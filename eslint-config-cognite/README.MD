@@ -20,7 +20,7 @@ Create a `.eslintrc.json` file in the root of your project:
 
 ```json
 {
-  "extends": ["cognite"]
+  "extends": ["@cognite"]
 }
 ```
 
