@@ -1,5 +1,5 @@
 {
-  "name": "@cognite/eslint-config-cognite",
+  "name": "@cognite/eslint-config",
   "version": "1.0.1",
   "description": "Cognite eslint config",
   "main": "index.js",
