@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['airbnb', 'prettier', 'prettier/react'],
+  extends: ['airbnb', 'prettier', 'prettier/react', 'plugin:jest/recommended'],
   plugins: ['react', 'prettier', 'jest'],
   parser: 'babel-eslint',
   parserOptions: {
@@ -20,9 +20,6 @@ module.exports = {
     'import/no-extraneous-dependencies': 0,
     'import/no-unresolved': 0,
     'import/extensions': 0,
-    'jest/no-disabled-tests': 'warn',
-    'jest/no-focused-tests': 'error',
-    'jest/no-identical-title': 'error',
     'import/prefer-default-export': 0,
     'prettier/prettier': ['error', { singleQuote: true, trailingComma: 'es5' }],
   },
