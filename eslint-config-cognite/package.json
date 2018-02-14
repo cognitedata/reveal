@@ -5,7 +5,9 @@
   "main": "index.js",
   "keywords": ["eslint", "prettier", "cognite", "javascript"],
   "author": "halvard.eggen@cognite.com",
-  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "babel-eslint": ">=8",
     "eslint": ">=4",
