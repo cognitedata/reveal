@@ -7,7 +7,7 @@ This provides styleguide for JS/ES through eslint rules and prettier formatter.
 Install lint config:
 
 ```sh
-yarn add --dev @cognite/eslint-config-cognite
+yarn add --dev @cognite/eslint-config
 ```
 
 Install peer dependencies:
