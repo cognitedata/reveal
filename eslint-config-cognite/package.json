@@ -1,9 +1,14 @@
 {
   "name": "@cognite/eslint-config-cognite",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Cognite eslint config",
   "main": "index.js",
-  "keywords": ["eslint", "prettier", "cognite", "javascript"],
+  "keywords": [
+    "eslint",
+    "prettier",
+    "cognite",
+    "javascript"
+  ],
   "author": "halvard.eggen@cognite.com",
   "publishConfig": {
     "access": "public"
