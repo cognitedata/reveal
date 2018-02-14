@@ -1,0 +1,39 @@
+{
+  "name": "@cognite/eslint-config-cognite",
+  "version": "0.0.0",
+  "description": "Cognite eslint config",
+  "main": "index.js",
+  "keywords": ["eslint", "prettier", "cognite", "javascript"],
+  "author": "halvard.eggen@cognite.com",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-eslint": ">=8",
+    "eslint": ">=4",
+    "eslint-config-airbnb": ">=16",
+    "eslint-config-prettier": ">=2",
+    "eslint-plugin-import": ">=2",
+    "eslint-plugin-jest": ">=2",
+    "eslint-plugin-jsx-a11y": ">=6",
+    "eslint-plugin-prettier": ">=2",
+    "eslint-plugin-react": ">=7",
+    "np": "*",
+    "prettier": ">=1"
+  },
+  "peerDependencies": {
+    "babel-eslint": ">=8",
+    "eslint": ">=4",
+    "eslint-config-airbnb": ">=16",
+    "eslint-config-prettier": ">=2",
+    "eslint-plugin-import": ">=2",
+    "eslint-plugin-jest": ">=2",
+    "eslint-plugin-jsx-a11y": ">=6",
+    "eslint-plugin-prettier": ">=2",
+    "eslint-plugin-react": ">=7",
+    "prettier": ">=1"
+  },
+  "scripts": {
+    "release": "np",
+    "lint": "yarn eslint .",
+    "lint:fix": "yarn lint --fix"
+  }
+}
