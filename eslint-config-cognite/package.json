@@ -1,6 +1,6 @@
 {
   "name": "@cognite/eslint-config",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Cognite eslint config",
   "main": "index.js",
   "keywords": [
