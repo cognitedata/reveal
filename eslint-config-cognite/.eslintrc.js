@@ -23,5 +23,15 @@ module.exports = {
     'import/prefer-default-export': 0,
     'prettier/prettier': ['error', { singleQuote: true, trailingComma: 'es5' }],
     'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
+    'jsx-a11y/anchor-is-valid': [
+      'error',
+      {
+        components: ['Link'],
+        specialLink: ['to'],
+      },
+    ],
+    // Disable this because it does not yet handle custom proptypes.
+    // See: https://github.com/yannickcr/eslint-plugin-react/issues/1389
+    'react/no-typos': ['off'],
   },
 };
