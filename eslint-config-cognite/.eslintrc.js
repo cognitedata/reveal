@@ -22,5 +22,6 @@ module.exports = {
     'import/extensions': 0,
     'import/prefer-default-export': 0,
     'prettier/prettier': ['error', { singleQuote: true, trailingComma: 'es5' }],
+    'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
   },
 };
