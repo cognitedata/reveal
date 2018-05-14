@@ -3,16 +3,12 @@
   "version": "1.0.3",
   "description": "Cognite eslint config",
   "main": "index.js",
-  "keywords": [
-    "eslint",
-    "prettier",
-    "cognite",
-    "javascript"
-  ],
+  "keywords": ["eslint", "prettier", "cognite", "javascript"],
   "author": "halvard.eggen@cognite.com",
   "license": "MIT",
   "repository": "https://github.com/cognitedata/eslint-config-cognite",
   "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
   "devDependencies": {
