@@ -15,8 +15,10 @@ const replaceTemplate = (repositoryPath, repositoryName) => {
   filesNames.forEach(name => {
     const filePath = path.join(repositoryPath, name);
     const file = fs.readFileSync(filePath, 'utf8');
-    const result = file.replace(/__REPOSITORY_NAME__/g, repositoryName);
-    fs.writeFileSync(filePath, result, 'utf8');
+    if (file.includes('__REPOSITORY_NAME__')) {
+      const result = file.replace(/__REPOSITORY_NAME__/g, repositoryName);
+      fs.writeFileSync(filePath, result, 'utf8');
+    }
   });
 };
 
