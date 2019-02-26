@@ -10,7 +10,7 @@
   },
   "scripts": {
     "publish-module": "cognite-release-manager publish-module",
-    "build": ""
+    "build": "echo empty build"
   },
   "files": [
     "index.js",
