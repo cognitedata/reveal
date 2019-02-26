@@ -1,0 +1,46 @@
+@Library('jenkins-helpers@v0.1.13') _
+
+static final String REPO = "create-react-package"
+
+def label = "${REPO}-${UUID.randomUUID().toString().substring(0, 5)}"
+podTemplate(
+  label: label,
+  containers: [containerTemplate(name: 'node',
+                                image: 'node:8',
+                                envVars: [
+                                  envVar(key: 'CI', value: 'true'),
+                                  envVar(key: 'NODE_PATH', value: 'src/')
+                                ],
+                                resourceRequestCpu: '2000m',
+                                resourceRequestMemory: '2500Mi',
+                                resourceLimitCpu: '2000m',
+                                resourceLimitMemory: '2500Mi',
+                                ttyEnabled: true)
+  ],
+  volumes: [
+    secretVolume(secretName: 'npm-credentials',
+                  mountPath: '/npm-credentials',
+                  readOnly: true),
+  ]) {
+    properties([buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))])
+    node(label) {
+    def gitCommit
+    stage('Checkout code') {
+      checkout(scm)
+    }
+    container('node') {
+      stage('Install dependencies') {
+        sh('cp /npm-credentials/npm-public-credentials.txt ~/.npmrc')
+        // Yarn can fail sometimes, so let's just retry it a few times.
+        retry(5) {
+          sh('yarn')
+        }
+      }
+      if (env.BRANCH_NAME == 'master') {
+        stage('Publish to npm') {
+          sh('yarn publish-module')
+        }
+      }
+    }
+  }
+}

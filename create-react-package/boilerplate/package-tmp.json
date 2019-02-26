@@ -1,0 +1,84 @@
+{
+  "name": "@cognite/__REPOSITORY_NAME__",
+  "version": "1.0.0",
+  "description": "",
+  "contributors": [
+    ""
+  ],
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "yarn clean && rollup -c && yarn esCheck",
+    "build-storybook": "build-storybook",
+    "clean": "rm -rf dist",
+    "deploy-storybook": "cognite-release-manager deploy-storybook -z storybook.tar.gz --output=storybook.md --repo __REPOSITORY_NAME__",
+    "esCheck": "es-check es5 './dist/index.js'",
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "prepublishOnly": "yarn build",
+    "publish-module": "cognite-release-manager publish-module",
+    "test": "yarn jest",
+    "storybook": "start-storybook -p 6006"
+  },
+  "repository": {
+    "type": "git",
+    "url": "__REPOSITORY_NAME__"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/core": "^7.3.3",
+    "@babel/preset-env": "^7.3.1",
+    "@babel/preset-react": "^7.0.0",
+    "@cognite/release-manager": "^0.1.76",
+    "@storybook/addon-actions": "^4.1.13",
+    "@storybook/addon-links": "^4.1.13",
+    "@storybook/addons": "^4.1.13",
+    "@storybook/react": "^4.1.13",
+    "@types/enzyme": "^3.9.0",
+    "@types/enzyme-adapter-react-16": "^1.0.5",
+    "@types/jest": "^24.0.6",
+    "@types/react": "^16.8.4",
+    "@types/storybook__react": "^4.0.1",
+    "babel-jest": "^24.1.0",
+    "babel-loader": "^8.0.5",
+    "enzyme": "^3.9.0",
+    "enzyme-adapter-react-16": "^1.9.1",
+    "es-check": "^5.0.0",
+    "husky": "^1.3.1",
+    "jest": "^24.1.0",
+    "lint-staged": "^8.1.4",
+    "prettier": "^1.16.4",
+    "react": "^16.8.3",
+    "react-dom": "^16.8.3",
+    "rollup": "^1.2.0",
+    "rollup-plugin-typescript2": "^0.19.2",
+    "ts-jest": "^24.0.0",
+    "tslint": "^5.12.1",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.0.1",
+    "tslint-react": "^3.6.0",
+    "typescript": "^3.3.3333"
+  },
+  "peerDependencies": {
+    "react": "^16.8.3",
+    "react-dom": "^16.8.3"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "prettier -- --write",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "engines": {
+    "npm": ">=4",
+    "node": ">=6"
+  }
+}

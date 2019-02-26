@@ -1,0 +1,33 @@
+{
+  "name": "@cognite/create-react-package",
+  "version": "1.0.4",
+  "description": "Create react package boilerplate",
+  "contributors": [
+    "valerii-gusev@cognite.com"
+  ],
+  "bin": {
+    "create-react-package": "./index.js"
+  },
+  "scripts": {
+    "publish-module": "cognite-release-manager publish-module"
+  },
+  "files": [
+    "index.js",
+    "createReactPackage.js",
+    "boilerplate"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "create-react-package"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "commander": "^2.19.0",
+    "fs-extra": "^7.0.1",
+    "validate-npm-package-name": "^3.0.0"
+  },
+  "devDependencies": {
+    "@cognite/release-manager": "^0.1.76"
+  }
+}
