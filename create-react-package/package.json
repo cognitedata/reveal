@@ -9,7 +9,8 @@
     "create-react-package": "./index.js"
   },
   "scripts": {
-    "publish-module": "cognite-release-manager publish-module"
+    "publish-module": "cognite-release-manager publish-module",
+    "build": ""
   },
   "files": [
     "index.js",
