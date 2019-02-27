@@ -29,6 +29,6 @@
     "validate-npm-package-name": "^3.0.0"
   },
   "devDependencies": {
-    "@cognite/release-manager": "^0.1.76"
+    "@cognite/release-manager": "^0.1.77"
   }
 }

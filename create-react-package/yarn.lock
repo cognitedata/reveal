@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@cognite/release-manager@^0.1.76":
-  version "0.1.76"
-  resolved "https://registry.yarnpkg.com/@cognite/release-manager/-/release-manager-0.1.76.tgz#62d447398385039fad450c5ae0835e873965e451"
-  integrity sha512-KVgUeinev4bESyJ0oYHIWN4Se4uof9EYJA3li0OwNG6SG6/Hgcq8mFMDMMDCbLMhEKIqQcF+FcfcZ/Diz5/eSw==
+"@cognite/release-manager@^0.1.77":
+  version "0.1.77"
+  resolved "https://registry.yarnpkg.com/@cognite/release-manager/-/release-manager-0.1.77.tgz#63de36ddd2f7fc43ce35d3908d04b70603c329b8"
+  integrity sha512-jEqkkRiyGb4v8+NURPhPEY2yE4WnRstP2i7WnOi2ItZUVFhaG21PC9xDrF66LBH+2yI3nbzXH9ie4NdVa6Qf/g==
   dependencies:
     axios "^0.18.0"
     commander "^2.15.1"
