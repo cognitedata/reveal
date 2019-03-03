@@ -3,5 +3,6 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.tslint": true
   },
-  "files.insertFinalNewline": true
+  "files.insertFinalNewline": true,
+  "typescript.suggest.autoImports": false
 }

@@ -1,12 +1,28 @@
 {
-  "extends": ["tslint:recommended", "tslint-config-prettier", "tslint-react"],
+  "extends": [
+    "tslint:recommended",
+    "tslint-config-prettier",
+    "tslint-react"
+  ],
   "rules": {
-    "interface-name": [true, "never-prefix"],
+    "interface-name": [
+      true,
+      "never-prefix"
+    ],
     "object-literal-sort-keys": false,
     "prettier": true,
     "no-console": false,
     "jsx-no-multiline-js": false,
-    "array-type": [true, "array"]
+    "array-type": [
+      true,
+      "array"
+    ],
+    "jsx-no-lambda": [
+      false
+    ],
+    "no-var-requires": false
   },
-  "rulesDirectory": ["tslint-plugin-prettier"]
+  "rulesDirectory": [
+    "tslint-plugin-prettier"
+  ]
 }
