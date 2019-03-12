@@ -78,7 +78,8 @@ podTemplate(
         sh("tar -zcvf storybook.tar.gz storybook-static/*")
       }
       stage('Deploy storybook') {
-        sh("npx @cognite/release-manager deploy-storybook -z storybook.tar.gz --output=storybook.md --repo __REPOSITORY_NAME__")
+        sh("yarn add --dev @cognite/release-manager")
+        sh("cognite-release-manager deploy-storybook -z storybook.tar.gz --output=storybook.md --repo __REPOSITORY_NAME__")
       }
       // If the autodeploy dropped a storybook.md file, then it should be posted
       // as a comment on GitHub.
@@ -90,7 +91,8 @@ podTemplate(
       }
       if (env.BRANCH_NAME == 'master') {
         stage('Publish to npm') {
-          sh('npx @cognite/release-manager publish-module')
+          sh("yarn add --dev @cognite/release-manager")
+          sh('cognite-release-manager publish-module')
         }
       }
     }
