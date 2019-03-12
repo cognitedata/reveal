@@ -76,6 +76,7 @@ process.chdir(root);
 const configurationPath = path.join(__dirname, `boilerplate`);
 fs.copySync(configurationPath, root);
 fs.moveSync(path.join(root, `package-tmp.json`), path.join(root, `package.json`));
+fs.moveSync(path.join(root, `gitignore-tmp`), path.join(root, `.gitignore`));
 replaceTemplate(root, appName);
 
 execSync('git init', { stdio: 'ignore' });
