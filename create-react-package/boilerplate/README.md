@@ -31,6 +31,6 @@ Run `yarn test`
 
 ## Release
 
-On a main brunch merge package will be automatically published to npm with updating patch version
+On a main branch merge package will be automatically published to npm with updating patch version
 
 Run `yarn publish-module`
