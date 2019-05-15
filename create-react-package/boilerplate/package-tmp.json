@@ -12,6 +12,7 @@
   ],
   "scripts": {
     "build": "yarn clean && rollup -c && yarn esCheck",
+    "build:watch": "yarn clean && rollup -c --watch && yarn esCheck",
     "build-storybook": "build-storybook",
     "clean": "rm -rf dist",
     "esCheck": "es-check es5 './dist/index.js'",
