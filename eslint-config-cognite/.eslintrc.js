@@ -3,7 +3,7 @@ module.exports = {
   plugins: ['react', 'prettier', 'jest'],
   parser: 'babel-eslint',
   parserOptions: {
-    ecmaVersion: 2016,
+    ecmaVersion: 2018,
     sourceType: 'module',
   },
   env: {
