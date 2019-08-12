@@ -45,5 +45,10 @@
     "release": "np",
     "lint": "yarn eslint .",
     "lint:fix": "yarn lint --fix"
+  },
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^1.13.0",
+    "@typescript-eslint/parser": "^1.13.0",
+    "eslint-plugin-react-hooks": "^1.7.0"
   }
 }
