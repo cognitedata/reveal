@@ -1,4 +1,5 @@
 [workspace]
 members = [
     "f3df",
+    "i3df",
 ]
