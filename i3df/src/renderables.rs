@@ -3,23 +3,40 @@ use i3df::Vector3;
 use serde_derive::{Deserialize, Serialize};
 use std::f64::consts::PI;
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+use wasm_bindgen::prelude::*;
+use serde_wasm_bindgen;
+use js_sys::{Uint8Array, Float32Array};
+use wasm_bindgen::JsValue;
+
+#[wasm_bindgen]
+#[derive(Clone, Default, Debug, Deserialize, Serialize)]
 pub struct Scene {
     pub root_sector_id: usize,
+    #[wasm_bindgen(skip)]
     pub sectors: Vec<Sector>,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Sector {
-    pub id: u64,
-
-    pub parent_id: Option<u64>,
-    pub bbox_min: Vector3,
-    pub bbox_max: Vector3,
-
-    pub box_collection: Box3DVec,
-    pub circle_collection: CircleVec,
-    pub cone_collection: ConeVec,
+#[wasm_bindgen]
+impl Scene {
+    pub fn sector_count(&self) -> usize {
+        self.sectors.len()
+    }
+    pub fn sector_id(&self, index: usize) -> u64 {
+        self.sectors[index].id
+    }
+    pub fn sector_parent_id(&self, index: usize) -> JsValue {
+        serde_wasm_bindgen::to_value(&self.sectors[index].parent_id).unwrap()
+    }
+    pub fn sector_bbox_min(&self, index: usize) -> JsValue {
+        serde_wasm_bindgen::to_value(&self.sectors[index].bbox_min).unwrap()
+    }
+    pub fn sector_bbox_max(&self, index: usize) -> JsValue {
+        serde_wasm_bindgen::to_value(&self.sectors[index].bbox_max).unwrap()
+    }
+    pub fn sector(&mut self, index: usize) -> Sector {
+        // NOTE the user can only get the sector once
+        std::mem::replace(&mut self.sectors[index], Sector::default())
+    }
 }
 
 pub trait Geometry {}
@@ -30,11 +47,58 @@ pub trait GeometryCollection<G: Geometry> {
     fn count(&self) -> usize;
 }
 
+fn vec_vector_to_array(data: &[i3df::Vector3]) -> Float32Array {
+    let data = unsafe {
+        std::slice::from_raw_parts(
+            data.as_ptr() as *const f32,
+            data.len() * 3,
+        ).to_vec()
+    };
+    Float32Array::from(&data[..])
+}
+
+macro_rules! make_func {
+    // node ids
+    ($self:ident, $field_name:ident, u64, JsValue) => {
+        serde_wasm_bindgen::to_value(&$self.$field_name).unwrap()
+    };
+
+    // tree index
+    ($self:ident, $field_name:ident, u64, Float32Array) => {
+        {
+            let data: Vec<f32> = $self.$field_name.iter().map(|value| {
+                *value as f32
+            }).collect();
+            Float32Array::from(&data[..])
+        }
+    };
+
+    // colors
+    ($self:ident, $field_name:ident, [u8; 4], Uint8Array) => {
+        {
+            let color_flat: Vec<u8> = $self.$field_name.iter().flat_map(|a| vec![a[0], a[1], a[2], a[3]]).collect();
+            Uint8Array::from(&color_flat[..])
+        }
+    };
+
+    ($self:ident, $field_name:ident, f32, Float32Array) => {
+        {
+            Float32Array::from(&$self.$field_name[..])
+        }
+    };
+
+    ($self:ident, $field_name:ident, Vector3, Float32Array) => {
+        {
+            vec_vector_to_array(&$self.$field_name)
+        }
+    };
+}
+
 macro_rules! new_geometry_types {
     (
         $(
-            $vis:vis struct $struct_name:ident, $vec_struct_name:ident {
-                $( $field_vis:vis $field_name:ident : $field_type:ty ),* $(,)?
+            $vis:vis struct $struct_name:ident, $vec_struct_name:ident, $collection_name:ident {
+                $( $field_vis:vis $field_name:ident : $field_type:ty $(=> $wasm_result:ident)? ),* $(,)?
             }
         )*
     ) => {
@@ -50,16 +114,35 @@ macro_rules! new_geometry_types {
             )*
         }
         $(
-            #[derive(Clone, Debug, Deserialize, Serialize)]
+            #[wasm_bindgen]
+            #[derive(Clone, Debug, Default, Deserialize, Serialize)]
             #[serde(rename_all="camelCase")]
             $vis struct $struct_name {
-                $( $field_vis $field_name : $field_type ),*
+                $(
+                    #[wasm_bindgen(skip)]
+                    $field_vis $field_name : $field_type,
+                )*
             }
 
-            #[derive(Clone, Debug, Deserialize, Serialize)]
+            #[wasm_bindgen]
+            #[derive(Clone, Debug, Default, Deserialize, Serialize)]
             #[serde(rename_all="camelCase")]
             $vis struct $vec_struct_name {
-                $( $field_vis $field_name : Vec<$field_type> ),*
+                $(
+                    #[wasm_bindgen(skip)]
+                    $field_vis $field_name : Vec<$field_type>,
+                )*
+            }
+
+            #[wasm_bindgen]
+            impl $vec_struct_name {
+                $(
+                    $(
+                        $field_vis fn $field_name(&self) -> $wasm_result {
+                            make_func!(self, $field_name, $field_type, $wasm_result)
+                        }
+                    )?
+                )*
             }
 
             impl Geometry for $struct_name { }
@@ -98,43 +181,69 @@ macro_rules! new_geometry_types {
                 }
             }
         )*
+
+        #[wasm_bindgen]
+        #[derive(Clone, Debug, Default, Deserialize, Serialize)]
+        pub struct Sector {
+            pub id: u64,
+
+            pub parent_id: Option<u64>,
+            #[wasm_bindgen(skip)]
+            pub bbox_min: Vector3,
+            #[wasm_bindgen(skip)]
+            pub bbox_max: Vector3,
+
+            $(
+                #[wasm_bindgen(skip)]
+                pub $collection_name: $vec_struct_name,
+            )*
+        }
+
+        #[wasm_bindgen]
+        impl Sector {
+            $(
+                pub fn $collection_name(&self) -> $vec_struct_name {
+                    std::mem::replace(&mut self.$collection_name.clone(), $vec_struct_name::default())
+                }
+            )*
+        }
     };
 }
 
 new_geometry_types! {
-    pub struct Box3D, Box3DVec {
-        pub node_id: u64,
-        pub tree_index: u64,
-        pub color: [u8; 4],
-        pub size: f32,
-        pub center: Vector3,
-        pub normal: Vector3,
-        pub rotation_angle: f32,
-        pub delta: Vector3,
+    pub struct Box3D, Box3DVec, box_collection {
+        pub node_id: u64 => JsValue,
+        pub tree_index: u64 => Float32Array,
+        pub color: [u8; 4] => Uint8Array,
+        pub size: f32 => Float32Array,
+        pub center: Vector3 => Float32Array,
+        pub normal: Vector3 => Float32Array,
+        pub rotation_angle: f32 => Float32Array,
+        pub delta: Vector3 => Float32Array,
     }
 
-    pub struct Cone, ConeVec {
-        pub node_id: u64,
-        pub tree_index: u64,
-        pub color: [u8; 4],
-        pub size: f32,
-        pub center_a: Vector3,
-        pub center_b: Vector3,
-        pub radius_a: f32,
-        pub radius_b: f32,
-        pub angle: f32,
-        pub arc_angle: f32,
-        pub local_x_axis: Vector3,
+    pub struct Cone, ConeVec, cone_collection {
+        pub node_id: u64 => JsValue,
+        pub tree_index: u64 => Float32Array,
+        pub color: [u8; 4] => Uint8Array,
+        pub size: f32 => Float32Array,
+        pub center_a: Vector3 => Float32Array,
+        pub center_b: Vector3 => Float32Array,
+        pub radius_a: f32 => Float32Array,
+        pub radius_b: f32 => Float32Array,
+        pub angle: f32 => Float32Array,
+        pub arc_angle: f32 => Float32Array,
+        pub local_x_axis: Vector3 => Float32Array,
     }
 
-    pub struct Circle, CircleVec {
-        pub node_id: u64,
-        pub tree_index: u64,
-        pub color: [u8; 4],
-        pub size: f32,
-        pub center: Vector3,
-        pub normal: Vector3,
-        pub radius: f32,
+    pub struct Circle, CircleVec, circle_collection {
+        pub node_id: u64 => JsValue,
+        pub tree_index: u64 => Float32Array,
+        pub color: [u8; 4] => Uint8Array,
+        pub size: f32 => Float32Array,
+        pub center: Vector3 => Float32Array,
+        pub normal: Vector3 => Float32Array,
+        pub radius: f32 => Float32Array,
     }
 }
 

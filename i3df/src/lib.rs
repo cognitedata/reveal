@@ -24,14 +24,14 @@ pub use generated::*;
 const MAGIC_BYTES: u32 = 0x4644_3349;
 const ATTRIBUTE_COUNT: u32 = 18;
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct Vector3 {
     pub x: f32,
     pub y: f32,
     pub z: f32,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct Vector4 {
     pub x: f32,
     pub y: f32,
