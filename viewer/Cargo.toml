@@ -1,0 +1,46 @@
+[package]
+name = "reveal-debug-viewer"
+version = "0.1.0"
+authors = [
+    "Svenn-Arne Dragly <dragly@cognite.com>"
+]
+edition = "2018"
+description = "Fast 3D debug viewer for CAD models"
+homepage = "https://github.com/cognitedata/reveal-rs"
+repository = "https://github.com/cognitedata/reveal-rs"
+keywords = ["graphics"]
+license = "Apache-2.0"
+
+[dependencies]
+cgmath = "0.17"
+serde_json = { version = "1.0.40" }
+serde = { version = "1.0.99", features = ["derive"] }
+serde_yaml = { version = "0.8.9" }
+env_logger = "0.6"
+glsl-to-spirv = "0.1"
+log = "0.4"
+i3df = { path = "../i3df" }
+f3df = { path = "../f3df" }
+clap = "2.33.0"
+arraymap = "0.1.1"
+nalgebra-glm = "0.4.0"
+nalgebra = "0.18.0"
+lzma-rs = "0.1.1"
+openctm = { git = "https://github.com/cognitedata/openctm-rs", rev="cbaf8e71b34485bde009cfe9ebf29d1e06233a8f" }
+byteorder = "1.3.2"
+imgui-wgpu = { git = "https://github.com/dragly/imgui-wgpu-rs", rev="79219b30246494b68739c0131fc1e2169faf18ab" }
+imgui = "0.0.23"
+imgui-winit-support = "0.0.23"
+
+[dependencies.wgpu]
+version = "0.2"
+git = "https://github.com/gfx-rs/wgpu-rs"
+rev = "5522c912f7e2f4f33a1167fb0c8ee4549f066dcf"
+
+[features]
+default = []
+metal = ["wgpu/metal"]
+dx11 = ["wgpu/dx11"]
+dx12 = ["wgpu/dx12"]
+vulkan = ["wgpu/vulkan"]
+gl = ["wgpu/gl"]
