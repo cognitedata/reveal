@@ -24,8 +24,8 @@ pub struct Sector {
     pub magic_bytes: u32,
     pub format_version: u32,
     pub optimizer_version: u32,
-    pub sector_id: u64,
-    pub parent_sector_id: u64,
+    pub sector_id: usize,
+    pub parent_sector_id: usize,
 
     pub bbox_min: [f32; 3],
     pub bbox_max: [f32; 3],
@@ -108,8 +108,8 @@ pub fn parse_sector(reader: impl Read) -> Result<Sector, Error> {
     // TODO add back assert_eq!(format_version, 5);
     let optimizer_version = input.read_u32::<LittleEndian>()?;
 
-    let sector_id = input.read_u64::<LittleEndian>()?;
-    let parent_sector_id = input.read_u64::<LittleEndian>()?;
+    let sector_id = input.read_u64::<LittleEndian>()? as usize;
+    let parent_sector_id = input.read_u64::<LittleEndian>()? as usize; // TODO 20191009 larsmoa: Look for u64::max to Option
 
     let bbox_min_x = input.read_f32::<LittleEndian>()?;
     let bbox_min_y = input.read_f32::<LittleEndian>()?;

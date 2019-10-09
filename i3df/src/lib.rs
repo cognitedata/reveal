@@ -101,8 +101,8 @@ pub struct SectorHeader {
     pub magic_bytes: u32,
     pub format_version: u32,
     pub optimizer_version: u32,
-    pub sector_id: u64,
-    pub parent_sector_id: Option<u64>,
+    pub sector_id: usize,
+    pub parent_sector_id: Option<usize>,
 
     pub bbox_min: [f32; 3],
     pub bbox_max: [f32; 3],
@@ -189,7 +189,7 @@ pub fn parse_scene_data(reader: impl Read) -> Result<Scene, Error> {
         Some(x) => x,
         None => return Err(error!("Attributes missing on root sector")),
     };
-    let root_sector_id = root_sector.header.sector_id as usize;
+    let root_sector_id = root_sector.header.sector_id;
 
     let mut other_sectors = Vec::new();
     loop {
@@ -219,7 +219,7 @@ pub fn parse_scene_data(reader: impl Read) -> Result<Scene, Error> {
     sectors.append(&mut other_sectors);
 
     Ok(Scene {
-        root_sector_id, // TODO consider u64
+        root_sector_id,
         sectors,
     })
 }
@@ -237,10 +237,10 @@ pub fn parse_sector_header(mut input: &mut impl BufRead) -> Result<SectorHeader,
     assert_eq!(format_version, 7);
     let optimizer_version = input.read_u32::<LittleEndian>()?;
 
-    let sector_id = input.read_u64::<LittleEndian>()?;
+    let sector_id = input.read_u64::<LittleEndian>()? as usize;
     let parent_sector_id = match input.read_u64::<LittleEndian>()? {
         std::u64::MAX => None,
-        x => Some(x),
+        x => Some(x as usize),
     };
 
     let bbox_min_x = input.read_f32::<LittleEndian>()?;

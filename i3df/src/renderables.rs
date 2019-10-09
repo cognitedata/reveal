@@ -21,11 +21,11 @@ impl Scene {
     pub fn sector_count(&self) -> usize {
         self.sectors.len()
     }
-    pub fn sector_id(&self, index: usize) -> u64 {
+    pub fn sector_id(&self, index: usize) -> usize {
         self.sectors[index].id
     }
-    pub fn sector_parent_id(&self, index: usize) -> JsValue {
-        serde_wasm_bindgen::to_value(&self.sectors[index].parent_id).unwrap()
+    pub fn sector_parent_id(&self, index: usize) -> Option<usize> {
+        self.sectors[index].parent_id
     }
     pub fn sector_bbox_min(&self, index: usize) -> JsValue {
         serde_wasm_bindgen::to_value(&self.sectors[index].bbox_min).unwrap()
@@ -185,9 +185,9 @@ macro_rules! new_geometry_types {
         #[wasm_bindgen]
         #[derive(Clone, Debug, Default, Deserialize, Serialize)]
         pub struct Sector {
-            pub id: u64,
+            pub id: usize,
 
-            pub parent_id: Option<u64>,
+            pub parent_id: Option<usize>,
             #[wasm_bindgen(skip)]
             pub bbox_min: Vector3,
             #[wasm_bindgen(skip)]
