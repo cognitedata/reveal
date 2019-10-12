@@ -1,5 +1,6 @@
 use crate as i3df;
 use i3df::Vector3;
+use i3df::error::Error;
 use serde_derive::{Deserialize, Serialize};
 use std::f64::consts::PI;
 
@@ -314,3 +315,65 @@ impl ToRenderables for i3df::ClosedCylinder {
         ]
     }
 }
+
+pub fn convert_sector(sector: &i3df::Sector) -> Sector {
+    // TODO calculate capacity based on number of objects of each type
+    // TODO introduce exact capacity
+    let mut box_collection = Box3DVec::with_capacity(0);
+    let mut circle_collection = CircleVec::with_capacity(0);
+    let mut cone_collection = ConeVec::with_capacity(0);
+
+    let mapper = &mut |item| match item {
+        RenderablePrimitive::Box3D(x) => {
+            box_collection.push(x);
+        }
+        RenderablePrimitive::Circle(x) => {
+            circle_collection.push(x);
+        }
+        RenderablePrimitive::Cone(x) => {
+            cone_collection.push(x);
+        }
+    };
+
+    {
+        let collection = &sector.primitive_collections.box_collection;
+        for raw_item in collection {
+            for item in raw_item.to_renderables() {
+                mapper(item);
+            }
+        }
+    }
+
+    {
+        let collection = &sector.primitive_collections.closed_cylinder_collection;
+        for raw_item in collection {
+            for item in raw_item.to_renderables() {
+                mapper(item);
+            }
+        }
+    }
+
+    Sector {
+        id: sector.header.sector_id,
+        parent_id: sector.header.parent_sector_id,
+        bbox_min: sector.header.bbox_min.into(),
+        bbox_max: sector.header.bbox_max.into(),
+        box_collection,
+        circle_collection,
+        cone_collection,
+    }
+}
+
+pub fn convert_scene(scene: &i3df::Scene) -> Scene {
+    let sectors = scene
+        .sectors
+        .iter()
+        .map(convert_sector)
+        .collect();
+
+    Scene {
+        root_sector_id: scene.root_sector_id,
+        sectors,
+    }
+}
+
