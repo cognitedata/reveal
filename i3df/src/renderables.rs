@@ -1,5 +1,5 @@
-use crate as i3df;
-use i3df::Vector3;
+use crate::Vector3;
+use crate::error::Error;
 use serde_derive::{Deserialize, Serialize};
 use std::f64::consts::PI;
 
@@ -47,7 +47,7 @@ pub trait GeometryCollection<G: Geometry> {
     fn count(&self) -> usize;
 }
 
-fn vec_vector_to_array(data: &[i3df::Vector3]) -> Float32Array {
+fn vec_vector_to_array(data: &[crate::Vector3]) -> Float32Array {
     let data = unsafe {
         std::slice::from_raw_parts(
             data.as_ptr() as *const f32,
@@ -251,7 +251,7 @@ pub trait ToRenderables {
     fn to_renderables(&self) -> Vec<RenderablePrimitive>;
 }
 
-impl ToRenderables for i3df::Box3D {
+impl ToRenderables for crate::Box3D {
     fn to_renderables(&self) -> Vec<RenderablePrimitive> {
         vec![RenderablePrimitive::Box3D(Box3D {
             node_id: self.node_id,
@@ -266,7 +266,7 @@ impl ToRenderables for i3df::Box3D {
     }
 }
 
-impl ToRenderables for i3df::ClosedCylinder {
+impl ToRenderables for crate::ClosedCylinder {
     fn to_renderables(&self) -> Vec<RenderablePrimitive> {
         let center_axis: Vector3 = self.center_axis.into();
         let local_x_axis: Vector3 = Vector3 { x: 1.0, y: 0.0, z: 0.0 }; // TODO fix
@@ -314,3 +314,65 @@ impl ToRenderables for i3df::ClosedCylinder {
         ]
     }
 }
+
+pub fn convert_sector(sector: &crate::Sector) -> Sector {
+    // TODO calculate capacity based on number of objects of each type
+    // TODO introduce exact capacity
+    let mut box_collection = Box3DVec::with_capacity(0);
+    let mut circle_collection = CircleVec::with_capacity(0);
+    let mut cone_collection = ConeVec::with_capacity(0);
+
+    let mapper = &mut |item| match item {
+        RenderablePrimitive::Box3D(x) => {
+            box_collection.push(x);
+        }
+        RenderablePrimitive::Circle(x) => {
+            circle_collection.push(x);
+        }
+        RenderablePrimitive::Cone(x) => {
+            cone_collection.push(x);
+        }
+    };
+
+    {
+        let collection = &sector.primitive_collections.box_collection;
+        for raw_item in collection {
+            for item in raw_item.to_renderables() {
+                mapper(item);
+            }
+        }
+    }
+
+    {
+        let collection = &sector.primitive_collections.closed_cylinder_collection;
+        for raw_item in collection {
+            for item in raw_item.to_renderables() {
+                mapper(item);
+            }
+        }
+    }
+
+    Sector {
+        id: sector.header.sector_id,
+        parent_id: sector.header.parent_sector_id,
+        bbox_min: sector.header.bbox_min.into(),
+        bbox_max: sector.header.bbox_max.into(),
+        box_collection,
+        circle_collection,
+        cone_collection,
+    }
+}
+
+pub fn convert_scene(scene: &crate::Scene) -> Scene {
+    let sectors = scene
+        .sectors
+        .iter()
+        .map(convert_sector)
+        .collect();
+
+    Scene {
+        root_sector_id: scene.root_sector_id,
+        sectors,
+    }
+}
+
