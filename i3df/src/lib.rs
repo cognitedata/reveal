@@ -3,6 +3,7 @@ use std::io::{self, BufRead, BufReader, Cursor, Read};
 use byteorder::{LittleEndian, ReadBytesExt};
 
 use serde_derive::{Deserialize, Serialize};
+use nalgebra;
 
 #[macro_use]
 extern crate impl_ops;
@@ -18,70 +19,17 @@ use fib::*;
 pub mod renderables;
 
 mod generated;
+mod generated_renderables;
+
 pub use generated::*;
+
+type Vector3 = nalgebra::Vector3::<f32>;
+type Vector4 = nalgebra::Vector4::<f32>;
+type Matrix<X, Y, Z> = nalgebra::Matrix::<f32, X, Y, Z>;
+type Rotation3 = nalgebra::Rotation3::<f32>;
 
 const MAGIC_BYTES: u32 = 0x4644_3349;
 const ATTRIBUTE_COUNT: u32 = 18;
-
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
-pub struct Vector3 {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
-}
-
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
-pub struct Vector4 {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
-    pub w: f32,
-}
-
-impl From<[f32; 3]> for Vector3 {
-    fn from(other: [f32; 3]) -> Self {
-        Vector3 {
-            x: other[0],
-            y: other[1],
-            z: other[2],
-        }
-    }
-}
-
-impl From<Vector3> for [f32; 3] {
-    fn from(other: Vector3) -> Self {
-        [other.x, other.y, other.z]
-    }
-}
-
-impl_op_ex!(+ |a: &Vector3, b: &Vector3| -> Vector3 {
-    Vector3 {
-        x: a.x + b.x,
-        y: a.y + b.y,
-        z: a.z + b.z,
-    }
-});
-impl_op_ex!(-|a: &Vector3, b: &Vector3| -> Vector3 {
-    Vector3 {
-        x: a.x - b.x,
-        y: a.y - b.y,
-        z: a.z - b.z,
-    }
-});
-impl_op_ex_commutative!(*|a: &Vector3, b: f32| -> Vector3 {
-    Vector3 {
-        x: a.x * b,
-        y: a.y * b,
-        z: a.z * b,
-    }
-});
-impl_op_ex!(/ |a: &Vector3, b: f32| -> Vector3 {
-    Vector3 {
-        x: a.x / b,
-        y: a.y / b,
-        z: a.z / b,
-    }
-});
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Scene {
@@ -156,12 +104,12 @@ pub struct Texture {
     pub height: u16,
 }
 
-pub fn parse_scene(reader: impl Read) -> Result<Scene, Error> {
+pub fn parse_scene(reader: impl BufRead) -> Result<Scene, Error> {
     parse_scene_data(reader)
 }
 
-pub fn parse_root_sector(reader: impl Read) -> Result<Sector, Error> {
-    let mut reader = BufReader::new(reader);
+pub fn parse_root_sector(mut reader: impl BufRead) -> Result<Sector, Error> {
+    //let mut reader = BufReader::new(reader);
     let size = reader.read_u32::<LittleEndian>()?;
 
     // read bytes
@@ -176,15 +124,15 @@ pub fn parse_root_sector(reader: impl Read) -> Result<Sector, Error> {
         None => return Err(error!("Attributes missing on root sector")),
     };
     let primitive_collections = generated::parse_primitives(&mut input, &attributes)?;
-    assert!(reader.eof()?);
+    //assert!(reader.eof()?);
     Ok(Sector {
         header,
         primitive_collections,
     })
 }
 
-pub fn parse_sector(attributes: &SectorAttributes, reader: impl Read) -> Result<Sector, Error> {
-    let mut reader = BufReader::new(reader);
+pub fn parse_sector(attributes: &SectorAttributes, mut reader: impl BufRead) -> Result<Sector, Error> {
+    //let mut reader = BufReader::new(reader);
     // read number of bytes
     let size = reader.read_u32::<LittleEndian>()?;
 
@@ -202,8 +150,8 @@ pub fn parse_sector(attributes: &SectorAttributes, reader: impl Read) -> Result<
     })
 }
 
-pub fn parse_scene_data(reader: impl Read) -> Result<Scene, Error> {
-    let mut reader = BufReader::new(reader);
+pub fn parse_scene_data(mut reader: impl BufRead) -> Result<Scene, Error> {
+    //let mut reader = BufReader::new(reader);
 
     let root_sector = parse_root_sector(&mut reader)?;
     let attributes = match &root_sector.header.attributes {

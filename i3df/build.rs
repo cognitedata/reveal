@@ -90,15 +90,26 @@ fn create_dtype(
     }
 }
 
-fn main() -> Result<(), Box<dyn Error>> {
-    let out_dir = env::var("OUT_DIR")?;
-    let out_file = format!("{}/generated.rs", out_dir);
+fn write_code_to_file(filename: &String, code: &proc_macro2::TokenStream) -> Result<(), Box<dyn Error>> {
+    let code = code.to_string().replace("}", "}\n").replace(";", ";\n");
 
-    println!("Output file: {}", out_file);
+    let (_, result, _) = rustfmt::format_input(
+        rustfmt::Input::Text(code),
+        &Default::default(),
+        None as Option<&mut std::io::Stdout>,
+    ).unwrap();
+
+    let code = &result[0].1;
+    println!("build.rs writing to output file: {}", filename);
+    let mut file = fs::File::create(filename)?;
+    write!(file, "{}", code)?;
+
+    Ok(())
+}
+
+fn main() -> Result<(), Box<dyn Error>> {
 
     let spec: Spec = serde_yaml::from_str(i3df_specification::as_string().as_str())?;
-
-    let mut file = fs::File::create(&out_file).unwrap();
 
     let mut attribute_map: HashMap<String, &Attribute> = HashMap::new();
     let mut attribute_id_map: HashMap<String, usize> = HashMap::new();
@@ -113,6 +124,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut primitive_idents = Vec::new();
     let mut primitive_match_patterns = Vec::new();
     let mut primitive_impls = Vec::new();
+    let mut primitive_to_renderables = Vec::new();
 
     for (geometry_id, geometry_type) in spec.geometry_types {
         let snake_name = &geometry_type.name;
@@ -157,20 +169,20 @@ fn main() -> Result<(), Box<dyn Error>> {
             let impl_function = match index.name.as_ref() {
                 "center_x" => quote! {
                     pub fn center(&self) -> Vector3 {
-                        Vector3 {
-                            x: self.center_x,
-                            y: self.center_y,
-                            z: self.center_z,
-                        }
+                        Vector3::new(
+                            self.center_x,
+                            self.center_y,
+                            self.center_z,
+                        )
                     }
                 },
                 "delta_x" => quote! {
                     pub fn delta(&self) -> Vector3 {
-                        Vector3 {
-                            x: self.delta_x,
-                            y: self.delta_y,
-                            z: self.delta_z,
-                        }
+                        Vector3::new(
+                            self.delta_x,
+                            self.delta_y,
+                            self.delta_z,
+                        )
                     }
                 },
                 _ => quote! {}
@@ -218,12 +230,19 @@ fn main() -> Result<(), Box<dyn Error>> {
             },
         };
 
+        let to_renderables = quote! {
+            for item in &raw_primitives.#snake_name_collection_ident {
+                collections = item.to_renderables(collections);
+            }
+        };
+
         primitive_functions.push(parse_primitive_function);
         primitive_names.push(name_ident);
         primitive_idents.push(snake_name_collection_ident);
         primitive_structs.push(primitive_struct);
         primitive_match_patterns.push(match_pattern);
         primitive_impls.push(primitive_impl);
+        primitive_to_renderables.push(to_renderables);
     }
 
     let code = quote! {
@@ -281,18 +300,22 @@ fn main() -> Result<(), Box<dyn Error>> {
             })
         }
     // Add some newlines to make it possible to debug errors
-    }.to_string().replace("}", "}\n").replace(";", ";\n");
+    };
 
-    // Format code before writing to file
-    let (_, result, _) = rustfmt::format_input(
-        rustfmt::Input::Text(code),
-        &Default::default(),
-        None as Option<&mut std::io::Stdout>,
-    ).unwrap();
+    let renderables_code = quote! {
+        pub fn convert_primitives(raw_primitives: &i3df::PrimitiveCollections) -> PrimitiveCollections {
+            let mut collections = PrimitiveCollections::new();
+            #(#primitive_to_renderables)*
+            collections
+        }
+    };
 
-    let code = &result[0].1;
-    write!(file, "{}", code)?;
-    drop(file);
+    let out_dir = env::var("OUT_DIR")?;
+    let out_file = format!("{}/generated.rs", out_dir);
+    let renderables_out_file = format!("{}/generated_renderables.rs", out_dir);
+
+    write_code_to_file(&out_file, &code)?;
+    write_code_to_file(&renderables_out_file, &renderables_code)?;
 
     Ok(())
 }
