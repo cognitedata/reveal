@@ -20,7 +20,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
   },
   devServer: {
-    https: true,
+    https: false,
   },
   plugins: [
     new HtmlWebpackPlugin(),

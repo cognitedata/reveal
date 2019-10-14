@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --mode=development --watch",
     "release": "webpack --mode=release",
-    "serve": "webpack-dev-server",
+    "serve": "webpack-dev-server --debug --color --progress --watch --port=8080",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": [
@@ -16,15 +16,13 @@
   ],
   "license": "Apache-2.0",
   "devDependencies": {
-    "@types/three": "0.93.28",
     "typescript": "3.6.4"
   },
   "dependencies": {
     "html-webpack-plugin": "3.2.0",
-    "three": "0.98.0",
+    "three": "0.109.0",
     "ts-loader": "6.2.0",
     "webpack": "4.41.1",
-    "webpack-cli": "3.3.9",
-    "webpack-dev-server": "3.8.2"
+    "webpack-cli": "3.3.9"
   }
 }
