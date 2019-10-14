@@ -16,12 +16,11 @@
   ],
   "license": "Apache-2.0",
   "devDependencies": {
-    "@types/three": "0.93.28",
     "typescript": "3.6.4"
   },
   "dependencies": {
     "html-webpack-plugin": "3.2.0",
-    "three": "0.98.0",
+    "three": "0.109.0",
     "ts-loader": "6.2.0",
     "webpack": "4.41.1",
     "webpack-cli": "3.3.9",
