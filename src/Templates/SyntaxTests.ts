@@ -1,7 +1,10 @@
 
-class SyntaxTests
+import { InheritClass } from "./InheritClass";
+import { Point } from "./Point";
+
+export class SyntaxTests
 {
-    public static makeVariables()
+    public static testVariables()
     {
         enum Color { Red = 1, Green, Blue }
 
@@ -13,67 +16,82 @@ class SyntaxTests
         const f: number = 7;
 
         b += 5;
-        console.log("" + a + b + c + d + e + f);
+        console.log(a + " " + b + " " + c + " " + d + " " + e + " " + f);
     }
 
-    public static makeObject()
+    public static testObject()
     {
         let object = new InheritClass("Hei");
-        console.log(object);
         object.showName();
     }
 
-    public static runLoop1()
+    public static testForLoop()
     {
+        console.log("Test for loop");
         for (let i: number = 0; i < 10; i++)
-            console.log("for loop executed : " + i);
+            console.log(i);
     }
 
-    public static showLoop2()
+    public static testArray()
     {
-        const array: number[] = [10, 65, 73, 26, 44];
+        const array: number[] = [100, 200, 300];
         for (let item in array)
             console.log(array[item]);
     }
 
-    public static showLoop3()
+    public static testArray2()
     {
-        const array: number[] = [10, 65, 73, 26, 44];
-        for (let item in array)
+        const array: number[] = [100, 200, 300];
+        for (let item of array)
             console.log(item);
     }
 
-    public static showLoop4()
+    public static testArrayTemplate()
     {
-        const array: Array<number> = new Array<number>();
-        array.push(1);
-        array.push(2);
-        array.push(4);
+        const array = new Array<Point>();
+        array.push(new Point(1, 1));
+        array.push(new Point(2, 2));
+        array.push(new Point(3, 3));
 
-        for (let item in array)
-            console.log(item);
+        for (let item of array)
+            console.log(item.getString());
     }
 
-    public static showLoop5() {
 
-        //let map = new Map();
+    public static testMap()
+    {
+        let map = new Map();
 
-        //map.set("A", 1);
-        //map.set("B", 2);
-        //map.set("C", 3);
+        map.set("A", 100);
+        map.set("B", 200);
+        map.set("C", 300);
 
-        //console.log(map.get("John"));
+        console.log(map.get("A"));
+        console.log(map.get("B"));
     }
-}
 
+    public static testMapTemplate()
+    {
+        let map = new Map<string, number>();
 
+        map.set("A", 100);
+        map.set("B", 200);
+        map.set("C", 300);
 
+        console.log(map.get("A"));  
+        console.log(map.get("B"));
+    }
 
-var a2: number = 5555;
+    public static testSetTemplate()
+    {
+        let map = new Set<string>();
 
+        map.add("A");
+        map.add("B");
+        map.add("C");
 
-function Add(x: number, y: number): number 
-{
-    return x + y;
+        console.log(map.has("A"));
+        console.log(map.has("D"));
+    }
 }
 

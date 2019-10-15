@@ -1,5 +1,5 @@
 
-class Point
+export class Point
 {
     public x: number;
     public y: number;
@@ -14,5 +14,10 @@ class Point
     {
         this.x += point.x;
         this.y += point.y;
+    }
+
+    public getString(): string
+    {
+        return "(" + this.x + ", " + this.y + ")";
     }
 }

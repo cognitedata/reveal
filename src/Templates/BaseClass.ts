@@ -1,5 +1,5 @@
 
-abstract class BaseClass
+export abstract class BaseClass
 {
     protected name: string;
     protected number: number;

@@ -1,5 +1,7 @@
 
-class InheritClass extends BaseClass
+import { BaseClass } from "./BaseClass";
+
+export class InheritClass extends BaseClass
 {
     constructor(name: string)
     {

@@ -1,5 +1,22 @@
 {
   "compilerOptions": {
-    "target": "es5"
-  }
+    "module": "es6",
+    "target": "es5",
+    "outDir": "dist",
+    "declarationDir": "dist",
+    "declaration": true,
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "sourceMap": true,
+    "downlevelIteration": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "lib": [ "dom", "es2015", "es2017" ]
+  },
+  "exclude": [ "node_modules", "dist" ]
 }
