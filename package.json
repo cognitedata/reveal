@@ -9,14 +9,10 @@
     "serve": "webpack-dev-server --debug --color --progress --watch --port=8080",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": [
-    "Nils Petter Fremming <nils.fremming@cognite.com>",
-    "Lars Moastuen <lars.moastuen@cognite.com>",
-    "Svenn-Arne Dragly <dragly@cognite.com>"
-  ],
   "license": "Apache-2.0",
   "devDependencies": {
-    "typescript": "3.6.4"
+    "@types/node": "^8.0.14",
+    "typescript": "^3.2.2"
   },
   "dependencies": {
     "html-webpack-plugin": "3.2.0",

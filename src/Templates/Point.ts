@@ -1,3 +1,4 @@
+
 class Point
 {
     public x: number;
@@ -13,27 +14,5 @@ class Point
     {
         this.x += point.x;
         this.y += point.y;
-    }
-}
-
-
-
-class BaseNode
-{
-
-    abstract ShowType()
-    {
-        alert("s");
-    }
-
-}
-
-
-class CadNode extends BaseNode
-{
-
-    ShowType()
-    {
-        alert("s");
     }
 }
