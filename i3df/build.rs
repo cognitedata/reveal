@@ -176,6 +176,33 @@ fn main() -> Result<(), Box<dyn Error>> {
                         )
                     }
                 },
+                "translation_x" => quote! {
+                    pub fn translation(&self) -> Vector3 {
+                        Vector3::new(
+                            self.translation_x,
+                            self.translation_y,
+                            self.translation_z,
+                        )
+                    }
+                },
+                "rotation_x" => quote! {
+                    pub fn rotation(&self) -> Vector3 {
+                        Vector3::new(
+                            self.rotation_x,
+                            self.rotation_y,
+                            self.rotation_z,
+                        )
+                    }
+                },
+                "scale_x" => quote! {
+                    pub fn scale(&self) -> Vector3 {
+                        Vector3::new(
+                            self.scale_x,
+                            self.scale_y,
+                            self.scale_z,
+                        )
+                    }
+                },
                 "delta_x" => quote! {
                     pub fn delta(&self) -> Vector3 {
                         Vector3::new(

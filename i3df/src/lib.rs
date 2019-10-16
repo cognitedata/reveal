@@ -5,6 +5,10 @@ use byteorder::{LittleEndian, ReadBytesExt};
 use serde_derive::{Deserialize, Serialize};
 use nalgebra;
 
+use serde_wasm_bindgen;
+use wasm_bindgen::prelude::*;
+use wasm_bindgen::JsValue;
+
 #[macro_use]
 extern crate impl_ops;
 use std::ops;
@@ -97,6 +101,7 @@ pub enum SectorAttributeData {
     Texture(Vec<Texture>),
 }
 
+#[wasm_bindgen]
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct Texture {
     pub file_id: u64,

@@ -1,10 +1,11 @@
-use crate::{Matrix, Rotation3, Vector3, Vector4};
+use crate::{Matrix, Rotation3, Vector3, Vector4, Texture};
 use serde_derive::{Deserialize, Serialize};
 use std::f64::consts::PI;
 
 use serde_wasm_bindgen;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
+use js_sys::Array;
 
 // TODO remember to normalize arc_angles
 
@@ -112,6 +113,10 @@ macro_rules! make_func_vec {
             .to_vec()
         };
         data_as_f32
+    }};
+
+    ($self:ident, $field_name:ident, Texture, Texture) => {{
+        $self.$field_name.clone()
     }};
 }
 
@@ -432,6 +437,35 @@ new_geometry_types! {
             vertex_2: Vector3 => f32,
             vertex_3: Vector3 => f32,
             vertex_4: Vector3 => f32,
+        ]
+    }
+
+    // Meshes
+    {
+        TriangleMesh, TriangleMeshVec, triangle_mesh_collection,
+        [
+            node_id: u64 => f64,
+            tree_index: u64 => f32,
+            color: [u8; 4] => u8,
+            size: f32 => f32,
+            file_id: u64 => f64,
+            triangle_count: u64 => f64,
+            //triangle_offset: u64 => f64,
+        ]
+    }
+    {
+        InstancedMesh, InstancedMeshVec, instanced_mesh_collection,
+        [
+            node_id: u64 => f64,
+            tree_index: u64 => f32,
+            color: [u8; 4] => u8,
+            size: f32 => f32,
+            file_id: u64 => f64,
+            triangle_count: u64 => f64,
+            triangle_offset: u64 => f64,
+            translation: Vector3 => f32,
+            rotation: Vector3 => f32,
+            scale: Vector3 => f32,
         ]
     }
 }
@@ -1823,11 +1857,44 @@ impl ToRenderables for crate::SolidClosedGeneralCone {
 }
 impl ToRenderables for crate::TriangleMesh {
     fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+        collections.triangle_mesh_collection.push(TriangleMesh {
+            node_id: self.node_id,
+            tree_index: self.tree_index,
+            color: self.color,
+            size: self.diagonal,
+            file_id: self.file_id,
+            //diffuse_texture: self.diffuse_texture,
+            //specular_texture: self.specular_texture,
+            //ambient_texture: self.ambient_texture,
+            //normal_texture: self.normal_texture,
+            //bump_texture: self.bump_texture,
+            triangle_count: self.triangle_count,
+            //triangle_offset: self.triangle_offset,
+        });
+
         collections
     }
 }
 impl ToRenderables for crate::InstancedMesh {
     fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+        collections.instanced_mesh_collection.push(InstancedMesh {
+            node_id: self.node_id,
+            tree_index: self.tree_index,
+            color: self.color,
+            size: self.diagonal,
+            file_id: self.file_id,
+            //diffuse_texture: self.diffuse_texture,
+            //specular_texture: self.specular_texture,
+            //ambient_texture: self.ambient_texture,
+            //normal_texture: self.normal_texture,
+            //bump_texture: self.bump_texture,
+            triangle_count: self.triangle_count,
+            triangle_offset: self.triangle_offset,
+            translation: self.translation(),
+            rotation: self.rotation(),
+            scale: self.scale(),
+        });
+
         collections
     }
 }
