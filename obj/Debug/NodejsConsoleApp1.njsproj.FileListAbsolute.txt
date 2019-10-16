@@ -1,2 +1,0 @@
-C:\Users\Nils Petter Fremming\Documents\GitHub\reveal-architecture\obj\Debug\NodejsConsoleApp1.njsprojAssemblyReference.cache
-C:\Users\Nils Petter Fremming\Documents\GitHub\reveal-architecture\bin\Microsoft.NodejsTools.WebRole.dll

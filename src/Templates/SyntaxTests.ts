@@ -1,5 +1,4 @@
 
-import { InheritClass } from "./InheritClass";
 import { Point } from "./Point";
 
 export class SyntaxTests
@@ -18,13 +17,7 @@ export class SyntaxTests
         b += 5;
         console.log(a + " " + b + " " + c + " " + d + " " + e + " " + f);
     }
-
-    public static testObject()
-    {
-        let object = new InheritClass("Hei");
-        object.showName();
-    }
-
+    
     public static testForLoop()
     {
         console.log("Test for loop");

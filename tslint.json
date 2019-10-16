@@ -1,0 +1,17 @@
+{
+  "extends": ["@cognite/tslint-config-cognite-3d"],
+  "linterOptions": {
+    "exclude": ["node_modules/**/*.ts", "**/*.json"]
+  },
+  "rules": {
+    "file-header": [
+      true,
+      {
+        "default": "Copyright 2019 Cognite AS",
+        "match": "Copyright \\d{4} Cognite AS",
+        "allow-single-line-comments": true,
+        "enforce-trailing-newline": true
+      }
+    ]
+  }
+}

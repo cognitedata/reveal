@@ -1,0 +1,18 @@
+{
+  "window.zoomLevel": 0,
+  "files.autoSave": "onFocusChange",
+  "editor.autoIndent": true,
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2,
+  "editor.indentSize": 2,
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "editor.formatOnSave": false,
+  "editor.formatOnPaste": true,
+  "javascript.format.enable": true,
+  "javascript.format.placeOpenBraceOnNewLineForFunctions": true,
+  "typescript.format.placeOpenBraceOnNewLineForControlBlocks": true,
+  "typescript.format.placeOpenBraceOnNewLineForFunctions": true,
+  "typescript.format.enable": true,
+}

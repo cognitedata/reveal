@@ -12,3 +12,16 @@ node_modules
 .vs/reveal-architecture/config/applicationhost.config
 .vs/reveal-architecture/config/applicationhost.config
 .vs/reveal-architecture/config/applicationhost.config
+.vs/NodejsConsoleApp1/v16/Server/sqlite3/db.lock
+.vs/NodejsConsoleApp1/DesignTimeBuild/.dtbcache
+.vs/NodejsConsoleApp1/v16/Server/sqlite3/storage.ide
+.vs/NodejsConsoleApp1/v16/Server/sqlite3/storage.ide-shm
+.vs/NodejsConsoleApp1/v16/Server/sqlite3/storage.ide-wal
+obj/Debug/NodejsConsoleApp1.njsprojAssemblyReference.cache
+obj/Debug/NodejsConsoleApp1.njsproj.FileListAbsolute.txt
+bin/Microsoft.NodejsTools.WebRole.dll
+obj/Debug/NodejsConsoleApp1.njsprojAssemblyReference.cache
+obj/Debug/NodejsConsoleApp1.njsproj.FileListAbsolute.txt
+bin/Microsoft.NodejsTools.WebRole.dll
+obj/Debug/NodejsConsoleApp1.njsproj.FileListAbsolute.txt
+obj/Debug/NodejsConsoleApp1.njsprojAssemblyReference.cache
