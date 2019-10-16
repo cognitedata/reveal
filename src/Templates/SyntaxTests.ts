@@ -7,9 +7,9 @@ export class SyntaxTests
     {
         enum Color { Red = 1, Green, Blue }
 
-        var a: boolean = true;
-        var b: number = 6;
-        var c: string = "Nils";
+        let a: boolean = true;
+        let b: number = 6;
+        let c: string = "Nils";
         let d: [string, number] = ["Hallo", 5];
         let e: Color = Color.Green;
         const f: number = 7;

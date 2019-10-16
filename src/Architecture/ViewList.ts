@@ -1,4 +1,5 @@
 import { BaseView } from "../Views/BaseView";
+import { TargetNode } from "../Nodes/TargetNode";
 
 export class ViewList
 {
@@ -6,7 +7,7 @@ export class ViewList
     // FIELDS
     //==================================================
 
-    private _list: Array<BaseView> = new Array<BaseView>();
+    public list: Array<BaseView> = new Array<BaseView>();
 
     //==================================================
     // CONSTRUCTORS
@@ -20,21 +21,27 @@ export class ViewList
 
     public add(view: BaseView): void
     {
-        this._list.push(view);
+        this.list.push(view);
     }
 
     public remove(view: BaseView): boolean
     {
-        const index = this._list.indexOf(view, 0);
+        const index = this.list.indexOf(view, 0);
         if (index < 0)
             return false;
 
-        this._list.splice(index, 1);
+        this.list.splice(index, 1);
         return true;
     }
 
     public clear(): void
     {
-        this._list.splice(0, this._list.length);
+        this.list.splice(0, this.list.length);
+    }
+
+    public getViewByTarget(target: TargetNode): BaseView | null
+    {
+        var view = this.list.find((view: BaseView) => view.target == target);
+        return view == undefined ? null : view;
     }
 }

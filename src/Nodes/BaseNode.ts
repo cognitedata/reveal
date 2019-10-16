@@ -1,5 +1,8 @@
 import { BaseView } from "../Views/BaseView";
 import { ViewList } from "../Architecture/ViewList";
+import { TargetNode } from "./TargetNode";
+import { ViewFactory } from "../Architecture/ViewFactory";
+import { NodeEventArgs } from "../Architecture/NodeEventArgs";
 
 
 export abstract class BaseNode
@@ -29,11 +32,52 @@ export abstract class BaseNode
     // CONSTRUCTORS
     //==================================================
 
-    protected constructor()
+    protected constructor() {}
+
+    //==================================================
+    // CONSTRUCTORS
+    //==================================================
+
+    public notify(args: NodeEventArgs): void
     {
+        for(var view of this._views.list)
+          view.update(args);
     }
 
 
+    public setVisibleInteractive(visible: boolean, target: TargetNode): void
+    {
+      if (this.setVisible(visible, target))
+        this.notify(new NodeEventArgs(NodeEventArgs.nodeVisible))
+    }
+
+    public setVisible(visible: boolean, target: TargetNode) : boolean
+    {
+      // Returns true if changed.
+        let view = this.views.getViewByTarget(target);
+        if (view == null)
+        {
+           view = ViewFactory.instance.create(this, target.className);
+           if (view == null)
+             return false;
+
+           view.target = target;
+           this.views.add(view);
+        }
+        if (view.isVisible == visible)
+           return false;
+
+        view.isVisible = visible;
+        return true;           
+    }
 
 
+    public isVisible(target: TargetNode): boolean
+    {
+      let view = this.views.getViewByTarget(target);
+      if (view == null)
+        return false;
+
+      return view.isVisible;
+    }
 }
