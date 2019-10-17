@@ -2,27 +2,21 @@
   "name": "reveal-architecture",
   "version": "0.1.0",
   "description": "Reveal viewer architecture",
-  "main": "index.ts",
+  "main": "app.js",
+  "entry": "dist/app.js",
   "scripts": {
-    "build": "webpack --mode=development --watch",
-    "release": "webpack --mode=release",
-    "serve": "webpack-dev-server --debug --color --progress --watch --port=8080",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "webpack",
+    "build-dev": "webpack --debug",
+    "clean": "tsc --build --clean"
   },
-  "author": [
-    "Nils Petter Fremming <nils.fremming@cognite.com>",
-    "Lars Moastuen <lars.moastuen@cognite.com>",
-    "Svenn-Arne Dragly <dragly@cognite.com>"
-  ],
   "license": "Apache-2.0",
   "devDependencies": {
-    "typescript": "3.6.4"
+    "@types/node": "^8.0.14",
+    "html-webpack-plugin": "^3.2.0",
+    "ts-loader": "^6.2.0",
+    "typescript": "^3.2.2",
+    "webpack": "^4.41.1",
+    "webpack-cli": "^3.3.9"
   },
-  "dependencies": {
-    "html-webpack-plugin": "3.2.0",
-    "three": "0.109.0",
-    "ts-loader": "6.2.0",
-    "webpack": "4.41.1",
-    "webpack-cli": "3.3.9"
-  }
+  "dependencies": {}
 }
