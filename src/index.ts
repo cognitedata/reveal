@@ -1,15 +1,7 @@
 import * as THREE from 'three';
+import { setUnion, setDifference } from './utils/setUtils';
 
 class Sector {}
-class SectorData {}
-
-function setDifference<T>(left: Set<T>, right: Set<T>): Set<T> {
-  return new Set<T>([...left].filter(x => !right.has(x)));
-}
-
-function setUnion<T>(left: Set<T>, right: Set<T>): Set<T> {
-  return new Set<T>([...left, ...right]);
-}
 
 enum LoadSectorStatus
 {
