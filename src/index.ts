@@ -1,53 +1,7 @@
 import * as THREE from 'three';
 import { setUnion, setDifference } from './utils/setUtils';
-
-class Sector {}
-
-enum LoadSectorStatus
-{
-  Awaiting,
-  InFlight,
-  Cancelled,
-  Resolved,
-}
-
-type LoadSectorRequest =
-{
-  promise?: Promise<void>;
-  cancelCb: () => void;
-  statusCb: () => LoadSectorStatus;
-}
-
-function loadSector(sectorId: number, fetchRequest: (sectorId: number) => Promise<ArrayBuffer>, parseSector: (sectorId: number, buffer: ArrayBuffer) => Promise<Sector>, receiveSector : (sector: Sector) => void) : LoadSectorRequest  {
-  let cancelRequested = false;
-  let status = LoadSectorStatus.Awaiting;
-  const result = { promise: undefined, cancelCb: () => cancelRequested = true, statusCb: () => status };
-
-  async function loadSectorAsync(): Promise<void> {
-    status = LoadSectorStatus.InFlight;
-
-    if (cancelRequested) {
-      status = LoadSectorStatus.Cancelled;
-      return;
-    }
-    const data = await fetchRequest(sectorId);
-    
-    if (cancelRequested) {
-      status = LoadSectorStatus.Cancelled;
-      return;
-    }
-    const sector = await parseSector(sectorId, data);
-    if (cancelRequested) {
-      status = LoadSectorStatus.Cancelled;
-      return;
-    }
-    status = LoadSectorStatus.Resolved;
-    receiveSector(sector);
-  }
-
-  result.promise = loadSectorAsync();
-  return result;
-}
+import { loadSector, LoadSectorRequest } from './loadSector';
+import { Sector } from './types/Sector';
 
 function buildScene(sector: SectorMetadata, parent: THREE.Object3D, sectorNodeMap: Map<number, SectorNode>) {
   const sectorGroup = new SectorNode();
@@ -57,11 +11,6 @@ function buildScene(sector: SectorMetadata, parent: THREE.Object3D, sectorNodeMa
   for (const child of sector.children) {
     buildScene(child, sectorGroup, sectorNodeMap);
   }
-}
-
-interface SectorMetadata {
-  id: number;
-  children: SectorMetadata[];
 }
 
 class SectorNode extends THREE.Group {
