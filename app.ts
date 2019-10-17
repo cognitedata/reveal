@@ -2,10 +2,9 @@ import { SyntaxTests } from "./src/XYZ/SyntaxTests";
 import { add } from "./src/XYZ/Functions";
 import { RevealModule } from "./src/Specific/RevealModule";
 import { PolylinesNode } from "./src/Specific/PolylinesNode";
-import { Render3DTargetNode as RevealTargetNode } from "./src/Nodes/Render3DTargetNode";
 import { RootNode } from "./src/Nodes/RootNode";
 import { FolderNode } from "./src/Nodes/FolderNode";
-
+import { RevealTargetNode } from "./src/Specific/RevealTargetNode";
 
 // Create the module
 let module = new RevealModule();
@@ -25,7 +24,6 @@ let root = new RootNode();
   dataFolder.addChild(node2);
   root.addChild(dataFolder);
 }
-
 // Create the viewers
 {
   let target1 = new RevealTargetNode();
@@ -38,47 +36,11 @@ let root = new RootNode();
   root.addChild(targets);
 }
 
-for (let descendant of root.getThisAndDescendants())
-  console.log(descendant.className + " " + descendant.name);
-
-
 
 let symbol = Symbol("Nils Petter");
 console.log(symbol);
 console.log(symbol.toString());
 
-let f = root.getChildOfType<FolderNode>();
-if (f != null)
-  console.log("Found " + f.className);
-
-
-for (let target of root.getChild(1).children)
-{
-  for (let node of root.getChild(0).children)
-  {
-    console.log(`Is visible ${node.name}: ` + node.isVisible(target));
-    node.setVisible(true, target);
-    console.log(`Is visible ${node.name}: ` + node.isVisible(target));
-    node.setVisible(false, target);
-    console.log(`Is visible ${node.name}: ` + node.isVisible(target));
-    console.log(node.root.className + " " + node.root.name);
-    console.log('---------');
-  }
-}
-
-for (let isVisible of [true, false])
-{
-  for (let target of root.getChild(1).children)
-    for (let node of root.getChild(0).children)
-      node.setVisible(isVisible, target);
-
-  let visibleCount = 0;
-  for (let target of root.getChild(1).children)
-    for (let node of root.getChild(0).children)
-      if (node.isVisible(target))
-        visibleCount++;
-  console.debug("visibleCount: " + visibleCount);
-}
 
 
 // let a = add(1, 2);

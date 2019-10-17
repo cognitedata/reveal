@@ -11,10 +11,22 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseView } from "../Views/BaseView";
+import { TargetNode } from "../Nodes/TargetNode";
 
-export class PolylinesView3 extends BaseView
+export class RevealTargetNode extends TargetNode
 {
+    //==================================================
+    // FIELDS
+    //==================================================
+
+    public static readonly staticClassName: string = "RevealTargetNode";
+
+    //==================================================
+    // PROPERTIES
+    //==================================================
+
+    public get className(): string { return RevealTargetNode.staticClassName; }
+
     //==================================================
     // CONSTRUCTORS
     //==================================================
