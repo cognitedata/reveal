@@ -24,9 +24,7 @@ export abstract class BaseView
     // CONSTRUCTORS
     //==================================================
 
-    protected constructor()
-    {
-    }
+    protected constructor() { }
 
     //==================================================
     // INSTANCE METHODS
@@ -34,5 +32,6 @@ export abstract class BaseView
 
     public update(args: NodeEventArgs) : void
     {
+        // Override this function to update your view
     }
 }

@@ -15,39 +15,38 @@ class ChangedDecription
 
 export class NodeEventArgs
 {
-    //==================================================
-    // STATIC FIELDS
-    //==================================================
+  //==================================================
+  // STATIC FIELDS; More will come here
+  //==================================================
 
-    public static readonly nodeName: Symbol = Symbol("nodeName");
-    public static readonly nodeVisible: Symbol = Symbol("nodeVisible");
-    public static readonly nodeColor: Symbol = Symbol("nodeColor");
-    //........more will core here
+  public static readonly nodeName: Symbol = Symbol("nodeName");
+  public static readonly nodeVisible: Symbol = Symbol("nodeVisible");
+  public static readonly nodeColor: Symbol = Symbol("nodeColor");
 
-    //==================================================
-    // FIELDS
-    //==================================================
+  //==================================================
+  // FIELDS
+  //==================================================
 
-    private _changes: Array<ChangedDecription> | null = null;
+  private _changes: Array<ChangedDecription> | null = null;
 
-    //==================================================
-    // CONSTRUCTORS
-    //==================================================
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
 
   public constructor(changed?: Symbol, fieldName?: string)
   {
     if (changed == undefined)
       return;
-     if (this._changes == null)
-       this._changes = new Array<ChangedDecription>();
+    if (this._changes == null)
+      this._changes = new Array<ChangedDecription>();
     this._changes.push(new ChangedDecription(changed, fieldName))
   }
 
-    //==================================================
-    // INSTANCE METHODS: Requests
-    //==================================================
+  //==================================================
+  // INSTANCE METHODS: Requests
+  //==================================================
 
-  public get isEmpty() : boolean { return this._changes == null || this._changes.length == 0;}
+  public get isEmpty(): boolean { return this._changes == null || this._changes.length == 0; }
 
   public isChanged(changed: Symbol): boolean
   {
@@ -55,9 +54,9 @@ export class NodeEventArgs
     return changedDecription != undefined;
   }
 
-    //==================================================
-    // INSTANCE METHODS: Getters
-    //==================================================
+  //==================================================
+  // INSTANCE METHODS: Getters
+  //==================================================
 
   public getChangedDecription(changed: Symbol): ChangedDecription | undefined
   {
