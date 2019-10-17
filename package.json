@@ -4,8 +4,8 @@
   "description": "Reveal viewer architecture",
   "main": "index.ts",
   "scripts": {
-    "build": "webpack --mode=development --watch",
     "release": "webpack --mode=release",
+    "build": "webpack --mode=development",
     "serve": "webpack-dev-server --debug --color --progress --watch --port=8080",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -16,13 +16,15 @@
   ],
   "license": "Apache-2.0",
   "devDependencies": {
-    "typescript": "3.6.4"
+    "html-webpack-plugin": "3.2.0",
+    "ts-loader": "6.2.0",
+    "typescript": "3.6.4",
+    "webpack": "4.41.1",
+    "webpack-cli": "3.3.9",
+    "webpack-dev-server": "^3.8.2"
   },
   "dependencies": {
-    "html-webpack-plugin": "3.2.0",
-    "three": "0.109.0",
-    "ts-loader": "6.2.0",
-    "webpack": "4.41.1",
-    "webpack-cli": "3.3.9"
+    "bluebird": "^3.7.1",
+    "three": "0.109.0"
   }
 }
