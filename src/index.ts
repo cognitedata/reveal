@@ -18,7 +18,7 @@ type LoadSectorRequest =
   statusCb: () => LoadSectorStatus;
 }
 
-function loadSector(sectorId: number, fetchRequest: (sectorId: number) => Promise<ArrayBuffer>, parseSector: (buffer: ArrayBuffer) => Promise<Sector>, receiveSector : (sector: Sector) => void) : LoadSectorRequest  {
+function loadSector(sectorId: number, fetchRequest: (sectorId: number) => Promise<ArrayBuffer>, parseSector: (sectorId: number, buffer: ArrayBuffer) => Promise<Sector>, receiveSector : (sector: Sector) => void) : LoadSectorRequest  {
   let cancelRequested = false;
   let status = LoadSectorStatus.Awaiting;
   const result = { promise: undefined, cancelCb: () => cancelRequested = true, statusCb: () => status };
@@ -36,7 +36,7 @@ function loadSector(sectorId: number, fetchRequest: (sectorId: number) => Promis
       status = LoadSectorStatus.Cancelled;
       return;
     }
-    const sector = await parseSector(data);
+    const sector = await parseSector(sectorId, data);
     if (cancelRequested) {
       status = LoadSectorStatus.Cancelled;
       return;
@@ -150,9 +150,6 @@ function main() {
         const request = loadSector(id, fetchRequest, parseSectorData, sector => receiveSector(id, sector));
         activeSectorRequests.set(id, request);
       }
-
-      // requestSectors(newIds);
-      // discardSectors(discardedSectors);
     };    
   };
   renderer.domElement.onmouseup = (upEvent) => {
