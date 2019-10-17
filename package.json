@@ -24,7 +24,6 @@
     "webpack-dev-server": "^3.8.2"
   },
   "dependencies": {
-    "bluebird": "^3.7.1",
     "three": "0.109.0"
   }
 }

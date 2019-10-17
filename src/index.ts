@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import * as bluebird from 'bluebird';
 
 class Sector {}
 class SectorData {}
