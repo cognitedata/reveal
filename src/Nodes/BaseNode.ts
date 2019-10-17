@@ -1,4 +1,3 @@
-import { BaseView } from "../Views/BaseView";
 import { ViewList } from "../Architecture/ViewList";
 import { TargetNode } from "./TargetNode";
 import { ViewFactory } from "../Architecture/ViewFactory";

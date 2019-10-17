@@ -1,15 +1,6 @@
 import { BaseView } from "../Views/BaseView";
 import { BaseNode } from "../Nodes/BaseNode";
 
-class Product
-{
-  public func: Function;
-  public constructor(func: Function)
-  {
-    this.func = func;
-  }
-}
-
 export class ViewFactory
 {
   //==================================================
@@ -74,13 +65,20 @@ export class ViewFactory
   // INSTANCE METHODS: Helpers
   //==================================================
 
-  private getKeyByNode(node: BaseNode, targetId: string): string
-  {
-    return this.getKey(node.className, targetId);
-  }
+  private getKeyByNode(node: BaseNode, targetId: string): string { return this.getKey(node.className, targetId); }
+  private getKey(nodeType: string, targetId: string): string { return nodeType + "_" + targetId }
+}
 
-  private getKey(nodeType: string, targetId: string): string
+//==================================================
+// LOCAL HELPER CLASS
+//==================================================
+
+class Product
+{
+  public func: Function;
+  public constructor(func: Function)
   {
-    return nodeType + "_" + targetId
+    this.func = func;
   }
 }
+

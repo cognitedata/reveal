@@ -1,17 +1,3 @@
-import { BaseView } from "../Views/BaseView";
-import { TargetNode } from "../Nodes/TargetNode";
-
-class ChangedDecription
-{
-  public changed: Symbol;
-  public fieldName: string | undefined;
-
-  public constructor(changed: Symbol, fieldName?: string)
-  {
-    this.changed = changed;
-    this.fieldName = fieldName;
-  }
-}
 
 export class NodeEventArgs
 {
@@ -69,5 +55,21 @@ export class NodeEventArgs
   {
     let changedDecription = this.getChangedDecription(changed);
     return (changedDecription == undefined) ? undefined : changedDecription.fieldName;
+  }
+}
+
+//==================================================
+// LOCAL HELPER CLASS
+//==================================================
+
+class ChangedDecription
+{
+  public changed: Symbol;
+  public fieldName: string | undefined;
+
+  public constructor(changed: Symbol, fieldName?: string)
+  {
+    this.changed = changed;
+    this.fieldName = fieldName;
   }
 }
