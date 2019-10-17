@@ -1,24 +1,20 @@
 import * as THREE from 'three';
 import { setUnion, setDifference } from './utils/setUtils';
 import { loadSector, LoadSectorRequest } from './sector/loadSector';
-import { Sector } from './sector/Sector';
-import { buildScene } from './views/threejs/buildScene';
 import { fetchRequest } from './sector/fetchSector';
 import { parseSectorData } from './sector/parseSectorData';
 import { determineSectors } from './sector/determineSectors';
-import { SectorNode } from './views/threejs/SectorNode';
+import { initializeThreeJsView } from './views/threejs/initializeThreeJsView';
 
 function main() {
   const activeSectorIds = new Set<number>();
   const activeSectorRequests = new Map<number, LoadSectorRequest>();
 
-  const sectorNodeMap = new Map<number, SectorNode>();
   const sectorRoot = fetchSectorMetadata();
-  const sectorRootGroup = new SectorNode();
-  buildScene(sectorRoot, sectorRootGroup, sectorNodeMap);
-  
+  const { rootGroup, discardSector, consumeSector } = initializeThreeJsView(sectorRoot);
+
   const scene = new THREE.Scene();
-  scene.add(sectorRootGroup);
+  scene.add(rootGroup);
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
   camera.position.z = 4;
   const renderer = new THREE.WebGLRenderer();
@@ -40,23 +36,6 @@ function main() {
     renderer.render(scene, camera);
   };
 
-  function consumeSector(sectorId: number, sector: Sector) {
-    const group = sectorNodeMap.get(sectorId);
-
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshBasicMaterial({
-      color: "#D33F" + sectorId.toString() + "2" // TODO remove
-    });
-    const cube = new THREE.Mesh(geometry, material);
-    cube.position.x = sectorId;
-    cube.name = "Bounding box " + sectorId.toString();
-
-    group.cube = cube; // TODO override add?
-    group.add(cube);
-
-    activeSectorRequests.delete(sectorId);
-  }
-
   renderer.domElement.onmousedown = (downEvent) => {
     const {x0, y0} = { x0: downEvent.x, y0: downEvent.y };
     renderer.domElement.onmousemove = async (moveEvent) => {
@@ -75,14 +54,16 @@ function main() {
       for (const id of discardedSectorIds) {
         const request = activeSectorRequests.get(id);
         activeSectorRequests.delete(id);
-        request.cancelCb();
-        const sectorNode = sectorNodeMap.get(id);
-        sectorNode.remove(sectorNode.cube);
-        sectorNode.cube = undefined; // TODO override remove?
+        discardSector(id, request);
       }
 
       for (const id of newSectorIds) {
-        const request = loadSector(id, fetchRequest, parseSectorData, sector => consumeSector(id, sector));
+        const consumeSectorAndDeleteRequest = (sector) => {
+          activeSectorRequests.delete(id);
+          consumeSector(id, sector);
+        };
+
+        const request = loadSector(id, fetchRequest, parseSectorData, consumeSectorAndDeleteRequest);
         activeSectorRequests.set(id, request);
       }
     };    
