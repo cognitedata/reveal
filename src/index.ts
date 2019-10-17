@@ -1,28 +1,19 @@
 import * as THREE from 'three';
 import { setUnion, setDifference } from './utils/setUtils';
-import { loadSector, LoadSectorRequest } from './loadSector';
-import { Sector } from './types/Sector';
-
-function buildScene(sector: SectorMetadata, parent: THREE.Object3D, sectorNodeMap: Map<number, SectorNode>) {
-  const sectorGroup = new SectorNode();
-  sectorGroup.name = `Sector ${sector.id}`;
-  parent.add(sectorGroup);
-  sectorNodeMap.set(sector.id, sectorGroup);
-  for (const child of sector.children) {
-    buildScene(child, sectorGroup, sectorNodeMap);
-  }
-}
-
-class SectorNode extends THREE.Group {
-  cube?: THREE.Mesh;
-}
+import { loadSector, LoadSectorRequest } from './sector/loadSector';
+import { Sector } from './sector/Sector';
+import { buildScene } from './views/threejs/buildScene';
+import { fetchRequest } from './sector/fetchSector';
+import { parseSectorData } from './sector/parseSectorData';
+import { determineSectors } from './sector/determineSectors';
+import { SectorNode } from './views/threejs/SectorNode';
 
 function main() {
   const activeSectorIds = new Set<number>();
   const activeSectorRequests = new Map<number, LoadSectorRequest>();
 
   const sectorNodeMap = new Map<number, SectorNode>();
-  const sectorRoot = fetchSectors();
+  const sectorRoot = fetchSectorMetadata();
   const sectorRootGroup = new SectorNode();
   buildScene(sectorRoot, sectorRootGroup, sectorNodeMap);
   
@@ -49,7 +40,7 @@ function main() {
     renderer.render(scene, camera);
   };
 
-  function receiveSector(sectorId: number, sector: Sector) {
+  function consumeSector(sectorId: number, sector: Sector) {
     const group = sectorNodeMap.get(sectorId);
 
     const geometry = new THREE.BoxGeometry(1, 1, 1);
@@ -62,6 +53,8 @@ function main() {
 
     group.cube = cube; // TODO override add?
     group.add(cube);
+
+    activeSectorRequests.delete(sectorId);
   }
 
   renderer.domElement.onmousedown = (downEvent) => {
@@ -88,15 +81,8 @@ function main() {
         sectorNode.cube = undefined; // TODO override remove?
       }
 
-      const fetchRequest = (sectorId: number) => new Promise<ArrayBuffer>((resolve, reject) => {
-        setTimeout(() => resolve(new ArrayBuffer(0)), Math.random() * 4000);
-      }); 
-      async function parseSectorData(sectorId: number, data: ArrayBuffer): Promise<Sector> {
-        return {};
-      }
-    
       for (const id of newSectorIds) {
-        const request = loadSector(id, fetchRequest, parseSectorData, sector => receiveSector(id, sector));
+        const request = loadSector(id, fetchRequest, parseSectorData, sector => consumeSector(id, sector));
         activeSectorRequests.set(id, request);
       }
     };    
@@ -110,18 +96,7 @@ function main() {
   render();
 }
 
-async function determineSectors(camera: THREE.Camera): Promise<Set<number>> {
-  let sectors = [];
-  for (let i = 0; i < 10; i++) {
-    if (i < camera.position.x) {
-      sectors.push(i);
-    }
-  }
-
-  return new Set<number>(sectors);
-}
-
-function fetchSectors(): SectorMetadata
+function fetchSectorMetadata(): SectorMetadata
 {
   return { id: 0, children : [
     { id: 1, children: [ 

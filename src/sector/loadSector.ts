@@ -1,4 +1,4 @@
-import { Sector } from "./types/Sector";
+import { Sector } from "./Sector";
 
 export type LoadSectorRequest =
 {
