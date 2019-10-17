@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { LoadSectorRequest } from '../../sector/loadSector';
-import { Sector } from '../../sector/Sector';
+import { Sector, SectorMetadata } from '../../sector/types';
 import { buildScene } from './buildScene';
 import { SectorNode } from './SectorNode';
 
@@ -10,7 +10,7 @@ export function initializeThreeJsView(sectorRoot: SectorMetadata) {
   buildScene(sectorRoot, rootGroup, sectorNodeMap);
 
   function discardSector(sectorId: number, request: LoadSectorRequest) {
-    request.cancelCb();
+    request.cancel();
     const sectorNode = sectorNodeMap.get(sectorId);
     sectorNode.remove(sectorNode.cube);
     sectorNode.cube = undefined; // TODO override remove?

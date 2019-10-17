@@ -1,10 +1,10 @@
-import { Sector } from "./Sector";
+import { Sector } from "./types";
 
 export type LoadSectorRequest =
 {
-  promise?: Promise<void>;
-  cancelCb: () => void;
-  statusCb: () => LoadSectorStatus;
+  promise: Promise<void>;
+  cancel: () => void;
+  status: () => LoadSectorStatus;
 }
 
 export enum LoadSectorStatus
@@ -22,7 +22,6 @@ export type ConsumeSectorDelegate = (sector: Sector) => void;
 export function loadSector(sectorId: number, fetchSector: FetchSectorDelegate, parseSector: ParseSectorDelegate, consumeSector: ConsumeSectorDelegate): LoadSectorRequest {
   let cancelRequested = false;
   let status = LoadSectorStatus.Awaiting;
-  const result = { promise: undefined, cancelCb: () => cancelRequested = true, statusCb: () => status };
   async function loadSectorAsync(): Promise<void> {
     status = LoadSectorStatus.InFlight;
     if (cancelRequested) {
@@ -42,6 +41,11 @@ export function loadSector(sectorId: number, fetchSector: FetchSectorDelegate, p
     status = LoadSectorStatus.Resolved;
     consumeSector(sector);
   }
-  result.promise = loadSectorAsync();
+
+  const result : LoadSectorRequest = { 
+    promise: loadSectorAsync(), 
+    cancel: () => cancelRequested = true, 
+    status: () => status 
+  };
   return result;
 }

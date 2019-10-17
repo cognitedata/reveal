@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { determineSectors } from './sector/determineSectors';
 import { initializeThreeJsView } from './views/threejs/initializeThreeJsView';
 import { initializeSectorLoader } from './sector/initializeSectorLoader';
+import { SectorMetadata } from './sector/types';
 
 function main() {
   const scene = new THREE.Scene();
