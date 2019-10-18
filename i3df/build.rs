@@ -259,7 +259,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
         let to_renderables = quote! {
             for item in &raw_primitives.#snake_name_collection_ident {
-                collections = item.to_renderables(collections);
+                item.to_renderables(&mut collections);
             }
         };
 

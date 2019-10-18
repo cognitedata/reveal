@@ -481,11 +481,11 @@ fn normalize_radians(mut angle: f32) -> f32 {
 }
 
 pub trait ToRenderables {
-    fn to_renderables(&self, collections: PrimitiveCollections) -> PrimitiveCollections;
+    fn to_renderables(&self, collections: &mut PrimitiveCollections);
 }
 
 impl ToRenderables for crate::Box3D {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         collections.box_collection.push(Box3D {
             node_id: self.node_id,
             tree_index: self.tree_index,
@@ -497,12 +497,11 @@ impl ToRenderables for crate::Box3D {
             delta: self.delta(),
         });
 
-        collections
     }
 }
 
 impl ToRenderables for crate::ClosedCone {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center_axis: Vector3 = self.center_axis.into();
         let x_axis = Vector3::new(1.0, 0.0, 0.0);
         let z_axis = Vector3::new(0.0, 0.0, 1.0);
@@ -544,12 +543,11 @@ impl ToRenderables for crate::ClosedCone {
             normal: -1.0 * center_axis,
             radius: self.radius_b,
         });
-        collections
     }
 }
 
 impl ToRenderables for crate::ClosedCylinder {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center_axis: Vector3 = self.center_axis.into();
         let x_axis = Vector3::new(1.0, 0.0, 0.0);
         let z_axis = Vector3::new(0.0, 0.0, 1.0);
@@ -592,12 +590,11 @@ impl ToRenderables for crate::ClosedCylinder {
             radius: self.radius,
         });
 
-        collections
     }
 }
 
 impl ToRenderables for crate::Circle {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         collections.circle_collection.push(Circle {
             node_id: self.node_id,
             tree_index: self.tree_index,
@@ -608,11 +605,10 @@ impl ToRenderables for crate::Circle {
             radius: self.radius,
         });
 
-        collections
     }
 }
 impl ToRenderables for crate::ClosedEccentricCone {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center_axis: Vector3 = self.center_axis.into();
         let center: Vector3 = self.center().into();
         let center_a = center + center_axis * self.height / 2.0;
@@ -654,11 +650,10 @@ impl ToRenderables for crate::ClosedEccentricCone {
             normal: normal.clone(),
             radius: self.radius_b,
         });
-        collections
     }
 }
 impl ToRenderables for crate::ClosedEllipsoidSegment {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         collections
             .ellipsoid_segment_collection
             .push(EllipsoidSegment {
@@ -689,11 +684,10 @@ impl ToRenderables for crate::ClosedEllipsoidSegment {
             radius: circle_radius,
         });
 
-        collections
     }
 }
 impl ToRenderables for crate::ClosedExtrudedRingSegment {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center_axis: Vector3 = self.center_axis.into();
         let x_axis = Vector3::new(1.0, 0.0, 0.0);
         let z_axis = Vector3::new(0.0, 0.0, 1.0);
@@ -802,11 +796,10 @@ impl ToRenderables for crate::ClosedExtrudedRingSegment {
             });
         }
 
-        collections
     }
 }
 impl ToRenderables for crate::ClosedSphericalSegment {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         collections
             .spherical_segment_collection
             .push(SphericalSegment {
@@ -834,11 +827,10 @@ impl ToRenderables for crate::ClosedSphericalSegment {
             radius: circle_radius,
         });
 
-        collections
     }
 }
 impl ToRenderables for crate::ClosedTorusSegment {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         collections.torus_segment_collection.push(TorusSegment {
             node_id: self.node_id,
             tree_index: self.tree_index,
@@ -854,11 +846,10 @@ impl ToRenderables for crate::ClosedTorusSegment {
 
         // TODO add circles in correct positions (also missing from TypeScript parser)
 
-        collections
     }
 }
 impl ToRenderables for crate::Ellipsoid {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         collections
             .ellipsoid_segment_collection
             .push(EllipsoidSegment {
@@ -872,11 +863,10 @@ impl ToRenderables for crate::Ellipsoid {
                 vertical_radius: self.vertical_radius,
                 height: self.vertical_radius * 2.0,
             });
-        collections
     }
 }
 impl ToRenderables for crate::ExtrudedRing {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         // TODO duplicate of OpenExtrudedRing
 
         let center_axis: Vector3 = self.center_axis.into();
@@ -947,11 +937,10 @@ impl ToRenderables for crate::ExtrudedRing {
             arc_angle: arc_angle,
             local_x_axis: local_x_axis.clone(),
         });
-        collections
     }
 }
 impl ToRenderables for crate::Nut {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let normal: Vector3 = self.center_axis.into();
         let center_a = self.center() + 0.5 * self.height * normal;
         let center_b = self.center() - 0.5 * self.height * normal;
@@ -967,11 +956,10 @@ impl ToRenderables for crate::Nut {
             rotation_angle: self.rotation_angle,
         });
 
-        collections
     }
 }
 impl ToRenderables for crate::OpenCone {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center_axis: Vector3 = self.center_axis.into();
         let x_axis = Vector3::new(1.0, 0.0, 0.0);
         let z_axis = Vector3::new(0.0, 0.0, 1.0);
@@ -994,11 +982,10 @@ impl ToRenderables for crate::OpenCone {
             arc_angle: 2.0 * PI as f32,
             local_x_axis,
         });
-        collections
     }
 }
 impl ToRenderables for crate::OpenCylinder {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center_axis: Vector3 = self.center_axis.into();
         let x_axis = Vector3::new(1.0, 0.0, 0.0);
         let z_axis = Vector3::new(0.0, 0.0, 1.0);
@@ -1022,11 +1009,10 @@ impl ToRenderables for crate::OpenCylinder {
             local_x_axis,
         });
 
-        collections
     }
 }
 impl ToRenderables for crate::OpenEccentricCone {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center_axis: Vector3 = self.center_axis.into();
         let center: Vector3 = self.center().into();
         let center_a = center + center_axis * self.height / 2.0;
@@ -1049,11 +1035,10 @@ impl ToRenderables for crate::OpenEccentricCone {
             radius_b: self.radius_b,
             normal,
         });
-        collections
     }
 }
 impl ToRenderables for crate::OpenEllipsoidSegment {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         collections
             .ellipsoid_segment_collection
             .push(EllipsoidSegment {
@@ -1067,11 +1052,10 @@ impl ToRenderables for crate::OpenEllipsoidSegment {
                 vertical_radius: self.vertical_radius,
                 height: self.height,
             });
-        collections
     }
 }
 impl ToRenderables for crate::OpenExtrudedRingSegment {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center_axis: Vector3 = self.center_axis.into();
         let x_axis = Vector3::new(1.0, 0.0, 0.0);
         let z_axis = Vector3::new(0.0, 0.0, 1.0);
@@ -1137,11 +1121,10 @@ impl ToRenderables for crate::OpenExtrudedRingSegment {
             arc_angle: self.arc_angle,
             local_x_axis: local_x_axis.clone(),
         });
-        collections
     }
 }
 impl ToRenderables for crate::OpenSphericalSegment {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         collections
             .spherical_segment_collection
             .push(SphericalSegment {
@@ -1155,11 +1138,10 @@ impl ToRenderables for crate::OpenSphericalSegment {
                 height: self.height,
             });
 
-        collections
     }
 }
 impl ToRenderables for crate::OpenTorusSegment {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         collections.torus_segment_collection.push(TorusSegment {
             node_id: self.node_id,
             tree_index: self.tree_index,
@@ -1173,11 +1155,10 @@ impl ToRenderables for crate::OpenTorusSegment {
             arc_angle: self.arc_angle,
         });
 
-        collections
     }
 }
 impl ToRenderables for crate::Ring {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let x_axis = Vector3::new(1.0, 0.0, 0.0);
         let z_axis = Vector3::new(0.0, 0.0, 1.0);
         let rotation = Rotation3::rotation_between(&z_axis, &self.normal.into()).unwrap();
@@ -1200,11 +1181,10 @@ impl ToRenderables for crate::Ring {
             arc_angle,
         });
 
-        collections
     }
 }
 impl ToRenderables for crate::Sphere {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let z_axis = Vector3::new(0.0, 0.0, 1.0);
 
         collections
@@ -1220,11 +1200,10 @@ impl ToRenderables for crate::Sphere {
                 height: 2.0 * self.radius,
             });
 
-        collections
     }
 }
 impl ToRenderables for crate::Torus {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         collections.torus_segment_collection.push(TorusSegment {
             node_id: self.node_id,
             tree_index: self.tree_index,
@@ -1238,7 +1217,6 @@ impl ToRenderables for crate::Torus {
             arc_angle: 2.0 * PI as f32,
         });
 
-        collections
     }
 }
 
@@ -1423,7 +1401,7 @@ fn create_general_cylinder(cylinder: &crate::SolidOpenGeneralCylinder) -> Genera
 }
 
 impl ToRenderables for crate::OpenGeneralCylinder {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let cylinder_with_caps = create_general_cylinder(&crate::SolidOpenGeneralCylinder {
             node_id: self.node_id,
             tree_index: self.tree_index,
@@ -1448,11 +1426,10 @@ impl ToRenderables for crate::OpenGeneralCylinder {
             .general_cylinder_collection
             .push(cylinder_with_caps.cylinder);
 
-        collections
     }
 }
 impl ToRenderables for crate::ClosedGeneralCylinder {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let cylinder_with_caps = create_general_cylinder(&crate::SolidOpenGeneralCylinder {
             node_id: self.node_id,
             tree_index: self.tree_index,
@@ -1483,11 +1460,10 @@ impl ToRenderables for crate::ClosedGeneralCylinder {
             .general_ring_collection
             .push(cylinder_with_caps.cap_b.ring);
 
-        collections
     }
 }
 impl ToRenderables for crate::SolidOpenGeneralCylinder {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let cylinder_with_caps = create_general_cylinder(&self);
         let outer_cylinder = cylinder_with_caps.cylinder;
         let inner_cylinder = {
@@ -1505,11 +1481,10 @@ impl ToRenderables for crate::SolidOpenGeneralCylinder {
             .general_ring_collection
             .push(cylinder_with_caps.cap_b.ring);
 
-        collections
     }
 }
 impl ToRenderables for crate::SolidClosedGeneralCylinder {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let cylinder_with_caps = create_general_cylinder(&crate::SolidOpenGeneralCylinder {
             node_id: self.node_id,
             tree_index: self.tree_index,
@@ -1593,11 +1568,10 @@ impl ToRenderables for crate::SolidClosedGeneralCylinder {
             });
         }
 
-        collections
     }
 }
 impl ToRenderables for crate::OpenGeneralCone {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center_axis: Vector3 = self.center_axis.into();
         let x_axis = Vector3::new(1.0, 0.0, 0.0);
         let z_axis = Vector3::new(0.0, 0.0, 1.0);
@@ -1620,14 +1594,13 @@ impl ToRenderables for crate::OpenGeneralCone {
             arc_angle: self.arc_angle,
             local_x_axis,
         });
-        collections
     }
 }
 
 // TODO why ar enot slope and z_angle used for general cones?
 //
 impl ToRenderables for crate::ClosedGeneralCone {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center_axis: Vector3 = self.center_axis.into();
         let x_axis = Vector3::new(1.0, 0.0, 0.0);
         let z_axis = Vector3::new(0.0, 0.0, 1.0);
@@ -1679,11 +1652,10 @@ impl ToRenderables for crate::ClosedGeneralCone {
             angle: self.rotation_angle,
             arc_angle: self.arc_angle,
         });
-        collections
     }
 }
 impl ToRenderables for crate::SolidOpenGeneralCone {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center_axis: Vector3 = self.center_axis.into();
         let x_axis = Vector3::new(1.0, 0.0, 0.0);
         let z_axis = Vector3::new(0.0, 0.0, 1.0);
@@ -1747,11 +1719,10 @@ impl ToRenderables for crate::SolidOpenGeneralCone {
             angle: self.rotation_angle,
             arc_angle: self.arc_angle,
         });
-        collections
     }
 }
 impl ToRenderables for crate::SolidClosedGeneralCone {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center_axis: Vector3 = self.center_axis.into();
         let x_axis = Vector3::new(1.0, 0.0, 0.0);
         let z_axis = Vector3::new(0.0, 0.0, 1.0);
@@ -1852,11 +1823,10 @@ impl ToRenderables for crate::SolidClosedGeneralCone {
             });
         }
 
-        collections
     }
 }
 impl ToRenderables for crate::TriangleMesh {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         collections.triangle_mesh_collection.push(TriangleMesh {
             node_id: self.node_id,
             tree_index: self.tree_index,
@@ -1872,11 +1842,10 @@ impl ToRenderables for crate::TriangleMesh {
             //triangle_offset: self.triangle_offset,
         });
 
-        collections
     }
 }
 impl ToRenderables for crate::InstancedMesh {
-    fn to_renderables(&self, mut collections: PrimitiveCollections) -> PrimitiveCollections {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         collections.instanced_mesh_collection.push(InstancedMesh {
             node_id: self.node_id,
             tree_index: self.tree_index,
@@ -1895,7 +1864,6 @@ impl ToRenderables for crate::InstancedMesh {
             scale: self.scale(),
         });
 
-        collections
     }
 }
 
