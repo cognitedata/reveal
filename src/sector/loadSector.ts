@@ -1,25 +1,32 @@
-import { FetchSectorDelegate, ParseSectorDelegate, ConsumeSectorDelegate } from "./delegates";
+/*!
+ * Copyright 2019 Cognite AS
+ */
 
-export type LoadSectorRequest =
-{
+import { FetchSectorDelegate, ParseSectorDelegate, ConsumeSectorDelegate } from './delegates';
+
+export type LoadSectorRequest = {
   promise: Promise<void>;
   cancel: () => void;
   status: () => LoadSectorStatus;
-}
+};
 
-export enum LoadSectorStatus
-{
+export enum LoadSectorStatus {
   Awaiting,
   InFlight,
   Cancelled,
-  Resolved,
+  Resolved
 }
 
-export function loadSector(sectorId: number, fetchSector: FetchSectorDelegate, parseSector: ParseSectorDelegate, consumeSector: ConsumeSectorDelegate): LoadSectorRequest {
+export function loadSector(
+  sectorId: number,
+  fetchSector: FetchSectorDelegate,
+  parseSector: ParseSectorDelegate,
+  consumeSector: ConsumeSectorDelegate
+): LoadSectorRequest {
   let status = LoadSectorStatus.Awaiting;
   let cancelRequested = false;
 
-  async function load(): Promise<LoadSectorStatus> { 
+  async function load(): Promise<LoadSectorStatus> {
     const data = await fetchSector(sectorId);
     if (cancelRequested) {
       return LoadSectorStatus.Cancelled;
@@ -36,10 +43,10 @@ export function loadSector(sectorId: number, fetchSector: FetchSectorDelegate, p
     status = await load();
   }
 
-  const result : LoadSectorRequest = { 
+  const result: LoadSectorRequest = {
     promise: loadAndReport(),
-    cancel: () => cancelRequested = true,
-    status: () => status 
+    cancel: () => (cancelRequested = true),
+    status: () => status
   };
   return result;
 }

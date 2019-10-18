@@ -1,7 +1,9 @@
-// Copyright 2019 Cognite AS
+/*!
+ * Copyright 2019 Cognite AS
+ */
 
-import { setUnion, setIntersection, setDifference } from "../../utils/setUtils";
-import { expectSetEqual } from "../expects";
+import { setUnion, setIntersection, setDifference } from '../../utils/setUtils';
+import { expectSetEqual } from '../expects';
 
 describe('setUtils', () => {
   test('setUnion with partial overlap', () => {

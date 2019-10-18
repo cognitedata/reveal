@@ -1,3 +1,7 @@
+/*!
+ * Copyright 2019 Cognite AS
+ */
+
 export async function waitUntill(condition: () => boolean): Promise<void> {
   while (!condition()) {
     await yieldProcessing();

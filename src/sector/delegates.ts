@@ -1,5 +1,9 @@
-import { LoadSectorRequest } from "./loadSector";
-import { Sector } from "./types";
+/*!
+ * Copyright 2019 Cognite AS
+ */
+
+import { LoadSectorRequest } from './loadSector';
+import { Sector } from './types';
 
 /**
  * Delegate that handles removal of a sector from a view (e.g. by removing it from the scene).

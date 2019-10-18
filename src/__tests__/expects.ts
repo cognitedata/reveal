@@ -1,4 +1,6 @@
-// Copyright 2019 Cognite AS
+/*!
+ * Copyright 2019 Cognite AS
+ */
 
 import 'jest-extended';
 

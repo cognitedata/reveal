@@ -1,9 +1,18 @@
+/*!
+ * Copyright 2019 Cognite AS
+ */
+
 import { setUnion, setDifference } from '../utils/setUtils';
 import { loadSector, LoadSectorRequest } from './loadSector';
 import { parseSectorData } from './parseSectorData';
-import { DiscardSectorDelegate, ConsumeSectorDelegate, FetchSectorDelegate } from './delegates';
+import { DiscardSectorDelegate, ConsumeSectorDelegate, FetchSectorDelegate, ParseSectorDelegate } from './delegates';
 
-export function initializeSectorLoader(fetchSector: FetchSectorDelegate, discardSector: DiscardSectorDelegate, consumeSector: ConsumeSectorDelegate) {
+export function initializeSectorLoader(
+  fetchSector: FetchSectorDelegate,
+  parseSector: ParseSectorDelegate,
+  discardSector: DiscardSectorDelegate,
+  consumeSector: ConsumeSectorDelegate
+) {
   const activeSectorIds = new Set<number>();
   const activeSectorRequests = new Map<number, LoadSectorRequest>();
 
@@ -18,7 +27,7 @@ export function initializeSectorLoader(fetchSector: FetchSectorDelegate, discard
       discardSector(id, request);
     }
     for (const id of newSectorIds) {
-      const consumeSectorAndDeleteRequest = (sector) => {
+      const consumeSectorAndDeleteRequest = sector => {
         activeSectorRequests.delete(id);
         consumeSector(id, sector);
         activeSectorIds.add(id);
