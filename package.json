@@ -7,12 +7,12 @@
     "release": "webpack --mode=release",
     "build": "webpack --mode=development",
     "serve": "webpack-dev-server --debug --color --progress --watch --port=8080",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
-  "author": [
-    "Nils Petter Fremming <nils.fremming@cognite.com>",
+  "author": "Svenn-Arne Dragly <dragly@cognite.com>",
+  "contributors": [
     "Lars Moastuen <lars.moastuen@cognite.com>",
-    "Svenn-Arne Dragly <dragly@cognite.com>"
+    "Nils Petter Fremming <nils.fremming@cognite.com>"
   ],
   "license": "Apache-2.0",
   "devDependencies": {
