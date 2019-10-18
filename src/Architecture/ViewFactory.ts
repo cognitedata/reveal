@@ -1,14 +1,18 @@
+//=====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
+// in October 2019. It is suited for flexible and customizable visualization of   
+// multiple dataset in multiple viewers.
+//
+// It is a C# to typescript port from the Modern Model architecture,   
+// based on the experience when building Petrel.  
+//
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//=====================================================================================
+
 import { BaseView } from "../Views/BaseView";
 import { BaseNode } from "../Nodes/BaseNode";
-
-class Product
-{
-  public func: Function;
-  public constructor(func: Function)
-  {
-    this.func = func;
-  }
-}
 
 export class ViewFactory
 {
@@ -74,13 +78,20 @@ export class ViewFactory
   // INSTANCE METHODS: Helpers
   //==================================================
 
-  private getKeyByNode(node: BaseNode, targetId: string): string
-  {
-    return this.getKey(node.className, targetId);
-  }
+  private getKeyByNode(node: BaseNode, targetId: string): string { return this.getKey(node.className, targetId); }
+  private getKey(nodeType: string, targetId: string): string { return nodeType + "_" + targetId }
+}
 
-  private getKey(nodeType: string, targetId: string): string
+//==================================================
+// LOCAL HELPER CLASS
+//==================================================
+
+class Product
+{
+  public func: Function;
+  public constructor(func: Function)
   {
-    return nodeType + "_" + targetId
+    this.func = func;
   }
 }
+

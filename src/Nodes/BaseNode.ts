@@ -1,9 +1,19 @@
-import { BaseView } from "../Views/BaseView";
-import { ViewList } from "../Architecture/ViewList";
-import { TargetNode } from "./TargetNode";
-import { ViewFactory } from "../Architecture/ViewFactory";
-import { NodeEventArgs } from "../Architecture/NodeEventArgs";
+//=====================================================================================  
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
+// in October 2019. It is suited for flexible and customizable visualization of   
+// multiple dataset in multiple viewers.
+//
+// It is a C# to typescript port from the Modern Model architecture,   
+// based on the experience when building Petrel.  
+//
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//=====================================================================================
 
+import { ViewList } from "../Architecture/ViewList";
+import { NodeEventArgs } from "../Architecture/NodeEventArgs";
+import { IVisibilityContext } from "../Architecture/IVisibilityContext";
 
 export abstract class BaseNode
 {
@@ -11,6 +21,7 @@ export abstract class BaseNode
   // FIELDS
   //==================================================
 
+  public static readonly staticClassName: string = "BaseNode";
   private _name: string = "";
   private _views: ViewList = new ViewList();
   private _children: Array<BaseNode> = new Array<BaseNode>();
@@ -53,20 +64,20 @@ export abstract class BaseNode
 
   public getChild(index: number): BaseNode { return this._children[index]; }
 
-  public getChildOfType<T extends BaseNode>(): T | null
-  {
-    for (let child of this.children)
-      if (child as T != null)
-        return child as T;
-    return null;
-  }
+  // public getChildOfType<T extends BaseNode>(): T | null
+  // {
+  //   for (let child of this.children)
+  //     if (child as T != null)
+  //       return child as T;
+  //   return null;
+  // }
 
-  public *getChildrenByType<T extends BaseNode>()
-  {
-    for (let child of this.children)
-      if (child as T != null)
-        yield child as T;
-  }
+  // public *getChildrenByType<T extends BaseNode>()
+  // {
+  //   for (let child of this.children)
+  //     if (child instanceof T)
+  //       yield child;
+  // }
 
   public *getDescendants()
   {
@@ -81,6 +92,20 @@ export abstract class BaseNode
     }
   }
 
+  public *getDescendantsByType<T extends BaseNode>()
+  {
+    for (let child of this.children)
+    {     
+      yield child; // TODO
+      for (let descendant of child.getDescendantsByType<T>())
+      {
+        let extraVariableBecauseOfStupidCompiler: BaseNode = descendant;
+        if (extraVariableBecauseOfStupidCompiler as T != null)
+          yield extraVariableBecauseOfStupidCompiler as T;
+      }
+    }
+  }
+
   public *getThisAndDescendants()
   {
     yield this;
@@ -90,7 +115,7 @@ export abstract class BaseNode
 
   public *getAncestors()
   {
-    let ancestor = parent;
+    let ancestor = this.parent;
     while (ancestor != null)
     {
       yield ancestor;
@@ -111,7 +136,7 @@ export abstract class BaseNode
     child._parent = this;
   }
 
-  public detach(): boolean
+  public remove(): boolean
   {
     if (this.parent == null)
       return false;
@@ -125,9 +150,42 @@ export abstract class BaseNode
     return true;
   }
 
+  public removeInteractive(): void
+  {
+    let parent = this.parent
+    this.removeAllViews();
+    this.remove();
+    parent!.notify(new NodeEventArgs(NodeEventArgs.childDeleted));
+  }
+
   //==================================================
   // INSTANCE FUNCTIONS: Visibility and notifying
   //==================================================
+
+  public canBeVisible(target: IVisibilityContext): boolean
+  {
+    return target.canShowView(this);
+  }
+
+  public isVisible(target: IVisibilityContext): boolean
+  {
+    return target.isVisibleView(this);
+  }
+
+  public setVisible(visible: boolean, target: IVisibilityContext): boolean
+  {
+    // Returns true if changed.
+    if (visible)
+      return target.showView(this)
+    else
+      return target.hideView(this);
+  }
+
+  public setVisibleInteractive(visible: boolean, target: IVisibilityContext): void
+  {
+    if (this.setVisible(visible, target))
+      this.notify(new NodeEventArgs(NodeEventArgs.nodeVisible))
+  }
 
   public notify(args: NodeEventArgs): void
   {
@@ -135,38 +193,17 @@ export abstract class BaseNode
       view.update(args);
   }
 
-  public setVisibleInteractive(visible: boolean, target: TargetNode): void
+  public removeAllViews(): void
   {
-    if (this.setVisible(visible, target))
-      this.notify(new NodeEventArgs(NodeEventArgs.nodeVisible))
-  }
-
-  public isVisible(target: TargetNode): boolean
-  {
-    let view = this.views.getViewByTarget(target);
-    if (view == null)
-      return false;
-
-    return view.isVisible;
-  }
-
-  public setVisible(visible: boolean, target: TargetNode): boolean
-  {
-    // Returns true if changed.
-    let view = this.views.getViewByTarget(target);
-    if (view == null)
+    for (let view of this.views.list)
     {
-      view = ViewFactory.instance.create(this, target.className);
-      if (view == null)
-        return false;
+      let target = view.target;
+      if (target == null)
+        continue;
 
-      view.target = target;
-      this.views.add(view);
+      target.removeViewShownHere(view);
     }
-    if (view.isVisible == visible)
-      return false;
-
-    view.isVisible = visible;
-    return true;
+    this.views.clear();
   }
+
 }

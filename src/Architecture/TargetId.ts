@@ -1,3 +1,5 @@
+import { UniqueId } from "./UniqueId";
+
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
@@ -11,22 +13,28 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { PolylinesView3 } from "./PolylinesView3";
-import { PolylinesNode } from "./PolylinesNode";
-import { BaseModule } from "../Architecture/BaseModule";
-import { ViewFactory } from "../Architecture/ViewFactory";
-import { RevealTargetNode } from "./RevealTargetNode";
-
-export class RevealModule extends BaseModule
+export class TargetId
 {
   //==================================================
-  // OVERRIDES of BaseModule
+  // FIELDS
   //==================================================
 
-  protected RegisterViewsCore(): void
+  private _uniqueId: UniqueId | undefined = undefined;
+  private _className: string | undefined = undefined;
+
+  public get uniqueId(): UniqueId | undefined { return this._uniqueId; }
+  public set uniqueId(value: UniqueId | undefined) { this._uniqueId = value; }
+  public get className(): string | undefined { return this._className; }
+  public set className(value: string | undefined) { this._className = value; }
+
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
+
+  public constructor(uniqueId?: TargetId | undefined, className?: string | undefined)
   {
-    let factory = ViewFactory.instance;
-    factory.register(PolylinesNode.staticClassName, PolylinesView3, RevealTargetNode.staticClassName);
+    this._uniqueId = uniqueId;
+    this._className = className;
   }
 }
 

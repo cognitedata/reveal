@@ -11,16 +11,14 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import { BaseNode } from "../Nodes/BaseNode";
 import { BaseView } from "../Views/BaseView";
 
-export class PolylinesView3 extends BaseView
+export interface IVisibilityContext
 {
-    //==================================================
-    // CONSTRUCTORS
-    //==================================================
-
-    public constructor()
-    {
-        super();
-    }
+  canShowView(node: BaseNode): boolean;
+  isVisibleView(node: BaseNode): boolean;
+  showView(node: BaseNode): boolean;
+  hideView(node: BaseNode): boolean;
+  removeViewShownHere(view: BaseView) : void;
 }

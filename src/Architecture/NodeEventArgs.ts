@@ -1,17 +1,15 @@
-import { BaseView } from "../Views/BaseView";
-import { TargetNode } from "../Nodes/TargetNode";
-
-class ChangedDecription
-{
-  public changed: Symbol;
-  public fieldName: string | undefined;
-
-  public constructor(changed: Symbol, fieldName?: string)
-  {
-    this.changed = changed;
-    this.fieldName = fieldName;
-  }
-}
+//=====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
+// in October 2019. It is suited for flexible and customizable visualization of   
+// multiple dataset in multiple viewers.
+//
+// It is a C# to typescript port from the Modern Model architecture,   
+// based on the experience when building Petrel.  
+//
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//=====================================================================================
 
 export class NodeEventArgs
 {
@@ -22,6 +20,7 @@ export class NodeEventArgs
   public static readonly nodeName: Symbol = Symbol("nodeName");
   public static readonly nodeVisible: Symbol = Symbol("nodeVisible");
   public static readonly nodeColor: Symbol = Symbol("nodeColor");
+  public static readonly childDeleted: Symbol = Symbol("childDeleted");
 
   //==================================================
   // FIELDS
@@ -69,5 +68,21 @@ export class NodeEventArgs
   {
     let changedDecription = this.getChangedDecription(changed);
     return (changedDecription == undefined) ? undefined : changedDecription.fieldName;
+  }
+}
+
+//==================================================
+// LOCAL HELPER CLASS
+//==================================================
+
+class ChangedDecription
+{
+  public changed: Symbol;
+  public fieldName: string | undefined;
+
+  public constructor(changed: Symbol, fieldName?: string)
+  {
+    this.changed = changed;
+    this.fieldName = fieldName;
   }
 }

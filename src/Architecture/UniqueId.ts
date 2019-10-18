@@ -1,3 +1,5 @@
+import { pseudoRandomBytes } from "crypto";
+
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
@@ -11,16 +13,19 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseView } from "../Views/BaseView";
-
-export class PolylinesView3 extends BaseView
+export class UniqueId
 {
-    //==================================================
-    // CONSTRUCTORS
-    //==================================================
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
 
-    public constructor()
-    {
-        super();
-    }
+  private _n: number;
+  private static  _nn:number = 0;
+
+  public constructor(n:number)
+  {
+    this._n = n;
+  }
+  static makeNew(): UniqueId { return new UniqueId(UniqueId._nn++); }
 }
+
