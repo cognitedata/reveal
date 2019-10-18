@@ -5,7 +5,7 @@ Recommended extensions:
 
 # Starting development web server
 
-- Start the web server: `npm install && npm serve`
+- Start the web server: `npm install && npm run serve`
 - Open a browser to [localhost:8080](http://localhost:8080).
 
 Web server will restart and browser will automatically update whenever a file changes.
