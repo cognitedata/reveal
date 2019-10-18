@@ -20,31 +20,29 @@ export type ParseSectorDelegate = (sectorId: number, buffer: ArrayBuffer) => Pro
 export type ConsumeSectorDelegate = (sector: Sector) => void;
 
 export function loadSector(sectorId: number, fetchSector: FetchSectorDelegate, parseSector: ParseSectorDelegate, consumeSector: ConsumeSectorDelegate): LoadSectorRequest {
-  let cancelRequested = false;
   let status = LoadSectorStatus.Awaiting;
-  async function loadSectorAsync(): Promise<void> {
-    status = LoadSectorStatus.InFlight;
-    if (cancelRequested) {
-      status = LoadSectorStatus.Cancelled;
-      return;
-    }
+  let cancelRequested = false;
+
+  async function load(): Promise<LoadSectorStatus> { 
     const data = await fetchSector(sectorId);
     if (cancelRequested) {
-      status = LoadSectorStatus.Cancelled;
-      return;
+      return LoadSectorStatus.Cancelled;
     }
     const sector = await parseSector(sectorId, data);
     if (cancelRequested) {
-      status = LoadSectorStatus.Cancelled;
-      return;
+      return LoadSectorStatus.Cancelled;
     }
-    status = LoadSectorStatus.Resolved;
     consumeSector(sector);
+    return LoadSectorStatus.Resolved;
+  }
+  async function loadAndReport(): Promise<void> {
+    status = LoadSectorStatus.InFlight;
+    status = await load();
   }
 
   const result : LoadSectorRequest = { 
-    promise: loadSectorAsync(), 
-    cancel: () => cancelRequested = true, 
+    promise: loadAndReport(),
+    cancel: () => cancelRequested = true,
     status: () => status 
   };
   return result;
