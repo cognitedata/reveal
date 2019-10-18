@@ -1,4 +1,5 @@
-import { FetchSectorDelegate, ParseSectorDelegate, ConsumeSectorDelegate, loadSector, LoadSectorStatus, LoadSectorRequest } from "../../sector/loadSector";
+import { FetchSectorDelegate, ParseSectorDelegate, ConsumeSectorDelegate } from "../../sector/delegates";
+import { loadSector, LoadSectorStatus, LoadSectorRequest } from "../../sector/loadSector";
 import { waitUntill } from "../wait";
 
 describe("loadSector", () => {

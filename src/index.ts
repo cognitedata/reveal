@@ -3,6 +3,7 @@ import { determineSectors } from './sector/determineSectors';
 import { initializeThreeJsView } from './views/threejs/initializeThreeJsView';
 import { initializeSectorLoader } from './sector/initializeSectorLoader';
 import { SectorMetadata } from './sector/types';
+import { fetchRequest } from './sector/fetchSector';
 
 function main() {
   const scene = new THREE.Scene();
@@ -29,7 +30,7 @@ function main() {
 
   const sectorRoot = fetchSectorMetadata();
   const { rootGroup, discardSector, consumeSector } = initializeThreeJsView(sectorRoot);
-  const activateSectors = initializeSectorLoader(discardSector, consumeSector);
+  const activateSectors = initializeSectorLoader(fetchRequest, discardSector, consumeSector);
   scene.add(rootGroup);
 
   renderer.domElement.onmousedown = (downEvent) => {

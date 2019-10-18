@@ -1,11 +1,9 @@
 import { setUnion, setDifference } from '../utils/setUtils';
 import { loadSector, LoadSectorRequest } from './loadSector';
-import { fetchRequest } from './fetchSector';
 import { parseSectorData } from './parseSectorData';
-import { Sector } from "./types";
+import { DiscardSectorDelegate, ConsumeSectorDelegate, FetchSectorDelegate } from './delegates';
 
-// TODO 20191017 larsmoa: Cleanup in the callbacks here and align with definitions in loadSector.ts
-export function initializeSectorLoader(discardSector: (sectorId: number, request: LoadSectorRequest) => void, consumeSector: (sectorId: number, sector: Sector) => void) {
+export function initializeSectorLoader(fetchSector: FetchSectorDelegate, discardSector: DiscardSectorDelegate, consumeSector: ConsumeSectorDelegate) {
   const activeSectorIds = new Set<number>();
   const activeSectorRequests = new Map<number, LoadSectorRequest>();
 
@@ -13,9 +11,7 @@ export function initializeSectorLoader(discardSector: (sectorId: number, request
     const activeOrInFlight = setUnion(activeSectorIds, new Set<number>(activeSectorRequests.keys()));
     const newSectorIds = setDifference(wantedSectorIds, activeOrInFlight);
     const discardedSectorIds = setDifference(activeOrInFlight, wantedSectorIds);
-    console.log("Wanted", wantedSectorIds);
-    console.log("Discarded", discardedSectorIds);
-    console.log("New", newSectorIds);
+
     for (const id of discardedSectorIds) {
       const request = activeSectorRequests.get(id);
       activeSectorRequests.delete(id);
@@ -25,8 +21,9 @@ export function initializeSectorLoader(discardSector: (sectorId: number, request
       const consumeSectorAndDeleteRequest = (sector) => {
         activeSectorRequests.delete(id);
         consumeSector(id, sector);
+        activeSectorIds.add(id);
       };
-      const request = loadSector(id, fetchRequest, parseSectorData, consumeSectorAndDeleteRequest);
+      const request = loadSector(id, fetchSector, parseSectorData, consumeSectorAndDeleteRequest);
       activeSectorRequests.set(id, request);
     }
   }

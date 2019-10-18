@@ -1,4 +1,4 @@
-import { Sector } from "./types";
+import { FetchSectorDelegate, ParseSectorDelegate, ConsumeSectorDelegate } from "./delegates";
 
 export type LoadSectorRequest =
 {
@@ -15,10 +15,6 @@ export enum LoadSectorStatus
   Resolved,
 }
 
-export type FetchSectorDelegate = (sectorId: number) => Promise<ArrayBuffer>;
-export type ParseSectorDelegate = (sectorId: number, buffer: ArrayBuffer) => Promise<Sector>;
-export type ConsumeSectorDelegate = (sector: Sector) => void;
-
 export function loadSector(sectorId: number, fetchSector: FetchSectorDelegate, parseSector: ParseSectorDelegate, consumeSector: ConsumeSectorDelegate): LoadSectorRequest {
   let status = LoadSectorStatus.Awaiting;
   let cancelRequested = false;
@@ -32,7 +28,7 @@ export function loadSector(sectorId: number, fetchSector: FetchSectorDelegate, p
     if (cancelRequested) {
       return LoadSectorStatus.Cancelled;
     }
-    consumeSector(sector);
+    consumeSector(sectorId, sector);
     return LoadSectorStatus.Resolved;
   }
   async function loadAndReport(): Promise<void> {
