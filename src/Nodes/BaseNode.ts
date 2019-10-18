@@ -12,9 +12,8 @@
 //=====================================================================================
 
 import { ViewList } from "../Architecture/ViewList";
-import { TargetNode } from "./TargetNode";
 import { NodeEventArgs } from "../Architecture/NodeEventArgs";
-import yargs from "yargs";
+import { IVisibilityContext } from "../Architecture/IVisibilityContext";
 
 export abstract class BaseNode
 {
@@ -137,7 +136,7 @@ export abstract class BaseNode
     child._parent = this;
   }
 
-  public detach(): boolean
+  public remove(): boolean
   {
     if (this.parent == null)
       return false;
@@ -151,21 +150,29 @@ export abstract class BaseNode
     return true;
   }
 
+  public removeInteractive(): void
+  {
+    let parent = this.parent
+    this.removeAllViews();
+    this.remove();
+    parent!.notify(new NodeEventArgs(NodeEventArgs.childDeleted));
+  }
+
   //==================================================
   // INSTANCE FUNCTIONS: Visibility and notifying
   //==================================================
 
-  public canBeVisible(target: TargetNode): boolean
+  public canBeVisible(target: IVisibilityContext): boolean
   {
     return target.canShowView(this);
   }
 
-  public isVisible(target: TargetNode): boolean
+  public isVisible(target: IVisibilityContext): boolean
   {
     return target.isVisibleView(this);
   }
 
-  public setVisible(visible: boolean, target: TargetNode): boolean
+  public setVisible(visible: boolean, target: IVisibilityContext): boolean
   {
     // Returns true if changed.
     if (visible)
@@ -174,7 +181,7 @@ export abstract class BaseNode
       return target.hideView(this);
   }
 
-  public setVisibleInteractive(visible: boolean, target: TargetNode): void
+  public setVisibleInteractive(visible: boolean, target: IVisibilityContext): void
   {
     if (this.setVisible(visible, target))
       this.notify(new NodeEventArgs(NodeEventArgs.nodeVisible))

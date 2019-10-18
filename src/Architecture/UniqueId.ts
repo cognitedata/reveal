@@ -1,4 +1,6 @@
-//=====================================================================================  
+import { pseudoRandomBytes } from "crypto";
+
+//=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
 // multiple dataset in multiple viewers.
@@ -11,23 +13,19 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseStyle } from "./BaseStyle";
-import { TargetId } from "../Architecture/TargetId";
-
-export abstract class BaseDrawStyle extends BaseStyle
+export class UniqueId
 {
-  private _targetId: TargetId | undefined = undefined;
-
-  public get targetId(): TargetId | undefined { return this._uniqueId; }
-  public set targetId(value: TargetId | undefined) { this._targetId = value; }
-
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  protected constructor(TargetId id) { 
-    
+  private _n: number;
+  private static  _nn:number = 0;
+
+  public constructor(n:number)
+  {
+    this._n = n;
   }
-
-
+  static makeNew(): UniqueId { return new UniqueId(UniqueId._nn++); }
 }
+

@@ -20,6 +20,7 @@ export class NodeEventArgs
   public static readonly nodeName: Symbol = Symbol("nodeName");
   public static readonly nodeVisible: Symbol = Symbol("nodeVisible");
   public static readonly nodeColor: Symbol = Symbol("nodeColor");
+  public static readonly childDeleted: Symbol = Symbol("childDeleted");
 
   //==================================================
   // FIELDS

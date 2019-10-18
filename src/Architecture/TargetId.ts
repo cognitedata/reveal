@@ -1,4 +1,6 @@
-//=====================================================================================  
+import { UniqueId } from "./UniqueId";
+
+//=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
 // multiple dataset in multiple viewers.
@@ -11,23 +13,28 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseStyle } from "./BaseStyle";
-import { TargetId } from "../Architecture/TargetId";
-
-export abstract class BaseDrawStyle extends BaseStyle
+export class TargetId
 {
-  private _targetId: TargetId | undefined = undefined;
+  //==================================================
+  // FIELDS
+  //==================================================
 
-  public get targetId(): TargetId | undefined { return this._uniqueId; }
-  public set targetId(value: TargetId | undefined) { this._targetId = value; }
+  private _uniqueId: UniqueId | undefined = undefined;
+  private _className: string | undefined = undefined;
+
+  public get uniqueId(): UniqueId | undefined { return this._uniqueId; }
+  public set uniqueId(value: UniqueId | undefined) { this._uniqueId = value; }
+  public get className(): string | undefined { return this._className; }
+  public set className(value: string | undefined) { this._className = value; }
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  protected constructor(TargetId id) { 
-    
+  public constructor(uniqueId?: TargetId | undefined, className?: string | undefined)
+  {
+    this._uniqueId = uniqueId;
+    this._className = className;
   }
-
-
 }
+

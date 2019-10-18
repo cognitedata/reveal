@@ -17,7 +17,7 @@ import { ViewFactory } from "../Architecture/ViewFactory";
 import { ViewList } from "../Architecture/ViewList";
 import { BaseView } from "../Views/BaseView";
 
-export abstract class TargetNode extends BaseNode 
+export abstract class TargetNode extends BaseNode implements IVisibilityContext
 {
     //==================================================
     // FIELDS
@@ -121,6 +121,16 @@ export abstract class TargetNode extends BaseNode
         view.dispose();
         this._viewsShownHere.remove(view);
         view.detach();
+    }
+
+    //==================================================
+    // OVERRIDES of BaseNode
+    //==================================================
+
+    public removeInteractive(): void
+    {
+        this.removeAllViewsShownHere();
+        super.removeInteractive();
     }
 
     //==================================================

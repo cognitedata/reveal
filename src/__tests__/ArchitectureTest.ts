@@ -80,7 +80,7 @@ describe('Hierarcy', () =>
       let parent = grandChild.parent;
       let count = parent!.childCount;
       expect(parent).not.toBeNull();
-      grandChild.detach();
+      grandChild.remove();
 
       expect(parent!.childCount).toBe(count - 1);
       expect(grandChild.hasParent).toBe(false);
