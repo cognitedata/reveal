@@ -24,7 +24,7 @@ impl Scene {
     pub fn sector_count(&self) -> usize {
         self.sectors.len()
     }
-    pub fn sector_id(&self, index: usize) -> u64 {
+    pub fn sector_id(&self, index: usize) -> usize {
         self.sectors[index].id
     }
     pub fn sector_parent_id(&self, index: usize) -> JsValue {
@@ -194,9 +194,11 @@ macro_rules! new_geometry_types {
                 }
 
                 fn count(&self) -> usize {
-                    let lengths = [$(self.$field_name.len(),)*];
-                    let max = lengths.iter().max().unwrap();
-                    *max
+                    // TODO they should all be the same
+                    //let lengths = [$(self.$field_name.len(),)*];
+                    //let max = lengths.iter().max().unwrap();
+                    //*max
+                    self.tree_index.len()
                 }
             }
         )*
@@ -219,11 +221,50 @@ macro_rules! new_geometry_types {
         }
 
         #[wasm_bindgen]
+        #[derive(Copy, Clone, Debug, Deserialize, Serialize)]
+        pub struct CollectionStatistics {
+            $(
+            pub $collection_name: usize,
+            )*
+        }
+
+        // TODO move statistics out of here - rather create a macro that can be used to create
+        // other macros that iterate over all the different renderable types, so that for instance
+        // a statistics class can be made in the dump program
+        #[wasm_bindgen]
+        #[derive(Copy, Clone, Debug, Deserialize, Serialize)]
+        pub struct SectorStatistics {
+            pub id: usize,
+            pub collections: CollectionStatistics,
+        }
+
+        #[wasm_bindgen]
+        #[derive(Copy, Clone, Debug, Deserialize, Serialize)]
+        pub struct SceneStatistics {
+            pub sectors: usize,
+            pub collections: CollectionStatistics,
+        }
+
+        #[wasm_bindgen]
+        impl Scene {
+            pub fn statistics(&self) -> SceneStatistics {
+                SceneStatistics {
+                    sectors: self.sectors.len(),
+                    collections: CollectionStatistics {
+                    $(
+                        $collection_name: self.sectors.iter().fold(0, |acc, sector| { acc + sector.primitive_collections.$collection_name.count() } ),
+                    )*
+                    },
+                }
+            }
+        }
+
+        #[wasm_bindgen]
         #[derive(Clone, Debug, Deserialize, Serialize)]
         pub struct Sector {
-            pub id: u64,
+            pub id: usize,
 
-            pub parent_id: Option<u64>,
+            pub parent_id: Option<usize>,
             #[wasm_bindgen(skip)]
             pub bbox_min: Vector3,
             #[wasm_bindgen(skip)]
@@ -236,10 +277,21 @@ macro_rules! new_geometry_types {
         #[wasm_bindgen]
         impl Sector {
             $(
-                pub fn $collection_name(&self) -> $vec_struct_name {
-                    std::mem::replace(&mut self.primitive_collections.$collection_name.clone(), $vec_struct_name::default())
-                }
+            pub fn $collection_name(&self) -> $vec_struct_name {
+                std::mem::replace(&mut self.primitive_collections.$collection_name.clone(), $vec_struct_name::default())
+            }
             )*
+
+            pub fn statistics(&self) -> SectorStatistics {
+                SectorStatistics {
+                    id: self.id,
+                    collections: CollectionStatistics {
+                    $(
+                        $collection_name: self.primitive_collections.$collection_name.count(),
+                    )*
+                    },
+                }
+            }
         }
     };
 }
