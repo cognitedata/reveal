@@ -331,7 +331,9 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let renderables_code = quote! {
         pub fn convert_primitives(raw_primitives: &i3df::PrimitiveCollections) -> PrimitiveCollections {
-            let mut collections = PrimitiveCollections::new();
+            // TODO do not make a guess at 100, but instead calculate the actual number, which we
+            // should know already since we know how many renderables there are per file primitive
+            let mut collections = PrimitiveCollections::with_capacity(10);
             #(#primitive_to_renderables)*
             collections
         }

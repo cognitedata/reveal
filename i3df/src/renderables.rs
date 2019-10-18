@@ -43,7 +43,7 @@ impl Scene {
             parent_id: None,
             bbox_min: Vector3::new(0.0, 0.0, 0.0),
             bbox_max: Vector3::new(0.0, 0.0, 0.0),
-            primitive_collections: PrimitiveCollections::new(),
+            primitive_collections: PrimitiveCollections::with_capacity(0),
         };
         std::mem::replace(&mut self.sectors[index], dummy_sector)
     }
@@ -209,10 +209,10 @@ macro_rules! new_geometry_types {
         }
 
         impl PrimitiveCollections {
-            pub fn new() -> PrimitiveCollections {
+            pub fn with_capacity(capacity: usize) -> PrimitiveCollections {
                 PrimitiveCollections {
                     $(
-                        $collection_name: $vec_struct_name::with_capacity(0),
+                        $collection_name: $vec_struct_name::with_capacity(capacity),
                     )*
                 }
             }
