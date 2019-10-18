@@ -1,10 +1,10 @@
-import { SyntaxTests } from "./src/XYZ/SyntaxTests";
-import { add } from "./src/XYZ/Functions";
 import { RevealModule } from "./src/Specific/RevealModule";
 import { PolylinesNode } from "./src/Specific/PolylinesNode";
 import { RootNode } from "./src/Nodes/RootNode";
 import { FolderNode } from "./src/Nodes/FolderNode";
 import { RevealTargetNode } from "./src/Specific/RevealTargetNode";
+
+import { main } from "./main";
 
 // Create the module
 let module = new RevealModule();
@@ -41,6 +41,9 @@ let symbol = Symbol("Nils Petter");
 console.log(symbol);
 console.log(symbol.toString());
 
+
+// Start ThreeJS test viewer
+main();
 
 
 // let a = add(1, 2);

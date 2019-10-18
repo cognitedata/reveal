@@ -7,7 +7,8 @@
   "scripts": {
     "build": "webpack",
     "build-dev": "webpack --debug",
-    "clean": "tsc --build --clean"
+    "clean": "tsc --build --clean",
+    "serve": "webpack-dev-server --debug --color --progress --watch --port=8080"
   },
   "license": "Apache-2.0",
   "devDependencies": {
@@ -19,7 +20,10 @@
     "ts-loader": "^6.2.0",
     "typescript": "^3.2.2",
     "webpack": "^4.41.1",
-    "webpack-cli": "^3.3.9"
+    "webpack-cli": "^3.3.9",
+    "webpack-dev-server": "^3.8.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "three": "^0.109.0"
+  }
 }
