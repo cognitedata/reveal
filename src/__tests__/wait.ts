@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 /*!
  * Copyright 2019 Cognite AS
  */

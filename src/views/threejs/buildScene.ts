@@ -1,5 +1,9 @@
-import { SectorNode } from "./SectorNode";
-import { SectorMetadata } from "../../sector/types";
+/*!
+ * Copyright 2019 Cognite AS
+ */
+
+import { SectorNode } from './SectorNode';
+import { SectorMetadata } from '../../sector/types';
 
 export function buildScene(sector: SectorMetadata, parent: THREE.Object3D, sectorNodeMap: Map<number, SectorNode>) {
   const sectorGroup = new SectorNode();

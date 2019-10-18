@@ -7,7 +7,8 @@
     "release": "webpack --mode=release",
     "build": "webpack --mode=development",
     "serve": "webpack-dev-server --debug --color --progress --watch --port=8080",
-    "test": "jest"
+    "test": "jest",
+    "coverage": "jest --coverage"
   },
   "author": "Svenn-Arne Dragly <dragly@cognite.com>",
   "contributors": [

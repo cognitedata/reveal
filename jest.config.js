@@ -7,5 +7,8 @@ module.exports = {
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   moduleNameMapper: {
     '^@/(.*)': '<rootDir>/src/$1',
-  }
+  },
+  collectCoverageFrom: [
+    "!src/__tests__/**/*.ts"
+  ]
 };

@@ -24,7 +24,7 @@ function main() {
   });
   const cube = new THREE.Mesh(geometry, material);
   scene.add(cube);
-  const render = function() {
+  const render = () => {
     requestAnimationFrame(render);
 
     cube.rotation.x += 0.01;

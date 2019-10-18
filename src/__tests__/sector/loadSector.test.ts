@@ -1,8 +1,12 @@
-import { FetchSectorDelegate, ParseSectorDelegate, ConsumeSectorDelegate } from "../../sector/delegates";
-import { loadSector, LoadSectorStatus, LoadSectorRequest } from "../../sector/loadSector";
-import { waitUntill } from "../wait";
+/*!
+ * Copyright 2019 Cognite AS
+ */
 
-describe("loadSector", () => {
+import { FetchSectorDelegate, ParseSectorDelegate, ConsumeSectorDelegate } from '../../sector/delegates';
+import { loadSector, LoadSectorStatus, LoadSectorRequest } from '../../sector/loadSector';
+import { waitUntill } from '../wait';
+
+describe('loadSector', () => {
   const fetch: FetchSectorDelegate = jest.fn();
   const parse: ParseSectorDelegate = jest.fn();
   const consume: ConsumeSectorDelegate = jest.fn();
@@ -35,15 +39,15 @@ describe("loadSector", () => {
 
   test('cancelled after fetch', async () => {
     let request: LoadSectorRequest | undefined;
-    const fetch: FetchSectorDelegate = jest.fn(async () => { 
+    const myFetch: FetchSectorDelegate = jest.fn(async () => {
       await waitUntill(() => request !== undefined);
       request.cancel();
       return new ArrayBuffer(0);
     });
-    request = loadSector(0, fetch, parse, consume);
+    request = loadSector(0, myFetch, parse, consume);
     await request.promise;
 
-    expect(fetch).toBeCalled();
+    expect(myFetch).toBeCalled();
     expect(parse).not.toBeCalled();
     expect(consume).not.toBeCalled();
     expect(request.status()).toBe(LoadSectorStatus.Cancelled);
@@ -51,16 +55,16 @@ describe("loadSector", () => {
 
   test('cancelled after parse', async () => {
     let request: LoadSectorRequest | undefined;
-    const parse: ParseSectorDelegate = jest.fn(async () => { 
+    const myParse: ParseSectorDelegate = jest.fn(async () => {
       await waitUntill(() => request !== undefined);
       request.cancel();
       return new ArrayBuffer(0);
     });
-    request = loadSector(0, fetch, parse, consume);
+    request = loadSector(0, fetch, myParse, consume);
     await request.promise;
 
     expect(fetch).toBeCalled();
-    expect(parse).toBeCalled();
+    expect(myParse).toBeCalled();
     expect(consume).not.toBeCalled();
     expect(request.status()).toBe(LoadSectorStatus.Cancelled);
   });
