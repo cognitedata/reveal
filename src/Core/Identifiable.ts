@@ -1,6 +1,4 @@
-import { pseudoRandomBytes } from "crypto";
-
-//=====================================================================================
+//=====================================================================================  
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
 // multiple dataset in multiple viewers.
@@ -13,19 +11,18 @@ import { pseudoRandomBytes } from "crypto";
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-export class UniqueId
+export abstract class Identifiable
 {
   //==================================================
-  // CONSTRUCTORS
+  // VIRTUAL METHODS
   //==================================================
 
-  private _n: number;
-  private static  _nn:number = 0;
+  public /*virtual*/ get className(): string { return Identifiable.name; }
+  public /*virtual*/ isA(className: string): boolean { return className == Identifiable.name; }
 
-  public constructor(n:number)
-  {
-    this._n = n;
-  }
-  static makeNew(): UniqueId { return new UniqueId(UniqueId._nn++); }
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
+
+  public isSubclass(obj: Identifiable): boolean { return this.isA(obj.className); }
 }
-

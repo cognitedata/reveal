@@ -12,27 +12,43 @@
 //=====================================================================================
 
 import { BaseNode } from "./BaseNode";
+import { TargetFolder } from "./TargetFolder";
+import { DataFolder as DataFolder } from "./DataFolder";
 
 export class RootNode extends BaseNode
 {
     //==================================================
-    // FIELDS
-    //==================================================
-
-    public static readonly staticClassName: string = "RootNode";
-
-    //==================================================
-    // PROPERTIES
-    //==================================================
-
-    public get className(): string { return RootNode.staticClassName; }
-
-    //==================================================
     // CONSTRUCTORS
     //==================================================
-    
+
     public constructor()
     {
         super();
     }
+
+    //==================================================
+    //PROPERTIES
+    //==================================================
+
+    public get dataFolder(): DataFolder | null { return this.getChildOfType(DataFolder); }
+    public get targetFolder(): TargetFolder | null { return this.getChildOfType(TargetFolder); }
+
+    //==================================================
+    // OVERRIDES of Identifiable
+    //==================================================
+
+    public /*override*/ get className(): string { return RootNode.name; }
+    public /*override*/ isA(className: string): boolean { return className == RootNode.name || super.isA(className); }
+
+    //==================================================
+    // OVERRIDES of BaseNode
+    //==================================================
+
+    protected /*override*/ initializeCore(): void
+    {
+        super.initializeCore();
+        this.addChild(new TargetFolder())
+        this.addChild(new DataFolder())
+    }
+
 }

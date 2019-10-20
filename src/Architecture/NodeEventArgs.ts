@@ -36,7 +36,7 @@ export class NodeEventArgs
   {
     if (changed == undefined)
       return;
-    if (this._changes == null)
+    if (!this._changes)
       this._changes = new Array<ChangedDecription>();
     this._changes.push(new ChangedDecription(changed, fieldName))
   }
@@ -49,7 +49,7 @@ export class NodeEventArgs
 
   public isChanged(changed: Symbol): boolean
   {
-    let changedDecription = this.getChangedDecription(changed);
+    const changedDecription = this.getChangedDecription(changed);
     return changedDecription != undefined;
   }
 
@@ -59,14 +59,14 @@ export class NodeEventArgs
 
   public getChangedDecription(changed: Symbol): ChangedDecription | undefined
   {
-    if (this._changes == null)
+    if (!this._changes)
       return undefined;
     return this._changes.find((desc: ChangedDecription) => desc.changed == changed);
   }
 
   public getFieldName(changed: Symbol): string | undefined
   {
-    let changedDecription = this.getChangedDecription(changed);
+    const changedDecription = this.getChangedDecription(changed);
     return (changedDecription == undefined) ? undefined : changedDecription.fieldName;
   }
 }

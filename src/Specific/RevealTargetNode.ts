@@ -16,23 +16,15 @@ import { TargetNode } from "../Nodes/TargetNode";
 export class RevealTargetNode extends TargetNode
 {
     //==================================================
-    // FIELDS
-    //==================================================
-
-    public static readonly staticClassName: string = "RevealTargetNode";
-
-    //==================================================
-    // PROPERTIES
-    //==================================================
-
-    public get className(): string { return RevealTargetNode.staticClassName; }
-
-    //==================================================
     // CONSTRUCTORS
     //==================================================
 
-    public constructor()
-    {
-        super();
-    }
+    public constructor() { super(); }
+
+    //==================================================
+    // OVERRIDES of Identifiable
+    //==================================================
+
+    public /*override*/ get className(): string { return RevealTargetNode.name; }
+    public /*override*/ isA(className: string): boolean { return className == RevealTargetNode.name || super.isA(className); }
 }

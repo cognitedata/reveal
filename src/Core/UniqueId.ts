@@ -1,4 +1,3 @@
-import { UniqueId } from "./UniqueId";
 
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
@@ -13,28 +12,38 @@ import { UniqueId } from "./UniqueId";
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-export class TargetId
+export class UniqueId
 {
-  //==================================================
-  // FIELDS
-  //==================================================
-
-  private _uniqueId: UniqueId | undefined = undefined;
-  private _className: string | undefined = undefined;
-
-  public get uniqueId(): UniqueId | undefined { return this._uniqueId; }
-  public set uniqueId(value: UniqueId | undefined) { this._uniqueId = value; }
-  public get className(): string | undefined { return this._className; }
-  public set className(value: string | undefined) { this._className = value; }
-
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(uniqueId?: TargetId | undefined, className?: string | undefined)
+  public constructor(id: number)
   {
-    this._uniqueId = uniqueId;
-    this._className = className;
+    this._id = id;
   }
+
+  public /*copy constructor*/ copy(): UniqueId { return new UniqueId(this._id); }
+
+  //==================================================
+  // FIELDS
+  //==================================================
+
+  private _id: number; //TODO Guid number instead
+  private static  _nextId:number = 1000;
+  public static empty = new UniqueId(0); 
+
+  //==================================================
+  // PROPERTIES
+  //==================================================
+
+  public  static new(): UniqueId { return new UniqueId(UniqueId._nextId++); }
+  public  get isEmpty(): boolean { return this._id == 0; }
+
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
+
+  equals(other: UniqueId): boolean { return this._id == other._id; }
 }
 

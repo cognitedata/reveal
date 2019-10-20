@@ -12,21 +12,13 @@
 //=====================================================================================
 
 import { BaseNode } from "../Nodes/BaseNode";
+import { PolylinesDrawStyle } from "./PolylinesDrawStyle";
+import { BaseDrawStyle } from "../Styles/BaseDrawStyle";
+import { TargetId } from "../Core/TargetId";
+import { Polylines } from "../Geometry/Polylines";
 
 export class PolylinesNode extends BaseNode
 {
-    //==================================================
-    // FIELDS
-    //==================================================
-
-    public static readonly staticClassName: string = "PolylinesNode";
-
-    //==================================================
-    // PROPERTIES
-    //==================================================
-
-    public get className(): string { return PolylinesNode.staticClassName; }
-
     //==================================================
     // CONSTRUCTORS
     //==================================================
@@ -34,5 +26,34 @@ export class PolylinesNode extends BaseNode
     public constructor()
     {
         super();
+        this._data = null;
+    }
+
+    //==================================================
+    // FIELDS
+    //==================================================
+
+    private _data: Polylines | null;
+
+    //==================================================
+    // PROPERTIES
+    //==================================================
+
+    public get data(): Polylines | null { return this._data; }
+
+    //==================================================
+    // OVERRIDES of Identifiable
+    //==================================================
+
+    public /*override*/ get className(): string { return PolylinesNode.name; }
+    public /*override*/ isA(className: string): boolean { return className == PolylinesNode.name || super.isA(className); }
+
+    //==================================================
+    // OVERRIDES of BaseNode
+    //==================================================
+
+    public /*override*/ createDrawStyle(targetId: TargetId): BaseDrawStyle | null
+    {
+        return new PolylinesDrawStyle(targetId);
     }
 }

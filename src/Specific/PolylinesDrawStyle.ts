@@ -1,4 +1,4 @@
-//=====================================================================================  
+//=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
 // multiple dataset in multiple viewers.
@@ -11,6 +11,21 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-export abstract class BaseStyle
+import { BaseDrawStyle } from "../Styles/BaseDrawStyle";
+import { TargetId } from "../Core/TargetId";
+
+export class PolylinesDrawStyle extends BaseDrawStyle
 {
+    //==================================================
+    // FIELDS
+    //==================================================
+
+    lineWidth: number = 1;
+
+    //==================================================
+    // CONSTRUCTORS
+    //==================================================
+
+    public constructor(targetId: TargetId) { super(targetId); }
+    copy(): BaseDrawStyle { return new PolylinesDrawStyle(this.targetId); }
 }

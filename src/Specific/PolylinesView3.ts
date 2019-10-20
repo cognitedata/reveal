@@ -12,6 +12,8 @@
 //=====================================================================================
 
 import { BaseView } from "../Views/BaseView";
+import { PolylinesDrawStyle } from "./PolylinesDrawStyle";
+import { PolylinesNode } from "./PolylinesNode";
 
 export class PolylinesView3 extends BaseView
 {
@@ -19,8 +21,42 @@ export class PolylinesView3 extends BaseView
     // CONSTRUCTORS
     //==================================================
 
-    public constructor()
+    public constructor() { super(); }
+
+    //==================================================
+    // PROPERTIES
+    //==================================================
+
+    public get node(): PolylinesNode | null { return this.node as PolylinesNode; }
+
+    //==================================================
+    // OVERRIDES of BaseView
+    //==================================================
+
+    public /*override*/ initialize(): void
     {
-        super();
+        const node = this.node;
+        if (!node)
+            return;
+
+        const polylines = node.data;
+        if (!polylines)
+            return;
+
+        const style = this.style;
+        if (!style)
+            return;
+
+            
+
+
+
     }
+
+    //==================================================
+    // INSTANCE METHODS
+    //==================================================
+
+    protected get style(): PolylinesDrawStyle | null { return super.getStyle() as PolylinesDrawStyle; }
+
 }

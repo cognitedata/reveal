@@ -17,6 +17,17 @@ import { BaseNode } from "../Nodes/BaseNode";
 export class ViewFactory
 {
   //==================================================
+  // CONSTRUCTORS
+  //==================================================
+
+  private constructor()
+  {
+    if (ViewFactory._instance)
+      throw new Error("Error - use ViewFactory.getInstance()");
+    this.products = new Map<string, Product>();
+  }
+
+  //==================================================
   // INSTANCE PATTERN
   //==================================================
 
@@ -36,32 +47,21 @@ export class ViewFactory
   private products: Map<string, Product>;
 
   //==================================================
-  // CONSTRUCTORS
-  //==================================================
-
-  private constructor()
-  {
-    if (ViewFactory._instance)
-      throw new Error("Error - use ViewFactory.getInstance()");
-    this.products = new Map<string, Product>();
-  }
-
-  //==================================================
   // INSTANCE METHODS:
   //==================================================
 
   public register<T extends BaseView>(className: string, viewType: new () => T, targetId: string): void
   {
-    let key = this.getKey(className, targetId);
-    let func = () => { return new viewType(); };
-    let product = new Product(func);
+    const key = this.getKey(className, targetId);
+    const func = () => { return new viewType(); };
+    const product = new Product(func);
     this.products.set(key, product);
   }
 
   public create(node: BaseNode, targetId: string): BaseView | null
   {
-    let key = this.getKeyByNode(node, targetId);
-    let product = this.products.get(key);
+    const key = this.getKeyByNode(node, targetId);
+    const product = this.products.get(key);
     if (product == undefined)
       return null;
 
@@ -70,7 +70,7 @@ export class ViewFactory
 
   public canCreate(node: BaseNode, targetId: string): boolean
   {
-    let key = this.getKeyByNode(node, targetId);
+    const key = this.getKeyByNode(node, targetId);
     return this.products.has(key);
   }
 

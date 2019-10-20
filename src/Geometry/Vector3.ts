@@ -11,50 +11,70 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseView } from "../Views/BaseView";
-import { TargetNode } from "../Nodes/TargetNode";
-
-export class ViewList
+export class Vector3
 {
-    //==================================================
-    // CONSTRUCTORS
-    //==================================================
-
-    public constructor() { }
-
     //==================================================
     // FIELDS
     //==================================================
 
-    public list: Array<BaseView> = new Array<BaseView>();
+    public x: number;
+    public y: number;
+    public z: number;
 
     //==================================================
-    // INSTANCE METHODS
+    // CONSTRUCTORS
     //==================================================
 
-    public add(view: BaseView): void
+    public constructor(x: number, y: number, z: number)
     {
-        this.list.push(view);
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
-    public remove(view: BaseView): boolean
+    public copy(): Vector3
     {
-        const index = this.list.indexOf(view, 0);
-        if (index < 0)
-            return false;
-
-        this.list.splice(index, 1);
-        return true;
+      return new Vector3(this.x, this.y, this.z);
     }
 
-    public clear(): void
+    //==================================================
+    // INSTANCE METHODS; Getters
+    //==================================================
+
+    public getString(): string
     {
-        this.list.splice(0, this.list.length);
+        return "(" + this.x + ", " + this.y + ", " + this.z + ")";
     }
 
-    public getViewByTarget(target: TargetNode): BaseView | null
+    //==================================================
+    // INSTANCE METHODS: Operations
+    //==================================================
+
+    public add(point: Vector3): void
     {
-        const view = this.list.find((view: BaseView) => view.target == target);
-        return view == undefined ? null : view;
+        this.x += point.x;
+        this.y += point.y;
+        this.z += point.z;
+    }
+
+    public substract(point: Vector3): void
+    {
+        this.x -= point.x;
+        this.y -= point.y;
+        this.z -= point.z;
+    }
+
+    public muliply(point: Vector3): void
+    {
+        this.x *= point.x;
+        this.y *= point.y;
+        this.z *= point.z;
+    }
+
+    public divide(point: Vector3): void
+    {
+        this.x /= point.x;
+        this.y /= point.y;
+        this.z /= point.z;
     }
 }

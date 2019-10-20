@@ -16,6 +16,8 @@ import { PolylinesNode } from "./PolylinesNode";
 import { BaseModule } from "../Architecture/BaseModule";
 import { ViewFactory } from "../Architecture/ViewFactory";
 import { RevealTargetNode } from "./RevealTargetNode";
+import { RootNode } from "../Nodes/RootNode";
+import { RevealRootNode } from "./RevealRootNode";
 
 export class RevealModule extends BaseModule
 {
@@ -23,10 +25,16 @@ export class RevealModule extends BaseModule
   // OVERRIDES of BaseModule
   //==================================================
 
-  protected RegisterViewsCore(): void
+  protected /*override*/ registerViewsCore(): void
   {
-    let factory = ViewFactory.instance;
-    factory.register(PolylinesNode.staticClassName, PolylinesView3, RevealTargetNode.staticClassName);
+    const factory = ViewFactory.instance;
+    factory.register(PolylinesNode.name, PolylinesView3, RevealTargetNode.name);
+  }
+
+  protected /*override*/ createRootCore(): RootNode { 
+    const root = new RevealRootNode(); 
+    root.initialize();
+    return root;
   }
 }
 

@@ -11,21 +11,31 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-export class BaseModule
+import { RootNode } from "../Nodes/RootNode";
+
+export abstract class BaseModule
 {
-  //==================================================
-  // INSTANCE METHODS: 
-  //==================================================
-
-  public Install(): void
-  {
-    this.RegisterViewsCore();
-  }
-
   //==================================================
   // VIRTUAL METHODS: 
   //==================================================
 
-  protected RegisterViewsCore(): void { }
+  protected /*virtual*/ registerViewsCore(): void { }
+  protected /*virtual*/ abstract createRootCore(): RootNode;
+
+  //==================================================
+  // INSTANCE METHODS: 
+  //==================================================
+
+  public install(): void
+  {
+    this.registerViewsCore();
+  }
+
+  public createRoot(): RootNode
+  {
+    const root = this.createRootCore();
+    root.initialize();
+    return root;
+  }
 }
 

@@ -14,6 +14,8 @@
 import { TargetNode } from "../Nodes/TargetNode";
 import { NodeEventArgs } from "../Architecture/NodeEventArgs";
 import { BaseNode } from "../Nodes/BaseNode";
+import { BaseDrawStyle } from "../Styles/BaseDrawStyle";
+import { TargetId } from "../Core/TargetId";
 
 export abstract class BaseView
 {
@@ -36,6 +38,15 @@ export abstract class BaseView
     public set isVisible(value: boolean) { this._isVisible = value; }
     public get stayAliveIfInvisible(): boolean { return false; }
 
+    protected getStyle(): BaseDrawStyle | null 
+    {
+        if (!this.node)
+          return null;
+        if (!this.target)
+          return this.node.getDrawStyle(TargetId.empty); 
+        return this.node.getDrawStyle(this.target.targetId); 
+     }
+
     //==================================================
     // CONSTRUCTORS
     //==================================================
@@ -46,34 +57,34 @@ export abstract class BaseView
     // VIRTUAL METHODS: 
     //==================================================
 
-    public initialize(): void
+    public /*virtual*/ initialize(): void
     {
         // Override this function to initialize your view
     }
 
-    public update(args: NodeEventArgs): void
+    public /*virtual*/ update(args: NodeEventArgs): void
     {
         // Override this function to update your view
     }
 
-    public clearMemory(args: NodeEventArgs): void
+    public /*virtual*/ clearMemory(args: NodeEventArgs): void
     {
         // Override this function to remove redundant data
     }
 
-    public onShow(): void
+    public /*virtual*/ onShow(): void
     {
         // Override this function to when your view
         // need to do something when it is set visible
     }
 
-    public onHide(): void
+    public /*virtual*/ onHide(): void
     {
         // Override this function to when your view
         // need to do something when it is set NOT visible
     }
 
-    public dispose(): void
+    public /*virtual*/ dispose(): void
     {
         // Override this function to when your view
         // need to do something when it is set NOT visible
