@@ -11,10 +11,10 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseDrawStyle } from "../Styles/BaseDrawStyle";
+import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
 import { TargetId } from "../Core/TargetId";
 
-export class PolylinesDrawStyle extends BaseDrawStyle
+export class PolylinesRenderStyle extends BaseRenderStyle
 {
     //==================================================
     // FIELDS
@@ -27,5 +27,14 @@ export class PolylinesDrawStyle extends BaseDrawStyle
     //==================================================
 
     public constructor(targetId: TargetId) { super(targetId); }
-    copy(): BaseDrawStyle { return new PolylinesDrawStyle(this.targetId); }
+    copy(): BaseRenderStyle
+    {
+        const style = new PolylinesRenderStyle(this.targetId);
+        style.lineWidth = this.lineWidth;
+        return style;
+    }
+
 }
+
+
+

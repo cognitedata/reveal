@@ -12,18 +12,18 @@
 //=====================================================================================
 
 import { TargetId } from "../Core/TargetId";
-import { BaseDrawStyle } from "../Styles/BaseDrawStyle";
+import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
 import { TargetNode } from "./TargetNode";
 import { BaseNode } from "./BaseNode";
-import { DrawStyleResolution } from "./DrawStyleResolution";
+import { RenderStyleResolution } from "../Core/RenderStyleResolution";
 
 export class BaseNodeImpl
 {
-  public static getDrawStyle(node: BaseNode, targetId: TargetId | null): BaseDrawStyle | null
+  public static getRenderStyle(node: BaseNode, targetId: TargetId | null): BaseRenderStyle | null
   {
     const root = node.drawStyleRoot;
     if (root != null && root != node)
-      return root.getDrawStyle(targetId);
+      return root.getRenderStyle(targetId);
 
     // Find the targetId if not present
     if (!targetId)
@@ -35,7 +35,7 @@ export class BaseNodeImpl
         return null;
     }
     // Find the style in the node itself
-    let style: BaseDrawStyle | null = null;
+    let style: BaseRenderStyle | null = null;
     for (const thisStyle of node.drawStyles)
     {
       if (thisStyle.isDefault)
@@ -48,7 +48,7 @@ export class BaseNodeImpl
       break;
     }
     // If still not find and unique, copy one of the existing
-    if (!style && node.drawStyleResolution == DrawStyleResolution.Unique)
+    if (!style && node.drawStyleResolution == RenderStyleResolution.Unique)
     {
       for (const thisStyle of node.drawStyles)
       {
@@ -68,7 +68,7 @@ export class BaseNodeImpl
     // If still not found: Create it
     if (!style)
     {
-      style = node.createDrawStyle(targetId);
+      style = node.createRenderStyle(targetId);
       if (style)
       {
         style.targetId.set(targetId, node.drawStyleResolution);
@@ -76,7 +76,7 @@ export class BaseNodeImpl
       }
     }
     if (style)
-      node.verifyDrawStyle(style);
+      node.verifyRenderStyle(style);
     return style;
   }
 }

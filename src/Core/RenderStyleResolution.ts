@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-export enum DrawStyleResolution
+export enum RenderStyleResolution
 {
   Global,
   Target,

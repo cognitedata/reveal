@@ -24,17 +24,14 @@ export class SyntaxTests
 {
     public static testVariables()
     {
-        enum Color { Red = 1, Green, Blue }
-
         const a: boolean = true;
         let b: number = 6;
         const c: string = "Nils";
         const d: [string, number] = ["Hallo", 5];
-        const e: Color = Color.Green;
         const f: number = 7;
 
         b += 5;
-        console.log(a + " " + b + " " + c + " " + d + " " + e + " " + f);
+        console.log(a + " " + b + " " + c + " " + d + " " + " " + f);
     }
 
     public static testForLoop()

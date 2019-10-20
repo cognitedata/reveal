@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import { UniqueId } from "./UniqueId";
-import { DrawStyleResolution } from "../Nodes/DrawStyleResolution";
+import { RenderStyleResolution } from "../Core/RenderStyleResolution";
 
 export class TargetId
 {
@@ -53,17 +53,17 @@ export class TargetId
   public hasSameTypeName(targetId: TargetId): boolean { return this.typeName == targetId.typeName; }
   public hasSameUniqueId(targetId: TargetId): boolean { return this.uniqueId == targetId.uniqueId; }
 
-  public equals(targetIdOnTargetNode: TargetId, drawStyleResolution: DrawStyleResolution): boolean
+  public equals(targetIdOnTargetNode: TargetId, drawStyleResolution: RenderStyleResolution): boolean
   {
     switch (drawStyleResolution)
     {
-      case DrawStyleResolution.Global:
+      case RenderStyleResolution.Global:
         return this.isEmpty;
 
-      case DrawStyleResolution.Target:
+      case RenderStyleResolution.Target:
         return this.hasSameTypeName(targetIdOnTargetNode);
 
-      case DrawStyleResolution.Unique:
+      case RenderStyleResolution.Unique:
         const result = this.hasSameUniqueId(targetIdOnTargetNode);
         if (this.hasSameTypeName(targetIdOnTargetNode))
           throw Error("The TypeName should be equal");
@@ -78,21 +78,21 @@ export class TargetId
   // INSTANCE METHODS: Setters
   //==================================================
 
-  public set(id: TargetId, drawStyleResolution: DrawStyleResolution): void
+  public set(id: TargetId, drawStyleResolution: RenderStyleResolution): void
   {
     switch (drawStyleResolution)
     {
-      case DrawStyleResolution.Global:
+      case RenderStyleResolution.Global:
         this.typeName = "";
         this.uniqueId = UniqueId.empty;
         break;
 
-      case DrawStyleResolution.Target:
+      case RenderStyleResolution.Target:
         this.typeName = id.typeName;
         this.uniqueId = UniqueId.empty;
         break;
 
-      case DrawStyleResolution.Unique:
+      case RenderStyleResolution.Unique:
         this.uniqueId = id.uniqueId;
         this.typeName = id.typeName;
         break;

@@ -14,7 +14,7 @@
 import { TargetNode } from "../Nodes/TargetNode";
 import { NodeEventArgs } from "../Architecture/NodeEventArgs";
 import { BaseNode } from "../Nodes/BaseNode";
-import { BaseDrawStyle } from "../Styles/BaseDrawStyle";
+import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
 import { TargetId } from "../Core/TargetId";
 
 export abstract class BaseView
@@ -31,27 +31,31 @@ export abstract class BaseView
     // PROPERTIES
     //==================================================
 
-    public get node(): BaseNode | null { return this._node; }
-    public get target(): TargetNode | null { return this._target; }
-
     public get isVisible(): boolean { return this._isVisible; }
     public set isVisible(value: boolean) { this._isVisible = value; }
     public get stayAliveIfInvisible(): boolean { return false; }
-
-    protected getStyle(): BaseDrawStyle | null 
-    {
-        if (!this.node)
-          return null;
-        if (!this.target)
-          return this.node.getDrawStyle(TargetId.empty); 
-        return this.node.getDrawStyle(this.target.targetId); 
-     }
 
     //==================================================
     // CONSTRUCTORS
     //==================================================
 
     protected constructor() { }
+
+    //==================================================
+    // INSTANCE METHODS: Getters
+    //==================================================
+
+    public getNode(): BaseNode | null { return this._node; }
+    public getTarget(): TargetNode | null { return this._target; }
+
+    protected getStyle(): BaseRenderStyle | null
+    {
+        if (!this._node)
+            return null;
+        if (!this._target)
+            return this._node.getRenderStyle(TargetId.empty);
+        return this._node.getRenderStyle(this._target.targetId);
+    }
 
     //==================================================
     // VIRTUAL METHODS: 
@@ -97,7 +101,7 @@ export abstract class BaseView
 
     public isOwner(node: BaseNode): boolean
     {
-        return this.node != null && this.node == node;
+        return this._node != null && this._node == node;
     }
 
     public detach(): void

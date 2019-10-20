@@ -12,10 +12,10 @@
 //=====================================================================================
 
 import { BaseNode } from "../Nodes/BaseNode";
-import { PolylinesDrawStyle } from "./PolylinesDrawStyle";
-import { BaseDrawStyle } from "../Styles/BaseDrawStyle";
+import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
 import { TargetId } from "../Core/TargetId";
 import { Polylines } from "../Geometry/Polylines";
+import { PolylinesRenderStyle } from "./PolylinesRenderStyle";
 
 export class PolylinesNode extends BaseNode
 {
@@ -23,23 +23,20 @@ export class PolylinesNode extends BaseNode
     // CONSTRUCTORS
     //==================================================
 
-    public constructor()
-    {
-        super();
-        this._data = null;
-    }
+    public constructor() { super(); }
 
     //==================================================
     // FIELDS
     //==================================================
 
-    private _data: Polylines | null;
+    private _data: Polylines | null = null;
 
     //==================================================
     // PROPERTIES
     //==================================================
 
     public get data(): Polylines | null { return this._data; }
+    public set data(value: Polylines | null) { this._data = value; }
 
     //==================================================
     // OVERRIDES of Identifiable
@@ -52,8 +49,8 @@ export class PolylinesNode extends BaseNode
     // OVERRIDES of BaseNode
     //==================================================
 
-    public /*override*/ createDrawStyle(targetId: TargetId): BaseDrawStyle | null
+    public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
     {
-        return new PolylinesDrawStyle(targetId);
+        return new PolylinesRenderStyle(targetId);
     }
 }

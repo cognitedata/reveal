@@ -14,7 +14,7 @@
 import { BaseStyle } from "./BaseStyle";
 import { TargetId } from "../Core/TargetId";
 
-export abstract class BaseDrawStyle extends BaseStyle
+export abstract class BaseRenderStyle extends BaseStyle
 {
   //==================================================
   // FIELDS
@@ -40,5 +40,5 @@ export abstract class BaseDrawStyle extends BaseStyle
     this._targetId = targetId.copy();
   }
 
-  abstract copy(): BaseDrawStyle;
+  abstract copy(): BaseRenderStyle;
 }

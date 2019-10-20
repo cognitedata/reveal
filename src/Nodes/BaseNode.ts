@@ -16,12 +16,12 @@ import { NodeEventArgs } from "../Architecture/NodeEventArgs";
 import { IVisibilityContext } from "../Architecture/IVisibilityContext";
 import { UniqueId } from "../Core/UniqueId";
 import { TargetId } from "../Core/TargetId";
-import { BaseDrawStyle } from "../Styles/BaseDrawStyle";
+import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
 import { TargetNode } from "../Nodes/TargetNode";
 import { Identifiable } from "../Core/Identifiable";
 import { RootNode } from "./RootNode";
 import { BaseNodeImpl } from "./BaseNodeImpl";
-import { DrawStyleResolution } from "./DrawStyleResolution";
+import { RenderStyleResolution } from "./Core/RenderStyleResolution";
 
 export abstract class BaseNode extends Identifiable
 {
@@ -39,7 +39,7 @@ export abstract class BaseNode extends Identifiable
   private _isActive: boolean = false;
   private _uniqueId: UniqueId = UniqueId.new();
   private _views: ViewList = new ViewList();
-  private _drawStyles: Array<BaseDrawStyle> = new Array<BaseDrawStyle>();
+  private _drawStyles: Array<BaseRenderStyle> = new Array<BaseRenderStyle>();
   private _children: Array<BaseNode> = new Array<BaseNode>();
   private _parent: BaseNode | null = null;
 
@@ -48,7 +48,7 @@ export abstract class BaseNode extends Identifiable
   //==================================================
 
   public get views(): ViewList { return this._views; }
-  public get drawStyles(): Array<BaseDrawStyle> { return this._drawStyles; }
+  public get drawStyles(): Array<BaseRenderStyle> { return this._drawStyles; }
   public get uniqueId(): UniqueId { return this._uniqueId; }
 
   //==================================================
@@ -291,7 +291,7 @@ export abstract class BaseNode extends Identifiable
   {
     for (const view of this.views.list)
     {
-      const target = view.target;
+      const target = view.getTarget();
       if (!target)
         continue;
 
@@ -304,9 +304,9 @@ export abstract class BaseNode extends Identifiable
   // VIRUAL METHODS: Draw styles
   //==================================================
 
-  public /*virtual*/ createDrawStyle(targetId: TargetId): BaseDrawStyle | null { return null; }
-  public /*virtual*/ verifyDrawStyle(style: BaseDrawStyle) { }
-  public /*virtual*/ get drawStyleResolution(): DrawStyleResolution { return DrawStyleResolution.Unique; }
+  public /*virtual*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null { return null; }
+  public /*virtual*/ verifyRenderStyle(style: BaseRenderStyle) { /* overide when validating the drawstyle*/ }
+  public /*virtual*/ get drawStyleResolution(): RenderStyleResolution { return RenderStyleResolution.Unique; }
   public /*virtual*/ get drawStyleRoot(): BaseNode | null { return null; } // To be overridden
 
   //==================================================
@@ -322,9 +322,9 @@ export abstract class BaseNode extends Identifiable
   // INSTANCE METHODS: Draw styles
   //==================================================
 
-  public getDrawStyle(targetId: TargetId | null): BaseDrawStyle | null 
+  public getRenderStyle(targetId: TargetId | null): BaseRenderStyle | null 
   {
-    return BaseNodeImpl.getDrawStyle(this, targetId);
+    return BaseNodeImpl.getRenderStyle(this, targetId);
   }
 }
 
