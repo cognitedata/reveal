@@ -16,31 +16,36 @@ import { IVisibilityContext } from "../Architecture/IVisibilityContext";
 import { ViewFactory } from "../Architecture/ViewFactory";
 import { ViewList } from "../Architecture/ViewList";
 import { BaseView } from "../Views/BaseView";
+import { TargetId } from "../Core/TargetId";
+
 
 export abstract class TargetNode extends BaseNode implements IVisibilityContext
 {
     //==================================================
+    // CONSTRUCTORS
+    //==================================================
+
+    public constructor() { super(); }
+
+    //==================================================
     // FIELDS
     //==================================================
 
-    public static readonly staticClassName: string = "TargetNode";
     private _viewsShownHere: ViewList = new ViewList();
 
     //==================================================
     // PROPERTIES
     //==================================================
 
-    public get className(): string { return TargetNode.staticClassName; }
     public get viewsShownHere(): ViewList { return this._viewsShownHere; }
+    public get targetId(): TargetId { return new TargetId(this.className, this.uniqueId); }
 
     //==================================================
-    // CONSTRUCTORS
+    // OVERRIDES of Identifiable
     //==================================================
 
-    public constructor()
-    {
-        super();
-    }
+    public /*override*/ get className(): string { return TargetNode.name; }
+    public /*override*/ isA(className: string): boolean { return className == TargetNode.name || super.isA(className); }
 
     //==================================================
     // IMPLEMETATION of IVisibilityContext
@@ -53,8 +58,8 @@ export abstract class TargetNode extends BaseNode implements IVisibilityContext
 
     public isVisibleView(node: BaseNode): boolean
     {
-        let view = node.views.getViewByTarget(this);
-        if (view == null)
+        const view = node.views.getViewByTarget(this);
+        if (!view)
             return false;
 
         return view.isVisible;
@@ -63,10 +68,10 @@ export abstract class TargetNode extends BaseNode implements IVisibilityContext
     public showView(node: BaseNode): boolean
     {
         let view = node.views.getViewByTarget(this);
-        if (view == null)
+        if (!view)
         {
             view = this.createViewCore(node);
-            if (view == null)
+            if (!view)
                 return false;
 
             view.attach(node, this);
@@ -91,8 +96,8 @@ export abstract class TargetNode extends BaseNode implements IVisibilityContext
 
     public hideView(node: BaseNode): boolean
     {
-        let view = node.views.getViewByTarget(this);
-        if (view == null)
+        const view = node.views.getViewByTarget(this);
+        if (!view)
             return false;
 
         if (view.stayAliveIfInvisible)
@@ -127,7 +132,7 @@ export abstract class TargetNode extends BaseNode implements IVisibilityContext
     // OVERRIDES of BaseNode
     //==================================================
 
-    public removeInteractive(): void
+    public /*override*/ removeInteractive(): void
     {
         this.removeAllViewsShownHere();
         super.removeInteractive();
@@ -144,16 +149,34 @@ export abstract class TargetNode extends BaseNode implements IVisibilityContext
 
     public removeAllViewsShownHere(): void
     {
-        for (let view of this._viewsShownHere.list)
+        for (const view of this._viewsShownHere.list)
         {
             view.onHide();
             view.isVisible = false;
             view.dispose();
-            let node = view.node;
-            if (node != null)
+            const node = view.node;
+            if (node)
                 node.views.remove(view);
             view.detach();
         }
         this._viewsShownHere.clear();
+    }
+
+
+    //==================================================
+    // STATIC METHODS
+    //==================================================
+
+    static getActive(node: BaseNode): TargetNode | null
+    {
+        const root = node.root;
+        if (!root)
+            return null;
+
+        const targetFolder = root.targetFolder;
+        if (targetFolder)
+            return targetFolder.getActiveDescendantByClassName(TargetNode.name) as TargetNode;
+
+        return root.getActiveDescendantByClassName(TargetNode.name) as TargetNode;
     }
 }

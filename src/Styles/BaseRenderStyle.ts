@@ -12,22 +12,33 @@
 //=====================================================================================
 
 import { BaseStyle } from "./BaseStyle";
-import { TargetId } from "../Architecture/TargetId";
+import { TargetId } from "../Core/TargetId";
 
-export abstract class BaseDrawStyle extends BaseStyle
+export abstract class BaseRenderStyle extends BaseStyle
 {
-  private _targetId: TargetId | undefined = undefined;
+  //==================================================
+  // FIELDS
+  //==================================================
 
-  public get targetId(): TargetId | undefined { return this._uniqueId; }
-  public set targetId(value: TargetId | undefined) { this._targetId = value; }
+  private _targetId: TargetId;
+  public isDefault: boolean = false;
+
+  //==================================================
+  // PROPERTIES
+  //==================================================
+
+  public get targetId(): TargetId { return this._targetId; }
+  public set targetId(value: TargetId) { this._targetId = value; }
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  protected constructor(TargetId id) { 
-    
+  public constructor(targetId: TargetId) 
+  {
+    super();
+    this._targetId = targetId.copy();
   }
 
-
+  abstract copy(): BaseRenderStyle;
 }

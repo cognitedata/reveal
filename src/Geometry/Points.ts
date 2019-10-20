@@ -11,50 +11,57 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseView } from "../Views/BaseView";
-import { TargetNode } from "../Nodes/TargetNode";
+import { Vector3 } from "./Vector3";
+import { Random } from "../Core/Random";
 
-export class ViewList
+export class Points
 {
-    //==================================================
-    // CONSTRUCTORS
-    //==================================================
-
-    public constructor() { }
-
     //==================================================
     // FIELDS
     //==================================================
 
-    public list: Array<BaseView> = new Array<BaseView>();
+    public list: Array<Vector3> = new Array<Vector3>();
 
     //==================================================
-    // INSTANCE METHODS
+    // CONSTRUCTORS
     //==================================================
 
-    public add(view: BaseView): void
+    public constructor()
     {
-        this.list.push(view);
     }
 
-    public remove(view: BaseView): boolean
+    public copy(): Points
     {
-        const index = this.list.indexOf(view, 0);
-        if (index < 0)
-            return false;
-
-        this.list.splice(index, 1);
-        return true;
+        const result = new Points()
+        result.list = [...this.list]; // This syntax sucks!
+        return result;
     }
 
-    public clear(): void
+    //==================================================
+    // INSTANCE METHODS: Operations
+    //==================================================
+
+    public add(point: Vector3): void
     {
-        this.list.splice(0, this.list.length);
+        this.list.push(point);
     }
 
-    public getViewByTarget(target: TargetNode): BaseView | null
+    //==================================================
+    // STATIC METHODS: 
+    //==================================================
+
+    public static createByRandom(pointCount: number): Points
     {
-        const view = this.list.find((view: BaseView) => view.target == target);
-        return view == undefined ? null : view;
+        const result = new Points();
+        for (let i = 0; i < pointCount; i++)
+        {
+            const x = Random.getFloat(0, 100);
+            const y = Random.getFloat(0, 100);
+            const z = Random.getFloat(0, 100);
+            const point = new Vector3(x, y, z);
+            result.add(point);
+        }
+        return result;
     }
+
 }

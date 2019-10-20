@@ -11,9 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseNode } from "./BaseNode";
+import { RootNode } from "../Nodes/RootNode";
+import { RevealTargetNode } from "./RevealTargetNode";
+import { TargetNode } from "../Nodes/TargetNode";
 
-export class FolderNode extends BaseNode
+export class RevealRootNode extends RootNode
 {
     //==================================================
     // CONSTRUCTORS
@@ -25,6 +27,27 @@ export class FolderNode extends BaseNode
     // OVERRIDES of Identifiable
     //==================================================
 
-    public /*override*/ get className(): string { return FolderNode.name; }
-    public /*override*/ isA(className: string): boolean { return className == FolderNode.name || super.isA(className); }
+    public /*override*/ get className(): string { return RevealRootNode.name; }
+    public /*override*/ isA(className: string): boolean { return className == RevealRootNode.name || super.isA(className); }
+
+    //==================================================
+    // OVERRIDES of BaseNode
+    //==================================================
+
+    protected /*override*/ initializeCore() : void
+    {
+        super.initializeCore();
+
+        const target = new RevealTargetNode();
+        target.isActive = true;
+
+        const targetFolder = this.targetFolder;
+        if (!targetFolder)
+         throw Error("targetFolder is not added");
+
+        this.addChild(target)
+
+        if (!TargetNode.getActive(this))
+           throw Error("target is not added properly");
+    }
 }

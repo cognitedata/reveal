@@ -20,5 +20,5 @@ export interface IVisibilityContext
   isVisibleView(node: BaseNode): boolean;
   showView(node: BaseNode): boolean;
   hideView(node: BaseNode): boolean;
-  removeViewShownHere(view: BaseView) : void;
+  removeViewShownHere(view: BaseView): void;
 }

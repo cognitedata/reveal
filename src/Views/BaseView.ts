@@ -14,6 +14,8 @@
 import { TargetNode } from "../Nodes/TargetNode";
 import { NodeEventArgs } from "../Architecture/NodeEventArgs";
 import { BaseNode } from "../Nodes/BaseNode";
+import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
+import { TargetId } from "../Core/TargetId";
 
 export abstract class BaseView
 {
@@ -29,9 +31,6 @@ export abstract class BaseView
     // PROPERTIES
     //==================================================
 
-    public get node(): BaseNode | null { return this._node; }
-    public get target(): TargetNode | null { return this._target; }
-
     public get isVisible(): boolean { return this._isVisible; }
     public set isVisible(value: boolean) { this._isVisible = value; }
     public get stayAliveIfInvisible(): boolean { return false; }
@@ -43,37 +42,53 @@ export abstract class BaseView
     protected constructor() { }
 
     //==================================================
+    // INSTANCE METHODS: Getters
+    //==================================================
+
+    public getNode(): BaseNode | null { return this._node; }
+    public getTarget(): TargetNode | null { return this._target; }
+
+    protected getStyle(): BaseRenderStyle | null
+    {
+        if (!this._node)
+            return null;
+        if (!this._target)
+            return this._node.getRenderStyle(TargetId.empty);
+        return this._node.getRenderStyle(this._target.targetId);
+    }
+
+    //==================================================
     // VIRTUAL METHODS: 
     //==================================================
 
-    public initialize(): void
+    public /*virtual*/ initialize(): void
     {
         // Override this function to initialize your view
     }
 
-    public update(args: NodeEventArgs): void
+    public /*virtual*/ update(args: NodeEventArgs): void
     {
         // Override this function to update your view
     }
 
-    public clearMemory(args: NodeEventArgs): void
+    public /*virtual*/ clearMemory(args: NodeEventArgs): void
     {
         // Override this function to remove redundant data
     }
 
-    public onShow(): void
+    public /*virtual*/ onShow(): void
     {
         // Override this function to when your view
         // need to do something when it is set visible
     }
 
-    public onHide(): void
+    public /*virtual*/ onHide(): void
     {
         // Override this function to when your view
         // need to do something when it is set NOT visible
     }
 
-    public dispose(): void
+    public /*virtual*/ dispose(): void
     {
         // Override this function to when your view
         // need to do something when it is set NOT visible
@@ -86,7 +101,7 @@ export abstract class BaseView
 
     public isOwner(node: BaseNode): boolean
     {
-        return this.node != null && this.node == node;
+        return this._node != null && this._node == node;
     }
 
     public detach(): void

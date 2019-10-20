@@ -11,9 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseNode } from "./BaseNode";
+import { Vector3 } from "./Vector3";
+import { Random } from "../Core/Random";
+import { Points } from "./Points";
 
-export class FolderNode extends BaseNode
+export class Polyline extends Points
 {
     //==================================================
     // CONSTRUCTORS
@@ -22,9 +24,21 @@ export class FolderNode extends BaseNode
     public constructor() { super(); }
 
     //==================================================
-    // OVERRIDES of Identifiable
+    // STATIC METHODS: 
     //==================================================
 
-    public /*override*/ get className(): string { return FolderNode.name; }
-    public /*override*/ isA(className: string): boolean { return className == FolderNode.name || super.isA(className); }
+    public static createByRandom(pointCount: number): Polyline
+    {
+        const result = new Polyline();
+        for (let i = 0; i < pointCount; i++)
+        {
+            const x = Random.getFloat(0, 100);
+            const y = Random.getFloat(0, 100);
+            const z = Random.getFloat(0, 100);
+            const point = new Vector3(x, y, z);
+            result.add(point);
+        }
+        return result;
+    }
+
 }

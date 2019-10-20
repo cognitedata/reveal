@@ -7,37 +7,37 @@ import { RevealTargetNode } from "./src/Specific/RevealTargetNode";
 import { main } from "./main";
 
 // Create the module
-let module = new RevealModule();
-module.Install();
+const module = new RevealModule();
+module.install();
 
 // Create the root
-let root = new RootNode();
+const root = new RootNode();
 
 // Create some data
 {
-  let node1 = new PolylinesNode();
-  let node2 = new PolylinesNode();
+  const node1 = new PolylinesNode();
+  const node2 = new PolylinesNode();
   node1.name = "node1";
   node2.name = "node2";
-  let dataFolder = new FolderNode();
+  const dataFolder = new FolderNode();
   dataFolder.addChild(node1);
   dataFolder.addChild(node2);
   root.addChild(dataFolder);
 }
 // Create the viewers
 {
-  let target1 = new RevealTargetNode();
-  let target2 = new RevealTargetNode();
+  const target1 = new RevealTargetNode();
+  const target2 = new RevealTargetNode();
   target1.name = "target1";
   target2.name = "target2";
-  let targets = new FolderNode();
+  const targets = new FolderNode();
   targets.addChild(target1);
   targets.addChild(target2);
   root.addChild(targets);
 }
 
 
-let symbol = Symbol("Nils Petter");
+const symbol = Symbol("Nils Petter");
 console.log(symbol);
 console.log(symbol.toString());
 
@@ -46,7 +46,7 @@ console.log(symbol.toString());
 main();
 
 
-// let a = add(1, 2);
+// const a = add(1, 2);
 // console.debug(a);
 
 // SyntaxTests.testVariables();

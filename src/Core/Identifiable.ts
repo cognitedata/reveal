@@ -1,6 +1,4 @@
-import { UniqueId } from "./UniqueId";
-
-//=====================================================================================
+//=====================================================================================  
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
 // multiple dataset in multiple viewers.
@@ -13,28 +11,18 @@ import { UniqueId } from "./UniqueId";
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-export class TargetId
+export abstract class Identifiable
 {
   //==================================================
-  // FIELDS
+  // VIRTUAL METHODS
   //==================================================
 
-  private _uniqueId: UniqueId | undefined = undefined;
-  private _className: string | undefined = undefined;
-
-  public get uniqueId(): UniqueId | undefined { return this._uniqueId; }
-  public set uniqueId(value: UniqueId | undefined) { this._uniqueId = value; }
-  public get className(): string | undefined { return this._className; }
-  public set className(value: string | undefined) { this._className = value; }
+  public /*virtual*/ get className(): string { return Identifiable.name; }
+  public /*virtual*/ isA(className: string): boolean { return className == Identifiable.name; }
 
   //==================================================
-  // CONSTRUCTORS
+  // INSTANCE METHODS
   //==================================================
 
-  public constructor(uniqueId?: TargetId | undefined, className?: string | undefined)
-  {
-    this._uniqueId = uniqueId;
-    this._className = className;
-  }
+  public isSubclass(obj: Identifiable): boolean { return this.isA(obj.className); }
 }
-

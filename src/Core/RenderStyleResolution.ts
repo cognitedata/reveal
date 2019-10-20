@@ -11,6 +11,12 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-export abstract class BaseStyle
+export enum RenderStyleResolution
 {
-}
+  Global,
+  Target,
+  Unique
+};
+
+
+
