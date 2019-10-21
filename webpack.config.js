@@ -2,6 +2,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
 module.exports = {
+  mode: 'development',
   entry: './app.ts',
   module: {
     rules: [
@@ -18,7 +19,9 @@ module.exports = {
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
+    sourceMapFilename: '[name].map',
   },
+  devtool: 'inline-source-map',
   devServer: {
     https: false,
   },

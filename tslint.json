@@ -1,11 +1,18 @@
 {
-  "extends": ["@cognite/tslint-config-cognite-3d"],
+  "extends": ["@cognite/tslint-config-cognite-3d", "tslint-no-circular-imports"],
   "linterOptions": {
     "exclude": ["node_modules/**/*.ts", "**/*.json"]
   },
   "rules": {
+    "comment-format": false,    
+    "no-irregular-whitespace": false,
+    "quotemark": false,
+    "member-ordering": false,
+    "prettier": false,
+    "curly": false,
+    
     "file-header": [
-      true,
+      false,
       {
         "default": "Copyright 2019 Cognite AS",
         "match": "Copyright \\d{4} Cognite AS",
