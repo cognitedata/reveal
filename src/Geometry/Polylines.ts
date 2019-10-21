@@ -20,7 +20,7 @@ export class Polylines
     // FIELDS
     //==================================================
 
-    public list: Array<Polyline> = new Array<Polyline>();
+    public list: Polyline[] = [];
 
     //==================================================
     // CONSTRUCTORS

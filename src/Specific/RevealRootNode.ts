@@ -17,37 +17,37 @@ import { TargetNode } from "../Nodes/TargetNode";
 
 export class RevealRootNode extends RootNode
 {
-    //==================================================
-    // CONSTRUCTORS
-    //==================================================
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
 
-    public constructor() { super(); }
+  public constructor() { super(); }
 
-    //==================================================
-    // OVERRIDES of Identifiable
-    //==================================================
+  //==================================================
+  // OVERRIDES of Identifiable
+  //==================================================
 
-    public /*override*/ get className(): string { return RevealRootNode.name; }
-    public /*override*/ isA(className: string): boolean { return className == RevealRootNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return RevealRootNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === RevealRootNode.name || super.isA(className); }
 
-    //==================================================
-    // OVERRIDES of BaseNode
-    //==================================================
+  //==================================================
+  // OVERRIDES of VisualNode
+  //==================================================
 
-    protected /*override*/ initializeCore() : void
-    {
-        super.initializeCore();
+  protected /*override*/ initializeCore(): void
+  {
+    super.initializeCore();
 
-        const target = new RevealTargetNode();
-        target.isActive = true;
+    const target = new RevealTargetNode();
+    target.isActive = true;
 
-        const targetFolder = this.targetFolder;
-        if (!targetFolder)
-         throw Error("targetFolder is not added");
+    const targetFolder = this.targetFolder;
+    if (!targetFolder)
+      throw Error("targetFolder is not added");
 
-        this.addChild(target)
+    this.addChild(target)
 
-        if (!TargetNode.getActive(this))
-           throw Error("target is not added properly");
-    }
+    if (!TargetNode.getActive(this))
+      throw Error("target is not added properly");
+  }
 }

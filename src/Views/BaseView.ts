@@ -11,11 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { TargetNode } from "../Nodes/TargetNode";
 import { NodeEventArgs } from "../Architecture/NodeEventArgs";
-import { BaseNode } from "../Nodes/BaseNode";
+import { VisualNode } from "../Nodes/VisualNode";
 import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
 import { TargetId } from "../Core/TargetId";
+import { ITargetId } from "../Architecture/ITargetId";
 
 export abstract class BaseView
 {
@@ -23,8 +23,8 @@ export abstract class BaseView
     // FIELDS
     //==================================================
 
-    private _node: BaseNode | null = null;
-    private _target: TargetNode | null = null;
+    private _node: VisualNode | null = null;
+    private _target: ITargetId | null = null;
     private _isVisible: boolean = false;
 
     //==================================================
@@ -45,8 +45,8 @@ export abstract class BaseView
     // INSTANCE METHODS: Getters
     //==================================================
 
-    public getNode(): BaseNode | null { return this._node; }
-    public getTarget(): TargetNode | null { return this._target; }
+    public getNode(): VisualNode | null { return this._node; }
+    public getTarget(): ITargetId | null { return this._target; }
 
     protected getStyle(): BaseRenderStyle | null
     {
@@ -99,9 +99,9 @@ export abstract class BaseView
     // INSTANCE METHODS: 
     //==================================================
 
-    public isOwner(node: BaseNode): boolean
+    public isOwner(node: VisualNode): boolean
     {
-        return this._node != null && this._node == node;
+        return this._node != null && this._node === node;
     }
 
     public detach(): void
@@ -112,7 +112,7 @@ export abstract class BaseView
         // need to do something when it is set NOT visible
     }
 
-    public attach(node: BaseNode, target: TargetNode): void
+    public attach(node: VisualNode, target: ITargetId): void
     {
         // This is called after dispose
         this._node = node;

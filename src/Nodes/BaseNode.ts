@@ -11,17 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { ViewList } from "../Architecture/ViewList";
-import { NodeEventArgs } from "../Architecture/NodeEventArgs";
-import { IVisibilityContext } from "../Architecture/IVisibilityContext";
 import { UniqueId } from "../Core/UniqueId";
-import { TargetId } from "../Core/TargetId";
-import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
-import { TargetNode } from "../Nodes/TargetNode";
 import { Identifiable } from "../Core/Identifiable";
-import { RootNode } from "./RootNode";
-import { BaseNodeImpl } from "./BaseNodeImpl";
-import { RenderStyleResolution } from "./Core/RenderStyleResolution";
+import { NodeEventArgs } from "../Architecture/NodeEventArgs";
 
 export abstract class BaseNode extends Identifiable
 {
@@ -38,17 +30,13 @@ export abstract class BaseNode extends Identifiable
   private _name: string = "";
   private _isActive: boolean = false;
   private _uniqueId: UniqueId = UniqueId.new();
-  private _views: ViewList = new ViewList();
-  private _drawStyles: Array<BaseRenderStyle> = new Array<BaseRenderStyle>();
-  private _children: Array<BaseNode> = new Array<BaseNode>();
+  private _children: BaseNode[] = [];
   private _parent: BaseNode | null = null;
 
   //==================================================
   // PROPERTIES
   //==================================================
 
-  public get views(): ViewList { return this._views; }
-  public get drawStyles(): Array<BaseRenderStyle> { return this._drawStyles; }
   public get uniqueId(): UniqueId { return this._uniqueId; }
 
   //==================================================
@@ -56,7 +44,7 @@ export abstract class BaseNode extends Identifiable
   //==================================================
 
   public /*override*/ get className(): string { return BaseNode.name }
-  public /*override*/ isA(className: string): boolean { return className == BaseNode.name || super.isA(className); }
+  public /*override*/ isA(className: string): boolean { return className === BaseNode.name || super.isA(className); }
 
   //==================================================
   // VIRTUAL METHODS
@@ -70,17 +58,24 @@ export abstract class BaseNode extends Identifiable
   public /*virtual*/ get getBeActive() { return false; } // To be overridden
 
   protected /*virtual*/ initializeCore(): void { }
+  protected /*virtual*/ notifyCore(args: NodeEventArgs): void { }
+
+  public  /*virtual*/ removeInteractive(): void
+  {
+    const parent = this.parent
+    this.remove();
+    parent!.notify(new NodeEventArgs(NodeEventArgs.childDeleted));
+  }
 
   //==================================================
   // PROPERTIES: Child-Parent relationship
   //==================================================
 
-  public get children(): Array<BaseNode> { return this._children; }
+  public get children(): BaseNode[] { return this._children; }
   public get childCount(): number { return this._children.length; }
   public get childIndex(): number { return !this.parent ? -1 : this.parent.children.indexOf(this, 0); }
   public get parent(): BaseNode | null { return this._parent; }
-  public get ancestor(): BaseNode { return this.parent != null ? this.parent.ancestor : this; }
-  public get root(): RootNode { return this.ancestor as RootNode; }
+  public get root(): BaseNode { return this.parent != null ? this.parent.root : this; }
   public get hasParent(): boolean { return this._parent != null; }
 
   //==================================================
@@ -92,7 +87,7 @@ export abstract class BaseNode extends Identifiable
   public getChildOfName(name: string): BaseNode | null
   {
     for (const child of this.children)
-      if (child.name == name)
+      if (child.name === name)
         return child;
     return null;
   }
@@ -100,7 +95,7 @@ export abstract class BaseNode extends Identifiable
   public getChildOfUniqueId(uniqueId: UniqueId): BaseNode | null
   {
     for (const child of this.children)
-      if (child.uniqueId == uniqueId)
+      if (child.uniqueId === uniqueId)
         return child;
     return null;
   }
@@ -109,7 +104,7 @@ export abstract class BaseNode extends Identifiable
   {
     for (const child of this.children)
     {
-      if (child.uniqueId == uniqueId)
+      if (child.uniqueId === uniqueId)
         return child;
 
       const ancestor = child.getChildOfUniqueIdRecursive(uniqueId);
@@ -119,7 +114,7 @@ export abstract class BaseNode extends Identifiable
     return null;
   }
 
-  public getChildOfType<T extends BaseNode>(constructor: { new(): T }): T | null
+  public getChildOfType<T extends BaseNode>(constructor: new() => T): T | null
   {
     for (const child of this.children)
       if (child instanceof constructor)
@@ -127,7 +122,7 @@ export abstract class BaseNode extends Identifiable
     return null;
   }
 
-  public *getChildrenByType<T extends BaseNode>(constructor: { new(): T })
+  public *getChildrenByType<T extends BaseNode>(constructor: new() => T)
   {
     for (const child of this.children)
       if (child instanceof constructor)
@@ -165,7 +160,7 @@ export abstract class BaseNode extends Identifiable
     }
   }
 
-  public *getDescendantsByType<T extends BaseNode>(constructor: { new(): T })
+  public *getDescendantsByType<T extends BaseNode>(constructor: new() => T)
   {
     for (const child of this.children)
     {
@@ -233,99 +228,17 @@ export abstract class BaseNode extends Identifiable
     return true;
   }
 
-  public removeInteractive(): void
-  {
-    const parent = this.parent
-    this.removeAllViews();
-    this.remove();
-    parent!.notify(new NodeEventArgs(NodeEventArgs.childDeleted));
-  }
-
   //==================================================
-  // INSTANCE METHODS: Visibility and notifying
+  // INSTANCE METHODS: Misc
   //==================================================
-
-  protected notifyCore(args: NodeEventArgs) /*VIRTUAL*/: void { }
-
-  public canBeVisible(target: IVisibilityContext | null): boolean
-  {
-    target ? target : TargetNode.getActive(this);
-    return target ? target.canShowView(this) : false;
-  }
-
-  public isVisible(target: IVisibilityContext | null): boolean
-  {
-    target ? target : TargetNode.getActive(this);
-    return target ? target.isVisibleView(this) : false;
-  }
-
-  public setVisible(visible: boolean, target: IVisibilityContext | null): boolean
-  {
-    // Returns true if changed.
-    target ? target : TargetNode.getActive(this);
-    if (!target)
-      return false;
-    if (visible)
-      return target.showView(this)
-    else
-      return target.hideView(this);
-  }
-
-  public setVisibleInteractive(visible: boolean, target: IVisibilityContext | null): void
-  {
-    target ? target : TargetNode.getActive(this);
-    if (!target)
-      return;
-    if (this.setVisible(visible, target))
-      this.notify(new NodeEventArgs(NodeEventArgs.nodeVisible))
-  }
 
   public notify(args: NodeEventArgs): void
   {
     this.notifyCore(args);
-    for (const view of this._views.list)
-      view.update(args);
   }
-
-  public removeAllViews(): void
-  {
-    for (const view of this.views.list)
-    {
-      const target = view.getTarget();
-      if (!target)
-        continue;
-
-      target.removeViewShownHere(view);
-    }
-    this.views.clear();
-  }
-
-  //==================================================
-  // VIRUAL METHODS: Draw styles
-  //==================================================
-
-  public /*virtual*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null { return null; }
-  public /*virtual*/ verifyRenderStyle(style: BaseRenderStyle) { /* overide when validating the drawstyle*/ }
-  public /*virtual*/ get drawStyleResolution(): RenderStyleResolution { return RenderStyleResolution.Unique; }
-  public /*virtual*/ get drawStyleRoot(): BaseNode | null { return null; } // To be overridden
-
-  //==================================================
-  // INSTANCE METHODS: Misc
-  //==================================================
 
   public initialize(): void
   {
     this.initializeCore();
   }
-
-  //==================================================
-  // INSTANCE METHODS: Draw styles
-  //==================================================
-
-  public getRenderStyle(targetId: TargetId | null): BaseRenderStyle | null 
-  {
-    return BaseNodeImpl.getRenderStyle(this, targetId);
-  }
 }
-
-

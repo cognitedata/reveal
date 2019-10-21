@@ -13,8 +13,9 @@
 
 import { BaseNode } from "../Nodes/BaseNode";
 import { BaseView } from "../Views/BaseView";
+import { ITargetId } from "./ITargetId";
 
-export interface IVisibilityContext
+export interface IVisibilityContext extends ITargetId
 {
   canShowView(node: BaseNode): boolean;
   isVisibleView(node: BaseNode): boolean;

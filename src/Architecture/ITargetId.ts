@@ -11,25 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { VisualNode } from "./VisualNode";
+import { TargetId } from "../Core/TargetId";
 
-export class DataFolder extends VisualNode
+export interface ITargetId
 {
-    //==================================================
-    // CONSTRUCTORS
-    //==================================================
-
-    public constructor() {         
-        super(); 
-        this.name = "Data folder";
-    }
-
-    //==================================================
-    // OVERRIDES of Identifiable
-    //==================================================
-
-    public /*override*/ get className(): string { return DataFolder.name; }
-    public /*override*/ isA(className: string): boolean { return className === DataFolder.name || super.isA(className); }
-
-
+  targetId :TargetId;
 }

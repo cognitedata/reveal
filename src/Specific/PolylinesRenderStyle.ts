@@ -16,23 +16,23 @@ import { TargetId } from "../Core/TargetId";
 
 export class PolylinesRenderStyle extends BaseRenderStyle
 {
-    //==================================================
-    // FIELDS
-    //==================================================
+  //==================================================
+  // FIELDS
+  //==================================================
 
-    lineWidth: number = 1;
+  lineWidth: number = 1;
 
-    //==================================================
-    // CONSTRUCTORS
-    //==================================================
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
 
-    public constructor(targetId: TargetId) { super(targetId); }
-    copy(): BaseRenderStyle
-    {
-        const style = new PolylinesRenderStyle(this.targetId);
-        style.lineWidth = this.lineWidth;
-        return style;
-    }
+  public constructor(targetId: TargetId) { super(targetId); }
+  copy(): BaseRenderStyle
+  {
+    const style = new PolylinesRenderStyle(this.targetId);
+    style.lineWidth = this.lineWidth;
+    return style;
+  }
 
 }
 

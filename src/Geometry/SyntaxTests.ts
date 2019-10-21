@@ -13,6 +13,8 @@
 
 import { Vector3 } from "./Vector3";
 
+// tslint:disable: no-console
+
 const globalVariable: number = 5555;
 
 export function globalFunction(x: number, y: number): number
@@ -57,7 +59,7 @@ export class SyntaxTests
 
     public static testArrayTemplate()
     {
-        const array = new Array<Vector3>();
+        const array: Vector3[] = [];
         array.push(new Vector3(1, 1, 1));
         array.push(new Vector3(2, 2, 4));
         array.push(new Vector3(3, 3, 4));

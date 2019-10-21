@@ -11,13 +11,13 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseNode } from "../Nodes/BaseNode";
+import { VisualNode } from "../Nodes/VisualNode";
 import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
 import { TargetId } from "../Core/TargetId";
 import { Polylines } from "../Geometry/Polylines";
 import { PolylinesRenderStyle } from "./PolylinesRenderStyle";
 
-export class PolylinesNode extends BaseNode
+export class PolylinesNode extends VisualNode
 {
     //==================================================
     // CONSTRUCTORS
@@ -43,10 +43,10 @@ export class PolylinesNode extends BaseNode
     //==================================================
 
     public /*override*/ get className(): string { return PolylinesNode.name; }
-    public /*override*/ isA(className: string): boolean { return className == PolylinesNode.name || super.isA(className); }
+    public /*override*/ isA(className: string): boolean { return className === PolylinesNode.name || super.isA(className); }
 
     //==================================================
-    // OVERRIDES of BaseNode
+    // OVERRIDES of VisualNode
     //==================================================
 
     public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null

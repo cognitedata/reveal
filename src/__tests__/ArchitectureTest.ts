@@ -1,67 +1,96 @@
-import { RevealModule } from "../Specific/RevealModule";
 import { RootNode } from "../Nodes/RootNode";
 import { PolylinesNode } from "../Specific/PolylinesNode";
 import { FolderNode } from "../Nodes/FolderNode";
 import { RevealTargetNode } from "../Specific/RevealTargetNode";
 import { TargetNode } from "../Nodes/TargetNode";
-import { BaseNode } from "../Nodes/BaseNode";
+import { VisualNode } from "../Nodes/VisualNode";
+import { RootCreator } from "./RootCreator";
+import { DataFolder } from "../Nodes/DataFolder";
+
+// tslint:disable: no-console
 
 describe('Hierarcy', () =>
 {
-  // Create the module
-  const module = new RevealModule();
-  module.install();
-
   // Create the root
-  const root = new RootNode();
+  const root = RootCreator.createRevealRoot();;
 
-  // Create some data
-  {
-    const node1 = new PolylinesNode();
-    const node2 = new PolylinesNode();
-    node1.name = "node1";
-    node2.name = "node2";
-    const dataFolder = new FolderNode();
-    dataFolder.addChild(node1);
-    dataFolder.addChild(node2);
-    root.addChild(dataFolder);
-  }
-  // Create the viewers
-  {
-    const target1 = new RevealTargetNode();
-    const target2 = new RevealTargetNode();
-    target1.name = "target1";
-    target2.name = "target2";
-    const targets = new FolderNode();
-    targets.addChild(target1);
-    targets.addChild(target2);
-    root.addChild(targets);
-  }
-  const vv = root.getChildOfType(FolderNode);
-  const ff = root.getChildOfType(RevealTargetNode);
-  console.log(vv);
-  console.log(ff);
-
-  for (const descendant of root.getDescendantsByType(PolylinesNode))
-    console.log(descendant.className);
-  for (const descendant of root.getDescendantsByType(RevealTargetNode))
-    console.log(descendant.className);
-
+  test('getDescendantsByType', () => getDescendantsByType(root));
   test('Identifyable', () => testIdentifyable());
+  test('Hierarcy', () => testChilderen(root));
+  test('isVisible/SetVisible', () => isVisibleSetVisible(root));
+  test('count views', () => countView(root));
 
-  test('Hierarcy', () => 
+  function countView(root: VisualNode): void
+  {
+    for (const testType of [0, 1, 2, 3]) 
+    {
+      // Set all visible
+      let expectedVisibleCount = 0;
+      for (const target of root.getChild(1).children)
+      {
+        if (!(target instanceof TargetNode))
+          continue;
+
+        for (const node of root.getChild(0).children)
+          if (node instanceof VisualNode && node.setVisible(true, target))
+            expectedVisibleCount++;
+      }
+      if (testType === 1)
+      {
+        for (const target of root.getChild(1).children)
+        {
+          if (!(target instanceof TargetNode))
+            continue;
+
+          for (const node of root.getChild(0).children)
+            node.setVisible(false, target);
+        }
+        expectedVisibleCount = 0;
+      }
+      if (testType === 2)
+      {
+        for (const target of root.getDescendants())
+          if (target instanceof TargetNode)
+            target.removeAllViewsShownHere();
+        expectedVisibleCount = 0;
+      }
+      else if (testType === 3)
+      {
+        for (const descendant of root.getDescendants())
+          descendant.removeAllViews();
+        expectedVisibleCount = 0;
+      }
+      let viewsInNodeCount = 0;
+      for (const descendant of root.getDescendants())
+        viewsInNodeCount += descendant.views.list.length;
+
+      let viewsInTargetCount = 0;
+      for (const target of root.getDescendants())
+      {
+        if (target instanceof TargetNode)
+          viewsInTargetCount += target.viewsShownHere.list.length;
+      }
+
+      expect(expectedVisibleCount).toBe(viewsInNodeCount);
+      expect(expectedVisibleCount).toBe(viewsInTargetCount);
+    }
+  }
+
+
+
+  function testChilderen(root: VisualNode): void
   {
     {
       let n = 0;
       for (const descendant of root.getThisAndDescendants())
         n++;
-      expect(n).toBe(7);
+      expect(n).toBe(9);
     }
     {
       let n = 0;
       for (const descendant of root.getDescendants())
         n++;
-      expect(n).toBe(6);
+      expect(n).toBe(8);
     }
     expect(root.childCount).toBe(2);
 
@@ -100,9 +129,31 @@ describe('Hierarcy', () =>
       expect(parent!.childCount).toBe(count);
       expect(grandChild.hasParent).toBe(true);
     }
-  });
+  }
 
-  test('isVisible/SetVisible', () =>
+  function getDescendantsByType(root: VisualNode): void
+  {
+    for (const descendant of root.getDescendantsByType(PolylinesNode))
+      console.log(descendant.className);
+    for (const descendant of root.getDescendantsByType(RevealTargetNode))
+      console.log(descendant.className);
+  }
+
+
+  function testIdentifyable(): void
+  {
+    const node = new PolylinesNode();
+    expect("PolylinesNode").toBe(node.className);
+    expect("PolylinesNode").toBe(PolylinesNode.name);
+
+    expect(node.isA(node.className)).toBe(true);
+    expect(node.isA(VisualNode.name)).toBe(true);
+
+    expect(node.isSubclass(new PolylinesNode())).toBe(true);
+    expect(node.isSubclass(new DataFolder())).toBe(false);
+  }
+
+  function isVisibleSetVisible(root: VisualNode): void
   {
     for (const target of root.getChild(1).children)
     {
@@ -111,6 +162,9 @@ describe('Hierarcy', () =>
 
       for (const node of root.getChild(0).children)
       {
+        if (!(node instanceof VisualNode))
+          continue;
+
         expect(node.isVisible(target)).toBe(false);
         node.setVisible(true, target);
         expect(node.isVisible(target)).toBe(true);
@@ -128,6 +182,7 @@ describe('Hierarcy', () =>
           continue;
 
         for (const node of root.getChild(0).children)
+        if (node instanceof VisualNode)
           node.setVisible(isVisible, target);
       }
       visibleCount = 0;
@@ -137,77 +192,11 @@ describe('Hierarcy', () =>
           continue;
 
         for (const node of root.getChild(0).children)
-          if (node.isVisible(target))
+          if (node instanceof VisualNode && node.isVisible(target))
             visibleCount++;
       }
-      expect(visibleCount).toBe(isVisible ? 4 : 0);
+      expect(visibleCount).toBe(isVisible ? 8 : 0);
     }
-  });
-
-  test('count views', () =>
-  {
-    for (const i of [0, 1, 2, 3]) 
-    {
-      // Set all visible
-      let expectedVisibleCount = 0;
-      for (const target of root.getChild(1).children)
-      {
-        if (!(target instanceof TargetNode))
-          continue;
-
-        for (const node of root.getChild(0).children)
-          if (node.setVisible(true, target))
-            expectedVisibleCount++;
-      }
-      if (i == 1)
-      {
-        for (const target of root.getChild(1).children)
-        {
-          if (!(target instanceof TargetNode))
-            continue;
-
-          for (const node of root.getChild(0).children)
-            node.setVisible(false, target);
-        }
-        expectedVisibleCount = 0;
-      }
-      if (i == 2)
-      {
-        for (const target of root.getDescendants())
-          if (target instanceof TargetNode)
-            target.removeAllViewsShownHere();
-        expectedVisibleCount = 0;
-      }
-      else if (i == 3)
-      {
-        for (const descendant of root.getDescendants())
-          descendant.removeAllViews();
-        expectedVisibleCount = 0;
-      }
-      let viewsInNodeCount = 0;
-      for (const descendant of root.getDescendants())
-        viewsInNodeCount += descendant.views.list.length;
-
-      let viewsInTargetCount = 0;
-      for (const target of root.getDescendants())
-      {
-        if (target instanceof TargetNode)
-          viewsInTargetCount += target.viewsShownHere.list.length;
-      }
-
-      expect(expectedVisibleCount).toBe(viewsInNodeCount);
-      expect(expectedVisibleCount).toBe(viewsInTargetCount);
-    }
-  });
+  }
 });
 
-function testIdentifyable(): void
-{
-  const node = new PolylinesNode();
-  expect("PolylinesNode").toBe(node.className);
-  expect("PolylinesNode").toBe(PolylinesNode.name);
-
-
-  expect(node.isA(node.className)).toBe(true);
-  expect(node.isA(BaseNode.name)).toBe(true);
-}

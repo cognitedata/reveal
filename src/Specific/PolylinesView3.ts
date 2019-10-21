@@ -17,35 +17,35 @@ import { PolylinesRenderStyle } from "./PolylinesRenderStyle";
 
 export class PolylinesView3 extends BaseView
 {
-    //==================================================
-    // CONSTRUCTORS
-    //==================================================
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
 
-    public constructor() { super(); }
+  public constructor() { super(); }
 
-    //==================================================
-    // PROPERTIES
-    //==================================================
+  //==================================================
+  // PROPERTIES
+  //==================================================
 
-    protected get node(): PolylinesNode | null { return super.getNode() as PolylinesNode; }
-    protected get style(): PolylinesRenderStyle | null { return super.getStyle() as PolylinesRenderStyle; }
+  protected get node(): PolylinesNode | null { return super.getNode() as PolylinesNode; }
+  protected get style(): PolylinesRenderStyle | null { return super.getStyle() as PolylinesRenderStyle; }
 
-    //==================================================
-    // OVERRIDES of BaseView
-    //==================================================
+  //==================================================
+  // OVERRIDES of BaseView
+  //==================================================
 
-    public /*override*/ initialize(): void
-    {
-        const node = this.node;
-        if (!node)
-            return;
+  public /*override*/ initialize(): void
+  {
+    const node = this.node;
+    if (!node)
+      return;
 
-        const polylines = node.data;
-        if (!polylines)
-            return;
+    const polylines = node.data;
+    if (!polylines)
+      return;
 
-        const style = this.style;
-        if (!style)
-            return;    
-    }
+    const style = this.style;
+    if (!style)
+      return;
+  }
 }

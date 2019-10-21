@@ -51,7 +51,7 @@
     <TypeScriptCompile Include="src\Templates\Point.ts" />
     <TypeScriptCompile Include="src\Templates\StaticClass.ts" />
     <TypeScriptCompile Include="src\Templates\SyntaxTests.ts" />
-    <TypeScriptCompile Include="src\Views\BaseNode.ts" />
+    <TypeScriptCompile Include="src\Views\VisualNode.ts" />
     <TypeScriptCompile Include="src\Views\BaseView.ts" />
     <TypeScriptCompile Include="src\Views\PolylinesView3.ts" />
     <TypeScriptCompile Include="src\Views\ViewFactory.ts">

@@ -38,12 +38,12 @@ export class UniqueId
   //==================================================
 
   public  static new(): UniqueId { return new UniqueId(UniqueId._nextId++); }
-  public  get isEmpty(): boolean { return this._id == 0; }
+  public  get isEmpty(): boolean { return this._id === 0; }
 
   //==================================================
   // INSTANCE METHODS
   //==================================================
 
-  equals(other: UniqueId): boolean { return this._id == other._id; }
+  equals(other: UniqueId): boolean { return this._id === other._id; }
 }
 

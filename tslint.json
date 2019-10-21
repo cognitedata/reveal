@@ -10,7 +10,7 @@
     "member-ordering": false,
     "prettier": false,
     "curly": false,
-    
+    "interface-name": false,    
     "file-header": [
       false,
       {

@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import { BaseView } from "../Views/BaseView";
-import { BaseNode } from "../Nodes/BaseNode";
+import { VisualNode } from "../Nodes/VisualNode";
 
 export class ViewFactory
 {
@@ -53,22 +53,22 @@ export class ViewFactory
   public register<T extends BaseView>(className: string, viewType: new () => T, targetId: string): void
   {
     const key = this.getKey(className, targetId);
-    const func = () => { return new viewType(); };
+    const func = () => new viewType();
     const product = new Product(func);
     this.products.set(key, product);
   }
 
-  public create(node: BaseNode, targetId: string): BaseView | null
+  public create(node: VisualNode, targetId: string): BaseView | null
   {
     const key = this.getKeyByNode(node, targetId);
     const product = this.products.get(key);
-    if (product == undefined)
+    if (product === undefined)
       return null;
 
     return product.func();
   }
 
-  public canCreate(node: BaseNode, targetId: string): boolean
+  public canCreate(node: VisualNode, targetId: string): boolean
   {
     const key = this.getKeyByNode(node, targetId);
     return this.products.has(key);
@@ -78,7 +78,7 @@ export class ViewFactory
   // INSTANCE METHODS: Helpers
   //==================================================
 
-  private getKeyByNode(node: BaseNode, targetId: string): string { return this.getKey(node.className, targetId); }
+  private getKeyByNode(node: VisualNode, targetId: string): string { return this.getKey(node.className, targetId); }
   private getKey(nodeType: string, targetId: string): string { return nodeType + "_" + targetId }
 }
 
@@ -88,8 +88,8 @@ export class ViewFactory
 
 class Product
 {
-  public func: Function;
-  public constructor(func: Function)
+  public func: () => BaseView;
+  public constructor(func: () => BaseView)
   {
     this.func = func;
   }

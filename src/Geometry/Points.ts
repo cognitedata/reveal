@@ -20,7 +20,7 @@ export class Points
     // FIELDS
     //==================================================
 
-    public list: Array<Vector3> = new Array<Vector3>();
+    public list: Vector3[] = [];
 
     //==================================================
     // CONSTRUCTORS

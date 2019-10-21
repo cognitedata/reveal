@@ -44,14 +44,14 @@ export class TargetId
   public set typeName(value: string) { this._typeName = value; }
   public get uniqueId(): UniqueId { return this._uniqueId; }
   public set uniqueId(value: UniqueId) { this._uniqueId = value; }
-  public get isEmpty(): boolean { return this.typeName == "" && this.uniqueId.isEmpty; }
+  public get isEmpty(): boolean { return this.typeName === "" && this.uniqueId.isEmpty; }
 
   //==================================================
   // INSTANCE METHODS: Requests
   //==================================================
 
-  public hasSameTypeName(targetId: TargetId): boolean { return this.typeName == targetId.typeName; }
-  public hasSameUniqueId(targetId: TargetId): boolean { return this.uniqueId == targetId.uniqueId; }
+  public hasSameTypeName(targetId: TargetId): boolean { return this.typeName === targetId.typeName; }
+  public hasSameUniqueId(targetId: TargetId): boolean { return this.uniqueId === targetId.uniqueId; }
 
   public equals(targetIdOnTargetNode: TargetId, drawStyleResolution: RenderStyleResolution): boolean
   {
@@ -101,6 +101,5 @@ export class TargetId
         throw Error(drawStyleResolution);
     }
   }
-
 }
 

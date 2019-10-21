@@ -1,15 +1,13 @@
+
 import { RevealModule } from "../Specific/RevealModule";
 import { RootNode } from "../Nodes/RootNode";
 import { PolylinesNode } from "../Specific/PolylinesNode";
-import { FolderNode } from "../Nodes/FolderNode";
 import { RevealTargetNode } from "../Specific/RevealTargetNode";
-import { TargetNode } from "../Nodes/TargetNode";
-import { BaseNode } from "../Nodes/BaseNode";
 import { Polylines } from "../Geometry/Polylines";
 
 export class RootCreator
 {
-  createRevealRoot(): RootNode 
+  public static createRevealRoot(): RootNode 
   {
     // Create the module
     const module = new RevealModule();
@@ -22,6 +20,9 @@ export class RootCreator
     {
       const target = new RevealTargetNode();
       root.targetFolder.addChild(target);
+      let i = 0;
+      for (const child of root.targetFolder.children)
+        child.name = "target " + i++;
     }
     // Create some data
     if (root.dataFolder)

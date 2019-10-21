@@ -17,27 +17,27 @@ export class NodeEventArgs
   // STATIC FIELDS; More will come here
   //==================================================
 
-  public static readonly nodeName: Symbol = Symbol("nodeName");
-  public static readonly nodeVisible: Symbol = Symbol("nodeVisible");
-  public static readonly nodeColor: Symbol = Symbol("nodeColor");
-  public static readonly childDeleted: Symbol = Symbol("childDeleted");
+  public static readonly nodeName: symbol = Symbol("nodeName");
+  public static readonly nodeVisible: symbol = Symbol("nodeVisible");
+  public static readonly nodeColor: symbol = Symbol("nodeColor");
+  public static readonly childDeleted: symbol = Symbol("childDeleted");
 
   //==================================================
   // FIELDS
   //==================================================
 
-  private _changes: Array<ChangedDecription> | null = null;
+  private _changes: ChangedDecription[] | null = null;
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(changed?: Symbol, fieldName?: string)
+  public constructor(changed?: symbol, fieldName?: string)
   {
-    if (changed == undefined)
+    if (changed === undefined)
       return;
     if (!this._changes)
-      this._changes = new Array<ChangedDecription>();
+      this._changes = [];
     this._changes.push(new ChangedDecription(changed, fieldName))
   }
 
@@ -45,29 +45,29 @@ export class NodeEventArgs
   // INSTANCE METHODS: Requests
   //==================================================
 
-  public get isEmpty(): boolean { return this._changes == null || this._changes.length == 0; }
+  public get isEmpty(): boolean { return this._changes == null || this._changes.length === 0; }
 
-  public isChanged(changed: Symbol): boolean
+  public isChanged(changed: symbol): boolean
   {
     const changedDecription = this.getChangedDecription(changed);
-    return changedDecription != undefined;
+    return changedDecription !== undefined;
   }
 
   //==================================================
   // INSTANCE METHODS: Getters
   //==================================================
 
-  public getChangedDecription(changed: Symbol): ChangedDecription | undefined
+  public getChangedDecription(changed: symbol): ChangedDecription | undefined
   {
     if (!this._changes)
       return undefined;
-    return this._changes.find((desc: ChangedDecription) => desc.changed == changed);
+    return this._changes.find((desc: ChangedDecription) => desc.changed === changed);
   }
 
-  public getFieldName(changed: Symbol): string | undefined
+  public getFieldName(changed: symbol): string | undefined
   {
     const changedDecription = this.getChangedDecription(changed);
-    return (changedDecription == undefined) ? undefined : changedDecription.fieldName;
+    return (changedDecription === undefined) ? undefined : changedDecription.fieldName;
   }
 }
 
@@ -77,10 +77,10 @@ export class NodeEventArgs
 
 class ChangedDecription
 {
-  public changed: Symbol;
+  public changed: symbol;
   public fieldName: string | undefined;
 
-  public constructor(changed: Symbol, fieldName?: string)
+  public constructor(changed: symbol, fieldName?: string)
   {
     this.changed = changed;
     this.fieldName = fieldName;

@@ -11,20 +11,23 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseNode } from "./BaseNode";
+import { VisualNode } from "./VisualNode";
 
-export class TargetFolder extends BaseNode
+export class TargetFolder extends VisualNode
 {
     //==================================================
     // CONSTRUCTORS
     //==================================================
 
-    public constructor() { super(); }
+    public constructor() { 
+        super(); 
+        this.name = "Target folder";
+    }
 
     //==================================================
     // OVERRIDES of Identifiable
     //==================================================
 
     public /*override*/ get className(): string { return TargetFolder.name; }
-    public /*override*/ isA(className: string): boolean { return className == TargetFolder.name || super.isA(className); }
+    public /*override*/ isA(className: string): boolean { return className === TargetFolder.name || super.isA(className); }
 }

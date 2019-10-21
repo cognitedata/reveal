@@ -1,23 +1,11 @@
-//=====================================================================================
-// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
-// in October 2019. It is suited for flexible and customizable visualization of   
-// multiple dataset in multiple viewers.
-//
-// It is a C# to typescript port from the Modern Model architecture,   
-// based on the experience when building Petrel.  
-//
-// NOTE: Always keep the code according to the code style already applied in the file.
-// Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
-//=====================================================================================
-
-import { BaseNode } from "./BaseNode";
+import { TargetId } from "../Core/TargetId";
 import { IVisibilityContext } from "../Architecture/IVisibilityContext";
 import { ViewFactory } from "../Architecture/ViewFactory";
 import { ViewList } from "../Architecture/ViewList";
 import { BaseView } from "../Views/BaseView";
-import { TargetId } from "../Core/TargetId";
-
+import { VisualNode } from "./VisualNode";
+import { RootNode } from "./RootNode";
+import { BaseNode } from "./BaseNode";
 
 export abstract class TargetNode extends BaseNode implements IVisibilityContext
 {
@@ -25,7 +13,7 @@ export abstract class TargetNode extends BaseNode implements IVisibilityContext
     // CONSTRUCTORS
     //==================================================
 
-    public constructor() { super(); }
+    protected constructor() { super(); }
 
     //==================================================
     // FIELDS
@@ -45,18 +33,18 @@ export abstract class TargetNode extends BaseNode implements IVisibilityContext
     //==================================================
 
     public /*override*/ get className(): string { return TargetNode.name; }
-    public /*override*/ isA(className: string): boolean { return className == TargetNode.name || super.isA(className); }
+    public /*override*/ isA(className: string): boolean { return className === TargetNode.name || super.isA(className); }
 
     //==================================================
     // IMPLEMETATION of IVisibilityContext
     //==================================================
 
-    public canShowView(node: BaseNode): boolean
+    public canShowView(node: VisualNode): boolean
     {
-        return ViewFactory.instance.canCreate(this, this.className);
+        return ViewFactory.instance.canCreate(node, this.className);
     }
 
-    public isVisibleView(node: BaseNode): boolean
+    public isVisibleView(node: VisualNode): boolean
     {
         const view = node.views.getViewByTarget(this);
         if (!view)
@@ -65,7 +53,7 @@ export abstract class TargetNode extends BaseNode implements IVisibilityContext
         return view.isVisible;
     }
 
-    public showView(node: BaseNode): boolean
+    public showView(node: VisualNode): boolean
     {
         let view = node.views.getViewByTarget(this);
         if (!view)
@@ -94,7 +82,7 @@ export abstract class TargetNode extends BaseNode implements IVisibilityContext
         return true;
     }
 
-    public hideView(node: BaseNode): boolean
+    public hideView(node: VisualNode): boolean
     {
         const view = node.views.getViewByTarget(this);
         if (!view)
@@ -129,7 +117,7 @@ export abstract class TargetNode extends BaseNode implements IVisibilityContext
     }
 
     //==================================================
-    // OVERRIDES of BaseNode
+    // OVERRIDES of VisualNode
     //==================================================
 
     public /*override*/ removeInteractive(): void
@@ -142,7 +130,7 @@ export abstract class TargetNode extends BaseNode implements IVisibilityContext
     // INSTANCE METHODS
     //==================================================
 
-    protected createViewCore(node: BaseNode)
+    protected createViewCore(node: VisualNode)
     {
         return ViewFactory.instance.create(node, this.className);
     }
@@ -154,7 +142,7 @@ export abstract class TargetNode extends BaseNode implements IVisibilityContext
             view.onHide();
             view.isVisible = false;
             view.dispose();
-            const node = view.node;
+            const node = view.getNode();
             if (node)
                 node.views.remove(view);
             view.detach();
@@ -167,11 +155,13 @@ export abstract class TargetNode extends BaseNode implements IVisibilityContext
     // STATIC METHODS
     //==================================================
 
-    static getActive(node: BaseNode): TargetNode | null
+    getActive(node: VisualNode): IVisibilityContext | null
     {
-        const root = node.root;
+        const root = node.root as RootNode;
         if (!root)
             return null;
+
+
 
         const targetFolder = root.targetFolder;
         if (targetFolder)

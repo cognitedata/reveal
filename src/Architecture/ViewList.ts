@@ -12,7 +12,8 @@
 //=====================================================================================
 
 import { BaseView } from "../Views/BaseView";
-import { TargetNode } from "../Nodes/TargetNode";
+import { BaseNode } from "../Nodes/BaseNode";
+import { ITargetId } from "./ITargetId";
 
 export class ViewList
 {
@@ -26,7 +27,7 @@ export class ViewList
     // FIELDS
     //==================================================
 
-    public list: Array<BaseView> = new Array<BaseView>();
+    public list: BaseView[] =  [];
 
     //==================================================
     // INSTANCE METHODS
@@ -52,9 +53,9 @@ export class ViewList
         this.list.splice(0, this.list.length);
     }
 
-    public getViewByTarget(target: TargetNode): BaseView | null
+    public getViewByTarget(target: ITargetId): BaseView | null
     {
-        const view = this.list.find((view: BaseView) => view.target == target);
-        return view == undefined ? null : view;
+        const view = this.list.find((v: BaseView) => v.getTarget() === target);
+        return view === undefined ? null : view;
     }
 }

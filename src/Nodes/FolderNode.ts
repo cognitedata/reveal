@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseNode } from "./BaseNode";
+import { VisualNode } from "./VisualNode";
 
-export class FolderNode extends BaseNode
+export class FolderNode extends VisualNode
 {
     //==================================================
     // CONSTRUCTORS
@@ -26,5 +26,5 @@ export class FolderNode extends BaseNode
     //==================================================
 
     public /*override*/ get className(): string { return FolderNode.name; }
-    public /*override*/ isA(className: string): boolean { return className == FolderNode.name || super.isA(className); }
+    public /*override*/ isA(className: string): boolean { return className === FolderNode.name || super.isA(className); }
 }
