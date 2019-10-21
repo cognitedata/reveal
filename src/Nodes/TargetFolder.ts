@@ -12,22 +12,26 @@
 //=====================================================================================
 
 import { VisualNode } from "./VisualNode";
+import { TargetNode } from "./TargetNode";
+import { BaseNode } from "./BaseNode";
+import { TargetIdAccessor } from "../Architecture/TargetIdAccessor";
 
 export class TargetFolder extends VisualNode
 {
-    //==================================================
-    // CONSTRUCTORS
-    //==================================================
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
 
-    public constructor() { 
-        super(); 
-        this.name = "Target folder";
-    }
+  public constructor()
+  {
+    super();
+    this.name = "Target folder";
+  }
 
-    //==================================================
-    // OVERRIDES of Identifiable
-    //==================================================
+  //==================================================
+  // OVERRIDES of Identifiable
+  //==================================================
 
-    public /*override*/ get className(): string { return TargetFolder.name; }
-    public /*override*/ isA(className: string): boolean { return className === TargetFolder.name || super.isA(className); }
+  public /*override*/ get className(): string { return TargetFolder.name; }
+  public /*override*/ isA(className: string): boolean { return className === TargetFolder.name || super.isA(className); }
 }

@@ -12,6 +12,7 @@
 //=====================================================================================
 
 import { RootNode } from "../Nodes/RootNode";
+import { ViewFactory } from "./ViewFactory";
 
 export abstract class BaseModule
 {
@@ -19,7 +20,7 @@ export abstract class BaseModule
   // VIRTUAL METHODS: 
   //==================================================
 
-  protected /*virtual*/ registerViewsCore(): void { }
+  protected /*virtual*/ registerViewsCore(factory: ViewFactory): void { }
   protected /*virtual*/ abstract createRootCore(): RootNode;
 
   //==================================================
@@ -28,7 +29,8 @@ export abstract class BaseModule
 
   public install(): void
   {
-    this.registerViewsCore();
+    const factory = ViewFactory.instance;
+    this.registerViewsCore(factory);
   }
 
   public createRoot(): RootNode

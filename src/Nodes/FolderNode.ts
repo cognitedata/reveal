@@ -15,16 +15,16 @@ import { VisualNode } from "./VisualNode";
 
 export class FolderNode extends VisualNode
 {
-    //==================================================
-    // CONSTRUCTORS
-    //==================================================
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
 
-    public constructor() { super(); }
+  public constructor() { super(); }
 
-    //==================================================
-    // OVERRIDES of Identifiable
-    //==================================================
+  //==================================================
+  // OVERRIDES of Identifiable
+  //==================================================
 
-    public /*override*/ get className(): string { return FolderNode.name; }
-    public /*override*/ isA(className: string): boolean { return className === FolderNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return FolderNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === FolderNode.name || super.isA(className); }
 }

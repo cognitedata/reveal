@@ -1,4 +1,4 @@
-//=====================================================================================  
+//=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
 // multiple dataset in multiple viewers.
@@ -11,12 +11,28 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-export abstract class Identifiable
+import { PolylinesView3 } from "../Example/PolylinesView3";
+import { PolylinesNode } from "../Example/PolylinesNode";
+import { BaseModule } from "../Architecture/BaseModule";
+import { ViewFactory } from "../Architecture/ViewFactory";
+import { ThreeTargetNode } from "./ThreeTargetNode";
+import { RootNode } from "../Nodes/RootNode";
+import { ThreeRootNode } from "./ThreeRootNode";
+
+export class ThreeModule extends BaseModule
 {
   //==================================================
-  // VIRTUAL METHODS
+  // OVERRIDES of BaseModule
   //==================================================
 
-  public /*virtual*/ get className(): string { return Identifiable.name; }
-  public /*virtual*/ isA(className: string): boolean { return className === Identifiable.name; }
+  protected /*override*/ registerViewsCore(factory: ViewFactory): void
+  {
+    factory.register(PolylinesNode.name, PolylinesView3, ThreeTargetNode.name);
+  }
+
+  protected /*override*/ createRootCore(): RootNode
+  {
+    return new ThreeRootNode();
+  }
 }
+

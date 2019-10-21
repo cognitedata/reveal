@@ -11,8 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseView } from "../Views/BaseView";
-import { VisualNode } from "../Nodes/VisualNode";
+import { BaseView } from "./BaseView";
+import { BaseNode } from "../Nodes/BaseNode";
 
 export class ViewFactory
 {
@@ -24,7 +24,6 @@ export class ViewFactory
   {
     if (ViewFactory._instance)
       throw new Error("Error - use ViewFactory.getInstance()");
-    this.products = new Map<string, Product>();
   }
 
   //==================================================
@@ -44,7 +43,7 @@ export class ViewFactory
   // INSTANCE FIELDS
   //==================================================
 
-  private products: Map<string, Product>;
+  private products = new Map<string, Product>()
 
   //==================================================
   // INSTANCE METHODS:
@@ -58,7 +57,7 @@ export class ViewFactory
     this.products.set(key, product);
   }
 
-  public create(node: VisualNode, targetId: string): BaseView | null
+  public create(node: BaseNode, targetId: string): BaseView | null
   {
     const key = this.getKeyByNode(node, targetId);
     const product = this.products.get(key);
@@ -68,7 +67,7 @@ export class ViewFactory
     return product.func();
   }
 
-  public canCreate(node: VisualNode, targetId: string): boolean
+  public canCreate(node: BaseNode, targetId: string): boolean
   {
     const key = this.getKeyByNode(node, targetId);
     return this.products.has(key);
@@ -78,7 +77,7 @@ export class ViewFactory
   // INSTANCE METHODS: Helpers
   //==================================================
 
-  private getKeyByNode(node: VisualNode, targetId: string): string { return this.getKey(node.className, targetId); }
+  private getKeyByNode(node: BaseNode, targetId: string): string { return this.getKey(node.className, targetId); }
   private getKey(nodeType: string, targetId: string): string { return nodeType + "_" + targetId }
 }
 

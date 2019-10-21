@@ -1,4 +1,4 @@
-//=====================================================================================  
+//=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
 // multiple dataset in multiple viewers.
@@ -11,12 +11,30 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-export abstract class Identifiable
+import { TargetId } from "../Core/TargetId";
+import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
+
+export class PolylinesRenderStyle extends BaseRenderStyle
 {
   //==================================================
-  // VIRTUAL METHODS
+  // FIELDS
   //==================================================
 
-  public /*virtual*/ get className(): string { return Identifiable.name; }
-  public /*virtual*/ isA(className: string): boolean { return className === Identifiable.name; }
+  lineWidth: number = 1;
+
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
+
+  public constructor(targetId: TargetId) { super(targetId); }
+  copy(): BaseRenderStyle
+  {
+    const style = new PolylinesRenderStyle(this.targetId);
+    style.lineWidth = this.lineWidth;
+    return style;
+  }
+
 }
+
+
+

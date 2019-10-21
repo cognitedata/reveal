@@ -11,30 +11,24 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { PolylinesView3 } from "./PolylinesView3";
-import { PolylinesNode } from "./PolylinesNode";
-import { BaseModule } from "../Architecture/BaseModule";
-import { ViewFactory } from "../Architecture/ViewFactory";
-import { RevealTargetNode } from "./RevealTargetNode";
-import { RootNode } from "../Nodes/RootNode";
-import { RevealRootNode } from "./RevealRootNode";
+import { BaseView } from "../Architecture/BaseView";
+import { ThreeTargetNode } from "./ThreeTargetNode";
 
-export class RevealModule extends BaseModule
+export class ThreeView extends BaseView
 {
   //==================================================
-  // OVERRIDES of BaseModule
+  // CONSTRUCTORS
   //==================================================
 
-  protected /*override*/ registerViewsCore(): void
-  {
-    const factory = ViewFactory.instance;
-    factory.register(PolylinesNode.name, PolylinesView3, RevealTargetNode.name);
-  }
+  public constructor() { super(); }
 
-  protected /*override*/ createRootCore(): RootNode { 
-    const root = new RevealRootNode(); 
-    root.initialize();
-    return root;
-  }
+  //==================================================
+  // PROPERTIES
+  //==================================================
+
+  protected get target(): ThreeTargetNode | null { return super.getTarget() as ThreeTargetNode; }
+
+  //==================================================
+  // OVERRIDES of BaseView
+  //==================================================
 }
-

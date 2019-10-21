@@ -11,11 +11,13 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { RootNode } from "../Nodes/RootNode";
-import { RevealTargetNode } from "./RevealTargetNode";
-import { TargetNode } from "../Nodes/TargetNode";
+import { VisualNode } from "../Nodes/VisualNode";
+import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
+import { TargetId } from "../Core/TargetId";
+import { Polylines } from "./Polylines";
+import { PolylinesRenderStyle } from "./PolylinesRenderStyle";
 
-export class RevealRootNode extends RootNode
+export class PolylinesNode extends VisualNode
 {
   //==================================================
   // CONSTRUCTORS
@@ -24,30 +26,31 @@ export class RevealRootNode extends RootNode
   public constructor() { super(); }
 
   //==================================================
+  // FIELDS
+  //==================================================
+
+  private _data: Polylines | null = null;
+
+  //==================================================
+  // PROPERTIES
+  //==================================================
+
+  public get data(): Polylines | null { return this._data; }
+  public set data(value: Polylines | null) { this._data = value; }
+
+  //==================================================
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return RevealRootNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === RevealRootNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return PolylinesNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === PolylinesNode.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of VisualNode
   //==================================================
 
-  protected /*override*/ initializeCore(): void
+  public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
-    super.initializeCore();
-
-    const target = new RevealTargetNode();
-    target.isActive = true;
-
-    const targetFolder = this.targetFolder;
-    if (!targetFolder)
-      throw Error("targetFolder is not added");
-
-    this.addChild(target)
-
-    if (!TargetNode.getActive(this))
-      throw Error("target is not added properly");
+    return new PolylinesRenderStyle(targetId);
   }
 }

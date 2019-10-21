@@ -1,4 +1,4 @@
-//=====================================================================================  
+//=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
 // multiple dataset in multiple viewers.
@@ -11,12 +11,20 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-export abstract class Identifiable
+import { TargetNode } from "../Nodes/TargetNode";
+
+export class ThreeTargetNode extends TargetNode
 {
   //==================================================
-  // VIRTUAL METHODS
+  // CONSTRUCTORS
   //==================================================
 
-  public /*virtual*/ get className(): string { return Identifiable.name; }
-  public /*virtual*/ isA(className: string): boolean { return className === Identifiable.name; }
+  public constructor() { super(); }
+
+  //==================================================
+  // OVERRIDES of Identifiable
+  //==================================================
+
+  public /*override*/ get className(): string { return ThreeTargetNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === ThreeTargetNode.name || super.isA(className); }
 }

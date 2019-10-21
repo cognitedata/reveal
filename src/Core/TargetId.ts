@@ -51,7 +51,7 @@ export class TargetId
   //==================================================
 
   public hasSameTypeName(targetId: TargetId): boolean { return this.typeName === targetId.typeName; }
-  public hasSameUniqueId(targetId: TargetId): boolean { return this.uniqueId === targetId.uniqueId; }
+  public hasSameUniqueId(targetId: TargetId): boolean { return this.uniqueId.equals(targetId.uniqueId); }
 
   public equals(targetIdOnTargetNode: TargetId, drawStyleResolution: RenderStyleResolution): boolean
   {
@@ -65,7 +65,7 @@ export class TargetId
 
       case RenderStyleResolution.Unique:
         const result = this.hasSameUniqueId(targetIdOnTargetNode);
-        if (this.hasSameTypeName(targetIdOnTargetNode))
+        if (!this.hasSameTypeName(targetIdOnTargetNode))
           throw Error("The TypeName should be equal");
         return result;
 

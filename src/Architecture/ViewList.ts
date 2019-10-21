@@ -11,51 +11,50 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseView } from "../Views/BaseView";
-import { BaseNode } from "../Nodes/BaseNode";
-import { ITargetId } from "./ITargetId";
+import { BaseView } from "./BaseView";
+import { TargetIdAccessor } from "./TargetIdAccessor";
 
 export class ViewList
 {
-    //==================================================
-    // CONSTRUCTORS
-    //==================================================
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
 
-    public constructor() { }
+  public constructor() { }
 
-    //==================================================
-    // FIELDS
-    //==================================================
+  //==================================================
+  // FIELDS
+  //==================================================
 
-    public list: BaseView[] =  [];
+  public list: BaseView[] = [];
 
-    //==================================================
-    // INSTANCE METHODS
-    //==================================================
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
 
-    public add(view: BaseView): void
-    {
-        this.list.push(view);
-    }
+  public add(view: BaseView): void
+  {
+    this.list.push(view);
+  }
 
-    public remove(view: BaseView): boolean
-    {
-        const index = this.list.indexOf(view, 0);
-        if (index < 0)
-            return false;
+  public remove(view: BaseView): boolean
+  {
+    const index = this.list.indexOf(view, 0);
+    if (index < 0)
+      return false;
 
-        this.list.splice(index, 1);
-        return true;
-    }
+    this.list.splice(index, 1);
+    return true;
+  }
 
-    public clear(): void
-    {
-        this.list.splice(0, this.list.length);
-    }
+  public clear(): void
+  {
+    this.list.splice(0, this.list.length);
+  }
 
-    public getViewByTarget(target: ITargetId): BaseView | null
-    {
-        const view = this.list.find((v: BaseView) => v.getTarget() === target);
-        return view === undefined ? null : view;
-    }
+  public getViewByTarget(target: TargetIdAccessor): BaseView | null
+  {
+    const resultView = this.list.find((view: BaseView) => view.getTarget() == target);
+    return resultView === undefined ? null : resultView;
+  }
 }

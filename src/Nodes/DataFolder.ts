@@ -15,21 +15,22 @@ import { VisualNode } from "./VisualNode";
 
 export class DataFolder extends VisualNode
 {
-    //==================================================
-    // CONSTRUCTORS
-    //==================================================
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
 
-    public constructor() {         
-        super(); 
-        this.name = "Data folder";
-    }
+  public constructor()
+  {
+    super();
+    this.name = "Data folder";
+  }
 
-    //==================================================
-    // OVERRIDES of Identifiable
-    //==================================================
+  //==================================================
+  // OVERRIDES of Identifiable
+  //==================================================
 
-    public /*override*/ get className(): string { return DataFolder.name; }
-    public /*override*/ isA(className: string): boolean { return className === DataFolder.name || super.isA(className); }
+  public /*override*/ get className(): string { return DataFolder.name; }
+  public /*override*/ isA(className: string): boolean { return className === DataFolder.name || super.isA(className); }
 
 
 }

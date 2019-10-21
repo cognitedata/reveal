@@ -12,32 +12,33 @@
 //=====================================================================================
 
 import { Vector3 } from "./Vector3";
-import { Polyline } from "./Polyline";
+import { Random } from "../Core/Random";
+import { Points } from "./Points";
 
-export class Polylines
+export class Polyline extends Points
 {
-    //==================================================
-    // FIELDS
-    //==================================================
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
 
-    public list: Polyline[] = [];
+  public constructor() { super(); }
 
-    //==================================================
-    // CONSTRUCTORS
-    //==================================================
+  //==================================================
+  // STATIC METHODS: 
+  //==================================================
 
-    public constructor() { }
-
-    //==================================================
-    // STATIC METHODS: 
-    //==================================================
-
-    public static createByRandom(polylinesCount: number, pointCount: number): Polylines
+  public static createByRandom(pointCount: number): Polyline
+  {
+    const result = new Polyline();
+    for (let i = 0; i < pointCount; i++)
     {
-        const result = new Polylines();
-        for (let i = 0; i < polylinesCount; i++)
-            result.list.push(Polyline.createByRandom(pointCount))
-        return result;
+      const x = Random.getFloat(0, 100);
+      const y = Random.getFloat(0, 100);
+      const z = Random.getFloat(0, 100);
+      const point = new Vector3(x, y, z);
+      result.add(point);
     }
+    return result;
+  }
 
 }

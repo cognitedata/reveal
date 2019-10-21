@@ -12,10 +12,10 @@
 //=====================================================================================
 
 import { TargetFolder } from "./TargetFolder";
-import { DataFolder as DataFolder } from "./DataFolder";
+import { DataFolder } from "./DataFolder";
 import { BaseNode } from "./BaseNode";
-import { IVisibilityContext } from "../Architecture/IVisibilityContext";
 import { TargetNode } from "./TargetNode";
+import { TargetIdAccessor } from "../Architecture/TargetIdAccessor";
 
 export class RootNode extends BaseNode
 {
@@ -26,14 +26,15 @@ export class RootNode extends BaseNode
   public constructor()
   {
     super();
+    this.name = "Root";
   }
 
   //==================================================
   //PROPERTIES
   //==================================================
 
-  public get dataFolder(): DataFolder | null { return this.getChildOfType(DataFolder); }
-  public get targetFolder(): TargetFolder | null { return this.getChildOfType(TargetFolder); }
+  public get dataFolder(): DataFolder | null { return this.getChildByType(DataFolder); }
+  public get targetFolder(): TargetFolder | null { return this.getChildByType(TargetFolder); }
 
   //==================================================
   // OVERRIDES of Identifiable
@@ -43,25 +44,22 @@ export class RootNode extends BaseNode
   public /*override*/ isA(className: string): boolean { return className === RootNode.name || super.isA(className); }
 
   //==================================================
-  // OVERRIDES of VisualNode
+  // OVERRIDES of BaseNode
   //==================================================
 
-  protected /*override*/ initializeCore(): void
-  {
-    super.initializeCore();
-    this.addChild(new TargetFolder())
-    this.addChild(new DataFolder())
-  }
-
-  //==================================================
-  // VIRTUAL FUNCTIONS
-  //==================================================
-
-  public /*virtual*/ getActiveTarget(): IVisibilityContext | null
+  public /*override*/ get activeTargetIdAccessor(): TargetIdAccessor | null
   {
     const targetFolder = this.targetFolder;
     if (!targetFolder)
       return null;
-    return targetFolder.getActiveDescendantByClassName(TargetNode.name) as TargetNode;
+    const targetNode = targetFolder.getActiveDescendantByType(TargetNode);
+    return targetNode as TargetIdAccessor;
+  }
+
+  protected /*override*/ initializeCore(): void
+  {
+    super.initializeCore();
+    this.addChild(new TargetFolder());
+    this.addChild(new DataFolder());
   }
 }

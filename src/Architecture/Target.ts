@@ -11,9 +11,15 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { TargetId } from "../Core/TargetId";
+import { BaseNode } from "../Nodes/BaseNode";
+import { BaseView } from "./BaseView";
+import { TargetIdAccessor } from "./TargetIdAccessor";
 
-export interface ITargetId
+export interface Target extends TargetIdAccessor
 {
-  targetId :TargetId;
+  canShowView(node: BaseNode): boolean;
+  isVisibleView(node: BaseNode): boolean;
+  showView(node: BaseNode): boolean;
+  hideView(node: BaseNode): boolean;
+  removeViewShownHere(view: BaseView): void;
 }

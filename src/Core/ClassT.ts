@@ -11,12 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-export abstract class Identifiable
-{
-  //==================================================
-  // VIRTUAL METHODS
-  //==================================================
+export type Class<T> = Function & { prototype: T };
 
-  public /*virtual*/ get className(): string { return Identifiable.name; }
-  public /*virtual*/ isA(className: string): boolean { return className === Identifiable.name; }
+export function isInstanceOf<T>(value: any, classType: Class<T>): value is T
+{
+  return value instanceof classType;
 }

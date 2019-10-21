@@ -11,15 +11,33 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseNode } from "../Nodes/BaseNode";
-import { BaseView } from "../Views/BaseView";
-import { ITargetId } from "./ITargetId";
+import { Vector3 } from "./Vector3";
+import { Polyline } from "./Polyline";
 
-export interface IVisibilityContext extends ITargetId
+export class Polylines
 {
-  canShowView(node: BaseNode): boolean;
-  isVisibleView(node: BaseNode): boolean;
-  showView(node: BaseNode): boolean;
-  hideView(node: BaseNode): boolean;
-  removeViewShownHere(view: BaseView): void;
+  //==================================================
+  // FIELDS
+  //==================================================
+
+  public list: Polyline[] = [];
+
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
+
+  public constructor() { }
+
+  //==================================================
+  // STATIC METHODS: 
+  //==================================================
+
+  public static createByRandom(polylinesCount: number, pointCount: number): Polylines
+  {
+    const result = new Polylines();
+    for (let i = 0; i < polylinesCount; i++)
+      result.list.push(Polyline.createByRandom(pointCount))
+    return result;
+  }
+
 }

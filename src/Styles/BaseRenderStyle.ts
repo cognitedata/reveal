@@ -13,8 +13,9 @@
 
 import { BaseStyle } from "./BaseStyle";
 import { TargetId } from "../Core/TargetId";
+import { TargetIdAccessor } from "../Architecture/TargetIdAccessor";
 
-export abstract class BaseRenderStyle extends BaseStyle
+export abstract class BaseRenderStyle extends BaseStyle implements TargetIdAccessor
 {
   //==================================================
   // FIELDS

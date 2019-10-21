@@ -11,41 +11,70 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseView } from "../Views/BaseView";
-import { PolylinesNode } from "./PolylinesNode";
-import { PolylinesRenderStyle } from "./PolylinesRenderStyle";
-
-export class PolylinesView3 extends BaseView
+export class Vector3
 {
+  //==================================================
+  // FIELDS
+  //==================================================
+
+  public x: number;
+  public y: number;
+  public z: number;
+
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor() { super(); }
-
-  //==================================================
-  // PROPERTIES
-  //==================================================
-
-  protected get node(): PolylinesNode | null { return super.getNode() as PolylinesNode; }
-  protected get style(): PolylinesRenderStyle | null { return super.getStyle() as PolylinesRenderStyle; }
-
-  //==================================================
-  // OVERRIDES of BaseView
-  //==================================================
-
-  public /*override*/ initialize(): void
+  public constructor(x: number, y: number, z: number)
   {
-    const node = this.node;
-    if (!node)
-      return;
+    this.x = x;
+    this.y = y;
+    this.z = z;
+  }
 
-    const polylines = node.data;
-    if (!polylines)
-      return;
+  public copy(): Vector3
+  {
+    return new Vector3(this.x, this.y, this.z);
+  }
 
-    const style = this.style;
-    if (!style)
-      return;
+  //==================================================
+  // INSTANCE METHODS; Getters
+  //==================================================
+
+  public getString(): string
+  {
+    return "(" + this.x + ", " + this.y + ", " + this.z + ")";
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Operations
+  //==================================================
+
+  public add(point: Vector3): void
+  {
+    this.x += point.x;
+    this.y += point.y;
+    this.z += point.z;
+  }
+
+  public substract(point: Vector3): void
+  {
+    this.x -= point.x;
+    this.y -= point.y;
+    this.z -= point.z;
+  }
+
+  public muliply(point: Vector3): void
+  {
+    this.x *= point.x;
+    this.y *= point.y;
+    this.z *= point.z;
+  }
+
+  public divide(point: Vector3): void
+  {
+    this.x /= point.x;
+    this.y /= point.y;
+    this.z /= point.z;
   }
 }

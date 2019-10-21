@@ -11,30 +11,57 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
-import { TargetId } from "../Core/TargetId";
+import { Vector3 } from "./Vector3";
+import { Random } from "../Core/Random";
 
-export class PolylinesRenderStyle extends BaseRenderStyle
+export class Points
 {
   //==================================================
   // FIELDS
   //==================================================
 
-  lineWidth: number = 1;
+  public list: Vector3[] = [];
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(targetId: TargetId) { super(targetId); }
-  copy(): BaseRenderStyle
+  public constructor()
   {
-    const style = new PolylinesRenderStyle(this.targetId);
-    style.lineWidth = this.lineWidth;
-    return style;
+  }
+
+  public copy(): Points
+  {
+    const result = new Points()
+    result.list = [...this.list]; // This syntax sucks!
+    return result;
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Operations
+  //==================================================
+
+  public add(point: Vector3): void
+  {
+    this.list.push(point);
+  }
+
+  //==================================================
+  // STATIC METHODS: 
+  //==================================================
+
+  public static createByRandom(pointCount: number): Points
+  {
+    const result = new Points();
+    for (let i = 0; i < pointCount; i++)
+    {
+      const x = Random.getFloat(0, 100);
+      const y = Random.getFloat(0, 100);
+      const z = Random.getFloat(0, 100);
+      const point = new Vector3(x, y, z);
+      result.add(point);
+    }
+    return result;
   }
 
 }
-
-
-
