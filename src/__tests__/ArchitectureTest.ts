@@ -19,7 +19,37 @@ describe('Hierarcy', () =>
   test('Hierarcy', () => testHierarcy());
   test('isVisible/SetVisible', () => isVisibleSetVisible());
   test('count views', () => countView());
-  test('renderStyle', () => renderStyle());
+  test('renderStyle', () => 
+  {
+    const root = RootCreator.createThreeRoot();
+
+    expect(root.targetFolder).not.toBeNull();
+    expect(root.dataFolder).not.toBeNull();
+    if (root.targetFolder == null)
+      return;
+    if (root.dataFolder == null)
+      return;
+
+    for (const isVisible of [true, false])
+    {
+      const styles: BaseRenderStyle[] = [];
+      for (const target of root.targetFolder.getChildrenByType(TargetNode))
+        for (const node of root.dataFolder.getChildrenByType(VisualNode))
+        {
+          node.setVisible(isVisible, target);
+          const style = node.getRenderStyle(target.targetId);
+          expect(style).not.toBeNull();
+          if (!style)
+            continue;
+
+          for (const other of styles)
+            if (style === other)
+             expect(style).not.toBe(other);
+
+          styles.push(style);
+        }
+    }
+  });
 
   //==================================================
   // FUNCTIONS: 
@@ -41,7 +71,7 @@ describe('Hierarcy', () =>
   function getDescendantsByType(): void
   {
     const root = RootCreator.createThreeRoot();
-    root.debug();
+    root.debugHierarcy();
 
     for (const descendant of root.getDescendantsByType(PolylinesNode))
       expect(PolylinesNode.name).toBe(descendant.className);
@@ -247,35 +277,5 @@ describe('Hierarcy', () =>
   }
 
 
-  function renderStyle(): void
-  {
-    const root = RootCreator.createThreeRoot();
-
-    expect(root.targetFolder).not.toBeNull();
-    expect(root.dataFolder).not.toBeNull();
-    if (root.targetFolder == null)
-      return;
-    if (root.dataFolder == null)
-      return;
-
-    let styles: BaseRenderStyle[] = [];
-    for (const isVisible of [true, false])
-    {
-      for (const target of root.targetFolder.getChildrenByType(TargetNode))
-        for (const node of root.dataFolder.getChildrenByType(VisualNode))
-        {
-          node.setVisible(isVisible, target);
-          const style = node.getRenderStyle(target.targetId);
-          expect(style).not.toBeNull();
-          if (!style)
-            continue;
-
-          for (let i = 0; i < styles.length; i++)
-            expect(style).not.toBe(styles[i]);
-
-          styles.push(style);
-        }
-    }
-  }
 });
 

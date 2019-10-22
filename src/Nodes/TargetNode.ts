@@ -4,7 +4,6 @@ import { ViewFactory } from "../Architecture/ViewFactory";
 import { ViewList } from "../Architecture/ViewList";
 import { BaseView } from "../Architecture/BaseView";
 import { VisualNode } from "./VisualNode";
-import { RootNode } from "./RootNode";
 import { BaseNode } from "./BaseNode";
 
 export abstract class TargetNode extends BaseNode implements Target
@@ -34,6 +33,7 @@ export abstract class TargetNode extends BaseNode implements Target
 
   public /*override*/ get className(): string { return TargetNode.name; }
   public /*override*/ isA(className: string): boolean { return className === TargetNode.name || super.isA(className); }
+  public /*override*/ toString(): string { return super.toString() + `, ViewsShownHere: ${this.viewsShownHere.count}`; }
 
   //==================================================
   // IMPLEMETATION of Target
@@ -144,7 +144,7 @@ export abstract class TargetNode extends BaseNode implements Target
       view.dispose();
       const node = view.getNode();
       if (node instanceof VisualNode)
-        node.views.remove(view);
+        node.views.remove(view); 
       view.detach();
     }
     this._viewsShownHere.clear();

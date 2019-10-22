@@ -11,6 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+// tslint:disable-next-line: ban-types
 export type Class<T> = Function & { prototype: T };
 
 export function isInstanceOf<T>(value: any, classType: Class<T>): value is T

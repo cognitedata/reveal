@@ -41,10 +41,7 @@ export class Vector3
   // INSTANCE METHODS; Getters
   //==================================================
 
-  public getString(): string
-  {
-    return "(" + this.x + ", " + this.y + ", " + this.z + ")";
-  }
+  public toString(): string { return `(${this.x}, ${this.y}, ${this.z})`; }
 
   //==================================================
   // INSTANCE METHODS: Operations

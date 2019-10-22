@@ -19,4 +19,5 @@ export abstract class Identifiable
 
   public /*virtual*/ get className(): string { return Identifiable.name; }
   public /*virtual*/ isA(className: string): boolean { return className === Identifiable.name; }
+  public /*override*/ toString(): string { return this.className; }
 }

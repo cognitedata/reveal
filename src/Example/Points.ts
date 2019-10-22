@@ -26,9 +26,7 @@ export class Points
   // CONSTRUCTORS
   //==================================================
 
-  public constructor()
-  {
-  }
+  public constructor() { }
 
   public copy(): Points
   {

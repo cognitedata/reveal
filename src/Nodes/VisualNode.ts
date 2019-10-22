@@ -43,6 +43,7 @@ export abstract class VisualNode extends BaseNode
 
   public /*override*/ get className(): string { return VisualNode.name }
   public /*override*/ isA(className: string): boolean { return className === VisualNode.name || super.isA(className); }
+  public /*override*/ toString(): string { return super.toString() + `, Views: ${this.views.count}`; }
 
   //==================================================
   // OVERRIDES of BaseNode

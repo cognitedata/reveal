@@ -47,7 +47,7 @@ export class TargetId
   public set uniqueId(value: UniqueId) { this._uniqueId = value; }
   public get isEmpty(): boolean { return this.typeName === "" && this.uniqueId.isEmpty; }
 
-  public toString() { return "(" + this.typeName + ", " + this.uniqueId.toString() + ")"; }
+  public /*override*/ toString(): string { return `(${this.typeName}, ${this.uniqueId})`; }
 
   //==================================================
   // INSTANCE METHODS: Requests

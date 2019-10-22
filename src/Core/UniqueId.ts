@@ -18,10 +18,7 @@ export class UniqueId
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(id: number)
-  {
-    this._id = id;
-  }
+  public constructor(id: number) { this._id = id; }
 
   public /*copy constructor*/ copy(): UniqueId { return new UniqueId(this._id); }
 
@@ -39,13 +36,12 @@ export class UniqueId
 
   public  static new(): UniqueId { return new UniqueId(UniqueId._nextId++); }
   public  get isEmpty(): boolean { return this._id === 0; }
+  public /*override*/ toString(): string { return `${this._id}`; }
 
   //==================================================
   // INSTANCE METHODS
   //==================================================
 
   public equals(other: UniqueId): boolean { return this._id === other._id; }
-  public toString() { return this._id.toString(); }
-    
 }
 

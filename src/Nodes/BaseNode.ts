@@ -53,7 +53,7 @@ export abstract class BaseNode extends Identifiable
 
   public /*override*/ get className(): string { return BaseNode.name }
   public /*override*/ isA(className: string): boolean { return className === BaseNode.name || super.isA(className); }
-  public /*override*/ toString(): string { return this.name + ", className: " + this.className + ", id: " + this.uniqueId + (this.isActive ? " (Active)" : ""); }
+  public /*override*/ toString(): string { return `${this.name}, className: ${this.className}, id: ${this.uniqueId}${this.isActive ? " (Active)" : ""}`; }
 
   //==================================================
   // VIRTUAL METHODS
@@ -64,7 +64,7 @@ export abstract class BaseNode extends Identifiable
 
   public /*virtual*/ get isActive(): boolean { return this._isActive; }
   public /*virtual*/ set isActive(value: boolean) { this._isActive = value; }
-  public /*virtual*/ get canBeActive() { return false; } 
+  public /*virtual*/ get canBeActive() { return false; }
 
   protected /*virtual*/ initializeCore(): void { }
   protected /*virtual*/ notifyCore(args: NodeEventArgs): void { }
@@ -119,16 +119,6 @@ export abstract class BaseNode extends Identifiable
     return null;
   }
 
-  // public getChildOfType<T extends BaseNode>(constructor: new () => T): T | null
-  // {
-  //   for (const child of this.children)
-  //   {
-  //     if (child instanceof constructor)
-  //       return child;
-  //   }
-  //   return null;
-  // }
-
   public getChildByType<T extends BaseNode>(classType: Class<T>): T | null
   {
     for (const child of this.children)
@@ -138,13 +128,6 @@ export abstract class BaseNode extends Identifiable
     }
     return null;
   }
-
-  // public *getChildrenByType<T extends BaseNode>(constructor: new () => T)
-  // {
-  //   for (const child of this.children)
-  //     if (child instanceof constructor)
-  //       yield child;
-  // }
 
   public *getChildrenByType<T extends BaseNode>(classType: Class<T>)
   {
@@ -220,22 +203,6 @@ export abstract class BaseNode extends Identifiable
     }
     return null;
   }
-
-  // public *getDescendantsByType<T extends BaseNode>(constructor: new () => T)
-  // {
-  //   for (const child of this.children)
-  //   {
-  //     if (child instanceof constructor)
-  //       yield child;
-
-  //     for (const descendant of child.getDescendantsByType<T>(constructor))
-  //     {
-  //       const copy: BaseNode = descendant;
-  //       if (copy instanceof constructor)
-  //         yield copy;
-  //     }
-  //   }
-  // }
 
   //==================================================
   // INSTANCE METHODS: Get ancestors
@@ -375,7 +342,7 @@ export abstract class BaseNode extends Identifiable
   // INSTANCE METHODS: Debugging
   //==================================================
 
-  public debug(): void
+  public toHierarcyString(): string
   {
     let text = "";
     for (const node of this.getThisAndDescendants())
@@ -386,6 +353,48 @@ export abstract class BaseNode extends Identifiable
       const line = " ".padStart(padding * 4) + node.toString() + "\n";
       text += line;
     }
-    console.log(text);
+    return text;
   }
+
+  // tslint:disable-next-line: no-console
+  public debugHierarcy(): void { console.log(this.toHierarcyString()); }
 }
+
+
+  //==================================================
+  // OLD TEMPLATE ACCESS CODE: Good to have
+  //==================================================
+
+  // public getChildOfType<T extends BaseNode>(constructor: new () => T): T | null
+  // {
+  //   for (const child of this.children)
+  //   {
+  //     if (child instanceof constructor)
+  //       return child;
+  //   }
+  //   return null;
+  // }
+
+  // public *getChildrenByType<T extends BaseNode>(constructor: new () => T)
+  // {
+  //   for (const child of this.children)
+  //     if (child instanceof constructor)
+  //       yield child;
+  // }
+
+  // public *getDescendantsByType<T extends BaseNode>(constructor: new () => T)
+  // {
+  //   for (const child of this.children)
+  //   {
+  //     if (child instanceof constructor)
+  //       yield child;
+
+  //     for (const descendant of child.getDescendantsByType<T>(constructor))
+  //     {
+  //       const copy: BaseNode = descendant;
+  //       if (copy instanceof constructor)
+  //         yield copy;
+  //     }
+  //   }
+  // }
+
