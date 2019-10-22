@@ -1,33 +1,46 @@
 import * as THREE from 'three';
+import { ThreeModule } from './src/Three/ThreeModule';
+import { ThreeTargetNode } from './src/Three/ThreeTargetNode';
+import { Polylines } from './src/Example/Polylines';
+import { PolylinesNode } from './src/Example/PolylinesNode';
 
 console.log("ssssssssssssss");
 main();
 console.log("sssssssss       sssss  end");
 
 export function main() {
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.z = 4;
-  const renderer = new THREE.WebGLRenderer();
-  renderer.setClearColor("#000000");
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
-  const geometry = new THREE.BoxGeometry(1, 1, 1);
-  const material = new THREE.MeshBasicMaterial({
-    color: "#433F81"
-  });
-  const cube = new THREE.Mesh(geometry, material);
-  scene.add(cube);
-  const render = function ()
+    // Create the module
+  const module = new ThreeModule();
+  module.install();
+
+  const root = module.createRoot();
+
+  // Create the viewers
+  if (!root.targetFolder)
   {
-    requestAnimationFrame(render);
-
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
-
-    renderer.render(scene, camera);
-  };
-
-  render();
+    console.log("Did not get a target folder. Cannot continue");
+    return;
+  }
+  const target = new ThreeTargetNode();
+  // TODO should not be added automatically like this?
+  document.body.appendChild(target.domElement);
+  root.targetFolder.addChild(target);
+  let i = 0;
+  for (const child of root.targetFolder.children)
+    child.name = "Target " + i++;
+  // Create some data
+  if (!root.dataFolder)
+  {
+    console.log("Did not get a data folder. Cannot continue");
+    return;
+  }
+  for (let i = 0; i < 4; i++)
+  {
+    const node = new PolylinesNode();
+    node.data = Polylines.createByRandom(10, 10);
+    node.name = "Polylines " + i;
+    root.dataFolder.addChild(node);
+    node.setVisible(true, target);
+  }
 }
 

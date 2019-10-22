@@ -59,6 +59,7 @@ export abstract class TargetNode extends BaseNode implements Target
     if (!view)
     {
       view = this.createViewCore(node);
+      console.log("CREATE VIEW", view);
       if (!view)
         return false;
 
