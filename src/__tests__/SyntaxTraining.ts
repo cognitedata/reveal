@@ -14,6 +14,23 @@
 
 // tslint:disable: no-console
 
+
+const symbol = Symbol("Nils Petter");
+console.log(symbol);
+console.log(symbol.toString());
+
+// const a = add(1, 2);
+// console.debug(a);
+// SyntaxTests.testVariables();
+// SyntaxTests.testForLoop();
+// SyntaxTests.testArray();
+// SyntaxTests.testArray2();
+// SyntaxTests.testArrayTemplate();
+// SyntaxTests.testMap();
+// SyntaxTests.testMapTemplate();
+// SyntaxTests.testSetTemplate();
+// setInterval(() => { }, 10000);
+
 export function globalFunction(x: number, y: number): number
 {
   return x + y;

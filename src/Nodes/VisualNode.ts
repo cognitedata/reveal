@@ -48,10 +48,10 @@ export abstract class VisualNode extends BaseNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ removeInteractive(): void
+  protected /*override*/ removeInteractiveCore(): void
   {
     this.removeAllViews();
-    super.removeInteractive();
+    super.removeInteractiveCore();
   }
 
   //==================================================

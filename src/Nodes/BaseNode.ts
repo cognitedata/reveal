@@ -53,6 +53,7 @@ export abstract class BaseNode extends Identifiable
 
   public /*override*/ get className(): string { return BaseNode.name }
   public /*override*/ isA(className: string): boolean { return className === BaseNode.name || super.isA(className); }
+  public /*override*/ toString(): string { return this.name + ", className: " + this.className + ", id: " + this.uniqueId + (this.isActive ? " (Active)" : ""); }
 
   //==================================================
   // VIRTUAL METHODS
@@ -60,21 +61,15 @@ export abstract class BaseNode extends Identifiable
 
   public /*virtual*/ get name(): string { return this._name; }
   public /*virtual*/ set name(value: string) { this._name = value; }
-  public /*virtual*/ get debugText(): string { return this.name + " (" + this.className + ")" + (this.isActive ? "(Active)" : ""); }
 
   public /*virtual*/ get isActive(): boolean { return this._isActive; }
   public /*virtual*/ set isActive(value: boolean) { this._isActive = value; }
-  public /*virtual*/ get getBeActive() { return false; } // To be overridden
+  public /*virtual*/ get canBeActive() { return false; } 
 
   protected /*virtual*/ initializeCore(): void { }
   protected /*virtual*/ notifyCore(args: NodeEventArgs): void { }
 
-  public /*virtual*/ removeInteractive(): void
-  {
-    const parent = this.parent
-    this.remove();
-    parent!.notify(new NodeEventArgs(NodeEventArgs.childDeleted));
-  }
+  protected /*virtual*/ removeInteractiveCore(): void { }
 
   public /*virtual*/ get activeTargetIdAccessor(): TargetIdAccessor | null
   {
@@ -301,6 +296,14 @@ export abstract class BaseNode extends Identifiable
     this.initializeCore();
   }
 
+  public removeInteractive(): void
+  {
+    this.removeInteractiveCore();
+    const parent = this.parent
+    this.remove();
+    parent!.notify(new NodeEventArgs(NodeEventArgs.childDeleted));
+  }
+
   //==================================================
   // INSTANCE METHODS: Draw styles
   //==================================================
@@ -380,7 +383,7 @@ export abstract class BaseNode extends Identifiable
       let padding = 0;
       for (const { } of node.getAncestors())
         padding++;
-      const line = " ".padStart(padding * 4) + node.debugText + "\n";
+      const line = " ".padStart(padding * 4) + node.toString() + "\n";
       text += line;
     }
     console.log(text);

@@ -44,6 +44,8 @@ export class UniqueId
   // INSTANCE METHODS
   //==================================================
 
-  equals(other: UniqueId): boolean { return this._id === other._id; }
+  public equals(other: UniqueId): boolean { return this._id === other._id; }
+  public toString() { return this._id.toString(); }
+    
 }
 

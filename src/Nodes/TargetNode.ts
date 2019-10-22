@@ -120,10 +120,10 @@ export abstract class TargetNode extends BaseNode implements Target
   // OVERRIDES of VisualNode
   //==================================================
 
-  public /*override*/ removeInteractive(): void
+  protected /*override*/ removeInteractiveCore(): void
   {
     this.removeAllViewsShownHere();
-    super.removeInteractive();
+    super.removeInteractiveCore();
   }
 
   //==================================================

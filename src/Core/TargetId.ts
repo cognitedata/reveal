@@ -13,6 +13,7 @@
 
 import { UniqueId } from "./UniqueId";
 import { RenderStyleResolution } from "../Core/RenderStyleResolution";
+import { typeAlias } from "@babel/types";
 
 export class TargetId
 {
@@ -45,6 +46,8 @@ export class TargetId
   public get uniqueId(): UniqueId { return this._uniqueId; }
   public set uniqueId(value: UniqueId) { this._uniqueId = value; }
   public get isEmpty(): boolean { return this.typeName === "" && this.uniqueId.isEmpty; }
+
+  public toString() { return "(" + this.typeName + ", " + this.uniqueId.toString() + ")"; }
 
   //==================================================
   // INSTANCE METHODS: Requests

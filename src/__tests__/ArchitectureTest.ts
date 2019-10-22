@@ -6,6 +6,8 @@ import { VisualNode } from "../Nodes/VisualNode";
 import { RootCreator } from "./RootCreator";
 import { DataFolder } from "../Nodes/DataFolder";
 import { isInstanceOf } from "../Core/ClassT";
+import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
+import { tsConstructSignatureDeclaration } from "@babel/types";
 
 // tslint:disable: no-console
 
@@ -17,6 +19,7 @@ describe('Hierarcy', () =>
   test('Hierarcy', () => testHierarcy());
   test('isVisible/SetVisible', () => isVisibleSetVisible());
   test('count views', () => countView());
+  test('renderStyle', () => renderStyle());
 
   //==================================================
   // FUNCTIONS: 
@@ -39,7 +42,7 @@ describe('Hierarcy', () =>
   {
     const root = RootCreator.createThreeRoot();
     root.debug();
-    
+
     for (const descendant of root.getDescendantsByType(PolylinesNode))
       expect(PolylinesNode.name).toBe(descendant.className);
     for (const descendant of root.getDescendantsByType(ThreeTargetNode))
@@ -68,25 +71,25 @@ describe('Hierarcy', () =>
     // Test Descendants
     {
       let n = 0;
-      for (const {} of root.getThisAndDescendants())
+      for (const { } of root.getThisAndDescendants())
         n++;
       expect(n).toBe(9);
     }
     {
       let n = 0;
-      for (const {} of root.getDescendants())
+      for (const { } of root.getDescendants())
         n++;
       expect(n).toBe(8);
     }
     {
       let n = 0;
-      for (const {} of root.getDescendantsByType(PolylinesNode))
+      for (const { } of root.getDescendantsByType(PolylinesNode))
         n++;
       expect(n).toBe(4);
     }
     {
       let n = 0;
-      for (const {} of root.dataFolder.getChildrenByType(PolylinesNode))
+      for (const { } of root.dataFolder.getChildrenByType(PolylinesNode))
         n++;
       expect(n).toBe(4);
     }
@@ -152,35 +155,26 @@ describe('Hierarcy', () =>
 
     for (const isVisible of [true, false])
     {
-      for (const target of root.targetFolder.children)
-      {
-        if (!(target instanceof TargetNode))
-          continue;
+      for (const target of root.targetFolder.getChildrenByType(TargetNode))
+        for (const node of root.dataFolder.getChildrenByType(VisualNode))
+          node.setVisible(isVisible, target);
 
-        for (const node of root.dataFolder.children)
-          if (node instanceof VisualNode)
-            node.setVisible(isVisible, target);
-      }
       let visibleCount = 0;
-      for (const target of root.targetFolder.children)
-      {
-        if (!(target instanceof TargetNode))
-          continue;
-
-        for (const node of root.dataFolder.children)
-          if (node instanceof VisualNode && node.isVisible(target))
+      for (const target of root.targetFolder.getChildrenByType(TargetNode))
+        for (const node of root.dataFolder.getChildrenByType(VisualNode))
+          if (node.isVisible(target))
             visibleCount++;
-      }
+
       expect(visibleCount).toBe(isVisible ? 8 : 0);
     }
     for (const isVisible of [true, false])
     {
-      for (const node of root.dataFolder.children)
-        if (node instanceof VisualNode)
-          node.setVisible(isVisible);
+      for (const node of root.dataFolder.getChildrenByType(VisualNode))
+        node.setVisible(isVisible);
+
       let visibleCount = 0;
-      for (const node of root.dataFolder.children)
-        if (node instanceof VisualNode && node.isVisible())
+      for (const node of root.dataFolder.getChildrenByType(VisualNode))
+        if (node.isVisible())
           visibleCount++;
       expect(visibleCount).toBe(isVisible ? 4 : 0);
     }
@@ -200,11 +194,10 @@ describe('Hierarcy', () =>
       // Set all visible
       let expectedVisibleCount = 0;
       for (const target of root.targetFolder.getChildrenByType(TargetNode))
-      {
         for (const node of root.dataFolder.getChildrenByType(VisualNode))
           if (node.setVisible(true, target))
             expectedVisibleCount++;
-      }
+
       expect(expectedVisibleCount).toBeGreaterThan(0);
 
       if (testType === 0)
@@ -214,10 +207,9 @@ describe('Hierarcy', () =>
       {
         // Set all invisible
         for (const target of root.targetFolder.getChildrenByType(TargetNode))
-        {
           for (const node of root.dataFolder.getChildrenByType(VisualNode))
             node.setVisible(false, target);
-        }
+
         expectedVisibleCount = 0;
       }
       else if (testType === 2)
@@ -244,16 +236,46 @@ describe('Hierarcy', () =>
 
       let isVisibleCount = 0;
       for (const target of root.getDescendantsByType(TargetNode))
-      {
         for (const node of root.getDescendantsByType(VisualNode))
           if (node.isVisible(target))
             isVisibleCount++;
-      }
+
       expect(expectedVisibleCount).toBe(viewsInNodeCount);
       expect(expectedVisibleCount).toBe(viewsInTargetCount);
       expect(expectedVisibleCount).toBe(isVisibleCount);
     }
   }
 
+
+  function renderStyle(): void
+  {
+    const root = RootCreator.createThreeRoot();
+
+    expect(root.targetFolder).not.toBeNull();
+    expect(root.dataFolder).not.toBeNull();
+    if (root.targetFolder == null)
+      return;
+    if (root.dataFolder == null)
+      return;
+
+    let styles: BaseRenderStyle[] = [];
+    for (const isVisible of [true, false])
+    {
+      for (const target of root.targetFolder.getChildrenByType(TargetNode))
+        for (const node of root.dataFolder.getChildrenByType(VisualNode))
+        {
+          node.setVisible(isVisible, target);
+          const style = node.getRenderStyle(target.targetId);
+          expect(style).not.toBeNull();
+          if (!style)
+            continue;
+
+          for (let i = 0; i < styles.length; i++)
+            expect(style).not.toBe(styles[i]);
+
+          styles.push(style);
+        }
+    }
+  }
 });
 
