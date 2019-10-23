@@ -16,7 +16,6 @@ import { DataFolder } from "./DataFolder";
 import { BaseNode } from "./BaseNode";
 import { TargetNode } from "./TargetNode";
 import { TargetIdAccessor } from "../Interfaces/TargetIdAccessor";
-import { TargetId } from "../PrimitivClasses/TargetId";
 
 export class RootNode extends BaseNode
 {
@@ -48,19 +47,12 @@ export class RootNode extends BaseNode
   // OVERRIDES of BaseNode
   //==================================================
 
+  public /*override*/ get typeName(): string { return "Root" }
+
   public /*override*/ get activeTargetIdAccessor(): TargetIdAccessor | null
   {
     const targetNode = this.activeTarget;
     return targetNode as TargetIdAccessor;
-  }
-
-  public /*override*/ get activeTarget(): TargetNode | null
-  {
-    const targetFolder = this.targetFolder;
-    if (!targetFolder)
-      return null;
-    const targetNode = targetFolder.getActiveDescendantByType(TargetNode);
-    return targetNode;
   }
 
   protected /*override*/ initializeCore(): void
@@ -68,5 +60,18 @@ export class RootNode extends BaseNode
     super.initializeCore();
     this.addChild(new TargetFolder());
     this.addChild(new DataFolder());
+  }
+
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
+
+  public get activeTarget(): TargetNode | null
+  {
+    const targetFolder = this.targetFolder;
+    if (!targetFolder)
+      return null;
+    const targetNode = targetFolder.getActiveDescendantByType(TargetNode);
+    return targetNode;
   }
 }

@@ -27,4 +27,10 @@ export class FolderNode extends VisualNode
 
   public /*override*/ get className(): string { return FolderNode.name; }
   public /*override*/ isA(className: string): boolean { return className === FolderNode.name || super.isA(className); }
+
+  //==================================================
+  // OVERRIDES of BaseNode
+  //==================================================
+
+  public /*override*/ get typeName(): string { return "Folder" }
 }

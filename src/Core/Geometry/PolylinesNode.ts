@@ -51,6 +51,8 @@ export class PolylinesNode extends VisualNode
   // OVERRIDES of VisualNode
   //==================================================
 
+  public /*override*/ get typeName(): string { return "Polylines" }
+
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
     return new PolylinesRenderStyle(targetId);

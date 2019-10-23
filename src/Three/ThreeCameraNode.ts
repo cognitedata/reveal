@@ -28,7 +28,7 @@ export class ThreeCameraNode extends CameraNode
 
   public get camera(): THREE.Camera
   {
-    if (this._camera == null)
+    if (!this._camera)
     {
       this._camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
       this._camera.position.z = 50;
@@ -37,6 +37,8 @@ export class ThreeCameraNode extends CameraNode
     }
     return this._camera;
   }
+
+  public set camera(value: THREE.Camera)  { this._camera = value; }
 
   //==================================================
   // CONSTRUCTORS

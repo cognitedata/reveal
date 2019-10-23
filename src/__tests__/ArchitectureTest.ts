@@ -6,6 +6,7 @@ import { DataFolder } from "../Core/Nodes/DataFolder";
 import { isInstanceOf } from "../Core/PrimitivClasses/ClassT";
 import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
 import { StubTargetNode } from "./StubModule/StubTargetNode";
+import { Colors } from "../Core/PrimitivClasses/Colors";
 
 describe('Hierarcy', () =>
 {

@@ -18,6 +18,7 @@ import { ViewFactory } from "../Core/Views/ViewFactory";
 import { ThreeTargetNode } from "./ThreeTargetNode";
 import { RootNode } from "../Core/Nodes/RootNode";
 import { ThreeRootNode } from "./ThreeRootNode";
+import { basename } from "path";
 
 export class ThreeModule extends BaseModule
 {

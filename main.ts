@@ -1,6 +1,7 @@
 import { ThreeModule } from './src/Three/ThreeModule';
 import { PolylinesNode } from './src/Core/Geometry/PolylinesNode';
 import { Polylines } from './src/Core/Geometry/Polylines';
+import { ThreeTargetNode } from './src/Three/ThreeTargetNode';
 
 main();
 

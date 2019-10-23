@@ -18,9 +18,11 @@ export class NodeEventArgs
   //==================================================
 
   public static readonly nodeName: symbol = Symbol("nodeName");
-  public static readonly nodeVisible: symbol = Symbol("nodeVisible");
   public static readonly nodeColor: symbol = Symbol("nodeColor");
+  public static readonly visible: symbol = Symbol("visible");
+  public static readonly active: symbol = Symbol("active");
   public static readonly childDeleted: symbol = Symbol("childDeleted");
+  public static readonly childAdded: symbol = Symbol("childAdded");
   public static readonly drawStyle: symbol = Symbol("drawStyle");
 
   //==================================================

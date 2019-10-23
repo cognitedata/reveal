@@ -42,7 +42,9 @@ export class StubTargetNode extends TargetNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  public initializeCore()
+  public /*override*/ get typeName(): string { return "Stub target" }
+
+  public /*override*/ initializeCore()
   {
     super.initializeCore();
     this.isInitialized = true;

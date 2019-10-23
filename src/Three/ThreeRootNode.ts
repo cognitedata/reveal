@@ -30,7 +30,7 @@ export class ThreeRootNode extends RootNode
   public /*override*/ isA(className: string): boolean { return className === ThreeRootNode.name || super.isA(className); }
 
   //==================================================
-  // OVERRIDES of VisualNode
+  // OVERRIDES of BaseNode
   //==================================================
 
   protected /*override*/ initializeCore(): void

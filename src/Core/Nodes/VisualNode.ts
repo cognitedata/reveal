@@ -92,7 +92,7 @@ export abstract class VisualNode extends BaseNode
     if (!target)
       return;
     if (this.setVisible(visible, target))
-      this.notify(new NodeEventArgs(NodeEventArgs.nodeVisible))
+      this.notify(new NodeEventArgs(NodeEventArgs.visible))
   }
 
   public removeAllViews(): void

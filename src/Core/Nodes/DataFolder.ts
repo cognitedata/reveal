@@ -19,11 +19,7 @@ export class DataFolder extends VisualNode
   // CONSTRUCTORS
   //==================================================
 
-  public constructor()
-  {
-    super();
-    this.name = "Data folder";
-  }
+  public constructor() { super(); }
 
   //==================================================
   // OVERRIDES of Identifiable
@@ -32,5 +28,11 @@ export class DataFolder extends VisualNode
   public /*override*/ get className(): string { return DataFolder.name; }
   public /*override*/ isA(className: string): boolean { return className === DataFolder.name || super.isA(className); }
 
+  //==================================================
+  // OVERRIDES of BaseNode
+  //==================================================
 
+  public /*override*/ get typeName(): string { return "Data" }
+  public /*override*/ get canChangeName(): boolean { return false; }
+  public /*override*/ get canChangeColor(): boolean { return false; }
 }

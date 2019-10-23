@@ -6,6 +6,7 @@ import { BaseView } from "../Views/BaseView";
 import { VisualNode } from "./VisualNode";
 import { BaseNode } from "./BaseNode";
 import { CameraNode } from "./CameraNode";
+import { Colors } from "../PrimitivClasses/Colors";
 
 export abstract class TargetNode extends BaseNode implements Target
 {
@@ -13,7 +14,11 @@ export abstract class TargetNode extends BaseNode implements Target
   // CONSTRUCTORS
   //==================================================
 
-  protected constructor() { super(); }
+  protected constructor()
+  {
+    super();
+    this.color = Colors.white;
+  }
 
   //==================================================
   // FIELDS
@@ -27,15 +32,14 @@ export abstract class TargetNode extends BaseNode implements Target
 
   public get viewsShownHere(): ViewList { return this._viewsShownHere; }
   public get targetId(): TargetId { return new TargetId(this.className, this.uniqueId); }
-  public get cameraNode(): CameraNode
+  public getActiveCameraNode(): CameraNode
   {
-    const camera = this.getChildByType(CameraNode);
+    const camera = this.getActiveChildByType(CameraNode);
     if (!camera)
       throw Error("Can not find the camara");
-      
+
     return camera as CameraNode;
   }
-
 
   //==================================================
   // OVERRIDES of Identifiable
@@ -49,7 +53,8 @@ export abstract class TargetNode extends BaseNode implements Target
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*virtual*/ get canBeActive() { return true; }
+  public /*override*/ get typeName(): string { return "Target" }
+  public /*override*/ get canBeActive(): boolean { return true; }
 
   //==================================================
   // IMPLEMETATION of Target

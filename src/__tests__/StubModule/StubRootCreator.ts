@@ -19,10 +19,6 @@ export class StubRootCreator
     {
       const target = new StubTargetNode();
       root.targetFolder.addChild(target);
-      let i = 0;
-      for (const child of root.targetFolder.children)
-        child.name = "Target " + i++;
-
       target.initialize();
     }
     // Create some data
@@ -32,7 +28,6 @@ export class StubRootCreator
       {
         const node = new PolylinesNode();
         node.data = Polylines.createByRandom(10, 10);
-        node.name = "Polylines " + i;
         root.dataFolder.addChild(node);
       }
     }

@@ -12,9 +12,6 @@
 //=====================================================================================
 
 import { VisualNode } from "./VisualNode";
-import { TargetNode } from "./TargetNode";
-import { BaseNode } from "./BaseNode";
-import { TargetIdAccessor } from "../Interfaces/TargetIdAccessor";
 
 export class TargetFolder extends VisualNode
 {
@@ -22,11 +19,7 @@ export class TargetFolder extends VisualNode
   // CONSTRUCTORS
   //==================================================
 
-  public constructor()
-  {
-    super();
-    this.name = "Target folder";
-  }
+  public constructor() { super(); }
 
   //==================================================
   // OVERRIDES of Identifiable
@@ -34,4 +27,12 @@ export class TargetFolder extends VisualNode
 
   public /*override*/ get className(): string { return TargetFolder.name; }
   public /*override*/ isA(className: string): boolean { return className === TargetFolder.name || super.isA(className); }
+
+  //==================================================
+  // OVERRIDES of BaseNode
+  //==================================================
+
+  public /*override*/ get typeName(): string { return "Targets" }
+  public /*override*/ get canChangeName(): boolean { return false; }
+  public /*override*/ get canChangeColor(): boolean { return false; }
 }

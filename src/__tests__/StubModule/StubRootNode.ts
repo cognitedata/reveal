@@ -30,8 +30,10 @@ export class StubRootNode extends RootNode
   public /*override*/ isA(className: string): boolean { return className === StubRootNode.name || super.isA(className); }
 
   //==================================================
-  // OVERRIDES of VisualNode
+  // OVERRIDES of BaseNode
   //==================================================
+
+  public /*override*/ get typeName(): string { return "Stub root" }
 
   protected /*override*/ initializeCore(): void
   {

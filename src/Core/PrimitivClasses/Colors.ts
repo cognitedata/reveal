@@ -14,11 +14,22 @@
 
 import * as Color from 'color'
 
+const MaxByte = 255;
+
 export class Colors
 {
   //==================================================
   // FIELDS
   //==================================================
+
+  public static get white(): Color { return Color.rgb(MaxByte, MaxByte, MaxByte) };
+  public static get black(): Color { return Color.rgb(0, 0, 0) };
+  public static get red(): Color { return Color.rgb(MaxByte, 0, 0) };
+  public static get green(): Color { return Color.rgb(0, MaxByte, 0) };
+  public static get blue(): Color { return Color.rgb(0, 0, MaxByte) };
+  public static get yellow(): Color { return Color.rgb(MaxByte, MaxByte, 0) };
+  public static get cyan(): Color { return Color.rgb(0, MaxByte, MaxByte) };
+  public static get magenta(): Color { return Color.rgb(MaxByte, 0, MaxByte) };
 
   private static _index: number = 0;
   private static _colors: Color[] | null = null;
@@ -29,10 +40,9 @@ export class Colors
 
   private static get colors(): Color[]
   {
-    let colors = this._colors;
-    if (!colors)
-      colors = Colors._colors = Colors.createSomeColors();
-    return colors;
+    if (!Colors._colors)
+      Colors._colors = Colors.createDifferentColors(50);
+    return Colors._colors;
   }
 
   public static get nextColor(): Color
@@ -53,18 +63,21 @@ export class Colors
     return colors[i];
   }
 
-  private static createSomeColors(): Color[]
+  private static createDifferentColors(count: number): Color[]
   {
-    let hue = 0.5;
+    let fraction = 0.5;
     const result: Color[] = [];
     const goldenRatioConjugate = 0.618033988749895;
 
-    for (let i = 0; i < 40; i++)
+    for (let i = 0; i < count; i++)
     {
-      hue += goldenRatioConjugate;
-      hue %= 1;
-      const color = Color.hsv(hue * 255, 255, 200);
-      result.push(color);
+      fraction += goldenRatioConjugate;
+      fraction %= 1;
+
+      const h = fraction * MaxByte;
+      const s = (i % 2) ? MaxByte : MaxByte * 0.8;
+      const v = MaxByte * 0.95;
+      result.push(Color.hsv(h, s, v));
     }
     return result;
   }

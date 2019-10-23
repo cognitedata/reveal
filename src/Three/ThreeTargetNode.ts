@@ -39,13 +39,24 @@ export class ThreeTargetNode extends TargetNode
     return this._scene;
   }
 
+  public get activeCameraNode(): ThreeCameraNode { return super.getActiveCameraNode() as ThreeCameraNode };
+
   public get activeCamera(): THREE.Camera
   {
-    const camera = this.getActiveChildByType(ThreeCameraNode);
-    if (!camera)
+    const cameraNode = this.activeCameraNode;
+    if (!cameraNode)
       throw Error("The camera is not set");
 
-    return camera.camera;
+    return cameraNode.camera;
+  }
+
+  public set activeCamera(value: THREE.Camera)
+  {
+    const cameraNode = this.activeCameraNode;
+    if (!cameraNode)
+      throw Error("The camera is not set");
+
+    cameraNode.camera = value;
   }
 
   private get renderer(): THREE.WebGLRenderer
@@ -63,8 +74,9 @@ export class ThreeTargetNode extends TargetNode
   // CONSTRUCTORS
   //==================================================
 
-  public constructor() { 
-    super(); 
+  public constructor()
+  {
+    super();
     this.color = color.rgb(0, 0, 0);
   }
 
@@ -79,13 +91,9 @@ export class ThreeTargetNode extends TargetNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  //==================================================
-  // OVERRIDES of BaseNode
-  //==================================================
+  public /*override*/ get canBeActive(): boolean { return true; }
 
-  public /*virtual*/ get canBeActive() { return true; }
-
- public initializeCore()
+  public /*override*/  initializeCore()
   {
     super.initializeCore();
 

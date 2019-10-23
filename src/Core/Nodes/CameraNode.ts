@@ -32,5 +32,7 @@ export abstract class CameraNode extends BaseNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*virtual*/ get canBeActive() { return true; }
+  public /*override*/ get canBeActive(): boolean { return true; }
+  public /*override*/ get canChangeColor(): boolean { return false; }
+  public /*override*/ get typeName(): string { return "Camera" }
 }

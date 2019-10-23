@@ -21,6 +21,7 @@ import { TargetIdAccessor } from "../Interfaces/TargetIdAccessor";
 import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
 import * as color from 'color'
 import { ColorType } from "../Enums/ColorType";
+import { Colors } from "../PrimitivClasses/Colors";
 
 export abstract class BaseNode extends Identifiable
 {
@@ -34,15 +35,17 @@ export abstract class BaseNode extends Identifiable
   // FIELDS
   //==================================================
 
-  private _color: color = color.rgb(255, 255, 255);
-  private _name: string = "";
+  private _color: color | undefined = undefined;
+  private _name: string | undefined = undefined;
 
   private _isActive: boolean = false;
+  private _isInitialized: boolean = false;
+
   private _uniqueId: UniqueId = UniqueId.new();
   private _children: BaseNode[] = [];
   private _parent: BaseNode | null = null;
   private _drawStyles: BaseRenderStyle[] = [];
-
+  
   //==================================================
   // PROPERTIES
   //==================================================
@@ -57,23 +60,27 @@ export abstract class BaseNode extends Identifiable
 
   public /*override*/ get className(): string { return BaseNode.name }
   public /*override*/ isA(className: string): boolean { return className === BaseNode.name || super.isA(className); }
-  public /*override*/ toString(): string { return `${this.name}, className: ${this.className}, id: ${this.uniqueId}${this.isActive ? " (Active)" : ""}`; }
+  public /*override*/ toString(): string 
+  {
+    return `${this.name}, typeName: ${this.typeName}, className: ${this.className}, color: ${this.color}, id: ${this.uniqueId} ${this.isActive ? " (Active)" : ""}`;
+  }
 
   //==================================================
   // VIRTUAL METHODS
   //==================================================
 
-  public /*virtual*/ get name(): string { return this._name; }
+  public abstract get typeName(): string;
   public /*virtual*/ set name(value: string) { this._name = value; }
-  public /*virtual*/ get canChangeName() { return true; }
+  public /*virtual*/ get name(): string { if (this._name === undefined) this._name = this.generateNewName(); return this._name; }
+  public /*virtual*/ get canChangeName(): boolean { return true; }
 
-  public /*virtual*/ get color(): color { return this._color; }
+  public /*virtual*/ get color(): color { if (this._color === undefined) this._color = this.generateNewColor(); return this._color; }
   public /*virtual*/ set color(value: color) { this._color = value; }
   public /*virtual*/ get canChangeColor() { return true; }
 
   public /*virtual*/ get isActive(): boolean { return this._isActive; }
   public /*virtual*/ set isActive(value: boolean) { this._isActive = value; }
-  public /*virtual*/ get canBeActive() { return false; }
+  public /*virtual*/ get canBeActive(): boolean { return false; }
 
   protected /*virtual*/ initializeCore(): void { }
   protected /*virtual*/ notifyCore(args: NodeEventArgs): void { }
@@ -280,7 +287,10 @@ export abstract class BaseNode extends Identifiable
 
   public initialize(): void
   {
+    if (this._isInitialized)
+      return; // This should be done once
     this.initializeCore();
+    this._isInitialized = true;
   }
 
   public initializeRecursive(): void
@@ -292,17 +302,50 @@ export abstract class BaseNode extends Identifiable
 
   public removeInteractive(): void
   {
+    // To be called when a node is removed
+    // It is not finished, because the children it not taken properly casr of
     this.removeInteractiveCore();
     const parent = this.parent
     this.remove();
     parent!.notify(new NodeEventArgs(NodeEventArgs.childDeleted));
   }
 
+  public setActiveInteractive(): void
+  {
+    // To be called when a object should be active
+    if (this.isActive)
+      return;
+
+    if (!this.canBeActive)
+      return;
+
+    if (this.parent)
+    {
+      // Turn the others off
+      for (const child of this.parent.children)
+      {
+        if (child === this)
+          continue;
+        if (child.className !== this.className)
+          continue;
+        if (!child.canBeActive)
+          return;
+        if (!child.isActive)
+          continue;
+
+        child.isActive = false;
+        child.notify(new NodeEventArgs(NodeEventArgs.active));
+      }
+    }
+    this.isActive = true;
+    this.notify(new NodeEventArgs(NodeEventArgs.active));
+  }
+
   //==================================================
   // INSTANCE METHODS: Draw styles
   //==================================================
 
-  public getRenderStyle(targetId?: TargetId | null): BaseRenderStyle | null 
+  public getRenderStyle(targetId?: TargetId | null): BaseRenderStyle | null
   {
     const root = this.drawStyleRoot;
     if (root != null && root !== this)
@@ -363,6 +406,29 @@ export abstract class BaseNode extends Identifiable
     if (style)
       this.verifyRenderStyle(style);
     return style;
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Some helpers
+  //==================================================
+
+  protected generateNewColor(): color
+  {
+    return this.canChangeColor ? Colors.nextColor : Colors.white;
+  }
+
+  protected generateNewName(): string
+  {
+    let result = this.typeName;
+    if (!this.canChangeName)
+      return result
+
+    const childIndex = this.childIndex;
+    if (childIndex == undefined)
+      return result;
+
+    result += " " + (childIndex + 1);
+    return result
   }
 
   //==================================================
