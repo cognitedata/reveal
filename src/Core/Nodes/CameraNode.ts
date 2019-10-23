@@ -11,42 +11,26 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { RootNode } from "../../Core/Nodes/RootNode";
-import { TestTargetNode } from "./TestTargetNode";
+import { BaseNode } from "./BaseNode";
 
-export class TestRootNode extends RootNode
+export abstract class CameraNode extends BaseNode
 {
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor() { super(); }
+  protected constructor() { super(); }
 
   //==================================================
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return TestRootNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === TestRootNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return CameraNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === CameraNode.name || super.isA(className); }
 
   //==================================================
-  // OVERRIDES of VisualNode
+  // OVERRIDES of BaseNode
   //==================================================
 
-  protected /*override*/ initializeCore(): void
-  {
-    super.initializeCore();
-
-    const target = new TestTargetNode();
-    target.isActive = true;
-
-    const targetFolder = this.targetFolder;
-    if (!targetFolder)
-      throw Error("targetFolder is not added");
-
-    targetFolder.addChild(target)
-
-    if (!this.activeTargetIdAccessor)
-      throw Error("target is not added properly");
-  }
+  public /*virtual*/ get canBeActive() { return true; }
 }

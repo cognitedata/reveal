@@ -5,6 +5,7 @@ import { ViewList } from "../Views/ViewList";
 import { BaseView } from "../Views/BaseView";
 import { VisualNode } from "./VisualNode";
 import { BaseNode } from "./BaseNode";
+import { CameraNode } from "./CameraNode";
 
 export abstract class TargetNode extends BaseNode implements Target
 {
@@ -26,6 +27,15 @@ export abstract class TargetNode extends BaseNode implements Target
 
   public get viewsShownHere(): ViewList { return this._viewsShownHere; }
   public get targetId(): TargetId { return new TargetId(this.className, this.uniqueId); }
+  public get cameraNode(): CameraNode
+  {
+    const camera = this.getChildByType(CameraNode);
+    if (!camera)
+      throw Error("Can not find the camara");
+      
+    return camera as CameraNode;
+  }
+
 
   //==================================================
   // OVERRIDES of Identifiable
@@ -34,6 +44,12 @@ export abstract class TargetNode extends BaseNode implements Target
   public /*override*/ get className(): string { return TargetNode.name; }
   public /*override*/ isA(className: string): boolean { return className === TargetNode.name || super.isA(className); }
   public /*override*/ toString(): string { return super.toString() + `, ViewsShownHere: ${this.viewsShownHere.count}`; }
+
+  //==================================================
+  // OVERRIDES of BaseNode
+  //==================================================
+
+  public /*virtual*/ get canBeActive() { return true; }
 
   //==================================================
   // IMPLEMETATION of Target
@@ -144,7 +160,7 @@ export abstract class TargetNode extends BaseNode implements Target
       view.dispose();
       const node = view.getNode();
       if (node instanceof VisualNode)
-        node.views.remove(view); 
+        node.views.remove(view);
       view.detach();
     }
     this._viewsShownHere.clear();

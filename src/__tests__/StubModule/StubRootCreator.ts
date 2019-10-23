@@ -1,15 +1,15 @@
 import { RootNode } from "../../Core/Nodes/RootNode";
-import { TestModule } from "./TestModule";
-import { TestTargetNode } from "./TestTargetNode";
+import { StubModule } from "./StubModule";
+import { StubTargetNode } from "./StubTargetNode";
 import { PolylinesNode } from "../../Core/Geometry/PolylinesNode";
 import { Polylines } from "../../Core/Geometry/Polylines";
 
-export class RootCreator
+export class StubRootCreator
 {
   public static createTestRoot(): RootNode 
   {
     // Create the module
-    const module = new TestModule();
+    const module = new StubModule();
     module.install();
 
     const root = module.createRoot();
@@ -17,11 +17,13 @@ export class RootCreator
     // Create the viewers
     if (root.targetFolder)
     {
-      const target = new TestTargetNode();
+      const target = new StubTargetNode();
       root.targetFolder.addChild(target);
       let i = 0;
       for (const child of root.targetFolder.children)
         child.name = "Target " + i++;
+
+      target.initialize();
     }
     // Create some data
     if (root.dataFolder)

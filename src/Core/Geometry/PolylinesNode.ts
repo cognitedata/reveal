@@ -16,6 +16,7 @@ import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
 import { TargetId } from "../PrimitivClasses/TargetId";
 import { Polylines } from "./Polylines";
 import { PolylinesRenderStyle } from "./PolylinesRenderStyle";
+import { ColorType } from "../Enums/ColorType";
 
 export class PolylinesNode extends VisualNode
 {
@@ -53,5 +54,27 @@ export class PolylinesNode extends VisualNode
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
     return new PolylinesRenderStyle(targetId);
+  }
+
+  public /*override*/ verifyRenderStyle(style: BaseRenderStyle)
+  {
+    if (!(style instanceof PolylinesRenderStyle))
+      return;
+
+    if (!this.supportsColorType(style.colorType))
+      style.colorType = ColorType.NodeColor;
+  }
+
+  public /*override*/ supportsColorType(colorType: ColorType): boolean
+  {
+    switch (colorType)
+    {
+      case ColorType.DifferentColor:
+      case ColorType.NodeColor:
+        return true;
+
+      default:
+        return false;
+    }
   }
 }

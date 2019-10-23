@@ -15,12 +15,12 @@
 import { BaseModule } from "../../Core/Module/BaseModule";
 import { ViewFactory } from "../../Core/Views/ViewFactory";
 import { PolylinesNode } from "../../Core/Geometry/PolylinesNode";
-import { TestPolylinesView } from "./TestPolylinesView";
-import { TestTargetNode } from "./TestTargetNode";
+import { StubPolylinesView } from "./StubPolylinesView";
+import { StubTargetNode } from "./StubTargetNode";
 import { RootNode } from "../../Core/Nodes/RootNode";
-import { TestRootNode } from "./TestRootNode";
+import { StubRootNode } from "./StubRootNode";
 
-export class TestModule extends BaseModule
+export class StubModule extends BaseModule
 {
   //==================================================
   // OVERRIDES of BaseModule
@@ -28,12 +28,12 @@ export class TestModule extends BaseModule
 
   protected /*override*/ registerViewsCore(factory: ViewFactory): void
   {
-    factory.register(PolylinesNode.name, TestPolylinesView, TestTargetNode.name);
+    factory.register(PolylinesNode.name, StubPolylinesView, StubTargetNode.name);
   }
 
   protected /*override*/ createRootCore(): RootNode
   {
-    return new TestRootNode();
+    return new StubRootNode();
   }
 }
 

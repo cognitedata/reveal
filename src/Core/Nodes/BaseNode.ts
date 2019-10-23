@@ -19,6 +19,8 @@ import { RenderStyleResolution } from "../Enums/RenderStyleResolution";
 import { NodeEventArgs } from "../Views/NodeEventArgs";
 import { TargetIdAccessor } from "../Interfaces/TargetIdAccessor";
 import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
+import * as color from 'color'
+import { ColorType } from "../Enums/ColorType";
 
 export abstract class BaseNode extends Identifiable
 {
@@ -32,7 +34,9 @@ export abstract class BaseNode extends Identifiable
   // FIELDS
   //==================================================
 
+  private _color: color = color.rgb(255, 255, 255);
   private _name: string = "";
+
   private _isActive: boolean = false;
   private _uniqueId: UniqueId = UniqueId.new();
   private _children: BaseNode[] = [];
@@ -61,6 +65,11 @@ export abstract class BaseNode extends Identifiable
 
   public /*virtual*/ get name(): string { return this._name; }
   public /*virtual*/ set name(value: string) { this._name = value; }
+  public /*virtual*/ get canChangeName() { return true; }
+
+  public /*virtual*/ get color(): color { return this._color; }
+  public /*virtual*/ set color(value: color) { this._color = value; }
+  public /*virtual*/ get canChangeColor() { return true; }
 
   public /*virtual*/ get isActive(): boolean { return this._isActive; }
   public /*virtual*/ set isActive(value: boolean) { this._isActive = value; }
@@ -85,6 +94,7 @@ export abstract class BaseNode extends Identifiable
   public /*virtual*/ verifyRenderStyle(style: BaseRenderStyle) { /* overide when validating the drawstyle*/ }
   public /*virtual*/ get drawStyleResolution(): RenderStyleResolution { return RenderStyleResolution.Unique; }
   public /*virtual*/ get drawStyleRoot(): BaseNode | null { return null; } // To be overridden
+  public /*override*/ supportsColorType(colorType: ColorType): boolean { return true; } // To be overridden
 
   //==================================================
   // PROPERTIES: Child-Parent relationship
@@ -98,7 +108,7 @@ export abstract class BaseNode extends Identifiable
   public get hasParent(): boolean { return this._parent != null; }
 
   //==================================================
-  // INSTANCE METHODS: Get a child
+  // INSTANCE METHODS: Get a child or children
   //==================================================
 
   public getChild(index: number): BaseNode { return this._children[index]; }
@@ -124,6 +134,16 @@ export abstract class BaseNode extends Identifiable
     for (const child of this.children)
     {
       if (isInstanceOf(child, classType))
+        return child as T;
+    }
+    return null;
+  }
+
+  public getActiveChildByType<T>(classType: Class<T>): T | null
+  {
+    for (const child of this.children)
+    {
+      if (child.isActive && isInstanceOf(child, classType))
         return child as T;
     }
     return null;
@@ -261,6 +281,13 @@ export abstract class BaseNode extends Identifiable
   public initialize(): void
   {
     this.initializeCore();
+  }
+
+  public initializeRecursive(): void
+  {
+    this.initialize();
+    for (const child of this.children)
+      child.initializeRecursive();
   }
 
   public removeInteractive(): void

@@ -1,11 +1,11 @@
 import { PolylinesNode } from "../Core/Geometry/PolylinesNode";
 import { TargetNode } from "../Core/Nodes/TargetNode";
 import { VisualNode } from "../Core/Nodes/VisualNode";
-import { RootCreator } from "./TestModule/RootCreator";
+import { StubRootCreator } from "./StubModule/StubRootCreator";
 import { DataFolder } from "../Core/Nodes/DataFolder";
 import { isInstanceOf } from "../Core/PrimitivClasses/ClassT";
 import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
-import { TestTargetNode } from "./TestModule/TestTargetNode";
+import { StubTargetNode } from "./StubModule/StubTargetNode";
 
 describe('Hierarcy', () =>
 {
@@ -18,7 +18,7 @@ describe('Hierarcy', () =>
 
   test('renderStyle', () => 
   {
-    const root = RootCreator.createTestRoot();
+    const root = StubRootCreator.createTestRoot();
     expect(root.targetFolder).not.toBeNull();
     expect(root.dataFolder).not.toBeNull();
     if (root.targetFolder == null)
@@ -66,18 +66,18 @@ describe('Hierarcy', () =>
 
   function getDescendantsByType(): void
   {
-    const root = RootCreator.createTestRoot();
+    const root = StubRootCreator.createTestRoot();
     root.debugHierarcy();
 
     for (const descendant of root.getDescendantsByType(PolylinesNode))
       expect(PolylinesNode.name).toBe(descendant.className);
-    for (const descendant of root.getDescendantsByType(TestTargetNode))
-      expect(TestTargetNode.name).toBe(descendant.className);
+    for (const descendant of root.getDescendantsByType(StubTargetNode))
+      expect(StubTargetNode.name).toBe(descendant.className);
   }
 
   function testHierarcy(): void
   {
-    const root = RootCreator.createTestRoot();;
+    const root = StubRootCreator.createTestRoot();;
     expect(root.targetFolder).not.toBeNull();
     expect(root.dataFolder).not.toBeNull();
     if (root.targetFolder == null)
@@ -170,7 +170,7 @@ describe('Hierarcy', () =>
 
   function isVisibleSetVisible(): void
   {
-    const root = RootCreator.createTestRoot();
+    const root = StubRootCreator.createTestRoot();
 
     expect(root.targetFolder).not.toBeNull();
     expect(root.dataFolder).not.toBeNull();
@@ -214,7 +214,7 @@ describe('Hierarcy', () =>
   {
     for (const testType of [0, 1, 2, 3]) 
     {
-      const root = RootCreator.createTestRoot();
+      const root = StubRootCreator.createTestRoot();
       if (!root.targetFolder)
         return;
       if (!root.dataFolder)
@@ -280,7 +280,5 @@ describe('Hierarcy', () =>
       expect(expectedVisibleCount).toBe(isVisibleCount);
     }
   }
-
-
 });
 

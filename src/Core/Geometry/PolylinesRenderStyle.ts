@@ -13,6 +13,7 @@
 
 import { TargetId } from "../PrimitivClasses/TargetId";
 import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
+import { ColorType } from "../Enums/ColorType";
 
 export class PolylinesRenderStyle extends BaseRenderStyle
 {
@@ -20,7 +21,8 @@ export class PolylinesRenderStyle extends BaseRenderStyle
   // FIELDS
   //==================================================
 
-  lineWidth: number = 1;
+  public lineWidth: number = 1;
+  public colorType: ColorType = ColorType.DifferentColor;
 
   //==================================================
   // CONSTRUCTORS

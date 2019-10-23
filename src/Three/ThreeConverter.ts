@@ -11,23 +11,17 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseView } from "../Core/Views/BaseView";
-import { ThreeTargetNode } from "./ThreeTargetNode";
+import { Vector3 } from "../Core/Geometry/Vector3";
 import * as THREE from 'three';
+import * as color from 'color'
 
-export abstract class BaseThreeView extends BaseView
+
+export class ThreeConverter
 {
   //==================================================
-  // CONSTRUCTORS
+  // STATIC METHODS
   //==================================================
 
-  public constructor() { super(); }
-
-  //==================================================
-  // PROPERTIES
-  //==================================================
-
-  protected get scene(): THREE.Scene { return this.target.scene; }
-  protected get camera(): THREE.Camera { return this.target.activeCamera; }
-  protected get target(): ThreeTargetNode { return super.getTarget() as ThreeTargetNode; }
+  public static toColor(value: color): THREE.Color { return new THREE.Color(value.red(), value.blue(), value.green()); }
+  public static toVector(value: Vector3): THREE.Vector3 { return new THREE.Vector3(value.x, value.y, value.z); }
 }

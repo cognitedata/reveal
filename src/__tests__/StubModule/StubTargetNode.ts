@@ -1,4 +1,3 @@
-
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
 // in October 2019. It is suited for flexible and customizable visualization of
@@ -12,13 +11,20 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseView } from "../../Core/Views/BaseView";
-import { PolylinesNode } from "../../Core/Geometry/PolylinesNode";
-import { PolylinesRenderStyle } from "../../Core/Geometry/PolylinesRenderStyle";
-import { TestTargetNode } from "./TestTargetNode";
+import { TargetNode } from "../../Core/Nodes/TargetNode";
 
-export class TestPolylinesView extends BaseView
+export class StubTargetNode extends TargetNode
 {
+  //==================================================
+  // FIELDS
+  //==================================================
+
+  public isInitialized = false;
+
+  //==================================================
+  // PROPERTIES
+  //==================================================
+
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -26,36 +32,19 @@ export class TestPolylinesView extends BaseView
   public constructor() { super(); }
 
   //==================================================
-  // PROPERTIES
+  // OVERRIDES of Identifiable
   //==================================================
 
-  protected get node(): PolylinesNode { return super.getNode() as PolylinesNode; }
-  protected get style(): PolylinesRenderStyle { return super.getStyle() as PolylinesRenderStyle; }
-  protected get target(): TestTargetNode { return super.getTarget() as TestTargetNode; }
+  public /*override*/ get className(): string { return StubTargetNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === StubTargetNode.name || super.isA(className); }
 
   //==================================================
-  // OVERRIDES of BaseView
+  // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ initialize(): void
+  public initializeCore()
   {
-    const node = this.node;
-    const style = this.style;
-    const target = this.target;
-
-    if (target.isInitialized)
-      throw Error("target is not initialized");
-
-    const polylines = node.data;
-    if (!polylines)
-      throw Error("polylines is missing in view");
-
-    let count = 0;
-    for (const polyline of polylines.list)
-      for (const point of polyline.list)
-        count++;
-
-    if (count === 0)
-      throw Error("No data in polylines");
+    super.initializeCore();
+    this.isInitialized = true;
   }
 }

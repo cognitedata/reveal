@@ -12,7 +12,10 @@
 //=====================================================================================
 
 import { TargetNode } from "../Core/Nodes/TargetNode";
+import { ThreeCameraNode as ThreeCameraNode } from "./ThreeCameraNode";
 import * as THREE from 'three';
+import * as color from 'color'
+import { ThreeConverter } from "./ThreeConverter";
 
 export class ThreeTargetNode extends TargetNode
 {
@@ -21,7 +24,6 @@ export class ThreeTargetNode extends TargetNode
   //==================================================
 
   private _scene: THREE.Scene | null = null;
-  private _camera: THREE.Camera | null = null;
   private _renderer: THREE.WebGLRenderer | null = null;
 
   //==================================================
@@ -32,28 +34,26 @@ export class ThreeTargetNode extends TargetNode
 
   public get scene(): THREE.Scene
   {
-    if (this._scene == null)
+    if (!this._scene)
       this._scene = new THREE.Scene();
     return this._scene;
   }
 
-  public get camera(): THREE.Camera
+  public get activeCamera(): THREE.Camera
   {
-    if (this._camera == null)
-    {
-      this._camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-      this._camera.position.z = 4;
-    }
-    return this._camera;
-  }
+    const camera = this.getActiveChildByType(ThreeCameraNode);
+    if (!camera)
+      throw Error("The camera is not set");
 
+    return camera.camera;
+  }
 
   private get renderer(): THREE.WebGLRenderer
   {
-    if (this._renderer == null)
+    if (!this._renderer)
     {
       this._renderer = new THREE.WebGLRenderer();
-      this._renderer.setClearColor("#000000");
+      this._renderer.setClearColor(ThreeConverter.toColor(this.color));
       this._renderer.setSize(window.innerWidth, window.innerHeight);
     }
     return this._renderer;
@@ -63,7 +63,10 @@ export class ThreeTargetNode extends TargetNode
   // CONSTRUCTORS
   //==================================================
 
-  public constructor() { super(); }
+  public constructor() { 
+    super(); 
+    this.color = color.rgb(0, 0, 0);
+  }
 
   //==================================================
   // OVERRIDES of Identifiable
@@ -76,15 +79,27 @@ export class ThreeTargetNode extends TargetNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  public initializeCore()
+  //==================================================
+  // OVERRIDES of BaseNode
+  //==================================================
+
+  public /*virtual*/ get canBeActive() { return true; }
+
+ public initializeCore()
   {
     super.initializeCore();
 
+    // Add a ddefault active camera
+    const cameraNode = new ThreeCameraNode();
+    cameraNode.isActive = true;
+    this.addChild(cameraNode);
+
+    // Start the rendering
     const renderer = this.renderer;
-    const camera = this.camera;
+    const camera = this.activeCamera;
     const scene = this.scene;
 
-    const render = function ()
+    const render = () =>
     {
       requestAnimationFrame(render);
       renderer.render(scene, camera);

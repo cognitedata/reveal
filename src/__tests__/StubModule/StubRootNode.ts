@@ -1,4 +1,3 @@
-
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
@@ -11,37 +10,43 @@
 // Put new code under the correct section, and make more sections if needed.
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
-import { v4 as uuid } from 'uuid';
 
-export class UniqueId
+import { RootNode } from "../../Core/Nodes/RootNode";
+import { StubTargetNode } from "./StubTargetNode";
+
+export class StubRootNode extends RootNode
 {
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(id: string) { this._id = id; }
-
-  public /*copy constructor*/ copy(): UniqueId { return new UniqueId(this._id); }
+  public constructor() { super(); }
 
   //==================================================
-  // FIELDS
+  // OVERRIDES of Identifiable
   //==================================================
 
-  private _id: string ;
-  public static empty = new UniqueId(""); 
+  public /*override*/ get className(): string { return StubRootNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === StubRootNode.name || super.isA(className); }
 
   //==================================================
-  // PROPERTIES
+  // OVERRIDES of VisualNode
   //==================================================
 
-  public static new(): UniqueId { return new UniqueId(uuid()); }
-  public get isEmpty(): boolean { return (!this._id || this._id === ""); }
-  public /*override*/ toString(): string { return `${this._id}`; }
+  protected /*override*/ initializeCore(): void
+  {
+    super.initializeCore();
 
-  //==================================================
-  // INSTANCE METHODS
-  //==================================================
+    const target = new StubTargetNode();
+    target.isActive = true;
 
-  public equals(other: UniqueId): boolean { return this._id === other._id; }
+    const targetFolder = this.targetFolder;
+    if (!targetFolder)
+      throw Error("targetFolder is not added");
+
+    targetFolder.addChild(target)
+
+    if (!this.activeTargetIdAccessor)
+      throw Error("target is not added properly");
+  }
 }
-

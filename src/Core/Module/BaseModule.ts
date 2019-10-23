@@ -20,8 +20,9 @@ export abstract class BaseModule
   // VIRTUAL METHODS: 
   //==================================================
 
-  protected /*virtual*/ registerViewsCore(factory: ViewFactory): void { }
   protected /*virtual*/ abstract createRootCore(): RootNode;
+  protected /*virtual*/ registerViewsCore(factory: ViewFactory): void { }
+  protected /*virtual*/ initializeCore(root: RootNode): void { }
 
   //==================================================
   // INSTANCE METHODS: 
@@ -33,10 +34,15 @@ export abstract class BaseModule
     this.registerViewsCore(factory);
   }
 
+  public initialize(root: RootNode): void
+  {
+    this.initializeCore(root);
+  }
+
   public createRoot(): RootNode
   {
     const root = this.createRootCore();
-    root.initialize();
+    root.initializeRecursive();
     return root;
   }
 }

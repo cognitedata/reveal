@@ -34,5 +34,14 @@ export class ThreeModule extends BaseModule
   {
     return new ThreeRootNode();
   }
+
+  protected /*override*/ initializeCore(root: RootNode): void
+  {
+    const target = root.activeTarget as ThreeTargetNode;
+    if (!target)
+      throw Error("No active target in the project");
+
+    document.body.appendChild(target.domElement);
+  }
 }
 

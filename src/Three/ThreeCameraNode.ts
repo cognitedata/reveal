@@ -11,19 +11,32 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { TargetNode } from "../../Core/Nodes/TargetNode";
+import { CameraNode } from "../Core/Nodes/CameraNode";
+import * as THREE from 'three';
 
-export class TestTargetNode extends TargetNode
+export class ThreeCameraNode extends CameraNode
 {
   //==================================================
   // FIELDS
   //==================================================
 
-  public isInitialized = false;
+  private _camera: THREE.Camera | null = null;
 
   //==================================================
   // PROPERTIES
   //==================================================
+
+  public get camera(): THREE.Camera
+  {
+    if (this._camera == null)
+    {
+      this._camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      this._camera.position.z = 50;
+      this._camera.position.x = 50;
+      this._camera.position.y = 50;
+    }
+    return this._camera;
+  }
 
   //==================================================
   // CONSTRUCTORS
@@ -35,16 +48,6 @@ export class TestTargetNode extends TargetNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return TestTargetNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === TestTargetNode.name || super.isA(className); }
-
-  //==================================================
-  // OVERRIDES of BaseNode
-  //==================================================
-
-  public initializeCore()
-  {
-    super.initializeCore();
-    this.isInitialized = true;
-  }
+  public /*override*/ get className(): string { return ThreeCameraNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === ThreeCameraNode.name || super.isA(className); }
 }
