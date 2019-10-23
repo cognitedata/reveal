@@ -1,10 +1,11 @@
 import { PolylinesNode } from "../Core/Geometry/PolylinesNode";
 import { TargetNode } from "../Core/Nodes/TargetNode";
 import { VisualNode } from "../Core/Nodes/VisualNode";
-import { RootCreator } from "./RootCreator";
+import { RootCreator } from "./TestModule/RootCreator";
 import { DataFolder } from "../Core/Nodes/DataFolder";
 import { isInstanceOf } from "../Core/PrimitivClasses/ClassT";
 import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
+import { TestTargetNode } from "./TestModule/TestTargetNode";
 
 describe('Hierarcy', () =>
 {
@@ -17,7 +18,7 @@ describe('Hierarcy', () =>
 
   test('renderStyle', () => 
   {
-    const root = RootCreator.createThreeRoot();
+    const root = RootCreator.createTestRoot();
     expect(root.targetFolder).not.toBeNull();
     expect(root.dataFolder).not.toBeNull();
     if (root.targetFolder == null)
@@ -39,7 +40,7 @@ describe('Hierarcy', () =>
 
           for (const other of styles)
             if (style === other)
-             expect(style).not.toBe(other);
+              expect(style).not.toBe(other);
 
           styles.push(style);
         }
@@ -65,18 +66,18 @@ describe('Hierarcy', () =>
 
   function getDescendantsByType(): void
   {
-    const root = RootCreator.createThreeRoot();
+    const root = RootCreator.createTestRoot();
     root.debugHierarcy();
 
     for (const descendant of root.getDescendantsByType(PolylinesNode))
       expect(PolylinesNode.name).toBe(descendant.className);
-    for (const descendant of root.getDescendantsByType(ThreeTargetNode))
-      expect(ThreeTargetNode.name).toBe(descendant.className);
+    for (const descendant of root.getDescendantsByType(TestTargetNode))
+      expect(TestTargetNode.name).toBe(descendant.className);
   }
 
   function testHierarcy(): void
   {
-    const root = RootCreator.createThreeRoot();;
+    const root = RootCreator.createTestRoot();;
     expect(root.targetFolder).not.toBeNull();
     expect(root.dataFolder).not.toBeNull();
     if (root.targetFolder == null)
@@ -169,7 +170,7 @@ describe('Hierarcy', () =>
 
   function isVisibleSetVisible(): void
   {
-    const root = RootCreator.createThreeRoot();
+    const root = RootCreator.createTestRoot();
 
     expect(root.targetFolder).not.toBeNull();
     expect(root.dataFolder).not.toBeNull();
@@ -213,7 +214,7 @@ describe('Hierarcy', () =>
   {
     for (const testType of [0, 1, 2, 3]) 
     {
-      const root = RootCreator.createThreeRoot();
+      const root = RootCreator.createTestRoot();
       if (!root.targetFolder)
         return;
       if (!root.dataFolder)

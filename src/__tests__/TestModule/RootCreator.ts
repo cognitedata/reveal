@@ -1,8 +1,8 @@
-import { RootNode } from "../Core/Nodes/RootNode";
-import { TestModule } from "./TestModule/TestModule";
-import { TestTargetNode } from "./TestModule/TestTargetNode";
-import { PolylinesNode } from "../Core/Geometry/PolylinesNode";
-import { Polylines } from "../Core/Geometry/Polylines";
+import { RootNode } from "../../Core/Nodes/RootNode";
+import { TestModule } from "./TestModule";
+import { TestTargetNode } from "./TestTargetNode";
+import { PolylinesNode } from "../../Core/Geometry/PolylinesNode";
+import { Polylines } from "../../Core/Geometry/Polylines";
 
 export class RootCreator
 {
