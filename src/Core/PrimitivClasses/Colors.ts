@@ -53,7 +53,7 @@ export class Colors
   }
 
   //==================================================
-  // STATIOC METHODS
+  // STATIC METHODS
   //==================================================
 
   public static getNextColor(i: number): Color
