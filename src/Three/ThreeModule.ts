@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { PolylinesView3 } from "../Example/PolylinesView3";
+import { PolylinesView3 } from "./PolylinesThreeView";
 import { PolylinesNode } from "../Example/PolylinesNode";
 import { BaseModule } from "../Architecture/BaseModule";
 import { ViewFactory } from "../Architecture/ViewFactory";

@@ -275,7 +275,7 @@ export abstract class BaseNode extends Identifiable
   // INSTANCE METHODS: Draw styles
   //==================================================
 
-  public getRenderStyle(targetId: TargetId | null): BaseRenderStyle | null 
+  public getRenderStyle(targetId?: TargetId | null): BaseRenderStyle | null 
   {
     const root = this.drawStyleRoot;
     if (root != null && root !== this)

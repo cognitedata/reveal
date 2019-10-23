@@ -21,6 +21,7 @@ export class NodeEventArgs
   public static readonly nodeVisible: symbol = Symbol("nodeVisible");
   public static readonly nodeColor: symbol = Symbol("nodeColor");
   public static readonly childDeleted: symbol = Symbol("childDeleted");
+  public static readonly drawStyle: symbol = Symbol("drawStyle");
 
   //==================================================
   // FIELDS
@@ -32,7 +33,7 @@ export class NodeEventArgs
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(changed?: symbol, fieldName?: string)
+  public constructor(changed: symbol, fieldName?: string)
   {
     if (changed === undefined)
       return;

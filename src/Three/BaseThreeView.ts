@@ -27,13 +27,8 @@ export class ThreeView extends BaseView
   // PROPERTIES
   //==================================================
 
-  protected get target(): ThreeTargetNode {
-    if (!super.getTarget()) {
-      throw "ERROR: Could not get target.";
-    }
-    return super.getTarget()! as ThreeTargetNode;
-  }
   protected get scene(): THREE.Scene { return this.target.scene; }
+  protected get target(): ThreeTargetNode { return super.getTarget() as ThreeTargetNode; }
 
   //==================================================
   // OVERRIDES of BaseView

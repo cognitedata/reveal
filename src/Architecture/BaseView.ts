@@ -45,15 +45,31 @@ export abstract class BaseView
   // INSTANCE METHODS: Getters
   //==================================================
 
-  public getNode(): BaseNode | null { return this._node; }
-  public getTarget(): TargetIdAccessor | null { return this._target; }
-  protected getStyle(): BaseRenderStyle | null
+  public getNode(): BaseNode
   {
     if (!this._node)
-      return null;
+      throw Error("The node is missing in the view");
+    return this._node;
+  }
+
+  public getTarget(): TargetIdAccessor 
+  {
     if (!this._target)
-      return this._node.getRenderStyle(TargetId.empty);
-    return this._node.getRenderStyle(this._target.targetId);
+      throw Error("The target is missing in the view");
+    return this._target;
+  }
+
+  protected getStyle(): BaseRenderStyle
+  {
+    let style: BaseRenderStyle | null = null;
+    if (!this.
+      )
+      style = this.getNode().getRenderStyle(TargetId.empty);
+    else
+      style = this.getNode().getRenderStyle(this._target.targetId);
+    if (!style)
+      throw Error("The style is missing in the view");
+    return style;
   }
 
   //==================================================

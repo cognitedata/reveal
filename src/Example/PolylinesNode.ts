@@ -37,6 +37,7 @@ export class PolylinesNode extends VisualNode
 
   public get data(): Polylines | null { return this._data; }
   public set data(value: Polylines | null) { this._data = value; }
+  public get renderStyle(): PolylinesRenderStyle | null { return this.getRenderStyle() as PolylinesRenderStyle; }
 
   //==================================================
   // OVERRIDES of Identifiable

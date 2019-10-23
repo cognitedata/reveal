@@ -1,4 +1,3 @@
-import { RootNode } from "../Nodes/RootNode";
 import { PolylinesNode } from "../Example/PolylinesNode";
 import { ThreeTargetNode } from "../Three/ThreeTargetNode";
 import { TargetNode } from "../Nodes/TargetNode";
@@ -7,9 +6,6 @@ import { RootCreator } from "./RootCreator";
 import { DataFolder } from "../Nodes/DataFolder";
 import { isInstanceOf } from "../Core/ClassT";
 import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
-import { tsConstructSignatureDeclaration } from "@babel/types";
-
-// tslint:disable: no-console
 
 describe('Hierarcy', () =>
 {
@@ -19,10 +15,10 @@ describe('Hierarcy', () =>
   test('Hierarcy', () => testHierarcy());
   test('isVisible/SetVisible', () => isVisibleSetVisible());
   test('count views', () => countView());
+
   test('renderStyle', () => 
   {
     const root = RootCreator.createThreeRoot();
-
     expect(root.targetFolder).not.toBeNull();
     expect(root.dataFolder).not.toBeNull();
     if (root.targetFolder == null)
