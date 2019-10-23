@@ -11,55 +11,42 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Vector3 } from "./Vector3";
-import { Random } from "../Core/PrimitivClasses/Random";
+import { RootNode } from "../../Core/Nodes/RootNode";
+import { TestTargetNode } from "./TestTargetNode";
 
-export class Points
+export class TestRootNode extends RootNode
 {
-  //==================================================
-  // FIELDS
-  //==================================================
-
-  public list: Vector3[] = [];
-
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor() { }
+  public constructor() { super(); }
 
-  public copy(): Points
+  //==================================================
+  // OVERRIDES of Identifiable
+  //==================================================
+
+  public /*override*/ get className(): string { return TestRootNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === TestRootNode.name || super.isA(className); }
+
+  //==================================================
+  // OVERRIDES of VisualNode
+  //==================================================
+
+  protected /*override*/ initializeCore(): void
   {
-    const result = new Points()
-    result.list = [...this.list]; // This syntax sucks!
-    return result;
+    super.initializeCore();
+
+    const target = new TestTargetNode();
+    target.isActive = true;
+
+    const targetFolder = this.targetFolder;
+    if (!targetFolder)
+      throw Error("targetFolder is not added");
+
+    targetFolder.addChild(target)
+
+    if (!this.activeTargetIdAccessor)
+      throw Error("target is not added properly");
   }
-
-  //==================================================
-  // INSTANCE METHODS: Operations
-  //==================================================
-
-  public add(point: Vector3): void
-  {
-    this.list.push(point);
-  }
-
-  //==================================================
-  // STATIC METHODS: 
-  //==================================================
-
-  public static createByRandom(pointCount: number): Points
-  {
-    const result = new Points();
-    for (let i = 0; i < pointCount; i++)
-    {
-      const x = Random.getFloat(0, 100);
-      const y = Random.getFloat(0, 100);
-      const z = Random.getFloat(0, 100);
-      const point = new Vector3(x, y, z);
-      result.add(point);
-    }
-    return result;
-  }
-
 }

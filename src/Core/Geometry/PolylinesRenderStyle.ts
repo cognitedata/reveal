@@ -11,26 +11,31 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseView } from "../Core/Views/BaseView";
-import { ThreeTargetNode } from "./ThreeTargetNode";
-import * as THREE from 'three';
+import { TargetId } from "../PrimitivClasses/TargetId";
+import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
 
-export abstract class BaseThreeView extends BaseView
+export class PolylinesRenderStyle extends BaseRenderStyle
 {
+  //==================================================
+  // FIELDS
+  //==================================================
+
+  lineWidth: number = 1;
+
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor() { super(); }
+  public constructor(targetId: TargetId) { super(targetId); }
 
-  //==================================================
-  // PROPERTIES
-  //==================================================
+  public /*copy constructor*/ copy(): BaseRenderStyle
+  {
+    const style = new PolylinesRenderStyle(this.targetId);
+    style.lineWidth = this.lineWidth;
+    return style;
+  }
 
-  protected get scene(): THREE.Scene { return this.target.scene; }
-  protected get target(): ThreeTargetNode { return super.getTarget() as ThreeTargetNode; }
-
-  //==================================================
-  // OVERRIDES of BaseView
-  //==================================================
 }
+
+
+

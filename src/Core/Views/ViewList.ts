@@ -66,7 +66,7 @@ export class ViewList
 
   public isOk(): boolean
   {
-    // Used unit unit testing
+    // Used in unit testing
     for (const view of this.list)
       if (!view.isOk())
       return false;

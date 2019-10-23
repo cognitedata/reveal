@@ -1,3 +1,4 @@
+
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
@@ -11,34 +12,28 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Vector3 } from "./Vector3";
-import { Random } from "../Core/PrimitivClasses/Random";
-import { Points } from "./Points";
+import { BaseModule } from "../../Core/Module/BaseModule";
+import { ViewFactory } from "../../Core/Views/ViewFactory";
+import { PolylinesNode } from "../../Core/Geometry/PolylinesNode";
+import { TestPolylinesView } from "./TestPolylinesView";
+import { TestTargetNode } from "./TestTargetNode";
+import { RootNode } from "../../Core/Nodes/RootNode";
+import { TestRootNode } from "./TestRootNode";
 
-export class Polyline extends Points
+export class TestModule extends BaseModule
 {
   //==================================================
-  // CONSTRUCTORS
+  // OVERRIDES of BaseModule
   //==================================================
 
-  public constructor() { super(); }
-
-  //==================================================
-  // STATIC METHODS: 
-  //==================================================
-
-  public static createByRandom(pointCount: number): Polyline
+  protected /*override*/ registerViewsCore(factory: ViewFactory): void
   {
-    const result = new Polyline();
-    for (let i = 0; i < pointCount; i++)
-    {
-      const x = Random.getFloat(0, 100);
-      const y = Random.getFloat(0, 100);
-      const z = Random.getFloat(0, 100);
-      const point = new Vector3(x, y, z);
-      result.add(point);
-    }
-    return result;
+    factory.register(PolylinesNode.name, TestPolylinesView, TestTargetNode.name);
   }
 
+  protected /*override*/ createRootCore(): RootNode
+  {
+    return new TestRootNode();
+  }
 }
+

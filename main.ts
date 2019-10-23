@@ -4,12 +4,11 @@ import { ThreeTargetNode } from './src/Three/ThreeTargetNode';
 import { Polylines } from './src/Example/Polylines';
 import { PolylinesNode } from './src/Example/PolylinesNode';
 
-console.log("ssssssssssssss");
 main();
-console.log("sssssssss       sssss  end");
 
-export function main() {
-    // Create the module
+export function main()
+{
+  // Create the module
   const module = new ThreeModule();
   module.install();
 

@@ -11,31 +11,40 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { TargetId } from "../Core/PrimitivClasses/TargetId";
-import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
+import { TargetNode } from "../../Core/Nodes/TargetNode";
 
-export class PolylinesRenderStyle extends BaseRenderStyle
+export class TestTargetNode extends TargetNode
 {
   //==================================================
   // FIELDS
   //==================================================
 
-  lineWidth: number = 1;
+  public isInitialized = false;
+
+  //==================================================
+  // PROPERTIES
+  //==================================================
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(targetId: TargetId) { super(targetId); }
+  public constructor() { super(); }
 
-  public /*copy constructor*/ copy(): BaseRenderStyle
+  //==================================================
+  // OVERRIDES of Identifiable
+  //==================================================
+
+  public /*override*/ get className(): string { return TestTargetNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === TestTargetNode.name || super.isA(className); }
+
+  //==================================================
+  // OVERRIDES of BaseNode
+  //==================================================
+
+  public initializeCore()
   {
-    const style = new PolylinesRenderStyle(this.targetId);
-    style.lineWidth = this.lineWidth;
-    return style;
+    super.initializeCore();
+    this.isInitialized = true;
   }
-
 }
-
-
-

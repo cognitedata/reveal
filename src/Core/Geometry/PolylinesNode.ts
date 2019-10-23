@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { VisualNode } from "../Core/Nodes/VisualNode";
-import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
-import { TargetId } from "../Core/PrimitivClasses/TargetId";
+import { VisualNode } from "../Nodes/VisualNode";
+import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
+import { TargetId } from "../PrimitivClasses/TargetId";
 import { Polylines } from "./Polylines";
 import { PolylinesRenderStyle } from "./PolylinesRenderStyle";
 

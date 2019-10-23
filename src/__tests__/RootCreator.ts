@@ -1,16 +1,15 @@
-
-import { ThreeModule } from "../Three/ThreeModule";
 import { RootNode } from "../Core/Nodes/RootNode";
-import { PolylinesNode } from "../Example/PolylinesNode";
-import { ThreeTargetNode } from "../Three/ThreeTargetNode";
-import { Polylines } from "../Example/Polylines";
+import { TestModule } from "./TestModule/TestModule";
+import { TestTargetNode } from "./TestModule/TestTargetNode";
+import { PolylinesNode } from "../Core/Geometry/PolylinesNode";
+import { Polylines } from "../Core/Geometry/Polylines";
 
 export class RootCreator
 {
-  public static createThreeRoot(): RootNode 
+  public static createTestRoot(): RootNode 
   {
     // Create the module
-    const module = new ThreeModule();
+    const module = new TestModule();
     module.install();
 
     const root = module.createRoot();
@@ -18,7 +17,7 @@ export class RootCreator
     // Create the viewers
     if (root.targetFolder)
     {
-      const target = new ThreeTargetNode();
+      const target = new TestTargetNode();
       root.targetFolder.addChild(target);
       let i = 0;
       for (const child of root.targetFolder.children)

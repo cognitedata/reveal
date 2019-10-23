@@ -135,7 +135,7 @@ export abstract class BaseView
 
   public isOk(): boolean
   {
-    // Used unit unit testing
+    // Used in unit testing
     if (!this.getNode())
       return false;
     if (!this.getTarget())

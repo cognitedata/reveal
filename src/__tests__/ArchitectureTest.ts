@@ -1,12 +1,10 @@
-import { PolylinesNode } from "../Example/PolylinesNode";
-import { ThreeTargetNode } from "../Three/ThreeTargetNode";
+import { PolylinesNode } from "../Core/Geometry/PolylinesNode";
 import { TargetNode } from "../Core/Nodes/TargetNode";
 import { VisualNode } from "../Core/Nodes/VisualNode";
 import { RootCreator } from "./RootCreator";
 import { DataFolder } from "../Core/Nodes/DataFolder";
 import { isInstanceOf } from "../Core/PrimitivClasses/ClassT";
 import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
-import { nodeInternals } from "stack-utils";
 
 describe('Hierarcy', () =>
 {
