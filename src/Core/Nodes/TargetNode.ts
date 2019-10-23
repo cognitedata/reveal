@@ -1,8 +1,8 @@
-import { TargetId } from "../Core/TargetId";
-import { Target } from "../Architecture/Target";
-import { ViewFactory } from "../Architecture/ViewFactory";
-import { ViewList } from "../Architecture/ViewList";
-import { BaseView } from "../Architecture/BaseView";
+import { TargetId } from "../PrimitivClasses/TargetId";
+import { Target } from "../Interfaces/Target";
+import { ViewFactory } from "../Views/ViewFactory";
+import { ViewList } from "../Views/ViewList";
+import { BaseView } from "../Views/BaseView";
 import { VisualNode } from "./VisualNode";
 import { BaseNode } from "./BaseNode";
 
@@ -59,7 +59,6 @@ export abstract class TargetNode extends BaseNode implements Target
     if (!view)
     {
       view = this.createViewCore(node);
-      console.log("CREATE VIEW", view);
       if (!view)
         return false;
 

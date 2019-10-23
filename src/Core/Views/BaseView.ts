@@ -13,8 +13,8 @@
 
 import { NodeEventArgs } from "./NodeEventArgs";
 import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
-import { TargetId } from "../Core/TargetId";
-import { TargetIdAccessor } from "./TargetIdAccessor";
+import { TargetId } from "../PrimitivClasses/TargetId";
+import { TargetIdAccessor } from "../Interfaces/TargetIdAccessor";
 import { BaseNode } from "../Nodes/BaseNode";
 
 export abstract class BaseView
@@ -62,8 +62,7 @@ export abstract class BaseView
   protected getStyle(): BaseRenderStyle
   {
     let style: BaseRenderStyle | null = null;
-    if (!this.
-      )
+    if (!this._target)
       style = this.getNode().getRenderStyle(TargetId.empty);
     else
       style = this.getNode().getRenderStyle(this._target.targetId);
@@ -132,5 +131,17 @@ export abstract class BaseView
     // This is called after dispose
     this._node = node;
     this._target = target;
+  }
+
+  public isOk(): boolean
+  {
+    // Used unit unit testing
+    if (!this.getNode())
+      return false;
+    if (!this.getTarget())
+      return false;
+    if (!this.getStyle())
+      return false;
+    return true;
   }
 }

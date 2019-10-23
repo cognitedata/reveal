@@ -11,13 +11,13 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { UniqueId } from "../Core/UniqueId";
-import { Identifiable } from "../Core/Identifiable";
-import { TargetId } from "../Core/TargetId";
-import { isInstanceOf, Class } from "../Core/ClassT";
-import { RenderStyleResolution } from "../Core/RenderStyleResolution";
-import { NodeEventArgs } from "../Architecture/NodeEventArgs";
-import { TargetIdAccessor } from "../Architecture/TargetIdAccessor";
+import { UniqueId } from "../PrimitivClasses/UniqueId";
+import { Identifiable } from "../PrimitivClasses/Identifiable";
+import { TargetId } from "../PrimitivClasses/TargetId";
+import { isInstanceOf, Class } from "../PrimitivClasses/ClassT";
+import { RenderStyleResolution } from "../Enums/RenderStyleResolution";
+import { NodeEventArgs } from "../Views/NodeEventArgs";
+import { TargetIdAccessor } from "../Interfaces/TargetIdAccessor";
 import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
 
 export abstract class BaseNode extends Identifiable

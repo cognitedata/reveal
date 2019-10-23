@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { RootNode } from "../Nodes/RootNode";
+import { RootNode } from "../Core/Nodes/RootNode";
 import { ThreeTargetNode } from "./ThreeTargetNode";
 
 export class ThreeRootNode extends RootNode

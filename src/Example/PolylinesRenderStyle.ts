@@ -11,8 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { TargetId } from "../Core/TargetId";
-import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
+import { TargetId } from "../Core/PrimitivClasses/TargetId";
+import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
 
 export class PolylinesRenderStyle extends BaseRenderStyle
 {

@@ -11,55 +11,65 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { TargetFolder } from "./TargetFolder";
-import { DataFolder } from "./DataFolder";
-import { BaseNode } from "./BaseNode";
-import { TargetNode } from "./TargetNode";
-import { TargetIdAccessor } from "../Architecture/TargetIdAccessor";
+import { BaseView } from "./BaseView";
+import { TargetIdAccessor } from "../Interfaces/TargetIdAccessor";
 
-export class RootNode extends BaseNode
+export class ViewList
 {
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor()
+  public constructor() { }
+
+  //==================================================
+  // FIELDS
+  //==================================================
+
+  public list: BaseView[] = [];
+
+  //==================================================
+  // PROPERTIES
+  //==================================================
+
+  public get count(): number { return this.list.length; }
+
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
+
+  public add(view: BaseView): void
   {
-    super();
-    this.name = "Root";
+    this.list.push(view);
   }
 
-  //==================================================
-  //PROPERTIES
-  //==================================================
-
-  public get dataFolder(): DataFolder | null { return this.getChildByType(DataFolder); }
-  public get targetFolder(): TargetFolder | null { return this.getChildByType(TargetFolder); }
-
-  //==================================================
-  // OVERRIDES of Identifiable
-  //==================================================
-
-  public /*override*/ get className(): string { return RootNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === RootNode.name || super.isA(className); }
-
-  //==================================================
-  // OVERRIDES of BaseNode
-  //==================================================
-
-  public /*override*/ get activeTargetIdAccessor(): TargetIdAccessor | null
+  public remove(view: BaseView): boolean
   {
-    const targetFolder = this.targetFolder;
-    if (!targetFolder)
-      return null;
-    const targetNode = targetFolder.getActiveDescendantByType(TargetNode);
-    return targetNode as TargetIdAccessor;
+    const index = this.list.indexOf(view, 0);
+    if (index < 0)
+      return false;
+
+    this.list.splice(index, 1);
+    return true;
   }
 
-  protected /*override*/ initializeCore(): void
+  public clear(): void
   {
-    super.initializeCore();
-    this.addChild(new TargetFolder());
-    this.addChild(new DataFolder());
+    this.list.splice(0, this.list.length);
+  }
+
+  public getViewByTarget(target: TargetIdAccessor): BaseView | null
+  {
+    const resultView = this.list.find((view: BaseView) => view.getTarget() === target);
+    return resultView === undefined ? null : resultView;
+  }
+
+  public isOk(): boolean
+  {
+    // Used unit unit testing
+    for (const view of this.list)
+      if (!view.isOk())
+      return false;
+    return true;
   }
 }

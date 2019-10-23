@@ -11,10 +11,10 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { ViewList } from "../Architecture/ViewList";
-import { NodeEventArgs } from "../Architecture/NodeEventArgs";
+import { ViewList } from "../Views/ViewList";
+import { NodeEventArgs } from "../Views/NodeEventArgs";
 import { BaseNode } from "./BaseNode";
-import { Target } from "../Architecture/Target";
+import { Target } from "../Interfaces/Target";
 
 export abstract class VisualNode extends BaseNode
 {

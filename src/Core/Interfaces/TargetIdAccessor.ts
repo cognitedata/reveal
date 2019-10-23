@@ -11,33 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { RootNode } from "../Nodes/RootNode";
-import { ViewFactory } from "./ViewFactory";
+import { TargetId } from "../PrimitivClasses/TargetId";
 
-export abstract class BaseModule
+export interface TargetIdAccessor
 {
-  //==================================================
-  // VIRTUAL METHODS: 
-  //==================================================
-
-  protected /*virtual*/ registerViewsCore(factory: ViewFactory): void { }
-  protected /*virtual*/ abstract createRootCore(): RootNode;
-
-  //==================================================
-  // INSTANCE METHODS: 
-  //==================================================
-
-  public install(): void
-  {
-    const factory = ViewFactory.instance;
-    this.registerViewsCore(factory);
-  }
-
-  public createRoot(): RootNode
-  {
-    const root = this.createRootCore();
-    root.initialize();
-    return root;
-  }
+  targetId :TargetId;
 }
-

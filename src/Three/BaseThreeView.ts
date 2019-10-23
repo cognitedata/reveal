@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseView } from "../Architecture/BaseView";
+import { BaseView } from "../Core/Views/BaseView";
 import { ThreeTargetNode } from "./ThreeTargetNode";
 import * as THREE from 'three';
 

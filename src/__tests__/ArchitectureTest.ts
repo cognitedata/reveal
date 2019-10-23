@@ -1,11 +1,12 @@
 import { PolylinesNode } from "../Example/PolylinesNode";
 import { ThreeTargetNode } from "../Three/ThreeTargetNode";
-import { TargetNode } from "../Nodes/TargetNode";
-import { VisualNode } from "../Nodes/VisualNode";
+import { TargetNode } from "../Core/Nodes/TargetNode";
+import { VisualNode } from "../Core/Nodes/VisualNode";
 import { RootCreator } from "./RootCreator";
-import { DataFolder } from "../Nodes/DataFolder";
-import { isInstanceOf } from "../Core/ClassT";
-import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
+import { DataFolder } from "../Core/Nodes/DataFolder";
+import { isInstanceOf } from "../Core/PrimitivClasses/ClassT";
+import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
+import { nodeInternals } from "stack-utils";
 
 describe('Hierarcy', () =>
 {
@@ -183,7 +184,10 @@ describe('Hierarcy', () =>
     {
       for (const target of root.targetFolder.getChildrenByType(TargetNode))
         for (const node of root.dataFolder.getChildrenByType(VisualNode))
+        {
           node.setVisible(isVisible, target);
+          expect(node.views.isOk()).toBe(true);
+        }
 
       let visibleCount = 0;
       for (const target of root.targetFolder.getChildrenByType(TargetNode))
@@ -254,11 +258,17 @@ describe('Hierarcy', () =>
       }
       let viewsInNodeCount = 0;
       for (const node of root.getDescendantsByType(VisualNode))
-        viewsInNodeCount += node.views.list.length;
+      {
+        expect(node.views.isOk()).toBe(true);
+        viewsInNodeCount += node.views.count;
+      }
 
       let viewsInTargetCount = 0;
       for (const target of root.getDescendantsByType(TargetNode))
-        viewsInTargetCount += target.viewsShownHere.list.length;
+      {
+        expect(target.viewsShownHere.isOk()).toBe(true);
+        viewsInTargetCount += target.viewsShownHere.count;
+      }
 
       let isVisibleCount = 0;
       for (const target of root.getDescendantsByType(TargetNode))

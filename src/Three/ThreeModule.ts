@@ -13,10 +13,10 @@
 
 import { PolylinesView3 } from "./PolylinesThreeView";
 import { PolylinesNode } from "../Example/PolylinesNode";
-import { BaseModule } from "../Architecture/BaseModule";
-import { ViewFactory } from "../Architecture/ViewFactory";
+import { BaseModule } from "../Core/Module/BaseModule";
+import { ViewFactory } from "../Core/Views/ViewFactory";
 import { ThreeTargetNode } from "./ThreeTargetNode";
-import { RootNode } from "../Nodes/RootNode";
+import { RootNode } from "../Core/Nodes/RootNode";
 import { ThreeRootNode } from "./ThreeRootNode";
 
 export class ThreeModule extends BaseModule

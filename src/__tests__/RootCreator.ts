@@ -1,6 +1,6 @@
 
 import { ThreeModule } from "../Three/ThreeModule";
-import { RootNode } from "../Nodes/RootNode";
+import { RootNode } from "../Core/Nodes/RootNode";
 import { PolylinesNode } from "../Example/PolylinesNode";
 import { ThreeTargetNode } from "../Three/ThreeTargetNode";
 import { Polylines } from "../Example/Polylines";

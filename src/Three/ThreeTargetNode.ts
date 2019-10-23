@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { TargetNode } from "../Nodes/TargetNode";
+import { TargetNode } from "../Core/Nodes/TargetNode";
 import * as THREE from 'three';
 
 export class ThreeTargetNode extends TargetNode

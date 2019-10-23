@@ -11,15 +11,33 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseNode } from "../Nodes/BaseNode";
-import { BaseView } from "./BaseView";
-import { TargetIdAccessor } from "./TargetIdAccessor";
+import { RootNode } from "../Nodes/RootNode";
+import { ViewFactory } from "../Views/ViewFactory";
 
-export interface Target extends TargetIdAccessor
+export abstract class BaseModule
 {
-  canShowView(node: BaseNode): boolean;
-  isVisibleView(node: BaseNode): boolean;
-  showView(node: BaseNode): boolean;
-  hideView(node: BaseNode): boolean;
-  removeViewShownHere(view: BaseView): void;
+  //==================================================
+  // VIRTUAL METHODS: 
+  //==================================================
+
+  protected /*virtual*/ registerViewsCore(factory: ViewFactory): void { }
+  protected /*virtual*/ abstract createRootCore(): RootNode;
+
+  //==================================================
+  // INSTANCE METHODS: 
+  //==================================================
+
+  public install(): void
+  {
+    const factory = ViewFactory.instance;
+    this.registerViewsCore(factory);
+  }
+
+  public createRoot(): RootNode
+  {
+    const root = this.createRootCore();
+    root.initialize();
+    return root;
+  }
 }
+

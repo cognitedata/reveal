@@ -11,27 +11,15 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { VisualNode } from "./VisualNode";
-import { TargetNode } from "./TargetNode";
-import { BaseNode } from "./BaseNode";
-import { TargetIdAccessor } from "../Architecture/TargetIdAccessor";
+import { BaseNode } from "../Nodes/BaseNode";
+import { BaseView } from "../Views/BaseView";
+import { TargetIdAccessor } from "./TargetIdAccessor";
 
-export class TargetFolder extends VisualNode
+export interface Target extends TargetIdAccessor
 {
-  //==================================================
-  // CONSTRUCTORS
-  //==================================================
-
-  public constructor()
-  {
-    super();
-    this.name = "Target folder";
-  }
-
-  //==================================================
-  // OVERRIDES of Identifiable
-  //==================================================
-
-  public /*override*/ get className(): string { return TargetFolder.name; }
-  public /*override*/ isA(className: string): boolean { return className === TargetFolder.name || super.isA(className); }
+  canShowView(node: BaseNode): boolean;
+  isVisibleView(node: BaseNode): boolean;
+  showView(node: BaseNode): boolean;
+  hideView(node: BaseNode): boolean;
+  removeViewShownHere(view: BaseView): void;
 }

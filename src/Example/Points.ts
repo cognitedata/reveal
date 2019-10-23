@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import { Vector3 } from "./Vector3";
-import { Random } from "../Core/Random";
+import { Random } from "../Core/PrimitivClasses/Random";
 
 export class Points
 {

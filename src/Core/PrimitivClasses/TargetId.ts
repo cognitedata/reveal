@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import { UniqueId } from "./UniqueId";
-import { RenderStyleResolution } from "../Core/RenderStyleResolution";
+import { RenderStyleResolution } from "../Enums/RenderStyleResolution";
 import { typeAlias } from "@babel/types";
 
 export class TargetId
