@@ -12,6 +12,7 @@
 //=====================================================================================
 
 import { BaseNode } from "./BaseNode";
+import { BaseTargetNode } from "./BaseTargetNode";
 
 export abstract class BaseCameraNode extends BaseNode
 {
@@ -35,4 +36,10 @@ export abstract class BaseCameraNode extends BaseNode
   public /*override*/ get canBeActive(): boolean { return true; }
   public /*override*/ get canChangeColor(): boolean { return false; }
   public /*override*/ get typeName(): string { return "Camera" }
+
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
+
+  public getTarget(): BaseTargetNode | null { return this.getAncestorByType(BaseTargetNode); }
 }

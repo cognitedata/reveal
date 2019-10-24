@@ -18,12 +18,19 @@ import { ViewFactory } from "../Core/Views/ViewFactory";
 import { ThreeTargetNode } from "./ThreeTargetNode";
 import { BaseRootNode } from "../Core/Nodes/BaseRootNode";
 import { ThreeRootNode } from "./ThreeRootNode";
+import CameraControls from 'camera-controls';
+import * as THREE from 'three';
 
 export class ThreeModule extends BaseModule
 {
   //==================================================
   // OVERRIDES of BaseModule
   //==================================================
+
+  protected /*override*/ installPackages(): void
+  {
+    CameraControls.install({ THREE });
+  }
 
   protected /*override*/ registerViewsCore(factory: ViewFactory): void
   {
@@ -35,13 +42,5 @@ export class ThreeModule extends BaseModule
     return new ThreeRootNode();
   }
 
-  protected /*override*/ initializeCore(root: BaseRootNode): void
-  {
-    const target = root.activeTarget as ThreeTargetNode;
-    if (!target)
-      throw Error("No active target in the project");
-
-    document.body.appendChild(target.domElement);
-  }
 }
 

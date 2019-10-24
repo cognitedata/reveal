@@ -1,7 +1,6 @@
 import { ThreeModule } from './src/Three/ThreeModule';
 import { PolylinesNode } from './src/Core/Geometry/PolylinesNode';
 import { Polylines } from './src/Core/Geometry/Polylines';
-import { ThreeTargetNode } from './src/Three/ThreeTargetNode';
 
 main();
 
@@ -12,18 +11,22 @@ export function main()
   module.install();
 
   const root = module.createRoot();
-  module.initialize(root);
 
   // Add some data
   if (!root.dataFolder)
     throw Error("No data folder in the project");
 
-  for (let i = 0; i < 4; i++)
+  for (let i = 0; i < 1; i++)
   {
     const node = new PolylinesNode();
-    node.data = Polylines.createByRandom(5, 10);
+    node.data = Polylines.createByRandom(20, 10);
     root.dataFolder.addChild(node);
     node.setVisible(true);
   }
+  module.initializeWhenPopulated(root);
+
+  const domElement = module.getDomElement(root);
+  if (domElement)
+    document.body.appendChild(domElement);
 }
 

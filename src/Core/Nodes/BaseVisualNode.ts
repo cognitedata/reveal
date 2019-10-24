@@ -13,10 +13,10 @@
 
 import { ViewList } from "../Views/ViewList";
 import { NodeEventArgs } from "../Views/NodeEventArgs";
-import { BaseNode } from "./BaseNode";
+import { BaseNode, cocatinate } from "./BaseNode";
 import { Target } from "../Interfaces/Target";
 
-export abstract class VisualNode extends BaseNode
+export abstract class BaseVisualNode extends BaseNode
 {
   //==================================================
   // CONSTRUCTORS
@@ -41,9 +41,8 @@ export abstract class VisualNode extends BaseNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return VisualNode.name }
-  public /*override*/ isA(className: string): boolean { return className === VisualNode.name || super.isA(className); }
-  public /*override*/ toString(): string { return super.toString() + `, Views: ${this.views.count}`; }
+  public /*override*/ get className(): string { return BaseVisualNode.name }
+  public /*override*/ isA(className: string): boolean { return className === BaseVisualNode.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
@@ -53,6 +52,14 @@ export abstract class VisualNode extends BaseNode
   {
     this.removeAllViews();
     super.removeInteractiveCore();
+  }
+
+  public /*override*/ getDebugString(): string
+  {
+    let result = super.getDebugString();
+    if (this.views.count > 0)
+      result += cocatinate("views", this.views.count);
+    return result;
   }
 
   //==================================================

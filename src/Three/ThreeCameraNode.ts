@@ -12,6 +12,8 @@
 //=====================================================================================
 
 import { BaseCameraNode } from "../Core/Nodes/BaseCameraNode";
+import { RenderTargetNode } from "../Core/Nodes/RenderTargetNode";
+import CameraControls from 'camera-controls';
 import * as THREE from 'three';
 
 export class ThreeCameraNode extends BaseCameraNode
@@ -21,6 +23,7 @@ export class ThreeCameraNode extends BaseCameraNode
   //==================================================
 
   private _camera: THREE.Camera | null = null;
+  private _controls: CameraControls | null = null;
 
   //==================================================
   // PROPERTIES
@@ -30,15 +33,34 @@ export class ThreeCameraNode extends BaseCameraNode
   {
     if (!this._camera)
     {
-      this._camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-      this._camera.position.z = 200;
-      this._camera.position.x = 50;
-      this._camera.position.y = 50;
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.z = 100;
+      camera.position.x = 0;
+      camera.position.y = 0;
+      this._camera = camera;
     }
     return this._camera;
   }
 
-  public set camera(value: THREE.Camera)  { this._camera = value; }
+  public set camera(value: THREE.Camera) { this._camera = value; this._controls = null; }
+
+  public get controls(): CameraControls | null
+  {
+    if (!this._controls)
+    {
+      const target = this.getTarget() as RenderTargetNode;
+      if (!target)
+        return null;;
+
+      const camera = this.camera as THREE.PerspectiveCamera | THREE.OrthographicCamera
+      if (!camera)
+        return null;
+
+
+      this._controls = new CameraControls(camera, target.domElement);
+    }
+    return this._controls;
+  }
 
   //==================================================
   // CONSTRUCTORS

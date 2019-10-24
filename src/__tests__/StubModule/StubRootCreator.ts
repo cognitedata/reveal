@@ -31,6 +31,7 @@ export class StubRootCreator
         root.dataFolder.addChild(node);
       }
     }
+    module.initializeWhenPopulated(root);
     return root;
   }
 }

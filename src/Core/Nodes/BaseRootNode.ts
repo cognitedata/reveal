@@ -47,6 +47,7 @@ export class BaseRootNode extends BaseNode
   // OVERRIDES of BaseNode
   //==================================================
 
+  public /*override*/ get canChangeColor(): boolean { return false; }
   public /*override*/ get typeName(): string { return "Root" }
 
   protected /*override*/ get activeTargetIdAccessor(): TargetIdAccessor | null

@@ -3,8 +3,8 @@ import { Target } from "../Interfaces/Target";
 import { ViewFactory } from "../Views/ViewFactory";
 import { ViewList } from "../Views/ViewList";
 import { BaseView } from "../Views/BaseView";
-import { VisualNode } from "./VisualNode";
-import { BaseNode } from "./BaseNode";
+import { BaseVisualNode } from "./BaseVisualNode";
+import { BaseNode, cocatinate } from "./BaseNode";
 
 export abstract class BaseTargetNode extends BaseNode implements Target
 {
@@ -33,7 +33,6 @@ export abstract class BaseTargetNode extends BaseNode implements Target
 
   public /*override*/ get className(): string { return BaseTargetNode.name; }
   public /*override*/ isA(className: string): boolean { return className === BaseTargetNode.name || super.isA(className); }
-  public /*override*/ toString(): string { return super.toString() + `, ViewsShownHere: ${this.viewsShownHere.count}`; }
 
   //==================================================
   // OVERRIDES of BaseNode
@@ -42,16 +41,24 @@ export abstract class BaseTargetNode extends BaseNode implements Target
   public /*override*/ get typeName(): string { return "Target" }
   public /*override*/ get canBeActive(): boolean { return true; }
 
+  public /*override*/ getDebugString(): string
+  {
+    let result = super.getDebugString();
+    if (this.viewsShownHere.count > 0)
+      result += cocatinate("viewsShownHere", this.viewsShownHere.count);
+    return result;
+  }
+
   //==================================================
   // IMPLEMETATION of Target
   //==================================================
 
-  public canShowView(node: VisualNode): boolean
+  public canShowView(node: BaseVisualNode): boolean
   {
     return ViewFactory.instance.canCreate(node, this.className);
   }
 
-  public isVisibleView(node: VisualNode): boolean
+  public isVisibleView(node: BaseVisualNode): boolean
   {
     const view = node.views.getViewByTarget(this);
     if (!view)
@@ -60,7 +67,7 @@ export abstract class BaseTargetNode extends BaseNode implements Target
     return view.isVisible;
   }
 
-  public showView(node: VisualNode): boolean
+  public showView(node: BaseVisualNode): boolean
   {
     let view = node.views.getViewByTarget(this);
     if (!view)
@@ -89,7 +96,7 @@ export abstract class BaseTargetNode extends BaseNode implements Target
     return true;
   }
 
-  public hideView(node: VisualNode): boolean
+  public hideView(node: BaseVisualNode): boolean
   {
     const view = node.views.getViewByTarget(this);
     if (!view)
@@ -137,7 +144,7 @@ export abstract class BaseTargetNode extends BaseNode implements Target
   // INSTANCE METHODS
   //==================================================
 
-  private createViewCore(node: VisualNode)
+  private createViewCore(node: BaseVisualNode)
   {
     return ViewFactory.instance.create(node, this.className);
   }
@@ -150,7 +157,7 @@ export abstract class BaseTargetNode extends BaseNode implements Target
       view.isVisible = false;
       view.dispose();
       const node = view.getNode();
-      if (node instanceof VisualNode)
+      if (node instanceof BaseVisualNode)
         node.views.remove(view);
       view.detach();
     }

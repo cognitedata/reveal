@@ -12,6 +12,7 @@
 //=====================================================================================
 
 import { BaseRootNode } from "../Nodes/BaseRootNode";
+import { RenderTargetNode } from "../Nodes/RenderTargetNode";
 import { ViewFactory } from "../Views/ViewFactory";
 
 export abstract class BaseModule
@@ -20,9 +21,11 @@ export abstract class BaseModule
   // VIRTUAL METHODS: 
   //==================================================
 
-  protected /*virtual*/ abstract createRootCore(): BaseRootNode;
+  protected /*virtual*/ installPackages(): void { }
   protected /*virtual*/ registerViewsCore(factory: ViewFactory): void { }
-  protected /*virtual*/ initializeCore(root: BaseRootNode): void { }
+  protected /*virtual*/ initializeWhenPopulatedCore(root: BaseRootNode): void { }
+
+  protected /*virtual*/ abstract createRootCore(): BaseRootNode;
 
   //==================================================
   // INSTANCE METHODS: 
@@ -30,13 +33,14 @@ export abstract class BaseModule
 
   public install(): void
   {
-    const factory = ViewFactory.instance;
-    this.registerViewsCore(factory);
+    this.installPackages();
+    this.registerViewsCore(ViewFactory.instance);
   }
 
-  public initialize(root: BaseRootNode): void
+  public initializeWhenPopulated(root: BaseRootNode): void
   {
-    this.initializeCore(root);
+    this.initializeWhenPopulatedCore(root);
+    root.initializeRecursive();
   }
 
   public createRoot(): BaseRootNode
@@ -44,6 +48,14 @@ export abstract class BaseModule
     const root = this.createRootCore();
     root.initializeRecursive();
     return root;
+  }
+
+  public getDomElement(root: BaseRootNode)
+  {
+    const target = root.activeTarget as RenderTargetNode;
+    if (!target)
+      return null;;
+    return target.domElement
   }
 }
 

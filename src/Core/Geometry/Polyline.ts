@@ -32,9 +32,9 @@ export class Polyline extends Points
     const result = new Polyline();
     for (let i = 0; i < pointCount; i++)
     {
-      const x = Random.getFloat(0, 100);
-      const y = Random.getFloat(0, 100);
-      const z = Random.getFloat(0, 100);
+      const x = Random.getFloat(-50, 50);
+      const y = Random.getFloat(-50, 50);
+      const z = Random.getFloat(-50, 50);
       const point = new Vector3(x, y, z);
       result.add(point);
     }

@@ -15,6 +15,7 @@ import { Vector3 } from "../Core/Geometry/Vector3";
 import * as THREE from 'three';
 import * as color from 'color'
 
+const MaxByte = 255;
 
 export class ThreeConverter
 {
@@ -22,6 +23,6 @@ export class ThreeConverter
   // STATIC METHODS
   //==================================================
 
-  public static toColor(value: color): THREE.Color { return new THREE.Color(value.red(), value.blue(), value.green()); }
+  public static toColor(value: color): THREE.Color { return new THREE.Color(value.red() / MaxByte, value.blue() / MaxByte, value.green() / MaxByte); }
   public static toVector(value: Vector3): THREE.Vector3 { return new THREE.Vector3(value.x, value.y, value.z); }
 }

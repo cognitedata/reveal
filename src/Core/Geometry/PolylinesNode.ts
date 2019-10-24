@@ -11,14 +11,14 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { VisualNode } from "../Nodes/VisualNode";
+import { BaseVisualNode } from "../Nodes/BaseVisualNode";
 import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
 import { TargetId } from "../PrimitivClasses/TargetId";
 import { Polylines } from "./Polylines";
 import { PolylinesRenderStyle } from "./PolylinesRenderStyle";
 import { ColorType } from "../Enums/ColorType";
 
-export class PolylinesNode extends VisualNode
+export class PolylinesNode extends BaseVisualNode
 {
   //==================================================
   // CONSTRUCTORS

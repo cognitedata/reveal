@@ -54,6 +54,9 @@ export class StubPolylinesView extends BaseView
     if (!target.isInitialized)
       throw Error("The target is not initialized");
 
+    if (!node.isInitialized)
+      throw Error("The node is not initialized");
+
     const polylines = node.data;
     if (!polylines)
       throw Error("The polylines is missing in view");

@@ -11,12 +11,13 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { TargetNode } from "../Core/Nodes/TargetNode";
+import { RenderTargetNode } from "../Core/Nodes/RenderTargetNode";
 import { ThreeCameraNode as ThreeCameraNode } from "./ThreeCameraNode";
-import * as THREE from 'three';
 import { ThreeConverter } from "./ThreeConverter";
+import CameraControls from 'camera-controls';
+import * as THREE from 'three';
 
-export class ThreeTargetNode extends TargetNode
+export class ThreeTargetNode extends RenderTargetNode
 {
   //==================================================
   // FIELDS
@@ -28,8 +29,6 @@ export class ThreeTargetNode extends TargetNode
   //==================================================
   // PROPERTIES
   //==================================================
-
-  public get domElement(): HTMLElement { return this.renderer.domElement; }
 
   public get scene(): THREE.Scene
   {
@@ -58,6 +57,15 @@ export class ThreeTargetNode extends TargetNode
     cameraNode.camera = value;
   }
 
+  public get activeControls(): CameraControls | null
+  {
+    const cameraNode = this.activeCameraNode;
+    if (!cameraNode)
+      throw Error("The camera is not set");
+
+    return cameraNode.controls;
+  }
+
   private get renderer(): THREE.WebGLRenderer
   {
     if (!this._renderer)
@@ -76,7 +84,7 @@ export class ThreeTargetNode extends TargetNode
   public constructor() { super(); }
 
   //==================================================
-  // OVERRIDES of Identifiable
+  // OVERRIDES of TargetNode
   //==================================================
 
   public /*override*/ get className(): string { return ThreeTargetNode.name; }
@@ -86,26 +94,44 @@ export class ThreeTargetNode extends TargetNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/  initializeCore()
+  public /*override*/ initializeCore()
   {
     super.initializeCore();
-
-    // Add a ddefault active camera
-    const cameraNode = new ThreeCameraNode();
-    cameraNode.isActive = true;
-    this.addChild(cameraNode);
-
-    this.render();
+    // Add a default active camera
+    this.addCameraNode(new ThreeCameraNode(), true)
+    const clock = new THREE.Clock();
+    this.render(clock);
   }
 
   //==================================================
+  // OVERRIDES of RenderTargetNode
+  //==================================================
+
+  public /*override*/ get domElement(): HTMLElement { return this.renderer.domElement; }
+
+  //================================================== 
   // INSTANCE FUNCTIONS
   //==================================================
 
-  private render(): void
+  private _hasRendered = false;
+  private render(clock: THREE.Clock): void
   {
-    // This goes forever?
-    requestAnimationFrame(() => { this.render(); });
-    this.renderer.render(this.scene, this.activeCamera);
+    requestAnimationFrame(() => { this.render(clock); });
+
+    if (!this.isInitialized)
+      return;
+
+    const controls = this.activeControls;
+    let needsUpdate = true;
+    if (controls)
+    {
+      const delta = clock.getDelta();
+      needsUpdate = controls.update(delta);
+    }
+    if (!this._hasRendered || needsUpdate)
+    {
+      this.renderer.render(this.scene, this.activeCamera);
+      this._hasRendered = true;
+    }
   }
 }

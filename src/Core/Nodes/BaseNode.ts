@@ -45,7 +45,7 @@ export abstract class BaseNode extends Identifiable
   private _children: BaseNode[] = [];
   private _parent: BaseNode | null = null;
   private _drawStyles: BaseRenderStyle[] = [];
-  
+
   //==================================================
   // PROPERTIES
   //==================================================
@@ -61,13 +61,10 @@ export abstract class BaseNode extends Identifiable
 
   public /*override*/ get className(): string { return BaseNode.name }
   public /*override*/ isA(className: string): boolean { return className === BaseNode.name || super.isA(className); }
-  public /*override*/ toString(): string 
-  {
-    return `${this.name}, typeName: ${this.typeName}, className: ${this.className}, color: ${this.color}, id: ${this.uniqueId} ${this.isActive ? " (Active)" : ""}`;
-  }
+  public /*override*/ toString(): string { return this.getDebugString(); }
 
   //==================================================
-  // VIRTUAL PROPERTIES
+  // VIRTUAL FUNCTIONS
   //==================================================
 
   public abstract get typeName(): string;
@@ -92,6 +89,21 @@ export abstract class BaseNode extends Identifiable
   {
     const root = this.root;
     return root ? root.activeTargetIdAccessor : null;
+  }
+
+  public /*virtual*/ getDebugString(): string
+  {
+    let result = this.name;
+    result += cocatinate("typeName", this.typeName);
+    result += cocatinate("className", this.className);
+    if (this.canChangeColor)
+      result += cocatinate("color", this.color);
+    result += cocatinate("id", this.uniqueId);
+    if (this.isActive)
+      result += cocatinate("active");
+    if (this.drawStyles.length > 0)
+      result += cocatinate("drawstyles", this.drawStyles.length);
+    return result;
   }
 
   //==================================================
@@ -244,6 +256,16 @@ export abstract class BaseNode extends Identifiable
       yield ancestor;
       ancestor = ancestor.parent;
     }
+  }
+
+  public getAncestorByType<T>(classType: Class<T>): T | null
+  {
+    for (const ancestor of this.getAncestors())
+    {
+      if (ancestor.isActive && isInstanceOf(ancestor, classType))
+        return ancestor as T;
+    }
+    return null;
   }
 
   public *getThisAndAncestors()
@@ -425,7 +447,7 @@ export abstract class BaseNode extends Identifiable
       return result
 
     const childIndex = this.childIndex;
-    if (childIndex == undefined)
+    if (childIndex === undefined)
       return result;
 
     result += " " + (childIndex + 1);
@@ -450,45 +472,53 @@ export abstract class BaseNode extends Identifiable
     return text;
   }
 
+
   // tslint:disable-next-line: no-console
   public debugHierarcy(): void { console.log(this.toHierarcyString()); }
 }
 
 
-  //==================================================
-  // OLD TEMPLATE ACCESS CODE: Good to have
-  //==================================================
+//==================================================
+// OLD TEMPLATE ACCESS CODE: Good to have
+//==================================================
 
-  // public getChildOfType<T extends BaseNode>(constructor: new () => T): T | null
-  // {
-  //   for (const child of this.children)
-  //   {
-  //     if (child instanceof constructor)
-  //       return child;
-  //   }
-  //   return null;
-  // }
+// public getChildOfType<T extends BaseNode>(constructor: new () => T): T | null
+// {
+//   for (const child of this.children)
+//   {
+//     if (child instanceof constructor)
+//       return child;
+//   }
+//   return null;
+// }
 
-  // public *getChildrenByType<T extends BaseNode>(constructor: new () => T)
-  // {
-  //   for (const child of this.children)
-  //     if (child instanceof constructor)
-  //       yield child;
-  // }
+// public *getChildrenByType<T extends BaseNode>(constructor: new () => T)
+// {
+//   for (const child of this.children)
+//     if (child instanceof constructor)
+//       yield child;
+// }
 
-  // public *getDescendantsByType<T extends BaseNode>(constructor: new () => T)
-  // {
-  //   for (const child of this.children)
-  //   {
-  //     if (child instanceof constructor)
-  //       yield child;
+// public *getDescendantsByType<T extends BaseNode>(constructor: new () => T)
+// {
+//   for (const child of this.children)
+//   {
+//     if (child instanceof constructor)
+//       yield child;
 
-  //     for (const descendant of child.getDescendantsByType<T>(constructor))
-  //     {
-  //       const copy: BaseNode = descendant;
-  //       if (copy instanceof constructor)
-  //         yield copy;
-  //     }
-  //   }
-  // }
+//     for (const descendant of child.getDescendantsByType<T>(constructor))
+//     {
+//       const copy: BaseNode = descendant;
+//       if (copy instanceof constructor)
+//         yield copy;
+//     }
+//   }
+// }
+
+export function cocatinate(name: string, value?: any): string
+{
+  if (value === undefined || value === null)
+    return ", " + name;
+  return ", " + name + ": " + value;
+}
 
