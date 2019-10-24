@@ -95,16 +95,17 @@ export class ThreeTargetNode extends TargetNode
     cameraNode.isActive = true;
     this.addChild(cameraNode);
 
-    // Start the rendering
-    const renderer = this.renderer;
-    const camera = this.activeCamera;
-    const scene = this.scene;
+    this.render();
+  }
 
-    const render = () =>
-    {
-      requestAnimationFrame(render);
-      renderer.render(scene, camera);
-    };
-    render();
+  //==================================================
+  // INSTANCE FUNCTIONS
+  //==================================================
+
+  private render(): void
+  {
+    // This goes forever?
+    requestAnimationFrame(() => { this.render(); });
+    this.renderer.render(this.scene, this.activeCamera);
   }
 }
