@@ -11,37 +11,44 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { PolylinesThreeView } from "./PolylinesThreeView";
-import { PolylinesNode } from "../Core/Geometry/PolylinesNode";
-import { SurfaceThreeView } from "./SurfaceThreeView";
-import { BaseModule } from "../Core/Module/BaseModule";
-import { ViewFactory } from "../Core/Views/ViewFactory";
-import { ThreeTargetNode } from "./ThreeTargetNode";
-import { BaseRootNode } from "../Core/Nodes/BaseRootNode";
-import { ThreeRootNode } from "./ThreeRootNode";
-import CameraControls from 'camera-controls';
-import * as THREE from 'three';
-
-export class ThreeModule extends BaseModule
+export class Index2
 {
   //==================================================
-  // OVERRIDES of BaseModule
+  // FIELDS
   //==================================================
 
-  protected /*override*/ installPackages(): void
+  public i: number;
+  public j: number;
+
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
+
+  public constructor(i: number, j: number)
   {
-    CameraControls.install({ THREE });
+    this.i = i;
+    this.j = j;
   }
 
-  protected /*override*/ registerViewsCore(factory: ViewFactory): void
+  public /*copy constructor*/ copy(): Index2
   {
-    factory.register(PolylinesNode.name, SurfaceThreeView, ThreeTargetNode.name);
+    return new Index2(this.i, this.j);
   }
 
-  protected /*override*/ createRootCore(): BaseRootNode
-  {
-    return new ThreeRootNode();
-  }
+  //==================================================
+  // PROPERTIES
+  //==================================================
+
+  public get size(): number { return this.i * this.j; }
+
+  //==================================================
+  // INSTANCE METHODS; Getters
+  //==================================================
+
+  public toString(): string { return `(${this.i}, ${this.j})`; }
+
+  //==================================================
+  // INSTANCE METHODS: Operations
+  //==================================================
 
 }
-

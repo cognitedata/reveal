@@ -1,3 +1,5 @@
+import { Index2 } from "./Index2";
+
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
@@ -11,37 +13,28 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { PolylinesThreeView } from "./PolylinesThreeView";
-import { PolylinesNode } from "../Core/Geometry/PolylinesNode";
-import { SurfaceThreeView } from "./SurfaceThreeView";
-import { BaseModule } from "../Core/Module/BaseModule";
-import { ViewFactory } from "../Core/Views/ViewFactory";
-import { ThreeTargetNode } from "./ThreeTargetNode";
-import { BaseRootNode } from "../Core/Nodes/BaseRootNode";
-import { ThreeRootNode } from "./ThreeRootNode";
-import CameraControls from 'camera-controls';
-import * as THREE from 'three';
-
-export class ThreeModule extends BaseModule
+export class Grid2
 {
   //==================================================
-  // OVERRIDES of BaseModule
+  // FIELDS
   //==================================================
 
-  protected /*override*/ installPackages(): void
+  public nodeSize: Index2;
+  
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
+
+  public constructor(numNodes: Index2)
   {
-    CameraControls.install({ THREE });
+    this.nodeSize = numNodes.copy();
   }
 
-  protected /*override*/ registerViewsCore(factory: ViewFactory): void
-  {
-    factory.register(PolylinesNode.name, SurfaceThreeView, ThreeTargetNode.name);
-  }
+  //==================================================
+  // INSTANCE METHODS; Getters
+  //==================================================
 
-  protected /*override*/ createRootCore(): BaseRootNode
-  {
-    return new ThreeRootNode();
-  }
+  public toString(): string { return `(${this.nodeSize})`; }
+  public  isNodeInside(i:number, j:number)  { return i >= 0 && j >= 0 && i < this.nodeSize.i && j <= this.nodeSize.j;}
 
 }
-

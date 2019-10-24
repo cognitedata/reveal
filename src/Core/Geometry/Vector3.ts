@@ -32,7 +32,7 @@ export class Vector3
     this.z = z;
   }
 
-  public copy(): Vector3
+  public /*copy constructor*/ copy(): Vector3
   {
     return new Vector3(this.x, this.y, this.z);
   }

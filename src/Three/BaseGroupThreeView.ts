@@ -28,7 +28,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
   // FIELDS
   //==================================================
 
-  private _group: THREE.Group | null = null;
+  private _group: THREE.Object3D | null = null;
 
   //==================================================
   // OVERRIDES of BaseView
@@ -83,7 +83,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
   // VIRTUAL METHODS
   //==================================================
 
-  protected abstract createGroup(): THREE.Group;
+  protected abstract createGroup(): THREE.Object3D;
 
   //==================================================
   // INSTANCE METHODS
