@@ -1,4 +1,4 @@
-import { RootNode } from "../../Core/Nodes/RootNode";
+import { BaseRootNode } from "../../Core/Nodes/BaseRootNode";
 import { StubModule } from "./StubModule";
 import { StubTargetNode } from "./StubTargetNode";
 import { PolylinesNode } from "../../Core/Geometry/PolylinesNode";
@@ -6,7 +6,7 @@ import { Polylines } from "../../Core/Geometry/Polylines";
 
 export class StubRootCreator
 {
-  public static createTestRoot(): RootNode 
+  public static createTestRoot(): BaseRootNode 
   {
     // Create the module
     const module = new StubModule();

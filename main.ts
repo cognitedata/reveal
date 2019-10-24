@@ -21,11 +21,9 @@ export function main()
   for (let i = 0; i < 4; i++)
   {
     const node = new PolylinesNode();
-    node.data = Polylines.createByRandom(10, 10);
-    node.name = "Polylines " + i;
+    node.data = Polylines.createByRandom(5, 10);
     root.dataFolder.addChild(node);
     node.setVisible(true);
   }
-  // In the end 
 }
 

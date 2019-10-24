@@ -53,6 +53,7 @@ export abstract class BaseNode extends Identifiable
   public get uniqueId(): UniqueId { return this._uniqueId; }
   public get drawStyles(): BaseRenderStyle[] { return this._drawStyles; }
   public get path(): string { return (this.parent ? this.parent.path : "") + "\\" + this.name; }
+  public get isInitialized(): boolean { return this._isInitialized; }
 
   //==================================================
   // OVERRIDES of Identifiable
@@ -66,7 +67,7 @@ export abstract class BaseNode extends Identifiable
   }
 
   //==================================================
-  // VIRTUAL METHODS
+  // VIRTUAL PROPERTIES
   //==================================================
 
   public abstract get typeName(): string;
@@ -87,7 +88,7 @@ export abstract class BaseNode extends Identifiable
 
   protected /*virtual*/ removeInteractiveCore(): void { }
 
-  public /*virtual*/ get activeTargetIdAccessor(): TargetIdAccessor | null
+  protected /*virtual*/ get activeTargetIdAccessor(): TargetIdAccessor | null
   {
     const root = this.root;
     return root ? root.activeTargetIdAccessor : null;

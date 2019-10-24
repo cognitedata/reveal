@@ -11,10 +11,10 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { CameraNode } from "../Core/Nodes/CameraNode";
+import { BaseCameraNode } from "../Core/Nodes/BaseCameraNode";
 import * as THREE from 'three';
 
-export class ThreeCameraNode extends CameraNode
+export class ThreeCameraNode extends BaseCameraNode
 {
   //==================================================
   // FIELDS
@@ -31,7 +31,7 @@ export class ThreeCameraNode extends CameraNode
     if (!this._camera)
     {
       this._camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-      this._camera.position.z = 50;
+      this._camera.position.z = 200;
       this._camera.position.x = 50;
       this._camera.position.y = 50;
     }

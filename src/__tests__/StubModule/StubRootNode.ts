@@ -11,10 +11,10 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { RootNode } from "../../Core/Nodes/RootNode";
+import { BaseRootNode } from "../../Core/Nodes/BaseRootNode";
 import { StubTargetNode } from "./StubTargetNode";
 
-export class StubRootNode extends RootNode
+export class StubRootNode extends BaseRootNode
 {
   //==================================================
   // CONSTRUCTORS

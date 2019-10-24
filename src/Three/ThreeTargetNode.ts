@@ -14,7 +14,6 @@
 import { TargetNode } from "../Core/Nodes/TargetNode";
 import { ThreeCameraNode as ThreeCameraNode } from "./ThreeCameraNode";
 import * as THREE from 'three';
-import * as color from 'color'
 import { ThreeConverter } from "./ThreeConverter";
 
 export class ThreeTargetNode extends TargetNode
@@ -74,11 +73,7 @@ export class ThreeTargetNode extends TargetNode
   // CONSTRUCTORS
   //==================================================
 
-  public constructor()
-  {
-    super();
-    this.color = color.rgb(0, 0, 0);
-  }
+  public constructor() { super(); }
 
   //==================================================
   // OVERRIDES of Identifiable
@@ -90,8 +85,6 @@ export class ThreeTargetNode extends TargetNode
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
-
-  public /*override*/ get canBeActive(): boolean { return true; }
 
   public /*override*/  initializeCore()
   {

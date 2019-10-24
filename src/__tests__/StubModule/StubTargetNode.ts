@@ -11,16 +11,10 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { TargetNode } from "../../Core/Nodes/TargetNode";
+import { BaseTargetNode } from "../../Core/Nodes/BaseTargetNode";
 
-export class StubTargetNode extends TargetNode
+export class StubTargetNode extends BaseTargetNode
 {
-  //==================================================
-  // FIELDS
-  //==================================================
-
-  public isInitialized = false;
-
   //==================================================
   // PROPERTIES
   //==================================================
@@ -43,10 +37,4 @@ export class StubTargetNode extends TargetNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Stub target" }
-
-  public /*override*/ initializeCore()
-  {
-    super.initializeCore();
-    this.isInitialized = true;
-  }
 }

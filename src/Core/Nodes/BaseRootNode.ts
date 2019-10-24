@@ -14,10 +14,10 @@
 import { TargetFolder } from "./TargetFolder";
 import { DataFolder } from "./DataFolder";
 import { BaseNode } from "./BaseNode";
-import { TargetNode } from "./TargetNode";
+import { BaseTargetNode } from "./BaseTargetNode";
 import { TargetIdAccessor } from "../Interfaces/TargetIdAccessor";
 
-export class RootNode extends BaseNode
+export class BaseRootNode extends BaseNode
 {
   //==================================================
   // CONSTRUCTORS
@@ -40,8 +40,8 @@ export class RootNode extends BaseNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return RootNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === RootNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return BaseRootNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === BaseRootNode.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
@@ -49,7 +49,7 @@ export class RootNode extends BaseNode
 
   public /*override*/ get typeName(): string { return "Root" }
 
-  public /*override*/ get activeTargetIdAccessor(): TargetIdAccessor | null
+  protected /*override*/ get activeTargetIdAccessor(): TargetIdAccessor | null
   {
     const targetNode = this.activeTarget;
     return targetNode as TargetIdAccessor;
@@ -66,12 +66,12 @@ export class RootNode extends BaseNode
   // INSTANCE METHODS
   //==================================================
 
-  public get activeTarget(): TargetNode | null
+  public get activeTarget(): BaseTargetNode | null
   {
     const targetFolder = this.targetFolder;
     if (!targetFolder)
       return null;
-    const targetNode = targetFolder.getActiveDescendantByType(TargetNode);
+    const targetNode = targetFolder.getActiveDescendantByType(BaseTargetNode);
     return targetNode;
   }
 }

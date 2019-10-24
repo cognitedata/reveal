@@ -16,9 +16,8 @@ import { PolylinesNode } from "../Core/Geometry/PolylinesNode";
 import { BaseModule } from "../Core/Module/BaseModule";
 import { ViewFactory } from "../Core/Views/ViewFactory";
 import { ThreeTargetNode } from "./ThreeTargetNode";
-import { RootNode } from "../Core/Nodes/RootNode";
+import { BaseRootNode } from "../Core/Nodes/BaseRootNode";
 import { ThreeRootNode } from "./ThreeRootNode";
-import { basename } from "path";
 
 export class ThreeModule extends BaseModule
 {
@@ -31,12 +30,12 @@ export class ThreeModule extends BaseModule
     factory.register(PolylinesNode.name, PolylinesThreeView, ThreeTargetNode.name);
   }
 
-  protected /*override*/ createRootCore(): RootNode
+  protected /*override*/ createRootCore(): BaseRootNode
   {
     return new ThreeRootNode();
   }
 
-  protected /*override*/ initializeCore(root: RootNode): void
+  protected /*override*/ initializeCore(root: BaseRootNode): void
   {
     const target = root.activeTarget as ThreeTargetNode;
     if (!target)

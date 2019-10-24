@@ -13,7 +13,7 @@
 
 import { BaseNode } from "./BaseNode";
 
-export abstract class CameraNode extends BaseNode
+export abstract class BaseCameraNode extends BaseNode
 {
   //==================================================
   // CONSTRUCTORS
@@ -25,8 +25,8 @@ export abstract class CameraNode extends BaseNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return CameraNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === CameraNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return BaseCameraNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === BaseCameraNode.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

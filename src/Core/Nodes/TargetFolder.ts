@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { VisualNode } from "./VisualNode";
+import { BaseNode } from "./BaseNode";
 
-export class TargetFolder extends VisualNode
+export class TargetFolder extends BaseNode
 {
   //==================================================
   // CONSTRUCTORS

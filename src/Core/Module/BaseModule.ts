@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { RootNode } from "../Nodes/RootNode";
+import { BaseRootNode } from "../Nodes/BaseRootNode";
 import { ViewFactory } from "../Views/ViewFactory";
 
 export abstract class BaseModule
@@ -20,9 +20,9 @@ export abstract class BaseModule
   // VIRTUAL METHODS: 
   //==================================================
 
-  protected /*virtual*/ abstract createRootCore(): RootNode;
+  protected /*virtual*/ abstract createRootCore(): BaseRootNode;
   protected /*virtual*/ registerViewsCore(factory: ViewFactory): void { }
-  protected /*virtual*/ initializeCore(root: RootNode): void { }
+  protected /*virtual*/ initializeCore(root: BaseRootNode): void { }
 
   //==================================================
   // INSTANCE METHODS: 
@@ -34,12 +34,12 @@ export abstract class BaseModule
     this.registerViewsCore(factory);
   }
 
-  public initialize(root: RootNode): void
+  public initialize(root: BaseRootNode): void
   {
     this.initializeCore(root);
   }
 
-  public createRoot(): RootNode
+  public createRoot(): BaseRootNode
   {
     const root = this.createRootCore();
     root.initializeRecursive();

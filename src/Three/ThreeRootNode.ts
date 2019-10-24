@@ -11,10 +11,10 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { RootNode } from "../Core/Nodes/RootNode";
+import { BaseRootNode } from "../Core/Nodes/BaseRootNode";
 import { ThreeTargetNode } from "./ThreeTargetNode";
 
-export class ThreeRootNode extends RootNode
+export class ThreeRootNode extends BaseRootNode
 {
   //==================================================
   // CONSTRUCTORS
