@@ -11,17 +11,17 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseThreeView } from "./BaseThreeView";
+import { BaseGroupThreeView } from "./BaseGroupThreeView";
 import { PolylinesNode } from "../Core/Geometry/PolylinesNode";
 import { PolylinesRenderStyle } from "../Core/Geometry/PolylinesRenderStyle";
-
-import * as THREE from 'three';
-import { Color } from "three";
 import { ThreeConverter } from "./ThreeConverter";
 import { ColorType } from "../Core/Enums/ColorType";
 import { Colors } from "../Core/PrimitivClasses/Colors";
+import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
+import * as THREE from 'three';
+import { Color } from "three";
 
-export class PolylinesThreeView extends BaseThreeView
+export class PolylinesThreeView extends BaseGroupThreeView
 {
   //==================================================
   // CONSTRUCTORS
@@ -40,11 +40,19 @@ export class PolylinesThreeView extends BaseThreeView
   // OVERRIDES of BaseView
   //==================================================
 
-  public /*override*/ initialize(): void
+  protected /*override*/ updateCore(args: NodeEventArgs): void
+  {
+    super.updateCore(args);
+  }
+
+  //==================================================
+  // OVERRIDES of BaseGroupThreeView
+  //==================================================
+
+  protected /*override*/ createGroup(): THREE.Group
   {
     const node = this.node;
     const style = this.style;
-    const scene = this.scene;
 
     const polylines = node.data;
     if (!polylines)
@@ -53,7 +61,7 @@ export class PolylinesThreeView extends BaseThreeView
     let color = node.color;
     const colorType = style.colorType;
 
-    let i = 0;
+    const group = new THREE.Group();
     for (const polyline of polylines.list)
     {
       const points = new THREE.Geometry();
@@ -61,11 +69,12 @@ export class PolylinesThreeView extends BaseThreeView
         points.vertices.push(ThreeConverter.toVector(point));
 
       if (colorType === ColorType.DifferentColor)
-        color = Colors.getNextColor(i++);
+        color = Colors.getNextColor(group.children.length);
 
       const threeColor: Color = ThreeConverter.toColor(color);
       const line = new THREE.Line(points, new THREE.LineBasicMaterial({ color: threeColor, linewidth: style.lineWidth }));
-      scene.add(line);
+      group.add(line);
     }
+    return group;
   }
 }

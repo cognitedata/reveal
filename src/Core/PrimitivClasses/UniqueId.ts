@@ -27,8 +27,8 @@ export class UniqueId
   // FIELDS
   //==================================================
 
-  private _id: string ;
-  public static empty = new UniqueId(""); 
+  private _id: string;
+  public static empty = new UniqueId("");
 
   //==================================================
   // PROPERTIES

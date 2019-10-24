@@ -113,7 +113,6 @@ export class ThreeTargetNode extends RenderTargetNode
   // INSTANCE FUNCTIONS
   //==================================================
 
-  private _hasRendered = false;
   private render(clock: THREE.Clock): void
   {
     requestAnimationFrame(() => { this.render(clock); });
@@ -128,10 +127,10 @@ export class ThreeTargetNode extends RenderTargetNode
       const delta = clock.getDelta();
       needsUpdate = controls.update(delta);
     }
-    if (!this._hasRendered || needsUpdate)
+    if (this.isInvalidated || needsUpdate)
     {
       this.renderer.render(this.scene, this.activeCamera);
-      this._hasRendered = true;
+      this.Invalidate(false);
     }
   }
 }

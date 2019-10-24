@@ -37,7 +37,7 @@ export class StubPolylinesView extends BaseView
   // OVERRIDES of BaseView
   //==================================================
 
-  public /*override*/ initialize(): void
+  protected /*override*/ initializeCore(): void
   {
     const node = this.node;
     if (!node)

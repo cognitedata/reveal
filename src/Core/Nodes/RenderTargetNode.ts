@@ -6,6 +6,12 @@ import { BaseTargetNode } from "./BaseTargetNode";
 export abstract class RenderTargetNode extends BaseTargetNode 
 {
   //==================================================
+  // FIELDS
+  //==================================================
+
+  private _isInvalidated = true;
+
+  //==================================================
   // CONSTRUCTORS
   //==================================================
 
@@ -23,6 +29,16 @@ export abstract class RenderTargetNode extends BaseTargetNode
   public /*override*/ isA(className: string): boolean { return className === RenderTargetNode.name || super.isA(className); }
 
   //==================================================
+  // OVERRIDES of BaseNode
+  //==================================================
+
+  public /*override*/ initializeCore()
+  {
+    super.initializeCore();
+    this.Invalidate();
+  }
+
+  //==================================================
   // VIRTUAL METHODS
   //==================================================
 
@@ -31,6 +47,8 @@ export abstract class RenderTargetNode extends BaseTargetNode
   //==================================================
   // INSTANCE METHODS
   //==================================================
+
+  public get isInvalidated(): boolean { return this._isInvalidated; }
 
   public getActiveCameraNode(): BaseCameraNode
   {
@@ -45,5 +63,10 @@ export abstract class RenderTargetNode extends BaseTargetNode
     // Convenience method, no checking that there is any other active or no updating. (use addChildInteractive() for that)
     child.isActive = isActive;
     this.addChild(child);
+  }
+
+  protected Invalidate(value?: boolean): void
+  {
+    this._isInvalidated = (value === undefined) ? true : value;
   }
 }

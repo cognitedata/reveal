@@ -28,12 +28,17 @@ export abstract class BaseView
   private _isVisible: boolean = false;
 
   //==================================================
+  // VIRTUAL METHODS
+  //==================================================
+
+  public /*virtual*/ get stayAliveIfInvisible(): boolean { return false; }
+
+  //==================================================
   // PROPERTIES
   //==================================================
 
   public get isVisible(): boolean { return this._isVisible; }
   public set isVisible(value: boolean) { this._isVisible = value; }
-  public get stayAliveIfInvisible(): boolean { return false; }
 
   //==================================================
   // CONSTRUCTORS
@@ -75,34 +80,34 @@ export abstract class BaseView
   // VIRTUAL METHODS: 
   //==================================================
 
-  public /*virtual*/ initialize(): void
+  protected /*virtual*/ initializeCore(): void
   {
     // Override this function to initialize your view
   }
 
-  public /*virtual*/ update(args: NodeEventArgs): void
+  protected /*virtual*/ updateCore(args: NodeEventArgs): void
   {
     // Override this function to update your view
   }
 
-  public /*virtual*/ clearMemory(args: NodeEventArgs): void
+  protected /*virtual*/ clearMemoryCore(): void
   {
     // Override this function to remove redundant data
   }
 
-  public /*virtual*/ onShow(): void
+  protected /*virtual*/ onShowCore(): void
   {
     // Override this function to when your view
     // need to do something when it is set visible
   }
 
-  public /*virtual*/ onHide(): void
+  protected /*virtual*/ onHideCore(): void
   {
     // Override this function to when your view
     // need to do something when it is set NOT visible
   }
 
-  public /*virtual*/ dispose(): void
+  protected /*virtual*/ disposeCore(): void
   {
     // Override this function to when your view
     // need to do something when it is set NOT visible
@@ -113,6 +118,36 @@ export abstract class BaseView
   // INSTANCE METHODS: 
   //==================================================
 
+  public initialize(): void
+  {
+    this.initializeCore();
+  }
+
+  public update(args: NodeEventArgs): void
+  {
+    this.updateCore(args);
+  }
+
+  public clearMemory(): void
+  {
+    this.clearMemoryCore();
+  }
+
+  public onShow(): void 
+  {
+    this.onShowCore();
+  }
+
+  public onHide(): void 
+  {
+    this.onHideCore();
+  }
+
+  public dispose(): void
+  {
+    this.disposeCore();
+  }
+
   public isOwner(node: BaseNode): boolean
   {
     return this._node != null && this._node === node;
@@ -122,8 +157,6 @@ export abstract class BaseView
   {
     this._node = null;
     this._target = null;
-    // Override this function to when your view
-    // need to do something when it is set NOT visible
   }
 
   public attach(node: BaseNode, target: TargetIdAccessor): void

@@ -22,6 +22,7 @@ import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
 import * as color from 'color'
 import { ColorType } from "../Enums/ColorType";
 import { Colors } from "../PrimitivClasses/Colors";
+import { Changes } from "../Views/Changes";
 
 export abstract class BaseNode extends Identifiable
 {
@@ -330,7 +331,7 @@ export abstract class BaseNode extends Identifiable
     this.removeInteractiveCore();
     const parent = this.parent
     this.remove();
-    parent!.notify(new NodeEventArgs(NodeEventArgs.childDeleted));
+    parent!.notify(new NodeEventArgs(Changes.childDeleted));
   }
 
   public setActiveInteractive(): void
@@ -357,11 +358,11 @@ export abstract class BaseNode extends Identifiable
           continue;
 
         child.isActive = false;
-        child.notify(new NodeEventArgs(NodeEventArgs.active));
+        child.notify(new NodeEventArgs(Changes.active));
       }
     }
     this.isActive = true;
-    this.notify(new NodeEventArgs(NodeEventArgs.active));
+    this.notify(new NodeEventArgs(Changes.active));
   }
 
   //==================================================

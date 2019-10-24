@@ -15,6 +15,7 @@ import { ViewList } from "../Views/ViewList";
 import { NodeEventArgs } from "../Views/NodeEventArgs";
 import { BaseNode, cocatinate } from "./BaseNode";
 import { Target } from "../Interfaces/Target";
+import { Changes } from "../Views/Changes";
 
 export abstract class BaseVisualNode extends BaseNode
 {
@@ -99,7 +100,7 @@ export abstract class BaseVisualNode extends BaseNode
     if (!target)
       return;
     if (this.setVisible(visible, target))
-      this.notify(new NodeEventArgs(NodeEventArgs.visible))
+      this.notify(new NodeEventArgs(Changes.visible))
   }
 
   public removeAllViews(): void

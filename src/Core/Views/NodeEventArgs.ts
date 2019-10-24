@@ -1,3 +1,5 @@
+import { AddEquation } from "three";
+
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
@@ -14,18 +16,6 @@
 export class NodeEventArgs
 {
   //==================================================
-  // STATIC FIELDS; More will come here
-  //==================================================
-
-  public static readonly nodeName: symbol = Symbol("nodeName");
-  public static readonly nodeColor: symbol = Symbol("nodeColor");
-  public static readonly visible: symbol = Symbol("visible");
-  public static readonly active: symbol = Symbol("active");
-  public static readonly childDeleted: symbol = Symbol("childDeleted");
-  public static readonly childAdded: symbol = Symbol("childAdded");
-  public static readonly drawStyle: symbol = Symbol("drawStyle");
-
-  //==================================================
   // FIELDS
   //==================================================
 
@@ -37,11 +27,7 @@ export class NodeEventArgs
 
   public constructor(changed: symbol, fieldName?: string)
   {
-    if (changed === undefined)
-      return;
-    if (!this._changes)
-      this._changes = [];
-    this._changes.push(new ChangedDecription(changed, fieldName))
+    this.add(changed, fieldName);
   }
 
   //==================================================
@@ -52,8 +38,9 @@ export class NodeEventArgs
 
   public isChanged(changed: symbol): boolean
   {
-    const changedDecription = this.getChangedDecription(changed);
-    return changedDecription !== undefined;
+    if (!this._changes)
+      return false;
+    return this._changes.some((desc: ChangedDecription) => desc.changed === changed);
   }
 
   //==================================================
@@ -71,6 +58,19 @@ export class NodeEventArgs
   {
     const changedDecription = this.getChangedDecription(changed);
     return (changedDecription === undefined) ? undefined : changedDecription.fieldName;
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Operations
+  //==================================================
+
+   public add(changed: symbol, fieldName?: string)
+  {
+    if (changed === undefined)
+      return;
+    if (!this._changes)
+      this._changes = [];
+    this._changes.push(new ChangedDecription(changed, fieldName))
   }
 }
 

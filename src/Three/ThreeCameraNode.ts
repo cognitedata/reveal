@@ -26,6 +26,19 @@ export class ThreeCameraNode extends BaseCameraNode
   private _controls: CameraControls | null = null;
 
   //==================================================
+  // CONSTRUCTORS
+  //==================================================
+
+  public constructor() { super(); }
+
+  //==================================================
+  // OVERRIDES of Identifiable
+  //==================================================
+
+  public /*override*/ get className(): string { return ThreeCameraNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === ThreeCameraNode.name || super.isA(className); }
+
+  //==================================================
   // PROPERTIES
   //==================================================
 
@@ -48,7 +61,7 @@ export class ThreeCameraNode extends BaseCameraNode
   {
     if (!this._controls)
     {
-      const target = this.getTarget() as RenderTargetNode;
+      const target = this.getTarget();
       if (!target)
         return null;;
 
@@ -63,15 +76,9 @@ export class ThreeCameraNode extends BaseCameraNode
   }
 
   //==================================================
-  // CONSTRUCTORS
+  // INSTANCE METHODS
   //==================================================
 
-  public constructor() { super(); }
+  public getTarget(): RenderTargetNode | null { return super.getTarget() as RenderTargetNode; }
 
-  //==================================================
-  // OVERRIDES of Identifiable
-  //==================================================
-
-  public /*override*/ get className(): string { return ThreeCameraNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === ThreeCameraNode.name || super.isA(className); }
 }
