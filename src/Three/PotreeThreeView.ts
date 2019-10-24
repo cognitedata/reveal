@@ -12,16 +12,13 @@
 //=====================================================================================
 
 import * as THREE from 'three';
-import { Color } from "three";
 import { BaseGroupThreeView } from "./BaseGroupThreeView";
-import { PolylinesNode } from "../Nodes/PolylinesNode";
-import { PolylinesRenderStyle } from "../Nodes/PolylinesRenderStyle";
-import { ThreeConverter } from "./ThreeConverter";
-import { ColorType } from "../Core/Enums/ColorType";
-import { Colors } from "../Core/PrimitivClasses/Colors";
+import { PotreeNode } from "../Nodes/PotreeNode";
+import { PotreeRenderStyle } from "../Nodes/PotreeRenderStyle";
 import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
+//import * as Potree from 'cognite/potree-core';
 
-export class PolylinesThreeView extends BaseGroupThreeView
+export class PotreeThreeView extends BaseGroupThreeView
 {
   //==================================================
   // CONSTRUCTORS
@@ -33,13 +30,13 @@ export class PolylinesThreeView extends BaseGroupThreeView
   // PROPERTIES
   //==================================================
 
-  protected get node(): PolylinesNode { return super.getNode() as PolylinesNode; }
-  protected get style(): PolylinesRenderStyle { return super.getStyle() as PolylinesRenderStyle; }
+  protected get node(): PotreeNode { return super.getNode() as PotreeNode; }
+  protected get style(): PotreeRenderStyle { return super.getStyle() as PotreeRenderStyle; }
 
   //==================================================
   // OVERRIDES of BaseView
   //==================================================
-  
+
   protected /*override*/ updateCore(args: NodeEventArgs): void
   {
     super.updateCore(args);
@@ -54,27 +51,19 @@ export class PolylinesThreeView extends BaseGroupThreeView
     const node = this.node;
     const style = this.style;
 
-    const polylines = node.data;
-    if (!polylines)
-      throw Error("polylines is missing in view");
+    //var points = new Potree.Group();
+    // points.setPointBudget(style.budget)
 
-    let color = node.color;
-    const colorType = style.colorType;
+    // @ts-ignore
+    // Potree.loadPointCloud(node.url, node.name, function(data) {
+    //   var pointcloud = data.pointcloud;
+    //   points.add(pointcloud);
+    // });
 
-    const group = new THREE.Group();
-    for (const polyline of polylines.list)
-    {
-      const points = new THREE.Geometry();
-      for (const point of polyline.list)
-        points.vertices.push(ThreeConverter.toVector(point));
-
-      if (colorType === ColorType.DifferentColor)
-        color = Colors.getNextColor(group.children.length);
-
-      const threeColor: Color = ThreeConverter.toColor(color);
-      const line = new THREE.Line(points, new THREE.LineBasicMaterial({ color: threeColor, linewidth: style.lineWidth }));
-      group.add(line);
-    }
-    return group;
+    // setInterval(() => {
+    //   points.position.set(-431895.739999483, -238.1446784943079, 4583065.15011712)
+    // }, 500);
+    // return points;
+    return null;
   }
 }

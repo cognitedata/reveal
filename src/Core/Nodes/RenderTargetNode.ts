@@ -9,6 +9,11 @@ export abstract class RenderTargetNode extends BaseTargetNode
   // FIELDS
   //==================================================
 
+  private static margin: number = 20;
+  public static get aspectRatio(): number { return RenderTargetNode.width / RenderTargetNode.height; }
+  public static get width(): number { return window.innerWidth - RenderTargetNode.margin; }
+  public static get height(): number { return window.innerHeight - RenderTargetNode.margin; }
+
   private _isInvalidated = true;
 
   //==================================================
@@ -42,6 +47,7 @@ export abstract class RenderTargetNode extends BaseTargetNode
   // VIRTUAL METHODS
   //==================================================
 
+  protected abstract setRenderSize(): void;
   public abstract get domElement(): HTMLElement;
 
   //==================================================
@@ -56,6 +62,15 @@ export abstract class RenderTargetNode extends BaseTargetNode
     if (!camera)
       throw Error("Can not find the camera, shoul be added");
     return camera as BaseCameraNode;
+  }
+
+  public onResize()
+  {
+    this.setRenderSize();
+    const aspect = RenderTargetNode.aspectRatio
+    for (const cameraNode of this.getChildrenByType(BaseCameraNode))
+      cameraNode.updateAspect(aspect);
+    this.Invalidate();
   }
 
   protected addCameraNode(child: BaseCameraNode, isActive: boolean): void

@@ -11,18 +11,16 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { TargetId } from "../PrimitivClasses/TargetId";
-import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
-import { ColorType } from "../Enums/ColorType";
+import { TargetId } from "../Core/PrimitivClasses/TargetId";
+import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
 
-export class PolylinesRenderStyle extends BaseRenderStyle
+export class PotreeRenderStyle extends BaseRenderStyle
 {
   //==================================================
   // FIELDS
   //==================================================
 
-  public lineWidth: number = 1;
-  public colorType: ColorType = ColorType.DifferentColor;
+  public budget: number = 5_000_000;
 
   //==================================================
   // CONSTRUCTORS
@@ -32,8 +30,8 @@ export class PolylinesRenderStyle extends BaseRenderStyle
 
   public /*copy constructor*/ copy(): BaseRenderStyle
   {
-    const style = new PolylinesRenderStyle(this.targetId);
-    style.lineWidth = this.lineWidth;
+    const style = new PotreeRenderStyle(this.targetId);
+    style.budget = this.budget;
     return style;
   }
 

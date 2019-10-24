@@ -11,14 +11,12 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseVisualNode } from "../Nodes/BaseVisualNode";
-import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
-import { TargetId } from "../PrimitivClasses/TargetId";
-import { Polylines } from "./Polylines";
-import { PolylinesRenderStyle } from "./PolylinesRenderStyle";
-import { ColorType } from "../Enums/ColorType";
+import { BaseVisualNode } from "../Core/Nodes/BaseVisualNode";
+import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
+import { TargetId } from "../Core/PrimitivClasses/TargetId";
+import { PotreeRenderStyle } from "./PotreeRenderStyle";
 
-export class PolylinesNode extends BaseVisualNode
+export class PotreeNode extends BaseVisualNode
 {
   //==================================================
   // CONSTRUCTORS
@@ -30,53 +28,37 @@ export class PolylinesNode extends BaseVisualNode
   // FIELDS
   //==================================================
 
-  private _data: Polylines | null = null;
+  private _url: string = "";
 
   //==================================================
   // PROPERTIES
   //==================================================
 
-  public get data(): Polylines | null { return this._data; }
-  public set data(value: Polylines | null) { this._data = value; }
-  public get renderStyle(): PolylinesRenderStyle | null { return this.getRenderStyle() as PolylinesRenderStyle; }
+  public get url(): string { return this._url; }
+  public set url(value: string) { this._url = value; }
+  public get renderStyle(): PotreeRenderStyle | null { return this.getRenderStyle() as PotreeRenderStyle; }
 
   //==================================================
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return PolylinesNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === PolylinesNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return PotreeNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === PotreeNode.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of VisualNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Polylines" }
+  public /*override*/ get typeName(): string { return "Potree" }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
-    return new PolylinesRenderStyle(targetId);
+    return new PotreeRenderStyle(targetId);
   }
 
   public /*override*/ verifyRenderStyle(style: BaseRenderStyle)
   {
-    if (!(style instanceof PolylinesRenderStyle))
+    if (!(style instanceof PotreeRenderStyle))
       return;
-
-    if (!this.supportsColorType(style.colorType))
-      style.colorType = ColorType.NodeColor;
-  }
-
-  public /*override*/ supportsColorType(colorType: ColorType): boolean
-  {
-    switch (colorType)
-    {
-      case ColorType.DifferentColor:
-      case ColorType.NodeColor:
-        return true;
-
-      default:
-        return false;
-    }
   }
 }

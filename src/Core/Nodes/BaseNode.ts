@@ -160,7 +160,7 @@ export abstract class BaseNode extends Identifiable
     return null;
   }
 
-  public getActiveChildByType<T>(classType: Class<T>): T | null
+  public getActiveChildByType<T extends BaseNode>(classType: Class<T>): T | null
   {
     for (const child of this.children)
     {
@@ -170,18 +170,20 @@ export abstract class BaseNode extends Identifiable
     return null;
   }
 
-  public *getChildrenByType<T extends BaseNode>(classType: Class<T>)
+  public *getChildrenByType<T extends BaseNode>(classType: Class<T>) 
   {
     for (const child of this.children)
+    {
       if (isInstanceOf(child, classType))
         yield child as T;
+    }
   }
 
   //==================================================
   // INSTANCE METHODS: Get descendants
   //==================================================
 
-  public *getDescendants()
+  public * getDescendants()
   {
     for (const child of this.children)
     {
@@ -194,14 +196,14 @@ export abstract class BaseNode extends Identifiable
     }
   }
 
-  public *getThisAndDescendants()
+  public * getThisAndDescendants()
   {
     yield this;
     for (const descendant of this.getDescendants())
       yield descendant;
   }
 
-  public *getDescendantsByType<T extends BaseNode>(classType: Class<T>)
+  public * getDescendantsByType<T extends BaseNode>(classType: Class<T>)
   {
     for (const child of this.children)
     {
@@ -217,7 +219,7 @@ export abstract class BaseNode extends Identifiable
     }
   }
 
-  public getActiveDescendantByType<T>(classType: Class<T>): T | null
+  public getActiveDescendantByType<T extends BaseNode>(classType: Class<T>): T | null
   {
     for (const child of this.children)
     {
@@ -249,7 +251,7 @@ export abstract class BaseNode extends Identifiable
   // INSTANCE METHODS: Get ancestors
   //==================================================
 
-  public *getAncestors()
+  public * getAncestors()
   {
     let ancestor = this.parent;
     while (ancestor)
@@ -269,7 +271,7 @@ export abstract class BaseNode extends Identifiable
     return null;
   }
 
-  public *getThisAndAncestors()
+  public * getThisAndAncestors()
   {
     yield this;
     for (const ancestor of this.getAncestors())

@@ -11,18 +11,33 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import * as THREE from 'three';
-import * as color from 'color'
-import { Vector3 } from "../Core/Geometry/Vector3";
+import { TargetId } from "../Core/PrimitivClasses/TargetId";
+import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
+import { ColorType } from "../Core/Enums/ColorType";
 
-const MaxByte = 255;
-
-export class ThreeConverter
+export class PolylinesRenderStyle extends BaseRenderStyle
 {
   //==================================================
-  // STATIC METHODS
+  // FIELDS
   //==================================================
 
-  public static toColor(value: color): THREE.Color { return new THREE.Color(value.red() / MaxByte, value.blue() / MaxByte, value.green() / MaxByte); }
-  public static toVector(value: Vector3): THREE.Vector3 { return new THREE.Vector3(value.x, value.y, value.z); }
+  public lineWidth: number = 1;
+  public colorType: ColorType = ColorType.DifferentColor;
+
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
+
+  public constructor(targetId: TargetId) { super(targetId); }
+
+  public /*copy constructor*/ copy(): BaseRenderStyle
+  {
+    const style = new PolylinesRenderStyle(this.targetId);
+    style.lineWidth = this.lineWidth;
+    return style;
+  }
+
 }
+
+
+

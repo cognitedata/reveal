@@ -33,8 +33,21 @@ export class BaseRootNode extends BaseNode
   //PROPERTIES
   //==================================================
 
-  public get dataFolder(): DataFolder | null { return this.getChildByType(DataFolder); }
-  public get targetFolder(): TargetFolder | null { return this.getChildByType(TargetFolder); }
+  public get dataFolder(): DataFolder
+  {
+    const child = this.getChildByType(DataFolder);
+    if (!child)
+      throw new Error("Cannot find the " + DataFolder.name);
+    return child;
+  }
+
+  public get targetFolder(): TargetFolder 
+  {
+    const child = this.getChildByType(TargetFolder);
+    if (!child)
+      throw new Error("Cannot find the " + TargetFolder.name);
+    return child;
+  }
 
   //==================================================
   // OVERRIDES of Identifiable
@@ -69,10 +82,6 @@ export class BaseRootNode extends BaseNode
 
   public get activeTarget(): BaseTargetNode | null
   {
-    const targetFolder = this.targetFolder;
-    if (!targetFolder)
-      return null;
-    const targetNode = targetFolder.getActiveDescendantByType(BaseTargetNode);
-    return targetNode;
+    return this.targetFolder.getActiveDescendantByType(BaseTargetNode);
   }
 }

@@ -11,15 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseGroupThreeView } from "./BaseGroupThreeView";
-import { PolylinesNode } from "../Core/Geometry/PolylinesNode";
-import { PolylinesRenderStyle } from "../Core/Geometry/PolylinesRenderStyle";
-import { ThreeConverter } from "./ThreeConverter";
-import { ColorType } from "../Core/Enums/ColorType";
-import { Colors } from "../Core/PrimitivClasses/Colors";
-import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
 import * as THREE from 'three';
-import { Color } from "three";
+import { BaseGroupThreeView } from "./BaseGroupThreeView";
+import { PolylinesNode } from "../Nodes/PolylinesNode";
+import { PolylinesRenderStyle } from "../Nodes/PolylinesRenderStyle";
+import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
 
 export class SurfaceThreeView extends BaseGroupThreeView
 {
@@ -49,7 +45,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
   // OVERRIDES of BaseGroupThreeView
   //==================================================
 
-  protected /*override*/ createGroup(): THREE.Object3D
+  protected /*override*/ createObject3D(): THREE.Object3D
   {
     const node = this.node;
     const style = this.style;

@@ -11,10 +11,10 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import * as THREE from 'three';
 import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
 import { Changes } from "../Core/Views/Changes";
 import { BaseThreeView } from "./BaseThreeView";
-import * as THREE from 'three';
 
 export abstract class BaseGroupThreeView extends BaseThreeView
 {
@@ -59,7 +59,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
     super.onShowCore();
     // Create the group and add it to the scene
     if (!this._group)
-      this._group = this.createGroup();
+      this._group = this.createObject3D();
 
     const scene = this.scene;
     scene.add(this._group);
@@ -83,7 +83,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
   // VIRTUAL METHODS
   //==================================================
 
-  protected abstract createGroup(): THREE.Object3D;
+  protected abstract createObject3D(): THREE.Object3D;
 
   //==================================================
   // INSTANCE METHODS
@@ -94,7 +94,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
     const scene = this.scene;
     if (this._group)
       scene.remove(this._group);
-    this._group = this.createGroup();
+    this._group = this.createObject3D();
     scene.add(this._group);
   }
 }

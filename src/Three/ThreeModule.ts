@@ -11,16 +11,19 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import CameraControls from 'camera-controls';
+import * as THREE from 'three';
+
+import { PolylinesNode } from "../Nodes/PolylinesNode";
 import { PolylinesThreeView } from "./PolylinesThreeView";
-import { PolylinesNode } from "../Core/Geometry/PolylinesNode";
-import { SurfaceThreeView } from "./SurfaceThreeView";
 import { BaseModule } from "../Core/Module/BaseModule";
 import { ViewFactory } from "../Core/Views/ViewFactory";
 import { ThreeTargetNode } from "./ThreeTargetNode";
 import { BaseRootNode } from "../Core/Nodes/BaseRootNode";
 import { ThreeRootNode } from "./ThreeRootNode";
-import CameraControls from 'camera-controls';
-import * as THREE from 'three';
+import { RenderTargetNode } from "../Core/Nodes/RenderTargetNode";
+import { PotreeNode } from "../Nodes/PotreeNode";
+import { PotreeThreeView } from "./PotreeThreeView";
 
 export class ThreeModule extends BaseModule
 {
@@ -35,7 +38,8 @@ export class ThreeModule extends BaseModule
 
   protected /*override*/ registerViewsCore(factory: ViewFactory): void
   {
-    factory.register(PolylinesNode.name, SurfaceThreeView, ThreeTargetNode.name);
+    factory.register(PolylinesNode.name, PolylinesThreeView, ThreeTargetNode.name);
+    factory.register(PotreeNode.name, PotreeThreeView, ThreeTargetNode.name);
   }
 
   protected /*override*/ createRootCore(): BaseRootNode
@@ -43,5 +47,13 @@ export class ThreeModule extends BaseModule
     return new ThreeRootNode();
   }
 
+  public initializeWhenPopulated(root: BaseRootNode): void
+  {
+    document.body.onresize = function ()
+    {
+      for (const target of root.targetFolder.getChildrenByType(RenderTargetNode))
+        target.onResize()
+    }
+  }
 }
 

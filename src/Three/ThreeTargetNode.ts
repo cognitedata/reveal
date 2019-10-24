@@ -11,11 +11,12 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import CameraControls from 'camera-controls';
+import * as THREE from 'three';
+
 import { RenderTargetNode } from "../Core/Nodes/RenderTargetNode";
 import { ThreeCameraNode as ThreeCameraNode } from "./ThreeCameraNode";
 import { ThreeConverter } from "./ThreeConverter";
-import CameraControls from 'camera-controls';
-import * as THREE from 'three';
 
 export class ThreeTargetNode extends RenderTargetNode
 {
@@ -72,7 +73,7 @@ export class ThreeTargetNode extends RenderTargetNode
     {
       this._renderer = new THREE.WebGLRenderer();
       this._renderer.setClearColor(ThreeConverter.toColor(this.color));
-      this._renderer.setSize(window.innerWidth, window.innerHeight);
+      this.setRenderSize();
     }
     return this._renderer;
   }
@@ -109,7 +110,12 @@ export class ThreeTargetNode extends RenderTargetNode
 
   public /*override*/ get domElement(): HTMLElement { return this.renderer.domElement; }
 
-  //================================================== 
+  protected /*override*/ setRenderSize(): void
+  {
+    this.renderer.setSize(RenderTargetNode.width, RenderTargetNode.height);
+  }
+
+  //==================================================
   // INSTANCE FUNCTIONS
   //==================================================
 

@@ -38,6 +38,12 @@ export abstract class BaseCameraNode extends BaseNode
   public /*override*/ get typeName(): string { return "Camera" }
 
   //==================================================
+  // VIRTUAL FUNCTIONS
+  //==================================================
+
+  public /*virtual*/ updateAspect(value: number) { }
+
+  //==================================================
   // INSTANCE METHODS
   //==================================================
 

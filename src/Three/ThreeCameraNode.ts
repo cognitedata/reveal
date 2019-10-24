@@ -11,10 +11,10 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseCameraNode } from "../Core/Nodes/BaseCameraNode";
-import { RenderTargetNode } from "../Core/Nodes/RenderTargetNode";
 import CameraControls from 'camera-controls';
 import * as THREE from 'three';
+import { BaseCameraNode } from "../Core/Nodes/BaseCameraNode";
+import { RenderTargetNode } from "../Core/Nodes/RenderTargetNode";
 
 export class ThreeCameraNode extends BaseCameraNode
 {
@@ -46,7 +46,7 @@ export class ThreeCameraNode extends BaseCameraNode
   {
     if (!this._camera)
     {
-      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const camera = new THREE.PerspectiveCamera(45, RenderTargetNode.aspectRatio, 0.1, 1000);
       camera.position.z = 100;
       camera.position.x = 0;
       camera.position.y = 0;
@@ -73,6 +73,23 @@ export class ThreeCameraNode extends BaseCameraNode
       this._controls = new CameraControls(camera, target.domElement);
     }
     return this._controls;
+  }
+
+  //==================================================
+  // OVERRIDES of BaseCameraNode
+  //==================================================
+
+  public /*override*/ updateAspect(value: number)
+  {
+    const camera = this._camera;
+    if (this._camera == null)
+      return;
+
+    if (!(camera instanceof THREE.PerspectiveCamera))
+      return;
+
+    camera.aspect = value;
+    camera.updateProjectionMatrix();
   }
 
   //==================================================

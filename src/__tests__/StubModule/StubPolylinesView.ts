@@ -13,8 +13,8 @@
 //=====================================================================================
 
 import { BaseView } from "../../Core/Views/BaseView";
-import { PolylinesNode } from "../../Core/Geometry/PolylinesNode";
-import { PolylinesRenderStyle } from "../../Core/Geometry/PolylinesRenderStyle";
+import { PolylinesNode } from "../../Nodes/PolylinesNode";
+import { PolylinesRenderStyle } from "../../Nodes/PolylinesRenderStyle";
 import { StubTargetNode } from "./StubTargetNode";
 
 export class StubPolylinesView extends BaseView

@@ -14,7 +14,7 @@
 
 import { BaseModule } from "../../Core/Module/BaseModule";
 import { ViewFactory } from "../../Core/Views/ViewFactory";
-import { PolylinesNode } from "../../Core/Geometry/PolylinesNode";
+import { PolylinesNode } from "../../Nodes/PolylinesNode";
 import { StubPolylinesView } from "./StubPolylinesView";
 import { StubTargetNode } from "./StubTargetNode";
 import { BaseRootNode } from "../../Core/Nodes/BaseRootNode";

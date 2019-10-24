@@ -1,4 +1,4 @@
-import { PolylinesNode } from "../Core/Geometry/PolylinesNode";
+import { PolylinesNode } from "../Nodes/PolylinesNode";
 import { BaseTargetNode } from "../Core/Nodes/BaseTargetNode";
 import { BaseVisualNode } from "../Core/Nodes/BaseVisualNode";
 import { StubRootCreator } from "./StubModule/StubRootCreator";
@@ -19,13 +19,6 @@ describe('Hierarcy', () =>
   test('renderStyle', () => 
   {
     const root = StubRootCreator.createTestRoot();
-    expect(root.targetFolder).not.toBeNull();
-    expect(root.dataFolder).not.toBeNull();
-    if (root.targetFolder == null)
-      return;
-    if (root.dataFolder == null)
-      return;
-
     for (const isVisible of [true, false])
     {
       const styles: BaseRenderStyle[] = [];
@@ -77,15 +70,7 @@ describe('Hierarcy', () =>
 
   function testHierarcy(): void
   {
-    const root = StubRootCreator.createTestRoot();;
-    expect(root.targetFolder).not.toBeNull();
-    expect(root.dataFolder).not.toBeNull();
-    if (root.targetFolder == null)
-      return;
-    if (root.dataFolder == null)
-      return;
-
-
+    const root = StubRootCreator.createTestRoot();
     const child = root.getChild(0);
     expect(root.childCount).toBe(2);
     expect(child).not.toBeNull();
@@ -172,13 +157,6 @@ describe('Hierarcy', () =>
   {
     const root = StubRootCreator.createTestRoot();
 
-    expect(root.targetFolder).not.toBeNull();
-    expect(root.dataFolder).not.toBeNull();
-    if (root.targetFolder == null)
-      return;
-    if (root.dataFolder == null)
-      return;
-
     for (const isVisible of [true, false])
     {
       for (const target of root.targetFolder.getChildrenByType(BaseTargetNode))
@@ -215,10 +193,6 @@ describe('Hierarcy', () =>
     for (const testType of [0, 1, 2, 3]) 
     {
       const root = StubRootCreator.createTestRoot();
-      if (!root.targetFolder)
-        return;
-      if (!root.dataFolder)
-        return;
 
       // Set all visible
       let expectedVisibleCount = 0;

@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import * as THREE from 'three';
 import { BaseView } from "../Core/Views/BaseView";
 import { ThreeTargetNode } from "./ThreeTargetNode";
-import * as THREE from 'three';
 
 export abstract class BaseThreeView extends BaseView
 {
