@@ -8,7 +8,7 @@
     "build": "webpack",
     "build-dev": "webpack --debug",
     "clean": "tsc --build --clean",
-    "serve": "webpack-dev-server --debug --color --progress --watch --port=8080",
+    "serve": "webpack-dev-server --debug --color --progress --watch",
     "lint": "tslint --project ."
   },
   "license": "Apache-2.0",
@@ -34,6 +34,7 @@
     "webpack-dev-server": "^3.8.2"
   },
   "dependencies": {
+    "@cognite/potree-core": "^1.0.6",
     "camera-controls": "^1.15.0",
     "color": "^3.1.2",
     "three": "^0.109.0",
