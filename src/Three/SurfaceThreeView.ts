@@ -69,35 +69,21 @@ export class SurfaceThreeView extends BaseGroupThreeView
     }
 
     var indices = new Uint16Array([0, 1, 2, 3, 4, 5]);
-    for (let i = 0; i < indices.length; i++)
-    {
-      if (i == 0)
-      {
-        colors.push(0);
-        colors.push(0);
-        colors.push(0);
-      }
-      else if (i == indices.length - 1)
-      {
-        colors.push(1);
-        colors.push(1);
-        colors.push(1);
-      }
-      else
-      {
-        var c = new THREE.Color();
-        c.setHSL(i / 6, 1, 0.5);
-        colors.push(c.r);
-        colors.push(c.g);
-        colors.push(c.b);
-      }
-    }
+    var color = new THREE.Color();
+    const f = 1;
+    colors.push(1, 0, 1);
+    colors.push(1, 0, 0);
+    colors.push(1, 1, 0);
+    colors.push(0, 1, 1);
+    colors.push(0, 1, 0);
+    colors.push(0, 0, 1);
+
     const geometry = new THREE.BufferGeometry();
-    geometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
-    geometry.addAttribute('normal', new THREE.BufferAttribute(new Float32Array(normals), 3));
-    geometry.addAttribute('color', new THREE.BufferAttribute(new Float32Array(colors), 3));
+    geometry.addAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geometry.addAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
+    geometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 3));
     geometry.addGroup(0, 6);
-    geometry.setIndex(new THREE.BufferAttribute(indices, 1));
+    geometry.setIndex(new THREE.Uint16BufferAttribute(indices, 1));
 
     const material = new THREE.MeshPhongMaterial({ vertexColors: THREE.VertexColors, side: THREE.DoubleSide, flatShading: false, shininess: 60 });
     const group = new Group();

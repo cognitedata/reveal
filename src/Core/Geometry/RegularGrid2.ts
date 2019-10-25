@@ -64,6 +64,10 @@ export class RegularGrid2 extends Grid2
   {
     return new Vector3(this.xOrigin + this.inc * i, this.yOrigin + this.inc * j, this.getZ(i, j));
   }
+  public getNormal(i: number, j: number): Vector3
+  {
+    return new Vector3(0, 0, 1);
+  }
 
   public getTriplet(i: number, j: number): [number, number, number]
   {
@@ -72,6 +76,7 @@ export class RegularGrid2 extends Grid2
 
   public getZ(i: number, j: number): number
   {
+    var f = this.nodeSize.j;
     const index = this.getNodeIndex(i, j);
     return this.buffer[index]
   }
@@ -89,5 +94,63 @@ export class RegularGrid2 extends Grid2
   {
     const index = this.getNodeIndex(i, j);
     this.buffer[index] = value;
+  }
+
+  private createUniqueIndices(): number[] 
+  {
+    let [uniqueIndexes, numUniqueIndex] = this.createUniqueIndexes();
+    let vertices = new Float32Array(numUniqueIndex * 3);
+    let normals = new Float32Array(numUniqueIndex * 3);
+
+    for (var j = 0; j < this.nodeSize.j; j++)
+    {
+      for (var i = 0; i < this.nodeSize.i; i++)
+      {
+        var nodeIndex = this.getNodeIndex(i, j);
+        var uniqueIndex = uniqueIndexes[nodeIndex];
+        if (uniqueIndex < 0)
+          continue;
+
+        var point = this.getPoint3(i, j);
+        let index = 3 * uniqueIndex;
+        vertices[index + 1] = point.x
+        vertices[index + 1] = point.y
+        vertices[index + 2] = point.z
+
+        var normal = this.getNormal(i, j);
+        normals[index + 1] = normal.x
+        normals[index + 1] = normal.y
+        normals[index + 2] = normal.z
+      }
+    }
+    return uniqueIndexes;
+  }
+
+
+  private createUniqueIndexes(): [number[], number]
+  {
+    let uniqueIndexes = [];
+    let numUniqueIndex = 0;
+    for (var j = 0; j < this.nodeSize.j; j++)
+    {
+      for (var i = 0; i < this.nodeSize.j; i++)
+      {
+        var nodeIndex = this.getNodeIndex(i, j);
+        let uniqueIndex = -1;
+        if (this.isNodeDef(i, j))
+        {
+          uniqueIndex = numUniqueIndex;
+          numUniqueIndex++;
+        }
+        uniqueIndexes[nodeIndex] = uniqueIndex;
+      }
+    }
+    return [uniqueIndexes, numUniqueIndex];
+  }
+
+
+  static createFractal(size: Index2): Grid2
+  {
+    return new Grid2(size);
   }
 }
