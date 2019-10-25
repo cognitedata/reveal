@@ -26,20 +26,20 @@ export function consumeSector(sectorId: number, sector: Sector, metadata: Sector
     const geometry = new THREE.BufferGeometry();
     const indices = new THREE.Uint32BufferAttribute(mesh.indices, 1);
     const vertices = new THREE.Float32BufferAttribute(mesh.vertices, 3);
-
-    // TODO check if there are normals first
-
+    const colors = new THREE.Float32BufferAttribute(mesh.colors, 3);
     geometry.setIndex(indices);
-    // geometry.setDrawRange(mesh.offset * 3, mesh.count * 3);
     geometry.addAttribute('position', vertices);
+    geometry.addAttribute('color', colors);
+
     if (mesh.normals !== undefined) {
       const normals = new THREE.Float32BufferAttribute(mesh.normals, 3);
       geometry.addAttribute('normal', normals);
     } else {
       geometry.computeVertexNormals();
     }
-    const material = new THREE.MeshPhongMaterial({ color: mesh.color, flatShading: true });
+    const material = new THREE.MeshPhongMaterial({ vertexColors: THREE.VertexColors, flatShading: true });
     const obj = new THREE.Mesh(geometry, material);
+
     obj.name = `Triangle mesh ${mesh.fileId}`;
     meshGroup.add(obj);
   }

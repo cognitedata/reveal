@@ -19,14 +19,14 @@ export interface SectorMetadata {
 export type Color = number;
 
 export type TriangleMesh = {
-  offset: number;
-  count: number;
-
-  color: Color;
+  // offset: number;
+  // count: number;
   fileId: number;
+
   indices: Uint32Array;
   vertices: Float32Array;
   normals: Float32Array | undefined;
+  colors: Float32Array;
 };
 
 export class Sector {

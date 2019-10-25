@@ -32,40 +32,65 @@ export async function createParser(
       const triangleCounts = collection.triangle_count();
       const sizes = collection.size();
 
-      const uniqueIds = new Set<number>(fileIds);
-
-      const loadCtmOperations = [...uniqueIds].map(async id => {
-        try {
-          const buffer = await fetchCtmFile(id);
-          const parsedCtm = rust.parse_ctm(buffer);
-          ctmData.set(id, parsedCtm);
-        } catch (err) {
-          throw new Error(`Parsing CTM file ${id} failed: ${err}`);
-        }
-      });
-
-      // Turn triangle counts into vertex counts
-      for (let i = 0; i < triangleCounts.length; i++) {
-        triangleCounts[i] *= 3;
-      }
-      const offsets = createOffsets(triangleCounts);
-      await Promise.all(loadCtmOperations);
-
+      // Group meshes (by index) by file
+      const meshesGroupedByFile = new Map<number, number[]>();
       for (let i = 0; i < fileIds.length; ++i) {
         const fileId = fileIds[i];
-        const color = readColor(colors, i); // TODO 20191023 larsmoa: Replace with Uint32Array parsed in Rust
-        const offset = offsets[i];
-        const count = triangleCounts[i];
-        const ctm = ctmData.get(fileId)!;
+        const oldValue = meshesGroupedByFile.get(fileId);
+        if (oldValue) {
+          meshesGroupedByFile.set(fileId, [...oldValue, i]);
+        } else {
+          meshesGroupedByFile.set(fileId, [i]);
+        }
+      }
+
+      // // Turn triangle counts into vertex counts
+      // for (let i = 0; i < triangleCounts.length; i++) {
+      //   triangleCounts[i] *= 3;
+      // }
+      const offsets = createOffsets(triangleCounts);
+
+      // Merge meshes by file
+      for (const [fileId, meshIndices] of meshesGroupedByFile.entries()) {
+        // Load CTM (geometry)
+        let ctm: CtmResult;
+        try {
+          const buffer = await fetchCtmFile(fileId);
+          ctm = rust.parse_ctm(buffer);
+        } catch (err) {
+          throw new Error(`Parsing CTM file ${fileId} failed: ${err}`);
+        }
+
+        const indices = ctm.indices();
+        const vertices = ctm.vertices();
+        const normals = ctm.normals();
+        const colorsBuffer = new Float32Array(vertices.length); // 3 components for each
+        // colorsBuffer.fill(1.0);
+
+        for (const meshIndex of meshIndices) {
+          const rangeFrom = offsets[meshIndex];
+          const rangeCount = triangleCounts[meshIndex];
+          const [r, g, b, a] = readColorToFloat32s(colors, meshIndex);
+
+          // TODO 20191025 lars: Per vertex coloring which wont really work.
+          for (let i = 0; i < rangeCount; i++) {
+            const idx = indices[rangeFrom + i];
+            colorsBuffer[3 * idx] = r;
+            colorsBuffer[3 * idx + 1] = g;
+            colorsBuffer[3 * idx + 2] = b;
+          }
+
+          // colorsBuffer.fill(color, rangeFrom, rangeFrom + rangeCount);
+        }
 
         const mesh: TriangleMesh = {
-          offset,
-          count,
-          color,
+          // offset,
+          // count,
+          colors: colorsBuffer,
           fileId,
-          indices: ctm.indices(),
-          vertices: ctm.vertices(),
-          normals: ctm.normals()
+          indices,
+          vertices,
+          normals
         };
         sector.triangleMeshes.push(mesh);
       }
@@ -81,13 +106,21 @@ export async function createParser(
   return parse;
 }
 
-function readColor(colors: Uint8Array, index: number): number {
+function readColorToUint32(colors: Uint8Array, index: number): number {
   const r = colors[4 * index];
   const g = colors[4 * index + 1];
   const b = colors[4 * index + 2];
   const a = colors[4 * index + 3];
   // tslint:disable-next-line: no-bitwise
   return (a << 24) | (b << 16) | (g << 8) | r;
+}
+
+function readColorToFloat32s(colors: Uint8Array, index: number): [number, number, number, number] {
+  const r = colors[4 * index] / 255;
+  const g = colors[4 * index + 1] / 255;
+  const b = colors[4 * index + 2] / 255;
+  const a = colors[4 * index + 3] / 255;
+  return [r, g, b, a];
 }
 
 // export async function parseSectorData(sectorId: number, data: ArrayBuffer): Promise<Sector> {
