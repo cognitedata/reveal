@@ -4,25 +4,44 @@
   "description": "Reveal viewer architecture",
   "main": "index.ts",
   "scripts": {
-    "build": "webpack --mode=development --watch",
     "release": "webpack --mode=release",
+    "build": "webpack --mode=development",
     "serve": "webpack-dev-server --debug --color --progress --watch --port=8080",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "coverage": "jest --coverage",
+    "lint": "tslint --project ."
   },
-  "author": [
-    "Nils Petter Fremming <nils.fremming@cognite.com>",
+  "author": "Svenn-Arne Dragly <dragly@cognite.com>",
+  "contributors": [
     "Lars Moastuen <lars.moastuen@cognite.com>",
-    "Svenn-Arne Dragly <dragly@cognite.com>"
+    "Nils Petter Fremming <nils.fremming@cognite.com>"
   ],
   "license": "Apache-2.0",
   "devDependencies": {
-    "typescript": "3.6.4"
+    "@cognite/sdk": "^2.6.1",
+    "@cognite/tslint-config-cognite-3d": "^1.0.4",
+    "@types/gl-matrix": "^2.4.5",
+    "@types/jest": "^24.0.19",
+    "html-webpack-plugin": "3.2.0",
+    "jest": "^24.9.0",
+    "jest-extended": "^0.11.2",
+    "jest-fetch-mock": "^2.1.2",
+    "prettier": "^1.18.2",
+    "ts-jest": "^24.1.0",
+    "ts-loader": "6.2.0",
+    "tslint": "^5.20.0",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-no-circular-imports": "^0.7.0",
+    "tslint-plugin-prettier": "^2.0.1",
+    "typescript": "3.6.4",
+    "webpack": "4.41.1",
+    "webpack-cli": "3.3.9",
+    "webpack-dev-server": "^3.9.0"
   },
   "dependencies": {
-    "html-webpack-plugin": "3.2.0",
-    "three": "0.109.0",
-    "ts-loader": "6.2.0",
-    "webpack": "4.41.1",
-    "webpack-cli": "3.3.9"
+    "@wasm-tool/wasm-pack-plugin": "^1.0.1",
+    "camera-controls": "^1.15.0",
+    "gl-matrix": "^3.1.0",
+    "three": "0.109.0"
   }
 }

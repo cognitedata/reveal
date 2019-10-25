@@ -1,0 +1,39 @@
+[package]
+name = "reveal-rs-wrapper"
+description = "Wrapper around reveal-rs to expose functions in this project"
+version = "0.1.0"
+authors = ["Svenn-Arne Dragly <dragly@cognite.com>"]
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib"]
+path = "rust/lib.rs"
+
+[dependencies]
+wasm-bindgen = { version = "0.2.49", features = ["serde-serialize"]  }
+js-sys = "0.3.26"
+serde = { version = "1.0.80", features = ["derive"] }
+serde_derive = "^1.0.59"
+arraymap = "0.1.1"
+console_error_panic_hook = "0.1.6"
+serde-wasm-bindgen = "0.1.3"
+serde_bytes = "0.11.2"
+byteorder = "1.3.2"
+openctm = { git = "https://github.com/cognitedata/openctm-rs", rev="cbaf8e71b34485bde009cfe9ebf29d1e06233a8f" }
+i3df = { git = "https://github.com/cognitedata/reveal-rs", rev="e4e5077024181e817013fb177244bcdfe28637f8" }
+
+[profile.release]
+# TODO this enables debug symbols - remove when actually releasing to reduce file size
+debug = true
+
+[dependencies.web-sys]
+version = "0.3.4"
+features = [
+  'console',
+  'Headers',
+  'Request',
+  'RequestInit',
+  'RequestMode',
+  'Response',
+  'Window',
+]

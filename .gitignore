@@ -1,3 +1,6 @@
+public/
 dist
 node_modules
-
+.vs
+coverage
+target
