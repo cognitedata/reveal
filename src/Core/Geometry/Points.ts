@@ -13,6 +13,7 @@
 
 import { Vector3 } from "./Vector3";
 import { Random } from "../PrimitivClasses/Random";
+import { Range1 } from "./Range1";
 
 export class Points
 {
@@ -48,14 +49,14 @@ export class Points
   // STATIC METHODS: 
   //==================================================
 
-  public static createByRandom(pointCount: number): Points
+  public static createByRandom(pointCount: number, range: Range1): Points
   {
     const result = new Points();
     for (let i = 0; i < pointCount; i++)
     {
-      const x = Random.getFloat(0, 100);
-      const y = Random.getFloat(0, 100);
-      const z = Random.getFloat(0, 100);
+      const x = Random.getFloat(range.min, range.max);
+      const y = Random.getFloat(range.min, range.max);
+      const z = Random.getFloat(range.min, range.max);
       const point = new Vector3(x, y, z);
       result.add(point);
     }

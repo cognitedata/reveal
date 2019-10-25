@@ -14,6 +14,7 @@
 import { Vector3 } from "./Vector3";
 import { Random } from "../PrimitivClasses/Random";
 import { Points } from "./Points";
+import { Range1 } from "./Range1";
 
 export class Polyline extends Points
 {
@@ -27,14 +28,14 @@ export class Polyline extends Points
   // STATIC METHODS: 
   //==================================================
 
-  public static createByRandom(pointCount: number): Polyline
+  public static createByRandom(pointCount: number, range: Range1): Polyline
   {
     const result = new Polyline();
     for (let i = 0; i < pointCount; i++)
     {
-      const x = Random.getFloat(-50, 50);
-      const y = Random.getFloat(-50, 50);
-      const z = Random.getFloat(-50, 50);
+      const x = Random.getFloat(range.min, range.max);
+      const y = Random.getFloat(range.min, range.max);
+      const z = Random.getFloat(range.min, range.max);
       const point = new Vector3(x, y, z);
       result.add(point);
     }

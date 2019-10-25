@@ -61,7 +61,8 @@ export abstract class BaseGroupThreeView extends BaseThreeView
     if (!this._group)
     {
       this._group = this.createObject3D();
-      this.scene.add(this._group);
+      if (this._group != null)
+        this.scene.add(this._group);
     }
     else
       this._group.visible = true;
@@ -76,7 +77,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
     {
       // Remove the group for the scene
       this.scene.remove(this._group);
-      this._group = null; 
+      this._group = null;
     }
     else
       this._group.visible = false;
@@ -87,7 +88,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
   // VIRTUAL METHODS
   //==================================================
 
-  protected abstract createObject3D(): THREE.Object3D;
+  protected abstract createObject3D(): THREE.Object3D | null;
 
   //==================================================
   // INSTANCE METHODS
@@ -98,7 +99,11 @@ export abstract class BaseGroupThreeView extends BaseThreeView
     const scene = this.scene;
     if (this._group)
       scene.remove(this._group);
+      
     this._group = this.createObject3D();
+    if (this._group == null)
+      return;
+
     this._group.visible = true;
     scene.add(this._group);
   }

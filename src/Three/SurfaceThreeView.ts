@@ -17,6 +17,7 @@ import { SurfaceNode } from "../Nodes/SurfaceNode";
 import { SurfaceRenderStyle } from "../Nodes/SurfaceRenderStyle";
 import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
 import { Color, Group } from 'three';
+import { RegularGrid2 } from '../Core/Geometry/RegularGrid2';
 
 export class SurfaceThreeView extends BaseGroupThreeView
 {
@@ -46,46 +47,14 @@ export class SurfaceThreeView extends BaseGroupThreeView
   // OVERRIDES of BaseGroupThreeView
   //==================================================
 
-  protected /*override*/ createObject3D(): THREE.Object3D
+  protected /*override*/ createObject3D(): THREE.Object3D | null
   {
     const node = this.node;
     const style = this.style;
+    const grid = node.data;
+    if (grid == null)
+      return null;
 
-    const vertices = [
-      { pos: [0, 0, 0], norm: [0, 0, 1] },
-      { pos: [1, 0, 0], norm: [0, 0, 1] },
-      { pos: [0, 1, 0], norm: [0, 0, 1] },
-      { pos: [1, 1, 0], norm: [0, 0, 1] },
-      { pos: [0, 2, 0], norm: [0, 0, 1] },
-      { pos: [1, 2, 0], norm: [0, 0, 1] },
-    ];
-    const positions = [];
-    const normals = [];
-    const colors = [];
-    for (const vertex of vertices)
-    {
-      positions.push(...vertex.pos);
-      normals.push(...vertex.norm);
-    }
-
-    var indices = new Uint16Array([0, 1, 2, 3, 4, 5]);
-    var color = new THREE.Color();
-    const f = 1;
-    colors.push(1, 0, 1);
-    colors.push(1, 0, 0);
-    colors.push(1, 1, 0);
-    colors.push(0, 1, 1);
-    colors.push(0, 1, 0);
-    colors.push(0, 0, 1);
-
-    const geometry = new THREE.BufferGeometry();
-    geometry.addAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-    geometry.addAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
-    geometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 3));
-    geometry.addGroup(0, 6);
-    geometry.setIndex(new THREE.Uint16BufferAttribute(indices, 1));
-
-    const material = new THREE.MeshPhongMaterial({ vertexColors: THREE.VertexColors, side: THREE.DoubleSide, flatShading: false, shininess: 60 });
     const group = new Group();
     {
       const color = 0xFFFFFF;
@@ -102,11 +71,171 @@ export class SurfaceThreeView extends BaseGroupThreeView
       group.add(light);
     }
     {
+      const geometry = new THREE.BufferGeometry();
+      addAttributes(geometry, grid);
+
+      const material = new THREE.MeshPhongMaterial({ vertexColors: THREE.VertexColors, side: THREE.DoubleSide, flatShading: false, shininess: 60 });
       const mesh = new THREE.Mesh(geometry, material);
-      mesh.drawMode = THREE.TriangleStripDrawMode;
+      mesh.drawMode = THREE.TrianglesDrawMode;//THREE.TriangleStripDrawMode;
       group.add(mesh);
     }
     return group;
   }
+}
 
+
+
+function addAttributes(geometry: THREE.BufferGeometry, grid: RegularGrid2): void
+{
+  const [uniqueIndexes, numUniqueIndex] = createUniqueIndexes(grid);
+  const positions = new Float32Array(numUniqueIndex * 3);
+  const normals = new Float32Array(numUniqueIndex * 3);
+  const colors: number[] = new Array(numUniqueIndex * 3);
+  const indices: number[] = [];
+  // const groups: number[] = [];
+
+  const color = new Color()
+
+
+  for (let j = 0; j < grid.nodeSize.j; j++)
+  {
+    for (let i = 0; i < grid.nodeSize.i; i++)
+    {
+      const nodeIndex = grid.getNodeIndex(i, j);
+      const uniqueIndex = uniqueIndexes[nodeIndex];
+      if (uniqueIndex < 0)
+        continue;
+
+      const point = grid.getPoint3(i, j);
+      const index = 3 * uniqueIndex;
+      positions[index + 0] = point.x
+      positions[index + 1] = point.y
+      positions[index + 2] = point.z
+
+      const normal = grid.getNormal(i, j);
+      normals[index + 0] = normal.x;
+      normals[index + 1] = normal.y;
+      normals[index + 2] = normal.z;
+
+      color.setHSL((0.0001 * point.x * point.x) % 1, 1, 0.5);
+      colors[index + 0] = color.r;
+      colors[index + 1] = color.g;
+      colors[index + 2] = color.b;
+    }
+  }
+  for (let i = 0; i < grid.nodeSize.i - 1; i++)
+  {
+    for (let j = 0; j < grid.nodeSize.j - 1; j++)
+    {
+      const nodeIndex0 = grid.getNodeIndex(i, j);
+      const nodeIndex1 = grid.getNodeIndex(i + 1, j);
+      const nodeIndex2 = grid.getNodeIndex(i + 1, j + 1);
+      const nodeIndex3 = grid.getNodeIndex(i, j + 1);
+
+      const unique0 = uniqueIndexes[nodeIndex0];
+      const unique1 = uniqueIndexes[nodeIndex1];
+      const unique2 = uniqueIndexes[nodeIndex2];
+      const unique3 = uniqueIndexes[nodeIndex3];
+
+      //(i,j+1)     (i+1,j+1)
+      //     3------2
+      //     |      |
+      //     0------1
+      //(i,j)       (i+1,j)
+
+      let n = 0;
+      if (unique0 >= 0) n++;
+      if (unique1 >= 0) n++;
+      if (unique2 >= 0) n++;
+      if (unique3 >= 0) n++;
+      if (n < 3)
+        continue;
+
+      if (n === 4)
+      {
+        indices.push(unique0);
+        indices.push(unique1);
+        indices.push(unique2);
+
+        indices.push(unique0);
+        indices.push(unique2);
+        indices.push(unique3);
+      }
+      else if (unique0 < 0)
+      {
+        indices.push(unique1);
+        indices.push(unique2);
+        indices.push(unique3);
+      }
+      else if (unique1 < 0)
+      {
+        indices.push(unique0);
+        indices.push(unique2);
+        indices.push(unique3);
+      }
+      else if (unique2 < 0)
+      {
+        indices.push(unique0);
+        indices.push(unique1);
+        indices.push(unique3);
+      }
+      else if (unique3 < 0)
+      {
+        indices.push(unique0);
+        indices.push(unique1);
+        indices.push(unique2);
+      }
+    }
+    //groups.push(indices.length);
+  }
+  // let prevCount = 0;
+  // for (const count of groups) 
+  // {
+  //   const groupCount = count - prevCount;
+  //   if (groupCount > 0)
+  //   {      
+  //     geometry.addGroup(prevCount, groupCount);
+  //   }
+  //   prevCount = count;
+  // }
+
+  geometry.addAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geometry.addAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
+  geometry.addAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+//  geometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 3));
+  geometry.setIndex(new THREE.Uint32BufferAttribute(indices, 1));
+}
+
+
+function addGroup(geometry: THREE.BufferGeometry, indices: number[], prevCount: number): number
+{
+  const count = indices.length - 1;
+  const groupCount = count - prevCount;
+  if (groupCount > 0)
+  {
+    //geometry.addGroup(prevCount, groupCount);
+    console.log(groupCount);
+  }
+  return count;
+}
+
+function createUniqueIndexes(grid: RegularGrid2): [number[], number]
+{
+  const uniqueIndexes = new Array<number>(grid.nodeSize.size);
+  let numUniqueIndex = 0;
+  for (let j = 0; j < grid.nodeSize.j; j++)
+  {
+    for (let i = 0; i < grid.nodeSize.j; i++)
+    {
+      const nodeIndex = grid.getNodeIndex(i, j);
+      if (grid.isNodeDef(i, j))
+      {
+        uniqueIndexes[nodeIndex] = numUniqueIndex;
+        numUniqueIndex++;
+      }
+      else
+        uniqueIndexes[nodeIndex] = -1;
+    }
+  }
+  return [uniqueIndexes, numUniqueIndex];
 }

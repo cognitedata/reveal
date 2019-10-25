@@ -54,7 +54,7 @@ export class RegularGrid2 extends Grid2
     return !Number.isNaN(this.getZ(i, j));
   }
 
-  public isInNodeInsideDef(i: number, j: number): boolean
+  public isNodeInsideDef(i: number, j: number): boolean
   {
     return this.isNodeInside(i, j) && this.isNodeDef(i, j);
   }
@@ -69,29 +69,58 @@ export class RegularGrid2 extends Grid2
   {
     return new Vector3(this.xOrigin + this.inc * i, this.yOrigin + this.inc * j, this.getZ(i, j));
   }
-  // public getNormal(i: number, j: number): Vector3
-  // {
-  //   const p = new Vector3(0, 0, this.getZ(i, j))
-  //   const a = new Vector3(0, 0, this.getZ(i, j))
 
-  //   const def0 = this.isInNodeInsideDef(i + 1, j);
-  //   const def1 = this.isInNodeInsideDef(j, i + 1);
-  //   const def2 = this.isInNodeInsideDef(i - 1, j);
-  //   const def3 = this.isInNodeInsideDef(i, j - 1);
+  public getNormal(i: number, j: number): Vector3
+  {
+    const sum = Vector3.newZero;
+    const z = this.getZ(i, j);
+    const a = Vector3.newZero;
+    const b = Vector3.newZero;
 
-  //   if (def0 && def1)
-  //   {
-  //     const a = new Vector3(0, this.inc, this.getZ(i, j + 1));
-  //     a.substract(p);
+    const def0 = this.isNodeInsideDef(i + 1, j + 0);
+    const def1 = this.isNodeInsideDef(i + 0, j + 1);
+    const def2 = this.isNodeInsideDef(i - 1, j + 0);
+    const def3 = this.isNodeInsideDef(i + 0, j - 1);
 
-  //     const b = new Vector3(0, this.inc, this.getZ(i, j + 1));
-  //     b.substract(p);
-
-
-  //   }
-
-
-  // }
+    if (def0 && def1)
+    {
+      a.set(this.inc, 0, this.getZ(i + 1, j + 0) - z);
+      b.set(0, this.inc, this.getZ(i + 0, j + 1) - z);
+      a.crossProduct(b);
+      sum.add(a);
+    }
+    if (def1 && def2)
+    {
+      a.set(0, +this.inc, this.getZ(i + 0, j + 1) - z);
+      b.set(-this.inc, 0, this.getZ(i - 1, j + 0) - z);
+      a.crossProduct(b);
+      sum.add(a);
+    }
+    if (def1 && def2)
+    {
+      a.set(0, +this.inc, this.getZ(i + 0, j + 1) - z);
+      b.set(-this.inc, 0, this.getZ(i - 1, j + 0) - z);
+      a.crossProduct(b);
+      sum.add(a);
+    }
+    if (def2 && def3)
+    {
+      a.set(-this.inc, 0, this.getZ(i - 1, j + 0) - z);
+      b.set(0, -this.inc, this.getZ(i + 0, j - 1) - z);
+      a.crossProduct(b);
+      sum.add(a);
+    }
+    if (def3 && def0)
+    {
+      a.set(0, -this.inc, this.getZ(i + 0, j - 1) - z);
+      b.set(+this.inc, 0, this.getZ(i + 1, j + 0) - z);
+      a.crossProduct(b);
+      sum.add(a);
+    }
+    if (!sum.normalize())
+      sum.set(0,0,1);
+    return sum;
+  }
 
   public getTriplet(i: number, j: number): [number, number, number]
   {
@@ -118,59 +147,6 @@ export class RegularGrid2 extends Grid2
     const index = this.getNodeIndex(i, j);
     this.buffer[index] = value;
   }
-
-  private createUniqueIndices(): number[] 
-  {
-    let [uniqueIndexes, numUniqueIndex] = this.createUniqueIndexes();
-    let vertices = new Float32Array(numUniqueIndex * 3);
-    let normals = new Float32Array(numUniqueIndex * 3);
-
-    for (var j = 0; j < this.nodeSize.j; j++)
-    {
-      for (var i = 0; i < this.nodeSize.i; i++)
-      {
-        var nodeIndex = this.getNodeIndex(i, j);
-        var uniqueIndex = uniqueIndexes[nodeIndex];
-        if (uniqueIndex < 0)
-          continue;
-
-        var point = this.getPoint3(i, j);
-        let index = 3 * uniqueIndex;
-        vertices[index + 1] = point.x
-        vertices[index + 1] = point.y
-        vertices[index + 2] = point.z
-
-        // var normal = this.getNormal(i, j);
-        // normals[index + 1] = normal.x
-        // normals[index + 1] = normal.y
-        // normals[index + 2] = normal.z
-      }
-    }
-    return uniqueIndexes;
-  }
-
-
-  private createUniqueIndexes(): [number[], number]
-  {
-    let uniqueIndexes = [];
-    let numUniqueIndex = 0;
-    for (var j = 0; j < this.nodeSize.j; j++)
-    {
-      for (var i = 0; i < this.nodeSize.j; i++)
-      {
-        var nodeIndex = this.getNodeIndex(i, j);
-        let uniqueIndex = -1;
-        if (this.isNodeDef(i, j))
-        {
-          uniqueIndex = numUniqueIndex;
-          numUniqueIndex++;
-        }
-        uniqueIndexes[nodeIndex] = uniqueIndex;
-      }
-    }
-    return [uniqueIndexes, numUniqueIndex];
-  }
-
 
   static createFractal(size: Index2): Grid2
   {

@@ -1,4 +1,15 @@
-
+//=====================================================================================
+// This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
+// in October 2019. It is suited for flexible and customizable visualization of   
+// multiple dataset in multiple viewers.
+//
+// It is a C# to typescript port from the Modern Model architecture,   
+// based on the experience when building Petrel.  
+//
+// NOTE: Always keep the code according to the code style already applied in the file.
+// Put new code under the correct section, and make more sections if needed.
+// Copyright (c) Cognite AS. All rights reserved.
+//=====================================================================================
 
 export class Random
 {
@@ -6,19 +17,36 @@ export class Random
   // STATIC METHODS: 
   //==================================================
 
-  static getInt(min: number, max: number): number
+  public static getInt(min: number, max: number): number
   {
     return Math.round(Random.getFloat(min, max));
   }
 
-  static getFloat(min: number, max: number): number
+  public static getFloat(min: number, max: number): number
   {
     return min + Math.random() * (max - min);
   }
 
-  static get isTrue(): boolean
+  public static isTrue(p: number = 0.5): boolean
   {
-    return Math.random() > 0.5;
+    return Math.random() > p;
+  }
+
+  public static getGaussian(mean: number = 0, stdDev: number = 1): number
+  {
+    while (true)
+    {
+      const a = Math.random();
+      if (a <= Number.EPSILON)
+        continue;
+
+      const b = Math.random();
+      if (b <= Number.EPSILON)
+        continue;
+
+      const gausian =  Math.sqrt(-2 * Math.log(a)) * Math.cos(2 * Math.PI * b);
+      return gausian * stdDev + mean;
+    }
   }
 }
 

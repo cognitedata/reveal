@@ -21,6 +21,11 @@ export class Vector3
   public y: number;
   public z: number;
 
+  public static get newZero(): Vector3 { return new Vector3(0, 0, 0); }
+
+  public get squuareLength(): number { return this.x * this.x + this.y * this.y + this.z * this.z; }
+  public get length(): number { return Math.sqrt(this.length); }
+
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -46,6 +51,13 @@ export class Vector3
   //==================================================
   // INSTANCE METHODS: Operations
   //==================================================
+
+  public set(x: number, y: number, z: number): void
+  {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+  }
 
   public add(point: Vector3): void
   {
@@ -73,5 +85,19 @@ export class Vector3
     this.x /= point.x;
     this.y /= point.y;
     this.z /= point.z;
+  }
+
+  public crossProduct(a: Vector3): void { this.set(this.y * a.z - this.z * a.y, this.z * a.x - this.x * a.z, this.x * a.y - this.y * a.x); }
+
+  public normalize(): boolean
+  {
+    const len = length;
+    if (len < Number.EPSILON)
+      return false;
+
+    this.x /= len;
+    this.y /= len;
+    this.z /= len;
+    return true;
   }
 }

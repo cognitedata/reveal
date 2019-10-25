@@ -39,7 +39,7 @@ export class PolylinesThreeView extends BaseGroupThreeView
   //==================================================
   // OVERRIDES of BaseView
   //==================================================
-  
+
   protected /*override*/ updateCore(args: NodeEventArgs): void
   {
     super.updateCore(args);
@@ -49,7 +49,7 @@ export class PolylinesThreeView extends BaseGroupThreeView
   // OVERRIDES of BaseGroupThreeView
   //==================================================
 
-  protected /*override*/ createObject3D(): THREE.Object3D
+  protected /*override*/ createObject3D(): THREE.Object3D | null
   {
     const node = this.node;
     const style = this.style;
