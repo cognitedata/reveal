@@ -24,6 +24,7 @@ module.exports = {
   devtool: 'inline-source-map',
   devServer: {
     https: false,
+    writeToDisk: true,
   },
   plugins: [
     new HtmlWebpackPlugin(),

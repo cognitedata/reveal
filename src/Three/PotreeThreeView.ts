@@ -18,7 +18,7 @@ import { PotreeRenderStyle } from "../Nodes/PotreeRenderStyle";
 import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
 
 // @ts-ignore
-import * as Potree from 'potree-core';
+import * as Potree from '@cognite/potree-core';
 
 export class PotreeThreeView extends BaseGroupThreeView
 {
