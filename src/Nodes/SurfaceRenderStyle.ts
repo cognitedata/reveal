@@ -15,13 +15,12 @@ import { TargetId } from "../Core/PrimitivClasses/TargetId";
 import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
 import { ColorType } from "../Core/Enums/ColorType";
 
-export class PolylinesRenderStyle extends BaseRenderStyle
+export class SurfaceRenderStyle extends BaseRenderStyle
 {
   //==================================================
   // FIELDS
   //==================================================
 
-  public lineWidth: number = 1;
   public colorType: ColorType = ColorType.DifferentColor;
 
   //==================================================
@@ -32,8 +31,7 @@ export class PolylinesRenderStyle extends BaseRenderStyle
 
   public /*copy constructor*/ copy(): BaseRenderStyle
   {
-    const style = new PolylinesRenderStyle(this.targetId);
-    style.lineWidth = this.lineWidth;
+    const style = new SurfaceRenderStyle(this.targetId);
     style.colorType = this.colorType;
     return style;
   }

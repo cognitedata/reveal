@@ -59,10 +59,12 @@ export abstract class BaseGroupThreeView extends BaseThreeView
     super.onShowCore();
     // Create the group and add it to the scene
     if (!this._group)
+    {
       this._group = this.createObject3D();
-
-    const scene = this.scene;
-    scene.add(this._group);
+      this.scene.add(this._group);
+    }
+    else
+      this._group.visible = true;
   }
 
   protected /*override*/ onHideCore(): void
@@ -70,12 +72,14 @@ export abstract class BaseGroupThreeView extends BaseThreeView
     if (!this._group)
       return;
 
-    // Remove the group for the scene
-    const scene = this.scene;
-    scene.remove(this._group);
     if (!this.stayAliveIfInvisible)
-      this._group = null;
-
+    {
+      // Remove the group for the scene
+      this.scene.remove(this._group);
+      this._group = null; 
+    }
+    else
+      this._group.visible = false;
     super.onHideCore();
   }
 
@@ -95,6 +99,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
     if (this._group)
       scene.remove(this._group);
     this._group = this.createObject3D();
+    this._group.visible = true;
     scene.add(this._group);
   }
 }

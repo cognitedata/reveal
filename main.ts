@@ -1,10 +1,8 @@
 import { ThreeModule } from './src/Three/ThreeModule';
 import { PolylinesNode } from './src/Nodes/PolylinesNode';
 import { Polylines } from './src/Core/Geometry/Polylines';
-import { BaseTargetNode } from './src/Core/Nodes/BaseTargetNode';
-import { BaseVisualNode } from './src/Core/Nodes/BaseVisualNode';
-import { ThreeTargetNode } from './src/Three/ThreeTargetNode';
 import { PotreeNode } from './src/Nodes/PotreeNode';
+import { SurfaceNode } from './src/Nodes/SurfaceNode';
 
 main();
 
@@ -27,6 +25,11 @@ export function main()
     const node = new PotreeNode();
     node.url = 'https://betaserver.icgc.cat/potree12/resources/pointclouds/barcelonasagradafamilia/cloud.js';
     node.name = 'Barcelona';
+    root.dataFolder.addChild(node);
+    node.setVisible(true);
+  }
+  {
+    const node = new SurfaceNode();
     root.dataFolder.addChild(node);
     node.setVisible(true);
   }
