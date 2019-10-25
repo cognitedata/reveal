@@ -76,7 +76,6 @@ export class RegularGrid2 extends Grid2
 
   public getZ(i: number, j: number): number
   {
-    var f = this.nodeSize.j;
     const index = this.getNodeIndex(i, j);
     return this.buffer[index]
   }

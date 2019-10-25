@@ -16,7 +16,9 @@ import { BaseGroupThreeView } from "./BaseGroupThreeView";
 import { PotreeNode } from "../Nodes/PotreeNode";
 import { PotreeRenderStyle } from "../Nodes/PotreeRenderStyle";
 import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
-//import * as Potree from 'cognite/potree-core';
+
+// @ts-ignore
+import * as Potree from 'potree-core';
 
 export class PotreeThreeView extends BaseGroupThreeView
 {
@@ -51,19 +53,15 @@ export class PotreeThreeView extends BaseGroupThreeView
     const node = this.node;
     const style = this.style;
 
-    //var points = new Potree.Group();
-    // points.setPointBudget(style.budget)
+    const points = new Potree.Group();
+    points.setPointBudget(style.budget)
 
-    // @ts-ignore
-    // Potree.loadPointCloud(node.url, node.name, function(data) {
-    //   var pointcloud = data.pointcloud;
-    //   points.add(pointcloud);
-    // });
-
-    // setInterval(() => {
-    //   points.position.set(-431895.739999483, -238.1446784943079, 4583065.15011712)
-    // }, 500);
-    // return points;
-    return null;
+    Potree.loadPointCloud(node.url, node.name, (data: any) =>
+    {
+      const pointcloud = data.pointcloud;
+      points.add(pointcloud);
+    });
+    setInterval(() => { points.position.set(-431895.739999483, -238.1446784943079, 4583065.15011712) }, 500);
+    return points;
   }
 }
