@@ -51,7 +51,12 @@ export class RegularGrid2 extends Grid2
 
   public isNodeDef(i: number, j: number): boolean
   {
-    return Number.isNaN(this.getZ(i, j)) == false;
+    return !Number.isNaN(this.getZ(i, j));
+  }
+
+  public isInNodeInsideDef(i: number, j: number): boolean
+  {
+    return this.isNodeInside(i, j) && this.isNodeDef(i, j);
   }
 
   //==================================================
@@ -64,10 +69,29 @@ export class RegularGrid2 extends Grid2
   {
     return new Vector3(this.xOrigin + this.inc * i, this.yOrigin + this.inc * j, this.getZ(i, j));
   }
-  public getNormal(i: number, j: number): Vector3
-  {
-    return new Vector3(0, 0, 1);
-  }
+  // public getNormal(i: number, j: number): Vector3
+  // {
+  //   const p = new Vector3(0, 0, this.getZ(i, j))
+  //   const a = new Vector3(0, 0, this.getZ(i, j))
+
+  //   const def0 = this.isInNodeInsideDef(i + 1, j);
+  //   const def1 = this.isInNodeInsideDef(j, i + 1);
+  //   const def2 = this.isInNodeInsideDef(i - 1, j);
+  //   const def3 = this.isInNodeInsideDef(i, j - 1);
+
+  //   if (def0 && def1)
+  //   {
+  //     const a = new Vector3(0, this.inc, this.getZ(i, j + 1));
+  //     a.substract(p);
+
+  //     const b = new Vector3(0, this.inc, this.getZ(i, j + 1));
+  //     b.substract(p);
+
+
+  //   }
+
+
+  // }
 
   public getTriplet(i: number, j: number): [number, number, number]
   {
@@ -116,10 +140,10 @@ export class RegularGrid2 extends Grid2
         vertices[index + 1] = point.y
         vertices[index + 2] = point.z
 
-        var normal = this.getNormal(i, j);
-        normals[index + 1] = normal.x
-        normals[index + 1] = normal.y
-        normals[index + 2] = normal.z
+        // var normal = this.getNormal(i, j);
+        // normals[index + 1] = normal.x
+        // normals[index + 1] = normal.y
+        // normals[index + 2] = normal.z
       }
     }
     return uniqueIndexes;
