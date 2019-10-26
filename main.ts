@@ -20,6 +20,7 @@ export function main()
 
   const root = module.createRoot();
 
+  // Add data
   for (let i = 0; i < 10; i++)
   {
     const node = new PolylinesNode();
@@ -41,6 +42,7 @@ export function main()
     root.dataFolder.addChild(node);
     node.setVisible(true);
 
+    // TODO: Move this to the general code
     const target = root.activeTarget as ThreeTargetNode;
     const range = node.getRange();
     if (target && !range.isEmpty && target.activeCamera instanceof THREE.PerspectiveCamera)
@@ -52,28 +54,9 @@ export function main()
   }
   module.initializeWhenPopulated(root);
 
-
-
   const domElement = module.getDomElement(root);
   if (domElement)
     document.body.appendChild(domElement);
-
-
-  // for (const isVisible of [true, false])
-  // {
-  //   for (const target of root.targetFolder.getChildrenByType(BaseTargetNode))
-  //     for (const node of root.dataFolder.getChildrenByType(BaseVisualNode))
-  //     {
-  //       const sleep = (milliseconds: number) =>
-  //       {
-  //         return new Promise(resolve => setTimeout(resolve, milliseconds))
-  //       }
-  //       sleep(10000).then(() =>
-  //       {
-  //         node.setVisible(isVisible, target);
-  //       });
-  //     }
-  // }
 }
 
 

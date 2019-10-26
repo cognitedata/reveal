@@ -55,62 +55,36 @@ export class SurfaceThreeView extends BaseGroupThreeView
     if (grid == null)
       return null;
 
-    const group = new Group();
-    {
-      const color = 0xFFFFFF;
-      const intensity = 0;
-      const light = new THREE.AmbientLight(color, intensity);
-      light.position.set(0, 0, 0);
-      group.add(light);
-    }
-    {
+    const geometry = new THREE.BufferGeometry();
+    addAttributes(geometry, grid);
 
-      const skyColor = 0xB1E1FF;  // light blue
-      const groundColor = 0xB97A20;  // brownish orange
-      const intensity = 0;
-      const light = new THREE.HemisphereLight(skyColor, groundColor, intensity);
-      group.add(light);
-    }
-    {
-      const color = 0xFFFFFF;
-      const intensity = 1;
-      const light = new THREE.DirectionalLight(color, intensity);
-      light.position.set(0, 0, 1000);
-      light.target.position.set(0.5, -0.5, -1);
-      group.add(light);
-    }
-    {
-      const geometry = new THREE.BufferGeometry();
-      addAttributes(geometry, grid);
-
-      //const material = new THREE.MeshStandardMaterial({ vertexColors: THREE.VertexColors, side: THREE.DoubleSide, roughness:0.8, metalness:0.75, flatShading: false });
-      const material = new THREE.MeshPhongMaterial({ vertexColors: THREE.VertexColors, side: THREE.DoubleSide, flatShading: false, shininess: 30 });
-      const mesh = new THREE.Mesh(geometry, material);
-      mesh.drawMode = THREE.TrianglesDrawMode;//THREE.TriangleStripDrawMode;
-      group.add(mesh);
-    }
-    return group;
+    //const material = new THREE.MeshStandardMaterial({ vertexColors: THREE.VertexColors, side: THREE.DoubleSide, roughness:0.8, metalness:0.75, flatShading: false });
+    const material = new THREE.MeshPhongMaterial({ vertexColors: THREE.VertexColors, side: THREE.DoubleSide, flatShading: false, shininess: 100 });
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.drawMode = THREE.TrianglesDrawMode;//THREE.TriangleStripDrawMode;
+    return mesh;
   }
 }
 
-
+//==================================================
+// LOCAL FUNCTIONS: Helpers
+//==================================================
 
 function addAttributes(geometry: THREE.BufferGeometry, grid: RegularGrid2): void
 {
   const [uniqueIndexes, numUniqueIndex] = createUniqueIndexes(grid);
   const positions = new Float32Array(numUniqueIndex * 3);
   const normals = new Float32Array(numUniqueIndex * 3);
-  const colors: number[] = new Array(numUniqueIndex * 3);
-  const indices: number[] = [];
+  const colors = new Float32Array(numUniqueIndex * 3);
   // const groups: number[] = [];
 
   const color = new Color()
-
-
   const currentRange = grid.getZRange();
-  for (let j = 0; j < grid.nodeSize.j; j++)
+
+  // Generate the position, normal and colors
+  for (let j = grid.nodeSize.j - 1; j >= 0; j--)
   {
-    for (let i = 0; i < grid.nodeSize.i; i++)
+    for (let i = grid.nodeSize.i - 1; i >= 0; i--)
     {
       const nodeIndex = grid.getNodeIndex(i, j);
       const uniqueIndex = uniqueIndexes[nodeIndex];
@@ -128,14 +102,18 @@ function addAttributes(geometry: THREE.BufferGeometry, grid: RegularGrid2): void
       normals[index + 1] = normal.y;
       normals[index + 2] = normal.z;
 
-      let fraction = (point.z - currentRange.min) / currentRange.delta;
+      let hue = (point.z - currentRange.min) / currentRange.delta;
+      hue = (hue + 0.5) % 1;
 
-      color.setHSL((fraction + 0.5) % 1, 1, 0.5);
+      color.setHSL(hue, 0.8, 0.5);
       colors[index + 0] = color.r;
       colors[index + 1] = color.g;
       colors[index + 2] = color.b;
     }
   }
+  // Generate the triangle indices
+  // Should be strip, but could not get it to work
+  const indices: number[] = [];
   for (let i = 0; i < grid.nodeSize.i - 1; i++)
   {
     for (let j = 0; j < grid.nodeSize.j - 1; j++)
@@ -215,7 +193,6 @@ function addAttributes(geometry: THREE.BufferGeometry, grid: RegularGrid2): void
   geometry.addAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
   geometry.addAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
   geometry.addAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-  //  geometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 3));
   geometry.setIndex(new THREE.Uint32BufferAttribute(indices, 1));
 }
 
@@ -236,9 +213,9 @@ function createUniqueIndexes(grid: RegularGrid2): [number[], number]
 {
   const uniqueIndexes = new Array<number>(grid.nodeSize.size);
   let numUniqueIndex = 0;
-  for (let j = 0; j < grid.nodeSize.j; j++)
+  for (let j = grid.nodeSize.j - 1; j >= 0; j--)
   {
-    for (let i = 0; i < grid.nodeSize.j; i++)
+    for (let i = grid.nodeSize.i - 1; i >= 0; i--)
     {
       const nodeIndex = grid.getNodeIndex(i, j);
       if (grid.isNodeDef(i, j))

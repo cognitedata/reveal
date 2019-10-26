@@ -98,10 +98,31 @@ export class ThreeTargetNode extends RenderTargetNode
   public /*override*/ initializeCore()
   {
     super.initializeCore();
-    // Add a default active camera
     this.addCameraNode(new ThreeCameraNode(), true)
     const clock = new THREE.Clock();
     this.render(clock);
+
+    // Add lights (TODO: move to TreeLightNode?)
+    const scene = this.scene;
+    let direction = new THREE.Vector3(0.25, -0.25, 1)
+    const color = 0xFFFFFF;
+
+    const group = new THREE.Group();
+    // Light from the sky
+    {
+      const intensity = 1;
+      const light = new THREE.DirectionalLight(color, intensity);
+      light.position.set(direction.x, direction.y, direction.z);
+      group.add(light);
+    }
+    // Light from the ground
+    {
+      const intensity = 0.75;
+      const light = new THREE.DirectionalLight(color, intensity);
+      light.position.set(-direction.x, -direction.y, -direction.z);
+      group.add(light);
+    }
+    scene.add(group);
   }
 
   //==================================================
