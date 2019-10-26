@@ -49,6 +49,12 @@ export abstract class BaseTargetNode extends BaseNode implements Target
     return result;
   }
 
+  protected /*override*/ removeInteractiveCore(): void
+  {
+    this.removeAllViewsShownHere();
+    super.removeInteractiveCore();
+  }
+
   //==================================================
   // IMPLEMETATION of Target
   //==================================================
@@ -128,16 +134,6 @@ export abstract class BaseTargetNode extends BaseNode implements Target
     view.dispose();
     this._viewsShownHere.remove(view);
     view.detach();
-  }
-
-  //==================================================
-  // OVERRIDES of VisualNode
-  //==================================================
-
-  protected /*override*/ removeInteractiveCore(): void
-  {
-    this.removeAllViewsShownHere();
-    super.removeInteractiveCore();
   }
 
   //==================================================

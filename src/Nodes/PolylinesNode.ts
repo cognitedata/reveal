@@ -17,6 +17,7 @@ import { TargetId } from "../Core/PrimitivClasses/TargetId";
 import { Polylines } from "../Core/Geometry/Polylines";
 import { PolylinesRenderStyle } from "./PolylinesRenderStyle";
 import { ColorType } from "../Core/Enums/ColorType";
+import { Range3 } from "../Core/Geometry/Range3";
 
 export class PolylinesNode extends BaseVisualNode
 {
@@ -48,7 +49,7 @@ export class PolylinesNode extends BaseVisualNode
   public /*override*/ isA(className: string): boolean { return className === PolylinesNode.name || super.isA(className); }
 
   //==================================================
-  // OVERRIDES of VisualNode
+  // OVERRIDES of BaseNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Polylines" }
@@ -79,4 +80,6 @@ export class PolylinesNode extends BaseVisualNode
         return false;
     }
   }
+
+  public getRange(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
 }

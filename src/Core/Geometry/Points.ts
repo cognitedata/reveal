@@ -14,6 +14,7 @@
 import { Vector3 } from "./Vector3";
 import { Random } from "../PrimitivClasses/Random";
 import { Range1 } from "./Range1";
+import { Range3 } from "./Range3";
 
 export class Points
 {
@@ -34,6 +35,18 @@ export class Points
     const result = new Points()
     result.list = [...this.list]; // This syntax sucks!
     return result;
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Getters
+  //==================================================
+
+  public getRange(): Range3
+  {
+    const range: Range3 = new Range3();
+    for (const point of this.list)
+      range.add(point);
+    return range;
   }
 
   //==================================================

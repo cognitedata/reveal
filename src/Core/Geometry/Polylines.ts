@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Vector3 } from "./Vector3";
 import { Polyline } from "./Polyline";
 import { Range1 } from "./Range1";
+import { Range3 } from "./Range3";
 
 export class Polylines
 {
@@ -41,4 +41,11 @@ export class Polylines
     return result;
   }
 
+  public getRange(): Range3
+  {
+    const range: Range3 = new Range3();
+    for (const polyline of this.list)
+      range.addRange(polyline.getRange());
+    return range;
+  }
 }

@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+
 import { ThreeModule } from './src/Three/ThreeModule';
 import { PolylinesNode } from './src/Nodes/PolylinesNode';
 import { Polylines } from './src/Core/Geometry/Polylines';
@@ -6,6 +8,7 @@ import { SurfaceNode } from './src/Nodes/SurfaceNode';
 import { RegularGrid2 } from './src/Core/Geometry/RegularGrid2';
 import { Index2 } from './src/Core/Geometry/Index2';
 import { Range1 } from './src/Core/Geometry/Range1';
+import { ThreeTargetNode } from './src/Three/ThreeTargetNode';
 
 main();
 
@@ -33,11 +36,23 @@ export function main()
   }
   {
     const node = new SurfaceNode();
-    node.data = new RegularGrid2(new Index2(100, 100), -500, -500, 10);
+    node.data = RegularGrid2.createFractal(8, -0, -0, 1, new Range1(0, 100));
+    node.data.smoothSimple(2);
     root.dataFolder.addChild(node);
     node.setVisible(true);
+
+    const target = root.activeTarget as ThreeTargetNode;
+    const range = node.getRange();
+    if (target && !range.isEmpty && target.activeCamera instanceof THREE.PerspectiveCamera)
+    {
+      const camera = target.activeCamera;
+      camera.position.set(range.x.center, range.y.center, range.z.center + 1000);
+      camera.updateProjectionMatrix();
+    }
   }
   module.initializeWhenPopulated(root);
+
+
 
   const domElement = module.getDomElement(root);
   if (domElement)

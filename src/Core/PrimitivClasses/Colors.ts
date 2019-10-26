@@ -76,7 +76,7 @@ export class Colors
 
       const h = fraction * 360;
       const s = (i % 2) ? MaxByte : MaxByte * 0.67; // Brighter
-      const v = (i % 2) ? MaxByte * 0.67 : MaxByte; // Brighter; // Darker
+      const v = (i % 2) ? MaxByte * 0.67 : MaxByte; // Brighter && Darker
       result.push(Color.hsv(h, s, v));
     }
     return result;

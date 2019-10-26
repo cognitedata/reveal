@@ -69,7 +69,6 @@ export class ThreeCameraNode extends BaseCameraNode
       if (!camera)
         return null;
 
-
       this._controls = new CameraControls(camera, target.domElement);
     }
     return this._controls;

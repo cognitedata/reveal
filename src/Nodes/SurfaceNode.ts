@@ -17,6 +17,7 @@ import { TargetId } from "../Core/PrimitivClasses/TargetId";
 import { RegularGrid2 } from "../Core/Geometry/RegularGrid2";
 import { SurfaceRenderStyle } from "./SurfaceRenderStyle";
 import { ColorType } from "../Core/Enums/ColorType";
+import { Range3 } from "../Core/Geometry/Range3";
 
 export class SurfaceNode extends BaseVisualNode
 {
@@ -48,7 +49,7 @@ export class SurfaceNode extends BaseVisualNode
   public /*override*/ isA(className: string): boolean { return className === SurfaceNode.name || super.isA(className); }
 
   //==================================================
-  // OVERRIDES of VisualNode
+  // OVERRIDES of BaseNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Surface" }
@@ -79,4 +80,6 @@ export class SurfaceNode extends BaseVisualNode
         return false;
     }
   }
+
+  public getRange(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
 }

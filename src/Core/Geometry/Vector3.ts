@@ -21,10 +21,13 @@ export class Vector3
   public y: number;
   public z: number;
 
-  public static get newZero(): Vector3 { return new Vector3(0, 0, 0); }
+  //==================================================
+  // PROPERTIES
+  //==================================================
 
-  public get squuareLength(): number { return this.x * this.x + this.y * this.y + this.z * this.z; }
-  public get length(): number { return Math.sqrt(this.length); }
+  public static get newZero(): Vector3 { return new Vector3(0, 0, 0); }
+  public get squareLength(): number { return this.x * this.x + this.y * this.y + this.z * this.z; }
+  public get length(): number { return Math.sqrt(this.squareLength); }
 
   //==================================================
   // CONSTRUCTORS
@@ -80,6 +83,13 @@ export class Vector3
     this.z *= point.z;
   }
 
+  public muliplyNumber(value: number): void
+  {
+    this.x *= value;
+    this.y *= value;
+    this.z *= value;
+  }
+
   public divide(point: Vector3): void
   {
     this.x /= point.x;
@@ -87,11 +97,18 @@ export class Vector3
     this.z /= point.z;
   }
 
-  public crossProduct(a: Vector3): void { this.set(this.y * a.z - this.z * a.y, this.z * a.x - this.x * a.z, this.x * a.y - this.y * a.x); }
+  public divideNumber(value: number): void
+  {
+    this.x /= value;
+    this.y /= value;
+    this.z /= value;
+  }
+
+  public crossProduct(other: Vector3): void { this.set(this.y * other.z - this.z * other.y, this.z * other.x - this.x * other.z, this.x * other.y - this.y * other.x); }
 
   public normalize(): boolean
   {
-    const len = length;
+    const len = this.length;
     if (len < Number.EPSILON)
       return false;
 

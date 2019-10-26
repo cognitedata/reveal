@@ -58,23 +58,33 @@ export class SurfaceThreeView extends BaseGroupThreeView
     const group = new Group();
     {
       const color = 0xFFFFFF;
-      const intensity = 0.5;
+      const intensity = 0;
       const light = new THREE.AmbientLight(color, intensity);
       light.position.set(0, 0, 0);
       group.add(light);
     }
     {
+
+      const skyColor = 0xB1E1FF;  // light blue
+      const groundColor = 0xB97A20;  // brownish orange
+      const intensity = 0;
+      const light = new THREE.HemisphereLight(skyColor, groundColor, intensity);
+      group.add(light);
+    }
+    {
       const color = 0xFFFFFF;
-      const intensity = 0.5;
+      const intensity = 1;
       const light = new THREE.DirectionalLight(color, intensity);
-      light.position.set(0, 0, 100);
+      light.position.set(0, 0, 1000);
+      light.target.position.set(0.5, -0.5, -1);
       group.add(light);
     }
     {
       const geometry = new THREE.BufferGeometry();
       addAttributes(geometry, grid);
 
-      const material = new THREE.MeshPhongMaterial({ vertexColors: THREE.VertexColors, side: THREE.DoubleSide, flatShading: false, shininess: 60 });
+      //const material = new THREE.MeshStandardMaterial({ vertexColors: THREE.VertexColors, side: THREE.DoubleSide, roughness:0.8, metalness:0.75, flatShading: false });
+      const material = new THREE.MeshPhongMaterial({ vertexColors: THREE.VertexColors, side: THREE.DoubleSide, flatShading: false, shininess: 30 });
       const mesh = new THREE.Mesh(geometry, material);
       mesh.drawMode = THREE.TrianglesDrawMode;//THREE.TriangleStripDrawMode;
       group.add(mesh);
@@ -97,6 +107,7 @@ function addAttributes(geometry: THREE.BufferGeometry, grid: RegularGrid2): void
   const color = new Color()
 
 
+  const currentRange = grid.getZRange();
   for (let j = 0; j < grid.nodeSize.j; j++)
   {
     for (let i = 0; i < grid.nodeSize.i; i++)
@@ -117,7 +128,9 @@ function addAttributes(geometry: THREE.BufferGeometry, grid: RegularGrid2): void
       normals[index + 1] = normal.y;
       normals[index + 2] = normal.z;
 
-      color.setHSL((0.0001 * point.x * point.x) % 1, 1, 0.5);
+      let fraction = (point.z - currentRange.min) / currentRange.delta;
+
+      color.setHSL((fraction + 0.5) % 1, 1, 0.5);
       colors[index + 0] = color.r;
       colors[index + 1] = color.g;
       colors[index + 2] = color.b;
@@ -202,7 +215,7 @@ function addAttributes(geometry: THREE.BufferGeometry, grid: RegularGrid2): void
   geometry.addAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
   geometry.addAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
   geometry.addAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-//  geometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 3));
+  //  geometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 3));
   geometry.setIndex(new THREE.Uint32BufferAttribute(indices, 1));
 }
 

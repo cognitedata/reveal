@@ -11,47 +11,43 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-export class Range1
+import { Range1 } from "./Range1";
+import { Vector3 } from "./Vector3";
+
+export class Range3
 {
   //==================================================
   // FIELDS
   //==================================================
 
-  private _min: number = 0;
-  private _max: number = 0;
-  private _isEmpty: boolean = true;
+  public x: Range1 = new Range1();
+  public y: Range1 = new Range1();
+  public z: Range1 = new Range1();
 
   //==================================================
   // PROPERTIES
   //==================================================
 
-  public static newUnit(): Range1 { return new Range1(0, 1); }
-  public get isEmpty(): boolean { return this._isEmpty; }
-  public get min(): number { return this._min; }
-  public get max(): number { return this._max; }
-  public get delta(): number { return this._min - this._max; }
-  public get center(): number { return (this._min + this._max) / 2; }
+  public get isEmpty(): boolean { return this.x.isEmpty || this.y.isEmpty || this.z.isEmpty; }
+  public get min(): Vector3 { return new Vector3(this.x.min, this.y.min, this.z.min); }
+  public get max(): Vector3 { return new Vector3(this.x.max, this.y.max, this.z.max); }
+  public get delta(): Vector3 { return new Vector3(this.x.delta, this.y.delta, this.z.delta); }
+  public get center(): Vector3 { return new Vector3(this.x.center, this.y.center, this.z.center); }
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(min?: number, max?: number) 
+  public constructor() 
   {
-    if (min === undefined && max !== undefined)
-      this.set(max, max);
-    else if (min !== undefined && max === undefined)
-      this.set(min, min);
-    else if (min !== undefined && max !== undefined)
-      this.set(min, max);
   }
 
-  public /*copy constructor*/ copy(): Range1
+  public /*copy constructor*/ copy(): Range3
   {
-    const range = new Range1();
-    range._min = this._min;
-    range._max = this._max;
-    range._isEmpty = this._isEmpty;
+    const range = new Range3();
+    range.x = this.x.copy();
+    range.y = this.y.copy();
+    range.z = this.z.copy();
     return range;
   }
 
@@ -59,39 +55,30 @@ export class Range1
   // INSTANCE METHODS; Getters
   //==================================================
 
-  public toString(): string { return `(${this._min}, ${this._max})`; }
+  public toString(): string { return `(X: ${this.x}, Y: ${this.y}, Z: ${this.z})`; }
 
   //==================================================
   // INSTANCE METHODS: Operations
   //==================================================
 
-  public set(min: number, max: number): void
+  public set(min: Vector3, max: Vector3): void
   {
-    this._min = Math.min(min, max);;
-    this._max = Math.max(min, max);;
-    this._isEmpty = false;
+    this.x.set(min.x, max.x);
+    this.x.set(min.y, max.y);
+    this.x.set(min.z, max.z);
   }
 
-  public add(value: number): void
+  public add(value: Vector3): void
   {
-    if (this._isEmpty)
-    {
-      this._isEmpty = false;
-      this._min = value;
-      this._max = value;
-    }
-    else if (value < this._min)
-      this._min = value;
-    else if (value > this._max)
-      this._max = value;
+    this.x.add(value.x);
+    this.y.add(value.y);
+    this.z.add(value.z);
   }
-
-  public addRange(value: Range1): void
+  
+  public addRange(value: Range3): void
   {
-    if (value.isEmpty)
-      return;
-
-    this.add(value.min)
-    this.add(value.max)
+    this.x.addRange(value.x);
+    this.y.addRange(value.y);
+    this.z.addRange(value.z);
   }
 }

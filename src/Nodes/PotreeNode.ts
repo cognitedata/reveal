@@ -46,7 +46,7 @@ export class PotreeNode extends BaseVisualNode
   public /*override*/ isA(className: string): boolean { return className === PotreeNode.name || super.isA(className); }
 
   //==================================================
-  // OVERRIDES of VisualNode
+  // OVERRIDES of BaseNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Potree" }
