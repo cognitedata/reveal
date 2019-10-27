@@ -14,12 +14,12 @@
 import { BaseVisualNode } from "../Core/Nodes/BaseVisualNode";
 import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
 import { TargetId } from "../Core/PrimitivClasses/TargetId";
-import { Polylines } from "../Core/Geometry/Polylines";
 import { PolylinesRenderStyle } from "./PolylinesRenderStyle";
 import { ColorType } from "../Core/Enums/ColorType";
 import { Range3 } from "../Core/Geometry/Range3";
+import { Well } from "./Well";
 
-export class PolylinesNode extends BaseVisualNode
+export class WellNode extends BaseVisualNode
 {
   //==================================================
   // CONSTRUCTORS
@@ -31,28 +31,28 @@ export class PolylinesNode extends BaseVisualNode
   // FIELDS
   //==================================================
 
-  private _data: Polylines | null = null;
+  private _data: Well | null = null;
 
   //==================================================
   // PROPERTIES
   //==================================================
 
-  public get data(): Polylines | null { return this._data; }
-  public set data(value: Polylines | null) { this._data = value; }
+  public get data(): Well | null { return this._data; }
+  public set data(value: Well | null) { this._data = value; }
   public get renderStyle(): PolylinesRenderStyle | null { return this.getRenderStyle() as PolylinesRenderStyle; }
 
   //==================================================
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return PolylinesNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === PolylinesNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return WellNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === WellNode.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Polylines" }
+  public /*override*/ get typeName(): string { return "Well" }
 
   public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
 

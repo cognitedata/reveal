@@ -26,6 +26,8 @@ import { PotreeNode } from "../Nodes/PotreeNode";
 import { PotreeThreeView } from "./PotreeThreeView";
 import { SurfaceNode } from '../Nodes/SurfaceNode';
 import { SurfaceThreeView } from './SurfaceThreeView';
+import { WellNode } from '../Nodes/WellNode';
+import { WellThreeView } from './WellThreeView';
 
 export class ThreeModule extends BaseModule
 {
@@ -43,6 +45,7 @@ export class ThreeModule extends BaseModule
     factory.register(PotreeNode.name, PotreeThreeView, ThreeTargetNode.name);
     factory.register(SurfaceNode.name, SurfaceThreeView, ThreeTargetNode.name);
     factory.register(PolylinesNode.name, PolylinesThreeView, ThreeTargetNode.name);
+    factory.register(WellNode.name, WellThreeView, ThreeTargetNode.name);
   }
 
   protected /*override*/ createRootCore(): BaseRootNode

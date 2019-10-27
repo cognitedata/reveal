@@ -1,3 +1,6 @@
+import { Range3 } from "./Range3";
+import { Random } from "../PrimitivClasses/Random";
+
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
@@ -104,7 +107,14 @@ export class Vector3
     this.z /= value;
   }
 
-  public crossProduct(other: Vector3): void { this.set(this.y * other.z - this.z * other.y, this.z * other.x - this.x * other.z, this.x * other.y - this.y * other.x); }
+  public crossProduct(other: Vector3): void 
+  {
+    this.set(
+      this.y * other.z - this.z * other.y,
+      this.z * other.x - this.x * other.z,
+      this.x * other.y - this.y * other.x
+    );
+  }
 
   public normalize(): boolean
   {
@@ -117,4 +127,13 @@ export class Vector3
     this.z /= len;
     return true;
   }
+
+  public static getRandom(range: Range3): Vector3
+  {
+    const x = Random.getFloat(range.x);
+    const y = Random.getFloat(range.y);
+    const z = Random.getFloat(range.z);
+    return new Vector3(x, y, z);
+  }
+
 }

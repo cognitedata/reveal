@@ -17,6 +17,28 @@ import { Vector3 } from "./Vector3";
 export class Range3
 {
   //==================================================
+  // STATIC FPROPERTIES
+  //==================================================
+
+  public static get newUnit(): Range3
+  {
+    const range = new Range3();
+    range.x = Range1.newUnit;
+    range.y = Range1.newUnit;
+    range.z = Range1.newUnit;
+    return range;
+  }
+
+  public static get newTest(): Range3
+  {
+    const range = new Range3();
+    range.x = Range1.newTest;
+    range.y = Range1.newTest;
+    range.z = Range1.newZTest;
+    return range;
+  }
+
+  //==================================================
   // FIELDS
   //==================================================
 
@@ -74,9 +96,11 @@ export class Range3
     this.y.add(value.y);
     this.z.add(value.z);
   }
-  
-  public addRange(value: Range3): void
+
+  public addRange(value: Range3 | undefined): void
   {
+    if (value === undefined)
+      return;
     this.x.addRange(value.x);
     this.y.addRange(value.y);
     this.z.addRange(value.z);

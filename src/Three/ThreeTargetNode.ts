@@ -104,7 +104,7 @@ export class ThreeTargetNode extends RenderTargetNode
 
     // Add lights (TODO: move to TreeLightNode?)
     const scene = this.scene;
-    let direction = new THREE.Vector3(0.25, -0.25, 1)
+    let direction = new THREE.Vector3(0.5, -0.5, 1)
     const color = 0xFFFFFF;
 
     const group = new THREE.Group();

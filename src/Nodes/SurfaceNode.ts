@@ -54,6 +54,8 @@ export class SurfaceNode extends BaseVisualNode
 
   public /*override*/ get typeName(): string { return "Surface" }
 
+  public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
+
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
     return new SurfaceRenderStyle(targetId);
@@ -80,6 +82,4 @@ export class SurfaceNode extends BaseVisualNode
         return false;
     }
   }
-
-  public getRange(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
 }

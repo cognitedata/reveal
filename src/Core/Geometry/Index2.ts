@@ -24,10 +24,10 @@ export class Index2
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(i: number, j: number)
+  public constructor(i: number, j?: number)
   {
     this.i = i;
-    this.j = j;
+    this.j = j == undefined ? i : j;
   }
 
   public /*copy constructor*/ copy(): Index2

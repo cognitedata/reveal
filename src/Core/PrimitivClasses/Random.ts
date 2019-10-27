@@ -1,3 +1,5 @@
+import { Range1 } from "../Geometry/Range1";
+
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
@@ -17,14 +19,14 @@ export class Random
   // STATIC METHODS: 
   //==================================================
 
-  public static getInt(min: number, max: number): number
+  public static getInt(range: Range1): number
   {
-    return Math.round(Random.getFloat(min, max));
+    return Math.round(Random.getFloat(range));
   }
 
-  public static getFloat(min: number, max: number): number
+  public static getFloat(range: Range1): number
   {
-    return min + Math.random() * (max - min);
+    return range.min + Math.random() * range.delta;
   }
 
   public static isTrue(p: number = 0.5): boolean
@@ -44,7 +46,7 @@ export class Random
       if (b <= Number.EPSILON)
         continue;
 
-      const gausian =  Math.sqrt(-2 * Math.log(a)) * Math.cos(2 * Math.PI * b);
+      const gausian = Math.sqrt(-2 * Math.log(a)) * Math.cos(2 * Math.PI * b);
       return gausian * stdDev + mean;
     }
   }

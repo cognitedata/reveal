@@ -14,6 +14,14 @@
 export class Range1
 {
   //==================================================
+  // STATIC FPROPERTIES
+  //==================================================
+  
+  public static get newUnit(): Range1 { return new Range1(0, 1); }
+  public static get newTest(): Range1 { return new Range1(-1000, 1000); }
+  public static get newZTest(): Range1 { return new Range1(-100, 100); }
+
+  //==================================================
   // FIELDS
   //==================================================
 
@@ -25,11 +33,10 @@ export class Range1
   // PROPERTIES
   //==================================================
 
-  public static newUnit(): Range1 { return new Range1(0, 1); }
   public get isEmpty(): boolean { return this._isEmpty; }
   public get min(): number { return this._min; }
   public get max(): number { return this._max; }
-  public get delta(): number { return this._min - this._max; }
+  public get delta(): number { return this._max - this._min; }
   public get center(): number { return (this._min + this._max) / 2; }
 
   //==================================================
@@ -93,5 +100,10 @@ export class Range1
 
     this.add(value.min)
     this.add(value.max)
+  }
+
+  public getFraction(value: number): number
+  {
+     return (value - this.min) / this.delta;
   }
 }

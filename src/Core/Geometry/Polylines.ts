@@ -12,7 +12,6 @@
 //=====================================================================================
 
 import { Polyline } from "./Polyline";
-import { Range1 } from "./Range1";
 import { Range3 } from "./Range3";
 
 export class Polylines
@@ -33,11 +32,11 @@ export class Polylines
   // STATIC METHODS: 
   //==================================================
 
-  public static createByRandom(polylinesCount: number, pointCount: number, range: Range1): Polylines
+  public static createByRandom(polylinesCount: number, pointCount: number, boundingBox: Range3): Polylines
   {
     const result = new Polylines();
     for (let i = 0; i < polylinesCount; i++)
-      result.list.push(Polyline.createByRandom(pointCount, range))
+      result.list.push(Polyline.createByRandom(pointCount, boundingBox))
     return result;
   }
 

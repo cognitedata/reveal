@@ -3,7 +3,7 @@ import { StubModule } from "./StubModule";
 import { StubTargetNode } from "./StubTargetNode";
 import { PolylinesNode } from "../../Nodes/PolylinesNode";
 import { Polylines } from "../../Core/Geometry/Polylines";
-import { Range1 } from "../../Core/Geometry/Range1";
+import { Range3 } from "../../Core/Geometry/Range3";
 
 export class StubRootCreator
 {
@@ -23,7 +23,7 @@ export class StubRootCreator
     for (let i = 0; i < 4; i++)
     {
       const node = new PolylinesNode();
-      node.data = Polylines.createByRandom(10, 10, new Range1(-100, 100));
+      node.data = Polylines.createByRandom(10, 10, Range3.newTest);
       root.dataFolder.addChild(node);
     }
     module.initializeWhenPopulated(root);

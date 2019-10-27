@@ -23,6 +23,7 @@ import * as color from 'color'
 import { ColorType } from "../Enums/ColorType";
 import { Colors } from "../PrimitivClasses/Colors";
 import { Changes } from "../Views/Changes";
+import { Range3 } from "../Geometry/Range3";
 
 export abstract class BaseNode extends Identifiable
 {
@@ -99,13 +100,15 @@ export abstract class BaseNode extends Identifiable
     result += cocatinate("className", this.className);
     if (this.canChangeColor)
       result += cocatinate("color", this.color);
-    result += cocatinate("id", this.uniqueId);
+    result += cocatinate("id", this.uniqueId.isEmpty ? "" : (this.uniqueId.toString().substring(0, 6) + "..."));
     if (this.isActive)
       result += cocatinate("active");
     if (this.drawStyles.length > 0)
       result += cocatinate("drawstyles", this.drawStyles.length);
     return result;
   }
+
+  public /*virtual*/ get boundingBox(): Range3 | undefined { return undefined; }
 
   //==================================================
   // VIRUAL METHODS: Draw styles
@@ -305,6 +308,21 @@ export abstract class BaseNode extends Identifiable
   //==================================================
   // INSTANCE METHODS: Misc
   //==================================================
+
+  public getBoundingBoxRecursive(): Range3 | undefined
+  {
+    let range = this.boundingBox;
+    for (const child of this.children)
+    {
+      var childRange = child.getBoundingBoxRecursive();
+      if (childRange == undefined)
+        continue;
+      if (range == undefined)
+        range = new Range3();
+      range.addRange(childRange);
+    }
+    return range;
+  }
 
   public notify(args: NodeEventArgs): void
   {

@@ -121,6 +121,7 @@ export abstract class BaseView
   public initialize(): void
   {
     this.initializeCore();
+    this.Verify(); // Just checking that everything is set up properly
   }
 
   public update(args: NodeEventArgs): void
@@ -166,7 +167,7 @@ export abstract class BaseView
     this._target = target;
   }
 
-  public isOk(): boolean
+  public Verify(): boolean
   {
     // Used in unit testing
     if (!this.getNode())

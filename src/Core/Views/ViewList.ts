@@ -68,7 +68,7 @@ export class ViewList
   {
     // Used in unit testing
     for (const view of this.list)
-      if (!view.isOk())
+      if (!view.Verify())
       return false;
     return true;
   }

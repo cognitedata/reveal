@@ -14,7 +14,6 @@
 import { Index2 } from "./Index2";
 import { Grid2 } from "./Grid2";
 import { Vector3 } from "./Vector3";
-import { continueStatement } from "@babel/types";
 import { Random } from "../PrimitivClasses/Random";
 import { Range1 } from "./Range1";
 import { Range3 } from "./Range3";
@@ -86,38 +85,41 @@ export class RegularGrid2 extends Grid2
     const def2 = this.isNodeInsideDef(i - 1, j + 0);
     const def3 = this.isNodeInsideDef(i + 0, j - 1);
 
+    const i0 = def0 ? this.getNodeIndex(i + 1, j + 0) : -1;
+    const i1 = def1 ? this.getNodeIndex(i + 0, j + 1) : -1;
+    const i2 = def2 ? this.getNodeIndex(i - 1, j + 0) : -1;
+    const i3 = def3 ? this.getNodeIndex(i + 0, j - 1) : -1;
+
+    const z0 = def0 ? this.buffer[i0] - z : 0;
+    const z1 = def1 ? this.buffer[i1] - z : 0;
+    const z2 = def1 ? this.buffer[i2] - z : 0;
+    const z3 = def1 ? this.buffer[i3] - z : 0;
+
     if (def0 && def1)
     {
-      a.set(this.inc, 0, this.getZ(i + 1, j + 0) - z);
-      b.set(0, this.inc, this.getZ(i + 0, j + 1) - z);
+      a.set(+this.inc, 0, z0);
+      b.set(0, +this.inc, z1);
       a.crossProduct(b);
       sum.add(a);
     }
     if (def1 && def2)
     {
-      a.set(0, +this.inc, this.getZ(i + 0, j + 1) - z);
-      b.set(-this.inc, 0, this.getZ(i - 1, j + 0) - z);
-      a.crossProduct(b);
-      sum.add(a);
-    }
-    if (def1 && def2)
-    {
-      a.set(0, +this.inc, this.getZ(i + 0, j + 1) - z);
-      b.set(-this.inc, 0, this.getZ(i - 1, j + 0) - z);
+      a.set(0, +this.inc, z1);
+      b.set(-this.inc, 0, z2);
       a.crossProduct(b);
       sum.add(a);
     }
     if (def2 && def3)
     {
-      a.set(-this.inc, 0, this.getZ(i - 1, j + 0) - z);
-      b.set(0, -this.inc, this.getZ(i + 0, j - 1) - z);
+      a.set(-this.inc, 0, z2);
+      b.set(0, -this.inc, z3);
       a.crossProduct(b);
       sum.add(a);
     }
     if (def3 && def0)
     {
-      a.set(0, -this.inc, this.getZ(i + 0, j - 1) - z);
-      b.set(+this.inc, 0, this.getZ(i + 1, j + 0) - z);
+      a.set(0, -this.inc, z3);
+      b.set(+this.inc, 0, z0);
       a.crossProduct(b);
       sum.add(a);
     }
@@ -148,8 +150,8 @@ export class RegularGrid2 extends Grid2
   public getRange(): Range3
   {
     const range = new Range3();
-    range.x.set(this.xOrigin, this.xOrigin + (this.nodeSize.i - 1) * this.inc);
-    range.y.set(this.yOrigin, this.yOrigin + (this.nodeSize.j - 1) * this.inc);
+    range.x.set(this.xOrigin, this.xOrigin + this.cellSize.i * this.inc);
+    range.y.set(this.yOrigin, this.yOrigin + this.cellSize.j * this.inc);
     range.z = this.getZRange();
     return range;
   }
@@ -173,13 +175,13 @@ export class RegularGrid2 extends Grid2
   // INSTANCE METHODS: Operation
   //==================================================
 
-  public normalize(wantedRange?: Range1): void
+  public normalizeZ(wantedRange?: Range1): void
   {
     const currentRange = this.getZRange();
     for (let i = this.buffer.length - 1; i >= 0; i--)
     {
       let z = this.buffer[i];
-      z = (z - currentRange.min) / currentRange.delta;
+      z = currentRange.getFraction(z);
       if (wantedRange != undefined)
         z = z * wantedRange.delta + wantedRange.min;
       this.buffer[i] = z;
@@ -198,9 +200,9 @@ export class RegularGrid2 extends Grid2
             continue;
 
           const iMin = Math.max(i - 1, 0);
-          const iMax = Math.min(i + 1, this.nodeSize.i - 1);
+          const iMax = Math.min(i + 1, this.cellSize.i);
           const jMin = Math.max(j - 1, 0);
-          const jMax = Math.min(j + 1, this.nodeSize.j - 1);
+          const jMax = Math.min(j + 1, this.cellSize.j);
 
           let count = 0;
           let sum = 0;
@@ -218,8 +220,8 @@ export class RegularGrid2 extends Grid2
               sum += this.getZ(ii, jj);
               count++;
             }
-          sum += this.getZ(i, j) * 2;
-          count += 2;
+          sum += this.getZ(i, j) * count;
+          count += count;
           const index = this.getNodeIndex(i, j);
           buffer[index] = sum / count;
         }
@@ -234,25 +236,28 @@ export class RegularGrid2 extends Grid2
   // STATIC METHODS: 
   //==================================================
 
-  static createFractal(n: number, xOrigin: number, yOrigin: number, inc: number, wantedRange?: Range1): RegularGrid2
+  static createFractal(boundingBox: Range3, powerOf2: number): RegularGrid2
   {
     const stdDev = 1;
-    const size = Math.pow(2, n) + 1;
-    const grid = new RegularGrid2(new Index2(size, size), xOrigin, yOrigin, inc);
+    const grid = new RegularGrid2(new Index2(Math.pow(2, powerOf2) + 1), 0, 0, 1);
 
     let i0 = 0;
     let j0 = 0;
-    let i1 = grid.nodeSize.i - 1;
-    let j1 = grid.nodeSize.j - 1;
+    let i1 = grid.cellSize.i;
+    let j1 = grid.cellSize.j;
 
     grid.setZ(i0, j0, Random.getGaussian(0, stdDev));
     grid.setZ(i1, j0, Random.getGaussian(0, stdDev));
     grid.setZ(i0, j1, Random.getGaussian(0, stdDev));
     grid.setZ(i1, j1, Random.getGaussian(0, stdDev));
 
-    subDivide(grid, i0, j0, i1, j1, stdDev, n, 0.55);
+    subDivide(grid, i0, j0, i1, j1, stdDev, powerOf2, 0.7);
 
-    grid.normalize(wantedRange);
+    grid.xOrigin = boundingBox.x.min;
+    grid.yOrigin = boundingBox.y.min;
+    grid.inc = boundingBox.x.delta / grid.cellSize.i;
+
+    grid.normalizeZ(boundingBox.z);
     return grid;
   }
 }

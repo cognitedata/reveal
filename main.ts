@@ -6,9 +6,11 @@ import { Polylines } from './src/Core/Geometry/Polylines';
 import { PotreeNode } from './src/Nodes/PotreeNode';
 import { SurfaceNode } from './src/Nodes/SurfaceNode';
 import { RegularGrid2 } from './src/Core/Geometry/RegularGrid2';
-import { Index2 } from './src/Core/Geometry/Index2';
 import { Range1 } from './src/Core/Geometry/Range1';
 import { ThreeTargetNode } from './src/Three/ThreeTargetNode';
+import { Range3 } from './src/Core/Geometry/Range3';
+import { WellNode } from './src/Nodes/WellNode';
+import { Well } from './src/Nodes/Well';
 
 main();
 
@@ -24,7 +26,14 @@ export function main()
   for (let i = 0; i < 10; i++)
   {
     const node = new PolylinesNode();
-    node.data = Polylines.createByRandom(20, 10, new Range1(-100, 100));
+    node.data = Polylines.createByRandom(20, 10, Range3.newTest);
+    root.dataFolder.addChild(node);
+    //node.setVisible(true);
+  }
+  for (let i = 0; i < 10; i++)
+  {
+    const node = new WellNode();
+    node.data = Well.createByRandom(20, Range3.newTest);
     root.dataFolder.addChild(node);
     node.setVisible(true);
   }
@@ -37,19 +46,23 @@ export function main()
   }
   {
     const node = new SurfaceNode();
-    node.data = RegularGrid2.createFractal(8, -0, -0, 1, new Range1(0, 100));
+    
+    const boundingBox = Range3.newTest;
+    node.data = RegularGrid2.createFractal(boundingBox, 8);
     node.data.smoothSimple(2);
     root.dataFolder.addChild(node);
     node.setVisible(true);
 
     // TODO: Move this to the general code
     const target = root.activeTarget as ThreeTargetNode;
-    const range = node.getRange();
-    if (target && !range.isEmpty && target.activeCamera instanceof THREE.PerspectiveCamera)
+    const range = root.getBoundingBoxRecursive();
+
+    if (range && target && !range.isEmpty && target.activeCamera instanceof THREE.PerspectiveCamera)
     {
       const camera = target.activeCamera;
       camera.position.set(range.x.center, range.y.center, range.z.center + 1000);
       camera.updateProjectionMatrix();
+      camera.updateMatrix();
     }
   }
   module.initializeWhenPopulated(root);
