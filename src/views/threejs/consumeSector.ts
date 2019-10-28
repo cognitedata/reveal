@@ -8,6 +8,11 @@ import { SectorNode } from './SectorNode';
 import { toThreeJsBox3 } from './utilities';
 
 export function consumeSector(sectorId: number, sector: Sector, metadata: SectorMetadata, sectorNode: SectorNode) {
+  if (sector.triangleMeshes.length === 0) {
+    // No geometry
+    return;
+  }
+
   const bounds = toThreeJsBox3(metadata.bounds);
   const boundsRenderer = new THREE.Box3Helper(bounds);
   boundsRenderer.name = `Bounding box ${sectorId}`;
