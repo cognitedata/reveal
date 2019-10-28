@@ -18,8 +18,9 @@ import { BaseGroupThreeView } from "./BaseGroupThreeView";
 import { SurfaceNode } from "../Nodes/SurfaceNode";
 import { SurfaceRenderStyle } from "../Nodes/SurfaceRenderStyle";
 import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
-import { RegularGrid2 } from '../Core/Geometry/RegularGrid2';
 import { Range1 } from '../Core/Geometry/Range1';
+import { RegularGrid2Buffers } from '../Core/Geometry/RegularGrid2Buffers';
+import { Colors } from '../Core/PrimitivClasses/Colors';
 
 export class SurfaceThreeView extends BaseGroupThreeView
 {
@@ -58,15 +59,19 @@ export class SurfaceThreeView extends BaseGroupThreeView
       return null;
 
     const geometry = new THREE.BufferGeometry();
-    addAttributes(geometry, grid);
+    const buffers = new RegularGrid2Buffers(grid);
 
-    const material = new THREE.MeshPhongMaterial({ /*vertexColors: THREE.VertexColors*/ side: THREE.DoubleSide, flatShading: false, shininess: 100 });
-    //const material = craeteShader();
-    
+    geometry.addAttribute('position', new THREE.Float32BufferAttribute(buffers.positions, 3));
+    geometry.addAttribute('normal', new THREE.Float32BufferAttribute(buffers.normals, 3));
+    geometry.addAttribute('uv', new THREE.Float32BufferAttribute(buffers.uvs, 2));
+    geometry.setIndex(new THREE.Uint32BufferAttribute(buffers.triangleIndexes, 1));
+
+    const material = new THREE.MeshPhongMaterial({ side: THREE.DoubleSide, flatShading: false, shininess: 100 });
+    //const material = createShader();
+
     const texture = createTexture(grid.getZRange());
     // texture.magFilter = THREE.NearestMipmapLinearFilter;
     // texture.minFilter = THREE.NearestMipmapLinearFilter;
-
     texture.anisotropy = 4;
     material.map = texture;
 
@@ -94,12 +99,11 @@ function createTexture(range: Range1): THREE.DataTexture
 
   for (let i = 0; i < width; i++)
   {
-    let hue = i / (width - 1);
-    //hue = (hue + 0.5) % 1;
+    const hue = i / (width - 1);
     let color = Color.hsv(hue * 360, 255, 200);
 
     if (true)
-      color = getGammaCorrected(color);
+      color = Colors.getGammaCorrected(color);
 
     if (true)
     {
@@ -112,178 +116,7 @@ function createTexture(range: Range1): THREE.DataTexture
     data[index1++] = data[index2++] = color.blue();
   }
   return new THREE.DataTexture(data, width, height, THREE.RGBFormat);
-
-  function getGammaCorrected(color: Color)
-  {
-    const gamma = 1 / 2.2;
-    let r = color.red();
-    let g = color.green();
-    let b = color.blue();
-
-    r = color.red() / 255;
-    g = color.green() / 255;
-    b = color.blue() / 255;
-
-    r = Math.pow(r, gamma);
-    g = Math.pow(g, gamma);
-    b = Math.pow(b, gamma);
-
-    r = Math.round(255 * r);
-    g = Math.round(255 * g);
-    b = Math.round(255 * b);
-
-    color = Color.rgb(r, g, b);
-    return color;
-  }
 }
-
-function addAttributes(geometry: THREE.BufferGeometry, grid: RegularGrid2): void
-{
-  const [uniqueIndexes, numUniqueIndex] = createUniqueIndexes(grid);
-
-  const positions = new Float32Array(3 * numUniqueIndex);
-  const normals = new Float32Array(3 * numUniqueIndex);
-  const uvs = new Float32Array(2 * numUniqueIndex);
-  const zRange = grid.getZRange();
-
-  // Generate the position, normal and uvs
-  for (let j = grid.nodeSize.j - 1; j >= 0; j--)
-  {
-    for (let i = grid.nodeSize.i - 1; i >= 0; i--)
-    {
-      const nodeIndex = grid.getNodeIndex(i, j);
-      const uniqueIndex = uniqueIndexes[nodeIndex];
-      if (uniqueIndex < 0)
-        continue;
-
-      let index = 3 * uniqueIndex;
-
-      const point = grid.getPoint3(i, j);
-      positions[index + 0] = point.x
-      positions[index + 1] = point.y
-      positions[index + 2] = point.z
-
-      const normal = grid.getNormal(i, j);
-      normals[index + 0] = normal.x;
-      normals[index + 1] = normal.y;
-      normals[index + 2] = normal.z;
-
-      const fraction = zRange.getFraction(point.z);
-
-      index = 2 * uniqueIndex;
-      uvs[index + 0] = fraction;
-      uvs[index + 1] = 0;
-    }
-  }
-  // Generate the triangle indices
-  // Should be strip, but could not get it to work
-  const indices: number[] = [];
-  for (let i = 0; i < grid.nodeSize.i - 1; i++)
-  {
-    for (let j = 0; j < grid.nodeSize.j - 1; j++)
-    {
-      const nodeIndex0 = grid.getNodeIndex(i, j);
-      const nodeIndex1 = grid.getNodeIndex(i + 1, j);
-      const nodeIndex2 = grid.getNodeIndex(i + 1, j + 1);
-      const nodeIndex3 = grid.getNodeIndex(i, j + 1);
-
-      const unique0 = uniqueIndexes[nodeIndex0];
-      const unique1 = uniqueIndexes[nodeIndex1];
-      const unique2 = uniqueIndexes[nodeIndex2];
-      const unique3 = uniqueIndexes[nodeIndex3];
-
-      //(i,j+1)     (i+1,j+1)
-      //     3------2
-      //     |      |
-      //     0------1
-      //(i,j)       (i+1,j)
-
-      let n = 0;
-      if (unique0 >= 0) n++;
-      if (unique1 >= 0) n++;
-      if (unique2 >= 0) n++;
-      if (unique3 >= 0) n++;
-      if (n < 3)
-        continue;
-
-      if (unique0 < 0)
-      {
-        indices.push(unique1);
-        indices.push(unique2);
-        indices.push(unique3);
-      }
-      if (n === 4 || unique1 < 0)
-      {
-        indices.push(unique0);
-        indices.push(unique2);
-        indices.push(unique3);
-      }
-      if (unique2 < 0)
-      {
-        indices.push(unique0);
-        indices.push(unique1);
-        indices.push(unique3);
-      }
-      if (n === 4 || unique3 < 0)
-      {
-        indices.push(unique0);
-        indices.push(unique1);
-        indices.push(unique2);
-      }
-    }
-    //groups.push(indices.length);
-  }
-  geometry.addAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-  geometry.addAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
-  geometry.addAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
-  geometry.setIndex(new THREE.Uint32BufferAttribute(indices, 1));
-
-  // let prevCount = 0;
-  // for (const count of groups) 
-  // {
-  //   const groupCount = count - prevCount;
-  //   if (groupCount > 0)
-  //   {      
-  //     geometry.addGroup(prevCount, groupCount);
-  //   }
-  //   prevCount = count;
-  // }
-}
-
-
-// function addGroup(geometry: THREE.BufferGeometry, indices: number[], prevCount: number): number
-// {
-//   const count = indices.length - 1;
-//   const groupCount = count - prevCount;
-//   if (groupCount > 0)
-//   {
-//     //geometry.addGroup(prevCount, groupCount);
-//     console.log(groupCount);
-//   }
-//   return count;
-// }
-
-function createUniqueIndexes(grid: RegularGrid2): [number[], number]
-{
-  const uniqueIndexes = new Array<number>(grid.nodeSize.size);
-  let numUniqueIndex = 0;
-  for (let j = grid.nodeSize.j - 1; j >= 0; j--)
-  {
-    for (let i = grid.nodeSize.i - 1; i >= 0; i--)
-    {
-      const nodeIndex = grid.getNodeIndex(i, j);
-      if (grid.isNodeDef(i, j))
-      {
-        uniqueIndexes[nodeIndex] = numUniqueIndex;
-        numUniqueIndex++;
-      }
-      else
-        uniqueIndexes[nodeIndex] = -1;
-    }
-  }
-  return [uniqueIndexes, numUniqueIndex];
-}
-
 
 //==================================================
 // LOCAL FUNCTIONS: Shader experiments
@@ -325,8 +158,8 @@ function createShader(): THREE.ShaderMaterial
   }
 
 
-  let material = new THREE.ShaderMaterial({
-    uniforms: uniforms,
+  const material = new THREE.ShaderMaterial({
+    uniforms,
     vertexShader: vertexShader(),
     //fragmentShader: fragmentShader(),
     fragmentShader: THREE.ShaderLib.phong.fragmentShader,

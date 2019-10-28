@@ -28,6 +28,8 @@ import { SurfaceNode } from '../Nodes/SurfaceNode';
 import { SurfaceThreeView } from './SurfaceThreeView';
 import { WellNode } from '../Nodes/WellNode';
 import { WellThreeView } from './WellThreeView';
+import { PointsNode } from '../Nodes/PointsNode';
+import { PointsThreeView } from './PointsThreeView';
 
 export class ThreeModule extends BaseModule
 {
@@ -42,10 +44,11 @@ export class ThreeModule extends BaseModule
 
   protected /*override*/ registerViewsCore(factory: ViewFactory): void
   {
-    factory.register(PotreeNode.name, PotreeThreeView, ThreeTargetNode.name);
-    factory.register(SurfaceNode.name, SurfaceThreeView, ThreeTargetNode.name);
-    factory.register(PolylinesNode.name, PolylinesThreeView, ThreeTargetNode.name);
     factory.register(WellNode.name, WellThreeView, ThreeTargetNode.name);
+    factory.register(PointsNode.name, PointsThreeView, ThreeTargetNode.name);
+    factory.register(PolylinesNode.name, PolylinesThreeView, ThreeTargetNode.name);
+    factory.register(SurfaceNode.name, SurfaceThreeView, ThreeTargetNode.name);
+    factory.register(PotreeNode.name, PotreeThreeView, ThreeTargetNode.name);
   }
 
   protected /*override*/ createRootCore(): BaseRootNode

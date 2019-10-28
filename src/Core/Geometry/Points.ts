@@ -13,6 +13,7 @@
 
 import { Vector3 } from "./Vector3";
 import { Range3 } from "./Range3";
+import { Range1 } from "./Range1";
 
 export class Points
 {
@@ -21,6 +22,7 @@ export class Points
   //==================================================
 
   public list: Vector3[] = [];
+  public get count(): number { return this.list.length; }
 
   //==================================================
   // CONSTRUCTORS
@@ -38,6 +40,14 @@ export class Points
   //==================================================
   // INSTANCE METHODS: Getters
   //==================================================
+
+  public getZRange(): Range1
+  {
+    const range: Range1 = new Range1();
+    for (const point of this.list)
+      range.add(point.z);
+    return range;
+  }
 
   public getRange(): Range3
   {

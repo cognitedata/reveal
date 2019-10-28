@@ -6,11 +6,12 @@ import { Polylines } from './src/Core/Geometry/Polylines';
 import { PotreeNode } from './src/Nodes/PotreeNode';
 import { SurfaceNode } from './src/Nodes/SurfaceNode';
 import { RegularGrid2 } from './src/Core/Geometry/RegularGrid2';
-import { Range1 } from './src/Core/Geometry/Range1';
 import { ThreeTargetNode } from './src/Three/ThreeTargetNode';
 import { Range3 } from './src/Core/Geometry/Range3';
 import { WellNode } from './src/Nodes/WellNode';
 import { Well } from './src/Nodes/Well';
+import { PointsNode } from './src/Nodes/PointsNode';
+import { Points } from './src/Core/Geometry/Points';
 
 main();
 
@@ -23,12 +24,19 @@ export function main()
   const root = module.createRoot();
 
   // Add data
-  for (let i = 0; i < 10; i++)
+  for (let i = 0; i < 1; i++)
   {
     const node = new PolylinesNode();
     node.data = Polylines.createByRandom(20, 10, Range3.newTest);
     root.dataFolder.addChild(node);
-    //node.setVisible(true);
+    node.setVisible(true);
+  }
+  for (let i = 0; i < 1; i++)
+  {
+    const node = new PointsNode();
+    node.data = Points.createByRandom(1000, Range3.newTest);
+    root.dataFolder.addChild(node);
+    node.setVisible(true);
   }
   for (let i = 0; i < 10; i++)
   {

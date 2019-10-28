@@ -65,9 +65,8 @@ export class WellThreeView extends BaseGroupThreeView
       points.push(ThreeConverter.toVector(point));
 
     const curve = new THREE.CatmullRomCurve3(points);
-    var geometry = new THREE.TubeGeometry(curve, 100, 6, 16, false);
+    const geometry = new THREE.TubeGeometry(curve, 100, 6, 16, false);
     const material = new THREE.MeshPhongMaterial({ color: threeColor, flatShading: false, shininess: 100 });
-    var mesh = new THREE.Mesh(geometry, material);      
-    return mesh;
+    return new THREE.Mesh(geometry, material);      
   }
 }

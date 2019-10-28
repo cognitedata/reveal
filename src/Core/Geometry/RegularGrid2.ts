@@ -182,7 +182,7 @@ export class RegularGrid2 extends Grid2
     {
       let z = this.buffer[i];
       z = currentRange.getFraction(z);
-      if (wantedRange != undefined)
+      if (wantedRange !== undefined)
         z = wantedRange.getValue(z);
       this.buffer[i] = z;
     }
@@ -241,10 +241,10 @@ export class RegularGrid2 extends Grid2
     const stdDev = 1;
     const grid = new RegularGrid2(new Index2(Math.pow(2, powerOf2) + 1), 0, 0, 1);
 
-    let i0 = 0;
-    let j0 = 0;
-    let i1 = grid.cellSize.i;
-    let j1 = grid.cellSize.j;
+    const i0 = 0;
+    const j0 = 0;
+    const i1 = grid.cellSize.i;
+    const j1 = grid.cellSize.j;
 
     grid.setZ(i0, j0, Random.getGaussian(0, stdDev));
     grid.setZ(i1, j0, Random.getGaussian(0, stdDev));
@@ -283,7 +283,7 @@ function subDivide(grid: RegularGrid2, i0: number, j0: number, i2: number, j2: n
   setValueBetween(grid, i0, j0, i2, j2, stdDev, z / 4);
 
   level--;
-  if (level == 0)
+  if (level === 0)
     return;
 
   const i1 = Math.trunc((i0 + i2) / 2);

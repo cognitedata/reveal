@@ -81,5 +81,30 @@ export class Colors
     }
     return result;
   }
+
+  public static getGammaCorrected(color: Color): Color
+  {
+    const gamma = 1 / 2.2;
+    let r = color.red();
+    let g = color.green();
+    let b = color.blue();
+
+    r = color.red() / 255;
+    g = color.green() / 255;
+    b = color.blue() / 255;
+
+    r = Math.pow(r, gamma);
+    g = Math.pow(g, gamma);
+    b = Math.pow(b, gamma);
+
+    r = Math.round(255 * r);
+    g = Math.round(255 * g);
+    b = Math.round(255 * b);
+
+    return Color.rgb(r, g, b);
+  }
+
+
+
 }
 
