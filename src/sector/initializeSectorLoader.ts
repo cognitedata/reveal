@@ -45,13 +45,16 @@ export function initializeSectorLoader(
       const request = loadSector(id, fetchSector, parseSector, consumeSectorAndDeleteRequest);
       activeSectorRequests.set(id, request);
     }
-    console.log(
-      `[${Date.now() / 1000}] activateSectors() [wanted: ${wantedSectorIds.size} ` +
-        `new: ${newSectorIds.size}` +
-        ` discarded: ${discardedSectorIds.size}` +
-        ` active: ${activeSectorIds.size}` +
-        ` in-flight: ${activeSectorRequests.size}] time=${(performance.now() - start).toPrecision(2)} ms`
-    );
+
+    if (newSectorIds.size > 0 || discardedSectorIds.size > 0) {
+      console.log(
+        `[${Date.now() / 1000}] activateSectors() [wanted: ${wantedSectorIds.size} ` +
+          `new: ${newSectorIds.size}` +
+          ` discarded: ${discardedSectorIds.size}` +
+          ` active: ${activeSectorIds.size}` +
+          ` in-flight: ${activeSectorRequests.size}] time=${(performance.now() - start).toPrecision(2)} ms`
+      );
+    }
   }
   return activateSectors;
 }
