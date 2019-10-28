@@ -4,7 +4,7 @@
 
 import { Sector, SectorMetadata, TriangleMesh } from './types';
 import { FetchSectorDelegate, FetchCtmDelegate } from './delegates';
-import { createOffsets } from '../utils/arrayUtils';
+import { createOffsets as createMeshOffsets } from '../utils/arrayUtils';
 import { CtmResult } from '../../pkg';
 const rustModule = import('../../pkg');
 
@@ -32,40 +32,18 @@ export async function createParser(
       const triangleCounts = collection.triangle_count();
       const sizes = collection.size();
 
-      // Group meshes (by index) by file
-      const meshesGroupedByFile = new Map<number, number[]>();
-      for (let i = 0; i < fileIds.length; ++i) {
-        const fileId = fileIds[i];
-        const oldValue = meshesGroupedByFile.get(fileId);
-        if (oldValue) {
-          meshesGroupedByFile.set(fileId, [...oldValue, i]);
-        } else {
-          meshesGroupedByFile.set(fileId, [i]);
-        }
-      }
-
-      // // Turn triangle counts into vertex counts
-      // for (let i = 0; i < triangleCounts.length; i++) {
-      //   triangleCounts[i] *= 3;
-      // }
-      const offsets = createOffsets(triangleCounts);
+      const meshesGroupedByFile = groupMeshesByFile(fileIds);
+      const offsets = createMeshOffsets(triangleCounts);
 
       // Merge meshes by file
       for (const [fileId, meshIndices] of meshesGroupedByFile.entries()) {
         // Load CTM (geometry)
-        let ctm: CtmResult;
-        try {
-          const buffer = await fetchCtmFile(fileId);
-          ctm = rust.parse_ctm(buffer);
-        } catch (err) {
-          throw new Error(`Parsing CTM file ${fileId} failed: ${err}`);
-        }
+        const ctm = await loadCtmGeometry(fileId, fetchCtmFile);
 
         const indices = ctm.indices();
         const vertices = ctm.vertices();
         const normals = ctm.normals();
         const colorsBuffer = new Float32Array(vertices.length); // 3 components for each
-        // colorsBuffer.fill(1.0);
 
         for (const meshIndex of meshIndices) {
           const rangeFrom = offsets[meshIndex];
@@ -106,6 +84,20 @@ export async function createParser(
   return parse;
 }
 
+function groupMeshesByFile(fileIds: Float64Array) {
+  const meshesGroupedByFile = new Map<number, number[]>();
+  for (let i = 0; i < fileIds.length; ++i) {
+    const fileId = fileIds[i];
+    const oldValue = meshesGroupedByFile.get(fileId);
+    if (oldValue) {
+      meshesGroupedByFile.set(fileId, [...oldValue, i]);
+    } else {
+      meshesGroupedByFile.set(fileId, [i]);
+    }
+  }
+  return meshesGroupedByFile;
+}
+
 function readColorToUint32(colors: Uint8Array, index: number): number {
   const r = colors[4 * index];
   const g = colors[4 * index + 1];
@@ -121,6 +113,17 @@ function readColorToFloat32s(colors: Uint8Array, index: number): [number, number
   const b = colors[4 * index + 2] / 255;
   const a = colors[4 * index + 3] / 255;
   return [r, g, b, a];
+}
+
+async function loadCtmGeometry(fileId: number, fetchCtmFile: FetchCtmDelegate): Promise<CtmResult> {
+  const rust = await rustModule;
+
+  try {
+    const buffer = await fetchCtmFile(fileId);
+    return rust.parse_ctm(buffer);
+  } catch (err) {
+    throw new Error(`Parsing CTM file ${fileId} failed: ${err}`);
+  }
 }
 
 // export async function parseSectorData(sectorId: number, data: ArrayBuffer): Promise<Sector> {
