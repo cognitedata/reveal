@@ -183,7 +183,7 @@ export class RegularGrid2 extends Grid2
       let z = this.buffer[i];
       z = currentRange.getFraction(z);
       if (wantedRange != undefined)
-        z = z * wantedRange.delta + wantedRange.min;
+        z = wantedRange.getValue(z);
       this.buffer[i] = z;
     }
   }

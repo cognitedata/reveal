@@ -26,7 +26,7 @@ export class Random
 
   public static getFloat(range: Range1): number
   {
-    return range.min + Math.random() * range.delta;
+    return range.getValue(Math.random());
   }
 
   public static isTrue(p: number = 0.5): boolean

@@ -68,6 +68,18 @@ export class Range1
 
   public toString(): string { return `(${this._min}, ${this._max})`; }
 
+  public getFraction(value: number): number
+  {
+    // Opposite of getValue
+    return (value - this.min) / this.delta;
+  }
+
+  public getValue(fraction: number): number
+  {
+    // Opposite of getFraction
+    return fraction * this.delta + this.min;
+  }
+
   //==================================================
   // INSTANCE METHODS: Operations
   //==================================================
@@ -100,10 +112,5 @@ export class Range1
 
     this.add(value.min)
     this.add(value.max)
-  }
-
-  public getFraction(value: number): number
-  {
-     return (value - this.min) / this.delta;
   }
 }
