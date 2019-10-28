@@ -21,6 +21,8 @@ import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
 import { Range1 } from '../Core/Geometry/Range1';
 import { RegularGrid2Buffers } from '../Core/Geometry/RegularGrid2Buffers';
 import { Colors } from '../Core/PrimitivClasses/Colors';
+import { ColorType } from '../Core/Enums/ColorType';
+import { ThreeConverter } from './ThreeConverter';
 
 export class SurfaceThreeView extends BaseGroupThreeView
 {
@@ -58,23 +60,32 @@ export class SurfaceThreeView extends BaseGroupThreeView
     if (grid == null)
       return null;
 
+    let color = node.color;
+    if (style.colorType !== ColorType.NodeColor)
+      color = Colors.white; // Must be white because the colors are multiplicated
+
+    const threeColor: THREE.Color = ThreeConverter.toColor(color);
+
     const geometry = new THREE.BufferGeometry();
     const buffers = new RegularGrid2Buffers(grid);
 
-    geometry.addAttribute('position', new THREE.Float32BufferAttribute(buffers.positions, 3));
-    geometry.addAttribute('normal', new THREE.Float32BufferAttribute(buffers.normals, 3));
-    geometry.addAttribute('uv', new THREE.Float32BufferAttribute(buffers.uvs, 2));
-    geometry.setIndex(new THREE.Uint32BufferAttribute(buffers.triangleIndexes, 1));
+    geometry.addAttribute('position', new THREE.Float32BufferAttribute(buffers.positions, 3, true));
+    geometry.addAttribute('normal', new THREE.Float32BufferAttribute(buffers.normals, 3, true));
 
-    const material = new THREE.MeshPhongMaterial({ side: THREE.DoubleSide, flatShading: false, shininess: 100 });
+    geometry.setIndex(new THREE.Uint32BufferAttribute(buffers.triangleIndexes, 1, true));
+
+    const material = new THREE.MeshPhongMaterial({ color: threeColor, side: THREE.DoubleSide, flatShading: false, shininess: 100 });
     //const material = createShader();
 
-    const texture = createTexture(grid.getZRange());
-    // texture.magFilter = THREE.NearestMipmapLinearFilter;
-    // texture.minFilter = THREE.NearestMipmapLinearFilter;
-    texture.anisotropy = 4;
-    material.map = texture;
-
+    if (style.colorType === ColorType.DepthColor)
+    {
+      geometry.addAttribute('uv', new THREE.Float32BufferAttribute(buffers.uvs, 2, true));
+      const texture = createTexture(grid.getZRange());
+      // texture.magFilter = THREE.NearestMipmapLinearFilter;
+      // texture.minFilter = THREE.NearestMipmapLinearFilter;
+      texture.anisotropy = 4;
+      material.map = texture;
+    }
     const mesh = new THREE.Mesh(geometry, material);
     mesh.drawMode = THREE.TrianglesDrawMode; //THREE.TriangleStripDrawMode (must use groups)
     return mesh;

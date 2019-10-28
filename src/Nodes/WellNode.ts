@@ -74,7 +74,6 @@ export class WellNode extends BaseVisualNode
   {
     switch (colorType)
     {
-      case ColorType.DifferentColor:
       case ColorType.NodeColor:
         return true;
 

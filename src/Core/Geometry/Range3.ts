@@ -77,7 +77,7 @@ export class Range3
   // INSTANCE METHODS; Getters
   //==================================================
 
-  public toString(): string { return `(X: ${this.x}, Y: ${this.y}, Z: ${this.z})`; }
+  public toString(): string { return `(X: ${this.x.toString()}, Y: ${this.y.toString()}, Z: ${this.z.toString()})`; }
 
   //==================================================
   // INSTANCE METHODS: Operations
@@ -104,5 +104,17 @@ export class Range3
     this.x.addRange(value.x);
     this.y.addRange(value.y);
     this.z.addRange(value.z);
+  }
+
+  //==================================================
+  // STATIC METHODS:
+  //==================================================
+
+  public static create(xmin: number, ymin: number, xmax: number, ymax: number): Range3
+  {
+    const range = new Range3();
+    range.x.set(xmin, xmax);
+    range.y.set(ymin, ymax);
+    return range;
   }
 }

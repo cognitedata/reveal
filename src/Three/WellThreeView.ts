@@ -57,7 +57,7 @@ export class WellThreeView extends BaseGroupThreeView
       throw Error("Well is missing");
 
     const color = node.color;
-    const threeColor: Color = ThreeConverter.toColor(color);
+    const threeColor = ThreeConverter.toColor(color);
 
 
     const points: THREE.Vector3[] = [];

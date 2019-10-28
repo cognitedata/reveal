@@ -64,12 +64,12 @@ export class PointsThreeView extends BaseGroupThreeView
     if (style.colorType !== ColorType.NodeColor)
       color = Colors.white; // Must be white because the colors are multiplicated
 
-    const nodeColor: THREE.Color = ThreeConverter.toColor(color);
+    const threeColor: THREE.Color = ThreeConverter.toColor(color);
 
     const geometry = new THREE.BufferGeometry();
-    geometry.addAttribute('position', new THREE.Float32BufferAttribute(createPositions(points), 3));
+    geometry.addAttribute('position', new THREE.Float32BufferAttribute(createPositions(points), 3, true));
 
-    const material = new THREE.PointsMaterial({ color: nodeColor, size: style.size, sizeAttenuation: true })
+    const material = new THREE.PointsMaterial({ color: threeColor, size: style.size, sizeAttenuation: true })
     if (style.colorType === ColorType.DepthColor)
     {
       geometry.addAttribute('color', new THREE.Uint8BufferAttribute(createColors(points), 3, true));

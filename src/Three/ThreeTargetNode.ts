@@ -17,6 +17,7 @@ import * as THREE from 'three';
 import { RenderTargetNode } from "../Core/Nodes/RenderTargetNode";
 import { ThreeCameraNode as ThreeCameraNode } from "./ThreeCameraNode";
 import { ThreeConverter } from "./ThreeConverter";
+import { Range3 } from '../Core/Geometry/Range3';
 
 export class ThreeTargetNode extends RenderTargetNode
 {
@@ -82,7 +83,7 @@ export class ThreeTargetNode extends RenderTargetNode
   // CONSTRUCTORS
   //==================================================
 
-  public constructor() { super(); }
+  public constructor(range: Range3 | undefined) { super(range); }
 
   //==================================================
   // OVERRIDES of TargetNode
@@ -104,7 +105,7 @@ export class ThreeTargetNode extends RenderTargetNode
 
     // Add lights (TODO: move to TreeLightNode?)
     const scene = this.scene;
-    let direction = new THREE.Vector3(0.5, -0.5, 1)
+    const direction = new THREE.Vector3(0.5, -0.5, 1)
     const color = 0xFFFFFF;
 
     const group = new THREE.Group();
@@ -133,7 +134,8 @@ export class ThreeTargetNode extends RenderTargetNode
 
   protected /*override*/ setRenderSize(): void
   {
-    this.renderer.setSize(RenderTargetNode.width, RenderTargetNode.height);
+    const range = this.pixelRange;
+    this.renderer.setSize(range.x.delta, range.y.delta);
   }
 
   //==================================================

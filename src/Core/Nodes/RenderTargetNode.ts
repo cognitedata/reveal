@@ -2,6 +2,7 @@
 import { BaseCameraNode } from "./BaseCameraNode";
 import { Colors } from "../PrimitivClasses/Colors";
 import { BaseTargetNode } from "./BaseTargetNode";
+import { Range3 } from "../Geometry/Range3";
 
 export abstract class RenderTargetNode extends BaseTargetNode 
 {
@@ -9,20 +10,34 @@ export abstract class RenderTargetNode extends BaseTargetNode
   // FIELDS
   //==================================================
 
-  private static margin: number = 20;
-  public static get aspectRatio(): number { return RenderTargetNode.width / RenderTargetNode.height; }
-  public static get width(): number { return window.innerWidth - RenderTargetNode.margin; }
-  public static get height(): number { return window.innerHeight - RenderTargetNode.margin; }
+  private static margin: number = 10;
+  public static get windowWidth(): number { return window.innerWidth - RenderTargetNode.margin; }
+  public static get windowHeight(): number { return window.innerHeight - RenderTargetNode.margin; }
+
+
+  public get aspectRatio(): number { return this.pixelRange.x.delta / this.pixelRange.y.delta; }
 
   private _isInvalidated = true;
+  private _range: Range3;
+
+  public get pixelRange(): Range3
+  {
+    const x = this._range.x.min * RenderTargetNode.windowWidth + RenderTargetNode.margin;
+    const y = this._range.y.min * RenderTargetNode.windowHeight + RenderTargetNode.margin;
+    const dx = RenderTargetNode.windowWidth * this._range.x.delta;
+    const dy = RenderTargetNode.windowHeight * this._range.y.delta;
+
+    return Range3.create(x, y, x + dx, y + dy);
+  }
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  protected constructor()
+  protected constructor(range: Range3 | undefined)
   {
     super();
+    this._range = range ? range : Range3.newUnit;
     this.color = Colors.black;
   }
 
@@ -67,7 +82,7 @@ export abstract class RenderTargetNode extends BaseTargetNode
   public onResize()
   {
     this.setRenderSize();
-    const aspect = RenderTargetNode.aspectRatio
+    const aspect = this.aspectRatio;
     for (const cameraNode of this.getChildrenByType(BaseCameraNode))
       cameraNode.updateAspect(aspect);
     this.Invalidate();

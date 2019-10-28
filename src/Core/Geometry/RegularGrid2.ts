@@ -190,6 +190,8 @@ export class RegularGrid2 extends Grid2
 
   public smoothSimple(numberOfPasses: number = 1): void
   {
+    if (numberOfPasses <= 0)
+      return;
     let buffer = new Float32Array(this.nodeSize.size);
     for (let pass = 0; pass < numberOfPasses; pass++)
     {
@@ -236,7 +238,7 @@ export class RegularGrid2 extends Grid2
   // STATIC METHODS: 
   //==================================================
 
-  static createFractal(boundingBox: Range3, powerOf2: number): RegularGrid2
+  static createFractal(boundingBox: Range3, powerOf2: number, smoothNumberOfPasses: number): RegularGrid2
   {
     const stdDev = 1;
     const grid = new RegularGrid2(new Index2(Math.pow(2, powerOf2) + 1), 0, 0, 1);
@@ -258,6 +260,7 @@ export class RegularGrid2 extends Grid2
     grid.inc = boundingBox.x.delta / grid.cellSize.i;
 
     grid.normalizeZ(boundingBox.z);
+    grid.smoothSimple(smoothNumberOfPasses);
     return grid;
   }
 }

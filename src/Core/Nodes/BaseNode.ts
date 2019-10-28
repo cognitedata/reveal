@@ -268,7 +268,7 @@ export abstract class BaseNode extends Identifiable
   {
     for (const ancestor of this.getAncestors())
     {
-      if (ancestor.isActive && isInstanceOf(ancestor, classType))
+      if (isInstanceOf(ancestor, classType))
         return ancestor as T;
     }
     return null;
@@ -314,10 +314,10 @@ export abstract class BaseNode extends Identifiable
     let range = this.boundingBox;
     for (const child of this.children)
     {
-      var childRange = child.getBoundingBoxRecursive();
-      if (childRange == undefined)
+      const childRange = child.getBoundingBoxRecursive();
+      if (childRange === undefined)
         continue;
-      if (range == undefined)
+      if (range === undefined)
         range = new Range3();
       range.addRange(childRange);
     }

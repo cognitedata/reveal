@@ -36,12 +36,5 @@ export class ThreeRootNode extends BaseRootNode
   protected /*override*/ initializeCore(): void
   {
     super.initializeCore();
-
-    const target = new ThreeTargetNode();
-    target.isActive = true;
-    this.targetFolder.addChild(target)
-
-    if (!this.activeTargetIdAccessor)
-      throw Error("target is not added properly");
   }
 }

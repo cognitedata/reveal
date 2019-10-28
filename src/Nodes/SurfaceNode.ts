@@ -74,7 +74,7 @@ export class SurfaceNode extends BaseVisualNode
   {
     switch (colorType)
     {
-      case ColorType.DifferentColor:
+      case ColorType.DepthColor:
       case ColorType.NodeColor:
         return true;
 

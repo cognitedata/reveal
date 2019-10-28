@@ -50,12 +50,10 @@ export abstract class BaseModule
     return root;
   }
 
-  public getDomElement(root: BaseRootNode)
+  public *getDomElements(root: BaseRootNode)
   {
-    const target = root.activeTarget as RenderTargetNode;
-    if (!target)
-      return null;;
-    return target.domElement
+    for (const target of root.targetFolder.getChildrenByType(RenderTargetNode))
+      yield target.domElement
   }
 }
 

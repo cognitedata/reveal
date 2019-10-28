@@ -21,7 +21,7 @@ export class SurfaceRenderStyle extends BaseRenderStyle
   // FIELDS
   //==================================================
 
-  public colorType: ColorType = ColorType.DifferentColor;
+  public colorType: ColorType = ColorType.DepthColor;
 
   //==================================================
   // CONSTRUCTORS
