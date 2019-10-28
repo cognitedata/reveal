@@ -60,8 +60,14 @@ export class Range3
   // CONSTRUCTORS
   //==================================================
 
-  public constructor() 
+  public constructor(min?: Vector3, max?: Vector3) 
   {
+    if (min === undefined && max !== undefined)
+      this.set(max, max);
+    else if (min !== undefined && max === undefined)
+      this.set(min, min);
+    else if (min !== undefined && max !== undefined)
+      this.set(min, max);
   }
 
   public /*copy constructor*/ copy(): Range3

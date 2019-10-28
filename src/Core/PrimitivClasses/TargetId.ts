@@ -56,9 +56,9 @@ export class TargetId
   public hasSameTypeName(targetId: TargetId): boolean { return this.typeName === targetId.typeName; }
   public hasSameUniqueId(targetId: TargetId): boolean { return this.uniqueId.equals(targetId.uniqueId); }
 
-  public equals(targetIdOnTargetNode: TargetId, drawStyleResolution: RenderStyleResolution): boolean
+  public equals(targetIdOnTargetNode: TargetId, renderStyleResolution: RenderStyleResolution): boolean
   {
-    switch (drawStyleResolution)
+    switch (renderStyleResolution)
     {
       case RenderStyleResolution.Global:
         return this.isEmpty;
@@ -73,7 +73,7 @@ export class TargetId
         return result;
 
       default:
-        throw Error(drawStyleResolution);
+        throw Error(renderStyleResolution);
     }
   }
 
@@ -81,9 +81,9 @@ export class TargetId
   // INSTANCE METHODS: Setters
   //==================================================
 
-  public set(id: TargetId, drawStyleResolution: RenderStyleResolution): void
+  public set(id: TargetId, renderStyleResolution: RenderStyleResolution): void
   {
-    switch (drawStyleResolution)
+    switch (renderStyleResolution)
     {
       case RenderStyleResolution.Global:
         this.typeName = "";
@@ -101,7 +101,7 @@ export class TargetId
         break;
 
       default:
-        throw Error(drawStyleResolution);
+        throw Error(renderStyleResolution);
     }
   }
 }

@@ -15,6 +15,7 @@ import { BaseVisualNode } from "../Core/Nodes/BaseVisualNode";
 import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
 import { TargetId } from "../Core/PrimitivClasses/TargetId";
 import { PotreeRenderStyle } from "./PotreeRenderStyle";
+import { Range3 } from "../Core/Geometry/Range3";
 
 export class PotreeNode extends BaseVisualNode
 {
@@ -29,6 +30,7 @@ export class PotreeNode extends BaseVisualNode
   //==================================================
 
   private _url: string = "";
+  private _boundingBox: Range3 | undefined = undefined;
 
   //==================================================
   // PROPERTIES
@@ -37,6 +39,7 @@ export class PotreeNode extends BaseVisualNode
   public get url(): string { return this._url; }
   public set url(value: string) { this._url = value; }
   public get renderStyle(): PotreeRenderStyle | null { return this.getRenderStyle() as PotreeRenderStyle; }
+  public set localBoundingBox(value: Range3 | undefined) { this._boundingBox = value; }
 
   //==================================================
   // OVERRIDES of Identifiable
@@ -51,14 +54,17 @@ export class PotreeNode extends BaseVisualNode
 
   public /*override*/ get typeName(): string { return "Potree" }
 
+  public /*virtual*/ get boundingBox(): Range3 | undefined { return this._boundingBox; }
+
+
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
-  {
-    return new PotreeRenderStyle(targetId);
-  }
+{
+  return new PotreeRenderStyle(targetId);
+}
 
   public /*override*/ verifyRenderStyle(style: BaseRenderStyle)
-  {
-    if (!(style instanceof PotreeRenderStyle))
-      return;
-  }
+{
+  if (!(style instanceof PotreeRenderStyle))
+    return;
+}
 }

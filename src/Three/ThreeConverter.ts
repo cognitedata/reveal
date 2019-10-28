@@ -14,6 +14,7 @@
 import * as THREE from 'three';
 import * as color from 'color'
 import { Vector3 } from "../Core/Geometry/Vector3";
+import { Range3 } from '../Core/Geometry/Range3';
 
 const MaxByte = 255;
 
@@ -25,4 +26,19 @@ export class ThreeConverter
 
   public static toColor(value: color): THREE.Color { return new THREE.Color(value.red() / MaxByte, value.blue() / MaxByte, value.green() / MaxByte); }
   public static toVector(value: Vector3): THREE.Vector3 { return new THREE.Vector3(value.x, value.y, value.z); }
+  public static fromVector(value: THREE.Vector3): Vector3 { return new Vector3(value.x, value.y, value.z); }
+
+  public static fromBox(value: THREE.Box3): Range3
+  {
+    if (value.isEmpty)
+      return new Range3();
+    return new Range3(ThreeConverter.fromVector(value.min), ThreeConverter.fromVector(value.max));
+  }
+  
+  public static toBox(value: Range3): THREE.Box3
+  {
+    if (value.isEmpty)
+      return new THREE.Box3();
+    return new THREE.Box3(ThreeConverter.toVector(value.min), ThreeConverter.toVector(value.max));
+  }
 }

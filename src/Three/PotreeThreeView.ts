@@ -19,6 +19,7 @@ import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
 
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
+import { ThreeConverter } from './ThreeConverter';
 
 export class PotreeThreeView extends BaseGroupThreeView
 {
@@ -53,15 +54,28 @@ export class PotreeThreeView extends BaseGroupThreeView
     const node = this.node;
     const style = this.style;
 
-    const points = new Potree.Group();
-    points.setPointBudget(style.budget)
+    const group = new Potree.Group();
+    group.setPointBudget(style.budget);
 
-    Potree.loadPointCloud(node.url, node.name, (data: any) =>
+    const path = node.url;
+
+    // https://github.com/tentone/potree-core
+
+    const material = Potree.PointCloudMaterial;
+    if (material)
+      material.pointSizeType = Potree.PointSizeType.ATTENUATED;
+
+    Potree.loadPointCloud(path, node.name, (data: any) =>
     {
       const pointcloud = data.pointcloud;
-      points.add(pointcloud);
+      group.add(pointcloud);
+
+      const boundingBox = pointcloud.pcoGeometry.tightBoundingBox as THREE.Box3;
+      if (boundingBox)
+        node.localBoundingBox = ThreeConverter.fromBox(boundingBox);
+
+      group.add(pointcloud);
     });
-    setInterval(() => { points.position.set(-431895.739999483, -238.1446784943079, 4583065.15011712) }, 500);
-    return points;
+    return group;
   }
 }

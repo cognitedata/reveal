@@ -46,14 +46,14 @@ export abstract class BaseNode extends Identifiable
   private _uniqueId: UniqueId = UniqueId.new();
   private _children: BaseNode[] = [];
   private _parent: BaseNode | null = null;
-  private _drawStyles: BaseRenderStyle[] = [];
+  private _renderStyles: BaseRenderStyle[] = [];
 
   //==================================================
   // PROPERTIES
   //==================================================
 
   public get uniqueId(): UniqueId { return this._uniqueId; }
-  public get drawStyles(): BaseRenderStyle[] { return this._drawStyles; }
+  public get renderStyles(): BaseRenderStyle[] { return this._renderStyles; }
   public get path(): string { return (this.parent ? this.parent.path : "") + "\\" + this.name; }
   public get isInitialized(): boolean { return this._isInitialized; }
 
@@ -103,8 +103,8 @@ export abstract class BaseNode extends Identifiable
     result += cocatinate("id", this.uniqueId.isEmpty ? "" : (this.uniqueId.toString().substring(0, 6) + "..."));
     if (this.isActive)
       result += cocatinate("active");
-    if (this.drawStyles.length > 0)
-      result += cocatinate("drawstyles", this.drawStyles.length);
+    if (this.renderStyles.length > 0)
+      result += cocatinate("renderStyles", this.renderStyles.length);
     return result;
   }
 
@@ -115,9 +115,9 @@ export abstract class BaseNode extends Identifiable
   //==================================================
 
   public /*virtual*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null { return null; }
-  public /*virtual*/ verifyRenderStyle(style: BaseRenderStyle) { /* overide when validating the drawstyle*/ }
-  public /*virtual*/ get drawStyleResolution(): RenderStyleResolution { return RenderStyleResolution.Unique; }
-  public /*virtual*/ get drawStyleRoot(): BaseNode | null { return null; } // To be overridden
+  public /*virtual*/ verifyRenderStyle(style: BaseRenderStyle) { /* overide when validating the render style*/ }
+  public /*virtual*/ get renderStyleResolution(): RenderStyleResolution { return RenderStyleResolution.Unique; }
+  public /*virtual*/ get renderStyleRoot(): BaseNode | null { return null; } // To be overridden
   public /*override*/ supportsColorType(colorType: ColorType): boolean { return true; } // To be overridden
 
   //==================================================
@@ -173,7 +173,7 @@ export abstract class BaseNode extends Identifiable
     return null;
   }
 
-  public *getChildrenByType<T extends BaseNode>(classType: Class<T>) 
+  public *getChildrenByType<T extends BaseNode>(classType: Class<T>): Iterable<T>
   {
     for (const child of this.children)
     {
@@ -186,7 +186,7 @@ export abstract class BaseNode extends Identifiable
   // INSTANCE METHODS: Get descendants
   //==================================================
 
-  public * getDescendants()
+  public * getDescendants(): Iterable<BaseNode>
   {
     for (const child of this.children)
     {
@@ -199,14 +199,14 @@ export abstract class BaseNode extends Identifiable
     }
   }
 
-  public * getThisAndDescendants()
+  public * getThisAndDescendants(): Iterable<BaseNode>
   {
     yield this;
     for (const descendant of this.getDescendants())
       yield descendant;
   }
 
-  public * getDescendantsByType<T extends BaseNode>(classType: Class<T>)
+  public * getDescendantsByType<T extends BaseNode>(classType: Class<T>): Iterable<T>
   {
     for (const child of this.children)
     {
@@ -254,7 +254,7 @@ export abstract class BaseNode extends Identifiable
   // INSTANCE METHODS: Get ancestors
   //==================================================
 
-  public * getAncestors()
+  public * getAncestors(): Iterable<BaseNode>
   {
     let ancestor = this.parent;
     while (ancestor)
@@ -274,7 +274,7 @@ export abstract class BaseNode extends Identifiable
     return null;
   }
 
-  public * getThisAndAncestors()
+  public * getThisAndAncestors(): Iterable<BaseNode>
   {
     yield this;
     for (const ancestor of this.getAncestors())
@@ -391,7 +391,7 @@ export abstract class BaseNode extends Identifiable
 
   public getRenderStyle(targetId?: TargetId | null): BaseRenderStyle | null
   {
-    const root = this.drawStyleRoot;
+    const root = this.renderStyleRoot;
     if (root != null && root !== this)
       return root.getRenderStyle(targetId);
 
@@ -408,21 +408,21 @@ export abstract class BaseNode extends Identifiable
     }
     // Find the style in the node itself
     let style: BaseRenderStyle | null = null;
-    for (const thisStyle of this.drawStyles)
+    for (const thisStyle of this.renderStyles)
     {
       if (thisStyle.isDefault)
         continue;
 
-      if (!thisStyle.targetId.equals(targetId, this.drawStyleResolution))
+      if (!thisStyle.targetId.equals(targetId, this.renderStyleResolution))
         continue;
 
       style = thisStyle;
       break;
     }
     // If still not find and unique, copy one of the existing
-    if (!style && this.drawStyleResolution === RenderStyleResolution.Unique)
+    if (!style && this.renderStyleResolution === RenderStyleResolution.Unique)
     {
-      for (const thisStyle of this.drawStyles)
+      for (const thisStyle of this.renderStyles)
       {
         if (thisStyle.isDefault)
           continue;
@@ -432,8 +432,8 @@ export abstract class BaseNode extends Identifiable
 
         style = thisStyle.copy();
         style.isDefault = false;
-        style.targetId.set(targetId, this.drawStyleResolution);
-        this.drawStyles.push(style);
+        style.targetId.set(targetId, this.renderStyleResolution);
+        this.renderStyles.push(style);
         break;
       }
     }
@@ -443,8 +443,8 @@ export abstract class BaseNode extends Identifiable
       style = this.createRenderStyle(targetId);
       if (style)
       {
-        style.targetId.set(targetId, this.drawStyleResolution);
-        this.drawStyles.push(style);
+        style.targetId.set(targetId, this.renderStyleResolution);
+        this.renderStyles.push(style);
       }
     }
     if (style)

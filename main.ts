@@ -55,12 +55,10 @@ export function main()
     const node = new PotreeNode();
     node.url = 'https://betaserver.icgc.cat/potree12/resources/pointclouds/barcelonasagradafamilia/cloud.js';
     node.name = 'Barcelona';
+    node.url = '/Real/ept.json';
+    node.name = 'Aerfugl';
     root.dataFolder.addChild(node);
   }
-
-
-
-
   {
     const range = Range3.create(0, 0, 1, 0.5);
     const target = new ThreeTargetNode(range);
@@ -72,38 +70,52 @@ export function main()
     const target = new ThreeTargetNode(range);
     root.targetFolder.addChild(target);
     target.initializeRecursive();
-    target.setActiveInteractive();
   }
+
+  module.initializeWhenPopulated(root);
+  for (const domElement of module.getDomElements(root))
+    document.body.appendChild(domElement);
 
 
   // Set some visible
   root.targetFolder.children[0].setActiveInteractive();
-  for (const node of root.getDescendantsByType(PointsNode))
+
+  // Trick
+  (window as any).camera = (root.activeTarget as ThreeTargetNode).activeCamera;
+
+  for (const node of root.getDescendantsByType(PotreeNode))
+    node.setVisible(true);
+
+  const use1 = false;
+  if (use1)
   {
-    const style = node.renderStyle;
-    if (style)
+    for (const node of root.getDescendantsByType(PointsNode))
     {
-      style.colorType = ColorType.NodeColor;
-      style.size = 2;
+      const style = node.renderStyle;
+      if (style)
+      {
+        style.colorType = ColorType.NodeColor;
+        style.size = 2;
+      }
+      node.setVisible(true);
     }
-    node.setVisible(true);
-  }
-  for (const node of root.getDescendantsByType(PolylinesNode))
-  {
-    const style = node.renderStyle;
-    if (style)
-      style.lineWidth = 10;
-    node.setVisible(true);
-  }
-  for (const node of root.getDescendantsByType(SurfaceNode))
-  {
-    const style = node.renderStyle;
-    node.color = Colors.grey;
-    if (style)
+    for (const node of root.getDescendantsByType(PolylinesNode))
     {
-      style.colorType = ColorType.NodeColor;
+      const style = node.renderStyle;
+      if (style)
+        style.lineWidth = 10;
+      node.setVisible(true);
     }
-    node.setVisible(true);
+    for (const node of root.getDescendantsByType(SurfaceNode))
+    {
+      const style = node.renderStyle;
+      node.color = Colors.grey;
+      if (style)
+      {
+        style.colorType = ColorType.NodeColor;
+      }
+      node.setVisible(true);
+    }
   }
 
   root.targetFolder.children[1].setActiveInteractive();
@@ -141,10 +153,6 @@ export function main()
   //   }
   // }
 
-  module.initializeWhenPopulated(root);
-
-  for (const domElement of module.getDomElements(root))
-    document.body.appendChild(domElement);
 }
 
 

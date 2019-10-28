@@ -1,6 +1,11 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
+function resolve(dir)
+{
+  return path.resolve(__dirname, dir);
+}
+
 module.exports = {
   mode: 'development',
   entry: './main.ts',
@@ -25,6 +30,7 @@ module.exports = {
   devServer: {
     https: false,
     writeToDisk: true,
+    contentBase: [resolve('public/')]
   },
   plugins: [
     new HtmlWebpackPlugin(),
