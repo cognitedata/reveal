@@ -49,9 +49,6 @@ export class ThreeCameraNode extends BaseCameraNode
       const target = this.getTarget();
       const aspectRatio = target ? target.aspectRatio : undefined;
       const camera = new THREE.PerspectiveCamera(45, aspectRatio, 0.1, 10000);
-      camera.position.z = 1000;
-      camera.position.x = 0;
-      camera.position.y = 0;
       this._camera = camera;
     }
     return this._camera;

@@ -113,4 +113,12 @@ export class Range1
     this.add(value.min)
     this.add(value.max)
   }
+
+  public expandByMarging(value: number): void
+  {
+    if (this.isEmpty)
+      return;
+    this._min -= value;
+    this._max -= value;
+  }
 }

@@ -20,6 +20,7 @@ import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
 import { ThreeConverter } from './ThreeConverter';
+import { Range3 } from '../Core/Geometry/Range3';
 
 export class PotreeThreeView extends BaseGroupThreeView
 {
@@ -45,7 +46,12 @@ export class PotreeThreeView extends BaseGroupThreeView
     super.updateCore(args);
   }
 
-  //==================================================
+  public calculateBoundringBoxCore(): Range3 | undefined
+  {
+    return this.node.boundingBox;
+  }
+
+//==================================================
   // OVERRIDES of BaseGroupThreeView
   //==================================================
 

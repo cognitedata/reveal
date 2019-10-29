@@ -64,6 +64,7 @@ export abstract class RenderTargetNode extends BaseTargetNode
 
   protected abstract setRenderSize(): void;
   public abstract get domElement(): HTMLElement;
+  public /*virtual*/ viewRange(boundingBox: Range3): void { }
 
   //==================================================
   // INSTANCE METHODS
@@ -77,6 +78,13 @@ export abstract class RenderTargetNode extends BaseTargetNode
     if (!camera)
       throw Error("Can not find the camera, shoul be added");
     return camera as BaseCameraNode;
+  }
+
+  public viewAll(): void 
+  {
+    var boundingBox = this.getBoundingBoxFromViews();
+    if (boundingBox)
+      this.viewRange(boundingBox);
   }
 
   public onResize()

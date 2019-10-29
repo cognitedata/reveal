@@ -14,7 +14,7 @@
 import { BaseVisualNode } from "../Core/Nodes/BaseVisualNode";
 import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
 import { TargetId } from "../Core/PrimitivClasses/TargetId";
-import { PolylinesRenderStyle } from "./PolylinesRenderStyle";
+import { WellRenderStyle } from "./WellRenderStyle";
 import { ColorType } from "../Core/Enums/ColorType";
 import { Range3 } from "../Core/Geometry/Range3";
 import { Well } from "./Well";
@@ -39,7 +39,7 @@ export class WellNode extends BaseVisualNode
 
   public get data(): Well | null { return this._data; }
   public set data(value: Well | null) { this._data = value; }
-  public get renderStyle(): PolylinesRenderStyle | null { return this.getRenderStyle() as PolylinesRenderStyle; }
+  public get renderStyle(): WellRenderStyle | null { return this.getRenderStyle() as WellRenderStyle; }
 
   //==================================================
   // OVERRIDES of Identifiable
@@ -58,12 +58,12 @@ export class WellNode extends BaseVisualNode
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
-    return new PolylinesRenderStyle(targetId);
+    return new WellRenderStyle(targetId);
   }
 
   public /*override*/ verifyRenderStyle(style: BaseRenderStyle)
   {
-    if (!(style instanceof PolylinesRenderStyle))
+    if (!(style instanceof WellRenderStyle))
       return;
 
     if (!this.supportsColorType(style.colorType))

@@ -23,6 +23,7 @@ import { RegularGrid2Buffers } from '../Core/Geometry/RegularGrid2Buffers';
 import { Colors } from '../Core/PrimitivClasses/Colors';
 import { ColorType } from '../Core/Enums/ColorType';
 import { ThreeConverter } from './ThreeConverter';
+import { Range3 } from '../Core/Geometry/Range3';
 
 export class SurfaceThreeView extends BaseGroupThreeView
 {
@@ -46,6 +47,11 @@ export class SurfaceThreeView extends BaseGroupThreeView
   protected /*override*/ updateCore(args: NodeEventArgs): void
   {
     super.updateCore(args);
+  }
+
+  public calculateBoundringBoxCore(): Range3 | undefined
+  {
+    return this.node.boundingBox;
   }
 
   //==================================================

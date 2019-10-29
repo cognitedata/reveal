@@ -26,7 +26,6 @@ export function main()
 
   const root = module.createRoot();
 
-
   // Add data
   for (let i = 0; i < 1; i++)
   {
@@ -86,7 +85,7 @@ export function main()
   for (const node of root.getDescendantsByType(PotreeNode))
     node.setVisible(true);
 
-  const use1 = false;
+  const use1 = true;
   if (use1)
   {
     for (const node of root.getDescendantsByType(PointsNode))
@@ -117,6 +116,9 @@ export function main()
       node.setVisible(true);
     }
   }
+  const activeTarget = root.activeTarget as ThreeTargetNode;
+  if (activeTarget)
+    activeTarget.viewAll();
 
   root.targetFolder.children[1].setActiveInteractive();
   for (const node of root.getDescendantsByType(PointsNode))
@@ -131,6 +133,7 @@ export function main()
   }
   for (const node of root.getDescendantsByType(WellNode))
     node.setVisible(true);
+
   for (const node of root.getDescendantsByType(SurfaceNode))
   {
     const style = node.renderStyle;
@@ -139,20 +142,10 @@ export function main()
       style.colorType = ColorType.DepthColor;
     }
     node.setVisible(true);
+    const activeTarget = root.activeTarget as ThreeTargetNode;
+    if (activeTarget)
+      activeTarget.viewAll();
   }
-
-  // {
-  //   const range = root.getBoundingBoxRecursive();
-
-  //   if (range && target && !range.isEmpty && target.activeCamera instanceof THREE.PerspectiveCamera)
-  //   {
-  //     const camera = target.activeCamera;
-  //     camera.position.set(range.x.center, range.y.center, range.z.center + 1000);
-  //     camera.updateProjectionMatrix();
-  //     camera.updateMatrix();
-  //   }
-  // }
-
 }
 
 

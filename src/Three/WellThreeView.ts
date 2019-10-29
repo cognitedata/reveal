@@ -15,9 +15,10 @@ import * as THREE from 'three';
 import { Color } from "three";
 import { BaseGroupThreeView } from "./BaseGroupThreeView";
 import { WellNode } from "../Nodes/WellNode";
-import { PolylinesRenderStyle } from "../Nodes/PolylinesRenderStyle";
+import { WellRenderStyle } from "../Nodes/WellRenderStyle";
 import { ThreeConverter } from "./ThreeConverter";
 import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
+import { Range3 } from '../Core/Geometry/Range3';
 
 export class WellThreeView extends BaseGroupThreeView
 {
@@ -32,7 +33,7 @@ export class WellThreeView extends BaseGroupThreeView
   //==================================================
 
   protected get node(): WellNode { return super.getNode() as WellNode; }
-  protected get style(): PolylinesRenderStyle { return super.getStyle() as PolylinesRenderStyle; }
+  protected get style(): WellRenderStyle { return super.getStyle() as WellRenderStyle; }
 
   //==================================================
   // OVERRIDES of BaseView
@@ -41,6 +42,16 @@ export class WellThreeView extends BaseGroupThreeView
   protected /*override*/ updateCore(args: NodeEventArgs): void
   {
     super.updateCore(args);
+  }
+
+  public calculateBoundringBoxCore(): Range3 | undefined
+  {
+    var boundingBox = this.node.boundingBox;
+    if (boundingBox == undefined)
+      return undefined;
+
+    boundingBox.expandByMarging(this.style.radius);
+    return boundingBox;
   }
 
   //==================================================
@@ -59,14 +70,20 @@ export class WellThreeView extends BaseGroupThreeView
     const color = node.color;
     const threeColor = ThreeConverter.toColor(color);
 
-
     const points: THREE.Vector3[] = [];
     for (const point of well.list)
       points.push(ThreeConverter.toVector(point));
 
     const curve = new THREE.CatmullRomCurve3(points);
-    const geometry = new THREE.TubeGeometry(curve, 100, 6, 16, false);
-    const material = new THREE.MeshPhongMaterial({ color: threeColor, flatShading: false, shininess: 100 });
-    return new THREE.Mesh(geometry, material);      
+    const geometry = new THREE.TubeGeometry(curve, 100, style.radius, 16);
+    const material = new THREE.MeshPhongMaterial(
+      {
+        color: threeColor,
+        flatShading: false,
+        shininess: 100,
+        emissive: new Color(1, 1, 1),
+        emissiveIntensity: 0.2
+      });
+    return new THREE.Mesh(geometry, material);
   }
 }

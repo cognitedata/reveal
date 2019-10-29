@@ -20,6 +20,7 @@ import { ThreeConverter } from "./ThreeConverter";
 import { ColorType } from "../Core/Enums/ColorType";
 import { Colors } from "../Core/PrimitivClasses/Colors";
 import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
+import { Range3 } from '../Core/Geometry/Range3';
 
 export class PolylinesThreeView extends BaseGroupThreeView
 {
@@ -43,6 +44,11 @@ export class PolylinesThreeView extends BaseGroupThreeView
   protected /*override*/ updateCore(args: NodeEventArgs): void
   {
     super.updateCore(args);
+  }
+
+  public calculateBoundringBoxCore(): Range3 | undefined
+  {
+    return this.node.boundingBox;
   }
 
   //==================================================

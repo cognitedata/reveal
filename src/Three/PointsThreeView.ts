@@ -22,6 +22,7 @@ import { Colors } from "../Core/PrimitivClasses/Colors";
 import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
 import { Range1 } from '../Core/Geometry/Range1';
 import { Points } from '../Core/Geometry/Points';
+import { Range3 } from '../Core/Geometry/Range3';
 
 export class PointsThreeView extends BaseGroupThreeView
 {
@@ -45,6 +46,16 @@ export class PointsThreeView extends BaseGroupThreeView
   protected /*override*/ updateCore(args: NodeEventArgs): void
   {
     super.updateCore(args);
+  }
+
+  public calculateBoundringBoxCore(): Range3 | undefined
+  {
+    var boundingBox = this.node.boundingBox;
+    if (boundingBox == undefined)
+      return undefined;
+
+    boundingBox.expandByMarging(this.style.size);
+    return boundingBox;
   }
 
   //==================================================

@@ -5,6 +5,7 @@ import { ViewList } from "../Views/ViewList";
 import { BaseView } from "../Views/BaseView";
 import { BaseVisualNode } from "./BaseVisualNode";
 import { BaseNode, cocatinate } from "./BaseNode";
+import { Range3 } from "../Geometry/Range3";
 
 export abstract class BaseTargetNode extends BaseNode implements Target
 {
@@ -139,6 +140,14 @@ export abstract class BaseTargetNode extends BaseNode implements Target
   //==================================================
   // INSTANCE METHODS
   //==================================================
+
+  public getBoundingBoxFromViews(): Range3
+  {
+    var boundingBox = new Range3();
+    for (const view of this._viewsShownHere.list)
+      boundingBox.addRange(view.boundingBox)
+    return boundingBox;
+  }
 
   private createViewCore(node: BaseVisualNode)
   {

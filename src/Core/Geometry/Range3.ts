@@ -16,6 +16,7 @@ import { Vector3 } from "./Vector3";
 
 export class Range3
 {
+  
   //==================================================
   // STATIC FPROPERTIES
   //==================================================
@@ -112,7 +113,14 @@ export class Range3
     this.z.addRange(value.z);
   }
 
-  //==================================================
+  expandByMarging(value: number)
+  {
+    this.x.expandByMarging(value);
+    this.y.expandByMarging(value);
+    this.z.expandByMarging(value);
+  }
+
+    //==================================================
   // STATIC METHODS:
   //==================================================
 

@@ -16,6 +16,7 @@ import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
 import { TargetId } from "../PrimitivClasses/TargetId";
 import { TargetIdAccessor } from "../Interfaces/TargetIdAccessor";
 import { BaseNode } from "../Nodes/BaseNode";
+import { Range3 } from "../Geometry/Range3";
 
 export abstract class BaseView
 {
@@ -26,6 +27,7 @@ export abstract class BaseView
   private _node: BaseNode | null = null;
   private _target: TargetIdAccessor | null = null;
   private _isVisible: boolean = false;
+  private _boundringBox: Range3 | undefined = undefined;
 
   //==================================================
   // VIRTUAL METHODS
@@ -47,38 +49,14 @@ export abstract class BaseView
   protected constructor() { }
 
   //==================================================
-  // INSTANCE METHODS: Getters
-  //==================================================
-
-  public getNode(): BaseNode
-  {
-    if (!this._node)
-      throw Error("The node is missing in the view");
-    return this._node;
-  }
-
-  public getTarget(): TargetIdAccessor 
-  {
-    if (!this._target)
-      throw Error("The target is missing in the view");
-    return this._target;
-  }
-
-  protected getStyle(): BaseRenderStyle
-  {
-    let style: BaseRenderStyle | null = null;
-    if (!this._target)
-      style = this.getNode().getRenderStyle(TargetId.empty);
-    else
-      style = this.getNode().getRenderStyle(this._target.targetId);
-    if (!style)
-      throw Error("The style is missing in the view");
-    return style;
-  }
-
-  //==================================================
   // VIRTUAL METHODS: 
   //==================================================
+
+  protected /*virtual*/ calculateBoundringBoxCore(): Range3|undefined
+  {
+    // Override this function to recalculate the range
+    return undefined;
+  }
 
   protected /*virtual*/ initializeCore(): void
   {
@@ -112,6 +90,43 @@ export abstract class BaseView
     // Override this function to when your view
     // need to do something when it is set NOT visible
     // Called just before removal from view list and detach
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Getters
+  //==================================================
+
+  public getNode(): BaseNode
+  {
+    if (!this._node)
+      throw Error("The node is missing in the view");
+    return this._node;
+  }
+
+  public getTarget(): TargetIdAccessor 
+  {
+    if (!this._target)
+      throw Error("The target is missing in the view");
+    return this._target;
+  }
+
+  protected getStyle(): BaseRenderStyle
+  {
+    let style: BaseRenderStyle | null = null;
+    if (!this._target)
+      style = this.getNode().getRenderStyle(TargetId.empty);
+    else
+      style = this.getNode().getRenderStyle(this._target.targetId);
+    if (!style)
+      throw Error("The style is missing in the view");
+    return style;
+  }
+
+  public get boundingBox(): Range3 | undefined
+  {
+    if (this._boundringBox == undefined)
+      this._boundringBox = this.calculateBoundringBoxCore();
+    return this._boundringBox;
   }
 
   //==================================================
