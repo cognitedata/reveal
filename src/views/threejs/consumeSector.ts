@@ -24,15 +24,12 @@ export function consumeSector(sectorId: number, sector: Sector, metadata: Sector
   // TODO 20191025 larsmoa: Hack to avoid lots of big meshes, but
   // color information is lost. Fix.
   const uniqueFiles = new Set<number>(sector.triangleMeshes.map(x => x.fileId));
-  // for (const mesh of sector.triangleMeshes) {
   for (const fileId of uniqueFiles) {
     const mesh = sector.triangleMeshes.find(x => x.fileId === fileId)!;
 
     const geometry = new THREE.BufferGeometry();
-    const indices = new THREE.Uint32BufferAttribute(mesh.indices, 1);
     const vertices = new THREE.Float32BufferAttribute(mesh.vertices, 3);
     const colors = new THREE.Float32BufferAttribute(mesh.colors, 3);
-    geometry.setIndex(indices);
     geometry.addAttribute('position', vertices);
     geometry.addAttribute('color', colors);
 

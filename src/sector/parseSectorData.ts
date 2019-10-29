@@ -2,6 +2,7 @@
  * Copyright 2019 Cognite AS
  */
 
+import * as THREE from 'three';
 import { Sector, SectorMetadata, TriangleMesh } from './types';
 import { FetchSectorDelegate, FetchCtmDelegate } from './delegates';
 import { createOffsets as createMeshOffsets } from '../utils/arrayUtils';
@@ -43,31 +44,33 @@ export async function createParser(
         const indices = ctm.indices();
         const vertices = ctm.vertices();
         const normals = ctm.normals();
-        const colorsBuffer = new Float32Array(vertices.length); // 3 components for each
 
-        for (const meshIndex of meshIndices) {
-          const rangeFrom = offsets[meshIndex];
-          const rangeCount = triangleCounts[meshIndex];
-          const [r, g, b, a] = readColorToFloat32s(colors, meshIndex);
-
-          // TODO 20191025 lars: Per vertex coloring which wont really work.
-          for (let i = 0; i < rangeCount; i++) {
-            const idx = indices[rangeFrom + i];
-            colorsBuffer[3 * idx] = r;
-            colorsBuffer[3 * idx + 1] = g;
-            colorsBuffer[3 * idx + 2] = b;
+        // TODO 2019-10-29 larsmoa: Get rid of flattening (or at least don't flatten all vertices)
+        const flatColors = new Float32Array(3 * indices.length);
+        const flatVertices = new Float32Array(3 * indices.length);
+        let currMeshIdx = 0;
+        for (let i = 0; i < indices.length; i++) {
+          if (i >= offsets[currMeshIdx] + triangleCounts[i]) {
+            currMeshIdx++;
           }
-
-          // colorsBuffer.fill(color, rangeFrom, rangeFrom + rangeCount);
+          const [r, g, b, a] = readColorToFloat32s(colors, currMeshIdx);
+          flatVertices[3 * i] = vertices[3 * indices[i]];
+          flatVertices[3 * i + 1] = vertices[3 * indices[i] + 1];
+          flatVertices[3 * i + 2] = vertices[3 * indices[i] + 2];
+          flatColors[3 * i] = r;
+          flatColors[3 * i + 1] = g;
+          flatColors[3 * i + 2] = b;
         }
 
         const mesh: TriangleMesh = {
           // offset,
           // count,
-          colors: colorsBuffer,
+          // colors: colorsBuffer,
+          colors: flatColors,
           fileId,
           indices,
-          vertices,
+          // vertices,
+          vertices: flatVertices,
           normals
         };
         sector.triangleMeshes.push(mesh);
