@@ -93,6 +93,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
       material.map = texture;
     }
     const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.set(grid.xOrigin, grid.yOrigin, 0);
     mesh.drawMode = THREE.TrianglesDrawMode; //THREE.TriangleStripDrawMode (must use groups)
     return mesh;
   }

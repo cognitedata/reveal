@@ -67,16 +67,26 @@ export class RegularGrid2 extends Grid2
   //==================================================
 
   public getNodeIndex(i: number, j: number) { return i + this.nodeSize.i * j; }
+  public getX(i: number, j: number): number { return this.xOrigin + this.inc * i; }
+  public getY(i: number, j: number): number { return this.yOrigin + this.inc * j; }
+  public getZ(i: number, j: number): number
+  {
+    const index = this.getNodeIndex(i, j);
+    return this.buffer[index]
+  }
 
   public getPoint3(i: number, j: number): Vector3
   {
     return new Vector3(this.xOrigin + this.inc * i, this.yOrigin + this.inc * j, this.getZ(i, j));
   }
 
-  public getNormal(i: number, j: number): Vector3
+  public getNormal(i: number, j: number, z?:number): Vector3
   {
     const sum = Vector3.newZero;
-    const z = this.getZ(i, j);
+
+    if (!z)
+      z = this.getZ(i, j);
+      
     const a = Vector3.newZero;
     const b = Vector3.newZero;
 
@@ -131,12 +141,6 @@ export class RegularGrid2 extends Grid2
   public getTriplet(i: number, j: number): [number, number, number]
   {
     return [this.xOrigin + this.inc * i, this.yOrigin + this.inc * j, this.getZ(i, j)];
-  }
-
-  public getZ(i: number, j: number): number
-  {
-    const index = this.getNodeIndex(i, j);
-    return this.buffer[index]
   }
 
   public getZRange(): Range1

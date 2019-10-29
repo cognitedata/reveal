@@ -50,17 +50,18 @@ export class RegularGrid2Buffers
 
         let index = 3 * uniqueIndex;
 
-        const point = grid.getPoint3(i, j);
-        this.positions[index + 0] = point.x
-        this.positions[index + 1] = point.y
-        this.positions[index + 2] = point.z
+        const z = grid.getZ(i, j);
 
-        const normal = grid.getNormal(i, j);
+        this.positions[index + 0] = grid.inc * i;
+        this.positions[index + 1] = grid.inc * j;
+        this.positions[index + 2] = z;
+
+        const normal = grid.getNormal(i, j, z);
         this.normals[index + 0] = normal.x;
         this.normals[index + 1] = normal.y;
         this.normals[index + 2] = normal.z;
 
-        const fraction = zRange.getFraction(point.z);
+        const fraction = zRange.getFraction(z);
 
         index = 2 * uniqueIndex;
         this.uvs[index + 0] = fraction;

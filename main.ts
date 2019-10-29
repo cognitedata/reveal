@@ -30,7 +30,7 @@ export function main()
   for (let i = 0; i < 1; i++)
   {
     const node = new PointsNode();
-    node.data = Points.createByRandom(1000, Range3.newTest);
+    node.data = Points.createByRandom(2_000_000, Range3.newTest);
     root.dataFolder.addChild(node);
   }
   for (let i = 0; i < 1; i++)
@@ -39,6 +39,7 @@ export function main()
     node.data = Polylines.createByRandom(20, 10, Range3.newTest);
     root.dataFolder.addChild(node);
   }
+  for (let i = 0; i < 1; i++)
   {
     const node = new SurfaceNode();
     node.data = RegularGrid2.createFractal(Range3.newTest, 8, 2);
@@ -122,9 +123,9 @@ export function main()
     if (style)
     {
       style.colorType = ColorType.DepthColor;
-      style.size = 50;
+      style.size = 1;
     }
-    node.setVisible(true);
+    //node.setVisible(true);
   }
   for (const node of root.getDescendantsByType(WellNode))
     node.setVisible(true);
