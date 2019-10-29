@@ -62,13 +62,11 @@ export function main()
     const range = Range3.create(0, 0, 1, 0.5);
     const target = new ThreeTargetNode(range);
     root.targetFolder.addChild(target)
-    target.initializeRecursive();
   }
   {
     const range = Range3.create(0, 0.5, 1, 1);
     const target = new ThreeTargetNode(range);
     root.targetFolder.addChild(target);
-    target.initializeRecursive();
   }
 
   module.initializeWhenPopulated(root);
@@ -79,13 +77,10 @@ export function main()
   // Set some visible
   root.targetFolder.children[0].setActiveInteractive();
 
-  // Trick
-  (window as any).camera = (root.activeTarget as ThreeTargetNode).activeCamera;
-
   for (const node of root.getDescendantsByType(PotreeNode))
     node.setVisible(true);
 
-  const use1 = true;
+  const use1 = false;
   if (use1)
   {
     for (const node of root.getDescendantsByType(PointsNode))
@@ -116,7 +111,7 @@ export function main()
       node.setVisible(true);
     }
   }
-  const activeTarget = root.activeTarget as ThreeTargetNode;
+  let activeTarget = root.activeTarget as ThreeTargetNode;
   if (activeTarget)
     activeTarget.viewAll();
 
@@ -142,10 +137,13 @@ export function main()
       style.colorType = ColorType.DepthColor;
     }
     node.setVisible(true);
-    const activeTarget = root.activeTarget as ThreeTargetNode;
-    if (activeTarget)
-      activeTarget.viewAll();
   }
+  activeTarget = root.activeTarget as ThreeTargetNode;
+  if (activeTarget)
+    activeTarget.viewAll();
+
+  // Trick
+  (window as any).camera = activeTarget.activeCamera;
 }
 
 

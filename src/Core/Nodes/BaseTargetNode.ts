@@ -143,7 +143,7 @@ export abstract class BaseTargetNode extends BaseNode implements Target
 
   public getBoundingBoxFromViews(): Range3
   {
-    var boundingBox = new Range3();
+    const boundingBox = new Range3();
     for (const view of this._viewsShownHere.list)
       boundingBox.addRange(view.boundingBox)
     return boundingBox;

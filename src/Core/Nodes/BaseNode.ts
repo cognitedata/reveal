@@ -309,21 +309,6 @@ export abstract class BaseNode extends Identifiable
   // INSTANCE METHODS: Misc
   //==================================================
 
-  public getBoundingBoxRecursive(): Range3 | undefined
-  {
-    let range = this.boundingBox;
-    for (const child of this.children)
-    {
-      const childRange = child.getBoundingBoxRecursive();
-      if (childRange === undefined)
-        continue;
-      if (range === undefined)
-        range = new Range3();
-      range.addRange(childRange);
-    }
-    return range;
-  }
-
   public notify(args: NodeEventArgs): void
   {
     this.notifyCore(args);

@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\Core",
+    "\\src\\Core\\Enums",
+    "\\src\\Core\\Geometry",
+    "\\src\\Core\\Nodes"
+  ],
+  "SelectedNode": "\\src\\Core\\Nodes\\FolderNode.ts",
+  "PreviewInSolutionExplorer": false
+}

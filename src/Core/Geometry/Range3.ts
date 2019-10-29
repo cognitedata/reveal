@@ -93,8 +93,8 @@ export class Range3
   public set(min: Vector3, max: Vector3): void
   {
     this.x.set(min.x, max.x);
-    this.x.set(min.y, max.y);
-    this.x.set(min.z, max.z);
+    this.y.set(min.y, max.y);
+    this.z.set(min.z, max.z);
   }
 
   public add(value: Vector3): void

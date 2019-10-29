@@ -20,7 +20,7 @@ export class PotreeRenderStyle extends BaseRenderStyle
   // FIELDS
   //==================================================
 
-  public budget: number = 5_000_000;
+  public budget: number = 2_000_000;
 
   //==================================================
   // CONSTRUCTORS

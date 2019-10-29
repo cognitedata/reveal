@@ -82,7 +82,7 @@ export abstract class RenderTargetNode extends BaseTargetNode
 
   public viewAll(): void 
   {
-    var boundingBox = this.getBoundingBoxFromViews();
+    const boundingBox = this.getBoundingBoxFromViews();
     if (boundingBox)
       this.viewRange(boundingBox);
   }

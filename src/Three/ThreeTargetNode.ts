@@ -138,14 +138,16 @@ export class ThreeTargetNode extends RenderTargetNode
     const controls = this.activeControls;
     if (!controls)
       return;
-    //controls.setTarget(range.x.center, range.y.center, range.z.center);
-    //controls.moveTo(range.x.center+1000, range.y.center+1000, range.z.center);
     controls.fitTo(ThreeConverter.toBox(range));
-    controls.rotate(0, 0.8);
-    controls.setTarget(range.x.center, range.y.center, range.z.center);
+
+
+    // The below stuff doesn't work!!
+    // controls.rotate(0, 0.8);
+    controls.moveTo(range.x.center, range.y.center, range.z.center);
+    this.Invalidate();
+
+    //https://github.com/yomotsu/camera-controls
   }
-
-
 
   public /*override*/ get domElement(): HTMLElement { return this.renderer.domElement; }
 

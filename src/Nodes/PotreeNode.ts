@@ -39,7 +39,6 @@ export class PotreeNode extends BaseVisualNode
   public get url(): string { return this._url; }
   public set url(value: string) { this._url = value; }
   public get renderStyle(): PotreeRenderStyle | null { return this.getRenderStyle() as PotreeRenderStyle; }
-  public set localBoundingBox(value: Range3 | undefined) { this._boundingBox = value; }
 
   //==================================================
   // OVERRIDES of Identifiable

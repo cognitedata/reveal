@@ -27,7 +27,7 @@ export abstract class BaseView
   private _node: BaseNode | null = null;
   private _target: TargetIdAccessor | null = null;
   private _isVisible: boolean = false;
-  private _boundringBox: Range3 | undefined = undefined;
+  protected _boundringBox: Range3 | undefined = undefined;
 
   //==================================================
   // VIRTUAL METHODS

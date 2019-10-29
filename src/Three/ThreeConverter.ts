@@ -28,9 +28,9 @@ export class ThreeConverter
   public static toVector(value: Vector3): THREE.Vector3 { return new THREE.Vector3(value.x, value.y, value.z); }
   public static fromVector(value: THREE.Vector3): Vector3 { return new Vector3(value.x, value.y, value.z); }
 
-  public static fromBox(value: THREE.Box3): Range3
+  public static fromBox(value: THREE.Box3, checkEmpty:boolean = true): Range3
   {
-    if (value.isEmpty)
+    if (checkEmpty && value.isEmpty)
       return new Range3();
     return new Range3(ThreeConverter.fromVector(value.min), ThreeConverter.fromVector(value.max));
   }

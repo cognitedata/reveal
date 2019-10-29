@@ -21,6 +21,7 @@ import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
 import * as Potree from '@cognite/potree-core';
 import { ThreeConverter } from './ThreeConverter';
 import { Range3 } from '../Core/Geometry/Range3';
+import { MeshToonMaterial } from 'three';
 
 export class PotreeThreeView extends BaseGroupThreeView
 {
@@ -37,6 +38,7 @@ export class PotreeThreeView extends BaseGroupThreeView
   protected get node(): PotreeNode { return super.getNode() as PotreeNode; }
   protected get style(): PotreeRenderStyle { return super.getStyle() as PotreeRenderStyle; }
 
+  
   //==================================================
   // OVERRIDES of BaseView
   //==================================================
@@ -60,26 +62,37 @@ export class PotreeThreeView extends BaseGroupThreeView
     const node = this.node;
     const style = this.style;
 
+    const path = node.url;
+    if (path == null || path === "")
+      return null;
+
     const group = new Potree.Group();
     group.setPointBudget(style.budget);
 
-    const path = node.url;
-
-    // https://github.com/tentone/potree-core
-
-    const material = Potree.PointCloudMaterial;
-    if (material)
-      material.pointSizeType = Potree.PointSizeType.ATTENUATED;
+    const self = this;
 
     Potree.loadPointCloud(path, node.name, (data: any) =>
     {
       const pointcloud = data.pointcloud;
       group.add(pointcloud);
 
+      const material = pointcloud.material;
+      if (material)
+      {
+       // https://github.com/tentone/potree-core
+        material.pointSizeType = Potree.PointSizeType.ATTENUATED; // ATTENUATED or FIXED
+        material.pointColorType = Potree.PointColorType.RGB;
+        material.shape = Potree.PointShape.SQUARE;
+        material.weighted = false;
+        //material.size = 0.5;
+      }
+
       const boundingBox = pointcloud.pcoGeometry.tightBoundingBox as THREE.Box3;
       if (boundingBox)
-        node.localBoundingBox = ThreeConverter.fromBox(boundingBox);
-
+      {
+        self._boundringBox = ThreeConverter.fromBox(boundingBox, false);
+        self.target.viewAll();
+      }
       group.add(pointcloud);
     });
     return group;

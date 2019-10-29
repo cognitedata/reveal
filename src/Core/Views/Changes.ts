@@ -17,12 +17,17 @@ export class Changes
   // STATIC FIELDS: More will come here
   //==================================================
 
-  public static readonly nodeName: symbol = Symbol("nodeName");
-  public static readonly nodeColor: symbol = Symbol("nodeColor");
+  // States changed
   public static readonly visible: symbol = Symbol("visible");
   public static readonly active: symbol = Symbol("active");
+
+  // Fields changed
+  public static readonly nodeName: symbol = Symbol("nodeName");
+  public static readonly nodeColor: symbol = Symbol("nodeColor");
   public static readonly geometry: symbol = Symbol("geometry");
+  public static readonly renderStyle: symbol = Symbol("renderStyle");
+
+  // Parent-child relation chips changed
   public static readonly childDeleted: symbol = Symbol("childDeleted");
   public static readonly childAdded: symbol = Symbol("childAdded");
-  public static readonly renderStyle: symbol = Symbol("renderStyle");
 }
