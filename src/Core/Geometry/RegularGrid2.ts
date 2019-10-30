@@ -30,7 +30,7 @@ export class RegularGrid2 extends Grid2
   public buffer: Float32Array;
 
   static readonly _staticHelperA = Vector3.newZero;
-  static readonly _staticHleperB = Vector3.newZero;
+  static readonly _staticHelperB = Vector3.newZero;
   static readonly _staticHelperC = Vector3.newZero;
 
   //==================================================
@@ -90,7 +90,7 @@ export class RegularGrid2 extends Grid2
       z = this.getZ(i, j);
 
     const a = RegularGrid2._staticHelperA;
-    const b = RegularGrid2._staticHleperB;
+    const b = RegularGrid2._staticHelperB;
     const sum = RegularGrid2._staticHelperC;
 
     sum.set(0, 0, 0);

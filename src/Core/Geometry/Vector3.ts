@@ -36,7 +36,7 @@ export class Vector3
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(x: number, y: number, z: number)
+  public constructor(x: number, y: number, z: number = 0)
   {
     this.x = x;
     this.y = y;
@@ -49,7 +49,13 @@ export class Vector3
   }
 
   //==================================================
-  // INSTANCE METHODS; Getters
+  // INSTANCE METHODS: Requests
+  //==================================================
+
+  public equals(other: Vector3): boolean { return this.x == other.x && this.y == other.y && this.z == other.z; }
+
+  //==================================================
+  // INSTANCE METHODS: Getters
   //==================================================
 
   public toString(): string { return `(${this.x}, ${this.y}, ${this.z})`; }
@@ -58,7 +64,7 @@ export class Vector3
   // INSTANCE METHODS: Operations
   //==================================================
 
-  public set(x: number, y: number, z: number): void
+  public set(x: number, y: number, z: number = 0): void
   {
     this.x = x;
     this.y = y;

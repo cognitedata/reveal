@@ -98,6 +98,20 @@ export class Range3
     this.z.set(min.z, max.z);
   }
 
+  public translate(value: Vector3): void
+  {
+    this.x.translate(value.x);
+    this.y.translate(value.y);
+    this.z.translate(value.z);
+  }
+
+  public scale(value: Vector3): void
+  {
+    this.x.scale(value.x);
+    this.y.scale(value.y);
+    this.z.scale(value.z);
+  }
+
   public add(value: Vector3): void
   {
     this.x.add(value.x);
@@ -137,6 +151,16 @@ export class Range3
     const range = new Range3();
     range.x.set(xmin, xmax);
     range.y.set(ymin, ymax);
+    range.z.set(0, 0);
+    return range;
+  }
+
+  public static createByMinAndDelta(xmin: number, ymin: number, dx: number, dy: number): Range3
+  {
+    const range = new Range3();
+    range.x.set(xmin, xmin + dx);
+    range.y.set(ymin, ymin + dy);
+    range.z.set(0, 0);
     return range;
   }
 }

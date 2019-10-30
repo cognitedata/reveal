@@ -13,6 +13,7 @@ import { PointsNode } from './src/Nodes/PointsNode';
 import { Points } from './src/Core/Geometry/Points';
 import { ColorType } from './src/Core/Enums/ColorType';
 import { Colors } from './src/Core/PrimitivClasses/Colors';
+import { RenderTargetNode } from './src/Core/Nodes/RenderTargetNode';
 
 main();
 
@@ -27,14 +28,18 @@ export function main()
   // Add data
   for (let i = 0; i < 1; i++)
   {
+    const range = Range3.newTest;
+    range.expandByFraction(-0.3);
     const node = new PointsNode();
-    node.data = Points.createByRandom(2_000_000, Range3.newTest);
+    node.data = Points.createByRandom(2_000_000, range);
     root.dataFolder.addChild(node);
   }
   for (let i = 0; i < 1; i++)
   {
+    const range = Range3.newTest;
+    range.expandByFraction(-0.2);
     const node = new PolylinesNode();
-    node.data = Polylines.createByRandom(20, 10, Range3.newTest);
+    node.data = Polylines.createByRandom(20, 10, range);
     root.dataFolder.addChild(node);
   }
   for (let i = 0; i < 1; i++)
@@ -69,11 +74,20 @@ export function main()
   }
 
   module.initializeWhenPopulated(root);
-  for (const domElement of module.getDomElements(root))
-    document.body.appendChild(domElement);
+  for (const target of root.targetFolder.getChildrenByType(ThreeTargetNode))
+  {
+    const range = target.pixelRange;
+    const stats = target.stats;
+    stats.dom.style.left = range.x.min.toFixed(0) + "px";
+    stats.dom.style.top = range.y.min.toFixed(0) + "px";
+    stats.dom.style.margin = "10px";
+    stats.dom.style.position = "absolute";
+    
+    document.body.appendChild(target.domElement);
+    document.body.appendChild(stats.dom);
+  }
 
-
-  // Set some visible
+  // Set some visible in target 0
   root.targetFolder.children[0].setActiveInteractive();
 
   for (const node of root.getDescendantsByType(PotreeNode))
@@ -114,6 +128,7 @@ export function main()
   if (activeTarget)
     activeTarget.viewAll();
 
+  // Set some visible in target 1
   root.targetFolder.children[1].setActiveInteractive();
   for (const node of root.getDescendantsByType(PointsNode))
   {
@@ -123,7 +138,14 @@ export function main()
       style.colorType = ColorType.DepthColor;
       style.size = 1;
     }
-    //node.setVisible(true);
+    node.setVisible(true);
+  }
+  for (const node of root.getDescendantsByType(PolylinesNode))
+  {
+    const style = node.renderStyle;
+    if (style)
+      style.lineWidth = 10;
+    node.setVisible(true);
   }
   for (const node of root.getDescendantsByType(WellNode))
     node.setVisible(true);

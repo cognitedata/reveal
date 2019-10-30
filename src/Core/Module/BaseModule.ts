@@ -53,7 +53,7 @@ export abstract class BaseModule
   public *getDomElements(root: BaseRootNode): Iterable<HTMLElement>
   {
     for (const target of root.targetFolder.getChildrenByType(RenderTargetNode))
-      yield target.domElement
+      yield target.domElement;
   }
 }
 

@@ -38,6 +38,8 @@
     "camera-controls": "^1.15.0",
     "color": "^3.1.2",
     "gl-matrix": "^3.1.0",
+    "stats-js": "^1.0.1",
+    "stats.js": "^0.17.0",
     "three": "^0.109.0",
     "ts-nameof": "^4.0.3",
     "uuid": "^3.3.3"

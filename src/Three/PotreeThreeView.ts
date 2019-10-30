@@ -21,6 +21,7 @@ import { Range3 } from '../Core/Geometry/Range3';
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
 import { ThreeConverter } from './ThreeConverter';
+import { ViewInfo } from '../Core/Views/ViewInfo';
 
 export class PotreeThreeView extends BaseGroupThreeView
 {
@@ -51,6 +52,18 @@ export class PotreeThreeView extends BaseGroupThreeView
   {
     return PotreeThreeView.getBoundingBoxFromGroup(this.object3D as Potree.Group);
   }
+
+  //==================================================
+  // OVERRIDES of Base3DView
+  //==================================================
+
+
+  protected /*virtual*/ getViewInfoCore(viewInfo: ViewInfo): void
+  {
+    super.getViewInfoCore(viewInfo);
+    viewInfo.addText("Potree", 1);
+  }
+
 
   //==================================================
   // OVERRIDES of BaseGroupThreeView

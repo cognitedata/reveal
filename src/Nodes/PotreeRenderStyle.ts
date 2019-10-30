@@ -34,7 +34,6 @@ export class PotreeRenderStyle extends BaseRenderStyle
     style.budget = this.budget;
     return style;
   }
-
 }
 
 

@@ -91,6 +91,25 @@ export class Range1
     this._isEmpty = false;
   }
 
+  public translate(value: number): void
+  {
+    if (this._isEmpty)
+      return;
+
+    this._min += value;
+    this._max += value;
+  }
+
+  public scale(scale: number): void
+  {
+    if (this._isEmpty)
+      return;
+
+    const center = this.center
+    this._min = (this._min - center) * scale + center;
+    this._max = (this._max - center) * scale + center;
+  }
+
   public add(value: number): void
   {
     if (this._isEmpty)
@@ -119,7 +138,7 @@ export class Range1
     if (this.isEmpty)
       return;
     this._min -= margin;
-    this._max -= margin;
+    this._max += margin;
     if (this._min > this._max)
       [this._max, this._min] = [this._min, this._max]; //Swap
   }

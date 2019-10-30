@@ -14,6 +14,8 @@
 import CameraControls from 'camera-controls';
 import * as THREE from 'three';
 
+const Stats = require('stats-js');
+
 import { RenderTargetNode } from "../Core/Nodes/RenderTargetNode";
 import { ThreeCameraNode as ThreeCameraNode } from "./ThreeCameraNode";
 import { ThreeConverter } from "./ThreeConverter";
@@ -30,10 +32,21 @@ export class ThreeTargetNode extends RenderTargetNode
   private _renderer: THREE.WebGLRenderer | null = null;
   private _clock = new THREE.Clock();
   private _overlay = new TreeOverlay();
+  private _stats: any | null; // NILS: Why any here? Compiler error if not
 
   //==================================================
   // PROPERTIES
   //==================================================
+
+  public get stats(): any
+  {
+    if (!this._stats)
+    {
+      this._stats = new Stats()
+      this._stats.showPanel(0); 
+    }    
+    return this._stats;
+  }
 
   public get scene(): THREE.Scene
   {
@@ -157,7 +170,7 @@ export class ThreeTargetNode extends RenderTargetNode
   protected /*override*/ setRenderSize(): void
   {
     const pixelRange = this.pixelRange;
-    this.renderer.setSize(pixelRange.x.delta, pixelRange.y.delta);    
+    this.renderer.setSize(pixelRange.x.delta, pixelRange.y.delta);
   }
 
   //==================================================
@@ -180,14 +193,14 @@ export class ThreeTargetNode extends RenderTargetNode
     }
     if (this.isInvalidated || needsUpdate)
     {
+      this.stats.begin();
       this.renderer.render(this.scene, this.activeCamera);
-      const pixelRange = this.pixelRange;
-      this._overlay.render(this.renderer, pixelRange.x.delta, pixelRange.y.delta);
+      this.stats.end();
+
+      var viewInfo = this.getViewInfo();
+
+      this._overlay.render(this.renderer, viewInfo, this.pixelRange.delta);
       this.Invalidate(false);
     }
   }
 }
-
-
-
-

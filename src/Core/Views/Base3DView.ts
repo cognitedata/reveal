@@ -15,6 +15,7 @@ import { Range3 } from "../Geometry/Range3";
 import { BaseView } from "./BaseView";
 import { Changes } from "./Changes";
 import { NodeEventArgs } from "./NodeEventArgs";
+import { ViewInfo } from "./ViewInfo";
 
 export abstract class Base3DView extends BaseView
 {
@@ -31,16 +32,6 @@ export abstract class Base3DView extends BaseView
   protected constructor() { super(); }
 
   //==================================================
-  // VIRTUAL METHODS: 
-  //==================================================
-
-  protected /*virtual*/ calculateBoundingBoxCore(): Range3 | undefined
-  {
-    // Override this function to recalculate the bounding box of the view
-    return undefined;
-  }
-
-  //==================================================
   // OVERRIDES of BaseView
   //==================================================
 
@@ -52,8 +43,27 @@ export abstract class Base3DView extends BaseView
   }
 
   //==================================================
+  // VIRTUAL METHODS: 
+  //==================================================
+
+  protected /*virtual*/ calculateBoundingBoxCore(): Range3 | undefined
+  {
+    // Override this function to recalculate the bounding box of the view
+    return undefined;
+  }
+
+  protected /*virtual*/ getViewInfoCore(viewInfo: ViewInfo): void
+  {
+  }
+
+  //==================================================
   // INSTANCE METHODS: 
   //==================================================
+
+  public /*virtual*/ getViewInfo(viewInfo: ViewInfo): void
+  {
+    return this.getViewInfoCore(viewInfo);
+  }
 
   public get boundingBox(): Range3 | undefined
   {
@@ -67,7 +77,7 @@ export abstract class Base3DView extends BaseView
     this._boundingBox = value;
   }
 
-  protected touchBoundingBox() : void
+  protected touchBoundingBox(): void
   {
     this._boundingBox = undefined;
   }

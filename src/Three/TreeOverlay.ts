@@ -12,6 +12,8 @@
 //=====================================================================================
 
 import * as THREE from 'three';
+import { ViewInfo } from '../Core/Views/ViewInfo';
+import { Vector3 } from '../Core/Geometry/Vector3';
 
 export class TreeOverlay
 {
@@ -23,17 +25,19 @@ export class TreeOverlay
   private camera: THREE.Camera | null = null;
   private bitmap: CanvasRenderingContext2D | null = null;
   private texture: THREE.Texture | null = null;
-  private width: number = -1;
-  private height: number = -1;
+  private delta: Vector3 = new Vector3(-1, -1);
 
   //==================================================
   // INSTANCE METHODS: 
   //==================================================
 
-  public render(renderer: THREE.WebGLRenderer, width: number, height: number): void
+  public render(renderer: THREE.WebGLRenderer, viewInfo: ViewInfo, delta: Vector3): void
   {
-    if (this.width != width || this.height != height)
-      this.initialize(width, height);
+    if (viewInfo.isEmpty)
+      return;
+
+    if (!this.delta.equals(delta))
+      this.initialize(delta);
 
     if (!this.bitmap)
       return;
@@ -47,15 +51,19 @@ export class TreeOverlay
     if (!this.camera)
       return;
 
-    this.bitmap.font = "Normal 10px Arial";
-    this.bitmap.textAlign = 'right';
-    this.bitmap.textBaseline = 'bottom';
-    this.bitmap.fillStyle = "rgb(245,245,245)";
+    const text = viewInfo.text;
 
-    this.bitmap.clearRect(0, 0, this.width, this.height);
-    this.bitmap.fillText("RAD", this.width, this.height);
-    this.texture.needsUpdate = true;
+    if (text && text.length)
+    {
+      this.bitmap.font = "Normal 10px Arial";
+      this.bitmap.textAlign = 'right';
+      this.bitmap.textBaseline = 'bottom';
+      this.bitmap.fillStyle = "rgba(255,255,255, 180)";
 
+      this.bitmap.clearRect(0, 0, this.delta.x, this.delta.y);
+      this.bitmap.fillText(text, this.delta.x, this.delta.y);
+      this.texture.needsUpdate = true;
+    }
     renderer.render(this.scene, this.camera);
   }
 
@@ -71,13 +79,9 @@ export class TreeOverlay
       this.texture = null;
     }
     if (this.bitmap)
-    {
       this.bitmap = null;
-    }
     if (this.camera)
-    {
       this.camera = null;
-    }
     if (this.scene)
     {
       while (this.scene.children.length)
@@ -86,34 +90,38 @@ export class TreeOverlay
         this.scene.remove(child);
         if (child instanceof THREE.Mesh)
         {
-          child.geometry.dispose();
+          const material = child.material as THREE.Material;
+          if (material)
+            material.dispose();
+          const geometry = child.geometry;
+          if (geometry)
+            geometry.dispose();
         }
       }
     }
   }
 
-  private initialize(width: number, height: number): void
+  private initialize(delta: Vector3): void
   {
     //  Very simple example rendering pure Three.js HUD on top of
     //  a 3D scene. 
     //  For more info, read the blog post about this experiment:
     //  http://www.evermade.fi/pure-three-js-hud/ 
     //  For more fanciness, follow me on Twitter @jalajoki
-
     this.clear();
-    this.width = width;
-    this.height = height;
     const canvas = document.createElement('canvas');
 
-    canvas.width = this.width;
-    canvas.height = this.height;
+    this.delta = delta;
+
+    canvas.width = this.delta.x;
+    canvas.height = this.delta.y;
 
     this.bitmap = canvas.getContext('2d');
     if (!this.bitmap)
       return;
 
     // Create the camera and set the viewport to match the screen dimensions.
-    this.camera = new THREE.OrthographicCamera(-this.width / 2, this.width / 2, this.height / 2, -this.height / 2, 0, 30);
+    this.camera = new THREE.OrthographicCamera(-this.delta.x / 2, this.delta.x / 2, this.delta.y / 2, -this.delta.y / 2, 0, 30);
 
     // Create texture from rendered graphics.
     this.texture = new THREE.Texture(canvas)
@@ -126,7 +134,7 @@ export class TreeOverlay
     material.transparent = true;
 
     // Create plane to render. This plane fill the whole screen.
-    const planeGeometry = new THREE.PlaneGeometry(this.width, this.height);
+    const planeGeometry = new THREE.PlaneGeometry(this.delta.x, this.delta.y);
     const plane = new THREE.Mesh(planeGeometry, material);
 
     if (!this.scene)

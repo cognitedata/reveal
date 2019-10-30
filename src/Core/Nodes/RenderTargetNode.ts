@@ -4,6 +4,7 @@ import { Colors } from "../PrimitivClasses/Colors";
 import { BaseTargetNode } from "./BaseTargetNode";
 import { Range3 } from "../Geometry/Range3";
 import { Base3DView } from "../Views/Base3DView";
+import { ViewInfo } from "../Views/ViewInfo";
 
 export abstract class RenderTargetNode extends BaseTargetNode 
 {
@@ -27,7 +28,7 @@ export abstract class RenderTargetNode extends BaseTargetNode
     const dx = RenderTargetNode.windowWidth * this._fractionRange.x.delta;
     const dy = RenderTargetNode.windowHeight * this._fractionRange.y.delta;
 
-    return Range3.createByMinAndMax(x, y, x + dx, y + dy);
+    return Range3.createByMinAndDelta(x, y, dx, dy);
   }
 
   //==================================================
@@ -83,6 +84,15 @@ export abstract class RenderTargetNode extends BaseTargetNode
       if (view instanceof Base3DView)
         boundingBox.addRange(view.boundingBox)
     return boundingBox;
+  }
+
+  public getViewInfo(): ViewInfo
+  {
+    const viewInfo = new ViewInfo();
+    for (const view of this.viewsShownHere.list)
+      if (view instanceof Base3DView)
+        view.getViewInfo(viewInfo);
+    return viewInfo;
   }
 
   public getActiveCameraNode(): BaseCameraNode
