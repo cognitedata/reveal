@@ -98,7 +98,7 @@ pub fn convert_sector(sector: &f3df::Sector) -> Vec<Face> {
             {
                 let offset = Vector3::new(0.5, 1.0, 0.5);
                 let normal = Vector3::new(0.0, 1.0, 0.0);
-                let rotation = Rotation3::from_axis_angle(&Vector3::x_axis(), FRAC_PI_2);
+                let rotation = Rotation3::from_axis_angle(&Vector3::x_axis(), -FRAC_PI_2);
                 let scale = if compress_type.intersects(f3df::CompressFlags::POSITIVE_Y_REPEAT_X) {
                     Vector3::new(increment, increment, count * increment)
                 } else {
@@ -164,7 +164,7 @@ pub fn convert_sector(sector: &f3df::Sector) -> Vec<Face> {
             {
                 let offset = Vector3::new(0.5, 0.0, 0.5);
                 let normal = Vector3::new(0.0, -1.0, 0.0);
-                let rotation = Rotation3::from_axis_angle(&Vector3::x_axis(), -FRAC_PI_2);
+                let rotation = Rotation3::from_axis_angle(&Vector3::x_axis(), FRAC_PI_2);
                 let scale = if compress_type.intersects(f3df::CompressFlags::NEGATIVE_Y_REPEAT_X) {
                     Vector3::new(increment, increment, count * increment)
                 } else {
