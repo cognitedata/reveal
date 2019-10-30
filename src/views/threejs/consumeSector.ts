@@ -30,6 +30,7 @@ export function consumeSector(sectorId: number, sector: Sector, metadata: Sector
     const geometry = new THREE.BufferGeometry();
     const vertices = new THREE.Float32BufferAttribute(mesh.vertices, 3);
     const colors = new THREE.Float32BufferAttribute(mesh.colors, 3);
+    geometry.setIndex(indices);
     geometry.addAttribute('position', vertices);
     geometry.addAttribute('color', colors);
 

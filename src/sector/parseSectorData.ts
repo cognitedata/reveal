@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { Sector, SectorMetadata, TriangleMesh } from './types';
 import { FetchSectorDelegate, FetchCtmDelegate } from './delegates';
-import { createOffsets as createMeshOffsets } from '../utils/arrayUtils';
+import { createOffsets as createMeshOffsets, createOffsetsArray } from '../utils/arrayUtils';
 import { CtmResult } from '../../pkg';
 const rustModule = import('../../pkg');
 
@@ -34,10 +34,11 @@ export async function createParser(
       const sizes = collection.size();
 
       const meshesGroupedByFile = groupMeshesByFile(fileIds);
-      const offsets = createMeshOffsets(triangleCounts);
 
       // Merge meshes by file
       for (const [fileId, meshIndices] of meshesGroupedByFile.entries()) {
+        const fileTriangleCounts = meshIndices.map(i => triangleCounts[i]);
+        const offsets = createOffsetsArray(fileTriangleCounts);
         // Load CTM (geometry)
         const ctm = await loadCtmGeometry(fileId, fetchCtmFile);
 
@@ -45,32 +46,29 @@ export async function createParser(
         const vertices = ctm.vertices();
         const normals = ctm.normals();
 
-        // TODO 2019-10-29 larsmoa: Get rid of flattening (or at least don't flatten all vertices)
-        const flatColors = new Float32Array(3 * indices.length);
-        const flatVertices = new Float32Array(3 * indices.length);
-        let currMeshIdx = 0;
-        for (let i = 0; i < indices.length; i++) {
-          if (i >= offsets[currMeshIdx] + triangleCounts[i]) {
-            currMeshIdx++;
+        const colorsBuffer = new Float32Array((3 * vertices.length) / 3);
+        for (let i = 0; i < meshIndices.length; i++) {
+          const meshIdx = meshIndices[i];
+          const triOffset = offsets[i];
+          const triCount = fileTriangleCounts[i];
+          const [r, g, b, a] = readColorToFloat32s(colors, meshIdx);
+
+          for (let triIdx = triOffset; triIdx < triOffset + triCount; triIdx++) {
+            for (let j = 0; j < 3; j++) {
+              const vIdx = indices[3 * triIdx + j];
+
+              colorsBuffer[3 * vIdx] = r;
+              colorsBuffer[3 * vIdx + 1] = g;
+              colorsBuffer[3 * vIdx + 2] = b;
+            }
           }
-          const [r, g, b, a] = readColorToFloat32s(colors, currMeshIdx);
-          flatVertices[3 * i] = vertices[3 * indices[i]];
-          flatVertices[3 * i + 1] = vertices[3 * indices[i] + 1];
-          flatVertices[3 * i + 2] = vertices[3 * indices[i] + 2];
-          flatColors[3 * i] = r;
-          flatColors[3 * i + 1] = g;
-          flatColors[3 * i + 2] = b;
         }
 
         const mesh: TriangleMesh = {
-          // offset,
-          // count,
-          // colors: colorsBuffer,
-          colors: flatColors,
+          colors: colorsBuffer,
           fileId,
           indices,
-          // vertices,
-          vertices: flatVertices,
+          vertices,
           normals
         };
         sector.triangleMeshes.push(mesh);
@@ -79,8 +77,6 @@ export async function createParser(
     } catch (err) {
       throw new Error(`Parsing sector ${sectorId} failed: ${err}`);
     }
-
-    // TODO create THREE.IndexedBuffer outside this function
 
     // TODO 20191023 larsmoa: Remember to free data from rust
   }
