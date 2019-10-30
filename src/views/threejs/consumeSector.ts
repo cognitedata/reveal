@@ -28,6 +28,7 @@ export function consumeSector(sectorId: number, sector: Sector, metadata: Sector
     const mesh = sector.triangleMeshes.find(x => x.fileId === fileId)!;
 
     const geometry = new THREE.BufferGeometry();
+    const indices = new THREE.Uint32BufferAttribute(mesh.indices, 1);
     const vertices = new THREE.Float32BufferAttribute(mesh.vertices, 3);
     const colors = new THREE.Float32BufferAttribute(mesh.colors, 3);
     geometry.setIndex(indices);
