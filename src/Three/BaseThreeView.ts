@@ -12,10 +12,10 @@
 //=====================================================================================
 
 import * as THREE from 'three';
-import { BaseView } from "../Core/Views/BaseView";
+import { Base3DView } from "../Core/Views/Base3DView";
 import { ThreeTargetNode } from "./ThreeTargetNode";
 
-export abstract class BaseThreeView extends BaseView
+export abstract class BaseThreeView extends Base3DView
 {
   //==================================================
   // CONSTRUCTORS

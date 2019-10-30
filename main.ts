@@ -1,4 +1,3 @@
-import * as THREE from 'three';
 
 import { ThreeModule } from './src/Three/ThreeModule';
 import { PolylinesNode } from './src/Nodes/PolylinesNode';
@@ -12,7 +11,6 @@ import { WellNode } from './src/Nodes/WellNode';
 import { Well } from './src/Nodes/Well';
 import { PointsNode } from './src/Nodes/PointsNode';
 import { Points } from './src/Core/Geometry/Points';
-import { BaseNode } from './src/Core/Nodes/BaseNode';
 import { ColorType } from './src/Core/Enums/ColorType';
 import { Colors } from './src/Core/PrimitivClasses/Colors';
 
@@ -42,7 +40,7 @@ export function main()
   for (let i = 0; i < 1; i++)
   {
     const node = new SurfaceNode();
-    node.data = RegularGrid2.createFractal(Range3.newTest, 8, 2);
+    node.data = RegularGrid2.createFractal(Range3.newTest, 8, 0.8, 2);
     root.dataFolder.addChild(node);
   }
   for (let i = 0; i < 10; i++)
@@ -53,19 +51,19 @@ export function main()
   }
   {
     const node = new PotreeNode();
-    node.url = 'https://betaserver.icgc.cat/potree12/resources/pointclouds/barcelonasagradafamilia/cloud.js';
-    node.name = 'Barcelona';
+    //node.url = 'https://betaserver.icgc.cat/potree12/resources/pointclouds/barcelonasagradafamilia/cloud.js';
+    //node.name = 'Barcelona';
     node.url = '/Real/ept.json';
     node.name = 'Aerfugl';
     root.dataFolder.addChild(node);
   }
   {
-    const range = Range3.create(0, 0, 1, 0.5);
+    const range = Range3.createByMinAndMax(0, 0, 1, 0.5);
     const target = new ThreeTargetNode(range);
     root.targetFolder.addChild(target)
   }
   {
-    const range = Range3.create(0, 0.5, 1, 1);
+    const range = Range3.createByMinAndMax(0, 0.5, 1, 1);
     const target = new ThreeTargetNode(range);
     root.targetFolder.addChild(target);
   }

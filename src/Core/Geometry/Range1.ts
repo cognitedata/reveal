@@ -16,7 +16,7 @@ export class Range1
   //==================================================
   // STATIC FPROPERTIES
   //==================================================
-  
+
   public static get newUnit(): Range1 { return new Range1(0, 1); }
   public static get newTest(): Range1 { return new Range1(-1000, 1000); }
   public static get newZTest(): Range1 { return new Range1(-100, 100); }
@@ -114,11 +114,19 @@ export class Range1
     this.add(value.max)
   }
 
-  public expandByMarging(value: number): void
+  public expandByMargin(margin: number): void
   {
     if (this.isEmpty)
       return;
-    this._min -= value;
-    this._max -= value;
+    this._min -= margin;
+    this._max -= margin;
+    if (this._min > this._max)
+      [this._max, this._min] = [this._min, this._max]; //Swap
+  }
+
+  public expandByFraction(fraction: number): void
+  {
+    if (!this.isEmpty)
+      this.expandByMargin(this.delta * fraction);
   }
 }

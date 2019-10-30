@@ -29,6 +29,10 @@ export class RegularGrid2 extends Grid2
   public inc: number;
   public buffer: Float32Array;
 
+  static readonly _staticHelperA = Vector3.newZero;
+  static readonly _staticHleperB = Vector3.newZero;
+  static readonly _staticHelperC = Vector3.newZero;
+
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -80,15 +84,16 @@ export class RegularGrid2 extends Grid2
     return new Vector3(this.xOrigin + this.inc * i, this.yOrigin + this.inc * j, this.getZ(i, j));
   }
 
-  public getNormal(i: number, j: number, z?:number): Vector3
+  public getNormal(i: number, j: number, z?: number): Vector3
   {
-    const sum = Vector3.newZero;
-
     if (!z)
       z = this.getZ(i, j);
-      
-    const a = Vector3.newZero;
-    const b = Vector3.newZero;
+
+    const a = RegularGrid2._staticHelperA;
+    const b = RegularGrid2._staticHleperB;
+    const sum = RegularGrid2._staticHelperC;
+
+    sum.set(0, 0, 0);
 
     const def0 = this.isNodeInsideDef(i + 1, j + 0);
     const def1 = this.isNodeInsideDef(i + 0, j + 1);
@@ -231,10 +236,7 @@ export class RegularGrid2 extends Grid2
           const index = this.getNodeIndex(i, j);
           buffer[index] = sum / count;
         }
-      // Swap buffers
-      const temp = this.buffer;
-      this.buffer = buffer;
-      buffer = temp;
+      [this.buffer, buffer] = [buffer, this.buffer]; // Swap buffers
     }
   }
 
@@ -242,7 +244,7 @@ export class RegularGrid2 extends Grid2
   // STATIC METHODS: 
   //==================================================
 
-  static createFractal(boundingBox: Range3, powerOf2: number, smoothNumberOfPasses: number): RegularGrid2
+  static createFractal(boundingBox: Range3, powerOf2: number, dampning: number = 0.7, smoothNumberOfPasses: number = 0): RegularGrid2
   {
     const stdDev = 1;
     const grid = new RegularGrid2(new Index2(Math.pow(2, powerOf2) + 1), 0, 0, 1);
@@ -257,7 +259,7 @@ export class RegularGrid2 extends Grid2
     grid.setZ(i0, j1, Random.getGaussian(0, stdDev));
     grid.setZ(i1, j1, Random.getGaussian(0, stdDev));
 
-    subDivide(grid, i0, j0, i1, j1, stdDev, powerOf2, 0.7);
+    subDivide(grid, i0, j0, i1, j1, stdDev, powerOf2, dampning);
 
     grid.xOrigin = boundingBox.x.min;
     grid.yOrigin = boundingBox.y.min;
@@ -309,7 +311,7 @@ function setValueBetween(grid: RegularGrid2, i0: number, j0: number, i2: number,
 
   const oldZ = grid.getZ(i1, j1);
   if (oldZ !== 0)
-    return oldZ; // Already calulated (little bit dirty...)
+    return oldZ; // Assume already calulated (little bit dirty...)
 
   if (zMean === undefined)
     zMean = (grid.getZ(i0, j0) + grid.getZ(i2, j2)) / 2;

@@ -18,6 +18,7 @@ import { RenderTargetNode } from "../Core/Nodes/RenderTargetNode";
 import { ThreeCameraNode as ThreeCameraNode } from "./ThreeCameraNode";
 import { ThreeConverter } from "./ThreeConverter";
 import { Range3 } from '../Core/Geometry/Range3';
+import { TreeOverlay } from './TreeOverlay';
 
 export class ThreeTargetNode extends RenderTargetNode
 {
@@ -27,6 +28,8 @@ export class ThreeTargetNode extends RenderTargetNode
 
   private _scene: THREE.Scene | null = null;
   private _renderer: THREE.WebGLRenderer | null = null;
+  private _clock = new THREE.Clock();
+  private _overlay = new TreeOverlay();
 
   //==================================================
   // PROPERTIES
@@ -75,6 +78,7 @@ export class ThreeTargetNode extends RenderTargetNode
       this._renderer = new THREE.WebGLRenderer();
       this._renderer.setClearColor(ThreeConverter.toColor(this.color));
       this.setRenderSize();
+      this._renderer.autoClear = false;
     }
     return this._renderer;
   }
@@ -100,8 +104,7 @@ export class ThreeTargetNode extends RenderTargetNode
   {
     super.initializeCore();
     this.addCameraNode(new ThreeCameraNode(), true)
-    const clock = new THREE.Clock();
-    this.render(clock);
+    this.render();
 
     // Add lights (TODO: move to TreeLightNode?)
     const scene = this.scene;
@@ -130,40 +133,40 @@ export class ThreeTargetNode extends RenderTargetNode
   // OVERRIDES of RenderTargetNode
   //==================================================
 
-  public /*override*/ viewRange(range: Range3): void
+  public /*override*/ viewRange(boundingBox: Range3 | undefined): void
   {
-    if (range.isEmpty)
+    if (!boundingBox)
+      return;
+
+    if (boundingBox.isEmpty)
       return;
 
     const controls = this.activeControls;
     if (!controls)
       return;
-    controls.fitTo(ThreeConverter.toBox(range));
-
-
-    // The below stuff doesn't work!!
-    // controls.rotate(0, 0.8);
-    controls.moveTo(range.x.center, range.y.center, range.z.center);
-    this.Invalidate();
 
     //https://github.com/yomotsu/camera-controls
+    controls.fitTo(ThreeConverter.toBox(boundingBox));
+    // The below stuff doesn't work!!
+    // controls.rotate(0, 0.8);
+    controls.moveTo(boundingBox.x.center, boundingBox.y.center, boundingBox.z.center);
   }
 
   public /*override*/ get domElement(): HTMLElement { return this.renderer.domElement; }
 
   protected /*override*/ setRenderSize(): void
   {
-    const range = this.pixelRange;
-    this.renderer.setSize(range.x.delta, range.y.delta);
+    const pixelRange = this.pixelRange;
+    this.renderer.setSize(pixelRange.x.delta, pixelRange.y.delta);    
   }
 
   //==================================================
   // INSTANCE FUNCTIONS
   //==================================================
 
-  private render(clock: THREE.Clock): void
+  private render(): void
   {
-    requestAnimationFrame(() => { this.render(clock); });
+    requestAnimationFrame(() => { this.render(); });
 
     if (!this.isInitialized)
       return;
@@ -172,13 +175,19 @@ export class ThreeTargetNode extends RenderTargetNode
     let needsUpdate = true;
     if (controls)
     {
-      const delta = clock.getDelta();
+      const delta = this._clock.getDelta();
       needsUpdate = controls.update(delta);
     }
     if (this.isInvalidated || needsUpdate)
     {
       this.renderer.render(this.scene, this.activeCamera);
+      const pixelRange = this.pixelRange;
+      this._overlay.render(this.renderer, pixelRange.x.delta, pixelRange.y.delta);
       this.Invalidate(false);
     }
   }
 }
+
+
+
+

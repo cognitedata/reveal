@@ -3,6 +3,7 @@ import { BaseCameraNode } from "./BaseCameraNode";
 import { Colors } from "../PrimitivClasses/Colors";
 import { BaseTargetNode } from "./BaseTargetNode";
 import { Range3 } from "../Geometry/Range3";
+import { Base3DView } from "../Views/Base3DView";
 
 export abstract class RenderTargetNode extends BaseTargetNode 
 {
@@ -10,34 +11,33 @@ export abstract class RenderTargetNode extends BaseTargetNode
   // FIELDS
   //==================================================
 
-  private static margin: number = 10;
-  public static get windowWidth(): number { return window.innerWidth - RenderTargetNode.margin; }
-  public static get windowHeight(): number { return window.innerHeight - RenderTargetNode.margin; }
+  private static margin: number = 24;
+  public static get windowWidth(): number { return window.innerWidth - 1 * RenderTargetNode.margin; }
+  public static get windowHeight(): number { return window.innerHeight - 1 * RenderTargetNode.margin; }
 
-
-  public get aspectRatio(): number { return this.pixelRange.x.delta / this.pixelRange.y.delta; }
+  public get aspectRatio(): number { return this.pixelRange.aspectRatio2; }
 
   private _isInvalidated = true;
-  private _range: Range3;
+  private _fractionRange: Range3;
 
   public get pixelRange(): Range3
   {
-    const x = this._range.x.min * RenderTargetNode.windowWidth + RenderTargetNode.margin;
-    const y = this._range.y.min * RenderTargetNode.windowHeight + RenderTargetNode.margin;
-    const dx = RenderTargetNode.windowWidth * this._range.x.delta;
-    const dy = RenderTargetNode.windowHeight * this._range.y.delta;
+    const x = this._fractionRange.x.min * RenderTargetNode.windowWidth;
+    const y = this._fractionRange.y.min * RenderTargetNode.windowHeight;
+    const dx = RenderTargetNode.windowWidth * this._fractionRange.x.delta;
+    const dy = RenderTargetNode.windowHeight * this._fractionRange.y.delta;
 
-    return Range3.create(x, y, x + dx, y + dy);
+    return Range3.createByMinAndMax(x, y, x + dx, y + dy);
   }
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  protected constructor(range: Range3 | undefined)
+  protected constructor(fractionRange: Range3 | undefined)
   {
     super();
-    this._range = range ? range : Range3.newUnit;
+    this._fractionRange = fractionRange ? fractionRange : Range3.newUnit;
     this.color = Colors.black;
   }
 
@@ -71,6 +71,19 @@ export abstract class RenderTargetNode extends BaseTargetNode
   //==================================================
 
   public get isInvalidated(): boolean { return this._isInvalidated; }
+
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
+
+  public getBoundingBoxFromViews(): Range3
+  {
+    const boundingBox = new Range3();
+    for (const view of this.viewsShownHere.list)
+      if (view instanceof Base3DView)
+        boundingBox.addRange(view.boundingBox)
+    return boundingBox;
+  }
 
   public getActiveCameraNode(): BaseCameraNode
   {

@@ -27,7 +27,6 @@ export abstract class BaseView
   private _node: BaseNode | null = null;
   private _target: TargetIdAccessor | null = null;
   private _isVisible: boolean = false;
-  protected _boundringBox: Range3 | undefined = undefined;
 
   //==================================================
   // VIRTUAL METHODS
@@ -52,7 +51,7 @@ export abstract class BaseView
   // VIRTUAL METHODS: 
   //==================================================
 
-  protected /*virtual*/ calculateBoundringBoxCore(): Range3|undefined
+  protected /*virtual*/ calculateBoundingBoxCore(): Range3 | undefined
   {
     // Override this function to recalculate the range
     return undefined;
@@ -61,28 +60,33 @@ export abstract class BaseView
   protected /*virtual*/ initializeCore(): void
   {
     // Override this function to initialize your view
+    // NOTE: Always call super.updateCore(args) in the overides
   }
 
   protected /*virtual*/ updateCore(args: NodeEventArgs): void
   {
     // Override this function to update your view
+    // NOTE: Always call super.updateCore(args) in the overides
   }
 
   protected /*virtual*/ clearMemoryCore(): void
   {
     // Override this function to remove redundant data
+    // NOTE: Always call super.updateCore(args) in the overides
   }
 
   protected /*virtual*/ onShowCore(): void
   {
     // Override this function to when your view
     // need to do something when it is set visible
+    // NOTE: Always call super.updateCore(args) in the overides
   }
 
   protected /*virtual*/ onHideCore(): void
   {
     // Override this function to when your view
     // need to do something when it is set NOT visible
+    // NOTE: Always call super.updateCore(args) in the overides
   }
 
   protected /*virtual*/ disposeCore(): void
@@ -90,6 +94,7 @@ export abstract class BaseView
     // Override this function to when your view
     // need to do something when it is set NOT visible
     // Called just before removal from view list and detach
+    // NOTE: Always call super.updateCore(args) in the overides
   }
 
   //==================================================
@@ -120,13 +125,6 @@ export abstract class BaseView
     if (!style)
       throw Error("The style is missing in the view");
     return style;
-  }
-
-  public get boundingBox(): Range3 | undefined
-  {
-    if (this._boundringBox == undefined)
-      this._boundringBox = this.calculateBoundringBoxCore();
-    return this._boundringBox;
   }
 
   //==================================================

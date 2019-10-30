@@ -16,7 +16,7 @@ import { Vector3 } from "./Vector3";
 
 export class Range3
 {
-  
+
   //==================================================
   // STATIC FPROPERTIES
   //==================================================
@@ -56,6 +56,7 @@ export class Range3
   public get max(): Vector3 { return new Vector3(this.x.max, this.y.max, this.z.max); }
   public get delta(): Vector3 { return new Vector3(this.x.delta, this.y.delta, this.z.delta); }
   public get center(): Vector3 { return new Vector3(this.x.center, this.y.center, this.z.center); }
+  public get aspectRatio2(): number { return this.x.delta / this.y.delta; }
 
   //==================================================
   // CONSTRUCTORS
@@ -113,18 +114,25 @@ export class Range3
     this.z.addRange(value.z);
   }
 
-  expandByMarging(value: number)
+  expandByMargin(margin: number)
   {
-    this.x.expandByMarging(value);
-    this.y.expandByMarging(value);
-    this.z.expandByMarging(value);
+    this.x.expandByMargin(margin);
+    this.y.expandByMargin(margin);
+    this.z.expandByMargin(margin);
   }
 
-    //==================================================
+  expandByFraction(fraction: number)
+  {
+    this.x.expandByFraction(fraction);
+    this.y.expandByFraction(fraction);
+    this.z.expandByFraction(fraction);
+  }
+
+  //==================================================
   // STATIC METHODS:
   //==================================================
 
-  public static create(xmin: number, ymin: number, xmax: number, ymax: number): Range3
+  public static createByMinAndMax(xmin: number, ymin: number, xmax: number, ymax: number): Range3
   {
     const range = new Range3();
     range.x.set(xmin, xmax);

@@ -28,7 +28,8 @@ export abstract class BaseGroupThreeView extends BaseThreeView
   // FIELDS
   //==================================================
 
-  private _group: THREE.Object3D | null = null;
+  private _object3D: THREE.Object3D | null = null;
+  protected get object3D(): THREE.Object3D | null { return this._object3D; }
 
   //==================================================
   // OVERRIDES of BaseView
@@ -44,43 +45,43 @@ export abstract class BaseGroupThreeView extends BaseThreeView
       if (this.isVisible)
         this.updateAll();
       else
-        this._group = null;
+        this._object3D = null;
     }
   }
 
   protected /*override*/ clearMemoryCore(): void
   {
     if (!this.isVisible)
-      this._group = null; // Remove the group from the memory
+      this._object3D = null; // Remove the group from the memory
   }
 
   protected /*override*/ onShowCore(): void
   {
     super.onShowCore();
     // Create the group and add it to the scene
-    if (!this._group)
+    if (!this._object3D)
     {
-      this._group = this.createObject3D();
-      if (this._group != null)
-        this.scene.add(this._group);
+      this._object3D = this.createObject3D();
+      if (this._object3D != null)
+        this.scene.add(this._object3D);
     }
     else
-      this._group.visible = true;
+      this._object3D.visible = true;
   }
 
   protected /*override*/ onHideCore(): void
   {
-    if (!this._group)
+    if (!this._object3D)
       return;
 
     if (!this.stayAliveIfInvisible)
     {
       // Remove the group for the scene
-      this.scene.remove(this._group);
-      this._group = null;
+      this.scene.remove(this._object3D);
+      this._object3D = null;
     }
     else
-      this._group.visible = false;
+      this._object3D.visible = false;
     super.onHideCore();
   }
 
@@ -97,14 +98,14 @@ export abstract class BaseGroupThreeView extends BaseThreeView
   protected updateAll(): void
   {
     const scene = this.scene;
-    if (this._group)
-      scene.remove(this._group);
-      
-    this._group = this.createObject3D();
-    if (this._group == null)
+    if (this._object3D)
+      scene.remove(this._object3D);
+
+    this._object3D = this.createObject3D();
+    if (this._object3D == null)
       return;
 
-    this._group.visible = true;
-    scene.add(this._group);
+    this._object3D.visible = true;
+    scene.add(this._object3D);
   }
 }

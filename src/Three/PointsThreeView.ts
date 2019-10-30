@@ -48,13 +48,13 @@ export class PointsThreeView extends BaseGroupThreeView
     super.updateCore(args);
   }
 
-  public calculateBoundringBoxCore(): Range3 | undefined
+  public calculateBoundingBoxCore(): Range3 | undefined
   {
     var boundingBox = this.node.boundingBox;
     if (boundingBox == undefined)
       return undefined;
 
-    boundingBox.expandByMarging(this.style.size);
+    boundingBox.expandByMargin(this.style.size);
     return boundingBox;
   }
 

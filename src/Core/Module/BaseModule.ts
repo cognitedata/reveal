@@ -50,7 +50,7 @@ export abstract class BaseModule
     return root;
   }
 
-  public *getDomElements(root: BaseRootNode)
+  public *getDomElements(root: BaseRootNode): Iterable<HTMLElement>
   {
     for (const target of root.targetFolder.getChildrenByType(RenderTargetNode))
       yield target.domElement

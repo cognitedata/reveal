@@ -49,7 +49,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
     super.updateCore(args);
   }
 
-  public calculateBoundringBoxCore(): Range3 | undefined
+  public calculateBoundingBoxCore(): Range3 | undefined
   {
     return this.node.boundingBox;
   }

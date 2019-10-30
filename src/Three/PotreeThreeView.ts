@@ -16,12 +16,11 @@ import { BaseGroupThreeView } from "./BaseGroupThreeView";
 import { PotreeNode } from "../Nodes/PotreeNode";
 import { PotreeRenderStyle } from "../Nodes/PotreeRenderStyle";
 import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
+import { Range3 } from '../Core/Geometry/Range3';
 
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
 import { ThreeConverter } from './ThreeConverter';
-import { Range3 } from '../Core/Geometry/Range3';
-import { MeshToonMaterial } from 'three';
 
 export class PotreeThreeView extends BaseGroupThreeView
 {
@@ -38,7 +37,7 @@ export class PotreeThreeView extends BaseGroupThreeView
   protected get node(): PotreeNode { return super.getNode() as PotreeNode; }
   protected get style(): PotreeRenderStyle { return super.getStyle() as PotreeRenderStyle; }
 
-  
+
   //==================================================
   // OVERRIDES of BaseView
   //==================================================
@@ -48,12 +47,12 @@ export class PotreeThreeView extends BaseGroupThreeView
     super.updateCore(args);
   }
 
-  public calculateBoundringBoxCore(): Range3 | undefined
+  public calculateBoundingBoxCore(): Range3 | undefined
   {
-    return this.node.boundingBox;
+    return PotreeThreeView.getBoundingBoxFromGroup(this.object3D as Potree.Group);
   }
 
-//==================================================
+  //==================================================
   // OVERRIDES of BaseGroupThreeView
   //==================================================
 
@@ -66,35 +65,40 @@ export class PotreeThreeView extends BaseGroupThreeView
     if (path == null || path === "")
       return null;
 
-    const group = new Potree.Group();
+    const group: Potree.Group = new Potree.Group();
     group.setPointBudget(style.budget);
-
-    const self = this;
 
     Potree.loadPointCloud(path, node.name, (data: any) =>
     {
-      const pointcloud = data.pointcloud;
+      const pointcloud: Potree.PointcloudOctree = data.pointcloud;
       group.add(pointcloud);
 
-      const material = pointcloud.material;
+      const material: Potree.PointCloudMaterial = pointcloud.material;
       if (material)
       {
-       // https://github.com/tentone/potree-core
-        material.pointSizeType = Potree.PointSizeType.ATTENUATED; // ATTENUATED or FIXED
-        material.pointColorType = Potree.PointColorType.RGB;
-        material.shape = Potree.PointShape.SQUARE;
-        material.weighted = false;
-        //material.size = 0.5;
-      }
-
-      const boundingBox = pointcloud.pcoGeometry.tightBoundingBox as THREE.Box3;
-      if (boundingBox)
-      {
-        self._boundringBox = ThreeConverter.fromBox(boundingBox, false);
-        self.target.viewAll();
+        // https://github.com/tentone/potree-core
+        // material.pointSizeType = Potree.PointSizeType.FIXED; 
+        // material.pointSizeType = Potree.PointSizeType.ATTENUATED;
+        // material.pointSizeType = Potree.PointSizeType.ADAPTIVE; 
+        // material.pointColorType = Potree.PointColorType.RGB;
+        // material.shape = Potree.PointShape.SQUARE;  // Potree.PointShape.PARABOLOI
+        // material.weighted = false;
+        // material.size = 0.5;
       }
       group.add(pointcloud);
+      this.target.viewRange(PotreeThreeView.getBoundingBoxFromGroup(group));
     });
     return group;
   }
+
+  public static getBoundingBoxFromGroup(group: Potree.Group): Range3 | undefined
+  {
+    if (!group)
+      return undefined;
+    const boundingBox = group.getBoundingBox();
+    if (!boundingBox)
+      return undefined;
+    return ThreeConverter.fromBox(boundingBox, false); //// BUG in the potree code (again!!!!), pass false here
+  }
+
 }
