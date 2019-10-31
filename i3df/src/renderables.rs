@@ -6,7 +6,7 @@ use std::f64::consts::PI;
 
 use wasm_bindgen::prelude::*;
 use serde_wasm_bindgen;
-use js_sys::{Uint8Array, Float32Array, Float64Array};
+use js_sys::{Uint8Array, Float32Array};
 use wasm_bindgen::JsValue;
 
 #[wasm_bindgen]
@@ -65,12 +65,12 @@ macro_rules! make_func {
     };
 
     // tree index
-    ($self:ident, $field_name:ident, u64, Float64Array) => {
+    ($self:ident, $field_name:ident, u64, Float32Array) => {
         {
-            let data: Vec<f64> = $self.$field_name.iter().map(|value| {
-                *value as f64
+            let data: Vec<f32> = $self.$field_name.iter().map(|value| {
+                *value as f32
             }).collect();
-            Float64Array::from(&data[..])
+            Float32Array::from(&data[..])
         }
     };
 
@@ -214,7 +214,7 @@ macro_rules! new_geometry_types {
 new_geometry_types! {
     pub struct Box3D, Box3DVec, box_collection {
         pub node_id: u64 => JsValue,
-        pub tree_index: u64 => Float64Array,
+        pub tree_index: u64 => Float32Array,
         pub color: [u8; 4] => Uint8Array,
         pub size: f32 => Float32Array,
         pub center: Vector3 => Float32Array,
@@ -225,7 +225,7 @@ new_geometry_types! {
 
     pub struct Cone, ConeVec, cone_collection {
         pub node_id: u64 => JsValue,
-        pub tree_index: u64 => Float64Array,
+        pub tree_index: u64 => Float32Array,
         pub color: [u8; 4] => Uint8Array,
         pub size: f32 => Float32Array,
         pub center_a: Vector3 => Float32Array,
@@ -239,7 +239,7 @@ new_geometry_types! {
 
     pub struct Circle, CircleVec, circle_collection {
         pub node_id: u64 => JsValue,
-        pub tree_index: u64 => Float64Array,
+        pub tree_index: u64 => Float32Array,
         pub color: [u8; 4] => Uint8Array,
         pub size: f32 => Float32Array,
         pub center: Vector3 => Float32Array,
