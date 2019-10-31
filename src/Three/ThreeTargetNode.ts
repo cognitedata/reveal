@@ -38,16 +38,6 @@ export class ThreeTargetNode extends RenderTargetNode
   // PROPERTIES
   //==================================================
 
-  public get stats(): any
-  {
-    if (!this._stats)
-    {
-      this._stats = new Stats()
-      this._stats.showPanel(0); 
-    }    
-    return this._stats;
-  }
-
   public get scene(): THREE.Scene
   {
     if (!this._scene)
@@ -96,11 +86,21 @@ export class ThreeTargetNode extends RenderTargetNode
     return this._renderer;
   }
 
+  public get stats(): any
+  {
+    if (!this._stats)
+    {
+      this._stats = new Stats()
+      this._stats.showPanel(0);
+    }
+    return this._stats;
+  }
+
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(range: Range3 | undefined) { super(range); }
+  public constructor(fractionRange: Range3 | undefined) { super(fractionRange); }
 
   //==================================================
   // OVERRIDES of TargetNode
@@ -162,6 +162,7 @@ export class ThreeTargetNode extends RenderTargetNode
     controls.fitTo(ThreeConverter.toBox(boundingBox));
     // The below stuff doesn't work!!
     // controls.rotate(0, 0.8);
+    //controls.setLookAt(0, 0, 0);
     controls.moveTo(boundingBox.x.center, boundingBox.y.center, boundingBox.z.center);
   }
 

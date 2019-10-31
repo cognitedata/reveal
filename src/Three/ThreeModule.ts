@@ -37,7 +37,7 @@ export class ThreeModule extends BaseModule
   // OVERRIDES of BaseModule
   //==================================================
 
-  protected /*override*/ installPackages(): void
+  protected /*override*/ installPackagesCore(): void
   {
     CameraControls.install({ THREE });
   }

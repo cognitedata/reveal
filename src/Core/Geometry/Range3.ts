@@ -57,6 +57,7 @@ export class Range3
   public get delta(): Vector3 { return new Vector3(this.x.delta, this.y.delta, this.z.delta); }
   public get center(): Vector3 { return new Vector3(this.x.center, this.y.center, this.z.center); }
   public get aspectRatio2(): number { return this.x.delta / this.y.delta; }
+  public get volume(): number { return this.x.delta * this.y.delta * this.z.delta; }
 
   //==================================================
   // CONSTRUCTORS

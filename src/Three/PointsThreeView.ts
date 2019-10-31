@@ -20,7 +20,6 @@ import { ThreeConverter } from "./ThreeConverter";
 import { ColorType } from "../Core/Enums/ColorType";
 import { Colors } from "../Core/PrimitivClasses/Colors";
 import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
-import { Range1 } from '../Core/Geometry/Range1';
 import { Points } from '../Core/Geometry/Points';
 import { Range3 } from '../Core/Geometry/Range3';
 

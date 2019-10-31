@@ -95,7 +95,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
   // INSTANCE METHODS
   //==================================================
 
-  protected updateAll(): void
+  private updateAll(): void
   {
     const scene = this.scene;
     if (this._object3D)

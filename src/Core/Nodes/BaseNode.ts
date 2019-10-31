@@ -332,7 +332,7 @@ export abstract class BaseNode extends Identifiable
   public removeInteractive(): void
   {
     // To be called when a node is removed
-    // It is not finished, because the children it not taken properly casr of
+    // It is not finished, because the children it not taken properly care of
     this.removeInteractiveCore();
     const parent = this.parent
     this.remove();
@@ -374,7 +374,7 @@ export abstract class BaseNode extends Identifiable
   // INSTANCE METHODS: Draw styles
   //==================================================
 
-  public getRenderStyle(targetId?: TargetId | null): BaseRenderStyle | null
+  public getRenderStyle(targetId?: TargetId): BaseRenderStyle | null
   {
     const root = this.renderStyleRoot;
     if (root != null && root !== this)

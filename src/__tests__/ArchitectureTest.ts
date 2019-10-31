@@ -11,6 +11,7 @@ describe('Hierarcy', () =>
 {
   // Create the root
   test('Identifyable', () => testIdentifyable());
+  test('boundingBox', () => boundingBox());
   test('getDescendantsByType', () => getDescendantsByType());
   test('Hierarcy', () => testHierarcy());
   test('isVisible/SetVisible', () => isVisibleSetVisible());
@@ -55,6 +56,18 @@ describe('Hierarcy', () =>
 
     expect(isInstanceOf(node, PolylinesNode).valueOf()); //Ask F2 about this syntax
     expect(isInstanceOf(node, DataFolder).valueOf());
+  }
+
+  function boundingBox(): void
+  {
+    const root = StubRootCreator.createTestRoot();
+    root.debugHierarcy();
+
+    for (const descendant of root.getDescendantsByType(PolylinesNode))
+    {
+      expect(descendant.boundingBox.isEmpty).toBe(false);
+      expect(descendant.boundingBox.volume).toBeGreaterThan(0);
+    }
   }
 
   function getDescendantsByType(): void

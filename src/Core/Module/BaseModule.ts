@@ -21,7 +21,7 @@ export abstract class BaseModule
   // VIRTUAL METHODS: 
   //==================================================
 
-  protected /*virtual*/ installPackages(): void { }
+  protected /*virtual*/ installPackagesCore(): void { }
   protected /*virtual*/ registerViewsCore(factory: ViewFactory): void { }
   protected /*virtual*/ initializeWhenPopulatedCore(root: BaseRootNode): void { }
 
@@ -33,7 +33,7 @@ export abstract class BaseModule
 
   public install(): void
   {
-    this.installPackages();
+    this.installPackagesCore();
     this.registerViewsCore(ViewFactory.instance);
   }
 

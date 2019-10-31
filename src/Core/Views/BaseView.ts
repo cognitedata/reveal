@@ -51,12 +51,6 @@ export abstract class BaseView
   // VIRTUAL METHODS: 
   //==================================================
 
-  protected /*virtual*/ calculateBoundingBoxCore(): Range3 | undefined
-  {
-    // Override this function to recalculate the range
-    return undefined;
-  }
-
   protected /*virtual*/ initializeCore(): void
   {
     // Override this function to initialize your view

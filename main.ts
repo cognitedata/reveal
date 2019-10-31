@@ -13,7 +13,6 @@ import { PointsNode } from './src/Nodes/PointsNode';
 import { Points } from './src/Core/Geometry/Points';
 import { ColorType } from './src/Core/Enums/ColorType';
 import { Colors } from './src/Core/PrimitivClasses/Colors';
-import { RenderTargetNode } from './src/Core/Nodes/RenderTargetNode';
 
 main();
 
