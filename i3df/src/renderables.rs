@@ -58,15 +58,6 @@ pub trait GeometryCollection<G: Geometry> {
 }
 
 macro_rules! make_func_vec {
-    // TODO remove and use f64 for tree_index
-    ($self:ident, $field_name:ident, u64, f32) => {{
-        let data: Vec<f32> = $self
-            .$field_name
-            .iter()
-            .map(|value| *value as f32)
-            .collect();
-        data
-    }};
 
     ($self:ident, $field_name:ident, u64, f64) => {{
         let data: Vec<f64> = $self
@@ -303,7 +294,7 @@ new_geometry_types! {
         box_collection,
         [
             node_id: u64 => f64,
-            tree_index: u64 => f32,
+            tree_index: u64 => f64,
             color: [u8; 4] => u8,
             size: f32 => f32,
             center: Vector3 => f32,
@@ -319,7 +310,7 @@ new_geometry_types! {
         cone_collection,
         [
             node_id: u64 => f64,
-            tree_index: u64 => f32,
+            tree_index: u64 => f64,
             color: [u8; 4] => u8,
             size: f32 => f32,
             center_a: Vector3 => f32,
@@ -338,7 +329,7 @@ new_geometry_types! {
         circle_collection,
         [
             node_id: u64 => f64,
-            tree_index: u64 => f32,
+            tree_index: u64 => f64,
             color: [u8; 4] => u8,
             size: f32 => f32,
             center: Vector3 => f32,
@@ -353,7 +344,7 @@ new_geometry_types! {
         eccentric_cone_collection,
         [
             node_id: u64 => f64,
-            tree_index: u64 => f32,
+            tree_index: u64 => f64,
             color: [u8; 4] => u8,
             size: f32 => f32,
             center_a: Vector3 => f32,
@@ -368,7 +359,7 @@ new_geometry_types! {
         EllipsoidSegment, EllipsoidSegmentVec, ellipsoid_segment_collection,
         [
             node_id: u64 => f64,
-            tree_index: u64 => f32,
+            tree_index: u64 => f64,
             color: [u8; 4] => u8,
             size: f32 => f32,
             center: Vector3 => f32,
@@ -383,7 +374,7 @@ new_geometry_types! {
         GeneralRing, GeneralRingVec, general_ring_collection,
         [
             node_id: u64 => f64,
-            tree_index: u64 => f32,
+            tree_index: u64 => f64,
             color: [u8; 4] => u8,
             size: f32 => f32,
             center: Vector3 => f32,
@@ -401,7 +392,7 @@ new_geometry_types! {
         GeneralCylinder, GeneralCylinderVec, general_cylinder_collection,
         [
             node_id: u64 => f64,
-            tree_index: u64 => f32,
+            tree_index: u64 => f64,
             color: [u8; 4] => u8,
             size: f32 => f32,
             center_a: Vector3 => f32,
@@ -426,7 +417,7 @@ new_geometry_types! {
         Nut, NutVec, nut_collection,
         [
             node_id: u64 => f64,
-            tree_index: u64 => f32,
+            tree_index: u64 => f64,
             color: [u8; 4] => u8,
             size: f32 => f32,
             center_a: Vector3 => f32,
@@ -440,7 +431,7 @@ new_geometry_types! {
         Quad, QuadVec, quad_collection,
         [
             node_id: u64 => f64,
-            tree_index: u64 => f32,
+            tree_index: u64 => f64,
             color: [u8; 4] => u8,
             size: f32 => f32,
             vertex_1: Vector3 => f32,
@@ -453,7 +444,7 @@ new_geometry_types! {
         SphericalSegment, SphericalSegmentVec, spherical_segment_collection,
         [
             node_id: u64 => f64,
-            tree_index: u64 => f32,
+            tree_index: u64 => f64,
             color: [u8; 4] => u8,
             size: f32 => f32,
             center: Vector3 => f32,
@@ -467,7 +458,7 @@ new_geometry_types! {
         TorusSegment, TorusSegmentVec, torus_segment_collection,
         [
             node_id: u64 => f64,
-            tree_index: u64 => f32,
+            tree_index: u64 => f64,
             color: [u8; 4] => u8,
             size: f32 => f32,
             center: Vector3 => f32,
@@ -482,7 +473,7 @@ new_geometry_types! {
         Trapezium, TrapeziumVec, trapezium_collection,
         [
             node_id: u64 => f64,
-            tree_index: u64 => f32,
+            tree_index: u64 => f64,
             color: [u8; 4] => u8,
             size: f32 => f32,
             vertex_1: Vector3 => f32,
@@ -497,7 +488,7 @@ new_geometry_types! {
         TriangleMesh, TriangleMeshVec, triangle_mesh_collection,
         [
             node_id: u64 => f64,
-            tree_index: u64 => f32,
+            tree_index: u64 => f64,
             color: [u8; 4] => u8,
             size: f32 => f32,
             file_id: u64 => f64,
@@ -509,7 +500,7 @@ new_geometry_types! {
         InstancedMesh, InstancedMeshVec, instanced_mesh_collection,
         [
             node_id: u64 => f64,
-            tree_index: u64 => f32,
+            tree_index: u64 => f64,
             color: [u8; 4] => u8,
             size: f32 => f32,
             file_id: u64 => f64,
