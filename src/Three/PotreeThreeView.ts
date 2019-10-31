@@ -99,7 +99,7 @@ export class PotreeThreeView extends BaseGroupThreeView
         // material.size = 0.5;
       }
       group.add(pointcloud);
-      this.target.viewRange(PotreeThreeView.getBoundingBoxFromGroup(group));
+      this.renderTarget.viewRange(PotreeThreeView.getBoundingBoxFromGroup(group));
     });
     return group;
   }

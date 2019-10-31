@@ -18,10 +18,10 @@ import { PolylinesNode } from "../Nodes/PolylinesNode";
 import { PolylinesThreeView } from "./PolylinesThreeView";
 import { BaseModule } from "../Core/Module/BaseModule";
 import { ViewFactory } from "../Core/Views/ViewFactory";
-import { ThreeTargetNode } from "./ThreeTargetNode";
+import { ThreeRenderTargetNode } from "./ThreeRenderTargetNode";
 import { BaseRootNode } from "../Core/Nodes/BaseRootNode";
-import { ThreeRootNode } from "./ThreeRootNode";
-import { RenderTargetNode } from "../Core/Nodes/RenderTargetNode";
+import { RootNode } from "../Nodes/RootNode";
+import { BaseRenderTargetNode } from "../Core/Nodes/BaseRenderTargetNode";
 import { PotreeNode } from "../Nodes/PotreeNode";
 import { PotreeThreeView } from "./PotreeThreeView";
 import { SurfaceNode } from '../Nodes/SurfaceNode';
@@ -44,16 +44,16 @@ export class ThreeModule extends BaseModule
 
   protected /*override*/ registerViewsCore(factory: ViewFactory): void
   {
-    factory.register(WellNode.name, WellThreeView, ThreeTargetNode.name);
-    factory.register(PointsNode.name, PointsThreeView, ThreeTargetNode.name);
-    factory.register(PolylinesNode.name, PolylinesThreeView, ThreeTargetNode.name);
-    factory.register(SurfaceNode.name, SurfaceThreeView, ThreeTargetNode.name);
-    factory.register(PotreeNode.name, PotreeThreeView, ThreeTargetNode.name);
+    factory.register(WellNode.name, WellThreeView, ThreeRenderTargetNode.name);
+    factory.register(PointsNode.name, PointsThreeView, ThreeRenderTargetNode.name);
+    factory.register(PolylinesNode.name, PolylinesThreeView, ThreeRenderTargetNode.name);
+    factory.register(SurfaceNode.name, SurfaceThreeView, ThreeRenderTargetNode.name);
+    factory.register(PotreeNode.name, PotreeThreeView, ThreeRenderTargetNode.name);
   }
 
   protected /*override*/ createRootCore(): BaseRootNode
   {
-    return new ThreeRootNode();
+    return new RootNode();
   }
 
   public initializeWhenPopulated(root: BaseRootNode): void
@@ -61,7 +61,7 @@ export class ThreeModule extends BaseModule
     root.initializeRecursive();
     document.body.onresize = () =>
     {
-      for (const target of root.targetFolder.getChildrenByType(RenderTargetNode))
+      for (const target of root.targetFolder.getChildrenByType(BaseRenderTargetNode))
         target.onResize()
     }
   }

@@ -6,15 +6,15 @@ import { Range3 } from "../Geometry/Range3";
 import { Base3DView } from "../Views/Base3DView";
 import { ViewInfo } from "../Views/ViewInfo";
 
-export abstract class RenderTargetNode extends BaseTargetNode 
+export abstract class BaseRenderTargetNode extends BaseTargetNode 
 {
   //==================================================
   // FIELDS
   //==================================================
 
   private static margin: number = 24;
-  public static get windowWidth(): number { return window.innerWidth - 1 * RenderTargetNode.margin; }
-  public static get windowHeight(): number { return window.innerHeight - 1 * RenderTargetNode.margin; }
+  public static get windowWidth(): number { return window.innerWidth - 1 * BaseRenderTargetNode.margin; }
+  public static get windowHeight(): number { return window.innerHeight - 1 * BaseRenderTargetNode.margin; }
 
   public get aspectRatio(): number { return this.pixelRange.aspectRatio2; }
 
@@ -23,10 +23,10 @@ export abstract class RenderTargetNode extends BaseTargetNode
 
   public get pixelRange(): Range3
   {
-    const x = this._fractionRange.x.min * RenderTargetNode.windowWidth;
-    const y = this._fractionRange.y.min * RenderTargetNode.windowHeight;
-    const dx = RenderTargetNode.windowWidth * this._fractionRange.x.delta;
-    const dy = RenderTargetNode.windowHeight * this._fractionRange.y.delta;
+    const x = this._fractionRange.x.min * BaseRenderTargetNode.windowWidth;
+    const y = this._fractionRange.y.min * BaseRenderTargetNode.windowHeight;
+    const dx = BaseRenderTargetNode.windowWidth * this._fractionRange.x.delta;
+    const dy = BaseRenderTargetNode.windowHeight * this._fractionRange.y.delta;
 
     return Range3.createByMinAndDelta(x, y, dx, dy);
   }
@@ -46,8 +46,8 @@ export abstract class RenderTargetNode extends BaseTargetNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return RenderTargetNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === RenderTargetNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return BaseRenderTargetNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === BaseRenderTargetNode.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

@@ -5,7 +5,7 @@ import { Polylines } from './src/Core/Geometry/Polylines';
 import { PotreeNode } from './src/Nodes/PotreeNode';
 import { SurfaceNode } from './src/Nodes/SurfaceNode';
 import { RegularGrid2 } from './src/Core/Geometry/RegularGrid2';
-import { ThreeTargetNode } from './src/Three/ThreeTargetNode';
+import { ThreeRenderTargetNode } from './src/Three/ThreeRenderTargetNode';
 import { Range3 } from './src/Core/Geometry/Range3';
 import { WellNode } from './src/Nodes/WellNode';
 import { Well } from './src/Nodes/Well';
@@ -63,17 +63,17 @@ export function main()
   }
   {
     const range = Range3.createByMinAndMax(0, 0, 1, 0.5);
-    const target = new ThreeTargetNode(range);
+    const target = new ThreeRenderTargetNode(range);
     root.targetFolder.addChild(target)
   }
   {
     const range = Range3.createByMinAndMax(0, 0.5, 1, 1);
-    const target = new ThreeTargetNode(range);
+    const target = new ThreeRenderTargetNode(range);
     root.targetFolder.addChild(target);
   }
 
   module.initializeWhenPopulated(root);
-  for (const target of root.targetFolder.getChildrenByType(ThreeTargetNode))
+  for (const target of root.targetFolder.getChildrenByType(ThreeRenderTargetNode))
   {
     const range = target.pixelRange;
     const stats = target.stats;
@@ -123,7 +123,7 @@ export function main()
       node.setVisible(true);
     }
   }
-  let activeTarget = root.activeTarget as ThreeTargetNode;
+  let activeTarget = root.activeTarget as ThreeRenderTargetNode;
   if (activeTarget)
     activeTarget.viewAll();
 
@@ -158,7 +158,7 @@ export function main()
     }
     node.setVisible(true);
   }
-  activeTarget = root.activeTarget as ThreeTargetNode;
+  activeTarget = root.activeTarget as ThreeRenderTargetNode;
   if (activeTarget)
     activeTarget.viewAll();
 

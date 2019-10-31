@@ -13,7 +13,7 @@
 
 import * as THREE from 'three';
 import { Base3DView } from "../Core/Views/Base3DView";
-import { ThreeTargetNode } from "./ThreeTargetNode";
+import { ThreeRenderTargetNode } from "./ThreeRenderTargetNode";
 
 export abstract class BaseThreeView extends Base3DView
 {
@@ -27,7 +27,7 @@ export abstract class BaseThreeView extends Base3DView
   // PROPERTIES
   //==================================================
 
-  protected get scene(): THREE.Scene { return this.target.scene; }
-  protected get camera(): THREE.Camera { return this.target.activeCamera; }
-  protected get target(): ThreeTargetNode { return super.getTarget() as ThreeTargetNode; }
+  protected get scene(): THREE.Scene { return this.renderTarget.scene; }
+  protected get camera(): THREE.Camera { return this.renderTarget.activeCamera; }
+  protected get renderTarget(): ThreeRenderTargetNode { return super.getTarget() as ThreeRenderTargetNode; }
 }

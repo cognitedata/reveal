@@ -16,13 +16,13 @@ import * as THREE from 'three';
 
 const Stats = require('stats-js');
 
-import { RenderTargetNode } from "../Core/Nodes/RenderTargetNode";
+import { BaseRenderTargetNode } from "../Core/Nodes/BaseRenderTargetNode";
 import { ThreeCameraNode as ThreeCameraNode } from "./ThreeCameraNode";
 import { ThreeConverter } from "./ThreeConverter";
 import { Range3 } from '../Core/Geometry/Range3';
 import { TreeOverlay } from './TreeOverlay';
 
-export class ThreeTargetNode extends RenderTargetNode
+export class ThreeRenderTargetNode extends BaseRenderTargetNode
 {
   //==================================================
   // FIELDS
@@ -106,8 +106,8 @@ export class ThreeTargetNode extends RenderTargetNode
   // OVERRIDES of TargetNode
   //==================================================
 
-  public /*override*/ get className(): string { return ThreeTargetNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === ThreeTargetNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return ThreeRenderTargetNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === ThreeRenderTargetNode.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

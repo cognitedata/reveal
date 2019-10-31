@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import { BaseRootNode } from "../Nodes/BaseRootNode";
-import { RenderTargetNode } from "../Nodes/RenderTargetNode";
+import { BaseRenderTargetNode } from "../Nodes/BaseRenderTargetNode";
 import { ViewFactory } from "../Views/ViewFactory";
 
 export abstract class BaseModule
@@ -52,7 +52,7 @@ export abstract class BaseModule
 
   public *getDomElements(root: BaseRootNode): Iterable<HTMLElement>
   {
-    for (const target of root.targetFolder.getChildrenByType(RenderTargetNode))
+    for (const target of root.targetFolder.getChildrenByType(BaseRenderTargetNode))
       yield target.domElement;
   }
 }

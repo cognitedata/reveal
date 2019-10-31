@@ -14,7 +14,7 @@
 import CameraControls from 'camera-controls';
 import * as THREE from 'three';
 import { BaseCameraNode } from "../Core/Nodes/BaseCameraNode";
-import { RenderTargetNode } from "../Core/Nodes/RenderTargetNode";
+import { BaseRenderTargetNode } from "../Core/Nodes/BaseRenderTargetNode";
 
 export class ThreeCameraNode extends BaseCameraNode
 {
@@ -95,6 +95,6 @@ export class ThreeCameraNode extends BaseCameraNode
   // INSTANCE METHODS
   //==================================================
 
-  public getTarget(): RenderTargetNode | null { return super.getTarget() as RenderTargetNode; }
+  public getTarget(): BaseRenderTargetNode | null { return super.getTarget() as BaseRenderTargetNode; }
 
 }

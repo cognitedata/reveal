@@ -12,9 +12,8 @@
 //=====================================================================================
 
 import { BaseRootNode } from "../Core/Nodes/BaseRootNode";
-import { ThreeTargetNode } from "./ThreeTargetNode";
 
-export class ThreeRootNode extends BaseRootNode
+export class RootNode extends BaseRootNode
 {
   //==================================================
   // CONSTRUCTORS
@@ -26,8 +25,8 @@ export class ThreeRootNode extends BaseRootNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return ThreeRootNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === ThreeRootNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return RootNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === RootNode.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
