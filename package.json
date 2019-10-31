@@ -6,6 +6,7 @@
   "scripts": {
     "release": "webpack --mode=release",
     "build": "webpack --mode=development",
+    "clean": "rimraf -rf node_modules/ dist/ target/",
     "serve": "webpack-dev-server --debug --color --progress --watch --port=8080",
     "test": "jest",
     "coverage": "jest --coverage",
@@ -27,6 +28,7 @@
     "jest-extended": "^0.11.2",
     "jest-fetch-mock": "^2.1.2",
     "prettier": "^1.18.2",
+    "rimraf": "^3.0.0",
     "ts-jest": "^24.1.0",
     "ts-loader": "6.2.0",
     "tslint": "^5.20.0",
@@ -35,7 +37,7 @@
     "tslint-plugin-prettier": "^2.0.1",
     "typescript": "3.6.4",
     "webpack": "4.41.1",
-    "webpack-cli": "3.3.9",
+    "webpack-cli": "^3.2.1",
     "webpack-dev-server": "^3.9.0"
   },
   "dependencies": {
