@@ -1,6 +1,6 @@
 use console_error_panic_hook;
 use std::panic;
-use js_sys::{ArrayBuffer, Uint8Array};
+use js_sys::{ArrayBuffer, Float32Array, Uint8Array};
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::JsCast;
 use wasm_bindgen::JsValue;
@@ -8,6 +8,7 @@ use wasm_bindgen::prelude::*;
 
 // From reveal-rs
 use i3df;
+use f3df;
 use openctm;
 use serde_bytes;
 use serde;
@@ -156,4 +157,41 @@ pub fn parse_sector(root_sector: &SectorHandle, array_buffer_value: JsValue) -> 
 #[wasm_bindgen]
 pub fn convert_sector(sector: &SectorHandle) -> i3df::renderables::Sector {
     i3df::renderables::convert_sector(&sector.sector)
+}
+
+#[wasm_bindgen]
+pub fn parse_and_convert_f3df(array_buffer_value: JsValue) -> Result<Float32Array, JsValue> {
+    // TODO read https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/building-your-project.html
+    // and see if this can be moved to one common place
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
+
+    assert!(array_buffer_value.is_instance_of::<ArrayBuffer>());
+
+    let uint8_array = Uint8Array::new(&array_buffer_value);
+    let mut result = vec![0; uint8_array.byte_length() as usize];
+    uint8_array.copy_to(&mut result);
+    let cursor = std::io::Cursor::new(result);
+
+    let result = match f3df::parse_sector(cursor) {
+        Ok(x) => x,
+        Err(e) => return Err(JsValue::from(error::ParserError::from(e)))
+    };
+
+    let result = f3df::renderables::convert_sector(&result);
+
+    Ok(
+        unsafe {
+            Float32Array::view(
+                std::slice::from_raw_parts(
+                    result.as_ptr() as *const f32,
+                    result.len() * std::mem::size_of::<f3df::renderables::Face>() / 4
+                )
+            )
+        }
+    )
+}
+
+#[wasm_bindgen]
+pub fn test() -> String {
+    "Hello from rust".into()
 }

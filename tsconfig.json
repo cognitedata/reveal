@@ -2,15 +2,22 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
-    "outDir": "dist",
     "esModuleInterop": true,
     "downlevelIteration": true,
     "sourceMap": true,
     "moduleResolution": "node",
+    "strict": true,
+    "types": [
+        "custom"
+    ],
+    "typeRoots": [
+        "node_modules/@types",
+        "./typings"
+    ],
     "lib": [
         "dom",
+        "webworker",
         "esnext"
-    ],
-    "strict": true
+    ]
   }
 }

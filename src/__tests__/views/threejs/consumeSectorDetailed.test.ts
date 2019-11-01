@@ -5,11 +5,11 @@
 import { Sector, SectorMetadata, TriangleMesh } from '../../../sector/types';
 import { Box3 } from '../../../utils/Box3';
 import { vec3 } from 'gl-matrix';
-import { consumeSector } from '../../../views/threejs/consumeSector';
+import { consumeSectorDetailed } from '../../../views/threejs/consumeSectorDetailed';
 import { SectorNode } from '../../../views/threejs/SectorNode';
 import 'jest-extended';
 
-describe('consumeSector', () => {
+describe('consumeSectorDetailed', () => {
   const metadata: SectorMetadata = {
     id: 1,
     path: '0/1/2/',
@@ -27,7 +27,7 @@ describe('consumeSector', () => {
     const node = new SectorNode();
 
     // Act
-    consumeSector(sectorId, sector, metadata, node);
+    consumeSectorDetailed(sectorId, sector, metadata, node);
 
     // Assert
     expect(node.children).toBeEmpty();
@@ -42,7 +42,22 @@ describe('consumeSector', () => {
     const node = new SectorNode();
 
     // Act
-    consumeSector(sectorId, sector, metadata, node);
+    consumeSectorDetailed(sectorId, sector, metadata, node);
+
+    // Assert
+    expect(node.children).not.toBeEmpty();
+  });
+
+  test('valid input, produces geometry', () => {
+    // Arrange
+    const sectorId = 1;
+    const sector: Sector = {
+      triangleMeshes: [newMesh()]
+    };
+    const node = new SectorNode();
+
+    // Act
+    consumeSectorDetailed(sectorId, sector, metadata, node);
 
     // Assert
     expect(node.children).not.toBeEmpty();

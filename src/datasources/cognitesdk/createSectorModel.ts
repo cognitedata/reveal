@@ -9,7 +9,7 @@ import { constructMatrixFromRotation } from './constructMatrixFromRotation';
 import { getNewestVersionedFile } from '../../sector/utilities';
 import { SectorModelTransformation } from '../../sector/types';
 
-export type SectorModel = [FetchSectorMetadataDelegate, FetchSectorDelegate, FetchCtmDelegate];
+export type SectorModel = [FetchSectorMetadataDelegate, FetchSectorDelegate, FetchSectorDelegate, FetchCtmDelegate];
 
 export function createSectorModel(sdk: CogniteClient, modelId: number, revisionId: number): SectorModel {
   const metadataPromise = loadSectorMetadata(sdk, modelId, revisionId);
@@ -32,11 +32,15 @@ export function createSectorModel(sdk: CogniteClient, modelId: number, revisionI
     }
     return loadSectorGeometry(sdk, sectorId, file);
   };
+  const fetchSectorQuads: FetchSectorDelegate = async sectorId => {
+    // TODO implement
+    throw("Not implemeted");
+  };
   const fetchCtmFile: FetchCtmDelegate = async fileId => {
     return loadCtmFile(sdk, fileId);
   };
 
-  return [fetchSectorMetadata, fetchSector, fetchCtmFile];
+  return [fetchSectorMetadata, fetchSector, fetchSectorQuads, fetchCtmFile];
 }
 
 async function loadSectorMetadata(sdk: CogniteClient, modelId: number, revisionId: number): Promise<RevealSector3D[]> {

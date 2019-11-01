@@ -33,6 +33,27 @@ export function createLocalSectorModel(baseUrl: string): SectorModel {
     }
     return fetchFile(fileId);
   };
+  // TODO this function is a big hack because we do not have the f3d fileId
+  const fetchSectorQuads: FetchSectorDelegate = async (sectorId: number) => {
+    const sectorIdToFileId = await loadSectorIdToFileId;
+    const fileId = sectorIdToFileId.get(sectorId);
+    if (!fileId) {
+      throw new Error(`${sectorId} is not a valid sector ID`);
+    }
+    const filemap = await loadFilemap;
+    const filename = filemap.get(fileId);
+    if (!filename) {
+      throw new Error(`Could not find filename mapping for file ${fileId})`);
+    }
+    const filenameQuads = filename.replace(".i3d", ".f3d");
+    const url = baseUrl + '/' + filenameQuads;
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Got error ${response.status} while fetching '${url}' (${response.statusText})`);
+    }
+
+    return response.arrayBuffer();
+  };
   const fetchFile: FetchCtmDelegate = async (fileId: number) => {
     const filemap = await loadFilemap;
     const filename = filemap.get(fileId);
@@ -48,5 +69,5 @@ export function createLocalSectorModel(baseUrl: string): SectorModel {
 
     return response.arrayBuffer();
   };
-  return [fetchMetadata, fetchSector, fetchFile];
+  return [fetchMetadata, fetchSector, fetchSectorQuads, fetchFile];
 }

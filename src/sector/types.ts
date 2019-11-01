@@ -33,6 +33,10 @@ export class Sector {
   readonly triangleMeshes: TriangleMesh[] = [];
 }
 
+export interface SectorQuads {
+  buffer: Float32Array;
+};
+
 export enum LoadSectorStatus {
   Awaiting,
   InFlight,
@@ -44,4 +48,16 @@ export type LoadSectorRequest = {
   promise: Promise<void>;
   cancel: () => void;
   status: () => LoadSectorStatus;
+};
+
+// TODO move somewhere else?
+export interface CtmWorkerResult {
+  indices: Uint32Array,
+  vertices: Float32Array,
+  normals: Float32Array | undefined,
+};
+
+export interface WantedSectors {
+  detailed: Set<number>;
+  simple: Set<number>;
 };

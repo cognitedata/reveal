@@ -9,8 +9,8 @@ import { LoadSectorStatus, LoadSectorRequest, Sector } from '../../sector/types'
 
 describe('loadSector', () => {
   const fetch: FetchSectorDelegate = jest.fn();
-  const parse: ParseSectorDelegate = jest.fn();
-  const consume: ConsumeSectorDelegate = jest.fn();
+  const parse: ParseSectorDelegate<Sector> = jest.fn();
+  const consume: ConsumeSectorDelegate<Sector> = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -56,7 +56,7 @@ describe('loadSector', () => {
 
   test('cancelled after parse', async () => {
     let request: LoadSectorRequest | undefined;
-    const myParse: ParseSectorDelegate = jest.fn(
+    const myParse: ParseSectorDelegate<Sector> = jest.fn(
       async (): Promise<Sector> => {
         await waitUntill(() => request !== undefined);
         request!.cancel();

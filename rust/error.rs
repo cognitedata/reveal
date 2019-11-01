@@ -34,6 +34,14 @@ impl From<i3df::error::Error> for ParserError {
     }
 }
 
+impl From<f3df::error::Error> for ParserError {
+    fn from(err: f3df::error::Error) -> ParserError {
+        ParserError {
+            message: format!("f3df error: {}", err)
+        }
+    }
+}
+
 macro_rules! error {
     ($($args:tt)*) => { JsValue::from($crate::error::ParserError::new(format!($($args)*))) }
 }

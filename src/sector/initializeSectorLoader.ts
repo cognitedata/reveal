@@ -7,11 +7,11 @@ import { loadSector } from './loadSector';
 import { DiscardSectorDelegate, ConsumeSectorDelegate, FetchSectorDelegate, ParseSectorDelegate } from './delegates';
 import { LoadSectorRequest } from './types';
 
-export function initializeSectorLoader(
+export function initializeSectorLoader<T>(
   fetchSector: FetchSectorDelegate,
-  parseSector: ParseSectorDelegate,
+  parseSector: ParseSectorDelegate<T>,
   discardSector: DiscardSectorDelegate,
-  consumeSector: ConsumeSectorDelegate
+  consumeSector: ConsumeSectorDelegate<T>
 ) {
   const activeSectorIds = new Set<number>();
   const activeSectorRequests = new Map<number, LoadSectorRequest>();
@@ -36,7 +36,7 @@ export function initializeSectorLoader(
       }
     }
 
-    const consumeSectorAndDeleteRequest: ConsumeSectorDelegate = (sectorId, sector) => {
+    const consumeSectorAndDeleteRequest: ConsumeSectorDelegate<T> = (sectorId, sector) => {
       activeSectorRequests.delete(sectorId);
       consumeSector(sectorId, sector);
       activeSectorIds.add(sectorId);
@@ -48,7 +48,7 @@ export function initializeSectorLoader(
 
     if (newSectorIds.size > 0 || discardedSectorIds.size > 0) {
       console.log(
-        `[${Date.now() / 1000}] activateSectors() [wanted: ${wantedSectorIds.size} ` +
+        `activateSectors() [wanted: ${wantedSectorIds.size} ` +
           `new: ${newSectorIds.size}` +
           ` discarded: ${discardedSectorIds.size}` +
           ` active: ${activeSectorIds.size}` +

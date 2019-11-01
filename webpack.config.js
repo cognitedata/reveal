@@ -6,7 +6,7 @@ function resolve(dir) {
   return path.join(__dirname, dir);
 }
 
-module.exports = {
+const appConfig = {
   mode: 'development',
   entry: './src/index.ts',
 
@@ -26,6 +26,7 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
     sourceMapFilename: '[name].map',
+    globalObject: `(typeof self !== 'undefined' ? self : this)`,
   },
 
   devtool: 'inline-source-map',
@@ -33,7 +34,10 @@ module.exports = {
     https: true,
     port: 8080,
     stats: 'minimal',
-    contentBase: [resolve('public/')]
+    contentBase: [
+      resolve('public/'),
+      resolve('dist/')
+    ]
   },
 
   plugins: [
@@ -44,3 +48,33 @@ module.exports = {
     })
   ],
 };
+
+const workerConfig = {
+  mode: 'development',
+  entry: "./workers/parser.worker.ts",
+  target: "webworker",
+  plugins: [
+    new WasmPackPlugin({
+      crateDirectory: ".",
+      forceMode: 'production',
+    })
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: "parser.worker.js"
+  }
+};
+
+module.exports = [appConfig, workerConfig];

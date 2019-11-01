@@ -3,13 +3,13 @@
  */
 
 import { FetchSectorDelegate, ParseSectorDelegate, ConsumeSectorDelegate } from './delegates';
-import { LoadSectorStatus, LoadSectorRequest } from './types';
+import { LoadSectorStatus, LoadSectorRequest, Sector } from './types';
 
-export function loadSector(
+export function loadSector<T>(
   sectorId: number,
   fetchSector: FetchSectorDelegate,
-  parseSector: ParseSectorDelegate,
-  consumeSector: ConsumeSectorDelegate
+  parseSector: ParseSectorDelegate<T>,
+  consumeSector: ConsumeSectorDelegate<T>
 ): LoadSectorRequest {
   let status = LoadSectorStatus.Awaiting;
   let cancelRequested = false;

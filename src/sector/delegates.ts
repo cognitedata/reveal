@@ -22,12 +22,12 @@ export type FetchSectorDelegate = (sectorId: number) => Promise<ArrayBuffer>;
 /**
  * Delegate for parsing data retrieved using a `FetchSectorDelegate`  to a `Sector`.
  */
-export type ParseSectorDelegate = (sectorId: number, buffer: ArrayBuffer) => Promise<Sector>;
+export type ParseSectorDelegate<T> = (sectorId: number, buffer: ArrayBuffer) => Promise<T>;
 
 /**
  * Delegate for 'consuming' a sector, e.g. by creating a 3D node for it.
  */
-export type ConsumeSectorDelegate = (sectorId: number, sector: Sector) => void;
+export type ConsumeSectorDelegate<T> = (sectorId: number, sector: T) => void;
 
 /**
  * Delegate for fetching raw data for a CTM file.

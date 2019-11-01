@@ -9,10 +9,12 @@ import { initializeSectorLoader } from './sector/initializeSectorLoader';
 import { WellKnownModels } from './example/models';
 import { CogniteClient } from '@cognite/sdk';
 import CameraControls from 'camera-controls';
-import { createParser } from './sector/parseSectorData';
+import { createParser, createQuadsParser } from './sector/parseSectorData';
 import { vec3 } from 'gl-matrix';
 import { createLocalSectorModel } from './datasources/local/createLocalSectorModel';
 import { ConsumeSectorDelegate } from './sector/delegates';
+import { Sector, SectorQuads } from './sector/types';
+import { createSyncedConsumeAndDiscard } from './views/createSyncedConsumeAndDiscard';
 
 const RendererStats = require('@xailabs/three-renderer-stats');
 
@@ -42,27 +44,48 @@ async function main() {
 
   let newDataAvailable = false;
   // const [fetchSectorMetadata, fetchSector, fetchCtmFile] = createSectorModel(sdk, model.modelId, model.revisionId);
-  const [fetchSectorMetadata, fetchSector, fetchCtmFile] = createLocalSectorModel(
+  const [fetchSectorMetadata, fetchSector, fetchSectorQuads, fetchCtmFile] = createLocalSectorModel(
     '/***REMOVED***'
   );
   const [sectorRoot, modelTranformation] = await fetchSectorMetadata();
   const parseSectorData = await createParser(sectorRoot, fetchSector, fetchCtmFile);
-  const [rootGroup, discardSector, consumeSector] = initializeThreeJsView(sectorRoot, modelTranformation);
-  const consumeSectorAndTriggerRedraw: ConsumeSectorDelegate = (sectorId, sector) => {
+  const parseSectorQuadsData = await createQuadsParser();
+  const [rootGroup, discardSector, consumeSector, consumeSectorQuads] = initializeThreeJsView(
+    sectorRoot,
+    modelTranformation
+  );
+  const consumeSectorAndTriggerRedraw: ConsumeSectorDelegate<Sector> = (sectorId, sector) => {
     consumeSector(sectorId, sector);
     newDataAvailable = true;
   };
-  const activateSectors = initializeSectorLoader(
+  const consumeSectorQuadsAndTriggerRedraw: ConsumeSectorDelegate<SectorQuads> = (sectorId, sector) => {
+    consumeSectorQuads(sectorId, sector);
+    newDataAvailable = true;
+  };
+
+  const [discardSectorFinal, consumeSectorFinal, consumeSectorQuadsFinal] = createSyncedConsumeAndDiscard(
+    discardSector,
+    consumeSectorAndTriggerRedraw,
+    consumeSectorQuadsAndTriggerRedraw
+  );
+
+  const activateDetailedSectors = initializeSectorLoader(
     fetchSector,
     parseSectorData,
-    discardSector,
-    consumeSectorAndTriggerRedraw
+    discardSectorFinal,
+    consumeSectorFinal
+  );
+  const activateSimpleSectors = initializeSectorLoader(
+    fetchSectorQuads,
+    parseSectorQuadsData,
+    discardSectorFinal,
+    consumeSectorQuadsFinal
   );
 
   const light = new THREE.PointLight(0xffffff, 1, 1000);
   light.position.set(340, 600, -90);
   scene.add(light);
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
   scene.add(ambientLight);
 
   scene.add(rootGroup);
@@ -78,19 +101,35 @@ async function main() {
     vec3.fromValues(330.697021484375, 84.89916229248047, 500.3190002441406),
     modelTranformation.modelMatrix
   );
+
   controls.setLookAt(pos[0], pos[1], pos[2], target[0], target[1], target[2]);
   controls.update(0.0);
   camera.updateMatrixWorld();
 
+  let sectorsLocked = false;
   async function triggerUpdate() {
-    const wantedSectorIds = await determineSectors(sectorRoot, camera, modelTranformation);
-    activateSectors(wantedSectorIds);
+    if (!sectorsLocked) {
+      const wantedSectorIds = await determineSectors(sectorRoot, camera, modelTranformation);
+      activateDetailedSectors(wantedSectorIds.detailed);
+      activateSimpleSectors(wantedSectorIds.simple);
+    }
   }
   controls.addEventListener('update', async () => {
     await triggerUpdate();
   });
   triggerUpdate();
 
+  document.addEventListener('keypress', event => {
+    if (event.key === 'l') {
+      sectorsLocked = !sectorsLocked;
+      if (sectorsLocked) {
+        console.log(`Sectors locked - will not load new sectors.`);
+      } else {
+        console.log(`Sectors unlocked - loading new sectors when view updates.`);
+        triggerUpdate();
+      }
+    }
+  });
   const rendererStats = createRendererStats();
 
   const clock = new THREE.Clock();

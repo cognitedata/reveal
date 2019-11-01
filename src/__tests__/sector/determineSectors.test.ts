@@ -32,7 +32,8 @@ describe('determineSectors', () => {
     const sectors = await determineSectors(root, camera, identityTransform);
 
     // Assert
-    expect(sectors).toBeEmpty();
+    expect(sectors.simple).toBeEmpty();
+    expect(sectors.detailed).toBeEmpty();
   });
 
   test('partial intersect, returns correct sectors', async () => {
@@ -65,7 +66,8 @@ describe('determineSectors', () => {
     const sectors = await determineSectors(root, camera, identityTransform);
 
     // Assert
-    expectSetEqual(sectors, [1, 2]);
+    expectSetEqual(sectors.detailed, [1, 2]);
+    expect(sectors.simple).toBeEmpty();
   });
 
   test('model with transformation, returns correctly', async () => {
@@ -88,6 +90,6 @@ describe('determineSectors', () => {
     const sectors = await determineSectors(root, camera, transform);
 
     // Assert
-    expectSetEqual(sectors, [1]);
+    expectSetEqual(sectors.detailed, [1]);
   });
 });
