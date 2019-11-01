@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { LoadSectorRequest } from '../../../sector/types';
+import { LoadSectorRequest } from '../../../models/sector/types';
 import { discardSector } from '../../../views/threejs/discardSector';
 import { SectorNode } from '../../../views/threejs/SectorNode';
 import 'jest-extended';

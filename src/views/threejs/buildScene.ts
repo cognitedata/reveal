@@ -3,7 +3,7 @@
  */
 
 import { SectorNode } from './SectorNode';
-import { SectorMetadata } from '../../sector/types';
+import { SectorMetadata } from '../../models/sector/types';
 
 export function buildScene(sector: SectorMetadata, parent: THREE.Object3D, sectorNodeMap: Map<number, SectorNode>) {
   const sectorGroup = new SectorNode();

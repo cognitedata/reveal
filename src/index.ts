@@ -3,17 +3,17 @@
  */
 
 import * as THREE from 'three';
-import { determineSectors } from './sector/determineSectors';
+import { determineSectors } from './models/sector/determineSectors';
 import { initializeThreeJsView } from './views/threejs/initializeThreeJsView';
-import { initializeSectorLoader } from './sector/initializeSectorLoader';
+import { initializeSectorLoader } from './models/sector/initializeSectorLoader';
 import { WellKnownModels } from './example/models';
 import { CogniteClient } from '@cognite/sdk';
 import CameraControls from 'camera-controls';
-import { createParser, createQuadsParser } from './sector/parseSectorData';
+import { createParser, createQuadsParser } from './models/sector/parseSectorData';
 import { vec3 } from 'gl-matrix';
 import { createLocalSectorModel } from './datasources/local/createLocalSectorModel';
-import { ConsumeSectorDelegate } from './sector/delegates';
-import { Sector, SectorQuads } from './sector/types';
+import { ConsumeSectorDelegate } from './models/sector/delegates';
+import { Sector, SectorQuads } from './models/sector/types';
 import { createSyncedConsumeAndDiscard } from './views/createSyncedConsumeAndDiscard';
 
 const RendererStats = require('@xailabs/three-renderer-stats');

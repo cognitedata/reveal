@@ -2,8 +2,8 @@
  * Copyright 2019 Cognite AS
  */
 
-import { ConsumeSectorDelegate, DiscardSectorDelegate } from '../sector/delegates';
-import { Sector, SectorQuads } from '../sector/types';
+import { ConsumeSectorDelegate, DiscardSectorDelegate } from '../models/sector/delegates';
+import { Sector, SectorQuads } from '../models/sector/types';
 
 // TODO 20191030 larsmoa: Unit test `createLazyConsumeAndDiscard`
 

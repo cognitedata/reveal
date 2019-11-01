@@ -2,16 +2,16 @@
  * Copyright 2019 Cognite AS
  */
 
-import { SectorMetadata, SectorModelTransformation } from '../../sector/types';
+import { SectorMetadata, SectorModelTransformation } from '../../models/sector/types';
 import { buildScene } from './buildScene';
 import { SectorNode } from './SectorNode';
 import { traverseDepthFirst } from '../../utils/traversal';
-import { DiscardSectorDelegate, ConsumeSectorDelegate } from '../../sector/delegates';
+import { DiscardSectorDelegate, ConsumeSectorDelegate } from '../../models/sector/delegates';
 import { discardSector } from './discardSector';
 import { consumeSectorSimple } from './consumeSectorSimple';
 import { consumeSectorDetailed } from './consumeSectorDetailed';
 import { toThreeMatrix4 } from './utilities';
-import { Sector, SectorQuads } from '../../sector/types';
+import { Sector, SectorQuads } from '../../models/sector/types';
 
 export function initializeThreeJsView(
   sectorRoot: SectorMetadata,

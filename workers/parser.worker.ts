@@ -1,8 +1,21 @@
+/*!
+ * Copyright 2019 Cognite AS
+ */
 
-import { CtmWorkerResult, Sector, SectorMetadata, TriangleMesh } from '../src/sector/types';
-import { FetchSectorDelegate, FetchCtmDelegate } from '../src/sector/delegates';
+
+import { CtmWorkerResult, Sector, SectorMetadata, TriangleMesh } from '../src/models/sector/types';
+import { FetchSectorDelegate, FetchCtmDelegate } from '../src/models/sector/delegates';
 import { createOffsets } from '../src/utils/arrayUtils';
-import { ParseRootSectorArguments, ParseRootSectorResult, ParseSectorArguments, ParseSectorResult, ParseCtmArguments, ParseCtmResult, ParseQuadsArguments, ParseQuadsResult } from './types/parser.types';
+import {
+  ParseRootSectorArguments,
+  ParseRootSectorResult,
+  ParseSectorArguments,
+  ParseSectorResult,
+  ParseCtmArguments,
+  ParseCtmResult,
+  ParseQuadsArguments,
+  ParseQuadsResult
+} from './types/parser.types';
 import * as rustTypes from '../pkg';
 const rustModule = import('../pkg');
 // NOTE workaround for TypeScript
@@ -13,7 +26,7 @@ const init = () => {
   let rootSectorHandle: rustTypes.SectorHandle | undefined;
 
   // Respond to message from parent thread
-  ctx.addEventListener("message", async (event) => {
+  ctx.addEventListener('message', async event => {
     const rust = await rustModule;
     if (!event.data) {
       return;
@@ -24,17 +37,17 @@ const init = () => {
       const { buffer } = work.parseRootSector;
       rootSectorHandle = rust.parse_root_sector(buffer);
       const result: ParseRootSectorResult = {
-        result: "OK", // TODO replace with reference or something
+        result: 'OK' // TODO replace with reference or something
       };
       ctx.postMessage({
         messageId,
-        result,
+        result
       });
     }
     if (work.parseSector) {
       const { buffer } = work.parseSector;
       if (!rootSectorHandle) {
-        throw `Worker ${workerId} requested to parse sector before parsing root sector!`;
+        throw new Error(`Worker ${workerId} requested to parse sector before parsing root sector!`);
       }
       const sectorDataHandle = rust.parse_sector(rootSectorHandle!, buffer);
       const sectorData = rust.convert_sector(sectorDataHandle);
@@ -45,7 +58,7 @@ const init = () => {
         treeIndexes: collection.tree_index(),
         colors: collection.color(),
         triangleCounts: collection.triangle_count(),
-        sizes: collection.size(),
+        sizes: collection.size()
       };
       ctx.postMessage({
         messageId,
@@ -60,7 +73,7 @@ const init = () => {
       const result: ParseCtmResult = {
         indices: ctm.indices(),
         vertices: ctm.vertices(),
-        normals: ctm.normals(),
+        normals: ctm.normals()
       };
       ctx.postMessage({
         messageId,
@@ -71,7 +84,7 @@ const init = () => {
       const { buffer } = work.parseQuads;
       const quads = rust.parse_and_convert_f3df(buffer);
       const result: ParseQuadsResult = {
-        data: quads,
+        data: quads
       };
       ctx.postMessage({
         messageId,
@@ -79,6 +92,6 @@ const init = () => {
       });
     }
   });
-}
+};
 
 init();

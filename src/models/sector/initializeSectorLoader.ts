@@ -2,7 +2,7 @@
  * Copyright 2019 Cognite AS
  */
 
-import { setUnion, setDifference } from '../utils/setUtils';
+import { setUnion, setDifference } from '../../utils/setUtils';
 import { loadSector } from './loadSector';
 import { DiscardSectorDelegate, ConsumeSectorDelegate, FetchSectorDelegate, ParseSectorDelegate } from './delegates';
 import { LoadSectorRequest } from './types';

@@ -3,12 +3,17 @@
  */
 
 import * as THREE from 'three';
-import { Sector, SectorMetadata, SectorQuads } from '../../sector/types';
+import { Sector, SectorMetadata, SectorQuads } from '../../models/sector/types';
 import { SectorNode } from './SectorNode';
 import { toThreeJsBox3 } from './utilities';
 import { vertexShaderDetailed, fragmentShader } from './shaders';
 
-export function consumeSectorDetailed(sectorId: number, sector: Sector, metadata: SectorMetadata, sectorNode: SectorNode) {
+export function consumeSectorDetailed(
+  sectorId: number,
+  sector: Sector,
+  metadata: SectorMetadata,
+  sectorNode: SectorNode
+) {
   if (sector.triangleMeshes.length === 0) {
     // No geometry
     return;
@@ -20,7 +25,7 @@ export function consumeSectorDetailed(sectorId: number, sector: Sector, metadata
   const bounds = toThreeJsBox3(metadata.bounds);
   const boundsRenderer = new THREE.Box3Helper(bounds);
   boundsRenderer.name = `Bounding box ${sectorId}`;
-  //group.add(boundsRenderer);
+  // group.add(boundsRenderer);
 
   // TODO 20191025 larsmoa: Hack to avoid lots of big meshes, but
   // color information is lost. Fix.
@@ -42,11 +47,11 @@ export function consumeSectorDetailed(sectorId: number, sector: Sector, metadata
     } else {
       geometry.computeVertexNormals();
     }
-    //const material = new THREE.MeshPhongMaterial({ vertexColors: THREE.VertexColors, flatShading: true });
-    const material =  new THREE.ShaderMaterial({
+    // const material = new THREE.MeshPhongMaterial({ vertexColors: THREE.VertexColors, flatShading: true });
+    const material = new THREE.ShaderMaterial({
       uniforms: {},
       fragmentShader: fragmentShader(),
-      vertexShader: vertexShaderDetailed(),
+      vertexShader: vertexShaderDetailed()
     });
     const obj = new THREE.Mesh(geometry, material);
 

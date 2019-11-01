@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { SectorMetadata, SectorQuads } from '../../sector/types';
+import { SectorMetadata, SectorQuads } from '../../models/sector/types';
 import { SectorNode } from './SectorNode';
 import { toThreeJsBox3 } from './utilities';
 import { vertexShaderSimple, fragmentShader } from './shaders';

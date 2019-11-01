@@ -2,12 +2,12 @@
  * Copyright 2019 Cognite AS
  */
 
-import { FetchSectorMetadataDelegate, FetchSectorDelegate, FetchCtmDelegate } from '../../sector/delegates';
+import { FetchSectorMetadataDelegate, FetchSectorDelegate, FetchCtmDelegate } from '../../models/sector/delegates';
 import { CogniteClient, RevealSector3D, Versioned3DFile } from '@cognite/sdk';
 import { buildSectorMetadata } from './buildSectorMetadata';
 import { constructMatrixFromRotation } from './constructMatrixFromRotation';
-import { getNewestVersionedFile } from '../../sector/utilities';
-import { SectorModelTransformation } from '../../sector/types';
+import { getNewestVersionedFile } from './utilities';
+import { SectorModelTransformation } from '../../models/sector/types';
 
 export type SectorModel = [FetchSectorMetadataDelegate, FetchSectorDelegate, FetchSectorDelegate, FetchCtmDelegate];
 
@@ -34,7 +34,7 @@ export function createSectorModel(sdk: CogniteClient, modelId: number, revisionI
   };
   const fetchSectorQuads: FetchSectorDelegate = async sectorId => {
     // TODO implement
-    throw("Not implemeted");
+    throw new Error('Not implemeted');
   };
   const fetchCtmFile: FetchCtmDelegate = async fileId => {
     return loadCtmFile(sdk, fileId);

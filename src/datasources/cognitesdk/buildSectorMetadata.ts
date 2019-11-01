@@ -4,7 +4,7 @@
 
 import { RevealSector3D } from '@cognite/sdk';
 import { vec3, mat4 } from 'gl-matrix';
-import { SectorMetadata } from '../../sector/types';
+import { SectorMetadata } from '../../models/sector/types';
 import { Box3 } from '../../utils/Box3';
 
 export function buildSectorMetadata(sectors: RevealSector3D[]): SectorMetadata {

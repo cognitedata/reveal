@@ -2,13 +2,13 @@
  * Copyright 2019 Cognite AS
  */
 
-import { FetchCtmDelegate, FetchSectorDelegate, FetchSectorMetadataDelegate } from '../../sector/delegates';
+import { FetchCtmDelegate, FetchSectorDelegate, FetchSectorMetadataDelegate } from '../../models/sector/delegates';
 import { SectorModel } from '../cognitesdk';
 import { loadLocalSectorMetadata } from './loadLocalSectorMetadata';
 import { DefaultSectorRotationMatrix } from '../cognitesdk/constructMatrixFromRotation';
 import { loadLocalFileMap } from './loadLocalFileMap';
 import { buildSectorMetadata } from '../cognitesdk/buildSectorMetadata';
-import { getNewestVersionedFile } from '../../sector/utilities';
+import { getNewestVersionedFile } from '../cognitesdk/utilities';
 
 export function createLocalSectorModel(baseUrl: string): SectorModel {
   const loadMetadata = loadLocalSectorMetadata(baseUrl + '/uploaded_sectors.txt');
@@ -45,7 +45,7 @@ export function createLocalSectorModel(baseUrl: string): SectorModel {
     if (!filename) {
       throw new Error(`Could not find filename mapping for file ${fileId})`);
     }
-    const filenameQuads = filename.replace(".i3d", ".f3d");
+    const filenameQuads = filename.replace('.i3d', '.f3d');
     const url = baseUrl + '/' + filenameQuads;
     const response = await fetch(url);
     if (!response.ok) {

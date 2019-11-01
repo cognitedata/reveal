@@ -2,10 +2,10 @@
  * Copyright 2019 Cognite AS
  */
 import * as THREE from 'three';
-import { SectorMetadata, SectorModelTransformation } from '../../sector/types';
+import { SectorMetadata, SectorModelTransformation } from '../../models/sector/types';
 import { Box3 } from '../../utils/Box3';
 import { vec3, mat4 } from 'gl-matrix';
-import { determineSectors } from '../../sector/determineSectors';
+import { determineSectors } from '../../models/sector/determineSectors';
 import { expectSetEqual } from '../expects';
 import { toThreeMatrix4 } from '../../views/threejs/utilities';
 import 'jest-extended';
