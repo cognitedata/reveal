@@ -14,6 +14,8 @@ import { vec3 } from 'gl-matrix';
 import { createLocalSectorModel } from './datasources/local/createLocalSectorModel';
 import { ConsumeSectorDelegate } from './sector/delegates';
 
+const RendererStats = require('@xailabs/three-renderer-stats');
+
 CameraControls.install({ THREE });
 
 async function main() {
@@ -89,6 +91,8 @@ async function main() {
   });
   triggerUpdate();
 
+  const rendererStats = createRendererStats();
+
   const clock = new THREE.Clock();
   const render = () => {
     requestAnimationFrame(render);
@@ -98,6 +102,7 @@ async function main() {
 
     if (needsUpdate) {
       renderer.render(scene, camera);
+      rendererStats.update(renderer);
       newDataAvailable = false;
     }
   };
@@ -110,3 +115,18 @@ async function main() {
 }
 
 main();
+
+// Typedefinition for RenderStats
+interface RenderStats {
+  update(renderer: THREE.WebGLRenderer): void;
+}
+
+function createRendererStats(): RenderStats {
+  const rendererStats = new RendererStats();
+  rendererStats.domElement.style.position = 'absolute';
+  rendererStats.domElement.style.left = '10px';
+  rendererStats.domElement.style.bottom = '10px';
+  rendererStats.domElement.style.zoom = '150%';
+  document.body.appendChild(rendererStats.domElement);
+  return rendererStats;
+}
