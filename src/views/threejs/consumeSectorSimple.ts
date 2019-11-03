@@ -19,7 +19,7 @@ const quadVertexData = new Float32Array([
   -0.5, -0.5, 0.0,
   // tslint:enable: prettier
 ]);
-const quadVertexBufferAttribute = new THREE.Float32BufferAttribute(quadVertexData, 3);
+const quadVertexBufferAttribute = new THREE.Float32BufferAttribute(quadVertexData.buffer, 3);
 
 export function consumeSectorSimple(
   sectorId: number,

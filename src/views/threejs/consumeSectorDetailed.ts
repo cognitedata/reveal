@@ -34,9 +34,9 @@ export function consumeSectorDetailed(
     const mesh = sector.triangleMeshes.find(x => x.fileId === fileId)!;
 
     const geometry = new THREE.BufferGeometry();
-    const indices = new THREE.Uint32BufferAttribute(mesh.indices, 1);
-    const vertices = new THREE.Float32BufferAttribute(mesh.vertices, 3);
-    const colors = new THREE.Float32BufferAttribute(mesh.colors, 3);
+    const indices = new THREE.Uint32BufferAttribute(mesh.indices.buffer, 1);
+    const vertices = new THREE.Float32BufferAttribute(mesh.vertices.buffer, 3);
+    const colors = new THREE.Float32BufferAttribute(mesh.colors.buffer, 3);
     geometry.setIndex(indices);
     geometry.addAttribute('position', vertices);
     geometry.addAttribute('color', colors);
@@ -46,7 +46,7 @@ export function consumeSectorDetailed(
     bounds.getBoundingSphere(geometry.boundingSphere);
 
     if (mesh.normals !== undefined) {
-      const normals = new THREE.Float32BufferAttribute(mesh.normals, 3);
+      const normals = new THREE.Float32BufferAttribute(mesh.normals.buffer, 3);
       geometry.addAttribute('normal', normals);
     } else {
       geometry.computeVertexNormals();
