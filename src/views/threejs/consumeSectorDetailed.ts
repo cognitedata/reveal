@@ -41,6 +41,10 @@ export function consumeSectorDetailed(
     geometry.addAttribute('position', vertices);
     geometry.addAttribute('color', colors);
 
+    geometry.boundingBox = bounds.clone();
+    geometry.boundingSphere = new THREE.Sphere();
+    bounds.getBoundingSphere(geometry.boundingSphere);
+
     if (mesh.normals !== undefined) {
       const normals = new THREE.Float32BufferAttribute(mesh.normals, 3);
       geometry.addAttribute('normal', normals);
