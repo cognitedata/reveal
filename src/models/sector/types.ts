@@ -2,7 +2,7 @@
  * Copyright 2019 Cognite AS
  */
 
-import { Box3 } from '../utils/Box3';
+import { Box3 } from '../../utils/Box3';
 import { mat4 } from 'gl-matrix';
 
 export type SectorModelTransformation = {

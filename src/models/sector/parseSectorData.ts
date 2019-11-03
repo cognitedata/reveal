@@ -4,8 +4,8 @@
 
 import { Sector, SectorQuads, SectorMetadata, TriangleMesh } from './types';
 import { FetchSectorDelegate, FetchCtmDelegate } from './delegates';
-import { createOffsetsArray } from '../utils/arrayUtils';
-import { WorkerArguments } from '../../workers/types/parser.types';
+import { createOffsetsArray } from '../../utils/arrayUtils';
+import { WorkerArguments } from '../../../workers/types/parser.types';
 
 // TODO 2019-11-01 larsmoa: Move PooledWorker.
 interface PooledWorker {

@@ -4,8 +4,8 @@
 
 import * as THREE from 'three';
 import { WantedSectors, SectorMetadata, SectorModelTransformation } from './types';
-import { traverseDepthFirst } from '../utils/traversal';
-import { toThreeMatrix4 } from '../views/threejs/utilities';
+import { traverseDepthFirst } from '../../utils/traversal';
+import { toThreeMatrix4 } from '../../views/threejs/utilities';
 
 export async function determineSectors(
   root: SectorMetadata,
