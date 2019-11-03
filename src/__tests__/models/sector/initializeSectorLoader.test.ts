@@ -2,16 +2,16 @@
  * Copyright 2019 Cognite AS
  */
 
-import { initializeSectorLoader } from '../../models/sector/initializeSectorLoader';
+import { initializeSectorLoader } from '../../../models/sector/initializeSectorLoader';
 import {
   DiscardSectorDelegate,
   ConsumeSectorDelegate,
   FetchSectorDelegate,
   ParseSectorDelegate
-} from '../../models/sector/delegates';
-import { waitUntill } from '../wait';
-import { expectSetEqual } from '../expects';
-import { Sector } from '../../models/sector/types';
+} from '../../../models/sector/delegates';
+import { waitUntill } from '../../wait';
+import { expectSetEqual } from '../../expects';
+import { Sector } from '../../../models/sector/types';
 
 describe('initializeSectorLoader', () => {
   const consumed = new Set<number>();

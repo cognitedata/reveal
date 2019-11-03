@@ -2,10 +2,10 @@
  * Copyright 2019 Cognite AS
  */
 
-import { FetchSectorDelegate, ParseSectorDelegate, ConsumeSectorDelegate } from '../../models/sector/delegates';
-import { loadSector } from '../../models/sector/loadSector';
-import { waitUntill } from '../wait';
-import { LoadSectorStatus, LoadSectorRequest, Sector } from '../../models/sector/types';
+import { FetchSectorDelegate, ParseSectorDelegate, ConsumeSectorDelegate } from '../../../models/sector/delegates';
+import { loadSector } from '../../../models/sector/loadSector';
+import { waitUntill } from '../../wait';
+import { LoadSectorStatus, LoadSectorRequest, Sector } from '../../../models/sector/types';
 
 describe('loadSector', () => {
   const fetch: FetchSectorDelegate = jest.fn();
