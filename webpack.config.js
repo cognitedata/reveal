@@ -8,7 +8,10 @@ function resolve(dir) {
 
 const appConfig = {
   mode: 'development',
-  entry: './src/index.ts',
+  entry: {
+    main: './src/index.ts',
+    example_threejs_post_processing_effects: './src/examples/threejs/post-processing-effects.ts'
+  },
 
   module: {
     rules: [
@@ -23,7 +26,8 @@ const appConfig = {
     extensions: ['.tsx', '.ts', '.js'],
   },
   output: {
-    filename: 'bundle.js',
+    // filename: 'bundle.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
     sourceMapFilename: '[name].map',
     globalObject: `(typeof self !== 'undefined' ? self : this)`,
@@ -45,6 +49,17 @@ const appConfig = {
     new WasmPackPlugin({
       crateDirectory: ".",
       forceMode: 'production',
+    }),
+    // Examples
+    new HtmlWebpackPlugin({
+      templateParameters: {
+        'title': 'ThreeJS Post-processing effects',
+        'entry': 'example_threejs_post_processing_effects.js'
+      },
+      hash: true,
+      inject: false,
+      template: 'src/examples/template.ejs',
+      filename: 'threejs-post-processing-effects.html'
     })
   ],
 };

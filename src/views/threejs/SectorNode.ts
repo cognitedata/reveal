@@ -4,4 +4,6 @@
 
 import * as THREE from 'three';
 
-export class SectorNode extends THREE.Group {}
+export class SectorNode extends THREE.Group {
+  public needsRedraw: boolean = true;
+}

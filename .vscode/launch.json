@@ -15,7 +15,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "https://localhost:8080/",
+            "url": "https://localhost:8080/threejs-post-processing-effects.html",
             "webRoot": "${workspaceFolder}"
         }
     ]

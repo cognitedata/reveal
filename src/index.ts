@@ -3,19 +3,14 @@
  */
 
 import * as THREE from 'three';
-import { determineSectors } from './models/sector/determineSectors';
-import { initializeThreeJsView } from './views/threejs/initializeThreeJsView';
-import { initializeSectorLoader } from './models/sector/initializeSectorLoader';
-import { WellKnownModels } from './example/models';
+import { WellKnownModels } from './examples/models';
 import { CogniteClient } from '@cognite/sdk';
 import CameraControls from 'camera-controls';
-import { createParser, createQuadsParser } from './models/sector/parseSectorData';
 import { vec3 } from 'gl-matrix';
 import { createLocalSectorModel } from './datasources/local/createLocalSectorModel';
-import { ConsumeSectorDelegate } from './models/sector/delegates';
-import { Sector, SectorQuads } from './models/sector/types';
-import { createSyncedConsumeAndDiscard } from './views/createSyncedConsumeAndDiscard';
+import createThreeJsSectorNode from './views/threejs/createThreeJsSectorNode';
 
+const postprocessing = require('postprocessing');
 const RendererStats = require('@xailabs/three-renderer-stats');
 
 CameraControls.install({ THREE });
@@ -42,94 +37,41 @@ async function main() {
     }
   });
 
-  let newDataAvailable = false;
-  // const [fetchSectorMetadata, fetchSector, fetchCtmFile] = createSectorModel(sdk, model.modelId, model.revisionId);
-  const [fetchSectorMetadata, fetchSector, fetchSectorQuads, fetchCtmFile] = createLocalSectorModel(
-    '/***REMOVED***'
-  );
-  const [sectorRoot, modelTranformation] = await fetchSectorMetadata();
-  const parseSectorData = await createParser(sectorRoot, fetchSector, fetchCtmFile);
-  const parseSectorQuadsData = await createQuadsParser();
-  const [rootGroup, discardSector, consumeSector, consumeSectorQuads] = initializeThreeJsView(
-    sectorRoot,
-    modelTranformation
-  );
-  const consumeSectorAndTriggerRedraw: ConsumeSectorDelegate<Sector> = (sectorId, sector) => {
-    consumeSector(sectorId, sector);
-    newDataAvailable = true;
-  };
-  const consumeSectorQuadsAndTriggerRedraw: ConsumeSectorDelegate<SectorQuads> = (sectorId, sector) => {
-    consumeSectorQuads(sectorId, sector);
-    newDataAvailable = true;
-  };
-
-  const [discardSectorFinal, consumeSectorFinal, consumeSectorQuadsFinal] = createSyncedConsumeAndDiscard(
-    discardSector,
-    consumeSectorAndTriggerRedraw,
-    consumeSectorQuadsAndTriggerRedraw
-  );
-
-  const activateDetailedSectors = initializeSectorLoader(
-    fetchSector,
-    parseSectorData,
-    discardSectorFinal,
-    consumeSectorFinal
-  );
-  const activateSimpleSectors = initializeSectorLoader(
-    fetchSectorQuads,
-    parseSectorQuadsData,
-    discardSectorFinal,
-    consumeSectorQuadsFinal
-  );
-
-  const light = new THREE.PointLight(0xffffff, 1, 1000);
-  light.position.set(340, 600, -90);
-  scene.add(light);
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-  scene.add(ambientLight);
-
-  scene.add(rootGroup);
+  const sectorModel = createLocalSectorModel('/***REMOVED***');
+  const sectorModelNode = await createThreeJsSectorNode(sectorModel);
+  scene.add(sectorModelNode);
 
   const controls = new CameraControls(camera, renderer.domElement);
-  const pos = vec3.transformMat4(
-    vec3.create(),
-    vec3.fromValues(373.2188407437061, 126.18227676536418, 512.6270615748768),
-    modelTranformation.modelMatrix
-  );
-  const target = vec3.transformMat4(
-    vec3.create(),
-    vec3.fromValues(330.697021484375, 84.89916229248047, 500.3190002441406),
-    modelTranformation.modelMatrix
-  );
-
+  const pos = vec3.fromValues(373.2188407437061, 512.6270615748768, -126.18227676536418);
+  const target = vec3.fromValues(330.697021484375, 500.3190002441406, -84.89916229248047);
   controls.setLookAt(pos[0], pos[1], pos[2], target[0], target[1], target[2]);
   controls.update(0.0);
   camera.updateMatrixWorld();
 
-  let sectorsLocked = false;
-  async function triggerUpdate() {
-    if (!sectorsLocked) {
-      const wantedSectorIds = await determineSectors(sectorRoot, camera, modelTranformation);
-      activateDetailedSectors(wantedSectorIds.detailed);
-      activateSimpleSectors(wantedSectorIds.simple);
-    }
-  }
-  controls.addEventListener('update', async () => {
-    await triggerUpdate();
-  });
-  triggerUpdate();
+  // let sectorsLocked = false;
+  // async function triggerUpdate() {
+  //   if (!sectorsLocked) {
+  //     const wantedSectorIds = await determineSectors(sectorRoot, camera, modelTranformation);
+  //     activateDetailedSectors(wantedSectorIds.detailed);
+  //     activateSimpleSectors(wantedSectorIds.simple);
+  //   }
+  // }
+  // controls.addEventListener('update', async () => {
+  //   await triggerUpdate();
+  // });
+  // triggerUpdate();
 
-  document.addEventListener('keypress', event => {
-    if (event.key === 'l') {
-      sectorsLocked = !sectorsLocked;
-      if (sectorsLocked) {
-        console.log(`Sectors locked - will not load new sectors.`);
-      } else {
-        console.log(`Sectors unlocked - loading new sectors when view updates.`);
-        triggerUpdate();
-      }
-    }
-  });
+  // document.addEventListener('keypress', event => {
+  //   if (event.key === 'l') {
+  //     sectorsLocked = !sectorsLocked;
+  //     if (sectorsLocked) {
+  //       console.log(`Sectors locked - will not load new sectors.`);
+  //     } else {
+  //       console.log(`Sectors unlocked - loading new sectors when view updates.`);
+  //       triggerUpdate();
+  //     }
+  //   }
+  // });
   const rendererStats = createRendererStats();
 
   const clock = new THREE.Clock();
@@ -137,12 +79,12 @@ async function main() {
     requestAnimationFrame(render);
 
     const delta = clock.getDelta();
-    const needsUpdate = controls.update(delta) || newDataAvailable;
+    const needsUpdate = controls.update(delta) || sectorModelNode.needsRedraw;
 
     if (needsUpdate) {
       renderer.render(scene, camera);
       rendererStats.update(renderer);
-      newDataAvailable = false;
+      sectorModelNode.needsRedraw = false;
     }
   };
   render();

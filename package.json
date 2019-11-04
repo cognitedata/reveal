@@ -28,6 +28,7 @@
     "jest": "^24.9.0",
     "jest-extended": "^0.11.2",
     "jest-fetch-mock": "^2.1.2",
+    "postprocessing": "^6.8.8",
     "prettier": "^1.18.2",
     "rimraf": "^3.0.0",
     "ts-jest": "^24.1.0",
@@ -39,7 +40,7 @@
     "typescript": "3.6.4",
     "webpack": "4.41.1",
     "webpack-cli": "^3.2.1",
-    "webpack-dev-server": "^3.2.1"
+    "webpack-dev-server": "^3.9.0"
   },
   "dependencies": {
     "@types/node": "^12.11.7",

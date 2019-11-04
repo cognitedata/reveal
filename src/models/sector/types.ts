@@ -35,7 +35,7 @@ export class Sector {
 
 export interface SectorQuads {
   buffer: Float32Array;
-};
+}
 
 export enum LoadSectorStatus {
   Awaiting,
@@ -52,12 +52,12 @@ export type LoadSectorRequest = {
 
 // TODO move somewhere else?
 export interface CtmWorkerResult {
-  indices: Uint32Array,
-  vertices: Float32Array,
-  normals: Float32Array | undefined,
-};
+  indices: Uint32Array;
+  vertices: Float32Array;
+  normals: Float32Array | undefined;
+}
 
 export interface WantedSectors {
   detailed: Set<number>;
   simple: Set<number>;
-};
+}

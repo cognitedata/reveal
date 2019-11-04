@@ -8,8 +8,7 @@ import { buildSectorMetadata } from './buildSectorMetadata';
 import { constructMatrixFromRotation } from './constructMatrixFromRotation';
 import { getNewestVersionedFile } from './utilities';
 import { SectorModelTransformation } from '../../models/sector/types';
-
-export type SectorModel = [FetchSectorMetadataDelegate, FetchSectorDelegate, FetchSectorDelegate, FetchCtmDelegate];
+import { SectorModel } from '../SectorModel';
 
 export function createSectorModel(sdk: CogniteClient, modelId: number, revisionId: number): SectorModel {
   const metadataPromise = loadSectorMetadata(sdk, modelId, revisionId);
