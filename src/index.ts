@@ -10,7 +10,6 @@ import { vec3 } from 'gl-matrix';
 import { createLocalSectorModel } from './datasources/local/createLocalSectorModel';
 import createThreeJsSectorNode from './views/threejs/createThreeJsSectorNode';
 
-const postprocessing = require('postprocessing');
 const RendererStats = require('@xailabs/three-renderer-stats');
 
 CameraControls.install({ THREE });
@@ -48,30 +47,6 @@ async function main() {
   controls.update(0.0);
   camera.updateMatrixWorld();
 
-  // let sectorsLocked = false;
-  // async function triggerUpdate() {
-  //   if (!sectorsLocked) {
-  //     const wantedSectorIds = await determineSectors(sectorRoot, camera, modelTranformation);
-  //     activateDetailedSectors(wantedSectorIds.detailed);
-  //     activateSimpleSectors(wantedSectorIds.simple);
-  //   }
-  // }
-  // controls.addEventListener('update', async () => {
-  //   await triggerUpdate();
-  // });
-  // triggerUpdate();
-
-  // document.addEventListener('keypress', event => {
-  //   if (event.key === 'l') {
-  //     sectorsLocked = !sectorsLocked;
-  //     if (sectorsLocked) {
-  //       console.log(`Sectors locked - will not load new sectors.`);
-  //     } else {
-  //       console.log(`Sectors unlocked - loading new sectors when view updates.`);
-  //       triggerUpdate();
-  //     }
-  //   }
-  // });
   const rendererStats = createRendererStats();
 
   const clock = new THREE.Clock();

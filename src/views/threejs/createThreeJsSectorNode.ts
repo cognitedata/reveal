@@ -13,12 +13,17 @@ import { createSyncedConsumeAndDiscard } from '../createSyncedConsumeAndDiscard'
 import { initializeSectorLoader } from '../../models/sector/initializeSectorLoader';
 import { SectorNode } from './SectorNode';
 import { determineSectors } from '../../models/sector/determineSectors';
+import { createCache } from '../../models/createCache';
 
 export default async function createThreeJsSectorNode(model: SectorModel): Promise<SectorNode> {
   const [fetchSectorMetadata, fetchSector, fetchSectorQuads, fetchCtmFile] = model;
+
+  // Fetch metadata
   const [sectorRoot, modelTranformation] = await fetchSectorMetadata();
   const parseSectorData = await createParser(sectorRoot, fetchSector, fetchCtmFile);
   const parseSectorQuadsData = await createQuadsParser();
+
+  // Setup ThreeJS geometry "consumption"
   const [rootGroup, discardSector, consumeSector, consumeSectorQuads] = initializeThreeJsView(
     sectorRoot,
     modelTranformation
@@ -32,31 +37,38 @@ export default async function createThreeJsSectorNode(model: SectorModel): Promi
     rootGroup.needsRedraw = true;
   };
 
+  // Sync high- and low-detail geometry
   const [discardSectorFinal, consumeSectorFinal, consumeSectorQuadsFinal] = createSyncedConsumeAndDiscard(
     discardSector,
     consumeSectorAndTriggerRedraw,
     consumeSectorQuadsAndTriggerRedraw
   );
 
+  // Create cache to avoid unnecessary loading and parsing of data
+  const [fetchSectorCached, parseSectorDataCached] = createCache<number, Sector>(fetchSector, parseSectorData);
+  const [fetchSectorQuadsCached, parseSectorQuadsDataCached] = createCache<number, SectorQuads>(
+    fetchSectorQuads,
+    parseSectorQuadsData
+  );
   const activateDetailedSectors = initializeSectorLoader(
-    fetchSector,
-    parseSectorData,
+    fetchSectorCached,
+    parseSectorDataCached,
     discardSectorFinal,
     consumeSectorFinal
   );
   const activateSimpleSectors = initializeSectorLoader(
-    fetchSectorQuads,
-    parseSectorQuadsData,
+    fetchSectorQuadsCached,
+    parseSectorQuadsDataCached,
     discardSectorFinal,
     consumeSectorQuadsFinal
   );
 
+  // Setup data load schedule whenever camera moves
   async function triggerUpdate(camera: THREE.Camera) {
     const wantedSectors = await determineSectors(sectorRoot, camera, modelTranformation);
     activateDetailedSectors(wantedSectors.detailed);
     activateSimpleSectors(wantedSectors.simple);
   }
-
   // Schedule sectors when camera moves
   const previousCameraMatrix = new THREE.Matrix4();
   previousCameraMatrix.elements[0] = Infinity; // Ensures inequality on first frame
@@ -66,6 +78,7 @@ export default async function createThreeJsSectorNode(model: SectorModel): Promi
       previousCameraMatrix.copy(camera.matrixWorld);
     }
   });
+
   return rootGroup;
 }
 

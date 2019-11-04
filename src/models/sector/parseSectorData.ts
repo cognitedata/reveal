@@ -26,7 +26,7 @@ async function createWorkers<AcceptedArguments>() {
       const messageId = worker.messageIdCounter;
 
       worker.worker.addEventListener('message', event => {
-        if (!event.data || event.data.messageId != messageId) {
+        if (!event.data || event.data.messageId !== messageId) {
           return;
         }
         worker.activeJobCount -= 1;
