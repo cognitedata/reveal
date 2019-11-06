@@ -15,7 +15,7 @@ import { SectorNode } from './SectorNode';
 import { determineSectors } from '../../models/sector/determineSectors';
 import { createCache } from '../../models/createCache';
 
-export default async function createThreeJsSectorNode(model: SectorModel): Promise<SectorNode> {
+export async function createThreeJsSectorNode(model: SectorModel): Promise<SectorNode> {
   const [fetchSectorMetadata, fetchSector, fetchSectorQuads, fetchCtmFile] = model;
 
   // Fetch metadata

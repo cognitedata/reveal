@@ -7,8 +7,6 @@ import CameraControls from 'camera-controls';
 import { createLocalSectorModel } from '../../datasources/local/createLocalSectorModel';
 import { createThreeJsSectorNode } from '../../views/threejs/createThreeJsSectorNode';
 
-const postprocessing = require('postprocessing');
-
 CameraControls.install({ THREE });
 
 async function main() {
@@ -32,13 +30,6 @@ async function main() {
   controls.update(0.0);
   camera.updateMatrixWorld();
 
-  // See https://vanruesc.github.io/postprocessing/public/docs/identifiers.html
-  const effectPass = new postprocessing.EffectPass(camera, new postprocessing.DotScreenEffect());
-  effectPass.renderToScreen = true;
-  const effectComposer = new postprocessing.EffectComposer(renderer);
-  effectComposer.addPass(new postprocessing.RenderPass(scene, camera));
-  effectComposer.addPass(effectPass);
-
   const clock = new THREE.Clock();
   const render = () => {
     requestAnimationFrame(render);
@@ -47,7 +38,7 @@ async function main() {
     const needsUpdate = controls.update(delta) || sectorModelNode.needsRedraw;
 
     if (needsUpdate) {
-      effectComposer.render(delta);
+      renderer.render(scene, camera);
       sectorModelNode.needsRedraw = false;
     }
   };
@@ -60,3 +51,4 @@ async function main() {
 }
 
 main();
+

@@ -31,7 +31,6 @@ export function createCache<T_ID, T>(
   const parseCached = async (id: T_ID, data: ArrayBuffer): Promise<T> => {
     const existing = parseResults.get(id);
     if (existing) {
-      console.log('Parse cache hit');
       return existing;
     }
     parseResults.set(id, parser(id, data));

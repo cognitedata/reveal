@@ -6,6 +6,7 @@ import { Sector, SectorQuads, SectorMetadata, TriangleMesh } from './types';
 import { FetchSectorDelegate, FetchCtmDelegate } from './delegates';
 import { createOffsetsArray } from '../../utils/arrayUtils';
 import { WorkerArguments } from '../../../workers/types/parser.types';
+//import * as ParserWorker from 'worker-loader!../../../workers/parser.worker';
 
 // TODO 2019-11-01 larsmoa: Move PooledWorker.
 interface PooledWorker {
@@ -45,9 +46,13 @@ async function createWorkers<AcceptedArguments>() {
     return result;
   };
 
-  for (let i = 0; i < window.navigator.hardwareConcurrency; i++) {
+  //for (let i = 0; i < window.navigator.hardwareConcurrency; i++) {
+  for (let i = 0; i < 1; i++) {
     const newWorker = {
-      worker: new Worker('parser.worker.js'),
+      worker: new Worker('../../../workers/parser.worker', { name: 'parser', type: 'module' }),
+      //worker: new Worker('./parserworker.js', {type: 'module'}),
+      //worker: new Worker('parser.worker.js'),
+      //worker: new (ParserWorker as any)(),
       activeJobCount: 0,
       messageIdCounter: 0
     };

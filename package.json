@@ -1,13 +1,17 @@
 {
-  "name": "reveal-architecture",
+  "name": "@cognite/reveal-streaming",
   "version": "0.1.0",
-  "description": "Reveal viewer architecture",
-  "main": "index.ts",
+  "description": "Reveal streaming component",
+  "main": "dist/index.js",
+  "types": "dist/src/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "release": "webpack --mode=release",
-    "build": "webpack --mode=development",
+    "release": "webpack",
+    "build": "webpack --env.development",
     "clean": "rimraf -rf node_modules/ dist/ target/",
-    "serve": "webpack-dev-server --debug --color --progress --watch --port=8080",
+    "serve": "webpack-dev-server --env.development --debug --color --progress --watch --port=8080",
     "test": "jest",
     "coverage": "jest --coverage",
     "lint": "tslint --project ."
@@ -31,6 +35,7 @@
     "postprocessing": "^6.8.8",
     "prettier": "^1.18.2",
     "rimraf": "^3.0.0",
+    "three": "0.109.0",
     "ts-jest": "^24.1.0",
     "ts-loader": "6.2.0",
     "tslint": "^5.20.0",
@@ -40,13 +45,17 @@
     "typescript": "3.6.4",
     "webpack": "4.41.1",
     "webpack-cli": "^3.2.1",
-    "webpack-dev-server": "^3.9.0"
+    "webpack-dev-server": "^3.9.0",
+    "webpack-node-externals": "^1.7.2",
+    "worker-plugin": "^3.2.0"
   },
   "dependencies": {
     "@types/node": "^12.11.7",
     "@wasm-tool/wasm-pack-plugin": "^1.0.1",
     "camera-controls": "^1.15.0",
-    "gl-matrix": "^3.1.0",
+    "gl-matrix": "^3.1.0"
+  },
+  "peerDependencies": {
     "three": "0.109.0"
   }
 }
