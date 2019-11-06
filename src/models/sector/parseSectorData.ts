@@ -46,13 +46,9 @@ async function createWorkers<AcceptedArguments>() {
     return result;
   };
 
-  //for (let i = 0; i < window.navigator.hardwareConcurrency; i++) {
-  for (let i = 0; i < 1; i++) {
+  for (let i = 0; i < window.navigator.hardwareConcurrency; i++) {
     const newWorker = {
       worker: new Worker('../../../workers/parser.worker', { name: 'parser', type: 'module' }),
-      //worker: new Worker('./parserworker.js', {type: 'module'}),
-      //worker: new Worker('parser.worker.js'),
-      //worker: new (ParserWorker as any)(),
       activeJobCount: 0,
       messageIdCounter: 0
     };

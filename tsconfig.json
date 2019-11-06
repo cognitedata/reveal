@@ -9,7 +9,7 @@
     "downlevelIteration": true,
     "sourceMap": true,
     "moduleResolution": "node",
-    "strict": false,
+    "strict": true,
     "typeRoots": [
         "node_modules/@types"
     ],
