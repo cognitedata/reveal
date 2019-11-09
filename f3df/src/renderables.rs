@@ -1,18 +1,12 @@
 use crate as f3df;
 use nalgebra;
-use wasm_bindgen::prelude::*;
-use wasm_bindgen::JsValue;
-use js_sys::Array;
 use serde_derive::Serialize;
 use std::f32::consts::{PI, FRAC_PI_2};
 
 type Vector3 = nalgebra::Vector3::<f32>;
-type Vector4 = nalgebra::Vector4::<f32>;
 type Matrix4 = nalgebra::Matrix4::<f32>;
-type Matrix<X, Y, Z> = nalgebra::Matrix::<f32, X, Y, Z>;
 type Rotation3 = nalgebra::Rotation3::<f32>;
 type Translation3 = nalgebra::Translation3::<f32>;
-type Transform3 = nalgebra::Transform3::<f32>;
 
 #[derive(Clone, Copy, Serialize)]
 pub struct Face {
