@@ -39,7 +39,6 @@ module.exports = env => {
     devtool: development ? "inline-source-map" : undefined,
     devServer: {
       https: true,
-      port: 8080,
       stats: 'minimal',
       contentBase: [
         resolve('public/'),
@@ -69,6 +68,7 @@ module.exports = env => {
           'entry': 'example_threejs_post_processing_effects.js'
         },
         hash: true,
+        inject: true,
         template: 'src/examples/template.ejs',
         filename: 'example-threejs-post-processing-effects.html'
       })
@@ -80,6 +80,7 @@ module.exports = env => {
           'entry': 'example_simple.js'
         },
         hash: true,
+        inject: true,
         template: 'src/examples/template.ejs',
         filename: 'example-threejs-simple.html'
       })

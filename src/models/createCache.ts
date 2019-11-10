@@ -3,11 +3,11 @@
  */
 
 interface FetchResult {
-  data: Promise<ArrayBuffer>;
+  data: Promise<Uint8Array>;
 }
 
-type FetchDelegate<T_ID> = (id: T_ID) => Promise<ArrayBuffer>;
-type ParseDelegate<T_ID, T> = (id: T_ID, buffer: ArrayBuffer) => Promise<T>;
+type FetchDelegate<T_ID> = (id: T_ID) => Promise<Uint8Array>;
+type ParseDelegate<T_ID, T> = (id: T_ID, buffer: Uint8Array) => Promise<T>;
 
 export function createCache<T_ID, T>(
   fetcher: FetchDelegate<T_ID>,
@@ -16,7 +16,7 @@ export function createCache<T_ID, T>(
   const fetchResults = new Map<T_ID, FetchResult>();
   const parseResults = new Map<T_ID, Promise<T>>();
 
-  const fetchCached = async (id: T_ID): Promise<ArrayBuffer> => {
+  const fetchCached = async (id: T_ID): Promise<Uint8Array> => {
     const existing = fetchResults.get(id);
     if (existing) {
       return existing.data;
@@ -28,7 +28,7 @@ export function createCache<T_ID, T>(
     return result.data;
   };
 
-  const parseCached = async (id: T_ID, data: ArrayBuffer): Promise<T> => {
+  const parseCached = async (id: T_ID, data: Uint8Array): Promise<T> => {
     const existing = parseResults.get(id);
     if (existing) {
       return existing;
@@ -45,7 +45,7 @@ export function createCache<T_ID, T>(
       return result;
     }
     // Clear the original fetch, since it is no longer needed
-    fetchResult.data = Promise.resolve(new ArrayBuffer(0));
+    fetchResult.data = Promise.resolve(new Uint8Array());
     return parseResult;
   };
 

@@ -43,7 +43,7 @@ describe('loadSector', () => {
     const myFetch: FetchSectorDelegate = jest.fn(async () => {
       await waitUntill(() => request !== undefined);
       request!.cancel();
-      return new ArrayBuffer(0);
+      return new Uint8Array(0);
     });
     request = loadSector(0, myFetch, parse, consume);
     await request.promise;
@@ -60,7 +60,6 @@ describe('loadSector', () => {
       async (): Promise<Sector> => {
         await waitUntill(() => request !== undefined);
         request!.cancel();
-        // return new ArrayBuffer(0);
         return { triangleMeshes: [] } as Sector;
       }
     );

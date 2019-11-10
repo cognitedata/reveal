@@ -34,6 +34,9 @@ export function consumeSectorDetailed(
     const mesh = sector.triangleMeshes.find(x => x.fileId === fileId)!;
 
     const geometry = new THREE.BufferGeometry();
+    geometry.boundingBox = bounds.clone();
+    geometry.boundingSphere = new THREE.Sphere();
+    bounds.getBoundingSphere(geometry.boundingSphere);
     const indices = new THREE.Uint32BufferAttribute(mesh.indices.buffer, 1);
     const vertices = new THREE.Float32BufferAttribute(mesh.vertices.buffer, 3);
     const colors = new THREE.Float32BufferAttribute(mesh.colors.buffer, 3);

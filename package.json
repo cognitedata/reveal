@@ -11,7 +11,7 @@
     "release": "webpack",
     "build": "webpack --env.development",
     "clean": "rimraf -rf node_modules/ dist/ target/",
-    "serve": "webpack-dev-server --env.development --debug --color --progress --watch --port=8080",
+    "serve": "webpack-dev-server --env.development --debug --color --progress --watch",
     "test": "jest",
     "coverage": "jest --coverage",
     "lint": "tslint --project ."
@@ -31,6 +31,8 @@
     "@wasm-tool/wasm-pack-plugin": "^1.0.1",
     "@xailabs/three-renderer-stats": "^1.0.4",
     "camera-controls": "^1.15.0",
+    "comlink": "^4.1.0",
+    "gl-matrix": "^3.1.0",
     "html-webpack-plugin": "3.2.0",
     "jest": "^24.9.0",
     "jest-extended": "^0.11.2",
@@ -46,16 +48,17 @@
     "tslint-no-circular-imports": "^0.7.0",
     "tslint-plugin-prettier": "^2.0.1",
     "typescript": "3.6.4",
-    "webpack": "4.41.1",
-    "webpack-cli": "^3.2.1",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.9.0",
     "webpack-node-externals": "^1.7.2",
     "worker-plugin": "^3.2.0"
   },
-  "dependencies": {
-    "gl-matrix": "^3.1.0"
-  },
   "peerDependencies": {
+    "@types/node": "^12.11.7",
+    "@wasm-tool/wasm-pack-plugin": "^1.0.1",
+    "camera-controls": "^1.15.0",
+    "gl-matrix": "^3.1.0",
     "three": "0.109.0"
   }
 }

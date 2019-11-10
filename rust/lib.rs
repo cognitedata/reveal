@@ -1,8 +1,7 @@
 use console_error_panic_hook;
 use std::panic;
-use js_sys::{ArrayBuffer, Float32Array, Uint8Array};
+use js_sys::{Float32Array};
 use serde::{Deserialize, Serialize};
-use wasm_bindgen::JsCast;
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::*;
 
@@ -78,18 +77,13 @@ impl CtmResult {
 }
 
 #[wasm_bindgen]
-pub fn parse_ctm(array_buffer_value: JsValue) -> Result<CtmResult, JsValue> {
+pub fn parse_ctm(input: &[u8]) -> Result<CtmResult, JsValue> {
     // TODO read https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/building-your-project.html
     // and see if this can be moved to one common place
     panic::set_hook(Box::new(console_error_panic_hook::hook));
 
-    assert!(array_buffer_value.is_instance_of::<ArrayBuffer>());
-
-    let uint8_array = Uint8Array::new(&array_buffer_value);
-    let mut result = vec![0; uint8_array.byte_length() as usize];
-    uint8_array.copy_to(&mut result);
-
-    let file = openctm::parse(std::io::Cursor::new(result)).unwrap();
+    let cursor = std::io::Cursor::new(input);
+    let file = openctm::parse(cursor).unwrap();
 
     let result = CtmResult {
         file,
@@ -105,17 +99,12 @@ pub struct SectorHandle {
 }
 
 #[wasm_bindgen]
-pub fn parse_root_sector(array_buffer_value: JsValue) -> Result<SectorHandle, JsValue> {
+pub fn parse_root_sector(input: &[u8]) -> Result<SectorHandle, JsValue> {
     // TODO read https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/building-your-project.html
     // and see if this can be moved to one common place
     panic::set_hook(Box::new(console_error_panic_hook::hook));
 
-    assert!(array_buffer_value.is_instance_of::<ArrayBuffer>());
-
-    let uint8_array = Uint8Array::new(&array_buffer_value);
-    let mut result = vec![0; uint8_array.byte_length() as usize];
-    uint8_array.copy_to(&mut result);
-    let cursor = std::io::Cursor::new(result);
+    let cursor = std::io::Cursor::new(input);
 
     // TODO see if it is possible to simplify this so we can use the ? operator instead
     let sector = match i3df::parse_root_sector(cursor) {
@@ -128,17 +117,13 @@ pub fn parse_root_sector(array_buffer_value: JsValue) -> Result<SectorHandle, Js
 }
 
 #[wasm_bindgen]
-pub fn parse_sector(root_sector: &SectorHandle, array_buffer_value: JsValue) -> Result<SectorHandle, JsValue> {
+pub fn parse_sector(root_sector: &SectorHandle, input: &[u8]) -> Result<SectorHandle, JsValue> {
+
     // TODO read https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/building-your-project.html
     // and see if this can be moved to one common place
     panic::set_hook(Box::new(console_error_panic_hook::hook));
 
-    assert!(array_buffer_value.is_instance_of::<ArrayBuffer>());
-
-    let uint8_array = Uint8Array::new(&array_buffer_value);
-    let mut result = vec![0; uint8_array.byte_length() as usize];
-    uint8_array.copy_to(&mut result);
-    let cursor = std::io::Cursor::new(result);
+    let cursor = std::io::Cursor::new(input);
 
     let attributes = match &root_sector.sector.header.attributes {
         Some(x) => x,
@@ -160,35 +145,41 @@ pub fn convert_sector(sector: &SectorHandle) -> i3df::renderables::Sector {
 }
 
 #[wasm_bindgen]
-pub fn parse_and_convert_f3df(array_buffer_value: JsValue) -> Result<Float32Array, JsValue> {
+pub fn parse_and_convert_f3df(input: &[u8]) -> Result<Float32Array, JsValue> {
     // TODO read https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/building-your-project.html
     // and see if this can be moved to one common place
     panic::set_hook(Box::new(console_error_panic_hook::hook));
 
-    assert!(array_buffer_value.is_instance_of::<ArrayBuffer>());
+    let cursor = std::io::Cursor::new(input);
 
-    let uint8_array = Uint8Array::new(&array_buffer_value);
-    let mut result = vec![0; uint8_array.byte_length() as usize];
-    uint8_array.copy_to(&mut result);
-    let cursor = std::io::Cursor::new(result);
-
-    let result = match f3df::parse_sector(cursor) {
+    let sector = match f3df::parse_sector(cursor) {
         Ok(x) => x,
         Err(e) => return Err(JsValue::from(error::ParserError::from(e)))
     };
 
-    let result = f3df::renderables::convert_sector(&result);
+    let faces = f3df::renderables::convert_sector(&sector);
+    let faces_as_f32 = unsafe {
+        // At this point, we do not want to pass Vec<Face> to JS,
+        // because it will turn into an inefficient array of objects.
+        // Instead, we want to use the more performant Float32Array to hold the data and only make
+        // sense of it in WebGL from now on.
+        // This requires us to use an unsafe block here to get a view into the data as if it was
+        // just &[f32].
+        // However, this is safe because we are making a copy below.
+        // Otherwise, we would not know when to free the memory on our end.
+        let pointer = faces.as_ptr() as *const f32;
+        let length = faces.len() * std::mem::size_of::<f3df::renderables::Face>() / std::mem::size_of::<f32>();
+        std::slice::from_raw_parts(
+            pointer,
+            length
+        )
+    };
 
-    Ok(
-        unsafe {
-            Float32Array::view(
-                std::slice::from_raw_parts(
-                    result.as_ptr() as *const f32,
-                    result.len() * std::mem::size_of::<f3df::renderables::Face>() / 4
-                )
-            )
-        }
-    )
+    // Returning a Vec<f32> here would lead to copying on the JS side instead.
+    // Also note that using a Float32Array::view here instead would be _very_ unsafe.
+    let result = Float32Array::from(faces_as_f32);
+
+    Ok(result)
 }
 
 #[wasm_bindgen]

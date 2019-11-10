@@ -10,10 +10,10 @@ crate-type = ["cdylib"]
 path = "rust/lib.rs"
 
 [dependencies]
-wasm-bindgen = { version = "0.2.49", features = ["serde-serialize"]  }
-js-sys = "0.3.26"
-serde = { version = "1.0.80", features = ["derive"] }
-serde_derive = "^1.0.59"
+wasm-bindgen = { version = "0.2.54", features = ["serde-serialize"] }
+js-sys = "0.3.31"
+serde = { version = "1.0.102", features = ["derive"] }
+serde_derive = "1.0.102"
 arraymap = "0.1.1"
 console_error_panic_hook = "0.1.6"
 serde-wasm-bindgen = "0.1.3"
@@ -23,12 +23,8 @@ openctm = { git = "https://github.com/cognitedata/openctm-rs", rev="cbaf8e71b344
 i3df = { git = "https://github.com/cognitedata/reveal-rs", rev="9eac0c208ceec2cbbff39b37cf992f42585d6e3d" }
 f3df = { git = "https://github.com/cognitedata/reveal-rs", rev="9eac0c208ceec2cbbff39b37cf992f42585d6e3d" }
 
-[profile.release]
-# TODO this enables debug symbols - remove when actually releasing to reduce file size
-debug = true
-
 [dependencies.web-sys]
-version = "0.3.4"
+version = "0.3.31"
 features = [
   'console',
   'Headers',
@@ -38,3 +34,7 @@ features = [
   'Response',
   'Window',
 ]
+
+[profile.release]
+# TODO this enables debug symbols - remove when actually releasing to reduce file size
+debug = true

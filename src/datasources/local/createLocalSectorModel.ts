@@ -52,7 +52,9 @@ export function createLocalSectorModel(baseUrl: string): SectorModel {
       throw new Error(`Got error ${response.status} while fetching '${url}' (${response.statusText})`);
     }
 
-    return response.arrayBuffer();
+    const buffer = await response.arrayBuffer();
+
+    return new Uint8Array(buffer);
   };
   const fetchFile: FetchCtmDelegate = async (fileId: number) => {
     const filemap = await loadFilemap;
@@ -67,7 +69,8 @@ export function createLocalSectorModel(baseUrl: string): SectorModel {
       throw new Error(`Got error ${response.status} while fetching '${url}' (${response.statusText})`);
     }
 
-    return response.arrayBuffer();
+    const buffer = await response.arrayBuffer();
+    return new Uint8Array(buffer);
   };
   return [fetchMetadata, fetchSector, fetchSectorQuads, fetchFile];
 }

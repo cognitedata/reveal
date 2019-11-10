@@ -5,8 +5,8 @@
 import { createCache } from '../../models/createCache';
 
 describe('createCache', () => {
-  const fetchCb: (id: number) => Promise<ArrayBuffer> = jest.fn();
-  const parseCb: (id: number, buffer: ArrayBuffer) => Promise<string> = jest.fn();
+  const fetchCb: (id: number) => Promise<Uint8Array> = jest.fn();
+  const parseCb: (id: number, buffer: Uint8Array) => Promise<string> = jest.fn();
 
   beforeEach(() => {
     jest.resetAllMocks();
@@ -33,7 +33,7 @@ describe('createCache', () => {
 
   test('parse on new id, parses', () => {
     const [fetch, parse] = createCache<number, string>(fetchCb, parseCb);
-    const buffer = new ArrayBuffer(10);
+    const buffer = new Uint8Array(10);
     parse(0, buffer);
     expect(parseCb).toBeCalledWith(0, buffer);
   });
@@ -41,7 +41,7 @@ describe('createCache', () => {
   test('parse on cached id, loads from cached', () => {
     // Arrange
     const [fetch, parse] = createCache<number, string>(fetchCb, parseCb);
-    const buffer = new ArrayBuffer(10);
+    const buffer = new Uint8Array(10);
     parse(0, buffer);
     jest.resetAllMocks();
 

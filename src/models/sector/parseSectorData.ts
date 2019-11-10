@@ -5,75 +5,63 @@
 import { Sector, SectorQuads, SectorMetadata, TriangleMesh } from './types';
 import { FetchSectorDelegate, FetchCtmDelegate } from './delegates';
 import { createOffsetsArray } from '../../utils/arrayUtils';
-import { WorkerArguments } from '../../../workers/types/parser.types';
-//import * as ParserWorker from 'worker-loader!../../../workers/parser.worker';
+import { WorkerArguments, ParseSectorResult, ParseQuadsResult, ParseCtmResult } from '../../../workers/types/parser.types';
+import { ParserWorker } from '../../../workers/parser.worker';
+import * as Comlink from 'comlink';
+
+type WorkDelegate<T> = (worker: ParserWorker) => Promise<T>;
 
 // TODO 2019-11-01 larsmoa: Move PooledWorker.
 interface PooledWorker {
-  worker: Worker;
+  // The worker returned by Comlink.wrap is not strictly speaking a ParserWorker,
+  // but it should expose the same functions
+  worker: ParserWorker;
   activeJobCount: number;
   messageIdCounter: number;
 }
 
+
+async function postWorkToAvailable<T>(workerList: PooledWorker[], work: WorkDelegate<T>):
+Promise<T>
+  {
+  let targetWorker = workerList[0];
+  for (const worker of workerList) {
+    if (worker.activeJobCount < targetWorker.activeJobCount) {
+      targetWorker = worker;
+    }
+  }
+  targetWorker.activeJobCount += 1;
+  const result = await work(targetWorker.worker);
+  targetWorker.activeJobCount -= 1;
+  return result;
+};
+
+async function postWorkToAll(workerList: PooledWorker[], work: WorkDelegate<void>) {
+  const operations = workerList.map(async worker => {
+    worker.activeJobCount += 1;
+    await work(worker.worker);
+    worker.activeJobCount -= 1;
+  });
+
+  await Promise.all(operations);
+};
+
+
 // TODO 20191030 larsmoa: Extract to separate file. Use Comlink (or other library
 // for web workers) to prettify.
-async function createWorkers<AcceptedArguments>() {
+function createWorkers<U>(): PooledWorker[] {
   const workerList: PooledWorker[] = [];
-
-  const postWork = async (worker: PooledWorker, work: any) => {
-    const result = await new Promise(resolve => {
-      // TODO add type
-      // TODO try to avoid passing rootSectorData - perhaps keep this stored in worker?
-      const messageId = worker.messageIdCounter;
-
-      worker.worker.addEventListener('message', event => {
-        if (!event.data || event.data.messageId !== messageId) {
-          return;
-        }
-        worker.activeJobCount -= 1;
-        resolve(event.data.result);
-      });
-
-      worker.activeJobCount += 1;
-      worker.messageIdCounter += 1;
-
-      worker.worker.postMessage({
-        // TODO add type
-        messageId,
-        work
-      });
-    });
-    return result;
-  };
 
   for (let i = 0; i < window.navigator.hardwareConcurrency; i++) {
     const newWorker = {
-      worker: new Worker('../../../workers/parser.worker', { name: 'parser', type: 'module' }),
+      worker: Comlink.wrap(new Worker('../../../workers/parser.worker', { name: 'parser', type: 'module' })) as ParserWorker,
       activeJobCount: 0,
       messageIdCounter: 0
     };
     workerList.push(newWorker);
   }
 
-  const postWorkToAvailable = async (work: AcceptedArguments): Promise<any> => {
-    // TODO add type
-    let targetWorker = workerList[0];
-    for (const worker of workerList) {
-      // TODO rewrite in a functional way
-      if (worker.activeJobCount < targetWorker.activeJobCount) {
-        targetWorker = worker;
-      }
-    }
-    return postWork(targetWorker, work);
-  };
-
-  const postWorkToAll = async (work: AcceptedArguments) => {
-    const operations = workerList.map(worker => postWork(worker, work));
-
-    await Promise.all(operations);
-  };
-
-  return [postWorkToAvailable, postWorkToAll];
+  return workerList;
 }
 
 // TODO make caching into a function that wraps around the CTM fetch + parse
@@ -84,26 +72,18 @@ export async function createParser(
   fetchSector: FetchSectorDelegate,
   fetchCtmFile: FetchCtmDelegate
 ) {
-  const rootSectorPromise = fetchSector(sectorRoot.id);
-  const workersPromise = createWorkers<WorkerArguments>();
+  const rootSectorArrayBuffer = await fetchSector(sectorRoot.id);
+  const workerList = createWorkers();
 
-  const [rootSectorArrayBuffer, workers] = await Promise.all([rootSectorPromise, workersPromise]);
-
-  const [postWork, postWorkToAll] = workers;
-
-  postWorkToAll({
-    parseRootSector: {
-      buffer: rootSectorArrayBuffer
-    }
+  postWorkToAll(workerList, async (worker: ParserWorker) => {
+    // NOTE: It is important that we copy the ArrayBuffer here, since it will be neutered the
+    // first time it is passed to a worker. We copy it by calling slice().
+    worker.parseRootSector(rootSectorArrayBuffer.slice())
   });
 
-  async function parse(sectorId: number, sectorArrayBuffer: ArrayBuffer): Promise<Sector> {
+  async function parse(sectorId: number, sectorArrayBuffer: Uint8Array): Promise<Sector> {
     try {
-      const sectorResult: any = await postWork({
-        parseSector: {
-          buffer: sectorArrayBuffer
-        }
-      });
+      const sectorResult = await postWorkToAvailable(workerList, async (worker: ParserWorker) => worker.parseSector(sectorArrayBuffer));
       const sector = new Sector();
       const { fileIds, colors, triangleCounts } = sectorResult;
 
@@ -114,7 +94,7 @@ export async function createParser(
         const fileTriangleCounts = meshIndices.map(i => triangleCounts[i]);
         const offsets = createOffsetsArray(fileTriangleCounts);
         // Load CTM (geometry)
-        const ctm = await loadCtmGeometry(fileId, fetchCtmFile, postWork);
+        const ctm = await loadCtmGeometry(fileId, fetchCtmFile, workerList);
 
         const indices = ctm.indices;
         const vertices = ctm.vertices;
@@ -159,15 +139,11 @@ export async function createParser(
 
 export async function createQuadsParser() {
   // TODO consider sharing workers with i3df parser
-  const [postWork] = await createWorkers<WorkerArguments>();
+  const workerList = await createWorkers<WorkerArguments>();
 
-  async function parse(sectorId: number, quadsArrayBuffer: ArrayBuffer): Promise<SectorQuads> {
+  async function parse(sectorId: number, quadsArrayBuffer: Uint8Array): Promise<SectorQuads> {
     try {
-      const sectorResult: any = await postWork({
-        parseQuads: {
-          buffer: quadsArrayBuffer
-        }
-      });
+      const sectorResult = await postWorkToAvailable<ParseQuadsResult>(workerList, async (worker: ParserWorker) => worker.parseQuads(quadsArrayBuffer));
       return {
         buffer: sectorResult.data
       } as SectorQuads;
@@ -205,13 +181,11 @@ function readColorToFloat32s(colors: Uint8Array, index: number): [number, number
 async function loadCtmGeometry(
   fileId: number,
   fetchCtmFile: FetchCtmDelegate,
-  postWork: (args: WorkerArguments) => any
+  workerList: PooledWorker[]
 ): Promise<any> {
   try {
     const buffer = await fetchCtmFile(fileId);
-    const ctm = await postWork({
-      parseCtm: { buffer }
-    });
+    const ctm = await postWorkToAvailable(workerList, async (worker: ParserWorker) => worker.parseCtm(buffer));
     return ctm;
   } catch (err) {
     throw new Error(`Parsing CTM file ${fileId} failed: ${err}`);

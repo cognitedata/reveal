@@ -17,12 +17,12 @@ export type FetchSectorMetadataDelegate = () => Promise<[SectorMetadata, SectorM
 /**
  * Delegate for fetching raw data for the sector given.
  */
-export type FetchSectorDelegate = (sectorId: number) => Promise<ArrayBuffer>;
+export type FetchSectorDelegate = (sectorId: number) => Promise<Uint8Array>;
 
 /**
  * Delegate for parsing data retrieved using a `FetchSectorDelegate`  to a `Sector`.
  */
-export type ParseSectorDelegate<T> = (sectorId: number, buffer: ArrayBuffer) => Promise<T>;
+export type ParseSectorDelegate<T> = (sectorId: number, buffer: Uint8Array) => Promise<T>;
 
 /**
  * Delegate for 'consuming' a sector, e.g. by creating a 3D node for it.
@@ -32,4 +32,4 @@ export type ConsumeSectorDelegate<T> = (sectorId: number, sector: T) => void;
 /**
  * Delegate for fetching raw data for a CTM file.
  */
-export type FetchCtmDelegate = (fileId: number) => Promise<ArrayBuffer>;
+export type FetchCtmDelegate = (fileId: number) => Promise<Uint8Array>;

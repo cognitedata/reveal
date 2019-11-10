@@ -71,12 +71,12 @@ function createSectorFilemap(sectors: RevealSector3D[]): Map<number, Versioned3D
   return sectorIdToFile;
 }
 
-async function loadSectorGeometry(sdk: CogniteClient, sectorId: number, file: Versioned3DFile): Promise<ArrayBuffer> {
+async function loadSectorGeometry(sdk: CogniteClient, sectorId: number, file: Versioned3DFile): Promise<Uint8Array> {
   const buffer = await sdk.files3D.retrieve(file!.fileId);
-  return buffer;
+  return new Uint8Array(buffer);
 }
 
-async function loadCtmFile(sdk: CogniteClient, fileId: number): Promise<ArrayBuffer> {
+async function loadCtmFile(sdk: CogniteClient, fileId: number): Promise<Uint8Array> {
   const buffer = await sdk.files3D.retrieve(fileId);
-  return buffer;
+  return new Uint8Array(buffer);
 }
