@@ -59,32 +59,57 @@ module.exports = env => {
   };
 
   if (development) {
-    config.entry["example_simple"] = './src/examples/threejs/simple.ts';
-    config.entry["example_threejs_post_processing_effects"] = './src/examples/threejs/post-processing-effects.ts';
-    config.plugins.push(
-      new HtmlWebpackPlugin({
-        templateParameters: {
-          'title': 'ThreeJS Post-processing effects',
-          'entry': 'example_threejs_post_processing_effects.js'
-        },
-        hash: true,
-        inject: true,
-        template: 'src/examples/template.ejs',
-        filename: 'example-threejs-post-processing-effects.html'
-      })
-    );
-    config.plugins.push(
-      new HtmlWebpackPlugin({
-        templateParameters: {
-          'title': 'Simple THREE js example',
-          'entry': 'example_simple.js'
-        },
-        hash: true,
-        inject: true,
-        template: 'src/examples/template.ejs',
-        filename: 'example-threejs-simple.html'
-      })
-    );
+    const examplesInput = [
+      {
+        name: "threejs-simple",
+        title: "Simple",
+        entry: './src/examples/threejs/simple.ts',
+      },
+      {
+        name: "threejs-post-processing-effects",
+        title: "Post processing effects",
+        entry: './src/examples/threejs/post-processing-effects.ts',
+      }
+    ];
+
+    const examples = examplesInput.map(example => {
+      const {name, title, entry} = example;
+      return {
+        name,
+        title,
+        entry,
+        script: `${name}.js`,
+        page: `example-${name}.html`,
+      };
+    });
+
+    config.target = 'web';
+
+    for (const example of examples) {
+      const { entry, name, page, script, title } = example;
+      config.entry[name] = entry;
+      config.plugins.push(
+        new HtmlWebpackPlugin({
+          templateParameters: {
+            'title': title,
+            'script': script
+          },
+          hash: true,
+          inject: false,
+          template: 'src/examples/template-example.ejs',
+          filename: page,
+        })
+      );
+    }
+
+    config.plugins.push(new HtmlWebpackPlugin({
+      templateParameters: {
+        'examples': examples,
+      },
+      hash: true,
+      inject: false,
+      template: 'src/examples/template-index.ejs',
+    }));
   }
 
   return config;
