@@ -141,24 +141,43 @@ fn main() -> Result<(), Box<dyn Error>> {
             let index_name_ident = format_ident!("{}", index.name);
             let attribute_ident = format_ident!("{}", index.attribute);
             let attribute_id = id;
+            let attribute_index = quote! {
+                *chunk.get(#attribute_id).ok_or(error!("Chunk does not contain attribute id"))?
+            };
             let body = match index.attribute.as_ref() {
                 "null" => quote! {
-                    #index_name_ident: chunk [ #attribute_id ],
+                    #index_name_ident: #attribute_index,
                 },
                 "color" => quote! {
-                    #index_name_ident: attributes.#attribute_ident[(chunk [ #attribute_id ] - 1) as usize],
+                    #index_name_ident: {
+                        let attribute_index = #attribute_index;
+                        match attribute_index {
+                            0 => Default::default(),
+                            i => *attributes
+                                .#attribute_ident
+                                .get((i - 1) as usize)
+                                .ok_or(error!("Attribute missing for color"))?,
+                        }
+                    },
                 },
                 "texture" => quote! {
                     #index_name_ident: {
-                        let attribute_index = chunk [ #attribute_id ];
+                        let attribute_index = #attribute_index;
                         match attribute_index {
                             0 => Default::default(), // TODO make into None
-                            _ => attributes.#attribute_ident[attribute_index as usize].clone()
+                            i => attributes
+                                .#attribute_ident
+                                .get(i as usize)
+                                .ok_or(error!("Attribute missing for texture"))?
+                                .clone()
                         }
                     },
                 },
                 _ => quote! {
-                    #index_name_ident: attributes.#attribute_ident[chunk [ #attribute_id ] as usize],
+                    #index_name_ident: *attributes
+                        .#attribute_ident
+                        .get(#attribute_index as usize)
+                        .ok_or(error!("Attribute missing"))?,
                 },
             };
 
@@ -241,19 +260,19 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 
         let parse_primitive_function = quote! {
-            fn #primitive_parse_function(node_ids: Vec<u64>, indices: std::slice::Chunks<u64>, attributes: &SectorAttributes) -> Vec<#name_ident> {
-                node_ids.iter().zip(indices).map(|(node_id, chunk)| {
-                    #name_ident {
+            fn #primitive_parse_function(node_ids: Vec<u64>, indices: std::slice::Chunks<u64>, attributes: &SectorAttributes) -> Result<Vec<#name_ident>, Error> {
+                node_ids.iter().zip(indices).map(|(node_id, chunk)|
+                    Ok(#name_ident {
                         node_id: *node_id,
                         #(#attribute_assignments)*
-                    }
-                }).collect()
+                    })
+                ).collect()
             }
         };
 
         let match_pattern = quote! {
             #geometry_id_num => {
-                #snake_name_collection_ident = #primitive_parse_function(node_ids, indices, attributes);
+                #snake_name_collection_ident = #primitive_parse_function(node_ids, indices, attributes)?;
             },
         };
 
