@@ -54,7 +54,6 @@ module.exports = env => {
         forceMode: 'production',
       }),
       new WorkerPlugin(),
-      // Examples
     ],
   };
 
@@ -69,7 +68,12 @@ module.exports = env => {
         name: "threejs-post-processing-effects",
         title: "Post processing effects",
         entry: './src/examples/threejs/post-processing-effects.ts',
-      }
+      },
+      {
+        name: "threejs-two-models",
+        title: "Two models",
+        entry: './src/examples/threejs/two-models.ts',
+      },
     ];
 
     const examples = examplesInput.map(example => {
