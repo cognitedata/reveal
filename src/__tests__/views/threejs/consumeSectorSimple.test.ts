@@ -57,4 +57,3 @@ describe('consumeSectorDetailed', () => {
     expect(node.children).not.toBeEmpty();
   });
 });
-

@@ -67,4 +67,3 @@ export function consumeSectorDetailed(
   }
   sectorNode.add(group);
 }
-

@@ -5,7 +5,7 @@
 import { Sector, SectorQuads, SectorMetadata, TriangleMesh } from './types';
 import { FetchSectorDelegate, FetchCtmDelegate } from './delegates';
 import { createOffsetsArray } from '../../utils/arrayUtils';
-import { WorkerArguments, ParseSectorResult, ParseQuadsResult, ParseCtmResult } from '../../../workers/types/parser.types';
+import { WorkerArguments, ParseQuadsResult } from '../../../workers/types/parser.types';
 import { ParserWorker } from '../../../workers/parser.worker';
 import * as Comlink from 'comlink';
 
@@ -20,10 +20,7 @@ interface PooledWorker {
   messageIdCounter: number;
 }
 
-
-async function postWorkToAvailable<T>(workerList: PooledWorker[], work: WorkDelegate<T>):
-Promise<T>
-  {
+async function postWorkToAvailable<T>(workerList: PooledWorker[], work: WorkDelegate<T>): Promise<T> {
   let targetWorker = workerList[0];
   for (const worker of workerList) {
     if (worker.activeJobCount < targetWorker.activeJobCount) {
@@ -34,7 +31,7 @@ Promise<T>
   const result = await work(targetWorker.worker);
   targetWorker.activeJobCount -= 1;
   return result;
-};
+}
 
 async function postWorkToAll(workerList: PooledWorker[], work: WorkDelegate<void>) {
   const operations = workerList.map(async worker => {
@@ -44,8 +41,7 @@ async function postWorkToAll(workerList: PooledWorker[], work: WorkDelegate<void
   });
 
   await Promise.all(operations);
-};
-
+}
 
 // TODO 20191030 larsmoa: Extract to separate file. Use Comlink (or other library
 // for web workers) to prettify.
@@ -54,7 +50,9 @@ function createWorkers<U>(): PooledWorker[] {
 
   for (let i = 0; i < window.navigator.hardwareConcurrency; i++) {
     const newWorker = {
-      worker: Comlink.wrap(new Worker('../../../workers/parser.worker', { name: 'parser', type: 'module' })) as ParserWorker,
+      worker: Comlink.wrap(
+        new Worker('../../../workers/parser.worker', { name: 'parser', type: 'module' })
+      ) as ParserWorker,
       activeJobCount: 0,
       messageIdCounter: 0
     };
@@ -78,12 +76,14 @@ export async function createParser(
   postWorkToAll(workerList, async (worker: ParserWorker) => {
     // NOTE: It is important that we copy the ArrayBuffer here, since it will be neutered the
     // first time it is passed to a worker. We copy it by calling slice().
-    worker.parseRootSector(rootSectorArrayBuffer.slice())
+    worker.parseRootSector(rootSectorArrayBuffer.slice());
   });
 
   async function parse(sectorId: number, sectorArrayBuffer: Uint8Array): Promise<Sector> {
     try {
-      const sectorResult = await postWorkToAvailable(workerList, async (worker: ParserWorker) => worker.parseSector(sectorArrayBuffer));
+      const sectorResult = await postWorkToAvailable(workerList, async (worker: ParserWorker) =>
+        worker.parseSector(sectorArrayBuffer)
+      );
       const sector = new Sector();
       const { fileIds, colors, triangleCounts } = sectorResult;
 
@@ -143,7 +143,9 @@ export async function createQuadsParser() {
 
   async function parse(sectorId: number, quadsArrayBuffer: Uint8Array): Promise<SectorQuads> {
     try {
-      const sectorResult = await postWorkToAvailable<ParseQuadsResult>(workerList, async (worker: ParserWorker) => worker.parseQuads(quadsArrayBuffer));
+      const sectorResult = await postWorkToAvailable<ParseQuadsResult>(workerList, async (worker: ParserWorker) =>
+        worker.parseQuads(quadsArrayBuffer)
+      );
       return {
         buffer: sectorResult.data
       } as SectorQuads;

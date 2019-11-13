@@ -28,7 +28,7 @@ export class ParserWorker {
   parseRootSector = async (buffer: Uint8Array): Promise<void> => {
     const rust = await rustModule;
     this.rootSectorHandle = rust.parse_root_sector(buffer);
-  }
+  };
   parseSector = async (buffer: Uint8Array): Promise<ParseSectorResult> => {
     const rust = await rustModule;
     if (!this.rootSectorHandle) {
@@ -48,7 +48,7 @@ export class ParserWorker {
     sectorDataHandle.free();
     collection.free();
     return result;
-  }
+  };
   parseCtm = async (buffer: Uint8Array): Promise<ParseCtmResult> => {
     const rust = await rustModule;
     // TODO handle parsing failure
@@ -60,15 +60,15 @@ export class ParserWorker {
     };
     ctm.free();
     return result;
-  }
+  };
   parseQuads = async (buffer: Uint8Array): Promise<ParseQuadsResult> => {
     const rust = await rustModule;
     const quads = rust.parse_and_convert_f3df(buffer);
     return {
       data: quads
     };
-  }
-};
+  };
+}
 
 const obj = new ParserWorker();
 

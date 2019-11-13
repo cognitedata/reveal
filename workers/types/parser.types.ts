@@ -1,7 +1,11 @@
+/*!
+ * Copyright 2019 Cognite AS
+ */
+
 export interface ParseRootSectorArguments {
   parseRootSector: {
     buffer: ArrayBuffer;
-  }
+  };
 }
 export interface ParseRootSectorResult {
   result: string;
@@ -10,7 +14,7 @@ export interface ParseRootSectorResult {
 export interface ParseSectorArguments {
   parseSector: {
     buffer: ArrayBuffer;
-  }
+  };
 }
 export interface ParseSectorResult {
   fileIds: Float64Array;
@@ -24,7 +28,7 @@ export interface ParseSectorResult {
 export interface ParseCtmArguments {
   parseCtm: {
     buffer: ArrayBuffer;
-  }
+  };
 }
 export interface ParseCtmResult {
   indices: Uint32Array;
@@ -34,8 +38,8 @@ export interface ParseCtmResult {
 
 export interface ParseQuadsArguments {
   parseQuads: {
-    buffer: ArrayBuffer,
-  }
+    buffer: ArrayBuffer;
+  };
 }
 export interface ParseQuadsResult {
   data: Float32Array;
