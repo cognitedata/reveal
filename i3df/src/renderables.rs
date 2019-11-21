@@ -1,11 +1,10 @@
-use crate::{Matrix, Rotation3, Vector3, Vector4, Texture};
+use crate::{Matrix, Rotation3, Vector3, Vector4};
 use serde_derive::{Deserialize, Serialize};
 use std::f64::consts::PI;
 
 use serde_wasm_bindgen;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
-use js_sys::Array;
 
 // TODO remember to normalize arc_angles
 
@@ -1203,9 +1202,6 @@ impl ToRenderables for crate::OpenTorusSegment {
 impl ToRenderables for crate::Ring {
     fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let x_axis = Vector3::new(1.0, 0.0, 0.0);
-        let z_axis = Vector3::new(0.0, 0.0, 1.0);
-        let rotation = Rotation3::rotation_between(&z_axis, &self.normal.into()).unwrap();
-        let local_x_axis: Vector3 = rotation.transform_vector(&x_axis);
         let thickness = (self.outer_radius - self.inner_radius) / self.outer_radius;
         let angle = 0.0;
         let arc_angle = 2.0 * PI as f32;
@@ -1266,7 +1262,6 @@ impl ToRenderables for crate::Torus {
 struct Cap {
     ring: GeneralRing,
     normal: Vector3,
-    center: Vector3,
     plane: Vector4,
 }
 
@@ -1337,7 +1332,7 @@ fn create_cap(
             tree_index: cylinder.tree_index,
             color: cylinder.color,
             size: cylinder.diagonal,
-            center: center.clone(),
+            center: *center,
             normal: cap_z_axis_a,
             local_x_axis: cap_x_axis_a,
             radius_x: cap_radius_x_a,
@@ -1347,7 +1342,6 @@ fn create_cap(
             arc_angle: cylinder.arc_angle,
         },
         normal,
-        center: center.clone(),
         plane,
     }
 }
@@ -1361,7 +1355,7 @@ struct GeneralCylinderWithCaps {
 }
 
 fn angle_between_vectors(v1: &Vector3, v2: &Vector3, up: &Vector3) -> f32 {
-    let angle = nalgebra::angle(v1, v2);
+    let angle = Matrix::angle(v1, v2);
     let right = Vector3::cross(v1, up);
     let more_than_pi = Vector3::dot(&right, &v2) < 0.0;
     if more_than_pi {
