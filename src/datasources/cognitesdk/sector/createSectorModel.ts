@@ -2,13 +2,13 @@
  * Copyright 2019 Cognite AS
  */
 
-import { FetchSectorMetadataDelegate, FetchSectorDelegate, FetchCtmDelegate } from '../../models/sector/delegates';
+import { FetchSectorMetadataDelegate, FetchSectorDelegate, FetchCtmDelegate } from '../../../models/sector/delegates';
 import { CogniteClient, RevealSector3D, Versioned3DFile } from '@cognite/sdk';
 import { buildSectorMetadata } from './buildSectorMetadata';
-import { constructMatrixFromRotation } from './constructMatrixFromRotation';
-import { getNewestVersionedFile } from './utilities';
-import { SectorModelTransformation } from '../../models/sector/types';
-import { SectorModel } from '../SectorModel';
+import { constructMatrixFromRotation } from '../../constructMatrixFromRotation';
+import { getNewestVersionedFile } from '../utilities';
+import { SectorModelTransformation } from '../../../models/sector/types';
+import { SectorModel } from '../../SectorModel';
 
 export function createSectorModel(sdk: CogniteClient, modelId: number, revisionId: number): SectorModel {
   const metadataPromise = loadSectorMetadata(sdk, modelId, revisionId);

@@ -4,16 +4,16 @@
 
 import * as THREE from 'three';
 
-import { SectorModel } from '../../datasources/cognitesdk';
-import { createParser, createQuadsParser } from '../../models/sector/parseSectorData';
+import { createParser, createQuadsParser } from '../../../models/sector/parseSectorData';
 import { initializeThreeJsView } from './initializeThreeJsView';
-import { Sector, SectorQuads } from '../../models/sector/types';
-import { ConsumeSectorDelegate } from '../../models/sector/delegates';
-import { createSyncedConsumeAndDiscard } from '../createSyncedConsumeAndDiscard';
-import { initializeSectorLoader } from '../../models/sector/initializeSectorLoader';
+import { Sector, SectorQuads } from '../../../models/sector/types';
+import { ConsumeSectorDelegate } from '../../../models/sector/delegates';
+import { createSyncedConsumeAndDiscard } from '../../createSyncedConsumeAndDiscard';
+import { initializeSectorLoader } from '../../../models/sector/initializeSectorLoader';
 import { SectorNode } from './SectorNode';
-import { determineSectors } from '../../models/sector/determineSectors';
-import { createCache } from '../../models/createCache';
+import { determineSectors } from '../../../models/sector/determineSectors';
+import { createCache } from '../../../models/createCache';
+import { SectorModel } from '../../../datasources/SectorModel';
 
 export async function createThreeJsSectorNode(model: SectorModel): Promise<SectorNode> {
   const [fetchSectorMetadata, fetchSector, fetchSectorQuads, fetchCtmFile] = model;

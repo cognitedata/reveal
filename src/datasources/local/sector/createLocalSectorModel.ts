@@ -2,13 +2,13 @@
  * Copyright 2019 Cognite AS
  */
 
-import { FetchCtmDelegate, FetchSectorDelegate, FetchSectorMetadataDelegate } from '../../models/sector/delegates';
-import { SectorModel } from '../cognitesdk';
+import { FetchCtmDelegate, FetchSectorDelegate, FetchSectorMetadataDelegate } from '../../../models/sector/delegates';
 import { loadLocalSectorMetadata } from './loadLocalSectorMetadata';
-import { DefaultSectorRotationMatrix } from '../cognitesdk/constructMatrixFromRotation';
+import { DefaultSectorRotationMatrix } from '../../constructMatrixFromRotation';
 import { loadLocalFileMap } from './loadLocalFileMap';
-import { buildSectorMetadata } from '../cognitesdk/buildSectorMetadata';
-import { getNewestVersionedFile } from '../cognitesdk/utilities';
+import { buildSectorMetadata } from '../../cognitesdk/sector/buildSectorMetadata';
+import { getNewestVersionedFile } from '../../cognitesdk/utilities';
+import { SectorModel } from '../../SectorModel';
 
 export function createLocalSectorModel(baseUrl: string): SectorModel {
   const loadMetadata = loadLocalSectorMetadata(baseUrl + '/uploaded_sectors.txt');

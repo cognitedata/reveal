@@ -2,7 +2,9 @@
  * Copyright 2019 Cognite AS
  */
 
-export { SectorNode } from './views/threejs/SectorNode';
-export { createLocalSectorModel } from './datasources/local/createLocalSectorModel';
-export { createThreeJsSectorNode } from './views/threejs/createThreeJsSectorNode';
 export { SectorModel } from './datasources/SectorModel';
+export { PointCloudModel } from './datasources/PointCloudModel';
+export { createLocalSectorModel, createLocalPointCloudModel } from './datasources/local';
+
+export { SectorNode } from './views/threejs';
+export { createThreeJsSectorNode, createThreeJsPointCloudNode } from './views/threejs';

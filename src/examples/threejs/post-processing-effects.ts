@@ -4,8 +4,8 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { createLocalSectorModel } from '../../datasources/local/createLocalSectorModel';
-import { createThreeJsSectorNode } from '../../views/threejs/createThreeJsSectorNode';
+import { createThreeJsSectorNode } from '../../views/threejs/sector/createThreeJsSectorNode';
+import { createLocalSectorModel } from '../..';
 
 const postprocessing = require('postprocessing');
 

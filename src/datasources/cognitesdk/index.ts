@@ -2,7 +2,6 @@
  * Copyright 2019 Cognite AS
  */
 
-import { createSectorModel } from './createSectorModel';
-import { SectorModel } from '../SectorModel';
+import { createSectorModel } from './sector/createSectorModel';
 
-export { createSectorModel, SectorModel };
+export { createSectorModel };

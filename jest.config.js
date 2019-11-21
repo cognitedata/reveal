@@ -13,7 +13,8 @@ module.exports = {
   ],
   automock: false,
   setupFiles: [
-    "./src/__tests__/setupJest.ts"
+    "./src/__tests__/setupJest.ts",
+    "jest-canvas-mock"
   ],
   setupFilesAfterEnv: [
     "jest-extended"

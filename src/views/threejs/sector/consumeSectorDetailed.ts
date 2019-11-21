@@ -3,9 +3,9 @@
  */
 
 import * as THREE from 'three';
-import { Sector, SectorMetadata, SectorQuads } from '../../models/sector/types';
+import { Sector, SectorMetadata, SectorQuads } from '../../../models/sector/types';
 import { SectorNode } from './SectorNode';
-import { toThreeJsBox3 } from './utilities';
+import { toThreeJsBox3 } from '../utilities';
 import { vertexShaderDetailed, fragmentShader } from './shaders';
 
 export function consumeSectorDetailed(

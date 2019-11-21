@@ -3,7 +3,7 @@
  */
 
 import { RevealSector3D } from '@cognite/sdk';
-import { buildSectorMetadata } from '../../../datasources/cognitesdk/buildSectorMetadata';
+import { buildSectorMetadata } from '../../../../datasources/cognitesdk/sector/buildSectorMetadata';
 
 describe('buildSectorMetadata', () => {
   test('no sectors, throws', () => {

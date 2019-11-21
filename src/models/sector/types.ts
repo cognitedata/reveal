@@ -5,28 +5,27 @@
 import { Box3 } from '../../utils/Box3';
 import { mat4 } from 'gl-matrix';
 
+// TODO 2019-11-12 larsmoa: Move and rename to something general (not specific
+// for sector data).
 export type SectorModelTransformation = {
   modelMatrix: mat4;
 };
 
 export interface SectorMetadata {
-  id: number;
-  path: string;
-  bounds: Box3;
-  children: SectorMetadata[];
+  readonly id: number;
+  readonly path: string;
+  readonly bounds: Box3;
+  readonly children: SectorMetadata[];
 }
 
 export type Color = number;
 
 export type TriangleMesh = {
-  // offset: number;
-  // count: number;
-  fileId: number;
-
-  indices: Uint32Array;
-  vertices: Float32Array;
-  normals: Float32Array | undefined;
-  colors: Float32Array;
+  readonly fileId: number;
+  readonly indices: Uint32Array;
+  readonly vertices: Float32Array;
+  readonly normals: Float32Array | undefined;
+  readonly colors: Float32Array;
 };
 
 export class Sector {
@@ -58,6 +57,6 @@ export interface CtmWorkerResult {
 }
 
 export interface WantedSectors {
-  detailed: Set<number>;
-  simple: Set<number>;
+  readonly detailed: Set<number>;
+  readonly simple: Set<number>;
 }

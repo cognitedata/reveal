@@ -74,6 +74,12 @@ module.exports = env => {
         title: "Two models",
         entry: './src/examples/threejs/two-models.ts',
       },
+      {
+        name: "threejs-with-pointcloud",
+        title: "CAD model with point cloud",
+        entry: './src/examples/threejs/sector-with-pointcloud.ts',
+
+      }
     ];
 
     const examples = examplesInput.map(example => {

@@ -2,7 +2,7 @@
  * Copyright 2019 Cognite AS
  */
 
-import { constructMatrixFromRotation } from '../../../datasources/cognitesdk/constructMatrixFromRotation';
+import { constructMatrixFromRotation } from '../../datasources/constructMatrixFromRotation';
 import { vec3 } from 'gl-matrix';
 
 describe('constructMatrixFromRotation', () => {

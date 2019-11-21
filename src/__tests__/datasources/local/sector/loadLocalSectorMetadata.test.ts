@@ -2,7 +2,7 @@
  * Copyright 2019 Cognite AS
  */
 
-import { loadLocalSectorMetadata } from '../../../datasources/local/loadLocalSectorMetadata';
+import { loadLocalSectorMetadata } from '../../../../datasources/local/sector/loadLocalSectorMetadata';
 
 describe('loadLocalSectorMetadata', () => {
   const singleSectorResponse =
