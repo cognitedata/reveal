@@ -1,0 +1,71 @@
+use crate::Vector3;
+use crate::renderables::{
+    Circle, GeometryCollection, PrimitiveCollections, SphericalSegment, ToRenderables,
+};
+
+impl ToRenderables for crate::OpenSphericalSegment {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
+        collections
+            .spherical_segment_collection
+            .push(SphericalSegment {
+                node_id: self.node_id,
+                tree_index: self.tree_index,
+                color: self.color,
+                size: self.diagonal,
+                center: self.center(),
+                normal: self.normal.into(),
+                radius: self.radius,
+                height: self.height,
+            });
+    }
+}
+
+impl ToRenderables for crate::Sphere {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
+        let z_axis = Vector3::new(0.0, 0.0, 1.0);
+
+        collections
+            .spherical_segment_collection
+            .push(SphericalSegment {
+                node_id: self.node_id,
+                tree_index: self.tree_index,
+                color: self.color,
+                size: self.diagonal,
+                center: self.center(),
+                normal: z_axis,
+                radius: self.radius,
+                height: 2.0 * self.radius,
+            });
+    }
+}
+
+impl ToRenderables for crate::ClosedSphericalSegment {
+    fn to_renderables(&self, collections: &mut PrimitiveCollections) {
+        collections
+            .spherical_segment_collection
+            .push(SphericalSegment {
+                node_id: self.node_id,
+                tree_index: self.tree_index,
+                color: self.color,
+                size: self.diagonal,
+                center: self.center(),
+                normal: self.normal.into(),
+                radius: self.radius,
+                height: self.height,
+            });
+
+        let length = self.radius - self.height;
+        let circle_radius = f32::sqrt(self.radius.powi(2) - length.powi(2));
+        let center = self.center() + length * Vector3::from(self.normal).normalize();
+
+        collections.circle_collection.push(Circle {
+            node_id: self.node_id,
+            tree_index: self.tree_index,
+            color: self.color,
+            size: self.diagonal,
+            center,
+            normal: self.normal.into(),
+            radius: circle_radius,
+        });
+    }
+}
