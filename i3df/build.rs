@@ -142,7 +142,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             let attribute_ident = format_ident!("{}", index.attribute);
             let attribute_id = id;
             let attribute_index = quote! {
-                *chunk.get(#attribute_id).ok_or(error!("Chunk does not contain attribute id"))?
+                *chunk.get(#attribute_id).ok_or_else(|| error!("Chunk does not contain attribute id"))?
             };
             let body = match index.attribute.as_ref() {
                 "null" => quote! {
@@ -156,7 +156,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                             i => *attributes
                                 .#attribute_ident
                                 .get((i - 1) as usize)
-                                .ok_or(error!("Attribute missing for color"))?,
+                                .ok_or_else(|| error!("Attribute missing for color"))?,
                         }
                     },
                 },
@@ -168,7 +168,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                             i => attributes
                                 .#attribute_ident
                                 .get(i as usize)
-                                .ok_or(error!("Attribute missing for texture"))?
+                                .ok_or_else(|| error!("Attribute missing for texture"))?
                                 .clone()
                         }
                     },
@@ -177,7 +177,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                     #index_name_ident: *attributes
                         .#attribute_ident
                         .get(#attribute_index as usize)
-                        .ok_or(error!("Attribute missing"))?,
+                        .ok_or_else(|| error!("Attribute missing"))?,
                 },
             };
 

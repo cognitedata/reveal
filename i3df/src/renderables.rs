@@ -88,9 +88,8 @@ macro_rules! make_func_vec {
                 data_as_vector3.as_ptr() as *const f32,
                 data_as_vector3.len() * 3,
             )
-            .to_vec()
         };
-        data_as_f32
+        data_as_f32.to_vec()
     }};
 
     ($self:ident, $field_name:ident, Vector4, f32) => {{
@@ -100,9 +99,8 @@ macro_rules! make_func_vec {
                 data_as_vector4.as_ptr() as *const f32,
                 data_as_vector4.len() * 4,
             )
-            .to_vec()
         };
-        data_as_f32
+        data_as_f32.to_vec()
     }};
 
     ($self:ident, $field_name:ident, Texture, Texture) => {{
@@ -547,7 +545,7 @@ impl ToRenderables for crate::ClosedCone {
         let center_axis: Vector3 = self.center_axis.into();
         let x_axis = Vector3::new(1.0, 0.0, 0.0);
         let z_axis = Vector3::new(0.0, 0.0, 1.0);
-        let center: Vector3 = self.center().into();
+        let center: Vector3 = self.center();
         let center_a = center + center_axis * self.height / 2.0;
         let center_b = center - center_axis * self.height / 2.0;
         let normal = (center_a - center_b).normalize();
@@ -558,8 +556,8 @@ impl ToRenderables for crate::ClosedCone {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center_a: center_a.clone(),
-            center_b: center_b.clone(),
+            center_a,
+            center_b,
             radius_a: self.radius_a,
             radius_b: self.radius_b,
             angle: 0.0,
@@ -571,7 +569,7 @@ impl ToRenderables for crate::ClosedCone {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center: center_a.clone(),
+            center: center_a,
             normal: self.center_axis.into(),
             radius: self.radius_a,
         });
@@ -580,7 +578,7 @@ impl ToRenderables for crate::ClosedCone {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center: center_b.clone(),
+            center: center_b,
             // TODO should this be negative, it is not in the JS version
             normal: -1.0 * center_axis,
             radius: self.radius_b,
@@ -593,7 +591,7 @@ impl ToRenderables for crate::ClosedCylinder {
         let center_axis: Vector3 = self.center_axis.into();
         let x_axis = Vector3::new(1.0, 0.0, 0.0);
         let z_axis = Vector3::new(0.0, 0.0, 1.0);
-        let center: Vector3 = self.center().into();
+        let center: Vector3 = self.center();
         let center_a = center + center_axis * self.height / 2.0;
         let center_b = center - center_axis * self.height / 2.0;
         let normal = (center_a - center_b).normalize();
@@ -604,8 +602,8 @@ impl ToRenderables for crate::ClosedCylinder {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center_a: center_a.clone(),
-            center_b: center_b.clone(),
+            center_a,
+            center_b,
             radius_a: self.radius,
             radius_b: self.radius,
             angle: 0.0,
@@ -617,7 +615,7 @@ impl ToRenderables for crate::ClosedCylinder {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center: center_a.clone(),
+            center: center_a,
             normal: self.center_axis.into(),
             radius: self.radius,
         });
@@ -626,7 +624,7 @@ impl ToRenderables for crate::ClosedCylinder {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center: center_b.clone(),
+            center: center_b,
             // TODO should this be negative, it is not in the JS version
             normal: -1.0 * center_axis,
             radius: self.radius,
@@ -652,12 +650,12 @@ impl ToRenderables for crate::Circle {
 impl ToRenderables for crate::ClosedEccentricCone {
     fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center_axis: Vector3 = self.center_axis.into();
-        let center: Vector3 = self.center().into();
+        let center: Vector3 = self.center();
         let center_a = center + center_axis * self.height / 2.0;
         let center_b = center - center_axis * self.height / 2.0;
 
         let mut normal: Vector3 = self.cap_normal.into();
-        let dot_product = Matrix::dot(&normal, &(&center_a - &center_b));
+        let dot_product = Matrix::dot(&normal, &(center_a - center_b));
         if dot_product < 0.0 {
             normal = -normal;
         }
@@ -667,19 +665,19 @@ impl ToRenderables for crate::ClosedEccentricCone {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center_a: center_a.clone(),
-            center_b: center_b.clone(),
+            center_a,
+            center_b,
             radius_a: self.radius_a,
             radius_b: self.radius_b,
-            normal: normal.clone(),
+            normal,
         });
         collections.circle_collection.push(Circle {
             node_id: self.node_id,
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center: center_a.clone(),
-            normal: normal.clone(),
+            center: center_a,
+            normal,
             radius: self.radius_a,
         });
         collections.circle_collection.push(Circle {
@@ -687,9 +685,9 @@ impl ToRenderables for crate::ClosedEccentricCone {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center: center_b.clone(),
+            center: center_b,
             // TODO should this be negative?
-            normal: normal.clone(),
+            normal,
             radius: self.radius_b,
         });
     }
@@ -721,7 +719,7 @@ impl ToRenderables for crate::ClosedEllipsoidSegment {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center: center,
+            center,
             normal: self.normal.into(),
             radius: circle_radius,
         });
@@ -733,7 +731,7 @@ impl ToRenderables for crate::ClosedExtrudedRingSegment {
         let center_axis: Vector3 = self.center_axis.into();
         let x_axis = Vector3::new(1.0, 0.0, 0.0);
         let z_axis = Vector3::new(0.0, 0.0, 1.0);
-        let center: Vector3 = self.center().into();
+        let center: Vector3 = self.center();
         let center_a = center + center_axis * self.height / 2.0;
         let center_b = center - center_axis * self.height / 2.0;
         let rotation = Rotation3::rotation_between(&z_axis, &center_axis).unwrap();
@@ -747,9 +745,9 @@ impl ToRenderables for crate::ClosedExtrudedRingSegment {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center: center_a.clone(),
+            center: center_a,
             normal: self.center_axis.into(),
-            local_x_axis: local_x_axis.clone(),
+            local_x_axis,
             radius_x: self.outer_radius,
             radius_y: self.outer_radius,
             thickness,
@@ -761,9 +759,9 @@ impl ToRenderables for crate::ClosedExtrudedRingSegment {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center: center_b.clone(),
+            center: center_b,
             normal: self.center_axis.into(),
-            local_x_axis: local_x_axis.clone(),
+            local_x_axis,
             radius_x: self.outer_radius,
             radius_y: self.outer_radius,
             thickness,
@@ -777,13 +775,13 @@ impl ToRenderables for crate::ClosedExtrudedRingSegment {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center_a: center_a.clone(),
-            center_b: center_b.clone(),
+            center_a,
+            center_b,
             radius_a: self.outer_radius,
             radius_b: self.outer_radius,
             angle: self.rotation_angle,
             arc_angle: self.arc_angle,
-            local_x_axis: local_x_axis.clone(),
+            local_x_axis,
         });
 
         // inner cone
@@ -792,13 +790,13 @@ impl ToRenderables for crate::ClosedExtrudedRingSegment {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center_a: center_a.clone(),
-            center_b: center_b.clone(),
+            center_a,
+            center_b,
             radius_a: self.inner_radius,
             radius_b: self.inner_radius,
             angle: self.rotation_angle,
             arc_angle: self.arc_angle,
-            local_x_axis: local_x_axis.clone(),
+            local_x_axis,
         });
 
         {
@@ -864,7 +862,7 @@ impl ToRenderables for crate::ClosedSphericalSegment {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center: center,
+            center,
             normal: self.normal.into(),
             radius: circle_radius,
         });
@@ -914,7 +912,7 @@ impl ToRenderables for crate::ExtrudedRing {
         let center_axis: Vector3 = self.center_axis.into();
         let x_axis = Vector3::new(1.0, 0.0, 0.0);
         let z_axis = Vector3::new(0.0, 0.0, 1.0);
-        let center: Vector3 = self.center().into();
+        let center: Vector3 = self.center();
         let center_a = center + center_axis * self.height / 2.0;
         let center_b = center - center_axis * self.height / 2.0;
         let rotation = Rotation3::rotation_between(&z_axis, &center_axis).unwrap();
@@ -930,54 +928,54 @@ impl ToRenderables for crate::ExtrudedRing {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center: center_a.clone(),
+            center: center_a,
             normal: self.center_axis.into(),
-            local_x_axis: local_x_axis.clone(),
+            local_x_axis,
             radius_x: self.outer_radius,
             radius_y: self.outer_radius,
             thickness,
             angle: rotation_angle,
-            arc_angle: arc_angle,
+            arc_angle,
         });
         collections.general_ring_collection.push(GeneralRing {
             node_id: self.node_id,
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center: center_b.clone(),
+            center: center_b,
             normal: self.center_axis.into(),
-            local_x_axis: local_x_axis.clone(),
+            local_x_axis,
             radius_x: self.outer_radius,
             radius_y: self.outer_radius,
             thickness,
             angle: rotation_angle,
-            arc_angle: arc_angle,
+            arc_angle,
         });
         collections.cone_collection.push(Cone {
             node_id: self.node_id,
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center_a: center_a.clone(),
-            center_b: center_b.clone(),
+            center_a,
+            center_b,
             radius_a: self.outer_radius,
             radius_b: self.outer_radius,
             angle: rotation_angle,
-            arc_angle: arc_angle,
-            local_x_axis: local_x_axis.clone(),
+            arc_angle,
+            local_x_axis,
         });
         collections.cone_collection.push(Cone {
             node_id: self.node_id,
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center_a: center_a.clone(),
-            center_b: center_b.clone(),
+            center_a,
+            center_b,
             radius_a: self.inner_radius,
             radius_b: self.inner_radius,
             angle: rotation_angle,
-            arc_angle: arc_angle,
-            local_x_axis: local_x_axis.clone(),
+            arc_angle,
+            local_x_axis,
         });
     }
 }
@@ -1005,7 +1003,7 @@ impl ToRenderables for crate::OpenCone {
         let center_axis: Vector3 = self.center_axis.into();
         let x_axis = Vector3::new(1.0, 0.0, 0.0);
         let z_axis = Vector3::new(0.0, 0.0, 1.0);
-        let center: Vector3 = self.center().into();
+        let center: Vector3 = self.center();
         let center_a = center + center_axis * self.height / 2.0;
         let center_b = center - center_axis * self.height / 2.0;
         let normal = (center_a - center_b).normalize();
@@ -1016,8 +1014,8 @@ impl ToRenderables for crate::OpenCone {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center_a: center_a.clone(),
-            center_b: center_b.clone(),
+            center_a,
+            center_b,
             radius_a: self.radius_a,
             radius_b: self.radius_b,
             angle: 0.0,
@@ -1031,7 +1029,7 @@ impl ToRenderables for crate::OpenCylinder {
         let center_axis: Vector3 = self.center_axis.into();
         let x_axis = Vector3::new(1.0, 0.0, 0.0);
         let z_axis = Vector3::new(0.0, 0.0, 1.0);
-        let center: Vector3 = self.center().into();
+        let center: Vector3 = self.center();
         let center_a = center + center_axis * self.height / 2.0;
         let center_b = center - center_axis * self.height / 2.0;
         let normal = (center_a - center_b).normalize();
@@ -1042,8 +1040,8 @@ impl ToRenderables for crate::OpenCylinder {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center_a: center_a.clone(),
-            center_b: center_b.clone(),
+            center_a,
+            center_b,
             radius_a: self.radius,
             radius_b: self.radius,
             angle: 0.0,
@@ -1056,12 +1054,12 @@ impl ToRenderables for crate::OpenCylinder {
 impl ToRenderables for crate::OpenEccentricCone {
     fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center_axis: Vector3 = self.center_axis.into();
-        let center: Vector3 = self.center().into();
+        let center: Vector3 = self.center();
         let center_a = center + center_axis * self.height / 2.0;
         let center_b = center - center_axis * self.height / 2.0;
 
         let mut normal: Vector3 = self.cap_normal.into();
-        let dot_product = Matrix::dot(&normal, &(&center_a - &center_b));
+        let dot_product = Matrix::dot(&normal, &(center_a - center_b));
         if dot_product < 0.0 {
             normal = -normal;
         }
@@ -1071,8 +1069,8 @@ impl ToRenderables for crate::OpenEccentricCone {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center_a: center_a.clone(),
-            center_b: center_b.clone(),
+            center_a,
+            center_b,
             radius_a: self.radius_a,
             radius_b: self.radius_b,
             normal,
@@ -1101,7 +1099,7 @@ impl ToRenderables for crate::OpenExtrudedRingSegment {
         let center_axis: Vector3 = self.center_axis.into();
         let x_axis = Vector3::new(1.0, 0.0, 0.0);
         let z_axis = Vector3::new(0.0, 0.0, 1.0);
-        let center: Vector3 = self.center().into();
+        let center: Vector3 = self.center();
         let center_a = center + center_axis * self.height / 2.0;
         let center_b = center - center_axis * self.height / 2.0;
         let rotation = Rotation3::rotation_between(&z_axis, &center_axis).unwrap();
@@ -1114,9 +1112,9 @@ impl ToRenderables for crate::OpenExtrudedRingSegment {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center: center_a.clone(),
+            center: center_a,
             normal: self.center_axis.into(),
-            local_x_axis: local_x_axis.clone(),
+            local_x_axis,
             radius_x: self.outer_radius,
             radius_y: self.outer_radius,
             thickness,
@@ -1128,9 +1126,9 @@ impl ToRenderables for crate::OpenExtrudedRingSegment {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center: center_b.clone(),
+            center: center_b,
             normal: self.center_axis.into(),
-            local_x_axis: local_x_axis.clone(),
+            local_x_axis,
             radius_x: self.outer_radius,
             radius_y: self.outer_radius,
             thickness,
@@ -1142,26 +1140,26 @@ impl ToRenderables for crate::OpenExtrudedRingSegment {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center_a: center_a.clone(),
-            center_b: center_b.clone(),
+            center_a,
+            center_b,
             radius_a: self.outer_radius,
             radius_b: self.outer_radius,
             angle: self.rotation_angle,
             arc_angle: self.arc_angle,
-            local_x_axis: local_x_axis.clone(),
+            local_x_axis,
         });
         collections.cone_collection.push(Cone {
             node_id: self.node_id,
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center_a: center_a.clone(),
-            center_b: center_b.clone(),
+            center_a,
+            center_b,
             radius_a: self.inner_radius,
             radius_b: self.inner_radius,
             angle: self.rotation_angle,
             arc_angle: self.arc_angle,
-            local_x_axis: local_x_axis.clone(),
+            local_x_axis,
         });
     }
 }
@@ -1280,6 +1278,7 @@ fn intersect(
 
 // TODO use f64 for the calculations - there is a slight offset between the trapeziums and top caps
 
+#[allow(clippy::too_many_arguments)]
 fn create_cap(
     cylinder: &crate::SolidOpenGeneralCylinder,
     cylinder_rotation: &Rotation3,
@@ -1367,7 +1366,7 @@ fn angle_between_vectors(v1: &Vector3, v2: &Vector3, up: &Vector3) -> f32 {
 
 fn create_general_cylinder(cylinder: &crate::SolidOpenGeneralCylinder) -> GeneralCylinderWithCaps {
     let center_axis: Vector3 = cylinder.center_axis.into();
-    let center: Vector3 = cylinder.center().into();
+    let center: Vector3 = cylinder.center();
     let center_a = center + center_axis * cylinder.height / 2.0;
     let center_b = center - center_axis * cylinder.height / 2.0;
 
@@ -1505,7 +1504,7 @@ impl ToRenderables for crate::SolidOpenGeneralCylinder {
         let outer_cylinder = cylinder_with_caps.cylinder;
         let inner_cylinder = {
             let mut c = outer_cylinder.clone();
-            c.radius = c.radius - self.thickness;
+            c.radius -= self.thickness;
             c
         };
 
@@ -1545,7 +1544,7 @@ impl ToRenderables for crate::SolidClosedGeneralCylinder {
         let outer_cylinder = cylinder_with_caps.cylinder;
         let inner_cylinder = {
             let mut c = outer_cylinder.clone();
-            c.radius = c.radius - self.thickness;
+            c.radius -= self.thickness;
             c
         };
 
@@ -1578,7 +1577,7 @@ impl ToRenderables for crate::SolidClosedGeneralCylinder {
                 let line_start = point * *radius + ext_b - normal;
                 let line_end = point * *radius + ext_a + normal;
                 let line_vector = line_end - line_start;
-                vertices[vertex_index + 0] = intersect(
+                vertices[vertex_index] = intersect(
                     &line_vector,
                     &line_start,
                     &cap_b.ring.normal,
@@ -1612,7 +1611,7 @@ impl ToRenderables for crate::OpenGeneralCone {
         let center_axis: Vector3 = self.center_axis.into();
         let x_axis = Vector3::new(1.0, 0.0, 0.0);
         let z_axis = Vector3::new(0.0, 0.0, 1.0);
-        let center: Vector3 = self.center().into();
+        let center: Vector3 = self.center();
         let center_a = center + center_axis * self.height / 2.0;
         let center_b = center - center_axis * self.height / 2.0;
         let normal = (center_a - center_b).normalize();
@@ -1641,7 +1640,7 @@ impl ToRenderables for crate::ClosedGeneralCone {
         let center_axis: Vector3 = self.center_axis.into();
         let x_axis = Vector3::new(1.0, 0.0, 0.0);
         let z_axis = Vector3::new(0.0, 0.0, 1.0);
-        let center: Vector3 = self.center().into();
+        let center: Vector3 = self.center();
         let center_a = center + center_axis * self.height / 2.0;
         let center_b = center - center_axis * self.height / 2.0;
         let normal = (center_a - center_b).normalize();
@@ -1665,9 +1664,9 @@ impl ToRenderables for crate::ClosedGeneralCone {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center: center_a.clone(),
+            center: center_a,
             normal: self.center_axis.into(),
-            local_x_axis: local_x_axis.clone(),
+            local_x_axis,
             radius_x: self.radius_a,
             radius_y: self.radius_a,
             // TODO is thickness in JS, but no thickness property exists on ClosedGeneralCone
@@ -1680,9 +1679,9 @@ impl ToRenderables for crate::ClosedGeneralCone {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center: center_a.clone(),
+            center: center_a,
             normal: self.center_axis.into(),
-            local_x_axis: local_x_axis.clone(),
+            local_x_axis,
             radius_x: self.radius_b,
             radius_y: self.radius_b,
             thickness: 1.0,
@@ -1696,7 +1695,7 @@ impl ToRenderables for crate::SolidOpenGeneralCone {
         let center_axis: Vector3 = self.center_axis.into();
         let x_axis = Vector3::new(1.0, 0.0, 0.0);
         let z_axis = Vector3::new(0.0, 0.0, 1.0);
-        let center: Vector3 = self.center().into();
+        let center: Vector3 = self.center();
         let center_a = center + center_axis * self.height / 2.0;
         let center_b = center - center_axis * self.height / 2.0;
         let normal = (center_a - center_b).normalize();
@@ -1733,9 +1732,9 @@ impl ToRenderables for crate::SolidOpenGeneralCone {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center: center_a.clone(),
+            center: center_a,
             normal: self.center_axis.into(),
-            local_x_axis: local_x_axis.clone(),
+            local_x_axis,
             radius_x: self.radius_a,
             radius_y: self.radius_a,
             thickness: self.thickness / self.radius_a,
@@ -1747,9 +1746,9 @@ impl ToRenderables for crate::SolidOpenGeneralCone {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center: center_b.clone(),
+            center: center_b,
             normal: self.center_axis.into(),
-            local_x_axis: local_x_axis.clone(),
+            local_x_axis,
             radius_x: self.radius_b,
             radius_y: self.radius_b,
             thickness: self.thickness / self.radius_b,
@@ -1763,7 +1762,7 @@ impl ToRenderables for crate::SolidClosedGeneralCone {
         let center_axis: Vector3 = self.center_axis.into();
         let x_axis = Vector3::new(1.0, 0.0, 0.0);
         let z_axis = Vector3::new(0.0, 0.0, 1.0);
-        let center: Vector3 = self.center().into();
+        let center: Vector3 = self.center();
         let center_a = center + center_axis * self.height / 2.0;
         let center_b = center - center_axis * self.height / 2.0;
         let normal = (center_a - center_b).normalize();
@@ -1801,9 +1800,9 @@ impl ToRenderables for crate::SolidClosedGeneralCone {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center: center_a.clone(),
+            center: center_a,
             normal: self.center_axis.into(),
-            local_x_axis: local_x_axis.clone(),
+            local_x_axis,
             radius_x: self.radius_a,
             radius_y: self.radius_a,
             thickness: self.thickness / self.radius_a,
@@ -1815,9 +1814,9 @@ impl ToRenderables for crate::SolidClosedGeneralCone {
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
-            center: center_b.clone(),
+            center: center_b,
             normal: self.center_axis.into(),
-            local_x_axis: local_x_axis.clone(),
+            local_x_axis,
             radius_x: self.radius_b,
             radius_y: self.radius_b,
             thickness: self.thickness / self.radius_b,

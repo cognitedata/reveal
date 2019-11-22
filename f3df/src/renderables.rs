@@ -37,9 +37,9 @@ pub fn convert_sector(sector: &f3df::Sector) -> Vec<Face> {
     };
     let origin = contents.grid_origin;
     let cell_size = [
-        (contents.grid_size[0] - 1) as u64,
-        (contents.grid_size[1] - 1) as u64,
-        (contents.grid_size[2] - 1) as u64,
+        u64::from(contents.grid_size[0] - 1),
+        u64::from(contents.grid_size[1] - 1),
+        u64::from(contents.grid_size[2] - 1),
     ];
     let cell_size_i_j = cell_size[0] * cell_size[1];
     let increment = contents.grid_increment;
@@ -63,7 +63,7 @@ pub fn convert_sector(sector: &f3df::Sector) -> Vec<Face> {
                 origin[2] + increment * z,
             );
 
-            let count = (face.repetitions as u32 + 1) as f32;
+            let count = (u32::from(face.repetitions) + 1) as f32;
             if face
                 .face_flags
                 .intersects(f3df::FaceFlags::POSITIVE_X_VISIBLE)
@@ -78,11 +78,11 @@ pub fn convert_sector(sector: &f3df::Sector) -> Vec<Face> {
                 };
                 instance_data.push(Face {
                     color: [
-                        color[0] as f32 / 255.0,
-                        color[1] as f32 / 255.0,
-                        color[2] as f32 / 255.0,
+                        f32::from(color[0]) / 255.0,
+                        f32::from(color[1]) / 255.0,
+                        f32::from(color[2]) / 255.0,
                     ],
-                    normal: normal,
+                    normal,
                     matrix: compose_face_matrix(&center, &offset, &scale, &rotation),
                 });
             }
@@ -100,11 +100,11 @@ pub fn convert_sector(sector: &f3df::Sector) -> Vec<Face> {
                 };
                 instance_data.push(Face {
                     color: [
-                        color[0] as f32 / 255.0,
-                        color[1] as f32 / 255.0,
-                        color[2] as f32 / 255.0,
+                        f32::from(color[0]) / 255.0,
+                        f32::from(color[1]) / 255.0,
+                        f32::from(color[2]) / 255.0,
                     ],
-                    normal: normal,
+                    normal,
                     matrix: compose_face_matrix(&center, &offset, &scale, &rotation),
                 });
             }
@@ -122,11 +122,11 @@ pub fn convert_sector(sector: &f3df::Sector) -> Vec<Face> {
                 };
                 instance_data.push(Face {
                     color: [
-                        color[0] as f32 / 255.0,
-                        color[1] as f32 / 255.0,
-                        color[2] as f32 / 255.0,
+                        f32::from(color[0]) / 255.0,
+                        f32::from(color[1]) / 255.0,
+                        f32::from(color[2]) / 255.0,
                     ],
-                    normal: normal,
+                    normal,
                     matrix: compose_face_matrix(&center, &offset, &scale, &rotation),
                 });
             }
@@ -144,11 +144,11 @@ pub fn convert_sector(sector: &f3df::Sector) -> Vec<Face> {
                 };
                 instance_data.push(Face {
                     color: [
-                        color[0] as f32 / 255.0,
-                        color[1] as f32 / 255.0,
-                        color[2] as f32 / 255.0,
+                        f32::from(color[0]) / 255.0,
+                        f32::from(color[1]) / 255.0,
+                        f32::from(color[2]) / 255.0,
                     ],
-                    normal: normal,
+                    normal,
                     matrix: compose_face_matrix(&center, &offset, &scale, &rotation),
                 });
             }
@@ -166,11 +166,11 @@ pub fn convert_sector(sector: &f3df::Sector) -> Vec<Face> {
                 };
                 instance_data.push(Face {
                     color: [
-                        color[0] as f32 / 255.0,
-                        color[1] as f32 / 255.0,
-                        color[2] as f32 / 255.0,
+                        f32::from(color[0]) / 255.0,
+                        f32::from(color[1]) / 255.0,
+                        f32::from(color[2]) / 255.0,
                     ],
-                    normal: normal,
+                    normal,
                     matrix: compose_face_matrix(&center, &offset, &scale, &rotation),
                 });
             }
@@ -188,11 +188,11 @@ pub fn convert_sector(sector: &f3df::Sector) -> Vec<Face> {
                 };
                 instance_data.push(Face {
                     color: [
-                        color[0] as f32 / 255.0,
-                        color[1] as f32 / 255.0,
-                        color[2] as f32 / 255.0,
+                        f32::from(color[0]) / 255.0,
+                        f32::from(color[1]) / 255.0,
+                        f32::from(color[2]) / 255.0,
                     ],
-                    normal: normal,
+                    normal,
                     matrix: compose_face_matrix(&center, &offset, &scale, &rotation),
                 });
             }

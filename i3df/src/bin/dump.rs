@@ -1,7 +1,6 @@
 use std::error::Error;
 use std::fs::File;
 use std::io::{stdin, stdout, BufReader, Read};
-use i3df::renderables::GeometryCollection;
 
 use clap::clap_app;
 
@@ -52,7 +51,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let output = if stats {
         match scene {
-            Output::FileScene(x) => Output::FileSceneStats { size: 1000 },
+            Output::FileScene(_) => Output::FileSceneStats { size: 1000 },
             Output::RenderableScene(x) => Output::RenderableSceneStats(x.statistics()),
             x => x,
         }

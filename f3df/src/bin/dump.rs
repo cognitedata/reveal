@@ -1,7 +1,7 @@
 use clap::clap_app;
+use serde_derive::Serialize;
 use serde_json;
 use serde_yaml;
-use serde_derive::{Deserialize, Serialize};
 use std::error::Error;
 use std::fs::File;
 use std::io::{stdin, stdout, Read};
