@@ -6,18 +6,38 @@ import * as THREE from 'three';
 import { WantedSectors, SectorMetadata, SectorModelTransformation } from './types';
 import { traverseDepthFirst } from '../../utils/traversal';
 import { toThreeMatrix4 } from '../../views/threejs/utilities';
+import { mat4 } from 'gl-matrix';
 
 export async function determineSectors(
   root: SectorMetadata,
-  camera: THREE.Camera,
+  cameraOrMatrix: THREE.Camera | mat4,
   modelTranformation: SectorModelTransformation
 ): Promise<WantedSectors> {
   const sectors: SectorMetadata[] = [];
 
-  const matrix = new THREE.Matrix4()
-    .multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse)
-    .multiply(toThreeMatrix4(modelTranformation.modelMatrix));
-  const frustum = new THREE.Frustum().setFromMatrix(matrix);
+  const frustum = new THREE.Frustum();
+  const cameraPosition = new THREE.Vector3();
+  if (cameraOrMatrix instanceof THREE.Camera) {
+    const camera = cameraOrMatrix as THREE.Camera;
+    const matrix = new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+
+    frustum.setFromMatrix(matrix);
+    cameraPosition.setFromMatrixPosition(matrix);
+    // const matrix = new THREE.Matrix4()
+    //   .multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse)
+    //   .multiply(toThreeMatrix4(modelTranformation.modelMatrix));
+    // frustum.setFromMatrix(matrix);
+    // cameraPosition.setFromMatrixPosition(matrix);
+  } else {
+    const invViewMatrix = mat4.invert(mat4.create(), cameraOrMatrix as mat4)!;
+    const invModelTransformationMatrix = mat4.invert(mat4.create(), modelTranformation.modelMatrix)!;
+    const matrix = mat4.multiply(mat4.create(), cameraOrMatrix as mat4, invModelTransformationMatrix);
+    const threeMatrix = toThreeMatrix4(matrix);
+    // const matrix = toThreeMatrix4(cameraOrMatrix as mat4);
+
+    frustum.setFromMatrix(threeMatrix);
+    cameraPosition.setFromMatrixPosition(threeMatrix);
+  }
 
   const bbox = new THREE.Box3();
   const min = new THREE.Vector3();
@@ -38,7 +58,7 @@ export async function determineSectors(
   });
 
   const inverseMatrix = new THREE.Matrix4().getInverse(toThreeMatrix4(modelTranformation.modelMatrix));
-  const cameraPosition = camera.position.clone().applyMatrix4(inverseMatrix);
+  // const cameraPosition = camera.position.clone().applyMatrix4(inverseMatrix);
 
   function distanceToCamera(s: SectorMetadata) {
     min.set(s.bounds.min[0], s.bounds.min[1], s.bounds.min[2]);

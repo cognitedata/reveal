@@ -26,12 +26,16 @@
     "@cognite/potree-core": "^1.0.8",
     "@cognite/sdk": "^2.6.1",
     "@cognite/tslint-config-cognite-3d": "^1.0.4",
+    "@types/cesium": "^1.59.2",
     "@types/dat.gui": "^0.7.5",
     "@types/gl-matrix": "^2.4.5",
     "@types/jest": "^24.0.19",
     "@types/node": "^12.11.7",
     "@wasm-tool/wasm-pack-plugin": "^1.0.1",
     "@xailabs/three-renderer-stats": "^1.0.4",
+    "cesium": "^1.63.0",
+    "copy-webpack-plugin": "^5.0.4",
+    "css-loader": "^3.2.0",
     "camera-controls": "^1.15.0",
     "comlink": "^4.1.0",
     "dat.gui": "^0.7.6",
@@ -59,9 +63,13 @@
     "worker-plugin": "^3.2.0"
   },
   "peerDependencies": {
+    "cesium": "^1.63.0",
     "@cognite/potree-core": "^1.0.8",
     "camera-controls": "^1.15.0",
     "gl-matrix": "^3.1.0",
     "three": "0.109.0"
+  },
+  "dependencies": {
+    "gl-matrix": "^3.1.0"
   }
 }
