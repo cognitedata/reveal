@@ -3,10 +3,9 @@ use std::io::{self, BufRead, BufReader, Cursor, Read};
 use byteorder::{LittleEndian, ReadBytesExt};
 
 use serde_derive::{Deserialize, Serialize};
+use nalgebra;
 
-#[macro_use]
-extern crate impl_ops;
-use std::ops;
+use wasm_bindgen::prelude::*;
 
 #[macro_use]
 pub mod error;
@@ -16,73 +15,19 @@ mod fib;
 use fib::*;
 
 pub mod renderables;
-use renderables::{GeometryCollection, ToRenderables};
 
 mod generated;
+mod generated_renderables;
+
 pub use generated::*;
+
+type Vector3 = nalgebra::Vector3::<f32>;
+type Vector4 = nalgebra::Vector4::<f32>;
+type Matrix<X, Y, Z> = nalgebra::Matrix::<f32, X, Y, Z>;
+type Rotation3 = nalgebra::Rotation3::<f32>;
 
 const MAGIC_BYTES: u32 = 0x4644_3349;
 const ATTRIBUTE_COUNT: u32 = 18;
-
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
-pub struct Vector3 {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
-}
-
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
-pub struct Vector4 {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
-    pub w: f32,
-}
-
-impl From<[f32; 3]> for Vector3 {
-    fn from(other: [f32; 3]) -> Self {
-        Vector3 {
-            x: other[0],
-            y: other[1],
-            z: other[2],
-        }
-    }
-}
-
-impl From<Vector3> for [f32; 3] {
-    fn from(other: Vector3) -> Self {
-        [other.x, other.y, other.z]
-    }
-}
-
-impl_op_ex!(+ |a: &Vector3, b: &Vector3| -> Vector3 {
-    Vector3 {
-        x: a.x + b.x,
-        y: a.y + b.y,
-        z: a.z + b.z,
-    }
-});
-impl_op_ex!(-|a: &Vector3, b: &Vector3| -> Vector3 {
-    Vector3 {
-        x: a.x - b.x,
-        y: a.y - b.y,
-        z: a.z - b.z,
-    }
-});
-impl_op_ex_commutative!(*|a: &Vector3, b: f32| -> Vector3 {
-    Vector3 {
-        x: a.x * b,
-        y: a.y * b,
-        z: a.z * b,
-    }
-});
-impl_op_ex!(/ |a: &Vector3, b: f32| -> Vector3 {
-    Vector3 {
-        x: a.x / b,
-        y: a.y / b,
-        z: a.z / b,
-    }
-});
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Scene {
@@ -101,8 +46,8 @@ pub struct SectorHeader {
     pub magic_bytes: u32,
     pub format_version: u32,
     pub optimizer_version: u32,
-    pub sector_id: u64,
-    pub parent_sector_id: Option<u64>,
+    pub sector_id: usize,
+    pub parent_sector_id: Option<usize>,
 
     pub bbox_min: [f32; 3],
     pub bbox_max: [f32; 3],
@@ -150,6 +95,7 @@ pub enum SectorAttributeData {
     Texture(Vec<Texture>),
 }
 
+#[wasm_bindgen]
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct Texture {
     pub file_id: u64,
@@ -157,34 +103,56 @@ pub struct Texture {
     pub height: u16,
 }
 
-pub fn parse_scene(reader: impl Read) -> Result<Scene, Error> {
+pub fn parse_scene(reader: impl BufRead) -> Result<Scene, Error> {
     parse_scene_data(reader)
 }
 
-pub fn parse_scene_data(reader: impl Read) -> Result<Scene, Error> {
-    let mut reader = BufReader::new(reader);
+pub fn parse_root_sector(mut reader: impl BufRead) -> Result<Sector, Error> {
+    //let mut reader = BufReader::new(reader);
+    let size = reader.read_u32::<LittleEndian>()?;
 
-    let root_sector = {
-        let size = reader.read_u32::<LittleEndian>()?;
+    // read bytes
+    let mut sector = vec![0; size as usize].into_boxed_slice();
+    reader.read_exact(&mut sector)?;
 
-        // read bytes
-        let mut sector = vec![0; size as usize].into_boxed_slice();
-        reader.read_exact(&mut sector)?;
-
-        // parse sector
-        let mut input = BufReader::new(Cursor::new(sector));
-        let header = parse_sector_header(&mut input)?;
-        let attributes = match &header.attributes {
-            Some(x) => x,
-            None => return Err(error!("Attributes missing on root sector")),
-        };
-        let primitive_collections = generated::parse_primitives(&mut input, &attributes)?;
-        Sector {
-            header,
-            primitive_collections,
-        }
+    // parse sector
+    let mut input = BufReader::new(Cursor::new(sector));
+    let header = parse_sector_header(&mut input)?;
+    let attributes = match &header.attributes {
+        Some(x) => x,
+        None => return Err(error!("Attributes missing on root sector")),
     };
+    let primitive_collections = generated::parse_primitives(&mut input, &attributes)?;
+    //assert!(reader.eof()?);
+    Ok(Sector {
+        header,
+        primitive_collections,
+    })
+}
 
+pub fn parse_sector(attributes: &SectorAttributes, mut reader: impl BufRead) -> Result<Sector, Error> {
+    //let mut reader = BufReader::new(reader);
+    // read number of bytes
+    let size = reader.read_u32::<LittleEndian>()?;
+
+    // read bytes
+    let mut sector = vec![0; size as usize].into_boxed_slice();
+    reader.read_exact(&mut sector)?;
+
+    // parse sector
+    let mut input = BufReader::new(Cursor::new(sector));
+    let header = parse_sector_header(&mut input)?;
+    let primitive_collections = generated::parse_primitives(&mut input, attributes)?;
+    Ok(Sector {
+        header,
+        primitive_collections,
+    })
+}
+
+pub fn parse_scene_data(mut reader: impl BufRead) -> Result<Scene, Error> {
+    //let mut reader = BufReader::new(reader);
+
+    let root_sector = parse_root_sector(&mut reader)?;
     let attributes = match &root_sector.header.attributes {
         Some(x) => x,
         None => return Err(error!("Attributes missing on root sector")),
@@ -198,21 +166,9 @@ pub fn parse_scene_data(reader: impl Read) -> Result<Scene, Error> {
             break;
         }
 
-        // read number of bytes
-        let size = reader.read_u32::<LittleEndian>()?;
+        let sector = parse_sector(&attributes, &mut reader)?;
 
-        // read bytes
-        let mut sector = vec![0; size as usize].into_boxed_slice();
-        reader.read_exact(&mut sector)?;
-
-        // parse sector
-        let mut input = BufReader::new(Cursor::new(sector));
-        let header = parse_sector_header(&mut input)?;
-        let primitive_collections = generated::parse_primitives(&mut input, &attributes)?;
-        other_sectors.push(Sector {
-            header,
-            primitive_collections,
-        });
+        other_sectors.push(sector);
     }
 
     let mut sectors = vec![root_sector];
@@ -237,10 +193,10 @@ pub fn parse_sector_header(mut input: &mut impl BufRead) -> Result<SectorHeader,
     assert_eq!(format_version, 7);
     let optimizer_version = input.read_u32::<LittleEndian>()?;
 
-    let sector_id = input.read_u64::<LittleEndian>()?;
+    let sector_id = input.read_u64::<LittleEndian>()? as usize;
     let parent_sector_id = match input.read_u64::<LittleEndian>()? {
         std::u64::MAX => None,
-        x => Some(x),
+        x => Some(x as usize),
     };
 
     let bbox_min_x = input.read_f32::<LittleEndian>()?;
@@ -294,70 +250,6 @@ pub fn parse_sector_header(mut input: &mut impl BufRead) -> Result<SectorHeader,
         bbox_max: [bbox_max_x, bbox_max_y, bbox_max_z],
 
         attributes,
-    })
-}
-
-pub fn parse_scene_to_renderables(input: impl Read) -> Result<renderables::Scene, Error> {
-    // TODO instead of storing the data twice, we should just stream directly from the
-    // file into a collection of renderables - benchmark and see if it makes sense
-
-    let scene = parse_scene(input)?;
-
-    let sectors = scene
-        .sectors
-        .iter()
-        .map(|sector| {
-            // TODO calculate capacity based on number of objects of each type
-            // TODO introduce exact capacity
-            let mut box_collection = renderables::Box3DVec::with_capacity(0);
-            let mut circle_collection = renderables::CircleVec::with_capacity(0);
-            let mut cone_collection = renderables::ConeVec::with_capacity(0);
-
-            let mapper = &mut |item| match item {
-                renderables::RenderablePrimitive::Box3D(x) => {
-                    box_collection.push(x);
-                }
-                renderables::RenderablePrimitive::Circle(x) => {
-                    circle_collection.push(x);
-                }
-                renderables::RenderablePrimitive::Cone(x) => {
-                    cone_collection.push(x);
-                }
-            };
-
-            {
-                let collection = &sector.primitive_collections.box_collection;
-                for raw_item in collection {
-                    for item in raw_item.to_renderables() {
-                        mapper(item);
-                    }
-                }
-            }
-
-            {
-                let collection = &sector.primitive_collections.closed_cylinder_collection;
-                for raw_item in collection {
-                    for item in raw_item.to_renderables() {
-                        mapper(item);
-                    }
-                }
-            }
-
-            renderables::Sector {
-                id: sector.header.sector_id,
-                parent_id: sector.header.parent_sector_id,
-                bbox_min: sector.header.bbox_min.into(),
-                bbox_max: sector.header.bbox_max.into(),
-                box_collection,
-                circle_collection,
-                cone_collection,
-            }
-        })
-        .collect();
-
-    Ok(renderables::Scene {
-        root_sector_id: scene.root_sector_id,
-        sectors,
     })
 }
 

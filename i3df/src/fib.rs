@@ -83,7 +83,7 @@ pub fn fib(n: usize) -> u64 {
 }
 
 pub fn decode_fib(data: &[u8], count: usize) -> Vec<u64> {
-    let mut array = Vec::new();
+    let mut array = Vec::with_capacity(count);
 
     let mut pos = 0;
     for _i in 0..count {

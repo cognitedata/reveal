@@ -4,6 +4,8 @@ use byteorder::{LittleEndian, ReadBytesExt};
 
 use serde::Serialize;
 
+pub mod renderables;
+
 #[macro_use]
 pub mod error;
 use error::*;

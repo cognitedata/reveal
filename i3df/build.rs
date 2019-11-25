@@ -90,15 +90,26 @@ fn create_dtype(
     }
 }
 
-fn main() -> Result<(), Box<dyn Error>> {
-    let out_dir = env::var("OUT_DIR")?;
-    let out_file = format!("{}/generated.rs", out_dir);
+fn write_code_to_file(filename: &String, code: &proc_macro2::TokenStream) -> Result<(), Box<dyn Error>> {
+    let code = code.to_string().replace("}", "}\n").replace(";", ";\n");
 
-    println!("Output file: {}", out_file);
+    let (_, result, _) = rustfmt::format_input(
+        rustfmt::Input::Text(code),
+        &Default::default(),
+        None as Option<&mut std::io::Stdout>,
+    ).unwrap();
+
+    let code = &result[0].1;
+    println!("build.rs writing to output file: {}", filename);
+    let mut file = fs::File::create(filename)?;
+    write!(file, "{}", code)?;
+
+    Ok(())
+}
+
+fn main() -> Result<(), Box<dyn Error>> {
 
     let spec: Spec = serde_yaml::from_str(i3df_specification::as_string().as_str())?;
-
-    let mut file = fs::File::create(&out_file).unwrap();
 
     let mut attribute_map: HashMap<String, &Attribute> = HashMap::new();
     let mut attribute_id_map: HashMap<String, usize> = HashMap::new();
@@ -113,6 +124,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut primitive_idents = Vec::new();
     let mut primitive_match_patterns = Vec::new();
     let mut primitive_impls = Vec::new();
+    let mut primitive_to_renderables = Vec::new();
 
     for (geometry_id, geometry_type) in spec.geometry_types {
         let snake_name = &geometry_type.name;
@@ -129,24 +141,43 @@ fn main() -> Result<(), Box<dyn Error>> {
             let index_name_ident = format_ident!("{}", index.name);
             let attribute_ident = format_ident!("{}", index.attribute);
             let attribute_id = id;
+            let attribute_index = quote! {
+                *chunk.get(#attribute_id).ok_or_else(|| error!("Chunk does not contain attribute id"))?
+            };
             let body = match index.attribute.as_ref() {
                 "null" => quote! {
-                    #index_name_ident: chunk [ #attribute_id ],
+                    #index_name_ident: #attribute_index,
                 },
                 "color" => quote! {
-                    #index_name_ident: attributes.#attribute_ident[(chunk [ #attribute_id ] - 1) as usize],
+                    #index_name_ident: {
+                        let attribute_index = #attribute_index;
+                        match attribute_index {
+                            0 => Default::default(),
+                            i => *attributes
+                                .#attribute_ident
+                                .get((i - 1) as usize)
+                                .ok_or_else(|| error!("Attribute missing for color"))?,
+                        }
+                    },
                 },
                 "texture" => quote! {
                     #index_name_ident: {
-                        let attribute_index = chunk [ #attribute_id ];
+                        let attribute_index = #attribute_index;
                         match attribute_index {
                             0 => Default::default(), // TODO make into None
-                            _ => attributes.#attribute_ident[attribute_index as usize].clone()
+                            i => attributes
+                                .#attribute_ident
+                                .get(i as usize)
+                                .ok_or_else(|| error!("Attribute missing for texture"))?
+                                .clone()
                         }
                     },
                 },
                 _ => quote! {
-                    #index_name_ident: attributes.#attribute_ident[chunk [ #attribute_id ] as usize],
+                    #index_name_ident: *attributes
+                        .#attribute_ident
+                        .get(#attribute_index as usize)
+                        .ok_or_else(|| error!("Attribute missing"))?,
                 },
             };
 
@@ -157,20 +188,47 @@ fn main() -> Result<(), Box<dyn Error>> {
             let impl_function = match index.name.as_ref() {
                 "center_x" => quote! {
                     pub fn center(&self) -> Vector3 {
-                        Vector3 {
-                            x: self.center_x,
-                            y: self.center_y,
-                            z: self.center_z,
-                        }
+                        Vector3::new(
+                            self.center_x,
+                            self.center_y,
+                            self.center_z,
+                        )
+                    }
+                },
+                "translation_x" => quote! {
+                    pub fn translation(&self) -> Vector3 {
+                        Vector3::new(
+                            self.translation_x,
+                            self.translation_y,
+                            self.translation_z,
+                        )
+                    }
+                },
+                "rotation_x" => quote! {
+                    pub fn rotation(&self) -> Vector3 {
+                        Vector3::new(
+                            self.rotation_x,
+                            self.rotation_y,
+                            self.rotation_z,
+                        )
+                    }
+                },
+                "scale_x" => quote! {
+                    pub fn scale(&self) -> Vector3 {
+                        Vector3::new(
+                            self.scale_x,
+                            self.scale_y,
+                            self.scale_z,
+                        )
                     }
                 },
                 "delta_x" => quote! {
                     pub fn delta(&self) -> Vector3 {
-                        Vector3 {
-                            x: self.delta_x,
-                            y: self.delta_y,
-                            z: self.delta_z,
-                        }
+                        Vector3::new(
+                            self.delta_x,
+                            self.delta_y,
+                            self.delta_z,
+                        )
                     }
                 },
                 _ => quote! {}
@@ -202,20 +260,26 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 
         let parse_primitive_function = quote! {
-            fn #primitive_parse_function(node_ids: Vec<u64>, indices: std::slice::Chunks<u64>, attributes: &SectorAttributes) -> Vec<#name_ident> {
-                node_ids.iter().zip(indices).map(|(node_id, chunk)| {
-                    #name_ident {
+            fn #primitive_parse_function(node_ids: Vec<u64>, indices: std::slice::Chunks<u64>, attributes: &SectorAttributes) -> Result<Vec<#name_ident>, Error> {
+                node_ids.iter().zip(indices).map(|(node_id, chunk)|
+                    Ok(#name_ident {
                         node_id: *node_id,
                         #(#attribute_assignments)*
-                    }
-                }).collect()
+                    })
+                ).collect()
             }
         };
 
         let match_pattern = quote! {
             #geometry_id_num => {
-                #snake_name_collection_ident = #primitive_parse_function(node_ids, indices, attributes);
+                #snake_name_collection_ident = #primitive_parse_function(node_ids, indices, attributes)?;
             },
+        };
+
+        let to_renderables = quote! {
+            for item in &raw_primitives.#snake_name_collection_ident {
+                item.to_renderables(&mut collections);
+            }
         };
 
         primitive_functions.push(parse_primitive_function);
@@ -224,6 +288,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         primitive_structs.push(primitive_struct);
         primitive_match_patterns.push(match_pattern);
         primitive_impls.push(primitive_impl);
+        primitive_to_renderables.push(to_renderables);
     }
 
     let code = quote! {
@@ -281,18 +346,24 @@ fn main() -> Result<(), Box<dyn Error>> {
             })
         }
     // Add some newlines to make it possible to debug errors
-    }.to_string().replace("}", "}\n").replace(";", ";\n");
+    };
 
-    // Format code before writing to file
-    let (_, result, _) = rustfmt::format_input(
-        rustfmt::Input::Text(code),
-        &Default::default(),
-        None as Option<&mut std::io::Stdout>,
-    ).unwrap();
+    let renderables_code = quote! {
+        pub fn convert_primitives(raw_primitives: &i3df::PrimitiveCollections) -> PrimitiveCollections {
+            // TODO do not make a guess at 100, but instead calculate the actual number, which we
+            // should know already since we know how many renderables there are per file primitive
+            let mut collections = PrimitiveCollections::with_capacity(10);
+            #(#primitive_to_renderables)*
+            collections
+        }
+    };
 
-    let code = &result[0].1;
-    write!(file, "{}", code)?;
-    drop(file);
+    let out_dir = env::var("OUT_DIR")?;
+    let out_file = format!("{}/generated.rs", out_dir);
+    let renderables_out_file = format!("{}/generated_renderables.rs", out_dir);
+
+    write_code_to_file(&out_file, &code)?;
+    write_code_to_file(&renderables_out_file, &renderables_code)?;
 
     Ok(())
 }
