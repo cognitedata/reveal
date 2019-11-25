@@ -15,6 +15,14 @@ pub struct Face {
     matrix: Matrix4,
 }
 
+fn normalize_color(color: [u8; 4]) -> [f32; 3] {
+    [
+        f32::from(color[0]) / f32::from(std::u8::MAX),
+        f32::from(color[1]) / f32::from(std::u8::MAX),
+        f32::from(color[2]) / f32::from(std::u8::MAX),
+    ]
+}
+
 fn compose_face_matrix(
     center: &Vector3,
     offset: &Vector3,
@@ -77,11 +85,7 @@ pub fn convert_sector(sector: &f3df::Sector) -> Vec<Face> {
                     Vector3::new(increment, count * increment, increment)
                 };
                 instance_data.push(Face {
-                    color: [
-                        f32::from(color[0]) / 255.0,
-                        f32::from(color[1]) / 255.0,
-                        f32::from(color[2]) / 255.0,
-                    ],
+                    color: normalize_color(color),
                     normal,
                     matrix: compose_face_matrix(&center, &offset, &scale, &rotation),
                 });
@@ -99,11 +103,7 @@ pub fn convert_sector(sector: &f3df::Sector) -> Vec<Face> {
                     Vector3::new(count * increment, increment, increment)
                 };
                 instance_data.push(Face {
-                    color: [
-                        f32::from(color[0]) / 255.0,
-                        f32::from(color[1]) / 255.0,
-                        f32::from(color[2]) / 255.0,
-                    ],
+                    color: normalize_color(color),
                     normal,
                     matrix: compose_face_matrix(&center, &offset, &scale, &rotation),
                 });
@@ -121,11 +121,7 @@ pub fn convert_sector(sector: &f3df::Sector) -> Vec<Face> {
                     Vector3::new(count * increment, increment, increment)
                 };
                 instance_data.push(Face {
-                    color: [
-                        f32::from(color[0]) / 255.0,
-                        f32::from(color[1]) / 255.0,
-                        f32::from(color[2]) / 255.0,
-                    ],
+                    color: normalize_color(color),
                     normal,
                     matrix: compose_face_matrix(&center, &offset, &scale, &rotation),
                 });
@@ -143,11 +139,7 @@ pub fn convert_sector(sector: &f3df::Sector) -> Vec<Face> {
                     Vector3::new(increment, count * increment, increment)
                 };
                 instance_data.push(Face {
-                    color: [
-                        f32::from(color[0]) / 255.0,
-                        f32::from(color[1]) / 255.0,
-                        f32::from(color[2]) / 255.0,
-                    ],
+                    color: normalize_color(color),
                     normal,
                     matrix: compose_face_matrix(&center, &offset, &scale, &rotation),
                 });
@@ -165,11 +157,7 @@ pub fn convert_sector(sector: &f3df::Sector) -> Vec<Face> {
                     Vector3::new(increment * count, increment, increment)
                 };
                 instance_data.push(Face {
-                    color: [
-                        f32::from(color[0]) / 255.0,
-                        f32::from(color[1]) / 255.0,
-                        f32::from(color[2]) / 255.0,
-                    ],
+                    color: normalize_color(color),
                     normal,
                     matrix: compose_face_matrix(&center, &offset, &scale, &rotation),
                 });
@@ -187,11 +175,7 @@ pub fn convert_sector(sector: &f3df::Sector) -> Vec<Face> {
                     Vector3::new(increment * count, increment, increment)
                 };
                 instance_data.push(Face {
-                    color: [
-                        f32::from(color[0]) / 255.0,
-                        f32::from(color[1]) / 255.0,
-                        f32::from(color[2]) / 255.0,
-                    ],
+                    color: normalize_color(color),
                     normal,
                     matrix: compose_face_matrix(&center, &offset, &scale, &rotation),
                 });
