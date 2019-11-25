@@ -26,7 +26,7 @@ bitflags = "1.1.0"
 glsl-to-spirv = { version = "0.1", optional = true }
 clap = { version = "2.33.0", optional = true }
 arraymap = { version = "0.1.1", optional = true }
-nalgebra = { version = "0.18.1", features = [ "serde-serialize" ] }
+nalgebra = { version = "0.19.0", features = [ "serde-serialize" ] }
 js-sys = { version = "0.3.27" }
 wasm-bindgen = "0.2.51"
 serde-wasm-bindgen = "0.1.3"
