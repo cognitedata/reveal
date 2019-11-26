@@ -27,7 +27,7 @@ pub struct Sector {
     pub format_version: u32,
     pub optimizer_version: u32,
     pub sector_id: u64,
-    pub parent_sector_id: u64,
+    pub parent_sector_id: Option<u64>,
 
     pub bbox_min: [f32; 3],
     pub bbox_max: [f32; 3],
@@ -49,7 +49,7 @@ pub struct SectorContents {
 pub struct Node {
     pub compress_type: CompressFlags,
     pub node_id: u64,
-    pub color: [u8; 4],
+    pub color: Option<[u8; 3]>,
     pub faces: Vec<Face>,
 }
 
@@ -58,6 +58,7 @@ pub struct Face {
     pub face_flags: FaceFlags,
     pub repetitions: u8,
     pub index: u64,
+    pub color: Option<[u8; 3]>,
 }
 
 bitflags! {
@@ -74,6 +75,7 @@ bitflags! {
     }
 }
 
+// TODO rename so that it matches the correct repeats
 bitflags! {
     #[derive(Serialize)]
     pub struct CompressFlags: u8 {
@@ -83,7 +85,7 @@ bitflags! {
         const NEGATIVE_X_REPEAT_Y = 0b0000_1000;
         const NEGATIVE_Y_REPEAT_X = 0b0001_0000;
         const NEGATIVE_Z_REPEAT_X = 0b0010_0000;
-        const RESERVED_1 = 0b0100_0000;
+        const HAS_COLOR_ON_EACH_CELL = 0b0100_0000;
         const INDEX_IS_LONG = 0b1000_0000;
     }
 }
@@ -111,7 +113,10 @@ pub fn parse_sector(reader: impl Read) -> Result<Sector, Error> {
     let optimizer_version = input.read_u32::<LittleEndian>()?;
 
     let sector_id = input.read_u64::<LittleEndian>()?;
-    let parent_sector_id = input.read_u64::<LittleEndian>()?;
+    let parent_sector_id = match input.read_u64::<LittleEndian>()? {
+        std::u64::MAX => None,
+        x => Some(x),
+    };
 
     let bbox_min_x = input.read_f32::<LittleEndian>()?;
     let bbox_min_y = input.read_f32::<LittleEndian>()?;
@@ -147,33 +152,54 @@ pub fn parse_sector(reader: impl Read) -> Result<Sector, Error> {
     let mut nodes = Vec::with_capacity(node_count as usize);
     for _ in 0..node_count {
         let node_id = input.read_u64::<LittleEndian>()?;
-        let mut color = [0 as u8; 4];
-        input.read_exact(&mut color)?;
-        //let compress_type = input.read_u8()?;
-        let compress_type = CompressFlags::from_bits_truncate(input.read_u8()?);
         let face_count = input.read_u32::<LittleEndian>()?;
+
+        // TODO replace with from_bits and return error if unknown bits found
+        let compress_type = CompressFlags::from_bits_truncate(input.read_u8()?);
+
+        println!("Compress type {:#?}", compress_type);
+        let has_color_on_each_cell = compress_type.intersects(CompressFlags::HAS_COLOR_ON_EACH_CELL);
+
+        let node_color = if has_color_on_each_cell {
+            None
+        } else {
+            let mut color = [0 as u8; 3];
+            input.read_exact(&mut color)?;
+            Some(color)
+        };
+
         let mut faces = Vec::with_capacity(face_count as usize);
         for _ in 0..face_count {
-            let face_flags = FaceFlags::from_bits_truncate(input.read_u8()?);
-            // TODO verify that the empty flag is not set while other flags are
-            let multiple_faces = face_flags.intersects(FaceFlags::MULTIPLE);
-            let repetitions = if multiple_faces { input.read_u8()? } else { 0 };
             let index = if compress_type.intersects(CompressFlags::INDEX_IS_LONG) {
                 input.read_u64::<LittleEndian>()?
             } else {
                 u64::from(input.read_u32::<LittleEndian>()?)
             };
+
+            // TODO do not use truncate
+            let face_flags = FaceFlags::from_bits_truncate(input.read_u8()?);
+            // TODO verify that the empty flag is not set while other flags are
+            let multiple_faces = face_flags.intersects(FaceFlags::MULTIPLE);
+            let repetitions = if multiple_faces { input.read_u8()? } else { 0 };
+            let face_color = if has_color_on_each_cell {
+                let mut color = [0 as u8; 3];
+                input.read_exact(&mut color)?;
+                Some(color)
+            } else {
+                None
+            };
             faces.push(Face {
                 face_flags,
                 repetitions,
                 index,
+                color: face_color,
             })
         }
 
         nodes.push(Node {
             compress_type,
             node_id,
-            color,
+            color: node_color,
             faces,
         });
     }
