@@ -81,7 +81,8 @@ fn create_dtype(
             "f32" => quote! {f32},
             t => quote! { ERROR_NOT_IMPLEMENTED: #t },
         },
-        Type::Texture(_) => quote! { Texture }
+        //Type::Texture(_) => quote! { Texture }
+        Type::Texture(_) => quote! { u32 }
     };
     if count > 1 {
         return quote! {[#type_name; #count]};
@@ -160,18 +161,22 @@ fn main() -> Result<(), Box<dyn Error>> {
                         }
                     },
                 },
+                //"texture" => quote! {
+                    //#index_name_ident: {
+                        //let attribute_index = #attribute_index;
+                        //match attribute_index {
+                            //0 => Default::default(), // TODO make into None
+                            //i => attributes
+                                //.#attribute_ident
+                                //.get((i - 1) as usize)
+                                //.ok_or_else(|| error!("Attribute missing for texture"))?
+                                //.clone()
+                        //}
+                    //},
+                //},
                 "texture" => quote! {
-                    #index_name_ident: {
-                        let attribute_index = #attribute_index;
-                        match attribute_index {
-                            0 => Default::default(), // TODO make into None
-                            i => attributes
-                                .#attribute_ident
-                                .get((i - 1) as usize)
-                                .ok_or_else(|| error!("Attribute missing for texture"))?
-                                .clone()
-                        }
-                    },
+                    // TODO verify that we do not need an u64 here
+                    #index_name_ident: #attribute_index as u32,
                 },
                 _ => quote! {
                     #index_name_ident: *attributes

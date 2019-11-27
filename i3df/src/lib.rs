@@ -96,7 +96,7 @@ pub enum SectorAttributeData {
 }
 
 #[wasm_bindgen]
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+#[derive(Clone, Copy, Debug, Default, Deserialize, Serialize)]
 pub struct Texture {
     pub file_id: u64,
     pub width: u16,

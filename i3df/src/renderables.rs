@@ -101,6 +101,10 @@ macro_rules! make_func_vec {
         $self.$field_name.clone()
     }};
 
+    ($self:ident, $field_name:ident, u32, u32) => {{
+        $self.$field_name.clone()
+    }};
+
     // TODO re-evaluate safety of this
     ($self:ident, $field_name:ident, Vector3, f32) => {{
         let data_as_vector3 = &$self.$field_name;
@@ -511,7 +515,11 @@ new_geometry_types! {
             size: f32 => f32,
             file_id: u64 => f64,
             triangle_count: u64 => f64,
-            //triangle_offset: u64 => f64,
+            diffuse_texture: u32 => u32,
+            specular_texture: u32 => u32,
+            ambient_texture: u32 => u32,
+            normal_texture: u32 => u32,
+            bump_texture: u32 => u32,
         ]
     }
     {
