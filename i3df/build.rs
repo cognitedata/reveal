@@ -167,7 +167,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                             0 => Default::default(), // TODO make into None
                             i => attributes
                                 .#attribute_ident
-                                .get(i as usize)
+                                .get((i - 1) as usize)
                                 .ok_or_else(|| error!("Attribute missing for texture"))?
                                 .clone()
                         }
