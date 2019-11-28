@@ -1,5 +1,7 @@
 use crate::{Vector3, Vector4};
 use serde_derive::{Deserialize, Serialize};
+use std::collections::HashMap;
+use js_sys::{Map, Uint8Array, Float64Array, Float32Array};
 
 use serde_wasm_bindgen;
 use wasm_bindgen::prelude::*;
@@ -149,8 +151,8 @@ macro_rules! new_geometry_types {
             #[serde(rename_all="camelCase")]
             pub struct $struct_name {
                 $(
-                    #[wasm_bindgen(skip)]
-                    pub $field_name : $field_type,
+                #[wasm_bindgen(skip)]
+                pub $field_name : $field_type,
                 )*
             }
 
@@ -159,18 +161,32 @@ macro_rules! new_geometry_types {
             #[serde(rename_all="camelCase")]
             pub struct $vec_struct_name {
                 $(
-                    #[wasm_bindgen(skip)]
-                    pub $field_name : Vec<$field_type>,
+                #[wasm_bindgen(skip)]
+                pub $field_name : Vec<$field_type>,
                 )*
             }
 
             #[wasm_bindgen]
             impl $vec_struct_name {
                 $(
-                    pub fn $field_name(&self) -> Vec<$wasm_vec_result> {
-                        make_func_vec!(self, $field_name, $field_type, $wasm_vec_result)
-                    }
+                pub fn $field_name(&self) -> Vec<$wasm_vec_result> {
+                    make_func_vec!(self, $field_name, $field_type, $wasm_vec_result)
+                }
                 )*
+
+                pub fn attributes(&self) -> PrimitiveAttributes {
+                    let attributes = PrimitiveAttributes {
+                        f32_attributes: Map::new(),
+                        f64_attributes: Map::new(),
+                        u8_attributes: Map::new(),
+                        vec3_attributes: Map::new(),
+                        vec4_attributes: Map::new(),
+                    };
+                    $( //fields
+                    insert_attribute!(self, attributes, $field_name, $field_type, $wasm_vec_result );
+                    )*
+                    attributes
+                }
             }
 
             impl Geometry for $struct_name { }
@@ -217,6 +233,35 @@ macro_rules! new_geometry_types {
             $(
                 pub $collection_name: $vec_struct_name,
             )*
+        }
+
+        #[wasm_bindgen]
+        #[derive(Clone, Debug)]
+        pub struct PrimitiveAttributes {
+            f64_attributes: Map,
+            u8_attributes: Map,
+            f32_attributes: Map,
+            vec3_attributes: Map,
+            vec4_attributes: Map,
+        }
+
+        #[wasm_bindgen]
+        impl PrimitiveAttributes {
+            pub fn f64_attributes(&self) -> Map {
+                self.f64_attributes.clone()
+            }
+            pub fn u8_attributes(&self) -> Map {
+                self.u8_attributes.clone()
+            }
+            pub fn f32_attributes(&self) -> Map {
+                self.f32_attributes.clone()
+            }
+            pub fn vec3_attributes(&self) -> Map {
+                self.vec3_attributes.clone()
+            }
+            pub fn vec4_attributes(&self) -> Map {
+                self.vec4_attributes.clone()
+            }
         }
 
         impl PrimitiveCollections {
@@ -303,6 +348,57 @@ macro_rules! new_geometry_types {
             }
         }
     };
+}
+
+macro_rules! insert_attribute {
+
+    // TODO a lot of this code is duplicated from make_func_vec - deduplicate please
+
+    ($self:ident, $attributes:ident, $field_name:ident, u64, f64) => {{
+        let data: Vec<f64> = $self
+            .$field_name
+            .iter()
+            .map(|value| *value as f64)
+            .collect();
+        $attributes.f64_attributes.set(&JsValue::from(stringify!($field_name)), &Float64Array::from(&data[..]));
+    }};
+
+    ($self:ident, $attributes:ident, $field_name:ident, f32, f32) => {{
+        $attributes.f32_attributes.set(&JsValue::from(stringify!($field_name)), &Float32Array::from(&$self.$field_name[..]));
+    }};
+
+    ($self:ident, $attributes:ident, $field_name:ident, [u8; 4], u8) => {{
+        let color_flat: Vec<u8> = $self
+            .$field_name
+            .iter()
+            .flat_map(|a| vec![a[0], a[1], a[2], a[3]])
+            .collect();
+        $attributes.u8_attributes.set(&JsValue::from(stringify!($field_name)), &Uint8Array::from(&color_flat[..]));
+    }};
+
+    ($self:ident, $attributes:ident, $field_name:ident, Vector3, f32) => {{
+        let data_as_vector3 = &$self.$field_name;
+        let data_as_f32 = unsafe {
+            std::slice::from_raw_parts(
+                data_as_vector3.as_ptr() as *const f32,
+                data_as_vector3.len() * 3,
+            )
+        };
+        let data = data_as_f32.to_vec();
+        $attributes.u8_attributes.set(&JsValue::from(stringify!($field_name)), &Float32Array::from(&data[..]));
+    }};
+
+    ($self:ident, $attributes:ident, $field_name:ident, Vector4, f32) => {{
+        let data_as_vector4 = &$self.$field_name;
+        let data_as_f32 = unsafe {
+            std::slice::from_raw_parts(
+                data_as_vector4.as_ptr() as *const f32,
+                data_as_vector4.len() * 4,
+            )
+        };
+        let data = data_as_f32.to_vec();
+        $attributes.u8_attributes.set(&JsValue::from(stringify!($field_name)), &Float32Array::from(&data[..]));
+    }};
 }
 
 new_geometry_types! {
@@ -535,6 +631,15 @@ pub trait ToRenderables {
     fn to_renderables(&self, collections: &mut PrimitiveCollections);
 }
 
+pub fn convert_scene(scene: &crate::Scene) -> Scene {
+    let sectors = scene.sectors.iter().map(convert_sector).collect();
+
+    Scene {
+        root_sector_id: scene.root_sector_id,
+        sectors,
+    }
+}
+
 pub fn convert_sector(sector: &crate::Sector) -> Sector {
     // TODO calculate capacity based on number of objects of each type
 
@@ -545,14 +650,5 @@ pub fn convert_sector(sector: &crate::Sector) -> Sector {
         bbox_min: sector.header.bbox_min.into(),
         bbox_max: sector.header.bbox_max.into(),
         primitive_collections: collections,
-    }
-}
-
-pub fn convert_scene(scene: &crate::Scene) -> Scene {
-    let sectors = scene.sectors.iter().map(convert_sector).collect();
-
-    Scene {
-        root_sector_id: scene.root_sector_id,
-        sectors,
     }
 }
