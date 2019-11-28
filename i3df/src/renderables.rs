@@ -515,6 +515,7 @@ new_geometry_types! {
             size: f32 => f32,
             file_id: u64 => f64,
             triangle_count: u64 => f64,
+            // TODO go directly to struct
             diffuse_texture: u32 => u32,
             specular_texture: u32 => u32,
             ambient_texture: u32 => u32,
