@@ -386,7 +386,7 @@ macro_rules! insert_attribute {
             )
         };
         let data = data_as_f32.to_vec();
-        $attributes.u8_attributes.set(&JsValue::from(to_camel_case(stringify!($field_name))), &Float32Array::from(&data[..]));
+        $attributes.vec3_attributes.set(&JsValue::from(to_camel_case(stringify!($field_name))), &Float32Array::from(&data[..]));
     }};
 
     ($self:ident, $attributes:ident, $field_name:ident, Vector4, f32) => {{
@@ -398,7 +398,7 @@ macro_rules! insert_attribute {
             )
         };
         let data = data_as_f32.to_vec();
-        $attributes.u8_attributes.set(&JsValue::from(to_camel_case(stringify!($field_name))), &Float32Array::from(&data[..]));
+        $attributes.vec4_attributes.set(&JsValue::from(to_camel_case(stringify!($field_name))), &Float32Array::from(&data[..]));
     }};
 }
 
