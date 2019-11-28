@@ -2,6 +2,7 @@ use crate::{Vector3, Vector4};
 use serde_derive::{Deserialize, Serialize};
 use std::collections::HashMap;
 use js_sys::{Map, Uint8Array, Float64Array, Float32Array};
+use inflector::cases::camelcase::to_camel_case;
 
 use serde_wasm_bindgen;
 use wasm_bindgen::prelude::*;
@@ -360,11 +361,11 @@ macro_rules! insert_attribute {
             .iter()
             .map(|value| *value as f64)
             .collect();
-        $attributes.f64_attributes.set(&JsValue::from(stringify!($field_name)), &Float64Array::from(&data[..]));
+        $attributes.f64_attributes.set(&JsValue::from(to_camel_case(stringify!($field_name))), &Float64Array::from(&data[..]));
     }};
 
     ($self:ident, $attributes:ident, $field_name:ident, f32, f32) => {{
-        $attributes.f32_attributes.set(&JsValue::from(stringify!($field_name)), &Float32Array::from(&$self.$field_name[..]));
+        $attributes.f32_attributes.set(&JsValue::from(to_camel_case(stringify!($field_name))), &Float32Array::from(&$self.$field_name[..]));
     }};
 
     ($self:ident, $attributes:ident, $field_name:ident, [u8; 4], u8) => {{
@@ -373,7 +374,7 @@ macro_rules! insert_attribute {
             .iter()
             .flat_map(|a| vec![a[0], a[1], a[2], a[3]])
             .collect();
-        $attributes.u8_attributes.set(&JsValue::from(stringify!($field_name)), &Uint8Array::from(&color_flat[..]));
+        $attributes.u8_attributes.set(&JsValue::from(to_camel_case(stringify!($field_name))), &Uint8Array::from(&color_flat[..]));
     }};
 
     ($self:ident, $attributes:ident, $field_name:ident, Vector3, f32) => {{
@@ -385,7 +386,7 @@ macro_rules! insert_attribute {
             )
         };
         let data = data_as_f32.to_vec();
-        $attributes.u8_attributes.set(&JsValue::from(stringify!($field_name)), &Float32Array::from(&data[..]));
+        $attributes.u8_attributes.set(&JsValue::from(to_camel_case(stringify!($field_name))), &Float32Array::from(&data[..]));
     }};
 
     ($self:ident, $attributes:ident, $field_name:ident, Vector4, f32) => {{
@@ -397,7 +398,7 @@ macro_rules! insert_attribute {
             )
         };
         let data = data_as_f32.to_vec();
-        $attributes.u8_attributes.set(&JsValue::from(stringify!($field_name)), &Float32Array::from(&data[..]));
+        $attributes.u8_attributes.set(&JsValue::from(to_camel_case(stringify!($field_name))), &Float32Array::from(&data[..]));
     }};
 }
 
