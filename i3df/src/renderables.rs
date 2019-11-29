@@ -1,4 +1,4 @@
-use crate::{Vector3, Vector4};
+use crate::{Matrix3, Matrix4, Vector3, Vector4};
 use serde_derive::{Deserialize, Serialize};
 use std::collections::HashMap;
 use js_sys::{Map, Uint8Array, Float64Array, Float32Array};
@@ -10,6 +10,7 @@ use wasm_bindgen::JsValue;
 
 pub mod box3d;
 pub mod circle;
+pub mod common;
 pub mod cone;
 pub mod cylinder;
 pub mod ellipsoid;
@@ -127,6 +128,17 @@ macro_rules! make_func_vec {
         data_as_f32.to_vec()
     }};
 
+    ($self:ident, $field_name:ident, Matrix4, f32) => {{
+        let data_as_matrix4 = &$self.$field_name;
+        let data_as_f32 = unsafe {
+            std::slice::from_raw_parts(
+                data_as_matrix4.as_ptr() as *const f32,
+                data_as_matrix4.len() * 16,
+            )
+        };
+        data_as_f32.to_vec()
+    }};
+
     ($self:ident, $field_name:ident, Texture, Texture) => {{
         $self.$field_name.clone()
     }};
@@ -182,6 +194,7 @@ macro_rules! new_geometry_types {
                         u8_attributes: Map::new(),
                         vec3_attributes: Map::new(),
                         vec4_attributes: Map::new(),
+                        mat4_attributes: Map::new(),
                     };
                     $( //fields
                     insert_attribute!(self, attributes, $field_name, $field_type, $wasm_vec_result );
@@ -244,6 +257,7 @@ macro_rules! new_geometry_types {
             f32_attributes: Map,
             vec3_attributes: Map,
             vec4_attributes: Map,
+            mat4_attributes: Map,
         }
 
         #[wasm_bindgen]
@@ -262,6 +276,9 @@ macro_rules! new_geometry_types {
             }
             pub fn vec4_attributes(&self) -> Map {
                 self.vec4_attributes.clone()
+            }
+            pub fn mat4_attributes(&self) -> Map {
+                self.mat4_attributes.clone()
             }
         }
 
@@ -400,6 +417,18 @@ macro_rules! insert_attribute {
         let data = data_as_f32.to_vec();
         $attributes.vec4_attributes.set(&JsValue::from(to_camel_case(stringify!($field_name))), &Float32Array::from(&data[..]));
     }};
+
+    ($self:ident, $attributes:ident, $field_name:ident, Matrix4, f32) => {{
+        let data_as_matrix4 = &$self.$field_name;
+        let data_as_f32 = unsafe {
+            std::slice::from_raw_parts(
+                data_as_matrix4.as_ptr() as *const f32,
+                data_as_matrix4.len() * 16,
+            )
+        };
+        let data = data_as_f32.to_vec();
+        $attributes.mat4_attributes.set(&JsValue::from(to_camel_case(stringify!($field_name))), &Float32Array::from(&data[..]));
+    }};
 }
 
 new_geometry_types! {
@@ -500,6 +529,7 @@ new_geometry_types! {
             thickness: f32 => f32,
             angle: f32 => f32,
             arc_angle: f32 => f32,
+            instance_matrix: Matrix4 => f32,
         ]
     }
 
