@@ -22,8 +22,6 @@ mod generated_renderables;
 pub use generated::*;
 
 type Matrix<X, Y, Z> = nalgebra::Matrix::<f32, X, Y, Z>;
-type Matrix3 = nalgebra::Matrix3::<f32>;
-type Matrix3x4 = nalgebra::Matrix3x4::<f32>;
 type Matrix4 = nalgebra::Matrix4::<f32>;
 type Rotation3 = nalgebra::Rotation3::<f32>;
 type Translation3 = nalgebra::Translation3::<f32>;
