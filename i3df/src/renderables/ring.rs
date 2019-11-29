@@ -158,7 +158,7 @@ impl ToRenderables for crate::ExtrudedRing {
         let instance_matrix_a = create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
             center: center_a,
             normal: center_axis,
-            local_x_axis: local_x_axis,
+            local_x_axis,
             radius_a: self.outer_radius,
             radius_b: self.outer_radius,
         });
@@ -166,7 +166,7 @@ impl ToRenderables for crate::ExtrudedRing {
         let instance_matrix_b = create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
             center: center_b,
             normal: center_axis,
-            local_x_axis: local_x_axis,
+            local_x_axis,
             radius_a: self.outer_radius,
             radius_b: self.outer_radius,
         });
@@ -246,7 +246,7 @@ impl ToRenderables for crate::OpenExtrudedRingSegment {
         let instance_matrix_a = create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
             center: center_a,
             normal: center_axis,
-            local_x_axis: local_x_axis,
+            local_x_axis,
             radius_a: self.outer_radius,
             radius_b: self.outer_radius,
         });
@@ -254,7 +254,7 @@ impl ToRenderables for crate::OpenExtrudedRingSegment {
         let instance_matrix_b = create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
             center: center_b,
             normal: center_axis,
-            local_x_axis: local_x_axis,
+            local_x_axis,
             radius_a: self.outer_radius,
             radius_b: self.outer_radius,
         });

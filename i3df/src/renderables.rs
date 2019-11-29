@@ -1,6 +1,5 @@
-use crate::{Matrix3, Matrix4, Vector3, Vector4};
+use crate::{Matrix4, Vector3, Vector4};
 use serde_derive::{Deserialize, Serialize};
-use std::collections::HashMap;
 use js_sys::{Map, Uint8Array, Float64Array, Float32Array};
 use inflector::cases::camelcase::to_camel_case;
 

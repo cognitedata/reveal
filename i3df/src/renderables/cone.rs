@@ -198,14 +198,14 @@ impl ToRenderables for crate::ClosedGeneralCone {
         let instance_matrix_a = create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
             center: center_a,
             normal: center_axis,
-            local_x_axis: local_x_axis,
+            local_x_axis,
             radius_a: self.radius_a,
             radius_b: self.radius_a,
         });
         let instance_matrix_b = create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
             center: center_b,
             normal: center_axis,
-            local_x_axis: local_x_axis,
+            local_x_axis,
             radius_a: self.radius_b,
             radius_b: self.radius_b,
         });
@@ -272,7 +272,7 @@ impl ToRenderables for crate::SolidOpenGeneralCone {
         let instance_matrix_a = create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
             center: center_a,
             normal: center_axis,
-            local_x_axis: local_x_axis,
+            local_x_axis,
             radius_a: self.radius_a,
             radius_b: self.radius_a,
         });
@@ -280,7 +280,7 @@ impl ToRenderables for crate::SolidOpenGeneralCone {
         let instance_matrix_b = create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
             center: center_b,
             normal: center_axis,
-            local_x_axis: local_x_axis,
+            local_x_axis,
             radius_a: self.radius_b,
             radius_b: self.radius_b,
         });
@@ -359,7 +359,7 @@ impl ToRenderables for crate::SolidClosedGeneralCone {
         let instance_matrix_a = create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
             center: center_a,
             normal: center_axis,
-            local_x_axis: local_x_axis,
+            local_x_axis,
             radius_a: self.radius_a,
             radius_b: self.radius_a,
         });
@@ -367,7 +367,7 @@ impl ToRenderables for crate::SolidClosedGeneralCone {
         let instance_matrix_b = create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
             center: center_b,
             normal: center_axis,
-            local_x_axis: local_x_axis,
+            local_x_axis,
             radius_a: self.radius_b,
             radius_b: self.radius_b,
         });
