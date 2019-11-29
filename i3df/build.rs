@@ -108,6 +108,8 @@ fn write_code_to_file(filename: &String, code: &proc_macro2::TokenStream) -> Res
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
+    // Tell cargo only to rerun the build script if it itself changes
+    println!("cargo:rerun-if-changed=build.rs");
 
     let spec: Spec = serde_yaml::from_str(i3df_specification::as_string().as_str())?;
 
