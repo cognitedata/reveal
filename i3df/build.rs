@@ -58,7 +58,7 @@ fn transform_name(name: &str) -> String {
     }
 }
 
-fn create_dtype(
+fn create_dtype_from_index(
     index: &Index,
     attribute_map: &HashMap<String, &Attribute>,
 ) -> TokenStream {
@@ -67,12 +67,15 @@ fn create_dtype(
         return quote! { u64 };
     }
     let attribute = attribute_map.get(&index.attribute).unwrap();
+    create_dtype(&attribute)
+}
+
+fn create_dtype(attribute: &Attribute) -> TokenStream {
     let count = match attribute.count {
         Some(n) => n,
         _ => 1,
     };
 
-    // TODO implement texture
     let type_name = match &attribute._type {
         Type::Simple(t) => match t.as_str() {
             "u8" => quote! {u8},
@@ -115,9 +118,17 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let mut attribute_map: HashMap<String, &Attribute> = HashMap::new();
     let mut attribute_id_map: HashMap<String, usize> = HashMap::new();
+    let mut sector_attribute_fields = Vec::new();
     for (index, attribute) in spec.attributes.iter().enumerate() {
         attribute_map.insert(attribute.name.clone(), &attribute);
         attribute_id_map.insert(attribute.name.clone(), index);
+        let attribute_ident = format_ident!("{}", attribute.name);
+        let attribute_type = create_dtype(&attribute);
+
+        let sector_attribute_field = quote! {
+            pub #attribute_ident: Vec<#attribute_type>,
+        };
+        sector_attribute_fields.push(sector_attribute_field);
     }
 
     let mut primitive_structs = Vec::new();
@@ -138,13 +149,12 @@ fn main() -> Result<(), Box<dyn Error>> {
         let mut attribute_dtypes = Vec::new();
         let mut attribute_assignments = Vec::new();
         let mut attribute_impl_functions = Vec::new();
-        for (id, index) in geometry_type.indices.iter().enumerate() {
-            let dtype = create_dtype(&index, &attribute_map);
+        for (attribute_id, index) in geometry_type.indices.iter().enumerate() {
+            let dtype = create_dtype_from_index(&index, &attribute_map);
             let index_name_ident = format_ident!("{}", index.name);
             let attribute_ident = format_ident!("{}", index.attribute);
-            let attribute_id = id;
             let attribute_index = quote! {
-                *chunk.get(#attribute_id).ok_or_else(|| error!("Chunk does not contain attribute id"))?
+                get_attribute(&chunk, #attribute_id)?
             };
             let body = match index.attribute.as_ref() {
                 "null" => quote! {
@@ -294,10 +304,27 @@ fn main() -> Result<(), Box<dyn Error>> {
     }
 
     let code = quote! {
+        #[derive(Clone, Debug, Deserialize, Serialize)]
+        pub struct SectorAttributes {
+            #(#sector_attribute_fields)*
+        }
+
+        #[wasm_bindgen]
+        #[derive(Clone, Debug, Default, Deserialize, Serialize)]
+        pub struct Texture {
+            // TODO generate from YAML
+            pub file_id: u64,
+            pub width: u16,
+            pub height: u16,
+        }
 
         #(#primitive_structs)*
 
         #(#primitive_impls)*
+
+        fn get_attribute(chunk: &[u64], attribute_id: usize) -> Result<u64, Error> {
+            Ok(*chunk.get(attribute_id).ok_or_else(|| error!("Chunk does not contain attribute id"))?)
+        }
 
         #[derive(Clone, Debug, Deserialize, Serialize)]
         pub struct PrimitiveCollections {
