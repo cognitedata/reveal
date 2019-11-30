@@ -1,13 +1,13 @@
 use heck::CamelCase;
 use i3df_specification;
+use indexmap::IndexMap;
 use quote::{format_ident, quote};
 use serde_yaml;
-use std::collections::{HashMap};
+use std::collections::HashMap;
 use std::env;
 use std::error::Error;
 use std::fs;
 use std::io::Write;
-use indexmap::IndexMap;
 
 use proc_macro2::TokenStream;
 use serde::{Deserialize, Serialize};
@@ -84,7 +84,7 @@ fn create_dtype(attribute: &Attribute) -> TokenStream {
             "f32" => quote! {f32},
             t => quote! { ERROR_NOT_IMPLEMENTED: #t },
         },
-        Type::Texture(_) => quote! { Texture }
+        Type::Texture(_) => quote! { Texture },
     };
     if count > 1 {
         return quote! {[#type_name; #count]};
@@ -93,14 +93,18 @@ fn create_dtype(attribute: &Attribute) -> TokenStream {
     }
 }
 
-fn write_code_to_file(filename: &String, code: &proc_macro2::TokenStream) -> Result<(), Box<dyn Error>> {
+fn write_code_to_file(
+    filename: &String,
+    code: &proc_macro2::TokenStream,
+) -> Result<(), Box<dyn Error>> {
     let code = code.to_string().replace("}", "}\n").replace(";", ";\n");
 
     let (_, result, _) = rustfmt::format_input(
         rustfmt::Input::Text(code),
         &Default::default(),
         None as Option<&mut std::io::Stdout>,
-    ).unwrap();
+    )
+    .unwrap();
 
     let code = &result[0].1;
     println!("build.rs writing to output file: {}", filename);
@@ -119,16 +123,51 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut attribute_map: HashMap<String, &Attribute> = HashMap::new();
     let mut attribute_id_map: HashMap<String, usize> = HashMap::new();
     let mut sector_attribute_fields = Vec::new();
+    let mut sector_attribute_getters = Vec::new();
     for (index, attribute) in spec.attributes.iter().enumerate() {
         attribute_map.insert(attribute.name.clone(), &attribute);
         attribute_id_map.insert(attribute.name.clone(), index);
         let attribute_ident = format_ident!("{}", attribute.name);
+        let attribute_getter = format_ident!("get_{}", attribute.name);
         let attribute_type = create_dtype(&attribute);
+        let attribute_getter_impl = match attribute.name.as_ref() {
+            "color" => quote! {
+                fn #attribute_getter(&self, index: usize) -> Result<#attribute_type, Error> {
+                    Ok(match index {
+                        0 => Default::default(),
+                        i => *self
+                            .#attribute_ident
+                            .get((i - 1) as usize)
+                            .ok_or_else(|| error!("Attribute {} missing for color", index))?
+                    })
+                }
+            },
+            "texture" => quote! {
+                fn #attribute_getter(&self, index: usize) -> Result<#attribute_type, Error> {
+                    Ok(match index {
+                        0 => Default::default(), // TODO make into None
+                        i => self.#attribute_ident
+                            .get(i as usize)
+                            .ok_or_else(|| error!("Attribute {} missing for texture", index))?
+                            .clone()
+                    })
+                }
+            },
+            _ => quote! {
+                fn #attribute_getter(&self, index: usize) -> Result<#attribute_type, Error> {
+                    Ok(*self.#attribute_ident
+                        .get(index)
+                        .ok_or_else(|| error!("Attribute {} missing for {}", index, stringify!(#attribute_ident)))?
+                    )
+                }
+            },
+        };
 
-        let sector_attribute_field = quote! {
+        let attribute_field = quote! {
             pub #attribute_ident: Vec<#attribute_type>,
         };
-        sector_attribute_fields.push(sector_attribute_field);
+        sector_attribute_fields.push(attribute_field);
+        sector_attribute_getters.push(attribute_getter_impl);
     }
 
     let mut primitive_structs = Vec::new();
@@ -152,44 +191,16 @@ fn main() -> Result<(), Box<dyn Error>> {
         for (attribute_id, index) in geometry_type.indices.iter().enumerate() {
             let dtype = create_dtype_from_index(&index, &attribute_map);
             let index_name_ident = format_ident!("{}", index.name);
-            let attribute_ident = format_ident!("{}", index.attribute);
+            let attribute_getter = format_ident!("get_{}", index.attribute);
             let attribute_index = quote! {
-                get_attribute(&chunk, #attribute_id)?
+                get_attribute_index(&chunk, #attribute_id)?
             };
             let body = match index.attribute.as_ref() {
                 "null" => quote! {
                     #index_name_ident: #attribute_index,
                 },
-                "color" => quote! {
-                    #index_name_ident: {
-                        let attribute_index = #attribute_index;
-                        match attribute_index {
-                            0 => Default::default(),
-                            i => *attributes
-                                .#attribute_ident
-                                .get((i - 1) as usize)
-                                .ok_or_else(|| error!("Attribute missing for color"))?,
-                        }
-                    },
-                },
-                "texture" => quote! {
-                    #index_name_ident: {
-                        let attribute_index = #attribute_index;
-                        match attribute_index {
-                            0 => Default::default(), // TODO make into None
-                            i => attributes
-                                .#attribute_ident
-                                .get(i as usize)
-                                .ok_or_else(|| error!("Attribute missing for texture"))?
-                                .clone()
-                        }
-                    },
-                },
                 _ => quote! {
-                    #index_name_ident: *attributes
-                        .#attribute_ident
-                        .get(#attribute_index as usize)
-                        .ok_or_else(|| error!("Attribute missing"))?,
+                    #index_name_ident: attributes.#attribute_getter(#attribute_index as usize)?,
                 },
             };
 
@@ -243,7 +254,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                         )
                     }
                 },
-                _ => quote! {}
+                _ => quote! {},
             };
 
             attribute_idents.push(index_name_ident);
@@ -269,7 +280,6 @@ fn main() -> Result<(), Box<dyn Error>> {
                 #(#attribute_impl_functions)*
             }
         };
-
 
         let parse_primitive_function = quote! {
             fn #primitive_parse_function(node_ids: Vec<u64>, indices: std::slice::Chunks<u64>, attributes: &SectorAttributes) -> Result<Vec<#name_ident>, Error> {
@@ -318,11 +328,15 @@ fn main() -> Result<(), Box<dyn Error>> {
             pub height: u16,
         }
 
+        impl SectorAttributes {
+            #(#sector_attribute_getters)*
+        }
+
         #(#primitive_structs)*
 
         #(#primitive_impls)*
 
-        fn get_attribute(chunk: &[u64], attribute_id: usize) -> Result<u64, Error> {
+        fn get_attribute_index(chunk: &[u64], attribute_id: usize) -> Result<u64, Error> {
             Ok(*chunk.get(attribute_id).ok_or_else(|| error!("Chunk does not contain attribute id"))?)
         }
 
@@ -396,4 +410,3 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
-
