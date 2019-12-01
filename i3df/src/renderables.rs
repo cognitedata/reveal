@@ -444,6 +444,7 @@ new_geometry_types! {
             normal: Vector3 => f32,
             rotation_angle: f32 => f32,
             delta: Vector3 => f32,
+            instance_matrix: Matrix4 => f32,
         ]
     }
 
