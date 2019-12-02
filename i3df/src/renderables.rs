@@ -599,6 +599,7 @@ new_geometry_types! {
             vertex_1: Vector3 => f32,
             vertex_2: Vector3 => f32,
             vertex_3: Vector3 => f32,
+            instance_matrix: Matrix4 => f32,
         ]
     }
 
@@ -711,6 +712,52 @@ impl Circle {
             center: data.center,
             normal: data.normal,
             radius: data.radius,
+            instance_matrix,
+        }
+    }
+}
+
+pub struct QuadInfo {
+    node_id: u64,
+    tree_index: u64,
+    color: [u8; 4],
+    size: f32,
+    vertex_1: Vector3,
+    vertex_2: Vector3,
+    vertex_3: Vector3,
+}
+
+impl Quad {
+    fn new(data: &QuadInfo) -> Quad {
+        let side_1 = data.vertex_3 - data.vertex_1;
+        let side_2 = data.vertex_3 - data.vertex_2;
+        let scale_matrix =
+            Matrix4::new_nonuniform_scaling(&Vector3::new(side_2.norm(), side_1.norm(), 1.0));
+
+        let normal = Vector3::cross(&side_2, &side_1).normalize();
+        let side_1 = side_1.normalize();
+        let side_2 = side_2.normalize();
+        #[rustfmt::skip]
+        let basis = Matrix4::new(
+            side_2.x, side_1.x, normal.x, 0.0,
+            side_2.y, side_1.y, normal.y, 0.0,
+            side_2.z, side_1.z, normal.z, 0.0,
+            0.0, 0.0, 0.0, 1.0,
+        );
+
+        let center = 0.5 * (data.vertex_1 + data.vertex_2);
+        let translation_matrix = Translation3::from(center);
+
+        let instance_matrix = Matrix4::from(translation_matrix) * basis * scale_matrix;
+
+        Quad {
+            node_id: data.node_id,
+            tree_index: data.tree_index,
+            color: data.color,
+            size: data.size,
+            vertex_1: data.vertex_1,
+            vertex_2: data.vertex_2,
+            vertex_3: data.vertex_3,
             instance_matrix,
         }
     }
