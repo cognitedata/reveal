@@ -629,6 +629,7 @@ new_geometry_types! {
             tube_radius: f32 => f32,
             rotation_angle: f32 => f32,
             arc_angle: f32 => f32,
+            instance_matrix: Matrix4 => f32,
         ]
     }
     {
@@ -675,6 +676,7 @@ new_geometry_types! {
     }
 }
 
+// TODO see if there exists a library for unnamed struct macros so we can avoid these '*Info' types
 pub struct CircleInfo {
     node_id: u64,
     tree_index: u64,
@@ -688,13 +690,15 @@ pub struct CircleInfo {
 impl Circle {
     fn new(data: &CircleInfo) -> Circle {
         let translation_matrix = Translation3::from(data.center);
-        let rotation_matrix =
-            match Rotation3::rotation_between(&Vector3::z_axis(), &data.normal) {
-                Some(x) => x,
-                None => Rotation3::from_axis_angle(&Vector3::x_axis(), PI),
-            };
-        let scale_matrix =
-            Matrix4::new_nonuniform_scaling(&Vector3::new(2.0 * data.radius, 2.0 * data.radius, 1.0));
+        let rotation_matrix = match Rotation3::rotation_between(&Vector3::z_axis(), &data.normal) {
+            Some(x) => x,
+            None => Rotation3::from_axis_angle(&Vector3::x_axis(), PI),
+        };
+        let scale_matrix = Matrix4::new_nonuniform_scaling(&Vector3::new(
+            2.0 * data.radius,
+            2.0 * data.radius,
+            1.0,
+        ));
 
         let instance_matrix =
             Matrix4::from(translation_matrix) * Matrix4::from(rotation_matrix) * scale_matrix;
@@ -707,6 +711,48 @@ impl Circle {
             center: data.center,
             normal: data.normal,
             radius: data.radius,
+            instance_matrix,
+        }
+    }
+}
+
+pub struct TorusSegmentInfo {
+    node_id: u64,
+    tree_index: u64,
+    color: [u8; 4],
+    size: f32,
+    center: Vector3,
+    normal: Vector3,
+    radius: f32,
+    tube_radius: f32,
+    rotation_angle: f32,
+    arc_angle: f32,
+}
+
+impl TorusSegment {
+    fn new(data: &TorusSegmentInfo) -> TorusSegment {
+        let translation_matrix = Translation3::from(data.center);
+        let first_rotation = Rotation3::from_axis_angle(&Vector3::z_axis(), data.rotation_angle);
+        let second_rotation = match Rotation3::rotation_between(&Vector3::z_axis(), &data.normal) {
+            Some(x) => x,
+            None => Rotation3::from_axis_angle(&Vector3::x_axis(), PI),
+        };
+
+        let instance_matrix = Matrix4::from(translation_matrix)
+            * Matrix4::from(second_rotation)
+            * Matrix4::from(first_rotation);
+
+        TorusSegment {
+            node_id: data.node_id,
+            tree_index: data.tree_index,
+            color: data.color,
+            size: data.size,
+            center: data.center,
+            normal: data.normal,
+            radius: data.radius,
+            tube_radius: data.tube_radius,
+            rotation_angle: data.rotation_angle,
+            arc_angle: data.arc_angle,
             instance_matrix,
         }
     }
