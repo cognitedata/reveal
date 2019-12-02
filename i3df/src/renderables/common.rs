@@ -44,4 +44,3 @@ pub fn create_general_ring_instance_matrix(
     //Matrix4::from(translation_matrix).transpose()
     //Matrix4::identity()
 }
-

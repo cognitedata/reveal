@@ -1,7 +1,8 @@
-use crate::{Matrix4, Vector3, Vector4};
-use serde_derive::{Deserialize, Serialize};
-use js_sys::{Map, Uint8Array, Float64Array, Float32Array};
+use crate::{Matrix4, Rotation3, Translation3, Vector3, Vector4};
 use inflector::cases::camelcase::to_camel_case;
+use js_sys::{Float32Array, Float64Array, Map, Uint8Array};
+use serde_derive::{Deserialize, Serialize};
+use std::f32::consts::PI;
 
 use serde_wasm_bindgen;
 use wasm_bindgen::prelude::*;
@@ -81,7 +82,6 @@ pub trait GeometryCollection<G: Geometry> {
 }
 
 macro_rules! make_func_vec {
-
     ($self:ident, $field_name:ident, u64, f64) => {{
         let data: Vec<f64> = $self
             .$field_name
@@ -368,20 +368,24 @@ macro_rules! new_geometry_types {
 }
 
 macro_rules! insert_attribute {
-
     // TODO a lot of this code is duplicated from make_func_vec - deduplicate please
-
     ($self:ident, $attributes:ident, $field_name:ident, u64, f64) => {{
         let data: Vec<f64> = $self
             .$field_name
             .iter()
             .map(|value| *value as f64)
             .collect();
-        $attributes.f64_attributes.set(&JsValue::from(to_camel_case(stringify!($field_name))), &Float64Array::from(&data[..]));
+        $attributes.f64_attributes.set(
+            &JsValue::from(to_camel_case(stringify!($field_name))),
+            &Float64Array::from(&data[..]),
+        );
     }};
 
     ($self:ident, $attributes:ident, $field_name:ident, f32, f32) => {{
-        $attributes.f32_attributes.set(&JsValue::from(to_camel_case(stringify!($field_name))), &Float32Array::from(&$self.$field_name[..]));
+        $attributes.f32_attributes.set(
+            &JsValue::from(to_camel_case(stringify!($field_name))),
+            &Float32Array::from(&$self.$field_name[..]),
+        );
     }};
 
     ($self:ident, $attributes:ident, $field_name:ident, [u8; 4], u8) => {{
@@ -390,7 +394,10 @@ macro_rules! insert_attribute {
             .iter()
             .flat_map(|a| vec![a[0], a[1], a[2], a[3]])
             .collect();
-        $attributes.u8_attributes.set(&JsValue::from(to_camel_case(stringify!($field_name))), &Uint8Array::from(&color_flat[..]));
+        $attributes.u8_attributes.set(
+            &JsValue::from(to_camel_case(stringify!($field_name))),
+            &Uint8Array::from(&color_flat[..]),
+        );
     }};
 
     ($self:ident, $attributes:ident, $field_name:ident, Vector3, f32) => {{
@@ -402,7 +409,10 @@ macro_rules! insert_attribute {
             )
         };
         let data = data_as_f32.to_vec();
-        $attributes.vec3_attributes.set(&JsValue::from(to_camel_case(stringify!($field_name))), &Float32Array::from(&data[..]));
+        $attributes.vec3_attributes.set(
+            &JsValue::from(to_camel_case(stringify!($field_name))),
+            &Float32Array::from(&data[..]),
+        );
     }};
 
     ($self:ident, $attributes:ident, $field_name:ident, Vector4, f32) => {{
@@ -414,7 +424,10 @@ macro_rules! insert_attribute {
             )
         };
         let data = data_as_f32.to_vec();
-        $attributes.vec4_attributes.set(&JsValue::from(to_camel_case(stringify!($field_name))), &Float32Array::from(&data[..]));
+        $attributes.vec4_attributes.set(
+            &JsValue::from(to_camel_case(stringify!($field_name))),
+            &Float32Array::from(&data[..]),
+        );
     }};
 
     ($self:ident, $attributes:ident, $field_name:ident, Matrix4, f32) => {{
@@ -426,7 +439,10 @@ macro_rules! insert_attribute {
             )
         };
         let data = data_as_f32.to_vec();
-        $attributes.mat4_attributes.set(&JsValue::from(to_camel_case(stringify!($field_name))), &Float32Array::from(&data[..]));
+        $attributes.mat4_attributes.set(
+            &JsValue::from(to_camel_case(stringify!($field_name))),
+            &Float32Array::from(&data[..]),
+        );
     }};
 }
 
@@ -479,6 +495,7 @@ new_geometry_types! {
             center: Vector3 => f32,
             normal: Vector3 => f32,
             radius: f32 => f32,
+            instance_matrix: Matrix4 => f32,
         ]
     }
 
@@ -655,6 +672,43 @@ new_geometry_types! {
             rotation: Vector3 => f32,
             scale: Vector3 => f32,
         ]
+    }
+}
+
+pub struct CircleInfo {
+    node_id: u64,
+    tree_index: u64,
+    color: [u8; 4],
+    size: f32,
+    center: Vector3,
+    normal: Vector3,
+    radius: f32,
+}
+
+impl Circle {
+    fn new(data: &CircleInfo) -> Circle {
+        let translation_matrix = Translation3::from(data.center);
+        let rotation_matrix =
+            match Rotation3::rotation_between(&Vector3::z_axis(), &data.normal) {
+                Some(x) => x,
+                None => Rotation3::from_axis_angle(&Vector3::x_axis(), PI),
+            };
+        let scale_matrix =
+            Matrix4::new_nonuniform_scaling(&Vector3::new(2.0 * data.radius, 2.0 * data.radius, 1.0));
+
+        let instance_matrix =
+            Matrix4::from(translation_matrix) * Matrix4::from(rotation_matrix) * scale_matrix;
+
+        Circle {
+            node_id: data.node_id,
+            tree_index: data.tree_index,
+            color: data.color,
+            size: data.size,
+            center: data.center,
+            normal: data.normal,
+            radius: data.radius,
+            instance_matrix,
+        }
     }
 }
 

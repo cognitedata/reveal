@@ -1,5 +1,5 @@
 use crate::renderables::{
-    Circle, EllipsoidSegment, GeometryCollection, PrimitiveCollections, ToRenderables,
+    Circle, CircleInfo, EllipsoidSegment, GeometryCollection, PrimitiveCollections, ToRenderables,
 };
 use crate::Vector3;
 
@@ -25,7 +25,7 @@ impl ToRenderables for crate::ClosedEllipsoidSegment {
             / self.vertical_radius;
         let center = self.center() + length * Vector3::from(self.normal).normalize();
 
-        collections.circle_collection.push(Circle {
+        collections.circle_collection.push(Circle::new(&CircleInfo {
             node_id: self.node_id,
             tree_index: self.tree_index,
             color: self.color,
@@ -33,7 +33,7 @@ impl ToRenderables for crate::ClosedEllipsoidSegment {
             center,
             normal: self.normal.into(),
             radius: circle_radius,
-        });
+        }));
     }
 }
 impl ToRenderables for crate::Ellipsoid {

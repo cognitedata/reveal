@@ -2,7 +2,7 @@ use crate::renderables::common::{
     create_general_ring_instance_matrix, GeneralRingInstanceMatrixInfo,
 };
 use crate::renderables::{
-    Circle, Cone, EccentricCone, GeneralRing, GeometryCollection, PrimitiveCollections,
+    Circle, CircleInfo, Cone, EccentricCone, GeneralRing, GeometryCollection, PrimitiveCollections,
     ToRenderables, Trapezium,
 };
 use crate::{Matrix, Rotation3, Vector3};
@@ -32,7 +32,7 @@ impl ToRenderables for crate::ClosedCone {
             arc_angle: 2.0 * PI as f32,
             local_x_axis,
         });
-        collections.circle_collection.push(Circle {
+        collections.circle_collection.push(Circle::new(&CircleInfo {
             node_id: self.node_id,
             tree_index: self.tree_index,
             color: self.color,
@@ -40,8 +40,8 @@ impl ToRenderables for crate::ClosedCone {
             center: center_a,
             normal: center_axis,
             radius: self.radius_a,
-        });
-        collections.circle_collection.push(Circle {
+        }));
+        collections.circle_collection.push(Circle::new(&CircleInfo {
             node_id: self.node_id,
             tree_index: self.tree_index,
             color: self.color,
@@ -50,7 +50,7 @@ impl ToRenderables for crate::ClosedCone {
             // TODO should this be negative, it is not in the JS version
             normal: -1.0 * center_axis,
             radius: self.radius_b,
-        });
+        }));
     }
 }
 
@@ -78,7 +78,7 @@ impl ToRenderables for crate::ClosedEccentricCone {
             radius_b: self.radius_b,
             normal,
         });
-        collections.circle_collection.push(Circle {
+        collections.circle_collection.push(Circle::new(&CircleInfo {
             node_id: self.node_id,
             tree_index: self.tree_index,
             color: self.color,
@@ -86,8 +86,8 @@ impl ToRenderables for crate::ClosedEccentricCone {
             center: center_a,
             normal,
             radius: self.radius_a,
-        });
-        collections.circle_collection.push(Circle {
+        }));
+        collections.circle_collection.push(Circle::new(&CircleInfo {
             node_id: self.node_id,
             tree_index: self.tree_index,
             color: self.color,
@@ -96,7 +96,7 @@ impl ToRenderables for crate::ClosedEccentricCone {
             // TODO should this be negative?
             normal,
             radius: self.radius_b,
-        });
+        }));
     }
 }
 
