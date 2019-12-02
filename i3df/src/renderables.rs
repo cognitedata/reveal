@@ -673,6 +673,7 @@ new_geometry_types! {
             translation: Vector3 => f32,
             rotation: Vector3 => f32,
             scale: Vector3 => f32,
+            instance_matrix: Matrix4 => f32
         ]
     }
 }
