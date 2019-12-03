@@ -46,33 +46,6 @@ export function consumeSectorDetailed(
       geometry: Cesium.GeometryPipeline.computeNormal(geometry)
     });
     geometryInstances.push(instance);
-
-    // geometry.
-    // const geometry = new THREE.BufferGeometry();
-    // const indices = new THREE.Uint32BufferAttribute(mesh.indices.buffer, 1);
-    // const vertices = new THREE.Float32BufferAttribute(mesh.vertices.buffer, 3);
-    // const colors = new THREE.Float32BufferAttribute(mesh.colors.buffer, 3);
-    // geometry.setIndex(indices);
-    // geometry.addAttribute('position', vertices);
-    // geometry.addAttribute('color', colors);
-
-    // geometry.boundingBox = bounds.clone();
-    // geometry.boundingSphere = new THREE.Sphere();
-    // bounds.getBoundingSphere(geometry.boundingSphere);
-
-    // if (mesh.normals !== undefined) {
-    //   const normals = new THREE.Float32BufferAttribute(mesh.normals.buffer, 3);
-    //   geometry.addAttribute('normal', normals);
-    // } else {
-    //   geometry.computeVertexNormals();
-    // }
-    // // const material = new THREE.MeshPhongMaterial({ vertexColors: THREE.VertexColors, flatShading: true });
-    // const material = new THREE.ShaderMaterial({
-    //   uniforms: {},
-    //   fragmentShader: fragmentShader(),
-    //   vertexShader: vertexShaderDetailed()
-    // });
-    // const obj = new THREE.Mesh(geometry, material);
   }
   const mergedMeshesPrimitive = new Cesium.Primitive({
     geometryInstances,
@@ -85,10 +58,6 @@ export function consumeSectorDetailed(
       closed: false,
       translucent: false
     })
-
-    // appearance: new Cesium.DebugAppearance({
-    //   attributeName: 'normal'
-    // })
   });
   primitivesCollection.add(mergedMeshesPrimitive);
 }

@@ -49,13 +49,13 @@ export function consumeSectorSimple(
   const matrix2 = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 4, 14, false);
   const matrix3 = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 4, 18, false);
 
-  geometry.addAttribute('position', quadVertexBufferAttribute);
-  geometry.addAttribute('color', color);
-  geometry.addAttribute('normal', normal);
-  geometry.addAttribute('matrix0', matrix0);
-  geometry.addAttribute('matrix1', matrix1);
-  geometry.addAttribute('matrix2', matrix2);
-  geometry.addAttribute('matrix3', matrix3);
+  geometry.setAttribute('position', quadVertexBufferAttribute);
+  geometry.setAttribute('color', color);
+  geometry.setAttribute('normal', normal);
+  geometry.setAttribute('matrix0', matrix0);
+  geometry.setAttribute('matrix1', matrix1);
+  geometry.setAttribute('matrix2', matrix2);
+  geometry.setAttribute('matrix3', matrix3);
 
   const uniforms = {};
   const material = new THREE.ShaderMaterial({

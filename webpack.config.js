@@ -66,6 +66,12 @@ module.exports = env => {
           ]
         },
         {
+          test: /\.(png|svg|jpg|jpeg|gif)$/,
+          use: [
+            'file-loader',
+          ],
+        },
+        {
           test: /\.(glsl|vert|frag)$/,
           exclude: '/node_modules/',
           use: [
@@ -87,6 +93,11 @@ module.exports = env => {
       libraryTarget: 'umd',
     },
     devtool: development ? "inline-source-map" : undefined,
+    watch: true,
+    watchOptions: {
+      aggregateTimeout: 1500,
+      ignored: ['node_modules/']
+    },
     devServer: {
       https: true,
       stats: 'minimal',
@@ -158,7 +169,13 @@ module.exports = env => {
           title: "Two models",
           entry: './src/examples/threejs/two-models.ts',
           template: './src/examples/template-example.ejs'
-        }
+        },
+        {
+          name: "threejs-custom-scene-elements",
+          title: "Custom ThreeJS scene elements",
+          entry: './src/examples/threejs/custom-scene-elements.ts',
+          template: './src/examples/template-example.ejs'
+        },
       ]);
     }
 

@@ -22,6 +22,7 @@ export function consumeSectorDetailed(
   const bounds = toThreeJsBox3(metadata.bounds);
   const boundsRenderer = new THREE.Box3Helper(bounds);
   boundsRenderer.name = `Bounding box ${sectorId}`;
+
   group.add(boundsRenderer);
   for (const primtiveRoot of createPrimitives(sector)) {
     group.add(primtiveRoot);
@@ -30,7 +31,6 @@ export function consumeSectorDetailed(
   for (const triangleMesh of triangleMeshes) {
     group.add(triangleMesh);
   }
-
   const instanceMeshes = createInstancedMeshes(sector.instanceMeshes, bounds);
   for (const instanceMesh of instanceMeshes) {
     group.add(instanceMesh);
