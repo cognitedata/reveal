@@ -15,7 +15,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "https://localhost:8080/cesiumjs-basic.html",
+            "url": "https://localhost:8080/example-threejs-simple.html",
             "webRoot": "${workspaceFolder}"
         }
     ]

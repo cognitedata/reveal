@@ -4,6 +4,7 @@
 
 import { Box3 } from '../../utils/Box3';
 import { mat4 } from 'gl-matrix';
+import { PrimitiveAttributes } from '../../../workers/types/parser.types';
 
 // TODO 2019-11-12 larsmoa: Move and rename to something general (not specific
 // for sector data).
@@ -28,8 +29,30 @@ export type TriangleMesh = {
   readonly colors: Float32Array;
 };
 
-export class Sector {
-  readonly triangleMeshes: TriangleMesh[] = [];
+export type InstancedMesh = {
+  readonly fileId: number;
+  readonly indices: Uint32Array;
+  readonly vertices: Float32Array;
+  readonly normals: Float32Array | undefined;
+  readonly colors: Uint8Array;
+  readonly instanceMatrices: Float32Array;
+};
+
+export interface Sector {
+  boxes: PrimitiveAttributes;
+  circles: PrimitiveAttributes;
+  cones: PrimitiveAttributes;
+  eccentricCones: PrimitiveAttributes;
+  ellipsoidSegments: PrimitiveAttributes;
+  generalCylinders: PrimitiveAttributes;
+  generalRings: PrimitiveAttributes;
+  instanceMeshes: InstancedMesh[];
+  nuts: PrimitiveAttributes;
+  quads: PrimitiveAttributes;
+  sphericalSegments: PrimitiveAttributes;
+  torusSegments: PrimitiveAttributes;
+  trapeziums: PrimitiveAttributes;
+  triangleMeshes: TriangleMesh[];
 }
 
 export interface SectorQuads {

@@ -8,6 +8,7 @@ import { vec3 } from 'gl-matrix';
 import { consumeSectorDetailed } from '../../../../views/threejs/sector/consumeSectorDetailed';
 import { SectorNode } from '../../../../views/threejs/sector/SectorNode';
 import 'jest-extended';
+import { createEmptySector } from '../../../models/sector/emptySector';
 
 describe('consumeSectorDetailed', () => {
   const metadata: SectorMetadata = {
@@ -20,10 +21,7 @@ describe('consumeSectorDetailed', () => {
   test('no geometry, does not add new nodes', () => {
     // Arrange
     const sectorId = 1;
-    const sector: Sector = {
-      triangleMeshes: []
-    };
-
+    const sector = createEmptySector();
     const node = new SectorNode();
 
     // Act
@@ -36,9 +34,7 @@ describe('consumeSectorDetailed', () => {
   test('single mesh, adds geometry', () => {
     // Arrange
     const sectorId = 1;
-    const sector: Sector = {
-      triangleMeshes: [newMesh()]
-    };
+    const sector = createEmptySector();
     const node = new SectorNode();
 
     // Act
@@ -51,9 +47,7 @@ describe('consumeSectorDetailed', () => {
   test('valid input, produces geometry', () => {
     // Arrange
     const sectorId = 1;
-    const sector: Sector = {
-      triangleMeshes: [newMesh()]
-    };
+    const sector = createEmptySector();
     const node = new SectorNode();
 
     // Act

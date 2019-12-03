@@ -5,8 +5,8 @@
 import * as THREE from 'three';
 import { SectorMetadata, SectorQuads } from '../../../models/sector/types';
 import { SectorNode } from './SectorNode';
+import { sectorShaders } from './shaders';
 import { toThreeJsBox3 } from '../utilities';
-import { vertexShaderSimple, fragmentShader } from './shaders';
 
 const quadVertexData = new Float32Array([
   // tslint:disable: prettier
@@ -37,7 +37,7 @@ export function consumeSectorSimple(
   const bounds = toThreeJsBox3(metadata.bounds);
   const boundsRenderer = new THREE.Box3Helper(bounds.expandByScalar(0.1), new THREE.Color(0xff00ff));
   boundsRenderer.name = `Bounding box ${sectorId}`;
-  // group.add(boundsRenderer);
+  group.add(boundsRenderer);
 
   const geometry = new THREE.InstancedBufferGeometry();
 
@@ -60,8 +60,8 @@ export function consumeSectorSimple(
   const uniforms = {};
   const material = new THREE.ShaderMaterial({
     uniforms,
-    fragmentShader: fragmentShader(),
-    vertexShader: vertexShaderSimple()
+    fragmentShader: sectorShaders.simpleMesh.fragment,
+    vertexShader: sectorShaders.simpleMesh.vertex
   });
   const obj = new THREE.Mesh(geometry, material);
 

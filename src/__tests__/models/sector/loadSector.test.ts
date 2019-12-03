@@ -6,6 +6,7 @@ import { FetchSectorDelegate, ParseSectorDelegate, ConsumeSectorDelegate } from 
 import { loadSector } from '../../../models/sector/loadSector';
 import { waitUntill } from '../../wait';
 import { LoadSectorStatus, LoadSectorRequest, Sector } from '../../../models/sector/types';
+import { createEmptySector } from './emptySector';
 
 describe('loadSector', () => {
   const fetch: FetchSectorDelegate = jest.fn();
@@ -60,7 +61,7 @@ describe('loadSector', () => {
       async (): Promise<Sector> => {
         await waitUntill(() => request !== undefined);
         request!.cancel();
-        return { triangleMeshes: [] } as Sector;
+        return createEmptySector();
       }
     );
     request = loadSector(0, fetch, myParse, consume);

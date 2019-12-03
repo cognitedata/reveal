@@ -2,7 +2,7 @@
  * Copyright 2019 Cognite AS
  */
 
-import { Sector, SectorQuads, SectorMetadata, TriangleMesh } from './types';
+import { Sector, SectorQuads, SectorMetadata, TriangleMesh, InstancedMesh } from './types';
 import { FetchSectorDelegate, FetchCtmDelegate } from './delegates';
 import { createOffsetsArray } from '../../utils/arrayUtils';
 import { WorkerArguments, ParseQuadsResult } from '../../../workers/types/parser.types';
@@ -84,49 +84,125 @@ export async function createParser(
       const sectorResult = await postWorkToAvailable(workerList, async (worker: ParserWorker) =>
         worker.parseSector(sectorArrayBuffer)
       );
-      const sector = new Sector();
-      const { fileIds, colors, triangleCounts } = sectorResult;
+      const {
+        boxes,
+        circles,
+        cones,
+        eccentricCones,
+        ellipsoidSegments,
+        generalCylinders,
+        generalRings,
+        instanceMeshes,
+        nuts,
+        quads,
+        sphericalSegments,
+        torusSegments,
+        trapeziums,
+        triangleMeshes
+      } = sectorResult;
 
-      const meshesGroupedByFile = groupMeshesByFile(fileIds);
+      const finalTriangleMeshes = await (async () => {
+        const { fileIds, colors, triangleCounts } = triangleMeshes;
 
-      // Merge meshes by file
-      for (const [fileId, meshIndices] of meshesGroupedByFile.entries()) {
-        const fileTriangleCounts = meshIndices.map(i => triangleCounts[i]);
-        const offsets = createOffsetsArray(fileTriangleCounts);
-        // Load CTM (geometry)
-        const ctm = await loadCtmGeometry(fileId, fetchCtmFile, workerList);
+        const meshesGroupedByFile = groupMeshesByFile(fileIds);
 
-        const indices = ctm.indices;
-        const vertices = ctm.vertices;
-        const normals = ctm.normals;
+        const finalMeshes = [];
+        // Merge meshes by file
+        // TODO do this in Rust instead
+        for (const [fileId, meshIndices] of meshesGroupedByFile.entries()) {
+          const fileTriangleCounts = meshIndices.map(i => triangleCounts[i]);
+          const offsets = createOffsetsArray(fileTriangleCounts);
+          // Load CTM (geometry)
+          const ctm = await loadCtmGeometry(fileId, fetchCtmFile, workerList);
 
-        const colorsBuffer = new Float32Array((3 * vertices.length) / 3);
-        for (let i = 0; i < meshIndices.length; i++) {
-          const meshIdx = meshIndices[i];
-          const triOffset = offsets[i];
-          const triCount = fileTriangleCounts[i];
-          const [r, g, b] = readColorToFloat32s(colors, meshIdx);
+          const indices = ctm.indices;
+          const vertices = ctm.vertices;
+          const normals = ctm.normals;
 
-          for (let triIdx = triOffset; triIdx < triOffset + triCount; triIdx++) {
-            for (let j = 0; j < 3; j++) {
-              const vIdx = indices[3 * triIdx + j];
+          const colorsBuffer = new Float32Array((3 * vertices.length) / 3);
+          for (let i = 0; i < meshIndices.length; i++) {
+            const meshIdx = meshIndices[i];
+            const triOffset = offsets[i];
+            const triCount = fileTriangleCounts[i];
+            const [r, g, b] = readColorToFloat32s(colors, meshIdx);
 
-              colorsBuffer[3 * vIdx] = r;
-              colorsBuffer[3 * vIdx + 1] = g;
-              colorsBuffer[3 * vIdx + 2] = b;
+            for (let triIdx = triOffset; triIdx < triOffset + triCount; triIdx++) {
+              for (let j = 0; j < 3; j++) {
+                const vIdx = indices[3 * triIdx + j];
+
+                colorsBuffer[3 * vIdx] = r;
+                colorsBuffer[3 * vIdx + 1] = g;
+                colorsBuffer[3 * vIdx + 2] = b;
+              }
             }
           }
+
+          const mesh: TriangleMesh = {
+            colors: colorsBuffer,
+            fileId,
+            indices,
+            vertices,
+            normals
+          };
+          finalMeshes.push(mesh);
+        }
+        return finalMeshes;
+      })();
+
+      const finalInstanceMeshes = await (async () => {
+        const { fileIds, colors, triangleCounts, triangleOffsets, instanceMatrices } = instanceMeshes;
+        const meshesGroupedByFile = groupMeshesByFile(fileIds);
+
+        const finalMeshes: InstancedMesh[] = [];
+        // Merge meshes by file
+        // TODO do this in Rust instead
+        // TODO de-duplicate this with the merged meshes above
+        for (const [fileId, meshIndices] of meshesGroupedByFile.entries()) {
+          const fileTriangleCounts = meshIndices.map(i => triangleCounts[i]);
+          const offsets = meshIndices.map(i => triangleOffsets[i]);
+
+          const ctm = await loadCtmGeometry(fileId, fetchCtmFile, workerList);
+
+          const indices = ctm.indices;
+          const vertices = ctm.vertices;
+          const normals = ctm.normals;
+          for (let i = 0; i < meshIndices.length; i++) {
+            const meshIdx = meshIndices[i];
+            const triOffset = offsets[i];
+            const triCount = fileTriangleCounts[i];
+            const [r, g, b] = readColorToFloat32s(colors, meshIdx);
+          }
+
+          const mesh: InstancedMesh = {
+            colors,
+            fileId,
+            indices,
+            vertices,
+            normals,
+            instanceMatrices
+          };
+          finalMeshes.push(mesh);
         }
 
-        const mesh: TriangleMesh = {
-          colors: colorsBuffer,
-          fileId,
-          indices,
-          vertices,
-          normals
-        };
-        sector.triangleMeshes.push(mesh);
-      }
+        return finalMeshes;
+      })();
+
+      const sector: Sector = {
+        boxes,
+        circles,
+        cones,
+        eccentricCones,
+        ellipsoidSegments,
+        generalCylinders,
+        generalRings,
+        instanceMeshes: finalInstanceMeshes,
+        nuts,
+        quads,
+        sphericalSegments,
+        torusSegments,
+        trapeziums,
+        triangleMeshes: finalTriangleMeshes
+      };
       return sector;
     } catch (err) {
       throw new Error(`Parsing sector ${sectorId} failed: ${err}`);

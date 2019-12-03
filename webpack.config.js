@@ -60,8 +60,19 @@ module.exports = env => {
         {
           test: /\.tsx?$/,
           use: 'ts-loader',
-          exclude: /node_modules/,
+          exclude: [
+            /node_modules/,
+            /src\/__tests__/,
+          ]
         },
+        {
+          test: /\.(glsl|vert|frag)$/,
+          exclude: '/node_modules/',
+          use: [
+            'raw-loader',
+            'glslify-loader'
+          ]
+        }
       ],
     },
     externals: development ? undefined : [nodeExternals()],
@@ -93,7 +104,6 @@ module.exports = env => {
         forceMode: 'production',
       }),
       new WorkerPlugin(),
-
     ],
   };
 

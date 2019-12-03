@@ -6,26 +6,27 @@ import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import { createThreeJsSectorNode } from '../../views/threejs/sector/createThreeJsSectorNode';
 import { createLocalSectorModel } from '../..';
+import { getUrlParameter } from '../../utils/urlUtils';
 
 CameraControls.install({ THREE });
 
 async function main() {
+  const modelUrl = getUrlParameter('model') || '/primitives-2019-11-11-f3d';
+
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.near = 0.12;
-  camera.far = 1000;
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
   const renderer = new THREE.WebGLRenderer();
-  renderer.setClearColor('#000000');
+  renderer.setClearColor('#444');
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const sectorModel = createLocalSectorModel('/***REMOVED***');
+  const sectorModel = createLocalSectorModel(modelUrl);
   const sectorModelNode = await createThreeJsSectorNode(sectorModel);
   scene.add(sectorModelNode);
 
   const controls = new CameraControls(camera, renderer.domElement);
-  const pos = new THREE.Vector3(373.2188407437061, 512.6270615748768, -126.18227676536418);
-  const target = new THREE.Vector3(330.697021484375, 500.3190002441406, -84.89916229248047);
+  const pos = new THREE.Vector3(1000, 1000, 100);
+  const target = new THREE.Vector3(0.0, 0.0, 0.0);
   controls.setLookAt(pos.x, pos.y, pos.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
