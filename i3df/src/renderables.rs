@@ -586,6 +586,7 @@ new_geometry_types! {
             center_b: Vector3 => f32,
             radius: f32 => f32,
             rotation_angle: f32 => f32,
+            instance_matrix: Matrix4 => f32,
         ]
     }
 
