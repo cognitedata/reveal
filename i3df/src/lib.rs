@@ -55,54 +55,6 @@ pub struct SectorHeader {
     pub attributes: Option<SectorAttributes>,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct SectorAttributes {
-    pub color: Vec<[u8; 4]>,
-    pub diagonal: Vec<f32>,
-    pub center_x: Vec<f32>,
-    pub center_y: Vec<f32>,
-    pub center_z: Vec<f32>,
-    pub normal: Vec<[f32; 3]>,
-    pub delta: Vec<f32>,
-    pub height: Vec<f32>,
-    pub radius: Vec<f32>,
-    pub angle: Vec<f32>,
-    pub translation_x: Vec<f32>,
-    pub translation_y: Vec<f32>,
-    pub translation_z: Vec<f32>,
-    pub scale_x: Vec<f32>,
-    pub scale_y: Vec<f32>,
-    pub scale_z: Vec<f32>,
-    pub file_id: Vec<u64>,
-    pub texture: Vec<Texture>,
-}
-
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct SectorAttribute {
-    pub item_count: u32,
-    pub item_size: u32,
-
-    pub attribute_data: SectorAttributeData,
-}
-
-#[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(untagged)]
-pub enum SectorAttributeData {
-    Color(Vec<(u8, u8, u8, u8)>),
-    Normal(Vec<(f32, f32, f32)>),
-    Float32(Vec<f32>),
-    Uint64(Vec<u64>),
-    Texture(Vec<Texture>),
-}
-
-#[wasm_bindgen]
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
-pub struct Texture {
-    pub file_id: u64,
-    pub width: u16,
-    pub height: u16,
-}
-
 pub fn parse_scene(reader: impl BufRead) -> Result<Scene, Error> {
     parse_scene_data(reader)
 }
