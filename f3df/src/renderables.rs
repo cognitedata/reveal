@@ -1,12 +1,12 @@
-use crate as f3df;
 use nalgebra;
 use serde_derive::Serialize;
-use std::f32::consts::{PI, FRAC_PI_2};
+use std::f32::consts::{FRAC_PI_2, PI};
+use std::u8;
 
-type Vector3 = nalgebra::Vector3::<f32>;
-type Matrix4 = nalgebra::Matrix4::<f32>;
-type Rotation3 = nalgebra::Rotation3::<f32>;
-type Translation3 = nalgebra::Translation3::<f32>;
+type Vector3 = nalgebra::Vector3<f32>;
+type Matrix4 = nalgebra::Matrix4<f32>;
+type Rotation3 = nalgebra::Rotation3<f32>;
+type Translation3 = nalgebra::Translation3<f32>;
 
 #[derive(Clone, Copy, Serialize)]
 pub struct Face {
@@ -32,12 +32,16 @@ fn compose_face_matrix(
     let translation_matrix = Translation3::from(*center);
     let offset_matrix = Translation3::from(*offset);
     let scale_matrix = Matrix4::new_nonuniform_scaling(scale);
+
     // NOTE rotation purposefully happens first to make the face point in the correct direction
     // TODO remove Matrix4::from if possible
-    Matrix4::from(translation_matrix) * scale_matrix * Matrix4::from(offset_matrix) * Matrix4::from(*rotation_matrix)
+    Matrix4::from(translation_matrix)
+        * scale_matrix
+        * Matrix4::from(offset_matrix)
+        * Matrix4::from(*rotation_matrix)
 }
 
-pub fn convert_sector(sector: &f3df::Sector) -> Vec<Face> {
+pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
     let mut instance_data = Vec::new();
     let contents = match &sector.sector_contents {
         Some(x) => x,
@@ -74,12 +78,12 @@ pub fn convert_sector(sector: &f3df::Sector) -> Vec<Face> {
             let count = (u32::from(face.repetitions) + 1) as f32;
             if face
                 .face_flags
-                .intersects(f3df::FaceFlags::POSITIVE_X_VISIBLE)
+                .intersects(crate::FaceFlags::POSITIVE_X_VISIBLE)
             {
                 let offset = Vector3::new(1.0, 0.5, 0.5);
                 let normal = Vector3::new(1.0, 0.0, 0.0);
                 let rotation = Rotation3::from_axis_angle(&Vector3::y_axis(), FRAC_PI_2);
-                let scale = if compress_type.intersects(f3df::CompressFlags::POSITIVE_X_REPEAT_Y) {
+                let scale = if compress_type.intersects(crate::CompressFlags::POSITIVE_X_REPEAT_Y) {
                     Vector3::new(increment, increment, count * increment)
                 } else {
                     Vector3::new(increment, count * increment, increment)
@@ -92,12 +96,12 @@ pub fn convert_sector(sector: &f3df::Sector) -> Vec<Face> {
             }
             if face
                 .face_flags
-                .intersects(f3df::FaceFlags::POSITIVE_Y_VISIBLE)
+                .intersects(crate::FaceFlags::POSITIVE_Y_VISIBLE)
             {
                 let offset = Vector3::new(0.5, 1.0, 0.5);
                 let normal = Vector3::new(0.0, 1.0, 0.0);
                 let rotation = Rotation3::from_axis_angle(&Vector3::x_axis(), -FRAC_PI_2);
-                let scale = if compress_type.intersects(f3df::CompressFlags::POSITIVE_Y_REPEAT_X) {
+                let scale = if compress_type.intersects(crate::CompressFlags::POSITIVE_Y_REPEAT_X) {
                     Vector3::new(increment, increment, count * increment)
                 } else {
                     Vector3::new(count * increment, increment, increment)
@@ -110,12 +114,12 @@ pub fn convert_sector(sector: &f3df::Sector) -> Vec<Face> {
             }
             if face
                 .face_flags
-                .intersects(f3df::FaceFlags::POSITIVE_Z_VISIBLE)
+                .intersects(crate::FaceFlags::POSITIVE_Z_VISIBLE)
             {
                 let offset = Vector3::new(0.5, 0.5, 1.0);
                 let normal = Vector3::new(0.0, 0.0, 1.0);
                 let rotation = Rotation3::identity();
-                let scale = if compress_type.intersects(f3df::CompressFlags::POSITIVE_Z_REPEAT_X) {
+                let scale = if compress_type.intersects(crate::CompressFlags::POSITIVE_Z_REPEAT_X) {
                     Vector3::new(increment, count * increment, increment)
                 } else {
                     Vector3::new(count * increment, increment, increment)
@@ -128,12 +132,12 @@ pub fn convert_sector(sector: &f3df::Sector) -> Vec<Face> {
             }
             if face
                 .face_flags
-                .intersects(f3df::FaceFlags::NEGATIVE_X_VISIBLE)
+                .intersects(crate::FaceFlags::NEGATIVE_X_VISIBLE)
             {
                 let offset = Vector3::new(0.0, 0.5, 0.5);
                 let normal = Vector3::new(-1.0, 0.0, 0.0);
                 let rotation = Rotation3::from_axis_angle(&Vector3::y_axis(), -FRAC_PI_2);
-                let scale = if compress_type.intersects(f3df::CompressFlags::NEGATIVE_X_REPEAT_Y) {
+                let scale = if compress_type.intersects(crate::CompressFlags::NEGATIVE_X_REPEAT_Y) {
                     Vector3::new(increment, increment, count * increment)
                 } else {
                     Vector3::new(increment, count * increment, increment)
@@ -146,12 +150,12 @@ pub fn convert_sector(sector: &f3df::Sector) -> Vec<Face> {
             }
             if face
                 .face_flags
-                .intersects(f3df::FaceFlags::NEGATIVE_Y_VISIBLE)
+                .intersects(crate::FaceFlags::NEGATIVE_Y_VISIBLE)
             {
                 let offset = Vector3::new(0.5, 0.0, 0.5);
                 let normal = Vector3::new(0.0, -1.0, 0.0);
                 let rotation = Rotation3::from_axis_angle(&Vector3::x_axis(), FRAC_PI_2);
-                let scale = if compress_type.intersects(f3df::CompressFlags::NEGATIVE_Y_REPEAT_X) {
+                let scale = if compress_type.intersects(crate::CompressFlags::NEGATIVE_Y_REPEAT_X) {
                     Vector3::new(increment, increment, count * increment)
                 } else {
                     Vector3::new(increment * count, increment, increment)
@@ -164,12 +168,12 @@ pub fn convert_sector(sector: &f3df::Sector) -> Vec<Face> {
             }
             if face
                 .face_flags
-                .intersects(f3df::FaceFlags::NEGATIVE_Z_VISIBLE)
+                .intersects(crate::FaceFlags::NEGATIVE_Z_VISIBLE)
             {
                 let offset = Vector3::new(0.5, 0.5, 0.0);
                 let normal = Vector3::new(0.0, 0.0, -1.0);
                 let rotation = Rotation3::from_axis_angle(&Vector3::x_axis(), -PI);
-                let scale = if compress_type.intersects(f3df::CompressFlags::NEGATIVE_Z_REPEAT_X) {
+                let scale = if compress_type.intersects(crate::CompressFlags::NEGATIVE_Z_REPEAT_X) {
                     Vector3::new(increment, count * increment, increment)
                 } else {
                     Vector3::new(increment * count, increment, increment)
@@ -184,4 +188,72 @@ pub fn convert_sector(sector: &f3df::Sector) -> Vec<Face> {
     }
 
     instance_data
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use approx::assert_abs_diff_eq;
+
+    #[test]
+    fn test_normalize_color() {
+        {
+            let result = normalize_color([128, 129, 130, 255]);
+            assert_abs_diff_eq!(result[0], 0.501_960_8); // 128/255
+            assert_abs_diff_eq!(result[1], 0.505_882_4); // 129/255
+            assert_abs_diff_eq!(result[2], 0.509_803_95); // 130/255
+        }
+
+        {
+            let result = normalize_color([0, 128, 255, 255]);
+            assert_abs_diff_eq!(result[0], 0.0);
+            assert_abs_diff_eq!(result[1], 0.501_960_8); // 128/255
+            assert_abs_diff_eq!(result[2], 1.0);
+        }
+    }
+
+    #[test]
+    fn test_convert_sector() {
+        let sector = crate::Sector {
+            sector_contents: Some(crate::SectorContents {
+                grid_increment: 3.0,
+                grid_size: [11, 15, 17],
+                grid_origin: [0.1, 0.2, 0.3],
+                nodes: vec![crate::Node {
+                    node_id: 0,
+                    color: [128, 129, 130, 255],
+                    compress_type: crate::CompressFlags::POSITIVE_Y_REPEAT_X,
+                    faces: vec![crate::Face {
+                        face_flags: crate::FaceFlags::POSITIVE_Y_VISIBLE,
+                        index: 100,
+                        repetitions: 4,
+                    }],
+                }],
+            }),
+            // The following is not used and only necessary to create a valid sector
+            bbox_min: [-2.0, -2.0, 3.0],
+            bbox_max: [-1.0, 3.0, 6.0],
+            format_version: 0,
+            magic_bytes: 0x0000_1111,
+            optimizer_version: 0,
+            parent_sector_id: 0,
+            sector_id: 0,
+        };
+        let result = convert_sector(&sector);
+
+        assert_abs_diff_eq!(result[0].color[0], 0.501_960_8); // 128/255
+        assert_abs_diff_eq!(result[0].color[1], 0.505_882_4); // 129/255
+        assert_abs_diff_eq!(result[0].color[2], 0.509_803_95); // 130/255
+
+        #[rustfmt::skip]
+        let matrix = Matrix4::from_column_slice(&[
+            3.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, -15.0, 0.0,
+            0.0, 3.0, 0.0, 0.0,
+            3.1, 34.7, 9.3, 1.0
+        ]);
+        assert_abs_diff_eq!(result[0].matrix, matrix, epsilon = 0.00001);
+
+        assert_abs_diff_eq!(result[0].normal, Vector3::new(0.0, 1.0, 0.0));
+    }
 }
