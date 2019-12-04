@@ -82,7 +82,9 @@ fn create_dtype(attribute: &Attribute) -> TokenStream {
             "u32" => quote! {u32},
             "u64" => quote! {u64},
             "f32" => quote! {f32},
-            t => quote! { ERROR_NOT_IMPLEMENTED: #t },
+             t => {
+               panic!("Type not implemented: {}", t);
+             },
         },
         Type::Texture(_) => quote! { Texture },
     };
