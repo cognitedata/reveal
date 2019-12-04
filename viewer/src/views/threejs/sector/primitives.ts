@@ -503,8 +503,11 @@ function createTorusSegments(torusSegments: PrimitiveAttributes) {
   if (!sizes) {
     throw new Error('Torus segments are missing size attribute');
   }
-  const biggestTorus = sizes.reduce((acc, size) => Math.max(acc, size));
   const lod = new THREE.LOD();
+  if (sizes.length < 1) {
+    return lod;
+  }
+  const biggestTorus = sizes.reduce((acc, size) => Math.max(acc, size));
 
   for (const [level, torus] of torusLODs.entries()) {
     const geometry = new THREE.InstancedBufferGeometry();

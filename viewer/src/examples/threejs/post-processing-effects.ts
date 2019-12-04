@@ -26,8 +26,8 @@ async function main() {
   scene.add(sectorModelNode);
 
   const controls = new CameraControls(camera, renderer.domElement);
-  const pos = new THREE.Vector3(373.2188407437061, 512.6270615748768, -126.18227676536418);
-  const target = new THREE.Vector3(330.697021484375, 500.3190002441406, -84.89916229248047);
+  const pos = new THREE.Vector3(100, 100, 100);
+  const target = new THREE.Vector3(0, 0, 0);
   controls.setLookAt(pos.x, pos.y, pos.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();

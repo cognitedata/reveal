@@ -11,10 +11,10 @@ import { getUrlParameter } from '../../utils/urlUtils';
 CameraControls.install({ THREE });
 
 async function main() {
-  const modelUrl = getUrlParameter('model') || '/primitives-2019-11-11-f3d';
+  const modelUrl = getUrlParameter('model') || '/primitives';
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#444');
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -25,7 +25,7 @@ async function main() {
   scene.add(sectorModelNode);
 
   const controls = new CameraControls(camera, renderer.domElement);
-  const pos = new THREE.Vector3(1000, 1000, 100);
+  const pos = new THREE.Vector3(100, 100, 10);
   const target = new THREE.Vector3(0.0, 0.0, 0.0);
   controls.setLookAt(pos.x, pos.y, pos.z, target.x, target.y, target.z);
   controls.update(0.0);

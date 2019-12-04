@@ -37,9 +37,9 @@ async function main() {
   sectorModelOffsetRoot.add(sectorModelNode);
   scene.add(sectorModelOffsetRoot);
 
-  const pointCloudModel = createLocalPointCloudModel('/pointcloud/cloud.js');
+  const pointCloudModel = createLocalPointCloudModel('/transformer-point-cloud/cloud.js');
   const [pointCloudGroup, pointCloudNode] = await createThreeJsPointCloudNode(pointCloudModel);
-  pointCloudGroup.position.set(320, 495, -90);
+  pointCloudGroup.position.set(10, 10, 10);
   scene.add(pointCloudGroup);
 
   let settingsChanged = false;
@@ -49,8 +49,8 @@ async function main() {
   initializeGui(pointCloudGroup, pointCloudNode, handleSettingsChanged);
 
   const controls = new CameraControls(camera, renderer.domElement);
-  const pos = new THREE.Vector3(50 + 320, 50 + 495, 50 - 90);
-  const target = new THREE.Vector3(320, 495, -90);
+  const pos = new THREE.Vector3(100, 100, 100);
+  const target = new THREE.Vector3(0, 0, 0);
   controls.setLookAt(pos.x, pos.y, pos.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();

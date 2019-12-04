@@ -16,9 +16,9 @@ async function main() {
   const viewer = new Cesium.Viewer('cesiumContainer', options);
   viewer.extend(Cesium.viewerCesiumInspectorMixin, {});
 
-  const sectorModel = createLocalSectorModel('/primitives');
+  const sectorModel = createLocalSectorModel('/transformer');
   const cogniteOffice = Cesium.Cartesian3.fromDegrees(10.624603, 59.904081);
-  const modelOffset = new Cesium.Cartesian3(-330, -100, -459);
+  const modelOffset = new Cesium.Cartesian3(0.0, 0.0, 0.0);
   const [bounds, modelTransformation] = await initializeCesiumSectorScene(
     cogniteOffice,
     modelOffset,

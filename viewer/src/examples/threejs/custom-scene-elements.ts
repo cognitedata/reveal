@@ -30,25 +30,25 @@ async function main() {
   scene.add(sectorModelNode);
 
   const controls = new CameraControls(camera, renderer.domElement);
-  const pos = new THREE.Vector3(373.2188407437061, 512.6270615748768, -126.18227676536418);
-  const target = new THREE.Vector3(330.697021484375, 500.3190002441406, -84.89916229248047);
+  const pos = new THREE.Vector3(100, 100, 100);
+  const target = new THREE.Vector3(0, 0, 0);
   controls.setLookAt(pos.x, pos.y, pos.z, target.x, target.y, target.z);
   controls.update(0.0);
 
   // Some custom content
   const path = [
-    new THREE.Vector3(338.58, 500.62, -122.32),
-    new THREE.Vector3(337.96, 500.62, -99.86),
-    new THREE.Vector3(340.62, 500.62, -99.86),
-    new THREE.Vector3(341.06, 500.62, -87.2)
+    new THREE.Vector3(8.58, 0.62, -2.32),
+    new THREE.Vector3(7.96, 0.62, -9.86),
+    new THREE.Vector3(10.62, 0.62, -9.86),
+    new THREE.Vector3(11.06, 0.62, -7.2)
   ];
   const pathNode = createPathNode(path);
   scene.add(pathNode);
 
   const spriteDefinitions = [
-    { pos: new THREE.Vector3(338.58, 500.62, -122.32), text: 'R-AB-98' },
-    { pos: new THREE.Vector3(340.62, 500.62, -99.86), text: 'K-CC-12' },
-    { pos: new THREE.Vector3(341.06, 500.62, -87.2), text: 'R-MN-42' }
+    { pos: new THREE.Vector3(8.58, 0.62, -2.32), text: 'R-AB-98' },
+    { pos: new THREE.Vector3(10.62, 0.62, -9.86), text: 'K-CC-12' },
+    { pos: new THREE.Vector3(11.06, 0.62, -7.2), text: 'R-MN-42' }
   ];
   const textSpritesNdoe = createTextSpriteNode(spriteDefinitions);
   scene.add(textSpritesNdoe);
