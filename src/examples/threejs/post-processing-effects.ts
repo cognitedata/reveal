@@ -21,7 +21,7 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const sectorModel = createLocalSectorModel('/***REMOVED***');
+  const sectorModel = createLocalSectorModel('/primitives');
   const sectorModelNode = await createThreeJsSectorNode(sectorModel);
   scene.add(sectorModelNode);
 

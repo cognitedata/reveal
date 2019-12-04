@@ -30,14 +30,14 @@ async function main() {
 
   Potree.XHRFactory.config.customHeaders.push({ header: 'MyDummyHeader', value: 'MyDummyValue' });
 
-  const sectorModel = createLocalSectorModel('/***REMOVED***');
+  const sectorModel = createLocalSectorModel('/primitives');
   const sectorModelNode = await createThreeJsSectorNode(sectorModel);
   const sectorModelOffsetRoot = new THREE.Group();
   sectorModelOffsetRoot.name = 'Sector model offset root';
   sectorModelOffsetRoot.add(sectorModelNode);
   scene.add(sectorModelOffsetRoot);
 
-  const pointCloudModel = createLocalPointCloudModel('/***REMOVED***/cloud.js');
+  const pointCloudModel = createLocalPointCloudModel('/pointcloud/cloud.js');
   const [pointCloudGroup, pointCloudNode] = await createThreeJsPointCloudNode(pointCloudModel);
   pointCloudGroup.position.set(320, 495, -90);
   scene.add(pointCloudGroup);

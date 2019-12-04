@@ -10,9 +10,6 @@ import { createThreeJsSectorNode } from '../../views/threejs/sector/createThreeJ
 import { createLocalSectorModel } from '../..';
 import { createPathNode, createTextSpriteNode } from './utils/scene-elements';
 
-import svennArneImgUrl from '../***REMOVED***';
-// const svennArneImgUrl = require('../***REMOVED***');
-
 CameraControls.install({ THREE });
 
 /**
@@ -28,7 +25,7 @@ async function main() {
   renderer.setClearColor('#000000');
   renderer.setSize(window.innerWidth, window.innerHeight);
 
-  const sectorModel = createLocalSectorModel('/***REMOVED***');
+  const sectorModel = createLocalSectorModel('/primitives');
   const sectorModelNode = await createThreeJsSectorNode(sectorModel);
   scene.add(sectorModelNode);
 
@@ -37,18 +34,6 @@ async function main() {
   const target = new THREE.Vector3(330.697021484375, 500.3190002441406, -84.89916229248047);
   controls.setLookAt(pos.x, pos.y, pos.z, target.x, target.y, target.z);
   controls.update(0.0);
-
-  // // Add a rendered DOM element to the scene
-  const svennArneTexture = new THREE.TextureLoader().load(svennArneImgUrl);
-  const quad = new THREE.PlaneBufferGeometry(5, 5, 10, 10);
-  const quadMaterial = new THREE.MeshBasicMaterial({
-    map: svennArneTexture,
-    side: THREE.DoubleSide
-  });
-  const quadMesh = new THREE.Mesh(quad, quadMaterial);
-  quadMesh.rotateY(Math.PI / 2);
-  quadMesh.position.set(348.84, 503.5, -91);
-  scene.add(quadMesh);
 
   // Some custom content
   const path = [

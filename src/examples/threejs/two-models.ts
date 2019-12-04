@@ -18,8 +18,8 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const sectorModel1 = createLocalSectorModel('/***REMOVED***');
-  const sectorModel2 = createLocalSectorModel('/***REMOVED***');
+  const sectorModel1 = createLocalSectorModel('/primitives');
+  const sectorModel2 = createLocalSectorModel('/primitives');
   const sectorModelNode1 = await createThreeJsSectorNode(sectorModel1);
   const sectorModelNode2 = await createThreeJsSectorNode(sectorModel2);
   const model2Offset = new THREE.Group();
