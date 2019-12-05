@@ -38,7 +38,12 @@ export type InstancedMesh = {
   readonly instanceMatrices: Float32Array;
 };
 
+// TODO 2019-12-05 larsmoa: Rename to e.g. SectorGeometry to avoid
+// confusion with other Sector-class
 export interface Sector {
+  instanceMeshes: InstancedMesh[];
+  triangleMeshes: TriangleMesh[];
+
   boxes: PrimitiveAttributes;
   circles: PrimitiveAttributes;
   cones: PrimitiveAttributes;
@@ -46,13 +51,11 @@ export interface Sector {
   ellipsoidSegments: PrimitiveAttributes;
   generalCylinders: PrimitiveAttributes;
   generalRings: PrimitiveAttributes;
-  instanceMeshes: InstancedMesh[];
   nuts: PrimitiveAttributes;
   quads: PrimitiveAttributes;
   sphericalSegments: PrimitiveAttributes;
   torusSegments: PrimitiveAttributes;
   trapeziums: PrimitiveAttributes;
-  triangleMeshes: TriangleMesh[];
 }
 
 export interface SectorQuads {

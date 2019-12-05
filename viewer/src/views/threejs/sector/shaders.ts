@@ -2,8 +2,7 @@
  * Copyright 2019 Cognite AS
  */
 
-// @ts-ignore
-import * as glsl from 'glslify';
+import glsl from 'glslify';
 
 export const sectorShaders = {
   // ----------------
