@@ -1,4 +1,4 @@
-use crate::{Vector3, Vector4};
+use crate::{Texture, Vector3, Vector4};
 use serde_derive::{Deserialize, Serialize};
 
 use serde_wasm_bindgen;
@@ -103,6 +103,10 @@ macro_rules! make_func_vec {
 
     ($self:ident, $field_name:ident, u32, u32) => {{
         $self.$field_name.clone()
+    }};
+
+    ($self:ident, $field_name:ident, Texture, JsValue) => {{
+        $self.$field_name.iter().map(JsValue::from_serde).filter_map(Result::ok).collect()
     }};
 
     // TODO re-evaluate safety of this
@@ -516,11 +520,11 @@ new_geometry_types! {
             file_id: u64 => f64,
             triangle_count: u64 => f64,
             // TODO go directly to struct
-            diffuse_texture: u32 => u32,
-            specular_texture: u32 => u32,
-            ambient_texture: u32 => u32,
-            normal_texture: u32 => u32,
-            bump_texture: u32 => u32,
+            diffuse_texture: Texture => JsValue,
+            specular_texture: Texture => JsValue,
+            ambient_texture: Texture => JsValue,
+            normal_texture: Texture => JsValue,
+            bump_texture: Texture => JsValue,
         ]
     }
     {
