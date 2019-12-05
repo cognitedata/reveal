@@ -2,4 +2,5 @@
 members = [
     "f3df",
     "i3df",
+    "viewer", # NOTE: it is actually a JS project, but we might as well build it
 ]
