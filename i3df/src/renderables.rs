@@ -1,5 +1,8 @@
-use crate::{Texture, Vector3, Vector4};
+use crate::{Matrix4, Rotation3, Texture, Translation3, Vector3, Vector4};
+use inflector::cases::camelcase::to_camel_case;
+use js_sys::{Float32Array, Float64Array, Map, Uint8Array};
 use serde_derive::{Deserialize, Serialize};
+use std::f32::consts::PI;
 
 use serde_wasm_bindgen;
 use wasm_bindgen::prelude::*;
@@ -7,6 +10,7 @@ use wasm_bindgen::JsValue;
 
 pub mod box3d;
 pub mod circle;
+pub mod common;
 pub mod cone;
 pub mod cylinder;
 pub mod ellipsoid;
@@ -78,7 +82,6 @@ pub trait GeometryCollection<G: Geometry> {
 }
 
 macro_rules! make_func_vec {
-
     ($self:ident, $field_name:ident, u64, f64) => {{
         let data: Vec<f64> = $self
             .$field_name
@@ -132,6 +135,17 @@ macro_rules! make_func_vec {
         data_as_f32.to_vec()
     }};
 
+    ($self:ident, $field_name:ident, Matrix4, f32) => {{
+        let data_as_matrix4 = &$self.$field_name;
+        let data_as_f32 = unsafe {
+            std::slice::from_raw_parts(
+                data_as_matrix4.as_ptr() as *const f32,
+                data_as_matrix4.len() * 16,
+            )
+        };
+        data_as_f32.to_vec()
+    }};
+
     ($self:ident, $field_name:ident, Texture, Texture) => {{
         $self.$field_name.clone()
     }};
@@ -157,8 +171,8 @@ macro_rules! new_geometry_types {
             #[serde(rename_all="camelCase")]
             pub struct $struct_name {
                 $(
-                    #[wasm_bindgen(skip)]
-                    pub $field_name : $field_type,
+                #[wasm_bindgen(skip)]
+                pub $field_name : $field_type,
                 )*
             }
 
@@ -167,18 +181,33 @@ macro_rules! new_geometry_types {
             #[serde(rename_all="camelCase")]
             pub struct $vec_struct_name {
                 $(
-                    #[wasm_bindgen(skip)]
-                    pub $field_name : Vec<$field_type>,
+                #[wasm_bindgen(skip)]
+                pub $field_name : Vec<$field_type>,
                 )*
             }
 
             #[wasm_bindgen]
             impl $vec_struct_name {
                 $(
-                    pub fn $field_name(&self) -> Vec<$wasm_vec_result> {
-                        make_func_vec!(self, $field_name, $field_type, $wasm_vec_result)
-                    }
+                pub fn $field_name(&self) -> Vec<$wasm_vec_result> {
+                    make_func_vec!(self, $field_name, $field_type, $wasm_vec_result)
+                }
                 )*
+
+                pub fn attributes(&self) -> PrimitiveAttributes {
+                    let attributes = PrimitiveAttributes {
+                        f32_attributes: Map::new(),
+                        f64_attributes: Map::new(),
+                        u8_attributes: Map::new(),
+                        vec3_attributes: Map::new(),
+                        vec4_attributes: Map::new(),
+                        mat4_attributes: Map::new(),
+                    };
+                    $( //fields
+                    insert_attribute!(self, attributes, $field_name, $field_type, $wasm_vec_result );
+                    )*
+                    attributes
+                }
             }
 
             impl Geometry for $struct_name { }
@@ -225,6 +254,39 @@ macro_rules! new_geometry_types {
             $(
                 pub $collection_name: $vec_struct_name,
             )*
+        }
+
+        #[wasm_bindgen]
+        #[derive(Clone, Debug)]
+        pub struct PrimitiveAttributes {
+            f64_attributes: Map,
+            u8_attributes: Map,
+            f32_attributes: Map,
+            vec3_attributes: Map,
+            vec4_attributes: Map,
+            mat4_attributes: Map,
+        }
+
+        #[wasm_bindgen]
+        impl PrimitiveAttributes {
+            pub fn f64_attributes(&self) -> Map {
+                self.f64_attributes.clone()
+            }
+            pub fn u8_attributes(&self) -> Map {
+                self.u8_attributes.clone()
+            }
+            pub fn f32_attributes(&self) -> Map {
+                self.f32_attributes.clone()
+            }
+            pub fn vec3_attributes(&self) -> Map {
+                self.vec3_attributes.clone()
+            }
+            pub fn vec4_attributes(&self) -> Map {
+                self.vec4_attributes.clone()
+            }
+            pub fn mat4_attributes(&self) -> Map {
+                self.mat4_attributes.clone()
+            }
         }
 
         impl PrimitiveCollections {
@@ -313,6 +375,85 @@ macro_rules! new_geometry_types {
     };
 }
 
+macro_rules! insert_attribute {
+    // TODO a lot of this code is duplicated from make_func_vec - deduplicate please
+    ($self:ident, $attributes:ident, $field_name:ident, u64, f64) => {{
+        let data: Vec<f64> = $self
+            .$field_name
+            .iter()
+            .map(|value| *value as f64)
+            .collect();
+        $attributes.f64_attributes.set(
+            &JsValue::from(to_camel_case(stringify!($field_name))),
+            &Float64Array::from(&data[..]),
+        );
+    }};
+
+    ($self:ident, $attributes:ident, $field_name:ident, f32, f32) => {{
+        $attributes.f32_attributes.set(
+            &JsValue::from(to_camel_case(stringify!($field_name))),
+            &Float32Array::from(&$self.$field_name[..]),
+        );
+    }};
+
+    ($self:ident, $attributes:ident, $field_name:ident, [u8; 4], u8) => {{
+        let color_flat: Vec<u8> = $self
+            .$field_name
+            .iter()
+            .flat_map(|a| vec![a[0], a[1], a[2], a[3]])
+            .collect();
+        $attributes.u8_attributes.set(
+            &JsValue::from(to_camel_case(stringify!($field_name))),
+            &Uint8Array::from(&color_flat[..]),
+        );
+    }};
+
+    ($self:ident, $attributes:ident, $field_name:ident, Vector3, f32) => {{
+        let data_as_vector3 = &$self.$field_name;
+        let data_as_f32 = unsafe {
+            std::slice::from_raw_parts(
+                data_as_vector3.as_ptr() as *const f32,
+                data_as_vector3.len() * 3,
+            )
+        };
+        let data = data_as_f32.to_vec();
+        $attributes.vec3_attributes.set(
+            &JsValue::from(to_camel_case(stringify!($field_name))),
+            &Float32Array::from(&data[..]),
+        );
+    }};
+
+    ($self:ident, $attributes:ident, $field_name:ident, Vector4, f32) => {{
+        let data_as_vector4 = &$self.$field_name;
+        let data_as_f32 = unsafe {
+            std::slice::from_raw_parts(
+                data_as_vector4.as_ptr() as *const f32,
+                data_as_vector4.len() * 4,
+            )
+        };
+        let data = data_as_f32.to_vec();
+        $attributes.vec4_attributes.set(
+            &JsValue::from(to_camel_case(stringify!($field_name))),
+            &Float32Array::from(&data[..]),
+        );
+    }};
+
+    ($self:ident, $attributes:ident, $field_name:ident, Matrix4, f32) => {{
+        let data_as_matrix4 = &$self.$field_name;
+        let data_as_f32 = unsafe {
+            std::slice::from_raw_parts(
+                data_as_matrix4.as_ptr() as *const f32,
+                data_as_matrix4.len() * 16,
+            )
+        };
+        let data = data_as_f32.to_vec();
+        $attributes.mat4_attributes.set(
+            &JsValue::from(to_camel_case(stringify!($field_name))),
+            &Float32Array::from(&data[..]),
+        );
+    }};
+}
+
 new_geometry_types! {
     {
         Box3D,
@@ -327,6 +468,7 @@ new_geometry_types! {
             normal: Vector3 => f32,
             rotation_angle: f32 => f32,
             delta: Vector3 => f32,
+            instance_matrix: Matrix4 => f32,
         ]
     }
 
@@ -361,6 +503,7 @@ new_geometry_types! {
             center: Vector3 => f32,
             normal: Vector3 => f32,
             radius: f32 => f32,
+            instance_matrix: Matrix4 => f32,
         ]
     }
 
@@ -411,6 +554,7 @@ new_geometry_types! {
             thickness: f32 => f32,
             angle: f32 => f32,
             arc_angle: f32 => f32,
+            instance_matrix: Matrix4 => f32,
         ]
     }
 
@@ -450,6 +594,7 @@ new_geometry_types! {
             center_b: Vector3 => f32,
             radius: f32 => f32,
             rotation_angle: f32 => f32,
+            instance_matrix: Matrix4 => f32,
         ]
     }
 
@@ -463,6 +608,7 @@ new_geometry_types! {
             vertex_1: Vector3 => f32,
             vertex_2: Vector3 => f32,
             vertex_3: Vector3 => f32,
+            instance_matrix: Matrix4 => f32,
         ]
     }
 
@@ -493,6 +639,7 @@ new_geometry_types! {
             tube_radius: f32 => f32,
             rotation_angle: f32 => f32,
             arc_angle: f32 => f32,
+            instance_matrix: Matrix4 => f32,
         ]
     }
     {
@@ -540,12 +687,150 @@ new_geometry_types! {
             translation: Vector3 => f32,
             rotation: Vector3 => f32,
             scale: Vector3 => f32,
+            instance_matrix: Matrix4 => f32
         ]
+    }
+}
+
+// TODO see if there exists a library for unnamed struct macros so we can avoid these '*Info' types
+pub struct CircleInfo {
+    node_id: u64,
+    tree_index: u64,
+    color: [u8; 4],
+    size: f32,
+    center: Vector3,
+    normal: Vector3,
+    radius: f32,
+}
+
+impl Circle {
+    fn new(data: &CircleInfo) -> Circle {
+        let translation_matrix = Translation3::from(data.center);
+        let rotation_matrix = match Rotation3::rotation_between(&Vector3::z_axis(), &data.normal) {
+            Some(x) => x,
+            None => Rotation3::from_axis_angle(&Vector3::x_axis(), PI),
+        };
+        let scale_matrix = Matrix4::new_nonuniform_scaling(&Vector3::new(
+            2.0 * data.radius,
+            2.0 * data.radius,
+            1.0,
+        ));
+
+        let instance_matrix =
+            Matrix4::from(translation_matrix) * Matrix4::from(rotation_matrix) * scale_matrix;
+
+        Circle {
+            node_id: data.node_id,
+            tree_index: data.tree_index,
+            color: data.color,
+            size: data.size,
+            center: data.center,
+            normal: data.normal,
+            radius: data.radius,
+            instance_matrix,
+        }
+    }
+}
+
+pub struct QuadInfo {
+    node_id: u64,
+    tree_index: u64,
+    color: [u8; 4],
+    size: f32,
+    vertex_1: Vector3,
+    vertex_2: Vector3,
+    vertex_3: Vector3,
+}
+
+impl Quad {
+    fn new(data: &QuadInfo) -> Quad {
+        let side_1 = data.vertex_3 - data.vertex_1;
+        let side_2 = data.vertex_3 - data.vertex_2;
+        let scale_matrix =
+            Matrix4::new_nonuniform_scaling(&Vector3::new(side_2.norm(), side_1.norm(), 1.0));
+
+        let normal = Vector3::cross(&side_2, &side_1).normalize();
+        let side_1 = side_1.normalize();
+        let side_2 = side_2.normalize();
+        #[rustfmt::skip]
+        let basis = Matrix4::new(
+            side_2.x, side_1.x, normal.x, 0.0,
+            side_2.y, side_1.y, normal.y, 0.0,
+            side_2.z, side_1.z, normal.z, 0.0,
+            0.0, 0.0, 0.0, 1.0,
+        );
+
+        let center = 0.5 * (data.vertex_1 + data.vertex_2);
+        let translation_matrix = Translation3::from(center);
+
+        let instance_matrix = Matrix4::from(translation_matrix) * basis * scale_matrix;
+
+        Quad {
+            node_id: data.node_id,
+            tree_index: data.tree_index,
+            color: data.color,
+            size: data.size,
+            vertex_1: data.vertex_1,
+            vertex_2: data.vertex_2,
+            vertex_3: data.vertex_3,
+            instance_matrix,
+        }
+    }
+}
+
+pub struct TorusSegmentInfo {
+    node_id: u64,
+    tree_index: u64,
+    color: [u8; 4],
+    size: f32,
+    center: Vector3,
+    normal: Vector3,
+    radius: f32,
+    tube_radius: f32,
+    rotation_angle: f32,
+    arc_angle: f32,
+}
+
+impl TorusSegment {
+    fn new(data: &TorusSegmentInfo) -> TorusSegment {
+        let translation_matrix = Translation3::from(data.center);
+        let first_rotation = Rotation3::from_axis_angle(&Vector3::z_axis(), data.rotation_angle);
+        let second_rotation = match Rotation3::rotation_between(&Vector3::z_axis(), &data.normal) {
+            Some(x) => x,
+            None => Rotation3::from_axis_angle(&Vector3::x_axis(), PI),
+        };
+
+        let instance_matrix = Matrix4::from(translation_matrix)
+            * Matrix4::from(second_rotation)
+            * Matrix4::from(first_rotation);
+
+        TorusSegment {
+            node_id: data.node_id,
+            tree_index: data.tree_index,
+            color: data.color,
+            size: data.size,
+            center: data.center,
+            normal: data.normal,
+            radius: data.radius,
+            tube_radius: data.tube_radius,
+            rotation_angle: data.rotation_angle,
+            arc_angle: data.arc_angle,
+            instance_matrix,
+        }
     }
 }
 
 pub trait ToRenderables {
     fn to_renderables(&self, collections: &mut PrimitiveCollections);
+}
+
+pub fn convert_scene(scene: &crate::Scene) -> Scene {
+    let sectors = scene.sectors.iter().map(convert_sector).collect();
+
+    Scene {
+        root_sector_id: scene.root_sector_id,
+        sectors,
+    }
 }
 
 pub fn convert_sector(sector: &crate::Sector) -> Sector {
@@ -558,14 +843,5 @@ pub fn convert_sector(sector: &crate::Sector) -> Sector {
         bbox_min: sector.header.bbox_min.into(),
         bbox_max: sector.header.bbox_max.into(),
         primitive_collections: collections,
-    }
-}
-
-pub fn convert_scene(scene: &crate::Scene) -> Scene {
-    let sectors = scene.sectors.iter().map(convert_sector).collect();
-
-    Scene {
-        root_sector_id: scene.root_sector_id,
-        sectors,
     }
 }

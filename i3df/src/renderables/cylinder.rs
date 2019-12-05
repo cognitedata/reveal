@@ -1,8 +1,11 @@
-use crate::{Matrix, Rotation3, Vector3, Vector4};
+use crate::renderables::common::{
+    create_general_ring_instance_matrix, GeneralRingInstanceMatrixInfo,
+};
 use crate::renderables::{
-    Circle, Cone, GeneralCylinder, GeneralRing, GeometryCollection, PrimitiveCollections,
+    Circle, CircleInfo, Cone, GeneralCylinder, GeneralRing, GeometryCollection, PrimitiveCollections,
     ToRenderables, Trapezium,
 };
+use crate::{Matrix, Rotation3, Vector3, Vector4};
 use std::f64::consts::PI;
 
 fn intersect(
@@ -83,6 +86,15 @@ fn create_cap(
     let cap_angle_axis_a = (intersection_point - center).normalize();
     let cap_angle_a = angle_between_vectors(&cap_angle_axis_a, &cap_x_axis_a, &cap_z_axis_a);
 
+    let instance_matrix = create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
+        center: *center,
+        // NOTE we cannot use the normal without also modifying the arc angles
+        normal: cap_z_axis_a,
+        local_x_axis: cap_x_axis_a,
+        radius_a: cap_radius_x_a,
+        radius_b: cap_radius_y,
+    });
+
     Cap {
         ring: GeneralRing {
             node_id: cylinder.node_id,
@@ -90,13 +102,14 @@ fn create_cap(
             color: cylinder.color,
             size: cylinder.diagonal,
             center: *center,
-            normal: cap_z_axis_a,
+            normal: if invert_normal { -1.0 } else { 1.0 } * cap_z_axis_a,
             local_x_axis: cap_x_axis_a,
             radius_x: cap_radius_x_a,
             radius_y: cap_radius_y,
             thickness: cylinder.thickness / cylinder.radius,
             angle: normalize_radians(cap_angle_a),
             arc_angle: cylinder.arc_angle,
+            instance_matrix,
         },
         normal,
         plane,
@@ -127,16 +140,16 @@ impl ToRenderables for crate::ClosedCylinder {
             arc_angle: 2.0 * PI as f32,
             local_x_axis,
         });
-        collections.circle_collection.push(Circle {
+        collections.circle_collection.push(Circle::new(&CircleInfo {
             node_id: self.node_id,
             tree_index: self.tree_index,
             color: self.color,
             size: self.diagonal,
             center: center_a,
-            normal: self.center_axis.into(),
+            normal: center_axis,
             radius: self.radius,
-        });
-        collections.circle_collection.push(Circle {
+        }));
+        collections.circle_collection.push(Circle::new(&CircleInfo{
             node_id: self.node_id,
             tree_index: self.tree_index,
             color: self.color,
@@ -145,7 +158,7 @@ impl ToRenderables for crate::ClosedCylinder {
             // TODO should this be negative, it is not in the JS version
             normal: -1.0 * center_axis,
             radius: self.radius,
-        });
+        }));
     }
 }
 

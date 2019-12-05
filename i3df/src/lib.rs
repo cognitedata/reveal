@@ -21,10 +21,12 @@ mod generated_renderables;
 
 pub use generated::*;
 
+type Matrix<X, Y, Z> = nalgebra::Matrix::<f32, X, Y, Z>;
+type Matrix4 = nalgebra::Matrix4::<f32>;
+type Rotation3 = nalgebra::Rotation3::<f32>;
+type Translation3 = nalgebra::Translation3::<f32>;
 type Vector3 = nalgebra::Vector3::<f32>;
 type Vector4 = nalgebra::Vector4::<f32>;
-type Matrix<X, Y, Z> = nalgebra::Matrix::<f32, X, Y, Z>;
-type Rotation3 = nalgebra::Rotation3::<f32>;
 
 const MAGIC_BYTES: u32 = 0x4644_3349;
 const ATTRIBUTE_COUNT: u32 = 18;
