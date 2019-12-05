@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "declaration": true,
+    "declarationDir": "dist",
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "downlevelIteration": true,
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "strict": true,
+    "typeRoots": [
+        "node_modules/@types"
+    ],
+    "lib": [
+        "dom",
+        "esnext"
+    ]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules/**/*", "dist/**/*"]
+}
