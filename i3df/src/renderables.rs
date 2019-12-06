@@ -393,6 +393,7 @@ macro_rules! insert_attribute {
     }};
 
     ($self:ident, $attributes:ident, $field_name:ident, Texture, JsValue) => {{
+        // TODO implement
     }};
 
     ($self:ident, $attributes:ident, $field_name:ident, [u8; 4], u8) => {{
