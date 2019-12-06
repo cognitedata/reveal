@@ -15,6 +15,27 @@ use serde;
 #[macro_use]
 pub mod error;
 
+// NOTE this is a workaround because alloc_zeroed takes a lot of time
+// TODO figure out why lzma-rs spends so much time calling alloc_zeroed
+use std::alloc::{GlobalAlloc, Layout, System};
+
+struct Allocator;
+
+unsafe impl GlobalAlloc for Allocator {
+    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
+        System.alloc(layout)
+    }
+    unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
+        System.dealloc(ptr, layout)
+    }
+    unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
+        System.alloc(layout)
+    }
+}
+
+#[global_allocator]
+static GLOBAL: Allocator = Allocator;
+
 #[derive(Deserialize, Serialize)]
 struct UvMap {
     //pub name: String,
