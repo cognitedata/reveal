@@ -20,7 +20,6 @@ matrix:
     - language: rust
       name: "Reveal viewer"
       cache:
-        cargo
         directories: 
           - "viewer/node_modules"
       before_install:
