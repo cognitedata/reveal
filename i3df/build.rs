@@ -148,10 +148,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                 fn #attribute_getter(&self, index: usize) -> Result<#attribute_type, Error> {
                     Ok(match index {
                         0 => Default::default(), // TODO make into None
-                        i => self.#attribute_ident
-                            .get(i as usize)
+                        i => *self
+                            .#attribute_ident
+                            .get((i - 1) as usize)
                             .ok_or_else(|| error!("Attribute {} missing for texture", index))?
-                            .clone()
                     })
                 }
             },
