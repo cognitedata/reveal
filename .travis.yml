@@ -16,15 +16,25 @@ matrix:
         - cargo clippy --all-targets --all-features -- -D warnings
         - cargo test --all --verbose
     
-    - language: node_js
-      node_js: 
-        - "10"
+    - language: rust
       cache:
         directories: 
           - "viewer/node_modules"
+      before_install:
+        # Install NVM and Node
+        - sudo curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash
+        - nvm install 10
+        - nvm install 12
       before_script: 
-          - cd viewer
+        - cd viewer
       script:
+          - nvm use 10
           - npm install
           - npm run build
           - npm run coverage
+
+          - nvm use 12
+          - npm install
+          - npm run build
+          - npm run coverage
+
