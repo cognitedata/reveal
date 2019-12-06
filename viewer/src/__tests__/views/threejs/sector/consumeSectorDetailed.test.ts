@@ -2,7 +2,7 @@
  * Copyright 2019 Cognite AS
  */
 
-import { SectorMetadata, TriangleMesh, InstancedMesh } from '../../../../models/sector/types';
+import { SectorMetadata, TriangleMesh, InstancedMeshFile, InstancedMesh } from '../../../../models/sector/types';
 import { Box3 } from '../../../../utils/Box3';
 import { vec3 } from 'gl-matrix';
 import { consumeSectorDetailed } from '../../../../views/threejs/sector/consumeSectorDetailed';
@@ -52,7 +52,7 @@ describe('consumeSectorDetailed', () => {
     const sectorId = 1;
     const sector = createEmptySector();
     const node = new SectorNode();
-    sector.instanceMeshes = [newInstanceMesh()];
+    sector.instanceMeshes = [newInstanceMeshFile()];
 
     // Act
     consumeSectorDetailed(sectorId, sector, metadata, node);
@@ -86,13 +86,21 @@ function newTriangleMesh(): TriangleMesh {
   };
 }
 
-function newInstanceMesh(): InstancedMesh {
+function newInstanceMeshFile(): InstancedMeshFile {
   return {
     fileId: 0,
     indices: new Uint32Array(10),
     vertices: new Float32Array(5),
     normals: new Float32Array(5),
-    colors: new Uint8Array(),
+    instances: [newInstanceMesh()]
+  };
+}
+
+function newInstanceMesh(): InstancedMesh {
+  return {
+    triangleCount: 4,
+    triangleOffset: 0,
+    colors: new Uint8Array(4),
     instanceMatrices: new Float32Array(16)
   };
 }

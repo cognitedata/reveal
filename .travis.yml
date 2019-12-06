@@ -23,7 +23,7 @@ matrix:
         cargo:
         directories: 
           - "viewer/node_modules"
-      before_install:
+      install:
         # Install NVM and Node
         - sudo curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash
         - nvm install 10
