@@ -1,16 +1,30 @@
-language: rust
-rust:
-  - stable
-  - beta
 matrix:
-  allow_failures:
-    - rust: nightly
-  fast_finish: true
-cache: cargo
-before_script:
-  - rustup component add clippy
-script:
-  # fail on warnings, test all features
-  - cargo clippy --all-targets --all-features -- -D warnings
-  - cargo test --all --verbose
-
+  include:
+    - language: rust
+      rust:
+        - stable
+        - beta
+      matrix:
+        allow_failures:
+          - rust: nightly
+        fast_finish: true
+      cache: cargo
+      before_script:
+        - rustup component add clippy
+      script:
+        # fail on warnings, test all features
+        - cargo clippy --all-targets --all-features -- -D warnings
+        - cargo test --all --verbose
+    
+    - language: node_js
+      node_js: 
+        - "10"
+      cache:
+        directories: 
+          - "viewer/node_modules"
+      before_script: 
+          - cd viewer
+      script:
+          - npm install
+          - npm run build
+          - npm run coverage
