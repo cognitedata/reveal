@@ -93,7 +93,6 @@ module.exports = env => {
       libraryTarget: 'umd',
     },
     devtool: development ? "inline-source-map" : undefined,
-    watch: true,
     watchOptions: {
       aggregateTimeout: 1500,
       ignored: ['node_modules/']
