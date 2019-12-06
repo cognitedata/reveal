@@ -2,7 +2,7 @@
  * Copyright 2019 Cognite AS
  */
 
-import { Sector, SectorQuads, SectorMetadata, TriangleMesh, InstancedMesh } from './types';
+import { Sector, SectorQuads, SectorMetadata, TriangleMesh, InstancedMesh, InstancedMeshFile } from './types';
 import { FetchSectorDelegate, FetchCtmDelegate } from './delegates';
 import { createOffsetsArray } from '../../utils/arrayUtils';
 import { WorkerArguments, ParseQuadsResult } from '../../../workers/types/parser.types';
@@ -104,7 +104,7 @@ export async function createParser(
       const finalTriangleMeshes = await (async () => {
         const { fileIds, colors, triangleCounts } = triangleMeshes;
 
-        const meshesGroupedByFile = groupMeshesByFile(fileIds);
+        const meshesGroupedByFile = groupMeshesByNumber(fileIds);
 
         const finalMeshes = [];
         // Merge meshes by file
@@ -151,35 +151,48 @@ export async function createParser(
 
       const finalInstanceMeshes = await (async () => {
         const { fileIds, colors, triangleCounts, triangleOffsets, instanceMatrices } = instanceMeshes;
-        const meshesGroupedByFile = groupMeshesByFile(fileIds);
+        const meshesGroupedByFile = groupMeshesByNumber(fileIds);
 
-        const finalMeshes: InstancedMesh[] = [];
+        const finalMeshes: InstancedMeshFile[] = [];
         // Merge meshes by file
         // TODO do this in Rust instead
         // TODO de-duplicate this with the merged meshes above
         for (const [fileId, meshIndices] of meshesGroupedByFile.entries()) {
-          const fileTriangleCounts = meshIndices.map(i => triangleCounts[i]);
-          const offsets = meshIndices.map(i => triangleOffsets[i]);
-
           const ctm = await loadCtmGeometry(fileId, fetchCtmFile, workerList);
 
           const indices = ctm.indices;
           const vertices = ctm.vertices;
           const normals = ctm.normals;
-          for (let i = 0; i < meshIndices.length; i++) {
-            const meshIdx = meshIndices[i];
-            const triOffset = offsets[i];
-            const triCount = fileTriangleCounts[i];
-            const [r, g, b] = readColorToFloat32s(colors, meshIdx);
+          const instancedMeshes: InstancedMesh[] = [];
+
+          const fileTriangleOffsets = new Float64Array(meshIndices.map(i => triangleOffsets[i]));
+          const fileMeshesGroupedByOffsets = groupMeshesByNumber(fileTriangleOffsets);
+
+          for (const [triangleOffset, fileMeshIndices] of fileMeshesGroupedByOffsets) {
+            const triangleCount = triangleCounts[fileMeshIndices[0]]; // TODO a bit hacky to use [0] here?
+            const instanceMatrixBuffer = new Float32Array(16 * fileMeshIndices.length);
+            const colorBuffer = new Uint8Array(4 * fileMeshIndices.length);
+            for (let i = 0; i < fileMeshIndices.length; i++) {
+              const meshIdx = meshIndices[fileMeshIndices[i]];
+              const instanceMatrix = instanceMatrices.slice(meshIdx * 16, meshIdx * 16 + 16);
+              instanceMatrixBuffer.set(instanceMatrix, i * 16);
+              const color = colors.slice(meshIdx * 4, meshIdx * 4 + 4);
+              colorBuffer.set(color, i * 4);
+            }
+            instancedMeshes.push({
+              triangleCount,
+              triangleOffset,
+              instanceMatrices: instanceMatrixBuffer,
+              colors: colorBuffer
+            });
           }
 
-          const mesh: InstancedMesh = {
-            colors,
+          const mesh: InstancedMeshFile = {
             fileId,
             indices,
             vertices,
             normals,
-            instanceMatrices
+            instances: instancedMeshes
           };
           finalMeshes.push(mesh);
         }
@@ -234,7 +247,7 @@ export async function createQuadsParser() {
   return parse;
 }
 
-function groupMeshesByFile(fileIds: Float64Array) {
+function groupMeshesByNumber(fileIds: Float64Array) {
   const meshesGroupedByFile = new Map<number, number[]>();
   for (let i = 0; i < fileIds.length; ++i) {
     const fileId = fileIds[i];
