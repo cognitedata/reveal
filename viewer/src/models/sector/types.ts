@@ -29,16 +29,27 @@ export type TriangleMesh = {
   readonly colors: Float32Array;
 };
 
-export type InstancedMesh = {
+export type InstancedMeshFile = {
   readonly fileId: number;
   readonly indices: Uint32Array;
   readonly vertices: Float32Array;
   readonly normals: Float32Array | undefined;
+  readonly instances: InstancedMesh[];
+};
+
+export type InstancedMesh = {
+  readonly triangleCount: number;
+  readonly triangleOffset: number;
   readonly colors: Uint8Array;
   readonly instanceMatrices: Float32Array;
 };
 
+// TODO 2019-12-05 larsmoa: Rename to e.g. SectorGeometry to avoid
+// confusion with other Sector-class
 export interface Sector {
+  instanceMeshes: InstancedMeshFile[];
+  triangleMeshes: TriangleMesh[];
+
   boxes: PrimitiveAttributes;
   circles: PrimitiveAttributes;
   cones: PrimitiveAttributes;
@@ -46,13 +57,11 @@ export interface Sector {
   ellipsoidSegments: PrimitiveAttributes;
   generalCylinders: PrimitiveAttributes;
   generalRings: PrimitiveAttributes;
-  instanceMeshes: InstancedMesh[];
   nuts: PrimitiveAttributes;
   quads: PrimitiveAttributes;
   sphericalSegments: PrimitiveAttributes;
   torusSegments: PrimitiveAttributes;
   trapeziums: PrimitiveAttributes;
-  triangleMeshes: TriangleMesh[];
 }
 
 export interface SectorQuads {

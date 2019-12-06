@@ -11,7 +11,8 @@
     "moduleResolution": "node",
     "strict": true,
     "typeRoots": [
-        "node_modules/@types"
+        "node_modules/@types",
+        "src/@types"
     ],
     "lib": [
         "dom",
@@ -19,5 +20,5 @@
     ]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules/**/*", "dist/**/*"]
+  "exclude": ["node_modules/**/*", "dist/**/*", "src/@types/**/*"]
 }
