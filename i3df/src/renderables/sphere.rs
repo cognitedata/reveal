@@ -1,7 +1,7 @@
-use crate::Vector3;
 use crate::renderables::{
-    Circle, GeometryCollection, PrimitiveCollections, SphericalSegment, ToRenderables,
+    Circle, CircleInfo, GeometryCollection, PrimitiveCollections, SphericalSegment, ToRenderables,
 };
+use crate::Vector3;
 
 impl ToRenderables for crate::OpenSphericalSegment {
     fn to_renderables(&self, collections: &mut PrimitiveCollections) {
@@ -58,7 +58,7 @@ impl ToRenderables for crate::ClosedSphericalSegment {
         let circle_radius = f32::sqrt(self.radius.powi(2) - length.powi(2));
         let center = self.center() + length * Vector3::from(self.normal).normalize();
 
-        collections.circle_collection.push(Circle {
+        collections.circle_collection.push(Circle::new(&CircleInfo {
             node_id: self.node_id,
             tree_index: self.tree_index,
             color: self.color,
@@ -66,6 +66,6 @@ impl ToRenderables for crate::ClosedSphericalSegment {
             center,
             normal: self.normal.into(),
             radius: circle_radius,
-        });
+        }));
     }
 }
