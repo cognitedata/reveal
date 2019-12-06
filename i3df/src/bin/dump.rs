@@ -1,68 +1,67 @@
+use std::error::Error;
 use std::fs::File;
-use std::io::{stdout, BufReader};
-use structopt::StructOpt;
+use std::io::{stdin, stdout, BufReader, Read};
+
+use clap::clap_app;
 
 use serde_derive::{Deserialize, Serialize};
 use serde_json;
 use serde_yaml;
 
-#[derive(StructOpt)]
-struct Options {
-    root_file: String,
-    sector_file: String,
-    #[structopt(short, long)]
-    yaml: bool,
-    #[structopt(short, long)]
-    compact: bool,
-    #[structopt(short, long)]
-    renderables: bool,
-    #[structopt(short, long)]
-    stats: bool,
-}
+use i3df;
 
 #[derive(Deserialize, Serialize)]
 enum Output {
-    FileSector(i3df::Sector),
-    FileSectorStats {
+    FileScene(i3df::Scene),
+    FileSceneStats {
         size: u64,
     },
-    RenderableSector(i3df::renderables::Sector),
-    RenderableSectorStats(i3df::renderables::SectorStatistics),
+    RenderableScene(i3df::renderables::Scene),
+    RenderableSceneStats(i3df::renderables::SceneStatistics),
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let options = Options::from_args();
+fn main() -> Result<(), Box<dyn Error>> {
+    let matches = clap_app!(("i3df-parser") =>
+        (@arg file: +takes_value)
+        (@arg yaml: -y --yaml)
+        (@arg compact: -c --compact)
+        (@arg renderables: -r --renderables)
+        (@arg stats: -s --stats)
+    )
+    .get_matches();
 
-    let root_file = options.root_file;
-    let sector_file = options.sector_file;
+    let file = matches.value_of("file");
+    let use_yaml = matches.is_present("yaml");
+    let use_compact = matches.is_present("compact");
+    let to_renderables = matches.is_present("renderables");
+    let stats = matches.is_present("stats");
 
-    let root_reader = BufReader::new(File::open(root_file)?);
-    let sector_reader = BufReader::new(File::open(sector_file)?);
-    let root_sector = i3df::parse_root_sector(root_reader)?;
-    let attributes = match root_sector.header.attributes {
-        Some(x) => x,
-        None => return Err(Box::new(i3df::error::Error::new(format!("Attributes missing on root sector"))))
-    };
-    let raw_sector = i3df::parse_sector(&attributes, sector_reader)?;
-    let sector: Output = if options.renderables {
-        Output::RenderableSector(i3df::renderables::convert_sector(&raw_sector))
+    let reader: Box<dyn Read> = if let Some(file) = file {
+        Box::new(File::open(file)?)
     } else {
-        Output::FileSector(raw_sector)
+        Box::new(stdin())
+    };
+    let reader = BufReader::new(reader);
+    let file_scene = i3df::parse_scene(reader)?;
+    let scene: Output = if to_renderables {
+        Output::RenderableScene(i3df::renderables::convert_scene(&file_scene))
+    } else {
+        Output::FileScene(file_scene)
     };
 
-    let output = if options.stats {
-        match sector {
-            Output::FileSector(_) => Output::FileSectorStats { size: 1000 },
-            Output::RenderableSector(x) => Output::RenderableSectorStats(x.statistics()),
+    let output = if stats {
+        match scene {
+            Output::FileScene(_) => Output::FileSceneStats { size: 1000 },
+            Output::RenderableScene(x) => Output::RenderableSceneStats(x.statistics()),
             x => x,
         }
     } else {
-        sector
+        scene
     };
 
-    if options.compact {
+    if use_compact {
         serde_json::to_writer(stdout(), &output)?;
-    } else if options.yaml {
+    } else if use_yaml {
         serde_yaml::to_writer(stdout(), &output)?;
     } else {
         serde_json::to_writer_pretty(stdout(), &output)?;
