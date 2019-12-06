@@ -76,7 +76,7 @@ pub fn parse_root_sector(mut reader: impl BufRead) -> Result<Sector, Error> {
         Some(x) => x,
         None => return Err(error!("Attributes missing on root sector")),
     };
-    let primitive_collections = generated::parse_primitives(&mut input, &attributes)?;
+    let primitive_collections = generated::parse_primitives(&mut input, attributes)?;
     //assert!(reader.eof()?);
     Ok(Sector {
         header,
