@@ -157,7 +157,6 @@ pub fn parse_sector(reader: impl Read) -> Result<Sector, Error> {
         // TODO replace with from_bits and return error if unknown bits found
         let compress_type = CompressFlags::from_bits_truncate(input.read_u8()?);
 
-        println!("Compress type {:#?}", compress_type);
         let has_color_on_each_cell = compress_type.intersects(CompressFlags::HAS_COLOR_ON_EACH_CELL);
 
         let node_color = if has_color_on_each_cell {
