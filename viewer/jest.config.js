@@ -11,7 +11,8 @@ module.exports = {
     '\\.(frag|vert)$': '<rootDir>/src/__mocks__/glslMocks.js',
   },
   collectCoverageFrom: [
-    "!src/__tests__/**/*.ts"
+    "!src/__tests__/**/*.ts",
+    "!src/examples/**/*.ts"
   ],
   automock: false,
   setupFiles: [
@@ -20,5 +21,5 @@ module.exports = {
   ],
   setupFilesAfterEnv: [
     "jest-extended"
-  ]
+  ],
 };
