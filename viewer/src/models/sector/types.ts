@@ -29,11 +29,17 @@ export type TriangleMesh = {
   readonly colors: Float32Array;
 };
 
-export type InstancedMesh = {
+export type InstancedMeshFile = {
   readonly fileId: number;
   readonly indices: Uint32Array;
   readonly vertices: Float32Array;
   readonly normals: Float32Array | undefined;
+  readonly instances: InstancedMesh[];
+};
+
+export type InstancedMesh = {
+  readonly triangleCount: number;
+  readonly triangleOffset: number;
   readonly colors: Uint8Array;
   readonly instanceMatrices: Float32Array;
 };
@@ -46,7 +52,7 @@ export interface Sector {
   ellipsoidSegments: PrimitiveAttributes;
   generalCylinders: PrimitiveAttributes;
   generalRings: PrimitiveAttributes;
-  instanceMeshes: InstancedMesh[];
+  instanceMeshes: InstancedMeshFile[];
   nuts: PrimitiveAttributes;
   quads: PrimitiveAttributes;
   sphericalSegments: PrimitiveAttributes;
