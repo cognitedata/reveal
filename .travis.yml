@@ -1,6 +1,7 @@
 matrix:
   include:
     - language: rust
+      name: 'Rust parser'
       rust:
         - stable
         - beta
@@ -17,6 +18,7 @@ matrix:
         - cargo test --all --verbose
     
     - language: rust
+      name: "Reveal viewer"
       cache:
         directories: 
           - "viewer/node_modules"
