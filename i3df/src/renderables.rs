@@ -145,10 +145,6 @@ macro_rules! make_func_vec {
         };
         data_as_f32.to_vec()
     }};
-
-    ($self:ident, $field_name:ident, Texture, Texture) => {{
-        $self.$field_name.clone()
-    }};
 }
 
 macro_rules! new_geometry_types {
@@ -394,6 +390,9 @@ macro_rules! insert_attribute {
             &JsValue::from(to_camel_case(stringify!($field_name))),
             &Float32Array::from(&$self.$field_name[..]),
         );
+    }};
+
+    ($self:ident, $attributes:ident, $field_name:ident, Texture, JsValue) => {{
     }};
 
     ($self:ident, $attributes:ident, $field_name:ident, [u8; 4], u8) => {{
