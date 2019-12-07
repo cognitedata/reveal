@@ -1,4 +1,4 @@
-use crate::{Matrix4, Rotation3, Translation3, Vector3, Vector4};
+use crate::{Matrix4, Rotation3, Texture, Translation3, Vector3, Vector4};
 use inflector::cases::camelcase::to_camel_case;
 use js_sys::{Float32Array, Float64Array, Map, Uint8Array};
 use serde_derive::{Deserialize, Serialize};
@@ -104,6 +104,14 @@ macro_rules! make_func_vec {
         $self.$field_name.clone()
     }};
 
+    ($self:ident, $field_name:ident, u32, u32) => {{
+        $self.$field_name.clone()
+    }};
+
+    ($self:ident, $field_name:ident, Texture, JsValue) => {{
+        $self.$field_name.iter().map(JsValue::from_serde).filter_map(Result::ok).collect()
+    }};
+
     // TODO re-evaluate safety of this
     ($self:ident, $field_name:ident, Vector3, f32) => {{
         let data_as_vector3 = &$self.$field_name;
@@ -136,10 +144,6 @@ macro_rules! make_func_vec {
             )
         };
         data_as_f32.to_vec()
-    }};
-
-    ($self:ident, $field_name:ident, Texture, Texture) => {{
-        $self.$field_name.clone()
     }};
 }
 
@@ -386,6 +390,10 @@ macro_rules! insert_attribute {
             &JsValue::from(to_camel_case(stringify!($field_name))),
             &Float32Array::from(&$self.$field_name[..]),
         );
+    }};
+
+    ($self:ident, $attributes:ident, $field_name:ident, Texture, JsValue) => {{
+        // TODO implement
     }};
 
     ($self:ident, $attributes:ident, $field_name:ident, [u8; 4], u8) => {{
@@ -658,7 +666,12 @@ new_geometry_types! {
             size: f32 => f32,
             file_id: u64 => f64,
             triangle_count: u64 => f64,
-            //triangle_offset: u64 => f64,
+            // TODO go directly to struct
+            diffuse_texture: Texture => JsValue,
+            specular_texture: Texture => JsValue,
+            ambient_texture: Texture => JsValue,
+            normal_texture: Texture => JsValue,
+            bump_texture: Texture => JsValue,
         ]
     }
     {

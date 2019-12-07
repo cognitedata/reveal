@@ -86,7 +86,7 @@ fn create_dtype(attribute: &Attribute) -> TokenStream {
                panic!("Type not implemented: {}", t);
              },
         },
-        Type::Texture(_) => quote! { Texture },
+        Type::Texture(_) => quote! { Texture }
     };
     if count > 1 {
         return quote! {[#type_name; #count]};
@@ -148,10 +148,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                 fn #attribute_getter(&self, index: usize) -> Result<#attribute_type, Error> {
                     Ok(match index {
                         0 => Default::default(), // TODO make into None
-                        i => self.#attribute_ident
-                            .get(i as usize)
+                        i => *self
+                            .#attribute_ident
+                            .get((i - 1) as usize)
                             .ok_or_else(|| error!("Attribute {} missing for texture", index))?
-                            .clone()
                     })
                 }
             },
@@ -322,7 +322,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         }
 
         #[wasm_bindgen]
-        #[derive(Clone, Debug, Default, Deserialize, Serialize)]
+        #[derive(Clone, Copy, Debug, Default, Deserialize, Serialize)]
         pub struct Texture {
             // TODO generate from YAML
             pub file_id: u64,
