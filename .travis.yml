@@ -20,7 +20,8 @@ matrix:
     - language: rust
       name: "Reveal viewer"
       cache:
-        cargo:
+        cargo: true
+        npm: true
         directories: 
           - "viewer/node_modules"
       install:
