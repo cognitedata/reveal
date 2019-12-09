@@ -2,7 +2,7 @@
  * Copyright 2019 Cognite AS
  */
 
-import { vec3 } from 'gl-matrix';
+import { vec3, mat4 } from 'gl-matrix';
 
 export class Box3 {
   public readonly min: vec3;
@@ -23,5 +23,11 @@ export class Box3 {
       this.max[1] = Math.max(p[1], this.max[1]);
       this.max[2] = Math.max(p[2], this.max[2]);
     }
+  }
+
+  createTransformed(matrix: mat4): Box3 {
+    const pMin = vec3.transformMat4(vec3.create(), this.min, matrix);
+    const pMax = vec3.transformMat4(vec3.create(), this.max, matrix);
+    return new Box3([pMin, pMax]);
   }
 }
