@@ -1,16 +1,45 @@
-language: rust
-rust:
-  - stable
-  - beta
 matrix:
-  allow_failures:
-    - rust: nightly
-  fast_finish: true
-cache: cargo
-before_script:
-  - rustup component add clippy
-script:
-  # fail on warnings, test all features
-  - cargo clippy --all-targets --all-features -- -D warnings
-  - cargo test --all --verbose
+  include:
+    - language: rust
+      name: 'Rust parser'
+      rust:
+        - stable
+        - beta
+      matrix:
+        allow_failures:
+          - rust: nightly
+        fast_finish: true
+      cache: cargo
+      before_script:
+        - rustup component add clippy
+      script:
+        # fail on warnings, test all features
+        - cargo clippy --all-targets --all-features -- -D warnings
+        - cargo test --all --verbose
+    
+    - language: rust
+      name: "Reveal viewer"
+      cache:
+        cargo:
+        directories: 
+          - "viewer/node_modules"
+      install:
+        # Install NVM and Node
+        - sudo curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash
+        - nvm install 10
+        - nvm install 12
+        # Install wasm-pack for Rust
+        - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+      before_script: 
+        - cd viewer
+      script:
+          - nvm use 10
+          - npm install
+          - npm run build
+          - npm run coverage
+
+          - nvm use 12
+          - npm install
+          - npm run build
+          - npm run coverage
 

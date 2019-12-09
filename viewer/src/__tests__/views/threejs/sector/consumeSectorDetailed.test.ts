@@ -2,7 +2,7 @@
  * Copyright 2019 Cognite AS
  */
 
-import { Sector, SectorMetadata, TriangleMesh } from '../../../../models/sector/types';
+import { SectorMetadata, TriangleMesh, InstancedMeshFile, InstancedMesh } from '../../../../models/sector/types';
 import { Box3 } from '../../../../utils/Box3';
 import { vec3 } from 'gl-matrix';
 import { consumeSectorDetailed } from '../../../../views/threejs/sector/consumeSectorDetailed';
@@ -28,20 +28,38 @@ describe('consumeSectorDetailed', () => {
     consumeSectorDetailed(sectorId, sector, metadata, node);
 
     // Assert
-    expect(node.children).toBeEmpty();
+    const geometries = extractGeometries(node);
+    expect(geometries).toBeEmpty();
   });
 
-  test('single mesh, adds geometry', () => {
+  test('single triangle mesh, adds geometry', () => {
     // Arrange
     const sectorId = 1;
     const sector = createEmptySector();
     const node = new SectorNode();
+    sector.triangleMeshes = [newTriangleMesh()];
 
     // Act
     consumeSectorDetailed(sectorId, sector, metadata, node);
 
     // Assert
-    expect(node.children).not.toBeEmpty();
+    const geometries = extractGeometries(node);
+    expect(geometries.length).toBe(1);
+  });
+
+  test('single instance mesh, adds geometry', () => {
+    // Arrange
+    const sectorId = 1;
+    const sector = createEmptySector();
+    const node = new SectorNode();
+    sector.instanceMeshes = [newInstanceMeshFile()];
+
+    // Act
+    consumeSectorDetailed(sectorId, sector, metadata, node);
+
+    // Assert
+    const geometries = extractGeometries(node);
+    expect(geometries.length).toBe(1);
   });
 
   test('valid input, produces geometry', () => {
@@ -58,7 +76,7 @@ describe('consumeSectorDetailed', () => {
   });
 });
 
-function newMesh(): TriangleMesh {
+function newTriangleMesh(): TriangleMesh {
   return {
     fileId: 0,
     indices: new Uint32Array(10),
@@ -66,4 +84,33 @@ function newMesh(): TriangleMesh {
     colors: new Float32Array(),
     normals: undefined
   };
+}
+
+function newInstanceMeshFile(): InstancedMeshFile {
+  return {
+    fileId: 0,
+    indices: new Uint32Array(10),
+    vertices: new Float32Array(5),
+    normals: new Float32Array(5),
+    instances: [newInstanceMesh()]
+  };
+}
+
+function newInstanceMesh(): InstancedMesh {
+  return {
+    triangleCount: 4,
+    triangleOffset: 0,
+    colors: new Uint8Array(4),
+    instanceMatrices: new Float32Array(16)
+  };
+}
+
+function extractGeometries(root: THREE.Object3D): THREE.Object3D[] {
+  const geometries: THREE.Object3D[] = [];
+  root.traverse(n => {
+    if (n.type.indexOf('Mesh') !== -1) {
+      geometries.push(n);
+    }
+  });
+  return geometries;
 }
