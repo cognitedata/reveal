@@ -4,7 +4,7 @@
 
 # Reveal 3D viewer file parsers and debug viewer #
 
-[![Build Status](https://travis-ci.org/cognitedata/reveal-rs.svg?branch=master)](https://travis-ci.org/cognitedata/reveal-rs)
+[![Build Status](https://travis-ci.org/cognitedata/reveal-rs.svg?branch=master)](https://travis-ci.org/cognitedata/reveal)
 
 This repository contains file loading libraries and a debug viewer for the Cognite Reveal 3D viewer.
 
