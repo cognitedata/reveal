@@ -30,7 +30,7 @@ matrix:
         - nvm install 10
         - nvm install 12
         # Install wasm-pack for Rust
-        - cargo install wasm-pack
+        - cargo install --force wasm-pack
       before_script: 
         - cd viewer
       script:
