@@ -28,7 +28,7 @@
     ]
   },
   "devDependencies": {
-    "@cognite/potree-core": "^1.0.8",
+    "@cognite/potree-core": "^1.0.9",
     "@cognite/sdk": "^2.13.0",
     "@cognite/tslint-config-cognite-3d": "^1.0.4",
     "@tweenjs/tween.js": "^17.2.0",
