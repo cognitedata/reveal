@@ -11,13 +11,12 @@ impl ToRenderables for crate::TriangleMesh {
             color: self.color,
             size: self.diagonal,
             file_id: self.file_id,
-            //diffuse_texture: self.diffuse_texture,
-            //specular_texture: self.specular_texture,
-            //ambient_texture: self.ambient_texture,
-            //normal_texture: self.normal_texture,
-            //bump_texture: self.bump_texture,
+            diffuse_texture: self.diffuse_texture,
+            specular_texture: self.specular_texture,
+            ambient_texture: self.ambient_texture,
+            normal_texture: self.normal_texture,
+            bump_texture: self.bump_texture,
             triangle_count: self.triangle_count,
-            //triangle_offset: self.triangle_offset,
         });
     }
 }

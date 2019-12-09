@@ -15,7 +15,7 @@ pub struct Face {
     matrix: Matrix4,
 }
 
-fn normalize_color(color: [u8; 4]) -> [f32; 3] {
+fn normalize_color(color: [u8; 3]) -> [f32; 3] {
     [
         f32::from(color[0]) / f32::from(std::u8::MAX),
         f32::from(color[1]) / f32::from(std::u8::MAX),
@@ -57,7 +57,6 @@ pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
     let increment = contents.grid_increment;
     let origin = Vector3::new(origin[0], origin[1], origin[2]);
     for node in &contents.nodes {
-        let color = node.color;
         let compress_type = node.compress_type;
         for face in &node.faces {
             let cell_index = face.index as u64;
@@ -68,6 +67,13 @@ pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
             let x = i as f32 + 0.5;
             let y = j as f32 + 0.5;
             let z = k as f32 + 0.5;
+            let color = match node.color {
+                Some(x) => x,
+                None => match face.color {
+                    Some(y) => y,
+                    None => [255, 0, 255]
+                }
+            };
 
             let center = Vector3::new(
                 origin[0] + increment * x,
@@ -198,14 +204,14 @@ mod tests {
     #[test]
     fn test_normalize_color() {
         {
-            let result = normalize_color([128, 129, 130, 255]);
+            let result = normalize_color([128, 129, 130]);
             assert_abs_diff_eq!(result[0], 0.501_960_8); // 128/255
             assert_abs_diff_eq!(result[1], 0.505_882_4); // 129/255
             assert_abs_diff_eq!(result[2], 0.509_803_95); // 130/255
         }
 
         {
-            let result = normalize_color([0, 128, 255, 255]);
+            let result = normalize_color([0, 128, 255]);
             assert_abs_diff_eq!(result[0], 0.0);
             assert_abs_diff_eq!(result[1], 0.501_960_8); // 128/255
             assert_abs_diff_eq!(result[2], 1.0);
@@ -221,12 +227,13 @@ mod tests {
                 grid_origin: [0.1, 0.2, 0.3],
                 nodes: vec![crate::Node {
                     node_id: 0,
-                    color: [128, 129, 130, 255],
+                    color: Some([128, 129, 130]),
                     compress_type: crate::CompressFlags::POSITIVE_Y_REPEAT_X,
                     faces: vec![crate::Face {
                         face_flags: crate::FaceFlags::POSITIVE_Y_VISIBLE,
                         index: 100,
                         repetitions: 4,
+                        color: None,
                     }],
                 }],
             }),
@@ -236,7 +243,7 @@ mod tests {
             format_version: 0,
             magic_bytes: 0x0000_1111,
             optimizer_version: 0,
-            parent_sector_id: 0,
+            parent_sector_id: None,
             sector_id: 0,
         };
         let result = convert_sector(&sector);
