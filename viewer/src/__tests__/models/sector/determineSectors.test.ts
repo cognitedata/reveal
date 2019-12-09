@@ -32,7 +32,6 @@ describe('determineSectors', () => {
     const sectors = await determineSectors(root, camera, identityTransform);
 
     // Assert
-    expect(sectors.simple).toBeEmpty();
     expect(sectors.detailed).toBeEmpty();
   });
 
@@ -67,7 +66,7 @@ describe('determineSectors', () => {
 
     // Assert
     expectSetEqual(sectors.detailed, [1, 2]);
-    expect(sectors.simple).toBeEmpty();
+    expectSetEqual(sectors.simple, [3]);
   });
 
   test('model with transformation, returns correctly', async () => {
