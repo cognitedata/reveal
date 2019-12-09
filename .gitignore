@@ -9,3 +9,9 @@ dist
 node_modules
 .vs
 coverage
+
+# Viewer ignores
+viewer/dist/
+viewer/public/
+viewer/pkg/
+viewer/node_modules/

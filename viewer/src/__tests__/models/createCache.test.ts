@@ -5,8 +5,12 @@
 import { createCache } from '../../models/createCache';
 
 describe('createCache', () => {
-  const fetchCb: (id: number) => Promise<Uint8Array> = jest.fn();
-  const parseCb: (id: number, buffer: Uint8Array) => Promise<string> = jest.fn();
+  const fetchCb: (id: number) => Promise<Uint8Array> = jest.fn(id => {
+    return Promise.resolve(new Uint8Array(10));
+  });
+  const parseCb: (id: number, buffer: Uint8Array) => Promise<string> = jest.fn((id, buffer) => {
+    return Promise.resolve('MyString');
+  });
 
   beforeEach(() => {
     jest.resetAllMocks();
@@ -40,7 +44,10 @@ describe('createCache', () => {
 
   test('parse on cached id, loads from cached', () => {
     // Arrange
-    const [fetch, parse] = createCache<number, string>(fetchCb, parseCb);
+    const myParseCb: (id: number, buffer: Uint8Array) => Promise<string> = (id, buffer) => {
+      return Promise.resolve('MyString');
+    };
+    const [fetch, parse] = createCache<number, string>(fetchCb, myParseCb);
     const buffer = new Uint8Array(10);
     parse(0, buffer);
     jest.resetAllMocks();
