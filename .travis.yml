@@ -1,7 +1,3 @@
-env:
-  # Enable sscache
-  - RUSTC_WRAPPER=sccache
-
 matrix:
   include:
     - language: rust
@@ -16,7 +12,11 @@ matrix:
       cache: cargo
       install:
         - rustup component add clippy
+        # sccache
         - cargo install sccache
+      env:
+        # Enable sscache
+        - RUSTC_WRAPPER=sccache
       script:
         # fail on warnings, test all features
         - cargo clippy --all-targets --all-features -- -D warnings
@@ -37,8 +37,11 @@ matrix:
         # Install wasm-pack for Rust
         - rm -rf $HOME/.cargo/bin/wasm-pack
         - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-        # SSCache
+        # sccache
         - cargo install sccache
+      env:
+        # Enable sscache
+        - RUSTC_WRAPPER=sccache
       before_script: 
         - cd viewer
       script:
