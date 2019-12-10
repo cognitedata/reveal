@@ -4,10 +4,9 @@
 
 import * as THREE from 'three';
 import * as TWEEN from '@tweenjs/tween.js';
+import * as reveal from '@cognite/reveal';
 
 import CameraControls from 'camera-controls';
-import { createThreeJsSectorNode } from '../../views/threejs/sector/createThreeJsSectorNode';
-import { createLocalSectorModel } from '../..';
 import { createPathNode, createTextSpriteNode } from './utils/scene-elements';
 
 CameraControls.install({ THREE });
@@ -25,8 +24,8 @@ async function main() {
   renderer.setClearColor('#000000');
   renderer.setSize(window.innerWidth, window.innerHeight);
 
-  const sectorModel = createLocalSectorModel('/primitives');
-  const sectorModelNode = await createThreeJsSectorNode(sectorModel);
+  const sectorModel = reveal.createLocalSectorModel('/primitives');
+  const sectorModelNode = await reveal.createThreeJsSectorNode(sectorModel);
   scene.add(sectorModelNode);
 
   const controls = new CameraControls(camera, renderer.domElement);

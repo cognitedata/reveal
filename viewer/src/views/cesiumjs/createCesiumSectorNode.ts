@@ -33,7 +33,7 @@ const zUpToYup = mat4.identity(mat4.create()); // mat4.invert(mat4.create(), yUp
  * @param model
  * @param scene
  */
-export default async function initializeCesiumSectorScene(
+export async function initializeCesiumSectorScene(
   geographicOrigin: Cesium.Cartesian3,
   modelOffset: Cesium.Cartesian3,
   model: SectorModel,

@@ -3,11 +3,8 @@
  */
 
 import * as THREE from 'three';
+import * as reveal from '@cognite/reveal';
 import CameraControls from 'camera-controls';
-import { createThreeJsSectorNode } from '../../views/threejs/sector/createThreeJsSectorNode';
-import { createLocalSectorModel } from '../..';
-
-const postprocessing = require('postprocessing');
 
 CameraControls.install({ THREE });
 
@@ -21,9 +18,15 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const sectorModel = createLocalSectorModel('/primitives');
-  const sectorModelNode = await createThreeJsSectorNode(sectorModel);
-  scene.add(sectorModelNode);
+  const sectorModel1 = reveal.createLocalSectorModel('/primitives');
+  const sectorModel2 = reveal.createLocalSectorModel('/primitives');
+  const sectorModelNode1 = await reveal.createThreeJsSectorNode(sectorModel1);
+  const sectorModelNode2 = await reveal.createThreeJsSectorNode(sectorModel2);
+  const model2Offset = new THREE.Group();
+  model2Offset.position.set(-50, -50, 0);
+  model2Offset.add(sectorModelNode2);
+  scene.add(sectorModelNode1);
+  scene.add(model2Offset);
 
   const controls = new CameraControls(camera, renderer.domElement);
   const pos = new THREE.Vector3(100, 100, 100);
@@ -32,23 +35,16 @@ async function main() {
   controls.update(0.0);
   camera.updateMatrixWorld();
 
-  // See https://vanruesc.github.io/postprocessing/public/docs/identifiers.html
-  const effectPass = new postprocessing.EffectPass(camera, new postprocessing.DotScreenEffect());
-  effectPass.renderToScreen = true;
-  const effectComposer = new postprocessing.EffectComposer(renderer);
-  effectComposer.addPass(new postprocessing.RenderPass(scene, camera));
-  effectComposer.addPass(effectPass);
-
   const clock = new THREE.Clock();
   const render = () => {
     requestAnimationFrame(render);
 
     const delta = clock.getDelta();
-    const needsUpdate = controls.update(delta) || sectorModelNode.needsRedraw;
+    const needsUpdate = controls.update(delta) || sectorModelNode1.needsRedraw || sectorModelNode2.needsRedraw;
 
     if (needsUpdate) {
-      effectComposer.render(delta);
-      sectorModelNode.needsRedraw = false;
+      renderer.render(scene, camera);
+      sectorModelNode1.needsRedraw = sectorModelNode2.needsRedraw = false;
     }
   };
   render();

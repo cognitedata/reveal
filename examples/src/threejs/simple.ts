@@ -3,25 +3,21 @@
  */
 
 import * as THREE from 'three';
+import * as reveal from '@cognite/reveal';
 import CameraControls from 'camera-controls';
-import { createThreeJsSectorNode } from '../../views/threejs/sector/createThreeJsSectorNode';
-import { createLocalSectorModel } from '../..';
-import { getUrlParameter } from '../../utils/urlUtils';
-import { suggestCameraLookAt } from '../../utils/cameraUtils';
-import { FetchSectorMetadataDelegate } from '../../models/sector/delegates';
 import { vec3 } from 'gl-matrix';
 
 CameraControls.install({ THREE });
 
 async function main() {
-  const modelUrl = getUrlParameter('model') || '/primitives';
+  const modelUrl = new URL(location.href).searchParams.get('model') || '/primitives';
 
   const scene = new THREE.Scene();
-  const sectorModel = createLocalSectorModel(modelUrl);
-  const sectorModelNode = await createThreeJsSectorNode(sectorModel);
+  const sectorModel = reveal.createLocalSectorModel(modelUrl);
+  const sectorModelNode = await reveal.createThreeJsSectorNode(sectorModel);
   scene.add(sectorModelNode);
 
-  const fetchMetadata: FetchSectorMetadataDelegate = sectorModel[0];
+  const fetchMetadata: reveal.internal.FetchSectorMetadataDelegate = sectorModel[0];
   const [metaData, modelTransform] = await fetchMetadata();
 
   const renderer = new THREE.WebGLRenderer();
@@ -29,7 +25,7 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
   const transformedBounds = metaData.bounds.createTransformed(modelTransform.modelMatrix);
-  const [pos, target] = suggestCameraLookAt(transformedBounds);
+  const [pos, target] = reveal.internal.suggestCameraLookAt(transformedBounds);
   const far = 3 * vec3.distance(target, pos);
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.2, far);
   const controls = new CameraControls(camera, renderer.domElement);

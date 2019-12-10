@@ -8,3 +8,9 @@ export { createLocalSectorModel, createLocalPointCloudModel } from './datasource
 
 export { SectorNode } from './views/threejs';
 export { createThreeJsSectorNode, createThreeJsPointCloudNode } from './views/threejs';
+export { initializeCesiumSectorScene } from './views/cesiumjs/createCesiumSectorNode';
+
+// @ts-ignore
+import * as internal from './internal';
+
+export { internal };
