@@ -30,7 +30,8 @@ matrix:
         - nvm install 10
         - nvm install 12
         # Install wasm-pack for Rust
-        - cargo install wasm-pack
+        - rm -rf $HOME/.cargo/bin/wasm-pack
+        - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
       before_script: 
         - cd viewer
       script:
