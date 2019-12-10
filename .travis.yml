@@ -14,8 +14,9 @@ matrix:
           - rust: nightly
         fast_finish: true
       cache: cargo
-      before_script:
+      install:
         - rustup component add clippy
+        - cargo install sccache
       script:
         # fail on warnings, test all features
         - cargo clippy --all-targets --all-features -- -D warnings
@@ -36,6 +37,8 @@ matrix:
         # Install wasm-pack for Rust
         - rm -rf $HOME/.cargo/bin/wasm-pack
         - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+        # SSCache
+        - cargo install sccache
       before_script: 
         - cd viewer
       script:
