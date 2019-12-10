@@ -20,7 +20,8 @@ matrix:
     - language: rust
       name: "Reveal viewer"
       cache:
-        cargo:
+        cargo: true
+        npm: true
         directories: 
           - "viewer/node_modules"
       install:
@@ -29,6 +30,7 @@ matrix:
         - nvm install 10
         - nvm install 12
         # Install wasm-pack for Rust
+        - rm -rf $HOME/.cargo/bin/wasm-pack
         - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
       before_script: 
         - cd viewer
