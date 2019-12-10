@@ -14,9 +14,9 @@ matrix:
         - rustup component add clippy
         # sccache
         - cargo install sccache
-      env:
+      before_script:
         # Enable sscache
-        - RUSTC_WRAPPER=sccache
+        - export RUSTC_WRAPPER=sccache
       script:
         # fail on warnings, test all features
         - cargo clippy --all-targets --all-features -- -D warnings
@@ -39,18 +39,17 @@ matrix:
         - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
         # sccache
         - cargo install sccache
-      env:
-        # Enable sscache
-        - RUSTC_WRAPPER=sccache
-      before_script: 
+      before_script:
         - cd viewer
+        # Enable sscache
+        - export RUSTC_WRAPPER=sccache
       script:
-          - nvm use 10
-          - npm install
-          - npm run build
-          - npm run coverage
+        - nvm use 10
+        - npm install
+        - npm run build
+        - npm run coverage
 
-          - nvm use 12
-          - npm install
-          - npm run build
-          - npm run coverage
+        - nvm use 12
+        - npm install
+        - npm run build
+        - npm run coverage
