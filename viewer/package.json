@@ -8,7 +8,7 @@
     "dist"
   ],
   "scripts": {
-    "release": "webpack",
+    "release": "webpack --env.three-examples false --env.cesium-examples false",
     "build": "webpack --env.development",
     "clean": "rimraf -rf node_modules/ dist/ target/",
     "serve": "webpack-dev-server --env.development --debug --color --progress --watch",
