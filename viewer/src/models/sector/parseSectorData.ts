@@ -8,6 +8,7 @@ import { createOffsetsArray } from '../../utils/arrayUtils';
 import { WorkerArguments, ParseQuadsResult } from '../../../workers/types/parser.types';
 import { ParserWorker } from '../../../workers/parser.worker';
 import * as Comlink from 'comlink';
+import { createSimpleCache } from '../createCache';
 
 type WorkDelegate<T> = (worker: ParserWorker) => Promise<T>;
 
@@ -62,9 +63,6 @@ function createWorkers<U>(): PooledWorker[] {
   return workerList;
 }
 
-// TODO make caching into a function that wraps around the CTM fetch + parse
-// and can be replaced to implement different caching strategies
-
 export async function createParser(
   sectorRoot: SectorMetadata,
   fetchSector: FetchSectorDelegate,
@@ -77,6 +75,11 @@ export async function createParser(
     // NOTE: It is important that we copy the ArrayBuffer here, since it will be neutered the
     // first time it is passed to a worker. We copy it by calling slice().
     worker.parseRootSector(rootSectorArrayBuffer.slice());
+  });
+
+  // TODO define the cache outside of the createParser function to make it configurable
+  const loadCtmGeometryCache = createSimpleCache((fileId: number) => {
+    return loadCtmGeometry(fileId, fetchCtmFile, workerList);
   });
 
   async function parse(sectorId: number, sectorArrayBuffer: Uint8Array): Promise<Sector> {
@@ -113,7 +116,7 @@ export async function createParser(
           const fileTriangleCounts = meshIndices.map(i => triangleCounts[i]);
           const offsets = createOffsetsArray(fileTriangleCounts);
           // Load CTM (geometry)
-          const ctm = await loadCtmGeometry(fileId, fetchCtmFile, workerList);
+          const ctm = await loadCtmGeometryCache.request(fileId);
 
           const indices = ctm.indices;
           const vertices = ctm.vertices;
@@ -158,7 +161,7 @@ export async function createParser(
         // TODO do this in Rust instead
         // TODO de-duplicate this with the merged meshes above
         for (const [fileId, meshIndices] of meshesGroupedByFile.entries()) {
-          const ctm = await loadCtmGeometry(fileId, fetchCtmFile, workerList);
+          const ctm = await loadCtmGeometryCache.request(fileId);
 
           const indices = ctm.indices;
           const vertices = ctm.vertices;
