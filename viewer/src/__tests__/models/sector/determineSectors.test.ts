@@ -7,12 +7,13 @@ import { Box3 } from '../../../utils/Box3';
 import { vec3, mat4 } from 'gl-matrix';
 import { determineSectors } from '../../../models/sector/determineSectors';
 import { expectSetEqual } from '../../expects';
-import { toThreeMatrix4 } from '../../../views/threejs/utilities';
+import { toThreeMatrix4, fromThreeMatrix, fromThreeVector3 } from '../../../views/threejs/utilities';
 import 'jest-extended';
 
 describe('determineSectors', () => {
   const identityTransform: SectorModelTransformation = {
-    modelMatrix: mat4.identity(mat4.create())
+    modelMatrix: mat4.identity(mat4.create()),
+    inverseModelMatrix: mat4.identity(mat4.create())
   };
 
   test('frustum does not intersect root bounds', async () => {
@@ -29,7 +30,12 @@ describe('determineSectors', () => {
     camera.updateMatrixWorld();
 
     // Act
-    const sectors = await determineSectors(root, camera, identityTransform);
+    const sectors = await determineSectors({
+      root,
+      cameraPosition: fromThreeVector3(vec3.create(), camera.position, identityTransform),
+      cameraModelMatrix: fromThreeMatrix(mat4.create(), camera.matrixWorld, identityTransform),
+      projectionMatrix: fromThreeMatrix(mat4.create(), camera.projectionMatrix, identityTransform)
+    });
 
     // Assert
     expect(sectors.detailed).toBeEmpty();
@@ -62,7 +68,12 @@ describe('determineSectors', () => {
     camera.updateMatrixWorld();
 
     // Act
-    const sectors = await determineSectors(root, camera, identityTransform);
+    const sectors = await determineSectors({
+      root,
+      cameraPosition: fromThreeVector3(vec3.create(), camera.position, identityTransform),
+      cameraModelMatrix: fromThreeMatrix(mat4.create(), camera.matrixWorld, identityTransform),
+      projectionMatrix: fromThreeMatrix(mat4.create(), camera.projectionMatrix, identityTransform)
+    });
 
     // Assert
     expectSetEqual(sectors.detailed, [1, 2]);
@@ -86,7 +97,12 @@ describe('determineSectors', () => {
     camera.updateMatrixWorld();
 
     // Act
-    const sectors = await determineSectors(root, camera, transform);
+    const sectors = await determineSectors({
+      root,
+      cameraPosition: fromThreeVector3(vec3.create(), camera.position, identityTransform),
+      cameraModelMatrix: fromThreeMatrix(mat4.create(), camera.matrixWorld, identityTransform),
+      projectionMatrix: fromThreeMatrix(mat4.create(), camera.projectionMatrix, identityTransform)
+    });
 
     // Assert
     expectSetEqual(sectors.detailed, [1]);

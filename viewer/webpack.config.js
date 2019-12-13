@@ -38,14 +38,14 @@ function arg(env, name, defaultValue) {
 
 module.exports = env => {
   const development = arg(env, "development", false);
-  const threeEnabled = arg(env, "three", true);
-  const cesiumEnabled = arg(env, "cesium", true);
+  const threeExamplesEnabled = arg(env, "three-examples", true);
+  const cesiumExamplesEnabled = arg(env, "cesium-examples", true);
 
   console.log(
     `Build config:
     - development: ${development}
-    - Three JS support: ${threeEnabled}
-    - Cesium support: ${cesiumEnabled}
+    - Three JS examples: ${threeExamplesEnabled}
+    - Cesium examples: ${cesiumExamplesEnabled}
     `
   );
 
@@ -95,7 +95,9 @@ module.exports = env => {
     devtool: development ? "inline-source-map" : undefined,
     watchOptions: {
       aggregateTimeout: 1500,
-      ignored: ['node_modules/']
+      ignored: [
+        'node_modules/',
+      ],
     },
     devServer: {
       https: true,
@@ -117,7 +119,7 @@ module.exports = env => {
     ],
   };
 
-  if (cesiumEnabled) {
+  if (cesiumExamplesEnabled) {
     // For the devServer, we need to resolve files in the Cesium source as well
     config.devServer.contentBase.push(resolve('node_modules/cesium/Source/'));
     // The Cesium workers need to be copied manually
@@ -133,7 +135,7 @@ module.exports = env => {
     config.target = 'web';
     let enabledExamples = [];
 
-    if (cesiumEnabled) {
+    if (cesiumExamplesEnabled) {
       enabledExamples = enabledExamples.concat([
         {
           name: "cesiumjs-basic",
@@ -143,7 +145,7 @@ module.exports = env => {
         },
       ]);
     }
-    if (threeEnabled) {
+    if (threeExamplesEnabled) {
       enabledExamples = enabledExamples.concat([
         {
           name: "threejs-simple",
