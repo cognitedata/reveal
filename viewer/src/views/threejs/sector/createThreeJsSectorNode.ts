@@ -37,13 +37,6 @@ export async function createThreeJsSectorNode(model: SectorModel): Promise<Secto
     rootGroup.needsRedraw = true;
   };
 
-  // Sync high- and low-detail geometry
-  const [discardSectorFinal, consumeSectorFinal, consumeSectorQuadsFinal] = createSyncedConsumeAndDiscard(
-    discardSector,
-    consumeSectorAndTriggerRedraw,
-    consumeSectorQuadsAndTriggerRedraw
-  );
-
   // Create cache to avoid unnecessary loading and parsing of data
   const [fetchSectorCached, parseSectorDataCached] = createCache<number, Sector>(fetchSector, parseSectorData);
   const [fetchSectorQuadsCached, parseSectorQuadsDataCached] = createCache<number, SectorQuads>(
@@ -53,14 +46,14 @@ export async function createThreeJsSectorNode(model: SectorModel): Promise<Secto
   const activateDetailedSectors = initializeSectorLoader(
     fetchSectorCached,
     parseSectorDataCached,
-    discardSectorFinal,
-    consumeSectorFinal
+    discardSector,
+    consumeSector
   );
   const activateSimpleSectors = initializeSectorLoader(
     fetchSectorQuadsCached,
     parseSectorQuadsDataCached,
-    discardSectorFinal,
-    consumeSectorQuadsFinal
+    discardSector,
+    consumeSectorQuads
   );
 
   // Setup data load schedule whenever camera moves
