@@ -82,8 +82,11 @@ describe('determineSectors', () => {
 
   test('model with transformation, returns correctly', async () => {
     // Arrange
+    const modelMatrix = mat4.fromRotation(mat4.create(), Math.PI, [0, 1, 0]);
+    const inverseModelMatrix = mat4.invert(mat4.create(), modelMatrix)!;
     const transform = {
-      modelMatrix: mat4.fromRotation(mat4.create(), Math.PI, [0, 1, 0])
+      modelMatrix,
+      inverseModelMatrix
     };
     const root: SectorMetadata = {
       id: 1,
@@ -99,9 +102,9 @@ describe('determineSectors', () => {
     // Act
     const sectors = await determineSectors({
       root,
-      cameraPosition: fromThreeVector3(vec3.create(), camera.position, identityTransform),
-      cameraModelMatrix: fromThreeMatrix(mat4.create(), camera.matrixWorld, identityTransform),
-      projectionMatrix: fromThreeMatrix(mat4.create(), camera.projectionMatrix, identityTransform)
+      cameraPosition: fromThreeVector3(vec3.create(), camera.position, transform),
+      cameraModelMatrix: fromThreeMatrix(mat4.create(), camera.matrixWorld, transform),
+      projectionMatrix: fromThreeMatrix(mat4.create(), camera.projectionMatrix, transform)
     });
 
     // Assert
