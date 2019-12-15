@@ -14,7 +14,7 @@ import { determineSectors } from '../../../models/sector/determineSectors';
 import { createCache } from '../../../models/createCache';
 import { SectorModel } from '../../../datasources/SectorModel';
 import { fromThreeMatrix, fromThreeVector3, toThreeMatrix4 } from '../utilities';
-import { mat4, vec3, mat3 } from 'gl-matrix';
+import { mat4, vec3 } from 'gl-matrix';
 import { buildScene } from './buildScene';
 import { findSectorMetadata } from '../../../models/sector/findSectorMetadata';
 import { consumeSectorDetailed } from './consumeSectorDetailed';
@@ -95,24 +95,11 @@ export async function createThreeJsSectorNode(model: SectorModel): Promise<Secto
     consumeSectorQuadsFinal
   );
 
-  function mat4FromMat3(out: mat4, a: mat3) {
-    out[0] = a[0];
-    out[1] = a[1];
-    out[2] = a[2];
-    out[4] = a[3];
-    out[5] = a[4];
-    out[6] = a[5];
-    out[8] = a[6];
-    out[9] = a[7];
-    out[10] = a[8];
-    return out;
-  }
-
   // Setup data load schedule whenever camera moves
   async function triggerUpdate(camera: THREE.Camera) {
     camera.updateMatrix();
     camera.updateMatrixWorld();
-    camera.matrixWorldInverse.getInverse( camera.matrixWorld );
+    camera.matrixWorldInverse.getInverse(camera.matrixWorld);
 
     const cameraPosition = fromThreeVector3(tempVec3, camera.position, modelTransformation);
     const cameraModelMatrix = fromThreeMatrix(tempMatrix, camera.matrixWorld, modelTransformation);
@@ -120,7 +107,6 @@ export async function createThreeJsSectorNode(model: SectorModel): Promise<Secto
     const wantedSectors = await determineSectors({
       root: sectorRoot,
       cameraPosition,
-      //inverseCameraModelMatrix,
       cameraModelMatrix,
       projectionMatrix
     });
