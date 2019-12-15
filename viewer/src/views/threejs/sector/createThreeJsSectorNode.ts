@@ -75,17 +75,65 @@ export async function createThreeJsSectorNode(model: SectorModel): Promise<Secto
     fetchSectorQuads,
     parseSectorQuadsData
   );
+
+  // Create throttle to avoid lag
+  const createThrottle = () => {
+    let triggerQueued = false;
+    const actions: (() => void)[] = [];
+    const trigger = () => {
+      const action = actions.shift()!;
+      action();
+      if (actions.length > 0) {
+        setTimeout(trigger, 8);
+      } else {
+        triggerQueued = false;
+      }
+    };
+    const throttle = (action: () => void) => {
+      actions.push(action);
+      if (!triggerQueued) {
+        setTimeout(trigger, 8);
+        triggerQueued = true;
+      }
+    };
+    return throttle;
+  };
+
+  const throttle = createThrottle();
+
+  // TODO generalize with variadic args, if they exist
+  const throttledConsumeDetailed: ConsumeSectorDelegate<Sector> = (sectorId, sector) => {
+    const f = () => {
+      consumeDetailed(sectorId, sector);
+    };
+    throttle(f);
+  };
+
+  const throttledConsumeSimple: ConsumeSectorDelegate<SectorQuads> = (sectorId, sector) => {
+    const f = () => {
+      consumeSimple(sectorId, sector);
+    };
+    throttle(f);
+  };
+
+  const throttledDiscard: DiscardSectorDelegate = (sectorId, request) => {
+    const f = () => {
+      discard(sectorId, request);
+    };
+    throttle(f);
+  };
+
   const activateDetailedSectors = initializeSectorLoader(
     fetchSectorCached,
     parseSectorDataCached,
-    discard,
-    consumeDetailed
+    throttledDiscard,
+    throttledConsumeDetailed
   );
   const activateSimpleSectors = initializeSectorLoader(
     fetchSectorQuadsCached,
     parseSectorQuadsDataCached,
-    discard,
-    consumeSimple
+    throttledDiscard,
+    throttledConsumeSimple
   );
 
   function mat4FromMat3(out: mat4, a: mat3) {
