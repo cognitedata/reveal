@@ -17,7 +17,10 @@ describe('createThreeJsPointCloudNode', () => {
     offset: new THREE.Vector3()
   };
   const fetchPointcloud: FetchPointCloudDelegate = async () => {
-    const transform: SectorModelTransformation = { modelMatrix: mat4.identity(mat4.create()) };
+    const transform: SectorModelTransformation = {
+      modelMatrix: mat4.identity(mat4.create()),
+      inverseModelMatrix: mat4.identity(mat4.create())
+    };
     return [geometry, transform];
   };
   const model: PointCloudModel = [fetchPointcloud];
