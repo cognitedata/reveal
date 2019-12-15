@@ -63,12 +63,12 @@ export function toThreeMatrix4(m: mat4, modelTransformation?: SectorModelTransfo
 }
 
 export function fromThreeVector3(out: vec3, m: THREE.Vector3, modelTransformation?: SectorModelTransformation): vec3 {
-  const original = vec3.set(vec3.create(), m.x, m.y, m.z);
+  const original = vec3.set(out, m.x, m.y, m.z);
   if (!modelTransformation) {
     return original;
   }
   // the fourth component is implicitly 1 in transformMat4
-  return vec3.transformMat4(vec3.create(), original, modelTransformation.inverseModelMatrix);
+  return vec3.transformMat4(out, original, modelTransformation.inverseModelMatrix);
 }
 
 export function fromThreeMatrix(out: mat4, m: THREE.Matrix4, modelTransformation?: SectorModelTransformation): mat4 {
