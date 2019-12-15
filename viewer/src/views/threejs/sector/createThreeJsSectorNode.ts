@@ -21,13 +21,15 @@ import { consumeSectorDetailed } from './consumeSectorDetailed';
 import { discardSector } from './discardSector';
 import { consumeSectorSimple } from './consumeSectorSimple';
 
-const tempVec3 = vec3.create();
-const tempMatrix = mat4.create();
-const tempMatrix2 = mat4.create();
+const createThreeJsSectorNodeVars = {
+  cameraPosition: vec3.create(),
+  cameraModelMatrix: mat4.create(),
+  projectionMatrix: mat4.create()
+};
 
 export async function createThreeJsSectorNode(model: SectorModel): Promise<SectorNode> {
   const [fetchSectorMetadata, fetchSector, fetchSectorQuads, fetchCtmFile] = model;
-
+  const { cameraPosition, cameraModelMatrix, projectionMatrix } = createThreeJsSectorNodeVars;
   // Fetch metadata
   const [sectorRoot, modelTransformation] = await fetchSectorMetadata();
   const parseSectorData = await createParser(sectorRoot, fetchSector, fetchCtmFile);
@@ -101,9 +103,9 @@ export async function createThreeJsSectorNode(model: SectorModel): Promise<Secto
     camera.updateMatrixWorld();
     camera.matrixWorldInverse.getInverse(camera.matrixWorld);
 
-    const cameraPosition = fromThreeVector3(tempVec3, camera.position, modelTransformation);
-    const cameraModelMatrix = fromThreeMatrix(tempMatrix, camera.matrixWorld, modelTransformation);
-    const projectionMatrix = fromThreeMatrix(tempMatrix2, camera.projectionMatrix);
+    fromThreeVector3(cameraPosition, camera.position, modelTransformation);
+    fromThreeMatrix(cameraModelMatrix, camera.matrixWorld, modelTransformation);
+    fromThreeMatrix(projectionMatrix, camera.projectionMatrix);
     const wantedSectors = await determineSectors({
       root: sectorRoot,
       cameraPosition,

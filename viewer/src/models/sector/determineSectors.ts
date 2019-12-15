@@ -8,9 +8,6 @@ import { traverseDepthFirst } from '../../utils/traversal';
 import { toThreeMatrix4, toThreeVector3 } from '../../views/threejs/utilities';
 import { mat4, vec3 } from 'gl-matrix';
 
-const tempMatrix = mat4.create();
-const tempMatrix2 = mat4.create();
-
 interface DetermineSectorsInput {
   root: SectorMetadata;
   cameraPosition: vec3;
@@ -18,18 +15,26 @@ interface DetermineSectorsInput {
   projectionMatrix: mat4;
 }
 
+const determineSectorsPreallocatedVars = {
+  invertCameraModelMatrix: mat4.create(),
+  frustumMatrix: mat4.create(),
+  frustum: new THREE.Frustum(),
+  bbox: new THREE.Box3(),
+  min: new THREE.Vector3(),
+  max: new THREE.Vector3()
+};
+
 export async function determineSectors(input: DetermineSectorsInput): Promise<WantedSectors> {
   const { root, cameraPosition, cameraModelMatrix, projectionMatrix } = input;
+  const { invertCameraModelMatrix, frustumMatrix, frustum, bbox, min, max } = determineSectorsPreallocatedVars;
 
   const sectors: SectorMetadata[] = [];
 
-  const frustum = new THREE.Frustum();
-  const frustumMatrix = mat4.multiply(tempMatrix, projectionMatrix, mat4.invert(tempMatrix2, cameraModelMatrix)!);
+  if (!mat4.invert(invertCameraModelMatrix, cameraModelMatrix)) {
+    throw new Error('Provided camera model matrix is not invertible');
+  }
+  mat4.multiply(frustumMatrix, projectionMatrix, invertCameraModelMatrix);
   frustum.setFromMatrix(toThreeMatrix4(frustumMatrix));
-
-  const bbox = new THREE.Box3();
-  const min = new THREE.Vector3();
-  const max = new THREE.Vector3();
 
   traverseDepthFirst(root, sector => {
     min.set(sector.bounds.min[0], sector.bounds.min[1], sector.bounds.min[2]);
