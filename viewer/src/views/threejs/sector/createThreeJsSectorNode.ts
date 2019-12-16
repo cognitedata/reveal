@@ -10,7 +10,7 @@ import { ConsumeSectorDelegate, DiscardSectorDelegate } from '../../../models/se
 import { initializeSectorLoader } from '../../../models/sector/initializeSectorLoader';
 import { SectorNode } from './SectorNode';
 import { determineSectors } from '../../../models/sector/determineSectors';
-import { createCache } from '../../../models/createCache';
+import { createCache, createSimpleCache } from '../../../models/createCache';
 import { SectorModel } from '../../../datasources/SectorModel';
 import { fromThreeMatrix, fromThreeVector3, toThreeMatrix4 } from '../utilities';
 import { mat4, vec3, mat3 } from 'gl-matrix';
@@ -64,13 +64,6 @@ export async function createThreeJsSectorNode(model: SectorModel): Promise<Secto
     consumeSectorSimple(sectorId, sector, metadata, sectorNode);
   };
 
-  // Create cache to avoid unnecessary loading and parsing of data
-  //const [fetchSectorCached, parseSectorDataCached] = createCache<number, Sector>(fetchSector, parseDetailed);
-  //const [fetchSectorQuadsCached, parseSectorQuadsDataCached] = createCache<number, SectorQuads>(
-    //fetchSectorQuads,
-    //parseSimple
-  //);
-
   const getDetailed = async (sectorId: number) => {
     const data = await fetchSector(sectorId);
     return parseDetailed(sectorId, data);
@@ -81,12 +74,15 @@ export async function createThreeJsSectorNode(model: SectorModel): Promise<Secto
     return parseSimple(sectorId, data);
   };
 
+  const getDetailedCache = createSimpleCache(getDetailed);
+  const getSimpleCache = createSimpleCache(getSimple);
+
   let redrawRequested = false;
   const requestRedraw = () => {
     redrawRequested = true;
   };
-  const activatorDetailed = initializeSectorLoader(getDetailed, discard, consumeDetailed, requestRedraw);
-  const activatorSimple = initializeSectorLoader(getSimple, discard, consumeSimple, requestRedraw);
+  const activatorDetailed = initializeSectorLoader(getDetailedCache.request, discard, consumeDetailed, requestRedraw);
+  const activatorSimple = initializeSectorLoader(getSimpleCache.request, discard, consumeSimple, requestRedraw);
 
   function mat4FromMat3(out: mat4, a: mat3) {
     out[0] = a[0];

@@ -27,7 +27,7 @@ describe('discardSector', () => {
   const node = new SectorNode({ modelTransformation });
 
   test('cancels request', () => {
-    discardSector(1, request, node);
+    discardSector(1, node);
     expect(request.cancel).toBeCalled();
   });
 
@@ -35,13 +35,13 @@ describe('discardSector', () => {
     node.add(new SectorNode({ modelTransformation }));
     node.add(new SectorNode({ modelTransformation }));
     node.add(new THREE.Box3Helper(new THREE.Box3()));
-    discardSector(1, request, node);
+    discardSector(1, node);
 
     expect(node.children.length).toBe(2);
     expect(node.children).toSatisfyAll(x => x instanceof SectorNode);
   });
 
   test('discard undefined request does not throw', () => {
-    expect(() => discardSector(1, undefined, node)).not.toThrow();
+    expect(() => discardSector(1, node)).not.toThrow();
   });
 });
