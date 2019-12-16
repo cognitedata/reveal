@@ -7,7 +7,6 @@ import * as THREE from 'three';
 import { createParser, createQuadsParser } from '../../../models/sector/parseSectorData';
 import { Sector, SectorQuads } from '../../../models/sector/types';
 import { ConsumeSectorDelegate, DiscardSectorDelegate } from '../../../models/sector/delegates';
-import { createSyncedConsumeAndDiscard } from '../../createSyncedConsumeAndDiscard';
 import { initializeSectorLoader } from '../../../models/sector/initializeSectorLoader';
 import { SectorNode } from './SectorNode';
 import { determineSectors } from '../../../models/sector/determineSectors';
@@ -71,13 +70,6 @@ export async function createThreeJsSectorNode(model: SectorModel): Promise<Secto
     consumeSectorSimple(sectorId, sector, metadata, sectorNode);
   };
 
-  // Sync high- and low-detail geometry
-  const [discardSectorFinal, consumeSectorFinal, consumeSectorQuadsFinal] = createSyncedConsumeAndDiscard(
-    discard,
-    consumeDetailed,
-    consumeSimple
-  );
-
   // Create cache to avoid unnecessary loading and parsing of data
   const [fetchSectorCached, parseSectorDataCached] = createCache<number, Sector>(fetchSector, parseSectorData);
   const [fetchSectorQuadsCached, parseSectorQuadsDataCached] = createCache<number, SectorQuads>(
@@ -87,14 +79,14 @@ export async function createThreeJsSectorNode(model: SectorModel): Promise<Secto
   const activateDetailedSectors = initializeSectorLoader(
     fetchSectorCached,
     parseSectorDataCached,
-    discardSectorFinal,
-    consumeSectorFinal
+    discard,
+    consumeDetailed
   );
   const activateSimpleSectors = initializeSectorLoader(
     fetchSectorQuadsCached,
     parseSectorQuadsDataCached,
-    discardSectorFinal,
-    consumeSectorQuadsFinal
+    discard,
+    consumeSimple
   );
 
   // Setup data load schedule whenever camera moves
