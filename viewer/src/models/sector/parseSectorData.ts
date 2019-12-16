@@ -78,9 +78,9 @@ export async function createParser(
   });
 
   // TODO define the cache outside of the createParser function to make it configurable
-  //const loadCtmGeometryCache = createSimpleCache((fileId: number) => {
-    //return loadCtmGeometry(fileId, fetchCtmFile, workerList);
-  //});
+  const loadCtmGeometryCache = createSimpleCache((fileId: number) => {
+    return loadCtmGeometry(fileId, fetchCtmFile, workerList);
+  });
 
   async function parse(sectorId: number, sectorArrayBuffer: Uint8Array): Promise<Sector> {
     try {
@@ -116,7 +116,7 @@ export async function createParser(
           const fileTriangleCounts = meshIndices.map(i => triangleCounts[i]);
           const offsets = createOffsetsArray(fileTriangleCounts);
           // Load CTM (geometry)
-          const ctm = await loadCtmGeometry(fileId, fetchCtmFile, workerList);
+          const ctm = await loadCtmGeometryCache.request(fileId);
 
           const indices = ctm.indices;
           const vertices = ctm.vertices;
@@ -161,7 +161,7 @@ export async function createParser(
         // TODO do this in Rust instead
         // TODO de-duplicate this with the merged meshes above
         for (const [fileId, meshIndices] of meshesGroupedByFile.entries()) {
-          const ctm = await loadCtmGeometry(fileId, fetchCtmFile, workerList);
+          const ctm = await loadCtmGeometryCache.request(fileId);
 
           const indices = ctm.indices;
           const vertices = ctm.vertices;
