@@ -34,35 +34,41 @@ export function toThreeJsBox3(box: Box3): THREE.Box3 {
   return new THREE.Box3(toThreeVector3(box.min), toThreeVector3(box.max));
 }
 
-const tempVec3 = vec3.create();
+const toThreeVector3Vars = {
+  result: vec3.create()
+};
 
 // TODO add out parameter
 export function toThreeVector3(v: vec3, modelTransformation?: SectorModelTransformation): THREE.Vector3 {
   if (!modelTransformation) {
     return new THREE.Vector3(v[0], v[1], v[2]);
   }
-
-  const result = vec3.transformMat4(tempVec3, v, modelTransformation.modelMatrix);
+  const { result } = toThreeVector3Vars;
+  vec3.transformMat4(result, v, modelTransformation.modelMatrix);
   return new THREE.Vector3(result[0], result[1], result[2]);
 }
 
-const tempMat4 = mat4.create();
+const toThreeMatrix4Vars = {
+  result: mat4.create()
+};
+
 // TODO add out parameter
 export function toThreeMatrix4(m: mat4, modelTransformation?: SectorModelTransformation): THREE.Matrix4 {
   if (!modelTransformation) {
     return new THREE.Matrix4().fromArray(m);
   }
-  const result = mat4.multiply(tempMat4, modelTransformation.modelMatrix, m);
+  const { result } = toThreeMatrix4Vars;
+  mat4.multiply(result, modelTransformation.modelMatrix, m);
   return new THREE.Matrix4().fromArray(result);
 }
 
 export function fromThreeVector3(out: vec3, m: THREE.Vector3, modelTransformation?: SectorModelTransformation): vec3 {
-  const original = vec3.set(vec3.create(), m.x, m.y, m.z);
+  const original = vec3.set(out, m.x, m.y, m.z);
   if (!modelTransformation) {
     return original;
   }
   // the fourth component is implicitly 1 in transformMat4
-  return vec3.transformMat4(vec3.create(), original, modelTransformation.inverseModelMatrix);
+  return vec3.transformMat4(out, original, modelTransformation.inverseModelMatrix);
 }
 
 export function fromThreeMatrix(out: mat4, m: THREE.Matrix4, modelTransformation?: SectorModelTransformation): mat4 {
