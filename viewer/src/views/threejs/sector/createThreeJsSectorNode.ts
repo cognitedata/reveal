@@ -8,7 +8,6 @@ import { createParser, createQuadsParser } from '../../../models/sector/parseSec
 import { initializeThreeJsView } from './initializeThreeJsView';
 import { Sector, SectorQuads } from '../../../models/sector/types';
 import { ConsumeSectorDelegate } from '../../../models/sector/delegates';
-import { createSyncedConsumeAndDiscard } from '../../createSyncedConsumeAndDiscard';
 import { initializeSectorLoader } from '../../../models/sector/initializeSectorLoader';
 import { SectorNode } from './SectorNode';
 import { determineSectors } from '../../../models/sector/determineSectors';
