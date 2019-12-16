@@ -13,7 +13,8 @@ const identity = mat4.identity(mat4.create());
 export function createLocalPointCloudModel(url: string): PointCloudModel {
   const fetchPointCloud: FetchPointCloudDelegate = async () => {
     const transform: SectorModelTransformation = {
-      modelMatrix: identity
+      modelMatrix: identity,
+      inverseModelMatrix: mat4.invert(mat4.create(), identity)!
     };
     return [await PointCloudLoader.load(url), transform];
   };

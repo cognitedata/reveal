@@ -1,3 +1,7 @@
+/*!
+ * Copyright 2019 Cognite AS
+ */
+
 // TODO potentially private types
 export { FetchSectorMetadataDelegate, FetchSectorDelegate, FetchCtmDelegate } from './models/sector/delegates';
 

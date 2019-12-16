@@ -38,14 +38,14 @@ function arg(env, name, defaultValue) {
 
 module.exports = env => {
   const development = arg(env, "development", false);
-  const threeEnabled = arg(env, "three", true);
-  const cesiumEnabled = arg(env, "cesium", true);
+  const threeExamplesEnabled = arg(env, "three-examples", true);
+  const cesiumExamplesEnabled = arg(env, "cesium-examples", true);
 
   console.log(
     `Build config:
     - development: ${development}
-    - Three JS support: ${threeEnabled}
-    - Cesium support: ${cesiumEnabled}
+    - Three JS examples: ${threeExamplesEnabled}
+    - Cesium examples: ${cesiumExamplesEnabled}
     `
   );
 
@@ -95,7 +95,9 @@ module.exports = env => {
     devtool: development ? "inline-source-map" : "source-map",
     watchOptions: {
       aggregateTimeout: 1500,
-      ignored: ['node_modules/']
+      ignored: [
+        'node_modules/',
+      ],
     },
     optimization: {
       usedExports: true,
