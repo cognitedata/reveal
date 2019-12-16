@@ -10,6 +10,7 @@ import { getUrlParameter } from '../../utils/urlUtils';
 import { suggestCameraLookAt } from '../../utils/cameraUtils';
 import { FetchSectorMetadataDelegate } from '../../models/sector/delegates';
 import { vec3 } from 'gl-matrix';
+import { toThreeVector3 } from '../../views/threejs/utilities';
 
 CameraControls.install({ THREE });
 
@@ -28,14 +29,13 @@ async function main() {
   renderer.setClearColor('#444');
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
-  const transformedBounds = metaData.bounds.createTransformed(modelTransform.modelMatrix);
-  const [pos, target] = suggestCameraLookAt(transformedBounds);
+  const [pos, target] = suggestCameraLookAt(metaData.bounds);
   const far = 3 * vec3.distance(target, pos);
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.2, far);
   const controls = new CameraControls(camera, renderer.domElement);
-  // const pos = new THREE.Vector3(100, 100, 10);
-  // const target = new THREE.Vector3(0.0, 0.0, 0.0);
-  controls.setLookAt(pos[0], pos[1], pos[2], target[0], target[1], target[2]);
+  const threePos = toThreeVector3(pos, sectorModelNode.modelTransformation);
+  const threeTarget = toThreeVector3(target, sectorModelNode.modelTransformation);
+  controls.setLookAt(threePos.x, threePos.y, threePos.z, threeTarget.x, threeTarget.y, threeTarget.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
 
