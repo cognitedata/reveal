@@ -10,7 +10,7 @@ import { ConsumeSectorDelegate, DiscardSectorDelegate } from '../../../models/se
 import { initializeSectorLoader } from '../../../models/sector/initializeSectorLoader';
 import { SectorNode } from './SectorNode';
 import { determineSectors } from '../../../models/sector/determineSectors';
-import { createCache, createSimpleCache } from '../../../models/createCache';
+import { createSimpleCache } from '../../../models/createCache';
 import { SectorModel } from '../../../datasources/SectorModel';
 import { fromThreeMatrix, fromThreeVector3, toThreeMatrix4 } from '../utilities';
 import { mat4, vec3, mat3 } from 'gl-matrix';

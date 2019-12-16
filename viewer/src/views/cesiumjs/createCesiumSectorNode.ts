@@ -8,7 +8,7 @@ import * as THREE from 'three';
 import { createParser, createQuadsParser } from '../../models/sector/parseSectorData';
 import { Sector, SectorModelTransformation } from '../../models/sector/types';
 import { initializeSectorLoader } from '../../models/sector/initializeSectorLoader';
-import { createCache } from '../../models/createCache';
+import { createSimpleCache } from '../../models/createCache';
 import { initializeCesiumView } from './initializeCesiumView';
 import { fromCesiumMatrix4, toCartesian3 as toCesiumCartesian3 } from './utilities';
 import { mat4, vec3 } from 'gl-matrix';
@@ -64,17 +64,17 @@ export default async function initializeCesiumSectorScene(
   );
 
   const getDetailed = async (sectorId: number) => {
-    const data = await fetchSectorCached(sectorId);
-    return parseSectorDataCached(sectorId, data);
+    const data = await fetchSector(sectorId);
+    return parseSectorData(sectorId, data);
   };
 
   // Create cache to avoid unnecessary loading and parsing of data
-  const [fetchSectorCached, parseSectorDataCached] = createCache<number, Sector>(fetchSector, parseSectorData);
+  const getDetailedCached = createSimpleCache(getDetailed);
 
   const requestRedraw = () => {
     // TODO implement
   };
-  const activatorDetailed = initializeSectorLoader(getDetailed, discardSector, consumeSector, requestRedraw);
+  const activatorDetailed = initializeSectorLoader(getDetailedCached.request, discardSector, consumeSector, requestRedraw);
 
   // TODO 2019-11-12 larsmoa: Add support for low detail geometry to cesium.
   // const [fetchSectorQuadsCached, parseSectorQuadsDataCached] = createCache<number, SectorQuads>(
