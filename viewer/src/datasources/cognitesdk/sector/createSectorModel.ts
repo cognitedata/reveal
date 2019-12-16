@@ -9,6 +9,7 @@ import { constructMatrixFromRotation } from '../../constructMatrixFromRotation';
 import { getNewestVersionedFile } from '../utilities';
 import { SectorModelTransformation } from '../../../models/sector/types';
 import { SectorModel } from '../../SectorModel';
+import { mat4 } from 'gl-matrix';
 
 export function createSectorModel(sdk: CogniteClient, modelId: number, revisionId: number): SectorModel {
   const metadataPromise = loadSectorMetadata(sdk, modelId, revisionId);
@@ -18,8 +19,14 @@ export function createSectorModel(sdk: CogniteClient, modelId: number, revisionI
   })();
 
   const fetchSectorMetadata: FetchSectorMetadataDelegate = async () => {
+    const modelMatrix = constructMatrixFromRotation(await rotationPromise);
+    const inverseModelMatrix = mat4.invert(mat4.create(), modelMatrix);
+    if (!inverseModelMatrix) {
+      throw new Error('Model rotation resulted in non-invertible model matrix');
+    }
     const modelTransform: SectorModelTransformation = {
-      modelMatrix: constructMatrixFromRotation(await rotationPromise)
+      modelMatrix,
+      inverseModelMatrix
     };
     return [buildSectorMetadata(await metadataPromise), modelTransform];
   };

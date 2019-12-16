@@ -3,10 +3,16 @@
  */
 
 import * as THREE from 'three';
-import { LoadSectorRequest } from '../../../../models/sector/types';
+import { LoadSectorRequest, SectorModelTransformation } from '../../../../models/sector/types';
 import { discardSector } from '../../../../views/threejs/sector/discardSector';
 import { SectorNode } from '../../../../views/threejs/sector/SectorNode';
 import 'jest-extended';
+import { mat4 } from 'gl-matrix';
+
+const modelTransformation: SectorModelTransformation = {
+  modelMatrix: mat4.create(),
+  inverseModelMatrix: mat4.create()
+};
 
 describe('discardSector', () => {
   beforeEach(() => {
@@ -18,7 +24,7 @@ describe('discardSector', () => {
     status: jest.fn(),
     cancel: jest.fn()
   };
-  const node = new SectorNode();
+  const node = new SectorNode({ modelTransformation });
 
   test('cancels request', () => {
     discardSector(1, request, node);
@@ -26,8 +32,8 @@ describe('discardSector', () => {
   });
 
   test('removes geometry, but keeps sectors', () => {
-    node.add(new SectorNode());
-    node.add(new SectorNode());
+    node.add(new SectorNode({ modelTransformation }));
+    node.add(new SectorNode({ modelTransformation }));
     node.add(new THREE.Box3Helper(new THREE.Box3()));
     discardSector(1, request, node);
 
