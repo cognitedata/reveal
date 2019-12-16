@@ -32,11 +32,7 @@ export function initializeCesiumView(
     const metadata = findSectorMetadata(sectorRoot, sectorId);
     consumeSectorDetailed(sectorId, sector, metadata, modelTransformation, primitivesCollection);
   };
-  const noopDiscard: DiscardSectorDelegate = (sectorId, request) => {
-    if (request) {
-      request.cancel();
-    }
-
+  const noopDiscard: DiscardSectorDelegate = sectorId => {
     // TODO 2019-11-06 larsmoa:  Implement
   };
   const noopConsumeQuads: ConsumeSectorDelegate<SectorQuads> = (sectorId, sector) => {

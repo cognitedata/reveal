@@ -7,7 +7,6 @@ import * as THREE from 'three';
 
 import { createParser, createQuadsParser } from '../../models/sector/parseSectorData';
 import { Sector, SectorModelTransformation } from '../../models/sector/types';
-import { createSyncedConsumeAndDiscard } from '../createSyncedConsumeAndDiscard';
 import { initializeSectorLoader } from '../../models/sector/initializeSectorLoader';
 import { createCache } from '../../models/createCache';
 import { initializeCesiumView } from './initializeCesiumView';
@@ -64,21 +63,18 @@ export default async function initializeCesiumSectorScene(
     scene.primitives
   );
 
-  // Sync high- and low-detail geometry
-  const [discardSectorFinal, consumeSectorFinal, consumeSectorQuadsFinal] = createSyncedConsumeAndDiscard(
-    discardSector,
-    consumeSector,
-    consumeSectorQuads
-  );
+  const getDetailed = async (sectorId: number) => {
+    const data = await fetchSectorCached(sectorId);
+    return parseSectorDataCached(sectorId, data);
+  };
 
   // Create cache to avoid unnecessary loading and parsing of data
   const [fetchSectorCached, parseSectorDataCached] = createCache<number, Sector>(fetchSector, parseSectorData);
-  const activateDetailedSectors = initializeSectorLoader(
-    fetchSectorCached,
-    parseSectorDataCached,
-    discardSectorFinal,
-    consumeSectorFinal
-  );
+
+  const requestRedraw = () => {
+    // TODO implement
+  };
+  const activatorDetailed = initializeSectorLoader(getDetailed, discardSector, consumeSector, requestRedraw);
 
   // TODO 2019-11-12 larsmoa: Add support for low detail geometry to cesium.
   // const [fetchSectorQuadsCached, parseSectorQuadsDataCached] = createCache<number, SectorQuads>(
@@ -100,7 +96,9 @@ export default async function initializeCesiumSectorScene(
       wantedSectors.add(x.id);
       return true;
     });
-    activateDetailedSectors(wantedSectors);
+    activatorDetailed.update(wantedSectors);
+
+    // TODO IMPORTANT activatorDetailed.refresh is never called!
   }
   // Schedule sectors when camera moves
   const previousCameraMatrix = new THREE.Matrix4();

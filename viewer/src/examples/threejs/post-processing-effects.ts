@@ -40,15 +40,14 @@ async function main() {
   effectComposer.addPass(effectPass);
 
   const clock = new THREE.Clock();
-  const render = () => {
+  const render = async () => {
     requestAnimationFrame(render);
 
     const delta = clock.getDelta();
-    const needsUpdate = controls.update(delta) || sectorModelNode.needsRedraw;
+    const needsUpdate = controls.update(delta) || (await sectorModelNode.update(camera));
 
     if (needsUpdate) {
       effectComposer.render(delta);
-      sectorModelNode.needsRedraw = false;
     }
   };
   render();

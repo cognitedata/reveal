@@ -7,7 +7,6 @@ import * as THREE from 'three';
 import { createParser, createQuadsParser } from '../../../models/sector/parseSectorData';
 import { Sector, SectorQuads } from '../../../models/sector/types';
 import { ConsumeSectorDelegate, DiscardSectorDelegate } from '../../../models/sector/delegates';
-import { createSyncedConsumeAndDiscard } from '../../createSyncedConsumeAndDiscard';
 import { initializeSectorLoader } from '../../../models/sector/initializeSectorLoader';
 import { SectorNode } from './SectorNode';
 import { determineSectors } from '../../../models/sector/determineSectors';
@@ -30,8 +29,8 @@ export async function createThreeJsSectorNode(model: SectorModel): Promise<Secto
 
   // Fetch metadata
   const [sectorRoot, modelTransformation] = await fetchSectorMetadata();
-  const parseSectorData = await createParser(sectorRoot, fetchSector, fetchCtmFile);
-  const parseSectorQuadsData = await createQuadsParser();
+  const parseDetailed = await createParser(sectorRoot, fetchSector, fetchCtmFile);
+  const parseSimple = await createQuadsParser();
 
   // Setup ThreeJS geometry "consumption"
   const sectorNodeMap = new Map<number, SectorNode>();
@@ -45,17 +44,15 @@ export async function createThreeJsSectorNode(model: SectorModel): Promise<Secto
       throw new Error(`Could not find 3D node for sector ${sectorId} - invalid id?`);
     }
 
-    rootGroup.needsRedraw = true;
-
     const metadata = findSectorMetadata(sectorRoot, sectorId);
     consumeSectorDetailed(sectorId, sector, metadata, sectorNode);
   };
-  const discard: DiscardSectorDelegate = (sectorId, request) => {
+  const discard: DiscardSectorDelegate = sectorId => {
     const sectorNode = sectorNodeMap.get(sectorId);
     if (!sectorNode) {
       throw new Error(`Could not find 3D node for sector ${sectorId} - invalid id?`);
     }
-    discardSector(sectorId, request, sectorNode);
+    discardSector(sectorId, sectorNode);
   };
   const consumeSimple: ConsumeSectorDelegate<SectorQuads> = (sectorId, sector) => {
     const sectorNode = sectorNodeMap.get(sectorId);
@@ -63,78 +60,33 @@ export async function createThreeJsSectorNode(model: SectorModel): Promise<Secto
       throw new Error(`Could not find 3D node for sector ${sectorId} - invalid id?`);
     }
 
-    rootGroup.needsRedraw = true;
-
     const metadata = findSectorMetadata(sectorRoot, sectorId);
     consumeSectorSimple(sectorId, sector, metadata, sectorNode);
   };
 
   // Create cache to avoid unnecessary loading and parsing of data
-  const [fetchSectorCached, parseSectorDataCached] = createCache<number, Sector>(fetchSector, parseSectorData);
-  const [fetchSectorQuadsCached, parseSectorQuadsDataCached] = createCache<number, SectorQuads>(
-    fetchSectorQuads,
-    parseSectorQuadsData
-  );
+  //const [fetchSectorCached, parseSectorDataCached] = createCache<number, Sector>(fetchSector, parseDetailed);
+  //const [fetchSectorQuadsCached, parseSectorQuadsDataCached] = createCache<number, SectorQuads>(
+    //fetchSectorQuads,
+    //parseSimple
+  //);
 
-  // Create throttle to avoid lag
-  const createThrottle = () => {
-    let triggerQueued = false;
-    const actions: (() => void)[] = [];
-    const trigger = () => {
-      const action = actions.shift()!;
-      action();
-      if (actions.length > 0) {
-        setTimeout(trigger, 8);
-      } else {
-        triggerQueued = false;
-      }
-    };
-    const throttle = (action: () => void) => {
-      actions.push(action);
-      if (!triggerQueued) {
-        setTimeout(trigger, 8);
-        triggerQueued = true;
-      }
-    };
-    return throttle;
+  const getDetailed = async (sectorId: number) => {
+    const data = await fetchSector(sectorId);
+    return parseDetailed(sectorId, data);
   };
 
-  const throttle = createThrottle();
-
-  // TODO generalize with variadic args, if they exist
-  const throttledConsumeDetailed: ConsumeSectorDelegate<Sector> = (sectorId, sector) => {
-    const f = () => {
-      consumeDetailed(sectorId, sector);
-    };
-    throttle(f);
+  const getSimple = async (sectorId: number) => {
+    const data = await fetchSectorQuads(sectorId);
+    return parseSimple(sectorId, data);
   };
 
-  const throttledConsumeSimple: ConsumeSectorDelegate<SectorQuads> = (sectorId, sector) => {
-    const f = () => {
-      consumeSimple(sectorId, sector);
-    };
-    throttle(f);
+  let redrawRequested = false;
+  const requestRedraw = () => {
+    redrawRequested = true;
   };
-
-  const throttledDiscard: DiscardSectorDelegate = (sectorId, request) => {
-    const f = () => {
-      discard(sectorId, request);
-    };
-    throttle(f);
-  };
-
-  const activateDetailedSectors = initializeSectorLoader(
-    fetchSectorCached,
-    parseSectorDataCached,
-    throttledDiscard,
-    throttledConsumeDetailed
-  );
-  const activateSimpleSectors = initializeSectorLoader(
-    fetchSectorQuadsCached,
-    parseSectorQuadsDataCached,
-    throttledDiscard,
-    throttledConsumeSimple
-  );
+  const activatorDetailed = initializeSectorLoader(getDetailed, discard, consumeDetailed, requestRedraw);
+  const activatorSimple = initializeSectorLoader(getSimple, discard, consumeSimple, requestRedraw);
 
   function mat4FromMat3(out: mat4, a: mat3) {
     out[0] = a[0];
@@ -149,50 +101,36 @@ export async function createThreeJsSectorNode(model: SectorModel): Promise<Secto
     return out;
   }
 
-  // Setup data load schedule whenever camera moves
-  async function triggerUpdate(camera: THREE.Camera) {
-    camera.updateMatrix();
-    camera.updateMatrixWorld();
-    camera.matrixWorldInverse.getInverse( camera.matrixWorld );
-
-    const cameraPosition = fromThreeVector3(tempVec3, camera.position, modelTransformation);
-    const cameraModelMatrix = fromThreeMatrix(tempMatrix, camera.matrixWorld, modelTransformation);
-    const projectionMatrix = fromThreeMatrix(tempMatrix2, camera.projectionMatrix);
-    const wantedSectors = await determineSectors({
-      root: sectorRoot,
-      cameraPosition,
-      //inverseCameraModelMatrix,
-      cameraModelMatrix,
-      projectionMatrix
-    });
-    activateDetailedSectors(wantedSectors.detailed);
-    activateSimpleSectors(wantedSectors.simple);
-  }
   // Schedule sectors when camera moves
   const previousCameraMatrix = new THREE.Matrix4();
   previousCameraMatrix.elements[0] = Infinity; // Ensures inequality on first frame
-  attachOnBeforeRender(rootGroup, async (renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.Camera) => {
+  rootGroup.update = async (camera: THREE.Camera) => {
+    let needsRedraw = false;
     if (!previousCameraMatrix.equals(camera.matrixWorld)) {
-      triggerUpdate(camera);
+      camera.updateMatrix();
+      camera.updateMatrixWorld();
+      camera.matrixWorldInverse.getInverse(camera.matrixWorld);
+
+      const cameraPosition = fromThreeVector3(tempVec3, camera.position, modelTransformation);
+      const cameraModelMatrix = fromThreeMatrix(tempMatrix, camera.matrixWorld, modelTransformation);
+      const projectionMatrix = fromThreeMatrix(tempMatrix2, camera.projectionMatrix);
+      const wantedSectors = await determineSectors({
+        root: sectorRoot,
+        cameraPosition,
+        // inverseCameraModelMatrix,
+        cameraModelMatrix,
+        projectionMatrix
+      });
+      needsRedraw = activatorDetailed.update(wantedSectors.detailed) || needsRedraw;
+      needsRedraw = activatorSimple.update(wantedSectors.simple) || needsRedraw;
       previousCameraMatrix.copy(camera.matrixWorld);
     }
-  });
+    needsRedraw = activatorDetailed.refresh() || needsRedraw;
+    needsRedraw = activatorSimple.refresh() || needsRedraw;
+    needsRedraw = needsRedraw || redrawRequested;
+    redrawRequested = false;
+    return needsRedraw;
+  };
 
   return rootGroup;
-}
-
-type OnBeforeRenderDelegate = (renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.Camera) => void;
-
-function attachOnBeforeRender(node: SectorNode, callback: OnBeforeRenderDelegate) {
-  // onBeforeRender is only called for renderable nodes so we create a dummy-node
-  const noEffectMaterial = new THREE.MeshBasicMaterial({
-    depthWrite: false,
-    colorWrite: false,
-    stencilWrite: false
-  });
-  const onBeforeRenderTarget = new THREE.Mesh(new THREE.BoxGeometry(), noEffectMaterial);
-  onBeforeRenderTarget.name = 'onBeforeRender()-target for loading sectors';
-  onBeforeRenderTarget.frustumCulled = false;
-  onBeforeRenderTarget.onBeforeRender = callback;
-  node.add(onBeforeRenderTarget);
 }

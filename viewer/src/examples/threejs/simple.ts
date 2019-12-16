@@ -40,15 +40,15 @@ async function main() {
   camera.updateMatrixWorld();
 
   const clock = new THREE.Clock();
-  const render = () => {
+  const render = async () => {
     requestAnimationFrame(render);
 
     const delta = clock.getDelta();
-    const needsUpdate = controls.update(delta) || sectorModelNode.needsRedraw;
+    const controlsNeedUpdate = controls.update(delta);
+    const sectorsNeedUpdate = await sectorModelNode.update(camera);
 
-    if (needsUpdate) {
+    if (controlsNeedUpdate || sectorsNeedUpdate) {
       renderer.render(scene, camera);
-      sectorModelNode.needsRedraw = false;
     }
   };
   render();

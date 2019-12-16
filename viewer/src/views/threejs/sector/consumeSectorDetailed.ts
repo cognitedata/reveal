@@ -23,7 +23,7 @@ export function consumeSectorDetailed(
   const boundsRenderer = new THREE.Box3Helper(bounds);
   boundsRenderer.name = `Bounding box ${sectorId}`;
 
-  group.add(boundsRenderer);
+  //group.add(boundsRenderer);
   for (const primtiveRoot of createPrimitives(sector)) {
     group.add(primtiveRoot);
   }
