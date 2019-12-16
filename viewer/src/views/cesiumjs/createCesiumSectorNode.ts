@@ -7,7 +7,6 @@ import * as THREE from 'three';
 
 import { createParser, createQuadsParser } from '../../models/sector/parseSectorData';
 import { Sector, SectorModelTransformation } from '../../models/sector/types';
-import { createSyncedConsumeAndDiscard } from '../createSyncedConsumeAndDiscard';
 import { initializeSectorLoader } from '../../models/sector/initializeSectorLoader';
 import { createCache } from '../../models/createCache';
 import { initializeCesiumView } from './initializeCesiumView';
@@ -65,19 +64,13 @@ export async function initializeCesiumSectorScene(
   );
 
   // Sync high- and low-detail geometry
-  const [discardSectorFinal, consumeSectorFinal, consumeSectorQuadsFinal] = createSyncedConsumeAndDiscard(
-    discardSector,
-    consumeSector,
-    consumeSectorQuads
-  );
-
   // Create cache to avoid unnecessary loading and parsing of data
   const [fetchSectorCached, parseSectorDataCached] = createCache<number, Sector>(fetchSector, parseSectorData);
   const activateDetailedSectors = initializeSectorLoader(
     fetchSectorCached,
     parseSectorDataCached,
-    discardSectorFinal,
-    consumeSectorFinal
+    discardSector,
+    consumeSector
   );
 
   // TODO 2019-11-12 larsmoa: Add support for low detail geometry to cesium.
