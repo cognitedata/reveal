@@ -5,36 +5,36 @@
 import * as THREE from 'three';
 import { WantedSectors, SectorMetadata, SectorModelTransformation } from './types';
 import { traverseDepthFirst } from '../../utils/traversal';
-import { toThreeMatrix4 } from '../../views/threejs/utilities';
-import { mat4 } from 'gl-matrix';
+import { toThreeMatrix4, toThreeVector3 } from '../../views/threejs/utilities';
+import { mat4, vec3 } from 'gl-matrix';
 
-export async function determineSectors(
-  root: SectorMetadata,
-  cameraOrMatrix: THREE.Camera | mat4,
-  modelTranformation: SectorModelTransformation
-): Promise<WantedSectors> {
+interface DetermineSectorsInput {
+  root: SectorMetadata;
+  cameraPosition: vec3;
+  cameraModelMatrix: mat4;
+  projectionMatrix: mat4;
+}
+
+const determineSectorsPreallocatedVars = {
+  invertCameraModelMatrix: mat4.create(),
+  frustumMatrix: mat4.create(),
+  frustum: new THREE.Frustum(),
+  bbox: new THREE.Box3(),
+  min: new THREE.Vector3(),
+  max: new THREE.Vector3()
+};
+
+export async function determineSectors(input: DetermineSectorsInput): Promise<WantedSectors> {
+  const { root, cameraPosition, cameraModelMatrix, projectionMatrix } = input;
+  const { invertCameraModelMatrix, frustumMatrix, frustum, bbox, min, max } = determineSectorsPreallocatedVars;
+
   const sectors: SectorMetadata[] = [];
 
-  const frustum = new THREE.Frustum();
-  const cameraPosition = new THREE.Vector3();
-  if (cameraOrMatrix instanceof THREE.Camera) {
-    const camera = cameraOrMatrix as THREE.Camera;
-    const matrix = new THREE.Matrix4()
-      .multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse)
-      .multiply(toThreeMatrix4(modelTranformation.modelMatrix));
-    frustum.setFromMatrix(matrix);
-    cameraPosition.setFromMatrixPosition(matrix);
-  } else {
-    const invModelTransformationMatrix = mat4.invert(mat4.create(), modelTranformation.modelMatrix)!;
-    const matrix = mat4.multiply(mat4.create(), cameraOrMatrix as mat4, invModelTransformationMatrix);
-    const threeMatrix = toThreeMatrix4(matrix);
-    frustum.setFromMatrix(threeMatrix);
-    cameraPosition.setFromMatrixPosition(threeMatrix);
+  if (!mat4.invert(invertCameraModelMatrix, cameraModelMatrix)) {
+    throw new Error('Provided camera model matrix is not invertible');
   }
-
-  const bbox = new THREE.Box3();
-  const min = new THREE.Vector3();
-  const max = new THREE.Vector3();
+  mat4.multiply(frustumMatrix, projectionMatrix, invertCameraModelMatrix);
+  frustum.setFromMatrix(toThreeMatrix4(frustumMatrix));
 
   traverseDepthFirst(root, sector => {
     min.set(sector.bounds.min[0], sector.bounds.min[1], sector.bounds.min[2]);
@@ -50,17 +50,15 @@ export async function determineSectors(
     return false;
   });
 
-  const inverseMatrix = new THREE.Matrix4().getInverse(toThreeMatrix4(modelTranformation.modelMatrix));
-  // const cameraPosition = camera.position.clone().applyMatrix4(inverseMatrix);
-
   function distanceToCamera(s: SectorMetadata) {
     min.set(s.bounds.min[0], s.bounds.min[1], s.bounds.min[2]);
     max.set(s.bounds.max[0], s.bounds.max[1], s.bounds.max[2]);
     bbox.makeEmpty();
     bbox.expandByPoint(min);
     bbox.expandByPoint(max);
-    return bbox.distanceToPoint(cameraPosition);
+    return bbox.distanceToPoint(toThreeVector3(cameraPosition));
   }
+
   sectors.sort((l, r) => {
     return distanceToCamera(l) - distanceToCamera(r);
   });

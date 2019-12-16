@@ -95,7 +95,9 @@ module.exports = env => {
     devtool: development ? "inline-source-map" : undefined,
     watchOptions: {
       aggregateTimeout: 1500,
-      ignored: ['node_modules/']
+      ignored: [
+        'node_modules/',
+      ],
     },
     devServer: {
       https: true,

@@ -2,13 +2,18 @@
  * Copyright 2019 Cognite AS
  */
 
-import { SectorMetadata, TriangleMesh, InstancedMeshFile, InstancedMesh } from '../../../../models/sector/types';
+import { SectorMetadata, TriangleMesh, InstancedMeshFile, InstancedMesh, SectorModelTransformation } from '../../../../models/sector/types';
 import { Box3 } from '../../../../utils/Box3';
-import { vec3 } from 'gl-matrix';
+import { vec3, mat4 } from 'gl-matrix';
 import { consumeSectorDetailed } from '../../../../views/threejs/sector/consumeSectorDetailed';
 import { SectorNode } from '../../../../views/threejs/sector/SectorNode';
 import 'jest-extended';
 import { createEmptySector } from '../../../models/sector/emptySector';
+
+const modelTransformation: SectorModelTransformation = {
+  modelMatrix: mat4.create(),
+  inverseModelMatrix: mat4.create(),
+};
 
 describe('consumeSectorDetailed', () => {
   const metadata: SectorMetadata = {
@@ -22,7 +27,7 @@ describe('consumeSectorDetailed', () => {
     // Arrange
     const sectorId = 1;
     const sector = createEmptySector();
-    const node = new SectorNode();
+    const node = new SectorNode({ modelTransformation });
 
     // Act
     consumeSectorDetailed(sectorId, sector, metadata, node);
@@ -36,7 +41,7 @@ describe('consumeSectorDetailed', () => {
     // Arrange
     const sectorId = 1;
     const sector = createEmptySector();
-    const node = new SectorNode();
+    const node = new SectorNode({ modelTransformation });
     sector.triangleMeshes = [newTriangleMesh()];
 
     // Act
@@ -51,7 +56,7 @@ describe('consumeSectorDetailed', () => {
     // Arrange
     const sectorId = 1;
     const sector = createEmptySector();
-    const node = new SectorNode();
+    const node = new SectorNode({ modelTransformation });
     sector.instanceMeshes = [newInstanceMeshFile()];
 
     // Act
@@ -66,7 +71,7 @@ describe('consumeSectorDetailed', () => {
     // Arrange
     const sectorId = 1;
     const sector = createEmptySector();
-    const node = new SectorNode();
+    const node = new SectorNode({ modelTransformation });
 
     // Act
     consumeSectorDetailed(sectorId, sector, metadata, node);

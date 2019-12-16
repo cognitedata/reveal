@@ -4,11 +4,12 @@
 
 import { FetchCtmDelegate, FetchSectorDelegate, FetchSectorMetadataDelegate } from '../../../models/sector/delegates';
 import { loadLocalSectorMetadata } from './loadLocalSectorMetadata';
-import { DefaultSectorRotationMatrix } from '../../constructMatrixFromRotation';
+import { DefaultSectorRotationMatrix, DefaultInverseSectorRotationMatrix } from '../../constructMatrixFromRotation';
 import { loadLocalFileMap } from './loadLocalFileMap';
 import { buildSectorMetadata } from '../../cognitesdk/sector/buildSectorMetadata';
 import { getNewestVersionedFile } from '../../cognitesdk/utilities';
 import { SectorModel } from '../../SectorModel';
+import { mat4 } from 'gl-matrix';
 
 export function createLocalSectorModel(baseUrl: string): SectorModel {
   const loadMetadata = loadLocalSectorMetadata(baseUrl + '/uploaded_sectors.txt');
@@ -23,7 +24,13 @@ export function createLocalSectorModel(baseUrl: string): SectorModel {
   const loadFilemap = loadLocalFileMap(baseUrl + '/uploaded_files.txt');
 
   const fetchMetadata: FetchSectorMetadataDelegate = async () => {
-    return [buildSectorMetadata(await loadMetadata), { modelMatrix: DefaultSectorRotationMatrix }];
+    return [
+      buildSectorMetadata(await loadMetadata),
+      {
+        modelMatrix: DefaultSectorRotationMatrix,
+        inverseModelMatrix: DefaultInverseSectorRotationMatrix
+      }
+    ];
   };
   const fetchSector: FetchSectorDelegate = async (sectorId: number) => {
     const sectorIdToFileId = await loadSectorIdToFileId;

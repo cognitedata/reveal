@@ -10,6 +10,7 @@ import { PrimitiveAttributes } from '../../../workers/types/parser.types';
 // for sector data).
 export type SectorModelTransformation = {
   modelMatrix: mat4;
+  inverseModelMatrix: mat4;
 };
 
 export interface SectorMetadata {

@@ -52,7 +52,8 @@ export default async function initializeCesiumSectorScene(
   mat4.mul(modelMatrix, modelTransformWithZup, referenceMatrix);
   mat4.translate(modelMatrix, modelMatrix, [modelOffset.x, modelOffset.y, modelOffset.z]);
   const cesiumModelTransformation = {
-    modelMatrix
+    modelMatrix,
+    inverseModelMatrix: mat4.invert(mat4.create(), modelMatrix)!
   };
 
   // Setup ThreeJS geometry "consumption"
