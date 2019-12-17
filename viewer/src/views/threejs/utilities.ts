@@ -89,7 +89,7 @@ export function fromThreeMatrix(out: mat4, m: THREE.Matrix4, modelTransformation
   out[14] = m.elements[14];
   out[15] = m.elements[15];
   if (modelTransformation) {
-    return mat4.multiply(mat4.create(), modelTransformation.inverseModelMatrix, out);
+    return mat4.multiply(out, modelTransformation.inverseModelMatrix, out);
   }
   return out;
 }
