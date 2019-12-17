@@ -32,6 +32,8 @@ export function initializeSectorLoader<T>(
     activeSectorIds.add(sectorId);
   };
 
+  // TODO 2019-12-17 larsmoa: This function is async but does not return Promise. Consider if
+  // this really needs to returnd boolean needsRedraw or if it could return a promise
   const update = (wantedSectorIds: Set<number>) => {
     const start = performance.now();
 
@@ -42,7 +44,6 @@ export function initializeSectorLoader<T>(
     for (const id of discardedSectorIds) {
       if (activeSectorRequests.has(id)) {
         // Request is in flight
-        const request = activeSectorRequests.get(id);
         discardSector(id);
         activeSectorRequests.delete(id);
       } else {

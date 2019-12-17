@@ -4,7 +4,7 @@
 
 import { initializeSectorLoader } from '../../../models/sector/initializeSectorLoader';
 import { DiscardSectorDelegate, ConsumeSectorDelegate, GetSectorDelegate } from '../../../models/sector/delegates';
-import { waitUntill } from '../../wait';
+import { waitUntill, yieldProcessing } from '../../wait';
 import { expectSetEqual } from '../../expects';
 import { Sector } from '../../../models/sector/types';
 
@@ -16,7 +16,7 @@ describe('initializeSectorLoader', () => {
   const consume: ConsumeSectorDelegate<Sector> = (sectorId, sector) => consumed.add(sectorId);
   const discard: DiscardSectorDelegate = id => discarded.add(id);
 
-  const dummy = async () => {};
+  const awaitUpdateToProcess = yieldProcessing; // We simply need to yield processing to allow processing loop to process Promises created by update()
 
   beforeEach(() => {
     jest.resetAllMocks();
@@ -36,7 +36,7 @@ describe('initializeSectorLoader', () => {
 
     // Act
     activateSectorsDelegate.update(new Set<number>(sectorIds));
-    await dummy();
+    await awaitUpdateToProcess();
     for (const _ of sectorIds) {
       activateSectorsDelegate.refresh();
     }
@@ -51,7 +51,7 @@ describe('initializeSectorLoader', () => {
     const activateSectorsDelegate = initializeSectorLoader(getSector, discard, consume);
     const sectorIds = [1, 2, 3];
     activateSectorsDelegate.update(new Set<number>(sectorIds));
-    await dummy();
+    await awaitUpdateToProcess();
     for (const _ of sectorIds) {
       activateSectorsDelegate.refresh();
     }
@@ -60,7 +60,7 @@ describe('initializeSectorLoader', () => {
 
     // Act
     activateSectorsDelegate.update(new Set<number>(newSectorIds));
-    await dummy();
+    await awaitUpdateToProcess();
     for (const _ of newSectorIds) {
       activateSectorsDelegate.refresh();
     }
@@ -75,7 +75,7 @@ describe('initializeSectorLoader', () => {
     const activateSectorsDelegate = initializeSectorLoader(getSector, discard, consume);
     const sectorIds = [1, 2, 3, 4, 5];
     activateSectorsDelegate.update(new Set<number>(sectorIds));
-    await dummy();
+    await awaitUpdateToProcess();
     for (const _ of sectorIds) {
       activateSectorsDelegate.refresh();
     }
@@ -84,7 +84,7 @@ describe('initializeSectorLoader', () => {
 
     // Act
     activateSectorsDelegate.update(new Set<number>(newSectorIds));
-    await dummy();
+    await awaitUpdateToProcess();
     for (const _ of newSectorIds) {
       activateSectorsDelegate.refresh();
     }
@@ -102,18 +102,18 @@ describe('initializeSectorLoader', () => {
     activateSectorsDelegate.update(
       new Set<number>([1])
     );
-    await dummy();
+    await awaitUpdateToProcess();
     activateSectorsDelegate.refresh();
     await waitUntill(() => consumed.has(1));
     consumed.clear();
     activateSectorsDelegate.update(new Set<number>());
-    await dummy();
+    await awaitUpdateToProcess();
     activateSectorsDelegate.refresh();
     await waitUntill(() => discarded.has(1));
     activateSectorsDelegate.update(
       new Set<number>([1])
     );
-    await dummy();
+    await awaitUpdateToProcess();
     activateSectorsDelegate.refresh();
     await waitUntill(() => consumed.has(1));
 
