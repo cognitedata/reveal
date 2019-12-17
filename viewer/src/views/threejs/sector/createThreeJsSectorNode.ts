@@ -2,8 +2,6 @@
  * Copyright 2019 Cognite AS
  */
 
-import * as THREE from 'three';
-
 import { createParser, createQuadsParser } from '../../../models/sector/parseSectorData';
 import { Sector, SectorQuads } from '../../../models/sector/types';
 import { ConsumeSectorDelegate, DiscardSectorDelegate } from '../../../models/sector/delegates';
@@ -70,10 +68,6 @@ export async function createThreeJsSectorNode(model: SectorModel): Promise<RootS
   const rootGroup = new RootSectorNode(sectorRoot, modelTransformation, activatorSimple, activatorDetailed);
   rootGroup.applyMatrix(toThreeMatrix4(modelTransformation.modelMatrix));
   buildScene(sectorRoot, rootGroup, sectorNodeMap);
-
-  // Schedule sectors when camera moves
-  const previousCameraMatrix = new THREE.Matrix4();
-  previousCameraMatrix.elements[0] = Infinity; // Ensures inequality on first frame
 
   return rootGroup;
 }
