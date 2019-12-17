@@ -2,60 +2,36 @@
  * Copyright 2019 Cognite AS
  */
 
-import { createCache } from '../../models/createCache';
+import { createSimpleCache } from '../../models/createCache';
 
 describe('createCache', () => {
-  const fetchCb: (id: number) => Promise<Uint8Array> = jest.fn(id => {
-    return Promise.resolve(new Uint8Array(10));
-  });
-  const parseCb: (id: number, buffer: Uint8Array) => Promise<string> = jest.fn((id, buffer) => {
-    return Promise.resolve('MyString');
-  });
+  const getSectorMock = jest.fn();
+
+  const getSector = async (id: number) => {
+    getSectorMock(id);
+    return 'MyString';
+  };
 
   beforeEach(() => {
     jest.resetAllMocks();
   });
 
   test('fetch on new id, fetches', () => {
-    const [fetch, parse] = createCache<number, string>(fetchCb, parseCb);
-    fetch(0);
-    expect(fetchCb).toBeCalledWith(0);
+    const getCached = createSimpleCache<number, string>(getSector);
+    getCached.request(0);
+    expect(getSectorMock).toBeCalledWith(0);
   });
 
   test('fetch on cached id, loads from cached', () => {
     // Arrange
-    const [fetch, parse] = createCache<number, string>(fetchCb, parseCb);
-    fetch(0);
+    const getCached = createSimpleCache<number, string>(getSector);
+    getCached.request(0);
     jest.resetAllMocks();
 
     // Act
-    fetch(0);
+    getCached.request(0);
 
     // Assert
-    expect(fetchCb).not.toBeCalled();
-  });
-
-  test('parse on new id, parses', () => {
-    const [fetch, parse] = createCache<number, string>(fetchCb, parseCb);
-    const buffer = new Uint8Array(10);
-    parse(0, buffer);
-    expect(parseCb).toBeCalledWith(0, buffer);
-  });
-
-  test('parse on cached id, loads from cached', () => {
-    // Arrange
-    const myParseCb: (id: number, buffer: Uint8Array) => Promise<string> = (id, buffer) => {
-      return Promise.resolve('MyString');
-    };
-    const [fetch, parse] = createCache<number, string>(fetchCb, myParseCb);
-    const buffer = new Uint8Array(10);
-    parse(0, buffer);
-    jest.resetAllMocks();
-
-    // Act
-    parse(0, buffer);
-
-    // Assert
-    expect(parseCb).not.toBeCalled();
+    expect(getSectorMock).not.toBeCalled();
   });
 });
