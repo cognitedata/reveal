@@ -26,11 +26,6 @@ describe('discardSector', () => {
   };
   const node = new SectorNode({ modelTransformation });
 
-  test('cancels request', () => {
-    discardSector(1, node);
-    expect(request.cancel).toBeCalled();
-  });
-
   test('removes geometry, but keeps sectors', () => {
     node.add(new SectorNode({ modelTransformation }));
     node.add(new SectorNode({ modelTransformation }));

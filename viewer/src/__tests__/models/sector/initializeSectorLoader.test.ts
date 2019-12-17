@@ -16,6 +16,8 @@ describe('initializeSectorLoader', () => {
   const consume: ConsumeSectorDelegate<Sector> = (sectorId, sector) => consumed.add(sectorId);
   const discard: DiscardSectorDelegate = id => discarded.add(id);
 
+  const dummy = async () => {};
+
   beforeEach(() => {
     jest.resetAllMocks();
     consumed.clear();
@@ -34,6 +36,10 @@ describe('initializeSectorLoader', () => {
 
     // Act
     activateSectorsDelegate.update(new Set<number>(sectorIds));
+    await dummy();
+    for (const _ of sectorIds) {
+      activateSectorsDelegate.refresh();
+    }
     await waitUntill(() => sectorIds.every(x => consumed.has(x)));
 
     // Assert
@@ -45,11 +51,19 @@ describe('initializeSectorLoader', () => {
     const activateSectorsDelegate = initializeSectorLoader(getSector, discard, consume);
     const sectorIds = [1, 2, 3];
     activateSectorsDelegate.update(new Set<number>(sectorIds));
+    await dummy();
+    for (const _ of sectorIds) {
+      activateSectorsDelegate.refresh();
+    }
     await waitUntill(() => sectorIds.every(x => consumed.has(x)));
     const newSectorIds = [1, 2, 3, 4, 5];
 
     // Act
     activateSectorsDelegate.update(new Set<number>(newSectorIds));
+    await dummy();
+    for (const _ of newSectorIds) {
+      activateSectorsDelegate.refresh();
+    }
     await waitUntill(() => newSectorIds.every(x => consumed.has(x)));
 
     // Assert
@@ -61,11 +75,19 @@ describe('initializeSectorLoader', () => {
     const activateSectorsDelegate = initializeSectorLoader(getSector, discard, consume);
     const sectorIds = [1, 2, 3, 4, 5];
     activateSectorsDelegate.update(new Set<number>(sectorIds));
+    await dummy();
+    for (const _ of sectorIds) {
+      activateSectorsDelegate.refresh();
+    }
     await waitUntill(() => sectorIds.every(x => consumed.has(x)));
     const newSectorIds = [1, 3, 5];
 
     // Act
     activateSectorsDelegate.update(new Set<number>(newSectorIds));
+    await dummy();
+    for (const _ of newSectorIds) {
+      activateSectorsDelegate.refresh();
+    }
     await waitUntill(() => [2, 4].every(x => discarded.has(x)));
 
     // Assert
@@ -80,13 +102,19 @@ describe('initializeSectorLoader', () => {
     activateSectorsDelegate.update(
       new Set<number>([1])
     );
+    await dummy();
+    activateSectorsDelegate.refresh();
     await waitUntill(() => consumed.has(1));
     consumed.clear();
     activateSectorsDelegate.update(new Set<number>());
+    await dummy();
+    activateSectorsDelegate.refresh();
     await waitUntill(() => discarded.has(1));
     activateSectorsDelegate.update(
       new Set<number>([1])
     );
+    await dummy();
+    activateSectorsDelegate.refresh();
     await waitUntill(() => consumed.has(1));
 
     // Assert
