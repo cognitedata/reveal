@@ -71,10 +71,7 @@ export default async function initializeCesiumSectorScene(
   // Create cache to avoid unnecessary loading and parsing of data
   const getDetailedCached = createSimpleCache(getDetailed);
 
-  const requestRedraw = () => {
-    // TODO implement
-  };
-  const activatorDetailed = initializeSectorLoader(getDetailedCached.request, discardSector, consumeSector, requestRedraw);
+  const activatorDetailed = initializeSectorLoader(getDetailedCached.request, discardSector, consumeSector);
 
   // TODO 2019-11-12 larsmoa: Add support for low detail geometry to cesium.
   // const [fetchSectorQuadsCached, parseSectorQuadsDataCached] = createCache<number, SectorQuads>(

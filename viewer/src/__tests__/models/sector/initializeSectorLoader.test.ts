@@ -3,13 +3,7 @@
  */
 
 import { initializeSectorLoader } from '../../../models/sector/initializeSectorLoader';
-import {
-  DiscardSectorDelegate,
-  ConsumeSectorDelegate,
-  FetchSectorDelegate,
-  ParseSectorDelegate,
-  GetSectorDelegate
-} from '../../../models/sector/delegates';
+import { DiscardSectorDelegate, ConsumeSectorDelegate, GetSectorDelegate } from '../../../models/sector/delegates';
 import { waitUntill } from '../../wait';
 import { expectSetEqual } from '../../expects';
 import { Sector } from '../../../models/sector/types';
@@ -21,7 +15,6 @@ describe('initializeSectorLoader', () => {
   const getSector: GetSectorDelegate<Sector> = jest.fn();
   const consume: ConsumeSectorDelegate<Sector> = (sectorId, sector) => consumed.add(sectorId);
   const discard: DiscardSectorDelegate = id => discarded.add(id);
-  const requestRedraw: (() => void) = jest.fn();
 
   beforeEach(() => {
     jest.resetAllMocks();
@@ -30,13 +23,13 @@ describe('initializeSectorLoader', () => {
   });
 
   test('call returns delegate', () => {
-    const delegate = initializeSectorLoader(getSector, discard, consume, requestRedraw);
+    const delegate = initializeSectorLoader(getSector, discard, consume);
     expect(delegate).toBeDefined();
   });
 
   test('first delegate invocation calls consume is called for all sectors', async () => {
     // Arrange
-    const activateSectorsDelegate = initializeSectorLoader(getSector, discard, consume, requestRedraw);
+    const activateSectorsDelegate = initializeSectorLoader(getSector, discard, consume);
     const sectorIds = [1, 2, 3];
 
     // Act
@@ -49,7 +42,7 @@ describe('initializeSectorLoader', () => {
 
   test('second invocation only consumes new sectors', async () => {
     // Arrange
-    const activateSectorsDelegate = initializeSectorLoader(getSector, discard, consume, requestRedraw);
+    const activateSectorsDelegate = initializeSectorLoader(getSector, discard, consume);
     const sectorIds = [1, 2, 3];
     activateSectorsDelegate.update(new Set<number>(sectorIds));
     await waitUntill(() => sectorIds.every(x => consumed.has(x)));
@@ -65,7 +58,7 @@ describe('initializeSectorLoader', () => {
 
   test('second invocation discards unwanted sectors', async () => {
     // Arrange
-    const activateSectorsDelegate = initializeSectorLoader(getSector, discard, consume, requestRedraw);
+    const activateSectorsDelegate = initializeSectorLoader(getSector, discard, consume);
     const sectorIds = [1, 2, 3, 4, 5];
     activateSectorsDelegate.update(new Set<number>(sectorIds));
     await waitUntill(() => sectorIds.every(x => consumed.has(x)));
@@ -81,15 +74,19 @@ describe('initializeSectorLoader', () => {
 
   test('activate previously discarded sector, reloads', async () => {
     // Arrange
-    const activateSectorsDelegate = initializeSectorLoader(getSector, discard, consume, requestRedraw);
+    const activateSectorsDelegate = initializeSectorLoader(getSector, discard, consume);
 
     // Act
-    activateSectorsDelegate.update(new Set<number>([1]));
+    activateSectorsDelegate.update(
+      new Set<number>([1])
+    );
     await waitUntill(() => consumed.has(1));
     consumed.clear();
     activateSectorsDelegate.update(new Set<number>());
     await waitUntill(() => discarded.has(1));
-    activateSectorsDelegate.update(new Set<number>([1]));
+    activateSectorsDelegate.update(
+      new Set<number>([1])
+    );
     await waitUntill(() => consumed.has(1));
 
     // Assert

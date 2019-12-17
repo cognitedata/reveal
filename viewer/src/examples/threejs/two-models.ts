@@ -40,7 +40,10 @@ async function main() {
     requestAnimationFrame(render);
 
     const delta = clock.getDelta();
-    const needsUpdate = controls.update(delta) || (await sectorModelNode1.update(camera)) || (sectorModelNode2.update(camera));
+    const controlsNeedUpdate = controls.update(delta);
+    const model1NeedsUpdate = await sectorModelNode1.update(camera);
+    const model2NeedsUpdate = await sectorModelNode2.update(camera);
+    const needsUpdate = controlsNeedUpdate || model1NeedsUpdate || model2NeedsUpdate;
 
     if (needsUpdate) {
       renderer.render(scene, camera);

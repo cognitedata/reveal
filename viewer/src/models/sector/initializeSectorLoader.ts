@@ -3,14 +3,7 @@
  */
 
 import { setUnion, setDifference } from '../../utils/setUtils';
-import { loadSector } from './loadSector';
-import {
-  DiscardSectorDelegate,
-  ConsumeSectorDelegate,
-  FetchSectorDelegate,
-  ParseSectorDelegate,
-  GetSectorDelegate
-} from './delegates';
+import { DiscardSectorDelegate, ConsumeSectorDelegate, GetSectorDelegate } from './delegates';
 import { LoadSectorRequest } from './types';
 
 interface SectorActivator {
@@ -26,12 +19,18 @@ interface QueuedSector<T> {
 export function initializeSectorLoader<T>(
   getSector: GetSectorDelegate<T>,
   discardSector: DiscardSectorDelegate,
-  consumeSector: ConsumeSectorDelegate<T>,
-  requestRedraw: () => void
+  consumeSector: ConsumeSectorDelegate<T>
 ): SectorActivator {
   const activeSectorIds = new Set<number>();
   const activeSectorRequests = new Map<number, Promise<void>>();
   let consumeQueue: QueuedSector<T>[] = [];
+
+  const getConsumeAndDeleteRequest = async (sectorId: number) => {
+    const sector = await getSector(sectorId);
+    activeSectorRequests.delete(sectorId);
+    consumeQueue.push({ sectorId, sector });
+    activeSectorIds.add(sectorId);
+  };
 
   const update = (wantedSectorIds: Set<number>) => {
     const start = performance.now();
@@ -45,7 +44,6 @@ export function initializeSectorLoader<T>(
         // Request is in flight
         const request = activeSectorRequests.get(id);
         discardSector(id);
-        requestRedraw();
         activeSectorRequests.delete(id);
       } else {
         // Sector processed
@@ -54,17 +52,8 @@ export function initializeSectorLoader<T>(
         consumeQueue = consumeQueue.filter(({ sectorId, sector }) => {
           return sectorId !== id;
         });
-        requestRedraw();
       }
     }
-
-    const getConsumeAndDeleteRequest = async (sectorId: number) => {
-      const sector = await getSector(sectorId);
-      activeSectorRequests.delete(sectorId);
-      consumeQueue.push({ sectorId, sector });
-      activeSectorIds.add(sectorId);
-      requestRedraw();
-    };
 
     for (const id of newSectorIds) {
       const request = getConsumeAndDeleteRequest(id);

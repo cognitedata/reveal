@@ -80,11 +80,8 @@ export async function createThreeJsSectorNode(model: SectorModel): Promise<Secto
   const getSimpleCache = createSimpleCache(getSimple);
 
   let redrawRequested = false;
-  const requestRedraw = () => {
-    redrawRequested = true;
-  };
-  const activatorDetailed = initializeSectorLoader(getDetailedCache.request, discard, consumeDetailed, requestRedraw);
-  const activatorSimple = initializeSectorLoader(getSimpleCache.request, discard, consumeSimple, requestRedraw);
+  const activatorDetailed = initializeSectorLoader(getDetailedCache.request, discard, consumeDetailed);
+  const activatorSimple = initializeSectorLoader(getSimpleCache.request, discard, consumeSimple);
 
   // Schedule sectors when camera moves
   const previousCameraMatrix = new THREE.Matrix4();

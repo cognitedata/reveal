@@ -44,7 +44,9 @@ async function main() {
     requestAnimationFrame(render);
 
     const delta = clock.getDelta();
-    const needsUpdate = controls.update(delta) || (await sectorModelNode.update(camera));
+    const controlsNeedUpdate = controls.update(delta);
+    const modelNeedsUpdate = await sectorModelNode.update(camera);
+    const needsUpdate = controlsNeedUpdate || modelNeedsUpdate;
 
     if (needsUpdate) {
       effectComposer.render(delta);

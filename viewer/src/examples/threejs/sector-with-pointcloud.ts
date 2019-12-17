@@ -60,8 +60,9 @@ async function main() {
     requestAnimationFrame(render);
 
     const delta = clock.getDelta();
-    const needsUpdate =
-      controls.update(delta) || (await sectorModelNode.update(camera)) || pointCloudGroup.needsRedraw || settingsChanged;
+    const controlsNeedUpdate = controls.update(delta);
+    const modelNeedsUpdate = await sectorModelNode.update(camera);
+    const needsUpdate = controlsNeedUpdate || modelNeedsUpdate || pointCloudGroup.needsRedraw || settingsChanged;
 
     if (needsUpdate) {
       renderer.render(scene, camera);
