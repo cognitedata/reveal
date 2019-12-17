@@ -61,4 +61,3 @@ export function consumeSectorDetailed(
   });
   primitivesCollection.add(mergedMeshesPrimitive);
 }
-

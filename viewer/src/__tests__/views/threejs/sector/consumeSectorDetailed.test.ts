@@ -2,18 +2,13 @@
  * Copyright 2019 Cognite AS
  */
 
-import { SectorMetadata, TriangleMesh, InstancedMeshFile, InstancedMesh, SectorModelTransformation } from '../../../../models/sector/types';
+import { SectorMetadata, TriangleMesh, InstancedMeshFile, InstancedMesh } from '../../../../models/sector/types';
 import { Box3 } from '../../../../utils/Box3';
-import { vec3, mat4 } from 'gl-matrix';
+import { vec3 } from 'gl-matrix';
 import { consumeSectorDetailed } from '../../../../views/threejs/sector/consumeSectorDetailed';
 import { SectorNode } from '../../../../views/threejs/sector/SectorNode';
 import 'jest-extended';
 import { createEmptySector } from '../../../models/sector/emptySector';
-
-const modelTransformation: SectorModelTransformation = {
-  modelMatrix: mat4.create(),
-  inverseModelMatrix: mat4.create(),
-};
 
 describe('consumeSectorDetailed', () => {
   const metadata: SectorMetadata = {
@@ -22,12 +17,16 @@ describe('consumeSectorDetailed', () => {
     bounds: new Box3([vec3.fromValues(1, 2, 3), vec3.fromValues(3, 4, 5)]),
     children: []
   };
+  const sectorId = 1;
+  let node: SectorNode;
+
+  beforeEach(() => {
+    node = new SectorNode(sectorId, '0/1/2');
+  });
 
   test('no geometry, does not add new nodes', () => {
     // Arrange
-    const sectorId = 1;
     const sector = createEmptySector();
-    const node = new SectorNode({ modelTransformation });
 
     // Act
     consumeSectorDetailed(sectorId, sector, metadata, node);
@@ -39,9 +38,7 @@ describe('consumeSectorDetailed', () => {
 
   test('single triangle mesh, adds geometry', () => {
     // Arrange
-    const sectorId = 1;
     const sector = createEmptySector();
-    const node = new SectorNode({ modelTransformation });
     sector.triangleMeshes = [newTriangleMesh()];
 
     // Act
@@ -54,9 +51,7 @@ describe('consumeSectorDetailed', () => {
 
   test('single instance mesh, adds geometry', () => {
     // Arrange
-    const sectorId = 1;
     const sector = createEmptySector();
-    const node = new SectorNode({ modelTransformation });
     sector.instanceMeshes = [newInstanceMeshFile()];
 
     // Act
@@ -69,9 +64,7 @@ describe('consumeSectorDetailed', () => {
 
   test('valid input, produces geometry', () => {
     // Arrange
-    const sectorId = 1;
     const sector = createEmptySector();
-    const node = new SectorNode({ modelTransformation });
 
     // Act
     consumeSectorDetailed(sectorId, sector, metadata, node);
