@@ -9,7 +9,9 @@ export class Box3 {
   public readonly max: vec3;
 
   public get center(): vec3 {
-    return vec3.scaleAndAdd(vec3.create(), this.min, this.max, 0.5);
+    const result = vec3.create();
+    const sum = vec3.add(result, this.min, this.max);
+    return vec3.scale(result, sum, 0.5);
   }
 
   constructor(points: vec3[]) {
