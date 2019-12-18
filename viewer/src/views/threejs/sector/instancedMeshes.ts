@@ -8,6 +8,9 @@ import { sectorShaders } from './shaders';
 
 const instancedMeshMaterial = new THREE.ShaderMaterial({
   uniforms: {},
+  extensions: {
+    derivatives: true
+  },
   fragmentShader: sectorShaders.instancedMesh.fragment,
   vertexShader: sectorShaders.instancedMesh.vertex
 });

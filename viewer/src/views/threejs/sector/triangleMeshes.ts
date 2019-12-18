@@ -38,6 +38,9 @@ export function createTriangleMeshes(triangleMeshes: TriangleMesh[], bounds: THR
     // const material = new THREE.MeshPhongMaterial({ vertexColors: THREE.VertexColors, flatShading: true });
     const material = new THREE.ShaderMaterial({
       uniforms: {},
+      extensions: {
+        derivatives: true
+      },
       fragmentShader: sectorShaders.detailedMesh.fragment,
       vertexShader: sectorShaders.detailedMesh.vertex
     });
