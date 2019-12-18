@@ -7,7 +7,6 @@ attribute vec4 a_instanceMatrix_column_3;
 
 attribute vec3 a_color;
 
-varying vec3 v_normal;
 varying vec3 v_color;
 varying vec3 v_viewPosition;
 
@@ -21,7 +20,6 @@ void main()
     );
 
     v_color = a_color;
-    v_normal = normalMatrix * normalize(instanceMatrix * vec4(normalize(normal), 0.0)).xyz;
 
     vec3 transformed = (instanceMatrix * vec4(position, 1.0)).xyz;
     vec4 modelViewPosition = modelViewMatrix * vec4(transformed, 1.0);
