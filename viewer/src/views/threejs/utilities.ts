@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { Box3 } from '../../utils/Box3';
-import { vec3, mat4 } from 'gl-matrix';
+import { vec3, mat4, vec4 } from 'gl-matrix';
 import { SectorModelTransformation } from '../../models/sector/types';
 
 export function fitCameraToBoundingBox(camera: THREE.Camera, bounds: Box3, radiusFactor: number = 4) {

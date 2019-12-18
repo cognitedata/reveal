@@ -7,7 +7,7 @@ import { Sector, SectorMetadata, LoadSectorRequest, SectorModelTransformation } 
 /**
  * Delegate that handles removal of a sector from a view (e.g. by removing it from the scene).
  */
-export type DiscardSectorDelegate = (sectorId: number, request: LoadSectorRequest | undefined) => void;
+export type DiscardSectorDelegate = (sectorId: number) => void;
 
 /**
  * Delegate for retrieving the metadata about the sectors in a model.
@@ -23,6 +23,11 @@ export type FetchSectorDelegate = (sectorId: number) => Promise<Uint8Array>;
  * Delegate for parsing data retrieved using a `FetchSectorDelegate`  to a `Sector`.
  */
 export type ParseSectorDelegate<T> = (sectorId: number, buffer: Uint8Array) => Promise<T>;
+
+/**
+ * Delegate for fetching and parsing a `Sector`.
+ */
+export type GetSectorDelegate<T> = (sectorId: number) => Promise<T>;
 
 /**
  * Delegate for 'consuming' a sector, e.g. by creating a 3D node for it.

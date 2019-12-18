@@ -3,20 +3,38 @@
  */
 
 import { setUnion, setDifference } from '../../utils/setUtils';
-import { loadSector } from './loadSector';
-import { DiscardSectorDelegate, ConsumeSectorDelegate, FetchSectorDelegate, ParseSectorDelegate } from './delegates';
+import { DiscardSectorDelegate, ConsumeSectorDelegate, GetSectorDelegate } from './delegates';
 import { LoadSectorRequest } from './types';
 
+export interface SectorActivator {
+  update: (wantedSectorIds: Set<number>) => boolean;
+  refresh: () => boolean;
+}
+
+interface QueuedSector<T> {
+  sectorId: number;
+  sector: T;
+}
+
 export function initializeSectorLoader<T>(
-  fetchSector: FetchSectorDelegate,
-  parseSector: ParseSectorDelegate<T>,
+  getSector: GetSectorDelegate<T>,
   discardSector: DiscardSectorDelegate,
   consumeSector: ConsumeSectorDelegate<T>
-) {
+): SectorActivator {
   const activeSectorIds = new Set<number>();
-  const activeSectorRequests = new Map<number, LoadSectorRequest>();
+  const activeSectorRequests = new Map<number, Promise<void>>();
+  let consumeQueue: QueuedSector<T>[] = [];
 
-  function activateSectors(wantedSectorIds: Set<number>) {
+  const getConsumeAndDeleteRequest = async (sectorId: number) => {
+    const sector = await getSector(sectorId);
+    activeSectorRequests.delete(sectorId);
+    consumeQueue.push({ sectorId, sector });
+    activeSectorIds.add(sectorId);
+  };
+
+  // TODO 2019-12-17 larsmoa: This function is async but does not return Promise. Consider if
+  // this really needs to returnd boolean needsRedraw or if it could return a promise
+  const update = (wantedSectorIds: Set<number>) => {
     const start = performance.now();
 
     const activeOrInFlight = setUnion(activeSectorIds, new Set<number>(activeSectorRequests.keys()));
@@ -26,27 +44,25 @@ export function initializeSectorLoader<T>(
     for (const id of discardedSectorIds) {
       if (activeSectorRequests.has(id)) {
         // Request is in flight
-        const request = activeSectorRequests.get(id);
-        discardSector(id, request);
+        discardSector(id);
         activeSectorRequests.delete(id);
       } else {
         // Sector processed
-        discardSector(id, undefined);
+        discardSector(id);
         activeSectorIds.delete(id);
+        consumeQueue = consumeQueue.filter(({ sectorId, sector }) => {
+          return sectorId !== id;
+        });
       }
     }
 
-    const consumeSectorAndDeleteRequest: ConsumeSectorDelegate<T> = (sectorId, sector) => {
-      activeSectorRequests.delete(sectorId);
-      consumeSector(sectorId, sector);
-      activeSectorIds.add(sectorId);
-    };
     for (const id of newSectorIds) {
-      const request = loadSector(id, fetchSector, parseSector, consumeSectorAndDeleteRequest);
+      const request = getConsumeAndDeleteRequest(id);
       activeSectorRequests.set(id, request);
     }
 
-    if (newSectorIds.size > 0 || discardedSectorIds.size > 0) {
+    const needsRedraw = newSectorIds.size > 0 || discardedSectorIds.size > 0;
+    if (needsRedraw) {
       console.log(
         `activateSectors() [wanted: ${wantedSectorIds.size} ` +
           `new: ${newSectorIds.size}` +
@@ -55,6 +71,21 @@ export function initializeSectorLoader<T>(
           ` in-flight: ${activeSectorRequests.size}] time=${(performance.now() - start).toPrecision(2)} ms`
       );
     }
-  }
-  return activateSectors;
+
+    return needsRedraw;
+  };
+
+  const refresh = () => {
+    if (consumeQueue.length < 1) {
+      return false;
+    }
+    const { sectorId, sector } = consumeQueue.shift()!;
+    consumeSector(sectorId, sector);
+    return true;
+  };
+
+  return {
+    update,
+    refresh
+  };
 }

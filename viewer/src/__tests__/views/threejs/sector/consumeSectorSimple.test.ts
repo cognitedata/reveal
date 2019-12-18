@@ -2,17 +2,12 @@
  * Copyright 2019 Cognite AS
  */
 
-import { SectorQuads, SectorMetadata, TriangleMesh, SectorModelTransformation } from '../../../../models/sector/types';
+import { SectorQuads, SectorMetadata } from '../../../../models/sector/types';
 import { Box3 } from '../../../../utils/Box3';
 import { vec3, mat4 } from 'gl-matrix';
 import { consumeSectorSimple } from '../../../../views/threejs/sector/consumeSectorSimple';
 import { SectorNode } from '../../../../views/threejs/sector/SectorNode';
 import 'jest-extended';
-
-const modelTransformation: SectorModelTransformation = {
-  modelMatrix: mat4.create(),
-  inverseModelMatrix: mat4.create()
-};
 
 describe('consumeSectorDetailed', () => {
   const metadata: SectorMetadata = {
@@ -21,15 +16,14 @@ describe('consumeSectorDetailed', () => {
     bounds: new Box3([vec3.fromValues(1, 2, 3), vec3.fromValues(3, 4, 5)]),
     children: []
   };
+  const sectorId = 1;
+  const node = new SectorNode(sectorId, '0/');
 
   test('no geometry, does not add new nodes', () => {
     // Arrange
-    const sectorId = 1;
     const sector: SectorQuads = {
       buffer: new Float32Array(0)
     };
-
-    const node = new SectorNode({ modelTransformation });
 
     // Act
     consumeSectorSimple(sectorId, sector, metadata, node);
@@ -40,7 +34,6 @@ describe('consumeSectorDetailed', () => {
 
   test('single mesh, adds geometry', () => {
     // Arrange
-    const sectorId = 1;
     const sector: SectorQuads = {
       buffer: new Float32Array([
         // tslint:disable: prettier
@@ -53,7 +46,6 @@ describe('consumeSectorDetailed', () => {
         // tslint:enable: prettier
       ])
     };
-    const node = new SectorNode({ modelTransformation });
 
     // Act
     consumeSectorSimple(sectorId, sector, metadata, node);
