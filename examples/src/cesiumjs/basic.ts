@@ -4,7 +4,6 @@
 
 import * as Cesium from 'cesium';
 
-// TODO remove or export these private imports
 import * as reveal from '@cognite/reveal';
 
 async function main() {

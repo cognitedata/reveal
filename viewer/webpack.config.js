@@ -38,14 +38,10 @@ function arg(env, name, defaultValue) {
 
 module.exports = env => {
   const development = arg(env, "development", false);
-  const threeExamplesEnabled = arg(env, "three-examples", true);
-  const cesiumExamplesEnabled = arg(env, "cesium-examples", true);
 
   console.log(
     `Build config:
     - development: ${development}
-    - Three JS examples: ${threeExamplesEnabled}
-    - Cesium examples: ${cesiumExamplesEnabled}
     `
   );
 
