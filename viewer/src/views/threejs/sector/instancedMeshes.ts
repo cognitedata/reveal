@@ -8,6 +8,9 @@ import { sectorShaders } from './shaders';
 
 const instancedMeshMaterial = new THREE.ShaderMaterial({
   uniforms: {},
+  extensions: {
+    derivatives: true
+  },
   fragmentShader: sectorShaders.instancedMesh.fragment,
   vertexShader: sectorShaders.instancedMesh.vertex
 });
@@ -18,17 +21,6 @@ export function createInstancedMeshes(meshes: InstancedMeshFile[], bounds: THREE
   for (const meshFile of meshes) {
     const indices = new THREE.Uint32BufferAttribute(meshFile.indices.buffer, 1);
     const vertices = new THREE.Float32BufferAttribute(meshFile.vertices.buffer, 3);
-    const normals = (() => {
-      if (meshFile.normals !== undefined) {
-        return new THREE.Float32BufferAttribute(meshFile.normals.buffer, 3);
-      } else {
-        const geometry = new THREE.BufferGeometry();
-        geometry.setIndex(indices);
-        geometry.setAttribute('position', vertices);
-        geometry.computeVertexNormals();
-        return geometry.getAttribute('normal');
-      }
-    })();
     for (const instancedMesh of meshFile.instances) {
       const triangleCount = instancedMesh.triangleCount;
       const triangleOffset = instancedMesh.triangleOffset;
@@ -39,7 +31,6 @@ export function createInstancedMeshes(meshes: InstancedMeshFile[], bounds: THREE
       bounds.getBoundingSphere(geometry.boundingSphere);
       geometry.setIndex(indices);
       geometry.setAttribute('position', vertices);
-      geometry.setAttribute('normal', normals);
       geometry.setAttribute(`a_color`, new THREE.InstancedBufferAttribute(instancedMesh.colors, 4, true));
       // TODO de-duplicate this, which is the same as in setAttributes
       const buffer = new THREE.InstancedInterleavedBuffer(instancedMesh.instanceMatrices, 16);
