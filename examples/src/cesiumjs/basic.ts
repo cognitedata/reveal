@@ -3,8 +3,8 @@
  */
 
 import * as Cesium from 'cesium';
-import initializeCesiumSectorScene from '../../views/cesiumjs/createCesiumSectorNode';
-import { createLocalSectorModel } from '../..';
+
+import * as reveal from '@cognite/reveal';
 
 async function main() {
   // TODO 2019-11-08 larsmoa: @types/cesium is lacking some of the supported options, so we need
@@ -16,10 +16,10 @@ async function main() {
   const viewer = new Cesium.Viewer('cesiumContainer', options);
   viewer.extend(Cesium.viewerCesiumInspectorMixin, {});
 
-  const sectorModel = createLocalSectorModel('/transformer');
+  const sectorModel = reveal.createLocalSectorModel('/transformer');
   const cogniteOffice = Cesium.Cartesian3.fromDegrees(10.624603, 59.904081);
   const modelOffset = new Cesium.Cartesian3(0.0, 0.0, 0.0);
-  const [bounds, modelTransformation] = await initializeCesiumSectorScene(
+  const [bounds, modelTransformation] = await reveal.initializeCesiumSectorScene(
     cogniteOffice,
     modelOffset,
     sectorModel,

@@ -5,16 +5,10 @@
 import * as THREE from 'three';
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
+import * as reveal from '@cognite/reveal';
 
 import CameraControls from 'camera-controls';
-import { createThreeJsSectorNode } from '../../views/threejs/sector/createThreeJsSectorNode';
-import { createThreeJsPointCloudNode } from '../../views/threejs/pointcloud/createThreeJsPointCloudNode';
-import { createLocalSectorModel } from '../..';
-import { createLocalPointCloudModel } from '../../datasources/local';
 import dat from 'dat.gui';
-import { PotreePointColorType, PotreePointShape } from '../../views/threejs/pointcloud/enums';
-import { PotreeNodeWrapper } from '../../views/threejs/pointcloud/PotreeNodeWrapper';
-import { PotreeGroupWrapper } from '../../views/threejs/pointcloud/PotreeGroupWrapper';
 
 CameraControls.install({ THREE });
 
@@ -30,15 +24,15 @@ async function main() {
 
   Potree.XHRFactory.config.customHeaders.push({ header: 'MyDummyHeader', value: 'MyDummyValue' });
 
-  const sectorModel = createLocalSectorModel('/primitives');
-  const sectorModelNode = await createThreeJsSectorNode(sectorModel);
+  const sectorModel = reveal.createLocalSectorModel('/primitives');
+  const sectorModelNode = await reveal.createThreeJsSectorNode(sectorModel);
   const sectorModelOffsetRoot = new THREE.Group();
   sectorModelOffsetRoot.name = 'Sector model offset root';
   sectorModelOffsetRoot.add(sectorModelNode);
   scene.add(sectorModelOffsetRoot);
 
-  const pointCloudModel = createLocalPointCloudModel('/transformer-point-cloud/cloud.js');
-  const [pointCloudGroup, pointCloudNode] = await createThreeJsPointCloudNode(pointCloudModel);
+  const pointCloudModel = reveal.createLocalPointCloudModel('/transformer-point-cloud/cloud.js');
+  const [pointCloudGroup, pointCloudNode] = await reveal.createThreeJsPointCloudNode(pointCloudModel);
   pointCloudGroup.position.set(10, 10, 10);
   scene.add(pointCloudGroup);
 
@@ -76,31 +70,31 @@ async function main() {
   (window as any).controls = controls;
 }
 
-function initializeGui(group: PotreeGroupWrapper, node: PotreeNodeWrapper, handleSettingsChangedCb: () => void) {
+function initializeGui(group: reveal.internal.PotreeGroupWrapper, node: reveal.internal.PotreeNodeWrapper, handleSettingsChangedCb: () => void) {
   const gui = new dat.GUI();
   gui.add(group, 'pointBudget', 0, 10_000_000);
   gui.add(node, 'pointSize', 0, 10).onChange(handleSettingsChangedCb);
   gui
     .add(node, 'pointColorType', {
-      Rgb: PotreePointColorType.Rgb,
-      Depth: PotreePointColorType.Depth,
-      Height: PotreePointColorType.Height,
-      PointIndex: PotreePointColorType.PointIndex,
-      LevelOfDetail: PotreePointColorType.LevelOfDetail,
-      Classification: PotreePointColorType.Classification
+      Rgb: reveal.internal.PotreePointColorType.Rgb,
+      Depth: reveal.internal.PotreePointColorType.Depth,
+      Height: reveal.internal.PotreePointColorType.Height,
+      PointIndex: reveal.internal.PotreePointColorType.PointIndex,
+      LevelOfDetail: reveal.internal.PotreePointColorType.LevelOfDetail,
+      Classification: reveal.internal.PotreePointColorType.Classification
     })
     .onChange((valueAsString: string) => {
-      const value: PotreePointColorType = parseInt(valueAsString, 10);
+      const value: reveal.internal.PotreePointColorType = parseInt(valueAsString, 10);
       node.pointColorType = value;
       handleSettingsChangedCb();
     });
   gui
     .add(node, 'pointShape', {
-      Circle: PotreePointShape.Circle,
-      Square: PotreePointShape.Square
+      Circle: reveal.internal.PotreePointShape.Circle,
+      Square: reveal.internal.PotreePointShape.Square
     })
     .onChange((valueAsString: string) => {
-      const value: PotreePointShape = parseInt(valueAsString, 10);
+      const value: reveal.internal.PotreePointShape = parseInt(valueAsString, 10);
       node.pointShape = value;
       handleSettingsChangedCb();
     });

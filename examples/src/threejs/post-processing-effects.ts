@@ -3,9 +3,8 @@
  */
 
 import * as THREE from 'three';
+import * as reveal from '@cognite/reveal';
 import CameraControls from 'camera-controls';
-import { createThreeJsSectorNode } from '../../views/threejs/sector/createThreeJsSectorNode';
-import { createLocalSectorModel } from '../..';
 
 const postprocessing = require('postprocessing');
 
@@ -21,8 +20,8 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const sectorModel = createLocalSectorModel('/primitives');
-  const sectorModelNode = await createThreeJsSectorNode(sectorModel);
+  const sectorModel = reveal.createLocalSectorModel('/primitives');
+  const sectorModelNode = await reveal.createThreeJsSectorNode(sectorModel);
   scene.add(sectorModelNode);
 
   const controls = new CameraControls(camera, renderer.domElement);
