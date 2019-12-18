@@ -4,10 +4,10 @@
 
 import { RevealSector3D } from '@cognite/sdk';
 import { vec3, mat4 } from 'gl-matrix';
-import { SectorMetadata } from '../../../models/sector/types';
+import { SectorMetadata, SectorScene } from '../../../models/sector/types';
 import { Box3 } from '../../../utils/Box3';
 
-export function buildSectorMetadata(sectors: RevealSector3D[]): SectorMetadata {
+export function buildSectorMetadata(sectors: RevealSector3D[]): SectorScene {
   const sectorsMetadata = sectors.reduce((map, x) => {
     const bbox = x.boundingBox;
     const boundsMin = vec3.fromValues(bbox.min[0], bbox.min[1], bbox.min[2]);
@@ -19,6 +19,7 @@ export function buildSectorMetadata(sectors: RevealSector3D[]): SectorMetadata {
       id,
       path: x.path,
       bounds,
+      parent: undefined,
       children: []
     };
 
@@ -26,21 +27,29 @@ export function buildSectorMetadata(sectors: RevealSector3D[]): SectorMetadata {
     return map;
   }, new Map<string, SectorMetadata>());
 
+  const sectorMap = new Map<number, SectorMetadata>();
+
   // Initialize relationships
   for (const [path, data] of sectorsMetadata) {
+    sectorMap.set(data.id, data);
+
     const parentPath = parentOf(path);
     if (parentPath === '') {
       continue;
     }
     const parent = sectorsMetadata.get(parentPath);
     parent!.children.push(data);
+    data.parent = parent;
   }
 
   const root = sectorsMetadata.get('0/');
   if (!root) {
     throw new Error('No root sector');
   }
-  return root || null;
+  return {
+    root,
+    sectors: sectorMap
+  };
 }
 
 function parentOf(path: string): string {

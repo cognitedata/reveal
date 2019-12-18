@@ -28,7 +28,8 @@ describe('buildSectorMetadata', () => {
       createSector(2, 0, '0/1/'),
       createSector(3, 1, '0/0/1/')
     ];
-    const root = buildSectorMetadata(sectors);
+    const scene = buildSectorMetadata(sectors);
+    const root = scene.root;
 
     expect(root).toBeTruthy();
     expect(root!.children.map(x => x.id)).toContainAllValues([2, 1]);

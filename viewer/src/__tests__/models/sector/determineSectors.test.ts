@@ -5,10 +5,23 @@ import * as THREE from 'three';
 import { SectorMetadata, SectorModelTransformation } from '../../../models/sector/types';
 import { Box3 } from '../../../utils/Box3';
 import { vec3, mat4 } from 'gl-matrix';
-import { determineSectors } from '../../../models/sector/determineSectors';
+import { determineSectors, determineSectorsQuality } from '../../../models/sector/determineSectors';
 import { expectSetEqual } from '../../expects';
 import { toThreeMatrix4, fromThreeMatrix, fromThreeVector3 } from '../../../views/threejs/utilities';
 import 'jest-extended';
+import { traverseDepthFirst } from '../../../utils/traversal';
+
+function createSceneFromRoot(root: SectorMetadata) {
+  const sectors = new Map<number, SectorMetadata>();
+  traverseDepthFirst(root, sector => {
+    sectors.set(sector.id, sector);
+    return true;
+  });
+  return {
+    root,
+    sectors
+  };
+}
 
 describe('determineSectors', () => {
   const identityTransform: SectorModelTransformation = {
@@ -24,6 +37,7 @@ describe('determineSectors', () => {
       bounds: new Box3([vec3.fromValues(10, 10, 10), vec3.fromValues(11, 11, 11)]),
       children: []
     };
+    const scene = createSceneFromRoot(root);
     const camera = new THREE.PerspectiveCamera();
     camera.position.set(0, 0, -2);
     camera.lookAt(0, 0, 0);
@@ -31,7 +45,7 @@ describe('determineSectors', () => {
 
     // Act
     const sectors = await determineSectors({
-      root,
+      scene,
       cameraPosition: fromThreeVector3(vec3.create(), camera.position, identityTransform),
       cameraModelMatrix: fromThreeMatrix(mat4.create(), camera.matrixWorld, identityTransform),
       projectionMatrix: fromThreeMatrix(mat4.create(), camera.projectionMatrix, identityTransform)
@@ -62,6 +76,7 @@ describe('determineSectors', () => {
         }
       ]
     };
+    const scene = createSceneFromRoot(root);
     const camera = new THREE.PerspectiveCamera();
     camera.position.set(0, 0, -1);
     camera.lookAt(0, 0, 0);
@@ -69,7 +84,7 @@ describe('determineSectors', () => {
 
     // Act
     const sectors = await determineSectors({
-      root,
+      scene,
       cameraPosition: fromThreeVector3(vec3.create(), camera.position, identityTransform),
       cameraModelMatrix: fromThreeMatrix(mat4.create(), camera.matrixWorld, identityTransform),
       projectionMatrix: fromThreeMatrix(mat4.create(), camera.projectionMatrix, identityTransform)
@@ -94,6 +109,7 @@ describe('determineSectors', () => {
       bounds: new Box3([vec3.fromValues(1, 1, 1), vec3.fromValues(2, 2, 2)]),
       children: []
     };
+    const scene = createSceneFromRoot(root);
     const camera = new THREE.PerspectiveCamera();
     camera.position.copy(new THREE.Vector3(1.5, 1.5, -1).applyMatrix4(toThreeMatrix4(transform.modelMatrix)));
     camera.lookAt(new THREE.Vector3(1.5, 1.5, 1.5).applyMatrix4(toThreeMatrix4(transform.modelMatrix)));
@@ -101,7 +117,7 @@ describe('determineSectors', () => {
 
     // Act
     const sectors = await determineSectors({
-      root,
+      scene,
       cameraPosition: fromThreeVector3(vec3.create(), camera.position, transform),
       cameraModelMatrix: fromThreeMatrix(mat4.create(), camera.matrixWorld, transform),
       projectionMatrix: fromThreeMatrix(mat4.create(), camera.projectionMatrix, transform)

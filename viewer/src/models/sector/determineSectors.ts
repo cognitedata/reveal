@@ -3,13 +3,13 @@
  */
 
 import * as THREE from 'three';
-import { WantedSectors, SectorMetadata, SectorModelTransformation } from './types';
+import { WantedSectors, SectorMetadata, SectorModelTransformation, SectorScene } from './types';
 import { traverseDepthFirst } from '../../utils/traversal';
 import { toThreeMatrix4, toThreeVector3 } from '../../views/threejs/utilities';
 import { mat4, vec3 } from 'gl-matrix';
 
 interface DetermineSectorsInput {
-  root: SectorMetadata;
+  scene: SectorScene;
   cameraPosition: vec3;
   cameraModelMatrix: mat4;
   projectionMatrix: mat4;
@@ -25,7 +25,7 @@ const determineSectorsPreallocatedVars = {
 };
 
 export async function determineSectors(input: DetermineSectorsInput): Promise<WantedSectors> {
-  const { root, cameraPosition, cameraModelMatrix, projectionMatrix } = input;
+  const { scene, cameraPosition, cameraModelMatrix, projectionMatrix } = input;
   const { invertCameraModelMatrix, frustumMatrix, frustum, bbox, min, max } = determineSectorsPreallocatedVars;
 
   const sectors: SectorMetadata[] = [];
@@ -36,7 +36,7 @@ export async function determineSectors(input: DetermineSectorsInput): Promise<Wa
   mat4.multiply(frustumMatrix, projectionMatrix, invertCameraModelMatrix);
   frustum.setFromMatrix(toThreeMatrix4(frustumMatrix));
 
-  traverseDepthFirst(root, sector => {
+  traverseDepthFirst(scene.root, sector => {
     min.set(sector.bounds.min[0], sector.bounds.min[1], sector.bounds.min[2]);
     max.set(sector.bounds.max[0], sector.bounds.max[1], sector.bounds.max[2]);
     bbox.makeEmpty();
@@ -63,28 +63,42 @@ export async function determineSectors(input: DetermineSectorsInput): Promise<Wa
     return distanceToCamera(l) - distanceToCamera(r);
   });
   const definitelyDetailed = new Set<number>(sectors.slice(0, 30).map(x => x.id));
-  const result = determineSectorsQuality(root, definitelyDetailed);
+  const result = determineSectorsQuality(scene, definitelyDetailed);
   return result;
 }
 
-function determineSectorsQuality(root: SectorMetadata, detailedSectors: Set<number>): WantedSectors {
+function traverseUpwards(sector: SectorMetadata, callback: (sector: SectorMetadata) => boolean) {
+  if (!callback(sector)) {
+    return;
+  }
+  if (!sector.parent) {
+    return;
+  }
+  traverseUpwards(sector.parent, callback);
+}
+
+export function determineSectorsQuality(scene: SectorScene, requestedDetailed: Set<number>): WantedSectors {
   const simple: number[] = [];
-  const pending: number[] = [];
   const detailed: number[] = [];
-  traverseDepthFirst(root, sector => {
-    pending.push(sector.id);
-    if (detailedSectors.has(sector.id)) {
-      detailed.push(...pending);
-      pending.length = 0;
+
+  for (const sectorId of requestedDetailed) {
+    const sector = scene.sectors.get(sectorId);
+    if (!sector) {
+      console.log("Sectors were", scene.sectors);
+      throw new Error(`Could not find sector with ID ${sectorId}`);
     }
-    if (sector.children.length === 0) {
-      if (pending.length > 0) {
-        simple.push(pending[0]);
-      }
-      pending.length = 0;
-      return false;
+    traverseUpwards(sector, (other: SectorMetadata) => {
+      detailed.push(other.id);
+      return true;
+    });
+  }
+
+  traverseDepthFirst(scene.root, sector => {
+    if (detailed.includes(sector.id)) {
+      return true;
     }
-    return true;
+    simple.push(sector.id);
+    return false;
   });
 
   return {

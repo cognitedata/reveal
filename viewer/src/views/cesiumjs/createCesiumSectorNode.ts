@@ -40,7 +40,8 @@ export async function initializeCesiumSectorScene(
 ): Promise<[Cesium.BoundingSphere, SectorModelTransformation]> {
   const [fetchSectorMetadata, fetchSector, fetchSectorQuads, fetchCtmFile] = model;
   // Fetch metadata
-  const [sectorRoot, modelTransformation] = await fetchSectorMetadata();
+  const [sectorScene, modelTransformation] = await fetchSectorMetadata();
+  const sectorRoot = sectorScene.root;
   const parseSectorData = await createParser(sectorRoot, fetchSector, fetchCtmFile);
   const parseSectorQuadsData = await createQuadsParser();
 

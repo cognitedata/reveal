@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { SectorModelTransformation, SectorMetadata } from '../../../models/sector/types';
+import { SectorModelTransformation, SectorMetadata, SectorScene } from '../../../models/sector/types';
 import { vec3, mat4 } from 'gl-matrix';
 import { fromThreeVector3, fromThreeMatrix } from '../utilities';
 import { determineSectors } from '../../../models/sector/determineSectors';
@@ -30,18 +30,18 @@ export class RootSectorNode extends SectorNode {
 
   private readonly simpleActivator: SectorActivator;
   private readonly detailedActivator: SectorActivator;
-  private readonly sectorRootMetadata: SectorMetadata;
+  private readonly sectorScene: SectorScene;
   private readonly previousCameraMatrix = new THREE.Matrix4();
 
   constructor(
-    sectorRootMetadata: SectorMetadata,
+    sectorScene: SectorScene,
     modelTransformation: SectorModelTransformation,
     simpleActivator: SectorActivator,
     detailedActivator: SectorActivator
   ) {
     super(0, '/');
     this.name = 'Sector model';
-    this.sectorRootMetadata = sectorRootMetadata;
+    this.sectorScene = sectorScene;
     this.simpleActivator = simpleActivator;
     this.detailedActivator = detailedActivator;
     this.modelTransformation = modelTransformation;
@@ -62,7 +62,7 @@ export class RootSectorNode extends SectorNode {
       fromThreeMatrix(cameraModelMatrix, camera.matrixWorld, this.modelTransformation);
       fromThreeMatrix(projectionMatrix, camera.projectionMatrix);
       const wantedSectors = await determineSectors({
-        root: this.sectorRootMetadata,
+        scene: this.sectorScene,
         cameraPosition,
         cameraModelMatrix,
         projectionMatrix

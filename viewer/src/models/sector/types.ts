@@ -17,7 +17,15 @@ export interface SectorMetadata {
   readonly id: number;
   readonly path: string;
   readonly bounds: Box3;
-  readonly children: SectorMetadata[];
+  // TODO can we make this readonly?
+  children: SectorMetadata[];
+  // TODO can we make this readonly?
+  parent?: SectorMetadata;
+}
+
+export interface SectorScene {
+  readonly root: SectorMetadata;
+  readonly sectors: Map<number, SectorMetadata>;
 }
 
 export type Color = number;
