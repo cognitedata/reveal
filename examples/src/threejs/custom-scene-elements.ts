@@ -55,13 +55,17 @@ async function main() {
   // Render loop
   const clock = new THREE.Clock();
   const render = () => {
-    requestAnimationFrame(render);
-
     const delta = clock.getDelta();
-    controls.update(delta);
-    renderer.render(scene, camera);
+    const controlsNeedUpdate = controls.update(delta);
+    const modelNeedsUpdate = sectorModelNode.update(camera);
+
+    if (controlsNeedUpdate || modelNeedsUpdate) {
+      renderer.render(scene, camera);
+    }
 
     TWEEN.update();
+
+    requestAnimationFrame(render);
   };
   render();
 

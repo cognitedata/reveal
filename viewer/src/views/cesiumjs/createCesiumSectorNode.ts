@@ -8,7 +8,7 @@ import * as THREE from 'three';
 import { createParser, createQuadsParser } from '../../models/sector/parseSectorData';
 import { Sector, SectorModelTransformation } from '../../models/sector/types';
 import { initializeSectorLoader } from '../../models/sector/initializeSectorLoader';
-import { createCache } from '../../models/createCache';
+import { createSimpleCache } from '../../models/createCache';
 import { initializeCesiumView } from './initializeCesiumView';
 import { fromCesiumMatrix4, toCartesian3 as toCesiumCartesian3 } from './utilities';
 import { mat4, vec3 } from 'gl-matrix';
@@ -63,15 +63,15 @@ export async function initializeCesiumSectorScene(
     scene.primitives
   );
 
-  // Sync high- and low-detail geometry
+  const getDetailed = async (sectorId: number) => {
+    const data = await fetchSector(sectorId);
+    return parseSectorData(sectorId, data);
+  };
+
   // Create cache to avoid unnecessary loading and parsing of data
-  const [fetchSectorCached, parseSectorDataCached] = createCache<number, Sector>(fetchSector, parseSectorData);
-  const activateDetailedSectors = initializeSectorLoader(
-    fetchSectorCached,
-    parseSectorDataCached,
-    discardSector,
-    consumeSector
-  );
+  const getDetailedCached = createSimpleCache(getDetailed);
+
+  const activatorDetailed = initializeSectorLoader(getDetailedCached.request, discardSector, consumeSector);
 
   // TODO 2019-11-12 larsmoa: Add support for low detail geometry to cesium.
   // const [fetchSectorQuadsCached, parseSectorQuadsDataCached] = createCache<number, SectorQuads>(
@@ -93,7 +93,9 @@ export async function initializeCesiumSectorScene(
       wantedSectors.add(x.id);
       return true;
     });
-    activateDetailedSectors(wantedSectors);
+    activatorDetailed.update(wantedSectors);
+
+    // TODO IMPORTANT activatorDetailed.refresh is never called!
   }
   // Schedule sectors when camera moves
   const previousCameraMatrix = new THREE.Matrix4();

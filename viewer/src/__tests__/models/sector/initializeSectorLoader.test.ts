@@ -3,13 +3,8 @@
  */
 
 import { initializeSectorLoader } from '../../../models/sector/initializeSectorLoader';
-import {
-  DiscardSectorDelegate,
-  ConsumeSectorDelegate,
-  FetchSectorDelegate,
-  ParseSectorDelegate
-} from '../../../models/sector/delegates';
-import { waitUntill } from '../../wait';
+import { DiscardSectorDelegate, ConsumeSectorDelegate, GetSectorDelegate } from '../../../models/sector/delegates';
+import { waitUntill, yieldProcessing } from '../../wait';
 import { expectSetEqual } from '../../expects';
 import { Sector } from '../../../models/sector/types';
 
@@ -17,10 +12,11 @@ describe('initializeSectorLoader', () => {
   const consumed = new Set<number>();
   const discarded = new Set<number>();
 
-  const fetch: FetchSectorDelegate = jest.fn();
-  const parse: ParseSectorDelegate<Sector> = jest.fn();
+  const getSector: GetSectorDelegate<Sector> = jest.fn();
   const consume: ConsumeSectorDelegate<Sector> = (sectorId, sector) => consumed.add(sectorId);
   const discard: DiscardSectorDelegate = id => discarded.add(id);
+
+  const awaitUpdateToProcess = yieldProcessing; // We simply need to yield processing to allow processing loop to process Promises created by update()
 
   beforeEach(() => {
     jest.resetAllMocks();
@@ -29,17 +25,21 @@ describe('initializeSectorLoader', () => {
   });
 
   test('call returns delegate', () => {
-    const delegate = initializeSectorLoader(fetch, parse, discard, consume);
+    const delegate = initializeSectorLoader(getSector, discard, consume);
     expect(delegate).toBeDefined();
   });
 
   test('first delegate invocation calls consume is called for all sectors', async () => {
     // Arrange
-    const activateSectorsDelegate = initializeSectorLoader(fetch, parse, discard, consume);
+    const activateSectorsDelegate = initializeSectorLoader(getSector, discard, consume);
     const sectorIds = [1, 2, 3];
 
     // Act
-    activateSectorsDelegate(new Set<number>(sectorIds));
+    activateSectorsDelegate.update(new Set<number>(sectorIds));
+    await awaitUpdateToProcess();
+    for (const _ of sectorIds) {
+      activateSectorsDelegate.refresh();
+    }
     await waitUntill(() => sectorIds.every(x => consumed.has(x)));
 
     // Assert
@@ -48,14 +48,22 @@ describe('initializeSectorLoader', () => {
 
   test('second invocation only consumes new sectors', async () => {
     // Arrange
-    const activateSectorsDelegate = initializeSectorLoader(fetch, parse, discard, consume);
+    const activateSectorsDelegate = initializeSectorLoader(getSector, discard, consume);
     const sectorIds = [1, 2, 3];
-    activateSectorsDelegate(new Set<number>(sectorIds));
+    activateSectorsDelegate.update(new Set<number>(sectorIds));
+    await awaitUpdateToProcess();
+    for (const _ of sectorIds) {
+      activateSectorsDelegate.refresh();
+    }
     await waitUntill(() => sectorIds.every(x => consumed.has(x)));
     const newSectorIds = [1, 2, 3, 4, 5];
 
     // Act
-    activateSectorsDelegate(new Set<number>(newSectorIds));
+    activateSectorsDelegate.update(new Set<number>(newSectorIds));
+    await awaitUpdateToProcess();
+    for (const _ of newSectorIds) {
+      activateSectorsDelegate.refresh();
+    }
     await waitUntill(() => newSectorIds.every(x => consumed.has(x)));
 
     // Assert
@@ -64,14 +72,22 @@ describe('initializeSectorLoader', () => {
 
   test('second invocation discards unwanted sectors', async () => {
     // Arrange
-    const activateSectorsDelegate = initializeSectorLoader(fetch, parse, discard, consume);
+    const activateSectorsDelegate = initializeSectorLoader(getSector, discard, consume);
     const sectorIds = [1, 2, 3, 4, 5];
-    activateSectorsDelegate(new Set<number>(sectorIds));
+    activateSectorsDelegate.update(new Set<number>(sectorIds));
+    await awaitUpdateToProcess();
+    for (const _ of sectorIds) {
+      activateSectorsDelegate.refresh();
+    }
     await waitUntill(() => sectorIds.every(x => consumed.has(x)));
     const newSectorIds = [1, 3, 5];
 
     // Act
-    activateSectorsDelegate(new Set<number>(newSectorIds));
+    activateSectorsDelegate.update(new Set<number>(newSectorIds));
+    await awaitUpdateToProcess();
+    for (const _ of newSectorIds) {
+      activateSectorsDelegate.refresh();
+    }
     await waitUntill(() => [2, 4].every(x => discarded.has(x)));
 
     // Assert
@@ -80,15 +96,25 @@ describe('initializeSectorLoader', () => {
 
   test('activate previously discarded sector, reloads', async () => {
     // Arrange
-    const activateSectorsDelegate = initializeSectorLoader(fetch, parse, discard, consume);
+    const activateSectorsDelegate = initializeSectorLoader(getSector, discard, consume);
 
     // Act
-    activateSectorsDelegate(new Set<number>([1]));
+    activateSectorsDelegate.update(
+      new Set<number>([1])
+    );
+    await awaitUpdateToProcess();
+    activateSectorsDelegate.refresh();
     await waitUntill(() => consumed.has(1));
     consumed.clear();
-    activateSectorsDelegate(new Set<number>());
+    activateSectorsDelegate.update(new Set<number>());
+    await awaitUpdateToProcess();
+    activateSectorsDelegate.refresh();
     await waitUntill(() => discarded.has(1));
-    activateSectorsDelegate(new Set<number>([1]));
+    activateSectorsDelegate.update(
+      new Set<number>([1])
+    );
+    await awaitUpdateToProcess();
+    activateSectorsDelegate.refresh();
     await waitUntill(() => consumed.has(1));
 
     // Assert

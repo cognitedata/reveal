@@ -37,7 +37,7 @@ export function consumeSectorSimple(
   const bounds = toThreeJsBox3(metadata.bounds);
   const boundsRenderer = new THREE.Box3Helper(bounds.expandByScalar(0.1), new THREE.Color(0xff00ff));
   boundsRenderer.name = `Bounding box ${sectorId}`;
-  group.add(boundsRenderer);
+  //group.add(boundsRenderer);
 
   const geometry = new THREE.InstancedBufferGeometry();
 

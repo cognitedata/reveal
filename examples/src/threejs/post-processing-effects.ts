@@ -39,16 +39,16 @@ async function main() {
   effectComposer.addPass(effectPass);
 
   const clock = new THREE.Clock();
-  const render = () => {
-    requestAnimationFrame(render);
-
+  const render = async () => {
     const delta = clock.getDelta();
-    const needsUpdate = controls.update(delta) || sectorModelNode.needsRedraw;
+    const controlsNeedUpdate = controls.update(delta);
+    const modelNeedsUpdate = await sectorModelNode.update(camera);
+    const needsUpdate = controlsNeedUpdate || modelNeedsUpdate;
 
     if (needsUpdate) {
       effectComposer.render(delta);
-      sectorModelNode.needsRedraw = false;
     }
+    requestAnimationFrame(render);
   };
   render();
 
