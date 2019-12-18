@@ -41,8 +41,6 @@ async function main() {
 
   const clock = new THREE.Clock();
   const render = async () => {
-    requestAnimationFrame(render);
-
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
     const modelNeedsUpdate = await sectorModelNode.update(camera);
@@ -51,6 +49,7 @@ async function main() {
     if (needsUpdate) {
       effectComposer.render(delta);
     }
+    requestAnimationFrame(render);
   };
   render();
 

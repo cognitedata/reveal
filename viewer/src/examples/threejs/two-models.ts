@@ -37,8 +37,6 @@ async function main() {
 
   const clock = new THREE.Clock();
   const render = async () => {
-    requestAnimationFrame(render);
-
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
     const model1NeedsUpdate = await sectorModelNode1.update(camera);
@@ -48,6 +46,8 @@ async function main() {
     if (needsUpdate) {
       renderer.render(scene, camera);
     }
+
+    requestAnimationFrame(render);
   };
   render();
 
