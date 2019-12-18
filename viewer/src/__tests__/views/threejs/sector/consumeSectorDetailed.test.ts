@@ -2,7 +2,13 @@
  * Copyright 2019 Cognite AS
  */
 
-import { SectorMetadata, TriangleMesh, InstancedMeshFile, InstancedMesh, SectorModelTransformation } from '../../../../models/sector/types';
+import {
+  SectorMetadata,
+  TriangleMesh,
+  InstancedMeshFile,
+  InstancedMesh,
+  SectorModelTransformation
+} from '../../../../models/sector/types';
 import { Box3 } from '../../../../utils/Box3';
 import { vec3, mat4 } from 'gl-matrix';
 import { consumeSectorDetailed } from '../../../../views/threejs/sector/consumeSectorDetailed';
@@ -12,7 +18,7 @@ import { createEmptySector } from '../../../models/sector/emptySector';
 
 const modelTransformation: SectorModelTransformation = {
   modelMatrix: mat4.create(),
-  inverseModelMatrix: mat4.create(),
+  inverseModelMatrix: mat4.create()
 };
 
 describe('consumeSectorDetailed', () => {

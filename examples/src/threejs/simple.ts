@@ -18,19 +18,19 @@ async function main() {
   scene.add(sectorModelNode);
 
   const fetchMetadata: reveal.internal.FetchSectorMetadataDelegate = sectorModel[0];
-  const [metaData, modelTransform] = await fetchMetadata();
+  const [rootSectorMetadata, modelTransform] = await fetchMetadata();
 
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#444');
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const transformedBounds = metaData.bounds.createTransformed(modelTransform.modelMatrix);
-  const [pos, target] = reveal.internal.suggestCameraLookAt(transformedBounds);
-  const far = 3 * vec3.distance(target, pos);
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.2, far);
+  const { position, target, near, far } = reveal.internal.suggestCameraConfig(rootSectorMetadata);
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
-  controls.setLookAt(pos[0], pos[1], pos[2], target[0], target[1], target[2]);
+  const threePos = reveal.toThreeVector3(position, sectorModelNode.modelTransformation);
+  const threeTarget = reveal.toThreeVector3(target, sectorModelNode.modelTransformation);
+  controls.setLookAt(threePos.x, threePos.y, threePos.z, threeTarget.x, threeTarget.y, threeTarget.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
 

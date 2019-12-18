@@ -10,4 +10,4 @@ export { PotreePointColorType, PotreePointShape } from './views/threejs/pointclo
 export { PotreeNodeWrapper } from './views/threejs/pointcloud/PotreeNodeWrapper';
 export { PotreeGroupWrapper } from './views/threejs/pointcloud/PotreeGroupWrapper';
 
-export { suggestCameraLookAt } from './utils/cameraUtils';
+export { suggestCameraConfig } from './utils/cameraUtils';
