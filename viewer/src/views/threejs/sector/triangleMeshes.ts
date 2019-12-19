@@ -35,6 +35,7 @@ export function createTriangleMeshes(triangleMeshes: TriangleMesh[], bounds: THR
       extensions: {
         derivatives: true
       },
+      side: THREE.DoubleSide,
       fragmentShader: sectorShaders.detailedMesh.fragment,
       vertexShader: sectorShaders.detailedMesh.vertex
     });
