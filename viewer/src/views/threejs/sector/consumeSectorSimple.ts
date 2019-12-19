@@ -31,9 +31,6 @@ export function consumeSectorSimple(
     // No data, just skip
     return;
   }
-  const group = new THREE.Group();
-  group.name = `Quads for sector ${sectorId}`;
-
   const bounds = toThreeJsBox3(metadata.bounds);
   const boundsRenderer = new THREE.Box3Helper(bounds.expandByScalar(0.1), new THREE.Color(0xff00ff));
   boundsRenderer.name = `Bounding box ${sectorId}`;
@@ -69,7 +66,5 @@ export function consumeSectorSimple(
   // TODO 20191028 dragly figure out why the quads are being culled wrongly and if we
   // can avoid disabling it entirely
   obj.frustumCulled = false;
-  group.add(obj);
-
-  sectorNode.add(group);
+  sectorNode.add(obj);
 }
