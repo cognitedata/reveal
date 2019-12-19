@@ -29,15 +29,12 @@ export function createTriangleMeshes(triangleMeshes: TriangleMesh[], bounds: THR
     geometry.boundingBox = bounds.clone();
     geometry.boundingSphere = new THREE.Sphere();
     bounds.getBoundingSphere(geometry.boundingSphere);
-    if (mesh.normals !== undefined) {
-      const normals = new THREE.Float32BufferAttribute(mesh.normals.buffer, 3);
-      geometry.setAttribute('normal', normals);
-    } else {
-      geometry.computeVertexNormals();
-    }
-    // const material = new THREE.MeshPhongMaterial({ vertexColors: THREE.VertexColors, flatShading: true });
+
     const material = new THREE.ShaderMaterial({
       uniforms: {},
+      extensions: {
+        derivatives: true
+      },
       fragmentShader: sectorShaders.detailedMesh.fragment,
       vertexShader: sectorShaders.detailedMesh.vertex
     });
