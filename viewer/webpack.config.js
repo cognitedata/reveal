@@ -2,7 +2,9 @@ const WorkerPlugin = require('worker-plugin');
 const WasmPackPlugin = require("@wasm-tool/wasm-pack-plugin");
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
-// const logging = require('webpack/logging/runtime');
+const getLogger = require('webpack-log');
+const logger = getLogger('reveal');
+
 /*
  * Set args on the command line using
  *
@@ -28,11 +30,8 @@ function arg(env, name, defaultValue) {
 module.exports = env => {
   const development = arg(env, "development", false);
 
-  // logging.info(
-  //   `Build config:
-  //   - development: ${development}
-  //   `
-  // );
+  logger.info("Build config:");
+  logger.info(`  - development: ${development}`);
 
   const config = {
     mode: development ? "development" : "production",
@@ -84,9 +83,9 @@ module.exports = env => {
         'node_modules/',
       ],
     },
-    // optimization: {
-    //   usedExports: true,
-    // },
+    optimization: {
+      usedExports: true,
+    },
     plugins: [
       new WasmPackPlugin({
         crateDirectory: ".",
