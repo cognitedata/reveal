@@ -84,7 +84,6 @@ export function determineSectorsQuality(scene: SectorScene, requestedDetailed: S
   for (const sectorId of requestedDetailed) {
     const sector = scene.sectors.get(sectorId);
     if (!sector) {
-      console.log("Sectors were", scene.sectors);
       throw new Error(`Could not find sector with ID ${sectorId}`);
     }
     traverseUpwards(sector, (other: SectorMetadata) => {
