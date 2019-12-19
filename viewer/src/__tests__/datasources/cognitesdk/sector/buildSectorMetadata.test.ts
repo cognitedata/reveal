@@ -7,17 +7,17 @@ import { buildSectorMetadata } from '../../../../datasources/cognitesdk/sector/b
 
 describe('buildSectorMetadata', () => {
   test('no sectors, throws', () => {
-    expect(() => buildSectorMetadata([])).toThrowError();
+    expect(() => buildSectorMetadata([], [])).toThrowError();
   });
 
   test('sectors is missing root, throws', () => {
     const sector = createSector(0, 5, '0/1/');
-    expect(() => buildSectorMetadata([sector])).toThrowError();
+    expect(() => buildSectorMetadata([sector], [])).toThrowError();
   });
 
   test('single root sector, works', async () => {
     const sector = createSector(0, -1, '0/');
-    const root = buildSectorMetadata([sector]);
+    const root = buildSectorMetadata([sector], []);
     expect(root).not.toBeFalsy();
   });
 
@@ -28,7 +28,7 @@ describe('buildSectorMetadata', () => {
       createSector(2, 0, '0/1/'),
       createSector(3, 1, '0/0/1/')
     ];
-    const scene = buildSectorMetadata(sectors);
+    const scene = buildSectorMetadata(sectors, []);
     const root = scene.root;
 
     expect(root).toBeTruthy();

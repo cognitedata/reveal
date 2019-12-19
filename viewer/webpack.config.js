@@ -93,6 +93,7 @@ module.exports = env => {
       aggregateTimeout: 1500,
       ignored: [
         'node_modules/',
+        'pkg/',
       ],
     },
     optimization: {

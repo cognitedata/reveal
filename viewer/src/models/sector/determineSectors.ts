@@ -8,6 +8,8 @@ import { traverseDepthFirst } from '../../utils/traversal';
 import { toThreeMatrix4, toThreeVector3 } from '../../views/threejs/utilities';
 import { mat4, vec3 } from 'gl-matrix';
 
+const degToRadFactor = Math.PI / 180;
+
 interface DetermineSectorsInput {
   scene: SectorScene;
   cameraPosition: vec3;
@@ -30,26 +32,6 @@ export async function determineSectors(input: DetermineSectorsInput): Promise<Wa
 
   const sectors: SectorMetadata[] = [];
 
-  if (!mat4.invert(invertCameraModelMatrix, cameraModelMatrix)) {
-    throw new Error('Provided camera model matrix is not invertible');
-  }
-  mat4.multiply(frustumMatrix, projectionMatrix, invertCameraModelMatrix);
-  frustum.setFromMatrix(toThreeMatrix4(frustumMatrix));
-
-  traverseDepthFirst(scene.root, sector => {
-    min.set(sector.bounds.min[0], sector.bounds.min[1], sector.bounds.min[2]);
-    max.set(sector.bounds.max[0], sector.bounds.max[1], sector.bounds.max[2]);
-    bbox.makeEmpty();
-    bbox.expandByPoint(min);
-    bbox.expandByPoint(max);
-
-    if (frustum.intersectsBox(bbox)) {
-      sectors.push(sector);
-      return true;
-    }
-    return false;
-  });
-
   function distanceToCamera(s: SectorMetadata) {
     min.set(s.bounds.min[0], s.bounds.min[1], s.bounds.min[2]);
     max.set(s.bounds.max[0], s.bounds.max[1], s.bounds.max[2]);
@@ -59,10 +41,47 @@ export async function determineSectors(input: DetermineSectorsInput): Promise<Wa
     return bbox.distanceToPoint(toThreeVector3(cameraPosition));
   }
 
+  if (!mat4.invert(invertCameraModelMatrix, cameraModelMatrix)) {
+    throw new Error('Provided camera model matrix is not invertible');
+  }
+  mat4.multiply(frustumMatrix, projectionMatrix, invertCameraModelMatrix);
+  frustum.setFromMatrix(toThreeMatrix4(frustumMatrix));
+
+  traverseDepthFirst(scene.root, sector => {
+
+    min.set(sector.bounds.min[0], sector.bounds.min[1], sector.bounds.min[2]);
+    max.set(sector.bounds.max[0], sector.bounds.max[1], sector.bounds.max[2]);
+    bbox.makeEmpty();
+    bbox.expandByPoint(min);
+    bbox.expandByPoint(max);
+
+    if (!frustum.intersectsBox(bbox)) {
+      return false;
+    }
+
+    const sectorDiagonal = vec3.distance(sector.bounds.max, sector.bounds.min);
+    const fov = 75; // TODO get actual camera fov
+    const screenSize = 2.0 * distanceToCamera(sector) * Math.tan(fov / 2 * degToRadFactor);
+    const pixelSize = screenSize / 1080; // TODO use actual pixel count
+    const quadSize = (() => {
+      if (!sector.simple.sectorContents) {
+        return 0;
+      }
+      return sector.simple.sectorContents.gridIncrement;
+    })();
+
+    if (quadSize < 6 * pixelSize) {
+      return false;
+    }
+
+    sectors.push(sector);
+    return true;
+  });
+
   sectors.sort((l, r) => {
     return distanceToCamera(l) - distanceToCamera(r);
   });
-  const definitelyDetailed = new Set<number>(sectors.slice(0, 30).map(x => x.id));
+  const definitelyDetailed = new Set<number>(sectors.map(x => x.id));
   const result = determineSectorsQuality(scene, definitelyDetailed);
   return result;
 }
