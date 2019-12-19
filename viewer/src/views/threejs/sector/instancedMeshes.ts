@@ -11,6 +11,7 @@ const instancedMeshMaterial = new THREE.ShaderMaterial({
   extensions: {
     derivatives: true
   },
+  side: THREE.DoubleSide,
   fragmentShader: sectorShaders.instancedMesh.fragment,
   vertexShader: sectorShaders.instancedMesh.vertex
 });
