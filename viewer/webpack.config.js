@@ -1,19 +1,8 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WorkerPlugin = require('worker-plugin');
 const WasmPackPlugin = require("@wasm-tool/wasm-pack-plugin");
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
-const webpack = require('webpack');
-
-// The path to the ceisum source code
-const cesiumSource = 'node_modules/cesium/Source';
-const cesiumWorkers = '../Build/Cesium/Workers';
-
-function resolve(dir) {
-  return path.resolve(__dirname, dir);
-}
-
+// const logging = require('webpack/logging/runtime');
 /*
  * Set args on the command line using
  *
@@ -39,11 +28,11 @@ function arg(env, name, defaultValue) {
 module.exports = env => {
   const development = arg(env, "development", false);
 
-  console.log(
-    `Build config:
-    - development: ${development}
-    `
-  );
+  // logging.info(
+  //   `Build config:
+  //   - development: ${development}
+  //   `
+  // );
 
   const config = {
     mode: development ? "development" : "production",
@@ -77,7 +66,7 @@ module.exports = env => {
         }
       ],
     },
-    externals: development ? undefined : [nodeExternals()],
+    externals: [nodeExternals()],
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
     },
@@ -88,22 +77,22 @@ module.exports = env => {
       globalObject: `(typeof self !== 'undefined' ? self : this)`,
       libraryTarget: 'umd',
     },
-    devtool: development ? "inline-source-map" : "source-map",
+    devtool: development ? "inline-cheap-module-source-map" : "source-map",
     watchOptions: {
       aggregateTimeout: 1500,
       ignored: [
         'node_modules/',
       ],
     },
-    optimization: {
-      usedExports: true,
-    },
+    // optimization: {
+    //   usedExports: true,
+    // },
     plugins: [
       new WasmPackPlugin({
         crateDirectory: ".",
         forceMode: 'production',
       }),
-      new WorkerPlugin(),
+      new WorkerPlugin()
     ],
   };
 
