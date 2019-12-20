@@ -34,7 +34,6 @@
     "@types/jest": "^24.0.23",
     "@types/node": "^12.12.11",
     "@wasm-tool/wasm-pack-plugin": "^1.0.1",
-
     "copy-webpack-plugin": "^5.1.0",
     "file-loader": "^5.0.2",
     "glslify-loader": "^2.0.0",
@@ -56,10 +55,10 @@
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.9.0",
+    "webpack-log": "^3.0.1",
     "webpack-node-externals": "^1.7.2",
     "worker-plugin": "^3.2.0"
   },
-
   "dependencies": {
     "@cognite/potree-core": "^1.0.9",
     "@cognite/sdk": "^2.13.0",

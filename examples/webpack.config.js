@@ -2,6 +2,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
+const getLogger = require('webpack-log');
+const logger = getLogger('reveal-examples');
 
 // The path to the ceisum source code
 const cesiumSource = 'node_modules/cesium/Source';
@@ -34,77 +36,100 @@ function resolve(dir) {
   return path.resolve(__dirname, dir);
 }
 
-const enabledExamples = [
+const allExamples = [
   {
     name: "threejs-simple",
     title: "Simple",
     entry: './src/threejs/simple.ts',
-    template: 'template-example.ejs'
+    template: 'template-example.ejs',
+    type: 'threejs'
   },
   {
     name: "threejs-post-processing-effects",
     title: "Post processing effects",
     entry: './src/threejs/post-processing-effects.ts',
-    template: 'template-example.ejs'
+    template: 'template-example.ejs',
+    type: 'threejs'
   },
   {
     name: "threejs-with-pointcloud",
     title: "CAD model with point cloud",
     entry: './src/threejs/sector-with-pointcloud.ts',
-    template: 'template-example.ejs'
+    template: 'template-example.ejs',
+    type: 'threejs'
   },
   {
     name: "threejs-two-models",
     title: "Two models",
     entry: './src/threejs/two-models.ts',
-    template: './template-example.ejs'
+    template: './template-example.ejs',
+    type: 'threejs'
   },
   {
     name: "threejs-custom-scene-elements",
     title: "Custom ThreeJS scene elements",
     entry: './src/threejs/custom-scene-elements.ts',
-    template: './template-example.ejs'
+    template: './template-example.ejs',
+    type: 'threejs'
   },
   {
     name: "cesiumjs-basic",
     title: 'CesiumJS basic',
     entry: './src/cesiumjs/basic.ts',
-    template: './src/cesiumjs/template.ejs'
+    template: './src/cesiumjs/template.ejs',
+    type: 'cesium'
   },
 ];
 
-const examples = enabledExamples.map(example => {
-  const {name, title, entry, template} = example;
-  return {
-    name,
-    title,
-    entry,
-    template,
-    script: `${name}.js`,
-    page: `example-${name}.html`,
-  };
-});
-const exampleEntries = examples.reduce((entries, example) => {
-  const { entry, name } = example;
-  entries[name] = entry;
-  return entries;
-}, {});
-const examplePlugins = examples.map(example => {
-  const { page, script, title, template } = example;
-  return new HtmlWebpackPlugin({
-    templateParameters: {
-      'title': title,
-      'script': script
-    },
-    hash: true,
-    inject: false,
-    template: template,
-    filename: page,
-  });
-});
-
 module.exports = env => {
+  const buildCesiumExamples = arg(env, 'cesium', true);
+  const buildThreeJsExamples = arg(env, 'threejs', true);
   const development = arg(env, 'development', true);
+
+  logger.info("Build config:");
+  logger.info(`  - development: ${development}`);
+  logger.info(`  - threejs: ${buildThreeJsExamples}`);
+  logger.info(`  - cesium:  ${buildCesiumExamples}`);
+
+  const isExampleEnabled = example => {
+    return (example.type === 'cesium' && buildCesiumExamples) || 
+      (example.type === 'threejs' && buildThreeJsExamples);
+  }
+  const enabledExamples = allExamples.filter(isExampleEnabled);
+  console.log(enabledExamples.map(x => x.name));
+
+  const examples = enabledExamples.map(example => {
+    const {name, title, entry, template} = example;
+    return {
+      name,
+      title,
+      entry,
+      template,
+      script: `${name}.js`,
+      page: `example-${name}.html`,
+    };
+  });
+  const exampleEntries = examples.reduce((entries, example) => {
+    const { entry, name } = example;
+    entries[name] = entry;
+    return entries;
+  }, {});
+  const examplePlugins = examples.map(example => {
+    const { page, script, title, template } = example;
+    return new HtmlWebpackPlugin({
+      templateParameters: {
+        'title': title,
+        'script': script
+      },
+      hash: true,
+      inject: false,
+      template: template,
+      filename: page,
+    });
+  });
+  // console.log(examplePlugins);
+
+
 
   return {
     mode: development ? "development" : "production",
