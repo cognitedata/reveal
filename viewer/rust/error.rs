@@ -29,7 +29,7 @@ impl std::error::Error for ParserError {}
 impl From<i3df::error::Error> for ParserError {
     fn from(err: i3df::error::Error) -> ParserError {
         ParserError {
-            message: format!("i3df error: {}", err)
+            message: format!("i3df error: {}", err),
         }
     }
 }
@@ -37,7 +37,7 @@ impl From<i3df::error::Error> for ParserError {
 impl From<f3df::error::Error> for ParserError {
     fn from(err: f3df::error::Error) -> ParserError {
         ParserError {
-            message: format!("f3df error: {}", err)
+            message: format!("f3df error: {}", err),
         }
     }
 }

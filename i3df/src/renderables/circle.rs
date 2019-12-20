@@ -1,4 +1,6 @@
-use crate::renderables::{Circle, CircleInfo, GeometryCollection, PrimitiveCollections, ToRenderables};
+use crate::renderables::{
+    Circle, CircleInfo, GeometryCollection, PrimitiveCollections, ToRenderables,
+};
 
 impl ToRenderables for crate::Circle {
     fn to_renderables(&self, collections: &mut PrimitiveCollections) {
@@ -11,7 +13,5 @@ impl ToRenderables for crate::Circle {
             normal: self.normal.into(),
             radius: self.radius,
         }));
-
     }
 }
-
