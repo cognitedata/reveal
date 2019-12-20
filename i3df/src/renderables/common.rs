@@ -9,9 +9,7 @@ pub struct GeneralRingInstanceMatrixInfo {
 }
 
 // NOTE do not flip the normal, it will mess up the rotation
-pub fn create_general_ring_instance_matrix(
-    data: &GeneralRingInstanceMatrixInfo
-) -> Matrix4 {
+pub fn create_general_ring_instance_matrix(data: &GeneralRingInstanceMatrixInfo) -> Matrix4 {
     let local_y_axis: Vector3 = data.normal.cross(&data.local_x_axis);
 
     // TODO verify construction order
