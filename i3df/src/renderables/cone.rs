@@ -195,20 +195,22 @@ impl ToRenderables for crate::ClosedGeneralCone {
         let rotation = Rotation3::rotation_between(&z_axis, &normal).unwrap();
         let local_x_axis: Vector3 = rotation.transform_vector(&x_axis);
 
-        let instance_matrix_a = create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
-            center: center_a,
-            normal: center_axis,
-            local_x_axis,
-            radius_a: self.radius_a,
-            radius_b: self.radius_a,
-        });
-        let instance_matrix_b = create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
-            center: center_b,
-            normal: center_axis,
-            local_x_axis,
-            radius_a: self.radius_b,
-            radius_b: self.radius_b,
-        });
+        let instance_matrix_a =
+            create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
+                center: center_a,
+                normal: center_axis,
+                local_x_axis,
+                radius_a: self.radius_a,
+                radius_b: self.radius_a,
+            });
+        let instance_matrix_b =
+            create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
+                center: center_b,
+                normal: center_axis,
+                local_x_axis,
+                radius_a: self.radius_b,
+                radius_b: self.radius_b,
+            });
 
         collections.cone_collection.push(Cone {
             node_id: self.node_id,
@@ -269,21 +271,23 @@ impl ToRenderables for crate::SolidOpenGeneralCone {
         let rotation = Rotation3::rotation_between(&z_axis, &normal).unwrap();
         let local_x_axis: Vector3 = rotation.transform_vector(&x_axis);
 
-        let instance_matrix_a = create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
-            center: center_a,
-            normal: center_axis,
-            local_x_axis,
-            radius_a: self.radius_a,
-            radius_b: self.radius_a,
-        });
+        let instance_matrix_a =
+            create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
+                center: center_a,
+                normal: center_axis,
+                local_x_axis,
+                radius_a: self.radius_a,
+                radius_b: self.radius_a,
+            });
 
-        let instance_matrix_b = create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
-            center: center_b,
-            normal: center_axis,
-            local_x_axis,
-            radius_a: self.radius_b,
-            radius_b: self.radius_b,
-        });
+        let instance_matrix_b =
+            create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
+                center: center_b,
+                normal: center_axis,
+                local_x_axis,
+                radius_a: self.radius_b,
+                radius_b: self.radius_b,
+            });
 
         collections.cone_collection.push(Cone {
             node_id: self.node_id,
@@ -356,21 +360,23 @@ impl ToRenderables for crate::SolidClosedGeneralCone {
         let rotation = Rotation3::rotation_between(&z_axis, &normal).unwrap();
         let local_x_axis: Vector3 = rotation.transform_vector(&x_axis);
 
-        let instance_matrix_a = create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
-            center: center_a,
-            normal: center_axis,
-            local_x_axis,
-            radius_a: self.radius_a,
-            radius_b: self.radius_a,
-        });
+        let instance_matrix_a =
+            create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
+                center: center_a,
+                normal: center_axis,
+                local_x_axis,
+                radius_a: self.radius_a,
+                radius_b: self.radius_a,
+            });
 
-        let instance_matrix_b = create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
-            center: center_b,
-            normal: center_axis,
-            local_x_axis,
-            radius_a: self.radius_b,
-            radius_b: self.radius_b,
-        });
+        let instance_matrix_b =
+            create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
+                center: center_b,
+                normal: center_axis,
+                local_x_axis,
+                radius_a: self.radius_b,
+                radius_b: self.radius_b,
+            });
 
         collections.cone_collection.push(Cone {
             node_id: self.node_id,

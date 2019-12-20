@@ -109,7 +109,12 @@ macro_rules! make_func_vec {
     }};
 
     ($self:ident, $field_name:ident, Texture, JsValue) => {{
-        $self.$field_name.iter().map(JsValue::from_serde).filter_map(Result::ok).collect()
+        $self
+            .$field_name
+            .iter()
+            .map(JsValue::from_serde)
+            .filter_map(Result::ok)
+            .collect()
     }};
 
     // TODO re-evaluate safety of this

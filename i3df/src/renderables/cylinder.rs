@@ -2,8 +2,8 @@ use crate::renderables::common::{
     create_general_ring_instance_matrix, GeneralRingInstanceMatrixInfo,
 };
 use crate::renderables::{
-    Circle, CircleInfo, Cone, GeneralCylinder, GeneralRing, GeometryCollection, PrimitiveCollections,
-    ToRenderables, Trapezium,
+    Circle, CircleInfo, Cone, GeneralCylinder, GeneralRing, GeometryCollection,
+    PrimitiveCollections, ToRenderables, Trapezium,
 };
 use crate::{Matrix, Rotation3, Vector3, Vector4};
 use std::f64::consts::PI;
@@ -149,7 +149,7 @@ impl ToRenderables for crate::ClosedCylinder {
             normal: center_axis,
             radius: self.radius,
         }));
-        collections.circle_collection.push(Circle::new(&CircleInfo{
+        collections.circle_collection.push(Circle::new(&CircleInfo {
             node_id: self.node_id,
             tree_index: self.tree_index,
             color: self.color,

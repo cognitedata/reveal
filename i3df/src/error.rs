@@ -24,7 +24,7 @@ impl std::error::Error for Error {}
 impl From<std::io::Error> for Error {
     fn from(err: std::io::Error) -> Error {
         Error {
-            message: format!("IO error {}", err)
+            message: format!("IO error {}", err),
         }
     }
 }
