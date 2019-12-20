@@ -68,7 +68,7 @@ describe('consumeSectorDetailed', () => {
     expect(geometries.length).toBe(1);
   });
 
-  test('valid input, produces geometry', () => {
+  test('empty sector, produces no geometry', () => {
     // Arrange
     const sector = createEmptySector();
 
@@ -76,7 +76,7 @@ describe('consumeSectorDetailed', () => {
     consumeSectorDetailed(sectorId, sector, metadata, node);
 
     // Assert
-    expect(node.children).not.toBeEmpty();
+    expect(node.children).toBeEmpty();
   });
 });
 

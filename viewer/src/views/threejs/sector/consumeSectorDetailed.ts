@@ -16,25 +16,20 @@ export function consumeSectorDetailed(
   metadata: SectorMetadata,
   sectorNode: SectorNode
 ) {
-  const group = new THREE.Group();
-  group.name = `Triangle meshes for sector ${sectorId}`;
-
   const bounds = toThreeJsBox3(metadata.bounds);
   const boundsRenderer = new THREE.Box3Helper(bounds);
   boundsRenderer.name = `Bounding box ${sectorId}`;
   // group.add(boundsRenderer);
 
   for (const primtiveRoot of createPrimitives(sector)) {
-    group.add(primtiveRoot);
+    sectorNode.add(primtiveRoot);
   }
   const triangleMeshes = createTriangleMeshes(sector.triangleMeshes, bounds);
   for (const triangleMesh of triangleMeshes) {
-    group.add(triangleMesh);
+    sectorNode.add(triangleMesh);
   }
   const instanceMeshes = createInstancedMeshes(sector.instanceMeshes, bounds);
   for (const instanceMesh of instanceMeshes) {
-    group.add(instanceMesh);
+    sectorNode.add(instanceMesh);
   }
-
-  sectorNode.add(group);
 }
