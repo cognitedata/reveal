@@ -20,21 +20,23 @@ impl ToRenderables for crate::ClosedExtrudedRingSegment {
 
         let thickness = (self.outer_radius - self.inner_radius) / self.outer_radius;
 
-        let instance_matrix_a = create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
-            center: center_a,
-            normal: center_axis,
-            local_x_axis,
-            radius_a: self.outer_radius,
-            radius_b: self.outer_radius,
-        });
+        let instance_matrix_a =
+            create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
+                center: center_a,
+                normal: center_axis,
+                local_x_axis,
+                radius_a: self.outer_radius,
+                radius_b: self.outer_radius,
+            });
 
-        let instance_matrix_b = create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
-            center: center_b,
-            normal: center_axis,
-            local_x_axis,
-            radius_a: self.outer_radius,
-            radius_b: self.outer_radius,
-        });
+        let instance_matrix_b =
+            create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
+                center: center_b,
+                normal: center_axis,
+                local_x_axis,
+                radius_a: self.outer_radius,
+                radius_b: self.outer_radius,
+            });
 
         // rings
         collections.general_ring_collection.push(GeneralRing {
@@ -155,21 +157,23 @@ impl ToRenderables for crate::ExtrudedRing {
         let rotation_angle = 0.0;
         let arc_angle = 2.0 * PI as f32;
 
-        let instance_matrix_a = create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
-            center: center_a,
-            normal: center_axis,
-            local_x_axis,
-            radius_a: self.outer_radius,
-            radius_b: self.outer_radius,
-        });
+        let instance_matrix_a =
+            create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
+                center: center_a,
+                normal: center_axis,
+                local_x_axis,
+                radius_a: self.outer_radius,
+                radius_b: self.outer_radius,
+            });
 
-        let instance_matrix_b = create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
-            center: center_b,
-            normal: center_axis,
-            local_x_axis,
-            radius_a: self.outer_radius,
-            radius_b: self.outer_radius,
-        });
+        let instance_matrix_b =
+            create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
+                center: center_b,
+                normal: center_axis,
+                local_x_axis,
+                radius_a: self.outer_radius,
+                radius_b: self.outer_radius,
+            });
 
         collections.general_ring_collection.push(GeneralRing {
             node_id: self.node_id,
@@ -243,21 +247,23 @@ impl ToRenderables for crate::OpenExtrudedRingSegment {
 
         let thickness = (self.outer_radius - self.inner_radius) / self.outer_radius;
 
-        let instance_matrix_a = create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
-            center: center_a,
-            normal: center_axis,
-            local_x_axis,
-            radius_a: self.outer_radius,
-            radius_b: self.outer_radius,
-        });
+        let instance_matrix_a =
+            create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
+                center: center_a,
+                normal: center_axis,
+                local_x_axis,
+                radius_a: self.outer_radius,
+                radius_b: self.outer_radius,
+            });
 
-        let instance_matrix_b = create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
-            center: center_b,
-            normal: center_axis,
-            local_x_axis,
-            radius_a: self.outer_radius,
-            radius_b: self.outer_radius,
-        });
+        let instance_matrix_b =
+            create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
+                center: center_b,
+                normal: center_axis,
+                local_x_axis,
+                radius_a: self.outer_radius,
+                radius_b: self.outer_radius,
+            });
 
         collections.general_ring_collection.push(GeneralRing {
             node_id: self.node_id,
