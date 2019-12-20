@@ -24,7 +24,8 @@ impl ToRenderables for crate::TriangleMesh {
 impl ToRenderables for crate::InstancedMesh {
     fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let translation_matrix = Translation3::from(self.translation());
-        let rotation_matrix = Rotation3::from_euler_angles(self.rotation_x, self.rotation_y, self.rotation_z);
+        let rotation_matrix =
+            Rotation3::from_euler_angles(self.rotation_x, self.rotation_y, self.rotation_z);
         let scale_matrix = Matrix4::new_nonuniform_scaling(&self.scale());
 
         let instance_matrix =

@@ -1,16 +1,16 @@
 use console_error_panic_hook;
-use std::panic;
-use js_sys::{Float32Array};
+use js_sys::Float32Array;
 use serde::{Deserialize, Serialize};
-use wasm_bindgen::JsValue;
+use std::panic;
 use wasm_bindgen::prelude::*;
+use wasm_bindgen::JsValue;
 
 // From reveal-rs
-use i3df;
 use f3df;
+use i3df;
 use openctm;
-use serde_bytes;
 use serde;
+use serde_bytes;
 
 #[macro_use]
 pub mod error;
@@ -85,9 +85,7 @@ pub fn parse_ctm(input: &[u8]) -> Result<CtmResult, JsValue> {
     let cursor = std::io::Cursor::new(input);
     let file = openctm::parse(cursor).unwrap();
 
-    let result = CtmResult {
-        file,
-    };
+    let result = CtmResult { file };
 
     Ok(result)
 }
@@ -109,16 +107,13 @@ pub fn parse_root_sector(input: &[u8]) -> Result<SectorHandle, JsValue> {
     // TODO see if it is possible to simplify this so we can use the ? operator instead
     let sector = match i3df::parse_root_sector(cursor) {
         Ok(x) => x,
-        Err(e) => return Err(JsValue::from(error::ParserError::from(e)))
+        Err(e) => return Err(JsValue::from(error::ParserError::from(e))),
     };
-    Ok(SectorHandle {
-        sector
-    })
+    Ok(SectorHandle { sector })
 }
 
 #[wasm_bindgen]
 pub fn parse_sector(root_sector: &SectorHandle, input: &[u8]) -> Result<SectorHandle, JsValue> {
-
     // TODO read https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/building-your-project.html
     // and see if this can be moved to one common place
     panic::set_hook(Box::new(console_error_panic_hook::hook));
@@ -132,11 +127,9 @@ pub fn parse_sector(root_sector: &SectorHandle, input: &[u8]) -> Result<SectorHa
 
     let sector = match i3df::parse_sector(attributes, cursor) {
         Ok(x) => x,
-        Err(e) => return Err(JsValue::from(error::ParserError::from(e)))
+        Err(e) => return Err(JsValue::from(error::ParserError::from(e))),
     };
-    Ok(SectorHandle {
-        sector
-    })
+    Ok(SectorHandle { sector })
 }
 
 #[wasm_bindgen]
@@ -154,7 +147,7 @@ pub fn parse_and_convert_f3df(input: &[u8]) -> Result<Float32Array, JsValue> {
 
     let sector = match f3df::parse_sector(cursor) {
         Ok(x) => x,
-        Err(e) => return Err(JsValue::from(error::ParserError::from(e)))
+        Err(e) => return Err(JsValue::from(error::ParserError::from(e))),
     };
 
     let faces = f3df::renderables::convert_sector(&sector);
@@ -168,11 +161,9 @@ pub fn parse_and_convert_f3df(input: &[u8]) -> Result<Float32Array, JsValue> {
         // However, this is safe because we are making a copy below.
         // Otherwise, we would not know when to free the memory on our end.
         let pointer = faces.as_ptr() as *const f32;
-        let length = faces.len() * std::mem::size_of::<f3df::renderables::Face>() / std::mem::size_of::<f32>();
-        std::slice::from_raw_parts(
-            pointer,
-            length
-        )
+        let length = faces.len() * std::mem::size_of::<f3df::renderables::Face>()
+            / std::mem::size_of::<f32>();
+        std::slice::from_raw_parts(pointer, length)
     };
 
     // Returning a Vec<f32> here would lead to copying on the JS side instead.
