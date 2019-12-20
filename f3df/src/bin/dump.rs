@@ -3,7 +3,7 @@ use serde_json;
 use serde_yaml;
 use std::error::Error;
 use std::fs::File;
-use std::io::{stdin, stdout, Read, BufReader};
+use std::io::{stdout, BufReader};
 use structopt::StructOpt;
 
 use f3df;
@@ -55,26 +55,24 @@ fn run() -> Result<(), Box<dyn Error>> {
     let file_sector = f3df::parse_sector(reader)?;
     let sector: Output = if to_renderables {
         Output::RenderableSector(f3df::renderables::convert_sector(&file_sector))
-    } else {
-        if options.stats {
-            Output::FileSectorStats {
-                sector_id: file_sector.sector_id,
-                parent_sector_id: file_sector.parent_sector_id,
-                bbox_min: file_sector.bbox_min,
-                bbox_max: file_sector.bbox_max,
-                sector_contents: match file_sector.sector_contents {
-                    None => None,
-                    Some(x) => Some(FileSectorContentsStats {
-                        grid_size: x.grid_size,
-                        grid_origin: x.grid_origin,
-                        grid_increment: x.grid_increment,
-                        node_count: x.nodes.len(),
-                    }),
-                },
-            }
-        } else {
-            Output::FileSector(file_sector)
+    } else if options.stats {
+        Output::FileSectorStats {
+            sector_id: file_sector.sector_id,
+            parent_sector_id: file_sector.parent_sector_id,
+            bbox_min: file_sector.bbox_min,
+            bbox_max: file_sector.bbox_max,
+            sector_contents: match file_sector.sector_contents {
+                None => None,
+                Some(x) => Some(FileSectorContentsStats {
+                    grid_size: x.grid_size,
+                    grid_origin: x.grid_origin,
+                    grid_increment: x.grid_increment,
+                    node_count: x.nodes.len(),
+                }),
+            },
         }
+    } else {
+        Output::FileSector(file_sector)
     };
 
     if use_compact {
