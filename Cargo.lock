@@ -417,8 +417,8 @@ dependencies = [
 
 [[package]]
 name = "lzma-rs"
-version = "0.1.1"
-source = "git+git://github.com/dragly/lzma-rs/?rev=5bfb9225bba49e6d58684d3fb9075e4c539fecf4#5bfb9225bba49e6d58684d3fb9075e4c539fecf4"
+version = "0.1.2"
+source = "git+git://github.com/dragly/lzma-rs/?rev=0117fcdecf55de9a7a95d855d0be388afd109aae#0117fcdecf55de9a7a95d855d0be388afd109aae"
 dependencies = [
  "byteorder 1.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "crc 1.8.1 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -550,12 +550,12 @@ dependencies = [
 [[package]]
 name = "openctm"
 version = "0.1.0"
-source = "git+https://github.com/cognitedata/openctm-rs?rev=326e8851d3d075b91b8374e4fac179305f8291ea#326e8851d3d075b91b8374e4fac179305f8291ea"
+source = "git+https://github.com/cognitedata/openctm-rs?rev=761789177b51f640f62ac265ab9da4ed462563cb#761789177b51f640f62ac265ab9da4ed462563cb"
 dependencies = [
  "byteorder 1.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "clap 2.33.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)",
- "lzma-rs 0.1.1 (git+git://github.com/dragly/lzma-rs/?rev=5bfb9225bba49e6d58684d3fb9075e4c539fecf4)",
+ "lzma-rs 0.1.2 (git+git://github.com/dragly/lzma-rs/?rev=0117fcdecf55de9a7a95d855d0be388afd109aae)",
  "num 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "num-derive 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "num-traits 0.2.10 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -824,7 +824,7 @@ dependencies = [
  "f3df 0.1.0",
  "i3df 0.1.0",
  "js-sys 0.3.32 (registry+https://github.com/rust-lang/crates.io-index)",
- "openctm 0.1.0 (git+https://github.com/cognitedata/openctm-rs?rev=326e8851d3d075b91b8374e4fac179305f8291ea)",
+ "openctm 0.1.0 (git+https://github.com/cognitedata/openctm-rs?rev=761789177b51f640f62ac265ab9da4ed462563cb)",
  "serde 1.0.104 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde-wasm-bindgen 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_bytes 0.11.3 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1321,7 +1321,7 @@ dependencies = [
 "checksum linked-hash-map 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)" = "ae91b68aebc4ddb91978b11a1b02ddd8602a05ec19002801c5666000e05e0f83"
 "checksum log 0.3.9 (registry+https://github.com/rust-lang/crates.io-index)" = "e19e8d5c34a3e0e2223db8e060f9e8264aeeb5c5fc64a4ee9965c062211c024b"
 "checksum log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)" = "14b6052be84e6b71ab17edffc2eeabf5c2c3ae1fdb464aae35ac50c67a44e1f7"
-"checksum lzma-rs 0.1.1 (git+git://github.com/dragly/lzma-rs/?rev=5bfb9225bba49e6d58684d3fb9075e4c539fecf4)" = "<none>"
+"checksum lzma-rs 0.1.2 (git+git://github.com/dragly/lzma-rs/?rev=0117fcdecf55de9a7a95d855d0be388afd109aae)" = "<none>"
 "checksum matrixmultiply 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)" = "d4f7ec66360130972f34830bfad9ef05c6610a43938a467bcc9ab9369ab3478f"
 "checksum memchr 2.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "88579771288728879b57485cc7d6b07d648c9f0141eb955f8ab7f9d45394468e"
 "checksum nalgebra 0.19.0 (registry+https://github.com/rust-lang/crates.io-index)" = "0abb021006c01b126a936a8dd1351e0720d83995f4fc942d0d426c654f990745"
@@ -1334,7 +1334,7 @@ dependencies = [
 "checksum num-iter 0.1.39 (registry+https://github.com/rust-lang/crates.io-index)" = "76bd5272412d173d6bf9afdf98db8612bbabc9a7a830b7bfc9c188911716132e"
 "checksum num-rational 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "f2885278d5fe2adc2f75ced642d52d879bffaceb5a2e0b1d4309ffdfb239b454"
 "checksum num-traits 0.2.10 (registry+https://github.com/rust-lang/crates.io-index)" = "d4c81ffc11c212fa327657cb19dd85eb7419e163b5b076bede2bdb5c974c07e4"
-"checksum openctm 0.1.0 (git+https://github.com/cognitedata/openctm-rs?rev=326e8851d3d075b91b8374e4fac179305f8291ea)" = "<none>"
+"checksum openctm 0.1.0 (git+https://github.com/cognitedata/openctm-rs?rev=761789177b51f640f62ac265ab9da4ed462563cb)" = "<none>"
 "checksum ppv-lite86 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)" = "74490b50b9fbe561ac330df47c08f3f33073d2d00c150f719147d7c54522fa1b"
 "checksum proc-macro-error 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)" = "aeccfe4d5d8ea175d5f0e4a2ad0637e0f4121d63bd99d356fb1f39ab2e7c6097"
 "checksum proc-macro2 0.4.30 (registry+https://github.com/rust-lang/crates.io-index)" = "cf3d2011ab5c909338f7887f4fc896d35932e29146c12c8d01da6b22a80ba759"
