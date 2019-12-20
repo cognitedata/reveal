@@ -1,6 +1,6 @@
 #[derive(Debug, Clone)]
 pub struct Error {
-    message: String
+    message: String,
 }
 
 impl Error {
@@ -17,14 +17,12 @@ impl std::fmt::Display for Error {
     }
 }
 
-impl std::error::Error for Error {
-
-}
+impl std::error::Error for Error {}
 
 impl From<std::io::Error> for Error {
     fn from(err: std::io::Error) -> Error {
         Error {
-            message: format!("IO error {}", err)
+            message: format!("IO error {}", err),
         }
     }
 }

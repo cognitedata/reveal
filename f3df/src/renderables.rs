@@ -71,8 +71,8 @@ pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
                 Some(x) => x,
                 None => match face.color {
                     Some(y) => y,
-                    None => [255, 0, 255]
-                }
+                    None => [255, 0, 255],
+                },
             };
 
             let center = Vector3::new(

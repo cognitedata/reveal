@@ -23,9 +23,7 @@ struct Options {
 #[derive(Deserialize, Serialize)]
 enum Output {
     FileSector(Box<i3df::Sector>),
-    FileSectorStats {
-        size: u64,
-    },
+    FileSectorStats { size: u64 },
     RenderableSector(Box<i3df::renderables::Sector>),
     RenderableSectorStats(i3df::renderables::SectorStatistics),
 }
@@ -41,7 +39,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let root_sector = i3df::parse_root_sector(root_reader)?;
     let attributes = match root_sector.header.attributes {
         Some(x) => x,
-        None => return Err(Box::new(i3df::error::Error::new("Attributes missing on root sector")))
+        None => {
+            return Err(Box::new(i3df::error::Error::new(
+                "Attributes missing on root sector",
+            )))
+        }
     };
     let raw_sector = i3df::parse_sector(&attributes, sector_reader)?;
     let sector: Output = if options.renderables {

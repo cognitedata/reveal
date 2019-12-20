@@ -35,7 +35,6 @@ pub struct Sector {
     pub sector_contents: Option<SectorContents>,
 }
 
-
 #[derive(Debug, Serialize)]
 pub struct SectorContents {
     pub grid_size: [u32; 3],
@@ -43,7 +42,6 @@ pub struct SectorContents {
     pub grid_increment: f32,
     pub nodes: Vec<Node>,
 }
-
 
 #[derive(Debug, Serialize)]
 pub struct Node {
@@ -136,7 +134,7 @@ pub fn parse_sector(reader: impl Read) -> Result<Sector, Error> {
             bbox_min: [bbox_min_x, bbox_min_y, bbox_min_z],
             bbox_max: [bbox_max_x, bbox_max_y, bbox_max_z],
             sector_contents: None,
-        })
+        });
     }
 
     let grid_size_x = input.read_u32::<LittleEndian>()?;
@@ -157,7 +155,8 @@ pub fn parse_sector(reader: impl Read) -> Result<Sector, Error> {
         // TODO replace with from_bits and return error if unknown bits found
         let compress_type = CompressFlags::from_bits_truncate(input.read_u8()?);
 
-        let has_color_on_each_cell = compress_type.intersects(CompressFlags::HAS_COLOR_ON_EACH_CELL);
+        let has_color_on_each_cell =
+            compress_type.intersects(CompressFlags::HAS_COLOR_ON_EACH_CELL);
 
         let node_color = if has_color_on_each_cell {
             None
@@ -216,6 +215,6 @@ pub fn parse_sector(reader: impl Read) -> Result<Sector, Error> {
             grid_origin: [grid_origin_x, grid_origin_y, grid_origin_z],
             grid_increment,
             nodes,
-        })
+        }),
     })
 }
