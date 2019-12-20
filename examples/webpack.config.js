@@ -1,19 +1,14 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const WorkerPlugin = require('worker-plugin');
-const WasmPackPlugin = require("@wasm-tool/wasm-pack-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
-const nodeExternals = require('webpack-node-externals');
 const webpack = require('webpack');
+const getLogger = require('webpack-log');
+const logger = getLogger('reveal-examples');
 
 // The path to the ceisum source code
 const cesiumSource = 'node_modules/cesium/Source';
 const cesiumWorkers = '../Build/Cesium/Workers';
 const revealSource = 'node_modules/@cognite/reveal/dist';
-
-function resolve(dir) {
-  return path.resolve(__dirname, dir);
-}
 
 /*
  * Set args on the command line using
@@ -37,27 +32,113 @@ function arg(env, name, defaultValue) {
   return env[name];
 }
 
+function resolve(dir) {
+  return path.resolve(__dirname, dir);
+}
+
+const allExamples = [
+  {
+    name: "threejs-simple",
+    title: "Simple",
+    entry: './src/threejs/simple.ts',
+    template: 'template-example.ejs',
+    type: 'threejs'
+  },
+  {
+    name: "threejs-post-processing-effects",
+    title: "Post processing effects",
+    entry: './src/threejs/post-processing-effects.ts',
+    template: 'template-example.ejs',
+    type: 'threejs'
+  },
+  {
+    name: "threejs-with-pointcloud",
+    title: "CAD model with point cloud",
+    entry: './src/threejs/sector-with-pointcloud.ts',
+    template: 'template-example.ejs',
+    type: 'threejs'
+  },
+  {
+    name: "threejs-two-models",
+    title: "Two models",
+    entry: './src/threejs/two-models.ts',
+    template: './template-example.ejs',
+    type: 'threejs'
+  },
+  {
+    name: "threejs-custom-scene-elements",
+    title: "Custom ThreeJS scene elements",
+    entry: './src/threejs/custom-scene-elements.ts',
+    template: './template-example.ejs',
+    type: 'threejs'
+  },
+  {
+    name: "cesiumjs-basic",
+    title: 'CesiumJS basic',
+    entry: './src/cesiumjs/basic.ts',
+    template: './src/cesiumjs/template.ejs',
+    type: 'cesium'
+  },
+];
+
 module.exports = env => {
-  const development = arg(env, "development", false);
-  const threeEnabled = arg(env, "three", true);
-  const cesiumEnabled = arg(env, "cesium", true);
+  const buildCesiumExamples = arg(env, 'cesium', true);
+  const buildThreeJsExamples = arg(env, 'threejs', true);
+  const development = arg(env, 'development', true);
 
-  console.log(
-    `Build config:
-    - development: ${development}
-    - Three JS support: ${threeEnabled}
-    - Cesium support: ${cesiumEnabled}
-    `
-  );
+  logger.info("Build config:");
+  logger.info(`  - development: ${development}`);
+  logger.info(`  - threejs: ${buildThreeJsExamples}`);
+  logger.info(`  - cesium:  ${buildCesiumExamples}`);
 
-  const config = {
+  const isExampleEnabled = example => {
+    return (example.type === 'cesium' && buildCesiumExamples) || 
+      (example.type === 'threejs' && buildThreeJsExamples);
+  }
+  const enabledExamples = allExamples.filter(isExampleEnabled);
+  console.log(enabledExamples.map(x => x.name));
+
+  const examples = enabledExamples.map(example => {
+    const {name, title, entry, template} = example;
+    return {
+      name,
+      title,
+      entry,
+      template,
+      script: `${name}.js`,
+      page: `example-${name}.html`,
+    };
+  });
+  const exampleEntries = examples.reduce((entries, example) => {
+    const { entry, name } = example;
+    entries[name] = entry;
+    return entries;
+  }, {});
+  const examplePlugins = examples.map(example => {
+    const { page, script, title, template } = example;
+    return new HtmlWebpackPlugin({
+      templateParameters: {
+        'title': title,
+        'script': script
+      },
+      hash: true,
+      inject: false,
+      template: template,
+      filename: page,
+    });
+  });
+  // console.log(examplePlugins);
+
+
+
+  return {
     mode: development ? "development" : "production",
-    entry: {},
-    target: "node",
+    entry: exampleEntries,
+    target: "web",
     module: {
       rules: [
         {
-          test: /node_modules\/@cognite\/reveal\/dist\/.+\.(js|map)$/, // TODO consider adding ts
+          test: /node_modules\/@cognite\/reveal\/dist\/.+\.(js|map)$/, // Consider adding ts
           use: ['source-map-loader'],
           enforce: 'pre',
         },
@@ -76,6 +157,10 @@ module.exports = env => {
           ],
         },
         {
+          test: /\.css$/,
+          use: [ 'style-loader', 'css-loader' ]
+        },
+        {
           test: /\.(glsl|vert|frag)$/,
           exclude: '/node_modules/',
           use: [
@@ -85,7 +170,6 @@ module.exports = env => {
         }
       ],
     },
-    externals: development ? undefined : [nodeExternals()],
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
       symlinks: false, // necessary because we symlink the parent folder - source maps fail otherwise
@@ -97,7 +181,7 @@ module.exports = env => {
       globalObject: `(typeof self !== 'undefined' ? self : this)`,
       libraryTarget: 'umd',
     },
-    devtool: development ? "inline-source-map" : "source-map",
+    devtool: development ? "cheap-module-eval-source-map" : "source-map",
     watchOptions: {
       aggregateTimeout: 1500,
       ignored: ['node_modules/']
@@ -108,129 +192,37 @@ module.exports = env => {
       contentBase: [
         resolve('public/'),
         resolve('dist/'),
+        resolve('node_modules/cesium/Source/')
       ]
     },
     optimization: {
       usedExports: true,
     },
+    amd: {
+      // Enable webpack-friendly use of require in Cesium
+      toUrlUndefined: true
+    },
     plugins: [
       new CopyWebpackPlugin([
         {from: path.join(revealSource, "**/*.wasm"), to: ".", flatten: true},
         {from: path.join(revealSource, "**/*.worker.js"), to: ".", flatten: true}
-      ])
-    ]
+      ]),
+      new CopyWebpackPlugin([{ from: path.join(cesiumSource, cesiumWorkers), to: 'Workers' } ]),
+      new CopyWebpackPlugin([{ from: cesiumSource, to: 'Cesium' } ]),
+      new webpack.DefinePlugin({
+          CESIUM_BASE_URL: JSON.stringify('/')
+      }),
+
+      // Examples and index
+      new HtmlWebpackPlugin({
+        templateParameters: {
+          'examples': examples,
+        },
+        hash: true,
+        inject: false,
+        template: 'template-index.ejs',
+      }),
+      ...examplePlugins
+    ],
   };
-
-  if (cesiumEnabled) {
-    // For the devServer, we need to resolve files in the Cesium source as well
-    config.devServer.contentBase.push(resolve('node_modules/cesium/Source/'));
-    // The Cesium workers need to be copied manually
-    config.plugins.push(new CopyWebpackPlugin([{ from: path.join(cesiumSource, cesiumWorkers), to: 'Workers' } ]));
-    config.plugins.push(new CopyWebpackPlugin([{ from: cesiumSource, to: 'Cesium' } ]));
-    config.plugins.push(new webpack.DefinePlugin({
-        CESIUM_BASE_URL: JSON.stringify('/')
-      })
-    );
-  }
-
-  if (development) {
-    config.target = 'web';
-    let enabledExamples = [];
-
-    if (cesiumEnabled) {
-      enabledExamples = enabledExamples.concat([
-        {
-          name: "cesiumjs-basic",
-          title: 'CesiumJS basic',
-          entry: './src/cesiumjs/basic.ts',
-          template: './src/cesiumjs/template.ejs'
-        },
-      ]);
-    }
-    if (threeEnabled) {
-      enabledExamples = enabledExamples.concat([
-        {
-          name: "threejs-simple",
-          title: "Simple",
-          entry: './src/threejs/simple.ts',
-          template: 'template-example.ejs'
-        },
-        {
-          name: "threejs-post-processing-effects",
-          title: "Post processing effects",
-          entry: './src/threejs/post-processing-effects.ts',
-          template: 'template-example.ejs'
-        },
-        {
-          name: "threejs-with-pointcloud",
-          title: "CAD model with point cloud",
-          entry: './src/threejs/sector-with-pointcloud.ts',
-          template: './template-example.ejs'
-        },
-        {
-          name: "threejs-two-models",
-          title: "Two models",
-          entry: './src/threejs/two-models.ts',
-          template: './template-example.ejs'
-        },
-        {
-          name: "threejs-custom-scene-elements",
-          title: "Custom ThreeJS scene elements",
-          entry: './src/threejs/custom-scene-elements.ts',
-          template: './template-example.ejs'
-        },
-      ]);
-    }
-
-    if (enabledExamples.length < 1) {
-      console.log(`No examples enabled!`);
-    } else {
-      console.log(`Enabled examples:`);
-    }
-
-    for (const example of enabledExamples) {
-      console.log(`- ${example.name}`);
-    }
-
-    const examples = enabledExamples.map(example => {
-      const {name, title, entry, template} = example;
-      return {
-        name,
-        title,
-        entry,
-        template,
-        script: `${name}.js`,
-        page: `example-${name}.html`,
-      };
-    });
-
-    for (const example of examples) {
-      const { entry, name, page, script, title, template } = example;
-      config.entry[name] = entry;
-      config.plugins.push(
-        new HtmlWebpackPlugin({
-          templateParameters: {
-            'title': title,
-            'script': script
-          },
-          hash: true,
-          inject: false,
-          template: template,
-          filename: page,
-        })
-      );
-    }
-
-    config.plugins.push(new HtmlWebpackPlugin({
-      templateParameters: {
-        'examples': examples,
-      },
-      hash: true,
-      inject: false,
-      template: 'template-index.ejs',
-    }));
-  }
-
-  return config;
 };
-
