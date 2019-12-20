@@ -6,19 +6,31 @@ import { RevealSector3D } from '@cognite/sdk';
 import { vec3, mat4 } from 'gl-matrix';
 import { SectorMetadata, SectorScene } from '../../../models/sector/types';
 import { Box3 } from '../../../utils/Box3';
-import { SimpleSector3D } from '../../local/sector/loadLocalSimpleSectorMetadata';
+import { LocalSimpleSectorMetadataResponse } from '../../local/sector/loadLocalSimpleSectorMetadata';
 
-export function buildSectorMetadata(sectors: RevealSector3D[], simpleSectors: SimpleSector3D[]): SectorScene {
-  const simpleSectorsMetadata = simpleSectors.reduce((map, x) => {
-    map.set(x.id, x);
-    return map;
-  }, new Map<number, SimpleSector3D>());
-
+export function buildSectorMetadata(
+  sectors: RevealSector3D[],
+  simpleSectors: Map<number, LocalSimpleSectorMetadataResponse>
+): SectorScene {
   const sectorsMetadata = sectors.reduce((map, x) => {
-    const simpleSector = simpleSectorsMetadata.get(x.id);
+    const simpleSector = simpleSectors.get(x.id);
     if (!simpleSector) {
       throw new Error(`Could not find corresponding simple sector for sector with ID ${x.id}`);
     }
+    const simple = (() => {
+      if (!simpleSector.sector_contents) {
+        return undefined;
+      }
+      const size = simpleSector.sector_contents.grid_size;
+      const origin = simpleSector.sector_contents.grid_size;
+      return {
+        gridSize: vec3.fromValues(size[0], size[1], size[2]),
+        gridOrigin: vec3.fromValues(origin[0], origin[1], origin[2]),
+        gridIncrement: simpleSector.sector_contents.grid_increment,
+        nodeCount: simpleSector.sector_contents.node_count
+      };
+    })();
+
     const bbox = x.boundingBox;
     const boundsMin = vec3.fromValues(bbox.min[0], bbox.min[1], bbox.min[2]);
     const boundsMax = vec3.fromValues(bbox.max[0], bbox.max[1], bbox.max[2]);
@@ -31,7 +43,7 @@ export function buildSectorMetadata(sectors: RevealSector3D[], simpleSectors: Si
       bounds,
       parent: undefined,
       children: [],
-      simple: simpleSector
+      simple
     };
 
     map.set(x.path, metadata);

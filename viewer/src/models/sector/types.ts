@@ -5,7 +5,6 @@
 import { Box3 } from '../../utils/Box3';
 import { mat4, vec3 } from 'gl-matrix';
 import { PrimitiveAttributes } from '../../../workers/types/parser.types';
-import { SimpleSector3D } from '../../datasources/local/sector/loadLocalSimpleSectorMetadata';
 
 // TODO 2019-11-12 larsmoa: Move and rename to something general (not specific
 // for sector data).
@@ -18,7 +17,12 @@ export interface SectorMetadata {
   readonly id: number;
   readonly path: string;
   readonly bounds: Box3;
-  readonly simple: SimpleSector3D;
+  readonly simple?: {
+    readonly gridSize: vec3;
+    readonly gridOrigin: vec3;
+    readonly gridIncrement: number;
+    readonly nodeCount: number;
+  };
   // TODO can we make this readonly?
   children: SectorMetadata[];
   // TODO can we make this readonly?

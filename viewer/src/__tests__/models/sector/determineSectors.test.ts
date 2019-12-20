@@ -46,6 +46,7 @@ describe('determineSectors', () => {
     // Act
     const sectors = await determineSectors({
       scene,
+      cameraFov: camera.fov,
       cameraPosition: fromThreeVector3(vec3.create(), camera.position, identityTransform),
       cameraModelMatrix: fromThreeMatrix(mat4.create(), camera.matrixWorld, identityTransform),
       projectionMatrix: fromThreeMatrix(mat4.create(), camera.projectionMatrix, identityTransform)
@@ -85,6 +86,7 @@ describe('determineSectors', () => {
     // Act
     const sectors = await determineSectors({
       scene,
+      cameraFov: camera.fov,
       cameraPosition: fromThreeVector3(vec3.create(), camera.position, identityTransform),
       cameraModelMatrix: fromThreeMatrix(mat4.create(), camera.matrixWorld, identityTransform),
       projectionMatrix: fromThreeMatrix(mat4.create(), camera.projectionMatrix, identityTransform)
@@ -118,6 +120,7 @@ describe('determineSectors', () => {
     // Act
     const sectors = await determineSectors({
       scene,
+      cameraFov: camera.fov,
       cameraPosition: fromThreeVector3(vec3.create(), camera.position, transform),
       cameraModelMatrix: fromThreeMatrix(mat4.create(), camera.matrixWorld, transform),
       projectionMatrix: fromThreeMatrix(mat4.create(), camera.projectionMatrix, transform)
