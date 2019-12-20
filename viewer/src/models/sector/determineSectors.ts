@@ -12,6 +12,7 @@ const degToRadFactor = Math.PI / 180;
 
 interface DetermineSectorsInput {
   scene: SectorScene;
+  cameraFov: number;
   cameraPosition: vec3;
   cameraModelMatrix: mat4;
   projectionMatrix: mat4;
@@ -27,7 +28,7 @@ const determineSectorsPreallocatedVars = {
 };
 
 export async function determineSectors(input: DetermineSectorsInput): Promise<WantedSectors> {
-  const { scene, cameraPosition, cameraModelMatrix, projectionMatrix } = input;
+  const { scene, cameraPosition, cameraModelMatrix, projectionMatrix, cameraFov } = input;
   const { invertCameraModelMatrix, frustumMatrix, frustum, bbox, min, max } = determineSectorsPreallocatedVars;
 
   const sectors: SectorMetadata[] = [];
@@ -48,7 +49,6 @@ export async function determineSectors(input: DetermineSectorsInput): Promise<Wa
   frustum.setFromMatrix(toThreeMatrix4(frustumMatrix));
 
   traverseDepthFirst(scene.root, sector => {
-
     min.set(sector.bounds.min[0], sector.bounds.min[1], sector.bounds.min[2]);
     max.set(sector.bounds.max[0], sector.bounds.max[1], sector.bounds.max[2]);
     bbox.makeEmpty();
@@ -60,9 +60,8 @@ export async function determineSectors(input: DetermineSectorsInput): Promise<Wa
     }
 
     const sectorDiagonal = vec3.distance(sector.bounds.max, sector.bounds.min);
-    const fov = 75; // TODO get actual camera fov
-    const screenSize = 2.0 * distanceToCamera(sector) * Math.tan(fov / 2 * degToRadFactor);
-    const pixelSize = screenSize / 1080; // TODO use actual pixel count
+    const screenHeight = 2.0 * distanceToCamera(sector) * Math.tan((cameraFov / 2) * degToRadFactor);
+    const largestAllowedQuadSize = 0.01 * screenHeight; // no larger than x percent of the height
     const quadSize = (() => {
       if (!sector.simple.sectorContents) {
         return 0;
@@ -70,7 +69,7 @@ export async function determineSectors(input: DetermineSectorsInput): Promise<Wa
       return sector.simple.sectorContents.gridIncrement;
     })();
 
-    if (quadSize < 6 * pixelSize) {
+    if (quadSize < largestAllowedQuadSize) {
       return false;
     }
 

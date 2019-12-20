@@ -49,7 +49,7 @@ export class RootSectorNode extends SectorNode {
     this.previousCameraMatrix.elements[0] = Infinity;
   }
 
-  public async update(camera: THREE.Camera): Promise<boolean> {
+  public async update(camera: THREE.PerspectiveCamera): Promise<boolean> {
     let needsRedraw = false;
     const { cameraPosition, cameraModelMatrix, projectionMatrix } = updateVars;
     if (!this.previousCameraMatrix.equals(camera.matrixWorld)) {
@@ -63,6 +63,7 @@ export class RootSectorNode extends SectorNode {
       fromThreeMatrix(projectionMatrix, camera.projectionMatrix);
       const wantedSectors = await determineSectors({
         scene: this.sectorScene,
+        cameraFov: camera.fov,
         cameraPosition,
         cameraModelMatrix,
         projectionMatrix
