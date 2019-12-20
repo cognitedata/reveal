@@ -96,7 +96,6 @@ module.exports = env => {
       (example.type === 'threejs' && buildThreeJsExamples);
   }
   const enabledExamples = allExamples.filter(isExampleEnabled);
-  console.log(enabledExamples.map(x => x.name));
 
   const examples = enabledExamples.map(example => {
     const {name, title, entry, template} = example;
@@ -127,7 +126,6 @@ module.exports = env => {
       filename: page,
     });
   });
-  // console.log(examplePlugins);
 
 
 
