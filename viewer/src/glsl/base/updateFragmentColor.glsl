@@ -3,7 +3,7 @@
 
 void updateFragmentColor(vec3 color, vec3 normal) {
     vec3 hsv = rgb2hsv(color);
-    hsv.z = 0.6 * hsv.z + 0.2;
+    hsv.z = min(0.6 * hsv.z + 0.4, 1.0);
     color = hsv2rgb(hsv);
 
     float amplitude = max(0.0, dot(normal, vec3(0.0, 0.0, 1.0)));
