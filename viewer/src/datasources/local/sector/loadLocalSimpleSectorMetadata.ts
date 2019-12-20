@@ -44,7 +44,6 @@ export async function loadLocalSimpleSectorMetadata(sectorsMetadataUrl: string):
     .filter(x => x.trim() !== '')
     .map(chunk => {
       const sector: LocalSimpleSectorMetadataResponse = JSON.parse(chunk);
-      console.log(sector);
       return sector;
     });
 
