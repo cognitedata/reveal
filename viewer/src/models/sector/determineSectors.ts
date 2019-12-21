@@ -11,11 +11,11 @@ import { mat4, vec3 } from 'gl-matrix';
 const degToRadFactor = Math.PI / 180;
 
 interface DetermineSectorsInput {
-  scene: SectorScene;
-  cameraFov: number;
-  cameraPosition: vec3;
-  cameraModelMatrix: mat4;
-  projectionMatrix: mat4;
+  readonly scene: SectorScene;
+  readonly cameraFov: number;
+  readonly cameraPosition: vec3;
+  readonly cameraModelMatrix: mat4;
+  readonly projectionMatrix: mat4;
 }
 
 const determineSectorsPreallocatedVars = {
@@ -59,7 +59,6 @@ export async function determineSectors(input: DetermineSectorsInput): Promise<Wa
       return false;
     }
 
-    const sectorDiagonal = vec3.distance(sector.bounds.max, sector.bounds.min);
     const screenHeight = 2.0 * distanceToCamera(sector) * Math.tan((cameraFov / 2) * degToRadFactor);
     const largestAllowedQuadSize = 0.01 * screenHeight; // no larger than x percent of the height
     const quadSize = (() => {
@@ -81,8 +80,8 @@ export async function determineSectors(input: DetermineSectorsInput): Promise<Wa
   sectors.sort((l, r) => {
     return distanceToCamera(l) - distanceToCamera(r);
   });
-  const definitelyDetailed = new Set<number>(sectors.map(x => x.id));
-  const result = determineSectorsQuality(scene, definitelyDetailed);
+  const requestedDetailed = new Set<number>(sectors.map(x => x.id));
+  const result = determineSectorsQuality(scene, requestedDetailed);
   return result;
 }
 
