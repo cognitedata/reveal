@@ -1,15 +1,11 @@
 /*!
  * Copyright 2019 Cognite AS
  */
-import * as THREE from 'three';
-import { SectorMetadata, SectorModelTransformation } from '../../../models/sector/types';
+import { SectorMetadata } from '../../../models/sector/types';
 import { Box3 } from '../../../utils/Box3';
-import { vec3, mat4 } from 'gl-matrix';
-import { determineSectors, determineSectorsQuality } from '../../../models/sector/determineSectors';
+import { determineSectorsQuality } from '../../../models/sector/determineSectors';
 import { expectSetEqual } from '../../expects';
-import { toThreeMatrix4, fromThreeMatrix, fromThreeVector3 } from '../../../views/threejs/utilities';
 import { traverseDepthFirst } from '../../../utils/traversal';
-import { SectorNode } from '../../..';
 
 function createSceneFromRoot(root: SectorMetadata) {
   const sectors = new Map<number, SectorMetadata>();
@@ -40,7 +36,7 @@ interface TreeNode {
   children: TreeNode[];
 }
 
-describe('determine sector quality', () => {
+describe('determineSectorsQuality', () => {
   const treeRoot: TreeNode = {
     id: 1,
     children: [
