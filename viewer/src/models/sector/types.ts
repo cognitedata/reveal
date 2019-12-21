@@ -9,8 +9,8 @@ import { PrimitiveAttributes } from '../../../workers/types/parser.types';
 // TODO 2019-11-12 larsmoa: Move and rename to something general (not specific
 // for sector data).
 export type SectorModelTransformation = {
-  modelMatrix: mat4;
-  inverseModelMatrix: mat4;
+  readonly modelMatrix: mat4;
+  readonly inverseModelMatrix: mat4;
 };
 
 export interface SectorMetadata {
@@ -23,9 +23,8 @@ export interface SectorMetadata {
     readonly gridIncrement: number;
     readonly nodeCount: number;
   };
-  // TODO can we make this readonly?
-  children: SectorMetadata[];
-  // TODO can we make this readonly?
+  readonly children: SectorMetadata[];
+  // TODO 2019-12-21 larsmoa: Make readonly
   parent?: SectorMetadata;
 }
 
@@ -62,25 +61,25 @@ export type InstancedMesh = {
 // TODO 2019-12-05 larsmoa: Rename to e.g. SectorGeometry to avoid
 // confusion with other Sector-class
 export interface Sector {
-  instanceMeshes: InstancedMeshFile[];
-  triangleMeshes: TriangleMesh[];
+  readonly instanceMeshes: InstancedMeshFile[];
+  readonly triangleMeshes: TriangleMesh[];
 
-  boxes: PrimitiveAttributes;
-  circles: PrimitiveAttributes;
-  cones: PrimitiveAttributes;
-  eccentricCones: PrimitiveAttributes;
-  ellipsoidSegments: PrimitiveAttributes;
-  generalCylinders: PrimitiveAttributes;
-  generalRings: PrimitiveAttributes;
-  nuts: PrimitiveAttributes;
-  quads: PrimitiveAttributes;
-  sphericalSegments: PrimitiveAttributes;
-  torusSegments: PrimitiveAttributes;
-  trapeziums: PrimitiveAttributes;
+  readonly boxes: PrimitiveAttributes;
+  readonly circles: PrimitiveAttributes;
+  readonly cones: PrimitiveAttributes;
+  readonly eccentricCones: PrimitiveAttributes;
+  readonly ellipsoidSegments: PrimitiveAttributes;
+  readonly generalCylinders: PrimitiveAttributes;
+  readonly generalRings: PrimitiveAttributes;
+  readonly nuts: PrimitiveAttributes;
+  readonly quads: PrimitiveAttributes;
+  readonly sphericalSegments: PrimitiveAttributes;
+  readonly torusSegments: PrimitiveAttributes;
+  readonly trapeziums: PrimitiveAttributes;
 }
 
 export interface SectorQuads {
-  buffer: Float32Array;
+  readonly buffer: Float32Array;
 }
 
 export enum LoadSectorStatus {
@@ -91,16 +90,16 @@ export enum LoadSectorStatus {
 }
 
 export type LoadSectorRequest = {
-  promise: Promise<void>;
+  readonly promise: Promise<void>;
   cancel: () => void;
   status: () => LoadSectorStatus;
 };
 
 // TODO move somewhere else?
 export interface CtmWorkerResult {
-  indices: Uint32Array;
-  vertices: Float32Array;
-  normals: Float32Array | undefined;
+  readonly indices: Uint32Array;
+  readonly vertices: Float32Array;
+  readonly normals: Float32Array | undefined;
 }
 
 export interface WantedSectors {
