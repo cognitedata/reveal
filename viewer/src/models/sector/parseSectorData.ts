@@ -169,10 +169,13 @@ export async function createParser(
           const instancedMeshes: InstancedMesh[] = [];
 
           const fileTriangleOffsets = new Float64Array(meshIndices.map(i => triangleOffsets[i]));
+          const fileTriangleCounts = new Float64Array(meshIndices.map(i => triangleCounts[i]));
           const fileMeshesGroupedByOffsets = groupMeshesByNumber(fileTriangleOffsets);
 
           for (const [triangleOffset, fileMeshIndices] of fileMeshesGroupedByOffsets) {
-            const triangleCount = triangleCounts[fileMeshIndices[0]]; // TODO a bit hacky to use [0] here?
+            // NOTE the triangle counts should be the same for all meshes with the same offset,
+            // hence we can look up only fileMeshIndices[0] instead of enumerating here
+            const triangleCount = fileTriangleCounts[fileMeshIndices[0]];
             const instanceMatrixBuffer = new Float32Array(16 * fileMeshIndices.length);
             const treeIndexBuffer = new Uint32Array(fileMeshIndices.length);
             const colorBuffer = new Uint8Array(4 * fileMeshIndices.length);
