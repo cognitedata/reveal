@@ -7,6 +7,7 @@ import { PointCloudModel } from '../../PointCloudModel';
 import { FetchPointCloudDelegate } from '../../../models/pointclouds/delegates';
 import { SectorModelTransformation } from '../../../models/sector/types';
 import { PointCloudLoader } from '../../../utils/potree/PointCloudLoader';
+import { EptLoader } from '../../../utils/potree/EptLoader';
 
 const identity = mat4.identity(mat4.create());
 
@@ -16,7 +17,14 @@ export function createLocalPointCloudModel(url: string): PointCloudModel {
       modelMatrix: identity,
       inverseModelMatrix: mat4.invert(mat4.create(), identity)!
     };
-    return [await PointCloudLoader.load(url), transform];
+
+    if (url.endsWith('ept.json')) {
+      // Entwine format
+      return [await EptLoader.load(url), transform];
+    } else {
+      // Potree format
+      return [await PointCloudLoader.load(url), transform];
+    }
   };
   return [fetchPointCloud];
 }
