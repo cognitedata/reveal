@@ -17,14 +17,14 @@ async function main() {
   scene.add(sectorModelNode);
 
   const fetchMetadata: reveal.internal.FetchSectorMetadataDelegate = sectorModel[0];
-  const [rootSectorMetadata, modelTransform] = await fetchMetadata();
+  const [sectorScene, modelTransform] = await fetchMetadata();
 
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#444');
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const { position, target, near, far } = reveal.internal.suggestCameraConfig(rootSectorMetadata);
+  const { position, target, near, far } = reveal.internal.suggestCameraConfig(sectorScene.root);
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
   const threePos = reveal.toThreeVector3(position, sectorModelNode.modelTransformation);
