@@ -4,20 +4,23 @@
 
 import { RevealSector3D } from '@cognite/sdk';
 import { buildSectorMetadata } from '../../../../datasources/cognitesdk/sector/buildSectorMetadata';
+import { LocalSimpleSectorMetadataResponse } from '../../../../datasources/local/sector/loadLocalSimpleSectorMetadata';
 
 describe('buildSectorMetadata', () => {
   test('no sectors, throws', () => {
-    expect(() => buildSectorMetadata([])).toThrowError();
+    expect(() => buildSectorMetadata([], new Map())).toThrowError();
   });
 
   test('sectors is missing root, throws', () => {
     const sector = createSector(0, 5, '0/1/');
-    expect(() => buildSectorMetadata([sector])).toThrowError();
+    const simpleSector = createSimpleSector(0, 5);
+    expect(() => buildSectorMetadata([sector], new Map([[0, simpleSector]]))).toThrowError();
   });
 
   test('single root sector, works', async () => {
     const sector = createSector(0, -1, '0/');
-    const root = buildSectorMetadata([sector]);
+    const simpleSector = createSimpleSector(0, -1);
+    const root = buildSectorMetadata([sector], new Map([[0, simpleSector]]));
     expect(root).not.toBeFalsy();
   });
 
@@ -28,7 +31,14 @@ describe('buildSectorMetadata', () => {
       createSector(2, 0, '0/1/'),
       createSector(3, 1, '0/0/1/')
     ];
-    const root = buildSectorMetadata(sectors);
+    const simpleSectors: [number, LocalSimpleSectorMetadataResponse][] = [
+      [0, createSimpleSector(0, -1)],
+      [1, createSimpleSector(1, 0)],
+      [2, createSimpleSector(2, 0)],
+      [3, createSimpleSector(3, 1)]
+    ];
+    const scene = buildSectorMetadata(sectors, new Map(simpleSectors));
+    const root = scene.root;
 
     expect(root).toBeTruthy();
     expect(root!.children.map(x => x.id)).toContainAllValues([2, 1]);
@@ -46,4 +56,13 @@ function createSector(id: number, parentId: number, path: string): RevealSector3
     threedFiles: []
   };
   return sector;
+}
+
+function createSimpleSector(id: number, parentId: number): LocalSimpleSectorMetadataResponse {
+  return {
+    sector_id: id,
+    parent_sector_id: parentId,
+    bbox_min: [0, 0, 0],
+    bbox_max: [0, 0, 0]
+  };
 }

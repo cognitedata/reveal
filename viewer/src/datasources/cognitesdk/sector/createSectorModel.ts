@@ -10,9 +10,18 @@ import { getNewestVersionedFile } from '../utilities';
 import { SectorModelTransformation } from '../../../models/sector/types';
 import { SectorModel } from '../../SectorModel';
 import { mat4 } from 'gl-matrix';
+import { LocalSimpleSectorMetadataResponse } from '../../local/sector/loadLocalSimpleSectorMetadata';
 
 export function createSectorModel(sdk: CogniteClient, modelId: number, revisionId: number): SectorModel {
   const metadataPromise = loadSectorMetadata(sdk, modelId, revisionId);
+
+  // TODO replace this with actually fetching metadata about simple sectors
+  const simpleMetadataPromise: Promise<
+    Map<number, LocalSimpleSectorMetadataResponse>> =
+    new Promise(resolve => {
+      throw new Error("Not implemented");
+    });
+
   const rotationPromise = loadRotation(sdk, modelId, revisionId);
   const sectorFilemapPromise = (async () => {
     return createSectorFilemap(await metadataPromise);
@@ -28,7 +37,7 @@ export function createSectorModel(sdk: CogniteClient, modelId: number, revisionI
       modelMatrix,
       inverseModelMatrix
     };
-    return [buildSectorMetadata(await metadataPromise), modelTransform];
+    return [buildSectorMetadata(await metadataPromise, await simpleMetadataPromise), modelTransform];
   };
   const fetchSector: FetchSectorDelegate = async sectorId => {
     const sectorFilemap = await sectorFilemapPromise;
