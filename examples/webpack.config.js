@@ -45,6 +45,13 @@ const allExamples = [
     type: 'threejs'
   },
   {
+    name: "threejs-simple-pointcloud",
+    title: "Simple pointcloud",
+    entry: './src/threejs/simple-pointcloud.ts',
+    template: 'template-example.ejs',
+    type: 'threejs'
+  },
+  {
     name: "threejs-post-processing-effects",
     title: "Post processing effects",
     entry: './src/threejs/post-processing-effects.ts',
