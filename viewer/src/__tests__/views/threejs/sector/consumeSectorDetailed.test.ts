@@ -105,7 +105,8 @@ function newInstanceMesh(): InstancedMesh {
     triangleCount: 4,
     triangleOffset: 0,
     colors: new Uint8Array(4),
-    instanceMatrices: new Float32Array(16)
+    instanceMatrices: new Float32Array(16),
+    treeIndexes: new Uint32Array(1)
   };
 }
 
