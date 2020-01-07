@@ -5,7 +5,6 @@
 import * as THREE from 'three';
 import * as reveal from '@cognite/reveal';
 import CameraControls from 'camera-controls';
-import { vec3 } from 'gl-matrix';
 
 CameraControls.install({ THREE });
 
