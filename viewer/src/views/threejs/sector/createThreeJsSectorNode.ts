@@ -19,8 +19,8 @@ import { consumeSectorSimple } from './consumeSectorSimple';
 export async function createThreeJsSectorNode(model: SectorModel): Promise<RootSectorNode> {
   const [fetchSectorMetadata, fetchSector, fetchSectorQuads, fetchCtmFile] = model;
   // Fetch metadata
-  const [sectorRoot, modelTransformation] = await fetchSectorMetadata();
-  const parseDetailed = await createParser(sectorRoot, fetchSector, fetchCtmFile);
+  const [scene, modelTransformation] = await fetchSectorMetadata();
+  const parseDetailed = await createParser(scene.root, fetchSector, fetchCtmFile);
   const parseSimple = await createQuadsParser();
   const sectorNodeMap = new Map<number, SectorNode>(); // Populated by buildScene() below
 
@@ -30,7 +30,7 @@ export async function createThreeJsSectorNode(model: SectorModel): Promise<RootS
       throw new Error(`Could not find 3D node for sector ${sectorId} - invalid id?`);
     }
 
-    const metadata = findSectorMetadata(sectorRoot, sectorId);
+    const metadata = findSectorMetadata(scene.root, sectorId);
     consumeSectorDetailed(sectorId, sector, metadata, sectorNode);
   };
   const discard: DiscardSectorDelegate = sectorId => {
@@ -46,7 +46,7 @@ export async function createThreeJsSectorNode(model: SectorModel): Promise<RootS
       throw new Error(`Could not find 3D node for sector ${sectorId} - invalid id?`);
     }
 
-    const metadata = findSectorMetadata(sectorRoot, sectorId);
+    const metadata = findSectorMetadata(scene.root, sectorId);
     consumeSectorSimple(sectorId, sector, metadata, sectorNode);
   };
 
@@ -65,9 +65,9 @@ export async function createThreeJsSectorNode(model: SectorModel): Promise<RootS
 
   const activatorDetailed = initializeSectorLoader(getDetailedCache.request, discard, consumeDetailed);
   const activatorSimple = initializeSectorLoader(getSimpleCache.request, discard, consumeSimple);
-  const rootGroup = new RootSectorNode(sectorRoot, modelTransformation, activatorSimple, activatorDetailed);
+  const rootGroup = new RootSectorNode(scene, modelTransformation, activatorSimple, activatorDetailed);
   rootGroup.applyMatrix(toThreeMatrix4(modelTransformation.modelMatrix));
-  buildScene(sectorRoot, rootGroup, sectorNodeMap);
+  buildScene(scene.root, rootGroup, sectorNodeMap);
 
   return rootGroup;
 }
