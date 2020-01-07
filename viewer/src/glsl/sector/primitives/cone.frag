@@ -26,7 +26,45 @@ varying vec4 v_V;
 varying vec3 v_color;
 varying vec3 v_normal;
 
+#if NUM_CLIPPING_PLANES > 0
+    varying vec3 vViewPosition;
+    uniform vec4 clippingPlanes[ NUM_CLIPPING_PLANES ];
+#endif
+
 void main() {
+
+#if NUM_CLIPPING_PLANES > 0
+
+	vec4 plane;
+
+	#pragma unroll_loop
+	for ( int i = 0; i < UNION_CLIPPING_PLANES; i ++ ) {
+
+		plane = clippingPlanes[ i ];
+
+		if ( dot( vViewPosition, plane.xyz ) > plane.w ) discard;
+
+	}
+
+	#if UNION_CLIPPING_PLANES < NUM_CLIPPING_PLANES
+
+		bool clipped = true;
+
+		#pragma unroll_loop
+		for ( int i = UNION_CLIPPING_PLANES; i < NUM_CLIPPING_PLANES; i ++ ) {
+
+			plane = clippingPlanes[ i ];
+			clipped = ( dot( vViewPosition, plane.xyz ) > plane.w ) && clipped;
+
+		}
+
+		if ( clipped ) discard;
+
+	#endif
+
+
+#endif
+
   vec3 normal = normalize( v_normal );
 
   float R1 = v_centerB.w;
@@ -94,7 +132,7 @@ void main() {
 
   if (intersectionPoint.z <= 0.0 ||
       intersectionPoint.z > height ||
-      theta > v_angle + v_arcAngle || 
+      theta > v_angle + v_arcAngle ||
       isSliced(p)
     ) {
       // Missed the first point, check the other point
@@ -106,7 +144,7 @@ void main() {
       if (theta < v_angle) theta += 2.0 * PI;
       if (intersectionPoint.z <= 0.0 ||
         intersectionPoint.z > height ||
-        theta > v_angle + v_arcAngle || 
+        theta > v_angle + v_arcAngle ||
         isSliced(p)
       ) {
         // Missed the other point too

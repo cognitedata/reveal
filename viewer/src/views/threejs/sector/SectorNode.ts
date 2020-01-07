@@ -26,12 +26,14 @@ const updateVars = {
 };
 
 export class RootSectorNode extends SectorNode {
+  clippingPlanes: THREE.Plane[] = [];
   public readonly modelTransformation: SectorModelTransformation;
 
   private readonly simpleActivator: SectorActivator;
   private readonly detailedActivator: SectorActivator;
   private readonly sectorScene: SectorScene;
   private readonly previousCameraMatrix = new THREE.Matrix4();
+  private readonly previousClippingPlanes: THREE.Plane[] = [];
 
   constructor(
     sectorScene: SectorScene,
