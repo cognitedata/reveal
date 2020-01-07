@@ -5,14 +5,16 @@
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
 import { PotreePointSizeType, PotreePointColorType, PotreePointShape } from './enums';
+import { fromThreeJsBox3 } from '../utilities';
+import { Box3 } from '../../../utils/Box3';
 
 /**
  * Wrapper around `Potree.PointCloudOctree` with some convinence functions.
  */
 export class PotreeNodeWrapper {
-  readonly octtree: Potree.PointCloudOctree;
+  readonly octtree: Potree.PointCloudOctreeNode;
 
-  constructor(octtree: Potree.PointCloudOctree) {
+  constructor(octtree: Potree.PointCloudOctreeNode) {
     this.octtree = octtree;
     this.pointSize = 2;
     this.pointSizeType = PotreePointSizeType.Adaptive;
@@ -32,6 +34,13 @@ export class PotreeNodeWrapper {
   }
   set pointSizeType(type: PotreePointSizeType) {
     this.octtree.material.pointSizeType = type;
+  }
+
+  get boundingBox(): Box3 {
+    // const offset: THREE.Vector3 = this.octtree.position;
+    const bbox: THREE.Box3 = this.octtree.boundingBox;
+    // bbox.translate(offset.negate());
+    return fromThreeJsBox3(bbox);
   }
 
   get pointColorType(): PotreePointColorType {
