@@ -18,6 +18,7 @@ matrix:
         - cargo fmt -- --check
         - cargo clippy --all-targets --all-features -- -D warnings
         - cargo test --all --verbose
+
     - language: rust
       name: "Reveal viewer"
       cache:
@@ -25,6 +26,7 @@ matrix:
         npm: true
         directories:
           - "viewer/node_modules"
+          - "examples/node_modules"
       install:
         # Install NVM and Node
         - sudo curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash
@@ -33,18 +35,25 @@ matrix:
         # Install wasm-pack for Rust
         - rm -rf $HOME/.cargo/bin/wasm-pack
         - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-      before_script:
-        - cd viewer
+      
       script:
-          - nvm use 10
-          - npm install
-          - npm run build
-          - npm run coverage
+        - cd $TRAVIS_BUILD_DIR/viewer
+        - nvm use 10
+        - npm install
+        - npm run build
+        - npm run coverage
+        - cd $TRAVIS_BUILD_DIR//examples
+        - npm install
+        - npm run build
 
-          - nvm use 12
-          - npm install
-          - npm run build
-          - npm run coverage
+        - cd $TRAVIS_BUILD_DIR/viewer
+        - nvm use 12
+        - npm install
+        - npm run build
+        - npm run coverage
+        - cd $TRAVIS_BUILD_DIR/examples
+        - npm install
+        - npm run build
 branches:
   only:
     - master

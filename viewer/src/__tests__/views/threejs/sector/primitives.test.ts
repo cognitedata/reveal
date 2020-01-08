@@ -5,26 +5,14 @@
 import { Sector } from '../../../../models/sector/types';
 import { createPrimitives } from '../../../../views/threejs/sector/primitives';
 import { PrimitiveAttributes } from '../../../../../workers/types/parser.types';
+import { createEmptySector } from '../../../models/sector/emptySector';
 
 describe('createPrimitives', () => {
-  const emptyAttributes = newAttributes();
-  const emptySector: Sector = {
-    boxes: emptyAttributes,
-    circles: emptyAttributes,
-    cones: emptyAttributes,
-    eccentricCones: emptyAttributes,
-    ellipsoidSegments: emptyAttributes,
-    generalCylinders: emptyAttributes,
-    generalRings: emptyAttributes,
-    nuts: emptyAttributes,
-    quads: emptyAttributes,
-    sphericalSegments: emptyAttributes,
-    torusSegments: emptyAttributes,
-    trapeziums: emptyAttributes,
+  let emptySector: Sector;
 
-    triangleMeshes: [],
-    instanceMeshes: []
-  };
+  beforeEach(() => {
+    emptySector = createEmptySector();
+  });
 
   test('no primitives doesnt return any nods', () => {
     const nodes = Array.from(createPrimitives(emptySector));
@@ -32,89 +20,86 @@ describe('createPrimitives', () => {
   });
 
   test('Box primitives, returns one geometry', () => {
-    const sector: Sector = Object.assign({} as Sector, emptySector);
-    sector.boxes = newAttributes(10);
+    const boxes = newAttributes(10);
+    const sector: Sector = Object.assign(emptySector, { boxes } as Sector);
     const nodes = Array.from(createPrimitives(sector));
     expect(nodes.length).toBe(1);
   });
 
   test('Circle primitives, returns one geometry', () => {
-    const sector: Sector = Object.assign({} as Sector, emptySector);
-    sector.circles = newAttributes(10);
+    const circles = newAttributes(10);
+    const sector: Sector = Object.assign(emptySector, { circles } as Sector);
     const nodes = Array.from(createPrimitives(sector));
     expect(nodes.length).toBe(1);
   });
 
   test('Cone primitives, returns one geometry', () => {
-    const sector: Sector = Object.assign({} as Sector, emptySector);
-    sector.cones = newAttributes(10);
+    const cones = newAttributes(10);
+    const sector: Sector = Object.assign(emptySector, { cones } as Sector);
     const nodes = Array.from(createPrimitives(sector));
     expect(nodes.length).toBe(1);
   });
 
   test('Eccentric cone primitives, returns one geometry', () => {
-    const sector: Sector = Object.assign({} as Sector, emptySector);
-    sector.eccentricCones = newAttributes(10);
+    const eccentricCones = newAttributes(10);
+    const sector: Sector = Object.assign(emptySector, { eccentricCones } as Sector);
     const nodes = Array.from(createPrimitives(sector));
     expect(nodes.length).toBe(1);
   });
 
   test('Ellipsoid segments primitives, returns one geometry', () => {
-    const sector: Sector = Object.assign({} as Sector, emptySector);
-    sector.ellipsoidSegments = newAttributes(10);
+    const ellipsoidSegments = newAttributes(10);
+    const sector: Sector = Object.assign(emptySector, { ellipsoidSegments } as Sector);
     const nodes = Array.from(createPrimitives(sector));
     expect(nodes.length).toBe(1);
   });
 
   test('General cylinder primitives, returns one geometry', () => {
-    const sector: Sector = Object.assign({} as Sector, emptySector);
-    sector.generalCylinders = newAttributes(10);
+    const generalCylinders = newAttributes(10);
+    const sector: Sector = Object.assign(emptySector, { generalCylinders } as Sector);
     const nodes = Array.from(createPrimitives(sector));
     expect(nodes.length).toBe(1);
   });
 
   test('General ring primitives, returns one geometry', () => {
-    const sector: Sector = Object.assign({} as Sector, emptySector);
-    sector.generalRings = newAttributes(10);
+    const generalRings = newAttributes(10);
+    const sector: Sector = Object.assign(emptySector, { generalRings } as Sector);
     const nodes = Array.from(createPrimitives(sector));
     expect(nodes.length).toBe(1);
   });
 
   test('Nut primitives, returns one geometry', () => {
-    const sector: Sector = Object.assign({} as Sector, emptySector);
-    sector.nuts = newAttributes(10);
+    const nuts = newAttributes(10);
+    const sector: Sector = Object.assign(emptySector, { nuts } as Sector);
     const nodes = Array.from(createPrimitives(sector));
     expect(nodes.length).toBe(1);
   });
 
   test('Quad primitives, returns one geometry', () => {
-    const sector: Sector = Object.assign({} as Sector, emptySector);
-    sector.quads = newAttributes(10);
+    const quads = newAttributes(10);
+    const sector: Sector = Object.assign(emptySector, { quads } as Sector);
     const nodes = Array.from(createPrimitives(sector));
     expect(nodes.length).toBe(1);
   });
 
   test('Spherical segment primitives, returns one geometry', () => {
-    const sector: Sector = Object.assign({} as Sector, emptySector);
-    const attributes = newAttributes(10);
-    attributes.f32Attributes.set('radius', new Float32Array(10));
-    sector.sphericalSegments = attributes;
+    const sphericalSegments = newAttributes(10);
+    sphericalSegments.f32Attributes.set('radius', new Float32Array(10));
+    const sector: Sector = Object.assign(emptySector, { sphericalSegments } as Sector);
     const nodes = Array.from(createPrimitives(sector));
     expect(nodes.length).toBe(1);
   });
 
   test('Torus segment primitives, returns one geometry', () => {
-    const sector: Sector = Object.assign({} as Sector, emptySector);
     const attributes = newAttributes(10);
     attributes.f32Attributes.set('size', new Float32Array(10));
-    sector.torusSegments = attributes;
+    const sector: Sector = Object.assign(emptySector, { torusSegments: attributes } as Sector);
     const nodes = Array.from(createPrimitives(sector));
     expect(nodes.length).toBe(1);
   });
 
   test('Trapezium primitives, returns one geometry', () => {
-    const sector: Sector = Object.assign({} as Sector, emptySector);
-    sector.trapeziums = newAttributes(10);
+    const sector: Sector = Object.assign(emptySector, { trapeziums: newAttributes(10) } as Sector);
     const nodes = Array.from(createPrimitives(sector));
     expect(nodes.length).toBe(1);
   });

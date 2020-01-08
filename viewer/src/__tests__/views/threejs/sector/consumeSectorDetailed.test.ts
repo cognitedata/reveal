@@ -7,7 +7,7 @@ import {
   TriangleMesh,
   InstancedMeshFile,
   InstancedMesh,
-  SectorModelTransformation
+  Sector
 } from '../../../../models/sector/types';
 import { Box3 } from '../../../../utils/Box3';
 import { vec3 } from 'gl-matrix';
@@ -44,8 +44,8 @@ describe('consumeSectorDetailed', () => {
 
   test('single triangle mesh, adds geometry', () => {
     // Arrange
-    const sector = createEmptySector();
-    sector.triangleMeshes = [newTriangleMesh()];
+    const triangleMeshes = [newTriangleMesh()];
+    const sector: Sector = Object.assign(createEmptySector(), { triangleMeshes } as Sector);
 
     // Act
     consumeSectorDetailed(sectorId, sector, metadata, node);
@@ -57,8 +57,8 @@ describe('consumeSectorDetailed', () => {
 
   test('single instance mesh, adds geometry', () => {
     // Arrange
-    const sector = createEmptySector();
-    sector.instanceMeshes = [newInstanceMeshFile()];
+    const instanceMeshes = [newInstanceMeshFile()];
+    const sector: Sector = Object.assign(createEmptySector(), { instanceMeshes } as Sector);
 
     // Act
     consumeSectorDetailed(sectorId, sector, metadata, node);
@@ -105,7 +105,8 @@ function newInstanceMesh(): InstancedMesh {
     triangleCount: 4,
     triangleOffset: 0,
     colors: new Uint8Array(4),
-    instanceMatrices: new Float32Array(16)
+    instanceMatrices: new Float32Array(16),
+    treeIndexes: new Uint32Array(1)
   };
 }
 
