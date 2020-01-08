@@ -69,7 +69,8 @@ async function main() {
 
 function initializeGui(group: reveal.internal.PotreeGroupWrapper, node: reveal.internal.PotreeNodeWrapper, handleSettingsChangedCb: () => void) {
   const gui = new dat.GUI();
-  gui.add(group, 'pointBudget', 0, 10_000_000);
+  gui.add(node, 'pointBudget', 0, 20_000_000);
+  // gui.add(node, 'visiblePointCount', 0, 20_000_000).onChange(() => { /* Ignore update */ });
   gui.add(node, 'pointSize', 0, 10).onChange(handleSettingsChangedCb);
   gui
     .add(node, 'pointColorType', {

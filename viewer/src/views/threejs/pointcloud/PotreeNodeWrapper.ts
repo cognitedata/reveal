@@ -20,6 +20,8 @@ export class PotreeNodeWrapper {
     this.pointSizeType = PotreePointSizeType.Adaptive;
     this.pointColorType = PotreePointColorType.Rgb;
     this.pointShape = PotreePointShape.Circle;
+
+    this.pointBudget = 2_000_000;
   }
 
   get pointSize(): number {
@@ -34,6 +36,17 @@ export class PotreeNodeWrapper {
   }
   set pointSizeType(type: PotreePointSizeType) {
     this.octtree.material.pointSizeType = type;
+  }
+
+  get pointBudget(): number {
+    return this.octtree.pointBudget;
+  }
+  set pointBudget(count: number) {
+    // this.octtree.visiblePointsTarget = count;
+    this.octtree.pointBudget = count;
+  }
+  get visiblePointCount(): number {
+    return this.octtree.numVisiblePoints || 0;
   }
 
   get boundingBox(): Box3 {
