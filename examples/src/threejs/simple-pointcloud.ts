@@ -39,10 +39,23 @@ async function main() {
   }
   initializeGui(pointCloudGroup, pointCloudNode, handleSettingsChanged);
 
+  {
+    // Create a bounding box around the point cloud for debugging
+    const bbox = pointCloudNode.boundingBox;
+    const w = bbox.max[0] - bbox.min[0];
+    const h = bbox.max[1] - bbox.min[1];
+    const d = bbox.max[2] - bbox.min[2];  
+    const boundsGeometry = new THREE.BoxGeometry();
+    const boundsMesh = new THREE.Mesh(boundsGeometry, new THREE.MeshBasicMaterial({color: 0xffff00, wireframe: true}));
+    boundsMesh.position.set(bbox.center[0], bbox.center[1], bbox.center[2]);
+    boundsMesh.scale.set(w,h,d);
+    scene.add(boundsMesh);
+  }
+
 
   const camTarget = pointCloudNode.boundingBox.center;
   const minToCenter = vec3.sub(vec3.create(), camTarget, pointCloudNode.boundingBox.min);
-  const camPos = vec3.scaleAndAdd(vec3.create(), camTarget, minToCenter, -5.0);
+  const camPos = vec3.scaleAndAdd(vec3.create(), camTarget, minToCenter, -1.5);
   const controls = new CameraControls(camera, renderer.domElement);
   controls.setLookAt(camPos[0], camPos[1], camPos[2], camTarget[0], camTarget[1], camTarget[2]);
   controls.update(0.0);

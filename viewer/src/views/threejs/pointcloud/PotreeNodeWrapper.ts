@@ -7,6 +7,7 @@ import * as Potree from '@cognite/potree-core';
 import { PotreePointSizeType, PotreePointColorType, PotreePointShape } from './enums';
 import { fromThreeJsBox3 } from '../utilities';
 import { Box3 } from '../../../utils/Box3';
+import { mat4, vec3 } from 'gl-matrix';
 
 /**
  * Wrapper around `Potree.PointCloudOctree` with some convinence functions.
@@ -50,7 +51,11 @@ export class PotreeNodeWrapper {
 
   get boundingBox(): Box3 {
     const bbox: THREE.Box3 = this.octtree.root.tightBoundingBox;
-    return fromThreeJsBox3(bbox);
+    const box = fromThreeJsBox3(bbox);
+    // Apply transformation to switch axes
+    const min = vec3.fromValues(box.min[0], box.min[2], -box.min[1]);
+    const max = vec3.fromValues(box.max[0], box.max[2], -box.max[1]);
+    return new Box3([min, max]);
   }
 
   get pointColorType(): PotreePointColorType {

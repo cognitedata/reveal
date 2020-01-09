@@ -15,7 +15,7 @@ export function createLocalPointCloudModel(url: string): PointCloudModel {
   const fetchPointCloud: FetchPointCloudDelegate = async () => {
     const transform: SectorModelTransformation = {
       modelMatrix: identity,
-      inverseModelMatrix: mat4.invert(mat4.create(), identity)!
+      inverseModelMatrix: identity
     };
 
     if (url.endsWith('ept.json')) {
