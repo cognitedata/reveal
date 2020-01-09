@@ -20,6 +20,7 @@ async function main() {
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   camera.near = 0.12;
   camera.far = 1000;
+  camera.updateProjectionMatrix();
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#000000');
   renderer.setSize(window.innerWidth, window.innerHeight);

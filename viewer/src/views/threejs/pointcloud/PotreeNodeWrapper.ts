@@ -42,7 +42,6 @@ export class PotreeNodeWrapper {
     return this.octtree.pointBudget;
   }
   set pointBudget(count: number) {
-    // this.octtree.visiblePointsTarget = count;
     this.octtree.pointBudget = count;
   }
   get visiblePointCount(): number {
@@ -50,9 +49,7 @@ export class PotreeNodeWrapper {
   }
 
   get boundingBox(): Box3 {
-    // const offset: THREE.Vector3 = this.octtree.position;
-    const bbox: THREE.Box3 = this.octtree.boundingBox;
-    // bbox.translate(offset.negate());
+    const bbox: THREE.Box3 = this.octtree.root.tightBoundingBox;
     return fromThreeJsBox3(bbox);
   }
 
