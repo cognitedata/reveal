@@ -5,8 +5,8 @@
 import { Sector, SectorQuads, SectorMetadata, TriangleMesh, InstancedMesh, InstancedMeshFile } from './types';
 import { FetchSectorDelegate, FetchCtmDelegate } from './delegates';
 import { createOffsetsArray } from '../../utils/arrayUtils';
-import { WorkerArguments, ParseQuadsResult } from '../../../workers/types/parser.types';
-import { ParserWorker } from '../../../workers/parser.worker';
+import { WorkerArguments, ParseQuadsResult } from '../../workers/types/parser.types';
+import { ParserWorker } from '../../workers/parser.worker';
 import * as Comlink from 'comlink';
 import { createSimpleCache } from '../createCache';
 
@@ -52,7 +52,7 @@ function createWorkers<U>(): PooledWorker[] {
   for (let i = 0; i < window.navigator.hardwareConcurrency; i++) {
     const newWorker = {
       worker: Comlink.wrap(
-        new Worker('../../../workers/parser.worker', { name: 'parser', type: 'module' })
+        new Worker('../../workers/parser.worker', { name: 'parser', type: 'module' })
       ) as ParserWorker,
       activeJobCount: 0,
       messageIdCounter: 0

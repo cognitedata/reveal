@@ -2,14 +2,11 @@
   "name": "@cognite/reveal",
   "version": "0.1.0",
   "description": "Reveal streaming component",
-  "main": "dist/index.js",
-  "types": "dist/src/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "release": "webpack --env.three-examples false --env.cesium-examples false",
-    "build": "webpack --env.development",
+    "build": "mkdir -p dist && cp package.json README.md dist/ && webpack --env.development",
     "clean": "rimraf -rf dist/ target/ pkg/",
     "test": "jest",
     "coverage": "jest --coverage",

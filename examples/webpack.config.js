@@ -8,7 +8,7 @@ const logger = getLogger('reveal-examples');
 // The path to the ceisum source code
 const cesiumSource = 'node_modules/cesium/Source';
 const cesiumWorkers = '../Build/Cesium/Workers';
-const revealSource = 'node_modules/@cognite/reveal/dist';
+const revealSource = 'node_modules/@cognite/reveal';
 
 /*
  * Set args on the command line using
@@ -44,41 +44,41 @@ const allExamples = [
     template: 'template-example.ejs',
     type: 'threejs'
   },
-  {
-    name: "threejs-post-processing-effects",
-    title: "Post processing effects",
-    entry: './src/threejs/post-processing-effects.ts',
-    template: 'template-example.ejs',
-    type: 'threejs'
-  },
-  {
-    name: "threejs-with-pointcloud",
-    title: "CAD model with point cloud",
-    entry: './src/threejs/sector-with-pointcloud.ts',
-    template: 'template-example.ejs',
-    type: 'threejs'
-  },
-  {
-    name: "threejs-two-models",
-    title: "Two models",
-    entry: './src/threejs/two-models.ts',
-    template: './template-example.ejs',
-    type: 'threejs'
-  },
-  {
-    name: "threejs-custom-scene-elements",
-    title: "Custom ThreeJS scene elements",
-    entry: './src/threejs/custom-scene-elements.ts',
-    template: './template-example.ejs',
-    type: 'threejs'
-  },
-  {
-    name: "cesiumjs-basic",
-    title: 'CesiumJS basic',
-    entry: './src/cesiumjs/basic.ts',
-    template: './src/cesiumjs/template.ejs',
-    type: 'cesium'
-  },
+  //{
+    //name: "threejs-post-processing-effects",
+    //title: "Post processing effects",
+    //entry: './src/threejs/post-processing-effects.ts',
+    //template: 'template-example.ejs',
+    //type: 'threejs'
+  //},
+  //{
+    //name: "threejs-with-pointcloud",
+    //title: "CAD model with point cloud",
+    //entry: './src/threejs/sector-with-pointcloud.ts',
+    //template: 'template-example.ejs',
+    //type: 'threejs'
+  //},
+  //{
+    //name: "threejs-two-models",
+    //title: "Two models",
+    //entry: './src/threejs/two-models.ts',
+    //template: './template-example.ejs',
+    //type: 'threejs'
+  //},
+  //{
+    //name: "threejs-custom-scene-elements",
+    //title: "Custom ThreeJS scene elements",
+    //entry: './src/threejs/custom-scene-elements.ts',
+    //template: './template-example.ejs',
+    //type: 'threejs'
+  //},
+  //{
+    //name: "cesiumjs-basic",
+    //title: 'CesiumJS basic',
+    //entry: './src/cesiumjs/basic.ts',
+    //template: './src/cesiumjs/template.ejs',
+    //type: 'cesium'
+  //},
 ];
 
 module.exports = env => {
@@ -92,7 +92,7 @@ module.exports = env => {
   logger.info(`  - cesium:  ${buildCesiumExamples}`);
 
   const isExampleEnabled = example => {
-    return (example.type === 'cesium' && buildCesiumExamples) || 
+    return (example.type === 'cesium' && buildCesiumExamples) ||
       (example.type === 'threejs' && buildThreeJsExamples);
   }
   const enabledExamples = allExamples.filter(isExampleEnabled);
@@ -142,7 +142,12 @@ module.exports = env => {
         },
         {
           test: /\.tsx?$/,
-          use: 'ts-loader',
+          use: {
+            loader: 'ts-loader',
+            options: {
+              onlyCompileBundledFiles: true,
+            },
+          },
           exclude: [
             /node_modules/,
           ],
@@ -191,7 +196,8 @@ module.exports = env => {
         resolve('public/'),
         resolve('dist/'),
         resolve('node_modules/cesium/Source/')
-      ]
+      ],
+      writeToDisk: true,
     },
     optimization: {
       usedExports: true,

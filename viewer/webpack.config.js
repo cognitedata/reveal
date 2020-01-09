@@ -37,13 +37,20 @@ module.exports = env => {
     mode: development ? "development" : "production",
     entry: {
       index: './src/index.ts',
+      threejs: './src/threejs.ts',
+      //cesiumjs: './src/views/cesiumjs/index.ts',
     },
     target: "web",
     module: {
       rules: [
         {
           test: /\.tsx?$/,
-          use: 'ts-loader',
+          use: {
+            loader: 'ts-loader',
+            options: {
+              onlyCompileBundledFiles: true,
+            },
+          },
           exclude: [
             /node_modules/,
             /src\/__tests__/,
