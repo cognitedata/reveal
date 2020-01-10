@@ -83,7 +83,7 @@ describe('consumeSectorDetailed', () => {
 function newTriangleMesh(): TriangleMesh {
   return {
     fileId: 0,
-    treeIndexes: new Float32Array(10),
+    treeIndices: new Float32Array(10),
     indices: new Uint32Array(10),
     vertices: new Float32Array(5),
     colors: new Float32Array(),
