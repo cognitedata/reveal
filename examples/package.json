@@ -59,18 +59,18 @@
     "worker-plugin": "^3.2.0"
   },
   "dependencies": {
-    "gl-matrix": "^3.1.0",
+    "@cognite/potree-core": "^1.0.10",
+    "@cognite/reveal": "../viewer",
+    "@cognite/sdk": "^2.13.0",
+    "@xailabs/three-renderer-stats": "^1.0.4",
     "camera-controls": "^1.15.0",
     "cesium": "^1.64.0",
     "comlink": "^4.1.0",
     "dat.gui": "^0.7.6",
-    "@cognite/potree-core": "^1.0.9",
-    "@cognite/reveal": "../viewer",
-    "@cognite/sdk": "^2.13.0",
-    "@xailabs/three-renderer-stats": "^1.0.4",
-    "postprocessing": "^6.8.9",
-    "three": "0.110.0",
+    "gl-matrix": "^3.1.0",
     "glslify": "^7.0.0",
-    "glslify-import": "^3.1.0"
+    "glslify-import": "^3.1.0",
+    "postprocessing": "^6.8.9",
+    "three": "0.110.0"
   }
 }

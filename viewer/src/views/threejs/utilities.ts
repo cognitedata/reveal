@@ -30,10 +30,6 @@ export function fitCameraToBoundingBox(camera: THREE.Camera, bounds: Box3, radiu
   camera.position.set(position.x, position.y, position.z);
 }
 
-export function toThreeJsBox3(box: Box3): THREE.Box3 {
-  return new THREE.Box3(toThreeVector3(box.min), toThreeVector3(box.max));
-}
-
 const toThreeVector3Vars = {
   result: vec3.create()
 };
@@ -92,4 +88,20 @@ export function fromThreeMatrix(out: mat4, m: THREE.Matrix4, modelTransformation
     return mat4.multiply(out, modelTransformation.inverseModelMatrix, out);
   }
   return out;
+}
+
+export function toThreeJsBox3(box: Box3): THREE.Box3 {
+  return new THREE.Box3(toThreeVector3(box.min), toThreeVector3(box.max));
+}
+
+const fromThreeJsBox3Vars = {
+  min: vec3.create(),
+  max: vec3.create()
+};
+
+export function fromThreeJsBox3(box: THREE.Box3): Box3 {
+  const { min, max } = fromThreeJsBox3Vars;
+  fromThreeVector3(min, box.min);
+  fromThreeVector3(max, box.max);
+  return new Box3([min, max]);
 }

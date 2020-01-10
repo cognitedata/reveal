@@ -5,7 +5,6 @@
 import * as THREE from 'three';
 import * as reveal from '@cognite/reveal';
 import CameraControls from 'camera-controls';
-import { vec3 } from 'gl-matrix';
 
 CameraControls.install({ THREE });
 
@@ -18,14 +17,14 @@ async function main() {
   scene.add(sectorModelNode);
 
   const fetchMetadata: reveal.internal.FetchSectorMetadataDelegate = sectorModel[0];
-  const [sectorScene, modelTransform] = await fetchMetadata();
+  const [modelScene, modelTransform] = await fetchMetadata();
 
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#444');
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const { position, target, near, far } = reveal.internal.suggestCameraConfig(sectorScene.root);
+  const { position, target, near, far } = reveal.internal.suggestCameraConfig(modelScene.root);
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
   const threePos = reveal.toThreeVector3(position, sectorModelNode.modelTransformation);
@@ -33,7 +32,7 @@ async function main() {
   controls.setLookAt(threePos.x, threePos.y, threePos.z, threeTarget.x, threeTarget.y, threeTarget.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
-
+4
   const clock = new THREE.Clock();
   const render = async () => {
     const delta = clock.getDelta();

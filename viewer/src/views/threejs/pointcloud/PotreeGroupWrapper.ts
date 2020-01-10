@@ -13,13 +13,6 @@ import { PotreeNodeWrapper } from './PotreeNodeWrapper';
  * basic functionality.
  */
 export class PotreeGroupWrapper extends THREE.Object3D {
-  get pointBudget(): number {
-    return this.potreeGroup.pointBudget;
-  }
-  set pointBudget(numPoints: number) {
-    this.potreeGroup.setPointBudget(numPoints);
-  }
-
   get needsRedraw(): boolean {
     return (
       Potree.Global.numNodesLoading !== this.numNodesLoadingAfterLastRedraw ||
@@ -37,7 +30,6 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     this.potreeGroup.name = 'PotreeGroup';
     this.name = 'Potree point cloud wrapper';
     this.add(this.potreeGroup);
-    this.pointBudget = 2_000_000;
 
     this.onAfterRender = this.resetNeedsRedraw;
   }
