@@ -38,6 +38,7 @@ export type Color = number;
 export type TriangleMesh = {
   readonly fileId: number;
   readonly indices: Uint32Array;
+  readonly treeIndexes: Float32Array;
   readonly vertices: Float32Array;
   readonly normals: Float32Array | undefined;
   readonly colors: Float32Array;
