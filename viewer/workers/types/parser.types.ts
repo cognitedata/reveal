@@ -42,7 +42,7 @@ export interface ParseSectorResult {
   instanceMeshes: {
     fileIds: Float64Array;
     nodeIds: Float64Array;
-    treeIndexes: Float64Array;
+    treeIndices: Float64Array;
     colors: Uint8Array;
     triangleOffsets: Float64Array;
     triangleCounts: Float64Array;
@@ -52,7 +52,7 @@ export interface ParseSectorResult {
   triangleMeshes: {
     fileIds: Float64Array;
     nodeIds: Float64Array;
-    treeIndexes: Float64Array;
+    treeIndices: Float64Array;
     colors: Uint8Array;
     triangleCounts: Float64Array;
     sizes: Float32Array;

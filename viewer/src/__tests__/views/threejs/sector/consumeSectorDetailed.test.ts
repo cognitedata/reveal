@@ -83,6 +83,7 @@ describe('consumeSectorDetailed', () => {
 function newTriangleMesh(): TriangleMesh {
   return {
     fileId: 0,
+    treeIndices: new Float32Array(10),
     indices: new Uint32Array(10),
     vertices: new Float32Array(5),
     colors: new Float32Array(),
@@ -106,7 +107,7 @@ function newInstanceMesh(): InstancedMesh {
     triangleOffset: 0,
     colors: new Uint8Array(4),
     instanceMatrices: new Float32Array(16),
-    treeIndexes: new Uint32Array(1)
+    treeIndices: new Uint32Array(1)
   };
 }
 
