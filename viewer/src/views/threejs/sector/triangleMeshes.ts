@@ -7,15 +7,8 @@ import { TriangleMesh } from '../../../models/sector/types';
 import { sectorShaders } from './shaders';
 
 export function createTriangleMeshes(triangleMeshes: TriangleMesh[], bounds: THREE.Box3): THREE.Mesh[] {
-  // TODO since we iterate over unique files here as well as in parseSector,
-  // we should just send the data grouped by file from the parsing
-  // (and ideally from Rust)
-  // TODO 20191025 larsmoa: Hack to avoid lots of big meshes, but
-  // color information is lost. Fix.
   const result: THREE.Mesh[] = [];
-  const uniqueFiles = new Set<number>(triangleMeshes.map(x => x.fileId));
-  for (const fileId of uniqueFiles) {
-    const mesh = triangleMeshes.find(x => x.fileId === fileId)!;
+  for (const mesh of triangleMeshes) {
     const geometry = new THREE.BufferGeometry();
     geometry.boundingBox = bounds.clone();
     geometry.boundingSphere = new THREE.Sphere();
@@ -23,9 +16,11 @@ export function createTriangleMeshes(triangleMeshes: TriangleMesh[], bounds: THR
     const indices = new THREE.Uint32BufferAttribute(mesh.indices.buffer, 1);
     const vertices = new THREE.Float32BufferAttribute(mesh.vertices.buffer, 3);
     const colors = new THREE.Float32BufferAttribute(mesh.colors.buffer, 3);
+    const treeIndices = new THREE.Float32BufferAttribute(mesh.treeIndexes.buffer, 1);
     geometry.setIndex(indices);
     geometry.setAttribute('position', vertices);
     geometry.setAttribute('color', colors);
+    geometry.setAttribute('treeIndex', treeIndices);
     geometry.boundingBox = bounds.clone();
     geometry.boundingSphere = new THREE.Sphere();
     bounds.getBoundingSphere(geometry.boundingSphere);
