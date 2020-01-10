@@ -157,7 +157,7 @@ export async function createParser(
       })();
 
       const finalInstanceMeshes = await (async () => {
-        const { fileIds, colors, treeIndexes, triangleCounts, triangleOffsets, instanceMatrices } = instanceMeshes;
+        const { fileIds, colors, treeIndices, triangleCounts, triangleOffsets, instanceMatrices } = instanceMeshes;
         const meshesGroupedByFile = groupMeshesByNumber(fileIds);
 
         const finalMeshes: InstancedMeshFile[] = [];
@@ -187,7 +187,7 @@ export async function createParser(
               const meshIdx = meshIndices[fileMeshIndices[i]];
               const instanceMatrix = instanceMatrices.slice(meshIdx * 16, meshIdx * 16 + 16);
               instanceMatrixBuffer.set(instanceMatrix, i * 16);
-              treeIndexBuffer.set(treeIndexes.slice(meshIdx, meshIdx + 1), i);
+              treeIndexBuffer.set(treeIndices.slice(meshIdx, meshIdx + 1), i);
               const color = colors.slice(meshIdx * 4, meshIdx * 4 + 4);
               colorBuffer.set(color, i * 4);
             }
@@ -196,7 +196,7 @@ export async function createParser(
               triangleOffset,
               instanceMatrices: instanceMatrixBuffer,
               colors: colorBuffer,
-              treeIndexes: treeIndexBuffer
+              treeIndices: treeIndexBuffer
             });
           }
 
