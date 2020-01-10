@@ -16,7 +16,7 @@ export function createTriangleMeshes(triangleMeshes: TriangleMesh[], bounds: THR
     const indices = new THREE.Uint32BufferAttribute(mesh.indices.buffer, 1);
     const vertices = new THREE.Float32BufferAttribute(mesh.vertices.buffer, 3);
     const colors = new THREE.Float32BufferAttribute(mesh.colors.buffer, 3);
-    const treeIndices = new THREE.Float32BufferAttribute(mesh.treeIndexes.buffer, 1);
+    const treeIndices = new THREE.Float32BufferAttribute(mesh.treeIndices.buffer, 1);
     geometry.setIndex(indices);
     geometry.setAttribute('position', vertices);
     geometry.setAttribute('color', colors);
