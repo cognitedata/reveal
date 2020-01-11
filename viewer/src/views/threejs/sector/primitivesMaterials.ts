@@ -3,15 +3,17 @@
  */
 
 import * as THREE from 'three';
-import { sectorShaders } from './shaders';
+import { sectorShaders, shaderDefines } from './shaders';
 
 export const boxMaterial = new THREE.ShaderMaterial({
+  ...shaderDefines,
   extensions: { fragDepth: true },
   vertexShader: sectorShaders.boxPrimitive.vertex,
   fragmentShader: sectorShaders.boxPrimitive.fragment
 });
 
 export const circleMaterial = new THREE.ShaderMaterial({
+  ...shaderDefines,
   extensions: { fragDepth: true },
   vertexShader: sectorShaders.circlePrimitive.vertex,
   fragmentShader: sectorShaders.circlePrimitive.fragment,
@@ -21,17 +23,20 @@ export const circleMaterial = new THREE.ShaderMaterial({
 });
 
 export const nutsMaterial = new THREE.ShaderMaterial({
+  ...shaderDefines,
   vertexShader: sectorShaders.nutPrimitive.vertex,
   fragmentShader: sectorShaders.nutPrimitive.fragment
 });
 
 export const quadsMaterial = new THREE.ShaderMaterial({
+  ...shaderDefines,
   vertexShader: sectorShaders.quadPrimitive.vertex,
   fragmentShader: sectorShaders.quadPrimitive.fragment,
   side: THREE.DoubleSide
 });
 
 const generalRingsMaterialTemplate = new THREE.ShaderMaterial({
+  ...shaderDefines,
   uniforms: {
     inverseModelMatrix: {
       value: new THREE.Matrix4()
@@ -50,6 +55,7 @@ export function createGeneralRingsMaterial() {
 }
 
 const coneMaterialTemplate = new THREE.ShaderMaterial({
+  ...shaderDefines,
   uniforms: {
     inverseModelMatrix: {
       value: new THREE.Matrix4()
@@ -65,6 +71,7 @@ export function createConeMaterial() {
 }
 
 const eccentricConesMaterialTemplate = new THREE.ShaderMaterial({
+  ...shaderDefines,
   uniforms: {
     inverseModelMatrix: {
       value: new THREE.Matrix4()
@@ -80,6 +87,7 @@ export function createEccentricConesMaterial() {
 }
 
 const ellipsoidSegmentsMaterialTemplate = new THREE.ShaderMaterial({
+  ...shaderDefines,
   uniforms: {
     inverseModelMatrix: {
       value: new THREE.Matrix4()
@@ -95,6 +103,7 @@ export function createEllipsoidSegmentsMaterial() {
 }
 
 const generalCylinderMaterialTemplate = new THREE.ShaderMaterial({
+  ...shaderDefines,
   uniforms: {
     inverseModelMatrix: {
       value: new THREE.Matrix4()
@@ -110,6 +119,7 @@ export function createGeneralCylinderMaterial() {
 }
 
 const trapeziumsMaterialTemplate = new THREE.ShaderMaterial({
+  ...shaderDefines,
   uniforms: {
     inverseModelMatrix: {
       value: new THREE.Matrix4()
@@ -125,6 +135,7 @@ export function createTrapeziumsMaterial() {
 }
 
 const torusSegmentsMaterialTemplate = new THREE.ShaderMaterial({
+  ...shaderDefines,
   uniforms: {
     inverseModelMatrix: {
       value: new THREE.Matrix4()
@@ -142,6 +153,7 @@ export function createTorusSegmentsMaterial() {
 }
 
 const sphericalSegmentsMaterialTemplate = new THREE.ShaderMaterial({
+  ...shaderDefines,
   uniforms: {
     inverseModelMatrix: {
       value: new THREE.Matrix4()
@@ -157,6 +169,7 @@ export function createSphericalSegmentsMaterial() {
 }
 
 const sphericalSegementsMaterialTemplate = new THREE.ShaderMaterial({
+  ...shaderDefines,
   uniforms: {
     inverseModelMatrix: {
       value: new THREE.Matrix4()

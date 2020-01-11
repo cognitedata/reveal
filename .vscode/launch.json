@@ -15,7 +15,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "https://localhost:8080/example-threejs-simple.html",
+            "url": "https://localhost:8080/example-threejs-simple.html?model=ivar-aasen-2019-12-06-max-size-3_0",
             "webRoot": "${workspaceFolder}"
         }
     ]

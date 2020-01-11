@@ -1,6 +1,6 @@
 #pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
-#pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
+#pragma glslify: import('../../base/updateFragmentColor.glsl')
 #pragma glslify: isSliced = require('../../base/isSliced.glsl')
 
 #define PI 3.14159265359

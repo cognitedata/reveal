@@ -3,10 +3,11 @@
  */
 
 import * as THREE from 'three';
-import { InstancedMesh, InstancedMeshFile } from '../../../models/sector/types';
-import { sectorShaders } from './shaders';
+import { InstancedMeshFile } from '../../../models/sector/types';
+import { sectorShaders, shaderDefines } from './shaders';
 
 const instancedMeshMaterial = new THREE.ShaderMaterial({
+  ...shaderDefines,
   uniforms: {},
   extensions: {
     derivatives: true

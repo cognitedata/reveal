@@ -1,4 +1,4 @@
-#pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
+#pragma glslify: import('../../base/updateFragmentColor.glsl')
 
 varying vec3 v_color;
 varying vec3 v_normal;

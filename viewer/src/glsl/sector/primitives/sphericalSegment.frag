@@ -1,5 +1,5 @@
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
-#pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
+#pragma glslify: import('../../base/updateFragmentColor.glsl')
 #pragma glslify: isSliced = require('../../base/isSliced.glsl')
 
 uniform mat4 projectionMatrix;

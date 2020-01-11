@@ -4,6 +4,16 @@
 
 import glsl from 'glslify';
 
+/**
+ * Defines used to enable debugging features in shaders.
+ */
+export const shaderDefines = {
+  defines: {
+    // Color geometry by tree index instead of model colors.
+    COGNITE_COLOR_BY_TREE_INDEX: true
+  }
+};
+
 export const sectorShaders = {
   // ----------------
   // "Regular" meshes

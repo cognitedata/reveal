@@ -16,7 +16,7 @@ varying float v_treeIndex;
 
 void main() {
     v_xy = vec2(position.x, position.y);
-    v_treeIndex = v_treeIndex;
+    v_treeIndex = a_treeIndex;
 
     mat4 instanceMatrix = constructMatrix(
         a_instanceMatrix_column_0,
