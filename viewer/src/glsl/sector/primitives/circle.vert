@@ -5,15 +5,18 @@ attribute vec4 a_instanceMatrix_column_1;
 attribute vec4 a_instanceMatrix_column_2;
 attribute vec4 a_instanceMatrix_column_3;
 
+attribute float a_treeIndex;
 attribute vec3 a_color;
 attribute vec3 a_normal;
 
 varying vec2 v_xy;
 varying vec3 v_color;
 varying vec3 v_normal;
+varying float v_treeIndex;
 
 void main() {
     v_xy = vec2(position.x, position.y);
+    v_treeIndex = v_treeIndex;
 
     mat4 instanceMatrix = constructMatrix(
         a_instanceMatrix_column_0,
