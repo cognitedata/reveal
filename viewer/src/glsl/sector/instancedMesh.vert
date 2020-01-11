@@ -5,6 +5,7 @@ attribute vec4 a_instanceMatrix_column_1;
 attribute vec4 a_instanceMatrix_column_2;
 attribute vec4 a_instanceMatrix_column_3;
 
+attribute float a_treeIndex;
 attribute vec3 a_color;
 
 varying float v_treeIndex;
@@ -25,7 +26,6 @@ void main()
     vec3 transformed = (instanceMatrix * vec4(position, 1.0)).xyz;
     vec4 modelViewPosition = modelViewMatrix * vec4(transformed, 1.0);
     v_viewPosition = modelViewPosition.xyz;
-    // TODO 20200111 larsmoa: Implement treeIndex for instanced meshes.
-    v_treeIndex = 255.0*255.0*255.0;
+    v_treeIndex = a_treeIndex;
     gl_Position = projectionMatrix * modelViewPosition;
 }

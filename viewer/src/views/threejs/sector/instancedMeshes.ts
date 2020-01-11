@@ -33,6 +33,7 @@ export function createInstancedMeshes(meshes: InstancedMeshFile[], bounds: THREE
       bounds.getBoundingSphere(geometry.boundingSphere);
       geometry.setIndex(indices);
       geometry.setAttribute('position', vertices);
+      geometry.setAttribute('a_treeIndex', new THREE.InstancedBufferAttribute(instancedMesh.treeIndices, 1));
       geometry.setAttribute(`a_color`, new THREE.InstancedBufferAttribute(instancedMesh.colors, 4, true));
       // TODO de-duplicate this, which is the same as in setAttributes
       const buffer = new THREE.InstancedInterleavedBuffer(instancedMesh.instanceMatrices, 16);
