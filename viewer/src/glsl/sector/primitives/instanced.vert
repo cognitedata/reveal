@@ -5,6 +5,7 @@ attribute vec4 a_instanceMatrix_column_1;
 attribute vec4 a_instanceMatrix_column_2;
 attribute vec4 a_instanceMatrix_column_3;
 
+attribute float a_treeIndex;
 attribute vec3 a_color;
 
 varying float v_treeIndex;
@@ -20,8 +21,7 @@ void main()
         a_instanceMatrix_column_3
     );
 
-    // TODO 20200111 larsmoa: Implement treeIndex for quads.
-    v_treeIndex = 255.0*255.0*255.0;
+    v_treeIndex = a_treeIndex;
     v_color = a_color;
     v_normal = normalMatrix * normalize(instanceMatrix * vec4(normalize(normal), 0.0)).xyz;
 
