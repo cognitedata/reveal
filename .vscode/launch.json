@@ -1,5 +1,4 @@
 {
-    // Use IntelliSense to learn about possible attributes.
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
@@ -15,7 +14,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "https://localhost:8080/example-threejs-simple.html?model=ivar-aasen-2019-12-06-max-size-3_0",
+            "url": "https://localhost:8080/example-threejs-simple.html",
             "webRoot": "${workspaceFolder}"
         }
     ]
