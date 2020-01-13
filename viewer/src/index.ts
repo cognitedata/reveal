@@ -2,9 +2,9 @@
  * Copyright 2019 Cognite AS
  */
 
-export { SectorModel } from './datasources/SectorModel';
+export { CadModel } from './models/sector/CadModel';
 export { PointCloudModel } from './datasources/PointCloudModel';
-export { createLocalSectorModel, createLocalPointCloudModel } from './datasources/local';
+export { createLocalCadModel, createLocalPointCloudModel } from './datasources/local';
 
 //export { toThreeVector3 } from './views/threejs/utilities';
 //export { SectorNode } from './views/threejs';

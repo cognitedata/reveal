@@ -4,7 +4,11 @@
 
 import * as THREE from 'three';
 import * as reveal from '@cognite/reveal';
-import * as revealthree from '@cognite/reveal/threejs';
+//import * as revealthree from '@cognite/reveal/threejs';
+
+//import { CadModelRemote } from '@cognite/reveal';
+import { CadNode, toThreeVector3, suggestCameraConfig } from '@cognite/reveal/threejs';
+
 import CameraControls from 'camera-controls';
 import { vec3 } from 'gl-matrix';
 
@@ -14,24 +18,20 @@ async function main() {
   const modelUrl = new URL(location.href).searchParams.get('model') || '/primitives';
 
   const scene = new THREE.Scene();
-  const sectorModel = reveal.createLocalSectorModel(modelUrl);
-  const sectorModelNode = await revealthree.createThreeJsSectorNode(sectorModel);
-  scene.add(sectorModelNode);
+  const cadModel = await reveal.createLocalCadModel(modelUrl);
+  const cadNode = new CadNode(cadModel);
 
-  const fetchMetadata: reveal.internal.FetchSectorMetadataDelegate = sectorModel[0];
-  const [sectorScene, modelTransform] = await fetchMetadata();
+  scene.add(cadNode);
 
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#444');
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const { position, target, near, far } = reveal.internal.suggestCameraConfig(sectorScene.root);
+  const { position, target, near, far } = suggestCameraConfig(cadModel);
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
-  const threePos = revealthree.toThreeVector3(position, sectorModelNode.modelTransformation);
-  const threeTarget = revealthree.toThreeVector3(target, sectorModelNode.modelTransformation);
-  controls.setLookAt(threePos.x, threePos.y, threePos.z, threeTarget.x, threeTarget.y, threeTarget.z);
+  controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
 
@@ -39,7 +39,7 @@ async function main() {
   const render = async () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
-    const sectorsNeedUpdate = await sectorModelNode.update(camera);
+    const sectorsNeedUpdate = await cadNode.update(camera);
 
     if (controlsNeedUpdate || sectorsNeedUpdate) {
       renderer.render(scene, camera);

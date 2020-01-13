@@ -3,7 +3,7 @@
  */
 
 import { Sector, SectorQuads, SectorMetadata, TriangleMesh, InstancedMesh, InstancedMeshFile } from './types';
-import { FetchSectorDelegate, FetchCtmDelegate } from './delegates';
+import { FetchSectorDelegate, FetchCtmDelegate, ParseSectorDelegate } from './delegates';
 import { createOffsetsArray } from '../../utils/arrayUtils';
 import { WorkerArguments, ParseQuadsResult } from '../../workers/types/parser.types';
 import { ParserWorker } from '../../workers/parser.worker';
@@ -67,7 +67,7 @@ export async function createParser(
   sectorRoot: SectorMetadata,
   fetchSector: FetchSectorDelegate,
   fetchCtmFile: FetchCtmDelegate
-) {
+): Promise<ParseSectorDelegate<Sector>> {
   const rootSectorArrayBuffer = await fetchSector(sectorRoot.id);
   const workerList = createWorkers();
 
