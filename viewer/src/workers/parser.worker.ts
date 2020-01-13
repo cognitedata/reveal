@@ -59,7 +59,7 @@ export class ParserWorker {
       const result = {
         fileIds: collection.file_id().slice(),
         nodeIds: collection.node_id().slice(),
-        treeIndexes: collection.tree_index().slice(),
+        treeIndices: collection.tree_index().slice(),
         colors: collection.color().slice(),
         triangleOffsets: collection.triangle_offset().slice(),
         triangleCounts: collection.triangle_count().slice(),
@@ -74,7 +74,7 @@ export class ParserWorker {
       const result = {
         fileIds: collection.file_id().slice(),
         nodeIds: collection.node_id().slice(),
-        treeIndexes: collection.tree_index().slice(),
+        treeIndices: collection.tree_index().slice(),
         colors: collection.color().slice(),
         triangleCounts: collection.triangle_count().slice(),
         sizes: collection.size().slice()
@@ -98,7 +98,7 @@ export class ParserWorker {
     const torusSegments = collectAttributes(sectorData.torus_segment_collection());
     const trapeziums = collectAttributes(sectorData.trapezium_collection());
 
-    const result: ParseSectorResult = {
+    const parseResult: ParseSectorResult = {
       boxes,
       circles,
       cones,
@@ -115,7 +115,7 @@ export class ParserWorker {
       triangleMeshes
     };
     sectorDataHandle.free();
-    return result;
+    return parseResult;
   };
   parseCtm = async (buffer: Uint8Array): Promise<ParseCtmResult> => {
     const rust = await rustModule;

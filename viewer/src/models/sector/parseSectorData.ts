@@ -5,7 +5,7 @@
 import { Sector, SectorQuads, SectorMetadata, TriangleMesh, InstancedMesh, InstancedMeshFile } from './types';
 import { FetchSectorDelegate, FetchCtmDelegate, ParseSectorDelegate } from './delegates';
 import { createOffsetsArray } from '../../utils/arrayUtils';
-import { WorkerArguments, ParseQuadsResult } from '../../workers/types/parser.types';
+import { WorkerArguments, ParseQuadsResult, ParseSectorResult } from '../../workers/types/parser.types';
 import { ParserWorker } from '../../workers/parser.worker';
 import * as Comlink from 'comlink';
 import { createSimpleCache } from '../createCache';
@@ -84,7 +84,7 @@ export async function createParser(
 
   async function parse(sectorId: number, sectorArrayBuffer: Uint8Array): Promise<Sector> {
     try {
-      const sectorResult = await postWorkToAvailable(workerList, async (worker: ParserWorker) =>
+      const sectorResult: ParseSectorResult = await postWorkToAvailable(workerList, async (worker: ParserWorker) =>
         worker.parseSector(sectorArrayBuffer)
       );
       const {
@@ -105,7 +105,7 @@ export async function createParser(
       } = sectorResult;
 
       const finalTriangleMeshes = await (async () => {
-        const { fileIds, colors, triangleCounts } = triangleMeshes;
+        const { fileIds, colors, triangleCounts, treeIndices } = triangleMeshes;
 
         const meshesGroupedByFile = groupMeshesByNumber(fileIds);
 
@@ -118,17 +118,20 @@ export async function createParser(
           // Load CTM (geometry)
           const ctm = await loadCtmGeometryCache.request(fileId);
 
-          const indices = ctm.indices;
-          const vertices = ctm.vertices;
-          const normals = ctm.normals;
+          const indices: Uint32Array = ctm.indices;
+          const vertices: Float32Array = ctm.vertices;
+          const normals: Float32Array = ctm.normals;
+          const expandedTreeIndices = new Float32Array(indices.length);
 
           const colorsBuffer = new Float32Array((3 * vertices.length) / 3);
           for (let i = 0; i < meshIndices.length; i++) {
             const meshIdx = meshIndices[i];
+            const treeIndex = treeIndices[meshIdx];
             const triOffset = offsets[i];
             const triCount = fileTriangleCounts[i];
             const [r, g, b] = readColorToFloat32s(colors, meshIdx);
 
+            expandedTreeIndices.fill(treeIndex, triOffset, triOffset + triCount);
             for (let triIdx = triOffset; triIdx < triOffset + triCount; triIdx++) {
               for (let j = 0; j < 3; j++) {
                 const vIdx = indices[3 * triIdx + j];
@@ -143,6 +146,7 @@ export async function createParser(
           const mesh: TriangleMesh = {
             colors: colorsBuffer,
             fileId,
+            treeIndices: expandedTreeIndices,
             indices,
             vertices,
             normals
@@ -153,7 +157,7 @@ export async function createParser(
       })();
 
       const finalInstanceMeshes = await (async () => {
-        const { fileIds, colors, treeIndexes, triangleCounts, triangleOffsets, instanceMatrices } = instanceMeshes;
+        const { fileIds, colors, treeIndices, triangleCounts, triangleOffsets, instanceMatrices } = instanceMeshes;
         const meshesGroupedByFile = groupMeshesByNumber(fileIds);
 
         const finalMeshes: InstancedMeshFile[] = [];
@@ -183,7 +187,7 @@ export async function createParser(
               const meshIdx = meshIndices[fileMeshIndices[i]];
               const instanceMatrix = instanceMatrices.slice(meshIdx * 16, meshIdx * 16 + 16);
               instanceMatrixBuffer.set(instanceMatrix, i * 16);
-              treeIndexBuffer.set(treeIndexes.slice(meshIdx, meshIdx + 1), i);
+              treeIndexBuffer.set(treeIndices.slice(meshIdx, meshIdx + 1), i);
               const color = colors.slice(meshIdx * 4, meshIdx * 4 + 4);
               colorBuffer.set(color, i * 4);
             }
@@ -192,7 +196,7 @@ export async function createParser(
               triangleOffset,
               instanceMatrices: instanceMatrixBuffer,
               colors: colorBuffer,
-              treeIndexes: treeIndexBuffer
+              treeIndices: treeIndexBuffer
             });
           }
 
@@ -291,9 +295,3 @@ async function loadCtmGeometry(
     throw new Error(`Parsing CTM file ${fileId} failed: ${err}`);
   }
 }
-
-// export async function parseSectorData(sectorId: number, data: ArrayBuffer): Promise<Sector> {
-//// const m = await rust;
-//// const test = await m.parse_sector(data);
-// return {};
-// }

@@ -4,7 +4,6 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { vec3 } from 'gl-matrix';
 import * as reveal from '@cognite/reveal';
 import { CadNode, toThreeVector3, suggestCameraConfig } from '@cognite/reveal/threejs';
 
@@ -30,7 +29,6 @@ async function main() {
   controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
-
   const clock = new THREE.Clock();
   const render = async () => {
     const delta = clock.getDelta();

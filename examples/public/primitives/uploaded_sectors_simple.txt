@@ -1,0 +1,1 @@
+{"sector_id":0,"parent_sector_id":null,"bbox_min":[-0.74993515,-286.58817,-0.075009815],"bbox_max":[465.26218,137.46092,605.6],"sector_contents":{"grid_size":[161,147,207],"grid_origin":[-6.0,-294.0,-6.0],"grid_increment":3.0,"node_count":2936}}

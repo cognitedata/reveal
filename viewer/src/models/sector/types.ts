@@ -38,6 +38,7 @@ export type Color = number;
 export type TriangleMesh = {
   readonly fileId: number;
   readonly indices: Uint32Array;
+  readonly treeIndices: Float32Array;
   readonly vertices: Float32Array;
   readonly normals: Float32Array | undefined;
   readonly colors: Float32Array;
@@ -56,7 +57,7 @@ export type InstancedMesh = {
   readonly triangleOffset: number;
   readonly colors: Uint8Array;
   readonly instanceMatrices: Float32Array;
-  readonly treeIndexes: Uint32Array;
+  readonly treeIndices: Uint32Array;
 };
 
 // TODO 2019-12-05 larsmoa: Rename to e.g. SectorGeometry to avoid
