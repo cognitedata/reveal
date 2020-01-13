@@ -27,9 +27,13 @@ export function consumeSectorSimple(
   metadata: SectorMetadata,
   sectorNode: SectorNode
 ) {
+  const stride = 3 + 1 + 3 + 16;
   if (sector.buffer.byteLength === 0) {
     // No data, just skip
     return;
+  }
+  if (sector.buffer.byteLength % stride !== 0) {
+    throw new Error(`Expected buffer size to be multiple of ${stride}, but got ${sector.buffer.byteLength}`);
   }
   const bounds = toThreeJsBox3(metadata.bounds);
   const boundsRenderer = new THREE.Box3Helper(bounds.expandByScalar(0.1), new THREE.Color(0xff00ff));
@@ -39,7 +43,7 @@ export function consumeSectorSimple(
 
   const interleavedBuffer32 = new THREE.InstancedInterleavedBuffer(sector.buffer, 3 + 1 + 3 + 16);
   const color = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 3, 0, true);
-  const tree_index = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 1, 3, false);
+  const treeIndex = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 1, 3, false);
   const normal = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 3, 4, true);
   const matrix0 = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 4, 7, false);
   const matrix1 = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 4, 11, false);
@@ -48,7 +52,7 @@ export function consumeSectorSimple(
 
   geometry.setAttribute('position', quadVertexBufferAttribute);
   geometry.setAttribute('color', color);
-  geometry.setAttribute('treeIndex', tree_index);
+  geometry.setAttribute('treeIndex', treeIndex);
   geometry.setAttribute('normal', normal);
   geometry.setAttribute('matrix0', matrix0);
   geometry.setAttribute('matrix1', matrix1);
