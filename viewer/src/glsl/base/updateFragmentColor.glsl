@@ -2,7 +2,7 @@
 #pragma glslify: hsv2rgb = require('../color/hsv2rgb.glsl')
 #pragma glslify: packIntToColor = require('../color/packIntToColor.glsl')
 
-#ifdef COGNITE_COLOR_BY_TREEINDEX
+#ifdef COGNITE_COLOR_BY_TREE_INDEX
 
 void updateFragmentColor(vec3 color, float treeIndex, vec3 normal) {
     color = packIntToColor(treeIndex);
