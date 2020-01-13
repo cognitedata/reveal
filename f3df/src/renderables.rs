@@ -258,7 +258,7 @@ mod tests {
         };
         let result = convert_sector(&sector);
 
-        assert_eq!(result[0].tree_index, 42.0);
+        assert_abs_diff_eq!(result[0].tree_index, 42.0, epsilon = 0.0);
         assert_abs_diff_eq!(result[0].color[0], 0.501_960_8); // 128/255
         assert_abs_diff_eq!(result[0].color[1], 0.505_882_4); // 129/255
         assert_abs_diff_eq!(result[0].color[2], 0.509_803_95); // 130/255
