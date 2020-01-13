@@ -1,5 +1,5 @@
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
-#pragma glslify: import('../../base/updateFragmentColor.glsl')
+#pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
 #pragma glslify: isSliced = require('../../base/isSliced.glsl')
 
 uniform mat4 projectionMatrix;
@@ -11,6 +11,7 @@ varying vec4 U;
 varying vec4 V;
 varying vec4 sphereNormal;
 
+varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
@@ -88,6 +89,6 @@ void main() {
     }
 #endif
 
-  updateFragmentColor(v_color, normal);
+  updateFragmentColor(v_color, v_treeIndex, normal);
   updateFragmentDepth(p, projectionMatrix);
 }

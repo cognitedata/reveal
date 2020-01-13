@@ -1,6 +1,6 @@
 #pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
-#pragma glslify: import('../../base/updateFragmentColor.glsl')
+#pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
 #pragma glslify: isSliced = require('../../base/isSliced.glsl')
 
 #define PI 3.14159265359
@@ -17,14 +17,12 @@ varying vec4 v_centerA;
 varying vec4 v_centerB;
 varying float height;
 
+varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
 void main() {
-    // START NEW CODE
     vec3 normal = normalize( v_normal );
-    // END NEW CODE
-
     mat3 basis = mat3(U.xyz, V.xyz, axis.xyz);
     vec3 surfacePoint = vec3(U.w, V.w, axis.w);
     vec3 rayTarget = surfacePoint;
@@ -124,13 +122,6 @@ void main() {
     normal = normalize(cross(A, B));
 #endif
 
-    vec3 color = v_color;
-    //if (isInner) {
-        //normal = -normal;
-        //// TODO move this into lighting function
-        //color = 0.8 * color;
-    //}
-
-    updateFragmentColor(color, normal);
+    updateFragmentColor(v_color, v_treeIndex, normal);
     updateFragmentDepth(p, projectionMatrix);
 }

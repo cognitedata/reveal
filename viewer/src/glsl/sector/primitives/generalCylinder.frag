@@ -1,7 +1,7 @@
 #pragma glslify: mul3 = require('../../math/mul3.glsl')
 #pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
-#pragma glslify: import('../../base/updateFragmentColor.glsl')
+#pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
 #pragma glslify: isSliced = require('../../base/isSliced.glsl')
 
 #define PI 3.14159265359
@@ -29,6 +29,7 @@ varying float v_surfacePointY;
 varying vec4 v_planeA;
 varying vec4 v_planeB;
 
+varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
@@ -117,13 +118,6 @@ void main() {
     normal = normalize(p_local - W.xyz * dot(p_local, W.xyz));
 #endif
 
-    vec3 color = v_color;
-    //if (isInner) {
-        //normal = -normal;
-        //// TODO move this into lighting function
-        //color = 0.8 * color;
-    //}
-
-    updateFragmentColor(color, normal);
+    updateFragmentColor(v_color, v_treeIndex, normal);
     updateFragmentDepth(p, projectionMatrix);
 }
