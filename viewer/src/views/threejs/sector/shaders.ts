@@ -10,7 +10,7 @@ import glsl from 'glslify';
 export const shaderDefines = {
   defines: {
     // Color geometry by tree index instead of model colors.
-    COGNITE_COLOR_BY_TREE_INDEX: true
+    COGNITE_COLOR_BY_TREE_INDEX: false
   }
 };
 
