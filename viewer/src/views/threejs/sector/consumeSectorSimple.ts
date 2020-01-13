@@ -37,16 +37,18 @@ export function consumeSectorSimple(
 
   const geometry = new THREE.InstancedBufferGeometry();
 
-  const interleavedBuffer32 = new THREE.InstancedInterleavedBuffer(sector.buffer, 3 + 3 + 16);
+  const interleavedBuffer32 = new THREE.InstancedInterleavedBuffer(sector.buffer, 3 + 1 + 3 + 16);
   const color = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 3, 0, true);
-  const normal = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 3, 3, true);
-  const matrix0 = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 4, 6, false);
-  const matrix1 = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 4, 10, false);
-  const matrix2 = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 4, 14, false);
-  const matrix3 = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 4, 18, false);
+  const tree_index = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 1, 3, false);
+  const normal = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 3, 4, true);
+  const matrix0 = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 4, 7, false);
+  const matrix1 = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 4, 11, false);
+  const matrix2 = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 4, 15, false);
+  const matrix3 = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 4, 19, false);
 
   geometry.setAttribute('position', quadVertexBufferAttribute);
   geometry.setAttribute('color', color);
+  geometry.setAttribute('treeIndex', tree_index);
   geometry.setAttribute('normal', normal);
   geometry.setAttribute('matrix0', matrix0);
   geometry.setAttribute('matrix1', matrix1);

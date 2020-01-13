@@ -1,4 +1,5 @@
 attribute vec3 color;
+attribute float treeIndex;
 attribute vec4 matrix0;
 attribute vec4 matrix1;
 attribute vec4 matrix2;
@@ -9,9 +10,7 @@ varying vec3 v_color;
 varying vec3 v_normal;
 
 void main() {
-    // TODO 20200111 larsmoa: Implement treeIndex for quads.
-    v_treeIndex = 255.0*255.0*255.0;
-
+    v_treeIndex = treeIndex;
     v_color = color;
     v_normal = normalMatrix * normal;
     mat4 instanceMatrix = mat4(matrix0, matrix1, matrix2, matrix3);
