@@ -3,14 +3,10 @@
  */
 
 import * as THREE from 'three';
-import * as reveal from '@cognite/reveal';
-//import * as revealthree from '@cognite/reveal/threejs';
-
-//import { CadModelRemote } from '@cognite/reveal';
-import { CadNode, toThreeVector3, suggestCameraConfig } from '@cognite/reveal/threejs';
-
 import CameraControls from 'camera-controls';
 import { vec3 } from 'gl-matrix';
+import * as reveal from '@cognite/reveal';
+import { CadNode, toThreeVector3, suggestCameraConfig } from '@cognite/reveal/threejs';
 
 CameraControls.install({ THREE });
 
