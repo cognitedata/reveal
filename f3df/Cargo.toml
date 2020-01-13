@@ -1,7 +1,7 @@
 [package]
 name = "f3df"
-version = "0.1.0"
-authors = ["Svenn-Arne Dragly <dragly@cognite.com>"]
+version = "0.1.1"
+authors = ["Svenn-Arne Dragly <dragly@cognite.com>", "Lars Moastuen <lars.moastuen@cognite.com>"]
 edition = "2018"
 
 [lib]
