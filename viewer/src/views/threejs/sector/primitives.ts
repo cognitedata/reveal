@@ -140,7 +140,7 @@ function createBoxes(boxes: PrimitiveAttributes) {
   const mesh = new THREE.Mesh(geometry, boxMaterial);
   mesh.frustumCulled = false;
 
-  mesh.name = `Boxes`;
+  mesh.name = `Primtives (Boxes)`;
   return mesh;
 }
 
@@ -155,7 +155,7 @@ function createCircles(circles: PrimitiveAttributes) {
   const mesh = new THREE.Mesh(geometry, circleMaterial);
   mesh.frustumCulled = false;
 
-  mesh.name = `Circles`;
+  mesh.name = `Primitives (Circles)`;
   return mesh;
 }
 
@@ -170,7 +170,7 @@ function createCones(cones: PrimitiveAttributes) {
   const mesh = new THREE.Mesh(geometry, material);
   mesh.frustumCulled = false;
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
-  mesh.name = `Cones`;
+  mesh.name = `Primitives (Cones)`;
   return mesh;
 }
 
@@ -185,7 +185,7 @@ function createEccentricCones(eccentricCones: PrimitiveAttributes) {
   const mesh = new THREE.Mesh(geometry, material);
   mesh.frustumCulled = false;
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
-  mesh.name = `EccentricCones`;
+  mesh.name = `Primitives (EccentricCones)`;
   return mesh;
 }
 
@@ -200,7 +200,7 @@ function createEllipsoidSegments(ellipsoidSegments: PrimitiveAttributes) {
   const mesh = new THREE.Mesh(geometry, material);
   mesh.frustumCulled = false;
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
-  mesh.name = `EllipsoidSegments`;
+  mesh.name = `Primtives (EllipsoidSegments)`;
   return mesh;
 }
 
@@ -230,7 +230,7 @@ function createGeneralRings(generalRings: PrimitiveAttributes) {
   const mesh = new THREE.Mesh(geometry, material);
   mesh.frustumCulled = false;
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
-  mesh.name = `GeneralRings`;
+  mesh.name = `Primitives (GeneralRings)`;
   return mesh;
 }
 
@@ -257,7 +257,7 @@ function createSphericalSegments(sphericalSegments: PrimitiveAttributes) {
   const mesh = new THREE.Mesh(geometry, material);
   mesh.frustumCulled = false;
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
-  mesh.name = `EllipsoidSegments`;
+  mesh.name = `Primitives (EllipsoidSegments)`;
   return mesh;
 }
 
@@ -271,7 +271,7 @@ function createQuads(quads: PrimitiveAttributes) {
 
   const mesh = new THREE.Mesh(geometry, quadsMaterial);
   mesh.frustumCulled = false;
-  mesh.name = `Quads`;
+  mesh.name = `Primtive (Quads)`;
   return mesh;
 }
 
@@ -286,7 +286,7 @@ function createTrapeziums(trapeziums: PrimitiveAttributes) {
   const mesh = new THREE.Mesh(geometry, material);
   mesh.frustumCulled = false;
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
-  mesh.name = `Trapeziums`;
+  mesh.name = `Primtives (Trapeziums)`;
   return mesh;
 }
 
@@ -317,7 +317,7 @@ function createTorusSegments(torusSegments: PrimitiveAttributes) {
     mesh.frustumCulled = false;
     // TODO consider removing if not used in shader
     mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
-    mesh.name = `TorusSegments`;
+    mesh.name = `Primitives (TorusSegments)`;
 
     lod.addLevel(mesh, calcLODDistance(biggestTorus, level, torusLODs.length));
   }
@@ -335,7 +335,7 @@ function createNuts(nuts: PrimitiveAttributes) {
 
   const mesh = new THREE.Mesh(geometry, nutsMaterial);
   mesh.frustumCulled = false;
-  mesh.name = `Nuts`;
+  mesh.name = `Primtives (Nuts)`;
   return mesh;
 }
 
