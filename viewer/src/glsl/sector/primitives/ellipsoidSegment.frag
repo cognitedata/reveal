@@ -11,6 +11,7 @@ varying vec4 U;
 varying vec4 V;
 varying vec4 sphereNormal;
 
+varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
@@ -88,6 +89,6 @@ void main() {
     }
 #endif
 
-  updateFragmentColor(v_color, normal);
+  updateFragmentColor(v_color, v_treeIndex, normal);
   updateFragmentDepth(p, projectionMatrix);
 }

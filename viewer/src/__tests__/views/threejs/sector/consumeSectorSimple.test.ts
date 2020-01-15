@@ -4,7 +4,7 @@
 
 import { SectorQuads, SectorMetadata } from '../../../../models/sector/types';
 import { Box3 } from '../../../../utils/Box3';
-import { vec3, mat4 } from 'gl-matrix';
+import { vec3 } from 'gl-matrix';
 import { consumeSectorSimple } from '../../../../views/threejs/sector/consumeSectorSimple';
 import { SectorNode } from '../../../../views/threejs/sector/SectorNode';
 import 'jest-extended';
@@ -32,13 +32,14 @@ describe('consumeSectorDetailed', () => {
     expect(node.children).toBeEmpty();
   });
 
-  test('single mesh, adds geometry', () => {
+  test('single valid mesh, adds geometry', () => {
     // Arrange
     const sector: SectorQuads = {
       buffer: new Float32Array([
         // tslint:disable: prettier
         0.0, 0.0, 0.0,
         0.0, 0.0, 0.0,
+        42.0,
         1.0, 0.0, 0.0, 0.0,
         0.0, 1.0, 0.0, 0.0,
         0.0, 0.0, 1.0, 0.0,
@@ -52,5 +53,73 @@ describe('consumeSectorDetailed', () => {
 
     // Assert
     expect(node.children).not.toBeEmpty();
+  });
+
+  test('buffer has two elements, success', () => {
+    // Arrange
+    const sector: SectorQuads = {
+      buffer: new Float32Array([
+        // tslint:disable: prettier
+        // First element
+        0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0,
+        42.0,
+        1.0, 0.0, 0.0, 0.0,
+        0.0, 1.0, 0.0, 0.0,
+        0.0, 0.0, 1.0, 0.0,
+        0.0, 0.0, 0.0, 1.0,
+        // Second element
+        0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0,
+        42.0,
+        1.0, 0.0, 0.0, 0.0,
+        0.0, 1.0, 0.0, 0.0,
+        0.0, 0.0, 1.0, 0.0,
+        0.0, 0.0, 0.0, 1.0
+        // tslint:enable: prettier
+      ])
+    };
+
+    // Act
+    consumeSectorSimple(sectorId, sector, metadata, node);
+
+    // Assert
+    expect(node.children.length).toBe(2);
+  });
+
+  test('buffer has extra bytes, throws', () => {
+    // Arrange
+    const sector: SectorQuads = {
+      buffer: new Float32Array([
+        // tslint:disable: prettier
+        0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0,
+        42.0,
+        1.0, 0.0, 0.0, 0.0,
+        0.0, 1.0, 0.0, 0.0,
+        0.0, 0.0, 1.0, 0.0,
+        0.0, 0.0, 0.0, 1.0,
+        
+        0.13337,
+        // tslint:enable: prettier
+      ])
+    };
+
+    // Act
+    expect(() => consumeSectorSimple(sectorId, sector, metadata, node)).toThrowError();
+  });
+
+  test('buffer missing bytes, throws', () => {
+    // Arrange
+    const sector: SectorQuads = {
+      buffer: new Float32Array([
+        // tslint:disable: prettier
+        0.0, 0.0, 0.0,
+        // tslint:enable: prettier
+      ])
+    };
+
+    // Act
+    expect(() => consumeSectorSimple(sectorId, sector, metadata, node)).toThrowError();
   });
 });

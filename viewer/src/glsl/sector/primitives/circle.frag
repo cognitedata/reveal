@@ -1,7 +1,7 @@
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
 
+varying float v_treeIndex;
 varying vec2 v_xy;
-
 varying vec3 v_color;
 varying vec3 v_normal;
 
@@ -11,5 +11,5 @@ void main() {
     if (dist > 0.25)
       discard;
 
-    updateFragmentColor(v_color, normal);
+    updateFragmentColor(v_color, v_treeIndex, normal);
 }

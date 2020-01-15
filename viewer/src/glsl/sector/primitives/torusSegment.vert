@@ -5,11 +5,13 @@ attribute vec4 a_instanceMatrix_column_1;
 attribute vec4 a_instanceMatrix_column_2;
 attribute vec4 a_instanceMatrix_column_3;
 
+attribute float a_treeIndex;
 attribute vec3 a_color;
 attribute float a_arcAngle;
 attribute float a_radius;
 attribute float a_tubeRadius;
 
+varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
@@ -39,7 +41,7 @@ void main() {
     vec3 objectNormal = normalize(pos3 - center);
 #endif
 
-    // START NEW CODE
+    v_treeIndex = a_treeIndex;
     v_color = a_color;
     v_normal = normalMatrix * objectNormal;
 

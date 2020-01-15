@@ -4,6 +4,7 @@
 uniform mat4 inverseModelMatrix;
 uniform mat4 inverseNormalMatrix;
 
+attribute float a_treeIndex;
 attribute vec3 a_color;
 attribute vec3 a_center;
 attribute vec3 a_normal;
@@ -11,6 +12,7 @@ attribute float a_horizontalRadius;
 attribute float a_verticalRadius;
 attribute float a_height;
 
+varying float v_treeIndex;
 // We pack vRadius as w-component of center
 varying vec4 center;
 varying float hRadius;
@@ -27,6 +29,7 @@ varying vec3 v_color;
 varying vec3 v_normal;
 
 void main() {
+    v_treeIndex = a_treeIndex;
     v_color = a_color;
 
     vec3 lDir;
@@ -83,9 +86,7 @@ void main() {
     V.w = surfacePoint.y;
     sphereNormal.w = surfacePoint.z;
 
-    // START NEW CODE
     // TODO should perhaps be a different normal?
-    //v_normal = normalMatrix * normal;
     vec4 mvPosition = modelViewMatrix * vec4( transformed, 1.0 );
     gl_Position = projectionMatrix * mvPosition;
 }

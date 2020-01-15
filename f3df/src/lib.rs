@@ -47,6 +47,7 @@ pub struct SectorContents {
 pub struct Node {
     pub compress_type: CompressFlags,
     pub node_id: u64,
+    pub tree_index: u64,
     pub color: Option<[u8; 3]>,
     pub faces: Vec<Face>,
 }
@@ -150,6 +151,7 @@ pub fn parse_sector(reader: impl Read) -> Result<Sector, Error> {
     let mut nodes = Vec::with_capacity(node_count as usize);
     for _ in 0..node_count {
         let node_id = input.read_u64::<LittleEndian>()?;
+        let tree_index = input.read_u64::<LittleEndian>()?;
         let face_count = input.read_u32::<LittleEndian>()?;
 
         // TODO replace with from_bits and return error if unknown bits found
@@ -197,6 +199,7 @@ pub fn parse_sector(reader: impl Read) -> Result<Sector, Error> {
         nodes.push(Node {
             compress_type,
             node_id,
+            tree_index,
             color: node_color,
             faces,
         });
