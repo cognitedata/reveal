@@ -31,6 +31,7 @@ export function createRendererDebugWidget(
     instanceMeshes: {
       meshCount: 0,
       instanceCount: 0,
+      avgInstancesPerMesh: 0.0,
       templateTriangleCount: 0
     },
     quads: {
@@ -55,6 +56,7 @@ export function createRendererDebugWidget(
   controls.push(instancesGui.add(sceneInfo.instanceMeshes, 'meshCount').name('Mesh count'));
   controls.push(instancesGui.add(sceneInfo.instanceMeshes, 'instanceCount').name('Instance count'));
   controls.push(instancesGui.add(sceneInfo.instanceMeshes, 'templateTriangleCount').name('Triangles'));
+  controls.push(instancesGui.add(sceneInfo.instanceMeshes, 'avgInstancesPerMesh').name('Avg instances per mesh'));
   const meshesGui = gui.addFolder('Meshes');
   controls.push(meshesGui.add(sceneInfo.triangleMeshes, 'meshCount').name('Mesh count'));
   controls.push(meshesGui.add(sceneInfo.triangleMeshes, 'triangleCount').name('Triangles'));
@@ -71,12 +73,13 @@ export function createRendererDebugWidget(
     sceneInfo.instanceMeshes.meshCount = 0;
     sceneInfo.instanceMeshes.templateTriangleCount = 0;
     sceneInfo.instanceMeshes.instanceCount = 0;
+    sceneInfo.instanceMeshes.avgInstancesPerMesh = 0.0;
     sceneInfo.triangleMeshes.meshCount = 0;
     sceneInfo.triangleMeshes.triangleCount = 0;
     sceneInfo.quads.meshCount = 0;
     sceneInfo.quads.quadCount = 0;
-    scene.traverse(x => {
-      if (x.name.startsWith('Sector')) {
+    scene.traverseVisible(x => {
+      if (x.visible && x.name.startsWith('Sector')) {
         sceneInfo.sectors.count++;
         sceneInfo.sectors.withMeshesCount += x.children.find(y => y.type === 'Mesh') ? 1 : 0;
       } else if (x.name.startsWith('Primitives')) {
@@ -95,7 +98,7 @@ export function createRendererDebugWidget(
         const geometry = mesh.geometry as THREE.BufferGeometry;
         sceneInfo.instanceMeshes.meshCount++;
         sceneInfo.instanceMeshes.templateTriangleCount += geometry.drawRange.count;
-        sceneInfo.instanceMeshes.instanceCount += geometry.attributes.a_color.count;
+        sceneInfo.instanceMeshes.instanceCount += geometry.attributes.a_treeIndex.count;
       } else if (x.name.startsWith('Quads')) {
         const mesh = x as THREE.Mesh;
         const geometry = mesh.geometry as THREE.BufferGeometry;
@@ -103,7 +106,8 @@ export function createRendererDebugWidget(
         sceneInfo.quads.quadCount += geometry.attributes.color.count;
       }
     });
-
+    sceneInfo.instanceMeshes.avgInstancesPerMesh =
+      sceneInfo.instanceMeshes.instanceCount / sceneInfo.instanceMeshes.meshCount;
     controls.forEach(ctrl => ctrl.updateDisplay());
   }, intervalMs);
 }
