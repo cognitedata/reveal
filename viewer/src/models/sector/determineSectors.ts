@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { WantedSectors, SectorMetadata, SectorModelTransformation, SectorScene } from './types';
-import { traverseDepthFirst } from '../../utils/traversal';
+import { traverseDepthFirst, traverseUpwards } from '../../utils/traversal';
 import { toThreeMatrix4, toThreeVector3 } from '../../views/threejs/utilities';
 import { mat4, vec3 } from 'gl-matrix';
 
@@ -83,16 +83,6 @@ export async function determineSectors(input: DetermineSectorsInput): Promise<Wa
   const requestedDetailed = new Set<number>(sectors.map(x => x.id));
   const result = determineSectorsQuality(scene, requestedDetailed);
   return result;
-}
-
-function traverseUpwards(sector: SectorMetadata, callback: (sector: SectorMetadata) => boolean) {
-  if (!callback(sector)) {
-    return;
-  }
-  if (!sector.parent) {
-    return;
-  }
-  traverseUpwards(sector.parent, callback);
 }
 
 export function determineSectorsQuality(scene: SectorScene, requestedDetailed: Set<number>): WantedSectors {

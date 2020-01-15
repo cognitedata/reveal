@@ -181,13 +181,14 @@ export async function createParser(
             // hence we can look up only fileMeshIndices[0] instead of enumerating here
             const triangleCount = fileTriangleCounts[fileMeshIndices[0]];
             const instanceMatrixBuffer = new Float32Array(16 * fileMeshIndices.length);
-            const treeIndexBuffer = new Uint32Array(fileMeshIndices.length);
+            const treeIndicesBuffer: number[] = new Array<number>(fileMeshIndices.length);
             const colorBuffer = new Uint8Array(4 * fileMeshIndices.length);
             for (let i = 0; i < fileMeshIndices.length; i++) {
               const meshIdx = meshIndices[fileMeshIndices[i]];
+              const treeIndex = treeIndices[meshIdx];
               const instanceMatrix = instanceMatrices.slice(meshIdx * 16, meshIdx * 16 + 16);
               instanceMatrixBuffer.set(instanceMatrix, i * 16);
-              treeIndexBuffer.set(treeIndices.slice(meshIdx, meshIdx + 1), i);
+              treeIndicesBuffer[i] = treeIndex;
               const color = colors.slice(meshIdx * 4, meshIdx * 4 + 4);
               colorBuffer.set(color, i * 4);
             }
@@ -196,7 +197,7 @@ export async function createParser(
               triangleOffset,
               instanceMatrices: instanceMatrixBuffer,
               colors: colorBuffer,
-              treeIndices: treeIndexBuffer
+              treeIndices: Float32Array.from(treeIndicesBuffer)
             });
           }
 

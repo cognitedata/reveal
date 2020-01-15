@@ -3,10 +3,11 @@
  */
 
 import * as THREE from 'three';
-import { InstancedMesh, InstancedMeshFile } from '../../../models/sector/types';
-import { sectorShaders } from './shaders';
+import { InstancedMeshFile } from '../../../models/sector/types';
+import { sectorShaders, shaderDefines } from './shaders';
 
 const instancedMeshMaterial = new THREE.ShaderMaterial({
+  ...shaderDefines,
   uniforms: {},
   extensions: {
     derivatives: true
@@ -32,6 +33,7 @@ export function createInstancedMeshes(meshes: InstancedMeshFile[], bounds: THREE
       bounds.getBoundingSphere(geometry.boundingSphere);
       geometry.setIndex(indices);
       geometry.setAttribute('position', vertices);
+      geometry.setAttribute('a_treeIndex', new THREE.InstancedBufferAttribute(instancedMesh.treeIndices, 1));
       geometry.setAttribute(`a_color`, new THREE.InstancedBufferAttribute(instancedMesh.colors, 4, true));
       // TODO de-duplicate this, which is the same as in setAttributes
       const buffer = new THREE.InstancedInterleavedBuffer(instancedMesh.instanceMatrices, 16);

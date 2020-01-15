@@ -29,6 +29,7 @@ varying float v_surfacePointY;
 varying vec4 v_planeA;
 varying vec4 v_planeB;
 
+varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
@@ -117,13 +118,6 @@ void main() {
     normal = normalize(p_local - W.xyz * dot(p_local, W.xyz));
 #endif
 
-    vec3 color = v_color;
-    //if (isInner) {
-        //normal = -normal;
-        //// TODO move this into lighting function
-        //color = 0.8 * color;
-    //}
-
-    updateFragmentColor(color, normal);
+    updateFragmentColor(v_color, v_treeIndex, normal);
     updateFragmentDepth(p, projectionMatrix);
 }

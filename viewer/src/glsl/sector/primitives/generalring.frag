@@ -7,6 +7,7 @@ varying vec2 v_xy;
 varying float v_angle;
 varying float v_arcAngle;
 
+varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
@@ -21,5 +22,5 @@ void main() {
         discard;
     }
 
-    updateFragmentColor(v_color, normal);
+    updateFragmentColor(v_color, v_treeIndex, normal);
 }

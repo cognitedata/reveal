@@ -1,9 +1,11 @@
+attribute float a_treeIndex;
 attribute vec3 a_color;
 attribute vec3 a_vertex1;
 attribute vec3 a_vertex2;
 attribute vec3 a_vertex3;
 attribute vec3 a_vertex4;
 
+varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
@@ -18,7 +20,7 @@ void main() {
 
     vec3 objectNormal = cross(a_vertex1 - a_vertex2, a_vertex1 - a_vertex3);
 
-    // START NEW CODE
+    v_treeIndex = a_treeIndex;
     v_color = a_color;
     v_normal = normalMatrix * objectNormal;
 

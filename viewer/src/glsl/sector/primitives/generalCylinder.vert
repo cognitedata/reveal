@@ -4,7 +4,7 @@
 uniform mat4 inverseModelMatrix;
 uniform mat4 inverseNormalMatrix;
 
-attribute float treeIndex;
+attribute float a_treeIndex;
 attribute vec3 a_centerA;
 attribute vec3 a_centerB;
 attribute float a_radius;
@@ -17,6 +17,7 @@ attribute vec3 a_localXAxis;
 attribute float a_angle;
 attribute float a_arcAngle;
 
+varying float v_treeIndex;
 // We pack the radii into w-components
 varying vec4 v_centerB;
 
@@ -71,6 +72,7 @@ void main() {
     surfacePoint = mul3(modelViewMatrix, surfacePoint);
 
     // varying data
+    v_treeIndex = a_treeIndex;
     v_angle = a_angle;
     v_arcAngle = a_arcAngle;
 
@@ -85,14 +87,13 @@ void main() {
 
     // We pack radii as w-components of v_centerB
     v_centerB.xyz = mul3(modelViewMatrix, a_centerB);
-    v_centerB.w = displaceScalar(a_centerB, a_radius, treeIndex, cameraPosition, inverseModelMatrix);
+    v_centerB.w = displaceScalar(a_centerB, a_radius, a_treeIndex, cameraPosition, inverseModelMatrix);
 
     v_planeA = a_planeA;
     v_planeB = a_planeB;
     v_surfacePointY = surfacePoint.y;
     v_centerB.w = a_radius;
 
-    // START NEW CODE
     v_color = a_color;
     v_normal = normalMatrix * normal;
 

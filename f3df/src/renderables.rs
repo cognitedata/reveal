@@ -11,6 +11,8 @@ type Translation3 = nalgebra::Translation3<f32>;
 #[derive(Clone, Copy, Serialize)]
 pub struct Face {
     color: [f32; 3],
+    // Note! Only integral part of f32 used.
+    tree_index: f32,
     normal: Vector3,
     matrix: Matrix4,
 }
@@ -58,6 +60,7 @@ pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
     let origin = Vector3::new(origin[0], origin[1], origin[2]);
     for node in &contents.nodes {
         let compress_type = node.compress_type;
+        let tree_index = node.tree_index as f32;
         for face in &node.faces {
             let cell_index = face.index as u64;
             let cell_index_i_j = cell_index % cell_size_i_j;
@@ -96,6 +99,7 @@ pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
                 };
                 instance_data.push(Face {
                     color: normalize_color(color),
+                    tree_index,
                     normal,
                     matrix: compose_face_matrix(&center, &offset, &scale, &rotation),
                 });
@@ -114,6 +118,7 @@ pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
                 };
                 instance_data.push(Face {
                     color: normalize_color(color),
+                    tree_index,
                     normal,
                     matrix: compose_face_matrix(&center, &offset, &scale, &rotation),
                 });
@@ -132,6 +137,7 @@ pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
                 };
                 instance_data.push(Face {
                     color: normalize_color(color),
+                    tree_index,
                     normal,
                     matrix: compose_face_matrix(&center, &offset, &scale, &rotation),
                 });
@@ -150,6 +156,7 @@ pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
                 };
                 instance_data.push(Face {
                     color: normalize_color(color),
+                    tree_index,
                     normal,
                     matrix: compose_face_matrix(&center, &offset, &scale, &rotation),
                 });
@@ -168,6 +175,7 @@ pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
                 };
                 instance_data.push(Face {
                     color: normalize_color(color),
+                    tree_index,
                     normal,
                     matrix: compose_face_matrix(&center, &offset, &scale, &rotation),
                 });
@@ -186,6 +194,7 @@ pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
                 };
                 instance_data.push(Face {
                     color: normalize_color(color),
+                    tree_index,
                     normal,
                     matrix: compose_face_matrix(&center, &offset, &scale, &rotation),
                 });
@@ -227,6 +236,7 @@ mod tests {
                 grid_origin: [0.1, 0.2, 0.3],
                 nodes: vec![crate::Node {
                     node_id: 0,
+                    tree_index: 42,
                     color: Some([128, 129, 130]),
                     compress_type: crate::CompressFlags::POSITIVE_Y_REPEAT_X,
                     faces: vec![crate::Face {
@@ -248,6 +258,7 @@ mod tests {
         };
         let result = convert_sector(&sector);
 
+        assert_abs_diff_eq!(result[0].tree_index, 42.0, epsilon = 0.0);
         assert_abs_diff_eq!(result[0].color[0], 0.501_960_8); // 128/255
         assert_abs_diff_eq!(result[0].color[1], 0.505_882_4); // 129/255
         assert_abs_diff_eq!(result[0].color[2], 0.509_803_95); // 130/255

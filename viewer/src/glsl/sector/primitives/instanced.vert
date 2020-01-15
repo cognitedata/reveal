@@ -5,8 +5,10 @@ attribute vec4 a_instanceMatrix_column_1;
 attribute vec4 a_instanceMatrix_column_2;
 attribute vec4 a_instanceMatrix_column_3;
 
+attribute float a_treeIndex;
 attribute vec3 a_color;
 
+varying float v_treeIndex;
 varying vec3 v_normal;
 varying vec3 v_color;
 
@@ -19,6 +21,7 @@ void main()
         a_instanceMatrix_column_3
     );
 
+    v_treeIndex = a_treeIndex;
     v_color = a_color;
     v_normal = normalMatrix * normalize(instanceMatrix * vec4(normalize(normal), 0.0)).xyz;
 
