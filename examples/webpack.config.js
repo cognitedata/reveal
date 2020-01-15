@@ -45,6 +45,13 @@ const allExamples = [
     type: 'threejs'
   },
   {
+    name: "threejs-debugger",
+    title: "Debugger for sector models",
+    entry: './src/threejs/debugger.ts',
+    template: 'template-example-two-canvases.ejs',
+    type: 'threejs'
+  },
+  {
     name: "threejs-simple-pointcloud",
     title: "Simple pointcloud",
     entry: './src/threejs/simple-pointcloud.ts',

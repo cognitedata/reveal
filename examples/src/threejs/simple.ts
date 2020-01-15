@@ -5,14 +5,8 @@
 import * as THREE from 'three';
 import * as reveal from '@cognite/reveal';
 import CameraControls from 'camera-controls';
-import dat from 'dat.gui';
-import { createRendererDebugWidget } from './utils/renderer-debug-widget';
 
 CameraControls.install({ THREE });
-
-type Options = {
-  suspendLoading: boolean;
-};
 
 async function main() {
   const modelUrl = new URL(location.href).searchParams.get('model') || '/primitives';
@@ -30,11 +24,6 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const options: Options = {
-    suspendLoading: false
-  };
-  initializeGui(options, renderer, scene);
-
   const { position, target, near, far } = reveal.internal.suggestCameraConfig(modelScene.root);
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
@@ -47,7 +36,7 @@ async function main() {
   const render = async () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
-    const sectorsNeedUpdate = !options.suspendLoading && (await sectorModelNode.update(camera));
+    const sectorsNeedUpdate = await sectorModelNode.update(camera);
 
     if (controlsNeedUpdate || sectorsNeedUpdate) {
       renderer.render(scene, camera);
@@ -62,12 +51,6 @@ async function main() {
   (window as any).camera = camera;
   (window as any).controls = controls;
   (window as any).renderer = renderer;
-}
-
-function initializeGui(options: Options, renderer: THREE.WebGLRenderer, scene: THREE.Scene) {
-  const gui = new dat.GUI();
-  gui.add(options, 'suspendLoading', options.suspendLoading).name('Suspend loading');
-  createRendererDebugWidget(renderer, scene, gui);
 }
 
 main();
