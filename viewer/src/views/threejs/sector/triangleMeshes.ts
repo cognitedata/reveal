@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { TriangleMesh } from '../../../models/sector/types';
-import { sectorShaders } from './shaders';
+import { sectorShaders, shaderDefines } from './shaders';
 
 export function createTriangleMeshes(triangleMeshes: TriangleMesh[], bounds: THREE.Box3): THREE.Mesh[] {
   const result: THREE.Mesh[] = [];
@@ -26,6 +26,7 @@ export function createTriangleMeshes(triangleMeshes: TriangleMesh[], bounds: THR
     bounds.getBoundingSphere(geometry.boundingSphere);
 
     const material = new THREE.ShaderMaterial({
+      ...shaderDefines,
       uniforms: {},
       extensions: {
         derivatives: true

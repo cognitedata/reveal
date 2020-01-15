@@ -23,6 +23,7 @@ varying float v_arcAngle;
 varying vec4 v_centerA;
 varying vec4 v_V;
 
+varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
@@ -137,13 +138,7 @@ void main() {
       }
   #endif
 
-    vec3 color = v_color;
-    //if (isInner) {
-        //normal = -normal;
-        //// TODO move this into lighting function
-        //color = 0.8 * color;
-    //}
-
-    updateFragmentColor(color, normal);
+    
+    updateFragmentColor(v_color, v_treeIndex, normal);
     updateFragmentDepth(p, projectionMatrix);
 }
