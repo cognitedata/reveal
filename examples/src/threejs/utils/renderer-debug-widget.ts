@@ -82,26 +82,24 @@ export function createRendererDebugWidget(
       if (x.visible && x.name.startsWith('Sector')) {
         sceneInfo.sectors.count++;
         sceneInfo.sectors.withMeshesCount += x.children.find(y => y.type === 'Mesh') ? 1 : 0;
-      } else if (x.name.startsWith('Primitives')) {
-        const mesh = x as THREE.Mesh;
-        const geometry = mesh.geometry as THREE.BufferGeometry;
+      } else if (x.type !== 'Mesh') {
+        return;
+      }
+      const mesh = x as THREE.Mesh;
+      const geometry = mesh.geometry as THREE.BufferGeometry;
+
+      if (x.name.startsWith('Primitives')) {
         sceneInfo.primitives.meshCount++;
         sceneInfo.primitives.templateTriangleCount += geometry.index.count / 3;
         sceneInfo.primitives.instanceCount += geometry.attributes.a_treeIndex.count;
       } else if (x.name.startsWith('Triangle mesh')) {
-        const mesh = x as THREE.Mesh;
-        const geometry = mesh.geometry as THREE.BufferGeometry;
         sceneInfo.triangleMeshes.meshCount++;
         sceneInfo.triangleMeshes.triangleCount += geometry.index.count / 3;
       } else if (x.name.startsWith('Instanced mesh')) {
-        const mesh = x as THREE.Mesh;
-        const geometry = mesh.geometry as THREE.BufferGeometry;
         sceneInfo.instanceMeshes.meshCount++;
         sceneInfo.instanceMeshes.templateTriangleCount += geometry.drawRange.count;
         sceneInfo.instanceMeshes.instanceCount += geometry.attributes.a_treeIndex.count;
       } else if (x.name.startsWith('Quads')) {
-        const mesh = x as THREE.Mesh;
-        const geometry = mesh.geometry as THREE.BufferGeometry;
         sceneInfo.quads.meshCount++;
         sceneInfo.quads.quadCount += geometry.attributes.color.count;
       }
