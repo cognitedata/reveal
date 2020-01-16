@@ -17,8 +17,15 @@ type RenderFilter = {
   renderInstancedMeshes: boolean;
 };
 
+enum RenderMode {
+  WhenNecessary = 'WhenNecessary',
+  DisableRendering = 'DisableRendering',
+  AlwaysRender = 'AlwaysRender'
+}
+
 type Options = {
   suspendLoading: boolean;
+  renderMode: RenderMode;
   renderFilter: RenderFilter;
 };
 
@@ -37,6 +44,7 @@ async function initializeModel(
 
   const options: Options = {
     suspendLoading: false,
+    renderMode: RenderMode.WhenNecessary,
     renderFilter: {
       renderInstancedMeshes: true,
       renderPrimitives: true,
@@ -54,8 +62,8 @@ async function main() {
   const modelUrl2 = new URL(location.href).searchParams.get('model2') || modelUrl1;
 
   // Page layout
-  const gui1 = new dat.GUI({ autoPlace: false });
-  const gui2 = new dat.GUI({ autoPlace: false });
+  const gui1 = new dat.GUI({ autoPlace: false, width: 300 });
+  const gui2 = new dat.GUI({ autoPlace: false, width: 300 });
   document.getElementById('gui1')!.appendChild(gui1.domElement);
   document.getElementById('gui2')!.appendChild(gui2.domElement);
   document.getElementById('header1')!.appendChild(document.createTextNode(modelUrl1));
@@ -89,11 +97,17 @@ async function main() {
     const sectors1NeedUpdate = !options1.suspendLoading && (await modelNode1.update(camera));
     const sectors2NeedUpdate = !options2.suspendLoading && (await modelNode2.update(camera));
 
-    if (controlsNeedUpdate || sectors1NeedUpdate) {
+    if (
+      options1.renderMode === RenderMode.AlwaysRender ||
+      (options1.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || sectors1NeedUpdate))
+    ) {
       applyRenderingFilters(scene1, options1.renderFilter);
       renderer1.render(scene1, camera);
     }
-    if (controlsNeedUpdate || sectors2NeedUpdate) {
+    if (
+      options2.renderMode === RenderMode.AlwaysRender ||
+      (options2.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || sectors2NeedUpdate))
+    ) {
       applyRenderingFilters(scene2, options2.renderFilter);
       renderer2.render(scene2, camera);
     }
@@ -102,6 +116,37 @@ async function main() {
 }
 
 function initializeGui(gui: dat.GUI, options: Options, renderer: THREE.WebGLRenderer, scene: THREE.Scene) {
+  const functions = {
+    printVisible: () => {
+      const visibleMeshes: Record<string, THREE.Mesh> = {};
+      scene.traverseVisible(x => {
+        if (x.type === 'Mesh' || x.type === 'LOD') {
+          let path = '';
+          x.traverseAncestors(y => {
+            path = y.name + '/' + path;
+          });
+          visibleMeshes[path + x.name] = x as THREE.Mesh;
+        }
+      });
+      console.log('Visible meshes:', visibleMeshes);
+    },
+    initializeThreeJSInspector: () => {
+      (window as any).THREE = THREE;
+      (window as any).scene = scene;
+      (window as any).renderer = renderer;
+      console.log('Set window.scene, window.renderer and window.THREE');
+      console.log(
+        'See https://github.com/jeromeetienne/threejs-inspector/blob/master/README.md for details on the ThreeJS inspector'
+      );
+    }
+  };
+
+  gui.add(options, 'suspendLoading').name('Suspend loading');
+  const renderModes = [RenderMode.WhenNecessary, RenderMode.AlwaysRender, RenderMode.DisableRendering];
+  gui.add(options, 'renderMode', renderModes).name('Render mode');
+  gui.add(functions, 'printVisible').name('Print visible meshes');
+  gui.add(functions, 'initializeThreeJSInspector').name('Initialize ThreeJS inspector');
+
   const filterGui = gui.addFolder('Filtering');
   filterGui.add(options.renderFilter, 'renderInstancedMeshes').name('Instanced meshes');
   filterGui.add(options.renderFilter, 'renderPrimitives').name('Primitives');
