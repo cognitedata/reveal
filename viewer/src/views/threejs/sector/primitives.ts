@@ -140,7 +140,7 @@ function createBoxes(boxes: PrimitiveAttributes) {
   const mesh = new THREE.Mesh(geometry, boxMaterial);
   mesh.frustumCulled = false;
 
-  mesh.name = `Primtives (Boxes)`;
+  mesh.name = `Primitives (Boxes)`;
   return mesh;
 }
 
@@ -200,7 +200,7 @@ function createEllipsoidSegments(ellipsoidSegments: PrimitiveAttributes) {
   const mesh = new THREE.Mesh(geometry, material);
   mesh.frustumCulled = false;
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
-  mesh.name = `Primtives (EllipsoidSegments)`;
+  mesh.name = `Primitives (EllipsoidSegments)`;
   return mesh;
 }
 
@@ -215,7 +215,7 @@ function createGeneralCylinders(generalCylinders: PrimitiveAttributes) {
   const mesh = new THREE.Mesh(geometry, material);
   mesh.frustumCulled = false;
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
-  mesh.name = `GeneralCylinders`;
+  mesh.name = `Primitives (GeneralCylinders)`;
   return mesh;
 }
 
@@ -271,7 +271,7 @@ function createQuads(quads: PrimitiveAttributes) {
 
   const mesh = new THREE.Mesh(geometry, quadsMaterial);
   mesh.frustumCulled = false;
-  mesh.name = `Primtive (Quads)`;
+  mesh.name = `Primitives (Quads)`;
   return mesh;
 }
 
@@ -286,7 +286,7 @@ function createTrapeziums(trapeziums: PrimitiveAttributes) {
   const mesh = new THREE.Mesh(geometry, material);
   mesh.frustumCulled = false;
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
-  mesh.name = `Primtives (Trapeziums)`;
+  mesh.name = `Primitives (Trapeziums)`;
   return mesh;
 }
 
@@ -305,6 +305,7 @@ function createTorusSegments(torusSegments: PrimitiveAttributes) {
   }
   const biggestTorus = sizes.reduce((acc, size) => Math.max(acc, size));
   const lod = new THREE.LOD();
+  lod.name = 'Primitives (TorusSegments)';
 
   for (const [level, torus] of torusLODs.entries()) {
     const geometry = new THREE.InstancedBufferGeometry();
@@ -317,7 +318,7 @@ function createTorusSegments(torusSegments: PrimitiveAttributes) {
     mesh.frustumCulled = false;
     // TODO consider removing if not used in shader
     mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
-    mesh.name = `Primitives (TorusSegments)`;
+    mesh.name = `Primitives (TorusSegments) - LOD ${level}`;
 
     lod.addLevel(mesh, calcLODDistance(biggestTorus, level, torusLODs.length));
   }
@@ -335,7 +336,7 @@ function createNuts(nuts: PrimitiveAttributes) {
 
   const mesh = new THREE.Mesh(geometry, nutsMaterial);
   mesh.frustumCulled = false;
-  mesh.name = `Primtives (Nuts)`;
+  mesh.name = `Primitives (Nuts)`;
   return mesh;
 }
 
