@@ -63,7 +63,13 @@ function createEmptySceneInfo() {
       meshCount: 0,
       quadCount: 0,
       templateTriangleCount: 0
-    }
+    },
+    // Stuff to compute FPS
+    lastUpdate: {
+      timestamp: Date.now(),
+      frame: 0
+    },
+    fps: 0
   };
 }
 type SceneInfo = ReturnType<typeof createEmptySceneInfo>;
@@ -108,11 +114,12 @@ export function createRendererDebugWidget(
     }
   };
 
-  const controls: dat.GUIController[] = [];
+  const controls: dat.GUIController[] = []; // List of controls that must be manually updated
 
   const renderModes = [RenderMode.WhenNecessary, RenderMode.AlwaysRender, RenderMode.DisableRendering];
   gui.add(renderOptions, 'suspendLoading').name('Suspend loading');
   gui.add(renderOptions, 'renderMode', renderModes).name('Render mode');
+  controls.push(gui.add(sceneInfo, 'fps').name('FPS'));
   gui.add(functions, 'printVisible').name('Print visible meshes');
   gui.add(functions, 'initializeThreeJSInspector').name('Init ThreeJS inspector');
 
@@ -149,11 +156,24 @@ export function createRendererDebugWidget(
   controls.push(quadsGui.add(sceneInfo.quads, 'quadCount').name('Quad count'));
 
   setInterval(() => {
+    computeFramesPerSecond(renderer, sceneInfo);
     updateSceneInfo(scene, sceneInfo);
     controls.forEach(ctrl => ctrl.updateDisplay());
   }, intervalMs);
 
   return renderOptions;
+}
+
+function computeFramesPerSecond(renderer: THREE.WebGLRenderer, sceneInfo: SceneInfo) {
+  const timestamp = Date.now();
+  const currentFrame = renderer.info.render.frame;
+
+  const dts = (timestamp - sceneInfo.lastUpdate.timestamp) / 1000;
+  const dFrames = currentFrame - sceneInfo.lastUpdate.frame;
+  // FPS over time
+  sceneInfo.fps = 0.3 * (dFrames / dts) + 0.7 * sceneInfo.fps;
+  sceneInfo.lastUpdate.frame = currentFrame;
+  sceneInfo.lastUpdate.timestamp = timestamp;
 }
 
 function updateSceneInfo(scene: THREE.Object3D, sceneInfo: SceneInfo) {
