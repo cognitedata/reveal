@@ -7,8 +7,8 @@ import { InstancedMeshFile } from '../../../models/sector/types';
 import { sectorShaders, shaderDefines } from './shaders';
 
 const instancedMeshMaterial = new THREE.ShaderMaterial({
+  name: 'Instanced meshes',
   ...shaderDefines,
-  uniforms: {},
   extensions: {
     derivatives: true
   },

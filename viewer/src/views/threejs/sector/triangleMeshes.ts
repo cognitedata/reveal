@@ -26,8 +26,8 @@ export function createTriangleMeshes(triangleMeshes: TriangleMesh[], bounds: THR
     bounds.getBoundingSphere(geometry.boundingSphere);
 
     const material = new THREE.ShaderMaterial({
+      name: 'Triangle meshes',
       ...shaderDefines,
-      uniforms: {},
       extensions: {
         derivatives: true
       },

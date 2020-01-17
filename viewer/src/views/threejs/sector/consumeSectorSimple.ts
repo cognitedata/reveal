@@ -59,10 +59,9 @@ export function consumeSectorSimple(
   geometry.setAttribute('matrix2', matrix2);
   geometry.setAttribute('matrix3', matrix3);
 
-  const uniforms = {};
   const material = new THREE.ShaderMaterial({
+    name: 'Low detail material',
     ...shaderDefines,
-    uniforms,
     fragmentShader: sectorShaders.simpleMesh.fragment,
     vertexShader: sectorShaders.simpleMesh.vertex
   });

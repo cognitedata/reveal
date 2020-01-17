@@ -64,6 +64,7 @@ function createEmptySceneInfo() {
       quadCount: 0,
       templateTriangleCount: 0
     },
+    distinctMaterialCount: 0,
     // Stuff to compute FPS
     lastUpdate: {
       timestamp: Date.now(),
@@ -87,7 +88,7 @@ export function createRendererDebugWidget(
   const renderOptions = createDefaultRenderOptions();
 
   const functions = {
-    printVisible: () => {
+    logVisible: () => {
       const visibleMeshes: Record<string, THREE.Mesh> = {};
       scene.traverseVisible(x => {
         if (x.type === 'Mesh' || x.type === 'LOD') {
@@ -100,6 +101,18 @@ export function createRendererDebugWidget(
       });
       // tslint:disable-next-line: no-console
       console.log('Visible meshes:', visibleMeshes);
+    },
+    logMaterials: () => {
+      const uniqueMaterials: Record<number, THREE.Material> = {};
+      scene.traverseVisible(x => {
+        if (x.type === 'Mesh') {
+          const mesh = x as THREE.Mesh;
+          const materials = getMaterials(mesh);
+          materials.forEach(m => (uniqueMaterials[m.id] = m));
+        }
+      });
+      // tslint:disable-next-line: no-console
+      console.log('Unique materials:', uniqueMaterials);
     },
     initializeThreeJSInspector: () => {
       (window as any).THREE = THREE;
@@ -119,14 +132,18 @@ export function createRendererDebugWidget(
   const renderModes = [RenderMode.WhenNecessary, RenderMode.AlwaysRender, RenderMode.DisableRendering];
   gui.add(renderOptions, 'suspendLoading').name('Suspend loading');
   gui.add(renderOptions, 'renderMode', renderModes).name('Render mode');
-  controls.push(gui.add(sceneInfo, 'fps').name('FPS'));
-  gui.add(functions, 'printVisible').name('Print visible meshes');
-  gui.add(functions, 'initializeThreeJSInspector').name('Init ThreeJS inspector');
 
   // Basic render performance
+  controls.push(gui.add(sceneInfo, 'fps').name('FPS'));
   controls.push(gui.add(renderInfo.render, 'calls').name('Draw calls'));
   controls.push(gui.add(renderInfo.render, 'triangles').name('Triangles'));
   controls.push(gui.add(renderInfo.programs || [], 'length').name('Shaders'));
+  controls.push(gui.add(sceneInfo, 'distinctMaterialCount').name('Materials'));
+
+  // Actions
+  gui.add(functions, 'logVisible').name('Log visible meshes');
+  gui.add(functions, 'initializeThreeJSInspector').name('Init ThreeJS inspector');
+  gui.add(functions, 'logMaterials').name('Print materials');
 
   // Render filtering
   const filterGui = gui.addFolder('Filtering');
@@ -191,6 +208,7 @@ function updateSceneInfo(scene: THREE.Object3D, sceneInfo: SceneInfo) {
   sceneInfo.quads.meshCount = 0;
   sceneInfo.quads.quadCount = 0;
 
+  const materialIds = new Set<number>();
   scene.traverseVisible(x => {
     if (x.visible && x.name.startsWith('Sector')) {
       sceneInfo.sectors.count++;
@@ -200,6 +218,9 @@ function updateSceneInfo(scene: THREE.Object3D, sceneInfo: SceneInfo) {
     }
     const mesh = x as THREE.Mesh;
     const geometry = mesh.geometry as THREE.BufferGeometry;
+
+    const materials = getMaterials(mesh);
+    materials.forEach(m => materialIds.add(m.id));
 
     if (x.name.startsWith('Primitives')) {
       sceneInfo.primitives.meshCount++;
@@ -217,6 +238,8 @@ function updateSceneInfo(scene: THREE.Object3D, sceneInfo: SceneInfo) {
       sceneInfo.quads.quadCount += geometry.attributes.color.count;
     }
   });
+
+  sceneInfo.distinctMaterialCount = materialIds.size;
   sceneInfo.instanceMeshes.avgInstancesPerMesh =
     sceneInfo.instanceMeshes.instanceCount / sceneInfo.instanceMeshes.meshCount;
 }
@@ -239,4 +262,14 @@ export function applyRenderingFilters(scene: THREE.Scene, filter: RenderFilter) 
       x.visible = filter.renderQuads;
     }
   });
+}
+
+function getMaterials(mesh: THREE.Mesh): THREE.Material[] {
+  if (!mesh.material) {
+    return [];
+  } else if (Array.isArray(mesh.material)) {
+    return mesh.material;
+  } else {
+    return [mesh.material as THREE.Material];
+  }
 }

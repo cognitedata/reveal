@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { sectorShaders, shaderDefines } from './shaders';
 
 export const boxMaterial = new THREE.ShaderMaterial({
+  name: 'Primitives (Box)',
   ...shaderDefines,
   extensions: { fragDepth: true },
   vertexShader: sectorShaders.boxPrimitive.vertex,
@@ -13,6 +14,7 @@ export const boxMaterial = new THREE.ShaderMaterial({
 });
 
 export const circleMaterial = new THREE.ShaderMaterial({
+  name: 'Primitives (Circle)',
   ...shaderDefines,
   extensions: { fragDepth: true },
   vertexShader: sectorShaders.circlePrimitive.vertex,
@@ -23,12 +25,14 @@ export const circleMaterial = new THREE.ShaderMaterial({
 });
 
 export const nutsMaterial = new THREE.ShaderMaterial({
+  name: 'Primitives (Nuts)',
   ...shaderDefines,
   vertexShader: sectorShaders.nutPrimitive.vertex,
   fragmentShader: sectorShaders.nutPrimitive.fragment
 });
 
 export const quadsMaterial = new THREE.ShaderMaterial({
+  name: 'Primitives (Quads)',
   ...shaderDefines,
   vertexShader: sectorShaders.quadPrimitive.vertex,
   fragmentShader: sectorShaders.quadPrimitive.fragment,
@@ -36,6 +40,7 @@ export const quadsMaterial = new THREE.ShaderMaterial({
 });
 
 const generalRingsMaterialTemplate = new THREE.ShaderMaterial({
+  name: 'Primitives (General rings)',
   ...shaderDefines,
   uniforms: {
     inverseModelMatrix: {
@@ -55,6 +60,7 @@ export function createGeneralRingsMaterial() {
 }
 
 const coneMaterialTemplate = new THREE.ShaderMaterial({
+  name: 'Primitives (Cone)',
   ...shaderDefines,
   uniforms: {
     inverseModelMatrix: {
@@ -71,6 +77,7 @@ export function createConeMaterial() {
 }
 
 const eccentricConesMaterialTemplate = new THREE.ShaderMaterial({
+  name: 'Primitives (Eccentric cone)',
   ...shaderDefines,
   uniforms: {
     inverseModelMatrix: {
@@ -87,6 +94,7 @@ export function createEccentricConesMaterial() {
 }
 
 const ellipsoidSegmentsMaterialTemplate = new THREE.ShaderMaterial({
+  name: 'Primitives (Ellipsoid segments)',
   ...shaderDefines,
   uniforms: {
     inverseModelMatrix: {
@@ -103,6 +111,7 @@ export function createEllipsoidSegmentsMaterial() {
 }
 
 const generalCylinderMaterialTemplate = new THREE.ShaderMaterial({
+  name: 'Primitives (General cylinder)',
   ...shaderDefines,
   uniforms: {
     inverseModelMatrix: {
@@ -119,6 +128,7 @@ export function createGeneralCylinderMaterial() {
 }
 
 const trapeziumsMaterialTemplate = new THREE.ShaderMaterial({
+  name: 'Primitives (Trapezium)',
   ...shaderDefines,
   uniforms: {
     inverseModelMatrix: {
@@ -135,6 +145,7 @@ export function createTrapeziumsMaterial() {
 }
 
 const torusSegmentsMaterialTemplate = new THREE.ShaderMaterial({
+  name: 'Primitives (Torus segment)',
   ...shaderDefines,
   uniforms: {
     inverseModelMatrix: {
@@ -153,6 +164,7 @@ export function createTorusSegmentsMaterial() {
 }
 
 const sphericalSegmentsMaterialTemplate = new THREE.ShaderMaterial({
+  name: 'Primitives (Spherical segment)',
   ...shaderDefines,
   uniforms: {
     inverseModelMatrix: {
@@ -166,20 +178,4 @@ const sphericalSegmentsMaterialTemplate = new THREE.ShaderMaterial({
 
 export function createSphericalSegmentsMaterial() {
   return sphericalSegmentsMaterialTemplate.clone();
-}
-
-const sphericalSegementsMaterialTemplate = new THREE.ShaderMaterial({
-  ...shaderDefines,
-  uniforms: {
-    inverseModelMatrix: {
-      value: new THREE.Matrix4()
-    }
-  },
-  extensions: { fragDepth: true },
-  vertexShader: sectorShaders.ellipsoidSegmentPrimitive.vertex,
-  fragmentShader: sectorShaders.ellipsoidSegmentPrimitive.fragment
-});
-
-export function createSphericalSegementsMaterial() {
-  return sphericalSegementsMaterialTemplate.clone();
 }
