@@ -5,16 +5,41 @@
 import * as THREE from 'three';
 import dat from 'dat.gui';
 
-export function createRendererDebugWidget(
-  renderer: THREE.WebGLRenderer,
-  scene: THREE.Scene,
-  parentGui?: dat.GUI,
-  intervalMs: number = 100
-) {
-  const gui = (parentGui || new dat.GUI()).addFolder('WebGL debug');
-  const renderInfo = renderer.info;
+export type RenderFilter = {
+  renderQuads: boolean;
+  renderPrimitives: boolean;
+  renderTriangleMeshes: boolean;
+  renderInstancedMeshes: boolean;
+};
+const everythingRenderFilter: RenderFilter = {
+  renderQuads: true,
+  renderPrimitives: true,
+  renderTriangleMeshes: true,
+  renderInstancedMeshes: true
+};
 
-  const sceneInfo = {
+export enum RenderMode {
+  WhenNecessary = 'WhenNecessary',
+  DisableRendering = 'DisableRendering',
+  AlwaysRender = 'AlwaysRender'
+}
+
+export type RenderOptions = {
+  suspendLoading: boolean;
+  renderMode: RenderMode;
+  renderFilter: RenderFilter;
+};
+
+export function createDefaultRenderOptions() {
+  return {
+    suspendLoading: false,
+    renderMode: RenderMode.WhenNecessary,
+    renderFilter: everythingRenderFilter
+  };
+}
+
+function createEmptySceneInfo() {
+  return {
     sectors: {
       count: 0,
       withMeshesCount: 0
@@ -40,11 +65,70 @@ export function createRendererDebugWidget(
       templateTriangleCount: 0
     }
   };
+}
+type SceneInfo = ReturnType<typeof createEmptySceneInfo>;
+
+export function createRendererDebugWidget(
+  renderer: THREE.WebGLRenderer,
+  scene: THREE.Object3D,
+  parentGui?: dat.GUI,
+  intervalMs: number = 100
+): RenderOptions {
+  const gui = parentGui || new dat.GUI();
+  const renderInfo = renderer.info;
+
+  const sceneInfo = createEmptySceneInfo();
+  const renderOptions = createDefaultRenderOptions();
+
+  const functions = {
+    printVisible: () => {
+      const visibleMeshes: Record<string, THREE.Mesh> = {};
+      scene.traverseVisible(x => {
+        if (x.type === 'Mesh' || x.type === 'LOD') {
+          let path = '';
+          x.traverseAncestors(y => {
+            path = y.name + '/' + path;
+          });
+          visibleMeshes[path + x.name] = x as THREE.Mesh;
+        }
+      });
+      // tslint:disable-next-line: no-console
+      console.log('Visible meshes:', visibleMeshes);
+    },
+    initializeThreeJSInspector: () => {
+      (window as any).THREE = THREE;
+      (window as any).scene = scene;
+      (window as any).renderer = renderer;
+      // tslint:disable-next-line: no-console
+      console.log('Set window.scene, window.renderer and window.THREE');
+      // tslint:disable-next-line: no-console
+      console.log(
+        'See https://github.com/jeromeetienne/threejs-inspector/blob/master/README.md for details on the ThreeJS inspector'
+      );
+    }
+  };
 
   const controls: dat.GUIController[] = [];
+
+  const renderModes = [RenderMode.WhenNecessary, RenderMode.AlwaysRender, RenderMode.DisableRendering];
+  gui.add(renderOptions, 'suspendLoading').name('Suspend loading');
+  gui.add(renderOptions, 'renderMode', renderModes).name('Render mode');
+  gui.add(functions, 'printVisible').name('Print visible meshes');
+  gui.add(functions, 'initializeThreeJSInspector').name('Init ThreeJS inspector');
+
+  // Basic render performance
   controls.push(gui.add(renderInfo.render, 'calls').name('Draw calls'));
   controls.push(gui.add(renderInfo.render, 'triangles').name('Triangles'));
   controls.push(gui.add(renderInfo.programs || [], 'length').name('Shaders'));
+
+  // Render filtering
+  const filterGui = gui.addFolder('Filtering');
+  filterGui.add(renderOptions.renderFilter, 'renderInstancedMeshes').name('Instanced meshes');
+  filterGui.add(renderOptions.renderFilter, 'renderPrimitives').name('Primitives');
+  filterGui.add(renderOptions.renderFilter, 'renderTriangleMeshes').name('Triangle meshes');
+  filterGui.add(renderOptions.renderFilter, 'renderQuads').name('Quads');
+
+  // Details about different geometries
   const sectorsGui = gui.addFolder('Sectors');
   controls.push(sectorsGui.add(sceneInfo.sectors, 'count').name('Total'));
   controls.push(sectorsGui.add(sceneInfo.sectors, 'withMeshesCount').name('With mesh(es)'));
@@ -65,47 +149,74 @@ export function createRendererDebugWidget(
   controls.push(quadsGui.add(sceneInfo.quads, 'quadCount').name('Quad count'));
 
   setInterval(() => {
-    sceneInfo.sectors.count = 0;
-    sceneInfo.sectors.withMeshesCount = 0;
-    sceneInfo.primitives.meshCount = 0;
-    sceneInfo.primitives.templateTriangleCount = 0;
-    sceneInfo.primitives.instanceCount = 0;
-    sceneInfo.instanceMeshes.meshCount = 0;
-    sceneInfo.instanceMeshes.templateTriangleCount = 0;
-    sceneInfo.instanceMeshes.instanceCount = 0;
-    sceneInfo.instanceMeshes.avgInstancesPerMesh = 0.0;
-    sceneInfo.triangleMeshes.meshCount = 0;
-    sceneInfo.triangleMeshes.triangleCount = 0;
-    sceneInfo.quads.meshCount = 0;
-    sceneInfo.quads.quadCount = 0;
-    scene.traverseVisible(x => {
-      if (x.visible && x.name.startsWith('Sector')) {
-        sceneInfo.sectors.count++;
-        sceneInfo.sectors.withMeshesCount += x.children.find(y => y.type === 'Mesh') ? 1 : 0;
-      } else if (x.type !== 'Mesh') {
-        return;
-      }
-      const mesh = x as THREE.Mesh;
-      const geometry = mesh.geometry as THREE.BufferGeometry;
-
-      if (x.name.startsWith('Primitives')) {
-        sceneInfo.primitives.meshCount++;
-        sceneInfo.primitives.templateTriangleCount += geometry.index.count / 3;
-        sceneInfo.primitives.instanceCount += geometry.attributes.a_treeIndex.count;
-      } else if (x.name.startsWith('Triangle mesh')) {
-        sceneInfo.triangleMeshes.meshCount++;
-        sceneInfo.triangleMeshes.triangleCount += geometry.index.count / 3;
-      } else if (x.name.startsWith('Instanced mesh')) {
-        sceneInfo.instanceMeshes.meshCount++;
-        sceneInfo.instanceMeshes.templateTriangleCount += geometry.drawRange.count;
-        sceneInfo.instanceMeshes.instanceCount += geometry.attributes.a_treeIndex.count;
-      } else if (x.name.startsWith('Quads')) {
-        sceneInfo.quads.meshCount++;
-        sceneInfo.quads.quadCount += geometry.attributes.color.count;
-      }
-    });
-    sceneInfo.instanceMeshes.avgInstancesPerMesh =
-      sceneInfo.instanceMeshes.instanceCount / sceneInfo.instanceMeshes.meshCount;
+    updateSceneInfo(scene, sceneInfo);
     controls.forEach(ctrl => ctrl.updateDisplay());
   }, intervalMs);
+
+  return renderOptions;
+}
+
+function updateSceneInfo(scene: THREE.Object3D, sceneInfo: SceneInfo) {
+  sceneInfo.sectors.count = 0;
+  sceneInfo.sectors.withMeshesCount = 0;
+  sceneInfo.primitives.meshCount = 0;
+  sceneInfo.primitives.templateTriangleCount = 0;
+  sceneInfo.primitives.instanceCount = 0;
+  sceneInfo.instanceMeshes.meshCount = 0;
+  sceneInfo.instanceMeshes.templateTriangleCount = 0;
+  sceneInfo.instanceMeshes.instanceCount = 0;
+  sceneInfo.instanceMeshes.avgInstancesPerMesh = 0.0;
+  sceneInfo.triangleMeshes.meshCount = 0;
+  sceneInfo.triangleMeshes.triangleCount = 0;
+  sceneInfo.quads.meshCount = 0;
+  sceneInfo.quads.quadCount = 0;
+
+  scene.traverseVisible(x => {
+    if (x.visible && x.name.startsWith('Sector')) {
+      sceneInfo.sectors.count++;
+      sceneInfo.sectors.withMeshesCount += x.children.find(y => y.type === 'Mesh') ? 1 : 0;
+    } else if (x.type !== 'Mesh') {
+      return;
+    }
+    const mesh = x as THREE.Mesh;
+    const geometry = mesh.geometry as THREE.BufferGeometry;
+
+    if (x.name.startsWith('Primitives')) {
+      sceneInfo.primitives.meshCount++;
+      sceneInfo.primitives.templateTriangleCount += geometry.index.count / 3;
+      sceneInfo.primitives.instanceCount += geometry.attributes.a_treeIndex.count;
+    } else if (x.name.startsWith('Triangle mesh')) {
+      sceneInfo.triangleMeshes.meshCount++;
+      sceneInfo.triangleMeshes.triangleCount += geometry.index.count / 3;
+    } else if (x.name.startsWith('Instanced mesh')) {
+      sceneInfo.instanceMeshes.meshCount++;
+      sceneInfo.instanceMeshes.templateTriangleCount += geometry.drawRange.count;
+      sceneInfo.instanceMeshes.instanceCount += geometry.attributes.a_treeIndex.count;
+    } else if (x.name.startsWith('Quads')) {
+      sceneInfo.quads.meshCount++;
+      sceneInfo.quads.quadCount += geometry.attributes.color.count;
+    }
+  });
+  sceneInfo.instanceMeshes.avgInstancesPerMesh =
+    sceneInfo.instanceMeshes.instanceCount / sceneInfo.instanceMeshes.meshCount;
+}
+
+/**
+ * Apply filters from a RenderFilter created using createRendererDebugWidget.
+ * This must be called every frame in order to ensure scene is updated correctly.
+ * @param scene
+ * @param filter
+ */
+export function applyRenderingFilters(scene: THREE.Scene, filter: RenderFilter) {
+  scene.traverse(x => {
+    if (x.name.startsWith('Primitives')) {
+      x.visible = filter.renderPrimitives;
+    } else if (x.name.startsWith('Triangle mesh')) {
+      x.visible = filter.renderTriangleMeshes;
+    } else if (x.name.startsWith('Instanced mesh')) {
+      x.visible = filter.renderInstancedMeshes;
+    } else if (x.name.startsWith('Quads')) {
+      x.visible = filter.renderQuads;
+    }
+  });
 }

@@ -6,34 +6,20 @@ import * as THREE from 'three';
 import * as reveal from '@cognite/reveal';
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
-import { createRendererDebugWidget } from './utils/renderer-debug-widget';
+import {
+  createRendererDebugWidget,
+  applyRenderingFilters,
+  RenderMode,
+  RenderOptions
+} from './utils/renderer-debug-widget';
 
 CameraControls.install({ THREE });
-
-type RenderFilter = {
-  renderQuads: boolean;
-  renderPrimitives: boolean;
-  renderTriangleMeshes: boolean;
-  renderInstancedMeshes: boolean;
-};
-
-enum RenderMode {
-  WhenNecessary = 'WhenNecessary',
-  DisableRendering = 'DisableRendering',
-  AlwaysRender = 'AlwaysRender'
-}
-
-type Options = {
-  suspendLoading: boolean;
-  renderMode: RenderMode;
-  renderFilter: RenderFilter;
-};
 
 async function initializeModel(
   sectorModel: reveal.SectorModel,
   canvas: HTMLCanvasElement,
   gui: dat.GUI
-): Promise<[THREE.WebGLRenderer, THREE.Scene, reveal.RootSectorNode, Options]> {
+): Promise<[THREE.WebGLRenderer, THREE.Scene, reveal.RootSectorNode, RenderOptions]> {
   const renderer = new THREE.WebGLRenderer({ canvas });
   renderer.setClearColor('#444');
   renderer.setSize(canvas.width, canvas.height);
@@ -42,17 +28,7 @@ async function initializeModel(
   const sectorModelNode = await reveal.createThreeJsSectorNode(sectorModel);
   scene.add(sectorModelNode);
 
-  const options: Options = {
-    suspendLoading: false,
-    renderMode: RenderMode.WhenNecessary,
-    renderFilter: {
-      renderInstancedMeshes: true,
-      renderPrimitives: true,
-      renderQuads: true,
-      renderTriangleMeshes: true
-    }
-  };
-  initializeGui(gui, options, renderer, scene);
+  const options = createRendererDebugWidget(renderer, scene, gui);
 
   return [renderer, scene, sectorModelNode, options];
 }
@@ -74,8 +50,10 @@ async function main() {
   // Initialize models
   const model1 = reveal.createLocalSectorModel(modelUrl1);
   const model2 = reveal.createLocalSectorModel(modelUrl2);
-  const [renderer1, scene1, modelNode1, options1] = await initializeModel(model1, leftCanvas, gui1);
-  const [renderer2, scene2, modelNode2, options2] = await initializeModel(model2, rightCanvas, gui2);
+  const model1Promise = initializeModel(model1, leftCanvas, gui1);
+  const model2Promise = initializeModel(model2, rightCanvas, gui2);
+  const [renderer1, scene1, modelNode1, options1] = await model1Promise;
+  const [renderer2, scene2, modelNode2, options2] = await model2Promise;
 
   const fetchMetadata: reveal.internal.FetchSectorMetadataDelegate = model1[0];
   const [modelScene, modelTransform] = await fetchMetadata();
@@ -113,60 +91,6 @@ async function main() {
     }
   };
   render();
-}
-
-function initializeGui(gui: dat.GUI, options: Options, renderer: THREE.WebGLRenderer, scene: THREE.Scene) {
-  const functions = {
-    printVisible: () => {
-      const visibleMeshes: Record<string, THREE.Mesh> = {};
-      scene.traverseVisible(x => {
-        if (x.type === 'Mesh' || x.type === 'LOD') {
-          let path = '';
-          x.traverseAncestors(y => {
-            path = y.name + '/' + path;
-          });
-          visibleMeshes[path + x.name] = x as THREE.Mesh;
-        }
-      });
-      console.log('Visible meshes:', visibleMeshes);
-    },
-    initializeThreeJSInspector: () => {
-      (window as any).THREE = THREE;
-      (window as any).scene = scene;
-      (window as any).renderer = renderer;
-      console.log('Set window.scene, window.renderer and window.THREE');
-      console.log(
-        'See https://github.com/jeromeetienne/threejs-inspector/blob/master/README.md for details on the ThreeJS inspector'
-      );
-    }
-  };
-
-  gui.add(options, 'suspendLoading').name('Suspend loading');
-  const renderModes = [RenderMode.WhenNecessary, RenderMode.AlwaysRender, RenderMode.DisableRendering];
-  gui.add(options, 'renderMode', renderModes).name('Render mode');
-  gui.add(functions, 'printVisible').name('Print visible meshes');
-  gui.add(functions, 'initializeThreeJSInspector').name('Initialize ThreeJS inspector');
-
-  const filterGui = gui.addFolder('Filtering');
-  filterGui.add(options.renderFilter, 'renderInstancedMeshes').name('Instanced meshes');
-  filterGui.add(options.renderFilter, 'renderPrimitives').name('Primitives');
-  filterGui.add(options.renderFilter, 'renderTriangleMeshes').name('Triangle meshes');
-  filterGui.add(options.renderFilter, 'renderQuads').name('Quads');
-  createRendererDebugWidget(renderer, scene, gui);
-}
-
-function applyRenderingFilters(scene: THREE.Scene, filter: RenderFilter) {
-  scene.traverse(x => {
-    if (x.name.startsWith('Primitives')) {
-      x.visible = filter.renderPrimitives;
-    } else if (x.name.startsWith('Triangle mesh')) {
-      x.visible = filter.renderTriangleMeshes;
-    } else if (x.name.startsWith('Instanced mesh')) {
-      x.visible = filter.renderInstancedMeshes;
-    } else if (x.name.startsWith('Quads')) {
-      x.visible = filter.renderQuads;
-    }
-  });
 }
 
 main();
