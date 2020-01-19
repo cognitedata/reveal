@@ -72,8 +72,8 @@ async function main() {
 
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
-    const sectors1NeedUpdate = !options1.suspendLoading && (await modelNode1.update(camera));
-    const sectors2NeedUpdate = !options2.suspendLoading && (await modelNode2.update(camera));
+    const sectors1NeedUpdate = options1.loadingEnabled && (await modelNode1.update(camera));
+    const sectors2NeedUpdate = options2.loadingEnabled && (await modelNode2.update(camera));
 
     if (
       options1.renderMode === RenderMode.AlwaysRender ||

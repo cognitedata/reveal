@@ -25,14 +25,14 @@ export enum RenderMode {
 }
 
 export type RenderOptions = {
-  suspendLoading: boolean;
+  loadingEnabled: boolean;
   renderMode: RenderMode;
   renderFilter: RenderFilter;
 };
 
-export function createDefaultRenderOptions() {
+export function createDefaultRenderOptions(): RenderOptions {
   return {
-    suspendLoading: false,
+    loadingEnabled: true,
     renderMode: RenderMode.WhenNecessary,
     renderFilter: everythingRenderFilter
   };
@@ -78,10 +78,9 @@ type SceneInfo = ReturnType<typeof createEmptySceneInfo>;
 export function createRendererDebugWidget(
   renderer: THREE.WebGLRenderer,
   scene: THREE.Object3D,
-  parentGui?: dat.GUI,
+  gui: dat.GUI,
   intervalMs: number = 100
 ): RenderOptions {
-  const gui = parentGui || new dat.GUI();
   const renderInfo = renderer.info;
 
   const sceneInfo = createEmptySceneInfo();
@@ -130,7 +129,7 @@ export function createRendererDebugWidget(
   const controls: dat.GUIController[] = []; // List of controls that must be manually updated
 
   const renderModes = [RenderMode.WhenNecessary, RenderMode.AlwaysRender, RenderMode.DisableRendering];
-  gui.add(renderOptions, 'suspendLoading').name('Suspend loading');
+  gui.add(renderOptions, 'loadingEnabled').name('Loading enabled');
   gui.add(renderOptions, 'renderMode', renderModes).name('Render mode');
 
   // Basic render performance

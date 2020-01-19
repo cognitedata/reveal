@@ -21,6 +21,13 @@ const quadVertexData = new Float32Array([
 ]);
 const quadVertexBufferAttribute = new THREE.Float32BufferAttribute(quadVertexData.buffer, 3);
 
+const lowDetailMaterial = new THREE.ShaderMaterial({
+  name: 'Low detail material',
+  ...shaderDefines,
+  fragmentShader: sectorShaders.simpleMesh.fragment,
+  vertexShader: sectorShaders.simpleMesh.vertex
+});
+
 export function consumeSectorSimple(
   sectorId: number,
   sector: SectorQuads,
@@ -59,13 +66,7 @@ export function consumeSectorSimple(
   geometry.setAttribute('matrix2', matrix2);
   geometry.setAttribute('matrix3', matrix3);
 
-  const material = new THREE.ShaderMaterial({
-    name: 'Low detail material',
-    ...shaderDefines,
-    fragmentShader: sectorShaders.simpleMesh.fragment,
-    vertexShader: sectorShaders.simpleMesh.vertex
-  });
-  const obj = new THREE.Mesh(geometry, material);
+  const obj = new THREE.Mesh(geometry, lowDetailMaterial);
 
   obj.name = `Quads ${sectorId}`;
   // TODO 20191028 dragly figure out why the quads are being culled wrongly and if we

@@ -42,21 +42,13 @@ async function main() {
 
   const pointCloudModel = reveal.createLocalPointCloudModel(pointCloudModelUrl);
   const [pointCloudGroup, pointCloudNode] = await reveal.createThreeJsPointCloudNode(pointCloudModel);
-  // pointCloudGroup.position.set(10, 10, 10);
   scene.add(pointCloudGroup);
 
   let settingsChanged = false;
   function handleSettingsChanged() {
     settingsChanged = true;
   }
-  const renderOptions = initializeGui(
-    renderer,
-    scene,
-    sectorModelNode,
-    pointCloudGroup,
-    pointCloudNode,
-    handleSettingsChanged
-  );
+  const renderOptions = initializeGui(sectorModelNode, pointCloudGroup, pointCloudNode, handleSettingsChanged);
 
   const { position, target, near, far } = reveal.internal.suggestCameraConfig(modelScene.root);
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
@@ -71,7 +63,7 @@ async function main() {
   const render = async () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
-    const modelNeedsUpdate = !renderOptions.suspendLoading && (await sectorModelNode.update(camera));
+    const modelNeedsUpdate = renderOptions.loadingEnabled && (await sectorModelNode.update(camera));
     const needsUpdate =
       renderOptions.renderMode === RenderMode.AlwaysRender ||
       (renderOptions.renderMode === RenderMode.WhenNecessary &&
@@ -93,8 +85,6 @@ async function main() {
 }
 
 function initializeGui(
-  renderer: THREE.WebGLRenderer,
-  scene: THREE.Object3D,
   cadNode: reveal.SectorNode,
   pcGroup: reveal.internal.PotreeGroupWrapper,
   pcNode: reveal.internal.PotreeNodeWrapper,
