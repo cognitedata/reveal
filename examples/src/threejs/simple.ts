@@ -50,6 +50,7 @@ async function main() {
   (window as any).THREE = THREE;
   (window as any).camera = camera;
   (window as any).controls = controls;
+  (window as any).renderer = renderer;
 }
 
 main();
