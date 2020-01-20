@@ -15,6 +15,7 @@ import { findSectorMetadata } from '../../../models/sector/findSectorMetadata';
 import { consumeSectorDetailed } from './consumeSectorDetailed';
 import { discardSector } from './discardSector';
 import { consumeSectorSimple } from './consumeSectorSimple';
+import { defaultDetermineSectors } from '../../../models/sector/determineSectors';
 
 export async function createThreeJsSectorNode(model: SectorModel): Promise<RootSectorNode> {
   const [fetchSectorMetadata, fetchSector, fetchSectorQuads, fetchCtmFile] = model;
@@ -63,10 +64,16 @@ export async function createThreeJsSectorNode(model: SectorModel): Promise<RootS
   const getDetailedCache = createSimpleCache(getDetailed);
   const getSimpleCache = createSimpleCache(getSimple);
 
+  const determineSectors = defaultDetermineSectors;
   const activatorDetailed = initializeSectorLoader(getDetailedCache.request, discard, consumeDetailed);
   const activatorSimple = initializeSectorLoader(getSimpleCache.request, discard, consumeSimple);
-  const rootGroup = new RootSectorNode(scene, modelTransformation, activatorSimple, activatorDetailed);
-  rootGroup.applyMatrix(toThreeMatrix4(modelTransformation.modelMatrix));
+  const rootGroup = new RootSectorNode(
+    scene,
+    modelTransformation,
+    determineSectors,
+    activatorSimple,
+    activatorDetailed
+  );
   buildScene(scene.root, rootGroup, sectorNodeMap);
 
   return rootGroup;

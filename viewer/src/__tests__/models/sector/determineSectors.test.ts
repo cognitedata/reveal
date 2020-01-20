@@ -5,11 +5,11 @@ import * as THREE from 'three';
 import { SectorMetadata, SectorModelTransformation } from '../../../models/sector/types';
 import { Box3 } from '../../../utils/Box3';
 import { vec3, mat4 } from 'gl-matrix';
-import { determineSectors, determineSectorsQuality } from '../../../models/sector/determineSectors';
+import { defaultDetermineSectors } from '../../../models/sector/determineSectors';
 import { expectSetEqual } from '../../expects';
 import { toThreeMatrix4, fromThreeMatrix, fromThreeVector3 } from '../../../views/threejs/utilities';
-import 'jest-extended';
 import { traverseDepthFirst } from '../../../utils/traversal';
+import 'jest-extended';
 
 function createSceneFromRoot(root: SectorMetadata) {
   const sectors = new Map<number, SectorMetadata>();
@@ -44,7 +44,7 @@ describe('determineSectors', () => {
     camera.updateMatrixWorld();
 
     // Act
-    const sectors = await determineSectors({
+    const sectors = await defaultDetermineSectors({
       scene,
       cameraFov: camera.fov,
       cameraPosition: fromThreeVector3(vec3.create(), camera.position, identityTransform),
@@ -84,7 +84,7 @@ describe('determineSectors', () => {
     camera.updateMatrixWorld();
 
     // Act
-    const sectors = await determineSectors({
+    const sectors = await defaultDetermineSectors({
       scene,
       cameraFov: camera.fov,
       cameraPosition: fromThreeVector3(vec3.create(), camera.position, identityTransform),
@@ -118,7 +118,7 @@ describe('determineSectors', () => {
     camera.updateMatrixWorld();
 
     // Act
-    const sectors = await determineSectors({
+    const sectors = await defaultDetermineSectors({
       scene,
       cameraFov: camera.fov,
       cameraPosition: fromThreeVector3(vec3.create(), camera.position, transform),

@@ -3,20 +3,12 @@
  */
 
 import * as THREE from 'three';
-import { WantedSectors, SectorMetadata, SectorModelTransformation, SectorScene } from './types';
+import { WantedSectors, SectorMetadata, SectorScene, DetermineSectorsInput } from './types';
 import { traverseDepthFirst, traverseUpwards } from '../../utils/traversal';
 import { toThreeMatrix4, toThreeVector3 } from '../../views/threejs/utilities';
 import { mat4, vec3 } from 'gl-matrix';
 
 const degToRadFactor = Math.PI / 180;
-
-interface DetermineSectorsInput {
-  readonly scene: SectorScene;
-  readonly cameraFov: number;
-  readonly cameraPosition: vec3;
-  readonly cameraModelMatrix: mat4;
-  readonly projectionMatrix: mat4;
-}
 
 const determineSectorsPreallocatedVars = {
   invertCameraModelMatrix: mat4.create(),
@@ -27,8 +19,8 @@ const determineSectorsPreallocatedVars = {
   max: new THREE.Vector3()
 };
 
-export async function determineSectors(input: DetermineSectorsInput): Promise<WantedSectors> {
-  const { scene, cameraPosition, cameraModelMatrix, projectionMatrix, cameraFov } = input;
+export async function defaultDetermineSectors(params: DetermineSectorsInput): Promise<WantedSectors> {
+  const { scene, cameraPosition, cameraModelMatrix, projectionMatrix, cameraFov } = params;
   const { invertCameraModelMatrix, frustumMatrix, frustum, bbox, min, max } = determineSectorsPreallocatedVars;
 
   const sectors: SectorMetadata[] = [];
