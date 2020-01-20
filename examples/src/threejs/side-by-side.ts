@@ -12,6 +12,7 @@ import {
   RenderMode,
   RenderOptions
 } from './utils/renderer-debug-widget';
+import { DetermineSectorsInput } from '@cognite/reveal/dist/src/models/sector/types';
 
 CameraControls.install({ THREE });
 
@@ -24,11 +25,24 @@ async function initializeModel(
   renderer.setClearColor('#444');
   renderer.setSize(canvas.width, canvas.height);
 
-  const scene = new THREE.Scene();
-  const sectorModelNode = await reveal.createThreeJsSectorNode(sectorModel);
-  scene.add(sectorModelNode);
+  // TODO 2020-01-20 larsmoa: Make SectorModel to class
+  const [fetchMetadata, fetchCtm] = sectorModel;
+  const [sectorScene, modelTransform] = await fetchMetadata();
 
-  const options = createRendererDebugWidget(renderer, scene, gui);
+  const scene = new THREE.Scene();
+  const options = createRendererDebugWidget(sectorScene.root, renderer, scene, gui);
+  const sectorModelNode = await reveal.createThreeJsSectorNode(sectorModel);
+  const defaultDetermineSectors = sectorModelNode.determineSectors;
+
+  function determineSectors(params: DetermineSectorsInput) {
+    if (options.overrideWantedSectors) {
+      return Promise.resolve(options.overrideWantedSectors);
+    }
+    return defaultDetermineSectors(params);
+  }
+
+  sectorModelNode.determineSectors = determineSectors;
+  scene.add(sectorModelNode);
 
   return [renderer, scene, sectorModelNode, options];
 }

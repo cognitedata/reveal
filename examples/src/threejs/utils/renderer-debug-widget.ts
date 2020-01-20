@@ -3,7 +3,10 @@
  */
 
 import * as THREE from 'three';
+import * as reveal from '@cognite/reveal';
 import dat from 'dat.gui';
+import { SectorMetadata, WantedSectors } from '@cognite/reveal/dist/src/models/sector/types';
+// import { WantedSectors } from '@cognite/reveal/internal';
 
 export type RenderFilter = {
   renderQuads: boolean;
@@ -24,17 +27,24 @@ export enum RenderMode {
   AlwaysRender = 'AlwaysRender'
 }
 
+export enum SectorLevelOfDetail {
+  High,
+  Low
+}
+
 export type RenderOptions = {
   loadingEnabled: boolean;
   renderMode: RenderMode;
   renderFilter: RenderFilter;
+  overrideWantedSectors: WantedSectors | null;
 };
 
 export function createDefaultRenderOptions(): RenderOptions {
   return {
     loadingEnabled: true,
     renderMode: RenderMode.WhenNecessary,
-    renderFilter: everythingRenderFilter
+    renderFilter: everythingRenderFilter,
+    overrideWantedSectors: null
   };
 }
 
@@ -76,13 +86,13 @@ function createEmptySceneInfo() {
 type SceneInfo = ReturnType<typeof createEmptySceneInfo>;
 
 export function createRendererDebugWidget(
+  sectorRoot: SectorMetadata,
   renderer: THREE.WebGLRenderer,
   scene: THREE.Object3D,
   gui: dat.GUI,
   intervalMs: number = 100
 ): RenderOptions {
   const renderInfo = renderer.info;
-
   const sceneInfo = createEmptySceneInfo();
   const renderOptions = createDefaultRenderOptions();
 
@@ -133,16 +143,13 @@ export function createRendererDebugWidget(
   gui.add(renderOptions, 'renderMode', renderModes).name('Render mode');
 
   // Basic render performance
-  controls.push(gui.add(sceneInfo, 'fps').name('FPS'));
-  controls.push(gui.add(renderInfo.render, 'calls').name('Draw calls'));
-  controls.push(gui.add(renderInfo.render, 'triangles').name('Triangles'));
-  controls.push(gui.add(renderInfo.programs || [], 'length').name('Shaders'));
-  controls.push(gui.add(sceneInfo, 'distinctMaterialCount').name('Materials'));
-
-  // Actions
-  gui.add(functions, 'logVisible').name('Log visible meshes');
-  gui.add(functions, 'initializeThreeJSInspector').name('Init ThreeJS inspector');
-  gui.add(functions, 'logMaterials').name('Print materials');
+  const statsGui = gui.addFolder('Stats');
+  controls.push(statsGui.add(sceneInfo, 'fps').name('FPS'));
+  controls.push(statsGui.add(renderInfo.render, 'calls').name('Draw calls'));
+  controls.push(statsGui.add(renderInfo.render, 'triangles').name('Triangles'));
+  controls.push(statsGui.add(renderInfo.programs || [], 'length').name('Shaders'));
+  controls.push(statsGui.add(sceneInfo, 'distinctMaterialCount').name('Materials'));
+  statsGui.open();
 
   // Render filtering
   const filterGui = gui.addFolder('Filtering');
@@ -151,10 +158,26 @@ export function createRendererDebugWidget(
   filterGui.add(renderOptions.renderFilter, 'renderTriangleMeshes').name('Triangle meshes');
   filterGui.add(renderOptions.renderFilter, 'renderQuads').name('Quads');
 
-  // Details about different geometries
+  // Sectors
   const sectorsGui = gui.addFolder('Sectors');
   controls.push(sectorsGui.add(sceneInfo.sectors, 'count').name('Total'));
   controls.push(sectorsGui.add(sceneInfo.sectors, 'withMeshesCount').name('With mesh(es)'));
+
+  // Sectors to load
+  const loadOverrideGui = sectorsGui.addFolder('Override sectors to load');
+  const sectorOverride = { quadsFilter: '', detailedFilter: '' };
+  const updateWantedNodesFilter = () =>
+    updateWantedSectorOverride(renderOptions, sectorRoot, sectorOverride.quadsFilter, sectorOverride.detailedFilter);
+  loadOverrideGui
+    .add(sectorOverride, 'quadsFilter')
+    .name('Quads (low detail)')
+    .onFinishChange(updateWantedNodesFilter);
+  loadOverrideGui
+    .add(sectorOverride, 'detailedFilter')
+    .name('Detailed')
+    .onFinishChange(updateWantedNodesFilter);
+
+  // Details about different geometries
   const primitivesGui = gui.addFolder('Primitives');
   controls.push(primitivesGui.add(sceneInfo.primitives, 'meshCount').name('Mesh count'));
   controls.push(primitivesGui.add(sceneInfo.primitives, 'instanceCount').name('Instance count'));
@@ -167,9 +190,16 @@ export function createRendererDebugWidget(
   const meshesGui = gui.addFolder('Meshes');
   controls.push(meshesGui.add(sceneInfo.triangleMeshes, 'meshCount').name('Mesh count'));
   controls.push(meshesGui.add(sceneInfo.triangleMeshes, 'triangleCount').name('Triangles'));
+
   const quadsGui = gui.addFolder('Quads (low detail geometry)');
   controls.push(quadsGui.add(sceneInfo.quads, 'meshCount').name('Mesh count'));
   controls.push(quadsGui.add(sceneInfo.quads, 'quadCount').name('Quad count'));
+
+  // Actions
+  const actionsGui = gui.addFolder('Actions');
+  actionsGui.add(functions, 'logVisible').name('Log visible meshes');
+  actionsGui.add(functions, 'initializeThreeJSInspector').name('Init ThreeJS inspector');
+  actionsGui.add(functions, 'logMaterials').name('Print materials');
 
   setInterval(() => {
     computeFramesPerSecond(renderer, sceneInfo);
@@ -271,4 +301,43 @@ function getMaterials(mesh: THREE.Mesh): THREE.Material[] {
   } else {
     return [mesh.material as THREE.Material];
   }
+}
+
+/**
+ * From the provided filter, returns a set of nodeIds accepted by the filter.
+ * @param filter Comma-separated list of regular expressions, matched with the sector-tree paths (on
+ *               format x/y/z/ where x,y,z is a number).
+ * @param root   The root of the sector tree.
+ */
+function filterSectorNodes(filter: string, root: SectorMetadata): Set<number> {
+  const acceptedNodeIds: number[] = [];
+  for (let pathRegex of filter.split(',').map(x => x.trim())) {
+    if (!pathRegex.startsWith('^')) {
+      pathRegex = '^' + pathRegex;
+    }
+    if (!pathRegex.endsWith('$')) {
+      pathRegex = pathRegex + '$';
+    }
+    reveal.internal.traverseDepthFirst(root, node => {
+      if (node.path.match(pathRegex)) {
+        acceptedNodeIds.push(node.id);
+      }
+      return true;
+    });
+  }
+  return new Set<number>(acceptedNodeIds);
+}
+
+function updateWantedSectorOverride(
+  renderOptions: RenderOptions,
+  root: SectorMetadata,
+  quadsFilter: string,
+  detailedFilter: string
+) {
+  const acceptedSimple = filterSectorNodes(quadsFilter, root);
+  const acceptedDetailed = filterSectorNodes(detailedFilter, root);
+  renderOptions.overrideWantedSectors = {
+    simple: new Set<number>(acceptedSimple),
+    detailed: new Set<number>(acceptedDetailed)
+  };
 }

@@ -41,13 +41,13 @@ const allExamples = [
     name: "threejs-simple",
     title: "Simple",
     entry: './src/threejs/simple.ts',
-    template: 'template-example.ejs',
+    template: 'template-example.ejs', 
     type: 'threejs'
   },
   {
-    name: "threejs-debugger",
-    title: "Debugger for sector models",
-    entry: './src/threejs/debugger.ts',
+    name: "threejs-side-by-side",
+    title: "Side-by-side view for sector models",
+    entry: './src/threejs/side-by-side.ts',
     template: 'template-example-two-canvases.ejs',
     type: 'threejs'
   },
