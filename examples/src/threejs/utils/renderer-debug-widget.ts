@@ -96,46 +96,6 @@ export function createRendererDebugWidget(
   const sceneInfo = createEmptySceneInfo();
   const renderOptions = createDefaultRenderOptions();
 
-  const functions = {
-    logVisible: () => {
-      const visibleMeshes: Record<string, THREE.Mesh> = {};
-      scene.traverseVisible(x => {
-        if (x.type === 'Mesh' || x.type === 'LOD') {
-          let path = '';
-          x.traverseAncestors(y => {
-            path = y.name + '/' + path;
-          });
-          visibleMeshes[path + x.name] = x as THREE.Mesh;
-        }
-      });
-      // tslint:disable-next-line: no-console
-      console.log('Visible meshes:', visibleMeshes);
-    },
-    logMaterials: () => {
-      const uniqueMaterials: Record<number, THREE.Material> = {};
-      scene.traverseVisible(x => {
-        if (x.type === 'Mesh') {
-          const mesh = x as THREE.Mesh;
-          const materials = getMaterials(mesh);
-          materials.forEach(m => (uniqueMaterials[m.id] = m));
-        }
-      });
-      // tslint:disable-next-line: no-console
-      console.log('Unique materials:', uniqueMaterials);
-    },
-    initializeThreeJSInspector: () => {
-      (window as any).THREE = THREE;
-      (window as any).scene = scene;
-      (window as any).renderer = renderer;
-      // tslint:disable-next-line: no-console
-      console.log('Set window.scene, window.renderer and window.THREE');
-      // tslint:disable-next-line: no-console
-      console.log(
-        'See https://github.com/jeromeetienne/threejs-inspector/blob/master/README.md for details on the ThreeJS inspector'
-      );
-    }
-  };
-
   const controls: dat.GUIController[] = []; // List of controls that must be manually updated
 
   const renderModes = [RenderMode.WhenNecessary, RenderMode.AlwaysRender, RenderMode.DisableRendering];
@@ -196,11 +156,17 @@ export function createRendererDebugWidget(
   controls.push(quadsGui.add(sceneInfo.quads, 'quadCount').name('Quad count'));
 
   // Actions
+  const actions = {
+    logVisible: () => logVisibleSectorsInScene(scene),
+    logMaterials: () => logActiveMaterialsInScene(scene),
+    initializeThreeJSInspector: () => initializeThreeJSInspector(renderer, scene)
+  };
   const actionsGui = gui.addFolder('Actions');
-  actionsGui.add(functions, 'logVisible').name('Log visible meshes');
-  actionsGui.add(functions, 'initializeThreeJSInspector').name('Init ThreeJS inspector');
-  actionsGui.add(functions, 'logMaterials').name('Print materials');
+  actionsGui.add(actions, 'logVisible').name('Log visible meshes');
+  actionsGui.add(actions, 'initializeThreeJSInspector').name('Init ThreeJS inspector');
+  actionsGui.add(actions, 'logMaterials').name('Print materials');
 
+  // Regularly update displays
   setInterval(() => {
     computeFramesPerSecond(renderer, sceneInfo);
     updateSceneInfo(scene, sceneInfo);
@@ -340,4 +306,44 @@ function updateWantedSectorOverride(
     simple: new Set<number>(acceptedSimple),
     detailed: new Set<number>(acceptedDetailed)
   };
+}
+
+function logVisibleSectorsInScene(scene: THREE.Object3D) {
+  const visibleMeshes: Record<string, THREE.Mesh> = {};
+  scene.traverseVisible(x => {
+    if (x.type === 'Mesh' || x.type === 'LOD') {
+      let path = '';
+      x.traverseAncestors(y => {
+        path = y.name + '/' + path;
+      });
+      visibleMeshes[path + x.name] = x as THREE.Mesh;
+    }
+  });
+  // tslint:disable-next-line: no-console
+  console.log('Visible meshes:', visibleMeshes);
+}
+
+function logActiveMaterialsInScene(scene: THREE.Object3D) {
+  const uniqueMaterials: Record<number, THREE.Material> = {};
+  scene.traverseVisible(x => {
+    if (x.type === 'Mesh') {
+      const mesh = x as THREE.Mesh;
+      const materials = getMaterials(mesh);
+      materials.forEach(m => (uniqueMaterials[m.id] = m));
+    }
+  });
+  // tslint:disable-next-line: no-console
+  console.log('Unique materials:', uniqueMaterials);
+}
+
+function initializeThreeJSInspector(renderer: THREE.WebGLRenderer, scene: THREE.Object3D) {
+  (window as any).THREE = THREE;
+  (window as any).scene = scene;
+  (window as any).renderer = renderer;
+  // tslint:disable-next-line: no-console
+  console.log('Set window.scene, window.renderer and window.THREE');
+  // tslint:disable-next-line: no-console
+  console.log(
+    'See https://github.com/jeromeetienne/threejs-inspector/blob/master/README.md for details on the ThreeJS inspector'
+  );
 }
