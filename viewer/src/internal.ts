@@ -11,3 +11,5 @@ export { PotreeNodeWrapper } from './views/threejs/pointcloud/PotreeNodeWrapper'
 export { PotreeGroupWrapper } from './views/threejs/pointcloud/PotreeGroupWrapper';
 
 export { suggestCameraConfig } from './utils/cameraUtils';
+export { traverseDepthFirst, traverseUpwards } from './utils/traversal';
+export { WantedSectors } from './models/sector/types';
