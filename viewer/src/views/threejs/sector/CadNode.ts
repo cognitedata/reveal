@@ -5,7 +5,7 @@
 import { createParser, createQuadsParser } from '../../../models/sector/parseSectorData';
 import { initializeSectorLoader, SectorActivator } from '../../../models/sector/initializeSectorLoader';
 import { createSimpleCache } from '../../../models/createCache';
-import { toThreeMatrix4, fromThreeVector3, fromThreeMatrix } from '../utilities';
+import { toThreeMatrix4, fromThreeVector3, fromThreeMatrix, toThreeVector3 } from '../utilities';
 import { buildScene } from './buildScene';
 import { consumeSectorDetailed } from './consumeSectorDetailed';
 import { discardSector } from './discardSector';
@@ -20,6 +20,14 @@ import { SectorModelTransformation, SectorMetadata, SectorScene } from '../../..
 import { vec3, mat4 } from 'gl-matrix';
 import { determineSectors } from '../../../models/sector/determineSectors';
 import { createThreeJsSectorNode } from './createThreeJsSectorNode';
+import { suggestCameraConfig } from '../../../utils/cameraUtils';
+
+export interface SuggestedCameraConfig {
+  position: THREE.Vector3;
+  target: THREE.Vector3;
+  near: number;
+  far: number;
+}
 
 const updateVars = {
   cameraPosition: vec3.create(),
@@ -91,5 +99,16 @@ export class CadNode extends THREE.Object3D {
     needsRedraw = this.detailedActivator.refresh() || needsRedraw;
     needsRedraw = this.simpleActivator.refresh() || needsRedraw;
     return needsRedraw;
+  }
+
+  public suggestCameraConfig(): SuggestedCameraConfig {
+    const { position, target, near, far } = suggestCameraConfig(this.sectorScene.root);
+
+    return {
+      position: toThreeVector3(position, this.modelTransformation),
+      target: toThreeVector3(target, this.modelTransformation),
+      near,
+      far
+    };
   }
 }
