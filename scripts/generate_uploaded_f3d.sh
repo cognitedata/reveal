@@ -1,7 +1,7 @@
 #!/bin/bash
 TARGET_DIR="$1"
 TARGET_FILE=$TARGET_DIR/uploaded_sectors_simple.txt
-rm -f $TARGET_FILE 2>&1 /dev/null
+rm -f $TARGET_FILE > /dev/null 2>&1
 cd ../f3df
 cargo build --features=dump
 touch $TARGET_FILE
