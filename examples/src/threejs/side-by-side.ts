@@ -32,17 +32,17 @@ async function initializeModel(
   const scene = new THREE.Scene();
   const options = createRendererDebugWidget(sectorScene.root, renderer, scene, gui);
   const sectorModelNode = await reveal.createThreeJsSectorNode(sectorModel);
-  const defaultDetermineSectors = sectorModelNode.determineSectors;
+  scene.add(sectorModelNode);
 
+  // Override determineSectors of the node to obey override in RenderOptions
+  const defaultDetermineSectors = sectorModelNode.determineSectors;
   function determineSectors(params: DetermineSectorsInput) {
     if (options.overrideWantedSectors) {
       return Promise.resolve(options.overrideWantedSectors);
     }
     return defaultDetermineSectors(params);
   }
-
   sectorModelNode.determineSectors = determineSectors;
-  scene.add(sectorModelNode);
 
   return [renderer, scene, sectorModelNode, options];
 }
