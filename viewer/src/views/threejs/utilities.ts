@@ -34,14 +34,20 @@ const toThreeVector3Vars = {
   result: vec3.create()
 };
 
-// TODO add out parameter
-export function toThreeVector3(v: vec3, modelTransformation?: SectorModelTransformation): THREE.Vector3 {
+export function toThreeVector3(
+  v: vec3,
+  modelTransformation?: SectorModelTransformation,
+  out?: THREE.Vector3
+): THREE.Vector3 {
+  out = out || new THREE.Vector3();
   if (!modelTransformation) {
-    return new THREE.Vector3(v[0], v[1], v[2]);
+    out.set(v[0], v[1], v[2]);
+    return out;
   }
   const { result } = toThreeVector3Vars;
   vec3.transformMat4(result, v, modelTransformation.modelMatrix);
-  return new THREE.Vector3(result[0], result[1], result[2]);
+  out.set(result[0], result[1], result[2]);
+  return out;
 }
 
 const toThreeMatrix4Vars = {

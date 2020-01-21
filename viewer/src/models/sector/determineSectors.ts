@@ -32,14 +32,18 @@ export async function determineSectors(input: DetermineSectorsInput): Promise<Wa
   const { invertCameraModelMatrix, frustumMatrix, frustum, bbox, min, max } = determineSectorsPreallocatedVars;
 
   const sectors: SectorMetadata[] = [];
+  const distanceToCameraVars = {
+    threeJsVec3: new THREE.Vector3()
+  };
 
   function distanceToCamera(s: SectorMetadata) {
+    const { threeJsVec3 } = distanceToCameraVars;
     min.set(s.bounds.min[0], s.bounds.min[1], s.bounds.min[2]);
     max.set(s.bounds.max[0], s.bounds.max[1], s.bounds.max[2]);
     bbox.makeEmpty();
     bbox.expandByPoint(min);
     bbox.expandByPoint(max);
-    return bbox.distanceToPoint(toThreeVector3(cameraPosition));
+    return bbox.distanceToPoint(toThreeVector3(cameraPosition, undefined, threeJsVec3));
   }
 
   if (!mat4.invert(invertCameraModelMatrix, cameraModelMatrix)) {
@@ -60,7 +64,7 @@ export async function determineSectors(input: DetermineSectorsInput): Promise<Wa
     }
 
     const screenHeight = 2.0 * distanceToCamera(sector) * Math.tan((cameraFov / 2) * degToRadFactor);
-    const largestAllowedQuadSize = 0.01 * screenHeight; // no larger than x percent of the height
+    const largestAllowedQuadSize = 0.0025 * screenHeight; // no larger than x percent of the height
     const quadSize = (() => {
       if (!sector.simple) {
         // Making the quad infinite in size means we will always use the detailed version instead
@@ -77,6 +81,7 @@ export async function determineSectors(input: DetermineSectorsInput): Promise<Wa
     return true;
   });
 
+  // TODO 2020-01-21 larsmoa: Waste since we add sectors in a set below
   sectors.sort((l, r) => {
     return distanceToCamera(l) - distanceToCamera(r);
   });
