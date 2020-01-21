@@ -64,7 +64,7 @@ export async function determineSectors(input: DetermineSectorsInput): Promise<Wa
     }
 
     const screenHeight = 2.0 * distanceToCamera(sector) * Math.tan((cameraFov / 2) * degToRadFactor);
-    const largestAllowedQuadSize = 0.0025 * screenHeight; // no larger than x percent of the height
+    const largestAllowedQuadSize = 0.01 * screenHeight; // no larger than x percent of the height
     const quadSize = (() => {
       if (!sector.simple) {
         // Making the quad infinite in size means we will always use the detailed version instead
