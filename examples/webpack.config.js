@@ -46,7 +46,7 @@ const allExamples = [
   },
   {
     name: "threejs-side-by-side",
-    title: "Side-by-side view for sector models",
+    title: "Side-by-side debugger for sector models",
     entry: './src/threejs/side-by-side.ts',
     template: 'template-example-two-canvases.ejs',
     type: 'threejs'
