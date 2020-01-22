@@ -6,8 +6,10 @@ import * as THREE from 'three';
 import * as reveal from '@cognite/reveal';
 import { CadNode } from '@cognite/reveal/threejs';
 import CameraControls from 'camera-controls';
+//import { NormalPass, DepthEffect, BlendFunction, EffectPass, SSAOEffect } from 'postprocessing';
 
 const postprocessing = require('postprocessing');
+const { NormalPass, DepthEffect, BlendFunction, EffectPass, SSAOEffect }  = postprocessing;
 
 CameraControls.install({ THREE });
 
@@ -30,12 +32,40 @@ async function main() {
   controls.update(0.0);
   camera.updateMatrixWorld();
 
-  // See https://vanruesc.github.io/postprocessing/public/docs/identifiers.html
-  const effectPass = new postprocessing.EffectPass(camera, new postprocessing.DotScreenEffect());
+  const normalPass = new NormalPass(scene, camera);
+
+  const depthEffect = new DepthEffect({
+    blendFunction: BlendFunction.SKIP
+  });
+
+  const ssaoEffect = new SSAOEffect(camera, normalPass.renderTarget.texture, {
+    blendFunction: BlendFunction.MULTIPLY,
+    samples: 11,
+    rings: 4,
+    distanceThreshold: 0.3, // Render up to a distance of ~300 world units
+    distanceFalloff: 0.02, // with an additional 20 units of falloff.
+    rangeThreshold: 0.001,
+    rangeFalloff: 0.001,
+    luminanceInfluence: 0.7,
+    radius: 18.25,
+    scale: 1.0,
+    bias: 0.05
+  });
+
+  const effectPass = new EffectPass(camera, ssaoEffect, depthEffect);
+  // renderPass.renderToScreen = false;
   effectPass.renderToScreen = true;
+
   const effectComposer = new postprocessing.EffectComposer(renderer);
-  effectComposer.addPass(new postprocessing.RenderPass(scene, camera));
+  effectComposer.addPass(normalPass);
   effectComposer.addPass(effectPass);
+
+  // See https://vanruesc.github.io/postprocessing/public/docs/identifiers.html
+  //const effectPass = new postprocessing.EffectPass(camera, smaaEffect, ssaoEffect, depthEffect);
+  //effectPass.renderToScreen = true;
+  //const effectComposer = new postprocessing.EffectComposer(renderer);
+  //effectComposer.addPass(new postprocessing.RenderPass(scene, camera));
+  //effectComposer.addPass(effectPass);
 
   const clock = new THREE.Clock();
   const render = async () => {
