@@ -42,6 +42,6 @@ export function suggestCameraConfig(rootSector: SectorMetadata): SuggestedCamera
     position,
     target,
     near: 0.1,
-    far: vec3.distance(position, target) * 6
+    far: vec3.distance(position, target) * 12
   };
 }
