@@ -2,6 +2,7 @@
  * Copyright 2019 Cognite AS
  */
 
+import { createParser, createQuadsParser } from '../../../models/sector/parseSectorData';
 import { FetchCtmDelegate, FetchSectorDelegate, FetchSectorMetadataDelegate } from '../../../models/sector/delegates';
 import { loadLocalSectorMetadata } from './loadLocalSectorMetadata';
 import { loadLocalSimpleSectorMetadata } from './loadLocalSimpleSectorMetadata';
@@ -9,10 +10,12 @@ import { DefaultSectorRotationMatrix, DefaultInverseSectorRotationMatrix } from 
 import { loadLocalFileMap } from './loadLocalFileMap';
 import { buildSectorMetadata } from '../../cognitesdk/sector/buildSectorMetadata';
 import { getNewestVersionedFile } from '../../cognitesdk/utilities';
-import { SectorModel } from '../../SectorModel';
+// TODO rename folder from sector to cad
+import { CadModel } from '../../../models/sector/CadModel';
 import { mat4 } from 'gl-matrix';
 
-export function createLocalSectorModel(baseUrl: string): SectorModel {
+// TODO rename file from sector to cad
+export async function createLocalCadModel(baseUrl: string): Promise<CadModel> {
   const loadMetadata = loadLocalSectorMetadata(baseUrl + '/uploaded_sectors.txt');
   const loadSimpleMetadata = loadLocalSimpleSectorMetadata(baseUrl + '/uploaded_sectors_simple.txt');
   const loadSectorIdToFileId = loadMetadata.then(metadata => {
@@ -25,7 +28,7 @@ export function createLocalSectorModel(baseUrl: string): SectorModel {
   });
   const loadFilemap = loadLocalFileMap(baseUrl + '/uploaded_files.txt');
 
-  const fetchMetadata: FetchSectorMetadataDelegate = async () => {
+  const fetchSectorMetadata: FetchSectorMetadataDelegate = async () => {
     return [
       buildSectorMetadata(await loadMetadata, await loadSimpleMetadata),
       {
@@ -34,16 +37,16 @@ export function createLocalSectorModel(baseUrl: string): SectorModel {
       }
     ];
   };
-  const fetchSector: FetchSectorDelegate = async (sectorId: number) => {
+  const fetchSectorDetailed: FetchSectorDelegate = async (sectorId: number) => {
     const sectorIdToFileId = await loadSectorIdToFileId;
     const fileId = sectorIdToFileId.get(sectorId);
     if (!fileId) {
       throw new Error(`${sectorId} is not a valid sector ID`);
     }
-    return fetchFile(fileId);
+    return fetchCtm(fileId);
   };
   // TODO this function is a big hack because we do not have the f3d fileId
-  const fetchSectorQuads: FetchSectorDelegate = async (sectorId: number) => {
+  const fetchSectorSimple: FetchSectorDelegate = async (sectorId: number) => {
     const sectorIdToFileId = await loadSectorIdToFileId;
     const fileId = sectorIdToFileId.get(sectorId);
     if (!fileId) {
@@ -65,7 +68,7 @@ export function createLocalSectorModel(baseUrl: string): SectorModel {
 
     return new Uint8Array(buffer);
   };
-  const fetchFile: FetchCtmDelegate = async (fileId: number) => {
+  const fetchCtm: FetchCtmDelegate = async (fileId: number) => {
     const filemap = await loadFilemap;
     const filename = filemap.get(fileId);
     if (!filename) {
@@ -81,5 +84,18 @@ export function createLocalSectorModel(baseUrl: string): SectorModel {
     const buffer = await response.arrayBuffer();
     return new Uint8Array(buffer);
   };
-  return [fetchMetadata, fetchSector, fetchSectorQuads, fetchFile];
+  // Fetch metadata
+  const [scene, modelTransformation] = await fetchSectorMetadata();
+  const parseDetailed = await createParser(scene.root, fetchSectorDetailed, fetchCtm);
+  const parseSimple = await createQuadsParser();
+  return {
+    fetchSectorMetadata,
+    fetchSectorDetailed,
+    fetchSectorSimple,
+    fetchCtm,
+    parseDetailed,
+    parseSimple,
+    scene,
+    modelTransformation
+  };
 }

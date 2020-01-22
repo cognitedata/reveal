@@ -43,7 +43,12 @@ module.exports = env => {
       rules: [
         {
           test: /\.tsx?$/,
-          use: 'ts-loader',
+          use: {
+            loader: 'ts-loader',
+            options: {
+              onlyCompileBundledFiles: true,
+            },
+          },
           exclude: [
             /node_modules/,
             /src\/__tests__/,
@@ -94,6 +99,14 @@ module.exports = env => {
       new WorkerPlugin()
     ],
   };
+
+  if (arg(env, 'threejs', true)) {
+    config.entry['threejs'] = './src/threejs.ts';
+  }
+
+  if (arg(env, 'cesiumjs', true)) {
+    config.entry['cesiumjs'] = './src/cesiumjs.ts';
+  }
 
   return config;
 };

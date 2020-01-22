@@ -6,6 +6,7 @@ import * as THREE from 'three';
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
 import * as reveal from '@cognite/reveal';
+import { createThreeJsPointCloudNode } from '@cognite/reveal/threejs';
 
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
@@ -27,7 +28,7 @@ async function main() {
   Potree.XHRFactory.config.customHeaders.push({ header: 'MyDummyHeader', value: 'MyDummyValue' });
 
   const pointCloudModel = reveal.createLocalPointCloudModel(modelUrl);
-  const [pointCloudGroup, pointCloudNode] = await reveal.createThreeJsPointCloudNode(pointCloudModel);
+  const [pointCloudGroup, pointCloudNode] = await createThreeJsPointCloudNode(pointCloudModel);
   scene.add(pointCloudGroup);
 
   let settingsChanged = false;
@@ -41,7 +42,7 @@ async function main() {
     const bbox = pointCloudNode.boundingBox;
     const w = bbox.max[0] - bbox.min[0];
     const h = bbox.max[1] - bbox.min[1];
-    const d = bbox.max[2] - bbox.min[2];  
+    const d = bbox.max[2] - bbox.min[2];
     const boundsGeometry = new THREE.BoxGeometry();
     const boundsMesh = new THREE.Mesh(boundsGeometry, new THREE.MeshBasicMaterial({color: 0xffff00, wireframe: true}));
     boundsMesh.position.set(bbox.center[0], bbox.center[1], bbox.center[2]);
