@@ -30,9 +30,9 @@ async function initializeModel(
   const [sectorScene, modelTransform] = await fetchMetadata();
 
   const scene = new THREE.Scene();
-  const options = createRendererDebugWidget(sectorScene.root, renderer, scene, gui);
   const sectorModelNode = await reveal.createThreeJsSectorNode(sectorModel);
   scene.add(sectorModelNode);
+  const options = createRendererDebugWidget(sectorScene.root, renderer, sectorModelNode, gui);
 
   // Override determineSectors of the node to obey override in RenderOptions
   const defaultDetermineSectors = sectorModelNode.determineSectors;
@@ -48,8 +48,9 @@ async function initializeModel(
 }
 
 async function main() {
-  const modelUrl1 = new URL(location.href).searchParams.get('model1') || '/primitives';
-  const modelUrl2 = new URL(location.href).searchParams.get('model2') || modelUrl1;
+  const params = new URL(location.href).searchParams;
+  const modelUrl1 = params.get('model1') || '/primitives';
+  const modelUrl2 = params.get('model2') || modelUrl1;
 
   // Page layout
   const gui1 = new dat.GUI({ autoPlace: false, width: 300 });

@@ -86,9 +86,9 @@ function createEmptySceneInfo() {
 type SceneInfo = ReturnType<typeof createEmptySceneInfo>;
 
 export function createRendererDebugWidget(
-  sectorRoot: SectorMetadata,
+  sectorMetadataRoot: SectorMetadata,
   renderer: THREE.WebGLRenderer,
-  scene: THREE.Object3D,
+  sectorNode: reveal.RootSectorNode,
   gui: dat.GUI,
   intervalMs: number = 100
 ): RenderOptions {
@@ -99,8 +99,17 @@ export function createRendererDebugWidget(
   const controls: dat.GUIController[] = []; // List of controls that must be manually updated
 
   const renderModes = [RenderMode.WhenNecessary, RenderMode.AlwaysRender, RenderMode.DisableRendering];
+  const renderStyleOptions = { showBoundingBoxes: false };
   gui.add(renderOptions, 'loadingEnabled').name('Loading enabled');
   gui.add(renderOptions, 'renderMode', renderModes).name('Render mode');
+  gui
+    .add(renderStyleOptions, 'showBoundingBoxes')
+    .name('Show bounding boxes')
+    .onChange(() => {
+      sectorNode.renderStyle = Object.assign(sectorNode.renderStyle || {}, {
+        showSectorBoundingBoxes: renderStyleOptions.showBoundingBoxes
+      });
+    });
 
   // Basic render performance
   const statsGui = gui.addFolder('Stats');
@@ -127,7 +136,12 @@ export function createRendererDebugWidget(
   const loadOverrideGui = sectorsGui.addFolder('Override sectors to load');
   const sectorOverride = { quadsFilter: '', detailedFilter: '' };
   const updateWantedNodesFilter = () =>
-    updateWantedSectorOverride(renderOptions, sectorRoot, sectorOverride.quadsFilter, sectorOverride.detailedFilter);
+    updateWantedSectorOverride(
+      renderOptions,
+      sectorMetadataRoot,
+      sectorOverride.quadsFilter,
+      sectorOverride.detailedFilter
+    );
   loadOverrideGui
     .add(sectorOverride, 'quadsFilter')
     .name('Quads (low detail)')
@@ -157,9 +171,9 @@ export function createRendererDebugWidget(
 
   // Actions
   const actions = {
-    logVisible: () => logVisibleSectorsInScene(scene),
-    logMaterials: () => logActiveMaterialsInScene(scene),
-    initializeThreeJSInspector: () => initializeThreeJSInspector(renderer, scene)
+    logVisible: () => logVisibleSectorsInScene(sectorNode),
+    logMaterials: () => logActiveMaterialsInScene(sectorNode),
+    initializeThreeJSInspector: () => initializeThreeJSInspector(renderer, sectorNode)
   };
   const actionsGui = gui.addFolder('Actions');
   actionsGui.add(actions, 'logVisible').name('Log visible meshes');
@@ -169,7 +183,7 @@ export function createRendererDebugWidget(
   // Regularly update displays
   setInterval(() => {
     computeFramesPerSecond(renderer, sceneInfo);
-    updateSceneInfo(scene, sceneInfo);
+    updateSceneInfo(sectorNode, sceneInfo);
     controls.forEach(ctrl => ctrl.updateDisplay());
   }, intervalMs);
 
