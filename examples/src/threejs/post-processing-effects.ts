@@ -4,6 +4,7 @@
 
 import * as THREE from 'three';
 import * as reveal from '@cognite/reveal';
+import { CadNode } from '@cognite/reveal/threejs';
 import CameraControls from 'camera-controls';
 
 const postprocessing = require('postprocessing');
@@ -18,9 +19,9 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const sectorModel = reveal.createLocalSectorModel('/primitives');
-  const sectorModelNode = await reveal.createThreeJsSectorNode(sectorModel);
-  scene.add(sectorModelNode);
+  const cadModel = await reveal.createLocalCadModel('/primitives');
+  const cadModelNode = new CadNode(cadModel);
+  scene.add(cadModelNode);
 
   const controls = new CameraControls(camera, renderer.domElement);
   const pos = new THREE.Vector3(100, 100, 100);
@@ -40,7 +41,7 @@ async function main() {
   const render = async () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
-    const modelNeedsUpdate = await sectorModelNode.update(camera);
+    const modelNeedsUpdate = await cadModelNode.update(camera);
     const needsUpdate = controlsNeedUpdate || modelNeedsUpdate;
 
     if (needsUpdate) {

@@ -4,7 +4,7 @@
 
 import { Sector } from '../../../../models/sector/types';
 import { createPrimitives } from '../../../../views/threejs/sector/primitives';
-import { PrimitiveAttributes } from '../../../../../workers/types/parser.types';
+import { PrimitiveAttributes } from '../../../../workers/types/parser.types';
 import { createEmptySector } from '../../../models/sector/emptySector';
 
 describe('createPrimitives', () => {

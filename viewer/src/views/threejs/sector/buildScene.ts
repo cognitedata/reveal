@@ -2,10 +2,10 @@
  * Copyright 2019 Cognite AS
  */
 
-import { SectorNode, RootSectorNode } from './SectorNode';
+import { SectorNode } from './SectorNode';
 import { SectorMetadata } from '../../../models/sector/types';
 
-export function buildScene(sector: SectorMetadata, root: RootSectorNode, sectorNodeMap: Map<number, SectorNode>) {
+export function buildScene(sector: SectorMetadata, root: SectorNode, sectorNodeMap: Map<number, SectorNode>) {
   return buildSceneRecurse(sector, root, sectorNodeMap);
 }
 
