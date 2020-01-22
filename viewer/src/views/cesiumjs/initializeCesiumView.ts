@@ -3,10 +3,10 @@
  */
 import * as Cesium from 'cesium';
 
-import { SectorMetadata, SectorModelTransformation, Sector, SectorQuads } from '../../models/sector/types';
-import { ConsumeSectorDelegate, DiscardSectorDelegate } from '../../models/sector/delegates';
+import { SectorMetadata, SectorModelTransformation, Sector, SectorQuads } from '../../models/cad/types';
+import { ConsumeSectorDelegate, DiscardSectorDelegate } from '../../models/cad/delegates';
 import { consumeSectorDetailed } from './consumeSectorDetailed';
-import { findSectorMetadata } from '../../models/sector/findSectorMetadata';
+import { findSectorMetadata } from '../../models/cad/findSectorMetadata';
 import { toCartesian3 } from './utilities';
 
 export function initializeCesiumView(

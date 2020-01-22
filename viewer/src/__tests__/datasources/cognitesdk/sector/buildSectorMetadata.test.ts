@@ -4,7 +4,7 @@
 
 import { RevealSector3D } from '@cognite/sdk';
 import { buildSectorMetadata } from '../../../../datasources/cognitesdk/sector/buildSectorMetadata';
-import { LocalSimpleSectorMetadataResponse } from '../../../../datasources/local/sector/loadLocalSimpleSectorMetadata';
+import { LocalSimpleCadMetadataResponse } from '../../../../datasources/local/cad/loadLocalSimpleSectorMetadata';
 
 describe('buildSectorMetadata', () => {
   test('no sectors, throws', () => {
@@ -31,7 +31,7 @@ describe('buildSectorMetadata', () => {
       createSector(2, 0, '0/1/'),
       createSector(3, 1, '0/0/1/')
     ];
-    const simpleSectors: [number, LocalSimpleSectorMetadataResponse][] = [
+    const simpleSectors: [number, LocalSimpleCadMetadataResponse][] = [
       [0, createSimpleSector(0, -1)],
       [1, createSimpleSector(1, 0)],
       [2, createSimpleSector(2, 0)],
@@ -58,7 +58,7 @@ function createSector(id: number, parentId: number, path: string): RevealSector3
   return sector;
 }
 
-function createSimpleSector(id: number, parentId: number): LocalSimpleSectorMetadataResponse {
+function createSimpleSector(id: number, parentId: number): LocalSimpleCadMetadataResponse {
   return {
     sector_id: id,
     parent_sector_id: parentId,

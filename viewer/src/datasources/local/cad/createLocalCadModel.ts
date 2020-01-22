@@ -2,22 +2,22 @@
  * Copyright 2019 Cognite AS
  */
 
-import { createParser, createQuadsParser } from '../../../models/sector/parseSectorData';
-import { FetchCtmDelegate, FetchSectorDelegate, FetchSectorMetadataDelegate } from '../../../models/sector/delegates';
-import { loadLocalSectorMetadata } from './loadLocalSectorMetadata';
-import { loadLocalSimpleSectorMetadata } from './loadLocalSimpleSectorMetadata';
+import { createParser, createQuadsParser } from '../../../models/cad/parseSectorData';
+import { FetchCtmDelegate, FetchSectorDelegate, FetchSectorMetadataDelegate } from '../../../models/cad/delegates';
+import { loadLocalCadMetadata } from './loadLocalCadMetadata';
+import { loadLocalSimpleCadMetadata } from './loadLocalSimpleSectorMetadata';
 import { DefaultSectorRotationMatrix, DefaultInverseSectorRotationMatrix } from '../../constructMatrixFromRotation';
 import { loadLocalFileMap } from './loadLocalFileMap';
 import { buildSectorMetadata } from '../../cognitesdk/sector/buildSectorMetadata';
 import { getNewestVersionedFile } from '../../cognitesdk/utilities';
 // TODO rename folder from sector to cad
-import { CadModel } from '../../../models/sector/CadModel';
+import { CadModel } from '../../../models/cad/CadModel';
 import { mat4 } from 'gl-matrix';
 
 // TODO rename file from sector to cad
 export async function createLocalCadModel(baseUrl: string): Promise<CadModel> {
-  const loadMetadata = loadLocalSectorMetadata(baseUrl + '/uploaded_sectors.txt');
-  const loadSimpleMetadata = loadLocalSimpleSectorMetadata(baseUrl + '/uploaded_sectors_simple.txt');
+  const loadMetadata = loadLocalCadMetadata(baseUrl + '/uploaded_sectors.txt');
+  const loadSimpleMetadata = loadLocalSimpleCadMetadata(baseUrl + '/uploaded_sectors_simple.txt');
   const loadSectorIdToFileId = loadMetadata.then(metadata => {
     const sectorIdToFileId = new Map<number, number>();
     for (const sector of metadata) {

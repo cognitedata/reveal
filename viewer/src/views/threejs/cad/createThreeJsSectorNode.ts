@@ -2,16 +2,16 @@
  * Copyright 2019 Cognite AS
  */
 
-import { createParser, createQuadsParser } from '../../../models/sector/parseSectorData';
-import { Sector, SectorQuads } from '../../../models/sector/types';
-import { ConsumeSectorDelegate, DiscardSectorDelegate } from '../../../models/sector/delegates';
-import { initializeSectorLoader } from '../../../models/sector/initializeSectorLoader';
+import { createParser, createQuadsParser } from '../../../models/cad/parseSectorData';
+import { Sector, SectorQuads } from '../../../models/cad/types';
+import { ConsumeSectorDelegate, DiscardSectorDelegate } from '../../../models/cad/delegates';
+import { initializeSectorLoader } from '../../../models/cad/initializeSectorLoader';
 import { SectorNode, RootSectorNodeData } from './SectorNode';
 import { createSimpleCache } from '../../../models/createCache';
-import { CadModel } from '../../../models/sector/CadModel';
+import { CadModel } from '../../../models/cad/CadModel';
 import { toThreeMatrix4 } from '../utilities';
 import { buildScene } from './buildScene';
-import { findSectorMetadata } from '../../../models/sector/findSectorMetadata';
+import { findSectorMetadata } from '../../../models/cad/findSectorMetadata';
 import { consumeSectorDetailed } from './consumeSectorDetailed';
 import { discardSector } from './discardSector';
 import { consumeSectorSimple } from './consumeSectorSimple';

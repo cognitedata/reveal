@@ -4,13 +4,13 @@
 
 import { RevealSector3D } from '@cognite/sdk';
 import { vec3, mat4 } from 'gl-matrix';
-import { SectorMetadata, SectorScene } from '../../../models/sector/types';
+import { SectorMetadata, SectorScene } from '../../../models/cad/types';
 import { Box3 } from '../../../utils/Box3';
-import { LocalSimpleSectorMetadataResponse } from '../../local/sector/loadLocalSimpleSectorMetadata';
+import { LocalSimpleCadMetadataResponse } from '../../local/cad/loadLocalSimpleSectorMetadata';
 
 export function buildSectorMetadata(
   sectors: RevealSector3D[],
-  simpleSectors: Map<number, LocalSimpleSectorMetadataResponse>
+  simpleSectors: Map<number, LocalSimpleCadMetadataResponse>
 ): SectorScene {
   const sectorsMetadata = sectors.reduce((map, x) => {
     const simpleSector = simpleSectors.get(x.id);

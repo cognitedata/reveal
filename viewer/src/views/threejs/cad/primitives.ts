@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { PrimitiveAttributes } from '../../../workers/types/parser.types';
-import { Sector } from '../../../models/sector/types';
+import { Sector } from '../../../models/cad/types';
 import { TypedArray } from 'three';
 import {
   nutsMaterial,

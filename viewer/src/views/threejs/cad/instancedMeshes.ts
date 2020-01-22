@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { InstancedMeshFile } from '../../../models/sector/types';
+import { InstancedMeshFile } from '../../../models/cad/types';
 import { sectorShaders, shaderDefines } from './shaders';
 
 const instancedMeshMaterial = new THREE.ShaderMaterial({

@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { TriangleMesh } from '../../../models/sector/types';
+import { TriangleMesh } from '../../../models/cad/types';
 import { sectorShaders, shaderDefines } from './shaders';
 
 export function createTriangleMeshes(triangleMeshes: TriangleMesh[], bounds: THREE.Box3): THREE.Mesh[] {
