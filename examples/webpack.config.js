@@ -44,48 +44,48 @@ const allExamples = [
     template: 'template-example.ejs',
     type: 'threejs'
   },
-  //{
-    //name: "threejs-simple-pointcloud",
-    //title: "Simple pointcloud",
-    //entry: './src/threejs/simple-pointcloud.ts',
-    //template: 'template-example.ejs',
-    //type: 'threejs'
-  //},
-  //{
-    //name: "threejs-post-processing-effects",
-    //title: "Post processing effects",
-    //entry: './src/threejs/post-processing-effects.ts',
-    //template: 'template-example.ejs',
-    //type: 'threejs'
-  //},
-  //{
-    //name: "threejs-with-pointcloud",
-    //title: "CAD model with point cloud",
-    //entry: './src/threejs/sector-with-pointcloud.ts',
-    //template: 'template-example.ejs',
-    //type: 'threejs'
-  //},
-  //{
-    //name: "threejs-two-models",
-    //title: "Two models",
-    //entry: './src/threejs/two-models.ts',
-    //template: './template-example.ejs',
-    //type: 'threejs'
-  //},
-  //{
-    //name: "threejs-custom-scene-elements",
-    //title: "Custom ThreeJS scene elements",
-    //entry: './src/threejs/custom-scene-elements.ts',
-    //template: './template-example.ejs',
-    //type: 'threejs'
-  //},
-  //{
-    //name: "cesiumjs-basic",
-    //title: 'CesiumJS basic',
-    //entry: './src/cesiumjs/basic.ts',
-    //template: './src/cesiumjs/template.ejs',
-    //type: 'cesium'
-  //},
+  {
+    name: "threejs-simple-pointcloud",
+    title: "Simple pointcloud",
+    entry: './src/threejs/simple-pointcloud.ts',
+    template: 'template-example.ejs',
+    type: 'threejs'
+  },
+  {
+    name: "threejs-post-processing-effects",
+    title: "Post processing effects",
+    entry: './src/threejs/post-processing-effects.ts',
+    template: 'template-example.ejs',
+    type: 'threejs'
+  },
+  {
+    name: "threejs-with-pointcloud",
+    title: "CAD model with point cloud",
+    entry: './src/threejs/sector-with-pointcloud.ts',
+    template: 'template-example.ejs',
+    type: 'threejs'
+  },
+  {
+    name: "threejs-two-models",
+    title: "Two models",
+    entry: './src/threejs/two-models.ts',
+    template: './template-example.ejs',
+    type: 'threejs'
+  },
+  {
+    name: "threejs-custom-scene-elements",
+    title: "Custom ThreeJS scene elements",
+    entry: './src/threejs/custom-scene-elements.ts',
+    template: './template-example.ejs',
+    type: 'threejs'
+  },
+  {
+    name: "cesiumjs-basic",
+    title: 'CesiumJS basic',
+    entry: './src/cesiumjs/basic.ts',
+    template: './src/cesiumjs/template.ejs',
+    type: 'cesium'
+  },
 ];
 
 module.exports = env => {

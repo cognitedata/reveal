@@ -50,7 +50,7 @@ export class PotreeNodeWrapper {
   }
 
   get boundingBox(): Box3 {
-    const bbox: THREE.Box3 = this.octtree.root.tightBoundingBox;
+    const bbox: THREE.Box3 = this.octtree.root.boundingBox;
     const box = fromThreeJsBox3(bbox);
     // Apply transformation to switch axes
     const min = vec3.fromValues(box.min[0], box.min[2], -box.min[1]);
