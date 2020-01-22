@@ -43,7 +43,6 @@ async function main() {
 
   const pointCloudModel = reveal.createLocalPointCloudModel(pointCloudModelUrl);
   const [pointCloudGroup, pointCloudNode] = await createThreeJsPointCloudNode(pointCloudModel);
-  pointCloudGroup.position.set(10, 10, 10);
   scene.add(pointCloudGroup);
 
   let settingsChanged = false;
