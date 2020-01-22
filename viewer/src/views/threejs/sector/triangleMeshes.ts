@@ -25,9 +25,9 @@ export function createTriangleMeshes(triangleMeshes: TriangleMesh[], bounds: THR
     geometry.boundingSphere = new THREE.Sphere();
     bounds.getBoundingSphere(geometry.boundingSphere);
 
-    const material = new THREE.ShaderMaterial({
+    const triangleMeshMaterial = new THREE.ShaderMaterial({
+      name: 'Triangle meshes',
       ...shaderDefines,
-      uniforms: {},
       extensions: {
         derivatives: true
       },
@@ -35,7 +35,7 @@ export function createTriangleMeshes(triangleMeshes: TriangleMesh[], bounds: THR
       fragmentShader: sectorShaders.detailedMesh.fragment,
       vertexShader: sectorShaders.detailedMesh.vertex
     });
-    const obj = new THREE.Mesh(geometry, material);
+    const obj = new THREE.Mesh(geometry, triangleMeshMaterial);
     obj.name = `Triangle mesh ${mesh.fileId}`;
     result.push(obj);
   }

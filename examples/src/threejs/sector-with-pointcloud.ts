@@ -6,16 +6,25 @@ import * as THREE from 'three';
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
 import * as reveal from '@cognite/reveal';
-import { CadNode, createThreeJsPointCloudNode } from '@cognite/reveal/threejs';
+import { CadNode, createThreeJsPointCloudNode, toThreeVector3 } from '@cognite/reveal/threejs';
 
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
+import {
+  createRendererDebugWidget,
+  RenderOptions,
+  applyRenderingFilters,
+  RenderMode,
+  createDefaultRenderOptions
+} from './utils/renderer-debug-widget';
 
 CameraControls.install({ THREE });
 
 async function main() {
+  const cadModelUrl = new URL(location.href).searchParams.get('model') || '/transformer';
+  const pointCloudModelUrl = new URL(location.href).searchParams.get('pointcloud') || '/transformer-point-cloud';
+
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#000000');
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -23,14 +32,16 @@ async function main() {
 
   Potree.XHRFactory.config.customHeaders.push({ header: 'MyDummyHeader', value: 'MyDummyValue' });
 
-  const sectorModel = await reveal.createLocalCadModel('/primitives');
+  const sectorModel = await reveal.createLocalCadModel(cadModelUrl);
   const sectorModelNode = new CadNode(sectorModel);
   const sectorModelOffsetRoot = new THREE.Group();
   sectorModelOffsetRoot.name = 'Sector model offset root';
   sectorModelOffsetRoot.add(sectorModelNode);
   scene.add(sectorModelOffsetRoot);
+  const { fetchSectorMetadata } = sectorModel;
+  const [modelScene, modelTransform] = await fetchSectorMetadata();
 
-  const pointCloudModel = reveal.createLocalPointCloudModel('/transformer-point-cloud/cloud.js');
+  const pointCloudModel = reveal.createLocalPointCloudModel(pointCloudModelUrl);
   const [pointCloudGroup, pointCloudNode] = await createThreeJsPointCloudNode(pointCloudModel);
   pointCloudGroup.position.set(10, 10, 10);
   scene.add(pointCloudGroup);
@@ -39,12 +50,14 @@ async function main() {
   function handleSettingsChanged() {
     settingsChanged = true;
   }
-  initializeGui(pointCloudGroup, pointCloudNode, handleSettingsChanged);
+  const renderOptions = initializeGui(sectorModelNode, pointCloudGroup, pointCloudNode, handleSettingsChanged);
 
+  const { position, target, near, far } = reveal.internal.suggestCameraConfig(modelScene.root);
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
-  const pos = new THREE.Vector3(100, 100, 100);
-  const target = new THREE.Vector3(0, 0, 0);
-  controls.setLookAt(pos.x, pos.y, pos.z, target.x, target.y, target.z);
+  const threePos = toThreeVector3(position, sectorModelNode.modelTransformation);
+  const threeTarget = toThreeVector3(target, sectorModelNode.modelTransformation);
+  controls.setLookAt(threePos.x, threePos.y, threePos.z, threeTarget.x, threeTarget.y, threeTarget.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
 
@@ -52,10 +65,14 @@ async function main() {
   const render = async () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
-    const modelNeedsUpdate = await sectorModelNode.update(camera);
-    const needsUpdate = controlsNeedUpdate || modelNeedsUpdate || pointCloudGroup.needsRedraw || settingsChanged;
+    const modelNeedsUpdate = renderOptions.loadingEnabled && (await sectorModelNode.update(camera));
+    const needsUpdate =
+      renderOptions.renderMode === RenderMode.AlwaysRender ||
+      (renderOptions.renderMode === RenderMode.WhenNecessary &&
+        (controlsNeedUpdate || modelNeedsUpdate || pointCloudGroup.needsRedraw || settingsChanged));
 
     if (needsUpdate) {
+      applyRenderingFilters(scene, renderOptions.renderFilter);
       renderer.render(scene, camera);
       settingsChanged = false;
     }
@@ -69,12 +86,47 @@ async function main() {
   (window as any).controls = controls;
 }
 
-function initializeGui(group: reveal.internal.PotreeGroupWrapper, node: reveal.internal.PotreeNodeWrapper, handleSettingsChangedCb: () => void) {
+function initializeGui(
+  cadNode: CadNode,
+  pcGroup: reveal.internal.PotreeGroupWrapper,
+  pcNode: reveal.internal.PotreeNodeWrapper,
+  handleSettingsChangedCb: () => void
+): RenderOptions {
   const gui = new dat.GUI();
-  gui.add(node, 'pointBudget', 0, 10_000_000);
-  gui.add(node, 'pointSize', 0, 10).onChange(handleSettingsChangedCb);
   gui
-    .add(node, 'pointColorType', {
+    .add(pcGroup, 'visible')
+    .name('Show point cloud')
+    .onChange(handleSettingsChangedCb);
+  gui
+    .add(cadNode, 'visible')
+    .name('Show CAD')
+    .onChange(handleSettingsChangedCb);
+  const pcGui = gui.addFolder('Point cloud');
+  pcGui
+    .add(pcGroup.position, 'x')
+    .name('Offset X')
+    .onChange(handleSettingsChangedCb);
+  pcGui
+    .add(pcGroup.position, 'y')
+    .name('Offset Y')
+    .onChange(handleSettingsChangedCb);
+  pcGui
+    .add(pcGroup.position, 'z')
+    .name('Offset Z')
+    .onChange(handleSettingsChangedCb);
+  const rotation = { y: pcGroup.rotation.y };
+  pcGui
+    .add(rotation, 'y')
+    .name('Rotation')
+    .onChange(newValue => {
+      pcGroup.setRotationFromEuler(new THREE.Euler(0.0, newValue, 0.0));
+      handleSettingsChangedCb();
+    });
+
+  pcGui.add(pcNode, 'pointBudget', 0, 10_000_000);
+  pcGui.add(pcNode, 'pointSize', 0, 10).onChange(handleSettingsChangedCb);
+  pcGui
+    .add(pcNode, 'pointColorType', {
       Rgb: reveal.internal.PotreePointColorType.Rgb,
       Depth: reveal.internal.PotreePointColorType.Depth,
       Height: reveal.internal.PotreePointColorType.Height,
@@ -84,19 +136,22 @@ function initializeGui(group: reveal.internal.PotreeGroupWrapper, node: reveal.i
     })
     .onChange((valueAsString: string) => {
       const value: reveal.internal.PotreePointColorType = parseInt(valueAsString, 10);
-      node.pointColorType = value;
+      pcNode.pointColorType = value;
       handleSettingsChangedCb();
     });
-  gui
-    .add(node, 'pointShape', {
+  pcGui
+    .add(pcNode, 'pointShape', {
       Circle: reveal.internal.PotreePointShape.Circle,
       Square: reveal.internal.PotreePointShape.Square
     })
     .onChange((valueAsString: string) => {
       const value: reveal.internal.PotreePointShape = parseInt(valueAsString, 10);
-      node.pointShape = value;
+      pcNode.pointShape = value;
       handleSettingsChangedCb();
     });
+  return createDefaultRenderOptions();
+  // Uncomment to enable debugging widget
+  // return createRendererDebugWidget(renderer, scene, gui.addFolder('Debug'));
 }
 
 main();
