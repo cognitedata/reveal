@@ -3,9 +3,9 @@
  */
 
 import * as Comlink from 'comlink';
-import { CtmWorkerResult, Sector, SectorMetadata, TriangleMesh } from '../src/models/sector/types';
-import { FetchSectorDelegate, FetchCtmDelegate } from '../src/models/sector/delegates';
-import { createOffsets } from '../src/utils/arrayUtils';
+import { CtmWorkerResult, Sector, SectorMetadata, TriangleMesh } from '../models/cad/types';
+import { FetchSectorDelegate, FetchCtmDelegate } from '../models/cad/delegates';
+import { createOffsets } from '../utils/arrayUtils';
 import {
   ParseRootSectorArguments,
   ParseRootSectorResult,
@@ -17,8 +17,8 @@ import {
   ParseQuadsResult,
   PrimitiveAttributes
 } from './types/parser.types';
-import * as rustTypes from '../pkg';
-const rustModule = import('../pkg');
+import * as rustTypes from '../../pkg';
+const rustModule = import('../../pkg');
 
 // TODO see if we can defined this in Rust instead
 interface Collection {

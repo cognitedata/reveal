@@ -2,10 +2,7 @@
  * Copyright 2019 Cognite AS
  */
 
-import { RevealSector3D, BoundingBox3D, Versioned3DFile } from '@cognite/sdk';
-import { vec3 } from 'gl-matrix';
-
-export interface LocalSimpleSectorMetadataResponse {
+export interface LocalSimpleCadMetadataResponse {
   readonly sector_id: number;
   readonly parent_sector_id: number;
   readonly parent_id?: number;
@@ -19,28 +16,22 @@ export interface LocalSimpleSectorMetadataResponse {
   };
 }
 
-export async function loadLocalSimpleSectorMetadata(
+export async function loadLocalSimpleCadMetadata(
   sectorsMetadataUrl: string
-): Promise<Map<number, LocalSimpleSectorMetadataResponse>> {
+): Promise<Map<number, LocalSimpleCadMetadataResponse>> {
   const response = await fetch(sectorsMetadataUrl);
   if (!response.ok) {
     throw new Error(`Could not fetch ${sectorsMetadataUrl}, got ${response.status}`);
   }
 
   const content = await response.text();
-  const sectors: Map<number, LocalSimpleSectorMetadataResponse> = content
+  const sectors: Map<number, LocalSimpleCadMetadataResponse> = content
     .split('\n')
     .filter(x => x.trim() !== '')
     .reduce((map, chunk) => {
-      const sector: LocalSimpleSectorMetadataResponse = JSON.parse(chunk);
+      const sector: LocalSimpleCadMetadataResponse = JSON.parse(chunk);
       map.set(sector.sector_id, sector);
       return map;
-    }, new Map<number, LocalSimpleSectorMetadataResponse>());
+    }, new Map<number, LocalSimpleCadMetadataResponse>());
   return sectors;
-}
-
-function transformBbox(sector: LocalSimpleSectorMetadataResponse): BoundingBox3D {
-  const rMin = sector.bbox_min;
-  const rMax = sector.bbox_max;
-  return { min: [rMin[0], rMin[1], rMin[2]], max: [rMax[0], rMax[1], rMax[2]] };
 }

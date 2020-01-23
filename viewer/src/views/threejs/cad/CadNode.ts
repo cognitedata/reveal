@@ -3,22 +3,24 @@
  */
 
 import * as THREE from 'three';
-import { SectorModelTransformation, SectorScene, SectorMetadata, WantedSectors } from '../../../models/sector/types';
-import { fromThreeVector3, fromThreeMatrix, toThreeMatrix4, toThreeJsBox3 } from '../utilities';
-import { SectorActivator } from '../../../models/sector/initializeSectorLoader';
-import { DetermineSectorsDelegate } from '../../../models/sector/delegates';
 import { vec3, mat4 } from 'gl-matrix';
+
+import { SectorNode } from './SectorNode';
+import { SectorModelTransformation, SectorScene, SectorMetadata, WantedSectors } from '../../../models/cad/types';
+import { fromThreeVector3, fromThreeMatrix, toThreeMatrix4, toThreeJsBox3, toThreeVector3 } from '../utilities';
+import { SectorActivator } from '../../../models/cad/initializeSectorLoader';
+import { DetermineSectorsDelegate } from '../../../models/cad/delegates';
 import { SectorRenderStyle } from '../../SectorRenderStyle';
-import { CadLoadingStyle } from '../../../models/sector/CadLoadingStyle';
+import { CadLoadingStyle } from '../../../models/cad/CadLoadingStyle';
+import { CadModel, createThreeJsSectorNode } from '../../..';
+import { suggestCameraConfig } from '../../../utils/cameraUtils';
+import { defaultDetermineSectors } from '../../../models/cad/determineSectors';
 
-export class SectorNode extends THREE.Group {
-  public readonly sectorId: number;
-
-  constructor(sectorId: number, sectorPath: string) {
-    super();
-    this.name = `Sector ${sectorPath} [id=${sectorId}]`;
-    this.sectorId = sectorId;
-  }
+export interface SuggestedCameraConfig {
+  position: THREE.Vector3;
+  target: THREE.Vector3;
+  near: number;
+  far: number;
 }
 
 const updateVars = {
@@ -27,7 +29,8 @@ const updateVars = {
   projectionMatrix: mat4.create()
 };
 
-export class RootSectorNode extends SectorNode {
+export class CadNode extends THREE.Object3D {
+  public readonly rootSector: SectorNode;
   public readonly modelTransformation: SectorModelTransformation;
 
   private _determineSectors: DetermineSectorsDelegate;
@@ -40,27 +43,28 @@ export class RootSectorNode extends SectorNode {
   private readonly _previousCameraMatrix = new THREE.Matrix4();
   private readonly _boundingBoxNode: THREE.Object3D;
 
-  constructor(
-    sectorScene: SectorScene,
-    modelTransformation: SectorModelTransformation,
-    determineSectors: DetermineSectorsDelegate,
-    simpleActivator: SectorActivator,
-    detailedActivator: SectorActivator
-  ) {
-    super(0, '/');
+  constructor(model: CadModel) {
+    super();
     this.name = 'Sector model';
-    this._sectorScene = sectorScene;
-    this._determineSectors = determineSectors;
+
+    const { rootSector, simpleActivator, detailedActivator } = createThreeJsSectorNode(model);
+    const { scene, modelTransformation } = model;
+
+    this.rootSector = rootSector;
+    this.add(rootSector);
+    this._boundingBoxNode = this.createBoundingBoxNode(scene.sectors);
+    this.add(this._boundingBoxNode);
+
+    this._sectorScene = scene;
+    this._determineSectors = defaultDetermineSectors;
     this._simpleActivator = simpleActivator;
     this._detailedActivator = detailedActivator;
     this.modelTransformation = modelTransformation;
     // Ensure camera matrix is unequal on first frame
     this._previousCameraMatrix.elements[0] = Infinity;
-    // Apply model matrix to this model
-    this.applyMatrix(toThreeMatrix4(modelTransformation.modelMatrix));
 
-    this._boundingBoxNode = this.createBoundingBoxNode(sectorScene.sectors);
-    this.add(this._boundingBoxNode);
+    // // Apply model matrix to this model
+    // this.applyMatrix(toThreeMatrix4(modelTransformation.modelMatrix));
 
     // Apply default styles
     this._renderStyle = {};
@@ -127,6 +131,17 @@ export class RootSectorNode extends SectorNode {
     needsRedraw = this._detailedActivator.refresh() || needsRedraw;
     needsRedraw = this._simpleActivator.refresh() || needsRedraw;
     return needsRedraw;
+  }
+
+  public suggestCameraConfig(): SuggestedCameraConfig {
+    const { position, target, near, far } = suggestCameraConfig(this._sectorScene.root);
+
+    return {
+      position: toThreeVector3(position, this.modelTransformation),
+      target: toThreeVector3(target, this.modelTransformation),
+      near,
+      far
+    };
   }
 
   private updateSectorBoundingBoxes(wantedSectors: WantedSectors) {

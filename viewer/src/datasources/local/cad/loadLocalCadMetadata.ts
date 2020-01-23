@@ -4,7 +4,7 @@
 
 import { RevealSector3D, BoundingBox3D, Versioned3DFile } from '@cognite/sdk';
 
-export type LocalSectorMetadataResponse = {
+export type LocalCadMetadataResponse = {
   readonly SectorId: number;
   readonly FileId: number;
   readonly ParentId: { Value: number } | null;
@@ -17,16 +17,16 @@ export type LocalSectorMetadataResponse = {
   readonly Files: { [key: string]: number };
 };
 
-export async function loadLocalSectorMetadata(sectorsMetadataUrl: string): Promise<RevealSector3D[]> {
-  const response = await fetch(sectorsMetadataUrl);
+export async function loadLocalCadMetadata(cadMetadataUrl: string): Promise<RevealSector3D[]> {
+  const response = await fetch(cadMetadataUrl);
   if (!response.ok) {
-    throw new Error(`Could not fetch ${sectorsMetadataUrl}, got ${response.status}`);
+    throw new Error(`Could not fetch ${cadMetadataUrl}, got ${response.status}`);
   }
 
   const content = await response.text();
-  const sectors: LocalSectorMetadataResponse[] = [];
+  const sectors: LocalCadMetadataResponse[] = [];
   for (const chunk of content.split('\n').filter(x => x.trim() !== '')) {
-    const sector: LocalSectorMetadataResponse = JSON.parse(chunk);
+    const sector: LocalCadMetadataResponse = JSON.parse(chunk);
     sectors.push(sector);
   }
 
@@ -45,13 +45,13 @@ export async function loadLocalSectorMetadata(sectorsMetadataUrl: string): Promi
   return sdkSectors;
 }
 
-function transformBbox(sector: LocalSectorMetadataResponse): BoundingBox3D {
+function transformBbox(sector: LocalCadMetadataResponse): BoundingBox3D {
   const rMin = sector.BoundingBox.Min;
   const rMax = sector.BoundingBox.Max;
   return { min: [rMin.X, rMin.Y, rMin.Z], max: [rMax.X, rMax.Y, rMax.Z] };
 }
 
-function transformFiles(sector: LocalSectorMetadataResponse): Versioned3DFile[] {
+function transformFiles(sector: LocalCadMetadataResponse): Versioned3DFile[] {
   const files: Versioned3DFile[] = [];
   for (const [key, value] of Object.entries(sector.Files)) {
     const file = {

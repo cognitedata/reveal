@@ -3,7 +3,7 @@
  */
 
 // TODO potentially private types
-export { FetchSectorMetadataDelegate, FetchSectorDelegate, FetchCtmDelegate } from './models/sector/delegates';
+export { FetchSectorMetadataDelegate, FetchSectorDelegate, FetchCtmDelegate } from './models/cad/delegates';
 
 // TODO move these types into potree-core as TypeScript definitions and remove them from here
 export { PotreePointColorType, PotreePointShape } from './views/threejs/pointcloud/enums';
@@ -12,4 +12,4 @@ export { PotreeGroupWrapper } from './views/threejs/pointcloud/PotreeGroupWrappe
 
 export { suggestCameraConfig } from './utils/cameraUtils';
 export { traverseDepthFirst, traverseUpwards } from './utils/traversal';
-export { WantedSectors } from './models/sector/types';
+export { WantedSectors } from './models/cad/types';

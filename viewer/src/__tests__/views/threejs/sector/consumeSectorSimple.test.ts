@@ -2,11 +2,11 @@
  * Copyright 2019 Cognite AS
  */
 
-import { SectorQuads, SectorMetadata } from '../../../../models/sector/types';
+import { SectorQuads, SectorMetadata } from '../../../../models/cad/types';
 import { Box3 } from '../../../../utils/Box3';
 import { vec3 } from 'gl-matrix';
-import { consumeSectorSimple } from '../../../../views/threejs/sector/consumeSectorSimple';
-import { SectorNode } from '../../../../views/threejs/sector/SectorNode';
+import { consumeSectorSimple } from '../../../../views/threejs/cad/consumeSectorSimple';
+import { SectorNode } from '../../../../views/threejs/cad/SectorNode';
 import 'jest-extended';
 
 describe('consumeSectorDetailed', () => {

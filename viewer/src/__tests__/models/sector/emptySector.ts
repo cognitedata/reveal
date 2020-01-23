@@ -2,8 +2,8 @@
  * Copyright 2019 Cognite AS
  */
 
-import { PrimitiveAttributes } from '../../../../workers/types/parser.types';
-import { Sector } from '../../../models/sector/types';
+import { PrimitiveAttributes } from '../../../workers/types/parser.types';
+import { Sector } from '../../../models/cad/types';
 
 export function createEmptyPrimitive(): PrimitiveAttributes {
   return {

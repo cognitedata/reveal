@@ -2,6 +2,7 @@
  * Copyright 2019 Cognite AS
  */
 
-export { RootSectorNode, SectorNode } from './sector/SectorNode';
+export { CadNode } from './cad/CadNode';
+export { SectorNode } from './cad/SectorNode';
 export { createThreeJsPointCloudNode } from './pointcloud/createThreeJsPointCloudNode';
-export { createThreeJsSectorNode } from './sector/createThreeJsSectorNode';
+export { createThreeJsSectorNode } from './cad/createThreeJsSectorNode';

@@ -8,7 +8,7 @@ const logger = getLogger('reveal-examples');
 // The path to the ceisum source code
 const cesiumSource = 'node_modules/cesium/Source';
 const cesiumWorkers = '../Build/Cesium/Workers';
-const revealSource = 'node_modules/@cognite/reveal/dist';
+const revealSource = 'node_modules/@cognite/reveal';
 
 /*
  * Set args on the command line using
@@ -106,7 +106,7 @@ module.exports = env => {
   logger.info(`  - cesium:  ${buildCesiumExamples}`);
 
   const isExampleEnabled = example => {
-    return (example.type === 'cesium' && buildCesiumExamples) || 
+    return (example.type === 'cesium' && buildCesiumExamples) ||
       (example.type === 'threejs' && buildThreeJsExamples);
   }
   const enabledExamples = allExamples.filter(isExampleEnabled);
@@ -156,7 +156,12 @@ module.exports = env => {
         },
         {
           test: /\.tsx?$/,
-          use: 'ts-loader',
+          use: {
+            loader: 'ts-loader',
+            options: {
+              onlyCompileBundledFiles: true,
+            },
+          },
           exclude: [
             /node_modules/,
           ],
@@ -205,7 +210,8 @@ module.exports = env => {
         resolve('public/'),
         resolve('dist/'),
         resolve('node_modules/cesium/Source/')
-      ]
+      ],
+      writeToDisk: true,
     },
     optimization: {
       usedExports: true,

@@ -5,8 +5,9 @@
 import * as THREE from 'three';
 import * as reveal from '@cognite/reveal';
 import dat from 'dat.gui';
-import { SectorMetadata, WantedSectors } from '@cognite/reveal/dist/src/models/sector/types';
-import { CadLoadingStyle } from '@cognite/reveal/dist/src/models/sector/CadLoadingStyle';
+import { WantedSectors } from '@cognite/reveal/internal';
+import { SectorMetadata } from '@cognite/reveal/models/cad/types';
+import { CadLoadingStyle } from '@cognite/reveal/models/cad/CadLoadingStyle';
 
 export type RenderFilter = {
   renderQuads: boolean;
@@ -88,7 +89,7 @@ type SceneInfo = ReturnType<typeof createEmptySceneInfo>;
 export function createRendererDebugWidget(
   sectorMetadataRoot: SectorMetadata,
   renderer: THREE.WebGLRenderer,
-  sectorNode: reveal.RootSectorNode,
+  cadNode: reveal.CadNode,
   gui: dat.GUI,
   intervalMs: number = 100
 ): RenderOptions {
@@ -106,7 +107,7 @@ export function createRendererDebugWidget(
     .add(renderStyleOptions, 'showBoundingBoxes')
     .name('Show bounding boxes')
     .onChange(() => {
-      sectorNode.renderStyle = Object.assign(sectorNode.renderStyle || {}, {
+      cadNode.renderStyle = Object.assign(cadNode.renderStyle || {}, {
         showSectorBoundingBoxes: renderStyleOptions.showBoundingBoxes
       });
     });
@@ -149,8 +150,8 @@ export function createRendererDebugWidget(
       const override: CadLoadingStyle = {
         maxQuadSize: loadOverride.maxQuadSize > 0.0 ? loadOverride.maxQuadSize : undefined
       };
-      sectorNode.loadingStyle = {
-        ...sectorNode.loadingStyle,
+      cadNode.loadingStyle = {
+        ...cadNode.loadingStyle,
         ...override
       };
     });
@@ -183,9 +184,9 @@ export function createRendererDebugWidget(
 
   // Actions
   const actions = {
-    logVisible: () => logVisibleSectorsInScene(sectorNode),
-    logMaterials: () => logActiveMaterialsInScene(sectorNode),
-    initializeThreeJSInspector: () => initializeThreeJSInspector(renderer, sectorNode)
+    logVisible: () => logVisibleSectorsInScene(cadNode),
+    logMaterials: () => logActiveMaterialsInScene(cadNode),
+    initializeThreeJSInspector: () => initializeThreeJSInspector(renderer, cadNode)
   };
   const actionsGui = gui.addFolder('Actions');
   actionsGui.add(actions, 'logVisible').name('Log visible meshes');
@@ -195,7 +196,7 @@ export function createRendererDebugWidget(
   // Regularly update displays
   setInterval(() => {
     computeFramesPerSecond(renderer, sceneInfo);
-    updateSceneInfo(sectorNode, sceneInfo);
+    updateSceneInfo(cadNode, sceneInfo);
     controls.forEach(ctrl => ctrl.updateDisplay());
   }, intervalMs);
 
