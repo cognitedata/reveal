@@ -5,9 +5,9 @@
 import * as Cesium from 'cesium';
 import * as THREE from 'three';
 
-import { createParser, createQuadsParser } from '../../models/sector/parseSectorData';
-import { Sector, SectorModelTransformation } from '../../models/sector/types';
-import { initializeSectorLoader } from '../../models/sector/initializeSectorLoader';
+import { createParser, createQuadsParser } from '../../models/cad/parseSectorData';
+import { Sector, SectorModelTransformation } from '../../models/cad/types';
+import { initializeSectorLoader } from '../../models/cad/initializeSectorLoader';
 import { createSimpleCache } from '../../models/createCache';
 import { initializeCesiumView } from './initializeCesiumView';
 import { fromCesiumMatrix4, toCartesian3 as toCesiumCartesian3 } from './utilities';
@@ -38,7 +38,7 @@ export async function initializeCesiumSectorScene(
   model: CadModel,
   scene: Cesium.Scene
 ): Promise<[Cesium.BoundingSphere, SectorModelTransformation]> {
-  const {fetchSectorMetadata, fetchSectorDetailed, fetchSectorSimple, fetchCtm} = model;
+  const { fetchSectorMetadata, fetchSectorDetailed, fetchSectorSimple, fetchCtm } = model;
   // Fetch metadata
   const [sectorScene, modelTransformation] = await fetchSectorMetadata();
   const sectorRoot = sectorScene.root;

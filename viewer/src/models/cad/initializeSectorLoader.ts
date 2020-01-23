@@ -4,7 +4,6 @@
 
 import { setUnion, setDifference } from '../../utils/setUtils';
 import { DiscardSectorDelegate, ConsumeSectorDelegate, GetSectorDelegate } from './delegates';
-import { LoadSectorRequest } from './types';
 
 export interface SectorActivator {
   update: (wantedSectorIds: Set<number>) => boolean;

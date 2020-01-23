@@ -2,9 +2,9 @@
  * Copyright 2019 Cognite AS
  */
 
-import { loadLocalSectorMetadata } from '../../../../datasources/local/sector/loadLocalSectorMetadata';
+import { loadLocalCadMetadata } from '../../../../datasources/local/cad/loadLocalCadMetadata';
 
-describe('loadLocalSectorMetadata', () => {
+describe('loadLocalCadMetadata', () => {
   const singleSectorResponse =
     '{"ProjectId":123,"ModelId":456,"RevisionId":789,"SubrevisionId":999,"SectorId":0,"ParentId":null,"Path":"0/","Depth":2,"BoundingBox":{"Min":{"X":319.310028,"Y":82.06455,"Z":459.384},"Max":{"X":356.740021,"Y":124.95504,"Z":517.192}},"FileId":1331885983,"Files":{"1":1331885983,"2":1642093787,"3":1622861214,"5":477710090,"6":1793394194,"7":1324920441},"Metadata":null,"Fields":{"Paths":["project_id","model_id","revision_id","subrevision_id","sector_id","parent_id","path","depth","bounding_box","file_id","files"]}}';
   const twoSectorsResponse = `{"ProjectId":123,"ModelId":456,"RevisionId":789,"SubrevisionId":999,"SectorId":0,"ParentId":null,"Path":"0/","Depth":2,"BoundingBox":{"Min":{"X":319.310028,"Y":82.06455,"Z":459.384},"Max":{"X":356.740021,"Y":124.95504,"Z":517.192}},"FileId":1331885983,"Files":{"1":1331885983,"2":1642093787,"3":1622861214,"5":477710090,"6":1793394194,"7":1324920441},"Metadata":null,"Fields":{"Paths":["project_id","model_id","revision_id","subrevision_id","sector_id","parent_id","path","depth","bounding_box","file_id","files"]}}
@@ -13,7 +13,7 @@ describe('loadLocalSectorMetadata', () => {
   test('valid response with single sector, returns valid definition', async () => {
     fetchMock.mockResponseOnce(singleSectorResponse);
 
-    const sectors = await loadLocalSectorMetadata('/uploaded_sectors.txt');
+    const sectors = await loadLocalCadMetadata('/uploaded_sectors.txt');
     expect(sectors.length).toBe(1);
     expect(sectors[0].id).toBeDefined();
     expect(sectors[0].parentId).toBeDefined();
@@ -27,7 +27,7 @@ describe('loadLocalSectorMetadata', () => {
   test('valid response with two sectors, returns definitions', async () => {
     fetchMock.mockResponseOnce(twoSectorsResponse);
 
-    const sectors = await loadLocalSectorMetadata('/uploaded_sectors.txt');
+    const sectors = await loadLocalCadMetadata('/uploaded_sectors.txt');
     expect(sectors.length).toBe(2);
   });
 
@@ -35,13 +35,13 @@ describe('loadLocalSectorMetadata', () => {
     expect.assertions(1);
     fetchMock.mockResponseOnce('', { status: 404 });
 
-    await expect(loadLocalSectorMetadata('/uploaded_sectors.txt')).rejects.toThrow();
+    await expect(loadLocalCadMetadata('/uploaded_sectors.txt')).rejects.toThrow();
   });
 
   test('response contains empty line, ignored', async () => {
     fetchMock.mockResponseOnce(singleSectorResponse + '\n');
 
-    const sectors = await loadLocalSectorMetadata('/uploaded_sectors.txt');
+    const sectors = await loadLocalCadMetadata('/uploaded_sectors.txt');
 
     expect(sectors.length).toBe(1);
   });

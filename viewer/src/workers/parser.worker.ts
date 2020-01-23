@@ -3,8 +3,8 @@
  */
 
 import * as Comlink from 'comlink';
-import { CtmWorkerResult, Sector, SectorMetadata, TriangleMesh } from '../models/sector/types';
-import { FetchSectorDelegate, FetchCtmDelegate } from '../models/sector/delegates';
+import { CtmWorkerResult, Sector, SectorMetadata, TriangleMesh } from '../models/cad/types';
+import { FetchSectorDelegate, FetchCtmDelegate } from '../models/cad/delegates';
 import { createOffsets } from '../utils/arrayUtils';
 import {
   ParseRootSectorArguments,

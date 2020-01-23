@@ -2,7 +2,7 @@
  * Copyright 2019 Cognite AS
  */
 
-import { SectorMetadata } from '../../models/sector/types';
+import { SectorMetadata } from '../../models/cad/types';
 import Cesium from 'cesium';
 import { traverseDepthFirst } from '../../utils/traversal';
 

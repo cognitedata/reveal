@@ -7,7 +7,7 @@ import { mat4 } from 'gl-matrix';
 import { PointCloudModel } from '../../../../datasources/PointCloudModel';
 import { createThreeJsPointCloudNode } from '../../../../views/threejs';
 import { FetchPointCloudDelegate } from '../../../../models/pointclouds/delegates';
-import { SectorModelTransformation } from '../../../../models/sector/types';
+import { SectorModelTransformation } from '../../../../models/cad/types';
 import { PotreeGroupWrapper } from '../../../../views/threejs/pointcloud/PotreeGroupWrapper';
 
 describe('createThreeJsPointCloudNode', () => {

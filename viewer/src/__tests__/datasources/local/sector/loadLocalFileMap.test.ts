@@ -2,7 +2,7 @@
  * Copyright 2019 Cognite AS
  */
 
-import { loadLocalFileMap } from '../../../../datasources/local/sector/loadLocalFileMap';
+import { loadLocalFileMap } from '../../../../datasources/local/cad/loadLocalFileMap';
 
 describe('loadLocalFileMap', () => {
   const fileMapBody = `734862805\t\t\tweb_node_7_115.f3d
