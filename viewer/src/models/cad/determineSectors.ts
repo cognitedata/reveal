@@ -7,13 +7,9 @@ import { WantedSectors, SectorMetadata, SectorScene, DetermineSectorsInput } fro
 import { traverseDepthFirst, traverseUpwards } from '../../utils/traversal';
 import { toThreeMatrix4, toThreeVector3 } from '../../views/threejs/utilities';
 import { mat4 } from 'gl-matrix';
-import { CadLoadingStyle } from './CadLoadingStyle';
+import { CadLoadingHints, defaultLoadingHints as defaultCadLoadingHints } from './CadLoadingHints';
 
 const degToRadFactor = Math.PI / 180;
-
-const defaultLoadingStyle: Required<CadLoadingStyle> = {
-  maxQuadSize: 0.0025
-};
 
 const determineSectorsPreallocatedVars = {
   invertCameraModelMatrix: mat4.create(),
@@ -25,7 +21,7 @@ const determineSectorsPreallocatedVars = {
 };
 
 export async function defaultDetermineSectors(params: DetermineSectorsInput): Promise<WantedSectors> {
-  const style = { ...defaultLoadingStyle, ...(params.loadingStyle || {}) };
+  const hints = { ...defaultCadLoadingHints, ...(params.loadingHints || {}) };
 
   const { scene, cameraPosition, cameraModelMatrix, projectionMatrix, cameraFov } = params;
   const { invertCameraModelMatrix, frustumMatrix, frustum, bbox, min, max } = determineSectorsPreallocatedVars;
@@ -59,7 +55,7 @@ export async function defaultDetermineSectors(params: DetermineSectorsInput): Pr
     }
 
     const screenHeight = 2.0 * distanceToCamera(sector) * Math.tan((cameraFov / 2) * degToRadFactor);
-    const largestAllowedQuadSize = style.maxQuadSize * screenHeight; // no larger than x percent of the height
+    const largestAllowedQuadSize = hints.maxQuadSize * screenHeight; // no larger than x percent of the height
     const quadSize = (() => {
       if (!sector.simple) {
         // Making the quad infinite in size means we will always use the detailed version instead

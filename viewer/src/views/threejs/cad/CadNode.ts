@@ -10,8 +10,8 @@ import { SectorModelTransformation, SectorScene, SectorMetadata, WantedSectors }
 import { fromThreeVector3, fromThreeMatrix, toThreeMatrix4, toThreeJsBox3, toThreeVector3 } from '../utilities';
 import { SectorActivator } from '../../../models/cad/initializeSectorLoader';
 import { DetermineSectorsDelegate } from '../../../models/cad/delegates';
-import { SectorRenderStyle } from '../../SectorRenderStyle';
-import { CadLoadingStyle } from '../../../models/cad/CadLoadingStyle';
+import { CadRenderHints } from '../../CadRenderHints';
+import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
 import { CadModel, createThreeJsSectorNode } from '../../..';
 import { suggestCameraConfig } from '../../../utils/cameraUtils';
 import { defaultDetermineSectors } from '../../../models/cad/determineSectors';
@@ -36,8 +36,8 @@ export class CadNode extends THREE.Object3D {
   private _determineSectors: DetermineSectorsDelegate;
   private _simpleActivator: SectorActivator;
   private _detailedActivator: SectorActivator;
-  private _renderStyle: SectorRenderStyle;
-  private _loadingStyle: CadLoadingStyle;
+  private _renderHints: CadRenderHints;
+  private _loadingHints: CadLoadingHints;
 
   private readonly _sectorScene: SectorScene;
   private readonly _previousCameraMatrix = new THREE.Matrix4();
@@ -66,28 +66,28 @@ export class CadNode extends THREE.Object3D {
     // // Apply model matrix to this model
     // this.applyMatrix(toThreeMatrix4(modelTransformation.modelMatrix));
 
-    // Apply default styles
-    this._renderStyle = {};
-    this._loadingStyle = {};
-    this.renderStyle = {};
-    this.loadingStyle = {};
+    // Apply default hints
+    this._renderHints = {};
+    this._loadingHints = {};
+    this.renderHints = {};
+    this.loadingHints = {};
   }
 
-  set renderStyle(style: Readonly<SectorRenderStyle>) {
-    this._renderStyle = style;
+  set renderHints(hints: Readonly<CadRenderHints>) {
+    this._renderHints = hints;
     this._boundingBoxNode.visible = this.shouldRenderSectorBoundingBoxes;
   }
 
-  get renderStyle(): Readonly<SectorRenderStyle> {
-    return this._renderStyle;
+  get renderHints(): Readonly<CadRenderHints> {
+    return this._renderHints;
   }
 
-  set loadingStyle(style: Readonly<CadLoadingStyle>) {
-    this._loadingStyle = style;
+  set loadingHints(hints: Readonly<CadLoadingHints>) {
+    this._loadingHints = hints;
   }
 
-  get loadingStyle(): Readonly<CadLoadingStyle> {
-    return this._loadingStyle;
+  get loadingHints(): Readonly<CadLoadingHints> {
+    return this._loadingHints;
   }
 
   set determineSectors(determineSectors: DetermineSectorsDelegate) {
@@ -99,7 +99,7 @@ export class CadNode extends THREE.Object3D {
   }
 
   private get shouldRenderSectorBoundingBoxes(): boolean {
-    return this._renderStyle.showSectorBoundingBoxes || false;
+    return this._renderHints.showSectorBoundingBoxes || false;
   }
 
   public async update(camera: THREE.PerspectiveCamera): Promise<boolean> {
@@ -117,7 +117,7 @@ export class CadNode extends THREE.Object3D {
         cameraPosition,
         cameraModelMatrix,
         projectionMatrix,
-        loadingStyle: this.loadingStyle
+        loadingHints: this.loadingHints
       });
       needsRedraw = this._detailedActivator.update(wantedSectors.detailed) || needsRedraw;
       needsRedraw = this._simpleActivator.update(wantedSectors.simple) || needsRedraw;

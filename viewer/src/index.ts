@@ -8,7 +8,7 @@ export { createLocalCadModel, createLocalPointCloudModel } from './datasources/l
 export { toThreeVector3 } from './views/threejs/utilities';
 
 export { CadNode, SectorNode } from './views/threejs';
-export { SectorRenderStyle } from './views/SectorRenderStyle';
+export { CadRenderHints as SectorRenderStyle } from './views/CadRenderHints';
 export { createThreeJsSectorNode, createThreeJsPointCloudNode } from './views/threejs';
 export { initializeCesiumSectorScene } from './views/cesiumjs/createCesiumSectorNode';
 
