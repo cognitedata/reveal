@@ -51,9 +51,11 @@ function createWorkers<U>(): PooledWorker[] {
 
   for (let i = 0; i < window.navigator.hardwareConcurrency; i++) {
     const newWorker = {
-      worker: Comlink.wrap(
+      // NOTE: As of Comlink 4.2.0 we need to go through unknown before ParserWorker
+      // Please feel free to remove `as unknown` if possible.
+      worker: (Comlink.wrap(
         new Worker('../../workers/parser.worker', { name: 'parser', type: 'module' })
-      ) as ParserWorker,
+      ) as unknown) as ParserWorker,
       activeJobCount: 0,
       messageIdCounter: 0
     };
