@@ -5,6 +5,7 @@
 import { Box3 } from '../../utils/Box3';
 import { mat4, vec3 } from 'gl-matrix';
 import { PrimitiveAttributes } from '../../../workers/types/parser.types';
+import { CadLoadingStyle } from './CadLoadingStyle';
 
 /**
  * Input to DetermineSectorsDelegate.
@@ -15,6 +16,7 @@ export interface DetermineSectorsInput {
   readonly cameraPosition: vec3;
   readonly cameraModelMatrix: mat4;
   readonly projectionMatrix: mat4;
+  readonly loadingStyle?: CadLoadingStyle;
 }
 
 // TODO 2019-11-12 larsmoa: Move and rename to something general (not specific

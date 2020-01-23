@@ -9,6 +9,7 @@ import { SectorActivator } from '../../../models/sector/initializeSectorLoader';
 import { DetermineSectorsDelegate } from '../../../models/sector/delegates';
 import { vec3, mat4 } from 'gl-matrix';
 import { SectorRenderStyle } from '../../SectorRenderStyle';
+import { CadLoadingStyle } from '../../../models/sector/CadLoadingStyle';
 
 export class SectorNode extends THREE.Group {
   public readonly sectorId: number;
@@ -33,6 +34,7 @@ export class RootSectorNode extends SectorNode {
   private _simpleActivator: SectorActivator;
   private _detailedActivator: SectorActivator;
   private _renderStyle: SectorRenderStyle;
+  private _loadingStyle: CadLoadingStyle;
 
   private readonly _sectorScene: SectorScene;
   private readonly _previousCameraMatrix = new THREE.Matrix4();
@@ -47,7 +49,6 @@ export class RootSectorNode extends SectorNode {
   ) {
     super(0, '/');
     this.name = 'Sector model';
-    this._renderStyle = {};
     this._sectorScene = sectorScene;
     this._determineSectors = determineSectors;
     this._simpleActivator = simpleActivator;
@@ -61,8 +62,11 @@ export class RootSectorNode extends SectorNode {
     this._boundingBoxNode = this.createBoundingBoxNode(sectorScene.sectors);
     this.add(this._boundingBoxNode);
 
-    // Apply default rendering style
+    // Apply default styles
+    this._renderStyle = {};
+    this._loadingStyle = {};
     this.renderStyle = {};
+    this.loadingStyle = {};
   }
 
   set renderStyle(style: Readonly<SectorRenderStyle>) {
@@ -72,6 +76,14 @@ export class RootSectorNode extends SectorNode {
 
   get renderStyle(): Readonly<SectorRenderStyle> {
     return this._renderStyle;
+  }
+
+  set loadingStyle(style: Readonly<CadLoadingStyle>) {
+    this._loadingStyle = style;
+  }
+
+  get loadingStyle(): Readonly<CadLoadingStyle> {
+    return this._loadingStyle;
   }
 
   set determineSectors(determineSectors: DetermineSectorsDelegate) {
@@ -100,7 +112,8 @@ export class RootSectorNode extends SectorNode {
         cameraFov: camera.fov,
         cameraPosition,
         cameraModelMatrix,
-        projectionMatrix
+        projectionMatrix,
+        loadingStyle: this.loadingStyle
       });
       needsRedraw = this._detailedActivator.update(wantedSectors.detailed) || needsRedraw;
       needsRedraw = this._simpleActivator.update(wantedSectors.simple) || needsRedraw;
