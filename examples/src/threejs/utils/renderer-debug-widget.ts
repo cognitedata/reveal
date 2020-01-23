@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import * as reveal from '@cognite/reveal';
 import dat from 'dat.gui';
 import { SectorMetadata, WantedSectors } from '@cognite/reveal/dist/src/models/sector/types';
-// import { WantedSectors } from '@cognite/reveal/internal';
+import { CadLoadingStyle } from '@cognite/reveal/dist/src/models/sector/CadLoadingStyle';
 
 export type RenderFilter = {
   renderQuads: boolean;
@@ -36,7 +36,7 @@ export type RenderOptions = {
   loadingEnabled: boolean;
   renderMode: RenderMode;
   renderFilter: RenderFilter;
-  overrideWantedSectors: WantedSectors | null;
+  overrideWantedSectors?: WantedSectors;
 };
 
 export function createDefaultRenderOptions(): RenderOptions {
@@ -44,7 +44,7 @@ export function createDefaultRenderOptions(): RenderOptions {
     loadingEnabled: true,
     renderMode: RenderMode.WhenNecessary,
     renderFilter: everythingRenderFilter,
-    overrideWantedSectors: null
+    overrideWantedSectors: undefined
   };
 }
 
@@ -130,24 +130,36 @@ export function createRendererDebugWidget(
   // Sectors
   const sectorsGui = gui.addFolder('Sectors');
   controls.push(sectorsGui.add(sceneInfo.sectors, 'count').name('Total'));
-  controls.push(sectorsGui.add(sceneInfo.sectors, 'withMeshesCount').name('With mesh(es)'));
+  controls.push(sectorsGui.add(sceneInfo.sectors, 'withMeshesCount').name('Loaded'));
 
   // Sectors to load
-  const loadOverrideGui = sectorsGui.addFolder('Override sectors to load');
-  const sectorOverride = { quadsFilter: '', detailedFilter: '' };
+  const loadOverrideGui = sectorsGui.addFolder('Override loading');
+  const loadOverride = { maxQuadSize: 0.0025, quadsFilter: '', detailedFilter: '' };
   const updateWantedNodesFilter = () =>
     updateWantedSectorOverride(
       renderOptions,
       sectorMetadataRoot,
-      sectorOverride.quadsFilter,
-      sectorOverride.detailedFilter
+      loadOverride.quadsFilter,
+      loadOverride.detailedFilter
     );
   loadOverrideGui
-    .add(sectorOverride, 'quadsFilter')
+    .add(loadOverride, 'maxQuadSize', 0, 0.05, 0.0001)
+    .name('Max quad size %')
+    .onFinishChange(() => {
+      const override: CadLoadingStyle = {
+        maxQuadSize: loadOverride.maxQuadSize > 0.0 ? loadOverride.maxQuadSize : undefined
+      };
+      sectorNode.loadingStyle = {
+        ...sectorNode.loadingStyle,
+        ...override
+      };
+    });
+  loadOverrideGui
+    .add(loadOverride, 'quadsFilter')
     .name('Quads (low detail)')
     .onFinishChange(updateWantedNodesFilter);
   loadOverrideGui
-    .add(sectorOverride, 'detailedFilter')
+    .add(loadOverride, 'detailedFilter')
     .name('Detailed')
     .onFinishChange(updateWantedNodesFilter);
 
@@ -314,12 +326,16 @@ function updateWantedSectorOverride(
   quadsFilter: string,
   detailedFilter: string
 ) {
-  const acceptedSimple = filterSectorNodes(quadsFilter, root);
-  const acceptedDetailed = filterSectorNodes(detailedFilter, root);
-  renderOptions.overrideWantedSectors = {
-    simple: new Set<number>(acceptedSimple),
-    detailed: new Set<number>(acceptedDetailed)
-  };
+  if (quadsFilter === '' && detailedFilter === '') {
+    renderOptions.overrideWantedSectors = undefined;
+  } else {
+    const acceptedSimple = filterSectorNodes(quadsFilter, root);
+    const acceptedDetailed = filterSectorNodes(detailedFilter, root);
+    renderOptions.overrideWantedSectors = {
+      simple: new Set<number>(acceptedSimple),
+      detailed: new Set<number>(acceptedDetailed)
+    };
+  }
 }
 
 function logVisibleSectorsInScene(scene: THREE.Object3D) {
