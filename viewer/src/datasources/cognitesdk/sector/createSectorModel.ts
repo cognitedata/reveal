@@ -16,11 +16,9 @@ export function createSectorModel(sdk: CogniteClient, modelId: number, revisionI
   const metadataPromise = loadSectorMetadata(sdk, modelId, revisionId);
 
   // TODO replace this with actually fetching metadata about simple sectors
-  const simpleMetadataPromise: Promise<
-    Map<number, LocalSimpleSectorMetadataResponse>> =
-    new Promise(resolve => {
-      throw new Error("Not implemented");
-    });
+  const simpleMetadataPromise: Promise<Map<number, LocalSimpleSectorMetadataResponse>> = new Promise(resolve => {
+    throw new Error('Not implemented');
+  });
 
   const rotationPromise = loadRotation(sdk, modelId, revisionId);
   const sectorFilemapPromise = (async () => {
