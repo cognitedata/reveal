@@ -107,7 +107,7 @@ export function createRendererDebugWidget(
     .add(renderStyleOptions, 'showBoundingBoxes')
     .name('Show bounding boxes')
     .onChange(() => {
-      cadNode.renderStyle = Object.assign(cadNode.renderStyle || {}, {
+      cadNode.renderHints = Object.assign(cadNode.renderHints || {}, {
         showSectorBoundingBoxes: renderStyleOptions.showBoundingBoxes
       });
     });
@@ -150,8 +150,8 @@ export function createRendererDebugWidget(
       const override: CadLoadingStyle = {
         maxQuadSize: loadOverride.maxQuadSize > 0.0 ? loadOverride.maxQuadSize : undefined
       };
-      cadNode.loadingStyle = {
-        ...cadNode.loadingStyle,
+      cadNode.loadingHints = {
+        ...cadNode.loadingHints,
         ...override
       };
     });
