@@ -11,7 +11,8 @@
     "test": "jest",
     "coverage": "jest --coverage",
     "lint": "tslint --project .",
-    "serve": "npm install && npm link && cd examples && npm install && npm link @cognite/reveal && npm run serve"
+    "serve": "npm install && npm link && cd examples && npm install && npm link @cognite/reveal && npm run serve",
+    "tsc": "tsc"
   },
   "author": "Svenn-Arne Dragly <dragly@cognite.com>",
   "contributors": [

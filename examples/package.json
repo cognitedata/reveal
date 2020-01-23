@@ -14,7 +14,8 @@
     "serve": "webpack-dev-server --env.development --debug --color --progress --watch",
     "test": "jest",
     "coverage": "jest --coverage",
-    "lint": "tslint --project ."
+    "lint": "tslint --project .",
+    "tsc": "tsc"
   },
   "author": "Svenn-Arne Dragly <dragly@cognite.com>",
   "contributors": [
