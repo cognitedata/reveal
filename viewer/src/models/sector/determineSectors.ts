@@ -43,7 +43,7 @@ export async function determineSectors(input: DetermineSectorsInput): Promise<Wa
     bbox.makeEmpty();
     bbox.expandByPoint(min);
     bbox.expandByPoint(max);
-    return bbox.distanceToPoint(toThreeVector3(cameraPosition, undefined, threeJsVec3));
+    return bbox.distanceToPoint(toThreeVector3(threeJsVec3, cameraPosition));
   }
 
   if (!mat4.invert(invertCameraModelMatrix, cameraModelMatrix)) {

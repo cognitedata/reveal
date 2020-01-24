@@ -16,7 +16,7 @@ export function consumeSectorDetailed(
   metadata: SectorMetadata,
   sectorNode: SectorNode
 ) {
-  const bounds = toThreeJsBox3(metadata.bounds);
+  const bounds = toThreeJsBox3(new THREE.Box3(), metadata.bounds);
   const boundsRenderer = new THREE.Box3Helper(bounds);
   boundsRenderer.name = `Bounding box ${sectorId}`;
   // group.add(boundsRenderer);

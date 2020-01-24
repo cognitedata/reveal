@@ -60,8 +60,8 @@ async function main() {
   const { position, target, near, far } = reveal.internal.suggestCameraConfig(modelScene.root);
   const camera = new THREE.PerspectiveCamera(75, leftCanvas.width / leftCanvas.height, near, far);
   const controls = new CameraControls(camera, leftCanvas);
-  const threePos = reveal.toThreeVector3(position, modelNode1.modelTransformation);
-  const threeTarget = reveal.toThreeVector3(target, modelNode2.modelTransformation);
+  const threePos = reveal.toThreeVector3(new THREE.Vector3(), position, modelNode1.modelTransformation);
+  const threeTarget = reveal.toThreeVector3(new THREE.Vector3(), target, modelNode2.modelTransformation);
   controls.setLookAt(threePos.x, threePos.y, threePos.z, threeTarget.x, threeTarget.y, threeTarget.z);
   controls.update(0.0);
   camera.updateMatrixWorld();

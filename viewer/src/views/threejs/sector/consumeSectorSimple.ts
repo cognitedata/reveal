@@ -42,7 +42,7 @@ export function consumeSectorSimple(
   if (sector.buffer.byteLength % stride !== 0) {
     throw new Error(`Expected buffer size to be multiple of ${stride}, but got ${sector.buffer.byteLength}`);
   }
-  const bounds = toThreeJsBox3(metadata.bounds);
+  const bounds = toThreeJsBox3(new THREE.Box3(), metadata.bounds);
   const boundsRenderer = new THREE.Box3Helper(bounds.expandByScalar(0.1), new THREE.Color(0xff00ff));
   boundsRenderer.name = `Bounding box ${sectorId}`;
 
