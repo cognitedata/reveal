@@ -63,9 +63,6 @@ export class CadNode extends THREE.Object3D {
     // Ensure camera matrix is unequal on first frame
     this._previousCameraMatrix.elements[0] = Infinity;
 
-    // // Apply model matrix to this model
-    // this.applyMatrix(toThreeMatrix4(modelTransformation.modelMatrix));
-
     // Apply default hints
     this._renderHints = {};
     this._loadingHints = {};
@@ -169,7 +166,7 @@ export class CadNode extends THREE.Object3D {
     const boxesNode = new THREE.Group();
     boxesNode.name = 'Bounding boxes (for debugging)';
     sectors.forEach(sector => {
-      const bbox = toThreeJsBox3(sector.bounds);
+      const bbox = toThreeJsBox3(new THREE.Box3(), sector.bounds);
       const color = colors[sectorDepth(sector)];
       const boxMesh = new THREE.Box3Helper(bbox, color);
       boxMesh.name = `${sector.id}`;

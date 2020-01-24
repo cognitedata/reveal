@@ -10,9 +10,10 @@ import { getNewestVersionedFile } from '../utilities';
 import { SectorModelTransformation } from '../../../models/cad/types';
 import { mat4 } from 'gl-matrix';
 import { LocalSimpleCadMetadataResponse } from '../../local/cad/loadLocalSimpleSectorMetadata';
+import { CadModel } from '../../../models/cad/CadModel';
 import { createParser, createQuadsParser } from '../../../models/cad/parseSectorData';
 
-export async function createSectorModel(sdk: CogniteClient, modelId: number, revisionId: number): CadModel {
+export async function createCadModel(sdk: CogniteClient, modelId: number, revisionId: number): Promise<CadModel> {
   const metadataPromise = loadSectorMetadata(sdk, modelId, revisionId);
 
   // TODO replace this with actually fetching metadata about simple sectors
@@ -45,28 +46,28 @@ export async function createSectorModel(sdk: CogniteClient, modelId: number, rev
     }
     return loadSectorGeometry(sdk, sectorId, file);
   };
-  const fetchSectorQuads: FetchSectorDelegate = async sectorId => {
+  const fetchSectorSimple: FetchSectorDelegate = async sectorId => {
     // TODO implement
     throw new Error('Not implemeted');
   };
-  const fetchCtmFile: FetchCtmDelegate = async fileId => {
+  const fetchCtm: FetchCtmDelegate = async fileId => {
     return loadCtmFile(sdk, fileId);
   };
 
   // Fetch metadata
   const [scene, modelTransformation] = await fetchSectorMetadata();
-  const parseDetailed = await createParser(scene.root, fetchSectorDetailed, fetchCtmFile);
+  const parseDetailed = await createParser(scene.root, fetchSectorDetailed, fetchCtm);
   const parseSimple = await createQuadsParser();
-  return [
+  return {
     fetchSectorMetadata,
     fetchSectorDetailed,
-    fetchSectorQuads,
-    fetchCtmFile,
+    fetchSectorSimple,
+    fetchCtm,
     parseDetailed,
     parseSimple,
     scene,
     modelTransformation
-  ];
+  };
 }
 
 async function loadSectorMetadata(sdk: CogniteClient, modelId: number, revisionId: number): Promise<RevealSector3D[]> {

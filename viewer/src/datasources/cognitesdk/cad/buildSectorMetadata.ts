@@ -3,7 +3,7 @@
  */
 
 import { RevealSector3D } from '@cognite/sdk';
-import { vec3, mat4 } from 'gl-matrix';
+import { vec3 } from 'gl-matrix';
 import { SectorMetadata, SectorScene } from '../../../models/cad/types';
 import { Box3 } from '../../../utils/Box3';
 import { LocalSimpleCadMetadataResponse } from '../../local/cad/loadLocalSimpleSectorMetadata';
