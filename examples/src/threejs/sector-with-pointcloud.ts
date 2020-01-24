@@ -11,7 +11,6 @@ import { CadNode, createThreeJsPointCloudNode, toThreeVector3 } from '@cognite/r
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
 import {
-  createRendererDebugWidget,
   RenderOptions,
   applyRenderingFilters,
   RenderMode,
@@ -54,8 +53,8 @@ async function main() {
   const { position, target, near, far } = reveal.internal.suggestCameraConfig(modelScene.root);
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
-  const threePos = toThreeVector3(position, sectorModelNode.modelTransformation);
-  const threeTarget = toThreeVector3(target, sectorModelNode.modelTransformation);
+  const threePos = toThreeVector3(new THREE.Vector3(), position, sectorModelNode.modelTransformation);
+  const threeTarget = toThreeVector3(new THREE.Vector3(), target, sectorModelNode.modelTransformation);
   controls.setLookAt(threePos.x, threePos.y, threePos.z, threeTarget.x, threeTarget.y, threeTarget.z);
   controls.update(0.0);
   camera.updateMatrixWorld();

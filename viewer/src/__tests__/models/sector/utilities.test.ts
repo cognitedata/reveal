@@ -12,7 +12,10 @@ describe('getNewestVersionedFile', () => {
   });
 
   test('Two versions, returns newest', () => {
-    const files: Versioned3DFile[] = [{ version: 2, fileId: 9 }, { version: 7, fileId: 10 }];
+    const files: Versioned3DFile[] = [
+      { version: 2, fileId: 9 },
+      { version: 7, fileId: 10 }
+    ];
     const version = getNewestVersionedFile(files);
     expect(version).toMatchObject({ fileId: 10, version: 7 });
   });
