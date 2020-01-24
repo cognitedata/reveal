@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { Box3 } from '../../utils/Box3';
-import { vec3, mat4, vec4 } from 'gl-matrix';
+import { vec3, mat4 } from 'gl-matrix';
 import { SectorModelTransformation } from '../../models/cad/types';
 
 export function fitCameraToBoundingBox(camera: THREE.Camera, bounds: Box3, radiusFactor: number = 4) {
@@ -34,14 +34,19 @@ const toThreeVector3Vars = {
   result: vec3.create()
 };
 
-// TODO add out parameter
-export function toThreeVector3(v: vec3, modelTransformation?: SectorModelTransformation): THREE.Vector3 {
+export function toThreeVector3(
+  out: THREE.Vector3,
+  v: vec3,
+  modelTransformation?: SectorModelTransformation
+): THREE.Vector3 {
   if (!modelTransformation) {
-    return new THREE.Vector3(v[0], v[1], v[2]);
+    out.set(v[0], v[1], v[2]);
+    return out;
   }
   const { result } = toThreeVector3Vars;
   vec3.transformMat4(result, v, modelTransformation.modelMatrix);
-  return new THREE.Vector3(result[0], result[1], result[2]);
+  out.set(result[0], result[1], result[2]);
+  return out;
 }
 
 const toThreeMatrix4Vars = {
@@ -90,8 +95,15 @@ export function fromThreeMatrix(out: mat4, m: THREE.Matrix4, modelTransformation
   return out;
 }
 
-export function toThreeJsBox3(box: Box3): THREE.Box3 {
-  return new THREE.Box3(toThreeVector3(box.min), toThreeVector3(box.max));
+const toThreeJsBox3Vars = {
+  outMin: new THREE.Vector3(),
+  outMax: new THREE.Vector3()
+};
+
+export function toThreeJsBox3(out: THREE.Box3, box: Box3): THREE.Box3 {
+  const { outMin, outMax } = toThreeJsBox3Vars;
+  out.set(toThreeVector3(outMin, box.min), toThreeVector3(outMax, box.max));
+  return out;
 }
 
 const fromThreeJsBox3Vars = {
