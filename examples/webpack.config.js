@@ -41,7 +41,7 @@ const allExamples = [
     name: "threejs-simple",
     title: "Simple",
     entry: './src/threejs/simple.ts',
-    template: 'template-example.ejs', 
+    template: 'template-example.ejs',
     type: 'threejs'
   },
   {
