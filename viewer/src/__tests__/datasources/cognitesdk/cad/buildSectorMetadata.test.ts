@@ -3,7 +3,7 @@
  */
 
 import { RevealSector3D } from '@cognite/sdk';
-import { buildSectorMetadata } from '../../../../datasources/cognitesdk/sector/buildSectorMetadata';
+import { buildSectorMetadata } from '../../../../datasources/cognitesdk/cad/buildSectorMetadata';
 import { LocalSimpleCadMetadataResponse } from '../../../../datasources/local/cad/loadLocalSimpleSectorMetadata';
 
 describe('buildSectorMetadata', () => {
