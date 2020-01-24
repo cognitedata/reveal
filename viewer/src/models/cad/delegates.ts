@@ -2,7 +2,12 @@
  * Copyright 2019 Cognite AS
  */
 
-import { Sector, SectorMetadata, LoadSectorRequest, SectorModelTransformation, SectorScene } from './types';
+import { SectorModelTransformation, SectorScene, WantedSectors, DetermineSectorsInput } from './types';
+
+/**
+ * Delegate for determining what sectors to load for a given frustum.
+ */
+export type DetermineSectorsDelegate = (params: DetermineSectorsInput) => Promise<WantedSectors>;
 
 /**
  * Delegate that handles removal of a sector from a view (e.g. by removing it from the scene).
