@@ -4,7 +4,7 @@
 
 import { Box3 } from '../../utils/Box3';
 import { mat4, vec3 } from 'gl-matrix';
-import { PrimitiveAttributes } from '../../../workers/types/parser.types';
+import { PrimitiveAttributes } from '../../workers/types/parser.types';
 
 // TODO 2019-11-12 larsmoa: Move and rename to something general (not specific
 // for sector data).

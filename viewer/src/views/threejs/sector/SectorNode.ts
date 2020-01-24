@@ -25,56 +25,8 @@ const updateVars = {
   projectionMatrix: mat4.create()
 };
 
-export class RootSectorNode extends SectorNode {
-  public readonly modelTransformation: SectorModelTransformation;
-
-  private readonly simpleActivator: SectorActivator;
-  private readonly detailedActivator: SectorActivator;
-  private readonly sectorScene: SectorScene;
-  private readonly previousCameraMatrix = new THREE.Matrix4();
-
-  constructor(
-    sectorScene: SectorScene,
-    modelTransformation: SectorModelTransformation,
-    simpleActivator: SectorActivator,
-    detailedActivator: SectorActivator
-  ) {
-    super(0, '/');
-    this.name = 'Sector model';
-    this.sectorScene = sectorScene;
-    this.simpleActivator = simpleActivator;
-    this.detailedActivator = detailedActivator;
-    this.modelTransformation = modelTransformation;
-    // Ensure camera matrix is unequal on first frame
-    this.previousCameraMatrix.elements[0] = Infinity;
-  }
-
-  public async update(camera: THREE.PerspectiveCamera): Promise<boolean> {
-    let needsRedraw = false;
-    const { cameraPosition, cameraModelMatrix, projectionMatrix } = updateVars;
-    if (!this.previousCameraMatrix.equals(camera.matrixWorld)) {
-      // Need to trigger reload of data
-      // camera.updateMatrix();
-      // camera.updateMatrixWorld();
-      camera.matrixWorldInverse.getInverse(camera.matrixWorld);
-
-      fromThreeVector3(cameraPosition, camera.position, this.modelTransformation);
-      fromThreeMatrix(cameraModelMatrix, camera.matrixWorld, this.modelTransformation);
-      fromThreeMatrix(projectionMatrix, camera.projectionMatrix);
-      const wantedSectors = await determineSectors({
-        scene: this.sectorScene,
-        cameraFov: camera.fov,
-        cameraPosition,
-        cameraModelMatrix,
-        projectionMatrix
-      });
-      needsRedraw = this.detailedActivator.update(wantedSectors.detailed) || needsRedraw;
-      needsRedraw = this.simpleActivator.update(wantedSectors.simple) || needsRedraw;
-
-      this.previousCameraMatrix.copy(camera.matrixWorld);
-    }
-    needsRedraw = this.detailedActivator.refresh() || needsRedraw;
-    needsRedraw = this.simpleActivator.refresh() || needsRedraw;
-    return needsRedraw;
-  }
+export interface RootSectorNodeData {
+  rootSector: SectorNode;
+  simpleActivator: SectorActivator;
+  detailedActivator: SectorActivator;
 }

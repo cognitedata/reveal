@@ -13,7 +13,7 @@ import { initializeCesiumView } from './initializeCesiumView';
 import { fromCesiumMatrix4, toCartesian3 as toCesiumCartesian3 } from './utilities';
 import { mat4, vec3 } from 'gl-matrix';
 import { traverseDepthFirst } from '../../utils/traversal';
-import { SectorModel } from '../..';
+import { CadModel } from '../..';
 
 /**
  * Column major rotation from right-handed Y up (e.g. ThreeJS) to left-handed Z up (Cesium)
@@ -35,14 +35,14 @@ const zUpToYup = mat4.identity(mat4.create()); // mat4.invert(mat4.create(), yUp
 export async function initializeCesiumSectorScene(
   geographicOrigin: Cesium.Cartesian3,
   modelOffset: Cesium.Cartesian3,
-  model: SectorModel,
+  model: CadModel,
   scene: Cesium.Scene
 ): Promise<[Cesium.BoundingSphere, SectorModelTransformation]> {
-  const [fetchSectorMetadata, fetchSector, fetchSectorQuads, fetchCtmFile] = model;
+  const {fetchSectorMetadata, fetchSectorDetailed, fetchSectorSimple, fetchCtm} = model;
   // Fetch metadata
   const [sectorScene, modelTransformation] = await fetchSectorMetadata();
   const sectorRoot = sectorScene.root;
-  const parseSectorData = await createParser(sectorRoot, fetchSector, fetchCtmFile);
+  const parseSectorData = await createParser(sectorRoot, fetchSectorDetailed, fetchCtm);
   const parseSectorQuadsData = await createQuadsParser();
 
   // Position model to have origin at given position, and convert from left-handed Y up to
@@ -65,7 +65,7 @@ export async function initializeCesiumSectorScene(
   );
 
   const getDetailed = async (sectorId: number) => {
-    const data = await fetchSector(sectorId);
+    const data = await fetchSectorDetailed(sectorId);
     return parseSectorData(sectorId, data);
   };
 
@@ -76,7 +76,7 @@ export async function initializeCesiumSectorScene(
 
   // TODO 2019-11-12 larsmoa: Add support for low detail geometry to cesium.
   // const [fetchSectorQuadsCached, parseSectorQuadsDataCached] = createCache<number, SectorQuads>(
-  //   fetchSectorQuads,
+  //   fetchSectorSimple,
   //   parseSectorQuadsData
   // );
   // const activateSimpleSectors = initializeSectorLoader(

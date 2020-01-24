@@ -4,6 +4,7 @@
 
 import * as THREE from 'three';
 import * as reveal from '@cognite/reveal';
+import { CadNode } from '@cognite/reveal/threejs';
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
 import {
@@ -15,17 +16,17 @@ import {
 
 CameraControls.install({ THREE });
 
-async function initializeModel(
-  sectorModel: reveal.SectorModel,
+function initializeModel(
+  sectorModel: reveal.CadModel,
   canvas: HTMLCanvasElement,
   gui: dat.GUI
-): Promise<[THREE.WebGLRenderer, THREE.Scene, reveal.RootSectorNode, RenderOptions]> {
+): [THREE.WebGLRenderer, THREE.Scene, CadNode, RenderOptions] {
   const renderer = new THREE.WebGLRenderer({ canvas });
   renderer.setClearColor('#444');
   renderer.setSize(canvas.width, canvas.height);
 
   const scene = new THREE.Scene();
-  const sectorModelNode = await reveal.createThreeJsSectorNode(sectorModel);
+  const sectorModelNode = new CadNode(sectorModel);
   scene.add(sectorModelNode);
 
   const options = createRendererDebugWidget(renderer, scene, gui);
@@ -48,21 +49,15 @@ async function main() {
   const rightCanvas = document.getElementById('rightCanvas')! as HTMLCanvasElement;
 
   // Initialize models
-  const model1 = reveal.createLocalSectorModel(modelUrl1);
-  const model2 = reveal.createLocalSectorModel(modelUrl2);
-  const model1Promise = initializeModel(model1, leftCanvas, gui1);
-  const model2Promise = initializeModel(model2, rightCanvas, gui2);
-  const [renderer1, scene1, modelNode1, options1] = await model1Promise;
-  const [renderer2, scene2, modelNode2, options2] = await model2Promise;
+  const model1 = await reveal.createLocalCadModel(modelUrl1);
+  const model2 = await reveal.createLocalCadModel(modelUrl2);
+  const [renderer1, scene1, modelNode1, options1] = initializeModel(model1, leftCanvas, gui1);
+  const [renderer2, scene2, modelNode2, options2] = initializeModel(model2, rightCanvas, gui2);
 
-  const fetchMetadata: reveal.internal.FetchSectorMetadataDelegate = model1[0];
-  const [modelScene, modelTransform] = await fetchMetadata();
-  const { position, target, near, far } = reveal.internal.suggestCameraConfig(modelScene.root);
+  const { position, target, near, far } = modelNode1.suggestCameraConfig();
   const camera = new THREE.PerspectiveCamera(75, leftCanvas.width / leftCanvas.height, near, far);
   const controls = new CameraControls(camera, leftCanvas);
-  const threePos = reveal.toThreeVector3(new THREE.Vector3(), position, modelNode1.modelTransformation);
-  const threeTarget = reveal.toThreeVector3(new THREE.Vector3(), target, modelNode2.modelTransformation);
-  controls.setLookAt(threePos.x, threePos.y, threePos.z, threeTarget.x, threeTarget.y, threeTarget.z);
+  controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
 

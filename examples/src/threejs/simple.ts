@@ -3,8 +3,9 @@
  */
 
 import * as THREE from 'three';
-import * as reveal from '@cognite/reveal';
 import CameraControls from 'camera-controls';
+import * as reveal from '@cognite/reveal';
+import { CadNode } from '@cognite/reveal/threejs';
 
 CameraControls.install({ THREE });
 
@@ -12,31 +13,27 @@ async function main() {
   const modelUrl = new URL(location.href).searchParams.get('model') || '/primitives';
 
   const scene = new THREE.Scene();
-  const sectorModel = reveal.createLocalSectorModel(modelUrl);
-  const sectorModelNode = await reveal.createThreeJsSectorNode(sectorModel);
-  scene.add(sectorModelNode);
+  const cadModel = await reveal.createLocalCadModel(modelUrl);
+  const cadNode = new CadNode(cadModel);
 
-  const fetchMetadata: reveal.internal.FetchSectorMetadataDelegate = sectorModel[0];
-  const [modelScene, modelTransform] = await fetchMetadata();
+  scene.add(cadNode);
 
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#444');
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const { position, target, near, far } = reveal.internal.suggestCameraConfig(modelScene.root);
+  const { position, target, near, far } = cadNode.suggestCameraConfig();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
-  const threePos = reveal.toThreeVector3(new THREE.Vector3(), position, sectorModelNode.modelTransformation);
-  const threeTarget = reveal.toThreeVector3(new THREE.Vector3(), target, sectorModelNode.modelTransformation);
-  controls.setLookAt(threePos.x, threePos.y, threePos.z, threeTarget.x, threeTarget.y, threeTarget.z);
+  controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
   const clock = new THREE.Clock();
   const render = async () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
-    const sectorsNeedUpdate = await sectorModelNode.update(camera);
+    const sectorsNeedUpdate = await cadNode.update(camera);
 
     if (controlsNeedUpdate || sectorsNeedUpdate) {
       renderer.render(scene, camera);

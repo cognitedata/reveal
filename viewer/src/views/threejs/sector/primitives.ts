@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { PrimitiveAttributes } from '../../../../workers/types/parser.types';
+import { PrimitiveAttributes } from '../../../workers/types/parser.types';
 import { Sector } from '../../../models/sector/types';
 import { TypedArray } from 'three';
 import {
