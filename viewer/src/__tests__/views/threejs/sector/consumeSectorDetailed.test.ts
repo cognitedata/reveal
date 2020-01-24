@@ -2,17 +2,11 @@
  * Copyright 2019 Cognite AS
  */
 
-import {
-  SectorMetadata,
-  TriangleMesh,
-  InstancedMeshFile,
-  InstancedMesh,
-  Sector
-} from '../../../../models/sector/types';
+import { SectorMetadata, TriangleMesh, InstancedMeshFile, InstancedMesh, Sector } from '../../../../models/cad/types';
 import { Box3 } from '../../../../utils/Box3';
 import { vec3 } from 'gl-matrix';
-import { consumeSectorDetailed } from '../../../../views/threejs/sector/consumeSectorDetailed';
-import { SectorNode } from '../../../../views/threejs/sector/SectorNode';
+import { consumeSectorDetailed } from '../../../../views/threejs/cad/consumeSectorDetailed';
+import { SectorNode } from '../../../../views/threejs/cad/SectorNode';
 import 'jest-extended';
 import { createEmptySector } from '../../../models/sector/emptySector';
 

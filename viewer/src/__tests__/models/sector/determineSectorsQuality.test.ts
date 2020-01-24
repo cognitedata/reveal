@@ -1,9 +1,9 @@
 /*!
  * Copyright 2019 Cognite AS
  */
-import { SectorMetadata } from '../../../models/sector/types';
+import { SectorMetadata } from '../../../models/cad/types';
 import { Box3 } from '../../../utils/Box3';
-import { determineSectorsQuality } from '../../../models/sector/determineSectors';
+import { determineSectorsQuality } from '../../../models/cad/determineSectors';
 import { expectSetEqual } from '../../expects';
 import { traverseDepthFirst } from '../../../utils/traversal';
 

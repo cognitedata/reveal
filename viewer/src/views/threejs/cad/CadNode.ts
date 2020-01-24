@@ -2,23 +2,14 @@
  * Copyright 2019 Cognite AS
  */
 
-import { createParser, createQuadsParser } from '../../../models/sector/parseSectorData';
-import { initializeSectorLoader, SectorActivator } from '../../../models/sector/initializeSectorLoader';
-import { createSimpleCache } from '../../../models/createCache';
-import { toThreeMatrix4, fromThreeVector3, fromThreeMatrix, toThreeVector3 } from '../utilities';
-import { buildScene } from './buildScene';
-import { consumeSectorDetailed } from './consumeSectorDetailed';
-import { discardSector } from './discardSector';
-import { consumeSectorSimple } from './consumeSectorSimple';
-import { CadModel } from '../../../models/sector/CadModel';
+import { SectorActivator } from '../../../models/cad/initializeSectorLoader';
+import { fromThreeVector3, fromThreeMatrix, toThreeVector3 } from '../utilities';
+import { CadModel } from '../../../models/cad/CadModel';
 import { SectorNode } from './SectorNode';
 import * as THREE from 'three';
-import { ConsumeSectorDelegate, DiscardSectorDelegate } from '../../../models/sector/delegates';
-import { Sector, SectorQuads } from '../../../models/sector/types';
-import { findSectorMetadata } from '../../../models/sector/findSectorMetadata';
-import { SectorModelTransformation, SectorMetadata, SectorScene } from '../../../models/sector/types';
+import { SectorModelTransformation, SectorScene } from '../../../models/cad/types';
 import { vec3, mat4 } from 'gl-matrix';
-import { determineSectors } from '../../../models/sector/determineSectors';
+import { determineSectors } from '../../../models/cad/determineSectors';
 import { createThreeJsSectorNode } from './createThreeJsSectorNode';
 import { suggestCameraConfig } from '../../../utils/cameraUtils';
 
@@ -47,16 +38,7 @@ export class CadNode extends THREE.Object3D {
 
   constructor(model: CadModel) {
     super();
-    const {
-      fetchSectorMetadata,
-      fetchSectorDetailed,
-      fetchSectorSimple,
-      fetchCtm,
-      scene,
-      modelTransformation,
-      parseSimple,
-      parseDetailed
-    } = model;
+    const { modelTransformation } = model;
 
     const { rootSector, simpleActivator, detailedActivator } = createThreeJsSectorNode(model);
 
@@ -76,9 +58,6 @@ export class CadNode extends THREE.Object3D {
     let needsRedraw = false;
     const { cameraPosition, cameraModelMatrix, projectionMatrix } = updateVars;
     if (!this.previousCameraMatrix.equals(camera.matrixWorld)) {
-      // Need to trigger reload of data
-      // camera.updateMatrix();
-      // camera.updateMatrixWorld();
       camera.matrixWorldInverse.getInverse(camera.matrixWorld);
 
       fromThreeVector3(cameraPosition, camera.position, this.modelTransformation);

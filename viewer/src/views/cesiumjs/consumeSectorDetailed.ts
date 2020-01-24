@@ -2,7 +2,7 @@
  * Copyright 2019 Cognite AS
  */
 
-import { SectorMetadata, Sector, SectorModelTransformation } from '../../models/sector/types';
+import { SectorMetadata, Sector, SectorModelTransformation } from '../../models/cad/types';
 import * as Cesium from 'cesium';
 import { toCesiumMatrix4 } from './utilities';
 

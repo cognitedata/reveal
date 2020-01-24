@@ -2,8 +2,8 @@
  * Copyright 2019 Cognite AS
  */
 
-import { Sector } from '../../../../models/sector/types';
-import { createPrimitives } from '../../../../views/threejs/sector/primitives';
+import { Sector } from '../../../../models/cad/types';
+import { createPrimitives } from '../../../../views/threejs/cad/primitives';
 import { PrimitiveAttributes } from '../../../../workers/types/parser.types';
 import { createEmptySector } from '../../../models/sector/emptySector';
 

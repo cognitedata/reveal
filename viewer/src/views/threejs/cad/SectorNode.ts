@@ -3,11 +3,11 @@
  */
 
 import * as THREE from 'three';
-import { SectorModelTransformation, SectorMetadata, SectorScene } from '../../../models/sector/types';
+import { SectorModelTransformation, SectorMetadata, SectorScene } from '../../../models/cad/types';
 import { vec3, mat4 } from 'gl-matrix';
 import { fromThreeVector3, fromThreeMatrix } from '../utilities';
-import { determineSectors } from '../../../models/sector/determineSectors';
-import { SectorActivator } from '../../../models/sector/initializeSectorLoader';
+import { determineSectors } from '../../../models/cad/determineSectors';
+import { SectorActivator } from '../../../models/cad/initializeSectorLoader';
 
 export class SectorNode extends THREE.Group {
   public readonly sectorId: number;

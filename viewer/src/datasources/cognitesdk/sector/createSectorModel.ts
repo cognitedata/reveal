@@ -2,25 +2,23 @@
  * Copyright 2019 Cognite AS
  */
 
-import { FetchSectorMetadataDelegate, FetchSectorDelegate, FetchCtmDelegate } from '../../../models/sector/delegates';
+import { FetchSectorMetadataDelegate, FetchSectorDelegate, FetchCtmDelegate } from '../../../models/cad/delegates';
 import { CogniteClient, RevealSector3D, Versioned3DFile } from '@cognite/sdk';
 import { buildSectorMetadata } from './buildSectorMetadata';
 import { constructMatrixFromRotation } from '../../constructMatrixFromRotation';
 import { getNewestVersionedFile } from '../utilities';
-import { SectorModelTransformation } from '../../../models/sector/types';
+import { SectorModelTransformation } from '../../../models/cad/types';
 import { SectorModel } from '../../SectorModel';
 import { mat4 } from 'gl-matrix';
-import { LocalSimpleSectorMetadataResponse } from '../../local/sector/loadLocalSimpleSectorMetadata';
+import { LocalSimpleCadMetadataResponse } from '../../local/cad/loadLocalSimpleSectorMetadata';
 
 export function createSectorModel(sdk: CogniteClient, modelId: number, revisionId: number): SectorModel {
   const metadataPromise = loadSectorMetadata(sdk, modelId, revisionId);
 
   // TODO replace this with actually fetching metadata about simple sectors
-  const simpleMetadataPromise: Promise<
-    Map<number, LocalSimpleSectorMetadataResponse>> =
-    new Promise(resolve => {
-      throw new Error("Not implemented");
-    });
+  const simpleMetadataPromise: Promise<Map<number, LocalSimpleCadMetadataResponse>> = new Promise(resolve => {
+    throw new Error('Not implemented');
+  });
 
   const rotationPromise = loadRotation(sdk, modelId, revisionId);
   const sectorFilemapPromise = (async () => {
