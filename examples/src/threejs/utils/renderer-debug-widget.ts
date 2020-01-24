@@ -7,7 +7,7 @@ import * as reveal from '@cognite/reveal';
 import dat from 'dat.gui';
 import { WantedSectors } from '@cognite/reveal/internal';
 import { SectorMetadata } from '@cognite/reveal/models/cad/types';
-import { CadLoadingStyle } from '@cognite/reveal/models/cad/CadLoadingStyle';
+import { CadLoadingHints } from '@cognite/reveal';
 
 export type RenderFilter = {
   renderQuads: boolean;
@@ -147,7 +147,7 @@ export function createRendererDebugWidget(
     .add(loadOverride, 'maxQuadSize', 0, 0.05, 0.0001)
     .name('Max quad size %')
     .onFinishChange(() => {
-      const override: CadLoadingStyle = {
+      const override: CadLoadingHints = {
         maxQuadSize: loadOverride.maxQuadSize > 0.0 ? loadOverride.maxQuadSize : undefined
       };
       cadNode.loadingHints = {

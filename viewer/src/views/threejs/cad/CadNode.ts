@@ -5,16 +5,17 @@
 import * as THREE from 'three';
 import { vec3, mat4 } from 'gl-matrix';
 
-import { SectorNode } from './SectorNode';
 import { SectorModelTransformation, SectorScene, SectorMetadata, WantedSectors } from '../../../models/cad/types';
-import { fromThreeVector3, fromThreeMatrix, toThreeMatrix4, toThreeJsBox3, toThreeVector3 } from '../utilities';
+import { defaultDetermineSectors } from '../../../models/cad/determineSectors';
 import { SectorActivator } from '../../../models/cad/initializeSectorLoader';
 import { DetermineSectorsDelegate } from '../../../models/cad/delegates';
-import { CadRenderHints } from '../../CadRenderHints';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
-import { CadModel, createThreeJsSectorNode } from '../../..';
+import { CadModel } from '../../../models/cad/CadModel';
+import { CadRenderHints } from '../../CadRenderHints';
 import { suggestCameraConfig } from '../../../utils/cameraUtils';
-import { defaultDetermineSectors } from '../../../models/cad/determineSectors';
+import { createThreeJsSectorNode } from './createThreeJsSectorNode';
+import { SectorNode } from './SectorNode';
+import { fromThreeVector3, fromThreeMatrix, toThreeJsBox3, toThreeVector3 } from '../utilities';
 
 export interface SuggestedCameraConfig {
   position: THREE.Vector3;
