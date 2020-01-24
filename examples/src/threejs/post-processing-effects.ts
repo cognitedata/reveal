@@ -66,8 +66,15 @@ class RevealNormalPass extends Pass {
     const previousClearAlpha = renderer.getClearAlpha();
     const previousClearColor = renderer.getClearColor().clone();
 
-    renderer.setClearColor(new THREE.Color(0x7777ff), 1.0);
+    this.scene.children[0].traverseVisible(object => {
+      console.log(object, object instanceof THREE.Mesh);
+      if (object instanceof THREE.Mesh && object.material != null) {
+        console.log("WOOP");
+        //object.material = object.pickMaterial;
+      }
+    });
 
+    renderer.setClearColor(new THREE.Color(0x7777ff), 1.0);
     renderer.setRenderTarget(this.renderToScreen ? null : renderTarget);
     renderer.clear(true, false, false);
     renderer.render(scene, camera);
@@ -132,12 +139,9 @@ async function main() {
     const modelNeedsUpdate = await cadModelNode.update(camera);
     const needsUpdate = controlsNeedUpdate || modelNeedsUpdate;
 
-    // renderer.render(scene, camera);
-    composer.render(clock.getDelta());
-
-    // if (needsUpdate) {
-    // effectComposer.render(delta);
-    // }
+    if (needsUpdate) {
+      composer.render(delta);
+    }
     requestAnimationFrame(render);
   };
   render();
