@@ -6,12 +6,76 @@ import * as THREE from 'three';
 import * as reveal from '@cognite/reveal';
 import { CadNode } from '@cognite/reveal/threejs';
 import CameraControls from 'camera-controls';
-//import { NormalPass, DepthEffect, BlendFunction, EffectPass, SSAOEffect } from 'postprocessing';
 
 const postprocessing = require('postprocessing');
-const { NormalPass, DepthEffect, BlendFunction, EffectPass, SSAOEffect }  = postprocessing;
+const {
+  BloomEffect,
+  EffectComposer,
+  NormalPass,
+  DepthEffect,
+  RenderPass,
+  BlendFunction,
+  EffectPass,
+  Pass,
+  SSAOEffect
+} = postprocessing;
 
 CameraControls.install({ THREE });
+
+class RevealNormalPass extends Pass {
+  renderTarget: THREE.WebGLRenderTarget;
+  scene: THREE.Scene;
+  camera: THREE.Camera;
+  renderToScreen: boolean;
+  private _renderPass: any; // RenderPass
+
+  constructor(
+    scene: THREE.Scene,
+    camera: THREE.Camera,
+    params?: {
+      renderTarget?: THREE.WebGLRenderTarget;
+    }
+  ) {
+    super('RevealNormalPass');
+
+    // @ts-ignore
+    this.needsSwap = false;
+
+    this.renderToScreen = false;
+
+    this.scene = scene;
+    this.camera = camera;
+
+    if (!params || !params.renderTarget) {
+      this.renderTarget = new THREE.WebGLRenderTarget(1920, 1920, {
+        minFilter: THREE.LinearFilter,
+        magFilter: THREE.LinearFilter,
+        format: THREE.RGBFormat,
+        stencilBuffer: false
+      });
+
+      this.renderTarget.texture.name = 'RevealNormalPass.Target';
+    } else {
+      this.renderTarget = params.renderTarget;
+    }
+  }
+
+  render(renderer: THREE.WebGLRenderer) {
+    const { renderTarget, scene, camera } = this;
+
+    const previousClearAlpha = renderer.getClearAlpha();
+    const previousClearColor = renderer.getClearColor().clone();
+
+    renderer.setClearColor(new THREE.Color(0x7777ff), 1.0);
+
+    renderer.setRenderTarget(this.renderToScreen ? null : renderTarget);
+    renderer.clear(true, false, false);
+    renderer.render(scene, camera);
+
+    renderer.setClearColor(previousClearColor);
+    renderer.setClearAlpha(previousClearAlpha);
+  }
+}
 
 async function main() {
   const scene = new THREE.Scene();
@@ -26,17 +90,15 @@ async function main() {
   scene.add(cadModelNode);
 
   const controls = new CameraControls(camera, renderer.domElement);
-  const pos = new THREE.Vector3(100, 100, 100);
-  const target = new THREE.Vector3(0, 0, 0);
+  const pos = new THREE.Vector3(10, 10, 10);
+  const target = new THREE.Vector3(5, 5, 5);
   controls.setLookAt(pos.x, pos.y, pos.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
 
-  const normalPass = new NormalPass(scene, camera);
-
-  const depthEffect = new DepthEffect({
-    blendFunction: BlendFunction.SKIP
-  });
+  const renderPass = new RenderPass(scene, camera);
+  const normalPass = new RevealNormalPass(scene, camera);
+  const composer = new EffectComposer(renderer);
 
   const ssaoEffect = new SSAOEffect(camera, normalPass.renderTarget.texture, {
     blendFunction: BlendFunction.MULTIPLY,
@@ -51,21 +113,17 @@ async function main() {
     scale: 1.0,
     bias: 0.05
   });
-
-  const effectPass = new EffectPass(camera, ssaoEffect, depthEffect);
-  // renderPass.renderToScreen = false;
+  const effectPass = new EffectPass(camera, ssaoEffect);
   effectPass.renderToScreen = true;
 
-  const effectComposer = new postprocessing.EffectComposer(renderer);
-  effectComposer.addPass(normalPass);
-  effectComposer.addPass(effectPass);
+  composer.addPass(renderPass);
+  composer.addPass(normalPass);
 
-  // See https://vanruesc.github.io/postprocessing/public/docs/identifiers.html
-  //const effectPass = new postprocessing.EffectPass(camera, smaaEffect, ssaoEffect, depthEffect);
-  //effectPass.renderToScreen = true;
-  //const effectComposer = new postprocessing.EffectComposer(renderer);
-  //effectComposer.addPass(new postprocessing.RenderPass(scene, camera));
-  //effectComposer.addPass(effectPass);
+  if (true) {
+    normalPass.renderToScreen = true;
+  } else {
+    composer.addPass(effectPass);
+  }
 
   const clock = new THREE.Clock();
   const render = async () => {
@@ -74,9 +132,12 @@ async function main() {
     const modelNeedsUpdate = await cadModelNode.update(camera);
     const needsUpdate = controlsNeedUpdate || modelNeedsUpdate;
 
-    if (needsUpdate) {
-      effectComposer.render(delta);
-    }
+    // renderer.render(scene, camera);
+    composer.render(clock.getDelta());
+
+    // if (needsUpdate) {
+    // effectComposer.render(delta);
+    // }
     requestAnimationFrame(render);
   };
   render();
