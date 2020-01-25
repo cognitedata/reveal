@@ -1,5 +1,5 @@
 /*!
- * Copyright 2019 Cognite AS
+ * Copyright 2020 Cognite AS
  */
 
 type RequestDelegate<T_ID, T> = (id: T_ID) => Promise<T>;
