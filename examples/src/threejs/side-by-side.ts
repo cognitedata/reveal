@@ -13,11 +13,12 @@ import {
   RenderMode,
   RenderOptions
 } from './utils/renderer-debug-widget';
+import { DetermineSectorsInput } from '@cognite/reveal/models/cad/types';
 
 CameraControls.install({ THREE });
 
 function initializeModel(
-  sectorModel: reveal.CadModel,
+  cadModel: reveal.CadModel,
   canvas: HTMLCanvasElement,
   gui: dat.GUI
 ): [THREE.WebGLRenderer, THREE.Scene, CadNode, RenderOptions] {
@@ -25,18 +26,29 @@ function initializeModel(
   renderer.setClearColor('#444');
   renderer.setSize(canvas.width, canvas.height);
 
+  const sectorScene = cadModel.scene;
   const scene = new THREE.Scene();
-  const sectorModelNode = new CadNode(sectorModel);
+  const sectorModelNode = new CadNode(cadModel);
   scene.add(sectorModelNode);
+  const options = createRendererDebugWidget(sectorScene.root, renderer, sectorModelNode, gui);
 
-  const options = createRendererDebugWidget(renderer, scene, gui);
+  // Override determineSectors of the node to obey override in RenderOptions
+  const defaultDetermineSectors = sectorModelNode.determineSectors;
+  function determineSectors(params: DetermineSectorsInput) {
+    if (options.overrideWantedSectors) {
+      return Promise.resolve(options.overrideWantedSectors);
+    }
+    return defaultDetermineSectors(params);
+  }
+  sectorModelNode.determineSectors = determineSectors;
 
   return [renderer, scene, sectorModelNode, options];
 }
 
 async function main() {
-  const modelUrl1 = new URL(location.href).searchParams.get('model1') || '/primitives';
-  const modelUrl2 = new URL(location.href).searchParams.get('model2') || modelUrl1;
+  const params = new URL(location.href).searchParams;
+  const modelUrl1 = params.get('model1') || '/primitives';
+  const modelUrl2 = params.get('model2') || modelUrl1;
 
   // Page layout
   const gui1 = new dat.GUI({ autoPlace: false, width: 300 });

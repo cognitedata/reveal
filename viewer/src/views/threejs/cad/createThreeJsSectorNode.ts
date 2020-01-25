@@ -2,31 +2,22 @@
  * Copyright 2019 Cognite AS
  */
 
-import { createParser, createQuadsParser } from '../../../models/cad/parseSectorData';
 import { Sector, SectorQuads } from '../../../models/cad/types';
 import { ConsumeSectorDelegate, DiscardSectorDelegate } from '../../../models/cad/delegates';
 import { initializeSectorLoader } from '../../../models/cad/initializeSectorLoader';
 import { SectorNode, RootSectorNodeData } from './SectorNode';
 import { createSimpleCache } from '../../../models/createCache';
 import { CadModel } from '../../../models/cad/CadModel';
-import { toThreeMatrix4 } from '../utilities';
 import { buildScene } from './buildScene';
 import { findSectorMetadata } from '../../../models/cad/findSectorMetadata';
 import { consumeSectorDetailed } from './consumeSectorDetailed';
 import { discardSector } from './discardSector';
 import { consumeSectorSimple } from './consumeSectorSimple';
+import { defaultDetermineSectors } from '../../../models/cad/determineSectors';
+import { toThreeMatrix4 } from '../utilities';
 
 export function createThreeJsSectorNode(model: CadModel): RootSectorNodeData {
-  const {
-    fetchSectorMetadata,
-    fetchSectorDetailed,
-    fetchSectorSimple,
-    fetchCtm,
-    scene,
-    modelTransformation,
-    parseSimple,
-    parseDetailed
-  } = model;
+  const { fetchSectorDetailed, fetchSectorSimple, scene, modelTransformation, parseSimple, parseDetailed } = model;
   // Fetch metadata
   const sectorNodeMap = new Map<number, SectorNode>(); // Populated by buildScene() below
 
@@ -68,7 +59,6 @@ export function createThreeJsSectorNode(model: CadModel): RootSectorNodeData {
 
   const getDetailedCache = createSimpleCache(getDetailed);
   const getSimpleCache = createSimpleCache(getSimple);
-
   const detailedActivator = initializeSectorLoader(getDetailedCache.request, discard, consumeDetailed);
   const simpleActivator = initializeSectorLoader(getSimpleCache.request, discard, consumeSimple);
   const rootSector = new SectorNode(0, '/');

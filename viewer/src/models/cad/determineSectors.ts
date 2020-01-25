@@ -3,20 +3,13 @@
  */
 
 import * as THREE from 'three';
-import { WantedSectors, SectorMetadata, SectorModelTransformation, SectorScene } from './types';
+import { WantedSectors, SectorMetadata, SectorScene, DetermineSectorsInput } from './types';
 import { traverseDepthFirst, traverseUpwards } from '../../utils/traversal';
 import { toThreeMatrix4, toThreeVector3 } from '../../views/threejs/utilities';
-import { mat4, vec3 } from 'gl-matrix';
+import { mat4 } from 'gl-matrix';
+import { CadLoadingHints, defaultLoadingHints as defaultCadLoadingHints } from './CadLoadingHints';
 
 const degToRadFactor = Math.PI / 180;
-
-interface DetermineSectorsInput {
-  readonly scene: SectorScene;
-  readonly cameraFov: number;
-  readonly cameraPosition: vec3;
-  readonly cameraModelMatrix: mat4;
-  readonly projectionMatrix: mat4;
-}
 
 const determineSectorsPreallocatedVars = {
   invertCameraModelMatrix: mat4.create(),
@@ -27,8 +20,10 @@ const determineSectorsPreallocatedVars = {
   max: new THREE.Vector3()
 };
 
-export async function determineSectors(input: DetermineSectorsInput): Promise<WantedSectors> {
-  const { scene, cameraPosition, cameraModelMatrix, projectionMatrix, cameraFov } = input;
+export async function defaultDetermineSectors(params: DetermineSectorsInput): Promise<WantedSectors> {
+  const hints = { ...defaultCadLoadingHints, ...(params.loadingHints || {}) };
+
+  const { scene, cameraPosition, cameraModelMatrix, projectionMatrix, cameraFov } = params;
   const { invertCameraModelMatrix, frustumMatrix, frustum, bbox, min, max } = determineSectorsPreallocatedVars;
 
   const sectors: SectorMetadata[] = [];
@@ -64,7 +59,7 @@ export async function determineSectors(input: DetermineSectorsInput): Promise<Wa
     }
 
     const screenHeight = 2.0 * distanceToCamera(sector) * Math.tan((cameraFov / 2) * degToRadFactor);
-    const largestAllowedQuadSize = 0.01 * screenHeight; // no larger than x percent of the height
+    const largestAllowedQuadSize = hints.maxQuadSize * screenHeight; // no larger than x percent of the height
     const quadSize = (() => {
       if (!sector.simple) {
         // Making the quad infinite in size means we will always use the detailed version instead

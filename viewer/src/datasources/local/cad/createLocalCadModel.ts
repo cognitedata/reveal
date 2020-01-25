@@ -8,11 +8,10 @@ import { loadLocalCadMetadata } from './loadLocalCadMetadata';
 import { loadLocalSimpleCadMetadata } from './loadLocalSimpleSectorMetadata';
 import { DefaultSectorRotationMatrix, DefaultInverseSectorRotationMatrix } from '../../constructMatrixFromRotation';
 import { loadLocalFileMap } from './loadLocalFileMap';
-import { buildSectorMetadata } from '../../cognitesdk/sector/buildSectorMetadata';
+import { buildSectorMetadata } from '../../cognitesdk/cad/buildSectorMetadata';
 import { getNewestVersionedFile } from '../../cognitesdk/utilities';
 // TODO rename folder from sector to cad
 import { CadModel } from '../../../models/cad/CadModel';
-import { mat4 } from 'gl-matrix';
 
 // TODO rename file from sector to cad
 export async function createLocalCadModel(baseUrl: string): Promise<CadModel> {
