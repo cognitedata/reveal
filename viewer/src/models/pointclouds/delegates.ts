@@ -1,5 +1,5 @@
 /*!
- * Copyright 2019 Cognite AS
+ * Copyright 2020 Cognite AS
  */
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';

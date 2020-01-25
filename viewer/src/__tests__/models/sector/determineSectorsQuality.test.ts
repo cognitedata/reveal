@@ -1,5 +1,5 @@
 /*!
- * Copyright 2019 Cognite AS
+ * Copyright 2020 Cognite AS
  */
 import { SectorMetadata } from '../../../models/cad/types';
 import { Box3 } from '../../../utils/Box3';

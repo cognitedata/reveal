@@ -1,5 +1,5 @@
 /*!
- * Copyright 2019 Cognite AS
+ * Copyright 2020 Cognite AS
  */
 
 import { SectorQuads, SectorMetadata } from '../../../../models/cad/types';
