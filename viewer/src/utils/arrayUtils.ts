@@ -1,5 +1,5 @@
 /*!
- * Copyright 2019 Cognite AS
+ * Copyright 2020 Cognite AS
  */
 
 export function createOffsets(array: Float64Array): Float64Array {

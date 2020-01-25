@@ -1,5 +1,5 @@
 /*!
- * Copyright 2019 Cognite AS
+ * Copyright 2020 Cognite AS
  */
 
 import { vec3, mat4 } from 'gl-matrix';

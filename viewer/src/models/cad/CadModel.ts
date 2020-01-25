@@ -1,5 +1,5 @@
 /*!
- * Copyright 2019 Cognite AS
+ * Copyright 2020 Cognite AS
  */
 
 import { FetchSectorMetadataDelegate, FetchSectorDelegate, FetchCtmDelegate, ParseSectorDelegate } from './delegates';

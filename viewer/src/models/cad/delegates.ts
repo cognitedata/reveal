@@ -1,5 +1,5 @@
 /*!
- * Copyright 2019 Cognite AS
+ * Copyright 2020 Cognite AS
  */
 
 import { SectorModelTransformation, SectorScene, WantedSectors, DetermineSectorsInput } from './types';

@@ -1,5 +1,5 @@
 /*!
- * Copyright 2019 Cognite AS
+ * Copyright 2020 Cognite AS
  */
 
 import { RevealSector3D, BoundingBox3D, Versioned3DFile } from '@cognite/sdk';
