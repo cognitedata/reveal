@@ -95,7 +95,7 @@ void main() {
 
   if (intersectionPoint.z <= 0.0 ||
       intersectionPoint.z > height ||
-      theta > v_angle + v_arcAngle || 
+      theta > v_angle + v_arcAngle ||
       isSliced(p)
     ) {
       // Missed the first point, check the other point
@@ -107,7 +107,7 @@ void main() {
       if (theta < v_angle) theta += 2.0 * PI;
       if (intersectionPoint.z <= 0.0 ||
         intersectionPoint.z > height ||
-        theta > v_angle + v_arcAngle || 
+        theta > v_angle + v_arcAngle ||
         isSliced(p)
       ) {
         // Missed the other point too
@@ -138,7 +138,7 @@ void main() {
       }
   #endif
 
-    
+
     updateFragmentColor(v_color, v_treeIndex, normal);
     updateFragmentDepth(p, projectionMatrix);
 }

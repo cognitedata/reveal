@@ -93,7 +93,7 @@ void main() {
 
     if (dot(intersectionPoint - planeACenter, planeANormal) > 0.0 ||
         dot(intersectionPoint - planeBCenter, planeBNormal) > 0.0 ||
-        theta > v_arcAngle + v_angle || 
+        theta > v_arcAngle + v_angle ||
         isSliced(p)
        ) {
         // Missed the first point, check the other point
@@ -119,5 +119,6 @@ void main() {
 #endif
 
     updateFragmentColor(v_color, v_treeIndex, normal);
+
     updateFragmentDepth(p, projectionMatrix);
 }

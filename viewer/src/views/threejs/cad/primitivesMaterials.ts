@@ -10,7 +10,12 @@ export const boxMaterial = new THREE.ShaderMaterial({
   ...shaderDefines,
   extensions: { fragDepth: true },
   vertexShader: sectorShaders.boxPrimitive.vertex,
-  fragmentShader: sectorShaders.boxPrimitive.fragment
+  fragmentShader: sectorShaders.boxPrimitive.fragment,
+  uniforms: {
+    renderNormals: {
+      value: 0.0
+    }
+  }
 });
 
 export const circleMaterial = new THREE.ShaderMaterial({
@@ -21,14 +26,24 @@ export const circleMaterial = new THREE.ShaderMaterial({
   fragmentShader: sectorShaders.circlePrimitive.fragment,
   // TODO double side is not necessary for all,
   // we should indicate this in the data from Rust
-  side: THREE.DoubleSide
+  side: THREE.DoubleSide,
+  uniforms: {
+    renderNormals: {
+      value: 0.0
+    }
+  }
 });
 
 export const nutsMaterial = new THREE.ShaderMaterial({
   name: 'Primitives (Nuts)',
   ...shaderDefines,
   vertexShader: sectorShaders.nutPrimitive.vertex,
-  fragmentShader: sectorShaders.nutPrimitive.fragment
+  fragmentShader: sectorShaders.nutPrimitive.fragment,
+  uniforms: {
+    renderNormals: {
+      value: 0.0
+    }
+  }
 });
 
 export const quadsMaterial = new THREE.ShaderMaterial({
@@ -36,7 +51,12 @@ export const quadsMaterial = new THREE.ShaderMaterial({
   ...shaderDefines,
   vertexShader: sectorShaders.quadPrimitive.vertex,
   fragmentShader: sectorShaders.quadPrimitive.fragment,
-  side: THREE.DoubleSide
+  side: THREE.DoubleSide,
+  uniforms: {
+    renderNormals: {
+      value: 0.0
+    }
+  }
 });
 
 const generalRingsMaterialTemplate = new THREE.ShaderMaterial({
@@ -45,6 +65,9 @@ const generalRingsMaterialTemplate = new THREE.ShaderMaterial({
   uniforms: {
     inverseModelMatrix: {
       value: new THREE.Matrix4()
+    },
+    renderNormals: {
+      value: 0.0
     }
   },
   extensions: { fragDepth: true },
@@ -65,6 +88,9 @@ const coneMaterialTemplate = new THREE.ShaderMaterial({
   uniforms: {
     inverseModelMatrix: {
       value: new THREE.Matrix4()
+    },
+    renderNormals: {
+      value: 0.0
     }
   },
   extensions: { fragDepth: true },
@@ -82,6 +108,9 @@ const eccentricConesMaterialTemplate = new THREE.ShaderMaterial({
   uniforms: {
     inverseModelMatrix: {
       value: new THREE.Matrix4()
+    },
+    renderNormals: {
+      value: 0.0
     }
   },
   extensions: { fragDepth: true },
@@ -99,6 +128,9 @@ const ellipsoidSegmentsMaterialTemplate = new THREE.ShaderMaterial({
   uniforms: {
     inverseModelMatrix: {
       value: new THREE.Matrix4()
+    },
+    renderNormals: {
+      value: 0.0
     }
   },
   extensions: { fragDepth: true },
@@ -116,6 +148,9 @@ const generalCylinderMaterialTemplate = new THREE.ShaderMaterial({
   uniforms: {
     inverseModelMatrix: {
       value: new THREE.Matrix4()
+    },
+    renderNormals: {
+      value: 0.0
     }
   },
   extensions: { fragDepth: true },
@@ -133,6 +168,9 @@ const trapeziumsMaterialTemplate = new THREE.ShaderMaterial({
   uniforms: {
     inverseModelMatrix: {
       value: new THREE.Matrix4()
+    },
+    renderNormals: {
+      value: 0.0
     }
   },
   extensions: { fragDepth: true },
@@ -150,6 +188,9 @@ const torusSegmentsMaterialTemplate = new THREE.ShaderMaterial({
   uniforms: {
     inverseModelMatrix: {
       value: new THREE.Matrix4()
+    },
+    renderNormals: {
+      value: 0.0
     }
   },
   extensions: { fragDepth: true },
@@ -169,6 +210,9 @@ const sphericalSegmentsMaterialTemplate = new THREE.ShaderMaterial({
   uniforms: {
     inverseModelMatrix: {
       value: new THREE.Matrix4()
+    },
+    renderNormals: {
+      value: 0.0
     }
   },
   extensions: { fragDepth: true },

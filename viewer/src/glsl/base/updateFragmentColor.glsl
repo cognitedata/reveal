@@ -2,6 +2,12 @@
 #pragma glslify: hsv2rgb = require('../color/hsv2rgb.glsl')
 #pragma glslify: packIntToColor = require('../color/packIntToColor.glsl')
 
+uniform float renderNormals;
+
+vec3 packNormalToRGB( const in vec3 normal ) {
+	return normalize( normal ) * 0.5 + 0.5;
+}
+
 #ifdef COGNITE_COLOR_BY_TREE_INDEX
 
 void updateFragmentColor(vec3 color, float treeIndex, vec3 normal) {
@@ -10,9 +16,14 @@ void updateFragmentColor(vec3 color, float treeIndex, vec3 normal) {
     gl_FragColor = vec4(color * (0.4 + 0.6 * amplitude), 1.0);
 }
 
-#else 
+#else
 
 void updateFragmentColor(vec3 color, float treeIndex, vec3 normal) {
+    if (renderNormals > 0.0) {
+        gl_FragColor = vec4(packNormalToRGB(normal), 1.0);
+        return;
+    }
+
     vec3 hsv = rgb2hsv(color);
     hsv.z = min(0.6 * hsv.z + 0.4, 1.0);
     color = hsv2rgb(hsv);
