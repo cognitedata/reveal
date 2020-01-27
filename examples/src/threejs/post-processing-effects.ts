@@ -8,7 +8,22 @@ import { CadNode, internal } from '@cognite/reveal/threejs';
 import CameraControls from 'camera-controls';
 
 const postprocessing = require('postprocessing');
-const { EffectComposer, RenderPass, BlendFunction, EffectPass, Pass, SSAOEffect, Resizer } = postprocessing;
+const {
+  BloomEffect,
+  EffectComposer,
+  NormalPass,
+  DepthEffect,
+  RenderPass,
+  BlendFunction,
+  EffectPass,
+  Pass,
+  SSAOEffect,
+  Resizer,
+  SMAAImageLoader,
+  SMAAAreaImage,
+  SMAASearchImage,
+  SMAAEffect
+} = postprocessing;
 
 CameraControls.install({ THREE });
 
@@ -100,9 +115,22 @@ class RevealNormalPass extends Pass {
 }
 
 async function main() {
+  const loadingManager = new THREE.LoadingManager();
+  const smaaImageLoader = new SMAAImageLoader(loadingManager);
+
+  const smaaPromise: Promise<any[]> = new Promise(resolve => {
+    smaaImageLoader.load(([s, a]: any[]) => {
+      resolve([s, a]);
+    });
+  });
+
+  const [search, area] = await smaaPromise;
+
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  const renderer = new THREE.WebGLRenderer();
+  const renderer = new THREE.WebGLRenderer({
+    antialias: false
+  });
   renderer.setClearColor('#000000');
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
@@ -122,6 +150,7 @@ async function main() {
   const normalPass = new RevealNormalPass(scene, camera);
   const composer = new EffectComposer(renderer);
 
+  const smaaEffect = new SMAAEffect(search, area);
   const ssaoEffect = new SSAOEffect(camera, normalPass.renderTarget.texture, {
     blendFunction: BlendFunction.MULTIPLY,
     samples: 16,
@@ -135,7 +164,7 @@ async function main() {
     scale: 0.45,
     bias: 0.3
   });
-  const effectPass = new EffectPass(camera, ssaoEffect);
+  const effectPass = new EffectPass(camera, smaaEffect, ssaoEffect);
 
   if (false) {
     normalPass.renderToScreen = true;
