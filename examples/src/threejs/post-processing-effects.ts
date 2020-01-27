@@ -138,7 +138,6 @@ async function main() {
 
   const ssaoEffect = new SSAOEffect(camera, normalPass.renderTarget.texture, {
     blendFunction: BlendFunction.MULTIPLY,
-    //blendFunction: BlendFunction.NORMAL,
     samples: 16,
     rings: 4,
     distanceThreshold: 0.8, // Render up to a distance of ~300 world units
@@ -147,8 +146,7 @@ async function main() {
     rangeFalloff: 0.01,
     luminanceInfluence: 0.8,
     radius: 18.25,
-    //scale: 1.0,
-    scale: 0.3,
+    scale: 0.45,
     bias: 0.3
   });
   const effectPass = new EffectPass(camera, ssaoEffect);
