@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 import * as reveal from '@cognite/reveal';
 import { CadNode, internal } from '@cognite/reveal/threejs';
+import * as dat from 'dat.gui';
 import CameraControls from 'camera-controls';
 
 const postprocessing = require('postprocessing');
@@ -151,19 +152,20 @@ async function main() {
   const composer = new EffectComposer(renderer);
 
   const smaaEffect = new SMAAEffect(search, area);
-  const ssaoEffect = new SSAOEffect(camera, normalPass.renderTarget.texture, {
+  const ssaoParams = {
     blendFunction: BlendFunction.MULTIPLY,
-    samples: 16,
+    samples: 4,
     rings: 4,
     distanceThreshold: 0.8, // Render up to a distance of ~300 world units
-    distanceFalloff: 0.2, // with an additional 20 units of falloff.
-    rangeThreshold: 0.05,
+    distanceFalloff: 0.1, // with an additional 20 units of falloff.
+    rangeThreshold: 0.06,
     rangeFalloff: 0.01,
     luminanceInfluence: 0.8,
-    radius: 18.25,
-    scale: 0.45,
-    bias: 0.3
-  });
+    radius: 6.0,
+    scale: 0.6,
+    bias: 0.2
+  };
+  const ssaoEffect = new SSAOEffect(camera, normalPass.renderTarget.texture);
   const effectPass = new EffectPass(camera, smaaEffect, ssaoEffect);
 
   if (false) {
@@ -178,16 +180,76 @@ async function main() {
     composer.addPass(effectPass);
   }
 
+  let paramsNeedUpdate = false;
+  const gui = new dat.GUI();
+  gui
+    .add(ssaoParams, 'scale')
+    .min(0.0)
+    .max(1.0)
+    .onChange(() => {
+      ssaoEffect.uniforms.get('scale').value = ssaoParams.scale;
+      paramsNeedUpdate = true;
+    });
+  gui
+    .add(ssaoParams, 'bias')
+    .min(0.0)
+    .max(1.0)
+    .onChange(() => {
+      ssaoEffect.uniforms.get('bias').value = ssaoParams.bias;
+      paramsNeedUpdate = true;
+    });
+  gui
+    .add(ssaoParams, 'radius')
+    .min(0.0)
+    .max(30.1)
+    .onChange(() => {
+      ssaoEffect.radius = ssaoParams.radius;
+      paramsNeedUpdate = true;
+    });
+  gui
+    .add(ssaoParams, 'distanceThreshold')
+    .min(0.0)
+    .max(1.0)
+    .onChange(() => {
+      ssaoEffect.setDistanceCutoff(ssaoParams.distanceThreshold, ssaoParams.distanceFalloff);
+      paramsNeedUpdate = true;
+    });
+  gui
+    .add(ssaoParams, 'distanceFalloff')
+    .min(0.0)
+    .max(0.1)
+    .onChange(() => {
+      ssaoEffect.setDistanceCutoff(ssaoParams.distanceThreshold, ssaoParams.distanceFalloff);
+      paramsNeedUpdate = true;
+    });
+  gui
+    .add(ssaoParams, 'rangeThreshold')
+    .min(0.0)
+    .max(0.1)
+    .onChange(() => {
+      ssaoEffect.setDistanceCutoff(ssaoParams.rangeThreshold, ssaoParams.rangeFalloff);
+      paramsNeedUpdate = true;
+    });
+  gui
+    .add(ssaoParams, 'rangeFalloff')
+    .min(0.0)
+    .max(0.1)
+    .onChange(() => {
+      ssaoEffect.setDistanceCutoff(ssaoParams.rangeThreshold, ssaoParams.rangeFalloff);
+      paramsNeedUpdate = true;
+    });
+
   const clock = new THREE.Clock();
   const render = async () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
     const modelNeedsUpdate = await cadModelNode.update(camera);
-    const needsUpdate = controlsNeedUpdate || modelNeedsUpdate;
+    const needsUpdate = controlsNeedUpdate || modelNeedsUpdate || paramsNeedUpdate;
 
     if (needsUpdate) {
       composer.render(delta);
     }
+    paramsNeedUpdate = false;
     requestAnimationFrame(render);
   };
   render();

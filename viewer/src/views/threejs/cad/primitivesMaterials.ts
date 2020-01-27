@@ -194,7 +194,10 @@ const torusSegmentsMaterialTemplate = new THREE.ShaderMaterial({
       value: RenderType.Color
     }
   },
-  extensions: { fragDepth: true },
+  extensions: {
+    fragDepth: true,
+    derivatives: true
+  },
   vertexShader: sectorShaders.torusSegmentPrimitive.vertex,
   fragmentShader: sectorShaders.torusSegmentPrimitive.fragment,
   // TODO we can drop the double sided rendering if we add end caps
