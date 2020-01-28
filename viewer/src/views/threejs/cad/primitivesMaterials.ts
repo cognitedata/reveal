@@ -4,6 +4,7 @@
 
 import * as THREE from 'three';
 import { sectorShaders, shaderDefines } from './shaders';
+import { RenderType } from '../materials';
 
 export const boxMaterial = new THREE.ShaderMaterial({
   name: 'Primitives (Box)',
@@ -12,8 +13,8 @@ export const boxMaterial = new THREE.ShaderMaterial({
   vertexShader: sectorShaders.boxPrimitive.vertex,
   fragmentShader: sectorShaders.boxPrimitive.fragment,
   uniforms: {
-    renderNormals: {
-      value: 0.0
+    renderType: {
+      value: RenderType.Color
     }
   }
 });
@@ -28,8 +29,8 @@ export const circleMaterial = new THREE.ShaderMaterial({
   // we should indicate this in the data from Rust
   side: THREE.DoubleSide,
   uniforms: {
-    renderNormals: {
-      value: 0.0
+    renderType: {
+      value: RenderType.Color
     }
   }
 });
@@ -40,8 +41,8 @@ export const nutsMaterial = new THREE.ShaderMaterial({
   vertexShader: sectorShaders.nutPrimitive.vertex,
   fragmentShader: sectorShaders.nutPrimitive.fragment,
   uniforms: {
-    renderNormals: {
-      value: 0.0
+    renderType: {
+      value: RenderType.Color
     }
   }
 });
@@ -53,8 +54,8 @@ export const quadsMaterial = new THREE.ShaderMaterial({
   fragmentShader: sectorShaders.quadPrimitive.fragment,
   side: THREE.DoubleSide,
   uniforms: {
-    renderNormals: {
-      value: 0.0
+    renderType: {
+      value: RenderType.Color
     }
   }
 });
@@ -66,8 +67,8 @@ const generalRingsMaterialTemplate = new THREE.ShaderMaterial({
     inverseModelMatrix: {
       value: new THREE.Matrix4()
     },
-    renderNormals: {
-      value: 0.0
+    renderType: {
+      value: RenderType.Color
     }
   },
   extensions: { fragDepth: true },
@@ -89,8 +90,8 @@ const coneMaterialTemplate = new THREE.ShaderMaterial({
     inverseModelMatrix: {
       value: new THREE.Matrix4()
     },
-    renderNormals: {
-      value: 0.0
+    renderType: {
+      value: RenderType.Color
     }
   },
   extensions: { fragDepth: true },
@@ -109,8 +110,8 @@ const eccentricConesMaterialTemplate = new THREE.ShaderMaterial({
     inverseModelMatrix: {
       value: new THREE.Matrix4()
     },
-    renderNormals: {
-      value: 0.0
+    renderType: {
+      value: RenderType.Color
     }
   },
   extensions: { fragDepth: true },
@@ -129,8 +130,8 @@ const ellipsoidSegmentsMaterialTemplate = new THREE.ShaderMaterial({
     inverseModelMatrix: {
       value: new THREE.Matrix4()
     },
-    renderNormals: {
-      value: 0.0
+    renderType: {
+      value: RenderType.Color
     }
   },
   extensions: { fragDepth: true },
@@ -149,8 +150,8 @@ const generalCylinderMaterialTemplate = new THREE.ShaderMaterial({
     inverseModelMatrix: {
       value: new THREE.Matrix4()
     },
-    renderNormals: {
-      value: 0.0
+    renderType: {
+      value: RenderType.Color
     }
   },
   extensions: { fragDepth: true },
@@ -169,8 +170,8 @@ const trapeziumsMaterialTemplate = new THREE.ShaderMaterial({
     inverseModelMatrix: {
       value: new THREE.Matrix4()
     },
-    renderNormals: {
-      value: 0.0
+    renderType: {
+      value: RenderType.Color
     }
   },
   extensions: { fragDepth: true },
@@ -189,8 +190,8 @@ const torusSegmentsMaterialTemplate = new THREE.ShaderMaterial({
     inverseModelMatrix: {
       value: new THREE.Matrix4()
     },
-    renderNormals: {
-      value: 0.0
+    renderType: {
+      value: RenderType.Color
     }
   },
   extensions: { fragDepth: true },
@@ -211,8 +212,8 @@ const sphericalSegmentsMaterialTemplate = new THREE.ShaderMaterial({
     inverseModelMatrix: {
       value: new THREE.Matrix4()
     },
-    renderNormals: {
-      value: 0.0
+    renderType: {
+      value: RenderType.Color
     }
   },
   extensions: { fragDepth: true },

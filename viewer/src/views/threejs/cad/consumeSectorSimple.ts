@@ -7,6 +7,7 @@ import { SectorMetadata, SectorQuads } from '../../../models/cad/types';
 import { SectorNode } from './SectorNode';
 import { sectorShaders, shaderDefines } from './shaders';
 import { toThreeJsBox3 } from '../utilities';
+import { RenderType } from '../materials';
 
 const quadVertexData = new Float32Array([
   // tslint:disable: prettier
@@ -25,7 +26,12 @@ const lowDetailMaterial = new THREE.ShaderMaterial({
   name: 'Low detail material',
   ...shaderDefines,
   fragmentShader: sectorShaders.simpleMesh.fragment,
-  vertexShader: sectorShaders.simpleMesh.vertex
+  vertexShader: sectorShaders.simpleMesh.vertex,
+  uniforms: {
+    renderType: {
+      value: RenderType.Color
+    }
+  }
 });
 
 export function consumeSectorSimple(

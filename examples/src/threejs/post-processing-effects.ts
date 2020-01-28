@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import * as reveal from '@cognite/reveal';
-import { CadNode } from '@cognite/reveal/threejs';
+import { CadNode, internal } from '@cognite/reveal/threejs';
 import CameraControls from 'camera-controls';
 
 const postprocessing = require('postprocessing');
@@ -44,6 +44,7 @@ class RevealNormalPass extends Pass {
   scene: THREE.Scene;
   camera: THREE.Camera;
   renderToScreen: boolean;
+  private _resolution: any;
   private _renderPass: any; // RenderPass
 
   constructor(scene: THREE.Scene, camera: THREE.Camera) {
@@ -66,21 +67,17 @@ class RevealNormalPass extends Pass {
 
     this.renderTarget.texture.name = 'RevealNormalPass.Target';
 
-    // @ts-ignore
-    this.resolution = new Resizer(this, Resizer.AUTO_SIZE, Resizer.AUTO_SIZE);
-    // @ts-ignore
-    this.resolution.scale = 1.0;
+    this._resolution = new Resizer(this, Resizer.AUTO_SIZE, Resizer.AUTO_SIZE);
+    this._resolution.scale = 1.0;
   }
 
   setResolutionScale(scale: number) {
-    // @ts-ignore
-    this.resolutionScale = scale;
+    this._resolution.scale = scale;
     this.setSize(this.originalSize.x, this.originalSize.y);
   }
 
   setSize(width: number, height: number) {
-    // @ts-ignore
-    const resolution = this.resolution;
+    const resolution = this._resolution;
     resolution.base.set(width, height);
 
     width = resolution.width;
@@ -96,7 +93,7 @@ class RevealNormalPass extends Pass {
     const previousClearColor = renderer.getClearColor().clone();
 
     traverseShaderMaterials(this.scene.children[0], material => {
-      material.uniforms.renderNormals = { value: 1.0 };
+      material.uniforms.renderType = { value: internal.materials.RenderType.Normal };
     });
 
     renderer.setClearColor(new THREE.Color(0x7777ff), 1.0);
@@ -108,7 +105,7 @@ class RevealNormalPass extends Pass {
     renderer.setClearAlpha(previousClearAlpha);
 
     traverseShaderMaterials(this.scene.children[0], material => {
-      material.uniforms.renderNormals = { value: 0.0 };
+      material.uniforms.renderType = { value: internal.materials.RenderType.Color };
     });
   }
 }

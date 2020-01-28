@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 import { TriangleMesh } from '../../../models/cad/types';
 import { sectorShaders, shaderDefines } from './shaders';
+import { RenderType } from '../materials';
 
 export function createTriangleMeshes(triangleMeshes: TriangleMesh[], bounds: THREE.Box3): THREE.Mesh[] {
   const result: THREE.Mesh[] = [];
@@ -33,7 +34,12 @@ export function createTriangleMeshes(triangleMeshes: TriangleMesh[], bounds: THR
       },
       side: THREE.DoubleSide,
       fragmentShader: sectorShaders.detailedMesh.fragment,
-      vertexShader: sectorShaders.detailedMesh.vertex
+      vertexShader: sectorShaders.detailedMesh.vertex,
+      uniforms: {
+        renderType: {
+          value: RenderType.Color
+        }
+      }
     });
     const obj = new THREE.Mesh(geometry, triangleMeshMaterial);
     obj.name = `Triangle mesh ${mesh.fileId}`;

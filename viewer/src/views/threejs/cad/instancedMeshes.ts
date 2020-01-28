@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 import { InstancedMeshFile } from '../../../models/cad/types';
 import { sectorShaders, shaderDefines } from './shaders';
+import { RenderType } from '../materials';
 
 const instancedMeshMaterial = new THREE.ShaderMaterial({
   name: 'Instanced meshes',
@@ -14,7 +15,12 @@ const instancedMeshMaterial = new THREE.ShaderMaterial({
   },
   side: THREE.DoubleSide,
   fragmentShader: sectorShaders.instancedMesh.fragment,
-  vertexShader: sectorShaders.instancedMesh.vertex
+  vertexShader: sectorShaders.instancedMesh.vertex,
+  uniforms: {
+    renderType: {
+      value: RenderType.Color
+    }
+  }
 });
 
 export function createInstancedMeshes(meshes: InstancedMeshFile[], bounds: THREE.Box3): THREE.Mesh[] {

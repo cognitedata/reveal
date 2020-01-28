@@ -14,6 +14,7 @@ attribute float a_tubeRadius;
 varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
+varying vec3 v_viewPosition;
 
 void main() {
     mat4 instanceMatrix = constructMatrix(
@@ -36,15 +37,15 @@ void main() {
     vec3 transformed = (instanceMatrix * vec4(pos3, 1.0)).xyz;
 
     // Calculate normal vectors if we're not picking
-#if !defined(FLAT_SHADED) && !defined(COGNITE_RENDER_COLOR_ID) && !defined(COGNITE_RENDER_DEPTH)
-    vec3 center = vec3(a_radius * cosTheta, a_radius * sinTheta, 0.0);
-    vec3 objectNormal = normalize(pos3 - center);
-#endif
+    vec3 center = (instanceMatrix * vec4(a_radius * cosTheta, a_radius * sinTheta, 0.0, 1.0)).xyz;
+    vec3 objectNormal = normalize(transformed.xyz - center);
 
     v_treeIndex = a_treeIndex;
     v_color = a_color;
     v_normal = normalMatrix * objectNormal;
 
-    vec4 mvPosition = modelViewMatrix * vec4( transformed, 1.0 );
-    gl_Position = projectionMatrix * mvPosition;
+    vec4 modelViewPosition = modelViewMatrix * vec4(transformed, 1.0);
+    v_viewPosition = modelViewPosition.xyz;
+
+    gl_Position = projectionMatrix * modelViewPosition;
 }
