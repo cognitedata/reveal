@@ -5,7 +5,7 @@
     "module": "esnext",
     "declaration": true,
     "declarationDir": "dist",
-    "outDir": "dist",
+    "outDir": "dist-ts",
     "rootDir": "src",
     "esModuleInterop": true,
     "downlevelIteration": true,
