@@ -100,9 +100,9 @@ const toThreeJsBox3Vars = {
   outMax: new THREE.Vector3()
 };
 
-export function toThreeJsBox3(out: THREE.Box3, box: Box3): THREE.Box3 {
+export function toThreeJsBox3(out: THREE.Box3, box: Box3, modelTransformation?: SectorModelTransformation): THREE.Box3 {
   const { outMin, outMax } = toThreeJsBox3Vars;
-  out.set(toThreeVector3(outMin, box.min), toThreeVector3(outMax, box.max));
+  out.set(toThreeVector3(outMin, box.min, modelTransformation), toThreeVector3(outMax, box.max, modelTransformation));
   return out;
 }
 
