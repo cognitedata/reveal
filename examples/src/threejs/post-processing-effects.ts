@@ -8,15 +8,7 @@ import { CadNode } from '@cognite/reveal/threejs';
 import CameraControls from 'camera-controls';
 
 const postprocessing = require('postprocessing');
-const {
-  EffectComposer,
-  RenderPass,
-  BlendFunction,
-  EffectPass,
-  Pass,
-  SSAOEffect,
-  Resizer
-} = postprocessing;
+const { EffectComposer, RenderPass, BlendFunction, EffectPass, Pass, SSAOEffect, Resizer } = postprocessing;
 
 CameraControls.install({ THREE });
 
