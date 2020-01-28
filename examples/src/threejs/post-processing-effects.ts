@@ -8,18 +8,7 @@ import { CadNode, internal } from '@cognite/reveal/threejs';
 import CameraControls from 'camera-controls';
 
 const postprocessing = require('postprocessing');
-const {
-  BloomEffect,
-  EffectComposer,
-  NormalPass,
-  DepthEffect,
-  RenderPass,
-  BlendFunction,
-  EffectPass,
-  Pass,
-  SSAOEffect,
-  Resizer
-} = postprocessing;
+const { EffectComposer, RenderPass, BlendFunction, EffectPass, Pass, SSAOEffect, Resizer } = postprocessing;
 
 CameraControls.install({ THREE });
 
@@ -44,13 +33,13 @@ class RevealNormalPass extends Pass {
   scene: THREE.Scene;
   camera: THREE.Camera;
   renderToScreen: boolean;
-  private _resolution: any;
+  private _resolution: any; // Resizer
   private _renderPass: any; // RenderPass
 
   constructor(scene: THREE.Scene, camera: THREE.Camera) {
     super('RevealNormalPass');
 
-    // @ts-ignore
+    // @ts-ignore this exists on Pass, which does not have a definition
     this.needsSwap = false;
 
     this.renderToScreen = false;
