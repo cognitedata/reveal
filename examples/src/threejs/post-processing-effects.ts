@@ -9,10 +9,7 @@ import CameraControls from 'camera-controls';
 
 const postprocessing = require('postprocessing');
 const {
-  BloomEffect,
   EffectComposer,
-  NormalPass,
-  DepthEffect,
   RenderPass,
   BlendFunction,
   EffectPass,
@@ -44,6 +41,7 @@ class RevealNormalPass extends Pass {
   scene: THREE.Scene;
   camera: THREE.Camera;
   renderToScreen: boolean;
+
   private _renderPass: any; // RenderPass
 
   constructor(scene: THREE.Scene, camera: THREE.Camera) {
