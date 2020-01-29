@@ -3,20 +3,7 @@
  */
 
 import * as Comlink from 'comlink';
-import { CtmWorkerResult, Sector, SectorMetadata, TriangleMesh } from '../models/cad/types';
-import { FetchSectorDelegate, FetchCtmDelegate } from '../models/cad/delegates';
-import { createOffsets } from '../utils/arrayUtils';
-import {
-  ParseRootSectorArguments,
-  ParseRootSectorResult,
-  ParseSectorArguments,
-  ParseSectorResult,
-  ParseCtmArguments,
-  ParseCtmResult,
-  ParseQuadsArguments,
-  ParseQuadsResult,
-  PrimitiveAttributes
-} from './types/parser.types';
+import { ParseSectorResult, ParseCtmResult, ParseQuadsResult, PrimitiveAttributes } from './types/parser.types';
 import * as rustTypes from '../../pkg';
 const rustModule = import('../../pkg');
 
