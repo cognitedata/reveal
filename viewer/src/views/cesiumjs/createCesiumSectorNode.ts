@@ -42,7 +42,7 @@ export async function initializeCesiumSectorScene(
   // Fetch metadata
   const [sectorScene, modelTransformation] = await fetchSectorMetadata();
   const sectorRoot = sectorScene.root;
-  const parseSectorData = await createParser(sectorRoot, fetchSectorDetailed, fetchCtm);
+  const parseSectorData = createParser(fetchCtm);
   const parseSectorQuadsData = await createQuadsParser();
 
   // Position model to have origin at given position, and convert from left-handed Y up to

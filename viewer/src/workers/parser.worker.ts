@@ -3,20 +3,7 @@
  */
 
 import * as Comlink from 'comlink';
-import { CtmWorkerResult, Sector, SectorMetadata, TriangleMesh } from '../models/cad/types';
-import { FetchSectorDelegate, FetchCtmDelegate } from '../models/cad/delegates';
-import { createOffsets } from '../utils/arrayUtils';
-import {
-  ParseRootSectorArguments,
-  ParseRootSectorResult,
-  ParseSectorArguments,
-  ParseSectorResult,
-  ParseCtmArguments,
-  ParseCtmResult,
-  ParseQuadsArguments,
-  ParseQuadsResult,
-  PrimitiveAttributes
-} from './types/parser.types';
+import { ParseSectorResult, ParseQuadsResult, PrimitiveAttributes, ParseCtmResult } from './types/parser.types';
 import * as rustTypes from '../../pkg';
 const rustModule = import('../../pkg');
 
@@ -39,20 +26,12 @@ function collectAttributes(collection: Collection): PrimitiveAttributes {
 
 export class ParserWorker {
   private workerId: number;
-  private rootSectorHandle: rustTypes.SectorHandle | undefined;
   constructor() {
     this.workerId = Math.floor(Math.random() * 1_000_000_000);
   }
-  parseRootSector = async (buffer: Uint8Array): Promise<void> => {
-    const rust = await rustModule;
-    this.rootSectorHandle = rust.parse_root_sector(buffer);
-  };
   parseSector = async (buffer: Uint8Array): Promise<ParseSectorResult> => {
     const rust = await rustModule;
-    if (!this.rootSectorHandle) {
-      throw new Error(`Worker ${this.workerId} requested to parse sector before parsing root sector!`);
-    }
-    const sectorDataHandle = rust.parse_sector(this.rootSectorHandle, buffer);
+    const sectorDataHandle = rust.parse_root_sector(buffer);
     const sectorData = rust.convert_sector(sectorDataHandle);
     const instanceMeshes = (() => {
       const collection = sectorData.instanced_mesh_collection();
