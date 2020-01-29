@@ -107,14 +107,14 @@ export function createParser(fetchCtmFile: FetchCtmDelegate): ParseSectorDelegat
           const fileTriangleCounts = meshIndices.map(i => triangleCounts[i]);
           const offsets = createOffsetsArray(fileTriangleCounts);
           // Load CTM (geometry)
-          const ctm = await loadCtmGeometryCache.request(fileId);
+          const {
+            indices,
+            vertices,
+            normals,
+            colors: sharedColors,
+            treeIndices: sharedTreeIndices
+          } = await loadCtmGeometryCache.request(fileId);
 
-          const indices: Uint32Array = ctm.indices;
-          const vertices: Float32Array = ctm.vertices;
-          const normals: Float32Array = ctm.normals;
-          const expandedTreeIndices = new Float32Array(indices.length);
-
-          const colorsBuffer = new Float32Array((3 * vertices.length) / 3);
           for (let i = 0; i < meshIndices.length; i++) {
             const meshIdx = meshIndices[i];
             const treeIndex = treeIndices[meshIdx];
@@ -122,22 +122,22 @@ export function createParser(fetchCtmFile: FetchCtmDelegate): ParseSectorDelegat
             const triCount = fileTriangleCounts[i];
             const [r, g, b] = readColorToFloat32s(colors, meshIdx);
 
-            expandedTreeIndices.fill(treeIndex, triOffset, triOffset + triCount);
+            sharedTreeIndices.fill(treeIndex, triOffset, triOffset + triCount);
             for (let triIdx = triOffset; triIdx < triOffset + triCount; triIdx++) {
               for (let j = 0; j < 3; j++) {
                 const vIdx = indices[3 * triIdx + j];
 
-                colorsBuffer[3 * vIdx] = r;
-                colorsBuffer[3 * vIdx + 1] = g;
-                colorsBuffer[3 * vIdx + 2] = b;
+                sharedColors[3 * vIdx] = r;
+                sharedColors[3 * vIdx + 1] = g;
+                sharedColors[3 * vIdx + 2] = b;
               }
             }
           }
 
           const mesh: TriangleMesh = {
-            colors: colorsBuffer,
+            colors: sharedColors,
             fileId,
-            treeIndices: expandedTreeIndices,
+            treeIndices: sharedTreeIndices,
             indices,
             vertices,
             normals
