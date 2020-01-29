@@ -38,7 +38,7 @@ export async function createLocalCadModel(baseUrl: string): Promise<CadModel> {
   const fetchSectorDetailed: FetchSectorDelegate = async (sectorId: number) => {
     const sectorIdToFileId = await loadSectorIdToFileId;
     const fileId = sectorIdToFileId.get(sectorId);
-    if (!fileId) {
+    if (!fileId || fileId === -1) {
       throw new Error(`${sectorId} is not a valid sector ID`);
     }
     return fetchCtm(fileId);
@@ -47,7 +47,7 @@ export async function createLocalCadModel(baseUrl: string): Promise<CadModel> {
   const fetchSectorSimple: FetchSectorDelegate = async (sectorId: number) => {
     const sectorIdToFileId = await loadSectorIdToFileId;
     const fileId = sectorIdToFileId.get(sectorId);
-    if (!fileId) {
+    if (!fileId || fileId === -1) {
       throw new Error(`${sectorId} is not a valid sector ID`);
     }
     const filemap = await loadFilemap;
