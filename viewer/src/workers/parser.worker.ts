@@ -121,10 +121,15 @@ export class ParserWorker {
     const rust = await rustModule;
     // TODO handle parsing failure
     const ctm = rust.parse_ctm(buffer);
+    const indices = ctm.indices();
+    const vertices = ctm.vertices();
+    const normals = ctm.normals();
     const result = {
-      indices: ctm.indices(),
-      vertices: ctm.vertices(),
-      normals: ctm.normals()
+      indices,
+      vertices,
+      normals,
+      colors: new Float32Array(indices.length),
+      treeIndices: new Float32Array(indices.length)
     };
     ctm.free();
     return result;
