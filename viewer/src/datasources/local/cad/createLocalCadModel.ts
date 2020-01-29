@@ -10,7 +10,6 @@ import { DefaultSectorRotationMatrix, DefaultInverseSectorRotationMatrix } from 
 import { loadLocalFileMap } from './loadLocalFileMap';
 import { buildSectorMetadata } from '../../cognitesdk/cad/buildSectorMetadata';
 import { getNewestVersionedFile } from '../../cognitesdk/utilities';
-// TODO rename folder from sector to cad
 import { CadModel } from '../../../models/cad/CadModel';
 
 // TODO rename file from sector to cad
@@ -85,7 +84,7 @@ export async function createLocalCadModel(baseUrl: string): Promise<CadModel> {
   };
   // Fetch metadata
   const [scene, modelTransformation] = await fetchSectorMetadata();
-  const parseDetailed = await createParser(scene.root, fetchSectorDetailed, fetchCtm);
+  const parseDetailed = createParser(fetchCtm);
   const parseSimple = await createQuadsParser();
   return {
     fetchSectorMetadata,
