@@ -147,7 +147,7 @@ pub fn parse_sector_header(mut input: &mut impl BufRead) -> Result<SectorHeader,
         ));
     }
     let format_version = input.read_u32::<LittleEndian>()?;
-    assert_eq!(format_version, 7);
+    assert_eq!(format_version, 8);
     let optimizer_version = input.read_u32::<LittleEndian>()?;
 
     let sector_id = input.read_u64::<LittleEndian>()? as usize;
