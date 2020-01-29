@@ -53,7 +53,7 @@ function createEmptySceneInfo() {
   return {
     sectors: {
       count: 0,
-      withMeshesCount: 0
+      loadedDetailedCount: 0
     },
     primitives: {
       meshCount: 0,
@@ -131,7 +131,8 @@ export function createRendererDebugWidget(
   // Sectors
   const sectorsGui = gui.addFolder('Sectors');
   controls.push(sectorsGui.add(sceneInfo.sectors, 'count').name('Total'));
-  controls.push(sectorsGui.add(sceneInfo.sectors, 'withMeshesCount').name('Loaded'));
+  controls.push(sectorsGui.add(sceneInfo.sectors, 'loadedDetailedCount').name('Loaded detailed'));
+  controls.push(sectorsGui.add(sceneInfo.quads, 'meshCount').name('Loaded quads'));
 
   // Sectors to load
   const loadOverrideGui = sectorsGui.addFolder('Override loading');
@@ -217,7 +218,7 @@ function computeFramesPerSecond(renderer: THREE.WebGLRenderer, sceneInfo: SceneI
 
 function updateSceneInfo(scene: THREE.Object3D, sceneInfo: SceneInfo) {
   sceneInfo.sectors.count = 0;
-  sceneInfo.sectors.withMeshesCount = 0;
+  sceneInfo.sectors.loadedDetailedCount = 0;
   sceneInfo.primitives.meshCount = 0;
   sceneInfo.primitives.templateTriangleCount = 0;
   sceneInfo.primitives.instanceCount = 0;
@@ -234,7 +235,7 @@ function updateSceneInfo(scene: THREE.Object3D, sceneInfo: SceneInfo) {
   scene.traverseVisible(x => {
     if (x.visible && x.name.startsWith('Sector')) {
       sceneInfo.sectors.count++;
-      sceneInfo.sectors.withMeshesCount += x.children.find(y => y.type === 'Mesh') ? 1 : 0;
+      sceneInfo.sectors.loadedDetailedCount += x.children.find(y => y.type === 'Mesh') ? 1 : 0;
     } else if (x.type !== 'Mesh') {
       return;
     }
