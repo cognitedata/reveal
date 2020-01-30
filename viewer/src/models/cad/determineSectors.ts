@@ -47,13 +47,6 @@ export async function defaultDetermineSectors(params: DetermineSectorsInput): Pr
   mat4.multiply(frustumMatrix, projectionMatrix, invertCameraModelMatrix);
   frustum.setFromMatrix(toThreeMatrix4(frustumMatrix));
 
-  let maxDepth = 0;
-
-  traverseDepthFirst(scene.root, sector => {
-    maxDepth = Math.max(maxDepth, sector.path.length);
-    return true;
-  });
-
   traverseDepthFirst(scene.root, sector => {
     min.set(sector.bounds.min[0], sector.bounds.min[1], sector.bounds.min[2]);
     max.set(sector.bounds.max[0], sector.bounds.max[1], sector.bounds.max[2]);
@@ -63,11 +56,6 @@ export async function defaultDetermineSectors(params: DetermineSectorsInput): Pr
 
     if (!frustum.intersectsBox(bbox)) {
       return false;
-    }
-
-    if (sector.path.length > maxDepth) {
-      sectors.push(sector);
-      return true;
     }
 
     const screenHeight = 2.0 * distanceToCamera(sector) * Math.tan((cameraFov / 2) * degToRadFactor);
