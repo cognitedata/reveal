@@ -124,7 +124,7 @@ podTemplate(
         }
       )
 
-      if (isPullRequest) {
+      if (!isPullRequest) {
         fas.publish()
       }
     }
