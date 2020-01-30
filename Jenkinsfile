@@ -12,7 +12,7 @@ podTemplate(
   containers: [
     containerTemplate(
       name: 'node',
-      image: 'node:12',
+      image: 'node:10',
       envVars: [
         envVar(key: 'CI', value: 'true'),
         envVar(key: 'NODE_PATH', value: 'src/'),
@@ -69,12 +69,22 @@ podTemplate(
     properties([buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))])
     node(label) {
     def gitCommit
+    def context_checkout = "continuous-integration/jenkins/checkout"
+    def context_setup = "continuous-integration/jenkins/setup"
+    def context_lint = "continuous-integration/jenkins/lint"
+    def context_unitTests = "continuous-integration/jenkins/unit-tests"
+    def context_buildPrPreview = "continuous-integration/jenkins/build-pr-preview"
+    def context_buildRelease = "continuous-integration/jenkins/build-release"
+    def context_publishRelease = "continuous-integration/jenkins/publish-release"
+
     def isPullRequest = !!env.CHANGE_ID
-    stage('Checkout code') {
+
+    stageWithNotify('Checkout code', context_checkout) {
       checkout(scm)
     }
+
     container('node') {
-      stage('Install dependencies') {
+      stageWithNotify('Install dependencies', context_setup) {
         sh('cp /npm-credentials/npm-public-credentials.txt ~/.npmrc')
         // Yarn can fail sometimes, so let's just retry it a few times.
         retry(5) {
@@ -95,37 +105,48 @@ podTemplate(
 
       parallel(
         'Check linting': {
-          sh('yarn lint')
-        },
-        'Execute tests': {
-          sh('yarn test')
-        },
-        'PR preview': {
-          if (!isPullRequest) {
-            print "No PR previews for release builds"
-            return
+          stageWithNotify('Check linting', context_lint) {
+            sh('yarn lint')
           }
-          sh('yarn build');
-          deployPrServer(
-            commentPrefix: PR_COMMENT_MARKER,
-          )
         },
-        'Release build': {
-          if (isPullRequest) {
-            print "No release builds for PRs"
-            return
+        'Execute unit tests': {
+          stageWithNotify('Execute unit tests', context_unitTests) {
+            sh('yarn test')
           }
-          fas.build(
-            GOOGLE_APPLICATION_CREDENTIALS: env.FAS_APPLICATION_CREDENTIALS,
-            domainName: DOMAIN_NAME,
-            iap: true,
-            buildCommand: 'yarn build',
-          )
+        },
+        'Build for PR': {
+          stageWithNotify('Build for PR', context_buildPrPreview) {
+            if (!isPullRequest) {
+              print "No PR previews for release builds"
+              return
+            }
+            sh('yarn build');
+          }
+        },
+        'Build for release': {
+          stageWithNotify('Build for release', context_buildRelease) {
+            if (isPullRequest) {
+              print "No release builds for PRs"
+              return
+            }
+            fas.build(
+              GOOGLE_APPLICATION_CREDENTIALS: env.FAS_APPLICATION_CREDENTIALS,
+              domainName: DOMAIN_NAME,
+              iap: true,
+              buildCommand: 'yarn build',
+            )
+          }
         }
       )
 
-      if (!isPullRequest) {
-        fas.publish()
+      stageWithNotify('Publish build', context_publishRelease) {
+        if (!isPullRequest) {
+          fas.publish()
+        } else {
+          deployPrServer(
+            commentPrefix: PR_COMMENT_MARKER,
+          )
+        }
       }
     }
   }
