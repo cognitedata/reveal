@@ -2,114 +2,119 @@
  * Copyright 2020 Cognite AS
  */
 
+#define KERNEL_SIZE 32
+
+uniform sampler2D tDiffuse;
+uniform sampler2D tNormal;
+uniform sampler2D tDepth;
+uniform sampler2D tNoise;
+
+uniform vec3 kernel[KERNEL_SIZE]; // TODO move size out
+
+uniform vec2 resolution;
+
 uniform float cameraNear;
 uniform float cameraFar;
-uniform float radius;
-uniform vec2 size;
-uniform float aoClamp;
-uniform float lumInfluence;
-uniform sampler2D tDiffuse;
-uniform highp sampler2D tDepth;
+uniform mat4 cameraProjectionMatrix;
+uniform mat4 cameraInverseProjectionMatrix;
+
+uniform float kernelRadius;
+uniform float minDistance;
+uniform float maxDistance;
 
 varying vec2 vUv;
 
-#define DL 2.399963229728653
-#define EULER 2.718281828459045
-
-const int samples = 12;
-
-const float noiseScale = 0.0005;
-
-const float defaultArea = 0.4;
-const float displacement = 0.4;
-
 #include <packing>
 
-vec2 rand(vec2 co)
-{
-    float a = 12.9898;
-    float b = 78.233;
-    float c = 43758.5453;
-    float dt = dot(co.xy, vec2(a,b));
-    float dt2 = dot(co.xy, vec2(a,b));
-    vec2 sn = mod(vec2(dt, dt2), 3.14);
-    return noiseScale * fract(sin(sn) * c);
+float getDepth( const in vec2 screenPosition ) {
+
+    return texture2D( tDepth, screenPosition ).x;
+
 }
 
-float readDepth(vec2 coord) {
-  float fragCoordZ = texture2D(tDepth, coord).x;
-  float viewZ = perspectiveDepthToViewZ(fragCoordZ, cameraNear, cameraFar);
-  return viewZToOrthographicDepth(viewZ, cameraNear, cameraFar);
+float getLinearDepth( const in vec2 screenPosition ) {
+
+//#if PERSPECTIVE_CAMERA == 1
+
+    float fragCoordZ = texture2D( tDepth, screenPosition ).x;
+    float viewZ = perspectiveDepthToViewZ( fragCoordZ, cameraNear, cameraFar );
+    return viewZToOrthographicDepth( viewZ, cameraNear, cameraFar );
+
+//#else
+
+    //return texture2D( depthSampler, coord ).x;
+
+//#endif
+
 }
 
-float compareDepths(const in float depth1, const in float depth2, inout bool retry) {
-  float area = 8.0;
-  float diff = (depth1 - depth2) * 100.0;
+float getViewZ( const in float depth ) {
 
-  if (diff < displacement) {
-    area = defaultArea;
-  } else {
-    retry = true;
-  }
+//#if PERSPECTIVE_CAMERA == 1
 
-  float dd = diff - displacement;
-  float gauss = pow(EULER, -2.0 * (dd * dd) / (area * area));
-  return gauss;
+    return perspectiveDepthToViewZ( depth, cameraNear, cameraFar );
+
+//#else
+
+    //return orthographicDepthToViewZ( depth, cameraNear, cameraFar );
+
+//#endif
 }
 
-float ambientOcclusion(float depth, float dw, float dh) {
-  vec2 vv = vec2(dw, dh);
+vec3 getViewPosition( const in vec2 screenPosition, const in float depth, const in float viewZ ) {
+    float clipW = cameraProjectionMatrix[2][3] * viewZ + cameraProjectionMatrix[3][3];
 
-  vec2 coord1 = vUv + radius * vv;
-  vec2 coord2 = vUv - radius * vv;
+    vec4 clipPosition = vec4( ( vec3( screenPosition, depth ) - 0.5 ) * 2.0, 1.0 );
 
-  float temp1 = 0.0;
-  float temp2 = 0.0;
+    clipPosition *= clipW; // unprojection.
 
-  bool retry = false;
-  temp1 = compareDepths(depth, readDepth(coord1), retry);
+    return ( cameraInverseProjectionMatrix * clipPosition ).xyz;
+}
 
-  if (retry) {
-    temp2 = compareDepths(readDepth(coord2), depth, retry);
-    temp1 += (1.0 - temp1) * temp2;
-  }
-  return temp1;
+vec3 getViewNormal( const in vec2 screenPosition ) {
+    return unpackRGBToNormal( texture2D( tNormal, screenPosition ).xyz );
 }
 
 void main() {
-  vec2 noise = rand(vUv);
-  float depth = readDepth(vUv);
+    float depth = getDepth( vUv );
+    float viewZ = getViewZ( depth );
 
-  float tt = clamp(depth, aoClamp, 1.0);
+    vec3 viewPosition = getViewPosition( vUv, depth, viewZ );
+    vec3 viewNormal = getViewNormal( vUv );
 
-  float w = (1.0 / size.x) / tt + (noise.x * (1.0 - noise.x));
-  float h = (1.0 / size.y) / tt + (noise.y * (1.0 - noise.y));
+    vec2 noiseScale = vec2( resolution.x / 128.0, resolution.y / 128.0 );
+    //vec3 random = texture2D( tNoise, vUv * noiseScale ).xyz;
+    vec3 random = vec3(1, 0, 0);
 
-  float ao = 0.0;
+    // compute matrix used to reorient a kernel vector
 
-  float dz = 1.0 / float(samples);
-  float l = 0.0;
-  float z = 1.0 - dz / 2.0;
+    vec3 tangent = normalize( random - viewNormal * dot( random, viewNormal ) );
+    vec3 bitangent = cross( viewNormal, tangent );
+    mat3 kernelMatrix = mat3( tangent, bitangent, viewNormal );
 
-  for (int i = 0; i <= samples; i ++) {
-    float r = sqrt(1.0 - z);
-    float pw = cos(l) * r;
-    float ph = sin(l) * r;
-    ao += ambientOcclusion(depth, pw * w, ph * h);
-    z = z - dz;
-    l = l + DL;
-  }
+    float occlusion = 0.0;
 
-  ao /= float(samples);
-  ao = 1.0 - ao;
+    for ( int i = 0; i < KERNEL_SIZE; i ++ ) {
+        vec3 sampleVector = kernelMatrix * kernel[ i ];
+        vec3 samplePoint = viewPosition + viewZ * sampleVector * kernelRadius;
 
-  vec3 color = texture2D(tDiffuse, vUv).rgb;
+        vec4 samplePointNDC = cameraProjectionMatrix * vec4( samplePoint, 1.0 );
+        samplePointNDC /= samplePointNDC.w;
 
-  vec3 lumcoeff = vec3(0.299, 0.587, 0.114);
-  float lum = dot(color.rgb, lumcoeff);
-  vec3 luminance = vec3(lum);
+        vec2 samplePointUv = samplePointNDC.xy * 0.5 + 0.5;
 
-  vec3 final = vec3(mix(vec3(ao), vec3(1.0), luminance * lumInfluence));
+        float realDepth = getLinearDepth( samplePointUv );
+        float sampleDepth = viewZToOrthographicDepth( samplePoint.z, cameraNear, cameraFar );
+        float delta = sampleDepth - realDepth;
 
-  gl_FragColor = vec4(final, 1.0);
+        if ( delta > minDistance && delta < maxDistance ) {
+            occlusion += 1.0;
+        }
+
+    }
+
+    occlusion = clamp( occlusion / float( KERNEL_SIZE ), 0.0, 1.0 );
+
+    gl_FragColor = vec4( vec3( 1.0 - occlusion ), 1.0 );
+
 }
