@@ -2,7 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
-export { SsaoRenderer } from './views/threejs/post-processing/ssao';
+export { Renderer } from './views/threejs/renderer';
+export { createSsaoPass, Pass } from './views/threejs/post-processing/ssao';
 export { CadNode } from './views/threejs/cad/CadNode';
 export { SectorNode } from './views/threejs/cad/SectorNode';
 export { createThreeJsPointCloudNode } from './views/threejs/pointcloud/createThreeJsPointCloudNode';

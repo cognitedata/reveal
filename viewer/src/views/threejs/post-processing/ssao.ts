@@ -79,7 +79,7 @@ function createAntialiasScene(diffuseTexture: THREE.Texture): SceneInfo {
 
 const quadCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
-interface Pass {
+export interface Pass {
   render: (renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera) => void;
   setSize: (width: number, height: number) => void;
 }
@@ -143,26 +143,4 @@ export function createSsaoPass(): Pass {
     render,
     setSize
   };
-}
-
-export class SsaoRenderer extends THREE.WebGLRenderer {
-  private _pass: Pass;
-
-  constructor() {
-    super();
-    this._pass = createSsaoPass();
-  }
-
-  setSizeX(width: number, height: number, updateStyle?: boolean) {
-    this.setSize(width, height, updateStyle);
-    this._pass.setSize(width, height);
-  }
-
-  renderEffect(scene: THREE.Scene, camera: THREE.Camera) {
-    if (camera.type !== 'PerspectiveCamera') {
-      throw new Error('SsaoRenderer: Camera must be a THREE.PerspectiveCamera');
-    }
-    const perspectiveCamera = camera as THREE.PerspectiveCamera;
-    this._pass.render(this, scene, perspectiveCamera);
-  }
 }
