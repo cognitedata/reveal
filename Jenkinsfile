@@ -117,7 +117,7 @@ podTemplate(
           }
           fasBuild(
             GOOGLE_APPLICATION_CREDENTIALS: env.FAS_APPLICATION_CREDENTIALS,
-            domainName: DOMAIN_NAME
+            domainName: DOMAIN_NAME,
             iap: true,
             buildCommand: 'yarn build',
           )
