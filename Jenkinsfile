@@ -1,4 +1,4 @@
-@Library('jenkins-helpers@fas') _
+@Library('jenkins-helpers') _
 
 static final String REPO = "fas-demo-app"
 static final String PR_COMMENT_MARKER = "[pr-server]\n"
@@ -140,12 +140,12 @@ podTemplate(
       )
 
       stageWithNotify('Publish build', context_publishRelease) {
-        if (!isPullRequest) {
-          fas.publish()
-        } else {
-          deployPrServer(
+        if (isPullRequest) {
+          previewServer.deployApp(
             commentPrefix: PR_COMMENT_MARKER,
           )
+        } else {
+          fas.publish()
         }
       }
     }
