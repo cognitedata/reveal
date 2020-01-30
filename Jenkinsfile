@@ -115,7 +115,7 @@ podTemplate(
             print "No release builds for PRs"
             return
           }
-          fasBuild(
+          fas.build(
             GOOGLE_APPLICATION_CREDENTIALS: env.FAS_APPLICATION_CREDENTIALS,
             domainName: DOMAIN_NAME,
             iap: true,
@@ -125,7 +125,7 @@ podTemplate(
       )
 
       if (isPullRequest) {
-        fasPublish()
+        fas.publish()
       }
     }
   }
