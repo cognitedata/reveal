@@ -144,3 +144,19 @@ export function createSsaoPass(): Pass {
     setSize
   };
 }
+
+export class SsaoEffect {
+  private _ssaoPass: Pass;
+
+  constructor() {
+    this._ssaoPass = createSsaoPass();
+  }
+
+  setSize(width: number, height: number) {
+    this._ssaoPass.setSize(width, height);
+  }
+
+  render(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
+    this._ssaoPass.render(renderer, scene, camera);
+  }
+}

@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import * as reveal from '@cognite/reveal';
-import { CadNode, Renderer } from '@cognite/reveal/threejs';
+import { CadNode, SsaoEffect } from '@cognite/reveal/threejs';
 
 CameraControls.install({ THREE });
 
@@ -18,15 +18,16 @@ async function main() {
 
   scene.add(cadNode);
 
-  const glRenderer = new THREE.WebGLRenderer();
-  const renderer = new Renderer(glRenderer);
-  glRenderer.setClearColor('#000');
+  const renderer = new THREE.WebGLRenderer();
+  const effect = new SsaoEffect();
+  renderer.setClearColor('#000');
+  effect.setSize(window.innerWidth, window.innerHeight);
   renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(glRenderer.domElement);
+  document.body.appendChild(renderer.domElement);
 
   const { position, target, near, far } = cadNode.suggestCameraConfig();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
-  const controls = new CameraControls(camera, glRenderer.domElement);
+  const controls = new CameraControls(camera, renderer.domElement);
   controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
@@ -38,18 +39,12 @@ async function main() {
     const sectorsNeedUpdate = await cadNode.update(camera);
 
     if (controlsNeedUpdate || sectorsNeedUpdate) {
-      renderer.render(scene, camera);
+      effect.render(renderer, scene, camera);
     }
 
     requestAnimationFrame(render);
   };
   render();
-
-  (window as any).scene = scene;
-  (window as any).THREE = THREE;
-  (window as any).camera = camera;
-  (window as any).controls = controls;
-  (window as any).renderer = renderer;
 }
 
 main();

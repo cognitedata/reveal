@@ -45,9 +45,9 @@ const allExamples = [
     type: 'threejs'
   },
   {
-    name: "threejs-classic",
-    title: "Classic shading",
-    entry: './src/threejs/classic-shading.ts',
+    name: "threejs-ssao",
+    title: "Screen space ambient occlusion shading",
+    entry: './src/threejs/ssao.ts',
     template: 'template-example.ejs',
     type: 'threejs'
   },
