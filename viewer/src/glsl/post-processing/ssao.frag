@@ -83,8 +83,8 @@ void main() {
     vec3 viewNormal = getViewNormal( vUv );
 
     vec2 noiseScale = vec2( resolution.x / 128.0, resolution.y / 128.0 );
-    //vec3 random = texture2D( tNoise, vUv * noiseScale ).xyz;
-    vec3 random = vec3(1, 0, 0);
+    vec3 random = texture2D( tNoise, vUv * noiseScale ).xyz;
+    //vec3 random = vec3(1, 0, 0);
 
     // compute matrix used to reorient a kernel vector
 
@@ -96,7 +96,7 @@ void main() {
 
     for ( int i = 0; i < KERNEL_SIZE; i ++ ) {
         vec3 sampleVector = kernelMatrix * kernel[ i ];
-        vec3 samplePoint = viewPosition + viewZ * sampleVector * kernelRadius;
+        vec3 samplePoint = viewPosition + sampleVector * kernelRadius;
 
         vec4 samplePointNDC = cameraProjectionMatrix * vec4( samplePoint, 1.0 );
         samplePointNDC /= samplePointNDC.w;
