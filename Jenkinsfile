@@ -121,6 +121,11 @@ podTemplate(
               return
             }
             sh('yarn build');
+            stageWithNotify('Publish build', context_publishRelease) {
+              previewServer.deployApp(
+                commentPrefix: PR_COMMENT_MARKER,
+              )
+            }
           }
         },
         'Build for release': {
@@ -139,12 +144,8 @@ podTemplate(
         }
       )
 
-      stageWithNotify('Publish build', context_publishRelease) {
-        if (isPullRequest) {
-          previewServer.deployApp(
-            commentPrefix: PR_COMMENT_MARKER,
-          )
-        } else {
+      if (!isPullRequest) {
+        stageWithNotify('Publish build', context_publishRelease) {
           fas.publish()
         }
       }
