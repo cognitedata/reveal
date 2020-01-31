@@ -17,7 +17,7 @@ uniform vec2 size;
 
 vec3 unpack(float a) {
   float h = (a > 0.1) ? (a - 0.1) / 0.9 : 0.0;
-  float s = (a > 0.1) ? 1.0 : 0.0;
+  float s = (a > 0.1) ? 0.7 : 0.0;
   float v = (a > 0.1) ? 1.0 : a / 0.1;
   return hsv2rgb(vec3(h, s, v));
 }
