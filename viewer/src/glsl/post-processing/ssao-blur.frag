@@ -16,9 +16,9 @@ uniform sampler2D ssaoTexture;
 uniform vec2 size;
 
 vec3 unpack(float a) {
-  float h = (a > 0.1) ? (a - 0.1) / 0.9 : 0.0;
-  float s = (a > 0.1) ? 0.6 : 0.0;
-  float v = (a > 0.1) ? 1.0 : a / 0.1;
+  float h = (a > 0.095) ? max(0.0, (a - 0.1)) / 0.9 : 0.0;
+  float s = (a > 0.095) ? 0.6 : 0.0;
+  float v = (a > 0.095) ? 1.0 : a / 0.09;
   return hsv2rgb(vec3(h, s, v));
 }
 
