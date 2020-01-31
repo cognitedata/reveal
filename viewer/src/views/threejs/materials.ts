@@ -5,5 +5,6 @@
 export enum RenderType {
   Color = 1,
   Normal,
-  TreeIndex
+  TreeIndex,
+  PackColorAndNormal
 }

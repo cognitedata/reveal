@@ -19,6 +19,10 @@ async function main() {
 
   scene.add(cadNode);
 
+  //const canvas = document.createElement('canvas');
+  //const context = canvas.getContext('webgl2', { alpha: false });
+  // @ts-ignore
+  //const renderer = new THREE.WebGLRenderer({ canvas, context });
   const renderer = new THREE.WebGLRenderer();
   const effect = new SsaoEffect();
   renderer.setClearColor('#000');
@@ -40,7 +44,7 @@ async function main() {
   };
 
   const renderSettings = {
-    pass: SsaoPassType.Regular
+    pass: SsaoPassType.Full
   };
 
   const gui = new dat.GUI();
@@ -77,10 +81,10 @@ async function main() {
     const controlsNeedUpdate = controls.update(delta);
     const sectorsNeedUpdate = await cadNode.update(camera);
 
-    if (controlsNeedUpdate || sectorsNeedUpdate || effectNeedsUpdate) {
+    //if (controlsNeedUpdate || sectorsNeedUpdate || effectNeedsUpdate) {
       effect.render(renderer, scene, camera, renderSettings.pass);
       effectNeedsUpdate = false;
-    }
+    //}
 
     requestAnimationFrame(render);
   };

@@ -14,7 +14,7 @@ export const boxMaterial = new THREE.ShaderMaterial({
   fragmentShader: sectorShaders.boxPrimitive.fragment,
   uniforms: {
     renderType: {
-      value: RenderType.Color
+      value: RenderType.PackColorAndNormal
     }
   }
 });
@@ -30,7 +30,7 @@ export const circleMaterial = new THREE.ShaderMaterial({
   side: THREE.DoubleSide,
   uniforms: {
     renderType: {
-      value: RenderType.Color
+      value: RenderType.PackColorAndNormal
     }
   }
 });
@@ -42,7 +42,7 @@ export const nutsMaterial = new THREE.ShaderMaterial({
   fragmentShader: sectorShaders.nutPrimitive.fragment,
   uniforms: {
     renderType: {
-      value: RenderType.Color
+      value: RenderType.PackColorAndNormal
     }
   }
 });
@@ -55,7 +55,7 @@ export const quadsMaterial = new THREE.ShaderMaterial({
   side: THREE.DoubleSide,
   uniforms: {
     renderType: {
-      value: RenderType.Color
+      value: RenderType.PackColorAndNormal
     }
   }
 });
@@ -68,7 +68,7 @@ const generalRingsMaterialTemplate = new THREE.ShaderMaterial({
       value: new THREE.Matrix4()
     },
     renderType: {
-      value: RenderType.Color
+      value: RenderType.PackColorAndNormal
     }
   },
   extensions: { fragDepth: true },
@@ -91,7 +91,7 @@ const coneMaterialTemplate = new THREE.ShaderMaterial({
       value: new THREE.Matrix4()
     },
     renderType: {
-      value: RenderType.Color
+      value: RenderType.PackColorAndNormal
     }
   },
   extensions: { fragDepth: true },
@@ -111,7 +111,7 @@ const eccentricConesMaterialTemplate = new THREE.ShaderMaterial({
       value: new THREE.Matrix4()
     },
     renderType: {
-      value: RenderType.Color
+      value: RenderType.PackColorAndNormal
     }
   },
   extensions: { fragDepth: true },
@@ -131,7 +131,7 @@ const ellipsoidSegmentsMaterialTemplate = new THREE.ShaderMaterial({
       value: new THREE.Matrix4()
     },
     renderType: {
-      value: RenderType.Color
+      value: RenderType.PackColorAndNormal
     }
   },
   extensions: { fragDepth: true },
@@ -151,7 +151,7 @@ const generalCylinderMaterialTemplate = new THREE.ShaderMaterial({
       value: new THREE.Matrix4()
     },
     renderType: {
-      value: RenderType.Color
+      value: RenderType.PackColorAndNormal
     }
   },
   extensions: { fragDepth: true },
@@ -171,7 +171,7 @@ const trapeziumsMaterialTemplate = new THREE.ShaderMaterial({
       value: new THREE.Matrix4()
     },
     renderType: {
-      value: RenderType.Color
+      value: RenderType.PackColorAndNormal
     }
   },
   extensions: { fragDepth: true },
@@ -191,7 +191,7 @@ const torusSegmentsMaterialTemplate = new THREE.ShaderMaterial({
       value: new THREE.Matrix4()
     },
     renderType: {
-      value: RenderType.Color
+      value: RenderType.PackColorAndNormal
     }
   },
   extensions: {
@@ -216,7 +216,7 @@ const sphericalSegmentsMaterialTemplate = new THREE.ShaderMaterial({
       value: new THREE.Matrix4()
     },
     renderType: {
-      value: RenderType.Color
+      value: RenderType.PackColorAndNormal
     }
   },
   extensions: { fragDepth: true },

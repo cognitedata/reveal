@@ -2,10 +2,29 @@
  * Copyright 2020 Cognite AS
  */
 
+// Based on https://github.com/godlikepanos/anki-3d-engine/blob/master/shaders/Pack.glsl
+// Copyright (C) 2009-2020, Panagiotis Christopoulos Charitos and contributors.
+// All rights reserved.
+// Code licensed under the BSD License.
+// http://www.anki3d.org/LICENSE
+vec3 unpackRGToNormal(vec2 enc)
+{
+    float scale = 1.7777;
+    vec2 nn = enc * (2.0 * scale) - scale;
+    float g = 2.0 / (dot(nn.xy, nn.xy) + 1.0);
+    vec3 normal;
+    normal.xy = g * nn.xy;
+    normal.z = g - 1.0;
+    return normalize(normal);
+}
+
+#pragma glslify: rgb2hsv = require('../color/rgb2hsv.glsl')
+#pragma glslify: hsv2rgb = require('../color/hsv2rgb.glsl')
+
 #define KERNEL_SIZE 32
 
 uniform sampler2D tDiffuse;
-uniform sampler2D tNormal;
+//uniform sampler2D tNormal;
 uniform sampler2D tDepth;
 uniform sampler2D tNoise;
 
@@ -72,7 +91,15 @@ vec3 getViewPosition( const in vec2 screenPosition, const in float depth, const 
 }
 
 vec3 getViewNormal( const in vec2 screenPosition ) {
-    return unpackRGBToNormal( texture2D( tNormal, screenPosition ).xyz );
+    vec4 packedColorAndNormal = texture2D(tDiffuse, screenPosition);
+    //vec3 normalHsv = vec3(packedColorAndNormal.z, 1.0, packedColorAndNormal.w);
+    //vec3 normalRgb = hsv2rgb(normalHsv);
+    //vec2 normalRg = vec2(packedColorAndNormal.r, packedColorAndNormal.g);
+    //vec2 normalRg = vec2(packedColorAndNormal.b, packedColorAndNormal.a);
+    //vec3 normal = unpackRGToNormal(normalRg);
+    //return unpackRGBToNormal(normalRgb);
+    vec3 normal = packedColorAndNormal.rgb;
+    return normalize(normal);
 }
 
 void main() {
@@ -106,13 +133,15 @@ void main() {
         float realDepth = getLinearDepth( samplePointUv );
         float sampleDepth = viewZToOrthographicDepth( samplePoint.z, cameraNear, cameraFar );
         float delta = sampleDepth - realDepth;
+        //float delta = viewZToOrthographicDepth(viewZ, cameraNear, cameraFar) - realDepth;
+        //float delta = realDepth - depth;
 
         if ( delta > minDistance && delta < maxDistance ) {
             occlusion += 1.0;
         }
-
     }
 
+    // Subtract 0.5 here because at least 50 % of the points need to be behind to count as occlusion
     occlusion = clamp( occlusion / float( KERNEL_SIZE ), 0.0, 1.0 );
 
     gl_FragColor = vec4( vec3( 1.0 - occlusion ), 1.0 );

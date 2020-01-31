@@ -37,7 +37,7 @@ export function createTriangleMeshes(triangleMeshes: TriangleMesh[], bounds: THR
       vertexShader: sectorShaders.detailedMesh.vertex,
       uniforms: {
         renderType: {
-          value: RenderType.Color
+          value: RenderType.PackColorAndNormal
         }
       }
     });

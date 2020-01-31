@@ -29,7 +29,7 @@ const lowDetailMaterial = new THREE.ShaderMaterial({
   vertexShader: sectorShaders.simpleMesh.vertex,
   uniforms: {
     renderType: {
-      value: RenderType.Color
+      value: RenderType.PackColorAndNormal
     }
   }
 });

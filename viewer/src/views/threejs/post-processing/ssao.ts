@@ -189,7 +189,7 @@ export function createSsaoPass(): Pass {
     tDiffuse: { value: modelTarget.texture },
     tDepth: { value: modelTarget.depthTexture },
     tNoise: { value: noiseTexture },
-    tNormal: { value: normalTarget.texture },
+    //tNormal: { value: normalTarget.texture },
     resolution: { value: new THREE.Vector2() },
     kernel: { value: kernel },
     kernelRadius: { value: 1.0 },
@@ -238,9 +238,9 @@ export function createSsaoPass(): Pass {
     pass?: SsaoPassType
   ) => {
     pass = pass || SsaoPassType.Full;
-    console.log('PASS', pass, SsaoPassType.Normal, pass === SsaoPassType.Normal, typeof(pass), typeof(SsaoPassType.Normal));
     {
       // Regular pass
+      renderer.setClearColor(new THREE.Color(0x7777ff), 0.0);
       renderer.clear(true, true, false);
       renderer.setRenderTarget(modelTarget);
       if (pass === SsaoPassType.Regular) {
@@ -252,33 +252,33 @@ export function createSsaoPass(): Pass {
       }
     }
 
-    {
-      // Normal pass
-      traverseShaderMaterials(scene.children[0], material => {
-        material.uniforms.renderType = { value: RenderType.Normal };
-      });
+    //{
+      //// Normal pass
+      //traverseShaderMaterials(scene.children[0], material => {
+        //material.uniforms.renderType = { value: RenderType.Normal };
+      //});
 
-      const previousClearAlpha = renderer.getClearAlpha();
-      const previousClearColor = renderer.getClearColor().clone();
+      //const previousClearAlpha = renderer.getClearAlpha();
+      //const previousClearColor = renderer.getClearColor().clone();
 
-      renderer.setClearColor(new THREE.Color(0x7777ff), 1.0);
-      renderer.setRenderTarget(normalTarget);
-      if (pass === SsaoPassType.Normal) {
-        renderer.setRenderTarget(null);
-      }
-      renderer.clear(true, false, false);
-      renderer.render(scene, camera);
-      if (pass === SsaoPassType.Normal) {
-        return;
-      }
+      //renderer.setClearColor(new THREE.Color(0x7777ff), 1.0);
+      //renderer.setRenderTarget(normalTarget);
+      //if (pass === SsaoPassType.Normal) {
+        //renderer.setRenderTarget(null);
+      //}
+      //renderer.clear(true, false, false);
+      //renderer.render(scene, camera);
+      //if (pass === SsaoPassType.Normal) {
+        //return;
+      //}
 
-      renderer.setClearColor(previousClearColor);
-      renderer.setClearAlpha(previousClearAlpha);
+      //renderer.setClearColor(previousClearColor);
+      //renderer.setClearAlpha(previousClearAlpha);
 
-      traverseShaderMaterials(scene.children[0], material => {
-        material.uniforms.renderType = { value: RenderType.Color };
-      });
-    }
+      //traverseShaderMaterials(scene.children[0], material => {
+        //material.uniforms.renderType = { value: RenderType.Color };
+      //});
+    //}
 
     {
       // SSAO pass

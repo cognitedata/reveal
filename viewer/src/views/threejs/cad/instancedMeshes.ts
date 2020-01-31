@@ -18,7 +18,7 @@ const instancedMeshMaterial = new THREE.ShaderMaterial({
   vertexShader: sectorShaders.instancedMesh.vertex,
   uniforms: {
     renderType: {
-      value: RenderType.Color
+      value: RenderType.PackColorAndNormal
     }
   }
 });
