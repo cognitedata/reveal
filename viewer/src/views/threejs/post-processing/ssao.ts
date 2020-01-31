@@ -13,7 +13,15 @@ const passThroughVertexShader = glsl(require('../../../glsl/post-processing/pass
 const ssaoShader = glsl(require('../../../glsl/post-processing/ssao.frag').default);
 const ssaoFinalShader = glsl(require('../../../glsl/post-processing/ssao-blur.frag').default);
 
-function setupRenderingPass(options: { uniforms: any; vertexShader: string; fragmentShader: string }): THREE.Scene {
+interface Uniforms {
+  [uniform: string]: THREE.IUniform;
+}
+
+function setupRenderingPass(options: {
+  uniforms: Uniforms;
+  vertexShader: string;
+  fragmentShader: string;
+}): THREE.Scene {
   const scene = new THREE.Scene();
   const material = new THREE.ShaderMaterial({
     uniforms: options.uniforms,
@@ -29,7 +37,7 @@ function setupRenderingPass(options: { uniforms: any; vertexShader: string; frag
 
 interface SceneInfo {
   scene: THREE.Scene;
-  uniforms: any;
+  uniforms: Uniforms;
 }
 
 function createSSAOFinalScene(diffuseTexture: THREE.Texture, ssaoTexture: THREE.Texture): SceneInfo {
@@ -62,8 +70,9 @@ function createAntialiasScene(diffuseTexture: THREE.Texture): SceneInfo {
 const quadCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
 export interface Pass {
-  render: (renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera) => void;
+  render: (renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera, pass?: SsaoPass) => void;
   setSize: (width: number, height: number) => void;
+  uniforms: Uniforms;
 }
 
 function lerp(value1: number, value2: number, amount: number) {
@@ -144,6 +153,14 @@ function createNoiseTexture() {
   return result;
 }
 
+export enum SsaoPassType {
+  Regular = 'Regular',
+  Normal = 'Normal',
+  Ssao = 'Ssao',
+  SsaoBlur = 'SsaoBlur',
+  Full = 'Full'
+}
+
 export function createSsaoPass(): Pass {
   const modelTarget = new THREE.WebGLRenderTarget(0, 0); // adjust size later
   modelTarget.depthBuffer = true;
@@ -176,8 +193,8 @@ export function createSsaoPass(): Pass {
     resolution: { value: new THREE.Vector2() },
     kernel: { value: kernel },
     kernelRadius: { value: 1.0 },
-    minDistance: { value: 0.00001 },
-    maxDistance: { value: 0.001 },
+    minDistance: { value: 0.0001 },
+    maxDistance: { value: 0.1 },
     cameraNear: { value: 0.0 }, // set during rendering
     cameraFar: { value: 0.0 }, // set during rendering
     cameraProjectionMatrix: { value: new THREE.Matrix4() },
@@ -214,14 +231,25 @@ export function createSsaoPass(): Pass {
     ssaoFinalUniforms.size.value.set(width, height);
   };
 
-  const render = (renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera) => {
+  const render = (
+    renderer: THREE.WebGLRenderer,
+    scene: THREE.Scene,
+    camera: THREE.PerspectiveCamera,
+    pass?: SsaoPassType
+  ) => {
+    pass = pass || SsaoPassType.Full;
+    console.log('PASS', pass, SsaoPassType.Normal, pass === SsaoPassType.Normal, typeof(pass), typeof(SsaoPassType.Normal));
     {
       // Regular pass
       renderer.clear(true, true, false);
-      // renderer.setRenderTarget(null);
       renderer.setRenderTarget(modelTarget);
+      if (pass === SsaoPassType.Regular) {
+        renderer.setRenderTarget(null);
+      }
       renderer.render(scene, camera);
-      // return;
+      if (pass === SsaoPassType.Regular) {
+        return;
+      }
     }
 
     {
@@ -234,11 +262,15 @@ export function createSsaoPass(): Pass {
       const previousClearColor = renderer.getClearColor().clone();
 
       renderer.setClearColor(new THREE.Color(0x7777ff), 1.0);
-      // renderer.setRenderTarget(null);
       renderer.setRenderTarget(normalTarget);
+      if (pass === SsaoPassType.Normal) {
+        renderer.setRenderTarget(null);
+      }
       renderer.clear(true, false, false);
       renderer.render(scene, camera);
-      // return;
+      if (pass === SsaoPassType.Normal) {
+        return;
+      }
 
       renderer.setClearColor(previousClearColor);
       renderer.setClearAlpha(previousClearAlpha);
@@ -255,18 +287,26 @@ export function createSsaoPass(): Pass {
       ssaoUniforms.cameraProjectionMatrix.value = camera.projectionMatrix;
       ssaoUniforms.cameraInverseProjectionMatrix.value = camera.projectionMatrixInverse;
       renderer.setRenderTarget(ssaoTarget);
-      //renderer.setRenderTarget(null);
+      if (pass === SsaoPassType.Ssao) {
+        renderer.setRenderTarget(null);
+      }
       renderer.render(ssaoScene, quadCamera);
+      if (pass === SsaoPassType.Ssao) {
+        return;
+      }
     }
-    //return;
 
     {
       // SSAO final pass
       renderer.setRenderTarget(ssaoFinalTarget);
-      //renderer.setRenderTarget(null);
+      if (pass === SsaoPassType.SsaoBlur) {
+        renderer.setRenderTarget(null);
+      }
       renderer.render(ssaoFinalScene, quadCamera);
+      if (pass === SsaoPassType.SsaoBlur) {
+        return;
+      }
     }
-    //return;
 
     {
       // FXAA pass
@@ -277,7 +317,8 @@ export function createSsaoPass(): Pass {
 
   return {
     render,
-    setSize
+    setSize,
+    uniforms: ssaoUniforms
   };
 }
 
@@ -288,11 +329,35 @@ export class SsaoEffect {
     this._ssaoPass = createSsaoPass();
   }
 
+  get kernelRadius() {
+    return this._ssaoPass.uniforms.kernelRadius.value;
+  }
+
+  set kernelRadius(value: number) {
+    this._ssaoPass.uniforms.kernelRadius.value = value;
+  }
+
+  get minDistance() {
+    return this._ssaoPass.uniforms.minDistance.value;
+  }
+
+  set minDistance(value: number) {
+    this._ssaoPass.uniforms.minDistance.value = value;
+  }
+
+  get maxDistance() {
+    return this._ssaoPass.uniforms.maxDistance.value;
+  }
+
+  set maxDistance(value: number) {
+    this._ssaoPass.uniforms.maxDistance.value = value;
+  }
+
   setSize(width: number, height: number) {
     this._ssaoPass.setSize(width, height);
   }
 
-  render(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
-    this._ssaoPass.render(renderer, scene, camera);
+  render(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera, pass?: SsaoPassType) {
+    this._ssaoPass.render(renderer, scene, camera, pass);
   }
 }

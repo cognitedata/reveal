@@ -5,7 +5,8 @@
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import * as reveal from '@cognite/reveal';
-import { CadNode, SsaoEffect } from '@cognite/reveal/threejs';
+import { CadNode, SsaoEffect, SsaoPassType } from '@cognite/reveal/threejs';
+import dat from 'dat.gui';
 
 CameraControls.install({ THREE });
 
@@ -33,13 +34,52 @@ async function main() {
   camera.updateMatrixWorld();
   const clock = new THREE.Clock();
 
+  let effectNeedsUpdate = false;
+  const updateEffect = () => {
+    effectNeedsUpdate = true;
+  };
+
+  const renderSettings = {
+    pass: SsaoPassType.Regular
+  };
+
+  const gui = new dat.GUI();
+  gui
+    .add(renderSettings, 'pass', {
+      Regular: SsaoPassType.Regular,
+      Normal: SsaoPassType.Normal,
+      Ssao: SsaoPassType.Ssao,
+      SsaoBlur: SsaoPassType.SsaoBlur,
+      Full: SsaoPassType.Full
+    })
+    .onChange(updateEffect);
+
+  gui
+    .add(effect, 'kernelRadius')
+    .min(0.1)
+    .max(30.0)
+    .onChange(updateEffect);
+
+  gui
+    .add(effect, 'minDistance')
+    .min(0.0)
+    .max(0.001)
+    .onChange(updateEffect);
+
+  gui
+    .add(effect, 'maxDistance')
+    .min(0.0)
+    .max(0.2)
+    .onChange(updateEffect);
+
   const render = async () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
     const sectorsNeedUpdate = await cadNode.update(camera);
 
-    if (controlsNeedUpdate || sectorsNeedUpdate) {
-      effect.render(renderer, scene, camera);
+    if (controlsNeedUpdate || sectorsNeedUpdate || effectNeedsUpdate) {
+      effect.render(renderer, scene, camera, renderSettings.pass);
+      effectNeedsUpdate = false;
     }
 
     requestAnimationFrame(render);
