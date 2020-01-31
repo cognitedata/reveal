@@ -17,7 +17,7 @@ uniform vec2 size;
 
 vec3 unpack(float a) {
   float h = (a > 0.1) ? (a - 0.1) / 0.9 : 0.0;
-  float s = (a > 0.1) ? 0.7 : 0.0;
+  float s = (a > 0.1) ? 0.6 : 0.0;
   float v = (a > 0.1) ? 1.0 : a / 0.1;
   return hsv2rgb(vec3(h, s, v));
 }
@@ -48,7 +48,9 @@ void main() {
   //vec3 colorRgb = hsv2rgb(colorHsv);
   //vec2 normalRg = vec2(packedColor.z, packedColor.w);
   //vec3 normal = unpackRGToNormal(normalRg);
-  gl_FragColor = vec4(vec3(colorRgb.rgb * blurredAO), 1.0);
+  vec3 normal = packedColor.xyz;
+  float amplitude = 0.4 + 0.6 * max(0.0, dot(normal, vec3(0.0, 0.0, 1.0)));
+  gl_FragColor = vec4(vec3(amplitude * colorRgb.rgb * blurredAO), 1.0);
   //gl_FragColor = vec4(colorRgb, 1.0);
   //gl_FragColor = vec4(normal, 1.0);
   //gl_FragColor = vec4(packedColor.rgb, 1.0);

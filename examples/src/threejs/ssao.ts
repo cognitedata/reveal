@@ -81,10 +81,10 @@ async function main() {
     const controlsNeedUpdate = controls.update(delta);
     const sectorsNeedUpdate = await cadNode.update(camera);
 
-    //if (controlsNeedUpdate || sectorsNeedUpdate || effectNeedsUpdate) {
+    if (controlsNeedUpdate || sectorsNeedUpdate || effectNeedsUpdate) {
       effect.render(renderer, scene, camera, renderSettings.pass);
       effectNeedsUpdate = false;
-    //}
+    }
 
     requestAnimationFrame(render);
   };
