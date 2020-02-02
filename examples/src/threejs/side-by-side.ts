@@ -47,7 +47,7 @@ function initializeModel(
 
 async function main() {
   const params = new URL(location.href).searchParams;
-  const modelUrl1 = params.get('model1') || '/primitives';
+  const modelUrl1 = params.get('model1') || params.get('model') || '/primitives';
   const modelUrl2 = params.get('model2') || modelUrl1;
 
   // Page layout
