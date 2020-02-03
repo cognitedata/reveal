@@ -68,6 +68,8 @@ export interface ParseCtmResult {
   indices: Uint32Array;
   vertices: Float32Array;
   normals: Float32Array | undefined;
+  colors: Float32Array;
+  treeIndices: Float32Array;
 }
 
 export interface ParseQuadsArguments {
