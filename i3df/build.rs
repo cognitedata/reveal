@@ -89,14 +89,14 @@ fn create_dtype(attribute: &Attribute) -> TokenStream {
         Type::Texture(_) => quote! { Texture },
     };
     if count > 1 {
-        return quote! {[#type_name; #count]};
+        quote! {[#type_name; #count]}
     } else {
-        return type_name;
+        type_name
     }
 }
 
 fn write_code_to_file(
-    filename: &String,
+    filename: &str,
     code: &proc_macro2::TokenStream,
 ) -> Result<(), Box<dyn Error>> {
     let code = code.to_string().replace("}", "}\n").replace(";", ";\n");
@@ -116,6 +116,8 @@ fn write_code_to_file(
     Ok(())
 }
 
+// TODO 20200203 larsmoa: Split this into several functions - way too complex.
+#[allow(clippy::cognitive_complexity)]
 fn main() -> Result<(), Box<dyn Error>> {
     // Tell cargo only to rerun the build script if it itself changes
     println!("cargo:rerun-if-changed=build.rs");

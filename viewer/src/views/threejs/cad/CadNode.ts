@@ -15,7 +15,7 @@ import { CadRenderHints } from '../../CadRenderHints';
 import { suggestCameraConfig } from '../../../utils/cameraUtils';
 import { createThreeJsSectorNode } from './createThreeJsSectorNode';
 import { SectorNode } from './SectorNode';
-import { fromThreeVector3, fromThreeMatrix, toThreeJsBox3, toThreeVector3 } from '../utilities';
+import { fromThreeVector3, fromThreeMatrix, toThreeJsBox3, toThreeVector3, toThreeMatrix4 } from '../utilities';
 
 export interface SuggestedCameraConfig {
   position: THREE.Vector3;
@@ -51,11 +51,6 @@ export class CadNode extends THREE.Object3D {
     const { rootSector, simpleActivator, detailedActivator } = createThreeJsSectorNode(model);
     const { scene, modelTransformation } = model;
 
-    this.rootSector = rootSector;
-    this.add(rootSector);
-    this._boundingBoxNode = this.createBoundingBoxNode(scene.sectors);
-    this.add(this._boundingBoxNode);
-
     this._sectorScene = scene;
     this._determineSectors = defaultDetermineSectors;
     this._simpleActivator = simpleActivator;
@@ -63,6 +58,12 @@ export class CadNode extends THREE.Object3D {
     this.modelTransformation = modelTransformation;
     // Ensure camera matrix is unequal on first frame
     this._previousCameraMatrix.elements[0] = Infinity;
+
+    // Prepare renderables
+    this.rootSector = rootSector;
+    this.add(rootSector);
+    this._boundingBoxNode = this.createBoundingBoxNode(scene.sectors);
+    this.add(this._boundingBoxNode);
 
     // Apply default hints
     this._renderHints = {};
@@ -165,6 +166,7 @@ export class CadNode extends THREE.Object3D {
     });
 
     const boxesNode = new THREE.Group();
+    boxesNode.applyMatrix(toThreeMatrix4(this.modelTransformation.modelMatrix));
     boxesNode.name = 'Bounding boxes (for debugging)';
     sectors.forEach(sector => {
       const bbox = toThreeJsBox3(new THREE.Box3(), sector.bounds);

@@ -3,7 +3,7 @@
  */
 
 import * as Comlink from 'comlink';
-import { ParseSectorResult, ParseQuadsResult, PrimitiveAttributes, ParseCtmResult } from './types/parser.types';
+import { ParseSectorResult, ParseCtmResult, ParseQuadsResult, PrimitiveAttributes } from './types/parser.types';
 import * as rustTypes from '../../pkg';
 const rustModule = import('../../pkg');
 
