@@ -65,6 +65,7 @@
     "comlink": "^4.1.0",
     "dat.gui": "^0.7.6",
     "gl-matrix": "^3.1.0",
+    "glslify": "^7.0.0",
     "postprocessing": "^6.10.0",
     "three": "0.110.0"
   }
