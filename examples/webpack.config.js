@@ -1,13 +1,9 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
-const webpack = require('webpack');
 const getLogger = require('webpack-log');
 const logger = getLogger('reveal-examples');
 
-// The path to the ceisum source code
-const cesiumSource = 'node_modules/cesium/Source';
-const cesiumWorkers = '../Build/Cesium/Workers';
 const revealSource = 'node_modules/@cognite/reveal';
 
 /*
@@ -41,77 +37,53 @@ const allExamples = [
     name: "threejs-simple",
     title: "Simple",
     entry: './src/threejs/simple.ts',
-    template: 'template-example.ejs',
-    type: 'threejs'
+    template: 'template-example.ejs'
   },
   {
     name: "threejs-side-by-side",
     title: "Side-by-side debugger for sector models",
     entry: './src/threejs/side-by-side.ts',
-    template: 'template-example-two-canvases.ejs',
-    type: 'threejs'
+    template: 'template-example-two-canvases.ejs'
   },
   {
     name: "threejs-simple-pointcloud",
     title: "Simple pointcloud",
     entry: './src/threejs/simple-pointcloud.ts',
-    template: 'template-example.ejs',
-    type: 'threejs'
+    template: 'template-example.ejs'
   },
   {
     name: "threejs-post-processing-effects",
     title: "Post processing effects",
     entry: './src/threejs/post-processing-effects.ts',
-    template: 'template-example.ejs',
-    type: 'threejs'
+    template: 'template-example.ejs'
   },
   {
     name: "threejs-with-pointcloud",
     title: "CAD model with point cloud",
     entry: './src/threejs/sector-with-pointcloud.ts',
-    template: 'template-example.ejs',
-    type: 'threejs'
+    template: 'template-example.ejs'
   },
   {
     name: "threejs-two-models",
     title: "Two models",
     entry: './src/threejs/two-models.ts',
-    template: './template-example.ejs',
-    type: 'threejs'
+    template: './template-example.ejs'
   },
   {
     name: "threejs-custom-scene-elements",
     title: "Custom ThreeJS scene elements",
     entry: './src/threejs/custom-scene-elements.ts',
-    template: './template-example.ejs',
-    type: 'threejs'
-  },
-  {
-    name: "cesiumjs-basic",
-    title: 'CesiumJS basic',
-    entry: './src/cesiumjs/basic.ts',
-    template: './src/cesiumjs/template.ejs',
-    type: 'cesium'
-  },
+    template: './template-example.ejs'
+  }
 ];
 
 module.exports = env => {
-  const buildCesiumExamples = arg(env, 'cesium', true);
-  const buildThreeJsExamples = arg(env, 'threejs', true);
   const development = arg(env, 'development', true);
 
   logger.info("Build config:");
   logger.info(`  - development: ${development}`);
-  logger.info(`  - threejs: ${buildThreeJsExamples}`);
-  logger.info(`  - cesium:  ${buildCesiumExamples}`);
 
-  const isExampleEnabled = example => {
-    return (example.type === 'cesium' && buildCesiumExamples) ||
-      (example.type === 'threejs' && buildThreeJsExamples);
-  }
-  const enabledExamples = allExamples.filter(isExampleEnabled);
-
-  const examples = enabledExamples.map(example => {
+  const examples = allExamples.map(example => {
     const {name, title, entry, template} = example;
     return {
       name,
@@ -209,7 +181,6 @@ module.exports = env => {
       contentBase: [
         resolve('public/'),
         resolve('dist/'),
-        resolve('node_modules/cesium/Source/')
       ],
       writeToDisk: true,
     },
@@ -225,12 +196,6 @@ module.exports = env => {
         {from: path.join(revealSource, "**/*.wasm"), to: ".", flatten: true},
         {from: path.join(revealSource, "**/*.worker.js"), to: ".", flatten: true}
       ]),
-      new CopyWebpackPlugin([{ from: path.join(cesiumSource, cesiumWorkers), to: 'Workers' } ]),
-      new CopyWebpackPlugin([{ from: cesiumSource, to: 'Cesium' } ]),
-      new webpack.DefinePlugin({
-          CESIUM_BASE_URL: JSON.stringify('/')
-      }),
-
       // Examples and index
       new HtmlWebpackPlugin({
         templateParameters: {

@@ -100,14 +100,6 @@ module.exports = env => {
     ],
   };
 
-  if (arg(env, 'threejs', true)) {
-    config.entry['threejs'] = './src/threejs.ts';
-  }
-
-  if (arg(env, 'cesiumjs', true)) {
-    config.entry['cesiumjs'] = './src/cesiumjs.ts';
-  }
-
   return config;
 };
 

@@ -16,7 +16,6 @@ export { PointCloudModel } from './datasources/PointCloudModel';
 // Loaders
 export { createLocalCadModel, createLocalPointCloudModel } from './datasources/local';
 export { createThreeJsSectorNode, createThreeJsPointCloudNode } from './views/threejs';
-export { initializeCesiumSectorScene } from './views/cesiumjs/createCesiumSectorNode';
 
 // Utilities
 export { toThreeVector3 } from './views/threejs/utilities';

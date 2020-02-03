@@ -30,7 +30,6 @@
   "devDependencies": {
     "@cognite/tslint-config-cognite-3d": "^1.0.4",
     "@tweenjs/tween.js": "^17.2.0",
-    "@types/cesium": "^1.65.1",
     "@types/dat.gui": "^0.7.5",
     "@types/gl-matrix": "^2.4.5",
     "@types/jest": "^24.9.0",
@@ -64,7 +63,6 @@
     "@cognite/sdk": "^2.16.2",
     "@xailabs/three-renderer-stats": "^1.0.4",
     "camera-controls": "^1.18.2",
-    "cesium": "^1.65.0",
     "comlink": "^4.1.0",
     "dat.gui": "^0.7.6",
     "gl-matrix": "^3.1.0",
