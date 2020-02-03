@@ -5,9 +5,6 @@
 import * as THREE from 'three';
 import * as reveal from '@cognite/reveal';
 import dat from 'dat.gui';
-import { WantedSectors } from '@cognite/reveal/internal';
-import { SectorMetadata } from '@cognite/reveal/models/cad/types';
-import { CadLoadingHints } from '@cognite/reveal';
 
 export type RenderFilter = {
   renderQuads: boolean;
@@ -37,7 +34,7 @@ export type RenderOptions = {
   loadingEnabled: boolean;
   renderMode: RenderMode;
   renderFilter: RenderFilter;
-  overrideWantedSectors?: WantedSectors;
+  overrideWantedSectors?: reveal.internal.WantedSectors;
 };
 
 export function createDefaultRenderOptions(): RenderOptions {
@@ -87,7 +84,7 @@ function createEmptySceneInfo() {
 type SceneInfo = ReturnType<typeof createEmptySceneInfo>;
 
 export function createRendererDebugWidget(
-  sectorMetadataRoot: SectorMetadata,
+  sectorMetadataRoot: reveal.SectorMetadata,
   renderer: THREE.WebGLRenderer,
   cadNode: reveal.CadNode,
   gui: dat.GUI,
@@ -147,7 +144,7 @@ export function createRendererDebugWidget(
     .add(loadOverride, 'maxQuadSize', 0, 0.05, 0.0001)
     .name('Max quad size %')
     .onFinishChange(() => {
-      const override: CadLoadingHints = {
+      const override: reveal.CadLoadingHints = {
         maxQuadSize: loadOverride.maxQuadSize > 0.0 ? loadOverride.maxQuadSize : undefined
       };
       cadNode.loadingHints = {
@@ -302,7 +299,7 @@ function getMaterials(mesh: THREE.Mesh): THREE.Material[] {
  *               format x/y/z/ where x,y,z is a number).
  * @param root   The root of the sector tree.
  */
-function filterSectorNodes(filter: string, root: SectorMetadata): Set<number> {
+function filterSectorNodes(filter: string, root: reveal.SectorMetadata): Set<number> {
   const acceptedNodeIds: number[] = [];
   for (let pathRegex of filter.split(',').map(x => x.trim())) {
     if (!pathRegex.startsWith('^')) {
@@ -323,7 +320,7 @@ function filterSectorNodes(filter: string, root: SectorMetadata): Set<number> {
 
 function updateWantedSectorOverride(
   renderOptions: RenderOptions,
-  root: SectorMetadata,
+  root: reveal.SectorMetadata,
   quadsFilter: string,
   detailedFilter: string
 ) {

@@ -6,7 +6,6 @@ import * as THREE from 'three';
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
 import * as reveal from '@cognite/reveal';
-import { createThreeJsPointCloudNode } from '@cognite/reveal/threejs';
 
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
@@ -28,7 +27,7 @@ async function main() {
   Potree.XHRFactory.config.customHeaders.push({ header: 'MyDummyHeader', value: 'MyDummyValue' });
 
   const pointCloudModel = reveal.createLocalPointCloudModel(modelUrl);
-  const [pointCloudGroup, pointCloudNode] = await createThreeJsPointCloudNode(pointCloudModel);
+  const [pointCloudGroup, pointCloudNode] = await reveal.createThreeJsPointCloudNode(pointCloudModel);
   scene.add(pointCloudGroup);
 
   let settingsChanged = false;
@@ -44,12 +43,14 @@ async function main() {
     const h = bbox.max[1] - bbox.min[1];
     const d = bbox.max[2] - bbox.min[2];
     const boundsGeometry = new THREE.BoxGeometry();
-    const boundsMesh = new THREE.Mesh(boundsGeometry, new THREE.MeshBasicMaterial({color: 0xffff00, wireframe: true}));
+    const boundsMesh = new THREE.Mesh(
+      boundsGeometry,
+      new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true })
+    );
     boundsMesh.position.set(bbox.center[0], bbox.center[1], bbox.center[2]);
-    boundsMesh.scale.set(w,h,d);
+    boundsMesh.scale.set(w, h, d);
     scene.add(boundsMesh);
   }
-
 
   const camTarget = pointCloudNode.boundingBox.center;
   const minToCenter = vec3.sub(vec3.create(), camTarget, pointCloudNode.boundingBox.min);
@@ -63,7 +64,7 @@ async function main() {
   const render = async () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
-    const needsUpdate = controlsNeedUpdate ||  pointCloudGroup.needsRedraw || settingsChanged;
+    const needsUpdate = controlsNeedUpdate || pointCloudGroup.needsRedraw || settingsChanged;
 
     if (needsUpdate) {
       renderer.render(scene, camera);
@@ -79,7 +80,11 @@ async function main() {
   (window as any).controls = controls;
 }
 
-function initializeGui(group: reveal.internal.PotreeGroupWrapper, node: reveal.internal.PotreeNodeWrapper, handleSettingsChangedCb: () => void) {
+function initializeGui(
+  group: reveal.internal.PotreeGroupWrapper,
+  node: reveal.internal.PotreeNodeWrapper,
+  handleSettingsChangedCb: () => void
+) {
   const gui = new dat.GUI();
   gui.add(node, 'pointBudget', 0, 20_000_000);
   // gui.add(node, 'visiblePointCount', 0, 20_000_000).onChange(() => { /* Ignore update */ });

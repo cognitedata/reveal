@@ -4,7 +4,6 @@
 
 import * as THREE from 'three';
 import * as reveal from '@cognite/reveal';
-import { CadNode } from '@cognite/reveal/threejs';
 import CameraControls from 'camera-controls';
 
 const postprocessing = require('postprocessing');
@@ -20,7 +19,7 @@ async function main() {
   document.body.appendChild(renderer.domElement);
 
   const cadModel = await reveal.createLocalCadModel('/primitives');
-  const cadModelNode = new CadNode(cadModel);
+  const cadModelNode = new reveal.CadNode(cadModel);
   scene.add(cadModelNode);
 
   const controls = new CameraControls(camera, renderer.domElement);

@@ -2,6 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
+import { DetermineSectorsInput } from './models/cad/types';
+
 // TODO potentially private types
 export { FetchSectorMetadataDelegate, FetchSectorDelegate, FetchCtmDelegate } from './models/cad/delegates';
 
@@ -12,4 +14,4 @@ export { PotreeGroupWrapper } from './views/threejs/pointcloud/PotreeGroupWrappe
 
 export { suggestCameraConfig } from './utils/cameraUtils';
 export { traverseDepthFirst, traverseUpwards } from './utils/traversal';
-export { WantedSectors } from './models/cad/types';
+export { WantedSectors, DetermineSectorsInput } from './models/cad/types';

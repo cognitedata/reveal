@@ -5,10 +5,12 @@
 // CAD types
 export { CadModel } from './models/cad/CadModel';
 export { CadNode } from './views/threejs/cad/CadNode';
+export { SectorMetadata } from './models/cad/types';
 export { CadRenderHints } from './views/CadRenderHints';
 export { CadLoadingHints } from './models/cad/CadLoadingHints';
+
+// ThreeJS views
 export { SectorNode } from './views/threejs/cad/SectorNode';
-export { SectorMetadata } from './models/cad/types';
 
 // Point cloud
 export { PointCloudModel } from './datasources/PointCloudModel';
