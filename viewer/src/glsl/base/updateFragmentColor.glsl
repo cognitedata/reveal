@@ -32,8 +32,8 @@ void updateFragmentColor(vec3 color, float treeIndex, vec3 normal) {
         gl_FragColor = vec4(color * (0.4 + 0.6 * amplitude), h);
     } else if (renderType == RenderTypePackColorAndNormal) {
         vec3 hsv = rgb2hsv(color);
-        float h = (hsv.y > 0.0) ? (0.1 + hsv.x * 0.9) : hsv.z * 0.09;
-        gl_FragColor = vec4(normal.rgb, h);
+        float a = (hsv.y > 0.0) ? (0.1 + hsv.x * 0.9) : hsv.z * 0.09;
+        gl_FragColor = vec4(normal.rgb, a);
         //gl_FragColor = vec4(normalPacked.r, normalPacked.g, normalPacked.x, normalPacked.y);
     } else if (renderType == RenderTypeNormal) {
         gl_FragColor = vec4(packNormalToRGB(normal), 1.0);
