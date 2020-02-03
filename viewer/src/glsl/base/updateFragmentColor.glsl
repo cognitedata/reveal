@@ -22,8 +22,6 @@ void updateFragmentColor(vec3 color, float treeIndex, vec3 normal) {
 
 void updateFragmentColor(vec3 color, float treeIndex, vec3 normal) {
     if (renderType == RenderTypeColor) {
-        gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
-        return;
         vec3 hsv = rgb2hsv(color);
         float h = hsv.x;
         hsv.z = min(0.6 * hsv.z + 0.4, 1.0);

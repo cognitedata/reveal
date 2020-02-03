@@ -16,6 +16,7 @@ import { suggestCameraConfig } from '../../../utils/cameraUtils';
 import { createThreeJsSectorNode } from './createThreeJsSectorNode';
 import { SectorNode } from './SectorNode';
 import { fromThreeVector3, fromThreeMatrix, toThreeJsBox3, toThreeVector3, toThreeMatrix4 } from '../utilities';
+import { createMaterials, Materials } from './materials';
 
 export interface SuggestedCameraConfig {
   position: THREE.Vector3;
@@ -44,11 +45,16 @@ export class CadNode extends THREE.Object3D {
   private readonly _previousCameraMatrix = new THREE.Matrix4();
   private readonly _boundingBoxNode: THREE.Object3D;
 
+  // TODO make private + friend?
+  public readonly _materials: Materials;
+
   constructor(model: CadModel) {
     super();
     this.name = 'Sector model';
 
-    const { rootSector, simpleActivator, detailedActivator } = createThreeJsSectorNode(model);
+    this._materials = createMaterials();
+
+    const { rootSector, simpleActivator, detailedActivator } = createThreeJsSectorNode(model, this._materials);
     const { scene, modelTransformation } = model;
 
     this._sectorScene = scene;

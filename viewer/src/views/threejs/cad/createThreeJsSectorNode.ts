@@ -15,8 +15,9 @@ import { discardSector } from './discardSector';
 import { consumeSectorSimple } from './consumeSectorSimple';
 import { defaultDetermineSectors } from '../../../models/cad/determineSectors';
 import { toThreeMatrix4 } from '../utilities';
+import { Materials } from './materials';
 
-export function createThreeJsSectorNode(model: CadModel): RootSectorNodeData {
+export function createThreeJsSectorNode(model: CadModel, materials: Materials): RootSectorNodeData {
   const { fetchSectorDetailed, fetchSectorSimple, scene, modelTransformation, parseSimple, parseDetailed } = model;
   // Fetch metadata
   const sectorNodeMap = new Map<number, SectorNode>(); // Populated by buildScene() below
@@ -28,7 +29,7 @@ export function createThreeJsSectorNode(model: CadModel): RootSectorNodeData {
     }
 
     const metadata = findSectorMetadata(scene.root, sectorId);
-    consumeSectorDetailed(sectorId, sector, metadata, sectorNode);
+    consumeSectorDetailed(sectorId, sector, metadata, sectorNode, materials);
   };
   const discard: DiscardSectorDelegate = sectorId => {
     const sectorNode = sectorNodeMap.get(sectorId);

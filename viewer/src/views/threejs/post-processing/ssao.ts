@@ -6,6 +6,7 @@ import glsl from 'glslify';
 import * as THREE from 'three';
 import { SimplexNoise } from 'three/examples/jsm/math/SimplexNoise';
 import { RenderType } from '../materials';
+import { CadNode } from '../cad/CadNode';
 
 const vertexShaderAntialias = glsl(require('../../../glsl/post-processing/fxaa.vert').default);
 const fragmentShaderAntialias = glsl(require('../../../glsl/post-processing/fxaa.frag').default);
@@ -70,7 +71,12 @@ function createAntialiasScene(diffuseTexture: THREE.Texture): SceneInfo {
 const quadCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
 export interface Pass {
-  render: (renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera, pass?: SsaoPassType) => void;
+  render: (
+    renderer: THREE.WebGLRenderer,
+    scene: THREE.Scene,
+    camera: THREE.PerspectiveCamera,
+    pass?: SsaoPassType
+  ) => void;
   setSize: (width: number, height: number) => void;
   uniforms: Uniforms;
 }
@@ -189,7 +195,7 @@ export function createSsaoPass(): Pass {
     tDiffuse: { value: modelTarget.texture },
     tDepth: { value: modelTarget.depthTexture },
     tNoise: { value: noiseTexture },
-    //tNormal: { value: normalTarget.texture },
+    // tNormal: { value: normalTarget.texture },
     resolution: { value: new THREE.Vector2() },
     kernel: { value: kernel },
     kernelRadius: { value: 1.0 },
@@ -246,39 +252,57 @@ export function createSsaoPass(): Pass {
       if (pass === SsaoPassType.Regular) {
         renderer.setRenderTarget(null);
       }
+      scene.traverseVisible(object => {
+        if (object.type !== 'CadNode') {
+          return;
+        }
+        const cadNode = object as CadNode;
+        for (const material of Object.values(cadNode._materials)) {
+          material.uniforms.renderType.value = RenderType.PackColorAndNormal;
+        }
+      });
       renderer.render(scene, camera);
+      scene.traverseVisible(object => {
+        if (object.type !== 'CadNode') {
+          return;
+        }
+        const cadNode = object as CadNode;
+        for (const material of Object.values(cadNode._materials)) {
+          material.uniforms.renderType.value = RenderType.Color;
+        }
+      });
       if (pass === SsaoPassType.Regular) {
         return;
       }
     }
 
-    //{
-      //// Normal pass
-      //traverseShaderMaterials(scene.children[0], material => {
-        //material.uniforms.renderType = { value: RenderType.Normal };
-      //});
+    // {
+    //// Normal pass
+    // traverseShaderMaterials(scene.children[0], material => {
+    // material.uniforms.renderType = { value: RenderType.Normal };
+    // });
 
-      //const previousClearAlpha = renderer.getClearAlpha();
-      //const previousClearColor = renderer.getClearColor().clone();
+    // const previousClearAlpha = renderer.getClearAlpha();
+    // const previousClearColor = renderer.getClearColor().clone();
 
-      //renderer.setClearColor(new THREE.Color(0x7777ff), 1.0);
-      //renderer.setRenderTarget(normalTarget);
-      //if (pass === SsaoPassType.Normal) {
-        //renderer.setRenderTarget(null);
-      //}
-      //renderer.clear(true, false, false);
-      //renderer.render(scene, camera);
-      //if (pass === SsaoPassType.Normal) {
-        //return;
-      //}
+    // renderer.setClearColor(new THREE.Color(0x7777ff), 1.0);
+    // renderer.setRenderTarget(normalTarget);
+    // if (pass === SsaoPassType.Normal) {
+    // renderer.setRenderTarget(null);
+    // }
+    // renderer.clear(true, false, false);
+    // renderer.render(scene, camera);
+    // if (pass === SsaoPassType.Normal) {
+    // return;
+    // }
 
-      //renderer.setClearColor(previousClearColor);
-      //renderer.setClearAlpha(previousClearAlpha);
+    // renderer.setClearColor(previousClearColor);
+    // renderer.setClearAlpha(previousClearAlpha);
 
-      //traverseShaderMaterials(scene.children[0], material => {
-        //material.uniforms.renderType = { value: RenderType.Color };
-      //});
-    //}
+    // traverseShaderMaterials(scene.children[0], material => {
+    // material.uniforms.renderType = { value: RenderType.Color };
+    // });
+    // }
 
     {
       // SSAO pass
