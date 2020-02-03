@@ -9,7 +9,7 @@ matrix:
         allow_failures:
           - rust: nightly
         fast_finish: true
-      cache: cargo
+
       before_script:
         - rustup component add clippy
         - rustup component add rustfmt
@@ -22,7 +22,6 @@ matrix:
     - language: rust
       name: "Reveal viewer"
       cache:
-        cargo: true
         npm: true
         directories:
           - "viewer/node_modules"
