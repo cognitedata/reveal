@@ -89,9 +89,9 @@ fn create_dtype(attribute: &Attribute) -> TokenStream {
         Type::Texture(_) => quote! { Texture },
     };
     if count > 1 {
-        return quote! {[#type_name; #count]};
+        quote! {[#type_name; #count]}
     } else {
-        return type_name;
+        type_name
     }
 }
 
