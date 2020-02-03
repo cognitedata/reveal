@@ -70,7 +70,7 @@ function createAntialiasScene(diffuseTexture: THREE.Texture): SceneInfo {
 const quadCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
 export interface Pass {
-  render: (renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera, pass?: SsaoPass) => void;
+  render: (renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera, pass?: SsaoPassType) => void;
   setSize: (width: number, height: number) => void;
   uniforms: Uniforms;
 }

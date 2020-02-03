@@ -16,10 +16,32 @@ uniform sampler2D ssaoTexture;
 uniform vec2 size;
 
 vec3 unpack(float a) {
-  float h = (a > 0.095) ? max(0.0, (a - 0.1)) / 0.9 : 0.0;
-  float s = (a > 0.095) ? 0.6 : 0.0;
-  float v = (a > 0.095) ? 1.0 : a / 0.09;
-  return hsv2rgb(vec3(h, s, v));
+  float h = 0.0;
+  float s = 0.0;
+  float v = 0.0;
+  if (a > 0.095) {
+      // color
+      if (a > 0.545) {
+          // light color
+          float clamped = max(0.55, a);
+          h = (clamped - 0.55) / 0.45;
+          s = 0.6;
+          v = 0.9;
+          return hsv2rgb(vec3(h, s, v));
+      } else {
+          float clamped = max(0.1, a);
+          h = (clamped - 0.1) / 0.45;
+          s = 0.8;
+          v = 0.5;
+          return hsv2rgb(vec3(h, s, v));
+      }
+  } else {
+      // grayscale
+      float h = 0.0;
+      float s = 0.0;
+      float v = a / 0.09;
+      return hsv2rgb(vec3(h, s, v));
+  }
 }
 
 const bool blur = true;
