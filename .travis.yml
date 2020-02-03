@@ -21,11 +21,7 @@ matrix:
 
     - language: rust
       name: "Reveal viewer"
-      cache:
-        npm: true
-        directories:
-          - "viewer/node_modules"
-          - "examples/node_modules"
+
       install:
         # Install NVM and Node
         - sudo curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash
