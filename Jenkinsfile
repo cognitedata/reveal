@@ -1,10 +1,10 @@
 @Library('jenkins-helpers') _
 
-static final String REPO = "fas-demo-app"
+static final String REPO = "react-demo-app"
 static final String PR_COMMENT_MARKER = "[pr-server]\n"
 // If you need separate staging / production / etc URLs, then you'll have to do
 // switches in the code down below.
-static final String DOMAIN_NAME = "fas-demo.cognite.ai"
+static final String DOMAIN_NAME = "react-demo.cognite.ai"
 
 def label = "${REPO}-${UUID.randomUUID().toString().substring(0, 5)}"
 podTemplate(

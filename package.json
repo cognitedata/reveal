@@ -1,5 +1,5 @@
 {
-  "name": "fas-demo-app",
+  "name": "@cognite/react-demo-app",
   "version": "0.1.0",
   "private": true,
   "scripts": {
