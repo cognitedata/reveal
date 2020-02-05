@@ -105,7 +105,7 @@ const allExamples = [
 module.exports = env => {
   const buildCesiumExamples = arg(env, 'cesium', true);
   const buildThreeJsExamples = arg(env, 'threejs', true);
-  const development = arg(env, 'development', true);
+  const development = arg(env, 'development', false);
 
   logger.info("Build config:");
   logger.info(`  - development: ${development}`);
