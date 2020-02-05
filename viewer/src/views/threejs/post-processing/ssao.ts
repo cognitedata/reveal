@@ -257,6 +257,7 @@ export function createSsaoPass(): Pass {
           return;
         }
         const cadNode = object as CadNode;
+        const test = new THREE.ShaderMaterial();
         for (const material of Object.values(cadNode._materials)) {
           material.uniforms.renderType.value = RenderType.PackColorAndNormal;
         }

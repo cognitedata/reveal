@@ -21,7 +21,7 @@ vec3 unpack(float a) {
   float v = 0.0;
   if (a > 0.095) {
       // color
-      if (a > 0.545) {
+      if (a > 0.55) {
           // light color
           float clamped = max(0.55, a);
           h = (clamped - 0.55) / 0.45;

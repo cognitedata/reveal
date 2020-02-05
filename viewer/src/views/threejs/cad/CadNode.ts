@@ -50,6 +50,7 @@ export class CadNode extends THREE.Object3D {
 
   constructor(model: CadModel) {
     super();
+    this.type = 'CadNode';
     this.name = 'Sector model';
 
     this._materials = createMaterials();

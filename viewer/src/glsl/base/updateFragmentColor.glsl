@@ -34,10 +34,10 @@ void updateFragmentColor(vec3 color, float treeIndex, vec3 normal) {
         if (hsv.y > 0.01) {
             if (hsv.z > 0.5) {
                 // light color
-                a = (0.55 + hsv.x * 0.44);
+                a = (0.55 + hsv.x * 0.45);
             } else {
                 // dark color
-                a = (0.1 + hsv.x * 0.44);
+                a = (0.1 + hsv.x * 0.45);
             }
         } else {
             // no saturation - grayscale
