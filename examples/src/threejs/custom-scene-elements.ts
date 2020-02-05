@@ -23,7 +23,7 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 
   const sectorModel = await reveal.createLocalCadModel('/primitives');
-  const sectorModelNode = new reveal.CadNode(sectorModel);
+  const sectorModelNode = new reveal.threejs.CadNode(sectorModel);
   scene.add(sectorModelNode);
 
   const controls = new CameraControls(camera, renderer.domElement);

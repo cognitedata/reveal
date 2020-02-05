@@ -4,23 +4,19 @@
 
 // CAD types
 export { CadModel } from './models/cad/CadModel';
-export { CadNode } from './views/threejs/cad/CadNode';
 export { SectorMetadata } from './models/cad/types';
 export { CadRenderHints } from './views/CadRenderHints';
 export { CadLoadingHints } from './models/cad/CadLoadingHints';
 
-// ThreeJS views
-export { SectorNode } from './views/threejs/cad/SectorNode';
-
 // Point cloud
-export { PointCloudModel } from './datasources/PointCloudModel';
+export { PointCloudModel } from './models/pointclouds/PointCloudModel';
 
 // Loaders
 export { createLocalCadModel, createLocalPointCloudModel } from './datasources/local';
-export { createThreeJsSectorNode, createThreeJsPointCloudNode } from './views/threejs';
 
-// Utilities
-export { toThreeVector3 } from './views/threejs/utilities';
+// ThreeJS views
+import * as threejs from './views/threejs';
+export { threejs };
 
 // Internals
 import * as internal from './internal';

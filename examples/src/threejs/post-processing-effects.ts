@@ -19,7 +19,7 @@ async function main() {
   document.body.appendChild(renderer.domElement);
 
   const cadModel = await reveal.createLocalCadModel('/primitives');
-  const cadModelNode = new reveal.CadNode(cadModel);
+  const cadModelNode = new reveal.threejs.CadNode(cadModel);
   scene.add(cadModelNode);
 
   const controls = new CameraControls(camera, renderer.domElement);

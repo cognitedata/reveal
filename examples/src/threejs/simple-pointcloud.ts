@@ -27,7 +27,7 @@ async function main() {
   Potree.XHRFactory.config.customHeaders.push({ header: 'MyDummyHeader', value: 'MyDummyValue' });
 
   const pointCloudModel = reveal.createLocalPointCloudModel(modelUrl);
-  const [pointCloudGroup, pointCloudNode] = await reveal.createThreeJsPointCloudNode(pointCloudModel);
+  const [pointCloudGroup, pointCloudNode] = await reveal.threejs.createThreeJsPointCloudNode(pointCloudModel);
   scene.add(pointCloudGroup);
 
   let settingsChanged = false;

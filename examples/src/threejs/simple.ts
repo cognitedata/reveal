@@ -13,7 +13,7 @@ async function main() {
 
   const scene = new THREE.Scene();
   const cadModel = await reveal.createLocalCadModel(modelUrl);
-  const cadNode = new reveal.CadNode(cadModel);
+  const cadNode = new reveal.threejs.CadNode(cadModel);
 
   scene.add(cadNode);
 

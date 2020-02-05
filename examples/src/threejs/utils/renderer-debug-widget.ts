@@ -86,7 +86,7 @@ type SceneInfo = ReturnType<typeof createEmptySceneInfo>;
 export function createRendererDebugWidget(
   sectorMetadataRoot: reveal.SectorMetadata,
   renderer: THREE.WebGLRenderer,
-  cadNode: reveal.CadNode,
+  cadNode: reveal.threejs.CadNode,
   gui: dat.GUI,
   intervalMs: number = 100
 ): RenderOptions {

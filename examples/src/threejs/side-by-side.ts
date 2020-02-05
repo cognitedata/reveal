@@ -19,14 +19,14 @@ function initializeModel(
   cadModel: reveal.CadModel,
   canvas: HTMLCanvasElement,
   gui: dat.GUI
-): [THREE.WebGLRenderer, THREE.Scene, reveal.CadNode, RenderOptions] {
+): [THREE.WebGLRenderer, THREE.Scene, reveal.threejs.CadNode, RenderOptions] {
   const renderer = new THREE.WebGLRenderer({ canvas });
   renderer.setClearColor('#444');
   renderer.setSize(canvas.width, canvas.height);
 
   const sectorScene = cadModel.scene;
   const scene = new THREE.Scene();
-  const sectorModelNode = new reveal.CadNode(cadModel);
+  const sectorModelNode = new reveal.threejs.CadNode(cadModel);
   scene.add(sectorModelNode);
   const options = createRendererDebugWidget(sectorScene.root, renderer, sectorModelNode, gui);
 
