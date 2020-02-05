@@ -186,11 +186,13 @@ export function createRendererDebugWidget(
   // Actions
   const actions = {
     logVisible: () => logVisibleSectorsInScene(cadNode),
+    logActiveSectors: () => logActiveSectors(cadNode),
     logMaterials: () => logActiveMaterialsInScene(cadNode),
     initializeThreeJSInspector: () => initializeThreeJSInspector(renderer, cadNode)
   };
   const actionsGui = gui.addFolder('Actions');
   actionsGui.add(actions, 'logVisible').name('Log visible meshes');
+  actionsGui.add(actions, 'logActiveSectors').name('Log active sectors');
   actionsGui.add(actions, 'initializeThreeJSInspector').name('Init ThreeJS inspector');
   actionsGui.add(actions, 'logMaterials').name('Print materials');
 
@@ -216,6 +218,18 @@ function computeFramesPerSecond(renderer: THREE.WebGLRenderer, sceneInfo: SceneI
   sceneInfo.lastUpdate.timestamp = timestamp;
 }
 
+function isSectorRoot(object: THREE.Object3D): boolean {
+  return object.name.startsWith('Sector');
+}
+
+function isHighDetailSectorRoot(object: THREE.Object3D): boolean {
+  return isSectorRoot(object) && !!object.children.find(y => y.type === 'Mesh' && !y.name.startsWith('Quads'));
+}
+
+function isQuadSectorRoot(object: THREE.Object3D): boolean {
+  return isSectorRoot(object) && !!object.children.find(y => y.type === 'Mesh' && y.name.startsWith('Quads'));
+}
+
 function updateSceneInfo(scene: THREE.Object3D, sceneInfo: SceneInfo) {
   sceneInfo.sectors.count = 0;
   sceneInfo.sectors.loadedDetailedCount = 0;
@@ -233,10 +247,12 @@ function updateSceneInfo(scene: THREE.Object3D, sceneInfo: SceneInfo) {
 
   const materialIds = new Set<number>();
   scene.traverseVisible(x => {
-    if (x.visible && x.name.startsWith('Sector')) {
+    if (isSectorRoot(x)) {
       sceneInfo.sectors.count++;
-      sceneInfo.sectors.loadedDetailedCount += x.children.find(y => y.type === 'Mesh') ? 1 : 0;
-    } else if (x.type !== 'Mesh') {
+      sceneInfo.sectors.loadedDetailedCount += isHighDetailSectorRoot(x) ? 1 : 0;
+    }
+
+    if (x.type !== 'Mesh') {
       return;
     }
     const mesh = x as THREE.Mesh;
@@ -366,6 +382,24 @@ function logActiveMaterialsInScene(scene: THREE.Object3D) {
   });
   // tslint:disable-next-line: no-console
   console.log('Unique materials:', uniqueMaterials);
+}
+
+function logActiveSectors(scene: THREE.Object3D) {
+  const activeDetailedRoots: THREE.Object3D[] = [];
+  const activeQuadsRoots: THREE.Object3D[] = [];
+  scene.traverseVisible(x => {
+    if (x.name.startsWith('Sector') && x.children.find(y => y.type === 'Mesh')) {
+      if (x.children.find(y => y.name.startsWith('Quads'))) {
+        activeQuadsRoots.push(x);
+      } else {
+        activeDetailedRoots.push(x);
+      }
+    }
+  });
+  // tslint:disable-next-line: no-console
+  console.log('Active detailed sectors:', activeDetailedRoots);
+  // tslint:disable-next-line: no-console
+  console.log('Active quads sectors:', activeQuadsRoots);
 }
 
 function initializeThreeJSInspector(renderer: THREE.WebGLRenderer, scene: THREE.Object3D) {
