@@ -78,8 +78,7 @@ const allExamples = [
 ];
 
 module.exports = env => {
-  const development = arg(env, 'development', true);
-
+  const development = arg(env, 'development', false);
   logger.info("Build config:");
   logger.info(`  - development: ${development}`);
 
