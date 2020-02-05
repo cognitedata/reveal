@@ -188,12 +188,12 @@ export function createRendererDebugWidget(
     logVisible: () => logVisibleSectorsInScene(cadNode),
     logActiveSectors: () => logActiveSectors(cadNode),
     logMaterials: () => logActiveMaterialsInScene(cadNode),
-    initializeThreeJSInspector: () => initializeThreeJSInspector(renderer, cadNode)
+    saveWindowVariables: () => saveWindowVariables(renderer, cadNode, sectorMetadataRoot)
   };
   const actionsGui = gui.addFolder('Actions');
   actionsGui.add(actions, 'logVisible').name('Log visible meshes');
   actionsGui.add(actions, 'logActiveSectors').name('Log active sectors');
-  actionsGui.add(actions, 'initializeThreeJSInspector').name('Init ThreeJS inspector');
+  actionsGui.add(actions, 'saveWindowVariables').name('Save global variables');
   actionsGui.add(actions, 'logMaterials').name('Print materials');
 
   // Regularly update displays
@@ -402,12 +402,13 @@ function logActiveSectors(scene: THREE.Object3D) {
   console.log('Active quads sectors:', activeQuadsRoots);
 }
 
-function initializeThreeJSInspector(renderer: THREE.WebGLRenderer, scene: THREE.Object3D) {
+function saveWindowVariables(renderer: THREE.WebGLRenderer, scene: THREE.Object3D, sectorMetadataRoot: SectorMetadata) {
   (window as any).THREE = THREE;
   (window as any).scene = scene;
   (window as any).renderer = renderer;
+  (window as any).sectorRoot = sectorMetadataRoot;
   // tslint:disable-next-line: no-console
-  console.log('Set window.scene, window.renderer and window.THREE');
+  console.log('Set window.scene, window.renderer, window.THREE and window.sectorRoot');
   // tslint:disable-next-line: no-console
   console.log(
     'See https://github.com/jeromeetienne/threejs-inspector/blob/master/README.md for details on the ThreeJS inspector'
