@@ -64,6 +64,6 @@
     "gl-matrix": "^3.1.0",
     "glslify": "^7.0.0",
     "glslify-import": "^3.1.0",
-    "three": "0.110.0"
+    "three": "0.113.2"
   }
 }
