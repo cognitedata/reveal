@@ -5,8 +5,8 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
-    "release": "webpack --env.three-examples false --env.cesium-examples false",
-    "build": "mkdir -p dist && cp package.json README.md dist/ && webpack --env.development",
+    "release": "mkdir -p dist && cp package.json README.md dist/ && webpack --env.three-examples false --env.cesium-examples false",
+    "build": "webpack --env.development",
     "clean": "rimraf -rf dist/ target/ pkg/",
     "test": "jest",
     "coverage": "jest --coverage",
