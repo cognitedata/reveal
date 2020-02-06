@@ -11,6 +11,16 @@ Reveal viewer a highly performant viewer for the Web written in a combination of
 This repository contains the source code for the new version of the Cognite Reveal 3D viewer,
 including its file loading libraries.
 
+## Prerequisite ##
+Install [Node](https://nodejs.org/en/download/)
+Install [Rust](https://www.rust-lang.org/)
+
+### Install wasm-pack
+
+With Rust installed and ready to go, open a command shell: ```
+cargo install wasm-pack
+
+```
 ## Getting started ##
 
 To test the viewer, you need to build the viewer first and then the examples:
