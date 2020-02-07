@@ -1,7 +1,7 @@
 {
-  "name": "@cognite/reveal-streaming-examples",
+  "name": "@cognite/reveal-examples",
   "version": "0.1.0",
-  "description": "Reveal streaming examples",
+  "description": "Reveal examples",
   "main": "dist/index.js",
   "types": "dist/src/index.d.ts",
   "files": [
@@ -31,13 +31,11 @@
   "devDependencies": {
     "@cognite/tslint-config-cognite-3d": "^1.0.4",
     "@tweenjs/tween.js": "^17.2.0",
-    "@types/cesium": "^1.65.2",
     "@types/dat.gui": "^0.7.5",
     "@types/gl-matrix": "^2.4.5",
     "@types/jest": "^25.1.1",
     "@types/node": "^12.12.26",
     "@types/tween.js": "^17.2.0",
-    "@wasm-tool/wasm-pack-plugin": "^1.1.0",
     "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^3.4.2",
     "file-loader": "^5.0.2",
@@ -65,12 +63,10 @@
     "@cognite/sdk": "^2.16.2",
     "@xailabs/three-renderer-stats": "^1.0.4",
     "camera-controls": "^1.18.2",
-    "cesium": "^1.66.0",
     "comlink": "^4.1.0",
     "dat.gui": "^0.7.6",
     "gl-matrix": "^3.1.0",
     "glslify": "^7.0.0",
-    "glslify-import": "^3.1.0",
     "postprocessing": "^6.10.0",
     "three": "^0.113.2"
   }
