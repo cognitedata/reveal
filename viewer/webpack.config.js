@@ -37,6 +37,7 @@ module.exports = env => {
     mode: development ? "development" : "production",
     entry: {
       index: './src/index.ts',
+      threejs: './src/threejs.ts'
     },
     target: "web",
     module: {
@@ -99,14 +100,6 @@ module.exports = env => {
       new WorkerPlugin()
     ],
   };
-
-  if (arg(env, 'threejs', true)) {
-    config.entry['threejs'] = './src/threejs.ts';
-  }
-
-  if (arg(env, 'cesiumjs', true)) {
-    config.entry['cesiumjs'] = './src/cesiumjs.ts';
-  }
 
   return config;
 };
