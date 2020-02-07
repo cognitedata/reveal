@@ -34,45 +34,51 @@ function resolve(dir) {
 
 const allExamples = [
   {
+    name: "no-rendering",
+    title: "Load model without rendering",
+    entry: './src/no-rendering.ts',
+    template: 'template-example.ejs'
+  },
+  {
     name: "threejs-simple",
     title: "Simple",
-    entry: './src/threejs/simple.ts',
+    entry: './src/simple.ts',
     template: 'template-example.ejs'
   },
   {
     name: "threejs-side-by-side",
     title: "Side-by-side debugger for sector models",
-    entry: './src/threejs/side-by-side.ts',
+    entry: './src/side-by-side.ts',
     template: 'template-example-two-canvases.ejs'
   },
   {
     name: "threejs-simple-pointcloud",
     title: "Simple pointcloud",
-    entry: './src/threejs/simple-pointcloud.ts',
+    entry: './src/simple-pointcloud.ts',
     template: 'template-example.ejs'
   },
   {
     name: "threejs-post-processing-effects",
     title: "Post processing effects",
-    entry: './src/threejs/post-processing-effects.ts',
+    entry: './src/post-processing-effects.ts',
     template: 'template-example.ejs'
   },
   {
     name: "threejs-with-pointcloud",
     title: "CAD model with point cloud",
-    entry: './src/threejs/sector-with-pointcloud.ts',
+    entry: './src/sector-with-pointcloud.ts',
     template: 'template-example.ejs'
   },
   {
     name: "threejs-two-models",
     title: "Two models",
-    entry: './src/threejs/two-models.ts',
+    entry: './src/two-models.ts',
     template: './template-example.ejs'
   },
   {
     name: "threejs-custom-scene-elements",
     title: "Custom ThreeJS scene elements",
-    entry: './src/threejs/custom-scene-elements.ts',
+    entry: './src/custom-scene-elements.ts',
     template: './template-example.ejs'
   }
 ];

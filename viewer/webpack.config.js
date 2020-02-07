@@ -37,6 +37,7 @@ module.exports = env => {
     mode: development ? "development" : "production",
     entry: {
       index: './src/index.ts',
+      threejs: './src/threejs.ts'
     },
     target: "web",
     module: {

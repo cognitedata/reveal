@@ -6,6 +6,7 @@ import * as THREE from 'three';
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
 import * as reveal from '@cognite/reveal';
+import * as reveal_threejs from '@cognite/reveal/threejs';
 
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
@@ -27,7 +28,7 @@ async function main() {
   Potree.XHRFactory.config.customHeaders.push({ header: 'MyDummyHeader', value: 'MyDummyValue' });
 
   const pointCloudModel = reveal.createLocalPointCloudModel(modelUrl);
-  const [pointCloudGroup, pointCloudNode] = await reveal.threejs.createThreeJsPointCloudNode(pointCloudModel);
+  const [pointCloudGroup, pointCloudNode] = await reveal_threejs.createThreeJsPointCloudNode(pointCloudModel);
   scene.add(pointCloudGroup);
 
   let settingsChanged = false;

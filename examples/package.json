@@ -1,7 +1,7 @@
 {
-  "name": "@cognite/reveal-streaming-examples",
+  "name": "@cognite/reveal-examples",
   "version": "0.1.0",
-  "description": "Reveal streaming examples",
+  "description": "Reveal examples",
   "main": "dist/index.js",
   "types": "dist/src/index.d.ts",
   "files": [

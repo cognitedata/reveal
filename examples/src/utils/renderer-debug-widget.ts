@@ -4,6 +4,7 @@
 
 import * as THREE from 'three';
 import * as reveal from '@cognite/reveal';
+import * as reveal_threejs from '@cognite/reveal/threejs';
 import dat from 'dat.gui';
 
 export type RenderFilter = {
@@ -86,7 +87,7 @@ type SceneInfo = ReturnType<typeof createEmptySceneInfo>;
 export function createRendererDebugWidget(
   sectorMetadataRoot: reveal.SectorMetadata,
   renderer: THREE.WebGLRenderer,
-  cadNode: reveal.threejs.CadNode,
+  cadNode: reveal_threejs.CadNode,
   gui: dat.GUI,
   intervalMs: number = 100
 ): RenderOptions {

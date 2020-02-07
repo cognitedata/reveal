@@ -4,27 +4,25 @@
 
 import * as THREE from 'three';
 import * as reveal from '@cognite/reveal';
+import * as reveal_threejs from '@cognite/reveal/threejs';
+
 import CameraControls from 'camera-controls';
+
+const postprocessing = require('postprocessing');
 
 CameraControls.install({ THREE });
 
 async function main() {
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.12, 1000);
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#000000');
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const sectorModel1 = await reveal.createLocalCadModel('/primitives');
-  const sectorModel2 = await reveal.createLocalCadModel('/primitives');
-  const sectorModelNode1 = new reveal.threejs.CadNode(sectorModel1);
-  const sectorModelNode2 = new reveal.threejs.CadNode(sectorModel2);
-  const model2Offset = new THREE.Group();
-  model2Offset.position.set(-50, -50, 0);
-  model2Offset.add(sectorModelNode2);
-  scene.add(sectorModelNode1);
-  scene.add(model2Offset);
+  const cadModel = await reveal.createLocalCadModel('/primitives');
+  const cadModelNode = new reveal_threejs.CadNode(cadModel);
+  scene.add(cadModelNode);
 
   const controls = new CameraControls(camera, renderer.domElement);
   const pos = new THREE.Vector3(100, 100, 100);
@@ -33,18 +31,23 @@ async function main() {
   controls.update(0.0);
   camera.updateMatrixWorld();
 
+  // See https://vanruesc.github.io/postprocessing/public/docs/identifiers.html
+  const effectPass = new postprocessing.EffectPass(camera, new postprocessing.DotScreenEffect());
+  effectPass.renderToScreen = true;
+  const effectComposer = new postprocessing.EffectComposer(renderer);
+  effectComposer.addPass(new postprocessing.RenderPass(scene, camera));
+  effectComposer.addPass(effectPass);
+
   const clock = new THREE.Clock();
   const render = async () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
-    const model1NeedsUpdate = await sectorModelNode1.update(camera);
-    const model2NeedsUpdate = await sectorModelNode2.update(camera);
-    const needsUpdate = controlsNeedUpdate || model1NeedsUpdate || model2NeedsUpdate;
+    const modelNeedsUpdate = await cadModelNode.update(camera);
+    const needsUpdate = controlsNeedUpdate || modelNeedsUpdate;
 
     if (needsUpdate) {
-      renderer.render(scene, camera);
+      effectComposer.render(delta);
     }
-
     requestAnimationFrame(render);
   };
   render();

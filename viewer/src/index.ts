@@ -14,10 +14,9 @@ export { PointCloudModel } from './models/pointclouds/PointCloudModel';
 // Loaders
 export { createLocalCadModel, createLocalPointCloudModel } from './datasources/local';
 
-// ThreeJS views
-import * as threejs from './views/threejs';
-export { threejs };
-
 // Internals
 import * as internal from './internal';
 export { internal };
+
+
+// Note! ThreeJS is in a separate folder to ensure it's imported as '@cognite/reveal/threejs'.
