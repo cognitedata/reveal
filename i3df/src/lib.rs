@@ -61,7 +61,7 @@ pub fn parse_scene(reader: impl BufRead) -> Result<Scene, Error> {
     parse_scene_data(reader)
 }
 
-pub fn parse_root_sector(mut reader: impl BufRead) -> Result<Sector, Error> {
+pub fn parse_sector(mut reader: impl BufRead) -> Result<Sector, Error> {
     //let mut reader = BufReader::new(reader);
     let size = reader.read_u32::<LittleEndian>()?;
 
@@ -74,7 +74,7 @@ pub fn parse_root_sector(mut reader: impl BufRead) -> Result<Sector, Error> {
     let header = parse_sector_header(&mut input)?;
     let attributes = match &header.attributes {
         Some(x) => x,
-        None => return Err(error!("Attributes missing on root sector")),
+        None => return Err(error!("Attributes missing on sector")),
     };
     let primitive_collections = generated::parse_primitives(&mut input, attributes)?;
     //assert!(reader.eof()?);
@@ -84,36 +84,10 @@ pub fn parse_root_sector(mut reader: impl BufRead) -> Result<Sector, Error> {
     })
 }
 
-pub fn parse_sector(
-    attributes: &SectorAttributes,
-    mut reader: impl BufRead,
-) -> Result<Sector, Error> {
-    //let mut reader = BufReader::new(reader);
-    // read number of bytes
-    let size = reader.read_u32::<LittleEndian>()?;
-
-    // read bytes
-    let mut sector = vec![0; size as usize].into_boxed_slice();
-    reader.read_exact(&mut sector)?;
-
-    // parse sector
-    let mut input = BufReader::new(Cursor::new(sector));
-    let header = parse_sector_header(&mut input)?;
-    let primitive_collections = generated::parse_primitives(&mut input, attributes)?;
-    Ok(Sector {
-        header,
-        primitive_collections,
-    })
-}
-
 pub fn parse_scene_data(mut reader: impl BufRead) -> Result<Scene, Error> {
     //let mut reader = BufReader::new(reader);
 
-    let root_sector = parse_root_sector(&mut reader)?;
-    let attributes = match &root_sector.header.attributes {
-        Some(x) => x,
-        None => return Err(error!("Attributes missing on root sector")),
-    };
+    let root_sector = parse_sector(&mut reader)?;
     let root_sector_id = root_sector.header.sector_id as usize;
 
     let mut other_sectors = Vec::new();
@@ -123,7 +97,7 @@ pub fn parse_scene_data(mut reader: impl BufRead) -> Result<Scene, Error> {
             break;
         }
 
-        let sector = parse_sector(&attributes, &mut reader)?;
+        let sector = parse_sector(&mut reader)?;
 
         other_sectors.push(sector);
     }
@@ -147,7 +121,7 @@ pub fn parse_sector_header(mut input: &mut impl BufRead) -> Result<SectorHeader,
         ));
     }
     let format_version = input.read_u32::<LittleEndian>()?;
-    assert_eq!(format_version, 7);
+    assert_eq!(format_version, 8);
     let optimizer_version = input.read_u32::<LittleEndian>()?;
 
     let sector_id = input.read_u64::<LittleEndian>()? as usize;
