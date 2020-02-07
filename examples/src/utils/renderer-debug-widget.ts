@@ -51,7 +51,7 @@ function createEmptySceneInfo() {
   return {
     sectors: {
       count: 0,
-      withMeshesCount: 0
+      loadedDetailedCount: 0
     },
     primitives: {
       meshCount: 0,
@@ -129,7 +129,8 @@ export function createRendererDebugWidget(
   // Sectors
   const sectorsGui = gui.addFolder('Sectors');
   controls.push(sectorsGui.add(sceneInfo.sectors, 'count').name('Total'));
-  controls.push(sectorsGui.add(sceneInfo.sectors, 'withMeshesCount').name('Loaded'));
+  controls.push(sectorsGui.add(sceneInfo.sectors, 'loadedDetailedCount').name('Loaded detailed'));
+  controls.push(sectorsGui.add(sceneInfo.quads, 'meshCount').name('Loaded quads'));
 
   // Sectors to load
   const loadOverrideGui = sectorsGui.addFolder('Override loading');
@@ -183,12 +184,14 @@ export function createRendererDebugWidget(
   // Actions
   const actions = {
     logVisible: () => logVisibleSectorsInScene(cadNode),
+    logActiveSectors: () => logActiveSectors(cadNode),
     logMaterials: () => logActiveMaterialsInScene(cadNode),
-    initializeThreeJSInspector: () => initializeThreeJSInspector(renderer, cadNode)
+    saveWindowVariables: () => saveWindowVariables(renderer, cadNode, sectorMetadataRoot)
   };
   const actionsGui = gui.addFolder('Actions');
   actionsGui.add(actions, 'logVisible').name('Log visible meshes');
-  actionsGui.add(actions, 'initializeThreeJSInspector').name('Init ThreeJS inspector');
+  actionsGui.add(actions, 'logActiveSectors').name('Log active sectors');
+  actionsGui.add(actions, 'saveWindowVariables').name('Save global variables');
   actionsGui.add(actions, 'logMaterials').name('Print materials');
 
   // Regularly update displays
@@ -213,9 +216,21 @@ function computeFramesPerSecond(renderer: THREE.WebGLRenderer, sceneInfo: SceneI
   sceneInfo.lastUpdate.timestamp = timestamp;
 }
 
+function isSectorRoot(object: THREE.Object3D): boolean {
+  return object.name.startsWith('Sector');
+}
+
+function isHighDetailSectorRoot(object: THREE.Object3D): boolean {
+  return isSectorRoot(object) && !!object.children.find(y => y.type === 'Mesh' && !y.name.startsWith('Quads'));
+}
+
+function isQuadSectorRoot(object: THREE.Object3D): boolean {
+  return isSectorRoot(object) && !!object.children.find(y => y.type === 'Mesh' && y.name.startsWith('Quads'));
+}
+
 function updateSceneInfo(scene: THREE.Object3D, sceneInfo: SceneInfo) {
   sceneInfo.sectors.count = 0;
-  sceneInfo.sectors.withMeshesCount = 0;
+  sceneInfo.sectors.loadedDetailedCount = 0;
   sceneInfo.primitives.meshCount = 0;
   sceneInfo.primitives.templateTriangleCount = 0;
   sceneInfo.primitives.instanceCount = 0;
@@ -230,10 +245,12 @@ function updateSceneInfo(scene: THREE.Object3D, sceneInfo: SceneInfo) {
 
   const materialIds = new Set<number>();
   scene.traverseVisible(x => {
-    if (x.visible && x.name.startsWith('Sector')) {
+    if (isSectorRoot(x)) {
       sceneInfo.sectors.count++;
-      sceneInfo.sectors.withMeshesCount += x.children.find(y => y.type === 'Mesh') ? 1 : 0;
-    } else if (x.type !== 'Mesh') {
+      sceneInfo.sectors.loadedDetailedCount += isHighDetailSectorRoot(x) ? 1 : 0;
+    }
+
+    if (x.type !== 'Mesh') {
       return;
     }
     const mesh = x as THREE.Mesh;
@@ -365,12 +382,31 @@ function logActiveMaterialsInScene(scene: THREE.Object3D) {
   console.log('Unique materials:', uniqueMaterials);
 }
 
-function initializeThreeJSInspector(renderer: THREE.WebGLRenderer, scene: THREE.Object3D) {
+function logActiveSectors(scene: THREE.Object3D) {
+  const activeDetailedRoots: THREE.Object3D[] = [];
+  const activeQuadsRoots: THREE.Object3D[] = [];
+  scene.traverseVisible(x => {
+    if (x.name.startsWith('Sector') && x.children.find(y => y.type === 'Mesh')) {
+      if (x.children.find(y => y.name.startsWith('Quads'))) {
+        activeQuadsRoots.push(x);
+      } else {
+        activeDetailedRoots.push(x);
+      }
+    }
+  });
+  // tslint:disable-next-line: no-console
+  console.log('Active detailed sectors:', activeDetailedRoots);
+  // tslint:disable-next-line: no-console
+  console.log('Active quads sectors:', activeQuadsRoots);
+}
+
+function saveWindowVariables(renderer: THREE.WebGLRenderer, scene: THREE.Object3D, sectorMetadataRoot: reveal.SectorMetadata) {
   (window as any).THREE = THREE;
   (window as any).scene = scene;
   (window as any).renderer = renderer;
+  (window as any).sectorRoot = sectorMetadataRoot;
   // tslint:disable-next-line: no-console
-  console.log('Set window.scene, window.renderer and window.THREE');
+  console.log('Set window.scene, window.renderer, window.THREE and window.sectorRoot');
   // tslint:disable-next-line: no-console
   console.log(
     'See https://github.com/jeromeetienne/threejs-inspector/blob/master/README.md for details on the ThreeJS inspector'
