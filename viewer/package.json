@@ -19,7 +19,6 @@
     "Nils Petter Fremming <nils.fremming@cognite.com>"
   ],
   "license": "Apache-2.0",
-  
   "sideEffects": false,
   "glslify": {
     "transform": [

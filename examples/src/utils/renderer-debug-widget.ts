@@ -400,7 +400,7 @@ function logActiveSectors(scene: THREE.Object3D) {
   console.log('Active quads sectors:', activeQuadsRoots);
 }
 
-function saveWindowVariables(renderer: THREE.WebGLRenderer, scene: THREE.Object3D, sectorMetadataRoot: SectorMetadata) {
+function saveWindowVariables(renderer: THREE.WebGLRenderer, scene: THREE.Object3D, sectorMetadataRoot: reveal.SectorMetadata) {
   (window as any).THREE = THREE;
   (window as any).scene = scene;
   (window as any).renderer = renderer;
