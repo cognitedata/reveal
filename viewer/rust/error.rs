@@ -41,4 +41,3 @@ impl From<f3df::error::Error> for ParserError {
         }
     }
 }
-
