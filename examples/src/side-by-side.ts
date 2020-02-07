@@ -4,7 +4,8 @@
 
 import * as THREE from 'three';
 import * as reveal from '@cognite/reveal';
-import { CadNode } from '@cognite/reveal/threejs';
+import * as reveal_threejs from '@cognite/reveal/threejs';
+
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
 import {
@@ -13,7 +14,6 @@ import {
   RenderMode,
   RenderOptions
 } from './utils/renderer-debug-widget';
-import { DetermineSectorsInput } from '@cognite/reveal/models/cad/types';
 
 CameraControls.install({ THREE });
 
@@ -21,20 +21,20 @@ function initializeModel(
   cadModel: reveal.CadModel,
   canvas: HTMLCanvasElement,
   gui: dat.GUI
-): [THREE.WebGLRenderer, THREE.Scene, CadNode, RenderOptions] {
+): [THREE.WebGLRenderer, THREE.Scene, reveal_threejs.CadNode, RenderOptions] {
   const renderer = new THREE.WebGLRenderer({ canvas });
   renderer.setClearColor('#444');
   renderer.setSize(canvas.width, canvas.height);
 
   const sectorScene = cadModel.scene;
   const scene = new THREE.Scene();
-  const sectorModelNode = new CadNode(cadModel);
+  const sectorModelNode = new reveal_threejs.CadNode(cadModel);
   scene.add(sectorModelNode);
   const options = createRendererDebugWidget(sectorScene.root, renderer, sectorModelNode, gui);
 
   // Override determineSectors of the node to obey override in RenderOptions
   const defaultDetermineSectors = sectorModelNode.determineSectors;
-  function determineSectors(params: DetermineSectorsInput) {
+  function determineSectors(params: reveal.internal.DetermineSectorsInput) {
     if (options.overrideWantedSectors) {
       return Promise.resolve(options.overrideWantedSectors);
     }
