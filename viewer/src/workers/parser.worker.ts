@@ -31,7 +31,7 @@ export class ParserWorker {
   }
   parseSector = async (buffer: Uint8Array): Promise<ParseSectorResult> => {
     const rust = await rustModule;
-    const sectorDataHandle = rust.parse_root_sector(buffer);
+    const sectorDataHandle = rust.parse_sector(buffer);
     const sectorData = rust.convert_sector(sectorDataHandle);
     const instanceMeshes = (() => {
       const collection = sectorData.instanced_mesh_collection();

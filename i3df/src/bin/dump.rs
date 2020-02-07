@@ -33,7 +33,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let sector_file = options.sector_file;
 
     let sector_reader = BufReader::new(File::open(sector_file)?);
-    let raw_sector = i3df::parse_root_sector(sector_reader)?;
+    let raw_sector = i3df::parse_sector(sector_reader)?;
     let sector: Output = if options.renderables {
         Output::RenderableSector(Box::new(i3df::renderables::convert_sector(&raw_sector)))
     } else {
