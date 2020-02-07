@@ -62,7 +62,7 @@ export function createThreeJsSectorNode(model: CadModel): RootSectorNodeData {
   const detailedActivator = initializeSectorLoader(getDetailedCache.request, discard, consumeDetailed);
   const simpleActivator = initializeSectorLoader(getSimpleCache.request, discard, consumeSimple);
   const rootSector = new SectorNode(0, '/');
-  rootSector.applyMatrix(toThreeMatrix4(modelTransformation.modelMatrix));
+  rootSector.applyMatrix4(toThreeMatrix4(modelTransformation.modelMatrix));
   buildScene(scene.root, rootSector, sectorNodeMap);
 
   return {
