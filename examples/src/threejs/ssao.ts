@@ -19,10 +19,6 @@ async function main() {
 
   scene.add(cadNode);
 
-  //const canvas = document.createElement('canvas');
-  //const context = canvas.getContext('webgl2', { alpha: false });
-  // @ts-ignore
-  //const renderer = new THREE.WebGLRenderer({ canvas, context });
   const renderer = new THREE.WebGLRenderer();
   const effect = new SsaoEffect();
   renderer.setClearColor('#000');

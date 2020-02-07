@@ -13,13 +13,6 @@ vec3 packNormalToRGB( const in vec3 normal ) {
 	return normalize( normal ) * 0.5 + 0.5;
 }
 
-#ifdef COGNITE_COLOR_BY_TREE_INDEX
-
-void updateFragmentColor(vec3 color, float treeIndex, vec3 normal) {
-}
-
-#else
-
 void updateFragmentColor(vec3 color, float treeIndex, vec3 normal) {
     if (renderType == RenderTypeColor) {
         vec3 hsv = rgb2hsv(color);
@@ -56,7 +49,5 @@ void updateFragmentColor(vec3 color, float treeIndex, vec3 normal) {
         gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
     }
 }
-
-#endif
 
 #pragma glslify: export(updateFragmentColor)

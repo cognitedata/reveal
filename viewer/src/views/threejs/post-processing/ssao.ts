@@ -247,8 +247,9 @@ export function createSsaoPass(): Pass {
     {
       // Regular pass
       renderer.setClearColor(new THREE.Color(0x7777ff), 0.0);
-      renderer.clear(true, true, false);
       renderer.setRenderTarget(modelTarget);
+      // TODO ordering
+      renderer.clear(true, true, false);
       if (pass === SsaoPassType.Regular) {
         renderer.setRenderTarget(null);
       }
@@ -257,7 +258,6 @@ export function createSsaoPass(): Pass {
           return;
         }
         const cadNode = object as CadNode;
-        const test = new THREE.ShaderMaterial();
         for (const material of Object.values(cadNode._materials)) {
           material.uniforms.renderType.value = RenderType.PackColorAndNormal;
         }
