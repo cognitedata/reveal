@@ -7,7 +7,7 @@ import * as Potree from '@cognite/potree-core';
 
 export class EptLoader {
   static async load(eptJsonUrl: string): Promise<Potree.PointCloudOctreeGeometry> {
-    const response = await fetch(eptJsonUrl);
+    const response = await Potree.XHRFactory.fetch(eptJsonUrl);
     const json = await response.json();
     const baseUrl = eptJsonUrl.substr(0, eptJsonUrl.lastIndexOf('ept.json'));
     const geometry = new Potree.PointCloudEptGeometry(baseUrl, json);
@@ -18,6 +18,5 @@ export class EptLoader {
     geometry.root = root;
     geometry.root.load();
     return geometry;
-    // callback(geometry);
   }
 }

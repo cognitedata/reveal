@@ -3,5 +3,6 @@
  */
 
 import { createCadModel } from './cad/createCadModel';
+import { createPointCloudModel } from './pointcloud/createPointCloudModel';
 
-export { createCadModel as createSectorModel };
+export { createCadModel, createPointCloudModel };

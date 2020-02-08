@@ -11,11 +11,23 @@ import * as reveal_threejs from '@cognite/reveal/threejs';
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
 import { vec3 } from 'gl-matrix';
+import { CogniteClient } from '@cognite/sdk';
 
 CameraControls.install({ THREE });
 
 async function main() {
-  const modelUrl = new URL(location.href).searchParams.get('model') || '/transformer-point-cloud/cloud.js';
+  const urlParams = new URL(location.href).searchParams;
+  const modelUrl = urlParams.get('model') || '/transformer-point-cloud/cloud.js';
+  const project = urlParams.get('project') || '3ddemo';
+  const sdk = new CogniteClient({ appId: 'cognite.reveal.example.simple-pointcloud' });
+  sdk.loginWithOAuth({ project });
+  await sdk.authenticate();
+
+  // const wrapper = new CogniteClient3dV2Extensions(client);
+  // const result = await wrapper.retrieveJsonBlob<{}>(6344298602719510, 'ept.json');
+  // console.log(result);
+  // const description = await wrapper.getOutputs(531098129576448);
+  // console.log(description);
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -27,7 +39,9 @@ async function main() {
   // Shows how to set custom headers for PoTree request (useful for authentication)
   Potree.XHRFactory.config.customHeaders.push({ header: 'MyDummyHeader', value: 'MyDummyValue' });
 
-  const pointCloudModel = reveal.createLocalPointCloudModel(modelUrl);
+  const pointCloudModel = Number.isNaN(Number(modelUrl))
+    ? reveal.createLocalPointCloudModel(modelUrl)
+    : reveal.createPointCloudModel(sdk, Number.parseInt(modelUrl, 10));
   const [pointCloudGroup, pointCloudNode] = await reveal_threejs.createThreeJsPointCloudNode(pointCloudModel);
   scene.add(pointCloudGroup);
 
