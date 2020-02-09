@@ -5,10 +5,10 @@
 import * as THREE from 'three';
 import * as TWEEN from '@tweenjs/tween.js';
 import * as reveal from '@cognite/reveal';
+import * as reveal_threejs from '@cognite/reveal/threejs';
 
 import CameraControls from 'camera-controls';
 import { createPathNode, createTextSpriteNode } from './utils/scene-elements';
-import { CadNode } from '@cognite/reveal/threejs';
 
 CameraControls.install({ THREE });
 
@@ -24,7 +24,7 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 
   const sectorModel = await reveal.createLocalCadModel('/primitives');
-  const sectorModelNode = new CadNode(sectorModel);
+  const sectorModelNode = new reveal_threejs.CadNode(sectorModel);
   scene.add(sectorModelNode);
 
   const controls = new CameraControls(camera, renderer.domElement);

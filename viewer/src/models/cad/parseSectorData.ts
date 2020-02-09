@@ -65,19 +65,8 @@ function createWorkers<U>(): PooledWorker[] {
   return workerList;
 }
 
-export async function createParser(
-  sectorRoot: SectorMetadata,
-  fetchSector: FetchSectorDelegate,
-  fetchCtmFile: FetchCtmDelegate
-): Promise<ParseSectorDelegate<Sector>> {
-  const rootSectorArrayBuffer = await fetchSector(sectorRoot.id);
+export function createParser(fetchCtmFile: FetchCtmDelegate): ParseSectorDelegate<Sector> {
   const workerList = createWorkers();
-
-  postWorkToAll(workerList, async (worker: ParserWorker) => {
-    // NOTE: It is important that we copy the ArrayBuffer here, since it will be neutered the
-    // first time it is passed to a worker. We copy it by calling slice().
-    worker.parseRootSector(rootSectorArrayBuffer.slice());
-  });
 
   // TODO define the cache outside of the createParser function to make it configurable
   const loadCtmGeometryCache = createSimpleCache((fileId: number) => {
@@ -255,7 +244,7 @@ export async function createQuadsParser() {
         buffer: sectorResult.data
       } as SectorQuads;
     } catch (err) {
-      throw new Error(`Parsing sector ${sectorId} failed: ${err}`);
+      throw new Error(`Parsing quads sector ${sectorId} failed: ${err}`);
     }
 
     // TODO 20191023 larsmoa: Remember to free data from rust

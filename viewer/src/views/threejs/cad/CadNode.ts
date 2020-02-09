@@ -173,7 +173,7 @@ export class CadNode extends THREE.Object3D {
     });
 
     const boxesNode = new THREE.Group();
-    boxesNode.applyMatrix(toThreeMatrix4(this.modelTransformation.modelMatrix));
+    boxesNode.applyMatrix4(toThreeMatrix4(this.modelTransformation.modelMatrix));
     boxesNode.name = 'Bounding boxes (for debugging)';
     sectors.forEach(sector => {
       const bbox = toThreeJsBox3(new THREE.Box3(), sector.bounds);
