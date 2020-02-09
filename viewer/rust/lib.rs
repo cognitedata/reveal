@@ -97,7 +97,7 @@ pub struct SectorHandle {
 }
 
 #[wasm_bindgen]
-pub fn parse_root_sector(input: &[u8]) -> Result<SectorHandle, JsValue> {
+pub fn parse_sector(input: &[u8]) -> Result<SectorHandle, JsValue> {
     // TODO read https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/building-your-project.html
     // and see if this can be moved to one common place
     panic::set_hook(Box::new(console_error_panic_hook::hook));
@@ -105,27 +105,7 @@ pub fn parse_root_sector(input: &[u8]) -> Result<SectorHandle, JsValue> {
     let cursor = std::io::Cursor::new(input);
 
     // TODO see if it is possible to simplify this so we can use the ? operator instead
-    let sector = match i3df::parse_root_sector(cursor) {
-        Ok(x) => x,
-        Err(e) => return Err(JsValue::from(error::ParserError::from(e))),
-    };
-    Ok(SectorHandle { sector })
-}
-
-#[wasm_bindgen]
-pub fn parse_sector(root_sector: &SectorHandle, input: &[u8]) -> Result<SectorHandle, JsValue> {
-    // TODO read https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/building-your-project.html
-    // and see if this can be moved to one common place
-    panic::set_hook(Box::new(console_error_panic_hook::hook));
-
-    let cursor = std::io::Cursor::new(input);
-
-    let attributes = match &root_sector.sector.header.attributes {
-        Some(x) => x,
-        None => return Err(error!("Attributes missing on root sector")),
-    };
-
-    let sector = match i3df::parse_sector(attributes, cursor) {
+    let sector = match i3df::parse_sector(cursor) {
         Ok(x) => x,
         Err(e) => return Err(JsValue::from(error::ParserError::from(e))),
     };

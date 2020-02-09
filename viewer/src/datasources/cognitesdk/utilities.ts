@@ -4,7 +4,7 @@
 
 import { Versioned3DFile } from '@cognite/sdk';
 
-export const supportedVersions = [1, 2, 3, 7];
+export const supportedVersions = [8];
 
 export function getNewestVersionedFile(files: Versioned3DFile[]): Versioned3DFile {
   return files
