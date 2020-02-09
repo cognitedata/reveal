@@ -15,7 +15,7 @@ CameraControls.install({ THREE });
 
 async function main() {
   const urlParams = new URL(location.href).searchParams;
-  const modelUrl = urlParams.get('model') || '/transformer-point-cloud/cloud.js';
+  const modelIdentifier = urlParams.get('model') || '/transformer-point-cloud/cloud.js';
   const project = urlParams.get('project') || '3ddemo';
 
   const scene = new THREE.Scene();
@@ -25,7 +25,7 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const pointCloudModel = await createPointCloudModel(modelUrl, project);
+  const pointCloudModel = await createPointCloudModel(modelIdentifier, project);
   const [pointCloudGroup, pointCloudNode] = await reveal_threejs.createThreeJsPointCloudNode(pointCloudModel);
   scene.add(pointCloudGroup);
 
@@ -114,14 +114,15 @@ function initializeGui(
     });
 }
 
-async function createPointCloudModel(url: string, project: string): Promise<reveal.PointCloudModel> {
-  if (Number.isNaN(Number(url))) {
+async function createPointCloudModel(model: string, project: string): Promise<reveal.PointCloudModel> {
+  const isUrlModelId = !Number.isNaN(Number(model));
+  if (isUrlModelId) {
     const sdk = new CogniteClient({ appId: 'cognite.reveal.example.simple-pointcloud' });
     sdk.loginWithOAuth({ project });
     await sdk.authenticate();
-    return reveal.createPointCloudModel(sdk, Number.parseInt(url, 10));
+    return reveal.createPointCloudModel(sdk, Number.parseInt(model, 10));
   } else {
-    return reveal.createLocalPointCloudModel(url);
+    return reveal.createLocalPointCloudModel(model);
   }
 }
 

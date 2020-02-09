@@ -56,7 +56,7 @@ export async function createCadModel(sdk: CogniteClient, modelId: number, revisi
 
   // Fetch metadata
   const [scene, modelTransformation] = await fetchSectorMetadata();
-  const parseDetailed = await createParser(scene.root, fetchSectorDetailed, fetchCtm);
+  const parseDetailed = await createParser(fetchCtm);
   const parseSimple = await createQuadsParser();
   return {
     fetchSectorMetadata,
