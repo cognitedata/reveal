@@ -15,16 +15,10 @@ import * as Potree from '@cognite/potree-core';
 const identity = mat4.identity(mat4.create());
 
 export function createPointCloudModel(sdk: CogniteClient, modelRevisionId: number): PointCloudModel {
+  initializeXHRRequestHeaders(sdk);
+  const baseUrl = sdk.getBaseUrl();
+
   const sdkExtensions = new CogniteClient3dV2Extensions(sdk);
-  let xhrHeaders: { header: string; value: string }[] = Potree.XHRFactory.config.customHeaders;
-
-  Potree.XHRFactory.config.withCredentials = true;
-  for (const [header, value] of Object.entries(sdkExtensions.defaultHeaders)) {
-    xhrHeaders = xhrHeaders.filter(x => x.header !== header);
-    xhrHeaders.push({ header, value });
-  }
-  Potree.XHRFactory.config.customHeaders = xhrHeaders.filter(x => x.header);
-
   const outputsPromise = sdkExtensions.getOutputs(modelRevisionId);
 
   const fetchPointCloud: FetchPointCloudDelegate = async () => {
@@ -34,8 +28,7 @@ export function createPointCloudModel(sdk: CogniteClient, modelRevisionId: numbe
       throw new Error(`No point cloud output found for model ${modelRevisionId}`);
     }
     const mostReventEptOutput = eptOutput.versions[eptOutput.versions.length - 1];
-    const url =
-      'https://api.cognitedata.com' + sdkExtensions.buildBlobBaseUrl(mostReventEptOutput.blobs.ept) + '/ept.json';
+    const url = baseUrl + sdkExtensions.buildBlobBaseUrl(mostReventEptOutput.blobs.ept) + '/ept.json';
 
     const transform: SectorModelTransformation = {
       modelMatrix: identity,
@@ -44,4 +37,14 @@ export function createPointCloudModel(sdk: CogniteClient, modelRevisionId: numbe
     return [await EptLoader.load(url), transform];
   };
   return [fetchPointCloud];
+}
+
+function initializeXHRRequestHeaders(sdk: CogniteClient) {
+  const sdkHeaders = sdk.getDefaultRequestHeaders();
+  let xhrHeaders: { header: string; value: string }[] = Potree.XHRFactory.config.customHeaders;
+  for (const [header, value] of Object.entries(sdkHeaders)) {
+    xhrHeaders = xhrHeaders.filter(x => x.header !== header);
+    xhrHeaders.push({ header, value });
+  }
+  Potree.XHRFactory.config.customHeaders = xhrHeaders.filter(x => x.header);
 }

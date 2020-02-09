@@ -3,8 +3,6 @@
  */
 
 import * as THREE from 'three';
-// @ts-ignore
-import * as Potree from '@cognite/potree-core';
 import * as reveal from '@cognite/reveal';
 import * as reveal_threejs from '@cognite/reveal/threejs';
 
@@ -19,15 +17,6 @@ async function main() {
   const urlParams = new URL(location.href).searchParams;
   const modelUrl = urlParams.get('model') || '/transformer-point-cloud/cloud.js';
   const project = urlParams.get('project') || '3ddemo';
-  const sdk = new CogniteClient({ appId: 'cognite.reveal.example.simple-pointcloud' });
-  sdk.loginWithOAuth({ project });
-  await sdk.authenticate();
-
-  // const wrapper = new CogniteClient3dV2Extensions(client);
-  // const result = await wrapper.retrieveJsonBlob<{}>(6344298602719510, 'ept.json');
-  // console.log(result);
-  // const description = await wrapper.getOutputs(531098129576448);
-  // console.log(description);
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -36,12 +25,7 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  // Shows how to set custom headers for PoTree request (useful for authentication)
-  Potree.XHRFactory.config.customHeaders.push({ header: 'MyDummyHeader', value: 'MyDummyValue' });
-
-  const pointCloudModel = Number.isNaN(Number(modelUrl))
-    ? reveal.createLocalPointCloudModel(modelUrl)
-    : reveal.createPointCloudModel(sdk, Number.parseInt(modelUrl, 10));
+  const pointCloudModel = await createPointCloudModel(modelUrl, project);
   const [pointCloudGroup, pointCloudNode] = await reveal_threejs.createThreeJsPointCloudNode(pointCloudModel);
   scene.add(pointCloudGroup);
 
@@ -128,6 +112,17 @@ function initializeGui(
       node.pointShape = value;
       handleSettingsChangedCb();
     });
+}
+
+async function createPointCloudModel(url: string, project: string): Promise<reveal.PointCloudModel> {
+  if (Number.isNaN(Number(url))) {
+    const sdk = new CogniteClient({ appId: 'cognite.reveal.example.simple-pointcloud' });
+    sdk.loginWithOAuth({ project });
+    await sdk.authenticate();
+    return reveal.createPointCloudModel(sdk, Number.parseInt(url, 10));
+  } else {
+    return reveal.createLocalPointCloudModel(url);
+  }
 }
 
 main();
