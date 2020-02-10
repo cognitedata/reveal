@@ -45,7 +45,7 @@ export async function defaultDetermineSectors(params: DetermineSectorsInput): Pr
     throw new Error('Provided camera model matrix is not invertible');
   }
   mat4.multiply(frustumMatrix, projectionMatrix, invertCameraModelMatrix);
-  frustum.setFromProjectionMatrix(toThreeMatrix4(frustumMatrix));
+  frustum.setFromMatrix(toThreeMatrix4(frustumMatrix));
 
   traverseDepthFirst(scene.root, sector => {
     min.set(sector.bounds.min[0], sector.bounds.min[1], sector.bounds.min[2]);
