@@ -114,7 +114,7 @@ export const nutGeometry = (() => {
   // the problem is with the normals, because to do flat shading, we have to duplicate normals
   // one way to improve it is to use 'flat' qualifier to stop glsl from interpolating normals
   const geometry = new THREE.CylinderBufferGeometry(0.5, 0.5, 1, 6);
-  geometry.applyMatrix4(new THREE.Matrix4().makeRotationX(-Math.PI / 2));
+  geometry.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI / 2));
   const result = {
     index: geometry.getIndex(),
     position: geometry.getAttribute('position'),
