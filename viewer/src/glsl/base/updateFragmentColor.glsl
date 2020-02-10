@@ -36,9 +36,7 @@ void updateFragmentColor(vec3 color, float treeIndex, vec3 normal) {
             // no saturation - grayscale
             a = hsv.z * 0.09;
         }
-        //float a = (hsv.y > 0.0) ? (0.1 + hsv.x * 0.9) : hsv.z * 0.09;
         gl_FragColor = vec4(normal.rgb, a);
-        //gl_FragColor = vec4(normalPacked.r, normalPacked.g, normalPacked.x, normalPacked.y);
     } else if (renderType == RenderTypeNormal) {
         gl_FragColor = vec4(packNormalToRGB(normal), 1.0);
     } else if (renderType == RenderTypeTreeIndex) {

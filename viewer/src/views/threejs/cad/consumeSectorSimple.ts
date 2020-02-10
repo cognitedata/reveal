@@ -8,6 +8,7 @@ import { SectorNode } from './SectorNode';
 import { sectorShaders, shaderDefines } from './shaders';
 import { toThreeJsBox3 } from '../utilities';
 import { RenderType } from '../materials';
+import { Materials } from './materials';
 
 const quadVertexData = new Float32Array([
   // tslint:disable: prettier
@@ -22,23 +23,12 @@ const quadVertexData = new Float32Array([
 ]);
 const quadVertexBufferAttribute = new THREE.Float32BufferAttribute(quadVertexData.buffer, 3);
 
-const lowDetailMaterial = new THREE.ShaderMaterial({
-  name: 'Low detail material',
-  ...shaderDefines,
-  fragmentShader: sectorShaders.simpleMesh.fragment,
-  vertexShader: sectorShaders.simpleMesh.vertex,
-  uniforms: {
-    renderType: {
-      value: RenderType.PackColorAndNormal
-    }
-  }
-});
-
 export function consumeSectorSimple(
   sectorId: number,
   sector: SectorQuads,
   metadata: SectorMetadata,
-  sectorNode: SectorNode
+  sectorNode: SectorNode,
+  materials: Materials
 ) {
   const stride = 3 + 1 + 3 + 16;
   if (sector.buffer.byteLength === 0) {
@@ -72,7 +62,7 @@ export function consumeSectorSimple(
   geometry.setAttribute('matrix2', matrix2);
   geometry.setAttribute('matrix3', matrix3);
 
-  const obj = new THREE.Mesh(geometry, lowDetailMaterial);
+  const obj = new THREE.Mesh(geometry, materials.simple);
 
   obj.name = `Quads ${sectorId}`;
   // TODO 20191028 dragly figure out why the quads are being culled wrongly and if we

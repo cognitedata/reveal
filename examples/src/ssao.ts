@@ -40,17 +40,16 @@ async function main() {
   };
 
   const renderSettings = {
-    pass: SsaoPassType.Full
+    pass: SsaoPassType.Antialias
   };
 
   const gui = new dat.GUI();
   gui
     .add(renderSettings, 'pass', {
       Regular: SsaoPassType.Regular,
-      Normal: SsaoPassType.Normal,
       Ssao: SsaoPassType.Ssao,
-      SsaoBlur: SsaoPassType.SsaoBlur,
-      Full: SsaoPassType.Full
+      SsaoFinal: SsaoPassType.SsaoFinal,
+      Antialias: SsaoPassType.Antialias
     })
     .onChange(updateEffect);
 

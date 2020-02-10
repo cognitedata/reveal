@@ -66,16 +66,8 @@ void main() {
   }
   vec4 packedColor = texture2D(tDiffuse, vUv);
   vec3 colorRgb = unpack(packedColor.a);
-  //vec3 colorHsv = vec3(packedColor.x, 1.0, packedColor.y);
-  //vec3 colorRgb = hsv2rgb(colorHsv);
-  //vec2 normalRg = vec2(packedColor.z, packedColor.w);
-  //vec3 normal = unpackRGToNormal(normalRg);
   vec3 normal = packedColor.xyz;
   float amplitude = 0.4 + 0.6 * max(0.0, dot(normal, vec3(0.0, 0.0, 1.0)));
   gl_FragColor = vec4(vec3(amplitude * colorRgb.rgb * blurredAO), 1.0);
-  //gl_FragColor = vec4(colorRgb, 1.0);
-  //gl_FragColor = vec4(normal, 1.0);
-  //gl_FragColor = vec4(packedColor.rgb, 1.0);
-  //gl_FragColor = vec4(packNormalToRGB(normal), 1.0);
 }
 

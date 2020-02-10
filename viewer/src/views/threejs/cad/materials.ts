@@ -21,6 +21,7 @@ export interface Materials {
   ellipsoidSegment: THREE.ShaderMaterial;
   instancedMesh: THREE.ShaderMaterial;
   triangleMesh: THREE.ShaderMaterial;
+  simple: THREE.ShaderMaterial;
 }
 
 export function createMaterials(): Materials {
@@ -246,6 +247,18 @@ export function createMaterials(): Materials {
     }
   });
 
+  const simpleMaterial = new THREE.ShaderMaterial({
+    name: 'Low detail material',
+    ...shaderDefines,
+    fragmentShader: sectorShaders.simpleMesh.fragment,
+    vertexShader: sectorShaders.simpleMesh.vertex,
+    uniforms: {
+      renderType: {
+        value: RenderType.Color
+      }
+    }
+  });
+
   return {
     box: boxMaterial,
     circle: circleMaterial,
@@ -260,6 +273,7 @@ export function createMaterials(): Materials {
     trapezium: trapeziumMaterial,
     ellipsoidSegment: ellipsoidSegmentMaterial,
     instancedMesh: instancedMeshMaterial,
-    triangleMesh: triangleMeshMaterial
+    triangleMesh: triangleMeshMaterial,
+    simple: simpleMaterial
   };
 }

@@ -48,7 +48,7 @@ const allExamples = [
   {
     name: "threejs-ssao",
     title: "Screen space ambient occlusion shading",
-    entry: './src/threejs/ssao.ts',
+    entry: './src/ssao.ts',
     template: 'template-example.ejs',
     type: 'threejs'
   },

@@ -12,7 +12,7 @@ const vertexShaderAntialias = glsl(require('../../../glsl/post-processing/fxaa.v
 const fragmentShaderAntialias = glsl(require('../../../glsl/post-processing/fxaa.frag').default);
 const passThroughVertexShader = glsl(require('../../../glsl/post-processing/passthrough.vert').default);
 const ssaoShader = glsl(require('../../../glsl/post-processing/ssao.frag').default);
-const ssaoFinalShader = glsl(require('../../../glsl/post-processing/ssao-blur.frag').default);
+const ssaoFinalShader = glsl(require('../../../glsl/post-processing/ssao-final.frag').default);
 
 interface Uniforms {
   [uniform: string]: THREE.IUniform;
@@ -161,10 +161,9 @@ function createNoiseTexture() {
 
 export enum SsaoPassType {
   Regular = 'Regular',
-  Normal = 'Normal',
   Ssao = 'Ssao',
-  SsaoBlur = 'SsaoBlur',
-  Full = 'Full'
+  SsaoFinal = 'SsaoFinal',
+  Antialias = 'Antialias'
 }
 
 export function createSsaoPass(): Pass {
@@ -195,7 +194,6 @@ export function createSsaoPass(): Pass {
     tDiffuse: { value: modelTarget.texture },
     tDepth: { value: modelTarget.depthTexture },
     tNoise: { value: noiseTexture },
-    // tNormal: { value: normalTarget.texture },
     resolution: { value: new THREE.Vector2() },
     kernel: { value: kernel },
     kernelRadius: { value: 1.0 },
@@ -219,10 +217,6 @@ export function createSsaoPass(): Pass {
 
   const { scene: antiAliasScene, uniforms: antiAliasUniforms } = createAntialiasScene(ssaoFinalTarget.texture);
 
-  /////////
-
-  const modelUrl = new URL(location.href).searchParams.get('model') || '/primitives';
-
   const setSize = (width: number, height: number) => {
     modelTarget.setSize(width, height);
 
@@ -243,7 +237,7 @@ export function createSsaoPass(): Pass {
     camera: THREE.PerspectiveCamera,
     pass?: SsaoPassType
   ) => {
-    pass = pass || SsaoPassType.Full;
+    pass = pass || SsaoPassType.Antialias;
     {
       // Regular pass
       renderer.setClearColor(new THREE.Color(0x7777ff), 0.0);
@@ -277,34 +271,6 @@ export function createSsaoPass(): Pass {
       }
     }
 
-    // {
-    //// Normal pass
-    // traverseShaderMaterials(scene.children[0], material => {
-    // material.uniforms.renderType = { value: RenderType.Normal };
-    // });
-
-    // const previousClearAlpha = renderer.getClearAlpha();
-    // const previousClearColor = renderer.getClearColor().clone();
-
-    // renderer.setClearColor(new THREE.Color(0x7777ff), 1.0);
-    // renderer.setRenderTarget(normalTarget);
-    // if (pass === SsaoPassType.Normal) {
-    // renderer.setRenderTarget(null);
-    // }
-    // renderer.clear(true, false, false);
-    // renderer.render(scene, camera);
-    // if (pass === SsaoPassType.Normal) {
-    // return;
-    // }
-
-    // renderer.setClearColor(previousClearColor);
-    // renderer.setClearAlpha(previousClearAlpha);
-
-    // traverseShaderMaterials(scene.children[0], material => {
-    // material.uniforms.renderType = { value: RenderType.Color };
-    // });
-    // }
-
     {
       // SSAO pass
       ssaoUniforms.cameraNear.value = camera.near;
@@ -324,11 +290,11 @@ export function createSsaoPass(): Pass {
     {
       // SSAO final pass
       renderer.setRenderTarget(ssaoFinalTarget);
-      if (pass === SsaoPassType.SsaoBlur) {
+      if (pass === SsaoPassType.SsaoFinal) {
         renderer.setRenderTarget(null);
       }
       renderer.render(ssaoFinalScene, quadCamera);
-      if (pass === SsaoPassType.SsaoBlur) {
+      if (pass === SsaoPassType.SsaoFinal) {
         return;
       }
     }

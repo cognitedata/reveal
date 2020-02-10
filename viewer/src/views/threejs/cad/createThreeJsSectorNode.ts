@@ -45,7 +45,7 @@ export function createThreeJsSectorNode(model: CadModel, materials: Materials): 
     }
 
     const metadata = findSectorMetadata(scene.root, sectorId);
-    consumeSectorSimple(sectorId, sector, metadata, sectorNode);
+    consumeSectorSimple(sectorId, sector, metadata, sectorNode, materials);
   };
 
   const getDetailed = async (sectorId: number) => {
