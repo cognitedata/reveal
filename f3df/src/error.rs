@@ -1,14 +1,14 @@
 #[derive(Debug)]
 pub enum Error {
     IoError(std::io::Error),
-    F3dfError(String)
+    F3dfError(String),
 }
 
 impl std::fmt::Display for Error {
     fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
             Error::IoError(x) => x.fmt(fmt),
-            Error::F3dfError(message) => write!(fmt, "i3df::Error({:?})", message)
+            Error::F3dfError(message) => write!(fmt, "i3df::Error({:?})", message),
         }
     }
 }
