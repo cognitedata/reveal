@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "@cognite/tslint-config-cognite-3d": "^1.0.4",
-    "@tweenjs/tween.js": "^17.2.0",
+    "@tweenjs/tween.js": "^18.5.0",
     "@types/dat.gui": "^0.7.5",
     "@types/gl-matrix": "^2.4.5",
     "@types/jest": "^25.1.1",
