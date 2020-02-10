@@ -5,7 +5,6 @@
 import * as THREE from 'three';
 import { TriangleMesh } from '../../../models/cad/types';
 import { sectorShaders, shaderDefines } from './shaders';
-import { RenderType } from '../materials';
 
 export function createTriangleMeshes(
   triangleMeshes: TriangleMesh[],
