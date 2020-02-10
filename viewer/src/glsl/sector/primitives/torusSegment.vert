@@ -14,7 +14,6 @@ attribute float a_tubeRadius;
 varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
-varying vec3 v_viewPosition;
 
 void main() {
     mat4 instanceMatrix = constructMatrix(
@@ -45,7 +44,6 @@ void main() {
     v_normal = normalMatrix * objectNormal;
 
     vec4 modelViewPosition = modelViewMatrix * vec4(transformed, 1.0);
-    v_viewPosition = modelViewPosition.xyz;
 
     gl_Position = projectionMatrix * modelViewPosition;
 }

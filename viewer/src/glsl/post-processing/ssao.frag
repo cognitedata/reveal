@@ -10,7 +10,6 @@
 #define KERNEL_SIZE 32
 
 uniform sampler2D tDiffuse;
-//uniform sampler2D tNormal;
 uniform sampler2D tDepth;
 uniform sampler2D tNoise;
 
