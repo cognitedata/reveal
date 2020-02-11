@@ -4,7 +4,6 @@
 
 import glsl from 'glslify';
 import * as THREE from 'three';
-import { SimplexNoise } from 'three/examples/jsm/math/SimplexNoise';
 import { RenderType } from '../materials';
 import { CadNode } from '../cad/CadNode';
 
@@ -133,8 +132,6 @@ function createNoiseTexture() {
   const width = 128;
   const height = 128;
 
-  const simplex = new SimplexNoise();
-
   const size = width * height;
   const data = new Float32Array(size * 4);
 
@@ -143,13 +140,11 @@ function createNoiseTexture() {
 
     const x = Math.random() * 2 - 1;
     const y = Math.random() * 2 - 1;
-    const z = 0;
+    const z = Math.random() * 2 - 1;
 
-    const noise = simplex.noise3d(x, y, z);
-
-    data[stride] = noise;
-    data[stride + 1] = noise;
-    data[stride + 2] = noise;
+    data[stride] = x;
+    data[stride + 1] = y;
+    data[stride + 2] = z;
     data[stride + 3] = 1;
   }
 
