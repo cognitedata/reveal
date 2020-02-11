@@ -21,6 +21,8 @@ varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
+uniform int renderType;
+
 void main() {
     vec3 normal = normalize( v_normal );
     mat3 basis = mat3(U.xyz, V.xyz, axis.xyz);
@@ -89,7 +91,7 @@ void main() {
     bool isInner = false;
 
     if (intersectionPointZ <= 0.0 ||
-      intersectionPointZ >= L || 
+      intersectionPointZ >= L ||
       isSliced(p)
       ) {
       // Either intersection point is behind starting point (happens inside the cone),
@@ -100,7 +102,7 @@ void main() {
       p = rayTarget + dist*rayDirection;
 
       if (intersectionPointZ <= 0.0 ||
-        intersectionPointZ >= L || 
+        intersectionPointZ >= L ||
         isSliced(p)
       ) {
         // Missed the other point too
@@ -122,6 +124,6 @@ void main() {
     normal = normalize(cross(A, B));
 #endif
 
-    updateFragmentColor(v_color, v_treeIndex, normal);
+    updateFragmentColor(renderType, v_color, v_treeIndex, normal);
     updateFragmentDepth(p, projectionMatrix);
 }

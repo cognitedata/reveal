@@ -7,13 +7,11 @@ const int RenderTypeNormal = 2;
 const int RenderTypeTreeIndex = 3;
 const int RenderTypePackColorAndNormal = 4;
 
-uniform int renderType;
-
 vec3 packNormalToRGB( const in vec3 normal ) {
-	return normalize( normal ) * 0.5 + 0.5;
+    return normalize( normal ) * 0.5 + 0.5;
 }
 
-void updateFragmentColor(vec3 color, float treeIndex, vec3 normal) {
+void updateFragmentColor(int renderType, vec3 color, float treeIndex, vec3 normal) {
     if (renderType == RenderTypeColor) {
         vec3 hsv = rgb2hsv(color);
         float h = hsv.x;
@@ -36,7 +34,7 @@ void updateFragmentColor(vec3 color, float treeIndex, vec3 normal) {
             // no saturation - grayscale
             a = hsv.z * 0.09;
         }
-        gl_FragColor = vec4(normal.rgb, a);
+        gl_FragColor = vec4(packNormalToRGB(normal.rgb), a);
     } else if (renderType == RenderTypeNormal) {
         gl_FragColor = vec4(packNormalToRGB(normal), 1.0);
     } else if (renderType == RenderTypeTreeIndex) {

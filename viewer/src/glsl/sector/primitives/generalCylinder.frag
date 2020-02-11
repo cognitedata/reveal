@@ -33,6 +33,8 @@ varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
+uniform int renderType;
+
 void main() {
     vec3 normal = normalize( v_normal );
 
@@ -118,7 +120,7 @@ void main() {
     normal = normalize(p_local - W.xyz * dot(p_local, W.xyz));
 #endif
 
-    updateFragmentColor(v_color, v_treeIndex, normal);
+    updateFragmentColor(renderType, v_color, v_treeIndex, normal);
 
     updateFragmentDepth(p, projectionMatrix);
 }

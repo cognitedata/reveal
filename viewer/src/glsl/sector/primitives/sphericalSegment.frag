@@ -15,6 +15,8 @@ varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
+uniform int renderType;
+
 void main() {
     vec3 normal = normalize(sphereNormal.xyz);
 
@@ -87,6 +89,6 @@ void main() {
     }
 #endif
 
-  updateFragmentColor(v_color, v_treeIndex, normal);
+  updateFragmentColor(renderType, v_color, v_treeIndex, normal);
   updateFragmentDepth(p, projectionMatrix);
 }

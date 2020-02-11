@@ -11,6 +11,8 @@ varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
+uniform int renderType;
+
 void main() {
     float dist = dot(v_xy, v_xy);
     float theta = atan(v_xy.y, v_xy.x);
@@ -22,5 +24,5 @@ void main() {
         discard;
     }
 
-    updateFragmentColor(v_color, v_treeIndex, normal);
+    updateFragmentColor(renderType, v_color, v_treeIndex, normal);
 }

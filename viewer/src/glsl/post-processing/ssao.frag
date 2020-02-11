@@ -53,7 +53,7 @@ vec3 getViewPosition( const in vec2 screenPosition, const in float depth, const 
 
 vec3 getViewNormal( const in vec2 screenPosition ) {
     vec4 packedColorAndNormal = texture2D(tDiffuse, screenPosition);
-    vec3 normal = packedColorAndNormal.rgb;
+    vec3 normal = unpackRGBToNormal(packedColorAndNormal.rgb);
     return normalize(normal);
 }
 
