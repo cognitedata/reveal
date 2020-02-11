@@ -2,10 +2,10 @@
  * Copyright 2020 Cognite AS
  */
 
-import { Sector, SectorQuads, SectorMetadata, TriangleMesh, InstancedMesh, InstancedMeshFile } from './types';
-import { FetchSectorDelegate, FetchCtmDelegate, ParseSectorDelegate } from './delegates';
+import { Sector, SectorQuads, TriangleMesh, InstancedMesh, InstancedMeshFile } from './types';
+import { FetchCtmDelegate, ParseSectorDelegate } from './delegates';
 import { createOffsetsArray } from '../../utils/arrayUtils';
-import { WorkerArguments, ParseQuadsResult, ParseSectorResult } from '../../workers/types/parser.types';
+import { ParseQuadsResult, ParseSectorResult } from '../../workers/types/parser.types';
 import { ParserWorker } from '../../workers/parser.worker';
 import * as Comlink from 'comlink';
 import { createSimpleCache } from '../createCache';
@@ -34,19 +34,9 @@ async function postWorkToAvailable<T>(workerList: PooledWorker[], work: WorkDele
   return result;
 }
 
-async function postWorkToAll(workerList: PooledWorker[], work: WorkDelegate<void>) {
-  const operations = workerList.map(async worker => {
-    worker.activeJobCount += 1;
-    await work(worker.worker);
-    worker.activeJobCount -= 1;
-  });
-
-  await Promise.all(operations);
-}
-
 // TODO 20191030 larsmoa: Extract to separate file. Use Comlink (or other library
 // for web workers) to prettify.
-function createWorkers<U>(): PooledWorker[] {
+function createWorkers(): PooledWorker[] {
   const workerList: PooledWorker[] = [];
 
   for (let i = 0; i < window.navigator.hardwareConcurrency; i++) {
@@ -233,7 +223,7 @@ export function createParser(fetchCtmFile: FetchCtmDelegate): ParseSectorDelegat
 
 export async function createQuadsParser() {
   // TODO consider sharing workers with i3df parser
-  const workerList = await createWorkers<WorkerArguments>();
+  const workerList = await createWorkers();
 
   async function parse(sectorId: number, quadsArrayBuffer: Uint8Array): Promise<SectorQuads> {
     try {

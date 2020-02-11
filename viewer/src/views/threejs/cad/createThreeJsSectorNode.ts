@@ -13,7 +13,6 @@ import { findSectorMetadata } from '../../../models/cad/findSectorMetadata';
 import { consumeSectorDetailed } from './consumeSectorDetailed';
 import { discardSector } from './discardSector';
 import { consumeSectorSimple } from './consumeSectorSimple';
-import { defaultDetermineSectors } from '../../../models/cad/determineSectors';
 import { toThreeMatrix4 } from '../utilities';
 import { Materials } from './materials';
 

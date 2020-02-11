@@ -38,7 +38,7 @@ async function main() {
   sectorModelOffsetRoot.add(sectorModelNode);
   scene.add(sectorModelOffsetRoot);
   const { fetchSectorMetadata } = sectorModel;
-  const [modelScene, modelTransform] = await fetchSectorMetadata();
+  const [modelScene] = await fetchSectorMetadata();
 
   const pointCloudModel = reveal.createLocalPointCloudModel(pointCloudModelUrl);
   const [pointCloudGroup, pointCloudNode] = await reveal_threejs.createThreeJsPointCloudNode(pointCloudModel);
