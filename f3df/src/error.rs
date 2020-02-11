@@ -1,32 +1,33 @@
-#[derive(Debug, Clone)]
-pub struct Error {
-    message: String,
-}
-
-impl Error {
-    pub fn new(message: impl ToString) -> Error {
-        Error {
-            message: message.to_string(),
-        }
-    }
+#[derive(Debug)]
+pub enum Error {
+    IoError(std::io::Error),
+    F3dfError(String),
 }
 
 impl std::fmt::Display for Error {
     fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(fmt, "i3df::Error({:?})", self.message)
-    }
-}
-
-impl std::error::Error for Error {}
-
-impl From<std::io::Error> for Error {
-    fn from(err: std::io::Error) -> Error {
-        Error {
-            message: format!("IO error {}", err),
+        match self {
+            Error::IoError(x) => x.fmt(fmt),
+            Error::F3dfError(message) => write!(fmt, "i3df::Error({:?})", message),
         }
     }
 }
 
+impl std::error::Error for Error {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            Error::IoError(err) => Some(err),
+            _ => None,
+        }
+    }
+}
+
+impl From<std::io::Error> for Error {
+    fn from(err: std::io::Error) -> Error {
+        Error::IoError(err)
+    }
+}
+
 macro_rules! error {
-    ($($args:tt)*) => { $crate::error::Error::new(format!($($args)*)) }
+    ($($args:tt)*) => { $crate::error::Error::F3dfError(format!($($args)*)) }
 }
