@@ -21,11 +21,11 @@ export async function createPointCloudModel(sdk: CogniteClient, modelRevisionId:
   const sdkExtensions = new CogniteClient3dV2Extensions(sdk);
   const outputs = await sdkExtensions.getOutputs(modelRevisionId);
   const eptOutput = outputs.find(x => x.outputType === 'ept');
-  if (!eptOutput || eptOutput.versions.length === 0) {
+  if (!eptOutput || !eptOutput.versions || eptOutput.versions.length === 0) {
     throw new Error(`No point cloud output found for model ${modelRevisionId}`);
   }
-  const mostReventEptOutput = eptOutput.versions[eptOutput.versions.length - 1];
-  const url = baseUrl + sdkExtensions.buildBlobBaseUrl(mostReventEptOutput.blobs.ept) + '/ept.json';
+  const mostRecentEptOutput = eptOutput.versions[eptOutput.versions.length - 1];
+  const url = baseUrl + sdkExtensions.buildBlobBaseUrl(mostRecentEptOutput.blobId) + '/ept.json';
   const loaderPromise = EptLoader.load(url);
 
   const fetchPointCloud: FetchPointCloudDelegate = async () => {
@@ -33,7 +33,7 @@ export async function createPointCloudModel(sdk: CogniteClient, modelRevisionId:
       modelMatrix: identity,
       inverseModelMatrix: identity
     };
-    return [loaderPromise, transform];
+    return [await loaderPromise, transform];
   };
   return [fetchPointCloud];
 }

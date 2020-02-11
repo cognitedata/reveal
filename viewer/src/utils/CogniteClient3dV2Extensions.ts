@@ -2,13 +2,12 @@
  * Copyright 2020 Cognite AS
  */
 
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient, CogniteInternalId } from '@cognite/sdk';
 import { CDFHttpClient } from '@cognite/sdk/dist/src/utils/http/cdfHttpClient';
 
 export interface VersionedBlob {
   version: number;
-  blobs: { [key: string]: number };
-  // blobId: CogniteInternalId;
+  blobId: CogniteInternalId;
 }
 
 export interface Model3dOutput {
