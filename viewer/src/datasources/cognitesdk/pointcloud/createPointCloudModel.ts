@@ -14,27 +14,26 @@ import * as Potree from '@cognite/potree-core';
 
 const identity = mat4.identity(mat4.create());
 
-export function createPointCloudModel(sdk: CogniteClient, modelRevisionId: number): PointCloudModel {
+export async function createPointCloudModel(sdk: CogniteClient, modelRevisionId: number): Promise<PointCloudModel> {
   initializeXHRRequestHeaders(sdk);
   const baseUrl = sdk.getBaseUrl();
 
   const sdkExtensions = new CogniteClient3dV2Extensions(sdk);
-  const outputsPromise = sdkExtensions.getOutputs(modelRevisionId);
+  const outputs = await sdkExtensions.getOutputs(modelRevisionId);
+  const eptOutput = outputs.find(x => x.outputType === 'ept');
+  if (!eptOutput || eptOutput.versions.length === 0) {
+    throw new Error(`No point cloud output found for model ${modelRevisionId}`);
+  }
+  const mostReventEptOutput = eptOutput.versions[eptOutput.versions.length - 1];
+  const url = baseUrl + sdkExtensions.buildBlobBaseUrl(mostReventEptOutput.blobs.ept) + '/ept.json';
+  const loaderPromise = EptLoader.load(url);
 
   const fetchPointCloud: FetchPointCloudDelegate = async () => {
-    const outputs = await outputsPromise;
-    const eptOutput = outputs.find(x => x.outputType === 'ept');
-    if (!eptOutput || eptOutput.versions.length === 0) {
-      throw new Error(`No point cloud output found for model ${modelRevisionId}`);
-    }
-    const mostReventEptOutput = eptOutput.versions[eptOutput.versions.length - 1];
-    const url = baseUrl + sdkExtensions.buildBlobBaseUrl(mostReventEptOutput.blobs.ept) + '/ept.json';
-
     const transform: SectorModelTransformation = {
       modelMatrix: identity,
       inverseModelMatrix: identity
     };
-    return [await EptLoader.load(url), transform];
+    return [loaderPromise, transform];
   };
   return [fetchPointCloud];
 }
