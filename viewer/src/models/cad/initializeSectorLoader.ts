@@ -49,7 +49,7 @@ export function initializeSectorLoader<T>(
         // Sector processed
         discardSector(id);
         activeSectorIds.delete(id);
-        consumeQueue = consumeQueue.filter(({ sectorId, sector }) => {
+        consumeQueue = consumeQueue.filter(({ sectorId }) => {
           return sectorId !== id;
         });
       }

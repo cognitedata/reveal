@@ -25,10 +25,6 @@ function collectAttributes(collection: Collection): PrimitiveAttributes {
 }
 
 export class ParserWorker {
-  private workerId: number;
-  constructor() {
-    this.workerId = Math.floor(Math.random() * 1_000_000_000);
-  }
   parseSector = async (buffer: Uint8Array): Promise<ParseSectorResult> => {
     const rust = await rustModule;
     const sectorDataHandle = rust.parse_sector(buffer);

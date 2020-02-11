@@ -2,8 +2,6 @@
  * Copyright 2020 Cognite AS
  */
 
-import { DetermineSectorsInput } from './models/cad/types';
-
 // TODO potentially private types
 export { FetchSectorMetadataDelegate, FetchSectorDelegate, FetchCtmDelegate } from './models/cad/delegates';
 
