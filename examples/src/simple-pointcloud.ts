@@ -35,7 +35,7 @@ async function main() {
   function handleSettingsChanged() {
     settingsChanged = true;
   }
-  initializeGui(pointCloudGroup, pointCloudNode, handleSettingsChanged);
+  initializeGui(pointCloudNode, handleSettingsChanged);
 
   {
     // Create a bounding box around the point cloud for debugging
@@ -81,11 +81,7 @@ async function main() {
   (window as any).controls = controls;
 }
 
-function initializeGui(
-  group: reveal.internal.PotreeGroupWrapper,
-  node: reveal.internal.PotreeNodeWrapper,
-  handleSettingsChangedCb: () => void
-) {
+function initializeGui(node: reveal.internal.PotreeNodeWrapper, handleSettingsChangedCb: () => void) {
   const gui = new dat.GUI();
   gui.add(node, 'pointBudget', 0, 20_000_000);
   // gui.add(node, 'visiblePointCount', 0, 20_000_000).onChange(() => { /* Ignore update */ });

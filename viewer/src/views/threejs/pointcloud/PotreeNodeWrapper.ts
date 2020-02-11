@@ -7,7 +7,7 @@ import * as Potree from '@cognite/potree-core';
 import { PotreePointSizeType, PotreePointColorType, PotreePointShape } from './enums';
 import { fromThreeJsBox3 } from '../utilities';
 import { Box3 } from '../../../utils/Box3';
-import { mat4, vec3 } from 'gl-matrix';
+import { vec3 } from 'gl-matrix';
 
 /**
  * Wrapper around `Potree.PointCloudOctree` with some convinence functions.
