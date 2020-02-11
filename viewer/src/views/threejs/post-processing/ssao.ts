@@ -76,7 +76,6 @@ export interface Pass {
     camera: THREE.PerspectiveCamera,
     pass?: SsaoPassType
   ) => void;
-  setSize: (width: number, height: number) => void;
   uniforms: Uniforms;
 }
 
@@ -84,22 +83,6 @@ function lerp(value1: number, value2: number, amount: number) {
   amount = amount < 0 ? 0 : amount;
   amount = amount > 1 ? 1 : amount;
   return value1 + (value2 - value1) * amount;
-}
-
-function traverseShaderMaterials(rootNode: THREE.Object3D, callback: (material: THREE.ShaderMaterial) => void) {
-  rootNode.traverseVisible(obj => {
-    // NOTE we cannot rely on instanceof here because THREE is not necessarily the same library
-    if (obj.type !== 'Mesh') {
-      return;
-    }
-    const mesh = obj as THREE.Mesh;
-    if (mesh.material == null || Array.isArray(mesh.material) || mesh.material.type !== 'ShaderMaterial') {
-      return;
-    }
-    const material = mesh.material as THREE.ShaderMaterial;
-
-    callback(material);
-  });
 }
 
 function createKernel() {
@@ -226,12 +209,19 @@ export function createSsaoPass(): Pass {
     ssaoFinalUniforms.size.value.set(width, height);
   };
 
+  const rendererSize = new THREE.Vector2();
+
   const render = (
     renderer: THREE.WebGLRenderer,
     scene: THREE.Scene,
     camera: THREE.PerspectiveCamera,
     pass?: SsaoPassType
   ) => {
+    renderer.getSize(rendererSize);
+    if (modelTarget.width !== rendererSize.x || modelTarget.height !== rendererSize.y) {
+      setSize(rendererSize.x, rendererSize.y);
+    }
+
     pass = pass || SsaoPassType.Antialias;
     {
       // Regular pass
@@ -303,13 +293,12 @@ export function createSsaoPass(): Pass {
 
   return {
     render,
-    setSize,
     uniforms: ssaoUniforms
   };
 }
 
 export class SsaoEffect {
-  private _ssaoPass: Pass;
+  private readonly _ssaoPass: Pass;
 
   constructor() {
     this._ssaoPass = createSsaoPass();
@@ -337,10 +326,6 @@ export class SsaoEffect {
 
   set maxDistance(value: number) {
     this._ssaoPass.uniforms.maxDistance.value = value;
-  }
-
-  setSize(width: number, height: number) {
-    this._ssaoPass.setSize(width, height);
   }
 
   render(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera, pass?: SsaoPassType) {

@@ -5,9 +5,7 @@
 import * as THREE from 'three';
 import { SectorMetadata, SectorQuads } from '../../../models/cad/types';
 import { SectorNode } from './SectorNode';
-import { sectorShaders, shaderDefines } from './shaders';
 import { toThreeJsBox3 } from '../utilities';
-import { RenderType } from '../materials';
 import { Materials } from './materials';
 
 const quadVertexData = new Float32Array([

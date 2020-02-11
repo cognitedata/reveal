@@ -22,7 +22,6 @@ async function main() {
   const renderer = new THREE.WebGLRenderer();
   const effect = new SsaoEffect();
   renderer.setClearColor('#000');
-  effect.setSize(window.innerWidth, window.innerHeight);
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 

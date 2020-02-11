@@ -4,8 +4,6 @@
 
 import * as THREE from 'three';
 import { InstancedMeshFile } from '../../../models/cad/types';
-import { sectorShaders, shaderDefines } from './shaders';
-import { RenderType } from '../materials';
 
 export function createInstancedMeshes(
   meshes: InstancedMeshFile[],
