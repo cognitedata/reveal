@@ -7,7 +7,7 @@ import { WantedSectors, SectorMetadata, SectorScene, DetermineSectorsInput } fro
 import { traverseDepthFirst, traverseUpwards } from '../../utils/traversal';
 import { toThreeMatrix4, toThreeVector3 } from '../../views/threejs/utilities';
 import { mat4 } from 'gl-matrix';
-import { CadLoadingHints, defaultLoadingHints as defaultCadLoadingHints } from './CadLoadingHints';
+import { defaultLoadingHints as defaultCadLoadingHints } from './CadLoadingHints';
 
 const degToRadFactor = Math.PI / 180;
 
