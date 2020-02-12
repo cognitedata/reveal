@@ -32,7 +32,7 @@ export function createMaterials(): Materials {
     vertexShader: sectorShaders.boxPrimitive.vertex,
     fragmentShader: sectorShaders.boxPrimitive.fragment,
     uniforms: {
-      renderType: {
+      renderMode: {
         value: RenderMode.Color
       }
     }
@@ -48,7 +48,7 @@ export function createMaterials(): Materials {
     // we should indicate this in the data from Rust
     side: THREE.DoubleSide,
     uniforms: {
-      renderType: {
+      renderMode: {
         value: RenderMode.Color
       }
     }
@@ -60,7 +60,7 @@ export function createMaterials(): Materials {
     vertexShader: sectorShaders.nutPrimitive.vertex,
     fragmentShader: sectorShaders.nutPrimitive.fragment,
     uniforms: {
-      renderType: {
+      renderMode: {
         value: RenderMode.Color
       }
     }
@@ -73,7 +73,7 @@ export function createMaterials(): Materials {
     fragmentShader: sectorShaders.quadPrimitive.fragment,
     side: THREE.DoubleSide,
     uniforms: {
-      renderType: {
+      renderMode: {
         value: RenderMode.Color
       }
     }
@@ -86,7 +86,7 @@ export function createMaterials(): Materials {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
       },
-      renderType: {
+      renderMode: {
         value: RenderMode.Color
       }
     },
@@ -105,7 +105,7 @@ export function createMaterials(): Materials {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
       },
-      renderType: {
+      renderMode: {
         value: RenderMode.Color
       }
     },
@@ -121,7 +121,7 @@ export function createMaterials(): Materials {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
       },
-      renderType: {
+      renderMode: {
         value: RenderMode.Color
       }
     },
@@ -137,7 +137,7 @@ export function createMaterials(): Materials {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
       },
-      renderType: {
+      renderMode: {
         value: RenderMode.Color
       }
     },
@@ -153,7 +153,7 @@ export function createMaterials(): Materials {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
       },
-      renderType: {
+      renderMode: {
         value: RenderMode.Color
       }
     },
@@ -169,7 +169,7 @@ export function createMaterials(): Materials {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
       },
-      renderType: {
+      renderMode: {
         value: RenderMode.Color
       }
     },
@@ -185,7 +185,7 @@ export function createMaterials(): Materials {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
       },
-      renderType: {
+      renderMode: {
         value: RenderMode.Color
       }
     },
@@ -206,7 +206,7 @@ export function createMaterials(): Materials {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
       },
-      renderType: {
+      renderMode: {
         value: RenderMode.Color
       }
     },
@@ -225,7 +225,7 @@ export function createMaterials(): Materials {
     fragmentShader: sectorShaders.detailedMesh.fragment,
     vertexShader: sectorShaders.detailedMesh.vertex,
     uniforms: {
-      renderType: {
+      renderMode: {
         value: RenderMode.Color
       }
     }
@@ -241,7 +241,7 @@ export function createMaterials(): Materials {
     fragmentShader: sectorShaders.instancedMesh.fragment,
     vertexShader: sectorShaders.instancedMesh.vertex,
     uniforms: {
-      renderType: {
+      renderMode: {
         value: RenderMode.Color
       }
     }
@@ -253,7 +253,7 @@ export function createMaterials(): Materials {
     fragmentShader: sectorShaders.simpleMesh.fragment,
     vertexShader: sectorShaders.simpleMesh.vertex,
     uniforms: {
-      renderType: {
+      renderMode: {
         value: RenderMode.Color
       }
     }

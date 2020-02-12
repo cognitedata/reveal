@@ -80,6 +80,9 @@ export class CadNode extends THREE.Object3D {
   set renderHints(hints: Readonly<CadRenderHints>) {
     this._renderHints = hints;
     this._boundingBoxNode.visible = this.shouldRenderSectorBoundingBoxes;
+    for (const material of Object.values(this._materials)) {
+      material.uniforms.renderType.value = hints.renderMode;
+    }
   }
 
   get renderHints(): Readonly<CadRenderHints> {
