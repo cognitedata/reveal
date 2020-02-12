@@ -7,8 +7,11 @@ import { Box3 } from '../../../../utils/Box3';
 import { vec3 } from 'gl-matrix';
 import { consumeSectorDetailed } from '../../../../views/threejs/cad/consumeSectorDetailed';
 import { SectorNode } from '../../../../views/threejs/cad/SectorNode';
-import 'jest-extended';
 import { createEmptySector } from '../../../models/sector/emptySector';
+import { createMaterials } from '../../../../views/threejs/cad/materials';
+import 'jest-extended';
+
+const materials = createMaterials();
 
 describe('consumeSectorDetailed', () => {
   const metadata: SectorMetadata = {
@@ -29,7 +32,7 @@ describe('consumeSectorDetailed', () => {
     const sector = createEmptySector();
 
     // Act
-    consumeSectorDetailed(sectorId, sector, metadata, node);
+    consumeSectorDetailed(sectorId, sector, metadata, node, materials);
 
     // Assert
     const geometries = extractGeometries(node);
@@ -42,7 +45,7 @@ describe('consumeSectorDetailed', () => {
     const sector: Sector = Object.assign(createEmptySector(), { triangleMeshes } as Sector);
 
     // Act
-    consumeSectorDetailed(sectorId, sector, metadata, node);
+    consumeSectorDetailed(sectorId, sector, metadata, node, materials);
 
     // Assert
     const geometries = extractGeometries(node);
@@ -55,7 +58,7 @@ describe('consumeSectorDetailed', () => {
     const sector: Sector = Object.assign(createEmptySector(), { instanceMeshes } as Sector);
 
     // Act
-    consumeSectorDetailed(sectorId, sector, metadata, node);
+    consumeSectorDetailed(sectorId, sector, metadata, node, materials);
 
     // Assert
     const geometries = extractGeometries(node);
@@ -67,7 +70,7 @@ describe('consumeSectorDetailed', () => {
     const sector = createEmptySector();
 
     // Act
-    consumeSectorDetailed(sectorId, sector, metadata, node);
+    consumeSectorDetailed(sectorId, sector, metadata, node, materials);
 
     // Assert
     expect(node.children).toBeEmpty();

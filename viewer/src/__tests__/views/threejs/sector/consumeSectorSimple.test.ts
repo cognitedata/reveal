@@ -7,7 +7,10 @@ import { Box3 } from '../../../../utils/Box3';
 import { vec3 } from 'gl-matrix';
 import { consumeSectorSimple } from '../../../../views/threejs/cad/consumeSectorSimple';
 import { SectorNode } from '../../../../views/threejs/cad/SectorNode';
+import { createMaterials } from '../../../../views/threejs/cad/materials';
 import 'jest-extended';
+
+const materials = createMaterials();
 
 describe('consumeSectorDetailed', () => {
   const metadata: SectorMetadata = {
@@ -26,7 +29,7 @@ describe('consumeSectorDetailed', () => {
     };
 
     // Act
-    consumeSectorSimple(sectorId, sector, metadata, node);
+    consumeSectorSimple(sectorId, sector, metadata, node, materials);
 
     // Assert
     expect(node.children).toBeEmpty();
@@ -49,7 +52,7 @@ describe('consumeSectorDetailed', () => {
     };
 
     // Act
-    consumeSectorSimple(sectorId, sector, metadata, node);
+    consumeSectorSimple(sectorId, sector, metadata, node, materials);
 
     // Assert
     expect(node.children).not.toBeEmpty();
@@ -81,7 +84,7 @@ describe('consumeSectorDetailed', () => {
     };
 
     // Act
-    consumeSectorSimple(sectorId, sector, metadata, node);
+    consumeSectorSimple(sectorId, sector, metadata, node, materials);
 
     // Assert
     expect(node.children.length).toBe(2);
@@ -99,14 +102,14 @@ describe('consumeSectorDetailed', () => {
         0.0, 1.0, 0.0, 0.0,
         0.0, 0.0, 1.0, 0.0,
         0.0, 0.0, 0.0, 1.0,
-        
+
         0.13337,
         // tslint:enable: prettier
       ])
     };
 
     // Act
-    expect(() => consumeSectorSimple(sectorId, sector, metadata, node)).toThrowError();
+    expect(() => consumeSectorSimple(sectorId, sector, metadata, node, materials)).toThrowError();
   });
 
   test('buffer missing bytes, throws', () => {
@@ -120,6 +123,6 @@ describe('consumeSectorDetailed', () => {
     };
 
     // Act
-    expect(() => consumeSectorSimple(sectorId, sector, metadata, node)).toThrowError();
+    expect(() => consumeSectorSimple(sectorId, sector, metadata, node, materials)).toThrowError();
   });
 });

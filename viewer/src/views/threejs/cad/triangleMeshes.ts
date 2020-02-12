@@ -4,9 +4,12 @@
 
 import * as THREE from 'three';
 import { TriangleMesh } from '../../../models/cad/types';
-import { sectorShaders, shaderDefines } from './shaders';
 
-export function createTriangleMeshes(triangleMeshes: TriangleMesh[], bounds: THREE.Box3): THREE.Mesh[] {
+export function createTriangleMeshes(
+  triangleMeshes: TriangleMesh[],
+  bounds: THREE.Box3,
+  material: THREE.ShaderMaterial
+): THREE.Mesh[] {
   const result: THREE.Mesh[] = [];
   for (const mesh of triangleMeshes) {
     const geometry = new THREE.BufferGeometry();
@@ -25,17 +28,7 @@ export function createTriangleMeshes(triangleMeshes: TriangleMesh[], bounds: THR
     geometry.boundingSphere = new THREE.Sphere();
     bounds.getBoundingSphere(geometry.boundingSphere);
 
-    const triangleMeshMaterial = new THREE.ShaderMaterial({
-      name: 'Triangle meshes',
-      ...shaderDefines,
-      extensions: {
-        derivatives: true
-      },
-      side: THREE.DoubleSide,
-      fragmentShader: sectorShaders.detailedMesh.fragment,
-      vertexShader: sectorShaders.detailedMesh.vertex
-    });
-    const obj = new THREE.Mesh(geometry, triangleMeshMaterial);
+    const obj = new THREE.Mesh(geometry, material);
     obj.name = `Triangle mesh ${mesh.fileId}`;
     result.push(obj);
   }

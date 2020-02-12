@@ -17,6 +17,7 @@ void updateFragmentDepth(vec3 p,mat4 projectionMatrix){
 
 void updateFragmentDepth(vec3 p,mat4 projectionMatrix){
   // Extension not available - not much we can do.
+  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
 }
 
 #endif
