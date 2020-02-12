@@ -44,9 +44,7 @@ export class CadNode extends THREE.Object3D {
   private readonly _sectorScene: SectorScene;
   private readonly _previousCameraMatrix = new THREE.Matrix4();
   private readonly _boundingBoxNode: THREE.Object3D;
-
-  // TODO make private + friend?
-  public readonly _materials: Materials;
+  private readonly _materials: Materials;
 
   constructor(model: CadModel) {
     super();

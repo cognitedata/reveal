@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-export enum RenderType {
+export enum RenderMode {
   Color = 1,
   Normal,
   TreeIndex,

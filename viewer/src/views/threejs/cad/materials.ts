@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { sectorShaders, shaderDefines } from './shaders';
-import { RenderType } from '../materials';
+import { RenderMode } from '../materials';
 
 export interface Materials {
   box: THREE.ShaderMaterial;
@@ -33,7 +33,7 @@ export function createMaterials(): Materials {
     fragmentShader: sectorShaders.boxPrimitive.fragment,
     uniforms: {
       renderType: {
-        value: RenderType.Color
+        value: RenderMode.Color
       }
     }
   });
@@ -49,7 +49,7 @@ export function createMaterials(): Materials {
     side: THREE.DoubleSide,
     uniforms: {
       renderType: {
-        value: RenderType.Color
+        value: RenderMode.Color
       }
     }
   });
@@ -61,7 +61,7 @@ export function createMaterials(): Materials {
     fragmentShader: sectorShaders.nutPrimitive.fragment,
     uniforms: {
       renderType: {
-        value: RenderType.Color
+        value: RenderMode.Color
       }
     }
   });
@@ -74,7 +74,7 @@ export function createMaterials(): Materials {
     side: THREE.DoubleSide,
     uniforms: {
       renderType: {
-        value: RenderType.Color
+        value: RenderMode.Color
       }
     }
   });
@@ -87,7 +87,7 @@ export function createMaterials(): Materials {
         value: new THREE.Matrix4()
       },
       renderType: {
-        value: RenderType.Color
+        value: RenderMode.Color
       }
     },
     extensions: { fragDepth: true },
@@ -106,7 +106,7 @@ export function createMaterials(): Materials {
         value: new THREE.Matrix4()
       },
       renderType: {
-        value: RenderType.Color
+        value: RenderMode.Color
       }
     },
     extensions: { fragDepth: true },
@@ -122,7 +122,7 @@ export function createMaterials(): Materials {
         value: new THREE.Matrix4()
       },
       renderType: {
-        value: RenderType.Color
+        value: RenderMode.Color
       }
     },
     extensions: { fragDepth: true },
@@ -138,7 +138,7 @@ export function createMaterials(): Materials {
         value: new THREE.Matrix4()
       },
       renderType: {
-        value: RenderType.Color
+        value: RenderMode.Color
       }
     },
     extensions: { fragDepth: true },
@@ -154,7 +154,7 @@ export function createMaterials(): Materials {
         value: new THREE.Matrix4()
       },
       renderType: {
-        value: RenderType.Color
+        value: RenderMode.Color
       }
     },
     extensions: { fragDepth: true },
@@ -170,7 +170,7 @@ export function createMaterials(): Materials {
         value: new THREE.Matrix4()
       },
       renderType: {
-        value: RenderType.Color
+        value: RenderMode.Color
       }
     },
     extensions: { fragDepth: true },
@@ -186,7 +186,7 @@ export function createMaterials(): Materials {
         value: new THREE.Matrix4()
       },
       renderType: {
-        value: RenderType.Color
+        value: RenderMode.Color
       }
     },
     extensions: {
@@ -207,7 +207,7 @@ export function createMaterials(): Materials {
         value: new THREE.Matrix4()
       },
       renderType: {
-        value: RenderType.Color
+        value: RenderMode.Color
       }
     },
     extensions: { fragDepth: true },
@@ -226,7 +226,7 @@ export function createMaterials(): Materials {
     vertexShader: sectorShaders.detailedMesh.vertex,
     uniforms: {
       renderType: {
-        value: RenderType.Color
+        value: RenderMode.Color
       }
     }
   });
@@ -242,7 +242,7 @@ export function createMaterials(): Materials {
     vertexShader: sectorShaders.instancedMesh.vertex,
     uniforms: {
       renderType: {
-        value: RenderType.Color
+        value: RenderMode.Color
       }
     }
   });
@@ -254,7 +254,7 @@ export function createMaterials(): Materials {
     vertexShader: sectorShaders.simpleMesh.vertex,
     uniforms: {
       renderType: {
-        value: RenderType.Color
+        value: RenderMode.Color
       }
     }
   });

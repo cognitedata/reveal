@@ -4,7 +4,7 @@
 
 import glsl from 'glslify';
 import * as THREE from 'three';
-import { RenderType } from '../materials';
+import { RenderMode } from '../materials';
 import { CadNode } from '../cad/CadNode';
 
 const vertexShaderAntialias = glsl(require('../../../glsl/post-processing/fxaa.vert').default);
@@ -237,9 +237,7 @@ export function createSsaoPass(): Pass {
           return;
         }
         const cadNode = object as CadNode;
-        for (const material of Object.values(cadNode._materials)) {
-          material.uniforms.renderType.value = RenderType.PackColorAndNormal;
-        }
+        cadNode.renderHints.renderMode = RenderMode.PackColorAndNormal;
       });
       renderer.render(scene, camera);
       scene.traverseVisible(object => {
@@ -247,9 +245,7 @@ export function createSsaoPass(): Pass {
           return;
         }
         const cadNode = object as CadNode;
-        for (const material of Object.values(cadNode._materials)) {
-          material.uniforms.renderType.value = RenderType.Color;
-        }
+        cadNode.renderHints.renderMode = RenderMode.Color;
       });
       if (pass === SsaoPassType.Regular) {
         return;
