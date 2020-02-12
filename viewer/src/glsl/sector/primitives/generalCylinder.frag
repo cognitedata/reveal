@@ -33,6 +33,8 @@ varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
+uniform int renderMode;
+
 void main() {
     vec3 normal = normalize( v_normal );
 
@@ -93,7 +95,7 @@ void main() {
 
     if (dot(intersectionPoint - planeACenter, planeANormal) > 0.0 ||
         dot(intersectionPoint - planeBCenter, planeBNormal) > 0.0 ||
-        theta > v_arcAngle + v_angle || 
+        theta > v_arcAngle + v_angle ||
         isSliced(p)
        ) {
         // Missed the first point, check the other point
@@ -118,6 +120,7 @@ void main() {
     normal = normalize(p_local - W.xyz * dot(p_local, W.xyz));
 #endif
 
-    updateFragmentColor(v_color, v_treeIndex, normal);
+    updateFragmentColor(renderMode, v_color, v_treeIndex, normal);
+
     updateFragmentDepth(p, projectionMatrix);
 }

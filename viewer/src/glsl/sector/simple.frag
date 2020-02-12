@@ -4,6 +4,8 @@ varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
+uniform int renderMode;
+
 void main() {
-    updateFragmentColor(v_color, v_treeIndex, v_normal);
+    updateFragmentColor(renderMode, v_color, v_treeIndex, v_normal);
 }

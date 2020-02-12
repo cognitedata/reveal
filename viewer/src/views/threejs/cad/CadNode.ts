@@ -16,6 +16,8 @@ import { suggestCameraConfig } from '../../../utils/cameraUtils';
 import { createThreeJsSectorNode } from './createThreeJsSectorNode';
 import { SectorNode } from './SectorNode';
 import { fromThreeVector3, fromThreeMatrix, toThreeJsBox3, toThreeVector3, toThreeMatrix4 } from '../utilities';
+import { createMaterials, Materials } from './materials';
+import { RenderMode } from '../materials';
 
 export interface SuggestedCameraConfig {
   position: THREE.Vector3;
@@ -39,16 +41,21 @@ export class CadNode extends THREE.Object3D {
   private _detailedActivator: SectorActivator;
   private _renderHints: CadRenderHints;
   private _loadingHints: CadLoadingHints;
+  private _renderMode: RenderMode;
 
   private readonly _sectorScene: SectorScene;
   private readonly _previousCameraMatrix = new THREE.Matrix4();
   private readonly _boundingBoxNode: THREE.Object3D;
+  private readonly _materials: Materials;
 
   constructor(model: CadModel) {
     super();
+    this.type = 'CadNode';
     this.name = 'Sector model';
 
-    const { rootSector, simpleActivator, detailedActivator } = createThreeJsSectorNode(model);
+    this._materials = createMaterials();
+
+    const { rootSector, simpleActivator, detailedActivator } = createThreeJsSectorNode(model, this._materials);
     const { scene, modelTransformation } = model;
 
     this._sectorScene = scene;
@@ -68,8 +75,21 @@ export class CadNode extends THREE.Object3D {
     // Apply default hints
     this._renderHints = {};
     this._loadingHints = {};
+    this._renderMode = RenderMode.Color;
     this.renderHints = {};
     this.loadingHints = {};
+    this.renderMode = RenderMode.Color;
+  }
+
+  set renderMode(mode: RenderMode) {
+    this._renderMode = mode;
+    for (const material of Object.values(this._materials)) {
+      material.uniforms.renderMode.value = mode;
+    }
+  }
+
+  get renderMode() {
+    return this._renderMode;
   }
 
   set renderHints(hints: Readonly<CadRenderHints>) {
