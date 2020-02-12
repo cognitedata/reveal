@@ -16,6 +16,7 @@
           "enforce-trailing-newline": false
         }
       ],
-      "no-return-await": true
+      "no-return-await": true,
+      "no-unused-variable": true
     }
 }

@@ -17,7 +17,7 @@ export async function createCadModel(sdk: CogniteClient, modelId: number, revisi
   const metadataPromise = loadSectorMetadata(sdk, modelId, revisionId);
 
   // TODO replace this with actually fetching metadata about simple sectors
-  const simpleMetadataPromise: Promise<Map<number, LocalSimpleCadMetadataResponse>> = new Promise(resolve => {
+  const simpleMetadataPromise: Promise<Map<number, LocalSimpleCadMetadataResponse>> = new Promise(_ => {
     throw new Error('Not implemented');
   });
 
@@ -46,7 +46,7 @@ export async function createCadModel(sdk: CogniteClient, modelId: number, revisi
     }
     return loadSectorGeometry(sdk, sectorId, file);
   };
-  const fetchSectorSimple: FetchSectorDelegate = async sectorId => {
+  const fetchSectorSimple: FetchSectorDelegate = async _sectorId => {
     // TODO implement
     throw new Error('Not implemeted');
   };
@@ -99,7 +99,7 @@ function createSectorFilemap(sectors: RevealSector3D[]): Map<number, Versioned3D
   return sectorIdToFile;
 }
 
-async function loadSectorGeometry(sdk: CogniteClient, sectorId: number, file: Versioned3DFile): Promise<Uint8Array> {
+async function loadSectorGeometry(sdk: CogniteClient, _sectorId: number, file: Versioned3DFile): Promise<Uint8Array> {
   const buffer = await sdk.files3D.retrieve(file!.fileId);
   return new Uint8Array(buffer);
 }

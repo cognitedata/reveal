@@ -3,7 +3,6 @@
  */
 
 import { CogniteClient, CogniteInternalId } from '@cognite/sdk';
-import { CDFHttpClient } from '@cognite/sdk/dist/src/utils/http/cdfHttpClient';
 
 export interface VersionedBlob {
   version: number;
