@@ -41,6 +41,7 @@ export class CadNode extends THREE.Object3D {
   private _detailedActivator: SectorActivator;
   private _renderHints: CadRenderHints;
   private _loadingHints: CadLoadingHints;
+  private _renderMode: RenderMode;
 
   private readonly _sectorScene: SectorScene;
   private readonly _previousCameraMatrix = new THREE.Matrix4();
@@ -74,17 +75,26 @@ export class CadNode extends THREE.Object3D {
     // Apply default hints
     this._renderHints = {};
     this._loadingHints = {};
+    this._renderMode = RenderMode.Color;
     this.renderHints = {};
     this.loadingHints = {};
+    this.renderMode = RenderMode.Color;
+  }
+
+  set renderMode(mode: RenderMode) {
+    this._renderMode = mode;
+    for (const material of Object.values(this._materials)) {
+      material.uniforms.renderMode.value = mode;
+    }
+  }
+
+  get renderMode() {
+    return this._renderMode;
   }
 
   set renderHints(hints: Readonly<CadRenderHints>) {
     this._renderHints = hints;
-    const renderMode = hints.renderMode ? hints.renderMode : RenderMode.Color;
     this._boundingBoxNode.visible = this.shouldRenderSectorBoundingBoxes;
-    for (const material of Object.values(this._materials)) {
-      material.uniforms.renderMode.value = renderMode;
-    }
   }
 
   get renderHints(): Readonly<CadRenderHints> {

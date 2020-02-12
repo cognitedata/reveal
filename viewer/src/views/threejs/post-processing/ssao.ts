@@ -6,7 +6,6 @@ import glsl from 'glslify';
 import * as THREE from 'three';
 import { RenderMode } from '../materials';
 import { CadNode } from '../cad/CadNode';
-import { CadRenderHints } from '../../CadRenderHints';
 
 const vertexShaderAntialias = glsl(require('../../../glsl/post-processing/fxaa.vert').default);
 const fragmentShaderAntialias = glsl(require('../../../glsl/post-processing/fxaa.frag').default);
@@ -238,9 +237,7 @@ export function createSsaoPass(): Pass {
           return;
         }
         const cadNode = object as CadNode;
-        const renderHints: CadRenderHints = { ...cadNode.renderHints };
-        renderHints.renderMode = RenderMode.PackColorAndNormal;
-        cadNode.renderHints = renderHints;
+        cadNode.renderMode = RenderMode.PackColorAndNormal;
       });
       renderer.render(scene, camera);
       scene.traverseVisible(object => {
@@ -248,9 +245,7 @@ export function createSsaoPass(): Pass {
           return;
         }
         const cadNode = object as CadNode;
-        const renderHints: CadRenderHints = { ...cadNode.renderHints };
-        renderHints.renderMode = RenderMode.Color;
-        cadNode.renderHints = renderHints;
+        cadNode.renderMode = RenderMode.Color;
       });
       if (pass === SsaoPassType.Regular) {
         return;
