@@ -17,6 +17,7 @@ import { createThreeJsSectorNode } from './createThreeJsSectorNode';
 import { SectorNode } from './SectorNode';
 import { fromThreeVector3, fromThreeMatrix, toThreeJsBox3, toThreeVector3, toThreeMatrix4 } from '../utilities';
 import { createMaterials, Materials } from './materials';
+import { RenderMode } from '../materials';
 
 export interface SuggestedCameraConfig {
   position: THREE.Vector3;
@@ -79,9 +80,10 @@ export class CadNode extends THREE.Object3D {
 
   set renderHints(hints: Readonly<CadRenderHints>) {
     this._renderHints = hints;
+    const renderMode = hints.renderMode ? hints.renderMode : RenderMode.Color;
     this._boundingBoxNode.visible = this.shouldRenderSectorBoundingBoxes;
     for (const material of Object.values(this._materials)) {
-      material.uniforms.renderType.value = hints.renderMode;
+      material.uniforms.renderMode.value = renderMode;
     }
   }
 
