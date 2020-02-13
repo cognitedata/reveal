@@ -25,6 +25,28 @@ export interface Materials {
 }
 
 export function createMaterials(): Materials {
+  const pixelCount = 2048;
+  const colorCount = pixelCount * pixelCount;
+
+  const colors = new Uint8Array(4 * colorCount);
+  const colorDataTexture = new THREE.DataTexture(colors, pixelCount, pixelCount);
+
+  // const commonUniforms = {
+  // renderMode: {
+  // value: RenderMode.Color
+  // },
+  // colorDataTexture: {
+  // value: colorDataTexture
+  // }
+  // };
+
+  for (let i = 0; i < colorCount; i++) {
+    colorDataTexture.image.data[4 * i] = 255;
+    colorDataTexture.image.data[4 * i + 1] = 128;
+    colorDataTexture.image.data[4 * i + 2] = 64;
+    colorDataTexture.image.data[4 * i + 3] = 255;
+  }
+
   const boxMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Box)',
     ...shaderDefines,
@@ -34,6 +56,9 @@ export function createMaterials(): Materials {
     uniforms: {
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: colorDataTexture
       }
     }
   });
@@ -50,6 +75,9 @@ export function createMaterials(): Materials {
     uniforms: {
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: colorDataTexture
       }
     }
   });
@@ -62,6 +90,9 @@ export function createMaterials(): Materials {
     uniforms: {
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: colorDataTexture
       }
     }
   });
@@ -75,6 +106,9 @@ export function createMaterials(): Materials {
     uniforms: {
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: colorDataTexture
       }
     }
   });
@@ -88,6 +122,9 @@ export function createMaterials(): Materials {
       },
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: colorDataTexture
       }
     },
     extensions: { fragDepth: true },
@@ -107,6 +144,9 @@ export function createMaterials(): Materials {
       },
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: colorDataTexture
       }
     },
     extensions: { fragDepth: true },
@@ -123,6 +163,9 @@ export function createMaterials(): Materials {
       },
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: colorDataTexture
       }
     },
     extensions: { fragDepth: true },
@@ -139,6 +182,9 @@ export function createMaterials(): Materials {
       },
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: colorDataTexture
       }
     },
     extensions: { fragDepth: true },
@@ -155,6 +201,9 @@ export function createMaterials(): Materials {
       },
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: colorDataTexture
       }
     },
     extensions: { fragDepth: true },
@@ -171,6 +220,9 @@ export function createMaterials(): Materials {
       },
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: colorDataTexture
       }
     },
     extensions: { fragDepth: true },
@@ -187,6 +239,9 @@ export function createMaterials(): Materials {
       },
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: colorDataTexture
       }
     },
     extensions: {
@@ -208,6 +263,9 @@ export function createMaterials(): Materials {
       },
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: colorDataTexture
       }
     },
     extensions: { fragDepth: true },
@@ -227,6 +285,9 @@ export function createMaterials(): Materials {
     uniforms: {
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: colorDataTexture
       }
     }
   });
@@ -243,6 +304,9 @@ export function createMaterials(): Materials {
     uniforms: {
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: colorDataTexture
       }
     }
   });
@@ -255,6 +319,9 @@ export function createMaterials(): Materials {
     uniforms: {
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: colorDataTexture
       }
     }
   });
