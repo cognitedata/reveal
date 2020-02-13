@@ -53,11 +53,12 @@ async function main() {
     const pickCamera = camera.clone();
 
     // const pixelRatio = renderer.getPixelRatio();
+    const canvasRect = renderer.domElement.getBoundingClientRect();
     pickCamera.setViewOffset(
       renderer.domElement.clientWidth,
       renderer.domElement.clientHeight,
-      event.clientX,
-      event.clientY,
+      renderer.getPixelRatio() * (event.clientX - canvasRect.left),
+      renderer.getPixelRatio() * (event.clientY - canvasRect.top),
       1,
       1
     );
@@ -80,6 +81,7 @@ async function main() {
   };
 
   renderer.domElement.addEventListener('mousedown', pick);
+  console.log("DOM", renderer.domElement);
 
   (window as any).scene = scene;
   (window as any).THREE = THREE;
