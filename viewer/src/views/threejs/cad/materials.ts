@@ -7,6 +7,7 @@ import { sectorShaders, shaderDefines } from './shaders';
 import { RenderMode } from '../materials';
 
 export interface Materials {
+  // Materials
   box: THREE.ShaderMaterial;
   circle: THREE.ShaderMaterial;
   generalRing: THREE.ShaderMaterial;
@@ -22,6 +23,8 @@ export interface Materials {
   instancedMesh: THREE.ShaderMaterial;
   triangleMesh: THREE.ShaderMaterial;
   simple: THREE.ShaderMaterial;
+  // Data textures
+  colorDataTexture: THREE.DataTexture;
 }
 
 export function createMaterials(): Materials {
@@ -341,6 +344,7 @@ export function createMaterials(): Materials {
     ellipsoidSegment: ellipsoidSegmentMaterial,
     instancedMesh: instancedMeshMaterial,
     triangleMesh: triangleMeshMaterial,
-    simple: simpleMaterial
+    simple: simpleMaterial,
+    colorDataTexture
   };
 }

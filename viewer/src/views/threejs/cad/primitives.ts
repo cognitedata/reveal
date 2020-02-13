@@ -16,41 +16,55 @@ import {
 } from './primitiveGeometries';
 import { Materials } from './materials';
 
-export function* createPrimitives(sector: Sector, materials: Materials) {
+type SetColorDelegate = (treeIndex: number, red: number, green: number, blue: number) => void;
+
+export function* createPrimitives(sector: Sector, materials: Materials, setColor: SetColorDelegate) {
   if (hasAny(sector.boxes)) {
+    setColors(sector.boxes, setColor);
     yield createBoxes(sector.boxes, materials.box);
   }
   if (hasAny(sector.circles)) {
+    setColors(sector.circles, setColor);
     yield createCircles(sector.circles, materials.circle);
   }
   if (hasAny(sector.cones)) {
+    setColors(sector.cones, setColor);
     yield createCones(sector.cones, materials.cone);
   }
   if (hasAny(sector.eccentricCones)) {
+    setColors(sector.eccentricCones, setColor);
     yield createEccentricCones(sector.eccentricCones, materials.eccentricCone);
   }
   if (hasAny(sector.ellipsoidSegments)) {
+    setColors(sector.ellipsoidSegments, setColor);
     yield createEllipsoidSegments(sector.ellipsoidSegments, materials.ellipsoidSegment);
   }
   if (hasAny(sector.generalCylinders)) {
+    setColors(sector.generalCylinders, setColor);
     yield createGeneralCylinders(sector.generalCylinders, materials.generalCylinder);
   }
   if (hasAny(sector.generalRings)) {
+    setColors(sector.generalRings, setColor);
     yield createGeneralRings(sector.generalRings, materials.generalRing);
   }
   if (hasAny(sector.quads)) {
+    setColors(sector.quads, setColor);
     yield createQuads(sector.quads, materials.quad);
   }
   if (hasAny(sector.sphericalSegments)) {
+    setColors(sector.sphericalSegments, setColor);
     yield createSphericalSegments(sector.sphericalSegments, materials.sphericalSegment);
   }
   if (hasAny(sector.torusSegments)) {
+    setColors(sector.torusSegments, setColor);
     yield createTorusSegments(sector.torusSegments, materials.torusSegment);
   }
   if (hasAny(sector.trapeziums)) {
+    setColors(sector.trapeziums, setColor);
     yield createTrapeziums(sector.trapeziums, materials.trapezium);
   }
   if (hasAny(sector.nuts)) {
+    setColors(sector.nuts, setColor);
     yield createNuts(sector.nuts, materials.nut);
   }
 }
@@ -113,6 +127,19 @@ function setAttributes(geometry: THREE.InstancedBufferGeometry, attributes: Prim
     throw new Error('nodeId not present in f64Attributes');
   }
   geometry.maxInstancedCount = nodeIds.length;
+}
+
+function setColors(attributes: PrimitiveAttributes, setColor: SetColorDelegate) {
+  // TODO ensure this exists instead of assuming it here (bake it into the type)
+  const treeIndices = attributes.f64Attributes.get('treeIndex')!;
+  const colors = attributes.u8Attributes.get('color')!;
+  for (let i = 0; i < treeIndices.length; i++) {
+    const treeIndex = treeIndices[i];
+    const red = colors[4 * i];
+    const green = colors[4 * i + 1];
+    const blue = colors[4 * i + 2];
+    setColor(treeIndex, red, green, blue);
+  }
 }
 
 function createBoxes(boxes: PrimitiveAttributes, material: THREE.ShaderMaterial) {

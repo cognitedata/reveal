@@ -81,11 +81,31 @@ export class CadNode extends THREE.Object3D {
     this.renderMode = RenderMode.Color;
   }
 
+  setColor(treeIndex: number, red: number, green: number, blue: number) {
+    this._materials.colorDataTexture.image.data[4 * treeIndex] = red;
+    this._materials.colorDataTexture.image.data[4 * treeIndex + 1] = green;
+    this._materials.colorDataTexture.image.data[4 * treeIndex + 2] = blue;
+    this._materials.colorDataTexture.image.data[4 * treeIndex + 3] = 255;
+    this._materials.colorDataTexture.needsUpdate = true;
+  }
+
   set renderMode(mode: RenderMode) {
     this._renderMode = mode;
-    for (const material of Object.values(this._materials)) {
-      material.uniforms.renderMode.value = mode;
-    }
+    this._materials.box.uniforms.renderMode.value = mode;
+    this._materials.circle.uniforms.renderMode.value = mode;
+    this._materials.generalRing.uniforms.renderMode.value = mode;
+    this._materials.nut.uniforms.renderMode.value = mode;
+    this._materials.quad.uniforms.renderMode.value = mode;
+    this._materials.cone.uniforms.renderMode.value = mode;
+    this._materials.eccentricCone.uniforms.renderMode.value = mode;
+    this._materials.sphericalSegment.uniforms.renderMode.value = mode;
+    this._materials.torusSegment.uniforms.renderMode.value = mode;
+    this._materials.generalCylinder.uniforms.renderMode.value = mode;
+    this._materials.trapezium.uniforms.renderMode.value = mode;
+    this._materials.ellipsoidSegment.uniforms.renderMode.value = mode;
+    this._materials.instancedMesh.uniforms.renderMode.value = mode;
+    this._materials.triangleMesh.uniforms.renderMode.value = mode;
+    this._materials.triangleMesh.uniforms.renderMode.value = mode;
   }
 
   get renderMode() {

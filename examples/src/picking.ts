@@ -30,14 +30,16 @@ async function main() {
   controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
+  let pickingNeedsUpdate = false;
   const clock = new THREE.Clock();
   const render = async () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
     const sectorsNeedUpdate = await cadNode.update(camera);
 
-    if (controlsNeedUpdate || sectorsNeedUpdate) {
+    if (controlsNeedUpdate || sectorsNeedUpdate || pickingNeedsUpdate) {
       renderer.render(scene, camera);
+      pickingNeedsUpdate = false;
     }
 
     requestAnimationFrame(render);
@@ -69,9 +71,12 @@ async function main() {
     renderer.readRenderTargetPixels(pickingTarget, 0, 0, 1, 1, pixelBuffer);
 
     // tslint:disable-next-line:no-bitwise
-    const id = (pixelBuffer[0] << 16) | (pixelBuffer[1] << 8) | pixelBuffer[2];
+    const id = pixelBuffer[0] * 255 * 255 + pixelBuffer[1] * 255 + pixelBuffer[2];
 
     console.log('Picked', id);
+
+    cadNode.setColor(id, 255, 255, 255);
+    pickingNeedsUpdate = true;
   };
 
   renderer.domElement.addEventListener('mousedown', pick);
