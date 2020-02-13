@@ -13,9 +13,6 @@ export function createTriangleMeshes(
   const result: THREE.Mesh[] = [];
   for (const mesh of triangleMeshes) {
     const geometry = new THREE.BufferGeometry();
-    geometry.boundingBox = bounds.clone();
-    geometry.boundingSphere = new THREE.Sphere();
-    bounds.getBoundingSphere(geometry.boundingSphere);
     const indices = new THREE.Uint32BufferAttribute(mesh.indices.buffer, 1);
     const vertices = new THREE.Float32BufferAttribute(mesh.vertices.buffer, 3);
     const colors = new THREE.Float32BufferAttribute(mesh.colors.buffer, 3);
