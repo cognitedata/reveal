@@ -16,6 +16,17 @@ export interface Model3dOutput {
 
 export type Model3dOutputs = Model3dOutput[];
 
+interface DescribeEntwineOutput {
+  versions: [
+    {
+      version: number;
+      blobs: {
+        ept: number;
+      };
+    }
+  ];
+}
+
 export class CogniteClient3dV2Extensions {
   private readonly client: CogniteClient;
 
@@ -46,8 +57,11 @@ export class CogniteClient3dV2Extensions {
 
   async getOutputs(modelRevisionId: number): Promise<Model3dOutputs> {
     const url = `/api/playground/projects/${this.client.project}/3d/v2/pointcloud/entwine/describe`;
-    const response = await this.client.get<Model3dOutput>(url, { params: { modelId: modelRevisionId } });
-    const output = { outputType: 'ept', ...response.data };
+    const response = await this.client.get<DescribeEntwineOutput>(url, { params: { modelId: modelRevisionId } });
+    const versions = response.data.versions.map(v => {
+      return { version: v.version, blobId: v.blobs.ept };
+    });
+    const output = { outputType: 'ept', versions };
     return [output];
   }
 }
