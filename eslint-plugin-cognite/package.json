@@ -10,11 +10,15 @@
     "test": "mocha tests --recursive",
     "autodeploy": "cognite-release-manager autodeploy --repo=eslint-plugin-cognite"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/eslint-plugin-cognite"
+  },
   "keywords": [
     "eslint"
   ],
   "author": "Cameron Shum",
-  "license": "ISC",
+  "license": "MIT",
   "peerDependencies": {
     "babel-eslint": ">=10.0",
     "eslint": "^6.5",
@@ -28,6 +32,7 @@
   "optionalDependencies": {
     "typescript": "^3.6"
   },
+  "homepage": "https://github.com/cognitedata/eslint-plugin-cognite#readme",
   "devDependencies": {
     "@cognite/eslint-config": "^1.4.2",
     "@typescript-eslint/eslint-plugin": "^2.19.2",
