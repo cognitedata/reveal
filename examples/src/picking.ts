@@ -55,39 +55,14 @@ async function main() {
   };
   render();
 
-  const pickingTarget = new THREE.WebGLRenderTarget(1, 1);
-  const pixelBuffer = new Uint8Array(4);
-
+  const picker = new reveal_threejs.CadPicker(renderer, cadNode);
   const pick = (event: MouseEvent) => {
-    const pickCamera = camera.clone();
-
-    const canvasRect = renderer.domElement.getBoundingClientRect();
-    pickCamera.setViewOffset(
-      renderer.domElement.clientWidth,
-      renderer.domElement.clientHeight,
-      renderer.getPixelRatio() * (event.clientX - canvasRect.left),
-      renderer.getPixelRatio() * (event.clientY - canvasRect.top),
-      1,
-      1
-    );
-
-    cadNode.renderMode = 3;
-    renderer.setRenderTarget(pickingTarget);
-    renderer.render(scene, pickCamera);
-    renderer.setRenderTarget(null);
-    cadNode.renderMode = 1;
-
-    renderer.readRenderTargetPixels(pickingTarget, 0, 0, 1, 1, pixelBuffer);
-
-    const id = pixelBuffer[0] * 255 * 255 + pixelBuffer[1] * 255 + pixelBuffer[2];
-
-    console.log('Picked', id);
-
-    pickedNodes.push(id);
-    shading.updateNodes([id]);
+    const treeIndex = picker.pick(scene, camera, event);
+    console.log('Picked', treeIndex);
+    pickedNodes.push(treeIndex);
+    shading.updateNodes([treeIndex]);
     pickingNeedsUpdate = true;
   };
-
   renderer.domElement.addEventListener('mousedown', pick);
 
   (window as any).scene = scene;
