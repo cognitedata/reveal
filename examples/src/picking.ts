@@ -6,16 +6,25 @@ import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import * as reveal from '@cognite/reveal';
 import * as reveal_threejs from '@cognite/reveal/threejs';
-// import { RenderMode } from '@cognite/reveal/views/threejs/materials';
 
 CameraControls.install({ THREE });
 
 async function main() {
   const modelUrl = new URL(location.href).searchParams.get('model') || '/primitives';
 
+  const pickedNodes: number[] = [];
+  const shading = reveal_threejs.createDefaultShading({
+    color(treeIndex: number) {
+      if (pickedNodes.indexOf(treeIndex) !== -1) {
+        return [255, 255, 0, 255];
+      }
+      return undefined;
+    }
+  });
+
   const scene = new THREE.Scene();
   const cadModel = await reveal.createLocalCadModel(modelUrl);
-  const cadNode = new reveal_threejs.CadNode(cadModel);
+  const cadNode = new reveal_threejs.CadNode(cadModel, { shading });
 
   scene.add(cadNode);
 
@@ -52,7 +61,6 @@ async function main() {
   const pick = (event: MouseEvent) => {
     const pickCamera = camera.clone();
 
-    // const pixelRatio = renderer.getPixelRatio();
     const canvasRect = renderer.domElement.getBoundingClientRect();
     pickCamera.setViewOffset(
       renderer.domElement.clientWidth,
@@ -71,16 +79,12 @@ async function main() {
 
     renderer.readRenderTargetPixels(pickingTarget, 0, 0, 1, 1, pixelBuffer);
 
-    // tslint:disable-next-line:no-bitwise
     const id = pixelBuffer[0] * 255 * 255 + pixelBuffer[1] * 255 + pixelBuffer[2];
 
     console.log('Picked', id);
 
-    if (event.ctrlKey) {
-      cadNode.resetColor(id);
-    } else {
-      cadNode.setColor(id, 255, 255, 255);
-    }
+    pickedNodes.push(id);
+    shading.updateNodes([id]);
     pickingNeedsUpdate = true;
   };
 

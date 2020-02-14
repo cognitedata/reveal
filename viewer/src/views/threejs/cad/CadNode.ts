@@ -16,8 +16,12 @@ import { suggestCameraConfig } from '../../../utils/cameraUtils';
 import { createThreeJsSectorNode } from './createThreeJsSectorNode';
 import { SectorNode } from './SectorNode';
 import { fromThreeVector3, fromThreeMatrix, toThreeJsBox3, toThreeVector3, toThreeMatrix4 } from '../utilities';
-import { createMaterials, Materials } from './materials';
 import { RenderMode } from '../materials';
+import { Shading, createDefaultShading } from './shading';
+
+interface CadNodeOptions {
+  shading?: Shading;
+}
 
 export interface SuggestedCameraConfig {
   position: THREE.Vector3;
@@ -35,6 +39,7 @@ const updateVars = {
 export class CadNode extends THREE.Object3D {
   public readonly rootSector: SectorNode;
   public readonly modelTransformation: SectorModelTransformation;
+  public readonly _shading: Shading;
 
   private _determineSectors: DetermineSectorsDelegate;
   private _simpleActivator: SectorActivator;
@@ -46,16 +51,25 @@ export class CadNode extends THREE.Object3D {
   private readonly _sectorScene: SectorScene;
   private readonly _previousCameraMatrix = new THREE.Matrix4();
   private readonly _boundingBoxNode: THREE.Object3D;
-  private readonly _materials: Materials;
 
-  constructor(model: CadModel) {
+  constructor(model: CadModel, options?: CadNodeOptions) {
     super();
     this.type = 'CadNode';
     this.name = 'Sector model';
 
-    this._materials = createMaterials();
+    this._shading = (() => {
+      if (options && options.shading) {
+        return options.shading;
+      }
+      return createDefaultShading({
+        color(_treeIndex: number) {
+          return undefined;
+        }
+      });
+    })();
 
-    const { rootSector, simpleActivator, detailedActivator } = createThreeJsSectorNode(model, this._materials);
+    // TODO if shading changes, this needs to be updated - or perhaps shading needs to be set in the constructor?
+    const { rootSector, simpleActivator, detailedActivator } = createThreeJsSectorNode(model, this._shading.materials);
     const { scene, modelTransformation } = model;
 
     this._sectorScene = scene;
@@ -79,41 +93,32 @@ export class CadNode extends THREE.Object3D {
     this.renderHints = {};
     this.loadingHints = {};
     this.renderMode = RenderMode.Color;
-  }
 
-  setColor(treeIndex: number, red: number, green: number, blue: number) {
-    this._materials.colorDataTexture.image.data[4 * treeIndex] = red;
-    this._materials.colorDataTexture.image.data[4 * treeIndex + 1] = green;
-    this._materials.colorDataTexture.image.data[4 * treeIndex + 2] = blue;
-    this._materials.colorDataTexture.image.data[4 * treeIndex + 3] = 255;
-    this._materials.colorDataTexture.needsUpdate = true;
-  }
+    const indices = [];
+    for (let i = 0; i < 100; i++) {
+      indices.push(i);
+    }
 
-  resetColor(treeIndex: number) {
-    this._materials.colorDataTexture.image.data[4 * treeIndex] = 0;
-    this._materials.colorDataTexture.image.data[4 * treeIndex + 1] = 0;
-    this._materials.colorDataTexture.image.data[4 * treeIndex + 2] = 0;
-    this._materials.colorDataTexture.image.data[4 * treeIndex + 3] = 0;
-    this._materials.colorDataTexture.needsUpdate = true;
+    this._shading.updateNodes(indices);
   }
 
   set renderMode(mode: RenderMode) {
     this._renderMode = mode;
-    this._materials.box.uniforms.renderMode.value = mode;
-    this._materials.circle.uniforms.renderMode.value = mode;
-    this._materials.generalRing.uniforms.renderMode.value = mode;
-    this._materials.nut.uniforms.renderMode.value = mode;
-    this._materials.quad.uniforms.renderMode.value = mode;
-    this._materials.cone.uniforms.renderMode.value = mode;
-    this._materials.eccentricCone.uniforms.renderMode.value = mode;
-    this._materials.sphericalSegment.uniforms.renderMode.value = mode;
-    this._materials.torusSegment.uniforms.renderMode.value = mode;
-    this._materials.generalCylinder.uniforms.renderMode.value = mode;
-    this._materials.trapezium.uniforms.renderMode.value = mode;
-    this._materials.ellipsoidSegment.uniforms.renderMode.value = mode;
-    this._materials.instancedMesh.uniforms.renderMode.value = mode;
-    this._materials.triangleMesh.uniforms.renderMode.value = mode;
-    this._materials.simple.uniforms.renderMode.value = mode;
+    this._shading.materials.box.uniforms.renderMode.value = mode;
+    this._shading.materials.circle.uniforms.renderMode.value = mode;
+    this._shading.materials.generalRing.uniforms.renderMode.value = mode;
+    this._shading.materials.nut.uniforms.renderMode.value = mode;
+    this._shading.materials.quad.uniforms.renderMode.value = mode;
+    this._shading.materials.cone.uniforms.renderMode.value = mode;
+    this._shading.materials.eccentricCone.uniforms.renderMode.value = mode;
+    this._shading.materials.sphericalSegment.uniforms.renderMode.value = mode;
+    this._shading.materials.torusSegment.uniforms.renderMode.value = mode;
+    this._shading.materials.generalCylinder.uniforms.renderMode.value = mode;
+    this._shading.materials.trapezium.uniforms.renderMode.value = mode;
+    this._shading.materials.ellipsoidSegment.uniforms.renderMode.value = mode;
+    this._shading.materials.instancedMesh.uniforms.renderMode.value = mode;
+    this._shading.materials.triangleMesh.uniforms.renderMode.value = mode;
+    this._shading.materials.simple.uniforms.renderMode.value = mode;
   }
 
   get renderMode() {
