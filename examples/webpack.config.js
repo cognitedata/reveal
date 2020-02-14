@@ -59,6 +59,12 @@ const allExamples = [
     type: 'threejs'
   },
   {
+    name: "walkable-path",
+    title: "Walkable Path",
+    entry: './src/walkable-path.ts',
+    template: 'template-example.ejs'
+  },
+  {
     name: "threejs-side-by-side",
     title: "Side-by-side debugger for sector models",
     entry: './src/side-by-side.ts',
