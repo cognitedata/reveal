@@ -4,7 +4,18 @@ Custom eslint rules for Cognite's front-end applications.
 
 ## Installation
 
-Install `eslint-plugin-cognite`:
+You will need to install [ESLint](https://eslint.org):
+
+```
+$ yarn add --dev eslint
+```
+
+And install [eslint-config-cognite](https://github.com/cognitedata/eslint-config-cognite):
+```
+$ yarn add --dev @cognite/eslint-config
+```
+
+Next, install `eslint-plugin-cognite`:
 
 ```
 $ yarn add --dev eslint-plugin-cognite
