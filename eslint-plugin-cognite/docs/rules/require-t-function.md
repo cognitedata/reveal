@@ -1,0 +1,2 @@
+# `require-t-function`
+Since for translations we are utilizing custom contexts in order to prevert collisions between the translation keys we need to ensure that `Trans` component while using `t`-function comming from `withTranslation` HOC  with custom context should be passed as a prop.
