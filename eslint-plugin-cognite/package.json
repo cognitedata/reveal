@@ -4,6 +4,7 @@
   "description": "Custom eslint plugins for Cognite's front end applications.",
   "main": "index.js",
   "scripts": {
+    "build": "true",
     "release": "np",
     "lint": "yarn eslint .",
     "lint:fix": "yarn lint --fix",
