@@ -89,6 +89,14 @@ export class CadNode extends THREE.Object3D {
     this._materials.colorDataTexture.needsUpdate = true;
   }
 
+  resetColor(treeIndex: number) {
+    this._materials.colorDataTexture.image.data[4 * treeIndex] = 0;
+    this._materials.colorDataTexture.image.data[4 * treeIndex + 1] = 0;
+    this._materials.colorDataTexture.image.data[4 * treeIndex + 2] = 0;
+    this._materials.colorDataTexture.image.data[4 * treeIndex + 3] = 0;
+    this._materials.colorDataTexture.needsUpdate = true;
+  }
+
   set renderMode(mode: RenderMode) {
     this._renderMode = mode;
     this._materials.box.uniforms.renderMode.value = mode;
@@ -105,7 +113,7 @@ export class CadNode extends THREE.Object3D {
     this._materials.ellipsoidSegment.uniforms.renderMode.value = mode;
     this._materials.instancedMesh.uniforms.renderMode.value = mode;
     this._materials.triangleMesh.uniforms.renderMode.value = mode;
-    this._materials.triangleMesh.uniforms.renderMode.value = mode;
+    this._materials.simple.uniforms.renderMode.value = mode;
   }
 
   get renderMode() {

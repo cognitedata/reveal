@@ -16,13 +16,17 @@ vec3 packNormalToRGB( const in vec3 normal ) {
 }
 
 // TODO remove input color
-void updateFragmentColor(int renderMode, vec3 _color, float treeIndex, vec3 normal) {
+void updateFragmentColor(int renderMode, vec3 color, float treeIndex, vec3 normal) {
     float u = mod(treeIndex, dataTextureWidth);
     float v = floor(treeIndex / dataTextureWidth);
     float uCoord = (u + 0.5) / dataTextureWidth;
     float vCoord = (v + 0.5) / dataTextureHeight; // invert Y axis
     vec2 treeIndexUv = vec2(uCoord, vCoord);
-    vec3 color = texture2D(colorDataTexture, treeIndexUv).rgb;
+    vec4 overrideColor = texture2D(colorDataTexture, treeIndexUv);
+
+    if (overrideColor.a != 0.0) {
+        color = overrideColor.rgb;
+    }
 
     if (renderMode == RenderTypeColor) {
         vec3 hsv = rgb2hsv(color);

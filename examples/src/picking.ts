@@ -76,12 +76,15 @@ async function main() {
 
     console.log('Picked', id);
 
-    cadNode.setColor(id, 255, 255, 255);
+    if (event.ctrlKey) {
+      cadNode.resetColor(id);
+    } else {
+      cadNode.setColor(id, 255, 255, 255);
+    }
     pickingNeedsUpdate = true;
   };
 
   renderer.domElement.addEventListener('mousedown', pick);
-  console.log("DOM", renderer.domElement);
 
   (window as any).scene = scene;
   (window as any).THREE = THREE;

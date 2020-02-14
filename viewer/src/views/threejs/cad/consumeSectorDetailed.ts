@@ -23,16 +23,7 @@ export function consumeSectorDetailed(
   boundsRenderer.name = `Bounding box ${sectorId}`;
   // group.add(boundsRenderer);
 
-  // TODO duplicate definition with the one in CadNode (which should perhaps not be there at all)
-  const setColor = (treeIndex: number, red: number, green: number, blue: number) => {
-    materials.colorDataTexture.image.data[4 * treeIndex] = red;
-    materials.colorDataTexture.image.data[4 * treeIndex + 1] = green;
-    materials.colorDataTexture.image.data[4 * treeIndex + 2] = blue;
-    materials.colorDataTexture.image.data[4 * treeIndex + 3] = 255;
-    materials.colorDataTexture.needsUpdate = true;
-  };
-
-  for (const primtiveRoot of createPrimitives(sector, materials, setColor)) {
+  for (const primtiveRoot of createPrimitives(sector, materials)) {
     sectorNode.add(primtiveRoot);
   }
   const triangleMeshes = createTriangleMeshes(sector.triangleMeshes, bounds, materials.triangleMesh);
