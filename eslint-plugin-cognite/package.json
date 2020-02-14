@@ -7,7 +7,8 @@
     "release": "np",
     "lint": "yarn eslint .",
     "lint:fix": "yarn lint --fix",
-    "test": "mocha tests --recursive"
+    "test": "mocha tests --recursive",
+    "autodeploy": "cognite-release-manager autodeploy --repo eslint-plugin-cognite"
   },
   "keywords": [
     "eslint"

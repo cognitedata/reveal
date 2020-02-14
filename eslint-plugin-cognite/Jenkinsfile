@@ -1,0 +1,67 @@
+static final String REPO = "eslint-plugin-cognite"
+static final String PR_COMMENT_MARKER = "[pr-server]\n"
+
+def label = "${REPO}-${UUID.randomUUID().toString().substring(0, 5)}"
+podTemplate(
+  label: label,
+  containers: [
+    containerTemplate(
+      name: 'node',
+      image: 'node:12',
+      envVars: [
+        envVar(key: 'CI', value: 'true'),
+      ],
+      resourceRequestCpu: '2000m',
+      resourceRequestMemory: '2500Mi',
+      resourceLimitCpu: '2000m',
+      resourceLimitMemory: '2500Mi',
+      ttyEnabled: true)
+  ],
+  envVars: [
+    envVar(key: 'CHANGE_ID', value: env.CHANGE_ID),
+  ],
+  volumes: [
+    secretVolume(
+      secretName: 'npm-credentials',
+      mountPath: '/npm-credentials',
+      readOnly: true),
+    secretVolume(
+      secretName: 'cognite-cicd-ssh-dupe',
+      mountPath: '/cognite-cicd-ssh',
+      readOnly: true),
+  ]) {
+    properties([buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))])
+    node(label) {
+    stage('Checkout code') {
+      checkout(scm)
+    }
+    container('node') {
+      stage('Install dependencies') {
+        sh('cp /npm-credentials/npm-public-credentials.txt ~/.npmrc')
+        sh('yarn')
+      }
+
+      stage('Lint') {
+        sh('yarn lint')
+      }
+
+      stage('Test') {
+        sh('yarn test')
+      }
+
+      stage('Autodeploy') {
+        sh('yarn add --dev @cognite/release-manager')
+        sh('yarn autodeploy')
+      }
+
+      // If the autodeploy dropped a comment.md file, then it should be posted
+      // as a comment on GitHub.
+      if (env.CHANGE_ID && fileExists('comment.md')) {
+        stage('Comment on GitHub') {
+          markdown = readFile('comment.md')
+          pullRequest.comment("${PR_COMMENT_MARKER}${markdown}")
+        }
+      }
+    }
+  }
+}
