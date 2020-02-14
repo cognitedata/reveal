@@ -7,7 +7,7 @@ podTemplate(
   containers: [
     containerTemplate(
       name: 'node',
-      image: 'node:12',
+      image: 'node:10',
       envVars: [
         envVar(key: 'CI', value: 'true'),
       ],
