@@ -46,6 +46,13 @@ const allExamples = [
     template: 'template-example.ejs'
   },
   {
+    name: "threejs-ssao",
+    title: "Screen space ambient occlusion shading",
+    entry: './src/ssao.ts',
+    template: 'template-example.ejs',
+    type: 'threejs'
+  },
+  {
     name: "threejs-side-by-side",
     title: "Side-by-side debugger for sector models",
     entry: './src/side-by-side.ts',

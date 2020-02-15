@@ -8,3 +8,4 @@ export { createThreeJsPointCloudNode } from './pointcloud/createThreeJsPointClou
 export { createThreeJsSectorNode } from './cad/createThreeJsSectorNode';
 
 export { toThreeVector3, fitCameraToBoundingBox, toThreeMatrix4, toThreeJsBox3 } from './utilities';
+export { SsaoEffect, SsaoPassType } from './post-processing/ssao';
