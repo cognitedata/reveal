@@ -2,8 +2,8 @@
   "name": "@cognite/reveal",
   "version": "0.1.0",
   "description": "Reveal streaming component",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "release": "mkdir -p dist && cp package.json README.md dist/ && webpack",
     "build": "webpack --env.development",
@@ -26,6 +26,8 @@
     ]
   },
   "devDependencies": {
+    "@cognite/potree-core": "^1.1.1",
+    "@cognite/sdk": "^2.19.0",
     "@cognite/tslint-config-cognite-3d": "^1.0.4",
     "@types/gl-matrix": "^2.4.5",
     "@types/jest": "^25.1.2",
@@ -42,6 +44,7 @@
     "prettier": "^1.19.1",
     "raw-loader": "^4.0.0",
     "rimraf": "^3.0.2",
+    "three": "^0.110.0",
     "ts-jest": "^24.3.0",
     "ts-loader": "6.2.1",
     "tslint": "^5.20.1",
@@ -57,12 +60,14 @@
     "worker-plugin": "^3.2.0"
   },
   "dependencies": {
-    "@cognite/potree-core": "^1.1.1",
-    "@cognite/sdk": "^2.13.0",
     "comlink": "^4.1.0",
     "gl-matrix": "^3.1.0",
     "glslify": "^7.0.0",
-    "glslify-import": "^3.1.0",
+    "glslify-import": "^3.1.0"
+  },
+  "peerDependencies": {
+    "@cognite/potree-core": "^1.1.1",
+    "@cognite/sdk": "^2.19.0",
     "three": "0.110.0"
   }
 }
