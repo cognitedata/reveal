@@ -52,7 +52,6 @@ podTemplate(
       stage('Autodeploy') {
         sh('yarn add --dev @cognite/release-manager')
         sh('yarn autodeploy')
-        sh('npm unpublish eslint-plugin-cognite --force')
       }
 
       // If the autodeploy dropped a comment.md file, then it should be posted
