@@ -1,11 +1,11 @@
 /* eslint-disable global-require */
 const allRules = {
-  'no-number-z-index-inline-styling': require('./lib/rules/no-number-z-index-inline-styling'),
-  'no-number-z-index-property': require('./lib/rules/no-number-z-index-property'),
-  'no-number-z-index-styled-components': require('./lib/rules/no-number-z-index-styled-components'),
-  'no-unissued-todos': require('./lib/rules/no-unissued-todos'),
-  'require-styled-macro': require('./lib/rules/require-styled-macro'),
-  'require-t-function': require('./lib/rules/require-t-function'),
+  'no-number-z-index-inline-styling': require('./rules/no-number-z-index-inline-styling'),
+  'no-number-z-index-property': require('./rules/no-number-z-index-property'),
+  'no-number-z-index-styled-components': require('./rules/no-number-z-index-styled-components'),
+  'no-unissued-todos': require('./rules/no-unissued-todos'),
+  'require-styled-macro': require('./rules/require-styled-macro'),
+  'require-t-function': require('./rules/require-t-function'),
 };
 
 const pluginsAllRules = Object.keys(allRules).reduce(
