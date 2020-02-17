@@ -1,4 +1,4 @@
-# eslint-plugin-cognite
+# @cognite/eslint-plugin
 
 Custom eslint rules for Cognite's front-end applications. 
 
@@ -15,19 +15,19 @@ And install [eslint-config-cognite](https://github.com/cognitedata/eslint-config
 $ yarn add --dev @cognite/eslint-config
 ```
 
-Next, install `eslint-plugin-cognite`:
+Next, install `@cognite/eslint-plugin`:
 
 ```
-$ yarn add --dev eslint-plugin-cognite
+$ yarn add --dev @cognite/eslint-plugin
 ```
 ## Usage
 
-Add `cognite` to the plugins section of your `.eslintrc` configuration file. You can omit the `eslint-plugin-` prefix:
+Add `cognite` to the plugins section of your `.eslintrc` configuration file. You can omit the `/eslint-plugin` suffix:
 
 ```json
 {
     "plugins": [
-        "cognite"
+        "@cognite"
     ]
 }
 ```
@@ -38,7 +38,7 @@ Then configure the rules you want to use under the rules section.
 ```json
 {
     "rules": {
-        "cognite/no-number-z-index-styled-components": "error"
+        "@cognite/no-number-z-index-styled-components": "error"
     }
 }
 ```
@@ -50,7 +50,7 @@ Presets are enabled by adding a line to the `extends` list in your config file. 
 ```json
 {
     "extends": [
-        "plugin:cognite/all"
+        "plugin:@cognite/all"
     ]
 }
 ```
