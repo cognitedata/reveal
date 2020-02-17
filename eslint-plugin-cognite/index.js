@@ -9,7 +9,7 @@ const allRules = {
 };
 
 const pluginsAllRules = Object.keys(allRules).reduce(
-  (o, rule) => Object.assign(o, { [`cognite/${rule}`]: 2 }),
+  (o, rule) => Object.assign(o, { [`@cognite/${rule}`]: 2 }),
   {}
 );
 
@@ -17,15 +17,15 @@ module.exports = {
   rules: allRules,
   configs: {
     noNumZIndex: {
-      plugins: ['cognite'],
+      plugins: ['@cognite'],
       rules: {
-        'cognite/no-number-z-index-inline-styling': 2,
-        'cognite/no-number-z-index-property': 2,
-        'cognite/no-number-z-index-styled-components': 2,
+        '@cognite/no-number-z-index-inline-styling': 2,
+        '@cognite/no-number-z-index-property': 2,
+        '@cognite/no-number-z-index-styled-components': 2,
       },
     },
     all: {
-      plugins: ['cognite'],
+      plugins: ['@cognite'],
       rules: pluginsAllRules,
     },
   },

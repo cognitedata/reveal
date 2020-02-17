@@ -1,6 +1,6 @@
 {
-  "name": "eslint-plugin-cognite",
-  "version": "1.0.0",
+  "name": "@cognite/eslint-plugin",
+  "version": "1.0.2",
   "description": "Custom eslint plugins for Cognite's front end applications.",
   "main": "index.js",
   "scripts": {
