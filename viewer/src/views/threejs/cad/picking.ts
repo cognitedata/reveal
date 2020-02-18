@@ -5,52 +5,59 @@
 import * as THREE from 'three';
 import { CadNode } from './CadNode';
 
-type PickDelegate = (scene: THREE.Scene, camera: THREE.PerspectiveCamera, event: MouseEvent) => number;
-
-export class CadPicker {
-  private readonly _picker: {
-    pick: PickDelegate;
-  };
-
-  constructor(renderer: THREE.WebGLRenderer, cadNode: CadNode) {
-    this._picker = createCadPicker(renderer, cadNode);
-  }
-
-  pick(scene: THREE.Scene, camera: THREE.PerspectiveCamera, event: MouseEvent) {
-    return this._picker.pick(scene, camera, event);
-  }
+interface PickingStorage {
+  renderTarget: THREE.WebGLRenderTarget;
+  pixelBuffer: Uint8Array;
 }
 
-export function createCadPicker(renderer: THREE.WebGLRenderer, cadNode: CadNode) {
-  const pickingTarget = new THREE.WebGLRenderTarget(1, 1);
-  const pixelBuffer = new Uint8Array(4);
+interface PickingInput {
+  event: MouseEvent;
+  scene: THREE.Scene;
+  camera: THREE.PerspectiveCamera;
+  renderer: THREE.WebGLRenderer;
+  cadNode: CadNode;
+}
 
-  const pick = (scene: THREE.Scene, camera: THREE.PerspectiveCamera, event: MouseEvent) => {
-    const pickCamera = camera.clone();
+function pickTreeIndex(storage: PickingStorage, input: PickingInput) {
+  const { renderTarget, pixelBuffer } = storage;
+  const { scene, camera, event, renderer, cadNode } = input;
 
-    const canvasRect = renderer.domElement.getBoundingClientRect();
-    pickCamera.setViewOffset(
-      renderer.domElement.clientWidth,
-      renderer.domElement.clientHeight,
-      renderer.getPixelRatio() * (event.clientX - canvasRect.left),
-      renderer.getPixelRatio() * (event.clientY - canvasRect.top),
-      1,
-      1
-    );
+  const pickCamera = camera.clone();
 
-    cadNode.renderMode = 3;
-    renderer.setRenderTarget(pickingTarget);
-    renderer.render(scene, pickCamera);
-    renderer.setRenderTarget(null);
-    cadNode.renderMode = 1;
+  const canvasRect = renderer.domElement.getBoundingClientRect();
+  pickCamera.setViewOffset(
+    renderer.domElement.clientWidth,
+    renderer.domElement.clientHeight,
+    renderer.getPixelRatio() * (event.clientX - canvasRect.left),
+    renderer.getPixelRatio() * (event.clientY - canvasRect.top),
+    1,
+    1
+  );
 
-    renderer.readRenderTargetPixels(pickingTarget, 0, 0, 1, 1, pixelBuffer);
+  cadNode.renderMode = 3;
+  renderer.setRenderTarget(renderTarget);
+  renderer.render(scene, pickCamera);
+  renderer.setRenderTarget(null);
+  cadNode.renderMode = 1;
 
-    const treeIndex = pixelBuffer[0] * 255 * 255 + pixelBuffer[1] * 255 + pixelBuffer[2];
+  renderer.readRenderTargetPixels(renderTarget, 0, 0, 1, 1, pixelBuffer);
 
-    return treeIndex;
-  };
-  return {
-    pick
-  };
+  const treeIndex = pixelBuffer[0] * 255 * 255 + pixelBuffer[1] * 255 + pixelBuffer[2];
+
+  return treeIndex;
+}
+
+export class CadPicker {
+  private readonly _pickingStorage: PickingStorage;
+
+  constructor() {
+    this._pickingStorage = {
+      renderTarget: new THREE.WebGLRenderTarget(1, 1),
+      pixelBuffer: new Uint8Array(4)
+    };
+  }
+
+  pickTreeIndex(input: PickingInput) {
+    return pickTreeIndex(this._pickingStorage, input);
+  }
 }

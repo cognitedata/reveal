@@ -39,7 +39,6 @@ const updateVars = {
 export class CadNode extends THREE.Object3D {
   public readonly rootSector: SectorNode;
   public readonly modelTransformation: SectorModelTransformation;
-  public readonly _shading: Shading;
 
   private _determineSectors: DetermineSectorsDelegate;
   private _simpleActivator: SectorActivator;
@@ -48,6 +47,7 @@ export class CadNode extends THREE.Object3D {
   private _loadingHints: CadLoadingHints;
   private _renderMode: RenderMode;
 
+  private readonly _shading: Shading;
   private readonly _sectorScene: SectorScene;
   private readonly _previousCameraMatrix = new THREE.Matrix4();
   private readonly _boundingBoxNode: THREE.Object3D;
