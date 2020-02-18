@@ -55,9 +55,8 @@ async function main() {
   };
   render();
 
-  const picker = new reveal_threejs.CadPicker();
   const pick = (event: MouseEvent) => {
-    const treeIndex = picker.pickTreeIndex({ renderer, cadNode, scene, camera, event });
+    const treeIndex = reveal_threejs.pickTreeIndex({ renderer, cadNode, scene, camera, event });
     console.log('Picked', treeIndex);
     pickedNodes.push(treeIndex);
     shading.updateNodes([treeIndex]);
