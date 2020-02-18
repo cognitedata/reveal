@@ -30,7 +30,7 @@ matrix:
         # Install wasm-pack for Rust
         - rm -rf $HOME/.cargo/bin/wasm-pack
         - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-      
+
       script:
         - cd $TRAVIS_BUILD_DIR/viewer
         - nvm use 10
@@ -52,4 +52,4 @@ matrix:
 branches:
   only:
     - master
-
+    - dependency-updates
