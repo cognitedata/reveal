@@ -16,7 +16,7 @@ const storage = {
   pixelBuffer: new Uint8Array(4)
 };
 
-export function pickPixelColor(input: PickingInput) {
+export function pickPixelColor(input: PickingInput, clearColor: THREE.Color, clearAlpha: number) {
   const { renderTarget, pixelBuffer } = storage;
   const { scene, camera, event, renderer } = input;
 
@@ -32,9 +32,16 @@ export function pickPixelColor(input: PickingInput) {
     1
   );
 
+  const currentClearColor = renderer.getClearColor();
+  const currentClearAlpha = renderer.getClearAlpha();
+
   renderer.setRenderTarget(renderTarget);
+  renderer.setClearColor(clearColor, clearAlpha);
+  renderer.clearColor();
   renderer.render(scene, pickCamera);
   renderer.setRenderTarget(null);
+
+  renderer.setClearColor(currentClearColor, currentClearAlpha);
 
   renderer.readRenderTargetPixels(renderTarget, 0, 0, 1, 1, pixelBuffer);
   return pixelBuffer;

@@ -23,11 +23,43 @@ async function main() {
   });
 
   const scene = new THREE.Scene();
+  const pickingScene = new THREE.Scene();
+
+  // Add some data for Reveal
   const cadModel = await reveal.createLocalCadModel(modelUrl);
   const cadNode = new reveal_threejs.CadNode(cadModel, { shading });
 
+  // TODO We might need to split CadNode up to achieve what we want
+  // We probably need to have a shadow scene that uses the same data,
+  // but different shading from the original scene.
+  // This has the benefit of not having to change the uniforms back and forth as well.
+  //
+  // We can look into this at the same time as we try to split CadNode into more useful components.
+  const pickingCadNode = new reveal_threejs.CadNode(cadModel, { shading });
   scene.add(cadNode);
+  pickingScene.add(pickingCadNode);
 
+  // Add some other geometry
+  const boxGeometry = new THREE.BoxGeometry(10.0, 4.0, 2.0);
+  const boxMaterial = new THREE.MeshPhongMaterial({
+    color: 'red',
+    emissive: 'rgb(0.2, 0.1, 0.1)'
+  });
+  const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
+  // We add other objects to a group to use only this when raycasting
+  const otherGroup = new THREE.Group();
+  otherGroup.add(boxMesh);
+  scene.add(otherGroup);
+
+  // Add some light for the box
+  const light = new THREE.PointLight();
+  light.position.set(-10, -10, 10);
+  scene.add(light);
+
+  // Set up picking for other objects
+  const raycaster = new THREE.Raycaster();
+
+  // Set up the renderer
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#444');
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -56,11 +88,68 @@ async function main() {
   render();
 
   const pick = (event: MouseEvent) => {
-    const treeIndex = reveal_threejs.pickTreeIndex({ renderer, cadNode, scene, camera, event });
-    console.log('Picked', treeIndex);
-    pickedNodes.push(treeIndex);
-    shading.updateNodes([treeIndex]);
-    pickingNeedsUpdate = true;
+    // Pick in Reveal
+    const revealPickResult = reveal_threejs.pickCadNode({ renderer, cadNode: pickingCadNode, scene: pickingScene, camera, event });
+    if (revealPickResult) {
+      console.log('Reveal', revealPickResult.treeIndex, revealPickResult.distance, revealPickResult.point);
+    }
+
+    // Pick other objects
+    const otherPickResult = (() => {
+      const rect = renderer.domElement.getBoundingClientRect();
+      const coords = {
+        x: ((event.clientX - rect.left) / renderer.domElement.clientWidth) * 2 - 1,
+        y: ((event.clientY - rect.top) / renderer.domElement.clientHeight) * -2 + 1
+      };
+      raycaster.setFromCamera(coords, camera);
+      const intersectedObjects = raycaster.intersectObjects(otherGroup.children);
+      console.log(intersectedObjects);
+      if (intersectedObjects.length === 0) {
+        return;
+      }
+
+      if (intersectedObjects[0].object.type !== 'Mesh') {
+        return;
+      }
+
+      console.log('Other', intersectedObjects[0].distance, intersectedObjects[0].point);
+
+      return intersectedObjects[0];
+    })();
+
+    const chosenPickResult = (() => {
+      if (otherPickResult && revealPickResult) {
+        if (otherPickResult.distance < revealPickResult.distance) {
+          return 'other';
+        } else {
+          return 'reveal';
+        }
+      }
+      if (otherPickResult) {
+        return 'other';
+      }
+      if (revealPickResult) {
+        return 'reveal';
+      }
+      return 'none';
+    })();
+
+    console.log('CHOSEN', chosenPickResult);
+
+    switch (chosenPickResult) {
+      case 'other':
+        const mesh = otherPickResult!.object as THREE.Mesh;
+        const material = mesh.material as THREE.MeshPhongMaterial;
+        material.emissive = new THREE.Color('yellow');
+        break;
+      case 'reveal':
+        pickedNodes.push(revealPickResult!.treeIndex);
+        shading.updateNodes([revealPickResult!.treeIndex]);
+        pickingNeedsUpdate = true;
+        break;
+      default:
+        break;
+    }
   };
   renderer.domElement.addEventListener('mousedown', pick);
 

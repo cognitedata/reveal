@@ -6,12 +6,22 @@ const int RenderTypeColor = 1;
 const int RenderTypeNormal = 2;
 const int RenderTypeTreeIndex = 3;
 const int RenderTypePackColorAndNormal = 4;
+const int RenderTypeDepth = 5;
 
-vec3 packNormalToRGB( const in vec3 normal ) {
+
+vec4 packDistanceToRgba(float value) {
+  float r = value;
+  float g = mod(value * 255.0, 1.0);
+  float b = mod(value * 255.0 * 255.0, 1.0);
+  float a = 1.0;
+  return vec4(r, g, b, a);
+}
+
+vec3 packNormalToRgb( const in vec3 normal ) {
     return normalize( normal ) * 0.5 + 0.5;
 }
 
-void updateFragmentColor(int renderMode, vec3 color, float treeIndex, vec3 normal) {
+void updateFragmentColor(int renderMode, vec3 color, float treeIndex, vec3 normal, float depth) {
     if (renderMode == RenderTypeColor) {
         vec3 hsv = rgb2hsv(color);
         float h = hsv.x;
@@ -34,12 +44,14 @@ void updateFragmentColor(int renderMode, vec3 color, float treeIndex, vec3 norma
             // no saturation - grayscale
             a = hsv.z * 0.09;
         }
-        gl_FragColor = vec4(packNormalToRGB(normal.rgb), a);
+        gl_FragColor = vec4(packNormalToRgb(normal.rgb), a);
     } else if (renderMode == RenderTypeNormal) {
-        gl_FragColor = vec4(packNormalToRGB(normal), 1.0);
+        gl_FragColor = vec4(packNormalToRgb(normal), 1.0);
     } else if (renderMode == RenderTypeTreeIndex) {
         color = packIntToColor(treeIndex);
         gl_FragColor = vec4(color, 1.0);
+    } else if (renderMode == RenderTypeDepth) {
+        gl_FragColor = packDistanceToRgba(depth);
     } else {
         gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
     }
