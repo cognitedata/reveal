@@ -60,7 +60,7 @@
     "@cognite/potree-core": "^1.1.1",
     "@cognite/sdk": "^2.19.0",
     "comlink": "^4.1.0",
-    "gl-matrix": "^3.1.0",
+    "gl-matrix": "^3.2.1",
     "glslify": "^7.0.0",
     "glslify-import": "^3.1.0",
     "three": "0.110.0"
