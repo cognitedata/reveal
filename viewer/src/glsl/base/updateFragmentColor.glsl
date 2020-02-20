@@ -39,8 +39,7 @@ void updateFragmentColor(int renderMode, vec3 color, float treeIndex, vec3 norma
         gl_FragColor = vec4(packNormalToRGB(normal), 1.0);
     } else if (renderMode == RenderTypeTreeIndex) {
         color = packIntToColor(treeIndex);
-        float amplitude = max(0.0, dot(normal, vec3(0.0, 0.0, 1.0)));
-        gl_FragColor = vec4(color * (0.4 + 0.6 * amplitude), 1.0);
+        gl_FragColor = vec4(color, 1.0);
     } else {
         gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
     }
