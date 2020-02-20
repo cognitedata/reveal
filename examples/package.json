@@ -59,7 +59,7 @@
   "dependencies": {
     "@cognite/potree-core": "^1.1.1",
     "@cognite/reveal": "../viewer/dist",
-    "@cognite/sdk": "^2.16.2",
+    "@cognite/sdk": "^2.20.0",
     "@xailabs/three-renderer-stats": "^1.0.4",
     "camera-controls": "^1.18.3",
     "comlink": "^4.1.0",
