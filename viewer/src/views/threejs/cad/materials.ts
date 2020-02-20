@@ -7,6 +7,7 @@ import { sectorShaders, shaderDefines } from './shaders';
 import { RenderMode } from '../materials';
 
 export interface Materials {
+  // Materials
   box: THREE.ShaderMaterial;
   circle: THREE.ShaderMaterial;
   generalRing: THREE.ShaderMaterial;
@@ -22,9 +23,17 @@ export interface Materials {
   instancedMesh: THREE.ShaderMaterial;
   triangleMesh: THREE.ShaderMaterial;
   simple: THREE.ShaderMaterial;
+  // Data textures
+  overrideColorPerTreeIndex: THREE.DataTexture;
 }
 
 export function createMaterials(): Materials {
+  const pixelCount = 2048;
+  const colorCount = pixelCount * pixelCount;
+
+  const colors = new Uint8Array(4 * colorCount);
+  const overrideColorPerTreeIndex = new THREE.DataTexture(colors, pixelCount, pixelCount);
+
   const boxMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Box)',
     ...shaderDefines,
@@ -34,6 +43,9 @@ export function createMaterials(): Materials {
     uniforms: {
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: overrideColorPerTreeIndex
       }
     }
   });
@@ -50,6 +62,9 @@ export function createMaterials(): Materials {
     uniforms: {
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: overrideColorPerTreeIndex
       }
     }
   });
@@ -62,6 +77,9 @@ export function createMaterials(): Materials {
     uniforms: {
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: overrideColorPerTreeIndex
       }
     }
   });
@@ -75,6 +93,9 @@ export function createMaterials(): Materials {
     uniforms: {
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: overrideColorPerTreeIndex
       }
     }
   });
@@ -88,6 +109,9 @@ export function createMaterials(): Materials {
       },
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: overrideColorPerTreeIndex
       }
     },
     extensions: { fragDepth: true },
@@ -107,6 +131,9 @@ export function createMaterials(): Materials {
       },
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: overrideColorPerTreeIndex
       }
     },
     extensions: { fragDepth: true },
@@ -123,6 +150,9 @@ export function createMaterials(): Materials {
       },
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: overrideColorPerTreeIndex
       }
     },
     extensions: { fragDepth: true },
@@ -139,6 +169,9 @@ export function createMaterials(): Materials {
       },
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: overrideColorPerTreeIndex
       }
     },
     extensions: { fragDepth: true },
@@ -155,6 +188,9 @@ export function createMaterials(): Materials {
       },
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: overrideColorPerTreeIndex
       }
     },
     extensions: { fragDepth: true },
@@ -171,6 +207,9 @@ export function createMaterials(): Materials {
       },
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: overrideColorPerTreeIndex
       }
     },
     extensions: { fragDepth: true },
@@ -187,6 +226,9 @@ export function createMaterials(): Materials {
       },
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: overrideColorPerTreeIndex
       }
     },
     extensions: {
@@ -208,6 +250,9 @@ export function createMaterials(): Materials {
       },
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: overrideColorPerTreeIndex
       }
     },
     extensions: { fragDepth: true },
@@ -227,6 +272,9 @@ export function createMaterials(): Materials {
     uniforms: {
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: overrideColorPerTreeIndex
       }
     }
   });
@@ -243,6 +291,9 @@ export function createMaterials(): Materials {
     uniforms: {
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: overrideColorPerTreeIndex
       }
     }
   });
@@ -255,6 +306,9 @@ export function createMaterials(): Materials {
     uniforms: {
       renderMode: {
         value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: overrideColorPerTreeIndex
       }
     }
   });
@@ -274,6 +328,7 @@ export function createMaterials(): Materials {
     ellipsoidSegment: ellipsoidSegmentMaterial,
     instancedMesh: instancedMeshMaterial,
     triangleMesh: triangleMeshMaterial,
-    simple: simpleMaterial
+    simple: simpleMaterial,
+    overrideColorPerTreeIndex
   };
 }
