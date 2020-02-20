@@ -3,6 +3,8 @@
  */
 
 export { CadNode } from './cad/CadNode';
+export { pickTreeIndex } from './cad/picking';
+export { Shading, createDefaultShading } from './cad/shading';
 export { SectorNode } from './cad/SectorNode';
 export { createThreeJsPointCloudNode } from './pointcloud/createThreeJsPointCloudNode';
 export { createThreeJsSectorNode } from './cad/createThreeJsSectorNode';
