@@ -1,6 +1,9 @@
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
 #pragma glslify: isSliced = require('../../base/isSliced.glsl')
+#pragma glslify: determineColor = require('../../base/determineColor.glsl');
+
+uniform sampler2D colorDataTexture;
 
 uniform mat4 projectionMatrix;
 varying vec4 center;
@@ -18,6 +21,7 @@ varying vec3 v_normal;
 uniform int renderMode;
 
 void main() {
+    vec3 color = determineColor(v_color, colorDataTexture, v_treeIndex);
     vec3 normal = normalize(sphereNormal.xyz);
 
     float vRadius = center.w;
@@ -63,7 +67,7 @@ void main() {
     vec3 p = rayTarget + dist*rayDirection;
 
     if (intersectionPointZ <= vRadius - height ||
-        intersectionPointZ > vRadius || 
+        intersectionPointZ > vRadius ||
         isSliced(p)
        ) {
         // Missed the first point, check the other point
@@ -72,7 +76,7 @@ void main() {
         intersectionPointZ = E.z + dist*D.z;
         p = rayTarget + dist*rayDirection;
         if (intersectionPointZ <= vRadius - height ||
-            intersectionPointZ > vRadius || 
+            intersectionPointZ > vRadius ||
             isSliced(p)
            ) {
             // Missed the other point too
@@ -91,6 +95,6 @@ void main() {
     }
 #endif
 
-  updateFragmentColor(renderMode, v_color, v_treeIndex, normal);
+  updateFragmentColor(renderMode, color, v_treeIndex, normal);
   updateFragmentDepth(p, projectionMatrix);
 }

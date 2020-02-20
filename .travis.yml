@@ -56,4 +56,4 @@ matrix:
 branches:
   only:
     - master
-
+    - dependency-updates
