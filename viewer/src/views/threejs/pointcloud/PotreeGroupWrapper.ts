@@ -32,7 +32,7 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     this.add(this.potreeGroup);
 
     const onAfterRenderTrigger = new THREE.Mesh(new THREE.Geometry());
-    onAfterRenderTrigger.onAfterRender = this.resetNeedsRedraw;
+    onAfterRenderTrigger.onAfterRender = () => this.resetNeedsRedraw();
     this.add(onAfterRenderTrigger);
   }
 
