@@ -17,6 +17,7 @@
         }
       ],
       "no-return-await": true,
-      "no-unused-variable": true
+      "no-unused-variable": true,
+      "no-unbound-method": true
     }
 }
