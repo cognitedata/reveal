@@ -58,7 +58,7 @@
   },
   "dependencies": {
     "@cognite/potree-core": "^1.1.1",
-    "@cognite/sdk": "^2.19.0",
+    "@cognite/sdk": "^2.20.0",
     "comlink": "^4.1.0",
     "gl-matrix": "^3.2.1",
     "glslify": "^7.0.0",
