@@ -10,11 +10,7 @@ vec3 determineColor(vec3 originalColor, sampler2D colorDataTexture, float treeIn
     vec2 treeIndexUv = vec2(uCoord, vCoord);
     vec4 overrideColor = texture2D(colorDataTexture, treeIndexUv);
 
-    if (overrideColor.a == 0.0) {
-        return originalColor;
-    }
-
-    return overrideColor.rgb;
+    return overrideColor.a * overrideColor.rgb + (1.0 - overrideColor.a) * originalColor;
 }
 
 #pragma glslify: export(determineColor)

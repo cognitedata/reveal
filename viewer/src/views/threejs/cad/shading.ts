@@ -13,7 +13,7 @@ export interface DefaultShadingOptions {
   color: (treeIndex: number) => number[] | undefined;
 }
 
-export function createDefaultShading(options: DefaultShadingOptions) {
+export function createDefaultShading(options: DefaultShadingOptions): Shading {
   const materials = createMaterials();
   const updateNodes = (treeIndices: number[]) => {
     if (treeIndices.length === 0) {
@@ -22,12 +22,12 @@ export function createDefaultShading(options: DefaultShadingOptions) {
     for (const treeIndex of treeIndices) {
       const colorOrUndefined = options.color(treeIndex);
       const color = colorOrUndefined ? colorOrUndefined : [0, 0, 0, 0];
-      materials.colorDataTexture.image.data[4 * treeIndex] = color[0];
-      materials.colorDataTexture.image.data[4 * treeIndex + 1] = color[1];
-      materials.colorDataTexture.image.data[4 * treeIndex + 2] = color[2];
-      materials.colorDataTexture.image.data[4 * treeIndex + 3] = color[3];
+      materials.overrideColorPerTreeIndex.image.data[4 * treeIndex] = color[0];
+      materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 1] = color[1];
+      materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 2] = color[2];
+      materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 3] = color[3];
     }
-    materials.colorDataTexture.needsUpdate = true;
+    materials.overrideColorPerTreeIndex.needsUpdate = true;
   };
 
   return {

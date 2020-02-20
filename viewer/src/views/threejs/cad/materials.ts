@@ -24,7 +24,7 @@ export interface Materials {
   triangleMesh: THREE.ShaderMaterial;
   simple: THREE.ShaderMaterial;
   // Data textures
-  colorDataTexture: THREE.DataTexture;
+  overrideColorPerTreeIndex: THREE.DataTexture;
 }
 
 export function createMaterials(): Materials {
@@ -329,6 +329,6 @@ export function createMaterials(): Materials {
     instancedMesh: instancedMeshMaterial,
     triangleMesh: triangleMeshMaterial,
     simple: simpleMaterial,
-    colorDataTexture
+    overrideColorPerTreeIndex
   };
 }
