@@ -66,6 +66,7 @@ async function main() {
   document.body.appendChild(renderer.domElement);
 
   const { position, target, near, far } = cadNode.suggestCameraConfig();
+  console.log("CAMERA NEAR FAR", near, far);
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
   controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
@@ -88,27 +89,30 @@ async function main() {
   render();
 
   const pick = (event: MouseEvent) => {
+    const rect = renderer.domElement.getBoundingClientRect();
+    const coords = {
+      x: ((event.clientX - rect.left) / renderer.domElement.clientWidth) * 2 - 1,
+      y: ((event.clientY - rect.top) / renderer.domElement.clientHeight) * -2 + 1
+    };
     // Pick in Reveal
-    const revealPickResult = reveal_threejs.pickCadNode({ renderer, cadNode: pickingCadNode, scene: pickingScene, camera, event });
+    const revealPickResult = (() => {
+      const intersections = reveal_threejs.intersectCadNodes([cadNode], { renderer, camera, coords });
+      if (intersections.length === 0) {
+        return;
+      }
+
+      return intersections[0];
+    })();
     if (revealPickResult) {
       console.log('Reveal', revealPickResult.treeIndex, revealPickResult.distance, revealPickResult.point);
     }
 
     // Pick other objects
     const otherPickResult = (() => {
-      const rect = renderer.domElement.getBoundingClientRect();
-      const coords = {
-        x: ((event.clientX - rect.left) / renderer.domElement.clientWidth) * 2 - 1,
-        y: ((event.clientY - rect.top) / renderer.domElement.clientHeight) * -2 + 1
-      };
       raycaster.setFromCamera(coords, camera);
       const intersectedObjects = raycaster.intersectObjects(otherGroup.children);
       console.log(intersectedObjects);
       if (intersectedObjects.length === 0) {
-        return;
-      }
-
-      if (intersectedObjects[0].object.type !== 'Mesh') {
         return;
       }
 
@@ -141,6 +145,7 @@ async function main() {
         const mesh = otherPickResult!.object as THREE.Mesh;
         const material = mesh.material as THREE.MeshPhongMaterial;
         material.emissive = new THREE.Color('yellow');
+        pickingNeedsUpdate = true;
         break;
       case 'reveal':
         pickedNodes.push(revealPickResult!.treeIndex);

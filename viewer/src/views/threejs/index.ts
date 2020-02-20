@@ -3,7 +3,7 @@
  */
 
 export { CadNode } from './cad/CadNode';
-export { pickCadNode } from './cad/picking';
+export { pickCadNode, intersectCadNodes } from './cad/picking';
 export { Shading, createDefaultShading } from './cad/shading';
 export { SectorNode } from './cad/SectorNode';
 export { createThreeJsPointCloudNode } from './pointcloud/createThreeJsPointCloudNode';
