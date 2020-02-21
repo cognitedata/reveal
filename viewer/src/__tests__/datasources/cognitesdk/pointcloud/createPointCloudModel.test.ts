@@ -32,7 +32,7 @@ describe('createPointCloudModel', () => {
     });
     nock(/.*/)
       .get(/.*/)
-      .reply(202, []);
+      .reply(200, []);
 
     // Act
     expect(createPointCloudModel(sdk, 1337)).rejects.toThrowError();
@@ -45,19 +45,22 @@ describe('createPointCloudModel', () => {
       baseUrl
     });
     const response = {
-      versions: [
+      items: [
         {
-          version: 1,
-          blobs: {
-            outputType: 'ept',
-            blobId: 1234
-          }
+          model: { id: 1337 },
+          outputs: [
+            {
+              format: 'ept-pointcloud',
+              version: 1,
+              blobId: 4242424242
+            }
+          ]
         }
       ]
     };
     nock(/.*/)
       .get(/.*/)
-      .reply(202, response);
+      .reply(200, response);
 
     // Act
     const model = await createPointCloudModel(sdk, 1337);

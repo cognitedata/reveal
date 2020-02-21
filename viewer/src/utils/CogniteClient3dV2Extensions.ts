@@ -2,29 +2,62 @@
  * Copyright 2020 Cognite AS
  */
 
-import { CogniteClient, CogniteInternalId } from '@cognite/sdk';
+import { CogniteClient, CogniteInternalId, CogniteExternalId } from '@cognite/sdk';
 
-export interface VersionedBlob {
-  version: number;
-  blobId: CogniteInternalId;
+export type Model3dOutput = {
+  readonly format: string;
+  readonly version: number;
+  readonly blobId: CogniteInternalId;
+};
+
+export type CogniteUniformId = CogniteInternalId | CogniteExternalId;
+export enum CogniteWellknown3dFormat {
+  EptPointCloud = 'ept-pointcloud',
+  RevealCadModel = 'reveal-json',
+  RevealLegacyI3DFModel = 'reveal-i3df',
+  ReevalLegacyProtobufModel = 'reveal-pb'
 }
 
-export interface Model3dOutput {
-  outputType: string;
-  versions: VersionedBlob[];
+export class Model3dOutputList {
+  public readonly model: CogniteModel3dIdentifier;
+  public readonly outputs: Model3dOutput[];
+
+  constructor(model: CogniteModel3dIdentifier, outputs: Model3dOutput[]) {
+    this.model = model;
+    this.outputs = outputs;
+  }
+
+  /**
+   * Finds an output with a given format of the most recent version.
+   *
+   * @param outputFormat        Format to find output for, either a well known format a custom format.
+   * @param supportedVersions   Optional list of supported version. If not provided all versions are considered.
+   */
+  public findMostRecentOutput(
+    outputFormat: CogniteWellknown3dFormat | string,
+    supportedVersions?: number[]
+  ): Model3dOutput | undefined {
+    const candidates = this.outputs.filter(
+      x => x.format === outputFormat && (!supportedVersions || supportedVersions.indexOf(x.version) !== -1)
+    );
+    return candidates.reduce((left, right) => {
+      return right.version > left.version ? right : left;
+    });
+  }
 }
 
-export type Model3dOutputs = Model3dOutput[];
+type CogniteModel3dIdentifier = { id: CogniteInternalId } | { externalId: CogniteExternalId };
 
-interface DescribeEntwineOutput {
-  versions: [
-    {
-      version: number;
-      blobs: {
-        ept: number;
-      };
-    }
-  ];
+interface OutputsRequest {
+  models: CogniteModel3dIdentifier[];
+  formats?: (string | CogniteWellknown3dFormat)[];
+}
+
+interface OutputsResponse {
+  readonly items: {
+    readonly model: CogniteModel3dIdentifier;
+    readonly outputs: Model3dOutput[];
+  }[];
 }
 
 export class CogniteClient3dV2Extensions {
@@ -55,13 +88,27 @@ export class CogniteClient3dV2Extensions {
     return url;
   }
 
-  async getOutputs(modelRevisionId: number): Promise<Model3dOutputs> {
-    const url = `/api/playground/projects/${this.client.project}/3d/v2/pointcloud/entwine/describe`;
-    const response = await this.client.get<DescribeEntwineOutput>(url, { params: { modelId: modelRevisionId } });
-    const versions = response.data.versions.map(v => {
-      return { version: v.version, blobId: v.blobs.ept };
-    });
-    const output = { outputType: 'ept', versions };
-    return [output];
+  async getOutputs(
+    modelRevisionId: CogniteUniformId,
+    formats?: (CogniteWellknown3dFormat | string)[]
+  ): Promise<Model3dOutputList> {
+    const url = `/api/playground/projects/${this.client.project}/3d/v2/outputs`;
+    const request: OutputsRequest = {
+      models: [createModelIdentifier(modelRevisionId)],
+      formats
+    };
+    const response = await this.client.post<OutputsResponse>(url, { data: request });
+    if (response.status === 200) {
+      const item = response.data.items[0];
+      return new Model3dOutputList(item.model, item.outputs);
+    }
+    throw new Error(`Unexpected response ${response.status} (payload: '${response.data})`);
   }
+}
+
+function createModelIdentifier(id: CogniteUniformId): CogniteModel3dIdentifier {
+  if (typeof id === 'number') {
+    return { id };
+  }
+  return { externalId: id };
 }

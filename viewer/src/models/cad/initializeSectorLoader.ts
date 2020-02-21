@@ -34,7 +34,7 @@ export function initializeSectorLoader<T>(
   // TODO 2019-12-17 larsmoa: This function is async but does not return Promise. Consider if
   // this really needs to returnd boolean needsRedraw or if it could return a promise
   const update = (wantedSectorIds: Set<number>) => {
-    const start = performance.now();
+    // const start = performance.now();
 
     const activeOrInFlight = setUnion(activeSectorIds, new Set<number>(activeSectorRequests.keys()));
     const newSectorIds = setDifference(wantedSectorIds, activeOrInFlight);
@@ -61,15 +61,15 @@ export function initializeSectorLoader<T>(
     }
 
     const needsRedraw = newSectorIds.size > 0 || discardedSectorIds.size > 0;
-    if (needsRedraw) {
-      console.log(
-        `activateSectors() [wanted: ${wantedSectorIds.size} ` +
-          `new: ${newSectorIds.size}` +
-          ` discarded: ${discardedSectorIds.size}` +
-          ` active: ${activeSectorIds.size}` +
-          ` in-flight: ${activeSectorRequests.size}] time=${(performance.now() - start).toPrecision(2)} ms`
-      );
-    }
+    // if (needsRedraw) {
+    //   console.log(
+    //     `activateSectors() [wanted: ${wantedSectorIds.size} ` +
+    //       `new: ${newSectorIds.size}` +
+    //       ` discarded: ${discardedSectorIds.size}` +
+    //       ` active: ${activeSectorIds.size}` +
+    //       ` in-flight: ${activeSectorRequests.size}] time=${(performance.now() - start).toPrecision(2)} ms`
+    //   );
+    // }
 
     return needsRedraw;
   };

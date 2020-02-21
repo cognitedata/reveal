@@ -8,23 +8,29 @@ import { SectorModelTransformation } from '../../../models/cad/types';
 import { EptLoader } from '../../../utils/potree/EptLoader';
 import { PointCloudModel } from '../../../models/pointclouds/PointCloudModel';
 import { CogniteClient } from '@cognite/sdk';
-import { CogniteClient3dV2Extensions } from '../../../utils/CogniteClient3dV2Extensions';
+import {
+  CogniteClient3dV2Extensions,
+  CogniteWellknown3dFormat,
+  CogniteUniformId
+} from '../../../utils/CogniteClient3dV2Extensions';
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
 
 const identity = mat4.identity(mat4.create());
 
-export async function createPointCloudModel(sdk: CogniteClient, modelRevisionId: number): Promise<PointCloudModel> {
+export async function createPointCloudModel(
+  sdk: CogniteClient,
+  modelRevisionId: CogniteUniformId
+): Promise<PointCloudModel> {
   initializeXHRRequestHeaders(sdk);
   const baseUrl = sdk.getBaseUrl();
 
   const sdkExtensions = new CogniteClient3dV2Extensions(sdk);
-  const outputs = await sdkExtensions.getOutputs(modelRevisionId);
-  const eptOutput = outputs.find(x => x.outputType === 'ept');
-  if (!eptOutput || !eptOutput.versions || eptOutput.versions.length === 0) {
+  const outputs = await sdkExtensions.getOutputs(modelRevisionId, [CogniteWellknown3dFormat.EptPointCloud]);
+  const mostRecentEptOutput = outputs.findMostRecentOutput(CogniteWellknown3dFormat.EptPointCloud);
+  if (!mostRecentEptOutput) {
     throw new Error(`No point cloud output found for model ${modelRevisionId}`);
   }
-  const mostRecentEptOutput = eptOutput.versions[eptOutput.versions.length - 1];
   const url = baseUrl + sdkExtensions.buildBlobBaseUrl(mostRecentEptOutput.blobId) + '/ept.json';
   const loaderPromise = EptLoader.load(url);
 
