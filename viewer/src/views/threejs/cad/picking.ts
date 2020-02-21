@@ -43,6 +43,7 @@ const clearAlpha = 0.0;
 export function intersectCadNodes(cadNodes: CadNode[], input: IntersectCadNodesInput): IntersectCadNodesResult[] {
   const results: IntersectCadNodesResult[] = [];
   const { camera, coords, renderer } = input;
+  console.log('COORDS', coords);
   for (const cadNode of cadNodes) {
     const pickingScene = new THREE.Scene();
     // TODO consider case where parent does not exist
@@ -66,8 +67,6 @@ export function intersectCadNodes(cadNodes: CadNode[], input: IntersectCadNodesI
   return results;
 }
 
-const distanceVector = new THREE.Vector3();
-
 export function pickCadNode(input: TreeIndexPickingInput): TreeIndexPickingResult | undefined {
   const { camera } = input;
   const treeIndex = pickTreeIndex(input);
@@ -75,16 +74,11 @@ export function pickCadNode(input: TreeIndexPickingInput): TreeIndexPickingResul
     return;
   }
   const depth = pickDepth(input);
-  const point = getPosition(input, depth);
-  // const distance = distanceVector.subVectors(camera.position, point).length();
-  const distance = (() => {
-    const n = camera.near;
-    const f = camera.far;
-    const z = depth;
-    return ((f - n) * (2.0 * n)) / (f + n - z * (f - n));
-  })();
+  const viewZ = perspectiveDepthToViewZ(depth, camera.near, camera.far);
+  const point = getPosition(input, viewZ);
+
   return {
-    distance,
+    distance: -viewZ + camera.near,
     point,
     treeIndex
   };
@@ -105,28 +99,47 @@ export function pickTreeIndex(input: TreeIndexPickingInput): number | undefined 
   return treeIndex;
 }
 
+const rgbaVector = new THREE.Vector4();
+const unpackDownscale = 255 / 256;
+const unpackFactors = new THREE.Vector4(
+  unpackDownscale / (256 * 256 * 256),
+  unpackDownscale / (256 * 256),
+  unpackDownscale / 256,
+  unpackDownscale
+);
+
+function unpackRGBAToDepth(rgbaBuffer: Uint8Array) {
+  return rgbaVector
+    .fromArray(rgbaBuffer)
+    .multiplyScalar(1 / 255)
+    .dot(unpackFactors);
+}
+
+function perspectiveDepthToViewZ(invClipZ: number, near: number, far: number) {
+  return (near * far) / ((far - near) * invClipZ - far);
+}
+
 export function pickDepth(input: TreeIndexPickingInput): number {
   const { cadNode } = input;
   const previousRenderMode = cadNode.renderMode;
   cadNode.renderMode = RenderMode.Depth;
   const pixelBuffer = pickPixelColor(input, clearColor, clearAlpha);
   cadNode.renderMode = previousRenderMode;
-  const depth =
-    pixelBuffer[0] * (255 / 256 / (256 * 256 * 256)) +
-    pixelBuffer[1] * (255 / 256 / (256 * 256)) +
-    pixelBuffer[2] * (255 / 256 / 256);
-  // const depth = pixelBuffer[0] / 255 + pixelBuffer[1] / (255 * 255) + pixelBuffer[2] / (255 * 255 * 255);
-  console.log('RAW DEPTH', depth);
+
+  const depth = unpackRGBAToDepth(pixelBuffer);
+  console.log('RAW DEPTH', depth, pixelBuffer[0], pixelBuffer[1], pixelBuffer[2], pixelBuffer[3]);
   return depth;
 }
 
-export function getPosition(input: TreeIndexPickingInput, depth: number): THREE.Vector3 {
-  const { camera, coords } = input;
-  // const canvasRect = renderer.domElement.getBoundingClientRect();
-  const screenZ = 2 * depth - 1;
-  // const { width, height } = renderer.getSize(new THREE.Vector2());
-  // const screenX = ((event.clientX - canvasRect.left) / width) * 2 - 1;
-  // const screenY = ((event.clientX - canvasRect.left) / height) * -2 + 1;
+const projInv = new THREE.Matrix4();
 
-  return new THREE.Vector3(coords.x, coords.y, screenZ).unproject(camera);
+export function getPosition(input: TreeIndexPickingInput, viewZ: number): THREE.Vector3 {
+  const { camera, coords } = input;
+  const position = new THREE.Vector3();
+  projInv.getInverse(camera.projectionMatrix);
+  position.set(coords.x, coords.y, 0.5).applyMatrix4(projInv);
+
+  position.multiplyScalar(viewZ / position.z);
+  position.applyMatrix4(camera.matrixWorld);
+  return position;
 }

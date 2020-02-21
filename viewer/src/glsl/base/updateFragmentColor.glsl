@@ -8,21 +8,6 @@ const int RenderTypeTreeIndex = 3;
 const int RenderTypePackColorAndNormal = 4;
 const int RenderTypeDepth = 5;
 
-
-//vec4 packDistanceToRgba(float value) {
-  //float r = value;
-  //float g = mod(value * 255.0, 1.0);
-  //float b = mod(value * 255.0 * 255.0, 1.0);
-  //float a = 1.0;
-  //return vec4(r, g, b, a);
-//}
-
-//vec4 packDepthToRGBA( const in float v ) {
-    //vec4 r = vec4( fract( v * PackFactors ), v );
-    //r.yzw -= r.xyz * ShiftRight8; // tidy overflow
-    //return r * PackUpscale;
-//}
-
 #include <packing>
 
 vec3 packNormalToRgb( const in vec3 normal ) {
