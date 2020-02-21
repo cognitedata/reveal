@@ -17,7 +17,7 @@ describe('createPointCloudModel', () => {
       baseUrl
     });
     nock(/.*/)
-      .get(/.*/)
+      .post(/.*/)
       .reply(404);
 
     // Act
@@ -31,7 +31,7 @@ describe('createPointCloudModel', () => {
       baseUrl
     });
     nock(/.*/)
-      .get(/.*/)
+      .post(/.*/)
       .reply(200, []);
 
     // Act
@@ -59,7 +59,7 @@ describe('createPointCloudModel', () => {
       ]
     };
     nock(/.*/)
-      .get(/.*/)
+      .post(/.*/)
       .reply(200, response);
 
     // Act
