@@ -18,10 +18,11 @@ function createSphere(point: THREE.Vector3, color: string): THREE.Mesh {
 async function main() {
   const modelUrl = new URL(location.href).searchParams.get('model') || '/primitives';
 
-  const pickedNodes: number[] = [];
+  const pickedNodes: Set<number> = new Set();
+  const pickedObjects: Set<THREE.Mesh> = new Set();
   const shading = reveal_threejs.createDefaultShading({
     color(treeIndex: number) {
-      if (pickedNodes.indexOf(treeIndex) !== -1) {
+      if (pickedNodes.has(treeIndex)) {
         return [255, 255, 0, 255];
       }
       return undefined;
@@ -29,37 +30,18 @@ async function main() {
   });
 
   const scene = new THREE.Scene();
-  const pickingScene = new THREE.Scene();
 
   // Add some data for Reveal
   const cadModel = await reveal.createLocalCadModel(modelUrl);
   const cadNode = new reveal_threejs.CadNode(cadModel, { shading });
-
-  // TODO We might need to split CadNode up to achieve what we want
-  // We probably need to have a shadow scene that uses the same data,
-  // but different shading from the original scene.
-  // This has the benefit of not having to change the uniforms back and forth as well.
-  //
-  // We can look into this at the same time as we try to split CadNode into more useful components.
-  const pickingCadNode = new reveal_threejs.CadNode(cadModel, { shading });
   scene.add(cadNode);
-  pickingScene.add(pickingCadNode);
 
   // Add some other geometry
   const boxGeometry = new THREE.BoxGeometry(10.0, 4.0, 2.0);
-  const boxMaterial = new THREE.MeshPhongMaterial({
-    color: 'red',
-    emissive: 'rgb(0.2, 0.1, 0.1)',
-    wireframe: true
-  });
-  //const boxMaterial = new THREE.MeshDepthMaterial({
-    //depthPacking: THREE.RGBADepthPacking
-  //});
+  const boxMaterial = new THREE.MeshPhongMaterial({ color: 'red' });
+
   const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
-  // We add other objects to a group to use only this when raycasting
-  const otherGroup = new THREE.Group();
-  otherGroup.add(boxMesh);
-  scene.add(otherGroup);
+  scene.add(boxMesh);
 
   // Add some light for the box
   for (const position of [[-20, 40, 50], [60, 100, -30]]) {
@@ -120,7 +102,7 @@ async function main() {
     // Pick other objects
     const otherPickResult = (() => {
       raycaster.setFromCamera(coords, camera);
-      const intersections = raycaster.intersectObjects(otherGroup.children);
+      const intersections = raycaster.intersectObjects([boxMesh]);
       if (intersections.length === 0) {
         return;
       }
@@ -151,13 +133,24 @@ async function main() {
       case 'other':
         const mesh = otherPickResult!.object as THREE.Mesh;
         const material = mesh.material as THREE.MeshPhongMaterial;
-        material.emissive = new THREE.Color('yellow');
+        if (!pickedObjects.has(mesh)) {
+          pickedObjects.add(mesh);
+          material.emissive = new THREE.Color('yellow');
+        } else {
+          pickedObjects.delete(mesh);
+          material.emissive = new THREE.Color('black');
+        }
         pickingNeedsUpdate = true;
 
         break;
       case 'reveal':
-        pickedNodes.push(revealPickResult!.treeIndex);
-        shading.updateNodes([revealPickResult!.treeIndex]);
+        const treeIndex = revealPickResult!.treeIndex;
+        if (!pickedNodes.has(treeIndex)) {
+          pickedNodes.add(treeIndex);
+        } else {
+          pickedNodes.delete(treeIndex);
+        }
+        shading.updateNodes([treeIndex]);
         pickingNeedsUpdate = true;
 
         break;
