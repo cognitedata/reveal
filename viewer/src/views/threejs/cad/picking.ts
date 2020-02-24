@@ -18,12 +18,10 @@ export interface TreeIndexPickingResult {
 }
 
 export interface IntersectCadNodesInput {
-  // event: MouseEvent;
   coords: {
     x: number;
     y: number;
   };
-   scene: THREE.Scene;
   camera: THREE.PerspectiveCamera;
   renderer: THREE.WebGLRenderer;
 }
@@ -32,9 +30,6 @@ export interface IntersectCadNodesResult {
   distance: number;
   point: THREE.Vector3;
   treeIndex: number;
-  // face
-  // faceIndex
-  // object
 }
 
 const clearColor = new THREE.Color('black');
@@ -42,25 +37,8 @@ const clearAlpha = 0.0;
 
 export function intersectCadNodes(cadNodes: CadNode[], input: IntersectCadNodesInput): IntersectCadNodesResult[] {
   const results: IntersectCadNodesResult[] = [];
-  const { camera, coords, renderer, scene } = input;
-  console.log("Looking up", cadNodes);
   for (const cadNode of cadNodes) {
-    const pickingScene = new THREE.Scene();
-    // TODO consider case where parent does not exist
-    // TODO add warning if parent has transforms
-    const oldParent = cadNode.parent!;
-    pickingScene.add(cadNode);
-    const pickInput = {
-      // event,
-      coords,
-      camera,
-      renderer,
-      scene: pickingScene,
-      //scene,
-      cadNode
-    };
-    const result = pickCadNode(pickInput);
-    oldParent.add(cadNode);
+    const result = pickCadNode(cadNode, input);
     if (result) {
       results.push(result);
     }
@@ -68,24 +46,33 @@ export function intersectCadNodes(cadNodes: CadNode[], input: IntersectCadNodesI
   return results;
 }
 
-export function pickCadNode(input: TreeIndexPickingInput): TreeIndexPickingResult | undefined {
-  const { camera } = input;
-  const treeIndex = pickTreeIndex(input);
+export function pickCadNode(cadNode: CadNode, input: IntersectCadNodesInput): TreeIndexPickingResult | undefined {
+  const { camera, coords, renderer } = input;
+  const pickingScene = new THREE.Scene();
+  // TODO consider case where parent does not exist
+  // TODO add warning if parent has transforms
+  const oldParent = cadNode.parent!;
+  pickingScene.add(cadNode);
+  const pickInput = {
+    coords,
+    camera,
+    renderer,
+    scene: pickingScene,
+    cadNode
+  };
+  const treeIndex = pickTreeIndex(pickInput);
   if (treeIndex === undefined) {
+    oldParent.add(cadNode);
     return;
   }
-  const depth = pickDepth(input);
-  //const viewZ = perspectiveDepthToViewZ(depth, camera.near, camera.far);
-  const viewZ = - (camera.near + (camera.far - camera.near) * depth);
-  //const viewZ = depth;
+  const depth = pickDepth(pickInput);
 
-  console.log("VIEW Z", viewZ);
-
-  const point = getPosition(input, viewZ);
+  const viewZ = perspectiveDepthToViewZ(depth, camera.near, camera.far);
+  const point = getPosition(pickInput, viewZ);
   const distance = new THREE.Vector3().subVectors(point, camera.position).length();
 
+  oldParent.add(cadNode);
   return {
-    //distance: -viewZ + camera.near,
     distance,
     point,
     treeIndex
@@ -135,7 +122,6 @@ export function pickDepth(input: TreeIndexPickingInput): number {
   cadNode.renderMode = previousRenderMode;
 
   const depth = unpackRGBAToDepth(pixelBuffer);
-  console.log('RAW DEPTH', depth, pixelBuffer[0], pixelBuffer[1], pixelBuffer[2], pixelBuffer[3]);
   return depth;
 }
 

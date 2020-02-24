@@ -9,6 +9,12 @@ import * as reveal_threejs from '@cognite/reveal/threejs';
 
 CameraControls.install({ THREE });
 
+function createSphere(point: THREE.Vector3, color: string): THREE.Mesh {
+  const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.2), new THREE.MeshPhongMaterial({ color }));
+  sphere.position.copy(point);
+  return sphere;
+}
+
 async function main() {
   const modelUrl = new URL(location.href).searchParams.get('model') || '/primitives';
 
@@ -56,9 +62,11 @@ async function main() {
   scene.add(otherGroup);
 
   // Add some light for the box
-  const light = new THREE.PointLight();
-  light.position.set(-10, -10, 10);
-  scene.add(light);
+  for (const position of [[-20, 40, 50], [60, 100, -30]]) {
+    const light = new THREE.PointLight();
+    light.position.set(position[0], position[1], position[2]);
+    scene.add(light);
+  }
 
   // Set up picking for other objects
   const raycaster = new THREE.Raycaster();
@@ -102,42 +110,27 @@ async function main() {
     };
     // Pick in Reveal
     const revealPickResult = (() => {
-      const intersections = reveal_threejs.intersectCadNodes([cadNode], { renderer, camera, coords, scene });
+      const intersections = reveal_threejs.intersectCadNodes([cadNode], { renderer, camera, coords });
       if (intersections.length === 0) {
         return;
       }
 
-      {
-        const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.2), new THREE.MeshPhongMaterial());
-        sphere.position.copy(intersections[0]!.point);
-        console.log('Distance reveal', new THREE.Vector3().subVectors(intersections[0]!.point, camera.position).length());
-        scene.add(sphere);
-      }
+      scene.add(createSphere(intersections[0]!.point, 'purple'));
 
       return intersections[0];
     })();
-    if (revealPickResult) {
-      console.log('Reveal', revealPickResult.treeIndex, revealPickResult.distance, revealPickResult.point);
-    }
 
     // Pick other objects
     const otherPickResult = (() => {
       raycaster.setFromCamera(coords, camera);
-      const intersectedObjects = raycaster.intersectObjects(otherGroup.children);
-      console.log(intersectedObjects);
-      if (intersectedObjects.length === 0) {
+      const intersections = raycaster.intersectObjects(otherGroup.children);
+      if (intersections.length === 0) {
         return;
       }
 
-      console.log('Other', intersectedObjects[0].distance, intersectedObjects[0].point);
-      {
-        const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.2), new THREE.MeshPhongMaterial({color: 'red'}));
-        sphere.position.copy(intersectedObjects[0]!.point);
-        console.log('Distance other', new THREE.Vector3().subVectors(intersectedObjects[0]!.point, camera.position).length());
-        scene.add(sphere);
-      }
+      scene.add(createSphere(intersections[0]!.point, 'orange'));
 
-      return intersectedObjects[0];
+      return intersections[0];
     })();
 
     const chosenPickResult = (() => {
@@ -156,8 +149,6 @@ async function main() {
       }
       return 'none';
     })();
-
-    console.log('CHOSEN', chosenPickResult);
 
     switch (chosenPickResult) {
       case 'other':
