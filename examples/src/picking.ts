@@ -77,10 +77,7 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const { position, target } = cadNode.suggestCameraConfig();
-  const near = 0.1;
-  const far = 1000.0;
-  console.log("CAMERA NEAR FAR", near, far);
+  const { position, target, near, far } = cadNode.suggestCameraConfig();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
   controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
