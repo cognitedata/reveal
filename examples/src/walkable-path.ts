@@ -23,22 +23,14 @@ interface NodeIdReference {
   nodeId: number;
 }
 
-interface TransitItem {
-  from: Coordinates | NodeIdReference;
-  to: Coordinates | NodeIdReference;
-  movingObjectSize: { diameter: number; height: number };
-}
-
 interface TransitPathRequest {
   modelId: number;
-  items: TransitItem[];
+  items: {
+    from: Coordinates | NodeIdReference;
+    to: Coordinates | NodeIdReference;
+    movingObjectSize: { diameter: number; height: number };
+  }[];
 }
-
-// Should find a way to add this to maybe cognite-sdk-js later?
-
-// TODO: Should be added to reveal/viewer. The input data TransitPath response is in my
-// opinion too coupled with our sdk response, should we split it into two funcitons, one taking in a { x, y, z}[]
-// and another converting the response to said array.
 
 async function main() {
   const url = new URL(location.href);
@@ -68,25 +60,26 @@ async function main() {
   const pathMeshes: THREE.Mesh[] = [];
 
   const removeWalkablePath = () => {
-    if (pathMeshes !== undefined) {
-      for (const pathMesh of pathMeshes) {
-        scene.remove(pathMesh);
-      }
-      pathMeshes.splice(0, pathMeshes.length);
-      updated = true;
+    for (const pathMesh of pathMeshes) {
+      scene.remove(pathMesh);
     }
+    pathMeshes.splice(0, pathMeshes.length);
+    updated = true;
   };
+
   createGUIWrapper({
-    create: walkablePath => async () => {
+    createWalkablePath: async (walkablePath: TransitPathRequest) => {
       const walkablePathResponse = await walkablePathSdkClient.getTransitPath(walkablePath);
       removeWalkablePath();
-      for (const mesh of createWalkablePath(walkablePathResponse, cadModel.modelTransformation)) {
+      const vector3Path = convertToVector3Array(walkablePathResponse, cadModel.modelTransformation);
+      const meshes = createWalkablePathMeshes(vector3Path);
+      for (const mesh of meshes) {
         scene.add(mesh);
         pathMeshes.push(mesh);
       }
       updated = true;
     },
-    remove: removeWalkablePath
+    removeWalkablePath
   });
 
   const clock = new THREE.Clock();
@@ -110,29 +103,33 @@ async function main() {
   (window as any).controls = controls;
   (window as any).renderer = renderer;
 }
+
 // TODO: Add to some kind of primitives like class in reveal viewer?
 
-const createWalkablePath = (
-  walkablePathResponse: TransitPathResponse,
-  modelTransformation: SectorModelTransformation
-) => {
-  const pathMeshes = [];
+function createWalkablePathMeshes(
+  pathArrays: THREE.Vector3[][],
+  radius: number = 0.0275,
+  radiusSegments: number = 10,
+  closed: boolean = false,
+  heightOffset: number = 0.15
+) {
+  const meshes = [];
   try {
-    const diameter = 0.55;
-    const pathArray = createVector3Array(walkablePathResponse, modelTransformation);
-
-    for (const path of pathArray) {
-      const pathGeometry = createPathGeometry(path, 2 * (path.length - 1), diameter / 20, 10, false);
-      const pathMaterial = new THREE.MeshPhongMaterial({ color: 0xfeafeafe });
-      const pathMesh = new THREE.Mesh(pathGeometry, pathMaterial);
-      pathMesh.position.y += diameter / 4;
-      pathMeshes.push(pathMesh);
+    for (const path of pathArrays) {
+      const curve = new THREE.CatmullRomCurve3(path);
+      const geometry = new THREE.TubeBufferGeometry(curve, 2 * (path.length - 1), radius, radiusSegments, closed);
+      const material = new THREE.MeshPhongMaterial({ color: 0xfeafeafe });
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.y += heightOffset;
+      meshes.push(mesh);
     }
   } catch (error) {}
-  return pathMeshes;
-};
+  return meshes;
+}
 
-function createVector3Array(
+// THREE js parser, from TransitResponse to Vector3
+
+function convertToVector3Array(
   pointData: TransitPathResponse,
   modelTransformation: SectorModelTransformation
 ): THREE.Vector3[][] {
@@ -150,161 +147,197 @@ function createVector3Array(
   }
   return paths;
 }
-function createPathGeometry(
-  points: THREE.Vector3[],
-  segments: number,
-  radius: number,
-  radiusSegments: number,
-  closed: boolean
-) {
-  const curve = new THREE.CatmullRomCurve3(points);
-  const geometry = new THREE.TubeBufferGeometry(curve, segments, radius, radiusSegments, closed);
-  return geometry;
-}
 
-function createGUIWrapper(callbacks: { create: (query: TransitPathRequest) => void; remove: () => void }) {
-  interface ItemTypeStorage {
-    type: string;
-    data: Coordinates | NodeIdReference;
-  }
-  function isCoordinates(object: any): object is Coordinates {
-    return 'x' in object && 'y' in object && 'z' in object;
-  }
-  function isNodeIdReference(object: any): object is NodeIdReference {
-    return 'nodeId' in object;
-  }
-  function defaultQueryParams(): TransitPathRequest {
-    return {
-      modelId: 3329507622597457,
-      items: [defaultItem()]
-    };
-  }
-  function defaultItem(): TransitItem {
-    return {
-      from: { x: 332.4, y: 117.6, z: 500.21 },
-      to: { x: 332.38, y: 114.6, z: 517.02 },
-      movingObjectSize: { diameter: 0.55, height: 1.6 }
-    };
-  }
-
-  let walkablePath = defaultQueryParams();
-  const gui = new GUI({ width: 300 });
-  const actions = {
-    addItem: () => {
-      if (gui !== undefined) {
-        gui.destroy();
-        walkablePath.items.push(defaultItem());
-        createQueryGUI();
-      }
-    },
-    removeItemAt: (index: number) => {
-      if (gui !== undefined) {
-        gui.destroy();
-        walkablePath.items.splice(index, 1);
-        createQueryGUI();
-      }
-    },
-    findPath: () => {
-      callbacks.create.call(gui, walkablePath);
-    },
-    removePath: callbacks.remove,
-    resetToDefault: () => {
-      if (gui !== undefined) {
-        gui.destroy();
-        walkablePath = defaultQueryParams();
-        createQueryGUI();
-      }
-    }
-  };
-  function defaultStorage(type: string, data: Coordinates | NodeIdReference): ItemTypeStorage {
-    return {
-      type,
-      data
-    };
-  }
-  const createQueryGUI = (): GUI => {
-    // Move out of function
-    gui.add(walkablePath, 'modelId');
-    gui.add(actions, 'addItem');
-    const items = gui.addFolder('items');
-    items.open();
-    let index = 0;
-    for (const item of walkablePath.items) {
-      const indexFolder = items.addFolder(`${index}`);
-      const removeItemController = indexFolder.add({ delete: () => {} }, 'delete');
-      const removeIndex = index;
-      const removeFunction = () => {
-        actions.removeItemAt(removeIndex);
+// Parser from GUI Data, to API request
+function transformDataToRequest(data: TransitPathData): TransitPathRequest {
+  return {
+    modelId: data.modelId,
+    items: data.items.map(item => {
+      return {
+        from: transformWaypoint(item.from),
+        to: transformWaypoint(item.to),
+        movingObjectSize: item.movingObjectSize
       };
-      removeItemController.onChange(removeFunction);
-      indexFolder.open();
-      const from = indexFolder.addFolder('from');
-      from.open();
-      createWaypointGUI(from, item.from, { x: 332.4, y: 117.6, z: 500.21 });
-      const to = indexFolder.addFolder('to');
-      to.open();
-      createWaypointGUI(to, item.to, { x: 332.38, y: 114.6, z: 517.02 });
-
-      const movingObjectSize = indexFolder.addFolder('movingObjectSize');
-      movingObjectSize.add(item.movingObjectSize, 'diameter');
-      movingObjectSize.add(item.movingObjectSize, 'height');
-      index += 1;
-    }
-    gui.add(actions, 'findPath');
-    gui.add(actions, 'removePath');
-    gui.add(actions, 'resetToDefault');
-    return gui;
+    })
   };
-
-  const addToGui = <T>(parent: GUI, target: T, items: string[]) => {
-    const addedItems: GUIController[] = [];
-    for (const item of items) {
-      addedItems.push(parent.add(target, item));
-    }
-    return addedItems;
-  };
-
-  const createWaypointGUI = (
-    parent: GUI,
-    waypoint: Coordinates | NodeIdReference,
-    defaultCoordinates: Coordinates,
-    defaultNodeId: NodeIdReference = { nodeId: 0 }
-  ) => {
-    let type: GUIController;
-    let storage: ItemTypeStorage;
-    let items: GUIController[];
-    if (isCoordinates(waypoint)) {
-      storage = defaultStorage('coordinates', defaultNodeId);
-      type = parent.add(storage, 'type', ['coordinates', 'nodeId']);
-      items = addToGui(parent, waypoint, ['x', 'y', 'z']);
-    } else if (isNodeIdReference(waypoint)) {
-      storage = defaultStorage('nodeId', defaultCoordinates);
-      type = parent.add(storage, 'type', ['coordinates', 'nodeId']);
-      items = addToGui(parent, waypoint, ['nodeId']);
-    } else {
-      return;
-    }
-    type.onChange((value: string) => {
-      const oldData = waypoint;
-      waypoint = storage.data;
-      for (const item of items) {
-        parent.remove(item);
-      }
-      switch (value) {
-        default:
-        case 'coordinates':
-          items = addToGui(parent, waypoint, ['x', 'y', 'z']);
-          break;
-        case 'nodeId':
-          items = addToGui(parent, waypoint, ['nodeId']);
-          break;
-      }
-      storage.data = oldData;
-    });
-  };
-  createQueryGUI();
+}
+// Helper Parser from GUI Data, to API format
+function transformWaypoint(data: Waypoint): Coordinates | NodeIdReference {
+  switch (data.type) {
+    case Type.coordinates:
+      return data.coordinates;
+    case Type.nodeId:
+      return data.nodeId;
+    default:
+      throw new TypeError('');
+  }
 }
 
+// GUI Wrapper with callbacks on create / remove path
+function createGUIWrapper(callbacks: {
+  createWalkablePath: (data: TransitPathRequest) => void;
+  removeWalkablePath: () => void;
+}) {
+  let transitPathData = defaultPathData();
+  const gui = new GUI({ width: 300 });
+  updateQueryGUI(gui, transitPathData);
+  gui.add(
+    {
+      resetToDefault: () => {
+        transitPathData = defaultPathData();
+        gui.destroy();
+        createGUIWrapper(callbacks);
+      }
+    },
+    'resetToDefault'
+  );
+  gui.add(
+    {
+      createWalkablePath: () => {
+        callbacks.createWalkablePath.call(gui, transformDataToRequest(transitPathData));
+      }
+    },
+    'createWalkablePath'
+  );
+  gui.add(callbacks, 'removeWalkablePath');
+}
+
+enum Type {
+  coordinates = 'coordinates',
+  nodeId = 'nodeId'
+}
+
+interface Waypoint {
+  type: Type;
+  coordinates: Coordinates;
+  nodeId: NodeIdReference;
+}
+
+interface TransitPathItem {
+  from: Waypoint;
+  to: Waypoint;
+  movingObjectSize: { diameter: number; height: number };
+}
+
+interface TransitPathData {
+  modelId: number;
+  items: TransitPathItem[];
+}
+
+function defaultPathData(): TransitPathData {
+  return {
+    modelId: 3329507622597457,
+    items: [defaultPathItem()]
+  };
+}
+
+function defaultPathItem(): TransitPathItem {
+  return {
+    from: {
+      type: Type.coordinates,
+      coordinates: { x: 332.4, y: 117.6, z: 500.21 },
+      nodeId: { nodeId: 0 }
+    },
+    to: {
+      type: Type.coordinates,
+      coordinates: { x: 332.38, y: 114.6, z: 517.02 },
+      nodeId: { nodeId: 0 }
+    },
+    movingObjectSize: { diameter: 0.55, height: 1.6 }
+  };
+}
+
+function updateQueryGUI(parent: GUI, data: TransitPathData): GUI {
+  const queryFolder = parent.addFolder('WalkablePath');
+  queryFolder.open();
+  queryFolder.add(data, 'modelId');
+  const updateItems = () => {
+    queryFolder.removeFolder(itemsFolder);
+    itemsFolder = updateItemsGUI(queryFolder, data.items, updateItems);
+  };
+  let itemsFolder = updateItemsGUI(queryFolder, data.items, updateItems);
+  return queryFolder;
+}
+
+function updateItemsGUI(parent: GUI, items: TransitPathItem[], onItemsUpdated: () => void) {
+  const itemsFolder = parent.addFolder('items');
+  itemsFolder.open();
+  itemsFolder.add(
+    {
+      addItem: () => {
+        const newItem = defaultPathItem();
+        items.push(newItem);
+        onItemsUpdated();
+      }
+    },
+    'addItem'
+  );
+  let index = 0;
+  for (const item of items) {
+    const itemIndex = index;
+    const indexFolder = itemsFolder.addFolder(`${index}`);
+    indexFolder.open();
+    createItemGUI(indexFolder, item, () => {
+      items.splice(itemIndex, 1);
+      onItemsUpdated();
+    });
+    index += 1;
+  }
+  return itemsFolder;
+}
+
+function createItemGUI(parent: GUI, item: TransitPathItem, onDelete: () => void) {
+  parent.add(
+    {
+      delete: onDelete
+    },
+    'delete'
+  );
+  const from = parent.addFolder('from');
+  from.open();
+  createWaypointGUI(from, item.from);
+  const to = parent.addFolder('to');
+  to.open();
+  createWaypointGUI(to, item.to);
+
+  const movingObjectSize = parent.addFolder('movingObjectSize');
+  movingObjectSize.add(item.movingObjectSize, 'diameter');
+  movingObjectSize.add(item.movingObjectSize, 'height');
+}
+
+function getWaypointData(waypoint: Waypoint) {
+  switch (waypoint.type) {
+    case Type.coordinates:
+      return waypoint.coordinates;
+    case Type.nodeId:
+      return waypoint.nodeId;
+    default:
+      throw new TypeError('');
+  }
+}
+
+function createWaypointGUI(parent: GUI, waypoint: Waypoint) {
+  const type = parent.add(waypoint, 'type', Object.values(Type));
+  const data = getWaypointData(waypoint);
+  let items = addToGui(parent, data, Object.keys(data));
+  type.onChange(() => {
+    for (const item of items) {
+      parent.remove(item);
+    }
+    const newData = getWaypointData(waypoint);
+    items = addToGui(parent, newData, Object.keys(newData));
+  });
+}
+
+function addToGui<T>(parent: GUI, target: T, items: string[]) {
+  const addedItems: GUIController[] = [];
+  for (const item of items) {
+    addedItems.push(parent.add(target, item));
+  }
+  return addedItems;
+}
+
+// Cognite Client, returns a function that queries the api for TransitPathResponse.
 interface TransitPathResponse {
   items: [
     {
