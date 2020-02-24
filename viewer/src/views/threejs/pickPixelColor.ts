@@ -34,7 +34,7 @@ export function pickPixelColor(input: PickingInput, clearColor: THREE.Color, cle
     1
   );
 
-  const currentClearColor = renderer.getClearColor();
+  const currentClearColor = renderer.getClearColor().clone();
   const currentClearAlpha = renderer.getClearAlpha();
 
   renderer.setRenderTarget(renderTarget);
