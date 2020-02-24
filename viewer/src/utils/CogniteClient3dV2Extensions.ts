@@ -40,9 +40,11 @@ export class Model3dOutputList {
     const candidates = this.outputs.filter(
       x => x.format === outputFormat && (!supportedVersions || supportedVersions.indexOf(x.version) !== -1)
     );
-    return candidates.reduce((left, right) => {
-      return right.version > left.version ? right : left;
-    });
+    return candidates.length > 0
+      ? candidates.reduce((left, right) => {
+          return right.version > left.version ? right : left;
+        })
+      : undefined;
   }
 }
 
@@ -60,6 +62,9 @@ interface OutputsResponse {
   }[];
 }
 
+/**
+ * Provides 3D V2 specific extensions for the standard CogniteClient used by Reveal.
+ */
 export class CogniteClient3dV2Extensions {
   private readonly client: CogniteClient;
 
