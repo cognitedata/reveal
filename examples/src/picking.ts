@@ -43,8 +43,12 @@ async function main() {
   const boxGeometry = new THREE.BoxGeometry(10.0, 4.0, 2.0);
   const boxMaterial = new THREE.MeshPhongMaterial({
     color: 'red',
-    emissive: 'rgb(0.2, 0.1, 0.1)'
+    emissive: 'rgb(0.2, 0.1, 0.1)',
+    wireframe: true
   });
+  //const boxMaterial = new THREE.MeshDepthMaterial({
+    //depthPacking: THREE.RGBADepthPacking
+  //});
   const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
   // We add other objects to a group to use only this when raycasting
   const otherGroup = new THREE.Group();
@@ -65,7 +69,9 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const { position, target, near, far } = cadNode.suggestCameraConfig();
+  const { position, target } = cadNode.suggestCameraConfig();
+  const near = 0.1;
+  const far = 1000.0;
   console.log("CAMERA NEAR FAR", near, far);
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
@@ -96,9 +102,16 @@ async function main() {
     };
     // Pick in Reveal
     const revealPickResult = (() => {
-      const intersections = reveal_threejs.intersectCadNodes([cadNode], { renderer, camera, coords });
+      const intersections = reveal_threejs.intersectCadNodes([cadNode], { renderer, camera, coords, scene });
       if (intersections.length === 0) {
         return;
+      }
+
+      {
+        const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.2), new THREE.MeshPhongMaterial());
+        sphere.position.copy(intersections[0]!.point);
+        console.log('Distance reveal', new THREE.Vector3().subVectors(intersections[0]!.point, camera.position).length());
+        scene.add(sphere);
       }
 
       return intersections[0];
@@ -117,6 +130,12 @@ async function main() {
       }
 
       console.log('Other', intersectedObjects[0].distance, intersectedObjects[0].point);
+      {
+        const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.2), new THREE.MeshPhongMaterial({color: 'red'}));
+        sphere.position.copy(intersectedObjects[0]!.point);
+        console.log('Distance other', new THREE.Vector3().subVectors(intersectedObjects[0]!.point, camera.position).length());
+        scene.add(sphere);
+      }
 
       return intersectedObjects[0];
     })();
@@ -146,11 +165,13 @@ async function main() {
         const material = mesh.material as THREE.MeshPhongMaterial;
         material.emissive = new THREE.Color('yellow');
         pickingNeedsUpdate = true;
+
         break;
       case 'reveal':
         pickedNodes.push(revealPickResult!.treeIndex);
         shading.updateNodes([revealPickResult!.treeIndex]);
         pickingNeedsUpdate = true;
+
         break;
       default:
         break;

@@ -23,7 +23,7 @@ export interface IntersectCadNodesInput {
     x: number;
     y: number;
   };
-  // scene: THREE.Scene;
+   scene: THREE.Scene;
   camera: THREE.PerspectiveCamera;
   renderer: THREE.WebGLRenderer;
 }
@@ -42,8 +42,8 @@ const clearAlpha = 0.0;
 
 export function intersectCadNodes(cadNodes: CadNode[], input: IntersectCadNodesInput): IntersectCadNodesResult[] {
   const results: IntersectCadNodesResult[] = [];
-  const { camera, coords, renderer } = input;
-  console.log('COORDS', coords);
+  const { camera, coords, renderer, scene } = input;
+  console.log("Looking up", cadNodes);
   for (const cadNode of cadNodes) {
     const pickingScene = new THREE.Scene();
     // TODO consider case where parent does not exist
@@ -56,6 +56,7 @@ export function intersectCadNodes(cadNodes: CadNode[], input: IntersectCadNodesI
       camera,
       renderer,
       scene: pickingScene,
+      //scene,
       cadNode
     };
     const result = pickCadNode(pickInput);
@@ -74,11 +75,18 @@ export function pickCadNode(input: TreeIndexPickingInput): TreeIndexPickingResul
     return;
   }
   const depth = pickDepth(input);
-  const viewZ = perspectiveDepthToViewZ(depth, camera.near, camera.far);
+  //const viewZ = perspectiveDepthToViewZ(depth, camera.near, camera.far);
+  const viewZ = - (camera.near + (camera.far - camera.near) * depth);
+  //const viewZ = depth;
+
+  console.log("VIEW Z", viewZ);
+
   const point = getPosition(input, viewZ);
+  const distance = new THREE.Vector3().subVectors(point, camera.position).length();
 
   return {
-    distance: -viewZ + camera.near,
+    //distance: -viewZ + camera.near,
+    distance,
     point,
     treeIndex
   };

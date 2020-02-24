@@ -44,7 +44,8 @@ void updateFragmentColor(int renderMode, vec3 color, float treeIndex, vec3 norma
         color = packIntToColor(treeIndex);
         gl_FragColor = vec4(color, 1.0);
     } else if (renderMode == RenderTypeDepth) {
-        gl_FragColor = packDepthToRGBA(depth);
+        //gl_FragColor = packDepthToRGBA(depth);
+        gl_FragColor = packDepthToRGBA(-perspectiveDepthToViewZ(depth, 0.1, 1000.0) / (1000.0 - 0.1));
     } else {
         gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
     }
