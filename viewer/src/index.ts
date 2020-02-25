@@ -12,11 +12,11 @@ export { CadLoadingHints } from './models/cad/CadLoadingHints';
 export { PointCloudModel } from './models/pointclouds/PointCloudModel';
 
 // Loaders
+export { createPointCloudModel } from './datasources/cognitesdk';
 export { createLocalCadModel, createLocalPointCloudModel } from './datasources/local';
 
 // Internals
 import * as internal from './internal';
 export { internal };
-
 
 // Note! ThreeJS is in a separate folder to ensure it's imported as '@cognite/reveal/threejs'.

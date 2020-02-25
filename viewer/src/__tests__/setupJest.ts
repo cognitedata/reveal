@@ -2,11 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
-// Mock for fetch() (exposed using fetchMock())
-import { GlobalWithFetchMock } from 'jest-fetch-mock';
-const customGlobal: GlobalWithFetchMock = global as GlobalWithFetchMock;
-customGlobal.fetch = require('jest-fetch-mock');
-customGlobal.fetchMock = customGlobal.fetch;
+// fetch() polyfill
+import 'whatwg-fetch';
 
 // Create document.currentScript required by potree-core
 Object.defineProperty(document, 'currentScript', {
