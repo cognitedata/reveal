@@ -17,7 +17,8 @@ export async function createCadModel(sdk: CogniteClient, modelId: number, revisi
   const metadataPromise = loadSectorMetadata(sdk, modelId, revisionId);
 
   // TODO replace this with actually fetching metadata about simple sectors
-  const simpleMetadataPromise: Promise<Map<number, LocalSimpleCadMetadataResponse>> = new Promise(_resolve => {
+
+  const simpleMetadataPromise: Promise<Map<number, LocalSimpleCadMetadataResponse>> = new Promise(_ => {
     throw new Error('Not implemented');
   });
 

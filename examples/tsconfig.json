@@ -20,6 +20,13 @@
     "lib": [
         "dom",
         "esnext"
-    ]
-  }
+    ],
+
+    // Workaround for TS2345
+    "baseUrl": ".",
+    "paths": {
+      "@cognite/sdk": ["node_modules/@cognite/sdk"]
+    },
+  },
+  
 }
