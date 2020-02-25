@@ -2,10 +2,13 @@
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
 #pragma glslify: isSliced = require('../../base/isSliced.glsl')
+#pragma glslify: determineColor = require('../../base/determineColor.glsl');
 
 #define PI 3.14159265359
 #define PI2 6.28318530718
 #define PI_HALF 1.5707963267949
+
+uniform sampler2D colorDataTexture;
 
 uniform mat4 projectionMatrix;
 
@@ -21,7 +24,10 @@ varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
+uniform int renderMode;
+
 void main() {
+    vec3 color = determineColor(v_color, colorDataTexture, v_treeIndex);
     vec3 normal = normalize( v_normal );
     mat3 basis = mat3(U.xyz, V.xyz, axis.xyz);
     vec3 surfacePoint = vec3(U.w, V.w, axis.w);
@@ -89,7 +95,7 @@ void main() {
     bool isInner = false;
 
     if (intersectionPointZ <= 0.0 ||
-      intersectionPointZ >= L || 
+      intersectionPointZ >= L ||
       isSliced(p)
       ) {
       // Either intersection point is behind starting point (happens inside the cone),
@@ -100,7 +106,7 @@ void main() {
       p = rayTarget + dist*rayDirection;
 
       if (intersectionPointZ <= 0.0 ||
-        intersectionPointZ >= L || 
+        intersectionPointZ >= L ||
         isSliced(p)
       ) {
         // Missed the other point too
@@ -122,6 +128,6 @@ void main() {
     normal = normalize(cross(A, B));
 #endif
 
-    updateFragmentColor(v_color, v_treeIndex, normal);
+    updateFragmentColor(renderMode, color, v_treeIndex, normal);
     updateFragmentDepth(p, projectionMatrix);
 }

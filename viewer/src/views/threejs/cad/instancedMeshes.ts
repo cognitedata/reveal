@@ -4,20 +4,12 @@
 
 import * as THREE from 'three';
 import { InstancedMeshFile } from '../../../models/cad/types';
-import { sectorShaders, shaderDefines } from './shaders';
 
-const instancedMeshMaterial = new THREE.ShaderMaterial({
-  name: 'Instanced meshes',
-  ...shaderDefines,
-  extensions: {
-    derivatives: true
-  },
-  side: THREE.DoubleSide,
-  fragmentShader: sectorShaders.instancedMesh.fragment,
-  vertexShader: sectorShaders.instancedMesh.vertex
-});
-
-export function createInstancedMeshes(meshes: InstancedMeshFile[], bounds: THREE.Box3): THREE.Mesh[] {
+export function createInstancedMeshes(
+  meshes: InstancedMeshFile[],
+  bounds: THREE.Box3,
+  material: THREE.ShaderMaterial
+): THREE.Mesh[] {
   const result: THREE.Mesh[] = [];
 
   for (const meshFile of meshes) {
@@ -44,7 +36,7 @@ export function createInstancedMeshes(meshes: InstancedMeshFile[], bounds: THREE
       geometry.boundingBox = bounds.clone();
       geometry.boundingSphere = new THREE.Sphere();
       bounds.getBoundingSphere(geometry.boundingSphere);
-      const obj = new THREE.Mesh(geometry, instancedMeshMaterial);
+      const obj = new THREE.Mesh(geometry, material);
       obj.name = `Instanced mesh ${meshFile.fileId}`;
       result.push(obj);
     }

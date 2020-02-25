@@ -3,13 +3,14 @@
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
 #pragma glslify: isSliced = require('../../base/isSliced.glsl')
+#pragma glslify: determineColor = require('../../base/determineColor.glsl');
 
 #define PI 3.14159265359
 #define PI2 6.28318530718
 #define PI_HALF 1.5707963267949
 
-uniform float dataTextureWidth;
-uniform float dataTextureHeight;
+uniform sampler2D colorDataTexture;
+
 uniform mat4 projectionMatrix;
 
 varying vec4 v_centerB;
@@ -27,8 +28,11 @@ varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
+uniform int renderMode;
+
 void main() {
   vec3 normal = normalize( v_normal );
+  vec3 color = determineColor(v_color, colorDataTexture, v_treeIndex);
 
   float R1 = v_centerB.w;
   vec4 U = v_U;
@@ -95,7 +99,7 @@ void main() {
 
   if (intersectionPoint.z <= 0.0 ||
       intersectionPoint.z > height ||
-      theta > v_angle + v_arcAngle || 
+      theta > v_angle + v_arcAngle ||
       isSliced(p)
     ) {
       // Missed the first point, check the other point
@@ -107,7 +111,7 @@ void main() {
       if (theta < v_angle) theta += 2.0 * PI;
       if (intersectionPoint.z <= 0.0 ||
         intersectionPoint.z > height ||
-        theta > v_angle + v_arcAngle || 
+        theta > v_angle + v_arcAngle ||
         isSliced(p)
       ) {
         // Missed the other point too
@@ -138,7 +142,7 @@ void main() {
       }
   #endif
 
-    
-    updateFragmentColor(v_color, v_treeIndex, normal);
+
+    updateFragmentColor(renderMode, color, v_treeIndex, normal);
     updateFragmentDepth(p, projectionMatrix);
 }

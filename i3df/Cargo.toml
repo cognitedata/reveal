@@ -17,12 +17,12 @@ required-features = ["dump"]
 
 [dependencies]
 clap = "2.33.0"
-byteorder = "1.3.2"
+byteorder = "1.3.4"
 nalgebra = { version = "0.19.0", features = [ "serde-serialize" ] }
 impl_ops = "0.1.1"
 serde = "1.0.104"
 serde_derive = "1.0.104"
-serde_json = { version = "1.0.46", optional = true }
+serde_json = { version = "1.0.48", optional = true }
 serde_yaml = { version = "0.8.11", optional = true }
 serde_bytes = { version = "0.11.3", optional = true }
 #js-sys = { version = "0.3.27", optional = true }

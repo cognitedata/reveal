@@ -224,10 +224,6 @@ function isHighDetailSectorRoot(object: THREE.Object3D): boolean {
   return isSectorRoot(object) && !!object.children.find(y => y.type === 'Mesh' && !y.name.startsWith('Quads'));
 }
 
-function isQuadSectorRoot(object: THREE.Object3D): boolean {
-  return isSectorRoot(object) && !!object.children.find(y => y.type === 'Mesh' && y.name.startsWith('Quads'));
-}
-
 function updateSceneInfo(scene: THREE.Object3D, sceneInfo: SceneInfo) {
   sceneInfo.sectors.count = 0;
   sceneInfo.sectors.loadedDetailedCount = 0;
@@ -400,7 +396,11 @@ function logActiveSectors(scene: THREE.Object3D) {
   console.log('Active quads sectors:', activeQuadsRoots);
 }
 
-function saveWindowVariables(renderer: THREE.WebGLRenderer, scene: THREE.Object3D, sectorMetadataRoot: reveal.SectorMetadata) {
+function saveWindowVariables(
+  renderer: THREE.WebGLRenderer,
+  scene: THREE.Object3D,
+  sectorMetadataRoot: reveal.SectorMetadata
+) {
   (window as any).THREE = THREE;
   (window as any).scene = scene;
   (window as any).renderer = renderer;

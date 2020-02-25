@@ -6,6 +6,6 @@
  * Style hints that allows overriding how a CadNode (and its children)
  * are rendered.
  */
-export type CadRenderHints = {
+export interface CadRenderHints {
   showSectorBoundingBoxes?: boolean;
-};
+}

@@ -46,6 +46,19 @@ const allExamples = [
     template: 'template-example.ejs'
   },
   {
+    name: "threejs-picking",
+    title: "Picking",
+    entry: './src/picking.ts',
+    template: 'template-example.ejs'
+  },
+  {
+    name: "threejs-ssao",
+    title: "Screen space ambient occlusion shading",
+    entry: './src/ssao.ts',
+    template: 'template-example.ejs',
+    type: 'threejs'
+  },
+  {
     name: "threejs-side-by-side",
     title: "Side-by-side debugger for sector models",
     entry: './src/side-by-side.ts',
@@ -137,6 +150,10 @@ module.exports = env => {
             loader: 'ts-loader',
             options: {
               onlyCompileBundledFiles: true,
+              compilerOptions: !development ? {} : {
+                noUnusedLocals: false,
+                noUnusedParameters: false
+              }
             },
           },
           exclude: [

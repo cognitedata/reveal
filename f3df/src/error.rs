@@ -1,19 +1,26 @@
 #[derive(Debug)]
 pub enum Error {
     IoError(std::io::Error),
-    F3dfError(String)
+    F3dfError(String),
 }
 
 impl std::fmt::Display for Error {
     fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
             Error::IoError(x) => x.fmt(fmt),
-            Error::F3dfError(message) => write!(fmt, "i3df::Error({:?})", message)
+            Error::F3dfError(message) => write!(fmt, "i3df::Error({:?})", message),
         }
     }
 }
 
-impl std::error::Error for Error {}
+impl std::error::Error for Error {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            Error::IoError(err) => Some(err),
+            _ => None,
+        }
+    }
+}
 
 impl From<std::io::Error> for Error {
     fn from(err: std::io::Error) -> Error {

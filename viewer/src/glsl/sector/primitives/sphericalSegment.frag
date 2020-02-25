@@ -1,6 +1,9 @@
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
 #pragma glslify: isSliced = require('../../base/isSliced.glsl')
+#pragma glslify: determineColor = require('../../base/determineColor.glsl');
+
+uniform sampler2D colorDataTexture;
 
 uniform mat4 projectionMatrix;
 varying vec4 center;
@@ -15,7 +18,10 @@ varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
+uniform int renderMode;
+
 void main() {
+    vec3 color = determineColor(v_color, colorDataTexture, v_treeIndex);
     vec3 normal = normalize(sphereNormal.xyz);
 
     float vRadius = center.w;
@@ -87,6 +93,6 @@ void main() {
     }
 #endif
 
-  updateFragmentColor(v_color, v_treeIndex, normal);
+  updateFragmentColor(renderMode, color, v_treeIndex, normal);
   updateFragmentDepth(p, projectionMatrix);
 }

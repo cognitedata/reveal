@@ -48,6 +48,10 @@ module.exports = env => {
             loader: 'ts-loader',
             options: {
               onlyCompileBundledFiles: true,
+              compilerOptions: !development ? {} : {
+                noUnusedLocals: false,
+                noUnusedParameters: false
+              }
             },
           },
           exclude: [

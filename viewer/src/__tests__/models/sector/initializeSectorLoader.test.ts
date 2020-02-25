@@ -13,7 +13,7 @@ describe('initializeSectorLoader', () => {
   const discarded = new Set<number>();
 
   const getSector: GetSectorDelegate<Sector> = jest.fn();
-  const consume: ConsumeSectorDelegate<Sector> = (sectorId, sector) => consumed.add(sectorId);
+  const consume: ConsumeSectorDelegate<Sector> = (sectorId, _sector) => consumed.add(sectorId);
   const discard: DiscardSectorDelegate = id => discarded.add(id);
 
   const awaitUpdateToProcess = yieldProcessing; // We simply need to yield processing to allow processing loop to process Promises created by update()

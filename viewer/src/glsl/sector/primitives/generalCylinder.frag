@@ -3,6 +3,7 @@
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
 #pragma glslify: isSliced = require('../../base/isSliced.glsl')
+#pragma glslify: determineColor = require('../../base/determineColor.glsl');
 
 #define PI 3.14159265359
 #define PI2 6.28318530718
@@ -11,6 +12,8 @@
 // TODO general cylinder and cone are very similar and used
 // the same shader in the old code. Consider de-duplicating
 // parts of this code
+
+uniform sampler2D colorDataTexture;
 
 uniform float dataTextureWidth;
 uniform float dataTextureHeight;
@@ -33,7 +36,10 @@ varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
+uniform int renderMode;
+
 void main() {
+    vec3 color = determineColor(v_color, colorDataTexture, v_treeIndex);
     vec3 normal = normalize( v_normal );
 
     float R1 = v_centerB.w;
@@ -93,7 +99,7 @@ void main() {
 
     if (dot(intersectionPoint - planeACenter, planeANormal) > 0.0 ||
         dot(intersectionPoint - planeBCenter, planeBNormal) > 0.0 ||
-        theta > v_arcAngle + v_angle || 
+        theta > v_arcAngle + v_angle ||
         isSliced(p)
        ) {
         // Missed the first point, check the other point
@@ -118,6 +124,7 @@ void main() {
     normal = normalize(p_local - W.xyz * dot(p_local, W.xyz));
 #endif
 
-    updateFragmentColor(v_color, v_treeIndex, normal);
+    updateFragmentColor(renderMode, color, v_treeIndex, normal);
+
     updateFragmentDepth(p, projectionMatrix);
 }
