@@ -124,7 +124,6 @@ void main() {
     normal = normalize(p_local - W.xyz * dot(p_local, W.xyz));
 #endif
 
-    updateFragmentColor(renderMode, color, v_treeIndex, normal);
-
     updateFragmentDepth(p, projectionMatrix);
+    updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragDepthEXT);
 }

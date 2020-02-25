@@ -143,6 +143,6 @@ void main() {
   #endif
 
 
-    updateFragmentColor(renderMode, color, v_treeIndex, normal);
     updateFragmentDepth(p, projectionMatrix);
+    updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragDepthEXT);
 }

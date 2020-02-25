@@ -28,5 +28,5 @@ void main() {
         discard;
     }
 
-    updateFragmentColor(renderMode, color, v_treeIndex, normal);
+    updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragCoord.z);
 }

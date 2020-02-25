@@ -11,5 +11,5 @@ uniform int renderMode;
 
 void main() {
     vec3 color = determineColor(v_color, colorDataTexture, v_treeIndex);
-    updateFragmentColor(renderMode, color, v_treeIndex, v_normal);
+    updateFragmentColor(renderMode, color, v_treeIndex, v_normal, gl_FragCoord.z);
 }
