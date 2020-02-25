@@ -35,6 +35,7 @@ interface TransitPathRequest {
 async function main() {
   const url = new URL(location.href);
   const project = url.searchParams.get('projectId') || 'publicdata';
+  const modelId = parseInt(url.searchParams.get('modelId') || '0', 10);
   const client: CogniteClient = new CogniteClient({ appId: 'Reveal Examples - WalkablePath' });
   client.loginWithOAuth({
     project
@@ -72,7 +73,7 @@ async function main() {
     updated = true;
   };
 
-  createGUIWrapper({
+  createGUIWrapper(modelId, {
     createWalkablePath: async (walkablePath: TransitPathRequest) => {
       const walkablePathResponse = await walkablePathSdkClient.getTransitPath(walkablePath);
       removeWalkablePath();
@@ -179,19 +180,22 @@ function transformWaypoint(data: Waypoint): Coordinates | NodeIdReference {
 }
 
 // GUI Wrapper with callbacks on create / remove path
-function createGUIWrapper(callbacks: {
-  createWalkablePath: (data: TransitPathRequest) => void;
-  removeWalkablePath: () => void;
-}) {
-  let transitPathData = defaultPathData();
+function createGUIWrapper(
+  modelId: number,
+  callbacks: {
+    createWalkablePath: (data: TransitPathRequest) => void;
+    removeWalkablePath: () => void;
+  }
+) {
+  let transitPathData = defaultPathData(modelId);
   const gui = new GUI({ width: 300 });
   updateQueryGUI(gui, transitPathData);
   gui.add(
     {
       resetToDefault: () => {
-        transitPathData = defaultPathData();
+        transitPathData = defaultPathData(modelId);
         gui.destroy();
-        createGUIWrapper(callbacks);
+        createGUIWrapper(modelId, callbacks);
       }
     },
     'resetToDefault'
@@ -229,9 +233,9 @@ interface TransitPathData {
   items: TransitPathItem[];
 }
 
-function defaultPathData(): TransitPathData {
+function defaultPathData(modelId: number): TransitPathData {
   return {
-    modelId: 3329507622597457,
+    modelId,
     items: [defaultPathItem()]
   };
 }
