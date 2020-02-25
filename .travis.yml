@@ -32,16 +32,17 @@ matrix:
         - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
         # Install codecov for test coverage reports
         - npm install -g codecov
-      script:
-        - cd $TRAVIS_BUILD_DIR/viewer
-        - nvm use 10
-        - npm install
-        - npm run release
-        - npm run coverage
-        - cd $TRAVIS_BUILD_DIR//examples
-        - npm install
-        - npm run release
 
+      script:
+        # - cd $TRAVIS_BUILD_DIR/viewer
+        # - nvm use 10
+        # - npm install
+        # - npm run release
+        # - npm run coverage
+        # - cd $TRAVIS_BUILD_DIR//examples
+        # - npm install
+        # - npm run release
+        
         - cd $TRAVIS_BUILD_DIR/viewer
         - nvm use 12
         - npm install
@@ -52,7 +53,8 @@ matrix:
         - npm run release
 
       after_script:
-        - codecov
+        - cd $TRAVIS_BUILD_DIR/
+        - codecov -f coverage/*.json
 branches:
   only:
     - master
