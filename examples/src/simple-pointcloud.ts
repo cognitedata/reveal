@@ -3,31 +3,30 @@
  */
 
 import * as THREE from 'three';
-// @ts-ignore
-import * as Potree from '@cognite/potree-core';
 import * as reveal from '@cognite/reveal';
 import * as reveal_threejs from '@cognite/reveal/threejs';
 
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
 import { vec3 } from 'gl-matrix';
+import { CogniteClient } from '@cognite/sdk';
+import { toThreeJsBox3 } from '@cognite/reveal/threejs';
 
 CameraControls.install({ THREE });
 
 async function main() {
-  const modelUrl = new URL(location.href).searchParams.get('model') || '/transformer-point-cloud/cloud.js';
+  const urlParams = new URL(location.href).searchParams;
+  const modelIdentifier = urlParams.get('model') || '/transformer-point-cloud/cloud.js';
+  const project = urlParams.get('project');
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#000000');
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  // Shows how to set custom headers for PoTree request (useful for authentication)
-  Potree.XHRFactory.config.customHeaders.push({ header: 'MyDummyHeader', value: 'MyDummyValue' });
-
-  const pointCloudModel = reveal.createLocalPointCloudModel(modelUrl);
+  const pointCloudModel = await createPointCloudModel(modelIdentifier, project);
   const [pointCloudGroup, pointCloudNode] = await reveal_threejs.createThreeJsPointCloudNode(pointCloudModel);
   scene.add(pointCloudGroup);
 
@@ -40,17 +39,8 @@ async function main() {
   {
     // Create a bounding box around the point cloud for debugging
     const bbox = pointCloudNode.boundingBox;
-    const w = bbox.max[0] - bbox.min[0];
-    const h = bbox.max[1] - bbox.min[1];
-    const d = bbox.max[2] - bbox.min[2];
-    const boundsGeometry = new THREE.BoxGeometry();
-    const boundsMesh = new THREE.Mesh(
-      boundsGeometry,
-      new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true })
-    );
-    boundsMesh.position.set(bbox.center[0], bbox.center[1], bbox.center[2]);
-    boundsMesh.scale.set(w, h, d);
-    scene.add(boundsMesh);
+    const bboxHelper = new THREE.Box3Helper(toThreeJsBox3(new THREE.Box3(), bbox));
+    scene.add(bboxHelper);
   }
 
   const camTarget = pointCloudNode.boundingBox.center;
@@ -110,6 +100,21 @@ function initializeGui(node: reveal.internal.PotreeNodeWrapper, handleSettingsCh
       node.pointShape = value;
       handleSettingsChangedCb();
     });
+}
+
+async function createPointCloudModel(model: string, project: string | null): Promise<reveal.PointCloudModel> {
+  const isUrlModelId = !Number.isNaN(Number(model));
+  if (isUrlModelId) {
+    if (!project) {
+      throw new Error('Must provide project when model is a modelId.');
+    }
+    const sdk = new CogniteClient({ appId: 'cognite.reveal.example.simple-pointcloud' });
+    sdk.loginWithOAuth({ project });
+    await sdk.authenticate();
+    return reveal.createPointCloudModel(sdk, Number.parseInt(model, 10));
+  } else {
+    return reveal.createLocalPointCloudModel(model);
+  }
 }
 
 main();

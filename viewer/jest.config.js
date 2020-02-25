@@ -12,8 +12,7 @@ module.exports = {
   },
   collectCoverageFrom: [
     "src/",
-    "!src/__tests__/**/*.ts",
-    "!src/examples/**/*.ts",
+    "!src/__tests__/**/*.ts"
   ],
   automock: false,
   setupFiles: [
