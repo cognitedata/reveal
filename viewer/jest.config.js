@@ -10,10 +10,10 @@ module.exports = {
     '^@/(.*)': '<rootDir>/src/$1',
     '\\.(frag|vert)$': '<rootDir>/src/__mocks__/glslMocks.js',
   },
-  coverageDirectory: './coverage',
+  coverageDirectory: '../coverage',
   collectCoverageFrom: [
-    "src/",
-    "!src/__tests__/**/*.ts"
+    "!src/__tests__/**/*.ts",
+    "!**/*.d.ts"
   ],
   automock: false,
   setupFiles: [
