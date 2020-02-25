@@ -65,7 +65,7 @@ interface OutputsResponse {
 /**
  * Provides 3D V2 specific extensions for the standard CogniteClient used by Reveal.
  */
-export class CogniteClient3dV2Extensions {
+export class CogniteClient3dExtensions {
   private readonly client: CogniteClient;
 
   constructor(client: CogniteClient) {

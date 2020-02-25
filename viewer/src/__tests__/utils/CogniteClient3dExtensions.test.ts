@@ -3,17 +3,17 @@
  */
 
 import nock from 'nock';
-import { CogniteClient3dV2Extensions, Model3dOutputList } from '../../utils/CogniteClient3dV2Extensions';
+import { CogniteClient3dExtensions, Model3dOutputList } from '../../utils/CogniteClient3dExtensions';
 import { CogniteClient } from '@cognite/sdk';
 
-describe('CogniteClient3dV2Extensions', () => {
+describe('CogniteClient3dExtensions', () => {
   const appId = 'reveal-CogniteClient3dV2Extensions-test';
   const baseUrl = 'https://localhost';
   const sdk = new CogniteClient({
     appId,
     baseUrl
   });
-  const sdkExt = new CogniteClient3dV2Extensions(sdk);
+  const sdkExt = new CogniteClient3dExtensions(sdk);
 
   test('getOutputs() throws error when server returns 400', async () => {
     nock(/.*/)

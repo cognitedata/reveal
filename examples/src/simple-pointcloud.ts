@@ -17,7 +17,7 @@ CameraControls.install({ THREE });
 async function main() {
   const urlParams = new URL(location.href).searchParams;
   const modelIdentifier = urlParams.get('model') || '/transformer-point-cloud/cloud.js';
-  const project = urlParams.get('project') || '3ddemo';
+  const project = urlParams.get('project');
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
@@ -102,9 +102,12 @@ function initializeGui(node: reveal.internal.PotreeNodeWrapper, handleSettingsCh
     });
 }
 
-async function createPointCloudModel(model: string, project: string): Promise<reveal.PointCloudModel> {
+async function createPointCloudModel(model: string, project: string | null): Promise<reveal.PointCloudModel> {
   const isUrlModelId = !Number.isNaN(Number(model));
   if (isUrlModelId) {
+    if (!project) {
+      throw new Error('Must provide project when model is a modelId.');
+    }
     const sdk = new CogniteClient({ appId: 'cognite.reveal.example.simple-pointcloud' });
     sdk.loginWithOAuth({ project });
     await sdk.authenticate();

@@ -9,10 +9,10 @@ import { EptLoader } from '../../../utils/potree/EptLoader';
 import { PointCloudModel } from '../../../models/pointclouds/PointCloudModel';
 import { CogniteClient } from '@cognite/sdk';
 import {
-  CogniteClient3dV2Extensions,
+  CogniteClient3dExtensions,
   CogniteWellknown3dFormat,
   CogniteUniformId
-} from '../../../utils/CogniteClient3dV2Extensions';
+} from '../../../utils/CogniteClient3dExtensions';
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
 
@@ -22,10 +22,10 @@ export async function createPointCloudModel(
   sdk: CogniteClient,
   modelRevisionId: CogniteUniformId
 ): Promise<PointCloudModel> {
-  initializeXHRRequestHeaders(sdk);
+  initializeXhrRequestHeaders(sdk);
   const baseUrl = sdk.getBaseUrl();
 
-  const sdkExtensions = new CogniteClient3dV2Extensions(sdk);
+  const sdkExtensions = new CogniteClient3dExtensions(sdk);
   const outputs = await sdkExtensions.getOutputs(modelRevisionId, [CogniteWellknown3dFormat.EptPointCloud]);
   const mostRecentEptOutput = outputs.findMostRecentOutput(CogniteWellknown3dFormat.EptPointCloud);
   if (!mostRecentEptOutput) {
@@ -44,7 +44,7 @@ export async function createPointCloudModel(
   return [fetchPointCloud];
 }
 
-function initializeXHRRequestHeaders(sdk: CogniteClient) {
+function initializeXhrRequestHeaders(sdk: CogniteClient) {
   const sdkHeaders = sdk.getDefaultRequestHeaders();
   let xhrHeaders: { header: string; value: string }[] = Potree.XHRFactory.config.customHeaders;
   for (const [header, value] of Object.entries(sdkHeaders)) {
