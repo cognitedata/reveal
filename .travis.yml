@@ -52,7 +52,7 @@ matrix:
         - npm run release
 
       after_script:
-        -- codecov
+        - codecov
 branches:
   only:
     - master
