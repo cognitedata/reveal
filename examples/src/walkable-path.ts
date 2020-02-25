@@ -35,6 +35,10 @@ interface TransitPathRequest {
 async function main() {
   const url = new URL(location.href);
   const project = url.searchParams.get('projectId') || 'publicdata';
+  const client: CogniteClient = new CogniteClient({ appId: 'Reveal Examples - WalkablePath' });
+  client.loginWithOAuth({
+    project
+  });
 
   const modelUrl = new URL(location.href).searchParams.get('model') || '/primitives';
   const cadModel = await reveal.createLocalCadModel(modelUrl);
@@ -54,7 +58,8 @@ async function main() {
   controls.update(0.0);
   camera.updateMatrixWorld();
   scene.add(cadNode);
-  const walkablePathSdkClient = createWalkablePathClient(project);
+
+  const walkablePathSdkClient = createNetworkDataSource(client);
 
   let updated = false;
   const pathMeshes: THREE.Mesh[] = [];
@@ -350,14 +355,11 @@ interface TransitPathResponse {
   ];
 }
 
-function createWalkablePathClient(project: string) {
-  const client: CogniteClient = new CogniteClient({ appId: 'Reveal Examples - WalkablePath' });
-  client.loginWithOAuth({
-    project
-  });
-
+function createNetworkDataSource(
+  client: CogniteClient
+): { getTransitPath: (transitRequest: TransitPathRequest) => Promise<TransitPathResponse> } {
   const getTransitPath = async (transitRequest: TransitPathRequest): Promise<TransitPathResponse> => {
-    const url = `https://api.cognitedata.com/api/playground/projects/${project}/3d/pathfinder/transit`;
+    const url = `https://api.cognitedata.com/api/playground/projects/${client.project}/3d/pathfinder/transit`;
     const response = await client.post<TransitPathResponse>(url, {
       data: transitRequest
     });
