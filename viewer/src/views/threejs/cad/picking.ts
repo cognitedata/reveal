@@ -11,13 +11,6 @@ export interface TreeIndexPickingInput extends PickingInput {
   cadNode: CadNode;
 }
 
-export interface TreeIndexPickingResult {
-  distance: number;
-  point: THREE.Vector3;
-  treeIndex: number;
-  object: THREE.Object3D; // always CadNode
-}
-
 export interface IntersectCadNodesInput {
   coords: {
     x: number;
@@ -31,6 +24,7 @@ export interface IntersectCadNodesResult {
   distance: number;
   point: THREE.Vector3;
   treeIndex: number;
+  object: THREE.Object3D; // always CadNode
 }
 
 const clearColor = new THREE.Color('black');
@@ -47,7 +41,7 @@ export function intersectCadNodes(cadNodes: CadNode[], input: IntersectCadNodesI
   return results;
 }
 
-export function intersectCadNode(cadNode: CadNode, input: IntersectCadNodesInput): TreeIndexPickingResult | undefined {
+export function intersectCadNode(cadNode: CadNode, input: IntersectCadNodesInput): IntersectCadNodesResult | undefined {
   const { camera, coords, renderer } = input;
   const pickingScene = new THREE.Scene();
   // TODO consider case where parent does not exist
