@@ -6,5 +6,6 @@ export enum RenderMode {
   Color = 1,
   Normal,
   TreeIndex,
-  PackColorAndNormal
+  PackColorAndNormal,
+  Depth
 }

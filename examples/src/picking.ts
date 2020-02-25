@@ -9,13 +9,20 @@ import * as reveal_threejs from '@cognite/reveal/threejs';
 
 CameraControls.install({ THREE });
 
+function createSphere(point: THREE.Vector3, color: string): THREE.Mesh {
+  const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.2), new THREE.MeshPhongMaterial({ color }));
+  sphere.position.copy(point);
+  return sphere;
+}
+
 async function main() {
   const modelUrl = new URL(location.href).searchParams.get('model') || '/primitives';
 
-  const pickedNodes: number[] = [];
+  const pickedNodes: Set<number> = new Set();
+  const pickedObjects: Set<THREE.Mesh> = new Set();
   const shading = reveal_threejs.createDefaultShading({
     color(treeIndex: number) {
-      if (pickedNodes.indexOf(treeIndex) !== -1) {
+      if (pickedNodes.has(treeIndex)) {
         return [255, 255, 0, 255];
       }
       return undefined;
@@ -23,11 +30,30 @@ async function main() {
   });
 
   const scene = new THREE.Scene();
+
+  // Add some data for Reveal
   const cadModel = await reveal.createLocalCadModel(modelUrl);
   const cadNode = new reveal_threejs.CadNode(cadModel, { shading });
-
   scene.add(cadNode);
 
+  // Add some other geometry
+  const boxGeometry = new THREE.BoxGeometry(10.0, 4.0, 2.0);
+  const boxMaterial = new THREE.MeshPhongMaterial({ color: 'red' });
+
+  const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
+  scene.add(boxMesh);
+
+  // Add some light for the box
+  for (const position of [[-20, 40, 50], [60, 100, -30]]) {
+    const light = new THREE.PointLight();
+    light.position.set(position[0], position[1], position[2]);
+    scene.add(light);
+  }
+
+  // Set up picking for other objects
+  const raycaster = new THREE.Raycaster();
+
+  // Set up the renderer
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#444');
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -56,11 +82,81 @@ async function main() {
   render();
 
   const pick = (event: MouseEvent) => {
-    const treeIndex = reveal_threejs.pickTreeIndex({ renderer, cadNode, scene, camera, event });
-    console.log('Picked', treeIndex);
-    pickedNodes.push(treeIndex);
-    shading.updateNodes([treeIndex]);
-    pickingNeedsUpdate = true;
+    const rect = renderer.domElement.getBoundingClientRect();
+    const coords = {
+      x: ((event.clientX - rect.left) / renderer.domElement.clientWidth) * 2 - 1,
+      y: ((event.clientY - rect.top) / renderer.domElement.clientHeight) * -2 + 1
+    };
+    // Pick in Reveal
+    const revealPickResult = (() => {
+      const intersections = reveal_threejs.intersectCadNodes([cadNode], { renderer, camera, coords });
+      if (intersections.length === 0) {
+        return;
+      }
+
+      scene.add(createSphere(intersections[0]!.point, 'purple'));
+
+      return intersections[0];
+    })();
+
+    // Pick other objects
+    const otherPickResult = (() => {
+      raycaster.setFromCamera(coords, camera);
+      const intersections = raycaster.intersectObjects([boxMesh]);
+      if (intersections.length === 0) {
+        return;
+      }
+
+      scene.add(createSphere(intersections[0]!.point, 'orange'));
+
+      return intersections[0];
+    })();
+
+    const chosenPickResult = (() => {
+      if (otherPickResult && revealPickResult) {
+        if (otherPickResult.distance < revealPickResult.distance) {
+          return 'other';
+        } else {
+          return 'reveal';
+        }
+      }
+      if (otherPickResult) {
+        return 'other';
+      }
+      if (revealPickResult) {
+        return 'reveal';
+      }
+      return 'none';
+    })();
+
+    switch (chosenPickResult) {
+      case 'other':
+        const mesh = otherPickResult!.object as THREE.Mesh;
+        const material = mesh.material as THREE.MeshPhongMaterial;
+        if (!pickedObjects.has(mesh)) {
+          pickedObjects.add(mesh);
+          material.emissive = new THREE.Color('yellow');
+        } else {
+          pickedObjects.delete(mesh);
+          material.emissive = new THREE.Color('black');
+        }
+        pickingNeedsUpdate = true;
+
+        break;
+      case 'reveal':
+        const treeIndex = revealPickResult!.treeIndex;
+        if (!pickedNodes.has(treeIndex)) {
+          pickedNodes.add(treeIndex);
+        } else {
+          pickedNodes.delete(treeIndex);
+        }
+        shading.updateNodes([treeIndex]);
+        pickingNeedsUpdate = true;
+
+        break;
+      default:
+        break;
+    }
   };
   renderer.domElement.addEventListener('mousedown', pick);
 

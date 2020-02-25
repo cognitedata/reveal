@@ -17,5 +17,5 @@ void main() {
     if (dist > 0.25)
       discard;
 
-    updateFragmentColor(renderMode, color, v_treeIndex, normal);
+    updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragCoord.z);
 }
