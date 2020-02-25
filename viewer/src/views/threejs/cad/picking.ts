@@ -15,6 +15,7 @@ export interface TreeIndexPickingResult {
   distance: number;
   point: THREE.Vector3;
   treeIndex: number;
+  object: THREE.Object3D; // always CadNode
 }
 
 export interface IntersectCadNodesInput {
@@ -38,7 +39,7 @@ const clearAlpha = 0.0;
 export function intersectCadNodes(cadNodes: CadNode[], input: IntersectCadNodesInput): IntersectCadNodesResult[] {
   const results: IntersectCadNodesResult[] = [];
   for (const cadNode of cadNodes) {
-    const result = pickCadNode(cadNode, input);
+    const result = intersectCadNode(cadNode, input);
     if (result) {
       results.push(result);
     }
@@ -46,7 +47,7 @@ export function intersectCadNodes(cadNodes: CadNode[], input: IntersectCadNodesI
   return results;
 }
 
-export function pickCadNode(cadNode: CadNode, input: IntersectCadNodesInput): TreeIndexPickingResult | undefined {
+export function intersectCadNode(cadNode: CadNode, input: IntersectCadNodesInput): TreeIndexPickingResult | undefined {
   const { camera, coords, renderer } = input;
   const pickingScene = new THREE.Scene();
   // TODO consider case where parent does not exist
@@ -75,11 +76,12 @@ export function pickCadNode(cadNode: CadNode, input: IntersectCadNodesInput): Tr
   return {
     distance,
     point,
-    treeIndex
+    treeIndex,
+    object: cadNode
   };
 }
 
-export function pickTreeIndex(input: TreeIndexPickingInput): number | undefined {
+function pickTreeIndex(input: TreeIndexPickingInput): number | undefined {
   const { cadNode } = input;
   const previousRenderMode = cadNode.renderMode;
   cadNode.renderMode = RenderMode.TreeIndex;
@@ -114,7 +116,7 @@ function perspectiveDepthToViewZ(invClipZ: number, near: number, far: number) {
   return (near * far) / ((far - near) * invClipZ - far);
 }
 
-export function pickDepth(input: TreeIndexPickingInput): number {
+function pickDepth(input: TreeIndexPickingInput): number {
   const { cadNode } = input;
   const previousRenderMode = cadNode.renderMode;
   cadNode.renderMode = RenderMode.Depth;
@@ -127,7 +129,7 @@ export function pickDepth(input: TreeIndexPickingInput): number {
 
 const projInv = new THREE.Matrix4();
 
-export function getPosition(input: TreeIndexPickingInput, viewZ: number): THREE.Vector3 {
+function getPosition(input: TreeIndexPickingInput, viewZ: number): THREE.Vector3 {
   const { camera, coords } = input;
   const position = new THREE.Vector3();
   projInv.getInverse(camera.projectionMatrix);
