@@ -2,6 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
+import nock from 'nock';
 import { loadLocalFileMap } from '../../../../datasources/local/cad/loadLocalFileMap';
 
 describe('loadLocalFileMap', () => {
@@ -11,12 +12,16 @@ describe('loadLocalFileMap', () => {
 1717535321  \t\tweb_node_7_117.i3d`;
 
   test('request returns 404, throws', async () => {
-    fetchMock.mockResponse('', { status: 404 });
+    nock(/.*/)
+      .get(/.*/)
+      .reply(404);
     await expect(loadLocalFileMap('/uploaded_files.txt')).rejects.toThrowError();
   });
 
   test('valid data, returns map', async () => {
-    fetchMock.mockResponse(fileMapBody);
+    nock(/.*/)
+      .get(/.*/)
+      .reply(200, fileMapBody);
     const map = await loadLocalFileMap('/uploaded_files.txt');
     expect(map.size).toBe(4);
     expect(map.get(734862805)).toBe('web_node_7_115.f3d');
