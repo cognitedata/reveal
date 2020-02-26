@@ -24,7 +24,7 @@ export class LocalModelDataRetriever implements ModelDataRetriever {
 
   private async fetchWithStatusCheck(filename: string): Promise<Response> {
     const response = await fetch(this.baseUrl + filename);
-    if (response.ok) {
+    if (!response.ok) {
       const headers: { [key: string]: string } = {};
       response.headers.forEach((key, value) => {
         headers[key] = value;
