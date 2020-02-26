@@ -7,7 +7,7 @@ import { Box3 } from '../../../../utils/Box3';
 import { vec3 } from 'gl-matrix';
 import { consumeSectorDetailed } from '../../../../views/threejs/cad/consumeSectorDetailed';
 import { SectorNode } from '../../../../views/threejs/cad/SectorNode';
-import { createEmptySector } from '../../../models/sector/emptySector';
+import { createEmptySector } from '../../../models/cad/emptySector';
 import { createMaterials } from '../../../../views/threejs/cad/materials';
 import 'jest-extended';
 
