@@ -44,7 +44,7 @@ export interface SectorMetadata {
       yz: number;
       xz: number;
     };
-    readonly filename: string;
+    readonly fileName: string;
     readonly downloadSize: number;
   };
   readonly children: SectorMetadata[];

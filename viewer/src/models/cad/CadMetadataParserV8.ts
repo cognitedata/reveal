@@ -36,7 +36,7 @@ export interface CadSectorMetadataV8 {
       yz: number;
       xz: number;
     };
-    readonly filename: string;
+    readonly fileName: string;
     readonly downloadSize: number;
   };
 }

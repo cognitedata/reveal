@@ -24,7 +24,7 @@ export function buildSectorMetadata(
               xz: 0.5,
               yz: 0.5
             },
-            filename: `sector_${x.id}.f3d`,
+            fileName: `sector_${x.id}.f3d`,
             downloadSize: -1
           }
         : undefined;

@@ -10,12 +10,11 @@ interface VersionHeader {
 }
 
 export class CadMetadataParser {
-  public parse(jsonText: string): SectorScene {
-    const parsed = JSON.parse(jsonText);
-    const version = (parsed as VersionHeader).version;
+  public parse(parsedJson: any): SectorScene {
+    const version = (parsedJson as VersionHeader).version;
     switch (version) {
       case 8:
-        return parseCadMetadataV8(parsed);
+        return parseCadMetadataV8(parsedJson);
 
       case undefined:
         throw new Error('Metadata must contain a "version"-field');
