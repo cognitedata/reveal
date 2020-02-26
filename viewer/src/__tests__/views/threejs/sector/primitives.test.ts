@@ -5,7 +5,7 @@
 import { Sector } from '../../../../models/cad/types';
 import { createPrimitives } from '../../../../views/threejs/cad/primitives';
 import { PrimitiveAttributes } from '../../../../workers/types/parser.types';
-import { createEmptySector } from '../../../models/sector/emptySector';
+import { createEmptySector } from '../../../models/cad/emptySector';
 import { createMaterials } from '../../../../views/threejs/cad/materials';
 
 const materials = createMaterials();
