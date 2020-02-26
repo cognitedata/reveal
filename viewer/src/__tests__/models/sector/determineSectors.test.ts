@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 import * as THREE from 'three';
-import { SectorMetadata, SectorModelTransformation } from '../../../models/cad/types';
+import { SectorMetadata, SectorModelTransformation, SectorScene } from '../../../models/cad/types';
 import { Box3 } from '../../../utils/Box3';
 import { vec3, mat4 } from 'gl-matrix';
 import { defaultDetermineSectors } from '../../../models/cad/determineSectors';
@@ -11,13 +11,15 @@ import { toThreeMatrix4, fromThreeMatrix, fromThreeVector3 } from '../../../view
 import { traverseDepthFirst } from '../../../utils/traversal';
 import 'jest-extended';
 
-function createSceneFromRoot(root: SectorMetadata) {
+function createSceneFromRoot(root: SectorMetadata): SectorScene {
   const sectors = new Map<number, SectorMetadata>();
   traverseDepthFirst(root, sector => {
     sectors.set(sector.id, sector);
     return true;
   });
   return {
+    version: 8,
+    maxTreeIndex: 1024,
     root,
     sectors
   };
@@ -33,9 +35,16 @@ describe('determineSectors', () => {
     // Arrange
     const root: SectorMetadata = {
       id: 1,
+      depth: 0,
       path: '0/',
       bounds: new Box3([vec3.fromValues(10, 10, 10), vec3.fromValues(11, 11, 11)]),
-      children: []
+      children: [],
+      indexFile: {
+        peripheralFiles: [],
+        estimatedDrawCallCount: 10,
+        fileName: 'sector_1.i3d',
+        downloadSize: 5433
+      }
     };
     const scene = createSceneFromRoot(root);
     const camera = new THREE.PerspectiveCamera();
@@ -60,20 +69,41 @@ describe('determineSectors', () => {
     // Arrange
     const root: SectorMetadata = {
       id: 1,
+      depth: 1,
       path: '0/',
       bounds: new Box3([vec3.fromValues(0, 0, 0), vec3.fromValues(2, 1, 1)]),
+      indexFile: {
+        fileName: 'sector_1.i3d',
+        peripheralFiles: [],
+        estimatedDrawCallCount: 10,
+        downloadSize: 1000
+      },
       children: [
         {
           id: 2,
+          depth: 1,
           path: '0/0/',
           bounds: new Box3([vec3.fromValues(0, 0, 0), vec3.fromValues(1, 1, 1)]),
-          children: []
+          children: [],
+          indexFile: {
+            fileName: 'sector_2.i3d',
+            peripheralFiles: [],
+            estimatedDrawCallCount: 10,
+            downloadSize: 1000
+          }
         },
         {
           id: 3,
+          depth: 1,
           path: '0/1/',
           bounds: new Box3([vec3.fromValues(1, 0, 0), vec3.fromValues(2, 1, 1)]),
-          children: []
+          children: [],
+          indexFile: {
+            fileName: 'sector_3.i3d',
+            peripheralFiles: [],
+            estimatedDrawCallCount: 10,
+            downloadSize: 1000
+          }
         }
       ]
     };
@@ -108,7 +138,14 @@ describe('determineSectors', () => {
     const root: SectorMetadata = {
       id: 1,
       path: '0/',
+      depth: 0,
       bounds: new Box3([vec3.fromValues(1, 1, 1), vec3.fromValues(2, 2, 2)]),
+      indexFile: {
+        fileName: 'sector_1.i3d',
+        peripheralFiles: [],
+        estimatedDrawCallCount: 10,
+        downloadSize: 1000
+      },
       children: []
     };
     const scene = createSceneFromRoot(root);
