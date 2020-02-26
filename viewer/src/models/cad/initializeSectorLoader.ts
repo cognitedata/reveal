@@ -15,49 +15,60 @@ interface QueuedSector<T> {
   sector: T;
 }
 
-export function initializeSectorLoader<T>(
-  getSector: GetSectorDelegate<T>,
-  discardSector: DiscardSectorDelegate,
-  consumeSector: ConsumeSectorDelegate<T>
-): SectorActivator {
-  const activeSectorIds = new Set<number>();
-  const activeSectorRequests = new Map<number, Promise<void>>();
-  let consumeQueue: QueuedSector<T>[] = [];
+export class BasicSectorActivator<T> {
+  private readonly getSector: GetSectorDelegate<T>;
+  private readonly discardSector: DiscardSectorDelegate;
+  private readonly consumeSector: ConsumeSectorDelegate<T>;
+  private readonly activeSectorIds: Set<number>;
+  private readonly activeSectorRequests: Map<number, Promise<void>>;
+  private consumeQueue: QueuedSector<T>[];
 
-  const getConsumeAndDeleteRequest = async (sectorId: number) => {
-    const sector = await getSector(sectorId);
-    activeSectorRequests.delete(sectorId);
-    consumeQueue.push({ sectorId, sector });
-    activeSectorIds.add(sectorId);
-  };
+  constructor(
+    getSector: GetSectorDelegate<T>,
+    discardSector: DiscardSectorDelegate,
+    consumeSector: ConsumeSectorDelegate<T>
+  ) {
+    this.getSector = getSector;
+    this.discardSector = discardSector;
+    this.consumeSector = consumeSector;
 
-  // TODO 2019-12-17 larsmoa: This function is async but does not return Promise. Consider if
-  // this really needs to returnd boolean needsRedraw or if it could return a promise
-  const update = (wantedSectorIds: Set<number>) => {
+    this.activeSectorIds = new Set<number>();
+    this.activeSectorRequests = new Map<number, Promise<void>>();
+    this.consumeQueue = [];
+  }
+
+  async getConsumeAndDeleteRequest(sectorId: number) {
+    const sector = await this.getSector(sectorId);
+    this.activeSectorRequests.delete(sectorId);
+    this.consumeQueue.push({ sectorId, sector });
+    this.activeSectorIds.add(sectorId);
+  }
+
+  update(wantedSectorIds: Set<number>) {
     const start = performance.now();
 
-    const activeOrInFlight = setUnion(activeSectorIds, new Set<number>(activeSectorRequests.keys()));
+    const activeOrInFlight = setUnion(this.activeSectorIds, new Set<number>(this.activeSectorRequests.keys()));
     const newSectorIds = setDifference(wantedSectorIds, activeOrInFlight);
     const discardedSectorIds = setDifference(activeOrInFlight, wantedSectorIds);
 
     for (const id of discardedSectorIds) {
-      if (activeSectorRequests.has(id)) {
+      if (this.activeSectorRequests.has(id)) {
         // Request is in flight
-        discardSector(id);
-        activeSectorRequests.delete(id);
+        this.discardSector(id);
+        this.activeSectorRequests.delete(id);
       } else {
         // Sector processed
-        discardSector(id);
-        activeSectorIds.delete(id);
-        consumeQueue = consumeQueue.filter(({ sectorId }) => {
+        this.discardSector(id);
+        this.activeSectorIds.delete(id);
+        this.consumeQueue = this.consumeQueue.filter(({ sectorId }) => {
           return sectorId !== id;
         });
       }
     }
 
     for (const id of newSectorIds) {
-      const request = getConsumeAndDeleteRequest(id);
-      activeSectorRequests.set(id, request);
+      const request = this.getConsumeAndDeleteRequest(id);
+      this.activeSectorRequests.set(id, request);
     }
 
     const needsRedraw = newSectorIds.size > 0 || discardedSectorIds.size > 0;
@@ -66,25 +77,20 @@ export function initializeSectorLoader<T>(
         `activateSectors() [wanted: ${wantedSectorIds.size} ` +
           `new: ${newSectorIds.size}` +
           ` discarded: ${discardedSectorIds.size}` +
-          ` active: ${activeSectorIds.size}` +
-          ` in-flight: ${activeSectorRequests.size}] time=${(performance.now() - start).toPrecision(2)} ms`
+          ` active: ${this.activeSectorIds.size}` +
+          ` in-flight: ${this.activeSectorRequests.size}] time=${(performance.now() - start).toPrecision(2)} ms`
       );
     }
 
     return needsRedraw;
   };
 
-  const refresh = () => {
-    if (consumeQueue.length < 1) {
+  refresh() {
+    if (this.consumeQueue.length < 1) {
       return false;
     }
-    const { sectorId, sector } = consumeQueue.shift()!;
-    consumeSector(sectorId, sector);
+    const { sectorId, sector } = this.consumeQueue.shift()!;
+    this.consumeSector(sectorId, sector);
     return true;
-  };
-
-  return {
-    update,
-    refresh
   };
 }

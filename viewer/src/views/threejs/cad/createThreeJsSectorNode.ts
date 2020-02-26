@@ -4,7 +4,7 @@
 
 import { Sector, SectorQuads } from '../../../models/cad/types';
 import { ConsumeSectorDelegate, DiscardSectorDelegate } from '../../../models/cad/delegates';
-import { initializeSectorLoader } from '../../../models/cad/initializeSectorLoader';
+import { BasicSectorActivator } from '../../../models/cad/initializeSectorLoader';
 import { SectorNode, RootSectorNodeData } from './SectorNode';
 import { createSimpleCache } from '../../../models/createCache';
 import { CadModel } from '../../../models/cad/CadModel';
@@ -59,8 +59,8 @@ export function createThreeJsSectorNode(model: CadModel, materials: Materials): 
 
   const getDetailedCache = createSimpleCache(getDetailed);
   const getSimpleCache = createSimpleCache(getSimple);
-  const detailedActivator = initializeSectorLoader(getDetailedCache.request, discard, consumeDetailed);
-  const simpleActivator = initializeSectorLoader(getSimpleCache.request, discard, consumeSimple);
+  const detailedActivator = new BasicSectorActivator(getDetailedCache.request, discard, consumeDetailed);
+  const simpleActivator = new BasicSectorActivator(getSimpleCache.request, discard, consumeSimple);
   const rootSector = new SectorNode(0, '/');
   rootSector.applyMatrix(toThreeMatrix4(modelTransformation.modelMatrix));
   buildScene(scene.root, rootSector, sectorNodeMap);

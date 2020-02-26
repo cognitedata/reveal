@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { initializeSectorLoader } from '../../../models/cad/initializeSectorLoader';
+import { BasicSectorActivator } from '../../../models/cad/initializeSectorLoader';
 import { DiscardSectorDelegate, ConsumeSectorDelegate, GetSectorDelegate } from '../../../models/cad/delegates';
 import { waitUntill, yieldProcessing } from '../../wait';
 import { expectSetEqual } from '../../expects';
@@ -25,13 +25,13 @@ describe('initializeSectorLoader', () => {
   });
 
   test('call returns delegate', () => {
-    const delegate = initializeSectorLoader(getSector, discard, consume);
+    const delegate = new BasicSectorActivator(getSector, discard, consume);
     expect(delegate).toBeDefined();
   });
 
   test('first delegate invocation calls consume is called for all sectors', async () => {
     // Arrange
-    const activateSectorsDelegate = initializeSectorLoader(getSector, discard, consume);
+    const activateSectorsDelegate = new BasicSectorActivator(getSector, discard, consume);
     const sectorIds = [1, 2, 3];
 
     // Act
@@ -48,7 +48,7 @@ describe('initializeSectorLoader', () => {
 
   test('second invocation only consumes new sectors', async () => {
     // Arrange
-    const activateSectorsDelegate = initializeSectorLoader(getSector, discard, consume);
+    const activateSectorsDelegate = new BasicSectorActivator(getSector, discard, consume);
     const sectorIds = [1, 2, 3];
     activateSectorsDelegate.update(new Set<number>(sectorIds));
     await awaitUpdateToProcess();
@@ -72,7 +72,7 @@ describe('initializeSectorLoader', () => {
 
   test('second invocation discards unwanted sectors', async () => {
     // Arrange
-    const activateSectorsDelegate = initializeSectorLoader(getSector, discard, consume);
+    const activateSectorsDelegate = new BasicSectorActivator(getSector, discard, consume);
     const sectorIds = [1, 2, 3, 4, 5];
     activateSectorsDelegate.update(new Set<number>(sectorIds));
     await awaitUpdateToProcess();
@@ -96,7 +96,7 @@ describe('initializeSectorLoader', () => {
 
   test('activate previously discarded sector, reloads', async () => {
     // Arrange
-    const activateSectorsDelegate = initializeSectorLoader(getSector, discard, consume);
+    const activateSectorsDelegate = new BasicSectorActivator(getSector, discard, consume);
 
     // Act
     activateSectorsDelegate.update(
