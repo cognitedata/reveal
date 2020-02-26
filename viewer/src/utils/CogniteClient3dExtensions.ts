@@ -13,9 +13,7 @@ export type Model3dOutput = {
 export type CogniteUniformId = CogniteInternalId | CogniteExternalId;
 export enum CogniteWellknown3dFormat {
   EptPointCloud = 'ept-pointcloud',
-  RevealCadModel = 'reveal-json',
-  RevealLegacyI3DFModel = 'reveal-i3df',
-  ReevalLegacyProtobufModel = 'reveal-pb'
+  RevealCadModel = 'reveal-json'
 }
 
 export class Model3dOutputList {
