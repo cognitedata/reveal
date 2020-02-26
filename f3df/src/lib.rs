@@ -158,10 +158,14 @@ pub fn parse_sector(reader: impl Read) -> Result<Sector, Error> {
             let compress_data = input.read_u8()?;
             match CompressFlags::from_bits(compress_data) {
                 Some(x) => x,
-                None => return Err(error!("CompressFlags contains illegal bits {:#b}", compress_data))
+                None => {
+                    return Err(error!(
+                        "CompressFlags contains illegal bits {:#b}",
+                        compress_data
+                    ))
+                }
             }
         };
-
 
         let has_color_on_each_cell =
             compress_type.intersects(CompressFlags::HAS_COLOR_ON_EACH_CELL);
@@ -186,7 +190,7 @@ pub fn parse_sector(reader: impl Read) -> Result<Sector, Error> {
                 let face_data = input.read_u8()?;
                 match FaceFlags::from_bits(face_data) {
                     Some(x) => x,
-                    None => return Err(error!("FaceFlags contains illegal bits {:#b}", face_data))
+                    None => return Err(error!("FaceFlags contains illegal bits {:#b}", face_data)),
                 }
             };
 
