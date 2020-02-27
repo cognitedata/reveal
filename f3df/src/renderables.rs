@@ -92,7 +92,7 @@ pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
                 let offset = Vector3::new(1.0, 0.5, 0.5);
                 let normal = Vector3::new(1.0, 0.0, 0.0);
                 let rotation = Rotation3::from_axis_angle(&Vector3::y_axis(), FRAC_PI_2);
-                let scale = if compress_type.intersects(crate::CompressFlags::POSITIVE_X_REPEAT_Y) {
+                let scale = if compress_type.intersects(crate::CompressFlags::POSITIVE_X_REPEAT_Z) {
                     Vector3::new(increment, increment, count * increment)
                 } else {
                     Vector3::new(increment, count * increment, increment)
@@ -111,7 +111,7 @@ pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
                 let offset = Vector3::new(0.5, 1.0, 0.5);
                 let normal = Vector3::new(0.0, 1.0, 0.0);
                 let rotation = Rotation3::from_axis_angle(&Vector3::x_axis(), -FRAC_PI_2);
-                let scale = if compress_type.intersects(crate::CompressFlags::POSITIVE_Y_REPEAT_X) {
+                let scale = if compress_type.intersects(crate::CompressFlags::POSITIVE_Y_REPEAT_Z) {
                     Vector3::new(increment, increment, count * increment)
                 } else {
                     Vector3::new(count * increment, increment, increment)
@@ -130,7 +130,7 @@ pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
                 let offset = Vector3::new(0.5, 0.5, 1.0);
                 let normal = Vector3::new(0.0, 0.0, 1.0);
                 let rotation = Rotation3::identity();
-                let scale = if compress_type.intersects(crate::CompressFlags::POSITIVE_Z_REPEAT_X) {
+                let scale = if compress_type.intersects(crate::CompressFlags::POSITIVE_Z_REPEAT_Y) {
                     Vector3::new(increment, count * increment, increment)
                 } else {
                     Vector3::new(count * increment, increment, increment)
@@ -149,7 +149,7 @@ pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
                 let offset = Vector3::new(0.0, 0.5, 0.5);
                 let normal = Vector3::new(-1.0, 0.0, 0.0);
                 let rotation = Rotation3::from_axis_angle(&Vector3::y_axis(), -FRAC_PI_2);
-                let scale = if compress_type.intersects(crate::CompressFlags::NEGATIVE_X_REPEAT_Y) {
+                let scale = if compress_type.intersects(crate::CompressFlags::NEGATIVE_X_REPEAT_Z) {
                     Vector3::new(increment, increment, count * increment)
                 } else {
                     Vector3::new(increment, count * increment, increment)
@@ -168,7 +168,7 @@ pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
                 let offset = Vector3::new(0.5, 0.0, 0.5);
                 let normal = Vector3::new(0.0, -1.0, 0.0);
                 let rotation = Rotation3::from_axis_angle(&Vector3::x_axis(), FRAC_PI_2);
-                let scale = if compress_type.intersects(crate::CompressFlags::NEGATIVE_Y_REPEAT_X) {
+                let scale = if compress_type.intersects(crate::CompressFlags::NEGATIVE_Y_REPEAT_Z) {
                     Vector3::new(increment, increment, count * increment)
                 } else {
                     Vector3::new(increment * count, increment, increment)
@@ -187,7 +187,7 @@ pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
                 let offset = Vector3::new(0.5, 0.5, 0.0);
                 let normal = Vector3::new(0.0, 0.0, -1.0);
                 let rotation = Rotation3::from_axis_angle(&Vector3::x_axis(), -PI);
-                let scale = if compress_type.intersects(crate::CompressFlags::NEGATIVE_Z_REPEAT_X) {
+                let scale = if compress_type.intersects(crate::CompressFlags::NEGATIVE_Z_REPEAT_Y) {
                     Vector3::new(increment, count * increment, increment)
                 } else {
                     Vector3::new(increment * count, increment, increment)
@@ -238,7 +238,7 @@ mod tests {
                     node_id: 0,
                     tree_index: 42,
                     color: Some([128, 129, 130]),
-                    compress_type: crate::CompressFlags::POSITIVE_Y_REPEAT_X,
+                    compress_type: crate::CompressFlags::POSITIVE_Y_REPEAT_Z,
                     faces: vec![crate::Face {
                         face_flags: crate::FaceFlags::POSITIVE_Y_VISIBLE,
                         index: 100,
