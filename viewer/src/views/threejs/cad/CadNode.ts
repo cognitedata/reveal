@@ -42,8 +42,8 @@ export class CadNode extends THREE.Object3D {
   public readonly modelTransformation: SectorModelTransformation;
 
   private _determineSectors: DetermineSectorsDelegate;
-  private _simpleActivator: SectorActivator;
-  private _detailedActivator: SectorActivator;
+  private _simpleSectorActivator: SectorActivator;
+  private _detailedSectorActivator: SectorActivator;
   private _renderHints: CadRenderHints;
   private _loadingHints: CadLoadingHints;
   private _renderMode: RenderMode;
@@ -83,7 +83,7 @@ export class CadNode extends THREE.Object3D {
 
     const getDetailedCache = createSimpleCache(getDetailed);
     const getSimpleCache = createSimpleCache(getSimple);
-    const detailedActivator = new BasicSectorActivator(
+    this._detailedSectorActivator = new BasicSectorActivator(
       getDetailedCache.request,
       sectorId => {
         // this redirection is necessary to capture the correct this-keyword
@@ -94,7 +94,7 @@ export class CadNode extends THREE.Object3D {
         rootSector.consumeDetailed(sectorId, sector);
       }
     );
-    const simpleActivator = new BasicSectorActivator(
+    this._simpleSectorActivator = new BasicSectorActivator(
       getSimpleCache.request,
       sectorId => {
         // this redirection is necessary to capture the correct this-keyword
@@ -109,8 +109,6 @@ export class CadNode extends THREE.Object3D {
 
     this._sectorScene = scene;
     this._determineSectors = defaultDetermineSectors;
-    this._simpleActivator = simpleActivator;
-    this._detailedActivator = detailedActivator;
     this.modelTransformation = modelTransformation;
     // Ensure camera matrix is unequal on first frame
     this._previousCameraMatrix.elements[0] = Infinity;
@@ -206,8 +204,8 @@ export class CadNode extends THREE.Object3D {
         projectionMatrix,
         loadingHints: this.loadingHints
       });
-      needsRedraw = this._detailedActivator.update(wantedSectors.detailed) || needsRedraw;
-      needsRedraw = this._simpleActivator.update(wantedSectors.simple) || needsRedraw;
+      needsRedraw = this._detailedSectorActivator.update(wantedSectors.detailed) || needsRedraw;
+      needsRedraw = this._simpleSectorActivator.update(wantedSectors.simple) || needsRedraw;
 
       if (this.shouldRenderSectorBoundingBoxes) {
         this.updateSectorBoundingBoxes(wantedSectors);
@@ -215,8 +213,8 @@ export class CadNode extends THREE.Object3D {
 
       this._previousCameraMatrix.copy(camera.matrixWorld);
     }
-    needsRedraw = this._detailedActivator.refresh() || needsRedraw;
-    needsRedraw = this._simpleActivator.refresh() || needsRedraw;
+    needsRedraw = this._detailedSectorActivator.refresh() || needsRedraw;
+    needsRedraw = this._simpleSectorActivator.refresh() || needsRedraw;
     return needsRedraw;
   }
 
