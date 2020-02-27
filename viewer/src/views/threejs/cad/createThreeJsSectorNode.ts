@@ -4,7 +4,7 @@
 
 import { Sector, SectorQuads } from '../../../models/cad/types';
 import { ConsumeSectorDelegate, DiscardSectorDelegate } from '../../../models/cad/delegates';
-import { BasicSectorActivator } from '../../../models/cad/initializeSectorLoader';
+import { BasicSectorActivator } from '../../../models/cad/BasicSectorActivator';
 import { SectorNode, RootSectorNodeData } from './SectorNode';
 import { createSimpleCache } from '../../../models/createCache';
 import { CadModel } from '../../../models/cad/CadModel';

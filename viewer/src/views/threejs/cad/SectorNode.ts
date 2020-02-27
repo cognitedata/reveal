@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { SectorActivator } from '../../../models/cad/initializeSectorLoader';
+import { SectorActivator } from '../../../models/cad/BasicSectorActivator';
 
 export class SectorNode extends THREE.Group {
   public readonly sectorId: number;
