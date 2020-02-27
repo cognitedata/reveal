@@ -1,5 +1,6 @@
 #pragma glslify: derivateNormal = require('../math/derivateNormal.glsl')
 #pragma glslify: updateFragmentColor = require('../base/updateFragmentColor.glsl')
+#pragma glslify: determineColor = require('../base/determineColor.glsl');
 
 uniform sampler2D colorDataTexture;
 
