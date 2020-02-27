@@ -7,6 +7,7 @@ import { vec3, mat4 } from 'gl-matrix';
 
 import { SectorModelTransformation, SectorScene, SectorMetadata, WantedSectors } from '../../../models/cad/types';
 import { defaultDetermineSectors } from '../../../models/cad/determineSectors';
+import { SectorActivator } from '../../../models/cad/BasicSectorActivator';
 import { DetermineSectorsDelegate } from '../../../models/cad/delegates';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
 import { CadModel } from '../../../models/cad/CadModel';
