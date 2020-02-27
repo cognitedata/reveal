@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { BasicSectorActivator } from '../../../models/cad/initializeSectorLoader';
+import { BasicSectorActivator } from '../../../models/cad/BasicSectorActivator';
 import { DiscardSectorDelegate, ConsumeSectorDelegate, GetSectorDelegate } from '../../../models/cad/delegates';
 import { waitUntill, yieldProcessing } from '../../wait';
 import { expectSetEqual } from '../../expects';

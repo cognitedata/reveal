@@ -7,17 +7,18 @@ import { vec3, mat4 } from 'gl-matrix';
 
 import { SectorModelTransformation, SectorScene, SectorMetadata, WantedSectors } from '../../../models/cad/types';
 import { defaultDetermineSectors } from '../../../models/cad/determineSectors';
-import { SectorActivator } from '../../../models/cad/initializeSectorLoader';
 import { DetermineSectorsDelegate } from '../../../models/cad/delegates';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
 import { CadModel } from '../../../models/cad/CadModel';
 import { CadRenderHints } from '../../CadRenderHints';
 import { suggestCameraConfig } from '../../../utils/cameraUtils';
-import { createThreeJsSectorNode } from './createThreeJsSectorNode';
 import { SectorNode } from './SectorNode';
 import { fromThreeVector3, fromThreeMatrix, toThreeJsBox3, toThreeVector3, toThreeMatrix4 } from '../utilities';
 import { RenderMode } from '../materials';
 import { Shading, createDefaultShading } from './shading';
+import { RootSectorNode } from './RootSectorNode';
+import { createSimpleCache } from '../../../models/createCache';
+import { BasicSectorActivator, SectorActivator } from '../../../models/cad/BasicSectorActivator';
 
 interface CadNodeOptions {
   shading?: Shading;
@@ -69,7 +70,41 @@ export class CadNode extends THREE.Object3D {
     })();
 
     // TODO if shading changes, this needs to be updated - or perhaps shading needs to be set in the constructor?
-    const { rootSector, simpleActivator, detailedActivator } = createThreeJsSectorNode(model, this._shading.materials);
+    const rootSector = new RootSectorNode(model, this._shading);
+    const getDetailed = async (sectorId: number) => {
+      const data = await model.fetchSectorDetailed(sectorId);
+      return model.parseDetailed(sectorId, data);
+    };
+
+    const getSimple = async (sectorId: number) => {
+      const data = await model.fetchSectorSimple(sectorId);
+      return model.parseSimple(sectorId, data);
+    };
+
+    const getDetailedCache = createSimpleCache(getDetailed);
+    const getSimpleCache = createSimpleCache(getSimple);
+    const detailedActivator = new BasicSectorActivator(
+      getDetailedCache.request,
+      sectorId => {
+        // this redirection is necessary to capture the correct this-keyword
+        rootSector.discard(sectorId);
+      },
+      (sectorId, sector) => {
+        // this redirection is necessary to capture the correct this-keyword
+        rootSector.consumeDetailed(sectorId, sector);
+      }
+    );
+    const simpleActivator = new BasicSectorActivator(
+      getSimpleCache.request,
+      sectorId => {
+        // this redirection is necessary to capture the correct this-keyword
+        rootSector.discard(sectorId);
+      },
+      (sectorId, sector) => {
+        // this redirection is necessary to capture the correct this-keyword
+        rootSector.consumeSimple(sectorId, sector);
+      }
+    );
     const { scene, modelTransformation } = model;
 
     this._sectorScene = scene;
