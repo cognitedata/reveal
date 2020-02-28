@@ -17,7 +17,6 @@ import { toThreeMatrix4 } from '../utilities';
 import { Materials } from './materials';
 
 export function createThreeJsSectorNode(model: CadModel, materials: Materials): RootSectorNodeData {
-  const { fetchSectorDetailed, fetchSectorSimple, scene, modelTransformation, parseSimple, parseDetailed } = model;
   // Fetch metadata
   const sectorNodeMap = new Map<number, SectorNode>(); // Populated by buildScene() below
 
@@ -27,7 +26,7 @@ export function createThreeJsSectorNode(model: CadModel, materials: Materials): 
       throw new Error(`Could not find 3D node for sector ${sectorId} - invalid id?`);
     }
 
-    const metadata = findSectorMetadata(scene.root, sectorId);
+    const metadata = findSectorMetadata(model.scene.root, sectorId);
     consumeSectorDetailed(sectorId, sector, metadata, sectorNode, materials);
   };
   const discard: DiscardSectorDelegate = sectorId => {
@@ -43,18 +42,18 @@ export function createThreeJsSectorNode(model: CadModel, materials: Materials): 
       throw new Error(`Could not find 3D node for sector ${sectorId} - invalid id?`);
     }
 
-    const metadata = findSectorMetadata(scene.root, sectorId);
+    const metadata = findSectorMetadata(model.scene.root, sectorId);
     consumeSectorSimple(sectorId, sector, metadata, sectorNode, materials);
   };
 
   const getDetailed = async (sectorId: number) => {
-    const data = await fetchSectorDetailed(sectorId);
-    return parseDetailed(sectorId, data);
+    const data = await model.fetchSectorDetailed(sectorId);
+    return model.parseDetailed(sectorId, data);
   };
 
   const getSimple = async (sectorId: number) => {
-    const data = await fetchSectorSimple(sectorId);
-    return parseSimple(sectorId, data);
+    const data = await model.fetchSectorSimple(sectorId);
+    return model.parseSimple(sectorId, data);
   };
 
   const getDetailedCache = createSimpleCache(getDetailed);
@@ -62,8 +61,8 @@ export function createThreeJsSectorNode(model: CadModel, materials: Materials): 
   const detailedActivator = initializeSectorLoader(getDetailedCache.request, discard, consumeDetailed);
   const simpleActivator = initializeSectorLoader(getSimpleCache.request, discard, consumeSimple);
   const rootSector = new SectorNode(0, '/');
-  rootSector.applyMatrix(toThreeMatrix4(modelTransformation.modelMatrix));
-  buildScene(scene.root, rootSector, sectorNodeMap);
+  rootSector.applyMatrix(toThreeMatrix4(model.modelTransformation.modelMatrix));
+  buildScene(model.scene.root, rootSector, sectorNodeMap);
 
   return {
     rootSector,
