@@ -60,7 +60,7 @@ export async function defaultDetermineSectors(params: DetermineSectorsInput): Pr
 
     const screenHeight = 2.0 * distanceToCamera(sector) * Math.tan((cameraFov / 2) * degToRadFactor);
     const largestAllowedQuadSize = hints.maxQuadSize * screenHeight; // no larger than x percent of the height
-    const quadSize = sector.facesFile ? sector.facesFile.quadSize : Infinity;
+    const quadSize = sector.facesFile.quadSize;
     if (quadSize < largestAllowedQuadSize) {
       return false;
     }
@@ -97,7 +97,10 @@ export function determineSectorsQuality(scene: SectorScene, requestedDetailed: S
     if (detailed.includes(sector.id)) {
       return true;
     }
-    simple.push(sector.id);
+    // F3D file is omitted if there are no geometry in the file
+    if (sector.facesFile.fileName) {
+      simple.push(sector.id);
+    }
     return false;
   });
 

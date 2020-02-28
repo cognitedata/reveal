@@ -80,7 +80,7 @@ export class LocalCadModel implements CadModel {
     if (!sector) {
       throw new Error(`Could not find sector with ID ${sectorId}`);
     }
-    if (!sector.facesFile) {
+    if (!sector.facesFile.fileName) {
       throw new Error(`Sector ${sectorId} does not have faces-data (low detail)`);
     }
 

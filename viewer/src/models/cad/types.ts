@@ -37,14 +37,14 @@ export interface SectorMetadata {
     readonly estimatedDrawCallCount: number;
     readonly downloadSize: number;
   };
-  readonly facesFile?: {
+  readonly facesFile: {
     readonly quadSize: number;
     readonly coverageFactors: {
       xy: number;
       yz: number;
       xz: number;
     };
-    readonly fileName: string;
+    readonly fileName: string | null;
     readonly downloadSize: number;
   };
   readonly children: SectorMetadata[];

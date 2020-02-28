@@ -27,7 +27,12 @@ export function buildSectorMetadata(
             fileName: `sector_${x.id}.f3d`,
             downloadSize: -1
           }
-        : undefined;
+        : {
+            quadSize: 0,
+            coverageFactors: { xy: 0, xz: 0, yz: 0 },
+            fileName: null,
+            downloadSize: 0
+          };
     const indexFile = {
       fileName: `sector_${x.id}.i3d`,
       peripheralFiles: [],

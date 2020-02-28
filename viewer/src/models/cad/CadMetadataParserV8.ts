@@ -29,14 +29,14 @@ export interface CadSectorMetadataV8 {
     readonly estimatedDrawCallCount: number;
     readonly downloadSize: number;
   };
-  readonly facesFile?: {
+  readonly facesFile: {
     readonly quadSize: number;
     readonly coverageFactors: {
       xy: number;
       yz: number;
       xz: number;
     };
-    readonly fileName: string;
+    readonly fileName: string | null;
     readonly downloadSize: number;
   };
 }
@@ -108,7 +108,7 @@ function createSectorMetadata(metadata: CadSectorMetadataV8): SectorMetadata {
     // I3D
     indexFile: { ...metadata.indexFile },
     // F3D
-    facesFile: metadata.facesFile ? { ...metadata.facesFile } : undefined,
+    facesFile: { ...metadata.facesFile },
 
     // Populated later
     children: []
