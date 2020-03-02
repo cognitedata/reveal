@@ -18,8 +18,8 @@ import { RenderMode } from '../materials';
 import { Shading, createDefaultShading } from './shading';
 import { RootSectorNode } from './RootSectorNode';
 import { BasicSectorActivator, SectorActivator } from '../../../models/cad/BasicSectorActivator';
-import { CachedRepository } from '../../../repository/CachedRepository';
-import { Repository } from '../../../repository/Repository';
+import { CachedRepository } from '../../../repository/cad/CachedRepository';
+import { Repository } from '../../../repository/cad/Repository';
 
 interface CadNodeOptions {
   shading?: Shading;

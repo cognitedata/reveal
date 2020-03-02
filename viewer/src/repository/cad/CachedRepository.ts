@@ -3,9 +3,9 @@
  */
 
 import { Repository } from './Repository';
-import { createSimpleCache, SimpleCache } from '../models/createCache';
-import { CadModel } from '../models/cad/CadModel';
-import { Sector, SectorQuads } from '../models/cad/types';
+import { createSimpleCache, SimpleCache } from '../../models/createCache';
+import { CadModel } from '../../models/cad/CadModel';
+import { Sector, SectorQuads } from '../../models/cad/types';
 
 export class CachedRepository implements Repository {
   private readonly _detailedCache: SimpleCache<number, Sector>;
