@@ -1,6 +1,7 @@
 #pragma glslify: derivateNormal = require('../math/derivateNormal.glsl')
 #pragma glslify: updateFragmentColor = require('../base/updateFragmentColor.glsl')
 #pragma glslify: determineVisibility = require('../base/determineVisibility.glsl');
+#pragma glslify: determineColor = require('../base/determineColor.glsl');
 
 uniform sampler2D colorDataTexture;
 uniform sampler2D overrideVisibilityPerTreeIndex;
