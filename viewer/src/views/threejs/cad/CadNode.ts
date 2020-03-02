@@ -7,17 +7,18 @@ import { vec3, mat4 } from 'gl-matrix';
 
 import { SectorModelTransformation, SectorScene, SectorMetadata, WantedSectors } from '../../../models/cad/types';
 import { defaultDetermineSectors } from '../../../models/cad/determineSectors';
-import { SectorActivator } from '../../../models/cad/BasicSectorActivator';
 import { DetermineSectorsDelegate } from '../../../models/cad/delegates';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
 import { CadModel } from '../../../models/cad/CadModel';
 import { CadRenderHints } from '../../CadRenderHints';
 import { suggestCameraConfig } from '../../../utils/cameraUtils';
-import { createThreeJsSectorNode } from './createThreeJsSectorNode';
 import { SectorNode } from './SectorNode';
 import { fromThreeVector3, fromThreeMatrix, toThreeJsBox3, toThreeVector3, toThreeMatrix4 } from '../utilities';
 import { RenderMode } from '../materials';
 import { Shading, createDefaultShading } from './shading';
+import { RootSectorNode } from './RootSectorNode';
+import { createSimpleCache } from '../../../models/createCache';
+import { BasicSectorActivator, SectorActivator } from '../../../models/cad/BasicSectorActivator';
 
 interface CadNodeOptions {
   shading?: Shading;
@@ -41,8 +42,8 @@ export class CadNode extends THREE.Object3D {
   public readonly modelTransformation: SectorModelTransformation;
 
   private _determineSectors: DetermineSectorsDelegate;
-  private _simpleActivator: SectorActivator;
-  private _detailedActivator: SectorActivator;
+  private _simpleSectorActivator: SectorActivator;
+  private _detailedSectorActivator: SectorActivator;
   private _renderHints: CadRenderHints;
   private _loadingHints: CadLoadingHints;
   private _renderMode: RenderMode;
@@ -69,13 +70,45 @@ export class CadNode extends THREE.Object3D {
     })();
 
     // TODO if shading changes, this needs to be updated - or perhaps shading needs to be set in the constructor?
-    const { rootSector, simpleActivator, detailedActivator } = createThreeJsSectorNode(model, this._shading.materials);
+    const rootSector = new RootSectorNode(model, this._shading);
+    const getDetailed = async (sectorId: number) => {
+      const data = await model.fetchSectorDetailed(sectorId);
+      return model.parseDetailed(sectorId, data);
+    };
+
+    const getSimple = async (sectorId: number) => {
+      const data = await model.fetchSectorSimple(sectorId);
+      return model.parseSimple(sectorId, data);
+    };
+
+    const getDetailedCache = createSimpleCache(getDetailed);
+    const getSimpleCache = createSimpleCache(getSimple);
+    this._detailedSectorActivator = new BasicSectorActivator(
+      getDetailedCache.request,
+      sectorId => {
+        // this redirection is necessary to capture the correct this-keyword
+        rootSector.discard(sectorId);
+      },
+      (sectorId, sector) => {
+        // this redirection is necessary to capture the correct this-keyword
+        rootSector.consumeDetailed(sectorId, sector);
+      }
+    );
+    this._simpleSectorActivator = new BasicSectorActivator(
+      getSimpleCache.request,
+      sectorId => {
+        // this redirection is necessary to capture the correct this-keyword
+        rootSector.discard(sectorId);
+      },
+      (sectorId, sector) => {
+        // this redirection is necessary to capture the correct this-keyword
+        rootSector.consumeSimple(sectorId, sector);
+      }
+    );
     const { scene, modelTransformation } = model;
 
     this._sectorScene = scene;
     this._determineSectors = defaultDetermineSectors;
-    this._simpleActivator = simpleActivator;
-    this._detailedActivator = detailedActivator;
     this.modelTransformation = modelTransformation;
     // Ensure camera matrix is unequal on first frame
     this._previousCameraMatrix.elements[0] = Infinity;
@@ -171,8 +204,8 @@ export class CadNode extends THREE.Object3D {
         projectionMatrix,
         loadingHints: this.loadingHints
       });
-      needsRedraw = this._detailedActivator.update(wantedSectors.detailed) || needsRedraw;
-      needsRedraw = this._simpleActivator.update(wantedSectors.simple) || needsRedraw;
+      needsRedraw = this._detailedSectorActivator.update(wantedSectors.detailed) || needsRedraw;
+      needsRedraw = this._simpleSectorActivator.update(wantedSectors.simple) || needsRedraw;
 
       if (this.shouldRenderSectorBoundingBoxes) {
         this.updateSectorBoundingBoxes(wantedSectors);
@@ -180,8 +213,8 @@ export class CadNode extends THREE.Object3D {
 
       this._previousCameraMatrix.copy(camera.matrixWorld);
     }
-    needsRedraw = this._detailedActivator.refresh() || needsRedraw;
-    needsRedraw = this._simpleActivator.refresh() || needsRedraw;
+    needsRedraw = this._detailedSectorActivator.refresh() || needsRedraw;
+    needsRedraw = this._simpleSectorActivator.refresh() || needsRedraw;
     return needsRedraw;
   }
 
