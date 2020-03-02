@@ -1,9 +1,11 @@
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
+#pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
 #pragma glslify: isSliced = require('../../base/isSliced.glsl')
 #pragma glslify: determineColor = require('../../base/determineColor.glsl');
 
 uniform sampler2D colorDataTexture;
+uniform sampler2D overrideVisibilityPerTreeIndex;
 
 uniform mat4 projectionMatrix;
 varying vec4 center;
@@ -21,6 +23,10 @@ varying vec3 v_normal;
 uniform int renderMode;
 
 void main() {
+    if (!determineVisibility(overrideVisibilityPerTreeIndex, v_treeIndex)) {
+        discard;
+    }
+
     vec3 color = determineColor(v_color, colorDataTexture, v_treeIndex);
     vec3 normal = normalize(sphereNormal.xyz);
 

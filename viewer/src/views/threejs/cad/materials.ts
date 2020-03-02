@@ -25,14 +25,21 @@ export interface Materials {
   simple: THREE.ShaderMaterial;
   // Data textures
   overrideColorPerTreeIndex: THREE.DataTexture;
+  overrideVisibilityPerTreeIndex: THREE.DataTexture;
 }
 
 export function createMaterials(): Materials {
   const pixelCount = 2048;
   const colorCount = pixelCount * pixelCount;
+  const visibilityCount = pixelCount * pixelCount;
 
   const colors = new Uint8Array(4 * colorCount);
+  const visibility = new Uint8Array(4 * visibilityCount);
+  for (let i = 0; i < visibilityCount; i++) {
+    visibility[i] = 255;
+  }
   const overrideColorPerTreeIndex = new THREE.DataTexture(colors, pixelCount, pixelCount);
+  const overrideVisibilityPerTreeIndex = new THREE.DataTexture(visibility, pixelCount, pixelCount);
 
   const boxMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Box)',
@@ -46,6 +53,9 @@ export function createMaterials(): Materials {
       },
       colorDataTexture: {
         value: overrideColorPerTreeIndex
+      },
+      overrideVisibilityPerTreeIndex: {
+        value: overrideVisibilityPerTreeIndex
       }
     }
   });
@@ -65,6 +75,9 @@ export function createMaterials(): Materials {
       },
       colorDataTexture: {
         value: overrideColorPerTreeIndex
+      },
+      overrideVisibilityPerTreeIndex: {
+        value: overrideVisibilityPerTreeIndex
       }
     }
   });
@@ -80,6 +93,9 @@ export function createMaterials(): Materials {
       },
       colorDataTexture: {
         value: overrideColorPerTreeIndex
+      },
+      overrideVisibilityPerTreeIndex: {
+        value: overrideVisibilityPerTreeIndex
       }
     }
   });
@@ -96,6 +112,9 @@ export function createMaterials(): Materials {
       },
       colorDataTexture: {
         value: overrideColorPerTreeIndex
+      },
+      overrideVisibilityPerTreeIndex: {
+        value: overrideVisibilityPerTreeIndex
       }
     }
   });
@@ -112,6 +131,9 @@ export function createMaterials(): Materials {
       },
       colorDataTexture: {
         value: overrideColorPerTreeIndex
+      },
+      overrideVisibilityPerTreeIndex: {
+        value: overrideVisibilityPerTreeIndex
       }
     },
     extensions: { fragDepth: true },
@@ -134,6 +156,9 @@ export function createMaterials(): Materials {
       },
       colorDataTexture: {
         value: overrideColorPerTreeIndex
+      },
+      overrideVisibilityPerTreeIndex: {
+        value: overrideVisibilityPerTreeIndex
       }
     },
     extensions: { fragDepth: true },
@@ -153,6 +178,9 @@ export function createMaterials(): Materials {
       },
       colorDataTexture: {
         value: overrideColorPerTreeIndex
+      },
+      overrideVisibilityPerTreeIndex: {
+        value: overrideVisibilityPerTreeIndex
       }
     },
     extensions: { fragDepth: true },
@@ -172,6 +200,9 @@ export function createMaterials(): Materials {
       },
       colorDataTexture: {
         value: overrideColorPerTreeIndex
+      },
+      overrideVisibilityPerTreeIndex: {
+        value: overrideVisibilityPerTreeIndex
       }
     },
     extensions: { fragDepth: true },
@@ -191,6 +222,9 @@ export function createMaterials(): Materials {
       },
       colorDataTexture: {
         value: overrideColorPerTreeIndex
+      },
+      overrideVisibilityPerTreeIndex: {
+        value: overrideVisibilityPerTreeIndex
       }
     },
     extensions: { fragDepth: true },
@@ -210,6 +244,9 @@ export function createMaterials(): Materials {
       },
       colorDataTexture: {
         value: overrideColorPerTreeIndex
+      },
+      overrideVisibilityPerTreeIndex: {
+        value: overrideVisibilityPerTreeIndex
       }
     },
     extensions: { fragDepth: true },
@@ -229,6 +266,9 @@ export function createMaterials(): Materials {
       },
       colorDataTexture: {
         value: overrideColorPerTreeIndex
+      },
+      overrideVisibilityPerTreeIndex: {
+        value: overrideVisibilityPerTreeIndex
       }
     },
     extensions: {
@@ -253,6 +293,9 @@ export function createMaterials(): Materials {
       },
       colorDataTexture: {
         value: overrideColorPerTreeIndex
+      },
+      overrideVisibilityPerTreeIndex: {
+        value: overrideVisibilityPerTreeIndex
       }
     },
     extensions: { fragDepth: true },
@@ -275,6 +318,9 @@ export function createMaterials(): Materials {
       },
       colorDataTexture: {
         value: overrideColorPerTreeIndex
+      },
+      overrideVisibilityPerTreeIndex: {
+        value: overrideVisibilityPerTreeIndex
       }
     }
   });
@@ -294,6 +340,9 @@ export function createMaterials(): Materials {
       },
       colorDataTexture: {
         value: overrideColorPerTreeIndex
+      },
+      overrideVisibilityPerTreeIndex: {
+        value: overrideVisibilityPerTreeIndex
       }
     }
   });
@@ -309,6 +358,9 @@ export function createMaterials(): Materials {
       },
       colorDataTexture: {
         value: overrideColorPerTreeIndex
+      },
+      overrideVisibilityPerTreeIndex: {
+        value: overrideVisibilityPerTreeIndex
       }
     }
   });
@@ -329,6 +381,7 @@ export function createMaterials(): Materials {
     instancedMesh: instancedMeshMaterial,
     triangleMesh: triangleMeshMaterial,
     simple: simpleMaterial,
-    overrideColorPerTreeIndex
+    overrideColorPerTreeIndex,
+    overrideVisibilityPerTreeIndex
   };
 }
