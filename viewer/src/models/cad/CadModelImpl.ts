@@ -19,8 +19,8 @@ export class CadModelImpl implements CadModel {
   private readonly scenePromise: Promise<SectorScene>;
 
   /**
-   * Do not use directly, see createLocalCadModel().
-   * @see createLocalCadModel
+   * Do not use directly, see loadCadModelByUrl().
+   * @see loadCadModelByUrl
    */
   constructor(dataRetriever: ModelDataRetriever, modelTransformation: SectorModelTransformation) {
     this.dataRetriever = dataRetriever;
