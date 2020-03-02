@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { SectorModelTransformation, SectorScene, WantedSectors, DetermineSectorsInput } from './types';
+import { WantedSectors, DetermineSectorsInput } from './types';
 
 /**
  * Delegate for determining what sectors to load for a given frustum.
@@ -13,11 +13,6 @@ export type DetermineSectorsDelegate = (params: DetermineSectorsInput) => Promis
  * Delegate that handles removal of a sector from a view (e.g. by removing it from the scene).
  */
 export type DiscardSectorDelegate = (sectorId: number) => void;
-
-/**
- * Delegate for retrieving the metadata about the sectors in a model.
- */
-export type FetchSectorMetadataDelegate = () => Promise<[SectorScene, SectorModelTransformation]>;
 
 /**
  * Delegate for fetching raw data for the sector given.

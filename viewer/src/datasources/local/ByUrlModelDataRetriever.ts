@@ -5,7 +5,7 @@
 import { ModelDataRetriever } from '../ModelDataRetriever';
 import { HttpError } from '@cognite/sdk';
 
-export class LocalModelDataRetriever implements ModelDataRetriever {
+export class ByUrlModelDataRetriever implements ModelDataRetriever {
   private readonly baseUrl: string;
 
   constructor(baseUrl: string) {
