@@ -1,5 +1,0 @@
-1250419722	partially-processed.opt.ciff		
-392752429	processed.opt.ciff		
-1003292913	walkableArea.waf		
-940074352	web_node_8_0.i3d		
-1955935610	web_node_8_0.f3d		
