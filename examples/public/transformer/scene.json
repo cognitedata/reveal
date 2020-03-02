@@ -1,0 +1,48 @@
+{
+  "version": 8,
+  "projectId": 123,
+  "modelId": 456,
+  "revisionId": 789,
+  "subRevisionId": -1,
+  "maxTreeIndex": 27,
+  "unit": "Centimeters",
+  "sectors": [
+    {
+      "id": 0,
+      "parentId": -1,
+      "path": "0/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": -355.14361872426792,
+          "y": -247.45145941186752,
+          "z": -355.14361872426792
+        },
+        "max": {
+          "x": 355.14375726392387,
+          "y": 252.54856215992467,
+          "z": 355.14375726392387
+        }
+      },
+      "indexFile": {
+        "peripheralFiles": [
+          "mesh_0.ctm",
+          "mesh_1.ctm"
+        ],
+        "estimatedDrawCallCount": 8,
+        "fileName": "sector_0.i3d",
+        "downloadSize": 106765
+      },
+      "facesFile": {
+        "quadSize": 7.7077606866407296,
+        "coverageFactors": {
+          "xy": 0.37851662404092073,
+          "yz": 0.66088538508186778,
+          "xz": 0.37851662404092073
+        },
+        "fileName": "sector_0.f3d",
+        "downloadSize": 52882
+      }
+    }
+  ]
+}
