@@ -19,8 +19,7 @@ export interface DefaultShadingOptions {
 
 function updateColors(getColor: ColorDelegate, materials: Materials, treeIndices: number[]) {
   for (const treeIndex of treeIndices) {
-    const colorOrUndefined = getColor(treeIndex);
-    const color = colorOrUndefined ? colorOrUndefined : [0, 0, 0, 0];
+    const color = getColor(treeIndex) || [0, 0, 0, 0];
     materials.overrideColorPerTreeIndex.image.data[4 * treeIndex] = color[0];
     materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 1] = color[1];
     materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 2] = color[2];
