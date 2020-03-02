@@ -1,4 +1,4 @@
-vec3 determineColor(vec3 originalColor, sampler2D colorDataTexture, float treeIndex) {
+bool determineVisibility(sampler2D visibilityTexture, float treeIndex) {
     // TODO specify width and height using uniforms
     const float dataTextureWidth = 2048.0;
     const float dataTextureHeight = 2048.0;
@@ -8,9 +8,9 @@ vec3 determineColor(vec3 originalColor, sampler2D colorDataTexture, float treeIn
     float uCoord = (u + 0.5) / dataTextureWidth;
     float vCoord = (v + 0.5) / dataTextureHeight; // invert Y axis
     vec2 treeIndexUv = vec2(uCoord, vCoord);
-    vec4 overrideColor = texture2D(colorDataTexture, treeIndexUv);
+    vec4 visible = texture2D(visibilityTexture, treeIndexUv);
 
-    return overrideColor.a * overrideColor.rgb + (1.0 - overrideColor.a) * originalColor;
+    return visible.r > 0.0;
 }
 
-#pragma glslify: export(determineColor)
+#pragma glslify: export(determineVisibility)
