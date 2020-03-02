@@ -3,7 +3,6 @@
  */
 
 import * as THREE from 'three';
-import { SectorActivator } from '../../../models/cad/BasicSectorActivator';
 
 export class SectorNode extends THREE.Group {
   public readonly sectorId: number;
@@ -15,8 +14,3 @@ export class SectorNode extends THREE.Group {
   }
 }
 
-export interface RootSectorNodeData {
-  rootSector: SectorNode;
-  simpleActivator: SectorActivator;
-  detailedActivator: SectorActivator;
-}
