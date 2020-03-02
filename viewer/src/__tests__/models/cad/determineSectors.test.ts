@@ -44,7 +44,8 @@ describe('determineSectors', () => {
         estimatedDrawCallCount: 10,
         fileName: 'sector_1.i3d',
         downloadSize: 5433
-      }
+      },
+      facesFile: emptyFacesFile()
     };
     const scene = createSceneFromRoot(root);
     const camera = new THREE.PerspectiveCamera();
@@ -78,6 +79,16 @@ describe('determineSectors', () => {
         estimatedDrawCallCount: 10,
         downloadSize: 1000
       },
+      facesFile: {
+        fileName: 'sector_1.f3d',
+        quadSize: 0.5,
+        coverageFactors: {
+          xy: 0.5,
+          xz: 0.5,
+          yz: 0.5
+        },
+        downloadSize: 1000
+      },
       children: [
         {
           id: 2,
@@ -89,6 +100,16 @@ describe('determineSectors', () => {
             fileName: 'sector_2.i3d',
             peripheralFiles: [],
             estimatedDrawCallCount: 10,
+            downloadSize: 1000
+          },
+          facesFile: {
+            fileName: 'sector_2.f3d',
+            quadSize: 0.5,
+            coverageFactors: {
+              xy: 0.5,
+              xz: 0.5,
+              yz: 0.5
+            },
             downloadSize: 1000
           }
         },
@@ -102,6 +123,16 @@ describe('determineSectors', () => {
             fileName: 'sector_3.i3d',
             peripheralFiles: [],
             estimatedDrawCallCount: 10,
+            downloadSize: 1000
+          },
+          facesFile: {
+            fileName: 'sector_3.f3d',
+            quadSize: 0.5,
+            coverageFactors: {
+              xy: 0.5,
+              xz: 0.5,
+              yz: 0.5
+            },
             downloadSize: 1000
           }
         }
@@ -146,6 +177,7 @@ describe('determineSectors', () => {
         estimatedDrawCallCount: 10,
         downloadSize: 1000
       },
+      facesFile: emptyFacesFile(),
       children: []
     };
     const scene = createSceneFromRoot(root);
@@ -167,3 +199,16 @@ describe('determineSectors', () => {
     expectSetEqual(sectors.detailed, [1]);
   });
 });
+
+function emptyFacesFile() {
+  return {
+    quadSize: 0.5,
+    fileName: null,
+    coverageFactors: {
+      xy: 0.5,
+      xz: 0.5,
+      yz: 0.5
+    },
+    downloadSize: 0
+  };
+}

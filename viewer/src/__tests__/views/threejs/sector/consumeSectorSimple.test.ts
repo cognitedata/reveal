@@ -24,6 +24,16 @@ describe('consumeSectorDetailed', () => {
       estimatedDrawCallCount: 10,
       downloadSize: 1000
     },
+    facesFile: {
+      fileName: 'sector_1.f3d',
+      quadSize: 0.5,
+      coverageFactors: {
+        xy: 0.5,
+        xz: 0.5,
+        yz: 0.5
+      },
+      downloadSize: 1000
+    },
     children: []
   };
   const sectorId = 1;

@@ -111,6 +111,16 @@ function createSectorMetadata(id: number, parentId: number = -1, path: string = 
       peripheralFiles: [],
       estimatedDrawCallCount: 10,
       downloadSize: 19996
+    },
+    facesFile: {
+      fileName: `sector_${id}.f3d`,
+      quadSize: 0.5,
+      coverageFactors: {
+        xy: 0.5,
+        xz: 0.5,
+        yz: 0.5
+      },
+      downloadSize: 1000
     }
   };
   return metadata;
