@@ -3,6 +3,7 @@
  */
 
 import { CogniteClient, CogniteInternalId, CogniteExternalId } from '@cognite/sdk';
+import { HttpHeaders } from '@cognite/sdk/dist/src/utils/http/basicHttpClient';
 
 export type Model3dOutput = {
   readonly format: CogniteWellknown3dFormat | string;
@@ -13,7 +14,7 @@ export type Model3dOutput = {
 export type CogniteUniformId = CogniteInternalId | CogniteExternalId;
 export enum CogniteWellknown3dFormat {
   EptPointCloud = 'ept-pointcloud',
-  RevealCadModel = 'reveal-json'
+  RevealCadModel = 'reveal-directory'
 }
 
 export class Model3dOutputList {
@@ -78,8 +79,13 @@ export class CogniteClient3dExtensions {
 
   public async retrieveBinaryBlob(blobId: number, path?: string): Promise<ArrayBuffer> {
     const url = this.buildBlobBaseUrl(blobId) + (path ? `/${path}` : '');
-    const response = await this.client.get<ArrayBuffer>(url);
-    return response.data;
+    const headers: HttpHeaders = {
+      ...this.client.getDefaultRequestHeaders(),
+      ...{ Accept: '*/*', 'Accept-Encoding': 'gzip' }
+    };
+
+    const response = await fetch(url, { headers });
+    return response.arrayBuffer();
   }
 
   public buildBlobBaseUrl(blobId: number): string {

@@ -79,6 +79,25 @@ describe('CogniteClient3dExtensions', () => {
     // Assert
     expect(result).toEqual({ ...response.items[0] });
   });
+
+  test('retrieveBinaryBlob() with binary data returns valid ArrayBuffer', async () => {
+    // Arrange
+    const response = '0123456789';
+    nock(/.*/)
+      .get(/.*/)
+      .reply(200, response, { 'content-type': 'binary' });
+
+    // Act
+    const result = await sdkExt.retrieveBinaryBlob(10);
+
+    // Assert
+    const expected = new Array<number>(response.length);
+    for (let i = 0; i < response.length; i++) {
+      expected[i] = response.charCodeAt(i);
+    }
+    const view = new Uint8Array(result);
+    expect(view.toString()).toEqual(expected.toString());
+  });
 });
 
 describe('Model3dOutputList', () => {
