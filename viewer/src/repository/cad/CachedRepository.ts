@@ -3,13 +3,13 @@
  */
 
 import { Repository } from './Repository';
-import { createSimpleCache, SimpleCache } from '../../models/createCache';
+import { MemoryRequestCache } from '../../cache/MemoryRequestCache';
 import { CadModel } from '../../models/cad/CadModel';
 import { Sector, SectorQuads } from '../../models/cad/types';
 
 export class CachedRepository implements Repository {
-  private readonly _detailedCache: SimpleCache<number, Sector>;
-  private readonly _simpleCache: SimpleCache<number, SectorQuads>;
+  private readonly _detailedCache: MemoryRequestCache<number, Sector>;
+  private readonly _simpleCache: MemoryRequestCache<number, SectorQuads>;
 
   constructor(model: CadModel) {
     const getDetailedBasic = async (sectorId: number) => {
@@ -22,8 +22,8 @@ export class CachedRepository implements Repository {
       return model.parseSimple(sectorId, data);
     };
 
-    this._detailedCache = createSimpleCache(getDetailedBasic);
-    this._simpleCache = createSimpleCache(getSimpleBasic);
+    this._detailedCache = new MemoryRequestCache(getDetailedBasic);
+    this._simpleCache = new MemoryRequestCache(getSimpleBasic);
   }
 
   async getDetailed(sectorId: number): Promise<Sector> {
