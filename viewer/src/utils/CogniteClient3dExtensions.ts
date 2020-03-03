@@ -78,10 +78,10 @@ export class CogniteClient3dExtensions {
   }
 
   public async retrieveBinaryBlob(blobId: number, path?: string): Promise<ArrayBuffer> {
-    const url = this.buildBlobBaseUrl(blobId) + (path ? `/${path}` : '');
+    const url = this.client.getBaseUrl() + this.buildBlobBaseUrl(blobId) + (path ? `/${path}` : '');
     const headers: HttpHeaders = {
       ...this.client.getDefaultRequestHeaders(),
-      ...{ Accept: '*/*', 'Accept-Encoding': 'gzip' }
+      ...{ Accept: '*/*' }
     };
 
     const response = await fetch(url, { headers });

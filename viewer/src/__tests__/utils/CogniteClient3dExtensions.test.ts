@@ -8,12 +8,19 @@ import { CogniteClient } from '@cognite/sdk';
 
 describe('CogniteClient3dExtensions', () => {
   const appId = 'reveal-CogniteClient3dV2Extensions-test';
-  const baseUrl = 'https://localhost';
+  const baseUrl = 'http://localhost';
   const sdk = new CogniteClient({
     appId,
     baseUrl
   });
   const sdkExt = new CogniteClient3dExtensions(sdk);
+
+  // beforeEach(() => {
+  //   nock(/.*/)
+  //     .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+  //     .options(/.*/)
+  //     .reply(200);
+  // });
 
   test('getOutputs() throws error when server returns 400', async () => {
     nock(/.*/)
