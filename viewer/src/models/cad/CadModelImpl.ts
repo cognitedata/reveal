@@ -88,7 +88,7 @@ export class CadModelImpl implements CadModel {
 
   public async fetchCtm(fileId: number): Promise<Uint8Array> {
     this.ensureInitialized();
-    const buffer = await this.dataRetriever.fetchData(`/mesh_${fileId}.ctm`);
+    const buffer = await this.dataRetriever.fetchData(`mesh_${fileId}.ctm`);
     return new Uint8Array(buffer);
   }
 

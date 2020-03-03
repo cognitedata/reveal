@@ -3,4 +3,6 @@
  */
 
 import { createPointCloudModel } from './pointcloud/createPointCloudModel';
-export { createPointCloudModel };
+import { loadCadModelFromCdf } from './cad/loadCadModelFromCdf';
+
+export { createPointCloudModel, loadCadModelFromCdf };

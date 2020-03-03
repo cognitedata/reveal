@@ -55,6 +55,7 @@ async function main() {
   const render = async () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
+
     const needsUpdate = controlsNeedUpdate || pointCloudGroup.needsRedraw || settingsChanged;
 
     if (needsUpdate) {
@@ -66,6 +67,7 @@ async function main() {
   render();
 
   (window as any).scene = scene;
+  (window as any).renderer = renderer;
   (window as any).THREE = THREE;
   (window as any).camera = camera;
   (window as any).controls = controls;

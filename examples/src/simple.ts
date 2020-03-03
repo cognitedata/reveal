@@ -4,16 +4,21 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
+import { CogniteClient } from '@cognite/sdk';
+
 import * as reveal from '@cognite/reveal';
 import * as reveal_threejs from '@cognite/reveal/threejs';
+import { CogniteUniformId } from '@cognite/reveal/utils/CogniteClient3dExtensions';
 
 CameraControls.install({ THREE });
 
 async function main() {
-  const modelUrl = new URL(location.href).searchParams.get('model') || '/primitives';
+  const urlParams = new URL(location.href).searchParams;
+  const model = urlParams.get('model') || '/primitives';
+  const project = urlParams.get('project');
 
   const scene = new THREE.Scene();
-  const cadModel = await reveal.loadCadModelByUrl(modelUrl);
+  const cadModel = await loadCadModel(model, project);
   const cadNode = new reveal_threejs.CadNode(cadModel);
 
   scene.add(cadNode);
@@ -48,6 +53,22 @@ async function main() {
   (window as any).camera = camera;
   (window as any).controls = controls;
   (window as any).renderer = renderer;
+}
+
+async function loadCadModel(model: string, project: string | null): Promise<reveal.CadModel> {
+  const isUrlModelId = !Number.isNaN(Number(model));
+  if (isUrlModelId) {
+    if (!project) {
+      throw new Error('Must provide project when model is a modelId.');
+    }
+    const sdk = new CogniteClient({ appId: 'cognite.reveal.example.simple-cad' });
+    sdk.loginWithOAuth({ project });
+    await sdk.authenticate();
+    const id: CogniteUniformId = Number.parseInt(model, 10);
+    return reveal.loadCadModelFromCdf(sdk, id);
+  } else {
+    return reveal.loadCadModelByUrl(model);
+  }
 }
 
 main();
