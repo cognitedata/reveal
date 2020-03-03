@@ -8,7 +8,7 @@ import { createOffsetsArray } from '../../utils/arrayUtils';
 import { ParseQuadsResult, ParseSectorResult } from '../../workers/types/parser.types';
 import { ParserWorker } from '../../workers/parser.worker';
 import * as Comlink from 'comlink';
-import { createSimpleCache } from '../createCache';
+import { MemoryRequestCache } from '../../cache/MemoryRequestCache';
 
 type WorkDelegate<T> = (worker: ParserWorker) => Promise<T>;
 
@@ -59,7 +59,7 @@ export function createParser(fetchCtmFile: FetchCtmDelegate): ParseSectorDelegat
   const workerList = createWorkers();
 
   // TODO define the cache outside of the createParser function to make it configurable
-  const loadCtmGeometryCache = createSimpleCache((fileId: number) => {
+  const loadCtmGeometryCache = new MemoryRequestCache((fileId: number) => {
     return loadCtmGeometry(fileId, fetchCtmFile, workerList);
   });
 
