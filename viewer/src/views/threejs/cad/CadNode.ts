@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { vec3, mat4 } from 'gl-matrix';
 
-import { SectorModelTransformation, SectorScene, SectorMetadata, WantedSectors } from '../../../models/cad/types';
+import { SectorModelTransformation, SectorScene, SectorMetadata, WantedSectors, SectorQuads, Sector } from '../../../models/cad/types';
 import { defaultDetermineSectors } from '../../../models/cad/determineSectors';
 import { DetermineSectorsDelegate } from '../../../models/cad/delegates';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
@@ -17,8 +17,9 @@ import { fromThreeVector3, fromThreeMatrix, toThreeJsBox3, toThreeVector3, toThr
 import { RenderMode } from '../materials';
 import { Shading, createDefaultShading } from './shading';
 import { RootSectorNode } from './RootSectorNode';
-import { createSimpleCache } from '../../../models/createCache';
 import { BasicSectorActivator, SectorActivator } from '../../../models/cad/BasicSectorActivator';
+import { CachedRepository } from '../../../repository/cad/CachedRepository';
+import { Repository } from '../../../repository/cad/Repository';
 
 interface CadNodeOptions {
   shading?: Shading;
@@ -52,6 +53,7 @@ export class CadNode extends THREE.Object3D {
   private readonly _sectorScene: SectorScene;
   private readonly _previousCameraMatrix = new THREE.Matrix4();
   private readonly _boundingBoxNode: THREE.Object3D;
+  private readonly _repository: Repository;
 
   constructor(model: CadModel, options?: CadNodeOptions) {
     super();
@@ -69,38 +71,31 @@ export class CadNode extends THREE.Object3D {
       });
     })();
 
-    // TODO if shading changes, this needs to be updated - or perhaps shading needs to be set in the constructor?
     const rootSector = new RootSectorNode(model, this._shading);
-    const getDetailed = async (sectorId: number) => {
-      const data = await model.fetchSectorDetailed(sectorId);
-      return model.parseDetailed(sectorId, data);
-    };
+    this._repository = new CachedRepository(model);
 
-    const getSimple = async (sectorId: number) => {
-      const data = await model.fetchSectorSimple(sectorId);
-      return model.parseSimple(sectorId, data);
-    };
-
-    const getDetailedCache = createSimpleCache(getDetailed);
-    const getSimpleCache = createSimpleCache(getSimple);
-    this._detailedSectorActivator = new BasicSectorActivator(
-      getDetailedCache.request,
+    this._detailedSectorActivator = new BasicSectorActivator<Sector>(
+      sectorId => {
+        return this._repository.getDetailed(sectorId);
+      },
       sectorId => {
         // this redirection is necessary to capture the correct this-keyword
         rootSector.discard(sectorId);
       },
-      (sectorId, sector) => {
+      (sectorId: number, sector: Sector) => {
         // this redirection is necessary to capture the correct this-keyword
         rootSector.consumeDetailed(sectorId, sector);
       }
     );
-    this._simpleSectorActivator = new BasicSectorActivator(
-      getSimpleCache.request,
+    this._simpleSectorActivator = new BasicSectorActivator<SectorQuads>(
+      sectorId => {
+        return this._repository.getSimple(sectorId);
+      },
       sectorId => {
         // this redirection is necessary to capture the correct this-keyword
         rootSector.discard(sectorId);
       },
-      (sectorId, sector) => {
+      (sectorId: number, sector: SectorQuads) => {
         // this redirection is necessary to capture the correct this-keyword
         rootSector.consumeSimple(sectorId, sector);
       }
