@@ -146,7 +146,7 @@ module.exports = env => {
     module: {
       rules: [
         {
-          test: /node_modules\/@cognite\/reveal\/dist\/.+\.(js|map)$/, // Consider adding ts
+          test: /node_modules\/@cognite\/reveal\/.+\.(js|map)$/, // Consider adding ts
           use: ['source-map-loader'],
           enforce: 'pre',
         },
