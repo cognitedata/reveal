@@ -46,6 +46,12 @@ const allExamples = [
     template: 'template-example.ejs'
   },
   {
+    name: "threejs-filtering",
+    title: "Filtering",
+    entry: './src/filtering.ts',
+    template: 'template-example.ejs'
+  },
+  {
     name: "threejs-picking",
     title: "Picking",
     entry: './src/picking.ts',
