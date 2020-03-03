@@ -9,13 +9,13 @@ import { createPointCloudModel } from '../../../../datasources/cognitesdk';
 describe('createPointCloudModel', () => {
   const appId = 'reveal-creatPointCloudModel-test';
   const baseUrl = 'https://localhost';
+  const sdk = new CogniteClient({
+    appId,
+    baseUrl
+  });
 
   test('invalid modelId, throws', async () => {
     // Arrange
-    const sdk = new CogniteClient({
-      appId,
-      baseUrl
-    });
     nock(/.*/)
       .post(/.*/)
       .reply(404);
@@ -26,10 +26,6 @@ describe('createPointCloudModel', () => {
 
   test('valid modelId without point cloud output, throws', async () => {
     // Arrange
-    const sdk = new CogniteClient({
-      appId,
-      baseUrl
-    });
     nock(/.*/)
       .post(/.*/)
       .reply(200, []);
@@ -40,10 +36,6 @@ describe('createPointCloudModel', () => {
 
   test('valid modelId point cloud output, returns model', async () => {
     // Arrange
-    const sdk = new CogniteClient({
-      appId,
-      baseUrl
-    });
     const response = {
       items: [
         {
