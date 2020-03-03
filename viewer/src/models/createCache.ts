@@ -4,7 +4,7 @@
 
 type RequestDelegate<T_ID, T> = (id: T_ID) => Promise<T>;
 
-interface SimpleCache<T_ID, T> {
+export interface SimpleCache<T_ID, T> {
   request: RequestDelegate<T_ID, T>;
   clearCache: () => void;
 }
