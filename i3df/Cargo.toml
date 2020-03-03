@@ -33,7 +33,7 @@ structopt = "0.3.11"
 Inflector = "0.11.4"
 
 [dependencies.wasm-bindgen]
-version = "0.2.58"
+version = "0.2.59"
 features = ["serde-serialize"]
 
 [build-dependencies]
