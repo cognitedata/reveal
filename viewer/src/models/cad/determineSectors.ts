@@ -97,7 +97,7 @@ export function determineSectorsQuality(scene: SectorScene, requestedDetailed: S
     if (detailed.includes(sector.id)) {
       return true;
     }
-    // F3D file is omitted if there are no geometry in the file
+    // F3D file is omitted if there is no geometry in the file
     if (sector.facesFile.fileName) {
       simple.push(sector.id);
     }
