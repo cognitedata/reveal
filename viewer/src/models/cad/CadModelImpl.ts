@@ -10,12 +10,19 @@ import { ModelDataRetriever } from '../../datasources/ModelDataRetriever';
 import { CadMetadataParser } from './CadMetadataParser';
 
 export class CadModelImpl implements CadModel {
+  public get modelTransformation(): SectorModelTransformation {
+    return this._modelTransformation;
+  }
+
+  public get scene(): SectorScene {
+    return this._scene!;
+  }
   /**
    * Creates and initializes a instance by loading metadata through the retriever provided.
    * @param dataRetriever         Data retriever used to fetch geometry and model metadata.
    * @param modelTransformation   Model transformation matrix.
    */
-  static async create(
+  public static async create(
     dataRetriever: ModelDataRetriever,
     modelTransformation: SectorModelTransformation
   ): Promise<CadModelImpl> {
@@ -45,18 +52,6 @@ export class CadModelImpl implements CadModel {
     const metadataJson = this.dataRetriever.fetchJson('scene.json');
     this.scenePromise = parseSceneMetadata(metadataJson);
     this._scene = undefined;
-  }
-
-  public get modelTransformation(): SectorModelTransformation {
-    return this._modelTransformation;
-  }
-
-  public get scene(): SectorScene {
-    return this._scene!;
-  }
-
-  public async initialize(): Promise<void> {
-    this._scene = await this.scenePromise;
   }
 
   public parseDetailed(sectorId: number, buffer: Uint8Array): Promise<Sector> {
@@ -96,6 +91,10 @@ export class CadModelImpl implements CadModel {
   public async fetchCtm(fileId: number): Promise<Uint8Array> {
     const buffer = await this.dataRetriever.fetchData(`/mesh_${fileId}.ctm`);
     return new Uint8Array(buffer);
+  }
+
+  private async initialize(): Promise<void> {
+    this._scene = await this.scenePromise;
   }
 }
 

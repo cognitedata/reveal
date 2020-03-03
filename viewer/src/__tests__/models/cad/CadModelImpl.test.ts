@@ -96,47 +96,28 @@ describe('CadModelImpl', () => {
     inverseModelMatrix: mat4.identity(mat4.create())
   };
 
-  test('Call accessors and functions before initialize, throws', async () => {
-    const model = new CadModelImpl(retriever, modelTransform);
-    expect(model.parseSimple(0, new Uint8Array())).rejects.toThrowError();
-    expect(model.fetchSectorSimple(0)).rejects.toThrowError();
-    expect(model.fetchSectorDetailed(0)).rejects.toThrowError();
-    expect(model.fetchCtm(0)).rejects.toThrowError();
-    expect(() => model.scene).toThrowError();
-    expect(() => model.modelTransformation).toThrowError();
-
-    // TODO 2020-03-02 larsmoa: Not sure why this fails, but look into it. Leaving for now
-    // as it is not about the implementation, but rather the test.
-    // expect(model.parseDetailed(0, new Uint8Array())).rejects.toThrowError();
-  });
-
   test('fetchSectorSimple() with valid ID, returns buffer', async () => {
-    const model = new CadModelImpl(retriever, modelTransform);
-    await model.initialize();
+    const model = await CadModelImpl.create(retriever, modelTransform);
     expect(model.fetchSectorSimple(SECTOR_ID_WITH_FACESFILE)).resolves.toBeTruthy();
   });
 
   test('fetchSectorSimple() with invalid ID, throws', async () => {
-    const model = new CadModelImpl(retriever, modelTransform);
-    await model.initialize();
+    const model = await CadModelImpl.create(retriever, modelTransform);
     expect(model.fetchSectorSimple(INVALID_SECTOR_ID)).rejects.toThrowError();
   });
 
   test('fetchSectorSimple() sector does not have facesFile, throws', async () => {
-    const model = new CadModelImpl(retriever, modelTransform);
-    await model.initialize();
+    const model = await CadModelImpl.create(retriever, modelTransform);
     expect(model.fetchSectorSimple(SECTOR_ID_WITHOUT_FACESFILE)).rejects.toThrowError();
   });
 
   test('fetchSectorDetailed() with valid ID, returns buffer', async () => {
-    const model = new CadModelImpl(retriever, modelTransform);
-    await model.initialize();
+    const model = await CadModelImpl.create(retriever, modelTransform);
     expect(model.fetchSectorDetailed(SECTOR_ID_WITH_FACESFILE)).resolves.toBeTruthy();
   });
 
   test('fetchSectorDetailed() with invalid ID, throws', async () => {
-    const model = new CadModelImpl(retriever, modelTransform);
-    await model.initialize();
+    const model = await CadModelImpl.create(retriever, modelTransform);
     expect(model.fetchSectorDetailed(INVALID_SECTOR_ID)).rejects.toThrowError();
   });
 });
