@@ -4,7 +4,7 @@
 
 import { RequestCache, RequestDelegate } from './RequestCache';
 
-export class MemoryCache<T_ID, T> implements RequestCache<T_ID, T> {
+export class MemoryRequestCache<T_ID, T> implements RequestCache<T_ID, T> {
   private readonly _results: Map<T_ID, Promise<T>>;
   private readonly _request: RequestDelegate<T_ID, T>;
   constructor(request: RequestDelegate<T_ID, T>) {

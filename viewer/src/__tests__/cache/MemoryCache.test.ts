@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { MemoryCache } from '../../cache/MemoryCache';
+import { MemoryRequestCache } from '../../cache/MemoryRequestCache';
 
 describe('MemoryCache', () => {
   const getSectorMock = jest.fn();
@@ -17,14 +17,14 @@ describe('MemoryCache', () => {
   });
 
   test('fetch on new id, fetches', () => {
-    const getCached = new MemoryCache<number, string>(getSector);
+    const getCached = new MemoryRequestCache<number, string>(getSector);
     getCached.request(0);
     expect(getSectorMock).toBeCalledWith(0);
   });
 
   test('fetch on cached id, loads from cached', () => {
     // Arrange
-    const getCached = new MemoryCache<number, string>(getSector);
+    const getCached = new MemoryRequestCache<number, string>(getSector);
     getCached.request(0);
     jest.resetAllMocks();
 
