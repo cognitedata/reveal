@@ -220,6 +220,9 @@ module.exports = env => {
     },
     optimization: {
       usedExports: true,
+      splitChunks: {
+        chunks: "all"
+      }
     },
     amd: {
       // Enable webpack-friendly use of require in Cesium
