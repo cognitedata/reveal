@@ -37,6 +37,5 @@ export async function loadCadModelFromCdf(
   };
   const retriever = new CdfModelDataRetriever(sdkClient, output.blobId);
   const model = await CadModelImpl.create(retriever, transform);
-  await model.initialize();
   return model;
 }
