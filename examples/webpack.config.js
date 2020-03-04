@@ -46,6 +46,12 @@ const allExamples = [
     template: 'template-example.ejs'
   },
   {
+    name: "threejs-rxjs",
+    title: "RxJS",
+    entry: './src/rxjs.ts',
+    template: 'template-example.ejs'
+  },
+  {
     name: "threejs-filtering",
     title: "Filtering",
     entry: './src/filtering.ts',
@@ -195,7 +201,6 @@ module.exports = env => {
     },
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
-      symlinks: false, // necessary because we symlink the parent folder - source maps fail otherwise
     },
     output: {
       filename: '[name].js',

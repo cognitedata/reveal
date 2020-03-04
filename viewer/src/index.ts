@@ -15,6 +15,10 @@ export { PointCloudModel } from './models/pointclouds/PointCloudModel';
 export { createPointCloudModel } from './datasources/cognitesdk';
 export { createLocalCadModel, createLocalPointCloudModel } from './datasources/local';
 
+// RxJS
+import * as rxjs from './rxjs';
+export { rxjs };
+
 // Internals
 import * as internal from './internal';
 export { internal };
