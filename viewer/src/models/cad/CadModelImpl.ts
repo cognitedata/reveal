@@ -10,6 +10,27 @@ import { ModelDataRetriever } from '../../datasources/ModelDataRetriever';
 import { CadMetadataParser } from './CadMetadataParser';
 
 export class CadModelImpl implements CadModel {
+  public get modelTransformation(): SectorModelTransformation {
+    return this._modelTransformation;
+  }
+
+  public get scene(): SectorScene {
+    return this._scene!;
+  }
+  /**
+   * Creates and initializes a instance by loading metadata through the retriever provided.
+   * @param dataRetriever         Data retriever used to fetch geometry and model metadata.
+   * @param modelTransformation   Model transformation matrix.
+   */
+  public static async create(
+    dataRetriever: ModelDataRetriever,
+    modelTransformation: SectorModelTransformation
+  ): Promise<CadModelImpl> {
+    const model = new CadModelImpl(dataRetriever, modelTransformation);
+    await model.initialize();
+    return model;
+  }
+
   private _scene?: SectorScene;
   private readonly _modelTransformation: SectorModelTransformation;
 
@@ -22,7 +43,7 @@ export class CadModelImpl implements CadModel {
    * Do not use directly, see loadCadModelByUrl().
    * @see loadCadModelByUrl
    */
-  constructor(dataRetriever: ModelDataRetriever, modelTransformation: SectorModelTransformation) {
+  private constructor(dataRetriever: ModelDataRetriever, modelTransformation: SectorModelTransformation) {
     this.dataRetriever = dataRetriever;
     this.detailedParser = createParser(id => this.fetchCtm(id));
     this.simpleParserPromise = createQuadsParser();
@@ -33,38 +54,20 @@ export class CadModelImpl implements CadModel {
     this._scene = undefined;
   }
 
-  public get modelTransformation(): SectorModelTransformation {
-    this.ensureInitialized();
-    return this._modelTransformation;
-  }
-
-  public get scene(): SectorScene {
-    this.ensureInitialized();
-    return this._scene!;
-  }
-
-  public async initialize(): Promise<void> {
-    this._scene = await this.scenePromise;
-  }
-
   public parseDetailed(sectorId: number, buffer: Uint8Array): Promise<Sector> {
-    this.ensureInitialized();
     return this.detailedParser(sectorId, buffer);
   }
 
   public async parseSimple(sectorId: number, buffer: Uint8Array): Promise<SectorQuads> {
-    this.ensureInitialized();
     const simpleParser = await this.simpleParserPromise;
     return simpleParser(sectorId, buffer);
   }
 
   public async fetchSectorMetadata(): Promise<SectorScene> {
-    this.ensureInitialized();
     return this.scenePromise;
   }
 
   public async fetchSectorDetailed(sectorId: number): Promise<Uint8Array> {
-    this.ensureInitialized();
     const sector = this.scene.sectors.get(sectorId);
     if (!sector) {
       throw new Error(`Could not find sector with ID ${sectorId}`);
@@ -74,7 +77,6 @@ export class CadModelImpl implements CadModel {
   }
 
   public async fetchSectorSimple(sectorId: number): Promise<Uint8Array> {
-    this.ensureInitialized();
     const sector = this.scene.sectors.get(sectorId);
     if (!sector) {
       throw new Error(`Could not find sector with ID ${sectorId}`);
@@ -87,15 +89,12 @@ export class CadModelImpl implements CadModel {
   }
 
   public async fetchCtm(fileId: number): Promise<Uint8Array> {
-    this.ensureInitialized();
     const buffer = await this.dataRetriever.fetchData(`mesh_${fileId}.ctm`);
     return new Uint8Array(buffer);
   }
 
-  private ensureInitialized() {
-    if (!this._scene) {
-      throw new Error('Must call and await initialize() first');
-    }
+  private async initialize(): Promise<void> {
+    this._scene = await this.scenePromise;
   }
 }
 

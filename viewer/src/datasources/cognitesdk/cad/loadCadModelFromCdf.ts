@@ -36,7 +36,6 @@ export async function loadCadModelFromCdf(
     inverseModelMatrix: DefaultInverseSectorRotationMatrix
   };
   const retriever = new CdfModelDataRetriever(sdkClient, output.blobId);
-  const model = new CadModelImpl(retriever, transform);
-  await model.initialize();
+  const model = await CadModelImpl.create(retriever, transform);
   return model;
 }

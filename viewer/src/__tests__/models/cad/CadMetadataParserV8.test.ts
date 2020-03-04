@@ -88,12 +88,12 @@ describe('parseCadMetadataV8', () => {
   });
 });
 
-function createSectorMetadata(id: number, parentId: number = -1, path: string = '0/1/'): CadSectorMetadataV8 {
+function createSectorMetadata(id: number, parentId: number = -1): CadSectorMetadataV8 {
   const metadata: CadSectorMetadataV8 = {
     id,
     parentId,
-    path,
-    depth: path.length / 2 - 1,
+    path: '0/',
+    depth: 0,
     boundingBox: {
       min: {
         x: 0.0,
