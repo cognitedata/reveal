@@ -256,12 +256,14 @@ function updateSceneInfo(scene: THREE.Object3D, sceneInfo: SceneInfo) {
     materials.forEach(m => materialIds.add(m.id));
 
     if (x.name.startsWith('Primitives')) {
+      const indexAttributes = geometry.index!;
       sceneInfo.primitives.meshCount++;
-      sceneInfo.primitives.templateTriangleCount += geometry.index.count / 3;
+      sceneInfo.primitives.templateTriangleCount += indexAttributes.count / 3;
       sceneInfo.primitives.instanceCount += geometry.attributes.a_treeIndex.count;
     } else if (x.name.startsWith('Triangle mesh')) {
+      const indexAttributes = geometry.index!;
       sceneInfo.triangleMeshes.meshCount++;
-      sceneInfo.triangleMeshes.triangleCount += geometry.index.count / 3;
+      sceneInfo.triangleMeshes.triangleCount += indexAttributes.count / 3;
     } else if (x.name.startsWith('Instanced mesh')) {
       sceneInfo.instanceMeshes.meshCount++;
       sceneInfo.instanceMeshes.templateTriangleCount += geometry.drawRange.count;
