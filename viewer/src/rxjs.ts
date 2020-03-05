@@ -2,9 +2,22 @@
  * Copyright 2020 Cognite AS
  */
 
-import { Observable, from, of, partition, merge, Subject } from 'rxjs';
+import { Observable, from, of, partition, merge, Subject, pipe, GroupedObservable } from 'rxjs';
 import { createLocalCadModel } from './datasources/local/cad/createLocalCadModel';
-import { switchMap, flatMap, map, catchError, distinctUntilChanged, tap } from 'rxjs/operators';
+import {
+  switchMap,
+  flatMap,
+  map,
+  catchError,
+  distinctUntilChanged,
+  tap,
+  groupBy,
+  distinctUntilKeyChanged,
+  mergeMap,
+  reduce,
+  filter,
+  scan
+} from 'rxjs/operators';
 import { SectorQuads, WantedSectors, Sector } from './models/cad/types';
 
 enum Lod {
@@ -61,7 +74,6 @@ export async function testme() {
       }
     };
     setInterval(() => {
-      console.log('Creating wanted');
       const wanted = [
         { id: 0, lod: randomLod() },
         { id: 1, lod: randomLod() },
@@ -69,7 +81,6 @@ export async function testme() {
         { id: 3, lod: randomLod() },
         { id: 4, lod: randomLod() }
       ];
-      console.log('Wanted', wanted[0], wanted[1]);
       observer.next(wanted);
     }, 3000);
   });
@@ -84,49 +95,65 @@ export async function testme() {
     [Lod.Unwanted, unwanted]
   ]);
 
-  // TODO consider when this subscription should be cancelled
-  wantedSectors
-    .pipe(
-      tap((sector: WantedSector) => {
-        lodSubjectMap.get(sector.lod)!.next(sector);
-      })
+  const distinctUntilLodChanged = pipe(
+    groupBy((sector: WantedSector) => sector.id),
+    mergeMap((group: GroupedObservable<number, WantedSector>) =>
+      group.pipe(
+        distinctUntilKeyChanged('lod')
+      )
     )
-    .subscribe();
-  // const [simple, detailed] = partition(wantedSectors, (sector: WantedSector) => sector.lod === Lod.Simple);
-  const simpleParsed = simple.pipe(
-    flatMap(async (sector: WantedSector) => ({
-      id: sector.id,
-      data: await model.fetchSectorSimple(sector.id),
-      lod: sector.lod
-    })),
-    flatMap(async (sector: FetchedSectorSimple) => ({
-      id: sector.id,
-      data: await model.parseSimple(sector.id, sector.data),
-      lod: sector.lod
-    }))
   );
-  const detailedParsed = detailed.pipe(
-    flatMap(async (sector: WantedSector) => ({
-      id: sector.id,
-      data: await model.fetchSectorDetailed(sector.id),
-      lod: sector.lod
-    })),
-    flatMap(async (sector: FetchedSectorDetailed) => ({
-      id: sector.id,
-      data: await model.parseDetailed(sector.id, sector.data),
-      lod: sector.lod
-    }))
+
+  const handleWantedSectors = pipe(
+    distinctUntilLodChanged,
+    scan((sectors: Map<number, WantedSector>, sector: WantedSector) => {
+      sectors.set(sector.id, sector);
+      return sectors;
+    }, new Map()),
   );
-  const pipeline = merge(simpleParsed, detailedParsed);
-  // .pipe(
-  // distinctUntilChanged((previous: FinalSector, current: FinalSector) => previous.id === current.id)
-  // );
-  const sectors = new Map<number, FinalSector>();
-  pipeline.subscribe((x: FinalSector) => {
-    sectors.set(x.id, x);
-    console.log('Got', x.id, x.lod);
+
+  // TODO consider when this subscription should be cancelled
+  wantedSectors.pipe(handleWantedSectors).subscribe((sectors: Map<number, WantedSector>) => {
+    console.log("-------- Results: ---------");
     for (const [id, sector] of sectors) {
       console.log(id, sector.lod);
     }
   });
+  // const [simple, detailed] = partition(wantedSectors, (sector: WantedSector) => sector.lod === Lod.Simple);
+  // const simpleParsed = simple.pipe(
+  // flatMap(async (sector: WantedSector) => ({
+  // id: sector.id,
+  // data: await model.fetchSectorSimple(sector.id),
+  // lod: sector.lod
+  // })),
+  // flatMap(async (sector: FetchedSectorSimple) => ({
+  // id: sector.id,
+  // data: await model.parseSimple(sector.id, sector.data),
+  // lod: sector.lod
+  // }))
+  // );
+  // const detailedParsed = detailed.pipe(
+  // flatMap(async (sector: WantedSector) => ({
+  // id: sector.id,
+  // data: await model.fetchSectorDetailed(sector.id),
+  // lod: sector.lod
+  // })),
+  // flatMap(async (sector: FetchedSectorDetailed) => ({
+  // id: sector.id,
+  // data: await model.parseDetailed(sector.id, sector.data),
+  // lod: sector.lod
+  // }))
+  // );
+  // const pipeline = merge(simpleParsed, detailedParsed);
+  //// .pipe(
+  //// distinctUntilChanged((previous: FinalSector, current: FinalSector) => previous.id === current.id)
+  //// );
+  // const sectors = new Map<number, FinalSector>();
+  // pipeline.subscribe((x: FinalSector) => {
+  // sectors.set(x.id, x);
+  // console.log('Got', x.id, x.lod);
+  // for (const [id, sector] of sectors) {
+  // console.log(id, sector.lod);
+  // }
+  // });
 }
