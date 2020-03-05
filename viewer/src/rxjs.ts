@@ -2,7 +2,19 @@
  * Copyright 2020 Cognite AS
  */
 
-import { Observable, from, of, partition, merge, Subject, pipe, GroupedObservable, OperatorFunction, empty } from 'rxjs';
+import {
+  Observable,
+  from,
+  of,
+  partition,
+  merge,
+  Subject,
+  pipe,
+  GroupedObservable,
+  OperatorFunction,
+  empty,
+  UnaryFunction
+} from 'rxjs';
 import { createLocalCadModel } from './datasources/local/cad/createLocalCadModel';
 import {
   switchMap,
@@ -63,7 +75,7 @@ interface ParsedSectorDetailed {
 type FinalSector = WantedSector | ParsedSectorSimple | ParsedSectorDetailed;
 
 export async function testme() {
-  const model = await createLocalCadModel('./3d-data/ivar_aasen/ivar-aasen-2020-02-03-self-contained-fix/');
+  const model = await createLocalCadModel('./primitives');
   const wantedSectors: Observable<WantedSector[]> = Observable.create(function(observer: any) {
     console.log('Creating generator');
     const randomLod = () => {
@@ -80,26 +92,25 @@ export async function testme() {
     };
     setTimeout(() => {
       const wanted = [
-        { id: 0, lod: Lod.Simple },
-        { id: 1, lod: Lod.Simple },
-        { id: 2, lod: Lod.Simple },
-        { id: 3, lod: Lod.Simple },
-        { id: 4, lod: Lod.Simple }
+        { id: 0, lod: Lod.Simple }
+        // { id: 1, lod: Lod.Simple },
+        // { id: 2, lod: Lod.Simple },
+        // { id: 3, lod: Lod.Simple },
+        // { id: 4, lod: Lod.Simple }
       ];
       observer.next(wanted);
     }, 100);
     setTimeout(() => {
       const wanted = [
-        { id: 0, lod: Lod.Detailed },
-        { id: 1, lod: Lod.Detailed },
-        { id: 2, lod: Lod.Detailed },
-        { id: 3, lod: Lod.Detailed },
-        { id: 4, lod: Lod.Detailed }
+        { id: 0, lod: Lod.Detailed }
+        // { id: 1, lod: Lod.Detailed },
+        // { id: 2, lod: Lod.Detailed },
+        // { id: 3, lod: Lod.Detailed },
+        // { id: 4, lod: Lod.Detailed }
       ];
       observer.next(wanted);
     }, 3000);
   });
-
 
   const distinctUntilLodChanged = pipe(
     groupBy((sector: WantedSector) => sector.id),
@@ -172,28 +183,30 @@ export async function testme() {
     getFinalSectorByLod
   );
 
+  const dropOutdated = (wantedSectors: Observable<WantedSector[]>): OperatorFunction<FinalSector, FinalSector> => {
+    return pipe(
+      withLatestFrom(wantedSectors),
+      flatMap(([loaded, wanted]) => {
+        for (const wantedSector of wanted) {
+          if (loaded.id === wantedSector.id && loaded.lod === wantedSector.lod) {
+            return of(loaded);
+          }
+        }
+        return empty();
+      })
+    );
+  };
+
   // TODO consider when this subscription should be cancelled
   wantedSectors
     .pipe(
-      publish(multicast =>
-        multicast.pipe(
-          flatMap((sectors: WantedSector[]) => from(sectors)),
-          handleWantedSectors,
-          withLatestFrom(multicast),
-          flatMap(([loaded, wanted]) => {
-            for (const wantedSector of wanted) {
-              if (loaded.id === wantedSector.id && loaded.lod === wantedSector.lod) {
-                return of(loaded);
-              }
-            }
-            return empty();
-          }),
-          scan((sectors: Map<number, FinalSector>, sector: WantedSector) => {
-            sectors.set(sector.id, sector);
-            return sectors;
-          }, new Map())
-        )
-      ),
+      flatMap((sectors: WantedSector[]) => from(sectors)),
+      handleWantedSectors,
+      dropOutdated(wantedSectors),
+      scan((sectors: Map<number, FinalSector>, sector: WantedSector) => {
+        sectors.set(sector.id, sector);
+        return sectors;
+      }, new Map())
     )
     .subscribe((sectors: Map<number, WantedSector>) => {
       console.log('-------- Results: ---------');
