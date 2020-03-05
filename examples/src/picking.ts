@@ -32,7 +32,7 @@ async function main() {
   const scene = new THREE.Scene();
 
   // Add some data for Reveal
-  const cadModel = await reveal.createLocalCadModel(modelUrl);
+  const cadModel = await reveal.loadCadModelByUrl(modelUrl);
   const cadNode = new reveal_threejs.CadNode(cadModel, { shading });
   scene.add(cadNode);
 

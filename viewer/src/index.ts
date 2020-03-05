@@ -13,7 +13,7 @@ export { PointCloudModel } from './models/pointclouds/PointCloudModel';
 
 // Loaders
 export { createPointCloudModel } from './datasources/cognitesdk';
-export { createLocalCadModel, createLocalPointCloudModel } from './datasources/local';
+export { loadCadModelByUrl, createLocalPointCloudModel } from './datasources/local';
 
 // Internals
 import * as internal from './internal';
