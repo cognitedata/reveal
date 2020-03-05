@@ -1,8 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+const fakeHelperFunction = (): Promise<string> => {
+  return new Promise((_, reject) => {
+    setTimeout(() => {
+      reject(new Error('Fake error'));
+    }, 1000);
+  });
+};
+
 const App = () => {
+  const [crashing, setCrashing] = useState(false);
+  const [buttonText, setButtonText] = useState(() => 'Crash me!');
+
+  const clickHandler = () => {
+    setCrashing(true);
+    fakeHelperFunction().then(output => {
+      // This will never be seen.
+      setButtonText(output);
+    });
+  };
+
   return (
     <div className="App">
       <header className="App-header">
@@ -16,6 +35,9 @@ const App = () => {
         >
           Learn about how this is hosted
         </a>
+        <button disabled={crashing} type="button" onClick={clickHandler}>
+          {buttonText}
+        </button>
       </header>
     </div>
   );

@@ -27,10 +27,10 @@ podTemplate(
           secretKey: 'client_secret'
         ),
       ],
-      resourceRequestCpu: '2000m',
-      resourceRequestMemory: '2500Mi',
-      resourceLimitCpu: '2000m',
-      resourceLimitMemory: '2500Mi',
+      resourceRequestCpu: '1',
+      resourceRequestMemory: '8Gi',
+      resourceLimitCpu: '3',
+      resourceLimitMemory: '16Gi',
       ttyEnabled: true
     )
   ],
@@ -48,6 +48,19 @@ podTemplate(
       key: 'FAS_APPLICATION_CREDENTIALS',
       value: '/fas-credentials/credentials.json'
     ),
+    envVar(
+      key: 'SENTRY_ORG',
+      value: 'cognite',
+    ),
+    envVar(
+      key: 'SENTRY_PROJECT',
+      value: 'react-demo-app'
+    ),
+    secretEnvVar(
+      key: 'SENTRY_AUTH_TOKEN',
+      secretName: 'sentry-auth-tokens',
+      secretKey: 'releases'
+    )
   ],
   volumes: [
     secretVolume(
@@ -69,6 +82,7 @@ podTemplate(
     properties([buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))])
     node(label) {
     def gitCommit
+    def shortHash
     def context_checkout = "continuous-integration/jenkins/checkout"
     def context_setup = "continuous-integration/jenkins/setup"
     def context_lint = "continuous-integration/jenkins/lint"
@@ -81,15 +95,15 @@ podTemplate(
 
     stageWithNotify('Checkout code', context_checkout) {
       checkout(scm)
+      shortHash = sh(
+        returnStdout: true,
+        script: "git rev-parse --short HEAD"
+      )
     }
 
     container('node') {
       stageWithNotify('Install dependencies', context_setup) {
-        sh('cp /npm-credentials/npm-public-credentials.txt ~/.npmrc')
-        // Yarn can fail sometimes, so let's just retry it a few times.
-        retry(5) {
-          sh('yarn')
-        }
+        yarn()
       }
       if (isPullRequest) {
         // This needs to follow the delete-pr.sh step because we don't want to
@@ -139,6 +153,7 @@ podTemplate(
               domainName: DOMAIN_NAME,
               iap: true,
               buildCommand: 'yarn build',
+              releaseName: "${env.BRANCH_NAME}-${shortHash}",
             )
           }
         }
@@ -146,7 +161,9 @@ podTemplate(
 
       if (!isPullRequest) {
         stageWithNotify('Publish build', context_publishRelease) {
-          fas.publish()
+          fas.publish(
+            releaseName: "${env.BRANCH_NAME}-${shortHash}",
+          )
         }
       }
     }
