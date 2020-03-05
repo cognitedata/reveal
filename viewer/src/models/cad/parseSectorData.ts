@@ -221,7 +221,7 @@ export function createParser(fetchCtmFile: FetchCtmDelegate): ParseSectorDelegat
   return parse;
 }
 
-export async function createQuadsParser() {
+export async function createQuadsParser(): Promise<ParseSectorDelegate<SectorQuads>> {
   // TODO consider sharing workers with i3df parser
   const workerList = await createWorkers();
 
