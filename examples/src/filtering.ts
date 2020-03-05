@@ -41,7 +41,7 @@ async function main() {
   });
 
   const scene = new THREE.Scene();
-  const cadModel = await reveal.createLocalCadModel(modelUrl);
+  const cadModel = await reveal.loadCadModelByUrl(modelUrl);
   const cadNode = new reveal_threejs.CadNode(cadModel, { shading });
 
   scene.add(cadNode);
