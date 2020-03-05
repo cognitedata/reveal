@@ -8,9 +8,9 @@ import { switchMap, flatMap, map, catchError, distinctUntilChanged, tap } from '
 import { SectorQuads, WantedSectors, Sector } from './models/cad/types';
 
 enum Lod {
+  Unwanted,
   Simple,
-  Detailed,
-  Unwanted
+  Detailed
 }
 
 interface WantedSector {
@@ -21,21 +21,25 @@ interface WantedSector {
 interface FetchedSectorSimple {
   id: number;
   data: Uint8Array;
+  lod: Lod;
 }
 
 interface FetchedSectorDetailed {
   id: number;
   data: Uint8Array;
+  lod: Lod;
 }
 
 interface ParsedSectorSimple {
   id: number;
   data: SectorQuads;
+  lod: Lod;
 }
 
 interface ParsedSectorDetailed {
   id: number;
   data: Sector;
+  lod: Lod;
 }
 
 type FinalSector = ParsedSectorSimple | ParsedSectorDetailed;
@@ -81,22 +85,36 @@ export async function testme() {
   ]);
 
   // TODO consider when this subscription should be cancelled
-  wantedSectors.pipe(tap((sector: WantedSector) => {
-    lodSubjectMap.get(sector.lod)!.next(sector)
-  })).subscribe();
+  wantedSectors
+    .pipe(
+      tap((sector: WantedSector) => {
+        lodSubjectMap.get(sector.lod)!.next(sector);
+      })
+    )
+    .subscribe();
   // const [simple, detailed] = partition(wantedSectors, (sector: WantedSector) => sector.lod === Lod.Simple);
   const simpleParsed = simple.pipe(
-    flatMap(async (sector: WantedSector) => ({ id: sector.id, data: await model.fetchSectorSimple(sector.id) })),
+    flatMap(async (sector: WantedSector) => ({
+      id: sector.id,
+      data: await model.fetchSectorSimple(sector.id),
+      lod: sector.lod
+    })),
     flatMap(async (sector: FetchedSectorSimple) => ({
       id: sector.id,
-      data: await model.parseSimple(sector.id, sector.data)
+      data: await model.parseSimple(sector.id, sector.data),
+      lod: sector.lod
     }))
   );
   const detailedParsed = detailed.pipe(
-    flatMap(async (sector: WantedSector) => ({ id: sector.id, data: await model.fetchSectorDetailed(sector.id) })),
+    flatMap(async (sector: WantedSector) => ({
+      id: sector.id,
+      data: await model.fetchSectorDetailed(sector.id),
+      lod: sector.lod
+    })),
     flatMap(async (sector: FetchedSectorDetailed) => ({
       id: sector.id,
-      data: await model.parseDetailed(sector.id, sector.data)
+      data: await model.parseDetailed(sector.id, sector.data),
+      lod: sector.lod
     }))
   );
   const pipeline = merge(simpleParsed, detailedParsed);
@@ -106,9 +124,9 @@ export async function testme() {
   const sectors = new Map<number, FinalSector>();
   pipeline.subscribe((x: FinalSector) => {
     sectors.set(x.id, x);
-    console.log('Updated!');
+    console.log('Got', x.id, x.lod);
     for (const [id, sector] of sectors) {
-      console.log(id, sector.data);
+      console.log(id, sector.lod);
     }
   });
 }
