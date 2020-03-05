@@ -98,7 +98,7 @@ podTemplate(
       shortHash = sh(
         returnStdout: true,
         script: "git rev-parse --short HEAD"
-      )
+      ).trim()
     }
 
     container('node') {
