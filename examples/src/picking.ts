@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import * as reveal from '@cognite/reveal';
 import * as reveal_threejs from '@cognite/reveal/threejs';
+import { loadCadModelFromCdfOrUrl } from './utils/loaders';
 
 CameraControls.install({ THREE });
 
@@ -16,7 +17,9 @@ function createSphere(point: THREE.Vector3, color: string): THREE.Mesh {
 }
 
 async function main() {
-  const modelUrl = new URL(location.href).searchParams.get('model') || '/primitives';
+  const urlParams = new URL(location.href).searchParams;
+  const model = urlParams.get('model') || '/primitives';
+  const project = urlParams.get('project');
 
   const pickedNodes: Set<number> = new Set();
   const pickedObjects: Set<THREE.Mesh> = new Set();
@@ -32,7 +35,7 @@ async function main() {
   const scene = new THREE.Scene();
 
   // Add some data for Reveal
-  const cadModel = await reveal.loadCadModelByUrl(modelUrl);
+  const cadModel = await loadCadModelFromCdfOrUrl(model, project);
   const cadNode = new reveal_threejs.CadNode(cadModel, { shading });
   scene.add(cadNode);
 
@@ -44,7 +47,10 @@ async function main() {
   scene.add(boxMesh);
 
   // Add some light for the box
-  for (const position of [[-20, 40, 50], [60, 100, -30]]) {
+  for (const position of [
+    [-20, 40, 50],
+    [60, 100, -30]
+  ]) {
     const light = new THREE.PointLight();
     light.position.set(position[0], position[1], position[2]);
     scene.add(light);

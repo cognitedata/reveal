@@ -7,14 +7,17 @@ import CameraControls from 'camera-controls';
 import * as reveal from '@cognite/reveal';
 import { CadNode, SsaoEffect, SsaoPassType } from '@cognite/reveal/threejs';
 import dat from 'dat.gui';
+import { loadCadModelFromCdfOrUrl } from './utils/loaders';
 
 CameraControls.install({ THREE });
 
 async function main() {
-  const modelUrl = new URL(location.href).searchParams.get('model') || '/primitives';
+  const urlParams = new URL(location.href).searchParams;
+  const model = urlParams.get('model') || '/primitives';
+  const project = urlParams.get('project');
 
   const scene = new THREE.Scene();
-  const cadModel = await reveal.loadCadModelByUrl(modelUrl);
+  const cadModel = await loadCadModelFromCdfOrUrl(model, project);
   const cadNode = new CadNode(cadModel);
 
   scene.add(cadNode);
