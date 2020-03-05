@@ -256,12 +256,14 @@ function updateSceneInfo(scene: THREE.Object3D, sceneInfo: SceneInfo) {
     materials.forEach(m => materialIds.add(m.id));
 
     if (x.name.startsWith('Primitives')) {
+      const indexAttribute = geometry.index!;
       sceneInfo.primitives.meshCount++;
-      sceneInfo.primitives.templateTriangleCount += geometry.index.count / 3;
+      sceneInfo.primitives.templateTriangleCount += indexAttribute.count / 3;
       sceneInfo.primitives.instanceCount += geometry.attributes.a_treeIndex.count;
     } else if (x.name.startsWith('Triangle mesh')) {
+      const indexAttribute = geometry.index!;
       sceneInfo.triangleMeshes.meshCount++;
-      sceneInfo.triangleMeshes.triangleCount += geometry.index.count / 3;
+      sceneInfo.triangleMeshes.triangleCount += indexAttribute.count / 3;
     } else if (x.name.startsWith('Instanced mesh')) {
       sceneInfo.instanceMeshes.meshCount++;
       sceneInfo.instanceMeshes.templateTriangleCount += geometry.drawRange.count;
@@ -315,7 +317,7 @@ function getMaterials(mesh: THREE.Mesh): THREE.Material[] {
  */
 function filterSectorNodes(filter: string, root: reveal.SectorMetadata): Set<number> {
   const acceptedNodeIds: number[] = [];
-  for (let pathRegex of filter.split(',').map(x => x.trim())) {
+  for (let pathRegex of filter.split('|').map(x => x.trim())) {
     if (!pathRegex.startsWith('^')) {
       pathRegex = '^' + pathRegex;
     }
