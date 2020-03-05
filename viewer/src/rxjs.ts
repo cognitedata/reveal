@@ -161,7 +161,6 @@ export async function testme() {
         multicast.pipe(
           filter((sector: WantedSector) => sector.lod === Lod.Detailed),
           fetchDetailed,
-          delay(5000),
           parseDetailed
         )
       )
