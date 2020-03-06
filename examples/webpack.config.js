@@ -161,6 +161,9 @@ module.exports = env => {
           test: /node_modules\/@cognite\/reveal\/.+\.(js|map)$/, // Consider adding ts
           use: ['source-map-loader'],
           enforce: 'pre',
+          exclude: [
+            /node_modules\/@cognite\/reveal\/node_modules/,
+          ],
         },
         {
           test: /\.tsx?$/,
