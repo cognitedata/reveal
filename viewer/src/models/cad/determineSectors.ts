@@ -20,7 +20,7 @@ const determineSectorsPreallocatedVars = {
   max: new THREE.Vector3()
 };
 
-export async function defaultDetermineSectors(params: DetermineSectorsInput): Promise<WantedSectors> {
+export function defaultDetermineSectors(params: DetermineSectorsInput): WantedSectors {
   const hints = { ...defaultCadLoadingHints, ...(params.loadingHints || {}) };
 
   const { scene, cameraPosition, cameraModelMatrix, projectionMatrix, cameraFov } = params;

@@ -76,12 +76,12 @@ const allExamples = [
     entry: './src/walkable-path.ts',
     template: 'template-example.ejs'
   },
-  {
-    name: "threejs-side-by-side",
-    title: "Side-by-side debugger for sector models",
-    entry: './src/side-by-side.ts',
-    template: 'template-example-two-canvases.ejs'
-  },
+  //{
+    //name: "threejs-side-by-side",
+    //title: "Side-by-side debugger for sector models",
+    //entry: './src/side-by-side.ts',
+    //template: 'template-example-two-canvases.ejs'
+  //},
   {
     name: "threejs-simple-pointcloud",
     title: "Simple pointcloud",

@@ -32,9 +32,22 @@ import {
   publish,
   delay,
   startWith,
-  withLatestFrom
+  withLatestFrom,
+  throttleTime,
+  share
 } from 'rxjs/operators';
-import { SectorQuads, WantedSectors, Sector } from './models/cad/types';
+import { SectorQuads, WantedSectors, Sector, SectorMetadata } from './models/cad/types';
+import { CadModel } from './models/cad/CadModel';
+import { consumeSectorSimple } from './views/threejs/cad/consumeSectorSimple';
+import { createMaterials } from './views/threejs/cad/materials';
+import { Box3 } from './utils/Box3';
+import * as THREE from 'three';
+import { consumeSectorDetailed } from './views/threejs/cad/consumeSectorDetailed';
+import { vec3, mat4 } from 'gl-matrix';
+import { RootSectorNode } from './views/threejs/cad/RootSectorNode';
+import { Shading, createDefaultShading } from './views/threejs';
+import { defaultDetermineSectors } from './models/cad/determineSectors';
+import { fromThreeVector3, fromThreeMatrix } from './views/threejs/utilities';
 
 enum Lod {
   Discarded,
@@ -46,71 +59,148 @@ enum Lod {
 interface WantedSector {
   id: number;
   lod: Lod;
+  metadata: SectorMetadata;
 }
 
 interface FetchedSectorSimple {
   id: number;
   data: Uint8Array;
   lod: Lod;
+  metadata: SectorMetadata;
 }
 
 interface FetchedSectorDetailed {
   id: number;
   data: Uint8Array;
   lod: Lod;
+  metadata: SectorMetadata;
 }
 
 interface ParsedSectorSimple {
   id: number;
-  data: SectorQuads;
+  simpleData: SectorQuads;
   lod: Lod;
+  metadata: SectorMetadata;
 }
 
 interface ParsedSectorDetailed {
   id: number;
-  data: Sector;
+  detailedData: Sector;
   lod: Lod;
+  metadata: SectorMetadata;
 }
 
 type FinalSector = WantedSector | ParsedSectorSimple | ParsedSectorDetailed;
 
-export async function testme() {
-  const model = await createLocalCadModel('./primitives');
-  const wantedSectors: Observable<WantedSector[]> = Observable.create(function(observer: any) {
-    console.log('Creating generator');
-    const randomLod = () => {
-      switch (Math.floor(Math.random() * 3)) {
-        case 0:
-          return Lod.Simple;
-        case 1:
-          return Lod.Detailed;
-        case 2:
-          return Lod.Discarded;
-        default:
-          return Lod.Discarded;
+export function testme(model: CadModel, callback: () => void) {
+  // const wantedSectors: Observable<WantedSector[]> = Observable.create(function(observer: any) {
+  // console.log('Creating generator');
+  // const randomLod = () => {
+  // switch (Math.floor(Math.random() * 3)) {
+  // case 0:
+  // return Lod.Simple;
+  // case 1:
+  // return Lod.Detailed;
+  // case 2:
+  // return Lod.Discarded;
+  // default:
+  // return Lod.Discarded;
+  // }
+  // };
+  // setTimeout(() => {
+  // const wanted: WantedSector[] = [
+  // {
+  // id: 0,
+  // lod: Lod.Simple,
+  // metadata: {
+  // id: 0,
+  // path: '',
+  // bounds: new Box3([
+  // vec3.fromValues(0.0, 0.0, 0.0),
+  // vec3.fromValues(1.0, 1.0, 1.0)
+  // ]),
+  // children: []
+  // }
+  // }
+  //// { id: 1, lod: Lod.Simple },
+  //// { id: 2, lod: Lod.Simple },
+  //// { id: 3, lod: Lod.Simple },
+  //// { id: 4, lod: Lod.Simple }
+  // ];
+  // observer.next(wanted);
+  // }, 100);
+  // setTimeout(() => {
+  // const wanted: WantedSector[] = [
+  // {
+  // id: 0,
+  // lod: Lod.Detailed,
+  // metadata: {
+  // id: 0,
+  // path: '',
+  // bounds: new Box3([
+  // vec3.fromValues(0.0, 0.0, 0.0),
+  // vec3.fromValues(1.0, 1.0, 1.0)
+  // ]),
+  // children: []
+  // }
+  // }
+  //// { id: 1, lod: Lod.Detailed },
+  //// { id: 2, lod: Lod.Detailed },
+  //// { id: 3, lod: Lod.Detailed },
+  //// { id: 4, lod: Lod.Detailed }
+  // ];
+  // observer.next(wanted);
+  // }, 3000);
+  // });
+  const cameraPosition: Subject<THREE.PerspectiveCamera> = new Subject();
+
+  const update = (camera: THREE.PerspectiveCamera) => {
+    cameraPosition.next(camera);
+  };
+
+  const updateVars = {
+    cameraPosition: vec3.create(),
+    cameraModelMatrix: mat4.create(),
+    projectionMatrix: mat4.create()
+  };
+
+  const wantedSectors = cameraPosition.pipe(
+    throttleTime(1000),
+    map((camera: THREE.PerspectiveCamera) => {
+      console.log('Got position');
+      camera.matrixWorldInverse.getInverse(camera.matrixWorld);
+
+      const { cameraPosition, cameraModelMatrix, projectionMatrix } = updateVars;
+      fromThreeVector3(cameraPosition, camera.position, model.modelTransformation);
+      fromThreeMatrix(cameraModelMatrix, camera.matrixWorld, model.modelTransformation);
+      fromThreeMatrix(projectionMatrix, camera.projectionMatrix);
+      const wantedSectors = defaultDetermineSectors({
+        scene: model.scene,
+        cameraFov: camera.fov,
+        cameraPosition,
+        cameraModelMatrix,
+        projectionMatrix,
+        loadingHints: {}
+      });
+      const actualWantedSectors: WantedSector[] = [];
+      for (const sector of wantedSectors.simple) {
+        actualWantedSectors.push({
+          id: sector,
+          lod: Lod.Simple,
+          metadata: model.scene.sectors.get(sector)!
+        });
       }
-    };
-    setTimeout(() => {
-      const wanted = [
-        { id: 0, lod: Lod.Simple }
-        // { id: 1, lod: Lod.Simple },
-        // { id: 2, lod: Lod.Simple },
-        // { id: 3, lod: Lod.Simple },
-        // { id: 4, lod: Lod.Simple }
-      ];
-      observer.next(wanted);
-    }, 100);
-    setTimeout(() => {
-      const wanted = [
-        { id: 0, lod: Lod.Detailed }
-        // { id: 1, lod: Lod.Detailed },
-        // { id: 2, lod: Lod.Detailed },
-        // { id: 3, lod: Lod.Detailed },
-        // { id: 4, lod: Lod.Detailed }
-      ];
-      observer.next(wanted);
-    }, 3000);
-  });
+      for (const sector of wantedSectors.detailed) {
+        actualWantedSectors.push({
+          id: sector,
+          lod: Lod.Detailed,
+          metadata: model.scene.sectors.get(sector)!
+        });
+      }
+      return actualWantedSectors;
+    }),
+    share()
+  );
 
   const distinctUntilLodChanged = pipe(
     groupBy((sector: WantedSector) => sector.id),
@@ -126,7 +216,8 @@ export async function testme() {
     return {
       id: sector.id,
       lod: sector.lod,
-      data: fetchedData
+      data: fetchedData,
+      metadata: sector.metadata
     };
   });
 
@@ -135,7 +226,8 @@ export async function testme() {
     return {
       id: sector.id,
       lod: sector.lod,
-      data: parsedData
+      simpleData: parsedData,
+      metadata: sector.metadata
     };
   });
 
@@ -144,7 +236,8 @@ export async function testme() {
     return {
       id: sector.id,
       lod: sector.lod,
-      data: fetchedData
+      data: fetchedData,
+      metadata: sector.metadata
     };
   });
 
@@ -153,7 +246,8 @@ export async function testme() {
     return {
       id: sector.id,
       lod: sector.lod,
-      data: parsedData
+      detailedData: parsedData,
+      metadata: sector.metadata
     };
   });
 
@@ -183,9 +277,9 @@ export async function testme() {
     getFinalSectorByLod
   );
 
-  const dropOutdated = (wantedSectors: Observable<WantedSector[]>): OperatorFunction<FinalSector, FinalSector> => {
+  function dropOutdated(wanted: Observable<WantedSector[]>): OperatorFunction<WantedSector, WantedSector> {
     return pipe(
-      withLatestFrom(wantedSectors),
+      withLatestFrom(wanted),
       flatMap(([loaded, wanted]) => {
         for (const wantedSector of wanted) {
           if (loaded.id === wantedSector.id && loaded.lod === wantedSector.lod) {
@@ -195,23 +289,38 @@ export async function testme() {
         return empty();
       })
     );
-  };
+  }
 
-  // TODO consider when this subscription should be cancelled
+  const rootSector: RootSectorNode = new RootSectorNode(model, createDefaultShading({}));
+
+  //const collect = scan((sectors: Map<number, FinalSector>, sector: WantedSector) => {
+    //sectors.set(sector.id, sector);
+    //return sectors;
+  //}, new Map());
+
   wantedSectors
     .pipe(
       flatMap((sectors: WantedSector[]) => from(sectors)),
       handleWantedSectors,
       dropOutdated(wantedSectors),
-      scan((sectors: Map<number, FinalSector>, sector: WantedSector) => {
-        sectors.set(sector.id, sector);
-        return sectors;
-      }, new Map())
     )
-    .subscribe((sectors: Map<number, WantedSector>) => {
-      console.log('-------- Results: ---------');
-      for (const [id, sector] of sectors) {
-        console.log(id, sector.lod);
+    .subscribe((sector: FinalSector) => {
+      if ('simpleData' in sector) {
+        const simpleSector = sector as ParsedSectorSimple;
+        rootSector.discard(sector.id);
+        rootSector.consumeSimple(sector.id, simpleSector.simpleData);
+      } else if ('detailedData' in sector) {
+        const detailedSector = sector as ParsedSectorDetailed;
+        rootSector.discard(sector.id);
+        rootSector.consumeDetailed(sector.id, detailedSector.detailedData);
+      } else {
+        rootSector.discard(sector.id);
       }
+      callback();
     });
+
+  return {
+    rootSector,
+    update
+  };
 }

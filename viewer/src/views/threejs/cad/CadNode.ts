@@ -191,7 +191,7 @@ export class CadNode extends THREE.Object3D {
       fromThreeVector3(cameraPosition, camera.position, this.modelTransformation);
       fromThreeMatrix(cameraModelMatrix, camera.matrixWorld, this.modelTransformation);
       fromThreeMatrix(projectionMatrix, camera.projectionMatrix);
-      const wantedSectors = await this._determineSectors({
+      const wantedSectors = this._determineSectors({
         scene: this._sectorScene,
         cameraFov: camera.fov,
         cameraPosition,

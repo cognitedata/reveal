@@ -7,7 +7,7 @@ import { SectorModelTransformation, SectorScene, WantedSectors, DetermineSectors
 /**
  * Delegate for determining what sectors to load for a given frustum.
  */
-export type DetermineSectorsDelegate = (params: DetermineSectorsInput) => Promise<WantedSectors>;
+export type DetermineSectorsDelegate = (params: DetermineSectorsInput) => WantedSectors;
 
 /**
  * Delegate that handles removal of a sector from a view (e.g. by removing it from the scene).

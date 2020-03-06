@@ -36,7 +36,8 @@ export class RootSectorNode extends SectorNode {
     }
 
     const metadata = findSectorMetadata(this.rootSectorMetadata, sectorId);
-    consumeSectorDetailed(sectorId, sector, metadata, sectorNode, this.shading.materials);
+    const obj = consumeSectorDetailed(sectorId, sector, metadata, this.shading.materials);
+    sectorNode.add(obj);
   }
 
   consumeSimple(sectorId: number, sector: SectorQuads) {
@@ -46,7 +47,8 @@ export class RootSectorNode extends SectorNode {
     }
 
     const metadata = findSectorMetadata(this.rootSectorMetadata, sectorId);
-    consumeSectorSimple(sectorId, sector, metadata, sectorNode, this.shading.materials);
+    const obj = consumeSectorSimple(sectorId, sector, metadata, this.shading.materials);
+    sectorNode.add(obj);
   }
 
   discard(sectorId: number) {
