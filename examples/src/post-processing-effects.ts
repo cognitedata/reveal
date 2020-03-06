@@ -20,7 +20,7 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const cadModel = await reveal.createLocalCadModel('/primitives');
+  const cadModel = await reveal.loadCadModelByUrl('/primitives');
   const cadModelNode = new reveal_threejs.CadNode(cadModel);
   scene.add(cadModelNode);
 

@@ -23,7 +23,7 @@ async function main() {
   renderer.setClearColor('#000000');
   renderer.setSize(window.innerWidth, window.innerHeight);
 
-  const sectorModel = await reveal.createLocalCadModel('/primitives');
+  const sectorModel = await reveal.loadCadModelByUrl('/primitives');
   const sectorModelNode = new reveal_threejs.CadNode(sectorModel);
   scene.add(sectorModelNode);
 

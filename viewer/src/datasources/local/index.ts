@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { createLocalCadModel } from './cad/createLocalCadModel';
+import { loadCadModelByUrl } from './cad/loadCadModelByUrl';
 import { createLocalPointCloudModel } from './pointcloud/createLocalPointCloudModel';
 
-export { createLocalCadModel, createLocalPointCloudModel };
+export { loadCadModelByUrl, createLocalPointCloudModel };

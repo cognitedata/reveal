@@ -42,7 +42,7 @@ async function main() {
   });
 
   const modelUrl = new URL(location.href).searchParams.get('model') || '/primitives';
-  const cadModel = await reveal.createLocalCadModel(modelUrl);
+  const cadModel = await reveal.loadCadModelByUrl(modelUrl);
 
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#444');
