@@ -81,10 +81,10 @@ export class CogniteClient3dExtensions {
     const url = this.client.getBaseUrl() + this.buildBlobBaseUrl(blobId) + (path ? `/${path}` : '');
     const headers: HttpHeaders = {
       ...this.client.getDefaultRequestHeaders(),
-      ...{ Accept: '*/*' }
+      Accept: '*/*'
     };
 
-    const response = await fetch(url, { headers });
+    const response = await fetch(url, { headers, method: 'GET' });
     return response.arrayBuffer();
   }
 
