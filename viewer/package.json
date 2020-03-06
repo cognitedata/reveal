@@ -19,7 +19,7 @@
   "author": "Svenn-Arne Dragly <dragly@cognite.com>",
   "contributors": [
     "Lars Moastuen <lars.moastuen@cognite.com>",
-    "Nils Petter Fremming <nils.fremming@cognite.com>"
+    "Joachim Bjørne <joachim.bjorne@cognite.com>"
   ],
   "license": "Apache-2.0",
   "sideEffects": false,
