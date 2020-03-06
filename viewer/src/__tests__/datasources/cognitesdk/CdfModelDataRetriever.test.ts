@@ -4,7 +4,7 @@
 
 import { CogniteClient } from '@cognite/sdk';
 import { CdfModelDataRetriever } from '../../../datasources/cognitesdk/CdfModelDataRetriever';
-import nock from 'nock/types';
+import nock from 'nock';
 
 describe('CdfModelDataRetriever', () => {
   const client = new CogniteClient({
