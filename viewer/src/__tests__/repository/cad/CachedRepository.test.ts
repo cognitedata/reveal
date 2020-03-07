@@ -11,16 +11,35 @@ import { vec3, mat4 } from 'gl-matrix';
 
 function createMockModel(): CadModel {
   return {
-    fetchSectorMetadata: jest.fn(),
     fetchSectorDetailed: jest.fn(),
     fetchSectorSimple: jest.fn(),
     fetchCtm: jest.fn(),
     parseDetailed: jest.fn(),
     parseSimple: jest.fn(),
+
     scene: {
+      version: 8,
+      maxTreeIndex: 0,
       root: {
         id: 0,
         path: '',
+        depth: 0,
+        indexFile: {
+          fileName: 'sector_0.i3d',
+          peripheralFiles: [],
+          downloadSize: 1000,
+          estimatedDrawCallCount: 1
+        },
+        facesFile: {
+          fileName: null,
+          quadSize: 0.5,
+          coverageFactors: {
+            xy: 0,
+            xz: 0,
+            yz: 0
+          },
+          downloadSize: 0
+        },
         bounds: new Box3([vec3.create(), vec3.create()]),
         children: []
       },

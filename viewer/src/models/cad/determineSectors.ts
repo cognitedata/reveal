@@ -45,7 +45,7 @@ export function defaultDetermineSectors(params: DetermineSectorsInput): WantedSe
     throw new Error('Provided camera model matrix is not invertible');
   }
   mat4.multiply(frustumMatrix, projectionMatrix, invertCameraModelMatrix);
-  frustum.setFromMatrix(toThreeMatrix4(frustumMatrix));
+  frustum.setFromProjectionMatrix(toThreeMatrix4(frustumMatrix));
 
   traverseDepthFirst(scene.root, sector => {
     min.set(sector.bounds.min[0], sector.bounds.min[1], sector.bounds.min[2]);
@@ -60,14 +60,7 @@ export function defaultDetermineSectors(params: DetermineSectorsInput): WantedSe
 
     const screenHeight = 2.0 * distanceToCamera(sector) * Math.tan((cameraFov / 2) * degToRadFactor);
     const largestAllowedQuadSize = hints.maxQuadSize * screenHeight; // no larger than x percent of the height
-    const quadSize = (() => {
-      if (!sector.simple) {
-        // Making the quad infinite in size means we will always use the detailed version instead
-        return Infinity;
-      }
-      return sector.simple.gridIncrement;
-    })();
-
+    const quadSize = sector.facesFile.quadSize;
     if (quadSize < largestAllowedQuadSize) {
       return false;
     }
@@ -104,7 +97,10 @@ export function determineSectorsQuality(scene: SectorScene, requestedDetailed: S
     if (detailed.includes(sector.id)) {
       return true;
     }
-    simple.push(sector.id);
+    // F3D file is omitted if there is no geometry in the file
+    if (sector.facesFile.fileName) {
+      simple.push(sector.id);
+    }
     return false;
   });
 

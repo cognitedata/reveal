@@ -21,7 +21,7 @@ export class RootSectorNode extends SectorNode {
   constructor(model: CadModel, shading: Shading) {
     super(0, '/');
     const { scene, modelTransformation } = model;
-    this.applyMatrix(toThreeMatrix4(modelTransformation.modelMatrix));
+    this.applyMatrix4(toThreeMatrix4(modelTransformation.modelMatrix));
     this.sectorNodeMap = new Map();
     this.rootSectorMetadata = scene.root;
     this.shading = shading;

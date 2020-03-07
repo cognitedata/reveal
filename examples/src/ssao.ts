@@ -14,7 +14,7 @@ async function main() {
   const modelUrl = new URL(location.href).searchParams.get('model') || '/primitives';
 
   const scene = new THREE.Scene();
-  const cadModel = await reveal.createLocalCadModel(modelUrl);
+  const cadModel = await reveal.loadCadModelByUrl(modelUrl);
   const cadNode = new CadNode(cadModel);
 
   scene.add(cadNode);

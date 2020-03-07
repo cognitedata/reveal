@@ -14,22 +14,31 @@ export function buildSectorMetadata(
 ): SectorScene {
   const sectorsMetadata = sectors.reduce((map, x) => {
     const simpleSector = simpleSectors.get(x.id);
-    if (!simpleSector) {
-      throw new Error(`Could not find corresponding simple sector for sector with ID ${x.id}`);
-    }
-    const simple = (() => {
-      if (!simpleSector.sector_contents) {
-        return undefined;
-      }
-      const size = simpleSector.sector_contents.grid_size;
-      const origin = simpleSector.sector_contents.grid_size;
-      return {
-        gridSize: vec3.fromValues(size[0], size[1], size[2]),
-        gridOrigin: vec3.fromValues(origin[0], origin[1], origin[2]),
-        gridIncrement: simpleSector.sector_contents.grid_increment,
-        nodeCount: simpleSector.sector_contents.node_count
-      };
-    })();
+    const facesFile =
+      simpleSector && simpleSector.sector_contents
+        ? {
+            quadSize: simpleSector.sector_contents.grid_increment,
+            // Unknowns
+            coverageFactors: {
+              xy: 0.5,
+              xz: 0.5,
+              yz: 0.5
+            },
+            fileName: `sector_${x.id}.f3d`,
+            downloadSize: -1
+          }
+        : {
+            quadSize: 0,
+            coverageFactors: { xy: 0, xz: 0, yz: 0 },
+            fileName: null,
+            downloadSize: 0
+          };
+    const indexFile = {
+      fileName: `sector_${x.id}.i3d`,
+      peripheralFiles: [],
+      estimatedDrawCallCount: 10,
+      downloadSize: -1
+    };
 
     const bbox = x.boundingBox;
     const boundsMin = vec3.fromValues(bbox.min[0], bbox.min[1], bbox.min[2]);
@@ -39,11 +48,13 @@ export function buildSectorMetadata(
     const id: number = x.id;
     const metadata: SectorMetadata = {
       id,
+      depth: x.depth,
       path: x.path,
       bounds,
       parent: undefined,
       children: [],
-      simple
+      facesFile,
+      indexFile
     };
 
     map.set(x.path, metadata);
@@ -70,6 +81,8 @@ export function buildSectorMetadata(
     throw new Error('No root sector');
   }
   return {
+    version: 8,
+    maxTreeIndex: -1,
     root,
     sectors: sectorMap
   };

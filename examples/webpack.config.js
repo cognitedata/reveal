@@ -162,7 +162,7 @@ module.exports = env => {
           use: ['source-map-loader'],
           enforce: 'pre',
           exclude: [
-            /node_modules\/@cognite\/reveal\/node_modules/,
+            /node_modules\/.*\/node_modules/,
           ],
         },
         {

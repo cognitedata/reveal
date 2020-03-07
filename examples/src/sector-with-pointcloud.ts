@@ -31,14 +31,12 @@ async function main() {
 
   Potree.XHRFactory.config.customHeaders.push({ header: 'MyDummyHeader', value: 'MyDummyValue' });
 
-  const sectorModel = await reveal.createLocalCadModel(cadModelUrl);
-  const sectorModelNode = new reveal_threejs.CadNode(sectorModel);
-  const sectorModelOffsetRoot = new THREE.Group();
-  sectorModelOffsetRoot.name = 'Sector model offset root';
-  sectorModelOffsetRoot.add(sectorModelNode);
-  scene.add(sectorModelOffsetRoot);
-  const { fetchSectorMetadata } = sectorModel;
-  const [modelScene] = await fetchSectorMetadata();
+  const cadModel = await reveal.loadCadModelByUrl(cadModelUrl);
+  const cadNode = new reveal_threejs.CadNode(cadModel);
+  const cadModelOffsetRoot = new THREE.Group();
+  cadModelOffsetRoot.name = 'Sector model offset root';
+  cadModelOffsetRoot.add(cadNode);
+  scene.add(cadModelOffsetRoot);
 
   const pointCloudModel = reveal.createLocalPointCloudModel(pointCloudModelUrl);
   const [pointCloudGroup, pointCloudNode] = await reveal_threejs.createThreeJsPointCloudNode(pointCloudModel);
@@ -48,13 +46,13 @@ async function main() {
   function handleSettingsChanged() {
     settingsChanged = true;
   }
-  const renderOptions = initializeGui(sectorModelNode, pointCloudGroup, pointCloudNode, handleSettingsChanged);
+  const renderOptions = initializeGui(cadNode, pointCloudGroup, pointCloudNode, handleSettingsChanged);
 
-  const { position, target, near, far } = reveal.internal.suggestCameraConfig(modelScene.root);
+  const { position, target, near, far } = reveal.internal.suggestCameraConfig(cadModel.scene.root);
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
-  const threePos = reveal_threejs.toThreeVector3(new THREE.Vector3(), position, sectorModelNode.modelTransformation);
-  const threeTarget = reveal_threejs.toThreeVector3(new THREE.Vector3(), target, sectorModelNode.modelTransformation);
+  const threePos = reveal_threejs.toThreeVector3(new THREE.Vector3(), position, cadNode.modelTransformation);
+  const threeTarget = reveal_threejs.toThreeVector3(new THREE.Vector3(), target, cadNode.modelTransformation);
   controls.setLookAt(threePos.x, threePos.y, threePos.z, threeTarget.x, threeTarget.y, threeTarget.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
@@ -63,7 +61,7 @@ async function main() {
   const render = async () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
-    const modelNeedsUpdate = renderOptions.loadingEnabled && (await sectorModelNode.update(camera));
+    const modelNeedsUpdate = renderOptions.loadingEnabled && (await cadNode.update(camera));
     const needsUpdate =
       renderOptions.renderMode === RenderMode.AlwaysRender ||
       (renderOptions.renderMode === RenderMode.WhenNecessary &&

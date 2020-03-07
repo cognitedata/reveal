@@ -6,7 +6,7 @@ import * as reveal from '@cognite/reveal';
 
 async function main() {
   const modelUrl = new URL(location.href).searchParams.get('model') || '/primitives';
-  const cadModel = await reveal.createLocalCadModel(modelUrl);
+  const cadModel = await reveal.loadCadModelByUrl(modelUrl);
   document.write(`<p>${JSON.stringify(cadModel.scene.root)}</p>`);
 }
 
