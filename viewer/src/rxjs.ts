@@ -15,7 +15,6 @@ import {
   empty,
   UnaryFunction
 } from 'rxjs';
-import { createLocalCadModel } from './datasources/local/cad/createLocalCadModel';
 import {
   switchMap,
   flatMap,
