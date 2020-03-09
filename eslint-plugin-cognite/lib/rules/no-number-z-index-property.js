@@ -15,7 +15,7 @@ module.exports = {
       description: 'Use the z-index util for zIndex props',
       category: 'Best Practices',
       recommended: false,
-      url: getDocsUrl('no-number-z-index'),
+      url: getDocsUrl('no-number-z-index-property'),
     },
     messages: {
       'no-number-z-index-property': 'zIndex property should use zIndex util',

@@ -15,7 +15,7 @@ module.exports = {
       description: 'Use the z-index util in styled components',
       category: 'Best Practices',
       recommended: false,
-      url: getDocsUrl('no-number-z-index'),
+      url: getDocsUrl('no-number-z-index-styled-components'),
     },
     messages: {
       'no-number-z-index-styled-components':

@@ -15,7 +15,7 @@ module.exports = {
       description: 'Use the z-index util in inline styling',
       category: 'Best Practices',
       recommended: false,
-      url: getDocsUrl('no-number-z-index'),
+      url: getDocsUrl('no-number-z-index-inline-styling'),
     },
     messages: {
       'no-number-z-index-inline-styling':
