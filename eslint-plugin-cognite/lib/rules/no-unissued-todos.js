@@ -1,6 +1,5 @@
 /**
  * @fileoverview Rule to disallow unissed use of todos
- * @author Evan Charlton
  */
 
 const { escapeRegExp } = require('lodash');

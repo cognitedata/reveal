@@ -1,6 +1,5 @@
 /**
  * @fileoverview Rule to disallow z-index numbers in component props
- * @author Cameron Shum
  */
 
 const { getDocsUrl } = require('../utils');

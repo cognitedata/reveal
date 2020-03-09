@@ -1,6 +1,5 @@
 /**
  * @fileoverview Rule to import styled-components/macro when using styled-components
- * @author Valerii Gusev
  */
 
 const { getDocsUrl } = require('../utils');
@@ -34,6 +33,7 @@ module.exports = {
       ImportDeclaration(node) {
         const name = 'styled-components';
         if (
+          node.source.value !== undefined &&
           node.source.value.indexOf(name) > -1 &&
           node.source.value !== `${name}/macro`
         ) {

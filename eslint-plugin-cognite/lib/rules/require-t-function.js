@@ -1,6 +1,5 @@
 /**
  * @fileoverview Rule to use t function when using withTranslation
- * @author Valerii Gusev
  */
 
 const { getDocsUrl } = require('../utils');
