@@ -7,13 +7,11 @@ import { CogniteClient } from '@cognite/sdk';
 import { CogniteClient3dExtensions } from '../../utils/CogniteClient3dExtensions';
 
 export class CdfModelDataRetriever implements ModelDataRetriever {
-  private readonly client: CogniteClient;
   private readonly clientExtensions: CogniteClient3dExtensions;
   private readonly blobId: number;
 
   constructor(client: CogniteClient, blobId: number) {
-    this.client = client;
-    this.clientExtensions = new CogniteClient3dExtensions(this.client);
+    this.clientExtensions = new CogniteClient3dExtensions(client);
     this.blobId = blobId;
   }
 
