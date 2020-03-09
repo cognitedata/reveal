@@ -9,25 +9,18 @@ import { CogniteClient } from '@cognite/sdk';
 describe('CogniteClient3dExtensions', () => {
   const appId = 'reveal-CogniteClient3dV2Extensions-test';
   const baseUrl = 'http://localhost';
-  const sdk = new CogniteClient({
+  const client = new CogniteClient({
     appId,
     baseUrl
   });
-  const sdkExt = new CogniteClient3dExtensions(sdk);
-
-  // beforeEach(() => {
-  //   nock(/.*/)
-  //     .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
-  //     .options(/.*/)
-  //     .reply(200);
-  // });
+  const clientExt = new CogniteClient3dExtensions(client);
 
   test('getOutputs() throws error when server returns 400', async () => {
     nock(/.*/)
       .post(/.*/)
       .reply(400, {});
 
-    expect(sdkExt.getOutputs('externalId')).rejects.toThrowError();
+    expect(clientExt.getOutputs('externalId')).rejects.toThrowError();
   });
 
   test('getOutputs() with empty outputs in response, returns empty list', async () => {
@@ -47,7 +40,7 @@ describe('CogniteClient3dExtensions', () => {
       .reply(200, response);
 
     // Act
-    const result = await sdkExt.getOutputs('externalId');
+    const result = await clientExt.getOutputs('externalId');
 
     // Assert
     expect(result).toEqual({ ...response.items[0] });
@@ -81,7 +74,7 @@ describe('CogniteClient3dExtensions', () => {
       .reply(200, response);
 
     // Act
-    const result = await sdkExt.getOutputs(42);
+    const result = await clientExt.getOutputs(42);
 
     // Assert
     expect(result).toEqual({ ...response.items[0] });
@@ -95,7 +88,7 @@ describe('CogniteClient3dExtensions', () => {
       .reply(200, response, { 'content-type': 'binary' });
 
     // Act
-    const result = await sdkExt.retrieveBinaryBlob(10);
+    const result = await clientExt.retrieveBinaryBlob(10);
 
     // Assert
     const expected = new Array<number>(response.length);

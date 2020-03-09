@@ -16,11 +16,11 @@ export async function loadCadModelFromCdfOrUrl(model: string, project: string | 
     if (!project) {
       throw new Error('Must provide project when model is a modelId.');
     }
-    const sdk = new CogniteClient({ appId: 'cognite.reveal.example' });
-    sdk.loginWithOAuth({ project });
-    await sdk.authenticate();
+    const client = new CogniteClient({ appId: 'cognite.reveal.example' });
+    client.loginWithOAuth({ project });
+    await client.authenticate();
     const id = Number.parseInt(model, 10);
-    return reveal.loadCadModelFromCdf(sdk, id);
+    return reveal.loadCadModelFromCdf(client, id);
   } else {
     return reveal.loadCadModelByUrl(model);
   }
@@ -40,10 +40,10 @@ export async function loadPointCloudModelFromCdfOrUrl(
     if (!project) {
       throw new Error('Must provide project when model is a modelId.');
     }
-    const sdk = new CogniteClient({ appId: 'cognite.reveal.example' });
-    sdk.loginWithOAuth({ project });
-    await sdk.authenticate();
-    return reveal.createPointCloudModel(sdk, Number.parseInt(model, 10));
+    const client = new CogniteClient({ appId: 'cognite.reveal.example' });
+    client.loginWithOAuth({ project });
+    await client.authenticate();
+    return reveal.createPointCloudModel(client, Number.parseInt(model, 10));
   } else {
     return reveal.createLocalPointCloudModel(model);
   }

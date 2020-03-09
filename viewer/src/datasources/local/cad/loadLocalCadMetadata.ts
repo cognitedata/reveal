@@ -30,7 +30,7 @@ export async function loadLocalCadMetadata(cadMetadataUrl: string): Promise<Reve
     sectors.push(sector);
   }
 
-  const sdkSectors = sectors.map(
+  const clientSectors = sectors.map(
     (s): RevealSector3D => {
       return {
         id: s.SectorId,
@@ -42,7 +42,7 @@ export async function loadLocalCadMetadata(cadMetadataUrl: string): Promise<Reve
       };
     }
   );
-  return sdkSectors;
+  return clientSectors;
 }
 
 function transformBbox(sector: LocalCadMetadataResponse): BoundingBox3D {

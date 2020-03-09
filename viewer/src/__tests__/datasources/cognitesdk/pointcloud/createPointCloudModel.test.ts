@@ -9,7 +9,7 @@ import { createPointCloudModel } from '../../../../datasources/cognitesdk';
 describe('createPointCloudModel', () => {
   const appId = 'reveal-creatPointCloudModel-test';
   const baseUrl = 'https://localhost';
-  const sdk = new CogniteClient({
+  const client = new CogniteClient({
     appId,
     baseUrl
   });
@@ -21,7 +21,7 @@ describe('createPointCloudModel', () => {
       .reply(404);
 
     // Act
-    expect(createPointCloudModel(sdk, 1337)).rejects.toThrowError();
+    expect(createPointCloudModel(client, 1337)).rejects.toThrowError();
   });
 
   test('valid modelId without point cloud output, throws', async () => {
@@ -31,7 +31,7 @@ describe('createPointCloudModel', () => {
       .reply(200, []);
 
     // Act
-    expect(createPointCloudModel(sdk, 1337)).rejects.toThrowError();
+    expect(createPointCloudModel(client, 1337)).rejects.toThrowError();
   });
 
   test('valid modelId point cloud output, returns model', async () => {
@@ -55,7 +55,7 @@ describe('createPointCloudModel', () => {
       .reply(200, response);
 
     // Act
-    const model = await createPointCloudModel(sdk, 1337);
+    const model = await createPointCloudModel(client, 1337);
     expect(model).toBeTruthy();
   });
 });
