@@ -14,7 +14,7 @@ import {
   RenderMode,
   RenderOptions
 } from './utils/renderer-debug-widget';
-import { loadCadModelFromCdfOrUrl } from './utils/loaders';
+import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams } from './utils/loaders';
 
 CameraControls.install({ THREE });
 
@@ -48,23 +48,30 @@ function initializeModel(
 
 async function main() {
   const params = new URL(location.href).searchParams;
-  const modelIdentifier1 = params.get('model1') || params.get('model') || '/primitives';
-  const modelIdentifier2 = params.get('model2') || modelIdentifier1;
-  const project = params.get('project');
+  const modelIdentifier1 = createModelIdentifierFromUrlParams(params, '/primitives', 'model1', 'project', 'modelUrl1');
+  const modelIdentifier2 = createModelIdentifierFromUrlParams(
+    params,
+    modelIdentifier1,
+    'model2',
+    'project',
+    'modelUrl2'
+  );
+  const modelHeader1 = params.get('modelUrl1') || `${params.get('model1')}@${params.get('project')}`;
+  const modelHeader2 = params.get('modelUrl2') || `${params.get('model2')}@${params.get('project')}`;
 
   // Page layout
   const gui1 = new dat.GUI({ autoPlace: false, width: 300 });
   const gui2 = new dat.GUI({ autoPlace: false, width: 300 });
   document.getElementById('gui1')!.appendChild(gui1.domElement);
   document.getElementById('gui2')!.appendChild(gui2.domElement);
-  document.getElementById('header1')!.appendChild(document.createTextNode(modelIdentifier1));
-  document.getElementById('header2')!.appendChild(document.createTextNode(modelIdentifier2));
+  document.getElementById('header1')!.appendChild(document.createTextNode(modelHeader1));
+  document.getElementById('header2')!.appendChild(document.createTextNode(modelHeader2));
   const leftCanvas = document.getElementById('leftCanvas')! as HTMLCanvasElement;
   const rightCanvas = document.getElementById('rightCanvas')! as HTMLCanvasElement;
 
   // Initialize models
-  const model1 = await loadCadModelFromCdfOrUrl(modelIdentifier1, project);
-  const model2 = await loadCadModelFromCdfOrUrl(modelIdentifier2, project);
+  const model1 = await loadCadModelFromCdfOrUrl(modelIdentifier1);
+  const model2 = await loadCadModelFromCdfOrUrl(modelIdentifier2);
   const [renderer1, scene1, modelNode1, options1] = initializeModel(model1, leftCanvas, gui1);
   const [renderer2, scene2, modelNode2, options2] = initializeModel(model2, rightCanvas, gui2);
 

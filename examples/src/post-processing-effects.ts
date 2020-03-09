@@ -3,11 +3,10 @@
  */
 
 import * as THREE from 'three';
-import * as reveal from '@cognite/reveal';
 import * as reveal_threejs from '@cognite/reveal/threejs';
 
 import CameraControls from 'camera-controls';
-import { loadCadModelFromCdfOrUrl } from './utils/loaders';
+import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams } from './utils/loaders';
 
 const postprocessing = require('postprocessing');
 
@@ -15,8 +14,7 @@ CameraControls.install({ THREE });
 
 async function main() {
   const urlParams = new URL(location.href).searchParams;
-  const model = urlParams.get('model') || '/primitives';
-  const project = urlParams.get('project');
+  const modelId = createModelIdentifierFromUrlParams(urlParams, '/primitives');
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -25,7 +23,7 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const cadModel = await loadCadModelFromCdfOrUrl(model, project);
+  const cadModel = await loadCadModelFromCdfOrUrl(modelId);
   const cadModelNode = new reveal_threejs.CadNode(cadModel);
   scene.add(cadModelNode);
 

@@ -16,14 +16,24 @@ import {
   RenderMode,
   createDefaultRenderOptions
 } from './utils/renderer-debug-widget';
-import { loadCadModelFromCdfOrUrl, loadPointCloudModelFromCdfOrUrl } from './utils/loaders';
+import {
+  loadCadModelFromCdfOrUrl,
+  loadPointCloudModelFromCdfOrUrl,
+  createModelIdentifierFromUrlParams
+} from './utils/loaders';
 
 CameraControls.install({ THREE });
 
 async function main() {
   const urlParams = new URL(location.href).searchParams;
-  const cadModelIdentifier = urlParams.get('model') || '/transformer';
-  const pointCloudModelIdentifier = urlParams.get('pointcloud') || '/transformer-point-cloud';
+  const cadModelIdentifier = createModelIdentifierFromUrlParams(urlParams, '/primitives');
+  const pointCloudModelIdentifier = createModelIdentifierFromUrlParams(
+    urlParams,
+    '/transformer',
+    'pointcloud',
+    'project',
+    'pointcloudUrl'
+  );
   const project = urlParams.get('project');
 
   const scene = new THREE.Scene();
@@ -34,14 +44,14 @@ async function main() {
 
   Potree.XHRFactory.config.customHeaders.push({ header: 'MyDummyHeader', value: 'MyDummyValue' });
 
-  const cadModel = await loadCadModelFromCdfOrUrl(cadModelIdentifier, project);
+  const cadModel = await loadCadModelFromCdfOrUrl(cadModelIdentifier);
   const cadNode = new reveal_threejs.CadNode(cadModel);
   const cadModelOffsetRoot = new THREE.Group();
   cadModelOffsetRoot.name = 'Sector model offset root';
   cadModelOffsetRoot.add(cadNode);
   scene.add(cadModelOffsetRoot);
 
-  const pointCloudModel = await loadPointCloudModelFromCdfOrUrl(pointCloudModelIdentifier, project);
+  const pointCloudModel = await loadPointCloudModelFromCdfOrUrl(pointCloudModelIdentifier);
   const [pointCloudGroup, pointCloudNode] = await reveal_threejs.createThreeJsPointCloudNode(pointCloudModel);
   scene.add(pointCloudGroup);
 

@@ -6,14 +6,13 @@ import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import * as reveal_threejs from '@cognite/reveal/threejs';
 import dat from 'dat.gui';
-import { loadCadModelFromCdfOrUrl } from './utils/loaders';
+import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams } from './utils/loaders';
 
 CameraControls.install({ THREE });
 
 async function main() {
   const urlParams = new URL(location.href).searchParams;
-  const model = urlParams.get('model') || '/primitives';
-  const project = urlParams.get('project');
+  const modelId = createModelIdentifierFromUrlParams(urlParams, '/primitives');
 
   let shadingNeedsUpdate = false;
   let visibleIndices = new Set([1, 2, 8, 12]);
@@ -43,7 +42,7 @@ async function main() {
   });
 
   const scene = new THREE.Scene();
-  const cadModel = await loadCadModelFromCdfOrUrl(model, project);
+  const cadModel = await loadCadModelFromCdfOrUrl(modelId);
   const cadNode = new reveal_threejs.CadNode(cadModel, { shading });
 
   scene.add(cadNode);

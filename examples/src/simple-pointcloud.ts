@@ -10,14 +10,13 @@ import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
 import { vec3 } from 'gl-matrix';
 import { toThreeJsBox3 } from '@cognite/reveal/threejs';
-import { loadPointCloudModelFromCdfOrUrl } from './utils/loaders';
+import { loadPointCloudModelFromCdfOrUrl, createModelIdentifierFromUrlParams } from './utils/loaders';
 
 CameraControls.install({ THREE });
 
 async function main() {
   const urlParams = new URL(location.href).searchParams;
-  const modelIdentifier = urlParams.get('model') || '/transformer-point-cloud/cloud.js';
-  const project = urlParams.get('project');
+  const modelIdentifier = createModelIdentifierFromUrlParams(urlParams, '/primitives');
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
@@ -26,7 +25,7 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const pointCloudModel = await loadPointCloudModelFromCdfOrUrl(modelIdentifier, project);
+  const pointCloudModel = await loadPointCloudModelFromCdfOrUrl(modelIdentifier);
   const [pointCloudGroup, pointCloudNode] = await reveal_threejs.createThreeJsPointCloudNode(pointCloudModel);
   scene.add(pointCloudGroup);
 

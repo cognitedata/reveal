@@ -4,9 +4,8 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import * as reveal from '@cognite/reveal';
 import * as reveal_threejs from '@cognite/reveal/threejs';
-import { loadCadModelFromCdfOrUrl } from './utils/loaders';
+import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams } from './utils/loaders';
 
 CameraControls.install({ THREE });
 
@@ -18,8 +17,7 @@ function createSphere(point: THREE.Vector3, color: string): THREE.Mesh {
 
 async function main() {
   const urlParams = new URL(location.href).searchParams;
-  const model = urlParams.get('model') || '/primitives';
-  const project = urlParams.get('project');
+  const modelId = createModelIdentifierFromUrlParams(urlParams, '/primitives');
 
   const pickedNodes: Set<number> = new Set();
   const pickedObjects: Set<THREE.Mesh> = new Set();
@@ -35,7 +33,7 @@ async function main() {
   const scene = new THREE.Scene();
 
   // Add some data for Reveal
-  const cadModel = await loadCadModelFromCdfOrUrl(model, project);
+  const cadModel = await loadCadModelFromCdfOrUrl(modelId);
   const cadNode = new reveal_threejs.CadNode(cadModel, { shading });
   scene.add(cadNode);
 
