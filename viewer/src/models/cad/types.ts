@@ -29,21 +29,43 @@ export type SectorModelTransformation = {
 export interface SectorMetadata {
   readonly id: number;
   readonly path: string;
+  readonly depth: number;
   readonly bounds: Box3;
-  readonly simple?: {
-    readonly gridSize: vec3;
-    readonly gridOrigin: vec3;
-    readonly gridIncrement: number;
-    readonly nodeCount: number;
+  readonly indexFile: {
+    readonly fileName: string;
+    readonly peripheralFiles: string[];
+    readonly estimatedDrawCallCount: number;
+    readonly downloadSize: number;
+  };
+  readonly facesFile: {
+    readonly quadSize: number;
+    readonly coverageFactors: {
+      xy: number;
+      yz: number;
+      xz: number;
+    };
+    readonly fileName: string | null;
+    readonly downloadSize: number;
   };
   readonly children: SectorMetadata[];
+
   // TODO 2019-12-21 larsmoa: Make readonly
   parent?: SectorMetadata;
 }
 
 export interface SectorScene {
+  readonly version: number;
+  readonly maxTreeIndex: number;
+
   readonly root: SectorMetadata;
   readonly sectors: Map<number, SectorMetadata>;
+
+  // Available, but not supported:
+  // readonly projectId: number;
+  // readonly modelId: number;
+  // readonly revisionId: number;
+  // readonly subRevisionId: number;
+  // readonly unit: string | null;
 }
 
 export type Color = number;

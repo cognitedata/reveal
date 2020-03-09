@@ -1,21 +1,26 @@
 /*!
  * Copyright 2020 Cognite AS
  */
-import { SectorMetadata } from '../../../models/cad/types';
+import { SectorMetadata, SectorScene } from '../../../models/cad/types';
 import { Box3 } from '../../../utils/Box3';
 import { determineSectorsQuality } from '../../../models/cad/determineSectors';
 import { expectSetEqual } from '../../expects';
 import { traverseDepthFirst } from '../../../utils/traversal';
 
-function createSceneFromRoot(root: SectorMetadata) {
+function createSceneFromRoot(root: SectorMetadata): SectorScene {
   const sectors = new Map<number, SectorMetadata>();
   traverseDepthFirst(root, sector => {
     sectors.set(sector.id, sector);
     return true;
   });
+  let maxTreeIndex = -1;
+  sectors.forEach(v => (maxTreeIndex = Math.max(maxTreeIndex, v.id)));
+
   return {
+    version: 8,
     root,
-    sectors
+    sectors,
+    maxTreeIndex
   };
 }
 
@@ -24,8 +29,25 @@ function sectorNodeFromTreeNode(node: TreeNode, parent?: SectorMetadata): Sector
     id: node.id,
     path: '',
     bounds: new Box3([]),
+    depth: 0,
     parent,
-    children: new Array<SectorMetadata>()
+    children: new Array<SectorMetadata>(),
+    indexFile: {
+      fileName: `sector_${node.id}.i3d`,
+      peripheralFiles: [],
+      estimatedDrawCallCount: 10,
+      downloadSize: 1000
+    },
+    facesFile: {
+      fileName: `sector_${node.id}.f3d`,
+      quadSize: 1.5,
+      coverageFactors: {
+        xy: 0.6,
+        yz: 0.5,
+        xz: 0.8
+      },
+      downloadSize: 100
+    }
   };
   result.children = node.children.map(x => sectorNodeFromTreeNode(x, result));
   return result;

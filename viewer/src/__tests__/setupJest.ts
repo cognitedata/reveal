@@ -10,3 +10,10 @@ Object.defineProperty(document, 'currentScript', {
   value: document.createElement('script')
 });
 (document.currentScript as any).src = 'http://localhost/iamdummy.html';
+
+// Mock Worker for web workers
+class StubWorker {
+  constructor(_: string) {}
+  public postMessage(_: any) {}
+}
+(window as any).Worker = StubWorker;

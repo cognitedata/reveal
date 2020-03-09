@@ -61,8 +61,8 @@ async function main() {
   const rightCanvas = document.getElementById('rightCanvas')! as HTMLCanvasElement;
 
   // Initialize models
-  const model1 = await reveal.createLocalCadModel(modelUrl1);
-  const model2 = await reveal.createLocalCadModel(modelUrl2);
+  const model1 = await reveal.loadCadModelByUrl(modelUrl1);
+  const model2 = await reveal.loadCadModelByUrl(modelUrl2);
   const [renderer1, scene1, modelNode1, options1] = initializeModel(model1, leftCanvas, gui1);
   const [renderer2, scene2, modelNode2, options2] = initializeModel(model2, rightCanvas, gui2);
 

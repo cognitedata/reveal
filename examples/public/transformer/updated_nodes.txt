@@ -1,7 +1,0 @@
-{"ProjectId":123,"ModelId":456,"RevisionId":789,"SubrevisionId":999,"NodeId":8491268013672499,"SectorId":{"Value":0}}
-{"ProjectId":123,"ModelId":456,"RevisionId":789,"SubrevisionId":999,"NodeId":5687152290985536,"SectorId":{"Value":0}}
-{"ProjectId":123,"ModelId":456,"RevisionId":789,"SubrevisionId":999,"NodeId":4517916276571228,"SectorId":{"Value":0}}
-{"ProjectId":123,"ModelId":456,"RevisionId":789,"SubrevisionId":999,"NodeId":4696765567789644,"SectorId":{"Value":0}}
-{"ProjectId":123,"ModelId":456,"RevisionId":789,"SubrevisionId":999,"NodeId":7684884707835676,"SectorId":{"Value":0}}
-{"ProjectId":123,"ModelId":456,"RevisionId":789,"SubrevisionId":999,"NodeId":6905837319658057,"SectorId":{"Value":0}}
-{"ProjectId":123,"ModelId":456,"RevisionId":789,"SubrevisionId":999,"NodeId":8443024807334774,"SectorId":{"Value":0}}

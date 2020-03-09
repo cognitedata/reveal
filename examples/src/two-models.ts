@@ -18,8 +18,8 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const sectorModel1 = await reveal.createLocalCadModel('/primitives');
-  const sectorModel2 = await reveal.createLocalCadModel('/primitives');
+  const sectorModel1 = await reveal.loadCadModelByUrl('/primitives');
+  const sectorModel2 = await reveal.loadCadModelByUrl('/primitives');
   const sectorModelNode1 = new reveal_threejs.CadNode(sectorModel1);
   const sectorModelNode2 = new reveal_threejs.CadNode(sectorModel2);
   const model2Offset = new THREE.Group();
