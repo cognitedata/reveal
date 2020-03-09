@@ -16,11 +16,8 @@ import { DefaultSectorRotationMatrix, DefaultInverseSectorRotationMatrix } from 
 
 const SupportedCadVersions = [8];
 
-export async function loadCadModelFromCdf(
-  sdkClient: CogniteClient,
-  modelRevisionId: CogniteUniformId
-): Promise<CadModel> {
-  const extension = new CogniteClient3dExtensions(sdkClient);
+export async function loadCadModelFromCdf(client: CogniteClient, modelRevisionId: CogniteUniformId): Promise<CadModel> {
+  const extension = new CogniteClient3dExtensions(client);
   const outputs = await extension.getOutputs(modelRevisionId, [CogniteWellknown3dFormat.RevealCadModel]);
   if (!outputs) {
     throw new Error(`Model is not compatible with Reveal`);
@@ -35,7 +32,7 @@ export async function loadCadModelFromCdf(
     modelMatrix: DefaultSectorRotationMatrix,
     inverseModelMatrix: DefaultInverseSectorRotationMatrix
   };
-  const retriever = new CdfModelDataRetriever(sdkClient, output.blobId);
+  const retriever = new CdfModelDataRetriever(client, output.blobId);
   const model = await CadModelImpl.create(retriever, transform);
   return model;
 }
