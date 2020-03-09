@@ -19,7 +19,7 @@ console_error_panic_hook = "0.1.6"
 serde-wasm-bindgen = "0.1.3"
 serde_bytes = "0.11.3"
 byteorder = "1.3.4"
-openctm = { git = "https://github.com/cognitedata/openctm-rs", rev="da096bc4db46ce165456a9d930d2971b1219ea69" }
+openctm = { git = "https://github.com/cognitedata/openctm-rs", rev="e0a0e2634db83c6aaf697cf54c7c48b9d985cdd5" }
 i3df = { path = "../i3df" }
 f3df = { path = "../f3df" }
 
