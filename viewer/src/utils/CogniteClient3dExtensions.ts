@@ -72,13 +72,16 @@ export class CogniteClient3dExtensions {
   }
 
   public async retrieveJsonBlob<T>(blobId: number, path?: string): Promise<T> {
-    const url = this.buildBlobBaseUrl(blobId) + (path ? `/${path}` : '');
+    const url = this.buildBlobRequestPath(blobId) + (path ? `/${path}` : '');
     const response = await this.client.get<T>(url);
     return response.data;
   }
 
   public async retrieveBinaryBlob(blobId: number, path?: string): Promise<ArrayBuffer> {
-    const url = this.client.getBaseUrl() + this.buildBlobBaseUrl(blobId) + (path ? `/${path}` : '');
+    const baseUrl = this.client.getBaseUrl();
+    const blobUrl = this.buildBlobRequestPath(blobId);
+    const pathUrl = path ? `/${path}` : '';
+    const url = `${baseUrl}/${blobUrl}${pathUrl}`;
     const headers: HttpHeaders = {
       ...this.client.getDefaultRequestHeaders(),
       Accept: '*/*'
@@ -88,7 +91,7 @@ export class CogniteClient3dExtensions {
     return response.arrayBuffer();
   }
 
-  public buildBlobBaseUrl(blobId: number): string {
+  public buildBlobRequestPath(blobId: number): string {
     const url = `/api/playground/projects/${this.client.project}/3d/v2/blobs/${blobId}`;
     return url;
   }

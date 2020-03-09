@@ -31,7 +31,7 @@ export async function createPointCloudModel(
   if (!mostRecentEptOutput) {
     throw new Error(`No point cloud output found for model ${modelRevisionId}`);
   }
-  const url = baseUrl + clientExtensions.buildBlobBaseUrl(mostRecentEptOutput.blobId) + '/ept.json';
+  const url = baseUrl + clientExtensions.buildBlobRequestPath(mostRecentEptOutput.blobId) + '/ept.json';
   const loaderPromise = EptLoader.load(url);
 
   const fetchPointCloud: FetchPointCloudDelegate = async () => {
