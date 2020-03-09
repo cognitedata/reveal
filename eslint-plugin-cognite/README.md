@@ -57,4 +57,6 @@ Presets are enabled by adding a line to the `extends` list in your config file. 
 
 * `all` enables all rules from this plugin.
 * `noNumZIndex` enables all the rules that prevent numbers with z-indexes.
+* `insight` enables all rules native to insight.
+* `opsup` enables all rules native to operations support.
 
