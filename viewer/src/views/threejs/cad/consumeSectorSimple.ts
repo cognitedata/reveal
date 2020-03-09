@@ -60,6 +60,7 @@ export function consumeSectorSimple(
   geometry.setAttribute('matrix3', matrix3);
 
   const obj = new THREE.Mesh(geometry, materials.simple);
+  obj.add(boundsRenderer);
 
   obj.name = `Quads ${sectorId}`;
   // TODO 20191028 dragly figure out why the quads are being culled wrongly and if we

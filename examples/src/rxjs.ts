@@ -31,10 +31,11 @@ async function main() {
   camera.updateMatrixWorld();
   const clock = new THREE.Clock();
 
-  let sectorNeedUpdate = false;
+  let sectorNeedUpdate = true;
   const rxjsObj = reveal.rxjs.testme(cadModel, () => {
     sectorNeedUpdate = true;
   });
+  rxjsObj.update(camera);
 
   scene.add(rxjsObj.rootSector);
 
@@ -44,7 +45,6 @@ async function main() {
     if (controlsNeedUpdate) {
       rxjsObj.update(camera);
     }
-    //const sectorsNeedUpdate = await cadNode.update(camera);
 
     if (controlsNeedUpdate || sectorNeedUpdate) {
       renderer.render(scene, camera);
