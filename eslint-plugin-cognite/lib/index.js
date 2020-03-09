@@ -16,6 +16,22 @@ const pluginsAllRules = Object.keys(allRules).reduce(
 module.exports = {
   rules: allRules,
   configs: {
+    opsup: {
+      plugins: ['@cognite'],
+      rules: {
+        '@cognite/no-number-z-index-inline-styling': 2,
+        '@cognite/no-number-z-index-property': 2,
+        '@cognite/no-number-z-index-styled-components': 2,
+        '@cognite/require-styled-macro': 1,
+        '@cognite/require-t-function': 1,
+      },
+    },
+    insight: {
+      plugins: ['@cognite'],
+      rules: {
+        '@cognite/no-unissued-todos': 1,
+      },
+    },
     noNumZIndex: {
       plugins: ['@cognite'],
       rules: {
