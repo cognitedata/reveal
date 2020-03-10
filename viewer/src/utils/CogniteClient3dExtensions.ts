@@ -81,7 +81,7 @@ export class CogniteClient3dExtensions {
     const baseUrl = this.client.getBaseUrl();
     const blobUrl = this.buildBlobRequestPath(blobId);
     const pathUrl = path ? `/${path}` : '';
-    const url = `${baseUrl}/${blobUrl}${pathUrl}`;
+    const url = `${baseUrl}${blobUrl}${pathUrl}`;
     const headers: HttpHeaders = {
       ...this.client.getDefaultRequestHeaders(),
       Accept: '*/*'
