@@ -22,11 +22,6 @@ module.exports = {
       'require-t-function':
         'Custom t function prop from withTranslation should be provided',
     },
-    schema: [
-      {
-        type: 'string',
-      },
-    ],
   },
   create(context) {
     return {

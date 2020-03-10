@@ -21,7 +21,6 @@ module.exports = {
       'no-number-z-index-inline-styling':
         'Inline zIndex styling should use zIndex util',
     },
-    schema: [],
   },
   create(context) {
     return {

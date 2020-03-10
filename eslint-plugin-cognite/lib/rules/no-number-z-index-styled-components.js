@@ -21,7 +21,6 @@ module.exports = {
       'no-number-z-index-styled-components':
         'z-index in a styled component should use zIndex util',
     },
-    schema: [],
   },
   create(context) {
     return {

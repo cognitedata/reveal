@@ -22,11 +22,6 @@ module.exports = {
     messages: {
       'require-styled-macro': 'Please import from styled-components/macro.',
     },
-    schema: [
-      {
-        type: 'string',
-      },
-    ],
   },
   create(context) {
     return {

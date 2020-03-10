@@ -20,7 +20,6 @@ module.exports = {
     messages: {
       'no-number-z-index-property': 'zIndex property should use zIndex util',
     },
-    schema: [],
   },
   create(context) {
     return {
