@@ -41,8 +41,7 @@ async function main() {
     project
   });
 
-  const modelUrl = new URL(location.href).searchParams.get('model') || '/primitives';
-  const cadModel = await reveal.loadCadModelByUrl(modelUrl);
+  const cadModel = await reveal.loadCadModelFromCdf(client, modelId);
 
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#444');

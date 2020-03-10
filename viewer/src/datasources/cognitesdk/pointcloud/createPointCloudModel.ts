@@ -19,19 +19,19 @@ import * as Potree from '@cognite/potree-core';
 const identity = mat4.identity(mat4.create());
 
 export async function createPointCloudModel(
-  sdk: CogniteClient,
+  client: CogniteClient,
   modelRevisionId: CogniteUniformId
 ): Promise<PointCloudModel> {
-  initializeXhrRequestHeaders(sdk);
-  const baseUrl = sdk.getBaseUrl();
+  initializeXhrRequestHeaders(client);
+  const baseUrl = client.getBaseUrl();
 
-  const sdkExtensions = new CogniteClient3dExtensions(sdk);
-  const outputs = await sdkExtensions.getOutputs(modelRevisionId, [CogniteWellknown3dFormat.EptPointCloud]);
+  const clientExtensions = new CogniteClient3dExtensions(client);
+  const outputs = await clientExtensions.getOutputs(modelRevisionId, [CogniteWellknown3dFormat.EptPointCloud]);
   const mostRecentEptOutput = outputs.findMostRecentOutput(CogniteWellknown3dFormat.EptPointCloud);
   if (!mostRecentEptOutput) {
     throw new Error(`No point cloud output found for model ${modelRevisionId}`);
   }
-  const url = baseUrl + sdkExtensions.buildBlobBaseUrl(mostRecentEptOutput.blobId) + '/ept.json';
+  const url = baseUrl + clientExtensions.buildBlobRequestPath(mostRecentEptOutput.blobId) + '/ept.json';
   const loaderPromise = EptLoader.load(url);
 
   const fetchPointCloud: FetchPointCloudDelegate = async () => {
@@ -44,10 +44,10 @@ export async function createPointCloudModel(
   return [fetchPointCloud];
 }
 
-function initializeXhrRequestHeaders(sdk: CogniteClient) {
-  const sdkHeaders = sdk.getDefaultRequestHeaders();
+function initializeXhrRequestHeaders(client: CogniteClient) {
+  const clientHeaders = client.getDefaultRequestHeaders();
   let xhrHeaders: { header: string; value: string }[] = Potree.XHRFactory.config.customHeaders;
-  for (const [header, value] of Object.entries(sdkHeaders)) {
+  for (const [header, value] of Object.entries(clientHeaders)) {
     xhrHeaders = xhrHeaders.filter(x => x.header !== header);
     xhrHeaders.push({ header, value });
   }

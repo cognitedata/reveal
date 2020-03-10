@@ -3,6 +3,7 @@
  */
 
 import { CogniteClient, CogniteInternalId, CogniteExternalId } from '@cognite/sdk';
+import { HttpHeaders } from '@cognite/sdk/dist/src/utils/http/basicHttpClient';
 
 export type Model3dOutput = {
   readonly format: CogniteWellknown3dFormat | string;
@@ -13,7 +14,7 @@ export type Model3dOutput = {
 export type CogniteUniformId = CogniteInternalId | CogniteExternalId;
 export enum CogniteWellknown3dFormat {
   EptPointCloud = 'ept-pointcloud',
-  RevealCadModel = 'reveal-json'
+  RevealCadModel = 'reveal-directory'
 }
 
 export class Model3dOutputList {
@@ -71,18 +72,26 @@ export class CogniteClient3dExtensions {
   }
 
   public async retrieveJsonBlob<T>(blobId: number, path?: string): Promise<T> {
-    const url = this.buildBlobBaseUrl(blobId) + (path ? `/${path}` : '');
+    const url = this.buildBlobRequestPath(blobId) + (path ? `/${path}` : '');
     const response = await this.client.get<T>(url);
     return response.data;
   }
 
   public async retrieveBinaryBlob(blobId: number, path?: string): Promise<ArrayBuffer> {
-    const url = this.buildBlobBaseUrl(blobId) + (path ? `/${path}` : '');
-    const response = await this.client.get<ArrayBuffer>(url);
-    return response.data;
+    const baseUrl = this.client.getBaseUrl();
+    const blobUrl = this.buildBlobRequestPath(blobId);
+    const pathUrl = path ? `/${path}` : '';
+    const url = `${baseUrl}${blobUrl}${pathUrl}`;
+    const headers: HttpHeaders = {
+      ...this.client.getDefaultRequestHeaders(),
+      Accept: '*/*'
+    };
+
+    const response = await fetch(url, { headers, method: 'GET' });
+    return response.arrayBuffer();
   }
 
-  public buildBlobBaseUrl(blobId: number): string {
+  public buildBlobRequestPath(blobId: number): string {
     const url = `/api/playground/projects/${this.client.project}/3d/v2/blobs/${blobId}`;
     return url;
   }

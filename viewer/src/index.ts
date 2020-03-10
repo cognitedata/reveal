@@ -12,7 +12,7 @@ export { CadLoadingHints } from './models/cad/CadLoadingHints';
 export { PointCloudModel } from './models/pointclouds/PointCloudModel';
 
 // Loaders
-export { createPointCloudModel } from './datasources/cognitesdk';
+export { createPointCloudModel, loadCadModelFromCdf } from './datasources/cognitesdk';
 export { loadCadModelByUrl, createLocalPointCloudModel } from './datasources/local';
 
 // RxJS
