@@ -212,7 +212,7 @@ module.exports = env => {
       globalObject: `(typeof self !== 'undefined' ? self : this)`,
       libraryTarget: 'umd',
     },
-    devtool: development ? "inline-source-map" : "source-map",
+    //devtool: development ? "inline-source-map" : "source-map",
     watchOptions: {
       aggregateTimeout: 1500,
       ignored: ['node_modules/']

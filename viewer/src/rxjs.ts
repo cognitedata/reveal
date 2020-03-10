@@ -33,22 +33,23 @@ import {
   startWith,
   withLatestFrom,
   throttleTime,
-  share
+  share,
+  auditTime
 } from 'rxjs/operators';
 import { SectorQuads, WantedSectors, Sector, SectorMetadata } from './models/cad/types';
 import { CadModel } from './models/cad/CadModel';
-import { consumeSectorSimple } from './views/threejs/cad/consumeSectorSimple';
-import { createMaterials } from './views/threejs/cad/materials';
-import { Box3 } from './utils/Box3';
 import * as THREE from 'three';
-import { consumeSectorDetailed } from './views/threejs/cad/consumeSectorDetailed';
 import { vec3, mat4 } from 'gl-matrix';
 import { RootSectorNode } from './views/threejs/cad/RootSectorNode';
-import { Shading, createDefaultShading } from './views/threejs';
+import { createDefaultShading } from './views/threejs';
 import { defaultDetermineSectors } from './models/cad/determineSectors';
 import { fromThreeVector3, fromThreeMatrix } from './views/threejs/utilities';
+import { CachedRepository } from './repository/cad/CachedRepository';
+import { consumeSectorDetailed } from './views/threejs/cad/consumeSectorDetailed';
+import { consumeSectorSimple } from './views/threejs/cad/consumeSectorSimple';
+import { MemoryRequestCache } from './cache/MemoryRequestCache';
 
-enum Lod {
+export enum Lod {
   Discarded,
   Hidden,
   Simple,
@@ -57,20 +58,6 @@ enum Lod {
 
 interface WantedSector {
   id: number;
-  lod: Lod;
-  metadata: SectorMetadata;
-}
-
-interface FetchedSectorSimple {
-  id: number;
-  data: Uint8Array;
-  lod: Lod;
-  metadata: SectorMetadata;
-}
-
-interface FetchedSectorDetailed {
-  id: number;
-  data: Uint8Array;
   lod: Lod;
   metadata: SectorMetadata;
 }
@@ -89,9 +76,17 @@ interface ParsedSectorDetailed {
   metadata: SectorMetadata;
 }
 
+interface ConsumedSector {
+  id: number;
+  lod: Lod;
+  group: THREE.Group;
+  metadata: SectorMetadata;
+}
+
 type FinalSector = WantedSector | ParsedSectorSimple | ParsedSectorDetailed;
 
 export function testme(model: CadModel, callback: () => void) {
+  const repository = new CachedRepository(model);
   const cameraPosition: Subject<THREE.PerspectiveCamera> = new Subject();
 
   const update = (camera: THREE.PerspectiveCamera) => {
@@ -135,6 +130,15 @@ export function testme(model: CadModel, callback: () => void) {
         metadata: model.scene.sectors.get(sector)!
       });
     }
+    for (const [id, sector] of model.scene.sectors) {
+      if (!wantedSectors.simple.has(sector.id) && !wantedSectors.detailed.has(sector.id)) {
+        actualWantedSectors.push({
+          id: sector.id,
+          lod: Lod.Discarded,
+          metadata: sector
+        });
+      }
+    }
     return actualWantedSectors;
   });
 
@@ -147,42 +151,22 @@ export function testme(model: CadModel, callback: () => void) {
     flatMap((sector: WantedSector) => of(sector).pipe(delay(1000), startWith({ ...sector, lod: Lod.Hidden })))
   );
 
-  const fetchSimple = flatMap(async (sector: WantedSector) => {
-    const fetchedData = await model.fetchSectorSimple(sector.id);
+  const getSimple = flatMap(async (sector: WantedSector) => {
+    const data = await repository.getSimple(sector.id);
     return {
       id: sector.id,
       lod: sector.lod,
-      data: fetchedData,
+      simpleData: data,
       metadata: sector.metadata
     };
   });
 
-  const parseSimple = flatMap(async (sector: FetchedSectorSimple) => {
-    const parsedData = await model.parseSimple(sector.id, sector.data);
+  const getDetailed = flatMap(async (sector: WantedSector) => {
+    const data = await repository.getDetailed(sector.id);
     return {
       id: sector.id,
       lod: sector.lod,
-      simpleData: parsedData,
-      metadata: sector.metadata
-    };
-  });
-
-  const fetchDetailed = flatMap(async (sector: WantedSector) => {
-    const fetchedData = await model.fetchSectorDetailed(sector.id);
-    return {
-      id: sector.id,
-      lod: sector.lod,
-      data: fetchedData,
-      metadata: sector.metadata
-    };
-  });
-
-  const parseDetailed = flatMap(async (sector: FetchedSectorDetailed) => {
-    const parsedData = await model.parseDetailed(sector.id, sector.data);
-    return {
-      id: sector.id,
-      lod: sector.lod,
-      detailedData: parsedData,
+      detailedData: data,
       metadata: sector.metadata
     };
   });
@@ -196,26 +180,19 @@ export function testme(model: CadModel, callback: () => void) {
         ),
         multicast.pipe(
           filter((sector: WantedSector) => sector.lod === Lod.Simple),
-          fetchSimple,
-          parseSimple
+          getSimple
         ),
         multicast.pipe(
           filter((sector: WantedSector) => sector.lod === Lod.Detailed),
-          fetchDetailed,
-          parseDetailed
+          getDetailed
         )
       )
     )
   );
 
-  const handleWantedSectors: OperatorFunction<WantedSector, FinalSector> = pipe(
-    distinctUntilLodChanged,
-    getFinalSectorByLod
-  );
-
-  function dropOutdated(wanted: Observable<WantedSector[]>): OperatorFunction<WantedSector, WantedSector> {
+  function dropOutdated(wantedObservable: Observable<WantedSector[]>): OperatorFunction<WantedSector, WantedSector> {
     return pipe(
-      withLatestFrom(wanted),
+      withLatestFrom(wantedObservable),
       flatMap(([loaded, wanted]) => {
         for (const wantedSector of wanted) {
           if (loaded.id === wantedSector.id && loaded.lod === wantedSector.lod) {
@@ -229,31 +206,76 @@ export function testme(model: CadModel, callback: () => void) {
 
   const rootSector: RootSectorNode = new RootSectorNode(model, createDefaultShading({}));
 
+  const consumeSimple = (id: number, sector: ParsedSectorSimple) => {
+    return consumeSectorSimple(id, sector.simpleData, sector.metadata, rootSector.shading.materials);
+  };
+
+  const consumeDetailed = (id: number, sector: ParsedSectorDetailed) => {
+    return consumeSectorDetailed(id, sector.detailedData, sector.metadata, rootSector.shading.materials);
+  };
+
+  const consumeSimpleCache = new MemoryRequestCache<number, ParsedSectorSimple, THREE.Group>(consumeSimple);
+  const consumeDetailedCache = new MemoryRequestCache<number, ParsedSectorDetailed, THREE.Group>(consumeDetailed);
+
+  // TODO this should not have to be async, but the cache requires it
+  const consume = async (id: number, sector: FinalSector): Promise<ConsumedSector> => {
+    const { lod, metadata } = sector;
+    const group = ((): THREE.Group => {
+      switch (sector.lod) {
+        case Lod.Simple: {
+          const simpleSector = sector as ParsedSectorSimple;
+          return consumeSimpleCache.request(id, simpleSector);
+          break;
+        }
+        case Lod.Detailed: {
+          const detailedSector = sector as ParsedSectorDetailed;
+          return consumeDetailedCache.request(id, detailedSector);
+          break;
+        }
+        default: {
+          // TODO avoid new to reduce GC cleanup - might need one group per sector due to parenting
+          return new THREE.Group();
+        }
+      }
+    })();
+
+    return {
+      id,
+      lod,
+      metadata,
+      group
+    };
+  };
+
   cameraPosition
     .pipe(
-      throttleTime(1000),
+      auditTime(10000),
       determineSectors,
-      share(),
-      publish(wantedSectors =>
-        wantedSectors.pipe(
-          flatMap((sectors: WantedSector[]) => from(sectors)),
-          handleWantedSectors,
-          dropOutdated(wantedSectors)
+      switchMap((x: WantedSector[]) =>
+        of(x).pipe(
+          share(),
+          publish(wantedSectors =>
+            wantedSectors.pipe(
+              flatMap((sectors: WantedSector[]) => from(sectors)),
+              distinctUntilLodChanged,
+              getFinalSectorByLod,
+              dropOutdated(wantedSectors),
+              flatMap((sector: FinalSector) => consume(sector.id, sector))
+            )
+          )
         )
       )
     )
-    .subscribe((sector: FinalSector) => {
-      if ('simpleData' in sector) {
-        const simpleSector = sector as ParsedSectorSimple;
-        rootSector.discard(sector.id);
-        rootSector.consumeSimple(sector.id, simpleSector.simpleData);
-      } else if ('detailedData' in sector) {
-        const detailedSector = sector as ParsedSectorDetailed;
-        rootSector.discard(sector.id);
-        rootSector.consumeDetailed(sector.id, detailedSector.detailedData);
-      } else {
-        rootSector.discard(sector.id);
+    .subscribe((sector: ConsumedSector) => {
+      const sectorNode = rootSector.sectorNodeMap.get(sector.id);
+      if (!sectorNode) {
+        throw new Error(`Could not find 3D node for sector ${sector.id} - invalid id?`);
       }
+      if (sectorNode.group) {
+        sectorNode.remove(sectorNode.group);
+      }
+      sectorNode.add(sector.group);
+      sectorNode.group = sector.group;
       callback();
     });
 

@@ -12,10 +12,17 @@ import { consumeSectorSimple } from './consumeSectorSimple';
 import { findSectorMetadata } from '../../../models/cad/findSectorMetadata';
 import { discardSector } from './discardSector';
 import { Shading } from './shading';
+import { Lod } from '../../../rxjs';
+
+function setVisible(group: THREE.Group, visible: boolean) {
+  for (const child of group.children) {
+    child.visible = visible;
+  }
+}
 
 export class RootSectorNode extends SectorNode {
-  private readonly sectorNodeMap: Map<number, SectorNode>;
-  private readonly shading: Shading;
+  public readonly sectorNodeMap: Map<number, SectorNode>;
+  public readonly shading: Shading;
   private readonly rootSectorMetadata: SectorMetadata;
 
   constructor(model: CadModel, shading: Shading) {
@@ -35,8 +42,18 @@ export class RootSectorNode extends SectorNode {
       throw new Error(`Could not find 3D node for sector ${sectorId} - invalid id?`);
     }
 
+    // TODO consider if this logic could be handled in the RxJS pipeline instead
+    if (sectorNode.visible === false && sectorNode.lod === Lod.Detailed) {
+      sectorNode.visible = true;
+      setVisible(sectorNode.group!, true);
+      return;
+    }
+
     const metadata = findSectorMetadata(this.rootSectorMetadata, sectorId);
     const obj = consumeSectorDetailed(sectorId, sector, metadata, this.shading.materials);
+    sectorNode.lod = Lod.Detailed;
+    sectorNode.visible = true;
+    sectorNode.group = obj;
     sectorNode.add(obj);
   }
 
@@ -46,8 +63,18 @@ export class RootSectorNode extends SectorNode {
       throw new Error(`Could not find 3D node for sector ${sectorId} - invalid id?`);
     }
 
+    // TODO consider if this logic could be handled in the RxJS pipeline instead
+    if (sectorNode.visible === false && sectorNode.lod === Lod.Simple) {
+      sectorNode.visible = true;
+      setVisible(sectorNode.group!, true);
+      return;
+    }
+
     const metadata = findSectorMetadata(this.rootSectorMetadata, sectorId);
     const obj = consumeSectorSimple(sectorId, sector, metadata, this.shading.materials);
+    sectorNode.lod = Lod.Simple;
+    sectorNode.visible = true;
+    sectorNode.group = obj;
     sectorNode.add(obj);
   }
 
@@ -56,6 +83,20 @@ export class RootSectorNode extends SectorNode {
     if (!sectorNode) {
       throw new Error(`Could not find 3D node for sector ${sectorId} - invalid id?`);
     }
+    sectorNode.group = undefined;
+    sectorNode.lod = Lod.Discarded;
+    sectorNode.visible = false;
     discardSector(sectorId, sectorNode);
+  }
+
+  hide(sectorId: number) {
+    const sectorNode = this.sectorNodeMap.get(sectorId);
+    if (!sectorNode) {
+      throw new Error(`Could not find 3D node for sector ${sectorId} - invalid id?`);
+    }
+    sectorNode.visible = false;
+    if (sectorNode.group) {
+      setVisible(sectorNode.group, false);
+    }
   }
 }

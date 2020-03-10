@@ -26,11 +26,13 @@ export function consumeSectorSimple(
   sector: SectorQuads,
   metadata: SectorMetadata,
   materials: Materials
-): THREE.Object3D {
+): THREE.Group {
+  console.log('Consume simple');
+  const group = new THREE.Group();
   const stride = 3 + 1 + 3 + 16;
   if (sector.buffer.byteLength === 0) {
     // No data, just skip
-    return new THREE.Object3D();
+    return new THREE.Group();
   }
   if (sector.buffer.byteLength % stride !== 0) {
     throw new Error(`Expected buffer size to be multiple of ${stride}, but got ${sector.buffer.byteLength}`);
@@ -66,5 +68,6 @@ export function consumeSectorSimple(
   // TODO 20191028 dragly figure out why the quads are being culled wrongly and if we
   // can avoid disabling it entirely
   obj.frustumCulled = false;
-  return obj;
+  group.add(obj);
+  return group;
 }
