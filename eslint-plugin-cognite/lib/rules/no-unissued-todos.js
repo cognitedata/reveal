@@ -19,7 +19,24 @@ module.exports = {
     },
     schema: [
       {
-        type: 'string',
+        type: 'object',
+        properties: {
+          terms: {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+          },
+          location: {
+            type: 'string',
+          },
+          messageRequirement: {
+            type: 'string',
+          },
+          issuePattern: {
+            type: 'string',
+          },
+        },
       },
     ],
   },
