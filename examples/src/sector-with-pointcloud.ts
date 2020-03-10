@@ -34,7 +34,6 @@ async function main() {
     'project',
     'pointcloudUrl'
   );
-  const project = urlParams.get('project');
 
   const scene = new THREE.Scene();
   const renderer = new THREE.WebGLRenderer();
