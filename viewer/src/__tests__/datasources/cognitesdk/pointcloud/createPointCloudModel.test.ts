@@ -9,41 +9,33 @@ import { createPointCloudModel } from '../../../../datasources/cognitesdk';
 describe('createPointCloudModel', () => {
   const appId = 'reveal-creatPointCloudModel-test';
   const baseUrl = 'https://localhost';
+  const client = new CogniteClient({
+    appId,
+    baseUrl
+  });
 
   test('invalid modelId, throws', async () => {
     // Arrange
-    const sdk = new CogniteClient({
-      appId,
-      baseUrl
-    });
     nock(/.*/)
       .post(/.*/)
       .reply(404);
 
     // Act
-    expect(createPointCloudModel(sdk, 1337)).rejects.toThrowError();
+    expect(createPointCloudModel(client, 1337)).rejects.toThrowError();
   });
 
   test('valid modelId without point cloud output, throws', async () => {
     // Arrange
-    const sdk = new CogniteClient({
-      appId,
-      baseUrl
-    });
     nock(/.*/)
       .post(/.*/)
       .reply(200, []);
 
     // Act
-    expect(createPointCloudModel(sdk, 1337)).rejects.toThrowError();
+    expect(createPointCloudModel(client, 1337)).rejects.toThrowError();
   });
 
   test('valid modelId point cloud output, returns model', async () => {
     // Arrange
-    const sdk = new CogniteClient({
-      appId,
-      baseUrl
-    });
     const response = {
       items: [
         {
@@ -63,7 +55,7 @@ describe('createPointCloudModel', () => {
       .reply(200, response);
 
     // Act
-    const model = await createPointCloudModel(sdk, 1337);
+    const model = await createPointCloudModel(client, 1337);
     expect(model).toBeTruthy();
   });
 });
