@@ -44,7 +44,7 @@ module.exports = {
   create(context) {
     const sourceCode = context.getSourceCode();
     const configuration = context.options[0] || {};
-    const warningTerms = configuration.terms || ['todo', 'fixme'];
+    const warningTerms = configuration.terms || ['todo', 'fixme', '@todo'];
     const location = configuration.location || 'start';
     const messageRequirement =
       configuration.messageRequirement || 'link to JIRA issue';

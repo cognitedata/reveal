@@ -19,6 +19,8 @@ const parserOptions = {
 
 const ruleTester = new RuleTester({ parserOptions });
 
+const errorMessage = /'TODO' comments should include link to JIRA issue, e.g TODO\((OI|OPSUP)-[0-9]+\)/;
+
 ruleTester.run('no-unissued-todos', rule, {
   valid: [
     {
@@ -30,13 +32,23 @@ ruleTester.run('no-unissued-todos', rule, {
     {
       code: '//TODO(OPSUP-100): asd',
     },
+    {
+      code: '// TODO(PROJECT-101)',
+      options: [{ issuePattern: '\\(((PROJECT)-[0-9]+)\\)' }],
+    },
+    {
+      code: '// TODO(OI-1): test with space before TODO',
+    },
+    {
+      code: '// @TODO(OI-12): support for jsdoc style todo',
+    },
   ],
   invalid: [
     {
       code: '//TODO(): asd',
       errors: [
         {
-          message: /'TODO' comments should include link to JIRA issue, e.g TODO\((OI|OPSUP)-[0-9]+\)/,
+          message: errorMessage,
         },
       ],
     },
@@ -44,7 +56,7 @@ ruleTester.run('no-unissued-todos', rule, {
       code: '//TODO(FARTS-123): asd',
       errors: [
         {
-          message: /'TODO' comments should include link to JIRA issue, e.g TODO\((OI|OPSUP)-[0-9]+\)/,
+          message: errorMessage,
         },
       ],
     },
