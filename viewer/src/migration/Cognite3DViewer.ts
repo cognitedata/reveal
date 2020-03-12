@@ -28,10 +28,10 @@ export class Cognite3DViewer {
   private readonly additionalObjects: THREE.Object3D[] = [];
 
   constructor(options?: Cognite3DViewerOptions) {
-    if (options?.enableCache) {
+    if (options && !options.enableCache) {
       throw new NotSupportedInMigrationWrapperError('Cache is not supported');
     }
-    if (options?.logMetrics) {
+    if (options && !options.logMetrics) {
       throw new NotSupportedInMigrationWrapperError('LogMetris is not supported');
     }
 
