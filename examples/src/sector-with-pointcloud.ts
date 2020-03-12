@@ -30,7 +30,7 @@ async function main() {
   const pointCloudModelIdentifier = createModelIdentifierFromUrlParams(urlParams, '/transformer', {
     modelIdParameterName: 'pointcloud',
     modelUrlParameterName: 'pointcloudUrl'
-  }3);
+  });
 
   const scene = new THREE.Scene();
   const renderer = new THREE.WebGLRenderer();
