@@ -15,6 +15,10 @@ export { PointCloudModel } from './models/pointclouds/PointCloudModel';
 export { createPointCloudModel, loadCadModelFromCdf } from './datasources/cognitesdk';
 export { loadCadModelByUrl, createLocalPointCloudModel } from './datasources/local';
 
+// ThreeJS migration layer
+import * as migration from './migration';
+export { migration };
+
 // Internals
 import * as internal from './internal';
 export { internal };
