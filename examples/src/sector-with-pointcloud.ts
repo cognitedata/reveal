@@ -27,13 +27,10 @@ CameraControls.install({ THREE });
 async function main() {
   const urlParams = new URL(location.href).searchParams;
   const cadModelIdentifier = createModelIdentifierFromUrlParams(urlParams, '/primitives');
-  const pointCloudModelIdentifier = createModelIdentifierFromUrlParams(
-    urlParams,
-    '/transformer',
-    'pointcloud',
-    'project',
-    'pointcloudUrl'
-  );
+  const pointCloudModelIdentifier = createModelIdentifierFromUrlParams(urlParams, '/transformer', {
+    modelIdParameterName: 'pointcloud',
+    modelUrlParameterName: 'pointcloudUrl'
+  }3);
 
   const scene = new THREE.Scene();
   const renderer = new THREE.WebGLRenderer();
