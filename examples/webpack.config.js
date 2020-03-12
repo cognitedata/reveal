@@ -105,6 +105,13 @@ const allExamples = [
     title: "Custom ThreeJS scene elements",
     entry: './src/custom-scene-elements.ts',
     template: './template-example.ejs'
+  },
+  {
+    name: "threejs-migration",
+    title: "Migration wrapper for applications using the old Reveal viewer",
+    entry: './src/migration.ts',
+    template: './template-example.ejs'
+
   }
 ];
 
