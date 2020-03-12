@@ -17,6 +17,9 @@ async function main() {
   const cadModel = await loadCadModelFromCdfOrUrl(modelIdentifier);
   const cadNode = new reveal_threejs.CadNode(cadModel);
   let sectorsNeedUpdate = true;
+  cadNode.renderHints = Object.assign(cadNode.renderHints || {}, {
+    showSectorBoundingBoxes: true
+  });
   cadNode.addEventListener('update', () => {
     sectorsNeedUpdate = true;
   });
