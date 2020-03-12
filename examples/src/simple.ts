@@ -37,6 +37,7 @@ async function main() {
   controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
+  cadNode.update(camera);
   const clock = new THREE.Clock();
   const render = async () => {
     const delta = clock.getDelta();

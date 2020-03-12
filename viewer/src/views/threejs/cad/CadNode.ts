@@ -24,20 +24,15 @@ import { fromThreeVector3, fromThreeMatrix, toThreeJsBox3, toThreeVector3, toThr
 import { RenderMode } from '../materials';
 import { Shading, createDefaultShading } from './shading';
 import { RootSectorNode } from './RootSectorNode';
-import { BasicSectorActivator, SectorActivator } from '../../../models/cad/BasicSectorActivator';
 import { CachedRepository } from '../../../repository/cad/CachedRepository';
 import { Repository } from '../../../repository/cad/Repository';
-import { consumeSectorDetailed } from './consumeSectorDetailed';
-import { consumeSectorSimple } from './consumeSectorSimple';
-import { MemoryRequestCache } from '../../../cache/MemoryRequestCache';
-import { Observable, of, merge, Subject, pipe, GroupedObservable, OperatorFunction, empty } from 'rxjs';
+import { Observable, of, Subject, pipe, GroupedObservable, OperatorFunction, empty } from 'rxjs';
 import {
   flatMap,
   map,
   groupBy,
   distinctUntilKeyChanged,
   mergeMap,
-  filter,
   publish,
   withLatestFrom,
   share,
@@ -47,6 +42,7 @@ import {
 import { LevelOfDetail } from '../../../data/model/LevelOfDetail';
 import { ParsedSector } from '../../../data/model/ParsedSector';
 import { WantedSector } from '../../../data/model/WantedSector';
+import { ConsumedSector } from '../../../data/model/ConsumedSector';
 
 interface CadNodeOptions {
   shading?: Shading;
@@ -65,29 +61,8 @@ const updateVars = {
   projectionMatrix: mat4.create()
 };
 
-interface ParsedSectorSimple {
-  id: number;
-  simpleData: SectorQuads;
-  levelOfDetail: LevelOfDetail;
-  metadata: SectorMetadata;
-}
-
-interface ParsedSectorDetailed {
-  id: number;
-  detailedData: Sector;
-  levelOfDetail: LevelOfDetail;
-  metadata: SectorMetadata;
-}
-
-interface ConsumedSector {
-  id: number;
-  levelOfDetail: LevelOfDetail;
-  group: THREE.Group;
-  metadata: SectorMetadata;
-}
-
 export class CadNode extends THREE.Object3D {
-  public readonly rootSector: SectorNode;
+  public readonly rootSector: RootSectorNode;
   public readonly modelTransformation: SectorModelTransformation;
 
   private _determineSectors: DetermineSectorsDelegate;
@@ -217,41 +192,6 @@ export class CadNode extends THREE.Object3D {
       );
     }
 
-    const consumeSector = (id: number, sector: ParsedSector) => {
-      const { levelOfDetail, metadata, data } = sector;
-      const group = ((): THREE.Group => {
-        switch (levelOfDetail) {
-          case LevelOfDetail.Discarded: {
-            return new THREE.Group();
-          }
-          case LevelOfDetail.Simple: {
-            return consumeSectorSimple(id, data as SectorQuads, metadata, rootSector.shading.materials);
-          }
-          case LevelOfDetail.Detailed: {
-            return consumeSectorDetailed(id, data as Sector, metadata, rootSector.shading.materials);
-          }
-          default:
-            throw new Error(`Unsupported level of detail ${sector.levelOfDetail}`);
-        }
-      })();
-      return group;
-    };
-
-    const consumeSectorCache = new MemoryRequestCache<number, ParsedSector, THREE.Group>(consumeSector);
-
-    // TODO this should not have to be async, but the cache requires it
-    const consume = async (id: number, sector: ParsedSector): Promise<ConsumedSector> => {
-      const { levelOfDetail, metadata } = sector;
-      const group = consumeSectorCache.request(id, sector);
-
-      return {
-        id,
-        levelOfDetail,
-        metadata,
-        group
-      };
-    };
-
     this._cameraPositionObservable
       .pipe(
         auditTime(100),
@@ -263,7 +203,7 @@ export class CadNode extends THREE.Object3D {
             distinctUntilLodChanged,
             this._repository.getSector,
             dropOutdated(wantedSectors),
-            flatMap((sector: ParsedSector) => consume(sector.id, sector))
+            this.rootSector.consumeSector
           )
         )
       )
