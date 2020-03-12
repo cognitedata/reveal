@@ -148,10 +148,6 @@ export function testme(model: CadModel, callback: () => void) {
     mergeMap((group: GroupedObservable<number, WantedSector>) => group.pipe(distinctUntilKeyChanged('lod')))
   );
 
-  const hideAndScheduleDiscard: OperatorFunction<WantedSector, WantedSector> = pipe(
-    flatMap((sector: WantedSector) => of(sector).pipe(delay(1000), startWith({ ...sector, lod: Lod.Hidden })))
-  );
-
   const getSimple = flatMap(async (sector: WantedSector) => {
     const data = await repository.getSimple(sector.id);
     return {
@@ -258,6 +254,7 @@ export function testme(model: CadModel, callback: () => void) {
           switchAll(),
           distinctUntilLodChanged,
           getFinalSectorByLod,
+           dropOutdated(wantedSectors),
           flatMap((sector: FinalSector) => consume(sector.id, sector))
         )
       )
