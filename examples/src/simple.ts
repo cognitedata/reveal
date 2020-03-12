@@ -16,6 +16,10 @@ async function main() {
   const scene = new THREE.Scene();
   const cadModel = await loadCadModelFromCdfOrUrl(modelIdentifier);
   const cadNode = new reveal_threejs.CadNode(cadModel);
+  let sectorsNeedUpdate = true;
+  cadNode.addEventListener('update', () => {
+    sectorsNeedUpdate = true;
+  });
 
   scene.add(cadNode);
 
@@ -34,7 +38,9 @@ async function main() {
   const render = async () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
-    const sectorsNeedUpdate = await cadNode.update(camera);
+    if (controlsNeedUpdate) {
+      cadNode.update(camera);
+    }
 
     if (controlsNeedUpdate || sectorsNeedUpdate) {
       renderer.render(scene, camera);

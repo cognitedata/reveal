@@ -4,35 +4,23 @@
 
 import {
   Observable,
-  from,
   of,
-  partition,
   merge,
   Subject,
   pipe,
   GroupedObservable,
   OperatorFunction,
   empty,
-  UnaryFunction
 } from 'rxjs';
 import {
-  switchMap,
   flatMap,
   map,
-  catchError,
-  distinctUntilChanged,
-  tap,
   groupBy,
   distinctUntilKeyChanged,
   mergeMap,
-  reduce,
   filter,
-  scan,
   publish,
-  delay,
-  startWith,
   withLatestFrom,
-  throttleTime,
   share,
   auditTime,
   switchAll

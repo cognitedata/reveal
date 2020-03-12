@@ -3,8 +3,12 @@
  */
 
 import { Sector, SectorQuads } from '../../models/cad/types';
+import { OperatorFunction } from 'rxjs';
+import { WantedSector } from '../../data/model/WantedSector';
+
+// TODO move
+export type SectorId = number;
 
 export interface Repository {
-  getDetailed: (sectorId: number) => Promise<Sector>;
-  getSimple: (sectorId: number) => Promise<SectorQuads>;
+  getSector: OperatorFunction<WantedSector, ParsedSector>;
 }

@@ -27,6 +27,26 @@ import { RootSectorNode } from './RootSectorNode';
 import { BasicSectorActivator, SectorActivator } from '../../../models/cad/BasicSectorActivator';
 import { CachedRepository } from '../../../repository/cad/CachedRepository';
 import { Repository } from '../../../repository/cad/Repository';
+import { consumeSectorDetailed } from './consumeSectorDetailed';
+import { consumeSectorSimple } from './consumeSectorSimple';
+import { MemoryRequestCache } from '../../../cache/MemoryRequestCache';
+import { Observable, of, merge, Subject, pipe, GroupedObservable, OperatorFunction, empty } from 'rxjs';
+import {
+  flatMap,
+  map,
+  groupBy,
+  distinctUntilKeyChanged,
+  mergeMap,
+  filter,
+  publish,
+  withLatestFrom,
+  share,
+  auditTime,
+  switchAll
+} from 'rxjs/operators';
+import { LevelOfDetail } from '../../../data/model/LevelOfDetail';
+import { ParsedSector } from '../../../data/model/ParsedSector';
+import { WantedSector } from '../../../data/model/WantedSector';
 
 interface CadNodeOptions {
   shading?: Shading;
@@ -45,17 +65,37 @@ const updateVars = {
   projectionMatrix: mat4.create()
 };
 
+interface ParsedSectorSimple {
+  id: number;
+  simpleData: SectorQuads;
+  levelOfDetail: LevelOfDetail;
+  metadata: SectorMetadata;
+}
+
+interface ParsedSectorDetailed {
+  id: number;
+  detailedData: Sector;
+  levelOfDetail: LevelOfDetail;
+  metadata: SectorMetadata;
+}
+
+interface ConsumedSector {
+  id: number;
+  levelOfDetail: LevelOfDetail;
+  group: THREE.Group;
+  metadata: SectorMetadata;
+}
+
 export class CadNode extends THREE.Object3D {
   public readonly rootSector: SectorNode;
   public readonly modelTransformation: SectorModelTransformation;
 
   private _determineSectors: DetermineSectorsDelegate;
-  private _simpleSectorActivator: SectorActivator;
-  private _detailedSectorActivator: SectorActivator;
   private _renderHints: CadRenderHints;
   private _loadingHints: CadLoadingHints;
   private _renderMode: RenderMode;
 
+  private readonly _cameraPositionObservable: Subject<THREE.PerspectiveCamera>;
   private readonly _shading: Shading;
   private readonly _sectorScene: SectorScene;
   private readonly _previousCameraMatrix = new THREE.Matrix4();
@@ -81,32 +121,6 @@ export class CadNode extends THREE.Object3D {
     const rootSector = new RootSectorNode(model, this._shading);
     this._repository = new CachedRepository(model);
 
-    this._detailedSectorActivator = new BasicSectorActivator<Sector>(
-      sectorId => {
-        return this._repository.getDetailed(sectorId);
-      },
-      sectorId => {
-        // this redirection is necessary to capture the correct this-keyword
-        rootSector.discard(sectorId);
-      },
-      (sectorId: number, sector: Sector) => {
-        // this redirection is necessary to capture the correct this-keyword
-        rootSector.consumeDetailed(sectorId, sector);
-      }
-    );
-    this._simpleSectorActivator = new BasicSectorActivator<SectorQuads>(
-      sectorId => {
-        return this._repository.getSimple(sectorId);
-      },
-      sectorId => {
-        // this redirection is necessary to capture the correct this-keyword
-        rootSector.discard(sectorId);
-      },
-      (sectorId: number, sector: SectorQuads) => {
-        // this redirection is necessary to capture the correct this-keyword
-        rootSector.consumeSimple(sectorId, sector);
-      }
-    );
     const { scene, modelTransformation } = model;
 
     this._sectorScene = scene;
@@ -135,6 +149,136 @@ export class CadNode extends THREE.Object3D {
     }
 
     this._shading.updateNodes(indices);
+
+    // ======== NEW STUFF ======
+    this._cameraPositionObservable = new Subject();
+
+    const determineSectors = map((camera: THREE.PerspectiveCamera) => {
+      camera.matrixWorldInverse.getInverse(camera.matrixWorld);
+
+      const { cameraPosition, cameraModelMatrix, projectionMatrix } = updateVars;
+      fromThreeVector3(cameraPosition, camera.position, model.modelTransformation);
+      fromThreeMatrix(cameraModelMatrix, camera.matrixWorld, model.modelTransformation);
+      fromThreeMatrix(projectionMatrix, camera.projectionMatrix);
+      const wantedSectors = this._determineSectors({
+        scene: model.scene,
+        cameraFov: camera.fov,
+        cameraPosition,
+        cameraModelMatrix,
+        projectionMatrix,
+        loadingHints: {}
+      });
+      const actualWantedSectors: WantedSector[] = [];
+      for (const sector of wantedSectors.simple) {
+        actualWantedSectors.push({
+          id: sector,
+          levelOfDetail: LevelOfDetail.Simple,
+          metadata: model.scene.sectors.get(sector)!
+        });
+      }
+      for (const sector of wantedSectors.detailed) {
+        actualWantedSectors.push({
+          id: sector,
+          levelOfDetail: LevelOfDetail.Detailed,
+          metadata: model.scene.sectors.get(sector)!
+        });
+      }
+      for (const [id, sector] of model.scene.sectors) {
+        if (!wantedSectors.simple.has(sector.id) && !wantedSectors.detailed.has(sector.id)) {
+          actualWantedSectors.push({
+            id: sector.id,
+            levelOfDetail: LevelOfDetail.Discarded,
+            metadata: sector
+          });
+        }
+      }
+      if (this.shouldRenderSectorBoundingBoxes) {
+        this.updateSectorBoundingBoxes(wantedSectors);
+      }
+      return actualWantedSectors;
+    });
+
+    const distinctUntilLodChanged = pipe(
+      groupBy((sector: WantedSector) => sector.id),
+      mergeMap((group: GroupedObservable<number, WantedSector>) => group.pipe(distinctUntilKeyChanged('levelOfDetail')))
+    );
+
+    function dropOutdated(wantedObservable: Observable<WantedSector[]>): OperatorFunction<ParsedSector, ParsedSector> {
+      return pipe(
+        withLatestFrom(wantedObservable),
+        flatMap(([loaded, wanted]) => {
+          for (const wantedSector of wanted) {
+            if (loaded.id === wantedSector.id && loaded.levelOfDetail === wantedSector.levelOfDetail) {
+              return of(loaded);
+            }
+          }
+          return empty();
+        })
+      );
+    }
+
+    const consumeSector = (id: number, sector: ParsedSector) => {
+      const { levelOfDetail, metadata, data } = sector;
+      const group = ((): THREE.Group => {
+        switch (levelOfDetail) {
+          case LevelOfDetail.Discarded: {
+            return new THREE.Group();
+          }
+          case LevelOfDetail.Simple: {
+            return consumeSectorSimple(id, data as SectorQuads, metadata, rootSector.shading.materials);
+          }
+          case LevelOfDetail.Detailed: {
+            return consumeSectorDetailed(id, data as Sector, metadata, rootSector.shading.materials);
+          }
+          default:
+            throw new Error(`Unsupported level of detail ${sector.levelOfDetail}`);
+        }
+      })();
+      return group;
+    };
+
+    const consumeSectorCache = new MemoryRequestCache<number, ParsedSector, THREE.Group>(consumeSector);
+
+    // TODO this should not have to be async, but the cache requires it
+    const consume = async (id: number, sector: ParsedSector): Promise<ConsumedSector> => {
+      const { levelOfDetail, metadata } = sector;
+      const group = consumeSectorCache.request(id, sector);
+
+      return {
+        id,
+        levelOfDetail,
+        metadata,
+        group
+      };
+    };
+
+    this._cameraPositionObservable
+      .pipe(
+        auditTime(100),
+        determineSectors,
+        share(),
+        publish(wantedSectors =>
+          wantedSectors.pipe(
+            switchAll(),
+            distinctUntilLodChanged,
+            this._repository.getSector,
+            dropOutdated(wantedSectors),
+            flatMap((sector: ParsedSector) => consume(sector.id, sector))
+          )
+        )
+      )
+      .subscribe((sector: ConsumedSector) => {
+        const sectorNode = rootSector.sectorNodeMap.get(sector.id);
+        if (!sectorNode) {
+          throw new Error(`Could not find 3D node for sector ${sector.id} - invalid id?`);
+        }
+        if (sectorNode.group) {
+          sectorNode.remove(sectorNode.group);
+        }
+        sectorNode.add(sector.group);
+        sectorNode.group = sector.group;
+        this.dispatchEvent({ type: 'update' });
+      });
   }
 
   set renderMode(mode: RenderMode) {
@@ -189,35 +333,8 @@ export class CadNode extends THREE.Object3D {
     return this._renderHints.showSectorBoundingBoxes || false;
   }
 
-  public async update(camera: THREE.PerspectiveCamera): Promise<boolean> {
-    let needsRedraw = false;
-    const { cameraPosition, cameraModelMatrix, projectionMatrix } = updateVars;
-    if (!this._previousCameraMatrix.equals(camera.matrixWorld)) {
-      camera.matrixWorldInverse.getInverse(camera.matrixWorld);
-
-      fromThreeVector3(cameraPosition, camera.position, this.modelTransformation);
-      fromThreeMatrix(cameraModelMatrix, camera.matrixWorld, this.modelTransformation);
-      fromThreeMatrix(projectionMatrix, camera.projectionMatrix);
-      const wantedSectors = this._determineSectors({
-        scene: this._sectorScene,
-        cameraFov: camera.fov,
-        cameraPosition,
-        cameraModelMatrix,
-        projectionMatrix,
-        loadingHints: this.loadingHints
-      });
-      needsRedraw = this._detailedSectorActivator.update(wantedSectors.detailed) || needsRedraw;
-      needsRedraw = this._simpleSectorActivator.update(wantedSectors.simple) || needsRedraw;
-
-      if (this.shouldRenderSectorBoundingBoxes) {
-        this.updateSectorBoundingBoxes(wantedSectors);
-      }
-
-      this._previousCameraMatrix.copy(camera.matrixWorld);
-    }
-    needsRedraw = this._detailedSectorActivator.refresh() || needsRedraw;
-    needsRedraw = this._simpleSectorActivator.refresh() || needsRedraw;
-    return needsRedraw;
+  public update(camera: THREE.PerspectiveCamera) {
+    this._cameraPositionObservable.next(camera);
   }
 
   public suggestCameraConfig(): SuggestedCameraConfig {
