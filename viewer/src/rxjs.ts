@@ -34,7 +34,8 @@ import {
   withLatestFrom,
   throttleTime,
   share,
-  auditTime
+  auditTime,
+  switchAll
 } from 'rxjs/operators';
 import { SectorQuads, WantedSectors, Sector, SectorMetadata } from './models/cad/types';
 import { CadModel } from './models/cad/CadModel';
@@ -175,8 +176,8 @@ export function testme(model: CadModel, callback: () => void) {
     publish(multicast =>
       merge(
         multicast.pipe(
-          filter((sector: WantedSector) => sector.lod === Lod.Discarded),
-          hideAndScheduleDiscard
+          filter((sector: WantedSector) => sector.lod === Lod.Discarded)
+          // hideAndScheduleDiscard
         ),
         multicast.pipe(
           filter((sector: WantedSector) => sector.lod === Lod.Simple),
@@ -249,20 +250,15 @@ export function testme(model: CadModel, callback: () => void) {
 
   cameraPosition
     .pipe(
-      auditTime(10000),
+      auditTime(100),
       determineSectors,
-      switchMap((x: WantedSector[]) =>
-        of(x).pipe(
-          share(),
-          publish(wantedSectors =>
-            wantedSectors.pipe(
-              flatMap((sectors: WantedSector[]) => from(sectors)),
-              distinctUntilLodChanged,
-              getFinalSectorByLod,
-              dropOutdated(wantedSectors),
-              flatMap((sector: FinalSector) => consume(sector.id, sector))
-            )
-          )
+      share(),
+      publish(wantedSectors =>
+        wantedSectors.pipe(
+          switchAll(),
+          distinctUntilLodChanged,
+          getFinalSectorByLod,
+          flatMap((sector: FinalSector) => consume(sector.id, sector))
         )
       )
     )
