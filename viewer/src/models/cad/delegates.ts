@@ -2,12 +2,13 @@
  * Copyright 2020 Cognite AS
  */
 
-import { WantedSectors, DetermineSectorsInput } from './types';
+import { DetermineSectorsInput } from './types';
+import { WantedSector } from '../../data/model/WantedSector';
 
 /**
  * Delegate for determining what sectors to load for a given frustum.
  */
-export type DetermineSectorsDelegate = (params: DetermineSectorsInput) => WantedSectors;
+export type DetermineSectorsDelegate = (params: DetermineSectorsInput) => WantedSector[];
 
 /**
  * Delegate that handles removal of a sector from a view (e.g. by removing it from the scene).

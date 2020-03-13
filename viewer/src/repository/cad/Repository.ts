@@ -10,5 +10,5 @@ import { ParsedSector } from '../../data/model/ParsedSector';
 export type SectorId = number;
 
 export interface Repository {
-  getSector: OperatorFunction<WantedSector, ParsedSector>;
+  loadSector(): OperatorFunction<WantedSector, ParsedSector>;
 }

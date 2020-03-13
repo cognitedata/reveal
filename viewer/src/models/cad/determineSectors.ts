@@ -2,12 +2,16 @@
  * Copyright 2020 Cognite AS
  */
 
+// TODO try to implement all functionality that three.js provides here without three.js to avoid
+// pulling it in just for this reason
 import * as THREE from 'three';
-import { WantedSectors, SectorMetadata, SectorScene, DetermineSectorsInput } from './types';
+import { SectorMetadata, SectorScene, DetermineSectorsInput } from './types';
 import { traverseDepthFirst, traverseUpwards } from '../../utils/traversal';
 import { toThreeMatrix4, toThreeVector3 } from '../../views/threejs/utilities';
 import { mat4 } from 'gl-matrix';
 import { defaultLoadingHints as defaultCadLoadingHints } from './CadLoadingHints';
+import { WantedSector } from '../../data/model/WantedSector';
+import { LevelOfDetail } from '../../data/model/LevelOfDetail';
 
 const degToRadFactor = Math.PI / 180;
 
@@ -20,10 +24,10 @@ const determineSectorsPreallocatedVars = {
   max: new THREE.Vector3()
 };
 
-export function defaultDetermineSectors(params: DetermineSectorsInput): WantedSectors {
+export function determineSectorsByProximity(params: DetermineSectorsInput): WantedSector[] {
   const hints = { ...defaultCadLoadingHints, ...(params.loadingHints || {}) };
 
-  const { scene, cameraPosition, cameraModelMatrix, projectionMatrix, cameraFov } = params;
+  const { sectorScene, cameraPosition, cameraModelMatrix, projectionMatrix, cameraFov } = params;
   const { invertCameraModelMatrix, frustumMatrix, frustum, bbox, min, max } = determineSectorsPreallocatedVars;
 
   const sectors: SectorMetadata[] = [];
@@ -47,7 +51,7 @@ export function defaultDetermineSectors(params: DetermineSectorsInput): WantedSe
   mat4.multiply(frustumMatrix, projectionMatrix, invertCameraModelMatrix);
   frustum.setFromProjectionMatrix(toThreeMatrix4(frustumMatrix));
 
-  traverseDepthFirst(scene.root, sector => {
+  traverseDepthFirst(sectorScene.root, sector => {
     min.set(sector.bounds.min[0], sector.bounds.min[1], sector.bounds.min[2]);
     max.set(sector.bounds.max[0], sector.bounds.max[1], sector.bounds.max[2]);
     bbox.makeEmpty();
@@ -74,13 +78,14 @@ export function defaultDetermineSectors(params: DetermineSectorsInput): WantedSe
     return distanceToCamera(l) - distanceToCamera(r);
   });
   const requestedDetailed = new Set<number>(sectors.map(x => x.id));
-  const result = determineSectorsQuality(scene, requestedDetailed);
+  const result = determineSectorsFromDetailed(sectorScene, requestedDetailed);
   return result;
 }
 
-export function determineSectorsQuality(scene: SectorScene, requestedDetailed: Set<number>): WantedSectors {
+export function determineSectorsFromDetailed(scene: SectorScene, requestedDetailed: Set<number>): WantedSector[] {
   const simple: number[] = [];
   const detailed: number[] = [];
+  const wanted: WantedSector[] = [];
 
   for (const sectorId of requestedDetailed) {
     const sector = scene.sectors.get(sectorId);
@@ -88,6 +93,11 @@ export function determineSectorsQuality(scene: SectorScene, requestedDetailed: S
       throw new Error(`Could not find sector with ID ${sectorId}`);
     }
     traverseUpwards(sector, (other: SectorMetadata) => {
+      wanted.push({
+        id: other.id,
+        levelOfDetail: LevelOfDetail.Detailed,
+        metadata: other
+      });
       detailed.push(other.id);
       return true;
     });
@@ -100,12 +110,25 @@ export function determineSectorsQuality(scene: SectorScene, requestedDetailed: S
     // F3D file is omitted if there is no geometry in the file
     if (sector.facesFile.fileName) {
       simple.push(sector.id);
+      wanted.push({
+        id: sector.id,
+        levelOfDetail: LevelOfDetail.Simple,
+        metadata: sector
+      });
     }
     return false;
   });
 
-  return {
-    detailed: new Set<number>(detailed),
-    simple: new Set<number>(simple)
-  };
+  traverseDepthFirst(scene.root, sector => {
+    if (!detailed.includes(sector.id) && !simple.includes(sector.id)) {
+      wanted.push({
+        id: sector.id,
+        levelOfDetail: LevelOfDetail.Discarded,
+        metadata: sector
+      });
+    }
+    return true;
+  });
+
+  return wanted;
 }

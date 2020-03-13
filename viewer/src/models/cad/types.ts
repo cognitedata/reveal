@@ -11,7 +11,7 @@ import { CadLoadingHints } from './CadLoadingHints';
  * Input to DetermineSectorsDelegate.
  */
 export interface DetermineSectorsInput {
-  readonly scene: SectorScene;
+  readonly sectorScene: SectorScene;
   readonly cameraFov: number;
   readonly cameraPosition: vec3;
   readonly cameraModelMatrix: mat4;
@@ -139,7 +139,3 @@ export interface CtmWorkerResult {
   readonly normals: Float32Array | undefined;
 }
 
-export interface WantedSectors {
-  readonly detailed: Set<number>;
-  readonly simple: Set<number>;
-}

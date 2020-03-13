@@ -31,7 +31,7 @@ export class CachedRepository implements Repository {
     this._simpleCache = new MemoryRequestCache(getSimpleBasic);
   }
 
-  get getSector(): OperatorFunction<WantedSector, ParsedSector> {
+  loadSector(): OperatorFunction<WantedSector, ParsedSector> {
     return flatMap(async (sector: WantedSector) => {
       const data: (null | Sector | SectorQuads) = await (() => {
         switch (sector.levelOfDetail) {

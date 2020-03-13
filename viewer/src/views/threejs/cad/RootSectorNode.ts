@@ -17,11 +17,15 @@ import { consumeSectorSimple } from './consumeSectorSimple';
 import { consumeSectorDetailed } from './consumeSectorDetailed';
 import { SectorQuads, Sector } from '../../../models/cad/types';
 
+function hashIdAndLevelOfDetail(id: number, levelOfDetail: LevelOfDetail) {
+  return `${id},${levelOfDetail}`;
+}
+
 export class RootSectorNode extends SectorNode {
   public readonly sectorNodeMap: Map<number, SectorNode>;
   public readonly shading: Shading;
 
-  private readonly consumeSectorCache: MemoryRequestCache<number, ParsedSector, THREE.Group>;
+  private readonly consumeSectorCache: MemoryRequestCache<string, ParsedSector, THREE.Group>;
 
   constructor(model: CadModel, shading: Shading) {
     super(0, '/');
@@ -30,19 +34,17 @@ export class RootSectorNode extends SectorNode {
     this.sectorNodeMap = new Map();
     this.shading = shading;
 
-    this.consumeSectorCache = new MemoryRequestCache<number, ParsedSector, THREE.Group>(
-      (id: number, sector: ParsedSector) => this.consumeImpl(id, sector)
+    this.consumeSectorCache = new MemoryRequestCache<string, ParsedSector, THREE.Group>(
+      (_hash: string, sector: ParsedSector) => this.consumeImpl(sector.id, sector)
     );
-
-    // TODO this should not have to be async, but the cache requires it
 
     buildScene(scene.root, this, this.sectorNodeMap);
   }
 
-  get consumeSector() {
+  consumeSector() {
     const consume = async (id: number, sector: ParsedSector): Promise<ConsumedSector> => {
       const { levelOfDetail, metadata } = sector;
-      const group = this.consumeSectorCache.request(id, sector);
+      const group = this.consumeSectorCache.request(hashIdAndLevelOfDetail(id, levelOfDetail), sector);
 
       return {
         id,

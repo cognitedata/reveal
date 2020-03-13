@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { SectorMetadata, SectorModelTransformation, SectorScene } from '../../../models/cad/types';
 import { Box3 } from '../../../utils/Box3';
 import { vec3, mat4 } from 'gl-matrix';
-import { defaultDetermineSectors } from '../../../models/cad/determineSectors';
+import { determineSectorsByProximity } from '../../../models/cad/determineSectors';
 import { expectSetEqual } from '../../expects';
 import { toThreeMatrix4, fromThreeMatrix, fromThreeVector3 } from '../../../views/threejs/utilities';
 import { traverseDepthFirst } from '../../../utils/traversal';
@@ -54,7 +54,7 @@ describe('determineSectors', () => {
     camera.updateMatrixWorld();
 
     // Act
-    const sectors = await defaultDetermineSectors({
+    const sectors = await determineSectorsByProximity({
       scene,
       cameraFov: camera.fov,
       cameraPosition: fromThreeVector3(vec3.create(), camera.position, identityTransform),
@@ -145,7 +145,7 @@ describe('determineSectors', () => {
     camera.updateMatrixWorld();
 
     // Act
-    const sectors = await defaultDetermineSectors({
+    const sectors = await determineSectorsByProximity({
       scene,
       cameraFov: camera.fov,
       cameraPosition: fromThreeVector3(vec3.create(), camera.position, identityTransform),
@@ -187,7 +187,7 @@ describe('determineSectors', () => {
     camera.updateMatrixWorld();
 
     // Act
-    const sectors = await defaultDetermineSectors({
+    const sectors = await determineSectorsByProximity({
       scene,
       cameraFov: camera.fov,
       cameraPosition: fromThreeVector3(vec3.create(), camera.position, transform),

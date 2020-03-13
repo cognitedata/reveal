@@ -3,24 +3,14 @@
  */
 
 import * as THREE from 'three';
-import { vec3, mat4 } from 'gl-matrix';
 
-import {
-  SectorModelTransformation,
-  SectorScene,
-  SectorMetadata,
-  WantedSectors,
-  SectorQuads,
-  Sector
-} from '../../../models/cad/types';
-import { defaultDetermineSectors } from '../../../models/cad/determineSectors';
+import { SectorModelTransformation, SectorScene, SectorMetadata } from '../../../models/cad/types';
 import { DetermineSectorsDelegate } from '../../../models/cad/delegates';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
 import { CadModel } from '../../../models/cad/CadModel';
 import { CadRenderHints } from '../../CadRenderHints';
 import { suggestCameraConfig } from '../../../utils/cameraUtils';
-import { SectorNode } from './SectorNode';
-import { fromThreeVector3, fromThreeMatrix, toThreeJsBox3, toThreeVector3, toThreeMatrix4 } from '../utilities';
+import { toThreeJsBox3, toThreeVector3, toThreeMatrix4 } from '../utilities';
 import { RenderMode } from '../materials';
 import { Shading, createDefaultShading } from './shading';
 import { RootSectorNode } from './RootSectorNode';
@@ -29,7 +19,6 @@ import { Repository } from '../../../repository/cad/Repository';
 import { Observable, of, Subject, pipe, GroupedObservable, OperatorFunction, empty } from 'rxjs';
 import {
   flatMap,
-  map,
   groupBy,
   distinctUntilKeyChanged,
   mergeMap,
@@ -37,12 +26,16 @@ import {
   withLatestFrom,
   share,
   auditTime,
-  switchAll
+  switchAll,
+  tap
 } from 'rxjs/operators';
-import { LevelOfDetail } from '../../../data/model/LevelOfDetail';
 import { ParsedSector } from '../../../data/model/ParsedSector';
 import { WantedSector } from '../../../data/model/WantedSector';
 import { ConsumedSector } from '../../../data/model/ConsumedSector';
+import { fromThreeCameraConfig, ThreeCameraConfig } from './determineSectors';
+import { SectorCuller } from '../../../culling/SectorCuller';
+import { ProximitySectorCuller } from '../../../culling/ProximitySectorCuller';
+import { LevelOfDetail } from '../../../data/model/LevelOfDetail';
 
 interface CadNodeOptions {
   shading?: Shading;
@@ -55,22 +48,16 @@ export interface SuggestedCameraConfig {
   far: number;
 }
 
-const updateVars = {
-  cameraPosition: vec3.create(),
-  cameraModelMatrix: mat4.create(),
-  projectionMatrix: mat4.create()
-};
-
 export class CadNode extends THREE.Object3D {
   public readonly rootSector: RootSectorNode;
   public readonly modelTransformation: SectorModelTransformation;
 
-  private _determineSectors: DetermineSectorsDelegate;
+  private _sectorCuller: SectorCuller;
   private _renderHints: CadRenderHints;
   private _loadingHints: CadLoadingHints;
   private _renderMode: RenderMode;
 
-  private readonly _cameraPositionObservable: Subject<THREE.PerspectiveCamera>;
+  private readonly _cameraPositionObservable: Subject<ThreeCameraConfig>;
   private readonly _shading: Shading;
   private readonly _sectorScene: SectorScene;
   private readonly _previousCameraMatrix = new THREE.Matrix4();
@@ -99,7 +86,7 @@ export class CadNode extends THREE.Object3D {
     const { scene, modelTransformation } = model;
 
     this._sectorScene = scene;
-    this._determineSectors = defaultDetermineSectors;
+    this._sectorCuller = new ProximitySectorCuller();
     this.modelTransformation = modelTransformation;
     // Ensure camera matrix is unequal on first frame
     this._previousCameraMatrix.elements[0] = Infinity;
@@ -128,55 +115,13 @@ export class CadNode extends THREE.Object3D {
     // ======== NEW STUFF ======
     this._cameraPositionObservable = new Subject();
 
-    const determineSectors = map((camera: THREE.PerspectiveCamera) => {
-      camera.matrixWorldInverse.getInverse(camera.matrixWorld);
-
-      const { cameraPosition, cameraModelMatrix, projectionMatrix } = updateVars;
-      fromThreeVector3(cameraPosition, camera.position, model.modelTransformation);
-      fromThreeMatrix(cameraModelMatrix, camera.matrixWorld, model.modelTransformation);
-      fromThreeMatrix(projectionMatrix, camera.projectionMatrix);
-      const wantedSectors = this._determineSectors({
-        scene: model.scene,
-        cameraFov: camera.fov,
-        cameraPosition,
-        cameraModelMatrix,
-        projectionMatrix,
-        loadingHints: {}
-      });
-      const actualWantedSectors: WantedSector[] = [];
-      for (const sector of wantedSectors.simple) {
-        actualWantedSectors.push({
-          id: sector,
-          levelOfDetail: LevelOfDetail.Simple,
-          metadata: model.scene.sectors.get(sector)!
-        });
-      }
-      for (const sector of wantedSectors.detailed) {
-        actualWantedSectors.push({
-          id: sector,
-          levelOfDetail: LevelOfDetail.Detailed,
-          metadata: model.scene.sectors.get(sector)!
-        });
-      }
-      for (const [id, sector] of model.scene.sectors) {
-        if (!wantedSectors.simple.has(sector.id) && !wantedSectors.detailed.has(sector.id)) {
-          actualWantedSectors.push({
-            id: sector.id,
-            levelOfDetail: LevelOfDetail.Discarded,
-            metadata: sector
-          });
-        }
-      }
-      if (this.shouldRenderSectorBoundingBoxes) {
-        this.updateSectorBoundingBoxes(wantedSectors);
-      }
-      return actualWantedSectors;
-    });
-
-    const distinctUntilLodChanged = pipe(
-      groupBy((sector: WantedSector) => sector.id),
-      mergeMap((group: GroupedObservable<number, WantedSector>) => group.pipe(distinctUntilKeyChanged('levelOfDetail')))
-    );
+    const distinctUntilLodChanged = () =>
+      pipe(
+        groupBy((sector: WantedSector) => sector.id),
+        mergeMap((group: GroupedObservable<number, WantedSector>) =>
+          group.pipe(distinctUntilKeyChanged('levelOfDetail'))
+        )
+      );
 
     function dropOutdated(wantedObservable: Observable<WantedSector[]>): OperatorFunction<ParsedSector, ParsedSector> {
       return pipe(
@@ -194,16 +139,17 @@ export class CadNode extends THREE.Object3D {
 
     this._cameraPositionObservable
       .pipe(
-        auditTime(100),
-        determineSectors,
+        auditTime(1000),
+        fromThreeCameraConfig(),
+        this._sectorCuller.determineSectors(),
         share(),
         publish(wantedSectors =>
           wantedSectors.pipe(
             switchAll(),
-            distinctUntilLodChanged,
-            this._repository.getSector,
+            distinctUntilLodChanged(),
+            this._repository.loadSector(),
             dropOutdated(wantedSectors),
-            this.rootSector.consumeSector
+            this.rootSector.consumeSector()
           )
         )
       )
@@ -217,6 +163,7 @@ export class CadNode extends THREE.Object3D {
         }
         sectorNode.add(sector.group);
         sectorNode.group = sector.group;
+        this.updateSectorBoundingBoxes(sector);
         this.dispatchEvent({ type: 'update' });
       });
   }
@@ -261,20 +208,17 @@ export class CadNode extends THREE.Object3D {
     return this._loadingHints;
   }
 
-  set determineSectors(determineSectors: DetermineSectorsDelegate) {
-    this._determineSectors = determineSectors;
-  }
-
-  get determineSectors() {
-    return this._determineSectors;
-  }
-
   private get shouldRenderSectorBoundingBoxes(): boolean {
     return this._renderHints.showSectorBoundingBoxes || false;
   }
 
   public update(camera: THREE.PerspectiveCamera) {
-    this._cameraPositionObservable.next(camera);
+    const cameraConfig: ThreeCameraConfig = {
+      camera,
+      modelTransformation: this.modelTransformation,
+      sectorScene: this._sectorScene
+    };
+    this._cameraPositionObservable.next(cameraConfig);
   }
 
   public suggestCameraConfig(): SuggestedCameraConfig {
@@ -288,11 +232,14 @@ export class CadNode extends THREE.Object3D {
     };
   }
 
-  private updateSectorBoundingBoxes(wantedSectors: WantedSectors) {
+  private updateSectorBoundingBoxes(sector: ConsumedSector) {
     this._boundingBoxNode.children.forEach(x => {
       const sectorId = x.userData.sectorId as number;
+      if (sectorId !== sector.id) {
+        return;
+      }
       const boxHelper = x as THREE.Box3Helper;
-      boxHelper.visible = wantedSectors.detailed.has(sectorId) || wantedSectors.simple.has(sectorId);
+      boxHelper.visible = sector.levelOfDetail !== LevelOfDetail.Discarded;
     });
   }
 
