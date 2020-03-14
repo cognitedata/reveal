@@ -5,7 +5,6 @@
 import * as THREE from 'three';
 
 import { SectorModelTransformation, SectorScene, SectorMetadata } from '../../../models/cad/types';
-import { DetermineSectorsDelegate } from '../../../models/cad/delegates';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
 import { CadModel } from '../../../models/cad/CadModel';
 import { CadRenderHints } from '../../CadRenderHints';
@@ -16,26 +15,20 @@ import { Shading, createDefaultShading } from './shading';
 import { RootSectorNode } from './RootSectorNode';
 import { CachedRepository } from '../../../repository/cad/CachedRepository';
 import { Repository } from '../../../repository/cad/Repository';
-import { Observable, of, Subject, pipe, GroupedObservable, OperatorFunction, empty } from 'rxjs';
+import { Subject } from 'rxjs';
 import {
-  flatMap,
-  groupBy,
-  distinctUntilKeyChanged,
-  mergeMap,
   publish,
-  withLatestFrom,
   share,
   auditTime,
   switchAll,
-  tap
 } from 'rxjs/operators';
-import { ParsedSector } from '../../../data/model/ParsedSector';
-import { WantedSector } from '../../../data/model/WantedSector';
 import { ConsumedSector } from '../../../data/model/ConsumedSector';
 import { fromThreeCameraConfig, ThreeCameraConfig } from './determineSectors';
 import { SectorCuller } from '../../../culling/SectorCuller';
 import { ProximitySectorCuller } from '../../../culling/ProximitySectorCuller';
 import { LevelOfDetail } from '../../../data/model/LevelOfDetail';
+import { distinctUntilLevelOfDetailChanged } from '../../../models/cad/distinctUntilChanged';
+import { filterCurrentWantedSectors } from '../../../models/cad/filterCurrentWantedSectors';
 
 interface CadNodeOptions {
   shading?: Shading;
@@ -112,30 +105,7 @@ export class CadNode extends THREE.Object3D {
 
     this._shading.updateNodes(indices);
 
-    // ======== NEW STUFF ======
     this._cameraPositionObservable = new Subject();
-
-    const distinctUntilLodChanged = () =>
-      pipe(
-        groupBy((sector: WantedSector) => sector.id),
-        mergeMap((group: GroupedObservable<number, WantedSector>) =>
-          group.pipe(distinctUntilKeyChanged('levelOfDetail'))
-        )
-      );
-
-    function dropOutdated(wantedObservable: Observable<WantedSector[]>): OperatorFunction<ParsedSector, ParsedSector> {
-      return pipe(
-        withLatestFrom(wantedObservable),
-        flatMap(([loaded, wanted]) => {
-          for (const wantedSector of wanted) {
-            if (loaded.id === wantedSector.id && loaded.levelOfDetail === wantedSector.levelOfDetail) {
-              return of(loaded);
-            }
-          }
-          return empty();
-        })
-      );
-    }
 
     this._cameraPositionObservable
       .pipe(
@@ -146,9 +116,9 @@ export class CadNode extends THREE.Object3D {
         publish(wantedSectors =>
           wantedSectors.pipe(
             switchAll(),
-            distinctUntilLodChanged(),
+            distinctUntilLevelOfDetailChanged(),
             this._repository.loadSector(),
-            dropOutdated(wantedSectors),
+            filterCurrentWantedSectors(wantedSectors),
             this.rootSector.consumeSector()
           )
         )
