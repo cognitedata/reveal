@@ -22,14 +22,15 @@ import { suggestCameraConfig } from '../../../utils/cameraUtils';
 import { SectorNode } from './SectorNode';
 import { fromThreeVector3, fromThreeMatrix, toThreeJsBox3, toThreeVector3, toThreeMatrix4 } from '../utilities';
 import { RenderMode } from '../materials';
-import { Shading, createDefaultShading } from './shading';
 import { RootSectorNode } from './RootSectorNode';
 import { BasicSectorActivator, SectorActivator } from '../../../models/cad/BasicSectorActivator';
 import { CachedRepository } from '../../../repository/cad/CachedRepository';
 import { Repository } from '../../../repository/cad/Repository';
+import { NodeProperties } from '../../common/cad/NodeProperties';
+import { MaterialManager } from './MaterialManager';
 
 interface CadNodeOptions {
-  shading?: Shading;
+  nodeProperties?: NodeProperties;
 }
 
 export interface SuggestedCameraConfig {
@@ -56,7 +57,7 @@ export class CadNode extends THREE.Object3D {
   private _loadingHints: CadLoadingHints;
   private _renderMode: RenderMode;
 
-  private readonly _shading: Shading;
+  private readonly _materialManager: MaterialManager;
   private readonly _sectorScene: SectorScene;
   private readonly _previousCameraMatrix = new THREE.Matrix4();
   private readonly _boundingBoxNode: THREE.Object3D;
@@ -67,18 +68,9 @@ export class CadNode extends THREE.Object3D {
     this.type = 'CadNode';
     this.name = 'Sector model';
 
-    this._shading = (() => {
-      if (options && options.shading) {
-        return options.shading;
-      }
-      return createDefaultShading({
-        color(_treeIndex: number) {
-          return undefined;
-        }
-      });
-    })();
+    this._materialManager = new MaterialManager(options ? options.nodeProperties : undefined);
 
-    const rootSector = new RootSectorNode(model, this._shading);
+    const rootSector = new RootSectorNode(model, this._materialManager.materials);
     this._repository = new CachedRepository(model);
 
     this._detailedSectorActivator = new BasicSectorActivator<Sector>(
@@ -134,26 +126,30 @@ export class CadNode extends THREE.Object3D {
       indices.push(i);
     }
 
-    this._shading.updateNodes(indices);
+    this._materialManager.updateNodes(indices);
   }
 
   set renderMode(mode: RenderMode) {
     this._renderMode = mode;
-    this._shading.materials.box.uniforms.renderMode.value = mode;
-    this._shading.materials.circle.uniforms.renderMode.value = mode;
-    this._shading.materials.generalRing.uniforms.renderMode.value = mode;
-    this._shading.materials.nut.uniforms.renderMode.value = mode;
-    this._shading.materials.quad.uniforms.renderMode.value = mode;
-    this._shading.materials.cone.uniforms.renderMode.value = mode;
-    this._shading.materials.eccentricCone.uniforms.renderMode.value = mode;
-    this._shading.materials.sphericalSegment.uniforms.renderMode.value = mode;
-    this._shading.materials.torusSegment.uniforms.renderMode.value = mode;
-    this._shading.materials.generalCylinder.uniforms.renderMode.value = mode;
-    this._shading.materials.trapezium.uniforms.renderMode.value = mode;
-    this._shading.materials.ellipsoidSegment.uniforms.renderMode.value = mode;
-    this._shading.materials.instancedMesh.uniforms.renderMode.value = mode;
-    this._shading.materials.triangleMesh.uniforms.renderMode.value = mode;
-    this._shading.materials.simple.uniforms.renderMode.value = mode;
+    this._materialManager.materials.box.uniforms.renderMode.value = mode;
+    this._materialManager.materials.circle.uniforms.renderMode.value = mode;
+    this._materialManager.materials.generalRing.uniforms.renderMode.value = mode;
+    this._materialManager.materials.nut.uniforms.renderMode.value = mode;
+    this._materialManager.materials.quad.uniforms.renderMode.value = mode;
+    this._materialManager.materials.cone.uniforms.renderMode.value = mode;
+    this._materialManager.materials.eccentricCone.uniforms.renderMode.value = mode;
+    this._materialManager.materials.sphericalSegment.uniforms.renderMode.value = mode;
+    this._materialManager.materials.torusSegment.uniforms.renderMode.value = mode;
+    this._materialManager.materials.generalCylinder.uniforms.renderMode.value = mode;
+    this._materialManager.materials.trapezium.uniforms.renderMode.value = mode;
+    this._materialManager.materials.ellipsoidSegment.uniforms.renderMode.value = mode;
+    this._materialManager.materials.instancedMesh.uniforms.renderMode.value = mode;
+    this._materialManager.materials.triangleMesh.uniforms.renderMode.value = mode;
+    this._materialManager.materials.simple.uniforms.renderMode.value = mode;
+  }
+
+  requestNodeUpdate(treeIndices: number[]) {
+    this._materialManager.updateNodes(treeIndices);
   }
 
   get renderMode() {

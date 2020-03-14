@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import * as reveal_threejs from '@cognite/reveal/threejs';
+import { CadNode, NodeProperties, intersectCadNodes } from '@cognite/reveal/threejs';
 import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams } from './utils/loaders';
 
 CameraControls.install({ THREE });
@@ -21,20 +21,20 @@ async function main() {
 
   const pickedNodes: Set<number> = new Set();
   const pickedObjects: Set<THREE.Mesh> = new Set();
-  const shading = reveal_threejs.createDefaultShading({
+  const nodeProperties: NodeProperties = {
     color(treeIndex: number) {
       if (pickedNodes.has(treeIndex)) {
         return [255, 255, 0, 255];
       }
       return undefined;
     }
-  });
+  };
 
   const scene = new THREE.Scene();
 
   // Add some data for Reveal
   const cadModel = await loadCadModelFromCdfOrUrl(modelId);
-  const cadNode = new reveal_threejs.CadNode(cadModel, { shading });
+  const cadNode = new CadNode(cadModel, { nodeProperties });
   scene.add(cadNode);
 
   // Add some other geometry
@@ -93,7 +93,7 @@ async function main() {
     };
     // Pick in Reveal
     const revealPickResult = (() => {
-      const intersections = reveal_threejs.intersectCadNodes([cadNode], { renderer, camera, coords });
+      const intersections = intersectCadNodes([cadNode], { renderer, camera, coords });
       if (intersections.length === 0) {
         return;
       }
@@ -154,7 +154,7 @@ async function main() {
         } else {
           pickedNodes.delete(treeIndex);
         }
-        shading.updateNodes([treeIndex]);
+        cadNode.requestNodeUpdate([treeIndex]);
         pickingNeedsUpdate = true;
 
         break;

@@ -11,20 +11,20 @@ import { consumeSectorDetailed } from './consumeSectorDetailed';
 import { consumeSectorSimple } from './consumeSectorSimple';
 import { findSectorMetadata } from '../../../models/cad/findSectorMetadata';
 import { discardSector } from './discardSector';
-import { Shading } from './shading';
+import { Materials } from './materials';
 
 export class RootSectorNode extends SectorNode {
   private readonly sectorNodeMap: Map<number, SectorNode>;
-  private readonly shading: Shading;
+  private readonly materials: Materials;
   private readonly rootSectorMetadata: SectorMetadata;
 
-  constructor(model: CadModel, shading: Shading) {
+  constructor(model: CadModel, materials: Materials) {
     super(0, '/');
     const { scene, modelTransformation } = model;
     this.applyMatrix4(toThreeMatrix4(modelTransformation.modelMatrix));
     this.sectorNodeMap = new Map();
     this.rootSectorMetadata = scene.root;
-    this.shading = shading;
+    this.materials = materials;
 
     buildScene(scene.root, this, this.sectorNodeMap);
   }
@@ -36,7 +36,7 @@ export class RootSectorNode extends SectorNode {
     }
 
     const metadata = findSectorMetadata(this.rootSectorMetadata, sectorId);
-    consumeSectorDetailed(sectorId, sector, metadata, sectorNode, this.shading.materials);
+    consumeSectorDetailed(sectorId, sector, metadata, sectorNode, this.materials);
   }
 
   consumeSimple(sectorId: number, sector: SectorQuads) {
@@ -46,7 +46,7 @@ export class RootSectorNode extends SectorNode {
     }
 
     const metadata = findSectorMetadata(this.rootSectorMetadata, sectorId);
-    consumeSectorSimple(sectorId, sector, metadata, sectorNode, this.shading.materials);
+    consumeSectorSimple(sectorId, sector, metadata, sectorNode, this.materials);
   }
 
   discard(sectorId: number) {
