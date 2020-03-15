@@ -13,14 +13,13 @@ export interface Color {
 }
 
 export interface Cognite3DViewerOptions {
+  sdk: CogniteClient;
   domElement?: HTMLElement;
   noBackground?: boolean;
   logMetrics?: boolean;
   highlightColor?: THREE.Color;
-  // Only if you need to access CDF models
-  sdk?: CogniteClient;
   viewCube?: 'topleft' | 'topright' | 'bottomleft' | 'bottomright';
-  enableCache: boolean;
+  enableCache?: boolean;
 }
 
 // export { OnProgressData } from '@/helpers/Progress';
