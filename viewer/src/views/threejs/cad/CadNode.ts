@@ -130,7 +130,7 @@ export class CadNode extends THREE.Object3D {
     this.renderMode = RenderMode.Color;
 
     const indices = [];
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < scene.maxTreeIndex; i++) {
       indices.push(i);
     }
 
