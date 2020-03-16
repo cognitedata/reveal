@@ -27,7 +27,7 @@ import { fromThreeCameraConfig, ThreeCameraConfig } from './determineSectors';
 import { SectorCuller } from '../../../culling/SectorCuller';
 import { ProximitySectorCuller } from '../../../culling/ProximitySectorCuller';
 import { LevelOfDetail } from '../../../data/model/LevelOfDetail';
-import { distinctUntilLevelOfDetailChanged } from '../../../models/cad/distinctUntilChanged';
+import { distinctUntilLevelOfDetailChanged } from '../../../models/cad/distinctUntilLevelOfDetailChanged';
 import { filterCurrentWantedSectors } from '../../../models/cad/filterCurrentWantedSectors';
 
 interface CadNodeOptions {
