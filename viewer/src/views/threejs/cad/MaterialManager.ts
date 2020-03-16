@@ -6,7 +6,7 @@ import { createMaterials, Materials } from './materials';
 import {
   VisibilityDelegate,
   ColorDelegate,
-  NodeProperties
+  NodeAppearance
 } from '../../common/cad/NodeProperties';
 
 function updateColors(getColor: ColorDelegate, materials: Materials, treeIndices: number[]) {
@@ -27,9 +27,9 @@ function updateVisibility(visible: VisibilityDelegate, materials: Materials, tre
 
 export class MaterialManager {
   public readonly materials: Materials;
-  private readonly _options?: NodeProperties;
+  private readonly _options?: NodeAppearance;
 
-  constructor(options?: NodeProperties) {
+  constructor(options?: NodeAppearance) {
     this.materials = createMaterials();
     this._options = options;
   }

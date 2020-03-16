@@ -26,11 +26,11 @@ import { RootSectorNode } from './RootSectorNode';
 import { BasicSectorActivator, SectorActivator } from '../../../models/cad/BasicSectorActivator';
 import { CachedRepository } from '../../../repository/cad/CachedRepository';
 import { Repository } from '../../../repository/cad/Repository';
-import { NodeProperties } from '../../common/cad/NodeProperties';
+import { NodeAppearance } from '../../common/cad/NodeProperties';
 import { MaterialManager } from './MaterialManager';
 
 interface CadNodeOptions {
-  nodeProperties?: NodeProperties;
+  nodeProperties?: NodeAppearance;
 }
 
 export interface SuggestedCameraConfig {
