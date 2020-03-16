@@ -98,7 +98,7 @@ export class CadNode extends THREE.Object3D {
     this.renderMode = RenderMode.Color;
 
     const indices = [];
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < model.scene.maxTreeIndex; i++) {
       indices.push(i);
     }
 
@@ -108,7 +108,7 @@ export class CadNode extends THREE.Object3D {
 
     this._cameraPositionObservable
       .pipe(
-        auditTime(1000),
+        auditTime(100),
         fromThreeCameraConfig(),
         this._sectorCuller.determineSectors(),
         share(),
