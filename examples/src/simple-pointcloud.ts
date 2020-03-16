@@ -9,15 +9,14 @@ import * as reveal_threejs from '@cognite/reveal/threejs';
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
 import { vec3 } from 'gl-matrix';
-import { CogniteClient } from '@cognite/sdk';
 import { toThreeJsBox3 } from '@cognite/reveal/threejs';
+import { loadPointCloudModelFromCdfOrUrl, createModelIdentifierFromUrlParams } from './utils/loaders';
 
 CameraControls.install({ THREE });
 
 async function main() {
   const urlParams = new URL(location.href).searchParams;
-  const modelIdentifier = urlParams.get('model') || '/transformer-point-cloud/cloud.js';
-  const project = urlParams.get('project');
+  const modelIdentifier = createModelIdentifierFromUrlParams(urlParams, '/primitives');
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
@@ -26,7 +25,7 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const pointCloudModel = await createPointCloudModel(modelIdentifier, project);
+  const pointCloudModel = await loadPointCloudModelFromCdfOrUrl(modelIdentifier);
   const [pointCloudGroup, pointCloudNode] = await reveal_threejs.createThreeJsPointCloudNode(pointCloudModel);
   scene.add(pointCloudGroup);
 
@@ -55,6 +54,7 @@ async function main() {
   const render = async () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
+
     const needsUpdate = controlsNeedUpdate || pointCloudGroup.needsRedraw || settingsChanged;
 
     if (needsUpdate) {
@@ -66,6 +66,7 @@ async function main() {
   render();
 
   (window as any).scene = scene;
+  (window as any).renderer = renderer;
   (window as any).THREE = THREE;
   (window as any).camera = camera;
   (window as any).controls = controls;
@@ -100,21 +101,6 @@ function initializeGui(node: reveal.internal.PotreeNodeWrapper, handleSettingsCh
       node.pointShape = value;
       handleSettingsChangedCb();
     });
-}
-
-async function createPointCloudModel(model: string, project: string | null): Promise<reveal.PointCloudModel> {
-  const isUrlModelId = !Number.isNaN(Number(model));
-  if (isUrlModelId) {
-    if (!project) {
-      throw new Error('Must provide project when model is a modelId.');
-    }
-    const sdk = new CogniteClient({ appId: 'cognite.reveal.example.simple-pointcloud' });
-    sdk.loginWithOAuth({ project });
-    await sdk.authenticate();
-    return reveal.createPointCloudModel(sdk, Number.parseInt(model, 10));
-  } else {
-    return reveal.createLocalPointCloudModel(model);
-  }
 }
 
 main();
