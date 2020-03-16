@@ -7,7 +7,8 @@ import { vec3, mat4 } from 'gl-matrix';
 import { fromThreeVector3, fromThreeMatrix } from '../utilities';
 import { map } from 'rxjs/operators';
 import { OperatorFunction } from 'rxjs';
-import { DetermineSectorsInput, SectorModelTransformation, SectorScene } from '../../../models/cad/types';
+import { SectorModelTransformation, SectorScene } from '../../../models/cad/types';
+import { DetermineSectorsByProximityInput } from '../../../models/cad/determineSectors';
 
 const updateVars = {
   cameraPosition: vec3.create(),
@@ -21,7 +22,7 @@ export interface ThreeCameraConfig {
   sectorScene: SectorScene;
 }
 
-export function fromThreeCameraConfig(): OperatorFunction<ThreeCameraConfig, DetermineSectorsInput> {
+export function fromThreeCameraConfig(): OperatorFunction<ThreeCameraConfig, DetermineSectorsByProximityInput> {
   return map((input: ThreeCameraConfig) => {
     const { camera, modelTransformation, sectorScene } = input;
     const { cameraPosition, cameraModelMatrix, projectionMatrix } = updateVars;

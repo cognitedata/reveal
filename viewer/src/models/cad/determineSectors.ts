@@ -5,11 +5,11 @@
 // TODO try to implement all functionality that three.js provides here without three.js to avoid
 // pulling it in just for this reason
 import * as THREE from 'three';
-import { SectorMetadata, SectorScene, DetermineSectorsInput } from './types';
+import { SectorMetadata, SectorScene } from './types';
 import { traverseDepthFirst, traverseUpwards } from '../../utils/traversal';
 import { toThreeMatrix4, toThreeVector3 } from '../../views/threejs/utilities';
-import { mat4 } from 'gl-matrix';
-import { defaultLoadingHints as defaultCadLoadingHints } from './CadLoadingHints';
+import { mat4, vec3 } from 'gl-matrix';
+import { defaultLoadingHints as defaultCadLoadingHints, CadLoadingHints } from './CadLoadingHints';
 import { WantedSector } from '../../data/model/WantedSector';
 import { LevelOfDetail } from '../../data/model/LevelOfDetail';
 
@@ -24,7 +24,16 @@ const determineSectorsPreallocatedVars = {
   max: new THREE.Vector3()
 };
 
-export function determineSectorsByProximity(params: DetermineSectorsInput): WantedSector[] {
+export interface DetermineSectorsByProximityInput {
+  readonly sectorScene: SectorScene;
+  readonly cameraFov: number;
+  readonly cameraPosition: vec3;
+  readonly cameraModelMatrix: mat4;
+  readonly projectionMatrix: mat4;
+  readonly loadingHints?: CadLoadingHints;
+}
+
+export function determineSectorsByProximity(params: DetermineSectorsByProximityInput): WantedSector[] {
   const hints = { ...defaultCadLoadingHints, ...(params.loadingHints || {}) };
 
   const { sectorScene, cameraPosition, cameraModelMatrix, projectionMatrix, cameraFov } = params;

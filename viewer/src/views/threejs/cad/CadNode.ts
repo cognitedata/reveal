@@ -23,8 +23,7 @@ import {
   switchAll,
 } from 'rxjs/operators';
 import { ConsumedSector } from '../../../data/model/ConsumedSector';
-import { fromThreeCameraConfig, ThreeCameraConfig } from './determineSectors';
-import { SectorCuller } from '../../../culling/SectorCuller';
+import { fromThreeCameraConfig, ThreeCameraConfig } from './fromThreeCameraConfig';
 import { ProximitySectorCuller } from '../../../culling/ProximitySectorCuller';
 import { LevelOfDetail } from '../../../data/model/LevelOfDetail';
 import { distinctUntilLevelOfDetailChanged } from '../../../models/cad/distinctUntilLevelOfDetailChanged';
@@ -45,7 +44,7 @@ export class CadNode extends THREE.Object3D {
   public readonly rootSector: RootSectorNode;
   public readonly modelTransformation: SectorModelTransformation;
 
-  private _sectorCuller: SectorCuller;
+  private _sectorCuller: ProximitySectorCuller;
   private _renderHints: CadRenderHints;
   private _loadingHints: CadLoadingHints;
   private _renderMode: RenderMode;

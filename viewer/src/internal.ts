@@ -12,4 +12,3 @@ export { PotreeGroupWrapper } from './views/threejs/pointcloud/PotreeGroupWrappe
 
 export { suggestCameraConfig } from './utils/cameraUtils';
 export { traverseDepthFirst, traverseUpwards } from './utils/traversal';
-export { DetermineSectorsInput } from './models/cad/types';

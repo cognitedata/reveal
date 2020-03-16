@@ -3,12 +3,11 @@
  */
 
 import { SectorCuller } from './SectorCuller';
-import { DetermineSectorsInput } from '../models/cad/types';
 import { map } from 'rxjs/operators';
-import { determineSectorsByProximity } from '../models/cad/determineSectors';
+import { determineSectorsByProximity, DetermineSectorsByProximityInput } from '../models/cad/determineSectors';
 
-export class ProximitySectorCuller implements SectorCuller<DetermineSectorsInput> {
+export class ProximitySectorCuller implements SectorCuller<DetermineSectorsByProximityInput> {
   determineSectors() {
-    return map((input: DetermineSectorsInput) => determineSectorsByProximity(input));
+    return map((input: DetermineSectorsByProximityInput) => determineSectorsByProximity(input));
   }
 }
