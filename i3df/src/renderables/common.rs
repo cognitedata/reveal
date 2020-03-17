@@ -38,7 +38,7 @@ pub fn create_general_ring_instance_matrix(data: &GeneralRingInstanceMatrixInfo)
     let scale_matrix = Matrix4::new_nonuniform_scaling(&scale);
 
     // TODO remove Matrix4::from if possible
-    (Matrix4::from(translation_matrix) * rotation_matrix * scale_matrix)
+    Matrix4::from(translation_matrix) * rotation_matrix * scale_matrix
     //Matrix4::from(translation_matrix).transpose()
     //Matrix4::identity()
 }
