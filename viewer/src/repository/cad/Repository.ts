@@ -2,7 +2,6 @@
  * Copyright 2020 Cognite AS
  */
 
-import { OperatorFunction } from 'rxjs';
 import { WantedSector } from '../../data/model/WantedSector';
 import { ParsedSector } from '../../data/model/ParsedSector';
 
@@ -10,5 +9,5 @@ import { ParsedSector } from '../../data/model/ParsedSector';
 export type SectorId = number;
 
 export interface Repository {
-  loadSector(): OperatorFunction<WantedSector, ParsedSector>;
+  loadSector(sector: WantedSector): Promise<ParsedSector>;
 }

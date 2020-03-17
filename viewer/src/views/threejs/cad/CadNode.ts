@@ -26,6 +26,7 @@ import { filterCurrentWantedSectors } from '../../../models/cad/filterCurrentWan
 import { SectorCuller } from '../../../culling/SectorCuller';
 import { DetermineSectorsByProximityInput } from '../../../models/cad/determineSectors';
 import { ParsedSector } from '../../../data/model/ParsedSector';
+import { WantedSector } from '../../../data/model/WantedSector';
 
 interface CadNodeOptions {
   shading?: Shading;
@@ -161,6 +162,7 @@ export class CadNode extends THREE.Object3D {
   }
 
   private createLoadSectorsPipeline(): Subject<ThreeCameraConfig> {
+    const loadSectorOperator = flatMap((s: WantedSector) => this._repository.loadSector(s));
     const consumeSectorOperator = flatMap((sector: ParsedSector) => this.rootSector.consumeSector(sector.id, sector));
 
     const pipeline = new Subject<ThreeCameraConfig>();
@@ -174,7 +176,7 @@ export class CadNode extends THREE.Object3D {
           wantedSectors.pipe(
             switchAll(),
             distinctUntilLevelOfDetailChanged(),
-            this._repository.loadSector(),
+            loadSectorOperator,
             filterCurrentWantedSectors(wantedSectors),
             consumeSectorOperator
           )
