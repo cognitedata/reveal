@@ -16,7 +16,7 @@ import { RootSectorNode } from './RootSectorNode';
 import { CachedRepository } from '../../../repository/cad/CachedRepository';
 import { Repository } from '../../../repository/cad/Repository';
 import { Subject } from 'rxjs';
-import { publish, share, auditTime, switchAll } from 'rxjs/operators';
+import { publish, share, auditTime, switchAll, flatMap } from 'rxjs/operators';
 import { ConsumedSector } from '../../../data/model/ConsumedSector';
 import { fromThreeCameraConfig, ThreeCameraConfig } from './fromThreeCameraConfig';
 import { ProximitySectorCuller } from '../../../culling/ProximitySectorCuller';
@@ -25,6 +25,7 @@ import { distinctUntilLevelOfDetailChanged } from '../../../models/cad/distinctU
 import { filterCurrentWantedSectors } from '../../../models/cad/filterCurrentWantedSectors';
 import { SectorCuller } from '../../../culling/SectorCuller';
 import { DetermineSectorsByProximityInput } from '../../../models/cad/determineSectors';
+import { ParsedSector } from '../../../data/model/ParsedSector';
 
 interface CadNodeOptions {
   shading?: Shading;
@@ -160,6 +161,8 @@ export class CadNode extends THREE.Object3D {
   }
 
   private createLoadSectorsPipeline(): Subject<ThreeCameraConfig> {
+    const consumeSectorOperator = flatMap((sector: ParsedSector) => this.rootSector.consumeSector(sector.id, sector));
+
     const pipeline = new Subject<ThreeCameraConfig>();
     pipeline
       .pipe(
@@ -173,7 +176,7 @@ export class CadNode extends THREE.Object3D {
             distinctUntilLevelOfDetailChanged(),
             this._repository.loadSector(),
             filterCurrentWantedSectors(wantedSectors),
-            this.rootSector.consumeSector()
+            consumeSectorOperator
           )
         )
       )
