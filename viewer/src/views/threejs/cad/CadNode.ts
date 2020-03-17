@@ -16,21 +16,22 @@ import { RootSectorNode } from './RootSectorNode';
 import { CachedRepository } from '../../../repository/cad/CachedRepository';
 import { Repository } from '../../../repository/cad/Repository';
 import { Subject } from 'rxjs';
-import {
-  publish,
-  share,
-  auditTime,
-  switchAll,
-} from 'rxjs/operators';
+import { publish, share, auditTime, switchAll } from 'rxjs/operators';
 import { ConsumedSector } from '../../../data/model/ConsumedSector';
 import { fromThreeCameraConfig, ThreeCameraConfig } from './fromThreeCameraConfig';
 import { ProximitySectorCuller } from '../../../culling/ProximitySectorCuller';
 import { LevelOfDetail } from '../../../data/model/LevelOfDetail';
 import { distinctUntilLevelOfDetailChanged } from '../../../models/cad/distinctUntilLevelOfDetailChanged';
 import { filterCurrentWantedSectors } from '../../../models/cad/filterCurrentWantedSectors';
+import { SectorCuller } from '../../../culling/SectorCuller';
+import { DetermineSectorsByProximityInput } from '../../../models/cad/determineSectors';
 
 interface CadNodeOptions {
   shading?: Shading;
+  // internal options are experimental and may change in the future
+  internal?: {
+    sectorCuller?: SectorCuller<DetermineSectorsByProximityInput>;
+  };
 }
 
 export interface SuggestedCameraConfig {
@@ -44,7 +45,7 @@ export class CadNode extends THREE.Object3D {
   public readonly rootSector: RootSectorNode;
   public readonly modelTransformation: SectorModelTransformation;
 
-  private _sectorCuller: ProximitySectorCuller;
+  private _sectorCuller: SectorCuller<DetermineSectorsByProximityInput>;
   private _renderHints: CadRenderHints;
   private _loadingHints: CadLoadingHints;
   private _renderMode: RenderMode;
@@ -78,7 +79,7 @@ export class CadNode extends THREE.Object3D {
     const { scene, modelTransformation } = model;
 
     this._sectorScene = scene;
-    this._sectorCuller = new ProximitySectorCuller();
+    this._sectorCuller = (options && options.internal && options.internal.sectorCuller) || new ProximitySectorCuller();
     this.modelTransformation = modelTransformation;
     // Ensure camera matrix is unequal on first frame
     this._previousCameraMatrix.elements[0] = Infinity;

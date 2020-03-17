@@ -4,7 +4,6 @@
 
 import * as THREE from 'three';
 import { Sector, SectorMetadata } from '../../../models/cad/types';
-import { SectorNode } from './SectorNode';
 import { toThreeJsBox3 } from '../utilities';
 import { createPrimitives } from './primitives';
 import { createTriangleMeshes } from './triangleMeshes';

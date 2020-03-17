@@ -102,6 +102,9 @@ export function determineSectorsFromDetailed(scene: SectorScene, requestedDetail
       throw new Error(`Could not find sector with ID ${sectorId}`);
     }
     traverseUpwards(sector, (other: SectorMetadata) => {
+      if (detailed.includes(other.id)) {
+        return false;
+      }
       wanted.push({
         id: other.id,
         levelOfDetail: LevelOfDetail.Detailed,

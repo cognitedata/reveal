@@ -14,7 +14,7 @@
     "test": "jest",
     "coverage": "jest --coverage",
     "lint": "tslint --project .",
-    "serve": "webpack-dev-server"
+    "serve": "npm install && npm link && cd examples && npm install && npm link @cognite/reveal && npm run serve"
   },
   "author": "Svenn-Arne Dragly <dragly@cognite.com>",
   "contributors": [

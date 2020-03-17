@@ -6,7 +6,6 @@ import { SectorMetadata, TriangleMesh, InstancedMeshFile, InstancedMesh, Sector 
 import { Box3 } from '../../../../utils/Box3';
 import { vec3 } from 'gl-matrix';
 import { consumeSectorDetailed } from '../../../../views/threejs/cad/consumeSectorDetailed';
-import { SectorNode } from '../../../../views/threejs/cad/SectorNode';
 import { createEmptySector } from '../../../models/cad/emptySector';
 import { createMaterials } from '../../../../views/threejs/cad/materials';
 import 'jest-extended';
@@ -38,22 +37,16 @@ describe('consumeSectorDetailed', () => {
     }
   };
   const sectorId = 1;
-  let node: SectorNode;
-
-  beforeEach(() => {
-    node = new SectorNode(sectorId, '0/1/2');
-  });
 
   test('no geometry, does not add new nodes', () => {
     // Arrange
     const sector = createEmptySector();
 
     // Act
-    consumeSectorDetailed(sectorId, sector, metadata, node, materials);
+    const group = consumeSectorDetailed(sectorId, sector, metadata, materials);
 
     // Assert
-    const geometries = extractGeometries(node);
-    expect(geometries).toBeEmpty();
+    expect(group.children).toBeEmpty();
   });
 
   test('single triangle mesh, adds geometry', () => {
@@ -62,11 +55,10 @@ describe('consumeSectorDetailed', () => {
     const sector: Sector = Object.assign(createEmptySector(), { triangleMeshes } as Sector);
 
     // Act
-    consumeSectorDetailed(sectorId, sector, metadata, node, materials);
+    const group = consumeSectorDetailed(sectorId, sector, metadata, materials);
 
     // Assert
-    const geometries = extractGeometries(node);
-    expect(geometries.length).toBe(1);
+    expect(group.children.length).toBe(1);
   });
 
   test('single instance mesh, adds geometry', () => {
@@ -75,11 +67,10 @@ describe('consumeSectorDetailed', () => {
     const sector: Sector = Object.assign(createEmptySector(), { instanceMeshes } as Sector);
 
     // Act
-    consumeSectorDetailed(sectorId, sector, metadata, node, materials);
+    const group = consumeSectorDetailed(sectorId, sector, metadata, materials);
 
     // Assert
-    const geometries = extractGeometries(node);
-    expect(geometries.length).toBe(1);
+    expect(group.children.length).toBe(1);
   });
 
   test('empty sector, produces no geometry', () => {
@@ -87,10 +78,10 @@ describe('consumeSectorDetailed', () => {
     const sector = createEmptySector();
 
     // Act
-    consumeSectorDetailed(sectorId, sector, metadata, node, materials);
+    const group = consumeSectorDetailed(sectorId, sector, metadata, materials);
 
     // Assert
-    expect(node.children).toBeEmpty();
+    expect(group.children).toBeEmpty();
   });
 });
 
@@ -125,12 +116,3 @@ function newInstanceMesh(): InstancedMesh {
   };
 }
 
-function extractGeometries(root: THREE.Object3D): THREE.Object3D[] {
-  const geometries: THREE.Object3D[] = [];
-  root.traverse(n => {
-    if (n.type.indexOf('Mesh') !== -1) {
-      geometries.push(n);
-    }
-  });
-  return geometries;
-}

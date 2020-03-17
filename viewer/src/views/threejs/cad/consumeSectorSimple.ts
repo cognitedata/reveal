@@ -4,7 +4,6 @@
 
 import * as THREE from 'three';
 import { SectorMetadata, SectorQuads } from '../../../models/cad/types';
-import { SectorNode } from './SectorNode';
 import { toThreeJsBox3 } from '../utilities';
 import { Materials } from './materials';
 

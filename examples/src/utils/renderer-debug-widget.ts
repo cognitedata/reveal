@@ -35,7 +35,7 @@ export type RenderOptions = {
   loadingEnabled: boolean;
   renderMode: RenderMode;
   renderFilter: RenderFilter;
-  overrideWantedSectors?: reveal.internal.WantedSectors;
+  overrideWantedSectors?: reveal.internal.WantedSector[];
 };
 
 export function createDefaultRenderOptions(): RenderOptions {
@@ -315,8 +315,8 @@ function getMaterials(mesh: THREE.Mesh): THREE.Material[] {
  *               format x/y/z/ where x,y,z is a number).
  * @param root   The root of the sector tree.
  */
-function filterSectorNodes(filter: string, root: reveal.SectorMetadata): Set<number> {
-  const acceptedNodeIds: number[] = [];
+function filterSectorNodes(filter: string, root: reveal.SectorMetadata): reveal.SectorMetadata[] {
+  const acceptedNodes: reveal.SectorMetadata[] = [];
   for (let pathRegex of filter.split('|').map(x => x.trim())) {
     if (!pathRegex.startsWith('^')) {
       pathRegex = '^' + pathRegex;
@@ -326,12 +326,12 @@ function filterSectorNodes(filter: string, root: reveal.SectorMetadata): Set<num
     }
     reveal.internal.traverseDepthFirst(root, node => {
       if (node.path.match(pathRegex)) {
-        acceptedNodeIds.push(node.id);
+        acceptedNodes.push(node);
       }
       return true;
     });
   }
-  return new Set<number>(acceptedNodeIds);
+  return acceptedNodes;
 }
 
 function updateWantedSectorOverride(
@@ -345,10 +345,22 @@ function updateWantedSectorOverride(
   } else {
     const acceptedSimple = filterSectorNodes(quadsFilter, root);
     const acceptedDetailed = filterSectorNodes(detailedFilter, root);
-    renderOptions.overrideWantedSectors = {
-      simple: new Set<number>(acceptedSimple),
-      detailed: new Set<number>(acceptedDetailed)
-    };
+    const wanted: reveal.internal.WantedSector[] = [];
+    for (const node of acceptedSimple) {
+      wanted.push({
+        id: node.id,
+        levelOfDetail: reveal.internal.LevelOfDetail.Simple,
+        metadata: node
+      });
+    }
+    for (const node of acceptedDetailed) {
+      wanted.push({
+        id: node.id,
+        levelOfDetail: reveal.internal.LevelOfDetail.Detailed,
+        metadata: node
+      });
+    }
+    renderOptions.overrideWantedSectors = wanted;
   }
 }
 
