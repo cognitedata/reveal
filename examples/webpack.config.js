@@ -65,12 +65,6 @@ const allExamples = [
     type: 'threejs'
   },
   {
-    name: "walkable-path",
-    title: "Walkable Path",
-    entry: './src/walkable-path.ts',
-    template: 'template-example.ejs'
-  },
-  {
     name: "threejs-side-by-side",
     title: "Side-by-side debugger for sector models",
     entry: './src/side-by-side.ts',
@@ -111,7 +105,18 @@ const allExamples = [
     title: "Migration wrapper for applications using the old Reveal viewer",
     entry: './src/migration.ts',
     template: './template-single-canvas.ejs'
-
+  },
+  {
+    name: "walkable-path",
+    title: "Walkable Path",
+    entry: './src/walkable-path.ts',
+    template: 'template-example.ejs'
+  },
+  {
+    name: "world-to-screen",
+    title: "World To Screen",
+    entry: './src/world-to-screen.ts',
+    template: 'template-example.ejs'
   }
 ];
 
