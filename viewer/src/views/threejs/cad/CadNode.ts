@@ -42,102 +42,6 @@ export interface SuggestedCameraConfig {
 }
 
 export class CadNode extends THREE.Object3D {
-  public readonly rootSector: RootSectorNode;
-  public readonly modelTransformation: SectorModelTransformation;
-
-  private _sectorCuller: SectorCuller<DetermineSectorsByProximityInput>;
-  private _renderHints: CadRenderHints;
-  private _loadingHints: CadLoadingHints;
-  private _renderMode: RenderMode;
-
-  private readonly _cameraPositionObservable: Subject<ThreeCameraConfig>;
-  private readonly _shading: Shading;
-  private readonly _sectorScene: SectorScene;
-  private readonly _previousCameraMatrix = new THREE.Matrix4();
-  private readonly _boundingBoxNode: THREE.Object3D;
-  private readonly _repository: Repository;
-
-  constructor(model: CadModel, options?: CadNodeOptions) {
-    super();
-    this.type = 'CadNode';
-    this.name = 'Sector model';
-
-    this._shading = (() => {
-      if (options && options.shading) {
-        return options.shading;
-      }
-      return createDefaultShading({
-        color(_treeIndex: number) {
-          return undefined;
-        }
-      });
-    })();
-
-    const rootSector = new RootSectorNode(model, this._shading);
-    this._repository = new CachedRepository(model);
-
-    const { scene, modelTransformation } = model;
-
-    this._sectorScene = scene;
-    this._sectorCuller = (options && options.internal && options.internal.sectorCuller) || new ProximitySectorCuller();
-    this.modelTransformation = modelTransformation;
-    // Ensure camera matrix is unequal on first frame
-    this._previousCameraMatrix.elements[0] = Infinity;
-
-    // Prepare renderables
-    this.rootSector = rootSector;
-    this.add(rootSector);
-    this._boundingBoxNode = this.createBoundingBoxNode(scene.sectors);
-    this.add(this._boundingBoxNode);
-
-    // Apply default hints
-    this._renderHints = {};
-    this._loadingHints = {};
-    this._renderMode = RenderMode.Color;
-    this.renderHints = {};
-    this.loadingHints = {};
-    this.renderMode = RenderMode.Color;
-
-    const indices = [];
-    for (let i = 0; i < model.scene.maxTreeIndex; i++) {
-      indices.push(i);
-    }
-
-    this._shading.updateNodes(indices);
-
-    this._cameraPositionObservable = new Subject();
-
-    this._cameraPositionObservable
-      .pipe(
-        auditTime(100),
-        fromThreeCameraConfig(),
-        this._sectorCuller.determineSectors(),
-        share(),
-        publish(wantedSectors =>
-          wantedSectors.pipe(
-            switchAll(),
-            distinctUntilLevelOfDetailChanged(),
-            this._repository.loadSector(),
-            filterCurrentWantedSectors(wantedSectors),
-            this.rootSector.consumeSector()
-          )
-        )
-      )
-      .subscribe((sector: ConsumedSector) => {
-        const sectorNode = rootSector.sectorNodeMap.get(sector.id);
-        if (!sectorNode) {
-          throw new Error(`Could not find 3D node for sector ${sector.id} - invalid id?`);
-        }
-        if (sectorNode.group) {
-          sectorNode.remove(sectorNode.group);
-        }
-        sectorNode.add(sector.group);
-        sectorNode.group = sector.group;
-        this.updateSectorBoundingBoxes(sector);
-        this.dispatchEvent({ type: 'update' });
-      });
-  }
-
   set renderMode(mode: RenderMode) {
     this._renderMode = mode;
     this._shading.materials.box.uniforms.renderMode.value = mode;
@@ -181,6 +85,59 @@ export class CadNode extends THREE.Object3D {
   private get shouldRenderSectorBoundingBoxes(): boolean {
     return this._renderHints.showSectorBoundingBoxes || false;
   }
+  public readonly rootSector: RootSectorNode;
+  public readonly modelTransformation: SectorModelTransformation;
+
+  private _sectorCuller: SectorCuller<DetermineSectorsByProximityInput>;
+  private _renderHints: CadRenderHints;
+  private _loadingHints: CadLoadingHints;
+  private _renderMode: RenderMode;
+
+  private readonly _cameraPositionObservable: Subject<ThreeCameraConfig>;
+  private readonly _shading: Shading;
+  private readonly _sectorScene: SectorScene;
+  private readonly _previousCameraMatrix = new THREE.Matrix4();
+  private readonly _boundingBoxNode: THREE.Object3D;
+  private readonly _repository: Repository;
+
+  constructor(model: CadModel, options?: CadNodeOptions) {
+    super();
+    this.type = 'CadNode';
+    this.name = 'Sector model';
+    this._shading = initShading(options);
+
+    const rootSector = new RootSectorNode(model, this._shading);
+    this._repository = new CachedRepository(model);
+
+    const { scene, modelTransformation } = model;
+
+    this._sectorScene = scene;
+    this._sectorCuller = (options && options.internal && options.internal.sectorCuller) || new ProximitySectorCuller();
+    this.modelTransformation = modelTransformation;
+    // Ensure camera matrix is unequal on first frame
+    this._previousCameraMatrix.elements[0] = Infinity;
+
+    // Prepare renderables
+    this.rootSector = rootSector;
+    this.add(rootSector);
+    this._boundingBoxNode = this.createBoundingBoxNode(scene.sectors);
+    this.add(this._boundingBoxNode);
+
+    // Apply default hints
+    this._renderHints = {};
+    this._loadingHints = {};
+    this._renderMode = RenderMode.Color;
+    this.renderHints = {};
+    this.loadingHints = {};
+    this.renderMode = RenderMode.Color;
+
+    const indices = [];
+    for (let i = 0; i < model.scene.maxTreeIndex; i++) {
+      indices.push(i);
+    }
+    this._shading.updateNodes(indices);
+    this._cameraPositionObservable = this.createLoadSectorsPipeline();
+  }
 
   public update(camera: THREE.PerspectiveCamera) {
     const cameraConfig: ThreeCameraConfig = {
@@ -200,6 +157,40 @@ export class CadNode extends THREE.Object3D {
       near,
       far
     };
+  }
+
+  private createLoadSectorsPipeline(): Subject<ThreeCameraConfig> {
+    const pipeline = new Subject<ThreeCameraConfig>();
+    pipeline
+      .pipe(
+        auditTime(100),
+        fromThreeCameraConfig(),
+        this._sectorCuller.determineSectors(),
+        share(),
+        publish(wantedSectors =>
+          wantedSectors.pipe(
+            switchAll(),
+            distinctUntilLevelOfDetailChanged(),
+            this._repository.loadSector(),
+            filterCurrentWantedSectors(wantedSectors),
+            this.rootSector.consumeSector()
+          )
+        )
+      )
+      .subscribe((sector: ConsumedSector) => {
+        const sectorNode = this.rootSector.sectorNodeMap.get(sector.id);
+        if (!sectorNode) {
+          throw new Error(`Could not find 3D node for sector ${sector.id} - invalid id?`);
+        }
+        if (sectorNode.group) {
+          sectorNode.remove(sectorNode.group);
+        }
+        sectorNode.add(sector.group);
+        sectorNode.group = sector.group;
+        this.updateSectorBoundingBoxes(sector);
+        this.dispatchEvent({ type: 'update' });
+      });
+    return pipeline;
   }
 
   private updateSectorBoundingBoxes(sector: ConsumedSector) {
@@ -240,4 +231,15 @@ export class CadNode extends THREE.Object3D {
     });
     return boxesNode;
   }
+}
+
+function initShading(options?: CadNodeOptions): Shading {
+  if (options && options.shading) {
+    return options.shading;
+  }
+  return createDefaultShading({
+    color(_treeIndex: number) {
+      return undefined;
+    }
+  });
 }
