@@ -15,6 +15,9 @@ export { PointCloudModel } from './models/pointclouds/PointCloudModel';
 export { createPointCloudModel, loadCadModelFromCdf } from './datasources/cognitesdk';
 export { loadCadModelByUrl, createLocalPointCloudModel } from './datasources/local';
 
+// World to Viewport
+export { worldToViewport } from './views/threejs/worldToViewport';
+
 // Internals
 import * as internal from './internal';
 export { internal };
