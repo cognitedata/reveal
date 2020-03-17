@@ -26,11 +26,11 @@ import { RootSectorNode } from './RootSectorNode';
 import { BasicSectorActivator, SectorActivator } from '../../../models/cad/BasicSectorActivator';
 import { CachedRepository } from '../../../repository/cad/CachedRepository';
 import { Repository } from '../../../repository/cad/Repository';
-import { NodeAppearance } from '../../common/cad/NodeProperties';
+import { NodeAppearance } from '../../common/cad/NodeAppearance';
 import { MaterialManager } from './MaterialManager';
 
 interface CadNodeOptions {
-  nodeProperties?: NodeAppearance;
+  nodeAppearance?: NodeAppearance;
 }
 
 export interface SuggestedCameraConfig {
@@ -68,7 +68,7 @@ export class CadNode extends THREE.Object3D {
     this.type = 'CadNode';
     this.name = 'Sector model';
 
-    this._materialManager = new MaterialManager(options ? options.nodeProperties : undefined);
+    this._materialManager = new MaterialManager(options ? options.nodeAppearance : undefined);
 
     const rootSector = new RootSectorNode(model, this._materialManager.materials);
     this._repository = new CachedRepository(model);

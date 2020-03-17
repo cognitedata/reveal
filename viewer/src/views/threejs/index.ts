@@ -7,7 +7,7 @@ export { intersectCadNode, intersectCadNodes, IntersectCadNodesInput, IntersectC
 export { SectorNode } from './cad/SectorNode';
 export { createThreeJsPointCloudNode } from './pointcloud/createThreeJsPointCloudNode';
 export { RootSectorNode } from './cad/RootSectorNode';
-export { NodeAppearance } from '../common/cad/NodeProperties';
+export { NodeAppearance } from '../common/cad/NodeAppearance';
 
 export { worldToViewport } from './worldToViewport';
 export { toThreeVector3, fitCameraToBoundingBox, toThreeMatrix4, toThreeJsBox3 } from './utilities';

@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { CadNode, NodeProperties } from '@cognite/reveal/threejs';
+import { CadNode, NodeAppearance } from '@cognite/reveal/threejs';
 import dat from 'dat.gui';
 import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams } from './utils/loaders';
 
@@ -20,7 +20,7 @@ async function main() {
     treeIndices: '1, 2, 8, 12'
   };
 
-  const nodeProperties: NodeProperties = {
+  const nodeAppearance: NodeAppearance = {
     visible(treeIndex: number) {
       return visibleIndices.has(treeIndex);
     }
@@ -28,7 +28,7 @@ async function main() {
 
   const scene = new THREE.Scene();
   const cadModel = await loadCadModelFromCdfOrUrl(modelId);
-  const cadNode = new CadNode(cadModel, { nodeProperties });
+  const cadNode = new CadNode(cadModel, { nodeAppearance });
 
   const gui = new dat.GUI();
   gui.add(settings, 'treeIndices').onChange(() => {

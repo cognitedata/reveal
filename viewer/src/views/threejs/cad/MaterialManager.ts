@@ -7,7 +7,7 @@ import {
   VisibilityDelegate,
   ColorDelegate,
   NodeAppearance
-} from '../../common/cad/NodeProperties';
+} from '../../common/cad/NodeAppearance';
 
 function updateColors(getColor: ColorDelegate, materials: Materials, treeIndices: number[]) {
   for (const treeIndex of treeIndices) {

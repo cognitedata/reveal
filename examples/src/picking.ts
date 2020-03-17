@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { CadNode, NodeProperties, intersectCadNodes } from '@cognite/reveal/threejs';
+import { CadNode, NodeAppearance, intersectCadNodes } from '@cognite/reveal/threejs';
 import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams } from './utils/loaders';
 
 CameraControls.install({ THREE });
@@ -21,7 +21,7 @@ async function main() {
 
   const pickedNodes: Set<number> = new Set();
   const pickedObjects: Set<THREE.Mesh> = new Set();
-  const nodeProperties: NodeProperties = {
+  const nodeAppearance: NodeAppearance = {
     color(treeIndex: number) {
       if (pickedNodes.has(treeIndex)) {
         return [255, 255, 0, 255];
@@ -34,7 +34,7 @@ async function main() {
 
   // Add some data for Reveal
   const cadModel = await loadCadModelFromCdfOrUrl(modelId);
-  const cadNode = new CadNode(cadModel, { nodeProperties });
+  const cadNode = new CadNode(cadModel, { nodeAppearance });
   scene.add(cadNode);
 
   // Add some other geometry
