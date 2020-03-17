@@ -22,7 +22,6 @@ export interface Cognite3DViewerOptions {
   enableCache?: boolean;
 }
 
-// export { OnProgressData } from '@/helpers/Progress';
 export interface OnProgressData {
   step: number;
   numSteps: number;
