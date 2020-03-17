@@ -115,4 +115,3 @@ function newInstanceMesh(): InstancedMesh {
     treeIndices: new Float32Array(1)
   };
 }
-

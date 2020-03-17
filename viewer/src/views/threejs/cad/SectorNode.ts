@@ -17,4 +17,3 @@ export class SectorNode extends THREE.Group {
     this.lod = LevelOfDetail.Discarded;
   }
 }
-

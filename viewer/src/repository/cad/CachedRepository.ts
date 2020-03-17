@@ -33,7 +33,7 @@ export class CachedRepository implements Repository {
 
   loadSector(): OperatorFunction<WantedSector, ParsedSector> {
     return flatMap(async (sector: WantedSector) => {
-      const data: (null | Sector | SectorQuads) = await (() => {
+      const data: null | Sector | SectorQuads = await (() => {
         switch (sector.levelOfDetail) {
           case LevelOfDetail.Discarded:
             return null;

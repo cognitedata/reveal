@@ -11,18 +11,13 @@ import { createInstancedMeshes } from './instancedMeshes';
 import { Materials } from './materials';
 
 export function consumeSectorDetailed(
-  sectorId: number,
+  _sectorId: number,
   sector: Sector,
   metadata: SectorMetadata,
   materials: Materials
 ) {
-  console.log('Consume detailed');
   const bounds = toThreeJsBox3(new THREE.Box3(), metadata.bounds);
-  const boundsRenderer = new THREE.Box3Helper(bounds);
-  boundsRenderer.name = `Bounding box ${sectorId}`;
   const obj = new THREE.Group();
-  //obj.add(boundsRenderer);
-
   for (const primtiveRoot of createPrimitives(sector, materials)) {
     obj.add(primtiveRoot);
   }

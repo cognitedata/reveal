@@ -125,4 +125,3 @@ export interface CtmWorkerResult {
   readonly vertices: Float32Array;
   readonly normals: Float32Array | undefined;
 }
-

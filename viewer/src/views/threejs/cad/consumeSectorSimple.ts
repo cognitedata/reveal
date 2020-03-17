@@ -26,7 +26,6 @@ export function consumeSectorSimple(
   metadata: SectorMetadata,
   materials: Materials
 ): THREE.Group {
-  console.log('Consume simple');
   const group = new THREE.Group();
   const stride = 3 + 1 + 3 + 16;
   if (sector.buffer.byteLength === 0) {
@@ -61,7 +60,6 @@ export function consumeSectorSimple(
   geometry.setAttribute('matrix3', matrix3);
 
   const obj = new THREE.Mesh(geometry, materials.simple);
-  //obj.add(boundsRenderer);
 
   obj.name = `Quads ${sectorId}`;
   // TODO 20191028 dragly figure out why the quads are being culled wrongly and if we

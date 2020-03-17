@@ -1,3 +1,7 @@
+/*!
+ * Copyright 2020 Cognite AS
+ */
+
 import { OperatorFunction } from 'rxjs';
 import { WantedSector } from '../data/model/WantedSector';
 
