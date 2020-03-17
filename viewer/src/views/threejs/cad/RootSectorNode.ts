@@ -39,7 +39,7 @@ export class RootSectorNode extends SectorNode {
     buildScene(scene.root, this, this.sectorNodeMap);
   }
 
-  public async consumeSector(id: number, sector: ParsedSector) {
+  public async consumeSector(id: number, sector: ParsedSector): ConsumedSector {
     const { levelOfDetail, metadata } = sector;
     const group = this.consumeSectorCache.request(hashIdAndLevelOfDetail(id, levelOfDetail), sector);
 
