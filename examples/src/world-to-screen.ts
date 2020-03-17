@@ -4,25 +4,36 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import * as reveal from '@cognite/reveal';
 import * as reveal_threejs from '@cognite/reveal/threejs';
-import { CogniteClient } from '@cognite/sdk';
 import { CadNode } from '@cognite/reveal/threejs';
-import { Vector3, MOUSE } from 'three';
-import { GUI } from 'dat.gui';
+import { createModelIdentifierFromUrlParams, loadCadModelFromCdfOrUrl } from './utils/loaders';
+import { MOUSE } from 'three';
 
 CameraControls.install({ THREE });
 
 async function main() {
-  const url = new URL(location.href);
-  const project = url.searchParams.get('projectId') || 'publicdata';
-  const modelId = parseInt(url.searchParams.get('modelId') || '0', 10);
-  const client: CogniteClient = new CogniteClient({ appId: 'Reveal Examples - World To Screen' });
-  client.loginWithOAuth({
-    project
+  const urlParams = new URL(location.href).searchParams;
+  const modelIndentifier = createModelIdentifierFromUrlParams(urlParams, '/primitives');
+
+  const scene = new THREE.Scene();
+  const cadModel = await loadCadModelFromCdfOrUrl(modelIndentifier);
+
+  const { htmlElement, updateHtmlElements } = createHtmlElements();
+  document.body.appendChild(htmlElement);
+
+  let pickingNeedsUpdate = false;
+  let pickedNode: number | undefined;
+  const shading = reveal_threejs.createDefaultShading({
+    color(treeIndex: number) {
+      if (treeIndex === pickedNode) {
+        return [0, 255, 255, 255];
+      }
+      return undefined;
+    }
   });
 
-  const cadModel = await reveal.loadCadModelFromCdf(client, modelId);
+  const cadNode = new CadNode(cadModel, { shading });
+  scene.add(cadNode);
 
   const renderer = new THREE.WebGLRenderer();
   const canvas = renderer.domElement;
@@ -31,22 +42,6 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(canvas);
 
-  const { htmlElement, paragraph } = createHtmlElements();
-  document.body.appendChild(htmlElement);
-
-  let pickingNeedsUpdate = false;
-  const pickedNodes: Set<number> = new Set();
-  const shading = reveal_threejs.createDefaultShading({
-    color(treeIndex: number) {
-      if (pickedNodes.has(treeIndex)) {
-        return [255, 255, 0, 255];
-      }
-      return undefined;
-    }
-  });
-
-  const scene = new THREE.Scene();
-  const cadNode = new CadNode(cadModel, { shading });
   const { position, target, near, far } = cadNode.suggestCameraConfig();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
@@ -54,13 +49,7 @@ async function main() {
   controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
-  scene.add(cadNode);
 
-  let updateUI = true;
-  const worldPosition: Vector3 = new Vector3(0, 0, 0);
-  createGUI(worldPosition, htmlElement, () => {
-    updateUI = true;
-  });
   const clock = new THREE.Clock();
   const render = async () => {
     const delta = clock.getDelta();
@@ -70,17 +59,10 @@ async function main() {
     if (controlsNeedUpdate || sectorsNeedUpdate || pickingNeedsUpdate) {
       renderer.render(scene, camera);
     }
-    if (controlsNeedUpdate || updateUI) {
-      updateUI = false;
-      const { x, y } = reveal.worldToViewport(canvas, camera, worldPosition);
-      htmlElement.style.top = `${y}px`;
-      htmlElement.style.left = `${x}px`;
-    }
-
     requestAnimationFrame(render);
   };
 
-  const pick = (event: MouseEvent) => {
+  const onLeftMouseDown = (event: MouseEvent) => {
     if (event.button === MOUSE.RIGHT) {
       return;
     }
@@ -95,22 +77,29 @@ async function main() {
       if (intersections.length === 0) {
         return;
       }
-
-      // scene.add(createSphere(intersections[0]!.point, 'purple'));
-
       return intersections[0];
     })();
-    const treeIndex = revealPickResult!.treeIndex;
-    paragraph.textContent = `treeIndex: ${treeIndex}`;
-    if (!pickedNodes.has(treeIndex)) {
-      pickedNodes.add(treeIndex);
-    } else {
-      pickedNodes.delete(treeIndex);
+    const treeIndex = revealPickResult ? revealPickResult.treeIndex : undefined;
+    if (pickedNode !== treeIndex) {
+      const oldNode = pickedNode;
+      const text = `treeIndex: ${treeIndex}`;
+      pickedNode = treeIndex;
+      const updatedNodes = [];
+      if (oldNode) {
+        updatedNodes.push(oldNode);
+      }
+      if (pickedNode) {
+        updatedNodes.push(pickedNode);
+        const { x, y } = reveal_threejs.worldToViewport(canvas, camera, revealPickResult!.point);
+        updateHtmlElements(x, y, text);
+      } else {
+        updateHtmlElements(0, 0, text);
+      }
+      shading.updateNodes(updatedNodes);
+      pickingNeedsUpdate = true;
     }
-    shading.updateNodes([treeIndex]);
-    pickingNeedsUpdate = true;
   };
-  renderer.domElement.addEventListener('mousedown', pick);
+  renderer.domElement.addEventListener('mousedown', onLeftMouseDown);
 
   requestAnimationFrame(render);
   (window as any).scene = scene;
@@ -118,14 +107,6 @@ async function main() {
   (window as any).camera = camera;
   (window as any).controls = controls;
   (window as any).renderer = renderer;
-}
-
-function createGUI(position: Vector3, htmlElement: HTMLElement, guiUpdated: () => void) {
-  const gui = new GUI({ width: 300 });
-  gui.add(position, 'x').onChange(guiUpdated);
-  gui.add(position, 'y').onChange(guiUpdated);
-  gui.add(position, 'z').onChange(guiUpdated);
-  gui.addColor(htmlElement.style, 'background').onChange(guiUpdated);
 }
 
 // Since we don't have a good way to link css to examples I added a way of creating the demo html element.
@@ -151,7 +132,12 @@ function createHtmlElements() {
   htmlElement.appendChild(paragraph);
 
   htmlElement.className = 'htmlOverlay';
-  return { htmlElement, paragraph };
+  const updateHtmlElements = (x: number, y: number, text: string) => {
+    htmlElement.style.top = `${y}px`;
+    htmlElement.style.left = `${x}px`;
+    paragraph.textContent = text;
+  };
+  return { htmlElement, updateHtmlElements };
 }
 
 main();
