@@ -8,4 +8,3 @@ export interface RequestCache<T_ID, T> {
   request: RequestDelegate<T_ID, T>;
   clearCache: () => void;
 }
-
