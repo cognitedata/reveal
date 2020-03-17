@@ -73,6 +73,7 @@ export class BasicSectorActivator<T> {
 
     const needsRedraw = newSectorIds.size > 0 || discardedSectorIds.size > 0;
     if (needsRedraw) {
+      // tslint:disable-next-line: no-console
       console.log(
         `activateSectors() [wanted: ${wantedSectorIds.size} ` +
           `new: ${newSectorIds.size}` +
@@ -83,7 +84,7 @@ export class BasicSectorActivator<T> {
     }
 
     return needsRedraw;
-  };
+  }
 
   refresh() {
     if (this.consumeQueue.length < 1) {
@@ -92,5 +93,5 @@ export class BasicSectorActivator<T> {
     const { sectorId, sector } = this.consumeQueue.shift()!;
     this.consumeSector(sectorId, sector);
     return true;
-  };
+  }
 }
