@@ -10,6 +10,7 @@ import { CogniteClient, List3DNodesQuery } from '@cognite/sdk';
 import { CadModel } from '../models/cad/CadModel';
 import { toThreeJsBox3, CadNode } from '../views/threejs';
 import { loadCadModelFromCdf } from '../datasources/cognitesdk';
+import { CadRenderHints } from '../views/CadRenderHints';
 
 export class Cognite3DModel extends THREE.Object3D {
   readonly modelId: number;
@@ -28,6 +29,18 @@ export class Cognite3DModel extends THREE.Object3D {
     this.cadNode = cadNode;
 
     this.children.push(cadNode);
+  }
+
+  get renderHints(): CadRenderHints {
+    return this.cadNode.renderHints;
+  }
+
+  set renderHints(value: CadRenderHints) {
+    this.cadNode.renderHints = value;
+  }
+
+  dispose() {
+    this.children = [];
   }
 
   getSubtreeNodeIds(nodeId: number, subtreeSize?: number): Promise<number[]> {

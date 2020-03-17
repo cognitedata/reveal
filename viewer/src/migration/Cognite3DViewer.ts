@@ -53,7 +53,7 @@ export class Cognite3DViewer {
     this.canvas.style.minHeight = '100%';
     this.canvas.style.maxWidth = '100%';
     this.canvas.style.maxHeight = '100%';
-    this.domElement = createCanvasWrapper();
+    this.domElement = options.domElement || createCanvasWrapper();
     this.domElement.appendChild(this.canvas);
 
     this.camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
@@ -65,18 +65,30 @@ export class Cognite3DViewer {
     this.scene = new THREE.Scene();
     this.controls = new ComboControls(this.camera, this.canvas);
     this.controls.dollyFactor = 0.992;
-    this.controls.enabled = false;
-    this.sdkClient = options.sdk;
 
+    this.sdkClient = options.sdk;
     this.renderController = new RenderController(this.camera);
     this.animate(0);
-
-    (window as any).camera = this.camera;
-    (window as any).scene = this.scene;
   }
 
   dispose(): void {
+    if (this.isDisposed) {
+      return;
+    }
+
     this.isDisposed = true;
+
+    if (this.latestRequestId !== undefined) {
+      cancelAnimationFrame(this.latestRequestId);
+    }
+
+    this.domElement.removeChild(this.canvas);
+    this.renderer.dispose();
+    this.scene.dispose();
+    while (this.models.length > 0) {
+      const model = this.models.pop()!;
+      model.dispose();
+    }
   }
 
   onClick(callback: (event: PointerEvent) => void): void {
@@ -292,10 +304,10 @@ export class Cognite3DViewer {
       //   this._performanceMonitor.begin();
       // }
       TWEEN.update(time);
-      // const didResize = this._resizeIfNeeded();
-      // if (didResize) {
-      //   renderController.redraw();
-      // }
+      const didResize = this.resizeIfNecessary();
+      if (didResize) {
+        renderController.redraw();
+      }
       this.controls.update(this.clock.getDelta());
       renderController.update();
       const modelsNeedsUpdate = (await Promise.all(this.models.map(m => m.cadNode.update(this.camera)))).some(x => x);
@@ -359,6 +371,64 @@ export class Cognite3DViewer {
     //   0.1 * boundingBoxNear // If the nearest point on bounding box is far away,
     //   // choose a fraction of it as minDistance
     // );
+  }
+
+  private resizeIfNecessary(): boolean {
+    if (this.isDisposed) {
+      return false;
+    }
+    // The maxTextureSize is chosen from testing on low-powered hardware,
+    // and could be increased in the future.
+    // TODO Increase maxTextureSize if SSAO performance is improved
+    const maxTextureSize = 1.4e6;
+
+    const rendererSize = this.renderer.getSize(new THREE.Vector2());
+    const rendererPixelWidth = rendererSize.width;
+    const rendererPixelHeight = rendererSize.height;
+
+    // client width and height are in virtual pixels and not yet scaled by dpr
+    // TODO VERSION 5.0.0 remove the test for dom element size once we have removed the getCanvas function
+    const clientWidth = this.domElement.clientWidth !== 0 ? this.domElement.clientWidth : this.canvas.clientWidth;
+    const clientHeight = this.domElement.clientHeight !== 0 ? this.domElement.clientHeight : this.canvas.clientHeight;
+    const clientPixelWidth = window.devicePixelRatio * clientWidth;
+    const clientPixelHeight = window.devicePixelRatio * clientHeight;
+    const clientTextureSize = clientPixelWidth * clientPixelHeight;
+
+    const scale = clientTextureSize > maxTextureSize ? Math.sqrt(maxTextureSize / clientTextureSize) : 1;
+
+    const width = clientPixelWidth * scale;
+    const height = clientPixelHeight * scale;
+
+    const maxError = 0.1; // pixels
+    const isOptimalSize =
+      Math.abs(rendererPixelWidth - width) < maxError && Math.abs(rendererPixelHeight - height) < maxError;
+
+    if (isOptimalSize) {
+      return false;
+    }
+
+    this.renderer.setSize(width, height);
+
+    adjustCamera(this.camera, width, height);
+
+    if (this.camera instanceof THREE.OrthographicCamera) {
+      this.controls.orthographicCameraDollyFactor = 20 / width;
+      this.controls.keyboardDollySpeed = 2 / width;
+    }
+
+    return true;
+  }
+}
+
+function adjustCamera(camera: THREE.Camera, width: number, height: number) {
+  if (camera instanceof THREE.PerspectiveCamera) {
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+  } else if (camera instanceof THREE.OrthographicCamera) {
+    camera.left = -width;
+    camera.right = width;
+    camera.top = height;
+    camera.bottom = -height;
   }
 }
 

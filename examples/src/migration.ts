@@ -14,6 +14,7 @@ async function main() {
   }
   const modelId = Number.parseInt(modelIdStr, 10);
   const revisionId = Number.parseInt(revisionIdStr, 10);
+  const domElement = document.getElementById('canvas-container')!;
 
   // Login
   const client = new CogniteClient({ appId: 'cognite.reveal.example' });
@@ -22,11 +23,12 @@ async function main() {
 
   // Load and show model
   const model = await reveal_migration.createCognite3DModel(modelId, revisionId, client);
-  const viewer = new reveal_migration.Cognite3DViewer({ sdk: client });
-  viewer.addModel(model);
+  const viewer = new reveal_migration.Cognite3DViewer({ sdk: client, domElement });
+  const migrationModel = await viewer.addModel(model);
+  migrationModel.renderHints = { showSectorBoundingBoxes: true };
   viewer.fitCameraToModel(model);
 
-  document.body.appendChild(viewer.domElement);
+  (window as any).viewer = viewer;
 }
 
 main();
