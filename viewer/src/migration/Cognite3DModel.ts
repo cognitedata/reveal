@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 import { Color } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
-import { CogniteClient, List3DNodesQuery } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk';
 import { CadModel } from '../models/cad/CadModel';
 import { toThreeJsBox3, CadNode } from '../views/threejs';
 import { loadCadModelFromCdf } from '../datasources/cognitesdk';
@@ -18,13 +18,10 @@ export class Cognite3DModel extends THREE.Object3D {
   readonly cadModel: CadModel;
   readonly cadNode: CadNode;
 
-  private readonly client: CogniteClient;
-
   constructor(modelId: number, revisionId: number, client: CogniteClient, model: CadModel, cadNode: CadNode) {
     super();
     this.modelId = modelId;
     this.revisionId = revisionId;
-    this.client = client;
     this.cadModel = model;
     this.cadNode = cadNode;
 
@@ -43,7 +40,7 @@ export class Cognite3DModel extends THREE.Object3D {
     this.children = [];
   }
 
-  getSubtreeNodeIds(nodeId: number, subtreeSize?: number): Promise<number[]> {
+  getSubtreeNodeIds(_nodeId: number, _subtreeSize?: number): Promise<number[]> {
     throw new NotSupportedInMigrationWrapperError();
   }
 
@@ -56,36 +53,36 @@ export class Cognite3DModel extends THREE.Object3D {
     return toThreeJsBox3(box || new THREE.Box3(), bounds, this.cadModel.modelTransformation);
   }
 
-  iterateNodes(action: (nodeId: number, treeIndex?: number) => void): void {
+  iterateNodes(_action: (nodeId: number, treeIndex?: number) => void): void {
     throw new NotSupportedInMigrationWrapperError();
   }
 
   iterateSubtree(
-    nodeId: number,
-    action: (nodeId: number, treeIndex?: number) => void,
-    treeIndex?: number,
-    subtreeSize?: number
+    _nodeId: number,
+    _action: (nodeId: number, treeIndex?: number) => void,
+    _treeIndex?: number,
+    _subtreeSize?: number
   ): Promise<boolean> {
     throw new NotSupportedInMigrationWrapperError();
   }
 
-  getNodeColor(nodeId: number): Color {
+  getNodeColor(_nodeId: number): Color {
     throw new NotSupportedInMigrationWrapperError();
   }
 
-  setNodeColor(nodeId: number, r: number, g: number, b: number): void {
+  setNodeColor(_nodeId: number, _r: number, _g: number, _b: number): void {
     throw new NotSupportedInMigrationWrapperError();
   }
 
-  resetNodeColor(nodeId: number): void {
+  resetNodeColor(_nodeId: number): void {
     throw new NotSupportedInMigrationWrapperError();
   }
 
-  selectNode(nodeId: number): void {
+  selectNode(_nodeId: number): void {
     throw new NotSupportedInMigrationWrapperError();
   }
 
-  deselectNode(nodeId: number): void {
+  deselectNode(_nodeId: number): void {
     throw new NotSupportedInMigrationWrapperError();
   }
 
@@ -93,17 +90,17 @@ export class Cognite3DModel extends THREE.Object3D {
     throw new NotSupportedInMigrationWrapperError();
   }
 
-  showNode(nodeId: number): void {
+  showNode(_nodeId: number): void {
     throw new NotSupportedInMigrationWrapperError();
   }
 
   showAllNodes(): void {
     throw new NotSupportedInMigrationWrapperError();
   }
-  hideAllNodes(makeGray?: boolean): void {
+  hideAllNodes(_makeGray?: boolean): void {
     throw new NotSupportedInMigrationWrapperError();
   }
-  hideNode(nodeId: number, makeGray?: boolean): void {
+  hideNode(_nodeId: number, _makeGray?: boolean): void {
     throw new NotSupportedInMigrationWrapperError();
   }
 }

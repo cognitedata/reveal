@@ -29,7 +29,6 @@ export class Cognite3DViewer {
   private readonly sdkClient: CogniteClient;
 
   private readonly models: Cognite3DModel[] = [];
-  private readonly additionalObjects: THREE.Object3D[] = [];
 
   private isDisposed = false;
   private readonly forceRendering = false; // For future support
@@ -91,22 +90,22 @@ export class Cognite3DViewer {
     }
   }
 
-  onClick(callback: (event: PointerEvent) => void): void {
+  onClick(_callback: (event: PointerEvent) => void): void {
     throw new NotSupportedInMigrationWrapperError();
   }
-  offClick(callback: (event: PointerEvent) => void): void {
+  offClick(_callback: (event: PointerEvent) => void): void {
     throw new NotSupportedInMigrationWrapperError();
   }
-  onHover(callback: (event: PointerEvent) => void): void {
+  onHover(_callback: (event: PointerEvent) => void): void {
     throw new NotSupportedInMigrationWrapperError();
   }
-  offHover(callback: (event: PointerEvent) => void): void {
+  offHover(_callback: (event: PointerEvent) => void): void {
     throw new NotSupportedInMigrationWrapperError();
   }
-  onCameraChange(callback: (position: THREE.Vector3, target: THREE.Vector3) => void): void {
+  onCameraChange(_callback: (position: THREE.Vector3, target: THREE.Vector3) => void): void {
     throw new NotSupportedInMigrationWrapperError();
   }
-  offCameraChange(callback: (position: THREE.Vector3, target: THREE.Vector3) => void): void {
+  offCameraChange(_callback: (position: THREE.Vector3, target: THREE.Vector3) => void): void {
     throw new NotSupportedInMigrationWrapperError();
   }
 
@@ -120,14 +119,14 @@ export class Cognite3DViewer {
       return model3d;
     }
   }
-  addObject3D(object: THREE.Object3D): void {
+  addObject3D(_object: THREE.Object3D): void {
     throw new NotSupportedInMigrationWrapperError();
   }
-  removeObject3D(object: THREE.Object3D): void {
+  removeObject3D(_object: THREE.Object3D): void {
     throw new NotSupportedInMigrationWrapperError();
   }
 
-  setSlicingPlanes(slicingPlanes: THREE.Plane[]): void {
+  setSlicingPlanes(_slicingPlanes: THREE.Plane[]): void {
     throw new NotSupportedInMigrationWrapperError();
   }
 
@@ -190,14 +189,14 @@ export class Cognite3DViewer {
     throw new NotSupportedInMigrationWrapperError();
   }
 
-  worldToScreen(point: THREE.Vector3, normalize?: boolean): THREE.Vector2 | null {
+  worldToScreen(_point: THREE.Vector3, _normalize?: boolean): THREE.Vector2 | null {
     throw new NotSupportedInMigrationWrapperError();
   }
 
-  getScreenshot(width?: number, height?: number): Promise<string> {
+  getScreenshot(_width?: number, _height?: number): Promise<string> {
     throw new NotSupportedInMigrationWrapperError();
   }
-  getIntersectionFromPixel(x: number, y: number, cognite3DModel?: Cognite3DModel): null | Intersection {
+  getIntersectionFromPixel(_x: number, _y: number, _cognite3DModel?: Cognite3DModel): null | Intersection {
     throw new NotSupportedInMigrationWrapperError();
   }
 
@@ -265,7 +264,7 @@ export class Cognite3DViewer {
     const tmpPosition = new THREE.Vector3();
     animation
       .to(to, duration)
-      .easing(TWEEN.Easing.Circular.Out)
+      .easing((x: number) => TWEEN.Easing.Circular.Out(x))
       .onUpdate(() => {
         if (this.isDisposed) {
           return;
@@ -321,7 +320,7 @@ export class Cognite3DViewer {
     this.latestRequestId = requestAnimationFrame(this.animate.bind(this));
   }
 
-  private updateNearAndFarPlane(camera: THREE.Camera) {
+  private updateNearAndFarPlane(_camera: THREE.Camera) {
     // TODO 2020-03-15 larsmoa: Implement updateNearAndFarPlane
     // if (this._isDisposed) {
     //   return;
