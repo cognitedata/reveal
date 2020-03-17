@@ -6,11 +6,11 @@ import * as THREE from 'three';
 
 import { Color } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
-import { CogniteClient } from '@cognite/sdk';
 import { CadModel } from '../models/cad/CadModel';
 import { toThreeJsBox3, CadNode } from '../views/threejs';
 import { loadCadModelFromCdf } from '../datasources/cognitesdk';
 import { CadRenderHints } from '../views/CadRenderHints';
+import { CogniteClient } from '@cognite/sdk';
 
 export class Cognite3DModel extends THREE.Object3D {
   readonly modelId: number;
@@ -18,7 +18,7 @@ export class Cognite3DModel extends THREE.Object3D {
   readonly cadModel: CadModel;
   readonly cadNode: CadNode;
 
-  constructor(modelId: number, revisionId: number, client: CogniteClient, model: CadModel, cadNode: CadNode) {
+  constructor(modelId: number, revisionId: number, model: CadModel, cadNode: CadNode) {
     super();
     this.modelId = modelId;
     this.revisionId = revisionId;
@@ -112,5 +112,5 @@ export async function createCognite3DModel(
 ): Promise<Cognite3DModel> {
   const model = await loadCadModelFromCdf(client, revisionId);
   const node = new CadNode(model);
-  return new Cognite3DModel(modelId, revisionId, client, model, node);
+  return new Cognite3DModel(modelId, revisionId, model, node);
 }
