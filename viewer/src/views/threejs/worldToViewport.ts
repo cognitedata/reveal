@@ -2,6 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
+import * as THREE from 'three';
+
 // Should be somewhere else??
 export interface Position2D {
   x: number;
