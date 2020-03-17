@@ -5,26 +5,13 @@
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import * as reveal from '@cognite/reveal';
+import * as reveal_threejs from '@cognite/reveal/threejs';
 import { CogniteClient } from '@cognite/sdk';
 import { CadNode } from '@cognite/reveal/threejs';
-import { Vector3 } from 'three';
+import { Vector3, MOUSE } from 'three';
 import { GUI } from 'dat.gui';
 
 CameraControls.install({ THREE });
-
-// Want to split the logic away from THREE at some point.
-function project3DPositionTo2DPlane(
-  canvas: HTMLCanvasElement,
-  camera: THREE.PerspectiveCamera,
-  position3D: THREE.Vector3
-): { x: number; y: number } {
-  const vector = position3D.clone();
-  vector.project(camera);
-  vector.x = Math.round((0.5 + vector.x / 2) * (canvas.width / window.devicePixelRatio));
-  vector.y = Math.round((0.5 - vector.y / 2) * (canvas.height / window.devicePixelRatio));
-
-  return { x: vector.x, y: vector.y };
-}
 
 async function main() {
   const url = new URL(location.href);
@@ -44,11 +31,22 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(canvas);
 
-  const htmlElement = createHtmlElement();
+  const { htmlElement, paragraph } = createHtmlElements();
   document.body.appendChild(htmlElement);
 
+  let pickingNeedsUpdate = false;
+  const pickedNodes: Set<number> = new Set();
+  const shading = reveal_threejs.createDefaultShading({
+    color(treeIndex: number) {
+      if (pickedNodes.has(treeIndex)) {
+        return [255, 255, 0, 255];
+      }
+      return undefined;
+    }
+  });
+
   const scene = new THREE.Scene();
-  const cadNode = new CadNode(cadModel);
+  const cadNode = new CadNode(cadModel, { shading });
   const { position, target, near, far } = cadNode.suggestCameraConfig();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
@@ -69,18 +67,50 @@ async function main() {
     const controlsNeedUpdate = controls.update(delta);
     const sectorsNeedUpdate = await cadNode.update(camera);
 
-    if (controlsNeedUpdate || sectorsNeedUpdate) {
+    if (controlsNeedUpdate || sectorsNeedUpdate || pickingNeedsUpdate) {
       renderer.render(scene, camera);
     }
     if (controlsNeedUpdate || updateUI) {
       updateUI = false;
-      const { x, y } = project3DPositionTo2DPlane(canvas, camera, worldPosition);
+      const { x, y } = reveal.worldToViewport(canvas, camera, worldPosition);
       htmlElement.style.top = `${y}px`;
       htmlElement.style.left = `${x}px`;
     }
 
     requestAnimationFrame(render);
   };
+
+  const pick = (event: MouseEvent) => {
+    if (event.button === MOUSE.RIGHT) {
+      return;
+    }
+    const rect = renderer.domElement.getBoundingClientRect();
+    const coords = {
+      x: ((event.clientX - rect.left) / renderer.domElement.clientWidth) * 2 - 1,
+      y: ((event.clientY - rect.top) / renderer.domElement.clientHeight) * -2 + 1
+    };
+    // Pick in Reveal
+    const revealPickResult = (() => {
+      const intersections = reveal_threejs.intersectCadNodes([cadNode], { renderer, camera, coords });
+      if (intersections.length === 0) {
+        return;
+      }
+
+      // scene.add(createSphere(intersections[0]!.point, 'purple'));
+
+      return intersections[0];
+    })();
+    const treeIndex = revealPickResult!.treeIndex;
+    paragraph.textContent = `treeIndex: ${treeIndex}`;
+    if (!pickedNodes.has(treeIndex)) {
+      pickedNodes.add(treeIndex);
+    } else {
+      pickedNodes.delete(treeIndex);
+    }
+    shading.updateNodes([treeIndex]);
+    pickingNeedsUpdate = true;
+  };
+  renderer.domElement.addEventListener('mousedown', pick);
 
   requestAnimationFrame(render);
   (window as any).scene = scene;
@@ -99,24 +129,29 @@ function createGUI(position: Vector3, htmlElement: HTMLElement, guiUpdated: () =
 }
 
 // Since we don't have a good way to link css to examples I added a way of creating the demo html element.
-function createHtmlElement() {
+function createHtmlElements() {
   const htmlElement = document.createElement('div');
   const style = htmlElement.style;
   style.position = 'absolute';
+  style.pointerEvents = 'none';
   style.top = '0';
   style.left = '0';
   style.zIndex = '1';
-  style.marginLeft = '0px';
-  style.marginTop = '0px';
-  style.width = '10px';
-  style.height = '10px';
+  style.marginLeft = '5px';
+  style.marginTop = '5px';
+  style.padding = '15px';
+  style.width = '220px';
   style.color = '#fff';
-  style.background = '#ce0024ff';
-  style.borderRadius = '2em';
+  style.background = '#232323da';
+  style.borderRadius = '0.5em';
   style.transition = 'opacity .5s';
 
+  const paragraph = document.createElement('p');
+  paragraph.textContent = 'Hello there, I am an example paragraph.';
+  htmlElement.appendChild(paragraph);
+
   htmlElement.className = 'htmlOverlay';
-  return htmlElement;
+  return { htmlElement, paragraph };
 }
 
 main();
