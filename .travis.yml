@@ -16,7 +16,9 @@ matrix:
       script:
         # fail on warnings, test all features
         - cargo fmt -- --check
-        - cargo clippy --all-targets --all-features -- -D warnings
+        # NOTE: as of 2020-03-17, Rust 1.42, mem_replace_with_default is triggered by a macro in wasm_bindgen
+        # and needs to be disabled
+        - cargo clippy --all-targets --all-features -- -D warnings -A clippy::mem_replace_with_default
         - cargo test --all --verbose
 
     - language: rust
