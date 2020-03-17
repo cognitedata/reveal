@@ -65,12 +65,6 @@ const allExamples = [
     type: 'threejs'
   },
   {
-    name: "walkable-path",
-    title: "Walkable Path",
-    entry: './src/walkable-path.ts',
-    template: 'template-example.ejs'
-  },
-  {
     name: "threejs-side-by-side",
     title: "Side-by-side debugger for sector models",
     entry: './src/side-by-side.ts',
@@ -105,6 +99,18 @@ const allExamples = [
     title: "Custom ThreeJS scene elements",
     entry: './src/custom-scene-elements.ts',
     template: './template-example.ejs'
+  },
+  {
+    name: "walkable-path",
+    title: "Walkable Path",
+    entry: './src/walkable-path.ts',
+    template: 'template-example.ejs'
+  },
+  {
+    name: "world-to-screen",
+    title: "World To Screen",
+    entry: './src/world-to-screen.ts',
+    template: 'template-example.ejs'
   }
 ];
 
