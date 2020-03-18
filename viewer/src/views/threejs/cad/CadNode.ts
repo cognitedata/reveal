@@ -44,49 +44,6 @@ export interface SuggestedCameraConfig {
 }
 
 export class CadNode extends THREE.Object3D {
-  set renderMode(mode: RenderMode) {
-    this._renderMode = mode;
-    this._shading.materials.box.uniforms.renderMode.value = mode;
-    this._shading.materials.circle.uniforms.renderMode.value = mode;
-    this._shading.materials.generalRing.uniforms.renderMode.value = mode;
-    this._shading.materials.nut.uniforms.renderMode.value = mode;
-    this._shading.materials.quad.uniforms.renderMode.value = mode;
-    this._shading.materials.cone.uniforms.renderMode.value = mode;
-    this._shading.materials.eccentricCone.uniforms.renderMode.value = mode;
-    this._shading.materials.sphericalSegment.uniforms.renderMode.value = mode;
-    this._shading.materials.torusSegment.uniforms.renderMode.value = mode;
-    this._shading.materials.generalCylinder.uniforms.renderMode.value = mode;
-    this._shading.materials.trapezium.uniforms.renderMode.value = mode;
-    this._shading.materials.ellipsoidSegment.uniforms.renderMode.value = mode;
-    this._shading.materials.instancedMesh.uniforms.renderMode.value = mode;
-    this._shading.materials.triangleMesh.uniforms.renderMode.value = mode;
-    this._shading.materials.simple.uniforms.renderMode.value = mode;
-  }
-
-  get renderMode() {
-    return this._renderMode;
-  }
-
-  set renderHints(hints: Readonly<CadRenderHints>) {
-    this._renderHints = hints;
-    this._boundingBoxNode.visible = this.shouldRenderSectorBoundingBoxes;
-  }
-
-  get renderHints(): Readonly<CadRenderHints> {
-    return this._renderHints;
-  }
-
-  set loadingHints(hints: Readonly<CadLoadingHints>) {
-    this._loadingHints = hints;
-  }
-
-  get loadingHints(): Readonly<CadLoadingHints> {
-    return this._loadingHints;
-  }
-
-  private get shouldRenderSectorBoundingBoxes(): boolean {
-    return this._renderHints.showSectorBoundingBoxes || false;
-  }
   public readonly rootSector: RootSectorNode;
   public readonly modelTransformation: SectorModelTransformation;
 
@@ -139,6 +96,50 @@ export class CadNode extends THREE.Object3D {
     }
     this._shading.updateNodes(indices);
     this._cameraPositionObservable = this.createLoadSectorsPipeline();
+  }
+
+  set renderMode(mode: RenderMode) {
+    this._renderMode = mode;
+    this._shading.materials.box.uniforms.renderMode.value = mode;
+    this._shading.materials.circle.uniforms.renderMode.value = mode;
+    this._shading.materials.generalRing.uniforms.renderMode.value = mode;
+    this._shading.materials.nut.uniforms.renderMode.value = mode;
+    this._shading.materials.quad.uniforms.renderMode.value = mode;
+    this._shading.materials.cone.uniforms.renderMode.value = mode;
+    this._shading.materials.eccentricCone.uniforms.renderMode.value = mode;
+    this._shading.materials.sphericalSegment.uniforms.renderMode.value = mode;
+    this._shading.materials.torusSegment.uniforms.renderMode.value = mode;
+    this._shading.materials.generalCylinder.uniforms.renderMode.value = mode;
+    this._shading.materials.trapezium.uniforms.renderMode.value = mode;
+    this._shading.materials.ellipsoidSegment.uniforms.renderMode.value = mode;
+    this._shading.materials.instancedMesh.uniforms.renderMode.value = mode;
+    this._shading.materials.triangleMesh.uniforms.renderMode.value = mode;
+    this._shading.materials.simple.uniforms.renderMode.value = mode;
+  }
+
+  get renderMode() {
+    return this._renderMode;
+  }
+
+  set renderHints(hints: Readonly<CadRenderHints>) {
+    this._renderHints = hints;
+    this._boundingBoxNode.visible = this.shouldRenderSectorBoundingBoxes;
+  }
+
+  get renderHints(): Readonly<CadRenderHints> {
+    return this._renderHints;
+  }
+
+  set loadingHints(hints: Readonly<CadLoadingHints>) {
+    this._loadingHints = hints;
+  }
+
+  get loadingHints(): Readonly<CadLoadingHints> {
+    return this._loadingHints;
+  }
+
+  private get shouldRenderSectorBoundingBoxes(): boolean {
+    return this._renderHints.showSectorBoundingBoxes || false;
   }
 
   public update(camera: THREE.PerspectiveCamera) {
