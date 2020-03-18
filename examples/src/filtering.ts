@@ -44,6 +44,10 @@ async function main() {
   const scene = new THREE.Scene();
   const cadModel = await loadCadModelFromCdfOrUrl(modelId, await createClientIfNecessary(modelId));
   const cadNode = new CadNode(cadModel, { nodeAppearance });
+  let modelNeedsUpdate = false;
+  cadNode.addEventListener('update', () => {
+    modelNeedsUpdate = true;
+  });
 
   scene.add(cadNode);
 
@@ -58,13 +62,16 @@ async function main() {
   controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
+  cadNode.update(camera);
   const clock = new THREE.Clock();
-  const render = async () => {
+  const render = () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
-    const sectorsNeedUpdate = await cadNode.update(camera);
+    if (controlsNeedUpdate) {
+      cadNode.update(camera);
+    }
 
-    if (controlsNeedUpdate || sectorsNeedUpdate || shadingNeedsUpdate) {
+    if (controlsNeedUpdate || modelNeedsUpdate || shadingNeedsUpdate) {
       renderer.render(scene, camera);
       shadingNeedsUpdate = false;
     }

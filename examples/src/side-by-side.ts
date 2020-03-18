@@ -19,6 +19,8 @@ import { CogniteClient } from '@cognite/sdk';
 
 CameraControls.install({ THREE });
 
+let modelNeedsUpdate = false;
+
 function initializeModel(
   cadModel: reveal.CadModel,
   canvas: HTMLCanvasElement,
@@ -32,6 +34,9 @@ function initializeModel(
   const scene = new THREE.Scene();
   const sectorModelNode = new reveal_threejs.CadNode(cadModel);
   scene.add(sectorModelNode);
+  sectorModelNode.addEventListener('update', () => {
+    modelNeedsUpdate = true;
+  });
   const options = createRendererDebugWidget(sectorScene.root, renderer, sectorModelNode, gui);
 
   return [renderer, scene, sectorModelNode, options];
@@ -80,6 +85,8 @@ async function main() {
   controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
+  modelNode1.update(camera);
+  modelNode2.update(camera);
 
   const clock = new THREE.Clock();
   const render = async () => {
@@ -87,19 +94,23 @@ async function main() {
 
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
-    const sectors1NeedUpdate = options1.loadingEnabled && (await modelNode1.update(camera));
-    const sectors2NeedUpdate = options2.loadingEnabled && (await modelNode2.update(camera));
+    if (options1.loadingEnabled) {
+      modelNode1.update(camera);
+    }
+    if (options2.loadingEnabled) {
+      modelNode2.update(camera);
+    }
 
     if (
       options1.renderMode === RenderMode.AlwaysRender ||
-      (options1.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || sectors1NeedUpdate))
+      (options1.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || modelNeedsUpdate))
     ) {
       applyRenderingFilters(scene1, options1.renderFilter);
       renderer1.render(scene1, camera);
     }
     if (
       options2.renderMode === RenderMode.AlwaysRender ||
-      (options2.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || sectors2NeedUpdate))
+      (options2.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || modelNeedsUpdate))
     ) {
       applyRenderingFilters(scene2, options2.renderFilter);
       renderer2.render(scene2, camera);
