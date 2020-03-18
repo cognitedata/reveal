@@ -3,6 +3,8 @@
  */
 
 import 'jest-extended';
+import { WantedSector } from '../data/model/WantedSector';
+import { LevelOfDetail } from '../data/model/LevelOfDetail';
 
 interface Matrix4 {
   elements: Float32Array;
@@ -62,4 +64,27 @@ export function expectBoundingBoxEqual(a: BoundingBox, b: BoundingBox) {
 
 export function expectSetEqual<T>(actual: Set<T>, expected: T[]) {
   expect([...actual]).toIncludeSameMembers(expected);
+}
+
+export function expectContainsSectorsWithLevelOfDetail(sectors: WantedSector[], simple: number[], detailed: number[]) {
+  for (const id of simple) {
+    expect(sectors).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id,
+          levelOfDetail: LevelOfDetail.Simple
+        })
+      ])
+    );
+  }
+  for (const id of detailed) {
+    expect(sectors).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id,
+          levelOfDetail: LevelOfDetail.Detailed
+        })
+      ])
+    );
+  }
 }

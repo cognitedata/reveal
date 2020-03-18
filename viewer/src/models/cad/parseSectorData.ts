@@ -59,7 +59,7 @@ export function createParser(fetchCtmFile: FetchCtmDelegate): ParseSectorDelegat
   const workerList = createWorkers();
 
   // TODO define the cache outside of the createParser function to make it configurable
-  const loadCtmGeometryCache = new MemoryRequestCache((fileId: number) => {
+  const loadCtmGeometryCache = new MemoryRequestCache((fileId: number, _: null) => {
     return loadCtmGeometry(fileId, fetchCtmFile, workerList);
   });
 
@@ -103,7 +103,7 @@ export function createParser(fetchCtmFile: FetchCtmDelegate): ParseSectorDelegat
             normals,
             colors: sharedColors,
             treeIndices: sharedTreeIndices
-          } = await loadCtmGeometryCache.request(fileId);
+          } = await loadCtmGeometryCache.request(fileId, null);
 
           for (let i = 0; i < meshIndices.length; i++) {
             const meshIdx = meshIndices[i];
@@ -146,7 +146,7 @@ export function createParser(fetchCtmFile: FetchCtmDelegate): ParseSectorDelegat
         // TODO do this in Rust instead
         // TODO de-duplicate this with the merged meshes above
         for (const [fileId, meshIndices] of meshesGroupedByFile.entries()) {
-          const ctm = await loadCtmGeometryCache.request(fileId);
+          const ctm = await loadCtmGeometryCache.request(fileId, null);
 
           const indices = ctm.indices;
           const vertices = ctm.vertices;

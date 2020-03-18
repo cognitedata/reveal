@@ -34,16 +34,6 @@ function initializeModel(
   scene.add(sectorModelNode);
   const options = createRendererDebugWidget(sectorScene.root, renderer, sectorModelNode, gui);
 
-  // Override determineSectors of the node to obey override in RenderOptions
-  const defaultDetermineSectors = sectorModelNode.determineSectors;
-  function determineSectors(params: reveal.internal.DetermineSectorsInput) {
-    if (options.overrideWantedSectors) {
-      return Promise.resolve(options.overrideWantedSectors);
-    }
-    return defaultDetermineSectors(params);
-  }
-  sectorModelNode.determineSectors = determineSectors;
-
   return [renderer, scene, sectorModelNode, options];
 }
 
