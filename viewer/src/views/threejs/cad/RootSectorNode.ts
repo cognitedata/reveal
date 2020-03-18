@@ -14,6 +14,7 @@ import { LevelOfDetail } from '../../../data/model/LevelOfDetail';
 import { consumeSectorSimple } from './consumeSectorSimple';
 import { consumeSectorDetailed } from './consumeSectorDetailed';
 import { SectorQuads, Sector } from '../../../models/cad/types';
+import { ConsumedSector } from '../../../data/model/ConsumedSector';
 
 function hashIdAndLevelOfDetail(id: number, levelOfDetail: LevelOfDetail) {
   return `${id},${levelOfDetail}`;
@@ -39,7 +40,7 @@ export class RootSectorNode extends SectorNode {
     buildScene(scene.root, this, this.sectorNodeMap);
   }
 
-  public async consumeSector(id: number, sector: ParsedSector): ConsumedSector {
+  public async consumeSector(id: number, sector: ParsedSector): Promise<ConsumedSector> {
     const { levelOfDetail, metadata } = sector;
     const group = this.consumeSectorCache.request(hashIdAndLevelOfDetail(id, levelOfDetail), sector);
 
