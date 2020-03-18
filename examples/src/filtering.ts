@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import { CadNode, NodeAppearance } from '@cognite/reveal/threejs';
 import dat from 'dat.gui';
-import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams } from './utils/loaders';
+import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams, createClientIfNecessary } from './utils/loaders';
 
 CameraControls.install({ THREE });
 
@@ -26,10 +26,6 @@ async function main() {
     }
   };
 
-  const scene = new THREE.Scene();
-  const cadModel = await loadCadModelFromCdfOrUrl(modelId);
-  const cadNode = new CadNode(cadModel, { nodeAppearance });
-
   const gui = new dat.GUI();
   gui.add(settings, 'treeIndices').onChange(() => {
     const indices = settings.treeIndices
@@ -44,6 +40,10 @@ async function main() {
     cadNode.requestNodeUpdate([...visibleIndices]);
     shadingNeedsUpdate = true;
   });
+
+  const scene = new THREE.Scene();
+  const cadModel = await loadCadModelFromCdfOrUrl(modelId, await createClientIfNecessary(modelId));
+  const cadNode = new CadNode(cadModel, { nodeAppearance });
 
   scene.add(cadNode);
 

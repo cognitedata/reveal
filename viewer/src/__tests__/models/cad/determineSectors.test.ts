@@ -5,11 +5,12 @@ import * as THREE from 'three';
 import { SectorMetadata, SectorModelTransformation, SectorScene } from '../../../models/cad/types';
 import { Box3 } from '../../../utils/Box3';
 import { vec3, mat4 } from 'gl-matrix';
-import { defaultDetermineSectors } from '../../../models/cad/determineSectors';
-import { expectSetEqual } from '../../expects';
+import { determineSectorsByProximity } from '../../../models/cad/determineSectors';
 import { toThreeMatrix4, fromThreeMatrix, fromThreeVector3 } from '../../../views/threejs/utilities';
 import { traverseDepthFirst } from '../../../utils/traversal';
 import 'jest-extended';
+import { LevelOfDetail } from '../../../data/model/LevelOfDetail';
+import { WantedSector } from '../../../data/model/WantedSector';
 
 function createSceneFromRoot(root: SectorMetadata): SectorScene {
   const sectors = new Map<number, SectorMetadata>();
@@ -54,8 +55,8 @@ describe('determineSectors', () => {
     camera.updateMatrixWorld();
 
     // Act
-    const sectors = await defaultDetermineSectors({
-      scene,
+    const sectors = await determineSectorsByProximity({
+      sectorScene: scene,
       cameraFov: camera.fov,
       cameraPosition: fromThreeVector3(vec3.create(), camera.position, identityTransform),
       cameraModelMatrix: fromThreeMatrix(mat4.create(), camera.matrixWorld, identityTransform),
@@ -63,7 +64,8 @@ describe('determineSectors', () => {
     });
 
     // Assert
-    expect(sectors.detailed).toBeEmpty();
+    expect(sectors.length).toEqual(1);
+    expect(sectors[0].levelOfDetail).toEqual(LevelOfDetail.Discarded);
   });
 
   test('partial intersect, returns correct sectors', async () => {
@@ -145,8 +147,8 @@ describe('determineSectors', () => {
     camera.updateMatrixWorld();
 
     // Act
-    const sectors = await defaultDetermineSectors({
-      scene,
+    const sectors = await determineSectorsByProximity({
+      sectorScene: scene,
       cameraFov: camera.fov,
       cameraPosition: fromThreeVector3(vec3.create(), camera.position, identityTransform),
       cameraModelMatrix: fromThreeMatrix(mat4.create(), camera.matrixWorld, identityTransform),
@@ -154,8 +156,17 @@ describe('determineSectors', () => {
     });
 
     // Assert
-    expectSetEqual(sectors.detailed, [1, 2]);
-    expectSetEqual(sectors.simple, [3]);
+    expect(
+      sectors.filter((sector: WantedSector) => sector.id === 1 && sector.levelOfDetail === LevelOfDetail.Detailed)
+        .length
+    ).toEqual(1);
+    expect(
+      sectors.filter((sector: WantedSector) => sector.id === 2 && sector.levelOfDetail === LevelOfDetail.Detailed)
+        .length
+    ).toEqual(1);
+    expect(
+      sectors.filter((sector: WantedSector) => sector.id === 3 && sector.levelOfDetail === LevelOfDetail.Simple).length
+    ).toEqual(1);
   });
 
   test('model with transformation, returns correctly', async () => {
@@ -187,8 +198,8 @@ describe('determineSectors', () => {
     camera.updateMatrixWorld();
 
     // Act
-    const sectors = await defaultDetermineSectors({
-      scene,
+    const sectors = await determineSectorsByProximity({
+      sectorScene: scene,
       cameraFov: camera.fov,
       cameraPosition: fromThreeVector3(vec3.create(), camera.position, transform),
       cameraModelMatrix: fromThreeMatrix(mat4.create(), camera.matrixWorld, transform),
@@ -196,7 +207,10 @@ describe('determineSectors', () => {
     });
 
     // Assert
-    expectSetEqual(sectors.detailed, [1]);
+    expect(
+      sectors.filter((sector: WantedSector) => sector.id === 1 && sector.levelOfDetail === LevelOfDetail.Detailed)
+        .length
+    ).toEqual(1);
   });
 });
 

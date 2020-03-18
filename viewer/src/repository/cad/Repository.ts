@@ -2,9 +2,12 @@
  * Copyright 2020 Cognite AS
  */
 
-import { Sector, SectorQuads } from '../../models/cad/types';
+import { WantedSector } from '../../data/model/WantedSector';
+import { ParsedSector } from '../../data/model/ParsedSector';
+
+// TODO move
+export type SectorId = number;
 
 export interface Repository {
-  getDetailed: (sectorId: number) => Promise<Sector>;
-  getSimple: (sectorId: number) => Promise<SectorQuads>;
+  loadSector(sector: WantedSector): Promise<ParsedSector>;
 }

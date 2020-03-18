@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import * as reveal_threejs from '@cognite/reveal/threejs';
-import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams } from './utils/loaders';
+import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams, createClientIfNecessary } from './utils/loaders';
 
 CameraControls.install({ THREE });
 
@@ -14,8 +14,12 @@ async function main() {
   const modelIdentifier = createModelIdentifierFromUrlParams(urlParams, '/primitives');
 
   const scene = new THREE.Scene();
-  const cadModel = await loadCadModelFromCdfOrUrl(modelIdentifier);
+  const cadModel = await loadCadModelFromCdfOrUrl(modelIdentifier, await createClientIfNecessary(modelIdentifier));
   const cadNode = new reveal_threejs.CadNode(cadModel);
+  let sectorsNeedUpdate = true;
+  cadNode.addEventListener('update', () => {
+    sectorsNeedUpdate = true;
+  });
 
   scene.add(cadNode);
 
@@ -30,11 +34,14 @@ async function main() {
   controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
+  cadNode.update(camera);
   const clock = new THREE.Clock();
   const render = async () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
-    const sectorsNeedUpdate = await cadNode.update(camera);
+    if (controlsNeedUpdate) {
+      cadNode.update(camera);
+    }
 
     if (controlsNeedUpdate || sectorsNeedUpdate) {
       renderer.render(scene, camera);

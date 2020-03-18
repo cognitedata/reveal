@@ -38,8 +38,9 @@ async function postWorkToAvailable<T>(workerList: PooledWorker[], work: WorkDele
 // for web workers) to prettify.
 function createWorkers(): PooledWorker[] {
   const workerList: PooledWorker[] = [];
+  const numberOfWorkers = determineNumberOfWorkers();
 
-  for (let i = 0; i < window.navigator.hardwareConcurrency; i++) {
+  for (let i = 0; i < numberOfWorkers; i++) {
     const newWorker = {
       // NOTE: As of Comlink 4.2.0 we need to go through unknown before ParserWorker
       // Please feel free to remove `as unknown` if possible.
@@ -53,6 +54,11 @@ function createWorkers(): PooledWorker[] {
   }
 
   return workerList;
+}
+
+function determineNumberOfWorkers() {
+  // Use between 2-4 workers, depending on hardware
+  return Math.max(2, Math.min(4, window.navigator.hardwareConcurrency || 2));
 }
 
 export function createParser(fetchCtmFile: FetchCtmDelegate): ParseSectorDelegate<Sector> {
@@ -103,7 +109,7 @@ export function createParser(fetchCtmFile: FetchCtmDelegate): ParseSectorDelegat
             normals,
             colors: sharedColors,
             treeIndices: sharedTreeIndices
-          } = await loadCtmGeometryCache.request(fileId);
+          } = await loadCtmGeometryCache.request(fileId, null);
 
           for (let i = 0; i < meshIndices.length; i++) {
             const meshIdx = meshIndices[i];
@@ -146,7 +152,7 @@ export function createParser(fetchCtmFile: FetchCtmDelegate): ParseSectorDelegat
         // TODO do this in Rust instead
         // TODO de-duplicate this with the merged meshes above
         for (const [fileId, meshIndices] of meshesGroupedByFile.entries()) {
-          const ctm = await loadCtmGeometryCache.request(fileId);
+          const ctm = await loadCtmGeometryCache.request(fileId, null);
 
           const indices = ctm.indices;
           const vertices = ctm.vertices;
