@@ -33,6 +33,10 @@ async function main() {
   });
 
   const cadNode = new CadNode(cadModel, { shading });
+  let modelNeedsUpdate = false;
+  cadNode.addEventListener('update', () => {
+    modelNeedsUpdate = true;
+  });
   scene.add(cadNode);
 
   const renderer = new THREE.WebGLRenderer();
@@ -49,14 +53,17 @@ async function main() {
   controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
+  cadNode.update(camera);
 
   const clock = new THREE.Clock();
-  const render = async () => {
+  const render = () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
-    const sectorsNeedUpdate = await cadNode.update(camera);
+    if (controlsNeedUpdate) {
+      cadNode.update(camera);
+    }
 
-    if (controlsNeedUpdate || sectorsNeedUpdate || pickingNeedsUpdate) {
+    if (controlsNeedUpdate || modelNeedsUpdate || pickingNeedsUpdate) {
       renderer.render(scene, camera);
     }
     requestAnimationFrame(render);
