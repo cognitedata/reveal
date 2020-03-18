@@ -17,6 +17,10 @@ async function main() {
   const scene = new THREE.Scene();
   const cadModel = await loadCadModelFromCdfOrUrl(modelIdentifier);
   const cadNode = new CadNode(cadModel);
+  let modelNeedsUpdate = false;
+  cadNode.addEventListener('update', () => {
+    modelNeedsUpdate = true;
+  });
 
   scene.add(cadNode);
 
@@ -32,6 +36,7 @@ async function main() {
   controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
+  cadNode.update(camera);
   const clock = new THREE.Clock();
 
   let effectNeedsUpdate = false;
@@ -71,12 +76,14 @@ async function main() {
     .max(0.2)
     .onChange(updateEffect);
 
-  const render = async () => {
+  const render = () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
-    const sectorsNeedUpdate = await cadNode.update(camera);
+    if (controlsNeedUpdate) {
+      cadNode.update(camera);
+    }
 
-    if (controlsNeedUpdate || sectorsNeedUpdate || effectNeedsUpdate) {
+    if (controlsNeedUpdate || modelNeedsUpdate || effectNeedsUpdate) {
       effect.render(renderer, scene, camera, renderSettings.pass);
       effectNeedsUpdate = false;
     }

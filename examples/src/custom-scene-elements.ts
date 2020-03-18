@@ -23,9 +23,13 @@ async function main() {
   renderer.setClearColor('#000000');
   renderer.setSize(window.innerWidth, window.innerHeight);
 
+  let modelNeedsUpdate = false;
   const sectorModel = await reveal.loadCadModelByUrl('/primitives');
   const sectorModelNode = new reveal_threejs.CadNode(sectorModel);
   scene.add(sectorModelNode);
+  sectorModelNode.addEventListener('update', () => {
+    modelNeedsUpdate = true;
+  });
 
   const controls = new CameraControls(camera, renderer.domElement);
   const pos = new THREE.Vector3(100, 100, 100);
@@ -56,7 +60,10 @@ async function main() {
   const render = () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
-    const modelNeedsUpdate = sectorModelNode.update(camera);
+
+    if (controlsNeedUpdate) {
+      sectorModelNode.update(camera);
+    }
 
     if (controlsNeedUpdate || modelNeedsUpdate) {
       renderer.render(scene, camera);

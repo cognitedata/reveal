@@ -25,6 +25,10 @@ async function main() {
 
   const cadModel = await loadCadModelFromCdfOrUrl(modelId);
   const cadModelNode = new reveal_threejs.CadNode(cadModel);
+  let modelNeedsUpdate = false;
+  cadModelNode.addEventListener('update', () => {
+    modelNeedsUpdate = true;
+  });
   scene.add(cadModelNode);
 
   const controls = new CameraControls(camera, renderer.domElement);
@@ -33,6 +37,7 @@ async function main() {
   controls.setLookAt(pos.x, pos.y, pos.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
+  cadModelNode.update(camera);
 
   // See https://vanruesc.github.io/postprocessing/public/docs/identifiers.html
   const effectPass = new postprocessing.EffectPass(camera, new postprocessing.DotScreenEffect());
@@ -42,12 +47,14 @@ async function main() {
   effectComposer.addPass(effectPass);
 
   const clock = new THREE.Clock();
-  const render = async () => {
+  const render = () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
-    const modelNeedsUpdate = await cadModelNode.update(camera);
-    const needsUpdate = controlsNeedUpdate || modelNeedsUpdate;
+    if (controlsNeedUpdate) {
+      cadModelNode.update(camera);
+    }
 
+    const needsUpdate = controlsNeedUpdate || modelNeedsUpdate;
     if (needsUpdate) {
       effectComposer.render(delta);
     }

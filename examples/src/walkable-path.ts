@@ -50,6 +50,10 @@ async function main() {
 
   const scene = new THREE.Scene();
   const cadNode = new CadNode(cadModel);
+  let modelNeedsUpdate = false;
+  cadNode.addEventListener('update', () => {
+    modelNeedsUpdate = true;
+  });
   const { position, target, near, far } = cadNode.suggestCameraConfig();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
@@ -88,13 +92,15 @@ async function main() {
   });
 
   const clock = new THREE.Clock();
-  const render = async () => {
+  const render = () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
-    const sectorsNeedUpdate = await cadNode.update(camera);
+    if (controlsNeedUpdate) {
+      cadNode.update(camera);
+    }
     const walkablePathUpdated = updated;
 
-    if (controlsNeedUpdate || sectorsNeedUpdate || walkablePathUpdated) {
+    if (controlsNeedUpdate || modelNeedsUpdate || walkablePathUpdated) {
       updated = false;
       renderer.render(scene, camera);
     }

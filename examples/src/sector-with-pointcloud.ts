@@ -45,6 +45,10 @@ async function main() {
 
   const cadModel = await loadCadModelFromCdfOrUrl(cadModelIdentifier);
   const cadNode = new reveal_threejs.CadNode(cadModel);
+  let modelNeedsUpdate = false;
+  cadNode.addEventListener('update', () => {
+    modelNeedsUpdate = true;
+  });
   const cadModelOffsetRoot = new THREE.Group();
   cadModelOffsetRoot.name = 'Sector model offset root';
   cadModelOffsetRoot.add(cadNode);
@@ -73,7 +77,9 @@ async function main() {
   const render = async () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
-    const modelNeedsUpdate = renderOptions.loadingEnabled && (await cadNode.update(camera));
+    if (renderOptions.loadingEnabled) {
+      cadNode.update(camera);
+    }
     const needsUpdate =
       renderOptions.renderMode === RenderMode.AlwaysRender ||
       (renderOptions.renderMode === RenderMode.WhenNecessary &&
