@@ -19,7 +19,8 @@ import {
 import {
   loadCadModelFromCdfOrUrl,
   loadPointCloudModelFromCdfOrUrl,
-  createModelIdentifierFromUrlParams
+  createModelIdentifierFromUrlParams,
+  createClientIfNecessary
 } from './utils/loaders';
 
 CameraControls.install({ THREE });
@@ -40,7 +41,10 @@ async function main() {
 
   Potree.XHRFactory.config.customHeaders.push({ header: 'MyDummyHeader', value: 'MyDummyValue' });
 
-  const cadModel = await loadCadModelFromCdfOrUrl(cadModelIdentifier);
+  const cadModel = await loadCadModelFromCdfOrUrl(
+    cadModelIdentifier,
+    await createClientIfNecessary(cadModelIdentifier)
+  );
   const cadNode = new reveal_threejs.CadNode(cadModel);
   const cadModelOffsetRoot = new THREE.Group();
   cadModelOffsetRoot.name = 'Sector model offset root';
