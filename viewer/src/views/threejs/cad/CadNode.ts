@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 
 import { SectorModelTransformation, SectorScene, SectorMetadata } from '../../../models/cad/types';
-import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
+import { CadLoadingHints, defaultLoadingHints } from '../../../models/cad/CadLoadingHints';
 import { CadModel } from '../../../models/cad/CadModel';
 import { CadRenderHints } from '../../CadRenderHints';
 import { suggestCameraConfig } from '../../../utils/cameraUtils';
@@ -87,6 +87,7 @@ export class CadNode extends THREE.Object3D {
   private get shouldRenderSectorBoundingBoxes(): boolean {
     return this._renderHints.showSectorBoundingBoxes || false;
   }
+
   public readonly rootSector: RootSectorNode;
   public readonly modelTransformation: SectorModelTransformation;
 
@@ -145,7 +146,8 @@ export class CadNode extends THREE.Object3D {
     const cameraConfig: ThreeCameraConfig = {
       camera,
       modelTransformation: this.modelTransformation,
-      sectorScene: this._sectorScene
+      sectorScene: this._sectorScene,
+      loadingHints: this.loadingHints
     };
     this._cameraPositionObservable.next(cameraConfig);
   }

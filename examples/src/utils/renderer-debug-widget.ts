@@ -221,7 +221,17 @@ function isSectorRoot(object: THREE.Object3D): boolean {
 }
 
 function isHighDetailSectorRoot(object: THREE.Object3D): boolean {
-  return isSectorRoot(object) && !!object.children.find(y => y.type === 'Mesh' && !y.name.startsWith('Quads'));
+  return (
+    // Container for a sector
+    isSectorRoot(object) &&
+    !!object.children.find(
+      // Container has a group
+      y =>
+        y.type === 'Group' &&
+        // The group contains mesh that isn't quad
+        y.children.find(z => z.type === 'Mesh' && !z.name.startsWith('Quads'))
+    )
+  );
 }
 
 function updateSceneInfo(scene: THREE.Object3D, sceneInfo: SceneInfo) {

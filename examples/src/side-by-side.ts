@@ -112,8 +112,8 @@ async function main() {
       options2.renderMode === RenderMode.AlwaysRender ||
       (options2.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || modelNeedsUpdate))
     ) {
-      applyRenderingFilters(scene2, options2.renderFilter);
-      renderer2.render(scene2, camera);
+      // applyRenderingFilters(scene2, options2.renderFilter);
+      // renderer2.render(scene2, camera);
     }
   };
   render();

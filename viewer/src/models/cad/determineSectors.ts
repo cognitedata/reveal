@@ -35,6 +35,7 @@ export interface DetermineSectorsByProximityInput {
 
 export function determineSectorsByProximity(params: DetermineSectorsByProximityInput): WantedSector[] {
   const hints = { ...defaultCadLoadingHints, ...(params.loadingHints || {}) };
+  console.log(hints.maxQuadSize);
 
   const { sectorScene, cameraPosition, cameraModelMatrix, projectionMatrix, cameraFov } = params;
   const { invertCameraModelMatrix, frustumMatrix, frustum, bbox, min, max } = determineSectorsPreallocatedVars;
