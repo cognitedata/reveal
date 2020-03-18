@@ -1,3 +1,6 @@
+env:
+  # examples require a lot of memory...
+  NODE_OPTIONS=--max-old-space-size=8192
 matrix:
   include:
     - language: rust

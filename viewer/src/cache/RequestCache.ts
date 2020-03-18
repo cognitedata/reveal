@@ -2,9 +2,9 @@
  * Copyright 2020 Cognite AS
  */
 
-export type RequestDelegate<T_ID, T> = (id: T_ID) => Promise<T>;
+export type RequestDelegate<Key, Data, Result> = (id: Key, data: Data) => Result;
 
-export interface RequestCache<T_ID, T> {
-  request: RequestDelegate<T_ID, T>;
+export interface RequestCache<Key, Data, Result> {
+  request: RequestDelegate<Key, Data, Result>;
   clearCache: () => void;
 }

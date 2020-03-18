@@ -4,25 +4,25 @@
 
 import { RequestCache, RequestDelegate } from './RequestCache';
 
-export class MemoryRequestCache<T_ID, T> implements RequestCache<T_ID, T> {
-  private readonly _results: Map<T_ID, Promise<T>>;
-  private readonly _request: RequestDelegate<T_ID, T>;
-  constructor(request: RequestDelegate<T_ID, T>) {
+export class MemoryRequestCache<Key, Data, Result> implements RequestCache<Key, Data, Result> {
+  private readonly _results: Map<Key, Result>;
+  private readonly _request: RequestDelegate<Key, Data, Result>;
+  constructor(request: RequestDelegate<Key, Data, Result>) {
     this._results = new Map();
     this._request = request;
   }
 
-  async request(id: T_ID) {
+  request(id: Key, data: Data) {
     const existing = this._results.get(id);
     if (existing) {
       return existing;
     }
-    const result: Promise<T> = this._request(id);
+    const result: Result = this._request(id, data);
     this._results.set(id, result);
     return result;
   }
 
-  async clearCache() {
+  clearCache() {
     this._results.clear();
   }
 }
