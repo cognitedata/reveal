@@ -38,8 +38,9 @@ async function postWorkToAvailable<T>(workerList: PooledWorker[], work: WorkDele
 // for web workers) to prettify.
 function createWorkers(): PooledWorker[] {
   const workerList: PooledWorker[] = [];
+  const numberOfWorkers = determineNumberOfWorkers();
 
-  for (let i = 0; i < window.navigator.hardwareConcurrency; i++) {
+  for (let i = 0; i < numberOfWorkers; i++) {
     const newWorker = {
       // NOTE: As of Comlink 4.2.0 we need to go through unknown before ParserWorker
       // Please feel free to remove `as unknown` if possible.
@@ -55,11 +56,16 @@ function createWorkers(): PooledWorker[] {
   return workerList;
 }
 
+function determineNumberOfWorkers() {
+  // Use between 2-4 workers, depending on hardware
+  return Math.max(2, Math.min(4, window.navigator.hardwareConcurrency || 2));
+}
+
 export function createParser(fetchCtmFile: FetchCtmDelegate): ParseSectorDelegate<Sector> {
   const workerList = createWorkers();
 
   // TODO define the cache outside of the createParser function to make it configurable
-  const loadCtmGeometryCache = new MemoryRequestCache((fileId: number, _: null) => {
+  const loadCtmGeometryCache = new MemoryRequestCache((fileId: number) => {
     return loadCtmGeometry(fileId, fetchCtmFile, workerList);
   });
 
