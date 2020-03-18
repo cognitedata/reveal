@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import * as reveal_threejs from '@cognite/reveal/threejs';
 
 import CameraControls from 'camera-controls';
-import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams } from './utils/loaders';
+import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams, createClientIfNecessary } from './utils/loaders';
 
 const postprocessing = require('postprocessing');
 
@@ -23,7 +23,7 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const cadModel = await loadCadModelFromCdfOrUrl(modelId);
+  const cadModel = await loadCadModelFromCdfOrUrl(modelId, await createClientIfNecessary(modelId));
   const cadModelNode = new reveal_threejs.CadNode(cadModel);
   let modelNeedsUpdate = false;
   cadModelNode.addEventListener('update', () => {

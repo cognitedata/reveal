@@ -19,7 +19,8 @@ import {
 import {
   loadCadModelFromCdfOrUrl,
   loadPointCloudModelFromCdfOrUrl,
-  createModelIdentifierFromUrlParams
+  createModelIdentifierFromUrlParams,
+  createClientIfNecessary
 } from './utils/loaders';
 
 CameraControls.install({ THREE });
@@ -27,13 +28,10 @@ CameraControls.install({ THREE });
 async function main() {
   const urlParams = new URL(location.href).searchParams;
   const cadModelIdentifier = createModelIdentifierFromUrlParams(urlParams, '/primitives');
-  const pointCloudModelIdentifier = createModelIdentifierFromUrlParams(
-    urlParams,
-    '/transformer',
-    'pointcloud',
-    'project',
-    'pointcloudUrl'
-  );
+  const pointCloudModelIdentifier = createModelIdentifierFromUrlParams(urlParams, '/transformer', {
+    modelIdParameterName: 'pointcloud',
+    modelUrlParameterName: 'pointcloudUrl'
+  });
 
   const scene = new THREE.Scene();
   const renderer = new THREE.WebGLRenderer();
@@ -43,7 +41,10 @@ async function main() {
 
   Potree.XHRFactory.config.customHeaders.push({ header: 'MyDummyHeader', value: 'MyDummyValue' });
 
-  const cadModel = await loadCadModelFromCdfOrUrl(cadModelIdentifier);
+  const cadModel = await loadCadModelFromCdfOrUrl(
+    cadModelIdentifier,
+    await createClientIfNecessary(cadModelIdentifier)
+  );
   const cadNode = new reveal_threejs.CadNode(cadModel);
   let modelNeedsUpdate = false;
   cadNode.addEventListener('update', () => {

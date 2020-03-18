@@ -15,6 +15,7 @@ import {
   RenderOptions
 } from './utils/renderer-debug-widget';
 import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams } from './utils/loaders';
+import { CogniteClient } from '@cognite/sdk';
 
 CameraControls.install({ THREE });
 
@@ -43,14 +44,15 @@ function initializeModel(
 
 async function main() {
   const params = new URL(location.href).searchParams;
-  const modelIdentifier1 = createModelIdentifierFromUrlParams(params, '/primitives', 'model1', 'project', 'modelUrl1');
-  const modelIdentifier2 = createModelIdentifierFromUrlParams(
-    params,
-    modelIdentifier1,
-    'model2',
-    'project',
-    'modelUrl2'
-  );
+  const project = params.get('project');
+  const modelIdentifier1 = createModelIdentifierFromUrlParams(params, '/primitives', {
+    modelIdParameterName: 'model1',
+    modelUrlParameterName: 'modelUrl1'
+  });
+  const modelIdentifier2 = createModelIdentifierFromUrlParams(params, modelIdentifier1, {
+    modelIdParameterName: 'model2',
+    modelUrlParameterName: 'modelUrl2'
+  });
   const modelHeader1 = params.get('modelUrl1') || `${params.get('model1')}@${params.get('project')}`;
   const modelHeader2 = params.get('modelUrl2') || `${params.get('model2')}@${params.get('project')}`;
 
@@ -64,9 +66,16 @@ async function main() {
   const leftCanvas = document.getElementById('leftCanvas')! as HTMLCanvasElement;
   const rightCanvas = document.getElementById('rightCanvas')! as HTMLCanvasElement;
 
+  // Initialize CogniteClient (if loading model from CDF)
+  let client: CogniteClient | undefined;
+  if (project) {
+    client = new CogniteClient({ appId: 'cognite.reveal.examples' });
+    await client.loginWithOAuth({ project });
+  }
+
   // Initialize models
-  const model1 = await loadCadModelFromCdfOrUrl(modelIdentifier1);
-  const model2 = await loadCadModelFromCdfOrUrl(modelIdentifier2);
+  const model1 = await loadCadModelFromCdfOrUrl(modelIdentifier1, client);
+  const model2 = await loadCadModelFromCdfOrUrl(modelIdentifier2, client);
   const [renderer1, scene1, modelNode1, options1] = initializeModel(model1, leftCanvas, gui1);
   const [renderer2, scene2, modelNode2, options2] = initializeModel(model2, rightCanvas, gui2);
 
