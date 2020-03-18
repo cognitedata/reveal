@@ -3,9 +3,9 @@
  */
 import { SectorMetadata, SectorScene } from '../../../models/cad/types';
 import { Box3 } from '../../../utils/Box3';
-import { determineSectorsQuality } from '../../../models/cad/determineSectors';
-import { expectSetEqual } from '../../expects';
+import { determineSectorsFromDetailed } from '../../../models/cad/determineSectors';
 import { traverseDepthFirst } from '../../../utils/traversal';
+import { expectContainsSectorsWithLevelOfDetail } from '../../expects';
 
 function createSceneFromRoot(root: SectorMetadata): SectorScene {
   const sectors = new Map<number, SectorMetadata>();
@@ -100,43 +100,37 @@ describe('determineSectorsQuality', () => {
 
   test('no detailed gives root as simple', () => {
     const detailed: number[] = [];
-    const sectors = determineSectorsQuality(scene, new Set(detailed));
-    expectSetEqual(sectors.simple, [1]);
-    expectSetEqual(sectors.detailed, []);
+    const sectors = determineSectorsFromDetailed(scene, new Set(detailed));
+    expectContainsSectorsWithLevelOfDetail(sectors, [1], []);
   });
 
   test('root detailed makes children simple', () => {
     const detailed: number[] = [1];
-    const sectors = determineSectorsQuality(scene, new Set(detailed));
-    expectSetEqual(sectors.simple, [2, 5, 6]);
-    expectSetEqual(sectors.detailed, [1]);
+    const sectors = determineSectorsFromDetailed(scene, new Set(detailed));
+    expectContainsSectorsWithLevelOfDetail(sectors, [2, 5, 6], [1]);
   });
 
   test('leaf node makes all parents detailed', () => {
     const detailed: number[] = [8];
-    const sectors = determineSectorsQuality(scene, new Set(detailed));
-    expectSetEqual(sectors.simple, [2, 5, 7]);
-    expectSetEqual(sectors.detailed, [1, 6, 8]);
+    const sectors = determineSectorsFromDetailed(scene, new Set(detailed));
+    expectContainsSectorsWithLevelOfDetail(sectors, [2, 5, 7], [1, 6, 8]);
   });
 
   test('lone node leaves other branches simple', () => {
     const detailed: number[] = [5];
-    const sectors = determineSectorsQuality(scene, new Set(detailed));
-    expectSetEqual(sectors.simple, [2, 6]);
-    expectSetEqual(sectors.detailed, [1, 5]);
+    const sectors = determineSectorsFromDetailed(scene, new Set(detailed));
+    expectContainsSectorsWithLevelOfDetail(sectors, [2, 6], [1, 5]);
   });
 
   test('detailed at different levels', () => {
     const detailed: number[] = [2, 7];
-    const sectors = determineSectorsQuality(scene, new Set(detailed));
-    expectSetEqual(sectors.simple, [3, 4, 5, 8]);
-    expectSetEqual(sectors.detailed, [1, 2, 6, 7]);
+    const sectors = determineSectorsFromDetailed(scene, new Set(detailed));
+    expectContainsSectorsWithLevelOfDetail(sectors, [3, 4, 5, 8], [1, 2, 6, 7]);
   });
 
   test('all detailed', () => {
     const detailed: number[] = [1, 2, 3, 4, 5, 6, 7, 8];
-    const sectors = determineSectorsQuality(scene, new Set(detailed));
-    expectSetEqual(sectors.simple, []);
-    expectSetEqual(sectors.detailed, [1, 2, 3, 4, 5, 6, 7, 8]);
+    const sectors = determineSectorsFromDetailed(scene, new Set(detailed));
+    expectContainsSectorsWithLevelOfDetail(sectors, [], [1, 2, 3, 4, 5, 6, 7, 8]);
   });
 });
