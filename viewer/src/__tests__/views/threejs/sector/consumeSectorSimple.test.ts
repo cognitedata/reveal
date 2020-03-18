@@ -6,7 +6,6 @@ import { SectorQuads, SectorMetadata } from '../../../../models/cad/types';
 import { Box3 } from '../../../../utils/Box3';
 import { vec3 } from 'gl-matrix';
 import { consumeSectorSimple } from '../../../../views/threejs/cad/consumeSectorSimple';
-import { SectorNode } from '../../../../views/threejs/cad/SectorNode';
 import { createMaterials } from '../../../../views/threejs/cad/materials';
 import 'jest-extended';
 
@@ -37,7 +36,6 @@ describe('consumeSectorDetailed', () => {
     children: []
   };
   const sectorId = 1;
-  const node = new SectorNode(sectorId, '0/');
 
   test('no geometry, does not add new nodes', () => {
     // Arrange
@@ -46,10 +44,10 @@ describe('consumeSectorDetailed', () => {
     };
 
     // Act
-    consumeSectorSimple(sectorId, sector, metadata, node, materials);
+    const group = consumeSectorSimple(sectorId, sector, metadata, materials);
 
     // Assert
-    expect(node.children).toBeEmpty();
+    expect(group.children).toBeEmpty();
   });
 
   test('single valid mesh, adds geometry', () => {
@@ -69,10 +67,10 @@ describe('consumeSectorDetailed', () => {
     };
 
     // Act
-    consumeSectorSimple(sectorId, sector, metadata, node, materials);
+    const group = consumeSectorSimple(sectorId, sector, metadata, materials);
 
     // Assert
-    expect(node.children).not.toBeEmpty();
+    expect(group.children).not.toBeEmpty();
   });
 
   test('buffer has two elements, success', () => {
@@ -101,10 +99,10 @@ describe('consumeSectorDetailed', () => {
     };
 
     // Act
-    consumeSectorSimple(sectorId, sector, metadata, node, materials);
+    const group = consumeSectorSimple(sectorId, sector, metadata, materials);
 
     // Assert
-    expect(node.children.length).toBe(2);
+    expect(group.children.length).toBe(1);
   });
 
   test('buffer has extra bytes, throws', () => {
@@ -126,7 +124,7 @@ describe('consumeSectorDetailed', () => {
     };
 
     // Act
-    expect(() => consumeSectorSimple(sectorId, sector, metadata, node, materials)).toThrowError();
+    expect(() => consumeSectorSimple(sectorId, sector, metadata, materials)).toThrowError();
   });
 
   test('buffer missing bytes, throws', () => {
@@ -140,6 +138,6 @@ describe('consumeSectorDetailed', () => {
     };
 
     // Act
-    expect(() => consumeSectorSimple(sectorId, sector, metadata, node, materials)).toThrowError();
+    expect(() => consumeSectorSimple(sectorId, sector, metadata, materials)).toThrowError();
   });
 });

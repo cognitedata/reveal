@@ -210,7 +210,6 @@ module.exports = env => {
     },
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
-      symlinks: false, // necessary because we symlink the parent folder - source maps fail otherwise
     },
     output: {
       filename: '[name].js',

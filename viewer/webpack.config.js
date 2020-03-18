@@ -79,6 +79,7 @@ module.exports = env => {
     externals: [nodeExternals()],
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
+      symlinks: false,
     },
     output: {
       filename: '[name].js',

@@ -3,33 +3,37 @@
  */
 
 import * as THREE from 'three';
-import { vec3, mat4 } from 'gl-matrix';
 
-import {
-  SectorModelTransformation,
-  SectorScene,
-  SectorMetadata,
-  WantedSectors,
-  SectorQuads,
-  Sector
-} from '../../../models/cad/types';
-import { defaultDetermineSectors } from '../../../models/cad/determineSectors';
-import { DetermineSectorsDelegate } from '../../../models/cad/delegates';
+import { SectorModelTransformation, SectorScene, SectorMetadata } from '../../../models/cad/types';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
 import { CadModel } from '../../../models/cad/CadModel';
 import { CadRenderHints } from '../../CadRenderHints';
 import { suggestCameraConfig } from '../../../utils/cameraUtils';
-import { SectorNode } from './SectorNode';
-import { fromThreeVector3, fromThreeMatrix, toThreeJsBox3, toThreeVector3, toThreeMatrix4 } from '../utilities';
+import { toThreeJsBox3, toThreeVector3, toThreeMatrix4 } from '../utilities';
 import { RenderMode } from '../materials';
 import { Shading, createDefaultShading } from './shading';
 import { RootSectorNode } from './RootSectorNode';
-import { BasicSectorActivator, SectorActivator } from '../../../models/cad/BasicSectorActivator';
 import { CachedRepository } from '../../../repository/cad/CachedRepository';
 import { Repository } from '../../../repository/cad/Repository';
+import { Subject } from 'rxjs';
+import { publish, share, auditTime, switchAll, flatMap } from 'rxjs/operators';
+import { ConsumedSector } from '../../../data/model/ConsumedSector';
+import { fromThreeCameraConfig, ThreeCameraConfig } from './fromThreeCameraConfig';
+import { ProximitySectorCuller } from '../../../culling/ProximitySectorCuller';
+import { LevelOfDetail } from '../../../data/model/LevelOfDetail';
+import { distinctUntilLevelOfDetailChanged } from '../../../models/cad/distinctUntilLevelOfDetailChanged';
+import { filterCurrentWantedSectors } from '../../../models/cad/filterCurrentWantedSectors';
+import { SectorCuller } from '../../../culling/SectorCuller';
+import { DetermineSectorsByProximityInput } from '../../../models/cad/determineSectors';
+import { ParsedSector } from '../../../data/model/ParsedSector';
+import { WantedSector } from '../../../data/model/WantedSector';
 
 interface CadNodeOptions {
   shading?: Shading;
+  // internal options are experimental and may change in the future
+  internal?: {
+    sectorCuller?: SectorCuller<DetermineSectorsByProximityInput>;
+  };
 }
 
 export interface SuggestedCameraConfig {
@@ -39,104 +43,7 @@ export interface SuggestedCameraConfig {
   far: number;
 }
 
-const updateVars = {
-  cameraPosition: vec3.create(),
-  cameraModelMatrix: mat4.create(),
-  projectionMatrix: mat4.create()
-};
-
 export class CadNode extends THREE.Object3D {
-  public readonly rootSector: SectorNode;
-  public readonly modelTransformation: SectorModelTransformation;
-
-  private _determineSectors: DetermineSectorsDelegate;
-  private _simpleSectorActivator: SectorActivator;
-  private _detailedSectorActivator: SectorActivator;
-  private _renderHints: CadRenderHints;
-  private _loadingHints: CadLoadingHints;
-  private _renderMode: RenderMode;
-
-  private readonly _shading: Shading;
-  private readonly _sectorScene: SectorScene;
-  private readonly _previousCameraMatrix = new THREE.Matrix4();
-  private readonly _boundingBoxNode: THREE.Object3D;
-  private readonly _repository: Repository;
-
-  constructor(model: CadModel, options?: CadNodeOptions) {
-    super();
-    this.type = 'CadNode';
-    this.name = 'Sector model';
-
-    this._shading = (() => {
-      if (options && options.shading) {
-        return options.shading;
-      }
-      return createDefaultShading({
-        color(_treeIndex: number) {
-          return undefined;
-        }
-      });
-    })();
-
-    const rootSector = new RootSectorNode(model, this._shading);
-    this._repository = new CachedRepository(model);
-
-    this._detailedSectorActivator = new BasicSectorActivator<Sector>(
-      sectorId => {
-        return this._repository.getDetailed(sectorId);
-      },
-      sectorId => {
-        // this redirection is necessary to capture the correct this-keyword
-        rootSector.discard(sectorId);
-      },
-      (sectorId: number, sector: Sector) => {
-        // this redirection is necessary to capture the correct this-keyword
-        rootSector.consumeDetailed(sectorId, sector);
-      }
-    );
-    this._simpleSectorActivator = new BasicSectorActivator<SectorQuads>(
-      sectorId => {
-        return this._repository.getSimple(sectorId);
-      },
-      sectorId => {
-        // this redirection is necessary to capture the correct this-keyword
-        rootSector.discard(sectorId);
-      },
-      (sectorId: number, sector: SectorQuads) => {
-        // this redirection is necessary to capture the correct this-keyword
-        rootSector.consumeSimple(sectorId, sector);
-      }
-    );
-    const { scene, modelTransformation } = model;
-
-    this._sectorScene = scene;
-    this._determineSectors = defaultDetermineSectors;
-    this.modelTransformation = modelTransformation;
-    // Ensure camera matrix is unequal on first frame
-    this._previousCameraMatrix.elements[0] = Infinity;
-
-    // Prepare renderables
-    this.rootSector = rootSector;
-    this.add(rootSector);
-    this._boundingBoxNode = this.createBoundingBoxNode(scene.sectors);
-    this.add(this._boundingBoxNode);
-
-    // Apply default hints
-    this._renderHints = {};
-    this._loadingHints = {};
-    this._renderMode = RenderMode.Color;
-    this.renderHints = {};
-    this.loadingHints = {};
-    this.renderMode = RenderMode.Color;
-
-    const indices = [];
-    for (let i = 0; i < scene.maxTreeIndex; i++) {
-      indices.push(i);
-    }
-
-    this._shading.updateNodes(indices);
-  }
-
   set renderMode(mode: RenderMode) {
     this._renderMode = mode;
     this._shading.materials.box.uniforms.renderMode.value = mode;
@@ -177,47 +84,70 @@ export class CadNode extends THREE.Object3D {
     return this._loadingHints;
   }
 
-  set determineSectors(determineSectors: DetermineSectorsDelegate) {
-    this._determineSectors = determineSectors;
-  }
-
-  get determineSectors() {
-    return this._determineSectors;
-  }
-
   private get shouldRenderSectorBoundingBoxes(): boolean {
     return this._renderHints.showSectorBoundingBoxes || false;
   }
+  public readonly rootSector: RootSectorNode;
+  public readonly modelTransformation: SectorModelTransformation;
 
-  public async update(camera: THREE.PerspectiveCamera): Promise<boolean> {
-    let needsRedraw = false;
-    const { cameraPosition, cameraModelMatrix, projectionMatrix } = updateVars;
-    if (!this._previousCameraMatrix.equals(camera.matrixWorld)) {
-      camera.matrixWorldInverse.getInverse(camera.matrixWorld);
+  private _sectorCuller: SectorCuller<DetermineSectorsByProximityInput>;
+  private _renderHints: CadRenderHints;
+  private _loadingHints: CadLoadingHints;
+  private _renderMode: RenderMode;
 
-      fromThreeVector3(cameraPosition, camera.position, this.modelTransformation);
-      fromThreeMatrix(cameraModelMatrix, camera.matrixWorld, this.modelTransformation);
-      fromThreeMatrix(projectionMatrix, camera.projectionMatrix);
-      const wantedSectors = await this._determineSectors({
-        scene: this._sectorScene,
-        cameraFov: camera.fov,
-        cameraPosition,
-        cameraModelMatrix,
-        projectionMatrix,
-        loadingHints: this.loadingHints
-      });
-      needsRedraw = this._detailedSectorActivator.update(wantedSectors.detailed) || needsRedraw;
-      needsRedraw = this._simpleSectorActivator.update(wantedSectors.simple) || needsRedraw;
+  private readonly _cameraPositionObservable: Subject<ThreeCameraConfig>;
+  private readonly _shading: Shading;
+  private readonly _sectorScene: SectorScene;
+  private readonly _previousCameraMatrix = new THREE.Matrix4();
+  private readonly _boundingBoxNode: THREE.Object3D;
+  private readonly _repository: Repository;
 
-      if (this.shouldRenderSectorBoundingBoxes) {
-        this.updateSectorBoundingBoxes(wantedSectors);
-      }
+  constructor(model: CadModel, options?: CadNodeOptions) {
+    super();
+    this.type = 'CadNode';
+    this.name = 'Sector model';
+    this._shading = initShading(options);
 
-      this._previousCameraMatrix.copy(camera.matrixWorld);
+    const rootSector = new RootSectorNode(model, this._shading);
+    this._repository = new CachedRepository(model);
+
+    const { scene, modelTransformation } = model;
+
+    this._sectorScene = scene;
+    this._sectorCuller = (options && options.internal && options.internal.sectorCuller) || new ProximitySectorCuller();
+    this.modelTransformation = modelTransformation;
+    // Ensure camera matrix is unequal on first frame
+    this._previousCameraMatrix.elements[0] = Infinity;
+
+    // Prepare renderables
+    this.rootSector = rootSector;
+    this.add(rootSector);
+    this._boundingBoxNode = this.createBoundingBoxNode(scene.sectors);
+    this.add(this._boundingBoxNode);
+
+    // Apply default hints
+    this._renderHints = {};
+    this._loadingHints = {};
+    this._renderMode = RenderMode.Color;
+    this.renderHints = {};
+    this.loadingHints = {};
+    this.renderMode = RenderMode.Color;
+
+    const indices = [];
+    for (let i = 0; i < scene.maxTreeIndex; i++) {
+      indices.push(i);
     }
-    needsRedraw = this._detailedSectorActivator.refresh() || needsRedraw;
-    needsRedraw = this._simpleSectorActivator.refresh() || needsRedraw;
-    return needsRedraw;
+    this._shading.updateNodes(indices);
+    this._cameraPositionObservable = this.createLoadSectorsPipeline();
+  }
+
+  public update(camera: THREE.PerspectiveCamera) {
+    const cameraConfig: ThreeCameraConfig = {
+      camera,
+      modelTransformation: this.modelTransformation,
+      sectorScene: this._sectorScene
+    };
+    this._cameraPositionObservable.next(cameraConfig);
   }
 
   public suggestCameraConfig(): SuggestedCameraConfig {
@@ -231,11 +161,51 @@ export class CadNode extends THREE.Object3D {
     };
   }
 
-  private updateSectorBoundingBoxes(wantedSectors: WantedSectors) {
+  private createLoadSectorsPipeline(): Subject<ThreeCameraConfig> {
+    const loadSectorOperator = flatMap((s: WantedSector) => this._repository.loadSector(s));
+    const consumeSectorOperator = flatMap((sector: ParsedSector) => this.rootSector.consumeSector(sector.id, sector));
+
+    const pipeline = new Subject<ThreeCameraConfig>();
+    pipeline
+      .pipe(
+        auditTime(100),
+        fromThreeCameraConfig(),
+        this._sectorCuller.determineSectors(),
+        share(),
+        publish(wantedSectors =>
+          wantedSectors.pipe(
+            switchAll(),
+            distinctUntilLevelOfDetailChanged(),
+            loadSectorOperator,
+            filterCurrentWantedSectors(wantedSectors),
+            consumeSectorOperator
+          )
+        )
+      )
+      .subscribe((sector: ConsumedSector) => {
+        const sectorNode = this.rootSector.sectorNodeMap.get(sector.id);
+        if (!sectorNode) {
+          throw new Error(`Could not find 3D node for sector ${sector.id} - invalid id?`);
+        }
+        if (sectorNode.group) {
+          sectorNode.remove(sectorNode.group);
+        }
+        sectorNode.add(sector.group);
+        sectorNode.group = sector.group;
+        this.updateSectorBoundingBoxes(sector);
+        this.dispatchEvent({ type: 'update' });
+      });
+    return pipeline;
+  }
+
+  private updateSectorBoundingBoxes(sector: ConsumedSector) {
     this._boundingBoxNode.children.forEach(x => {
       const sectorId = x.userData.sectorId as number;
+      if (sectorId !== sector.id) {
+        return;
+      }
       const boxHelper = x as THREE.Box3Helper;
-      boxHelper.visible = wantedSectors.detailed.has(sectorId) || wantedSectors.simple.has(sectorId);
+      boxHelper.visible = sector.levelOfDetail !== LevelOfDetail.Discarded;
     });
   }
 
@@ -266,4 +236,15 @@ export class CadNode extends THREE.Object3D {
     });
     return boxesNode;
   }
+}
+
+function initShading(options?: CadNodeOptions): Shading {
+  if (options && options.shading) {
+    return options.shading;
+  }
+  return createDefaultShading({
+    color(_treeIndex: number) {
+      return undefined;
+    }
+  });
 }
