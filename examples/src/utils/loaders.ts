@@ -16,13 +16,23 @@ function isUrlModelIdentifier(model: ModelIdentifier): model is UrlModelIdentifi
 export function createModelIdentifierFromUrlParams(
   urlParams: URLSearchParams,
   fallbackModel: ModelIdentifier | string,
-  modelIdParameterName: string = 'model',
-  projectParameterName: string = 'project',
-  modelUrlParameterName: string = 'modelUrl'
+  options?: {
+    modelIdParameterName?: string;
+    projectParameterName?: string;
+    modelUrlParameterName?: string;
+  }
 ): ModelIdentifier {
-  const modelId = urlParams.get(modelIdParameterName);
-  const modelUrl = urlParams.get(modelUrlParameterName);
-  const project = urlParams.get(projectParameterName);
+  const opts = {
+    ...{
+      modelIdParameterName: 'model',
+      projectParameterName: 'project',
+      modelUrlParameterName: 'modelUrl'
+    },
+    ...options
+  };
+  const modelId = urlParams.get(opts.modelIdParameterName);
+  const modelUrl = urlParams.get(opts.modelUrlParameterName);
+  const project = urlParams.get(opts.projectParameterName);
   const fallbackModelIdentifier = typeof fallbackModel === 'string' ? { modelUrl: fallbackModel } : fallbackModel;
 
   if (modelUrl) {
@@ -41,15 +51,28 @@ export function createModelIdentifierFromUrlParams(
  * @param model Model identifier. If a number, the model is assumed to be stored in CDF.
  * @param project If model is a number (i.e. model ID), project must be provided.
  */
-export async function loadCadModelFromCdfOrUrl(model: ModelIdentifier): Promise<reveal.CadModel> {
+export async function loadCadModelFromCdfOrUrl(
+  model: ModelIdentifier,
+  client?: CogniteClient
+): Promise<reveal.CadModel> {
   if (isUrlModelIdentifier(model)) {
     return reveal.loadCadModelByUrl(model.modelUrl);
-  } else {
-    const client = new CogniteClient({ appId: 'cognite.reveal.example' });
-    client.loginWithOAuth({ project: model.project });
-    await client.authenticate();
-    return reveal.loadCadModelFromCdf(client, model.modelId);
+  } else if (!client) {
+    throw new Error('Must provide a SDK client');
   }
+  return reveal.loadCadModelFromCdf(client, model.modelId);
+}
+
+export async function createClientIfNecessary(modelId: ModelIdentifier): Promise<CogniteClient | undefined> {
+  if (isUrlModelIdentifier(modelId)) {
+    // Model is not on CDF
+    return undefined;
+  }
+
+  const client = new CogniteClient({ appId: 'cognite.reveal.example' });
+  client.loginWithOAuth({ project: modelId.project });
+  await client.authenticate();
+  return client;
 }
 
 /**
