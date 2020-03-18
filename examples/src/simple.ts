@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import * as reveal_threejs from '@cognite/reveal/threejs';
-import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams } from './utils/loaders';
+import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams, createClientIfNecessary } from './utils/loaders';
 
 CameraControls.install({ THREE });
 
@@ -14,7 +14,7 @@ async function main() {
   const modelIdentifier = createModelIdentifierFromUrlParams(urlParams, '/primitives');
 
   const scene = new THREE.Scene();
-  const cadModel = await loadCadModelFromCdfOrUrl(modelIdentifier);
+  const cadModel = await loadCadModelFromCdfOrUrl(modelIdentifier, await createClientIfNecessary(modelIdentifier));
   const cadNode = new reveal_threejs.CadNode(cadModel);
   let sectorsNeedUpdate = true;
   cadNode.addEventListener('update', () => {

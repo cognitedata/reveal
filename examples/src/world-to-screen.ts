@@ -6,17 +6,17 @@ import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import * as reveal_threejs from '@cognite/reveal/threejs';
 import { CadNode } from '@cognite/reveal/threejs';
-import { createModelIdentifierFromUrlParams, loadCadModelFromCdfOrUrl } from './utils/loaders';
+import { createModelIdentifierFromUrlParams, loadCadModelFromCdfOrUrl, createClientIfNecessary } from './utils/loaders';
 import { MOUSE } from 'three';
 
 CameraControls.install({ THREE });
 
 async function main() {
   const urlParams = new URL(location.href).searchParams;
-  const modelIndentifier = createModelIdentifierFromUrlParams(urlParams, '/primitives');
+  const modelIdentifier = createModelIdentifierFromUrlParams(urlParams, '/primitives');
 
   const scene = new THREE.Scene();
-  const cadModel = await loadCadModelFromCdfOrUrl(modelIndentifier);
+  const cadModel = await loadCadModelFromCdfOrUrl(modelIdentifier, await createClientIfNecessary(modelIdentifier));
 
   const { htmlElement, updateHtmlElements } = createHtmlElements();
   document.body.appendChild(htmlElement);
