@@ -23,16 +23,20 @@ async function main() {
 
   let pickingNeedsUpdate = false;
   let pickedNode: number | undefined;
-  const shading = reveal_threejs.createDefaultShading({
+  const nodeAppearance: reveal_threejs.NodeAppearance = {
     color(treeIndex: number) {
       if (treeIndex === pickedNode) {
         return [0, 255, 255, 255];
       }
       return undefined;
     }
-  });
+  };
 
-  const cadNode = new CadNode(cadModel, { shading });
+  const cadNode = new CadNode(cadModel, { nodeAppearance });
+  let modelNeedsUpdate = false;
+  cadNode.addEventListener('update', () => {
+    modelNeedsUpdate = true;
+  });
   scene.add(cadNode);
 
   const renderer = new THREE.WebGLRenderer();
@@ -49,14 +53,17 @@ async function main() {
   controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
+  cadNode.update(camera);
 
   const clock = new THREE.Clock();
-  const render = async () => {
+  const render = () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
-    const sectorsNeedUpdate = await cadNode.update(camera);
+    if (controlsNeedUpdate) {
+      cadNode.update(camera);
+    }
 
-    if (controlsNeedUpdate || sectorsNeedUpdate || pickingNeedsUpdate) {
+    if (controlsNeedUpdate || modelNeedsUpdate || pickingNeedsUpdate) {
       renderer.render(scene, camera);
     }
     requestAnimationFrame(render);
@@ -95,7 +102,7 @@ async function main() {
       } else {
         updateHtmlElements(0, 0, text);
       }
-      shading.updateNodes(updatedNodes);
+      cadNode.requestNodeUpdate(updatedNodes);
       pickingNeedsUpdate = true;
     }
   };

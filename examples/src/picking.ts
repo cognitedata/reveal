@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import * as reveal_threejs from '@cognite/reveal/threejs';
+import { CadNode, NodeAppearance, intersectCadNodes } from '@cognite/reveal/threejs';
 import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams, createClientIfNecessary } from './utils/loaders';
 
 CameraControls.install({ THREE });
@@ -21,20 +21,24 @@ async function main() {
 
   const pickedNodes: Set<number> = new Set();
   const pickedObjects: Set<THREE.Mesh> = new Set();
-  const shading = reveal_threejs.createDefaultShading({
+  const nodeAppearance: NodeAppearance = {
     color(treeIndex: number) {
       if (pickedNodes.has(treeIndex)) {
         return [255, 255, 0, 255];
       }
       return undefined;
     }
-  });
+  };
 
   const scene = new THREE.Scene();
 
   // Add some data for Reveal
   const cadModel = await loadCadModelFromCdfOrUrl(modelId, await createClientIfNecessary(modelId));
-  const cadNode = new reveal_threejs.CadNode(cadModel, { shading });
+  const cadNode = new CadNode(cadModel, { nodeAppearance });
+  let modelNeedsUpdate = false;
+  cadNode.addEventListener('update', () => {
+    modelNeedsUpdate = true;
+  });
   scene.add(cadNode);
 
   // Add some other geometry
@@ -69,14 +73,17 @@ async function main() {
   controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
+  cadNode.update(camera);
   let pickingNeedsUpdate = false;
   const clock = new THREE.Clock();
-  const render = async () => {
+  const render = () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
-    const sectorsNeedUpdate = await cadNode.update(camera);
+    if (controlsNeedUpdate) {
+      cadNode.update(camera);
+    }
 
-    if (controlsNeedUpdate || sectorsNeedUpdate || pickingNeedsUpdate) {
+    if (controlsNeedUpdate || pickingNeedsUpdate || modelNeedsUpdate) {
       renderer.render(scene, camera);
       pickingNeedsUpdate = false;
     }
@@ -93,7 +100,7 @@ async function main() {
     };
     // Pick in Reveal
     const revealPickResult = (() => {
-      const intersections = reveal_threejs.intersectCadNodes([cadNode], { renderer, camera, coords });
+      const intersections = intersectCadNodes([cadNode], { renderer, camera, coords });
       if (intersections.length === 0) {
         return;
       }
@@ -154,7 +161,7 @@ async function main() {
         } else {
           pickedNodes.delete(treeIndex);
         }
-        shading.updateNodes([treeIndex]);
+        cadNode.requestNodeUpdate([treeIndex]);
         pickingNeedsUpdate = true;
 
         break;

@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import * as reveal_threejs from '@cognite/reveal/threejs';
+import { CadNode, NodeAppearance } from '@cognite/reveal/threejs';
 import dat from 'dat.gui';
 import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams, createClientIfNecessary } from './utils/loaders';
 
@@ -20,11 +20,11 @@ async function main() {
     treeIndices: '1, 2, 8, 12'
   };
 
-  const shading = reveal_threejs.createDefaultShading({
+  const nodeAppearance: NodeAppearance = {
     visible(treeIndex: number) {
       return visibleIndices.has(treeIndex);
     }
-  });
+  };
 
   const gui = new dat.GUI();
   gui.add(settings, 'treeIndices').onChange(() => {
@@ -36,14 +36,18 @@ async function main() {
 
     const oldIndices = visibleIndices;
     visibleIndices = new Set(indices);
-    shading.updateNodes([...oldIndices]);
-    shading.updateNodes([...visibleIndices]);
+    cadNode.requestNodeUpdate([...oldIndices]);
+    cadNode.requestNodeUpdate([...visibleIndices]);
     shadingNeedsUpdate = true;
   });
 
   const scene = new THREE.Scene();
   const cadModel = await loadCadModelFromCdfOrUrl(modelId, await createClientIfNecessary(modelId));
-  const cadNode = new reveal_threejs.CadNode(cadModel, { shading });
+  const cadNode = new CadNode(cadModel, { nodeAppearance });
+  let modelNeedsUpdate = false;
+  cadNode.addEventListener('update', () => {
+    modelNeedsUpdate = true;
+  });
 
   scene.add(cadNode);
 
@@ -58,13 +62,16 @@ async function main() {
   controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
+  cadNode.update(camera);
   const clock = new THREE.Clock();
-  const render = async () => {
+  const render = () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
-    const sectorsNeedUpdate = await cadNode.update(camera);
+    if (controlsNeedUpdate) {
+      cadNode.update(camera);
+    }
 
-    if (controlsNeedUpdate || sectorsNeedUpdate || shadingNeedsUpdate) {
+    if (controlsNeedUpdate || modelNeedsUpdate || shadingNeedsUpdate) {
       renderer.render(scene, camera);
       shadingNeedsUpdate = false;
     }

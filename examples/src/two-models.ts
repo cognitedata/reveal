@@ -21,7 +21,14 @@ async function main() {
   const sectorModel1 = await reveal.loadCadModelByUrl('/primitives');
   const sectorModel2 = await reveal.loadCadModelByUrl('/primitives');
   const sectorModelNode1 = new reveal_threejs.CadNode(sectorModel1);
+  let modelNeedsUpdate = false;
+  sectorModelNode1.addEventListener('update', () => {
+    modelNeedsUpdate = true;
+  });
   const sectorModelNode2 = new reveal_threejs.CadNode(sectorModel2);
+  sectorModelNode2.addEventListener('update', () => {
+    modelNeedsUpdate = true;
+  });
   const model2Offset = new THREE.Group();
   model2Offset.position.set(-50, -50, 0);
   model2Offset.add(sectorModelNode2);
@@ -34,14 +41,18 @@ async function main() {
   controls.setLookAt(pos.x, pos.y, pos.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
+  sectorModelNode1.update(camera);
+  sectorModelNode2.update(camera);
 
   const clock = new THREE.Clock();
-  const render = async () => {
+  const render = () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
-    const model1NeedsUpdate = await sectorModelNode1.update(camera);
-    const model2NeedsUpdate = await sectorModelNode2.update(camera);
-    const needsUpdate = controlsNeedUpdate || model1NeedsUpdate || model2NeedsUpdate;
+    if (controlsNeedUpdate) {
+      sectorModelNode1.update(camera);
+      sectorModelNode2.update(camera);
+    }
+    const needsUpdate = controlsNeedUpdate || modelNeedsUpdate;
 
     if (needsUpdate) {
       renderer.render(scene, camera);
