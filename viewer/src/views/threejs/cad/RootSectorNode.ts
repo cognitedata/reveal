@@ -7,7 +7,7 @@ import { buildScene } from './buildScene';
 import { SectorNode } from './SectorNode';
 import { toThreeMatrix4 } from '../utilities';
 import { CadModel } from '../../../models/cad/CadModel';
-import { Shading } from './shading';
+import { Materials } from './materials';
 import { MemoryRequestCache } from '../../../cache/MemoryRequestCache';
 import { ParsedSector } from '../../../data/model/ParsedSector';
 import { LevelOfDetail } from '../../../data/model/LevelOfDetail';
@@ -22,16 +22,16 @@ function hashIdAndLevelOfDetail(id: number, levelOfDetail: LevelOfDetail) {
 
 export class RootSectorNode extends SectorNode {
   public readonly sectorNodeMap: Map<number, SectorNode>;
-  public readonly shading: Shading;
+  private readonly materials: Materials;
 
   private readonly consumeSectorCache: MemoryRequestCache<string, ParsedSector, THREE.Group>;
 
-  constructor(model: CadModel, shading: Shading) {
+  constructor(model: CadModel, materials: Materials) {
     super(0, '/');
     const { scene, modelTransformation } = model;
     this.applyMatrix4(toThreeMatrix4(modelTransformation.modelMatrix));
     this.sectorNodeMap = new Map();
-    this.shading = shading;
+    this.materials = materials;
 
     this.consumeSectorCache = new MemoryRequestCache<string, ParsedSector, THREE.Group>(
       (_hash: string, sector: ParsedSector) => this.consumeImpl(sector.id, sector)
@@ -60,10 +60,10 @@ export class RootSectorNode extends SectorNode {
           return new THREE.Group();
         }
         case LevelOfDetail.Simple: {
-          return consumeSectorSimple(id, data as SectorQuads, metadata, this.shading.materials);
+          return consumeSectorSimple(id, data as SectorQuads, metadata, this.materials);
         }
         case LevelOfDetail.Detailed: {
-          return consumeSectorDetailed(id, data as Sector, metadata, this.shading.materials);
+          return consumeSectorDetailed(id, data as Sector, metadata, this.materials);
         }
         default:
           throw new Error(`Unsupported level of detail ${sector.levelOfDetail}`);

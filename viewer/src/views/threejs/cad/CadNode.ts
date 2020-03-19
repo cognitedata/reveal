@@ -11,11 +11,12 @@ import { CadRenderHints } from '../../CadRenderHints';
 import { suggestCameraConfig } from '../../../utils/cameraUtils';
 import { toThreeJsBox3, toThreeVector3, toThreeMatrix4 } from '../utilities';
 import { RenderMode } from '../materials';
-import { Shading, createDefaultShading } from './shading';
 import { RootSectorNode } from './RootSectorNode';
 import { CachedRepository } from '../../../repository/cad/CachedRepository';
 import { Repository } from '../../../repository/cad/Repository';
-import { Subject } from 'rxjs';
+import { NodeAppearance } from '../../common/cad/NodeAppearance';
+import { MaterialManager } from './MaterialManager';
+import { Subject, Observable } from 'rxjs';
 import { publish, share, auditTime, switchAll, flatMap } from 'rxjs/operators';
 import { ConsumedSector } from '../../../data/model/ConsumedSector';
 import { fromThreeCameraConfig, ThreeCameraConfig } from './fromThreeCameraConfig';
@@ -29,7 +30,7 @@ import { ParsedSector } from '../../../data/model/ParsedSector';
 import { WantedSector } from '../../../data/model/WantedSector';
 
 interface CadNodeOptions {
-  shading?: Shading;
+  nodeAppearance?: NodeAppearance;
   // internal options are experimental and may change in the future
   internal?: {
     sectorCuller?: SectorCuller<DetermineSectorsByProximityInput>;
@@ -44,49 +45,6 @@ export interface SuggestedCameraConfig {
 }
 
 export class CadNode extends THREE.Object3D {
-  set renderMode(mode: RenderMode) {
-    this._renderMode = mode;
-    this._shading.materials.box.uniforms.renderMode.value = mode;
-    this._shading.materials.circle.uniforms.renderMode.value = mode;
-    this._shading.materials.generalRing.uniforms.renderMode.value = mode;
-    this._shading.materials.nut.uniforms.renderMode.value = mode;
-    this._shading.materials.quad.uniforms.renderMode.value = mode;
-    this._shading.materials.cone.uniforms.renderMode.value = mode;
-    this._shading.materials.eccentricCone.uniforms.renderMode.value = mode;
-    this._shading.materials.sphericalSegment.uniforms.renderMode.value = mode;
-    this._shading.materials.torusSegment.uniforms.renderMode.value = mode;
-    this._shading.materials.generalCylinder.uniforms.renderMode.value = mode;
-    this._shading.materials.trapezium.uniforms.renderMode.value = mode;
-    this._shading.materials.ellipsoidSegment.uniforms.renderMode.value = mode;
-    this._shading.materials.instancedMesh.uniforms.renderMode.value = mode;
-    this._shading.materials.triangleMesh.uniforms.renderMode.value = mode;
-    this._shading.materials.simple.uniforms.renderMode.value = mode;
-  }
-
-  get renderMode() {
-    return this._renderMode;
-  }
-
-  set renderHints(hints: Readonly<CadRenderHints>) {
-    this._renderHints = hints;
-    this._boundingBoxNode.visible = this.shouldRenderSectorBoundingBoxes;
-  }
-
-  get renderHints(): Readonly<CadRenderHints> {
-    return this._renderHints;
-  }
-
-  set loadingHints(hints: Readonly<CadLoadingHints>) {
-    this._loadingHints = hints;
-  }
-
-  get loadingHints(): Readonly<CadLoadingHints> {
-    return this._loadingHints;
-  }
-
-  private get shouldRenderSectorBoundingBoxes(): boolean {
-    return this._renderHints.showSectorBoundingBoxes || false;
-  }
   public readonly rootSector: RootSectorNode;
   public readonly modelTransformation: SectorModelTransformation;
 
@@ -95,8 +53,8 @@ export class CadNode extends THREE.Object3D {
   private _loadingHints: CadLoadingHints;
   private _renderMode: RenderMode;
 
+  private readonly _materialManager: MaterialManager;
   private readonly _cameraPositionObservable: Subject<ThreeCameraConfig>;
-  private readonly _shading: Shading;
   private readonly _sectorScene: SectorScene;
   private readonly _previousCameraMatrix = new THREE.Matrix4();
   private readonly _boundingBoxNode: THREE.Object3D;
@@ -106,9 +64,9 @@ export class CadNode extends THREE.Object3D {
     super();
     this.type = 'CadNode';
     this.name = 'Sector model';
-    this._shading = initShading(options);
+    this._materialManager = new MaterialManager(options ? options.nodeAppearance : undefined);
 
-    const rootSector = new RootSectorNode(model, this._shading);
+    const rootSector = new RootSectorNode(model, this._materialManager.materials);
     this._repository = new CachedRepository(model);
 
     const { scene, modelTransformation } = model;
@@ -137,8 +95,56 @@ export class CadNode extends THREE.Object3D {
     for (let i = 0; i < scene.maxTreeIndex; i++) {
       indices.push(i);
     }
-    this._shading.updateNodes(indices);
+    this._materialManager.updateNodes(indices);
     this._cameraPositionObservable = this.createLoadSectorsPipeline();
+  }
+
+  requestNodeUpdate(treeIndices: number[]) {
+    this._materialManager.updateNodes(treeIndices);
+  }
+
+  set renderMode(mode: RenderMode) {
+    this._renderMode = mode;
+    this._materialManager.materials.box.uniforms.renderMode.value = mode;
+    this._materialManager.materials.circle.uniforms.renderMode.value = mode;
+    this._materialManager.materials.generalRing.uniforms.renderMode.value = mode;
+    this._materialManager.materials.nut.uniforms.renderMode.value = mode;
+    this._materialManager.materials.quad.uniforms.renderMode.value = mode;
+    this._materialManager.materials.cone.uniforms.renderMode.value = mode;
+    this._materialManager.materials.eccentricCone.uniforms.renderMode.value = mode;
+    this._materialManager.materials.sphericalSegment.uniforms.renderMode.value = mode;
+    this._materialManager.materials.torusSegment.uniforms.renderMode.value = mode;
+    this._materialManager.materials.generalCylinder.uniforms.renderMode.value = mode;
+    this._materialManager.materials.trapezium.uniforms.renderMode.value = mode;
+    this._materialManager.materials.ellipsoidSegment.uniforms.renderMode.value = mode;
+    this._materialManager.materials.instancedMesh.uniforms.renderMode.value = mode;
+    this._materialManager.materials.triangleMesh.uniforms.renderMode.value = mode;
+    this._materialManager.materials.simple.uniforms.renderMode.value = mode;
+  }
+
+  get renderMode() {
+    return this._renderMode;
+  }
+
+  set renderHints(hints: Readonly<CadRenderHints>) {
+    this._renderHints = hints;
+    this._boundingBoxNode.visible = this.shouldRenderSectorBoundingBoxes;
+  }
+
+  get renderHints(): Readonly<CadRenderHints> {
+    return this._renderHints;
+  }
+
+  set loadingHints(hints: Readonly<CadLoadingHints>) {
+    this._loadingHints = hints;
+  }
+
+  get loadingHints(): Readonly<CadLoadingHints> {
+    return this._loadingHints;
+  }
+
+  private get shouldRenderSectorBoundingBoxes(): boolean {
+    return this._renderHints.showSectorBoundingBoxes || false;
   }
 
   public update(camera: THREE.PerspectiveCamera) {
@@ -172,7 +178,7 @@ export class CadNode extends THREE.Object3D {
         fromThreeCameraConfig(),
         this._sectorCuller.determineSectors(),
         share(),
-        publish(wantedSectors =>
+        publish((wantedSectors: Observable<WantedSector[]>) =>
           wantedSectors.pipe(
             switchAll(),
             distinctUntilLevelOfDetailChanged(),
@@ -236,15 +242,4 @@ export class CadNode extends THREE.Object3D {
     });
     return boxesNode;
   }
-}
-
-function initShading(options?: CadNodeOptions): Shading {
-  if (options && options.shading) {
-    return options.shading;
-  }
-  return createDefaultShading({
-    color(_treeIndex: number) {
-      return undefined;
-    }
-  });
 }

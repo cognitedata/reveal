@@ -3,19 +3,11 @@
  */
 
 import { createMaterials, Materials } from './materials';
-
-export interface Shading {
-  materials: Materials;
-  updateNodes: (treeIndices: number[]) => void;
-}
-
-type ColorDelegate = (treeIndex: number) => [number, number, number, number] | undefined;
-type VisibilityDelegate = (treeIndex: number) => boolean;
-
-export interface DefaultShadingOptions {
-  color?: ColorDelegate;
-  visible?: VisibilityDelegate;
-}
+import {
+  VisibilityDelegate,
+  ColorDelegate,
+  NodeAppearance
+} from '../../common/cad/NodeAppearance';
 
 function updateColors(getColor: ColorDelegate, materials: Materials, treeIndices: number[]) {
   for (const treeIndex of treeIndices) {
@@ -33,9 +25,21 @@ function updateVisibility(visible: VisibilityDelegate, materials: Materials, tre
   }
 }
 
-export function createDefaultShading(options: DefaultShadingOptions): Shading {
-  const materials = createMaterials();
-  const updateNodes = (treeIndices: number[]) => {
+export class MaterialManager {
+  public readonly materials: Materials;
+  private readonly _options?: NodeAppearance;
+
+  constructor(options?: NodeAppearance) {
+    this.materials = createMaterials();
+    this._options = options;
+  }
+
+  updateNodes(treeIndices: number[]) {
+    const options = this._options;
+    const materials = this.materials;
+    if (!options) {
+      return;
+    }
     if (treeIndices.length === 0) {
       return;
     }
@@ -47,10 +51,5 @@ export function createDefaultShading(options: DefaultShadingOptions): Shading {
       updateVisibility(options.visible, materials, treeIndices);
       materials.overrideVisibilityPerTreeIndex.needsUpdate = true;
     }
-  };
-
-  return {
-    materials,
-    updateNodes
-  };
+  }
 }
