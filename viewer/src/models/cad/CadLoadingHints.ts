@@ -14,5 +14,5 @@ export type CadLoadingHints = {
 };
 
 export const defaultLoadingHints: Required<CadLoadingHints> = {
-  maxQuadSize: 0.025
+  maxQuadSize: 0.0025
 };
