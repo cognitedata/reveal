@@ -28,6 +28,9 @@ export class Cognite3DViewer {
   private readonly controls: ComboControls;
   private readonly sdkClient: CogniteClient;
 
+  private readonly eventListeners = {
+    cameraChange: new Array<(pos: THREE.Vector3, target: THREE.Vector3) => void>()
+  };
   private readonly models: Cognite3DModel[] = [];
 
   private isDisposed = false;
@@ -64,6 +67,13 @@ export class Cognite3DViewer {
     this.scene = new THREE.Scene();
     this.controls = new ComboControls(this.camera, this.canvas);
     this.controls.dollyFactor = 0.992;
+    this.controls.addEventListener('cameraChange', event => {
+      const { position, target } = event.camera;
+      this.eventListeners.cameraChange.forEach(f => {
+        f(position.clone(), target.clone());
+      });
+    });
+
 
     this.sdkClient = options.sdk;
     this.renderController = new RenderController(this.camera);
@@ -102,11 +112,11 @@ export class Cognite3DViewer {
   offHover(_callback: (event: PointerEvent) => void): void {
     throw new NotSupportedInMigrationWrapperError();
   }
-  onCameraChange(_callback: (position: THREE.Vector3, target: THREE.Vector3) => void): void {
-    throw new NotSupportedInMigrationWrapperError();
+  onCameraChange(callback: (position: THREE.Vector3, target: THREE.Vector3) => void): void {
+    this.eventListeners.cameraChange.push(callback);
   }
-  offCameraChange(_callback: (position: THREE.Vector3, target: THREE.Vector3) => void): void {
-    throw new NotSupportedInMigrationWrapperError();
+  offCameraChange(callback: (position: THREE.Vector3, target: THREE.Vector3) => void): void {
+    this.eventListeners.cameraChange = this.eventListeners.cameraChange.filter(x => x !== callback);
   }
 
   async addModel(options: AddModelOptions): Promise<Cognite3DModel> {
