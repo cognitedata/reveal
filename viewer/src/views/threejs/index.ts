@@ -4,10 +4,10 @@
 
 export { CadNode } from './cad/CadNode';
 export { intersectCadNode, intersectCadNodes, IntersectCadNodesInput, IntersectCadNodesResult } from './cad/picking';
-export { Shading, createDefaultShading } from './cad/shading';
 export { SectorNode } from './cad/SectorNode';
 export { createThreeJsPointCloudNode } from './pointcloud/createThreeJsPointCloudNode';
 export { RootSectorNode } from './cad/RootSectorNode';
+export { NodeAppearance } from '../common/cad/NodeAppearance';
 
 export { worldToViewport } from './worldToViewport';
 export { toThreeVector3, fitCameraToBoundingBox, toThreeMatrix4, toThreeJsBox3 } from './utilities';
