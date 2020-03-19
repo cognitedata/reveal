@@ -151,8 +151,7 @@ export class CadNode extends THREE.Object3D {
     const cameraConfig: ThreeCameraConfig = {
       camera,
       modelTransformation: this.modelTransformation,
-      sectorScene: this._sectorScene,
-      loadingHints: this.loadingHints
+      sectorScene: this._sectorScene
     };
     this._cameraPositionObservable.next(cameraConfig);
   }
