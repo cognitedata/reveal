@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 
 import { SectorModelTransformation, SectorScene, SectorMetadata } from '../../../models/cad/types';
-import { CadLoadingHints, defaultLoadingHints } from '../../../models/cad/CadLoadingHints';
+import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
 import { CadModel } from '../../../models/cad/CadModel';
 import { CadRenderHints } from '../../CadRenderHints';
 import { suggestCameraConfig } from '../../../utils/cameraUtils';
