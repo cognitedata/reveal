@@ -11,6 +11,7 @@ import { toThreeJsBox3, CadNode } from '../views/threejs';
 import { loadCadModelFromCdf } from '../datasources/cognitesdk';
 import { CadRenderHints } from '../views/CadRenderHints';
 import { CogniteClient } from '@cognite/sdk';
+import { CadLoadingHints } from '../models/cad/CadLoadingHints';
 
 export class Cognite3DModel extends THREE.Object3D {
   readonly modelId: number;
@@ -32,8 +33,16 @@ export class Cognite3DModel extends THREE.Object3D {
     return this.cadNode.renderHints;
   }
 
-  set renderHints(value: CadRenderHints) {
-    this.cadNode.renderHints = value;
+  set renderHints(hints: CadRenderHints) {
+    this.cadNode.renderHints = hints;
+  }
+
+  get loadingHints(): CadLoadingHints {
+    return this.cadNode.loadingHints;
+  }
+
+  set loadingHints(hints: CadLoadingHints) {
+    this.cadNode.loadingHints = hints;
   }
 
   dispose() {
