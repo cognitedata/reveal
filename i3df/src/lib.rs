@@ -62,7 +62,6 @@ pub fn parse_scene(reader: impl BufRead) -> Result<Scene, Error> {
 }
 
 pub fn parse_sector(mut reader: impl BufRead) -> Result<Sector, Error> {
-    //let mut reader = BufReader::new(reader);
     let size = reader.read_u32::<LittleEndian>()?;
 
     // read bytes
@@ -77,7 +76,6 @@ pub fn parse_sector(mut reader: impl BufRead) -> Result<Sector, Error> {
         None => return Err(error!("Attributes missing on sector")),
     };
     let primitive_collections = generated::parse_primitives(&mut input, attributes)?;
-    //assert!(reader.eof()?);
     Ok(Sector {
         header,
         primitive_collections,
@@ -85,8 +83,6 @@ pub fn parse_sector(mut reader: impl BufRead) -> Result<Sector, Error> {
 }
 
 pub fn parse_scene_data(mut reader: impl BufRead) -> Result<Scene, Error> {
-    //let mut reader = BufReader::new(reader);
-
     let root_sector = parse_sector(&mut reader)?;
     let root_sector_id = root_sector.header.sector_id as usize;
 
