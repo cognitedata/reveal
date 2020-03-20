@@ -99,23 +99,47 @@ export class Cognite3DViewer {
     }
   }
 
-  onClick(_callback: (event: PointerEvent) => void): void {
-    throw new NotSupportedInMigrationWrapperError();
+  on(event: 'click' | 'hover', _callback: (event: PointerEvent) => void): void;
+  on(event: 'cameraChanged', _callback: (position: THREE.Vector3, target: THREE.Vector3) => void): void;
+
+  on(event: 'click' | 'hover' | 'cameraChanged', callback: any): void {
+    switch (event) {
+      case 'click':
+        this.onClick(callback);
+        break;
+
+      case 'hover':
+        this.onHover(callback);
+        break;
+
+      case 'cameraChanged':
+        this.onCameraChange(callback);
+        break;
+
+      default:
+        throw new Error(`Unsupported event "${event}"`);
+    }
   }
-  offClick(_callback: (event: PointerEvent) => void): void {
-    throw new NotSupportedInMigrationWrapperError();
-  }
-  onHover(_callback: (event: PointerEvent) => void): void {
-    throw new NotSupportedInMigrationWrapperError();
-  }
-  offHover(_callback: (event: PointerEvent) => void): void {
-    throw new NotSupportedInMigrationWrapperError();
-  }
-  onCameraChange(callback: (position: THREE.Vector3, target: THREE.Vector3) => void): void {
-    this.eventListeners.cameraChange.push(callback);
-  }
-  offCameraChange(callback: (position: THREE.Vector3, target: THREE.Vector3) => void): void {
-    this.eventListeners.cameraChange = this.eventListeners.cameraChange.filter(x => x !== callback);
+
+  off(event: 'click' | 'hover', _callback: (event: PointerEvent) => void): void;
+  off(event: 'cameraChanged', _callback: (position: THREE.Vector3, target: THREE.Vector3) => void): void;
+  off(event: 'click' | 'hover' | 'cameraChanged', callback: any): void {
+    switch (event) {
+      case 'click':
+        this.offClick(callback);
+        break;
+
+      case 'hover':
+        this.offHover(callback);
+        break;
+
+      case 'cameraChanged':
+        this.offCameraChange(callback);
+        break;
+
+      default:
+        throw new Error(`Unsupported event "${event}"`);
+    }
   }
 
   async addModel(options: AddModelOptions): Promise<Cognite3DModel> {
@@ -212,6 +236,25 @@ export class Cognite3DViewer {
 
   clearCache(): void {
     throw new NotSupportedInMigrationWrapperError('Cache is not supported');
+  }
+
+  private onClick(_callback: (event: PointerEvent) => void): void {
+    throw new NotSupportedInMigrationWrapperError();
+  }
+  private offClick(_callback: (event: PointerEvent) => void): void {
+    throw new NotSupportedInMigrationWrapperError();
+  }
+  private onHover(_callback: (event: PointerEvent) => void): void {
+    throw new NotSupportedInMigrationWrapperError();
+  }
+  private offHover(_callback: (event: PointerEvent) => void): void {
+    throw new NotSupportedInMigrationWrapperError();
+  }
+  private onCameraChange(callback: (position: THREE.Vector3, target: THREE.Vector3) => void): void {
+    this.eventListeners.cameraChange.push(callback);
+  }
+  private offCameraChange(callback: (position: THREE.Vector3, target: THREE.Vector3) => void): void {
+    this.eventListeners.cameraChange = this.eventListeners.cameraChange.filter(x => x !== callback);
   }
 
   private moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number) {

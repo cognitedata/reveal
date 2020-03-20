@@ -35,11 +35,11 @@ describe('Cognite3DViewer', () => {
     expect(renderer.dispose).toBeCalledTimes(1);
   });
 
-  test('onCameraChange triggers when position and target is changed', () => {
+  test('on cameraChanged triggers when position and target is changed', () => {
     // Arrange
     const onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void = jest.fn();
     const viewer = new Cognite3DViewer({ sdk, renderer });
-    viewer.onCameraChange(onCameraChange);
+    viewer.on('cameraChanged', onCameraChange);
 
     // Act
     viewer.setCameraTarget(new THREE.Vector3(123, 456, 789));
@@ -81,7 +81,7 @@ describe('Cognite3DViewer', () => {
 
     const onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void = jest.fn();
     const viewer = new Cognite3DViewer({ sdk, renderer });
-    viewer.onCameraChange(onCameraChange);
+    viewer.on('cameraChanged', onCameraChange);
 
     // Act
     const model = await viewer.addModel({ modelId: 1, revisionId: 2 });
