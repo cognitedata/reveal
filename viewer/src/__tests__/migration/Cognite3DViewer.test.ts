@@ -5,9 +5,12 @@
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 
-import { Cognite3DViewer } from './Cognite3DViewer';
+import { Cognite3DViewer } from '../../migration/Cognite3DViewer';
 import { CogniteClient } from '@cognite/sdk';
-import { Cognite3DThreeRenderer } from './types';
+import { Cognite3DThreeRenderer } from '../../migration/types';
+import nock from 'nock';
+
+const sceneJson = require('./scene.json');
 
 describe('Cognite3DViewer', () => {
   const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
@@ -49,6 +52,44 @@ describe('Cognite3DViewer', () => {
   test('addModel with local model, throws', async () => {
     const viewer = new Cognite3DViewer({ sdk, renderer });
     expect(viewer.addModel({ localPath: '/some/model', modelId: 1, revisionId: 2 })).rejects.toThrowError();
+  });
+
+  test('addModel with remote model and fit viewer, updates camera', async () => {
+    // Arrange
+    const outputs = {
+      items: [
+        {
+          model: {
+            id: 42
+          },
+          outputs: [
+            {
+              format: 'reveal-directory',
+              version: 8,
+              blobId: 1
+            }
+          ]
+        }
+      ]
+    };
+    nock(/.*/)
+      .post(/.*\/outputs/)
+      .reply(200, outputs);
+    nock(/.*/)
+      .get(/.*\/scene.json/)
+      .reply(200, sceneJson);
+
+    const onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void = jest.fn();
+    const viewer = new Cognite3DViewer({ sdk, renderer });
+    viewer.onCameraChange(onCameraChange);
+
+    // Act
+    const model = await viewer.addModel({ modelId: 1, revisionId: 2 });
+    viewer.fitCameraToModel(model);
+    TWEEN.update();
+
+    // Assert
+    expect(onCameraChange).toBeCalled();
   });
 
   test('fitCameraToBoundingBox with 0 duration, moves camera immediatly', () => {

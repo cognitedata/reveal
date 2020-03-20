@@ -128,6 +128,7 @@ export class Cognite3DViewer {
       return model3d;
     }
   }
+
   addObject3D(_object: THREE.Object3D): void {
     throw new NotSupportedInMigrationWrapperError();
   }
