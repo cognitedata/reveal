@@ -3,6 +3,7 @@
  */
 
 import * as THREE from 'three';
+import TWEEN from '@tweenjs/tween.js';
 
 import { Cognite3DViewer } from './Cognite3DViewer';
 import { CogniteClient } from '@cognite/sdk';
@@ -48,5 +49,21 @@ describe('Cognite3DViewer', () => {
   test('addModel with local model, throws', async () => {
     const viewer = new Cognite3DViewer({ sdk, renderer });
     expect(viewer.addModel({ localPath: '/some/model', modelId: 1, revisionId: 2 })).rejects.toThrowError();
+  });
+
+  test('fitCameraToBoundingBox with 0 duration, moves camera immediatly', () => {
+    // Arrange
+    const viewer = new Cognite3DViewer({ sdk, renderer });
+    const bbox = new THREE.Box3(new THREE.Vector3(1, 1, 1), new THREE.Vector3(2, 2, 2));
+    const bSphere = bbox.getBoundingSphere(new THREE.Sphere());
+    bSphere.radius *= 3;
+
+    // Act
+    viewer.fitCameraToBoundingBox(bbox, 0);
+    TWEEN.update();
+
+    // Assert
+    expect(viewer.getCameraTarget()).toEqual(bbox.getCenter(new THREE.Vector3()));
+    expect(bSphere.containsPoint(viewer.getCameraPosition())).toBeTrue();
   });
 });
