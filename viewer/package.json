@@ -33,6 +33,7 @@
     "@types/gl-matrix": "^2.4.5",
     "@types/jest": "^25.1.4",
     "@types/node": "^13.9.2",
+    "@types/tween.js": "^18.5.0",
     "@wasm-tool/wasm-pack-plugin": "^1.1.0",
     "copy-webpack-plugin": "^5.1.1",
     "file-loader": "^6.0.0",
@@ -64,6 +65,8 @@
   "dependencies": {
     "@cognite/potree-core": "^1.1.1",
     "@cognite/sdk": "^2.25.0",
+    "@cognite/three-combo-controls": "^1.4.1",
+    "@tweenjs/tween.js": "^18.5.0",
     "comlink": "^4.1.0",
     "gl-matrix": "^3.2.1",
     "glslify": "^7.0.0",

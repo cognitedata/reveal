@@ -3,6 +3,8 @@
  */
 
 import * as THREE from 'three';
+import { Subject, Observable } from 'rxjs';
+import { publish, share, auditTime, switchAll, flatMap } from 'rxjs/operators';
 
 import { SectorModelTransformation, SectorScene, SectorMetadata } from '../../../models/cad/types';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
@@ -16,8 +18,6 @@ import { CachedRepository } from '../../../repository/cad/CachedRepository';
 import { Repository } from '../../../repository/cad/Repository';
 import { NodeAppearance } from '../../common/cad/NodeAppearance';
 import { MaterialManager } from './MaterialManager';
-import { Subject, Observable } from 'rxjs';
-import { publish, share, auditTime, switchAll, flatMap } from 'rxjs/operators';
 import { ConsumedSector } from '../../../data/model/ConsumedSector';
 import { fromThreeCameraConfig, ThreeCameraConfig } from './fromThreeCameraConfig';
 import { ProximitySectorCuller } from '../../../culling/ProximitySectorCuller';
