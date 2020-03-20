@@ -101,6 +101,12 @@ const allExamples = [
     template: './template-example.ejs'
   },
   {
+    name: "threejs-migration",
+    title: "Migration wrapper for applications using the old Reveal viewer",
+    entry: './src/migration.ts',
+    template: './template-single-canvas.ejs'
+  },
+  {
     name: "walkable-path",
     title: "Walkable Path",
     entry: './src/walkable-path.ts',

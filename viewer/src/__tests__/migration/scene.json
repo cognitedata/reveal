@@ -1,0 +1,577 @@
+{
+  "version": 8,
+  "projectId": 5367039524583807,
+  "modelId": 585892933202867,
+  "revisionId": 6125795861689266,
+  "subRevisionId": -1,
+  "maxTreeIndex": 2978,
+  "unit": null,
+  "sectors": [
+    {
+      "id": 0,
+      "parentId": -1,
+      "path": "0/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": -153.3045728464034,
+          "y": -60.459801737520316,
+          "z": -62.049668147303365
+        },
+        "max": {
+          "x": 107.35625986676312,
+          "y": 585.77698619048419,
+          "z": 54.412433472722931
+        }
+      },
+      "indexFile": {
+        "peripheralFiles": [
+          "mesh_0.ctm",
+          "mesh_1.ctm"
+        ],
+        "estimatedDrawCallCount": 9,
+        "fileName": "sector_0.i3d",
+        "downloadSize": 148745
+      },
+      "facesFile": {
+        "quadSize": 5.1084176509893249,
+        "coverageFactors": {
+          "yz": 0.31552162849872772,
+          "xz": 0.40211640211640209,
+          "xy": 0.16712104689203927
+        },
+        "fileName": "sector_0.f3d",
+        "downloadSize": 43965
+      }
+    },
+    {
+      "id": 1,
+      "parentId": 0,
+      "path": "0/0/",
+      "depth": 2,
+      "boundingBox": {
+        "min": {
+          "x": -38.100477080753826,
+          "y": 212.03402105092439,
+          "z": -10.200967668265843
+        },
+        "max": {
+          "x": -36.660318544034567,
+          "y": 215.22479254248043,
+          "z": -9.73124035012125
+        }
+      },
+      "indexFile": {
+        "peripheralFiles": [],
+        "estimatedDrawCallCount": 1,
+        "fileName": "sector_1.i3d",
+        "downloadSize": 211
+      },
+      "facesFile": {
+        "quadSize": 3.6121967621476054,
+        "coverageFactors": {
+          "yz": 0.0,
+          "xz": 0.0,
+          "xy": 0.0
+        },
+        "fileName": null,
+        "downloadSize": 0
+      }
+    },
+    {
+      "id": 2,
+      "parentId": 0,
+      "path": "0/1/",
+      "depth": 2,
+      "boundingBox": {
+        "min": {
+          "x": -37.616367312529135,
+          "y": 212.0340202515776,
+          "z": -1.8813186011493133
+        },
+        "max": {
+          "x": -34.305505233392452,
+          "y": 215.22479542780437,
+          "z": 6.3679124756047791
+        }
+      },
+      "indexFile": {
+        "peripheralFiles": [],
+        "estimatedDrawCallCount": 1,
+        "fileName": "sector_2.i3d",
+        "downloadSize": 243
+      },
+      "facesFile": {
+        "quadSize": 3.6121967621476054,
+        "coverageFactors": {
+          "yz": 0.0,
+          "xz": 0.0,
+          "xy": 0.0
+        },
+        "fileName": null,
+        "downloadSize": 0
+      }
+    },
+    {
+      "id": 3,
+      "parentId": 0,
+      "path": "0/2/",
+      "depth": 2,
+      "boundingBox": {
+        "min": {
+          "x": -153.3045728464034,
+          "y": 214.73975123390608,
+          "z": -53.1097524409226
+        },
+        "max": {
+          "x": -6.4937511160288786,
+          "y": 544.96533025871236,
+          "z": 39.371952083731593
+        }
+      },
+      "indexFile": {
+        "peripheralFiles": [
+          "mesh_2.ctm",
+          "mesh_1.ctm"
+        ],
+        "estimatedDrawCallCount": 14,
+        "fileName": "sector_3.i3d",
+        "downloadSize": 339357
+      },
+      "facesFile": {
+        "quadSize": 3.6121967621476054,
+        "coverageFactors": {
+          "yz": 0.046180555555555558,
+          "xz": 0.27481481481481479,
+          "xy": 0.0375
+        },
+        "fileName": "sector_3.f3d",
+        "downloadSize": 9567
+      }
+    },
+    {
+      "id": 4,
+      "parentId": 0,
+      "path": "0/3/",
+      "depth": 2,
+      "boundingBox": {
+        "min": {
+          "x": -97.62986921324341,
+          "y": 214.7463540518236,
+          "z": -42.090568542480469
+        },
+        "max": {
+          "x": 0.040971471873379205,
+          "y": 537.17644245866438,
+          "z": 50.5985662535111
+        }
+      },
+      "indexFile": {
+        "peripheralFiles": [
+          "mesh_3.ctm",
+          "mesh_1.ctm"
+        ],
+        "estimatedDrawCallCount": 14,
+        "fileName": "sector_4.i3d",
+        "downloadSize": 320999
+      },
+      "facesFile": {
+        "quadSize": 3.6121967621476054,
+        "coverageFactors": {
+          "yz": 0.058865248226950356,
+          "xz": 0.21770833333333334,
+          "xy": 0.0581781914893617
+        },
+        "fileName": "sector_4.f3d",
+        "downloadSize": 8560
+      }
+    },
+    {
+      "id": 5,
+      "parentId": 0,
+      "path": "0/4/",
+      "depth": 2,
+      "boundingBox": {
+        "min": {
+          "x": -35.020480730358059,
+          "y": -28.931863875250791,
+          "z": -46.816947335324826
+        },
+        "max": {
+          "x": 40.366063584579535,
+          "y": 215.23634704441955,
+          "z": 28.650943629835865
+        }
+      },
+      "indexFile": {
+        "peripheralFiles": [],
+        "estimatedDrawCallCount": 3,
+        "fileName": "sector_5.i3d",
+        "downloadSize": 794
+      },
+      "facesFile": {
+        "quadSize": 3.6121967621476054,
+        "coverageFactors": {
+          "yz": 0.076666666666666661,
+          "xz": 0.0896,
+          "xy": 0.093888888888888883
+        },
+        "fileName": "sector_5.f3d",
+        "downloadSize": 5258
+      }
+    },
+    {
+      "id": 6,
+      "parentId": 0,
+      "path": "0/5/",
+      "depth": 2,
+      "boundingBox": {
+        "min": {
+          "x": -23.455905912113092,
+          "y": -28.931387485816597,
+          "z": -3.1835802315638504
+        },
+        "max": {
+          "x": 40.397285604598849,
+          "y": 215.23634897251887,
+          "z": 19.480537430152431
+        }
+      },
+      "indexFile": {
+        "peripheralFiles": [],
+        "estimatedDrawCallCount": 2,
+        "fileName": "sector_6.i3d",
+        "downloadSize": 405
+      },
+      "facesFile": {
+        "quadSize": 3.6121967621476054,
+        "coverageFactors": {
+          "yz": 0.0707070707070707,
+          "xz": 0.053719008264462811,
+          "xy": 0.0946969696969697
+        },
+        "fileName": "sector_6.f3d",
+        "downloadSize": 1218
+      }
+    },
+    {
+      "id": 7,
+      "parentId": 0,
+      "path": "0/6/",
+      "depth": 2,
+      "boundingBox": {
+        "min": {
+          "x": -60.610288675045645,
+          "y": 214.71588564312333,
+          "z": -62.049668147303365
+        },
+        "max": {
+          "x": 107.35625986676312,
+          "y": 581.39442333655052,
+          "z": 28.650970435400207
+        }
+      },
+      "indexFile": {
+        "peripheralFiles": [],
+        "estimatedDrawCallCount": 2,
+        "fileName": "sector_7.i3d",
+        "downloadSize": 534
+      },
+      "facesFile": {
+        "quadSize": 3.6121967621476054,
+        "coverageFactors": {
+          "yz": 0.0871069182389937,
+          "xz": 0.27124183006535946,
+          "xy": 0.0756566777654458
+        },
+        "fileName": "sector_7.f3d",
+        "downloadSize": 18884
+      }
+    },
+    {
+      "id": 8,
+      "parentId": 7,
+      "path": "0/6/0/",
+      "depth": 3,
+      "boundingBox": {
+        "min": {
+          "x": -49.2468249394774,
+          "y": 263.81360879639885,
+          "z": -60.930586303330422
+        },
+        "max": {
+          "x": 77.606701963243822,
+          "y": 435.761784136918,
+          "z": 23.751699659639733
+        }
+      },
+      "indexFile": {
+        "peripheralFiles": [
+          "mesh_4.ctm"
+        ],
+        "estimatedDrawCallCount": 11,
+        "fileName": "sector_8.i3d",
+        "downloadSize": 126723
+      },
+      "facesFile": {
+        "quadSize": 2.554208825494662,
+        "coverageFactors": {
+          "yz": 0.078581871345029239,
+          "xz": 0.13255360623781676,
+          "xy": 0.071244855967078191
+        },
+        "fileName": "sector_8.f3d",
+        "downloadSize": 10374
+      }
+    },
+    {
+      "id": 9,
+      "parentId": 7,
+      "path": "0/6/1/",
+      "depth": 3,
+      "boundingBox": {
+        "min": {
+          "x": -42.686369535938375,
+          "y": 410.47193839853452,
+          "z": -62.049668147303365
+        },
+        "max": {
+          "x": 107.35625986676312,
+          "y": 581.39442333655052,
+          "z": 8.4725532531738281
+        }
+      },
+      "indexFile": {
+        "peripheralFiles": [
+          "mesh_1.ctm"
+        ],
+        "estimatedDrawCallCount": 5,
+        "fileName": "sector_9.i3d",
+        "downloadSize": 82548
+      },
+      "facesFile": {
+        "quadSize": 2.554208825494662,
+        "coverageFactors": {
+          "yz": 0.18397887323943662,
+          "xz": 0.38541666666666669,
+          "xy": 0.14017437961099932
+        },
+        "fileName": "sector_9.f3d",
+        "downloadSize": 24258
+      }
+    },
+    {
+      "id": 10,
+      "parentId": 9,
+      "path": "0/6/1/0/",
+      "depth": 4,
+      "boundingBox": {
+        "min": {
+          "x": -36.895108438082445,
+          "y": 410.47193839853452,
+          "z": -62.049668147303365
+        },
+        "max": {
+          "x": 67.796699528863229,
+          "y": 505.76837068546189,
+          "z": 7.9823894500732422
+        }
+      },
+      "indexFile": {
+        "peripheralFiles": [
+          "mesh_5.ctm"
+        ],
+        "estimatedDrawCallCount": 11,
+        "fileName": "sector_10.i3d",
+        "downloadSize": 307631
+      },
+      "facesFile": {
+        "quadSize": 1.8060983810738023,
+        "coverageFactors": {
+          "yz": 0.32231742146062831,
+          "xz": 0.44823705926481622,
+          "xy": 0.309564233163554
+        },
+        "fileName": "sector_10.f3d",
+        "downloadSize": 32220
+      }
+    },
+    {
+      "id": 11,
+      "parentId": 9,
+      "path": "0/6/1/1/",
+      "depth": 4,
+      "boundingBox": {
+        "min": {
+          "x": -14.979354200741696,
+          "y": 524.52444771820922,
+          "z": -25.394028782844543
+        },
+        "max": {
+          "x": -0.69310127223671836,
+          "y": 581.39442333655052,
+          "z": -16.076332092285156
+        }
+      },
+      "indexFile": {
+        "peripheralFiles": [],
+        "estimatedDrawCallCount": 3,
+        "fileName": "sector_11.i3d",
+        "downloadSize": 2017
+      },
+      "facesFile": {
+        "quadSize": 1.8060983810738023,
+        "coverageFactors": {
+          "yz": 0.013888888888888888,
+          "xz": 0.25,
+          "xy": 0.0046296296296296294
+        },
+        "fileName": "sector_11.f3d",
+        "downloadSize": 264
+      }
+    },
+    {
+      "id": 12,
+      "parentId": 9,
+      "path": "0/6/1/2/",
+      "depth": 4,
+      "boundingBox": {
+        "min": {
+          "x": 54.142250046300248,
+          "y": 411.24295043945312,
+          "z": -46.866107940673828
+        },
+        "max": {
+          "x": 107.35625986676312,
+          "y": 488.72710828728827,
+          "z": 8.4725532531738281
+        }
+      },
+      "indexFile": {
+        "peripheralFiles": [
+          "mesh_6.ctm"
+        ],
+        "estimatedDrawCallCount": 10,
+        "fileName": "sector_12.i3d",
+        "downloadSize": 77758
+      },
+      "facesFile": {
+        "quadSize": 1.8060983810738023,
+        "coverageFactors": {
+          "yz": 0.30334346504559273,
+          "xz": 0.41008403361344536,
+          "xy": 0.1702127659574468
+        },
+        "fileName": "sector_12.f3d",
+        "downloadSize": 8781
+      }
+    },
+    {
+      "id": 13,
+      "parentId": 0,
+      "path": "0/7/",
+      "depth": 2,
+      "boundingBox": {
+        "min": {
+          "x": -63.688428693892682,
+          "y": 214.70926436857161,
+          "z": -32.085363388061523
+        },
+        "max": {
+          "x": 107.34430950059321,
+          "y": 488.93289678189996,
+          "z": 54.276791610275382
+        }
+      },
+      "indexFile": {
+        "peripheralFiles": [],
+        "estimatedDrawCallCount": 2,
+        "fileName": "sector_13.i3d",
+        "downloadSize": 304
+      },
+      "facesFile": {
+        "quadSize": 3.6121967621476054,
+        "coverageFactors": {
+          "yz": 0.08125,
+          "xz": 0.21497252747252749,
+          "xy": 0.0829326923076923
+        },
+        "fileName": "sector_13.f3d",
+        "downloadSize": 16031
+      }
+    },
+    {
+      "id": 14,
+      "parentId": 13,
+      "path": "0/7/0/",
+      "depth": 3,
+      "boundingBox": {
+        "min": {
+          "x": -43.289852142333984,
+          "y": 263.81361267859086,
+          "z": -32.085363388061523
+        },
+        "max": {
+          "x": 74.826521060197578,
+          "y": 430.87777136234087,
+          "z": 54.276791610275382
+        }
+      },
+      "indexFile": {
+        "peripheralFiles": [
+          "mesh_7.ctm"
+        ],
+        "estimatedDrawCallCount": 10,
+        "fileName": "sector_14.i3d",
+        "downloadSize": 184854
+      },
+      "facesFile": {
+        "quadSize": 2.554208825494662,
+        "coverageFactors": {
+          "yz": 0.086090225563909772,
+          "xz": 0.16150670794633643,
+          "xy": 0.077030812324929976
+        },
+        "fileName": "sector_14.f3d",
+        "downloadSize": 11130
+      }
+    },
+    {
+      "id": 15,
+      "parentId": 13,
+      "path": "0/7/1/",
+      "depth": 3,
+      "boundingBox": {
+        "min": {
+          "x": -48.900894655827386,
+          "y": 406.9121867759066,
+          "z": -21.362895987980526
+        },
+        "max": {
+          "x": 107.34430950059321,
+          "y": 488.93289678189996,
+          "z": 54.268885612487793
+        }
+      },
+      "indexFile": {
+        "peripheralFiles": [
+          "mesh_8.ctm",
+          "mesh_1.ctm"
+        ],
+        "estimatedDrawCallCount": 13,
+        "fileName": "sector_15.i3d",
+        "downloadSize": 360965
+      },
+      "facesFile": {
+        "quadSize": 2.554208825494662,
+        "coverageFactors": {
+          "yz": 0.19952305246422894,
+          "xz": 0.22281639928698752,
+          "xy": 0.20188370188370189
+        },
+        "fileName": "sector_15.f3d",
+        "downloadSize": 17077
+      }
+    }
+  ]
+}
