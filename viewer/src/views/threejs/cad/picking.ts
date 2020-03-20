@@ -79,8 +79,12 @@ function pickTreeIndex(input: TreeIndexPickingInput): number | undefined {
   const { cadNode } = input;
   const previousRenderMode = cadNode.renderMode;
   cadNode.renderMode = RenderMode.TreeIndex;
-  const pixelBuffer = pickPixelColor(input, clearColor, clearAlpha);
-  cadNode.renderMode = previousRenderMode;
+  let pixelBuffer: Uint8Array;
+  try {
+    pixelBuffer = pickPixelColor(input, clearColor, clearAlpha);
+  } finally {
+    cadNode.renderMode = previousRenderMode;
+  }
 
   if (pixelBuffer[3] === 0) {
     return;
