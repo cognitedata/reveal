@@ -7,7 +7,7 @@ import TWEEN from '@tweenjs/tween.js';
 import ComboControls from '@cognite/three-combo-controls';
 
 import { Cognite3DModel, createCognite3DModel } from './Cognite3DModel';
-import { Cognite3DViewerOptions, AddModelOptions } from './types';
+import { Cognite3DViewerOptions, AddModelOptions, Cognite3DThreeRenderer } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { Intersection } from './intersection';
 import { CogniteClient } from '@cognite/sdk';
@@ -22,7 +22,7 @@ export class Cognite3DViewer {
   }
 
   readonly domElement: HTMLElement;
-  private readonly renderer: THREE.WebGLRenderer;
+  private readonly renderer: THREE.WebGLRenderer | Cognite3DThreeRenderer;
   private readonly camera: THREE.PerspectiveCamera;
   private readonly scene: THREE.Scene;
   private readonly controls: ComboControls;
@@ -48,7 +48,7 @@ export class Cognite3DViewer {
       throw new NotSupportedInMigrationWrapperError('LogMetris is not supported');
     }
 
-    this.renderer = new THREE.WebGLRenderer();
+    this.renderer = options.renderer || new THREE.WebGLRenderer();
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
     this.canvas.style.minWidth = '100%';
@@ -73,7 +73,6 @@ export class Cognite3DViewer {
         f(position.clone(), target.clone());
       });
     });
-
 
     this.sdkClient = options.sdk;
     this.renderController = new RenderController(this.camera);
