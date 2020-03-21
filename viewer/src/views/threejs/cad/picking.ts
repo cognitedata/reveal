@@ -24,6 +24,7 @@ export interface IntersectCadNodesResult {
   distance: number;
   point: THREE.Vector3;
   treeIndex: number;
+  cadNode: CadNode,
   object: THREE.Object3D; // always CadNode
 }
 
@@ -69,7 +70,8 @@ export function intersectCadNode(cadNode: CadNode, input: IntersectCadNodesInput
       distance,
       point,
       treeIndex,
-      object: cadNode
+      object: cadNode,
+      cadNode
     };
   } finally {
     // Re-add cadNode to previous parent
