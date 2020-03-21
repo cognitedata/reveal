@@ -3,11 +3,7 @@
  */
 
 import { createMaterials, Materials } from './materials';
-import {
-  VisibilityDelegate,
-  ColorDelegate,
-  NodeAppearance
-} from '../../common/cad/NodeAppearance';
+import { VisibilityDelegate, ColorDelegate, NodeAppearance } from '../../common/cad/NodeAppearance';
 
 function updateColors(getColor: ColorDelegate, materials: Materials, treeIndices: number[]) {
   for (const treeIndex of treeIndices) {
@@ -29,8 +25,8 @@ export class MaterialManager {
   public readonly materials: Materials;
   private readonly _options?: NodeAppearance;
 
-  constructor(options?: NodeAppearance) {
-    this.materials = createMaterials();
+  constructor(treeIndexCount: number, options?: NodeAppearance) {
+    this.materials = createMaterials(treeIndexCount);
     this._options = options;
   }
 

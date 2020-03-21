@@ -64,7 +64,8 @@ export class CadNode extends THREE.Object3D {
     super();
     this.type = 'CadNode';
     this.name = 'Sector model';
-    this._materialManager = new MaterialManager(options ? options.nodeAppearance : undefined);
+    const treeIndexCount = model.scene.maxTreeIndex + 1;
+    this._materialManager = new MaterialManager(treeIndexCount, options ? options.nodeAppearance : undefined);
 
     const rootSector = new RootSectorNode(model, this._materialManager.materials);
     this._repository = new CachedRepository(model);
