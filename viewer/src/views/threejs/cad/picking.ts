@@ -48,31 +48,35 @@ export function intersectCadNode(cadNode: CadNode, input: IntersectCadNodesInput
   // TODO add warning if parent has transforms
   const oldParent = cadNode.parent!;
   pickingScene.add(cadNode);
-  const pickInput = {
-    coords,
-    camera,
-    renderer,
-    scene: pickingScene,
-    cadNode
-  };
-  const treeIndex = pickTreeIndex(pickInput);
-  if (treeIndex === undefined) {
-    oldParent.add(cadNode);
-    return;
+  try {
+    const pickInput = {
+      coords,
+      camera,
+      renderer,
+      scene: pickingScene,
+      cadNode
+    };
+    const treeIndex = pickTreeIndex(pickInput);
+    if (treeIndex === undefined) {
+      return undefined;
+    }
+    const depth = pickDepth(pickInput);
+
+    const viewZ = perspectiveDepthToViewZ(depth, camera.near, camera.far);
+    const point = getPosition(pickInput, viewZ);
+    const distance = new THREE.Vector3().subVectors(point, camera.position).length();
+    return {
+      distance,
+      point,
+      treeIndex,
+      object: cadNode
+    };
+  } finally {
+    // Re-add cadNode to previous parent
+    if (oldParent) {
+      oldParent.add(cadNode);
+    }
   }
-  const depth = pickDepth(pickInput);
-
-  const viewZ = perspectiveDepthToViewZ(depth, camera.near, camera.far);
-  const point = getPosition(pickInput, viewZ);
-  const distance = new THREE.Vector3().subVectors(point, camera.position).length();
-
-  oldParent.add(cadNode);
-  return {
-    distance,
-    point,
-    treeIndex,
-    object: cadNode
-  };
 }
 
 function pickTreeIndex(input: TreeIndexPickingInput): number | undefined {
