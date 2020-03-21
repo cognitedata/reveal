@@ -250,7 +250,9 @@ export class Cognite3DViewer {
       const model: Cognite3DModel = this.models.find(v => v.cadNode === result.cadNode)!;
       const intersection: Intersection = {
         model,
-        nodeId: -result.treeIndex, // TODO 2020-03-21 larsmoa: Map to nodeId,
+        // TODO 2020-03-21 larsmoa: Map to nodeId,
+        nodeId: -1,
+        treeIndex: -result.treeIndex,
         point: result.point
       };
       return intersection;
