@@ -36,7 +36,7 @@ export interface Cognite3DViewerOptions {
   viewCube?: 'topleft' | 'topright' | 'bottomleft' | 'bottomright';
   enableCache?: boolean;
 
-  renderer?: Cognite3DThreeRenderer;
+  renderer?: THREE.WebGLRenderer;
 }
 
 export interface OnProgressData {

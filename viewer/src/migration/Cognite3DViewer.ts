@@ -12,6 +12,7 @@ import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWr
 import { Intersection } from './intersection';
 import { CogniteClient } from '@cognite/sdk';
 import RenderController from './RenderController';
+import { intersectCadNodes } from '../threejs';
 
 export class Cognite3DViewer {
   private get canvas(): HTMLCanvasElement {
@@ -22,7 +23,7 @@ export class Cognite3DViewer {
   }
 
   readonly domElement: HTMLElement;
-  private readonly renderer: THREE.WebGLRenderer | Cognite3DThreeRenderer;
+  private readonly renderer: THREE.WebGLRenderer;
   private readonly camera: THREE.PerspectiveCamera;
   private readonly scene: THREE.Scene;
   private readonly controls: ComboControls;
@@ -230,8 +231,32 @@ export class Cognite3DViewer {
   getScreenshot(_width?: number, _height?: number): Promise<string> {
     throw new NotSupportedInMigrationWrapperError();
   }
-  getIntersectionFromPixel(_x: number, _y: number, _cognite3DModel?: Cognite3DModel): null | Intersection {
-    throw new NotSupportedInMigrationWrapperError();
+  getIntersectionFromPixel(x: number, y: number, _cognite3DModel?: Cognite3DModel): null | Intersection {
+    const nodes = this.models.map(x => x.cadNode);
+
+    const rect = this.renderer.domElement.getBoundingClientRect();
+    const coords = {
+      x: ((x - rect.left) / this.renderer.domElement.clientWidth) * 2 - 1,
+      y: ((y - rect.top) / this.renderer.domElement.clientHeight) * -2 + 1
+    };
+    const results = intersectCadNodes(nodes, {
+      coords,
+      camera: this.camera,
+      renderer: this.renderer
+    });
+
+    if (results) {
+      const result = results[0]; // Nearest intersection
+      const model: Cognite3DModel = this.models.find(x => x.cadNode === result.cadNode)!;
+      const intersection: Intersection = {
+        model,
+        nodeId: -result.treeIndex, // TODO 2020-03-21 larsmoa: Map to nodeId,
+        point: result.point
+      };
+      return intersection;
+    }
+
+    return null;
   }
 
   clearCache(): void {
@@ -242,7 +267,6 @@ export class Cognite3DViewer {
     throw new NotSupportedInMigrationWrapperError();
   }
   private offClick(_callback: (event: PointerEvent) => void): void {
-    throw new NotSupportedInMigrationWrapperError();
   }
   private onHover(_callback: (event: PointerEvent) => void): void {
     throw new NotSupportedInMigrationWrapperError();
