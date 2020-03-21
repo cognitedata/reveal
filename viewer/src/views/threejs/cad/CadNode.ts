@@ -3,8 +3,8 @@
  */
 
 import * as THREE from 'three';
-import { Subject, Observable } from 'rxjs';
-import { publish, share, auditTime, switchAll, flatMap } from 'rxjs/operators';
+import { Subject, Observable, of, empty, ObservableInput, OperatorFunction } from 'rxjs';
+import { publish, share, auditTime, switchAll, flatMap, mergeMap } from 'rxjs/operators';
 
 import { SectorModelTransformation, SectorScene, SectorMetadata } from '../../../models/cad/types';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
@@ -147,7 +147,7 @@ export class CadNode extends THREE.Object3D {
     return this._renderHints.showSectorBoundingBoxes || false;
   }
 
-  public update(camera: THREE.PerspectiveCamera) {
+  public update(camera: THREE.PerspectiveCamera): void {
     const cameraConfig: ThreeCameraConfig = {
       camera,
       modelTransformation: this.modelTransformation,
@@ -168,22 +168,31 @@ export class CadNode extends THREE.Object3D {
   }
 
   private createLoadSectorsPipeline(): Subject<ThreeCameraConfig> {
+    const suspendLoading = this.loadingHints.suspendLoading;
+
     const loadSectorOperator = flatMap((s: WantedSector) => this._repository.loadSector(s));
     const consumeSectorOperator = flatMap((sector: ParsedSector) => this.rootSector.consumeSector(sector.id, sector));
+    function suspendIfLoadingToggled<T>(): OperatorFunction<T, T> {
+      return mergeMap<T, ObservableInput<T>>(x => (!suspendLoading ? of(x) : empty()));
+    }
 
     const pipeline = new Subject<ThreeCameraConfig>();
     pipeline
       .pipe(
         auditTime(100),
         fromThreeCameraConfig(),
+        suspendIfLoadingToggled(),
         this._sectorCuller.determineSectors(),
         share(),
         publish((wantedSectors: Observable<WantedSector[]>) =>
           wantedSectors.pipe(
+            suspendIfLoadingToggled(),
             switchAll(),
             distinctUntilLevelOfDetailChanged(),
+            suspendIfLoadingToggled(),
             loadSectorOperator,
             filterCurrentWantedSectors(wantedSectors),
+            suspendIfLoadingToggled(),
             consumeSectorOperator
           )
         )
