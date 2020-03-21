@@ -247,7 +247,7 @@ export class Cognite3DViewer {
 
     if (results) {
       const result = results[0]; // Nearest intersection
-      const model: Cognite3DModel = this.models.find(x => x.cadNode === result.cadNode)!;
+      const model: Cognite3DModel = this.models.find(v => v.cadNode === result.cadNode)!;
       const intersection: Intersection = {
         model,
         nodeId: -result.treeIndex, // TODO 2020-03-21 larsmoa: Map to nodeId,
@@ -266,8 +266,7 @@ export class Cognite3DViewer {
   private onClick(_callback: (event: PointerEvent) => void): void {
     throw new NotSupportedInMigrationWrapperError();
   }
-  private offClick(_callback: (event: PointerEvent) => void): void {
-  }
+  private offClick(_callback: (event: PointerEvent) => void): void {}
   private onHover(_callback: (event: PointerEvent) => void): void {
     throw new NotSupportedInMigrationWrapperError();
   }
