@@ -7,7 +7,7 @@ import TWEEN from '@tweenjs/tween.js';
 import ComboControls from '@cognite/three-combo-controls';
 
 import { Cognite3DModel, createCognite3DModel } from './Cognite3DModel';
-import { Cognite3DViewerOptions, AddModelOptions, Cognite3DThreeRenderer } from './types';
+import { Cognite3DViewerOptions, AddModelOptions } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { Intersection } from './intersection';
 import { CogniteClient } from '@cognite/sdk';

@@ -12,21 +12,6 @@ export interface Color {
   b: number;
 }
 
-/**
- * Subset of THREE.WebGLRenderer used to support injecting THREE.WeblGLRenderer for testing.
- */
-export type Cognite3DThreeRenderer = Pick<
-  THREE.WebGLRenderer,
-  'domElement' | 'dispose' | 'setSize' | 'getSize' | 'render'
->;
-// {
-//   readonly domElement: HTMLCanvasElement;
-//   dispose(): void;
-//   setSize(size: THREE.Vector2): void;
-//   getSize(out: THREE.Vector2): THREE.Vector2;
-//   render(scene: THREE.Scene, camera: THREE.Camera): void;
-// }
-
 export interface Cognite3DViewerOptions {
   sdk: CogniteClient;
   domElement?: HTMLElement;
