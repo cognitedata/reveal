@@ -38,7 +38,7 @@ export function intersectCadNodes(cadNodes: CadNode[], input: IntersectCadNodesI
       results.push(result);
     }
   }
-  return results;
+  return results.sort((l, r) => l.distance - r.distance);
 }
 
 export function intersectCadNode(cadNode: CadNode, input: IntersectCadNodesInput): IntersectCadNodesResult | undefined {
