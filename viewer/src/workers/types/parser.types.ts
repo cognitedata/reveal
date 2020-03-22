@@ -27,6 +27,8 @@ export interface PrimitiveAttributes {
 }
 
 export interface ParseSectorResult {
+  treeIndexToNodeIdMap: Map<number, number>;
+  nodeIdToTreeIndexMap: Map<number, number>;
   boxes: PrimitiveAttributes;
   circles: PrimitiveAttributes;
   cones: PrimitiveAttributes;
@@ -78,7 +80,9 @@ export interface ParseQuadsArguments {
   };
 }
 export interface ParseQuadsResult {
-  data: Float32Array;
+  treeIndexToNodeIdMap: Map<number, number>;
+  nodeIdToTreeIndexMap: Map<number, number>;
+  faces: Float32Array;
 }
 
 export type WorkerArguments = ParseRootSectorArguments | ParseSectorArguments | ParseCtmArguments | ParseQuadsArguments;
