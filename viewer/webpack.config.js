@@ -103,6 +103,7 @@ module.exports = env => {
         crateDirectory: ".",
         forceMode: 'production',
         watchDirectories: [
+          path.resolve(__dirname, 'rust'),
           path.resolve(__dirname, '..', 'i3df', 'src'),
           path.resolve(__dirname, '..', 'f3df', 'src'),
         ]

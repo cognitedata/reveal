@@ -85,6 +85,9 @@ export type InstancedMesh = {
 // TODO 2019-12-05 larsmoa: Rename to e.g. SectorGeometry to avoid
 // confusion with other Sector-class
 export interface Sector {
+  readonly nodeIdToTreeIndexMap: Map<number, number>;
+  readonly treeIndexToNodeIdMap: Map<number, number>;
+
   readonly instanceMeshes: InstancedMeshFile[];
   readonly triangleMeshes: TriangleMesh[];
 
@@ -103,6 +106,8 @@ export interface Sector {
 }
 
 export interface SectorQuads {
+  readonly nodeIdToTreeIndexMap: Map<number, number>;
+  readonly treeIndexToNodeIdMap: Map<number, number>;
   readonly buffer: Float32Array;
 }
 

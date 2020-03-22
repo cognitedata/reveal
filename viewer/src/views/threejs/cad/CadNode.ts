@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { Subject, Observable } from 'rxjs';
-import { publish, share, auditTime, switchAll, flatMap } from 'rxjs/operators';
+import { publish, share, auditTime, switchAll, flatMap, tap } from 'rxjs/operators';
 
 import { SectorModelTransformation, SectorScene, SectorMetadata } from '../../../models/cad/types';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
@@ -103,6 +103,13 @@ export class CadNode extends THREE.Object3D {
     this._materialManager.updateNodes(treeIndices);
   }
 
+  requestNodeUpdateByNodeIds(nodeIds: number[]) {
+    const treeIndices = nodeIds
+      .map((nodeId: number) => this.rootSector.nodeIdToTreeIndexMap.get(nodeId))
+      .filter((treeIndex: number | undefined) => treeIndex !== undefined);
+    this.requestNodeUpdateByNodeIds(treeIndices as number[]);
+  }
+
   set renderMode(mode: RenderMode) {
     this._renderMode = mode;
     this._materialManager.materials.box.uniforms.renderMode.value = mode;
@@ -184,6 +191,7 @@ export class CadNode extends THREE.Object3D {
             distinctUntilLevelOfDetailChanged(),
             loadSectorOperator,
             filterCurrentWantedSectors(wantedSectors),
+            tap((sector: ParsedSector) => this.dispatchEvent({ type: 'sectorParsed', sector })),
             consumeSectorOperator
           )
         )
@@ -199,7 +207,7 @@ export class CadNode extends THREE.Object3D {
         sectorNode.add(sector.group);
         sectorNode.group = sector.group;
         this.updateSectorBoundingBoxes(sector);
-        this.dispatchEvent({ type: 'update' });
+        this.dispatchEvent({ type: 'update', sector });
       });
     return pipeline;
   }

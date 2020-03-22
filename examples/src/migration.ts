@@ -26,6 +26,7 @@ async function main() {
     const model = await viewer.addModel({modelId, revisionId});
     viewer.fitCameraToModel(model);
     models.push(model);
+    model.setNodeColor(4348193951131409, 255, 255, 100);
   }
 
   // Add GUI for loading models and such

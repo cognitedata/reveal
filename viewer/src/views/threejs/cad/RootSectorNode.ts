@@ -25,6 +25,8 @@ export class RootSectorNode extends SectorNode {
   private readonly materials: Materials;
 
   private readonly consumeSectorCache: MemoryRequestCache<string, ParsedSector, THREE.Group>;
+  private _nodeIdToTreeIndexMap: Map<number, number>;
+  private _treeIndexToNodeIdMap: Map<number, number>;
 
   constructor(model: CadModel, materials: Materials) {
     super(0, '/');
@@ -32,12 +34,23 @@ export class RootSectorNode extends SectorNode {
     this.applyMatrix4(toThreeMatrix4(modelTransformation.modelMatrix));
     this.sectorNodeMap = new Map();
     this.materials = materials;
+    this._nodeIdToTreeIndexMap = new Map();
+    this._nodeIdToTreeIndexMap.set(0, 0);
+    this._treeIndexToNodeIdMap = new Map();
+    this._treeIndexToNodeIdMap.set(0, 0);
 
     this.consumeSectorCache = new MemoryRequestCache<string, ParsedSector, THREE.Group>(
       (_hash: string, sector: ParsedSector) => this.consumeImpl(sector.id, sector)
     );
 
     buildScene(scene.root, this, this.sectorNodeMap);
+  }
+
+  get nodeIdToTreeIndexMap() {
+    return this._nodeIdToTreeIndexMap;
+  }
+  get treeIndexToNodeIdMap() {
+    return this._treeIndexToNodeIdMap;
   }
 
   public async consumeSector(id: number, sector: ParsedSector): Promise<ConsumedSector> {
@@ -60,10 +73,16 @@ export class RootSectorNode extends SectorNode {
           return new THREE.Group();
         }
         case LevelOfDetail.Simple: {
-          return consumeSectorSimple(id, data as SectorQuads, metadata, this.materials);
+          const simpleData = data as SectorQuads;
+          this._nodeIdToTreeIndexMap = new Map([...this._nodeIdToTreeIndexMap, ...simpleData.nodeIdToTreeIndexMap]);
+          this._treeIndexToNodeIdMap = new Map([...this._treeIndexToNodeIdMap, ...simpleData.treeIndexToNodeIdMap]);
+          return consumeSectorSimple(id, simpleData, metadata, this.materials);
         }
         case LevelOfDetail.Detailed: {
-          return consumeSectorDetailed(id, data as Sector, metadata, this.materials);
+          const detailedData = data as Sector;
+          this._nodeIdToTreeIndexMap = new Map([...this._nodeIdToTreeIndexMap, ...detailedData.nodeIdToTreeIndexMap]);
+          this._treeIndexToNodeIdMap = new Map([...this._treeIndexToNodeIdMap, ...detailedData.treeIndexToNodeIdMap]);
+          return consumeSectorDetailed(id, detailedData, metadata, this.materials);
         }
         default:
           throw new Error(`Unsupported level of detail ${sector.levelOfDetail}`);

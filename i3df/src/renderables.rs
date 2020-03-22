@@ -368,11 +368,11 @@ macro_rules! new_geometry_types {
             )*
 
             pub fn tree_index_to_node_id_map(&self) -> Map {
-                Map::from(JsValue::from_serde(&self.primitive_collections.tree_index_to_node_id_map).unwrap())
+                Map::from(serde_wasm_bindgen::to_value(&self.primitive_collections.tree_index_to_node_id_map).unwrap())
             }
 
             pub fn node_id_to_tree_index_map(&self) -> Map {
-                Map::from(JsValue::from_serde(&self.primitive_collections.node_id_to_tree_index_map).unwrap())
+                Map::from(serde_wasm_bindgen::to_value(&self.primitive_collections.node_id_to_tree_index_map).unwrap())
             }
 
             pub fn statistics(&self) -> SectorStatistics {

@@ -174,10 +174,10 @@ pub fn parse_and_convert_f3df(input: &[u8]) -> Result<SimpleSectorData, JsValue>
     Ok(SimpleSectorData {
         faces: faces_as_float_32_array,
         node_id_to_tree_index_map: Map::from(
-            JsValue::from_serde(&renderable_sector.node_id_to_tree_index_map).unwrap(),
+            serde_wasm_bindgen::to_value(&renderable_sector.node_id_to_tree_index_map).unwrap(),
         ),
         tree_index_to_node_id_map: Map::from(
-            JsValue::from_serde(&renderable_sector.tree_index_to_node_id_map).unwrap(),
+            serde_wasm_bindgen::to_value(&renderable_sector.tree_index_to_node_id_map).unwrap(),
         ),
     })
 }
