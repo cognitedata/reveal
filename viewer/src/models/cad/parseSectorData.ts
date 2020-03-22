@@ -237,7 +237,7 @@ export async function createQuadsParser(): Promise<ParseSectorDelegate<SectorQua
         worker.parseQuads(quadsArrayBuffer)
       );
       return {
-        buffer: sectorResult.data
+        buffer: sectorResult.faces
       } as SectorQuads;
     } catch (err) {
       throw new Error(`Parsing quads sector ${sectorId} failed: ${err}`);
