@@ -84,7 +84,7 @@ export class CadNode extends THREE.Object3D {
     // Prepare renderables
     this.rootSector = rootSector;
     this.add(rootSector);
-    this._boundingBoxNode = this.createBoundingBoxNode(scene.sectors);
+    this._boundingBoxNode = this.createBoundingBoxNode(scene.getAllSectors());
     this.add(this._boundingBoxNode);
 
     // Apply default hints
@@ -234,12 +234,11 @@ export class CadNode extends THREE.Object3D {
     });
   }
 
-  private createBoundingBoxNode(sectors: Map<number, SectorMetadata>): THREE.Object3D {
+  private createBoundingBoxNode(sectors: SectorMetadata[]): THREE.Object3D {
     function sectorDepth(s: SectorMetadata) {
       return s.path.length / 2; // Path are on format 'x/y/z/'
     }
-
-    const maxColorDepth = [...sectors.values()].reduce((max, s) => Math.max(max, sectorDepth(s)), 0.0);
+    const maxColorDepth = sectors.reduce((max, s) => Math.max(max, sectorDepth(s)), 0.0);
     const from = new THREE.Color(0xff0000);
     const to = new THREE.Color(0x00ff00);
     const colors = [...Array(maxColorDepth).keys()].map(d => {

@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { CadBudgetImpl, createDefaultCadBudget } from '../../../models/cad/CadBudget';
+import { createDefaultCadBudget } from '../../../models/cad/CadBudget';
 import { SectorScene, SectorMetadata } from '../../../models/cad/types';
 
 describe('CadBudgetImpl', () => {
