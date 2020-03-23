@@ -132,10 +132,6 @@ export class Cognite3DModel extends THREE.Object3D {
     };
   }
 
-  test() {
-    console.log('node id', this.cadNode.rootSector.treeIndexToNodeIdMap);
-  }
-
   setNodeColor(nodeId: number, r: number, g: number, b: number): void {
     this.nodeColors.set(nodeId, [r, g, b, 255]);
     this.refreshNodeColor(nodeId);
