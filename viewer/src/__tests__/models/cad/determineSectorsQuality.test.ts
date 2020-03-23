@@ -1,28 +1,11 @@
 /*!
  * Copyright 2020 Cognite AS
  */
-import { SectorMetadata, SectorScene } from '../../../models/cad/types';
+import { SectorMetadata } from '../../../models/cad/types';
 import { Box3 } from '../../../utils/Box3';
 import { determineSectorsFromDetailed } from '../../../models/cad/determineSectors';
-import { traverseDepthFirst } from '../../../utils/traversal';
 import { expectContainsSectorsWithLevelOfDetail } from '../../expects';
-
-function createSceneFromRoot(root: SectorMetadata): SectorScene {
-  const sectors = new Map<number, SectorMetadata>();
-  traverseDepthFirst(root, sector => {
-    sectors.set(sector.id, sector);
-    return true;
-  });
-  let maxTreeIndex = -1;
-  sectors.forEach(v => (maxTreeIndex = Math.max(maxTreeIndex, v.id)));
-
-  return {
-    version: 8,
-    root,
-    sectors,
-    maxTreeIndex
-  };
-}
+import { createSceneFromRoot } from '../../testUtils/createSceneFromRoot';
 
 function sectorNodeFromTreeNode(node: TreeNode, parent?: SectorMetadata): SectorMetadata {
   const result = {
