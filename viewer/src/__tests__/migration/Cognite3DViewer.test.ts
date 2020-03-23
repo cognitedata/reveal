@@ -49,11 +49,6 @@ describe('Cognite3DViewer', () => {
     expect(onCameraChange).toBeCalledTimes(2);
   });
 
-  test('addModel with local model, throws', async () => {
-    const viewer = new Cognite3DViewer({ sdk, renderer });
-    expect(viewer.addModel({ localPath: '/some/model', modelId: 1, revisionId: 2 })).rejects.toThrowError();
-  });
-
   test('addModel with remote model and fit viewer, updates camera', async () => {
     // Arrange
     const outputs = {
