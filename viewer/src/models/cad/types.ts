@@ -43,16 +43,37 @@ export interface SectorMetadata {
 export interface SectorScene {
   readonly version: number;
   readonly maxTreeIndex: number;
-
   readonly root: SectorMetadata;
-  readonly sectors: Map<number, SectorMetadata>;
 
+  getSectorById(sectorId: number): SectorMetadata | undefined;
+  getAllSectors(): SectorMetadata[];
   // Available, but not supported:
   // readonly projectId: number;
   // readonly modelId: number;
   // readonly revisionId: number;
   // readonly subRevisionId: number;
   // readonly unit: string | null;
+}
+
+export class SectorSceneImpl implements SectorScene {
+  readonly version: number;
+  readonly maxTreeIndex: number;
+  readonly root: SectorMetadata;
+  private readonly sectors: Map<number, SectorMetadata>;
+
+  constructor(version: number, maxTreeIndex: number, root: SectorMetadata, sectorsById: Map<number, SectorMetadata>) {
+    this.version = version;
+    this.maxTreeIndex = maxTreeIndex;
+    this.root = root;
+    this.sectors = sectorsById;
+  }
+
+  getSectorById(sectorId: number): SectorMetadata | undefined {
+    return this.sectors.get(sectorId);
+  }
+  getAllSectors(): SectorMetadata[] {
+    return [...this.sectors.values()];
+  }
 }
 
 export type Color = number;

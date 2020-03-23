@@ -181,4 +181,3 @@ export class Cognite3DModel extends THREE.Object3D {
     this.cadNode.requestNodeUpdate([treeIndex]);
   }
 }
-
