@@ -13,22 +13,27 @@ import { NodeAppearance } from '../views/common/cad/NodeAppearance';
 import { CadLoadingHints } from '../models/cad/CadLoadingHints';
 import { LevelOfDetail } from '../data/model/LevelOfDetail';
 import { SectorQuads, Sector } from '../models/cad/types';
+import { ParsedSector } from '../data/model/ParsedSector';
 
 export class Cognite3DModel extends THREE.Object3D {
   readonly cadModel: CadModel;
   readonly cadNode: CadNode;
   readonly nodeColors: Map<number, [number, number, number, number]>;
+  private nodeIdToTreeIndexMap: Map<number, number>;
+  private treeIndexToNodeIdMap: Map<number, number>;
 
   constructor(model: CadModel) {
     super();
     this.cadModel = model;
     this.nodeColors = new Map();
+    this.nodeIdToTreeIndexMap = new Map();
+    this.treeIndexToNodeIdMap = new Map();
     const nodeAppearance: NodeAppearance = {
       color: (treeIndex: number) => {
         if (!this.cadNode) {
           return;
         }
-        const nodeId = this.cadNode.rootSector.treeIndexToNodeIdMap.get(treeIndex);
+        const nodeId = this.treeIndexToNodeIdMap.get(treeIndex);
         if (!nodeId) {
           // TODO get updates from cadNode when the map is updated
           return;
@@ -36,33 +41,26 @@ export class Cognite3DModel extends THREE.Object3D {
         return this.nodeColors.get(nodeId);
       }
     };
-    this.cadNode = new CadNode(model, { nodeAppearance });
     const that = this;
-    this.cadNode.rootSector.addEventListener('nodeIdToTreeIndexMapUpdated', event => {
-      const { sector } = event;
-      switch (sector.levelOfDetail) {
-        case LevelOfDetail.Simple: {
-          const simpleData = sector.data as SectorQuads;
-          const treeIndices = Array.from(simpleData.nodeIdToTreeIndexMap)
-            .filter(([nodeId]) => that.nodeColors.has(nodeId))
-            .map(([_nodeId, treeIndex]) => treeIndex);
-          if (treeIndices.length > 0) {
-            that.cadNode.requestNodeUpdate(treeIndices);
+    this.cadNode = new CadNode(model, {
+      nodeAppearance,
+      internal: {
+        parseCallback: (sector: ParsedSector) => {
+          switch (sector.levelOfDetail) {
+            case LevelOfDetail.Simple: {
+              const simpleData = sector.data as SectorQuads;
+              that.updateMapsAndRequestUpdate(simpleData.nodeIdToTreeIndexMap);
+              break;
+            }
+            case LevelOfDetail.Detailed: {
+              const detailedData = sector.data as Sector;
+              that.updateMapsAndRequestUpdate(detailedData.nodeIdToTreeIndexMap);
+              break;
+            }
+            default: {
+              break;
+            }
           }
-          break;
-        }
-        case LevelOfDetail.Detailed: {
-          const detailedData = sector.data as Sector;
-          const treeIndices = Array.from(detailedData.nodeIdToTreeIndexMap)
-            .filter(([nodeId]) => that.nodeColors.has(nodeId))
-            .map(([_nodeId, treeIndex]) => treeIndex);
-          if (treeIndices.length > 0) {
-            that.cadNode.requestNodeUpdate(treeIndices);
-          }
-          break;
-        }
-        default: {
-          break;
         }
       }
     });
@@ -168,8 +166,21 @@ export class Cognite3DModel extends THREE.Object3D {
     throw new NotSupportedInMigrationWrapperError();
   }
 
+  private updateMapsAndRequestUpdate(nodeIdToTreeIndexMap: Map<number, number>) {
+    for (const [nodeId, treeIndex] of nodeIdToTreeIndexMap) {
+      this.nodeIdToTreeIndexMap.set(nodeId, treeIndex);
+      this.treeIndexToNodeIdMap.set(treeIndex, nodeId);
+    }
+    const treeIndices = Array.from(nodeIdToTreeIndexMap)
+      .filter(([nodeId]) => this.nodeColors.has(nodeId))
+      .map(([_nodeId, treeIndex]) => treeIndex);
+    if (treeIndices.length > 0) {
+      this.cadNode.requestNodeUpdate(treeIndices);
+    }
+  }
+
   private refreshNodeColor(nodeId: number) {
-    const treeIndex = this.cadNode.rootSector.nodeIdToTreeIndexMap.get(nodeId);
+    const treeIndex = this.nodeIdToTreeIndexMap.get(nodeId);
     if (!treeIndex) {
       return;
     }
