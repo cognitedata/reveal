@@ -281,10 +281,10 @@ mod tests {
         };
         let result = convert_sector(&sector);
 
-        assert_abs_diff_eq!(result[0].tree_index, 42.0, epsilon = 0.0);
-        assert_abs_diff_eq!(result[0].color[0], 0.501_960_8); // 128/255
-        assert_abs_diff_eq!(result[0].color[1], 0.505_882_4); // 129/255
-        assert_abs_diff_eq!(result[0].color[2], 0.509_803_95); // 130/255
+        assert_abs_diff_eq!(result.faces[0].tree_index, 42.0, epsilon = 0.0);
+        assert_abs_diff_eq!(result.faces[0].color[0], 0.501_960_8); // 128/255
+        assert_abs_diff_eq!(result.faces[0].color[1], 0.505_882_4); // 129/255
+        assert_abs_diff_eq!(result.faces[0].color[2], 0.509_803_95); // 130/255
 
         #[rustfmt::skip]
         let matrix = Matrix4::from_column_slice(&[
@@ -293,8 +293,8 @@ mod tests {
             0.0, 3.0, 0.0, 0.0,
             3.1, 34.7, 9.3, 1.0
         ]);
-        assert_abs_diff_eq!(result[0].matrix, matrix, epsilon = 0.00001);
+        assert_abs_diff_eq!(result.faces[0].matrix, matrix, epsilon = 0.00001);
 
-        assert_abs_diff_eq!(result[0].normal, Vector3::new(0.0, 1.0, 0.0));
+        assert_abs_diff_eq!(result.faces[0].normal, Vector3::new(0.0, 1.0, 0.0));
     }
 }

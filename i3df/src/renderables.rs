@@ -2,8 +2,8 @@ use crate::{Matrix4, Rotation3, Texture, Translation3, Vector3, Vector4};
 use inflector::cases::camelcase::to_camel_case;
 use js_sys::{Float32Array, Float64Array, Map, Uint8Array};
 use serde_derive::{Deserialize, Serialize};
-use std::f32::consts::PI;
 use std::collections::HashMap;
+use std::f32::consts::PI;
 
 use serde_wasm_bindgen;
 use wasm_bindgen::prelude::*;
