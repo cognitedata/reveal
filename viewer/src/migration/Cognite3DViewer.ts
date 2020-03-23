@@ -78,26 +78,6 @@ export class Cognite3DViewer {
     this.sdkClient = options.sdk;
     this.renderController = new RenderController(this.camera);
 
-    const cubeGeometry = new THREE.BoxGeometry(500, 500, 500);
-    const mesh = new THREE.Mesh(
-      cubeGeometry,
-      new THREE.MeshBasicMaterial({
-        color: 0x156289,
-        side: THREE.DoubleSide
-      })
-    );
-    const line = new THREE.LineSegments(
-      new THREE.WireframeGeometry(cubeGeometry),
-      new THREE.LineBasicMaterial({
-        color: 0xffffff,
-        linewidth: 1,
-        opacity: 0.25,
-        transparent: true
-      })
-    );
-    this.scene.add(mesh);
-    this.scene.add(line);
-
     this.animate(0);
   }
 
