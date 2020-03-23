@@ -107,13 +107,6 @@ export class CadNode extends THREE.Object3D {
     this._materialManager.updateNodes(treeIndices);
   }
 
-  requestNodeUpdateByNodeIds(nodeIds: number[]) {
-    const treeIndices = nodeIds
-      .map((nodeId: number) => this.rootSector.nodeIdToTreeIndexMap.get(nodeId))
-      .filter((treeIndex: number | undefined) => treeIndex !== undefined);
-    this.requestNodeUpdateByNodeIds(treeIndices as number[]);
-  }
-
   set renderMode(mode: RenderMode) {
     this._renderMode = mode;
     this._materialManager.materials.box.uniforms.renderMode.value = mode;
@@ -225,7 +218,7 @@ export class CadNode extends THREE.Object3D {
         sectorNode.add(sector.group);
         sectorNode.group = sector.group;
         this.updateSectorBoundingBoxes(sector);
-        this.dispatchEvent({ type: 'update', sector });
+        this.dispatchEvent({ type: 'update' });
       });
     return pipeline;
   }

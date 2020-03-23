@@ -171,7 +171,6 @@ export class Cognite3DModel extends THREE.Object3D {
   private refreshNodeColor(nodeId: number) {
     const treeIndex = this.cadNode.rootSector.nodeIdToTreeIndexMap.get(nodeId);
     if (!treeIndex) {
-      // TODO get updates from cadNode when the map is updated
       return;
     }
     this.cadNode.requestNodeUpdate([treeIndex]);
