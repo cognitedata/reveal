@@ -178,7 +178,6 @@ export class Cognite3DModel extends THREE.Object3D {
         })
       )
       .subscribe((response: NodeIdResponse) => {
-        console.log('Response', response);
         response.responses.forEach((node, index) => {
           this.treeIndexToNodeIdMap.set(node.treeIndex, node.id);
           this.nodeIdToTreeIndexMap.set(node.id, node.treeIndex);
