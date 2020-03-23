@@ -22,8 +22,8 @@ async function main() {
   const viewer = new reveal_migration.Cognite3DViewer({ sdk: client, domElement });
   (window as any).viewer = viewer;
 
-  async function addModel(modelId: number, revisionId: number) {
-    const model = await viewer.addModel({modelId, revisionId});
+  async function addModel(options: reveal_migration.AddModelOptions) {
+    const model = await viewer.addModel(options);
     viewer.fitCameraToModel(model);
     models.push(model);
     model.setNodeColor(4348193951131409, 255, 255, 100);
