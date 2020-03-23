@@ -9,6 +9,7 @@ import { map } from 'rxjs/operators';
 import { OperatorFunction } from 'rxjs';
 import { SectorModelTransformation, SectorScene } from '../../../models/cad/types';
 import { DetermineSectorsByProximityInput } from '../../../models/cad/determineSectors';
+import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
 
 const updateVars = {
   cameraPosition: vec3.create(),
@@ -20,11 +21,12 @@ export interface ThreeCameraConfig {
   camera: THREE.PerspectiveCamera;
   modelTransformation: SectorModelTransformation;
   sectorScene: SectorScene;
+  loadingHints: CadLoadingHints;
 }
 
 export function fromThreeCameraConfig(): OperatorFunction<ThreeCameraConfig, DetermineSectorsByProximityInput> {
   return map((input: ThreeCameraConfig) => {
-    const { camera, modelTransformation, sectorScene } = input;
+    const { camera, modelTransformation, sectorScene, loadingHints } = input;
     const { cameraPosition, cameraModelMatrix, projectionMatrix } = updateVars;
     fromThreeVector3(cameraPosition, camera.position, modelTransformation);
     fromThreeMatrix(cameraModelMatrix, camera.matrixWorld, modelTransformation);
@@ -35,7 +37,7 @@ export function fromThreeCameraConfig(): OperatorFunction<ThreeCameraConfig, Det
       cameraPosition,
       cameraModelMatrix,
       projectionMatrix,
-      loadingHints: {}
+      loadingHints
     };
   });
 }
