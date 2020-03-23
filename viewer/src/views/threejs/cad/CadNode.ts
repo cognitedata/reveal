@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { Subject, Observable } from 'rxjs';
-import { publish, share, auditTime, switchAll, flatMap } from 'rxjs/operators';
+import { publish, share, auditTime, switchAll, flatMap, tap, map } from 'rxjs/operators';
 
 import { SectorModelTransformation, SectorScene, SectorMetadata } from '../../../models/cad/types';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
@@ -28,9 +28,11 @@ import { SectorCuller } from '../../../culling/SectorCuller';
 import { DetermineSectorsByProximityInput } from '../../../models/cad/determineSectors';
 import { ParsedSector } from '../../../data/model/ParsedSector';
 import { WantedSector } from '../../../data/model/WantedSector';
+import { CadBudget, createDefaultCadBudget } from '../../../models/cad/CadBudget';
 
 interface CadNodeOptions {
   nodeAppearance?: NodeAppearance;
+  budget?: CadBudget;
   // internal options are experimental and may change in the future
   internal?: {
     sectorCuller?: SectorCuller<DetermineSectorsByProximityInput>;
@@ -52,6 +54,7 @@ export class CadNode extends THREE.Object3D {
   private _renderHints: CadRenderHints;
   private _loadingHints: CadLoadingHints;
   private _renderMode: RenderMode;
+  private _budget: CadBudget;
 
   private readonly _materialManager: MaterialManager;
   private readonly _cameraPositionObservable: Subject<ThreeCameraConfig>;
@@ -69,6 +72,7 @@ export class CadNode extends THREE.Object3D {
 
     const rootSector = new RootSectorNode(model, this._materialManager.materials);
     this._repository = new CachedRepository(model);
+    this._budget = (options && options.budget) || createDefaultCadBudget();
 
     const { scene, modelTransformation } = model;
 
@@ -81,7 +85,7 @@ export class CadNode extends THREE.Object3D {
     // Prepare renderables
     this.rootSector = rootSector;
     this.add(rootSector);
-    this._boundingBoxNode = this.createBoundingBoxNode(scene.sectors);
+    this._boundingBoxNode = this.createBoundingBoxNode(scene.getAllSectors());
     this.add(this._boundingBoxNode);
 
     // Apply default hints
@@ -125,6 +129,10 @@ export class CadNode extends THREE.Object3D {
 
   get renderMode() {
     return this._renderMode;
+  }
+
+  get budget() {
+    return this._budget;
   }
 
   set renderHints(hints: Readonly<CadRenderHints>) {
@@ -177,7 +185,18 @@ export class CadNode extends THREE.Object3D {
       .pipe(
         auditTime(100),
         fromThreeCameraConfig(),
+
+        // Determine all wanted sectors
         this._sectorCuller.determineSectors(),
+
+        // Take sectors within budget
+        tap(c => console.log(`Want ${c.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded).length} sectors`)),
+        map(wantedSectors => this.budget.filter(wantedSectors, this._sectorScene)),
+        tap(c => {
+          console.log(`Filtered to ${c.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded).length} sectors`);
+        }),
+
+        // Load and consume
         share(),
         publish((wantedSectors: Observable<WantedSector[]>) =>
           wantedSectors.pipe(
@@ -216,12 +235,11 @@ export class CadNode extends THREE.Object3D {
     });
   }
 
-  private createBoundingBoxNode(sectors: Map<number, SectorMetadata>): THREE.Object3D {
+  private createBoundingBoxNode(sectors: SectorMetadata[]): THREE.Object3D {
     function sectorDepth(s: SectorMetadata) {
       return s.path.length / 2; // Path are on format 'x/y/z/'
     }
-
-    const maxColorDepth = [...sectors.values()].reduce((max, s) => Math.max(max, sectorDepth(s)), 0.0);
+    const maxColorDepth = sectors.reduce((max, s) => Math.max(max, sectorDepth(s)), 0.0);
     const from = new THREE.Color(0xff0000);
     const to = new THREE.Color(0x00ff00);
     const colors = [...Array(maxColorDepth).keys()].map(d => {
