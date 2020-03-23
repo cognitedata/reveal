@@ -25,10 +25,9 @@ export function worldToViewport(
   camera: THREE.PerspectiveCamera,
   position3D: THREE.Vector3
 ): Position2D {
-  const normalizedDeviceCoordinates = from3DPositionToRelativeViewportCoordinates(camera, position3D);
-  console.log(normalizedDeviceCoordinates);
+  const relativeCoordinates = from3DPositionToRelativeViewportCoordinates(camera, position3D);
   return {
-    x: Math.round(normalizedDeviceCoordinates.x * (canvas.width / window.devicePixelRatio)),
-    y: Math.round(normalizedDeviceCoordinates.y * (canvas.height / window.devicePixelRatio))
+    x: Math.round(relativeCoordinates.x * (canvas.width / window.devicePixelRatio)),
+    y: Math.round(relativeCoordinates.y * (canvas.height / window.devicePixelRatio))
   };
 }
