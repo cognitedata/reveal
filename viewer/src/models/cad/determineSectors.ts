@@ -82,12 +82,14 @@ export function determineSectorsByProximity(params: DetermineSectorsByProximityI
     return true;
   });
 
-  // TODO 2020-01-21 larsmoa: Waste since we add sectors in a set below
-  sectors.sort((l, r) => {
-    return distanceToCamera(l) - distanceToCamera(r);
-  });
   const requestedDetailed = new Set<number>(sectors.map(x => x.id));
   const result = determineSectorsFromDetailed(sectorScene, requestedDetailed);
+  result.sort((l, r) => {
+    // TODO 2020-03-22 larsmoa: Optimize to improve performance of determineSectors.
+    const leftMetadata = sectorScene.getSectorById(l.id)!;
+    const rightMetdata = sectorScene.getSectorById(r.id)!;
+    return distanceToCamera(leftMetadata) - distanceToCamera(rightMetdata);
+  });
   return result;
 }
 
@@ -97,7 +99,7 @@ export function determineSectorsFromDetailed(scene: SectorScene, requestedDetail
   const wanted: WantedSector[] = [];
 
   for (const sectorId of requestedDetailed) {
-    const sector = scene.sectors.get(sectorId);
+    const sector = scene.getSectorById(sectorId);
     if (!sector) {
       throw new Error(`Could not find sector with ID ${sectorId}`);
     }

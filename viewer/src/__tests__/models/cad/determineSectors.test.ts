@@ -1,30 +1,18 @@
 /*!
  * Copyright 2020 Cognite AS
  */
+import 'jest-extended';
+
 import * as THREE from 'three';
-import { SectorMetadata, SectorModelTransformation, SectorScene } from '../../../models/cad/types';
-import { Box3 } from '../../../utils/Box3';
 import { vec3, mat4 } from 'gl-matrix';
+
+import { SectorMetadata, SectorModelTransformation } from '../../../models/cad/types';
+import { Box3 } from '../../../utils/Box3';
 import { determineSectorsByProximity } from '../../../models/cad/determineSectors';
 import { toThreeMatrix4, fromThreeMatrix, fromThreeVector3 } from '../../../views/threejs/utilities';
-import { traverseDepthFirst } from '../../../utils/traversal';
-import 'jest-extended';
 import { LevelOfDetail } from '../../../data/model/LevelOfDetail';
 import { WantedSector } from '../../../data/model/WantedSector';
-
-function createSceneFromRoot(root: SectorMetadata): SectorScene {
-  const sectors = new Map<number, SectorMetadata>();
-  traverseDepthFirst(root, sector => {
-    sectors.set(sector.id, sector);
-    return true;
-  });
-  return {
-    version: 8,
-    maxTreeIndex: 1024,
-    root,
-    sectors
-  };
-}
+import { createSceneFromRoot } from '../../testUtils/createSceneFromRoot';
 
 describe('determineSectors', () => {
   const identityTransform: SectorModelTransformation = {
