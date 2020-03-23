@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { Subject, Observable, of, empty, ObservableInput, OperatorFunction } from 'rxjs';
-import { publish, share, auditTime, switchAll, flatMap, tap, map, mergeMap } from 'rxjs/operators';
+import { publish, share, auditTime, switchAll, flatMap, map, mergeMap } from 'rxjs/operators';
 
 import { SectorModelTransformation, SectorScene, SectorMetadata } from '../../../models/cad/types';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
