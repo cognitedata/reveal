@@ -8,26 +8,19 @@ import { Color } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { CadModel } from '../models/cad/CadModel';
 import { toThreeJsBox3, CadNode } from '../views/threejs';
-import { loadCadModelFromCdf } from '../datasources/cognitesdk';
 import { CadRenderHints } from '../views/CadRenderHints';
 import { NodeAppearance } from '../views/common/cad/NodeAppearance';
-import { CogniteClient } from '@cognite/sdk';
 import { CadLoadingHints } from '../models/cad/CadLoadingHints';
-import { ConsumedSector } from '../data/model/ConsumedSector';
 import { LevelOfDetail } from '../data/model/LevelOfDetail';
 import { SectorQuads, Sector } from '../models/cad/types';
 
 export class Cognite3DModel extends THREE.Object3D {
-  readonly modelId: number;
-  readonly revisionId: number;
   readonly cadModel: CadModel;
   readonly cadNode: CadNode;
   readonly nodeColors: Map<number, [number, number, number, number]>;
 
-  constructor(modelId: number, revisionId: number, model: CadModel) {
+  constructor(model: CadModel) {
     super();
-    this.modelId = modelId;
-    this.revisionId = revisionId;
     this.cadModel = model;
     this.nodeColors = new Map();
     const nodeAppearance: NodeAppearance = {
@@ -185,11 +178,3 @@ export class Cognite3DModel extends THREE.Object3D {
   }
 }
 
-export async function createCognite3DModel(
-  modelId: number,
-  revisionId: number,
-  client: CogniteClient
-): Promise<Cognite3DModel> {
-  const model = await loadCadModelFromCdf(client, revisionId);
-  return new Cognite3DModel(modelId, revisionId, model);
-}
