@@ -6,12 +6,14 @@ import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import ComboControls from '@cognite/three-combo-controls';
 
-import { Cognite3DModel, createCognite3DModel } from './Cognite3DModel';
+import { Cognite3DModel } from './Cognite3DModel';
 import { Cognite3DViewerOptions, AddModelOptions, Cognite3DThreeRenderer } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { Intersection } from './intersection';
 import { CogniteClient } from '@cognite/sdk';
 import RenderController from './RenderController';
+import { loadCadModelByUrl } from '../datasources/local';
+import { loadCadModelFromCdf } from '../datasources/cognitesdk/cad/loadCadModelFromCdf';
 
 export class Cognite3DViewer {
   private get canvas(): HTMLCanvasElement {
@@ -143,14 +145,21 @@ export class Cognite3DViewer {
   }
 
   async addModel(options: AddModelOptions): Promise<Cognite3DModel> {
-    if (options.localPath) {
-      throw new NotSupportedInMigrationWrapperError();
-    } else {
-      const model3d = await createCognite3DModel(options.modelId, options.revisionId, this.sdkClient);
-      this.models.push(model3d);
-      this.scene.add(model3d);
-      return model3d;
+    const { localPath, modelId, revisionId } = options;
+    const model = await (() => {
+      if (localPath) {
+        return loadCadModelByUrl(localPath);
+      } else if (modelId && revisionId) {
+        return loadCadModelFromCdf(this.sdkClient, revisionId);
+      }
+    })();
+    if (!model) {
+      throw new Error('AddModelOptions must have either localPath or modelId and revisionId set');
     }
+    const model3d = new Cognite3DModel(model);
+    this.models.push(model3d);
+    this.scene.add(model3d);
+    return model3d;
   }
 
   addObject3D(_object: THREE.Object3D): void {

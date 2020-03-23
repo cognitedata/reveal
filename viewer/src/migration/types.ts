@@ -51,8 +51,8 @@ export interface GeometryFilter {
 }
 
 export interface AddModelOptions {
-  modelId: number;
-  revisionId: number;
+  modelId?: number;
+  revisionId?: number;
   // if you need to access local files, this is where you would specify it
   localPath?: string;
   geometryFilter?: GeometryFilter;

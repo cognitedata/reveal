@@ -8,21 +8,17 @@ import { Color } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { CadModel } from '../models/cad/CadModel';
 import { toThreeJsBox3, CadNode } from '../views/threejs';
-import { loadCadModelFromCdf } from '../datasources/cognitesdk';
 import { CadRenderHints } from '../views/CadRenderHints';
 import { CogniteClient } from '@cognite/sdk';
 import { CadLoadingHints } from '../models/cad/CadLoadingHints';
+import { CadLoadingHints } from '../models/cad/CadLoadingHints';
 
 export class Cognite3DModel extends THREE.Object3D {
-  readonly modelId: number;
-  readonly revisionId: number;
   readonly cadModel: CadModel;
   readonly cadNode: CadNode;
 
-  constructor(modelId: number, revisionId: number, model: CadModel, cadNode: CadNode) {
+  constructor(model: CadModel, cadNode: CadNode) {
     super();
-    this.modelId = modelId;
-    this.revisionId = revisionId;
     this.cadModel = model;
     this.cadNode = cadNode;
 
@@ -112,14 +108,4 @@ export class Cognite3DModel extends THREE.Object3D {
   hideNode(_nodeId: number, _makeGray?: boolean): void {
     throw new NotSupportedInMigrationWrapperError();
   }
-}
-
-export async function createCognite3DModel(
-  modelId: number,
-  revisionId: number,
-  client: CogniteClient
-): Promise<Cognite3DModel> {
-  const model = await loadCadModelFromCdf(client, revisionId);
-  const node = new CadNode(model);
-  return new Cognite3DModel(modelId, revisionId, model, node);
 }
