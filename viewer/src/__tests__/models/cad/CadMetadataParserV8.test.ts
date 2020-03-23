@@ -3,7 +3,7 @@
  */
 
 import { CadMetadataV8, parseCadMetadataV8, CadSectorMetadataV8 } from '../../../models/cad/CadMetadataParserV8';
-import { SectorScene, SectorMetadata } from '../../../models/cad/types';
+import { SectorMetadata } from '../../../models/cad/types';
 import { Box3 } from '../../../utils/Box3';
 import { vec3 } from 'gl-matrix';
 import { traverseDepthFirst } from '../../../utils/traversal';
@@ -47,18 +47,15 @@ describe('parseCadMetadataV8', () => {
       facesFile: sectorRoot.facesFile,
       children: []
     };
-    const expected: SectorScene = {
-      version: 8,
-      maxTreeIndex: 8000,
-      root: expectedRoot,
-      sectors: new Map<number, SectorMetadata>([[expectedRoot.id, expectedRoot]])
-    };
 
     // Act
     const scene = parseCadMetadataV8(metadata);
 
     // Assert
-    expect(scene).toEqual(expected);
+    expect(scene.version).toBe(8);
+    expect(scene.maxTreeIndex).toBe(8000);
+    expect(scene.root).toEqual(expectedRoot);
+    expect(scene.getSectorById(expectedRoot.id)).toEqual(expectedRoot);
   });
 
   test('Multiple sectors, relations are established', () => {

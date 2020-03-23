@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { SectorScene, SectorMetadata } from './types';
+import { SectorScene, SectorMetadata, SectorSceneImpl } from './types';
 import { Box3 } from '../../utils/Box3';
 import { vec3 } from 'gl-matrix';
 
@@ -79,20 +79,7 @@ export function parseCadMetadataV8(metadata: CadMetadataV8): SectorScene {
     throw new Error('Root sector not found, must have ID 0');
   }
 
-  const sceneDescriptor: SectorScene = {
-    version: metadata.version,
-    maxTreeIndex: metadata.maxTreeIndex,
-    root: rootSector,
-    sectors: sectorsById
-
-    // Available, but unused:
-    // projectId: metadata.projectId,
-    // modelId: metadata.modelId,
-    // revisionId: metadata.revisionId,
-    // subRevisionId: metadata.subRevisionId,
-    // unit: metadata.unit,
-  };
-  return sceneDescriptor;
+  return new SectorSceneImpl(metadata.version, metadata.maxTreeIndex, rootSector, sectorsById);
 }
 
 function createSectorMetadata(metadata: CadSectorMetadataV8): SectorMetadata {
