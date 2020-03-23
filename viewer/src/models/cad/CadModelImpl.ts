@@ -17,6 +17,7 @@ export class CadModelImpl implements CadModel {
   public get scene(): SectorScene {
     return this._scene!;
   }
+
   /**
    * Creates and initializes a instance by loading metadata through the retriever provided.
    * @param dataRetriever         Data retriever used to fetch geometry and model metadata.
@@ -68,7 +69,7 @@ export class CadModelImpl implements CadModel {
   }
 
   public async fetchSectorDetailed(sectorId: number): Promise<Uint8Array> {
-    const sector = this.scene.sectors.get(sectorId);
+    const sector = this.scene.getSectorById(sectorId);
     if (!sector) {
       throw new Error(`Could not find sector with ID ${sectorId}`);
     }
@@ -77,7 +78,7 @@ export class CadModelImpl implements CadModel {
   }
 
   public async fetchSectorSimple(sectorId: number): Promise<Uint8Array> {
-    const sector = this.scene.sectors.get(sectorId);
+    const sector = this.scene.getSectorById(sectorId);
     if (!sector) {
       throw new Error(`Could not find sector with ID ${sectorId}`);
     }
