@@ -304,8 +304,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
         let to_renderables = quote! {
             for item in &raw_primitives.#snake_name_collection_ident {
-                collections.tree_index_to_node_id_map.insert(item.tree_index, item.node_id + 1);
-                collections.node_id_to_tree_index_map.insert(item.node_id + 1, item.tree_index);
+                collections.tree_index_to_node_id_map.insert(item.tree_index, item.node_id);
+                collections.node_id_to_tree_index_map.insert(item.node_id, item.tree_index);
                 item.to_renderables(&mut collections);
             }
         };

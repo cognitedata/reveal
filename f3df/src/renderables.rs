@@ -77,8 +77,8 @@ pub fn convert_sector(sector: &crate::Sector) -> Sector {
         let compress_type = node.compress_type;
         let tree_index = node.tree_index;
         let node_id = node.node_id;
-        node_id_to_tree_index_map.insert(node_id + 1, tree_index);
-        tree_index_to_node_id_map.insert(tree_index, node_id + 1);
+        node_id_to_tree_index_map.insert(node_id, tree_index);
+        tree_index_to_node_id_map.insert(tree_index, node_id);
 
         for face in &node.faces {
             let cell_index = face.index as u64;

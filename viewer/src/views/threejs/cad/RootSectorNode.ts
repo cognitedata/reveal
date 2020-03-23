@@ -35,9 +35,7 @@ export class RootSectorNode extends SectorNode {
     this.sectorNodeMap = new Map();
     this.materials = materials;
     this._nodeIdToTreeIndexMap = new Map();
-    this._nodeIdToTreeIndexMap.set(0, 0);
     this._treeIndexToNodeIdMap = new Map();
-    this._treeIndexToNodeIdMap.set(0, 0);
 
     this.consumeSectorCache = new MemoryRequestCache<string, ParsedSector, THREE.Group>(
       (_hash: string, sector: ParsedSector) => this.consumeImpl(sector.id, sector)
@@ -76,12 +74,14 @@ export class RootSectorNode extends SectorNode {
           const simpleData = data as SectorQuads;
           this._nodeIdToTreeIndexMap = new Map([...this._nodeIdToTreeIndexMap, ...simpleData.nodeIdToTreeIndexMap]);
           this._treeIndexToNodeIdMap = new Map([...this._treeIndexToNodeIdMap, ...simpleData.treeIndexToNodeIdMap]);
+          this.dispatchEvent({ type: 'nodeIdToTreeIndexMapUpdated', sector });
           return consumeSectorSimple(id, simpleData, metadata, this.materials);
         }
         case LevelOfDetail.Detailed: {
           const detailedData = data as Sector;
           this._nodeIdToTreeIndexMap = new Map([...this._nodeIdToTreeIndexMap, ...detailedData.nodeIdToTreeIndexMap]);
           this._treeIndexToNodeIdMap = new Map([...this._treeIndexToNodeIdMap, ...detailedData.treeIndexToNodeIdMap]);
+          this.dispatchEvent({ type: 'nodeIdToTreeIndexMapUpdated', sector });
           return consumeSectorDetailed(id, detailedData, metadata, this.materials);
         }
         default:

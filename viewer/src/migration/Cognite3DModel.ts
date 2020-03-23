@@ -38,7 +38,7 @@ export class Cognite3DModel extends THREE.Object3D {
     };
     this.cadNode = new CadNode(model, { nodeAppearance });
     const that = this;
-    this.cadNode.addEventListener('sectorParsed', event => {
+    this.cadNode.rootSector.addEventListener('nodeIdToTreeIndexMapUpdated', event => {
       const { sector } = event;
       switch (sector.levelOfDetail) {
         case LevelOfDetail.Simple: {
@@ -130,6 +130,10 @@ export class Cognite3DModel extends THREE.Object3D {
       g,
       b
     };
+  }
+
+  test() {
+    console.log('node id', this.cadNode.rootSector.treeIndexToNodeIdMap);
   }
 
   setNodeColor(nodeId: number, r: number, g: number, b: number): void {

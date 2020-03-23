@@ -191,7 +191,6 @@ export class CadNode extends THREE.Object3D {
             distinctUntilLevelOfDetailChanged(),
             loadSectorOperator,
             filterCurrentWantedSectors(wantedSectors),
-            tap((sector: ParsedSector) => this.dispatchEvent({ type: 'sectorParsed', sector })),
             consumeSectorOperator
           )
         )
