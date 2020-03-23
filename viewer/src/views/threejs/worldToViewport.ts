@@ -15,8 +15,8 @@ export function from3DPositionToRelativeViewportCoordinates(
   position3D: THREE.Vector3
 ): THREE.Vector3 {
   const relativePosition = position3D.clone().project(camera);
-  relativePosition.addScalar(1).multiplyScalar(0.5);
-  relativePosition.y = -relativePosition.y; // Is it better to have a multiply with a 0.5, -0.5 vector?
+  relativePosition.y = -relativePosition.y;
+  relativePosition.addScalar(1).multiplyScalar(0.5); // Is it better to have a multiply with a 0.5, -0.5 vector?
   return relativePosition;
 }
 
@@ -26,6 +26,7 @@ export function worldToViewport(
   position3D: THREE.Vector3
 ): Position2D {
   const normalizedDeviceCoordinates = from3DPositionToRelativeViewportCoordinates(camera, position3D);
+  console.log(normalizedDeviceCoordinates);
   return {
     x: Math.round(normalizedDeviceCoordinates.x * (canvas.width / window.devicePixelRatio)),
     y: Math.round(normalizedDeviceCoordinates.y * (canvas.height / window.devicePixelRatio))
