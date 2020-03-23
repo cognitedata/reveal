@@ -163,7 +163,7 @@ export class Cognite3DModel extends THREE.Object3D {
     const nodeIdRequest = new Subject<NodeIdRequest>();
     nodeIdRequest
       .pipe(
-        bufferTime(3000),
+        bufferTime(50),
         filter((requests: NodeIdRequest[]) => requests.length > 0),
         flatMap(async (requests: NodeIdRequest[]) => {
           const responses = await this.client.revisions3D.retrieve3DNodes(
