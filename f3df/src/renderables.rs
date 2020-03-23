@@ -44,6 +44,7 @@ fn compose_face_matrix(
         * Matrix4::from(*rotation_matrix)
 }
 
+#[derive(Clone, Serialize)]
 pub struct Sector {
     pub faces: Vec<Face>,
     pub node_id_to_tree_index_map: HashMap<u64, u64>,
