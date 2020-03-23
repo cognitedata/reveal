@@ -22,9 +22,8 @@ async function main() {
   const viewer = new reveal_migration.Cognite3DViewer({ sdk: client, domElement });
   (window as any).viewer = viewer;
 
-  async function addModel(modelId: number, revisionId: number) {
-    const model = await reveal_migration.createCognite3DModel(modelId, revisionId, client);
-    await viewer.addModel(model);
+  async function addModel(options: reveal_migration.AddModelOptions) {
+    const model = await viewer.addModel(options);
     viewer.fitCameraToModel(model);
     models.push(model);
   }
