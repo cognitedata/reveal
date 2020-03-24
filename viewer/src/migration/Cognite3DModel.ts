@@ -10,23 +10,11 @@ import { CadModel } from '../models/cad/CadModel';
 import { toThreeJsBox3, CadNode, NodeAppearance } from '../views/threejs';
 import { loadCadModelFromCdf } from '../datasources/cognitesdk';
 import { CadRenderHints } from '../views/CadRenderHints';
-import { CogniteClient, InternalId, Node3D } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk';
 import { CadLoadingHints } from '../models/cad/CadLoadingHints';
-import { Subject } from 'rxjs';
-import { bufferTime, flatMap, filter } from 'rxjs/operators';
-
-interface NodeIdRequest {
-  nodeId: InternalId;
-  onComplete: (treeIndex: number) => void;
-}
-
-interface NodeIdResponse {
-  requests: NodeIdRequest[];
-  responses: Node3D[];
-}
+import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 
 export class Cognite3DModel extends THREE.Object3D {
-
   get renderHints(): CadRenderHints {
     return this.cadNode.renderHints;
   }
@@ -46,11 +34,9 @@ export class Cognite3DModel extends THREE.Object3D {
   readonly revisionId: number;
   readonly cadModel: CadModel;
   readonly cadNode: CadNode;
-  readonly nodeIdRequest: Subject<NodeIdRequest>;
   readonly nodeColors: Map<number, [number, number, number, number]>;
-  readonly treeIndexToNodeIdMap: Map<number, number>;
-  readonly nodeIdToTreeIndexMap: Map<number, number>;
   readonly client: CogniteClient;
+  readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
 
   constructor(modelId: number, revisionId: number, model: CadModel, client: CogniteClient) {
     super();
@@ -59,16 +45,13 @@ export class Cognite3DModel extends THREE.Object3D {
     this.cadModel = model;
     this.client = client;
     this.nodeColors = new Map();
-    this.nodeIdToTreeIndexMap = new Map();
-    this.treeIndexToNodeIdMap = new Map();
     const nodeAppearance: NodeAppearance = {
       color: (treeIndex: number) => {
         return this.nodeColors.get(treeIndex);
       }
     };
     this.cadNode = new CadNode(model, { nodeAppearance });
-    this.nodeIdRequest = this.setupPipeline();
-    this.setupPipeline();
+    this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client);
 
     this.children.push(this.cadNode);
   }
@@ -108,20 +91,10 @@ export class Cognite3DModel extends THREE.Object3D {
   }
 
   setNodeColor(nodeId: number, r: number, g: number, b: number): void {
-    const treeIndex = this.nodeIdToTreeIndexMap.get(nodeId);
-    if (treeIndex !== undefined) {
+    (async () => {
+      const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
       this.setNodeColorByTreeIndex(treeIndex, r, g, b);
-      return;
-    }
-
-    this.nodeIdRequest.next({
-      nodeId: {
-        id: nodeId
-      },
-      onComplete: (treeIndexx: number) => {
-        this.setNodeColorByTreeIndex(treeIndexx, r, g, b);
-      }
-    });
+    })();
   }
 
   resetNodeColor(_nodeId: number): void {
@@ -157,36 +130,6 @@ export class Cognite3DModel extends THREE.Object3D {
   private setNodeColorByTreeIndex(treeIndex: number, r: number, g: number, b: number) {
     this.nodeColors.set(treeIndex, [r, g, b, 255]);
     this.cadNode.requestNodeUpdate([treeIndex]);
-  }
-
-  private setupPipeline() {
-    const nodeIdRequest = new Subject<NodeIdRequest>();
-    nodeIdRequest
-      .pipe(
-        bufferTime(50),
-        filter((requests: NodeIdRequest[]) => requests.length > 0),
-        flatMap(async (requests: NodeIdRequest[]) => {
-          const responses = await this.client.revisions3D.retrieve3DNodes(
-            this.modelId,
-            this.revisionId,
-            Array.from(requests.map(request => request.nodeId))
-          );
-          return {
-            requests,
-            responses
-          };
-        })
-      )
-      .subscribe((response: NodeIdResponse) => {
-        response.responses.forEach((node, index) => {
-          this.treeIndexToNodeIdMap.set(node.treeIndex, node.id);
-          this.nodeIdToTreeIndexMap.set(node.id, node.treeIndex);
-          if (response.requests[index]) {
-            response.requests[index].onComplete(node.treeIndex);
-          }
-        });
-      });
-    return nodeIdRequest;
   }
 }
 
