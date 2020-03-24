@@ -35,7 +35,6 @@ matrix:
         # Install codecov for test coverage reports
         - npm install -g codecov
       script:
-        - bash scripts/verify-package-lock.sh
         - cd $TRAVIS_BUILD_DIR/viewer
         - nvm use 12
         - npm install
