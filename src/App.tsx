@@ -16,7 +16,7 @@ const App = () => {
 
   const clickHandler = () => {
     setCrashing(true);
-    fakeHelperFunction().then(output => {
+    fakeHelperFunction().then((output) => {
       // This will never be seen.
       setButtonText(output);
     });
