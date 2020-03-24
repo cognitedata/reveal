@@ -92,8 +92,12 @@ export class Cognite3DModel extends THREE.Object3D {
 
   setNodeColor(nodeId: number, r: number, g: number, b: number): void {
     (async () => {
-      const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-      this.setNodeColorByTreeIndex(treeIndex, r, g, b);
+      try {
+        const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+        this.setNodeColorByTreeIndex(treeIndex, r, g, b);
+      } catch (error) {
+        console.error(`Cannot set color of ${nodeId} because of error:`, error);
+      }
     })();
   }
 
