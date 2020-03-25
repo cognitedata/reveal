@@ -10,13 +10,14 @@ export interface Position2D {
   y: number;
 }
 
-function from3DPositionToRelativeViewportPosition(
+export function from3DPositionToRelativeViewportCoordinates(
   camera: THREE.PerspectiveCamera,
   position3D: THREE.Vector3
-): Position2D {
-  const vector = position3D.clone();
-  vector.project(camera);
-  return { x: 0.5 + vector.x / 2, y: 0.5 - vector.y / 2 };
+): THREE.Vector3 {
+  const relativePosition = position3D.clone().project(camera);
+  relativePosition.y = -relativePosition.y;
+  relativePosition.addScalar(1).multiplyScalar(0.5); // Is it better to have a multiply with a 0.5, -0.5 vector?
+  return relativePosition;
 }
 
 export function worldToViewport(
@@ -24,9 +25,9 @@ export function worldToViewport(
   camera: THREE.PerspectiveCamera,
   position3D: THREE.Vector3
 ): Position2D {
-  const relativePosition2D = from3DPositionToRelativeViewportPosition(camera, position3D);
+  const relativeCoordinates = from3DPositionToRelativeViewportCoordinates(camera, position3D);
   return {
-    x: Math.round(relativePosition2D.x * (canvas.width / window.devicePixelRatio)),
-    y: Math.round(relativePosition2D.y * (canvas.height / window.devicePixelRatio))
+    x: Math.round(relativeCoordinates.x * (canvas.width / window.devicePixelRatio)),
+    y: Math.round(relativeCoordinates.y * (canvas.height / window.devicePixelRatio))
   };
 }
