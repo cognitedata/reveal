@@ -12,6 +12,7 @@ import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWr
 import { Intersection } from './intersection';
 import { CogniteClient } from '@cognite/sdk';
 import RenderController from './RenderController';
+import { from3DPositionToRelativeViewportCoordinates } from '../views/threejs/worldToViewport';
 
 export class Cognite3DViewer {
   private get canvas(): HTMLCanvasElement {
@@ -76,6 +77,7 @@ export class Cognite3DViewer {
 
     this.sdkClient = options.sdk;
     this.renderController = new RenderController(this.camera);
+
     this.animate(0);
   }
 
@@ -224,7 +226,17 @@ export class Cognite3DViewer {
   }
 
   worldToScreen(_point: THREE.Vector3, _normalize?: boolean): THREE.Vector2 | null {
-    throw new NotSupportedInMigrationWrapperError();
+    const p = from3DPositionToRelativeViewportCoordinates(this.camera, _point);
+    if (p.x < 0 || p.x > 1 || p.y < 0 || p.y > 1 || p.z < 0 || p.z > 1) {
+      // Return null if point is outside camera frustum.
+      return null;
+    }
+    if (!_normalize) {
+      const canvas = this.renderer.domElement;
+      p.x = Math.round(p.x * canvas.clientWidth);
+      p.y = Math.round(p.y * canvas.clientHeight);
+    }
+    return new THREE.Vector2(p.x, p.y);
   }
 
   getScreenshot(_width?: number, _height?: number): Promise<string> {
