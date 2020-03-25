@@ -39,7 +39,7 @@
     "file-loader": "^6.0.0",
     "glslify-loader": "^2.0.0",
     "html-webpack-plugin": "4.0.1",
-    "jest": "^25.1.0",
+    "jest": "^25.2.0",
     "jest-canvas-mock": "^2.2.0",
     "jest-extended": "^0.11.5",
     "nock": "^12.0.3",
