@@ -55,6 +55,10 @@ export class NodeIdAndTreeIndexMaps {
     return result;
   }
 
+  getNodeId(treeIndex: number): number | undefined {
+    return this.treeIndexToNodeIdMap.get(treeIndex);
+  }
+
   updateMaps(sector: ParsedSector) {
     switch (sector.levelOfDetail) {
       case LevelOfDetail.Simple: {

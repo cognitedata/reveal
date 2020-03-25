@@ -160,6 +160,10 @@ export class Cognite3DModel extends THREE.Object3D {
     throw new NotSupportedInMigrationWrapperError();
   }
 
+  getNodeId(treeIndex: number): number | undefined {
+    return this.nodeIdAndTreeIndexMaps.getNodeId(treeIndex);
+  }
+
   private setNodeColorByTreeIndex(treeIndex: number, r: number, g: number, b: number) {
     this.nodeColors.set(treeIndex, [r, g, b, 255]);
     this.cadNode.requestNodeUpdate([treeIndex]);
