@@ -8,65 +8,15 @@ import { Color } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { CadModel } from '../models/cad/CadModel';
 import { toThreeJsBox3, CadNode } from '../views/threejs';
+import { loadCadModelFromCdf } from '../datasources/cognitesdk';
 import { CadRenderHints } from '../views/CadRenderHints';
 import { NodeAppearance } from '../views/common/cad/NodeAppearance';
 import { CadLoadingHints } from '../models/cad/CadLoadingHints';
-import { LevelOfDetail } from '../data/model/LevelOfDetail';
-import { SectorQuads, Sector } from '../models/cad/types';
 import { ParsedSector } from '../data/model/ParsedSector';
+import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
+import { CogniteClient } from '@cognite/sdk';
 
 export class Cognite3DModel extends THREE.Object3D {
-  readonly cadModel: CadModel;
-  readonly cadNode: CadNode;
-  readonly nodeColors: Map<number, [number, number, number, number]>;
-  private nodeIdToTreeIndexMap: Map<number, number>;
-  private treeIndexToNodeIdMap: Map<number, number>;
-
-  constructor(model: CadModel) {
-    super();
-    this.cadModel = model;
-    this.nodeColors = new Map();
-    this.nodeIdToTreeIndexMap = new Map();
-    this.treeIndexToNodeIdMap = new Map();
-    const nodeAppearance: NodeAppearance = {
-      color: (treeIndex: number) => {
-        if (!this.cadNode) {
-          return;
-        }
-        const nodeId = this.treeIndexToNodeIdMap.get(treeIndex);
-        if (!nodeId) {
-          // TODO get updates from cadNode when the map is updated
-          return;
-        }
-        return this.nodeColors.get(nodeId);
-      }
-    };
-    const that = this;
-    this.cadNode = new CadNode(model, {
-      nodeAppearance,
-      internal: {
-        parseCallback: (sector: ParsedSector) => {
-          switch (sector.levelOfDetail) {
-            case LevelOfDetail.Simple: {
-              const simpleData = sector.data as SectorQuads;
-              that.updateMapsAndRequestUpdate(simpleData.nodeIdToTreeIndexMap);
-              break;
-            }
-            case LevelOfDetail.Detailed: {
-              const detailedData = sector.data as Sector;
-              that.updateMapsAndRequestUpdate(detailedData.nodeIdToTreeIndexMap);
-              break;
-            }
-            default: {
-              break;
-            }
-          }
-        }
-      }
-    });
-    this.children.push(this.cadNode);
-  }
-
   get renderHints(): CadRenderHints {
     return this.cadNode.renderHints;
   }
@@ -81,6 +31,38 @@ export class Cognite3DModel extends THREE.Object3D {
 
   set loadingHints(hints: CadLoadingHints) {
     this.cadNode.loadingHints = hints;
+  }
+  readonly modelId: number;
+  readonly revisionId: number;
+  readonly cadModel: CadModel;
+  readonly cadNode: CadNode;
+  readonly nodeColors: Map<number, [number, number, number, number]>;
+  readonly client: CogniteClient;
+  readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
+
+  constructor(modelId: number, revisionId: number, model: CadModel, client: CogniteClient) {
+    super();
+    this.modelId = modelId;
+    this.revisionId = revisionId;
+    this.cadModel = model;
+    this.client = client;
+    this.nodeColors = new Map();
+    this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client);
+    const nodeAppearance: NodeAppearance = {
+      color: (treeIndex: number) => {
+        return this.nodeColors.get(treeIndex);
+      }
+    };
+    this.cadNode = new CadNode(model, {
+      nodeAppearance,
+      internal: {
+        parseCallback: (sector: ParsedSector) => {
+          this.nodeIdAndTreeIndexMaps.updateMaps(sector);
+        }
+      }
+    });
+
+    this.children.push(this.cadNode);
   }
 
   dispose() {
@@ -131,13 +113,25 @@ export class Cognite3DModel extends THREE.Object3D {
   }
 
   setNodeColor(nodeId: number, r: number, g: number, b: number): void {
-    this.nodeColors.set(nodeId, [r, g, b, 255]);
-    this.refreshNodeColor(nodeId);
+    (async () => {
+      try {
+        const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+        this.setNodeColorByTreeIndex(treeIndex, r, g, b);
+      } catch (error) {
+        console.error(`Cannot set color of ${nodeId} because of error:`, error);
+      }
+    })();
   }
 
   resetNodeColor(nodeId: number): void {
-    this.nodeColors.delete(nodeId);
-    this.refreshNodeColor(nodeId);
+    (async () => {
+      try {
+        const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+        this.nodeColors.delete(treeIndex);
+      } catch (error) {
+        console.error(`Cannot reset color of ${nodeId} because of error:`, error);
+      }
+    })();
   }
 
   selectNode(_nodeId: number): void {
@@ -166,24 +160,17 @@ export class Cognite3DModel extends THREE.Object3D {
     throw new NotSupportedInMigrationWrapperError();
   }
 
-  private updateMapsAndRequestUpdate(nodeIdToTreeIndexMap: Map<number, number>) {
-    for (const [nodeId, treeIndex] of nodeIdToTreeIndexMap) {
-      this.nodeIdToTreeIndexMap.set(nodeId, treeIndex);
-      this.treeIndexToNodeIdMap.set(treeIndex, nodeId);
-    }
-    const treeIndices = Array.from(nodeIdToTreeIndexMap)
-      .filter(([nodeId]) => this.nodeColors.has(nodeId))
-      .map(([_nodeId, treeIndex]) => treeIndex);
-    if (treeIndices.length > 0) {
-      this.cadNode.requestNodeUpdate(treeIndices);
-    }
-  }
-
-  private refreshNodeColor(nodeId: number) {
-    const treeIndex = this.nodeIdToTreeIndexMap.get(nodeId);
-    if (!treeIndex) {
-      return;
-    }
+  private setNodeColorByTreeIndex(treeIndex: number, r: number, g: number, b: number) {
+    this.nodeColors.set(treeIndex, [r, g, b, 255]);
     this.cadNode.requestNodeUpdate([treeIndex]);
   }
+}
+
+export async function createCognite3DModel(
+  modelId: number,
+  revisionId: number,
+  client: CogniteClient
+): Promise<Cognite3DModel> {
+  const model = await loadCadModelFromCdf(client, revisionId);
+  return new Cognite3DModel(modelId, revisionId, model, client);
 }
