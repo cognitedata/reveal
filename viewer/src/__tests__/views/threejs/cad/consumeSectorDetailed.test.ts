@@ -10,7 +10,7 @@ import { createEmptySector } from '../../../models/cad/emptySector';
 import { createMaterials } from '../../../../views/threejs/cad/materials';
 import 'jest-extended';
 
-const materials = createMaterials();
+const materials = createMaterials(10);
 
 describe('consumeSectorDetailed', () => {
   const metadata: SectorMetadata = {
