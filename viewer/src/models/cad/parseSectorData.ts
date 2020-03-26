@@ -118,10 +118,11 @@ export function createParser(fetchCtmFile: FetchCtmDelegate): ParseSectorDelegat
             const triCount = fileTriangleCounts[i];
             const [r, g, b] = readColorToFloat32s(colors, meshIdx);
 
-            sharedTreeIndices.fill(treeIndex, triOffset, triOffset + triCount);
             for (let triIdx = triOffset; triIdx < triOffset + triCount; triIdx++) {
               for (let j = 0; j < 3; j++) {
                 const vIdx = indices[3 * triIdx + j];
+
+                sharedTreeIndices[vIdx] = treeIndex;
 
                 sharedColors[3 * vIdx] = r;
                 sharedColors[3 * vIdx + 1] = g;
