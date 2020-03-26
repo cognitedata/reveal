@@ -104,9 +104,7 @@ export class ParserWorker {
     const result = {
       indices,
       vertices,
-      normals,
-      colors: new Float32Array(indices.length),
-      treeIndices: new Float32Array(indices.length)
+      normals
     };
     ctm.free();
     return result;
