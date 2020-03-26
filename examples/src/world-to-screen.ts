@@ -65,10 +65,15 @@ async function main() {
 
     if (controlsNeedUpdate || modelNeedsUpdate || pickingNeedsUpdate) {
       renderer.render(scene, camera);
+      if (anchorPoint !== undefined) {
+        const { x, y } = reveal_threejs.worldToViewport(canvas, camera, anchorPoint);
+        updateHtmlElements(x, y, undefined);
+      }
     }
     requestAnimationFrame(render);
   };
 
+  let anchorPoint: THREE.Vector3 | undefined;
   const onLeftMouseDown = (event: MouseEvent) => {
     if (event.button === MOUSE.RIGHT) {
       return;
@@ -97,9 +102,11 @@ async function main() {
       }
       if (pickedNode) {
         updatedNodes.push(pickedNode);
-        const { x, y } = reveal_threejs.worldToViewport(canvas, camera, revealPickResult!.point);
+        anchorPoint = revealPickResult!.point;
+        const { x, y } = reveal_threejs.worldToViewport(canvas, camera, revealPickResult!.point)
         updateHtmlElements(x, y, text);
       } else {
+        anchorPoint = undefined;
         updateHtmlElements(0, 0, text);
       }
       cadNode.requestNodeUpdate(updatedNodes);
@@ -139,10 +146,12 @@ function createHtmlElements() {
   htmlElement.appendChild(paragraph);
 
   htmlElement.className = 'htmlOverlay';
-  const updateHtmlElements = (x: number, y: number, text: string) => {
+  const updateHtmlElements = (x: number, y: number, text: string | undefined) => {
     htmlElement.style.top = `${y}px`;
     htmlElement.style.left = `${x}px`;
-    paragraph.textContent = text;
+    if (text !== undefined) {
+      paragraph.textContent = text;
+    }
   };
   return { htmlElement, updateHtmlElements };
 }
