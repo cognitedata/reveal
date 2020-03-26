@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { Subject, Observable } from 'rxjs';
-import { publish, share, auditTime, switchAll, flatMap, tap, map } from 'rxjs/operators';
+import { publish, share, auditTime, switchAll, flatMap, map } from 'rxjs/operators';
 
 import { SectorModelTransformation, SectorScene, SectorMetadata } from '../../../models/cad/types';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
@@ -173,11 +173,7 @@ export class CadNode extends THREE.Object3D {
         this._sectorCuller.determineSectors(),
 
         // Take sectors within budget
-        tap(c => console.log(`Want ${c.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded).length} sectors`)),
         map(wantedSectors => this.budget.filter(wantedSectors, this._sectorScene)),
-        tap(c => {
-          console.log(`Filtered to ${c.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded).length} sectors`);
-        }),
 
         // Load and consume
         share(),
