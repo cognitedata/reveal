@@ -24,7 +24,7 @@ export interface IntersectCadNodesResult {
   distance: number;
   point: THREE.Vector3;
   treeIndex: number;
-  cadNode: CadNode,
+  cadNode: CadNode;
   object: THREE.Object3D; // always CadNode
 }
 
@@ -47,7 +47,7 @@ export function intersectCadNode(cadNode: CadNode, input: IntersectCadNodesInput
   const pickingScene = new THREE.Scene();
   // TODO consider case where parent does not exist
   // TODO add warning if parent has transforms
-  const oldParent = cadNode.parent!;
+  const oldParent = cadNode.parent;
   pickingScene.add(cadNode);
   try {
     const pickInput = {

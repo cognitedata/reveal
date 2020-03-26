@@ -252,7 +252,7 @@ export class Cognite3DViewer {
         model,
         // TODO 2020-03-21 larsmoa: Map to nodeId,
         nodeId: -1,
-        treeIndex: -result.treeIndex,
+        treeIndex: result.treeIndex,
         point: result.point
       };
       return intersection;
@@ -268,7 +268,9 @@ export class Cognite3DViewer {
   private onClick(_callback: (event: PointerEvent) => void): void {
     throw new NotSupportedInMigrationWrapperError();
   }
-  private offClick(_callback: (event: PointerEvent) => void): void {}
+  private offClick(_callback: (event: PointerEvent) => void): void {
+    throw new NotSupportedInMigrationWrapperError();
+  }
   private onHover(_callback: (event: PointerEvent) => void): void {
     throw new NotSupportedInMigrationWrapperError();
   }

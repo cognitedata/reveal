@@ -177,42 +177,29 @@ export class CadNode extends THREE.Object3D {
   }
 
   private createLoadSectorsPipeline(): Subject<ThreeCameraConfig> {
-    const suspendLoading = this.loadingHints.suspendLoading;
-
     const loadSectorOperator = flatMap((s: WantedSector) => this._repository.loadSector(s));
     const consumeSectorOperator = flatMap((sector: ParsedSector) => this.rootSector.consumeSector(sector.id, sector));
-    function suspendIfLoadingToggled<T>(): OperatorFunction<T, T> {
-      return mergeMap<T, ObservableInput<T>>(x => (!suspendLoading ? of(x) : empty()));
-    }
 
     const pipeline = new Subject<ThreeCameraConfig>();
     pipeline
       .pipe(
         auditTime(100),
         fromThreeCameraConfig(),
-        suspendIfLoadingToggled(),
 
         // Determine all wanted sectors
         this._sectorCuller.determineSectors(),
 
         // Take sectors within budget
-        // tap(c => console.log(`Want ${c.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded).length} sectors`)),
         map(wantedSectors => this.budget.filter(wantedSectors, this._sectorScene)),
-        // tap(c => {
-        //   console.log(`Filtered to ${c.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded).length} sectors`);
-        // }),
 
         // Load and consume
         share(),
         publish((wantedSectors: Observable<WantedSector[]>) =>
           wantedSectors.pipe(
-            suspendIfLoadingToggled(),
             switchAll(),
             distinctUntilLevelOfDetailChanged(),
-            suspendIfLoadingToggled(),
             loadSectorOperator,
             filterCurrentWantedSectors(wantedSectors),
-            suspendIfLoadingToggled(),
             consumeSectorOperator
           )
         )
