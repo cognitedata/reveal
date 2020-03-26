@@ -56,13 +56,10 @@ async function main() {
   // Load model if provided by URL
   const modelIdStr = urlParams.get('modelId');
   const revisionIdStr = urlParams.get('revisionId');
-  const localPath = urlParams.get('localPath');
   if (modelIdStr && revisionIdStr) {
     const modelId = Number.parseInt(modelIdStr, 10);
     const revisionId = Number.parseInt(revisionIdStr, 10);
     addModel({ modelId, revisionId });
-  } else if (localPath) {
-    addModel({ localPath });
   }
 }
 
