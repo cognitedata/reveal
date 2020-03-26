@@ -5,13 +5,14 @@
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import ComboControls from '@cognite/three-combo-controls';
+import { CogniteClient } from '@cognite/sdk';
 
 import { Cognite3DModel, createCognite3DModel } from './Cognite3DModel';
-import { Cognite3DViewerOptions, AddModelOptions, Cognite3DThreeRenderer } from './types';
+import { Cognite3DViewerOptions, AddModelOptions } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { Intersection } from './intersection';
-import { CogniteClient } from '@cognite/sdk';
 import RenderController from './RenderController';
+import { intersectCadNodes } from '../threejs';
 import { from3DPositionToRelativeViewportCoordinates } from '../views/threejs/worldToViewport';
 
 export class Cognite3DViewer {
@@ -23,7 +24,7 @@ export class Cognite3DViewer {
   }
 
   readonly domElement: HTMLElement;
-  private readonly renderer: THREE.WebGLRenderer | Cognite3DThreeRenderer;
+  private readonly renderer: THREE.WebGLRenderer;
   private readonly camera: THREE.PerspectiveCamera;
   private readonly scene: THREE.Scene;
   private readonly controls: ComboControls;
@@ -242,8 +243,34 @@ export class Cognite3DViewer {
   getScreenshot(_width?: number, _height?: number): Promise<string> {
     throw new NotSupportedInMigrationWrapperError();
   }
-  getIntersectionFromPixel(_x: number, _y: number, _cognite3DModel?: Cognite3DModel): null | Intersection {
-    throw new NotSupportedInMigrationWrapperError();
+  getIntersectionFromPixel(x: number, y: number, _cognite3DModel?: Cognite3DModel): null | Intersection {
+    const nodes = this.models.map(x => x.cadNode);
+
+    const rect = this.renderer.domElement.getBoundingClientRect();
+    const coords = {
+      x: ((x - rect.left) / this.renderer.domElement.clientWidth) * 2 - 1,
+      y: ((y - rect.top) / this.renderer.domElement.clientHeight) * -2 + 1
+    };
+    const results = intersectCadNodes(nodes, {
+      coords,
+      camera: this.camera,
+      renderer: this.renderer
+    });
+
+    if (results) {
+      const result = results[0]; // Nearest intersection
+      const model: Cognite3DModel = this.models.find(v => v.cadNode === result.cadNode)!;
+      const intersection: Intersection = {
+        model,
+        // TODO 2020-03-21 larsmoa: Map to nodeId,
+        nodeId: -1,
+        treeIndex: result.treeIndex,
+        point: result.point
+      };
+      return intersection;
+    }
+
+    return null;
   }
 
   clearCache(): void {
