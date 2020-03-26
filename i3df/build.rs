@@ -304,6 +304,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
         let to_renderables = quote! {
             for item in &raw_primitives.#snake_name_collection_ident {
+                collections.tree_index_to_node_id_map.insert(item.tree_index, item.node_id);
+                collections.node_id_to_tree_index_map.insert(item.node_id, item.tree_index);
                 item.to_renderables(&mut collections);
             }
         };
@@ -397,7 +399,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let renderables_code = quote! {
         pub fn convert_primitives(raw_primitives: &i3df::PrimitiveCollections) -> PrimitiveCollections {
-            // TODO do not make a guess at 100, but instead calculate the actual number, which we
+            // TODO do not make a guess at capacity, but instead calculate the actual number, which we
             // should know already since we know how many renderables there are per file primitive
             let mut collections = PrimitiveCollections::with_capacity(10);
             #(#primitive_to_renderables)*

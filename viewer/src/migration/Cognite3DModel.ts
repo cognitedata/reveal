@@ -7,12 +7,14 @@ import * as THREE from 'three';
 import { Color } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { CadModel } from '../models/cad/CadModel';
-import { toThreeJsBox3, CadNode, NodeAppearance } from '../views/threejs';
+import { toThreeJsBox3, CadNode } from '../views/threejs';
 import { loadCadModelFromCdf } from '../datasources/cognitesdk';
 import { CadRenderHints } from '../views/CadRenderHints';
-import { CogniteClient } from '@cognite/sdk';
+import { NodeAppearance } from '../views/common/cad/NodeAppearance';
 import { CadLoadingHints } from '../models/cad/CadLoadingHints';
+import { ParsedSector } from '../data/model/ParsedSector';
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
+import { CogniteClient } from '@cognite/sdk';
 
 export class Cognite3DModel extends THREE.Object3D {
   get renderHints(): CadRenderHints {
@@ -45,13 +47,20 @@ export class Cognite3DModel extends THREE.Object3D {
     this.cadModel = model;
     this.client = client;
     this.nodeColors = new Map();
+    this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client);
     const nodeAppearance: NodeAppearance = {
       color: (treeIndex: number) => {
         return this.nodeColors.get(treeIndex);
       }
     };
-    this.cadNode = new CadNode(model, { nodeAppearance });
-    this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client);
+    this.cadNode = new CadNode(model, {
+      nodeAppearance,
+      internal: {
+        parseCallback: (sector: ParsedSector) => {
+          this.nodeIdAndTreeIndexMaps.updateMaps(sector);
+        }
+      }
+    });
 
     this.children.push(this.cadNode);
   }
@@ -86,23 +95,46 @@ export class Cognite3DModel extends THREE.Object3D {
     throw new NotSupportedInMigrationWrapperError();
   }
 
-  getNodeColor(_nodeId: number): Color {
-    throw new NotSupportedInMigrationWrapperError();
-  }
-
-  setNodeColor(nodeId: number, r: number, g: number, b: number): void {
-    (async () => {
-      try {
-        const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-        this.setNodeColorByTreeIndex(treeIndex, r, g, b);
-      } catch (error) {
-        console.error(`Cannot set color of ${nodeId} because of error:`, error);
+  async getNodeColor(nodeId: number): Promise<Color> {
+    try {
+      const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+      const color = this.nodeColors.get(treeIndex);
+      if (!color) {
+        // TODO: migration wrapper currently does not support looking up colors not set by the user
+        throw new NotSupportedInMigrationWrapperError();
       }
-    })();
+      const [r, g, b] = color;
+      return {
+        r,
+        g,
+        b
+      };
+    } catch (error) {
+      console.error(`Cannot get color of ${nodeId} because of error:`, error);
+      return {
+        r: 255,
+        g: 255,
+        b: 255
+      };
+    }
   }
 
-  resetNodeColor(_nodeId: number): void {
-    throw new NotSupportedInMigrationWrapperError();
+  async setNodeColor(nodeId: number, r: number, g: number, b: number): Promise<void> {
+    try {
+      const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+      this.setNodeColorByTreeIndex(treeIndex, r, g, b);
+    } catch (error) {
+      console.error(`Cannot set color of ${nodeId} because of error:`, error);
+    }
+  }
+
+  async resetNodeColor(nodeId: number): Promise<void> {
+    try {
+      const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+      this.nodeColors.delete(treeIndex);
+    } catch (error) {
+      console.error(`Cannot reset color of ${nodeId} because of error:`, error);
+    }
   }
 
   selectNode(_nodeId: number): void {
@@ -129,6 +161,10 @@ export class Cognite3DModel extends THREE.Object3D {
   }
   hideNode(_nodeId: number, _makeGray?: boolean): void {
     throw new NotSupportedInMigrationWrapperError();
+  }
+
+  tryGetNodeId(treeIndex: number): number | undefined {
+    return this.nodeIdAndTreeIndexMaps.getNodeId(treeIndex);
   }
 
   private setNodeColorByTreeIndex(treeIndex: number, r: number, g: number, b: number) {
