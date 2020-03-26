@@ -4,6 +4,7 @@
 
 uniform sampler2D colorDataTexture;
 uniform sampler2D overrideVisibilityPerTreeIndex;
+uniform vec2 dataTextureSize;
 
 varying float v_treeIndex;
 varying vec3 v_color;
@@ -12,10 +13,10 @@ varying vec3 v_normal;
 uniform int renderMode;
 
 void main() {
-    if (!determineVisibility(overrideVisibilityPerTreeIndex, v_treeIndex)) {
+    if (!determineVisibility(overrideVisibilityPerTreeIndex, dataTextureSize, v_treeIndex)) {
         discard;
     }
 
-    vec3 color = determineColor(v_color, colorDataTexture, v_treeIndex);
+    vec3 color = determineColor(v_color, colorDataTexture, dataTextureSize, v_treeIndex);
     updateFragmentColor(renderMode, color, v_treeIndex, v_normal, gl_FragCoord.z);
 }
