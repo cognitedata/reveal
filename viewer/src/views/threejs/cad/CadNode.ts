@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { Subject, Observable } from 'rxjs';
-import { publish, share, auditTime, switchAll, flatMap, map } from 'rxjs/operators';
+import { publish, share, auditTime, switchAll, flatMap, map, tap } from 'rxjs/operators';
 
 import { SectorModelTransformation, SectorScene, SectorMetadata } from '../../../models/cad/types';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
@@ -189,7 +189,7 @@ export class CadNode extends THREE.Object3D {
             filterCurrentWantedSectors(wantedSectors),
             tap((sector: ParsedSector) => {
               if (this._parseCallback) {
-                this._parseCallback(sector)
+                this._parseCallback(sector);
               }
             }),
             consumeSectorOperator
