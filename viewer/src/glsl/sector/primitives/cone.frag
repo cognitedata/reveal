@@ -12,6 +12,7 @@
 
 uniform sampler2D colorDataTexture;
 uniform sampler2D overrideVisibilityPerTreeIndex;
+uniform vec2 dataTextureSize;
 
 uniform mat4 projectionMatrix;
 
@@ -33,12 +34,12 @@ varying vec3 v_normal;
 uniform int renderMode;
 
 void main() {
-  if (!determineVisibility(overrideVisibilityPerTreeIndex, v_treeIndex)) {
+  if (!determineVisibility(overrideVisibilityPerTreeIndex, dataTextureSize, v_treeIndex)) {
     discard;
   }
 
   vec3 normal = normalize( v_normal );
-  vec3 color = determineColor(v_color, colorDataTexture, v_treeIndex);
+  vec3 color = determineColor(v_color, colorDataTexture, dataTextureSize, v_treeIndex);
 
   float R1 = v_centerB.w;
   vec4 U = v_U;
