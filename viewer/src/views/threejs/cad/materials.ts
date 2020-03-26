@@ -5,7 +5,6 @@
 import * as THREE from 'three';
 import { sectorShaders, shaderDefines } from './shaders';
 import { RenderMode } from '../materials';
-import { determinePowerOfTwoDimensions } from '../../../utils/determinePowerOfTwoDimensions';
 
 export interface Materials {
   // Materials
@@ -29,15 +28,18 @@ export interface Materials {
   overrideVisibilityPerTreeIndex: THREE.DataTexture;
 }
 
-export function createMaterials(treeIndexCount: number): Materials {
-  const textureDims = determinePowerOfTwoDimensions(treeIndexCount);
-  const textureElementCount = textureDims.width * textureDims.height;
+export function createMaterials(): Materials {
+  const pixelCount = 2048;
+  const colorCount = pixelCount * pixelCount;
+  const visibilityCount = pixelCount * pixelCount;
 
-  const colors = new Uint8Array(4 * textureElementCount);
-  const visibility = new Uint8Array(4 * textureElementCount);
-  visibility.fill(255);
-  const overrideColorPerTreeIndex = new THREE.DataTexture(colors, textureDims.width, textureDims.height);
-  const overrideVisibilityPerTreeIndex = new THREE.DataTexture(visibility, textureDims.width, textureDims.height);
+  const colors = new Uint8Array(4 * colorCount);
+  const visibility = new Uint8Array(4 * visibilityCount);
+  for (let i = 0; i < 4 * visibilityCount; i++) {
+    visibility[i] = 255;
+  }
+  const overrideColorPerTreeIndex = new THREE.DataTexture(colors, pixelCount, pixelCount);
+  const overrideVisibilityPerTreeIndex = new THREE.DataTexture(visibility, pixelCount, pixelCount);
 
   const boxMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Box)',

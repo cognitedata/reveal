@@ -8,8 +8,9 @@ import { PrimitiveAttributes } from '../../../../workers/types/parser.types';
 import { createEmptySector } from '../../../models/cad/emptySector';
 import { createMaterials } from '../../../../views/threejs/cad/materials';
 
+const materials = createMaterials();
+
 describe('createPrimitives', () => {
-  const materials = createMaterials(64);
   let emptySector: Sector;
 
   beforeEach(() => {
