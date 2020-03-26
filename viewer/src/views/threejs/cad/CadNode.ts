@@ -137,7 +137,7 @@ export class CadNode extends THREE.Object3D {
     return this._renderHints.showSectorBoundingBoxes || false;
   }
 
-  public update(camera: THREE.PerspectiveCamera) {
+  public update(camera: THREE.PerspectiveCamera): void {
     const cameraConfig: ThreeCameraConfig = {
       camera,
       modelTransformation: this.modelTransformation,
