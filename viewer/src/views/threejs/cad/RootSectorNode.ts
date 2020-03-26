@@ -60,13 +60,10 @@ export class RootSectorNode extends SectorNode {
           return new THREE.Group();
         }
         case LevelOfDetail.Simple: {
-          const simpleData = data as SectorQuads;
-          return consumeSectorSimple(id, simpleData, metadata, this.materials);
+          return consumeSectorSimple(id, data as SectorQuads, metadata, this.materials);
         }
         case LevelOfDetail.Detailed: {
-          const detailedData = data as Sector;
-          this.dispatchEvent({ type: 'nodeIdToTreeIndexMapUpdated', sector });
-          return consumeSectorDetailed(id, detailedData, metadata, this.materials);
+          return consumeSectorDetailed(id, data as Sector, metadata, this.materials);
         }
         default:
           throw new Error(`Unsupported level of detail ${sector.levelOfDetail}`);

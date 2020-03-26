@@ -95,43 +95,49 @@ export class Cognite3DModel extends THREE.Object3D {
     throw new NotSupportedInMigrationWrapperError();
   }
 
-  getNodeColor(nodeId: number): Color {
-    const color = this.nodeColors.get(nodeId);
-    if (!color) {
+  async getNodeColor(nodeId: number): Promise<Color> {
+    try {
+      const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+      const color = this.nodeColors.get(treeIndex);
+      if (!color) {
+        return {
+          r: 255,
+          g: 255,
+          b: 255
+        };
+      }
+      const [r, g, b] = color;
+      return {
+        r,
+        g,
+        b
+      };
+    } catch (error) {
+      console.error(`Cannot get color of ${nodeId} because of error:`, error);
       return {
         r: 255,
         g: 255,
         b: 255
       };
     }
-    const [r, g, b] = color;
-    return {
-      r,
-      g,
-      b
-    };
   }
 
-  setNodeColor(nodeId: number, r: number, g: number, b: number): void {
-    (async () => {
-      try {
-        const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-        this.setNodeColorByTreeIndex(treeIndex, r, g, b);
-      } catch (error) {
-        console.error(`Cannot set color of ${nodeId} because of error:`, error);
-      }
-    })();
+  async setNodeColor(nodeId: number, r: number, g: number, b: number): Promise<void> {
+    try {
+      const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+      this.setNodeColorByTreeIndex(treeIndex, r, g, b);
+    } catch (error) {
+      console.error(`Cannot set color of ${nodeId} because of error:`, error);
+    }
   }
 
-  resetNodeColor(nodeId: number): void {
-    (async () => {
-      try {
-        const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-        this.nodeColors.delete(treeIndex);
-      } catch (error) {
-        console.error(`Cannot reset color of ${nodeId} because of error:`, error);
-      }
-    })();
+  async resetNodeColor(nodeId: number): Promise<void> {
+    try {
+      const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+      this.nodeColors.delete(treeIndex);
+    } catch (error) {
+      console.error(`Cannot reset color of ${nodeId} because of error:`, error);
+    }
   }
 
   selectNode(_nodeId: number): void {
@@ -160,7 +166,7 @@ export class Cognite3DModel extends THREE.Object3D {
     throw new NotSupportedInMigrationWrapperError();
   }
 
-  getNodeId(treeIndex: number): number | undefined {
+  tryGetNodeId(treeIndex: number): number | undefined {
     return this.nodeIdAndTreeIndexMaps.getNodeId(treeIndex);
   }
 

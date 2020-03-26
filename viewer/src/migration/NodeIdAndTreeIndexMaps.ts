@@ -77,7 +77,7 @@ export class NodeIdAndTreeIndexMaps {
     }
   }
 
-  updateMapsFromMap(nodeIdToTreeIndexMap: Map<number, number>) {
+  private updateMapsFromMap(nodeIdToTreeIndexMap: Map<number, number>) {
     for (const [nodeId, treeIndex] of nodeIdToTreeIndexMap) {
       this.nodeIdToTreeIndexMap.set(nodeId, treeIndex);
       this.treeIndexToNodeIdMap.set(treeIndex, nodeId);
