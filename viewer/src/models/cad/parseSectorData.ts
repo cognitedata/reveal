@@ -103,13 +103,10 @@ export function createParser(fetchCtmFile: FetchCtmDelegate): ParseSectorDelegat
           const fileTriangleCounts = meshIndices.map(i => triangleCounts[i]);
           const offsets = createOffsetsArray(fileTriangleCounts);
           // Load CTM (geometry)
-          const {
-            indices,
-            vertices,
-            normals,
-            colors: sharedColors,
-            treeIndices: sharedTreeIndices
-          } = await loadCtmGeometryCache.request(fileId, null);
+          const { indices, vertices, normals } = await loadCtmGeometryCache.request(fileId, null);
+
+          const sharedColors = new Float32Array(indices.length);
+          const sharedTreeIndices = new Float32Array(indices.length);
 
           for (let i = 0; i < meshIndices.length; i++) {
             const meshIdx = meshIndices[i];
@@ -168,7 +165,7 @@ export function createParser(fetchCtmFile: FetchCtmDelegate): ParseSectorDelegat
             // hence we can look up only fileMeshIndices[0] instead of enumerating here
             const triangleCount = fileTriangleCounts[fileMeshIndices[0]];
             const instanceMatrixBuffer = new Float32Array(16 * fileMeshIndices.length);
-            const treeIndicesBuffer: number[] = new Array<number>(fileMeshIndices.length);
+            const treeIndicesBuffer = new Float32Array(fileMeshIndices.length);
             const colorBuffer = new Uint8Array(4 * fileMeshIndices.length);
             for (let i = 0; i < fileMeshIndices.length; i++) {
               const meshIdx = meshIndices[fileMeshIndices[i]];
@@ -184,7 +181,7 @@ export function createParser(fetchCtmFile: FetchCtmDelegate): ParseSectorDelegat
               triangleOffset,
               instanceMatrices: instanceMatrixBuffer,
               colors: colorBuffer,
-              treeIndices: Float32Array.from(treeIndicesBuffer)
+              treeIndices: treeIndicesBuffer
             });
           }
 
