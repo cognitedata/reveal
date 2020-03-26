@@ -53,7 +53,6 @@ export class CadNode extends THREE.Object3D {
   private _sectorCuller: SectorCuller<DetermineSectorsByProximityInput>;
   private _renderHints: CadRenderHints;
   private _loadingHints: CadLoadingHints;
-  private _renderMode: RenderMode;
   private _budget: CadBudget;
 
   private readonly _materialManager: MaterialManager;
@@ -91,10 +90,8 @@ export class CadNode extends THREE.Object3D {
     // Apply default hints
     this._renderHints = {};
     this._loadingHints = {};
-    this._renderMode = RenderMode.Color;
     this.renderHints = {};
     this.loadingHints = {};
-    this.renderMode = RenderMode.Color;
 
     const indices = [];
     for (let i = 0; i < scene.maxTreeIndex; i++) {
@@ -109,26 +106,11 @@ export class CadNode extends THREE.Object3D {
   }
 
   set renderMode(mode: RenderMode) {
-    this._renderMode = mode;
-    this._materialManager.materials.box.uniforms.renderMode.value = mode;
-    this._materialManager.materials.circle.uniforms.renderMode.value = mode;
-    this._materialManager.materials.generalRing.uniforms.renderMode.value = mode;
-    this._materialManager.materials.nut.uniforms.renderMode.value = mode;
-    this._materialManager.materials.quad.uniforms.renderMode.value = mode;
-    this._materialManager.materials.cone.uniforms.renderMode.value = mode;
-    this._materialManager.materials.eccentricCone.uniforms.renderMode.value = mode;
-    this._materialManager.materials.sphericalSegment.uniforms.renderMode.value = mode;
-    this._materialManager.materials.torusSegment.uniforms.renderMode.value = mode;
-    this._materialManager.materials.generalCylinder.uniforms.renderMode.value = mode;
-    this._materialManager.materials.trapezium.uniforms.renderMode.value = mode;
-    this._materialManager.materials.ellipsoidSegment.uniforms.renderMode.value = mode;
-    this._materialManager.materials.instancedMesh.uniforms.renderMode.value = mode;
-    this._materialManager.materials.triangleMesh.uniforms.renderMode.value = mode;
-    this._materialManager.materials.simple.uniforms.renderMode.value = mode;
+    this._materialManager.setRenderMode(mode);
   }
 
   get renderMode() {
-    return this._renderMode;
+    return this._materialManager.getRenderMode();
   }
 
   get budget() {
