@@ -74,6 +74,8 @@ export class ParserWorker {
     const trapeziums = collectAttributes(sectorData.trapezium_collection());
 
     const parseResult: ParseSectorResult = {
+      treeIndexToNodeIdMap: sectorData.tree_index_to_node_id_map(),
+      nodeIdToTreeIndexMap: sectorData.node_id_to_tree_index_map(),
       boxes,
       circles,
       cones,
@@ -111,9 +113,11 @@ export class ParserWorker {
   };
   parseQuads = async (buffer: Uint8Array): Promise<ParseQuadsResult> => {
     const rust = await rustModule;
-    const quads = rust.parse_and_convert_f3df(buffer);
+    const sectorData = rust.parse_and_convert_f3df(buffer);
     return {
-      data: quads
+      faces: sectorData.faces(),
+      treeIndexToNodeIdMap: sectorData.tree_index_to_node_id_map(),
+      nodeIdToTreeIndexMap: sectorData.node_id_to_tree_index_map()
     };
   };
 }

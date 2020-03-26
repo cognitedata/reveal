@@ -202,6 +202,8 @@ export function createParser(fetchCtmFile: FetchCtmDelegate): ParseSectorDelegat
       })();
 
       const sector: Sector = {
+        treeIndexToNodeIdMap: sectorResult.treeIndexToNodeIdMap,
+        nodeIdToTreeIndexMap: sectorResult.nodeIdToTreeIndexMap,
         boxes,
         circles,
         cones,
@@ -237,7 +239,9 @@ export async function createQuadsParser(): Promise<ParseSectorDelegate<SectorQua
         worker.parseQuads(quadsArrayBuffer)
       );
       return {
-        buffer: sectorResult.data
+        treeIndexToNodeIdMap: sectorResult.treeIndexToNodeIdMap,
+        nodeIdToTreeIndexMap: sectorResult.nodeIdToTreeIndexMap,
+        buffer: sectorResult.faces
       } as SectorQuads;
     } catch (err) {
       throw new Error(`Parsing quads sector ${sectorId} failed: ${err}`);
