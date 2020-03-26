@@ -11,8 +11,14 @@ export type CadLoadingHints = {
    * relative to screen size.
    */
   maxQuadSize?: number;
+
+  /**
+   * Optionally disables loading of sectors.
+   */
+  suspendLoading?: boolean;
 };
 
 export const defaultLoadingHints: Required<CadLoadingHints> = {
-  maxQuadSize: 0.0025
+  maxQuadSize: 0.0025,
+  suspendLoading: false
 };
