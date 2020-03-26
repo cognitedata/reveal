@@ -26,8 +26,8 @@ export class MaterialManager {
   public readonly materials: Readonly<Materials>;
   private readonly _options?: NodeAppearance;
 
-  constructor(options?: NodeAppearance) {
-    this.materials = createMaterials();
+  constructor(treeIndexCount: number, options?: NodeAppearance) {
+    this.materials = createMaterials(treeIndexCount);
     this._options = options;
     this.setRenderMode(RenderMode.Color);
   }
