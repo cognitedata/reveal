@@ -24,6 +24,7 @@ export interface IntersectCadNodesResult {
   distance: number;
   point: THREE.Vector3;
   treeIndex: number;
+  cadNode: CadNode;
   object: THREE.Object3D; // always CadNode
 }
 
@@ -38,7 +39,7 @@ export function intersectCadNodes(cadNodes: CadNode[], input: IntersectCadNodesI
       results.push(result);
     }
   }
-  return results;
+  return results.sort((l, r) => l.distance - r.distance);
 }
 
 export function intersectCadNode(cadNode: CadNode, input: IntersectCadNodesInput): IntersectCadNodesResult | undefined {
@@ -46,41 +47,50 @@ export function intersectCadNode(cadNode: CadNode, input: IntersectCadNodesInput
   const pickingScene = new THREE.Scene();
   // TODO consider case where parent does not exist
   // TODO add warning if parent has transforms
-  const oldParent = cadNode.parent!;
+  const oldParent = cadNode.parent;
   pickingScene.add(cadNode);
-  const pickInput = {
-    coords,
-    camera,
-    renderer,
-    scene: pickingScene,
-    cadNode
-  };
-  const treeIndex = pickTreeIndex(pickInput);
-  if (treeIndex === undefined) {
-    oldParent.add(cadNode);
-    return;
+  try {
+    const pickInput = {
+      coords,
+      camera,
+      renderer,
+      scene: pickingScene,
+      cadNode
+    };
+    const treeIndex = pickTreeIndex(pickInput);
+    if (treeIndex === undefined) {
+      return undefined;
+    }
+    const depth = pickDepth(pickInput);
+
+    const viewZ = perspectiveDepthToViewZ(depth, camera.near, camera.far);
+    const point = getPosition(pickInput, viewZ);
+    const distance = new THREE.Vector3().subVectors(point, camera.position).length();
+    return {
+      distance,
+      point,
+      treeIndex,
+      object: cadNode,
+      cadNode
+    };
+  } finally {
+    // Re-add cadNode to previous parent
+    if (oldParent) {
+      oldParent.add(cadNode);
+    }
   }
-  const depth = pickDepth(pickInput);
-
-  const viewZ = perspectiveDepthToViewZ(depth, camera.near, camera.far);
-  const point = getPosition(pickInput, viewZ);
-  const distance = new THREE.Vector3().subVectors(point, camera.position).length();
-
-  oldParent.add(cadNode);
-  return {
-    distance,
-    point,
-    treeIndex,
-    object: cadNode
-  };
 }
 
 function pickTreeIndex(input: TreeIndexPickingInput): number | undefined {
   const { cadNode } = input;
   const previousRenderMode = cadNode.renderMode;
   cadNode.renderMode = RenderMode.TreeIndex;
-  const pixelBuffer = pickPixelColor(input, clearColor, clearAlpha);
-  cadNode.renderMode = previousRenderMode;
+  let pixelBuffer: Uint8Array;
+  try {
+    pixelBuffer = pickPixelColor(input, clearColor, clearAlpha);
+  } finally {
+    cadNode.renderMode = previousRenderMode;
+  }
 
   if (pixelBuffer[3] === 0) {
     return;
