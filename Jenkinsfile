@@ -1,4 +1,4 @@
-@Library('jenkins-helpers@fas-container') _
+@Library('jenkins-helpers') _
 
 static final String REPO = "react-demo-app"
 static final String PR_COMMENT_MARKER = "[pr-server]\n"
