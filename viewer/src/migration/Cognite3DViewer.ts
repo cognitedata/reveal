@@ -4,6 +4,7 @@
 
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
+import debounce from 'lodash/debounce';
 import ComboControls from '@cognite/three-combo-controls';
 import { CogniteClient } from '@cognite/sdk';
 
@@ -14,6 +15,14 @@ import { Intersection } from './intersection';
 import RenderController from './RenderController';
 import { intersectCadNodes } from '../threejs';
 import { from3DPositionToRelativeViewportCoordinates } from '../views/threejs/worldToViewport';
+
+export interface RelativeMouseEvent {
+  offsetX: number;
+  offsetY: number;
+}
+
+type PointerEventDelegate = (event: RelativeMouseEvent) => void;
+type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
 
 export class Cognite3DViewer {
   private get canvas(): HTMLCanvasElement {
@@ -29,9 +38,12 @@ export class Cognite3DViewer {
   private readonly scene: THREE.Scene;
   private readonly controls: ComboControls;
   private readonly sdkClient: CogniteClient;
+  private modelsNeedUpdate = true;
 
   private readonly eventListeners = {
-    cameraChange: new Array<(pos: THREE.Vector3, target: THREE.Vector3) => void>()
+    cameraChange: new Array<CameraChangeDelegate>(),
+    click: new Array<PointerEventDelegate>(),
+    hover: new Array<PointerEventDelegate>()
   };
   private readonly models: Cognite3DModel[] = [];
 
@@ -78,6 +90,7 @@ export class Cognite3DViewer {
 
     this.sdkClient = options.sdk;
     this.renderController = new RenderController(this.camera);
+    this.startPointerEventListeners();
 
     this.animate(0);
   }
@@ -102,21 +115,20 @@ export class Cognite3DViewer {
     }
   }
 
-  on(event: 'click' | 'hover', _callback: (event: PointerEvent) => void): void;
-  on(event: 'cameraChanged', _callback: (position: THREE.Vector3, target: THREE.Vector3) => void): void;
-
+  on(event: 'click' | 'hover', _callback: PointerEventDelegate): void;
+  on(event: 'cameraChanged', _callback: CameraChangeDelegate): void;
   on(event: 'click' | 'hover' | 'cameraChanged', callback: any): void {
     switch (event) {
       case 'click':
-        this.onClick(callback);
+        this.eventListeners.click.push(callback);
         break;
 
       case 'hover':
-        this.onHover(callback);
+        this.eventListeners.hover.push(callback);
         break;
 
       case 'cameraChanged':
-        this.onCameraChange(callback);
+        this.eventListeners.cameraChange.push(callback);
         break;
 
       default:
@@ -129,15 +141,15 @@ export class Cognite3DViewer {
   off(event: 'click' | 'hover' | 'cameraChanged', callback: any): void {
     switch (event) {
       case 'click':
-        this.offClick(callback);
+        this.eventListeners.click = this.eventListeners.click.filter(x => x !== callback);
         break;
 
       case 'hover':
-        this.offHover(callback);
+        this.eventListeners.hover = this.eventListeners.hover.filter(x => x !== callback);
         break;
 
       case 'cameraChanged':
-        this.offCameraChange(callback);
+        this.eventListeners.cameraChange = this.eventListeners.cameraChange.filter(x => x !== callback);
         break;
 
       default:
@@ -150,6 +162,9 @@ export class Cognite3DViewer {
       throw new NotSupportedInMigrationWrapperError();
     } else {
       const model3d = await createCognite3DModel(options.modelId, options.revisionId, this.sdkClient);
+      model3d.cadNode.addEventListener('update', () => {
+        this.modelsNeedUpdate = true;
+      });
       this.models.push(model3d);
       this.scene.add(model3d);
       return model3d;
@@ -243,13 +258,12 @@ export class Cognite3DViewer {
   getScreenshot(_width?: number, _height?: number): Promise<string> {
     throw new NotSupportedInMigrationWrapperError();
   }
-  getIntersectionFromPixel(x: number, y: number, _cognite3DModel?: Cognite3DModel): null | Intersection {
+  getIntersectionFromPixel(offsetX: number, offsetY: number, _cognite3DModel?: Cognite3DModel): null | Intersection {
     const nodes = this.models.map(x => x.cadNode);
 
-    const rect = this.renderer.domElement.getBoundingClientRect();
     const coords = {
-      x: ((x - rect.left) / this.renderer.domElement.clientWidth) * 2 - 1,
-      y: ((y - rect.top) / this.renderer.domElement.clientHeight) * -2 + 1
+      x: (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
+      y: (offsetY / this.renderer.domElement.clientHeight) * -2 + 1
     };
     const results = intersectCadNodes(nodes, {
       coords,
@@ -257,13 +271,12 @@ export class Cognite3DViewer {
       renderer: this.renderer
     });
 
-    if (results) {
+    if (results.length > 0) {
       const result = results[0]; // Nearest intersection
       const model: Cognite3DModel = this.models.find(v => v.cadNode === result.cadNode)!;
       const intersection: Intersection = {
         model,
-        // TODO 2020-03-21 larsmoa: Map to nodeId,
-        nodeId: -1,
+        nodeId: model.tryGetNodeId(result.treeIndex) || -1,
         treeIndex: result.treeIndex,
         point: result.point
       };
@@ -275,25 +288,6 @@ export class Cognite3DViewer {
 
   clearCache(): void {
     throw new NotSupportedInMigrationWrapperError('Cache is not supported');
-  }
-
-  private onClick(_callback: (event: PointerEvent) => void): void {
-    throw new NotSupportedInMigrationWrapperError();
-  }
-  private offClick(_callback: (event: PointerEvent) => void): void {
-    throw new NotSupportedInMigrationWrapperError();
-  }
-  private onHover(_callback: (event: PointerEvent) => void): void {
-    throw new NotSupportedInMigrationWrapperError();
-  }
-  private offHover(_callback: (event: PointerEvent) => void): void {
-    throw new NotSupportedInMigrationWrapperError();
-  }
-  private onCameraChange(callback: (position: THREE.Vector3, target: THREE.Vector3) => void): void {
-    this.eventListeners.cameraChange.push(callback);
-  }
-  private offCameraChange(callback: (position: THREE.Vector3, target: THREE.Vector3) => void): void {
-    this.eventListeners.cameraChange = this.eventListeners.cameraChange.filter(x => x !== callback);
   }
 
   private moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number) {
@@ -401,11 +395,14 @@ export class Cognite3DViewer {
       }
       this.controls.update(this.clock.getDelta());
       renderController.update();
-      const modelsNeedsUpdate = (await Promise.all(this.models.map(m => m.cadNode.update(this.camera)))).some(x => x);
-      if (renderController.needsRedraw || this.forceRendering || modelsNeedsUpdate) {
+      for (const model of this.models) {
+        model.cadNode.update(this.camera);
+      }
+      if (renderController.needsRedraw || this.forceRendering || this.modelsNeedUpdate) {
         this.updateNearAndFarPlane(this.camera);
         this.renderer.render(this.scene, this.camera);
         renderController.clearNeedsRedraw();
+        this.modelsNeedUpdate = false;
       }
     }
 
@@ -509,6 +506,80 @@ export class Cognite3DViewer {
 
     return true;
   }
+
+  private startPointerEventListeners = () => {
+    const canvas = this.canvas;
+    const maxMoveDistance = 4;
+
+    let pointerDown = false;
+    let validClick = false;
+
+    const onHoverCallback = debounce((e: MouseEvent) => {
+      for (const _ of this.eventListeners.hover) {
+        this.eventListeners.hover[0](mouseEventOffset(e, canvas));
+      }
+    }, 100);
+
+    const onMove = (e: MouseEvent | TouchEvent) => {
+      const { offsetX, offsetY } = mouseEventOffset(e, canvas);
+      const { offsetX: firstOffsetX, offsetY: firstOffsetY } = mouseEventOffset(e, canvas);
+
+      // check for Manhattan distance greater than maxMoveDistance pixels
+      if (
+        pointerDown &&
+        validClick &&
+        Math.abs(offsetX - firstOffsetX) + Math.abs(offsetY - firstOffsetY) > maxMoveDistance
+      ) {
+        validClick = false;
+      }
+    };
+
+    const onUp = (e: MouseEvent | TouchEvent) => {
+      if (pointerDown && validClick) {
+        // trigger events
+        this.eventListeners.click.forEach(func => {
+          func(mouseEventOffset(e, canvas));
+        });
+      }
+      pointerDown = false;
+      validClick = false;
+
+      // move
+      canvas.removeEventListener('mousemove', onMove);
+      canvas.removeEventListener('touchmove', onMove);
+
+      // up
+      canvas.removeEventListener('mouseup', onUp);
+      canvas.removeEventListener('touchend', onUp);
+
+      // add back onHover
+      canvas.addEventListener('mousemove', onHoverCallback);
+    };
+
+    const onDown = (e: MouseEvent | TouchEvent) => {
+      event = e;
+      pointerDown = true;
+      validClick = true;
+
+      // move
+      canvas.addEventListener('mousemove', onMove);
+      canvas.addEventListener('touchmove', onMove);
+
+      // up
+      canvas.addEventListener('mouseup', onUp);
+      canvas.addEventListener('touchend', onUp);
+
+      // no more onHover
+      canvas.removeEventListener('mousemove', onHoverCallback);
+    };
+
+    // down
+    canvas.addEventListener('mousedown', onDown);
+    canvas.addEventListener('touchstart', onDown);
+
+    // on hover callback
+    canvas.addEventListener('mousemove', onHoverCallback);
+  };
 }
 
 function adjustCamera(camera: THREE.Camera, width: number, height: number) {
@@ -528,4 +599,15 @@ function createCanvasWrapper(): HTMLElement {
   domElement.style.width = '100%';
   domElement.style.height = '100%';
   return domElement;
+}
+
+function mouseEventOffset(ev: MouseEvent | TouchEvent, target: HTMLElement) {
+  target = target || ev.currentTarget || ev.srcElement;
+  const cx = 'clientX' in ev ? ev.clientX : 0;
+  const cy = 'clientY' in ev ? ev.clientY : 0;
+  const rect = target.getBoundingClientRect();
+  return {
+    offsetX: cx - rect.left,
+    offsetY: cy - rect.top
+  };
 }
