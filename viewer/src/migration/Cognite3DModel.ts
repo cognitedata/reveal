@@ -100,11 +100,8 @@ export class Cognite3DModel extends THREE.Object3D {
       const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
       const color = this.nodeColors.get(treeIndex);
       if (!color) {
-        return {
-          r: 255,
-          g: 255,
-          b: 255
-        };
+        // TODO: migration wrapper currently does not support looking up colors not set by the user
+        throw new NotSupportedInMigrationWrapperError();
       }
       const [r, g, b] = color;
       return {
