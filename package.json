@@ -1,6 +1,6 @@
 {
   "name": "@cognite/testing",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "source": "src/index.ts",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
