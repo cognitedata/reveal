@@ -61,6 +61,20 @@ async function main() {
     const revisionId = Number.parseInt(revisionIdStr, 10);
     addModel({ modelId, revisionId });
   }
+  viewer.on('click', function(event) {
+    const { offsetX, offsetY } = event;
+    console.log('2D coordinates', event);
+    const intersection = viewer.getIntersectionFromPixel(offsetX, offsetY);
+    if (intersection !== null) {
+      const { nodeId, point, model } = intersection;
+      console.log(`Clicked node ${nodeId} at`, point);
+      // highlight the object
+      model.setNodeColor(nodeId, 0, 255, 0);
+      // TODO make the camera zoom to the object
+      //const boundingBox = model.getBoundingBox(nodeId);
+      //viewer.fitCameraToBoundingBox(boundingBox, 2000); // 2 sec
+    }
+  });
 }
 
 main();
