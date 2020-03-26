@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { Subject, Observable } from 'rxjs';
-import { publish, share, auditTime, switchAll, flatMap, map } from 'rxjs/operators';
+import { publish, share, auditTime, switchAll, flatMap, map, tap } from 'rxjs/operators';
 
 import { SectorModelTransformation, SectorScene, SectorMetadata } from '../../../models/cad/types';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
@@ -30,12 +30,15 @@ import { ParsedSector } from '../../../data/model/ParsedSector';
 import { WantedSector } from '../../../data/model/WantedSector';
 import { CadBudget, createDefaultCadBudget } from '../../../models/cad/CadBudget';
 
-interface CadNodeOptions {
+export type ParseCallbackDelegate = (sector: ParsedSector) => void;
+
+export interface CadNodeOptions {
   nodeAppearance?: NodeAppearance;
   budget?: CadBudget;
   // internal options are experimental and may change in the future
   internal?: {
     sectorCuller?: SectorCuller<DetermineSectorsByProximityInput>;
+    parseCallback?: ParseCallbackDelegate;
   };
 }
 
@@ -54,6 +57,7 @@ export class CadNode extends THREE.Object3D {
   private _renderHints: CadRenderHints;
   private _loadingHints: CadLoadingHints;
   private _budget: CadBudget;
+  private _parseCallback?: ParseCallbackDelegate;
 
   private readonly _materialManager: MaterialManager;
   private readonly _cameraPositionObservable: Subject<ThreeCameraConfig>;
@@ -77,6 +81,7 @@ export class CadNode extends THREE.Object3D {
 
     this._sectorScene = scene;
     this._sectorCuller = (options && options.internal && options.internal.sectorCuller) || new ProximitySectorCuller();
+    this._parseCallback = options && options.internal && options.internal.parseCallback;
     this.modelTransformation = modelTransformation;
     // Ensure camera matrix is unequal on first frame
     this._previousCameraMatrix.elements[0] = Infinity;
@@ -138,7 +143,7 @@ export class CadNode extends THREE.Object3D {
     return this._renderHints.showSectorBoundingBoxes || false;
   }
 
-  public update(camera: THREE.PerspectiveCamera) {
+  public update(camera: THREE.PerspectiveCamera): void {
     const cameraConfig: ThreeCameraConfig = {
       camera,
       modelTransformation: this.modelTransformation,
@@ -183,6 +188,11 @@ export class CadNode extends THREE.Object3D {
             distinctUntilLevelOfDetailChanged(),
             loadSectorOperator,
             filterCurrentWantedSectors(wantedSectors),
+            tap((sector: ParsedSector) => {
+              if (this._parseCallback) {
+                this._parseCallback(sector);
+              }
+            }),
             consumeSectorOperator
           )
         )

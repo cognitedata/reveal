@@ -22,8 +22,8 @@ async function main() {
   const viewer = new reveal_migration.Cognite3DViewer({ sdk: client, domElement });
   (window as any).viewer = viewer;
 
-  async function addModel(modelId: number, revisionId: number) {
-    const model = await viewer.addModel({modelId, revisionId});
+  async function addModel(options: reveal_migration.AddModelOptions) {
+    const model = await viewer.addModel(options);
     viewer.fitCameraToModel(model);
     models.push(model);
   }
@@ -37,7 +37,11 @@ async function main() {
     });
   }
   const guiActions = {
-    addModel: () => addModel(guiState.modelId, guiState.revisionId)
+    addModel: () =>
+      addModel({
+        modelId: guiState.modelId,
+        revisionId: guiState.revisionId
+      })
   };
   const gui = new dat.GUI();
   const settingsGui = gui.addFolder('settings');
@@ -55,7 +59,7 @@ async function main() {
   if (modelIdStr && revisionIdStr) {
     const modelId = Number.parseInt(modelIdStr, 10);
     const revisionId = Number.parseInt(revisionIdStr, 10);
-    addModel(modelId, revisionId);
+    addModel({ modelId, revisionId });
   }
 }
 

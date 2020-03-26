@@ -7,20 +7,19 @@ import TWEEN from '@tweenjs/tween.js';
 
 import { Cognite3DViewer } from '../../migration/Cognite3DViewer';
 import { CogniteClient } from '@cognite/sdk';
-import { Cognite3DThreeRenderer } from '../../migration/types';
 import nock from 'nock';
 
 const sceneJson = require('./scene.json');
 
 describe('Cognite3DViewer', () => {
   const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
-  const renderer: Cognite3DThreeRenderer = {
+  const renderer: THREE.WebGLRenderer = {
     domElement: document.createElement('canvas'),
     dispose: jest.fn(),
     setSize: jest.fn(),
     getSize: () => new THREE.Vector2(),
     render: jest.fn()
-  };
+  } as any;
 
   test('constructor throws error when unsupported options are set', () => {
     expect(() => new Cognite3DViewer({ sdk, enableCache: true })).toThrowError();
@@ -47,11 +46,6 @@ describe('Cognite3DViewer', () => {
 
     // Assert
     expect(onCameraChange).toBeCalledTimes(2);
-  });
-
-  test('addModel with local model, throws', async () => {
-    const viewer = new Cognite3DViewer({ sdk, renderer });
-    expect(viewer.addModel({ localPath: '/some/model', modelId: 1, revisionId: 2 })).rejects.toThrowError();
   });
 
   test('addModel with remote model and fit viewer, updates camera', async () => {
