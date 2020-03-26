@@ -108,6 +108,7 @@ export class CadNode extends THREE.Object3D {
 
   requestNodeUpdate(treeIndices: number[]) {
     this._materialManager.updateNodes(treeIndices);
+    this.dispatchEvent({ type: 'update' });
   }
 
   set renderMode(mode: RenderMode) {
