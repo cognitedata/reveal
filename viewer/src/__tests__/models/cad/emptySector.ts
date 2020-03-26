@@ -18,6 +18,8 @@ export function createEmptyPrimitive(): PrimitiveAttributes {
 
 export function createEmptySector(): Sector {
   return {
+    nodeIdToTreeIndexMap: new Map(),
+    treeIndexToNodeIdMap: new Map(),
     boxes: createEmptyPrimitive(),
     circles: createEmptyPrimitive(),
     cones: createEmptyPrimitive(),

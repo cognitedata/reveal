@@ -1,5 +1,5 @@
 use console_error_panic_hook;
-use js_sys::Float32Array;
+use js_sys::{Float32Array, Map};
 use serde::{Deserialize, Serialize};
 use std::panic;
 use wasm_bindgen::prelude::*;
@@ -118,7 +118,28 @@ pub fn convert_sector(sector: &SectorHandle) -> i3df::renderables::Sector {
 }
 
 #[wasm_bindgen]
-pub fn parse_and_convert_f3df(input: &[u8]) -> Result<Float32Array, JsValue> {
+#[derive(Clone)]
+pub struct SimpleSectorData {
+    faces: Float32Array,
+    node_id_to_tree_index_map: Map,
+    tree_index_to_node_id_map: Map,
+}
+
+#[wasm_bindgen]
+impl SimpleSectorData {
+    pub fn faces(&self) -> Float32Array {
+        self.faces.clone()
+    }
+    pub fn node_id_to_tree_index_map(&self) -> Map {
+        self.node_id_to_tree_index_map.clone()
+    }
+    pub fn tree_index_to_node_id_map(&self) -> Map {
+        self.tree_index_to_node_id_map.clone()
+    }
+}
+
+#[wasm_bindgen]
+pub fn parse_and_convert_f3df(input: &[u8]) -> Result<SimpleSectorData, JsValue> {
     // TODO read https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/building-your-project.html
     // and see if this can be moved to one common place
     panic::set_hook(Box::new(console_error_panic_hook::hook));
@@ -130,7 +151,7 @@ pub fn parse_and_convert_f3df(input: &[u8]) -> Result<Float32Array, JsValue> {
         Err(e) => return Err(JsValue::from(error::ParserError::from(e))),
     };
 
-    let faces = f3df::renderables::convert_sector(&sector);
+    let renderable_sector = f3df::renderables::convert_sector(&sector);
     let faces_as_f32 = unsafe {
         // At this point, we do not want to pass Vec<Face> to JS,
         // because it will turn into an inefficient array of objects.
@@ -140,17 +161,25 @@ pub fn parse_and_convert_f3df(input: &[u8]) -> Result<Float32Array, JsValue> {
         // just &[f32].
         // However, this is safe because we are making a copy below.
         // Otherwise, we would not know when to free the memory on our end.
-        let pointer = faces.as_ptr() as *const f32;
-        let length = faces.len() * std::mem::size_of::<f3df::renderables::Face>()
+        let pointer = renderable_sector.faces.as_ptr() as *const f32;
+        let length = renderable_sector.faces.len() * std::mem::size_of::<f3df::renderables::Face>()
             / std::mem::size_of::<f32>();
         std::slice::from_raw_parts(pointer, length)
     };
 
     // Returning a Vec<f32> here would lead to copying on the JS side instead.
     // Also note that using a Float32Array::view here instead would be _very_ unsafe.
-    let result = Float32Array::from(faces_as_f32);
+    let faces_as_float_32_array = Float32Array::from(faces_as_f32);
 
-    Ok(result)
+    Ok(SimpleSectorData {
+        faces: faces_as_float_32_array,
+        node_id_to_tree_index_map: Map::from(
+            serde_wasm_bindgen::to_value(&renderable_sector.node_id_to_tree_index_map).unwrap(),
+        ),
+        tree_index_to_node_id_map: Map::from(
+            serde_wasm_bindgen::to_value(&renderable_sector.tree_index_to_node_id_map).unwrap(),
+        ),
+    })
 }
 
 #[wasm_bindgen]

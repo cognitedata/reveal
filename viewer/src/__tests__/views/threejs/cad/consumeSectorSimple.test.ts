@@ -40,6 +40,8 @@ describe('consumeSectorDetailed', () => {
   test('no geometry, does not add new nodes', () => {
     // Arrange
     const sector: SectorQuads = {
+      nodeIdToTreeIndexMap: new Map(),
+      treeIndexToNodeIdMap: new Map(),
       buffer: new Float32Array(0)
     };
 
@@ -53,6 +55,8 @@ describe('consumeSectorDetailed', () => {
   test('single valid mesh, adds geometry', () => {
     // Arrange
     const sector: SectorQuads = {
+      nodeIdToTreeIndexMap: new Map(),
+      treeIndexToNodeIdMap: new Map(),
       buffer: new Float32Array([
         // tslint:disable: prettier
         0.0, 0.0, 0.0,
@@ -76,6 +80,8 @@ describe('consumeSectorDetailed', () => {
   test('buffer has two elements, success', () => {
     // Arrange
     const sector: SectorQuads = {
+      nodeIdToTreeIndexMap: new Map(),
+      treeIndexToNodeIdMap: new Map(),
       buffer: new Float32Array([
         // tslint:disable: prettier
         // First element
@@ -108,6 +114,8 @@ describe('consumeSectorDetailed', () => {
   test('buffer has extra bytes, throws', () => {
     // Arrange
     const sector: SectorQuads = {
+      nodeIdToTreeIndexMap: new Map(),
+      treeIndexToNodeIdMap: new Map(),
       buffer: new Float32Array([
         // tslint:disable: prettier
         0.0, 0.0, 0.0,
@@ -130,6 +138,8 @@ describe('consumeSectorDetailed', () => {
   test('buffer missing bytes, throws', () => {
     // Arrange
     const sector: SectorQuads = {
+      nodeIdToTreeIndexMap: new Map(),
+      treeIndexToNodeIdMap: new Map(),
       buffer: new Float32Array([
         // tslint:disable: prettier
         0.0, 0.0, 0.0,
