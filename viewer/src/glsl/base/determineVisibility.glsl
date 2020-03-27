@@ -1,7 +1,6 @@
-bool determineVisibility(sampler2D visibilityTexture, float treeIndex) {
-    // TODO specify width and height using uniforms
-    const float dataTextureWidth = 2048.0;
-    const float dataTextureHeight = 2048.0;
+bool determineVisibility(sampler2D visibilityTexture, vec2 textureSize, float treeIndex) {
+    float dataTextureWidth = textureSize.x;
+    float dataTextureHeight = textureSize.y;
 
     float u = mod(treeIndex, dataTextureWidth);
     float v = floor(treeIndex / dataTextureWidth);

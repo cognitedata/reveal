@@ -32,6 +32,7 @@ export interface Materials {
 export function createMaterials(treeIndexCount: number): Materials {
   const textureDims = determinePowerOfTwoDimensions(treeIndexCount);
   const textureElementCount = textureDims.width * textureDims.height;
+  const dataTextureSize = new THREE.Vector2(textureDims.width, textureDims.height);
 
   const colors = new Uint8Array(4 * textureElementCount);
   const visibility = new Uint8Array(4 * textureElementCount);
@@ -41,97 +42,39 @@ export function createMaterials(treeIndexCount: number): Materials {
 
   const boxMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Box)',
-    ...shaderDefines,
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.boxPrimitive.vertex,
-    fragmentShader: sectorShaders.boxPrimitive.fragment,
-    uniforms: {
-      renderMode: {
-        value: RenderMode.Color
-      },
-      colorDataTexture: {
-        value: overrideColorPerTreeIndex
-      },
-      overrideVisibilityPerTreeIndex: {
-        value: overrideVisibilityPerTreeIndex
-      }
-    }
+    fragmentShader: sectorShaders.boxPrimitive.fragment
   });
 
   const circleMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Circle)',
-    ...shaderDefines,
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.circlePrimitive.vertex,
     fragmentShader: sectorShaders.circlePrimitive.fragment,
     // TODO double side is not necessary for all,
     // we should indicate this in the data from Rust
-    side: THREE.DoubleSide,
-    uniforms: {
-      renderMode: {
-        value: RenderMode.Color
-      },
-      colorDataTexture: {
-        value: overrideColorPerTreeIndex
-      },
-      overrideVisibilityPerTreeIndex: {
-        value: overrideVisibilityPerTreeIndex
-      }
-    }
+    side: THREE.DoubleSide
   });
 
   const nutMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Nuts)',
-    ...shaderDefines,
     vertexShader: sectorShaders.nutPrimitive.vertex,
-    fragmentShader: sectorShaders.nutPrimitive.fragment,
-    uniforms: {
-      renderMode: {
-        value: RenderMode.Color
-      },
-      colorDataTexture: {
-        value: overrideColorPerTreeIndex
-      },
-      overrideVisibilityPerTreeIndex: {
-        value: overrideVisibilityPerTreeIndex
-      }
-    }
+    fragmentShader: sectorShaders.nutPrimitive.fragment
   });
 
   const quadMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Quads)',
-    ...shaderDefines,
     vertexShader: sectorShaders.quadPrimitive.vertex,
     fragmentShader: sectorShaders.quadPrimitive.fragment,
-    side: THREE.DoubleSide,
-    uniforms: {
-      renderMode: {
-        value: RenderMode.Color
-      },
-      colorDataTexture: {
-        value: overrideColorPerTreeIndex
-      },
-      overrideVisibilityPerTreeIndex: {
-        value: overrideVisibilityPerTreeIndex
-      }
-    }
+    side: THREE.DoubleSide
   });
 
   const generalRingMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (General rings)',
-    ...shaderDefines,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
-      },
-      renderMode: {
-        value: RenderMode.Color
-      },
-      colorDataTexture: {
-        value: overrideColorPerTreeIndex
-      },
-      overrideVisibilityPerTreeIndex: {
-        value: overrideVisibilityPerTreeIndex
       }
     },
     extensions: { fragDepth: true },
@@ -144,19 +87,9 @@ export function createMaterials(treeIndexCount: number): Materials {
 
   const coneMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Cone)',
-    ...shaderDefines,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
-      },
-      renderMode: {
-        value: RenderMode.Color
-      },
-      colorDataTexture: {
-        value: overrideColorPerTreeIndex
-      },
-      overrideVisibilityPerTreeIndex: {
-        value: overrideVisibilityPerTreeIndex
       }
     },
     extensions: { fragDepth: true },
@@ -166,19 +99,9 @@ export function createMaterials(treeIndexCount: number): Materials {
 
   const eccentricConeMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Eccentric cone)',
-    ...shaderDefines,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
-      },
-      renderMode: {
-        value: RenderMode.Color
-      },
-      colorDataTexture: {
-        value: overrideColorPerTreeIndex
-      },
-      overrideVisibilityPerTreeIndex: {
-        value: overrideVisibilityPerTreeIndex
       }
     },
     extensions: { fragDepth: true },
@@ -188,19 +111,9 @@ export function createMaterials(treeIndexCount: number): Materials {
 
   const ellipsoidSegmentMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Ellipsoid segments)',
-    ...shaderDefines,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
-      },
-      renderMode: {
-        value: RenderMode.Color
-      },
-      colorDataTexture: {
-        value: overrideColorPerTreeIndex
-      },
-      overrideVisibilityPerTreeIndex: {
-        value: overrideVisibilityPerTreeIndex
       }
     },
     extensions: { fragDepth: true },
@@ -210,19 +123,9 @@ export function createMaterials(treeIndexCount: number): Materials {
 
   const generalCylinderMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (General cylinder)',
-    ...shaderDefines,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
-      },
-      renderMode: {
-        value: RenderMode.Color
-      },
-      colorDataTexture: {
-        value: overrideColorPerTreeIndex
-      },
-      overrideVisibilityPerTreeIndex: {
-        value: overrideVisibilityPerTreeIndex
       }
     },
     extensions: { fragDepth: true },
@@ -232,19 +135,9 @@ export function createMaterials(treeIndexCount: number): Materials {
 
   const trapeziumMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Trapezium)',
-    ...shaderDefines,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
-      },
-      renderMode: {
-        value: RenderMode.Color
-      },
-      colorDataTexture: {
-        value: overrideColorPerTreeIndex
-      },
-      overrideVisibilityPerTreeIndex: {
-        value: overrideVisibilityPerTreeIndex
       }
     },
     extensions: { fragDepth: true },
@@ -254,19 +147,9 @@ export function createMaterials(treeIndexCount: number): Materials {
 
   const torusSegmentMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Torus segment)',
-    ...shaderDefines,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
-      },
-      renderMode: {
-        value: RenderMode.Color
-      },
-      colorDataTexture: {
-        value: overrideColorPerTreeIndex
-      },
-      overrideVisibilityPerTreeIndex: {
-        value: overrideVisibilityPerTreeIndex
       }
     },
     extensions: {
@@ -281,19 +164,9 @@ export function createMaterials(treeIndexCount: number): Materials {
 
   const sphericalSegmentMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Spherical segment)',
-    ...shaderDefines,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
-      },
-      renderMode: {
-        value: RenderMode.Color
-      },
-      colorDataTexture: {
-        value: overrideColorPerTreeIndex
-      },
-      overrideVisibilityPerTreeIndex: {
-        value: overrideVisibilityPerTreeIndex
       }
     },
     extensions: { fragDepth: true },
@@ -303,67 +176,31 @@ export function createMaterials(treeIndexCount: number): Materials {
 
   const triangleMeshMaterial = new THREE.ShaderMaterial({
     name: 'Triangle meshes',
-    ...shaderDefines,
     extensions: {
       derivatives: true
     },
     side: THREE.DoubleSide,
     fragmentShader: sectorShaders.detailedMesh.fragment,
-    vertexShader: sectorShaders.detailedMesh.vertex,
-    uniforms: {
-      renderMode: {
-        value: RenderMode.Color
-      },
-      colorDataTexture: {
-        value: overrideColorPerTreeIndex
-      },
-      overrideVisibilityPerTreeIndex: {
-        value: overrideVisibilityPerTreeIndex
-      }
-    }
+    vertexShader: sectorShaders.detailedMesh.vertex
   });
 
   const instancedMeshMaterial = new THREE.ShaderMaterial({
     name: 'Instanced meshes',
-    ...shaderDefines,
     extensions: {
       derivatives: true
     },
     side: THREE.DoubleSide,
     fragmentShader: sectorShaders.instancedMesh.fragment,
-    vertexShader: sectorShaders.instancedMesh.vertex,
-    uniforms: {
-      renderMode: {
-        value: RenderMode.Color
-      },
-      colorDataTexture: {
-        value: overrideColorPerTreeIndex
-      },
-      overrideVisibilityPerTreeIndex: {
-        value: overrideVisibilityPerTreeIndex
-      }
-    }
+    vertexShader: sectorShaders.instancedMesh.vertex
   });
 
   const simpleMaterial = new THREE.ShaderMaterial({
     name: 'Low detail material',
-    ...shaderDefines,
     fragmentShader: sectorShaders.simpleMesh.fragment,
-    vertexShader: sectorShaders.simpleMesh.vertex,
-    uniforms: {
-      renderMode: {
-        value: RenderMode.Color
-      },
-      colorDataTexture: {
-        value: overrideColorPerTreeIndex
-      },
-      overrideVisibilityPerTreeIndex: {
-        value: overrideVisibilityPerTreeIndex
-      }
-    }
+    vertexShader: sectorShaders.simpleMesh.vertex
   });
 
-  return {
+  const allMaterials = {
     box: boxMaterial,
     circle: circleMaterial,
     nut: nutMaterial,
@@ -378,8 +215,38 @@ export function createMaterials(treeIndexCount: number): Materials {
     ellipsoidSegment: ellipsoidSegmentMaterial,
     instancedMesh: instancedMeshMaterial,
     triangleMesh: triangleMeshMaterial,
-    simple: simpleMaterial,
-    overrideColorPerTreeIndex,
-    overrideVisibilityPerTreeIndex
+    simple: simpleMaterial
   };
+  for (const material of Object.values(allMaterials)) {
+    updateDefinesAndUniforms(material, dataTextureSize, overrideColorPerTreeIndex, overrideVisibilityPerTreeIndex);
+  }
+
+  return { ...allMaterials, overrideColorPerTreeIndex, overrideVisibilityPerTreeIndex };
+}
+
+function updateDefinesAndUniforms(
+  material: THREE.ShaderMaterial,
+  dataTextureSize: THREE.Vector2,
+  overrideColorPerTreeIndex: THREE.DataTexture,
+  overrideVisibilityPerTreeIndex: THREE.DataTexture
+) {
+  const oldUniforms = material.uniforms;
+  material.setValues({
+    ...shaderDefines,
+    uniforms: {
+      ...oldUniforms,
+      renderMode: {
+        value: RenderMode.Color
+      },
+      colorDataTexture: {
+        value: overrideColorPerTreeIndex
+      },
+      overrideVisibilityPerTreeIndex: {
+        value: overrideVisibilityPerTreeIndex
+      },
+      dataTextureSize: {
+        value: dataTextureSize
+      }
+    }
+  });
 }
