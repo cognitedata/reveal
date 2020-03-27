@@ -235,10 +235,10 @@ export class Cognite3DViewer {
   }
 
   enableKeyboardNavigation(): void {
-    throw new NotSupportedInMigrationWrapperError();
+    this.controls.enableKeyboardNavigation = true;
   }
   disableKeyboardNavigation(): void {
-    throw new NotSupportedInMigrationWrapperError();
+    this.controls.enableKeyboardNavigation = false;
   }
 
   worldToScreen(_point: THREE.Vector3, _normalize?: boolean): THREE.Vector2 | null {
