@@ -125,22 +125,14 @@ export class Cognite3DModel extends THREE.Object3D {
   }
 
   async setNodeColor(nodeId: number, r: number, g: number, b: number): Promise<void> {
-    try {
-      const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-      this.setNodeColorByTreeIndex(treeIndex, r, g, b);
-    } catch (error) {
-      console.error(`Cannot set color of ${nodeId} because of error:`, error);
-    }
+    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.setNodeColorByTreeIndex(treeIndex, r, g, b);
   }
 
   async resetNodeColor(nodeId: number): Promise<void> {
-    try {
-      const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-      this.nodeColors.delete(treeIndex);
-      this.cadNode.requestNodeUpdate([treeIndex]);
-    } catch (error) {
-      console.error(`Cannot reset color of ${nodeId} because of error:`, error);
-    }
+    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.nodeColors.delete(treeIndex);
+    this.cadNode.requestNodeUpdate([treeIndex]);
   }
 
   selectNode(_nodeId: number): void {
@@ -156,13 +148,9 @@ export class Cognite3DModel extends THREE.Object3D {
   }
 
   async showNode(nodeId: number): Promise<void> {
-    try {
-      const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-      this.hiddenNodes.delete(treeIndex);
-      this.cadNode.requestNodeUpdate([treeIndex]);
-    } catch (error) {
-      console.error(`Cannot reset color of ${nodeId} because of error:`, error);
-    }
+    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.hiddenNodes.delete(treeIndex);
+    this.cadNode.requestNodeUpdate([treeIndex]);
   }
 
   showAllNodes(): void {
@@ -185,13 +173,9 @@ export class Cognite3DModel extends THREE.Object3D {
     if (makeGray) {
       throw new NotSupportedInMigrationWrapperError();
     }
-    try {
-      const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-      this.hiddenNodes.add(treeIndex);
-      this.cadNode.requestNodeUpdate([treeIndex]);
-    } catch (error) {
-      console.error(`Cannot reset color of ${nodeId} because of error:`, error);
-    }
+    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.hiddenNodes.add(treeIndex);
+    this.cadNode.requestNodeUpdate([treeIndex]);
   }
 
   tryGetNodeId(treeIndex: number): number | undefined {
