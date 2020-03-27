@@ -37,6 +37,7 @@ export class Cognite3DModel extends THREE.Object3D {
   readonly cadModel: CadModel;
   readonly cadNode: CadNode;
   readonly nodeColors: Map<number, [number, number, number, number]>;
+  readonly hiddenNodes: Set<number>;
   readonly client: CogniteClient;
   readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
 
@@ -47,10 +48,14 @@ export class Cognite3DModel extends THREE.Object3D {
     this.cadModel = model;
     this.client = client;
     this.nodeColors = new Map();
+    this.hiddenNodes = new Set();
     this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client);
     const nodeAppearance: NodeAppearance = {
       color: (treeIndex: number) => {
         return this.nodeColors.get(treeIndex);
+      },
+      visible: (treeIndex: number) => {
+        return this.hiddenNodes.has(treeIndex) ? false : true;
       }
     };
     this.cadNode = new CadNode(model, {
@@ -120,21 +125,14 @@ export class Cognite3DModel extends THREE.Object3D {
   }
 
   async setNodeColor(nodeId: number, r: number, g: number, b: number): Promise<void> {
-    try {
-      const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-      this.setNodeColorByTreeIndex(treeIndex, r, g, b);
-    } catch (error) {
-      console.error(`Cannot set color of ${nodeId} because of error:`, error);
-    }
+    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.setNodeColorByTreeIndex(treeIndex, r, g, b);
   }
 
   async resetNodeColor(nodeId: number): Promise<void> {
-    try {
-      const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-      this.nodeColors.delete(treeIndex);
-    } catch (error) {
-      console.error(`Cannot reset color of ${nodeId} because of error:`, error);
-    }
+    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.nodeColors.delete(treeIndex);
+    this.cadNode.requestNodeUpdate([treeIndex]);
   }
 
   selectNode(_nodeId: number): void {
@@ -149,18 +147,35 @@ export class Cognite3DModel extends THREE.Object3D {
     throw new NotSupportedInMigrationWrapperError();
   }
 
-  showNode(_nodeId: number): void {
-    throw new NotSupportedInMigrationWrapperError();
+  async showNode(nodeId: number): Promise<void> {
+    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.hiddenNodes.delete(treeIndex);
+    this.cadNode.requestNodeUpdate([treeIndex]);
   }
 
   showAllNodes(): void {
-    throw new NotSupportedInMigrationWrapperError();
+    const wasHidden = Array.from(this.hiddenNodes.values());
+    this.hiddenNodes.clear();
+    this.cadNode.requestNodeUpdate(wasHidden);
   }
-  hideAllNodes(_makeGray?: boolean): void {
-    throw new NotSupportedInMigrationWrapperError();
+
+  hideAllNodes(makeGray?: boolean): void {
+    if (makeGray) {
+      throw new NotSupportedInMigrationWrapperError();
+    }
+    for (let i = 0; i < this.cadModel.scene.maxTreeIndex; i++) {
+      this.hiddenNodes.add(i);
+    }
+    this.cadNode.requestNodeUpdate(Array.from(this.hiddenNodes.values()));
   }
-  hideNode(_nodeId: number, _makeGray?: boolean): void {
-    throw new NotSupportedInMigrationWrapperError();
+
+  async hideNode(nodeId: number, makeGray?: boolean): Promise<void> {
+    if (makeGray) {
+      throw new NotSupportedInMigrationWrapperError();
+    }
+    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.hiddenNodes.add(treeIndex);
+    this.cadNode.requestNodeUpdate([treeIndex]);
   }
 
   tryGetNodeId(treeIndex: number): number | undefined {
