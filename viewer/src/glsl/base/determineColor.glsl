@@ -1,7 +1,6 @@
-vec3 determineColor(vec3 originalColor, sampler2D colorDataTexture, float treeIndex) {
-    // TODO specify width and height using uniforms
-    const float dataTextureWidth = 2048.0;
-    const float dataTextureHeight = 2048.0;
+vec3 determineColor(vec3 originalColor, sampler2D colorDataTexture, vec2 textureSize, float treeIndex) {
+    float dataTextureWidth = textureSize.x;
+    float dataTextureHeight = textureSize.y;
 
     float u = mod(treeIndex, dataTextureWidth);
     float v = floor(treeIndex / dataTextureWidth);
