@@ -42,11 +42,10 @@ podTemplate(
       setup: "continuous-integration/jenkins/setup",
       lint: "continuous-integration/jenkins/lint",
       unitTests: "continuous-integration/jenkins/unit-tests",
-      buildPrPreview: "continuous-integration/jenkins/build-pr-preview",
+      preview: "continuous-integration/jenkins/preview",
+      storybook: "continuous-integration/jenkins/storybook",
       buildRelease: "continuous-integration/jenkins/build-release",
       publishRelease: "continuous-integration/jenkins/publish-release",
-      buildStorybook: "continuous-integration/jenkins/build-storybook",
-      publishStorybook: "continuous-integration/jenkins/publish-storybook",
     ]
 
     def isStaging = env.BRANCH_NAME == "master"
@@ -81,45 +80,29 @@ podTemplate(
       // directory. Making separate working folders for this would help, but
       // that's an exercise for a later date.
       'Storybook + Preview': {
-        stageWithNotify('Build storybook', contexts.buildStorybook) {
+        stageWithNotify('Storybook', contexts.storybook) {
           if (!isPullRequest) {
             print "Preview storybooks only work for PRs"
             return
           }
-          container('preview') {
-            stage('Remove GitHub comments') {
-              deleteComments(STORYBOOK_COMMENT_MARKER)
-            }
-            stage('Build storybook') {
-              sh('yarn build-storybook')
-            }
-          }
-          stageWithNotify('Publish storybook', contexts.publishStorybook) {
-            previewServer.deployStorybook(
-              useContainer: true,
-              commentPrefix: STORYBOOK_COMMENT_MARKER,
-            )
-          }
+          previewServer(
+            buildCommand: 'yarn build-storybook',
+            commentPrefix: STORYBOOK_COMMENT_MARKER,
+            buildFolder: 'storybook-static',
+            prefix: 'storybook',
+          )
         }
-        stageWithNotify('Build preview', contexts.buildPrPreview) {
+        stageWithNotify('Preview', contexts.preview) {
           if (!isPullRequest) {
             print "No PR previews for release builds"
             return
           }
-          container('preview') {
-            stage('Remove GitHub comments') {
-              deleteComments(PR_COMMENT_MARKER)
-            }
-            stage('Build preview') {
-              sh('yarn build')
-            }
-          }
-          stageWithNotify('Publish preview', contexts.publishRelease) {
-            previewServer.deployApp(
-              useContainer: true,
-              commentPrefix: PR_COMMENT_MARKER,
-            )
-          }
+          previewServer(
+            buildCommand: 'yarn build',
+            commentPrefix: PR_COMMENT_MARKER,
+            buildFolder: 'build',
+            prefix: 'pr',
+          )
         }
       },
       'Release': {
