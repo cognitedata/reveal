@@ -9,6 +9,9 @@ export class HtmlOverlayHelper {
   private readonly htmlOverlays: Map<HTMLElement, THREE.Vector3> = new Map();
 
   addOverlayElement(htmlElement: HTMLElement, position3D: THREE.Vector3) {
+    if (htmlElement.style.position !== 'absolute') {
+      throw new Error('htmlElement style must have a position of absolute');
+    }
     this.htmlOverlays.set(htmlElement, position3D);
   }
 
