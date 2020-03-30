@@ -28,6 +28,12 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
+  const sectorRenderer = new THREE.WebGLRenderer();
+  sectorRenderer.setSize(640, (640 * window.innerHeight) / window.innerWidth);
+  document.body.appendChild(sectorRenderer.domElement);
+  const coverageUtil = new reveal_threejs.OrderSectorsByVisibleCoverage(sectorRenderer);
+  coverageUtil.addSectorTree(cadModel.scene.root, cadModel.modelTransformation);
+
   const { position, target, near, far } = cadNode.suggestCameraConfig();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
@@ -45,6 +51,7 @@ async function main() {
 
     if (controlsNeedUpdate || sectorsNeedUpdate) {
       renderer.render(scene, camera);
+      coverageUtil.render(camera);
     }
 
     requestAnimationFrame(render);

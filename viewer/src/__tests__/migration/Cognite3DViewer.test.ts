@@ -20,6 +20,7 @@ describe('Cognite3DViewer', () => {
     getSize: () => new THREE.Vector2(),
     render: jest.fn()
   } as any;
+  jest.useFakeTimers();
 
   test('constructor throws error when unsupported options are set', () => {
     expect(() => new Cognite3DViewer({ sdk, enableCache: true })).toThrowError();
@@ -101,4 +102,37 @@ describe('Cognite3DViewer', () => {
     expect(viewer.getCameraTarget()).toEqual(bbox.getCenter(new THREE.Vector3()));
     expect(bSphere.containsPoint(viewer.getCameraPosition())).toBeTrue();
   });
+
+  test('toggle keyboardNavigation, reacts correctly to keyboard input', async () => {
+    // Arrange
+    const viewer = new Cognite3DViewer({ sdk, renderer });
+    const initialCameraPosition = viewer.getCameraPosition();
+
+    // Act
+    emulateKeyDown('w', viewer.domElement);
+    await new Promise(r => setTimeout(r, 200));
+    emulateKeyUp('w', viewer.domElement);
+    await new Promise(r => setTimeout(r, 1));
+
+    // Assert
+    expect(viewer.getCameraPosition()).not.toEqual(initialCameraPosition);
+  });
 });
+
+function emulateKeyDown(key: string, domElement: HTMLElement) {
+  domElement.dispatchEvent(
+    new KeyboardEvent('keydown', {
+      code: key,
+      key
+    })
+  );
+}
+
+function emulateKeyUp(key: string, domElement: HTMLElement) {
+  domElement.dispatchEvent(
+    new KeyboardEvent('keyup', {
+      code: key,
+      key
+    })
+  );
+}
