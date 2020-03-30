@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { Color } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { CadModel } from '../models/cad/CadModel';
-import { toThreeJsBox3, CadNode } from '../views/threejs';
+import { toThreeJsBox3, CadNode, toThreeMatrix4 } from '../views/threejs';
 import { loadCadModelFromCdf } from '../datasources/cognitesdk';
 import { CadRenderHints } from '../views/CadRenderHints';
 import { NodeAppearance } from '../views/common/cad/NodeAppearance';
@@ -80,11 +80,25 @@ export class Cognite3DModel extends THREE.Object3D {
 
   getBoundingBox(nodeId?: number, box?: THREE.Box3): THREE.Box3 {
     if (nodeId) {
-      throw new NotSupportedInMigrationWrapperError();
+      throw new NotSupportedInMigrationWrapperError('Use getBoundingBoxFromApi(nodeId: number)');
     }
 
     const bounds = this.cadModel.scene.root.bounds;
     return toThreeJsBox3(box || new THREE.Box3(), bounds, this.cadModel.modelTransformation);
+  }
+
+  async getBoundingBoxFromApi(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
+    const response = await this.client.revisions3D.retrieve3DNodes(this.modelId, this.revisionId, [{ id: nodeId }]);
+    if (response.length < 1) {
+      throw new Error('NodeId not found');
+    }
+    const boundingBox3D = response[0].boundingBox;
+    const min = boundingBox3D.min;
+    const max = boundingBox3D.max;
+    const result = box || new THREE.Box3();
+    result.min.set(min[0], min[1], min[2]);
+    result.max.set(max[0], max[1], max[2]);
+    return result.applyMatrix4(toThreeMatrix4(this.cadModel.modelTransformation.modelMatrix));
   }
 
   iterateNodes(_action: (nodeId: number, treeIndex?: number) => void): void {
