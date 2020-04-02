@@ -34,6 +34,21 @@ export interface OrderSectorsByVisibleCoverageOptions {
   renderSize?: THREE.Vector2;
 }
 
+export type PrioritizedSectorIdentifier = {
+  /**
+   * The CadModel that holds the sector.
+   */
+  model: CadModel;
+  /**
+   * Sector ID contained in the model provided.
+   */
+  sectorId: number;
+  /**
+   * A number between 0 and 1 indicating how 'important' the sector is.
+   */
+  priority: number;
+};
+
 export class OrderSectorsByVisibleCoverage {
   private sectorIdOffset = 0;
   private readonly scene = new THREE.Scene();
@@ -78,10 +93,7 @@ export class OrderSectorsByVisibleCoverage {
     this.scene.add(mesh);
   }
 
-  render(camera: THREE.Camera) {
-    // const start = performance.now();
-    const start = performance.now();
-
+  prioritizeSectors(camera: THREE.Camera): PrioritizedSectorIdentifier[] {
     // 1. Render to offscreen buffer
     this.renderer.render(this.scene, camera);
 
@@ -104,13 +116,12 @@ export class OrderSectorsByVisibleCoverage {
       this.renderTarget.height,
       this.buffers.rtBuffer
     );
-    console.log(sectorVisibility);
 
     // 5. Map to IDs that the world understands
     const totalHits = sectorVisibility.reduce((hits, x) => x.hitCount + hits, 0);
     const result = sectorVisibility
-      // Sort by "hit" to put most visible sectors first
       .filter(x => x.hitCount > 0)
+      // Sort by "hit" to put most visible sectors first
       .sort((left, right) => {
         if (left && right) {
           return right.hitCount - left.hitCount;
@@ -127,9 +138,6 @@ export class OrderSectorsByVisibleCoverage {
         return { model: container.model, sectorId, priority: x.hitCount / totalHits };
       });
 
-    // Map from IDs to SectorMetadata
-    // sectorVisibility.map(s => { sectorId: s.sectorId, })
-    console.log(`Read pixels took ${performance.now() - start} ms`, result);
     return result;
   }
 
