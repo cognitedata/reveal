@@ -25,7 +25,6 @@ import { LevelOfDetail } from '../../../data/model/LevelOfDetail';
 import { distinctUntilLevelOfDetailChanged } from '../../../models/cad/distinctUntilLevelOfDetailChanged';
 import { filterCurrentWantedSectors } from '../../../models/cad/filterCurrentWantedSectors';
 import { SectorCuller } from '../../../culling/SectorCuller';
-import { DetermineSectorsByProximityInput } from '../../../models/cad/determineSectors';
 import { ParsedSector } from '../../../data/model/ParsedSector';
 import { WantedSector } from '../../../data/model/WantedSector';
 import { CadBudget, createDefaultCadBudget } from '../../../models/cad/CadBudget';
@@ -37,7 +36,7 @@ export interface CadNodeOptions {
   budget?: CadBudget;
   // internal options are experimental and may change in the future
   internal?: {
-    sectorCuller?: SectorCuller<DetermineSectorsByProximityInput>;
+    sectorCuller?: SectorCuller;
     parseCallback?: ParseCallbackDelegate;
   };
 }
@@ -53,7 +52,7 @@ export class CadNode extends THREE.Object3D {
   public readonly rootSector: RootSectorNode;
   public readonly modelTransformation: SectorModelTransformation;
 
-  private _sectorCuller: SectorCuller<DetermineSectorsByProximityInput>;
+  private _sectorCuller: SectorCuller;
   private _renderHints: CadRenderHints;
   private _loadingHints: CadLoadingHints;
   private _budget: CadBudget;
@@ -176,7 +175,7 @@ export class CadNode extends THREE.Object3D {
         fromThreeCameraConfig(),
 
         // Determine all wanted sectors
-        this._sectorCuller.determineSectors(),
+        map(input => this._sectorCuller.determineSectors(input)),
 
         // Take sectors within budget
         map(wantedSectors => this.budget.filter(wantedSectors, this._sectorScene)),
