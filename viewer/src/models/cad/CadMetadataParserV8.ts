@@ -72,6 +72,7 @@ export function parseCadMetadataV8(metadata: CadMetadataV8): SectorScene {
     }
     const parent = sectorsById.get(parentId)!;
     parent.children.push(sector);
+    sector.parent = parent;
   }
 
   const rootSector = sectorsById.get(0);
@@ -98,6 +99,7 @@ function createSectorMetadata(metadata: CadSectorMetadataV8): SectorMetadata {
     facesFile: { ...metadata.facesFile },
 
     // Populated later
-    children: []
+    children: [],
+    parent: undefined
   };
 }
