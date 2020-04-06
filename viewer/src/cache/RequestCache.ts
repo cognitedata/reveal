@@ -5,6 +5,6 @@
 export type RequestDelegate<Key, Data, Result> = (id: Key, data: Data) => Result;
 
 export interface RequestCache<Key, Data, Result> {
-  request: RequestDelegate<Key, Data, Result>;
-  clearCache: () => void;
+  request(id: Key, data: Data): Result;
+  clearCache(): void;
 }
