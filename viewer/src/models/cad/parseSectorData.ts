@@ -65,9 +65,12 @@ export function createParser(fetchCtmFile: FetchCtmDelegate): ParseSectorDelegat
   const workerList = createWorkers();
 
   // TODO define the cache outside of the createParser function to make it configurable
-  const loadCtmGeometryCache = new MemoryRequestCache((fileId: number) => {
-    return loadCtmGeometry(fileId, fetchCtmFile, workerList);
-  });
+  const loadCtmGeometryCache = new MemoryRequestCache(
+    (fileId: number) => {
+      return loadCtmGeometry(fileId, fetchCtmFile, workerList);
+    },
+    { maxElementsInCache: 10000 }
+  );
 
   async function parse(sectorId: number, sectorArrayBuffer: Uint8Array): Promise<Sector> {
     try {

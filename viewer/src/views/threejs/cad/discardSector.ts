@@ -2,13 +2,13 @@
  * Copyright 2020 Cognite AS
  */
 
-import { SectorNode } from './SectorNode';
 import * as THREE from 'three';
 
-export function discardSector(_sectorId: number, sectorNode: SectorNode) {
-  const meshes: THREE.Mesh[] = sectorNode.children.filter(x => x instanceof THREE.Mesh).map(x => x as THREE.Mesh);
+export function discardSector(group: THREE.Group) {
+  const meshes: THREE.Mesh[] = group.children.filter(x => x instanceof THREE.Mesh).map(x => x as THREE.Mesh);
   for (const mesh of meshes) {
     if (mesh.geometry) {
+      console.log("Disposing", mesh.geometry);
       mesh.geometry.dispose();
     }
     if (mesh.material && mesh.material instanceof THREE.Material) {
@@ -20,6 +20,4 @@ export function discardSector(_sectorId: number, sectorNode: SectorNode) {
       }
     }
   }
-  const sectorChildren = sectorNode.children.filter(x => !(x instanceof SectorNode));
-  sectorNode.remove(...sectorChildren);
 }
