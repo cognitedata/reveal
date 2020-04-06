@@ -21,6 +21,7 @@ type SectorContainer = {
 type SectorVisibility = {
   sectorIdWithOffset: number;
   hitCount: number;
+  distance: number;
 };
 
 const coverageMaterial = new THREE.ShaderMaterial({
@@ -47,12 +48,15 @@ export type PrioritizedSectorIdentifier = {
    * A number between 0 and 1 indicating how 'important' the sector is.
    */
   priority: number;
+
+  depth: number;
 };
 
 export class OrderSectorsByVisibleCoverage {
   private sectorIdOffset = 0;
   private readonly scene = new THREE.Scene();
   private readonly renderer: THREE.WebGLRenderer;
+  private debugRenderer?: THREE.WebGLRenderer;
   private readonly renderTarget: THREE.WebGLRenderTarget;
   private readonly containers: SectorContainer[] = [];
   private readonly buffers = {
@@ -74,10 +78,26 @@ export class OrderSectorsByVisibleCoverage {
     this.renderTarget = new THREE.WebGLRenderTarget(renderSize.width, renderSize.height, {
       generateMipmaps: false,
       type: THREE.UnsignedByteType,
-      format: THREE.RGBFormat,
+      format: THREE.RGBAFormat,
       stencilBuffer: false
     });
     this.renderer.setRenderTarget(this.renderTarget);
+  }
+
+  createDebugCanvas(): HTMLCanvasElement {
+    if (this.debugRenderer) {
+      throw new Error('createDebugCanvas() can only be called once');
+    }
+
+    this.debugRenderer = new THREE.WebGLRenderer({
+      antialias: false,
+      alpha: false,
+      precision: 'lowp',
+      stencil: false
+    });
+    this.debugRenderer.setClearColor('white');
+
+    return this.debugRenderer.domElement;
   }
 
   addModel(model: CadModel) {
@@ -96,6 +116,10 @@ export class OrderSectorsByVisibleCoverage {
   prioritizeSectors(camera: THREE.Camera): PrioritizedSectorIdentifier[] {
     // 1. Render to offscreen buffer
     this.renderer.render(this.scene, camera);
+    if (this.debugRenderer) {
+      this.debugRenderer.setSize(this.renderTarget.width, this.renderTarget.height);
+      this.debugRenderer.render(this.scene, camera);
+    }
 
     // 2. Prepare buffer for reading from GPU
     this.prepareBuffers();
@@ -135,7 +159,12 @@ export class OrderSectorsByVisibleCoverage {
       .map(x => {
         const container = this.findSectorContainer(x.sectorIdWithOffset);
         const sectorId = x.sectorIdWithOffset - container.sectorIdOffset;
-        return { model: container.model, sectorId, priority: x.hitCount / totalHits };
+        return {
+          model: container.model,
+          sectorId,
+          priority: x.hitCount / totalHits,
+          depth: x.distance
+        };
       });
 
     return result;
@@ -160,13 +189,15 @@ export class OrderSectorsByVisibleCoverage {
   ): SectorVisibility[] {
     const sectorVisibility = this.buffers.sectorVisibilityBuffer;
     for (let i = 0; i < renderTargetWidth * renderTargetHeight; i++) {
-      const r = renderTargetBuffer[3 * i + 0];
-      const g = renderTargetBuffer[3 * i + 1];
-      const b = renderTargetBuffer[3 * i + 2];
+      const r = renderTargetBuffer[4 * i + 0];
+      const g = renderTargetBuffer[4 * i + 1];
+      const b = renderTargetBuffer[4 * i + 2];
+      const distance = renderTargetBuffer[4 * i + 3]; // Distance stored in alpha
       const sectorIdWithOffset = b + g * 255 + r * 255 * 255;
       if (r !== 255 && g !== 255 && b !== 255) {
-        const value = sectorVisibility[sectorIdWithOffset] || { sectorIdWithOffset, hitCount: 0 };
+        const value = sectorVisibility[sectorIdWithOffset] || { sectorIdWithOffset, hitCount: 0, distance };
         value.hitCount++;
+        value.distance = Math.min(value.distance, distance);
         sectorVisibility[sectorIdWithOffset] = value;
       }
     }
@@ -175,12 +206,11 @@ export class OrderSectorsByVisibleCoverage {
 
   private prepareBuffers() {
     // Ensure buffer can hold all pixels from render target
-    if (this.buffers.rtBuffer.length < 3 * this.renderTarget.width * this.renderTarget.height) {
-      this.buffers.rtBuffer = new Uint8Array(3 * this.renderTarget.width * this.renderTarget.height);
+    if (this.buffers.rtBuffer.length < 4 * this.renderTarget.width * this.renderTarget.height) {
+      this.buffers.rtBuffer = new Uint8Array(4 * this.renderTarget.width * this.renderTarget.height);
     }
 
     // Blank visibility information
-    // tslint:disable-next-line: prefer-for-of - for performance
     for (let i = 0; i < this.buffers.sectorVisibilityBuffer.length; i++) {
       const entry = this.buffers.sectorVisibilityBuffer[i];
       if (entry) {
