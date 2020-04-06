@@ -1,29 +1,18 @@
 #pragma glslify: packIntToColor = require('../color/packIntToColor.glsl')
 
-// attribute lowp vec3 a_translation;
-// attribute lowp vec3 a_scale;
 attribute highp float a_sectorId;
 attribute lowp float a_coverageFactor;
 
 varying highp vec3 v_color;
 varying lowp float v_coverageFactor;
+varying lowp vec4 v_position;
+varying lowp vec2 v_seed;
 
 void main()
 {
-
-    // mat4 instanceMatrix = mat4(
-    //     vec4(a_scale.x, 0.0, 0.0, 0.0), // Column 1
-    //     vec4(0.0, a_scale.y, 0.0, 0.0), // Column 2
-    //     vec4(0.0, 0.0, a_scale.z, 0.0), // Column 3
-    //     vec4(a_translation, 1.0)        // Column 4
-    // );
     v_color = packIntToColor(a_sectorId);
     v_coverageFactor = a_coverageFactor;
-    gl_Position = projectionMatrix * modelViewMatrix * instanceMatrix * vec4(position, 1.0);;
-
-    // vec3 transformed = (instanceMatrix * vec4(position, 1.0)).xyz;
-    // // vec3 transformed = (instanceMatrix * vec4(position, 1.0)).xyz;
-    // // vec4 modelViewPosition = modelViewMatrix * vec4(transformed, 1.0);
-    // vec4 modelViewPosition = modelViewMatrix * vec4(transformed, 1.0);
-    // gl_Position = projectionMatrix * modelViewPosition;
+    v_seed = vec2(a_sectorId, a_sectorId*a_sectorId);
+    v_position = projectionMatrix * modelViewMatrix * instanceMatrix * vec4(position, 1.0);
+    gl_Position = v_position;
 }
