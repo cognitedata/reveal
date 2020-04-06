@@ -45,7 +45,6 @@ export class MemoryRequestCache<Key, Data, Result> implements RequestCache<Key, 
     }
 
     this.cleanupCache();
-    const value = ;
     const result = new TimestampedContainer<Result>(this._request(id, data));
     this._results.set(id, result);
     return result.value;

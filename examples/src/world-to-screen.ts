@@ -4,8 +4,7 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import * as reveal_threejs from '@cognite/reveal/threejs';
-import { CadNode } from '@cognite/reveal/threejs';
+import { CadNode, NodeAppearance, HtmlOverlayHelper, intersectCadNodes } from '@cognite/reveal/threejs';
 import { createModelIdentifierFromUrlParams, loadCadModelFromCdfOrUrl, createClientIfNecessary } from './utils/loaders';
 import { MOUSE } from 'three';
 
@@ -18,12 +17,9 @@ async function main() {
   const scene = new THREE.Scene();
   const cadModel = await loadCadModelFromCdfOrUrl(modelIdentifier, await createClientIfNecessary(modelIdentifier));
 
-  const { htmlElement, updateHtmlElements } = createHtmlElements();
-  document.body.appendChild(htmlElement);
-
   let pickingNeedsUpdate = false;
   let pickedNode: number | undefined;
-  const nodeAppearance: reveal_threejs.NodeAppearance = {
+  const nodeAppearance: NodeAppearance = {
     color(treeIndex: number) {
       if (treeIndex === pickedNode) {
         return [0, 255, 255, 255];
@@ -55,6 +51,10 @@ async function main() {
   camera.updateMatrixWorld();
   cadNode.update(camera);
 
+  const { htmlElement, paragraph } = createHtmlElements();
+  document.body.appendChild(htmlElement);
+  const htmlOverlayHelper = new HtmlOverlayHelper();
+
   const clock = new THREE.Clock();
   const render = () => {
     const delta = clock.getDelta();
@@ -65,15 +65,11 @@ async function main() {
 
     if (controlsNeedUpdate || modelNeedsUpdate || pickingNeedsUpdate) {
       renderer.render(scene, camera);
-      if (anchorPoint !== undefined) {
-        const { x, y } = reveal_threejs.worldToViewport(canvas, camera, anchorPoint);
-        updateHtmlElements(x, y, undefined);
-      }
+      htmlOverlayHelper.updatePositions(renderer, camera);
     }
     requestAnimationFrame(render);
   };
 
-  let anchorPoint: THREE.Vector3 | undefined;
   const onLeftMouseDown = (event: MouseEvent) => {
     if (event.button === MOUSE.RIGHT) {
       return;
@@ -85,7 +81,7 @@ async function main() {
     };
     // Pick in Reveal
     const revealPickResult = (() => {
-      const intersections = reveal_threejs.intersectCadNodes([cadNode], { renderer, camera, coords });
+      const intersections = intersectCadNodes([cadNode], { renderer, camera, coords });
       if (intersections.length === 0) {
         return;
       }
@@ -102,12 +98,12 @@ async function main() {
       }
       if (pickedNode) {
         updatedNodes.push(pickedNode);
-        anchorPoint = revealPickResult!.point;
-        const { x, y } = reveal_threejs.worldToViewport(canvas, camera, revealPickResult!.point)
-        updateHtmlElements(x, y, text);
+        htmlOverlayHelper.addOverlayElement(htmlElement, revealPickResult!.point);
+        paragraph.textContent = text;
+        htmlElement.style.display = 'block';
       } else {
-        anchorPoint = undefined;
-        updateHtmlElements(0, 0, text);
+        htmlOverlayHelper.removeOverlayElement(htmlElement);
+        htmlElement.style.display = 'none';
       }
       cadNode.requestNodeUpdate(updatedNodes);
       pickingNeedsUpdate = true;
@@ -127,6 +123,7 @@ async function main() {
 function createHtmlElements() {
   const htmlElement = document.createElement('div');
   const style = htmlElement.style;
+  style.display = 'none';
   style.position = 'absolute';
   style.pointerEvents = 'none';
   style.top = '0';
@@ -142,18 +139,10 @@ function createHtmlElements() {
   style.transition = 'opacity .5s';
 
   const paragraph = document.createElement('p');
-  paragraph.textContent = 'Hello there, I am an example paragraph.';
   htmlElement.appendChild(paragraph);
 
   htmlElement.className = 'htmlOverlay';
-  const updateHtmlElements = (x: number, y: number, text: string | undefined) => {
-    htmlElement.style.top = `${y}px`;
-    htmlElement.style.left = `${x}px`;
-    if (text !== undefined) {
-      paragraph.textContent = text;
-    }
-  };
-  return { htmlElement, updateHtmlElements };
+  return { htmlElement, paragraph };
 }
 
 main();
