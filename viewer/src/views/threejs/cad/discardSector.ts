@@ -10,14 +10,9 @@ export function discardSector(group: THREE.Group) {
     if (mesh.geometry) {
       console.log("Disposing", mesh.geometry);
       mesh.geometry.dispose();
-    }
-    if (mesh.material && mesh.material instanceof THREE.Material) {
-      mesh.material.dispose();
-    }
-    if (mesh.material && mesh.material instanceof Array) {
-      for (const material of mesh.material) {
-        material.dispose();
-      }
+      // NOTE: Forcefully creating a new reference here to make sure
+      // there are no lingering references to the large geometry buffer
+      mesh.geometry = new THREE.Geometry();
     }
   }
 }
