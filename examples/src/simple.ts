@@ -12,16 +12,13 @@ import * as reveal from '@cognite/reveal';
 CameraControls.install({ THREE });
 
 class GpuBasedSectorCuller implements reveal.internal.SectorCuller {
+  public readonly coverageUtil: OrderSectorsByVisibleCoverage;
   private readonly camera: THREE.Camera;
-  private readonly coverageUtil: OrderSectorsByVisibleCoverage;
   private readonly models: reveal.CadModel[] = [];
 
   constructor(camera: THREE.Camera) {
     this.camera = camera;
     this.coverageUtil = new OrderSectorsByVisibleCoverage();
-
-    const canvas = this.coverageUtil.createDebugCanvas();
-    document.body.appendChild(canvas);
   }
 
   addModel(cadModel: reveal.CadModel) {
@@ -110,6 +107,17 @@ async function main() {
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#444');
   renderer.setSize(window.innerWidth, window.innerHeight);
+
+  // Debug overlay for "determineSectors"
+  const canvas = sectorCuller.coverageUtil.createDebugCanvas();
+  canvas.style.position = 'fixed';
+  canvas.style.width = '320px';
+  canvas.style.height = '240px';
+  canvas.style.left = '8px';
+  canvas.style.top = '8px';
+  canvas.width = 320;
+  canvas.height = 200;
+  document.body.appendChild(canvas);
   document.body.appendChild(renderer.domElement);
 
   const { position, target, near, far } = cadNode.suggestCameraConfig();

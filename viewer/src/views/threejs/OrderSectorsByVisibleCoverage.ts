@@ -96,6 +96,7 @@ export class OrderSectorsByVisibleCoverage {
       stencil: false
     });
     this.debugRenderer.setClearColor('white');
+    this.debugRenderer.setSize(this.renderTarget.width, this.renderTarget.height);
 
     return this.debugRenderer.domElement;
   }
@@ -117,7 +118,6 @@ export class OrderSectorsByVisibleCoverage {
     // 1. Render to offscreen buffer
     this.renderer.render(this.scene, camera);
     if (this.debugRenderer) {
-      this.debugRenderer.setSize(this.renderTarget.width, this.renderTarget.height);
       this.debugRenderer.render(this.scene, camera);
     }
 
