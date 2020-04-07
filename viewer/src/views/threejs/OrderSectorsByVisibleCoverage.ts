@@ -84,10 +84,12 @@ export class OrderSectorsByVisibleCoverage {
     this.renderer.setRenderTarget(this.renderTarget);
   }
 
-  createDebugCanvas(): HTMLCanvasElement {
+  createDebugCanvas(options?: { width: number; height: number }): HTMLCanvasElement {
     if (this.debugRenderer) {
       throw new Error('createDebugCanvas() can only be called once');
     }
+    const width = options ? options.width : this.renderTarget.width;
+    const height = options ? options.height : this.renderTarget.height;
 
     this.debugRenderer = new THREE.WebGLRenderer({
       antialias: false,
@@ -96,7 +98,7 @@ export class OrderSectorsByVisibleCoverage {
       stencil: false
     });
     this.debugRenderer.setClearColor('white');
-    this.debugRenderer.setSize(this.renderTarget.width, this.renderTarget.height);
+    this.debugRenderer.setSize(width, height);
 
     return this.debugRenderer.domElement;
   }

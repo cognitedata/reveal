@@ -109,14 +109,10 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 
   // Debug overlay for "determineSectors"
-  const canvas = sectorCuller.coverageUtil.createDebugCanvas();
+  const canvas = sectorCuller.coverageUtil.createDebugCanvas({ width: 320, height: 200 });
   canvas.style.position = 'fixed';
-  canvas.style.width = '320px';
-  canvas.style.height = '240px';
   canvas.style.left = '8px';
   canvas.style.top = '8px';
-  canvas.width = 320;
-  canvas.height = 200;
   document.body.appendChild(canvas);
   document.body.appendChild(renderer.domElement);
 
