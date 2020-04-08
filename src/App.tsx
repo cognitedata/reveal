@@ -1,25 +1,16 @@
 import React, { useState } from 'react';
+import { Button } from '@cognite/cogs.js';
 import logo from './logo.svg';
 import './App.css';
 
-const fakeHelperFunction = (): Promise<string> => {
-  return new Promise((_, reject) => {
-    setTimeout(() => {
-      reject(new Error('Fake error'));
-    }, 1000);
-  });
-};
-
 const App = () => {
   const [crashing, setCrashing] = useState(false);
-  const [buttonText, setButtonText] = useState(() => 'Crash me!');
 
   const clickHandler = () => {
     setCrashing(true);
-    fakeHelperFunction().then((output) => {
-      // This will never be seen.
-      setButtonText(output);
-    });
+    if (!crashing) {
+      throw new Error('Synthetic error');
+    }
   };
 
   return (
@@ -35,9 +26,14 @@ const App = () => {
         >
           Learn about how this is hosted
         </a>
-        <button disabled={crashing} type="button" onClick={clickHandler}>
-          {buttonText}
-        </button>
+        <Button
+          disabled={crashing}
+          type="danger"
+          onClick={clickHandler}
+          style={{ marginTop: 8 }}
+        >
+          Crash me!
+        </Button>
       </header>
     </div>
   );
