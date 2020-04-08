@@ -1,5 +1,5 @@
 use console_error_panic_hook;
-use js_sys::{Float32Array, Uint32Array, Map};
+use js_sys::{Float32Array, Map, Uint32Array};
 use serde::{Deserialize, Serialize};
 use std::panic;
 use wasm_bindgen::prelude::*;
