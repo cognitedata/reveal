@@ -10,18 +10,22 @@ const rustModule = import('../../pkg');
 // TODO see if we can defined this in Rust instead
 interface Collection {
   attributes: () => rustTypes.PrimitiveAttributes;
+  free: () => void;
 }
 
 function collectAttributes(collection: Collection): PrimitiveAttributes {
-  // TODO we might need to call free on collection and the attributes
-  return {
-    f32Attributes: collection.attributes().f32_attributes(),
-    f64Attributes: collection.attributes().f64_attributes(),
-    u8Attributes: collection.attributes().u8_attributes(),
-    vec3Attributes: collection.attributes().vec3_attributes(),
-    vec4Attributes: collection.attributes().vec4_attributes(),
-    mat4Attributes: collection.attributes().mat4_attributes()
+  const attributes = collection.attributes();
+  const result = {
+    f32Attributes: attributes.f32_attributes(),
+    f64Attributes: attributes.f64_attributes(),
+    u8Attributes: attributes.u8_attributes(),
+    vec3Attributes: attributes.vec3_attributes(),
+    vec4Attributes: attributes.vec4_attributes(),
+    mat4Attributes: attributes.mat4_attributes()
   };
+  attributes.free();
+  collection.free();
+  return result;
 }
 
 export class ParserWorker {
@@ -91,6 +95,7 @@ export class ParserWorker {
       trapeziums,
       triangleMeshes
     };
+    sectorData.free();
     sectorDataHandle.free();
     return parseResult;
   };
@@ -112,11 +117,13 @@ export class ParserWorker {
   parseQuads = async (buffer: Uint8Array): Promise<ParseQuadsResult> => {
     const rust = await rustModule;
     const sectorData = rust.parse_and_convert_f3df(buffer);
-    return {
+    const result = {
       faces: sectorData.faces(),
       treeIndexToNodeIdMap: sectorData.tree_index_to_node_id_map(),
       nodeIdToTreeIndexMap: sectorData.node_id_to_tree_index_map()
     };
+    sectorData.free();
+    return result;
   };
 }
 
