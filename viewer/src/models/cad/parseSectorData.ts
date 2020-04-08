@@ -69,7 +69,7 @@ export function createParser(fetchCtmFile: FetchCtmDelegate): ParseSectorDelegat
     (fileId: number) => {
       return loadCtmGeometry(fileId, fetchCtmFile, workerList);
     },
-    { maxElementsInCache: 10000 }
+    { maxElementsInCache: 300 }
   );
 
   async function parse(sectorId: number, sectorArrayBuffer: Uint8Array): Promise<Sector> {

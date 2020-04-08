@@ -205,8 +205,8 @@ export class CadNode extends THREE.Object3D {
           throw new Error(`Could not find 3D node for sector ${sector.id} - invalid id?`);
         }
         if (sectorNode.group) {
-          sectorNode.group.userData.used = false;
-          if (!sectorNode.group.userData.cached) {
+          sectorNode.group.userData.refCount -= 1;
+          if (sectorNode.group.userData.refCount === 0) {
             discardSector(sectorNode.group);
           }
           sectorNode.remove(sectorNode.group);

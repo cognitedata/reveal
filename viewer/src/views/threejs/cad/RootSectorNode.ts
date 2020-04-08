@@ -36,10 +36,10 @@ export class RootSectorNode extends SectorNode {
 
     this.consumeSectorCache = new MemoryRequestCache<string, ParsedSector, THREE.Group>(
       (_hash: string, sector: ParsedSector) => this.consumeImpl(sector.id, sector),
-      { remove: (_hash: string, sector: THREE.Group) => {
-        sector.userData.cached = false;
-        if (!sector.userData.used) {
-          discardSector(sector);
+      { remove: (_hash: string, group: THREE.Group) => {
+        group.userData.refCount -= 1;
+        if (group.userData.refCount === 0) {
+          discardSector(group);
         }
       }}
     );
@@ -50,6 +50,7 @@ export class RootSectorNode extends SectorNode {
   public async consumeSector(id: number, sector: ParsedSector): Promise<ConsumedSector> {
     const { levelOfDetail, metadata } = sector;
     const group = this.consumeSectorCache.request(hashIdAndLevelOfDetail(id, levelOfDetail), sector);
+    group.userData.refCount += 1;
 
     return {
       id,
@@ -76,8 +77,7 @@ export class RootSectorNode extends SectorNode {
           throw new Error(`Unsupported level of detail ${sector.levelOfDetail}`);
       }
     })();
-    group.userData.cached = true;
-    group.userData.used = true;
+    group.userData.refCount = 1; // cache = 1 user
     return group;
   }
 }
