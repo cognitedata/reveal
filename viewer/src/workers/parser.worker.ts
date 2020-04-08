@@ -117,11 +117,13 @@ export class ParserWorker {
   parseQuads = async (buffer: Uint8Array): Promise<ParseQuadsResult> => {
     const rust = await rustModule;
     const sectorData = rust.parse_and_convert_f3df(buffer);
-    return {
+    const result = {
       faces: sectorData.faces(),
       treeIndexToNodeIdMap: sectorData.tree_index_to_node_id_map(),
       nodeIdToTreeIndexMap: sectorData.node_id_to_tree_index_map()
     };
+    sectorData.free();
+    return result;
   };
 }
 
