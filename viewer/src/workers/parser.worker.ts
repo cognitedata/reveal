@@ -10,10 +10,10 @@ const rustModule = import('../../pkg');
 // TODO see if we can defined this in Rust instead
 interface Collection {
   attributes: () => rustTypes.PrimitiveAttributes;
+  free: () => void;
 }
 
 function collectAttributes(collection: Collection): PrimitiveAttributes {
-  // TODO we might need to call free on collection and the attributes
   const attributes = collection.attributes();
   const result = {
     f32Attributes: attributes.f32_attributes(),
@@ -24,6 +24,7 @@ function collectAttributes(collection: Collection): PrimitiveAttributes {
     mat4Attributes: attributes.mat4_attributes()
   };
   attributes.free();
+  collection.free();
   return result;
 }
 
