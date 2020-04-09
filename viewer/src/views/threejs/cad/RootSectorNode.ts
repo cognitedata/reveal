@@ -15,6 +15,7 @@ import { consumeSectorSimple } from './consumeSectorSimple';
 import { consumeSectorDetailed } from './consumeSectorDetailed';
 import { SectorQuads, Sector } from '../../../models/cad/types';
 import { ConsumedSector } from '../../../data/model/ConsumedSector';
+import { discardSector } from './discardSector';
 
 function hashIdAndLevelOfDetail(id: number, levelOfDetail: LevelOfDetail) {
   return `${id},${levelOfDetail}`;
@@ -34,7 +35,13 @@ export class RootSectorNode extends SectorNode {
     this.materials = materials;
 
     this.consumeSectorCache = new MemoryRequestCache<string, ParsedSector, THREE.Group>(
-      (_hash: string, sector: ParsedSector) => this.consumeImpl(sector.id, sector)
+      (_hash: string, sector: ParsedSector) => this.consumeImpl(sector.id, sector),
+      { remove: (_hash: string, group: THREE.Group) => {
+        group.userData.refCount -= 1;
+        if (group.userData.refCount === 0) {
+          discardSector(group);
+        }
+      }}
     );
 
     buildScene(scene.root, this, this.sectorNodeMap);
@@ -43,6 +50,7 @@ export class RootSectorNode extends SectorNode {
   public async consumeSector(id: number, sector: ParsedSector): Promise<ConsumedSector> {
     const { levelOfDetail, metadata } = sector;
     const group = this.consumeSectorCache.request(hashIdAndLevelOfDetail(id, levelOfDetail), sector);
+    group.userData.refCount += 1;
 
     return {
       id,
@@ -69,6 +77,7 @@ export class RootSectorNode extends SectorNode {
           throw new Error(`Unsupported level of detail ${sector.levelOfDetail}`);
       }
     })();
+    group.userData.refCount = 1; // cache = 1 user
     return group;
   }
 }

@@ -27,15 +27,24 @@ class TimestampedContainer<T> {
   }
 }
 
+export type RemoveDelegate<Key, Result> = (key: Key, result: Result) => void;
+
+export interface MemoryRequestCacheOptions<Key, Result> {
+  maxElementsInCache?: number;
+  remove?: RemoveDelegate<Key, Result>;
+}
+
 export class MemoryRequestCache<Key, Data, Result> implements RequestCache<Key, Data, Result> {
   private readonly _maxElementsInCache: number;
   private readonly _results: Map<Key, TimestampedContainer<Result>>;
   private readonly _request: RequestDelegate<Key, Data, Result>;
+  private readonly _removeCallback?: RemoveDelegate<Key, Result>;
 
-  constructor(request: RequestDelegate<Key, Data, Result>, maxElementsInCache: number = 50) {
+  constructor(request: RequestDelegate<Key, Data, Result>, options?: MemoryRequestCacheOptions<Key, Result>) {
     this._results = new Map();
     this._request = request;
-    this._maxElementsInCache = maxElementsInCache;
+    this._maxElementsInCache = (options && options.maxElementsInCache) || 50;
+    this._removeCallback = options && options.remove;
   }
 
   request(id: Key, data: Data): Result {
@@ -66,6 +75,9 @@ export class MemoryRequestCache<Key, Data, Result> implements RequestCache<Key, 
       let index = 0;
       while (this._results.size > maxCacheSize) {
         const toRemove = allResults[index++];
+        if (this._removeCallback) {
+          this._removeCallback(toRemove[0], toRemove[1].value);
+        }
         this._results.delete(toRemove[0]);
       }
     }
