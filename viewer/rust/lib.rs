@@ -1,5 +1,5 @@
 use console_error_panic_hook;
-use js_sys::{Float32Array, Map};
+use js_sys::{Float32Array, Map, Uint32Array};
 use serde::{Deserialize, Serialize};
 use std::panic;
 use wasm_bindgen::prelude::*;
@@ -45,21 +45,20 @@ pub struct CtmResult {
 
 #[wasm_bindgen]
 impl CtmResult {
-    // TODO 20191023 dragly can we go directly to Vec<u32>?
-    pub fn indices(&self) -> Vec<u32> {
-        self.file.indices.clone()
+    pub fn indices(&self) -> Uint32Array {
+        Uint32Array::from(self.file.indices.as_slice())
     }
-    pub fn vertices(&self) -> Vec<f32> {
+    pub fn vertices(&self) -> Float32Array {
         let data_as_vector3 = &self.file.vertices;
-        unsafe {
+        let vertices_as_f32 = unsafe {
             std::slice::from_raw_parts(
                 data_as_vector3.as_ptr() as *const f32,
                 data_as_vector3.len() * 3,
             )
-            .to_vec()
-        }
+        };
+        Float32Array::from(vertices_as_f32)
     }
-    pub fn normals(&self) -> Option<Vec<f32>> {
+    pub fn normals(&self) -> Option<Float32Array> {
         let data_as_vector3 = match &self.file.normals {
             Some(x) => x,
             None => return None,
@@ -69,9 +68,8 @@ impl CtmResult {
                 data_as_vector3.as_ptr() as *const f32,
                 data_as_vector3.len() * 3,
             )
-            .to_vec()
         };
-        Some(data_as_f32)
+        Some(Float32Array::from(data_as_f32))
     }
     // TODO 2019-10-23 dragly: add UV maps
 }
