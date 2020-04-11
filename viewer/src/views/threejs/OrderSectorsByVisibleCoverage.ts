@@ -226,38 +226,45 @@ export class OrderSectorsByVisibleCoverage {
     sectors: SectorMetadata[],
     modelTransformation: SectorModelTransformation
   ): THREE.Object3D {
+    const transformMatrix = toThreeMatrix4(modelTransformation.modelMatrix);
+    const normalTransformMatrix = new THREE.Matrix3().setFromMatrix4(transformMatrix);
     const group = new THREE.Group();
-    group.applyMatrix4(toThreeMatrix4(modelTransformation.modelMatrix));
+    group.applyMatrix4(transformMatrix);
 
     const sectorCount = sectors.length;
 
-    const instanceValues = new Float32Array(2 * sectorCount); // sectorId, coverageFactor
+    const instanceValues = new Float32Array(4 * sectorCount); // sectorId, coverageFactor
     const boxGeometry = new THREE.BoxBufferGeometry();
     const mesh = new THREE.InstancedMesh(boxGeometry, coverageMaterial, sectorCount);
 
     const bounds = new THREE.Box3();
-    const addSector = (sectorBounds: Box3, sectorId: number, coverageFactor: number) => {
+    const addSector = (sectorBounds: Box3, sectorId: number, coverageFactors: THREE.Vector3) => {
       toThreeJsBox3(bounds, sectorBounds);
       const translation = bounds.getCenter(new THREE.Vector3());
       const scale = bounds.getSize(new THREE.Vector3());
 
+      coverageFactors.applyNormalMatrix(normalTransformMatrix);
       const instanceMatrix = new THREE.Matrix4().compose(translation, identityRotation, scale);
       mesh.setMatrixAt(sectorId, instanceMatrix);
 
-      instanceValues[2 * sectorId + 0] = sectorIdOffset + sectorId;
-      instanceValues[2 * sectorId + 1] = coverageFactor;
+      instanceValues[4 * sectorId + 0] = sectorIdOffset + sectorId;
+      instanceValues[4 * sectorId + 1] = coverageFactors.x;
+      instanceValues[4 * sectorId + 2] = coverageFactors.y;
+      instanceValues[4 * sectorId + 3] = coverageFactors.z;
     };
 
+    const coverageFactors = new THREE.Vector3(); // Allocate once only
     sectors.forEach(sector => {
       // TODO 2020-04-02 larsmoa: Consider sending each of the coverage factors to the shader
       const { xy, xz, yz } = sector.facesFile.coverageFactors;
-      const coverageFactor = (xy + xz + yz) / 3.0;
-      addSector(sector.bounds, sector.id, coverageFactor);
+      coverageFactors.set(yz, xz, xy);
+      // const coverageFactor = (xy + xz + yz) / 3.0;
+      addSector(sector.bounds, sector.id, coverageFactors);
     });
 
-    const buffer = new THREE.InstancedInterleavedBuffer(instanceValues, 2);
+    const buffer = new THREE.InstancedInterleavedBuffer(instanceValues, 4);
     boxGeometry.setAttribute('a_sectorId', new THREE.InterleavedBufferAttribute(buffer, 1, 0));
-    boxGeometry.setAttribute('a_coverageFactor', new THREE.InterleavedBufferAttribute(buffer, 1, 1));
+    boxGeometry.setAttribute('a_coverageFactor', new THREE.InterleavedBufferAttribute(buffer, 3, 1));
 
     group.add(mesh);
     return group;

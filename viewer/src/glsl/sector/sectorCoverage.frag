@@ -3,6 +3,7 @@
 varying highp vec3 v_color;
 varying lowp float v_coverageFactor;
 varying lowp vec4 v_position;
+varying lowp vec3 v_normal;
 varying lowp vec2 v_seed;
 
 
