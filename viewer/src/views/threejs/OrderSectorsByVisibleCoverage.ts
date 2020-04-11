@@ -195,8 +195,8 @@ export class OrderSectorsByVisibleCoverage {
       const g = renderTargetBuffer[4 * i + 1];
       const b = renderTargetBuffer[4 * i + 2];
       const distance = renderTargetBuffer[4 * i + 3]; // Distance stored in alpha
-      const sectorIdWithOffset = b + g * 255 + r * 255 * 255;
       if (r !== 255 && g !== 255 && b !== 255) {
+        const sectorIdWithOffset = b + g * 255 + r * 255 * 255;
         const value = sectorVisibility[sectorIdWithOffset] || { sectorIdWithOffset, hitCount: 0, distance };
         value.hitCount++;
         value.distance = Math.min(value.distance, distance);
@@ -227,7 +227,6 @@ export class OrderSectorsByVisibleCoverage {
     modelTransformation: SectorModelTransformation
   ): THREE.Object3D {
     const transformMatrix = toThreeMatrix4(modelTransformation.modelMatrix);
-    const normalTransformMatrix = new THREE.Matrix3().setFromMatrix4(transformMatrix);
     const group = new THREE.Group();
     group.applyMatrix4(transformMatrix);
 
@@ -243,7 +242,6 @@ export class OrderSectorsByVisibleCoverage {
       const translation = bounds.getCenter(new THREE.Vector3());
       const scale = bounds.getSize(new THREE.Vector3());
 
-      coverageFactors.applyNormalMatrix(normalTransformMatrix);
       const instanceMatrix = new THREE.Matrix4().compose(translation, identityRotation, scale);
       mesh.setMatrixAt(sectorId, instanceMatrix);
 
@@ -255,10 +253,8 @@ export class OrderSectorsByVisibleCoverage {
 
     const coverageFactors = new THREE.Vector3(); // Allocate once only
     sectors.forEach(sector => {
-      // TODO 2020-04-02 larsmoa: Consider sending each of the coverage factors to the shader
       const { xy, xz, yz } = sector.facesFile.coverageFactors;
       coverageFactors.set(yz, xz, xy);
-      // const coverageFactor = (xy + xz + yz) / 3.0;
       addSector(sector.bounds, sector.id, coverageFactors);
     });
 
