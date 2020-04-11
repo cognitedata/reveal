@@ -9,7 +9,7 @@ varying lowp vec2 v_seed;
 
 void main() {
     float v = rand2d(gl_FragCoord.xy + v_seed);
-    if (v > v_coverageFactor) {
+    if (v >= v_coverageFactor) {
         discard;
     }
 
