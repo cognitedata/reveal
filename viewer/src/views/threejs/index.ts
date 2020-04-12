@@ -14,4 +14,8 @@ export { worldToViewport } from './worldToViewport';
 export { toThreeVector3, fitCameraToBoundingBox, toThreeMatrix4, toThreeJsBox3 } from './utilities';
 export { SsaoEffect, SsaoPassType } from './post-processing/ssao';
 
-export { OrderSectorsByVisibleCoverage } from './OrderSectorsByVisibleCoverage';
+export {
+  OrderSectorsByVisibleCoverage,
+  PrioritizedSectorIdentifier,
+  OrderSectorsByVisibleCoverageOptions
+} from './OrderSectorsByVisibleCoverage';
