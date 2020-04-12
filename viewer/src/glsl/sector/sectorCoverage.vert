@@ -2,6 +2,7 @@
 
 attribute highp float a_sectorId;
 attribute lowp vec3 a_coverageFactor;
+attribute lowp float a_depth;
 
 varying highp vec3 v_color;
 varying lowp float v_coverageFactor;
@@ -12,7 +13,8 @@ void main()
 {
     v_color = packIntToColor(a_sectorId);
     v_coverageFactor = abs(dot(a_coverageFactor, normal));
-    v_seed = vec2(a_sectorId, a_sectorId*a_sectorId);
+    v_seed = vec2(a_sectorId / 255.0, a_sectorId / 255.0);
     v_position = projectionMatrix * modelViewMatrix * instanceMatrix * vec4(position, 1.0);
+    v_position = v_position + vec4(0.0, 0.0, 0.0, a_depth);
     gl_Position = v_position;
 }
