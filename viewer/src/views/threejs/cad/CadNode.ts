@@ -151,7 +151,10 @@ export class CadNode extends THREE.Object3D {
       sectorScene: this._sectorScene,
       loadingHints: this.loadingHints
     };
-    this._cameraPositionObservable.next(cameraConfig);
+
+    if (!this.loadingHints.suspendLoading) {
+      this._cameraPositionObservable.next(cameraConfig);
+    }
   }
 
   public suggestCameraConfig(): SuggestedCameraConfig {
