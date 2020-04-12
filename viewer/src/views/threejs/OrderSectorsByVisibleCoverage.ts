@@ -30,8 +30,17 @@ const coverageMaterial = new THREE.ShaderMaterial({
 });
 const identityRotation = new THREE.Quaternion();
 
+/**
+ * Options for OrderSectorsByVisibleCoverage.
+ */
 export interface OrderSectorsByVisibleCoverageOptions {
+  /**
+   * Optional WebGL context to use for rendering of coverage.
+   */
   glContext?: WebGLRenderingContext;
+  /**
+   * Optional size of the framebuffer used for rendering coverage.
+   */
   renderSize?: THREE.Vector2;
 }
 
