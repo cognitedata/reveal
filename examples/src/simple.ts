@@ -8,8 +8,12 @@ import * as reveal_threejs from '@cognite/reveal/threejs';
 import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams, createClientIfNecessary } from './utils/loaders';
 import { OrderSectorsByVisibleCoverage } from '@cognite/reveal/threejs';
 import * as reveal from '@cognite/reveal';
+import { vec3 } from 'gl-matrix';
+import { Sector } from '@cognite/reveal/models/cad/types';
 
 CameraControls.install({ THREE });
+
+type PrioritizedWantedSector = reveal.internal.WantedSector & { priority: number };
 
 class GpuBasedSectorCuller implements reveal.internal.SectorCuller {
   public readonly coverageUtil: OrderSectorsByVisibleCoverage;
@@ -43,75 +47,27 @@ class GpuBasedSectorCuller implements reveal.internal.SectorCuller {
     let costSpent = 0.0;
 
     const wanted: (reveal.internal.WantedSector & { priority: number })[] = [];
-    const takenSectors = new Set<number>();
+    const wantedSimpleSectors = new Set<[reveal.CadModel, number]>();
+    const takenSectors = new Set<[reveal.CadModel, number]>();
 
     // Add high details for all sectors the camera is inside
-    this.models.forEach(model => {
-      for (const sector of model.scene.getSectorsContainingPoint(input.cameraPosition)) {
-        costSpent += this.computeSectorCost(sector);
-        takenSectors.add(sector.id);
-        wanted.push({
-          id: sector.id,
-          metadata: sector,
-          levelOfDetail: reveal.internal.LevelOfDetail.Detailed,
-          priority: Infinity
-        });
-      }
-    });
+    costSpent += this.addHighDetailsForInsideSectors(input.cameraPosition, takenSectors, wanted);
 
     // Create a list of parents that are required for each entry of the prioritized list
     let debugAccumulatedPriority = 0.0;
     const prioritizedLength = prioritized.length;
     // Holds IDs of wanted simple sectors. No children of these should be loaded.
-    const wantedSimpleSectors = new Set<number>();
     for (let i = 0; i < prioritizedLength && costSpent < costLimit; i++) {
       const x = prioritized[i];
-      let metadata = x.model.scene.getSectorById(x.sectorId);
+      const metadata = x.model.scene.getSectorById(x.sectorId);
       const levelOfDetail = this.determineLevelOfDetail(input, metadata!);
+      debugAccumulatedPriority += x.priority;
       if (levelOfDetail === reveal.internal.LevelOfDetail.Detailed) {
-        // Find parents and "total cost" of sector
-        const required: reveal.SectorMetadata[] = [];
-        let totalCost = 0;
-        // TODO 2020-04-12 larsmoa: Not sure if adding parents is a good idea
-        while (metadata && !takenSectors.has(metadata.id)) {
-          if (wantedSimpleSectors.has(metadata.id)) {
-            console.log(`Skipped ${x.sectorId} because ${metadata.path} is loaded simple`);
-            continue;
-          }
-          totalCost += this.computeSectorCost(metadata);
-          takenSectors.add(metadata.id);
-          required.push(metadata);
-          metadata = metadata.parent;
-        }
-
-        // Add "order"
-        debugAccumulatedPriority += x.priority;
-        const batch = required.map(y => {
-          return {
-            id: y.id,
-            metadata: y,
-            levelOfDetail,
-            priority: x.priority
-          };
-        });
-        wanted.push(...batch);
-
-        // Update spendage
-        costSpent += totalCost;
+        costSpent += this.addDetailed(x, metadata, wanted, wantedSimpleSectors, takenSectors);
+      } else if (levelOfDetail === reveal.internal.LevelOfDetail.Simple) {
+        costSpent += this.addSimpleSector(x, metadata!, wanted, wantedSimpleSectors);
       } else {
-        // console.log(`Add simple ${x.sectorId}`);
-        // Simple detail
-        wantedSimpleSectors.add(x.sectorId);
-        debugAccumulatedPriority += x.priority;
-        wanted.push({
-          id: x.sectorId,
-          metadata: metadata!,
-          levelOfDetail,
-          priority: x.priority
-        });
-
-        // Update spendage
-        costSpent += this.computeSectorCost(metadata!);
+        throw new Error(`Unexpected levelOfDetail ${levelOfDetail}`);
       }
     }
 
@@ -127,6 +83,81 @@ class GpuBasedSectorCuller implements reveal.internal.SectorCuller {
     // );
     console.log(`Total: ${wanted.length} (cost: ${costSpent / 1024 / 1024}, priority: ${debugAccumulatedPriority}`);
     return wanted;
+  }
+
+  private addHighDetailsForInsideSectors(
+    cameraPosition: vec3,
+    takenSectors: Set<[reveal.CadModel, number]>,
+    wanted: PrioritizedWantedSector[]
+  ): number {
+    let costSpent = 0.0;
+    this.models.forEach(model => {
+      for (const sector of model.scene.getSectorsContainingPoint(cameraPosition)) {
+        costSpent += this.computeSectorCost(sector);
+        takenSectors.add([model, sector.id]);
+        wanted.push({
+          id: sector.id,
+          metadata: sector,
+          levelOfDetail: reveal.internal.LevelOfDetail.Detailed,
+          priority: Infinity
+        });
+      }
+    });
+    return costSpent;
+  }
+
+  private addSimpleSector(
+    sector: reveal_threejs.PrioritizedSectorIdentifier,
+    metadata: reveal.SectorMetadata,
+    wanted: PrioritizedWantedSector[],
+    wantedSimpleSectors: Set<[reveal.CadModel, number]>
+  ): number {
+    // Simple detail
+    wantedSimpleSectors.add([sector.model, sector.sectorId]);
+    wanted.push({
+      id: sector.sectorId,
+      metadata: metadata!,
+      levelOfDetail: reveal.internal.LevelOfDetail.Simple,
+      priority: sector.priority
+    });
+
+    return this.computeSectorCost(metadata!);
+  }
+
+  private addDetailed(
+    sector: reveal_threejs.PrioritizedSectorIdentifier,
+    metadata: reveal.SectorMetadata | undefined,
+    wanted: PrioritizedWantedSector[],
+    wantedSimpleSectors: Set<[reveal.CadModel, number]>,
+    takenSectors: Set<[reveal.CadModel, number]>
+  ): number {
+    // Find parents and "total cost" of sector
+    const required: reveal.SectorMetadata[] = [];
+    let totalCost = 0;
+    // TODO 2020-04-12 larsmoa: Not sure if adding parents is a good idea
+    while (metadata && !takenSectors.has([sector.model, metadata.id])) {
+      if (wantedSimpleSectors.has([sector.model, metadata.id])) {
+        console.log(`Skipped ${sector.sectorId} because ${metadata.path} is loaded simple`);
+        break;
+      }
+      totalCost += this.computeSectorCost(metadata);
+      takenSectors.add([sector.model, metadata.id]);
+      required.push(metadata);
+      metadata = metadata.parent;
+    }
+
+    // Add "order"
+    const offset = wanted.length;
+    wanted.length = wanted.length + required.length;
+    for (let i = 0; i < required.length; i++) {
+      wanted[offset + i] = {
+        id: required[i].id,
+        metadata: required[i],
+        levelOfDetail: reveal.internal.LevelOfDetail.Detailed,
+        priority: sector.priority
+      };
+    }
+    return totalCost;
   }
 
   private determineLevelOfDetail(
@@ -189,7 +220,7 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 
   // Debug overlay for "determineSectors"
-  const canvas = sectorCuller.coverageUtil.createDebugCanvas({ width: 320, height: 200 });
+  const canvas = sectorCuller.coverageUtil.createDebugCanvas({ width: 640, height: 400 });
   canvas.style.position = 'fixed';
   canvas.style.left = '8px';
   canvas.style.top = '8px';
