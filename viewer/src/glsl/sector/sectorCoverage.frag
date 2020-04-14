@@ -1,6 +1,6 @@
 #pragma glslify: rand2d = require('../math/rand2d.glsl')
 
-varying highp vec3 v_color;
+varying mediump vec3 v_color;
 varying lowp float v_coverageFactor;
 varying lowp vec4 v_position;
 varying lowp vec3 v_normal;

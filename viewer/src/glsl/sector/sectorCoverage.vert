@@ -1,10 +1,10 @@
 #pragma glslify: packIntToColor = require('../color/packIntToColor.glsl')
 
-attribute highp float a_sectorId;
+attribute mediump float a_sectorId;
 attribute lowp vec3 a_coverageFactor;
 attribute lowp float a_depth;
 
-varying highp vec3 v_color;
+varying mediump vec3 v_color;
 varying lowp float v_coverageFactor;
 varying lowp vec4 v_position;
 varying lowp vec2 v_seed;
