@@ -26,7 +26,18 @@ export interface SectorMetadata {
   };
   readonly facesFile: {
     readonly quadSize: number;
+    /**
+     * Coverage factors for the sector without children.
+     */
     readonly coverageFactors: {
+      xy: number;
+      yz: number;
+      xz: number;
+    };
+    /**
+     * Coverage factor for the sectors including children.
+     */
+    readonly recursiveCoverageFactors: {
       xy: number;
       yz: number;
       xz: number;
