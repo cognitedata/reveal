@@ -2,7 +2,7 @@
 
 static final String STAGING_DOMAIN_NAME = "tenant-selector.cognite.ai"
 static final String RELEASE_DOMAIN_NAME = "production.tenant-selector.cognite.ai"
-static final String SENTRY_PROJECT_NAME = "tenant-selector-app"
+static final String SENTRY_PROJECT_NAME = "tenant-selector"
 
 static final String PR_COMMENT_MARKER = "[pr-server]\n"
 static final String STORYBOOK_COMMENT_MARKER = "[storybook-server]\n"
