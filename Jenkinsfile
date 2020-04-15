@@ -1,14 +1,8 @@
 @Library('jenkins-helpers') _
 
-// This is your staging domain. Staging deployments are protected by Cognite
-// IAP, meaning they're only accessible to Cogniters.
-static final String STAGING_DOMAIN_NAME = "react-demo.cognite.ai"
-// For the demo app, this domain does not exist. However, it likely will exist
-// for your app.
-static final String RELEASE_DOMAIN_NAME = "production.react-demo.cognite.ai"
-// Replace this with your app's ID on https://sentry.io/ -- if you do not have
-// one (or do not have access to Sentry), stop by #frontend to ask for help. :)
-static final String SENTRY_PROJECT_NAME = "react-demo-app"
+static final String STAGING_DOMAIN_NAME = "tenant-selector.cognite.ai"
+static final String RELEASE_DOMAIN_NAME = "production.tenant-selector.cognite.ai"
+static final String SENTRY_PROJECT_NAME = "tenant-selector-app"
 
 static final String PR_COMMENT_MARKER = "[pr-server]\n"
 static final String STORYBOOK_COMMENT_MARKER = "[storybook-server]\n"
