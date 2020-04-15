@@ -20,12 +20,7 @@ const quadVertexData = new Float32Array([
 ]);
 const quadVertexBufferAttribute = new THREE.Float32BufferAttribute(quadVertexData.buffer, 3);
 
-export function consumeSectorSimple(
-  sectorId: number,
-  sector: SectorQuads,
-  metadata: SectorMetadata,
-  materials: Materials
-): THREE.Group {
+export function consumeSectorSimple(sector: SectorQuads, materials: Materials): THREE.Group {
   const group = new THREE.Group();
   const stride = 3 + 1 + 3 + 16;
   if (sector.buffer.byteLength === 0) {
@@ -35,9 +30,9 @@ export function consumeSectorSimple(
   if (sector.buffer.byteLength % stride !== 0) {
     throw new Error(`Expected buffer size to be multiple of ${stride}, but got ${sector.buffer.byteLength}`);
   }
-  const bounds = toThreeJsBox3(new THREE.Box3(), metadata.bounds);
-  const boundsRenderer = new THREE.Box3Helper(bounds.expandByScalar(0.1), new THREE.Color(0xff00ff));
-  boundsRenderer.name = `Bounding box ${sectorId}`;
+  // const bounds = toThreeJsBox3(new THREE.Box3(), metadata.bounds);
+  // const boundsRenderer = new THREE.Box3Helper(bounds.expandByScalar(0.1), new THREE.Color(0xff00ff));
+  // boundsRenderer.name = `Bounding box ${sectorId}`;
 
   const geometry = new THREE.InstancedBufferGeometry();
 
@@ -61,7 +56,7 @@ export function consumeSectorSimple(
 
   const obj = new THREE.Mesh(geometry, materials.simple);
 
-  obj.name = `Quads ${sectorId}`;
+  // obj.name = `Quads ${sectorId}`;
   // TODO 20191028 dragly figure out why the quads are being culled wrongly and if we
   // can avoid disabling it entirely
   obj.frustumCulled = false;
