@@ -8,7 +8,7 @@ type SidecarConfig = {
 
 export const getSidecar = (): SidecarConfig => {
   // eslint-disable-next-line no-underscore-dangle
-  return (<any>window).__cogniteSidecar;
+  return (window as any).__cogniteSidecar;
 };
 
 type ValidationResult = {
@@ -38,4 +38,10 @@ export const validateTenant: TenantValidator = async (
         status: response.status,
       };
     });
+};
+
+const KEY_LAST_TENANT = '__tenant-selector_last-tenant';
+
+export const getLastTenant = (): string | undefined => {
+  return KEY_LAST_TENANT;
 };

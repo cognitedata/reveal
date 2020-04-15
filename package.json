@@ -13,9 +13,10 @@
     "storybook": "start-storybook -p 6006"
   },
   "dependencies": {
-    "@cognite/cogs.js": "^1.0.7",
+    "@cognite/cogs.js": "^1.0.9",
+    "@cognite/metrics": "^0.0.31",
     "@sentry/browser": "^5.15.4",
-    "antd": "^4.1.1",
+    "antd": "^3.19.2",
     "axios": "^0.19.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
@@ -25,6 +26,7 @@
   },
   "devDependencies": {
     "@cognite/eslint-config": "^1.4.2",
+    "@storybook/addon-actions": "^5.3.18",
     "@storybook/preset-create-react-app": "^2.1.1",
     "@storybook/react": "^5.3.18",
     "@testing-library/jest-dom": "^5.3.0",
@@ -34,6 +36,7 @@
     "@types/react": "^16.9.32",
     "@types/react-dom": "^16.9.6",
     "@types/react-helmet": "^5.0.15",
+    "@types/styled-components": "^5.1.0",
     "concurrently": "^5.1.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.1.0",

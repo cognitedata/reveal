@@ -1,13 +1,15 @@
 import React from 'react';
 import TitleChanger from 'TitleChanger.tsx';
-import TenantSelector from 'TenantSelector';
-import { validateTenant } from 'utils';
+import TenantSelectorContainer from 'TenantSelectorContainer';
+import { getSidecar } from 'utils';
 
 const App = () => {
+  const { applicationId } = getSidecar();
+
   return (
     <div className="App">
       <TitleChanger />
-      <TenantSelector validateTenant={validateTenant} />
+      <TenantSelectorContainer applicationId={applicationId} />
     </div>
   );
 };
