@@ -1,12 +1,12 @@
 import React from 'react';
-import { render } from 'test/utils';
+import { render } from '@testing-library/react';
 
 import { Base } from './CardFooterError.stories';
 
 describe('CardFooterError', () => {
   it('Renders children', () => {
-    const { expectByText } = render(<Base />);
-    expectByText(
+    const { getByText } = render(<Base />);
+    getByText(
       'Something is taking longer than usual. Please refresh the page.'
     );
   });

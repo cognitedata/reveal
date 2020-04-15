@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, typeText } from 'test/utils';
+import { render, fireEvent } from '@testing-library/react';
 
 import { Base, Loading } from './TenantSelector.stories';
 
@@ -15,7 +15,7 @@ describe('<TenantSelector />', () => {
     const tenantInput = getByPlaceholderText(
       'Enter Company ID'
     ) as HTMLInputElement;
-    typeText(tenantInput, 'AKERBP_');
+    fireEvent.change(tenantInput, { target: { value: 'AKERBP_' } });
     expect(tenantInput.value).toEqual('akerbp');
   });
 
