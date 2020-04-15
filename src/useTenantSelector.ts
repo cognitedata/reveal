@@ -10,12 +10,8 @@ const useTenantSelector = (appName: string) => {
 
   const onTenantSelected = (newTenant: string) => {
     setRedirecting(true);
-    const { hash, pathname, search } = window.location;
-    let url = `/${newTenant}`;
-    if (pathname) {
-      url += pathname;
-    }
-    url += (search || '') + (hash || '');
+    const { hash, search } = window.location;
+    const url = [`/${newTenant}`, search, hash].filter(Boolean).join('');
     window.location.href = url;
   };
 
@@ -26,12 +22,13 @@ const useTenantSelector = (appName: string) => {
         params: { tenant, app: appName },
       })
       .then(() => {
-        setValidatingTenant(false);
         return true;
       })
       .catch((e) => {
-        setValidatingTenant(false);
         throw e;
+      })
+      .finally(() => {
+        setValidatingTenant(false);
       });
   };
 

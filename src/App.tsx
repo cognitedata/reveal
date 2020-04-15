@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import TitleChanger from 'TitleChanger.tsx';
 import { getSidecar } from 'utils';
 import TenantSelectorScreen from 'TenantSelectorScreen';
@@ -15,26 +15,28 @@ const App = () => {
     redirecting,
   } = useTenantSelector(applicationId);
 
-  const errorFooter = authenticating ? (
-    <>
-      <div>Something is taking longer than usual. Please refresh the page.</div>
-      <div>
-        Contact{' '}
-        <a href={`mailto:support@cognite.com?subject=Error ID: ${'errorId'}`}>
-          support@cognite.com
-        </a>{' '}
-        if the problem persists.
-      </div>
-    </>
-  ) : null;
+  const isLoading = redirecting || authenticating || validatingTenant;
+
+  // TODO: Set a timeout here so that we detect if we're ever in this loading
+  // state for too long.
+
+  const performValidation = useCallback(
+    (tenant: string) => {
+      setAuthenticating(true);
+      return checkTenantValidity(tenant).finally(() => {
+        setAuthenticating(false);
+      });
+    },
+    [checkTenantValidity]
+  );
 
   return (
     <>
       <TitleChanger />
       <TenantSelectorScreen
-        validateTenant={checkTenantValidity}
+        validateTenant={performValidation}
         handleSubmit={onTenantSelected}
-        loading={redirecting || authenticating || validatingTenant}
+        loading={isLoading}
         error={undefined}
       />
     </>
