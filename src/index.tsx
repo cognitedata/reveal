@@ -4,6 +4,7 @@ import * as Sentry from '@sentry/browser';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
+import 'antd/dist/antd.css';
 import '@cognite/cogs.js/dist/cogs.css';
 
 // if (process.env.REACT_APP_ENV !== 'development') {

@@ -1,9 +1,10 @@
 import React from 'react';
-import { Title5, Colors } from '@cognite/cogs.js';
-import { Form, Input, Button } from 'antd';
+import { Title5, Colors, Button } from '@cognite/cogs.js';
+import { Form, Input } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 
 import CardFooterError from 'CardFooterError';
+import { getSidecar, sanitizeTenant } from 'utils';
 import { StyledTenantSelector, CompanyIdLabel } from './elements';
 import { StyledHeading, CogniteMark } from '../elements';
 
@@ -19,9 +20,6 @@ type Props = FormComponentProps<TenantSelectorFormValues> & {
   error?: React.ReactNode;
 };
 
-export const sanitizeTenant = (tenant: string) =>
-  (tenant || '').toLowerCase().replace(/[^a-z0-9-]/g, '');
-
 const TenantSelector = ({
   handleSubmit,
   validateTenant,
@@ -30,6 +28,8 @@ const TenantSelector = ({
   error,
   form: { getFieldDecorator, validateFields, setFields },
 }: Props) => {
+  const { appName } = getSidecar();
+
   const enhanceTenantInput = getFieldDecorator<TenantSelectorFormValues>(
     'tenant',
     {
@@ -86,14 +86,14 @@ const TenantSelector = ({
     <StyledTenantSelector>
       <Title5>Log in to</Title5>
 
-      <StyledHeading className="name">Asset Data Insight</StyledHeading>
+      <StyledHeading className="name">{appName}</StyledHeading>
 
       <CogniteMark color={Colors['yellow-4']} />
 
       <div className="content">
         <Form onSubmit={onSubmit} hideRequiredMark>
           <Form.Item
-            label={<CompanyIdLabel>Company ID: </CompanyIdLabel>}
+            label={<CompanyIdLabel>Company ID:</CompanyIdLabel>}
             colon={false}
             className="tenant-selector__company-item"
           >
@@ -106,7 +106,7 @@ const TenantSelector = ({
             )}
           </Form.Item>
 
-          <Button type="primary" htmlType="submit" loading={loading}>
+          <Button type="primary" onClick={onSubmit} loading={loading}>
             Continue
           </Button>
         </Form>

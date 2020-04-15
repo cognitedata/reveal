@@ -4,6 +4,7 @@ type SidecarConfig = {
   appsApiBaseUrl: string;
   applicationId: string;
   appName: string;
+  backgroundImage: string;
 };
 
 export const getSidecar = (): SidecarConfig => {
@@ -16,6 +17,9 @@ type ValidationResult = {
 };
 
 export type TenantValidator = (tenant: string) => Promise<ValidationResult>;
+
+export const sanitizeTenant = (tenant: string) =>
+  (tenant || '').toLowerCase().replace(/[^a-z0-9-]/g, '');
 
 export const validateTenant: TenantValidator = async (
   tenant: string
