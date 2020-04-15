@@ -9,7 +9,6 @@ import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams, createCli
 import { OrderSectorsByVisibleCoverage } from '@cognite/reveal/threejs';
 import * as reveal from '@cognite/reveal';
 import { vec3 } from 'gl-matrix';
-import { Sector } from '@cognite/reveal/models/cad/types';
 
 CameraControls.install({ THREE });
 
@@ -220,7 +219,7 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 
   // Debug overlay for "determineSectors"
-  const canvas = sectorCuller.coverageUtil.createDebugCanvas({ width: 640, height: 400 });
+  const canvas = sectorCuller.coverageUtil.createDebugCanvas({ width: 160, height: 100 });
   canvas.style.position = 'fixed';
   canvas.style.left = '8px';
   canvas.style.top = '8px';
