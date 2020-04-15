@@ -175,7 +175,9 @@ export class CadNode extends THREE.Object3D {
     const pipeline = new Subject<ThreeCameraConfig>();
     pipeline
       .pipe(
-        auditTime(100),
+        // TODO 2020-04-15 larsmoa: Reduce delay to something more sensible
+        // Temporary workaround to avoid flooding the GPU pipeline with readPixels.
+        auditTime(1000),
         fromThreeCameraConfig(),
 
         // Determine all wanted sectors
