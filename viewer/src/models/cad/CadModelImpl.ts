@@ -31,15 +31,13 @@ export class CadModelImpl implements CadModel {
     await model.initialize();
     return model;
   }
-
+  dataRetriever: ModelDataRetriever;
   private _scene?: SectorScene;
   private readonly _modelTransformation: SectorModelTransformation;
 
-  private readonly dataRetriever: ModelDataRetriever;
   private readonly detailedParser: ParseSectorDelegate<Sector>;
   private readonly simpleParserPromise: Promise<ParseSectorDelegate<SectorQuads>>;
   private readonly scenePromise: Promise<SectorScene>;
-
   /**
    * Do not use directly, see loadCadModelByUrl().
    * @see loadCadModelByUrl
@@ -55,13 +53,13 @@ export class CadModelImpl implements CadModel {
     this._scene = undefined;
   }
 
-  public parseDetailed(sectorId: number, buffer: Uint8Array): Promise<Sector> {
-    return this.detailedParser(sectorId, buffer);
+  public parseDetailed(buffer: Uint8Array): Promise<Sector> {
+    return this.detailedParser(buffer);
   }
 
-  public async parseSimple(sectorId: number, buffer: Uint8Array): Promise<SectorQuads> {
+  public async parseSimple(buffer: Uint8Array): Promise<SectorQuads> {
     const simpleParser = await this.simpleParserPromise;
-    return simpleParser(sectorId, buffer);
+    return simpleParser(buffer);
   }
 
   public async fetchSectorMetadata(): Promise<SectorScene> {

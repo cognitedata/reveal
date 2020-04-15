@@ -3,11 +3,12 @@
  */
 
 import { WantedSector } from '../../data/model/WantedSector';
-import { ParsedSector } from '../../data/model/ParsedSector';
+import { OperatorFunction } from 'rxjs';
+import { ConsumedSector } from '../../data/model/ConsumedSector';
 
 // TODO move
 export type SectorId = number;
 
 export interface Repository {
-  loadSector(sector: WantedSector): Promise<ParsedSector>;
+  loadSector(): OperatorFunction<WantedSector, ConsumedSector>;
 }

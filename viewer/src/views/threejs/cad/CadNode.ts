@@ -29,6 +29,8 @@ import { ParsedSector } from '../../../data/model/ParsedSector';
 import { WantedSector } from '../../../data/model/WantedSector';
 import { CadBudget, createDefaultCadBudget } from '../../../models/cad/CadBudget';
 import { discardSector } from './discardSector';
+import { CADSectorParser } from '../../../data/parser/CADSectorParser';
+import { SimpleAndDetailedToSector3D } from '../../../data/transformer/three/SimpleAndDetailedToSector3D';
 
 export type ParseCallbackDelegate = (sector: ParsedSector) => void;
 
@@ -74,7 +76,16 @@ export class CadNode extends THREE.Object3D {
     this._materialManager = new MaterialManager(treeIndexCount, options ? options.nodeAppearance : undefined);
 
     const rootSector = new RootSectorNode(model, this._materialManager.materials);
-    this._repository = new CachedRepository(model);
+
+    const modelDataParser: CADSectorParser = new CADSectorParser(
+      buffer => model.parseDetailed(buffer),
+      buffer => model.parseSimple(buffer)
+    );
+    const modelDataTransformer: SimpleAndDetailedToSector3D = new SimpleAndDetailedToSector3D(
+      this._materialManager.materials
+    );
+
+    this._repository = new CachedRepository(model.dataRetriever, modelDataParser, modelDataTransformer);
     this._budget = (options && options.budget) || createDefaultCadBudget();
 
     const { scene, modelTransformation } = model;
@@ -166,8 +177,8 @@ export class CadNode extends THREE.Object3D {
   }
 
   private createLoadSectorsPipeline(): Subject<ThreeCameraConfig> {
-    const loadSectorOperator = flatMap((s: WantedSector) => this._repository.loadSector(s));
-    const consumeSectorOperator = flatMap((sector: ParsedSector) => this.rootSector.consumeSector(sector.id, sector));
+    // const loadSectorOperator = flatMap((s: WantedSector) => this._repository.loadSector(s));
+    // const consumeSectorOperator = flatMap((sector: ParsedSector) => this.rootSector.consumeSector(sector.id, sector));
 
     const pipeline = new Subject<ThreeCameraConfig>();
     pipeline
@@ -187,14 +198,8 @@ export class CadNode extends THREE.Object3D {
           wantedSectors.pipe(
             switchAll(),
             distinctUntilLevelOfDetailChanged(),
-            loadSectorOperator,
-            filterCurrentWantedSectors(wantedSectors),
-            tap((sector: ParsedSector) => {
-              if (this._parseCallback) {
-                this._parseCallback(sector);
-              }
-            }),
-            consumeSectorOperator
+            this._repository.loadSector(),
+            filterCurrentWantedSectors(wantedSectors)
           )
         )
       )
@@ -210,7 +215,9 @@ export class CadNode extends THREE.Object3D {
           }
           sectorNode.remove(sectorNode.group);
         }
-        sectorNode.add(sector.group);
+        if (sector.group) {
+          sectorNode.add(sector.group);
+        }
         sectorNode.group = sector.group;
         this.updateSectorBoundingBoxes(sector);
         this.dispatchEvent({ type: 'update' });

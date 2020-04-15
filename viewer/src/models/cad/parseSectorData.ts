@@ -72,7 +72,7 @@ export function createParser(fetchCtmFile: FetchCtmDelegate): ParseSectorDelegat
     { maxElementsInCache: 300 }
   );
 
-  async function parse(sectorId: number, sectorArrayBuffer: Uint8Array): Promise<Sector> {
+  async function parse(sectorArrayBuffer: Uint8Array): Promise<Sector> {
     try {
       const sectorResult: ParseSectorResult = await postWorkToAvailable(workerList, async (worker: ParserWorker) =>
         worker.parseSector(sectorArrayBuffer)
@@ -222,7 +222,7 @@ export function createParser(fetchCtmFile: FetchCtmDelegate): ParseSectorDelegat
       };
       return sector;
     } catch (err) {
-      throw new Error(`Parsing sector ${sectorId} failed: ${err}`);
+      throw new Error(`Parsing sector failed: ${err}`); // Passing in variables for logging only is an antipattern.
     }
 
     // TODO 20191023 larsmoa: Remember to free data from rust
@@ -234,7 +234,7 @@ export async function createQuadsParser(): Promise<ParseSectorDelegate<SectorQua
   // TODO consider sharing workers with i3df parser
   const workerList = await createWorkers();
 
-  async function parse(sectorId: number, quadsArrayBuffer: Uint8Array): Promise<SectorQuads> {
+  async function parse(quadsArrayBuffer: Uint8Array): Promise<SectorQuads> {
     try {
       const sectorResult = await postWorkToAvailable<ParseQuadsResult>(workerList, async (worker: ParserWorker) =>
         worker.parseQuads(quadsArrayBuffer)
@@ -245,7 +245,7 @@ export async function createQuadsParser(): Promise<ParseSectorDelegate<SectorQua
         buffer: sectorResult.faces
       } as SectorQuads;
     } catch (err) {
-      throw new Error(`Parsing quads sector ${sectorId} failed: ${err}`);
+      throw new Error(`Parsing quads sector failed: ${err}`); // Passing in variables for logging only is an antipattern.
     }
 
     // TODO 20191023 larsmoa: Remember to free data from rust

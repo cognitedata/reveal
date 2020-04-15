@@ -4,12 +4,12 @@
 
 import { Observable, of, pipe, OperatorFunction, empty } from 'rxjs';
 import { flatMap, withLatestFrom } from 'rxjs/operators';
-import { ParsedSector } from '../../data/model/ParsedSector';
 import { WantedSector } from '../../data/model/WantedSector';
+import { ConsumedSector } from '../../data/model/ConsumedSector';
 
 export function filterCurrentWantedSectors(
   wantedObservable: Observable<WantedSector[]>
-): OperatorFunction<ParsedSector, ParsedSector> {
+): OperatorFunction<ConsumedSector, ConsumedSector> {
   return pipe(
     withLatestFrom(wantedObservable),
     flatMap(([loaded, wanted]) => {
