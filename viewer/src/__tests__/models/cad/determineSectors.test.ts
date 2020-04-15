@@ -77,6 +77,11 @@ describe('determineSectors', () => {
           xz: 0.5,
           yz: 0.5
         },
+        recursiveCoverageFactors: {
+          xy: 0.5,
+          xz: 0.5,
+          yz: 0.5
+        },
         downloadSize: 1000
       },
       children: [
@@ -100,6 +105,11 @@ describe('determineSectors', () => {
               xz: 0.5,
               yz: 0.5
             },
+            recursiveCoverageFactors: {
+              xy: 0.5,
+              xz: 0.5,
+              yz: 0.5
+            },
             downloadSize: 1000
           }
         },
@@ -119,6 +129,11 @@ describe('determineSectors', () => {
             fileName: 'sector_3.f3d',
             quadSize: 0.5,
             coverageFactors: {
+              xy: 0.5,
+              xz: 0.5,
+              yz: 0.5
+            },
+            recursiveCoverageFactors: {
               xy: 0.5,
               xz: 0.5,
               yz: 0.5
@@ -207,6 +222,11 @@ function emptyFacesFile() {
     quadSize: 0.5,
     fileName: null,
     coverageFactors: {
+      xy: 0.5,
+      xz: 0.5,
+      yz: 0.5
+    },
+    recursiveCoverageFactors: {
       xy: 0.5,
       xz: 0.5,
       yz: 0.5

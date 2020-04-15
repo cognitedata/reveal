@@ -33,6 +33,11 @@ describe('consumeSectorDetailed', () => {
         xz: 0.5,
         yz: 0.5
       },
+      recursiveCoverageFactors: {
+        xy: 0.5,
+        xz: 0.5,
+        yz: 0.5
+      },
       downloadSize: 1000
     }
   };
