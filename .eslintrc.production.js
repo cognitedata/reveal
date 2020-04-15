@@ -5,8 +5,13 @@ module.exports = {
     'plugin:lodash/recommended',
     'plugin:testcafe/recommended',
   ],
-  plugins: ['testing-library', 'lodash', 'testcafe'],
+  plugins: ['@cognite', 'testing-library', 'lodash', 'testcafe'],
   rules: {
+    '@cognite/no-unissued-todos': [
+      'error',
+      { issuePattern: '\\(((DEMO)-[0-9]+)\\)' },
+    ],
+
     'max-classes-per-file': ['off'],
     'lines-between-class-members': ['off'],
     'class-methods-use-this': ['off'],
