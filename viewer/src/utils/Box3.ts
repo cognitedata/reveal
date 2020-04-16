@@ -5,14 +5,22 @@
 import { vec3, mat4 } from 'gl-matrix';
 
 export class Box3 {
-  public readonly min: vec3;
-  public readonly max: vec3;
-
   public get center(): vec3 {
     const result = vec3.create();
     const sum = vec3.add(result, this.min, this.max);
     return vec3.scale(result, sum, 0.5);
   }
+
+  get size(): vec3 {
+    return vec3.subtract(vec3.create(), this.max, this.min);
+  }
+
+  static fromBounds(xMin: number, yMin: number, zMin: number, xMax: number, yMax: number, zMax: number): Box3 {
+    return new Box3([vec3.fromValues(xMin, yMin, zMin), vec3.fromValues(xMax, yMax, zMax)]);
+  }
+
+  public readonly min: vec3;
+  public readonly max: vec3;
 
   constructor(points: vec3[]) {
     this.min = vec3.fromValues(Infinity, Infinity, Infinity);
@@ -25,10 +33,6 @@ export class Box3 {
       this.max[1] = Math.max(p[1], this.max[1]);
       this.max[2] = Math.max(p[2], this.max[2]);
     }
-  }
-
-  get size(): vec3 {
-    return vec3.subtract(vec3.create(), this.max, this.min);
   }
 
   createTransformed(matrix: mat4): Box3 {
