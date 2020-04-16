@@ -125,7 +125,7 @@ export class OrderSectorsByVisibleCoverage {
     this.scene.add(mesh);
   }
 
-  prioritizeSectors(camera: THREE.Camera): PrioritizedSectorIdentifier[] {
+  orderSectorsByVisibility(camera: THREE.Camera): PrioritizedSectorIdentifier[] {
     // 1. Render to offscreen buffer
     this.renderer.render(this.scene, camera);
     if (this.debugRenderer) {
@@ -204,7 +204,7 @@ export class OrderSectorsByVisibleCoverage {
       const g = renderTargetBuffer[4 * i + 1];
       const b = renderTargetBuffer[4 * i + 2];
       const distance = renderTargetBuffer[4 * i + 3]; // Distance stored in alpha
-      if (r !== 255 && g !== 255 && b !== 255) {
+      if (r !== 255 || g !== 255 || b !== 255) {
         const sectorIdWithOffset = b + g * 255 + r * 255 * 255;
         const value = sectorVisibility[sectorIdWithOffset] || { sectorIdWithOffset, hitCount: 0, distance };
         value.hitCount++;

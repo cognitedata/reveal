@@ -175,7 +175,7 @@ class GpuBasedSectorCuller implements reveal.internal.SectorCuller {
       return bbox.distanceToPoint(cameraPosition);
     }
 
-    const maxQuadSize = 0.012;
+    const maxQuadSize = 0.008;
     const degToRadFactor = Math.PI / 180;
     const screenHeight = 2.0 * distanceToCamera(sector) * Math.tan((input.cameraFov / 2) * degToRadFactor);
     const largestAllowedQuadSize = maxQuadSize * screenHeight; // no larger than x percent of the height
