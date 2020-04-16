@@ -25,6 +25,21 @@ matrix:
 
     - language: rust
       name: "Reveal viewer"
+
+      os: linux
+      sudo: required
+      dist: trusty
+      addons:
+        apt:
+          packages:
+          - mesa-utils
+          - xvfb
+          - libgl1-mesa-dri
+          - libglapi-mesa
+          - libosmesa6
+      before_script:
+        - export DISPLAY=:99.0; sh -e /etc/init.d/xvfb start
+
       install:
         # Install NVM and Node
         - sudo curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash
