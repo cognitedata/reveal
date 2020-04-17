@@ -3,8 +3,8 @@
  */
 
 import * as THREE from 'three';
-import { Subject, Observable } from 'rxjs';
-import { publish, share, auditTime, switchAll, flatMap, map, tap } from 'rxjs/operators';
+import { Subject, Observable, animationFrameScheduler } from 'rxjs';
+import { publish, share, auditTime, switchAll, map, observeOn } from 'rxjs/operators';
 
 import { SectorModelTransformation, SectorScene, SectorMetadata } from '../../../models/cad/types';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
@@ -30,7 +30,7 @@ import { ParsedSector } from '../../../data/model/ParsedSector';
 import { WantedSector } from '../../../data/model/WantedSector';
 import { CadBudget, createDefaultCadBudget } from '../../../models/cad/CadBudget';
 import { discardSector } from './discardSector';
-import { CADSectorParser } from '../../../data/parser/CADSectorParser';
+import { CadSectorParser } from '../../../data/parser/CadSectorParser';
 import { SimpleAndDetailedToSector3D } from '../../../data/transformer/three/SimpleAndDetailedToSector3D';
 
 export type ParseCallbackDelegate = (sector: ParsedSector) => void;
@@ -41,7 +41,6 @@ export interface CadNodeOptions {
   // internal options are experimental and may change in the future
   internal?: {
     sectorCuller?: SectorCuller<DetermineSectorsByProximityInput>;
-    parseCallback?: ParseCallbackDelegate;
   };
 }
 
@@ -60,7 +59,6 @@ export class CadNode extends THREE.Object3D {
   private _renderHints: CadRenderHints;
   private _loadingHints: CadLoadingHints;
   private _budget: CadBudget;
-  private _parseCallback?: ParseCallbackDelegate;
 
   private readonly _materialManager: MaterialManager;
   private readonly _cameraPositionObservable: Subject<ThreeCameraConfig>;
@@ -76,12 +74,9 @@ export class CadNode extends THREE.Object3D {
     const treeIndexCount = model.scene.maxTreeIndex + 1;
     this._materialManager = new MaterialManager(treeIndexCount, options ? options.nodeAppearance : undefined);
 
-    const rootSector = new RootSectorNode(model, this._materialManager.materials);
+    const rootSector = new RootSectorNode(model);
 
-    const modelDataParser: CADSectorParser = new CADSectorParser(
-      buffer => model.parseDetailed(buffer),
-      buffer => model.parseSimple(buffer)
-    );
+    const modelDataParser: CadSectorParser = new CadSectorParser();
     const modelDataTransformer: SimpleAndDetailedToSector3D = new SimpleAndDetailedToSector3D(
       this._materialManager.materials
     );
@@ -93,7 +88,6 @@ export class CadNode extends THREE.Object3D {
 
     this._sectorScene = scene;
     this._sectorCuller = (options && options.internal && options.internal.sectorCuller) || new ProximitySectorCuller();
-    this._parseCallback = options && options.internal && options.internal.parseCallback;
     this.modelTransformation = modelTransformation;
     // Ensure camera matrix is unequal on first frame
     this._previousCameraMatrix.elements[0] = Infinity;
@@ -178,22 +172,16 @@ export class CadNode extends THREE.Object3D {
   }
 
   private createLoadSectorsPipeline(): Subject<ThreeCameraConfig> {
-    // const loadSectorOperator = flatMap((s: WantedSector) => this._repository.loadSector(s));
-    // const consumeSectorOperator = flatMap((sector: ParsedSector) => this.rootSector.consumeSector(sector.id, sector));
-
     const pipeline = new Subject<ThreeCameraConfig>();
     pipeline
       .pipe(
         auditTime(100),
         fromThreeCameraConfig(),
-
         // Determine all wanted sectors
         this._sectorCuller.determineSectors(),
-
         // Take sectors within budget
         map(wantedSectors => this.budget.filter(wantedSectors, this._sectorScene)),
-
-        // Load and consume
+        // Load sectors from repository
         share(),
         publish((wantedSectors: Observable<WantedSector[]>) =>
           wantedSectors.pipe(
@@ -202,8 +190,9 @@ export class CadNode extends THREE.Object3D {
             this._repository.loadSector(),
             filterCurrentWantedSectors(wantedSectors)
           )
-        )
-      )
+        ),
+        observeOn(animationFrameScheduler)
+      ) // Consume sectors
       .subscribe((sector: ConsumedSector) => {
         const sectorNode = this.rootSector.sectorNodeMap.get(sector.id);
         if (!sectorNode) {
@@ -217,6 +206,7 @@ export class CadNode extends THREE.Object3D {
           sectorNode.remove(sectorNode.group);
         }
         if (sector.group) {
+          // Is this correct now?
           sectorNode.add(sector.group);
         }
         sectorNode.group = sector.group;

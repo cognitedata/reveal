@@ -2,57 +2,89 @@
  * Copyright 2020 Cognite AS
  */
 
-import { ParseSectorDelegate } from '../../../models/cad/delegates';
-import { SectorQuads, Sector } from '../../../models/cad/types';
-import { CADSectorParser } from '../../../data/parser/CADSectorParser';
+import { CadSectorParser } from '../../../data/parser/CadSectorParser';
 import { of } from 'rxjs';
+import { WorkerPool } from '../../../data/worker/WorkerPool';
+
+jest.mock('../../../data/worker/WorkerPool');
+// jest.mock('../../../data/parser/CadSectorParser');
+
+const workerPool: WorkerPool = new WorkerPool();
+const parser = new CadSectorParser(workerPool);
 
 describe('CadSectorParser', () => {
-  test('parse i3d format', async () => {
+  test('parse i3d format', done => {
     // Arrange
-    const detailedParser: ParseSectorDelegate<Sector> = jest.fn(() => Promise.resolve(({} as any) as Sector));
-    const simpleParser: ParseSectorDelegate<SectorQuads> = jest.fn(() => Promise.resolve(({} as any) as SectorQuads));
-    const parser = new CADSectorParser(detailedParser, simpleParser);
-    const operator = parser.parse();
-
+    let events = 0;
+    let errors = 0;
     // Act
-    const observable = of({ format: 'i3d', data: new Uint8Array() });
-    await operator(observable).toPromise();
+    const observable = of({ format: 'i3d', data: new Uint8Array() }).pipe(parser.parse());
 
     // Assert
-    expect(detailedParser).toBeCalledTimes(1);
-    expect(simpleParser).not.toBeCalled();
+    observable.subscribe(
+      _next => {
+        events += 1;
+        // expect(next).toBeInstanceOf; Check if return type of data is correct.
+      },
+      _error => {
+        errors += 1;
+        // done(error)??
+      },
+      () => {
+        expect(events).toBe(1);
+        expect(errors).toBe(0);
+        done();
+      }
+    );
   });
 
-  test('parse f3d format', async () => {
+  // TODO: j-bjorne 17-04-2020: No idea why this fails. Will look into it later.
+  test('parse f3d format', done => {
     // Arrange
-    const detailedParser: ParseSectorDelegate<Sector> = jest.fn(() => Promise.resolve(({} as any) as Sector));
-    const simpleParser: ParseSectorDelegate<SectorQuads> = jest.fn(() => Promise.resolve(({} as any) as SectorQuads));
-    const parser = new CADSectorParser(detailedParser, simpleParser);
-    const operator = parser.parse();
-
+    let events = 0;
+    let errors = 0;
     // Act
-    const observable = of({ format: 'f3d', data: new Uint8Array() });
-    await operator(observable).toPromise();
+    const observable = of({ format: 'f3d', data: new Uint8Array() }).pipe(parser.parse());
 
     // Assert
-    expect(detailedParser).not.toBeCalled();
-    expect(simpleParser).toBeCalledTimes(1);
+    observable.subscribe(
+      _next => {
+        events += 1;
+        // expect(next).toBeInstanceOf; Check if return type of data is correct.
+      },
+      _error => {
+        errors += 1;
+        // done(error)??
+      },
+      () => {
+        expect(events).toBe(1);
+        expect(errors).toBe(0);
+        done();
+      }
+    );
   });
 
-  test('parse other format, ignored', async () => {
+  test('parse other format, ignored', done => {
     // Arrange
-    const detailedParser: ParseSectorDelegate<Sector> = jest.fn(() => Promise.resolve(({} as any) as Sector));
-    const simpleParser: ParseSectorDelegate<SectorQuads> = jest.fn(() => Promise.resolve(({} as any) as SectorQuads));
-    const parser = new CADSectorParser(detailedParser, simpleParser);
-    const operator = parser.parse();
-
+    let events = 0;
+    let errors = 0;
     // Act
-    const observable = of({ format: 'i3d', data: new Uint8Array() });
-    await operator(observable).toPromise();
+    const observable = of({ format: 'no-known-format', data: new Uint8Array() }).pipe(parser.parse());
 
     // Assert
-    expect(detailedParser).not.toBeCalled();
-    expect(simpleParser).not.toBeCalled();
+    observable.subscribe(
+      _next => {
+        events += 1;
+      },
+      _error => {
+        errors += 1;
+        // done(error)??
+      },
+      () => {
+        expect(events).toBe(0);
+        expect(errors).toBe(0);
+        done();
+      }
+    );
   });
 });
