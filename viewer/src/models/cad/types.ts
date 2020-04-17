@@ -59,6 +59,7 @@ export interface SectorScene {
 
   getSectorById(sectorId: number): SectorMetadata | undefined;
   getSectorsContainingPoint(p: vec3): SectorMetadata[];
+  getSectorsIntersectingBox(b: Box3): SectorMetadata[];
   getAllSectors(): SectorMetadata[];
 
   // Available, but not supported:
@@ -94,6 +95,18 @@ export class SectorSceneImpl implements SectorScene {
     const accepted: SectorMetadata[] = [];
     traverseDepthFirst(this.root, x => {
       if (x.bounds.containsPoint(p)) {
+        accepted.push(x);
+        return true;
+      }
+      return false;
+    });
+    return accepted;
+  }
+
+  getSectorsIntersectingBox(b: Box3): SectorMetadata[] {
+    const accepted: SectorMetadata[] = [];
+    traverseDepthFirst(this.root, x => {
+      if (x.bounds.intersectsBox(b)) {
         accepted.push(x);
         return true;
       }

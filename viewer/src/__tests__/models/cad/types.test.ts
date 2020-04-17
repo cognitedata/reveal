@@ -30,6 +30,14 @@ describe('SectorSceneImpl', () => {
     expect(sectorIds(scene.getSectorsContainingPoint(vec3.fromValues(0.75, 0.5, 0.5)))).toEqual([0, 2]);
     expect(sectorIds(scene.getSectorsContainingPoint(vec3.fromValues(2, 0.5, 0.5)))).toEqual([]);
   });
+
+  test('getSectorsIntersectingBox', () => {
+    const scene = new SectorSceneImpl(8, 3, root, sectorsById);
+
+    expect(sectorIds(scene.getSectorsIntersectingBox(Box3.fromBounds(-10, -10, -10, 10, 10, 10)))).toEqual([0, 1, 2]);
+    expect(sectorIds(scene.getSectorsIntersectingBox(Box3.fromBounds(0, 0, 0, 0.2, 0.2, 0.2)))).toEqual([0, 1]);
+    expect(sectorIds(scene.getSectorsIntersectingBox(Box3.fromBounds(0.6, 0.6, 0.6, 1, 1, 1)))).toEqual([0, 2]);
+  });
 });
 
 function sectorIds(sectors: SectorMetadata[]): number[] {
