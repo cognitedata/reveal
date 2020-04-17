@@ -4,8 +4,7 @@
 
 import * as THREE from 'three';
 import { OrderSectorsByVisibleCoverage } from '../../../threejs';
-import { CadModel } from '../../..';
-import { SectorSceneImpl, SectorMetadata, SectorModelTransformation } from '../../../models/cad/types';
+import { SectorSceneImpl, SectorMetadata, SectorModelTransformation, SectorScene } from '../../../models/cad/types';
 import { createSectorMetadata, SectorTree } from '../../testUtils/createSectorMetadata';
 import { traverseDepthFirst } from '../../../utils/traversal';
 import { fromThreeMatrix } from '../../../views/threejs/utilities';
@@ -15,7 +14,8 @@ import { Box3 } from '../../../utils/Box3';
 describe('OrderSectorsByVisibleCoverage', () => {
   const glContext: WebGLRenderingContext = require('gl')(64, 64);
   const renderSize = new THREE.Vector2(64, 64);
-  const singleSectorModel = createStubModel([0, [], Box3.fromBounds(-1, -1, -1, 1, 1, 1)]);
+  const identityTransform = createModelTransformation(new THREE.Matrix4().identity());
+  const singleSectorScene = createStubScene([0, [], Box3.fromBounds(-1, -1, -1, 1, 1, 1)]);
 
   test('orderSectorsByVisibility() returns empty array when there are no models', () => {
     // Arrange
@@ -32,7 +32,7 @@ describe('OrderSectorsByVisibleCoverage', () => {
   test('rendered result has no sectors, returns empty array', () => {
     // Arrange
     const util = new OrderSectorsByVisibleCoverage({ glContext, renderSize });
-    util.addModel(singleSectorModel);
+    util.addModel(singleSectorScene, identityTransform);
     const camera = new THREE.PerspectiveCamera();
 
     // Act
@@ -46,7 +46,7 @@ describe('OrderSectorsByVisibleCoverage', () => {
   test('rendered result has one sector, returns array with priority 1', () => {
     // Arrange
     const util = new OrderSectorsByVisibleCoverage({ glContext, renderSize });
-    util.addModel(singleSectorModel);
+    util.addModel(singleSectorScene, identityTransform);
     const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 20.0);
     camera.position.set(0, 0, -10);
     camera.lookAt(0, 0, 0);
@@ -60,16 +60,16 @@ describe('OrderSectorsByVisibleCoverage', () => {
     expect(result.length).toBe(1);
     expect(result[0].sectorId).toBe(0);
     expect(result[0].priority).toBe(1.0);
-    expect(result[0].model).toBe(singleSectorModel);
+    expect(result[0].scene).toBe(singleSectorScene);
   });
 
   test('two models, rendered result returns value at offset', () => {
     // Arrange
-    const model1 = singleSectorModel;
-    const model2 = createStubModel([0, [], Box3.fromBounds(-1, -1, -1, 1, 1, 1)]);
+    const model1 = singleSectorScene;
+    const model2 = createStubScene([0, [], Box3.fromBounds(-1, -1, -1, 1, 1, 1)]);
     const util = new OrderSectorsByVisibleCoverage({ glContext, renderSize });
-    util.addModel(model1);
-    util.addModel(model2);
+    util.addModel(model1, identityTransform);
+    util.addModel(model2, identityTransform);
     const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 20.0);
     camera.position.set(0, 0, -10);
     camera.lookAt(0, 0, 0);
@@ -83,22 +83,18 @@ describe('OrderSectorsByVisibleCoverage', () => {
     expect(result.length).toBe(1);
     expect(result[0].sectorId).toBe(0);
     expect(result[0].priority).toBe(1.0);
-    expect(result[0].model).toBe(model2);
+    expect(result[0].scene).toBe(model2);
   });
 });
 
-function createStubModel(tree: SectorTree, modelTransform?: THREE.Matrix4): CadModel {
+function createStubScene(tree: SectorTree): SectorScene {
   const sectorsMap = new Map<number, SectorMetadata>();
   const root = createSectorMetadata(tree);
   traverseDepthFirst(root, x => {
     sectorsMap.set(x.id, x);
     return true;
   });
-  const scene = new SectorSceneImpl(8, 1, root, sectorsMap);
-  const model: CadModel = {} as any; // Trick to allow incomplete type
-  model.scene = scene;
-  model.modelTransformation = createModelTransformation(modelTransform);
-  return model;
+  return new SectorSceneImpl(8, 1, root, sectorsMap);
 }
 
 function createModelTransformation(modelTransform?: THREE.Matrix4): SectorModelTransformation {

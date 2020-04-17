@@ -27,9 +27,7 @@
       "glslify-import"
     ]
   },
-  "optionalDependencies": {
-    "fsevents": "^2.1.2"
-  },
+  "optionalDependencies": {},
   "devDependencies": {
     "@cognite/tslint-config-cognite-3d": "^1.0.4",
     "@tweenjs/tween.js": "^18.5.0",

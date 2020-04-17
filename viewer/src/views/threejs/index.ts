@@ -16,6 +16,7 @@ export { SsaoEffect, SsaoPassType } from './post-processing/ssao';
 
 export {
   OrderSectorsByVisibleCoverage,
+  GpuOrderSectorsByVisibleCoverage,
   PrioritizedSectorIdentifier,
   OrderSectorsByVisibleCoverageOptions
 } from './OrderSectorsByVisibleCoverage';

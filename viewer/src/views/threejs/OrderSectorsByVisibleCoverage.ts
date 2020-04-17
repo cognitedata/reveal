@@ -4,14 +4,14 @@
 
 import * as THREE from 'three';
 
-import { SectorMetadata, CadModel } from '../..';
-import { SectorModelTransformation } from '../../models/cad/types';
+import { SectorMetadata } from '../..';
+import { SectorModelTransformation, SectorScene } from '../../models/cad/types';
 import { toThreeJsBox3, toThreeMatrix4 } from './utilities';
 import { Box3 } from '../../utils/Box3';
 import { coverageShaders } from './cad/shaders';
 
 type SectorContainer = {
-  model: CadModel;
+  scene: SectorScene;
   sectors: SectorMetadata[];
 
   sectorIdOffset: number;
@@ -46,9 +46,9 @@ export interface OrderSectorsByVisibleCoverageOptions {
 
 export type PrioritizedSectorIdentifier = {
   /**
-   * The CadModel that holds the sector.
+   * The scene of the CAD model that holds the sector.
    */
-  model: CadModel;
+  scene: SectorScene;
   /**
    * Sector ID contained in the model provided.
    */
@@ -61,7 +61,25 @@ export type PrioritizedSectorIdentifier = {
   depth: number;
 };
 
-export class OrderSectorsByVisibleCoverage {
+/**
+ * Interface for classes that estimates how visible a sector will be on screen.
+ */
+export interface OrderSectorsByVisibleCoverage {
+  /**
+   * Adds a new CAD model to estimate visibility for.
+   * @param scene
+   * @param modelTransformation
+   */
+  addModel(scene: SectorScene, modelTransformation: SectorModelTransformation): void;
+  /**
+   * Estimates how visible the different sectors for the models added are and returns
+   * a prioritized list.
+   * @param camera The current viewpoint.
+   */
+  orderSectorsByVisibility(camera: THREE.Camera): PrioritizedSectorIdentifier[];
+}
+
+export class GpuOrderSectorsByVisibleCoverage {
   private sectorIdOffset = 0;
   private readonly scene = new THREE.Scene();
   private readonly renderer: THREE.WebGLRenderer;
@@ -112,11 +130,11 @@ export class OrderSectorsByVisibleCoverage {
     return this.debugRenderer.domElement;
   }
 
-  addModel(model: CadModel) {
-    const sectors = model.scene.getAllSectors();
-    const mesh = this.createSectorTreeMesh(this.sectorIdOffset, sectors, model.modelTransformation);
+  addModel(scene: SectorScene, modelTransformation: SectorModelTransformation) {
+    const sectors = scene.getAllSectors();
+    const mesh = this.createSectorTreeMesh(this.sectorIdOffset, sectors, modelTransformation);
     this.containers.push({
-      model,
+      scene,
       sectors,
       sectorIdOffset: this.sectorIdOffset,
       renderable: mesh
@@ -171,7 +189,7 @@ export class OrderSectorsByVisibleCoverage {
         const container = this.findSectorContainer(x.sectorIdWithOffset);
         const sectorId = x.sectorIdWithOffset - container.sectorIdOffset;
         return {
-          model: container.model,
+          scene: container.scene,
           sectorId,
           priority: x.hitCount / totalHits,
           depth: x.distance
