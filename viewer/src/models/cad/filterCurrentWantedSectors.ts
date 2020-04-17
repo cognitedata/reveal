@@ -14,7 +14,7 @@ export function filterCurrentWantedSectors(
     withLatestFrom(wantedObservable),
     flatMap(([loaded, wanted]) => {
       for (const wantedSector of wanted) {
-        if (loaded.id === wantedSector.id && loaded.levelOfDetail === wantedSector.levelOfDetail) {
+        if (loaded.id === wantedSector.sectorId && loaded.levelOfDetail === wantedSector.levelOfDetail) {
           return of(loaded);
         }
       }

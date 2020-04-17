@@ -145,15 +145,15 @@ describe('determineSectors', () => {
     };
     const scene = createSceneFromRoot(root);
     const camera = new THREE.PerspectiveCamera();
-    camera.position.set(0, 0, -1);
+    camera.position.set(0, 0, -1);sectorId
     camera.lookAt(0, 0, 0);
     camera.updateMatrixWorld();
 
-    // Act
+    // ActsectorId
     const sectors = await determineSectorsByProximity({
       sectorScene: scene,
       cameraFov: camera.fov,
-      cameraPosition: fromThreeVector3(vec3.create(), camera.position, identityTransform),
+      cameraPosition: fromThreeVector3(vec3.create(), sectorIdmera.position, identityTransform),
       cameraModelMatrix: fromThreeMatrix(mat4.create(), camera.matrixWorld, identityTransform),
       projectionMatrix: fromThreeMatrix(mat4.create(), camera.projectionMatrix, identityTransform)
     });
@@ -196,7 +196,7 @@ describe('determineSectors', () => {
     };
     const scene = createSceneFromRoot(root);
     const camera = new THREE.PerspectiveCamera();
-    camera.position.copy(new THREE.Vector3(1.5, 1.5, -1).applyMatrix4(toThreeMatrix4(transform.modelMatrix)));
+    camera.position.copy(new THREE.Vector3(1.5, 1.5, -sectorId.applyMatrix4(toThreeMatrix4(transform.modelMatrix)));
     camera.lookAt(new THREE.Vector3(1.5, 1.5, 1.5).applyMatrix4(toThreeMatrix4(transform.modelMatrix)));
     camera.updateMatrixWorld();
 

@@ -35,15 +35,15 @@ export class CachedRepository implements Repository {
         case LevelOfDetail.Discarded:
           return null;
         case LevelOfDetail.Simple:
-          return this._simpleCache.request(sector.id, null);
+          return this._simpleCache.request(sector.sectorId, null);
         case LevelOfDetail.Detailed:
-          return this._detailedCache.request(sector.id, null);
+          return this._detailedCache.request(sector.sectorId, null);
         default:
           throw new Error(`Unsupported level of detail ${sector.levelOfDetail}`);
       }
     })();
     return {
-      id: sector.id,
+      id: sector.sectorId,
       levelOfDetail: sector.levelOfDetail,
       data,
       metadata: sector.metadata

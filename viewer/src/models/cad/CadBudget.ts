@@ -68,9 +68,9 @@ class CadBudgetAccumulator {
   }
 
   private tryAddWantedSector(candidate: WantedSector, accumulatedSpendage: CadBudgetSpendage): boolean {
-    const sectorMetadata = this.sectors.getSectorById(candidate.id);
+    const sectorMetadata = this.sectors.getSectorById(candidate.sectorId);
     if (!sectorMetadata) {
-      throw new Error(`Could not find metadata for sector ${candidate.id}`);
+      throw new Error(`Could not find metadata for sector ${candidate.sectorId}`);
     }
 
     const candidateSpendage = this.getCandidateSpendage(candidate, sectorMetadata);

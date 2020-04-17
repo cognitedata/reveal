@@ -117,7 +117,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
         costSpent += this.computeSectorCost(sector);
         takenSectors.add([model.scene, sector.id]);
         wanted.push({
-          id: sector.id,
+          sectorId: sector.id,
           metadata: sector,
           levelOfDetail: LevelOfDetail.Detailed,
           priority: Infinity
@@ -136,7 +136,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     // Simple detail
     wantedSimpleSectors.add([sector.scene, sector.sectorId]);
     wanted.push({
-      id: sector.sectorId,
+      sectorId: sector.sectorId,
       metadata: metadata!,
       levelOfDetail: LevelOfDetail.Simple,
       priority: sector.priority
@@ -172,7 +172,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     wanted.length = wanted.length + required.length;
     for (let i = 0; i < required.length; i++) {
       wanted[offset + i] = {
-        id: required[i].id,
+        sectorId: required[i].id,
         metadata: required[i],
         levelOfDetail: LevelOfDetail.Detailed,
         priority: sector.priority
