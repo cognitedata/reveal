@@ -17,6 +17,7 @@
         }
       ],
       "no-return-await": true,
-      "no-unbound-method": true
+      "no-unbound-method": true,
+      "prefer-for-of": false
     }
 }
