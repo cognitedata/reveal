@@ -3,8 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { SectorMetadata, SectorQuads } from '../../../models/cad/types';
-import { toThreeJsBox3 } from '../utilities';
+import { SectorQuads } from '../../../models/cad/types';
 import { Materials } from './materials';
 
 const quadVertexData = new Float32Array([
@@ -30,6 +29,8 @@ export function consumeSectorSimple(sector: SectorQuads, materials: Materials): 
   if (sector.buffer.byteLength % stride !== 0) {
     throw new Error(`Expected buffer size to be multiple of ${stride}, but got ${sector.buffer.byteLength}`);
   }
+
+  // TODO j-bjorne 16-04-2020: Should move this to some debug utils and attach it to pipe
   // const bounds = toThreeJsBox3(new THREE.Box3(), metadata.bounds);
   // const boundsRenderer = new THREE.Box3Helper(bounds.expandByScalar(0.1), new THREE.Color(0xff00ff));
   // boundsRenderer.name = `Bounding box ${sectorId}`;
