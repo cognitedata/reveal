@@ -27,6 +27,9 @@
       "glslify-import"
     ]
   },
+  "optionalDependencies": {
+    "fsevents": "^2.1.2"
+  },
   "devDependencies": {
     "@cognite/tslint-config-cognite-3d": "^1.0.4",
     "@tweenjs/tween.js": "^18.5.0",
@@ -38,7 +41,6 @@
     "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^3.4.2",
     "file-loader": "^6.0.0",
-    "fsevents": "^2.1.2",
     "html-webpack-plugin": "4.0.2",
     "prettier": "^1.19.1",
     "raw-loader": "^4.0.0",
