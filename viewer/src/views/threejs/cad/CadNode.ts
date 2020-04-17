@@ -219,14 +219,8 @@ export class CadNode extends THREE.Object3D {
   }
 
   private updateSectorBoundingBoxes(sector: ConsumedSector) {
-    this._boundingBoxNode.children.forEach(x => {
-      const sectorId = x.userData.sectorId as number;
-      if (sectorId !== sector.id) {
-        return;
-      }
-      const boxHelper = x as THREE.Box3Helper;
-      boxHelper.visible = sector.levelOfDetail !== LevelOfDetail.Discarded;
-    });
+    const bboxNode = this._boundingBoxNode.children.find(x => x.userData.sectorId === sector.id)!;
+    bboxNode.visible = sector.levelOfDetail !== LevelOfDetail.Discarded;
   }
 
   private createBoundingBoxNode(sectors: SectorMetadata[]): THREE.Object3D {
@@ -251,6 +245,7 @@ export class CadNode extends THREE.Object3D {
       const boxMesh = new THREE.Box3Helper(bbox, color);
       boxMesh.name = `${sector.id}`;
       boxMesh.userData.sectorId = sector.id;
+      boxMesh.visible = false;
       boxesNode.add(boxMesh);
     });
     return boxesNode;
