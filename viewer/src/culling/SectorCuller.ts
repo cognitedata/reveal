@@ -2,9 +2,13 @@
  * Copyright 2020 Cognite AS
  */
 
-import { OperatorFunction } from 'rxjs';
 import { WantedSector } from '../data/model/WantedSector';
+import { DetermineSectorsByProximityInput } from '../models/cad/determineSectors';
 
-export interface SectorCuller<Input> {
-  determineSectors(): OperatorFunction<Input, WantedSector[]>;
+/**
+ * Interface for implementations that are responsible for determining
+ * what sectors should be loaded.
+ */
+export interface SectorCuller {
+  determineSectors(input: DetermineSectorsByProximityInput): WantedSector[];
 }
