@@ -8,6 +8,11 @@ matrix:
       rust:
         - stable
         - beta
+
+      os: linux
+      sudo: required
+      dist: trusty
+
       matrix:
         allow_failures:
           - rust: nightly
@@ -63,6 +68,11 @@ matrix:
 
     - language: rust
       name: "Reveal viewer release"
+
+      os: linux
+      sudo: required
+      dist: trusty
+
       if: branch =~ /^release/
       install:
         # Install NVM and Node
