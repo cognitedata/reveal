@@ -29,7 +29,6 @@ import { MemoryRequestCache } from '../../cache/MemoryRequestCache';
 import { ParseCtmResult, ParseSectorResult } from '../../workers/types/parser.types';
 import { Sector, TriangleMesh, InstancedMeshFile, InstancedMesh } from '../../models/cad/types';
 import { createOffsetsArray } from '../../utils/arrayUtils';
-import { Semaphore } from '../../data/network/Semaphore';
 
 // TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
 export class CachedRepository implements Repository {
@@ -42,7 +41,6 @@ export class CachedRepository implements Repository {
   private readonly _modelDataParser: CadSectorParser;
   private readonly _modelDataRetriever: ModelDataRetriever;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
-  private readonly _semaphore = new Semaphore(50);
 
   constructor(
     modelDataRetriever: ModelDataRetriever,
@@ -52,10 +50,6 @@ export class CachedRepository implements Repository {
     this._modelDataRetriever = modelDataRetriever;
     this._modelDataParser = modelDataParser;
     this._modelDataTransformer = modelDataTransformer;
-  }
-
-  clearSemaphore() {
-    this._semaphore.clear();
   }
 
   // TODO j-bjorne 16-04-2020: Should look into ways of not sending in discarded sectors,
@@ -83,21 +77,7 @@ export class CachedRepository implements Repository {
         );
         return merge(
           cachedSectorObservable.pipe(flatMap(wantedSector => this._modelDataCache.get(this.cacheKey(wantedSector)))),
-          uncachedSectorObservable.pipe(
-            flatMap(
-              async _ => this._semaphore.acquire(),
-              (wantedSector: WantedSector, ready: boolean) => {
-                return {
-                  wantedSector,
-                  ready
-                };
-              }
-            ),
-            filter((data: { wantedSector: WantedSector; ready: boolean }) => data.ready),
-            map((data: { wantedSector: WantedSector; ready: boolean }) => data.wantedSector),
-            this.loadSectorFromNetwork(),
-            tap(_ => this._semaphore.release())
-          ),
+          uncachedSectorObservable.pipe(this.loadSectorFromNetwork()),
           discardedSectorObservable
         );
       }),

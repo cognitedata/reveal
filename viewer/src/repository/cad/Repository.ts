@@ -11,5 +11,4 @@ export type SectorId = number;
 
 export interface Repository {
   loadSector(): OperatorFunction<WantedSector, ConsumedSector>;
-  clearSemaphore(): void;
 }
