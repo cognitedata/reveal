@@ -3,8 +3,8 @@
  */
 
 import * as THREE from 'three';
-import { Subject, Observable } from 'rxjs';
-import { publish, share, auditTime, switchAll, flatMap, map, tap } from 'rxjs/operators';
+import { Subject, Observable, empty, pipe } from 'rxjs';
+import { publish, share, auditTime, switchAll, flatMap, map, tap, filter, mergeAll } from 'rxjs/operators';
 
 import { SectorModelTransformation, SectorScene, SectorMetadata } from '../../../models/cad/types';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
@@ -30,6 +30,7 @@ import { ParsedSector } from '../../../data/model/ParsedSector';
 import { WantedSector } from '../../../data/model/WantedSector';
 import { CadBudget, createDefaultCadBudget } from '../../../models/cad/CadBudget';
 import { discardSector } from './discardSector';
+import { Semaphore } from '../../../data/network/Semaphore';
 
 export type ParseCallbackDelegate = (sector: ParsedSector) => void;
 
@@ -167,8 +168,30 @@ export class CadNode extends THREE.Object3D {
   }
 
   private createLoadSectorsPipeline(): Subject<ThreeCameraConfig> {
-    const loadSectorOperator = flatMap((s: WantedSector) => this._repository.loadSector(s));
+    const currentLevelOfDetail = new Map<number, LevelOfDetail>();
+    const semaphore = new Semaphore(50);
+    const loadSectorOperator = pipe(
+      flatMap(
+        async _ => semaphore.acquire(),
+        (wantedSector: WantedSector, ready: boolean) => {
+          return {
+            wantedSector,
+            ready
+          };
+        }
+      ),
+      filter((data: { wantedSector: WantedSector; ready: boolean }) => data.ready),
+      map((data: { wantedSector: WantedSector; ready: boolean }) => data.wantedSector),
+      flatMap((s: WantedSector) => this._repository.loadSector(s)),
+      tap(_ => semaphore.release())
+    );
     const consumeSectorOperator = flatMap((sector: ParsedSector) => this.rootSector.consumeSector(sector.id, sector));
+    const filterWantedWithDistinctLevelOfDetail = filter(
+      (wantedSector: WantedSector) => currentLevelOfDetail.get(wantedSector.id) !== wantedSector.levelOfDetail
+    );
+    const filterParsedWithDistinctLevelOfDetail = filter(
+      (parsedSector: ParsedSector) => currentLevelOfDetail.get(parsedSector.id) !== parsedSector.levelOfDetail
+    );
 
     const pipeline = new Subject<ThreeCameraConfig>();
     pipeline
@@ -186,9 +209,11 @@ export class CadNode extends THREE.Object3D {
         share(),
         publish((wantedSectors: Observable<WantedSector[]>) =>
           wantedSectors.pipe(
-            switchAll(),
-            distinctUntilLevelOfDetailChanged(),
+            tap(_ => semaphore.clear()),
+            mergeAll(),
+            filterWantedWithDistinctLevelOfDetail,
             loadSectorOperator,
+            filterParsedWithDistinctLevelOfDetail,
             filterCurrentWantedSectors(wantedSectors),
             tap((sector: ParsedSector) => {
               if (this._parseCallback) {
