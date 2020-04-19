@@ -2,10 +2,13 @@
  * Copyright 2020 Cognite AS
  */
 
+import * as THREE from 'three';
+
 import { Box3 } from '../../utils/Box3';
 import { mat4, vec3 } from 'gl-matrix';
 import { PrimitiveAttributes } from '../../workers/types/parser.types';
 import { traverseDepthFirst } from '../../utils/traversal';
+import { toThreeMatrix4, toThreeJsBox3 } from '../../views/threejs/utilities';
 
 // TODO 2019-11-12 larsmoa: Move and rename to something general (not specific
 // for sector data).
@@ -60,6 +63,7 @@ export interface SectorScene {
   getSectorById(sectorId: number): SectorMetadata | undefined;
   getSectorsContainingPoint(p: vec3): SectorMetadata[];
   getSectorsIntersectingBox(b: Box3): SectorMetadata[];
+  getSectorsIntersectingFrustum(cameraModelMatrix: mat4, projectionMatrix: mat4): SectorMetadata[];
   getAllSectors(): SectorMetadata[];
 
   // Available, but not supported:
@@ -107,6 +111,26 @@ export class SectorSceneImpl implements SectorScene {
     const accepted: SectorMetadata[] = [];
     traverseDepthFirst(this.root, x => {
       if (x.bounds.intersectsBox(b)) {
+        accepted.push(x);
+        return true;
+      }
+      return false;
+    });
+    return accepted;
+  }
+
+  getSectorsIntersectingFrustum(cameraModelMatrix: mat4, projectionMatrix: mat4): SectorMetadata[] {
+    const invertCameraModelMatrix = mat4.create();
+    if (!mat4.invert(invertCameraModelMatrix, cameraModelMatrix)) {
+      throw new Error('Provided camera model matrix is not invertible');
+    }
+    const frustumMatrix = mat4.multiply(mat4.create(), projectionMatrix, invertCameraModelMatrix);
+    const frustum = new THREE.Frustum().setFromProjectionMatrix(toThreeMatrix4(frustumMatrix));
+    const bbox = new THREE.Box3();
+
+    const accepted: SectorMetadata[] = [];
+    traverseDepthFirst(this.root, x => {
+      if (frustum.intersectsBox(toThreeJsBox3(bbox, x.bounds))) {
         accepted.push(x);
         return true;
       }
