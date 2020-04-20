@@ -12,7 +12,6 @@ import { loadCadModelFromCdf } from '../datasources/cognitesdk';
 import { CadRenderHints } from '../views/CadRenderHints';
 import { NodeAppearance } from '../views/common/cad/NodeAppearance';
 import { CadLoadingHints } from '../models/cad/CadLoadingHints';
-import { ParsedSector } from '../data/model/ParsedSector';
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { CogniteClient } from '@cognite/sdk';
 
@@ -61,8 +60,8 @@ export class Cognite3DModel extends THREE.Object3D {
     this.cadNode = new CadNode(model, {
       nodeAppearance,
       internal: {
-        parseCallback: (sector: ParsedSector) => {
-          this.nodeIdAndTreeIndexMaps.updateMaps(sector);
+        parseCallback: parsed => {
+          this.nodeIdAndTreeIndexMaps.updateMaps(parsed);
         }
       }
     });

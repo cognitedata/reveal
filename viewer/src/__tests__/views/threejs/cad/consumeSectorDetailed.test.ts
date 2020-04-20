@@ -41,14 +41,14 @@ describe('consumeSectorDetailed', () => {
       downloadSize: 1000
     }
   };
-  const sectorId = 1;
+  // const sectorId = 1;
 
   test('no geometry, does not add new nodes', () => {
     // Arrange
     const sector = createEmptySector();
 
     // Act
-    const group = consumeSectorDetailed(sectorId, sector, metadata, materials);
+    const group = consumeSectorDetailed(sector, metadata, materials);
 
     // Assert
     expect(group.children).toBeEmpty();
@@ -60,7 +60,7 @@ describe('consumeSectorDetailed', () => {
     const sector: Sector = Object.assign(createEmptySector(), { triangleMeshes } as Sector);
 
     // Act
-    const group = consumeSectorDetailed(sectorId, sector, metadata, materials);
+    const group = consumeSectorDetailed(sector, metadata, materials);
 
     // Assert
     expect(group.children.length).toBe(1);
@@ -72,7 +72,7 @@ describe('consumeSectorDetailed', () => {
     const sector: Sector = Object.assign(createEmptySector(), { instanceMeshes } as Sector);
 
     // Act
-    const group = consumeSectorDetailed(sectorId, sector, metadata, materials);
+    const group = consumeSectorDetailed(sector, metadata, materials);
 
     // Assert
     expect(group.children.length).toBe(1);
@@ -83,7 +83,7 @@ describe('consumeSectorDetailed', () => {
     const sector = createEmptySector();
 
     // Act
-    const group = consumeSectorDetailed(sectorId, sector, metadata, materials);
+    const group = consumeSectorDetailed(sector, metadata, materials);
 
     // Assert
     expect(group.children).toBeEmpty();
