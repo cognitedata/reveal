@@ -5,10 +5,11 @@
 import * as THREE from 'three';
 import { LevelOfDetail } from './LevelOfDetail';
 import { SectorMetadata } from '../../models/cad/types';
+import { ExternalSource, CDFSource } from './DataSource';
 
 export interface ConsumedSector {
-  id: number;
+  dataSource: CDFSource | ExternalSource;
+  metadata: SectorMetadata;
   levelOfDetail: LevelOfDetail;
   group: THREE.Group | undefined;
-  metadata: SectorMetadata;
 }

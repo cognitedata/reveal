@@ -5,10 +5,11 @@
 import { LevelOfDetail } from './LevelOfDetail';
 import { SectorQuads, SectorMetadata, Sector } from '../../models/cad/types';
 import { ParseSectorResult, ParseCtmResult } from '../../workers/types/parser.types';
+import { CDFSource, ExternalSource } from './DataSource';
 
 export interface ParsedSector {
-  id: number;
+  dataSource: CDFSource | ExternalSource;
+  metadata: SectorMetadata;
   data: null | ParseSectorResult | ParseCtmResult | Sector | SectorQuads;
   levelOfDetail: LevelOfDetail;
-  metadata: SectorMetadata;
 }

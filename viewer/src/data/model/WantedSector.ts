@@ -4,9 +4,10 @@
 
 import { SectorMetadata } from '../../models/cad/types';
 import { LevelOfDetail } from './LevelOfDetail';
+import { CDFSource, ExternalSource } from './DataSource';
 
 export interface WantedSector {
-  id: number;
+  dataSource: CDFSource | ExternalSource;
   levelOfDetail: LevelOfDetail;
   metadata: SectorMetadata;
 }

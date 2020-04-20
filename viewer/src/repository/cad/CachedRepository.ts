@@ -5,7 +5,7 @@
 import { Repository } from './Repository';
 import { WantedSector } from '../../data/model/WantedSector';
 import { LevelOfDetail } from '../../data/model/LevelOfDetail';
-import { OperatorFunction, pipe, Observable, from, merge, partition, of, asapScheduler, zip } from 'rxjs';
+import { OperatorFunction, pipe, Observable, from, merge, partition, of, asapScheduler, zip, empty } from 'rxjs';
 import {
   publish,
   filter,
@@ -21,7 +21,6 @@ import {
   retryWhen,
   delay
 } from 'rxjs/operators';
-import { ModelDataRetriever } from '../../datasources/ModelDataRetriever';
 import { CadSectorParser } from '../../data/parser/CadSectorParser';
 import { SimpleAndDetailedToSector3D } from '../../data/transformer/three/SimpleAndDetailedToSector3D';
 import { ConsumedSector } from '../../data/model/ConsumedSector';
@@ -29,8 +28,14 @@ import { MemoryRequestCache } from '../../cache/MemoryRequestCache';
 import { ParseCtmResult, ParseSectorResult } from '../../workers/types/parser.types';
 import { Sector, TriangleMesh, InstancedMeshFile, InstancedMesh } from '../../models/cad/types';
 import { createOffsetsArray } from '../../utils/arrayUtils';
+import { BinaryBlobFileProvider } from '../../data/provider/BinaryBlobFileProvider';
+import { BinaryFileProvider } from '../../data/provider/BinaryFileProvider';
+import { CDFSource, ExternalSource } from '../../data/model/DataSource';
 
 // TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
+
+interface DataRetriever extends BinaryBlobFileProvider, BinaryFileProvider {}
+
 export class CachedRepository implements Repository {
   private readonly _modelDataCache: MemoryRequestCache<string, Observable<ConsumedSector>> = new MemoryRequestCache({
     maxElementsInCache: 50
@@ -39,15 +44,15 @@ export class CachedRepository implements Repository {
     maxElementsInCache: 300
   });
   private readonly _modelDataParser: CadSectorParser;
-  private readonly _modelDataRetriever: ModelDataRetriever;
+  private readonly _dataRetriever: DataRetriever;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
 
   constructor(
-    modelDataRetriever: ModelDataRetriever,
+    dataRetriever: DataRetriever,
     modelDataParser: CadSectorParser,
     modelDataTransformer: SimpleAndDetailedToSector3D
   ) {
-    this._modelDataRetriever = modelDataRetriever;
+    this._dataRetriever = dataRetriever;
     this._modelDataParser = modelDataParser;
     this._modelDataTransformer = modelDataTransformer;
   }
@@ -82,7 +87,10 @@ export class CachedRepository implements Repository {
         );
       }),
       retryWhen(errors => {
-        return errors.pipe(tap(e => console.error(e)), delay(5000));
+        return errors.pipe(
+          tap(e => console.error(e)),
+          delay(5000)
+        );
       })
     );
   }
@@ -96,9 +104,18 @@ export class CachedRepository implements Repository {
       const simpleSectorObservable: Observable<ConsumedSector> = wantedSectorObservable.pipe(
         filter(wantedSector => wantedSector.levelOfDetail === LevelOfDetail.Simple),
         flatMap((wantedSector: WantedSector) => {
-          const networkObservable: Observable<ConsumedSector> = from(
-            this._modelDataRetriever.fetchData(wantedSector.metadata.facesFile.fileName!)
-          ).pipe(
+          let networkPromise: Promise<ArrayBuffer>;
+          if (wantedSector.dataSource.discriminator === 'cdf') {
+            networkPromise = this._dataRetriever.fetchBinaryFileByPath(
+              wantedSector.dataSource.modelId,
+              wantedSector.metadata.facesFile.fileName!
+            );
+          } else if (wantedSector.dataSource.discriminator === 'external') {
+            networkPromise = this._dataRetriever.fetchBinaryFileByUrl(
+              wantedSector.dataSource.url + '/' + wantedSector.metadata.facesFile.fileName!
+            );
+          }
+          const networkObservable: Observable<ConsumedSector> = from(() => networkPromise).pipe(
             retry(3),
             map(arrayBuffer => ({ format: 'f3d', data: new Uint8Array(arrayBuffer) })),
             this._modelDataParser.parse(),
@@ -107,7 +124,7 @@ export class CachedRepository implements Repository {
             }),
             this._modelDataTransformer.transform(),
             tap(group => {
-              group.name = `Quads ${wantedSector.id}`;
+              group.name = `Quads ${wantedSector.metadata.id}`;
             }),
             map(group => ({ ...wantedSector, group })),
             shareReplay(1),
@@ -129,16 +146,34 @@ export class CachedRepository implements Repository {
         // tap(e => this.requestSet.add(this.cacheKey(e))),
         flatMap(wantedSector => {
           const i3dFileObservable = of(wantedSector.metadata.indexFile).pipe(
-            flatMap(indexFile => this._modelDataRetriever.fetchData(indexFile.fileName)),
-            map(response => ({
-              format: 'i3d',
-              data: new Uint8Array(response)
-            })),
+            flatMap(
+              indexFile => {
+                let networkPromise: Promise<ArrayBuffer>;
+                if (wantedSector.dataSource.discriminator === 'cdf') {
+                  networkPromise = this._dataRetriever.fetchBinaryFileByPath(
+                    wantedSector.dataSource.modelId,
+                    indexFile.fileName!
+                  );
+                } else if (wantedSector.dataSource.discriminator === 'external') {
+                  networkPromise = this._dataRetriever.fetchBinaryFileByUrl(
+                    wantedSector.dataSource.url + '/' + indexFile.fileName!
+                  );
+                } else {
+                  throw new Error('unknown type');
+                }
+                return networkPromise;
+              },
+              (_, response) => ({
+                format: 'i3d',
+                data: new Uint8Array(response)
+              })
+            ),
             retry(3),
             this._modelDataParser.parse()
           );
 
           const ctmFilesObservable = from(wantedSector.metadata.indexFile.peripheralFiles).pipe(
+            map(fileName => ({ dataSource: wantedSector.dataSource, fileName})),
             this.loadCtmFile(),
             reduce((accumulator, value) => {
               accumulator.set(value.fileName, value.data);
@@ -168,16 +203,19 @@ export class CachedRepository implements Repository {
     });
   }
 
-  private loadCtmFile(): OperatorFunction<string, { fileName: string; data: ParseCtmResult }> {
-    return publish(fileNameArrayObservable => {
-      const [cachedCtmFileObservable, uncachedCtmFileObservable] = partition(fileNameArrayObservable, fileName =>
-        this._ctmFileCache.has(fileName)
+  private loadCtmFile(): OperatorFunction<
+    { dataSource: CDFSource | ExternalSource; fileName: string },
+    { fileName: string; data: ParseCtmResult }
+  > {
+    return publish(ctmRequestObservable => {
+      const [cachedCtmFileObservable, uncachedCtmFileObservable] = partition(ctmRequestObservable, ctmRequest =>
+        this._ctmFileCache.has(this.ctmCacheKey(ctmRequest))
       );
       return merge(
         cachedCtmFileObservable.pipe(
           flatMap(
-            fileName => this._ctmFileCache.get(fileName),
-            (fileName, data) => ({ fileName, data })
+            ctmRequest => this._ctmFileCache.get(this.ctmCacheKey(ctmRequest)),
+            (ctmRequest, data) => ({ fileName: ctmRequest.fileName, data })
           )
         ),
         uncachedCtmFileObservable.pipe(this.loadCtmFileFromNetwork())
@@ -185,11 +223,25 @@ export class CachedRepository implements Repository {
     });
   }
 
-  private loadCtmFileFromNetwork(): OperatorFunction<string, { fileName: string; data: ParseCtmResult }> {
+  private loadCtmFileFromNetwork(): OperatorFunction<
+    { dataSource: CDFSource | ExternalSource; fileName: string },
+    { fileName: string; data: ParseCtmResult }
+  > {
     return pipe(
       flatMap(
-        fileName => {
-          const networkObservable = from(this._modelDataRetriever.fetchData(fileName)).pipe(
+        ctmRequest => {
+          let networkPromise: Promise<ArrayBuffer>;
+          if (ctmRequest.dataSource.discriminator === 'cdf') {
+            networkPromise = this._dataRetriever.fetchBinaryFileByPath(
+              ctmRequest.dataSource.modelId,
+              ctmRequest.fileName
+            );
+          } else if (ctmRequest.dataSource.discriminator === 'external') {
+            networkPromise = this._dataRetriever.fetchBinaryFileByUrl(
+              ctmRequest.dataSource.url + '/' + ctmRequest.fileName!
+            );
+          }
+          const networkObservable = from(() => networkPromise).pipe(
             retry(3),
             map(arrayBuffer => ({ format: 'ctm', data: new Uint8Array(arrayBuffer) })),
             this._modelDataParser.parse(),
@@ -198,7 +250,7 @@ export class CachedRepository implements Repository {
           );
           while (true) {
             try {
-              this._ctmFileCache.add(fileName, networkObservable as Observable<ParseCtmResult>);
+              this._ctmFileCache.add(this.ctmCacheKey(ctmRequest), networkObservable as Observable<ParseCtmResult>);
               break;
             } catch (e) {
               this._ctmFileCache.cleanCache(10);
@@ -206,7 +258,7 @@ export class CachedRepository implements Repository {
           }
           return networkObservable;
         },
-        (fileName, data) => ({ fileName, data: data as ParseCtmResult })
+        (ctmRequest, data) => ({ fileName: ctmRequest.fileName, data: data as ParseCtmResult })
       )
     );
   }
@@ -382,7 +434,21 @@ export class CachedRepository implements Repository {
     return [r, g, b, a];
   }
 
+  private ctmCacheKey(ctmRequest: { dataSource: CDFSource | ExternalSource; fileName: string }) {
+    if (ctmRequest.dataSource.discriminator === 'cdf') {
+      return '' + ctmRequest.dataSource.modelId + '.' + ctmRequest.fileName;
+    } else if (ctmRequest.dataSource.discriminator === 'external') {
+      return '' + ctmRequest.dataSource.url + '' + ctmRequest.fileName;
+    }
+    throw new Error('unknown datasource');
+  }
+
   private cacheKey(wantedSector: WantedSector) {
-    return '' + wantedSector.id + '.' + wantedSector.levelOfDetail;
+    if (wantedSector.dataSource.discriminator === 'cdf') {
+      return '' + wantedSector.dataSource.modelId + '.' + wantedSector.levelOfDetail;
+    } else if (wantedSector.dataSource.discriminator === 'external') {
+      return '' + wantedSector.dataSource.url + '' + wantedSector.levelOfDetail;
+    }
+    throw new Error('unknown datasource');
   }
 }

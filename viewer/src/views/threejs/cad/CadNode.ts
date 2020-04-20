@@ -3,8 +3,8 @@
  */
 
 import * as THREE from 'three';
-import { Subject, Observable, animationFrameScheduler } from 'rxjs';
-import { publish, share, auditTime, switchAll, map, observeOn } from 'rxjs/operators';
+import { Subject, Observable, animationFrameScheduler, merge, empty } from 'rxjs';
+import { publish, share, auditTime, switchAll, map, observeOn, scan, filter, flatMap } from 'rxjs/operators';
 
 import { SectorModelTransformation, SectorScene, SectorMetadata } from '../../../models/cad/types';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
@@ -32,6 +32,9 @@ import { CadBudget, createDefaultCadBudget } from '../../../models/cad/CadBudget
 import { discardSector } from './discardSector';
 import { CadSectorParser } from '../../../data/parser/CadSectorParser';
 import { SimpleAndDetailedToSector3D } from '../../../data/transformer/three/SimpleAndDetailedToSector3D';
+import { CDFSource, ExternalSource } from '../../../data/model/DataSource';
+import { Reveal3DClientExtension } from '../../../data/provider/http/Reveal3DClientExtension';
+import { CogniteClient } from '@cognite/sdk';
 
 export type ParseCallbackDelegate = (sector: ParsedSector) => void;
 
@@ -51,52 +54,109 @@ export interface SuggestedCameraConfig {
   far: number;
 }
 
+export interface RootSector {
+  source: CDFSource | ExternalSource;
+  scene: SectorScene;
+  boundingBox: THREE.Object3D;
+  node: RootSectorNode;
+  materialManager: MaterialManager;
+  modelTransformation: SectorModelTransformation;
+  renderHints: CadRenderHints;
+  loadingHints: CadLoadingHints;
+}
+
+enum ActionType {
+  Add,
+  Remove
+}
+
 export class CadNode extends THREE.Object3D {
-  public readonly rootSector: RootSectorNode;
-  public readonly modelTransformation: SectorModelTransformation;
+  // public readonly rootSector: RootSectorNode;
+  // public readonly modelTransformation: SectorModelTransformation;
+  public readonly rootSectors: Map<string, RootSector> = new Map();
+  public readonly rootSectorSubject: Subject<{
+    type: ActionType;
+    dataSource: CDFSource | ExternalSource;
+  }> = new Subject();
+  public readonly rootSectorObservable: Observable<RootSector[]>;
 
   private _sectorCuller: SectorCuller<DetermineSectorsByProximityInput>;
   private _renderHints: CadRenderHints;
   private _loadingHints: CadLoadingHints;
   private _budget: CadBudget;
 
-  private readonly _materialManager: MaterialManager;
+  // private readonly _materialManager: MaterialManager;
   private readonly _cameraPositionObservable: Subject<ThreeCameraConfig>;
-  private readonly _sectorScene: SectorScene;
+  // private readonly _sectorScene: SectorScene;
   private readonly _previousCameraMatrix = new THREE.Matrix4();
-  private readonly _boundingBoxNode: THREE.Object3D;
+  // private readonly _boundingBoxNode: THREE.Object3D;
   private readonly _repository: Repository;
 
-  constructor(model: CadModel, options?: CadNodeOptions) {
+  constructor(client: CogniteClient, options?: CadNodeOptions) {
     super();
     this.type = 'CadNode';
     this.name = 'Sector model';
-    const treeIndexCount = model.scene.maxTreeIndex + 1;
-    this._materialManager = new MaterialManager(treeIndexCount, options ? options.nodeAppearance : undefined);
+    // const treeIndexCount = model.scene.maxTreeIndex + 1;
+    // this._materialManager = new MaterialManager(treeIndexCount, options ? options.nodeAppearance : undefined);
 
-    const rootSector = new RootSectorNode(model);
+    // const rootSector = new RootSectorNode(model);
 
-    const modelDataParser: CadSectorParser = new CadSectorParser();
-    const modelDataTransformer: SimpleAndDetailedToSector3D = new SimpleAndDetailedToSector3D(
-      this._materialManager.materials
+    this.rootSectorObservable = this.rootSectorSubject.pipe(
+      publish(actionObservable => {
+        const addActionObservable = actionObservable.pipe(
+          filter(action => action.type === ActionType.Add),
+          flatMap(
+            action => {
+              // TODO: Create RootSector from Source?
+              return empty();
+            },
+            (action, rootSector) => ({ action: action.type, rootSector })
+          )
+        );
+        const removeActionObservable = actionObservable.pipe(
+          filter(action => action.type === ActionType.Remove),
+          flatMap(
+            action => {
+              // TODO: Clean up RootSector
+              return empty();
+            },
+            (action, rootSector) => ({ action: action.type, rootSector })
+          )
+        );
+
+        return merge(addActionObservable, removeActionObservable);
+      }),
+      scan((collection, event) => {
+        if (event.action === ActionType.Add) {
+          collection.push(event.rootSector);
+        }
+        if (event.action === ActionType.Remove) {
+          collection.remove(event.rootSector);
+        }
+        return collection;
+      }, [])
     );
 
-    this._repository = new CachedRepository(model.dataRetriever, modelDataParser, modelDataTransformer);
+    const revealClient: Reveal3DClientExtension = new Reveal3DClientExtension(client);
+    const modelDataParser: CadSectorParser = new CadSectorParser();
+    const modelDataTransformer: SimpleAndDetailedToSector3D = new SimpleAndDetailedToSector3D();
+
+    this._repository = new CachedRepository(revealClient, modelDataParser, modelDataTransformer);
     this._budget = (options && options.budget) || createDefaultCadBudget();
 
-    const { scene, modelTransformation } = model;
+    // const { scene, modelTransformation } = model;
 
-    this._sectorScene = scene;
+    // this._sectorScene = scene;
     this._sectorCuller = (options && options.internal && options.internal.sectorCuller) || new ProximitySectorCuller();
-    this.modelTransformation = modelTransformation;
+    // this.modelTransformation = modelTransformation;
     // Ensure camera matrix is unequal on first frame
     this._previousCameraMatrix.elements[0] = Infinity;
 
     // Prepare renderables
-    this.rootSector = rootSector;
-    this.add(rootSector);
-    this._boundingBoxNode = this.createBoundingBoxNode(scene.getAllSectors());
-    this.add(this._boundingBoxNode);
+    // this.rootSector = rootSector;
+    // this.add(rootSector);
+    // this._boundingBoxNode = this.createBoundingBoxNode(scene.getAllSectors());
+    // this.add(this._boundingBoxNode);
 
     // Apply default hints
     this._renderHints = {};
@@ -104,25 +164,36 @@ export class CadNode extends THREE.Object3D {
     this.renderHints = {};
     this.loadingHints = {};
 
+    /*
     const indices = [];
     for (let i = 0; i < scene.maxTreeIndex; i++) {
       indices.push(i);
-    }
-    this._materialManager.updateNodes(indices);
+    }*/
+    // this._materialManager.updateNodes(indices);
     this._cameraPositionObservable = this.createLoadSectorsPipeline();
   }
 
-  requestNodeUpdate(treeIndices: number[]) {
-    this._materialManager.updateNodes(treeIndices);
+  async addModelFromCDF(modelId: number): THREE.Object3D {}
+
+  /*
+  removeModel() {
+
+  }*/
+
+  async addModelByUrl(url: string): THREE.Object3D {}
+
+  requestNodeUpdate(key: string, treeIndices: number[]) {
+    //     this._materialManager.updateNodes(treeIndices);
+    this.rootSectors.get(key)!.materialManager.updateNodes(treeIndices);
     this.dispatchEvent({ type: 'update' });
   }
 
-  set renderMode(mode: RenderMode) {
-    this._materialManager.setRenderMode(mode);
+  setRenderMode(key: string, mode: RenderMode) {
+    this.rootSectors.get(key)!.materialManager.setRenderMode(mode);
   }
 
-  get renderMode() {
-    return this._materialManager.getRenderMode();
+  getRenderMode(key: string) {
+    return this.rootSectors.get(key)!.materialManager.getRenderMode();
   }
 
   get budget() {
@@ -131,11 +202,19 @@ export class CadNode extends THREE.Object3D {
 
   set renderHints(hints: Readonly<CadRenderHints>) {
     this._renderHints = hints;
-    this._boundingBoxNode.visible = this.shouldRenderSectorBoundingBoxes;
+    //this._boundingBoxNode.visible = this.shouldRenderSectorBoundingBoxes;
   }
 
   get renderHints(): Readonly<CadRenderHints> {
     return this._renderHints;
+  }
+
+  setRenderHints(key: string, hints: Readonly<CadRenderHints>) {
+    this.rootSectors.get(key)!.renderHints = hints;
+  }
+
+  getRenderHints(key: string): Readonly<CadRenderHints> {
+    return this.rootSectors.get(key)!.renderHints;
   }
 
   set loadingHints(hints: Readonly<CadLoadingHints>) {
@@ -153,13 +232,14 @@ export class CadNode extends THREE.Object3D {
   public update(camera: THREE.PerspectiveCamera): void {
     const cameraConfig: ThreeCameraConfig = {
       camera,
-      modelTransformation: this.modelTransformation,
-      sectorScene: this._sectorScene,
+      // modelTransformation: this.modelTransformation,
+      // sectorScene: this._sectorScene,
       loadingHints: this.loadingHints
     };
     this._cameraPositionObservable.next(cameraConfig);
   }
 
+  /*
   public suggestCameraConfig(): SuggestedCameraConfig {
     const { position, target, near, far } = suggestCameraConfig(this._sectorScene.root);
 
@@ -169,6 +249,16 @@ export class CadNode extends THREE.Object3D {
       near,
       far
     };
+  }*/
+
+  // TODO: j-bjorne 20-04-20 Move to toString utils class with other datasource to string functions.
+  private sourceToString(item: { dataSource: ExternalSource | CDFSource }) {
+    if (item.dataSource.discriminator === 'cdf') {
+      return '' + item.dataSource.modelId;
+    } else if (item.dataSource.discriminator === 'external') {
+      return '' + item.dataSource.url;
+    }
+    throw new Error('unknown datasource');
   }
 
   private createLoadSectorsPipeline(): Subject<ThreeCameraConfig> {
@@ -194,9 +284,10 @@ export class CadNode extends THREE.Object3D {
         observeOn(animationFrameScheduler)
       ) // Consume sectors
       .subscribe((sector: ConsumedSector) => {
-        const sectorNode = this.rootSector.sectorNodeMap.get(sector.id);
+        const sectorNodeParent = this.rootSectors.get(this.sourceToString(sector));
+        const sectorNode = sectorNodeParent?.node.sectorNodeMap.get(sector.metadata.id);
         if (!sectorNode) {
-          throw new Error(`Could not find 3D node for sector ${sector.id} - invalid id?`);
+          throw new Error(`Could not find 3D node for sector ${sector.metadata.id} - invalid id?`);
         }
         if (sectorNode.group) {
           sectorNode.group.userData.refCount -= 1;
@@ -217,6 +308,8 @@ export class CadNode extends THREE.Object3D {
   }
 
   private updateSectorBoundingBoxes(sector: ConsumedSector) {
+    throw new Error('Not implemented');
+    /*
     this._boundingBoxNode.children.forEach(x => {
       const sectorId = x.userData.sectorId as number;
       if (sectorId !== sector.id) {
@@ -224,10 +317,10 @@ export class CadNode extends THREE.Object3D {
       }
       const boxHelper = x as THREE.Box3Helper;
       boxHelper.visible = sector.levelOfDetail !== LevelOfDetail.Discarded;
-    });
+    }); */
   }
 
-  private createBoundingBoxNode(sectors: SectorMetadata[]): THREE.Object3D {
+  private createBoundingBoxNode(key: string, sectors: SectorMetadata[]): THREE.Object3D {
     function sectorDepth(s: SectorMetadata) {
       return s.path.length / 2; // Path are on format 'x/y/z/'
     }
@@ -241,7 +334,8 @@ export class CadNode extends THREE.Object3D {
     });
 
     const boxesNode = new THREE.Group();
-    boxesNode.applyMatrix4(toThreeMatrix4(this.modelTransformation.modelMatrix));
+    const sectorNodeParent = this.rootSectors.get(key);
+    boxesNode.applyMatrix4(toThreeMatrix4(sectorNodeParent!.modelTransformation.modelMatrix));
     boxesNode.name = 'Bounding boxes (for debugging)';
     sectors.forEach(sector => {
       const bbox = toThreeJsBox3(new THREE.Box3(), sector.bounds);
