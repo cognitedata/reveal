@@ -50,11 +50,11 @@ describe('SectorSceneImpl', () => {
     camera.lookAt(2.0, 0.5, 0.5);
     camera.updateMatrixWorld();
     camera.updateProjectionMatrix();
-    const cameraModelMatrix = fromThreeMatrix(mat4.create(), camera.matrixWorld);
+    const cameraModelMatrixInverse = fromThreeMatrix(mat4.create(), camera.matrixWorldInverse);
     const projectionMatrix = fromThreeMatrix(mat4.create(), camera.projectionMatrix);
 
     // Act
-    const sectors = scene.getSectorsIntersectingFrustum(cameraModelMatrix, projectionMatrix);
+    const sectors = scene.getSectorsIntersectingFrustum(projectionMatrix, cameraModelMatrixInverse);
 
     // Assert
     expect(sectorIds(sectors)).toEqual([0, 2]);
@@ -68,11 +68,11 @@ describe('SectorSceneImpl', () => {
     camera.lookAt(0.5, 0.5, 0.5);
     camera.updateMatrixWorld();
     camera.updateProjectionMatrix();
-    const cameraModelMatrix = fromThreeMatrix(mat4.create(), camera.matrixWorld);
+    const cameraModelMatrixInverse = fromThreeMatrix(mat4.create(), camera.matrixWorldInverse);
     const projectionMatrix = fromThreeMatrix(mat4.create(), camera.projectionMatrix);
 
     // Act
-    const sectors = scene.getSectorsIntersectingFrustum(cameraModelMatrix, projectionMatrix);
+    const sectors = scene.getSectorsIntersectingFrustum(projectionMatrix, cameraModelMatrixInverse);
 
     // Assert
     expect(sectorIds(sectors)).toEqual([0, 1, 2]);
