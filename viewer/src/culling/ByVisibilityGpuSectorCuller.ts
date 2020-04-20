@@ -20,6 +20,7 @@ import {
 } from '../views/threejs/OrderSectorsByVisibleCoverage';
 import { SectorCuller } from './SectorCuller';
 import { fromThreeMatrix } from '../views/threejs/utilities';
+import { traverseUpwards, traverseDepthFirst } from '../utils/traversal';
 
 type PrioritizedWantedSector = WantedSector & { priority: number; scene: SectorScene };
 
@@ -49,6 +50,114 @@ export type ByVisibilityGpuSectorCullerOptions = {
   coverageUtil?: OrderSectorsByVisibleCoverage;
 };
 
+type TakenSector = { metadata: SectorMetadata; lod: LevelOfDetail; priority: number };
+type TakenSectorDictionary = Map<SectorScene, Map<number, TakenSector>>;
+class TakenSectorMap {
+  // TODO 2020-04-21 larsmoa: Count cost in TakenSectorMap
+  // TODO 2020-04-21 larsmoa: Unit test TakenSectorMap
+
+  private readonly map: TakenSectorDictionary = new Map();
+
+  /**
+   * Finds first anchestor of the sector with the given LOD that already has been
+   * added to the collection and returns it if found.
+   */
+  findAddedAnchestor(scene: SectorScene, sector: SectorMetadata, lod: LevelOfDetail): SectorMetadata | undefined {
+    let result: SectorMetadata | undefined;
+    traverseUpwards(sector, x => {
+      const parentLod = this.getSectorLOD(scene, x.id);
+      if (parentLod === lod) {
+        result = x;
+        return false;
+      }
+      return true;
+    });
+    return result;
+  }
+
+  removeAllChildrenOf(scene: SectorScene, sector: SectorMetadata): SectorMetadata[] {
+    const removed: SectorMetadata[] = [];
+    traverseDepthFirst(sector, x => {
+      if (sector !== x && this.hasSector(scene, x.id)) {
+        removed.push(x);
+      }
+      return true;
+    });
+    return removed;
+  }
+
+  hasSector(scene: SectorScene, sectorId: number): boolean {
+    const sceneMap = this.map.get(scene);
+    return sceneMap ? sceneMap.has(sectorId) : false;
+  }
+
+  getSectorLOD(scene: SectorScene, sectorId: number): LevelOfDetail | undefined {
+    const sceneMap = this.map.get(scene);
+    const entry = sceneMap ? sceneMap.get(sectorId) : undefined;
+    return entry ? entry.lod : undefined;
+  }
+
+  getSectorCount(onlyFromScene?: SectorScene): number {
+    let count = 0;
+    this.map.forEach((taken, scene) => {
+      if (onlyFromScene === undefined || scene === onlyFromScene) {
+        count += taken.size;
+      }
+    });
+    return count;
+  }
+
+  collectWantedSectors(scene: SectorScene): PrioritizedWantedSector[] {
+    const sceneMap = this.map.get(scene);
+    if (!sceneMap) {
+      return [];
+    }
+
+    const wanted = Array.from(sceneMap.entries()).map(x => {
+      const sectorId = x[0];
+      const entry = x[1];
+      return {
+        scene,
+        sectorId,
+        levelOfDetail: entry.lod,
+        metadata: entry.metadata,
+        priority: entry.priority
+      };
+    });
+    return wanted.sort((l, r) => r.priority - l.priority);
+  }
+
+  add(scene: SectorScene, sector: SectorMetadata, levelOfDetail: LevelOfDetail, priority: number) {
+    const sectorId = sector.id;
+    let sceneMap = this.map.get(scene);
+    if (!sceneMap) {
+      sceneMap = new Map<number, TakenSector>();
+      this.map.set(scene, sceneMap);
+    }
+    const currentValue = sceneMap.get(sectorId);
+    if (!currentValue) {
+      const value = { metadata: sector, lod: levelOfDetail, priority };
+      sceneMap.set(sectorId, value);
+    } else if (currentValue !== undefined) {
+      throw new Error(`Sector ${scene}[${sectorId}] already added`);
+    }
+
+    // TODO 2020-04-21 larsmoa: Obey rules for adding/removing sectors to avoid duplicated geometry in this
+    // function
+  }
+
+  remove(scene: SectorScene, sectorId: number) {
+    const sceneMap = this.map.get(scene);
+    if (sceneMap) {
+      sceneMap.delete(sectorId);
+    }
+  }
+
+  clear() {
+    this.map.clear();
+  }
+}
+
 /**
  * Experimental implementation of SectorCuller that uses the GPU to determine an approximatin
  * of how "visible" each sector is to get a priority for each sector.
@@ -64,7 +173,9 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   private readonly lastUpdate = {
     matrix: new THREE.Matrix4(),
     projectionMatrix: new THREE.Matrix4(),
-    wanted: [] as PrioritizedWantedSector[]
+    takenSectors: new TakenSectorMap()
+    // TODO 2020-04-20 larsmoa: Remove the need for this and merge with takenSectors
+    // wanted: [] as PrioritizedWantedSector[]
   };
 
   constructor(camera: THREE.PerspectiveCamera, options?: ByVisibilityGpuSectorCullerOptions) {
@@ -92,31 +203,47 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   }
 
   determineSectors(input: DetermineSectorsByProximityInput): WantedSector[] {
-    const wanted = this.update(input);
+    const takenSectors = this.update(input);
 
-    const wantedForScene = wanted.filter(x => x.scene === input.sectorScene);
+    const wantedForScene = takenSectors.collectWantedSectors(input.sectorScene);
+    // Mark anything not wanted, as Discarded
+    traverseDepthFirst(input.sectorScene.root, x => {
+      if (!takenSectors.hasSector(input.sectorScene, x.id)) {
+        wantedForScene.push({
+          sectorId: x.id,
+          metadata: x,
+          levelOfDetail: LevelOfDetail.Discarded,
+          scene: input.sectorScene,
+          priority: -1
+        });
+      }
+      return true;
+    });
     console.log(
       `Scene: ${wantedForScene.length} (${wantedForScene.filter(x => !Number.isFinite(x.priority)).length} required)`
     );
+
     return wantedForScene;
   }
 
   get lastWantedSectors(): PrioritizedWantedSector[] {
-    return this.lastUpdate.wanted.slice();
+    return this.models.flatMap(m => this.lastUpdate.takenSectors.collectWantedSectors(m.scene));
   }
 
-  private update(input: DetermineSectorsByProximityInput): PrioritizedWantedSector[] {
+  private update(input: DetermineSectorsByProximityInput): TakenSectorMap {
     const { coverageUtil } = this.options;
+    const takenSectors = this.lastUpdate.takenSectors;
     // Necessary to update?
     const changed =
       !this.lastUpdate.matrix.equals(this.camera.matrix) ||
       !this.lastUpdate.projectionMatrix.equals(this.camera.projectionMatrix);
 
     if (!changed) {
-      return this.lastUpdate.wanted;
+      return takenSectors;
     }
+    takenSectors.clear();
 
-    // Update wanted sector
+    // Update wanted sectors
     const prioritized = coverageUtil.orderSectorsByVisibility(this.camera);
     this.lastUpdate.matrix = this.camera.matrix.clone();
     this.lastUpdate.projectionMatrix = this.camera.projectionMatrix.clone();
@@ -124,20 +251,16 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     const costLimit = this.options.costLimitMb * 1024 * 1024;
     let costSpent = 0.0;
 
-    const wanted: PrioritizedWantedSector[] = [];
-    const wantedSimpleSectors = new Set<[SectorScene, number]>();
-    const takenSectors = new Set<[SectorScene, number]>();
-
     // Add high details for all sectors the camera is inside or near
     const proximityThreshold = 10;
-    costSpent += this.addHighDetailsForNearSectors(proximityThreshold, takenSectors, wanted);
+    // costSpent += this.addHighDetailsForNearSectors(proximityThreshold, takenSectors, wanted);
 
     // Create a list of parents that are required for each entry of the prioritized list
     const reservedForSimple = 0.1; // 10% of budget is resevered for simple geometry
 
     let debugAccumulatedPriority = 0.0;
     const prioritizedLength = prioritized.length;
-    // Holds IDs of wanted simple sectors. No children of these should be loaded.
+    // // Holds IDs of wanted simple sectors. No children of these should be loaded.
     let i = 0;
     for (i = 0; i < prioritizedLength && costSpent < costLimit; i++) {
       const x = prioritized[i];
@@ -147,13 +270,13 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
       switch (levelOfDetail) {
         case LevelOfDetail.Detailed:
           if (costSpent < (1.0 - reservedForSimple) * costLimit) {
-            costSpent += this.addDetailedSector(x, metadata, wanted, wantedSimpleSectors, takenSectors);
+            costSpent += this.addDetailedSector(x, metadata!, takenSectors);
             break;
           }
           console.log(`Reverting to simple for ${metadata!.path}`);
 
         case LevelOfDetail.Simple:
-          costSpent += this.addSimpleSector(x, metadata!, wanted, wantedSimpleSectors);
+          costSpent += this.addSimpleSector(x, metadata!, takenSectors);
           break;
 
         default:
@@ -164,22 +287,15 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
       `Retrieving ${i} of ${prioritizedLength} (last: ${prioritized.length > 0 ? prioritized[i - 1] : null})`
     );
     console.log(
-      `Total scheduled: ${wanted.length} of ${prioritizedLength} (cost: ${costSpent / 1024 / 1024}/${costLimit /
+      `Total scheduled: ${takenSectors.getSectorCount()} of ${prioritizedLength} (cost: ${costSpent /
         1024 /
-        1024}, priority: ${debugAccumulatedPriority} (${
-        wanted.filter(x => !Number.isFinite(x.priority)).length
-      } required))`
+        1024}/${costLimit / 1024 / 1024}, priority: ${debugAccumulatedPriority})`
     );
 
-    this.lastUpdate.wanted = wanted;
-    return wanted;
+    return takenSectors;
   }
 
-  private addHighDetailsForNearSectors(
-    proximityThreshold: number,
-    takenSectors: Set<[SectorScene, number]>,
-    wanted: PrioritizedWantedSector[]
-  ): number {
+  private addHighDetailsForNearSectors(proximityThreshold: number, takenSectors: TakenSectorMap): number {
     const shortRangeCamera = this.camera.clone(true);
     shortRangeCamera.far = proximityThreshold;
     shortRangeCamera.updateProjectionMatrix();
@@ -200,15 +316,8 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
         cameraProjectionMatrix,
         transformedCameraMatrixWorldInverse
       )) {
-        costSpent += this.computeSectorCost(sector);
-        takenSectors.add([model.scene, sector.id]);
-        wanted.push({
-          sectorId: sector.id,
-          metadata: sector,
-          levelOfDetail: LevelOfDetail.Detailed,
-          priority: Infinity,
-          scene: model.scene
-        });
+        costSpent += this.computeSectorCost(sector, LevelOfDetail.Detailed);
+        takenSectors.add(model.scene, sector, LevelOfDetail.Detailed, Infinity);
       }
     });
     return costSpent;
@@ -217,56 +326,58 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   private addSimpleSector(
     sector: PrioritizedSectorIdentifier,
     metadata: SectorMetadata,
-    wanted: PrioritizedWantedSector[],
-    wantedSimpleSectors: Set<[SectorScene, number]>
+    takenSectors: TakenSectorMap
   ): number {
-    // Simple detail
-    wantedSimpleSectors.add([sector.scene, sector.sectorId]);
-    wanted.push({
-      sectorId: sector.sectorId,
-      metadata: metadata!,
-      levelOfDetail: LevelOfDetail.Simple,
-      priority: sector.priority,
-      scene: sector.scene
-    });
+    const scene = sector.scene;
 
-    return this.computeSectorCost(metadata!);
+    const anchestorAlreadyAdded = !!takenSectors.findAddedAnchestor(scene, metadata, LevelOfDetail.Simple);
+    if (anchestorAlreadyAdded) {
+      // Don't add if a anchestor already is accepted
+      return 0;
+    }
+
+    // Remove any children that might have been already added
+    // TODO 2020-04-21 larsmoa: Account for saved cost
+    takenSectors.removeAllChildrenOf(sector.scene, metadata);
+
+    takenSectors.add(scene, metadata, LevelOfDetail.Simple, sector.priority);
+    return this.computeSectorCost(metadata, LevelOfDetail.Simple);
   }
 
   private addDetailedSector(
     sector: PrioritizedSectorIdentifier,
-    metadata: SectorMetadata | undefined,
-    wanted: PrioritizedWantedSector[],
-    wantedSimpleSectors: Set<[SectorScene, number]>,
-    takenSectors: Set<[SectorScene, number]>
+    metadata: SectorMetadata,
+    takenSectors: TakenSectorMap
   ): number {
-    // Find parents and "total cost" of sector
-    const required: SectorMetadata[] = [];
     let totalCost = 0;
-    // TODO 2020-04-12 larsmoa: Not sure if adding parents is a good idea
-    while (metadata && !takenSectors.has([sector.scene, metadata.id])) {
-      if (wantedSimpleSectors.has([sector.scene, metadata.id])) {
-        console.log(`Skipped ${sector.sectorId} because ${metadata.path} is loaded simple`);
-        break;
+
+    // Check if any parent is added as low-detail and remove low detail if so
+    let simpleSector: SectorMetadata | undefined;
+    traverseUpwards(metadata, x => {
+      const parentLod = takenSectors.getSectorLOD(sector.scene, sector.sectorId);
+      if (parentLod === LevelOfDetail.Simple) {
+        simpleSector = x;
+        return false;
       }
-      totalCost += this.computeSectorCost(metadata);
-      takenSectors.add([sector.scene, metadata.id]);
-      required.push(metadata);
-      metadata = metadata.parent;
+      return true;
+    });
+    if (simpleSector) {
+      // Remove low-detail to avoid duplicated geometry
+      totalCost -= this.computeSectorCost(simpleSector, LevelOfDetail.Simple);
+      takenSectors.remove(sector.scene, simpleSector.id);
     }
 
-    // Add "order"
-    const offset = wanted.length;
-    wanted.length = wanted.length + required.length;
-    for (let i = 0; i < required.length; i++) {
-      wanted[offset + i] = {
-        sectorId: required[i].id,
-        metadata: required[i],
-        levelOfDetail: LevelOfDetail.Detailed,
-        priority: sector.priority,
-        scene: sector.scene
-      };
+    // TODO 2020-04-12 larsmoa: Not sure if adding parents is a good idea, even though it's required
+    // by the 'contract'
+
+    // Add sector and all parents
+    let parent: SectorMetadata | undefined = metadata;
+    while (parent && !takenSectors.hasSector(sector.scene, parent.id)) {
+      totalCost += this.computeSectorCost(parent, LevelOfDetail.Detailed);
+      takenSectors.add(sector.scene, parent, LevelOfDetail.Detailed, sector.priority);
+      parent = parent.parent;
     }
+
     return totalCost;
   }
 
@@ -291,8 +402,15 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     return LevelOfDetail.Detailed;
   }
 
-  private computeSectorCost(metadata: SectorMetadata): number {
-    return metadata.indexFile.downloadSize;
+  private computeSectorCost(metadata: SectorMetadata, lod: LevelOfDetail): number {
+    switch (lod) {
+      case LevelOfDetail.Detailed:
+        return metadata.indexFile.downloadSize;
+      case LevelOfDetail.Simple:
+        return metadata.facesFile.downloadSize;
+      default:
+        throw new Error(`Can't compute cost for lod ${lod}`);
+    }
   }
 }
 
