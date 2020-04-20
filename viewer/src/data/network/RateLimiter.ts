@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-export class Semaphore {
+export class RateLimiter {
   private queue: ((ready: boolean) => void)[] = [];
   private slotsInUse: number = 0;
   private slotCount: number;

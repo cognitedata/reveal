@@ -3,16 +3,13 @@
  */
 
 import * as THREE from 'three';
-import { Subject, Observable, animationFrameScheduler, from, pipe } from 'rxjs';
+import { Subject, Observable, animationFrameScheduler } from 'rxjs';
 import {
   publish,
   share,
   auditTime,
-  switchAll,
   map,
   observeOn,
-  switchMap,
-  flatMap,
   tap,
   filter,
   mergeAll
@@ -34,7 +31,6 @@ import { ConsumedSector } from '../../../data/model/ConsumedSector';
 import { fromThreeCameraConfig, ThreeCameraConfig } from './fromThreeCameraConfig';
 import { ProximitySectorCuller } from '../../../culling/ProximitySectorCuller';
 import { LevelOfDetail } from '../../../data/model/LevelOfDetail';
-import { distinctUntilLevelOfDetailChanged } from '../../../models/cad/distinctUntilLevelOfDetailChanged';
 import { filterCurrentWantedSectors } from '../../../models/cad/filterCurrentWantedSectors';
 import { SectorCuller } from '../../../culling/SectorCuller';
 import { DetermineSectorsByProximityInput } from '../../../models/cad/determineSectors';
@@ -44,7 +40,6 @@ import { CadBudget, createDefaultCadBudget } from '../../../models/cad/CadBudget
 import { discardSector } from './discardSector';
 import { CadSectorParser } from '../../../data/parser/CadSectorParser';
 import { SimpleAndDetailedToSector3D } from '../../../data/transformer/three/SimpleAndDetailedToSector3D';
-import { Semaphore } from '../../../data/network/Semaphore';
 
 export type ParseCallbackDelegate = (sector: ParsedSector) => void;
 
