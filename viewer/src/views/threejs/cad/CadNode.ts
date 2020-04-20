@@ -4,16 +4,7 @@
 
 import * as THREE from 'three';
 import { Subject, Observable, animationFrameScheduler } from 'rxjs';
-import {
-  publish,
-  share,
-  auditTime,
-  map,
-  observeOn,
-  tap,
-  filter,
-  mergeAll
-} from 'rxjs/operators';
+import { publish, share, auditTime, map, observeOn, tap, filter, mergeAll } from 'rxjs/operators';
 
 import { SectorModelTransformation, SectorScene, SectorMetadata, Sector, SectorQuads } from '../../../models/cad/types';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
@@ -33,21 +24,20 @@ import { ProximitySectorCuller } from '../../../culling/ProximitySectorCuller';
 import { LevelOfDetail } from '../../../data/model/LevelOfDetail';
 import { filterCurrentWantedSectors } from '../../../models/cad/filterCurrentWantedSectors';
 import { SectorCuller } from '../../../culling/SectorCuller';
-import { ParsedSector } from '../../../data/model/ParsedSector';
 import { WantedSector } from '../../../data/model/WantedSector';
 import { CadBudget, createDefaultCadBudget } from '../../../models/cad/CadBudget';
 import { discardSector } from './discardSector';
 import { CadSectorParser } from '../../../data/parser/CadSectorParser';
 import { SimpleAndDetailedToSector3D } from '../../../data/transformer/three/SimpleAndDetailedToSector3D';
 
-export type ParseCallbackDelegate = (sector: ParsedSector) => void;
+export type ParseCallbackDelegate = (parsed: { lod: string; data: Sector | SectorQuads }) => void;
 
 export interface CadNodeOptions {
   nodeAppearance?: NodeAppearance;
   budget?: CadBudget;
   // internal options are experimental and may change in the future
   internal?: {
-    parseCallback: (parsed: { lod: string; data: Sector | SectorQuads }) => void;
+    parseCallback?: (parsed: { lod: string; data: Sector | SectorQuads }) => void;
     sectorCuller?: SectorCuller;
   };
 }
@@ -67,6 +57,7 @@ export class CadNode extends THREE.Object3D {
   private _renderHints: CadRenderHints;
   private _loadingHints: CadLoadingHints;
   private _budget: CadBudget;
+  private _parseCallback?: ParseCallbackDelegate;
 
   private readonly _materialManager: MaterialManager;
   private readonly _cameraPositionObservable: Subject<ThreeCameraConfig>;
@@ -90,9 +81,12 @@ export class CadNode extends THREE.Object3D {
     );
 
     this._repository = new CachedRepository(model.dataRetriever, modelDataParser, modelDataTransformer);
-    if (options!.internal!.parseCallback !== undefined) {
+    this._parseCallback = options && options.internal && options.internal.parseCallback;
+    if (this._parseCallback) {
       this._repository.getParsedData().subscribe(parseResult => {
-        options!.internal!.parseCallback.call(this, parseResult);
+        if (this._parseCallback) {
+          this._parseCallback(parseResult);
+        }
       });
     }
     this._budget = (options && options.budget) || createDefaultCadBudget();
