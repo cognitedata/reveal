@@ -145,30 +145,31 @@ describe('determineSectors', () => {
     };
     const scene = createSceneFromRoot(root);
     const camera = new THREE.PerspectiveCamera();
-    camera.position.set(0, 0, -1);sectorId
+    camera.position.set(0, 0, -1);
     camera.lookAt(0, 0, 0);
     camera.updateMatrixWorld();
 
-    // ActsectorId
+    // Act
     const sectors = await determineSectorsByProximity({
       sectorScene: scene,
       cameraFov: camera.fov,
-      cameraPosition: fromThreeVector3(vec3.create(), sectorIdmera.position, identityTransform),
+      cameraPosition: fromThreeVector3(vec3.create(), camera.position, identityTransform),
       cameraModelMatrix: fromThreeMatrix(mat4.create(), camera.matrixWorld, identityTransform),
       projectionMatrix: fromThreeMatrix(mat4.create(), camera.projectionMatrix, identityTransform)
     });
 
     // Assert
     expect(
-      sectors.filter((sector: WantedSector) => sector.id === 1 && sector.levelOfDetail === LevelOfDetail.Detailed)
+      sectors.filter((wanted: WantedSector) => wanted.sectorId === 1 && wanted.levelOfDetail === LevelOfDetail.Detailed)
         .length
     ).toEqual(1);
     expect(
-      sectors.filter((sector: WantedSector) => sector.id === 2 && sector.levelOfDetail === LevelOfDetail.Detailed)
+      sectors.filter((sector: WantedSector) => sector.sectorId === 2 && sector.levelOfDetail === LevelOfDetail.Detailed)
         .length
     ).toEqual(1);
     expect(
-      sectors.filter((sector: WantedSector) => sector.id === 3 && sector.levelOfDetail === LevelOfDetail.Simple).length
+      sectors.filter((sector: WantedSector) => sector.sectorId === 3 && sector.levelOfDetail === LevelOfDetail.Simple)
+        .length
     ).toEqual(1);
   });
 
@@ -196,7 +197,7 @@ describe('determineSectors', () => {
     };
     const scene = createSceneFromRoot(root);
     const camera = new THREE.PerspectiveCamera();
-    camera.position.copy(new THREE.Vector3(1.5, 1.5, -sectorId.applyMatrix4(toThreeMatrix4(transform.modelMatrix)));
+    camera.position.copy(new THREE.Vector3(1.5, 1.5, -1).applyMatrix4(toThreeMatrix4(transform.modelMatrix)));
     camera.lookAt(new THREE.Vector3(1.5, 1.5, 1.5).applyMatrix4(toThreeMatrix4(transform.modelMatrix)));
     camera.updateMatrixWorld();
 
@@ -211,7 +212,7 @@ describe('determineSectors', () => {
 
     // Assert
     expect(
-      sectors.filter((sector: WantedSector) => sector.id === 1 && sector.levelOfDetail === LevelOfDetail.Detailed)
+      sectors.filter((sector: WantedSector) => sector.sectorId === 1 && sector.levelOfDetail === LevelOfDetail.Detailed)
         .length
     ).toEqual(1);
   });
