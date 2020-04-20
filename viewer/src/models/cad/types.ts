@@ -63,7 +63,7 @@ export interface SectorScene {
   getSectorById(sectorId: number): SectorMetadata | undefined;
   getSectorsContainingPoint(p: vec3): SectorMetadata[];
   getSectorsIntersectingBox(b: Box3): SectorMetadata[];
-  getSectorsIntersectingFrustum(cameraModelMatrix: mat4, projectionMatrix: mat4): SectorMetadata[];
+  getSectorsIntersectingFrustum(projectionMatrix: mat4, inverseCameraModelMatrix: mat4): SectorMetadata[];
   getAllSectors(): SectorMetadata[];
 
   // Available, but not supported:
@@ -119,12 +119,8 @@ export class SectorSceneImpl implements SectorScene {
     return accepted;
   }
 
-  getSectorsIntersectingFrustum(cameraModelMatrix: mat4, projectionMatrix: mat4): SectorMetadata[] {
-    const invertCameraModelMatrix = mat4.create();
-    if (!mat4.invert(invertCameraModelMatrix, cameraModelMatrix)) {
-      throw new Error('Provided camera model matrix is not invertible');
-    }
-    const frustumMatrix = mat4.multiply(mat4.create(), projectionMatrix, invertCameraModelMatrix);
+  getSectorsIntersectingFrustum(projectionMatrix: mat4, inverseCameraModelMatrix: mat4): SectorMetadata[] {
+    const frustumMatrix = mat4.multiply(mat4.create(), projectionMatrix, inverseCameraModelMatrix);
     const frustum = new THREE.Frustum().setFromProjectionMatrix(toThreeMatrix4(frustumMatrix));
     const bbox = new THREE.Box3();
 
