@@ -10,12 +10,7 @@ import { createTriangleMeshes } from './triangleMeshes';
 import { createInstancedMeshes } from './instancedMeshes';
 import { Materials } from './materials';
 
-export function consumeSectorDetailed(
-  _sectorId: number,
-  sector: Sector,
-  metadata: SectorMetadata,
-  materials: Materials
-) {
+export function consumeSectorDetailed(sector: Sector, metadata: SectorMetadata, materials: Materials) {
   const bounds = toThreeJsBox3(new THREE.Box3(), metadata.bounds);
   const obj = new THREE.Group();
   for (const primtiveRoot of createPrimitives(sector, materials)) {

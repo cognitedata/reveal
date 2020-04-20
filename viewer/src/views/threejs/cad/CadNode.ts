@@ -3,10 +3,10 @@
  */
 
 import * as THREE from 'three';
-import { Subject, Observable } from 'rxjs';
-import { publish, share, auditTime, switchAll, flatMap, map, tap } from 'rxjs/operators';
+import { Subject, Observable, animationFrameScheduler } from 'rxjs';
+import { publish, share, auditTime, map, observeOn, tap, filter, mergeAll } from 'rxjs/operators';
 
-import { SectorModelTransformation, SectorScene, SectorMetadata } from '../../../models/cad/types';
+import { SectorModelTransformation, SectorScene, SectorMetadata, Sector, SectorQuads } from '../../../models/cad/types';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
 import { CadModel } from '../../../models/cad/CadModel';
 import { CadRenderHints } from '../../CadRenderHints';
@@ -22,23 +22,23 @@ import { ConsumedSector } from '../../../data/model/ConsumedSector';
 import { fromThreeCameraConfig, ThreeCameraConfig } from './fromThreeCameraConfig';
 import { ProximitySectorCuller } from '../../../culling/ProximitySectorCuller';
 import { LevelOfDetail } from '../../../data/model/LevelOfDetail';
-import { distinctUntilLevelOfDetailChanged } from '../../../models/cad/distinctUntilLevelOfDetailChanged';
 import { filterCurrentWantedSectors } from '../../../models/cad/filterCurrentWantedSectors';
 import { SectorCuller } from '../../../culling/SectorCuller';
-import { ParsedSector } from '../../../data/model/ParsedSector';
 import { WantedSector } from '../../../data/model/WantedSector';
 import { CadBudget, createDefaultCadBudget } from '../../../models/cad/CadBudget';
 import { discardSector } from './discardSector';
+import { CadSectorParser } from '../../../data/parser/CadSectorParser';
+import { SimpleAndDetailedToSector3D } from '../../../data/transformer/three/SimpleAndDetailedToSector3D';
 
-export type ParseCallbackDelegate = (sector: ParsedSector) => void;
+export type ParseCallbackDelegate = (parsed: { lod: string; data: Sector | SectorQuads }) => void;
 
 export interface CadNodeOptions {
   nodeAppearance?: NodeAppearance;
   budget?: CadBudget;
   // internal options are experimental and may change in the future
   internal?: {
+    parseCallback?: (parsed: { lod: string; data: Sector | SectorQuads }) => void;
     sectorCuller?: SectorCuller;
-    parseCallback?: ParseCallbackDelegate;
   };
 }
 
@@ -73,15 +73,28 @@ export class CadNode extends THREE.Object3D {
     const treeIndexCount = model.scene.maxTreeIndex + 1;
     this._materialManager = new MaterialManager(treeIndexCount, options ? options.nodeAppearance : undefined);
 
-    const rootSector = new RootSectorNode(model, this._materialManager.materials);
-    this._repository = new CachedRepository(model);
+    const rootSector = new RootSectorNode(model);
+
+    const modelDataParser: CadSectorParser = new CadSectorParser();
+    const modelDataTransformer: SimpleAndDetailedToSector3D = new SimpleAndDetailedToSector3D(
+      this._materialManager.materials
+    );
+
+    this._repository = new CachedRepository(model.dataRetriever, modelDataParser, modelDataTransformer);
+    this._parseCallback = options && options.internal && options.internal.parseCallback;
+    if (this._parseCallback) {
+      this._repository.getParsedData().subscribe(parseResult => {
+        if (this._parseCallback) {
+          this._parseCallback(parseResult);
+        }
+      });
+    }
     this._budget = (options && options.budget) || createDefaultCadBudget();
 
     const { scene, modelTransformation } = model;
 
     this._sectorScene = scene;
     this._sectorCuller = (options && options.internal && options.internal.sectorCuller) || new ProximitySectorCuller();
-    this._parseCallback = options && options.internal && options.internal.parseCallback;
     this.modelTransformation = modelTransformation;
     // Ensure camera matrix is unequal on first frame
     this._previousCameraMatrix.elements[0] = Infinity;
@@ -166,39 +179,41 @@ export class CadNode extends THREE.Object3D {
   }
 
   private createLoadSectorsPipeline(): Subject<ThreeCameraConfig> {
-    const loadSectorOperator = flatMap((s: WantedSector) => this._repository.loadSector(s));
-    const consumeSectorOperator = flatMap((sector: ParsedSector) => this.rootSector.consumeSector(sector.id, sector));
-
+    const currentLevelOfDetail = new Map<number, LevelOfDetail>();
+    // Do not request sectors that are already in scene
+    const filterWantedSectorsDistinctFromCurrent = filter(
+      (wantedSector: WantedSector) => currentLevelOfDetail.get(wantedSector.id) !== wantedSector.levelOfDetail
+    );
+    // Do not continue with sectors already in scene
+    const filterConsumedSectorsDistinctFromCurrent = filter(
+      (consumedSector: ConsumedSector) => currentLevelOfDetail.get(consumedSector.id) !== consumedSector.levelOfDetail
+    );
     const pipeline = new Subject<ThreeCameraConfig>();
     pipeline
       .pipe(
         auditTime(100),
         fromThreeCameraConfig(),
-
         // Determine all wanted sectors
         map(input => this._sectorCuller.determineSectors(input)),
 
         // Take sectors within budget
         map(wantedSectors => this.budget.filter(wantedSectors, this._sectorScene)),
-
-        // Load and consume
+        // Load sectors from repository
         share(),
-        publish((wantedSectors: Observable<WantedSector[]>) =>
-          wantedSectors.pipe(
-            switchAll(),
-            distinctUntilLevelOfDetailChanged(),
-            loadSectorOperator,
-            filterCurrentWantedSectors(wantedSectors),
-            tap((sector: ParsedSector) => {
-              if (this._parseCallback) {
-                this._parseCallback(sector);
-              }
-            }),
-            consumeSectorOperator
+        publish((wantedSectorsObservable: Observable<WantedSector[]>) =>
+          wantedSectorsObservable.pipe(
+            tap(_ => this._repository.clearSemaphore()),
+            mergeAll(),
+            filterWantedSectorsDistinctFromCurrent,
+            this._repository.loadSector(),
+            filterConsumedSectorsDistinctFromCurrent,
+            filterCurrentWantedSectors(wantedSectorsObservable)
           )
-        )
-      )
+        ),
+        observeOn(animationFrameScheduler)
+      ) // Consume sectors
       .subscribe((sector: ConsumedSector) => {
+        currentLevelOfDetail.set(sector.id, sector.levelOfDetail);
         const sectorNode = this.rootSector.sectorNodeMap.get(sector.id);
         if (!sectorNode) {
           throw new Error(`Could not find 3D node for sector ${sector.id} - invalid id?`);
@@ -210,7 +225,10 @@ export class CadNode extends THREE.Object3D {
           }
           sectorNode.remove(sectorNode.group);
         }
-        sectorNode.add(sector.group);
+        if (sector.group) {
+          // Is this correct now?
+          sectorNode.add(sector.group);
+        }
         sectorNode.group = sector.group;
         this.updateSectorBoundingBoxes(sector);
         this.dispatchEvent({ type: 'update' });
