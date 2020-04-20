@@ -5,34 +5,30 @@
 import { MemoryRequestCache } from '../../cache/MemoryRequestCache';
 
 describe('MemoryCache', () => {
-  const getSectorMock = jest.fn();
-
-  const getSector = (id: number, _data: null) => {
-    getSectorMock(id);
-    return 'MyString';
-  };
-
   beforeEach(() => {
     jest.resetAllMocks();
   });
 
-  test('fetch on new id, fetches', () => {
-    const getCached = new MemoryRequestCache<number, null, string>(getSector);
-    getCached.request(0, null);
-    expect(getSectorMock).toBeCalledWith(0);
+  test('insert data', () => {
+    const cache = new MemoryRequestCache<number, string>();
+    expect(() => cache.add(1, 'test')).not.toThrow();
   });
 
-  test('fetch on cached id, loads from cached', () => {
+  test('get existing data', () => {
+    const cache = new MemoryRequestCache<number, string>();
+    cache.add(1, 'test');
+    expect(cache.has(1)).toBeTruthy();
+    expect(cache.get(1)).toBe('test');
+  });
+
+  test('insert data after clearing cache', () => {
     // Arrange
-    const getCached = new MemoryRequestCache<number, null, string>(getSector);
-    getCached.request(0, null);
+    const cache = new MemoryRequestCache<number, string>({ maxElementsInCache: 1 });
+    cache.add(1, 'test');
+    expect(() => cache.add(2, 'overflow')).toThrow();
+    cache.cleanCache(1);
+    expect(() => cache.add(2, 'overflow retry')).not.toThrow();
     jest.resetAllMocks();
-
-    // Act
-    getCached.request(0, null);
-
-    // Assert
-    expect(getSectorMock).not.toBeCalled();
   });
 
   // TODO add test that requires data

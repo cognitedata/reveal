@@ -9,6 +9,6 @@ import { SectorMetadata } from '../../models/cad/types';
 export interface ConsumedSector {
   id: number;
   levelOfDetail: LevelOfDetail;
-  group: THREE.Group;
+  group: THREE.Group | undefined;
   metadata: SectorMetadata;
 }
