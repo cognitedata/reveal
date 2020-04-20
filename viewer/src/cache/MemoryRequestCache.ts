@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { RequestCache, RequestDelegate } from './RequestCache';
+import { RequestCache } from './RequestCache';
 
 class TimestampedContainer<T> {
   private _lastAccessTime: number;
@@ -27,59 +27,58 @@ class TimestampedContainer<T> {
   }
 }
 
-export type RemoveDelegate<Key, Result> = (key: Key, result: Result) => void;
-
-export interface MemoryRequestCacheOptions<Key, Result> {
+export interface MemoryRequestCacheOptions {
   maxElementsInCache?: number;
-  remove?: RemoveDelegate<Key, Result>;
+  // remove?: RemoveDelegate<Key, Result>;
 }
 
-export class MemoryRequestCache<Key, Data, Result> implements RequestCache<Key, Data, Result> {
+export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
   private readonly _maxElementsInCache: number;
-  private readonly _results: Map<Key, TimestampedContainer<Result>>;
-  private readonly _request: RequestDelegate<Key, Data, Result>;
-  private readonly _removeCallback?: RemoveDelegate<Key, Result>;
+  private readonly _data: Map<Key, TimestampedContainer<Data>>;
 
-  constructor(request: RequestDelegate<Key, Data, Result>, options?: MemoryRequestCacheOptions<Key, Result>) {
-    this._results = new Map();
-    this._request = request;
+  constructor(options?: MemoryRequestCacheOptions) {
+    this._data = new Map();
     this._maxElementsInCache = (options && options.maxElementsInCache) || 50;
-    this._removeCallback = options && options.remove;
   }
 
-  request(id: Key, data: Data): Result {
-    const existing = this._results.get(id);
-    if (existing) {
-      return existing.value;
+  has(id: Key) {
+    return this._data.has(id);
+  }
+
+  add(id: Key, data: Data) {
+    if (this._data.size < this._maxElementsInCache) {
+      this._data.set(id, new TimestampedContainer(data));
+    } else {
+      throw new Error('Cache full, please clean Cache and retry adding data');
     }
-
-    this.cleanupCache();
-    const result = new TimestampedContainer<Result>(this._request(id, data));
-    this._results.set(id, result);
-    return result.value;
   }
 
-  clearCache() {
-    this._results.clear();
+  get(id: Key): Data {
+    const data = this._data.get(id);
+    if (data !== undefined) {
+      // Don't really like the touch for lastTime being hidden within a get function. Should we maybe make a
+      // TimeConstrainedCache interface where the geter is called something like getAndUpdateTimestamp for clarity?
+      return data.value;
+    }
+    throw new Error(`Cache element ${id} does not exist`);
   }
 
-  private cleanupCache() {
-    const maxCacheSize = this._maxElementsInCache;
-    if (this._results.size > maxCacheSize) {
-      const allResults = Array.from(this._results.entries());
-      allResults.sort((left, right) => {
-        return right[1].lastAccessTime - left[1].lastAccessTime;
-      });
-
-      // Remove least recent access items
-      let index = 0;
-      while (this._results.size > maxCacheSize) {
-        const toRemove = allResults[index++];
-        if (this._removeCallback) {
-          this._removeCallback(toRemove[0], toRemove[1].value);
-        }
-        this._results.delete(toRemove[0]);
+  cleanCache(count: number) {
+    const allResults = Array.from(this._data.entries());
+    allResults.sort((left, right) => {
+      return right[1].lastAccessTime - left[1].lastAccessTime;
+    });
+    for (let i = 0; i < count; i++) {
+      const entry = allResults.pop();
+      if (entry !== undefined) {
+        this._data.delete(entry[0]);
+      } else {
+        return;
       }
     }
+  }
+
+  clear() {
+    this._data.clear();
   }
 }
