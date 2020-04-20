@@ -5,7 +5,19 @@
 import { Repository } from './Repository';
 import { WantedSector } from '../../data/model/WantedSector';
 import { LevelOfDetail } from '../../data/model/LevelOfDetail';
-import { OperatorFunction, pipe, Observable, from, merge, partition, of, asapScheduler, zip } from 'rxjs';
+import {
+  OperatorFunction,
+  pipe,
+  Observable,
+  from,
+  merge,
+  partition,
+  of,
+  asapScheduler,
+  zip,
+  Subject,
+  ReplaySubject
+} from 'rxjs';
 import {
   publish,
   filter,
@@ -20,7 +32,8 @@ import {
   subscribeOn,
   retryWhen,
   delay,
-  catchError
+  catchError,
+  distinct
 } from 'rxjs/operators';
 import { ModelDataRetriever } from '../../datasources/ModelDataRetriever';
 import { CadSectorParser } from '../../data/parser/CadSectorParser';
@@ -28,7 +41,7 @@ import { SimpleAndDetailedToSector3D } from '../../data/transformer/three/Simple
 import { ConsumedSector } from '../../data/model/ConsumedSector';
 import { MemoryRequestCache } from '../../cache/MemoryRequestCache';
 import { ParseCtmResult, ParseSectorResult } from '../../workers/types/parser.types';
-import { Sector, TriangleMesh, InstancedMeshFile, InstancedMesh } from '../../models/cad/types';
+import { Sector, TriangleMesh, InstancedMeshFile, InstancedMesh, SectorQuads } from '../../models/cad/types';
 import { createOffsetsArray } from '../../utils/arrayUtils';
 import { RateLimiter } from '../../data/network/RateLimiter';
 
@@ -44,6 +57,13 @@ export class CachedRepository implements Repository {
   private readonly _modelDataRetriever: ModelDataRetriever;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
   private readonly _rateLimiter = new RateLimiter(50);
+
+  // Adding this to support parse map for migration wrapper. Should be removed later.
+  private readonly _parsedDataSubject: Subject<{
+    discriptor: string;
+    lod: string;
+    data: Sector | SectorQuads;
+  }> = new ReplaySubject();
 
   constructor(
     modelDataRetriever: ModelDataRetriever,
@@ -125,6 +145,12 @@ export class CachedRepository implements Repository {
     this._modelDataCache.clear();
   }
 
+  getParsedData(): Observable<{ lod: string; data: Sector | SectorQuads }> {
+    return this._parsedDataSubject.pipe(
+      distinct(keySelector => keySelector.discriptor)
+    ); // TODO: Should we do replay subject here instead of variable type?
+  }
+
   private loadSectorFromNetwork(): OperatorFunction<WantedSector, ConsumedSector> {
     return publish(wantedSectorObservable => {
       const simpleSectorObservable: Observable<ConsumedSector> = wantedSectorObservable.pipe(
@@ -137,6 +163,11 @@ export class CachedRepository implements Repository {
             map(arrayBuffer => ({ format: 'f3d', data: new Uint8Array(arrayBuffer) })),
             this._modelDataParser.parse(),
             map(data => {
+              this._parsedDataSubject.next({
+                discriptor: this.cacheKey(wantedSector),
+                lod: 'simple',
+                data: data as SectorQuads
+              }); // TODO: Remove when migration is gone.
               return { ...wantedSector, data };
             }),
             this._modelDataTransformer.transform(),
@@ -181,7 +212,10 @@ export class CachedRepository implements Repository {
           );
           const networkObservable = zip(i3dFileObservable, ctmFilesObservable).pipe(
             map(([i3dFile, ctmFiles]) => this.finalizeDetailed(i3dFile as ParseSectorResult, ctmFiles)),
-            map(data => ({ ...wantedSector, data })),
+            map(data => {
+              this._parsedDataSubject.next({ discriptor: this.cacheKey(wantedSector), lod: 'detailed', data }); // TODO: Remove when migration is gone.
+              return { ...wantedSector, data };
+            }),
             this._modelDataTransformer.transform(),
             map(group => ({ ...wantedSector, group })),
             shareReplay(1),

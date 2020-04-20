@@ -15,7 +15,7 @@ import {
   mergeAll
 } from 'rxjs/operators';
 
-import { SectorModelTransformation, SectorScene, SectorMetadata } from '../../../models/cad/types';
+import { SectorModelTransformation, SectorScene, SectorMetadata, Sector, SectorQuads } from '../../../models/cad/types';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
 import { CadModel } from '../../../models/cad/CadModel';
 import { CadRenderHints } from '../../CadRenderHints';
@@ -47,6 +47,7 @@ export interface CadNodeOptions {
   budget?: CadBudget;
   // internal options are experimental and may change in the future
   internal?: {
+    parseCallback: (parsed: { lod: string; data: Sector | SectorQuads }) => void;
     sectorCuller?: SectorCuller;
   };
 }
@@ -89,6 +90,11 @@ export class CadNode extends THREE.Object3D {
     );
 
     this._repository = new CachedRepository(model.dataRetriever, modelDataParser, modelDataTransformer);
+    if (options!.internal!.parseCallback !== undefined) {
+      this._repository.getParsedData().subscribe(parseResult => {
+        options!.internal!.parseCallback.call(this, parseResult);
+      });
+    }
     this._budget = (options && options.budget) || createDefaultCadBudget();
 
     const { scene, modelTransformation } = model;
