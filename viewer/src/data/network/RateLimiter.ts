@@ -36,7 +36,7 @@ export class RateLimiter {
     return this.slotsInUse;
   }
 
-  clear() {
+  clearPendingRequests() {
     for (const item of this.queue) {
       item(false);
     }

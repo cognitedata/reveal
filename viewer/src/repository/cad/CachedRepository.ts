@@ -56,7 +56,7 @@ export class CachedRepository implements Repository {
   }
 
   clearSemaphore() {
-    this._rateLimiter.clear();
+    this._rateLimiter.clearPendingRequests();
   }
 
   // TODO j-bjorne 16-04-2020: Should look into ways of not sending in discarded sectors,
