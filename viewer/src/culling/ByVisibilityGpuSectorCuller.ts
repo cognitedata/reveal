@@ -145,7 +145,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
         wantedForScene.filter(x => !Number.isFinite(x.priority)).length
       } required), total: ${wanted.length} (cost: ${costSpent / 1024 / 1024}/${costLimit /
         1024 /
-        1024}/, priority: ${debugAccumulatedPriority} (${
+        1024}, priority: ${debugAccumulatedPriority} (${
         wanted.filter(x => !Number.isFinite(x.priority)).length
       } required))`
     );
@@ -189,10 +189,9 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
       );
 
       for (const sector of model.scene.getSectorsIntersectingFrustum(
-        transformedCameraMatrixWorldInverse,
-        cameraProjectionMatrix
+        cameraProjectionMatrix,
+        transformedCameraMatrixWorldInverse
       )) {
-        console.log(sector);
         costSpent += this.computeSectorCost(sector);
         takenSectors.add([model.scene, sector.id]);
         wanted.push({
