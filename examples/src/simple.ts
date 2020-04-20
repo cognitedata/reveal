@@ -60,7 +60,24 @@ async function main() {
       console.log(`Show sector bounds: ${showSectorBoundingBoxes}`);
       cadNode.renderHints = { ...cadNode.renderHints, showSectorBoundingBoxes };
     } else if (event.key === 'p') {
-      console.log('Last list of wanted sectors:\n', sectorCuller.lastWantedSectors);
+      const lastWanted = sectorCuller.lastWantedSectors.sort((l, r) => {
+        if (l.scene.maxTreeIndex !== r.scene.maxTreeIndex) {
+          return l.scene.maxTreeIndex - r.scene.maxTreeIndex;
+        } else if (l.metadata.path !== r.metadata.path) {
+          return l.metadata.path.localeCompare(r.metadata.path);
+        } else if (l.priority !== r.priority) {
+          return l.priority - r.priority;
+        }
+        return l.levelOfDetail - r.levelOfDetail;
+      });
+      const duplicateCount = lastWanted.reduce((count, x, i) => {
+        if (i === 0 || (lastWanted[i - 1].sectorId === x.sectorId && lastWanted[i - 1].scene === x.scene)) {
+          return count + 1;
+        }
+        return count;
+      }, 0);
+      console.log('Last list of wanted sectors:\n', lastWanted);
+      console.log(`Duplicate count: ${duplicateCount}`);
     }
   });
 
