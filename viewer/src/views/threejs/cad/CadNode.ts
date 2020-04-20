@@ -4,7 +4,16 @@
 
 import * as THREE from 'three';
 import { Subject, Observable, animationFrameScheduler } from 'rxjs';
-import { publish, share, auditTime, switchAll, map, observeOn } from 'rxjs/operators';
+import {
+  publish,
+  share,
+  auditTime,
+  map,
+  observeOn,
+  tap,
+  filter,
+  mergeAll
+} from 'rxjs/operators';
 
 import { SectorModelTransformation, SectorScene, SectorMetadata } from '../../../models/cad/types';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
@@ -22,7 +31,6 @@ import { ConsumedSector } from '../../../data/model/ConsumedSector';
 import { fromThreeCameraConfig, ThreeCameraConfig } from './fromThreeCameraConfig';
 import { ProximitySectorCuller } from '../../../culling/ProximitySectorCuller';
 import { LevelOfDetail } from '../../../data/model/LevelOfDetail';
-import { distinctUntilLevelOfDetailChanged } from '../../../models/cad/distinctUntilLevelOfDetailChanged';
 import { filterCurrentWantedSectors } from '../../../models/cad/filterCurrentWantedSectors';
 import { SectorCuller } from '../../../culling/SectorCuller';
 import { ParsedSector } from '../../../data/model/ParsedSector';
@@ -171,6 +179,15 @@ export class CadNode extends THREE.Object3D {
   }
 
   private createLoadSectorsPipeline(): Subject<ThreeCameraConfig> {
+    const currentLevelOfDetail = new Map<number, LevelOfDetail>();
+    // Do not request sectors that are already in scene
+    const filterWantedSectorsDistinctFromCurrent = filter(
+      (wantedSector: WantedSector) => currentLevelOfDetail.get(wantedSector.id) !== wantedSector.levelOfDetail
+    );
+    // Do not continue with sectors already in scene
+    const filterConsumedSectorsDistinctFromCurrent = filter(
+      (consumedSector: ConsumedSector) => currentLevelOfDetail.get(consumedSector.id) !== consumedSector.levelOfDetail
+    );
     const pipeline = new Subject<ThreeCameraConfig>();
     pipeline
       .pipe(
@@ -183,17 +200,20 @@ export class CadNode extends THREE.Object3D {
         map(wantedSectors => this.budget.filter(wantedSectors, this._sectorScene)),
         // Load sectors from repository
         share(),
-        publish((wantedSectors: Observable<WantedSector[]>) =>
-          wantedSectors.pipe(
-            switchAll(),
-            distinctUntilLevelOfDetailChanged(),
+        publish((wantedSectorsObservable: Observable<WantedSector[]>) =>
+          wantedSectorsObservable.pipe(
+            tap(_ => this._repository.clearSemaphore()),
+            mergeAll(),
+            filterWantedSectorsDistinctFromCurrent,
             this._repository.loadSector(),
-            filterCurrentWantedSectors(wantedSectors)
+            filterConsumedSectorsDistinctFromCurrent,
+            filterCurrentWantedSectors(wantedSectorsObservable)
           )
         ),
         observeOn(animationFrameScheduler)
       ) // Consume sectors
       .subscribe((sector: ConsumedSector) => {
+        currentLevelOfDetail.set(sector.id, sector.levelOfDetail);
         const sectorNode = this.rootSector.sectorNodeMap.get(sector.id);
         if (!sectorNode) {
           throw new Error(`Could not find 3D node for sector ${sector.id} - invalid id?`);

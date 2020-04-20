@@ -19,7 +19,8 @@ import {
   reduce,
   subscribeOn,
   retryWhen,
-  delay
+  delay,
+  catchError
 } from 'rxjs/operators';
 import { ModelDataRetriever } from '../../datasources/ModelDataRetriever';
 import { CadSectorParser } from '../../data/parser/CadSectorParser';
@@ -29,6 +30,7 @@ import { MemoryRequestCache } from '../../cache/MemoryRequestCache';
 import { ParseCtmResult, ParseSectorResult } from '../../workers/types/parser.types';
 import { Sector, TriangleMesh, InstancedMeshFile, InstancedMesh } from '../../models/cad/types';
 import { createOffsetsArray } from '../../utils/arrayUtils';
+import { RateLimiter } from '../../data/network/RateLimiter';
 
 // TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
 export class CachedRepository implements Repository {
@@ -41,6 +43,7 @@ export class CachedRepository implements Repository {
   private readonly _modelDataParser: CadSectorParser;
   private readonly _modelDataRetriever: ModelDataRetriever;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
+  private readonly _rateLimiter = new RateLimiter(50);
 
   constructor(
     modelDataRetriever: ModelDataRetriever,
@@ -50,6 +53,10 @@ export class CachedRepository implements Repository {
     this._modelDataRetriever = modelDataRetriever;
     this._modelDataParser = modelDataParser;
     this._modelDataTransformer = modelDataTransformer;
+  }
+
+  clearSemaphore() {
+    this._rateLimiter.clearPendingRequests();
   }
 
   // TODO j-bjorne 16-04-2020: Should look into ways of not sending in discarded sectors,
@@ -77,12 +84,39 @@ export class CachedRepository implements Repository {
         );
         return merge(
           cachedSectorObservable.pipe(flatMap(wantedSector => this._modelDataCache.get(this.cacheKey(wantedSector)))),
-          uncachedSectorObservable.pipe(this.loadSectorFromNetwork()),
+          uncachedSectorObservable.pipe(
+            flatMap(async (wantedSector: WantedSector) => {
+              // Try to acquire a slot. If the rateLimiter is cleared because a new frame of
+              // wantedSectors are received, this will return false and the wantedSector
+              // will be filtered out further down. If it succeeds, the sector will be loaded.
+              const ready = await this._rateLimiter.acquire();
+              return {
+                wantedSector,
+                ready
+              };
+            }),
+            // Only let sectors that got a slot through.
+            filter((data: { wantedSector: WantedSector; ready: boolean }) => data.ready),
+            map((data: { wantedSector: WantedSector; ready: boolean }) => data.wantedSector),
+            // Actually load the sector
+            this.loadSectorFromNetwork(),
+            catchError(e => {
+              // If there are any errors, release the slot and pass the error on further down the
+              // pipe for handling.
+              this._rateLimiter.release();
+              return of(e);
+            }),
+            // Release the slot
+            tap(_ => this._rateLimiter.release())
+          ),
           discardedSectorObservable
         );
       }),
       retryWhen(errors => {
-        return errors.pipe(tap(e => console.error(e)), delay(5000));
+        return errors.pipe(
+          tap(e => console.error(e)),
+          delay(5000)
+        );
       })
     );
   }
