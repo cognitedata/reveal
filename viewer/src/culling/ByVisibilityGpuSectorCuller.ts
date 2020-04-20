@@ -19,8 +19,7 @@ import {
   OrderSectorsByVisibleCoverage
 } from '../views/threejs/OrderSectorsByVisibleCoverage';
 import { SectorCuller } from './SectorCuller';
-import { toThreeMatrix4, toThreeJsBox3, fromThreeMatrix } from '../views/threejs/utilities';
-import { traverseDepthFirst } from '../utils/traversal';
+import { fromThreeMatrix } from '../views/threejs/utilities';
 
 type PrioritizedWantedSector = WantedSector & { priority: number; scene: SectorScene };
 
@@ -56,7 +55,7 @@ export type ByVisibilityGpuSectorCullerOptions = {
  */
 export class ByVisibilityGpuSectorCuller implements SectorCuller {
   public static readonly DefaultMaxQuadSize = 0.004;
-  public static readonly DefaultCostLimitMb = 70;
+  public static readonly DefaultCostLimitMb = 110;
   public static readonly DefaultHighDetailProximityThreshold = 10;
 
   private readonly options: Required<ByVisibilityGpuSectorCullerOptions>;
