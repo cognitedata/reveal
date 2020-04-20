@@ -16,7 +16,7 @@ async function main() {
 
   const camera = new THREE.PerspectiveCamera();
   const coverageUtil = new reveal_threejs.GpuOrderSectorsByVisibleCoverage();
-  const sectorCuller = new reveal.internal.ByVisibilityGpuSectorCuller(camera, { coverageUtil });
+  const sectorCuller = new reveal.internal.ByVisibilityGpuSectorCuller(camera, { coverageUtil, costLimitMb: 150 });
 
   const scene = new THREE.Scene();
   const cadModel = await loadCadModelFromCdfOrUrl(modelIdentifier, await createClientIfNecessary(modelIdentifier));
