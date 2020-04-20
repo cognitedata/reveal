@@ -59,6 +59,8 @@ async function main() {
       const showSectorBoundingBoxes = !cadNode.renderHints.showSectorBoundingBoxes;
       console.log(`Show sector bounds: ${showSectorBoundingBoxes}`);
       cadNode.renderHints = { ...cadNode.renderHints, showSectorBoundingBoxes };
+    } else if (event.key === 'p') {
+      console.log('Last list of wanted sectors:\n', sectorCuller.lastWantedSectors);
     }
   });
 

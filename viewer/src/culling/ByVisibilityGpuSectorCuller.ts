@@ -63,9 +63,9 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   private readonly models: CadModel[] = [];
   private readonly lastUpdate = {
     matrix: new THREE.Matrix4(),
-    projectionMatrix: new THREE.Matrix4()
+    projectionMatrix: new THREE.Matrix4(),
+    wanted: [] as PrioritizedWantedSector[]
   };
-  private prioritizedSectors: PrioritizedSectorIdentifier[] = [];
 
   constructor(camera: THREE.PerspectiveCamera, options?: ByVisibilityGpuSectorCullerOptions) {
     this.options = {
@@ -92,13 +92,39 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   }
 
   determineSectors(input: DetermineSectorsByProximityInput): WantedSector[] {
-    this.update();
+    const wanted = this.update(input);
+
+    const wantedForScene = wanted.filter(x => x.scene === input.sectorScene);
+    console.log(
+      `Scene: ${wantedForScene.length} (${wantedForScene.filter(x => !Number.isFinite(x.priority)).length} required)`
+    );
+    return wantedForScene;
+  }
+
+  get lastWantedSectors(): PrioritizedWantedSector[] {
+    return this.lastUpdate.wanted.slice();
+  }
+
+  private update(input: DetermineSectorsByProximityInput): PrioritizedWantedSector[] {
+    const { coverageUtil } = this.options;
+    // Necessary to update?
+    const changed =
+      !this.lastUpdate.matrix.equals(this.camera.matrix) ||
+      !this.lastUpdate.projectionMatrix.equals(this.camera.projectionMatrix);
+
+    if (!changed) {
+      return this.lastUpdate.wanted;
+    }
+
+    // Update wanted sector
+    const prioritized = coverageUtil.orderSectorsByVisibility(this.camera);
+    this.lastUpdate.matrix = this.camera.matrix.clone();
+    this.lastUpdate.projectionMatrix = this.camera.projectionMatrix.clone();
 
     const costLimit = this.options.costLimitMb * 1024 * 1024;
     let costSpent = 0.0;
 
-    const prioritized = this.prioritizedSectors;
-    const wanted: (WantedSector & { priority: number; scene: SectorScene })[] = [];
+    const wanted: PrioritizedWantedSector[] = [];
     const wantedSimpleSectors = new Set<[SectorScene, number]>();
     const takenSectors = new Set<[SectorScene, number]>();
 
@@ -137,33 +163,16 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     console.log(
       `Retrieving ${i} of ${prioritizedLength} (last: ${prioritized.length > 0 ? prioritized[i - 1] : null})`
     );
-
-    const wantedForScene = wanted.filter(x => x.scene === input.sectorScene);
     console.log(
-      `Scene: ${wantedForScene.length} (${
-        wantedForScene.filter(x => !Number.isFinite(x.priority)).length
-      } required), total: ${wanted.length} (cost: ${costSpent / 1024 / 1024}/${costLimit /
+      `Total scheduled: ${wanted.length} of ${prioritizedLength} (cost: ${costSpent / 1024 / 1024}/${costLimit /
         1024 /
         1024}, priority: ${debugAccumulatedPriority} (${
         wanted.filter(x => !Number.isFinite(x.priority)).length
       } required))`
     );
-    return wantedForScene;
-  }
 
-  private update() {
-    const { coverageUtil } = this.options;
-    // Necessary to update?
-    const changed =
-      !this.lastUpdate.matrix.equals(this.camera.matrix) ||
-      !this.lastUpdate.projectionMatrix.equals(this.camera.projectionMatrix);
-
-    if (changed) {
-      console.log('Update');
-      this.prioritizedSectors = coverageUtil.orderSectorsByVisibility(this.camera);
-      this.lastUpdate.matrix = this.camera.matrix.clone();
-      this.lastUpdate.projectionMatrix = this.camera.projectionMatrix.clone();
-    }
+    this.lastUpdate.wanted = wanted;
+    return wanted;
   }
 
   private addHighDetailsForNearSectors(
