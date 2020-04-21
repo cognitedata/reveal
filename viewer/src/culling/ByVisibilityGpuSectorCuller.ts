@@ -173,7 +173,6 @@ class TakenSectorMap {
     this._totalCost = 0;
   }
 }
-
 function computeSectorCost(metadata: SectorMetadata, lod: LevelOfDetail): number {
   switch (lod) {
     case LevelOfDetail.Detailed:
@@ -184,7 +183,6 @@ function computeSectorCost(metadata: SectorMetadata, lod: LevelOfDetail): number
       throw new Error(`Can't compute cost for lod ${lod}`);
   }
 }
-
 /**
  * Experimental implementation of SectorCuller that uses the GPU to determine an approximatin
  * of how "visible" each sector is to get a priority for each sector.
