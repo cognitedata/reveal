@@ -5,19 +5,7 @@
 import { Repository } from './Repository';
 import { WantedSector } from '../../data/model/WantedSector';
 import { LevelOfDetail } from '../../data/model/LevelOfDetail';
-import {
-  OperatorFunction,
-  pipe,
-  Observable,
-  from,
-  merge,
-  partition,
-  of,
-  asapScheduler,
-  zip,
-  Subject,
-  ReplaySubject
-} from 'rxjs';
+import { OperatorFunction, pipe, Observable, from, merge, partition, of, asapScheduler, zip, Subject } from 'rxjs';
 import {
   publish,
   filter,
@@ -60,10 +48,10 @@ export class CachedRepository implements Repository {
 
   // Adding this to support parse map for migration wrapper. Should be removed later.
   private readonly _parsedDataSubject: Subject<{
-    discriptor: string;
+    descriptor: string;
     lod: string;
     data: Sector | SectorQuads;
-  }> = new ReplaySubject();
+  }> = new Subject();
 
   constructor(
     modelDataRetriever: ModelDataRetriever,
@@ -146,7 +134,7 @@ export class CachedRepository implements Repository {
   }
 
   getParsedData(): Observable<{ lod: string; data: Sector | SectorQuads }> {
-    return this._parsedDataSubject.pipe(distinct(keySelector => keySelector.discriptor)); // TODO: Should we do replay subject here instead of variable type?
+    return this._parsedDataSubject.pipe(distinct(keySelector => keySelector.descriptor)); // TODO: Should we do replay subject here instead of variable type?
   }
 
   private loadSectorFromNetwork(): OperatorFunction<WantedSector, ConsumedSector> {
@@ -162,7 +150,7 @@ export class CachedRepository implements Repository {
             this._modelDataParser.parse(),
             map(data => {
               this._parsedDataSubject.next({
-                discriptor: this.cacheKey(wantedSector),
+                descriptor: this.cacheKey(wantedSector),
                 lod: 'simple',
                 data: data as SectorQuads
               }); // TODO: Remove when migration is gone.
@@ -211,7 +199,7 @@ export class CachedRepository implements Repository {
           const networkObservable = zip(i3dFileObservable, ctmFilesObservable).pipe(
             map(([i3dFile, ctmFiles]) => this.finalizeDetailed(i3dFile as ParseSectorResult, ctmFiles)),
             map(data => {
-              this._parsedDataSubject.next({ discriptor: this.cacheKey(wantedSector), lod: 'detailed', data }); // TODO: Remove when migration is gone.
+              this._parsedDataSubject.next({ descriptor: this.cacheKey(wantedSector), lod: 'detailed', data }); // TODO: Remove when migration is gone.
               return { ...wantedSector, data };
             }),
             this._modelDataTransformer.transform(),
