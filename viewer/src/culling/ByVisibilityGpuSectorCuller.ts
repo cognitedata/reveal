@@ -17,7 +17,7 @@ import {
   GpuOrderSectorsByVisibleCoverage,
   PrioritizedSectorIdentifier,
   OrderSectorsByVisibleCoverage
-} from '../views/threejs/OrderSectorsByVisibleCoverage';
+} from '../views/threejs/GpuOrderSectorsByVisibleCoverage';
 import { SectorCuller } from './SectorCuller';
 import { fromThreeMatrix } from '../views/threejs/utilities';
 import { traverseUpwards, traverseDepthFirst } from '../utils/traversal';

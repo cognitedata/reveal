@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { OrderSectorsByVisibleCoverage } from '../../../threejs';
+import { GpuOrderSectorsByVisibleCoverage } from '../../../threejs';
 import { SectorSceneImpl, SectorMetadata, SectorModelTransformation, SectorScene } from '../../../models/cad/types';
 import { createSectorMetadata, SectorTree } from '../../testUtils/createSectorMetadata';
 import { traverseDepthFirst } from '../../../utils/traversal';
@@ -11,7 +11,7 @@ import { fromThreeMatrix } from '../../../views/threejs/utilities';
 import { mat4 } from 'gl-matrix';
 import { Box3 } from '../../../utils/Box3';
 
-describe('OrderSectorsByVisibleCoverage', () => {
+describe('GpuOrderSectorsByVisibleCoverage', () => {
   const glContext: WebGLRenderingContext = require('gl')(64, 64);
   const renderSize = new THREE.Vector2(64, 64);
   const identityTransform = createModelTransformation(new THREE.Matrix4().identity());
@@ -20,7 +20,7 @@ describe('OrderSectorsByVisibleCoverage', () => {
   test('orderSectorsByVisibility() returns empty array when there are no models', () => {
     // Arrange
     const camera = new THREE.PerspectiveCamera();
-    const coverageUtil = new OrderSectorsByVisibleCoverage({ glContext, renderSize });
+    const coverageUtil = new GpuOrderSectorsByVisibleCoverage({ glContext, renderSize });
 
     // Act
     const arrays = coverageUtil.orderSectorsByVisibility(camera);
@@ -31,7 +31,7 @@ describe('OrderSectorsByVisibleCoverage', () => {
 
   test('rendered result has no sectors, returns empty array', () => {
     // Arrange
-    const util = new OrderSectorsByVisibleCoverage({ glContext, renderSize });
+    const util = new GpuOrderSectorsByVisibleCoverage({ glContext, renderSize });
     util.addModel(singleSectorScene, identityTransform);
     const camera = new THREE.PerspectiveCamera();
 
@@ -45,7 +45,7 @@ describe('OrderSectorsByVisibleCoverage', () => {
 
   test('rendered result has one sector, returns array with priority 1', () => {
     // Arrange
-    const util = new OrderSectorsByVisibleCoverage({ glContext, renderSize });
+    const util = new GpuOrderSectorsByVisibleCoverage({ glContext, renderSize });
     util.addModel(singleSectorScene, identityTransform);
     const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 20.0);
     camera.position.set(0, 0, -10);
@@ -67,7 +67,7 @@ describe('OrderSectorsByVisibleCoverage', () => {
     // Arrange
     const model1 = singleSectorScene;
     const model2 = createStubScene([0, [], Box3.fromBounds(-1, -1, -1, 1, 1, 1)]);
-    const util = new OrderSectorsByVisibleCoverage({ glContext, renderSize });
+    const util = new GpuOrderSectorsByVisibleCoverage({ glContext, renderSize });
     util.addModel(model1, identityTransform);
     util.addModel(model2, identityTransform);
     const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 20.0);

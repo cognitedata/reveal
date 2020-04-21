@@ -19,4 +19,4 @@ export {
   GpuOrderSectorsByVisibleCoverage,
   PrioritizedSectorIdentifier,
   OrderSectorsByVisibleCoverageOptions
-} from './OrderSectorsByVisibleCoverage';
+} from './GpuOrderSectorsByVisibleCoverage';
