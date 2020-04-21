@@ -63,7 +63,7 @@ export class CachedRepository implements Repository {
     discriptor: string;
     lod: string;
     data: Sector | SectorQuads;
-  }> = new ReplaySubject();
+  }> = new Subject();
 
   constructor(
     modelDataRetriever: ModelDataRetriever,
@@ -146,9 +146,7 @@ export class CachedRepository implements Repository {
   }
 
   getParsedData(): Observable<{ lod: string; data: Sector | SectorQuads }> {
-    return this._parsedDataSubject.pipe(
-      distinct(keySelector => keySelector.discriptor)
-    ); // TODO: Should we do replay subject here instead of variable type?
+    return this._parsedDataSubject.pipe(distinct(keySelector => keySelector.discriptor)); // TODO: Should we do replay subject here instead of variable type?
   }
 
   private loadSectorFromNetwork(): OperatorFunction<WantedSector, ConsumedSector> {
