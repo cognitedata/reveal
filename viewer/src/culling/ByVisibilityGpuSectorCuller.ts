@@ -53,7 +53,6 @@ export type ByVisibilityGpuSectorCullerOptions = {
 type TakenSector = { metadata: SectorMetadata; lod: LevelOfDetail; priority: number; cost: number };
 type TakenSectorDictionary = Map<SectorScene, Map<number, TakenSector>>;
 class TakenSectorMap {
-  // TODO 2020-04-21 larsmoa: Count cost in TakenSectorMap
   // TODO 2020-04-21 larsmoa: Unit test TakenSectorMap
 
   private readonly map: TakenSectorDictionary = new Map();
@@ -80,15 +79,13 @@ class TakenSectorMap {
     return result;
   }
 
-  removeAllChildrenOf(scene: SectorScene, sector: SectorMetadata): SectorMetadata[] {
-    const removed: SectorMetadata[] = [];
+  removeTree(scene: SectorScene, sector: SectorMetadata) {
     traverseDepthFirst(sector, x => {
-      if (sector !== x && this.hasSector(scene, x.id)) {
-        removed.push(x);
+      if (this.hasSector(scene, x.id)) {
+        this.remove(scene, x.id);
       }
       return true;
     });
-    return removed;
   }
 
   hasSector(scene: SectorScene, sectorId: number): boolean {
@@ -150,7 +147,9 @@ class TakenSectorMap {
       this._totalCost += value.cost;
       sceneMap.set(sectorId, value);
     } else if (currentValue !== undefined) {
-      throw new Error(`Sector ${scene}[${sectorId}] already added`);
+      throw new Error(
+        `Sector ${scene}[${sectorId}] already added with LOD ${currentValue.lod} (tried to add as LOD ${levelOfDetail})`
+      );
     }
 
     // TODO 2020-04-21 larsmoa: Obey rules for adding/removing sectors to avoid duplicated geometry in this
@@ -284,7 +283,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
 
     let debugAccumulatedPriority = 0.0;
     const prioritizedLength = prioritized.length;
-    // // Holds IDs of wanted simple sectors. No children of these should be loaded.
+
     let i = 0;
     for (i = 0; i < prioritizedLength && takenSectors.totalCost < costLimit; i++) {
       const x = prioritized[i];
@@ -354,10 +353,8 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
       return 0;
     }
 
-    // Remove any children that might have been already added
-    // TODO 2020-04-21 larsmoa: Account for saved cost
-    takenSectors.removeAllChildrenOf(sector.scene, metadata);
-
+    // Remove sector and any children that might have been already added
+    takenSectors.removeTree(sector.scene, metadata);
     takenSectors.add(scene, metadata, LevelOfDetail.Simple, sector.priority);
   }
 
