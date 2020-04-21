@@ -1,12 +1,12 @@
 import React from 'react';
-import { Title5, Colors, Button } from '@cognite/cogs.js';
-import { Form, Input } from 'antd';
+import { Title5, Colors, Button, Input } from '@cognite/cogs.js';
+import { Form } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 
 import CardFooterError from 'CardFooterError';
 import { getSidecar, sanitizeTenant } from 'utils';
-import { StyledTenantSelector, CompanyIdLabel } from './elements';
-import { StyledHeading, CogniteMark } from '../elements';
+import { StyledHeading, CogniteMark } from 'styles/elements';
+import { StyledTenantSelector } from './elements';
 
 type TenantSelectorFormValues = {
   tenant: string;
@@ -92,15 +92,13 @@ const TenantSelector = ({
 
       <div className="content">
         <Form onSubmit={onSubmit} hideRequiredMark>
-          <Form.Item
-            label={<CompanyIdLabel>Company ID:</CompanyIdLabel>}
-            colon={false}
-            className="tenant-selector__company-item"
-          >
+          <Form.Item className="tenant-selector__company-item">
             {enhanceTenantInput(
               <Input
                 autoFocus
+                title="Company ID:"
                 placeholder="Enter Company ID"
+                size="large"
                 disabled={loading}
               />
             )}

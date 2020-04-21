@@ -21,6 +21,7 @@ export const CardContainer = styled.div`
   background: #fff;
   padding: 40px 32px;
   border-radius: 4px;
+  box-sizing: border-box;
   box-shadow: 0px 16.8443px 50.5328px rgba(0, 0, 0, 0.1),
     0px 13.4754px 20.2131px rgba(0, 0, 0, 0.07);
 

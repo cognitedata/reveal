@@ -1,6 +1,6 @@
 import React from 'react';
 import { Icon } from 'antd';
-import { Centered } from 'elements';
+import { Centered } from 'styles/elements';
 
 import styled from 'styled-components';
 import { StyledCardFooterError } from './elements';

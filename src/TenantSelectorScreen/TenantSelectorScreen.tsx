@@ -2,9 +2,10 @@ import React from 'react';
 
 import TenantSelector from 'TenantSelector';
 import { getSidecar } from 'utils';
-import { Centered } from 'elements';
+import { Centered } from 'styles/elements';
 import background from 'assets/background.jpg';
-import { StyledAuthenticationScreen } from './elements';
+import TenantSelectorBackground from 'TenantSelectorBackground/TenantSelectorBackground';
+import { StyledTenantSelectorScreen } from './elements';
 
 type Props = {
   handleSubmit: (tenant: string) => void;
@@ -17,11 +18,13 @@ type Props = {
 const TenantSelectorScreen = (props: Props) => {
   const { backgroundImage } = getSidecar();
   return (
-    <StyledAuthenticationScreen backgroundImage={backgroundImage || background}>
-      <Centered>
-        <TenantSelector {...props} />
-      </Centered>
-    </StyledAuthenticationScreen>
+    <TenantSelectorBackground backgroundImage={backgroundImage || background}>
+      <StyledTenantSelectorScreen>
+        <Centered>
+          <TenantSelector {...props} />
+        </Centered>
+      </StyledTenantSelectorScreen>
+    </TenantSelectorBackground>
   );
 };
 
