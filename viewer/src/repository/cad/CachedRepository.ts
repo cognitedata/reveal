@@ -5,19 +5,7 @@
 import { Repository } from './Repository';
 import { WantedSector } from '../../data/model/WantedSector';
 import { LevelOfDetail } from '../../data/model/LevelOfDetail';
-import {
-  OperatorFunction,
-  pipe,
-  Observable,
-  from,
-  merge,
-  partition,
-  of,
-  asapScheduler,
-  zip,
-  Subject,
-  ReplaySubject
-} from 'rxjs';
+import { OperatorFunction, pipe, Observable, from, merge, partition, of, asapScheduler, zip, Subject } from 'rxjs';
 import {
   publish,
   filter,
