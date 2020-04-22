@@ -5,7 +5,8 @@
 import * as THREE from 'three';
 
 import { SectorMetadata } from '../..';
-import { SectorModelTransformation, SectorScene } from '../../models/cad/types';
+import { SectorModelTransformation } from '../../models/cad/types';
+import { SectorScene } from '../../models/cad/SectorScene';
 import { toThreeJsBox3, toThreeMatrix4 } from './utilities';
 import { Box3 } from '../../utils/Box3';
 import { coverageShaders } from './cad/shaders';

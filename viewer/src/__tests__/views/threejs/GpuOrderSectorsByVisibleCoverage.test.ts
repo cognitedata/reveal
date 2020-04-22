@@ -4,7 +4,8 @@
 
 import * as THREE from 'three';
 import { GpuOrderSectorsByVisibleCoverage } from '../../../threejs';
-import { SectorSceneImpl, SectorMetadata, SectorModelTransformation, SectorScene } from '../../../models/cad/types';
+import { SectorMetadata, SectorModelTransformation } from '../../../models/cad/types';
+import { SectorScene, SectorSceneImpl } from '../../../models/cad/SectorScene';
 import { createSectorMetadata, SectorTree } from '../../testUtils/createSectorMetadata';
 import { traverseDepthFirst } from '../../../utils/traversal';
 import { fromThreeMatrix } from '../../../views/threejs/utilities';

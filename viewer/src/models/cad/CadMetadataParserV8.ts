@@ -2,7 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
-import { SectorScene, SectorMetadata, SectorSceneImpl } from './types';
+import { SectorMetadata } from './types';
+import { SectorScene, SectorSceneImpl } from './SectorScene';
 import { Box3 } from '../../utils/Box3';
 import { vec3 } from 'gl-matrix';
 

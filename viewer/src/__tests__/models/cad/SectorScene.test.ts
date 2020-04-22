@@ -5,7 +5,8 @@
 import * as THREE from 'three';
 import { vec3, mat4 } from 'gl-matrix';
 
-import { SectorSceneImpl, SectorMetadata } from '../../../models/cad/types';
+import { SectorMetadata } from '../../../models/cad/types';
+import { SectorSceneImpl } from '../../../models/cad/SectorScene';
 import { createSectorMetadata } from '../../testUtils/createSectorMetadata';
 import { traverseDepthFirst } from '../../../utils/traversal';
 import { Box3 } from '../../../utils/Box3';

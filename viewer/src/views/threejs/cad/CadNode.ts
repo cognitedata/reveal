@@ -6,7 +6,8 @@ import * as THREE from 'three';
 import { Subject, Observable, animationFrameScheduler } from 'rxjs';
 import { publish, share, auditTime, map, observeOn, tap, filter, mergeAll } from 'rxjs/operators';
 
-import { SectorModelTransformation, SectorScene, SectorMetadata, Sector, SectorQuads } from '../../../models/cad/types';
+import { SectorModelTransformation, SectorMetadata, Sector, SectorQuads } from '../../../models/cad/types';
+import { SectorScene } from '../../../models/cad/SectorScene';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
 import { CadModel } from '../../../models/cad/CadModel';
 import { CadRenderHints } from '../../CadRenderHints';

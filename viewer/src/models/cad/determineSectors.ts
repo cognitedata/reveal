@@ -5,7 +5,8 @@
 // TODO try to implement all functionality that three.js provides here without three.js to avoid
 // pulling it in just for this reason
 import * as THREE from 'three';
-import { SectorMetadata, SectorScene } from './types';
+import { SectorMetadata } from './types';
+import { SectorScene } from './SectorScene';
 import { traverseDepthFirst, traverseUpwards } from '../../utils/traversal';
 import { toThreeMatrix4, toThreeVector3 } from '../../views/threejs/utilities';
 import { mat4, vec3 } from 'gl-matrix';

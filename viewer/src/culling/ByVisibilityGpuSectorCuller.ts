@@ -8,7 +8,7 @@
 import * as THREE from 'three';
 
 import { WantedSector } from '../data/model/WantedSector';
-import { SectorScene } from '../models/cad/types';
+import { SectorScene } from '../models/cad/SectorScene';
 import { CadModel } from '../models/cad/CadModel';
 import { DetermineSectorsByProximityInput } from '../models/cad/determineSectors';
 import {

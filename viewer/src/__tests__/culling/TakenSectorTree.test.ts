@@ -4,7 +4,8 @@
 
 import { generateSectorTree } from '../testUtils/createSectorMetadata';
 import { TakenSectorTree } from '../../culling/TakenSectorTree';
-import { SectorMetadata, SectorScene } from '../../models/cad/types';
+import { SectorMetadata } from '../../models/cad/types';
+import { SectorScene } from '../../models/cad/SectorScene';
 import { traverseDepthFirst } from '../../utils/traversal';
 import { expectContainsSectorsWithLevelOfDetail } from '../expects';
 import { PrioritizedWantedSector } from '../../culling/types';

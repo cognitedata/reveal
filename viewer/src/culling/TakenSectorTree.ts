@@ -3,7 +3,8 @@
  */
 
 import { LevelOfDetail } from '../data/model/LevelOfDetail';
-import { SectorScene, SectorMetadata } from '../models/cad/types';
+import { SectorMetadata } from '../models/cad/types';
+import { SectorScene } from '../models/cad/SectorScene';
 import { traverseUpwards, traverseDepthFirst } from '../utils/traversal';
 import { PrioritizedWantedSector } from './types';
 

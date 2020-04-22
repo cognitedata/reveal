@@ -3,7 +3,8 @@
  */
 
 import { LevelOfDetail, WantedSector } from '../../internal';
-import { SectorScene, SectorMetadata } from './types';
+import { SectorMetadata } from './types';
+import { SectorScene } from './SectorScene';
 
 /**
  * Keeps number of loads within a specified budget.
