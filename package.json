@@ -13,7 +13,7 @@
     "storybook": "start-storybook -p 6006"
   },
   "dependencies": {
-    "@cognite/cogs.js": "^1.0.9",
+    "@cognite/cogs.js": "^1.0.16",
     "@cognite/metrics": "^0.0.31",
     "@sentry/browser": "^5.15.4",
     "antd": "^3.19.2",

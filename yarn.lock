@@ -1057,15 +1057,13 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cognite/cogs.js@^1.0.9":
-  version "1.0.9"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-1.0.9.tgz#b0bdb0375cb062db9e9ab6e719bd2a0b994dc808"
-  integrity sha512-w7BRgHOV8rHgqFozGATdrRNO/dsQfi/7fs8rVTSdYSzVGZJZM+g2VDyOpUXBJoLeHHkya1WVRIUGe9/0Oaw9wg==
+"@cognite/cogs.js@^1.0.16":
+  version "1.0.16"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-1.0.16.tgz#c86a4a5c2db4b33dbcf053aed08df94e63edfbea"
+  integrity sha512-2EGkZdek/x6oDI8XMAtCAUxPtzKHyIb2VAROEObuK/NLBBY2BnoUkalxWsdd3/8T73ZSMuyfU87wgvG4+8TbWA==
   dependencies:
-    "@cognite/sdk" "^1.7.7"
     "@tippyjs/react" "4.0.0-alpha.4"
-    "@types/styled-components" "^4.1.18"
-    rgb-hex "^2.1.0"
+    rc-collapse "^1.11.8"
     tippy.js "6.1.0"
 
 "@cognite/eslint-config@^1.4.2":
@@ -1083,16 +1081,6 @@
   integrity sha512-BYYMUPJDKNuGvkMmpIyZ5NA8j7lzvHvCZSWYJhbR7GeceEYYKs/J5ajLJfw+SK58/nhRV4eMzmUYedc975QG5Q==
   dependencies:
     mixpanel-browser "^2.29.1"
-
-"@cognite/sdk@^1.7.7":
-  version "1.7.7"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-1.7.7.tgz#c85838459094f7a8e478e0e80b93db13f3bf4abd"
-  integrity sha512-SSJw+aperjrjLMGB1Cmm7I1zMWNhVOSJk652zA+DjPJBSZdrazpanoHRf8oYzEHBzJ2gmUd2jDutl3PdjK7dOg==
-  dependencies:
-    axios "0.18.1"
-    jwt-decode "^2.2.0"
-    query-string "^5.1.1"
-    url "^0.11.0"
 
 "@csstools/convert-colors@^1.4.0":
   version "1.4.0"
@@ -2193,16 +2181,6 @@
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-1.0.1.tgz#0a851d3bd96498fa25c33ab7278ed3bd65f06c3e"
   integrity sha512-l42BggppR6zLmpfU6fq9HEa2oGPEI8yrSPL3GITjfRInppYFahObbIQOQK3UGxEnyQpltZLaPe75046NOZQikw==
 
-"@types/styled-components@^4.1.18":
-  version "4.4.3"
-  resolved "https://registry.yarnpkg.com/@types/styled-components/-/styled-components-4.4.3.tgz#74dd00ad760845a98890a8539361d8afc32059de"
-  integrity sha512-U0udeNOZBfUkJycmGJwmzun0FBt11rZy08weVQmE2xfUNAbX8AGOEWxWna2d+qAUKxKgMlcG+TZT0+K2FfDcnQ==
-  dependencies:
-    "@types/hoist-non-react-statics" "*"
-    "@types/react" "*"
-    "@types/react-native" "*"
-    csstype "^2.2.0"
-
 "@types/styled-components@^5.1.0":
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/@types/styled-components/-/styled-components-5.1.0.tgz#24d3412ba5395aa06e14fbc93c52f9454cebd0d6"
@@ -3188,14 +3166,6 @@ aws4@^1.8.0:
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.9.1.tgz#7e33d8f7d449b3f673cd72deb9abdc552dbe528e"
   integrity sha512-wMHVg2EOHaMRxbzgFJ9gtjOOCrI80OHLG14rxi28XwOW8ux6IiEbRCGGGqCtdAIg4FQCbW20k9RsT4y3gJlFug==
-
-axios@0.18.1:
-  version "0.18.1"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-0.18.1.tgz#ff3f0de2e7b5d180e757ad98000f1081b87bcea3"
-  integrity sha512-0BfJq4NSfQXd+SkFdrvFbG7addhYSBA2mQwISr46pD6E5iqkWg02RAs8vyTT/j0RTnoYmeXauBuSv1qKwR179g==
-  dependencies:
-    follow-redirects "1.5.10"
-    is-buffer "^2.0.2"
 
 axios@^0.19.2:
   version "0.19.2"
@@ -7481,11 +7451,6 @@ is-buffer@^1.0.2, is-buffer@^1.1.5:
   resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-1.1.6.tgz#efaa2ea9daa0d7ab2ea13a97b2b8ad51fefbe8be"
   integrity sha512-NcdALwpXkTm5Zvvbk7owOUSvVvBKDgKP5/ewfXEznmQFfs4ZRmanOeKBTjRVjka3QFoN6XJ+9F3USqfHqTaU5w==
 
-is-buffer@^2.0.2:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-2.0.4.tgz#3e572f23c8411a5cfd9557c849e3665e0b290623"
-  integrity sha512-Kq1rokWXOPXWuaMAqZiJW4XxsmD9zGx9q4aePabbn3qCRGedtH7Cm+zV8WETitMfu1wdh+Rvd6w5egwSngUX2A==
-
 is-callable@^1.1.4, is-callable@^1.1.5:
   version "1.1.5"
   resolved "https://registry.yarnpkg.com/is-callable/-/is-callable-1.1.5.tgz#f7e46b596890456db74e7f6e976cb3273d06faab"
@@ -8512,11 +8477,6 @@ jsx-ast-utils@^2.2.1, jsx-ast-utils@^2.2.3:
   dependencies:
     array-includes "^3.0.3"
     object.assign "^4.1.0"
-
-jwt-decode@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-2.2.0.tgz#7d86bd56679f58ce6a84704a657dd392bba81a79"
-  integrity sha1-fYa9VmefWM5qhHBKZX3TkruoGnk=
 
 killable@^1.0.1:
   version "1.0.1"
@@ -11027,15 +10987,6 @@ query-string@^4.1.0:
     object-assign "^4.1.0"
     strict-uri-encode "^1.0.0"
 
-query-string@^5.1.1:
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/query-string/-/query-string-5.1.1.tgz#a78c012b71c17e05f2e3fa2319dd330682efb3cb"
-  integrity sha512-gjWOsm2SoGlgLEdAGt7a6slVOk9mGiXmPFMqrEhLQ68rhQuBnpfs3+EmlvqKyxnCo9/PPlF+9MtY02S1aFg+Jw==
-  dependencies:
-    decode-uri-component "^0.2.0"
-    object-assign "^4.1.0"
-    strict-uri-encode "^1.0.0"
-
 querystring-es3@^0.2.0:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/querystring-es3/-/querystring-es3-0.2.1.tgz#9ec61f79049875707d69414596fd907a4d711e73"
@@ -11174,7 +11125,7 @@ rc-checkbox@~2.1.6:
     prop-types "15.x"
     react-lifecycles-compat "^3.0.4"
 
-rc-collapse@~1.11.3:
+rc-collapse@^1.11.8, rc-collapse@~1.11.3:
   version "1.11.8"
   resolved "https://registry.yarnpkg.com/rc-collapse/-/rc-collapse-1.11.8.tgz#66a40089d469519e9424009ab1c927e214041d80"
   integrity sha512-8EhfPyScTYljkbRuIoHniSwZagD5UPpZ3CToYgoNYWC85L2qCbPYF7+OaC713FOrIkp6NbfNqXsITNxmDAmxog==
@@ -12272,11 +12223,6 @@ rework@1.0.1:
   dependencies:
     convert-source-map "^0.3.3"
     css "^2.0.0"
-
-rgb-hex@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/rgb-hex/-/rgb-hex-2.1.0.tgz#c773c5fe2268a25578d92539a82a7a5ce53beda6"
-  integrity sha1-x3PF/iJoolV42SU5qCp6XOU77aY=
 
 rgb-regex@^1.0.1:
   version "1.0.1"
