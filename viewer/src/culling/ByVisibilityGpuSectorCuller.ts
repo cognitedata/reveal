@@ -90,11 +90,11 @@ class TakenSectorMap {
 }
 
 /**
- * Experimental implementation of SectorCuller that uses the GPU to determine an approximatin
- * of how "visible" each sector is to get a priority for each sector.
+ * SectorCuller that uses the GPU to determine an approximation
+ * of how "visible" each sector is to get a priority for each sector
+ * and loads sectors based on priority within a budget.
  */
 export class ByVisibilityGpuSectorCuller implements SectorCuller {
-  public static readonly DefaultMaxQuadSize = 0.004;
   public static readonly DefaultCostLimitMb = 110;
   public static readonly DefaultHighDetailProximityThreshold = 10;
 
