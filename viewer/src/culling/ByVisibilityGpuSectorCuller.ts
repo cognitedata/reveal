@@ -169,15 +169,6 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     takenSectors.clear();
     this.models.forEach(x => takenSectors.initializeScene(x.scene));
 
-    this.models.forEach(x => takenSectors.markSectorDetailed(x.scene, 0, 1));
-    this.models.forEach(x => {
-      traverseDepthFirst(x.scene.root, y => {
-        if (y.id % 2 === 0) {
-          takenSectors.markSectorDetailed(x.scene, y.id, 1);
-        }
-        return y.depth < 4;
-      });
-    });
     // Update wanted sectors
     const prioritized = coverageUtil.orderSectorsByVisibility(this.camera);
     this.lastUpdate.matrix = this.camera.matrix.clone();
