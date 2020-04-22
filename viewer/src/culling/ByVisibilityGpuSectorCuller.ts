@@ -31,12 +31,6 @@ export type ByVisibilityGpuSectorCullerOptions = {
   costLimitMb?: number;
 
   /**
-   * Default maximum quad size used to determine level of detail. Note that this is overriden
-   * by per-model loading hints if provided.
-   */
-  defaultMaxQuadSize?: number;
-
-  /**
    * Sectors within this distance from the camera will always be loaded in high details.
    */
   highDetailProximityThreshold?: number;
@@ -111,18 +105,12 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     matrix: new THREE.Matrix4(),
     projectionMatrix: new THREE.Matrix4(),
     takenSectors: new TakenSectorMap()
-    // TODO 2020-04-20 larsmoa: Remove the need for this and merge with takenSectors
-    // wanted: [] as PrioritizedWantedSector[]
   };
 
   constructor(camera: THREE.PerspectiveCamera, options?: ByVisibilityGpuSectorCullerOptions) {
     this.options = {
       costLimitMb:
         options && options.costLimitMb ? options.costLimitMb : ByVisibilityGpuSectorCuller.DefaultCostLimitMb,
-      defaultMaxQuadSize:
-        options && options.defaultMaxQuadSize
-          ? options.defaultMaxQuadSize
-          : ByVisibilityGpuSectorCuller.DefaultMaxQuadSize,
       highDetailProximityThreshold:
         options && options.highDetailProximityThreshold
           ? options.highDetailProximityThreshold
