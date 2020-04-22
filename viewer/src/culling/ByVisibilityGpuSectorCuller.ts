@@ -12,9 +12,9 @@ import { SectorScene } from '../models/cad/SectorScene';
 import { CadModel } from '../models/cad/CadModel';
 import { DetermineSectorsByProximityInput } from '../models/cad/determineSectors';
 import {
-  GpuOrderSectorsByVisibleCoverage,
-  OrderSectorsByVisibleCoverage
-} from '../views/threejs/GpuOrderSectorsByVisibleCoverage';
+  GpuOrderSectorsByVisibilityCoverage,
+  OrderSectorsByVisibilityCoverage
+} from '../views/threejs/OrderSectorsByVisibilityCoverage';
 import { SectorCuller } from './SectorCuller';
 import { TakenSectorTree } from './TakenSectorTree';
 import { PrioritizedWantedSector } from './types';
@@ -38,7 +38,7 @@ export type ByVisibilityGpuSectorCullerOptions = {
   /**
    * Use a custom coverage utility to determine how "visible" each sector is.
    */
-  coverageUtil?: OrderSectorsByVisibleCoverage;
+  coverageUtil?: OrderSectorsByVisibilityCoverage;
 };
 
 function assert(condition: boolean, message: string = 'assertion hit') {
@@ -116,7 +116,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
           ? options.highDetailProximityThreshold
           : ByVisibilityGpuSectorCuller.DefaultHighDetailProximityThreshold,
 
-      coverageUtil: options && options.coverageUtil ? options.coverageUtil : new GpuOrderSectorsByVisibleCoverage()
+      coverageUtil: options && options.coverageUtil ? options.coverageUtil : new GpuOrderSectorsByVisibilityCoverage()
     };
     this.camera = camera;
   }

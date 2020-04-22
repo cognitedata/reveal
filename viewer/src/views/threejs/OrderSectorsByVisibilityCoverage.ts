@@ -65,7 +65,7 @@ export type PrioritizedSectorIdentifier = {
 /**
  * Interface for classes that estimates how visible a sector will be on screen.
  */
-export interface OrderSectorsByVisibleCoverage {
+export interface OrderSectorsByVisibilityCoverage {
   /**
    * Adds a new CAD model to estimate visibility for.
    * @param scene
@@ -80,7 +80,11 @@ export interface OrderSectorsByVisibleCoverage {
   orderSectorsByVisibility(camera: THREE.Camera): PrioritizedSectorIdentifier[];
 }
 
-export class GpuOrderSectorsByVisibleCoverage {
+/**
+ * Estimates sector visibility by rendering their bounds with a pattern confirming to how
+ * much of the geometry covers of the bounding box.
+ */
+export class GpuOrderSectorsByVisibilityCoverage {
   private sectorIdOffset = 0;
   private readonly scene = new THREE.Scene();
   private readonly renderer: THREE.WebGLRenderer;
