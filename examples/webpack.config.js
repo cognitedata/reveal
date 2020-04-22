@@ -33,91 +33,91 @@ function resolve(dir) {
 }
 
 const allExamples = [
-  // {
-  //   name: "no-rendering",
-  //   title: "Load model without rendering",
-  //   entry: './src/no-rendering.ts',
-  //   template: 'template-example.ejs'
-  // },
+  {
+    name: "no-rendering",
+    title: "Load model without rendering",
+    entry: './src/no-rendering.ts',
+    template: 'template-example.ejs'
+  },
   {
     name: "threejs-simple",
     title: "Simple",
     entry: './src/simple.ts',
     template: 'template-example.ejs'
   },
-  // {
-  //   name: "threejs-filtering",
-  //   title: "Filtering",
-  //   entry: './src/filtering.ts',
-  //   template: 'template-example.ejs'
-  // },
-  // {
-  //   name: "threejs-picking",
-  //   title: "Picking",
-  //   entry: './src/picking.ts',
-  //   template: 'template-example.ejs'
-  // },
-  // {
-  //   name: "threejs-ssao",
-  //   title: "Screen space ambient occlusion shading",
-  //   entry: './src/ssao.ts',
-  //   template: 'template-example.ejs',
-  //   type: 'threejs'
-  // },
-  // {
-  //   name: "threejs-side-by-side",
-  //   title: "Side-by-side debugger for sector models",
-  //   entry: './src/side-by-side.ts',
-  //   template: 'template-example-two-canvases.ejs'
-  // },
-  // {
-  //   name: "threejs-simple-pointcloud",
-  //   title: "Simple pointcloud",
-  //   entry: './src/simple-pointcloud.ts',
-  //   template: 'template-example.ejs'
-  // },
-  // {
-  //   name: "threejs-post-processing-effects",
-  //   title: "Post processing effects",
-  //   entry: './src/post-processing-effects.ts',
-  //   template: 'template-example.ejs'
-  // },
-  // {
-  //   name: "threejs-with-pointcloud",
-  //   title: "CAD model with point cloud",
-  //   entry: './src/sector-with-pointcloud.ts',
-  //   template: 'template-example.ejs'
-  // },
-  // {
-  //   name: "threejs-two-models",
-  //   title: "Two models",
-  //   entry: './src/two-models.ts',
-  //   template: './template-example.ejs'
-  // },
-  // {
-  //   name: "threejs-custom-scene-elements",
-  //   title: "Custom ThreeJS scene elements",
-  //   entry: './src/custom-scene-elements.ts',
-  //   template: './template-example.ejs'
-  // },
-  // {
-  //   name: "threejs-migration",
-  //   title: "Migration wrapper for applications using the old Reveal viewer",
-  //   entry: './src/migration.ts',
-  //   template: './template-single-canvas.ejs'
-  // },
-  // {
-  //   name: "walkable-path",
-  //   title: "Walkable Path",
-  //   entry: './src/walkable-path.ts',
-  //   template: 'template-example.ejs'
-  // },
-  // {
-  //   name: "world-to-screen",
-  //   title: "World To Screen",
-  //   entry: './src/world-to-screen.ts',
-  //   template: 'template-example.ejs'
-  // }
+  {
+    name: "threejs-filtering",
+    title: "Filtering",
+    entry: './src/filtering.ts',
+    template: 'template-example.ejs'
+  },
+  {
+    name: "threejs-picking",
+    title: "Picking",
+    entry: './src/picking.ts',
+    template: 'template-example.ejs'
+  },
+  {
+    name: "threejs-ssao",
+    title: "Screen space ambient occlusion shading",
+    entry: './src/ssao.ts',
+    template: 'template-example.ejs',
+    type: 'threejs'
+  },
+  {
+    name: "threejs-side-by-side",
+    title: "Side-by-side debugger for sector models",
+    entry: './src/side-by-side.ts',
+    template: 'template-example-two-canvases.ejs'
+  },
+  {
+    name: "threejs-simple-pointcloud",
+    title: "Simple pointcloud",
+    entry: './src/simple-pointcloud.ts',
+    template: 'template-example.ejs'
+  },
+  {
+    name: "threejs-post-processing-effects",
+    title: "Post processing effects",
+    entry: './src/post-processing-effects.ts',
+    template: 'template-example.ejs'
+  },
+  {
+    name: "threejs-with-pointcloud",
+    title: "CAD model with point cloud",
+    entry: './src/sector-with-pointcloud.ts',
+    template: 'template-example.ejs'
+  },
+  {
+    name: "threejs-two-models",
+    title: "Two models",
+    entry: './src/two-models.ts',
+    template: './template-example.ejs'
+  },
+  {
+    name: "threejs-custom-scene-elements",
+    title: "Custom ThreeJS scene elements",
+    entry: './src/custom-scene-elements.ts',
+    template: './template-example.ejs'
+  },
+  {
+    name: "threejs-migration",
+    title: "Migration wrapper for applications using the old Reveal viewer",
+    entry: './src/migration.ts',
+    template: './template-single-canvas.ejs'
+  },
+  {
+    name: "walkable-path",
+    title: "Walkable Path",
+    entry: './src/walkable-path.ts',
+    template: 'template-example.ejs'
+  },
+  {
+    name: "world-to-screen",
+    title: "World To Screen",
+    entry: './src/world-to-screen.ts',
+    template: 'template-example.ejs'
+  }
 ];
 
 module.exports = env => {
