@@ -56,3 +56,17 @@ const KEY_LAST_TENANT = '__tenant-selector_last-tenant';
 export const getLastTenant = (): string | undefined => {
   return KEY_LAST_TENANT;
 };
+
+type ErrorSchema = {
+  [name: string]: {
+    requiredMessage: string;
+    validationMessage: string;
+  };
+};
+
+export const errorSchema: ErrorSchema = {
+  tenant: {
+    requiredMessage: 'Company ID is required',
+    validationMessage: 'This is an unknown configuration',
+  },
+};
