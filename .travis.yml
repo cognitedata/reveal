@@ -31,6 +31,7 @@ matrix:
     - language: rust
       name: "Reveal viewer"
 
+      # The section below is to allow for unit testing of WebGL
       os: linux
       sudo: required
       dist: trusty
