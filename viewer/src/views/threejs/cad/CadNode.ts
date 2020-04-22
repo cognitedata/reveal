@@ -198,7 +198,7 @@ export class CadNode extends THREE.Object3D {
       .pipe(
         // TODO 2020-04-15 larsmoa: Reduce delay to something more sensible
         // Temporary workaround to avoid flooding the GPU pipeline with readPixels.
-        debounceTime(1000),
+        debounceTime(150),
         fromThreeCameraConfig(),
         // Determine all wanted sectors
         map(input => this._sectorCuller.determineSectors(input)),

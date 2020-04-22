@@ -374,14 +374,14 @@ function updateWantedSectorOverride(
     const wanted: reveal.internal.WantedSector[] = [];
     for (const node of acceptedSimple) {
       wanted.push({
-        id: node.id,
+        sectorId: node.id,
         levelOfDetail: reveal.internal.LevelOfDetail.Simple,
         metadata: node
       });
     }
     for (const node of acceptedDetailed) {
       wanted.push({
-        id: node.id,
+        sectorId: node.id,
         levelOfDetail: reveal.internal.LevelOfDetail.Detailed,
         metadata: node
       });
