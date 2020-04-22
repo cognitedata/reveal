@@ -286,6 +286,9 @@ export class GpuOrderSectorsByVisibilityCoverage {
 
     const coverageFactors = new THREE.Vector3(); // Allocate once only
     sectors.forEach(sector => {
+      // Note! We always use the 'high detail' coverage factors, not recursiveCoverageFactors because we
+      // don't know what detail level a sector will be loaded in. A better approach might be to choose this
+      // runtime (either before rendering or in shader), but not sure how to solve this. -lars 2020-04-22
       const { xy, xz, yz } = sector.facesFile.coverageFactors;
       coverageFactors.set(yz, xz, xy);
       addSector(sector.bounds, sector.id, coverageFactors, sector.depth);
