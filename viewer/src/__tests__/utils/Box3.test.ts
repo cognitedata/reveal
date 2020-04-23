@@ -8,7 +8,6 @@ import { Box3 } from '../../utils/Box3';
 describe('Box3', () => {
   test('containsPoint, unit box', () => {
     const box = Box3.fromBounds(-1, -1, -1, 1, 1, 1);
-
     expect(box.containsPoint(vec3.fromValues(-2, 0, 0))).toBeFalse();
     expect(box.containsPoint(vec3.fromValues(0, -2, 0))).toBeFalse();
     expect(box.containsPoint(vec3.fromValues(0, 0, -2))).toBeFalse();

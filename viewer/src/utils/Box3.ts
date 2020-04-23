@@ -35,6 +35,10 @@ export class Box3 {
     }
   }
 
+  get size(): vec3 {
+    return vec3.subtract(vec3.create(), this.max, this.min);
+  }
+
   createTransformed(matrix: mat4): Box3 {
     const pMin = vec3.transformMat4(vec3.create(), this.min, matrix);
     const pMax = vec3.transformMat4(vec3.create(), this.max, matrix);
@@ -51,7 +55,7 @@ export class Box3 {
       p[2] <= this.max[2]
     );
   }
-
+  
   intersectsBox(b: Box3): boolean {
     const a = this;
     return (

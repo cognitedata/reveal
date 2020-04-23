@@ -3,8 +3,9 @@
  */
 
 import { Box3 } from '../../utils/Box3';
-import { mat4 } from 'gl-matrix';
+import { mat4, vec3 } from 'gl-matrix';
 import { PrimitiveAttributes } from '../../workers/types/parser.types';
+import { traverseDepthFirst } from '../../utils/traversal';
 
 // TODO 2019-11-12 larsmoa: Move and rename to something general (not specific
 // for sector data).
@@ -46,7 +47,9 @@ export interface SectorScene {
   readonly root: SectorMetadata;
 
   getSectorById(sectorId: number): SectorMetadata | undefined;
+  getSectorsContainingPoint(p: vec3): SectorMetadata[];
   getAllSectors(): SectorMetadata[];
+
   // Available, but not supported:
   // readonly projectId: number;
   // readonly modelId: number;
@@ -71,8 +74,21 @@ export class SectorSceneImpl implements SectorScene {
   getSectorById(sectorId: number): SectorMetadata | undefined {
     return this.sectors.get(sectorId);
   }
+
   getAllSectors(): SectorMetadata[] {
     return [...this.sectors.values()];
+  }
+
+  getSectorsContainingPoint(p: vec3): SectorMetadata[] {
+    const accepted: SectorMetadata[] = [];
+    traverseDepthFirst(this.root, x => {
+      if (x.bounds.containsPoint(p)) {
+        accepted.push(x);
+        return true;
+      }
+      return false;
+    });
+    return accepted;
   }
 }
 
