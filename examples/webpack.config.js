@@ -122,10 +122,11 @@ const allExamples = [
 
 module.exports = env => {
   const development = arg(env, 'development', false);
+  const filter = arg(env, 'filter', undefined);
   logger.info("Build config:");
   logger.info(`  - development: ${development}`);
 
-  const examples = allExamples.map(example => {
+  let examples = allExamples.map(example => {
     const {name, title, entry, template} = example;
     return {
       name,
@@ -136,6 +137,10 @@ module.exports = env => {
       page: `example-${name}.html`,
     };
   });
+  if (filter) {
+    examples = examples.filter(example => example.name.match(filter))
+  }
+  logger.info(`  - examples: ${examples.length}`);
   const exampleEntries = examples.reduce((entries, example) => {
     const { entry, name } = example;
     entries[name] = entry;
