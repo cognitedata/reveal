@@ -8,7 +8,10 @@ const useTenantSelector = (appName: string) => {
   const [validatingTenant, setValidatingTenant] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
 
+  const initialTenant = localStorage.getItem('initialTenant');
+
   const onTenantSelected = (newTenant: string) => {
+    localStorage.setItem('initialTenant', newTenant);
     setRedirecting(true);
     const { hash, search } = window.location;
     const url = [`/${newTenant}`, search, hash].filter(Boolean).join('');
@@ -37,6 +40,7 @@ const useTenantSelector = (appName: string) => {
     onTenantSelected,
     validatingTenant,
     redirecting,
+    initialTenant,
   };
 };
 
