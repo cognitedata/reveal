@@ -87,6 +87,7 @@ pub fn convert_sector(sector: &crate::Sector) -> Sector {
             let i = cell_index_i_j % (cell_size[0]);
             let j = cell_index_i_j / (cell_size[0]);
             let k = cell_index / (cell_size_i_j);
+            // TODO this offset might be wrong
             let x = i as f32 + 0.5;
             let y = j as f32 + 0.5;
             let z = k as f32 + 0.5;
