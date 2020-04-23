@@ -9,6 +9,8 @@ varying vec3 v_normal;
 
 uniform sampler2D colorDataTexture;
 uniform sampler2D overrideVisibilityPerTreeIndex;
+uniform sampler2D matCapTexture;
+
 uniform vec2 dataTextureSize;
 
 uniform int renderMode;
@@ -24,5 +26,5 @@ void main() {
     if (dist > 0.25)
       discard;
 
-    updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragCoord.z);
+    updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragCoord.z, matCapTexture);
 }
