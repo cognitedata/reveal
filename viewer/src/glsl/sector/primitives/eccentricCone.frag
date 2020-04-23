@@ -137,6 +137,6 @@ void main() {
     normal = normalize(cross(A, B));
 #endif
 
-    updateFragmentDepth(p, projectionMatrix);
-    updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragDepthEXT, matCapTexture);
+    float fragDepth = updateFragmentDepth(p, projectionMatrix);
+    updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture);
 }
