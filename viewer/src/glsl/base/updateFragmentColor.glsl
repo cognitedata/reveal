@@ -14,14 +14,23 @@ vec3 packNormalToRgb( const in vec3 normal ) {
     return normalize( normal ) * 0.5 + 0.5;
 }
 
-void updateFragmentColor(int renderMode, vec3 color, float treeIndex, vec3 normal, float depth) {
+void updateFragmentColor(int renderMode, vec3 color, float treeIndex, vec3 normal, float depth, sampler2D matCapTexture) {
     if (renderMode == RenderTypeColor) {
         vec3 hsv = rgb2hsv(color);
         float h = hsv.x;
         hsv.z = min(0.6 * hsv.z + 0.4, 1.0);
         color = hsv2rgb(hsv);
         float amplitude = max(0.0, dot(normal, vec3(0.0, 0.0, 1.0)));
-        gl_FragColor = vec4(color * (0.4 + 0.6 * amplitude), h);
+        
+        vec4 albedo = vec4(color * (0.4 + 0.6 * amplitude), h);
+
+        vec2 cap = normal.xy * 0.5 + 0.5;
+
+        vec4 mc = vec4(texture2D(matCapTexture, cap).rgb, 1);
+        
+        gl_FragColor = albedo * mc * 2.0;
+
+
     } else if (renderMode == RenderTypePackColorAndNormal) {
         vec3 hsv = rgb2hsv(color);
         float a = 0.0;
