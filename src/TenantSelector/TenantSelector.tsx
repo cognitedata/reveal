@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Title5, Colors, Button, Input } from '@cognite/cogs.js';
+import { useTranslation } from 'react-i18next';
 
 import CardFooterError from 'CardFooterError';
 import { getSidecar, sanitizeTenant, errorSchema } from 'utils';
@@ -11,7 +12,7 @@ type Props = {
   validateTenant: (tenant: string) => Promise<boolean>;
   loading: boolean;
   initialTenant?: string;
-  error?: React.ReactNode;
+  errors?: React.ReactNode[];
 };
 
 type FormState = {
@@ -27,9 +28,10 @@ const TenantSelector = ({
   validateTenant,
   initialTenant,
   loading,
-  error,
+  errors,
 }: Props) => {
-  const { appName } = getSidecar();
+  const { t } = useTranslation('TenantSelector');
+  const { appName, applicationId } = getSidecar();
 
   const [formState, setFormState] = useState<FormState>({
     tenant: {
@@ -86,10 +88,13 @@ const TenantSelector = ({
     event.stopPropagation();
 
     if (!loading) {
-      const fieldsName = Object.keys(formState);
-      // if there is going to be more that one input field in the form we would need to loop through fieldsName array
-      // and submit only if all validation functions return isValid = true
-      if (fieldsName.every((field: string) => formState[field].isValid)) {
+      // if there is going to be more that one input field in the form we would
+      // need to loop through fieldsName array and submit only if all validation
+      // functions return isValid = true
+      const formValid = Object.values(formState).every(
+        ({ isValid }) => isValid
+      );
+      if (formValid) {
         validateTenant(formState.tenant.value)
           .then((isValid) => {
             if (isValid) {
@@ -107,11 +112,37 @@ const TenantSelector = ({
     }
   };
 
+  const tenantError = useMemo(() => {
+    if (!formState.tenant.error) {
+      return '';
+    }
+    return t('tenant-required_error', {
+      defaultValue: formState.tenant.error,
+    });
+  }, [t, formState.tenant.error]);
+
+  const errorList = useMemo(() => {
+    if (!errors) {
+      return null;
+    }
+    return errors.map((error) => {
+      return (
+        <CardFooterError style={{ marginTop: '16px' }}>{error}</CardFooterError>
+      );
+    });
+  }, [errors]);
+
   return (
     <StyledTenantSelector>
-      <Title5>Log in to</Title5>
+      <Title5>
+        {t('log-in-header', {
+          defaultValue: 'Log in to:',
+        })}
+      </Title5>
 
-      <StyledHeading className="name">{appName}</StyledHeading>
+      <StyledHeading className="name">
+        {t(`app-name_${applicationId}`, { defaultValue: appName })}
+      </StyledHeading>
 
       <CogniteMark color={Colors['yellow-4']} />
 
@@ -120,27 +151,28 @@ const TenantSelector = ({
           <div className="tenant-selector__company-item">
             <Input
               autoFocus
-              title="Company ID:"
+              title={t('company-id_input_title', {
+                defaultValue: 'Company ID:',
+              })}
               id="tenant"
               name="tenant"
-              placeholder="Enter Company ID"
+              placeholder={t('company-id_input_placeholder', {
+                defaultValue: 'Enter Company ID',
+              })}
               size="large"
               value={formState.tenant.value}
               onChange={handleOnChange}
-              error={formState.tenant.error}
+              error={tenantError}
               disabled={loading}
             />
           </div>
 
           <Button type="primary" onClick={onSubmit} loading={loading}>
-            Continue
+            {t('continue_button', { defaultValue: 'Continue' })}
           </Button>
         </form>
       </div>
-
-      {error && (
-        <CardFooterError style={{ marginTop: '16px' }}>{error}</CardFooterError>
-      )}
+      {errorList}
     </StyledTenantSelector>
   );
 };

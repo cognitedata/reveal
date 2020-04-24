@@ -1,6 +1,8 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { fireEvent } from '@testing-library/react';
+import { render } from 'utils/test';
 
+import { act } from 'react-dom/test-utils';
 import { Base, Loading } from './TenantSelector.stories';
 
 describe('<TenantSelector />', () => {
@@ -15,7 +17,9 @@ describe('<TenantSelector />', () => {
     const tenantInput = getByPlaceholderText(
       'Enter Company ID'
     ) as HTMLInputElement;
-    fireEvent.change(tenantInput, { target: { value: 'AKERBP_' } });
+    act(() => {
+      fireEvent.change(tenantInput, { target: { value: 'AKERBP_' } });
+    });
     expect(tenantInput.value).toEqual('akerbp');
   });
 

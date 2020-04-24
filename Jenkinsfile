@@ -92,7 +92,7 @@ podTemplate(
             return
           }
           previewServer(
-            buildCommand: 'yarn build',
+            buildCommand: 'yarn build preview',
             commentPrefix: PR_COMMENT_MARKER,
             buildFolder: 'build',
             prefix: 'pr',
@@ -107,6 +107,7 @@ podTemplate(
           }
 
           def domainName = isStaging ? STAGING_DOMAIN_NAME : RELEASE_DOMAIN_NAME
+          def variant = isStaging ? 'staging' : 'production'
 
           fas.build(
             useContainer: true,
@@ -119,7 +120,7 @@ podTemplate(
             // an incognito window and see if you get hit with a Google login
             // screen straight away.
             iap: isStaging,
-            buildCommand: 'yarn build',
+            buildCommand: "yarn build ${variant}",
           )
         }
       }

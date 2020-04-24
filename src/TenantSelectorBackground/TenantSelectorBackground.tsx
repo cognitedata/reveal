@@ -1,27 +1,30 @@
 import React from 'react';
 import LogoWithText from 'icons/LogoWithText';
+import { Centered } from 'styles/elements';
 import {
   Background,
   CogniteLogo,
   StyledIconWrapper,
   CLetter,
   NLetter,
+  DimmingOverlay,
 } from './elements';
 import { useIsDesktop } from '../useIsDesktop';
 
 interface Props {
-  children: React.ReactNode;
+  children: React.ReactNode | null;
   className?: string;
   backgroundImage: string;
 }
 
-const TenantSelectorBackground = (props: Props) => {
+const TenantSelectorBackground = ({
+  children,
+  className,
+  backgroundImage,
+}: Props) => {
   const isDesktop = useIsDesktop();
   return (
-    <Background
-      className={props.className}
-      backgroundImage={props.backgroundImage}
-    >
+    <Background className={className} backgroundImage={backgroundImage}>
       <CogniteLogo>
         <StyledIconWrapper>
           <LogoWithText />
@@ -33,7 +36,9 @@ const TenantSelectorBackground = (props: Props) => {
           <NLetter />
         </>
       ) : null}
-      {props.children}
+      <DimmingOverlay>
+        <Centered>{children}</Centered>
+      </DimmingOverlay>
     </Background>
   );
 };

@@ -1,12 +1,25 @@
-import React, { useState, useCallback } from 'react';
-import TitleChanger from 'TitleChanger.tsx';
+import React, { useState, useCallback, useEffect } from 'react';
+import TitleChanger from 'TitleChanger';
 import { getSidecar } from 'utils';
-import TenantSelectorScreen from 'TenantSelectorScreen';
 import useTenantSelector from 'useTenantSelector';
+import background from 'assets/background.jpg';
+import TenantSelectorBackground from 'TenantSelectorBackground';
+import TenantSelector from 'TenantSelector';
+import I18nContainer from 'I18nContainer';
+import Metrics from '@cognite/metrics';
+
+const { REACT_APP_MIXPANEL_TOKEN, REACT_APP_ENV, NODE_ENV } = process.env;
 
 const App = () => {
-  const { applicationId } = getSidecar();
+  const { applicationId, backgroundImage } = getSidecar();
   const [authenticating, setAuthenticating] = useState(false);
+
+  useEffect(() => {
+    Metrics.init({
+      mixpanelToken: REACT_APP_MIXPANEL_TOKEN,
+      environment: REACT_APP_ENV || NODE_ENV || 'development',
+    });
+  }, []);
 
   const possibleTenant = window.location.pathname.replace(
     /^\/([^/]*).*$/,
@@ -41,16 +54,16 @@ const App = () => {
   );
 
   return (
-    <>
-      <TitleChanger />
-      <TenantSelectorScreen
-        validateTenant={performValidation}
-        handleSubmit={onTenantSelected}
-        initialTenant={initialTenant || ''}
-        loading={isLoading}
-        error={undefined}
-      />
-    </>
+    <TenantSelectorBackground backgroundImage={backgroundImage || background}>
+      <I18nContainer>
+        <TitleChanger />
+        <TenantSelector
+          validateTenant={performValidation}
+          handleSubmit={onTenantSelected}
+          loading={isLoading}
+        />
+      </I18nContainer>
+    </TenantSelectorBackground>
   );
 };
 

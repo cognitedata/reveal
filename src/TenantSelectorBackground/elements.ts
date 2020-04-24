@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import CLetterImage from 'assets/CLetter.svg';
 import NLetterImage from 'assets/NLetter.svg';
 
-type BackgroundProps = {
+export type BackgroundProps = {
   backgroundImage: string;
 };
 
@@ -47,4 +47,11 @@ export const NLetter = styled(CLetter)`
   bottom: 9%;
   top: auto;
   left: auto;
+`;
+
+export const DimmingOverlay = styled.div`
+  > div {
+    background: rgba(0, 0, 0, 0.3);
+    height: 100vh;
+  }
 `;

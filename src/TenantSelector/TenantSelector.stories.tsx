@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-
 import { action } from '@storybook/addon-actions';
-import TenantSelector from './TenantSelector';
 import '@cognite/cogs.js/dist/cogs.css';
+
+import TenantSelector from './TenantSelector';
 
 export default {
   title: 'Authentication|TenantSelector',
@@ -55,17 +55,7 @@ export const WithError = () => {
   return (
     <TenantSelector
       {...tenantSelectorProps}
-      error={
-        <>
-          <div>
-            Something is taking longer than usual. Please refresh the page.
-          </div>
-          <div>
-            Contact <a href="mailto:support@cognite.com">support@cognite.com</a>{' '}
-            if the problem persists.
-          </div>
-        </>
-      }
+      errors={['This is just a storybook']}
     />
   );
 };
