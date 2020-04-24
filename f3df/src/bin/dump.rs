@@ -1,5 +1,4 @@
 use serde_derive::Serialize;
-use serde_yaml;
 use std::error::Error;
 use std::fs::File;
 use std::io::{stdout, BufReader};

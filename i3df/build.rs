@@ -1,8 +1,6 @@
 use heck::CamelCase;
-use i3df_specification;
 use indexmap::IndexMap;
 use quote::{format_ident, quote};
-use serde_yaml;
 use std::collections::HashMap;
 use std::env;
 use std::error::Error;
