@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { CogniteClient, CogniteInternalId, CogniteExternalId } from '@cognite/sdk';
+import { CogniteClient, CogniteInternalId, CogniteExternalId, IdEither } from '@cognite/sdk';
 import { HttpHeaders } from '@cognite/sdk/dist/src/utils/http/basicHttpClient';
 
 export type Model3dOutput = {
@@ -50,7 +50,7 @@ export class Model3dOutputList {
 type CogniteModel3dIdentifier = { id: CogniteInternalId } | { externalId: CogniteExternalId };
 
 interface OutputsRequest {
-  models: CogniteModel3dIdentifier[];
+  models: IdEither[];
   formats?: (string | CogniteWellknown3dFormat)[];
 }
 
@@ -97,12 +97,12 @@ export class CogniteClient3dExtensions {
   }
 
   public async getOutputs(
-    modelRevisionId: CogniteUniformId,
+    modelRevisionId: IdEither,
     formats?: (CogniteWellknown3dFormat | string)[]
   ): Promise<Model3dOutputList> {
     const url = `/api/playground/projects/${this.client.project}/3d/v2/outputs`;
     const request: OutputsRequest = {
-      models: [createModelIdentifier(modelRevisionId)],
+      models: [modelRevisionId],
       formats
     };
     const response = await this.client.post<OutputsResponse>(url, { data: request });

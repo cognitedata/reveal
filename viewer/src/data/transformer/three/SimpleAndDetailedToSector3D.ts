@@ -11,11 +11,11 @@ import { consumeSectorSimple } from '../../../views/threejs/cad/consumeSectorSim
 import { consumeSectorDetailed } from '../../../views/threejs/cad/consumeSectorDetailed';
 import { ParsedSector } from '../../model/ParsedSector';
 import { LevelOfDetail } from '../../model/LevelOfDetail';
-import { ExternalSource, CDFSource } from '../../model/DataSource';
+import { ExternalSource } from '../../model/ExternalSource';
+import { CdfBlobSource } from '../../model/CDFBlobSource';
 
 export class SimpleAndDetailedToSector3D {
   private readonly materialMap: Map<string, Materials> = new Map();
-  // private readonly materials: Materials;
   constructor() {}
 
   addMaterial(key: string, materials: Materials) {
@@ -58,9 +58,9 @@ export class SimpleAndDetailedToSector3D {
   }
 
   // TODO: j-bjorne 20-04-20: Move into a utils class since it is used multiple places.
-  private sourceLodToString(item: { dataSource: ExternalSource | CDFSource; levelOfDetail: LevelOfDetail }) {
-    if (item.dataSource.discriminator === 'cdf') {
-      return '' + item.dataSource.modelId + '.' + item.levelOfDetail;
+  private sourceLodToString(item: { dataSource: ExternalSource | CdfBlobSource; levelOfDetail: LevelOfDetail }) {
+    if (item.dataSource.discriminator === 'cdf-blob') {
+      return '' + item.dataSource.blobId + '.' + item.levelOfDetail;
     } else if (item.dataSource.discriminator === 'external') {
       return '' + item.dataSource.url + '' + item.levelOfDetail;
     }

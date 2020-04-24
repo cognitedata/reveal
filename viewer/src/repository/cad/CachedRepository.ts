@@ -5,7 +5,7 @@
 import { Repository } from './Repository';
 import { WantedSector } from '../../data/model/WantedSector';
 import { LevelOfDetail } from '../../data/model/LevelOfDetail';
-import { OperatorFunction, pipe, Observable, from, merge, partition, of, asapScheduler, zip, empty } from 'rxjs';
+import { OperatorFunction, pipe, Observable, from, merge, partition, of, asapScheduler, zip } from 'rxjs';
 import {
   publish,
   filter,
@@ -28,13 +28,7 @@ import { MemoryRequestCache } from '../../cache/MemoryRequestCache';
 import { ParseCtmResult, ParseSectorResult } from '../../workers/types/parser.types';
 import { Sector, TriangleMesh, InstancedMeshFile, InstancedMesh } from '../../models/cad/types';
 import { createOffsetsArray } from '../../utils/arrayUtils';
-import { BinaryBlobFileProvider } from '../../data/provider/BinaryBlobFileProvider';
-import { BinaryFileProvider } from '../../data/provider/BinaryFileProvider';
-import { CDFSource, ExternalSource } from '../../data/model/DataSource';
-
-// TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
-
-interface DataRetriever extends BinaryBlobFileProvider, BinaryFileProvider {}
+import { ModelDataRetriever } from '../../datasources/ModelDataRetriever';
 
 export class CachedRepository implements Repository {
   private readonly _modelDataCache: MemoryRequestCache<string, Observable<ConsumedSector>> = new MemoryRequestCache({
@@ -44,15 +38,9 @@ export class CachedRepository implements Repository {
     maxElementsInCache: 300
   });
   private readonly _modelDataParser: CadSectorParser;
-  private readonly _dataRetriever: DataRetriever;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
 
-  constructor(
-    dataRetriever: DataRetriever,
-    modelDataParser: CadSectorParser,
-    modelDataTransformer: SimpleAndDetailedToSector3D
-  ) {
-    this._dataRetriever = dataRetriever;
+  constructor(modelDataParser: CadSectorParser, modelDataTransformer: SimpleAndDetailedToSector3D) {
     this._modelDataParser = modelDataParser;
     this._modelDataTransformer = modelDataTransformer;
   }
@@ -105,17 +93,20 @@ export class CachedRepository implements Repository {
         filter(wantedSector => wantedSector.levelOfDetail === LevelOfDetail.Simple),
         flatMap((wantedSector: WantedSector) => {
           let networkPromise: Promise<ArrayBuffer>;
-          if (wantedSector.dataSource.discriminator === 'cdf') {
-            networkPromise = this._dataRetriever.fetchBinaryFileByPath(
-              wantedSector.dataSource.modelId,
+          /*
+          if (wantedSector.dataSource.discriminator === 'cdf-blob') {
+            networkPromise = this._dataRetriever.fetchBinaryFileFromCdf(
+              wantedSector.dataSource.blobId,
               wantedSector.metadata.facesFile.fileName!
             );
           } else if (wantedSector.dataSource.discriminator === 'external') {
-            networkPromise = this._dataRetriever.fetchBinaryFileByUrl(
+            networkPromise = this._dataRetriever.fetchBinaryFileFromUrl(
               wantedSector.dataSource.url + '/' + wantedSector.metadata.facesFile.fileName!
             );
-          }
-          const networkObservable: Observable<ConsumedSector> = from(() => networkPromise).pipe(
+          } */
+          const networkObservable: Observable<ConsumedSector> = from(
+            wantedSector.dataRetriever.fetchData(wantedSector.metadata.facesFile.fileName!)
+          ).pipe(
             retry(3),
             map(arrayBuffer => ({ format: 'f3d', data: new Uint8Array(arrayBuffer) })),
             this._modelDataParser.parse(),
@@ -147,22 +138,7 @@ export class CachedRepository implements Repository {
         flatMap(wantedSector => {
           const i3dFileObservable = of(wantedSector.metadata.indexFile).pipe(
             flatMap(
-              indexFile => {
-                let networkPromise: Promise<ArrayBuffer>;
-                if (wantedSector.dataSource.discriminator === 'cdf') {
-                  networkPromise = this._dataRetriever.fetchBinaryFileByPath(
-                    wantedSector.dataSource.modelId,
-                    indexFile.fileName!
-                  );
-                } else if (wantedSector.dataSource.discriminator === 'external') {
-                  networkPromise = this._dataRetriever.fetchBinaryFileByUrl(
-                    wantedSector.dataSource.url + '/' + indexFile.fileName!
-                  );
-                } else {
-                  throw new Error('unknown type');
-                }
-                return networkPromise;
-              },
+              indexFile => wantedSector.dataRetriever.fetchData(indexFile.fileName),
               (_, response) => ({
                 format: 'i3d',
                 data: new Uint8Array(response)
@@ -173,7 +149,7 @@ export class CachedRepository implements Repository {
           );
 
           const ctmFilesObservable = from(wantedSector.metadata.indexFile.peripheralFiles).pipe(
-            map(fileName => ({ dataSource: wantedSector.dataSource, fileName})),
+            map(fileName => ({ dataRetriever: wantedSector.dataRetriever, cadModelIdentifier: wantedSector.cadModelIdentifier, fileName })),
             this.loadCtmFile(),
             reduce((accumulator, value) => {
               accumulator.set(value.fileName, value.data);
@@ -204,7 +180,7 @@ export class CachedRepository implements Repository {
   }
 
   private loadCtmFile(): OperatorFunction<
-    { dataSource: CDFSource | ExternalSource; fileName: string },
+    { dataRetriever: ModelDataRetriever; cadModelIdentifier: string; fileName: string },
     { fileName: string; data: ParseCtmResult }
   > {
     return publish(ctmRequestObservable => {
@@ -224,24 +200,13 @@ export class CachedRepository implements Repository {
   }
 
   private loadCtmFileFromNetwork(): OperatorFunction<
-    { dataSource: CDFSource | ExternalSource; fileName: string },
+    { dataRetriever: ModelDataRetriever; cadModelIdentifier: string; fileName: string },
     { fileName: string; data: ParseCtmResult }
   > {
     return pipe(
       flatMap(
         ctmRequest => {
-          let networkPromise: Promise<ArrayBuffer>;
-          if (ctmRequest.dataSource.discriminator === 'cdf') {
-            networkPromise = this._dataRetriever.fetchBinaryFileByPath(
-              ctmRequest.dataSource.modelId,
-              ctmRequest.fileName
-            );
-          } else if (ctmRequest.dataSource.discriminator === 'external') {
-            networkPromise = this._dataRetriever.fetchBinaryFileByUrl(
-              ctmRequest.dataSource.url + '/' + ctmRequest.fileName!
-            );
-          }
-          const networkObservable = from(() => networkPromise).pipe(
+          const networkObservable = from(() => ctmRequest.dataRetriever.fetchData(ctmRequest.fileName)).pipe(
             retry(3),
             map(arrayBuffer => ({ format: 'ctm', data: new Uint8Array(arrayBuffer) })),
             this._modelDataParser.parse(),
@@ -434,21 +399,11 @@ export class CachedRepository implements Repository {
     return [r, g, b, a];
   }
 
-  private ctmCacheKey(ctmRequest: { dataSource: CDFSource | ExternalSource; fileName: string }) {
-    if (ctmRequest.dataSource.discriminator === 'cdf') {
-      return '' + ctmRequest.dataSource.modelId + '.' + ctmRequest.fileName;
-    } else if (ctmRequest.dataSource.discriminator === 'external') {
-      return '' + ctmRequest.dataSource.url + '' + ctmRequest.fileName;
-    }
-    throw new Error('unknown datasource');
+  private ctmCacheKey(ctmRequest: { cadModelIdentifier: string; fileName: string }) {
+    return '' + ctmRequest.cadModelIdentifier + '.' + ctmRequest.fileName;
   }
 
   private cacheKey(wantedSector: WantedSector) {
-    if (wantedSector.dataSource.discriminator === 'cdf') {
-      return '' + wantedSector.dataSource.modelId + '.' + wantedSector.levelOfDetail;
-    } else if (wantedSector.dataSource.discriminator === 'external') {
-      return '' + wantedSector.dataSource.url + '' + wantedSector.levelOfDetail;
-    }
-    throw new Error('unknown datasource');
+    return '' + wantedSector.cadModelIdentifier + '.' + wantedSector.metadata.id;
   }
 }

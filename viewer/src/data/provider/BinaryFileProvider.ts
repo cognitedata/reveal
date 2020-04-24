@@ -3,5 +3,6 @@
  */
 
 export interface BinaryFileProvider {
-  fetchBinaryFileByUrl(url: string): Promise<Uint8Array>;
+  fetchBinaryFileFromUrl(url: string): Promise<Uint8Array>;
+  fetchBinaryFileFromCdf(blobId: number, filePath: string): Promise<Uint8Array>;
 }
