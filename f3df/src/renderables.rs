@@ -1,4 +1,3 @@
-use nalgebra;
 use serde_derive::Serialize;
 use std::collections::HashMap;
 use std::f32::consts::{FRAC_PI_2, PI};
