@@ -11,6 +11,7 @@ import { SectorSceneImpl, SectorScene } from '../../models/cad/SectorScene';
 import { mat4, vec3 } from 'gl-matrix';
 import { generateSectorTree } from '../testUtils/createSectorMetadata';
 import { DetermineSectorsByProximityInput } from '../../models/cad/determineSectors';
+import { LevelOfDetail } from '../../data/model/LevelOfDetail';
 
 type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 
@@ -62,6 +63,40 @@ describe('ByVisibilityGpuSectorCuller', () => {
     expect(sectors2).not.toBeEmpty();
     expect(model2.scene.getAllSectors()).toContainAllValues(sectors2.map(x => x.metadata));
   });
+
+  test('determineSectors returns sector from coverate utility by priority', () => {
+    // Arrange
+    const determineSectorCost = (sector: SectorMetadata, lod: LevelOfDetail) => {
+      switch (lod) {
+        case LevelOfDetail.Detailed:
+          return [10, 10, 100][sector.id];
+        case LevelOfDetail.Simple:
+          return 1;
+        default:
+          return 0;
+      }
+    };
+    const culler = new ByVisibilityGpuSectorCuller(camera, { coverageUtil, determineSectorCost, costLimit: 20 });
+    const model = createModel(generateSectorTree(2, 2));
+    culler.addModel(model);
+    coverageUtil.orderSectorsByVisibility = () => {
+      return [
+        { scene: model.scene, sectorId: 0, priority: 1000.0 },
+        { scene: model.scene, sectorId: 1, priority: 100.0 },
+        { scene: model.scene, sectorId: 2, priority: 10.0 }
+      ];
+    };
+    // Place camera far away to avoid sectors being loaded because camera is near them
+    const cameraPosition = vec3.fromValues(1000, 1000, 1000);
+    const input = createDetermineSectorInput(model.scene, cameraPosition);
+
+    // Act
+    const sectors = culler.determineSectors(input);
+
+    // Assert
+    expect(sectors.filter(x => x.levelOfDetail === LevelOfDetail.Detailed).map(x => x.sectorId)).toEqual([0, 1]);
+    expect(sectors.filter(x => x.levelOfDetail === LevelOfDetail.Simple).map(x => x.sectorId)).toEqual([2]);
+  });
 });
 
 function createModel(root: SectorMetadata): CadModel {
@@ -79,11 +114,11 @@ function createModel(root: SectorMetadata): CadModel {
   return model;
 }
 
-function createDetermineSectorInput(scene: SectorScene): DetermineSectorsByProximityInput {
+function createDetermineSectorInput(scene: SectorScene, cameraPosition?: vec3): DetermineSectorsByProximityInput {
   const determineSectorsInput: DetermineSectorsByProximityInput = {
     sectorScene: scene,
     cameraFov: 60.0,
-    cameraPosition: vec3.fromValues(0, 0, 0),
+    cameraPosition: cameraPosition || vec3.fromValues(0, 0, 0),
     cameraModelMatrix: mat4.identity(mat4.create()),
     projectionMatrix: mat4.identity(mat4.create())
   };

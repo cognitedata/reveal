@@ -58,8 +58,6 @@ export type PrioritizedSectorIdentifier = {
    * A number between 0 and 1 indicating how 'important' the sector is.
    */
   priority: number;
-
-  depth: number;
 };
 
 /**

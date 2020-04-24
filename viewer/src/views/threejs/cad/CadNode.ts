@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { Subject, Observable, animationFrameScheduler } from 'rxjs';
-import { publish, share, map, observeOn, tap, filter, mergeAll, debounceTime } from 'rxjs/operators';
+import { publish, share, map, observeOn, tap, filter, mergeAll, auditTime } from 'rxjs/operators';
 
 import { SectorModelTransformation, SectorMetadata, Sector, SectorQuads } from '../../../models/cad/types';
 import { SectorScene } from '../../../models/cad/SectorScene';
@@ -198,7 +198,7 @@ export class CadNode extends THREE.Object3D {
       .pipe(
         // TODO 2020-04-15 larsmoa: Reduce delay to something more sensible
         // Temporary workaround to avoid flooding the GPU pipeline with readPixels.
-        debounceTime(150),
+        auditTime(650),
         fromThreeCameraConfig(),
         // Determine all wanted sectors
         map(input => this._sectorCuller.determineSectors(input)),

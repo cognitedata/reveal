@@ -6,7 +6,7 @@ import { LevelOfDetail } from '../data/model/LevelOfDetail';
 import { SectorMetadata } from '../models/cad/types';
 import { SectorScene } from '../models/cad/SectorScene';
 import { traverseUpwards, traverseDepthFirst } from '../utils/traversal';
-import { PrioritizedWantedSector } from './types';
+import { PrioritizedWantedSector, DetermineSectorCostDelegate } from './types';
 
 export class TakenSectorTree {
   get totalCost(): number {
@@ -18,9 +18,12 @@ export class TakenSectorTree {
     cost: number;
     lod: LevelOfDetail;
   }[] = [];
+  private readonly determineSectorCost: DetermineSectorCostDelegate;
+
   private _totalCost = 0.0;
 
-  constructor(sectorRoot: SectorMetadata) {
+  constructor(sectorRoot: SectorMetadata, determineSectorCost: DetermineSectorCostDelegate) {
+    this.determineSectorCost = determineSectorCost;
     // Allocate space for all sectors
     traverseDepthFirst(sectorRoot, x => {
       this.sectors.length = Math.max(this.sectors.length, x.id);
@@ -57,15 +60,6 @@ export class TakenSectorTree {
     if (this.sectors[sectorId].lod === LevelOfDetail.Detailed) {
       return;
     }
-    // if (this.getSectorLod(sectorId) === LevelOfDetail.Simple) {
-    //   this.replaceSimpleWithDetailed(sectorId);
-    // } else {
-    //   this.setSectorLod(sectorId, LevelOfDetail.Detailed);
-    // }
-    // Walk tree upwards and:
-    // - 1. find simple sectors and replace with detailed
-    //      by marking all children as simple
-    // - 2. add all anchestors as detailed
     traverseUpwards(this.sectors[sectorId].sector, x => {
       switch (this.sectors[x.id].lod) {
         case LevelOfDetail.Simple:
@@ -112,7 +106,7 @@ export class TakenSectorTree {
     assert(lod !== LevelOfDetail.Simple || this.sectors[sectorId].sector.facesFile.fileName !== null);
     this.sectors[sectorId].lod = lod;
     this._totalCost -= this.sectors[sectorId].cost;
-    this.sectors[sectorId].cost = computeSectorCost(this.sectors[sectorId].sector, lod);
+    this.sectors[sectorId].cost = this.determineSectorCost(this.sectors[sectorId].sector, lod);
     this._totalCost += this.sectors[sectorId].cost;
   }
   private setSectorPriority(sectorId: number, priority: number) {
@@ -126,15 +120,4 @@ export class TakenSectorTree {
 function assert(condition: boolean, message: string = 'assertion hit') {
   // tslint:disable-next-line: no-console
   console.assert(condition, message);
-}
-
-function computeSectorCost(metadata: SectorMetadata, lod: LevelOfDetail): number {
-  switch (lod) {
-    case LevelOfDetail.Detailed:
-      return metadata.indexFile.downloadSize;
-    case LevelOfDetail.Simple:
-      return metadata.facesFile.downloadSize;
-    default:
-      throw new Error(`Can't compute cost for lod ${lod}`);
-  }
 }

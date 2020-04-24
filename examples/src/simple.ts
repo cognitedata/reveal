@@ -7,6 +7,7 @@ import CameraControls from 'camera-controls';
 import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams, createClientIfNecessary } from './utils/loaders';
 import * as reveal_threejs from '@cognite/reveal/threejs';
 import * as reveal from '@cognite/reveal';
+import { PrioritizedWantedSector } from '@cognite/reveal/culling/types';
 
 CameraControls.install({ THREE });
 
@@ -17,7 +18,10 @@ async function main() {
 
   const camera = new THREE.PerspectiveCamera();
   const coverageUtil = new reveal_threejs.GpuOrderSectorsByVisibleCoverage();
-  const sectorCuller = new reveal.internal.ByVisibilityGpuSectorCuller(camera, { coverageUtil, costLimitMb: 40 });
+  const sectorCuller = new reveal.internal.ByVisibilityGpuSectorCuller(camera, {
+    coverageUtil,
+    costLimit: 70 * 1024 * 1024
+  });
 
   const scene = new THREE.Scene();
   const cadModel = await loadCadModelFromCdfOrUrl(
@@ -26,7 +30,7 @@ async function main() {
   );
   sectorCuller.addModel(cadModel);
   const cadNode = new reveal_threejs.CadNode(cadModel, { internal: { sectorCuller } });
-  cadNode.renderHints = { showSectorBoundingBoxes: true };
+  cadNode.renderHints = { showSectorBoundingBoxes: false };
   let sectorsNeedUpdate = true;
   cadNode.addEventListener('update', () => {
     sectorsNeedUpdate = true;
@@ -76,15 +80,11 @@ async function main() {
           }
           return l.levelOfDetail - r.levelOfDetail;
         });
-      const duplicateCount = lastWanted.reduce((count, x, i) => {
-        if (i !== 0 && lastWanted[i - 1].sectorId === x.sectorId && lastWanted[i - 1].scene === x.scene) {
-          return count + 1;
-        }
-        return count;
-      }, 0);
+
       console.log('Last list of wanted sectors:\n', lastWanted);
-      console.log(`Duplicate count: ${duplicateCount}`);
-      const paths = lastWanted.map(x => `${x.metadata.path} [lod=${x.levelOfDetail}, id=${x.sectorId}]`).sort();
+      const paths = lastWanted
+        .map((x: PrioritizedWantedSector) => `${x.metadata.path} [lod=${x.levelOfDetail}, id=${x.sectorId}]`)
+        .sort();
       console.log('Paths:', paths);
     }
   });

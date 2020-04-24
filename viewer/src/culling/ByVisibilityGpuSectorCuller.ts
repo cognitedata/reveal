@@ -6,6 +6,7 @@
 // If we add other rendering engines, we should consider to implement this in 'pure'
 // WebGL.
 import * as THREE from 'three';
+import { mat4 } from 'gl-matrix';
 
 import { WantedSector } from '../data/model/WantedSector';
 import { SectorScene } from '../models/cad/SectorScene';
@@ -17,18 +18,26 @@ import {
 } from '../views/threejs/OrderSectorsByVisibilityCoverage';
 import { SectorCuller } from './SectorCuller';
 import { TakenSectorTree } from './TakenSectorTree';
-import { PrioritizedWantedSector } from './types';
+import { PrioritizedWantedSector, DetermineSectorCostDelegate } from './types';
 import { fromThreeMatrix } from '../views/threejs/utilities';
-import { mat4 } from 'gl-matrix';
+import { LevelOfDetail } from '../data/model/LevelOfDetail';
+import { SectorMetadata } from '../models/cad/types';
 
 /**
  * Options for creating GpuBasedSectorCuller.
  */
 export type ByVisibilityGpuSectorCullerOptions = {
   /**
-   * Limit of how much data (measured in megabytes) to load for a given view point.
+   * Limit of how much data to load for a given view point. By default cost is measured in
+   * downloaded bytes per sector.
    */
-  costLimitMb?: number;
+  costLimit?: number;
+
+  /**
+   * Optional callback for determining the cost of a sector. The default unit of the cost
+   * function is bytes downloaded.
+   */
+  determineSectorCost?: DetermineSectorCostDelegate;
 
   /**
    * Sectors within this distance from the camera will always be loaded in high details.
@@ -55,11 +64,15 @@ class TakenSectorMap {
     return totalCost;
   }
   private readonly maps: Map<SectorScene, TakenSectorTree> = new Map();
+  private readonly determineSectorCost: DetermineSectorCostDelegate;
 
   // TODO 2020-04-21 larsmoa: Unit test TakenSectorMap
+  constructor(determineSectorCost: DetermineSectorCostDelegate) {
+    this.determineSectorCost = determineSectorCost;
+  }
 
   initializeScene(scene: SectorScene) {
-    this.maps.set(scene, new TakenSectorTree(scene.root));
+    this.maps.set(scene, new TakenSectorTree(scene.root, this.determineSectorCost));
   }
 
   getWantedSectorCount(): number {
@@ -89,34 +102,42 @@ class TakenSectorMap {
   }
 }
 
+const invalidMatrixArray: number[] = Array(16).map(_ => NaN);
+
 /**
  * SectorCuller that uses the GPU to determine an approximation
  * of how "visible" each sector is to get a priority for each sector
  * and loads sectors based on priority within a budget.
  */
 export class ByVisibilityGpuSectorCuller implements SectorCuller {
-  public static readonly DefaultCostLimitMb = 110;
+  public static readonly DefaultCostLimit = 50 * 1024 * 1024;
   public static readonly DefaultHighDetailProximityThreshold = 10;
 
   private readonly options: Required<ByVisibilityGpuSectorCullerOptions>;
   private readonly camera: THREE.PerspectiveCamera;
   private readonly models: CadModel[] = [];
-  private readonly lastUpdate = {
-    matrix: new THREE.Matrix4(),
-    projectionMatrix: new THREE.Matrix4(),
-    takenSectors: new TakenSectorMap()
+  private readonly lastUpdate: {
+    matrix: THREE.Matrix4;
+    projectionMatrix: THREE.Matrix4;
+    takenSectors: TakenSectorMap;
   };
 
   constructor(camera: THREE.PerspectiveCamera, options?: ByVisibilityGpuSectorCullerOptions) {
     this.options = {
-      costLimitMb:
-        options && options.costLimitMb ? options.costLimitMb : ByVisibilityGpuSectorCuller.DefaultCostLimitMb,
+      costLimit: options && options.costLimit ? options.costLimit : ByVisibilityGpuSectorCuller.DefaultCostLimit,
+      determineSectorCost:
+        options && options.determineSectorCost ? options.determineSectorCost : computeSectorCostAsDownloadSize,
       highDetailProximityThreshold:
         options && options.highDetailProximityThreshold
           ? options.highDetailProximityThreshold
           : ByVisibilityGpuSectorCuller.DefaultHighDetailProximityThreshold,
 
       coverageUtil: options && options.coverageUtil ? options.coverageUtil : new GpuOrderSectorsByVisibilityCoverage()
+    };
+    this.lastUpdate = {
+      matrix: new THREE.Matrix4().fromArray(invalidMatrixArray),
+      projectionMatrix: new THREE.Matrix4().fromArray(invalidMatrixArray),
+      takenSectors: new TakenSectorMap(this.options.determineSectorCost)
     };
     this.camera = camera;
   }
@@ -161,7 +182,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     this.lastUpdate.matrix = this.camera.matrix.clone();
     this.lastUpdate.projectionMatrix = this.camera.projectionMatrix.clone();
 
-    const costLimit = this.options.costLimitMb * 1024 * 1024;
+    const costLimit = this.options.costLimit;
 
     // Add high details for all sectors the camera is inside or near
     const proximityThreshold = 10;
@@ -212,5 +233,16 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
         takenSectors.markSectorDetailed(model.scene, intersectingSectors[i].id, Infinity);
       }
     });
+  }
+}
+
+function computeSectorCostAsDownloadSize(metadata: SectorMetadata, lod: LevelOfDetail): number {
+  switch (lod) {
+    case LevelOfDetail.Detailed:
+      return metadata.indexFile.downloadSize;
+    case LevelOfDetail.Simple:
+      return metadata.facesFile.downloadSize;
+    default:
+      throw new Error(`Can't compute cost for lod ${lod}`);
   }
 }
