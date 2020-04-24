@@ -87,7 +87,10 @@ pub fn convert_sector(sector: &crate::Sector) -> Sector {
             let i = cell_index_i_j % (cell_size[0]);
             let j = cell_index_i_j / (cell_size[0]);
             let k = cell_index / (cell_size_i_j);
-            // TODO this offset might be wrong
+            // TODO dragly 2020-04-24 The below offset of 0.5 might be wrong: when swapping between
+            // simple and detailed geometry in a sector, the geometry appears to "jump" a bit.
+            // This should maybe be set to either 0.0 or 1.0 instead, but this needs to be
+            // investigated first.
             let x = i as f32 + 0.5;
             let y = j as f32 + 0.5;
             let z = k as f32 + 0.5;
