@@ -49,9 +49,7 @@ export interface RevealOptions {
   };
 }
 
-export interface OnSectorLoaded {
-  loaded(cadNode: CadNode): void;
-}
+export type OnDataUpdated = () => void;
 
 export class RevealManager {
   private readonly _sectorRepository: CachedRepository;
@@ -62,18 +60,22 @@ export class RevealManager {
   private readonly _nodeObservable: Observable<CadNode>;
   private readonly _sceneObservable: Observable<CadNode[]>;
 
-  private readonly _sectorRepositoryMap: Map<string, CadNode> = new Map();
+  private readonly _cadNodeMap: Map<string, CadNode> = new Map();
 
   private _sectorCuller: SectorCuller;
   // private _budget: CadBudget;
 
-  constructor(client: CogniteClient, options?: RevealOptions) {
+  constructor(client: CogniteClient, dataUpdatedCallback: OnDataUpdated, options?: RevealOptions) {
     this._sectorCuller = (options && options.internal && options.internal.sectorCuller) || new ProximitySectorCuller();
     // this._budget = (options && options.budget) || createDefaultCadBudget();
     const modelDataParser: CadSectorParser = new CadSectorParser();
     const modelDataTransformer: SimpleAndDetailedToSector3D = new SimpleAndDetailedToSector3D();
 
     this._sectorRepository = new CachedRepository(modelDataParser, modelDataTransformer);
+    this._sectorRepository.getParsedData().subscribe(parsedSector => {
+      const cadNode = this._cadNodeMap.get(parsedSector.cadModelIdentifier);
+      
+    });
 
     this._modelObservable = this._modelSubject.pipe(
       publish(addModelObservable => {
@@ -105,14 +107,14 @@ export class RevealManager {
       map(wrapper => {
         const cadModel = wrapper.cadModel;
         const node = new CadNode(cadModel, options);
-        this._sectorRepositoryMap.set(cadModel.identifier, node);
+        this._cadNodeMap.set(cadModel.identifier, node);
         modelDataTransformer.addMaterial(cadModel.identifier, node.materialManager.materials);
         wrapper.callbacks.success(node);
         return node;
       })
     );
     this._sceneObservable = this._nodeObservable.pipe(toArray());
-    this._cameraSubject = this.createLoadSectorsPipeline();
+    this._cameraSubject = this.createLoadSectorsPipeline(dataUpdatedCallback);
   }
 
   public addModelFromCdf(modelRevision: string | number): Promise<CadNode> {
@@ -153,7 +155,7 @@ export class RevealManager {
     return { externalId: id };
   }
 
-  private createLoadSectorsPipeline(): Subject<THREE.PerspectiveCamera> {
+  private createLoadSectorsPipeline(callback: OnDataUpdated): Subject<THREE.PerspectiveCamera> {
     const pipeline = new Subject<THREE.PerspectiveCamera>();
     pipeline
       .pipe(
@@ -178,8 +180,9 @@ export class RevealManager {
         observeOn(animationFrameScheduler)
       ) // Consume sectors
       .subscribe((sector: ConsumedSector) => {
-        const sectorNodeParent = this._sectorRepositoryMap.get(sector.cadModelIdentifier)!.rootSector;
-        const sectorNode = sectorNodeParent?.sectorNodeMap.get(sector.metadata.id);
+        const cadNode = this._cadNodeMap.get(sector.cadModelIdentifier);
+        const sectorNodeParent = cadNode!.rootSector;
+        const sectorNode = sectorNodeParent!.sectorNodeMap.get(sector.metadata.id);
         if (!sectorNode) {
           throw new Error(`Could not find 3D node for sector ${sector.metadata.id} - invalid id?`);
         }
@@ -196,7 +199,7 @@ export class RevealManager {
         }
         sectorNode.group = sector.group;
         // this.updateSectorBoundingBoxes(sector);
-        // this.dispatchEvent({ type: 'update' });
+        callback();
       });
     return pipeline;
   }

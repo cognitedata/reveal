@@ -21,7 +21,7 @@ describe('createPointCloudModel', () => {
       .reply(404);
 
     // Act
-    expect(createPointCloudModel(client, 1337)).rejects.toThrowError();
+    expect(createPointCloudModel(client, { id: 1337 })).rejects.toThrowError();
   });
 
   test('valid modelId without point cloud output, throws', async () => {
@@ -31,7 +31,7 @@ describe('createPointCloudModel', () => {
       .reply(200, []);
 
     // Act
-    expect(createPointCloudModel(client, 1337)).rejects.toThrowError();
+    expect(createPointCloudModel(client, { id: 1337 })).rejects.toThrowError();
   });
 
   test('valid modelId point cloud output, returns model', async () => {
@@ -55,7 +55,7 @@ describe('createPointCloudModel', () => {
       .reply(200, response);
 
     // Act
-    const model = await createPointCloudModel(client, 1337);
+    const model = await createPointCloudModel(client, { id: 1337 });
     expect(model).toBeTruthy();
   });
 });

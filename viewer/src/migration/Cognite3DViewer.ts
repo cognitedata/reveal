@@ -8,13 +8,14 @@ import debounce from 'lodash/debounce';
 import ComboControls from '@cognite/three-combo-controls';
 import { CogniteClient } from '@cognite/sdk';
 
-import { Cognite3DModel, createCognite3DModel } from './Cognite3DModel';
+import { Cognite3DModel } from './Cognite3DModel';
 import { Cognite3DViewerOptions, AddModelOptions } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { Intersection } from './intersection';
 import RenderController from './RenderController';
 import { intersectCadNodes } from '../threejs';
 import { from3DPositionToRelativeViewportCoordinates } from '../views/threejs/worldToViewport';
+import { RevealManager, NodeAppearance } from '../views/threejs';
 
 export interface RelativeMouseEvent {
   offsetX: number;
@@ -38,6 +39,7 @@ export class Cognite3DViewer {
   private readonly scene: THREE.Scene;
   private readonly controls: ComboControls;
   private readonly sdkClient: CogniteClient;
+  private readonly revealManager: RevealManager;
   private modelsNeedUpdate = true;
 
   private readonly eventListeners = {
@@ -90,6 +92,22 @@ export class Cognite3DViewer {
 
     this.sdkClient = options.sdk;
     this.renderController = new RenderController(this.camera);
+    /*
+    const nodeAppearance: NodeAppearance = {
+      color: (treeIndex: number) => {
+        return this.nodeColors.get(treeIndex);
+      },
+      visible: (treeIndex: number) => {
+        return this.hiddenNodes.has(treeIndex) ? false : true;
+      }
+    };*/
+    this.revealManager = new RevealManager(
+      this.sdkClient,
+      () => {
+        this.modelsNeedUpdate = true;
+      }
+      //{ nodeAppearance }
+    );
     this.startPointerEventListeners();
 
     this.animate(0);
@@ -161,10 +179,8 @@ export class Cognite3DViewer {
     if (options.localPath) {
       throw new NotSupportedInMigrationWrapperError();
     } else {
-      const model3d = await createCognite3DModel(options.modelId, options.revisionId, this.sdkClient);
-      model3d.cadNode.addEventListener('update', () => {
-        this.modelsNeedUpdate = true;
-      });
+      const cadNode = await this.revealManager.addModelFromCdf(options.revisionId);
+      const model3d = new Cognite3DModel(options.modelId, options.revisionId, cadNode, this.sdkClient);
       this.models.push(model3d);
       this.scene.add(model3d);
       return model3d;
@@ -395,9 +411,7 @@ export class Cognite3DViewer {
       }
       this.controls.update(this.clock.getDelta());
       renderController.update();
-      for (const model of this.models) {
-        model.cadNode.update(this.camera);
-      }
+      this.revealManager.update(this.camera);
       if (renderController.needsRedraw || this.forceRendering || this.modelsNeedUpdate) {
         this.updateNearAndFarPlane(this.camera);
         this.renderer.render(this.scene, this.camera);
