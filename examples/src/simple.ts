@@ -13,13 +13,17 @@ CameraControls.install({ THREE });
 async function main() {
   const urlParams = new URL(location.href).searchParams;
   const modelIdentifier = createModelIdentifierFromUrlParams(urlParams, '/primitives');
+  const apiKey = urlParams.get('apiKey');
 
   const camera = new THREE.PerspectiveCamera();
   const coverageUtil = new reveal_threejs.GpuOrderSectorsByVisibleCoverage();
   const sectorCuller = new reveal.internal.ByVisibilityGpuSectorCuller(camera, { coverageUtil, costLimitMb: 40 });
 
   const scene = new THREE.Scene();
-  const cadModel = await loadCadModelFromCdfOrUrl(modelIdentifier, await createClientIfNecessary(modelIdentifier));
+  const cadModel = await loadCadModelFromCdfOrUrl(
+    modelIdentifier,
+    await createClientIfNecessary(modelIdentifier, apiKey)
+  );
   sectorCuller.addModel(cadModel);
   const cadNode = new reveal_threejs.CadNode(cadModel, { internal: { sectorCuller } });
   cadNode.renderHints = { showSectorBoundingBoxes: true };
