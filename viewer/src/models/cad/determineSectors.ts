@@ -5,7 +5,7 @@
 // TODO try to implement all functionality that three.js provides here without three.js to avoid
 // pulling it in just for this reason
 import * as THREE from 'three';
-import { SectorMetadata, SectorScene } from './types';
+import { SectorMetadata } from './types';
 import { traverseDepthFirst, traverseUpwards } from '../../utils/traversal';
 import { toThreeMatrix4, toThreeVector3 } from '../../views/threejs/utilities';
 import { mat4 } from 'gl-matrix';
@@ -46,13 +46,10 @@ export function determineSectorsByProximity(params: DetermineSectorsByProximityI
   const hints = { ...defaultCadLoadingHints, ...(params.loadingHints || {}) };
 
   const { cameraPosition, cameraModelMatrix, projectionMatrix, cameraFov } = params.cameraConfig;
-  const { invertCameraModelMatrix, frustumMatrix, frustum, bbox, min, max } = determineSectorsPreallocatedVars;
-
-  const sectors: SectorMetadata[] = [];
   const distanceToCameraVars = {
     threeJsVec3: new THREE.Vector3()
   };
-
+  const { invertCameraModelMatrix, frustumMatrix, frustum, bbox, min, max } = determineSectorsPreallocatedVars;
   function distanceToCamera(s: SectorMetadata) {
     const { threeJsVec3 } = distanceToCameraVars;
     min.set(s.bounds.min[0], s.bounds.min[1], s.bounds.min[2]);
@@ -63,49 +60,59 @@ export function determineSectorsByProximity(params: DetermineSectorsByProximityI
     return bbox.distanceToPoint(toThreeVector3(threeJsVec3, cameraPosition));
   }
 
-  if (!mat4.invert(invertCameraModelMatrix, cameraModelMatrix)) {
-    throw new Error('Provided camera model matrix is not invertible');
+  const result: WantedSector[] = [];
+  for (const cadNode of params.cadNodes) {
+    const sectorScene = cadNode.sectorScene;
+    const sectors: SectorMetadata[] = [];
+
+    if (!mat4.invert(invertCameraModelMatrix, cameraModelMatrix)) {
+      throw new Error('Provided camera model matrix is not invertible');
+    }
+    mat4.multiply(frustumMatrix, projectionMatrix, invertCameraModelMatrix);
+    frustum.setFromProjectionMatrix(toThreeMatrix4(frustumMatrix));
+
+    traverseDepthFirst(sectorScene.root, sector => {
+      min.set(sector.bounds.min[0], sector.bounds.min[1], sector.bounds.min[2]);
+      max.set(sector.bounds.max[0], sector.bounds.max[1], sector.bounds.max[2]);
+      bbox.makeEmpty();
+      bbox.expandByPoint(min);
+      bbox.expandByPoint(max);
+
+      if (!frustum.intersectsBox(bbox)) {
+        return false;
+      }
+
+      const screenHeight = 2.0 * distanceToCamera(sector) * Math.tan((cameraFov / 2) * degToRadFactor);
+      const largestAllowedQuadSize = hints.maxQuadSize * screenHeight; // no larger than x percent of the height
+      const quadSize = sector.facesFile.quadSize;
+      if (quadSize < largestAllowedQuadSize) {
+        return false;
+      }
+
+      sectors.push(sector);
+      return true;
+    });
+
+    const requestedDetailed = new Set<number>(sectors.map(x => x.id));
+    const wanteds: WantedSector[] = determineSectorsFromDetailed(cadNode, requestedDetailed);
+    for (const wanted of wanteds) {
+      result.push(wanted);
+    }
   }
-  mat4.multiply(frustumMatrix, projectionMatrix, invertCameraModelMatrix);
-  frustum.setFromProjectionMatrix(toThreeMatrix4(frustumMatrix));
-
-  traverseDepthFirst(sectorScene.root, sector => {
-    min.set(sector.bounds.min[0], sector.bounds.min[1], sector.bounds.min[2]);
-    max.set(sector.bounds.max[0], sector.bounds.max[1], sector.bounds.max[2]);
-    bbox.makeEmpty();
-    bbox.expandByPoint(min);
-    bbox.expandByPoint(max);
-
-    if (!frustum.intersectsBox(bbox)) {
-      return false;
-    }
-
-    const screenHeight = 2.0 * distanceToCamera(sector) * Math.tan((cameraFov / 2) * degToRadFactor);
-    const largestAllowedQuadSize = hints.maxQuadSize * screenHeight; // no larger than x percent of the height
-    const quadSize = sector.facesFile.quadSize;
-    if (quadSize < largestAllowedQuadSize) {
-      return false;
-    }
-
-    sectors.push(sector);
-    return true;
-  });
-
-  const requestedDetailed = new Set<number>(sectors.map(x => x.id));
-  const result = determineSectorsFromDetailed(sectorScene, requestedDetailed);
   result.sort((l, r) => {
     // TODO 2020-03-22 larsmoa: Optimize to improve performance of determineSectors.
-    const leftMetadata = sectorScene.getSectorById(l.id)!;
-    const rightMetdata = sectorScene.getSectorById(r.id)!;
+    const leftMetadata = l.scene.getSectorById(l.metadata.id)!;
+    const rightMetdata = r.scene.getSectorById(r.metadata.id)!;
     return distanceToCamera(leftMetadata) - distanceToCamera(rightMetdata);
   });
   return result;
 }
 
-export function determineSectorsFromDetailed(scene: SectorScene, requestedDetailed: Set<number>): WantedSector[] {
+export function determineSectorsFromDetailed(cadNode: CadNode, requestedDetailed: Set<number>): WantedSector[] {
   const simple: number[] = [];
   const detailed: number[] = [];
   const wanted: WantedSector[] = [];
+  const scene = cadNode.sectorScene;
 
   for (const sectorId of requestedDetailed) {
     const sector = scene.getSectorById(sectorId);
@@ -117,7 +124,10 @@ export function determineSectorsFromDetailed(scene: SectorScene, requestedDetail
         return false;
       }
       wanted.push({
-        id: other.id,
+        cadModelIdentifier: cadNode.cadModel.identifier,
+        dataRetriever: cadNode.cadModel.dataRetriever,
+        cadModelTransformation: cadNode.cadModel.modelTransformation,
+        scene: cadNode.cadModel.scene,
         levelOfDetail: LevelOfDetail.Detailed,
         metadata: other
       });
@@ -134,7 +144,10 @@ export function determineSectorsFromDetailed(scene: SectorScene, requestedDetail
     if (sector.facesFile.fileName) {
       simple.push(sector.id);
       wanted.push({
-        id: sector.id,
+        cadModelIdentifier: cadNode.cadModel.identifier,
+        dataRetriever: cadNode.cadModel.dataRetriever,
+        cadModelTransformation: cadNode.cadModel.modelTransformation,
+        scene: cadNode.cadModel.scene,
         levelOfDetail: LevelOfDetail.Simple,
         metadata: sector
       });
@@ -145,7 +158,10 @@ export function determineSectorsFromDetailed(scene: SectorScene, requestedDetail
   traverseDepthFirst(scene.root, sector => {
     if (!detailed.includes(sector.id) && !simple.includes(sector.id)) {
       wanted.push({
-        id: sector.id,
+        cadModelIdentifier: cadNode.cadModel.identifier,
+        dataRetriever: cadNode.cadModel.dataRetriever,
+        cadModelTransformation: cadNode.cadModel.modelTransformation,
+        scene: cadNode.cadModel.scene,
         levelOfDetail: LevelOfDetail.Discarded,
         metadata: sector
       });

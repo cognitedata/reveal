@@ -20,8 +20,8 @@ import {
   subscribeOn,
   retryWhen,
   delay,
-  catchError,
-  distinct
+  distinct,
+  catchError
 } from 'rxjs/operators';
 import { ModelDataRetriever } from '../../datasources/ModelDataRetriever';
 import { CadSectorParser } from '../../data/parser/CadSectorParser';
@@ -42,7 +42,6 @@ export class CachedRepository implements Repository {
     maxElementsInCache: 300
   });
   private readonly _modelDataParser: CadSectorParser;
-  private readonly _modelDataRetriever: ModelDataRetriever;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
   private readonly _rateLimiter = new RateLimiter(50);
 
@@ -53,12 +52,7 @@ export class CachedRepository implements Repository {
     data: Sector | SectorQuads;
   }> = new Subject();
 
-  constructor(
-    modelDataRetriever: ModelDataRetriever,
-    modelDataParser: CadSectorParser,
-    modelDataTransformer: SimpleAndDetailedToSector3D
-  ) {
-    this._modelDataRetriever = modelDataRetriever;
+  constructor(modelDataParser: CadSectorParser, modelDataTransformer: SimpleAndDetailedToSector3D) {
     this._modelDataParser = modelDataParser;
     this._modelDataTransformer = modelDataTransformer;
   }
@@ -143,7 +137,7 @@ export class CachedRepository implements Repository {
         filter(wantedSector => wantedSector.levelOfDetail === LevelOfDetail.Simple),
         flatMap((wantedSector: WantedSector) => {
           const networkObservable: Observable<ConsumedSector> = from(
-            this._modelDataRetriever.fetchData(wantedSector.metadata.facesFile.fileName!)
+            wantedSector.dataRetriever.fetchData(wantedSector.metadata.facesFile.fileName!)
           ).pipe(
             retry(3),
             map(arrayBuffer => ({ format: 'f3d', data: new Uint8Array(arrayBuffer) })),
@@ -180,7 +174,7 @@ export class CachedRepository implements Repository {
         // tap(e => this.requestSet.add(this.cacheKey(e))),
         flatMap(wantedSector => {
           const i3dFileObservable = of(wantedSector.metadata.indexFile).pipe(
-            flatMap(indexFile => this._modelDataRetriever.fetchData(indexFile.fileName)),
+            flatMap(indexFile => wantedSector.dataRetriever.fetchData(indexFile.fileName)),
             map(response => ({
               format: 'i3d',
               data: new Uint8Array(response)
@@ -190,6 +184,11 @@ export class CachedRepository implements Repository {
           );
 
           const ctmFilesObservable = from(wantedSector.metadata.indexFile.peripheralFiles).pipe(
+            map(fileName => ({
+              identifier: wantedSector.cadModelIdentifier,
+              dataRetriever: wantedSector.dataRetriever,
+              fileName
+            })),
             this.loadCtmFile(),
             reduce((accumulator, value) => {
               accumulator.set(value.fileName, value.data);
@@ -222,16 +221,19 @@ export class CachedRepository implements Repository {
     });
   }
 
-  private loadCtmFile(): OperatorFunction<string, { fileName: string; data: ParseCtmResult }> {
-    return publish(fileNameArrayObservable => {
-      const [cachedCtmFileObservable, uncachedCtmFileObservable] = partition(fileNameArrayObservable, fileName =>
-        this._ctmFileCache.has(fileName)
+  private loadCtmFile(): OperatorFunction<
+    { identifier: string; dataRetriever: ModelDataRetriever; fileName: string },
+    { fileName: string; data: ParseCtmResult }
+  > {
+    return publish(ctmRequestObservable => {
+      const [cachedCtmFileObservable, uncachedCtmFileObservable] = partition(ctmRequestObservable, ctmRequest =>
+        this._ctmFileCache.has(this.ctmKey(ctmRequest))
       );
       return merge(
         cachedCtmFileObservable.pipe(
           flatMap(
-            fileName => this._ctmFileCache.get(fileName),
-            (fileName, data) => ({ fileName, data })
+            ctmRequest => this._ctmFileCache.get(this.ctmKey(ctmRequest)),
+            (ctmRequest, data) => ({ fileName: ctmRequest.fileName, data })
           )
         ),
         uncachedCtmFileObservable.pipe(this.loadCtmFileFromNetwork())
@@ -239,11 +241,14 @@ export class CachedRepository implements Repository {
     });
   }
 
-  private loadCtmFileFromNetwork(): OperatorFunction<string, { fileName: string; data: ParseCtmResult }> {
+  private loadCtmFileFromNetwork(): OperatorFunction<
+    { identifier: string; dataRetriever: ModelDataRetriever; fileName: string },
+    { fileName: string; data: ParseCtmResult }
+  > {
     return pipe(
       flatMap(
-        fileName => {
-          const networkObservable = from(this._modelDataRetriever.fetchData(fileName)).pipe(
+        ctmRequest => {
+          const networkObservable = from(ctmRequest.dataRetriever.fetchData(ctmRequest.fileName)).pipe(
             retry(3),
             map(arrayBuffer => ({ format: 'ctm', data: new Uint8Array(arrayBuffer) })),
             this._modelDataParser.parse(),
@@ -252,7 +257,7 @@ export class CachedRepository implements Repository {
           );
           while (true) {
             try {
-              this._ctmFileCache.add(fileName, networkObservable as Observable<ParseCtmResult>);
+              this._ctmFileCache.add(this.ctmKey(ctmRequest), networkObservable as Observable<ParseCtmResult>);
               break;
             } catch (e) {
               this._ctmFileCache.cleanCache(10);
@@ -260,7 +265,7 @@ export class CachedRepository implements Repository {
           }
           return networkObservable;
         },
-        (fileName, data) => ({ fileName, data: data as ParseCtmResult })
+        (ctmRequest, data) => ({ fileName: ctmRequest.fileName, data: data as ParseCtmResult })
       )
     );
   }
@@ -438,5 +443,9 @@ export class CachedRepository implements Repository {
 
   private cacheKey(wantedSector: WantedSector) {
     return '' + wantedSector.cadModelIdentifier + '.' + wantedSector.metadata.id + '.' + wantedSector.levelOfDetail;
+  }
+
+  private ctmKey(request: { identifier: string; fileName: string }) {
+    return '' + request.identifier + '.' + request.fileName;
   }
 }

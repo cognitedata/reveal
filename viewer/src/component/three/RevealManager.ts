@@ -3,9 +3,9 @@
  */
 
 import { Subject, Observable, merge, BehaviorSubject, animationFrameScheduler } from 'rxjs';
-import { Cdf3dModel } from '../data/model/Cdf3dModel';
-import { External3dModel } from '../data/model/External3dModel';
-import { CadModel } from '../models/cad/CadModel';
+import { Cdf3dModel } from '../../data/model/Cdf3dModel';
+import { External3dModel } from '../../data/model/External3dModel';
+import { CadModel } from '../../models/cad/CadModel';
 import {
   publish,
   filter,
@@ -16,28 +16,28 @@ import {
   share,
   switchAll,
   toArray,
-  observeOn,
-  tap
+  observeOn
 } from 'rxjs/operators';
-import { loadCadModelByUrl } from '../datasources/local';
-import { loadCadModelFromCdf } from '../datasources/cognitesdk';
+import { loadCadModelByUrl } from '../../datasources/local';
+import { loadCadModelFromCdf } from '../../datasources/cognitesdk';
 import { CogniteClient, IdEither } from '@cognite/sdk';
-import { fromThreeCameraConfig } from '../views/threejs/cad/fromThreeCameraConfig';
-import { distinctUntilLevelOfDetailChanged } from '../models/cad/distinctUntilLevelOfDetailChanged';
-import { filterCurrentWantedSectors } from '../models/cad/filterCurrentWantedSectors';
-import { discardSector } from '../views/threejs/cad/discardSector';
-import { CadLoadingHints } from '../models/cad/CadLoadingHints';
-import { SectorCuller, WantedSector } from '../internal';
-import { CadNode } from '../views/threejs/cad/CadNode';
-import { ProximitySectorCuller } from '../culling/ProximitySectorCuller';
-import { CadBudget, createDefaultCadBudget } from '../models/cad/CadBudget';
-import { ConsumedSector } from '../data/model/ConsumedSector';
-import { NodeAppearance } from '../views/common/cad/NodeAppearance';
-import { Sector, SectorQuads } from '../models/cad/types';
-import { CachedRepository } from '../repository/cad/CachedRepository';
-import { SimpleAndDetailedToSector3D } from '../data/transformer/three/SimpleAndDetailedToSector3D';
-import { CadSectorParser } from '../data/parser/CadSectorParser';
-import { File3dFormat } from '../data/model/File3dFormat';
+import { fromThreeCameraConfig } from '../../views/threejs/cad/fromThreeCameraConfig';
+import { distinctUntilLevelOfDetailChanged } from '../../models/cad/distinctUntilLevelOfDetailChanged';
+import { filterCurrentWantedSectors } from '../../models/cad/filterCurrentWantedSectors';
+import { discardSector } from '../../views/threejs/cad/discardSector';
+import { CadLoadingHints } from '../../models/cad/CadLoadingHints';
+import { SectorCuller, WantedSector } from '../../internal';
+import { CadNode } from '../../views/threejs/cad/CadNode';
+import { ProximitySectorCuller } from '../../culling/ProximitySectorCuller';
+import { CadBudget } from '../../models/cad/CadBudget';
+import { ConsumedSector } from '../../data/model/ConsumedSector';
+import { NodeAppearance } from '../../views/common/cad/NodeAppearance';
+import { Sector, SectorQuads } from '../../models/cad/types';
+import { CachedRepository } from '../../repository/cad/CachedRepository';
+import { SimpleAndDetailedToSector3D } from '../../data/transformer/three/SimpleAndDetailedToSector3D';
+import { CadSectorParser } from '../../data/parser/CadSectorParser';
+import { File3dFormat } from '../../data/model/File3dFormat';
+import { PromiseCallbacks } from '../../data/model/PromiseCallbacks';
 
 export interface RevealOptions {
   nodeAppearance?: NodeAppearance;
@@ -57,19 +57,19 @@ export class RevealManager {
   private readonly _sectorRepository: CachedRepository;
   private readonly _modelSubject: Subject<Cdf3dModel | External3dModel> = new Subject();
   private readonly _loadingHintsSubject: Subject<CadLoadingHints> = new BehaviorSubject({});
-  private readonly _modelObservable: Observable<CadModel>;
+  private readonly _cameraSubject: Subject<THREE.PerspectiveCamera>;
+  private readonly _modelObservable: Observable<{ callbacks: PromiseCallbacks<CadNode>; cadModel: CadModel }>;
   private readonly _nodeObservable: Observable<CadNode>;
   private readonly _sceneObservable: Observable<CadNode[]>;
 
   private readonly _sectorRepositoryMap: Map<string, CadNode> = new Map();
 
   private _sectorCuller: SectorCuller;
-  private _budget: CadBudget;
+  // private _budget: CadBudget;
 
-  constructor(client: CogniteClient, onSectorLoadedCallback: OnSectorLoaded, options?: RevealOptions) {
+  constructor(client: CogniteClient, options?: RevealOptions) {
     this._sectorCuller = (options && options.internal && options.internal.sectorCuller) || new ProximitySectorCuller();
-    this._budget = (options && options.budget) || createDefaultCadBudget();
-
+    // this._budget = (options && options.budget) || createDefaultCadBudget();
     const modelDataParser: CadSectorParser = new CadSectorParser();
     const modelDataTransformer: SimpleAndDetailedToSector3D = new SimpleAndDetailedToSector3D();
 
@@ -79,40 +79,71 @@ export class RevealManager {
       publish(addModelObservable => {
         const externalModelObservable = addModelObservable.pipe(
           filter((model): model is External3dModel => model.discriminator === 'external'),
-          flatMap(model => loadCadModelByUrl(model.url))
+          flatMap(
+            model => loadCadModelByUrl(model.url),
+            (model, cadModel) => ({
+              callbacks: model.callbacks,
+              cadModel
+            })
+          )
         );
         const cdfModelObservable = addModelObservable.pipe(
           filter((model): model is Cdf3dModel => model.discriminator === 'cdf-model'),
-          flatMap(model => loadCadModelFromCdf(client, model.modelRevision))
+          flatMap(
+            model => loadCadModelFromCdf(client, model.modelRevision),
+            (model, cadModel) => ({
+              callbacks: model.callbacks,
+              cadModel
+            })
+          )
         );
         return merge(externalModelObservable, cdfModelObservable);
       })
     );
 
     this._nodeObservable = this._modelObservable.pipe(
-      map(model => {
-        const node = new CadNode(model, options);
-        this._sectorRepositoryMap.set(model.identifier, node);
-        modelDataTransformer.addMaterial(model.identifier, node.materialManager.materials);
+      map(wrapper => {
+        const cadModel = wrapper.cadModel;
+        const node = new CadNode(cadModel, options);
+        this._sectorRepositoryMap.set(cadModel.identifier, node);
+        modelDataTransformer.addMaterial(cadModel.identifier, node.materialManager.materials);
+        wrapper.callbacks.success(node);
         return node;
-      }),
-      tap(cadNode => {
-        onSectorLoadedCallback.loaded(cadNode);
       })
     );
     this._sceneObservable = this._nodeObservable.pipe(toArray());
+    this._cameraSubject = this.createLoadSectorsPipeline();
   }
 
-  public addModelFromCdf(modelRevision: string | number) {
+  public addModelFromCdf(modelRevision: string | number): Promise<CadNode> {
+    let resolveCb: (cadNode: CadNode) => void | undefined;
+    let rejectCb: (message: string) => void | undefined;
+    const promise = new Promise<CadNode>((resolve, reject) => {
+      resolveCb = resolve;
+      rejectCb = reject;
+    });
     this._modelSubject.next({
       discriminator: 'cdf-model',
       modelRevision: this.createModelIdentifier(modelRevision),
-      format: File3dFormat.RevealCadModel
+      format: File3dFormat.RevealCadModel,
+      callbacks: { success: resolveCb!, fail: rejectCb! }
     });
+    return promise;
   }
 
-  public addModelFromUrl(url: string) {
-    this._modelSubject.next({ discriminator: 'external', url });
+  public addModelFromUrl(url: string): Promise<CadNode> {
+    let resolveCb: (cadNode: CadNode) => void | undefined;
+    let rejectCb: (message: string) => void | undefined;
+    const promise = new Promise<CadNode>((resolve, reject) => {
+      resolveCb = resolve;
+      rejectCb = reject;
+    });
+    this._modelSubject.next({ discriminator: 'external', url, callbacks: { success: resolveCb!, fail: rejectCb! } });
+    return promise;
+  }
+
+  public update(camera: THREE.PerspectiveCamera) {
+    this._cameraSubject.next(camera);
   }
 
   private createModelIdentifier(id: string | number): IdEither {
@@ -133,7 +164,7 @@ export class RevealManager {
           this._sectorCuller.determineSectors({ cameraConfig, cadNodes, loadingHints })
         ),
         // Take sectors within budget
-        map(wantedSectors => this._budget.filter(wantedSectors)),
+        // map(wantedSectors => this._budget.filter(wantedSectors)), <-- Was removed since it requires scene which wanted sectors don't have
         // Load sectors from repository
         share(),
         publish((wantedSectors: Observable<WantedSector[]>) =>

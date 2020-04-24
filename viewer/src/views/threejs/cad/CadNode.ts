@@ -14,8 +14,6 @@ import { RenderMode } from '../materials';
 import { RootSectorNode } from './RootSectorNode';
 import { NodeAppearance } from '../../common/cad/NodeAppearance';
 import { MaterialManager } from './MaterialManager';
-import { SectorCuller } from '../../../culling/SectorCuller';
-import { CadBudget, createDefaultCadBudget } from '../../../models/cad/CadBudget';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: Sector | SectorQuads }) => void;
 
@@ -37,6 +35,7 @@ export class CadNode extends THREE.Object3D {
   private _renderHints: CadRenderHints;
   private _loadingHints: CadLoadingHints;
 
+  private readonly _cadModel: CadModel;
   private readonly _materialManager: MaterialManager;
   private readonly _sectorScene: SectorScene;
   private readonly _previousCameraMatrix = new THREE.Matrix4();
@@ -50,7 +49,7 @@ export class CadNode extends THREE.Object3D {
     this._materialManager = new MaterialManager(treeIndexCount, options ? options.nodeAppearance : undefined);
 
     const rootSector = new RootSectorNode(model);
-
+    this._cadModel = model;
     const { scene, modelTransformation } = model;
 
     this._sectorScene = scene;
@@ -80,6 +79,14 @@ export class CadNode extends THREE.Object3D {
   requestNodeUpdate(treeIndices: number[]) {
     this._materialManager.updateNodes(treeIndices);
     this.dispatchEvent({ type: 'update' });
+  }
+
+  get cadModel() {
+    return this._cadModel;
+  }
+
+  get sectorScene() {
+    return this._sectorScene;
   }
 
   get rootSector() {
@@ -129,7 +136,6 @@ export class CadNode extends THREE.Object3D {
       far
     };
   }
-
 
   private createBoundingBoxNode(sectors: SectorMetadata[]): THREE.Object3D {
     function sectorDepth(s: SectorMetadata) {
