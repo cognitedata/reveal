@@ -2,9 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { SectorQuads, SectorMetadata } from '../../../../models/cad/types';
-import { Box3 } from '../../../../utils/Box3';
-import { vec3 } from 'gl-matrix';
+import { SectorQuads } from '../../../../models/cad/types';
 import { consumeSectorSimple } from '../../../../views/threejs/cad/consumeSectorSimple';
 import { createMaterials } from '../../../../views/threejs/cad/materials';
 import 'jest-extended';
@@ -12,36 +10,6 @@ import 'jest-extended';
 const materials = createMaterials(64);
 
 describe('consumeSectorDetailed', () => {
-  const metadata: SectorMetadata = {
-    id: 1,
-    depth: 0,
-    path: '0/1/2/',
-    bounds: new Box3([vec3.fromValues(1, 2, 3), vec3.fromValues(3, 4, 5)]),
-    indexFile: {
-      fileName: 'sector_1.i3d',
-      peripheralFiles: [],
-      estimatedDrawCallCount: 10,
-      downloadSize: 1000
-    },
-    facesFile: {
-      fileName: 'sector_1.f3d',
-      quadSize: 0.5,
-      coverageFactors: {
-        xy: 0.5,
-        xz: 0.5,
-        yz: 0.5
-      },
-      recursiveCoverageFactors: {
-        xy: 0.5,
-        xz: 0.5,
-        yz: 0.5
-      },
-      downloadSize: 1000
-    },
-    children: []
-  };
-  const sectorId = 1;
-
   test('no geometry, does not add new nodes', () => {
     // Arrange
     const sector: SectorQuads = {
@@ -51,7 +19,7 @@ describe('consumeSectorDetailed', () => {
     };
 
     // Act
-    const group = consumeSectorSimple(sectorId, sector, metadata, materials);
+    const group = consumeSectorSimple(sector, materials);
 
     // Assert
     expect(group.children).toBeEmpty();
@@ -76,7 +44,7 @@ describe('consumeSectorDetailed', () => {
     };
 
     // Act
-    const group = consumeSectorSimple(sectorId, sector, metadata, materials);
+    const group = consumeSectorSimple(sector, materials);
 
     // Assert
     expect(group.children).not.toBeEmpty();
@@ -110,7 +78,7 @@ describe('consumeSectorDetailed', () => {
     };
 
     // Act
-    const group = consumeSectorSimple(sectorId, sector, metadata, materials);
+    const group = consumeSectorSimple(sector, materials);
 
     // Assert
     expect(group.children.length).toBe(1);
@@ -137,7 +105,7 @@ describe('consumeSectorDetailed', () => {
     };
 
     // Act
-    expect(() => consumeSectorSimple(sectorId, sector, metadata, materials)).toThrowError();
+    expect(() => consumeSectorSimple(sector, materials)).toThrowError();
   });
 
   test('buffer missing bytes, throws', () => {
@@ -153,6 +121,6 @@ describe('consumeSectorDetailed', () => {
     };
 
     // Act
-    expect(() => consumeSectorSimple(sectorId, sector, metadata, materials)).toThrowError();
+    expect(() => consumeSectorSimple(sector, materials)).toThrowError();
   });
 });

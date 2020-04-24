@@ -27,9 +27,24 @@ export class Box3 {
     }
   }
 
+  get size(): vec3 {
+    return vec3.subtract(vec3.create(), this.max, this.min);
+  }
+
   createTransformed(matrix: mat4): Box3 {
     const pMin = vec3.transformMat4(vec3.create(), this.min, matrix);
     const pMax = vec3.transformMat4(vec3.create(), this.max, matrix);
     return new Box3([pMin, pMax]);
+  }
+
+  containsPoint(p: vec3): boolean {
+    return (
+      p[0] >= this.min[0] &&
+      p[1] >= this.min[1] &&
+      p[2] >= this.min[2] &&
+      p[0] <= this.max[0] &&
+      p[1] <= this.max[1] &&
+      p[2] <= this.max[2]
+    );
   }
 }

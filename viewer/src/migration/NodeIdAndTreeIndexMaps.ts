@@ -5,8 +5,6 @@
 import { Subject, Observable } from 'rxjs';
 import { bufferTime, flatMap, filter, mergeAll, map, share, tap, first } from 'rxjs/operators';
 import { CogniteClient, InternalId, Node3D } from '@cognite/sdk';
-import { ParsedSector } from '../data/model/ParsedSector';
-import { LevelOfDetail } from '../data/model/LevelOfDetail';
 import { Sector, SectorQuads } from '../models/cad/types';
 
 type NodeIdRequest = InternalId;
@@ -59,14 +57,14 @@ export class NodeIdAndTreeIndexMaps {
     return this.treeIndexToNodeIdMap.get(treeIndex);
   }
 
-  updateMaps(sector: ParsedSector) {
-    switch (sector.levelOfDetail) {
-      case LevelOfDetail.Simple: {
+  updateMaps(sector: { lod: string; data: Sector | SectorQuads }) {
+    switch (sector.lod) {
+      case 'simple': {
         const simpleData = sector.data as SectorQuads;
         this.updateMapsFromMap(simpleData.nodeIdToTreeIndexMap);
         break;
       }
-      case LevelOfDetail.Detailed: {
+      case 'detailed': {
         const detailedData = sector.data as Sector;
         this.updateMapsFromMap(detailedData.nodeIdToTreeIndexMap);
         break;
