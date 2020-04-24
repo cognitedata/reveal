@@ -15,8 +15,8 @@ export { toThreeVector3, fitCameraToBoundingBox, toThreeMatrix4, toThreeJsBox3 }
 export { SsaoEffect, SsaoPassType } from './post-processing/ssao';
 
 export {
-  OrderSectorsByVisibilityCoverage as OrderSectorsByVisibleCoverage,
-  GpuOrderSectorsByVisibilityCoverage as GpuOrderSectorsByVisibleCoverage,
+  OrderSectorsByVisibilityCoverage,
+  GpuOrderSectorsByVisibilityCoverage,
   PrioritizedSectorIdentifier,
   OrderSectorsByVisibleCoverageOptions
 } from './OrderSectorsByVisibilityCoverage';
