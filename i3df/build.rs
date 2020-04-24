@@ -329,7 +329,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         #[derive(Clone, Copy, Debug, Default, Deserialize, Serialize)]
         pub struct Texture {
             // TODO generate from YAML
-            pub file_id: u32,
+            pub file_id: f64,
             pub width: u16,
             pub height: u16,
         }
