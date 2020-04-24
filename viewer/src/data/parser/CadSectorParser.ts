@@ -26,7 +26,6 @@ export class CadSectorParser {
         flatMap(data => this.parseSimple(data.data)),
         map(parsedQuadsResult => this.finalizeSimple(parsedQuadsResult))
       );
-
       const ctmObservable = dataObservable.pipe(
         filter(data => data.format === 'ctm'),
         flatMap(data => this.parseCtm(data.data))

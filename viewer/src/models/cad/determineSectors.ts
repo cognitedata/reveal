@@ -8,10 +8,12 @@ import * as THREE from 'three';
 import { SectorMetadata, SectorScene } from './types';
 import { traverseDepthFirst, traverseUpwards } from '../../utils/traversal';
 import { toThreeMatrix4, toThreeVector3 } from '../../views/threejs/utilities';
-import { mat4, vec3 } from 'gl-matrix';
+import { mat4 } from 'gl-matrix';
 import { defaultLoadingHints as defaultCadLoadingHints, CadLoadingHints } from './CadLoadingHints';
 import { WantedSector } from '../../data/model/WantedSector';
 import { LevelOfDetail } from '../../data/model/LevelOfDetail';
+import { CameraConfig } from '../../views/threejs/cad/fromThreeCameraConfig';
+import { CadNode } from '../../views/threejs/cad/CadNode';
 
 const degToRadFactor = Math.PI / 180;
 
@@ -25,6 +27,12 @@ const determineSectorsPreallocatedVars = {
 };
 
 export interface DetermineSectorsByProximityInput {
+  cameraConfig: CameraConfig;
+  cadNodes: CadNode[];
+  loadingHints: CadLoadingHints;
+}
+/*
+export interface DetermineSectorsByProximityInput {
   readonly sectorScene: SectorScene;
   readonly cameraFov: number;
   readonly cameraPosition: vec3;
@@ -32,11 +40,12 @@ export interface DetermineSectorsByProximityInput {
   readonly projectionMatrix: mat4;
   readonly loadingHints?: CadLoadingHints;
 }
+*/
 
 export function determineSectorsByProximity(params: DetermineSectorsByProximityInput): WantedSector[] {
   const hints = { ...defaultCadLoadingHints, ...(params.loadingHints || {}) };
 
-  const { sectorScene, cameraPosition, cameraModelMatrix, projectionMatrix, cameraFov } = params;
+  const { cameraPosition, cameraModelMatrix, projectionMatrix, cameraFov } = params.cameraConfig;
   const { invertCameraModelMatrix, frustumMatrix, frustum, bbox, min, max } = determineSectorsPreallocatedVars;
 
   const sectors: SectorMetadata[] = [];

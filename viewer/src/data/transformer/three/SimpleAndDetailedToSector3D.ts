@@ -13,9 +13,15 @@ import { ParsedSector } from '../../model/ParsedSector';
 import { LevelOfDetail } from '../../model/LevelOfDetail';
 
 export class SimpleAndDetailedToSector3D {
-  private readonly materials: Materials;
-  constructor(materials: Materials) {
-    this.materials = materials;
+  private readonly materialMap: Map<string, Materials> = new Map();
+  constructor() {}
+
+  addMaterial(key: string, materials: Materials) {
+    this.materialMap.set(key, materials);
+  }
+
+  removeMaterial(key: string) {
+    this.materialMap.delete(key);
   }
 
   transform(): OperatorFunction<ParsedSector, Group> {
@@ -29,10 +35,21 @@ export class SimpleAndDetailedToSector3D {
 
       return merge(
         detailedObservable.pipe(
-          map(parsedSector => consumeSectorDetailed(parsedSector.data as Sector, parsedSector.metadata, this.materials)),
+          map(parsedSector =>
+            consumeSectorDetailed(
+              parsedSector.data as Sector,
+              parsedSector.metadata,
+              this.materialMap.get(parsedSector.cadModelIdentifier)!
+            )
+          )
         ),
         simpleObservable.pipe(
-          map(parsedSector => consumeSectorSimple(parsedSector.data as SectorQuads, this.materials))
+          map(parsedSector =>
+            consumeSectorSimple(
+              parsedSector.data as SectorQuads,
+              this.materialMap.get(parsedSector.cadModelIdentifier)!
+            )
+          )
         )
       );
     });

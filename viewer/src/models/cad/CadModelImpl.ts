@@ -22,14 +22,17 @@ export class CadModelImpl implements CadModel {
    * @param modelTransformation   Model transformation matrix.
    */
   public static async create(
+    identifier: string,
     dataRetriever: ModelDataRetriever,
     modelTransformation: SectorModelTransformation
   ): Promise<CadModelImpl> {
-    const model = new CadModelImpl(dataRetriever, modelTransformation);
+    const model = new CadModelImpl(identifier, dataRetriever, modelTransformation);
     await model.initialize();
     return model;
   }
-  dataRetriever: ModelDataRetriever;
+  readonly dataRetriever: ModelDataRetriever;
+  readonly identifier: string;
+
   private _scene?: SectorScene;
   private readonly _modelTransformation: SectorModelTransformation;
 
@@ -38,7 +41,12 @@ export class CadModelImpl implements CadModel {
    * Do not use directly, see loadCadModelByUrl().
    * @see loadCadModelByUrl
    */
-  private constructor(dataRetriever: ModelDataRetriever, modelTransformation: SectorModelTransformation) {
+  private constructor(
+    identifier: string,
+    dataRetriever: ModelDataRetriever,
+    modelTransformation: SectorModelTransformation
+  ) {
+    this.identifier = identifier;
     this.dataRetriever = dataRetriever;
     this._modelTransformation = modelTransformation;
 
