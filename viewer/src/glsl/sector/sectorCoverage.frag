@@ -2,8 +2,6 @@
 
 varying mediump vec3 v_color;
 varying lowp float v_coverageFactor;
-varying lowp vec4 v_position;
-varying lowp vec3 v_normal;
 varying lowp vec2 v_seed;
 
 
@@ -13,5 +11,5 @@ void main() {
         discard;
     }
 
-    gl_FragColor = vec4(v_color, pow(v_position.z / v_position.w, 10.0)); // Ghetto-linearization of the depth
+    gl_FragColor = vec4(v_color, 1.0);
 }
