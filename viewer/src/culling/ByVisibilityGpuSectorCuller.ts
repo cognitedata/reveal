@@ -78,7 +78,7 @@ class TakenSectorMap {
   getWantedSectorCount(): number {
     let count = 0;
     this.maps.forEach(tree => {
-      count += tree.getWantedSectorCount();
+      count += tree.determineWantedSectorCount();
     });
     return count;
   }

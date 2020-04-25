@@ -33,7 +33,7 @@ export class TakenSectorTree {
     this.setSectorLod(sectorRoot.id, LevelOfDetail.Simple);
   }
 
-  getWantedSectorCount(): number {
+  determineWantedSectorCount(): number {
     return this.sectors.reduce((count, x) => {
       count = x.lod !== LevelOfDetail.Discarded ? count + 1 : count;
       return count;
