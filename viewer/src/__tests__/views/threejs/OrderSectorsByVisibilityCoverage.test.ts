@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { GpuOrderSectorsByVisibleCoverage as GpuOrderSectorsByVisibilityCoverage } from '../../../threejs';
+import { GpuOrderSectorsByVisibilityCoverage } from '../../../threejs';
 import { SectorMetadata, SectorModelTransformation } from '../../../models/cad/types';
 import { SectorScene, SectorSceneImpl } from '../../../models/cad/SectorScene';
 import { createSectorMetadata, SectorTree } from '../../testUtils/createSectorMetadata';
