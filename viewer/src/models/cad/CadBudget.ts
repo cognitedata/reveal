@@ -6,6 +6,8 @@ import { LevelOfDetail, WantedSector } from '../../internal';
 import { SectorMetadata } from './types';
 import { SectorScene } from './SectorScene';
 
+// TODO 2020-04-26 larsmoa: Get rid of CadBudget or use it in ByVisibilityGpuSectorCuller.
+
 /**
  * Keeps number of loads within a specified budget.
  */
