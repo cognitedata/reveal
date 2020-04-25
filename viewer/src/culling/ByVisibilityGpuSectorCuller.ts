@@ -48,6 +48,11 @@ export type ByVisibilityGpuSectorCullerOptions = {
    * Use a custom coverage utility to determine how "visible" each sector is.
    */
   coverageUtil?: OrderSectorsByVisibilityCoverage;
+
+  /**
+   * Logging function for debugging.
+   */
+  logCallback: (message?: any, ...optionalParameters: any[]) => void;
 };
 
 function assert(condition: boolean, message: string = 'assertion hit') {
@@ -131,6 +136,11 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
         options && options.highDetailProximityThreshold
           ? options.highDetailProximityThreshold
           : ByVisibilityGpuSectorCuller.DefaultHighDetailProximityThreshold,
+      logCallback:
+        options && options.logCallback
+          ? options.logCallback
+          : // No logging
+            () => {},
 
       coverageUtil: options && options.coverageUtil ? options.coverageUtil : new GpuOrderSectorsByVisibilityCoverage()
     };
@@ -152,7 +162,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     const takenSectors = this.update();
 
     const wantedForScene = takenSectors.collectWantedSectors(input.sectorScene);
-    console.log(
+    this.log(
       `Scene: ${wantedForScene.length} (${wantedForScene.filter(x => !Number.isFinite(x.priority)).length} required)`
     );
 
@@ -197,10 +207,10 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
       takenSectors.markSectorDetailed(x.scene, x.sectorId, x.priority);
       debugAccumulatedPriority += x.priority;
     }
-    console.log(
+    this.log(
       `Retrieving ${i} of ${prioritizedLength} (last: ${prioritized.length > 0 ? prioritized[i - 1] : null})`
     );
-    console.log(
+    this.log(
       `Total scheduled: ${takenSectors.getWantedSectorCount()} of ${prioritizedLength} (cost: ${takenSectors.totalCost /
         1024 /
         1024}/${costLimit / 1024 / 1024}, priority: ${debugAccumulatedPriority})`
@@ -233,6 +243,10 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
         takenSectors.markSectorDetailed(model.scene, intersectingSectors[i].id, Infinity);
       }
     });
+  }
+
+  private log(message?: any, ...optionalParameters: any[]) {
+    this.options.logCallback(message, ...optionalParameters);
   }
 }
 

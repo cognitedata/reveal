@@ -2,6 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
+// tslint:disable no-console
+
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams, createClientIfNecessary } from './utils/loaders';
@@ -20,7 +22,8 @@ async function main() {
   const coverageUtil = new reveal_threejs.GpuOrderSectorsByVisibilityCoverage();
   const sectorCuller = new reveal.internal.ByVisibilityGpuSectorCuller(camera, {
     coverageUtil,
-    costLimit: 70 * 1024 * 1024
+    costLimit: 70 * 1024 * 1024,
+    logCallback: console.debug
   });
 
   const scene = new THREE.Scene();
