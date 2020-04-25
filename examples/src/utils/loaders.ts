@@ -63,15 +63,22 @@ export async function loadCadModelFromCdfOrUrl(
   return reveal.loadCadModelFromCdf(client, model.modelId);
 }
 
-export async function createClientIfNecessary(modelId: ModelIdentifier): Promise<CogniteClient | undefined> {
+export async function createClientIfNecessary(
+  modelId: ModelIdentifier,
+  apiKey: string | null
+): Promise<CogniteClient | undefined> {
   if (isUrlModelIdentifier(modelId)) {
     // Model is not on CDF
     return undefined;
   }
 
-  const client = new CogniteClient({ appId: 'cognite.reveal.example' });
-  client.loginWithOAuth({ project: modelId.project });
-  await client.authenticate();
+  const client = new CogniteClient({ baseUrl: '/cdf', appId: 'cognite.reveal.example' });
+  if (apiKey) {
+    client.loginWithApiKey({ project: modelId.project, apiKey });
+  } else {
+    client.loginWithOAuth({ project: modelId.project });
+    await client.authenticate();
+  }
   return client;
 }
 
