@@ -15,6 +15,7 @@ CameraControls.install({ THREE });
 async function main() {
   const urlParams = new URL(location.href).searchParams;
   const modelId = createModelIdentifierFromUrlParams(urlParams, '/primitives');
+  const apiKey = urlParams.get('apiKey');
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -23,7 +24,7 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const cadModel = await loadCadModelFromCdfOrUrl(modelId, await createClientIfNecessary(modelId));
+  const cadModel = await loadCadModelFromCdfOrUrl(modelId, await createClientIfNecessary(modelId, apiKey));
   const cadModelNode = new reveal_threejs.CadNode(cadModel);
   let modelNeedsUpdate = false;
   cadModelNode.addEventListener('update', () => {
