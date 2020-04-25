@@ -1,12 +1,8 @@
 use serde_derive::Serialize;
-use serde_json;
-use serde_yaml;
 use std::error::Error;
 use std::fs::File;
 use std::io::{stdout, BufReader};
 use structopt::StructOpt;
-
-use f3df;
 
 #[derive(StructOpt)]
 struct Options {
