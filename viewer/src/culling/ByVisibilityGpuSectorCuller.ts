@@ -117,8 +117,8 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   private readonly camera: THREE.PerspectiveCamera;
   private readonly models: CadModel[] = [];
   private readonly lastUpdate: {
-    matrix: THREE.Matrix4;
-    projectionMatrix: THREE.Matrix4;
+    readonly matrix: THREE.Matrix4;
+    readonly projectionMatrix: THREE.Matrix4;
     takenSectors: TakenSectorMap;
   };
 
@@ -179,8 +179,8 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
 
     // Update wanted sectors
     const prioritized = coverageUtil.orderSectorsByVisibility(this.camera);
-    this.lastUpdate.matrix = this.camera.matrix.clone();
-    this.lastUpdate.projectionMatrix = this.camera.projectionMatrix.clone();
+    this.lastUpdate.matrix.copy(this.camera.matrix);
+    this.lastUpdate.projectionMatrix.copy(this.camera.projectionMatrix);
 
     const costLimit = this.options.costLimit;
 
