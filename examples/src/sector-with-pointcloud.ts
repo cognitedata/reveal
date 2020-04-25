@@ -32,6 +32,7 @@ async function main() {
     modelIdParameterName: 'pointcloud',
     modelUrlParameterName: 'pointcloudUrl'
   });
+  const apiKey = urlParams.get('apiKey');
 
   const scene = new THREE.Scene();
   const renderer = new THREE.WebGLRenderer();
@@ -43,7 +44,7 @@ async function main() {
 
   const cadModel = await loadCadModelFromCdfOrUrl(
     cadModelIdentifier,
-    await createClientIfNecessary(cadModelIdentifier)
+    await createClientIfNecessary(cadModelIdentifier, apiKey)
   );
   const cadNode = new reveal_threejs.CadNode(cadModel);
   let modelNeedsUpdate = false;
