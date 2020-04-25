@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { sectorShaders, shaderDefines } from './shaders';
 import { RenderMode } from '../materials';
 import { determinePowerOfTwoDimensions } from '../../../utils/determinePowerOfTwoDimensions';
-import  matCapTextureImage  from './matCapTextureData';
+import matCapTextureImage from './matCapTextureData';
 
 export interface Materials {
   // Materials
@@ -40,7 +40,7 @@ export function createMaterials(treeIndexCount: number): Materials {
   visibility.fill(255);
   const overrideColorPerTreeIndex = new THREE.DataTexture(colors, textureDims.width, textureDims.height);
   const overrideVisibilityPerTreeIndex = new THREE.DataTexture(visibility, textureDims.width, textureDims.height);
-  
+
   const matCapTexture = new THREE.Texture(matCapTextureImage);
   matCapTexture.needsUpdate = true;
 
@@ -222,7 +222,13 @@ export function createMaterials(treeIndexCount: number): Materials {
     simple: simpleMaterial
   };
   for (const material of Object.values(allMaterials)) {
-    updateDefinesAndUniforms(material, dataTextureSize, overrideColorPerTreeIndex, overrideVisibilityPerTreeIndex, matCapTexture);
+    updateDefinesAndUniforms(
+      material,
+      dataTextureSize,
+      overrideColorPerTreeIndex,
+      overrideVisibilityPerTreeIndex,
+      matCapTexture
+    );
   }
 
   return { ...allMaterials, overrideColorPerTreeIndex, overrideVisibilityPerTreeIndex };
@@ -252,7 +258,7 @@ function updateDefinesAndUniforms(
       dataTextureSize: {
         value: dataTextureSize
       },
-      matCapTexture:{
+      matCapTexture: {
         value: matCapTexture
       }
     }
