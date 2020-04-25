@@ -23,7 +23,7 @@ async function main() {
   const sectorCuller = new reveal.internal.ByVisibilityGpuSectorCuller(camera, {
     coverageUtil,
     costLimit: 70 * 1024 * 1024,
-    logCallback: console.debug
+    logCallback: console.log
   });
 
   const scene = new THREE.Scene();
