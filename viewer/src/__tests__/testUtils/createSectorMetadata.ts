@@ -36,6 +36,11 @@ export function createSectorMetadata(tree: SectorTree, depth: number = 0, path: 
         yz: 0.5,
         xz: 0.5
       },
+      recursiveCoverageFactors: {
+        xy: 0.5,
+        yz: 0.5,
+        xz: 0.5
+      },
       fileName: `sector_${id}.f3d`,
       downloadSize: 128 * 1024
     },
