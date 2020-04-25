@@ -18,6 +18,7 @@ function createSphere(point: THREE.Vector3, color: string): THREE.Mesh {
 async function main() {
   const urlParams = new URL(location.href).searchParams;
   const modelId = createModelIdentifierFromUrlParams(urlParams, '/primitives');
+  const apiKey = urlParams.get('apiKey');
 
   const pickedNodes: Set<number> = new Set();
   const pickedObjects: Set<THREE.Mesh> = new Set();
@@ -33,7 +34,7 @@ async function main() {
   const scene = new THREE.Scene();
 
   // Add some data for Reveal
-  const cadModel = await loadCadModelFromCdfOrUrl(modelId, await createClientIfNecessary(modelId));
+  const cadModel = await loadCadModelFromCdfOrUrl(modelId, await createClientIfNecessary(modelId, apiKey));
   const cadNode = new CadNode(cadModel, { nodeAppearance });
   let modelNeedsUpdate = false;
   cadNode.addEventListener('update', () => {
