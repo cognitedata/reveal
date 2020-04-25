@@ -137,7 +137,10 @@ pub fn parse_sector_header(mut input: &mut impl BufRead) -> Result<SectorHeader,
     let attribute_count = input.read_u32::<LittleEndian>()?;
 
     if attribute_count != ATTRIBUTE_COUNT {
-        return Err(error!("Wrong attribute count. Got {}, but expected {}", attribute_count, ATTRIBUTE_COUNT));
+        return Err(error!(
+            "Wrong attribute count. Got {}, but expected {}", 
+            attribute_count, ATTRIBUTE_COUNT
+        ));
     }
 
     let attributes = match attribute_count {
