@@ -8,15 +8,16 @@ import { SectorMetadata } from '../../models/cad/types';
 import { SectorScene } from '../../models/cad/SectorScene';
 import { traverseDepthFirst } from '../../utils/traversal';
 import { expectContainsSectorsWithLevelOfDetail } from '../expects';
-import { PrioritizedWantedSector } from '../../culling/types';
+import { PrioritizedWantedSector, DetermineSectorCostDelegate } from '../../culling/types';
 import { LevelOfDetail } from '../../data/model/LevelOfDetail';
 
 describe('TakenSectorTree', () => {
   const scene: SectorScene = {} as any;
+  const determineSectorCost: DetermineSectorCostDelegate = () => 1; // Flat cost
 
   test('default tree contains root as simple', () => {
     const root = generateSectorTree(2);
-    const tree = new TakenSectorTree(root);
+    const tree = new TakenSectorTree(root, determineSectorCost);
     const wanted = tree.toWantedSectors(scene);
     expectContainsSectorsWithLevelOfDetail(wanted, [0], []);
   });
@@ -24,7 +25,7 @@ describe('TakenSectorTree', () => {
   test('three levels, partial detailed at level 2', () => {
     // Arrange
     const root = generateSectorTree(3, 2);
-    const tree = new TakenSectorTree(root);
+    const tree = new TakenSectorTree(root, determineSectorCost);
 
     // Act
     tree.markSectorDetailed(0, 1);
@@ -41,7 +42,7 @@ describe('TakenSectorTree', () => {
   test('add detailed sectors out of order', () => {
     // Arrange
     const root = generateSectorTree(5, 2);
-    const tree = new TakenSectorTree(root);
+    const tree = new TakenSectorTree(root, determineSectorCost);
 
     // Act
     tree.markSectorDetailed(findId(root, '0/0/0/'), 1);
