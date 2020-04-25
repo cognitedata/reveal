@@ -93,12 +93,11 @@ export class TakenSectorTree {
   private markAllDiscardedChildrenAsSimple(sectorId: number) {
     for (const child of this.sectors[sectorId].sector.children) {
       if (this.getSectorLod(child.id) === LevelOfDetail.Discarded) {
+        // Note! When fileName is null the sector is so sparse that there is
+        // no geometry in the F3D - we therefore skip such sectors.
         if (child.facesFile.fileName !== null) {
           this.setSectorLod(child.id, LevelOfDetail.Simple);
-        } else {
-          // Need to drill down yet another level
-          this.markAllDiscardedChildrenAsSimple(child.id);
-        }
+        } 
       }
     }
   }

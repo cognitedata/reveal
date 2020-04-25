@@ -11,6 +11,9 @@ import { expectContainsSectorsWithLevelOfDetail } from '../expects';
 import { PrioritizedWantedSector, DetermineSectorCostDelegate } from '../../culling/types';
 import { LevelOfDetail } from '../../data/model/LevelOfDetail';
 
+type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
+type Mutable<T> = { -readonly [P in keyof T]: T[P] };
+
 describe('TakenSectorTree', () => {
   const scene: SectorScene = {} as any;
   const determineSectorCost: DetermineSectorCostDelegate = () => 1; // Flat cost
@@ -54,6 +57,23 @@ describe('TakenSectorTree', () => {
     const wanted = tree.toWantedSectors(scene);
     expectHasSectors(wanted, LevelOfDetail.Detailed, expectedDetailed);
     expectHasSectors(wanted, LevelOfDetail.Simple, expectedSimple);
+  });
+
+  test('Simple data is not added when sector has no f3d file', () => {
+    // Arrange
+    const root = generateSectorTree(3, 2);
+    // Apply trickery to ditch readonly
+    const mutableFacesFile: Mutable<PropType<SectorMetadata, 'facesFile'>> = root.children[0].facesFile;
+    mutableFacesFile.fileName = null;
+    const tree = new TakenSectorTree(root, determineSectorCost);
+
+    // Act
+    tree.markSectorDetailed(0, 1);
+
+    // Assert
+    const wanted = tree.toWantedSectors(scene);
+    expectHasSectors(wanted, LevelOfDetail.Detailed, ['0/']);
+    expectHasSectors(wanted, LevelOfDetail.Simple, ['0/1/']);
   });
 });
 
