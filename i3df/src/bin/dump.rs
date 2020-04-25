@@ -3,8 +3,6 @@ use std::io::{stdout, BufReader};
 use structopt::StructOpt;
 
 use serde_derive::{Deserialize, Serialize};
-use serde_json;
-use serde_yaml;
 
 #[derive(StructOpt)]
 struct Options {
