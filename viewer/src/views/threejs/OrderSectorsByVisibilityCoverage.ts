@@ -262,12 +262,12 @@ export class GpuOrderSectorsByVisibilityCoverage {
 
     const sectorCount = sectors.length;
 
-    const instanceValues = new Float32Array(5 * sectorCount); // sectorId, coverageFactor[3], depth
+    const instanceValues = new Float32Array(4 * sectorCount); // sectorId, coverageFactor[3]
     const boxGeometry = new THREE.BoxBufferGeometry();
     const mesh = new THREE.InstancedMesh(boxGeometry, coverageMaterial, sectorCount);
 
     const bounds = new THREE.Box3();
-    const addSector = (sectorBounds: Box3, sectorId: number, coverage: THREE.Vector3, depth: number) => {
+    const addSector = (sectorBounds: Box3, sectorId: number, coverage: THREE.Vector3) => {
       toThreeJsBox3(bounds, sectorBounds);
       const translation = bounds.getCenter(new THREE.Vector3());
       const scale = bounds.getSize(new THREE.Vector3());
@@ -275,11 +275,10 @@ export class GpuOrderSectorsByVisibilityCoverage {
       const instanceMatrix = new THREE.Matrix4().compose(translation, identityRotation, scale);
       mesh.setMatrixAt(sectorId, instanceMatrix);
 
-      instanceValues[5 * sectorId + 0] = sectorIdOffset + sectorId;
-      instanceValues[5 * sectorId + 1] = coverage.x;
-      instanceValues[5 * sectorId + 2] = coverage.y;
-      instanceValues[5 * sectorId + 3] = coverage.z;
-      instanceValues[5 * sectorId + 4] = depth;
+      instanceValues[4 * sectorId + 0] = sectorIdOffset + sectorId;
+      instanceValues[4 * sectorId + 1] = coverage.x;
+      instanceValues[4 * sectorId + 2] = coverage.y;
+      instanceValues[4 * sectorId + 3] = coverage.z;
     };
 
     const coverageFactors = new THREE.Vector3(); // Allocate once only
@@ -289,13 +288,12 @@ export class GpuOrderSectorsByVisibilityCoverage {
       // runtime (either before rendering or in shader), but not sure how to solve this. -lars 2020-04-22
       const { xy, xz, yz } = sector.facesFile.coverageFactors;
       coverageFactors.set(yz, xz, xy);
-      addSector(sector.bounds, sector.id, coverageFactors, sector.depth);
+      addSector(sector.bounds, sector.id, coverageFactors);
     });
 
     const buffer = new THREE.InstancedInterleavedBuffer(instanceValues, 5);
     boxGeometry.setAttribute('a_sectorId', new THREE.InterleavedBufferAttribute(buffer, 1, 0));
     boxGeometry.setAttribute('a_coverageFactor', new THREE.InterleavedBufferAttribute(buffer, 3, 1));
-    boxGeometry.setAttribute('a_depth', new THREE.InterleavedBufferAttribute(buffer, 1, 4));
 
     group.add(mesh);
     return group;
