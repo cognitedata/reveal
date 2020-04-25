@@ -36,6 +36,13 @@ export interface CadSectorMetadataV8 {
       yz: number;
       xz: number;
     };
+    readonly recursiveCoverageFactors:
+      | {
+          xy: number;
+          yz: number;
+          xz: number;
+        }
+      | undefined;
     readonly fileName: string | null;
     readonly downloadSize: number;
   };
@@ -83,6 +90,10 @@ export function parseCadMetadataV8(metadata: CadMetadataV8): SectorScene {
 }
 
 function createSectorMetadata(metadata: CadSectorMetadataV8): SectorMetadata {
+  const facesFile = {
+    ...metadata.facesFile,
+    recursiveCoverageFactors: metadata.facesFile.recursiveCoverageFactors || metadata.facesFile.coverageFactors
+  };
   return {
     id: metadata.id,
     path: metadata.path,
@@ -95,7 +106,7 @@ function createSectorMetadata(metadata: CadSectorMetadataV8): SectorMetadata {
     // I3D
     indexFile: { ...metadata.indexFile },
     // F3D
-    facesFile: { ...metadata.facesFile },
+    facesFile,
 
     // Populated later
     children: []
