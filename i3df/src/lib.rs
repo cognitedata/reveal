@@ -2,7 +2,6 @@ use std::io::{self, BufRead, BufReader, Cursor, Read};
 
 use byteorder::{LittleEndian, ReadBytesExt};
 
-use nalgebra;
 use serde_derive::{Deserialize, Serialize};
 
 use wasm_bindgen::prelude::*;
@@ -272,7 +271,7 @@ pub fn decode_array_texture(mut reader: impl Read) -> Result<Vec<Texture>, Error
     let mut array = Vec::new();
 
     for _ in 0..item_count {
-        let file_id = reader.read_u64::<LittleEndian>()?;
+        let file_id = reader.read_u64::<LittleEndian>()? as f64;
         let width = reader.read_u16::<LittleEndian>()?;
         let height = reader.read_u16::<LittleEndian>()?;
         let _reserved = reader.read_u32::<LittleEndian>()?;
