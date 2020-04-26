@@ -52,7 +52,7 @@ export type ByVisibilityGpuSectorCullerOptions = {
   /**
    * Logging function for debugging.
    */
-  logCallback: (message?: any, ...optionalParameters: any[]) => void;
+  logCallback?: (message?: any, ...optionalParameters: any[]) => void;
 };
 
 function assert(condition: boolean, message: string = 'assertion hit') {
