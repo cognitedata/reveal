@@ -3,7 +3,8 @@
  */
 
 import { CadModel } from './CadModel';
-import { SectorScene, SectorModelTransformation } from './types';
+import { SectorModelTransformation } from './types';
+import { SectorScene } from './SectorScene';
 import { ModelDataRetriever } from '../../datasources/ModelDataRetriever';
 import { CadMetadataParser } from './CadMetadataParser';
 

@@ -2,10 +2,9 @@
  * Copyright 2020 Cognite AS
  */
 
+import { mat4 } from 'gl-matrix';
 import { Box3 } from '../../utils/Box3';
-import { mat4, vec3 } from 'gl-matrix';
 import { PrimitiveAttributes } from '../../workers/types/parser.types';
-import { traverseDepthFirst } from '../../utils/traversal';
 
 // TODO 2019-11-12 larsmoa: Move and rename to something general (not specific
 // for sector data).
@@ -50,57 +49,6 @@ export interface SectorMetadata {
 
   // TODO 2019-12-21 larsmoa: Make readonly
   parent?: SectorMetadata;
-}
-
-export interface SectorScene {
-  readonly version: number;
-  readonly maxTreeIndex: number;
-  readonly root: SectorMetadata;
-
-  getSectorById(sectorId: number): SectorMetadata | undefined;
-  getSectorsContainingPoint(p: vec3): SectorMetadata[];
-  getAllSectors(): SectorMetadata[];
-
-  // Available, but not supported:
-  // readonly projectId: number;
-  // readonly modelId: number;
-  // readonly revisionId: number;
-  // readonly subRevisionId: number;
-  // readonly unit: string | null;
-}
-
-export class SectorSceneImpl implements SectorScene {
-  readonly version: number;
-  readonly maxTreeIndex: number;
-  readonly root: SectorMetadata;
-  private readonly sectors: Map<number, SectorMetadata>;
-
-  constructor(version: number, maxTreeIndex: number, root: SectorMetadata, sectorsById: Map<number, SectorMetadata>) {
-    this.version = version;
-    this.maxTreeIndex = maxTreeIndex;
-    this.root = root;
-    this.sectors = sectorsById;
-  }
-
-  getSectorById(sectorId: number): SectorMetadata | undefined {
-    return this.sectors.get(sectorId);
-  }
-
-  getAllSectors(): SectorMetadata[] {
-    return [...this.sectors.values()];
-  }
-
-  getSectorsContainingPoint(p: vec3): SectorMetadata[] {
-    const accepted: SectorMetadata[] = [];
-    traverseDepthFirst(this.root, x => {
-      if (x.bounds.containsPoint(p)) {
-        accepted.push(x);
-        return true;
-      }
-      return false;
-    });
-    return accepted;
-  }
 }
 
 export type Color = number;

@@ -12,14 +12,11 @@ import nock from 'nock';
 const sceneJson = require('./scene.json');
 
 describe('Cognite3DViewer', () => {
+  const context: WebGLRenderingContext = require('gl')(64, 64);
+
   const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
-  const renderer: THREE.WebGLRenderer = {
-    domElement: document.createElement('canvas'),
-    dispose: jest.fn(),
-    setSize: jest.fn(),
-    getSize: () => new THREE.Vector2(),
-    render: jest.fn()
-  } as any;
+  const renderer = new THREE.WebGLRenderer({ context, precision: 'lowp' });
+  jest.useFakeTimers();
 
   test('constructor throws error when unsupported options are set', () => {
     expect(() => new Cognite3DViewer({ sdk, enableCache: true })).toThrowError();
@@ -29,9 +26,10 @@ describe('Cognite3DViewer', () => {
   });
 
   test('dispose disposes WebGL resources', () => {
+    const disposeSpy = jest.spyOn(renderer, 'dispose');
     const viewer = new Cognite3DViewer({ sdk, renderer });
     viewer.dispose();
-    expect(renderer.dispose).toBeCalledTimes(1);
+    expect(disposeSpy).toBeCalledTimes(1);
   });
 
   test('on cameraChanged triggers when position and target is changed', () => {
