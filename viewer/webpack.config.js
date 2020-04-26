@@ -92,7 +92,7 @@ module.exports = env => {
     watchOptions: {
       aggregateTimeout: 1500,
       ignored: [
-        'node_modules/',
+        /node_modules/,
       ],
     },
     optimization: {

@@ -4,9 +4,10 @@
 
 import * as THREE from 'three';
 import { Subject, Observable, animationFrameScheduler } from 'rxjs';
-import { publish, share, auditTime, map, observeOn, tap, filter, mergeAll } from 'rxjs/operators';
+import { publish, share, map, observeOn, tap, filter, mergeAll, auditTime } from 'rxjs/operators';
 
-import { SectorModelTransformation, SectorScene, SectorMetadata, Sector, SectorQuads } from '../../../models/cad/types';
+import { SectorModelTransformation, SectorMetadata, Sector, SectorQuads } from '../../../models/cad/types';
+import { SectorScene } from '../../../models/cad/SectorScene';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
 import { CadModel } from '../../../models/cad/CadModel';
 import { CadRenderHints } from '../../CadRenderHints';
@@ -37,7 +38,7 @@ export interface CadNodeOptions {
   budget?: CadBudget;
   // internal options are experimental and may change in the future
   internal?: {
-    parseCallback?: (parsed: { lod: string; data: Sector | SectorQuads }) => void;
+    parseCallback?: ParseCallbackDelegate;
     sectorCuller?: SectorCuller;
   };
 }
@@ -164,7 +165,10 @@ export class CadNode extends THREE.Object3D {
       sectorScene: this._sectorScene,
       loadingHints: this.loadingHints
     };
-    this._cameraPositionObservable.next(cameraConfig);
+
+    if (!this.loadingHints.suspendLoading) {
+      this._cameraPositionObservable.next(cameraConfig);
+    }
   }
 
   public suggestCameraConfig(): SuggestedCameraConfig {
@@ -182,16 +186,19 @@ export class CadNode extends THREE.Object3D {
     const currentLevelOfDetail = new Map<number, LevelOfDetail>();
     // Do not request sectors that are already in scene
     const filterWantedSectorsDistinctFromCurrent = filter(
-      (wantedSector: WantedSector) => currentLevelOfDetail.get(wantedSector.id) !== wantedSector.levelOfDetail
+      (wantedSector: WantedSector) => currentLevelOfDetail.get(wantedSector.sectorId) !== wantedSector.levelOfDetail
     );
     // Do not continue with sectors already in scene
     const filterConsumedSectorsDistinctFromCurrent = filter(
-      (consumedSector: ConsumedSector) => currentLevelOfDetail.get(consumedSector.id) !== consumedSector.levelOfDetail
+      (consumedSector: ConsumedSector) =>
+        currentLevelOfDetail.get(consumedSector.sectorId) !== consumedSector.levelOfDetail
     );
     const pipeline = new Subject<ThreeCameraConfig>();
     pipeline
       .pipe(
-        auditTime(100),
+        // TODO 2020-04-15 larsmoa: Reduce delay to something more sensible
+        // Temporary workaround to avoid flooding the GPU pipeline with readPixels.
+        auditTime(650),
         fromThreeCameraConfig(),
         // Determine all wanted sectors
         map(input => this._sectorCuller.determineSectors(input)),
@@ -213,10 +220,10 @@ export class CadNode extends THREE.Object3D {
         observeOn(animationFrameScheduler)
       ) // Consume sectors
       .subscribe((sector: ConsumedSector) => {
-        currentLevelOfDetail.set(sector.id, sector.levelOfDetail);
-        const sectorNode = this.rootSector.sectorNodeMap.get(sector.id);
+        currentLevelOfDetail.set(sector.sectorId, sector.levelOfDetail);
+        const sectorNode = this.rootSector.sectorNodeMap.get(sector.sectorId);
         if (!sectorNode) {
-          throw new Error(`Could not find 3D node for sector ${sector.id} - invalid id?`);
+          throw new Error(`Could not find 3D node for sector ${sector.sectorId} - invalid id?`);
         }
         if (sectorNode.group) {
           sectorNode.group.userData.refCount -= 1;
@@ -237,7 +244,7 @@ export class CadNode extends THREE.Object3D {
   }
 
   private updateSectorBoundingBoxes(sector: ConsumedSector) {
-    const bboxNode = this._boundingBoxNode.children.find(x => x.userData.sectorId === sector.id)!;
+    const bboxNode = this._boundingBoxNode.children.find(x => x.userData.sectorId === sector.sectorId)!;
     bboxNode.visible = sector.levelOfDetail !== LevelOfDetail.Discarded;
   }
 

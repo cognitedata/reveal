@@ -6,7 +6,7 @@ import { SectorMetadata } from '../../models/cad/types';
 import { LevelOfDetail } from './LevelOfDetail';
 
 export interface WantedSector {
-  id: number;
+  sectorId: number;
   levelOfDetail: LevelOfDetail;
   metadata: SectorMetadata;
 }

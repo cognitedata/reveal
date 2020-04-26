@@ -158,7 +158,7 @@ export class CachedRepository implements Repository {
             }),
             this._modelDataTransformer.transform(),
             tap(group => {
-              group.name = `Quads ${wantedSector.id}`;
+              group.name = `Quads ${wantedSector.sectorId}`;
             }),
             map(group => ({ ...wantedSector, group })),
             shareReplay(1),
@@ -437,6 +437,6 @@ export class CachedRepository implements Repository {
   }
 
   private cacheKey(wantedSector: WantedSector) {
-    return '' + wantedSector.id + '.' + wantedSector.levelOfDetail;
+    return '' + wantedSector.sectorId + '.' + wantedSector.levelOfDetail;
   }
 }

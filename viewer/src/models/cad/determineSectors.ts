@@ -5,7 +5,8 @@
 // TODO try to implement all functionality that three.js provides here without three.js to avoid
 // pulling it in just for this reason
 import * as THREE from 'three';
-import { SectorMetadata, SectorScene } from './types';
+import { SectorMetadata } from './types';
+import { SectorScene } from './SectorScene';
 import { traverseDepthFirst, traverseUpwards } from '../../utils/traversal';
 import { toThreeMatrix4, toThreeVector3 } from '../../views/threejs/utilities';
 import { mat4, vec3 } from 'gl-matrix';
@@ -86,8 +87,8 @@ export function determineSectorsByProximity(params: DetermineSectorsByProximityI
   const result = determineSectorsFromDetailed(sectorScene, requestedDetailed);
   result.sort((l, r) => {
     // TODO 2020-03-22 larsmoa: Optimize to improve performance of determineSectors.
-    const leftMetadata = sectorScene.getSectorById(l.id)!;
-    const rightMetdata = sectorScene.getSectorById(r.id)!;
+    const leftMetadata = sectorScene.getSectorById(l.sectorId)!;
+    const rightMetdata = sectorScene.getSectorById(r.sectorId)!;
     return distanceToCamera(leftMetadata) - distanceToCamera(rightMetdata);
   });
   return result;
@@ -108,7 +109,7 @@ export function determineSectorsFromDetailed(scene: SectorScene, requestedDetail
         return false;
       }
       wanted.push({
-        id: other.id,
+        sectorId: other.id,
         levelOfDetail: LevelOfDetail.Detailed,
         metadata: other
       });
@@ -125,7 +126,7 @@ export function determineSectorsFromDetailed(scene: SectorScene, requestedDetail
     if (sector.facesFile.fileName) {
       simple.push(sector.id);
       wanted.push({
-        id: sector.id,
+        sectorId: sector.id,
         levelOfDetail: LevelOfDetail.Simple,
         metadata: sector
       });
@@ -136,7 +137,7 @@ export function determineSectorsFromDetailed(scene: SectorScene, requestedDetail
   traverseDepthFirst(scene.root, sector => {
     if (!detailed.includes(sector.id) && !simple.includes(sector.id)) {
       wanted.push({
-        id: sector.id,
+        sectorId: sector.id,
         levelOfDetail: LevelOfDetail.Discarded,
         metadata: sector
       });

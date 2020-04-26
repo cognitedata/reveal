@@ -186,13 +186,13 @@ export class Cognite3DViewer {
     if (this.isDisposed) {
       return new THREE.Vector3(-Infinity, -Infinity, -Infinity);
     }
-    return this.controls.getState().position;
+    return this.controls.getState().position.clone();
   }
   getCameraTarget(): THREE.Vector3 {
     if (this.isDisposed) {
       return new THREE.Vector3(-Infinity, -Infinity, -Infinity);
     }
-    return this.controls.getState().target;
+    return this.controls.getState().target.clone();
   }
   setCameraPosition(position: THREE.Vector3): void {
     if (this.isDisposed) {
@@ -308,7 +308,6 @@ export class Cognite3DViewer {
     const distanceToTarget = target.distanceTo(camera.position);
     const scaledDirection = raycaster.ray.direction.clone().multiplyScalar(distanceToTarget);
     const startTarget = raycaster.ray.origin.clone().add(scaledDirection);
-
     const from = {
       x: camera.position.x,
       y: camera.position.y,

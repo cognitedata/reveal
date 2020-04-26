@@ -117,6 +117,12 @@ const allExamples = [
     title: "World To Screen",
     entry: './src/world-to-screen.ts',
     template: 'template-example.ejs'
+  },
+  {
+    name: "threejs-gpu-based-sectorculler",
+    title: "GPU based sector culler",
+    entry: './src/gpu-sector-culler.ts',
+    template: 'template-example.ejs'
   }
 ];
 
@@ -221,7 +227,7 @@ module.exports = env => {
     devtool: development ? "inline-source-map" : "source-map",
     watchOptions: {
       aggregateTimeout: 1500,
-      ignored: ['node_modules/']
+      ignored: [/node_modules/]
     },
     devServer: {
       https: true,

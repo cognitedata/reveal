@@ -19,6 +19,12 @@ export class Box3 {
     return new Box3([vec3.fromValues(xMin, yMin, zMin), vec3.fromValues(xMax, yMax, zMax)]);
   }
 
+  static fromCenterAndSize(center: vec3, size: vec3): Box3 {
+    const min = vec3.scaleAndAdd(vec3.create(), center, size, -0.5);
+    const max = vec3.scaleAndAdd(vec3.create(), center, size, 0.5);
+    return new Box3([min, max]);
+  }
+
   public readonly min: vec3;
   public readonly max: vec3;
 

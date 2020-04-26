@@ -16,7 +16,15 @@ interface PooledWorker {
 }
 
 export class WorkerPool {
+  static get defaultPool(): WorkerPool {
+    WorkerPool._defaultPool = WorkerPool._defaultPool || new WorkerPool();
+    return WorkerPool._defaultPool;
+  }
+
+  private static _defaultPool: WorkerPool | undefined;
+
   private readonly workerList: PooledWorker[] = [];
+
   constructor() {
     const numberOfWorkers = this.determineNumberOfWorkers();
 

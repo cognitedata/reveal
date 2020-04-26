@@ -61,6 +61,14 @@ describe('Box3', () => {
     expect(new Box3([v(-1, -2, -3), v(2, 3, 4)]).size).toEqual(v(3, 5, 7));
     expect(new Box3([v(1, 1, 1), v(1, 1, 1)]).size).toEqual(v(0, 0, 0));
   });
+
+  test('fromCenterAndSize', () => {
+    const box = Box3.fromCenterAndSize(vec3.fromValues(0, 1, 2), vec3.fromValues(2, 4, 6));
+    expect(box.center).toEqual(vec3.fromValues(0, 1, 2));
+    expect(box.size).toEqual(vec3.fromValues(2, 4, 6));
+    expect(box.min).toEqual(vec3.fromValues(-1, -1, -1));
+    expect(box.max).toEqual(vec3.fromValues(1, 3, 5));
+  });
 });
 
 function v(x: number, y: number, z: number): vec3 {
