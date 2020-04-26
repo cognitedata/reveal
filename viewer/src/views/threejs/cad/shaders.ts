@@ -79,3 +79,11 @@ export const sectorShaders = {
     vertex: glsl(require('../../../glsl/sector/primitives/trapezium.vert').default)
   }
 };
+
+/**
+ * Shaders use to estimate how many pixels a sector covers on screen.
+ */
+export const coverageShaders = {
+  fragment: glsl(require('../../../glsl/sector/sectorCoverage.frag').default),
+  vertex: glsl(require('../../../glsl/sector/sectorCoverage.vert').default)
+};

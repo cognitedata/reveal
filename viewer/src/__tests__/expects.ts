@@ -66,23 +66,29 @@ export function expectSetEqual<T>(actual: Set<T>, expected: T[]) {
   expect([...actual]).toIncludeSameMembers(expected);
 }
 
-export function expectContainsSectorsWithLevelOfDetail(sectors: WantedSector[], simple: number[], detailed: number[]) {
-  for (const id of simple) {
+export function expectContainsSectorsWithLevelOfDetail(
+  sectors: WantedSector[],
+  expectedSimple: number[],
+  expectedDetailed: number[]
+) {
+  for (const sectorId of expectedSimple) {
     expect(sectors).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          id,
-          levelOfDetail: LevelOfDetail.Simple
+          sectorId,
+          levelOfDetail: LevelOfDetail.Simple,
+          metadata: expect.anything()
         })
       ])
     );
   }
-  for (const id of detailed) {
+  for (const sectorId of expectedDetailed) {
     expect(sectors).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          id,
-          levelOfDetail: LevelOfDetail.Detailed
+          sectorId,
+          levelOfDetail: LevelOfDetail.Detailed,
+          metadata: expect.anything()
         })
       ])
     );

@@ -20,7 +20,7 @@ export function createSectorMetadata(tree: SectorTree, depth: number = 0, path: 
 
   const root: SectorMetadata = {
     id,
-    path: '',
+    path,
     depth,
     bounds,
     indexFile: {
@@ -50,4 +50,34 @@ export function createSectorMetadata(tree: SectorTree, depth: number = 0, path: 
     x.parent = root;
   });
   return root;
+}
+
+export function generateSectorTree(depth: number, childrenPerLevel: number = 4): SectorMetadata {
+  const bounds = Box3.fromBounds(0, 0, 0, 1, 1, 1); // Bounds doesnt matter for this test
+
+  const firstChildren = generateSectorTreeChildren(depth - 1, bounds, childrenPerLevel, 1);
+  const root: SectorTree = [0, firstChildren.children, bounds];
+
+  return createSectorMetadata(root);
+}
+
+function generateSectorTreeChildren(
+  depth: number,
+  bounds: Box3,
+  childCount: number,
+  firstId: number
+): { children: SectorTree[]; nextId: number } {
+  if (depth === 0) {
+    return { children: [], nextId: firstId };
+  }
+
+  let id = firstId;
+  const result = [...Array(childCount)].map(() => {
+    const { children, nextId } = generateSectorTreeChildren(depth - 1, bounds, childCount, id + 1);
+    const item: SectorTree = [id, children, bounds];
+    id = nextId;
+    return item;
+  });
+
+  return { children: result, nextId: id };
 }

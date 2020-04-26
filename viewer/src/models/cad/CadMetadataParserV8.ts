@@ -2,7 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
-import { SectorScene, SectorMetadata, SectorSceneImpl } from './types';
+import { SectorMetadata } from './types';
+import { SectorScene, SectorSceneImpl } from './SectorScene';
 import { Box3 } from '../../utils/Box3';
 import { vec3 } from 'gl-matrix';
 
@@ -79,6 +80,7 @@ export function parseCadMetadataV8(metadata: CadMetadataV8): SectorScene {
     }
     const parent = sectorsById.get(parentId)!;
     parent.children.push(sector);
+    sector.parent = parent;
   }
 
   const rootSector = sectorsById.get(0);
@@ -109,6 +111,7 @@ function createSectorMetadata(metadata: CadSectorMetadataV8): SectorMetadata {
     facesFile,
 
     // Populated later
-    children: []
+    children: [],
+    parent: undefined
   };
 }

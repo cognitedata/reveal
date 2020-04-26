@@ -160,15 +160,16 @@ describe('determineSectors', () => {
 
     // Assert
     expect(
-      sectors.filter((sector: WantedSector) => sector.id === 1 && sector.levelOfDetail === LevelOfDetail.Detailed)
+      sectors.filter((wanted: WantedSector) => wanted.sectorId === 1 && wanted.levelOfDetail === LevelOfDetail.Detailed)
         .length
     ).toEqual(1);
     expect(
-      sectors.filter((sector: WantedSector) => sector.id === 2 && sector.levelOfDetail === LevelOfDetail.Detailed)
+      sectors.filter((sector: WantedSector) => sector.sectorId === 2 && sector.levelOfDetail === LevelOfDetail.Detailed)
         .length
     ).toEqual(1);
     expect(
-      sectors.filter((sector: WantedSector) => sector.id === 3 && sector.levelOfDetail === LevelOfDetail.Simple).length
+      sectors.filter((sector: WantedSector) => sector.sectorId === 3 && sector.levelOfDetail === LevelOfDetail.Simple)
+        .length
     ).toEqual(1);
   });
 
@@ -211,7 +212,7 @@ describe('determineSectors', () => {
 
     // Assert
     expect(
-      sectors.filter((sector: WantedSector) => sector.id === 1 && sector.levelOfDetail === LevelOfDetail.Detailed)
+      sectors.filter((sector: WantedSector) => sector.sectorId === 1 && sector.levelOfDetail === LevelOfDetail.Detailed)
         .length
     ).toEqual(1);
   });
