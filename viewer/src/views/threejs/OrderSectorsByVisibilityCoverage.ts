@@ -291,7 +291,7 @@ export class GpuOrderSectorsByVisibilityCoverage {
       addSector(sector.bounds, sector.id, coverageFactors);
     });
 
-    const buffer = new THREE.InstancedInterleavedBuffer(instanceValues, 5);
+    const buffer = new THREE.InstancedInterleavedBuffer(instanceValues, 4);
     boxGeometry.setAttribute('a_sectorId', new THREE.InterleavedBufferAttribute(buffer, 1, 0));
     boxGeometry.setAttribute('a_coverageFactor', new THREE.InterleavedBufferAttribute(buffer, 3, 1));
 
