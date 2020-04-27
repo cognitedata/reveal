@@ -138,7 +138,7 @@ pub fn parse_sector_header(mut input: &mut impl BufRead) -> Result<SectorHeader,
 
     if attribute_count != ATTRIBUTE_COUNT {
         return Err(error!(
-            "Wrong attribute count. Got {}, but expected {}", 
+            "Wrong attribute count. Got {}, but expected {}",
             attribute_count, ATTRIBUTE_COUNT
         ));
     }
