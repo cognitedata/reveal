@@ -46,6 +46,12 @@ const allExamples = [
     template: 'template-example.ejs'
   },
   {
+    name: "threejs-clipping",
+    title: "Clipping planes",
+    entry: './src/clipping.ts',
+    template: 'template-example.ejs'
+  },
+  {
     name: "threejs-filtering",
     title: "Filtering",
     entry: './src/filtering.ts',
