@@ -11,7 +11,7 @@ import { ParserWorker } from '../../workers/parser.worker';
 
 export class CadSectorParser {
   private readonly workerPool: WorkerPool;
-  constructor(workerPool: WorkerPool = new WorkerPool()) {
+  constructor(workerPool: WorkerPool = WorkerPool.defaultPool) {
     this.workerPool = workerPool;
   }
 

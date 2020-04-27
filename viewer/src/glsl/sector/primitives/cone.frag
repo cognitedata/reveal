@@ -12,6 +12,8 @@
 
 uniform sampler2D colorDataTexture;
 uniform sampler2D overrideVisibilityPerTreeIndex;
+uniform sampler2D matCapTexture;
+
 uniform vec2 dataTextureSize;
 
 uniform mat4 projectionMatrix;
@@ -150,6 +152,6 @@ void main() {
   #endif
 
 
-    updateFragmentDepth(p, projectionMatrix);
-    updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragDepthEXT);
+    float fragDepth = updateFragmentDepth(p, projectionMatrix);
+    updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture);
 }

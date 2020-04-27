@@ -4,18 +4,24 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import * as reveal_threejs from '@cognite/reveal/threejs';
 import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams, createClientIfNecessary } from './utils/loaders';
+import * as reveal_threejs from '@cognite/reveal/threejs';
 
 CameraControls.install({ THREE });
 
 async function main() {
   const urlParams = new URL(location.href).searchParams;
   const modelIdentifier = createModelIdentifierFromUrlParams(urlParams, '/primitives');
+  const apiKey = urlParams.get('apiKey');
 
+  const camera = new THREE.PerspectiveCamera();
   const scene = new THREE.Scene();
-  const cadModel = await loadCadModelFromCdfOrUrl(modelIdentifier, await createClientIfNecessary(modelIdentifier));
+  const cadModel = await loadCadModelFromCdfOrUrl(
+    modelIdentifier,
+    await createClientIfNecessary(modelIdentifier, apiKey)
+  );
   const cadNode = new reveal_threejs.CadNode(cadModel);
+  cadNode.renderHints = { showSectorBoundingBoxes: false };
   let sectorsNeedUpdate = true;
   cadNode.addEventListener('update', () => {
     sectorsNeedUpdate = true;
@@ -26,10 +32,15 @@ async function main() {
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#444');
   renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
 
   const { position, target, near, far } = cadNode.suggestCameraConfig();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
+  camera.near = near;
+  camera.far = 3 * far;
+  camera.fov = 75;
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  camera.updateMatrixWorld();
+
   const controls = new CameraControls(camera, renderer.domElement);
   controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
@@ -45,6 +56,7 @@ async function main() {
 
     if (controlsNeedUpdate || sectorsNeedUpdate) {
       renderer.render(scene, camera);
+      sectorsNeedUpdate = false;
     }
 
     requestAnimationFrame(render);

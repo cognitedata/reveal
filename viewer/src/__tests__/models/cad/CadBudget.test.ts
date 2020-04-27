@@ -3,7 +3,8 @@
  */
 
 import { createDefaultCadBudget } from '../../../models/cad/CadBudget';
-import { SectorScene, SectorMetadata } from '../../../models/cad/types';
+import { SectorMetadata } from '../../../models/cad/types';
+import { SectorScene } from '../../../models/cad/SectorScene';
 
 describe('CadBudgetImpl', () => {
   const sectorScene: SectorScene = {

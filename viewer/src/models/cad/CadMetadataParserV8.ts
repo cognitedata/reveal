@@ -2,7 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
-import { SectorScene, SectorMetadata, SectorSceneImpl } from './types';
+import { SectorMetadata } from './types';
+import { SectorScene, SectorSceneImpl } from './SectorScene';
 import { Box3 } from '../../utils/Box3';
 import { vec3 } from 'gl-matrix';
 
@@ -36,6 +37,13 @@ export interface CadSectorMetadataV8 {
       yz: number;
       xz: number;
     };
+    readonly recursiveCoverageFactors:
+      | {
+          xy: number;
+          yz: number;
+          xz: number;
+        }
+      | undefined;
     readonly fileName: string | null;
     readonly downloadSize: number;
   };
@@ -72,6 +80,7 @@ export function parseCadMetadataV8(metadata: CadMetadataV8): SectorScene {
     }
     const parent = sectorsById.get(parentId)!;
     parent.children.push(sector);
+    sector.parent = parent;
   }
 
   const rootSector = sectorsById.get(0);
@@ -83,6 +92,10 @@ export function parseCadMetadataV8(metadata: CadMetadataV8): SectorScene {
 }
 
 function createSectorMetadata(metadata: CadSectorMetadataV8): SectorMetadata {
+  const facesFile = {
+    ...metadata.facesFile,
+    recursiveCoverageFactors: metadata.facesFile.recursiveCoverageFactors || metadata.facesFile.coverageFactors
+  };
   return {
     id: metadata.id,
     path: metadata.path,
@@ -95,9 +108,10 @@ function createSectorMetadata(metadata: CadSectorMetadataV8): SectorMetadata {
     // I3D
     indexFile: { ...metadata.indexFile },
     // F3D
-    facesFile: { ...metadata.facesFile },
+    facesFile,
 
     // Populated later
-    children: []
+    children: [],
+    parent: undefined
   };
 }

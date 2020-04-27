@@ -13,6 +13,7 @@ CameraControls.install({ THREE });
 async function main() {
   const urlParams = new URL(location.href).searchParams;
   const modelId = createModelIdentifierFromUrlParams(urlParams, '/primitives');
+  const apiKey = urlParams.get('apiKey');
 
   let shadingNeedsUpdate = false;
   let visibleIndices = new Set([1, 2, 8, 12]);
@@ -42,7 +43,7 @@ async function main() {
   });
 
   const scene = new THREE.Scene();
-  const cadModel = await loadCadModelFromCdfOrUrl(modelId, await createClientIfNecessary(modelId));
+  const cadModel = await loadCadModelFromCdfOrUrl(modelId, await createClientIfNecessary(modelId, apiKey));
   const cadNode = new CadNode(cadModel, { nodeAppearance });
   let modelNeedsUpdate = false;
   cadNode.addEventListener('update', () => {

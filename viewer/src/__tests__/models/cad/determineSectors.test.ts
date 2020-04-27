@@ -77,6 +77,11 @@ describe('determineSectors', () => {
           xz: 0.5,
           yz: 0.5
         },
+        recursiveCoverageFactors: {
+          xy: 0.5,
+          xz: 0.5,
+          yz: 0.5
+        },
         downloadSize: 1000
       },
       children: [
@@ -96,6 +101,11 @@ describe('determineSectors', () => {
             fileName: 'sector_2.f3d',
             quadSize: 0.5,
             coverageFactors: {
+              xy: 0.5,
+              xz: 0.5,
+              yz: 0.5
+            },
+            recursiveCoverageFactors: {
               xy: 0.5,
               xz: 0.5,
               yz: 0.5
@@ -123,6 +133,11 @@ describe('determineSectors', () => {
               xz: 0.5,
               yz: 0.5
             },
+            recursiveCoverageFactors: {
+              xy: 0.5,
+              xz: 0.5,
+              yz: 0.5
+            },
             downloadSize: 1000
           }
         }
@@ -145,15 +160,16 @@ describe('determineSectors', () => {
 
     // Assert
     expect(
-      sectors.filter((sector: WantedSector) => sector.id === 1 && sector.levelOfDetail === LevelOfDetail.Detailed)
+      sectors.filter((wanted: WantedSector) => wanted.sectorId === 1 && wanted.levelOfDetail === LevelOfDetail.Detailed)
         .length
     ).toEqual(1);
     expect(
-      sectors.filter((sector: WantedSector) => sector.id === 2 && sector.levelOfDetail === LevelOfDetail.Detailed)
+      sectors.filter((sector: WantedSector) => sector.sectorId === 2 && sector.levelOfDetail === LevelOfDetail.Detailed)
         .length
     ).toEqual(1);
     expect(
-      sectors.filter((sector: WantedSector) => sector.id === 3 && sector.levelOfDetail === LevelOfDetail.Simple).length
+      sectors.filter((sector: WantedSector) => sector.sectorId === 3 && sector.levelOfDetail === LevelOfDetail.Simple)
+        .length
     ).toEqual(1);
   });
 
@@ -196,7 +212,7 @@ describe('determineSectors', () => {
 
     // Assert
     expect(
-      sectors.filter((sector: WantedSector) => sector.id === 1 && sector.levelOfDetail === LevelOfDetail.Detailed)
+      sectors.filter((sector: WantedSector) => sector.sectorId === 1 && sector.levelOfDetail === LevelOfDetail.Detailed)
         .length
     ).toEqual(1);
   });
@@ -207,6 +223,11 @@ function emptyFacesFile() {
     quadSize: 0.5,
     fileName: null,
     coverageFactors: {
+      xy: 0.5,
+      xz: 0.5,
+      yz: 0.5
+    },
+    recursiveCoverageFactors: {
       xy: 0.5,
       xz: 0.5,
       yz: 0.5

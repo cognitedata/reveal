@@ -3,7 +3,10 @@
  */
 
 import { LevelOfDetail, WantedSector } from '../../internal';
-import { SectorScene, SectorMetadata } from './types';
+import { SectorMetadata } from './types';
+import { SectorScene } from './SectorScene';
+
+// TODO 2020-04-26 larsmoa: Get rid of CadBudget or use it in ByVisibilityGpuSectorCuller.
 
 /**
  * Keeps number of loads within a specified budget.
@@ -68,9 +71,9 @@ class CadBudgetAccumulator {
   }
 
   private tryAddWantedSector(candidate: WantedSector, accumulatedSpendage: CadBudgetSpendage): boolean {
-    const sectorMetadata = this.sectors.getSectorById(candidate.id);
+    const sectorMetadata = this.sectors.getSectorById(candidate.sectorId);
     if (!sectorMetadata) {
-      throw new Error(`Could not find metadata for sector ${candidate.id}`);
+      throw new Error(`Could not find metadata for sector ${candidate.sectorId}`);
     }
 
     const candidateSpendage = this.getCandidateSpendage(candidate, sectorMetadata);

@@ -1,16 +1,8 @@
-use console_error_panic_hook;
 use js_sys::{Float32Array, Map, Uint32Array};
 use serde::{Deserialize, Serialize};
 use std::panic;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
-
-// From reveal-rs
-use f3df;
-use i3df;
-use openctm;
-use serde;
-use serde_bytes;
 
 #[macro_use]
 pub mod error;
