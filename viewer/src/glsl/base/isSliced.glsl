@@ -7,7 +7,7 @@ bool isSliced(vec3 point) {
   vec3 pointFlipped = -point;
   vec4 plane;
 
-  for (int i = 0; i < NUM_CLIPPING_PLANES; i++) {
+  for (int i = 0; i < UNION_CLIPPING_PLANES; i++) {
     plane = clippingPlanes[i];
     if (dot(pointFlipped, plane.xyz) > plane.w) return true;
   }
@@ -15,9 +15,8 @@ bool isSliced(vec3 point) {
   bool clipped = true;
   for ( int i = UNION_CLIPPING_PLANES; i < NUM_CLIPPING_PLANES; i ++ ) {
       plane = clippingPlanes[ i ];
-      clipped = ( dot( point, plane.xyz ) > plane.w ) && clipped;
+      clipped = (dot(pointFlipped, plane.xyz) > plane.w) && clipped;
   }
-#pragma unroll_loop_end
   if ( clipped ) return true;
 #endif
 #endif

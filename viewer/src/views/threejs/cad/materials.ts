@@ -225,7 +225,6 @@ export function createMaterials(treeIndexCount: number): Materials {
     clipping: true,
     fragmentShader: sectorShaders.simpleMesh.fragment,
     vertexShader: sectorShaders.simpleMesh.vertex,
-    side: THREE.DoubleSide
   });
 
   const allMaterials = {

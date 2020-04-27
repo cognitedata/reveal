@@ -26,6 +26,7 @@ export class MaterialManager {
   public readonly materials: Readonly<Materials>;
   private readonly _options?: NodeAppearance;
   private _clippingPlanes: THREE.Plane[] = [];
+  private _clipIntersection: boolean = false;
 
   constructor(treeIndexCount: number, options?: NodeAppearance) {
     this.materials = createMaterials(treeIndexCount);
@@ -41,6 +42,18 @@ export class MaterialManager {
     this._clippingPlanes = clippingPlanes;
     this.applyToAllMaterials(material => {
       material.clippingPlanes = clippingPlanes;
+      console.log('Setting', material, clippingPlanes);
+    });
+  }
+
+  get clipIntersection(): boolean {
+    return this._clipIntersection;
+  }
+
+  set clipIntersection(intersection: boolean) {
+    this._clipIntersection = intersection;
+    this.applyToAllMaterials(material => {
+      material.clipIntersection = intersection;
     });
   }
 

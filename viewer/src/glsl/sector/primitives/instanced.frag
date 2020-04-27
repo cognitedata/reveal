@@ -15,9 +15,7 @@ uniform vec2 dataTextureSize;
 
 uniform int renderMode;
 
-#if NUM_CLIPPING_PLANES > 0
 varying vec3 vViewPosition;
-#endif
 
 void main() {
     if (!determineVisibility(overrideVisibilityPerTreeIndex, dataTextureSize, v_treeIndex)) {

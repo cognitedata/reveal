@@ -128,6 +128,14 @@ export class CadNode extends THREE.Object3D {
     this._materialManager.clippingPlanes = planes;
   }
 
+  get clipIntersection(): boolean {
+    return this._materialManager.clipIntersection;
+  }
+
+  set clipIntersection(intersection: boolean) {
+    this._materialManager.clipIntersection = intersection;
+  }
+
   requestNodeUpdate(treeIndices: number[]) {
     this._materialManager.updateNodes(treeIndices);
     this.dispatchEvent({ type: 'update' });

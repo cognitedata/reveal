@@ -15,9 +15,7 @@ varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
-#if NUM_CLIPPING_PLANES > 0
 varying vec3 vViewPosition;
-#endif
 
 void main() {
     mat4 instanceMatrix = constructMatrix(
@@ -49,9 +47,7 @@ void main() {
 
     vec4 modelViewPosition = modelViewMatrix * vec4(transformed, 1.0);
 
-#if NUM_CLIPPING_PLANES > 0
     vViewPosition = modelViewPosition.xyz;
-#endif
 
     gl_Position = projectionMatrix * modelViewPosition;
 }

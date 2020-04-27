@@ -34,10 +34,6 @@ varying float v_arcAngle;
 varying vec3 v_color;
 varying vec3 v_normal;
 
-#if NUM_CLIPPING_PLANES > 0
-	varying vec3 vViewPosition;
-#endif
-
 void main() {
     vec3 center = 0.5 * (a_centerA + a_centerB);
     float halfHeight = 0.5 * length(a_centerA - a_centerB);
@@ -100,10 +96,6 @@ void main() {
     v_normal = normalMatrix * normal;
 
     vec4 mvPosition = modelViewMatrix * vec4( transformed, 1.0 );
-
-#if NUM_CLIPPING_PLANES > 0
-    vViewPosition = mvPosition.xyz;
-#endif
 
     gl_Position = projectionMatrix * mvPosition;
 }

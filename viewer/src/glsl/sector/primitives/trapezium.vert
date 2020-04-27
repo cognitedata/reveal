@@ -9,9 +9,7 @@ varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
-#if NUM_CLIPPING_PLANES > 0
-    varying vec3 vViewPosition;
-#endif
+varying vec3 vViewPosition;
 
 void main() {
     vec3 transformed;
@@ -29,8 +27,6 @@ void main() {
     v_normal = normalMatrix * objectNormal;
 
     vec4 mvPosition = modelViewMatrix * vec4( transformed, 1.0 );
-#if NUM_CLIPPING_PLANES > 0
     vViewPosition = mvPosition.xyz;
-#endif
     gl_Position = projectionMatrix * mvPosition;
 }

@@ -14,9 +14,7 @@ varying vec3 v_color;
 varying vec3 v_normal;
 varying float v_treeIndex;
 
-#if NUM_CLIPPING_PLANES > 0
 varying vec3 vViewPosition;
-#endif
 
 void main() {
     v_xy = vec2(position.x, position.y);
@@ -34,8 +32,6 @@ void main() {
     v_color = a_color;
 
     v_normal = normalMatrix * a_normal;
-#if NUM_CLIPPING_PLANES > 0
     vViewPosition = mvPosition.xyz;
-#endif
     gl_Position = projectionMatrix * mvPosition;
 }
