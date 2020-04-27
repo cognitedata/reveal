@@ -72,7 +72,7 @@ export async function createClientIfNecessary(
     return undefined;
   }
 
-  const client = new CogniteClient({ baseUrl: '/cdf', appId: 'cognite.reveal.example' });
+  const client = new CogniteClient({ appId: 'cognite.reveal.example' });
   if (apiKey) {
     client.loginWithApiKey({ project: modelId.project, apiKey });
   } else {
