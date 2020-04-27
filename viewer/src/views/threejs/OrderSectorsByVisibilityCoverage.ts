@@ -124,7 +124,6 @@ export class GpuOrderSectorsByVisibilityCoverage {
     this.debugRenderer = new THREE.WebGLRenderer({
       antialias: false,
       alpha: false,
-      precision: 'lowp',
       stencil: false
     });
     this.debugRenderer.setClearColor('white');
