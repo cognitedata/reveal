@@ -15,6 +15,7 @@ import {
   nutGeometry
 } from './primitiveGeometries';
 import { Materials } from './materials';
+import { disposeAttributeArrayOnUpload } from '../disposeAttributeArrayOnUpload';
 
 export function* createPrimitives(sector: Sector, materials: Materials) {
   if (hasAny(sector.boxes)) {
@@ -81,21 +82,23 @@ function setAttributes(geometry: THREE.InstancedBufferGeometry, attributes: Prim
     const itemSize = 4;
     // We assume uint8 data is color and that it always is normalized. For now this is probably ok.
     // See comment above
-    geometry.setAttribute(`a_${name}`, new THREE.InstancedBufferAttribute(value, itemSize, true));
+    geometry.setAttribute(`a_${name}`, new THREE.InstancedBufferAttribute(value, itemSize, true).onUpload(disposeAttributeArrayOnUpload));
   }
   for (const [name, value] of attributes.f32Attributes) {
     const itemSize = 1;
-    geometry.setAttribute(`a_${name}`, new THREE.InstancedBufferAttribute(value, itemSize));
+    geometry.setAttribute(`a_${name}`, new THREE.InstancedBufferAttribute(value, itemSize).onUpload(disposeAttributeArrayOnUpload));
   }
   for (const [name, value] of attributes.vec3Attributes) {
     const itemSize = 3;
-    geometry.setAttribute(`a_${name}`, new THREE.InstancedBufferAttribute(value, itemSize));
+    geometry.setAttribute(`a_${name}`, new THREE.InstancedBufferAttribute(value, itemSize).onUpload(disposeAttributeArrayOnUpload));
   }
   for (const [name, value] of attributes.vec4Attributes) {
     const itemSize = 4;
-    geometry.setAttribute(`a_${name}`, new THREE.InstancedBufferAttribute(value, itemSize));
+    geometry.setAttribute(`a_${name}`, new THREE.InstancedBufferAttribute(value, itemSize).onUpload(disposeAttributeArrayOnUpload));
   }
   for (const [name, value] of attributes.mat4Attributes) {
+    // TODO 2020-04-27 larsmoa: Free memory from THREE.InstancedInterleavedBuffer from mat4-attributes
+    // after upload to GPU
     const buffer = new THREE.InstancedInterleavedBuffer(value, 16);
     for (let column = 0; column < 4; column++) {
       const attribute = new THREE.InterleavedBufferAttribute(buffer, 4, column * 4);
@@ -106,7 +109,7 @@ function setAttributes(geometry: THREE.InstancedBufferGeometry, attributes: Prim
     // TODO consider passing this properly from Rust instead
     const float32Value = new Float32Array(value);
     const itemSize = 1;
-    geometry.setAttribute(`a_${name}`, new THREE.InstancedBufferAttribute(float32Value, itemSize));
+    geometry.setAttribute(`a_${name}`, new THREE.InstancedBufferAttribute(float32Value, itemSize).onUpload(disposeAttributeArrayOnUpload));
   }
   const nodeIds = attributes.f64Attributes.get('nodeId');
   if (!nodeIds) {
