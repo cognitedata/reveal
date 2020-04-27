@@ -25,6 +25,7 @@ function updateVisibility(visible: VisibilityDelegate, materials: Materials, tre
 export class MaterialManager {
   public readonly materials: Readonly<Materials>;
   private readonly _options?: NodeAppearance;
+  private _clippingPlanes: THREE.Plane[] = [];
 
   constructor(treeIndexCount: number, options?: NodeAppearance) {
     this.materials = createMaterials(treeIndexCount);
@@ -32,22 +33,21 @@ export class MaterialManager {
     this.setRenderMode(RenderMode.Color);
   }
 
+  get clippingPlanes(): THREE.Plane[] {
+    return this._clippingPlanes;
+  }
+
+  set clippingPlanes(clippingPlanes: THREE.Plane[]) {
+    this._clippingPlanes = clippingPlanes;
+    this.applyToAllMaterials(material => {
+      material.clippingPlanes = clippingPlanes;
+    });
+  }
+
   setRenderMode(mode: RenderMode) {
-    this.materials.box.uniforms.renderMode.value = mode;
-    this.materials.circle.uniforms.renderMode.value = mode;
-    this.materials.generalRing.uniforms.renderMode.value = mode;
-    this.materials.nut.uniforms.renderMode.value = mode;
-    this.materials.quad.uniforms.renderMode.value = mode;
-    this.materials.cone.uniforms.renderMode.value = mode;
-    this.materials.eccentricCone.uniforms.renderMode.value = mode;
-    this.materials.sphericalSegment.uniforms.renderMode.value = mode;
-    this.materials.torusSegment.uniforms.renderMode.value = mode;
-    this.materials.generalCylinder.uniforms.renderMode.value = mode;
-    this.materials.trapezium.uniforms.renderMode.value = mode;
-    this.materials.ellipsoidSegment.uniforms.renderMode.value = mode;
-    this.materials.instancedMesh.uniforms.renderMode.value = mode;
-    this.materials.triangleMesh.uniforms.renderMode.value = mode;
-    this.materials.simple.uniforms.renderMode.value = mode;
+    this.applyToAllMaterials(material => {
+      material.uniforms.renderMode.value = mode;
+    });
   }
 
   getRenderMode(): RenderMode {
@@ -71,5 +71,23 @@ export class MaterialManager {
       updateVisibility(options.visible, materials, treeIndices);
       materials.overrideVisibilityPerTreeIndex.needsUpdate = true;
     }
+  }
+
+  private applyToAllMaterials(callback: (material: THREE.ShaderMaterial) => void) {
+    callback(this.materials.box);
+    callback(this.materials.circle);
+    callback(this.materials.generalRing);
+    callback(this.materials.nut);
+    callback(this.materials.quad);
+    callback(this.materials.cone);
+    callback(this.materials.eccentricCone);
+    callback(this.materials.sphericalSegment);
+    callback(this.materials.torusSegment);
+    callback(this.materials.generalCylinder);
+    callback(this.materials.trapezium);
+    callback(this.materials.ellipsoidSegment);
+    callback(this.materials.instancedMesh);
+    callback(this.materials.triangleMesh);
+    callback(this.materials.simple);
   }
 }

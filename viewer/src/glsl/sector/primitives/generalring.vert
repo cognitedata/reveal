@@ -21,6 +21,10 @@ varying float v_arcAngle;
 varying vec3 v_color;
 varying vec3 v_normal;
 
+#if NUM_CLIPPING_PLANES > 0
+varying vec3 vViewPosition;
+#endif
+
 void main() {
     mat4 instanceMatrix = constructMatrix(
         a_instanceMatrix_column_0,
@@ -40,5 +44,8 @@ void main() {
     v_color = a_color;
 
     v_normal = normalMatrix * a_normal;
+#if NUM_CLIPPING_PLANES > 0
+    vViewPosition = mvPosition.xyz;
+#endif
     gl_Position = projectionMatrix * mvPosition;
 }

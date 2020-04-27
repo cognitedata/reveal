@@ -67,8 +67,6 @@ export class CadNode extends THREE.Object3D {
   private readonly _boundingBoxNode: THREE.Object3D;
   private readonly _repository: Repository;
 
-  clippingPlanes: THREE.Plane[] = [];
-
   constructor(model: CadModel, options?: CadNodeOptions) {
     super();
     this.type = 'CadNode';
@@ -120,6 +118,14 @@ export class CadNode extends THREE.Object3D {
     }
     this._materialManager.updateNodes(indices);
     this._cameraPositionObservable = this.createLoadSectorsPipeline();
+  }
+
+  get clippingPlanes(): THREE.Plane[] {
+    return this._materialManager.clippingPlanes;
+  }
+
+  set clippingPlanes(planes: THREE.Plane[]) {
+    this._materialManager.clippingPlanes = planes;
   }
 
   requestNodeUpdate(treeIndices: number[]) {

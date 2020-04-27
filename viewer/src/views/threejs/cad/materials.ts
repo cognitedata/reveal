@@ -49,7 +49,8 @@ export function createMaterials(treeIndexCount: number): Materials {
     clipping: true,
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.boxPrimitive.vertex,
-    fragmentShader: sectorShaders.boxPrimitive.fragment
+    fragmentShader: sectorShaders.boxPrimitive.fragment,
+    side: THREE.DoubleSide
   });
 
   const circleMaterial = new THREE.ShaderMaterial({
@@ -67,7 +68,8 @@ export function createMaterials(treeIndexCount: number): Materials {
     name: 'Primitives (Nuts)',
     clipping: true,
     vertexShader: sectorShaders.nutPrimitive.vertex,
-    fragmentShader: sectorShaders.nutPrimitive.fragment
+    fragmentShader: sectorShaders.nutPrimitive.fragment,
+    side: THREE.DoubleSide
   });
 
   const quadMaterial = new THREE.ShaderMaterial({
@@ -104,7 +106,8 @@ export function createMaterials(treeIndexCount: number): Materials {
     },
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.conePrimitive.vertex,
-    fragmentShader: sectorShaders.conePrimitive.fragment
+    fragmentShader: sectorShaders.conePrimitive.fragment,
+    side: THREE.DoubleSide
   });
 
   const eccentricConeMaterial = new THREE.ShaderMaterial({
@@ -117,7 +120,8 @@ export function createMaterials(treeIndexCount: number): Materials {
     },
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.eccentricConePrimitive.vertex,
-    fragmentShader: sectorShaders.eccentricConePrimitive.fragment
+    fragmentShader: sectorShaders.eccentricConePrimitive.fragment,
+    side: THREE.DoubleSide
   });
 
   const ellipsoidSegmentMaterial = new THREE.ShaderMaterial({
@@ -130,7 +134,8 @@ export function createMaterials(treeIndexCount: number): Materials {
     },
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.ellipsoidSegmentPrimitive.vertex,
-    fragmentShader: sectorShaders.ellipsoidSegmentPrimitive.fragment
+    fragmentShader: sectorShaders.ellipsoidSegmentPrimitive.fragment,
+    side: THREE.DoubleSide
   });
 
   const generalCylinderMaterial = new THREE.ShaderMaterial({
@@ -143,7 +148,8 @@ export function createMaterials(treeIndexCount: number): Materials {
     },
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.generalCylinderPrimitive.vertex,
-    fragmentShader: sectorShaders.generalCylinderPrimitive.fragment
+    fragmentShader: sectorShaders.generalCylinderPrimitive.fragment,
+    side: THREE.DoubleSide
   });
 
   const trapeziumMaterial = new THREE.ShaderMaterial({
@@ -156,7 +162,8 @@ export function createMaterials(treeIndexCount: number): Materials {
     },
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.trapeziumPrimitive.vertex,
-    fragmentShader: sectorShaders.trapeziumPrimitive.fragment
+    fragmentShader: sectorShaders.trapeziumPrimitive.fragment,
+    side: THREE.DoubleSide
   });
 
   const torusSegmentMaterial = new THREE.ShaderMaterial({
@@ -187,7 +194,8 @@ export function createMaterials(treeIndexCount: number): Materials {
     },
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.ellipsoidSegmentPrimitive.vertex,
-    fragmentShader: sectorShaders.ellipsoidSegmentPrimitive.fragment
+    fragmentShader: sectorShaders.ellipsoidSegmentPrimitive.fragment,
+    side: THREE.DoubleSide
   });
 
   const triangleMeshMaterial = new THREE.ShaderMaterial({
@@ -198,7 +206,7 @@ export function createMaterials(treeIndexCount: number): Materials {
     },
     side: THREE.DoubleSide,
     fragmentShader: sectorShaders.detailedMesh.fragment,
-    vertexShader: sectorShaders.detailedMesh.vertex
+    vertexShader: sectorShaders.detailedMesh.vertex,
   });
 
   const instancedMeshMaterial = new THREE.ShaderMaterial({
@@ -216,7 +224,8 @@ export function createMaterials(treeIndexCount: number): Materials {
     name: 'Low detail material',
     clipping: true,
     fragmentShader: sectorShaders.simpleMesh.fragment,
-    vertexShader: sectorShaders.simpleMesh.vertex
+    vertexShader: sectorShaders.simpleMesh.vertex,
+    side: THREE.DoubleSide
   });
 
   const allMaterials = {

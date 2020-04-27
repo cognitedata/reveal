@@ -3,7 +3,7 @@
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
 #pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
-#pragma glslify: isSliced = require('../../base/isSliced.glsl')
+#pragma glslify: isSliced = require('../../base/isSliced.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: determineColor = require('../../base/determineColor.glsl');
 
 #define PI 3.14159265359
@@ -33,49 +33,12 @@ varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
-#if NUM_CLIPPING_PLANES > 0
-    varying vec3 vViewPosition;
-    uniform vec4 clippingPlanes[ NUM_CLIPPING_PLANES ];
-#endif
-
 uniform int renderMode;
 
 void main() {
   if (!determineVisibility(overrideVisibilityPerTreeIndex, dataTextureSize, v_treeIndex)) {
     discard;
   }
-
-#if NUM_CLIPPING_PLANES > 0
-
-  vec4 plane;
-
-#pragma unroll_loop
-  for ( int i = 0; i < UNION_CLIPPING_PLANES; i ++ ) {
-
-      plane = clippingPlanes[ i ];
-
-      if ( dot( vViewPosition, plane.xyz ) > plane.w ) discard;
-
-  }
-
-#if UNION_CLIPPING_PLANES < NUM_CLIPPING_PLANES
-
-  bool clipped = true;
-
-#pragma unroll_loop
-  for ( int i = UNION_CLIPPING_PLANES; i < NUM_CLIPPING_PLANES; i ++ ) {
-
-      plane = clippingPlanes[ i ];
-      clipped = ( dot( vViewPosition, plane.xyz ) > plane.w ) && clipped;
-
-  }
-
-  if ( clipped ) discard;
-
-#endif
-
-
-#endif
 
   vec3 normal = normalize( v_normal );
   vec3 color = determineColor(v_color, colorDataTexture, dataTextureSize, v_treeIndex);
