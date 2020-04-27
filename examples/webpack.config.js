@@ -237,17 +237,6 @@ module.exports = env => {
         resolve('dist/'),
       ],
 
-      proxy: {
-       // Setup a proxy to allow requests from LAN to access API without CORS issues
-       '/cdf': {
-            target: 'https://api.cognitedata.com',
-            changeOrigin: true,
-            secure: true,
-            pathRewrite: {
-              '^/cdf': ''
-            }
-        },
-      },
       writeToDisk: true,
     },
     optimization: {
