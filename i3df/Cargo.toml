@@ -17,34 +17,34 @@ required-features = ["dump"]
 
 [dependencies]
 clap = "2.33.0"
-byteorder = "1.3.2"
-nalgebra = { version = "0.19.0", features = [ "serde-serialize" ] }
+byteorder = "1.3.4"
+nalgebra = { version = "0.20.0", features = [ "serde-serialize" ] }
 impl_ops = "0.1.1"
-serde = "1.0.104"
-serde_derive = "1.0.103"
-serde_json = { version = "1.0.42", optional = true }
+serde = "1.0.105"
+serde_derive = "1.0.104"
+serde_json = { version = "1.0.48", optional = true }
 serde_yaml = { version = "0.8.11", optional = true }
-serde_bytes = { version = "0.11.2", optional = true }
+serde_bytes = { version = "0.11.3", optional = true }
 #js-sys = { version = "0.3.27", optional = true }
 #wasm-bindgen = { version = "0.2.50", optional = true }
-js-sys = "0.3.32"
+js-sys = "0.3.37"
 serde-wasm-bindgen = "0.1.3"
-structopt = "0.3.7"
+structopt = "0.3.12"
 Inflector = "0.11.4"
 
 [dependencies.wasm-bindgen]
-version = "0.2.55"
+version = "0.2.59"
 features = ["serde-serialize"]
 
 [build-dependencies]
 serde_yaml = "0.8.11"
-serde = { version = "1.0.104", features = ["derive"] }
+serde = { version = "1.0.105", features = ["derive"] }
 heck = "0.3.1"
 i3df-specification = { git = "git://github.com/cognitedata/i3df-specification", version = "0.1.0" }
-quote = "1.0.2"
-proc-macro2 = "1.0.7"
+quote = "1.0.3"
+proc-macro2 = "1.0.9"
 rustfmt = "0.10.0"
-indexmap = { version = "1.3.0", features = ["serde-1"] }
+indexmap = { version = "1.3.1", features = ["serde-1"] }
 
 [features]
 dump = ["serde_json", "serde_yaml"]

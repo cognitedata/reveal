@@ -1,8 +1,10 @@
 /*!
- * Copyright 2019 Cognite AS
+ * Copyright 2020 Cognite AS
  */
 
 import 'jest-extended';
+import { WantedSector } from '../data/model/WantedSector';
+import { LevelOfDetail } from '../data/model/LevelOfDetail';
 
 interface Matrix4 {
   elements: Float32Array;
@@ -62,4 +64,33 @@ export function expectBoundingBoxEqual(a: BoundingBox, b: BoundingBox) {
 
 export function expectSetEqual<T>(actual: Set<T>, expected: T[]) {
   expect([...actual]).toIncludeSameMembers(expected);
+}
+
+export function expectContainsSectorsWithLevelOfDetail(
+  sectors: WantedSector[],
+  expectedSimple: number[],
+  expectedDetailed: number[]
+) {
+  for (const sectorId of expectedSimple) {
+    expect(sectors).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          sectorId,
+          levelOfDetail: LevelOfDetail.Simple,
+          metadata: expect.anything()
+        })
+      ])
+    );
+  }
+  for (const sectorId of expectedDetailed) {
+    expect(sectors).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          sectorId,
+          levelOfDetail: LevelOfDetail.Detailed,
+          metadata: expect.anything()
+        })
+      ])
+    );
+  }
 }

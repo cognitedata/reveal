@@ -1,5 +1,5 @@
-use nalgebra;
 use serde_derive::Serialize;
+use std::collections::HashMap;
 use std::f32::consts::{FRAC_PI_2, PI};
 use std::u8;
 
@@ -11,6 +11,8 @@ type Translation3 = nalgebra::Translation3<f32>;
 #[derive(Clone, Copy, Serialize)]
 pub struct Face {
     color: [f32; 3],
+    // Note! Only integral part of f32 used.
+    tree_index: f32,
     normal: Vector3,
     matrix: Matrix4,
 }
@@ -41,11 +43,26 @@ fn compose_face_matrix(
         * Matrix4::from(*rotation_matrix)
 }
 
-pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
-    let mut instance_data = Vec::new();
+#[derive(Clone, Serialize)]
+pub struct Sector {
+    pub faces: Vec<Face>,
+    pub node_id_to_tree_index_map: HashMap<u64, u64>,
+    pub tree_index_to_node_id_map: HashMap<u64, u64>,
+}
+
+pub fn convert_sector(sector: &crate::Sector) -> Sector {
+    let mut faces = Vec::<Face>::new();
+    let mut node_id_to_tree_index_map = HashMap::<u64, u64>::new();
+    let mut tree_index_to_node_id_map = HashMap::<u64, u64>::new();
     let contents = match &sector.sector_contents {
         Some(x) => x,
-        None => return Vec::new(),
+        None => {
+            return Sector {
+                faces,
+                node_id_to_tree_index_map,
+                tree_index_to_node_id_map,
+            }
+        }
     };
     let origin = contents.grid_origin;
     let cell_size = [
@@ -58,6 +75,11 @@ pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
     let origin = Vector3::new(origin[0], origin[1], origin[2]);
     for node in &contents.nodes {
         let compress_type = node.compress_type;
+        let tree_index = node.tree_index;
+        let node_id = node.node_id;
+        node_id_to_tree_index_map.insert(node_id, tree_index);
+        tree_index_to_node_id_map.insert(tree_index, node_id);
+
         for face in &node.faces {
             let cell_index = face.index as u64;
             let cell_index_i_j = cell_index % cell_size_i_j;
@@ -89,13 +111,14 @@ pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
                 let offset = Vector3::new(1.0, 0.5, 0.5);
                 let normal = Vector3::new(1.0, 0.0, 0.0);
                 let rotation = Rotation3::from_axis_angle(&Vector3::y_axis(), FRAC_PI_2);
-                let scale = if compress_type.intersects(crate::CompressFlags::POSITIVE_X_REPEAT_Y) {
+                let scale = if compress_type.intersects(crate::CompressFlags::POSITIVE_X_REPEAT_Z) {
                     Vector3::new(increment, increment, count * increment)
                 } else {
                     Vector3::new(increment, count * increment, increment)
                 };
-                instance_data.push(Face {
+                faces.push(Face {
                     color: normalize_color(color),
+                    tree_index: tree_index as f32,
                     normal,
                     matrix: compose_face_matrix(&center, &offset, &scale, &rotation),
                 });
@@ -107,13 +130,14 @@ pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
                 let offset = Vector3::new(0.5, 1.0, 0.5);
                 let normal = Vector3::new(0.0, 1.0, 0.0);
                 let rotation = Rotation3::from_axis_angle(&Vector3::x_axis(), -FRAC_PI_2);
-                let scale = if compress_type.intersects(crate::CompressFlags::POSITIVE_Y_REPEAT_X) {
+                let scale = if compress_type.intersects(crate::CompressFlags::POSITIVE_Y_REPEAT_Z) {
                     Vector3::new(increment, increment, count * increment)
                 } else {
                     Vector3::new(count * increment, increment, increment)
                 };
-                instance_data.push(Face {
+                faces.push(Face {
                     color: normalize_color(color),
+                    tree_index: tree_index as f32,
                     normal,
                     matrix: compose_face_matrix(&center, &offset, &scale, &rotation),
                 });
@@ -125,13 +149,14 @@ pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
                 let offset = Vector3::new(0.5, 0.5, 1.0);
                 let normal = Vector3::new(0.0, 0.0, 1.0);
                 let rotation = Rotation3::identity();
-                let scale = if compress_type.intersects(crate::CompressFlags::POSITIVE_Z_REPEAT_X) {
+                let scale = if compress_type.intersects(crate::CompressFlags::POSITIVE_Z_REPEAT_Y) {
                     Vector3::new(increment, count * increment, increment)
                 } else {
                     Vector3::new(count * increment, increment, increment)
                 };
-                instance_data.push(Face {
+                faces.push(Face {
                     color: normalize_color(color),
+                    tree_index: tree_index as f32,
                     normal,
                     matrix: compose_face_matrix(&center, &offset, &scale, &rotation),
                 });
@@ -143,13 +168,14 @@ pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
                 let offset = Vector3::new(0.0, 0.5, 0.5);
                 let normal = Vector3::new(-1.0, 0.0, 0.0);
                 let rotation = Rotation3::from_axis_angle(&Vector3::y_axis(), -FRAC_PI_2);
-                let scale = if compress_type.intersects(crate::CompressFlags::NEGATIVE_X_REPEAT_Y) {
+                let scale = if compress_type.intersects(crate::CompressFlags::NEGATIVE_X_REPEAT_Z) {
                     Vector3::new(increment, increment, count * increment)
                 } else {
                     Vector3::new(increment, count * increment, increment)
                 };
-                instance_data.push(Face {
+                faces.push(Face {
                     color: normalize_color(color),
+                    tree_index: tree_index as f32,
                     normal,
                     matrix: compose_face_matrix(&center, &offset, &scale, &rotation),
                 });
@@ -161,13 +187,14 @@ pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
                 let offset = Vector3::new(0.5, 0.0, 0.5);
                 let normal = Vector3::new(0.0, -1.0, 0.0);
                 let rotation = Rotation3::from_axis_angle(&Vector3::x_axis(), FRAC_PI_2);
-                let scale = if compress_type.intersects(crate::CompressFlags::NEGATIVE_Y_REPEAT_X) {
+                let scale = if compress_type.intersects(crate::CompressFlags::NEGATIVE_Y_REPEAT_Z) {
                     Vector3::new(increment, increment, count * increment)
                 } else {
                     Vector3::new(increment * count, increment, increment)
                 };
-                instance_data.push(Face {
+                faces.push(Face {
                     color: normalize_color(color),
+                    tree_index: tree_index as f32,
                     normal,
                     matrix: compose_face_matrix(&center, &offset, &scale, &rotation),
                 });
@@ -179,13 +206,14 @@ pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
                 let offset = Vector3::new(0.5, 0.5, 0.0);
                 let normal = Vector3::new(0.0, 0.0, -1.0);
                 let rotation = Rotation3::from_axis_angle(&Vector3::x_axis(), -PI);
-                let scale = if compress_type.intersects(crate::CompressFlags::NEGATIVE_Z_REPEAT_X) {
+                let scale = if compress_type.intersects(crate::CompressFlags::NEGATIVE_Z_REPEAT_Y) {
                     Vector3::new(increment, count * increment, increment)
                 } else {
                     Vector3::new(increment * count, increment, increment)
                 };
-                instance_data.push(Face {
+                faces.push(Face {
                     color: normalize_color(color),
+                    tree_index: tree_index as f32,
                     normal,
                     matrix: compose_face_matrix(&center, &offset, &scale, &rotation),
                 });
@@ -193,7 +221,11 @@ pub fn convert_sector(sector: &crate::Sector) -> Vec<Face> {
         }
     }
 
-    instance_data
+    Sector {
+        faces,
+        node_id_to_tree_index_map,
+        tree_index_to_node_id_map,
+    }
 }
 
 #[cfg(test)]
@@ -227,8 +259,9 @@ mod tests {
                 grid_origin: [0.1, 0.2, 0.3],
                 nodes: vec![crate::Node {
                     node_id: 0,
+                    tree_index: 42,
                     color: Some([128, 129, 130]),
-                    compress_type: crate::CompressFlags::POSITIVE_Y_REPEAT_X,
+                    compress_type: crate::CompressFlags::POSITIVE_Y_REPEAT_Z,
                     faces: vec![crate::Face {
                         face_flags: crate::FaceFlags::POSITIVE_Y_VISIBLE,
                         index: 100,
@@ -248,9 +281,10 @@ mod tests {
         };
         let result = convert_sector(&sector);
 
-        assert_abs_diff_eq!(result[0].color[0], 0.501_960_8); // 128/255
-        assert_abs_diff_eq!(result[0].color[1], 0.505_882_4); // 129/255
-        assert_abs_diff_eq!(result[0].color[2], 0.509_803_95); // 130/255
+        assert_abs_diff_eq!(result.faces[0].tree_index, 42.0, epsilon = 0.0);
+        assert_abs_diff_eq!(result.faces[0].color[0], 0.501_960_8); // 128/255
+        assert_abs_diff_eq!(result.faces[0].color[1], 0.505_882_4); // 129/255
+        assert_abs_diff_eq!(result.faces[0].color[2], 0.509_803_95); // 130/255
 
         #[rustfmt::skip]
         let matrix = Matrix4::from_column_slice(&[
@@ -259,8 +293,8 @@ mod tests {
             0.0, 3.0, 0.0, 0.0,
             3.1, 34.7, 9.3, 1.0
         ]);
-        assert_abs_diff_eq!(result[0].matrix, matrix, epsilon = 0.00001);
+        assert_abs_diff_eq!(result.faces[0].matrix, matrix, epsilon = 0.00001);
 
-        assert_abs_diff_eq!(result[0].normal, Vector3::new(0.0, 1.0, 0.0));
+        assert_abs_diff_eq!(result.faces[0].normal, Vector3::new(0.0, 1.0, 0.0));
     }
 }

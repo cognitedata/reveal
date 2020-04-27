@@ -1,14 +1,10 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
-const webpack = require('webpack');
 const getLogger = require('webpack-log');
 const logger = getLogger('reveal-examples');
 
-// The path to the ceisum source code
-const cesiumSource = 'node_modules/cesium/Source';
-const cesiumWorkers = '../Build/Cesium/Workers';
-const revealSource = 'node_modules/@cognite/reveal/dist';
+const revealSource = 'node_modules/@cognite/reveal';
 
 /*
  * Set args on the command line using
@@ -38,66 +34,104 @@ function resolve(dir) {
 
 const allExamples = [
   {
+    name: "no-rendering",
+    title: "Load model without rendering",
+    entry: './src/no-rendering.ts',
+    template: 'template-example.ejs'
+  },
+  {
     name: "threejs-simple",
     title: "Simple",
-    entry: './src/threejs/simple.ts',
+    entry: './src/simple.ts',
+    template: 'template-example.ejs'
+  },
+  {
+    name: "threejs-filtering",
+    title: "Filtering",
+    entry: './src/filtering.ts',
+    template: 'template-example.ejs'
+  },
+  {
+    name: "threejs-picking",
+    title: "Picking",
+    entry: './src/picking.ts',
+    template: 'template-example.ejs'
+  },
+  {
+    name: "threejs-ssao",
+    title: "Screen space ambient occlusion shading",
+    entry: './src/ssao.ts',
     template: 'template-example.ejs',
     type: 'threejs'
+  },
+  {
+    name: "threejs-side-by-side",
+    title: "Side-by-side debugger for sector models",
+    entry: './src/side-by-side.ts',
+    template: 'template-example-two-canvases.ejs'
+  },
+  {
+    name: "threejs-simple-pointcloud",
+    title: "Simple pointcloud",
+    entry: './src/simple-pointcloud.ts',
+    template: 'template-example.ejs'
   },
   {
     name: "threejs-post-processing-effects",
     title: "Post processing effects",
-    entry: './src/threejs/post-processing-effects.ts',
-    template: 'template-example.ejs',
-    type: 'threejs'
+    entry: './src/post-processing-effects.ts',
+    template: 'template-example.ejs'
   },
   {
     name: "threejs-with-pointcloud",
     title: "CAD model with point cloud",
-    entry: './src/threejs/sector-with-pointcloud.ts',
-    template: 'template-example.ejs',
-    type: 'threejs'
+    entry: './src/sector-with-pointcloud.ts',
+    template: 'template-example.ejs'
   },
   {
     name: "threejs-two-models",
     title: "Two models",
-    entry: './src/threejs/two-models.ts',
-    template: './template-example.ejs',
-    type: 'threejs'
+    entry: './src/two-models.ts',
+    template: './template-example.ejs'
   },
   {
     name: "threejs-custom-scene-elements",
     title: "Custom ThreeJS scene elements",
-    entry: './src/threejs/custom-scene-elements.ts',
-    template: './template-example.ejs',
-    type: 'threejs'
+    entry: './src/custom-scene-elements.ts',
+    template: './template-example.ejs'
   },
   {
-    name: "cesiumjs-basic",
-    title: 'CesiumJS basic',
-    entry: './src/cesiumjs/basic.ts',
-    template: './src/cesiumjs/template.ejs',
-    type: 'cesium'
+    name: "threejs-migration",
+    title: "Migration wrapper for applications using the old Reveal viewer",
+    entry: './src/migration.ts',
+    template: './template-single-canvas.ejs'
   },
+  {
+    name: "walkable-path",
+    title: "Walkable Path",
+    entry: './src/walkable-path.ts',
+    template: 'template-example.ejs'
+  },
+  {
+    name: "world-to-screen",
+    title: "World To Screen",
+    entry: './src/world-to-screen.ts',
+    template: 'template-example.ejs'
+  },
+  {
+    name: "threejs-gpu-based-sectorculler",
+    title: "GPU based sector culler",
+    entry: './src/gpu-sector-culler.ts',
+    template: 'template-example.ejs'
+  }
 ];
 
 module.exports = env => {
-  const buildCesiumExamples = arg(env, 'cesium', true);
-  const buildThreeJsExamples = arg(env, 'threejs', true);
-  const development = arg(env, 'development', true);
-
+  const development = arg(env, 'development', false);
   logger.info("Build config:");
   logger.info(`  - development: ${development}`);
-  logger.info(`  - threejs: ${buildThreeJsExamples}`);
-  logger.info(`  - cesium:  ${buildCesiumExamples}`);
 
-  const isExampleEnabled = example => {
-    return (example.type === 'cesium' && buildCesiumExamples) || 
-      (example.type === 'threejs' && buildThreeJsExamples);
-  }
-  const enabledExamples = allExamples.filter(isExampleEnabled);
-
-  const examples = enabledExamples.map(example => {
+  const examples = allExamples.map(example => {
     const {name, title, entry, template} = example;
     return {
       name,
@@ -136,13 +170,25 @@ module.exports = env => {
     module: {
       rules: [
         {
-          test: /node_modules\/@cognite\/reveal\/dist\/.+\.(js|map)$/, // Consider adding ts
+          test: /node_modules\/@cognite\/reveal\/.+\.(js|map)$/, // Consider adding ts
           use: ['source-map-loader'],
           enforce: 'pre',
+          exclude: [
+            /node_modules\/.*\/node_modules/,
+          ],
         },
         {
           test: /\.tsx?$/,
-          use: 'ts-loader',
+          use: {
+            loader: 'ts-loader',
+            options: {
+              onlyCompileBundledFiles: true,
+              compilerOptions: !development ? {} : {
+                noUnusedLocals: false,
+                noUnusedParameters: false
+              }
+            },
+          },
           exclude: [
             /node_modules/,
           ],
@@ -170,7 +216,6 @@ module.exports = env => {
     },
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
-      symlinks: false, // necessary because we symlink the parent folder - source maps fail otherwise
     },
     output: {
       filename: '[name].js',
@@ -179,10 +224,10 @@ module.exports = env => {
       globalObject: `(typeof self !== 'undefined' ? self : this)`,
       libraryTarget: 'umd',
     },
-    devtool: development ? "cheap-module-eval-source-map" : "source-map",
+    devtool: development ? "inline-source-map" : "source-map",
     watchOptions: {
       aggregateTimeout: 1500,
-      ignored: ['node_modules/']
+      ignored: [/node_modules/]
     },
     devServer: {
       https: true,
@@ -190,8 +235,20 @@ module.exports = env => {
       contentBase: [
         resolve('public/'),
         resolve('dist/'),
-        resolve('node_modules/cesium/Source/')
-      ]
+      ],
+
+      proxy: {
+       // Setup a proxy to allow requests from LAN to access API without CORS issues
+       '/cdf': {
+            target: 'https://api.cognitedata.com',
+            changeOrigin: true,
+            secure: true,
+            pathRewrite: {
+              '^/cdf': ''
+            }
+        },
+      },
+      writeToDisk: true,
     },
     optimization: {
       usedExports: true,
@@ -205,12 +262,6 @@ module.exports = env => {
         {from: path.join(revealSource, "**/*.wasm"), to: ".", flatten: true},
         {from: path.join(revealSource, "**/*.worker.js"), to: ".", flatten: true}
       ]),
-      new CopyWebpackPlugin([{ from: path.join(cesiumSource, cesiumWorkers), to: 'Workers' } ]),
-      new CopyWebpackPlugin([{ from: cesiumSource, to: 'Cesium' } ]),
-      new webpack.DefinePlugin({
-          CESIUM_BASE_URL: JSON.stringify('/')
-      }),
-
       // Examples and index
       new HtmlWebpackPlugin({
         templateParameters: {

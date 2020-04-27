@@ -1,16 +1,8 @@
-use console_error_panic_hook;
-use js_sys::Float32Array;
+use js_sys::{Float32Array, Map, Uint32Array};
 use serde::{Deserialize, Serialize};
 use std::panic;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
-
-// From reveal-rs
-use f3df;
-use i3df;
-use openctm;
-use serde;
-use serde_bytes;
 
 #[macro_use]
 pub mod error;
@@ -45,21 +37,20 @@ pub struct CtmResult {
 
 #[wasm_bindgen]
 impl CtmResult {
-    // TODO 20191023 dragly can we go directly to Vec<u32>?
-    pub fn indices(&self) -> Vec<u32> {
-        self.file.indices.clone()
+    pub fn indices(&self) -> Uint32Array {
+        Uint32Array::from(self.file.indices.as_slice())
     }
-    pub fn vertices(&self) -> Vec<f32> {
+    pub fn vertices(&self) -> Float32Array {
         let data_as_vector3 = &self.file.vertices;
-        unsafe {
+        let vertices_as_f32 = unsafe {
             std::slice::from_raw_parts(
                 data_as_vector3.as_ptr() as *const f32,
                 data_as_vector3.len() * 3,
             )
-            .to_vec()
-        }
+        };
+        Float32Array::from(vertices_as_f32)
     }
-    pub fn normals(&self) -> Option<Vec<f32>> {
+    pub fn normals(&self) -> Option<Float32Array> {
         let data_as_vector3 = match &self.file.normals {
             Some(x) => x,
             None => return None,
@@ -69,9 +60,8 @@ impl CtmResult {
                 data_as_vector3.as_ptr() as *const f32,
                 data_as_vector3.len() * 3,
             )
-            .to_vec()
         };
-        Some(data_as_f32)
+        Some(Float32Array::from(data_as_f32))
     }
     // TODO 2019-10-23 dragly: add UV maps
 }
@@ -97,7 +87,7 @@ pub struct SectorHandle {
 }
 
 #[wasm_bindgen]
-pub fn parse_root_sector(input: &[u8]) -> Result<SectorHandle, JsValue> {
+pub fn parse_sector(input: &[u8]) -> Result<SectorHandle, JsValue> {
     // TODO read https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/building-your-project.html
     // and see if this can be moved to one common place
     panic::set_hook(Box::new(console_error_panic_hook::hook));
@@ -105,27 +95,7 @@ pub fn parse_root_sector(input: &[u8]) -> Result<SectorHandle, JsValue> {
     let cursor = std::io::Cursor::new(input);
 
     // TODO see if it is possible to simplify this so we can use the ? operator instead
-    let sector = match i3df::parse_root_sector(cursor) {
-        Ok(x) => x,
-        Err(e) => return Err(JsValue::from(error::ParserError::from(e))),
-    };
-    Ok(SectorHandle { sector })
-}
-
-#[wasm_bindgen]
-pub fn parse_sector(root_sector: &SectorHandle, input: &[u8]) -> Result<SectorHandle, JsValue> {
-    // TODO read https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/building-your-project.html
-    // and see if this can be moved to one common place
-    panic::set_hook(Box::new(console_error_panic_hook::hook));
-
-    let cursor = std::io::Cursor::new(input);
-
-    let attributes = match &root_sector.sector.header.attributes {
-        Some(x) => x,
-        None => return Err(error!("Attributes missing on root sector")),
-    };
-
-    let sector = match i3df::parse_sector(attributes, cursor) {
+    let sector = match i3df::parse_sector(cursor) {
         Ok(x) => x,
         Err(e) => return Err(JsValue::from(error::ParserError::from(e))),
     };
@@ -138,7 +108,28 @@ pub fn convert_sector(sector: &SectorHandle) -> i3df::renderables::Sector {
 }
 
 #[wasm_bindgen]
-pub fn parse_and_convert_f3df(input: &[u8]) -> Result<Float32Array, JsValue> {
+#[derive(Clone)]
+pub struct SimpleSectorData {
+    faces: Float32Array,
+    node_id_to_tree_index_map: Map,
+    tree_index_to_node_id_map: Map,
+}
+
+#[wasm_bindgen]
+impl SimpleSectorData {
+    pub fn faces(&self) -> Float32Array {
+        self.faces.clone()
+    }
+    pub fn node_id_to_tree_index_map(&self) -> Map {
+        self.node_id_to_tree_index_map.clone()
+    }
+    pub fn tree_index_to_node_id_map(&self) -> Map {
+        self.tree_index_to_node_id_map.clone()
+    }
+}
+
+#[wasm_bindgen]
+pub fn parse_and_convert_f3df(input: &[u8]) -> Result<SimpleSectorData, JsValue> {
     // TODO read https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/building-your-project.html
     // and see if this can be moved to one common place
     panic::set_hook(Box::new(console_error_panic_hook::hook));
@@ -150,7 +141,7 @@ pub fn parse_and_convert_f3df(input: &[u8]) -> Result<Float32Array, JsValue> {
         Err(e) => return Err(JsValue::from(error::ParserError::from(e))),
     };
 
-    let faces = f3df::renderables::convert_sector(&sector);
+    let renderable_sector = f3df::renderables::convert_sector(&sector);
     let faces_as_f32 = unsafe {
         // At this point, we do not want to pass Vec<Face> to JS,
         // because it will turn into an inefficient array of objects.
@@ -160,17 +151,25 @@ pub fn parse_and_convert_f3df(input: &[u8]) -> Result<Float32Array, JsValue> {
         // just &[f32].
         // However, this is safe because we are making a copy below.
         // Otherwise, we would not know when to free the memory on our end.
-        let pointer = faces.as_ptr() as *const f32;
-        let length = faces.len() * std::mem::size_of::<f3df::renderables::Face>()
+        let pointer = renderable_sector.faces.as_ptr() as *const f32;
+        let length = renderable_sector.faces.len() * std::mem::size_of::<f3df::renderables::Face>()
             / std::mem::size_of::<f32>();
         std::slice::from_raw_parts(pointer, length)
     };
 
     // Returning a Vec<f32> here would lead to copying on the JS side instead.
     // Also note that using a Float32Array::view here instead would be _very_ unsafe.
-    let result = Float32Array::from(faces_as_f32);
+    let faces_as_float_32_array = Float32Array::from(faces_as_f32);
 
-    Ok(result)
+    Ok(SimpleSectorData {
+        faces: faces_as_float_32_array,
+        node_id_to_tree_index_map: Map::from(
+            serde_wasm_bindgen::to_value(&renderable_sector.node_id_to_tree_index_map).unwrap(),
+        ),
+        tree_index_to_node_id_map: Map::from(
+            serde_wasm_bindgen::to_value(&renderable_sector.tree_index_to_node_id_map).unwrap(),
+        ),
+    })
 }
 
 #[wasm_bindgen]

@@ -47,6 +47,7 @@ pub struct SectorContents {
 pub struct Node {
     pub compress_type: CompressFlags,
     pub node_id: u64,
+    pub tree_index: u64,
     pub color: Option<[u8; 3]>,
     pub faces: Vec<Face>,
 }
@@ -68,7 +69,7 @@ bitflags! {
         const NEGATIVE_X_VISIBLE = 0b0000_1000;
         const NEGATIVE_Y_VISIBLE = 0b0001_0000;
         const NEGATIVE_Z_VISIBLE = 0b0010_0000;
-        const RESERVED = 0b0100_0000;
+        // 0b0100_0000 is reserved and left out to trigger an error if used
         const MULTIPLE = 0b1000_0000;
     }
 }
@@ -77,12 +78,12 @@ bitflags! {
 bitflags! {
     #[derive(Serialize)]
     pub struct CompressFlags: u8 {
-        const POSITIVE_X_REPEAT_Y = 0b0000_0001;
-        const POSITIVE_Y_REPEAT_X = 0b0000_0010;
-        const POSITIVE_Z_REPEAT_X = 0b0000_0100;
-        const NEGATIVE_X_REPEAT_Y = 0b0000_1000;
-        const NEGATIVE_Y_REPEAT_X = 0b0001_0000;
-        const NEGATIVE_Z_REPEAT_X = 0b0010_0000;
+        const POSITIVE_X_REPEAT_Z = 0b0000_0001;
+        const POSITIVE_Y_REPEAT_Z = 0b0000_0010;
+        const POSITIVE_Z_REPEAT_Y = 0b0000_0100;
+        const NEGATIVE_X_REPEAT_Z = 0b0000_1000;
+        const NEGATIVE_Y_REPEAT_Z = 0b0001_0000;
+        const NEGATIVE_Z_REPEAT_Y = 0b0010_0000;
         const HAS_COLOR_ON_EACH_CELL = 0b0100_0000;
         const INDEX_IS_LONG = 0b1000_0000;
     }
@@ -150,10 +151,21 @@ pub fn parse_sector(reader: impl Read) -> Result<Sector, Error> {
     let mut nodes = Vec::with_capacity(node_count as usize);
     for _ in 0..node_count {
         let node_id = input.read_u64::<LittleEndian>()?;
+        let tree_index = input.read_u64::<LittleEndian>()?;
         let face_count = input.read_u32::<LittleEndian>()?;
 
-        // TODO replace with from_bits and return error if unknown bits found
-        let compress_type = CompressFlags::from_bits_truncate(input.read_u8()?);
+        let compress_type = {
+            let compress_data = input.read_u8()?;
+            match CompressFlags::from_bits(compress_data) {
+                Some(x) => x,
+                None => {
+                    return Err(error!(
+                        "CompressFlags contains illegal bits {:#b}",
+                        compress_data
+                    ))
+                }
+            }
+        };
 
         let has_color_on_each_cell =
             compress_type.intersects(CompressFlags::HAS_COLOR_ON_EACH_CELL);
@@ -174,9 +186,14 @@ pub fn parse_sector(reader: impl Read) -> Result<Sector, Error> {
                 u64::from(input.read_u32::<LittleEndian>()?)
             };
 
-            // TODO do not use truncate
-            let face_flags = FaceFlags::from_bits_truncate(input.read_u8()?);
-            // TODO verify that the empty flag is not set while other flags are
+            let face_flags = {
+                let face_data = input.read_u8()?;
+                match FaceFlags::from_bits(face_data) {
+                    Some(x) => x,
+                    None => return Err(error!("FaceFlags contains illegal bits {:#b}", face_data)),
+                }
+            };
+
             let multiple_faces = face_flags.intersects(FaceFlags::MULTIPLE);
             let repetitions = if multiple_faces { input.read_u8()? } else { 0 };
             let face_color = if has_color_on_each_cell {
@@ -197,6 +214,7 @@ pub fn parse_sector(reader: impl Read) -> Result<Sector, Error> {
         nodes.push(Node {
             compress_type,
             node_id,
+            tree_index,
             color: node_color,
             faces,
         });

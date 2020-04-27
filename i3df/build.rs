@@ -1,8 +1,6 @@
 use heck::CamelCase;
-use i3df_specification;
 use indexmap::IndexMap;
 use quote::{format_ident, quote};
-use serde_yaml;
 use std::collections::HashMap;
 use std::env;
 use std::error::Error;
@@ -89,14 +87,14 @@ fn create_dtype(attribute: &Attribute) -> TokenStream {
         Type::Texture(_) => quote! { Texture },
     };
     if count > 1 {
-        return quote! {[#type_name; #count]};
+        quote! {[#type_name; #count]}
     } else {
-        return type_name;
+        type_name
     }
 }
 
 fn write_code_to_file(
-    filename: &String,
+    filename: &str,
     code: &proc_macro2::TokenStream,
 ) -> Result<(), Box<dyn Error>> {
     let code = code.to_string().replace("}", "}\n").replace(";", ";\n");
@@ -116,6 +114,8 @@ fn write_code_to_file(
     Ok(())
 }
 
+// TODO 20200203 larsmoa: Split this into several functions - way too complex.
+#[allow(clippy::cognitive_complexity)]
 fn main() -> Result<(), Box<dyn Error>> {
     // Tell cargo only to rerun the build script if it itself changes
     println!("cargo:rerun-if-changed=build.rs");
@@ -302,6 +302,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
         let to_renderables = quote! {
             for item in &raw_primitives.#snake_name_collection_ident {
+                collections.tree_index_to_node_id_map.insert(item.tree_index, item.node_id);
+                collections.node_id_to_tree_index_map.insert(item.node_id, item.tree_index);
                 item.to_renderables(&mut collections);
             }
         };
@@ -325,7 +327,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         #[derive(Clone, Copy, Debug, Default, Deserialize, Serialize)]
         pub struct Texture {
             // TODO generate from YAML
-            pub file_id: u64,
+            pub file_id: f64,
             pub width: u16,
             pub height: u16,
         }
@@ -395,7 +397,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let renderables_code = quote! {
         pub fn convert_primitives(raw_primitives: &i3df::PrimitiveCollections) -> PrimitiveCollections {
-            // TODO do not make a guess at 100, but instead calculate the actual number, which we
+            // TODO do not make a guess at capacity, but instead calculate the actual number, which we
             // should know already since we know how many renderables there are per file primitive
             let mut collections = PrimitiveCollections::with_capacity(10);
             #(#primitive_to_renderables)*

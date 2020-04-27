@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 /*!
- * Copyright 2019 Cognite AS
+ * Copyright 2020 Cognite AS
  */
 
 export async function waitUntill(condition: () => boolean): Promise<void> {

@@ -1,16 +1,26 @@
 /*!
- * Copyright 2019 Cognite AS
+ * Copyright 2020 Cognite AS
  */
 
-export { SectorModel } from './datasources/SectorModel';
-export { PointCloudModel } from './datasources/PointCloudModel';
-export { createLocalSectorModel, createLocalPointCloudModel } from './datasources/local';
-export { toThreeVector3 } from './views/threejs/utilities';
+// CAD types
+export { CadModel } from './models/cad/CadModel';
+export { SectorMetadata } from './models/cad/types';
+export { CadRenderHints } from './views/CadRenderHints';
+export { CadLoadingHints } from './models/cad/CadLoadingHints';
 
-export { SectorNode } from './views/threejs';
-export { createThreeJsSectorNode, createThreeJsPointCloudNode } from './views/threejs';
-export { initializeCesiumSectorScene } from './views/cesiumjs/createCesiumSectorNode';
+// Point cloud
+export { PointCloudModel } from './models/pointclouds/PointCloudModel';
 
+// Loaders
+export { createPointCloudModel, loadCadModelFromCdf } from './datasources/cognitesdk';
+export { loadCadModelByUrl, createLocalPointCloudModel } from './datasources/local';
+
+// ThreeJS migration layer
+import * as migration from './migration';
+export { migration };
+
+// Internals
 import * as internal from './internal';
-
 export { internal };
+
+// Note! ThreeJS is in a separate folder to ensure it's imported as '@cognite/reveal/threejs'.

@@ -11,6 +11,8 @@
     "sourceMap": true,
     "moduleResolution": "node",
     "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "typeRoots": [
         "node_modules/@types",
         "src/@types"
@@ -18,8 +20,13 @@
     "lib": [
         "dom",
         "esnext"
-    ]
+    ],
+
+    // Workaround for TS2345
+    "baseUrl": ".",
+    "paths": {
+      "@cognite/sdk": ["node_modules/@cognite/sdk"]
+    },
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules/**/*", "dist/**/*", "src/@types/**/*"]
+  
 }

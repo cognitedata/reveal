@@ -41,7 +41,3 @@ impl From<f3df::error::Error> for ParserError {
         }
     }
 }
-
-macro_rules! error {
-    ($($args:tt)*) => { JsValue::from($crate::error::ParserError::new(format!($($args)*))) }
-}

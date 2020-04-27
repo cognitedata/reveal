@@ -1,10 +1,10 @@
 /*!
- * Copyright 2019 Cognite AS
+ * Copyright 2020 Cognite AS
  */
 
-import { vec3, mat4 } from 'gl-matrix';
+import { vec3 } from 'gl-matrix';
 import { Box3 } from './Box3';
-import { SectorMetadata } from '../models/sector/types';
+import { SectorMetadata } from '../models/cad/types';
 import { traverseDepthFirst } from './traversal';
 
 export interface SuggestedCameraConfig {
@@ -32,7 +32,7 @@ export function suggestCameraConfig(rootSector: SectorMetadata): SuggestedCamera
   const bounds = new Box3([averageMin, averageMax]);
   const target = bounds.center;
   const extent = vec3.subtract(vec3.create(), bounds.max, bounds.min);
-  const d = Math.max(extent[0], extent[1], extent[2]);
+
   const position = vec3.add(
     vec3.create(),
     target,
@@ -42,6 +42,6 @@ export function suggestCameraConfig(rootSector: SectorMetadata): SuggestedCamera
     position,
     target,
     near: 0.1,
-    far: vec3.distance(position, target) * 6
+    far: vec3.distance(position, target) * 12
   };
 }

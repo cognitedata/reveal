@@ -37,13 +37,24 @@ module.exports = env => {
     mode: development ? "development" : "production",
     entry: {
       index: './src/index.ts',
+      threejs: './src/threejs.ts',
+      migration: './src/migration.ts'
     },
     target: "web",
     module: {
       rules: [
         {
           test: /\.tsx?$/,
-          use: 'ts-loader',
+          use: {
+            loader: 'ts-loader',
+            options: {
+              onlyCompileBundledFiles: true,
+              compilerOptions: !development ? {} : {
+                noUnusedLocals: false,
+                noUnusedParameters: false
+              }
+            },
+          },
           exclude: [
             /node_modules/,
             /src\/__tests__/,
@@ -68,6 +79,7 @@ module.exports = env => {
     externals: [nodeExternals()],
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
+      symlinks: false,
     },
     output: {
       filename: '[name].js',
@@ -76,11 +88,11 @@ module.exports = env => {
       globalObject: `(typeof self !== 'undefined' ? self : this)`,
       libraryTarget: 'umd',
     },
-    devtool: development ? "inline-cheap-module-source-map" : "source-map",
+    devtool: development ? "inline-source-map" : "source-map",
     watchOptions: {
       aggregateTimeout: 1500,
       ignored: [
-        'node_modules/',
+        /node_modules/,
       ],
     },
     optimization: {
@@ -90,6 +102,11 @@ module.exports = env => {
       new WasmPackPlugin({
         crateDirectory: ".",
         forceMode: 'production',
+        watchDirectories: [
+          path.resolve(__dirname, 'rust'),
+          path.resolve(__dirname, '..', 'i3df', 'src'),
+          path.resolve(__dirname, '..', 'f3df', 'src'),
+        ]
       }),
       new WorkerPlugin()
     ],

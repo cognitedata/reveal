@@ -1,7 +1,22 @@
 /*!
- * Copyright 2019 Cognite AS
+ * Copyright 2020 Cognite AS
  */
 
-export { SectorNode } from './sector/SectorNode';
+export { CadNode } from './cad/CadNode';
+export { intersectCadNode, intersectCadNodes, IntersectCadNodesInput, IntersectCadNodesResult } from './cad/picking';
+export { SectorNode } from './cad/SectorNode';
 export { createThreeJsPointCloudNode } from './pointcloud/createThreeJsPointCloudNode';
-export { createThreeJsSectorNode } from './sector/createThreeJsSectorNode';
+export { RootSectorNode } from './cad/RootSectorNode';
+export { NodeAppearance } from '../common/cad/NodeAppearance';
+
+export { HtmlOverlayHelper } from './HtmlOverlayHelper';
+export { worldToViewport } from './worldToViewport';
+export { toThreeVector3, fitCameraToBoundingBox, toThreeMatrix4, toThreeJsBox3 } from './utilities';
+export { SsaoEffect, SsaoPassType } from './post-processing/ssao';
+
+export {
+  OrderSectorsByVisibilityCoverage,
+  GpuOrderSectorsByVisibilityCoverage,
+  PrioritizedSectorIdentifier,
+  OrderSectorsByVisibleCoverageOptions
+} from './OrderSectorsByVisibilityCoverage';

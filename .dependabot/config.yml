@@ -1,0 +1,44 @@
+version: 1
+update_configs:
+  # NPM deps
+  - target_branch: dependency-updates
+    package_manager: "javascript"
+    directory: "/examples"
+    update_schedule: live
+    automerged_updates:
+      - match:
+          dependency_name: "*"
+          update_type: "all"
+  - target_branch: dependency-updates
+    package_manager: "javascript"
+    directory: "/viewer"
+    update_schedule: live
+    automerged_updates:
+      - match:
+          dependency_name: "*"
+          update_type: "all"
+  # Rust deps
+  - target_branch: dependency-updates
+    package_manager: "rust:cargo"
+    directory: "/f3df"
+    update_schedule: live
+    automerged_updates:
+      - match:
+          dependency_name: "*"
+          update_type: "all"
+  - target_branch: dependency-updates
+    package_manager: rust:cargo
+    directory: "/i3df"
+    update_schedule: live
+    automerged_updates:
+      - match:
+          dependency_name: "*"
+          update_type: "all"
+  - target_branch: dependency-updates
+    package_manager: "rust:cargo"
+    directory: "/viewer"
+    update_schedule: live
+    automerged_updates:
+      - match:
+          dependency_name: "*"
+          update_type: "all"

@@ -1,5 +1,5 @@
 /*!
- * Copyright 2019 Cognite AS
+ * Copyright 2020 Cognite AS
  */
 
 // Functions from https://exploringjs.com/impatient-js/ch_sets.html#missing-set-operations

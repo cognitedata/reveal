@@ -1,8 +1,10 @@
 #pragma glslify: mul3 = require('../../math/mul3.glsl')
 #pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
+#pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
 #pragma glslify: isSliced = require('../../base/isSliced.glsl')
+#pragma glslify: determineColor = require('../../base/determineColor.glsl');
 
 #define PI 3.14159265359
 #define PI2 6.28318530718
@@ -11,6 +13,12 @@
 // TODO general cylinder and cone are very similar and used
 // the same shader in the old code. Consider de-duplicating
 // parts of this code
+
+uniform sampler2D colorDataTexture;
+uniform sampler2D overrideVisibilityPerTreeIndex;
+uniform sampler2D matCapTexture;
+
+uniform vec2 dataTextureSize;
 
 uniform float dataTextureWidth;
 uniform float dataTextureHeight;
@@ -29,10 +37,18 @@ varying float v_surfacePointY;
 varying vec4 v_planeA;
 varying vec4 v_planeB;
 
+varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
+uniform int renderMode;
+
 void main() {
+    if (!determineVisibility(overrideVisibilityPerTreeIndex, dataTextureSize, v_treeIndex)) {
+        discard;
+    }
+
+    vec3 color = determineColor(v_color, colorDataTexture, dataTextureSize, v_treeIndex);
     vec3 normal = normalize( v_normal );
 
     float R1 = v_centerB.w;
@@ -92,7 +108,7 @@ void main() {
 
     if (dot(intersectionPoint - planeACenter, planeANormal) > 0.0 ||
         dot(intersectionPoint - planeBCenter, planeBNormal) > 0.0 ||
-        theta > v_arcAngle + v_angle || 
+        theta > v_arcAngle + v_angle ||
         isSliced(p)
        ) {
         // Missed the first point, check the other point
@@ -117,13 +133,6 @@ void main() {
     normal = normalize(p_local - W.xyz * dot(p_local, W.xyz));
 #endif
 
-    vec3 color = v_color;
-    //if (isInner) {
-        //normal = -normal;
-        //// TODO move this into lighting function
-        //color = 0.8 * color;
-    //}
-
-    updateFragmentColor(color, normal);
-    updateFragmentDepth(p, projectionMatrix);
+    float fragDepth = updateFragmentDepth(p, projectionMatrix);
+    updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture);
 }

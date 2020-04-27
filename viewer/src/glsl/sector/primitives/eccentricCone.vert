@@ -3,7 +3,7 @@
 
 uniform mat4 inverseModelMatrix;
 
-attribute float treeIndex;
+attribute float a_treeIndex;
 attribute vec3 a_centerA;
 attribute vec3 a_centerB;
 attribute float a_radiusA;
@@ -11,6 +11,7 @@ attribute float a_radiusB;
 attribute vec3 a_normal;
 attribute vec3 a_color;
 
+varying float v_treeIndex;
 // We pack the radii into w-components
 varying vec4 v_centerA;
 varying vec4 v_centerB;
@@ -72,8 +73,8 @@ void main() {
     v_centerA.xyz = mul3(modelViewMatrix, a_centerA);
     v_centerB.xyz = mul3(modelViewMatrix, a_centerB);
     // Pack radii as w components of v_centerA and v_centerB
-    v_centerA.w = displaceScalar(a_centerA, a_radiusA, treeIndex, cameraPosition, inverseModelMatrix);
-    v_centerB.w = displaceScalar(a_centerB, a_radiusB, treeIndex, cameraPosition, inverseModelMatrix);
+    v_centerA.w = displaceScalar(a_centerA, a_radiusA, a_treeIndex, cameraPosition, inverseModelMatrix);
+    v_centerB.w = displaceScalar(a_centerB, a_radiusB, a_treeIndex, cameraPosition, inverseModelMatrix);
 
     float radiusIncludedDisplacement = 0.5*(2.0*max(a_radiusA, a_radiusB) + distanceBetweenProjectedCenters);
     vec3 surfacePoint = center + mat3(0.5*height*lDir, radiusIncludedDisplacement*left, radiusIncludedDisplacement*up) * newPosition;
@@ -86,7 +87,7 @@ void main() {
     V.w = surfacePoint.y;
     axis.w = surfacePoint.z;
 
-    // START NEW CODE
+    v_treeIndex = a_treeIndex;
     v_color = a_color;
     v_normal = normalMatrix * normal;
 

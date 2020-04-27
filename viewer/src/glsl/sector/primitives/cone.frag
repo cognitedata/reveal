@@ -1,15 +1,21 @@
 #pragma glslify: mul3 = require('../../math/mul3.glsl')
 #pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
+#pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
 #pragma glslify: isSliced = require('../../base/isSliced.glsl')
+#pragma glslify: determineColor = require('../../base/determineColor.glsl');
 
 #define PI 3.14159265359
 #define PI2 6.28318530718
 #define PI_HALF 1.5707963267949
 
-uniform float dataTextureWidth;
-uniform float dataTextureHeight;
+uniform sampler2D colorDataTexture;
+uniform sampler2D overrideVisibilityPerTreeIndex;
+uniform sampler2D matCapTexture;
+
+uniform vec2 dataTextureSize;
+
 uniform mat4 projectionMatrix;
 
 varying vec4 v_centerB;
@@ -23,6 +29,7 @@ varying float v_arcAngle;
 varying vec4 v_centerA;
 varying vec4 v_V;
 
+varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
@@ -31,41 +38,47 @@ varying vec3 v_normal;
     uniform vec4 clippingPlanes[ NUM_CLIPPING_PLANES ];
 #endif
 
+uniform int renderMode;
+
 void main() {
+  if (!determineVisibility(overrideVisibilityPerTreeIndex, dataTextureSize, v_treeIndex)) {
+    discard;
+  }
 
 #if NUM_CLIPPING_PLANES > 0
 
-	vec4 plane;
+  vec4 plane;
 
-	#pragma unroll_loop
-	for ( int i = 0; i < UNION_CLIPPING_PLANES; i ++ ) {
+#pragma unroll_loop
+  for ( int i = 0; i < UNION_CLIPPING_PLANES; i ++ ) {
 
-		plane = clippingPlanes[ i ];
+      plane = clippingPlanes[ i ];
 
-		if ( dot( vViewPosition, plane.xyz ) > plane.w ) discard;
+      if ( dot( vViewPosition, plane.xyz ) > plane.w ) discard;
 
-	}
+  }
 
-	#if UNION_CLIPPING_PLANES < NUM_CLIPPING_PLANES
+#if UNION_CLIPPING_PLANES < NUM_CLIPPING_PLANES
 
-		bool clipped = true;
+  bool clipped = true;
 
-		#pragma unroll_loop
-		for ( int i = UNION_CLIPPING_PLANES; i < NUM_CLIPPING_PLANES; i ++ ) {
+#pragma unroll_loop
+  for ( int i = UNION_CLIPPING_PLANES; i < NUM_CLIPPING_PLANES; i ++ ) {
 
-			plane = clippingPlanes[ i ];
-			clipped = ( dot( vViewPosition, plane.xyz ) > plane.w ) && clipped;
+      plane = clippingPlanes[ i ];
+      clipped = ( dot( vViewPosition, plane.xyz ) > plane.w ) && clipped;
 
-		}
+  }
 
-		if ( clipped ) discard;
+  if ( clipped ) discard;
 
-	#endif
+#endif
 
 
 #endif
 
   vec3 normal = normalize( v_normal );
+  vec3 color = determineColor(v_color, colorDataTexture, dataTextureSize, v_treeIndex);
 
   float R1 = v_centerB.w;
   vec4 U = v_U;
@@ -175,13 +188,7 @@ void main() {
       }
   #endif
 
-    vec3 color = v_color;
-    //if (isInner) {
-        //normal = -normal;
-        //// TODO move this into lighting function
-        //color = 0.8 * color;
-    //}
 
-    updateFragmentColor(color, normal);
-    updateFragmentDepth(p, projectionMatrix);
+    float fragDepth = updateFragmentDepth(p, projectionMatrix);
+    updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture);
 }

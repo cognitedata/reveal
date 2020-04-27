@@ -5,12 +5,15 @@
     "module": "esnext",
     "declaration": true,
     "declarationDir": "dist",
-    "outDir": "dist",
+    "outDir": "dist-ts",
+    "rootDir": "src",
     "esModuleInterop": true,
     "downlevelIteration": true,
     "sourceMap": true,
     "moduleResolution": "node",
     "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "typeRoots": [
         "node_modules/@types",
         "src/@types"

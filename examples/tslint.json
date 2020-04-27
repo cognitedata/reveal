@@ -1,0 +1,22 @@
+{
+  "extends": [
+    "@cognite/tslint-config-cognite-3d",
+    "tslint-no-circular-imports"
+  ],
+  "linterOptions": {
+    "exclude": ["node_modules/**/*.ts", "**/*.json"]
+  },
+  "rules": {
+    "file-header": [
+        true,
+        {
+          "default": "Copyright 2020 Cognite AS",
+          "match": "Copyright \\d{4} Cognite AS",
+          "allow-single-line-comments": true,
+          "enforce-trailing-newline": false
+        }
+      ],
+      "no-return-await": true,
+      "prefer-for-of": false
+    }
+}

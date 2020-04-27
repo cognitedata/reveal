@@ -1,7 +1,7 @@
 /*!
- * Copyright 2019 Cognite AS
+ * Copyright 2020 Cognite AS
  */
 
-import { createSectorModel } from './sector/createSectorModel';
-
-export { createSectorModel };
+import { createPointCloudModel } from './pointcloud/createPointCloudModel';
+import { loadCadModelFromCdf } from './cad/loadCadModelFromCdf';
+export { createPointCloudModel, loadCadModelFromCdf };

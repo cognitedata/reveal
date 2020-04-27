@@ -2,9 +2,9 @@ use crate::{Matrix4, Rotation3, Texture, Translation3, Vector3, Vector4};
 use inflector::cases::camelcase::to_camel_case;
 use js_sys::{Float32Array, Float64Array, Map, Uint8Array};
 use serde_derive::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::f32::consts::PI;
 
-use serde_wasm_bindgen;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
 
@@ -252,6 +252,8 @@ macro_rules! new_geometry_types {
 
         #[derive(Clone, Debug, Deserialize, Serialize)]
         pub struct PrimitiveCollections {
+            pub tree_index_to_node_id_map: HashMap<u64, u64>,
+            pub node_id_to_tree_index_map: HashMap<u64, u64>,
             $(
                 pub $collection_name: $vec_struct_name,
             )*
@@ -293,6 +295,8 @@ macro_rules! new_geometry_types {
         impl PrimitiveCollections {
             pub fn with_capacity(capacity: usize) -> PrimitiveCollections {
                 PrimitiveCollections {
+                    tree_index_to_node_id_map: HashMap::with_capacity(capacity),
+                    node_id_to_tree_index_map: HashMap::with_capacity(capacity),
                     $(
                         $collection_name: $vec_struct_name::with_capacity(capacity),
                     )*
@@ -361,6 +365,14 @@ macro_rules! new_geometry_types {
                 std::mem::replace(&mut self.primitive_collections.$collection_name.clone(), $vec_struct_name::default())
             }
             )*
+
+            pub fn tree_index_to_node_id_map(&self) -> Map {
+                Map::from(serde_wasm_bindgen::to_value(&self.primitive_collections.tree_index_to_node_id_map).unwrap())
+            }
+
+            pub fn node_id_to_tree_index_map(&self) -> Map {
+                Map::from(serde_wasm_bindgen::to_value(&self.primitive_collections.node_id_to_tree_index_map).unwrap())
+            }
 
             pub fn statistics(&self) -> SectorStatistics {
                 SectorStatistics {

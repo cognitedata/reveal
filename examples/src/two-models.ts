@@ -1,0 +1,71 @@
+/*!
+ * Copyright 2020 Cognite AS
+ */
+
+import * as THREE from 'three';
+import * as reveal from '@cognite/reveal';
+import * as reveal_threejs from '@cognite/reveal/threejs';
+
+import CameraControls from 'camera-controls';
+
+CameraControls.install({ THREE });
+
+async function main() {
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.12, 1000);
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setClearColor('#000000');
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  const sectorModel1 = await reveal.loadCadModelByUrl('/primitives');
+  const sectorModel2 = await reveal.loadCadModelByUrl('/primitives');
+  const sectorModelNode1 = new reveal_threejs.CadNode(sectorModel1);
+  let modelNeedsUpdate = false;
+  sectorModelNode1.addEventListener('update', () => {
+    modelNeedsUpdate = true;
+  });
+  const sectorModelNode2 = new reveal_threejs.CadNode(sectorModel2);
+  sectorModelNode2.addEventListener('update', () => {
+    modelNeedsUpdate = true;
+  });
+  const model2Offset = new THREE.Group();
+  model2Offset.position.set(-50, -50, 0);
+  model2Offset.add(sectorModelNode2);
+  scene.add(sectorModelNode1);
+  scene.add(model2Offset);
+
+  const controls = new CameraControls(camera, renderer.domElement);
+  const pos = new THREE.Vector3(100, 100, 100);
+  const target = new THREE.Vector3(0, 0, 0);
+  controls.setLookAt(pos.x, pos.y, pos.z, target.x, target.y, target.z);
+  controls.update(0.0);
+  camera.updateMatrixWorld();
+  sectorModelNode1.update(camera);
+  sectorModelNode2.update(camera);
+
+  const clock = new THREE.Clock();
+  const render = () => {
+    const delta = clock.getDelta();
+    const controlsNeedUpdate = controls.update(delta);
+    if (controlsNeedUpdate) {
+      sectorModelNode1.update(camera);
+      sectorModelNode2.update(camera);
+    }
+    const needsUpdate = controlsNeedUpdate || modelNeedsUpdate;
+
+    if (needsUpdate) {
+      renderer.render(scene, camera);
+    }
+
+    requestAnimationFrame(render);
+  };
+  render();
+
+  (window as any).scene = scene;
+  (window as any).THREE = THREE;
+  (window as any).camera = camera;
+  (window as any).controls = controls;
+}
+
+main();

@@ -1,12 +1,8 @@
 use serde_derive::Serialize;
-use serde_json;
-use serde_yaml;
 use std::error::Error;
 use std::fs::File;
 use std::io::{stdout, BufReader};
 use structopt::StructOpt;
-
-use f3df;
 
 #[derive(StructOpt)]
 struct Options {
@@ -40,7 +36,7 @@ enum Output {
         bbox_max: [f32; 3],
         sector_contents: Option<FileSectorContentsStats>,
     },
-    RenderableSector(Vec<f3df::renderables::Face>),
+    RenderableSector(f3df::renderables::Sector),
 }
 
 fn run() -> Result<(), Box<dyn Error>> {

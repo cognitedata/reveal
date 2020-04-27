@@ -4,6 +4,7 @@
 uniform mat4 inverseModelMatrix;
 uniform mat4 inverseNormalMatrix;
 
+attribute float a_treeIndex;
 attribute vec3 a_color;
 attribute vec3 a_center;
 attribute vec3 a_normal;
@@ -11,6 +12,7 @@ attribute float a_horizontalRadius;
 attribute float a_verticalRadius;
 attribute float a_height;
 
+varying float v_treeIndex;
 // We pack vRadius as w-component of center
 varying vec4 center;
 varying float hRadius;
@@ -27,8 +29,6 @@ varying vec3 v_color;
 varying vec3 v_normal;
 
 void main() {
-    v_color = a_color;
-
     vec3 lDir;
     float distanceToCenterOfSegment = a_verticalRadius - a_height*0.5;
     vec3 centerOfSegment = a_center + a_normal*distanceToCenterOfSegment;
@@ -67,11 +67,13 @@ void main() {
     vec3 surfacePoint = centerOfSegment + mat3(lDir, left, up) * displacement;
     vec3 transformed = surfacePoint;
 
+    v_treeIndex = a_treeIndex;
     surfacePoint = mul3(modelViewMatrix, surfacePoint);
     center.xyz = mul3(modelViewMatrix, a_center);
     center.w = a_verticalRadius; // Pack radius into w-component
     hRadius = a_horizontalRadius;
     height = a_height;
+    v_color = a_color;
 
     // compute basis
     sphereNormal.xyz = normalMatrix * a_normal;
@@ -83,9 +85,7 @@ void main() {
     V.w = surfacePoint.y;
     sphereNormal.w = surfacePoint.z;
 
-    // START NEW CODE
     // TODO should perhaps be a different normal?
-    //v_normal = normalMatrix * normal;
     vec4 mvPosition = modelViewMatrix * vec4( transformed, 1.0 );
     gl_Position = projectionMatrix * mvPosition;
 }

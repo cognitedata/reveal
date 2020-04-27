@@ -1,11 +1,19 @@
 #pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
+#pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
 #pragma glslify: isSliced = require('../../base/isSliced.glsl')
+#pragma glslify: determineColor = require('../../base/determineColor.glsl');
 
 #define PI 3.14159265359
 #define PI2 6.28318530718
 #define PI_HALF 1.5707963267949
+
+uniform sampler2D colorDataTexture;
+uniform sampler2D overrideVisibilityPerTreeIndex;
+uniform sampler2D matCapTexture;
+
+uniform vec2 dataTextureSize;
 
 uniform mat4 projectionMatrix;
 
@@ -17,14 +25,19 @@ varying vec4 v_centerA;
 varying vec4 v_centerB;
 varying float height;
 
+varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
-void main() {
-    // START NEW CODE
-    vec3 normal = normalize( v_normal );
-    // END NEW CODE
+uniform int renderMode;
 
+void main() {
+    if (!determineVisibility(overrideVisibilityPerTreeIndex, dataTextureSize, v_treeIndex)) {
+        discard;
+    }
+
+    vec3 color = determineColor(v_color, colorDataTexture, dataTextureSize, v_treeIndex);
+    vec3 normal = normalize( v_normal );
     mat3 basis = mat3(U.xyz, V.xyz, axis.xyz);
     vec3 surfacePoint = vec3(U.w, V.w, axis.w);
     vec3 rayTarget = surfacePoint;
@@ -91,7 +104,7 @@ void main() {
     bool isInner = false;
 
     if (intersectionPointZ <= 0.0 ||
-      intersectionPointZ >= L || 
+      intersectionPointZ >= L ||
       isSliced(p)
       ) {
       // Either intersection point is behind starting point (happens inside the cone),
@@ -102,7 +115,7 @@ void main() {
       p = rayTarget + dist*rayDirection;
 
       if (intersectionPointZ <= 0.0 ||
-        intersectionPointZ >= L || 
+        intersectionPointZ >= L ||
         isSliced(p)
       ) {
         // Missed the other point too
@@ -124,13 +137,6 @@ void main() {
     normal = normalize(cross(A, B));
 #endif
 
-    vec3 color = v_color;
-    //if (isInner) {
-        //normal = -normal;
-        //// TODO move this into lighting function
-        //color = 0.8 * color;
-    //}
-
-    updateFragmentColor(color, normal);
-    updateFragmentDepth(p, projectionMatrix);
+    float fragDepth = updateFragmentDepth(p, projectionMatrix);
+    updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture);
 }

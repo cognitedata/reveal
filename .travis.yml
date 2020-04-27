@@ -1,3 +1,6 @@
+env:
+  # examples require a lot of memory...
+  NODE_OPTIONS=--max-old-space-size=8192
 matrix:
   include:
     - language: rust
@@ -5,47 +8,54 @@ matrix:
       rust:
         - stable
         - beta
+
+      os: linux
+      sudo: required
+      dist: trusty
+
       matrix:
         allow_failures:
           - rust: nightly
         fast_finish: true
-      cache: cargo
       before_script:
         - rustup component add clippy
         - rustup component add rustfmt
       script:
         # fail on warnings, test all features
         - cargo fmt -- --check
-        - cargo clippy --all-targets --all-features -- -D warnings
+        # NOTE: as of 2020-03-17, Rust 1.42, mem_replace_with_default is triggered by a macro in wasm_bindgen
+        # and needs to be disabled
+        - cargo clippy --all-targets --all-features -- -D warnings -A clippy::mem_replace_with_default
         - cargo test --all --verbose
 
     - language: rust
       name: "Reveal viewer"
-      cache:
-        cargo: true
-        npm: true
-        directories:
-          - "viewer/node_modules"
-          - "examples/node_modules"
+
+      # The section below is to allow for unit testing of WebGL
+      os: linux
+      sudo: required
+      dist: trusty
+      addons:
+        apt:
+          packages:
+          - mesa-utils
+          - xvfb
+          - libgl1-mesa-dri
+          - libglapi-mesa
+          - libosmesa6
+      before_script:
+        - export DISPLAY=:99.0; sh -e /etc/init.d/xvfb start
+
       install:
         # Install NVM and Node
         - sudo curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash
-        - nvm install 10
         - nvm install 12
         # Install wasm-pack for Rust
         - rm -rf $HOME/.cargo/bin/wasm-pack
         - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-      
+        # Install codecov for test coverage reports
+        - npm install -g codecov
       script:
-        - cd $TRAVIS_BUILD_DIR/viewer
-        - nvm use 10
-        - npm install
-        - npm run build
-        - npm run coverage
-        - cd $TRAVIS_BUILD_DIR//examples
-        - npm install
-        - npm run build
-
         - cd $TRAVIS_BUILD_DIR/viewer
         - nvm use 12
         - npm install
@@ -54,7 +64,34 @@ matrix:
         - cd $TRAVIS_BUILD_DIR/examples
         - npm install
         - npm run build
+      after_script:
+        - codecov
+
+    - language: rust
+      name: "Reveal viewer release"
+
+      os: linux
+      sudo: required
+      dist: trusty
+
+      if: branch =~ /^release/
+      install:
+        # Install NVM and Node
+        - sudo curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.1/install.sh | bash
+        - nvm install 12
+        # Install wasm-pack for Rust
+        - rm -rf $HOME/.cargo/bin/wasm-pack
+        - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+      script:
+        - cd $TRAVIS_BUILD_DIR/viewer
+        - nvm use 12
+        - npm install
+        - npm run release
+        - cd $TRAVIS_BUILD_DIR/examples
+        - npm install
+        - npm run release
+
 branches:
   only:
     - master
-
+    - dependency-updates

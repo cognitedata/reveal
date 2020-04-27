@@ -1,8 +1,8 @@
 /*!
- * Copyright 2019 Cognite AS
+ * Copyright 2020 Cognite AS
  */
 
-import { createLocalSectorModel } from './sector/createLocalSectorModel';
+import { loadCadModelByUrl } from './cad/loadCadModelByUrl';
 import { createLocalPointCloudModel } from './pointcloud/createLocalPointCloudModel';
 
-export { createLocalSectorModel, createLocalPointCloudModel };
+export { loadCadModelByUrl, createLocalPointCloudModel };

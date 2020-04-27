@@ -1,11 +1,11 @@
 /*!
- * Copyright 2019 Cognite AS
+ * Copyright 2020 Cognite AS
  */
 
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
 
-import { PointCloudModel } from '../../../datasources/PointCloudModel';
+import { PointCloudModel } from '../../../models/pointclouds/PointCloudModel';
 import { toThreeMatrix4 } from '../utilities';
 import { PotreeGroupWrapper } from './PotreeGroupWrapper';
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
