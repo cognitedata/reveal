@@ -9,6 +9,12 @@ static final String RELEASE_DOMAIN_NAME = "production.react-demo.cognite.ai"
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
 // one (or do not have access to Sentry), stop by #frontend to ask for help. :)
 static final String SENTRY_PROJECT_NAME = "react-demo-app"
+// The Sentry DSN is the URL used to report issues into Sentry. This can be
+// found on your Sentry's project page, or by going here:
+// https://docs.sentry.io/error-reporting/quickstart/?platform=browser
+//
+// If you omit this, then client errors WILL NOT BE REPORTED.
+static final String SENTRY_DSN = "https://da67b4b23d3e4baea6c36de155a08491@sentry.io/3541732"
 
 static final String PR_COMMENT_MARKER = "[pr-server]\n"
 static final String STORYBOOK_COMMENT_MARKER = "[storybook-server]\n"
@@ -28,7 +34,9 @@ podTemplate(
     )
     .plus(previewServer.containers())
     .plus(yarn.containers()),
-  envVars: [],
+  envVars: [
+    envVar(key: 'REACT_APP_SENTRY_DSN', value: SENTRY_DSN),
+  ],
   volumes: []
     .plus(yarn.volumes())
     .plus(fas.volumes())

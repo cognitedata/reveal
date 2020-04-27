@@ -7,9 +7,15 @@ import * as serviceWorker from './serviceWorker';
 
 import '@cognite/cogs.js/dist/cogs.css';
 
-if (process.env.REACT_APP_ENV !== 'development') {
+if (process.env.REACT_APP_SENTRY_DSN) {
   Sentry.init({
-    dsn: 'https://da67b4b23d3e4baea6c36de155a08491@sentry.io/3541732',
+    dsn: process.env.REACT_APP_SENTRY_DSN,
+    // This is populated by the FAS build process. Change it if you want to
+    // source this information from somewhere else.
+    release: process.env.REACT_APP_RELEASE_ID,
+    // This is populated by react-scripts. However, this can be overridden by
+    // the app's build process if you wish.
+    environment: process.env.REACT_APP_ENV,
   });
 }
 
