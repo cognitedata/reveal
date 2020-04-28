@@ -41,7 +41,7 @@ export class CadNode extends THREE.Object3D {
   private readonly _previousCameraMatrix = new THREE.Matrix4();
   private readonly _boundingBoxNode: THREE.Object3D;
 
-  constructor(model: CadModel, materialManager: MaterialManager, options?: CadNodeOptions) {
+  constructor(model: CadModel, materialManager: MaterialManager) {
     super();
     this.type = 'CadNode';
     this.name = 'Sector model';

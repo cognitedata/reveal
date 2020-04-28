@@ -3,9 +3,6 @@
  */
 
 import { Subject, Observable, merge, BehaviorSubject, animationFrameScheduler } from 'rxjs';
-import { CdfSource } from '../../data/model/CdfSource';
-import { ExternalSource } from '../../data/model/ExternalSource';
-import { CadModel } from '../../models/cad/CadModel';
 import {
   publish,
   filter,
@@ -37,10 +34,10 @@ import { File3dFormat } from '../../data/model/File3dFormat';
 import { Repository } from '../../repository/cad/Repository';
 import { MaterialManager } from '../../views/threejs/cad/MaterialManager';
 import { Cad } from '../../data/model/Cad';
-import { PointCloud } from '../../data/model/PointCloud';
 import { createThreeJsPointCloudNode } from '../../views/threejs';
 import { PotreeGroupWrapper } from '../../views/threejs/pointcloud/PotreeGroupWrapper';
 import { PotreeNodeWrapper } from '../../views/threejs/pointcloud/PotreeNodeWrapper';
+import { PointCloud } from '../../data/model/PointCloud';
 
 export interface RevealOptions {
   nodeAppearance?: ModelNodeAppearance;
@@ -62,7 +59,7 @@ export class RevealManager {
   private readonly _modelObservable: Observable<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper]>;
   private readonly _cadObservable: Observable<CadNode[]>;
 
-private readonly _materialManager: MaterialManager;
+  private readonly _materialManager: MaterialManager;
   private readonly _cadNodeMap: Map<string, CadNode> = new Map();
 
   private _sectorCuller: SectorCuller;

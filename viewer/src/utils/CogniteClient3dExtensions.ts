@@ -113,10 +113,3 @@ export class CogniteClient3dExtensions {
     throw new Error(`Unexpected response ${response.status} (payload: '${response.data})`);
   }
 }
-
-function createModelIdentifier(id: CogniteUniformId): CogniteModel3dIdentifier {
-  if (typeof id === 'number') {
-    return { id };
-  }
-  return { externalId: id };
-}

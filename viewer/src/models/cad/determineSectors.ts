@@ -14,6 +14,7 @@ import { WantedSector } from '../../data/model/WantedSector';
 import { LevelOfDetail } from '../../data/model/LevelOfDetail';
 import { CameraConfig } from '../../views/threejs/cad/fromThreeCameraConfig';
 import { CadNode } from '../../views/threejs/cad/CadNode';
+import { CadModel } from '../..';
 
 const degToRadFactor = Math.PI / 180;
 
@@ -62,7 +63,7 @@ export function determineSectorsByProximity(params: DetermineSectorsByProximityI
 
   const result: WantedSector[] = [];
   for (const cadNode of params.cadNodes) {
-    const sectorScene = cadNode.sectorScene;
+    const sectorScene = cadNode.cadModel.scene;
     const sectors: SectorMetadata[] = [];
 
     if (!mat4.invert(invertCameraModelMatrix, cameraModelMatrix)) {
@@ -94,7 +95,7 @@ export function determineSectorsByProximity(params: DetermineSectorsByProximityI
     });
 
     const requestedDetailed = new Set<number>(sectors.map(x => x.id));
-    const wanteds: WantedSector[] = determineSectorsFromDetailed(cadNode, requestedDetailed);
+    const wanteds: WantedSector[] = determineSectorsFromDetailed(cadNode.cadModel, requestedDetailed);
     for (const wanted of wanteds) {
       result.push(wanted);
     }
@@ -108,11 +109,11 @@ export function determineSectorsByProximity(params: DetermineSectorsByProximityI
   return result;
 }
 
-export function determineSectorsFromDetailed(cadNode: CadNode, requestedDetailed: Set<number>): WantedSector[] {
+export function determineSectorsFromDetailed(cadModel: CadModel, requestedDetailed: Set<number>): WantedSector[] {
   const simple: number[] = [];
   const detailed: number[] = [];
   const wanted: WantedSector[] = [];
-  const scene = cadNode.sectorScene;
+  const scene = cadModel.scene;
 
   for (const sectorId of requestedDetailed) {
     const sector = scene.getSectorById(sectorId);
@@ -124,10 +125,10 @@ export function determineSectorsFromDetailed(cadNode: CadNode, requestedDetailed
         return false;
       }
       wanted.push({
-        cadModelIdentifier: cadNode.cadModel.identifier,
-        dataRetriever: cadNode.cadModel.dataRetriever,
-        cadModelTransformation: cadNode.cadModel.modelTransformation,
-        scene: cadNode.cadModel.scene,
+        cadModelIdentifier: cadModel.identifier,
+        dataRetriever: cadModel.dataRetriever,
+        cadModelTransformation: cadModel.modelTransformation,
+        scene: cadModel.scene,
         levelOfDetail: LevelOfDetail.Detailed,
         metadata: other
       });
@@ -144,10 +145,10 @@ export function determineSectorsFromDetailed(cadNode: CadNode, requestedDetailed
     if (sector.facesFile.fileName) {
       simple.push(sector.id);
       wanted.push({
-        cadModelIdentifier: cadNode.cadModel.identifier,
-        dataRetriever: cadNode.cadModel.dataRetriever,
-        cadModelTransformation: cadNode.cadModel.modelTransformation,
-        scene: cadNode.cadModel.scene,
+        cadModelIdentifier: cadModel.identifier,
+        dataRetriever: cadModel.dataRetriever,
+        cadModelTransformation: cadModel.modelTransformation,
+        scene: cadModel.scene,
         levelOfDetail: LevelOfDetail.Simple,
         metadata: sector
       });
@@ -158,10 +159,10 @@ export function determineSectorsFromDetailed(cadNode: CadNode, requestedDetailed
   traverseDepthFirst(scene.root, sector => {
     if (!detailed.includes(sector.id) && !simple.includes(sector.id)) {
       wanted.push({
-        cadModelIdentifier: cadNode.cadModel.identifier,
-        dataRetriever: cadNode.cadModel.dataRetriever,
-        cadModelTransformation: cadNode.cadModel.modelTransformation,
-        scene: cadNode.cadModel.scene,
+        cadModelIdentifier: cadModel.identifier,
+        dataRetriever: cadModel.dataRetriever,
+        cadModelTransformation: cadModel.modelTransformation,
+        scene: cadModel.scene,
         levelOfDetail: LevelOfDetail.Discarded,
         metadata: sector
       });
