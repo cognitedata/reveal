@@ -20,3 +20,5 @@ export {
   PrioritizedSectorIdentifier,
   OrderSectorsByVisibleCoverageOptions
 } from './OrderSectorsByVisibilityCoverage';
+
+export { BoundingBoxClipper } from './BoundingBoxClipper';

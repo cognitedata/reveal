@@ -1,7 +1,7 @@
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
 #pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
-#pragma glslify: isSliced = require('../../base/isSliced.glsl')
+#pragma glslify: isSliced = require('../../base/isSliced.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: determineColor = require('../../base/determineColor.glsl');
 
 uniform sampler2D colorDataTexture;

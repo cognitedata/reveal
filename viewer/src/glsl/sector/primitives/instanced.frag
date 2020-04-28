@@ -1,6 +1,7 @@
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
 #pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
 #pragma glslify: determineColor = require('../../base/determineColor.glsl');
+#pragma glslify: isSliced = require('../../base/isSliced.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 
 varying float v_treeIndex;
 varying vec3 v_normal;
@@ -14,8 +15,14 @@ uniform vec2 dataTextureSize;
 
 uniform int renderMode;
 
+varying vec3 vViewPosition;
+
 void main() {
     if (!determineVisibility(overrideVisibilityPerTreeIndex, dataTextureSize, v_treeIndex)) {
+        discard;
+    }
+
+    if (isSliced(vViewPosition)) {
         discard;
     }
 
