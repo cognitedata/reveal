@@ -53,6 +53,8 @@ export class Cognite3DViewer {
   private readonly renderController: RenderController;
   private latestRequestId: number = -1;
   private readonly clock = new THREE.Clock();
+  private _slicingPlanes: THREE.Plane[] = [];
+  private _slicingNeedsUpdate: boolean = false;
 
   constructor(options: Cognite3DViewerOptions) {
     if (options.enableCache) {
@@ -165,6 +167,7 @@ export class Cognite3DViewer {
       model3d.cadNode.addEventListener('update', () => {
         this.modelsNeedUpdate = true;
       });
+      model3d.cadNode.clippingPlanes = this._slicingPlanes;
       this.models.push(model3d);
       this.scene.add(model3d);
       return model3d;
@@ -178,8 +181,13 @@ export class Cognite3DViewer {
     throw new NotSupportedInMigrationWrapperError();
   }
 
-  setSlicingPlanes(_slicingPlanes: THREE.Plane[]): void {
-    throw new NotSupportedInMigrationWrapperError();
+  setSlicingPlanes(slicingPlanes: THREE.Plane[]): void {
+    this._slicingPlanes = slicingPlanes;
+    this.renderer.localClippingEnabled = slicingPlanes.length > 0;
+    for (const model of this.models) {
+      model.cadNode.clippingPlanes = slicingPlanes;
+    }
+    this._slicingNeedsUpdate = true;
   }
 
   getCameraPosition(): THREE.Vector3 {
@@ -397,11 +405,12 @@ export class Cognite3DViewer {
       for (const model of this.models) {
         model.cadNode.update(this.camera);
       }
-      if (renderController.needsRedraw || this.forceRendering || this.modelsNeedUpdate) {
+      if (renderController.needsRedraw || this.forceRendering || this.modelsNeedUpdate || this._slicingNeedsUpdate) {
         this.updateNearAndFarPlane(this.camera);
         this.renderer.render(this.scene, this.camera);
         renderController.clearNeedsRedraw();
         this.modelsNeedUpdate = false;
+        this._slicingNeedsUpdate = false;
       }
     }
 
