@@ -2,9 +2,9 @@
  * Copyright 2020 Cognite AS
  */
 
+// TODO: j-bjorne 28-04-2020: Investigate why show bounding boxes doesn't work.
+
 import * as THREE from 'three';
-import * as reveal from '@cognite/reveal';
-import * as reveal_threejs from '@cognite/reveal/threejs';
 
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
@@ -14,46 +14,72 @@ import {
   RenderMode,
   RenderOptions
 } from './utils/renderer-debug-widget';
-import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams } from './utils/loaders';
 import { CogniteClient } from '@cognite/sdk';
+import { CadNode, SimpleRevealManager } from '@cognite/reveal/threejs';
+import { getParamsFromURL } from './utils/example-helpers';
 
 CameraControls.install({ THREE });
 
-let modelNeedsUpdate = false;
+function getModel2Params() {
+  const url = new URL(location.href);
+  const searchParams = url.searchParams;
+  const modelRevision2 = searchParams.get('model2');
+  const modelUrl2 = searchParams.get('modelUrl2');
+  return {
+    modelRevision2: modelRevision2 ? Number.parseInt(modelRevision2, 10) : undefined,
+    modelUrl2: modelUrl2 ? location.origin + '/' + modelUrl2 : undefined
+  };
+}
 
 function initializeModel(
-  cadModel: reveal.CadModel,
+  cadNode: CadNode,
   canvas: HTMLCanvasElement,
   gui: dat.GUI
-): [THREE.WebGLRenderer, THREE.Scene, reveal_threejs.CadNode, RenderOptions] {
+): [THREE.WebGLRenderer, THREE.Scene, CadNode, RenderOptions] {
   const renderer = new THREE.WebGLRenderer({ canvas });
   renderer.setClearColor('#444');
   renderer.setSize(canvas.width, canvas.height);
 
-  const sectorScene = cadModel.scene;
+  const sectorScene = cadNode.cadModel.scene;
   const scene = new THREE.Scene();
-  const sectorModelNode = new reveal_threejs.CadNode(cadModel);
-  scene.add(sectorModelNode);
-  sectorModelNode.addEventListener('update', () => {
-    modelNeedsUpdate = true;
-  });
-  const options = createRendererDebugWidget(sectorScene.root, renderer, sectorModelNode, gui);
-
-  return [renderer, scene, sectorModelNode, options];
+  scene.add(cadNode);
+  const options = createRendererDebugWidget(sectorScene.root, renderer, cadNode, gui);
+  return [renderer, scene, cadNode, options];
 }
 
 async function main() {
+  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'ivar-aasen' });
+  const { modelUrl2, modelRevision2 } = getModel2Params();
+  const client = new CogniteClient({ appId: 'reveal.example.side-by-side' });
+  client.loginWithOAuth({ project });
+
+  let sectorsNeedUpdate = true;
+  const revealManager1 = new SimpleRevealManager(client, () => {
+    sectorsNeedUpdate = true;
+  });
+
+  const revealManager2 = new SimpleRevealManager(client, () => {
+    sectorsNeedUpdate = true;
+  });
+
+  let model1: CadNode;
+  if (modelUrl) {
+    model1 = await revealManager1.addModelFromUrl(modelUrl);
+  } else if (modelRevision) {
+    model1 = await revealManager1.addModelFromCdf(modelRevision);
+  } else {
+    throw new Error('Need to provide either project & model OR modelUrl as query parameters');
+  }
+  let model2: CadNode;
+  if (modelUrl2) {
+    model2 = await revealManager2.addModelFromUrl(modelUrl2);
+  } else if (modelRevision2) {
+    model2 = await revealManager2.addModelFromCdf(modelRevision2);
+  } else {
+    throw new Error('Need to provide either model2 OR modelUrl2 as an additional query parameters');
+  }
   const params = new URL(location.href).searchParams;
-  const project = params.get('project');
-  const modelIdentifier1 = createModelIdentifierFromUrlParams(params, '/primitives', {
-    modelIdParameterName: 'model1',
-    modelUrlParameterName: 'modelUrl1'
-  });
-  const modelIdentifier2 = createModelIdentifierFromUrlParams(params, modelIdentifier1, {
-    modelIdParameterName: 'model2',
-    modelUrlParameterName: 'modelUrl2'
-  });
-  const modelHeader1 = params.get('modelUrl1') || `${params.get('model1')}@${params.get('project')}`;
+  const modelHeader1 = params.get('modelUrl') || `${params.get('model')}@${params.get('project')}`;
   const modelHeader2 = params.get('modelUrl2') || `${params.get('model2')}@${params.get('project')}`;
 
   // Page layout
@@ -66,16 +92,7 @@ async function main() {
   const leftCanvas = document.getElementById('leftCanvas')! as HTMLCanvasElement;
   const rightCanvas = document.getElementById('rightCanvas')! as HTMLCanvasElement;
 
-  // Initialize CogniteClient (if loading model from CDF)
-  let client: CogniteClient | undefined;
-  if (project) {
-    client = new CogniteClient({ appId: 'cognite.reveal.examples' });
-    await client.loginWithOAuth({ project });
-  }
-
   // Initialize models
-  const model1 = await loadCadModelFromCdfOrUrl(modelIdentifier1, client);
-  const model2 = await loadCadModelFromCdfOrUrl(modelIdentifier2, client);
   const [renderer1, scene1, modelNode1, options1] = initializeModel(model1, leftCanvas, gui1);
   const [renderer2, scene2, modelNode2, options2] = initializeModel(model2, rightCanvas, gui2);
 
@@ -85,8 +102,8 @@ async function main() {
   controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
-  modelNode1.update(camera);
-  modelNode2.update(camera);
+  revealManager1.update(camera);
+  revealManager2.update(camera);
 
   const clock = new THREE.Clock();
   const render = async () => {
@@ -95,22 +112,22 @@ async function main() {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
     if (options1.loadingEnabled) {
-      modelNode1.update(camera);
+      revealManager1.update(camera);
     }
     if (options2.loadingEnabled) {
-      modelNode2.update(camera);
+      revealManager2.update(camera);
     }
 
     if (
       options1.renderMode === RenderMode.AlwaysRender ||
-      (options1.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || modelNeedsUpdate))
+      (options1.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || sectorsNeedUpdate))
     ) {
       applyRenderingFilters(scene1, options1.renderFilter);
       renderer1.render(scene1, camera);
     }
     if (
       options2.renderMode === RenderMode.AlwaysRender ||
-      (options2.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || modelNeedsUpdate))
+      (options2.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || sectorsNeedUpdate))
     ) {
       applyRenderingFilters(scene2, options2.renderFilter);
       renderer2.render(scene2, camera);

@@ -4,12 +4,12 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import * as reveal from '@cognite/reveal';
 import { CogniteClient, HttpError } from '@cognite/sdk';
-import { toThreeVector3, CadNode } from '@cognite/reveal/threejs';
+import { toThreeVector3, SimpleRevealManager, CadNode } from '@cognite/reveal/threejs';
 import { vec3 } from 'gl-matrix';
 import { SectorModelTransformation } from '@cognite/reveal/models/cad/types';
 import { GUI, GUIController } from 'dat.gui';
+import { getParamsFromURL } from './utils/example-helpers';
 
 CameraControls.install({ THREE });
 
@@ -33,35 +33,44 @@ interface TransitPathRequest {
 }
 
 async function main() {
-  const url = new URL(location.href);
-  const project = url.searchParams.get('projectId') || 'publicdata';
-  const modelId = parseInt(url.searchParams.get('modelId') || '0', 10);
-  const client: CogniteClient = new CogniteClient({ appId: 'Reveal Examples - WalkablePath' });
-  client.loginWithOAuth({
-    project
-  });
+  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'ivar-aasen' });
+  const client = new CogniteClient({ appId: 'reveal.example.walkable-path' });
+  client.loginWithOAuth({ project });
 
-  const cadModel = await reveal.loadCadModelFromCdf(client, modelId);
-
+  const scene = new THREE.Scene();
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#444');
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const scene = new THREE.Scene();
-  const cadNode = new CadNode(cadModel);
-  let modelNeedsUpdate = false;
-  cadNode.addEventListener('update', () => {
-    modelNeedsUpdate = true;
+  let sectorsNeedUpdate = true;
+  const revealManager = new SimpleRevealManager(client, () => {
+    sectorsNeedUpdate = true;
   });
-  const { position, target, near, far } = cadNode.suggestCameraConfig();
+  let cameraConfig;
+  let cadNode: CadNode;
+  if (modelUrl) {
+    const model = await revealManager.addModelFromUrl(modelUrl);
+    cadNode = model;
+    cameraConfig = model.suggestCameraConfig();
+    scene.add(model);
+  }
+  if (modelRevision) {
+    const model = await revealManager.addModelFromCdf(modelRevision);
+    cameraConfig = model.suggestCameraConfig();
+    cadNode = model;
+    scene.add(model);
+  }
+  if (cameraConfig === undefined) {
+    throw new Error('Need to provide either project & model OR modelUrl as query parameters');
+  }
+
+  const { position, target, near, far } = cameraConfig;
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
-
   controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
-  scene.add(cadNode);
 
   const walkablePathSdkClient = createNetworkDataSource(client);
 
@@ -76,11 +85,11 @@ async function main() {
     updated = true;
   };
 
-  createGUIWrapper(modelId, {
+  createGUIWrapper(modelRevision ? modelRevision : 0, {
     createWalkablePath: async (walkablePath: TransitPathRequest) => {
       const walkablePathResponse = await walkablePathSdkClient.getTransitPath(walkablePath);
       removeWalkablePath();
-      const vector3Path = convertToVector3Array(walkablePathResponse, cadModel.modelTransformation);
+      const vector3Path = convertToVector3Array(walkablePathResponse, cadNode.modelTransformation);
       const meshes = createWalkablePathMeshes(vector3Path);
       for (const mesh of meshes) {
         scene.add(mesh);
@@ -96,11 +105,11 @@ async function main() {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
     if (controlsNeedUpdate) {
-      cadNode.update(camera);
+      revealManager.update(camera);
     }
     const walkablePathUpdated = updated;
 
-    if (controlsNeedUpdate || modelNeedsUpdate || walkablePathUpdated) {
+    if (controlsNeedUpdate || sectorsNeedUpdate || walkablePathUpdated) {
       updated = false;
       renderer.render(scene, camera);
     }

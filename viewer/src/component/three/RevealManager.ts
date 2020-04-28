@@ -3,8 +3,8 @@
  */
 
 import { Subject, Observable, merge, BehaviorSubject, animationFrameScheduler } from 'rxjs';
-import { Cdf3dModel } from '../../data/model/Cdf3dModel';
-import { External3dModel } from '../../data/model/External3dModel';
+import { CdfSource } from '../../data/model/CdfSource';
+import { ExternalSource } from '../../data/model/ExternalSource';
 import { CadModel } from '../../models/cad/CadModel';
 import {
   publish,
@@ -15,11 +15,11 @@ import {
   map,
   share,
   switchAll,
-  toArray,
-  observeOn
+  observeOn,
+  scan
 } from 'rxjs/operators';
-import { loadCadModelByUrl } from '../../datasources/local';
-import { loadCadModelFromCdf } from '../../datasources/cognitesdk';
+import { loadCadModelByUrl, createLocalPointCloudModel } from '../../datasources/local';
+import { loadCadModelFromCdf, createPointCloudModel } from '../../datasources/cognitesdk';
 import { CogniteClient, IdEither } from '@cognite/sdk';
 import { fromThreeCameraConfig } from '../../views/threejs/cad/fromThreeCameraConfig';
 import { distinctUntilLevelOfDetailChanged } from '../../models/cad/distinctUntilLevelOfDetailChanged';
@@ -31,16 +31,19 @@ import { CadNode } from '../../views/threejs/cad/CadNode';
 import { ProximitySectorCuller } from '../../culling/ProximitySectorCuller';
 import { CadBudget } from '../../models/cad/CadBudget';
 import { ConsumedSector } from '../../data/model/ConsumedSector';
-import { NodeAppearance } from '../../views/common/cad/NodeAppearance';
+import { ModelNodeAppearance } from '../../views/common/cad/ModelNodeAppearance';
 import { Sector, SectorQuads } from '../../models/cad/types';
-import { CachedRepository } from '../../repository/cad/CachedRepository';
-import { SimpleAndDetailedToSector3D } from '../../data/transformer/three/SimpleAndDetailedToSector3D';
-import { CadSectorParser } from '../../data/parser/CadSectorParser';
 import { File3dFormat } from '../../data/model/File3dFormat';
-import { PromiseCallbacks } from '../../data/model/PromiseCallbacks';
+import { Repository } from '../../repository/cad/Repository';
+import { MaterialManager } from '../../views/threejs/cad/MaterialManager';
+import { Cad } from '../../data/model/Cad';
+import { PointCloud } from '../../data/model/PointCloud';
+import { createThreeJsPointCloudNode } from '../../views/threejs';
+import { PotreeGroupWrapper } from '../../views/threejs/pointcloud/PotreeGroupWrapper';
+import { PotreeNodeWrapper } from '../../views/threejs/pointcloud/PotreeNodeWrapper';
 
 export interface RevealOptions {
-  nodeAppearance?: NodeAppearance;
+  nodeAppearance?: ModelNodeAppearance;
   budget?: CadBudget;
   // internal options are experimental and may change in the future
   internal?: {
@@ -52,72 +55,108 @@ export interface RevealOptions {
 export type OnDataUpdated = () => void;
 
 export class RevealManager {
-  private readonly _sectorRepository: CachedRepository;
-  private readonly _modelSubject: Subject<Cdf3dModel | External3dModel> = new Subject();
+  private readonly _sectorRepository: Repository;
+  private readonly _modelSubject: Subject<Cad | PointCloud> = new Subject();
   private readonly _loadingHintsSubject: Subject<CadLoadingHints> = new BehaviorSubject({});
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera>;
-  private readonly _modelObservable: Observable<{ callbacks: PromiseCallbacks<CadNode>; cadModel: CadModel }>;
-  private readonly _nodeObservable: Observable<CadNode>;
-  private readonly _sceneObservable: Observable<CadNode[]>;
+  private readonly _modelObservable: Observable<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper]>;
+  private readonly _cadObservable: Observable<CadNode[]>;
 
+private readonly _materialManager: MaterialManager;
   private readonly _cadNodeMap: Map<string, CadNode> = new Map();
 
   private _sectorCuller: SectorCuller;
   // private _budget: CadBudget;
 
-  constructor(client: CogniteClient, dataUpdatedCallback: OnDataUpdated, options?: RevealOptions) {
+  constructor(
+    client: CogniteClient,
+    sectorRepository: Repository,
+    materialManager: MaterialManager,
+    dataUpdatedCallback: OnDataUpdated,
+    options?: RevealOptions
+  ) {
     this._sectorCuller = (options && options.internal && options.internal.sectorCuller) || new ProximitySectorCuller();
     // this._budget = (options && options.budget) || createDefaultCadBudget();
-    const modelDataParser: CadSectorParser = new CadSectorParser();
-    const modelDataTransformer: SimpleAndDetailedToSector3D = new SimpleAndDetailedToSector3D();
-
-    this._sectorRepository = new CachedRepository(modelDataParser, modelDataTransformer);
-    this._sectorRepository.getParsedData().subscribe(parsedSector => {
-      const cadNode = this._cadNodeMap.get(parsedSector.cadModelIdentifier);
-      
-    });
-
+    this._sectorRepository = sectorRepository;
+    this._materialManager = materialManager;
     this._modelObservable = this._modelSubject.pipe(
       publish(addModelObservable => {
-        const externalModelObservable = addModelObservable.pipe(
-          filter((model): model is External3dModel => model.discriminator === 'external'),
+        const cadObservable = addModelObservable.pipe(
+          filter((model): model is Cad => model.format === File3dFormat.RevealCadModel),
           flatMap(
-            model => loadCadModelByUrl(model.url),
+            model => {
+              if (model.source.discriminator === 'cdf') {
+                return loadCadModelFromCdf(client, model.source.modelRevision);
+              } else if (model.source.discriminator === 'external') {
+                return loadCadModelByUrl(model.source.url);
+              } else {
+                throw new Error('Unknown Source');
+              }
+            },
             (model, cadModel) => ({
-              callbacks: model.callbacks,
-              cadModel
+              ...model,
+              data: cadModel
             })
           )
         );
-        const cdfModelObservable = addModelObservable.pipe(
-          filter((model): model is Cdf3dModel => model.discriminator === 'cdf-model'),
+        const pointCloudObservable = addModelObservable.pipe(
+          filter((model): model is PointCloud => model.format === File3dFormat.EptPointCloud),
           flatMap(
-            model => loadCadModelFromCdf(client, model.modelRevision),
-            (model, cadModel) => ({
-              callbacks: model.callbacks,
-              cadModel
+            model => {
+              if (model.source.discriminator === 'cdf') {
+                return createPointCloudModel(client, model.source.modelRevision);
+              } else if (model.source.discriminator === 'external') {
+                return createLocalPointCloudModel(model.source.url);
+              } else {
+                throw new Error('Unknown Source');
+              }
+            },
+            (model, pointCloudModel) => ({
+              ...model,
+              data: pointCloudModel
             })
           )
         );
-        return merge(externalModelObservable, cdfModelObservable);
+        return merge(
+          cadObservable.pipe(
+            map(cad => {
+              const cadModel = cad.data;
+              const node = new CadNode(cadModel, this._materialManager);
+              this._materialManager.addModelMaterials(
+                cadModel.identifier,
+                cadModel.scene.maxTreeIndex,
+                cad.modelNodeAppearance
+              );
+              this._cadNodeMap.set(cadModel.identifier, node);
+              cad.callbacks.success(node);
+              return node;
+            })
+          ),
+          pointCloudObservable.pipe(
+            flatMap(
+              pointCloud => createThreeJsPointCloudNode(pointCloud.data),
+              (request, wrapper) => {
+                request.callbacks.success(wrapper);
+                return wrapper;
+              }
+            )
+          )
+        );
       })
     );
 
-    this._nodeObservable = this._modelObservable.pipe(
-      map(wrapper => {
-        const cadModel = wrapper.cadModel;
-        const node = new CadNode(cadModel, options);
-        this._cadNodeMap.set(cadModel.identifier, node);
-        modelDataTransformer.addMaterial(cadModel.identifier, node.materialManager.materials);
-        wrapper.callbacks.success(node);
-        return node;
-      })
+    const cadNodeArray: CadNode[] = [];
+    this._cadObservable = this._modelObservable.pipe(
+      filter((model): model is CadNode => model instanceof CadNode),
+      scan((accumulator, cadnode) => {
+        accumulator.push(cadnode);
+        return accumulator;
+      }, cadNodeArray)
     );
-    this._sceneObservable = this._nodeObservable.pipe(toArray());
     this._cameraSubject = this.createLoadSectorsPipeline(dataUpdatedCallback);
   }
 
-  public addModelFromCdf(modelRevision: string | number): Promise<CadNode> {
+  public addModelFromCdf(modelRevision: string | number, modelNodeAppearance?: ModelNodeAppearance): Promise<CadNode> {
     let resolveCb: (cadNode: CadNode) => void | undefined;
     let rejectCb: (message: string) => void | undefined;
     const promise = new Promise<CadNode>((resolve, reject) => {
@@ -125,22 +164,69 @@ export class RevealManager {
       rejectCb = reject;
     });
     this._modelSubject.next({
-      discriminator: 'cdf-model',
-      modelRevision: this.createModelIdentifier(modelRevision),
       format: File3dFormat.RevealCadModel,
+      source: {
+        discriminator: 'cdf',
+        modelRevision: this.createModelIdentifier(modelRevision)
+      },
+      modelNodeAppearance,
       callbacks: { success: resolveCb!, fail: rejectCb! }
     });
     return promise;
   }
 
-  public addModelFromUrl(url: string): Promise<CadNode> {
+  public addModelFromUrl(url: string, modelNodeAppearance?: ModelNodeAppearance): Promise<CadNode> {
     let resolveCb: (cadNode: CadNode) => void | undefined;
     let rejectCb: (message: string) => void | undefined;
     const promise = new Promise<CadNode>((resolve, reject) => {
       resolveCb = resolve;
       rejectCb = reject;
     });
-    this._modelSubject.next({ discriminator: 'external', url, callbacks: { success: resolveCb!, fail: rejectCb! } });
+    this._modelSubject.next({
+      format: File3dFormat.RevealCadModel,
+      source: {
+        discriminator: 'external',
+        url
+      },
+      modelNodeAppearance,
+      callbacks: { success: resolveCb!, fail: rejectCb! }
+    });
+    return promise;
+  }
+
+  public addPointCloudFromCdf(modelRevision: string | number): Promise<[PotreeGroupWrapper, PotreeNodeWrapper]> {
+    let resolveCb: (wrapper: [PotreeGroupWrapper, PotreeNodeWrapper]) => void | undefined;
+    let rejectCb: (message: string) => void | undefined;
+    const promise = new Promise<[PotreeGroupWrapper, PotreeNodeWrapper]>((resolve, reject) => {
+      resolveCb = resolve;
+      rejectCb = reject;
+    });
+    this._modelSubject.next({
+      format: File3dFormat.EptPointCloud,
+      source: {
+        discriminator: 'cdf',
+        modelRevision: this.createModelIdentifier(modelRevision)
+      },
+      callbacks: { success: resolveCb!, fail: rejectCb! }
+    });
+    return promise;
+  }
+
+  public addPointCloudFromUrl(url: string): Promise<[PotreeGroupWrapper, PotreeNodeWrapper]> {
+    let resolveCb: (cadNode: [PotreeGroupWrapper, PotreeNodeWrapper]) => void | undefined;
+    let rejectCb: (message: string) => void | undefined;
+    const promise = new Promise<[PotreeGroupWrapper, PotreeNodeWrapper]>((resolve, reject) => {
+      resolveCb = resolve;
+      rejectCb = reject;
+    });
+    this._modelSubject.next({
+      format: File3dFormat.EptPointCloud,
+      source: {
+        discriminator: 'external',
+        url
+      },
+      callbacks: { success: resolveCb!, fail: rejectCb! }
+    });
     return promise;
   }
 
@@ -161,7 +247,8 @@ export class RevealManager {
       .pipe(
         auditTime(100),
         fromThreeCameraConfig(),
-        withLatestFrom(this._sceneObservable, this._loadingHintsSubject.pipe(share())),
+        withLatestFrom(this._cadObservable, this._loadingHintsSubject.pipe(share())),
+        filter(([_cameraConfig, cadNodes, _loadingHints]) => cadNodes.length > 0),
         map(([cameraConfig, cadNodes, loadingHints]) =>
           this._sectorCuller.determineSectors({ cameraConfig, cadNodes, loadingHints })
         ),

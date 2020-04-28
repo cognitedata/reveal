@@ -7,37 +7,46 @@ import * as reveal_threejs from '@cognite/reveal/threejs';
 
 import CameraControls from 'camera-controls';
 import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams, createClientIfNecessary } from './utils/loaders';
+import { getParamsFromURL } from './utils/example-helpers';
+import { CogniteClient } from '@cognite/sdk';
+import { SimpleRevealManager, CadNode } from '@cognite/reveal/threejs';
 
 const postprocessing = require('postprocessing');
 
 CameraControls.install({ THREE });
 
 async function main() {
-  const urlParams = new URL(location.href).searchParams;
-  const modelId = createModelIdentifierFromUrlParams(urlParams, '/primitives');
+  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'ivar-aasen' });
+  const client = new CogniteClient({ appId: 'reveal.example.post-processing' });
+  client.loginWithOAuth({ project });
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  let sectorsNeedUpdate = true;
+  const revealManager = new SimpleRevealManager(client, () => {
+    sectorsNeedUpdate = true;
+  });
+  let model: CadNode;
+  if (modelUrl) {
+    model = await revealManager.addModelFromUrl(modelUrl);
+  } else if (modelRevision) {
+    model = await revealManager.addModelFromCdf(modelRevision);
+  } else {
+    throw new Error('Need to provide either project & model OR modelUrl as query parameters');
+  }
+  scene.add(model);
+
   const renderer = new THREE.WebGLRenderer();
-  renderer.setClearColor('#000000');
+  renderer.setClearColor('#444');
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const cadModel = await loadCadModelFromCdfOrUrl(modelId, await createClientIfNecessary(modelId));
-  const cadModelNode = new reveal_threejs.CadNode(cadModel);
-  let modelNeedsUpdate = false;
-  cadModelNode.addEventListener('update', () => {
-    modelNeedsUpdate = true;
-  });
-  scene.add(cadModelNode);
-
+  const { position, target, near, far } = model.suggestCameraConfig();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
-  const pos = new THREE.Vector3(100, 100, 100);
-  const target = new THREE.Vector3(0, 0, 0);
-  controls.setLookAt(pos.x, pos.y, pos.z, target.x, target.y, target.z);
+  controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
-  cadModelNode.update(camera);
+  revealManager.update(camera);
 
   // See https://vanruesc.github.io/postprocessing/public/docs/identifiers.html
   const effectPass = new postprocessing.EffectPass(camera, new postprocessing.DotScreenEffect());
@@ -51,10 +60,10 @@ async function main() {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
     if (controlsNeedUpdate) {
-      cadModelNode.update(camera);
+      revealManager.update(camera);
     }
 
-    const needsUpdate = controlsNeedUpdate || modelNeedsUpdate;
+    const needsUpdate = controlsNeedUpdate || sectorsNeedUpdate;
     if (needsUpdate) {
       effectComposer.render(delta);
     }

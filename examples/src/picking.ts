@@ -4,8 +4,9 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { CadNode, NodeAppearance, intersectCadNodes } from '@cognite/reveal/threejs';
-import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams, createClientIfNecessary } from './utils/loaders';
+import { CadNode, intersectCadNodes, SimpleRevealManager, ModelNodeAppearance } from '@cognite/reveal/threejs';
+import { getParamsFromURL } from './utils/example-helpers';
+import { CogniteClient } from '@cognite/sdk';
 
 CameraControls.install({ THREE });
 
@@ -16,12 +17,20 @@ function createSphere(point: THREE.Vector3, color: string): THREE.Mesh {
 }
 
 async function main() {
-  const urlParams = new URL(location.href).searchParams;
-  const modelId = createModelIdentifierFromUrlParams(urlParams, '/primitives');
+  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'ivar-aasen' });
+  const client = new CogniteClient({ appId: 'reveal.example.picking' });
+  client.loginWithOAuth({ project });
 
+  const scene = new THREE.Scene();
   const pickedNodes: Set<number> = new Set();
   const pickedObjects: Set<THREE.Mesh> = new Set();
-  const nodeAppearance: NodeAppearance = {
+
+  let sectorsNeedUpdate = true;
+  const revealManager = new SimpleRevealManager(client, () => {
+    sectorsNeedUpdate = true;
+  });
+
+  const nodeAppearance: ModelNodeAppearance = {
     color(treeIndex: number) {
       if (pickedNodes.has(treeIndex)) {
         return [255, 255, 0, 255];
@@ -30,16 +39,27 @@ async function main() {
     }
   };
 
-  const scene = new THREE.Scene();
+  let model: CadNode;
+  if (modelUrl) {
+    model = await revealManager.addModelFromUrl(modelUrl, nodeAppearance);
+  } else if (modelRevision) {
+    model = await revealManager.addModelFromCdf(modelRevision, nodeAppearance);
+  } else {
+    throw new Error('Need to provide either project & model OR modelUrl as query parameters');
+  }
+  scene.add(model);
 
-  // Add some data for Reveal
-  const cadModel = await loadCadModelFromCdfOrUrl(modelId, await createClientIfNecessary(modelId));
-  const cadNode = new CadNode(cadModel, { nodeAppearance });
-  let modelNeedsUpdate = false;
-  cadNode.addEventListener('update', () => {
-    modelNeedsUpdate = true;
-  });
-  scene.add(cadNode);
+  // Set up the renderer
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setClearColor('#444');
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+  const { position, target, near, far } = model.suggestCameraConfig();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
+  const controls = new CameraControls(camera, renderer.domElement);
+  controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
+  controls.update(0.0);
+  camera.updateMatrixWorld();
 
   // Add some other geometry
   const boxGeometry = new THREE.BoxGeometry(10.0, 4.0, 2.0);
@@ -61,29 +81,16 @@ async function main() {
   // Set up picking for other objects
   const raycaster = new THREE.Raycaster();
 
-  // Set up the renderer
-  const renderer = new THREE.WebGLRenderer();
-  renderer.setClearColor('#444');
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
-
-  const { position, target, near, far } = cadNode.suggestCameraConfig();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
-  const controls = new CameraControls(camera, renderer.domElement);
-  controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
-  controls.update(0.0);
-  camera.updateMatrixWorld();
-  cadNode.update(camera);
   let pickingNeedsUpdate = false;
   const clock = new THREE.Clock();
   const render = () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
     if (controlsNeedUpdate) {
-      cadNode.update(camera);
+      revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || pickingNeedsUpdate || modelNeedsUpdate) {
+    if (controlsNeedUpdate || pickingNeedsUpdate || sectorsNeedUpdate) {
       renderer.render(scene, camera);
       pickingNeedsUpdate = false;
     }
@@ -100,7 +107,8 @@ async function main() {
     };
     // Pick in Reveal
     const revealPickResult = (() => {
-      const intersections = intersectCadNodes([cadNode], { renderer, camera, coords });
+      const intersections = intersectCadNodes([model], { renderer, camera, coords });
+      console.log(intersections);
       if (intersections.length === 0) {
         return;
       }
@@ -161,7 +169,7 @@ async function main() {
         } else {
           pickedNodes.delete(treeIndex);
         }
-        cadNode.requestNodeUpdate([treeIndex]);
+        model.requestNodeUpdate([treeIndex]);
         pickingNeedsUpdate = true;
 
         break;

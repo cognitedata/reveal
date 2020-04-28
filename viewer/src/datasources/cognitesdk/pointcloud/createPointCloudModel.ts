@@ -8,11 +8,7 @@ import { SectorModelTransformation } from '../../../models/cad/types';
 import { EptLoader } from '../../../utils/potree/EptLoader';
 import { PointCloudModel } from '../../../models/pointclouds/PointCloudModel';
 import { CogniteClient, IdEither } from '@cognite/sdk';
-import {
-  CogniteClient3dExtensions,
-  CogniteWellknown3dFormat,
-  CogniteUniformId
-} from '../../../utils/CogniteClient3dExtensions';
+import { CogniteClient3dExtensions } from '../../../utils/CogniteClient3dExtensions';
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
 import { File3dFormat } from '../../../data/model/File3dFormat';

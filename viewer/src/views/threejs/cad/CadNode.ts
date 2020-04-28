@@ -12,13 +12,13 @@ import { suggestCameraConfig } from '../../../utils/cameraUtils';
 import { toThreeJsBox3, toThreeVector3, toThreeMatrix4 } from '../utilities';
 import { RenderMode } from '../materials';
 import { RootSectorNode } from './RootSectorNode';
-import { NodeAppearance } from '../../common/cad/NodeAppearance';
+import { ModelNodeAppearance } from '../../common/cad/ModelNodeAppearance';
 import { MaterialManager } from './MaterialManager';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: Sector | SectorQuads }) => void;
 
 export interface CadNodeOptions {
-  nodeAppearance?: NodeAppearance;
+  nodeAppearance?: ModelNodeAppearance;
 }
 
 export interface SuggestedCameraConfig {
@@ -41,12 +41,11 @@ export class CadNode extends THREE.Object3D {
   private readonly _previousCameraMatrix = new THREE.Matrix4();
   private readonly _boundingBoxNode: THREE.Object3D;
 
-  constructor(model: CadModel, options?: CadNodeOptions) {
+  constructor(model: CadModel, materialManager: MaterialManager, options?: CadNodeOptions) {
     super();
     this.type = 'CadNode';
     this.name = 'Sector model';
-    const treeIndexCount = model.scene.maxTreeIndex + 1;
-    this._materialManager = new MaterialManager(treeIndexCount, options ? options.nodeAppearance : undefined);
+    this._materialManager = materialManager;
 
     const rootSector = new RootSectorNode(model);
     this._cadModel = model;
@@ -68,16 +67,10 @@ export class CadNode extends THREE.Object3D {
     this._loadingHints = {};
     this.renderHints = {};
     this.loadingHints = {};
-
-    const indices = [];
-    for (let i = 0; i < scene.maxTreeIndex; i++) {
-      indices.push(i);
-    }
-    this._materialManager.updateNodes(indices);
   }
 
   requestNodeUpdate(treeIndices: number[]) {
-    this._materialManager.updateNodes(treeIndices);
+    this._materialManager.updateModelNodes(this._cadModel.identifier, treeIndices);
     this.dispatchEvent({ type: 'update' });
   }
 

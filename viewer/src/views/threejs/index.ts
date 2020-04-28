@@ -7,8 +7,16 @@ export { intersectCadNode, intersectCadNodes, IntersectCadNodesInput, IntersectC
 export { SectorNode } from './cad/SectorNode';
 export { createThreeJsPointCloudNode } from './pointcloud/createThreeJsPointCloudNode';
 export { RootSectorNode } from './cad/RootSectorNode';
-export { NodeAppearance } from '../common/cad/NodeAppearance';
+export { ModelNodeAppearance } from '../common/cad/ModelNodeAppearance';
+export { GlobalNodeAppearance } from '../common/cad/GlobalNodeAppearance';
+
+export { SimpleRevealManager } from '../../component/three/SimpleRevealManager';
+
 export { RevealManager } from '../../component/three/RevealManager';
+export { MaterialManager } from './cad/MaterialManager';
+export { CadSectorParser } from '../../data/parser/CadSectorParser';
+export { SimpleAndDetailedToSector3D } from '../../data/transformer/three/SimpleAndDetailedToSector3D';
+export { CachedRepository } from '../../repository/cad/CachedRepository';
 
 export { HtmlOverlayHelper } from './HtmlOverlayHelper';
 export { worldToViewport } from './worldToViewport';

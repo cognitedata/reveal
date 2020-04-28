@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { Color } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { CadModel } from '../models/cad/CadModel';
-import { toThreeJsBox3, CadNode, toThreeMatrix4 } from '../views/threejs';
+import { toThreeJsBox3, CadNode, toThreeMatrix4, ModelNodeAppearance } from '../views/threejs';
 import { CadRenderHints } from '../views/CadRenderHints';
 import { CadLoadingHints } from '../models/cad/CadLoadingHints';
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
@@ -48,6 +48,15 @@ export class Cognite3DModel extends THREE.Object3D {
     this.nodeColors = new Map();
     this.hiddenNodes = new Set();
     this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client);
+    const nodeAppearance: ModelNodeAppearance = {
+      color: (treeIndex: number) => {
+        return this.nodeColors.get(treeIndex);
+      },
+      visible: (treeIndex: number) => {
+        return this.hiddenNodes.has(treeIndex) ? false : true;
+      }
+    };
+    cadNode.materialManager.updateLocalAppearance(this.cadModel.identifier, nodeAppearance);
 
     this.cadNode = cadNode;
 

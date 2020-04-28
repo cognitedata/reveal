@@ -4,30 +4,42 @@
 
 import * as THREE from 'three';
 import * as reveal from '@cognite/reveal';
-import * as reveal_threejs from '@cognite/reveal/threejs';
 
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
 import { vec3 } from 'gl-matrix';
-import { toThreeJsBox3 } from '@cognite/reveal/threejs';
-import { loadPointCloudModelFromCdfOrUrl, createModelIdentifierFromUrlParams } from './utils/loaders';
+import { toThreeJsBox3, SimpleRevealManager } from '@cognite/reveal/threejs';
+import { CogniteClient } from '@cognite/sdk';
+import { PotreeGroupWrapper, PotreeNodeWrapper } from '@cognite/reveal/internal';
+import { getParamsFromURL } from './utils/example-helpers';
 
 CameraControls.install({ THREE });
 
 async function main() {
-  const urlParams = new URL(location.href).searchParams;
-  const modelIdentifier = createModelIdentifierFromUrlParams(urlParams, '/primitives');
+  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata' });
+  const client = new CogniteClient({ appId: 'reveal.example.simple-pointcloud' });
+  client.loginWithOAuth({ project });
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#000000');
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const pointCloudModel = await loadPointCloudModelFromCdfOrUrl(modelIdentifier);
-  const [pointCloudGroup, pointCloudNode] = await reveal_threejs.createThreeJsPointCloudNode(pointCloudModel);
+  const revealManager = new SimpleRevealManager(client, () => {});
+  let model: [PotreeGroupWrapper, PotreeNodeWrapper];
+  if (modelUrl) {
+    model = await revealManager.addPointCloudFromUrl(modelUrl);
+  } else if (modelRevision) {
+    await client.authenticate(); // Hack to make authentication flow work, required for pointcloud from cdf.
+    model = await revealManager.addPointCloudFromCdf(modelRevision);
+  } else {
+    throw new Error('Need to provide either project & model OR modelUrl as query parameters');
+  }
+  const [pointCloudGroup, pointCloudNode] = model;
   scene.add(pointCloudGroup);
+
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
 
   let settingsChanged = false;
   function handleSettingsChanged() {

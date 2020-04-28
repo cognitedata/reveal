@@ -60,7 +60,7 @@ export async function loadCadModelFromCdfOrUrl(
   } else if (!client) {
     throw new Error('Must provide a SDK client');
   }
-  return reveal.loadCadModelFromCdf(client, model.modelId);
+  return reveal.loadCadModelFromCdf(client, { id: model.modelId });
 }
 
 export async function createClientIfNecessary(modelId: ModelIdentifier): Promise<CogniteClient | undefined> {
@@ -87,6 +87,6 @@ export async function loadPointCloudModelFromCdfOrUrl(model: ModelIdentifier): P
     const client = new CogniteClient({ appId: 'cognite.reveal.example' });
     client.loginWithOAuth({ project: model.project });
     await client.authenticate();
-    return reveal.createPointCloudModel(client, model.modelId);
+    return reveal.createPointCloudModel(client, { id: model.modelId });
   }
 }

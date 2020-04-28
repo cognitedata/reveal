@@ -15,7 +15,11 @@ import { Intersection } from './intersection';
 import RenderController from './RenderController';
 import { intersectCadNodes } from '../threejs';
 import { from3DPositionToRelativeViewportCoordinates } from '../views/threejs/worldToViewport';
-import { RevealManager, NodeAppearance } from '../views/threejs';
+import { RevealManager } from '../views/threejs';
+import { CadSectorParser } from '../data/parser/CadSectorParser';
+import { SimpleAndDetailedToSector3D } from '../data/transformer/three/SimpleAndDetailedToSector3D';
+import { CachedRepository } from '../repository/cad/CachedRepository';
+import { MaterialManager } from '../views/threejs/cad/MaterialManager';
 
 export interface RelativeMouseEvent {
   offsetX: number;
@@ -39,6 +43,7 @@ export class Cognite3DViewer {
   private readonly scene: THREE.Scene;
   private readonly controls: ComboControls;
   private readonly sdkClient: CogniteClient;
+  private readonly modelDataTransformer: SimpleAndDetailedToSector3D;
   private readonly revealManager: RevealManager;
   private modelsNeedUpdate = true;
 
@@ -47,7 +52,7 @@ export class Cognite3DViewer {
     click: new Array<PointerEventDelegate>(),
     hover: new Array<PointerEventDelegate>()
   };
-  private readonly models: Cognite3DModel[] = [];
+  private readonly models: Map<string, Cognite3DModel> = new Map();
 
   private isDisposed = false;
   private readonly forceRendering = false; // For future support
@@ -92,22 +97,19 @@ export class Cognite3DViewer {
 
     this.sdkClient = options.sdk;
     this.renderController = new RenderController(this.camera);
-    /*
-    const nodeAppearance: NodeAppearance = {
-      color: (treeIndex: number) => {
-        return this.nodeColors.get(treeIndex);
-      },
-      visible: (treeIndex: number) => {
-        return this.hiddenNodes.has(treeIndex) ? false : true;
-      }
-    };*/
-    this.revealManager = new RevealManager(
-      this.sdkClient,
-      () => {
-        this.modelsNeedUpdate = true;
-      }
-      //{ nodeAppearance }
-    );
+
+    const modelDataParser: CadSectorParser = new CadSectorParser();
+    const materialManager = new MaterialManager();
+    this.modelDataTransformer = new SimpleAndDetailedToSector3D(materialManager);
+    const sectorRepository = new CachedRepository(modelDataParser, this.modelDataTransformer);
+    sectorRepository.getParsedData().subscribe(parsedSector => {
+      const model3d = this.models.get(parsedSector.cadModelIdentifier);
+      model3d!.updateNodeIdMaps(parsedSector);
+    });
+    const onDataUpdated = () => {
+      this.modelsNeedUpdate = true;
+    };
+    this.revealManager = new RevealManager(this.sdkClient, sectorRepository, materialManager, onDataUpdated);
     this.startPointerEventListeners();
 
     this.animate(0);
@@ -127,10 +129,10 @@ export class Cognite3DViewer {
     this.domElement.removeChild(this.canvas);
     this.renderer.dispose();
     this.scene.dispose();
-    while (this.models.length > 0) {
-      const model = this.models.pop()!;
+    for (const model of this.models.values()) {
       model.dispose();
     }
+    this.models.clear();
   }
 
   on(event: 'click' | 'hover', _callback: PointerEventDelegate): void;
@@ -181,7 +183,7 @@ export class Cognite3DViewer {
     } else {
       const cadNode = await this.revealManager.addModelFromCdf(options.revisionId);
       const model3d = new Cognite3DModel(options.modelId, options.revisionId, cadNode, this.sdkClient);
-      this.models.push(model3d);
+      this.models.set(cadNode.cadModel.identifier, model3d);
       this.scene.add(model3d);
       return model3d;
     }
@@ -275,7 +277,7 @@ export class Cognite3DViewer {
     throw new NotSupportedInMigrationWrapperError();
   }
   getIntersectionFromPixel(offsetX: number, offsetY: number, _cognite3DModel?: Cognite3DModel): null | Intersection {
-    const nodes = this.models.map(x => x.cadNode);
+    const nodes = Array.from(this.models.values()).map(x => x.cadNode);
 
     const coords = {
       x: (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
@@ -289,14 +291,17 @@ export class Cognite3DViewer {
 
     if (results.length > 0) {
       const result = results[0]; // Nearest intersection
-      const model: Cognite3DModel = this.models.find(v => v.cadNode === result.cadNode)!;
-      const intersection: Intersection = {
-        model,
-        nodeId: model.tryGetNodeId(result.treeIndex) || -1,
-        treeIndex: result.treeIndex,
-        point: result.point
-      };
-      return intersection;
+      for (const model of this.models.values()) {
+        if (model.cadNode === result.cadNode) {
+          const intersection: Intersection = {
+            model,
+            nodeId: model.tryGetNodeId(result.treeIndex) || -1,
+            treeIndex: result.treeIndex,
+            point: result.point
+          };
+          return intersection;
+        }
+      }
     }
 
     return null;

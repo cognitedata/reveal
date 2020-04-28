@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { sectorShaders, shaderDefines } from './shaders';
 import { RenderMode } from '../materials';
 import { determinePowerOfTwoDimensions } from '../../../utils/determinePowerOfTwoDimensions';
-import  matCapTextureImage  from './matCapTextureData';
+import matCapTextureImage from './matCapTextureData';
 
 export interface Materials {
   // Materials
@@ -30,7 +30,7 @@ export interface Materials {
   overrideVisibilityPerTreeIndex: THREE.DataTexture;
 }
 
-export function createMaterials(treeIndexCount: number): Materials {
+export function createMaterials(treeIndexCount: number, renderMode: RenderMode): Materials {
   const textureDims = determinePowerOfTwoDimensions(treeIndexCount);
   const textureElementCount = textureDims.width * textureDims.height;
   const dataTextureSize = new THREE.Vector2(textureDims.width, textureDims.height);
@@ -40,7 +40,7 @@ export function createMaterials(treeIndexCount: number): Materials {
   visibility.fill(255);
   const overrideColorPerTreeIndex = new THREE.DataTexture(colors, textureDims.width, textureDims.height);
   const overrideVisibilityPerTreeIndex = new THREE.DataTexture(visibility, textureDims.width, textureDims.height);
-  
+
   const matCapTexture = new THREE.Texture(matCapTextureImage);
   matCapTexture.needsUpdate = true;
 
@@ -222,7 +222,14 @@ export function createMaterials(treeIndexCount: number): Materials {
     simple: simpleMaterial
   };
   for (const material of Object.values(allMaterials)) {
-    updateDefinesAndUniforms(material, dataTextureSize, overrideColorPerTreeIndex, overrideVisibilityPerTreeIndex, matCapTexture);
+    updateDefinesAndUniforms(
+      material,
+      dataTextureSize,
+      overrideColorPerTreeIndex,
+      overrideVisibilityPerTreeIndex,
+      matCapTexture,
+      renderMode
+    );
   }
 
   return { ...allMaterials, overrideColorPerTreeIndex, overrideVisibilityPerTreeIndex };
@@ -233,7 +240,8 @@ function updateDefinesAndUniforms(
   dataTextureSize: THREE.Vector2,
   overrideColorPerTreeIndex: THREE.DataTexture,
   overrideVisibilityPerTreeIndex: THREE.DataTexture,
-  matCapTexture: THREE.Texture
+  matCapTexture: THREE.Texture,
+  renderMode: RenderMode
 ) {
   const oldUniforms = material.uniforms;
   material.setValues({
@@ -241,7 +249,7 @@ function updateDefinesAndUniforms(
     uniforms: {
       ...oldUniforms,
       renderMode: {
-        value: RenderMode.Color
+        value: renderMode
       },
       colorDataTexture: {
         value: overrideColorPerTreeIndex
@@ -252,7 +260,7 @@ function updateDefinesAndUniforms(
       dataTextureSize: {
         value: dataTextureSize
       },
-      matCapTexture:{
+      matCapTexture: {
         value: matCapTexture
       }
     }

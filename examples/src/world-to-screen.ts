@@ -4,37 +4,28 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { CadNode, NodeAppearance, HtmlOverlayHelper, intersectCadNodes } from '@cognite/reveal/threejs';
-import { createModelIdentifierFromUrlParams, loadCadModelFromCdfOrUrl, createClientIfNecessary } from './utils/loaders';
+import {
+  CadNode,
+  HtmlOverlayHelper,
+  intersectCadNodes,
+  SimpleRevealManager,
+  ModelNodeAppearance
+} from '@cognite/reveal/threejs';
 import { MOUSE } from 'three';
+import { getParamsFromURL } from './utils/example-helpers';
+import { CogniteClient } from '@cognite/sdk';
 
 CameraControls.install({ THREE });
 
 async function main() {
-  const urlParams = new URL(location.href).searchParams;
-  const modelIdentifier = createModelIdentifierFromUrlParams(urlParams, '/primitives');
-
-  const scene = new THREE.Scene();
-  const cadModel = await loadCadModelFromCdfOrUrl(modelIdentifier, await createClientIfNecessary(modelIdentifier));
+  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'ivar-aasen' });
+  const client = new CogniteClient({ appId: 'reveal.example.world-to-screen' });
+  client.loginWithOAuth({ project });
 
   let pickingNeedsUpdate = false;
   let pickedNode: number | undefined;
-  const nodeAppearance: NodeAppearance = {
-    color(treeIndex: number) {
-      if (treeIndex === pickedNode) {
-        return [0, 255, 255, 255];
-      }
-      return undefined;
-    }
-  };
 
-  const cadNode = new CadNode(cadModel, { nodeAppearance });
-  let modelNeedsUpdate = false;
-  cadNode.addEventListener('update', () => {
-    modelNeedsUpdate = true;
-  });
-  scene.add(cadNode);
-
+  const scene = new THREE.Scene();
   const renderer = new THREE.WebGLRenderer();
   const canvas = renderer.domElement;
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -42,14 +33,37 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(canvas);
 
-  const { position, target, near, far } = cadNode.suggestCameraConfig();
+  let sectorsNeedUpdate = true;
+  const revealManager = new SimpleRevealManager(client, () => {
+    sectorsNeedUpdate = true;
+  });
+
+  const nodeAppearance: ModelNodeAppearance = {
+    color(treeIndex: number) {
+      if (treeIndex === pickedNode) {
+        return [0, 255, 255, 255];
+      }
+      return undefined;
+    }
+  };
+  let model: CadNode;
+  if (modelUrl) {
+    model = await revealManager.addModelFromUrl(modelUrl, nodeAppearance);
+  } else if (modelRevision) {
+    model = await revealManager.addModelFromCdf(modelRevision, nodeAppearance);
+  } else {
+    throw new Error('Need to provide either project & model OR modelUrl as query parameters');
+  }
+  scene.add(model);
+
+  const { position, target, near, far } = model.suggestCameraConfig();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
 
   controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
-  cadNode.update(camera);
+  revealManager.update(camera);
 
   const { htmlElement, paragraph } = createHtmlElements();
   document.body.appendChild(htmlElement);
@@ -60,10 +74,10 @@ async function main() {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
     if (controlsNeedUpdate) {
-      cadNode.update(camera);
+      revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || modelNeedsUpdate || pickingNeedsUpdate) {
+    if (controlsNeedUpdate || sectorsNeedUpdate || pickingNeedsUpdate) {
       renderer.render(scene, camera);
       htmlOverlayHelper.updatePositions(renderer, camera);
     }
@@ -81,7 +95,7 @@ async function main() {
     };
     // Pick in Reveal
     const revealPickResult = (() => {
-      const intersections = intersectCadNodes([cadNode], { renderer, camera, coords });
+      const intersections = intersectCadNodes([model], { renderer, camera, coords });
       if (intersections.length === 0) {
         return;
       }
@@ -105,7 +119,7 @@ async function main() {
         htmlOverlayHelper.removeOverlayElement(htmlElement);
         htmlElement.style.display = 'none';
       }
-      cadNode.requestNodeUpdate(updatedNodes);
+      model.requestNodeUpdate(updatedNodes);
       pickingNeedsUpdate = true;
     }
   };

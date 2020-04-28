@@ -3,56 +3,83 @@
  */
 
 import * as THREE from 'three';
-import * as reveal from '@cognite/reveal';
-import * as reveal_threejs from '@cognite/reveal/threejs';
 
 import CameraControls from 'camera-controls';
+import { getParamsFromURL } from './utils/example-helpers';
+import { CogniteClient } from '@cognite/sdk';
+import { SimpleRevealManager, CadNode } from '@cognite/reveal/threejs';
 
 CameraControls.install({ THREE });
 
+function getModel2Params() {
+  const url = new URL(location.href);
+  const searchParams = url.searchParams;
+  const modelRevision2 = searchParams.get('model2');
+  const modelUrl2 = searchParams.get('modelUrl2');
+  return {
+    modelRevision2: modelRevision2 ? Number.parseInt(modelRevision2, 10) : undefined,
+    modelUrl2: modelUrl2 ? location.origin + '/' + modelUrl2 : undefined
+  };
+}
+
 async function main() {
+  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'ivar-aasen' });
+  const { modelUrl2, modelRevision2 } = getModel2Params();
+  const client = new CogniteClient({ appId: 'reveal.example.two-models' });
+  client.loginWithOAuth({ project });
+
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.12, 1000);
+
   const renderer = new THREE.WebGLRenderer();
-  renderer.setClearColor('#000000');
+  renderer.setClearColor('#444');
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const sectorModel1 = await reveal.loadCadModelByUrl('/primitives');
-  const sectorModel2 = await reveal.loadCadModelByUrl('/primitives');
-  const sectorModelNode1 = new reveal_threejs.CadNode(sectorModel1);
-  let modelNeedsUpdate = false;
-  sectorModelNode1.addEventListener('update', () => {
-    modelNeedsUpdate = true;
+  let sectorsNeedUpdate = true;
+  const revealManager = new SimpleRevealManager(client, () => {
+    sectorsNeedUpdate = true;
   });
-  const sectorModelNode2 = new reveal_threejs.CadNode(sectorModel2);
-  sectorModelNode2.addEventListener('update', () => {
-    modelNeedsUpdate = true;
-  });
-  const model2Offset = new THREE.Group();
-  model2Offset.position.set(-50, -50, 0);
-  model2Offset.add(sectorModelNode2);
-  scene.add(sectorModelNode1);
-  scene.add(model2Offset);
+  let model: CadNode;
+  if (modelUrl) {
+    model = await revealManager.addModelFromUrl(modelUrl);
+  } else if (modelRevision) {
+    model = await revealManager.addModelFromCdf(modelRevision);
+  } else {
+    throw new Error('Need to provide either project & model OR modelUrl as query parameters');
+  }
+  let model2: CadNode;
+  if (modelUrl2) {
+    model2 = await revealManager.addModelFromUrl(modelUrl2);
+  } else if (modelRevision2) {
+    model2 = await revealManager.addModelFromCdf(modelRevision2);
+  } else {
+    throw new Error('Need to provide either model2 OR modelUrl2 as an additional query parameters');
+  }
 
+  const { position, target, near, far } = model.suggestCameraConfig();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
-  const pos = new THREE.Vector3(100, 100, 100);
-  const target = new THREE.Vector3(0, 0, 0);
-  controls.setLookAt(pos.x, pos.y, pos.z, target.x, target.y, target.z);
+  controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
-  sectorModelNode1.update(camera);
-  sectorModelNode2.update(camera);
+  revealManager.update(camera);
+
+  const model2Offset = new THREE.Group();
+  model2Offset.position.set(-2, -2, 0);
+  model2Offset.add(model2);
+  scene.add(model);
+  scene.add(model2Offset);
+
+  revealManager.update(camera);
 
   const clock = new THREE.Clock();
   const render = () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
     if (controlsNeedUpdate) {
-      sectorModelNode1.update(camera);
-      sectorModelNode2.update(camera);
+      revealManager.update(camera);
     }
-    const needsUpdate = controlsNeedUpdate || modelNeedsUpdate;
+    const needsUpdate = controlsNeedUpdate || sectorsNeedUpdate;
 
     if (needsUpdate) {
       renderer.render(scene, camera);

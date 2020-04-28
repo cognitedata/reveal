@@ -142,22 +142,6 @@ export function createRendererDebugWidget(
       loadOverride.quadsFilter,
       loadOverride.detailedFilter
     );
-  const budget = {
-    maxDownloadSize: cadNode.budget.maxDownloadSize || -1,
-    maxDrawCount: cadNode.budget.maxDrawCount || -1
-  };
-  loadOverrideGui
-    .add(budget, 'maxDrawCount', -1, 10000)
-    .name('Max draw count')
-    .onFinishChange(() => {
-      cadNode.budget.maxDrawCount = budget.maxDrawCount !== -1 ? budget.maxDrawCount : undefined;
-    });
-  loadOverrideGui
-    .add(budget, 'maxDownloadSize', -1, 1000)
-    .name('Max download size (MB)')
-    .onFinishChange(() => {
-      cadNode.budget.maxDownloadSize = budget.maxDownloadSize !== -1 ? budget.maxDownloadSize : undefined;
-    });
   loadOverrideGui
     .add(loadOverride, 'maxQuadSize', 0, 0.05, 0.0001)
     .name('Max quad size %')
@@ -373,18 +357,19 @@ function updateWantedSectorOverride(
     const acceptedDetailed = filterSectorNodes(detailedFilter, root);
     const wanted: reveal.internal.WantedSector[] = [];
     for (const node of acceptedSimple) {
+      /*
       wanted.push({
         id: node.id,
         levelOfDetail: reveal.internal.LevelOfDetail.Simple,
         metadata: node
-      });
+      });*/
     }
     for (const node of acceptedDetailed) {
-      wanted.push({
+      /*wanted.push({
         id: node.id,
         levelOfDetail: reveal.internal.LevelOfDetail.Detailed,
         metadata: node
-      });
+      });*/
     }
     renderOptions.overrideWantedSectors = wanted;
   }
