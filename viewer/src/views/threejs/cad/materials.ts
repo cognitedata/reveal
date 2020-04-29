@@ -30,7 +30,11 @@ export interface Materials {
   overrideVisibilityPerTreeIndex: THREE.DataTexture;
 }
 
-export function createMaterials(treeIndexCount: number, renderMode: RenderMode): Materials {
+export function createMaterials(
+  treeIndexCount: number,
+  renderMode: RenderMode,
+  clippingPlanes: THREE.Plane[]
+): Materials {
   const textureDims = determinePowerOfTwoDimensions(treeIndexCount);
   const textureElementCount = textureDims.width * textureDims.height;
   const dataTextureSize = new THREE.Vector2(textureDims.width, textureDims.height);
@@ -46,13 +50,18 @@ export function createMaterials(treeIndexCount: number, renderMode: RenderMode):
 
   const boxMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Box)',
+    clipping: true,
+    clippingPlanes,
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.boxPrimitive.vertex,
-    fragmentShader: sectorShaders.boxPrimitive.fragment
+    fragmentShader: sectorShaders.boxPrimitive.fragment,
+    side: THREE.DoubleSide
   });
 
   const circleMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Circle)',
+    clipping: true,
+    clippingPlanes,
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.circlePrimitive.vertex,
     fragmentShader: sectorShaders.circlePrimitive.fragment,
@@ -63,12 +72,17 @@ export function createMaterials(treeIndexCount: number, renderMode: RenderMode):
 
   const nutMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Nuts)',
+    clipping: true,
+    clippingPlanes,
     vertexShader: sectorShaders.nutPrimitive.vertex,
-    fragmentShader: sectorShaders.nutPrimitive.fragment
+    fragmentShader: sectorShaders.nutPrimitive.fragment,
+    side: THREE.DoubleSide
   });
 
   const quadMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Quads)',
+    clipping: true,
+    clippingPlanes,
     vertexShader: sectorShaders.quadPrimitive.vertex,
     fragmentShader: sectorShaders.quadPrimitive.fragment,
     side: THREE.DoubleSide
@@ -76,6 +90,8 @@ export function createMaterials(treeIndexCount: number, renderMode: RenderMode):
 
   const generalRingMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (General rings)',
+    clipping: true,
+    clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
@@ -91,6 +107,8 @@ export function createMaterials(treeIndexCount: number, renderMode: RenderMode):
 
   const coneMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Cone)',
+    clipping: true,
+    clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
@@ -98,11 +116,14 @@ export function createMaterials(treeIndexCount: number, renderMode: RenderMode):
     },
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.conePrimitive.vertex,
-    fragmentShader: sectorShaders.conePrimitive.fragment
+    fragmentShader: sectorShaders.conePrimitive.fragment,
+    side: THREE.DoubleSide
   });
 
   const eccentricConeMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Eccentric cone)',
+    clipping: true,
+    clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
@@ -110,11 +131,14 @@ export function createMaterials(treeIndexCount: number, renderMode: RenderMode):
     },
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.eccentricConePrimitive.vertex,
-    fragmentShader: sectorShaders.eccentricConePrimitive.fragment
+    fragmentShader: sectorShaders.eccentricConePrimitive.fragment,
+    side: THREE.DoubleSide
   });
 
   const ellipsoidSegmentMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Ellipsoid segments)',
+    clipping: true,
+    clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
@@ -122,11 +146,14 @@ export function createMaterials(treeIndexCount: number, renderMode: RenderMode):
     },
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.ellipsoidSegmentPrimitive.vertex,
-    fragmentShader: sectorShaders.ellipsoidSegmentPrimitive.fragment
+    fragmentShader: sectorShaders.ellipsoidSegmentPrimitive.fragment,
+    side: THREE.DoubleSide
   });
 
   const generalCylinderMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (General cylinder)',
+    clipping: true,
+    clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
@@ -134,11 +161,14 @@ export function createMaterials(treeIndexCount: number, renderMode: RenderMode):
     },
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.generalCylinderPrimitive.vertex,
-    fragmentShader: sectorShaders.generalCylinderPrimitive.fragment
+    fragmentShader: sectorShaders.generalCylinderPrimitive.fragment,
+    side: THREE.DoubleSide
   });
 
   const trapeziumMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Trapezium)',
+    clipping: true,
+    clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
@@ -146,11 +176,14 @@ export function createMaterials(treeIndexCount: number, renderMode: RenderMode):
     },
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.trapeziumPrimitive.vertex,
-    fragmentShader: sectorShaders.trapeziumPrimitive.fragment
+    fragmentShader: sectorShaders.trapeziumPrimitive.fragment,
+    side: THREE.DoubleSide
   });
 
   const torusSegmentMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Torus segment)',
+    clipping: true,
+    clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
@@ -168,6 +201,8 @@ export function createMaterials(treeIndexCount: number, renderMode: RenderMode):
 
   const sphericalSegmentMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Spherical segment)',
+    clipping: true,
+    clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
@@ -175,11 +210,14 @@ export function createMaterials(treeIndexCount: number, renderMode: RenderMode):
     },
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.ellipsoidSegmentPrimitive.vertex,
-    fragmentShader: sectorShaders.ellipsoidSegmentPrimitive.fragment
+    fragmentShader: sectorShaders.ellipsoidSegmentPrimitive.fragment,
+    side: THREE.DoubleSide
   });
 
   const triangleMeshMaterial = new THREE.ShaderMaterial({
     name: 'Triangle meshes',
+    clipping: true,
+    clippingPlanes,
     extensions: {
       derivatives: true
     },
@@ -190,6 +228,8 @@ export function createMaterials(treeIndexCount: number, renderMode: RenderMode):
 
   const instancedMeshMaterial = new THREE.ShaderMaterial({
     name: 'Instanced meshes',
+    clipping: true,
+    clippingPlanes,
     extensions: {
       derivatives: true
     },
@@ -200,6 +240,8 @@ export function createMaterials(treeIndexCount: number, renderMode: RenderMode):
 
   const simpleMaterial = new THREE.ShaderMaterial({
     name: 'Low detail material',
+    clipping: true,
+    clippingPlanes,
     fragmentShader: sectorShaders.simpleMesh.fragment,
     vertexShader: sectorShaders.simpleMesh.vertex
   });

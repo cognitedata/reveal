@@ -62,13 +62,16 @@ export class MaterialManager {
   private _renderMode: RenderMode = RenderMode.Color;
   private readonly materialsMap: Map<string, MaterialsWrapper> = new Map();
   private _globalAppearance?: GlobalNodeAppearance;
+  // TODO: j-bjorne 29-04-2020: Move into separate cliping manager?
+  private _clippingPlanes: THREE.Plane[] = [];
+  private _clipIntersection: boolean = false;
 
   constructor(globalAppearance?: GlobalNodeAppearance) {
     this._globalAppearance = globalAppearance;
   }
 
   addModelMaterials(modelIdentifier: string, maxTreeIndex: number, nodeAppearance?: ModelNodeAppearance) {
-    const materials = createMaterials(maxTreeIndex + 1, this._renderMode);
+    const materials = createMaterials(maxTreeIndex + 1, this._renderMode, this._clippingPlanes);
     this.materialsMap.set(modelIdentifier, { materials, nodeAppearance });
     const indices = [];
     for (let i = 0; i < maxTreeIndex; i++) {
@@ -91,26 +94,34 @@ export class MaterialManager {
     this.materialsMap.set(modelIdentifier, materialWrapper);
   }
 
+  get clippingPlanes(): THREE.Plane[] {
+    return this._clippingPlanes;
+  }
+
+  set clippingPlanes(clippingPlanes: THREE.Plane[]) {
+    this._clippingPlanes = clippingPlanes;
+    this.applyToAllMaterials(material => {
+      material.clippingPlanes = clippingPlanes;
+      // console.log('Setting', material, clippingPlanes);
+    });
+  }
+
+  get clipIntersection(): boolean {
+    return this._clipIntersection;
+  }
+
+  set clipIntersection(intersection: boolean) {
+    this._clipIntersection = intersection;
+    this.applyToAllMaterials(material => {
+      material.clipIntersection = intersection;
+    });
+  }
+
   setRenderMode(mode: RenderMode) {
     this._renderMode = mode;
-    for (const materialsWrapper of this.materialsMap.values()) {
-      const materials = materialsWrapper.materials;
-      materials.box.uniforms.renderMode.value = mode;
-      materials.circle.uniforms.renderMode.value = mode;
-      materials.generalRing.uniforms.renderMode.value = mode;
-      materials.nut.uniforms.renderMode.value = mode;
-      materials.quad.uniforms.renderMode.value = mode;
-      materials.cone.uniforms.renderMode.value = mode;
-      materials.eccentricCone.uniforms.renderMode.value = mode;
-      materials.sphericalSegment.uniforms.renderMode.value = mode;
-      materials.torusSegment.uniforms.renderMode.value = mode;
-      materials.generalCylinder.uniforms.renderMode.value = mode;
-      materials.trapezium.uniforms.renderMode.value = mode;
-      materials.ellipsoidSegment.uniforms.renderMode.value = mode;
-      materials.instancedMesh.uniforms.renderMode.value = mode;
-      materials.triangleMesh.uniforms.renderMode.value = mode;
-      materials.simple.uniforms.renderMode.value = mode;
-    }
+    this.applyToAllMaterials(material => {
+      material.uniforms.renderMode.value = mode;
+    });
   }
 
   getRenderMode(): RenderMode {
@@ -143,6 +154,27 @@ export class MaterialManager {
     if (this._globalAppearance && this._globalAppearance.visible !== undefined) {
       updateGlobalVisibility(modelIdentifier, this._globalAppearance.visible, materials, treeIndices);
       materials.overrideVisibilityPerTreeIndex.needsUpdate = true;
+    }
+  }
+
+  private applyToAllMaterials(callback: (material: THREE.ShaderMaterial) => void) {
+    for (const materialWrapper of this.materialsMap.values()) {
+      const materials = materialWrapper.materials;
+      callback(materials.box);
+      callback(materials.circle);
+      callback(materials.generalRing);
+      callback(materials.nut);
+      callback(materials.quad);
+      callback(materials.cone);
+      callback(materials.eccentricCone);
+      callback(materials.sphericalSegment);
+      callback(materials.torusSegment);
+      callback(materials.generalCylinder);
+      callback(materials.trapezium);
+      callback(materials.ellipsoidSegment);
+      callback(materials.instancedMesh);
+      callback(materials.triangleMesh);
+      callback(materials.simple);
     }
   }
 }

@@ -13,6 +13,9 @@ export { PotreeGroupWrapper } from './views/threejs/pointcloud/PotreeGroupWrappe
 export { suggestCameraConfig } from './utils/cameraUtils';
 export { traverseDepthFirst, traverseUpwards } from './utils/traversal';
 export { determineSectorsByProximity, DetermineSectorsByProximityInput } from './models/cad/determineSectors';
-export { SectorCuller } from './culling/SectorCuller';
 export { WantedSector } from './data/model/WantedSector';
 export { LevelOfDetail } from './data/model/LevelOfDetail';
+
+export { SectorCuller } from './culling/SectorCuller';
+export { ProximitySectorCuller } from './culling/ProximitySectorCuller';
+// export { ByVisibilityGpuSectorCuller } from './culling/ByVisibilityGpuSectorCuller';

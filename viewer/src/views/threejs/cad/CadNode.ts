@@ -4,7 +4,8 @@
 
 import * as THREE from 'three';
 
-import { SectorModelTransformation, SectorScene, SectorMetadata, Sector, SectorQuads } from '../../../models/cad/types';
+import { SectorModelTransformation, SectorMetadata, Sector, SectorQuads } from '../../../models/cad/types';
+import { SectorScene } from '../../../models/cad/SectorScene';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
 import { CadModel } from '../../../models/cad/CadModel';
 import { CadRenderHints } from '../../CadRenderHints';
@@ -69,6 +70,22 @@ export class CadNode extends THREE.Object3D {
     this.loadingHints = {};
   }
 
+  get clippingPlanes(): THREE.Plane[] {
+    return this._materialManager.clippingPlanes;
+  }
+
+  set clippingPlanes(planes: THREE.Plane[]) {
+    this._materialManager.clippingPlanes = planes;
+  }
+
+  get clipIntersection(): boolean {
+    return this._materialManager.clipIntersection;
+  }
+
+  set clipIntersection(intersection: boolean) {
+    this._materialManager.clipIntersection = intersection;
+  }
+
   requestNodeUpdate(treeIndices: number[]) {
     this._materialManager.updateModelNodes(this._cadModel.identifier, treeIndices);
     this.dispatchEvent({ type: 'update' });
@@ -129,6 +146,12 @@ export class CadNode extends THREE.Object3D {
       far
     };
   }
+
+  // TODO: j-bjorne 29-04-2020: Check if still needed!
+  // private updateSectorBoundingBoxes(sector: ConsumedSector) {
+  //   const bboxNode = this._boundingBoxNode.children.find(x => x.userData.sectorId === sector.metadata.id)!;
+  //   bboxNode.visible = sector.levelOfDetail !== LevelOfDetail.Discarded;
+  // }
 
   private createBoundingBoxNode(sectors: SectorMetadata[]): THREE.Object3D {
     function sectorDepth(s: SectorMetadata) {

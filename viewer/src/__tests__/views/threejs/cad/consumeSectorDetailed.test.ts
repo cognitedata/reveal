@@ -9,8 +9,9 @@ import { consumeSectorDetailed } from '../../../../views/threejs/cad/consumeSect
 import { createEmptySector } from '../../../models/cad/emptySector';
 import { createMaterials } from '../../../../views/threejs/cad/materials';
 import 'jest-extended';
+import { RenderMode } from '../../../../views/threejs/materials';
 
-const materials = createMaterials(10);
+const materials = createMaterials(10, RenderMode.Color, []);
 
 describe('consumeSectorDetailed', () => {
   const metadata: SectorMetadata = {
@@ -29,6 +30,11 @@ describe('consumeSectorDetailed', () => {
       fileName: 'sector_1.f3d',
       quadSize: 0.5,
       coverageFactors: {
+        xy: 0.5,
+        xz: 0.5,
+        yz: 0.5
+      },
+      recursiveCoverageFactors: {
         xy: 0.5,
         xz: 0.5,
         yz: 0.5

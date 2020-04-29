@@ -33,7 +33,6 @@ async function main() {
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#444');
   renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
 
   const { position, target, near, far } = model.suggestCameraConfig();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
@@ -52,6 +51,7 @@ async function main() {
 
     if (controlsNeedUpdate || sectorsNeedUpdate) {
       renderer.render(scene, camera);
+      sectorsNeedUpdate = false;
     }
 
     requestAnimationFrame(render);

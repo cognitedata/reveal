@@ -108,7 +108,6 @@ async function main() {
     // Pick in Reveal
     const revealPickResult = (() => {
       const intersections = intersectCadNodes([model], { renderer, camera, coords });
-      console.log(intersections);
       if (intersections.length === 0) {
         return;
       }

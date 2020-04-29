@@ -34,6 +34,11 @@ function sectorNodeFromTreeNode(node: TreeNode, parent?: SectorMetadata): Sector
         yz: 0.5,
         xz: 0.8
       },
+      recursiveCoverageFactors: {
+        xy: 0.6,
+        yz: 0.5,
+        xz: 0.8
+      },
       downloadSize: 100
     }
   };

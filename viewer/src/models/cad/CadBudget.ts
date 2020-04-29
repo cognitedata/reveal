@@ -2,8 +2,12 @@
  * Copyright 2020 Cognite AS
  */
 
-import { LevelOfDetail, WantedSector } from '../../internal';
-import { SectorScene, SectorMetadata } from './types';
+import { SectorMetadata } from './types';
+import { SectorScene } from './SectorScene';
+import { WantedSector } from '../../data/model/WantedSector';
+import { LevelOfDetail } from '../../data/model/LevelOfDetail';
+
+// TODO 2020-04-26 larsmoa: Get rid of CadBudget or use it in ByVisibilityGpuSectorCuller.
 
 /**
  * Keeps number of loads within a specified budget.
@@ -113,4 +117,3 @@ class CadBudgetAccumulator {
     return false;
   }
 }
-

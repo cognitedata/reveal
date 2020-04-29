@@ -357,9 +357,9 @@ function updateWantedSectorOverride(
     const acceptedDetailed = filterSectorNodes(detailedFilter, root);
     const wanted: reveal.internal.WantedSector[] = [];
     for (const node of acceptedSimple) {
-      /*
+      /* TODO: j-bjorne 29-04-2020: How to add these again?
       wanted.push({
-        id: node.id,
+        sectorId: node.id,
         levelOfDetail: reveal.internal.LevelOfDetail.Simple,
         metadata: node
       });*/

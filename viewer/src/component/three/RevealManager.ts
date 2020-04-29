@@ -23,7 +23,6 @@ import { distinctUntilLevelOfDetailChanged } from '../../models/cad/distinctUnti
 import { filterCurrentWantedSectors } from '../../models/cad/filterCurrentWantedSectors';
 import { discardSector } from '../../views/threejs/cad/discardSector';
 import { CadLoadingHints } from '../../models/cad/CadLoadingHints';
-import { SectorCuller, WantedSector } from '../../internal';
 import { CadNode } from '../../views/threejs/cad/CadNode';
 import { ProximitySectorCuller } from '../../culling/ProximitySectorCuller';
 import { CadBudget } from '../../models/cad/CadBudget';
@@ -38,6 +37,8 @@ import { createThreeJsPointCloudNode } from '../../views/threejs';
 import { PotreeGroupWrapper } from '../../views/threejs/pointcloud/PotreeGroupWrapper';
 import { PotreeNodeWrapper } from '../../views/threejs/pointcloud/PotreeNodeWrapper';
 import { PointCloud } from '../../data/model/PointCloud';
+import { SectorCuller } from '../../culling/SectorCuller';
+import { WantedSector } from '../../data/model/WantedSector';
 
 export interface RevealOptions {
   nodeAppearance?: ModelNodeAppearance;

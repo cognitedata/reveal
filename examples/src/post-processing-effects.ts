@@ -3,10 +3,8 @@
  */
 
 import * as THREE from 'three';
-import * as reveal_threejs from '@cognite/reveal/threejs';
 
 import CameraControls from 'camera-controls';
-import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams, createClientIfNecessary } from './utils/loaders';
 import { getParamsFromURL } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import { SimpleRevealManager, CadNode } from '@cognite/reveal/threejs';

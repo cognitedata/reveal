@@ -60,6 +60,9 @@ export class Cognite3DViewer {
   private readonly renderController: RenderController;
   private latestRequestId: number = -1;
   private readonly clock = new THREE.Clock();
+  private readonly materialManager: MaterialManager;
+  // private _slicingPlanes: THREE.Plane[] = [];
+  private _slicingNeedsUpdate: boolean = false;
 
   constructor(options: Cognite3DViewerOptions) {
     if (options.enableCache) {
@@ -99,8 +102,8 @@ export class Cognite3DViewer {
     this.renderController = new RenderController(this.camera);
 
     const modelDataParser: CadSectorParser = new CadSectorParser();
-    const materialManager = new MaterialManager();
-    this.modelDataTransformer = new SimpleAndDetailedToSector3D(materialManager);
+    this.materialManager = new MaterialManager();
+    this.modelDataTransformer = new SimpleAndDetailedToSector3D(this.materialManager);
     const sectorRepository = new CachedRepository(modelDataParser, this.modelDataTransformer);
     sectorRepository.getParsedData().subscribe(parsedSector => {
       const model3d = this.models.get(parsedSector.cadModelIdentifier);
@@ -109,7 +112,7 @@ export class Cognite3DViewer {
     const onDataUpdated = () => {
       this.modelsNeedUpdate = true;
     };
-    this.revealManager = new RevealManager(this.sdkClient, sectorRepository, materialManager, onDataUpdated);
+    this.revealManager = new RevealManager(this.sdkClient, sectorRepository, this.materialManager, onDataUpdated);
     this.startPointerEventListeners();
 
     this.animate(0);
@@ -196,21 +199,24 @@ export class Cognite3DViewer {
     throw new NotSupportedInMigrationWrapperError();
   }
 
-  setSlicingPlanes(_slicingPlanes: THREE.Plane[]): void {
-    throw new NotSupportedInMigrationWrapperError();
+  setSlicingPlanes(slicingPlanes: THREE.Plane[]): void {
+    // this._slicingPlanes = slicingPlanes;
+    this.renderer.localClippingEnabled = slicingPlanes.length > 0;
+    this.materialManager.clippingPlanes = slicingPlanes;
+    this._slicingNeedsUpdate = true;
   }
 
   getCameraPosition(): THREE.Vector3 {
     if (this.isDisposed) {
       return new THREE.Vector3(-Infinity, -Infinity, -Infinity);
     }
-    return this.controls.getState().position;
+    return this.controls.getState().position.clone();
   }
   getCameraTarget(): THREE.Vector3 {
     if (this.isDisposed) {
       return new THREE.Vector3(-Infinity, -Infinity, -Infinity);
     }
-    return this.controls.getState().target;
+    return this.controls.getState().target.clone();
   }
   setCameraPosition(position: THREE.Vector3): void {
     if (this.isDisposed) {
@@ -329,7 +335,6 @@ export class Cognite3DViewer {
     const distanceToTarget = target.distanceTo(camera.position);
     const scaledDirection = raycaster.ray.direction.clone().multiplyScalar(distanceToTarget);
     const startTarget = raycaster.ray.origin.clone().add(scaledDirection);
-
     const from = {
       x: camera.position.x,
       y: camera.position.y,
@@ -417,11 +422,12 @@ export class Cognite3DViewer {
       this.controls.update(this.clock.getDelta());
       renderController.update();
       this.revealManager.update(this.camera);
-      if (renderController.needsRedraw || this.forceRendering || this.modelsNeedUpdate) {
+      if (renderController.needsRedraw || this.forceRendering || this.modelsNeedUpdate || this._slicingNeedsUpdate) {
         this.updateNearAndFarPlane(this.camera);
         this.renderer.render(this.scene, this.camera);
         renderController.clearNeedsRedraw();
         this.modelsNeedUpdate = false;
+        this._slicingNeedsUpdate = false;
       }
     }
 
