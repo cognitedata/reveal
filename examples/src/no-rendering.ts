@@ -7,7 +7,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { SimpleRevealManager, CadNode } from '@cognite/reveal/threejs';
 
 async function main() {
-  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'ivar-aasen' });
+  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'primitives' });
   const client = new CogniteClient({ appId: 'reveal.example.no-rendering' });
   client.loginWithOAuth({ project });
 

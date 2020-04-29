@@ -20,14 +20,14 @@ CameraControls.install({ THREE });
  * DOM element through a Canvas in ThreeJS.
  */
 async function main() {
-  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'ivar-aasen' });
+  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'primitives' });
   const client = new CogniteClient({ appId: 'reveal.example.custom-scene' });
   client.loginWithOAuth({ project });
 
   const scene = new THREE.Scene();
-  let sectorsNeedUpdate = true;
+  let modelsNeedUpdate = true;
   const revealManager = new SimpleRevealManager(client, () => {
-    sectorsNeedUpdate = true;
+    modelsNeedUpdate = true;
   });
   let model: CadNode;
   if (modelUrl) {
@@ -78,7 +78,7 @@ async function main() {
       revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || sectorsNeedUpdate) {
+    if (controlsNeedUpdate || modelsNeedUpdate) {
       renderer.render(scene, camera);
     }
 

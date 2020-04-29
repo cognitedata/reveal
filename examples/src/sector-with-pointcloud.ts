@@ -35,7 +35,7 @@ function getPointCloudParams() {
 }
 
 async function main() {
-  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'ivar-aasen' });
+  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'primitives' });
   const { pointCloudRevision, pointCloudUrl } = getPointCloudParams();
   const client = new CogniteClient({ appId: 'reveal.example.hybrid-cad-pointcloud' });
   client.loginWithOAuth({ project });
@@ -47,11 +47,11 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  let sectorsNeedUpdate = true;
+  let modelsNeedUpdate = true;
 
   Potree.XHRFactory.config.customHeaders.push({ header: 'MyDummyHeader', value: 'MyDummyValue' });
   const revealManager = new SimpleRevealManager(client, () => {
-    sectorsNeedUpdate = true;
+    modelsNeedUpdate = true;
   });
   let pointCloud: [PotreeGroupWrapper, PotreeNodeWrapper];
   if (pointCloudUrl) {
@@ -102,7 +102,7 @@ async function main() {
     const needsUpdate =
       renderOptions.renderMode === RenderMode.AlwaysRender ||
       (renderOptions.renderMode === RenderMode.WhenNecessary &&
-        (controlsNeedUpdate || sectorsNeedUpdate || pointCloudGroup.needsRedraw || settingsChanged));
+        (controlsNeedUpdate || modelsNeedUpdate || pointCloudGroup.needsRedraw || settingsChanged));
 
     if (needsUpdate) {
       applyRenderingFilters(scene, renderOptions.renderFilter);

@@ -47,9 +47,9 @@ async function main() {
   cadNode.clippingPlanes = boxClipper.clippingPlanes;
   cadNode.clipIntersection = boxClipper.intersection;
   cadNode.renderHints = { showSectorBoundingBoxes: false };
-  let sectorsNeedUpdate = true;
+  let modelsNeedUpdate = true;
   cadNode.addEventListener('update', () => {
-    sectorsNeedUpdate = true;
+    modelsNeedUpdate = true;
   });
   scene.add(cadNode);
 
@@ -93,10 +93,10 @@ async function main() {
       cadNode.update(camera);
     }
 
-    if (controlsNeedUpdate || sectorsNeedUpdate || planesNeedUpdate) {
+    if (controlsNeedUpdate || modelsNeedUpdate || planesNeedUpdate) {
       renderer.render(scene, camera);
       planesNeedUpdate = false;
-      sectorsNeedUpdate = false;
+      modelsNeedUpdate = false;
     }
 
     requestAnimationFrame(render);

@@ -18,7 +18,7 @@ import { CogniteClient } from '@cognite/sdk';
 CameraControls.install({ THREE });
 
 async function main() {
-  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'ivar-aasen' });
+  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'primitives' });
   const client = new CogniteClient({ appId: 'reveal.example.world-to-screen' });
   client.loginWithOAuth({ project });
 
@@ -33,9 +33,9 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(canvas);
 
-  let sectorsNeedUpdate = true;
+  let modelsNeedUpdate = true;
   const revealManager = new SimpleRevealManager(client, () => {
-    sectorsNeedUpdate = true;
+    modelsNeedUpdate = true;
   });
 
   const nodeAppearance: ModelNodeAppearance = {
@@ -77,7 +77,7 @@ async function main() {
       revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || sectorsNeedUpdate || pickingNeedsUpdate) {
+    if (controlsNeedUpdate || modelsNeedUpdate || pickingNeedsUpdate) {
       renderer.render(scene, camera);
       htmlOverlayHelper.updatePositions(renderer, camera);
     }

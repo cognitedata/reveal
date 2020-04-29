@@ -12,14 +12,14 @@ import { CogniteClient } from '@cognite/sdk';
 CameraControls.install({ THREE });
 
 async function main() {
-  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'ivar-aasen' });
+  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'primitives' });
   const client = new CogniteClient({ appId: 'reveal.example.ssao' });
   client.loginWithOAuth({ project });
 
   const scene = new THREE.Scene();
-  let sectorsNeedUpdate = true;
+  let modelsNeedUpdate = true;
   const revealManager = new SimpleRevealManager(client, () => {
-    sectorsNeedUpdate = true;
+    modelsNeedUpdate = true;
   });
   let model: CadNode;
   if (modelUrl) {
@@ -91,7 +91,7 @@ async function main() {
       revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || sectorsNeedUpdate || effectNeedsUpdate) {
+    if (controlsNeedUpdate || modelsNeedUpdate || effectNeedsUpdate) {
       effect.render(renderer, scene, camera, renderSettings.pass);
       effectNeedsUpdate = false;
     }

@@ -23,7 +23,7 @@ function getModel2Params() {
 }
 
 async function main() {
-  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'ivar-aasen' });
+  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'primitives' });
   const { modelUrl2, modelRevision2 } = getModel2Params();
   const client = new CogniteClient({ appId: 'reveal.example.two-models' });
   client.loginWithOAuth({ project });
@@ -35,9 +35,9 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  let sectorsNeedUpdate = true;
+  let modelsNeedUpdate = true;
   const revealManager = new SimpleRevealManager(client, () => {
-    sectorsNeedUpdate = true;
+    modelsNeedUpdate = true;
   });
   let model: CadNode;
   if (modelUrl) {
@@ -79,7 +79,7 @@ async function main() {
     if (controlsNeedUpdate) {
       revealManager.update(camera);
     }
-    const needsUpdate = controlsNeedUpdate || sectorsNeedUpdate;
+    const needsUpdate = controlsNeedUpdate || modelsNeedUpdate;
 
     if (needsUpdate) {
       renderer.render(scene, camera);

@@ -12,7 +12,7 @@ import { CogniteClient } from '@cognite/sdk';
 CameraControls.install({ THREE });
 
 async function main() {
-  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'ivar-aasen' });
+  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'primitives' });
   const client = new CogniteClient({ appId: 'reveal.example.filtering' });
   client.loginWithOAuth({ project });
 
@@ -22,9 +22,9 @@ async function main() {
   const settings = {
     treeIndices: '1, 2, 8, 12'
   };
-  let sectorsNeedUpdate = true;
+  let modelsNeedUpdate = true;
   const revealManager = new SimpleRevealManager(client, () => {
-    sectorsNeedUpdate = true;
+    modelsNeedUpdate = true;
   });
   let model: CadNode;
   const nodeAppearance: ModelNodeAppearance = {
@@ -76,7 +76,7 @@ async function main() {
       revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || sectorsNeedUpdate || shadingNeedsUpdate) {
+    if (controlsNeedUpdate || modelsNeedUpdate || shadingNeedsUpdate) {
       renderer.render(scene, camera);
       shadingNeedsUpdate = false;
     }

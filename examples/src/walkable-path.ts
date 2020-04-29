@@ -33,7 +33,7 @@ interface TransitPathRequest {
 }
 
 async function main() {
-  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'ivar-aasen' });
+  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'primitives' });
   const client = new CogniteClient({ appId: 'reveal.example.walkable-path' });
   client.loginWithOAuth({ project });
 
@@ -43,9 +43,9 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  let sectorsNeedUpdate = true;
+  let modelsNeedUpdate = true;
   const revealManager = new SimpleRevealManager(client, () => {
-    sectorsNeedUpdate = true;
+    modelsNeedUpdate = true;
   });
   let cameraConfig;
   let cadNode: CadNode;
@@ -109,7 +109,7 @@ async function main() {
     }
     const walkablePathUpdated = updated;
 
-    if (controlsNeedUpdate || sectorsNeedUpdate || walkablePathUpdated) {
+    if (controlsNeedUpdate || modelsNeedUpdate || walkablePathUpdated) {
       updated = false;
       renderer.render(scene, camera);
     }

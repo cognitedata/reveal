@@ -48,18 +48,18 @@ function initializeModel(
 }
 
 async function main() {
-  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'ivar-aasen' });
+  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'primitives' });
   const { modelUrl2, modelRevision2 } = getModel2Params();
   const client = new CogniteClient({ appId: 'reveal.example.side-by-side' });
   client.loginWithOAuth({ project });
 
-  let sectorsNeedUpdate = true;
+  let modelsNeedUpdate = true;
   const revealManager1 = new SimpleRevealManager(client, () => {
-    sectorsNeedUpdate = true;
+    modelsNeedUpdate = true;
   });
 
   const revealManager2 = new SimpleRevealManager(client, () => {
-    sectorsNeedUpdate = true;
+    modelsNeedUpdate = true;
   });
 
   let model1: CadNode;
@@ -120,14 +120,14 @@ async function main() {
 
     if (
       options1.renderMode === RenderMode.AlwaysRender ||
-      (options1.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || sectorsNeedUpdate))
+      (options1.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || modelsNeedUpdate))
     ) {
       applyRenderingFilters(scene1, options1.renderFilter);
       renderer1.render(scene1, camera);
     }
     if (
       options2.renderMode === RenderMode.AlwaysRender ||
-      (options2.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || sectorsNeedUpdate))
+      (options2.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || modelsNeedUpdate))
     ) {
       applyRenderingFilters(scene2, options2.renderFilter);
       renderer2.render(scene2, camera);

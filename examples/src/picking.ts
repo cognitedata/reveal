@@ -17,7 +17,7 @@ function createSphere(point: THREE.Vector3, color: string): THREE.Mesh {
 }
 
 async function main() {
-  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'ivar-aasen' });
+  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'primitives' });
   const client = new CogniteClient({ appId: 'reveal.example.picking' });
   client.loginWithOAuth({ project });
 
@@ -25,9 +25,9 @@ async function main() {
   const pickedNodes: Set<number> = new Set();
   const pickedObjects: Set<THREE.Mesh> = new Set();
 
-  let sectorsNeedUpdate = true;
+  let modelsNeedUpdate = true;
   const revealManager = new SimpleRevealManager(client, () => {
-    sectorsNeedUpdate = true;
+    modelsNeedUpdate = true;
   });
 
   const nodeAppearance: ModelNodeAppearance = {
@@ -90,7 +90,7 @@ async function main() {
       revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || pickingNeedsUpdate || sectorsNeedUpdate) {
+    if (controlsNeedUpdate || pickingNeedsUpdate || modelsNeedUpdate) {
       renderer.render(scene, camera);
       pickingNeedsUpdate = false;
     }
