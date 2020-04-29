@@ -53,6 +53,7 @@ export interface RevealOptions {
 export type OnDataUpdated = () => void;
 
 export class RevealManager {
+  protected readonly _materialManager: MaterialManager;
   private readonly _sectorRepository: Repository;
   private readonly _modelSubject: Subject<Cad | PointCloud> = new Subject();
   private readonly _loadingHintsSubject: Subject<CadLoadingHints> = new BehaviorSubject({});
@@ -60,7 +61,6 @@ export class RevealManager {
   private readonly _modelObservable: Observable<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper]>;
   private readonly _cadObservable: Observable<CadNode[]>;
 
-  private readonly _materialManager: MaterialManager;
   private readonly _cadNodeMap: Map<string, CadNode> = new Map();
 
   private _sectorCuller: SectorCuller;

@@ -19,4 +19,20 @@ export class SimpleRevealManager extends RevealManager {
     const sectorRepository = new CachedRepository(modelDataParser, modelDataTransformer);
     super(client, sectorRepository, materialManager, onUpdatedCallback, options);
   }
+
+  public set clippingPlanes(clippingPlanes: THREE.Plane[]) {
+    this._materialManager.clippingPlanes = clippingPlanes;
+  }
+
+  public get clippingPlanes() {
+    return this._materialManager.clippingPlanes;
+  }
+
+  public set clipIntersection(intersection: boolean) {
+    this._materialManager.clipIntersection = intersection;
+  }
+
+  public get clipIntersection() {
+    return this._materialManager.clipIntersection;
+  }
 }
