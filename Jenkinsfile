@@ -1,4 +1,4 @@
-@Library('jenkins-helpers') _
+@Library('jenkins-helpers@fas-12') _
 
 static final String STAGING_DOMAIN_NAME = "tenant-selector.cognite.ai"
 static final String RELEASE_DOMAIN_NAME = "production.tenant-selector.cognite.ai"
@@ -110,7 +110,7 @@ podTemplate(
           def variant = isStaging ? 'staging' : 'production'
 
           fas.build(
-            useContainer: true,
+            useContainer: 'fas-12',
             domainName: domainName,
             // Note: this should reflect the state of your app's deployment. In
             // general:
@@ -129,7 +129,7 @@ podTemplate(
     if (!isPullRequest) {
       stageWithNotify('Publish build', contexts.publishRelease) {
         fas.publish(
-          useContainer: true,
+          useContainer: 'fas-12',
         )
       }
     }

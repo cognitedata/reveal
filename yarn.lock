@@ -7136,10 +7136,10 @@ i18next-chained-backend@^2.0.1:
   dependencies:
     "@babel/runtime" "^7.4.5"
 
-i18next-http-backend@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/i18next-http-backend/-/i18next-http-backend-1.0.4.tgz#3845d1eae6c75853cc89b93803b9e326c7fd5f20"
-  integrity sha512-nnaCLtUIarFoQv1NNzN1I/TPyDRbHnq2gb5Lnf/rZBiWNJ6BdPXY0kpY1oxLIFTkwHvXJLoD9O6vVUDSXhnUjQ==
+i18next-http-backend@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/i18next-http-backend/-/i18next-http-backend-1.0.6.tgz#362c920e3f8838598d10d637b0d39407b4b97e57"
+  integrity sha512-U5dAyGwhWsEsM4JZxwYudkc64CeIPOKgeUnoRJo6csMVu9HbUhjKVKOXIM7pcmpvX/9cHAl0PBMbRfNKgGTU+Q==
   dependencies:
     node-fetch "2.6.0"
 
