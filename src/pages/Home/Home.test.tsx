@@ -1,9 +1,9 @@
 import React from 'react';
-import { render } from '@testing-library/react';
-import { Base } from './App.stories';
+import { render } from 'utils/test';
+import { Base } from './Home.stories';
 
-describe('<App />', () => {
-  test('renders learn react link', () => {
+describe('<Home />', () => {
+  test('renders learn react link', async () => {
     const { getByText } = render(<Base />);
     const linkElement = getByText(/learn about/i);
     expect(linkElement).toBeInTheDocument();

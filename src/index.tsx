@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import * as Sentry from '@sentry/browser';
+import config from 'utils/config';
+
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
@@ -15,7 +16,7 @@ if (process.env.REACT_APP_SENTRY_DSN) {
     release: process.env.REACT_APP_RELEASE_ID,
     // This is populated by react-scripts. However, this can be overridden by
     // the app's build process if you wish.
-    environment: process.env.REACT_APP_ENV,
+    environment: config.env,
   });
 }
 

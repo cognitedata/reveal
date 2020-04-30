@@ -1,4 +1,4 @@
-@Library('jenkins-helpers') _
+@Library('jenkins-helpers@fas-12') _
 
 // This is your staging domain. Staging deployments are protected by Cognite
 // IAP, meaning they're only accessible to Cogniters.
@@ -15,6 +15,11 @@ static final String SENTRY_PROJECT_NAME = "react-demo-app"
 //
 // If you omit this, then client errors WILL NOT BE REPORTED.
 static final String SENTRY_DSN = "https://da67b4b23d3e4baea6c36de155a08491@sentry.io/3541732"
+
+// Specify your locize.io project ID. If you do not have one of these, please
+// stop by #frontend to get a project created under the Cognite umbrella.
+// See https://cog.link/i18n for more information.
+static final String LOCIZE_PROJECT_ID = ""
 
 static final String PR_COMMENT_MARKER = "[pr-server]\n"
 static final String STORYBOOK_COMMENT_MARKER = "[storybook-server]\n"
@@ -36,6 +41,7 @@ podTemplate(
     .plus(yarn.containers()),
   envVars: [
     envVar(key: 'REACT_APP_SENTRY_DSN', value: SENTRY_DSN),
+    envVar(key: 'REACT_APP_LOCIZE_PROJECT_ID', value: LOCIZE_PROJECT_ID),
   ],
   volumes: []
     .plus(yarn.volumes())
@@ -123,7 +129,7 @@ podTemplate(
           def domainName = isStaging ? STAGING_DOMAIN_NAME : RELEASE_DOMAIN_NAME
 
           fas.build(
-            useContainer: true,
+            useContainer: 'fas-12',
             domainName: domainName,
             // Note: this should reflect the state of your app's deployment. In
             // general:
@@ -142,7 +148,7 @@ podTemplate(
     if (!isPullRequest) {
       stageWithNotify('Publish build', contexts.publishRelease) {
         fas.publish(
-          useContainer: true,
+          useContainer: 'fas-12',
         )
       }
     }

@@ -1,10 +1,10 @@
 import React from 'react';
-import App from './App';
+import Home from './Home';
 
 export default {
-  title: 'App',
+  title: 'Home',
 };
 
 export const Base = () => {
-  return <App />;
+  return <Home />;
 };
