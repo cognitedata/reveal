@@ -1,0 +1,40 @@
+[package]
+name = "reveal-debug-viewer"
+version = "0.1.0"
+authors = [
+    "Svenn-Arne Dragly <dragly@cognite.com>"
+]
+edition = "2018"
+description = "Fast 3D debug viewer for CAD models"
+homepage = "https://github.com/cognitedata/reveal"
+repository = "https://github.com/cognitedata/reveal"
+keywords = ["graphics"]
+license = "Apache-2.0"
+
+[dependencies]
+cgmath = "0.17"
+serde_json = { version = "1.0.40" }
+serde = { version = "1.0.99", features = ["derive"] }
+serde_yaml = { version = "0.8.9" }
+env_logger = "0.6"
+glsl-to-spirv = "0.1"
+log = "0.4"
+i3df = { path = "../i3df" }
+f3df = { path = "../f3df" }
+clap = "2.33.0"
+arraymap = "0.1.1"
+nalgebra-glm = "0.4.0"
+nalgebra = "0.20.0"
+lzma-rs = "0.1.1"
+openctm = { git = "https://github.com/cognitedata/openctm-rs", rev="aaee843a4788188ed4e4dfc3f8e0836c9a39240a" }
+byteorder = "1.3.2"
+imgui = "0.0.23"
+imgui-winit-support = "0.0.23"
+wgpu = { git = "https://github.com/gfx-rs/wgpu-rs.git", rev="309cc1ceddb72494c1880436900543d228697cdb" }
+imgui-wgpu = "0.6.0"
+winit = { version = "0.22.1", features = ["web-sys"] }
+futures = "0.3.4"
+wasm-bindgen-futures = "0.4.10"
+
+[profile.release]
+debug = true

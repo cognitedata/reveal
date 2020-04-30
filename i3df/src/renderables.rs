@@ -187,29 +187,29 @@ macro_rules! new_geometry_types {
                 )*
             }
 
-            #[wasm_bindgen]
-            impl $vec_struct_name {
-                $(
-                pub fn $field_name(&self) -> Vec<$wasm_vec_result> {
-                    make_func_vec!(self, $field_name, $field_type, $wasm_vec_result)
-                }
-                )*
+            //#[wasm_bindgen]
+            //impl $vec_struct_name {
+                //$(
+                //pub fn $field_name(&self) -> Vec<$wasm_vec_result> {
+                    //make_func_vec!(self, $field_name, $field_type, $wasm_vec_result)
+                //}
+                //)*
 
-                pub fn attributes(&self) -> PrimitiveAttributes {
-                    let attributes = PrimitiveAttributes {
-                        f32_attributes: Map::new(),
-                        f64_attributes: Map::new(),
-                        u8_attributes: Map::new(),
-                        vec3_attributes: Map::new(),
-                        vec4_attributes: Map::new(),
-                        mat4_attributes: Map::new(),
-                    };
-                    $( //fields
-                    insert_attribute!(self, attributes, $field_name, $field_type, $wasm_vec_result );
-                    )*
-                    attributes
-                }
-            }
+                //pub fn attributes(&self) -> PrimitiveAttributes {
+                    //let attributes = PrimitiveAttributes {
+                        //f32_attributes: Map::new(),
+                        //f64_attributes: Map::new(),
+                        //u8_attributes: Map::new(),
+                        //vec3_attributes: Map::new(),
+                        //vec4_attributes: Map::new(),
+                        //mat4_attributes: Map::new(),
+                    //};
+                    //$( //fields
+                    //insert_attribute!(self, attributes, $field_name, $field_type, $wasm_vec_result );
+                    //)*
+                    //attributes
+                //}
+            //}
 
             impl Geometry for $struct_name { }
 
@@ -255,7 +255,7 @@ macro_rules! new_geometry_types {
             pub tree_index_to_node_id_map: HashMap<u64, u64>,
             pub node_id_to_tree_index_map: HashMap<u64, u64>,
             $(
-                pub $collection_name: $vec_struct_name,
+                pub $collection_name: Vec<$struct_name>,
             )*
         }
 
@@ -297,8 +297,11 @@ macro_rules! new_geometry_types {
                 PrimitiveCollections {
                     tree_index_to_node_id_map: HashMap::with_capacity(capacity),
                     node_id_to_tree_index_map: HashMap::with_capacity(capacity),
+                    //$(
+                        //$collection_name: $vec_struct_name::with_capacity(capacity),
+                    //)*
                     $(
-                        $collection_name: $vec_struct_name::with_capacity(capacity),
+                        $collection_name: Vec::<$struct_name>::with_capacity(capacity),
                     )*
                 }
             }
@@ -360,11 +363,11 @@ macro_rules! new_geometry_types {
 
         #[wasm_bindgen]
         impl Sector {
-            $(
-            pub fn $collection_name(&self) -> $vec_struct_name {
-                std::mem::replace(&mut self.primitive_collections.$collection_name.clone(), $vec_struct_name::default())
-            }
-            )*
+            //$(
+            //pub fn $collection_name(&self) -> $vec_struct_name {
+                //std::mem::replace(&mut self.primitive_collections.$collection_name.clone(), $vec_struct_name::default())
+            //}
+            //)*
 
             pub fn tree_index_to_node_id_map(&self) -> Map {
                 Map::from(serde_wasm_bindgen::to_value(&self.primitive_collections.tree_index_to_node_id_map).unwrap())
