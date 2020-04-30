@@ -1,22 +1,10 @@
 import React, { Suspense } from 'react';
 import 'utils/i18n';
 
-import { useTranslation } from 'react-i18next';
 import SuspenseFallback from './SuspenseFallback';
 
 type Props = {
   children: React.ReactNode;
-};
-
-const Nested = ({ children }: Props) => {
-  const { t } = useTranslation('global');
-
-  return (
-    <>
-      <h1>{t('helloWorld', { defaultValue: 'Hello world' })}</h1>
-      {children}
-    </>
-  );
 };
 
 /**
@@ -24,11 +12,7 @@ const Nested = ({ children }: Props) => {
  * no user-visible strings should be above this component.
  */
 const I18nContainer = ({ children }: Props) => {
-  return (
-    <Suspense fallback={<SuspenseFallback />}>
-      <Nested>{children}</Nested>
-    </Suspense>
-  );
+  return <Suspense fallback={<SuspenseFallback />}>{children}</Suspense>;
 };
 
 export default I18nContainer;
