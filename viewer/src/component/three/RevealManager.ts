@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { Subject, Observable, merge, BehaviorSubject, animationFrameScheduler } from 'rxjs';
+import { Subject, Observable, merge, BehaviorSubject, animationFrameScheduler, OperatorFunction, pipe } from 'rxjs';
 import {
   publish,
   filter,
@@ -33,13 +33,18 @@ import { File3dFormat } from '../../data/model/File3dFormat';
 import { Repository } from '../../repository/cad/Repository';
 import { MaterialManager } from '../../views/threejs/cad/MaterialManager';
 import { Cad } from '../../data/model/Cad';
-import { createThreeJsPointCloudNode } from '../../views/threejs';
 import { PotreeGroupWrapper } from '../../views/threejs/pointcloud/PotreeGroupWrapper';
 import { PotreeNodeWrapper } from '../../views/threejs/pointcloud/PotreeNodeWrapper';
 import { PointCloud } from '../../data/model/PointCloud';
 import { SectorCuller } from '../../culling/SectorCuller';
 import { WantedSector } from '../../data/model/WantedSector';
 import { CadModel } from '../../models/cad/CadModel';
+import { isCad, isPointCloud } from '../../data/utils/dataTypeFilters';
+import { CdfSource } from '../../data/model/CdfSource';
+import { ExternalSource } from '../../data/model/ExternalSource';
+import { PromiseCallbacks } from '../../data/model/PromiseCallbacks';
+import { PointCloudModel } from '../../models/pointclouds/PointCloudModel';
+import { createThreeJsPointCloudNode } from '../../views/threejs/pointcloud/createThreeJsPointCloudNode';
 
 export interface RevealOptions {
   nodeAppearance?: ModelNodeAppearance;
@@ -78,81 +83,8 @@ export class RevealManager {
     // this._budget = (options && options.budget) || createDefaultCadBudget();
     this._sectorRepository = sectorRepository;
     this._materialManager = materialManager;
-    this._modelObservable = this._modelSubject.pipe(
-      publish(addModelObservable => {
-        const cadObservable = addModelObservable.pipe(
-          filter((model): model is Cad => model.format === File3dFormat.RevealCadModel),
-          flatMap(
-            model => {
-              if (model.source.discriminator === 'cdf') {
-                return loadCadModelFromCdf(client, model.source.modelRevision);
-              } else if (model.source.discriminator === 'external') {
-                return loadCadModelByUrl(model.source.url);
-              } else {
-                throw new Error('Unknown Source');
-              }
-            },
-            (model, cadModel) => ({
-              ...model,
-              data: cadModel
-            })
-          )
-        );
-        const pointCloudObservable = addModelObservable.pipe(
-          filter((model): model is PointCloud => model.format === File3dFormat.EptPointCloud),
-          flatMap(
-            model => {
-              if (model.source.discriminator === 'cdf') {
-                return createPointCloudModel(client, model.source.modelRevision);
-              } else if (model.source.discriminator === 'external') {
-                return createLocalPointCloudModel(model.source.url);
-              } else {
-                throw new Error('Unknown Source');
-              }
-            },
-            (model, pointCloudModel) => ({
-              ...model,
-              data: pointCloudModel
-            })
-          )
-        );
-        return merge(
-          cadObservable.pipe(
-            map(cad => {
-              const cadModel = cad.data;
-              const node = new CadNode(cadModel, this._materialManager);
-              this._materialManager.addModelMaterials(
-                cadModel.identifier,
-                cadModel.scene.maxTreeIndex,
-                cad.modelNodeAppearance
-              );
-              this._cadNodeMap.set(cadModel.identifier, node);
-              cad.callbacks.success(node);
-              return node;
-            })
-          ),
-          pointCloudObservable.pipe(
-            flatMap(
-              pointCloud => createThreeJsPointCloudNode(pointCloud.data),
-              (request, wrapper) => {
-                request.callbacks.success(wrapper);
-                return wrapper;
-              }
-            )
-          )
-        );
-      })
-    );
-
-    const cadNodeArray: CadModel[] = [];
-    this._cadModelObservable = this._modelObservable.pipe(
-      filter((model): model is CadNode => model instanceof CadNode),
-      map(node => node.cadModel),
-      scan((accumulator, cadnode) => {
-        accumulator.push(cadnode);
-        return accumulator;
-      }, cadNodeArray)
-    );
+    this._modelObservable = this._modelSubject.pipe(this.addCadOrPointcloudModel(client));
+    this._cadModelObservable = this._modelObservable.pipe(this.getAddedModels());
     this._cameraSubject = this.createLoadSectorsPipeline(dataUpdatedCallback);
   }
 
@@ -241,6 +173,112 @@ export class RevealManager {
     return { externalId: id };
   }
 
+  private addCadOrPointcloudModel(
+    client: CogniteClient
+  ): OperatorFunction<Cad | PointCloud, CadNode | [PotreeGroupWrapper, PotreeNodeWrapper]> {
+    return publish(addModelObservable => {
+      const cadObservable = addModelObservable.pipe(isCad(), this.loadCadModelFromCdfOrUrl(client));
+      const pointCloudObservable = addModelObservable.pipe(
+        isPointCloud(),
+        this.loadPointCloudModelFromCdfOrUrl(client)
+      );
+      return merge(
+        cadObservable.pipe(
+          map(cad => {
+            const cadModel = cad.data;
+            const node = new CadNode(cadModel, this._materialManager);
+            this._materialManager.addModelMaterials(
+              cadModel.identifier,
+              cadModel.scene.maxTreeIndex,
+              cad.modelNodeAppearance
+            );
+            this._cadNodeMap.set(cadModel.identifier, node);
+            cad.callbacks.success(node);
+            return node;
+          })
+        ),
+        pointCloudObservable.pipe(
+          flatMap(
+            pointCloud => createThreeJsPointCloudNode(pointCloud.data),
+            (request, wrapper) => {
+              request.callbacks.success(wrapper);
+              return wrapper;
+            }
+          )
+        )
+      );
+    });
+  }
+
+  private loadCadModelFromCdfOrUrl(
+    client: CogniteClient
+  ): OperatorFunction<
+    Cad,
+    {
+      source: CdfSource | ExternalSource;
+      format: File3dFormat.RevealCadModel;
+      modelNodeAppearance?: ModelNodeAppearance | undefined;
+      data: CadModel;
+      callbacks: PromiseCallbacks<CadNode>;
+    }
+  > {
+    return flatMap(
+      model => {
+        if (model.source.discriminator === 'cdf') {
+          return loadCadModelFromCdf(client, model.source.modelRevision);
+        } else if (model.source.discriminator === 'external') {
+          return loadCadModelByUrl(model.source.url);
+        } else {
+          throw new Error('Unknown Source');
+        }
+      },
+      (model, cadModel) => ({
+        ...model,
+        data: cadModel
+      })
+    );
+  }
+
+  private loadPointCloudModelFromCdfOrUrl(
+    client: CogniteClient
+  ): OperatorFunction<
+    PointCloud,
+    {
+      data: PointCloudModel;
+      format: File3dFormat.EptPointCloud;
+      source: CdfSource | ExternalSource;
+      callbacks: PromiseCallbacks<[PotreeGroupWrapper, PotreeNodeWrapper]>;
+    }
+  > {
+    return flatMap(
+      model => {
+        if (model.source.discriminator === 'cdf') {
+          return createPointCloudModel(client, model.source.modelRevision);
+        } else if (model.source.discriminator === 'external') {
+          return createLocalPointCloudModel(model.source.url);
+        } else {
+          throw new Error('Unknown Source');
+        }
+      },
+      (model, pointCloudModel) => ({
+        ...model,
+        data: pointCloudModel
+      })
+    );
+  }
+
+  private getAddedModels(): OperatorFunction<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper], CadModel[]> {
+    const cadNodeArray: CadModel[] = [];
+    return pipe(
+      filter((model): model is CadNode => model instanceof CadNode),
+      map(node => node.cadModel),
+      scan((accumulator, cadnode) => {
+        accumulator.push(cadnode);
+        return accumulator;
+      }, cadNodeArray)
+    );
+  }
+
   private createLoadSectorsPipeline(callback: OnDataUpdated): Subject<THREE.PerspectiveCamera> {
     const pipeline = new Subject<THREE.PerspectiveCamera>();
     pipeline
@@ -257,7 +295,6 @@ export class RevealManager {
         // Take sectors within budget
         // map(wantedSectors => this._budget.filter(wantedSectors)), <-- Was removed since it requires scene which wanted sectors don't have
         // Load sectors from repository
-        share(),
         publish((wantedSectors: Observable<WantedSector[]>) =>
           wantedSectors.pipe(
             switchAll(),
