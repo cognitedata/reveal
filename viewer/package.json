@@ -1,6 +1,7 @@
 {
   "name": "@cognite/reveal",
   "version": "0.1.1",
+  "private": true,
   "description": "Reveal streaming component",
   "main": "index.js",
   "types": "index.d.ts",
@@ -14,7 +15,8 @@
     "test": "jest",
     "coverage": "jest --coverage",
     "lint": "tslint --project .",
-    "serve": "npm install && npm link && cd examples && npm install && npm link @cognite/reveal && npm run serve"
+    "serve": "npm install && npm link && cd examples && npm install && npm link @cognite/reveal && npm run serve",
+    "publish": "node script/copyPackage.js"
   },
   "author": "Svenn-Arne Dragly <dragly@cognite.com>",
   "contributors": [
