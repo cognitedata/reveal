@@ -1,4 +1,4 @@
-@Library('jenkins-helpers@fas-12') _
+@Library('jenkins-helpers') _
 
 // This is your staging domain. Staging deployments are protected by Cognite
 // IAP, meaning they're only accessible to Cogniters.
@@ -129,7 +129,7 @@ podTemplate(
           def domainName = isStaging ? STAGING_DOMAIN_NAME : RELEASE_DOMAIN_NAME
 
           fas.build(
-            useContainer: 'fas-12',
+            useContainer: true,
             domainName: domainName,
             // Note: this should reflect the state of your app's deployment. In
             // general:
@@ -148,7 +148,7 @@ podTemplate(
     if (!isPullRequest) {
       stageWithNotify('Publish build', contexts.publishRelease) {
         fas.publish(
-          useContainer: 'fas-12',
+          useContainer: true,
         )
       }
     }
