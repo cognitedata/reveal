@@ -39,6 +39,7 @@ import { PotreeNodeWrapper } from '../../views/threejs/pointcloud/PotreeNodeWrap
 import { PointCloud } from '../../data/model/PointCloud';
 import { SectorCuller } from '../../culling/SectorCuller';
 import { WantedSector } from '../../data/model/WantedSector';
+import { CadModel } from '../../models/cad/CadModel';
 
 export interface RevealOptions {
   nodeAppearance?: ModelNodeAppearance;
@@ -59,7 +60,7 @@ export class RevealManager {
   private readonly _loadingHintsSubject: Subject<CadLoadingHints> = new BehaviorSubject({});
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera>;
   private readonly _modelObservable: Observable<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper]>;
-  private readonly _cadObservable: Observable<CadNode[]>;
+  private readonly _cadModelObservable: Observable<CadModel[]>;
 
   private readonly _cadNodeMap: Map<string, CadNode> = new Map();
 
@@ -143,9 +144,10 @@ export class RevealManager {
       })
     );
 
-    const cadNodeArray: CadNode[] = [];
-    this._cadObservable = this._modelObservable.pipe(
+    const cadNodeArray: CadModel[] = [];
+    this._cadModelObservable = this._modelObservable.pipe(
       filter((model): model is CadNode => model instanceof CadNode),
+      map(node => node.cadModel),
       scan((accumulator, cadnode) => {
         accumulator.push(cadnode);
         return accumulator;
@@ -245,10 +247,12 @@ export class RevealManager {
       .pipe(
         auditTime(100),
         fromThreeCameraConfig(),
-        withLatestFrom(this._cadObservable, this._loadingHintsSubject.pipe(share())),
-        filter(([_cameraConfig, cadNodes, _loadingHints]) => cadNodes.length > 0),
-        map(([cameraConfig, cadNodes, loadingHints]) =>
-          this._sectorCuller.determineSectors({ cameraConfig, cadNodes, loadingHints })
+        withLatestFrom(this._cadModelObservable, this._loadingHintsSubject.pipe(share())),
+        filter(
+          ([_cameraConfig, cadModels, loadingHints]) => cadModels.length > 0 && loadingHints.suspendLoading !== true
+        ),
+        map(([cameraConfig, cadModels, loadingHints]) =>
+          this._sectorCuller.determineSectors({ cameraConfig, cadModels, loadingHints })
         ),
         // Take sectors within budget
         // map(wantedSectors => this._budget.filter(wantedSectors)), <-- Was removed since it requires scene which wanted sectors don't have

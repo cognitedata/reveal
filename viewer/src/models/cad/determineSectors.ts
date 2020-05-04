@@ -13,8 +13,7 @@ import { defaultLoadingHints as defaultCadLoadingHints, CadLoadingHints } from '
 import { WantedSector } from '../../data/model/WantedSector';
 import { LevelOfDetail } from '../../data/model/LevelOfDetail';
 import { CameraConfig } from '../../views/threejs/cad/fromThreeCameraConfig';
-import { CadNode } from '../../views/threejs/cad/CadNode';
-import { CadModel } from '../..';
+import { CadModel } from './CadModel';
 
 const degToRadFactor = Math.PI / 180;
 
@@ -29,7 +28,7 @@ const determineSectorsPreallocatedVars = {
 
 export interface DetermineSectorsByProximityInput {
   cameraConfig: CameraConfig;
-  cadNodes: CadNode[];
+  cadModels: CadModel[];
   loadingHints: CadLoadingHints;
 }
 /*
@@ -62,8 +61,8 @@ export function determineSectorsByProximity(params: DetermineSectorsByProximityI
   }
 
   const result: WantedSector[] = [];
-  for (const cadNode of params.cadNodes) {
-    const sectorScene = cadNode.cadModel.scene;
+  for (const cadModel of params.cadModels) {
+    const sectorScene = cadModel.scene;
     const sectors: SectorMetadata[] = [];
 
     if (!mat4.invert(invertCameraModelMatrix, cameraModelMatrix)) {
@@ -95,7 +94,7 @@ export function determineSectorsByProximity(params: DetermineSectorsByProximityI
     });
 
     const requestedDetailed = new Set<number>(sectors.map(x => x.id));
-    const wanteds: WantedSector[] = determineSectorsFromDetailed(cadNode.cadModel, requestedDetailed);
+    const wanteds: WantedSector[] = determineSectorsFromDetailed(cadModel, requestedDetailed);
     for (const wanted of wanteds) {
       result.push(wanted);
     }
