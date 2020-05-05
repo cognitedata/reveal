@@ -5,8 +5,9 @@ import useTenantSelector from 'useTenantSelector';
 import background from 'assets/background.jpg';
 import TenantSelectorBackground from 'TenantSelectorBackground';
 import TenantSelector from 'TenantSelector';
-import I18nContainer from 'I18nContainer';
+import I18nContainer from 'containers/I18nContainer';
 import Metrics from '@cognite/metrics';
+import GlobalStyles from 'global-styles';
 
 const { REACT_APP_MIXPANEL_TOKEN, REACT_APP_ENV, NODE_ENV } = process.env;
 
@@ -54,16 +55,19 @@ const App = () => {
   );
 
   return (
-    <TenantSelectorBackground backgroundImage={backgroundImage || background}>
-      <I18nContainer>
-        <TitleChanger />
-        <TenantSelector
-          validateTenant={performValidation}
-          handleSubmit={onTenantSelected}
-          loading={isLoading}
-        />
-      </I18nContainer>
-    </TenantSelectorBackground>
+    <>
+      <GlobalStyles />
+      <TenantSelectorBackground backgroundImage={backgroundImage || background}>
+        <I18nContainer>
+          <TitleChanger />
+          <TenantSelector
+            validateTenant={performValidation}
+            handleSubmit={onTenantSelected}
+            loading={isLoading}
+          />
+        </I18nContainer>
+      </TenantSelectorBackground>
+    </>
   );
 };
 

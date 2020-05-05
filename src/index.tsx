@@ -1,16 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import * as Sentry from '@sentry/browser';
+import { config } from 'utils';
+
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
-import 'antd/dist/antd.css';
 import '@cognite/cogs.js/dist/cogs.css';
 
-if (process.env.REACT_APP_ENV !== 'development') {
+if (process.env.REACT_APP_SENTRY_DSN) {
   Sentry.init({
-    dsn:
-      'https://4558e4f6faaf4948ab9327457827a301@o124058.ingest.sentry.io/5193370',
+    dsn: process.env.REACT_APP_SENTRY_DSN,
+    // This is populated by the FAS build process. Change it if you want to
+    // source this information from somewhere else.
+    release: process.env.REACT_APP_RELEASE_ID,
+    // This is populated by react-scripts. However, this can be overridden by
+    // the app's build process if you wish.
+    environment: config.env,
   });
 }
 

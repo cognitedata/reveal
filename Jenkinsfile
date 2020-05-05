@@ -1,8 +1,19 @@
-@Library('jenkins-helpers') _
+@Library('jenkins-helpers@fas-12') _
 
 static final String STAGING_DOMAIN_NAME = "tenant-selector.cognite.ai"
 static final String RELEASE_DOMAIN_NAME = "production.tenant-selector.cognite.ai"
 static final String SENTRY_PROJECT_NAME = "tenant-selector"
+// The Sentry DSN is the URL used to report issues into Sentry. This can be
+// found on your Sentry's project page, or by going here:
+// https://docs.sentry.io/error-reporting/quickstart/?platform=browser
+//
+// If you omit this, then client errors WILL NOT BE REPORTED.
+static final String SENTRY_DSN = "https://4558e4f6faaf4948ab9327457827a301@o124058.ingest.sentry.io/5193370"
+
+// Specify your locize.io project ID. If you do not have one of these, please
+// stop by #frontend to get a project created under the Cognite umbrella.
+// See https://cog.link/i18n for more information.
+static final String LOCIZE_PROJECT_ID = "dfcacf1f-a7aa-4cc2-94d7-de6ea4e66f1d"
 
 static final String PR_COMMENT_MARKER = "[pr-server]\n"
 static final String STORYBOOK_COMMENT_MARKER = "[storybook-server]\n"
@@ -22,7 +33,10 @@ podTemplate(
     )
     .plus(previewServer.containers())
     .plus(yarn.containers()),
-  envVars: [],
+  envVars: [
+    envVar(key: 'REACT_APP_SENTRY_DSN', value: SENTRY_DSN),
+    envVar(key: 'REACT_APP_LOCIZE_PROJECT_ID', value: LOCIZE_PROJECT_ID),
+  ],
   volumes: []
     .plus(yarn.volumes())
     .plus(fas.volumes())
@@ -107,10 +121,9 @@ podTemplate(
           }
 
           def domainName = isStaging ? STAGING_DOMAIN_NAME : RELEASE_DOMAIN_NAME
-          def variant = isStaging ? 'staging' : 'production'
 
           fas.build(
-            useContainer: true,
+            useContainer: 'fas-12',
             domainName: domainName,
             // Note: this should reflect the state of your app's deployment. In
             // general:
@@ -120,7 +133,7 @@ podTemplate(
             // an incognito window and see if you get hit with a Google login
             // screen straight away.
             iap: isStaging,
-            buildCommand: "yarn build ${variant}",
+            buildCommand: 'yarn build',
           )
         }
       }
@@ -129,7 +142,7 @@ podTemplate(
     if (!isPullRequest) {
       stageWithNotify('Publish build', contexts.publishRelease) {
         fas.publish(
-          useContainer: true,
+          useContainer: 'fas-12',
         )
       }
     }
