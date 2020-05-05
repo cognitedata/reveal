@@ -1,5 +1,5 @@
 use crate::renderables::{
-    GeometryCollection, PrimitiveCollections, ToRenderables, TorusSegment, TorusSegmentInfo,
+    PrimitiveCollections, ToRenderables, TorusSegment, TorusSegmentInfo,
 };
 use std::f32::consts::PI;
 
@@ -8,8 +8,7 @@ impl ToRenderables for crate::Torus {
         collections
             .torus_segment_collection
             .push(TorusSegment::new(&TorusSegmentInfo {
-                node_id: self.node_id,
-                tree_index: self.tree_index,
+                tree_index: self.tree_index as f32,
                 color: self.color,
                 size: self.diagonal,
                 center: self.center(),
@@ -26,8 +25,7 @@ impl ToRenderables for crate::ClosedTorusSegment {
         collections
             .torus_segment_collection
             .push(TorusSegment::new(&TorusSegmentInfo {
-                node_id: self.node_id,
-                tree_index: self.tree_index,
+                tree_index: self.tree_index as f32,
                 color: self.color,
                 size: self.diagonal,
                 center: self.center(),
@@ -46,8 +44,7 @@ impl ToRenderables for crate::OpenTorusSegment {
         collections
             .torus_segment_collection
             .push(TorusSegment::new(&TorusSegmentInfo {
-                node_id: self.node_id,
-                tree_index: self.tree_index,
+                tree_index: self.tree_index as f32,
                 color: self.color,
                 size: self.diagonal,
                 center: self.center(),

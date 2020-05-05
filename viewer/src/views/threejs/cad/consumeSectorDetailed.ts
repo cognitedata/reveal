@@ -16,6 +16,9 @@ export function consumeSectorDetailed(sector: Sector, metadata: SectorMetadata, 
   for (const primtiveRoot of createPrimitives(sector, materials)) {
     obj.add(primtiveRoot);
   }
+
+  console.log(obj);
+
   const triangleMeshes = createTriangleMeshes(sector.triangleMeshes, bounds, materials.triangleMesh);
   for (const triangleMesh of triangleMeshes) {
     obj.add(triangleMesh);
@@ -24,5 +27,6 @@ export function consumeSectorDetailed(sector: Sector, metadata: SectorMetadata, 
   for (const instanceMesh of instanceMeshes) {
     obj.add(instanceMesh);
   }
+
   return obj;
 }

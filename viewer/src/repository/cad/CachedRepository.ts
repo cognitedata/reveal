@@ -267,19 +267,7 @@ export class CachedRepository implements Repository {
 
   private finalizeDetailed(i3dFile: ParseSectorResult, ctmFiles: Map<string, ParseCtmResult>): Sector {
     const {
-      boxes,
-      circles,
-      cones,
-      eccentricCones,
-      ellipsoidSegments,
-      generalCylinders,
-      generalRings,
       instanceMeshes,
-      nuts,
-      quads,
-      sphericalSegments,
-      torusSegments,
-      trapeziums,
       triangleMeshes
     } = i3dFile;
 
@@ -396,21 +384,11 @@ export class CachedRepository implements Repository {
     const sector: Sector = {
       treeIndexToNodeIdMap: i3dFile.treeIndexToNodeIdMap,
       nodeIdToTreeIndexMap: i3dFile.nodeIdToTreeIndexMap,
-      boxes,
-      circles,
-      cones,
-      eccentricCones,
-      ellipsoidSegments,
-      generalCylinders,
-      generalRings,
+      primitives: i3dFile.primitives,
       instanceMeshes: finalInstanceMeshes,
-      nuts,
-      quads,
-      sphericalSegments,
-      torusSegments,
-      trapeziums,
       triangleMeshes: finalTriangleMeshes
     };
+
     return sector;
   }
 
