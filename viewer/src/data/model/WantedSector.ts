@@ -10,6 +10,7 @@ import { SectorScene } from '../../models/cad/SectorScene';
 export interface WantedSector {
   cadModelIdentifier: string;
   dataRetriever: ModelDataRetriever;
+  // TODO 2020-05-05 larsmoa: Remove SectorModelTransformation in WantedSector
   cadModelTransformation: SectorModelTransformation;
   scene: SectorScene;
   levelOfDetail: LevelOfDetail;

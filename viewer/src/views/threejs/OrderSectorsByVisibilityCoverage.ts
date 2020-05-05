@@ -6,15 +6,14 @@ import * as THREE from 'three';
 
 import { SectorMetadata } from '../..';
 import { SectorModelTransformation } from '../../models/cad/types';
-import { SectorScene } from '../../models/cad/SectorScene';
+import { CadModel } from '../../models/cad/CadModel';
 import { toThreeJsBox3, toThreeMatrix4 } from './utilities';
 import { Box3 } from '../../utils/Box3';
 import { coverageShaders } from './cad/shaders';
 
 type SectorContainer = {
-  scene: SectorScene;
+  model: CadModel;
   sectors: SectorMetadata[];
-
   sectorIdOffset: number;
   renderable: THREE.Object3D;
 };
@@ -47,9 +46,9 @@ export interface OrderSectorsByVisibleCoverageOptions {
 
 export type PrioritizedSectorIdentifier = {
   /**
-   * The scene of the CAD model that holds the sector.
+   * The CAD model that holds the sector.
    */
-  scene: SectorScene;
+  model: CadModel;
   /**
    * Sector ID contained in the model provided.
    */
@@ -65,11 +64,10 @@ export type PrioritizedSectorIdentifier = {
  */
 export interface OrderSectorsByVisibilityCoverage {
   /**
-   * Adds a new CAD model to estimate visibility for.
-   * @param scene
-   * @param modelTransformation
+   * Specifies what CAD models to estimate sector visibility for.
+   * @param models Models to estimate sector visibility for.
    */
-  addModel(scene: SectorScene, modelTransformation: SectorModelTransformation): void;
+  setModels(models: CadModel[]): void;
   /**
    * Estimates how visible the different sectors for the models added are and returns
    * a prioritized list.
@@ -88,7 +86,7 @@ export class GpuOrderSectorsByVisibilityCoverage {
   private readonly renderer: THREE.WebGLRenderer;
   private debugRenderer?: THREE.WebGLRenderer;
   private readonly renderTarget: THREE.WebGLRenderTarget;
-  private readonly containers: SectorContainer[] = [];
+  private readonly containers: Map<string, SectorContainer> = new Map();
   private readonly buffers = {
     rtBuffer: new Uint8Array(),
     sectorVisibilityBuffer: [] as SectorVisibility[]
@@ -133,17 +131,21 @@ export class GpuOrderSectorsByVisibilityCoverage {
     return this.debugRenderer.domElement;
   }
 
-  addModel(scene: SectorScene, modelTransformation: SectorModelTransformation) {
-    const sectors = scene.getAllSectors();
-    const mesh = this.createSectorTreeMesh(this.sectorIdOffset, sectors, modelTransformation);
-    this.containers.push({
-      scene,
-      sectors,
-      sectorIdOffset: this.sectorIdOffset,
-      renderable: mesh
-    });
-    this.sectorIdOffset += sectors.length;
-    this.scene.add(mesh);
+  setModels(models: CadModel[]) {
+    const keepModelIdentifiers = new Set<string>();
+    for (const model of models) {
+      const identifier = model.identifier;
+      keepModelIdentifiers.add(identifier);
+      if (!this.containers.has(identifier)) {
+        this.addModel(model);
+      }
+    }
+
+    const allIdentifiers = new Set<string>(this.containers.keys());
+    const discardIdentifiers = new Set([...allIdentifiers].filter(x => !keepModelIdentifiers.has(x)));
+    for (const modelIdentifier of discardIdentifiers) {
+      this.removeModel(modelIdentifier);
+    }
   }
 
   orderSectorsByVisibility(camera: THREE.Camera): PrioritizedSectorIdentifier[] {
@@ -192,7 +194,7 @@ export class GpuOrderSectorsByVisibilityCoverage {
         const container = this.findSectorContainer(x.sectorIdWithOffset);
         const sectorId = x.sectorIdWithOffset - container.sectorIdOffset;
         return {
-          scene: container.scene,
+          model: container.model,
           sectorId,
           priority: x.hitCount / totalHits,
           depth: x.distance
@@ -202,8 +204,30 @@ export class GpuOrderSectorsByVisibilityCoverage {
     return result;
   }
 
+  private removeModel(modelIdentifier: string) {
+    const container = this.containers.get(modelIdentifier);
+    if (!container) {
+      throw new Error(`Could not find model '${modelIdentifier}'`);
+    }
+    this.scene.remove(container.renderable);
+    this.containers.delete(modelIdentifier);
+  }
+
+  private addModel(model: CadModel) {
+    const sectors = model.scene.getAllSectors();
+    const mesh = this.createSectorTreeMesh(this.sectorIdOffset, sectors, model.modelTransformation);
+    this.containers.set(model.identifier, {
+      model,
+      sectors,
+      sectorIdOffset: this.sectorIdOffset,
+      renderable: mesh
+    });
+    this.sectorIdOffset += sectors.length;
+    this.scene.add(mesh);
+  }
+
   private findSectorContainer(sectorIdWithOffset: number): SectorContainer {
-    for (const container of this.containers) {
+    for (const container of this.containers.values()) {
       if (
         sectorIdWithOffset >= container.sectorIdOffset &&
         sectorIdWithOffset < container.sectorIdOffset + container.sectors.length

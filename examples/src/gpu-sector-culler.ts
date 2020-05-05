@@ -6,13 +6,11 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams, createClientIfNecessary } from './utils/loaders';
 import * as reveal_threejs from '@cognite/reveal/threejs';
 import * as reveal from '@cognite/reveal';
-import { PrioritizedWantedSector } from '@cognite/reveal/culling/types';
 import { CogniteClient } from '@cognite/sdk';
 import { getParamsFromURL } from './utils/example-helpers';
-import { SimpleRevealManager, CadNode } from '@cognite/reveal/threejs';
+import { CadNode } from '@cognite/reveal/threejs';
 
 CameraControls.install({ THREE });
 
@@ -24,18 +22,19 @@ async function main() {
   const scene = new THREE.Scene();
   let modelsNeedUpdate = true;
 
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight);
   const coverageUtil = new reveal_threejs.GpuOrderSectorsByVisibilityCoverage();
   const sectorCuller = new reveal.internal.ByVisibilityGpuSectorCuller(camera, {
     coverageUtil,
     costLimit: 70 * 1024 * 1024,
     logCallback: console.log
   });
-  const revealManager = new SimpleRevealManager(
+  const revealManager = new reveal_threejs.SimpleRevealManager(
     client,
     () => {
       modelsNeedUpdate = true;
     },
-    { internal: { sectorCuller: sectorCuller } }
+    { internal: { sectorCuller } }
   );
   let model: CadNode;
   if (modelUrl) {
@@ -53,7 +52,8 @@ async function main() {
   document.body.appendChild(renderer.domElement);
 
   const { position, target, near, far } = model.suggestCameraConfig();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
+  camera.near = near;
+  camera.far = far;
   const controls = new CameraControls(camera, renderer.domElement);
   controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
@@ -71,36 +71,36 @@ async function main() {
   document.body.appendChild(canvas);
   document.body.appendChild(renderer.domElement);
 
-  document.addEventListener('keypress', event => {
-    if (event.key === 's') {
-      const suspendLoading = !cadNode.loadingHints.suspendLoading;
-      console.log(`Suspend loading: ${suspendLoading}`);
-      cadNode.loadingHints = { ...cadNode.loadingHints, suspendLoading };
-    } else if (event.key === 'b') {
-      const showSectorBoundingBoxes = !cadNode.renderHints.showSectorBoundingBoxes;
-      console.log(`Show sector bounds: ${showSectorBoundingBoxes}`);
-      cadNode.renderHints = { ...cadNode.renderHints, showSectorBoundingBoxes };
-    } else if (event.key === 'p') {
-      const lastWanted = sectorCuller.lastWantedSectors
-        .filter(x => x.levelOfDetail !== reveal.internal.LevelOfDetail.Discarded)
-        .sort((l, r) => {
-          if (l.scene.maxTreeIndex !== r.scene.maxTreeIndex) {
-            return l.scene.maxTreeIndex - r.scene.maxTreeIndex;
-          } else if (l.metadata.path !== r.metadata.path) {
-            return l.metadata.path.localeCompare(r.metadata.path);
-          } else if (l.priority !== r.priority) {
-            return l.priority - r.priority;
-          }
-          return l.levelOfDetail - r.levelOfDetail;
-        });
+  // document.addEventListener('keypress', event => {
+  //   if (event.key === 's') {
+  //     const suspendLoading = !cadNode.loadingHints.suspendLoading;
+  //     console.log(`Suspend loading: ${suspendLoading}`);
+  //     cadNode.loadingHints = { ...cadNode.loadingHints, suspendLoading };
+  //   } else if (event.key === 'b') {
+  //     const showSectorBoundingBoxes = !cadNode.renderHints.showSectorBoundingBoxes;
+  //     console.log(`Show sector bounds: ${showSectorBoundingBoxes}`);
+  //     cadNode.renderHints = { ...cadNode.renderHints, showSectorBoundingBoxes };
+  //   } else if (event.key === 'p') {
+  //     const lastWanted = sectorCuller.lastWantedSectors
+  //       .filter(x => x.levelOfDetail !== reveal.internal.LevelOfDetail.Discarded)
+  //       .sort((l, r) => {
+  //         if (l.scene.maxTreeIndex !== r.scene.maxTreeIndex) {
+  //           return l.scene.maxTreeIndex - r.scene.maxTreeIndex;
+  //         } else if (l.metadata.path !== r.metadata.path) {
+  //           return l.metadata.path.localeCompare(r.metadata.path);
+  //         } else if (l.priority !== r.priority) {
+  //           return l.priority - r.priority;
+  //         }
+  //         return l.levelOfDetail - r.levelOfDetail;
+  //       });
 
-      console.log('Last list of wanted sectors:\n', lastWanted);
-      const paths = lastWanted
-        .map((x: PrioritizedWantedSector) => `${x.metadata.path} [lod=${x.levelOfDetail}, id=${x.metadata.id}]`)
-        .sort();
-      console.log('Paths:', paths);
-    }
-  });
+  //     console.log('Last list of wanted sectors:\n', lastWanted);
+  //     const paths = lastWanted
+  //       .map((x: PrioritizedWantedSector) => `${x.metadata.path} [lod=${x.levelOfDetail}, id=${x.metadata.id}]`)
+  //       .sort();
+  //     console.log('Paths:', paths);
+  //   }
+  // });
 
   revealManager.update(camera);
   const render = async () => {

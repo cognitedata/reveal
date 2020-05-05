@@ -66,7 +66,7 @@ describe('determineSectors', () => {
 
     // Act
     const sectors = await determineSectorsByProximity({
-      cadNodes: [cadNode],
+      cadModels: [cadNode.cadModel],
       loadingHints: {},
       cameraConfig: {
         cameraFov: camera.fov,
@@ -188,7 +188,7 @@ describe('determineSectors', () => {
 
     // Act
     const sectors = await determineSectorsByProximity({
-      cadNodes: [cadNode],
+      cadModels: [cadNode.cadModel],
       cameraConfig: {
         cameraFov: camera.fov,
         cameraPosition: fromThreeVector3(vec3.create(), camera.position, identityTransform),
@@ -258,7 +258,7 @@ describe('determineSectors', () => {
 
     // Act
     const sectors = await determineSectorsByProximity({
-      cadNodes: [cadNode],
+      cadModels: [cadNode.cadModel],
       cameraConfig: {
         cameraFov: camera.fov,
         cameraPosition: fromThreeVector3(vec3.create(), camera.position, transform),

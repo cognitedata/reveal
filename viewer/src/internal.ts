@@ -18,4 +18,4 @@ export { LevelOfDetail } from './data/model/LevelOfDetail';
 
 export { SectorCuller } from './culling/SectorCuller';
 export { ProximitySectorCuller } from './culling/ProximitySectorCuller';
-// export { ByVisibilityGpuSectorCuller } from './culling/ByVisibilityGpuSectorCuller';
+export { ByVisibilityGpuSectorCuller } from './culling/ByVisibilityGpuSectorCuller';
