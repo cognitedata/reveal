@@ -24,7 +24,7 @@ export function* createPrimitives(sector: Sector, materials: Materials) {
   if (hasAny(primitives.boxCollection)) {
     yield createBoxes(primitives.boxCollection, primitives.boxAttributes, materials.box);
   }
-  /*if (hasAny(primitives.circleCollection)) {
+  if (hasAny(primitives.circleCollection)) {
     yield createCircles(primitives.circleCollection, primitives.circleAttributes, materials.circle);
   }
   if (hasAny(primitives.coneCollection)) {
@@ -56,7 +56,7 @@ export function* createPrimitives(sector: Sector, materials: Materials) {
   }
   if (hasAny(primitives.nutCollection)) {
     yield createNuts(primitives.nutCollection, primitives.nutAttributes, materials.nut);
-  }*/
+  }
 }
 
 function hasAny(collection: Uint8Array) {
@@ -81,18 +81,15 @@ function splitMatrix(attributes: Map<string, ParsePrimitiveAttribute>) {
   
     attributes.set('instanceMatrix_column_' + i, columnAttribute);
   }
-
-  attributes.delete('instanceMatrix');
-  attributes.delete('center');
-  attributes.delete('delta');
-  attributes.delete('normal');
-  attributes.delete('rotationAngle');
-  attributes.delete('size');
 }
 
 function setAttributes(geometry: THREE.InstancedBufferGeometry, collection: Uint8Array, attributes: Map<string, ParsePrimitiveAttribute>) {
   
   const attributesByteSize = Array.from(attributes.values()).reduce((a, b) => a + b.size, 0);
+
+  for (const attr of attributes) {
+      console.log(attr[0], ": ", attr[1]);
+  }
 
   splitMatrix(attributes);
 

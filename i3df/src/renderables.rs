@@ -234,6 +234,7 @@ macro_rules! new_geometry_types {
             #[wasm_bindgen]
             #[derive(Clone, Debug, Deserialize, Serialize)]
             #[serde(rename_all="camelCase")]
+            #[repr(C)]
             pub struct $struct_name {
                 $(
                 #[wasm_bindgen(skip)]
