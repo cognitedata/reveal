@@ -46,6 +46,12 @@ const allExamples = [
     template: 'template-example.ejs'
   },
   {
+    name: "threejs-clipping",
+    title: "Clipping planes",
+    entry: './src/clipping.ts',
+    template: 'template-example.ejs'
+  },
+  {
     name: "threejs-filtering",
     title: "Filtering",
     entry: './src/filtering.ts',
@@ -242,17 +248,6 @@ module.exports = env => {
         resolve('dist/'),
       ],
 
-      proxy: {
-       // Setup a proxy to allow requests from LAN to access API without CORS issues
-       '/cdf': {
-            target: 'https://api.cognitedata.com',
-            changeOrigin: true,
-            secure: true,
-            pathRewrite: {
-              '^/cdf': ''
-            }
-        },
-      },
       writeToDisk: true,
     },
     optimization: {
