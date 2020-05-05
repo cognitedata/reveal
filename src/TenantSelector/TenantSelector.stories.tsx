@@ -1,61 +1,63 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { action } from '@storybook/addon-actions';
-import '@cognite/cogs.js/dist/cogs.css';
 
+import { StyledContentWrapper } from '../CardContainer/elements';
+import CardFooterError from '../CardFooterError/CardFooterError';
 import TenantSelector from './TenantSelector';
 
 export default {
   title: 'Authentication|TenantSelector',
 };
 
-type TenantSelectorProps = {
-  initiallyLoading?: boolean;
-};
-
-const useTenantSelector = ({
-  initiallyLoading = false,
-}: TenantSelectorProps = {}) => {
-  const [loading, setLoading] = useState(initiallyLoading);
-
-  const validateTenant = (tenant: string) => {
-    setLoading(true);
-    return new Promise<boolean>((resolve) =>
-      setTimeout(() => {
-        setLoading(false);
-        resolve(tenant === 'valid-tenant');
-      }, 300)
-    );
-  };
-
-  return { validateTenant, handleSubmit: action('handleSubmit'), loading };
+const tenantSelectorProps = {
+  tenant: '',
+  loading: false,
+  errorList: null,
+  tenantError: '',
+  onSubmit: action('onSubmit'),
+  handleOnChange: action('handleOnChange'),
+  setClusterSelectorShown: action('setClusterSelectorShown'),
 };
 
 export const Base = () => {
-  const tenantSelectorProps = useTenantSelector();
-  return <TenantSelector {...tenantSelectorProps} />;
+  return (
+    <StyledContentWrapper>
+      <TenantSelector {...tenantSelectorProps} />
+    </StyledContentWrapper>
+  );
 };
 
 export const WithInitialTenant = () => {
-  const tenantSelectorProps = useTenantSelector();
   return (
-    <TenantSelector {...tenantSelectorProps} initialTenant="initial-tenant" />
+    <StyledContentWrapper>
+      <TenantSelector {...tenantSelectorProps} tenant="initial-tenant" />
+    </StyledContentWrapper>
   );
 };
 
 export const Loading = () => {
-  const tenantSelectorProps = useTenantSelector({ initiallyLoading: true });
   return (
-    <TenantSelector {...tenantSelectorProps} initialTenant="initial-tenant" />
+    <StyledContentWrapper>
+      <TenantSelector
+        {...tenantSelectorProps}
+        tenant="initial-tenant"
+        loading
+      />
+    </StyledContentWrapper>
   );
 };
 
 export const WithError = () => {
-  const tenantSelectorProps = useTenantSelector();
-
   return (
-    <TenantSelector
-      {...tenantSelectorProps}
-      errors={['This is just a storybook']}
-    />
+    <StyledContentWrapper>
+      <TenantSelector
+        {...tenantSelectorProps}
+        errorList={
+          <CardFooterError style={{ marginTop: '16px' }}>
+            This is just a storybook
+          </CardFooterError>
+        }
+      />
+    </StyledContentWrapper>
   );
 };

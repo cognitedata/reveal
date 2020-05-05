@@ -3,6 +3,7 @@ type SidecarConfig = {
   applicationId: string;
   appName: string;
   backgroundImage: string;
+  helpLink: string;
 };
 
 const DEFAULT_SIDECAR: SidecarConfig = {
@@ -10,6 +11,7 @@ const DEFAULT_SIDECAR: SidecarConfig = {
   applicationId: 'tenant-selector-test',
   appName: 'Tenant Selector Test',
   backgroundImage: '',
+  helpLink: '',
 };
 
 export default (): SidecarConfig => {

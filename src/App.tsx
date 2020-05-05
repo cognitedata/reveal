@@ -1,18 +1,17 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import TitleChanger from 'TitleChanger';
 import { getSidecar } from 'utils';
 import useTenantSelector from 'useTenantSelector';
 import background from 'assets/background.jpg';
 import TenantSelectorBackground from 'TenantSelectorBackground';
-import TenantSelector from 'TenantSelector';
 import I18nContainer from 'containers/I18nContainer';
 import Metrics from '@cognite/metrics';
 import GlobalStyles from 'global-styles';
+import CardContainer from 'CardContainer/CardContainer';
 
 const { REACT_APP_MIXPANEL_TOKEN, REACT_APP_ENV, NODE_ENV } = process.env;
 
 const App = () => {
-  const { applicationId, backgroundImage } = getSidecar();
+  const { applicationId, backgroundImage, helpLink } = getSidecar();
   const [authenticating, setAuthenticating] = useState(false);
 
   useEffect(() => {
@@ -59,11 +58,12 @@ const App = () => {
       <GlobalStyles />
       <TenantSelectorBackground backgroundImage={backgroundImage || background}>
         <I18nContainer>
-          <TitleChanger />
-          <TenantSelector
+          <CardContainer
             validateTenant={performValidation}
             handleSubmit={onTenantSelected}
             loading={isLoading}
+            initialTenant={initialTenant || ''}
+            helpLink={helpLink || ''}
           />
         </I18nContainer>
       </TenantSelectorBackground>
