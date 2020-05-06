@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { RateLimiter } from '../../../data/network/RateLimiter';
+import { RateLimiter } from '../../utils/RateLimiter';
 
 describe('RateLimiter', () => {
   test('Aqcuire and release', async () => {
@@ -134,5 +134,10 @@ describe('RateLimiter', () => {
     expect(rateLimiter.usedSlots()).toBe(0);
     expect(await fast).toBe(true);
     expect(await slow).toBe(true);
+  });
+
+  test('release() without acquire() throws', () => {
+    const limiter = new RateLimiter(0);
+    expect(() => limiter.release()).toThrowError();
   });
 });

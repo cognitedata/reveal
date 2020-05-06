@@ -4,9 +4,9 @@
 
 import { LevelOfDetail } from '../data/model/LevelOfDetail';
 import { SectorMetadata } from '../models/cad/types';
-import { SectorScene } from '../models/cad/SectorScene';
 import { traverseUpwards, traverseDepthFirst } from '../utils/traversal';
 import { PrioritizedWantedSector, DetermineSectorCostDelegate } from './types';
+import { CadModel } from '../models/cad/CadModel';
 
 export class TakenSectorTree {
   get totalCost(): number {
@@ -40,15 +40,19 @@ export class TakenSectorTree {
     }, 0);
   }
 
-  toWantedSectors(scene: SectorScene): PrioritizedWantedSector[] {
+  toWantedSectors(model: CadModel): PrioritizedWantedSector[] {
     return this.sectors
-      .map((x, id) => {
+      .map(sector => {
         const wanted: PrioritizedWantedSector = {
-          sectorId: id,
-          levelOfDetail: x.lod,
-          metadata: x.sector,
-          priority: x.priority,
-          scene
+          levelOfDetail: sector.lod,
+          metadata: sector.sector,
+          priority: sector.priority,
+
+          // TODO 2020-05-05 larsmoa: Reduce the number of fields here
+          cadModelIdentifier: model.identifier,
+          dataRetriever: model.dataRetriever,
+          scene: model.scene,
+          cadModelTransformation: model.modelTransformation
         };
         return wanted;
       })
@@ -97,7 +101,7 @@ export class TakenSectorTree {
         // no geometry in the F3D - we therefore skip such sectors.
         if (child.facesFile.fileName !== null) {
           this.setSectorLod(child.id, LevelOfDetail.Simple);
-        } 
+        }
       }
     }
   }

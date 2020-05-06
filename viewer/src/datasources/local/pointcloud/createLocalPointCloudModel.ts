@@ -11,7 +11,7 @@ import { PointCloudModel } from '../../../models/pointclouds/PointCloudModel';
 
 const identity = mat4.identity(mat4.create());
 
-export function createLocalPointCloudModel(url: string): PointCloudModel {
+export async function createLocalPointCloudModel(url: string): Promise<PointCloudModel> {
   const fetchPointCloud: FetchPointCloudDelegate = async () => {
     const transform: SectorModelTransformation = {
       modelMatrix: identity,

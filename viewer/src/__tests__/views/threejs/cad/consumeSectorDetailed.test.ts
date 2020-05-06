@@ -9,8 +9,9 @@ import { consumeSectorDetailed } from '../../../../views/threejs/cad/consumeSect
 import { createEmptySector } from '../../../models/cad/emptySector';
 import { createMaterials } from '../../../../views/threejs/cad/materials';
 import 'jest-extended';
+import { RenderMode } from '../../../../views/threejs/materials';
 
-const materials = createMaterials(10);
+const materials = createMaterials(10, RenderMode.Color, []);
 
 describe('consumeSectorDetailed', () => {
   const metadata: SectorMetadata = {

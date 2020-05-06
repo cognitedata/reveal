@@ -30,7 +30,11 @@ export interface Materials {
   overrideVisibilityPerTreeIndex: THREE.DataTexture;
 }
 
-export function createMaterials(treeIndexCount: number): Materials {
+export function createMaterials(
+  treeIndexCount: number,
+  renderMode: RenderMode,
+  clippingPlanes: THREE.Plane[]
+): Materials {
   const textureDims = determinePowerOfTwoDimensions(treeIndexCount);
   const textureElementCount = textureDims.width * textureDims.height;
   const dataTextureSize = new THREE.Vector2(textureDims.width, textureDims.height);
@@ -47,6 +51,7 @@ export function createMaterials(treeIndexCount: number): Materials {
   const boxMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Box)',
     clipping: true,
+    clippingPlanes,
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.boxPrimitive.vertex,
     fragmentShader: sectorShaders.boxPrimitive.fragment,
@@ -56,6 +61,7 @@ export function createMaterials(treeIndexCount: number): Materials {
   const circleMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Circle)',
     clipping: true,
+    clippingPlanes,
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.circlePrimitive.vertex,
     fragmentShader: sectorShaders.circlePrimitive.fragment,
@@ -67,6 +73,7 @@ export function createMaterials(treeIndexCount: number): Materials {
   const nutMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Nuts)',
     clipping: true,
+    clippingPlanes,
     vertexShader: sectorShaders.nutPrimitive.vertex,
     fragmentShader: sectorShaders.nutPrimitive.fragment,
     side: THREE.DoubleSide
@@ -75,6 +82,7 @@ export function createMaterials(treeIndexCount: number): Materials {
   const quadMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Quads)',
     clipping: true,
+    clippingPlanes,
     vertexShader: sectorShaders.quadPrimitive.vertex,
     fragmentShader: sectorShaders.quadPrimitive.fragment,
     side: THREE.DoubleSide
@@ -83,6 +91,7 @@ export function createMaterials(treeIndexCount: number): Materials {
   const generalRingMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (General rings)',
     clipping: true,
+    clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
@@ -99,6 +108,7 @@ export function createMaterials(treeIndexCount: number): Materials {
   const coneMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Cone)',
     clipping: true,
+    clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
@@ -113,6 +123,7 @@ export function createMaterials(treeIndexCount: number): Materials {
   const eccentricConeMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Eccentric cone)',
     clipping: true,
+    clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
@@ -127,6 +138,7 @@ export function createMaterials(treeIndexCount: number): Materials {
   const ellipsoidSegmentMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Ellipsoid segments)',
     clipping: true,
+    clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
@@ -141,6 +153,7 @@ export function createMaterials(treeIndexCount: number): Materials {
   const generalCylinderMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (General cylinder)',
     clipping: true,
+    clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
@@ -155,6 +168,7 @@ export function createMaterials(treeIndexCount: number): Materials {
   const trapeziumMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Trapezium)',
     clipping: true,
+    clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
@@ -169,6 +183,7 @@ export function createMaterials(treeIndexCount: number): Materials {
   const torusSegmentMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Torus segment)',
     clipping: true,
+    clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
@@ -187,6 +202,7 @@ export function createMaterials(treeIndexCount: number): Materials {
   const sphericalSegmentMaterial = new THREE.ShaderMaterial({
     name: 'Primitives (Spherical segment)',
     clipping: true,
+    clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
@@ -201,17 +217,19 @@ export function createMaterials(treeIndexCount: number): Materials {
   const triangleMeshMaterial = new THREE.ShaderMaterial({
     name: 'Triangle meshes',
     clipping: true,
+    clippingPlanes,
     extensions: {
       derivatives: true
     },
     side: THREE.DoubleSide,
     fragmentShader: sectorShaders.detailedMesh.fragment,
-    vertexShader: sectorShaders.detailedMesh.vertex,
+    vertexShader: sectorShaders.detailedMesh.vertex
   });
 
   const instancedMeshMaterial = new THREE.ShaderMaterial({
     name: 'Instanced meshes',
     clipping: true,
+    clippingPlanes,
     extensions: {
       derivatives: true
     },
@@ -223,8 +241,9 @@ export function createMaterials(treeIndexCount: number): Materials {
   const simpleMaterial = new THREE.ShaderMaterial({
     name: 'Low detail material',
     clipping: true,
+    clippingPlanes,
     fragmentShader: sectorShaders.simpleMesh.fragment,
-    vertexShader: sectorShaders.simpleMesh.vertex,
+    vertexShader: sectorShaders.simpleMesh.vertex
   });
 
   const allMaterials = {
@@ -250,7 +269,8 @@ export function createMaterials(treeIndexCount: number): Materials {
       dataTextureSize,
       overrideColorPerTreeIndex,
       overrideVisibilityPerTreeIndex,
-      matCapTexture
+      matCapTexture,
+      renderMode
     );
   }
 
@@ -262,7 +282,8 @@ function updateDefinesAndUniforms(
   dataTextureSize: THREE.Vector2,
   overrideColorPerTreeIndex: THREE.DataTexture,
   overrideVisibilityPerTreeIndex: THREE.DataTexture,
-  matCapTexture: THREE.Texture
+  matCapTexture: THREE.Texture,
+  renderMode: RenderMode
 ) {
   const oldUniforms = material.uniforms;
   material.setValues({
@@ -270,7 +291,7 @@ function updateDefinesAndUniforms(
     uniforms: {
       ...oldUniforms,
       renderMode: {
-        value: RenderMode.Color
+        value: renderMode
       },
       colorDataTexture: {
         value: overrideColorPerTreeIndex
