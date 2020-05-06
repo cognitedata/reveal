@@ -20,6 +20,6 @@ export async function loadCadModelByUrl(baseUrl: string): Promise<CadModel> {
     modelMatrix: DefaultSectorRotationMatrix,
     inverseModelMatrix: DefaultInverseSectorRotationMatrix
   };
-  const model = await CadModelImpl.create(retriever, transform);
+  const model = await CadModelImpl.create(baseUrl, retriever, transform);
   return model;
 }
