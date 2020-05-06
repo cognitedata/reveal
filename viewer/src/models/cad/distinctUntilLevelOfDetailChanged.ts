@@ -8,7 +8,7 @@ import { WantedSector } from '../../data/model/WantedSector';
 
 export function distinctUntilLevelOfDetailChanged() {
   return pipe(
-    groupBy((sector: WantedSector) => sector.sectorId),
+    groupBy((sector: WantedSector) => sector.metadata.id),
     mergeMap((group: GroupedObservable<number, WantedSector>) => group.pipe(distinctUntilKeyChanged('levelOfDetail')))
   );
 }
