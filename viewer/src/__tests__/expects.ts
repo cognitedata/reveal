@@ -71,25 +71,17 @@ export function expectContainsSectorsWithLevelOfDetail(
   expectedSimple: number[],
   expectedDetailed: number[]
 ) {
-  for (const sectorId of expectedSimple) {
+  for (const id of expectedSimple) {
     expect(sectors).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({
-          sectorId,
-          levelOfDetail: LevelOfDetail.Simple,
-          metadata: expect.anything()
-        })
+        expect.objectContaining({ metadata: expect.objectContaining({ id }), levelOfDetail: LevelOfDetail.Simple })
       ])
     );
   }
-  for (const sectorId of expectedDetailed) {
+  for (const id of expectedDetailed) {
     expect(sectors).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({
-          sectorId,
-          levelOfDetail: LevelOfDetail.Detailed,
-          metadata: expect.anything()
-        })
+        expect.objectContaining({ metadata: expect.objectContaining({ id }), levelOfDetail: LevelOfDetail.Detailed })
       ])
     );
   }

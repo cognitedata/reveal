@@ -24,6 +24,9 @@ export class RateLimiter {
   }
 
   release() {
+    if (this.slotsInUse === 0) {
+      throw new Error('Unbalanced call to release() - must call acquire() first');
+    }
     this.slotsInUse -= 1;
     const next = this.queue.shift();
     if (next) {

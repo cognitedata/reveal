@@ -7,6 +7,7 @@ import { SectorScene } from './SectorScene';
 import { ModelDataRetriever } from '../../datasources/ModelDataRetriever';
 
 export interface CadModel {
+  identifier: string;
   dataRetriever: ModelDataRetriever;
   modelTransformation: SectorModelTransformation;
   scene: SectorScene;

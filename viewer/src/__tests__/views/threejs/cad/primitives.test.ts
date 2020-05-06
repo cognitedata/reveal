@@ -7,9 +7,10 @@ import { createPrimitives } from '../../../../views/threejs/cad/primitives';
 import { PrimitiveAttributes } from '../../../../workers/types/parser.types';
 import { createEmptySector } from '../../../models/cad/emptySector';
 import { createMaterials } from '../../../../views/threejs/cad/materials';
+import { RenderMode } from '../../../../views/threejs/materials';
 
 describe('createPrimitives', () => {
-  const materials = createMaterials(64);
+  const materials = createMaterials(64, RenderMode.Color, []);
   let emptySector: Sector;
 
   beforeEach(() => {

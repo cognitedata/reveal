@@ -7,8 +7,8 @@ import { SectorQuads, SectorMetadata, Sector } from '../../models/cad/types';
 import { ParseSectorResult, ParseCtmResult } from '../../workers/types/parser.types';
 
 export interface ParsedSector {
-  sectorId: number;
+  cadModelIdentifier: string;
+  metadata: SectorMetadata;
   data: null | ParseSectorResult | ParseCtmResult | Sector | SectorQuads;
   levelOfDetail: LevelOfDetail;
-  metadata: SectorMetadata;
 }

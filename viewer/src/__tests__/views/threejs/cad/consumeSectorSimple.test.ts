@@ -6,8 +6,9 @@ import { SectorQuads } from '../../../../models/cad/types';
 import { consumeSectorSimple } from '../../../../views/threejs/cad/consumeSectorSimple';
 import { createMaterials } from '../../../../views/threejs/cad/materials';
 import 'jest-extended';
+import { RenderMode } from '../../../../views/threejs/materials';
 
-const materials = createMaterials(64);
+const materials = createMaterials(64, RenderMode.Color, []);
 
 describe('consumeSectorDetailed', () => {
   test('no geometry, does not add new nodes', () => {
