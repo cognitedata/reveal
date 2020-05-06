@@ -142,7 +142,7 @@ pub fn parse_and_convert_f3df(input: &[u8]) -> Result<SimpleSectorData, JsValue>
     };
 
     let renderable_sector = f3df::renderables::convert_sector(&sector);
-    let faces_as_f32 = unsafe {
+    let faces_as_f32: &[f32] = unsafe {
         // At this point, we do not want to pass Vec<Face> to JS,
         // because it will turn into an inefficient array of objects.
         // Instead, we want to use the more performant Float32Array to hold the data and only make
