@@ -3,24 +3,46 @@
  */
 
 import * as THREE from 'three';
-import * as reveal_threejs from '@cognite/reveal/threejs';
-import { BoundingBoxClipper } from '@cognite/reveal/threejs';
+import { BoundingBoxClipper, RevealManager, CadNode } from '@cognite/reveal/threejs';
 import CameraControls from 'camera-controls';
-import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams, createClientIfNecessary } from './utils/loaders';
 import dat from 'dat.gui';
+import { getParamsFromURL } from './utils/example-helpers';
+import { CogniteClient } from '@cognite/sdk';
 
 CameraControls.install({ THREE });
 
 async function main() {
-  const urlParams = new URL(location.href).searchParams;
-  const modelIdentifier = createModelIdentifierFromUrlParams(urlParams, '/primitives');
-  const apiKey = urlParams.get('apiKey');
+  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'primitives' });
+  const client = new CogniteClient({ appId: 'reveal.example.simple' });
+  client.loginWithOAuth({ project });
 
   const scene = new THREE.Scene();
-  const cadModel = await loadCadModelFromCdfOrUrl(
-    modelIdentifier,
-    await createClientIfNecessary(modelIdentifier, apiKey)
-  );
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setClearColor('#444');
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  let modelsNeedUpdate = true;
+  const revealManager = new RevealManager(client, () => {
+    modelsNeedUpdate = true;
+  });
+  let model: CadNode;
+  if (modelUrl) {
+    model = await revealManager.addModelFromUrl(modelUrl);
+  } else if (modelRevision) {
+    model = await revealManager.addModelFromCdf(modelRevision);
+  } else {
+    throw new Error('Need to provide either project & model OR modelUrl as query parameters');
+  }
+  scene.add(model);
+
+  const { position, target, near, far } = model.suggestCameraConfig();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
+  const controls = new CameraControls(camera, renderer.domElement);
+  controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
+  controls.update(0.0);
+  camera.updateMatrixWorld();
+  revealManager.update(camera);
 
   const params = {
     clipIntersection: true,
@@ -43,37 +65,10 @@ async function main() {
     params.clipIntersection
   );
 
-  const cadNode = new reveal_threejs.CadNode(cadModel);
-  cadNode.clippingPlanes = boxClipper.clippingPlanes;
-  cadNode.clipIntersection = boxClipper.intersection;
-  cadNode.renderHints = { showSectorBoundingBoxes: false };
-  let sectorsNeedUpdate = true;
-  cadNode.addEventListener('update', () => {
-    sectorsNeedUpdate = true;
-  });
-  scene.add(cadNode);
-
-  const renderer = new THREE.WebGLRenderer();
+  revealManager.clippingPlanes = boxClipper.clippingPlanes;
+  revealManager.clipIntersection = boxClipper.intersection;
   renderer.localClippingEnabled = true;
   // renderer.clippingPlanes = [new THREE.Plane(new THREE.Vector3(0, -1, 0), 0.0)];
-  renderer.setClearColor('#444');
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
-
-  const camera = new THREE.PerspectiveCamera();
-  const { position, target, near, far } = cadNode.suggestCameraConfig();
-  camera.near = near;
-  camera.far = 3 * far;
-  camera.fov = 75;
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  camera.updateMatrixWorld();
-
-  const controls = new CameraControls(camera, renderer.domElement);
-  controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
-  controls.update(0.0);
-  camera.updateMatrixWorld();
-  cadNode.update(camera);
 
   const helpers = new THREE.Group();
   helpers.add(new THREE.PlaneHelper(boxClipper.clippingPlanes[0], 2, 0xff0000));
@@ -90,13 +85,13 @@ async function main() {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
     if (controlsNeedUpdate) {
-      cadNode.update(camera);
+      revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || sectorsNeedUpdate || planesNeedUpdate) {
+    if (controlsNeedUpdate || modelsNeedUpdate || planesNeedUpdate) {
       renderer.render(scene, camera);
       planesNeedUpdate = false;
-      sectorsNeedUpdate = false;
+      modelsNeedUpdate = false;
     }
 
     requestAnimationFrame(render);
@@ -109,7 +104,7 @@ async function main() {
     .add(params, 'clipIntersection')
     .name('clip intersection')
     .onChange(value => {
-      cadNode.clipIntersection = value;
+      revealManager.clipIntersection = value;
       boxClipper.intersection = value;
       planesNeedUpdate = true;
     });

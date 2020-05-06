@@ -11,12 +11,15 @@ import { traverseDepthFirst } from '../../../utils/traversal';
 import { fromThreeMatrix } from '../../../views/threejs/utilities';
 import { mat4 } from 'gl-matrix';
 import { Box3 } from '../../../utils/Box3';
+import { CadModel } from '../../../models/cad/CadModel';
+import { ModelDataRetriever } from '../../../datasources/ModelDataRetriever';
 
 describe('GpuOrderSectorsByVisibilityCoverage', () => {
   const glContext: WebGLRenderingContext = require('gl')(64, 64);
   const renderSize = new THREE.Vector2(64, 64);
   const identityTransform = createModelTransformation(new THREE.Matrix4().identity());
   const singleSectorScene = createStubScene([0, [], Box3.fromBounds(-1, -1, -1, 1, 1, 1)]);
+  const cadModel = createStubModel('model', singleSectorScene, identityTransform);
 
   test('orderSectorsByVisibility() returns empty array when there are no models', () => {
     // Arrange
@@ -33,7 +36,7 @@ describe('GpuOrderSectorsByVisibilityCoverage', () => {
   test('rendered result has no sectors, returns empty array', () => {
     // Arrange
     const util = new GpuOrderSectorsByVisibilityCoverage({ glContext, renderSize });
-    util.addModel(singleSectorScene, identityTransform);
+    util.setModels([cadModel]);
     const camera = new THREE.PerspectiveCamera();
 
     // Act
@@ -47,7 +50,7 @@ describe('GpuOrderSectorsByVisibilityCoverage', () => {
   test('rendered result has one sector, returns array with priority 1', () => {
     // Arrange
     const util = new GpuOrderSectorsByVisibilityCoverage({ glContext, renderSize });
-    util.addModel(singleSectorScene, identityTransform);
+    util.setModels([cadModel]);
     const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 20.0);
     camera.position.set(0, 0, -10);
     camera.lookAt(0, 0, 0);
@@ -61,16 +64,16 @@ describe('GpuOrderSectorsByVisibilityCoverage', () => {
     expect(result.length).toBe(1);
     expect(result[0].sectorId).toBe(0);
     expect(result[0].priority).toBe(1.0);
-    expect(result[0].scene).toBe(singleSectorScene);
+    expect(result[0].model).toBe(cadModel);
   });
 
   test('two models, rendered result returns value at offset', () => {
     // Arrange
-    const model1 = singleSectorScene;
-    const model2 = createStubScene([0, [], Box3.fromBounds(-1, -1, -1, 1, 1, 1)]);
+    const scene2 = createStubScene([0, [], Box3.fromBounds(-1, -1, -1, 1, 1, 1)]);
+    const model1 = createStubModel('model1', singleSectorScene, identityTransform);
+    const model2 = createStubModel('model2', scene2, identityTransform);
     const util = new GpuOrderSectorsByVisibilityCoverage({ glContext, renderSize });
-    util.addModel(model1, identityTransform);
-    util.addModel(model2, identityTransform);
+    util.setModels([model1, model2]);
     const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 20.0);
     camera.position.set(0, 0, -10);
     camera.lookAt(0, 0, 0);
@@ -84,7 +87,7 @@ describe('GpuOrderSectorsByVisibilityCoverage', () => {
     expect(result.length).toBe(1);
     expect(result[0].sectorId).toBe(0);
     expect(result[0].priority).toBe(1.0);
-    expect(result[0].scene).toBe(model2);
+    expect(result[0].model).toBe(model2);
   });
 });
 
@@ -104,4 +107,18 @@ function createModelTransformation(modelTransform?: THREE.Matrix4): SectorModelT
     modelMatrix: fromThreeMatrix(mat4.create(), modelTransform),
     inverseModelMatrix: fromThreeMatrix(mat4.create(), new THREE.Matrix4().getInverse(modelTransform))
   };
+}
+
+function createStubModel(identifier: string, scene: SectorScene, modelTransformation: SectorModelTransformation) {
+  const dataRetriever: ModelDataRetriever = {
+    fetchJson: jest.fn(),
+    fetchData: jest.fn()
+  };
+  const cadModel: CadModel = {
+    identifier,
+    dataRetriever,
+    modelTransformation,
+    scene
+  };
+  return cadModel;
 }

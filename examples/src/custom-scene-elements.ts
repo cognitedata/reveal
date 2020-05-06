@@ -9,6 +9,9 @@ import * as reveal_threejs from '@cognite/reveal/threejs';
 
 import CameraControls from 'camera-controls';
 import { createPathNode, createTextSpriteNode } from './utils/scene-elements';
+import { getParamsFromURL } from './utils/example-helpers';
+import { CogniteClient } from '@cognite/sdk';
+import { RevealManager, CadNode } from '@cognite/reveal/threejs';
 
 CameraControls.install({ THREE });
 
@@ -17,19 +20,29 @@ CameraControls.install({ THREE });
  * DOM element through a Canvas in ThreeJS.
  */
 async function main() {
+  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'primitives' });
+  const client = new CogniteClient({ appId: 'reveal.example.custom-scene' });
+  client.loginWithOAuth({ project });
+
   const scene = new THREE.Scene();
+  let modelsNeedUpdate = true;
+  const revealManager = new RevealManager(client, () => {
+    modelsNeedUpdate = true;
+  });
+  let model: CadNode;
+  if (modelUrl) {
+    model = await revealManager.addModelFromUrl(modelUrl);
+  } else if (modelRevision) {
+    model = await revealManager.addModelFromCdf(modelRevision);
+  } else {
+    throw new Error('Need to provide either project & model OR modelUrl as query parameters');
+  }
+  scene.add(model);
+
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.5, 10000);
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#000000');
   renderer.setSize(window.innerWidth, window.innerHeight);
-
-  let modelNeedsUpdate = false;
-  const sectorModel = await reveal.loadCadModelByUrl('/primitives');
-  const sectorModelNode = new reveal_threejs.CadNode(sectorModel);
-  scene.add(sectorModelNode);
-  sectorModelNode.addEventListener('update', () => {
-    modelNeedsUpdate = true;
-  });
 
   const controls = new CameraControls(camera, renderer.domElement);
   const pos = new THREE.Vector3(100, 100, 100);
@@ -62,10 +75,10 @@ async function main() {
     const controlsNeedUpdate = controls.update(delta);
 
     if (controlsNeedUpdate) {
-      sectorModelNode.update(camera);
+      revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || modelNeedsUpdate) {
+    if (controlsNeedUpdate || modelsNeedUpdate) {
       renderer.render(scene, camera);
     }
 

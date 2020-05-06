@@ -4,43 +4,47 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { CadNode, SsaoEffect, SsaoPassType } from '@cognite/reveal/threejs';
+import { CadNode, SsaoEffect, SsaoPassType, RevealManager } from '@cognite/reveal/threejs';
 import dat from 'dat.gui';
-import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams, createClientIfNecessary } from './utils/loaders';
+import { getParamsFromURL } from './utils/example-helpers';
+import { CogniteClient } from '@cognite/sdk';
 
 CameraControls.install({ THREE });
 
 async function main() {
-  const urlParams = new URL(location.href).searchParams;
-  const modelIdentifier = createModelIdentifierFromUrlParams(urlParams, '/primitives');
-  const apiKey = urlParams.get('apiKey');
+  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'primitives' });
+  const client = new CogniteClient({ appId: 'reveal.example.ssao' });
+  client.loginWithOAuth({ project });
 
   const scene = new THREE.Scene();
-  const cadModel = await loadCadModelFromCdfOrUrl(
-    modelIdentifier,
-    await createClientIfNecessary(modelIdentifier, apiKey)
-  );
-  const cadNode = new CadNode(cadModel);
-  let modelNeedsUpdate = false;
-  cadNode.addEventListener('update', () => {
-    modelNeedsUpdate = true;
+  let modelsNeedUpdate = true;
+  const revealManager = new RevealManager(client, () => {
+    modelsNeedUpdate = true;
   });
+  let model: CadNode;
+  if (modelUrl) {
+    model = await revealManager.addModelFromUrl(modelUrl);
+  } else if (modelRevision) {
+    model = await revealManager.addModelFromCdf(modelRevision);
+  } else {
+    throw new Error('Need to provide either project & model OR modelUrl as query parameters');
+  }
+  scene.add(model);
 
-  scene.add(cadNode);
-
-  const renderer = new THREE.WebGLRenderer();
   const effect = new SsaoEffect();
-  renderer.setClearColor('#000');
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setClearColor('#444');
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const { position, target, near, far } = cadNode.suggestCameraConfig();
+  const { position, target, near, far } = model.suggestCameraConfig();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
   controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
-  cadNode.update(camera);
+  revealManager.update(camera);
+
   const clock = new THREE.Clock();
 
   let effectNeedsUpdate = false;
@@ -84,10 +88,10 @@ async function main() {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
     if (controlsNeedUpdate) {
-      cadNode.update(camera);
+      revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || modelNeedsUpdate || effectNeedsUpdate) {
+    if (controlsNeedUpdate || modelsNeedUpdate || effectNeedsUpdate) {
       effect.render(renderer, scene, camera, renderSettings.pass);
       effectNeedsUpdate = false;
     }
