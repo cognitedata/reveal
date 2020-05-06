@@ -17,7 +17,7 @@ import {
   createDefaultRenderOptions
 } from './utils/renderer-debug-widget';
 import { CogniteClient } from '@cognite/sdk';
-import { SimpleRevealManager, CadNode } from '@cognite/reveal/threejs';
+import { RevealManager, CadNode } from '@cognite/reveal/threejs';
 import { getParamsFromURL } from './utils/example-helpers';
 import { PotreeNodeWrapper, PotreeGroupWrapper } from '@cognite/reveal/internal';
 
@@ -50,7 +50,7 @@ async function main() {
   let modelsNeedUpdate = true;
 
   Potree.XHRFactory.config.customHeaders.push({ header: 'MyDummyHeader', value: 'MyDummyValue' });
-  const revealManager = new SimpleRevealManager(client, () => {
+  const revealManager = new RevealManager(client, () => {
     modelsNeedUpdate = true;
   });
   let pointCloud: [PotreeGroupWrapper, PotreeNodeWrapper];

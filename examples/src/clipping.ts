@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { BoundingBoxClipper, SimpleRevealManager, CadNode } from '@cognite/reveal/threejs';
+import { BoundingBoxClipper, RevealManager, CadNode } from '@cognite/reveal/threejs';
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
 import { getParamsFromURL } from './utils/example-helpers';
@@ -23,7 +23,7 @@ async function main() {
   document.body.appendChild(renderer.domElement);
 
   let modelsNeedUpdate = true;
-  const revealManager = new SimpleRevealManager(client, () => {
+  const revealManager = new RevealManager(client, () => {
     modelsNeedUpdate = true;
   });
   let model: CadNode;

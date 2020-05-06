@@ -11,7 +11,7 @@ import CameraControls from 'camera-controls';
 import { createPathNode, createTextSpriteNode } from './utils/scene-elements';
 import { getParamsFromURL } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
-import { SimpleRevealManager, CadNode } from '@cognite/reveal/threejs';
+import { RevealManager, CadNode } from '@cognite/reveal/threejs';
 
 CameraControls.install({ THREE });
 
@@ -26,7 +26,7 @@ async function main() {
 
   const scene = new THREE.Scene();
   let modelsNeedUpdate = true;
-  const revealManager = new SimpleRevealManager(client, () => {
+  const revealManager = new RevealManager(client, () => {
     modelsNeedUpdate = true;
   });
   let model: CadNode;

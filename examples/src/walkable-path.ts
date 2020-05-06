@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import { CogniteClient, HttpError } from '@cognite/sdk';
-import { toThreeVector3, SimpleRevealManager, CadNode } from '@cognite/reveal/threejs';
+import { toThreeVector3, RevealManager, CadNode } from '@cognite/reveal/threejs';
 import { vec3 } from 'gl-matrix';
 import { SectorModelTransformation } from '@cognite/reveal/models/cad/types';
 import { GUI, GUIController } from 'dat.gui';
@@ -44,7 +44,7 @@ async function main() {
   document.body.appendChild(renderer.domElement);
 
   let modelsNeedUpdate = true;
-  const revealManager = new SimpleRevealManager(client, () => {
+  const revealManager = new RevealManager(client, () => {
     modelsNeedUpdate = true;
   });
   let cameraConfig;

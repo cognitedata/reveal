@@ -4,18 +4,13 @@
 
 import { CogniteClient, CogniteInternalId, CogniteExternalId, IdEither } from '@cognite/sdk';
 import { HttpHeaders } from '@cognite/sdk/dist/src/utils/http/basicHttpClient';
+import { File3dFormat } from '../data/model/File3dFormat';
 
 export type Model3dOutput = {
-  readonly format: CogniteWellknown3dFormat | string;
+  readonly format: File3dFormat | string;
   readonly version: number;
   readonly blobId: CogniteInternalId;
 };
-
-export type CogniteUniformId = CogniteInternalId | CogniteExternalId;
-export enum CogniteWellknown3dFormat {
-  EptPointCloud = 'ept-pointcloud',
-  RevealCadModel = 'reveal-directory'
-}
 
 export class Model3dOutputList {
   public readonly model: CogniteModel3dIdentifier;
@@ -33,7 +28,7 @@ export class Model3dOutputList {
    * @param supportedVersions   Optional list of supported version. If not provided all versions are considered.
    */
   public findMostRecentOutput(
-    outputFormat: CogniteWellknown3dFormat | string,
+    outputFormat: File3dFormat | string,
     supportedVersions?: number[]
   ): Model3dOutput | undefined {
     const candidates = this.outputs.filter(
@@ -51,7 +46,7 @@ type CogniteModel3dIdentifier = { id: CogniteInternalId } | { externalId: Cognit
 
 interface OutputsRequest {
   models: IdEither[];
-  formats?: (string | CogniteWellknown3dFormat)[];
+  formats?: (string | File3dFormat)[];
 }
 
 interface OutputsResponse {
@@ -96,10 +91,7 @@ export class CogniteClient3dExtensions {
     return url;
   }
 
-  public async getOutputs(
-    modelRevisionId: IdEither,
-    formats?: (CogniteWellknown3dFormat | string)[]
-  ): Promise<Model3dOutputList> {
+  public async getOutputs(modelRevisionId: IdEither, formats?: (File3dFormat | string)[]): Promise<Model3dOutputList> {
     const url = `/api/playground/projects/${this.client.project}/3d/v2/outputs`;
     const request: OutputsRequest = {
       models: [modelRevisionId],

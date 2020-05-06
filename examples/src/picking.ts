@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { CadNode, intersectCadNodes, SimpleRevealManager, ModelNodeAppearance } from '@cognite/reveal/threejs';
+import { CadNode, intersectCadNodes, RevealManager, ModelNodeAppearance } from '@cognite/reveal/threejs';
 import { getParamsFromURL } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 
@@ -26,7 +26,7 @@ async function main() {
   const pickedObjects: Set<THREE.Mesh> = new Set();
 
   let modelsNeedUpdate = true;
-  const revealManager = new SimpleRevealManager(client, () => {
+  const revealManager = new RevealManager(client, () => {
     modelsNeedUpdate = true;
   });
 

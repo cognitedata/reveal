@@ -29,7 +29,7 @@ async function main() {
     costLimit: 70 * 1024 * 1024,
     logCallback: console.log
   });
-  const revealManager = new reveal_threejs.SimpleRevealManager(
+  const revealManager = new reveal_threejs.RevealManager(
     client,
     () => {
       modelsNeedUpdate = true;

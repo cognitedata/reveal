@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { CadNode, SsaoEffect, SsaoPassType, SimpleRevealManager } from '@cognite/reveal/threejs';
+import { CadNode, SsaoEffect, SsaoPassType, RevealManager } from '@cognite/reveal/threejs';
 import dat from 'dat.gui';
 import { getParamsFromURL } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
@@ -18,7 +18,7 @@ async function main() {
 
   const scene = new THREE.Scene();
   let modelsNeedUpdate = true;
-  const revealManager = new SimpleRevealManager(client, () => {
+  const revealManager = new RevealManager(client, () => {
     modelsNeedUpdate = true;
   });
   let model: CadNode;

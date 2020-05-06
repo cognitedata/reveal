@@ -15,7 +15,7 @@ import { Intersection } from './intersection';
 import RenderController from './RenderController';
 import { intersectCadNodes } from '../threejs';
 import { from3DPositionToRelativeViewportCoordinates } from '../views/threejs/worldToViewport';
-import { RevealManager } from '../views/threejs';
+import { RevealManagerBase } from '../views/threejs';
 import { CadSectorParser } from '../data/parser/CadSectorParser';
 import { SimpleAndDetailedToSector3D } from '../data/transformer/three/SimpleAndDetailedToSector3D';
 import { CachedRepository } from '../repository/cad/CachedRepository';
@@ -44,7 +44,7 @@ export class Cognite3DViewer {
   private readonly controls: ComboControls;
   private readonly sdkClient: CogniteClient;
   private readonly modelDataTransformer: SimpleAndDetailedToSector3D;
-  private readonly revealManager: RevealManager;
+  private readonly revealManager: RevealManagerBase;
   private modelsNeedUpdate = true;
 
   private readonly eventListeners = {
@@ -112,7 +112,7 @@ export class Cognite3DViewer {
     const onDataUpdated = () => {
       this.modelsNeedUpdate = true;
     };
-    this.revealManager = new RevealManager(this.sdkClient, sectorRepository, this.materialManager, onDataUpdated);
+    this.revealManager = new RevealManagerBase(this.sdkClient, sectorRepository, this.materialManager, onDataUpdated);
     this.startPointerEventListeners();
 
     this.animate(0);

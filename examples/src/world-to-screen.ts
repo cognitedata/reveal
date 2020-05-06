@@ -8,7 +8,7 @@ import {
   CadNode,
   HtmlOverlayHelper,
   intersectCadNodes,
-  SimpleRevealManager,
+  RevealManager,
   ModelNodeAppearance
 } from '@cognite/reveal/threejs';
 import { MOUSE } from 'three';
@@ -34,7 +34,7 @@ async function main() {
   document.body.appendChild(canvas);
 
   let modelsNeedUpdate = true;
-  const revealManager = new SimpleRevealManager(client, () => {
+  const revealManager = new RevealManager(client, () => {
     modelsNeedUpdate = true;
   });
 

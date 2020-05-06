@@ -4,7 +4,7 @@
 
 import { getParamsFromURL } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
-import { SimpleRevealManager, CadNode } from '@cognite/reveal/threejs';
+import { RevealManager, CadNode } from '@cognite/reveal/threejs';
 
 async function main() {
   const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'primitives' });
@@ -12,7 +12,7 @@ async function main() {
   client.loginWithOAuth({ project });
 
   console.log(project, modelUrl, modelRevision);
-  const revealManager = new SimpleRevealManager(client, () => {});
+  const revealManager = new RevealManager(client, () => {});
   let model: CadNode;
   if (modelUrl) {
     model = await revealManager.addModelFromUrl(modelUrl);

@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import { getParamsFromURL } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
-import { SimpleRevealManager, CadNode } from '@cognite/reveal/threejs';
+import { RevealManager, CadNode } from '@cognite/reveal/threejs';
 
 CameraControls.install({ THREE });
 
@@ -36,7 +36,7 @@ async function main() {
   document.body.appendChild(renderer.domElement);
 
   let modelsNeedUpdate = true;
-  const revealManager = new SimpleRevealManager(client, () => {
+  const revealManager = new RevealManager(client, () => {
     modelsNeedUpdate = true;
   });
   let model: CadNode;

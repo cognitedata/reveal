@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { CadNode, SimpleRevealManager, ModelNodeAppearance } from '@cognite/reveal/threejs';
+import { CadNode, RevealManager, ModelNodeAppearance } from '@cognite/reveal/threejs';
 import dat from 'dat.gui';
 import { getParamsFromURL } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
@@ -23,7 +23,7 @@ async function main() {
     treeIndices: '1, 2, 8, 12'
   };
   let modelsNeedUpdate = true;
-  const revealManager = new SimpleRevealManager(client, () => {
+  const revealManager = new RevealManager(client, () => {
     modelsNeedUpdate = true;
   });
   let model: CadNode;
