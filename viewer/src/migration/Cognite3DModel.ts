@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-import { Color } from './types';
+import { Color, WellKnownModelTypes } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { CadModel } from '../models/cad/CadModel';
 import { toThreeJsBox3, CadNode, toThreeMatrix4, ModelNodeAppearance } from '../views/threejs';
@@ -13,8 +13,11 @@ import { CadLoadingHints } from '../models/cad/CadLoadingHints';
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { CogniteClient } from '@cognite/sdk';
 import { SectorQuads, Sector } from '../models/cad/types';
+import { CogniteModelBase } from './CogniteModelBase';
 
-export class Cognite3DModel extends THREE.Object3D {
+export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
+  public readonly type: WellKnownModelTypes = WellKnownModelTypes.CAD;
+
   get renderHints(): CadRenderHints {
     return this.cadNode.renderHints;
   }
@@ -78,6 +81,10 @@ export class Cognite3DModel extends THREE.Object3D {
 
     const bounds = this.cadModel.scene.root.bounds;
     return toThreeJsBox3(box || new THREE.Box3(), bounds, this.cadModel.modelTransformation);
+  }
+
+  getModelBoundingBox(): THREE.Box3 {
+    return this.getBoundingBox();
   }
 
   updateNodeIdMaps(sector: { lod: string; data: Sector | SectorQuads }) {
