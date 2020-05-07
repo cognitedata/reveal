@@ -65,7 +65,7 @@
   },
   "dependencies": {
     "@cognite/potree-core": "^1.1.1",
-    "@cognite/sdk": "^2.26.0",
+    "@cognite/sdk": "^2.27.1",
     "@cognite/three-combo-controls": "^1.4.1",
     "@tweenjs/tween.js": "^18.5.0",
     "@types/lodash": "^4.14.149",
