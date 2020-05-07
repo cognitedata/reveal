@@ -109,16 +109,6 @@ macro_rules! triangle_mesh_types{
             impl $struct_name {
                 $(
                 pub fn $field_name(&self) -> $wasm_output_type {
-                    /*let data_as_u8: &[u8] = unsafe {
-                        std::slice::from_raw_parts(
-                            self.$field_name.as_ptr() as *const u8,
-                            self.$field_name.len() * std::mem::size_of::<$field_type>(),
-                        )
-                    };
-                    Uint8Array::from(data_as_u8)*/
-                    //Float32Array::from(&self.$field_name[..])
-                    //convert_to_js_type!(self, $field_name, $field_type, $wasm_output_type)
-                    //Float32Array::from(&self.$field_name[..])
                     convert_to_js_type!(self, $field_name, $field_type, $wasm_output_type)
                 }
                 )*
@@ -184,35 +174,6 @@ macro_rules! convert_to_js_type{
 
         Float32Array::from(&data[..])
     }};
-}
-
-triangle_mesh_types!{
-    {
-        TriangleMesh,
-        [
-            tree_index: Vec<f32> => Float32Array,
-            file_id: Vec<u64> => Float64Array,
-            size: Vec<f32> => Float32Array,
-            triangle_count: Vec<u64> => Float64Array,
-            color: Vec<[u8; 4]> => Uint8Array
-        ]
-    }
-
-    {
-        InstancedMesh,
-        [
-            tree_index: Vec<f32> => Float32Array,
-            size: Vec<f32> => Float32Array,
-            file_id: Vec<u64> => Float64Array,
-            triangle_count: Vec<f64> => Float64Array,
-            triangle_offset: Vec<f64> => Float64Array,
-            color: Vec<[u8; 4]> => Uint8Array,
-            translation: Vec<Vector3> => Float32Array,
-            rotation: Vec<Vector3> => Float32Array,
-            scale: Vec<Vector3> => Float32Array,
-            instance_matrix: Vec<Matrix4> => Float32Array
-        ]
-    }
 }
         
 
@@ -362,12 +323,13 @@ macro_rules! new_geometry_types {
             $(
             pub fn $collection_attributes(&self) -> Map {
                 let mut offset = 0;
+                let mut size = 0;
                 let map = Map::new();
                 $(
                     {
-                        let size = std::mem::size_of::<$field_type>();
-                        map.set(&JsValue::from(to_camel_case(stringify!($field_name))), &JsValue::from(Attribute{size, offset}));
                         offset += size;
+                        size = std::mem::size_of::<$field_type>();
+                        map.set(&JsValue::from(to_camel_case(stringify!($field_name))), &JsValue::from(Attribute{size, offset}));
                     }
                 )*
                 map
@@ -404,6 +366,34 @@ macro_rules! new_geometry_types {
     };
 }
 
+triangle_mesh_types!{
+    {
+        TriangleMesh,
+        [
+            tree_index: Vec<f32> => Float32Array,
+            file_id: Vec<u64> => Float64Array,
+            size: Vec<f32> => Float32Array,
+            triangle_count: Vec<u64> => Float64Array,
+            color: Vec<[u8; 4]> => Uint8Array
+        ]
+    }
+
+    {
+        InstancedMesh,
+        [
+            tree_index: Vec<f32> => Float32Array,
+            size: Vec<f32> => Float32Array,
+            file_id: Vec<u64> => Float64Array,
+            triangle_count: Vec<f64> => Float64Array,
+            triangle_offset: Vec<f64> => Float64Array,
+            color: Vec<[u8; 4]> => Uint8Array,
+            translation: Vec<Vector3> => Float32Array,
+            rotation: Vec<Vector3> => Float32Array,
+            scale: Vec<Vector3> => Float32Array,
+            instance_matrix: Vec<Matrix4> => Float32Array
+        ]
+    }
+}
 
 new_geometry_types! {
     {
