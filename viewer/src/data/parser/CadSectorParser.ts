@@ -31,8 +31,6 @@ export class CadSectorParser {
         filter(data => data.format === 'ctm'),
         flatMap(data => this.parseCtm(data.data))
       );
-
-
       return merge(i3dObservable, f3dObservable, ctmObservable);
     });
   }

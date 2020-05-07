@@ -17,8 +17,6 @@ export function consumeSectorDetailed(sector: Sector, metadata: SectorMetadata, 
     obj.add(primtiveRoot);
   }
 
-  console.log(obj);
-
   const triangleMeshes = createTriangleMeshes(sector.triangleMeshes, bounds, materials.triangleMesh);
   for (const triangleMesh of triangleMeshes) {
     obj.add(triangleMesh);

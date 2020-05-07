@@ -3,7 +3,7 @@
  */
 
 import { ParsedPrimitives } from '../../../workers/types/parser.types';
-import { Sector, } from '../../../models/cad/types';
+import { Sector } from '../../../models/cad/types';
 
 export function createEmptyPrimitive(): ParsedPrimitives {
   return {
@@ -33,25 +33,6 @@ export function createEmptyPrimitive(): ParsedPrimitives {
     trapeziumAttributes: new Map(),
   }
 }
-
-/*
-instanceMeshes: {
-    fileIds: Float64Array;
-    treeIndices: Float32Array;
-    colors: Uint8Array;
-    triangleOffsets: Float64Array;
-    triangleCounts: Float64Array;
-    sizes: Float32Array;
-    instanceMatrices: Float32Array;
-  };
-  triangleMeshes: {
-    fileIds: Float64Array;
-    treeIndices: Float32Array;
-    colors: Uint8Array;
-    triangleCounts: Float64Array;
-    sizes: Float32Array;
-  };
-*/
 
 export function createEmptySector(): Sector {
   return {

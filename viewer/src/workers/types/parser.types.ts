@@ -2,8 +2,6 @@
  * Copyright 2020 Cognite AS
  */
 
-import * as rustTypes from '../../../pkg';
-
 export interface ParseRootSectorArguments {
   parseRootSector: {
     buffer: ArrayBuffer;
