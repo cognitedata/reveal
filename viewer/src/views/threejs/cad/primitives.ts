@@ -19,8 +19,6 @@ export function* createPrimitives(sector: Sector, materials: Materials) {
 
   const primitives = sector.primitives;
 
-  console.log(materials);
-
   if (hasAny(primitives.boxCollection)) {
     yield createBoxes(primitives.boxCollection, primitives.boxAttributes, materials.box);
   }
@@ -65,15 +63,15 @@ function hasAny(collection: Uint8Array) {
 
 function splitMatrix(attributes: Map<string, ParsePrimitiveAttribute>) {
   
+  const matrixColumns = 4; 
+
   var matrixAttribute = attributes.get('instanceMatrix');
 
-  if(matrixAttribute == undefined){
-    return;
-  }
+  if(matrixAttribute == undefined) return;
 
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < matrixColumns; i++) {
 
-    const size = matrixAttribute!.size / 4;
+    const size = matrixAttribute!.size / matrixColumns;
     const columnAttribute = {
       size: size,
       offset: matrixAttribute!.offset + size * i
@@ -81,15 +79,13 @@ function splitMatrix(attributes: Map<string, ParsePrimitiveAttribute>) {
   
     attributes.set('instanceMatrix_column_' + i, columnAttribute);
   }
+
+  attributes.delete("instanceMatrix");
 }
 
 function setAttributes(geometry: THREE.InstancedBufferGeometry, collection: Uint8Array, attributes: Map<string, ParsePrimitiveAttribute>) {
   
   const attributesByteSize = Array.from(attributes.values()).reduce((a, b) => a + b.size, 0);
-
-  for (const attr of attributes) {
-      console.log(attr[0], ": ", attr[1]);
-  }
 
   splitMatrix(attributes);
 
@@ -269,6 +265,7 @@ function calcLODDistance(size: number, lodLevel: number, numLevels: number): num
 }
 
 function createTorusSegments(torusSegmentCollection: Uint8Array, torusSegmentAttributes: Map<string, ParsePrimitiveAttribute>, material: THREE.ShaderMaterial) {
+  
   const sizes = getTorusSizes(torusSegmentCollection, torusSegmentAttributes);
   if (!sizes) {
     throw new Error('Torus segments are missing size attribute');
@@ -277,18 +274,18 @@ function createTorusSegments(torusSegmentCollection: Uint8Array, torusSegmentAtt
   const lod = new THREE.LOD();
   lod.name = 'Primitives (TorusSegments)';
 
+
   for (const [level, torus] of torusLODs.entries()) {
     const geometry = new THREE.InstancedBufferGeometry();
     geometry.setIndex(torus.index);
     geometry.setAttribute('position', torus.position);
+    
     setAttributes(geometry, torusSegmentCollection, torusSegmentAttributes);
-
+    
     const mesh = new THREE.Mesh(geometry, material);
     mesh.frustumCulled = false;
-    // TODO consider removing if not used in shader
-    mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
     mesh.name = `Primitives (TorusSegments) - LOD ${level}`;
-
+    
     lod.addLevel(mesh, calcLODDistance(biggestTorus, level, torusLODs.length));
   }
 
@@ -309,7 +306,7 @@ function getTorusSizes(torusSegmentCollection: Uint8Array, torusSegmentAttribute
   const sizeAttributeOffset = sizeAttribute.offset;
 
   for (var i = 0; i < numberOfTorusSegments; i++){
-    sizes[i] = collectionView.getFloat32(i * collectionStride + sizeAttributeOffset!);
+    sizes[i] = collectionView.getFloat32(i * collectionStride + sizeAttributeOffset!, true);
   }
 
   return sizes;
