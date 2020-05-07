@@ -4,47 +4,55 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import * as reveal_threejs from '@cognite/reveal/threejs';
-import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams, createClientIfNecessary } from './utils/loaders';
+import { getParamsFromURL } from './utils/example-helpers';
+import { CogniteClient } from '@cognite/sdk';
+import { RevealManager, CadNode } from '@cognite/reveal/threejs';
 
 CameraControls.install({ THREE });
 
 async function main() {
-  const urlParams = new URL(location.href).searchParams;
-  const modelIdentifier = createModelIdentifierFromUrlParams(urlParams, '/primitives');
+  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'primitives' });
+  const client = new CogniteClient({ appId: 'reveal.example.simple' });
+  client.loginWithOAuth({ project });
 
   const scene = new THREE.Scene();
-  const cadModel = await loadCadModelFromCdfOrUrl(modelIdentifier, await createClientIfNecessary(modelIdentifier));
-  const cadNode = new reveal_threejs.CadNode(cadModel);
-  let sectorsNeedUpdate = true;
-  cadNode.addEventListener('update', () => {
-    sectorsNeedUpdate = true;
+  let modelsNeedUpdate = true;
+  const revealManager = new RevealManager(client, () => {
+    modelsNeedUpdate = true;
   });
-
-  scene.add(cadNode);
+  let model: CadNode;
+  if (modelUrl) {
+    model = await revealManager.addModelFromUrl(modelUrl);
+  } else if (modelRevision) {
+    model = await revealManager.addModelFromCdf(modelRevision);
+  } else {
+    throw new Error('Need to provide either project & model OR modelUrl as query parameters');
+  }
+  scene.add(model);
 
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#444');
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const { position, target, near, far } = cadNode.suggestCameraConfig();
+  const { position, target, near, far } = model.suggestCameraConfig();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
   controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
-  cadNode.update(camera);
+  revealManager.update(camera);
   const clock = new THREE.Clock();
   const render = async () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
     if (controlsNeedUpdate) {
-      cadNode.update(camera);
+      revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || sectorsNeedUpdate) {
+    if (controlsNeedUpdate || modelsNeedUpdate) {
       renderer.render(scene, camera);
+      modelsNeedUpdate = false;
     }
 
     requestAnimationFrame(render);

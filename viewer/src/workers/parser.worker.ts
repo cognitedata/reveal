@@ -11,6 +11,7 @@ export class ParserWorker {
 
   public async parseSector(buffer: Uint8Array): Promise<ParseSectorResult> {
     const rust = await rustModule;
+    // TODO dragly 2020-04-22 could this be just one call that returns renderables?
     const sectorDataHandle = rust.parse_sector(buffer);
     const sectorData = rust.convert_sector(sectorDataHandle);
 

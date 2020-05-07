@@ -8,6 +8,7 @@ import { createEmptySector } from '../../../models/cad/emptySector';
 import { createMaterials, Materials } from '../../../../views/threejs/cad/materials';
 import { ParsePrimitiveAttribute } from '../../../../workers/types/parser.types';
 import { Mesh, InstancedBufferGeometry, LOD } from 'three';
+import { RenderMode } from '../../../../views/threejs/materials';
 
 function createMockAttributes(): Map<string, ParsePrimitiveAttribute>{
  
@@ -36,7 +37,7 @@ function createMockAttributeBufferFromAttributes(attributes: Map<string, ParsePr
 }
 
 describe('createPrimitives', () => {
-  const materials = createMaterials(64);
+  const materials = createMaterials(64, RenderMode.Color, []);
   let emptySector: Sector;
   let mockAttributes: Map<string, ParsePrimitiveAttribute>;
   let mockAttributeBuffer: Uint8Array;

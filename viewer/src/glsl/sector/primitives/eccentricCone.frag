@@ -2,7 +2,7 @@
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
 #pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
-#pragma glslify: isSliced = require('../../base/isSliced.glsl')
+#pragma glslify: isSliced = require('../../base/isSliced.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: determineColor = require('../../base/determineColor.glsl');
 
 #define PI 3.14159265359
@@ -137,6 +137,6 @@ void main() {
     normal = normalize(cross(A, B));
 #endif
 
-    updateFragmentDepth(p, projectionMatrix);
-    updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragDepthEXT, matCapTexture);
+    float fragDepth = updateFragmentDepth(p, projectionMatrix);
+    updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture);
 }

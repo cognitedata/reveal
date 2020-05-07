@@ -5,7 +5,6 @@ use serde_derive::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::f32::consts::PI;
 
-use serde_wasm_bindgen;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
 

@@ -60,18 +60,25 @@ export async function loadCadModelFromCdfOrUrl(
   } else if (!client) {
     throw new Error('Must provide a SDK client');
   }
-  return reveal.loadCadModelFromCdf(client, model.modelId);
+  return reveal.loadCadModelFromCdf(client, { id: model.modelId });
 }
 
-export async function createClientIfNecessary(modelId: ModelIdentifier): Promise<CogniteClient | undefined> {
+export async function createClientIfNecessary(
+  modelId: ModelIdentifier,
+  apiKey: string | null
+): Promise<CogniteClient | undefined> {
   if (isUrlModelIdentifier(modelId)) {
     // Model is not on CDF
     return undefined;
   }
 
   const client = new CogniteClient({ appId: 'cognite.reveal.example' });
-  client.loginWithOAuth({ project: modelId.project });
-  await client.authenticate();
+  if (apiKey) {
+    client.loginWithApiKey({ project: modelId.project, apiKey });
+  } else {
+    client.loginWithOAuth({ project: modelId.project });
+    await client.authenticate();
+  }
   return client;
 }
 
@@ -87,6 +94,6 @@ export async function loadPointCloudModelFromCdfOrUrl(model: ModelIdentifier): P
     const client = new CogniteClient({ appId: 'cognite.reveal.example' });
     client.loginWithOAuth({ project: model.project });
     await client.authenticate();
-    return reveal.createPointCloudModel(client, model.modelId);
+    return reveal.createPointCloudModel(client, { id: model.modelId });
   }
 }

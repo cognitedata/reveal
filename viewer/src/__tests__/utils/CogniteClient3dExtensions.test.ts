@@ -20,7 +20,7 @@ describe('CogniteClient3dExtensions', () => {
       .post(/.*/)
       .reply(400, {});
 
-    expect(clientExt.getOutputs('externalId')).rejects.toThrowError();
+    expect(clientExt.getOutputs({ externalId: 'externalId' })).rejects.toThrowError();
   });
 
   test('getOutputs() with empty outputs in response, returns empty list', async () => {
@@ -40,7 +40,7 @@ describe('CogniteClient3dExtensions', () => {
       .reply(200, response);
 
     // Act
-    const result = await clientExt.getOutputs('externalId');
+    const result = await clientExt.getOutputs({ externalId: 'externalId' });
 
     // Assert
     expect(result).toEqual({ ...response.items[0] });
@@ -74,7 +74,7 @@ describe('CogniteClient3dExtensions', () => {
       .reply(200, response);
 
     // Act
-    const result = await clientExt.getOutputs(42);
+    const result = await clientExt.getOutputs({ id: 42 });
 
     // Assert
     expect(result).toEqual({ ...response.items[0] });

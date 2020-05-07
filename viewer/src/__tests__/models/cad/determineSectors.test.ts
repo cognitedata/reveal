@@ -13,7 +13,17 @@ import { toThreeMatrix4, fromThreeMatrix, fromThreeVector3 } from '../../../view
 import { LevelOfDetail } from '../../../data/model/LevelOfDetail';
 import { WantedSector } from '../../../data/model/WantedSector';
 import { createSceneFromRoot } from '../../testUtils/createSceneFromRoot';
+import { MaterialManager } from '../../../views/threejs/cad/MaterialManager';
+import { CadModel } from '../../../models/cad/CadModel';
+import {
+  fromCdfToThreeJsCoordinates,
+  fromThreeJsToCdfCoordinates
+} from '../../../views/threejs/cad/fromThreeCameraConfig';
+import { CadNode } from '../../../views/threejs/cad/CadNode';
 
+jest.mock('../../../views/threejs/cad/CadNode');
+jest.mock('../../../views/threejs/cad/MaterialManager');
+const materialManager = new MaterialManager();
 describe('determineSectors', () => {
   const identityTransform: SectorModelTransformation = {
     modelMatrix: mat4.identity(mat4.create()),
@@ -37,6 +47,18 @@ describe('determineSectors', () => {
       facesFile: emptyFacesFile()
     };
     const scene = createSceneFromRoot(root);
+    const cadModel: CadModel = {
+      identifier: 'test-model',
+      dataRetriever: { fetchData: jest.fn(), fetchJson: jest.fn() },
+      modelTransformation: {
+        inverseModelMatrix: fromCdfToThreeJsCoordinates,
+        modelMatrix: fromThreeJsToCdfCoordinates
+      },
+      scene
+    };
+    const cadNode = new CadNode(cadModel, materialManager);
+    Object.defineProperty(cadNode, 'cadModel', { get: jest.fn().mockReturnValue(cadModel) });
+
     const camera = new THREE.PerspectiveCamera();
     camera.position.set(0, 0, -2);
     camera.lookAt(0, 0, 0);
@@ -44,11 +66,14 @@ describe('determineSectors', () => {
 
     // Act
     const sectors = await determineSectorsByProximity({
-      sectorScene: scene,
-      cameraFov: camera.fov,
-      cameraPosition: fromThreeVector3(vec3.create(), camera.position, identityTransform),
-      cameraModelMatrix: fromThreeMatrix(mat4.create(), camera.matrixWorld, identityTransform),
-      projectionMatrix: fromThreeMatrix(mat4.create(), camera.projectionMatrix, identityTransform)
+      cadModels: [cadNode.cadModel],
+      loadingHints: {},
+      cameraConfig: {
+        cameraFov: camera.fov,
+        cameraPosition: fromThreeVector3(vec3.create(), camera.position, identityTransform),
+        cameraModelMatrix: fromThreeMatrix(mat4.create(), camera.matrixWorld, identityTransform),
+        projectionMatrix: fromThreeMatrix(mat4.create(), camera.projectionMatrix, identityTransform)
+      }
     });
 
     // Assert
@@ -77,6 +102,11 @@ describe('determineSectors', () => {
           xz: 0.5,
           yz: 0.5
         },
+        recursiveCoverageFactors: {
+          xy: 0.5,
+          xz: 0.5,
+          yz: 0.5
+        },
         downloadSize: 1000
       },
       children: [
@@ -96,6 +126,11 @@ describe('determineSectors', () => {
             fileName: 'sector_2.f3d',
             quadSize: 0.5,
             coverageFactors: {
+              xy: 0.5,
+              xz: 0.5,
+              yz: 0.5
+            },
+            recursiveCoverageFactors: {
               xy: 0.5,
               xz: 0.5,
               yz: 0.5
@@ -123,12 +158,29 @@ describe('determineSectors', () => {
               xz: 0.5,
               yz: 0.5
             },
+            recursiveCoverageFactors: {
+              xy: 0.5,
+              xz: 0.5,
+              yz: 0.5
+            },
             downloadSize: 1000
           }
         }
       ]
     };
     const scene = createSceneFromRoot(root);
+    const cadModel: CadModel = {
+      identifier: 'test-model',
+      dataRetriever: { fetchData: jest.fn(), fetchJson: jest.fn() },
+      modelTransformation: {
+        inverseModelMatrix: fromCdfToThreeJsCoordinates,
+        modelMatrix: fromThreeJsToCdfCoordinates
+      },
+      scene
+    };
+    const cadNode = new CadNode(cadModel, materialManager);
+    Object.defineProperty(cadNode, 'cadModel', { get: jest.fn().mockReturnValue(cadModel) });
+
     const camera = new THREE.PerspectiveCamera();
     camera.position.set(0, 0, -1);
     camera.lookAt(0, 0, 0);
@@ -136,24 +188,31 @@ describe('determineSectors', () => {
 
     // Act
     const sectors = await determineSectorsByProximity({
-      sectorScene: scene,
-      cameraFov: camera.fov,
-      cameraPosition: fromThreeVector3(vec3.create(), camera.position, identityTransform),
-      cameraModelMatrix: fromThreeMatrix(mat4.create(), camera.matrixWorld, identityTransform),
-      projectionMatrix: fromThreeMatrix(mat4.create(), camera.projectionMatrix, identityTransform)
+      cadModels: [cadNode.cadModel],
+      cameraConfig: {
+        cameraFov: camera.fov,
+        cameraPosition: fromThreeVector3(vec3.create(), camera.position, identityTransform),
+        cameraModelMatrix: fromThreeMatrix(mat4.create(), camera.matrixWorld, identityTransform),
+        projectionMatrix: fromThreeMatrix(mat4.create(), camera.projectionMatrix, identityTransform)
+      },
+      loadingHints: {}
     });
 
     // Assert
     expect(
-      sectors.filter((sector: WantedSector) => sector.id === 1 && sector.levelOfDetail === LevelOfDetail.Detailed)
-        .length
+      sectors.filter(
+        (sector: WantedSector) => sector.metadata.id === 1 && sector.levelOfDetail === LevelOfDetail.Detailed
+      ).length
     ).toEqual(1);
     expect(
-      sectors.filter((sector: WantedSector) => sector.id === 2 && sector.levelOfDetail === LevelOfDetail.Detailed)
-        .length
+      sectors.filter(
+        (sector: WantedSector) => sector.metadata.id === 2 && sector.levelOfDetail === LevelOfDetail.Detailed
+      ).length
     ).toEqual(1);
     expect(
-      sectors.filter((sector: WantedSector) => sector.id === 3 && sector.levelOfDetail === LevelOfDetail.Simple).length
+      sectors.filter(
+        (sector: WantedSector) => sector.metadata.id === 3 && sector.levelOfDetail === LevelOfDetail.Simple
+      ).length
     ).toEqual(1);
   });
 
@@ -180,6 +239,18 @@ describe('determineSectors', () => {
       children: []
     };
     const scene = createSceneFromRoot(root);
+    const cadModel: CadModel = {
+      identifier: 'test-model',
+      dataRetriever: { fetchData: jest.fn(), fetchJson: jest.fn() },
+      modelTransformation: {
+        inverseModelMatrix: fromCdfToThreeJsCoordinates,
+        modelMatrix: fromThreeJsToCdfCoordinates
+      },
+      scene
+    };
+    const cadNode = new CadNode(cadModel, materialManager);
+    Object.defineProperty(cadNode, 'cadModel', { get: jest.fn().mockReturnValue(cadModel) });
+
     const camera = new THREE.PerspectiveCamera();
     camera.position.copy(new THREE.Vector3(1.5, 1.5, -1).applyMatrix4(toThreeMatrix4(transform.modelMatrix)));
     camera.lookAt(new THREE.Vector3(1.5, 1.5, 1.5).applyMatrix4(toThreeMatrix4(transform.modelMatrix)));
@@ -187,17 +258,21 @@ describe('determineSectors', () => {
 
     // Act
     const sectors = await determineSectorsByProximity({
-      sectorScene: scene,
-      cameraFov: camera.fov,
-      cameraPosition: fromThreeVector3(vec3.create(), camera.position, transform),
-      cameraModelMatrix: fromThreeMatrix(mat4.create(), camera.matrixWorld, transform),
-      projectionMatrix: fromThreeMatrix(mat4.create(), camera.projectionMatrix, transform)
+      cadModels: [cadNode.cadModel],
+      cameraConfig: {
+        cameraFov: camera.fov,
+        cameraPosition: fromThreeVector3(vec3.create(), camera.position, transform),
+        cameraModelMatrix: fromThreeMatrix(mat4.create(), camera.matrixWorld, transform),
+        projectionMatrix: fromThreeMatrix(mat4.create(), camera.projectionMatrix, transform)
+      },
+      loadingHints: {}
     });
 
     // Assert
     expect(
-      sectors.filter((sector: WantedSector) => sector.id === 1 && sector.levelOfDetail === LevelOfDetail.Detailed)
-        .length
+      sectors.filter(
+        (sector: WantedSector) => sector.metadata.id === 1 && sector.levelOfDetail === LevelOfDetail.Detailed
+      ).length
     ).toEqual(1);
   });
 });
@@ -207,6 +282,11 @@ function emptyFacesFile() {
     quadSize: 0.5,
     fileName: null,
     coverageFactors: {
+      xy: 0.5,
+      xz: 0.5,
+      yz: 0.5
+    },
+    recursiveCoverageFactors: {
       xy: 0.5,
       xz: 0.5,
       yz: 0.5

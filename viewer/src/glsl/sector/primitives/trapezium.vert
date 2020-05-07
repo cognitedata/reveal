@@ -9,6 +9,8 @@ varying float v_treeIndex;
 varying vec3 v_color;
 varying vec3 v_normal;
 
+varying vec3 vViewPosition;
+
 void main() {
     vec3 transformed;
     // reduce the avarage branchings
@@ -25,5 +27,6 @@ void main() {
     v_normal = normalMatrix * objectNormal;
 
     vec4 mvPosition = modelViewMatrix * vec4( transformed, 1.0 );
+    vViewPosition = mvPosition.xyz;
     gl_Position = projectionMatrix * mvPosition;
 }

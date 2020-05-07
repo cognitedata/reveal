@@ -1,16 +1,8 @@
-use console_error_panic_hook;
 use js_sys::{Float32Array, Map, Uint32Array};
 use serde::{Deserialize, Serialize};
 use std::panic;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
-
-// From reveal-rs
-use f3df;
-use i3df;
-use openctm;
-use serde;
-use serde_bytes;
 
 #[macro_use]
 pub mod error;
@@ -150,7 +142,7 @@ pub fn parse_and_convert_f3df(input: &[u8]) -> Result<SimpleSectorData, JsValue>
     };
 
     let renderable_sector = f3df::renderables::convert_sector(&sector);
-    let faces_as_f32 = unsafe {
+    let faces_as_f32: &[f32] = unsafe {
         // At this point, we do not want to pass Vec<Face> to JS,
         // because it will turn into an inefficient array of objects.
         // Instead, we want to use the more performant Float32Array to hold the data and only make

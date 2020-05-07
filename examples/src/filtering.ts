@@ -4,27 +4,42 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { CadNode, NodeAppearance } from '@cognite/reveal/threejs';
+import { CadNode, RevealManager, ModelNodeAppearance } from '@cognite/reveal/threejs';
 import dat from 'dat.gui';
-import { loadCadModelFromCdfOrUrl, createModelIdentifierFromUrlParams, createClientIfNecessary } from './utils/loaders';
+import { getParamsFromURL } from './utils/example-helpers';
+import { CogniteClient } from '@cognite/sdk';
 
 CameraControls.install({ THREE });
 
 async function main() {
-  const urlParams = new URL(location.href).searchParams;
-  const modelId = createModelIdentifierFromUrlParams(urlParams, '/primitives');
+  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'primitives' });
+  const client = new CogniteClient({ appId: 'reveal.example.filtering' });
+  client.loginWithOAuth({ project });
 
+  const scene = new THREE.Scene();
   let shadingNeedsUpdate = false;
   let visibleIndices = new Set([1, 2, 8, 12]);
   const settings = {
     treeIndices: '1, 2, 8, 12'
   };
-
-  const nodeAppearance: NodeAppearance = {
+  let modelsNeedUpdate = true;
+  const revealManager = new RevealManager(client, () => {
+    modelsNeedUpdate = true;
+  });
+  let model: CadNode;
+  const nodeAppearance: ModelNodeAppearance = {
     visible(treeIndex: number) {
       return visibleIndices.has(treeIndex);
     }
   };
+  if (modelUrl) {
+    model = await revealManager.addModelFromUrl(modelUrl, nodeAppearance);
+  } else if (modelRevision) {
+    model = await revealManager.addModelFromCdf(modelRevision, nodeAppearance);
+  } else {
+    throw new Error('Need to provide either project & model OR modelUrl as query parameters');
+  }
+  scene.add(model);
 
   const gui = new dat.GUI();
   gui.add(settings, 'treeIndices').onChange(() => {
@@ -36,42 +51,32 @@ async function main() {
 
     const oldIndices = visibleIndices;
     visibleIndices = new Set(indices);
-    cadNode.requestNodeUpdate([...oldIndices]);
-    cadNode.requestNodeUpdate([...visibleIndices]);
+    model.requestNodeUpdate([...oldIndices]);
+    model.requestNodeUpdate([...visibleIndices]);
     shadingNeedsUpdate = true;
   });
-
-  const scene = new THREE.Scene();
-  const cadModel = await loadCadModelFromCdfOrUrl(modelId, await createClientIfNecessary(modelId));
-  const cadNode = new CadNode(cadModel, { nodeAppearance });
-  let modelNeedsUpdate = false;
-  cadNode.addEventListener('update', () => {
-    modelNeedsUpdate = true;
-  });
-
-  scene.add(cadNode);
 
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#444');
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const { position, target, near, far } = cadNode.suggestCameraConfig();
+  const { position, target, near, far } = model.suggestCameraConfig();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
   controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
-  cadNode.update(camera);
+  revealManager.update(camera);
   const clock = new THREE.Clock();
   const render = () => {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
     if (controlsNeedUpdate) {
-      cadNode.update(camera);
+      revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || modelNeedsUpdate || shadingNeedsUpdate) {
+    if (controlsNeedUpdate || modelsNeedUpdate || shadingNeedsUpdate) {
       renderer.render(scene, camera);
       shadingNeedsUpdate = false;
     }

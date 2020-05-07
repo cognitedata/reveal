@@ -46,6 +46,12 @@ const allExamples = [
     template: 'template-example.ejs'
   },
   {
+    name: "threejs-clipping",
+    title: "Clipping planes",
+    entry: './src/clipping.ts',
+    template: 'template-example.ejs'
+  },
+  {
     name: "threejs-filtering",
     title: "Filtering",
     entry: './src/filtering.ts',
@@ -117,15 +123,22 @@ const allExamples = [
     title: "World To Screen",
     entry: './src/world-to-screen.ts',
     template: 'template-example.ejs'
+  },
+  {
+    name: "threejs-gpu-based-sectorculler",
+    title: "GPU based sector culler",
+    entry: './src/gpu-sector-culler.ts',
+    template: 'template-example.ejs'
   }
 ];
 
 module.exports = env => {
   const development = arg(env, 'development', false);
+  const filter = arg(env, 'filter', undefined);
   logger.info("Build config:");
   logger.info(`  - development: ${development}`);
 
-  const examples = allExamples.map(example => {
+  let examples = allExamples.map(example => {
     const {name, title, entry, template} = example;
     return {
       name,
@@ -136,6 +149,10 @@ module.exports = env => {
       page: `example-${name}.html`,
     };
   });
+  if (filter) {
+    examples = examples.filter(example => example.name.match(filter))
+  }
+  logger.info(`  - examples: ${examples.length}`);
   const exampleEntries = examples.reduce((entries, example) => {
     const { entry, name } = example;
     entries[name] = entry;
@@ -221,7 +238,7 @@ module.exports = env => {
     devtool: development ? "inline-source-map" : "source-map",
     watchOptions: {
       aggregateTimeout: 1500,
-      ignored: ['node_modules/']
+      ignored: [/node_modules/]
     },
     devServer: {
       https: true,
@@ -230,6 +247,7 @@ module.exports = env => {
         resolve('public/'),
         resolve('dist/'),
       ],
+
       writeToDisk: true,
     },
     optimization: {

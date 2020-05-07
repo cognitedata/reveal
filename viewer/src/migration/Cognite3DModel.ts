@@ -7,13 +7,12 @@ import * as THREE from 'three';
 import { Color } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { CadModel } from '../models/cad/CadModel';
-import { toThreeJsBox3, CadNode, toThreeMatrix4 } from '../views/threejs';
-import { loadCadModelFromCdf } from '../datasources/cognitesdk';
+import { toThreeJsBox3, CadNode, toThreeMatrix4, ModelNodeAppearance } from '../views/threejs';
 import { CadRenderHints } from '../views/CadRenderHints';
-import { NodeAppearance } from '../views/common/cad/NodeAppearance';
 import { CadLoadingHints } from '../models/cad/CadLoadingHints';
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { CogniteClient } from '@cognite/sdk';
+import { SectorQuads, Sector } from '../models/cad/types';
 
 export class Cognite3DModel extends THREE.Object3D {
   get renderHints(): CadRenderHints {
@@ -40,16 +39,16 @@ export class Cognite3DModel extends THREE.Object3D {
   readonly client: CogniteClient;
   readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
 
-  constructor(modelId: number, revisionId: number, model: CadModel, client: CogniteClient) {
+  constructor(modelId: number, revisionId: number, cadNode: CadNode, client: CogniteClient) {
     super();
     this.modelId = modelId;
     this.revisionId = revisionId;
-    this.cadModel = model;
+    this.cadModel = cadNode.cadModel;
     this.client = client;
     this.nodeColors = new Map();
     this.hiddenNodes = new Set();
     this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client);
-    const nodeAppearance: NodeAppearance = {
+    const nodeAppearance: ModelNodeAppearance = {
       color: (treeIndex: number) => {
         return this.nodeColors.get(treeIndex);
       },
@@ -57,14 +56,9 @@ export class Cognite3DModel extends THREE.Object3D {
         return this.hiddenNodes.has(treeIndex) ? false : true;
       }
     };
-    this.cadNode = new CadNode(model, {
-      nodeAppearance,
-      internal: {
-        parseCallback: parsed => {
-          this.nodeIdAndTreeIndexMaps.updateMaps(parsed);
-        }
-      }
-    });
+    cadNode.materialManager.updateLocalAppearance(this.cadModel.identifier, nodeAppearance);
+
+    this.cadNode = cadNode;
 
     this.children.push(this.cadNode);
   }
@@ -84,6 +78,10 @@ export class Cognite3DModel extends THREE.Object3D {
 
     const bounds = this.cadModel.scene.root.bounds;
     return toThreeJsBox3(box || new THREE.Box3(), bounds, this.cadModel.modelTransformation);
+  }
+
+  updateNodeIdMaps(sector: { lod: string; data: Sector | SectorQuads }) {
+    this.nodeIdAndTreeIndexMaps.updateMaps(sector);
   }
 
   async getBoundingBoxFromApi(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
@@ -199,13 +197,4 @@ export class Cognite3DModel extends THREE.Object3D {
     this.nodeColors.set(treeIndex, [r, g, b, 255]);
     this.cadNode.requestNodeUpdate([treeIndex]);
   }
-}
-
-export async function createCognite3DModel(
-  modelId: number,
-  revisionId: number,
-  client: CogniteClient
-): Promise<Cognite3DModel> {
-  const model = await loadCadModelFromCdf(client, revisionId);
-  return new Cognite3DModel(modelId, revisionId, model, client);
 }

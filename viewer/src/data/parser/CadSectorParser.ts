@@ -11,7 +11,7 @@ import { ParserWorker } from '../../workers/parser.worker';
 
 export class CadSectorParser {
   private readonly workerPool: WorkerPool;
-  constructor(workerPool: WorkerPool = new WorkerPool()) {
+  constructor(workerPool: WorkerPool = WorkerPool.defaultPool) {
     this.workerPool = workerPool;
   }
 
@@ -26,7 +26,6 @@ export class CadSectorParser {
         flatMap(data => this.parseSimple(data.data)),
         map(parsedQuadsResult => this.finalizeSimple(parsedQuadsResult))
       );
-
       const ctmObservable = dataObservable.pipe(
         filter(data => data.format === 'ctm'),
         flatMap(data => this.parseCtm(data.data))

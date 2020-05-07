@@ -16,61 +16,79 @@ import {
   RenderMode,
   createDefaultRenderOptions
 } from './utils/renderer-debug-widget';
-import {
-  loadCadModelFromCdfOrUrl,
-  loadPointCloudModelFromCdfOrUrl,
-  createModelIdentifierFromUrlParams,
-  createClientIfNecessary
-} from './utils/loaders';
+import { CogniteClient } from '@cognite/sdk';
+import { RevealManager, CadNode } from '@cognite/reveal/threejs';
+import { getParamsFromURL } from './utils/example-helpers';
+import { PotreeNodeWrapper, PotreeGroupWrapper } from '@cognite/reveal/internal';
 
 CameraControls.install({ THREE });
 
+function getPointCloudParams() {
+  const url = new URL(location.href);
+  const searchParams = url.searchParams;
+  const pointCloudRevision = searchParams.get('pointCloud');
+  const pointCloudUrl = searchParams.get('pointCloudUrl');
+  return {
+    pointCloudRevision: pointCloudRevision ? Number.parseInt(pointCloudRevision, 10) : undefined,
+    pointCloudUrl: pointCloudUrl ? location.origin + '/' + pointCloudUrl : undefined
+  };
+}
+
 async function main() {
-  const urlParams = new URL(location.href).searchParams;
-  const cadModelIdentifier = createModelIdentifierFromUrlParams(urlParams, '/primitives');
-  const pointCloudModelIdentifier = createModelIdentifierFromUrlParams(urlParams, '/transformer', {
-    modelIdParameterName: 'pointcloud',
-    modelUrlParameterName: 'pointcloudUrl'
-  });
+  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'primitives' });
+  const { pointCloudRevision, pointCloudUrl } = getPointCloudParams();
+  const client = new CogniteClient({ appId: 'reveal.example.hybrid-cad-pointcloud' });
+  client.loginWithOAuth({ project });
 
   const scene = new THREE.Scene();
+
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#000000');
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  Potree.XHRFactory.config.customHeaders.push({ header: 'MyDummyHeader', value: 'MyDummyValue' });
+  let modelsNeedUpdate = true;
 
-  const cadModel = await loadCadModelFromCdfOrUrl(
-    cadModelIdentifier,
-    await createClientIfNecessary(cadModelIdentifier)
-  );
-  const cadNode = new reveal_threejs.CadNode(cadModel);
-  let modelNeedsUpdate = false;
-  cadNode.addEventListener('update', () => {
-    modelNeedsUpdate = true;
+  Potree.XHRFactory.config.customHeaders.push({ header: 'MyDummyHeader', value: 'MyDummyValue' });
+  const revealManager = new RevealManager(client, () => {
+    modelsNeedUpdate = true;
   });
+  let pointCloud: [PotreeGroupWrapper, PotreeNodeWrapper];
+  if (pointCloudUrl) {
+    pointCloud = await revealManager.addPointCloudFromUrl(pointCloudUrl);
+  } else if (pointCloudRevision) {
+    await client.authenticate();
+    pointCloud = await revealManager.addPointCloudFromCdf(pointCloudRevision);
+  } else {
+    throw new Error('Need to provide either project & pointCloud OR pointCloudlUrl as query parameters');
+  }
+  let model: CadNode;
+  if (modelUrl) {
+    model = await revealManager.addModelFromUrl(modelUrl);
+  } else if (modelRevision) {
+    model = await revealManager.addModelFromCdf(modelRevision);
+  } else {
+    throw new Error('Need to provide either project & model OR modelUrl as query parameters');
+  }
+
+  const [pointCloudGroup, pointCloudNode] = pointCloud;
+  scene.add(pointCloudGroup);
+
   const cadModelOffsetRoot = new THREE.Group();
   cadModelOffsetRoot.name = 'Sector model offset root';
-  cadModelOffsetRoot.add(cadNode);
+  cadModelOffsetRoot.add(model);
   scene.add(cadModelOffsetRoot);
-
-  const pointCloudModel = await loadPointCloudModelFromCdfOrUrl(pointCloudModelIdentifier);
-  const [pointCloudGroup, pointCloudNode] = await reveal_threejs.createThreeJsPointCloudNode(pointCloudModel);
-  scene.add(pointCloudGroup);
 
   let settingsChanged = false;
   function handleSettingsChanged() {
     settingsChanged = true;
   }
-  const renderOptions = initializeGui(cadNode, pointCloudGroup, pointCloudNode, handleSettingsChanged);
+  const renderOptions = initializeGui(model, pointCloudGroup, pointCloudNode, handleSettingsChanged);
 
-  const { position, target, near, far } = reveal.internal.suggestCameraConfig(cadModel.scene.root);
+  const { position, target, near, far } = model.suggestCameraConfig();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
-  const threePos = reveal_threejs.toThreeVector3(new THREE.Vector3(), position, cadNode.modelTransformation);
-  const threeTarget = reveal_threejs.toThreeVector3(new THREE.Vector3(), target, cadNode.modelTransformation);
-  controls.setLookAt(threePos.x, threePos.y, threePos.z, threeTarget.x, threeTarget.y, threeTarget.z);
+  controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
   controls.update(0.0);
   camera.updateMatrixWorld();
 
@@ -79,12 +97,12 @@ async function main() {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
     if (renderOptions.loadingEnabled) {
-      cadNode.update(camera);
+      revealManager.update(camera);
     }
     const needsUpdate =
       renderOptions.renderMode === RenderMode.AlwaysRender ||
       (renderOptions.renderMode === RenderMode.WhenNecessary &&
-        (controlsNeedUpdate || modelNeedsUpdate || pointCloudGroup.needsRedraw || settingsChanged));
+        (controlsNeedUpdate || modelsNeedUpdate || pointCloudGroup.needsRedraw || settingsChanged));
 
     if (needsUpdate) {
       applyRenderingFilters(scene, renderOptions.renderFilter);

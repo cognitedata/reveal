@@ -2,7 +2,6 @@ use std::io::{self, BufRead, BufReader, Cursor, Read};
 
 use byteorder::{LittleEndian, ReadBytesExt};
 
-use nalgebra;
 use serde_derive::{Deserialize, Serialize};
 
 use wasm_bindgen::prelude::*;
@@ -64,6 +63,7 @@ pub fn parse_scene(reader: impl BufRead) -> Result<Scene, Error> {
 pub fn parse_sector(mut reader: impl BufRead) -> Result<Sector, Error> {
     let size = reader.read_u32::<LittleEndian>()?;
 
+    // TODO dragly 2020-04-22 is it necessary to go via a Vec here?
     // read bytes
     let mut sector = vec![0; size as usize].into_boxed_slice();
     reader.read_exact(&mut sector)?;
@@ -136,7 +136,12 @@ pub fn parse_sector_header(mut input: &mut impl BufRead) -> Result<SectorHeader,
     // read attributes
     let attribute_count = input.read_u32::<LittleEndian>()?;
 
-    if attribute_count != 0 && attribute_count != ATTRIBUTE_COUNT {}
+    if attribute_count != ATTRIBUTE_COUNT {
+        return Err(error!(
+            "Wrong attribute count. Got {}, but expected {}",
+            attribute_count, ATTRIBUTE_COUNT
+        ));
+    }
 
     let attributes = match attribute_count {
         0 => Ok(None),
@@ -269,7 +274,7 @@ pub fn decode_array_texture(mut reader: impl Read) -> Result<Vec<Texture>, Error
     let mut array = Vec::new();
 
     for _ in 0..item_count {
-        let file_id = reader.read_u64::<LittleEndian>()?;
+        let file_id = reader.read_u64::<LittleEndian>()? as f64;
         let width = reader.read_u16::<LittleEndian>()?;
         let height = reader.read_u16::<LittleEndian>()?;
         let _reserved = reader.read_u32::<LittleEndian>()?;
