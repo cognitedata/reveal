@@ -13,14 +13,12 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   public readonly type: SupportedModelTypes = SupportedModelTypes.PointCloud;
   public readonly modelId: number;
   public readonly revisionId: number;
-  private readonly potreeGroup: PotreeGroupWrapper;
   private readonly potreeNode: PotreeNodeWrapper;
 
   constructor(modelId: number, revisionId: number, potreeGroup: PotreeGroupWrapper, potreeNode: PotreeNodeWrapper) {
     super();
     this.modelId = modelId;
     this.revisionId = revisionId;
-    this.potreeGroup = potreeGroup;
     this.potreeNode = potreeNode;
     this.add(potreeGroup);
   }
