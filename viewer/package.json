@@ -31,7 +31,7 @@
   "devDependencies": {
     "@cognite/tslint-config-cognite-3d": "^1.0.4",
     "@types/gl-matrix": "^2.4.5",
-    "@types/jest": "^25.1.4",
+    "@types/jest": "^25.2.1",
     "@types/node": "^13.9.4",
     "@types/tween.js": "^18.5.0",
     "@wasm-tool/wasm-pack-plugin": "^1.1.0",
