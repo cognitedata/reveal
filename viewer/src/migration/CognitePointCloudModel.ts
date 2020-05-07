@@ -7,10 +7,10 @@ import { toThreeJsBox3 } from '../views/threejs';
 import { PotreeNodeWrapper } from '../views/threejs/pointcloud/PotreeNodeWrapper';
 import { PotreeGroupWrapper } from '../views/threejs/pointcloud/PotreeGroupWrapper';
 import { CogniteModelBase } from './CogniteModelBase';
-import { WellKnownModelTypes } from './types';
+import { SupportedModelTypes } from './types';
 
 export class CognitePointCloudModel extends THREE.Object3D implements CogniteModelBase {
-  public readonly type: WellKnownModelTypes = WellKnownModelTypes.PointCloud;
+  public readonly type: SupportedModelTypes = SupportedModelTypes.PointCloud;
   public readonly modelId: number;
   public readonly revisionId: number;
   private readonly potreeGroup: PotreeGroupWrapper;

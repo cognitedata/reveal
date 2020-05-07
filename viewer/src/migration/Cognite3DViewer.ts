@@ -10,7 +10,7 @@ import { CogniteClient, IdEither } from '@cognite/sdk';
 
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
-import { Cognite3DViewerOptions, AddModelOptions, WellKnownModelTypes } from './types';
+import { Cognite3DViewerOptions, AddModelOptions, SupportedModelTypes } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { Intersection } from './intersection';
 import RenderController from './RenderController';
@@ -225,16 +225,16 @@ export class Cognite3DViewer {
     return model;
   }
 
-  async determineModelType(_modelId: number, revisionId: number): Promise<WellKnownModelTypes> {
+  async determineModelType(_modelId: number, revisionId: number): Promise<SupportedModelTypes> {
     const clientExt = new CogniteClient3dExtensions(this.sdkClient);
     const id: IdEither = { id: revisionId };
     const outputs = await clientExt.getOutputs(id, [File3dFormat.RevealCadModel, File3dFormat.EptPointCloud]);
     if (outputs.findMostRecentOutput(File3dFormat.RevealCadModel) !== undefined) {
-      return WellKnownModelTypes.CAD;
+      return SupportedModelTypes.CAD;
     } else if (outputs.findMostRecentOutput(File3dFormat.EptPointCloud) !== undefined) {
-      return WellKnownModelTypes.PointCloud;
+      return SupportedModelTypes.PointCloud;
     }
-    return WellKnownModelTypes.NotSupported;
+    return SupportedModelTypes.NotSupported;
   }
 
   addObject3D(_object: THREE.Object3D): void {
@@ -329,7 +329,7 @@ export class Cognite3DViewer {
   }
 
   getIntersectionFromPixel(offsetX: number, offsetY: number, _cognite3DModel?: Cognite3DModel): null | Intersection {
-    const cadModels = this.getModels(WellKnownModelTypes.CAD);
+    const cadModels = this.getModels(SupportedModelTypes.CAD);
     const nodes = cadModels.map(x => x.cadNode);
 
     const coords = {
@@ -364,9 +364,9 @@ export class Cognite3DViewer {
     throw new NotSupportedInMigrationWrapperError('Cache is not supported');
   }
 
-  private getModels(type: WellKnownModelTypes.CAD): Cognite3DModel[];
-  private getModels(type: WellKnownModelTypes.PointCloud): CognitePointCloudModel[];
-  private getModels(type: WellKnownModelTypes): CogniteModelBase[] {
+  private getModels(type: SupportedModelTypes.CAD): Cognite3DModel[];
+  private getModels(type: SupportedModelTypes.PointCloud): CognitePointCloudModel[];
+  private getModels(type: SupportedModelTypes): CogniteModelBase[] {
     return this.models.filter(x => x.type === type);
   }
 

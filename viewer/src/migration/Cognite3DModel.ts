@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-import { Color, WellKnownModelTypes } from './types';
+import { Color, SupportedModelTypes } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { CadModel } from '../models/cad/CadModel';
 import { toThreeJsBox3, CadNode, toThreeMatrix4, ModelNodeAppearance } from '../views/threejs';
@@ -16,7 +16,7 @@ import { SectorQuads, Sector } from '../models/cad/types';
 import { CogniteModelBase } from './CogniteModelBase';
 
 export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
-  public readonly type: WellKnownModelTypes = WellKnownModelTypes.CAD;
+  public readonly type: SupportedModelTypes = SupportedModelTypes.CAD;
 
   get renderHints(): CadRenderHints {
     return this.cadNode.renderHints;

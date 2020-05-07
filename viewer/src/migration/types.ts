@@ -46,7 +46,7 @@ export interface AddModelOptions {
   onComplete?: () => void;
 }
 
-export enum WellKnownModelTypes {
+export enum SupportedModelTypes {
   PointCloud = 'pointcloud',
   CAD = 'cad',
   /**

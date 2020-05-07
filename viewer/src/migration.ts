@@ -7,4 +7,9 @@ export { Cognite3DModel } from './migration/Cognite3DModel';
 export { CognitePointCloudModel } from './migration/CognitePointCloudModel';
 export { Cognite3DViewer } from './migration/Cognite3DViewer';
 export { Intersection } from './migration/intersection';
-export { Color, Cognite3DViewerOptions, AddModelOptions, WellKnownModelTypes } from './migration/types';
+export {
+  Color,
+  Cognite3DViewerOptions,
+  AddModelOptions,
+  SupportedModelTypes as WellKnownModelTypes
+} from './migration/types';
