@@ -280,10 +280,7 @@ export class CachedRepository implements Repository {
   }
 
   private finalizeDetailed(i3dFile: ParseSectorResult, ctmFiles: Map<string, ParseCtmResult>): Sector {
-    const {
-      instanceMeshes,
-      triangleMeshes
-    } = i3dFile;
+    const { instanceMeshes, triangleMeshes } = i3dFile;
 
     const finalTriangleMeshes = (() => {
       const { fileIds, colors, triangleCounts, treeIndices } = triangleMeshes;
