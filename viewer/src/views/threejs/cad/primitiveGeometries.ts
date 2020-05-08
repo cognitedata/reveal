@@ -95,6 +95,7 @@ export const coneGeometry = (() => {
 })();
 
 export const torusLODs = (() => {
+  //TODO: chris, 06.05.2020 - Reduce number of LODS
   const parameters = [
     [6, 4],
     [9, 4],

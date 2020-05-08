@@ -1,9 +1,7 @@
 use crate::renderables::common::{
     create_general_ring_instance_matrix, GeneralRingInstanceMatrixInfo,
 };
-use crate::renderables::{
-    Cone, GeneralRing, GeometryCollection, PrimitiveCollections, Quad, QuadInfo, ToRenderables,
-};
+use crate::renderables::{Cone, GeneralRing, PrimitiveCollections, Quad, QuadInfo, ToRenderables};
 use crate::{Rotation3, Vector3};
 use std::f64::consts::PI;
 
@@ -40,8 +38,7 @@ impl ToRenderables for crate::ClosedExtrudedRingSegment {
 
         // rings
         collections.general_ring_collection.push(GeneralRing {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center: center_a,
@@ -55,8 +52,7 @@ impl ToRenderables for crate::ClosedExtrudedRingSegment {
             instance_matrix: instance_matrix_a,
         });
         collections.general_ring_collection.push(GeneralRing {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center: center_b,
@@ -72,8 +68,7 @@ impl ToRenderables for crate::ClosedExtrudedRingSegment {
 
         // outer cone
         collections.cone_collection.push(Cone {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center_a,
@@ -87,8 +82,7 @@ impl ToRenderables for crate::ClosedExtrudedRingSegment {
 
         // inner cone
         collections.cone_collection.push(Cone {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center_a,
@@ -109,8 +103,7 @@ impl ToRenderables for crate::ClosedExtrudedRingSegment {
             let vertex_2 = vertex_0 * self.outer_radius + center_a;
             let vertex_3 = vertex_0 * self.outer_radius + center_b;
             collections.quad_collection.push(Quad::new(&QuadInfo {
-                node_id: self.node_id,
-                tree_index: self.tree_index,
+                tree_index: self.tree_index as f32,
                 color: self.color,
                 size: self.diagonal,
                 vertex_1,
@@ -127,8 +120,7 @@ impl ToRenderables for crate::ClosedExtrudedRingSegment {
             let vertex_2 = vertex_0 * self.inner_radius + center_b;
             let vertex_3 = vertex_0 * self.outer_radius + center_b;
             collections.quad_collection.push(Quad::new(&QuadInfo {
-                node_id: self.node_id,
-                tree_index: self.tree_index,
+                tree_index: self.tree_index as f32,
                 color: self.color,
                 size: self.diagonal,
                 vertex_1,
@@ -176,8 +168,7 @@ impl ToRenderables for crate::ExtrudedRing {
             });
 
         collections.general_ring_collection.push(GeneralRing {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center: center_a,
@@ -191,8 +182,7 @@ impl ToRenderables for crate::ExtrudedRing {
             instance_matrix: instance_matrix_a,
         });
         collections.general_ring_collection.push(GeneralRing {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center: center_b,
@@ -206,8 +196,7 @@ impl ToRenderables for crate::ExtrudedRing {
             instance_matrix: instance_matrix_b,
         });
         collections.cone_collection.push(Cone {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center_a,
@@ -219,8 +208,7 @@ impl ToRenderables for crate::ExtrudedRing {
             local_x_axis,
         });
         collections.cone_collection.push(Cone {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center_a,
@@ -266,8 +254,7 @@ impl ToRenderables for crate::OpenExtrudedRingSegment {
             });
 
         collections.general_ring_collection.push(GeneralRing {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center: center_a,
@@ -281,8 +268,7 @@ impl ToRenderables for crate::OpenExtrudedRingSegment {
             instance_matrix: instance_matrix_a,
         });
         collections.general_ring_collection.push(GeneralRing {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center: center_b,
@@ -296,8 +282,7 @@ impl ToRenderables for crate::OpenExtrudedRingSegment {
             instance_matrix: instance_matrix_b,
         });
         collections.cone_collection.push(Cone {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center_a,
@@ -309,8 +294,7 @@ impl ToRenderables for crate::OpenExtrudedRingSegment {
             local_x_axis,
         });
         collections.cone_collection.push(Cone {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center_a,
@@ -344,8 +328,7 @@ impl ToRenderables for crate::Ring {
         });
 
         collections.general_ring_collection.push(GeneralRing {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center,

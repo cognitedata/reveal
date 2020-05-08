@@ -2,8 +2,8 @@ use crate::renderables::common::{
     create_general_ring_instance_matrix, GeneralRingInstanceMatrixInfo,
 };
 use crate::renderables::{
-    Circle, CircleInfo, Cone, EccentricCone, GeneralRing, GeometryCollection, PrimitiveCollections,
-    ToRenderables, Trapezium,
+    Circle, CircleInfo, Cone, EccentricCone, GeneralRing, PrimitiveCollections, ToRenderables,
+    Trapezium,
 };
 use crate::{Matrix, Rotation3, Vector3};
 use std::f64::consts::PI;
@@ -20,8 +20,7 @@ impl ToRenderables for crate::ClosedCone {
         let rotation = Rotation3::rotation_between(&z_axis, &normal).unwrap();
         let local_x_axis: Vector3 = rotation.transform_vector(&x_axis);
         collections.cone_collection.push(Cone {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center_a,
@@ -33,8 +32,7 @@ impl ToRenderables for crate::ClosedCone {
             local_x_axis,
         });
         collections.circle_collection.push(Circle::new(&CircleInfo {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center: center_a,
@@ -42,8 +40,7 @@ impl ToRenderables for crate::ClosedCone {
             radius: self.radius_a,
         }));
         collections.circle_collection.push(Circle::new(&CircleInfo {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center: center_b,
@@ -68,8 +65,7 @@ impl ToRenderables for crate::ClosedEccentricCone {
         }
 
         collections.eccentric_cone_collection.push(EccentricCone {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center_a,
@@ -79,8 +75,7 @@ impl ToRenderables for crate::ClosedEccentricCone {
             normal,
         });
         collections.circle_collection.push(Circle::new(&CircleInfo {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center: center_a,
@@ -88,8 +83,7 @@ impl ToRenderables for crate::ClosedEccentricCone {
             radius: self.radius_a,
         }));
         collections.circle_collection.push(Circle::new(&CircleInfo {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center: center_b,
@@ -112,8 +106,7 @@ impl ToRenderables for crate::OpenCone {
         let rotation = Rotation3::rotation_between(&z_axis, &normal).unwrap();
         let local_x_axis: Vector3 = rotation.transform_vector(&x_axis);
         collections.cone_collection.push(Cone {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center_a,
@@ -141,8 +134,7 @@ impl ToRenderables for crate::OpenEccentricCone {
         }
 
         collections.eccentric_cone_collection.push(EccentricCone {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center_a,
@@ -166,8 +158,7 @@ impl ToRenderables for crate::OpenGeneralCone {
         let rotation = Rotation3::rotation_between(&z_axis, &normal).unwrap();
         let local_x_axis: Vector3 = rotation.transform_vector(&x_axis);
         collections.cone_collection.push(Cone {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center_a,
@@ -213,8 +204,7 @@ impl ToRenderables for crate::ClosedGeneralCone {
             });
 
         collections.cone_collection.push(Cone {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center_a,
@@ -226,8 +216,7 @@ impl ToRenderables for crate::ClosedGeneralCone {
             local_x_axis,
         });
         collections.general_ring_collection.push(GeneralRing {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center: center_a,
@@ -242,8 +231,7 @@ impl ToRenderables for crate::ClosedGeneralCone {
             instance_matrix: instance_matrix_a,
         });
         collections.general_ring_collection.push(GeneralRing {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center: center_b,
@@ -290,8 +278,7 @@ impl ToRenderables for crate::SolidOpenGeneralCone {
             });
 
         collections.cone_collection.push(Cone {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center_a,
@@ -303,8 +290,7 @@ impl ToRenderables for crate::SolidOpenGeneralCone {
             local_x_axis,
         });
         collections.cone_collection.push(Cone {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center_a,
@@ -316,8 +302,7 @@ impl ToRenderables for crate::SolidOpenGeneralCone {
             local_x_axis,
         });
         collections.general_ring_collection.push(GeneralRing {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center: center_a,
@@ -331,8 +316,7 @@ impl ToRenderables for crate::SolidOpenGeneralCone {
             instance_matrix: instance_matrix_a,
         });
         collections.general_ring_collection.push(GeneralRing {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center: center_b,
@@ -379,8 +363,7 @@ impl ToRenderables for crate::SolidClosedGeneralCone {
             });
 
         collections.cone_collection.push(Cone {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center_a,
@@ -392,8 +375,7 @@ impl ToRenderables for crate::SolidClosedGeneralCone {
             local_x_axis,
         });
         collections.cone_collection.push(Cone {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center_a,
@@ -405,8 +387,7 @@ impl ToRenderables for crate::SolidClosedGeneralCone {
             local_x_axis,
         });
         collections.general_ring_collection.push(GeneralRing {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center: center_a,
@@ -420,8 +401,7 @@ impl ToRenderables for crate::SolidClosedGeneralCone {
             instance_matrix: instance_matrix_a,
         });
         collections.general_ring_collection.push(GeneralRing {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center: center_b,
@@ -459,8 +439,7 @@ impl ToRenderables for crate::SolidClosedGeneralCone {
             }
 
             collections.trapezium_collection.push(Trapezium {
-                node_id: self.node_id,
-                tree_index: self.tree_index,
+                tree_index: self.tree_index as f32,
                 color: self.color,
                 size: self.diagonal,
                 vertex_1: vertices[0],

@@ -4,7 +4,7 @@
 
 import { Box3 } from '../../utils/Box3';
 import { mat4 } from 'gl-matrix';
-import { PrimitiveAttributes } from '../../workers/types/parser.types';
+import { ParsedPrimitives } from '../../workers/types/parser.types';
 
 // TODO 2019-11-12 larsmoa: Move and rename to something general (not specific
 // for sector data).
@@ -83,22 +83,11 @@ export type InstancedMesh = {
 export interface Sector {
   readonly nodeIdToTreeIndexMap: Map<number, number>;
   readonly treeIndexToNodeIdMap: Map<number, number>;
+  
+  readonly primitives: ParsedPrimitives;
 
   readonly instanceMeshes: InstancedMeshFile[];
   readonly triangleMeshes: TriangleMesh[];
-
-  readonly boxes: PrimitiveAttributes;
-  readonly circles: PrimitiveAttributes;
-  readonly cones: PrimitiveAttributes;
-  readonly eccentricCones: PrimitiveAttributes;
-  readonly ellipsoidSegments: PrimitiveAttributes;
-  readonly generalCylinders: PrimitiveAttributes;
-  readonly generalRings: PrimitiveAttributes;
-  readonly nuts: PrimitiveAttributes;
-  readonly quads: PrimitiveAttributes;
-  readonly sphericalSegments: PrimitiveAttributes;
-  readonly torusSegments: PrimitiveAttributes;
-  readonly trapeziums: PrimitiveAttributes;
 }
 
 export interface SectorQuads {
