@@ -53,16 +53,28 @@ async function main() {
   (window as any).viewer = viewer;
 
   async function addModel(options: reveal_migration.AddModelOptions) {
-    const model = await viewer.addModel(options);
-    viewer.fitCameraToModel(model);
-    models.push(model);
+    switch (await viewer.determineModelType(options.modelId, options.revisionId)) {
+      case reveal_migration.WellKnownModelTypes.CAD:
+        const model = await viewer.addModel(options);
+        viewer.fitCameraToModel(model);
+        cadModels.push(model);
+        break;
+
+      case reveal_migration.WellKnownModelTypes.PointCloud:
+        const pointCloud = await viewer.addPointCloudModel(options);
+        viewer.fitCameraToModel(pointCloud);
+        break;
+
+      default:
+        alert(`Model ID is invalid or is not supported`);
+    }
   }
 
   // Add GUI for loading models and such
-  const models: reveal_migration.Cognite3DModel[] = [];
+  const cadModels: reveal_migration.Cognite3DModel[] = [];
   const guiState = { modelId: 0, revisionId: 0, showSectorBoundingBoxes: false };
   function applySettingsToModels() {
-    models.forEach(m => {
+    cadModels.forEach(m => {
       m.renderHints = { ...m.renderHints, showSectorBoundingBoxes: guiState.showSectorBoundingBoxes };
     });
   }
