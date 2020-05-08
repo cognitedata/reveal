@@ -2,8 +2,8 @@ use crate::renderables::common::{
     create_general_ring_instance_matrix, GeneralRingInstanceMatrixInfo,
 };
 use crate::renderables::{
-    Circle, CircleInfo, Cone, GeneralCylinder, GeneralRing,
-    PrimitiveCollections, ToRenderables, Trapezium,
+    Circle, CircleInfo, Cone, GeneralCylinder, GeneralRing, PrimitiveCollections, ToRenderables,
+    Trapezium,
 };
 use crate::{Matrix, Rotation3, Vector3, Vector4};
 use std::f64::consts::PI;

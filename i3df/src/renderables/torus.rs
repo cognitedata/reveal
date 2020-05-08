@@ -1,6 +1,4 @@
-use crate::renderables::{
-    PrimitiveCollections, ToRenderables, TorusSegment, TorusSegmentInfo,
-};
+use crate::renderables::{PrimitiveCollections, ToRenderables, TorusSegment, TorusSegmentInfo};
 use std::f32::consts::PI;
 
 impl ToRenderables for crate::Torus {

@@ -1,9 +1,7 @@
 use crate::renderables::common::{
     create_general_ring_instance_matrix, GeneralRingInstanceMatrixInfo,
 };
-use crate::renderables::{
-    Cone, GeneralRing, PrimitiveCollections, Quad, QuadInfo, ToRenderables,
-};
+use crate::renderables::{Cone, GeneralRing, PrimitiveCollections, Quad, QuadInfo, ToRenderables};
 use crate::{Rotation3, Vector3};
 use std::f64::consts::PI;
 

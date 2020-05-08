@@ -1,6 +1,4 @@
-use crate::renderables::{
-    Circle, CircleInfo, PrimitiveCollections, ToRenderables,
-};
+use crate::renderables::{Circle, CircleInfo, PrimitiveCollections, ToRenderables};
 
 impl ToRenderables for crate::Circle {
     fn to_renderables(&self, collections: &mut PrimitiveCollections) {

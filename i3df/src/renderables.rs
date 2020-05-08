@@ -1,6 +1,6 @@
 use crate::{Matrix4, Rotation3, Translation3, Vector3, Vector4};
 use inflector::cases::camelcase::to_camel_case;
-use js_sys::{Map, Uint8Array, Float32Array, Float64Array};
+use js_sys::{Float32Array, Float64Array, Map, Uint8Array};
 use serde_derive::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::f32::consts::PI;
@@ -116,19 +116,18 @@ macro_rules! triangle_mesh_types{
     }
 }
 
-macro_rules! convert_to_js_type{
+macro_rules! convert_to_js_type {
     ($self:ident, $field_name:ident, Vec<f32>, Float32Array) => {{
         Float32Array::from(&$self.$field_name[..])
     }};
 
     ($self:ident, $field_name:ident, Vec<u64>, Float64Array) => {{
-        
         let data: Vec<f64> = $self
             .$field_name
             .iter()
             .map(|value| *value as f64)
             .collect();
-        
+
         Float64Array::from(&data[..])
     }};
 
@@ -137,7 +136,6 @@ macro_rules! convert_to_js_type{
     }};
 
     ($self:ident, $field_name:ident, Vec<[u8; 4]>, Uint8Array) => {{
-        
         let color_flat: Vec<u8> = $self
             .$field_name
             .iter()
@@ -156,7 +154,7 @@ macro_rules! convert_to_js_type{
             )
         };
         let data = data_as_f32.to_vec();
-        
+
         Float32Array::from(&data[..])
     }};
 
@@ -168,13 +166,12 @@ macro_rules! convert_to_js_type{
                 data_as_matrix4.len() * 16,
             )
         };
-        
+
         let data = data_as_f32.to_vec();
 
         Float32Array::from(&data[..])
     }};
 }
-        
 
 macro_rules! new_geometry_types {
     (
@@ -365,7 +362,7 @@ macro_rules! new_geometry_types {
     };
 }
 
-triangle_mesh_types!{
+triangle_mesh_types! {
     {
         TriangleMesh,
         [
@@ -462,7 +459,7 @@ new_geometry_types! {
 
     {
         EllipsoidSegment,
-        ellipsoid_segment_attributes, 
+        ellipsoid_segment_attributes,
         ellipsoid_segment_collection,
         [
             tree_index: f32,
@@ -478,7 +475,7 @@ new_geometry_types! {
 
     {
         GeneralRing,
-        general_ring_attributes, 
+        general_ring_attributes,
         general_ring_collection,
         [
             tree_index: f32,
@@ -497,7 +494,7 @@ new_geometry_types! {
     }
 
     {
-        GeneralCylinder, 
+        GeneralCylinder,
         general_cylinder_attributes,
         general_cylinder_collection,
         [
@@ -524,7 +521,7 @@ new_geometry_types! {
     }
     {
         Nut,
-        nut_attributes, 
+        nut_attributes,
         nut_collection,
         [
             tree_index: f32,
@@ -540,7 +537,7 @@ new_geometry_types! {
 
     {
         Quad,
-        quad_attributes, 
+        quad_attributes,
         quad_collection,
         [
             tree_index: f32,
@@ -554,7 +551,7 @@ new_geometry_types! {
     }
 
     {
-        SphericalSegment, 
+        SphericalSegment,
         spherical_segment_attributes,
         spherical_segment_collection,
         [
@@ -569,7 +566,7 @@ new_geometry_types! {
     }
 
     {
-        TorusSegment, 
+        TorusSegment,
         torus_segment_attributes,
         torus_segment_collection,
         [
@@ -586,7 +583,7 @@ new_geometry_types! {
         ]
     }
     {
-        Trapezium, 
+        Trapezium,
         trapezium_attributes,
         trapezium_collection,
         [
