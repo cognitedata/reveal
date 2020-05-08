@@ -13,38 +13,42 @@ export type SectorModelTransformation = {
   readonly inverseModelMatrix: mat4;
 };
 
+export interface SectorMetadataIndexFileSection {
+  readonly fileName: string;
+  readonly peripheralFiles: string[];
+  readonly estimatedDrawCallCount: number;
+  readonly downloadSize: number;
+}
+
+export interface SectorMetadataFacesFileSection {
+  readonly quadSize: number;
+  /**
+   * Coverage factors for the sector without children.
+   */
+  readonly coverageFactors: {
+    xy: number;
+    yz: number;
+    xz: number;
+  };
+  /**
+   * Coverage factor for the sectors including children.
+   */
+  readonly recursiveCoverageFactors: {
+    xy: number;
+    yz: number;
+    xz: number;
+  };
+  readonly fileName: string | null;
+  readonly downloadSize: number;
+}
+
 export interface SectorMetadata {
   readonly id: number;
   readonly path: string;
   readonly depth: number;
   readonly bounds: Box3;
-  readonly indexFile: {
-    readonly fileName: string;
-    readonly peripheralFiles: string[];
-    readonly estimatedDrawCallCount: number;
-    readonly downloadSize: number;
-  };
-  readonly facesFile: {
-    readonly quadSize: number;
-    /**
-     * Coverage factors for the sector without children.
-     */
-    readonly coverageFactors: {
-      xy: number;
-      yz: number;
-      xz: number;
-    };
-    /**
-     * Coverage factor for the sectors including children.
-     */
-    readonly recursiveCoverageFactors: {
-      xy: number;
-      yz: number;
-      xz: number;
-    };
-    readonly fileName: string | null;
-    readonly downloadSize: number;
-  };
+  readonly indexFile: SectorMetadataIndexFileSection;
+  readonly facesFile: SectorMetadataFacesFileSection;
   readonly children: SectorMetadata[];
 
   // TODO 2019-12-21 larsmoa: Make readonly
