@@ -16,7 +16,6 @@ import { Materials } from './materials';
 import { ParsePrimitiveAttribute } from '../../../workers/types/parser.types';
 
 export function* createPrimitives(sector: Sector, materials: Materials) {
-
   const primitives = sector.primitives;
 
   if (hasAny(primitives.boxCollection)) {
@@ -29,13 +28,25 @@ export function* createPrimitives(sector: Sector, materials: Materials) {
     yield createCones(primitives.coneCollection, primitives.coneAttributes, materials.cone);
   }
   if (hasAny(primitives.eccentricConeCollection)) {
-    yield createEccentricCones(primitives.eccentricConeCollection, primitives.eccentricConeAttributes, materials.eccentricCone);
+    yield createEccentricCones(
+      primitives.eccentricConeCollection,
+      primitives.eccentricConeAttributes,
+      materials.eccentricCone
+    );
   }
   if (hasAny(primitives.ellipsoidSegmentCollection)) {
-    yield createEllipsoidSegments(primitives.ellipsoidSegmentCollection, primitives.ellipsoidSegmentAttributes, materials.ellipsoidSegment);
+    yield createEllipsoidSegments(
+      primitives.ellipsoidSegmentCollection,
+      primitives.ellipsoidSegmentAttributes,
+      materials.ellipsoidSegment
+    );
   }
   if (hasAny(primitives.generalCylinderCollection)) {
-    yield createGeneralCylinders(primitives.generalCylinderCollection, primitives.generalCylinderAttributes, materials.generalCylinder);
+    yield createGeneralCylinders(
+      primitives.generalCylinderCollection,
+      primitives.generalCylinderAttributes,
+      materials.generalCylinder
+    );
   }
   if (hasAny(primitives.generalRingCollection)) {
     yield createGeneralRings(primitives.generalRingCollection, primitives.generalRingAttributes, materials.generalRing);
@@ -44,10 +55,18 @@ export function* createPrimitives(sector: Sector, materials: Materials) {
     yield createQuads(primitives.quadCollection, primitives.quadAttributes, materials.quad);
   }
   if (hasAny(primitives.sphericalSegmentCollection)) {
-    yield createSphericalSegments(primitives.sphericalSegmentCollection, primitives.sphericalSegmentAttributes, materials.sphericalSegment);
+    yield createSphericalSegments(
+      primitives.sphericalSegmentCollection,
+      primitives.sphericalSegmentAttributes,
+      materials.sphericalSegment
+    );
   }
   if (hasAny(primitives.torusSegmentCollection)) {
-    yield createTorusSegments(primitives.torusSegmentCollection, primitives.torusSegmentAttributes, materials.torusSegment);
+    yield createTorusSegments(
+      primitives.torusSegmentCollection,
+      primitives.torusSegmentAttributes,
+      materials.torusSegment
+    );
   }
   if (hasAny(primitives.trapeziumCollection)) {
     yield createTrapeziums(primitives.trapeziumCollection, primitives.trapeziumAttributes, materials.trapezium);
@@ -62,49 +81,62 @@ function hasAny(collection: Uint8Array) {
 }
 
 function splitMatrix(attributes: Map<string, ParsePrimitiveAttribute>) {
-  
-  const matrixColumns = 4; 
+  const matrixColumns = 4;
 
-  var matrixAttribute = attributes.get('instanceMatrix');
+  const matrixAttribute = attributes.get('instanceMatrix');
 
-  if(matrixAttribute == undefined) return;
+  if (!matrixAttribute) {
+    return;
+  }
 
   for (let i = 0; i < matrixColumns; i++) {
-
     const size = matrixAttribute!.size / matrixColumns;
     const columnAttribute = {
-      size: size,
+      size,
       offset: matrixAttribute!.offset + size * i
-    } as ParsePrimitiveAttribute
-  
+    } as ParsePrimitiveAttribute;
+
     attributes.set('instanceMatrix_column_' + i, columnAttribute);
   }
 
-  attributes.delete("instanceMatrix");
+  attributes.delete('instanceMatrix');
 }
 
-function setAttributes(geometry: THREE.InstancedBufferGeometry, collection: Uint8Array, attributes: Map<string, ParsePrimitiveAttribute>) {
-  
+function setAttributes(
+  geometry: THREE.InstancedBufferGeometry,
+  collection: Uint8Array,
+  attributes: Map<string, ParsePrimitiveAttribute>
+) {
   const attributesByteSize = Array.from(attributes.values()).reduce((a, b) => a + b.size, 0);
 
   splitMatrix(attributes);
 
   const interleavedBuffer8 = new THREE.InstancedInterleavedBuffer(collection, attributesByteSize);
-  const interleavedBuffer32 = new THREE.InstancedInterleavedBuffer(new Float32Array(collection.buffer), attributesByteSize / 4);
+  const interleavedBuffer32 = new THREE.InstancedInterleavedBuffer(
+    new Float32Array(collection.buffer),
+    attributesByteSize / 4
+  );
 
-  for(const [name, attribute] of attributes){
+  for (const [name, attribute] of attributes) {
     const is8BitAttribute = name === 'color';
     const interleavedBuffer = is8BitAttribute ? interleavedBuffer8 : interleavedBuffer32;
     const size = is8BitAttribute ? attribute.size : attribute.size / 4;
     const offset = is8BitAttribute ? attribute.offset : attribute.offset / 4;
 
-    geometry.setAttribute(`a_${name}`, new THREE.InterleavedBufferAttribute(interleavedBuffer, size, offset, is8BitAttribute));
+    geometry.setAttribute(
+      `a_${name}`,
+      new THREE.InterleavedBufferAttribute(interleavedBuffer, size, offset, is8BitAttribute)
+    );
   }
-  
+
   geometry.maxInstancedCount = collection.length / attributesByteSize;
 }
 
-function createBoxes(boxCollection: Uint8Array, boxAttributes: Map<string, ParsePrimitiveAttribute>, material: THREE.ShaderMaterial) {
+function createBoxes(
+  boxCollection: Uint8Array,
+  boxAttributes: Map<string, ParsePrimitiveAttribute>,
+  material: THREE.ShaderMaterial
+) {
   const geometry = new THREE.InstancedBufferGeometry();
 
   geometry.setIndex(boxGeometry.index);
@@ -120,7 +152,11 @@ function createBoxes(boxCollection: Uint8Array, boxAttributes: Map<string, Parse
   return mesh;
 }
 
-function createCircles(circleCollection: Uint8Array, circleAttributes: Map<string, ParsePrimitiveAttribute>, material: THREE.ShaderMaterial) {
+function createCircles(
+  circleCollection: Uint8Array,
+  circleAttributes: Map<string, ParsePrimitiveAttribute>,
+  material: THREE.ShaderMaterial
+) {
   const geometry = new THREE.InstancedBufferGeometry();
 
   geometry.setIndex(quadGeometry.index);
@@ -135,7 +171,11 @@ function createCircles(circleCollection: Uint8Array, circleAttributes: Map<strin
   return mesh;
 }
 
-function createCones(coneCollection: Uint8Array, coneAttributes: Map<string, ParsePrimitiveAttribute>, material: THREE.ShaderMaterial) {
+function createCones(
+  coneCollection: Uint8Array,
+  coneAttributes: Map<string, ParsePrimitiveAttribute>,
+  material: THREE.ShaderMaterial
+) {
   const geometry = new THREE.InstancedBufferGeometry();
 
   geometry.setIndex(coneGeometry.index);
@@ -149,7 +189,11 @@ function createCones(coneCollection: Uint8Array, coneAttributes: Map<string, Par
   return mesh;
 }
 
-function createEccentricCones(eccentericConeCollection: Uint8Array, eccentericConeAttributes: Map<string, ParsePrimitiveAttribute>, material: THREE.ShaderMaterial) {
+function createEccentricCones(
+  eccentericConeCollection: Uint8Array,
+  eccentericConeAttributes: Map<string, ParsePrimitiveAttribute>,
+  material: THREE.ShaderMaterial
+) {
   const geometry = new THREE.InstancedBufferGeometry();
 
   geometry.setIndex(coneGeometry.index);
@@ -163,7 +207,11 @@ function createEccentricCones(eccentericConeCollection: Uint8Array, eccentericCo
   return mesh;
 }
 
-function createEllipsoidSegments(ellipsoidSegmentCollection: Uint8Array, ellipsoidSegmentAttributes: Map<string, ParsePrimitiveAttribute>, material: THREE.ShaderMaterial) {
+function createEllipsoidSegments(
+  ellipsoidSegmentCollection: Uint8Array,
+  ellipsoidSegmentAttributes: Map<string, ParsePrimitiveAttribute>,
+  material: THREE.ShaderMaterial
+) {
   const geometry = new THREE.InstancedBufferGeometry();
 
   geometry.setIndex(coneGeometry.index);
@@ -177,7 +225,11 @@ function createEllipsoidSegments(ellipsoidSegmentCollection: Uint8Array, ellipso
   return mesh;
 }
 
-function createGeneralCylinders(generalCylinderCollection: Uint8Array, generalCylinderAttributes: Map<string, ParsePrimitiveAttribute>, material: THREE.ShaderMaterial) {
+function createGeneralCylinders(
+  generalCylinderCollection: Uint8Array,
+  generalCylinderAttributes: Map<string, ParsePrimitiveAttribute>,
+  material: THREE.ShaderMaterial
+) {
   const geometry = new THREE.InstancedBufferGeometry();
 
   geometry.setIndex(coneGeometry.index);
@@ -191,7 +243,11 @@ function createGeneralCylinders(generalCylinderCollection: Uint8Array, generalCy
   return mesh;
 }
 
-function createGeneralRings(generalRingCollection: Uint8Array, generalRingAttributes: Map<string, ParsePrimitiveAttribute>, material: THREE.ShaderMaterial) {
+function createGeneralRings(
+  generalRingCollection: Uint8Array,
+  generalRingAttributes: Map<string, ParsePrimitiveAttribute>,
+  material: THREE.ShaderMaterial
+) {
   const geometry = new THREE.InstancedBufferGeometry();
 
   geometry.setIndex(quadGeometry.index);
@@ -205,7 +261,11 @@ function createGeneralRings(generalRingCollection: Uint8Array, generalRingAttrib
   return mesh;
 }
 
-function createSphericalSegments(sphericalSegmentCollection: Uint8Array, sphericalSegmentAttributes: Map<string, ParsePrimitiveAttribute>, material: THREE.ShaderMaterial) {
+function createSphericalSegments(
+  sphericalSegmentCollection: Uint8Array,
+  sphericalSegmentAttributes: Map<string, ParsePrimitiveAttribute>,
+  material: THREE.ShaderMaterial
+) {
   const geometry = new THREE.InstancedBufferGeometry();
 
   geometry.setIndex(coneGeometry.index);
@@ -218,8 +278,8 @@ function createSphericalSegments(sphericalSegmentCollection: Uint8Array, spheric
   // this data from Rust or by creating a separate shader for
   // spherical segments
 
-  geometry.setAttribute(`a_horizontalRadius`, geometry.getAttribute("a_radius"));
-  geometry.setAttribute(`a_verticalRadius`, geometry.getAttribute("a_radius"));
+  geometry.setAttribute(`a_horizontalRadius`, geometry.getAttribute('a_radius'));
+  geometry.setAttribute(`a_verticalRadius`, geometry.getAttribute('a_radius'));
 
   const mesh = new THREE.Mesh(geometry, material);
   mesh.frustumCulled = false;
@@ -228,7 +288,11 @@ function createSphericalSegments(sphericalSegmentCollection: Uint8Array, spheric
   return mesh;
 }
 
-function createQuads(quadCollection: Uint8Array, quadAttributes: Map<string, ParsePrimitiveAttribute>, material: THREE.ShaderMaterial) {
+function createQuads(
+  quadCollection: Uint8Array,
+  quadAttributes: Map<string, ParsePrimitiveAttribute>,
+  material: THREE.ShaderMaterial
+) {
   const geometry = new THREE.InstancedBufferGeometry();
 
   geometry.setIndex(quadGeometry.index);
@@ -242,7 +306,11 @@ function createQuads(quadCollection: Uint8Array, quadAttributes: Map<string, Par
   return mesh;
 }
 
-function createTrapeziums(trapeziumCollection: Uint8Array, trapeziumAttributes: Map<string, ParsePrimitiveAttribute>, material: THREE.ShaderMaterial) {
+function createTrapeziums(
+  trapeziumCollection: Uint8Array,
+  trapeziumAttributes: Map<string, ParsePrimitiveAttribute>,
+  material: THREE.ShaderMaterial
+) {
   const geometry = new THREE.InstancedBufferGeometry();
 
   geometry.setIndex(trapeziumGeometry.index);
@@ -264,8 +332,11 @@ function calcLODDistance(size: number, lodLevel: number, numLevels: number): num
   return size * scaleFactor ** (numLevels - 1 - lodLevel);
 }
 
-function createTorusSegments(torusSegmentCollection: Uint8Array, torusSegmentAttributes: Map<string, ParsePrimitiveAttribute>, material: THREE.ShaderMaterial) {
-  
+function createTorusSegments(
+  torusSegmentCollection: Uint8Array,
+  torusSegmentAttributes: Map<string, ParsePrimitiveAttribute>,
+  material: THREE.ShaderMaterial
+) {
   const sizes = getTorusSizes(torusSegmentCollection, torusSegmentAttributes);
   if (!sizes) {
     throw new Error('Torus segments are missing size attribute');
@@ -274,45 +345,49 @@ function createTorusSegments(torusSegmentCollection: Uint8Array, torusSegmentAtt
   const lod = new THREE.LOD();
   lod.name = 'Primitives (TorusSegments)';
 
-
   for (const [level, torus] of torusLODs.entries()) {
     const geometry = new THREE.InstancedBufferGeometry();
     geometry.setIndex(torus.index);
     geometry.setAttribute('position', torus.position);
-    
+
     setAttributes(geometry, torusSegmentCollection, torusSegmentAttributes);
-    
+
     const mesh = new THREE.Mesh(geometry, material);
     mesh.frustumCulled = false;
     mesh.name = `Primitives (TorusSegments) - LOD ${level}`;
-    
+
     lod.addLevel(mesh, calcLODDistance(biggestTorus, level, torusLODs.length));
   }
 
   return lod;
 }
 
-function getTorusSizes(torusSegmentCollection: Uint8Array, torusSegmentAttributes: Map<string, ParsePrimitiveAttribute>) {
-  
-  var collectionStride = Array.from(torusSegmentAttributes.values())
-    .reduce((sum, element) => sum + element.size, 0);
+function getTorusSizes(
+  torusSegmentCollection: Uint8Array,
+  torusSegmentAttributes: Map<string, ParsePrimitiveAttribute>
+) {
+  const collectionStride = Array.from(torusSegmentAttributes.values()).reduce((sum, element) => sum + element.size, 0);
 
   const numberOfTorusSegments = torusSegmentCollection.length / collectionStride;
-  
+
   const sizes = new Float32Array(numberOfTorusSegments);
 
   const collectionView = new DataView(torusSegmentCollection.buffer);
   const sizeAttribute = torusSegmentAttributes.get('size')!;
   const sizeAttributeOffset = sizeAttribute.offset;
 
-  for (var i = 0; i < numberOfTorusSegments; i++){
+  for (let i = 0; i < numberOfTorusSegments; i++) {
     sizes[i] = collectionView.getFloat32(i * collectionStride + sizeAttributeOffset!, true);
   }
 
   return sizes;
 }
 
-function createNuts(nutCollection: Uint8Array, nutAttributes: Map<string, ParsePrimitiveAttribute>, material: THREE.ShaderMaterial) {
+function createNuts(
+  nutCollection: Uint8Array,
+  nutAttributes: Map<string, ParsePrimitiveAttribute>,
+  material: THREE.ShaderMaterial
+) {
   const geometry = new THREE.InstancedBufferGeometry();
 
   geometry.setIndex(nutGeometry.index);
