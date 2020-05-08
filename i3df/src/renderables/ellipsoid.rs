@@ -1,5 +1,5 @@
 use crate::renderables::{
-    Circle, CircleInfo, EllipsoidSegment, GeometryCollection, PrimitiveCollections, ToRenderables,
+    Circle, CircleInfo, EllipsoidSegment, PrimitiveCollections, ToRenderables,
 };
 use crate::Vector3;
 
@@ -8,8 +8,7 @@ impl ToRenderables for crate::ClosedEllipsoidSegment {
         collections
             .ellipsoid_segment_collection
             .push(EllipsoidSegment {
-                node_id: self.node_id,
-                tree_index: self.tree_index,
+                tree_index: self.tree_index as f32,
                 color: self.color,
                 size: self.diagonal,
                 center: self.center(),
@@ -26,8 +25,7 @@ impl ToRenderables for crate::ClosedEllipsoidSegment {
         let center = self.center() + length * Vector3::from(self.normal).normalize();
 
         collections.circle_collection.push(Circle::new(&CircleInfo {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center,
@@ -41,8 +39,7 @@ impl ToRenderables for crate::Ellipsoid {
         collections
             .ellipsoid_segment_collection
             .push(EllipsoidSegment {
-                node_id: self.node_id,
-                tree_index: self.tree_index,
+                tree_index: self.tree_index as f32,
                 color: self.color,
                 size: self.diagonal,
                 center: self.center(),
@@ -58,8 +55,7 @@ impl ToRenderables for crate::OpenEllipsoidSegment {
         collections
             .ellipsoid_segment_collection
             .push(EllipsoidSegment {
-                node_id: self.node_id,
-                tree_index: self.tree_index,
+                tree_index: self.tree_index as f32,
                 color: self.color,
                 size: self.diagonal,
                 center: self.center(),
