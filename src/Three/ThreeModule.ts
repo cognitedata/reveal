@@ -20,7 +20,7 @@ import { BaseModule } from "../Core/Module/BaseModule";
 import { ViewFactory } from "../Core/Views/ViewFactory";
 import { ThreeRenderTargetNode } from "./ThreeRenderTargetNode";
 import { BaseRootNode } from "../Core/Nodes/BaseRootNode";
-import { RootNode } from "../Nodes/RootNode";
+import { RootNode } from "../TreeNodes/RootNode";
 import { BaseRenderTargetNode } from "../Core/Nodes/BaseRenderTargetNode";
 import { PotreeNode } from "../Nodes/PotreeNode";
 import { PotreeThreeView } from "./PotreeThreeView";
@@ -59,10 +59,9 @@ export class ThreeModule extends BaseModule
   public initializeWhenPopulated(root: BaseRootNode): void
   {
     root.initializeRecursive();
-    document.body.onresize = () =>
-    {
+    document.body.onresize = () => {
       for (const target of root.targetFolder.getChildrenByType(BaseRenderTargetNode))
-        target.onResize()
+        target.onResize();
     }
   }
 }

@@ -34,13 +34,13 @@ export class NodeEventArgs
   // INSTANCE METHODS: Requests
   //==================================================
 
-  public get isEmpty(): boolean { return this._changes == null || this._changes.length === 0; }
+  public get isEmpty(): boolean { return this._changes === null || this._changes.length === 0; }
 
   public isChanged(changed: symbol): boolean
   {
     if (!this._changes)
       return false;
-    return this._changes.some((desc: ChangedDecription) => desc.changed === changed);
+    return this._changes.some(((desc: ChangedDecription) => desc.changed === changed) as any);
   }
 
   //==================================================

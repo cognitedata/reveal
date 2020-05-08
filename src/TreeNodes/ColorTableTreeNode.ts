@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseRootNode } from "../Core/Nodes/BaseRootNode";
+import { BaseTreeNode } from "../Core/Nodes/BaseTreeNode";
 
-export class RootNode extends BaseRootNode
+export class ColorTableTreeNode extends BaseTreeNode
 {
   //==================================================
   // CONSTRUCTORS
@@ -25,15 +25,13 @@ export class RootNode extends BaseRootNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return RootNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === RootNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return ColorTableTreeNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === ColorTableTreeNode.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  protected /*override*/ initializeCore(): void
-  {
-    super.initializeCore();
-  }
+  public /*override*/ get typeName(): string { return "ColorTables" }
+  public /*override*/ get name(): string { return "Colors" }
 }

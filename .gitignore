@@ -1,3 +1,8 @@
 dist
 node_modules
 public
+.vs/slnx.sqlite
+.vs/subsurface-visualization/config/applicationhost.config
+.vs/subsurface-visualization/v16/.suo
+.vs/VSWorkspaceState.json
+.vs/VSWorkspaceState.json

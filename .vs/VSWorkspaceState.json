@@ -3,10 +3,11 @@
     "",
     "\\src",
     "\\src\\Core",
-    "\\src\\Core\\Enums",
-    "\\src\\Core\\Geometry",
-    "\\src\\Core\\Nodes"
+    "\\src\\Core\\Nodes",
+    "\\src\\Nodes",
+    "\\src\\Three",
+    "\\src\\TreeNodes"
   ],
-  "SelectedNode": "\\src\\Core\\Nodes\\FolderNode.ts",
+  "SelectedNode": "\\src\\Three\\TreeOverlay.ts",
   "PreviewInSolutionExplorer": false
 }
