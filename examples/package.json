@@ -67,7 +67,7 @@
     "gl-matrix": "^3.3.0",
     "glslify": "^7.0.0",
     "postprocessing": "^6.13.5",
-    "rxjs": "^6.5.4",
+    "rxjs": "^6.5.5",
     "three": "^0.115.0"
   }
 }
