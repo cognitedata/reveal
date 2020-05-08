@@ -63,7 +63,7 @@
     "@xailabs/three-renderer-stats": "^1.0.4",
     "camera-controls": "^1.21.0",
     "comlink": "^4.3.0",
-    "dat.gui": "^0.7.6",
+    "dat.gui": "^0.7.7",
     "gl-matrix": "^3.3.0",
     "glslify": "^7.0.0",
     "postprocessing": "^6.13.5",
