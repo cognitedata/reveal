@@ -54,13 +54,13 @@ async function main() {
 
   async function addModel(options: reveal_migration.AddModelOptions) {
     switch (await viewer.determineModelType(options.modelId, options.revisionId)) {
-      case reveal_migration.WellKnownModelTypes.CAD:
+      case reveal_migration.SupportedModelTypes.CAD:
         const model = await viewer.addModel(options);
         viewer.fitCameraToModel(model);
         cadModels.push(model);
         break;
 
-      case reveal_migration.WellKnownModelTypes.PointCloud:
+      case reveal_migration.SupportedModelTypes.PointCloud:
         const pointCloud = await viewer.addPointCloudModel(options);
         viewer.fitCameraToModel(pointCloud);
         break;
