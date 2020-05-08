@@ -2,8 +2,8 @@ use crate::renderables::common::{
     create_general_ring_instance_matrix, GeneralRingInstanceMatrixInfo,
 };
 use crate::renderables::{
-    Circle, CircleInfo, Cone, GeneralCylinder, GeneralRing, GeometryCollection,
-    PrimitiveCollections, ToRenderables, Trapezium,
+    Circle, CircleInfo, Cone, GeneralCylinder, GeneralRing, PrimitiveCollections, ToRenderables,
+    Trapezium,
 };
 use crate::{Matrix, Rotation3, Vector3, Vector4};
 use std::f64::consts::PI;
@@ -97,8 +97,7 @@ fn create_cap(
 
     Cap {
         ring: GeneralRing {
-            node_id: cylinder.node_id,
-            tree_index: cylinder.tree_index,
+            tree_index: cylinder.tree_index as f32,
             color: cylinder.color,
             size: cylinder.diagonal,
             center: *center,
@@ -128,8 +127,7 @@ impl ToRenderables for crate::ClosedCylinder {
         let rotation = Rotation3::rotation_between(&z_axis, &normal).unwrap();
         let local_x_axis: Vector3 = rotation.transform_vector(&x_axis);
         collections.cone_collection.push(Cone {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center_a,
@@ -141,8 +139,7 @@ impl ToRenderables for crate::ClosedCylinder {
             local_x_axis,
         });
         collections.circle_collection.push(Circle::new(&CircleInfo {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center: center_a,
@@ -150,8 +147,7 @@ impl ToRenderables for crate::ClosedCylinder {
             radius: self.radius,
         }));
         collections.circle_collection.push(Circle::new(&CircleInfo {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center: center_b,
@@ -174,8 +170,7 @@ impl ToRenderables for crate::OpenCylinder {
         let rotation = Rotation3::rotation_between(&z_axis, &normal).unwrap();
         let local_x_axis: Vector3 = rotation.transform_vector(&x_axis);
         collections.cone_collection.push(Cone {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center_a,
@@ -252,8 +247,7 @@ fn create_general_cylinder(cylinder: &crate::SolidOpenGeneralCylinder) -> Genera
 
     GeneralCylinderWithCaps {
         cylinder: GeneralCylinder {
-            node_id: cylinder.node_id,
-            tree_index: cylinder.tree_index,
+            tree_index: cylinder.tree_index as f32,
             color: cylinder.color,
             size: cylinder.diagonal,
             center_a: ext_a,
@@ -434,8 +428,7 @@ impl ToRenderables for crate::SolidClosedGeneralCylinder {
             }
 
             collections.trapezium_collection.push(Trapezium {
-                node_id: self.node_id,
-                tree_index: self.tree_index,
+                tree_index: self.tree_index as f32,
                 color: self.color,
                 size: self.diagonal,
                 vertex_1: vertices[0],
