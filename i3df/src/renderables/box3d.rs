@@ -1,4 +1,4 @@
-use crate::renderables::{Box3D, GeometryCollection, PrimitiveCollections, ToRenderables};
+use crate::renderables::{Box3D, PrimitiveCollections, ToRenderables};
 use crate::{Matrix4, Rotation3, Translation3, Vector3};
 
 impl ToRenderables for crate::Box3D {
@@ -15,8 +15,7 @@ impl ToRenderables for crate::Box3D {
             * scale_matrix;
 
         collections.box_collection.push(Box3D {
-            node_id: self.node_id + 1,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center: self.center(),
