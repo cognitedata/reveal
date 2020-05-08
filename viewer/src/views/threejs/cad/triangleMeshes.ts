@@ -4,6 +4,7 @@
 
 import * as THREE from 'three';
 import { TriangleMesh } from '../../../models/cad/types';
+import { disposeAttributeArrayOnUpload } from '../disposeAttributeArrayOnUpload';
 
 export function createTriangleMeshes(
   triangleMeshes: TriangleMesh[],
@@ -13,10 +14,12 @@ export function createTriangleMeshes(
   const result: THREE.Mesh[] = [];
   for (const mesh of triangleMeshes) {
     const geometry = new THREE.BufferGeometry();
-    const indices = new THREE.Uint32BufferAttribute(mesh.indices.buffer, 1);
-    const vertices = new THREE.Float32BufferAttribute(mesh.vertices.buffer, 3);
-    const colors = new THREE.Float32BufferAttribute(mesh.colors.buffer, 3);
-    const treeIndices = new THREE.Float32BufferAttribute(mesh.treeIndices.buffer, 1);
+    const indices = new THREE.Uint32BufferAttribute(mesh.indices.buffer, 1).onUpload(disposeAttributeArrayOnUpload);
+    const vertices = new THREE.Float32BufferAttribute(mesh.vertices.buffer, 3).onUpload(disposeAttributeArrayOnUpload);
+    const colors = new THREE.Float32BufferAttribute(mesh.colors.buffer, 3).onUpload(disposeAttributeArrayOnUpload);
+    const treeIndices = new THREE.Float32BufferAttribute(mesh.treeIndices.buffer, 1).onUpload(
+      disposeAttributeArrayOnUpload
+    );
     geometry.setIndex(indices);
     geometry.setAttribute('position', vertices);
     geometry.setAttribute('color', colors);
