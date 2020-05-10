@@ -12,7 +12,7 @@ path = "rust/lib.rs"
 [dependencies]
 wasm-bindgen = { version = "0.2.60", features = ["serde-serialize"] }
 js-sys = "0.3.39"
-serde = { version = "1.0.107", features = ["derive"] }
+serde = { version = "1.0.108", features = ["derive"] }
 serde_derive = "1.0.104"
 arraymap = "0.1.1"
 console_error_panic_hook = "0.1.6"
