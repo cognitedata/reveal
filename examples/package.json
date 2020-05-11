@@ -43,7 +43,7 @@
     "raw-loader": "^4.0.1",
     "rimraf": "^3.0.2",
     "source-map-loader": "^0.2.4",
-    "ts-loader": "7.0.3",
+    "ts-loader": "7.0.4",
     "tslint": "^5.20.1",
     "tslint-config-prettier": "^1.18.0",
     "tslint-no-circular-imports": "^0.7.0",
