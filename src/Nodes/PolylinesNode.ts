@@ -13,7 +13,7 @@
 
 import { BaseVisualNode } from "../Core/Nodes/BaseVisualNode";
 import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
-import { TargetId } from "../Core/PrimitivClasses/TargetId";
+import { TargetId } from "../Core/PrimitiveClasses/TargetId";
 import { Polylines } from "../Core/Geometry/Polylines";
 import { PolylinesRenderStyle } from "./PolylinesRenderStyle";
 import { ColorType } from "../Core/Enums/ColorType";

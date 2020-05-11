@@ -1,6 +1,6 @@
 
 import { BaseCameraNode } from "./BaseCameraNode";
-import { Colors } from "../PrimitivClasses/Colors";
+import { Colors } from "../PrimitiveClasses/Colors";
 import { BaseTargetNode } from "./BaseTargetNode";
 import { Range3 } from "../Geometry/Range3";
 import { Base3DView } from "../Views/Base3DView";

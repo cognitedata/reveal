@@ -15,6 +15,7 @@ import { BaseRootNode } from "../Core/Nodes/BaseRootNode";
 import { WellTreeNode } from './WellTreeNode';
 import { ColorTableTreeNode } from './ColorTableTreeNode';
 import { SettingsTreeNode } from './SettingsTreeNode';
+import { OthersTreeNode } from './OthersTreeNode';
 
 export class RootNode extends BaseRootNode
 {
@@ -39,6 +40,7 @@ export class RootNode extends BaseRootNode
   {
     super.initializeCore();
     this.addChild(new WellTreeNode());
+    this.addChild(new OthersTreeNode());
     this.addChild(new ColorTableTreeNode());
     this.addChild(new SettingsTreeNode());
   }

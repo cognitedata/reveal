@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { TargetId } from "../Core/PrimitivClasses/TargetId";
+import { TargetId } from "../Core/PrimitiveClasses/TargetId";
 import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
 import { ColorType } from "../Core/Enums/ColorType";
 

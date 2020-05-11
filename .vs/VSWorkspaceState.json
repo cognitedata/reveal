@@ -3,11 +3,13 @@
     "",
     "\\src",
     "\\src\\Core",
-    "\\src\\Core\\Nodes",
-    "\\src\\Nodes",
+    "\\src\\Core\\Interfaces",
+    "\\src\\Core\\Module",
+    "\\src\\Core\\PrimitiveClasses",
+    "\\src\\Core\\Styles",
+    "\\src\\Core\\Views",
     "\\src\\Three",
     "\\src\\TreeNodes"
   ],
-  "SelectedNode": "\\src\\Three\\TreeOverlay.ts",
   "PreviewInSolutionExplorer": false
 }

@@ -11,13 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Vector3 } from "../Core/Geometry/Vector3";
-import { Random } from "../Core/PrimitiveClasses/Random";
-import { Points } from "../Core/Geometry/Points";
-import { Range3 } from "../Core/Geometry/Range3";
-import { Range1 } from "../Core/Geometry/Range1";
+import { BaseTreeNode } from "../Core/Nodes/BaseTreeNode";
 
-export class Well extends Points
+export class OthersTreeNode extends BaseTreeNode
 {
   //==================================================
   // CONSTRUCTORS
@@ -26,33 +22,17 @@ export class Well extends Points
   public constructor() { super(); }
 
   //==================================================
-  // STATIC METHODS: 
+  // OVERRIDES of Identifiable
   //==================================================
 
-  public static createByRandom(pointCount: number, boundingBox: Range3): Well
-  {
-    const result = new Well();
-    const p0 = Vector3.getRandom(boundingBox);
-    p0.z = 400;
-    
-    const p1 = p0.copy();
-    p1.z += -200;
+  public /*override*/ get className(): string { return OthersTreeNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === OthersTreeNode.name || super.isA(className); }
 
-    const p2 = p1.copy();
-    p2.x += Random.getFloat(new Range1(100, -100));
-    p2.y += Random.getFloat(new Range1(100, -100));
-    p2.z += -100;
+  //==================================================
+  // OVERRIDES of BaseNode
+  //==================================================
 
-    const p3 = p2.copy();
-    p3.x += Random.getFloat(new Range1(300, -300));
-    p3.y += Random.getFloat(new Range1(300, -300));
-    p3.z += -50;
-
-    result.add(p0);
-    result.add(p1);
-    result.add(p2);
-    result.add(p3);
-    return result;
-  }
+  public /*override*/ get typeName(): string { return "OthersTree" }
+  public /*override*/ get name(): string { return "Others" }
 
 }

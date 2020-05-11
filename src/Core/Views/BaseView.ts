@@ -13,10 +13,9 @@
 
 import { NodeEventArgs } from "./NodeEventArgs";
 import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
-import { TargetId } from "../PrimitivClasses/TargetId";
+import { TargetId } from "../PrimitiveClasses/TargetId";
 import { TargetIdAccessor } from "../Interfaces/TargetIdAccessor";
 import { BaseNode } from "../Nodes/BaseNode";
-import { Range3 } from "../Geometry/Range3";
 
 export abstract class BaseView
 {
@@ -24,8 +23,8 @@ export abstract class BaseView
   // FIELDS
   //==================================================
 
-  private _node: BaseNode | null = null;
-  private _target: TargetIdAccessor | null = null;
+  private _node: BaseNode | null;
+  private _target: TargetIdAccessor | null;
   private _isVisible: boolean = false;
 
   //==================================================
@@ -54,33 +53,33 @@ export abstract class BaseView
   protected /*virtual*/ initializeCore(): void
   {
     // Override this function to initialize your view
-    // NOTE: Always call super.updateCore(args) in the overides
+    // NOTE: Always call super.updateCore(args) in the overrides
   }
 
   protected /*virtual*/ updateCore(args: NodeEventArgs): void
   {
     // Override this function to update your view
-    // NOTE: Always call super.updateCore(args) in the overides
+    // NOTE: Always call super.updateCore(args) in the overrides
   }
 
   protected /*virtual*/ clearMemoryCore(): void
   {
     // Override this function to remove redundant data
-    // NOTE: Always call super.updateCore(args) in the overides
+    // NOTE: Always call super.updateCore(args) in the overrides
   }
 
   protected /*virtual*/ onShowCore(): void
   {
     // Override this function to when your view
     // need to do something when it is set visible
-    // NOTE: Always call super.updateCore(args) in the overides
+    // NOTE: Always call super.updateCore(args) in the overrides
   }
 
   protected /*virtual*/ onHideCore(): void
   {
     // Override this function to when your view
     // need to do something when it is set NOT visible
-    // NOTE: Always call super.updateCore(args) in the overides
+    // NOTE: Always call super.updateCore(args) in the overrides
   }
 
   protected /*virtual*/ disposeCore(): void
@@ -88,7 +87,7 @@ export abstract class BaseView
     // Override this function to when your view
     // need to do something when it is set NOT visible
     // Called just before removal from view list and detach
-    // NOTE: Always call super.updateCore(args) in the overides
+    // NOTE: Always call super.updateCore(args) in the overrides
   }
 
   //==================================================
@@ -111,7 +110,7 @@ export abstract class BaseView
 
   protected getStyle(): BaseRenderStyle
   {
-    let style: BaseRenderStyle | null = null;
+    let style: BaseRenderStyle | null;
     if (!this._target)
       style = this.getNode().getRenderStyle(TargetId.empty);
     else
@@ -128,7 +127,7 @@ export abstract class BaseView
   public initialize(): void
   {
     this.initializeCore();
-    this.Verify(); // Just checking that everything is set up properly
+    this.verify(); // Just checking that everything is set up properly
   }
 
   public update(args: NodeEventArgs): void
@@ -158,7 +157,7 @@ export abstract class BaseView
 
   public isOwner(node: BaseNode): boolean
   {
-    return this._node != null && this._node === node;
+    return this._node !== null && this._node === node;
   }
 
   public detach(): void
@@ -174,7 +173,7 @@ export abstract class BaseView
     this._target = target;
   }
 
-  public Verify(): boolean
+  public verify(): boolean
   {
     // Used in unit testing
     if (!this.getNode())

@@ -18,7 +18,7 @@ import { PointsNode } from "../Nodes/PointsNode";
 import { PointsRenderStyle } from "../Nodes/PointsRenderStyle";
 import { ThreeConverter } from "./ThreeConverter";
 import { ColorType } from "../Core/Enums/ColorType";
-import { Colors } from "../Core/PrimitivClasses/Colors";
+import { Colors } from "../Core/PrimitiveClasses/Colors";
 import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
 import { Points } from '../Core/Geometry/Points';
 import { Range3 } from '../Core/Geometry/Range3';

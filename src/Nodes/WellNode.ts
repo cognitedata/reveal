@@ -13,7 +13,7 @@
 
 import { BaseVisualNode } from "../Core/Nodes/BaseVisualNode";
 import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
-import { TargetId } from "../Core/PrimitivClasses/TargetId";
+import { TargetId } from "../Core/PrimitiveClasses/TargetId";
 import { WellRenderStyle } from "./WellRenderStyle";
 import { ColorType } from "../Core/Enums/ColorType";
 import { Range3 } from "../Core/Geometry/Range3";

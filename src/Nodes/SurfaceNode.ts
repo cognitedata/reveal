@@ -13,7 +13,7 @@
 
 import { BaseVisualNode } from "../Core/Nodes/BaseVisualNode";
 import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
-import { TargetId } from "../Core/PrimitivClasses/TargetId";
+import { TargetId } from "../Core/PrimitiveClasses/TargetId";
 import { RegularGrid2 } from "../Core/Geometry/RegularGrid2";
 import { SurfaceRenderStyle } from "./SurfaceRenderStyle";
 import { ColorType } from "../Core/Enums/ColorType";

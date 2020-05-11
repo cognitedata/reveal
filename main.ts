@@ -1,18 +1,17 @@
 
 import { ThreeModule } from './src/Three/ThreeModule';
 import { PolylinesNode } from './src/Nodes/PolylinesNode';
-import { Polylines } from './src/Core/Geometry/Polylines';
 import { PotreeNode } from './src/Nodes/PotreeNode';
 import { SurfaceNode } from './src/Nodes/SurfaceNode';
-import { RegularGrid2 } from './src/Core/Geometry/RegularGrid2';
 import { ThreeRenderTargetNode } from './src/Three/ThreeRenderTargetNode';
 import { Range3 } from './src/Core/Geometry/Range3';
 import { WellNode } from './src/Nodes/WellNode';
+import { WellTreeNode } from './src/TreeNodes/WellTreeNode';
 import { Well } from './src/Nodes/Well';
 import { PointsNode } from './src/Nodes/PointsNode';
 import { Points } from './src/Core/Geometry/Points';
 import { ColorType } from './src/Core/Enums/ColorType';
-import { Colors } from './src/Core/PrimitivClasses/Colors';
+import { Colors } from './src/Core/PrimitiveClasses/Colors';
 
 main();
 
@@ -24,6 +23,16 @@ export function main()
 
   const root = module.createRoot();
 
+
+  const wellTree = root.getChildrenByType(WellTreeNode);
+
+  for (let i = 0; i < 10; i++)
+  {
+    const node = new WellNode();
+    node.data = Well.createByRandom(20, Range3.newTest);
+    wellTree.addChild(node);
+  }
+
   // Add data
   for (let i = 0; i < 1; i++)
   {
@@ -33,34 +42,28 @@ export function main()
     node.data = Points.createByRandom(2_000_000, range);
     root.dataFolder.addChild(node);
   }
-  for (let i = 0; i < 1; i++)
-  {
-    const range = Range3.newTest;
-    range.expandByFraction(-0.2);
-    const node = new PolylinesNode();
-    node.data = Polylines.createByRandom(20, 10, range);
-    root.dataFolder.addChild(node);
-  }
-  for (let i = 0; i < 1; i++)
-  {
-    const node = new SurfaceNode();
-    node.data = RegularGrid2.createFractal(Range3.newTest, 8, 0.8, 2);
-    root.dataFolder.addChild(node);
-  }
-  for (let i = 0; i < 10; i++)
-  {
-    const node = new WellNode();
-    node.data = Well.createByRandom(20, Range3.newTest);
-    root.dataFolder.addChild(node);
-  }
-  {
-    const node = new PotreeNode();
-    //node.url = 'https://betaserver.icgc.cat/potree12/resources/pointclouds/barcelonasagradafamilia/cloud.js';
-    //node.name = 'Barcelona';
-    node.url = '/Real/ept.json';
-    node.name = 'Aerfugl';
-    root.dataFolder.addChild(node);
-  }
+  //for (let i = 0; i < 1; i++)
+  //{
+  //  const range = Range3.newTest;
+  //  range.expandByFraction(-0.2);
+  //  const node = new PolylinesNode();
+  //  node.data = Polylines.createByRandom(20, 10, range);
+  //  root.dataFolder.addChild(node);
+  //}
+  //for (let i = 0; i < 1; i++)
+  //{
+  //  const node = new SurfaceNode();
+  //  node.data = RegularGrid2.createFractal(Range3.newTest, 8, 0.8, 2);
+  //  root.dataFolder.addChild(node);
+  //}
+  //{
+  //  const node = new PotreeNode();
+  //  //node.url = 'https://betaserver.icgc.cat/potree12/resources/pointclouds/barcelonasagradafamilia/cloud.js';
+  //  //node.name = 'Barcelona';
+  //  node.url = '/Real/ept.json';
+  //  node.name = 'Aerfugl';
+  //  root.dataFolder.addChild(node);
+  //}
   {
     const range = Range3.createByMinAndMax(0, 0, 1, 0.5);
     const target = new ThreeRenderTargetNode(range);

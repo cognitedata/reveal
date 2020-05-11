@@ -1,11 +1,10 @@
-import { TargetId } from "../PrimitivClasses/TargetId";
+import { TargetId } from "../PrimitiveClasses/TargetId";
 import { Target } from "../Interfaces/Target";
 import { ViewFactory } from "../Views/ViewFactory";
 import { ViewList } from "../Views/ViewList";
 import { BaseView } from "../Views/BaseView";
 import { BaseVisualNode } from "./BaseVisualNode";
 import { BaseNode, cocatinate } from "./BaseNode";
-import { Range3 } from "../Geometry/Range3";
 
 export abstract class BaseTargetNode extends BaseNode implements Target
 {

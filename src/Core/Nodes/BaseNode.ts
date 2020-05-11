@@ -11,17 +11,17 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { UniqueId } from "../PrimitivClasses/UniqueId";
-import { Identifiable } from "../PrimitivClasses/Identifiable";
-import { TargetId } from "../PrimitivClasses/TargetId";
-import { isInstanceOf, Class } from "../PrimitivClasses/ClassT";
+import { UniqueId } from "../PrimitiveClasses/UniqueId";
+import { Identifiable } from "../PrimitiveClasses/Identifiable";
+import { TargetId } from "../PrimitiveClasses/TargetId";
+import { isInstanceOf, Class } from "../PrimitiveClasses/ClassT";
 import { RenderStyleResolution } from "../Enums/RenderStyleResolution";
 import { NodeEventArgs } from "../Views/NodeEventArgs";
 import { TargetIdAccessor } from "../Interfaces/TargetIdAccessor";
 import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
 import * as color from 'color'
 import { ColorType } from "../Enums/ColorType";
-import { Colors } from "../PrimitivClasses/Colors";
+import { Colors } from "../PrimitiveClasses/Colors";
 import { Changes } from "../Views/Changes";
 import { Range3 } from "../Geometry/Range3";
 

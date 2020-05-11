@@ -14,7 +14,7 @@
 import { Index2 } from "./Index2";
 import { Grid2 } from "./Grid2";
 import { Vector3 } from "./Vector3";
-import { Random } from "../PrimitivClasses/Random";
+import { Random } from "../PrimitiveClasses/Random";
 import { Range1 } from "./Range1";
 import { Range3 } from "./Range3";
 

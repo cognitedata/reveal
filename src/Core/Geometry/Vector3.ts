@@ -1,5 +1,5 @@
 import { Range3 } from "./Range3";
-import { Random } from "../PrimitivClasses/Random";
+import { Random } from "../PrimitiveClasses/Random";
 
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  

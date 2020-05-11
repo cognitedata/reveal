@@ -20,7 +20,7 @@ import { SurfaceRenderStyle } from "../Nodes/SurfaceRenderStyle";
 import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
 import { Range1 } from '../Core/Geometry/Range1';
 import { RegularGrid2Buffers } from '../Core/Geometry/RegularGrid2Buffers';
-import { Colors } from '../Core/PrimitivClasses/Colors';
+import { Colors } from '../Core/PrimitiveClasses/Colors';
 import { ColorType } from '../Core/Enums/ColorType';
 import { ThreeConverter } from './ThreeConverter';
 import { Range3 } from '../Core/Geometry/Range3';
