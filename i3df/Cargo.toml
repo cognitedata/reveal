@@ -16,7 +16,7 @@ path = "src/bin/dump.rs"
 required-features = ["dump"]
 
 [dependencies]
-clap = "2.33.0"
+clap = "2.33.1"
 byteorder = "1.3.4"
 nalgebra = { version = "0.21.0", features = [ "serde-serialize" ] }
 impl_ops = "0.1.1"
