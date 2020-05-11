@@ -33,8 +33,8 @@ fn normalize_radians(mut angle: f32) -> f32 {
 
 struct Cap {
     ring: GeneralRing,
-    normal: Vector3,
     plane: Vector4,
+    center: Vector3,
 }
 
 // TODO use f64 for the calculations - there is a slight offset between the trapeziums and top caps
@@ -99,19 +99,14 @@ fn create_cap(
         ring: GeneralRing {
             tree_index: cylinder.tree_index as f32,
             color: cylinder.color,
-            size: cylinder.diagonal,
-            center: *center,
             normal: if invert_normal { -1.0 } else { 1.0 } * cap_z_axis_a,
-            local_x_axis: cap_x_axis_a,
-            radius_x: cap_radius_x_a,
-            radius_y: cap_radius_y,
             thickness: cylinder.thickness / cylinder.radius,
             angle: normalize_radians(cap_angle_a),
             arc_angle: cylinder.arc_angle,
             instance_matrix,
         },
-        normal,
         plane,
+        center: *center,
     }
 }
 
@@ -129,7 +124,6 @@ impl ToRenderables for crate::ClosedCylinder {
         collections.cone_collection.push(Cone {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
             center_a,
             center_b,
             radius_a: self.radius,
@@ -141,7 +135,6 @@ impl ToRenderables for crate::ClosedCylinder {
         collections.circle_collection.push(Circle::new(&CircleInfo {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
             center: center_a,
             normal: center_axis,
             radius: self.radius,
@@ -149,7 +142,6 @@ impl ToRenderables for crate::ClosedCylinder {
         collections.circle_collection.push(Circle::new(&CircleInfo {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
             center: center_b,
             // TODO should this be negative, it is not in the JS version
             normal: -1.0 * center_axis,
@@ -172,7 +164,6 @@ impl ToRenderables for crate::OpenCylinder {
         collections.cone_collection.push(Cone {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
             center_a,
             center_b,
             radius_a: self.radius,
@@ -249,22 +240,13 @@ fn create_general_cylinder(cylinder: &crate::SolidOpenGeneralCylinder) -> Genera
         cylinder: GeneralCylinder {
             tree_index: cylinder.tree_index as f32,
             color: cylinder.color,
-            size: cylinder.diagonal,
             center_a: ext_a,
             center_b: ext_b,
             radius: cylinder.radius,
-            height_a,
-            height_b,
-            slope_a: cylinder.slope_a,
-            slope_b: cylinder.slope_b,
-            z_angle_a: cylinder.zangle_a, // TODO request rename to z_angle_a
-            z_angle_b: cylinder.zangle_b,
             angle: normalize_radians(cylinder.rotation_angle), // TODO normalize
             plane_a: cap_a.plane,
             plane_b: cap_b.plane,
             arc_angle: cylinder.arc_angle, // TODO normalize
-            cap_normal_a: cap_a.normal,
-            cap_normal_b: cap_b.normal,
             local_x_axis,
         },
         cap_a,
@@ -412,25 +394,16 @@ impl ToRenderables for crate::SolidClosedGeneralCylinder {
                 let line_start = point * *radius + ext_b - normal;
                 let line_end = point * *radius + ext_a + normal;
                 let line_vector = line_end - line_start;
-                vertices[vertex_index] = intersect(
-                    &line_vector,
-                    &line_start,
-                    &cap_b.ring.normal,
-                    &cap_b.ring.center,
-                );
-                vertices[vertex_index + 1] = intersect(
-                    &line_vector,
-                    &line_start,
-                    &cap_a.ring.normal,
-                    &cap_a.ring.center,
-                );
+                vertices[vertex_index] =
+                    intersect(&line_vector, &line_start, &cap_b.ring.normal, &cap_b.center);
+                vertices[vertex_index + 1] =
+                    intersect(&line_vector, &line_start, &cap_a.ring.normal, &cap_a.center);
                 vertex_index += 2;
             }
 
             collections.trapezium_collection.push(Trapezium {
                 tree_index: self.tree_index as f32,
                 color: self.color,
-                size: self.diagonal,
                 vertex_1: vertices[0],
                 vertex_2: vertices[1],
                 vertex_3: vertices[2],

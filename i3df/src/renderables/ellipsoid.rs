@@ -10,7 +10,6 @@ impl ToRenderables for crate::ClosedEllipsoidSegment {
             .push(EllipsoidSegment {
                 tree_index: self.tree_index as f32,
                 color: self.color,
-                size: self.diagonal,
                 center: self.center(),
                 normal: self.normal.into(),
                 horizontal_radius: self.horizontal_radius,
@@ -27,7 +26,6 @@ impl ToRenderables for crate::ClosedEllipsoidSegment {
         collections.circle_collection.push(Circle::new(&CircleInfo {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
             center,
             normal: self.normal.into(),
             radius: circle_radius,
@@ -41,7 +39,6 @@ impl ToRenderables for crate::Ellipsoid {
             .push(EllipsoidSegment {
                 tree_index: self.tree_index as f32,
                 color: self.color,
-                size: self.diagonal,
                 center: self.center(),
                 normal: self.normal.into(),
                 horizontal_radius: self.horizontal_radius,
@@ -57,7 +54,6 @@ impl ToRenderables for crate::OpenEllipsoidSegment {
             .push(EllipsoidSegment {
                 tree_index: self.tree_index as f32,
                 color: self.color,
-                size: self.diagonal,
                 center: self.center(),
                 normal: self.normal.into(),
                 horizontal_radius: self.horizontal_radius,
