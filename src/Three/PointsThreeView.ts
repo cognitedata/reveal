@@ -79,7 +79,7 @@ export class PointsThreeView extends BaseGroupThreeView
     const geometry = new THREE.BufferGeometry();
     geometry.addAttribute('position', new THREE.Float32BufferAttribute(createPositions(points), 3, true));
 
-    const material = new THREE.PointsMaterial({ color: threeColor, size: style.size, sizeAttenuation: true })
+    const material = new THREE.PointsMaterial({ color: threeColor, size: style.size, sizeAttenuation: true });
     if (style.colorType === ColorType.DepthColor)
     {
       geometry.addAttribute('color', new THREE.Uint8BufferAttribute(createColors(points), 3, true));

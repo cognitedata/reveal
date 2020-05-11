@@ -334,7 +334,7 @@ export abstract class BaseNode extends Identifiable
     // To be called when a node is removed
     // It is not finished, because the children it not taken properly care of
     this.removeInteractiveCore();
-    const parent = this.parent
+    const parent = this.parent;
     this.remove();
     parent!.notify(new NodeEventArgs(Changes.childDeleted));
   }
@@ -450,14 +450,14 @@ export abstract class BaseNode extends Identifiable
   {
     let result = this.typeName;
     if (!this.canChangeName)
-      return result
+      return result;
 
     const childIndex = this.childIndex;
     if (childIndex === undefined)
       return result;
 
     result += " " + (childIndex + 1);
-    return result
+    return result;
   }
 
   //==================================================

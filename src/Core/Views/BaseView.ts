@@ -23,8 +23,8 @@ export abstract class BaseView
   // FIELDS
   //==================================================
 
-  private _node: BaseNode | null;
-  private _target: TargetIdAccessor | null;
+  private _node: BaseNode | null = null;
+  private _target: TargetIdAccessor | null = null;
   private _isVisible: boolean = false;
 
   //==================================================

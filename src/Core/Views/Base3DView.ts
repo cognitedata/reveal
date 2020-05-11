@@ -39,7 +39,7 @@ export abstract class Base3DView extends BaseView
   {
     super.updateCore(args);
     if (args.isChanged(Changes.geometry))
-      this.touchBoundingBox()
+      this.touchBoundingBox();
   }
 
   //==================================================

@@ -23,25 +23,26 @@ export function main()
 
   const root = module.createRoot();
 
-
-  const wellTree = root.getChildrenByType(WellTreeNode);
-
-  for (let i = 0; i < 10; i++)
+  const wellTree = root.getChildByType(WellTreeNode);
+  if (wellTree !== null)
   {
-    const node = new WellNode();
-    node.data = Well.createByRandom(20, Range3.newTest);
-    wellTree.addChild(node);
+    for (let i = 0; i < 10; i++)
+    {
+      const node = new WellNode();
+      node.data = Well.createByRandom(20, Range3.newTest);
+      wellTree.addChild(node);
+    }
   }
 
   // Add data
-  for (let i = 0; i < 1; i++)
-  {
-    const range = Range3.newTest;
-    range.expandByFraction(-0.3);
-    const node = new PointsNode();
-    node.data = Points.createByRandom(2_000_000, range);
-    root.dataFolder.addChild(node);
-  }
+  //for (let i = 0; i < 1; i++)
+  //{
+  //  const range = Range3.newTest;
+  //  range.expandByFraction(-0.3);
+  //  const node = new PointsNode();
+  //  node.data = Points.createByRandom(2_000_000, range);
+  //  root.dataFolder.addChild(node);
+  //}
   //for (let i = 0; i < 1; i++)
   //{
   //  const range = Range3.newTest;
@@ -65,15 +66,15 @@ export function main()
   //  root.dataFolder.addChild(node);
   //}
   {
-    const range = Range3.createByMinAndMax(0, 0, 1, 0.5);
-    const target = new ThreeRenderTargetNode(range);
-    root.targetFolder.addChild(target)
-  }
-  {
-    const range = Range3.createByMinAndMax(0, 0.5, 1, 1);
+    const range = Range3.createByMinAndMax(0, 0, 1, 1);
     const target = new ThreeRenderTargetNode(range);
     root.targetFolder.addChild(target);
   }
+  //{
+  //  const range = Range3.createByMinAndMax(0, 0.5, 1, 1);
+  //  const target = new ThreeRenderTargetNode(range);
+  //  root.targetFolder.addChild(target);
+  //}
 
   module.initializeWhenPopulated(root);
   for (const target of root.targetFolder.getChildrenByType(ThreeRenderTargetNode))
@@ -84,7 +85,7 @@ export function main()
     stats.dom.style.top = range.y.min.toFixed(0) + "px";
     stats.dom.style.margin = "10px";
     stats.dom.style.position = "absolute";
-    
+
     document.body.appendChild(target.domElement);
     document.body.appendChild(stats.dom);
   }
@@ -130,37 +131,40 @@ export function main()
   if (activeTarget)
     activeTarget.viewAll();
 
-  // Set some visible in target 1
-  root.targetFolder.children[1].setActiveInteractive();
-  for (const node of root.getDescendantsByType(PointsNode))
-  {
-    const style = node.renderStyle;
-    if (style)
-    {
-      style.colorType = ColorType.DepthColor;
-      style.size = 1;
-    }
-    node.setVisible(true);
-  }
-  for (const node of root.getDescendantsByType(PolylinesNode))
-  {
-    const style = node.renderStyle;
-    if (style)
-      style.lineWidth = 10;
-    node.setVisible(true);
-  }
+
   for (const node of root.getDescendantsByType(WellNode))
     node.setVisible(true);
 
-  for (const node of root.getDescendantsByType(SurfaceNode))
-  {
-    const style = node.renderStyle;
-    if (style)
-    {
-      style.colorType = ColorType.DepthColor;
-    }
-    node.setVisible(true);
-  }
+  // Set some visible in target 1
+  root.targetFolder.children[0].setActiveInteractive();
+  //for (const node of root.getDescendantsByType(PointsNode))
+  //{
+  //  const style = node.renderStyle;
+  //  if (style)
+  //  {
+  //    style.colorType = ColorType.DepthColor;
+  //    style.size = 1;
+  //  }
+  //  node.setVisible(true);
+  //}
+  //for (const node of root.getDescendantsByType(PolylinesNode))
+  //{
+  //  const style = node.renderStyle;
+  //  if (style)
+  //    style.lineWidth = 10;
+  //  node.setVisible(true);
+  //}
+
+  //for (const node of root.getDescendantsByType(SurfaceNode))
+  //{
+  //  const style = node.renderStyle;
+  //  if (style)
+  //  {
+  //    style.colorType = ColorType.DepthColor;
+  //  }
+  //  node.setVisible(true);
+  //}
+
   activeTarget = root.activeTarget as ThreeRenderTargetNode;
   if (activeTarget)
     activeTarget.viewAll();

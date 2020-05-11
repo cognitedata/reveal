@@ -105,10 +105,10 @@ export class SurfaceThreeView extends BaseGroupThreeView
 
 function createTexture(range: Range1): THREE.DataTexture
 {
-  const darknessVolume = 0.3
+  const darknessVolume = 0.3;
 
   const width = 2000;
-  const height = 2
+  const height = 2;
   const data = new Uint8Array(3 * width * height);
   const inc = Math.round(width / 20);
 
@@ -164,7 +164,7 @@ function fragmentShader(): string
       void main() {
         gl_FragColor = vec4(mix(colorA, colorB, 0.5), 1.0);
       }
-  `
+  `;
 }
 
 function createShader(): THREE.ShaderMaterial
@@ -173,7 +173,7 @@ function createShader(): THREE.ShaderMaterial
   const uniforms = {
     colorB: { type: 'vec3', value: new THREE.Color(0xFF00000) },
     colorA: { type: 'vec3', value: new THREE.Color(0x00FF000) }
-  }
+  };
 
 
   const material = new THREE.ShaderMaterial({
@@ -182,6 +182,6 @@ function createShader(): THREE.ShaderMaterial
     //fragmentShader: fragmentShader(),
     fragmentShader: THREE.ShaderLib.phong.fragmentShader,
     lights: true,
-  })
+  });
   return material;
 }
