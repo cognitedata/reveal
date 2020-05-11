@@ -8,6 +8,8 @@ import { Box3 } from '../../../utils/Box3';
 import { vec3 } from 'gl-matrix';
 import { traverseDepthFirst } from '../../../utils/traversal';
 
+type Mutable<T> = { -readonly [P in keyof T]: T[P] };
+
 describe('parseCadMetadataV8', () => {
   test('Metadata without sectors, throws', () => {
     const metadata: CadMetadataV8 = {
@@ -44,7 +46,10 @@ describe('parseCadMetadataV8', () => {
       ]),
       depth: sectorRoot.depth,
       indexFile: sectorRoot.indexFile,
-      facesFile: { ...sectorRoot.facesFile, recursiveCoverageFactors: sectorRoot.facesFile.recursiveCoverageFactors! },
+      facesFile: {
+        ...sectorRoot.facesFile!,
+        recursiveCoverageFactors: sectorRoot.facesFile!.recursiveCoverageFactors!
+      },
       children: []
     };
 
@@ -75,7 +80,7 @@ describe('parseCadMetadataV8', () => {
       ]),
       depth: sectorRoot.depth,
       indexFile: sectorRoot.indexFile,
-      facesFile: { ...sectorRoot.facesFile, recursiveCoverageFactors: sectorRoot.facesFile.coverageFactors },
+      facesFile: { ...sectorRoot.facesFile!, recursiveCoverageFactors: sectorRoot.facesFile!.coverageFactors },
       children: []
     };
 
@@ -160,6 +165,101 @@ describe('parseCadMetadataV8', () => {
     expect(sector3).toBeDefined();
     expect(sector3!.children).toBeEmpty();
     expect(sector3!.parent).toBe(sector1);
+  });
+
+  test('Single sector without facesFile, creates dummy faces section', () => {
+    // Arrange
+    const root: Mutable<CadSectorMetadataV8> = createSectorMetadata(0, -1);
+    root.facesFile = null;
+    const metadata: CadMetadataV8 = {
+      version: 8,
+      maxTreeIndex: 4,
+      sectors: [root]
+    };
+
+    // Act
+    const result = parseCadMetadataV8(metadata);
+
+    // Assert
+    expect(result.getAllSectors().length).toBe(1);
+    expect(result.root.facesFile).toBeTruthy();
+    expect(result.root.facesFile.fileName).toBeNull();
+  });
+
+  test('Metadata is missing facesFile from leafs, creates dummy facesFile with coverage factors from parent', () => {
+    // Arrange
+    const leaf2: Mutable<CadSectorMetadataV8> = createSectorMetadata(3, 1);
+    leaf2.facesFile = null;
+    const leaf3: Mutable<CadSectorMetadataV8> = createSectorMetadata(2, 0);
+    leaf3.facesFile = null;
+    const metadata: CadMetadataV8 = {
+      version: 8,
+      maxTreeIndex: 4,
+      sectors: [
+        /*
+              0
+            /   \
+           1     2
+          /
+         3
+         */
+        leaf2,
+        createSectorMetadata(0),
+        leaf3,
+        createSectorMetadata(1, 0)
+      ]
+    };
+
+    // Act
+    const result = parseCadMetadataV8(metadata);
+
+    // Assert
+    {
+      const rootSector = result.getSectorById(0)!;
+      const sector = result.getSectorById(2);
+      expect(sector).toBeTruthy();
+      expect(sector!.facesFile).toBeDefined();
+      expect(sector!.facesFile.coverageFactors).toEqual(rootSector.facesFile.recursiveCoverageFactors);
+      expect(sector!.facesFile.recursiveCoverageFactors).toEqual(rootSector.facesFile.recursiveCoverageFactors);
+      expect(sector!.facesFile.fileName).toBeNull();
+    }
+    {
+      const sector1 = result.getSectorById(1)!;
+      const sector = result.getSectorById(3);
+      expect(sector).toBeTruthy();
+      expect(sector!.facesFile).toBeDefined();
+      expect(sector!.facesFile.coverageFactors).toEqual(sector1.facesFile.recursiveCoverageFactors);
+      expect(sector!.facesFile.recursiveCoverageFactors).toEqual(sector1.facesFile.recursiveCoverageFactors);
+      expect(sector!.facesFile.fileName).toBeNull();
+    }
+  });
+
+  test('No sectors has faces files, provides dummy values for all', () => {
+    // Arrange
+    const sectors: Mutable<CadSectorMetadataV8>[] = [
+      createSectorMetadata(2, 0),
+      createSectorMetadata(0),
+      createSectorMetadata(3, 1),
+      createSectorMetadata(1, 0)
+    ];
+    sectors.forEach(x => (x.facesFile = null));
+    const metadata: CadMetadataV8 = {
+      version: 8,
+      maxTreeIndex: 4,
+      sectors
+    };
+
+    // Act
+    const result = parseCadMetadataV8(metadata);
+
+    // Assert
+    expect(result.getAllSectors()).toBeArrayOfSize(4);
+    for (const sector of result.getAllSectors()) {
+      expect(sector.facesFile).toBeTruthy();
+      expect(sector.facesFile.fileName).toBeNull();
+      expect(sector.facesFile.coverageFactors).not.toBeNull();
+      expect(sector.facesFile.recursiveCoverageFactors).not.toBeNull();
+    }
   });
 });
 

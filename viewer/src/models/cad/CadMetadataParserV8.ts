@@ -2,10 +2,11 @@
  * Copyright 2020 Cognite AS
  */
 
-import { SectorMetadata } from './types';
+import { SectorMetadata, SectorMetadataFacesFileSection } from './types';
 import { SectorScene, SectorSceneImpl } from './SectorScene';
 import { Box3 } from '../../utils/Box3';
 import { vec3 } from 'gl-matrix';
+import { traverseUpwards } from '../../utils/traversal';
 
 export interface CadSectorMetadataV8 {
   readonly id: number;
@@ -46,7 +47,7 @@ export interface CadSectorMetadataV8 {
       | undefined;
     readonly fileName: string | null;
     readonly downloadSize: number;
-  };
+  } | null;
 }
 
 export interface CadMetadataV8 {
@@ -83,6 +84,13 @@ export function parseCadMetadataV8(metadata: CadMetadataV8): SectorScene {
     sector.parent = parent;
   }
 
+  // Check for missing facesFile-sections and provide coverage factors from parents when necessary
+  for (const sector of sectorsById.values()) {
+    if (hasDummyFacesFileSection(sector)) {
+      populateCoverageFactorsFromAnchestors(sector);
+    }
+  }
+
   const rootSector = sectorsById.get(0);
   if (!rootSector) {
     throw new Error('Root sector not found, must have ID 0');
@@ -92,10 +100,7 @@ export function parseCadMetadataV8(metadata: CadMetadataV8): SectorScene {
 }
 
 function createSectorMetadata(metadata: CadSectorMetadataV8): SectorMetadata {
-  const facesFile = {
-    ...metadata.facesFile,
-    recursiveCoverageFactors: metadata.facesFile.recursiveCoverageFactors || metadata.facesFile.coverageFactors
-  };
+  const facesFile = determineFacesFile(metadata);
   return {
     id: metadata.id,
     path: metadata.path,
@@ -114,4 +119,69 @@ function createSectorMetadata(metadata: CadSectorMetadataV8): SectorMetadata {
     children: [],
     parent: undefined
   };
+}
+
+function determineFacesFile(metadata: CadSectorMetadataV8): SectorMetadataFacesFileSection {
+  if (!metadata.facesFile) {
+    return {
+      quadSize: -1.0,
+      coverageFactors: {
+        xy: -1.0,
+        yz: -1.0,
+        xz: -1.0
+      },
+      recursiveCoverageFactors: {
+        xy: -1.0,
+        yz: -1.0,
+        xz: -1.0
+      },
+      fileName: null,
+      downloadSize: metadata.indexFile.downloadSize
+    };
+  }
+  const facesFile = {
+    ...metadata.facesFile,
+    recursiveCoverageFactors: metadata.facesFile.recursiveCoverageFactors || metadata.facesFile.coverageFactors
+  };
+  return facesFile;
+}
+
+const dummyFacesFileSection: SectorMetadataFacesFileSection = {
+  quadSize: -1.0,
+  coverageFactors: {
+    xy: 0.5,
+    yz: 0.5,
+    xz: 0.5
+  },
+  recursiveCoverageFactors: {
+    xy: 0.5,
+    yz: 0.5,
+    xz: 0.5
+  },
+  fileName: null,
+  downloadSize: 0
+};
+
+function hasDummyFacesFileSection(metadata: SectorMetadata): boolean {
+  return metadata.facesFile.coverageFactors.xy === -1.0;
+}
+
+function populateCoverageFactorsFromAnchestors(sector: SectorMetadata) {
+  // Find first parent with valud facesFile
+  let firstValidFacesFile: SectorMetadataFacesFileSection | undefined;
+  traverseUpwards(sector, parent => {
+    firstValidFacesFile = hasDummyFacesFileSection(parent) ? undefined : parent.facesFile;
+    return firstValidFacesFile === undefined;
+  });
+  if (!firstValidFacesFile) {
+    // When there are no valid facesFile in the tree
+    firstValidFacesFile = { ...dummyFacesFileSection };
+  }
+
+  sector.facesFile.coverageFactors.xy = firstValidFacesFile.recursiveCoverageFactors.xy;
+  sector.facesFile.coverageFactors.yz = firstValidFacesFile.recursiveCoverageFactors.yz;
+  sector.facesFile.coverageFactors.xz = firstValidFacesFile.recursiveCoverageFactors.xz;
+  sector.facesFile.recursiveCoverageFactors.xy = firstValidFacesFile.recursiveCoverageFactors.xy;
+  sector.facesFile.recursiveCoverageFactors.yz = firstValidFacesFile.recursiveCoverageFactors.yz;
+  sector.facesFile.recursiveCoverageFactors.xz = firstValidFacesFile.recursiveCoverageFactors.xz;
 }

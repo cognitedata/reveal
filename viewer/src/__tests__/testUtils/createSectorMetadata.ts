@@ -58,7 +58,7 @@ export function generateSectorTree(depth: number, childrenPerLevel: number = 4):
   const firstChildren = generateSectorTreeChildren(depth - 1, bounds, childrenPerLevel, 1);
   const root: SectorTree = [0, firstChildren.children, bounds];
 
-  return createSectorMetadata(root);
+  return createSectorMetadata(root, depth);
 }
 
 function generateSectorTreeChildren(
