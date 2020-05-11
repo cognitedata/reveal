@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 import { SectorQuads } from '../../../models/cad/types';
 import { Materials } from './materials';
+import { disposeAttributeArrayOnUpload } from '../disposeAttributeArrayOnUpload';
 
 const quadVertexData = new Float32Array([
   // tslint:disable: prettier
@@ -56,6 +57,10 @@ export function consumeSectorSimple(sector: SectorQuads, materials: Materials): 
   geometry.setAttribute('matrix3', matrix3);
 
   const obj = new THREE.Mesh(geometry, materials.simple);
+  obj.onAfterRender = () => {
+    disposeAttributeArrayOnUpload.bind(interleavedBuffer32)();
+    obj.onAfterRender = () => {};
+  };
 
   // obj.name = `Quads ${sectorId}`;
   // TODO 20191028 dragly figure out why the quads are being culled wrongly and if we

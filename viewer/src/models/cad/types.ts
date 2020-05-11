@@ -2,9 +2,9 @@
  * Copyright 2020 Cognite AS
  */
 
-import { mat4 } from 'gl-matrix';
 import { Box3 } from '../../utils/Box3';
-import { PrimitiveAttributes } from '../../workers/types/parser.types';
+import { mat4 } from 'gl-matrix';
+import { ParsedPrimitives } from '../../workers/types/parser.types';
 
 // TODO 2019-11-12 larsmoa: Move and rename to something general (not specific
 // for sector data).
@@ -13,38 +13,42 @@ export type SectorModelTransformation = {
   readonly inverseModelMatrix: mat4;
 };
 
+export interface SectorMetadataIndexFileSection {
+  readonly fileName: string;
+  readonly peripheralFiles: string[];
+  readonly estimatedDrawCallCount: number;
+  readonly downloadSize: number;
+}
+
+export interface SectorMetadataFacesFileSection {
+  readonly quadSize: number;
+  /**
+   * Coverage factors for the sector without children.
+   */
+  readonly coverageFactors: {
+    xy: number;
+    yz: number;
+    xz: number;
+  };
+  /**
+   * Coverage factor for the sectors including children.
+   */
+  readonly recursiveCoverageFactors: {
+    xy: number;
+    yz: number;
+    xz: number;
+  };
+  readonly fileName: string | null;
+  readonly downloadSize: number;
+}
+
 export interface SectorMetadata {
   readonly id: number;
   readonly path: string;
   readonly depth: number;
   readonly bounds: Box3;
-  readonly indexFile: {
-    readonly fileName: string;
-    readonly peripheralFiles: string[];
-    readonly estimatedDrawCallCount: number;
-    readonly downloadSize: number;
-  };
-  readonly facesFile: {
-    readonly quadSize: number;
-    /**
-     * Coverage factors for the sector without children.
-     */
-    readonly coverageFactors: {
-      xy: number;
-      yz: number;
-      xz: number;
-    };
-    /**
-     * Coverage factor for the sectors including children.
-     */
-    readonly recursiveCoverageFactors: {
-      xy: number;
-      yz: number;
-      xz: number;
-    };
-    readonly fileName: string | null;
-    readonly downloadSize: number;
-  };
+  readonly indexFile: SectorMetadataIndexFileSection;
+  readonly facesFile: SectorMetadataFacesFileSection;
   readonly children: SectorMetadata[];
 
   // TODO 2019-12-21 larsmoa: Make readonly
@@ -83,22 +87,11 @@ export type InstancedMesh = {
 export interface Sector {
   readonly nodeIdToTreeIndexMap: Map<number, number>;
   readonly treeIndexToNodeIdMap: Map<number, number>;
+  
+  readonly primitives: ParsedPrimitives;
 
   readonly instanceMeshes: InstancedMeshFile[];
   readonly triangleMeshes: TriangleMesh[];
-
-  readonly boxes: PrimitiveAttributes;
-  readonly circles: PrimitiveAttributes;
-  readonly cones: PrimitiveAttributes;
-  readonly eccentricCones: PrimitiveAttributes;
-  readonly ellipsoidSegments: PrimitiveAttributes;
-  readonly generalCylinders: PrimitiveAttributes;
-  readonly generalRings: PrimitiveAttributes;
-  readonly nuts: PrimitiveAttributes;
-  readonly quads: PrimitiveAttributes;
-  readonly sphericalSegments: PrimitiveAttributes;
-  readonly torusSegments: PrimitiveAttributes;
-  readonly trapeziums: PrimitiveAttributes;
 }
 
 export interface SectorQuads {

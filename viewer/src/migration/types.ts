@@ -45,3 +45,12 @@ export interface AddModelOptions {
   onProgress?: (progress: OnProgressData) => void;
   onComplete?: () => void;
 }
+
+export enum SupportedModelTypes {
+  PointCloud = 'pointcloud',
+  CAD = 'cad',
+  /**
+   * Not a model supported by Reveal.
+   */
+  NotSupported = ''
+}

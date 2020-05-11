@@ -4,16 +4,46 @@
 
 import { Sector } from '../../../../models/cad/types';
 import { createPrimitives } from '../../../../views/threejs/cad/primitives';
-import { PrimitiveAttributes } from '../../../../workers/types/parser.types';
 import { createEmptySector } from '../../../models/cad/emptySector';
-import { createMaterials } from '../../../../views/threejs/cad/materials';
+import { createMaterials, Materials } from '../../../../views/threejs/cad/materials';
+import { ParsePrimitiveAttribute } from '../../../../workers/types/parser.types';
+import { InstancedBufferGeometry, LOD, Mesh } from 'three';
+import { RenderMode } from '../../../../views/threejs/materials';
+
+function createMockAttributes(): Map<string, ParsePrimitiveAttribute> {
+  const map = new Map<string, ParsePrimitiveAttribute>();
+
+  const mockAttribute0: ParsePrimitiveAttribute = { offset: 0, size: 4 };
+  const mockAttribute1: ParsePrimitiveAttribute = { offset: 4, size: 8 };
+  const mockAttribute2: ParsePrimitiveAttribute = { offset: 12, size: 12 };
+
+  map.set('attrOne', mockAttribute0);
+  map.set('attrTwo', mockAttribute1);
+  map.set('attrThree', mockAttribute2);
+
+  return map;
+}
+
+function createMockAttributeBufferFromAttributes(attributes: Map<string, ParsePrimitiveAttribute>): Uint8Array {
+  let bufferSize = 0;
+
+  for (const attribute of attributes.values()) {
+    bufferSize += attribute.size;
+  }
+
+  return new Uint8Array(bufferSize);
+}
 
 describe('createPrimitives', () => {
-  const materials = createMaterials(64);
+  const materials = createMaterials(64, RenderMode.Color, []);
   let emptySector: Sector;
+  let mockAttributes: Map<string, ParsePrimitiveAttribute>;
+  let mockAttributeBuffer: Uint8Array;
 
   beforeEach(() => {
     emptySector = createEmptySector();
+    mockAttributes = createMockAttributes();
+    mockAttributeBuffer = createMockAttributeBufferFromAttributes(mockAttributes);
   });
 
   test('no primitives doesnt return any nods', () => {
@@ -21,105 +51,147 @@ describe('createPrimitives', () => {
     expect(nodes).toBeEmpty();
   });
 
-  test('Box primitives, returns one geometry', () => {
-    const boxes = newAttributes(10);
-    const sector: Sector = Object.assign(emptySector, { boxes } as Sector);
-    const nodes = Array.from(createPrimitives(sector, materials));
-    expect(nodes.length).toBe(1);
+  test('Box primitives, returns one geometry with added attributes', () => {
+    const boxSector = emptySector;
+    boxSector.primitives.boxCollection = mockAttributeBuffer;
+    boxSector.primitives.boxAttributes = mockAttributes;
+
+    testPrimitiveBase(boxSector, materials, mockAttributes, 'box', 2);
   });
 
   test('Circle primitives, returns one geometry', () => {
-    const circles = newAttributes(10);
-    const sector: Sector = Object.assign(emptySector, { circles } as Sector);
-    const nodes = Array.from(createPrimitives(sector, materials));
-    expect(nodes.length).toBe(1);
+    const circleSector = emptySector;
+    circleSector.primitives.circleCollection = mockAttributeBuffer;
+    circleSector.primitives.circleAttributes = mockAttributes;
+
+    testPrimitiveBase(circleSector, materials, mockAttributes, 'circle', 2);
   });
 
   test('Cone primitives, returns one geometry', () => {
-    const cones = newAttributes(10);
-    const sector: Sector = Object.assign(emptySector, { cones } as Sector);
-    const nodes = Array.from(createPrimitives(sector, materials));
-    expect(nodes.length).toBe(1);
+    const coneSector = emptySector;
+    coneSector.primitives.coneCollection = mockAttributeBuffer;
+    coneSector.primitives.coneAttributes = mockAttributes;
+
+    testPrimitiveBase(coneSector, materials, mockAttributes, 'cone');
   });
 
   test('Eccentric cone primitives, returns one geometry', () => {
-    const eccentricCones = newAttributes(10);
-    const sector: Sector = Object.assign(emptySector, { eccentricCones } as Sector);
-    const nodes = Array.from(createPrimitives(sector, materials));
-    expect(nodes.length).toBe(1);
+    const eccentricConeSector = emptySector;
+    eccentricConeSector.primitives.eccentricConeCollection = mockAttributeBuffer;
+    eccentricConeSector.primitives.eccentricConeAttributes = mockAttributes;
+
+    testPrimitiveBase(eccentricConeSector, materials, mockAttributes, 'eccentriccone');
   });
 
   test('Ellipsoid segments primitives, returns one geometry', () => {
-    const ellipsoidSegments = newAttributes(10);
-    const sector: Sector = Object.assign(emptySector, { ellipsoidSegments } as Sector);
-    const nodes = Array.from(createPrimitives(sector, materials));
-    expect(nodes.length).toBe(1);
+    const ellipsoidSector = emptySector;
+    ellipsoidSector.primitives.ellipsoidSegmentCollection = mockAttributeBuffer;
+    ellipsoidSector.primitives.ellipsoidSegmentAttributes = mockAttributes;
+
+    testPrimitiveBase(ellipsoidSector, materials, mockAttributes, 'ellipsoid');
   });
 
   test('General cylinder primitives, returns one geometry', () => {
-    const generalCylinders = newAttributes(10);
-    const sector: Sector = Object.assign(emptySector, { generalCylinders } as Sector);
-    const nodes = Array.from(createPrimitives(sector, materials));
-    expect(nodes.length).toBe(1);
+    const generalCylinderSector = emptySector;
+    generalCylinderSector.primitives.generalCylinderCollection = mockAttributeBuffer;
+    generalCylinderSector.primitives.generalCylinderAttributes = mockAttributes;
+
+    testPrimitiveBase(generalCylinderSector, materials, mockAttributes, 'generalcylinder');
   });
 
   test('General ring primitives, returns one geometry', () => {
-    const generalRings = newAttributes(10);
-    const sector: Sector = Object.assign(emptySector, { generalRings } as Sector);
-    const nodes = Array.from(createPrimitives(sector, materials));
-    expect(nodes.length).toBe(1);
+    const generalRingSector = emptySector;
+    generalRingSector.primitives.generalRingCollection = mockAttributeBuffer;
+    generalRingSector.primitives.generalRingAttributes = mockAttributes;
+
+    testPrimitiveBase(generalRingSector, materials, mockAttributes, 'generalring');
   });
 
   test('Nut primitives, returns one geometry', () => {
-    const nuts = newAttributes(10);
-    const sector: Sector = Object.assign(emptySector, { nuts } as Sector);
-    const nodes = Array.from(createPrimitives(sector, materials));
-    expect(nodes.length).toBe(1);
+    const nutSector = emptySector;
+    nutSector.primitives.nutCollection = mockAttributeBuffer;
+    nutSector.primitives.nutAttributes = mockAttributes;
+
+    testPrimitiveBase(nutSector, materials, mockAttributes, 'nut', 2);
   });
 
   test('Quad primitives, returns one geometry', () => {
-    const quads = newAttributes(10);
-    const sector: Sector = Object.assign(emptySector, { quads } as Sector);
-    const nodes = Array.from(createPrimitives(sector, materials));
-    expect(nodes.length).toBe(1);
+    const quadSector = emptySector;
+    quadSector.primitives.quadCollection = mockAttributeBuffer;
+    quadSector.primitives.quadAttributes = mockAttributes;
+
+    testPrimitiveBase(quadSector, materials, mockAttributes, 'quad', 2);
   });
 
   test('Spherical segment primitives, returns one geometry', () => {
-    const sphericalSegments = newAttributes(10);
-    sphericalSegments.f32Attributes.set('radius', new Float32Array(10));
-    const sector: Sector = Object.assign(emptySector, { sphericalSegments } as Sector);
-    const nodes = Array.from(createPrimitives(sector, materials));
-    expect(nodes.length).toBe(1);
+    const sphericalSegmentSector = emptySector;
+    sphericalSegmentSector.primitives.sphericalSegmentCollection = mockAttributeBuffer;
+    sphericalSegmentSector.primitives.sphericalSegmentAttributes = mockAttributes;
+
+    // The expected name is ellipsoid because we reuse that shader during rendering
+    testPrimitiveBase(sphericalSegmentSector, materials, mockAttributes, 'ellipsoidsegments', 3);
   });
 
   test('Torus segment primitives, returns one geometry', () => {
-    const attributes = newAttributes(10);
-    attributes.f32Attributes.set('size', new Float32Array(10));
-    const sector: Sector = Object.assign(emptySector, { torusSegments: attributes } as Sector);
-    const nodes = Array.from(createPrimitives(sector, materials));
-    expect(nodes.length).toBe(1);
+    // Torus segments must have the size attribute, so we add it
+    mockAttributes.set('size', { size: 4, offset: 24 });
+
+    const torusSegmentSector = emptySector;
+    torusSegmentSector.primitives.torusSegmentCollection = new Uint8Array(mockAttributeBuffer.length + 4);
+    torusSegmentSector.primitives.torusSegmentAttributes = mockAttributes;
+
+    const result = [];
+
+    for (const primitiveRoot of createPrimitives(torusSegmentSector, materials)) {
+      result.push(primitiveRoot);
+    }
+
+    expect(result.length).toBe(1);
+
+    const lodResult = result[0] as LOD;
+
+    expect(lodResult.name.toLowerCase().includes('torussegment')).toBeTrue();
+
+    for (const lodMesh of lodResult.children) {
+      const mesh = lodMesh as Mesh;
+      const geometry = mesh.geometry as InstancedBufferGeometry;
+
+      // one extra attribute is added (position/vertex)
+      expect(Object.entries(geometry.attributes).length).toBe(mockAttributes.size + 1);
+    }
   });
 
   test('Trapezium primitives, returns one geometry', () => {
-    const sector: Sector = Object.assign(emptySector, { trapeziums: newAttributes(10) } as Sector);
-    const nodes = Array.from(createPrimitives(sector, materials));
-    expect(nodes.length).toBe(1);
+    const trapeziumSector = emptySector;
+    trapeziumSector.primitives.trapeziumCollection = mockAttributeBuffer;
+    trapeziumSector.primitives.trapeziumAttributes = mockAttributes;
+
+    testPrimitiveBase(trapeziumSector, materials, mockAttributes, 'trapezium');
   });
 });
 
-function newAttributes(elementCount: number = 0): PrimitiveAttributes {
-  const attributes: PrimitiveAttributes = {
-    f32Attributes: new Map<string, Float32Array>(),
-    f64Attributes: new Map<string, Float64Array>(),
-    u8Attributes: new Map<string, Uint8Array>(),
-    vec3Attributes: new Map<string, Float32Array>(),
-    vec4Attributes: new Map<string, Float32Array>(),
-    mat4Attributes: new Map<string, Float32Array>()
-  };
-  const ids: number[] = [];
-  for (let i = 0; i < elementCount; i++) {
-    ids.push(i);
+function testPrimitiveBase(
+  sector: Sector,
+  materials: Materials,
+  mockAttributes: Map<string, ParsePrimitiveAttribute>,
+  expectedNameSubstring: string,
+  extraAttributes = 1
+) {
+  const result = [];
+
+  for (const primitiveRoot of createPrimitives(sector, materials)) {
+    result.push(primitiveRoot);
   }
-  attributes.f64Attributes.set('nodeId', new Float64Array(ids));
-  return attributes;
+
+  expect(result.length).toBe(1);
+
+  const meshResult = result[0] as Mesh;
+
+  expect(meshResult.name.toLowerCase().includes(expectedNameSubstring)).toBeTrue();
+
+  const geometry = meshResult.geometry as InstancedBufferGeometry;
+
+  // Should be additional attributes in the addition to our mock attributes
+  // Because the f.ex position and other attributes may be added as well
+  expect(Object.entries(geometry.attributes).length).toBe(mockAttributes.size + extraAttributes);
 }

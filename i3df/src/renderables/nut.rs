@@ -1,4 +1,4 @@
-use crate::renderables::{GeometryCollection, Nut, PrimitiveCollections, ToRenderables};
+use crate::renderables::{Nut, PrimitiveCollections, ToRenderables};
 use crate::{Matrix4, Rotation3, Translation3, Vector3};
 
 impl ToRenderables for crate::Nut {
@@ -21,8 +21,7 @@ impl ToRenderables for crate::Nut {
         let center_b = self.center() - 0.5 * self.height * normal;
 
         collections.nut_collection.push(Nut {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center_a,

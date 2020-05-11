@@ -6,15 +6,25 @@ import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import debounce from 'lodash/debounce';
 import ComboControls from '@cognite/three-combo-controls';
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient, IdEither } from '@cognite/sdk';
 
-import { Cognite3DModel, createCognite3DModel } from './Cognite3DModel';
-import { Cognite3DViewerOptions, AddModelOptions } from './types';
+import { Cognite3DModel } from './Cognite3DModel';
+import { CognitePointCloudModel } from './CognitePointCloudModel';
+import { Cognite3DViewerOptions, AddModelOptions, SupportedModelTypes } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { Intersection } from './intersection';
 import RenderController from './RenderController';
 import { intersectCadNodes } from '../threejs';
 import { from3DPositionToRelativeViewportCoordinates } from '../views/threejs/worldToViewport';
+import { RevealManagerBase } from '../views/threejs';
+import { CadSectorParser } from '../data/parser/CadSectorParser';
+import { SimpleAndDetailedToSector3D } from '../data/transformer/three/SimpleAndDetailedToSector3D';
+import { CachedRepository } from '../repository/cad/CachedRepository';
+import { MaterialManager } from '../views/threejs/cad/MaterialManager';
+import { CogniteModelBase } from './CogniteModelBase';
+import { share, filter } from 'rxjs/operators';
+import { CogniteClient3dExtensions } from '../utils/CogniteClient3dExtensions';
+import { File3dFormat } from '../data/model/File3dFormat';
 
 export interface RelativeMouseEvent {
   offsetX: number;
@@ -38,6 +48,9 @@ export class Cognite3DViewer {
   private readonly scene: THREE.Scene;
   private readonly controls: ComboControls;
   private readonly sdkClient: CogniteClient;
+  private readonly modelDataTransformer: SimpleAndDetailedToSector3D;
+  private readonly sectorRepository: CachedRepository;
+  private readonly revealManager: RevealManagerBase;
   private modelsNeedUpdate = true;
 
   private readonly eventListeners = {
@@ -45,7 +58,7 @@ export class Cognite3DViewer {
     click: new Array<PointerEventDelegate>(),
     hover: new Array<PointerEventDelegate>()
   };
-  private readonly models: Cognite3DModel[] = [];
+  private readonly models: CogniteModelBase[] = [];
 
   private isDisposed = false;
   private readonly forceRendering = false; // For future support
@@ -53,7 +66,7 @@ export class Cognite3DViewer {
   private readonly renderController: RenderController;
   private latestRequestId: number = -1;
   private readonly clock = new THREE.Clock();
-  private _slicingPlanes: THREE.Plane[] = [];
+  private readonly materialManager: MaterialManager;
   private _slicingNeedsUpdate: boolean = false;
 
   constructor(options: Cognite3DViewerOptions) {
@@ -92,6 +105,20 @@ export class Cognite3DViewer {
 
     this.sdkClient = options.sdk;
     this.renderController = new RenderController(this.camera);
+
+    const modelDataParser: CadSectorParser = new CadSectorParser();
+    this.materialManager = new MaterialManager();
+    this.modelDataTransformer = new SimpleAndDetailedToSector3D(this.materialManager);
+    this.sectorRepository = new CachedRepository(modelDataParser, this.modelDataTransformer);
+    const onDataUpdated = () => {
+      this.modelsNeedUpdate = true;
+    };
+    this.revealManager = new RevealManagerBase(
+      this.sdkClient,
+      this.sectorRepository,
+      this.materialManager,
+      onDataUpdated
+    );
     this.startPointerEventListeners();
 
     this.animate(0);
@@ -111,10 +138,10 @@ export class Cognite3DViewer {
     this.domElement.removeChild(this.canvas);
     this.renderer.dispose();
     this.scene.dispose();
-    while (this.models.length > 0) {
-      const model = this.models.pop()!;
+    for (const model of this.models.values()) {
       model.dispose();
     }
+    this.models.splice(0);
   }
 
   on(event: 'click' | 'hover', _callback: PointerEventDelegate): void;
@@ -162,16 +189,52 @@ export class Cognite3DViewer {
   async addModel(options: AddModelOptions): Promise<Cognite3DModel> {
     if (options.localPath) {
       throw new NotSupportedInMigrationWrapperError();
-    } else {
-      const model3d = await createCognite3DModel(options.modelId, options.revisionId, this.sdkClient);
-      model3d.cadNode.addEventListener('update', () => {
-        this.modelsNeedUpdate = true;
-      });
-      model3d.cadNode.clippingPlanes = this._slicingPlanes;
-      this.models.push(model3d);
-      this.scene.add(model3d);
-      return model3d;
     }
+
+    const cadNode = await this.revealManager.addModelFromCdf(options.revisionId);
+    const model3d = new Cognite3DModel(options.modelId, options.revisionId, cadNode, this.sdkClient);
+    this.sectorRepository
+      .getParsedData()
+      .pipe(
+        share(),
+        filter(x => x.cadModelIdentifier === cadNode.cadModel.identifier)
+      )
+      .subscribe(parseSector => model3d.updateNodeIdMaps(parseSector));
+
+    this.models.push(model3d);
+    this.scene.add(model3d);
+
+    return model3d;
+  }
+
+  async addPointCloudModel(options: AddModelOptions): Promise<CognitePointCloudModel> {
+    if (options.localPath) {
+      throw new NotSupportedInMigrationWrapperError();
+    }
+    if (options.geometryFilter) {
+      throw new NotSupportedInMigrationWrapperError();
+    }
+    if (options.orthographicCamera) {
+      throw new NotSupportedInMigrationWrapperError();
+    }
+
+    const [potreeGroup, potreeNode] = await this.revealManager.addPointCloudFromCdf(options.revisionId);
+    const model = new CognitePointCloudModel(options.modelId, options.revisionId, potreeGroup, potreeNode);
+    this.models.push(model);
+    this.scene.add(model);
+    return model;
+  }
+
+  async determineModelType(_modelId: number, revisionId: number): Promise<SupportedModelTypes> {
+    const clientExt = new CogniteClient3dExtensions(this.sdkClient);
+    const id: IdEither = { id: revisionId };
+    const outputs = await clientExt.getOutputs(id, [File3dFormat.RevealCadModel, File3dFormat.EptPointCloud]);
+    if (outputs.findMostRecentOutput(File3dFormat.RevealCadModel) !== undefined) {
+      return SupportedModelTypes.CAD;
+    } else if (outputs.findMostRecentOutput(File3dFormat.EptPointCloud) !== undefined) {
+      return SupportedModelTypes.PointCloud;
+    }
+    return SupportedModelTypes.NotSupported;
   }
 
   addObject3D(_object: THREE.Object3D): void {
@@ -182,11 +245,9 @@ export class Cognite3DViewer {
   }
 
   setSlicingPlanes(slicingPlanes: THREE.Plane[]): void {
-    this._slicingPlanes = slicingPlanes;
+    // this._slicingPlanes = slicingPlanes;
     this.renderer.localClippingEnabled = slicingPlanes.length > 0;
-    for (const model of this.models) {
-      model.cadNode.clippingPlanes = slicingPlanes;
-    }
+    this.materialManager.clippingPlanes = slicingPlanes;
     this._slicingNeedsUpdate = true;
   }
 
@@ -215,8 +276,8 @@ export class Cognite3DViewer {
     this.controls.setState(this.getCameraPosition(), target);
   }
 
-  fitCameraToModel(model: Cognite3DModel, duration?: number): void {
-    const bounds = model.getBoundingBox();
+  fitCameraToModel(model: CogniteModelBase, duration?: number): void {
+    const bounds = model.getModelBoundingBox();
     this.fitCameraToBoundingBox(bounds, duration);
   }
 
@@ -266,8 +327,10 @@ export class Cognite3DViewer {
   getScreenshot(_width?: number, _height?: number): Promise<string> {
     throw new NotSupportedInMigrationWrapperError();
   }
+
   getIntersectionFromPixel(offsetX: number, offsetY: number, _cognite3DModel?: Cognite3DModel): null | Intersection {
-    const nodes = this.models.map(x => x.cadNode);
+    const cadModels = this.getModels(SupportedModelTypes.CAD);
+    const nodes = cadModels.map(x => x.cadNode);
 
     const coords = {
       x: (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
@@ -281,14 +344,17 @@ export class Cognite3DViewer {
 
     if (results.length > 0) {
       const result = results[0]; // Nearest intersection
-      const model: Cognite3DModel = this.models.find(v => v.cadNode === result.cadNode)!;
-      const intersection: Intersection = {
-        model,
-        nodeId: model.tryGetNodeId(result.treeIndex) || -1,
-        treeIndex: result.treeIndex,
-        point: result.point
-      };
-      return intersection;
+      for (const model of cadModels) {
+        if (model.cadNode === result.cadNode) {
+          const intersection: Intersection = {
+            model,
+            nodeId: model.tryGetNodeId(result.treeIndex) || -1,
+            treeIndex: result.treeIndex,
+            point: result.point
+          };
+          return intersection;
+        }
+      }
     }
 
     return null;
@@ -296,6 +362,12 @@ export class Cognite3DViewer {
 
   clearCache(): void {
     throw new NotSupportedInMigrationWrapperError('Cache is not supported');
+  }
+
+  private getModels(type: SupportedModelTypes.CAD): Cognite3DModel[];
+  private getModels(type: SupportedModelTypes.PointCloud): CognitePointCloudModel[];
+  private getModels(type: SupportedModelTypes): CogniteModelBase[] {
+    return this.models.filter(x => x.type === type);
   }
 
   private moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number) {
@@ -402,9 +474,7 @@ export class Cognite3DViewer {
       }
       this.controls.update(this.clock.getDelta());
       renderController.update();
-      for (const model of this.models) {
-        model.cadNode.update(this.camera);
-      }
+      this.revealManager.update(this.camera);
       if (renderController.needsRedraw || this.forceRendering || this.modelsNeedUpdate || this._slicingNeedsUpdate) {
         this.updateNearAndFarPlane(this.camera);
         this.renderer.render(this.scene, this.camera);

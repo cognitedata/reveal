@@ -1,5 +1,5 @@
 use crate::renderables::{
-    Circle, CircleInfo, GeometryCollection, PrimitiveCollections, SphericalSegment, ToRenderables,
+    Circle, CircleInfo, PrimitiveCollections, SphericalSegment, ToRenderables,
 };
 use crate::Vector3;
 
@@ -8,8 +8,7 @@ impl ToRenderables for crate::OpenSphericalSegment {
         collections
             .spherical_segment_collection
             .push(SphericalSegment {
-                node_id: self.node_id,
-                tree_index: self.tree_index,
+                tree_index: self.tree_index as f32,
                 color: self.color,
                 size: self.diagonal,
                 center: self.center(),
@@ -27,8 +26,7 @@ impl ToRenderables for crate::Sphere {
         collections
             .spherical_segment_collection
             .push(SphericalSegment {
-                node_id: self.node_id,
-                tree_index: self.tree_index,
+                tree_index: self.tree_index as f32,
                 color: self.color,
                 size: self.diagonal,
                 center: self.center(),
@@ -44,8 +42,7 @@ impl ToRenderables for crate::ClosedSphericalSegment {
         collections
             .spherical_segment_collection
             .push(SphericalSegment {
-                node_id: self.node_id,
-                tree_index: self.tree_index,
+                tree_index: self.tree_index as f32,
                 color: self.color,
                 size: self.diagonal,
                 center: self.center(),
@@ -59,8 +56,7 @@ impl ToRenderables for crate::ClosedSphericalSegment {
         let center = self.center() + length * Vector3::from(self.normal).normalize();
 
         collections.circle_collection.push(Circle::new(&CircleInfo {
-            node_id: self.node_id,
-            tree_index: self.tree_index,
+            tree_index: self.tree_index as f32,
             color: self.color,
             size: self.diagonal,
             center,
