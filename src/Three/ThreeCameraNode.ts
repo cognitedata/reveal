@@ -64,7 +64,7 @@ export class ThreeCameraNode extends BaseCameraNode
       if (!target)
         return null;;
 
-      const camera = this.camera as THREE.PerspectiveCamera | THREE.OrthographicCamera
+      const camera = this.camera as THREE.PerspectiveCamera | THREE.OrthographicCamera;
       if (!camera)
         return null;
 

@@ -42,7 +42,7 @@ export class StubRootNode extends BaseRootNode
     const target = new StubTargetNode();
     target.isActive = true;
 
-    this.targetFolder.addChild(target)
+    this.targetFolder.addChild(target);
 
     if (!this.activeTargetIdAccessor)
       throw Error("target is not added properly");

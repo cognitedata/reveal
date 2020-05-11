@@ -118,7 +118,7 @@ export abstract class BaseTargetNode extends BaseNode implements Target
     }
     else
     {
-      this.removeViewShownHere(view)
+      this.removeViewShownHere(view);
       node.views.remove(view);
     }
     return true;

@@ -62,7 +62,7 @@ export class ThreeModule extends BaseModule
     document.body.onresize = () => {
       for (const target of root.targetFolder.getChildrenByType(BaseRenderTargetNode))
         target.onResize();
-    }
+    };
   }
 }
 

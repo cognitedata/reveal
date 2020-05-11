@@ -90,7 +90,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   {
     if (!this._stats)
     {
-      this._stats = new Stats()
+      this._stats = new Stats();
       this._stats.showPanel(0);
     }
     return this._stats;
@@ -116,12 +116,12 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   public /*override*/ initializeCore()
   {
     super.initializeCore();
-    this.addCameraNode(new ThreeCameraNode(), true)
+    this.addCameraNode(new ThreeCameraNode(), true);
     this.render();
 
     // Add lights (TODO: move to TreeLightNode?)
     const scene = this.scene;
-    const direction = new THREE.Vector3(0.5, -0.5, 1)
+    const direction = new THREE.Vector3(0.5, -0.5, 1);
     const color = 0xFFFFFF;
 
     const group = new THREE.Group();

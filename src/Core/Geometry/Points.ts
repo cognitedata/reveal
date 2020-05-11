@@ -32,7 +32,7 @@ export class Points
 
   public copy(): Points
   {
-    const result = new Points()
+    const result = new Points();
     result.list = [...this.list]; // This syntax sucks!
     return result;
   }

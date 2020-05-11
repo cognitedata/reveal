@@ -89,7 +89,7 @@ export abstract class BaseVisualNode extends BaseNode
     if (!target)
       return false;
     if (visible)
-      return target.showView(this)
+      return target.showView(this);
     return target.hideView(this);
   }
 
@@ -100,7 +100,7 @@ export abstract class BaseVisualNode extends BaseNode
     if (!target)
       return;
     if (this.setVisible(visible, target))
-      this.notify(new NodeEventArgs(Changes.visible))
+      this.notify(new NodeEventArgs(Changes.visible));
   }
 
   public removeAllViews(): void

@@ -32,7 +32,7 @@ export class RegularGrid2Buffers
     this.uvs = new Float32Array(2 * numUniqueIndex);
 
     this.makeBuffers(grid, uniqueIndexes);
-    this.makeTriangleIndexes(grid, uniqueIndexes)
+    this.makeTriangleIndexes(grid, uniqueIndexes);
   }
 
   makeBuffers(grid: RegularGrid2, uniqueIndexes: number[])

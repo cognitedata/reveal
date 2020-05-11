@@ -105,7 +105,7 @@ export class Range1
     if (this._isEmpty)
       return;
 
-    const center = this.center
+    const center = this.center;
     this._min = (this._min - center) * scale + center;
     this._max = (this._max - center) * scale + center;
   }
@@ -129,8 +129,8 @@ export class Range1
     if (value.isEmpty)
       return;
 
-    this.add(value.min)
-    this.add(value.max)
+    this.add(value.min);
+    this.add(value.max);
   }
 
   public expandByMargin(margin: number): void

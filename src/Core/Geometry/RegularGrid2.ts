@@ -76,7 +76,7 @@ export class RegularGrid2 extends Grid2
   public getZ(i: number, j: number): number
   {
     const index = this.getNodeIndex(i, j);
-    return this.buffer[index]
+    return this.buffer[index];
   }
 
   public getPoint3(i: number, j: number): Vector3

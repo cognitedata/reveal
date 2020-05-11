@@ -68,7 +68,7 @@ export class NodeEventArgs
       return;
     if (!this._changes)
       this._changes = [];
-    this._changes.push(new ChangedDecription(changed, fieldName))
+    this._changes.push(new ChangedDecription(changed, fieldName));
   }
 }
 
