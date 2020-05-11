@@ -8,7 +8,8 @@ function copyPackage(version) {
     // anything else we should remove?
     json.version = version;
     delete json.private;
-    delete json.scripts.publish;
+    delete json.scripts.publishscript;
+    delete json.scripts.prepublishscript;
   }
   fs.writeFileSync('./dist/package.json', JSON.stringify(json, null, 2));
 }

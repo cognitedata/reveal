@@ -16,7 +16,8 @@
     "coverage": "jest --coverage",
     "lint": "tslint --project .",
     "serve": "npm install && npm link && cd examples && npm install && npm link @cognite/reveal && npm run serve",
-    "publish": "node script/copyPackage.js"
+    "prepublishscript": "npm run release",
+    "publishscript": "node script/copyPackage.js && cd dist && npm publish"
   },
   "author": "Svenn-Arne Dragly <dragly@cognite.com>",
   "contributors": [
