@@ -155,7 +155,18 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   determineSectors(input: DetermineSectorsByProximityInput): WantedSector[] {
     const takenSectors = this.update(input.cadModels);
     const wanted = takenSectors.collectWantedSectors();
-    this.log(`Scene: ${wanted.length} (${wanted.filter(x => !Number.isFinite(x.priority)).length} required)`);
+
+    const totalSectorCount = input.cadModels.reduce((sum, x) => sum + x.scene.sectorCount, 0);
+    const takenSectorCount = wanted.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded).length;
+    const takenSimpleCount = wanted.filter(x => x.levelOfDetail === LevelOfDetail.Detailed).length;
+    const takenDetailedPercent = ((100.0 * (takenSectorCount - takenSimpleCount)) / totalSectorCount).toPrecision(3);
+    const takenPercent = ((100.0 * takenSectorCount) / totalSectorCount).toPrecision(3);
+
+    this.log(
+      `Scene: ${wanted.length} (${
+        wanted.filter(x => !Number.isFinite(x.priority)).length
+      } required, ${totalSectorCount} sectors, ${takenPercent}% of all sectors - ${takenDetailedPercent}% detailed)`
+    );
     return wanted;
   }
 
@@ -187,6 +198,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
       takenSectors.markSectorDetailed(x.model, x.sectorId, x.priority);
       debugAccumulatedPriority += x.priority;
     }
+
     this.log(`Retrieving ${i} of ${prioritizedLength} (last: ${prioritized.length > 0 ? prioritized[i - 1] : null})`);
     this.log(
       `Total scheduled: ${takenSectors.getWantedSectorCount()} of ${prioritizedLength} (cost: ${takenSectors.totalCost /
