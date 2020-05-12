@@ -11,6 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import { Ma } from "../PrimitiveClasses/Ma";
+
 export class Range1
 {
   //==================================================
@@ -78,6 +80,12 @@ export class Range1
   {
     // Opposite of getFraction
     return fraction * this.delta + this.min;
+  }
+
+  public getBestInc(numTicks = 50): number
+  {
+    const inc = this.delta / numTicks;
+    return Ma.roundInc(inc);
   }
 
   //==================================================

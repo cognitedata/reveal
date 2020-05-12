@@ -1,4 +1,3 @@
-
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
@@ -12,44 +11,60 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Range1 } from "../Geometry/Range1";
-
-export class Random
+export class Ma
 {
   //==================================================
   // STATIC METHODS: 
   //==================================================
 
-  public static getInt(range: Range1): number
+  public static roundInc(inc: number): number
   {
-    return Math.round(Random.getFloat(range));
-  }
-
-  public static getFloat(range: Range1): number
-  {
-    return range.getValue(Math.random());
-  }
-
-  public static isTrue(p: 0.5): boolean
-  {
-    return Math.random() > p;
-  }
-
-  public static getGaussian(mean: 0, stdDev: 1): number
-  {
-    while (true)
+    // Get the exponent for the number [1-10] and scale the inc so the number is between 1 and 10.
+    let exp = 0;
+    let found = false;
+    for (let i = 0; i < 100; i++)
     {
-      const a = Math.random();
-      if (a <= Number.EPSILON)
-        continue;
-
-      const b = Math.random();
-      if (b <= Number.EPSILON)
-        continue;
-
-      const gausian = Math.sqrt(-2 * Math.log(a)) * Math.cos(2 * Math.PI * b);
-      return gausian * stdDev + mean;
+      if (inc < 1)
+      {
+        exp--;
+        inc *= 10;
+      }
+      else if (inc > 10)
+      {
+        exp++;
+        inc /= 10;
+      }
+      else
+      {
+        found = true;
+        break;
+      }
     }
+    if (!found)
+      return Number.NaN;
+
+    // Now round it
+    if (inc < 2)
+      inc = 2;
+    else if (inc < 2.5)
+      inc = 2.5;
+    else if (inc < 5)
+      inc = 5;
+    else
+      inc = 10;
+
+    // Upscale the inc to the real number
+    if (exp < 0)
+    {
+      for (; exp !== 0; exp++)
+        inc /= 10;
+    }
+    else
+    {
+      for (; exp !== 0; exp--)
+        inc *= 10;
+    }
+    return inc;
   }
 }
 

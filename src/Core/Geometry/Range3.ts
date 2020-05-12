@@ -88,6 +88,38 @@ export class Range3
 
   public toString(): string { return `(X: ${this.x.toString()}, Y: ${this.y.toString()}, Z: ${this.z.toString()})`; }
 
+  getCornerPoints(): Vector3[]
+  {
+    const corners: Vector3[] = [];
+    for (let corner = 0; corner < 8; corner++)
+      corners[corner] = this.getCornerPoint(corner);
+    return corners;
+  }
+
+  public getCornerPoint(corner: number): Vector3
+  {
+    //      7-------6
+    //    / |      /|
+    //   4-------5  | 
+    //   |  |    |  |
+    //   Z  3----|--2
+    //   | /     |Y   
+    //   0---X---1
+
+    switch (corner)
+    {
+      case 0: return new Vector3(this.x.min, this.y.min, this.z.min);
+      case 1: return new Vector3(this.x.max, this.y.min, this.z.min);
+      case 2: return new Vector3(this.x.max, this.y.max, this.z.min);
+      case 3: return new Vector3(this.x.min, this.y.max, this.z.min);
+      case 4: return new Vector3(this.x.min, this.y.min, this.z.max);
+      case 5: return new Vector3(this.x.max, this.y.min, this.z.max);
+      case 6: return new Vector3(this.x.max, this.y.max, this.z.max);
+      case 7: return new Vector3(this.x.min, this.y.max, this.z.max);
+      default: Error("Corner"); return Vector3.newNaN;
+    }
+  }
+
   //==================================================
   // INSTANCE METHODS: Operations
   //==================================================
