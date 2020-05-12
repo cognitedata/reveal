@@ -60,7 +60,7 @@ export class ThreeModule extends BaseModule
   {
     root.initializeRecursive();
     document.body.onresize = () => {
-      for (const target of root.targetFolder.getChildrenByType(BaseRenderTargetNode))
+      for (const target of root.targets.getChildrenByType(BaseRenderTargetNode))
         target.onResize();
     };
   }

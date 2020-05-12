@@ -1,17 +1,11 @@
 
 import { ThreeModule } from './src/Three/ThreeModule';
-import { PolylinesNode } from './src/Nodes/PolylinesNode';
-import { PotreeNode } from './src/Nodes/PotreeNode';
-import { SurfaceNode } from './src/Nodes/SurfaceNode';
 import { ThreeRenderTargetNode } from './src/Three/ThreeRenderTargetNode';
 import { Range3 } from './src/Core/Geometry/Range3';
 import { WellNode } from './src/Nodes/WellNode';
 import { WellTreeNode } from './src/TreeNodes/WellTreeNode';
 import { Well } from './src/Nodes/Well';
-import { PointsNode } from './src/Nodes/PointsNode';
-import { Points } from './src/Core/Geometry/Points';
-import { ColorType } from './src/Core/Enums/ColorType';
-import { Colors } from './src/Core/PrimitiveClasses/Colors';
+import { RootNode } from './src/TreeNodes/RootNode';
 
 main();
 
@@ -21,19 +15,67 @@ export function main()
   const module = new ThreeModule();
   module.install();
 
-  const root = module.createRoot();
-
-  const wellTree = root.getChildByType(WellTreeNode);
-  if (wellTree !== null)
+  // Add some random wells
+  const root = module.createRoot() as RootNode;
+  const wellTree = root.wells;
+  for (let i = 0; i < 3; i++)
   {
-    for (let i = 0; i < 10; i++)
-    {
-      const node = new WellNode();
-      node.data = Well.createByRandom(20, Range3.newTest);
-      wellTree.addChild(node);
-    }
+    const node = new WellNode();
+    node.data = Well.createByRandom(20, Range3.newTest);
+    wellTree.addChild(node);
+  }
+  // Add a render target
+  {
+    const range = Range3.createByMinAndMax(0, 0, 1, 1);
+    const target = new ThreeRenderTargetNode(range);
+    root.targets.addChild(target);
   }
 
+  module.initializeWhenPopulated(root);
+  for (const target of root.targets.getChildrenByType(ThreeRenderTargetNode))
+  {
+    const range = target.pixelRange;
+    const stats = target.stats;
+    stats.dom.style.left = range.x.min.toFixed(0) + "px";
+    stats.dom.style.top = range.y.min.toFixed(0) + "px";
+    stats.dom.style.margin = "10px";
+    stats.dom.style.position = "absolute";
+
+    document.body.appendChild(target.domElement);
+    document.body.appendChild(stats.dom);
+  }
+  // Set some visible in target 0
+  root.targets.children[0].setActiveInteractive();
+
+  for (const node of root.getDescendantsByType(WellNode))
+    node.setVisible(true);
+
+  const activeTarget = root.activeTarget as ThreeRenderTargetNode;
+  if (activeTarget)
+    activeTarget.viewAll();
+
+  // Trick
+  (window as any).camera = activeTarget.activeCamera;
+}
+
+
+
+
+// Old test code:
+//===============
+
+//import { PolylinesNode } from './src/Nodes/PolylinesNode';
+//import { PotreeNode } from './src/Nodes/PotreeNode';
+//import { SurfaceNode } from './src/Nodes/SurfaceNode';
+//import { PointsNode } from './src/Nodes/PointsNode';
+//import { Points } from './src/Core/Geometry/Points';
+//import { ColorType } from './src/Core/Enums/ColorType';
+//import { Colors } from './src/Core/PrimitiveClasses/Colors';
+  //{
+  //  const range = Range3.createByMinAndMax(0, 0.5, 1, 1);
+  //  const target = new ThreeRenderTargetNode(range);
+  //  root.targets.addChild(target);
+  //}
   // Add data
   //for (let i = 0; i < 1; i++)
   //{
@@ -65,78 +107,10 @@ export function main()
   //  node.name = 'Aerfugl';
   //  root.dataFolder.addChild(node);
   //}
-  {
-    const range = Range3.createByMinAndMax(0, 0, 1, 1);
-    const target = new ThreeRenderTargetNode(range);
-    root.targetFolder.addChild(target);
-  }
-  //{
-  //  const range = Range3.createByMinAndMax(0, 0.5, 1, 1);
-  //  const target = new ThreeRenderTargetNode(range);
-  //  root.targetFolder.addChild(target);
-  //}
-
-  module.initializeWhenPopulated(root);
-  for (const target of root.targetFolder.getChildrenByType(ThreeRenderTargetNode))
-  {
-    const range = target.pixelRange;
-    const stats = target.stats;
-    stats.dom.style.left = range.x.min.toFixed(0) + "px";
-    stats.dom.style.top = range.y.min.toFixed(0) + "px";
-    stats.dom.style.margin = "10px";
-    stats.dom.style.position = "absolute";
-
-    document.body.appendChild(target.domElement);
-    document.body.appendChild(stats.dom);
-  }
-
-  // Set some visible in target 0
-  root.targetFolder.children[0].setActiveInteractive();
-
-  for (const node of root.getDescendantsByType(PotreeNode))
-    node.setVisible(true);
-
-  const use1 = false;
-  if (use1)
-  {
-    for (const node of root.getDescendantsByType(PointsNode))
-    {
-      const style = node.renderStyle;
-      if (style)
-      {
-        style.colorType = ColorType.NodeColor;
-        style.size = 2;
-      }
-      node.setVisible(true);
-    }
-    for (const node of root.getDescendantsByType(PolylinesNode))
-    {
-      const style = node.renderStyle;
-      if (style)
-        style.lineWidth = 10;
-      node.setVisible(true);
-    }
-    for (const node of root.getDescendantsByType(SurfaceNode))
-    {
-      const style = node.renderStyle;
-      node.color = Colors.grey;
-      if (style)
-      {
-        style.colorType = ColorType.NodeColor;
-      }
-      node.setVisible(true);
-    }
-  }
-  let activeTarget = root.activeTarget as ThreeRenderTargetNode;
-  if (activeTarget)
-    activeTarget.viewAll();
-
-
-  for (const node of root.getDescendantsByType(WellNode))
-    node.setVisible(true);
-
+  //for (const node of root.getDescendantsByType(PotreeNode))
+  //  node.setVisible(true);
   // Set some visible in target 1
-  root.targetFolder.children[0].setActiveInteractive();
+  // root.targets.children[0].setActiveInteractive();
   //for (const node of root.getDescendantsByType(PointsNode))
   //{
   //  const style = node.renderStyle;
@@ -154,7 +128,7 @@ export function main()
   //    style.lineWidth = 10;
   //  node.setVisible(true);
   //}
-
+  //
   //for (const node of root.getDescendantsByType(SurfaceNode))
   //{
   //  const style = node.renderStyle;
@@ -165,13 +139,6 @@ export function main()
   //  node.setVisible(true);
   //}
 
-  activeTarget = root.activeTarget as ThreeRenderTargetNode;
-  if (activeTarget)
-    activeTarget.viewAll();
-
-  // Trick
-  (window as any).camera = activeTarget.activeCamera;
-}
 
 
 

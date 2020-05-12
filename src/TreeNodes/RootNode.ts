@@ -20,6 +20,42 @@ import { OthersTreeNode } from './OthersTreeNode';
 export class RootNode extends BaseRootNode
 {
   //==================================================
+  //PROPERTIES
+  //==================================================
+
+  public get wells(): WellTreeNode
+  {
+    const child = this.getChildByType(WellTreeNode);
+    if (!child)
+      throw new Error("Cannot find the " + WellTreeNode.name);
+    return child;
+  }
+
+  public get others(): OthersTreeNode
+  {
+    const child = this.getChildByType(OthersTreeNode);
+    if (!child)
+      throw new Error("Cannot find the " + OthersTreeNode.name);
+    return child;
+  }
+
+  public get colorTables(): ColorTableTreeNode
+  {
+    const child = this.getChildByType(ColorTableTreeNode);
+    if (!child)
+      throw new Error("Cannot find the " + ColorTableTreeNode.name);
+    return child;
+  }
+
+  public get settingsTree(): SettingsTreeNode
+  {
+    const child = this.getChildByType(SettingsTreeNode);
+    if (!child)
+      throw new Error("Cannot find the " + SettingsTreeNode.name);
+    return child;
+  }
+
+  //==================================================
   // CONSTRUCTORS
   //==================================================
 

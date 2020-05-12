@@ -34,5 +34,4 @@ export class OthersTreeNode extends BaseTreeNode
 
   public /*override*/ get typeName(): string { return "OthersTree" }
   public /*override*/ get name(): string { return "Others" }
-
 }

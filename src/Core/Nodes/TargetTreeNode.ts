@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseVisualNode } from "./BaseVisualNode";
+import { BaseTreeNode } from "./BaseTreeNode";
 
-export class DataFolder extends BaseVisualNode
+export class TargetTreeNode extends BaseTreeNode
 {
   //==================================================
   // CONSTRUCTORS
@@ -25,14 +25,13 @@ export class DataFolder extends BaseVisualNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return DataFolder.name; }
-  public /*override*/ isA(className: string): boolean { return className === DataFolder.name || super.isA(className); }
+  public /*override*/ get className(): string { return TargetTreeNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === TargetTreeNode.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Data" }
-  public /*override*/ get canChangeName(): boolean { return false; }
-  public /*override*/ get canChangeColor(): boolean { return false; }
+  public /*override*/ get typeName(): string { return "TargetTree" }
+  public /*override*/ get name(): string { return "Targets" }
 }

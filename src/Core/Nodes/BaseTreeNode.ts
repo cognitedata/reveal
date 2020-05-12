@@ -33,4 +33,5 @@ export abstract class BaseTreeNode extends BaseNode
   //==================================================
 
   public /*override*/ get canChangeName(): boolean { return false }
+  public /*override*/ get canChangeColor(): boolean { return false; }
 }
