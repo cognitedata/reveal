@@ -135,6 +135,8 @@ export abstract class BaseNode extends Identifiable
   // INSTANCE METHODS: Get a child or children
   //==================================================
 
+  public hasChildByType<T extends BaseNode>(classType: Class<T>): boolean { return this.getChildByType(classType) !== null; }
+
   public getChild(index: number): BaseNode { return this._children[index]; }
 
   public getChildByName(name: string): BaseNode | null

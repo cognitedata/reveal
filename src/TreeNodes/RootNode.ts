@@ -75,9 +75,14 @@ export class RootNode extends BaseRootNode
   protected /*override*/ initializeCore(): void
   {
     super.initializeCore();
-    this.addChild(new WellTreeNode());
-    this.addChild(new OthersTreeNode());
-    this.addChild(new ColorTableTreeNode());
-    this.addChild(new SettingsTreeNode());
+    if (!this.hasChildByType(WellTreeNode))
+      this.addChild(new WellTreeNode());
+
+    if (!this.hasChildByType(OthersTreeNode))
+      this.addChild(new OthersTreeNode());
+    if (!this.hasChildByType(ColorTableTreeNode))
+      this.addChild(new ColorTableTreeNode());
+    if (!this.hasChildByType(SettingsTreeNode))
+      this.addChild(new SettingsTreeNode());
   }
 }

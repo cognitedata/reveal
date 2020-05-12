@@ -35,7 +35,7 @@ export class Random
     return Math.random() > p;
   }
 
-  public static getGaussian(mean: 0, stdDev: 1): number
+  public static getGaussian(mean: number = 0, stdDev: number = 1): number
   {
     while (true)
     {

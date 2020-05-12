@@ -16,6 +16,8 @@ import * as THREE from 'three';
 import { BaseCameraNode } from "../Core/Nodes/BaseCameraNode";
 import { BaseRenderTargetNode } from "../Core/Nodes/BaseRenderTargetNode";
 
+//import { OrbitControls } from "https://threejsfundamentals.org/threejs/resources/threejs/r115/examples/jsm/controls/OrbitControls.js";
+
 export class ThreeCameraNode extends BaseCameraNode
 {
   //==================================================
@@ -67,6 +69,9 @@ export class ThreeCameraNode extends BaseCameraNode
       const camera = this.camera as THREE.PerspectiveCamera | THREE.OrthographicCamera;
       if (!camera)
         return null;
+
+      //this._controls = new OrbitControls(camera, target.domElement);
+      // this._controls.update();
 
       this._controls = new CameraControls(camera, target.domElement);
       this._controls.setPosition(0, 0, 20);

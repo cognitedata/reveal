@@ -34,6 +34,9 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   private _overlay = new TreeOverlay();
   private _stats: any | null; // NILS: Why any here? Compiler error if not
 
+
+  // scene.background = new THREE.Color('white');
+
   //==================================================
   // PROPERTIES
   //==================================================

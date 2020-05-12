@@ -30,6 +30,8 @@ import { WellNode } from '../Nodes/WellNode';
 import { WellThreeView } from './WellThreeView';
 import { PointsNode } from '../Nodes/PointsNode';
 import { PointsThreeView } from './PointsThreeView';
+import { AxisNode } from '../Nodes/AxisNode';
+import { AxisThreeView } from './AxisThreeView';
 
 export class ThreeModule extends BaseModule
 {
@@ -49,6 +51,7 @@ export class ThreeModule extends BaseModule
     factory.register(PolylinesNode.name, PolylinesThreeView, ThreeRenderTargetNode.name);
     factory.register(SurfaceNode.name, SurfaceThreeView, ThreeRenderTargetNode.name);
     factory.register(PotreeNode.name, PotreeThreeView, ThreeRenderTargetNode.name);
+    factory.register(AxisNode.name, AxisThreeView, ThreeRenderTargetNode.name);
   }
 
   protected /*override*/ createRootCore(): BaseRootNode

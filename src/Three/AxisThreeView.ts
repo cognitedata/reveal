@@ -61,54 +61,146 @@ export class AxisThreeView extends BaseGroupThreeView
     const node = this.node;
     const style = this.style;
 
-    const polylines = node.data;
-    if (!polylines)
-      throw Error("polylines is missing in view");
+
 
     const group = new THREE.Group();
+    group.add(this.createLabel());
 
-    for (const polyline of polylines.list)
-    {
-      const geometry = new THREE.Geometry();
-      for (const point of polyline.list)
-        geometry.vertices.push(ThreeConverter.toVector(point));
-
-      const line = new THREE.Line(geometry, material, THREE.LinePieces);
-      group.add(line);
-    }
     return group;
   }
 
 
-  Greate(message, parameters): THREE.Sprite
+  createSprite(text: string): THREE.Sprite | null
   {
-    if (parameters === undefined) parameters = {};
-
-    const fontface = parameters["fontface"] || "Helvetica";
-    const fontsize = parameters["fontsize"] || 70;
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    context.font = fontsize + "px " + fontface;
-
-    // get size data (height depends only on font size)
-    var metrics = context.measureText(message);
-    var textWidth = metrics.width;
-
-
-    // text color
-    context.fillStyle = "rgba(0, 0, 0, 1.0)";
-    context.fillText(message, 0, fontsize);
-
     // canvas contents will be used for a texture
-    var texture = new THREE.Texture(canvas)
+    const canvas = this.createLabelCanvas(150, 32, name);
+    if (canvas === null)
+      return null;
+
+    const texture = new THREE.Texture(canvas);
     texture.minFilter = THREE.LinearFilter;
     texture.needsUpdate = true;
 
-    var spriteMaterial = new THREE.SpriteMaterial({ map: texture, useScreenCoordinates: false });
-    var sprite = new THREE.Sprite(spriteMaterial);
-    sprite.scale.set(100, 50, 1.0);
+    const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+    const sprite = new THREE.Sprite(spriteMaterial);
+    sprite.scale.set(1, 1, 1.0);
     return sprite;
   }
+
+  createLabel(): THREE.Object3D
+  {
+
+    const dobj = new THREE.Object3D();
+    for (let i = 0; i < 1; i++)
+    {
+      const label = this.createSprite("dssssss");
+      if (label === null)
+        continue;
+
+      label.position.set(i + 100, i + 100, i + 10);
+      dobj.add(label);
+    }
+    return dobj;
+  }
+
+
+  createLabelCanvas1(baseWidth: number, fontSize: number, name: string): HTMLCanvasElement | null
+  {
+    const fontface = "Helvetica";
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    if (context === null)
+      return null;
+
+    context.font = fontSize + "px " + fontface;
+
+    // text color
+    context.fillStyle = "rgba(255, 255, 255, 1.0)";
+    context.fillText(name, 0, fontSize);
+    return canvas;
+  }
+
+  createLabelCanvas(baseWidth: number, fontSize: number, name: string): HTMLCanvasElement | null
+  {
+    const borderSize = 2;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (ctx === null)
+      return null;
+
+    const font = `${fontSize}px bold sans-serif`;
+    ctx.font = font;
+    // measure how long the name will be
+    const textWidth = ctx.measureText(name).width;
+
+    const doubleBorderSize = borderSize * 2;
+    const width = baseWidth + doubleBorderSize;
+    const height = fontSize + doubleBorderSize;
+
+    ctx.canvas.width = width;
+    ctx.canvas.height = height;
+
+    // need to set font again after resizing canvas
+    ctx.font = font;
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'center';
+
+    //ctx.fillStyle = 'transparent';
+    //ctx.fillRect(0, 0, width, height);
+
+    // scale to fit but don't stretch
+    const scaleFactor = Math.min(1, baseWidth / textWidth);
+    ctx.translate(width / 2, height / 2);
+    ctx.scale(scaleFactor, 1);
+    ctx.fillStyle = 'blue';
+    ctx.fillText(name, 0, 0);
+    return canvas;
+  }
+
+  //function makePerson()
+  //{
+  //  const canvas = createLabelCanvas(150, 32, name);
+  //  const texture = new THREE.CanvasTexture(canvas);
+  //  // because our canvas is likely not a power of 2
+  //  // in both dimensions set the filtering appropriately.
+  //  texture.minFilter = THREE.LinearFilter;
+  //  texture.wrapS = THREE.ClampToEdgeWrapping;
+  //  texture.wrapT = THREE.ClampToEdgeWrapping;
+
+  //  const labelMaterial = new THREE.SpriteMaterial({
+  //    map: texture,
+  //    transparent: true,
+  //  });
+  //  const bodyMaterial = new THREE.MeshPhongMaterial({
+  //    color,
+  //    flatShading: true,
+  //  });
+
+  //  const root = new THREE.Object3D();
+  //  root.position.x = x;
+
+  //  const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+  //  root.add(body);
+  //  body.position.y = bodyHeight / 2;
+
+  //  const head = new THREE.Mesh(headGeometry, bodyMaterial);
+  //  root.add(head);
+  //  head.position.y = bodyHeight + headRadius * 1.1;
+
+  //  const label = new THREE.Sprite(labelMaterial);
+  //  root.add(label);
+  //  label.position.y = bodyHeight * 4 / 5;
+  //  label.position.z = bodyRadiusTop * 1.01;
+
+  //  // if units are meters then 0.01 here makes size
+  //  // of the label into centimeters.
+  //  const labelBaseScale = 0.01;
+  //  label.scale.x = canvas.width * labelBaseScale;
+  //  label.scale.y = canvas.height * labelBaseScale;
+
+  //  scene.add(root);
+  //  return root;
+  //}
 
 
 }

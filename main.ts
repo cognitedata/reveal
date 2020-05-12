@@ -3,9 +3,9 @@ import { ThreeModule } from './src/Three/ThreeModule';
 import { ThreeRenderTargetNode } from './src/Three/ThreeRenderTargetNode';
 import { Range3 } from './src/Core/Geometry/Range3';
 import { WellNode } from './src/Nodes/WellNode';
-import { WellTreeNode } from './src/TreeNodes/WellTreeNode';
 import { Well } from './src/Nodes/Well';
 import { RootNode } from './src/TreeNodes/RootNode';
+import { AxisNode } from './src/Nodes/AxisNode';
 
 main();
 
@@ -43,16 +43,20 @@ export function main()
 
     document.body.appendChild(target.domElement);
     document.body.appendChild(stats.dom);
+    target.setActiveInteractive();
   }
   // Set some visible in target 0
-  root.targets.children[0].setActiveInteractive();
 
   for (const node of root.getDescendantsByType(WellNode))
     node.setVisible(true);
 
+  for (const node of root.getDescendantsByType(AxisNode))
+    node.setVisible(true);
+
   const activeTarget = root.activeTarget as ThreeRenderTargetNode;
+  console.log(activeTarget.toString());
   if (activeTarget)
-    activeTarget.viewAll();
+    activeTarget.viewAll(); 
 
   // Trick
   (window as any).camera = activeTarget.activeCamera;
