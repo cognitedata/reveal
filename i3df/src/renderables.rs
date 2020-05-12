@@ -399,11 +399,6 @@ new_geometry_types! {
         [
             tree_index: f32,
             color: [u8; 4],
-            size: f32,
-            center: Vector3,
-            normal: Vector3,
-            rotation_angle: f32,
-            delta: Vector3,
             instance_matrix: Matrix4,
         ]
     }
@@ -415,7 +410,6 @@ new_geometry_types! {
         [
             tree_index: f32,
             color: [u8; 4],
-            size: f32,
             center_a: Vector3,
             center_b: Vector3,
             radius_a: f32,
@@ -433,10 +427,7 @@ new_geometry_types! {
         [
             tree_index: f32,
             color: [u8; 4],
-            size: f32,
-            center: Vector3,
             normal: Vector3,
-            radius: f32,
             instance_matrix: Matrix4,
         ]
     }
@@ -448,7 +439,6 @@ new_geometry_types! {
         [
             tree_index: f32,
             color: [u8; 4],
-            size: f32,
             center_a: Vector3,
             center_b: Vector3,
             radius_a: f32,
@@ -464,7 +454,6 @@ new_geometry_types! {
         [
             tree_index: f32,
             color: [u8; 4],
-            size: f32,
             center: Vector3,
             normal: Vector3,
             horizontal_radius: f32,
@@ -480,12 +469,7 @@ new_geometry_types! {
         [
             tree_index: f32,
             color: [u8; 4],
-            size: f32,
-            center: Vector3,
             normal: Vector3,
-            local_x_axis: Vector3,
-            radius_x: f32,
-            radius_y: f32,
             thickness: f32,
             angle: f32,
             arc_angle: f32,
@@ -500,22 +484,13 @@ new_geometry_types! {
         [
             tree_index: f32,
             color: [u8; 4],
-            size: f32,
             center_a: Vector3,
             center_b: Vector3,
             radius: f32,
-            height_a: f32,
-            height_b: f32,
-            slope_a: f32,
-            slope_b: f32,
-            z_angle_a: f32,
-            z_angle_b: f32,
             angle: f32,
             plane_a: Vector4,
             plane_b: Vector4,
             arc_angle: f32,
-            cap_normal_a: Vector3,
-            cap_normal_b: Vector3,
             local_x_axis: Vector3,
         ]
     }
@@ -526,11 +501,6 @@ new_geometry_types! {
         [
             tree_index: f32,
             color: [u8; 4],
-            size: f32,
-            center_a: Vector3,
-            center_b: Vector3,
-            radius: f32,
-            rotation_angle: f32,
             instance_matrix: Matrix4,
         ]
     }
@@ -542,10 +512,6 @@ new_geometry_types! {
         [
             tree_index: f32,
             color: [u8; 4],
-            size: f32,
-            vertex_1: Vector3,
-            vertex_2: Vector3,
-            vertex_3: Vector3,
             instance_matrix: Matrix4,
         ]
     }
@@ -557,7 +523,6 @@ new_geometry_types! {
         [
             tree_index: f32,
             color: [u8; 4],
-            size: f32,
             center: Vector3,
             normal: Vector3,
             radius: f32,
@@ -573,11 +538,8 @@ new_geometry_types! {
             tree_index: f32,
             color: [u8; 4],
             size: f32,
-            center: Vector3,
-            normal: Vector3,
             radius: f32,
             tube_radius: f32,
-            rotation_angle: f32,
             arc_angle: f32,
             instance_matrix: Matrix4,
         ]
@@ -589,7 +551,6 @@ new_geometry_types! {
         [
             tree_index: f32,
             color: [u8; 4],
-            size: f32,
             vertex_1: Vector3,
             vertex_2: Vector3,
             vertex_3: Vector3,
@@ -602,7 +563,6 @@ new_geometry_types! {
 pub struct CircleInfo {
     tree_index: f32,
     color: [u8; 4],
-    size: f32,
     center: Vector3,
     normal: Vector3,
     radius: f32,
@@ -627,10 +587,7 @@ impl Circle {
         Circle {
             tree_index: data.tree_index as f32,
             color: data.color,
-            size: data.size,
-            center: data.center,
             normal: data.normal,
-            radius: data.radius,
             instance_matrix,
         }
     }
@@ -639,7 +596,6 @@ impl Circle {
 pub struct QuadInfo {
     tree_index: f32,
     color: [u8; 4],
-    size: f32,
     vertex_1: Vector3,
     vertex_2: Vector3,
     vertex_3: Vector3,
@@ -671,10 +627,6 @@ impl Quad {
         Quad {
             tree_index: data.tree_index as f32,
             color: data.color,
-            size: data.size,
-            vertex_1: data.vertex_1,
-            vertex_2: data.vertex_2,
-            vertex_3: data.vertex_3,
             instance_matrix,
         }
     }
@@ -709,11 +661,8 @@ impl TorusSegment {
             tree_index: data.tree_index as f32,
             color: data.color,
             size: data.size,
-            center: data.center,
-            normal: data.normal,
             radius: data.radius,
             tube_radius: data.tube_radius,
-            rotation_angle: data.rotation_angle,
             arc_angle: data.arc_angle,
             instance_matrix,
         }
