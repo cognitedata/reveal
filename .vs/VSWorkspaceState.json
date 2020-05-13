@@ -5,12 +5,12 @@
     "\\src\\Core",
     "\\src\\Core\\Module",
     "\\src\\Core\\Nodes",
-    "\\src\\Core\\PrimitiveClasses",
-    "\\src\\Core\\Styles",
     "\\src\\Core\\Views",
+    "\\src\\Nodes",
+    "\\src\\Nodes\\Wells",
     "\\src\\Three",
     "\\src\\Three\\Utilities"
   ],
-  "SelectedNode": "\\package.json",
+  "SelectedNode": "\\src\\Nodes\\Wells\\WellTrajectoryNode.ts",
   "PreviewInSolutionExplorer": false
 }
