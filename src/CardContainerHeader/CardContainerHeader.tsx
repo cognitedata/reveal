@@ -6,7 +6,7 @@ import { StyledCardContainerHeader } from './elements';
 
 const CardContainerHeader = () => {
   const { t } = useTranslation('TenantSelector');
-  const { appName, applicationId } = getSidecar();
+  const { applicationName, applicationId } = getSidecar();
   return (
     <StyledCardContainerHeader>
       <h3 className="cogs-title-5">
@@ -16,7 +16,9 @@ const CardContainerHeader = () => {
       </h3>
 
       <StyledHeading className="name">
-        {t(`app-name_${applicationId}`, { defaultValue: appName })}
+        {t(`app-name_${applicationId}`, {
+          defaultValue: applicationName || applicationId,
+        })}
       </StyledHeading>
 
       <CogniteMark color="var(--cogs-yellow-4)" />

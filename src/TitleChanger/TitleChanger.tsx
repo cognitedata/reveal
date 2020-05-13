@@ -4,12 +4,14 @@ import { getSidecar } from 'utils';
 import { useTranslation } from 'react-i18next';
 
 const TitleChanger = () => {
-  const { appName, applicationId } = getSidecar();
+  const { applicationName, applicationId } = getSidecar();
   const { t } = useTranslation('Title');
   return (
     <Helmet>
       <title>
-        {t(`app-name_${applicationId}_title`, { defaultValue: appName })}
+        {t(`app-name_${applicationId}_title`, {
+          defaultValue: applicationName || applicationId,
+        })}
       </title>
     </Helmet>
   );

@@ -1,7 +1,7 @@
 type SidecarConfig = {
   appsApiBaseUrl: string;
   applicationId: string;
-  appName: string;
+  applicationName: string;
   backgroundImage: string;
   helpLink: string;
 };
@@ -9,7 +9,7 @@ type SidecarConfig = {
 const DEFAULT_SIDECAR: SidecarConfig = {
   appsApiBaseUrl: 'https://localhost',
   applicationId: 'tenant-selector-test',
-  appName: 'Tenant Selector Test',
+  applicationName: 'Tenant Selector Test',
   backgroundImage: '',
   helpLink: '',
 };
