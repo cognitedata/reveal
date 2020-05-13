@@ -14,6 +14,7 @@ export interface SectorScene {
   readonly maxTreeIndex: number;
   readonly root: SectorMetadata;
 
+  readonly sectorCount: number;
   getSectorById(sectorId: number): SectorMetadata | undefined;
   getSectorsContainingPoint(p: vec3): SectorMetadata[];
   getSectorsIntersectingBox(b: Box3): SectorMetadata[];
@@ -73,6 +74,10 @@ export class SectorSceneImpl implements SectorScene {
     this.maxTreeIndex = maxTreeIndex;
     this.root = root;
     this.sectors = sectorsById;
+  }
+
+  get sectorCount(): number {
+    return this.sectors.size;
   }
 
   getSectorById(sectorId: number): SectorMetadata | undefined {
