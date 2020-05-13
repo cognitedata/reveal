@@ -10,7 +10,6 @@ impl ToRenderables for crate::OpenSphericalSegment {
             .push(SphericalSegment {
                 tree_index: self.tree_index as f32,
                 color: self.color,
-                size: self.diagonal,
                 center: self.center(),
                 normal: self.normal.into(),
                 radius: self.radius,
@@ -28,7 +27,6 @@ impl ToRenderables for crate::Sphere {
             .push(SphericalSegment {
                 tree_index: self.tree_index as f32,
                 color: self.color,
-                size: self.diagonal,
                 center: self.center(),
                 normal: z_axis,
                 radius: self.radius,
@@ -44,7 +42,6 @@ impl ToRenderables for crate::ClosedSphericalSegment {
             .push(SphericalSegment {
                 tree_index: self.tree_index as f32,
                 color: self.color,
-                size: self.diagonal,
                 center: self.center(),
                 normal: self.normal.into(),
                 radius: self.radius,
@@ -58,7 +55,6 @@ impl ToRenderables for crate::ClosedSphericalSegment {
         collections.circle_collection.push(Circle::new(&CircleInfo {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
             center,
             normal: self.normal.into(),
             radius: circle_radius,

@@ -16,18 +16,9 @@ impl ToRenderables for crate::Nut {
             * Matrix4::from(first_rotation)
             * scale_matrix;
 
-        let normal: Vector3 = self.center_axis.into();
-        let center_a = self.center() + 0.5 * self.height * normal;
-        let center_b = self.center() - 0.5 * self.height * normal;
-
         collections.nut_collection.push(Nut {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
-            center_a,
-            center_b,
-            radius: self.radius,
-            rotation_angle: self.rotation_angle,
             instance_matrix,
         });
     }

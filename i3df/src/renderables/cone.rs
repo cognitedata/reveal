@@ -22,7 +22,6 @@ impl ToRenderables for crate::ClosedCone {
         collections.cone_collection.push(Cone {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
             center_a,
             center_b,
             radius_a: self.radius_a,
@@ -34,7 +33,6 @@ impl ToRenderables for crate::ClosedCone {
         collections.circle_collection.push(Circle::new(&CircleInfo {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
             center: center_a,
             normal: center_axis,
             radius: self.radius_a,
@@ -42,7 +40,6 @@ impl ToRenderables for crate::ClosedCone {
         collections.circle_collection.push(Circle::new(&CircleInfo {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
             center: center_b,
             // TODO should this be negative, it is not in the JS version
             normal: -1.0 * center_axis,
@@ -67,7 +64,6 @@ impl ToRenderables for crate::ClosedEccentricCone {
         collections.eccentric_cone_collection.push(EccentricCone {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
             center_a,
             center_b,
             radius_a: self.radius_a,
@@ -77,7 +73,6 @@ impl ToRenderables for crate::ClosedEccentricCone {
         collections.circle_collection.push(Circle::new(&CircleInfo {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
             center: center_a,
             normal,
             radius: self.radius_a,
@@ -85,7 +80,6 @@ impl ToRenderables for crate::ClosedEccentricCone {
         collections.circle_collection.push(Circle::new(&CircleInfo {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
             center: center_b,
             // TODO should this be negative?
             normal,
@@ -108,7 +102,6 @@ impl ToRenderables for crate::OpenCone {
         collections.cone_collection.push(Cone {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
             center_a,
             center_b,
             radius_a: self.radius_a,
@@ -136,7 +129,6 @@ impl ToRenderables for crate::OpenEccentricCone {
         collections.eccentric_cone_collection.push(EccentricCone {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
             center_a,
             center_b,
             radius_a: self.radius_a,
@@ -160,7 +152,6 @@ impl ToRenderables for crate::OpenGeneralCone {
         collections.cone_collection.push(Cone {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
             center_a,
             center_b,
             radius_a: self.radius_a,
@@ -206,7 +197,6 @@ impl ToRenderables for crate::ClosedGeneralCone {
         collections.cone_collection.push(Cone {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
             center_a,
             center_b,
             radius_a: self.radius_a,
@@ -218,12 +208,7 @@ impl ToRenderables for crate::ClosedGeneralCone {
         collections.general_ring_collection.push(GeneralRing {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
-            center: center_a,
             normal: center_axis,
-            local_x_axis,
-            radius_x: self.radius_a,
-            radius_y: self.radius_a,
             // TODO is thickness in JS, but no thickness property exists on ClosedGeneralCone
             thickness: 1.0,
             angle: self.rotation_angle,
@@ -233,12 +218,7 @@ impl ToRenderables for crate::ClosedGeneralCone {
         collections.general_ring_collection.push(GeneralRing {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
-            center: center_b,
             normal: -center_axis,
-            local_x_axis,
-            radius_x: self.radius_b,
-            radius_y: self.radius_b,
             thickness: 1.0,
             angle: self.rotation_angle,
             arc_angle: self.arc_angle,
@@ -280,7 +260,6 @@ impl ToRenderables for crate::SolidOpenGeneralCone {
         collections.cone_collection.push(Cone {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
             center_a,
             center_b,
             radius_a: self.radius_a,
@@ -292,7 +271,6 @@ impl ToRenderables for crate::SolidOpenGeneralCone {
         collections.cone_collection.push(Cone {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
             center_a,
             center_b,
             radius_a: self.radius_a - self.thickness,
@@ -304,12 +282,7 @@ impl ToRenderables for crate::SolidOpenGeneralCone {
         collections.general_ring_collection.push(GeneralRing {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
-            center: center_a,
             normal: center_axis,
-            local_x_axis,
-            radius_x: self.radius_a,
-            radius_y: self.radius_a,
             thickness: self.thickness / self.radius_a,
             angle: self.rotation_angle,
             arc_angle: self.arc_angle,
@@ -318,12 +291,7 @@ impl ToRenderables for crate::SolidOpenGeneralCone {
         collections.general_ring_collection.push(GeneralRing {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
-            center: center_b,
             normal: -center_axis,
-            local_x_axis,
-            radius_x: self.radius_b,
-            radius_y: self.radius_b,
             thickness: self.thickness / self.radius_b,
             angle: self.rotation_angle,
             arc_angle: self.arc_angle,
@@ -365,7 +333,6 @@ impl ToRenderables for crate::SolidClosedGeneralCone {
         collections.cone_collection.push(Cone {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
             center_a,
             center_b,
             radius_a: self.radius_a,
@@ -377,7 +344,6 @@ impl ToRenderables for crate::SolidClosedGeneralCone {
         collections.cone_collection.push(Cone {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
             center_a,
             center_b,
             radius_a: self.radius_a - self.thickness,
@@ -389,12 +355,7 @@ impl ToRenderables for crate::SolidClosedGeneralCone {
         collections.general_ring_collection.push(GeneralRing {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
-            center: center_a,
             normal: center_axis,
-            local_x_axis,
-            radius_x: self.radius_a,
-            radius_y: self.radius_a,
             thickness: self.thickness / self.radius_a,
             angle: self.rotation_angle,
             arc_angle: self.arc_angle,
@@ -403,12 +364,7 @@ impl ToRenderables for crate::SolidClosedGeneralCone {
         collections.general_ring_collection.push(GeneralRing {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
-            center: center_b,
             normal: -center_axis,
-            local_x_axis,
-            radius_x: self.radius_b,
-            radius_y: self.radius_b,
             thickness: self.thickness / self.radius_b,
             angle: self.rotation_angle,
             arc_angle: self.arc_angle,
@@ -441,7 +397,6 @@ impl ToRenderables for crate::SolidClosedGeneralCone {
             collections.trapezium_collection.push(Trapezium {
                 tree_index: self.tree_index as f32,
                 color: self.color,
-                size: self.diagonal,
                 vertex_1: vertices[0],
                 vertex_2: vertices[1],
                 vertex_3: vertices[2],
