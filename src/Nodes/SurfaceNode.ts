@@ -28,13 +28,13 @@ export class SurfaceNode extends BaseVisualNode
   public constructor() { super(); }
 
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private _data: RegularGrid2 | null = null;
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   public get data(): RegularGrid2 | null { return this._data; }

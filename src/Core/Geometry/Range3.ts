@@ -13,12 +13,12 @@
 
 import { Range1 } from "./Range1";
 import { Vector3 } from "./Vector3";
+import { Ma } from "../PrimitiveClasses/Ma";
 
 export class Range3
 {
-
   //==================================================
-  // STATIC FPROPERTIES
+  // STATIC PROPERTIES
   //==================================================
 
   public static get newUnit(): Range3
@@ -40,7 +40,7 @@ export class Range3
   }
 
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   public x: Range1 = new Range1();
@@ -48,7 +48,7 @@ export class Range3
   public z: Range1 = new Range1();
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   public get isEmpty(): boolean { return this.x.isEmpty || this.y.isEmpty || this.z.isEmpty; }
@@ -58,6 +58,7 @@ export class Range3
   public get center(): Vector3 { return new Vector3(this.x.center, this.y.center, this.z.center); }
   public get aspectRatio2(): number { return this.x.delta / this.y.delta; }
   public get volume(): number { return this.x.delta * this.y.delta * this.z.delta; }
+  public get diagonal(): number { return Math.sqrt(Ma.square(this.x.delta) + Ma.square(this.y.delta) + Ma.square(this.z.delta)); }
 
   //==================================================
   // CONSTRUCTORS
@@ -116,7 +117,7 @@ export class Range3
       case 5: return new Vector3(this.x.max, this.y.min, this.z.max);
       case 6: return new Vector3(this.x.max, this.y.max, this.z.max);
       case 7: return new Vector3(this.x.min, this.y.max, this.z.max);
-      default: Error("Corner"); return Vector3.newNaN;
+      default: Error("getCornerPoint"); return Vector3.newEmpty;
     }
   }
 
@@ -138,11 +139,11 @@ export class Range3
     this.z.translate(value.z);
   }
 
-  public scale(value: Vector3): void
+  public scaleDelta(value: Vector3): void
   {
-    this.x.scale(value.x);
-    this.y.scale(value.y);
-    this.z.scale(value.z);
+    this.x.scaleDelta(value.x);
+    this.y.scaleDelta(value.y);
+    this.z.scaleDelta(value.z);
   }
 
   public add(value: Vector3): void
@@ -195,5 +196,74 @@ export class Range3
     range.y.set(ymin, ymin + dy);
     range.z.set(0, 0);
     return range;
+  }
+
+  //==================================================
+  // STATIC METHODS:
+  //==================================================
+
+  // Corner and walls is pr. definition:  public static getWallNormal(wallIndex: number): Vector3
+  //   {
+  //            5    4    switch (wallIndex)
+  //            v   /    {
+  //        7-------6                  7-------6      case 0: return new Vector3(-1, +0, +0);
+  //       / |      /|               / |      /|      case 1: return new Vector3(+0, -1, +0);
+  //      4-------5  |              4-------5  |       case 2: return new Vector3(+0, +0, -1);
+  // 0->  |  |    |  |  <-3         |  |    |  |      case 3: return new Vector3(+1, +0, +0);
+  //      |  3----|--2              |  3----|--2      case 4: return new Vector3(+0, +1, +0);
+  //      | /     | /               | /     | /         case 5: return new Vector3(+0, +0, +1);
+  //      0-------1                 0-------1      default: Error("getWallNormal"); return Vector3.newEmpty;
+  //    /     ^    }
+  //   1      2  Wall number are marked with arrows  }
+
+  public static getWallNormal(wallIndex: number): Vector3
+  {
+    switch (wallIndex)
+    {
+      case 0: return new Vector3(-1, +0, +0);
+      case 1: return new Vector3(+0, -1, +0);
+      case 2: return new Vector3(+0, +0, -1);
+      case 3: return new Vector3(+1, +0, +0);
+      case 4: return new Vector3(+0, +1, +0);
+      case 5: return new Vector3(+0, +0, +1);
+      default: Error("getWallNormal"); return Vector3.newEmpty;
+    }
+  }
+
+  public static getWallCornerIndexes(wallIndex: number): number[]
+  {
+    // These as CCW
+    switch (wallIndex)
+    {
+      case 0: return [3, 0, 4, 7];
+      case 1: return [0, 1, 5, 4];
+      case 2: return [3, 2, 1, 0];
+      case 3: return [1, 2, 6, 5];
+      case 4: return [2, 3, 7, 6];
+      case 5: return [4, 5, 6, 7];
+      default: Error("getWallCornerIndexes"); return [0, 0, 0, 0];
+    }
+  }
+
+  public static getTickDirection(wallIndex1: number, wallIndex2: number): Vector3
+  {
+    const vector = new Vector3(0, 0, 0);
+
+    if (wallIndex1 === 0 || wallIndex2 === 0)
+      vector.x = -Math.SQRT1_2;
+    if (wallIndex1 === 3 || wallIndex2 === 3)
+      vector.x = Math.SQRT1_2;
+
+    if (wallIndex1 === 1 || wallIndex2 === 1)
+      vector.y = -Math.SQRT1_2;
+    if (wallIndex1 === 4 || wallIndex2 === 4)
+      vector.y = Math.SQRT1_2;
+
+    if (wallIndex1 === 2 || wallIndex2 === 2)
+      vector.z = -Math.SQRT1_2;
+    if (wallIndex1 === 5 || wallIndex2 === 5)
+      vector.z = Math.SQRT1_2;
+
+    return vector;
   }
 }

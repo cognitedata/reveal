@@ -18,7 +18,7 @@ import { Range1 } from "./Range1";
 export class Points
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   public list: Vector3[] = [];

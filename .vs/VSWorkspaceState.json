@@ -3,13 +3,14 @@
     "",
     "\\src",
     "\\src\\Core",
-    "\\src\\Core\\Interfaces",
     "\\src\\Core\\Module",
+    "\\src\\Core\\Nodes",
     "\\src\\Core\\PrimitiveClasses",
     "\\src\\Core\\Styles",
     "\\src\\Core\\Views",
     "\\src\\Three",
-    "\\src\\TreeNodes"
+    "\\src\\Three\\Utilities"
   ],
+  "SelectedNode": "\\package.json",
   "PreviewInSolutionExplorer": false
 }

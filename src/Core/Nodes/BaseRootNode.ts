@@ -30,7 +30,7 @@ export class BaseRootNode extends BaseNode
   }
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   public get targets(): TargetTreeNode 

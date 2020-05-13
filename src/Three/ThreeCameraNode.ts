@@ -12,19 +12,20 @@
 //=====================================================================================
 
 import CameraControls from 'camera-controls';
+//import { OrbitControls } from 'three-orbitcontrols-ts';  // npm install --save three-orbitcontrols-ts
 import * as THREE from 'three';
+
 import { BaseCameraNode } from "../Core/Nodes/BaseCameraNode";
 import { BaseRenderTargetNode } from "../Core/Nodes/BaseRenderTargetNode";
-
-//import { OrbitControls } from "https://threejsfundamentals.org/threejs/resources/threejs/r115/examples/jsm/controls/OrbitControls.js";
 
 export class ThreeCameraNode extends BaseCameraNode
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private _camera: THREE.Camera | null = null;
+  //private _controls: OrbitControls | null = null;
   private _controls: CameraControls | null = null;
 
   //==================================================
@@ -41,7 +42,7 @@ export class ThreeCameraNode extends BaseCameraNode
   public /*override*/ isA(className: string): boolean { return className === ThreeCameraNode.name || super.isA(className); }
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   public get camera(): THREE.Camera
@@ -59,6 +60,7 @@ export class ThreeCameraNode extends BaseCameraNode
   public set camera(value: THREE.Camera) { this._camera = value; this._controls = null; }
 
   public get controls(): CameraControls | null
+  //public get controls(): OrbitControls | null
   {
     if (!this._controls)
     {
@@ -71,7 +73,7 @@ export class ThreeCameraNode extends BaseCameraNode
         return null;
 
       //this._controls = new OrbitControls(camera, target.domElement);
-      // this._controls.update();
+      //this._controls.update();
 
       this._controls = new CameraControls(camera, target.domElement);
       this._controls.setPosition(0, 0, 20);
@@ -86,7 +88,7 @@ export class ThreeCameraNode extends BaseCameraNode
   public /*override*/ updateAspect(value: number)
   {
     const camera = this._camera;
-    if (this._camera == null)
+    if (this._camera === null)
       return;
 
     if (!(camera instanceof THREE.PerspectiveCamera))

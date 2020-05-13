@@ -26,13 +26,13 @@ export abstract class BaseVisualNode extends BaseNode
   protected constructor() { super(); }
 
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private _views: ViewList = new ViewList();
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   public get views(): ViewList { return this._views; }

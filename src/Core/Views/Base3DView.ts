@@ -20,7 +20,7 @@ import { ViewInfo } from "./ViewInfo";
 export abstract class Base3DView extends BaseView
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private _boundingBox: Range3 | undefined = undefined;

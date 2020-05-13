@@ -19,7 +19,7 @@ const MaxByte = 255;
 export class Colors
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   public static get white(): Color { return Color.rgb(MaxByte, MaxByte, MaxByte) };
@@ -36,7 +36,7 @@ export class Colors
   private static _colors: Color[] | null = null;
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   private static get colors(): Color[]

@@ -11,8 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import CameraControls from 'camera-controls';
 import * as THREE from 'three';
+import CameraControls from 'camera-controls';
+//import { OrbitControls } from 'three-orbitcontrols-ts';  // npm install --save three-orbitcontrols-ts
 
 const Stats = require('stats-js');
 
@@ -25,7 +26,7 @@ import { TreeOverlay } from './TreeOverlay';
 export class ThreeRenderTargetNode extends BaseRenderTargetNode
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private _scene: THREE.Scene | null = null;
@@ -38,7 +39,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   // scene.background = new THREE.Color('white');
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   public get scene(): THREE.Scene
@@ -69,6 +70,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   }
 
   public get activeControls(): CameraControls | null
+  //public get activeControls(): OrbitControls | null
   {
     const cameraNode = this.activeCameraNode;
     if (!cameraNode)
@@ -81,7 +83,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   {
     if (!this._renderer)
     {
-      this._renderer = new THREE.WebGLRenderer();
+      this._renderer = new THREE.WebGLRenderer({ antialias: true });
       this._renderer.setClearColor(ThreeConverter.toColor(this.color));
       this.setRenderSize();
       this._renderer.autoClear = false;
@@ -178,7 +180,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   }
 
   //==================================================
-  // INSTANCE FUNCTIONS
+  // INSTANCE METHODS
   //==================================================
 
   private render(): void
@@ -198,10 +200,14 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     if (this.isInvalidated || needsUpdate)
     {
       this.stats.begin();
+
+      for (const view of this.viewsShownHere.list)
+        view.beforeRender();
+
       this.renderer.render(this.scene, this.activeCamera);
       this.stats.end();
 
-      var viewInfo = this.getViewInfo();
+      const viewInfo = this.getViewInfo();
 
       this._overlay.render(this.renderer, viewInfo, this.pixelRange.delta);
       this.Invalidate(false);

@@ -34,7 +34,7 @@ export abstract class BaseNode extends Identifiable
   protected constructor() { super(); }
 
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private _color: color | undefined = undefined;
@@ -49,7 +49,7 @@ export abstract class BaseNode extends Identifiable
   private _renderStyles: BaseRenderStyle[] = [];
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   public get uniqueId(): UniqueId { return this._uniqueId; }
@@ -66,7 +66,7 @@ export abstract class BaseNode extends Identifiable
   public /*override*/ toString(): string { return this.getDebugString(); }
 
   //==================================================
-  // VIRTUAL FUNCTIONS
+  // VIRTUAL METHODS
   //==================================================
 
   public abstract get typeName(): string;
@@ -121,7 +121,7 @@ export abstract class BaseNode extends Identifiable
   public /*override*/ supportsColorType(colorType: ColorType): boolean { return true; } // To be overridden
 
   //==================================================
-  // PROPERTIES: Child-Parent relationship
+  // INSTANCE PROPERTIES: Child-Parent relationship
   //==================================================
 
   public get children(): BaseNode[] { return this._children; }

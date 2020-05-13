@@ -18,7 +18,7 @@ import { ColorType } from "../Core/Enums/ColorType";
 export class WellRenderStyle extends BaseRenderStyle
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   public radius: number = 10;

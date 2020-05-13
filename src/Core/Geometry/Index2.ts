@@ -14,7 +14,7 @@
 export class Index2
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   public i: number;
@@ -36,7 +36,7 @@ export class Index2
   }
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   public get size(): number { return this.i * this.j; }

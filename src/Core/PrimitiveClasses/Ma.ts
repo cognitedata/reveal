@@ -13,9 +13,27 @@
 
 export class Ma
 {
+  public static errorTolerance = 1.0E-10;
+
+  //==================================================
+  // STATIC METHODS: Returning boolean
+  //==================================================
+
+  public static isZero(x: number): boolean { return x < 0 ? x > -Ma.errorTolerance : x < Ma.errorTolerance; }
+
+  public static isInt(value: number): boolean
+  {
+    const diff = Math.round(value) - value;
+    return Ma.isZero(diff);
+  }
+
+  public static isInc(tick: number, inc: number): boolean { return Ma.isInt(tick / inc); }
+
   //==================================================
   // STATIC METHODS: 
   //==================================================
+
+  public static square(value: number): number { return value * value; }
 
   public static roundInc(inc: number): number
   {
@@ -65,6 +83,24 @@ export class Ma
         inc *= 10;
     }
     return inc;
+  }
+
+  public static ceil(value: number, delta: number): number
+  {
+    // Rounding number up to nearest delta
+    value /= delta;
+    value = Math.ceil(value);
+    value *= delta;
+    return value;
+  }
+
+  public static floor(value: number, delta: number): number
+  {
+    // Rounding number down to nearest delta
+    value /= delta;
+    value = Math.floor(value);
+    value *= delta;
+    return value;
   }
 }
 

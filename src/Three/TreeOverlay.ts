@@ -18,7 +18,7 @@ import { Vector3 } from '../Core/Geometry/Vector3';
 export class TreeOverlay
 {
   //==================================================
-  // FILEDS
+  // INSTANCE FIELDS
   //==================================================
 
   private scene: THREE.Scene | null = null;

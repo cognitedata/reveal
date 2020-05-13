@@ -17,7 +17,7 @@ import { Range3 } from "./Range3";
 export class Polylines
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   public list: Polyline[] = [];

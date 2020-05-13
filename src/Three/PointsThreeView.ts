@@ -32,7 +32,7 @@ export class PointsThreeView extends BaseGroupThreeView
   public constructor() { super(); }
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   protected get node(): PointsNode { return super.getNode() as PointsNode; }
@@ -49,7 +49,7 @@ export class PointsThreeView extends BaseGroupThreeView
 
   public calculateBoundingBoxCore(): Range3 | undefined
   {
-    var boundingBox = this.node.boundingBox;
+    const boundingBox = this.node.boundingBox;
     if (boundingBox == undefined)
       return undefined;
 

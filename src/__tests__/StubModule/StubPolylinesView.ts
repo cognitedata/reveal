@@ -26,7 +26,7 @@ export class StubPolylinesView extends Base3DView
   public constructor() { super(); }
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   protected get node(): PolylinesNode { return super.getNode() as PolylinesNode; }

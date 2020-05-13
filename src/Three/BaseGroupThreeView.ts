@@ -25,7 +25,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
   public constructor() { super(); }
 
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private _object3D: THREE.Object3D | null = null;

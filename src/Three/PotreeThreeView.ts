@@ -32,7 +32,7 @@ export class PotreeThreeView extends BaseGroupThreeView
   public constructor() { super(); }
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   protected get node(): PotreeNode { return super.getNode() as PotreeNode; }

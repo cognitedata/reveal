@@ -15,13 +15,13 @@ export abstract class BaseTargetNode extends BaseNode implements Target
   protected constructor() { super(); }
 
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private _viewsShownHere: ViewList = new ViewList();
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   public get viewsShownHere(): ViewList { return this._viewsShownHere; }

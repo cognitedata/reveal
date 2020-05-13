@@ -24,7 +24,7 @@ export abstract class BaseThreeView extends Base3DView
   public constructor() { super(); }
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   protected get scene(): THREE.Scene { return this.renderTarget.scene; }

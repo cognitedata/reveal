@@ -14,7 +14,7 @@
 export class NodeEventArgs
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private _changes: ChangedDecription[] | null = null;

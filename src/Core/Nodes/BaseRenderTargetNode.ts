@@ -9,7 +9,7 @@ import { ViewInfo } from "../Views/ViewInfo";
 export abstract class BaseRenderTargetNode extends BaseTargetNode 
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private static margin: number = 24;
