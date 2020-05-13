@@ -194,20 +194,21 @@ export class Vector3
   {
     switch (dimension)
     {
-    case 0: return new Vector3(1, 0, 0);
-    case 1: return new Vector3(0, 1, 0);
-    case 2: return new Vector3(0, 0, 1);
-    default: return Vector3.newEmpty;
+      case 0: return new Vector3(1, 0, 0);
+      case 1: return new Vector3(0, 1, 0);
+      case 2: return new Vector3(0, 0, 1);
+      default: return Vector3.newEmpty;
     }
   }
-  public static GetTick(wall0: number, wall1: number): Vector3
-  {
-    const vector = new Vector3(0, 0, 0);
-    if (wall0 === 0 || wall1 === 0)
-      vector.z = Math.SQRT1_2;
-    if (wall0 === 3 || wall1 === 3)
-      vector.z = -Math.SQRT1_2;
 
-    return vector;
+  public static getAxisName(dimension: number): string
+  {
+    switch (dimension)
+    {
+      case 0: return "X";
+      case 1: return "Y";
+      case 2: return "Z";
+      default: return "Undefined";;
+    }
   }
 }

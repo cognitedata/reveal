@@ -14,13 +14,13 @@
 import * as THREE from 'three';
 import { Color } from "three";
 import { BaseGroupThreeView } from "./BaseGroupThreeView";
-import { WellNode } from "../Nodes/WellNode";
-import { WellRenderStyle } from "../Nodes/WellRenderStyle";
+import { WellTrajectoryNode } from "../Nodes/Wells/WellTrajectoryNode";
+import { WellRenderStyle } from "../Nodes/Wells/WellRenderStyle";
 import { ThreeConverter } from "./ThreeConverter";
 import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
 import { Range3 } from '../Core/Geometry/Range3';
 
-export class WellThreeView extends BaseGroupThreeView
+export class WellTrajectoryThreeView extends BaseGroupThreeView
 {
   //==================================================
   // CONSTRUCTORS
@@ -32,7 +32,7 @@ export class WellThreeView extends BaseGroupThreeView
   // INSTANCE PROPERTIES
   //==================================================
 
-  protected get node(): WellNode { return super.getNode() as WellNode; }
+  protected get node(): WellTrajectoryNode { return super.getNode() as WellTrajectoryNode; }
   protected get style(): WellRenderStyle { return super.getStyle() as WellRenderStyle; }
 
   //==================================================
@@ -63,15 +63,15 @@ export class WellThreeView extends BaseGroupThreeView
     const node = this.node;
     const style = this.style;
 
-    const well = node.data;
-    if (!well)
-      throw Error("Well is missing");
+    const wellTrajectory = node.data;
+    if (!wellTrajectory)
+      throw Error("Well trajectory is missing");
 
     const color = node.color;
     const threeColor = ThreeConverter.toColor(color);
 
     const points: THREE.Vector3[] = [];
-    for (const point of well.list)
+    for (const point of wellTrajectory.list)
       points.push(ThreeConverter.toVector(point));
 
     const curve = new THREE.CatmullRomCurve3(points);

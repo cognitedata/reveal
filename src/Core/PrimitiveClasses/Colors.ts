@@ -23,6 +23,8 @@ export class Colors
   //==================================================
 
   public static get white(): Color { return Color.rgb(MaxByte, MaxByte, MaxByte) };
+  public static get darkGrey(): Color { return Color.rgb(MaxByte / 2, MaxByte / 2, MaxByte / 2) };
+  public static get lightGrey(): Color { return Color.rgb(3 * MaxByte / 4, 3 * MaxByte / 4, 3 * MaxByte / 4) };
   public static get grey(): Color { return Color.rgb(2 * MaxByte / 3, 2 * MaxByte / 3, 2 * MaxByte / 3) };
   public static get black(): Color { return Color.rgb(0, 0, 0) };
   public static get red(): Color { return Color.rgb(MaxByte, 0, 0) };

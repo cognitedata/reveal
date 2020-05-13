@@ -33,6 +33,7 @@ export class Ma
   // STATIC METHODS: 
   //==================================================
 
+  public static sign(value: number): number { return value < 0 ? -1 : 1; }
   public static square(value: number): number { return value * value; }
 
   public static roundInc(inc: number): number

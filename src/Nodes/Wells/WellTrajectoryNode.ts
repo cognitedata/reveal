@@ -11,15 +11,15 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseVisualNode } from "../Core/Nodes/BaseVisualNode";
-import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
-import { TargetId } from "../Core/PrimitiveClasses/TargetId";
+import { BaseVisualNode } from "../../Core/Nodes/BaseVisualNode";
+import { BaseRenderStyle } from "../../Core/Styles/BaseRenderStyle";
+import { TargetId } from "../../Core/PrimitiveClasses/TargetId";
 import { WellRenderStyle } from "./WellRenderStyle";
-import { ColorType } from "../Core/Enums/ColorType";
-import { Range3 } from "../Core/Geometry/Range3";
-import { Well } from "./Well";
+import { ColorType } from "../../Core/Enums/ColorType";
+import { Range3 } from "../../Core/Geometry/Range3";
+import { WellTrajectory } from "./WellTrajectory";
 
-export class WellNode extends BaseVisualNode
+export class WellTrajectoryNode extends BaseVisualNode
 {
   //==================================================
   // CONSTRUCTORS
@@ -31,28 +31,28 @@ export class WellNode extends BaseVisualNode
   // INSTANCE FIELDS
   //==================================================
 
-  private _data: Well | null = null;
+  private _data: WellTrajectory | null = null;
 
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): Well | null { return this._data; }
-  public set data(value: Well | null) { this._data = value; }
+  public get data(): WellTrajectory | null { return this._data; }
+  public set data(value: WellTrajectory | null) { this._data = value; }
   public get renderStyle(): WellRenderStyle | null { return this.getRenderStyle() as WellRenderStyle; }
 
   //==================================================
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return WellNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === WellNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return WellTrajectoryNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === WellTrajectoryNode.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Well" }
+  public /*override*/ get typeName(): string { return "WellTrajectory" }
 
   public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
 

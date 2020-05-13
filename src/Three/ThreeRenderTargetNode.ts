@@ -22,6 +22,9 @@ import { ThreeCameraNode as ThreeCameraNode } from "./ThreeCameraNode";
 import { ThreeConverter } from "./ThreeConverter";
 import { Range3 } from '../Core/Geometry/Range3';
 import { TreeOverlay } from './TreeOverlay';
+import { AxisNode } from './../Nodes/AxisNode';
+import { Colors } from '../Core/PrimitiveClasses/Colors';
+import * as Color from 'color'
 
 export class ThreeRenderTargetNode extends BaseRenderTargetNode
 {
@@ -34,9 +37,6 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   private _clock = new THREE.Clock();
   private _overlay = new TreeOverlay();
   private _stats: any | null; // NILS: Why any here? Compiler error if not
-
-
-  // scene.background = new THREE.Color('white');
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -81,10 +81,10 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   private get renderer(): THREE.WebGLRenderer
   {
+
     if (!this._renderer)
     {
       this._renderer = new THREE.WebGLRenderer({ antialias: true });
-      this._renderer.setClearColor(ThreeConverter.toColor(this.color));
       this.setRenderSize();
       this._renderer.autoClear = false;
     }
@@ -127,20 +127,23 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     // Add lights (TODO: move to TreeLightNode?)
     const scene = this.scene;
     const direction = new THREE.Vector3(0.5, -0.5, 1);
-    const color = 0xFFFFFF;
 
+    const hasAxis = this.hasViewOfNodeType(AxisNode);
+    this.scene.background = ThreeConverter.toColor(this.getBgColor(hasAxis));
+
+    const lightColor = ThreeConverter.toColor(Colors.white);
     const group = new THREE.Group();
     // Light from the sky
     {
       const intensity = 1;
-      const light = new THREE.DirectionalLight(color, intensity);
+      const light = new THREE.DirectionalLight(lightColor, intensity);
       light.position.set(direction.x, direction.y, direction.z);
       group.add(light);
     }
     // Light from the ground
     {
       const intensity = 0.75;
-      const light = new THREE.DirectionalLight(color, intensity);
+      const light = new THREE.DirectionalLight(lightColor, intensity);
       light.position.set(-direction.x, -direction.y, -direction.z);
       group.add(light);
     }

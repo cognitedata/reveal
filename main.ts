@@ -2,10 +2,12 @@
 import { ThreeModule } from './src/Three/ThreeModule';
 import { ThreeRenderTargetNode } from './src/Three/ThreeRenderTargetNode';
 import { Range3 } from './src/Core/Geometry/Range3';
-import { WellNode } from './src/Nodes/WellNode';
-import { Well } from './src/Nodes/Well';
+import { WellTrajectoryNode } from "./src/Nodes/Wells/WellTrajectoryNode";
+import { WellNode } from "./src/Nodes/Wells/WellNode";
+import { WellTrajectory } from './src/Nodes/Wells/WellTrajectory';
 import { RootNode } from './src/TreeNodes/RootNode';
 import { AxisNode } from './src/Nodes/AxisNode';
+import { Vector3 } from "./src/Core/Geometry/Vector3";
 
 main();
 
@@ -18,11 +20,20 @@ export function main()
   // Add some random wells
   const root = module.createRoot() as RootNode;
   const wellTree = root.wells;
-  for (let i = 0; i < 3; i++)
+  for (let i = 0; i < 6; i++)
   {
-    const node = new WellNode();
-    node.data = Well.createByRandom(20, Range3.newTest);
-    wellTree.addChild(node);
+    const well = new WellNode();
+    wellTree.addChild(well);
+
+    const wellHead = Vector3.getRandom(Range3.newTest);
+    wellHead.z = 0;
+
+    for (let j = 0; j < 5; j++)
+    {
+      const wellTrajectory = new WellTrajectoryNode();
+      wellTrajectory.data = WellTrajectory.createByWellHead(wellHead);
+      well.addChild(wellTrajectory);
+    }
   }
   // Add a render target
   {
@@ -47,7 +58,7 @@ export function main()
   }
   // Set some visible in target 0
 
-  for (const node of root.getDescendantsByType(WellNode))
+  for (const node of root.getDescendantsByType(WellTrajectoryNode))
     node.setVisible(true);
 
   for (const node of root.getDescendantsByType(AxisNode))
@@ -56,7 +67,7 @@ export function main()
   const activeTarget = root.activeTarget as ThreeRenderTargetNode;
   console.log(activeTarget.toString());
   if (activeTarget)
-    activeTarget.viewAll(); 
+    activeTarget.viewAll();
 
   // Trick
   (window as any).camera = activeTarget.activeCamera;
