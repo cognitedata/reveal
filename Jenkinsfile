@@ -24,13 +24,7 @@ static final String LOCIZE_PROJECT_ID = ""
 static final String PR_COMMENT_MARKER = "[pr-server]\n"
 static final String STORYBOOK_COMMENT_MARKER = "[storybook-server]\n"
 
-def label = [
-  jenkinsHelpersUtil.determineRepoName(),
-  UUID.randomUUID().toString().substring(0, 5)
-].join("-")
-
 podTemplate(
-  label: label,
   containers: []
     .plus(
       fas.containers(
@@ -49,7 +43,7 @@ podTemplate(
     .plus(previewServer.volumes())
 ) {
   properties([buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))])
-  node(label) {
+  node(POD_LABEL) {
     def gitCommit
     def contexts = [
       checkout: "continuous-integration/jenkins/checkout",
