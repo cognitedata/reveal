@@ -28,13 +28,13 @@ export class PolylinesNode extends BaseVisualNode
   public constructor() { super(); }
 
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private _data: Polylines | null = null;
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   public get data(): Polylines | null { return this._data; }

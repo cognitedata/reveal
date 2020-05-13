@@ -18,7 +18,7 @@ import { ColorType } from "../Core/Enums/ColorType";
 export class PointsRenderStyle extends BaseRenderStyle
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   public size: number = 30;

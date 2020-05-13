@@ -17,7 +17,7 @@ import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
 export class PotreeRenderStyle extends BaseRenderStyle
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   public budget: number = 2_000_000;

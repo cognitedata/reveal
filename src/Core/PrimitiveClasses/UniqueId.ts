@@ -24,14 +24,14 @@ export class UniqueId
   public /*copy constructor*/ copy(): UniqueId { return new UniqueId(this._id); }
 
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private _id: string;
   public static empty = new UniqueId("");
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   public static new(): UniqueId { return new UniqueId(uuid()); }

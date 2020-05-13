@@ -23,13 +23,13 @@ export class ViewList
   public constructor() { }
 
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   public list: BaseView[] = [];
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   public get count(): number { return this.list.length; }

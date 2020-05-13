@@ -25,7 +25,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
   public constructor() { super(); }
 
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private _object3D: THREE.Object3D | null = null;
@@ -102,7 +102,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
       scene.remove(this._object3D);
 
     this._object3D = this.createObject3D();
-    if (this._object3D == null)
+    if (this._object3D === null)
       return;
 
     this._object3D.visible = true;

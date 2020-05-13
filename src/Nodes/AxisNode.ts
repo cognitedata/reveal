@@ -14,12 +14,9 @@
 import { BaseVisualNode } from "../Core/Nodes/BaseVisualNode";
 import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
 import { TargetId } from "../Core/PrimitiveClasses/TargetId";
-import { RegularGrid2 } from "../Core/Geometry/RegularGrid2";
-import { SurfaceRenderStyle } from "./SurfaceRenderStyle";
-import { ColorType } from "../Core/Enums/ColorType";
-import { Range3 } from "../Core/Geometry/Range3";
+import { PointsRenderStyle } from "./PointsRenderStyle";
 
-export class SurfaceNode extends BaseVisualNode
+export class AxisNode extends BaseVisualNode
 {
   //==================================================
   // CONSTRUCTORS
@@ -31,55 +28,27 @@ export class SurfaceNode extends BaseVisualNode
   // INSTANCE FIELDS
   //==================================================
 
-  private _data: RegularGrid2 | null = null;
-
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): RegularGrid2 | null { return this._data; }
-  public set data(value: RegularGrid2 | null) { this._data = value; }
-  public get renderStyle(): SurfaceRenderStyle | null { return this.getRenderStyle() as SurfaceRenderStyle; }
+  public get renderStyle(): PointsRenderStyle | null { return this.getRenderStyle() as PointsRenderStyle; }
 
   //==================================================
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return SurfaceNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === SurfaceNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return AxisNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === AxisNode.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Surface" }
-
-  public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
+  public /*override*/ get typeName(): string { return "Axis" }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
-    return new SurfaceRenderStyle(targetId);
-  }
-
-  public /*override*/ verifyRenderStyle(style: BaseRenderStyle)
-  {
-    if (!(style instanceof SurfaceRenderStyle))
-      return;
-
-    if (!this.supportsColorType(style.colorType))
-      style.colorType = ColorType.NodeColor;
-  }
-
-  public /*override*/ supportsColorType(colorType: ColorType): boolean
-  {
-    switch (colorType)
-    {
-      case ColorType.DepthColor:
-      case ColorType.NodeColor:
-        return true;
-
-      default:
-        return false;
-    }
+    return new PointsRenderStyle(targetId);
   }
 }

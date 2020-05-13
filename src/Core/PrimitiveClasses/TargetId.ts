@@ -29,7 +29,7 @@ export class TargetId
   public /*copy constructor*/ copy(): TargetId { return new TargetId(this.typeName, this.uniqueId); }
 
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private _typeName: string;
@@ -37,7 +37,7 @@ export class TargetId
   public static empty = new TargetId("", UniqueId.empty);
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   public get typeName(): string { return this._typeName; }

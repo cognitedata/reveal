@@ -18,7 +18,7 @@ import { ColorType } from "../Core/Enums/ColorType";
 export class PolylinesRenderStyle extends BaseRenderStyle
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   public lineWidth: number = 1;

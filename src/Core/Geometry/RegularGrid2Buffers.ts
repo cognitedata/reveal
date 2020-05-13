@@ -16,7 +16,7 @@ import { RegularGrid2 } from "./RegularGrid2";
 export class RegularGrid2Buffers 
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   public positions: Float32Array;

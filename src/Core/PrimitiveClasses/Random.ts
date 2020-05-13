@@ -1,4 +1,3 @@
-import { Range1 } from "../Geometry/Range1";
 
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
@@ -12,6 +11,8 @@ import { Range1 } from "../Geometry/Range1";
 // Put new code under the correct section, and make more sections if needed.
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
+
+import { Range1 } from "../Geometry/Range1";
 
 export class Random
 {
@@ -29,7 +30,7 @@ export class Random
     return range.getValue(Math.random());
   }
 
-  public static isTrue(p: number = 0.5): boolean
+  public static isTrue(p: 0.5): boolean
   {
     return Math.random() > p;
   }

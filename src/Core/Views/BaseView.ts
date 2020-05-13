@@ -20,7 +20,7 @@ import { BaseNode } from "../Nodes/BaseNode";
 export abstract class BaseView
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private _node: BaseNode | null = null;
@@ -34,7 +34,7 @@ export abstract class BaseView
   public /*virtual*/ get stayAliveIfInvisible(): boolean { return false; }
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   public get isVisible(): boolean { return this._isVisible; }
@@ -53,7 +53,7 @@ export abstract class BaseView
   protected /*virtual*/ initializeCore(): void
   {
     // Override this function to initialize your view
-    // NOTE: Always call super.updateCore(args) in the overrides
+    // NOTE: Always call super.initializeCore() in the overrides
   }
 
   protected /*virtual*/ updateCore(args: NodeEventArgs): void
@@ -65,21 +65,28 @@ export abstract class BaseView
   protected /*virtual*/ clearMemoryCore(): void
   {
     // Override this function to remove redundant data
-    // NOTE: Always call super.updateCore(args) in the overrides
+    // NOTE: Always call super.clearMemoryCore() in the overrides
   }
 
   protected /*virtual*/ onShowCore(): void
   {
     // Override this function to when your view
     // need to do something when it is set visible
-    // NOTE: Always call super.updateCore(args) in the overrides
+    // NOTE: Always call super.onShowCore() in the overrides
   }
 
   protected /*virtual*/ onHideCore(): void
   {
     // Override this function to when your view
     // need to do something when it is set NOT visible
-    // NOTE: Always call super.updateCore(args) in the overrides
+    // NOTE: Always call super.onHideCore() in the overrides
+  }
+
+  public /*virtual*/ beforeRender(): void 
+  {
+    // Override this function to when your view
+    // need to do just before rendering
+    // NOTE: Always call super.beforeRender() in the overrides
   }
 
   protected /*virtual*/ disposeCore(): void
@@ -87,7 +94,7 @@ export abstract class BaseView
     // Override this function to when your view
     // need to do something when it is set NOT visible
     // Called just before removal from view list and detach
-    // NOTE: Always call super.updateCore(args) in the overrides
+    // NOTE: Always call super.disposeCore() in the overrides
   }
 
   //==================================================

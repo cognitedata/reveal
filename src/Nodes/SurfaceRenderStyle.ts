@@ -18,7 +18,7 @@ import { ColorType } from "../Core/Enums/ColorType";
 export class SurfaceRenderStyle extends BaseRenderStyle
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   public colorType: ColorType = ColorType.DepthColor;

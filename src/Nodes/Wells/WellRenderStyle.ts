@@ -11,14 +11,14 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { TargetId } from "../Core/PrimitiveClasses/TargetId";
-import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
-import { ColorType } from "../Core/Enums/ColorType";
+import { TargetId } from "../../Core/PrimitiveClasses/TargetId";
+import { BaseRenderStyle } from "../../Core/Styles/BaseRenderStyle";
+import { ColorType } from "../../Core/Enums/ColorType";
 
 export class WellRenderStyle extends BaseRenderStyle
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   public radius: number = 10;

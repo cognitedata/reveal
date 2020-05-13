@@ -30,7 +30,7 @@ export class PolylinesThreeView extends BaseGroupThreeView
   public constructor() { super(); }
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   protected get node(): PolylinesNode { return super.getNode() as PolylinesNode; }

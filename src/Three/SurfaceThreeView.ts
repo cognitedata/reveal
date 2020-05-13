@@ -34,7 +34,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
   public constructor() { super(); }
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   protected get node(): SurfaceNode { return super.getNode() as SurfaceNode; }

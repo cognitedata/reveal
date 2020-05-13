@@ -28,13 +28,13 @@ export class PointsNode extends BaseVisualNode
   public constructor() { super(); }
 
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private _data: Points | null = null;
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   public get data(): Points | null { return this._data; }
