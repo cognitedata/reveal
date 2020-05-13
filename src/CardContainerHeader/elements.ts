@@ -5,6 +5,8 @@ export const StyledCardContainerHeader = styled.div`
   .cogs-title-5 {
     font-weight: 700;
     line-height: 24px;
+    font-size: 12px;
+    text-transform: uppercase;
   }
 
   .name {
