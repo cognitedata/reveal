@@ -33,7 +33,7 @@
     "@cognite/eslint-plugin": "^1.0.17",
     "@storybook/preset-create-react-app": "^2.1.1",
     "@storybook/react": "^5.3.18",
-    "@testing-library/jest-dom": "^5.5.0",
+    "@testing-library/jest-dom": "^5.7.0",
     "@testing-library/react": "^10.0.2",
     "@types/jest": "^25.2.1",
     "@types/node": "^13.11.1",
