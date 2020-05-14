@@ -4,8 +4,7 @@
 
 import * as Comlink from 'comlink';
 import { ParserWorker } from './parser.worker';
-
-const parserWorkerPath = './parser.worker';
+// IMPORTANT NOTE! The path to the ParserWorker needs to be the same in the new Worker constructor
 
 type WorkDelegate<T> = (worker: ParserWorker) => Promise<T>;
 
@@ -35,7 +34,7 @@ export class WorkerPool {
         // NOTE: As of Comlink 4.2.0 we need to go through unknown before ParserWorker
         // Please feel free to remove `as unknown` if possible.
         worker: (Comlink.wrap(
-          new Worker(parserWorkerPath, { name: 'parser', type: 'module' })
+          new Worker('./parser.worker', { name: 'parser', type: 'module' })
         ) as unknown) as ParserWorker,
         activeJobCount: 0,
         messageIdCounter: 0
