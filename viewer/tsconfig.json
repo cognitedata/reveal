@@ -21,7 +21,12 @@
     "lib": [
         "dom",
         "esnext"
-    ]
+    ],
+
+    "baseUrl": "./src/",
+    "paths": {
+      "@/*": ["*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules/**/*", "dist/**/*", "src/@types/**/*"]

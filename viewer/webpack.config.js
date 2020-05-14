@@ -5,6 +5,10 @@ const nodeExternals = require('webpack-node-externals');
 const getLogger = require('webpack-log');
 const logger = getLogger('reveal');
 
+function resolve(dir) {
+  return path.join(__dirname, dir);
+}
+
 /*
  * Set args on the command line using
  *
@@ -41,6 +45,13 @@ module.exports = env => {
       migration: './src/migration.ts'
     },
     target: "web",
+    resolve: {
+      extensions: ['.tsx', '.ts', '.js'],
+      symlinks: false,
+      alias: {
+        '@': resolve('src'),
+      },
+    },
     module: {
       rules: [
         {
@@ -77,10 +88,6 @@ module.exports = env => {
       ],
     },
     externals: [nodeExternals()],
-    resolve: {
-      extensions: ['.tsx', '.ts', '.js'],
-      symlinks: false,
-    },
     output: {
       filename: '[name].js',
       path: path.resolve(__dirname, 'dist'),
