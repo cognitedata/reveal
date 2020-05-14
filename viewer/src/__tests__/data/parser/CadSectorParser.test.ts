@@ -6,7 +6,7 @@ import { CadSectorParser } from '../../../dataModels/cad/internal/sector/CadSect
 import { of } from 'rxjs';
 import { WorkerPool } from '../../../utilities/workers/WorkerPool';
 
-jest.mock('../../../data/worker/WorkerPool');
+jest.mock('../../../utilities/workers/WorkerPool');
 // jest.mock('../../../data/parser/CadSectorParser');
 
 const workerPool: WorkerPool = new WorkerPool();

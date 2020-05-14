@@ -18,8 +18,8 @@ import { CadModel } from '../../../dataModels/cad/internal';
 import { fromCdfToThreeJsCoordinates, fromThreeJsToCdfCoordinates } from '../../../utilities/fromThreeCameraConfig';
 import { CadNode } from '../../../dataModels/cad/internal/CadNode';
 
-jest.mock('../../../views/threejs/cad/CadNode');
-jest.mock('../../../views/threejs/cad/MaterialManager');
+jest.mock('../../../dataModels/cad/internal/CadNode');
+jest.mock('../../../dataModels/cad/internal/MaterialManager');
 const materialManager = new MaterialManager();
 describe('determineSectors', () => {
   const identityTransform: SectorModelTransformation = {
