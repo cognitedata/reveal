@@ -1,22 +1,24 @@
-import { SettingsActionTypes } from "../types/settings";
+import { SettingsActionTypes, SettingsState } from "../types/settings";
+import { IconTypes } from "../../constants/Icons";
 
 // Initial settings state
-const initialState = {
+const initialState: SettingsState = {
   id: "123sdffsdf^*&^Fdfs",
   titleBar: {
-    name: "Franke few",
-    icon: "polyline.png",
-  },
-  toolBar: [
-    {
-      icon: "pin.png",
-      action: null
-    },
-    {
-      icon: "left-arrow.png",
-      action: null
-    }
-  ],
+    name: "Random Polylines 1",
+    icon: { type: IconTypes.NODES, name: "PolylinesNode" },
+    toolBar: [
+      {
+        icon: { type: IconTypes.ACTIONS, name: "Clean" },
+      },
+      {
+        icon: { type: IconTypes.ARROWS, name: "FatLeft" },
+      },
+      {
+        icon: { type: IconTypes.ARROWS, name: "FatRight" },
+      }
+    ],
+  }
 };
 
 // explorer reducer to update state with actions

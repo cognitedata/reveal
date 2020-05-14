@@ -1,8 +1,6 @@
-*,
-*:before,
-*:after {
+body {
   box-sizing: border-box;
-  font-family: "Jost", sans-serif; }
+  font-family: "Roboto", "Jost", sans-serif; }
 
 .root-container {
   width: 100vw;
@@ -26,3 +24,38 @@
 
 .settings-container {
   flex: 1; }
+
+.icon img {
+  width: 1.2rem;
+  height: 1.2rem; }
+
+/* Tweak expansion panel */
+.MuiExpansionPanelSummary-content,
+.MuiExpansionPanel-root.Mui-expanded {
+  margin: 0px !important; }
+
+.MuiExpansionPanelDetails-root {
+  padding: 0 !important; }
+
+.settings-sections {
+  margin-top: 0.4rem; }
+
+/* Global title bar*/
+.title-bar {
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  padding-left: 0.5rem; }
+  .title-bar h1 {
+    font-weight: 500;
+    font-size: 1.2rem;
+    margin: 0 0.5rem; }
+  .title-bar .tool-bar-icon {
+    height: 2rem;
+    width: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s; }
+    .title-bar .tool-bar-icon:hover {
+      background-color: lightblue; }

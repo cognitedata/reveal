@@ -10,3 +10,23 @@ export interface SettingsAction
 
 // Settings action types
 export type SettingsActionTypes = SettingsAction
+// Settings state interface
+export interface SettingsState
+{
+  id: string,
+  titleBar: {
+    name: string,
+    icon?: {
+      type: string,
+      name: string
+    },
+    toolBar: {
+      icon?: {
+        type: string,
+        name: string
+      },
+      action?: Function
+    }[]
+  },
+
+}
