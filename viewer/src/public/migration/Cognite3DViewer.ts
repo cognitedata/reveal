@@ -7,24 +7,25 @@ import TWEEN from '@tweenjs/tween.js';
 import debounce from 'lodash/debounce';
 import ComboControls from '@cognite/three-combo-controls';
 import { CogniteClient, IdEither } from '@cognite/sdk';
+import { share, filter } from 'rxjs/operators';
 
-import { Cognite3DModel } from './Cognite3DModel';
-import { CognitePointCloudModel } from './CognitePointCloudModel';
-import { Cognite3DViewerOptions, AddModelOptions, SupportedModelTypes } from './types';
-import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
-import { Intersection } from './intersection';
-import RenderController from './RenderController';
-import { intersectCadNodes } from '../../threejs';
+import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
+import { File3dFormat } from '@/utilities/File3dFormat';
 import { from3DPositionToRelativeViewportCoordinates } from '@/utilities/worldToViewport';
-import { RevealManagerBase } from '@/utilities';
 import { CadSectorParser } from '@/datamodels/cad/internal/sector/CadSectorParser';
 import { SimpleAndDetailedToSector3D } from '@/datamodels/cad/internal/sector/SimpleAndDetailedToSector3D';
 import { CachedRepository } from '@/datamodels/cad/internal/sector/CachedRepository';
 import { MaterialManager } from '@/datamodels/cad/internal/MaterialManager';
+import { intersectCadNodes } from '@/dataModels/cad/internal/picking';
+
+import { Cognite3DViewerOptions, AddModelOptions, SupportedModelTypes } from './types';
+import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
+import { Intersection } from './intersection';
+import RenderController from './RenderController';
 import { CogniteModelBase } from './CogniteModelBase';
-import { share, filter } from 'rxjs/operators';
-import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
-import { File3dFormat } from '@/utilities/File3dFormat';
+import { Cognite3DModel } from './Cognite3DModel';
+import { CognitePointCloudModel } from './CognitePointCloudModel';
+import { RevealManagerBase } from '../RevealManagerBase';
 
 export interface RelativeMouseEvent {
   offsetX: number;

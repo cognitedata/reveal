@@ -3,17 +3,20 @@
  */
 
 import * as THREE from 'three';
+import { CogniteClient } from '@cognite/sdk';
 
-import { Color, SupportedModelTypes } from './types';
-import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
+import { toThreeJsBox3, toThreeMatrix4 } from '@/utilities';
 import { CadModel } from '@/datamodels/cad/internal';
-import { toThreeJsBox3, CadNode, toThreeMatrix4, ModelNodeAppearance } from '@/utilities';
 import { CadRenderHints } from '@/datamodels/cad/public/CadRenderHints';
 import { CadLoadingHints } from '@/datamodels/cad/public/CadLoadingHints';
-import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
-import { CogniteClient } from '@cognite/sdk';
 import { SectorQuads, Sector } from '@/datamodels/cad/internal/sector/types';
+import { CadNode } from '@/datamodels/cad/internal/CadNode';
+import { ModelNodeAppearance } from '@/datamodels/cad/internal/ModelNodeAppearance';
+
+import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
+import { Color, SupportedModelTypes } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
+import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 
 export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = SupportedModelTypes.CAD;
