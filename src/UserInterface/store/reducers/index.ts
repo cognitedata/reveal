@@ -1,6 +1,7 @@
 
 import { combineReducers } from "redux";
 import explorerReducer from "./explorer";
+import settingsReducer from "./settings";
 
 /**
  * The combineReducers helper function turns an object whose values
@@ -8,5 +9,6 @@ import explorerReducer from "./explorer";
  * that can pass to createStore.
  */
 export default combineReducers({
-  explorer: explorerReducer
+  explorer: explorerReducer,
+  settings: settingsReducer
 });
