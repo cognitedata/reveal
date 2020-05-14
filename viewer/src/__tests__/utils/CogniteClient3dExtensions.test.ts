@@ -3,7 +3,7 @@
  */
 
 import nock from 'nock';
-import { CogniteClient3dExtensions, Model3dOutputList } from '../../utils/CogniteClient3dExtensions';
+import { CogniteClient3dExtensions, Model3dOutputList } from '../../utilities/networking/CogniteClient3dExtensions';
 import { CogniteClient } from '@cognite/sdk';
 
 describe('CogniteClient3dExtensions', () => {
@@ -139,5 +139,5 @@ describe('Model3dOutputList', () => {
     });
   });
 
-  test('findMostRecentOutput() with ', () => {});
+  test('findMostRecentOutput() with ', () => { });
 });

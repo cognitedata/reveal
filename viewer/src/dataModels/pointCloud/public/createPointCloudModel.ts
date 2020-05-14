@@ -3,15 +3,15 @@
  */
 
 import { mat4 } from 'gl-matrix';
-import { FetchPointCloudDelegate } from '../../../models/pointclouds/delegates';
-import { SectorModelTransformation } from '../../../models/cad/types';
-import { EptLoader } from '../../../utils/potree/EptLoader';
+import { FetchPointCloudDelegate } from '../internal/delegates';
+import { SectorModelTransformation } from '../../cad/internal/sector/types';
+import { EptLoader } from '../internal/potree/EptLoader';
 import { PointCloudModel } from './PointCloudModel';
 import { CogniteClient, IdEither } from '@cognite/sdk';
-import { CogniteClient3dExtensions } from '../../../utils/CogniteClient3dExtensions';
+import { CogniteClient3dExtensions } from '../../../utilities/networking/CogniteClient3dExtensions';
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
-import { File3dFormat } from '../../../data/model/File3dFormat';
+import { File3dFormat } from '../../../utilities/File3dFormat';
 
 const identity = mat4.identity(mat4.create());
 

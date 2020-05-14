@@ -2,11 +2,15 @@
  * Copyright 2020 Cognite AS
  */
 
-import { CadMetadataV8, parseCadMetadataV8, CadSectorMetadataV8 } from '../../../models/cad/CadMetadataParserV8';
-import { SectorMetadata } from '../../../models/cad/types';
-import { Box3 } from '../../../utils/Box3';
+import {
+  CadMetadataV8,
+  parseCadMetadataV8,
+  CadSectorMetadataV8
+} from '../../../dataModels/cad/internal/CadMetadataParserV8';
+import { SectorMetadata } from '../../../dataModels/cad/internal/sector/types';
+import { Box3 } from '../../../utilities/Box3';
 import { vec3 } from 'gl-matrix';
-import { traverseDepthFirst } from '../../../utils/traversal';
+import { traverseDepthFirst } from '../../../utilities/traversal';
 
 type Mutable<T> = { -readonly [P in keyof T]: T[P] };
 

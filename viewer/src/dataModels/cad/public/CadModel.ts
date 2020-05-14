@@ -2,9 +2,9 @@
  * Copyright 2020 Cognite AS
  */
 
-import { SectorModelTransformation } from '../../../models/cad/types';
-import { SectorScene } from '../../../models/cad/SectorScene';
-import { ModelDataRetriever } from '../../../datasources/ModelDataRetriever';
+import { SectorModelTransformation } from '../internal/sector/types';
+import { SectorScene } from '../internal/sector/SectorScene';
+import { ModelDataRetriever } from '../../../utilities/networking/ModelDataRetriever';
 
 export interface CadModel {
   identifier: string;

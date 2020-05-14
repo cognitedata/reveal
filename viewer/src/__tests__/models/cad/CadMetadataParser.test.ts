@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { CadMetadataParser } from '../../../models/cad/CadMetadataParser';
+import { CadMetadataParser } from '../../../dataModels/cad/internal/CadMetadataParser';
 
 describe('CadMetadataParser', () => {
   const parser = new CadMetadataParser();

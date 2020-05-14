@@ -4,10 +4,10 @@
 
 import { RevealManagerBase, RevealOptions } from './RevealManagerBase';
 import { CogniteClient } from '@cognite/sdk';
-import { CadSectorParser } from '../data/parser/CadSectorParser';
-import { SimpleAndDetailedToSector3D } from '../data/transformer/three/SimpleAndDetailedToSector3D';
-import { CachedRepository } from '../repository/cad/CachedRepository';
-import { MaterialManager } from '../views/threejs/cad/MaterialManager';
+import { CadSectorParser } from '../dataModels/cad/internal/sector/CadSectorParser';
+import { SimpleAndDetailedToSector3D } from '../dataModels/cad/internal/sector/SimpleAndDetailedToSector3D';
+import { CachedRepository } from '../dataModels/cad/internal/sector/CachedRepository';
+import { MaterialManager } from '../dataModels/cad/internal/MaterialManager';
 
 // First iteration of a RevealManager. Currently tailored to examples but should be tailored to external usecase.
 // Should move to example-helpers.ts as a function without extending

@@ -2,18 +2,18 @@
  * Copyright 2020 Cognite AS
  */
 import * as THREE from 'three';
-import { OrderSectorsByVisibilityCoverage } from '../../views/threejs/OrderSectorsByVisibilityCoverage';
-import { ByVisibilityGpuSectorCuller } from '../../culling/ByVisibilityGpuSectorCuller';
-import { CadModel } from '../../dataModels/cad/';
-import { SectorMetadata } from '../../models/cad/types';
-import { ModelDataRetriever } from '../../datasources/ModelDataRetriever';
-import { SectorSceneImpl } from '../../models/cad/SectorScene';
+import { OrderSectorsByVisibilityCoverage } from '../../dataModels/cad/internal/sector/culling/OrderSectorsByVisibilityCoverage';
+import { ByVisibilityGpuSectorCuller } from '../../dataModels/cad/internal/sector/culling/ByVisibilityGpuSectorCuller';
+import { CadModel } from '../../dataModels/cad/internal';
+import { SectorMetadata } from '../../dataModels/cad/internal/sector/types';
+import { ModelDataRetriever } from '../../utilities/networking/ModelDataRetriever';
+import { SectorSceneImpl } from '../../dataModels/cad/internal/sector/SectorScene';
 import { mat4, vec3 } from 'gl-matrix';
 import { generateSectorTree } from '../testUtils/createSectorMetadata';
-import { DetermineSectorsByProximityInput } from '../../models/cad/determineSectors';
-import { LevelOfDetail } from '../../data/model/LevelOfDetail';
-import { MaterialManager } from '../../views/threejs/cad/MaterialManager';
-import { CadNode } from '../../views/threejs';
+import { DetermineSectorsByProximityInput } from '../../dataModels/cad/internal/sector/culling/determineSectors';
+import { LevelOfDetail } from '../../dataModels/cad/internal/sector/LevelOfDetail';
+import { MaterialManager } from '../../dataModels/cad/internal/MaterialManager';
+import { CadNode } from '../../utilities';
 
 type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 

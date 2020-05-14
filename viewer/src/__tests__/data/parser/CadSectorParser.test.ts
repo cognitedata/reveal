@@ -2,9 +2,9 @@
  * Copyright 2020 Cognite AS
  */
 
-import { CadSectorParser } from '../../../data/parser/CadSectorParser';
+import { CadSectorParser } from '../../../dataModels/cad/internal/sector/CadSectorParser';
 import { of } from 'rxjs';
-import { WorkerPool } from '../../../data/worker/WorkerPool';
+import { WorkerPool } from '../../../utilities/workers/WorkerPool';
 
 jest.mock('../../../data/worker/WorkerPool');
 // jest.mock('../../../data/parser/CadSectorParser');

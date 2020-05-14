@@ -2,11 +2,11 @@
  * Copyright 2020 Cognite AS
  */
 
-import { CadModel } from '..';
-import { SectorModelTransformation } from '../../../models/cad/types';
-import { SectorScene } from '../../../models/cad/SectorScene';
-import { ModelDataRetriever } from '../../../datasources/ModelDataRetriever';
-import { CadMetadataParser } from '../../../models/cad/CadMetadataParser';
+import { CadModel } from '.';
+import { SectorModelTransformation } from './sector/types';
+import { SectorScene } from './sector/SectorScene';
+import { ModelDataRetriever } from '../../../utilities/networking/ModelDataRetriever';
+import { CadMetadataParser } from './CadMetadataParser';
 
 export class CadModelImpl implements CadModel {
   public get modelTransformation(): SectorModelTransformation {

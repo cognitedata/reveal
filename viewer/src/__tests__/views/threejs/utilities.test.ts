@@ -3,10 +3,10 @@
  */
 
 import * as THREE from 'three';
-import { fitCameraToBoundingBox, toThreeJsBox3, toThreeVector3 } from '../../../views/threejs/utilities';
-import { Box3 } from '../../../utils/Box3';
+import { fitCameraToBoundingBox, toThreeJsBox3, toThreeVector3 } from '../../../utilities/utilities';
+import { Box3 } from '../../../utilities/Box3';
 import { vec3, mat4 } from 'gl-matrix';
-import { SectorModelTransformation } from '../../../models/cad/types';
+import { SectorModelTransformation } from '../../../dataModels/cad/internal/sector/types';
 
 describe('fitCameraToBoundingBox', () => {
   test('unit boundingbox, camera is placed outside box', () => {

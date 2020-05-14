@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { getNewestVersionedFile } from '../../../datasources/cognitesdk/utilities';
+import { getNewestVersionedFile } from '../../../utilities/networking/utilities';
 import { Versioned3DFile } from '@cognite/sdk';
 
 describe('getNewestVersionedFile', () => {

@@ -4,12 +4,12 @@
 
 import { CadModel } from './CadModel';
 import { CadModelImpl } from '../internal/CadModelImpl';
-import { ByUrlModelDataRetriever } from '../../../datasources/local/ByUrlModelDataRetriever';
-import { SectorModelTransformation } from '../../../models/cad/types';
+import { ByUrlModelDataRetriever } from '../../../utilities/networking/ByUrlModelDataRetriever';
+import { SectorModelTransformation } from '../internal/sector/types';
 import {
   DefaultSectorRotationMatrix,
   DefaultInverseSectorRotationMatrix
-} from '../../../datasources/constructMatrixFromRotation';
+} from '../../../utilities/constructMatrixFromRotation';
 
 /**
  * Create a new CAD model by using the URL provided. This is useful for loading CAD models outside of

@@ -2,5 +2,5 @@
  * Copyright 2020 Cognite AS
  */
 
-import * as materials from './views/threejs/materials';
+import * as materials from './dataModels/cad/internal/rendering/RenderMode';
 export { materials };

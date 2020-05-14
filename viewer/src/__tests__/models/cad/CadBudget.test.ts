@@ -2,9 +2,9 @@
  * Copyright 2020 Cognite AS
  */
 
-import { createDefaultCadBudget } from '../../../models/cad/CadBudget';
-import { SectorMetadata } from '../../../models/cad/types';
-import { SectorScene } from '../../../models/cad/SectorScene';
+import { createDefaultCadBudget } from '../../../dataModels/cad/public/CadBudget';
+import { SectorMetadata } from '../../../dataModels/cad/internal/sector/types';
+import { SectorScene } from '../../../dataModels/cad/internal/sector/SectorScene';
 
 describe('CadBudgetImpl', () => {
   const sectorScene: SectorScene = {
