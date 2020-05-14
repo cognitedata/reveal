@@ -7,7 +7,7 @@ import { mat4 } from 'gl-matrix';
 
 import { SectorMetadata, SectorModelTransformation } from '@/dataModels/cad/internal/sector/types';
 import { SectorScene, SectorSceneImpl } from '@/dataModels/cad/internal/sector/SectorScene';
-import { GpuOrderSectorsByVisibilityCoverage } from '@/datamodels/cad/internal/sector/culling/OrderSectorsByVisibilityCoverage';
+import { GpuOrderSectorsByVisibilityCoverage } from '@/dataModels/cad/internal/sector/culling/OrderSectorsByVisibilityCoverage';
 import { CadModel } from '@/dataModels/cad/internal';
 import { traverseDepthFirst } from '@/utilities/traversal';
 import { fromThreeMatrix } from '@/utilities';
