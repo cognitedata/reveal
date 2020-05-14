@@ -24,23 +24,15 @@ static final String LOCIZE_PROJECT_ID = ""
 static final String PR_COMMENT_MARKER = "[pr-server]\n"
 static final String STORYBOOK_COMMENT_MARKER = "[storybook-server]\n"
 
-podTemplate(
-  containers: []
-    .plus(
-      fas.containers(
-        sentryProjectName: SENTRY_PROJECT_NAME
-      )
-    )
-    .plus(previewServer.containers())
-    .plus(yarn.containers()),
-  envVars: [
-    envVar(key: 'REACT_APP_SENTRY_DSN', value: SENTRY_DSN),
-    envVar(key: 'REACT_APP_LOCIZE_PROJECT_ID', value: LOCIZE_PROJECT_ID),
-  ],
-  volumes: []
-    .plus(yarn.volumes())
-    .plus(fas.volumes())
-    .plus(previewServer.volumes())
+static final String NODE_VERSION = 'node:12'
+
+yarn.pod(nodeVersion: NODE_VERSION) {
+previewServer.pod(nodeVersion: NODE_VERSION) {
+fas.pod(
+  nodeVersion: NODE_VERSION,
+  sentryProjectName: SENTRY_PROJECT_NAME,
+  sentryDsn: SENTRY_DSN,
+  locizeProjectId: LOCIZE_PROJECT_ID
 ) {
   properties([buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))])
   node(POD_LABEL) {
@@ -147,4 +139,4 @@ podTemplate(
       }
     }
   }
-}
+} } } // end of the pipeline
