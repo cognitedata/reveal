@@ -1,12 +1,12 @@
 /*!
  * Copyright 2020 Cognite AS
  */
-import { SectorMetadata } from '@/datamodels/cad/internal/sector/types';
+import { SectorMetadata } from '@/dataModels/cad/internal/sector/types';
 import { Box3 } from '@/utilities/Box3';
-import { determineSectorsFromDetailed } from '@/datamodels/cad/internal/sector/culling/determineSectors';
+import { determineSectorsFromDetailed } from '@/dataModels/cad/internal/sector/culling/determineSectors';
 import { expectContainsSectorsWithLevelOfDetail } from '../../expects';
 import { createSceneFromRoot } from '../../testUtils/createSceneFromRoot';
-import { CadModel } from '@/datamodels/cad/internal';
+import { CadModel } from '@/dataModels/cad/internal';
 import {
   fromCdfToThreeJsCoordinates,
   fromThreeJsToCdfCoordinates

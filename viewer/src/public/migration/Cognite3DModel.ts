@@ -6,12 +6,12 @@ import * as THREE from 'three';
 import { CogniteClient } from '@cognite/sdk';
 
 import { toThreeJsBox3, toThreeMatrix4 } from '@/utilities';
-import { CadModel } from '@/datamodels/cad/internal';
-import { CadRenderHints } from '@/datamodels/cad/public/CadRenderHints';
-import { CadLoadingHints } from '@/datamodels/cad/public/CadLoadingHints';
-import { SectorQuads, Sector } from '@/datamodels/cad/internal/sector/types';
-import { CadNode } from '@/datamodels/cad/internal/CadNode';
-import { ModelNodeAppearance } from '@/datamodels/cad/internal/ModelNodeAppearance';
+import { CadModel } from '@/dataModels/cad/internal';
+import { CadRenderHints } from '@/dataModels/cad/public/CadRenderHints';
+import { CadLoadingHints } from '@/dataModels/cad/public/CadLoadingHints';
+import { SectorQuads, Sector } from '@/dataModels/cad/internal/sector/types';
+import { CadNode } from '@/dataModels/cad/internal/CadNode';
+import { ModelNodeAppearance } from '@/dataModels/cad/internal/ModelNodeAppearance';
 
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { Color, SupportedModelTypes } from './types';

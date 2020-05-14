@@ -3,7 +3,7 @@
  */
 
 import { ParsedPrimitives } from '@/utilities/workers/types/parser.types';
-import { Sector } from '@/datamodels/cad/internal/sector/types';
+import { Sector } from '@/dataModels/cad/internal/sector/types';
 
 export function createEmptyPrimitive(): ParsedPrimitives {
   return {

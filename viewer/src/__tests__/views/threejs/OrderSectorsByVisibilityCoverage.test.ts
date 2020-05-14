@@ -4,14 +4,14 @@
 
 import * as THREE from 'three';
 import { GpuOrderSectorsByVisibilityCoverage } from '../../../threejs';
-import { SectorMetadata, SectorModelTransformation } from '@/datamodels/cad/internal/sector/types';
-import { SectorScene, SectorSceneImpl } from '@/datamodels/cad/internal/sector/SectorScene';
+import { SectorMetadata, SectorModelTransformation } from '@/dataModels/cad/internal/sector/types';
+import { SectorScene, SectorSceneImpl } from '@/dataModels/cad/internal/sector/SectorScene';
 import { createSectorMetadata, SectorTree } from '../../testUtils/createSectorMetadata';
 import { traverseDepthFirst } from '@/utilities/traversal';
 import { fromThreeMatrix } from '@/utilities';
 import { mat4 } from 'gl-matrix';
 import { Box3 } from '@/utilities/Box3';
-import { CadModel } from '@/datamodels/cad/internal';
+import { CadModel } from '@/dataModels/cad/internal';
 import { ModelDataRetriever } from '@/utilities/networking/ModelDataRetriever';
 
 describe('GpuOrderSectorsByVisibilityCoverage', () => {

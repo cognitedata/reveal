@@ -8,14 +8,14 @@ import {
   InstancedMeshFile,
   InstancedMesh,
   Sector
-} from '@/datamodels/cad/internal/sector/types';
+} from '@/dataModels/cad/internal/sector/types';
 import { Box3 } from '@/utilities/Box3';
 import { vec3 } from 'gl-matrix';
-import { consumeSectorDetailed } from '@/datamodels/cad/internal/sector/consumeSectorDetailed';
+import { consumeSectorDetailed } from '@/dataModels/cad/internal/sector/consumeSectorDetailed';
 import { createEmptySector } from '../../../models/cad/emptySector';
-import { createMaterials } from '@/datamodels/cad/internal/rendering/materials';
+import { createMaterials } from '@/dataModels/cad/internal/rendering/materials';
 import 'jest-extended';
-import { RenderMode } from '@/datamodels/cad/internal/rendering/RenderMode';
+import { RenderMode } from '@/dataModels/cad/internal/rendering/RenderMode';
 
 const materials = createMaterials(10, RenderMode.Color, []);
 

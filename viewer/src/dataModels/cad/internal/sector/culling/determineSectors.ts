@@ -9,7 +9,7 @@ import { SectorMetadata } from '../types';
 import { traverseDepthFirst, traverseUpwards } from '@/utilities/traversal';
 import { toThreeMatrix4, toThreeVector3 } from '@/utilities';
 import { mat4 } from 'gl-matrix';
-import { defaultLoadingHints, CadLoadingHints } from '@/datamodels/cad/public/CadLoadingHints';
+import { defaultLoadingHints, CadLoadingHints } from '@/dataModels/cad/public/CadLoadingHints';
 import { WantedSector } from '../WantedSector';
 import { LevelOfDetail } from '../LevelOfDetail';
 import { CameraConfig } from '@/utilities/fromThreeCameraConfig';
