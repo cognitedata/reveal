@@ -14,7 +14,7 @@ import { LevelOfDetail } from '../../../data/model/LevelOfDetail';
 import { WantedSector } from '../../../data/model/WantedSector';
 import { createSceneFromRoot } from '../../testUtils/createSceneFromRoot';
 import { MaterialManager } from '../../../views/threejs/cad/MaterialManager';
-import { CadModel } from '../../../models/cad/CadModel';
+import { CadModel } from '../../../dataModels/cad/';
 import {
   fromCdfToThreeJsCoordinates,
   fromThreeJsToCdfCoordinates

@@ -6,7 +6,7 @@ import { Box3 } from '../../../utils/Box3';
 import { determineSectorsFromDetailed } from '../../../models/cad/determineSectors';
 import { expectContainsSectorsWithLevelOfDetail } from '../../expects';
 import { createSceneFromRoot } from '../../testUtils/createSceneFromRoot';
-import { CadModel } from '../../../models/cad/CadModel';
+import { CadModel } from '../../../dataModels/cad/';
 import {
   fromCdfToThreeJsCoordinates,
   fromThreeJsToCdfCoordinates

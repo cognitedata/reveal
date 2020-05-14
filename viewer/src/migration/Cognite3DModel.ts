@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 import { Color, SupportedModelTypes } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
-import { CadModel } from '../models/cad/CadModel';
+import { CadModel } from '../dataModels/cad/';
 import { toThreeJsBox3, CadNode, toThreeMatrix4, ModelNodeAppearance } from '../views/threejs';
 import { CadRenderHints } from '../views/CadRenderHints';
 import { CadLoadingHints } from '../models/cad/CadLoadingHints';

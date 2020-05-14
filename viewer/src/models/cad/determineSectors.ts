@@ -13,7 +13,7 @@ import { defaultLoadingHints as defaultCadLoadingHints, CadLoadingHints } from '
 import { WantedSector } from '../../data/model/WantedSector';
 import { LevelOfDetail } from '../../data/model/LevelOfDetail';
 import { CameraConfig } from '../../views/threejs/cad/fromThreeCameraConfig';
-import { CadModel } from './CadModel';
+import { CadModel } from '../../dataModels/cad/';
 
 const degToRadFactor = Math.PI / 180;
 

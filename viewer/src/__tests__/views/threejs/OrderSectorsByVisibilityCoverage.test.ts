@@ -11,7 +11,7 @@ import { traverseDepthFirst } from '../../../utils/traversal';
 import { fromThreeMatrix } from '../../../views/threejs/utilities';
 import { mat4 } from 'gl-matrix';
 import { Box3 } from '../../../utils/Box3';
-import { CadModel } from '../../../models/cad/CadModel';
+import { CadModel } from '../../../dataModels/cad/';
 import { ModelDataRetriever } from '../../../datasources/ModelDataRetriever';
 
 describe('GpuOrderSectorsByVisibilityCoverage', () => {

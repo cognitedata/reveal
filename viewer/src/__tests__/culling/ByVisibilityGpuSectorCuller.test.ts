@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 import { OrderSectorsByVisibilityCoverage } from '../../views/threejs/OrderSectorsByVisibilityCoverage';
 import { ByVisibilityGpuSectorCuller } from '../../culling/ByVisibilityGpuSectorCuller';
-import { CadModel } from '../../models/cad/CadModel';
+import { CadModel } from '../../dataModels/cad/';
 import { SectorMetadata } from '../../models/cad/types';
 import { ModelDataRetriever } from '../../datasources/ModelDataRetriever';
 import { SectorSceneImpl } from '../../models/cad/SectorScene';

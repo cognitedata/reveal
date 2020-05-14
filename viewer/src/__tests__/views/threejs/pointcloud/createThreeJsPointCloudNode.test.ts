@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { mat4 } from 'gl-matrix';
-import { PointCloudModel } from '../../../../models/pointclouds/PointCloudModel';
+import { PointCloudModel } from '../../../../dataModels/pointCloud/';
 import { createThreeJsPointCloudNode } from '../../../../views/threejs';
 import { FetchPointCloudDelegate } from '../../../../models/pointclouds/delegates';
 import { SectorModelTransformation } from '../../../../models/cad/types';

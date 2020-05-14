@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { SectorModelTransformation, SectorMetadata, Sector, SectorQuads } from '../../../models/cad/types';
 import { SectorScene } from '../../../models/cad/SectorScene';
 import { CadLoadingHints } from '../../../models/cad/CadLoadingHints';
-import { CadModel } from '../../../models/cad/CadModel';
+import { CadModel } from '../../../dataModels/cad/';
 import { CadRenderHints } from '../../CadRenderHints';
 import { suggestCameraConfig } from '../../../utils/cameraUtils';
 import { toThreeJsBox3, toThreeVector3, toThreeMatrix4 } from '../utilities';

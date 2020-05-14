@@ -10,9 +10,9 @@ export { RootSectorNode } from './cad/RootSectorNode';
 export { ModelNodeAppearance } from '../common/cad/ModelNodeAppearance';
 export { GlobalNodeAppearance } from '../common/cad/GlobalNodeAppearance';
 
-export { RevealManager } from '../../component/three/RevealManager';
+export { RevealManager } from '../../public/RevealManager';
 
-export { RevealManagerBase } from '../../component/three/RevealManagerBase';
+export { RevealManagerBase } from '../../public/RevealManagerBase';
 export { MaterialManager } from './cad/MaterialManager';
 export { CadSectorParser } from '../../data/parser/CadSectorParser';
 export { SimpleAndDetailedToSector3D } from '../../data/transformer/three/SimpleAndDetailedToSector3D';

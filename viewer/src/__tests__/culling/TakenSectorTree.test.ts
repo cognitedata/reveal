@@ -8,7 +8,7 @@ import { SectorMetadata } from '../../models/cad/types';
 import { expectContainsSectorsWithLevelOfDetail } from '../expects';
 import { PrioritizedWantedSector, DetermineSectorCostDelegate } from '../../culling/types';
 import { LevelOfDetail } from '../../data/model/LevelOfDetail';
-import { CadModel } from '../../models/cad/CadModel';
+import { CadModel } from '../../dataModels/cad/';
 import { traverseDepthFirst } from '../../utils/traversal';
 
 type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
