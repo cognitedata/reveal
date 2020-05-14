@@ -37,9 +37,6 @@ body {
 .MuiExpansionPanelDetails-root {
   padding: 0 !important; }
 
-.settings-sections {
-  margin-top: 0.4rem; }
-
 /* Global title bar*/
 .title-bar {
   height: 2rem;
@@ -48,14 +45,18 @@ body {
   padding-left: 0.5rem; }
   .title-bar h1 {
     font-weight: 500;
-    font-size: 1.2rem;
-    margin: 0 0.5rem; }
+    font-size: 0.8rem;
+    margin: 0 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; }
   .title-bar .tool-bar-icon {
     height: 2rem;
     width: 2rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.3s; }
+    transition: background-color 0.3s;
+    cursor: pointer; }
     .title-bar .tool-bar-icon:hover {
       background-color: lightblue; }

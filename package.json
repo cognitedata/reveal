@@ -52,6 +52,9 @@
   },
   "dependencies": {
     "@cognite/potree-core": "^1.0.6",
+    "@fortawesome/fontawesome-svg-core": "^1.2.28",
+    "@fortawesome/free-solid-svg-icons": "^5.13.0",
+    "@fortawesome/react-fontawesome": "^0.1.9",
     "@material-ui/core": "^4.9.14",
     "@material-ui/icons": "^4.9.1",
     "@types/react": "^16.9.35",
@@ -70,9 +73,6 @@
     "stats.js": "^0.17.0",
     "three": "^0.109.0",
     "ts-nameof": "^4.0.3",
-    "uuid": "^3.3.3",
-    "@fortawesome/fontawesome-svg-core": "^1.2.28",
-    "@fortawesome/free-solid-svg-icons": "^5.13.0",
-    "@fortawesome/react-fontawesome": "^0.1.9"
+    "uuid": "^3.4.0"
   }
 }

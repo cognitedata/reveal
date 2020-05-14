@@ -47,10 +47,6 @@ body {
   padding: 0 !important;
 }
 
-.settings-sections {
-  margin-top: 0.4rem;
-}
-
 $titleBarHeight: 2rem;
 $titleBarIconWidth: $titleBarHeight;
 
@@ -63,8 +59,11 @@ $titleBarIconWidth: $titleBarHeight;
   // background-image: linear-gradient(to right, white, lightgray);
   h1 {
     font-weight: 500;
-    font-size: 1.2rem;
+    font-size: 0.8rem;
     margin: 0 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .tool-bar-icon {
     height: $titleBarHeight;
@@ -73,6 +72,7 @@ $titleBarIconWidth: $titleBarHeight;
     align-items: center;
     justify-content: center;
     transition: background-color 0.3s;
+    cursor: pointer;
     &:hover {
       background-color: lightblue;
     }

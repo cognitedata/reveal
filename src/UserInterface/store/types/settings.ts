@@ -1,5 +1,5 @@
 // Action type constants
-export const UPDATE_VIEWER = 'UPDATE_VIEWER'
+export const ON_EXPAND_CHANGE = 'ON_EXPAND_CHANGE'
 
 // Action interfaces
 export interface SettingsAction

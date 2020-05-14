@@ -1,16 +1,19 @@
 import React from 'react';
+import { useDispatch } from "react-redux";
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
+
+import { onExpandChange } from "../../../store/actions/settings"
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     expansionSummaryRoot: {
       padding: "0 !important",
-      minHeight: "1.8rem !important"
+      minHeight: "1.8rem !important",
     },
     expansionSummaryHeader: {
       display: "flex",
@@ -23,18 +26,17 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     expansionTitle: {
       marginLeft: ".5rem",
-      fontSize: "1rem",
+      fontSize: "0.7rem",
       fontWeight: 500
     },
     expandButton: {
-      width: "20px",
-      height: "20px",
-      borderRadius: "20px",
-      lineHeight: "20px",
+      width: "0.8rem",
+      height: "0.8rem",
+      borderRadius: "0.8rem",
+      lineHeight: "0.8rem",
       color: "#a6a6a6",
-      fontWeight: 700,
       fontSize: "0.7rem",
-      border: "2px solid #a6a6a6",
+      border: "1px solid #a6a6a6",
       display: "flex",
       alignItems: "center",
       justifyContent: "center"
@@ -42,22 +44,27 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function ExpansionView(props: { children?: JSX.Element, title: string })
+export default function ExpansionView(props: {
+  children?: JSX.Element,
+  parent: string,
+  id: string,
+  title: string,
+  isExpanded: boolean
+})
 {
   const classes = useStyles();
-  const [expanded, setExpanded] = React.useState<boolean>(false);
-  const { title, children } = props;
-  const handleChange = (isExpanded: boolean) =>
-  {
-    setExpanded(isExpanded);
-  };
+  const dispatch = useDispatch();
 
+  const { id, main, title, isExpanded, children } = props;
   return (
-    <ExpansionPanel expanded={expanded} onChange={(event) => handleChange(!expanded)}>
+    <ExpansionPanel expanded={isExpanded} onChange={(event) =>
+    {
+      dispatch(onExpandChange({ main, sub: id }))
+    }}>
       <ExpansionPanelSummary className={classes.expansionSummaryRoot}>
         <div className={classes.expansionSummaryHeader}>
           <div className={classes.expandButton}>
-            {expanded ?
+            {isExpanded ?
 
               <FontAwesomeIcon icon={faChevronUp} />
               : <FontAwesomeIcon icon={faChevronDown} />}

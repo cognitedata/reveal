@@ -1,10 +1,9 @@
 import React from 'react';
-import Icon from "../common/Icon";
+import Icon from "../Common/Icon";
 import Tooltip from '@material-ui/core/Tooltip';
 
 function generateToolBar(nodeId, toolBar)
 {
-  console.log(toolBar);
   if (!toolBar || !toolBar.length) return null;
   return toolBar.map(({ icon }, idx) => <div
     key={`${nodeId}-toolBar-${idx}`}
@@ -14,13 +13,14 @@ function generateToolBar(nodeId, toolBar)
 }
 
 export default function TitleBar(props: {
-  nodeId: string,
+  sectionId: string,
   className?: string,
-  titleBar
+  name: string,
+  icon,
+  toolBar,
 })
 {
-  const { className, nodeId, titleBar } = props;
-  const { name, icon, toolBar } = titleBar;
+  const { className, name, icon, toolBar, nodeId } = props;
   return <div className={`title-bar ${className ? className : ""}`}>
     {icon ? <Icon type={icon.type} name={icon.name}></Icon> : null}
     <h1>{name}</h1>
