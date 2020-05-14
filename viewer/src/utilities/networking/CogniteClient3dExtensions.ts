@@ -3,7 +3,6 @@
  */
 
 import { CogniteClient, CogniteInternalId, CogniteExternalId, IdEither } from '@cognite/sdk';
-import { HttpHeaders } from '@cognite/sdk/dist/src/utils/http/basicHttpClient';
 import { File3dFormat } from '../File3dFormat';
 
 export type Model3dOutput = {
@@ -36,8 +35,8 @@ export class Model3dOutputList {
     );
     return candidates.length > 0
       ? candidates.reduce((left, right) => {
-        return right.version > left.version ? right : left;
-      })
+          return right.version > left.version ? right : left;
+        })
       : undefined;
   }
 }
@@ -77,7 +76,7 @@ export class CogniteClient3dExtensions {
     const blobUrl = this.buildBlobRequestPath(blobId);
     const pathUrl = path ? `/${path}` : '';
     const url = `${baseUrl}${blobUrl}${pathUrl}`;
-    const headers: HttpHeaders = {
+    const headers = {
       ...this.client.getDefaultRequestHeaders(),
       Accept: '*/*'
     };
