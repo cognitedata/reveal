@@ -1,5 +1,35 @@
-h1 {
-    font-size: 2rem;
-    color: yellow;
-    text-align: center;
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+  font-family: "Jost", sans-serif;
+}
+
+.root-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+}
+
+.left-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.right-panel {
+  flex: 3;
+}
+
+.left-panel-section {
+  border: 1px #f4f4f4 solid;
+  background-image: linear-gradient(to right, #f4f4f4, #d6d6d6);
+}
+
+.explorer-container {
+  flex: 1;
+}
+
+.settings-container {
+  flex: 1;
 }
