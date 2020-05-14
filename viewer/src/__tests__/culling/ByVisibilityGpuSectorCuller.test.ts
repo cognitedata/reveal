@@ -2,18 +2,21 @@
  * Copyright 2020 Cognite AS
  */
 import * as THREE from 'three';
+import { mat4, vec3 } from 'gl-matrix';
+
+import { ModelDataRetriever } from '@/utilities/networking/ModelDataRetriever';
+
 import { OrderSectorsByVisibilityCoverage } from '@/dataModels/cad/internal/sector/culling/OrderSectorsByVisibilityCoverage';
 import { ByVisibilityGpuSectorCuller } from '@/dataModels/cad/internal/sector/culling/ByVisibilityGpuSectorCuller';
 import { CadModel } from '@/dataModels/cad/internal';
 import { SectorMetadata } from '@/dataModels/cad/internal/sector/types';
-import { ModelDataRetriever } from '@/utilities/networking/ModelDataRetriever';
 import { SectorSceneImpl } from '@/dataModels/cad/internal/sector/SectorScene';
 import { DetermineSectorsByProximityInput } from '@/dataModels/cad/internal/sector/culling/determineSectors';
 import { LevelOfDetail } from '@/dataModels/cad/internal/sector/LevelOfDetail';
 import { MaterialManager } from '@/dataModels/cad/internal/MaterialManager';
-import { CadNode } from '@/utilities';
+import { CadNode } from '@/dataModels/cad/internal/CadNode';
+
 import { generateSectorTree } from '../testUtils/createSectorMetadata';
-import { mat4, vec3 } from 'gl-matrix';
 
 type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 
