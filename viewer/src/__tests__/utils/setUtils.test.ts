@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { setUnion, setIntersection, setDifference } from '../../utils/setUtils';
+import { setUnion, setIntersection, setDifference } from '../../utilities/setUtils';
 import { expectSetEqual } from '../expects';
 
 describe('setUtils', () => {

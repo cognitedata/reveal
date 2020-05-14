@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { RateLimiter } from '../../utils/RateLimiter';
+import { RateLimiter } from '../../utilities/RateLimiter';
 
 describe('RateLimiter', () => {
   test('Aqcuire and release', async () => {

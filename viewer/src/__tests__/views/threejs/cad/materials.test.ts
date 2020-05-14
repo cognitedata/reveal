@@ -2,8 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
-import { createMaterials } from '../../../../views/threejs/cad/materials';
-import { RenderMode } from '../../../../views/threejs/materials';
+import { createMaterials } from '../../../../dataModels/cad/internal/rendering/materials';
+import { RenderMode } from '../../../../dataModels/cad/internal/rendering/RenderMode';
 
 describe('createMaterials', () => {
   test('Positive treeIndexCount, creates materials', () => {

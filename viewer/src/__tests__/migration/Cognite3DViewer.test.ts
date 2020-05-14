@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 
-import { Cognite3DViewer } from '../../migration/Cognite3DViewer';
+import { Cognite3DViewer } from '../../public/migration/Cognite3DViewer';
 import { CogniteClient } from '@cognite/sdk';
 import nock from 'nock';
 

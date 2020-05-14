@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { determinePowerOfTwoDimensions } from '../../utils/determinePowerOfTwoDimensions';
+import { determinePowerOfTwoDimensions } from '../../utilities/determinePowerOfTwoDimensions';
 
 test('determinePowerOfTwoDimensions', () => {
   expect(determinePowerOfTwoDimensions(0)).toEqual({ width: 1, height: 1 });

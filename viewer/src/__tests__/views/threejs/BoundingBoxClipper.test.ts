@@ -1,12 +1,13 @@
+/*!
+ * Copyright 2020 Cognite AS
+ */
+
 import * as THREE from 'three';
-import {BoundingBoxClipper} from '../../../views/threejs/BoundingBoxClipper';
+import { BoundingBoxClipper } from '../../../utilities/BoundingBoxClipper';
 
 describe('BoundingBoxClipper', () => {
   test('Clip planes placed correctly', () => {
-    const box = new THREE.Box3(
-      new THREE.Vector3(1.0, 2.0, 3.0),
-      new THREE.Vector3(4.0, 5.0, 6.0)
-    );
+    const box = new THREE.Box3(new THREE.Vector3(1.0, 2.0, 3.0), new THREE.Vector3(4.0, 5.0, 6.0));
     const clipper = new BoundingBoxClipper(box);
 
     expect(clipper.clippingPlanes[0].normal.dot(new THREE.Vector3(1, 0, 0))).toBe(1);
