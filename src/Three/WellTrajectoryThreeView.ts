@@ -19,6 +19,8 @@ import { WellRenderStyle } from "../Nodes/Wells/WellRenderStyle";
 import { ThreeConverter } from "./ThreeConverter";
 import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
 import { Range3 } from '../Core/Geometry/Range3';
+import { ThreeLabel as TreeLabel } from "./Utilities/ThreeLabel";
+import { Vector3 } from '../Core/Geometry/Vector3';
 
 export class WellTrajectoryThreeView extends BaseGroupThreeView
 {
@@ -67,12 +69,21 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     if (!wellTrajectory)
       throw Error("Well trajectory is missing");
 
+    const group = new THREE.Group();
+    const well = node.well;
+    if (well)
+    {
+      const label = TreeLabel.createByPositionAndAlignment(well.name, well.wellHead, 1, 60, true);
+      if (label)
+        group.add(label);
+    }
+
     const color = node.color;
     const threeColor = ThreeConverter.toColor(color);
 
     const points: THREE.Vector3[] = [];
-    for (const point of wellTrajectory.list)
-      points.push(ThreeConverter.toVector(point));
+    for (const sample of wellTrajectory.samples)
+      points.push(ThreeConverter.toVector(sample.point));
 
     const curve = new THREE.CatmullRomCurve3(points);
     const geometry = new THREE.TubeGeometry(curve, 100, style.radius, 16);
@@ -84,6 +95,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
         emissive: new Color(1, 1, 1),
         emissiveIntensity: 0.2
       });
-    return new THREE.Mesh(geometry, material);
+
+    group.add(new THREE.Mesh(geometry, material));
+    return group;
   }
 }

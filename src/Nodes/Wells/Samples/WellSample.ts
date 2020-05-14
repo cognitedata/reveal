@@ -11,35 +11,32 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseVisualNode } from "../../Core/Nodes/BaseVisualNode";
-import { Vector3 } from "../../Core/Geometry/Vector3";
+import { BaseWellSample } from "./BaseWellSample";
+import { Vector3 } from "../../../Core/Geometry/Vector3";
 
-export class WellNode extends BaseVisualNode
+export class WellSample extends BaseWellSample 
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
-  public wellHead = Vector3.newZero;
+  public point: Vector3;
+  public inclination = 0;
+  public azimuth = 0;
+
+  //==================================================
+  // INSTANCE PROPERTIES
+  //==================================================
+
+  public /*override*/ toString(): string { return `${super.toString()} Point: ${this.point}`; }
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor() { super(); }
-
-  //==================================================
-  // OVERRIDES of Identifiable
-  //==================================================
-
-  public /*override*/ get className(): string { return WellNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === WellNode.name || super.isA(className); }
-
-  //==================================================
-  // OVERRIDES of BaseNode
-  //==================================================
-
-  public /*override*/ get typeName(): string { return "Well" }
-
-  //public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
-}
+  public constructor(point: Vector3, md = 0)
+  {
+    super(md);
+    this.point = point.copy();
+  }
+}  

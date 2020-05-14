@@ -21,6 +21,23 @@ export class Ma
 
   public static isZero(x: number): boolean { return x < 0 ? x > -Ma.errorTolerance : x < Ma.errorTolerance; }
 
+  public static isEqual(x: number, y: number): boolean
+  {
+    // ||x-y||/(1 + (|x|+|y|)/2)
+    let error = x - y;
+    if (error < 0)
+      error = -error;
+
+    if (x < 0)
+      x = -x;
+    if (y < 0)
+      y = -y;
+
+    if (error / (1 + (x + y) / 2) < this.errorTolerance)
+      return true;
+    return false;
+  }
+
   public static isInt(value: number): boolean
   {
     const diff = Math.round(value) - value;
@@ -28,6 +45,15 @@ export class Ma
   }
 
   public static isInc(tick: number, inc: number): boolean { return Ma.isInt(tick / inc); }
+
+  public static compare(a: number, b: number): number
+  {
+    if (a > b)
+      return 1;
+    if (a < b)
+      return -1;
+    return 0;
+  }
 
   //==================================================
   // STATIC METHODS: 
@@ -103,5 +129,25 @@ export class Ma
     value *= delta;
     return value;
   }
+
+  public static binarySearch<T>(array: T[], element: T, compare: Function): number
+  {
+    let minIndex = 0;
+    let maxIndex = array.length - 1;
+    while (minIndex <= maxIndex)
+    {
+      const k = (maxIndex + minIndex) >> 1;
+      const result = compare(element, array[k]);
+      if (result > 0)
+        minIndex = k + 1;
+      else if (result < 0)
+        maxIndex = k - 1;
+      else
+        return k;
+    }
+    return -minIndex - 1;
+  }
+
+
 }
 

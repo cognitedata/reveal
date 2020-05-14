@@ -12,7 +12,6 @@
 //=====================================================================================
 
 import CameraControls from 'camera-controls';
-//import { OrbitControls } from 'three-orbitcontrols-ts';  // npm install --save three-orbitcontrols-ts
 import * as THREE from 'three';
 
 import { BaseCameraNode } from "../Core/Nodes/BaseCameraNode";
@@ -25,7 +24,6 @@ export class ThreeCameraNode extends BaseCameraNode
   //==================================================
 
   private _camera: THREE.Camera | null = null;
-  //private _controls: OrbitControls | null = null;
   private _controls: CameraControls | null = null;
 
   //==================================================
@@ -52,6 +50,7 @@ export class ThreeCameraNode extends BaseCameraNode
       const target = this.getTarget();
       const aspectRatio = target ? target.aspectRatio : undefined;
       const camera = new THREE.PerspectiveCamera(45, aspectRatio, 0.1, 10000);
+      camera.up.set(0, 0, 1);
       this._camera = camera;
     }
     return this._camera;
@@ -60,7 +59,6 @@ export class ThreeCameraNode extends BaseCameraNode
   public set camera(value: THREE.Camera) { this._camera = value; this._controls = null; }
 
   public get controls(): CameraControls | null
-  //public get controls(): OrbitControls | null
   {
     if (!this._controls)
     {
@@ -71,9 +69,6 @@ export class ThreeCameraNode extends BaseCameraNode
       const camera = this.camera as THREE.PerspectiveCamera | THREE.OrthographicCamera;
       if (!camera)
         return null;
-
-      //this._controls = new OrbitControls(camera, target.domElement);
-      //this._controls.update();
 
       this._controls = new CameraControls(camera, target.domElement);
       this._controls.setPosition(0, 0, 20);

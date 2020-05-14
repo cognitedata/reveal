@@ -18,6 +18,7 @@ import { WellRenderStyle } from "./WellRenderStyle";
 import { ColorType } from "../../Core/Enums/ColorType";
 import { Range3 } from "../../Core/Geometry/Range3";
 import { WellTrajectory } from "./WellTrajectory";
+import { WellNode } from "./WellNode";
 
 export class WellTrajectoryNode extends BaseVisualNode
 {
@@ -40,6 +41,7 @@ export class WellTrajectoryNode extends BaseVisualNode
   public get data(): WellTrajectory | null { return this._data; }
   public set data(value: WellTrajectory | null) { this._data = value; }
   public get renderStyle(): WellRenderStyle | null { return this.getRenderStyle() as WellRenderStyle; }
+  public get well(): WellNode | null { return this.getAncestorByType(WellNode); }
 
   //==================================================
   // OVERRIDES of Identifiable

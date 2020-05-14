@@ -11,35 +11,43 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseVisualNode } from "../../Core/Nodes/BaseVisualNode";
-import { Vector3 } from "../../Core/Geometry/Vector3";
+import { Ma } from "../../../Core/PrimitiveClasses/Ma";
 
-export class WellNode extends BaseVisualNode
+export abstract class BaseWellSample 
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
-  public wellHead = Vector3.newZero;
+  public md: number;
+
+  //==================================================
+  // INSTANCE PROPERTIES
+  //==================================================
+
+  public /*virtual*/ toString(): string { return `Md: ${this.md}`; }
+  public /*virtual*/ sampleText(): string { return ``; }
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor() { super(); }
+  public constructor(md = 0) { this.md = md; }
 
   //==================================================
-  // OVERRIDES of Identifiable
+  // VIRTUAL METHODS
   //==================================================
 
-  public /*override*/ get className(): string { return WellNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === WellNode.name || super.isA(className); }
+  public /*virtual*/ translate(deltaMd: number, isAtMinMd: boolean): void
+  {
+    this.md += deltaMd;
+  }
+
+  public /*virtual*/ isPickedOnEdge(md: number, margin: number) { return Math.abs(this.md - md) <= margin; }
 
   //==================================================
-  // OVERRIDES of BaseNode
+  // STATIC METHODS
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Well" }
-
-  //public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
-}
+  public static compareMd(a: BaseWellSample, b: BaseWellSample): number { return Ma.compare(a.md, b.md); }
+}  

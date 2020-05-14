@@ -22,7 +22,7 @@ import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
 import { Range3 } from '../Core/Geometry/Range3';
 import { Range1 } from '../Core/Geometry/Range1';
 import { Vector3 } from '../Core/Geometry/Vector3';
-import { TreeLabel } from "./Utilities/TreeLabel";
+import { ThreeLabel as TreeLabel } from "./Utilities/ThreeLabel";
 import * as Color from 'color'
 
 export class AxisThreeView extends BaseGroupThreeView
@@ -86,11 +86,9 @@ export class AxisThreeView extends BaseGroupThreeView
     const node = this.node;
     const style = this.style;
 
-    console.log("sss" + node);
-
     this.zScale = 1;
     this.axisColor = target.fgColor;
-    this.gridColor = target.isLightBackground ? Colors.darkGrey : Colors.lightGrey; 
+    this.gridColor = target.isLightBackground ? Colors.darkGrey : Colors.lightGrey;
     this.wallColor = target.bgColor;
 
     // Initialize the corners and the centers
@@ -150,7 +148,6 @@ export class AxisThreeView extends BaseGroupThreeView
   //==================================================
   // INSTANCE METHODS: Add wall
   //==================================================
-
 
   private addAxis(group: THREE.Group, usedWall: boolean[], inc: number, tickLength: number, i0: number, i1: number, dimension: number, center: Vector3,
     wallIndex0: number, wallIndex1: number): void
@@ -234,7 +231,7 @@ export class AxisThreeView extends BaseGroupThreeView
         end.z /= this.zScale;
 
         // Add label
-        const label = TreeLabel.createWithPosition(`${tick}`, end, tickDirection, dimension, tickFontSize, true);
+        const label = TreeLabel.createByPositionAndDirection(`${tick}`, end, tickDirection, dimension, tickFontSize, true);
         if (label)
         {
           group.add(label);
@@ -265,7 +262,8 @@ export class AxisThreeView extends BaseGroupThreeView
         position.add(vector);
         position.z /= this.zScale;
 
-        const label = TreeLabel.createWithPosition(Vector3.getAxisName(dimension), position, tickDirection, dimension, labelFontSize, true);
+        // Align the text
+        const label = TreeLabel.createByPositionAndDirection(Vector3.getAxisName(dimension), position, tickDirection, dimension, labelFontSize, true);
         if (label)
         {
           group.add(label);
@@ -454,7 +452,6 @@ export class AxisThreeView extends BaseGroupThreeView
     }
     return inc;
   }
-
 
   private static getRealRange(inc: number, min: number, max: number, dimension: number, zScale: number): [Range1, number]
   {
