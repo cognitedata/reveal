@@ -5,7 +5,7 @@
 import { CadModel } from '.';
 import { SectorModelTransformation } from './sector/types';
 import { SectorScene } from './sector/SectorScene';
-import { ModelDataRetriever } from '../../../utilities/networking/ModelDataRetriever';
+import { ModelDataRetriever } from '@/utilities/networking/ModelDataRetriever';
 import { CadMetadataParser } from './CadMetadataParser';
 
 export class CadModelImpl implements CadModel {

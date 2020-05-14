@@ -6,13 +6,13 @@
 // pulling it in just for this reason
 import * as THREE from 'three';
 import { SectorMetadata } from '../types';
-import { traverseDepthFirst, traverseUpwards } from '../../../../../utilities/traversal';
-import { toThreeMatrix4, toThreeVector3 } from '../../../../../utilities/utilities';
+import { traverseDepthFirst, traverseUpwards } from '@/utilities/traversal';
+import { toThreeMatrix4, toThreeVector3 } from '@/utilities';
 import { mat4 } from 'gl-matrix';
-import { defaultLoadingHints as defaultCadLoadingHints, CadLoadingHints } from '../../../public/CadLoadingHints';
+import { defaultLoadingHints, CadLoadingHints } from '@/datamodels/cad/public/CadLoadingHints';
 import { WantedSector } from '../WantedSector';
 import { LevelOfDetail } from '../LevelOfDetail';
-import { CameraConfig } from '../../../../../utilities/fromThreeCameraConfig';
+import { CameraConfig } from '@/utilities/fromThreeCameraConfig';
 import { CadModel } from '../..';
 
 const degToRadFactor = Math.PI / 180;
@@ -43,7 +43,7 @@ export interface DetermineSectorsByProximityInput {
 */
 
 export function determineSectorsByProximity(params: DetermineSectorsByProximityInput): WantedSector[] {
-  const hints = { ...defaultCadLoadingHints, ...(params.loadingHints || {}) };
+  const hints = { ...defaultLoadingHints, ...(params.loadingHints || {}) };
 
   const { cameraPosition, cameraModelMatrix, projectionMatrix, cameraFov } = params.cameraConfig;
   const distanceToCameraVars = {

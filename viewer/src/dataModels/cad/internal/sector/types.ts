@@ -2,9 +2,9 @@
  * Copyright 2020 Cognite AS
  */
 
-import { Box3 } from '../../../../utilities/Box3';
+import { Box3 } from '@/utilities/Box3';
 import { mat4 } from 'gl-matrix';
-import { ParsedPrimitives } from '../../../../utilities/workers/types/parser.types';
+import { ParsedPrimitives } from '@/utilities/workers/types/parser.types';
 
 // TODO 2019-11-12 larsmoa: Move and rename to something general (not specific
 // for sector data).

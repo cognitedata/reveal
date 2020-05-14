@@ -6,13 +6,13 @@ import * as THREE from 'three';
 
 import { Color, SupportedModelTypes } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
-import { CadModel } from '../../dataModels/cad/internal';
-import { toThreeJsBox3, CadNode, toThreeMatrix4, ModelNodeAppearance } from '../../utilities';
-import { CadRenderHints } from '../../dataModels/cad/public/CadRenderHints';
-import { CadLoadingHints } from '../../dataModels/cad/public/CadLoadingHints';
+import { CadModel } from '@/datamodels/cad/internal';
+import { toThreeJsBox3, CadNode, toThreeMatrix4, ModelNodeAppearance } from '@/utilities';
+import { CadRenderHints } from '@/datamodels/cad/public/CadRenderHints';
+import { CadLoadingHints } from '@/datamodels/cad/public/CadLoadingHints';
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { CogniteClient } from '@cognite/sdk';
-import { SectorQuads, Sector } from '../../dataModels/cad/internal/sector/types';
+import { SectorQuads, Sector } from '@/datamodels/cad/internal/sector/types';
 import { CogniteModelBase } from './CogniteModelBase';
 
 export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {

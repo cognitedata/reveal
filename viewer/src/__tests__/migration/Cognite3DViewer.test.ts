@@ -4,9 +4,10 @@
 
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
-
-import { Cognite3DViewer } from '../../public/migration/Cognite3DViewer';
 import { CogniteClient } from '@cognite/sdk';
+
+import { Cognite3DViewer } from '@/public/migration/Cognite3DViewer';
+
 import nock from 'nock';
 
 const sceneJson = require('./scene.json');

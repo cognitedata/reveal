@@ -6,7 +6,7 @@
 import * as Potree from '@cognite/potree-core';
 
 import { PointCloudModel } from '..';
-import { toThreeMatrix4 } from '../../../utilities/utilities';
+import { toThreeMatrix4 } from '@/utilities';
 import { PotreeGroupWrapper } from './PotreeGroupWrapper';
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 

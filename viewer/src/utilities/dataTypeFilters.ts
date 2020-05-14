@@ -4,8 +4,8 @@
 
 import { filter } from 'rxjs/operators';
 import { OperatorFunction } from 'rxjs';
-import { Cad } from '../dataModels/cad/internal/Cad';
-import { PointCloud } from '../dataModels/pointCloud/internal/PointCloud';
+import { Cad } from '@/datamodels/cad/internal/Cad';
+import { PointCloud } from '@/datamodels/pointCloud/internal/PointCloud';
 import { File3dFormat } from './File3dFormat';
 
 export function isCad(): OperatorFunction<any, Cad> {

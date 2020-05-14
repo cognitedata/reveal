@@ -4,10 +4,10 @@
 
 import * as THREE from 'three';
 import { mat4, vec3 } from 'gl-matrix';
-import { Box3 } from '../../../../utilities/Box3';
+import { Box3 } from '@/utilities/Box3';
 import { SectorMetadata } from './types';
-import { traverseDepthFirst } from '../../../../utilities/traversal';
-import { toThreeJsBox3, toThreeMatrix4 } from '../../../../utilities/utilities';
+import { traverseDepthFirst } from '@/utilities/traversal';
+import { toThreeJsBox3, toThreeMatrix4 } from '@/utilities';
 
 export interface SectorScene {
   readonly version: number;

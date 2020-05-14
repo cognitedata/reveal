@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { SectorQuads } from './types';
 import { Materials } from '../rendering/materials';
-import { disposeAttributeArrayOnUpload } from '../../../../utilities/disposeAttributeArrayOnUpload';
+import { disposeAttributeArrayOnUpload } from '@/utilities/disposeAttributeArrayOnUpload';
 
 const quadVertexData = new Float32Array([
   // tslint:disable: prettier
