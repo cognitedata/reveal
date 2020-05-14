@@ -36,6 +36,12 @@ export default function getIcon(iconType: string, iconName: string)
           return require("../resources/Icons/Nodes/PolylinesNode.png")
         case "PointCloudNode":
           return require("../resources/Icons/Nodes/PointCloudNode.png");
+        case "FolderNode":
+          return require("../resources/Icons/Nodes/FolderNode.png");
+        case "Map":
+          return require("../resources/Icons/Nodes/Map.png");
+        case "PointsNode":
+          return require("../resources/Icons/Nodes/PointsNode.png");
       }
     case IconTypes.ARROWS:
       switch (iconName)
@@ -44,6 +50,14 @@ export default function getIcon(iconType: string, iconName: string)
           return require("../resources/Icons/Arrows/FatRight.png");
         case "FatLeft":
           return require("../resources/Icons/Arrows/FatLeft.png");
+      }
+    case IconTypes.POINT_SYMBOL:
+      switch (iconName)
+      {
+        case "Cube":
+          return require("../resources/Icons/PointSymbol/Sphere.png");
+        case "Sphere":
+          return require("../resources/Icons/PointSymbol/Cube.png");
       }
   }
   return require("../resources/Icons/Actions/Close.png");

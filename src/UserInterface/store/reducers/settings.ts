@@ -1,100 +1,47 @@
-import { SettingsActionTypes, SettingsState } from "../types/settings";
-import { IconTypes } from "../../constants/Icons";
-import { v4 as uuidv4 } from 'uuid';
-
-import { ON_EXPAND_CHANGE } from "../types/settings"
+import { SettingsActionTypes, ON_EXPAND_CHANGE, ON_TEXT_INPUT_CHANGE, ON_SELECT_CHANGE, ON_COMPACT_COLOR_CHANGE } from "../types/settings";
+import { state1, state2 } from "../../data/settings-dummy-state"
 
 // Initial settings state
-const initialState = {
-  id: uuidv4(),
-  sections: {
-    "section1": {
-      name: "Random Polylines 1",
-      icon: { type: IconTypes.NODES, name: "PolylinesNode" },
-      toolBar: [
-        {
-          icon: { type: IconTypes.STATES, name: "Pinned" },
-        },
-        {
-          icon: { type: IconTypes.ARROWS, name: "FatLeft" },
-        },
-        {
-          icon: { type: IconTypes.ARROWS, name: "FatRight" },
-        }
-      ],
-      subSections: {
-        "subSection1": {
-          name: "General Info",
-          isExpanded: true,
-        },
-        "subSection2": {
-          name: "Statistics",
-          isExpanded: false,
-        }
-      }
-    },
-    "section2": {
-      name: "Visual Settings",
-      toolBar: [
-        {
-          icon: { type: IconTypes.ACTIONS, name: "Paste" },
-        },
-        {
-          icon: { type: IconTypes.ACTIONS, name: "Reset" },
-        },
-        {
-          icon: { type: IconTypes.ACTIONS, name: "Solution" },
-        },
-        {
-          icon: { type: IconTypes.NODES, name: "PointCloudNode" },
-        },
-        {
-          icon: { type: IconTypes.NODES, name: "PolylinesNode" },
-        }
-      ],
-      subSections: {
-        "subSection1": {
-          name: "Lines",
-          isExpanded: false,
-        }
-      }
-    },
-    "section3": {
-      name: "New random Wells",
-      icon: { type: IconTypes.NODES, name: "PolylinesNode" },
-      toolBar: [
-        {
-          icon: { type: IconTypes.STATES, name: "Pinned" },
-        },
-        {
-          icon: { type: IconTypes.ARROWS, name: "FatLeft" },
-        },
-        {
-          icon: { type: IconTypes.ARROWS, name: "FatRight" },
-        }
-      ],
-      subSections: {
-        "subSection2": {
-          name: "General Info",
-          isExpanded: true,
-        }
-      }
-    },
-  },
-};
+const initialState = state1;
 
-// explorer reducer to update state with actions
+// Settings reducer to update state with actions
 export default (state = initialState, action: SettingsActionTypes) =>
 {
   switch (action.type)
   {
     case ON_EXPAND_CHANGE:
       {
-        const { main, sub } = action.payload;
-        const subSection = state.sections[main].subSections[sub];
+        const { mainId, subIndex } = action.payload;
+        const subSection = state.sections[mainId].subSections[subIndex];
         subSection.isExpanded = !subSection.isExpanded;
         return { ...state };
       }
+    case ON_TEXT_INPUT_CHANGE:
+      {
+        const { mainId, subIndex, elementIndex, value } = action.payload;
+        const element = state.sections[mainId].subSections[subIndex].elements[elementIndex];
+        element.value = value;
+        state.sections[mainId].subSections[subIndex].elements[elementIndex] = element;
+        return { ...state }
+      }
+    case ON_SELECT_CHANGE:
+      {
+        const { mainId, subIndex, elementIndex, value } = action.payload;
+        const element = state.sections[mainId].subSections[subIndex].elements[elementIndex];
+        element.value = value;
+        state.sections[mainId].subSections[subIndex].elements[elementIndex] = element;
+        return { ...state }
+      }
+    case ON_COMPACT_COLOR_CHANGE:
+      {
+        const { mainId, subIndex, elementIndex, value } = action.payload;
+        const element = state.sections[mainId].subSections[subIndex].elements[elementIndex];
+        element.value = value;
+        state.sections[mainId].subSections[subIndex].elements[elementIndex] = element;
+        return { ...state }
+      }
+    case "CHANGE":
+      return state2;
     default:
       return state;
   }

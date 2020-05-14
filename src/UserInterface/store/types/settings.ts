@@ -1,5 +1,8 @@
 // Action type constants
-export const ON_EXPAND_CHANGE = 'ON_EXPAND_CHANGE'
+export const ON_EXPAND_CHANGE = "ON_EXPAND_CHANGE";
+export const ON_TEXT_INPUT_CHANGE = "ON_TEXT_INPUT_CHANGE";
+export const ON_SELECT_CHANGE = "ON_SELECT_CHANGE";
+export const ON_COMPACT_COLOR_CHANGE = "ON_COMPACT_COLOR_CHANGE";
 
 // Action interfaces
 export interface SettingsAction

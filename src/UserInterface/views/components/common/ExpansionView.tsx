@@ -44,22 +44,16 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function ExpansionView(props: {
-  children?: JSX.Element,
-  parent: string,
-  id: string,
-  title: string,
-  isExpanded: boolean
-})
+export default function ExpansionView(props)
 {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const { id, main, title, isExpanded, children } = props;
+  const { subIndex, mainId, title, isExpanded, children } = props;
   return (
     <ExpansionPanel expanded={isExpanded} onChange={(event) =>
     {
-      dispatch(onExpandChange({ main, sub: id }))
+      dispatch(onExpandChange({ mainId, subIndex }))
     }}>
       <ExpansionPanelSummary className={classes.expansionSummaryRoot}>
         <div className={classes.expansionSummaryHeader}>

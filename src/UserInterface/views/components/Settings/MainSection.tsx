@@ -18,16 +18,19 @@ export default function MainSection(props)
       >
       </TitleBar>
       <div className="settings-sections">
-        {Object.entries(subSections).map(([key, sub]) =>
+        {subSections.map((sub, idx) =>
         {
-          const { name, isExpanded } = sub;
+          const { name, elements, isExpanded } = sub;
           return <ExpansionView
-            key={key}
-            main={id}
-            id={key}
+            key={`${id}-sub-${idx}`}
+            mainId={id}
+            subIndex={idx}
             title={name}
             isExpanded={isExpanded}>
-            <SubSection></SubSection>
+            <SubSection elements={elements}
+              mainId={id}
+              subIndex={idx}>
+            </SubSection>
           </ExpansionView>
         })}
       </div>

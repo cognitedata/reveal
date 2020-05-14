@@ -20,14 +20,21 @@ body {
   background-image: linear-gradient(to right, #f4f4f4, #d6d6d6); }
 
 .explorer-container {
-  flex: 1; }
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center; }
 
 .settings-container {
   flex: 1; }
 
-.icon img {
-  width: 1.2rem;
-  height: 1.2rem; }
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center; }
+  .icon img {
+    width: 1rem;
+    height: 1rem; }
 
 /* Tweak expansion panel */
 .MuiExpansionPanelSummary-content,
@@ -60,3 +67,17 @@ body {
     cursor: pointer; }
     .title-bar .tool-bar-icon:hover {
       background-color: lightblue; }
+
+.MuiInputBase-root {
+  height: 1.5rem;
+  border: 1.2px solid #c4c4c4;
+  font-size: 0.6rem;
+  flex: 1; }
+
+.MuiInput-underline:before {
+  content: "";
+  position: absolute;
+  border-bottom: 0 !important; }
+
+.MuiList-padding {
+  padding: 0 !important; }
