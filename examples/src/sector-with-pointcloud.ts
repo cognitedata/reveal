@@ -46,12 +46,8 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  let modelsNeedUpdate = true;
-
   Potree.XHRFactory.config.customHeaders.push({ header: 'MyDummyHeader', value: 'MyDummyValue' });
-  const revealManager = new RevealManager(client, () => {
-    modelsNeedUpdate = true;
-  });
+  const revealManager = new RevealManager(client);
   let pointCloud: [PotreeGroupWrapper, PotreeNodeWrapper];
   if (pointCloudUrl) {
     pointCloud = await revealManager.addPointCloudFromUrl(pointCloudUrl);
@@ -101,12 +97,13 @@ async function main() {
     const needsUpdate =
       renderOptions.renderMode === RenderMode.AlwaysRender ||
       (renderOptions.renderMode === RenderMode.WhenNecessary &&
-        (controlsNeedUpdate || modelsNeedUpdate || pointCloudGroup.needsRedraw || settingsChanged));
+        (controlsNeedUpdate || revealManager.needsRedraw || pointCloudGroup.needsRedraw || settingsChanged));
 
     if (needsUpdate) {
       applyRenderingFilters(scene, renderOptions.renderFilter);
       renderer.render(scene, camera);
       settingsChanged = false;
+      revealManager.resetRedraw();
     }
     requestAnimationFrame(render);
   };

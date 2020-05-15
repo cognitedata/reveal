@@ -27,10 +27,7 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(canvas);
 
-  let modelsNeedUpdate = true;
-  const revealManager = new reveal.RevealManager(client, () => {
-    modelsNeedUpdate = true;
-  });
+  const revealManager = new reveal.RevealManager(client);
 
   const nodeAppearance: reveal.ModelNodeAppearance = {
     color(treeIndex: number) {
@@ -71,9 +68,10 @@ async function main() {
       revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || modelsNeedUpdate || pickingNeedsUpdate) {
+    if (controlsNeedUpdate || revealManager.needsRedraw || pickingNeedsUpdate) {
       renderer.render(scene, camera);
       htmlOverlayHelper.updatePositions(renderer, camera);
+      revealManager.resetRedraw();
     }
     requestAnimationFrame(render);
   };

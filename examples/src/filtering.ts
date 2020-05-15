@@ -22,10 +22,7 @@ async function main() {
   const settings = {
     treeIndices: '1, 2, 8, 12'
   };
-  let modelsNeedUpdate = true;
-  const revealManager = new RevealManager(client, () => {
-    modelsNeedUpdate = true;
-  });
+  const revealManager = new RevealManager(client);
   let model: CadNode;
   const nodeAppearance: ModelNodeAppearance = {
     visible(treeIndex: number) {
@@ -76,9 +73,10 @@ async function main() {
       revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || modelsNeedUpdate || shadingNeedsUpdate) {
+    if (controlsNeedUpdate || revealManager.needsRedraw || shadingNeedsUpdate) {
       renderer.render(scene, camera);
       shadingNeedsUpdate = false;
+      revealManager.resetRedraw();
     }
 
     requestAnimationFrame(render);

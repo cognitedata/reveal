@@ -23,10 +23,7 @@ async function main() {
   client.loginWithOAuth({ project });
 
   const scene = new THREE.Scene();
-  let modelsNeedUpdate = true;
-  const revealManager = new reveal.RevealManager(client, () => {
-    modelsNeedUpdate = true;
-  });
+  const revealManager = new reveal.RevealManager(client);
   let model: reveal.CadNode;
   if (modelUrl) {
     model = await revealManager.addModelFromUrl(modelUrl);
@@ -76,8 +73,9 @@ async function main() {
       revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || modelsNeedUpdate) {
+    if (controlsNeedUpdate || revealManager.needsRedraw) {
       renderer.render(scene, camera);
+      revealManager.resetRedraw();
     }
 
     TWEEN.update();

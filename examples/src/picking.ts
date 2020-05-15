@@ -25,10 +25,7 @@ async function main() {
   const pickedNodes: Set<number> = new Set();
   const pickedObjects: Set<THREE.Mesh> = new Set();
 
-  let modelsNeedUpdate = true;
-  const revealManager = new RevealManager(client, () => {
-    modelsNeedUpdate = true;
-  });
+  const revealManager = new RevealManager(client);
 
   const nodeAppearance: ModelNodeAppearance = {
     color(treeIndex: number) {
@@ -90,9 +87,10 @@ async function main() {
       revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || pickingNeedsUpdate || modelsNeedUpdate) {
+    if (controlsNeedUpdate || pickingNeedsUpdate || revealManager.needsRedraw) {
       renderer.render(scene, camera);
       pickingNeedsUpdate = false;
+      revealManager.resetRedraw();
     }
 
     requestAnimationFrame(render);

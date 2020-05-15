@@ -21,11 +21,7 @@ async function main() {
   renderer.setClearColor('#444');
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
-
-  let modelsNeedUpdate = true;
-  const revealManager = new reveal.RevealManager(client, () => {
-    modelsNeedUpdate = true;
-  });
+  const revealManager = new reveal.RevealManager(client);
   let model: reveal.CadNode;
   if (modelUrl) {
     model = await revealManager.addModelFromUrl(modelUrl);
@@ -88,10 +84,10 @@ async function main() {
       revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || modelsNeedUpdate || planesNeedUpdate) {
+    if (controlsNeedUpdate || revealManager.needsRedraw || planesNeedUpdate) {
       renderer.render(scene, camera);
       planesNeedUpdate = false;
-      modelsNeedUpdate = false;
+      revealManager.resetRedraw();
     }
 
     requestAnimationFrame(render);

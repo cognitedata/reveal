@@ -19,10 +19,7 @@ async function main() {
   client.loginWithOAuth({ project });
 
   const scene = new THREE.Scene();
-  let modelsNeedUpdate = true;
-  const revealManager = new RevealManager(client, () => {
-    modelsNeedUpdate = true;
-  });
+  const revealManager = new RevealManager(client);
   let model: CadNode;
   if (modelUrl) {
     model = await revealManager.addModelFromUrl(modelUrl);
@@ -61,9 +58,10 @@ async function main() {
       revealManager.update(camera);
     }
 
-    const needsUpdate = controlsNeedUpdate || modelsNeedUpdate;
+    const needsUpdate = controlsNeedUpdate || revealManager.needsRedraw;
     if (needsUpdate) {
       effectComposer.render(delta);
+      revealManager.resetRedraw();
     }
     requestAnimationFrame(render);
   };

@@ -43,10 +43,7 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  let modelsNeedUpdate = true;
-  const revealManager = new reveal.RevealManager(client, () => {
-    modelsNeedUpdate = true;
-  });
+  const revealManager = new reveal.RevealManager(client);
   let cameraConfig;
   let cadNode: reveal.CadNode;
   if (modelUrl) {
@@ -109,9 +106,10 @@ async function main() {
     }
     const walkablePathUpdated = updated;
 
-    if (controlsNeedUpdate || modelsNeedUpdate || walkablePathUpdated) {
+    if (controlsNeedUpdate || revealManager.needsRedraw || walkablePathUpdated) {
       updated = false;
       renderer.render(scene, camera);
+      revealManager.resetRedraw();
     }
 
     requestAnimationFrame(render);

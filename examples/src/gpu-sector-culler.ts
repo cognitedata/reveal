@@ -18,7 +18,6 @@ async function main() {
   client.loginWithOAuth({ project });
 
   const scene = new THREE.Scene();
-  let modelsNeedUpdate = true;
 
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight);
   const coverageUtil = new reveal.internal.GpuOrderSectorsByVisibilityCoverage();
@@ -27,13 +26,7 @@ async function main() {
     costLimit: 70 * 1024 * 1024,
     logCallback: console.log
   });
-  const revealManager = new reveal.RevealManager(
-    client,
-    () => {
-      modelsNeedUpdate = true;
-    },
-    { internal: { sectorCuller } }
-  );
+  const revealManager = new reveal.RevealManager(client, { internal: { sectorCuller } });
   let model: reveal.CadNode;
   if (modelUrl) {
     model = await revealManager.addModelFromUrl(modelUrl);
@@ -108,9 +101,9 @@ async function main() {
       revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || modelsNeedUpdate) {
+    if (controlsNeedUpdate || revealManager.needsRedraw) {
       renderer.render(scene, camera);
-      modelsNeedUpdate = false;
+      revealManager.resetRedraw();
     }
 
     requestAnimationFrame(render);

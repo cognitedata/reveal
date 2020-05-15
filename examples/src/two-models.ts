@@ -35,10 +35,7 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  let modelsNeedUpdate = true;
-  const revealManager = new RevealManager(client, () => {
-    modelsNeedUpdate = true;
-  });
+  const revealManager = new RevealManager(client);
   let model: CadNode;
   if (modelUrl) {
     model = await revealManager.addModelFromUrl(modelUrl);
@@ -79,10 +76,11 @@ async function main() {
     if (controlsNeedUpdate) {
       revealManager.update(camera);
     }
-    const needsUpdate = controlsNeedUpdate || modelsNeedUpdate;
+    const needsUpdate = controlsNeedUpdate || revealManager.needsRedraw;
 
     if (needsUpdate) {
       renderer.render(scene, camera);
+      revealManager.resetRedraw();
     }
 
     requestAnimationFrame(render);

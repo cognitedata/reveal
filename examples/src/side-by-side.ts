@@ -40,7 +40,7 @@ function initializeModel(
   renderer.setClearColor('#444');
   renderer.setSize(canvas.width, canvas.height);
 
-  const sectorScene = cadNode.cadModel.scene;
+  const sectorScene = cadNode.cadModelMetadata.scene;
   const scene = new THREE.Scene();
   scene.add(cadNode);
   const options = createRendererDebugWidget(sectorScene.root, renderer, cadNode, gui);
@@ -53,14 +53,9 @@ async function main() {
   const client = new CogniteClient({ appId: 'reveal.example.side-by-side' });
   client.loginWithOAuth({ project });
 
-  let modelsNeedUpdate = true;
-  const revealManager1 = new RevealManager(client, () => {
-    modelsNeedUpdate = true;
-  });
+  const revealManager1 = new RevealManager(client);
 
-  const revealManager2 = new RevealManager(client, () => {
-    modelsNeedUpdate = true;
-  });
+  const revealManager2 = new RevealManager(client);
 
   let model1: CadNode;
   if (modelUrl) {
@@ -120,17 +115,19 @@ async function main() {
 
     if (
       options1.renderMode === RenderMode.AlwaysRender ||
-      (options1.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || modelsNeedUpdate))
+      (options1.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || revealManager1.needsRedraw))
     ) {
       applyRenderingFilters(scene1, options1.renderFilter);
       renderer1.render(scene1, camera);
+      revealManager1.resetRedraw();
     }
     if (
       options2.renderMode === RenderMode.AlwaysRender ||
-      (options2.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || modelsNeedUpdate))
+      (options2.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || revealManager2.needsRedraw))
     ) {
       applyRenderingFilters(scene2, options2.renderFilter);
       renderer2.render(scene2, camera);
+      revealManager2.resetRedraw();
     }
   };
   render();
