@@ -4,7 +4,8 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { CadNode, SsaoEffect, SsaoPassType, RevealManager } from '@cognite/reveal/threejs';
+import { CadNode, RevealManager } from '@cognite/reveal';
+import { SsaoEffect, SsaoPassType } from '@cognite/reveal/utilities';
 import dat from 'dat.gui';
 import { getParamsFromURL } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';

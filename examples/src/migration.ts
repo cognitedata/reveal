@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import * as reveal_migration from '@cognite/reveal/migration';
-import { BoundingBoxClipper } from '@cognite/reveal/threejs';
+import { BoundingBoxClipper } from '@cognite/reveal/utilities';
 import { CogniteClient } from '@cognite/sdk';
 import dat from 'dat.gui';
 
