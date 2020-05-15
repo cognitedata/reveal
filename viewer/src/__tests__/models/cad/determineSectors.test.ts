@@ -6,20 +6,22 @@ import 'jest-extended';
 import * as THREE from 'three';
 import { vec3, mat4 } from 'gl-matrix';
 
-import { SectorMetadata, SectorModelTransformation } from '../../../dataModels/cad/internal/sector/types';
-import { Box3 } from '../../../utilities/Box3';
-import { determineSectorsByProximity } from '../../../dataModels/cad/internal/sector/culling/determineSectors';
-import { toThreeMatrix4, fromThreeMatrix, fromThreeVector3 } from '../../../utilities/utilities';
-import { LevelOfDetail } from '../../../dataModels/cad/internal/sector/LevelOfDetail';
-import { WantedSector } from '../../../dataModels/cad/internal/sector/WantedSector';
-import { createSceneFromRoot } from '../../testUtils/createSceneFromRoot';
-import { MaterialManager } from '../../../dataModels/cad/internal/MaterialManager';
-import { CadModel } from '../../../dataModels/cad/internal';
-import { fromCdfToThreeJsCoordinates, fromThreeJsToCdfCoordinates } from '../../../utilities/fromThreeCameraConfig';
-import { CadNode } from '../../../dataModels/cad/internal/CadNode';
+import { SectorMetadata, SectorModelTransformation } from '@/dataModels/cad/internal/sector/types';
+import { determineSectorsByProximity } from '@/dataModels/cad/internal/sector/culling/determineSectors';
+import { LevelOfDetail } from '@/dataModels/cad/internal/sector/LevelOfDetail';
+import { WantedSector } from '@/dataModels/cad/internal/sector/WantedSector';
+import { MaterialManager } from '@/dataModels/cad/internal/MaterialManager';
+import { CadModel } from '@/dataModels/cad/internal';
+import { CadNode } from '@/dataModels/cad/internal/CadNode';
+import { Box3 } from '@/utilities/Box3';
+import { fromCdfToThreeJsCoordinates, fromThreeJsToCdfCoordinates } from '@/utilities/fromThreeCameraConfig';
+import { toThreeMatrix4, fromThreeMatrix, fromThreeVector3 } from '@/utilities/utilities';
 
-jest.mock('../../../dataModels/cad/internal/CadNode');
-jest.mock('../../../dataModels/cad/internal/MaterialManager');
+import { createSceneFromRoot } from '../../testUtils/createSceneFromRoot';
+
+jest.mock('@/dataModels/cad/internal/CadNode');
+jest.mock('@/dataModels/cad/internal/MaterialManager');
+
 const materialManager = new MaterialManager();
 describe('determineSectors', () => {
   const identityTransform: SectorModelTransformation = {

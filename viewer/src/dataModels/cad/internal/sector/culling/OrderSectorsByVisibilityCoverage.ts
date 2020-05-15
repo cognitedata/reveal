@@ -7,8 +7,8 @@ import * as THREE from 'three';
 import { SectorMetadata } from '../../../../..';
 import { SectorModelTransformation } from '../types';
 import { CadModel } from '../..';
-import { toThreeJsBox3, toThreeMatrix4 } from '../../../../../utilities/utilities';
-import { Box3 } from '../../../../../utilities/Box3';
+import { toThreeJsBox3, toThreeMatrix4 } from '@/utilities';
+import { Box3 } from '@/utilities/Box3';
 import { coverageShaders } from '../../rendering/shaders';
 
 type SectorContainer = {

@@ -5,13 +5,11 @@
 import * as THREE from 'three';
 import * as TWEEN from '@tweenjs/tween.js';
 import * as reveal from '@cognite/reveal';
-import * as reveal_threejs from '@cognite/reveal/threejs';
 
 import CameraControls from 'camera-controls';
 import { createPathNode, createTextSpriteNode } from './utils/scene-elements';
 import { getParamsFromURL } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
-import { RevealManager, CadNode } from '@cognite/reveal/threejs';
 
 CameraControls.install({ THREE });
 
@@ -26,10 +24,10 @@ async function main() {
 
   const scene = new THREE.Scene();
   let modelsNeedUpdate = true;
-  const revealManager = new RevealManager(client, () => {
+  const revealManager = new reveal.RevealManager(client, () => {
     modelsNeedUpdate = true;
   });
-  let model: CadNode;
+  let model: reveal.CadNode;
   if (modelUrl) {
     model = await revealManager.addModelFromUrl(modelUrl);
   } else if (modelRevision) {

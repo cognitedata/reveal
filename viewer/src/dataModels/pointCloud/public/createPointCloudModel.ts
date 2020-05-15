@@ -8,10 +8,10 @@ import { SectorModelTransformation } from '../../cad/internal/sector/types';
 import { EptLoader } from '../internal/potree/EptLoader';
 import { PointCloudModel } from './PointCloudModel';
 import { CogniteClient, IdEither } from '@cognite/sdk';
-import { CogniteClient3dExtensions } from '../../../utilities/networking/CogniteClient3dExtensions';
+import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
-import { File3dFormat } from '../../../utilities/File3dFormat';
+import { File3dFormat } from '@/utilities/File3dFormat';
 
 const identity = mat4.identity(mat4.create());
 

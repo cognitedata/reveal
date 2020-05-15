@@ -6,7 +6,6 @@ import * as THREE from 'three';
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
 import * as reveal from '@cognite/reveal';
-import * as reveal_threejs from '@cognite/reveal/threejs';
 
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
@@ -17,7 +16,7 @@ import {
   createDefaultRenderOptions
 } from './utils/renderer-debug-widget';
 import { CogniteClient } from '@cognite/sdk';
-import { RevealManager, CadNode } from '@cognite/reveal/threejs';
+import { RevealManager, CadNode } from '@cognite/reveal';
 import { getParamsFromURL } from './utils/example-helpers';
 import { PotreeNodeWrapper, PotreeGroupWrapper } from '@cognite/reveal/internal';
 
@@ -120,7 +119,7 @@ async function main() {
 }
 
 function initializeGui(
-  cadNode: reveal_threejs.CadNode,
+  cadNode: reveal.CadNode,
   pcGroup: reveal.internal.PotreeGroupWrapper,
   pcNode: reveal.internal.PotreeNodeWrapper,
   handleSettingsChangedCb: () => void

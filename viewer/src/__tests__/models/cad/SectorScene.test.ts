@@ -5,12 +5,12 @@
 import * as THREE from 'three';
 import { vec3, mat4 } from 'gl-matrix';
 
-import { SectorMetadata } from '../../../dataModels/cad/internal/sector/types';
-import { SectorSceneImpl } from '../../../dataModels/cad/internal/sector/SectorScene';
+import { SectorMetadata } from '@/dataModels/cad/internal/sector/types';
+import { SectorSceneImpl } from '@/dataModels/cad/internal/sector/SectorScene';
 import { createSectorMetadata } from '../../testUtils/createSectorMetadata';
-import { traverseDepthFirst } from '../../../utilities/traversal';
-import { Box3 } from '../../../utilities/Box3';
-import { fromThreeMatrix } from '../../../utilities/utilities';
+import { traverseDepthFirst } from '@/utilities/traversal';
+import { Box3 } from '@/utilities/Box3';
+import { fromThreeMatrix } from '@/utilities';
 
 describe('SectorSceneImpl', () => {
   const root = createSectorMetadata([

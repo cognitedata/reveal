@@ -5,7 +5,7 @@
 import { Subject, Observable } from 'rxjs';
 import { bufferTime, flatMap, filter, mergeAll, map, share, tap, first } from 'rxjs/operators';
 import { CogniteClient, InternalId, Node3D } from '@cognite/sdk';
-import { Sector, SectorQuads } from '../../dataModels/cad/internal/sector/types';
+import { Sector, SectorQuads } from '@/dataModels/cad/internal/sector/types';
 
 type NodeIdRequest = InternalId;
 

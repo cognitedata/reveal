@@ -3,7 +3,7 @@
  */
 
 import { CogniteClient } from '@cognite/sdk';
-import { CdfModelDataRetriever } from '../../../utilities/networking/CdfModelDataRetriever';
+import { CdfModelDataRetriever } from '@/utilities/networking/CdfModelDataRetriever';
 import nock from 'nock';
 
 describe('CdfModelDataRetriever', () => {

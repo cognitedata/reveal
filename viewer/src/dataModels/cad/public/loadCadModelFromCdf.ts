@@ -4,16 +4,16 @@
 
 import { CadModel } from './CadModel';
 import { CogniteClient, IdEither } from '@cognite/sdk';
-import { CogniteClient3dExtensions } from '../../../utilities/networking/CogniteClient3dExtensions';
-import { CdfModelDataRetriever } from '../../../utilities/networking/CdfModelDataRetriever';
+import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
+import { CdfModelDataRetriever } from '@/utilities/networking/CdfModelDataRetriever';
 import { CadModelImpl } from '../internal/CadModelImpl';
 import { SectorModelTransformation } from '../internal/sector/types';
 import {
   DefaultSectorRotationMatrix,
   DefaultInverseSectorRotationMatrix
-} from '../../../utilities/constructMatrixFromRotation';
-import { File3dFormat } from '../../../utilities/File3dFormat';
-import { instanceOfExternalId, instanceOfInternalId } from '../../../utilities/cogniteSdkGuards';
+} from '@/utilities/constructMatrixFromRotation';
+import { File3dFormat } from '@/utilities/File3dFormat';
+import { instanceOfExternalId, instanceOfInternalId } from '@/utilities/cogniteSdkGuards';
 
 const SupportedCadVersions = [8];
 

@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { BoundingBoxClipper } from '../../../utilities/BoundingBoxClipper';
+import { BoundingBoxClipper } from '@/utilities/BoundingBoxClipper';
 
 describe('BoundingBoxClipper', () => {
   test('Clip planes placed correctly', () => {

@@ -4,9 +4,9 @@
 
 import { SectorMetadata, SectorMetadataFacesFileSection } from './sector/types';
 import { SectorScene, SectorSceneImpl } from './sector/SectorScene';
-import { Box3 } from '../../../utilities/Box3';
+import { Box3 } from '@/utilities/Box3';
 import { vec3 } from 'gl-matrix';
-import { traverseUpwards } from '../../../utilities/traversal';
+import { traverseUpwards } from '@/utilities/traversal';
 
 export interface CadSectorMetadataV8 {
   readonly id: number;
@@ -39,12 +39,12 @@ export interface CadSectorMetadataV8 {
       xz: number;
     };
     readonly recursiveCoverageFactors:
-    | {
-      xy: number;
-      yz: number;
-      xz: number;
-    }
-    | undefined;
+      | {
+          xy: number;
+          yz: number;
+          xz: number;
+        }
+      | undefined;
     readonly fileName: string | null;
     readonly downloadSize: number;
   } | null;

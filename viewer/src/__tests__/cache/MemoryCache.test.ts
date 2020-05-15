@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { MemoryRequestCache } from '../../utilities/cache/MemoryRequestCache';
+import { MemoryRequestCache } from '@/utilities/cache/MemoryRequestCache';
 
 describe('MemoryCache', () => {
   beforeEach(() => {
