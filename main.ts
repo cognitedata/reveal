@@ -1,18 +1,18 @@
 
-import { ThreeModule } from './src/Three/ThreeModule';
-import { ThreeRenderTargetNode } from './src/Three/ThreeRenderTargetNode';
-import { Range3 } from './src/Core/Geometry/Range3';
-import { Range1 } from './src/Core/Geometry/Range1';
-import { WellTrajectoryNode } from "./src/Nodes/Wells/Wells/WellTrajectoryNode";
-import { FloatLogNode } from "./src/Nodes/Wells/Wells/FloatLogNode";
-import { DiscreteLogNode } from "./src/Nodes/Wells/Wells/DiscreteLogNode";
-import { WellNode } from "./src/Nodes/Wells/Wells/WellNode";
-import { WellTrajectory } from './src/Nodes/Wells/Logs/WellTrajectory';
-import { FloatLog } from './src/Nodes/Wells/Logs/FloatLog';
-import { DiscreteLog } from './src/Nodes/Wells/Logs/DiscreteLog';
-import { RootNode } from './src/TreeNodes/RootNode';
-import { AxisNode } from './src/Nodes/AxisNode';
-import { Vector3 } from "./src/Core/Geometry/Vector3";
+import { ThreeModule } from '@/Three/ThreeModule';
+import { ThreeRenderTargetNode } from '@/Three/ThreeRenderTargetNode';
+import { Range3 } from '@/Core/Geometry/Range3';
+import { Range1 } from '@/Core/Geometry/Range1';
+import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
+import { FloatLogNode } from "@/Nodes/Wells/Wells/FloatLogNode";
+import { DiscreteLogNode } from "@/Nodes/Wells/Wells/DiscreteLogNode";
+import { WellNode } from "@/Nodes/Wells/Wells/WellNode";
+import { WellTrajectory } from '@/Nodes/Wells/Logs/WellTrajectory';
+import { FloatLog } from '@/Nodes/Wells/Logs/FloatLog';
+import { DiscreteLog } from '@/Nodes/Wells/Logs/DiscreteLog';
+import { RootNode } from '@/TreeNodes/RootNode';
+import { AxisNode } from '@/Nodes/AxisNode';
+import { Vector3 } from "@/Core/Geometry/Vector3";
 
 main();
 
