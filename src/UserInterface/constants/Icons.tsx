@@ -12,3 +12,7 @@ export const IconTypes = {
   SHOW: "Show",
   STATES: "States",
 }
+
+export const ToolBarActionTypes = {
+  EXPAND: "EXPAND"
+};

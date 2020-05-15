@@ -49,11 +49,11 @@ export default function ExpansionView(props)
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const { subIndex, mainId, title, isExpanded, children } = props;
+  const { subIndex, mainId, title, isExpanded, children, iconIndex } = props;
   return (
     <ExpansionPanel expanded={isExpanded} onChange={(event) =>
     {
-      dispatch(onExpandChange({ mainId, subIndex }))
+      dispatch(onExpandChange({ mainId, subIndex, iconIndex }))
     }}>
       <ExpansionPanelSummary className={classes.expansionSummaryRoot}>
         <div className={classes.expansionSummaryHeader}>

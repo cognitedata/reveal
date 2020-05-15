@@ -67,6 +67,8 @@ body {
     cursor: pointer; }
     .title-bar .tool-bar-icon:hover {
       background-color: lightblue; }
+  .title-bar .icon-selected {
+    background-color: lightblue; }
 
 .MuiInputBase-root {
   height: 1.5rem;

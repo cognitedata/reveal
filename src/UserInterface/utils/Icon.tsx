@@ -59,6 +59,12 @@ export default function getIcon(iconType: string, iconName: string)
         case "Sphere":
           return require("../resources/Icons/PointSymbol/Cube.png");
       }
+    case IconTypes.SHOW:
+      switch (iconName)
+      {
+        case "Label":
+          return require("../resources/Icons/Show/Label.png");
+      }
   }
   return require("../resources/Icons/Actions/Close.png");
 };

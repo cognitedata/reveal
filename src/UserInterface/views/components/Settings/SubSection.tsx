@@ -17,11 +17,9 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-
 export default function SubSection(props: { elements, mainId, subIndex })
 {
   const { elements, mainId, subIndex } = props;
-  console.log(elements);
   const classes = useStyles();
   return <div className={classes.formContainer}>
     {elements.map((element, index) => <Input

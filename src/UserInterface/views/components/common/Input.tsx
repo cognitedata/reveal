@@ -29,15 +29,13 @@ const useStyles = makeStyles((theme: Theme) =>
     formLabel: {
       flex: 1,
       display: "flex",
-      alignItems: "center",
       marginLeft: ".5rem",
       fontSize: ".7rem",
-      fontWeight: 400
+      fontWeight: 400,
     },
     formInput: {
-      flex: 2,
+      flex: 1,
       display: "flex",
-      alignItems: "center",
       position: "relative",
     },
     textInput: {
@@ -48,7 +46,8 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: ".6rem",
       padding: ".1rem",
       flex: 1,
-      fontWeight: 500
+      fontWeight: 500,
+      width: 0
     },
     readOnlyInput: {
       background: "#ffffc4"
@@ -109,17 +108,14 @@ export default function Input(props: { config, index, mainId, subIndex })
       );
       break;
     case "input-group":
-      inputElement = (value.map((val, idx) =>
+      inputElement = value.map((val, idx) =>
         <input
           key={`${mainId}-${subIndex}-group-${idx}`}
-          className={
-            isReadOnly ?
-              `${classes.textInput} ${classes.readOnlyInput}`
-              : classes.textInput}
+          className={`${classes.textInput} ${isReadOnly ? classes.readOnlyInput : ""}`}
           value={val}
           onChange={() => { }}
         >
-        </input>));
+        </input>);
       break;
     case "select":
       inputElement = (
