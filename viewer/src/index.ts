@@ -2,18 +2,16 @@
  * Copyright 2020 Cognite AS
  */
 
-// CAD types
-export { CadModel } from './models/cad/CadModel';
-export { SectorMetadata } from './models/cad/types';
-export { CadRenderHints } from './views/CadRenderHints';
-export { CadLoadingHints } from './models/cad/CadLoadingHints';
+// Everything that is exposed to the user should be defined here
+
+// CAD
+export { CadModel, loadCadModelFromCdf, loadCadModelByUrl } from './dataModels/cad/internal';
+export { SectorMetadata, SectorModelTransformation } from './dataModels/cad/internal/sector/types';
+export { CadRenderHints } from './dataModels/cad/public/CadRenderHints';
+export { CadLoadingHints } from './dataModels/cad/public/CadLoadingHints';
 
 // Point cloud
-export { PointCloudModel } from './models/pointclouds/PointCloudModel';
-
-// Loaders
-export { createPointCloudModel, loadCadModelFromCdf } from './datasources/cognitesdk';
-export { loadCadModelByUrl, createLocalPointCloudModel } from './datasources/local';
+export { PointCloudModel, createPointCloudModel, createLocalPointCloudModel } from './dataModels/pointCloud';
 
 // ThreeJS migration layer
 import * as migration from './migration';

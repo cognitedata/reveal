@@ -3,7 +3,7 @@
  */
 
 import { CogniteClient, InternalId } from '@cognite/sdk';
-import { NodeIdAndTreeIndexMaps } from '../../migration/NodeIdAndTreeIndexMaps';
+import { NodeIdAndTreeIndexMaps } from '../../public/migration/NodeIdAndTreeIndexMaps';
 import { sleep } from '../wait';
 
 jest.mock('@cognite/sdk');

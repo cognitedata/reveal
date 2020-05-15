@@ -2,8 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
-import { ParsedPrimitives } from '../../../workers/types/parser.types';
-import { Sector } from '../../../models/cad/types';
+import { ParsedPrimitives } from '../../../utilities/workers/types/parser.types';
+import { Sector } from '../../../dataModels/cad/internal/sector/types';
 
 export function createEmptyPrimitive(): ParsedPrimitives {
   return {
@@ -30,8 +30,8 @@ export function createEmptyPrimitive(): ParsedPrimitives {
     torusSegmentCollection: new Uint8Array(),
     torusSegmentAttributes: new Map(),
     trapeziumCollection: new Uint8Array(),
-    trapeziumAttributes: new Map(),
-  }
+    trapeziumAttributes: new Map()
+  };
 }
 
 export function createEmptySector(): Sector {

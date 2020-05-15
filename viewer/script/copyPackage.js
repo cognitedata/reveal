@@ -5,12 +5,14 @@ function copyPackage(version) {
   const json = JSON.parse(jsonString);
 
   if(version) {
-    // anything else we should remove?
+    // updating version
     json.version = version;
-    delete json.private;
-    delete json.scripts.publishscript;
-    delete json.scripts.prepublishscript;
+    fs.writeFileSync('./package.json', JSON.stringify(json, null, 2));
   }
+  delete json.private;
+  delete json.scripts.publishscript;
+  delete json.scripts.prepublishscript;
+  delete json.scripts.postpublishscript;
   fs.writeFileSync('./dist/package.json', JSON.stringify(json, null, 2));
 }
 

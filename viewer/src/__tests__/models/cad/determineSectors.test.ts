@@ -6,23 +6,20 @@ import 'jest-extended';
 import * as THREE from 'three';
 import { vec3, mat4 } from 'gl-matrix';
 
-import { SectorMetadata, SectorModelTransformation } from '../../../models/cad/types';
-import { Box3 } from '../../../utils/Box3';
-import { determineSectorsByProximity } from '../../../models/cad/determineSectors';
-import { toThreeMatrix4, fromThreeMatrix, fromThreeVector3 } from '../../../views/threejs/utilities';
-import { LevelOfDetail } from '../../../data/model/LevelOfDetail';
-import { WantedSector } from '../../../data/model/WantedSector';
+import { SectorMetadata, SectorModelTransformation } from '../../../dataModels/cad/internal/sector/types';
+import { Box3 } from '../../../utilities/Box3';
+import { determineSectorsByProximity } from '../../../dataModels/cad/internal/sector/culling/determineSectors';
+import { toThreeMatrix4, fromThreeMatrix, fromThreeVector3 } from '../../../utilities/utilities';
+import { LevelOfDetail } from '../../../dataModels/cad/internal/sector/LevelOfDetail';
+import { WantedSector } from '../../../dataModels/cad/internal/sector/WantedSector';
 import { createSceneFromRoot } from '../../testUtils/createSceneFromRoot';
-import { MaterialManager } from '../../../views/threejs/cad/MaterialManager';
-import { CadModel } from '../../../models/cad/CadModel';
-import {
-  fromCdfToThreeJsCoordinates,
-  fromThreeJsToCdfCoordinates
-} from '../../../views/threejs/cad/fromThreeCameraConfig';
-import { CadNode } from '../../../views/threejs/cad/CadNode';
+import { MaterialManager } from '../../../dataModels/cad/internal/MaterialManager';
+import { CadModel } from '../../../dataModels/cad/internal';
+import { fromCdfToThreeJsCoordinates, fromThreeJsToCdfCoordinates } from '../../../utilities/fromThreeCameraConfig';
+import { CadNode } from '../../../dataModels/cad/internal/CadNode';
 
-jest.mock('../../../views/threejs/cad/CadNode');
-jest.mock('../../../views/threejs/cad/MaterialManager');
+jest.mock('../../../dataModels/cad/internal/CadNode');
+jest.mock('../../../dataModels/cad/internal/MaterialManager');
 const materialManager = new MaterialManager();
 describe('determineSectors', () => {
   const identityTransform: SectorModelTransformation = {

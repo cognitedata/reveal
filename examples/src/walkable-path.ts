@@ -7,7 +7,7 @@ import CameraControls from 'camera-controls';
 import { CogniteClient, HttpError } from '@cognite/sdk';
 import { toThreeVector3, RevealManager, CadNode } from '@cognite/reveal/threejs';
 import { vec3 } from 'gl-matrix';
-import { SectorModelTransformation } from '@cognite/reveal/models/cad/types';
+import { SectorModelTransformation } from '@cognite/reveal';
 import { GUI, GUIController } from 'dat.gui';
 import { getParamsFromURL } from './utils/example-helpers';
 
@@ -143,7 +143,7 @@ function createWalkablePathMeshes(
       mesh.position.y += heightOffset;
       meshes.push(mesh);
     }
-  } catch (error) {}
+  } catch (error) { }
   return meshes;
 }
 

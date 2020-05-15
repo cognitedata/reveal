@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { discardSector } from '../../../../views/threejs/cad/discardSector';
+import { discardSector } from '../../../../dataModels/cad/internal/sector/discardSector';
 import 'jest-extended';
 
 describe('discardSector', () => {

@@ -2,13 +2,13 @@
  * Copyright 2020 Cognite AS
  */
 
-import { Sector } from '../../../../models/cad/types';
-import { createPrimitives } from '../../../../views/threejs/cad/primitives';
+import { Sector } from '../../../../dataModels/cad/internal/sector/types';
+import { createPrimitives } from '../../../../dataModels/cad/internal/rendering/primitives';
 import { createEmptySector } from '../../../models/cad/emptySector';
-import { createMaterials, Materials } from '../../../../views/threejs/cad/materials';
-import { ParsePrimitiveAttribute } from '../../../../workers/types/parser.types';
+import { createMaterials, Materials } from '../../../../dataModels/cad/internal/rendering/materials';
+import { ParsePrimitiveAttribute } from '../../../../utilities/workers/types/parser.types';
 import { InstancedBufferGeometry, LOD, Mesh } from 'three';
-import { RenderMode } from '../../../../views/threejs/materials';
+import { RenderMode } from '../../../../dataModels/cad/internal/rendering/RenderMode';
 
 function createMockAttributes(): Map<string, ParsePrimitiveAttribute> {
   const map = new Map<string, ParsePrimitiveAttribute>();

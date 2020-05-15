@@ -4,11 +4,11 @@
 
 import * as THREE from 'three';
 import { mat4 } from 'gl-matrix';
-import { PointCloudModel } from '../../../../models/pointclouds/PointCloudModel';
-import { createThreeJsPointCloudNode } from '../../../../views/threejs';
-import { FetchPointCloudDelegate } from '../../../../models/pointclouds/delegates';
-import { SectorModelTransformation } from '../../../../models/cad/types';
-import { PotreeGroupWrapper } from '../../../../views/threejs/pointcloud/PotreeGroupWrapper';
+import { PointCloudModel } from '../../../../dataModels/pointCloud/';
+import { createThreeJsPointCloudNode } from '../../../../utilities';
+import { FetchPointCloudDelegate } from '../../../../dataModels/pointCloud/internal/delegates';
+import { SectorModelTransformation } from '../../../../dataModels/cad/internal/sector/types';
+import { PotreeGroupWrapper } from '../../../../dataModels/pointCloud/internal/PotreeGroupWrapper';
 
 describe('createThreeJsPointCloudNode', () => {
   const geometry = {

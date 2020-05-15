@@ -17,11 +17,6 @@ impl ToRenderables for crate::Box3D {
         collections.box_collection.push(Box3D {
             tree_index: self.tree_index as f32,
             color: self.color,
-            size: self.diagonal,
-            center: self.center(),
-            normal: self.normal.into(),
-            rotation_angle: self.rotation_angle,
-            delta: self.delta(),
             instance_matrix,
         });
     }

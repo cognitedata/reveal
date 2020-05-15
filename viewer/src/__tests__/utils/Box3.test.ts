@@ -3,7 +3,7 @@
  */
 
 import { vec3 } from 'gl-matrix';
-import { Box3 } from '../../utils/Box3';
+import { Box3 } from '../../utilities/Box3';
 
 describe('Box3', () => {
   test('containsPoint, unit box', () => {
