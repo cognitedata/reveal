@@ -11,54 +11,34 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseLogSample } from "./BaseLogSample";
+import { Ma } from "../../../Core/PrimitiveClasses/Ma";
 
-export class DiscreteLogSample extends BaseLogSample 
+export class MdSample 
 {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
 
-  public value: number;
+  public md: number;
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(value: number, md: number)
-  {
-    super(md);
-    this.value = value;
-  }
+  public constructor(md = 0) { this.md = md; }
 
   //==================================================
-  // OVERRIDES of MdSample
+  // VIRTUAL METHODS
   //==================================================
 
-  public /*override*/ toString(): string { return `${super.toString()} Value: ${this.value}`; }
-  public /*override*/ sampleText(): string { return `Value: ${this.value}`; }
+  public /*virtual*/ toString(): string { return `Md: ${this.md}`; }
+  public /*virtual*/ sampleText(): string { return ``; }
+  public /*virtual*/ translate(deltaMd: number, isAtMinMd: boolean): void { this.md += deltaMd; }
+  public /*virtual*/ isPickedOnEdge(md: number, margin: number) { return Math.abs(this.md - md) <= margin; }
 
   //==================================================
-  // OVERRIDES of BaseLogSample
+  // STATIC METHODS
   //==================================================
 
-  public /*override*/ get isEmpty(): boolean { return Number.isNaN(this.value); }
-
-  public /*override*/ isEqual(other: BaseLogSample): boolean
-  {
-    const otherSample = other as DiscreteLogSample;
-    if (!otherSample)
-      return false;
-    return this.value === otherSample.value;
-  }
-
-  public /*override*/ copyValueFrom(other: BaseLogSample): void
-  {
-    const otherSample = other as DiscreteLogSample;
-    if (!otherSample)
-      return;
-    this.value = otherSample.value;
-  }
-
-  public /*override*/  clone(): BaseLogSample { return new DiscreteLogSample(this.value, this.md); }
+  public static compareMd(a: MdSample, b: MdSample): number { return Ma.compare(a.md, b.md); }
 }  

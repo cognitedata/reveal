@@ -11,16 +11,17 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseVisualNode } from "../../Core/Nodes/BaseVisualNode";
-import { Vector3 } from "../../Core/Geometry/Vector3";
+import { FloatLog } from "./../Logs/FloatLog";
+import { BaseLogNode } from "./BaseLogNode";
 
-export class WellNode extends BaseVisualNode
+export class FloatLogNode extends BaseLogNode
 {
   //==================================================
-  // FIELDS
+  // INSTANCE PROPERTIES
   //==================================================
 
-  public wellHead = Vector3.newZero;
+  public get data(): FloatLog | null { return this._data as FloatLog; }
+  public set data(value: FloatLog | null) { this._data = value; }
 
   //==================================================
   // CONSTRUCTORS
@@ -32,14 +33,12 @@ export class WellNode extends BaseVisualNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return WellNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === WellNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return BaseLogNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === BaseLogNode.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Well" }
-
-  //public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
+  public /*override*/ get typeName(): string { return "FloatLogNode" }
 }

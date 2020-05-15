@@ -27,7 +27,7 @@ import { PotreeNode } from "../Nodes/PotreeNode";
 import { PotreeThreeView } from "./PotreeThreeView";
 import { SurfaceNode } from '../Nodes/SurfaceNode';
 import { SurfaceThreeView } from './SurfaceThreeView';
-import { WellTrajectoryNode } from "../Nodes/Wells/WellTrajectoryNode";
+import { WellTrajectoryNode } from "../Nodes/Wells/Wells/WellTrajectoryNode";
 import { WellTrajectoryThreeView } from './WellTrajectoryThreeView';
 import { PointsNode } from '../Nodes/PointsNode';
 import { PointsThreeView } from './PointsThreeView';

@@ -15,8 +15,9 @@ import { BaseLogSample } from "../Samples/BaseLogSample";
 import { DiscreteLogSample } from "../Samples/DiscreteLogSample";
 import { BaseLog } from "../Logs/BaseLog";
 import { Range1 } from "../../../Core/Geometry/Range1";
+import { Random } from "../../../Core/PrimitiveClasses/Random";
 
-export abstract class DiscreteLog extends BaseLog
+export class DiscreteLog extends BaseLog
 {
   //==================================================
   // OVERRIDES of BaseLog
@@ -63,4 +64,21 @@ export abstract class DiscreteLog extends BaseLog
         range.add(sample.value);
     }
   }
+
+  //==================================================
+  // INSTANCE METHODS: Operations
+  //==================================================
+
+  public static createByRandom(mdRange: Range1, valueRange: Range1): DiscreteLog
+  {
+    const log = new DiscreteLog();
+    const numSamples = 1000;
+    const mdInc = mdRange.delta / numSamples;
+    let md = mdRange.min;
+
+    for (let k = 0; k < numSamples; k++, md += mdInc)
+      log.samples.push(new DiscreteLogSample(Random.getInt(valueRange), md));
+    return log;
+  }
+
 }  

@@ -11,54 +11,36 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseLogSample } from "./BaseLogSample";
+import { BaseVisualNode } from "../../../Core/Nodes/BaseVisualNode";
+import { BaseLog } from "./../Logs/BaseLog";
+import { WellNode } from "./WellNode";
 
-export class DiscreteLogSample extends BaseLogSample 
+export abstract class BaseLogNode extends BaseVisualNode
 {
   //==================================================
-  // INSTANCE FIELDS
+  // FIELDS
   //==================================================
 
-  public value: number;
+  protected _data: BaseLog | null = null;
+
+  //==================================================
+  // INSTANCE PROPERTIES
+  //==================================================
+
+  protected get data(): BaseLog | null { return this._data; }
+  protected set data(value: BaseLog | null) { this._data = value; }
+  public get well(): WellNode | null { return this.getAncestorByType(WellNode); }
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(value: number, md: number)
-  {
-    super(md);
-    this.value = value;
-  }
+  public constructor() { super(); }
 
   //==================================================
-  // OVERRIDES of MdSample
+  // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ toString(): string { return `${super.toString()} Value: ${this.value}`; }
-  public /*override*/ sampleText(): string { return `Value: ${this.value}`; }
-
-  //==================================================
-  // OVERRIDES of BaseLogSample
-  //==================================================
-
-  public /*override*/ get isEmpty(): boolean { return Number.isNaN(this.value); }
-
-  public /*override*/ isEqual(other: BaseLogSample): boolean
-  {
-    const otherSample = other as DiscreteLogSample;
-    if (!otherSample)
-      return false;
-    return this.value === otherSample.value;
-  }
-
-  public /*override*/ copyValueFrom(other: BaseLogSample): void
-  {
-    const otherSample = other as DiscreteLogSample;
-    if (!otherSample)
-      return;
-    this.value = otherSample.value;
-  }
-
-  public /*override*/  clone(): BaseLogSample { return new DiscreteLogSample(this.value, this.md); }
-}  
+  public /*override*/ get className(): string { return BaseLogNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === BaseLogNode.name || super.isA(className); }
+}
