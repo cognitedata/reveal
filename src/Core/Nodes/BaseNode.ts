@@ -26,6 +26,7 @@ import { Changes } from "../Views/Changes";
 import { Range3 } from "../Geometry/Range3";
 import { CheckBoxState } from "../Enums/CheckBoxState";
 import { Target } from "../Interfaces/Target";
+import { Util } from "../PrimitiveClasses/Util";
 
 export abstract class BaseNode extends Identifiable
 {
@@ -41,6 +42,7 @@ export abstract class BaseNode extends Identifiable
 
   private _color: color | undefined = undefined;
   private _name: string | undefined = undefined;
+  private _isExpanded = false;
 
   private _isActive: boolean = false;
   private _isInitialized: boolean = false;
@@ -69,53 +71,61 @@ export abstract class BaseNode extends Identifiable
   public /*override*/ toString(): string { return this.getDebugString(); }
 
   //==================================================
-  // VIRTUAL METHODS
+  // VIRTUAL METHODS: Name
   //==================================================
 
   public abstract get typeName(): string;
   public /*virtual*/ set name(value: string) { this._name = value; }
   public /*virtual*/ get name(): string { if (this._name === undefined) this._name = this.generateNewName(); return this._name; }
   public /*virtual*/ get canChangeName(): boolean { return true; }
+  public /*virtual*/ get nameExtension(): string { return name; }
+
+  //==================================================
+  // VIRTUAL METHODS: Label
+  //==================================================
+
+  public  /*virtual*/ get isVisibleInTreeControl(): boolean { return true; } // If false, the icon and it children is not shown in the tree control
+  public /*virtual*/ get labelColor(): color { return Colors.black; }
+  public  /*virtual*/ get isLabelInBold(): boolean { return this.isActive; } // true shows the label in bold font
+  public  /*virtual*/ get isLabelInItalic(): boolean { return !this.canBeDeleted; } // true shows the label in italic font
+
+  public get label(): string // This is the text shown in the tree control
+  {
+    const nameExtension = this.nameExtension;
+    if (Util.isEmpty(nameExtension))
+      return name;
+    return `${name} [${nameExtension}]`;
+  }
+
+  //==================================================
+  // VIRTUAL METHODS: Color
+  //==================================================
 
   public /*virtual*/ get color(): color { if (this._color === undefined) this._color = this.generateNewColor(); return this._color; }
   public /*virtual*/ set color(value: color) { this._color = value; }
   public /*virtual*/ get canChangeColor() { return true; }
 
+  //==================================================
+  // VIRTUAL METHODS: Active
+  //==================================================
+
   public /*virtual*/ get isActive(): boolean { return this._isActive; }
   public /*virtual*/ set isActive(value: boolean) { this._isActive = value; }
   public /*virtual*/ get canBeActive(): boolean { return false; }
 
-  protected /*virtual*/ initializeCore(): void { }
-  protected /*virtual*/ notifyCore(args: NodeEventArgs): void { }
+  //==================================================
+  // VIRTUAL METHODS: Appearance in the explorer
+  //==================================================
 
-  protected /*virtual*/ removeInteractiveCore(): void { }
+  public  /*virtual*/ get canBeDeleted(): boolean { return true; }
 
   public  /*virtual*/ canBeChecked(target: Target | null): boolean { return true; }
   public  /*virtual*/ isFilter(target: Target | null): boolean { return false; }
   public  /*virtual*/ isRadio(target: Target | null): boolean { return false; }
 
-  protected /*virtual*/ get activeTargetIdAccessor(): TargetIdAccessor | null
-  {
-    const root = this.root;
-    return root ? root.activeTargetIdAccessor : null;
-  }
-
-  public /*virtual*/ getDebugString(): string
-  {
-    let result = this.name;
-    result += cocatinate("typeName", this.typeName);
-    result += cocatinate("className", this.className);
-    if (this.canChangeColor)
-      result += cocatinate("color", this.color);
-    result += cocatinate("id", this.uniqueId.isEmpty ? "" : (this.uniqueId.toString().substring(0, 6) + "..."));
-    if (this.isActive)
-      result += cocatinate("active");
-    if (this.renderStyles.length > 0)
-      result += cocatinate("renderStyles", this.renderStyles.length);
-    return result;
-  }
-
-  public /*virtual*/ get boundingBox(): Range3 | undefined { return undefined; }
+  //==================================================
+  // VIRTUAL METHODS: Visibility
+  //==================================================
 
   public /*virtual*/ getCheckBoxState(target?: Target | null): CheckBoxState
   {
@@ -154,6 +164,60 @@ export abstract class BaseNode extends Identifiable
     return CheckBoxState.Some;
   }
 
+  public /*virtual*/ setVisibleInteractive(visible: boolean, target?: Target | null): void
+  {
+    if (!target)
+      target = this.activeTarget;
+    if (!target)
+      return;
+    const checkBoxState = this.getCheckBoxState();
+    if (checkBoxState === CheckBoxState.Never)
+      return;
+    if (checkBoxState === CheckBoxState.None && !this.canBeChecked)
+      return;
+    for (const child of this.children)
+      child.setVisibleInteractive(visible, target);
+  }
+
+  public toogleVisibleInteractive(): void // Use this when clicking on the checkbox in the three control
+  {
+    const checkBoxState = this.getCheckBoxState();
+    if (checkBoxState === CheckBoxState.Never)
+      return;
+    if (checkBoxState === CheckBoxState.None)
+      this.setVisibleInteractive(true);
+    else
+      this.setVisibleInteractive(false);
+  }
+
+  //==================================================
+  // VIRTUAL METHODS: Others
+  //==================================================
+
+  protected /*virtual*/ initializeCore(): void { }
+  protected /*virtual*/ notifyCore(args: NodeEventArgs): void { }
+  protected /*virtual*/ removeInteractiveCore(): void { }
+  protected /*virtual*/ get activeTargetIdAccessor(): TargetIdAccessor | null
+  {
+    const root = this.root;
+    return root ? root.activeTargetIdAccessor : null;
+  }
+
+  public /*virtual*/ getDebugString(): string
+  {
+    let result = this.name;
+    result += cocatinate("typeName", this.typeName);
+    result += cocatinate("className", this.className);
+    if (this.canChangeColor)
+      result += cocatinate("color", this.color);
+    result += cocatinate("id", this.uniqueId.isEmpty ? "" : (this.uniqueId.toString().substring(0, 6) + "..."));
+    if (this.isActive)
+      result += cocatinate("active");
+    if (this.renderStyles.length > 0)
+      result += cocatinate("renderStyles", this.renderStyles.length);
+    return result;
+  }
+
   //==================================================
   // VIRTUAL METHODS: Draw styles
   //==================================================
@@ -163,6 +227,41 @@ export abstract class BaseNode extends Identifiable
   public /*virtual*/ get renderStyleResolution(): RenderStyleResolution { return RenderStyleResolution.Unique; }
   public /*virtual*/ get renderStyleRoot(): BaseNode | null { return null; } // To be overridden
   public /*override*/ supportsColorType(colorType: ColorType): boolean { return true; } // To be overridden
+
+  //==================================================
+  // INSTANCE METHODS: Expand
+  //==================================================
+
+  public get isExpanded(): boolean { return this._isExpanded; }
+  public set isExpanded(value: boolean) { this._isExpanded = value; }
+
+  public toggleExpandInteractive() // Use this when clicking on the expand marker in the three control
+  {
+    this.setExpandedInteractive(!this.isExpanded);
+  }
+
+  public setExpandedInteractive(value: boolean)
+  {
+    if (this.isExpanded === value)
+      return false;
+
+    if (!this.canBeExpanded)
+      return false;
+
+    this.isExpanded = value;
+    this.notify(new NodeEventArgs(Changes.expanded));
+    return true;
+  }
+
+  public canBeExpanded(): boolean // if true show expander marker
+  {
+    for (const child of this.children)
+    {
+      if (child.isVisibleInTreeControl)
+        return true;
+    }
+    return false;
+  }
 
   //==================================================
   // INSTANCE PROPERTIES: Child-Parent relationship

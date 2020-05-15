@@ -46,20 +46,13 @@ export class Ma
 
   public static isInc(tick: number, inc: number): boolean { return Ma.isInt(tick / inc); }
 
-  public static compare(a: number, b: number): number
-  {
-    if (a > b)
-      return 1;
-    if (a < b)
-      return -1;
-    return 0;
-  }
 
   //==================================================
-  // STATIC METHODS: 
+  // STATIC METHODS: Returning a number
   //==================================================
 
   public static sign(value: number): number { return value < 0 ? -1 : 1; }
+  public static strickSign(value: number): number { return value == 0 ? 0 : Ma.sign(value); }
   public static square(value: number): number { return value * value; }
 
   public static roundInc(inc: number): number
@@ -129,6 +122,24 @@ export class Ma
     value *= delta;
     return value;
   }
+
+  //==================================================
+  // STATIC METHODS: Comparing
+  //==================================================
+
+  public static compare(a: number, b: number): number
+  {
+    if (a > b)
+      return 1;
+    if (a < b)
+      return -1;
+    return 0;
+  }
+
+  //==================================================
+  // STATIC METHODS: Search
+  //==================================================
+
 
   public static binarySearch<T>(array: T[], element: T, compare: Function): number
   {
