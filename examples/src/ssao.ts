@@ -31,7 +31,7 @@ async function main() {
   }
   scene.add(model);
 
-  const effect = new SsaoEffect();
+  const effect = new reveal.utilities.SsaoEffect();
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#444');
   renderer.setSize(window.innerWidth, window.innerHeight);

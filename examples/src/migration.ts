@@ -26,7 +26,7 @@ async function main() {
     showHelpers: false
   };
 
-  const boxClipper = new BoundingBoxClipper(
+  const boxClipper = new reveal.utilities.BoundingBoxClipper(
     new THREE.Box3(
       new THREE.Vector3(
         slicingParams.x - slicingParams.width / 2,
