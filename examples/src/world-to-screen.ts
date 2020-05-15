@@ -4,8 +4,7 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { CadNode, RevealManager, ModelNodeAppearance, intersectCadNodes } from '@cognite/reveal';
-import { HtmlOverlayHelper } from '@cognite/reveal/utilities';
+import * as reveal from '@cognite/reveal';
 import { MOUSE } from 'three';
 import { getParamsFromURL } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
@@ -29,11 +28,11 @@ async function main() {
   document.body.appendChild(canvas);
 
   let modelsNeedUpdate = true;
-  const revealManager = new RevealManager(client, () => {
+  const revealManager = new reveal.RevealManager(client, () => {
     modelsNeedUpdate = true;
   });
 
-  const nodeAppearance: ModelNodeAppearance = {
+  const nodeAppearance: reveal.ModelNodeAppearance = {
     color(treeIndex: number) {
       if (treeIndex === pickedNode) {
         return [0, 255, 255, 255];
@@ -41,7 +40,7 @@ async function main() {
       return undefined;
     }
   };
-  let model: CadNode;
+  let model: reveal.CadNode;
   if (modelUrl) {
     model = await revealManager.addModelFromUrl(modelUrl, nodeAppearance);
   } else if (modelRevision) {
@@ -62,7 +61,7 @@ async function main() {
 
   const { htmlElement, paragraph } = createHtmlElements();
   document.body.appendChild(htmlElement);
-  const htmlOverlayHelper = new HtmlOverlayHelper();
+  const htmlOverlayHelper = new reveal.utilities.HtmlOverlayHelper();
 
   const clock = new THREE.Clock();
   const render = () => {
@@ -90,7 +89,7 @@ async function main() {
     };
     // Pick in Reveal
     const revealPickResult = (() => {
-      const intersections = intersectCadNodes([model], { renderer, camera, coords });
+      const intersections = reveal.intersectCadNodes([model], { renderer, camera, coords });
       if (intersections.length === 0) {
         return;
       }

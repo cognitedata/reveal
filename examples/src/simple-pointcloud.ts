@@ -4,13 +4,11 @@
 
 import * as THREE from 'three';
 import * as reveal from '@cognite/reveal';
+import { CogniteClient } from '@cognite/sdk';
 
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
 import { vec3 } from 'gl-matrix';
-import { RevealManager } from '@cognite/reveal';
-import { toThreeJsBox3 } from '@cognite/reveal/utilities';
-import { CogniteClient } from '@cognite/sdk';
 import { PotreeGroupWrapper, PotreeNodeWrapper } from '@cognite/reveal/internal';
 import { getParamsFromURL } from './utils/example-helpers';
 
@@ -27,7 +25,7 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const revealManager = new RevealManager(client, () => {});
+  const revealManager = new reveal.RevealManager(client, () => {});
   let model: [PotreeGroupWrapper, PotreeNodeWrapper];
   if (modelUrl) {
     model = await revealManager.addPointCloudFromUrl(modelUrl);
@@ -51,7 +49,7 @@ async function main() {
   {
     // Create a bounding box around the point cloud for debugging
     const bbox = pointCloudNode.boundingBox;
-    const bboxHelper = new THREE.Box3Helper(toThreeJsBox3(new THREE.Box3(), bbox));
+    const bboxHelper = new THREE.Box3Helper(reveal.utilities.toThreeJsBox3(new THREE.Box3(), bbox));
     scene.add(bboxHelper);
   }
 
