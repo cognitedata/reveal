@@ -33,7 +33,7 @@ export abstract class BaseNode extends Identifiable
   // CONSTRUCTORS
   //==================================================
 
-  protected constructor() { super();   }
+  protected constructor() { super(); }
 
   //==================================================
   // INSTANCE FIELDS

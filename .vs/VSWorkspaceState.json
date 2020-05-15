@@ -11,6 +11,6 @@
     "\\src\\Three",
     "\\src\\Three\\Utilities"
   ],
-  "SelectedNode": "\\src\\Core\\Nodes\\PsedoCodeForCheckboxImage.ts",
+  "SelectedNode": "\\src\\Core\\Nodes\\BaseNode.ts",
   "PreviewInSolutionExplorer": false
 }

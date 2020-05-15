@@ -19,6 +19,3 @@ export enum CheckBoxState
   Never, // No checkbox
   Unknown // The state when it is not pre calculated (Not in use)
 }
-
-
-
