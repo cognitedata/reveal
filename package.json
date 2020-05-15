@@ -31,7 +31,7 @@
   "devDependencies": {
     "@cognite/eslint-config": "^1.4.2",
     "@cognite/eslint-plugin": "^1.0.17",
-    "@storybook/preset-create-react-app": "^2.1.1",
+    "@storybook/preset-create-react-app": "^2.1.2",
     "@storybook/react": "^5.3.18",
     "@testing-library/jest-dom": "^5.7.0",
     "@testing-library/react": "^10.0.2",
