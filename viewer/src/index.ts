@@ -14,6 +14,7 @@ export { CadModel, loadCadModelFromCdf, loadCadModelByUrl } from './dataModels/c
 export { SectorMetadata, SectorModelTransformation } from './dataModels/cad/internal/sector/types';
 export { CadRenderHints } from './dataModels/cad/public/CadRenderHints';
 export { CadLoadingHints } from './dataModels/cad/public/CadLoadingHints';
+export { intersectCadNodes } from './dataModels/cad/internal/picking';
 // Point cloud
 export { PointCloudModel, createPointCloudModel, createLocalPointCloudModel } from './dataModels/pointCloud';
 
