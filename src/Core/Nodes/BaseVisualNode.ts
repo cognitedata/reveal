@@ -66,6 +66,16 @@ export abstract class BaseVisualNode extends BaseNode
     return CheckBoxState.Never;
   }
 
+  public /*override*/setVisibleInteractive(visible: boolean, target?: Target | null): void
+  {
+    if (!target)
+      target = this.activeTarget;
+    if (!target)
+      return;
+    if (this.setVisible(visible, target))
+      this.notify(new NodeEventArgs(Changes.visible));
+  }
+
   protected /*override*/ removeInteractiveCore(): void
   {
     this.removeAllViews();
@@ -108,16 +118,6 @@ export abstract class BaseVisualNode extends BaseNode
     if (visible)
       return target.showView(this);
     return target.hideView(this);
-  }
-
-  public setVisibleInteractive(visible: boolean, target?: Target | null): void
-  {
-    if (!target)
-      target = this.activeTarget;
-    if (!target)
-      return;
-    if (this.setVisible(visible, target))
-      this.notify(new NodeEventArgs(Changes.visible));
   }
 
   public removeAllViews(): void

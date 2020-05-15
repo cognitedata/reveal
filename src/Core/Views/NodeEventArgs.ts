@@ -45,7 +45,7 @@ export class NodeEventArgs
   // INSTANCE METHODS: Getters
   //==================================================
 
-  public getChangedDecription(changed: symbol): ChangedDecription | undefined
+  private getChangedDecription(changed: symbol): ChangedDecription | undefined
   {
     if (!this._changes)
       return undefined;
