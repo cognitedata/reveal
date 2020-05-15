@@ -12,19 +12,19 @@
 //=====================================================================================
 
 import * as THREE from 'three';
-import { Colors } from "../../Core/PrimitiveClasses/Colors";
 import { Ma } from "../../Core/PrimitiveClasses/Ma";
-import { NodeEventArgs } from "../../Core/Views/NodeEventArgs";
-import { Range3 } from '../../Core/Geometry/Range3';
-import { Range1 } from '../../Core/Geometry/Range1';
 import { Vector3 } from '../../Core/Geometry/Vector3';
 import { ThreeConverter } from "./../ThreeConverter";
 
-export class TreeLabel 
+export class ThreeLabel 
 {
-  public static createWithPosition(text: string, position: Vector3, along: Vector3, dimension: number, worldHeight: number, white = true): THREE.Sprite | null
+  //==================================================
+  // STATIC METHODS: 
+  //==================================================
+
+  public static createByPositionAndDirection(text: string, position: Vector3, along: Vector3, dimension: number, worldHeight: number, white = true): THREE.Sprite | null
   {
-    const label = TreeLabel.create(text, worldHeight, white);
+    const label = ThreeLabel.create(text, worldHeight, white);
     if (!label)
       return null;
 
@@ -38,6 +38,16 @@ export class TreeLabel
     return label;
   }
 
+  public static createByPositionAndAlignment(text: string, position: Vector3, alignment: number, worldHeight: number, white = true): THREE.Sprite | null
+  {
+    const sprite = ThreeLabel.create(text, worldHeight, white);
+    if (!sprite)
+      return null;
+
+    sprite.position.copy(ThreeConverter.toVector(position));
+    ThreeLabel.align(sprite, alignment);
+    return sprite;
+  }
 
   public static create(text: string, worldHeight: number, white = true): THREE.Sprite | null
   {
@@ -85,5 +95,54 @@ export class TreeLabel
     const sprite = new THREE.Sprite(spriteMaterial);
     sprite.scale.set(worldHeight * canvas.width / canvas.height, worldHeight, 1);
     return sprite;
+  }
+
+  //==================================================
+  // STATIC METHODS: Helpers
+  //==================================================
+
+  private static align(sprite: THREE.Sprite, alignment: number): void
+  {
+    //     alignment
+    //   6     7     8
+    //   3     4     5
+    //   0     1     2 
+
+    // If alignment == 0:
+    //    Text Here
+    //   +          <--- Point
+    //
+    // If alignment == 8
+    //            + <--- Point
+    //   Text Here
+
+    switch (alignment)
+    {
+      case 0:
+      case 3:
+      case 6:
+        sprite.position.x -= sprite.scale.x / 2;
+        break;
+
+      case 2:
+      case 5:
+      case 8:
+        sprite.position.x += sprite.scale.x / 2;
+        break;
+    }
+    switch (alignment)
+    {
+      case 0:
+      case 1:
+      case 2:
+        sprite.position.z += sprite.scale.y / 2;
+        break;
+
+      case 6:
+      case 7:
+      case 8:
+        sprite.position.z -= sprite.scale.y / 2;
+        break;
+    }
   }
 }

@@ -11,12 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-// tslint:disable-next-line: ban-types
-export type Class<T> = Function & { prototype: T };
-
-export function isInstanceOf<T>(value: any, classType: Class<T>): value is T
+export enum CheckBoxState
 {
-  return value instanceof classType;
+  All, // Checked
+  Some, // Checked with faded color
+  None, // Empty checkbox
+  Never, // No checkbox
+  Unknown // The state when it is not pre calculated (Not in use)
 }
-
-

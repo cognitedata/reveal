@@ -179,8 +179,6 @@ export abstract class BaseTargetNode extends BaseNode implements Target
     for (const view of this.viewsShownHere.list) 
     {
       const node = view.getNode();
-      console.log(node.toString());
-      console.log(view);
       if (!node)
         continue;
 

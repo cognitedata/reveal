@@ -25,13 +25,13 @@ export function main()
     const well = new WellNode();
     wellTree.addChild(well);
 
-    const wellHead = Vector3.getRandom(Range3.newTest);
-    wellHead.z = 0;
+    well.wellHead = Vector3.getRandom(Range3.newTest);
+    well.wellHead.z = 0;
 
     for (let j = 0; j < 5; j++)
     {
       const wellTrajectory = new WellTrajectoryNode();
-      wellTrajectory.data = WellTrajectory.createByWellHead(wellHead);
+      wellTrajectory.data = WellTrajectory.createByWellHead(well.wellHead);
       well.addChild(wellTrajectory);
     }
   }

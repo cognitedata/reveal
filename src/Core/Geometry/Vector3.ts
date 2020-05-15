@@ -1,5 +1,6 @@
 import { Range3 } from "./Range3";
 import { Random } from "../PrimitiveClasses/Random";
+import { Ma } from "../PrimitiveClasses/Ma";
 
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
@@ -38,7 +39,7 @@ export class Vector3
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(x: number, y: number, z: number = 0)
+  public constructor(x: number, y: number, z = 0)
   {
     this.x = x;
     this.y = y;
@@ -63,6 +64,8 @@ export class Vector3
   public toString(): string { return `(${this.x}, ${this.y}, ${this.z})`; }
 
   public dot(other: Vector3): number { return this.x * other.x + this.y * other.y + this.z * other.z; }
+  public squareDistance(other: Vector3): number { return Ma.square(this.x - other.x) + Ma.square(this.y - other.y) + Ma.square(this.z - other.z); }
+  public distance(other: Vector3): number { return Math.sqrt(this.squareDistance(other)); }
 
   public getAt(dimension: number): number
   {
@@ -89,7 +92,7 @@ export class Vector3
     }
   }
 
-  public set(x: number, y: number, z: number = 0): void
+  public set(x: number, y: number, z = 0): void
   {
     this.x = x;
     this.y = y;

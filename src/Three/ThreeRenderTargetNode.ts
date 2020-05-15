@@ -13,7 +13,6 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-//import { OrbitControls } from 'three-orbitcontrols-ts';  // npm install --save three-orbitcontrols-ts
 
 const Stats = require('stats-js');
 
@@ -70,7 +69,6 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   }
 
   public get activeControls(): CameraControls | null
-  //public get activeControls(): OrbitControls | null
   {
     const cameraNode = this.activeCameraNode;
     if (!cameraNode)
@@ -170,7 +168,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     controls.fitTo(ThreeConverter.toBox(boundingBox));
     // The below stuff doesn't work!!
     // controls.rotate(0, 0.8);
-    //controls.setLookAt(0, 0, 0);
+    // controls.setLookAt(boundingBox.x.center, boundingBox.y.center, boundingBox.z.center, 0, 0, 0);
     controls.moveTo(boundingBox.x.center, boundingBox.y.center, boundingBox.z.center);
   }
 

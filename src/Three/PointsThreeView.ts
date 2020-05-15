@@ -50,7 +50,7 @@ export class PointsThreeView extends BaseGroupThreeView
   public calculateBoundingBoxCore(): Range3 | undefined
   {
     const boundingBox = this.node.boundingBox;
-    if (boundingBox == undefined)
+    if (!boundingBox)
       return undefined;
 
     boundingBox.expandByMargin(this.style.size);

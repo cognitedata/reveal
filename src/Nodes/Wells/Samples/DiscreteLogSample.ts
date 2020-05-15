@@ -11,35 +11,53 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseVisualNode } from "../../Core/Nodes/BaseVisualNode";
-import { Vector3 } from "../../Core/Geometry/Vector3";
+import { BaseLogSample } from "./BaseLogSample";
 
-export class WellNode extends BaseVisualNode
+export class DiscreteLogSample extends BaseLogSample 
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
-  public wellHead = Vector3.newZero;
+  public value: number;
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor() { super(); }
+  public constructor(value: number, md: number)
+  {
+    super(md);
+    this.value = value;
+  }
 
   //==================================================
-  // OVERRIDES of Identifiable
+  // VIRTUAL PROPERTIES
   //==================================================
 
-  public /*override*/ get className(): string { return WellNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === WellNode.name || super.isA(className); }
+  public /*override*/ toString(): string { return `${super.toString()} Value: ${this.value}`; }
+  public /*override*/ sampleText(): string { return `Value: ${this.value}`; }
+  public /*override*/ get isEmpty(): boolean { return Number.isNaN(this.value); }
 
   //==================================================
-  // OVERRIDES of BaseNode
+  // VIRTUAL METHODS
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Well" }
+  public /*override*/ isEqual(other: BaseLogSample): boolean
+  {
+    const otherSample = other as DiscreteLogSample;
+    if (!otherSample)
+      return false;
+    return this.value === otherSample.value;
+  }
 
-  //public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
-}
+  public /*override*/ copyValueFrom(other: BaseLogSample): void
+  {
+    const otherSample = other as DiscreteLogSample;
+    if (!otherSample)
+      return;
+    this.value = otherSample.value;
+  }
+
+  public /*override*/  clone(): BaseLogSample { return new DiscreteLogSample(this.value, this.md); }
+}  

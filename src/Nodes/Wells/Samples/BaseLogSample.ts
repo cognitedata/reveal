@@ -1,4 +1,4 @@
-//=====================================================================================  
+//=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
 // multiple dataset in multiple viewers.
@@ -11,12 +11,21 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-// tslint:disable-next-line: ban-types
-export type Class<T> = Function & { prototype: T };
+import { BaseWellSample } from "./BaseWellSample";
 
-export function isInstanceOf<T>(value: any, classType: Class<T>): value is T
+export abstract class BaseLogSample extends BaseWellSample 
 {
-  return value instanceof classType;
-}
+  //==================================================
+  // VIRTUAL PROPERTIES
+  //==================================================
 
+  public abstract get isEmpty(): boolean;
 
+  //==================================================
+  // VIRTUAL METHODS
+  //==================================================
+
+  public abstract isEqual(other: BaseLogSample): boolean;
+  public abstract copyValueFrom(other: BaseLogSample): void;
+  public abstract clone(): BaseLogSample;
+}  
