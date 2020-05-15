@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { TriangleMesh } from '../sector/types';
-import { disposeAttributeArrayOnUpload } from '../../../../utilities/disposeAttributeArrayOnUpload';
+import { disposeAttributeArrayOnUpload } from '@/utilities/disposeAttributeArrayOnUpload';
 
 export function createTriangleMeshes(
   triangleMeshes: TriangleMesh[],

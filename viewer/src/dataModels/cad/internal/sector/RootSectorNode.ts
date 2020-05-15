@@ -4,7 +4,7 @@
 
 import { buildScene } from '../buildScene';
 import { SectorNode } from './SectorNode';
-import { toThreeMatrix4 } from '../../../../utilities/utilities';
+import { toThreeMatrix4 } from '@/utilities';
 import { CadModel } from '..';
 
 export class RootSectorNode extends SectorNode {

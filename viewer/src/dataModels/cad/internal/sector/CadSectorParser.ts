@@ -5,9 +5,9 @@
 import { OperatorFunction, merge } from 'rxjs';
 import { SectorQuads } from './types';
 import { publish, filter, flatMap, map } from 'rxjs/operators';
-import { WorkerPool } from '../../../../utilities/workers/WorkerPool';
-import { ParseSectorResult, ParseCtmResult, ParseQuadsResult } from '../../../../utilities/workers/types/parser.types';
-import { ParserWorker } from '../../../../utilities/workers/parser.worker';
+import { WorkerPool } from '@/utilities/workers/WorkerPool';
+import { ParseSectorResult, ParseCtmResult, ParseQuadsResult } from '@/utilities/workers/types/parser.types';
+import { ParserWorker } from '@/utilities/workers/parser.worker';
 
 export class CadSectorParser {
   private readonly workerPool: WorkerPool;

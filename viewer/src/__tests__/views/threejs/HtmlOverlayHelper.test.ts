@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { HtmlOverlayHelper } from '../../../utilities/HtmlOverlayHelper';
+import { HtmlOverlayHelper } from '@/utilities/HtmlOverlayHelper';
 import * as THREE from 'three';
 
 describe('HtmlOverlayHelper', () => {

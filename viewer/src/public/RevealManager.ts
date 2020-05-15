@@ -4,18 +4,18 @@
 
 import { RevealManagerBase, RevealOptions } from './RevealManagerBase';
 import { CogniteClient } from '@cognite/sdk';
-import { CadSectorParser } from '../dataModels/cad/internal/sector/CadSectorParser';
-import { SimpleAndDetailedToSector3D } from '../dataModels/cad/internal/sector/SimpleAndDetailedToSector3D';
-import { CachedRepository } from '../dataModels/cad/internal/sector/CachedRepository';
-import { MaterialManager } from '../dataModels/cad/internal/MaterialManager';
-import { CadManager } from '../dataModels/cad/internal/CadManager';
-import { CadModelMetadataRepository } from '../dataModels/cad/internal/CadModelMetadataRepository';
-import { DefaultCadTransformation } from '../dataModels/cad/internal/DefaultCadTransformation';
-import { CadMetadataParser } from '../dataModels/cad/internal/CadMetadataParser';
-import { CogniteClient3dExtensions } from '../utilities/networking/CogniteClient3dExtensions';
-import { CadModelFactory } from '../dataModels/cad/internal/CadModelFactory';
-import { CadModelUpdateHandler } from '../dataModels/cad/internal/CadModelUpdateHandler';
-import { ProximitySectorCuller } from '../dataModels/cad/internal/sector/culling/ProximitySectorCuller';
+import { CadSectorParser } from '@/dataModels/cad/internal/sector/CadSectorParser';
+import { SimpleAndDetailedToSector3D } from '@/dataModels/cad/internal/sector/SimpleAndDetailedToSector3D';
+import { CachedRepository } from '@/dataModels/cad/internal/sector/CachedRepository';
+import { MaterialManager } from '@/dataModels/cad/internal/MaterialManager';
+import { CadManager } from '@/dataModels/cad/internal/CadManager';
+import { CadModelMetadataRepository } from '@/dataModels/cad/internal/CadModelMetadataRepository';
+import { DefaultCadTransformation } from '@/dataModels/cad/internal/DefaultCadTransformation';
+import { CadMetadataParser } from '@/dataModels/cad/internal/CadMetadataParser';
+import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
+import { CadModelFactory } from '@/dataModels/cad/internal/CadModelFactory';
+import { CadModelUpdateHandler } from '@/dataModels/cad/internal/CadModelUpdateHandler';
+import { ProximitySectorCuller } from '@/dataModels/cad/internal/sector/culling/ProximitySectorCuller';
 
 // First iteration of a RevealManager. Currently tailored to examples but should be tailored to external usecase.
 // Should move to example-helpers.ts as a function without extending

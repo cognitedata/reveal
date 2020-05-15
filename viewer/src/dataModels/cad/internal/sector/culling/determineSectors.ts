@@ -6,14 +6,15 @@
 // pulling it in just for this reason
 import * as THREE from 'three';
 import { SectorMetadata } from '../types';
-import { traverseDepthFirst, traverseUpwards } from '../../../../../utilities/traversal';
-import { toThreeMatrix4, toThreeVector3 } from '../../../../../utilities/utilities';
+import { traverseDepthFirst, traverseUpwards } from '@/utilities/traversal';
+import { toThreeMatrix4, toThreeVector3 } from '@/utilities';
 import { mat4 } from 'gl-matrix';
-import { defaultLoadingHints as defaultCadLoadingHints, CadLoadingHints } from '../../../public/CadLoadingHints';
+import { defaultLoadingHints, CadLoadingHints } from '@/dataModels/cad/public/CadLoadingHints';
 import { WantedSector } from '../WantedSector';
 import { LevelOfDetail } from '../LevelOfDetail';
-import { CameraConfig } from '../../../../../utilities/fromThreeCameraConfig';
-import { CadModelMetadata } from '../..';
+import { CameraConfig } from '@/utilities/fromThreeCameraConfig';
+import { CadModelMetadata } from '@/dataModels/cad/public/CadModelMetadata';
+
 
 const degToRadFactor = Math.PI / 180;
 
@@ -28,7 +29,7 @@ const determineSectorsPreallocatedVars = {
 
 export interface DetermineSectorsByProximityInput {
   cameraConfig: CameraConfig;
-  cadModels: CadModel[];
+  cadModels: CadModelMetadata[];
   loadingHints: CadLoadingHints;
 }
 /*
@@ -43,7 +44,7 @@ export interface DetermineSectorsByProximityInput {
 */
 
 export function determineSectorsByProximity(params: DetermineSectorsByProximityInput): WantedSector[] {
-  const hints = { ...defaultCadLoadingHints, ...(params.loadingHints || {}) };
+  const hints = { ...defaultLoadingHints, ...(params.loadingHints || {}) };
 
   const { cameraPosition, cameraModelMatrix, projectionMatrix, cameraFov } = params.cameraConfig;
   const distanceToCameraVars = {
@@ -108,11 +109,11 @@ export function determineSectorsByProximity(params: DetermineSectorsByProximityI
   return result;
 }
 
-export function determineSectorsFromDetailed(cadModel: CadModelMetadata, requestedDetailed: Set<number>): WantedSector[] {
+export function determineSectorsFromDetailed(cadModelMetadata: CadModelMetadata, requestedDetailed: Set<number>): WantedSector[] {
   const simple: number[] = [];
   const detailed: number[] = [];
   const wanted: WantedSector[] = [];
-  const scene = cadModel.scene;
+  const scene = cadModelMetadata.scene;
 
   for (const sectorId of requestedDetailed) {
     const sector = scene.getSectorById(sectorId);
@@ -124,9 +125,9 @@ export function determineSectorsFromDetailed(cadModel: CadModelMetadata, request
         return false;
       }
       wanted.push({
-        blobUrl: cadModel.blobUrl,
-        cadModelTransformation: cadModel.modelTransformation,
-        scene: cadModel.scene,
+        blobUrl: cadModelMetadata.blobUrl,
+        cadModelTransformation: cadModelMetadata.modelTransformation,
+        scene: cadModelMetadata.scene,
         levelOfDetail: LevelOfDetail.Detailed,
         metadata: other
       });
@@ -143,9 +144,9 @@ export function determineSectorsFromDetailed(cadModel: CadModelMetadata, request
     if (sector.facesFile.fileName) {
       simple.push(sector.id);
       wanted.push({
-        blobUrl: cadModel.blobUrl,
-        cadModelTransformation: cadModel.modelTransformation,
-        scene: cadModel.scene,
+        blobUrl: cadModelMetadata.blobUrl,
+        cadModelTransformation: cadModelMetadata.modelTransformation,
+        scene: cadModelMetadata.scene,
         levelOfDetail: LevelOfDetail.Simple,
         metadata: sector
       });
@@ -156,9 +157,9 @@ export function determineSectorsFromDetailed(cadModel: CadModelMetadata, request
   traverseDepthFirst(scene.root, sector => {
     if (!detailed.includes(sector.id) && !simple.includes(sector.id)) {
       wanted.push({
-        blobUrl: cadModel.blobUrl,
-        cadModelTransformation: cadModel.modelTransformation,
-        scene: cadModel.scene,
+        blobUrl: cadModelMetadata.blobUrl,
+        cadModelTransformation: cadModelMetadata.modelTransformation,
+        scene: cadModelMetadata.scene,
         levelOfDetail: LevelOfDetail.Discarded,
         metadata: sector
       });

@@ -3,9 +3,9 @@
  */
 
 import nock from 'nock';
-import { CogniteClient3dExtensions } from '../../utilities/networking/CogniteClient3dExtensions';
+import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
 import { CogniteClient } from '@cognite/sdk';
-import { ModelOutputList } from '../../utilities/networking/ModelOutputList';
+import { ModelOutputList } from '@/utilities/networking/ModelOutputList';
 
 describe('CogniteClient3dExtensions', () => {
   const appId = 'reveal-CogniteClient3dV2Extensions-test';

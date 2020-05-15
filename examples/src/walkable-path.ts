@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import { CogniteClient, HttpError } from '@cognite/sdk';
-import { toThreeVector3, RevealManager, CadNode } from '@cognite/reveal/threejs';
+import * as reveal from '@cognite/reveal';
 import { vec3 } from 'gl-matrix';
 import { SectorModelTransformation } from '@cognite/reveal';
 import { GUI, GUIController } from 'dat.gui';
@@ -44,11 +44,11 @@ async function main() {
   document.body.appendChild(renderer.domElement);
 
   let modelsNeedUpdate = true;
-  const revealManager = new RevealManager(client, () => {
+  const revealManager = new reveal.RevealManager(client, () => {
     modelsNeedUpdate = true;
   });
   let cameraConfig;
-  let cadNode: CadNode;
+  let cadNode: reveal.CadNode;
   if (modelUrl) {
     const model = await revealManager.addModelFromUrl(modelUrl);
     cadNode = model;
@@ -143,7 +143,7 @@ function createWalkablePathMeshes(
       mesh.position.y += heightOffset;
       meshes.push(mesh);
     }
-  } catch (error) { }
+  } catch (error) {}
   return meshes;
 }
 
@@ -160,7 +160,7 @@ function convertToVector3Array(
     for (const segment of item.segments) {
       for (const path of segment.path) {
         vec3.set(vector, path.x, path.y, path.z);
-        pathVectors.push(toThreeVector3(new THREE.Vector3(), vector, modelTransformation));
+        pathVectors.push(reveal.utilities.toThreeVector3(new THREE.Vector3(), vector, modelTransformation));
       }
     }
     paths.push(pathVectors);

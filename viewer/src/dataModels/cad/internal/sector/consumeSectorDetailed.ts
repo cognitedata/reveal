@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { Sector, SectorMetadata } from './types';
-import { toThreeJsBox3 } from '../../../../utilities/utilities';
+import { toThreeJsBox3 } from '@/utilities';
 import { createPrimitives } from '../rendering/primitives';
 import { createTriangleMeshes } from '../rendering/triangleMeshes';
 import { createInstancedMeshes } from '../rendering/instancedMeshes';

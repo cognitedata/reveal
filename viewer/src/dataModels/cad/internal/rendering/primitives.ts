@@ -13,8 +13,8 @@ import {
   nutGeometry
 } from './primitiveGeometries';
 import { Materials } from './materials';
-import { ParsePrimitiveAttribute } from '../../../../utilities/workers/types/parser.types';
-import { disposeAttributeArrayOnUpload } from '../../../../utilities/disposeAttributeArrayOnUpload';
+import { ParsePrimitiveAttribute } from '@/utilities/workers/types/parser.types';
+import { disposeAttributeArrayOnUpload } from '@/utilities/disposeAttributeArrayOnUpload';
 
 export function* createPrimitives(sector: Sector, materials: Materials) {
   const primitives = sector.primitives;

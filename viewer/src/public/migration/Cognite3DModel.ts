@@ -3,17 +3,16 @@
  */
 
 import * as THREE from 'three';
-
-import { Color, SupportedModelTypes } from './types';
-import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
-import { CadModelMetadata } from '../../dataModels/cad/internal';
-import { toThreeJsBox3, CadNode, toThreeMatrix4, ModelNodeAppearance } from '../../utilities';
-import { CadRenderHints } from '../../dataModels/cad/public/CadRenderHints';
-import { CadLoadingHints } from '../../dataModels/cad/public/CadLoadingHints';
-import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { CogniteClient } from '@cognite/sdk';
-import { SectorQuads, Sector } from '../../dataModels/cad/internal/sector/types';
+
+import { CadModelMetadata } from '@/dataModels/cad/internal';
+import { toThreeJsBox3, CadNode, toThreeMatrix4, ModelNodeAppearance } from '@/utilities';
+import { CadRenderHints } from '@/dataModels/cad/public/CadRenderHints';
+import { CadLoadingHints } from '@/dataModels/cad/public/CadLoadingHints';
+import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
+import { Color, SupportedModelTypes } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
+import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 
 export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = SupportedModelTypes.CAD;

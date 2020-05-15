@@ -3,7 +3,9 @@
  */
 
 import * as THREE from 'three';
-import { CadNode, intersectCadNodes } from '../../../../threejs';
+
+import { intersectCadNodes } from '@/dataModels/cad/internal/picking';
+import { CadNode } from '@/dataModels/cad/internal/CadNode';
 
 describe('intersectCadNodes', () => {
   const camera = new THREE.PerspectiveCamera();

@@ -4,7 +4,7 @@
 
 import { LevelOfDetail } from './LevelOfDetail';
 import { SectorQuads, SectorMetadata, Sector } from './types';
-import { ParseSectorResult, ParseCtmResult } from '../../../../utilities/workers/types/parser.types';
+import { ParseSectorResult, ParseCtmResult } from '@/utilities/workers/types/parser.types';
 
 export interface ParsedSector {
   blobUrl: string;

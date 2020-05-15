@@ -3,7 +3,7 @@
  */
 
 import { CadNode } from './CadNode';
-import { pickPixelColor, PickingInput } from '../../../utilities/pickPixelColor';
+import { pickPixelColor, PickingInput } from '@/utilities/pickPixelColor';
 import { RenderMode } from './rendering/RenderMode';
 import * as THREE from 'three';
 

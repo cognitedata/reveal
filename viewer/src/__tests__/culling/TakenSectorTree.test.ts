@@ -2,17 +2,15 @@
  * Copyright 2020 Cognite AS
  */
 
-import { generateSectorTree } from '../testUtils/createSectorMetadata';
-import { TakenSectorTree } from '../../dataModels/cad/internal/sector/culling/TakenSectorTree';
-import { SectorMetadata } from '../../dataModels/cad/internal/sector/types';
+import { TakenSectorTree } from '@/dataModels/cad/internal/sector/culling/TakenSectorTree';
+import { SectorMetadata } from '@/dataModels/cad/internal/sector/types';
+import { PrioritizedWantedSector, DetermineSectorCostDelegate } from '@/dataModels/cad/internal/sector/culling/types';
+import { LevelOfDetail } from '@/dataModels/cad/internal/sector/LevelOfDetail';
+import { CadModelMetadata } from '@/dataModels/cad/internal';
+import { traverseDepthFirst } from '@/utilities/traversal';
+
 import { expectContainsSectorsWithLevelOfDetail } from '../expects';
-import {
-  PrioritizedWantedSector,
-  DetermineSectorCostDelegate
-} from '../../dataModels/cad/internal/sector/culling/types';
-import { LevelOfDetail } from '../../dataModels/cad/internal/sector/LevelOfDetail';
-import { CadModelMetadata } from '../../dataModels/cad/internal';
-import { traverseDepthFirst } from '../../utilities/traversal';
+import { generateSectorTree } from '../testUtils/createSectorMetadata';
 
 type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 type Mutable<T> = { -readonly [P in keyof T]: T[P] };

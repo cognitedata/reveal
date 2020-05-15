@@ -17,7 +17,7 @@ import {
 import { SectorCuller } from './SectorCuller';
 import { TakenSectorTree } from './TakenSectorTree';
 import { PrioritizedWantedSector, DetermineSectorCostDelegate } from './types';
-import { fromThreeMatrix } from '../../../../../utilities/utilities';
+import { fromThreeMatrix } from '@/utilities';
 import { LevelOfDetail } from '../LevelOfDetail';
 import { SectorMetadata } from '../types';
 import { CadModelMetadata } from '../..';

@@ -3,7 +3,7 @@
  */
 
 import nock from 'nock';
-import { loadLocalFileMap } from '../../../../utilities/loadLocalFileMap';
+import { loadLocalFileMap } from '@/utilities/loadLocalFileMap';
 
 describe('loadLocalFileMap', () => {
   const fileMapBody = `734862805\t\t\tweb_node_7_115.f3d

@@ -5,11 +5,11 @@
 import { CogniteClient, IdEither, ItemsResponse } from '@cognite/sdk';
 import { HttpHeaders } from '@cognite/sdk/dist/src/utils/http/basicHttpClient';
 import { File3dFormat } from '../File3dFormat';
-import { CadSceneProvider } from '../../dataModels/cad/internal/CadSceneProvider';
+import { CadSceneProvider } from '@/dataModels/cad/internal/CadSceneProvider';
 import { ModelUrlProvider } from './ModelUrlProvider';
 import { BlobOutputMetadata } from './BlobOutputMetadata';
 import { ModelOutputList } from './ModelOutputList';
-import { CadSectorProvider } from '../../dataModels/cad/internal/sector/CadSectorProvider';
+import { CadSectorProvider } from '@/dataModels/cad/internal/sector/CadSectorProvider';
 
 interface OutputsRequest {
   models: IdEither[];

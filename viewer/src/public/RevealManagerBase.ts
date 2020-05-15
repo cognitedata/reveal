@@ -2,18 +2,18 @@
  * Copyright 2020 Cognite AS
  */
 
-import { createLocalPointCloudModel, createPointCloudModel } from '../dataModels/pointCloud';
+import { createLocalPointCloudModel, createPointCloudModel } from '@/dataModels/pointCloud';
 import { CogniteClient, IdEither } from '@cognite/sdk';
-import { CadNode } from '../dataModels/cad/internal/CadNode';
-import { CadBudget } from '../dataModels/cad/public/CadBudget';
-import { ModelNodeAppearance } from '../dataModels/cad/internal/ModelNodeAppearance';
-import { Sector, SectorQuads } from '../dataModels/cad/internal/sector/types';
-import { MaterialManager } from '../dataModels/cad/internal/MaterialManager';
-import { PotreeGroupWrapper } from '../dataModels/pointCloud/internal/PotreeGroupWrapper';
-import { PotreeNodeWrapper } from '../dataModels/pointCloud/internal/PotreeNodeWrapper';
-import { SectorCuller } from '../dataModels/cad/internal/sector/culling/SectorCuller';
-import { createThreeJsPointCloudNode } from '../dataModels/pointCloud/internal/createThreeJsPointCloudNode';
-import { CadManager } from '../dataModels/cad/internal/CadManager';
+import { CadNode } from '@/dataModels/cad/internal/CadNode';
+import { CadBudget } from '@/dataModels/cad/public/CadBudget';
+import { ModelNodeAppearance } from '@/dataModels/cad/internal/ModelNodeAppearance';
+import { Sector, SectorQuads } from '@/dataModels/cad/internal/sector/types';
+import { MaterialManager } from '@/dataModels/cad/internal/MaterialManager';
+import { PotreeGroupWrapper } from '@/dataModels/pointCloud/internal/PotreeGroupWrapper';
+import { PotreeNodeWrapper } from '@/dataModels/pointCloud/internal/PotreeNodeWrapper';
+import { SectorCuller } from '@/dataModels/cad/internal/sector/culling/SectorCuller';
+import { createThreeJsPointCloudNode } from '@/dataModels/pointCloud/internal/createThreeJsPointCloudNode';
+import { CadManager } from '@/dataModels/cad/internal/CadManager';
 
 export interface RevealOptions {
   nodeAppearance?: ModelNodeAppearance;

@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { traverseDepthFirst, traverseUpwards } from '../../utilities/traversal';
+import { traverseDepthFirst, traverseUpwards } from '@/utilities/traversal';
 
 describe('traversal', () => {
   type Element = {

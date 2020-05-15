@@ -7,8 +7,8 @@ module.exports = {
   moduleDirectories: ['node_modules'],
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   moduleNameMapper: {
-    '^@/(.*)': '<rootDir>/src/$1',
     '\\.(frag|vert)$': '<rootDir>/src/__mocks__/glslMocks.js',
+    '^@/(.*)': '<rootDir>/src/$1',
   },
   coverageDirectory: '../coverage',
   collectCoverageFrom: [
