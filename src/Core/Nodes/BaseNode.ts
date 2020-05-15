@@ -24,6 +24,8 @@ import { ColorType } from "../Enums/ColorType";
 import { Colors } from "../PrimitiveClasses/Colors";
 import { Changes } from "../Views/Changes";
 import { Range3 } from "../Geometry/Range3";
+import { CheckBoxState } from "../Enums/CheckBoxState";
+import { Target } from "../Interfaces/Target";
 
 export abstract class BaseNode extends Identifiable
 {
@@ -31,7 +33,7 @@ export abstract class BaseNode extends Identifiable
   // CONSTRUCTORS
   //==================================================
 
-  protected constructor() { super(); }
+  protected constructor() { super();   }
 
   //==================================================
   // INSTANCE FIELDS
@@ -56,6 +58,7 @@ export abstract class BaseNode extends Identifiable
   public get renderStyles(): BaseRenderStyle[] { return this._renderStyles; }
   public get path(): string { return (this.parent ? this.parent.path : "") + "\\" + this.name; }
   public get isInitialized(): boolean { return this._isInitialized; }
+  public get activeTarget(): Target | null { return this.activeTargetIdAccessor as Target; }
 
   //==================================================
   // OVERRIDES of Identifiable
@@ -87,6 +90,10 @@ export abstract class BaseNode extends Identifiable
 
   protected /*virtual*/ removeInteractiveCore(): void { }
 
+  public  /*virtual*/ canBeChecked(target: Target | null): boolean { return true; }
+  public  /*virtual*/ isFilter(target: Target | null): boolean { return false; }
+  public  /*virtual*/ isRadio(target: Target | null): boolean { return false; }
+
   protected /*virtual*/ get activeTargetIdAccessor(): TargetIdAccessor | null
   {
     const root = this.root;
@@ -110,8 +117,45 @@ export abstract class BaseNode extends Identifiable
 
   public /*virtual*/ get boundingBox(): Range3 | undefined { return undefined; }
 
+  public /*virtual*/ getCheckBoxState(target?: Target | null): CheckBoxState
+  {
+    if (!target)
+      target = this.activeTarget;
+
+    if (!target)
+      return CheckBoxState.Never;
+
+    let numCandidates = 0;
+    let numAll = 0;
+    let numNone = 0;
+
+    for (const child of this.children)
+    {
+      const childState = child.getCheckBoxState(target);
+      if (childState === CheckBoxState.Never)
+        continue;
+
+      numCandidates++;
+      if (childState === CheckBoxState.All)
+        numAll++;
+      else if (childState === CheckBoxState.None)
+        numNone++;
+
+      // Optimization, not tested
+      if (numNone < numCandidates && numCandidates < numAll)
+        return CheckBoxState.Some;
+    }
+    if (numCandidates === 0)
+      return CheckBoxState.Never;
+    if (numCandidates === numAll)
+      return CheckBoxState.All;
+    if (numCandidates === numNone)
+      return CheckBoxState.None;
+    return CheckBoxState.Some;
+  }
+
   //==================================================
-  // VIRUAL METHODS: Draw styles
+  // VIRTUAL METHODS: Draw styles
   //==================================================
 
   public /*virtual*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null { return null; }
@@ -484,44 +528,6 @@ export abstract class BaseNode extends Identifiable
   // tslint:disable-next-line: no-console
   public debugHierarcy(): void { console.log(this.toHierarcyString()); }
 }
-
-
-//==================================================
-// OLD TEMPLATE ACCESS CODE: Good to have
-//==================================================
-
-// public getChildOfType<T extends BaseNode>(constructor: new () => T): T | null
-// {
-//   for (const child of this.children)
-//   {
-//     if (child instanceof constructor)
-//       return child;
-//   }
-//   return null;
-// }
-
-// public *getChildrenByType<T extends BaseNode>(constructor: new () => T)
-// {
-//   for (const child of this.children)
-//     if (child instanceof constructor)
-//       yield child;
-// }
-
-// public *getDescendantsByType<T extends BaseNode>(constructor: new () => T)
-// {
-//   for (const child of this.children)
-//   {
-//     if (child instanceof constructor)
-//       yield child;
-
-//     for (const descendant of child.getDescendantsByType<T>(constructor))
-//     {
-//       const copy: BaseNode = descendant;
-//       if (copy instanceof constructor)
-//         yield copy;
-//     }
-//   }
-// }
 
 export function cocatinate(name: string, value?: any): string
 {
