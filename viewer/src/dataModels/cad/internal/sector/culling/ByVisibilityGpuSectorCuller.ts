@@ -20,7 +20,7 @@ import { PrioritizedWantedSector, DetermineSectorCostDelegate } from './types';
 import { fromThreeMatrix } from '../../../../../utilities/utilities';
 import { LevelOfDetail } from '../LevelOfDetail';
 import { SectorMetadata } from '../types';
-import { CadModel } from '../..';
+import { CadModelMetadata } from '../..';
 
 /**
  * Options for creating GpuBasedSectorCuller.
@@ -67,7 +67,7 @@ class TakenSectorMap {
     });
     return totalCost;
   }
-  private readonly maps: Map<CadModel, TakenSectorTree> = new Map();
+  private readonly maps: Map<CadModelMetadata, TakenSectorTree> = new Map();
   private readonly determineSectorCost: DetermineSectorCostDelegate;
 
   // TODO 2020-04-21 larsmoa: Unit test TakenSectorMap
@@ -75,8 +75,8 @@ class TakenSectorMap {
     this.determineSectorCost = determineSectorCost;
   }
 
-  initializeScene(model: CadModel) {
-    this.maps.set(model, new TakenSectorTree(model.scene.root, this.determineSectorCost));
+  initializeScene(modelMetadata: CadModelMetadata) {
+    this.maps.set(modelMetadata, new TakenSectorTree(modelMetadata.scene.root, this.determineSectorCost));
   }
 
   getWantedSectorCount(): number {
@@ -87,7 +87,7 @@ class TakenSectorMap {
     return count;
   }
 
-  markSectorDetailed(model: CadModel, sectorId: number, priority: number) {
+  markSectorDetailed(model: CadModelMetadata, sectorId: number, priority: number) {
     const tree = this.maps.get(model);
     assert(!!tree);
     tree!.markSectorDetailed(sectorId, priority);
@@ -174,7 +174,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     return this.takenSectors.collectWantedSectors();
   }
 
-  private update(models: CadModel[]): TakenSectorMap {
+  private update(models: CadModelMetadata[]): TakenSectorMap {
     const { coverageUtil } = this.options;
     const takenSectors = this.takenSectors;
     takenSectors.clear();
@@ -209,7 +209,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     return takenSectors;
   }
 
-  private addHighDetailsForNearSectors(models: CadModel[], proximityThreshold: number, takenSectors: TakenSectorMap) {
+  private addHighDetailsForNearSectors(models: CadModelMetadata[], proximityThreshold: number, takenSectors: TakenSectorMap) {
     const shortRangeCamera = this.camera.clone(true);
     shortRangeCamera.far = proximityThreshold;
     shortRangeCamera.updateProjectionMatrix();

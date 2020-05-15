@@ -5,6 +5,7 @@
 import { mat4, quat } from 'gl-matrix';
 
 // Roate +Y to -Z
+// TODO: j-bjorne 15-05-2020: These already exist in fromThreeCameraConfig. Should be defined one place?
 export const DefaultSectorRotationMatrix = mat4.fromValues(1, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 1);
 export const DefaultInverseSectorRotationMatrix = mat4.invert(mat4.create(), DefaultSectorRotationMatrix)!;
 

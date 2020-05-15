@@ -25,6 +25,13 @@ import { CogniteModelBase } from './CogniteModelBase';
 import { share, filter } from 'rxjs/operators';
 import { CogniteClient3dExtensions } from '../../utilities/networking/CogniteClient3dExtensions';
 import { File3dFormat } from '../../utilities/File3dFormat';
+import { CadModelFactory } from '../../dataModels/cad/internal/CadModelFactory';
+import { ProximitySectorCuller } from '../../dataModels/cad/internal/sector/culling/ProximitySectorCuller';
+import { CadModelUpdateHandler } from '../../dataModels/cad/internal/CadModelUpdateHandler';
+import { CadManager } from '../../dataModels/cad/internal/CadManager';
+import { CadMetadataParser } from '../../dataModels/cad/internal/CadMetadataParser';
+import { DefaultCadTransformation } from '../../dataModels/cad/internal/DefaultCadTransformation';
+import { CadModelMetadataRepository } from '../../dataModels/cad/internal/CadModelMetadataRepository';
 
 export interface RelativeMouseEvent {
   offsetX: number;
@@ -48,10 +55,8 @@ export class Cognite3DViewer {
   private readonly scene: THREE.Scene;
   private readonly controls: ComboControls;
   private readonly sdkClient: CogniteClient;
-  private readonly modelDataTransformer: SimpleAndDetailedToSector3D;
   private readonly sectorRepository: CachedRepository;
   private readonly revealManager: RevealManagerBase;
-  private modelsNeedUpdate = true;
 
   private readonly eventListeners = {
     cameraChange: new Array<CameraChangeDelegate>(),
@@ -105,20 +110,23 @@ export class Cognite3DViewer {
 
     this.sdkClient = options.sdk;
     this.renderController = new RenderController(this.camera);
-
-    const modelDataParser: CadSectorParser = new CadSectorParser();
     this.materialManager = new MaterialManager();
-    this.modelDataTransformer = new SimpleAndDetailedToSector3D(this.materialManager);
-    this.sectorRepository = new CachedRepository(modelDataParser, this.modelDataTransformer);
-    const onDataUpdated = () => {
-      this.modelsNeedUpdate = true;
-    };
-    this.revealManager = new RevealManagerBase(
-      this.sdkClient,
-      this.sectorRepository,
-      this.materialManager,
-      onDataUpdated
+    const modelDataParser: CadSectorParser = new CadSectorParser();
+    const modelDataTransformer = new SimpleAndDetailedToSector3D(this.materialManager);
+    const cogniteClientExtension = new CogniteClient3dExtensions(this.sdkClient);
+    const cadModelRepository = new CadModelMetadataRepository(
+      cogniteClientExtension,
+      cogniteClientExtension,
+      new DefaultCadTransformation(),
+      new CadMetadataParser()
     );
+    const cadModelFactory = new CadModelFactory(this.materialManager);
+    const sectorCuller = new ProximitySectorCuller();
+    this.sectorRepository = new CachedRepository(cogniteClientExtension, modelDataParser, modelDataTransformer);
+    const cadModelUpdateHandler = new CadModelUpdateHandler(this.sectorRepository, sectorCuller);
+    const cadManager: CadManager = new CadManager(cadModelRepository, cadModelFactory, cadModelUpdateHandler);
+
+    this.revealManager = new RevealManagerBase(this.sdkClient, cadManager, this.materialManager);
     this.startPointerEventListeners();
 
     this.animate(0);
@@ -197,7 +205,7 @@ export class Cognite3DViewer {
       .getParsedData()
       .pipe(
         share(),
-        filter(x => x.cadModelIdentifier === cadNode.cadModel.identifier)
+        filter(x => x.blobUrl === cadNode.cadModelMetadata.blobUrl)
       )
       .subscribe(parseSector => model3d.updateNodeIdMaps(parseSector));
 
@@ -475,11 +483,16 @@ export class Cognite3DViewer {
       this.controls.update(this.clock.getDelta());
       renderController.update();
       this.revealManager.update(this.camera);
-      if (renderController.needsRedraw || this.forceRendering || this.modelsNeedUpdate || this._slicingNeedsUpdate) {
+      if (
+        renderController.needsRedraw ||
+        this.forceRendering ||
+        this.revealManager.needsRedraw ||
+        this._slicingNeedsUpdate
+      ) {
         this.updateNearAndFarPlane(this.camera);
         this.renderer.render(this.scene, this.camera);
         renderController.clearNeedsRedraw();
-        this.modelsNeedUpdate = false;
+        this.revealManager.resetRedraw();
         this._slicingNeedsUpdate = false;
       }
     }

@@ -5,7 +5,7 @@
 // Everything that is exposed to the user should be defined here
 
 // CAD
-export { CadModel, loadCadModelFromCdf, loadCadModelByUrl } from './dataModels/cad/internal';
+export { CadModelMetadata } from './dataModels/cad/internal';
 export { SectorMetadata, SectorModelTransformation } from './dataModels/cad/internal/sector/types';
 export { CadRenderHints } from './dataModels/cad/public/CadRenderHints';
 export { CadLoadingHints } from './dataModels/cad/public/CadLoadingHints';

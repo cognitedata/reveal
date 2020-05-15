@@ -2,8 +2,6 @@
  * Copyright 2020 Cognite AS
  */
 
-import { loadCadModelFromCdf } from '../public/loadCadModelFromCdf';
-import { loadCadModelByUrl } from '../public/loadCadModelByUrl';
-import { CadModel } from '../public/CadModel';
+import { CadModelMetadata } from '../public/CadModelMetadata';
 
-export { CadModel, loadCadModelFromCdf, loadCadModelByUrl };
+export { CadModelMetadata };

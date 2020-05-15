@@ -13,7 +13,7 @@ import { defaultLoadingHints as defaultCadLoadingHints, CadLoadingHints } from '
 import { WantedSector } from '../WantedSector';
 import { LevelOfDetail } from '../LevelOfDetail';
 import { CameraConfig } from '../../../../../utilities/fromThreeCameraConfig';
-import { CadModel } from '../..';
+import { CadModelMetadata } from '../..';
 
 const degToRadFactor = Math.PI / 180;
 
@@ -108,7 +108,7 @@ export function determineSectorsByProximity(params: DetermineSectorsByProximityI
   return result;
 }
 
-export function determineSectorsFromDetailed(cadModel: CadModel, requestedDetailed: Set<number>): WantedSector[] {
+export function determineSectorsFromDetailed(cadModel: CadModelMetadata, requestedDetailed: Set<number>): WantedSector[] {
   const simple: number[] = [];
   const detailed: number[] = [];
   const wanted: WantedSector[] = [];
@@ -124,8 +124,7 @@ export function determineSectorsFromDetailed(cadModel: CadModel, requestedDetail
         return false;
       }
       wanted.push({
-        cadModelIdentifier: cadModel.identifier,
-        dataRetriever: cadModel.dataRetriever,
+        blobUrl: cadModel.blobUrl,
         cadModelTransformation: cadModel.modelTransformation,
         scene: cadModel.scene,
         levelOfDetail: LevelOfDetail.Detailed,
@@ -144,8 +143,7 @@ export function determineSectorsFromDetailed(cadModel: CadModel, requestedDetail
     if (sector.facesFile.fileName) {
       simple.push(sector.id);
       wanted.push({
-        cadModelIdentifier: cadModel.identifier,
-        dataRetriever: cadModel.dataRetriever,
+        blobUrl: cadModel.blobUrl,
         cadModelTransformation: cadModel.modelTransformation,
         scene: cadModel.scene,
         levelOfDetail: LevelOfDetail.Simple,
@@ -158,8 +156,7 @@ export function determineSectorsFromDetailed(cadModel: CadModel, requestedDetail
   traverseDepthFirst(scene.root, sector => {
     if (!detailed.includes(sector.id) && !simple.includes(sector.id)) {
       wanted.push({
-        cadModelIdentifier: cadModel.identifier,
-        dataRetriever: cadModel.dataRetriever,
+        blobUrl: cadModel.blobUrl,
         cadModelTransformation: cadModel.modelTransformation,
         scene: cadModel.scene,
         levelOfDetail: LevelOfDetail.Discarded,

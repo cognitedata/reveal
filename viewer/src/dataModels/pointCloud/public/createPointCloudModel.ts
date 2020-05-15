@@ -23,12 +23,8 @@ export async function createPointCloudModel(
   const baseUrl = client.getBaseUrl();
 
   const clientExtensions = new CogniteClient3dExtensions(client);
-  const outputs = await clientExtensions.getOutputs(modelRevisionId, [File3dFormat.EptPointCloud]);
-  const mostRecentEptOutput = outputs.findMostRecentOutput(File3dFormat.EptPointCloud);
-  if (!mostRecentEptOutput) {
-    throw new Error(`No point cloud output found for model ${modelRevisionId}`);
-  }
-  const url = baseUrl + clientExtensions.buildBlobRequestPath(mostRecentEptOutput.blobId) + '/ept.json';
+  const blobUrl = await clientExtensions.getModelUrl(modelRevisionId, File3dFormat.EptPointCloud);
+  const url = baseUrl + blobUrl + '/ept.json';
   const loaderPromise = EptLoader.load(url);
 
   const fetchPointCloud: FetchPointCloudDelegate = async () => {
