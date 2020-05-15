@@ -432,6 +432,16 @@ export abstract class BaseNode extends Identifiable
 
   public addChild(child: BaseNode): void
   {
+    if (child.hasParent)
+    {
+      Error(`The child ${child.typeName} already has a parent`);
+      return;
+    }
+    if (child === this)
+    {
+      Error(`Trying to add illegal child ${child.typeName}`);
+      return;
+    }
     this._children.push(child);
     child._parent = this;
   }
@@ -439,13 +449,17 @@ export abstract class BaseNode extends Identifiable
   public remove(): boolean
   {
     if (!this.parent)
+    {
+      Error(`The child ${this.typeName} don't have a parent`);
       return false;
-
-    const index = this.childIndex;
-    if (index === undefined)
+    }
+    const childIndex = this.childIndex;
+    if (childIndex === undefined)
+    {
+      Error(`The child ${this.typeName} is not child of it's parent`);
       return false;
-
-    this.parent.children.splice(index, 1);
+    }
+    this.parent.children.splice(childIndex, 1);
     this._parent = null;
     return true;
   }

@@ -11,23 +11,17 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseVisualNode } from "../../Core/Nodes/BaseVisualNode";
-import { BaseRenderStyle } from "../../Core/Styles/BaseRenderStyle";
-import { TargetId } from "../../Core/PrimitiveClasses/TargetId";
+import { BaseVisualNode } from "../../../Core/Nodes/BaseVisualNode";
+import { BaseRenderStyle } from "../../../Core/Styles/BaseRenderStyle";
+import { TargetId } from "../../../Core/PrimitiveClasses/TargetId";
 import { WellRenderStyle } from "./WellRenderStyle";
-import { ColorType } from "../../Core/Enums/ColorType";
-import { Range3 } from "../../Core/Geometry/Range3";
-import { WellTrajectory } from "./WellTrajectory";
+import { ColorType } from "../../../Core/Enums/ColorType";
+import { Range3 } from "../../../Core/Geometry/Range3";
+import { WellTrajectory } from "../Logs/WellTrajectory";
 import { WellNode } from "./WellNode";
 
 export class WellTrajectoryNode extends BaseVisualNode
 {
-  //==================================================
-  // CONSTRUCTORS
-  //==================================================
-
-  public constructor() { super(); }
-
   //==================================================
   // INSTANCE FIELDS
   //==================================================
@@ -42,6 +36,12 @@ export class WellTrajectoryNode extends BaseVisualNode
   public set data(value: WellTrajectory | null) { this._data = value; }
   public get renderStyle(): WellRenderStyle | null { return this.getRenderStyle() as WellRenderStyle; }
   public get well(): WellNode | null { return this.getAncestorByType(WellNode); }
+
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
+
+  public constructor() { super(); }
 
   //==================================================
   // OVERRIDES of Identifiable

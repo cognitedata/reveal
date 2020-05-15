@@ -12,15 +12,32 @@
 //=====================================================================================
 
 import { MdSample } from "./MdSample";
+import { Vector3 } from "../../../Core/Geometry/Vector3";
 
-export abstract class BaseLogSample extends MdSample 
+export class TrajectorySample extends MdSample 
 {
   //==================================================
-  // VIRTUAL METHODS
+  // INSTANCE FIELDS
   //==================================================
 
-  public abstract get isEmpty(): boolean;
-  public abstract isEqual(other: BaseLogSample): boolean;
-  public abstract copyValueFrom(other: BaseLogSample): void;
-  public abstract clone(): BaseLogSample;
+  public point: Vector3;
+  public inclination = 0;
+  public azimuth = 0;
+
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
+
+  public constructor(point: Vector3, md = 0)
+  {
+    super(md);
+    this.point = point.copy();
+  }
+
+  //==================================================
+  // OVERRIDES from MdSample
+  //==================================================
+
+  public /*override*/ toString(): string { return `${super.toString()} Point: ${this.point}`; }
+  public /*override*/ sampleText(): string { return `Point: ${this.point}`; }
 }  

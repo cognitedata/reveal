@@ -32,17 +32,17 @@ export class FloatLogSample extends BaseLogSample
   }
 
   //==================================================
-  // VIRTUAL PROPERTIES
-  // VIRTUAL PROPERTIES
+  // OVERRIDES of MdSample
   //==================================================
 
   public /*override*/ toString(): string { return `${super.toString()} Value: ${this.value}`; }
   public /*override*/ sampleText(): string { return `Value: ${this.value}`; }
-  public /*override*/ get isEmpty(): boolean { return Number.isNaN(this.value); }
 
   //==================================================
-  // VIRTUAL METHODS
+  // OVERRIDES of BaseLogSample
   //==================================================
+
+  public /*override*/ get isEmpty(): boolean { return Number.isNaN(this.value); }
 
   public /*override*/ isEqual(other: BaseLogSample): boolean
   {

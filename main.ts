@@ -2,9 +2,14 @@
 import { ThreeModule } from './src/Three/ThreeModule';
 import { ThreeRenderTargetNode } from './src/Three/ThreeRenderTargetNode';
 import { Range3 } from './src/Core/Geometry/Range3';
-import { WellTrajectoryNode } from "./src/Nodes/Wells/WellTrajectoryNode";
-import { WellNode } from "./src/Nodes/Wells/WellNode";
-import { WellTrajectory } from './src/Nodes/Wells/WellTrajectory';
+import { Range1 } from './src/Core/Geometry/Range1';
+import { WellTrajectoryNode } from "./src/Nodes/Wells/Wells/WellTrajectoryNode";
+import { FloatLogNode } from "./src/Nodes/Wells/Wells/FloatLogNode";
+import { DiscreteLogNode } from "./src/Nodes/Wells/Wells/DiscreteLogNode";
+import { WellNode } from "./src/Nodes/Wells/Wells/WellNode";
+import { WellTrajectory } from './src/Nodes/Wells/Logs/WellTrajectory';
+import { FloatLog } from './src/Nodes/Wells/Logs/FloatLog';
+import { DiscreteLog } from './src/Nodes/Wells/Logs/DiscreteLog';
 import { RootNode } from './src/TreeNodes/RootNode';
 import { AxisNode } from './src/Nodes/AxisNode';
 import { Vector3 } from "./src/Core/Geometry/Vector3";
@@ -20,6 +25,9 @@ export function main()
   // Add some random wells
   const root = module.createRoot() as RootNode;
   const wellTree = root.wells;
+
+
+  // Add 6 wells
   for (let i = 0; i < 6; i++)
   {
     const well = new WellNode();
@@ -28,11 +36,32 @@ export function main()
     well.wellHead = Vector3.getRandom(Range3.newTest);
     well.wellHead.z = 0;
 
+    // Add 5 trajectories
     for (let j = 0; j < 5; j++)
     {
       const wellTrajectory = new WellTrajectoryNode();
-      wellTrajectory.data = WellTrajectory.createByWellHead(well.wellHead);
+      wellTrajectory.data = WellTrajectory.createByRandom(well.wellHead);
       well.addChild(wellTrajectory);
+
+      const mdRange = wellTrajectory.data.getMdRange();
+      mdRange.expandByFraction(-0.05);
+
+      // Add 2 float logs
+      for (let k = 0; k < 3; k++)
+      {
+        const valueRange = new Range1(0, k + 1 + 0.5);
+        const logNode = new FloatLogNode();
+        logNode.data = FloatLog.createByRandom(mdRange, valueRange);
+        wellTrajectory.addChild(logNode);
+      }
+      // Add 3 discrete logs
+      for (let k = 0; k < 3; k++)
+      {
+        const valueRange = new Range1(0, k + 1 + 0.5);
+        const logNode = new DiscreteLogNode();
+        logNode.data = DiscreteLog.createByRandom(mdRange, valueRange);
+        wellTrajectory.addChild(logNode);
+      }
     }
   }
   // Add a render target
@@ -59,10 +88,10 @@ export function main()
   // Set some visible in target 0
 
   for (const node of root.getDescendantsByType(WellTrajectoryNode))
-    node.setVisible(true);
+    node.setVisibleInteractive(true);
 
   for (const node of root.getDescendantsByType(AxisNode))
-    node.setVisible(true);
+    node.setVisibleInteractive(true);
 
   const activeTarget = root.activeTarget as ThreeRenderTargetNode;
   console.log(activeTarget.toString());

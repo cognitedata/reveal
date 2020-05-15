@@ -11,32 +11,34 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseWellSample } from "./BaseWellSample";
-import { Vector3 } from "../../../Core/Geometry/Vector3";
+import { DiscreteLog } from "./../Logs/DiscreteLog";
+import { BaseLogNode } from "./BaseLogNode";
 
-export class WellSample extends BaseWellSample 
+export class DiscreteLogNode extends BaseLogNode
 {
-  //==================================================
-  // INSTANCE FIELDS
-  //==================================================
-
-  public point: Vector3;
-  public inclination = 0;
-  public azimuth = 0;
-
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public /*override*/ toString(): string { return `${super.toString()} Point: ${this.point}`; }
+  public get data(): DiscreteLog | null { return this._data as DiscreteLog; }
+  public set data(value: DiscreteLog | null) { this._data = value; }
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(point: Vector3, md = 0)
-  {
-    super(md);
-    this.point = point.copy();
-  }
-}  
+  public constructor() { super(); }
+
+  //==================================================
+  // OVERRIDES of Identifiable
+  //==================================================
+
+  public /*override*/ get className(): string { return BaseLogNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === BaseLogNode.name || super.isA(className); }
+
+  //==================================================
+  // OVERRIDES of BaseNode
+  //==================================================
+
+  public /*override*/ get typeName(): string { return "_DiscreteLog" }
+}

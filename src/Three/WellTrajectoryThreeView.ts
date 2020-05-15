@@ -14,13 +14,13 @@
 import * as THREE from 'three';
 import { Color } from "three";
 import { BaseGroupThreeView } from "./BaseGroupThreeView";
-import { WellTrajectoryNode } from "../Nodes/Wells/WellTrajectoryNode";
-import { WellRenderStyle } from "../Nodes/Wells/WellRenderStyle";
+import { WellTrajectoryNode } from "../Nodes/Wells/Wells/WellTrajectoryNode";
+import { WellRenderStyle } from "../Nodes/Wells/Wells/WellRenderStyle";
 import { ThreeConverter } from "./ThreeConverter";
 import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
 import { Range3 } from '../Core/Geometry/Range3';
 import { ThreeLabel as TreeLabel } from "./Utilities/ThreeLabel";
-import { Vector3 } from '../Core/Geometry/Vector3';
+import { TrajectorySample } from "../Nodes/Wells/Samples/TrajectorySample";
 
 export class WellTrajectoryThreeView extends BaseGroupThreeView
 {
@@ -82,8 +82,11 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     const threeColor = ThreeConverter.toColor(color);
 
     const points: THREE.Vector3[] = [];
-    for (const sample of wellTrajectory.samples)
+    for (const baseSample of wellTrajectory.samples) 
+    {
+      const sample = baseSample as TrajectorySample;
       points.push(ThreeConverter.toVector(sample.point));
+    }
 
     const curve = new THREE.CatmullRomCurve3(points);
     const geometry = new THREE.TubeGeometry(curve, 100, style.radius, 16);

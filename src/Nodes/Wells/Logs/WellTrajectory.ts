@@ -11,26 +11,22 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Vector3 } from "../../Core/Geometry/Vector3";
-import { Random } from "../../Core/PrimitiveClasses/Random";
-import { Range3 } from "../../Core/Geometry/Range3";
-import { Range1 } from "../../Core/Geometry/Range1";
-import { WellSample } from "./Samples/WellSample";
-import { BaseWellSample } from "./Samples/BaseWellSample";
-import { Ma } from "../../Core/PrimitiveClasses/Ma";
+import { Vector3 } from "../../../Core/Geometry/Vector3";
+import { Random } from "../../../Core/PrimitiveClasses/Random";
+import { Range3 } from "../../../Core/Geometry/Range3";
+import { Range1 } from "../../../Core/Geometry/Range1";
+import { TrajectorySample } from "./../Samples/TrajectorySample";
+import { MdSample } from "./../Samples/MdSample";
+import { MdSamples } from "./MdSamples";
+import { Ma } from "../../../Core/PrimitiveClasses/Ma";
 
-export class WellTrajectory 
+export class WellTrajectory extends MdSamples
 {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
 
   public kb = 0;
-  public samples: WellSample[] = [];
-  public get count(): number { return this.samples.length; }
-
-  // For sorting and searching
-  private readonly _seachSample = new WellSample(Vector3.newZero);
 
   //==================================================
   // INSTANCE METHODS: Getters
@@ -63,18 +59,19 @@ export class WellTrajectory
     if (md < this.samples[0].md || this.samples[maxIndex].md < md)
       return Vector3.newEmpty;
 
-    this._seachSample.md = md;
-    let index = Ma.binarySearch(this.samples, this._seachSample, BaseWellSample.compareMd);
+    let index = this.binarySearch(md);
     if (index >= 0)
-      return this.samples[index].point.copy();
-
+    {
+      const sample = this.samples[index] as TrajectorySample;
+      return sample.point;
+    }
     index = ~index;
 
-    const minSample = this.samples[index - 1];
+    const minSample = this.samples[index - 1] as TrajectorySample;
     if (Ma.isEqual(md, minSample.md))
       return minSample.point;
 
-    const maxSample = this.samples[index];
+    const maxSample = this.samples[index] as TrajectorySample;
     if (Ma.isEqual(md, maxSample.md))
       return maxSample.point;
 
@@ -88,37 +85,88 @@ export class WellTrajectory
     return minPoint;
   }
 
+  public getTangentAtMd(md: number): Vector3
+  {
+    const maxIndex = this.samples.length - 1;
+    if (maxIndex < 0)
+      return Vector3.newEmpty;
+
+    let index0: number, index1: number;
+    if (md <= this.samples[0].md)
+    {
+      index0 = 0;
+      index1 = 1;
+
+    }
+    else if (md >= this.samples[maxIndex].md)
+    {
+      index0 = maxIndex - 1;
+      index1 = maxIndex;
+    }
+    else
+    {
+      index0 = this.getClosestIndexAtMd(md);
+      index1 = index0;
+      if (index0 === 0)
+      {
+        index1++;
+      }
+      else if (index0 === maxIndex)
+      {
+        index0--;
+      }
+      else
+      {
+        index0--;
+        index1++;
+      }
+    }
+    if (index0 >= index1)
+      Error("Index rrror in tangent");
+
+    const minSample = this.samples[index0] as TrajectorySample;
+    const maxSample = this.samples[index1] as TrajectorySample;
+
+    // Should pointing upwards
+    const tangent = minSample.point.copy();
+    tangent.substract(maxSample.point);
+    tangent.normalize();
+
+    if (tangent.z < 0)
+      Error("Direction error in tangent");
+
+    return tangent;
+  }
+
   //==================================================
   // INSTANCE METHODS: Operations
   //==================================================
 
-  public add(sample: WellSample): void
-  {
-    this.samples.push(sample);
-  }
-
-  public sortByMd(): void
-  {
-    this.samples.sort(BaseWellSample.compareMd);
-  }
-
   public expandZRange(range: Range1): void
   {
-    for (const sample of this.samples)
-      range.add(sample.point.z);
+    for (const baseSample of this.samples) 
+    {
+      const sample = baseSample as TrajectorySample;
+      if (sample)
+        range.add(sample.point.z);
+    }
   }
 
   public expandRange(range: Range3): void
   {
-    for (const sample of this.samples)
-      range.add(sample.point);
+    for (const baseSample of this.samples) 
+    {
+      const sample = baseSample as TrajectorySample;
+      if (sample)
+        range.add(sample.point);
+    }
   }
 
   //==================================================
   // STATIC METHODS: 
   //==================================================
 
-  public static createByWellHead(wellHead: Vector3): WellTrajectory
+  public static createByRandom(wellHead: Vector3): WellTrajectory
   {
     const result = new WellTrajectory();
     const p0 = wellHead.copy();
@@ -136,13 +184,13 @@ export class WellTrajectory
     p3.z += -300;
 
     let md = 0;
-    result.add(new WellSample(p0, md));
+    result.add(new TrajectorySample(p0, md));
     md += p0.distance(p1);
-    result.add(new WellSample(p1, md));
+    result.add(new TrajectorySample(p1, md));
     md += p1.distance(p2);
-    result.add(new WellSample(p2, md));
+    result.add(new TrajectorySample(p2, md));
     md += p1.distance(p2);
-    result.add(new WellSample(p3, md));
+    result.add(new TrajectorySample(p3, md));
     return result;
   }
 

@@ -16,8 +16,9 @@ import { FloatLogSample } from "../Samples/FloatLogSample";
 import { BaseLog } from "../Logs/BaseLog";
 import { Range1 } from "../../../Core/Geometry/Range1";
 import { Ma } from "../../../Core/PrimitiveClasses/Ma";
+import { Random } from "../../../Core/PrimitiveClasses/Random";
 
-export abstract class FloatLog extends BaseLog
+export class FloatLog extends BaseLog
 {
   //==================================================
   // OVERRIDES of BaseLog
@@ -80,5 +81,21 @@ export abstract class FloatLog extends BaseLog
       if (sample)
         range.add(sample.value);
     }
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Operations
+  //==================================================
+
+  public static createByRandom(mdRange: Range1, valueRange: Range1): FloatLog
+  {
+    const log = new FloatLog();
+    const numSamples = 1000;
+    const mdInc = mdRange.delta / numSamples;
+    let md = mdRange.min;
+
+    for (let k = 0; k < numSamples; k++, md += mdInc)
+      log.samples.push(new FloatLogSample(Random.getFloat(valueRange), md));
+    return log;
   }
 }  
