@@ -15,7 +15,7 @@
   "dependencies": {
     "@cognite/cogs.js": "^1.0.17",
     "@cognite/metrics": "^0.0.32",
-    "@sentry/browser": "^5.15.4",
+    "@sentry/browser": "^5.15.5",
     "i18next": "^19.4.3",
     "i18next-chained-backend": "^2.0.1",
     "i18next-http-backend": "^1.0.10",
