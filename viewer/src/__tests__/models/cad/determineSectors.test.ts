@@ -46,7 +46,7 @@ describe('determineSectors', () => {
       facesFile: emptyFacesFile()
     };
     const scene = createSceneFromRoot(root);
-    const cadModel: CadModelMetadata = {
+    const cadModelMetadata: CadModelMetadata = {
       blobUrl: 'test-model',
       modelTransformation: {
         inverseModelMatrix: fromCdfToThreeJsCoordinates,
@@ -54,8 +54,8 @@ describe('determineSectors', () => {
       },
       scene
     };
-    const cadNode = new CadNode(cadModel, materialManager);
-    Object.defineProperty(cadNode, 'cadModel', { get: jest.fn().mockReturnValue(cadModel) });
+    const cadNode = new CadNode(cadModelMetadata, materialManager);
+    Object.defineProperty(cadNode, 'cadModelMetadata', { get: jest.fn().mockReturnValue(cadModelMetadata) });
 
     const camera = new THREE.PerspectiveCamera();
     camera.position.set(0, 0, -2);
@@ -167,7 +167,7 @@ describe('determineSectors', () => {
       ]
     };
     const scene = createSceneFromRoot(root);
-    const cadModel: CadModelMetadata = {
+    const cadModelMetadata: CadModelMetadata = {
       blobUrl: 'test-model',
       modelTransformation: {
         inverseModelMatrix: fromCdfToThreeJsCoordinates,
@@ -175,8 +175,8 @@ describe('determineSectors', () => {
       },
       scene
     };
-    const cadNode = new CadNode(cadModel, materialManager);
-    Object.defineProperty(cadNode, 'cadModel', { get: jest.fn().mockReturnValue(cadModel) });
+    const cadNode = new CadNode(cadModelMetadata, materialManager);
+    Object.defineProperty(cadNode, 'cadModelMetadata', { get: jest.fn().mockReturnValue(cadModelMetadata) });
 
     const camera = new THREE.PerspectiveCamera();
     camera.position.set(0, 0, -1);
@@ -236,7 +236,7 @@ describe('determineSectors', () => {
       children: []
     };
     const scene = createSceneFromRoot(root);
-    const cadModel: CadModelMetadata = {
+    const cadModelMetadata: CadModelMetadata = {
       blobUrl: 'test-model',
       modelTransformation: {
         inverseModelMatrix: fromCdfToThreeJsCoordinates,
@@ -244,8 +244,8 @@ describe('determineSectors', () => {
       },
       scene
     };
-    const cadNode = new CadNode(cadModel, materialManager);
-    Object.defineProperty(cadNode, 'cadModel', { get: jest.fn().mockReturnValue(cadModel) });
+    const cadNode = new CadNode(cadModelMetadata, materialManager);
+    Object.defineProperty(cadNode, 'cadModelMetadata', { get: jest.fn().mockReturnValue(cadModelMetadata) });
 
     const camera = new THREE.PerspectiveCamera();
     camera.position.copy(new THREE.Vector3(1.5, 1.5, -1).applyMatrix4(toThreeMatrix4(transform.modelMatrix)));

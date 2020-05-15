@@ -53,7 +53,7 @@ export class RevealManagerBase {
     return promise;
   }
 
-  public addModelFromUrl(modelUrl: string, modelNodeAppearance?: ModelNodeAppearance): Promise<CadNode> {
+  public addModelFromUrl(_modelUrl: string, _modelNodeAppearance?: ModelNodeAppearance): Promise<CadNode> {
     throw new Error('Deprecated');
   }
 

@@ -37,8 +37,8 @@ export class CogniteClient3dExtensions implements ModelUrlProvider, CadSceneProv
   }
 
   public async getCadScene(blobUrl: string): Promise<any> {
-    const json = await this.client.get(`${blobUrl}/scene.json`);
-    return json;
+    const response = await this.client.get(`${blobUrl}/scene.json`);
+    return response.data;
   }
   public async getModelUrl(modelRevisionId: IdEither, format: File3dFormat): Promise<string> {
     const outputs = await this.getOutputs(modelRevisionId, [format]);
