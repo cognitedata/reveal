@@ -6,11 +6,8 @@ import { Box3 } from '../../../utilities/Box3';
 import { determineSectorsFromDetailed } from '../../../dataModels/cad/internal/sector/culling/determineSectors';
 import { expectContainsSectorsWithLevelOfDetail } from '../../expects';
 import { createSceneFromRoot } from '../../testUtils/createSceneFromRoot';
-import { CadModel } from '../../../dataModels/cad/internal';
-import {
-  fromCdfToThreeJsCoordinates,
-  fromThreeJsToCdfCoordinates
-} from '../../../utilities/fromThreeCameraConfig';
+import { CadModelMetadata } from '../../../dataModels/cad/internal';
+import { fromCdfToThreeJsCoordinates, fromThreeJsToCdfCoordinates } from '../../../utilities/fromThreeCameraConfig';
 
 function sectorNodeFromTreeNode(node: TreeNode, parent?: SectorMetadata): SectorMetadata {
   const result = {
@@ -90,10 +87,10 @@ describe('determineSectorsQuality', () => {
 
   const root: SectorMetadata = sectorNodeFromTreeNode(treeRoot);
   const scene = createSceneFromRoot(root);
-  const cadModel: CadModel = {
-    identifier: 'test',
+  const cadModel: CadModelMetadata = {
+    blobUrl: 'test',
     modelTransformation: { modelMatrix: fromCdfToThreeJsCoordinates, inverseModelMatrix: fromThreeJsToCdfCoordinates },
-    dataRetriever: { fetchData: jest.fn(), fetchJson: jest.fn() },
+    // dataRetriever: { fetchData: jest.fn(), fetchJson: jest.fn() },
     scene
   };
 

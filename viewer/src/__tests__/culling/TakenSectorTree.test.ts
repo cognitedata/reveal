@@ -11,14 +11,14 @@ import {
   DetermineSectorCostDelegate
 } from '../../dataModels/cad/internal/sector/culling/types';
 import { LevelOfDetail } from '../../dataModels/cad/internal/sector/LevelOfDetail';
-import { CadModel } from '../../dataModels/cad/internal';
+import { CadModelMetadata } from '../../dataModels/cad/internal';
 import { traverseDepthFirst } from '../../utilities/traversal';
 
 type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 type Mutable<T> = { -readonly [P in keyof T]: T[P] };
 
 describe('TakenSectorTree', () => {
-  const model: CadModel = {} as any;
+  const model: CadModelMetadata = {} as any;
   const determineSectorCost: DetermineSectorCostDelegate = () => 1; // Flat cost
 
   test('default tree contains root as simple', () => {

@@ -4,9 +4,8 @@
 import * as THREE from 'three';
 import { OrderSectorsByVisibilityCoverage } from '../../dataModels/cad/internal/sector/culling/OrderSectorsByVisibilityCoverage';
 import { ByVisibilityGpuSectorCuller } from '../../dataModels/cad/internal/sector/culling/ByVisibilityGpuSectorCuller';
-import { CadModel } from '../../dataModels/cad/internal';
+import { CadModelMetadata } from '../../dataModels/cad/internal';
 import { SectorMetadata } from '../../dataModels/cad/internal/sector/types';
-import { ModelDataRetriever } from '../../utilities/networking/ModelDataRetriever';
 import { SectorSceneImpl } from '../../dataModels/cad/internal/sector/SectorScene';
 import { mat4, vec3 } from 'gl-matrix';
 import { generateSectorTree } from '../testUtils/createSectorMetadata';
@@ -103,13 +102,11 @@ describe('ByVisibilityGpuSectorCuller', () => {
   });
 });
 
-function createModel(root: SectorMetadata): CadModel {
-  const dataRetriever: ModelDataRetriever = jest.fn() as any;
+function createModel(root: SectorMetadata): CadModelMetadata {
   const scene = SectorSceneImpl.createFromRootSector(8, 1, root);
 
-  const model: CadModel = {
-    identifier: 'test',
-    dataRetriever,
+  const model: CadModelMetadata = {
+    blobUrl: 'test',
     modelTransformation: {
       inverseModelMatrix: mat4.identity(mat4.create()),
       modelMatrix: mat4.identity(mat4.create())
@@ -120,7 +117,7 @@ function createModel(root: SectorMetadata): CadModel {
 }
 
 function createDetermineSectorInput(
-  models: CadModel | CadModel[],
+  models: CadModelMetadata | CadModelMetadata[],
   cameraPosition?: vec3
 ): DetermineSectorsByProximityInput {
   const determineSectorsInput: DetermineSectorsByProximityInput = {

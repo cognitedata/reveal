@@ -14,7 +14,7 @@ import { LevelOfDetail } from '../../../dataModels/cad/internal/sector/LevelOfDe
 import { WantedSector } from '../../../dataModels/cad/internal/sector/WantedSector';
 import { createSceneFromRoot } from '../../testUtils/createSceneFromRoot';
 import { MaterialManager } from '../../../dataModels/cad/internal/MaterialManager';
-import { CadModel } from '../../../dataModels/cad/internal';
+import { CadModelMetadata } from '../../../dataModels/cad/internal';
 import { fromCdfToThreeJsCoordinates, fromThreeJsToCdfCoordinates } from '../../../utilities/fromThreeCameraConfig';
 import { CadNode } from '../../../dataModels/cad/internal/CadNode';
 
@@ -44,9 +44,8 @@ describe('determineSectors', () => {
       facesFile: emptyFacesFile()
     };
     const scene = createSceneFromRoot(root);
-    const cadModel: CadModel = {
-      identifier: 'test-model',
-      dataRetriever: { fetchData: jest.fn(), fetchJson: jest.fn() },
+    const cadModel: CadModelMetadata = {
+      blobUrl: 'test-model',
       modelTransformation: {
         inverseModelMatrix: fromCdfToThreeJsCoordinates,
         modelMatrix: fromThreeJsToCdfCoordinates
@@ -63,7 +62,7 @@ describe('determineSectors', () => {
 
     // Act
     const sectors = await determineSectorsByProximity({
-      cadModels: [cadNode.cadModel],
+      cadModels: [cadNode.cadModelMetadata],
       loadingHints: {},
       cameraConfig: {
         cameraFov: camera.fov,
@@ -166,9 +165,8 @@ describe('determineSectors', () => {
       ]
     };
     const scene = createSceneFromRoot(root);
-    const cadModel: CadModel = {
-      identifier: 'test-model',
-      dataRetriever: { fetchData: jest.fn(), fetchJson: jest.fn() },
+    const cadModel: CadModelMetadata = {
+      blobUrl: 'test-model',
       modelTransformation: {
         inverseModelMatrix: fromCdfToThreeJsCoordinates,
         modelMatrix: fromThreeJsToCdfCoordinates
@@ -185,7 +183,7 @@ describe('determineSectors', () => {
 
     // Act
     const sectors = await determineSectorsByProximity({
-      cadModels: [cadNode.cadModel],
+      cadModels: [cadNode.cadModelMetadata],
       cameraConfig: {
         cameraFov: camera.fov,
         cameraPosition: fromThreeVector3(vec3.create(), camera.position, identityTransform),
@@ -236,9 +234,8 @@ describe('determineSectors', () => {
       children: []
     };
     const scene = createSceneFromRoot(root);
-    const cadModel: CadModel = {
-      identifier: 'test-model',
-      dataRetriever: { fetchData: jest.fn(), fetchJson: jest.fn() },
+    const cadModel: CadModelMetadata = {
+      blobUrl: 'test-model',
       modelTransformation: {
         inverseModelMatrix: fromCdfToThreeJsCoordinates,
         modelMatrix: fromThreeJsToCdfCoordinates
@@ -255,7 +252,7 @@ describe('determineSectors', () => {
 
     // Act
     const sectors = await determineSectorsByProximity({
-      cadModels: [cadNode.cadModel],
+      cadModels: [cadNode.cadModelMetadata],
       cameraConfig: {
         cameraFov: camera.fov,
         cameraPosition: fromThreeVector3(vec3.create(), camera.position, transform),

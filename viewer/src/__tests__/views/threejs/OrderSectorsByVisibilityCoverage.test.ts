@@ -11,8 +11,7 @@ import { traverseDepthFirst } from '../../../utilities/traversal';
 import { fromThreeMatrix } from '../../../utilities/utilities';
 import { mat4 } from 'gl-matrix';
 import { Box3 } from '../../../utilities/Box3';
-import { CadModel } from '../../../dataModels/cad/internal';
-import { ModelDataRetriever } from '../../../utilities/networking/ModelDataRetriever';
+import { CadModelMetadata } from '../../../dataModels/cad/internal';
 
 describe('GpuOrderSectorsByVisibilityCoverage', () => {
   const glContext: WebGLRenderingContext = require('gl')(64, 64);
@@ -109,14 +108,9 @@ function createModelTransformation(modelTransform?: THREE.Matrix4): SectorModelT
   };
 }
 
-function createStubModel(identifier: string, scene: SectorScene, modelTransformation: SectorModelTransformation) {
-  const dataRetriever: ModelDataRetriever = {
-    fetchJson: jest.fn(),
-    fetchData: jest.fn()
-  };
-  const cadModel: CadModel = {
-    identifier,
-    dataRetriever,
+function createStubModel(blobUrl: string, scene: SectorScene, modelTransformation: SectorModelTransformation) {
+  const cadModel: CadModelMetadata = {
+    blobUrl,
     modelTransformation,
     scene
   };
