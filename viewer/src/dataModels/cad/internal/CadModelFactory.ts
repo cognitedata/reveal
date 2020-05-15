@@ -5,7 +5,7 @@
 import { CadNode } from './CadNode';
 import { CadModelMetadata } from '../public/CadModelMetadata';
 import { MaterialManager } from './MaterialManager';
-import { ModelNodeAppearance } from '../../../utilities';
+import { ModelNodeAppearance } from './ModelNodeAppearance';
 
 export class CadModelFactory {
   private readonly _materialManager: MaterialManager;

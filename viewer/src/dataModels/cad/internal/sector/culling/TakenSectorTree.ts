@@ -6,7 +6,7 @@ import { LevelOfDetail } from '../LevelOfDetail';
 import { SectorMetadata } from '../types';
 import { traverseUpwards, traverseDepthFirst } from '@/utilities/traversal';
 import { PrioritizedWantedSector, DetermineSectorCostDelegate } from './types';
-import { CadModelMetadata } from '../..';
+import { CadModelMetadata } from '@/datamodels/cad/public/CadModelMetadata';
 
 
 export class TakenSectorTree {

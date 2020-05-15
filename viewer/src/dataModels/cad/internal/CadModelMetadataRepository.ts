@@ -3,10 +3,10 @@
  */
 
 import { IdEither } from '@cognite/sdk';
-import { CadModelMetadata } from '../public/CadModelMetadata';
-import { ModelUrlProvider } from '../../../utilities/networking/ModelUrlProvider';
+import { CadModelMetadata } from '@/datamodels/cad/public/CadModelMetadata';
+import { ModelUrlProvider } from '@/utilities/networking/ModelUrlProvider';
 import { CadSceneProvider } from './CadSceneProvider';
-import { File3dFormat } from '../../../utilities/File3dFormat';
+import { File3dFormat } from '@/utilities/File3dFormat';
 import { CadMetadataParser } from './CadMetadataParser';
 import { SectorScene } from './sector/SectorScene';
 import { CadTransformationProvider } from './CadTransformationProvider';

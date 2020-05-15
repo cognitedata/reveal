@@ -8,13 +8,13 @@ import { CadLoadingHints } from '../public/CadLoadingHints';
 import { CadNode } from './CadNode';
 import { ConsumedSector } from './sector/ConsumedSector';
 import { scan, share, startWith, auditTime, filter, map, publish, switchAll, observeOn } from 'rxjs/operators';
-import { fromThreeCameraConfig } from '../../../utilities/fromThreeCameraConfig';
 import { CadModelMetadata } from '.';
 import { SectorCuller } from './sector/culling/SectorCuller';
 import { distinctUntilLevelOfDetailChanged } from './sector/distinctUntilLevelOfDetailChanged';
-import { CachedRepository } from '../../../utilities';
 import { filterCurrentWantedSectors } from './sector/filterCurrentWantedSectors';
 import { WantedSector } from './sector/WantedSector';
+import { CachedRepository } from './sector/CachedRepository';
+import { fromThreeCameraConfig } from '@/utilities/fromThreeCameraConfig';
 
 export class CadModelUpdateHandler {
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();

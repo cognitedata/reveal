@@ -9,7 +9,7 @@ import { CadModelFactory } from './CadModelFactory';
 import { CadModelMetadataRepository } from './CadModelMetadataRepository';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 import { discardSector } from './sector/discardSector';
-import { ModelNodeAppearance } from '../../../utilities';
+import { ModelNodeAppearance } from './ModelNodeAppearance';
 
 export class CadManager {
   private readonly _cadModelMetadataRepository: CadModelMetadataRepository;

@@ -4,10 +4,10 @@
 
 import { mat4 } from 'gl-matrix';
 import { FetchPointCloudDelegate } from '../internal/delegates';
-import { SectorModelTransformation } from '../../cad/internal/sector/types';
 import { EptLoader } from '../internal/potree/EptLoader';
 import { PointCloudModel } from './PointCloudModel';
 import { CogniteClient, IdEither } from '@cognite/sdk';
+import { SectorModelTransformation } from '@/dataModels/cad/internal/sector/types';
 import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';

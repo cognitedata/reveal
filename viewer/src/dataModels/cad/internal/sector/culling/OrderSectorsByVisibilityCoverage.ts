@@ -4,11 +4,10 @@
 
 import * as THREE from 'three';
 
-import { SectorMetadata } from '../../../../..';
-import { SectorModelTransformation } from '../types';
+import { SectorModelTransformation, SectorMetadata } from '../types';
 import { toThreeJsBox3, toThreeMatrix4 } from '@/utilities';
 import { Box3 } from '@/utilities/Box3';
-import { coverageShaders } from '../../rendering/shaders';
+import { coverageShaders } from '@/dataModels/cad/internal/rendering/shaders';
 import { CadModelMetadata } from '@/dataModels/cad/public/CadModelMetadata';
 
 type SectorContainer = {
