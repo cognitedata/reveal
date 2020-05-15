@@ -5,7 +5,8 @@
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import { CogniteClient, HttpError } from '@cognite/sdk';
-import { toThreeVector3, RevealManager, CadNode } from '@cognite/reveal/threejs';
+import { RevealManager, CadNode } from '@cognite/reveal';
+import { toThreeVector3 } from '@cognite/reveal/utilities';
 import { vec3 } from 'gl-matrix';
 import { SectorModelTransformation } from '@cognite/reveal';
 import { GUI, GUIController } from 'dat.gui';

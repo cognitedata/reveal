@@ -40,9 +40,7 @@ module.exports = env => {
   const config = {
     mode: development ? "development" : "production",
     entry: {
-      index: './src/index.ts',
-      threejs: './src/threejs.ts',
-      migration: './src/migration.ts'
+      index: './src/index.ts'
     },
     target: "web",
     resolve: {

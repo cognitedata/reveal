@@ -4,7 +4,8 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { CadNode, intersectCadNodes, RevealManager, ModelNodeAppearance } from '@cognite/reveal/threejs';
+import { CadNode, RevealManager, ModelNodeAppearance } from '@cognite/reveal';
+import { intersectCadNodes } from '@cognite/reveal/dataModels/cad/internal/picking';
 import { getParamsFromURL } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 
