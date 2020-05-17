@@ -70,6 +70,8 @@ export class AxisThreeView extends BaseGroupThreeView
 
   private corners: Vector3[] = [];
   private centers = new Array<Vector3>(6);
+
+  // Set to read in order to see if they change later on
   private axisColor = Colors.red;
   private gridColor = Colors.red;
   private wallColor = Colors.red;
@@ -416,7 +418,7 @@ export class AxisThreeView extends BaseGroupThreeView
     const normal = Range3.getWallNormal(wallIndex);
     const cameraDirection = wallCenter.copy();
     cameraDirection.substract(cameraPosition);
-    return cameraDirection.dot(normal) > 0;
+    return cameraDirection.getDot(normal) > 0;
   }
 
   //==================================================

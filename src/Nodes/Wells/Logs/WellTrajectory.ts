@@ -16,7 +16,6 @@ import { Random } from "../../../Core/PrimitiveClasses/Random";
 import { Range3 } from "../../../Core/Geometry/Range3";
 import { Range1 } from "../../../Core/Geometry/Range1";
 import { TrajectorySample } from "./../Samples/TrajectorySample";
-import { MdSample } from "./../Samples/MdSample";
 import { MdSamples } from "./MdSamples";
 import { Ma } from "../../../Core/PrimitiveClasses/Ma";
 
@@ -122,7 +121,7 @@ export class WellTrajectory extends MdSamples
       }
     }
     if (index0 >= index1)
-      Error("Index rrror in tangent");
+      Error("Index error in tangent");
 
     const minSample = this.samples[index0] as TrajectorySample;
     const maxSample = this.samples[index1] as TrajectorySample;

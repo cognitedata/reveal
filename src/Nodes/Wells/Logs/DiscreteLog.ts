@@ -73,10 +73,9 @@ export class DiscreteLog extends BaseLog
   {
     const log = new DiscreteLog();
     const numSamples = 1000;
-    const mdInc = mdRange.delta / numSamples;
-    let md = mdRange.min;
+    const mdInc = mdRange.delta / (numSamples - 1);
 
-    for (let k = 0; k < numSamples; k++, md += mdInc)
+    for (let k = 0, md = mdRange.min; k < numSamples; k++, md += mdInc)
       log.samples.push(new DiscreteLogSample(Random.getInt(valueRange), md));
     return log;
   }

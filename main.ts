@@ -87,6 +87,11 @@ export function main()
   }
   // Set some visible in target 0
 
+  for (const node of root.getDescendantsByType(FloatLogNode))
+  {
+    node.setVisibleInteractive(true);
+  }
+
   for (const node of root.getDescendantsByType(WellTrajectoryNode))
     node.setVisibleInteractive(true);
 

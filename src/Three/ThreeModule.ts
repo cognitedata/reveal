@@ -15,24 +15,30 @@
 import CameraControls from 'camera-controls';
 import * as THREE from 'three';
 
-import { PolylinesNode } from "../Nodes/PolylinesNode";
-import { PolylinesThreeView } from "./PolylinesThreeView";
 import { BaseModule } from "../Core/Module/BaseModule";
 import { ViewFactory } from "../Core/Views/ViewFactory";
 import { ThreeRenderTargetNode } from "./ThreeRenderTargetNode";
 import { BaseRootNode } from "../Core/Nodes/BaseRootNode";
 import { RootNode } from "../TreeNodes/RootNode";
 import { BaseRenderTargetNode } from "../Core/Nodes/BaseRenderTargetNode";
-import { PotreeNode } from "../Nodes/PotreeNode";
-import { PotreeThreeView } from "./PotreeThreeView";
-import { SurfaceNode } from '../Nodes/SurfaceNode';
-import { SurfaceThreeView } from './SurfaceThreeView';
-import { WellTrajectoryNode } from "../Nodes/Wells/Wells/WellTrajectoryNode";
-import { WellTrajectoryThreeView } from './WellTrajectoryThreeView';
-import { PointsNode } from '../Nodes/PointsNode';
-import { PointsThreeView } from './PointsThreeView';
+
+
 import { AxisNode } from '../Nodes/AxisNode';
+import { PointsNode } from '../Nodes/PointsNode';
+import { PolylinesNode } from "../Nodes/PolylinesNode";
+import { SurfaceNode } from '../Nodes/SurfaceNode';
+import { PotreeNode } from "../Nodes/PotreeNode";
+import { WellTrajectoryNode } from "../Nodes/Wells/Wells/WellTrajectoryNode";
+import { FloatLogNode } from "../Nodes/Wells/Wells/FloatLogNode";
+
 import { AxisThreeView } from './AxisThreeView';
+import { PointsThreeView } from './PointsThreeView';
+import { PolylinesThreeView } from "./PolylinesThreeView";
+import { SurfaceThreeView } from './SurfaceThreeView';
+import { PotreeThreeView } from "./PotreeThreeView";
+import { WellTrajectoryThreeView } from './WellTrajectoryThreeView';
+import { FloatLogThreeView } from './FloatLogThreeView';
+
 
 export class ThreeModule extends BaseModule
 {
@@ -47,12 +53,13 @@ export class ThreeModule extends BaseModule
 
   protected /*override*/ registerViewsCore(factory: ViewFactory): void
   {
-    factory.register(WellTrajectoryNode.name, WellTrajectoryThreeView, ThreeRenderTargetNode.name);
+    factory.register(AxisNode.name, AxisThreeView, ThreeRenderTargetNode.name);
     factory.register(PointsNode.name, PointsThreeView, ThreeRenderTargetNode.name);
     factory.register(PolylinesNode.name, PolylinesThreeView, ThreeRenderTargetNode.name);
     factory.register(SurfaceNode.name, SurfaceThreeView, ThreeRenderTargetNode.name);
     factory.register(PotreeNode.name, PotreeThreeView, ThreeRenderTargetNode.name);
-    factory.register(AxisNode.name, AxisThreeView, ThreeRenderTargetNode.name);
+    factory.register(WellTrajectoryNode.name, WellTrajectoryThreeView, ThreeRenderTargetNode.name);
+    factory.register(FloatLogNode.name, FloatLogThreeView, ThreeRenderTargetNode.name);
   }
 
   protected /*override*/ createRootCore(): BaseRootNode

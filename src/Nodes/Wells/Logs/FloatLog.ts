@@ -91,10 +91,9 @@ export class FloatLog extends BaseLog
   {
     const log = new FloatLog();
     const numSamples = 1000;
-    const mdInc = mdRange.delta / numSamples;
-    let md = mdRange.min;
+    const mdInc = mdRange.delta / (numSamples - 1);
 
-    for (let k = 0; k < numSamples; k++, md += mdInc)
+    for (let k = 0, md = mdRange.min; k < numSamples; k++, md += mdInc)
       log.samples.push(new FloatLogSample(Random.getFloat(valueRange), md));
     return log;
   }

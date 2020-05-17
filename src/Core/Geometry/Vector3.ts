@@ -63,7 +63,6 @@ export class Vector3
 
   public toString(): string { return `(${this.x}, ${this.y}, ${this.z})`; }
 
-  public dot(other: Vector3): number { return this.x * other.x + this.y * other.y + this.z * other.z; }
   public squareDistance(other: Vector3): number { return Ma.square(this.x - other.x) + Ma.square(this.y - other.y) + Ma.square(this.z - other.z); }
   public distance(other: Vector3): number { return Math.sqrt(this.squareDistance(other)); }
 
@@ -76,6 +75,17 @@ export class Vector3
       case 2: return this.z;
       default: return Number.NaN;
     }
+  }
+
+  public getDot(other: Vector3): number { return this.x * other.x + this.y * other.y + this.z * other.z; }
+
+  public getCross(other: Vector3): Vector3
+  {
+    return new Vector3(
+      this.y * other.z - this.z * other.y,
+      this.z * other.x - this.x * other.z,
+      this.x * other.y - this.y * other.x
+    );
   }
 
   //==================================================

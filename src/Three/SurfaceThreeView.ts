@@ -68,19 +68,16 @@ export class SurfaceThreeView extends BaseGroupThreeView
 
     let color = node.color;
     if (style.colorType !== ColorType.NodeColor)
-      color = Colors.white; // Must be white because the colors are multiplicated
+      color = Colors.white; // Must be white because the colors are multiplicative
 
-    const threeColor: THREE.Color = ThreeConverter.toColor(color);
-
-    const geometry = new THREE.BufferGeometry();
     const buffers = new RegularGrid2Buffers(grid);
 
+    const geometry = new THREE.BufferGeometry();
     geometry.addAttribute('position', new THREE.Float32BufferAttribute(buffers.positions, 3, true));
     geometry.addAttribute('normal', new THREE.Float32BufferAttribute(buffers.normals, 3, true));
-
     geometry.setIndex(new THREE.Uint32BufferAttribute(buffers.triangleIndexes, 1, true));
 
-    const material = new THREE.MeshPhongMaterial({ color: threeColor, side: THREE.DoubleSide, flatShading: false, shininess: 100 });
+    const material = new THREE.MeshPhongMaterial({ color: ThreeConverter.toColor(color), side: THREE.DoubleSide, flatShading: false, shininess: 100 });
     //const material = createShader();
 
     if (style.colorType === ColorType.DepthColor)

@@ -33,7 +33,7 @@ export class DiscreteLogNode extends BaseLogNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return BaseLogNode.name; }
+  public /*override*/ get className(): string { return DiscreteLogNode.name; }
   public /*override*/ isA(className: string): boolean { return className === BaseLogNode.name || super.isA(className); }
 
   //==================================================

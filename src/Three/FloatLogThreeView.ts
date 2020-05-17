@@ -15,14 +15,21 @@ import * as THREE from 'three';
 import { Color } from "three";
 import { BaseGroupThreeView } from "./BaseGroupThreeView";
 import { WellTrajectoryNode } from "../Nodes/Wells/Wells/WellTrajectoryNode";
+import { FloatLogNode } from "../Nodes/Wells/Wells/FloatLogNode";
+import { FloatLog } from "../Nodes/Wells/Logs/FloatLog";
+import { WellTrajectory } from "../Nodes/Wells/Logs/WellTrajectory";
 import { WellRenderStyle } from "../Nodes/Wells/Wells/WellRenderStyle";
 import { ThreeConverter } from "./ThreeConverter";
 import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
 import { Range3 } from '../Core/Geometry/Range3';
 import { ThreeLabel as TreeLabel } from "./Utilities/ThreeLabel";
 import { TrajectorySample } from "../Nodes/Wells/Samples/TrajectorySample";
+import { FloatLogSample } from "../Nodes/Wells/Samples/FloatLogSample";
+import { Vector3 } from "../Core/Geometry/Vector3";
+import { TriangleStripBuffers } from "../Core/Geometry/TriangleStripBuffers";
+import { Colors } from '../Core/PrimitiveClasses/Colors';
 
-export class WellTrajectoryThreeView extends BaseGroupThreeView
+export class FloatLogThreeView extends BaseGroupThreeView
 {
   //==================================================
   // CONSTRUCTORS
@@ -34,7 +41,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
   // INSTANCE PROPERTIES
   //==================================================
 
-  protected get node(): WellTrajectoryNode { return super.getNode() as WellTrajectoryNode; }
+  protected get node(): FloatLogNode { return super.getNode() as FloatLogNode; }
   protected get style(): WellRenderStyle { return super.getStyle() as WellRenderStyle; }
 
   //==================================================
@@ -48,7 +55,13 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
   public calculateBoundingBoxCore(): Range3 | undefined
   {
-    const boundingBox = this.node.boundingBox;
+    const node = this.node;
+
+    const wellTrajectoryNode = node.wellTrajectory;
+    if (!wellTrajectoryNode)
+      return undefined;
+
+    const boundingBox = wellTrajectoryNode.boundingBox;
     if (!boundingBox)
       return undefined;
 
@@ -65,41 +78,58 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     const node = this.node;
     const style = this.style;
 
-    const wellTrajectory = node.data;
+    const wellTrajectoryNode = node.wellTrajectory;
+    if (!wellTrajectoryNode)
+      return null;
+
+    const wellTrajectory = wellTrajectoryNode.data;
     if (!wellTrajectory)
+      return null;
+
+    const wellLog = node.data;
+    if (!wellLog)
       throw Error("Well trajectory is missing");
 
     const group = new THREE.Group();
-    const well = node.well;
-    if (well)
+
+    const  directionToCamera = new Vector3(1, 1, 0);
+    directionToCamera.normalize();
+    const color = Colors.white;
+
+    const buffers = new TriangleStripBuffers(wellLog.count);
+
+    for (const baseSample of wellLog.samples)
     {
-      const label = TreeLabel.createByPositionAndAlignment(well.name, well.wellHead, 1, 60, true);
-      if (label)
-        group.add(label);
+      const position = wellTrajectory.getAtMd(baseSample.md);
+      const tangent = wellTrajectory.getTangentAtMd(baseSample.md);
+
+      const prependicular = directionToCamera.getCross(tangent);
+      const normal = prependicular.getCross(tangent);
+
+      prependicular.multiplyByNumber(100);
+
+      const endPosition = position.copy();
+      endPosition.add(prependicular);
+
+
+      buffers.addPair(position, endPosition, normal, normal);
+
+      const sample = baseSample as FloatLogSample;
     }
 
-    const color = node.color;
-    const threeColor = ThreeConverter.toColor(color);
+    const geometry = new THREE.BufferGeometry();
+    geometry.addAttribute('position', new THREE.Float32BufferAttribute(buffers.positions, 3, true));
+    geometry.addAttribute('normal', new THREE.Float32BufferAttribute(buffers.normals, 3, true));
+    geometry.setIndex(new THREE.Uint32BufferAttribute(buffers.triangleIndexes, 1, true));
 
-    const points: THREE.Vector3[] = [];
-    for (const baseSample of wellTrajectory.samples) 
-    {
-      const sample = baseSample as TrajectorySample;
-      points.push(ThreeConverter.toVector(sample.point));
-    }
+    const material = new THREE.MeshPhongMaterial({ color: ThreeConverter.toColor(color), side: THREE.DoubleSide, flatShading: false, shininess: 100 });
+    //const material = createShader();
 
-    const curve = new THREE.CatmullRomCurve3(points);
-    const geometry = new THREE.TubeGeometry(curve, 100, style.radius, 16);
-    const material = new THREE.MeshPhongMaterial(
-      {
-        color: threeColor,
-        flatShading: false,
-        shininess: 100,
-        emissive: new Color(1, 1, 1),
-        emissiveIntensity: 0.2
-      });
+    const mesh = new THREE.Mesh(geometry, material);
+    //mesh.position.set(grid.xOrigin, grid.yOrigin, 0);
+    mesh.drawMode = THREE.TrianglesDrawMode; //THREE.TriangleStripDrawMode (must use groups)
 
-    group.add(new THREE.Mesh(geometry, material));
+    group.add(mesh);
     return group;
   }
 }
