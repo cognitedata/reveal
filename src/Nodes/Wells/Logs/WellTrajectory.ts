@@ -11,6 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import * as THREE from 'three';
 import { Vector3 } from "../../../Core/Geometry/Vector3";
 import { Random } from "../../../Core/PrimitiveClasses/Random";
 import { Range3 } from "../../../Core/Geometry/Range3";
@@ -18,6 +19,7 @@ import { Range1 } from "../../../Core/Geometry/Range1";
 import { TrajectorySample } from "./../Samples/TrajectorySample";
 import { MdSamples } from "./MdSamples";
 import { Ma } from "../../../Core/PrimitiveClasses/Ma";
+import { ThreeConverter } from "../../../Three/ThreeConverter";
 
 export class WellTrajectory extends MdSamples
 {
@@ -127,8 +129,7 @@ export class WellTrajectory extends MdSamples
     const maxSample = this.samples[index1] as TrajectorySample;
 
     // Should pointing upwards
-    const tangent = minSample.point.copy();
-    tangent.substract(maxSample.point);
+    const tangent = Vector3.substract(minSample.point, maxSample.point);
     tangent.normalize();
 
     if (tangent.z < 0)
@@ -182,14 +183,24 @@ export class WellTrajectory extends MdSamples
     p3.y += Random.getFloat(new Range1(600, -600));
     p3.z += -300;
 
+    const points: THREE.Vector3[] = [];
+    points.push(ThreeConverter.toVector(p0));
+    points.push(ThreeConverter.toVector(p1));
+    points.push(ThreeConverter.toVector(p2));
+    points.push(ThreeConverter.toVector(p3));
+
+    const curve = new THREE.CatmullRomCurve3(points);
+    const curvePoints = curve.getPoints(64);
+
     let md = 0;
-    result.add(new TrajectorySample(p0, md));
-    md += p0.distance(p1);
-    result.add(new TrajectorySample(p1, md));
-    md += p1.distance(p2);
-    result.add(new TrajectorySample(p2, md));
-    md += p1.distance(p2);
-    result.add(new TrajectorySample(p3, md));
+    let prevPoint = ThreeConverter.fromVector(curvePoints[0]);
+    for (const curvePoint of curvePoints)
+    {
+      const point = ThreeConverter.fromVector(curvePoint);
+      md += prevPoint.distance(point);
+      result.add(new TrajectorySample(point, md));
+      prevPoint = point;
+    }
     return result;
   }
 

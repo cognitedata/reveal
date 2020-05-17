@@ -12,25 +12,18 @@
 //=====================================================================================
 
 import { RegularGrid2 } from "./RegularGrid2";
+import { TriangleStripBuffers } from "./TriangleStripBuffers";
 
-export class RegularGrid2Buffers 
+export class RegularGrid2Buffers extends TriangleStripBuffers
 {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
 
-  public positions: Float32Array;
-  public normals: Float32Array;
-  public uvs: Float32Array;
-  public triangleIndexes: number[] = [];
-
   public constructor(grid: RegularGrid2)
   {
     const [uniqueIndexes, numUniqueIndex] = RegularGrid2Buffers.createUniqueIndexes(grid);
-    this.positions = new Float32Array(3 * numUniqueIndex);
-    this.normals = new Float32Array(3 * numUniqueIndex);
-    this.uvs = new Float32Array(2 * numUniqueIndex);
-
+    super(numUniqueIndex, true);
     this.makeBuffers(grid, uniqueIndexes);
     this.makeTriangleIndexes(grid, uniqueIndexes);
   }
@@ -48,24 +41,11 @@ export class RegularGrid2Buffers
         if (uniqueIndex < 0)
           continue;
 
-        let index = 3 * uniqueIndex;
-
         const z = grid.getZ(i, j);
-
-        this.positions[index + 0] = grid.inc * i;
-        this.positions[index + 1] = grid.inc * j;
-        this.positions[index + 2] = z;
-
         const normal = grid.getNormal(i, j, z);
-        this.normals[index + 0] = normal.x;
-        this.normals[index + 1] = normal.y;
-        this.normals[index + 2] = normal.z;
+        const u = zRange.getFraction(z);
 
-        const fraction = zRange.getFraction(z);
-
-        index = 2 * uniqueIndex;
-        this.uvs[index + 0] = fraction;
-        this.uvs[index + 1] = 0;
+        this.setXyzAt(uniqueIndex, grid.inc * i, grid.inc * j, z, normal, u);
       }
     }
   }
@@ -112,11 +92,6 @@ export class RegularGrid2Buffers
           this.addTriangle(unique0, unique1, unique2);
       }
     }
-  }
-
-  private addTriangle(index0: number, index1: number, index2: number): void
-  {
-    this.triangleIndexes.push(index0, index1, index2);
   }
 
   private static createUniqueIndexes(grid: RegularGrid2): [number[], number]

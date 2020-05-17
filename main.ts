@@ -13,6 +13,8 @@ import { DiscreteLog } from './src/Nodes/Wells/Logs/DiscreteLog';
 import { RootNode } from './src/TreeNodes/RootNode';
 import { AxisNode } from './src/Nodes/AxisNode';
 import { Vector3 } from "./src/Core/Geometry/Vector3";
+import { MdSample } from "./src/Nodes/Wells/Samples/MdSample";
+import { MdSamples } from "./src/Nodes/Wells/Logs/MdSamples";
 
 main();
 
@@ -37,7 +39,7 @@ export function main()
     well.wellHead.z = 0;
 
     // Add 5 trajectories
-    for (let j = 0; j < 5; j++)
+    for (let j = 0; j < i + 1; j++)
     {
       const wellTrajectory = new WellTrajectoryNode();
       wellTrajectory.data = WellTrajectory.createByRandom(well.wellHead);
@@ -87,9 +89,13 @@ export function main()
   }
   // Set some visible in target 0
 
+  let n = 0;
   for (const node of root.getDescendantsByType(FloatLogNode))
   {
     node.setVisibleInteractive(true);
+    n++;
+    if (n > 3)
+      break;
   }
 
   for (const node of root.getDescendantsByType(WellTrajectoryNode))

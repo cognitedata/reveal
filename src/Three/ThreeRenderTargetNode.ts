@@ -124,25 +124,30 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
     // Add lights (TODO: move to TreeLightNode?)
     const scene = this.scene;
-    const direction = new THREE.Vector3(0.5, -0.5, 1);
+
+
+    // Light from the sky
+    const directions = new Array<THREE.Vector3>();
+    directions.push(new THREE.Vector3(2000, 0, 2000));
+    directions.push(new THREE.Vector3(-2000, 0, 2000));
+    directions.push(new THREE.Vector3(0, 2000, 2000));
+    directions.push(new THREE.Vector3(0, -2000, 2000));
 
     const hasAxis = this.hasViewOfNodeType(AxisNode);
     this.scene.background = ThreeConverter.toColor(this.getBgColor(hasAxis));
 
     const lightColor = ThreeConverter.toColor(Colors.white);
     const group = new THREE.Group();
-    // Light from the sky
+
+    for (const direction of directions)
     {
-      const intensity = 1;
+      const intensity = 0.25;
       const light = new THREE.DirectionalLight(lightColor, intensity);
-      light.position.set(direction.x, direction.y, direction.z);
+      light.position.copy(direction);
       group.add(light);
     }
-    // Light from the ground
     {
-      const intensity = 0.75;
-      const light = new THREE.DirectionalLight(lightColor, intensity);
-      light.position.set(-direction.x, -direction.y, -direction.z);
+      const light = new THREE.AmbientLight(lightColor, 0.25)
       group.add(light);
     }
     scene.add(group);

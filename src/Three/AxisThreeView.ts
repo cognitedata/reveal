@@ -199,15 +199,15 @@ export class AxisThreeView extends BaseGroupThreeView
       let labelCount = 0;
 
       // Draw ticks
-      const labelInc = AxisThreeView.getBoldInc(realRange, tickInc);
+      const labelInc = realRange.getBoldInc(tickInc);
 
       const tickDirection = Range3.getTickDirection(wallIndex0, wallIndex1);
 
       // Add tick marks and labels
       for (const anyTick of realRange.getTicks(tickInc))
       {
-        const start = this.corners[i0].copy();
         const tick = Number(anyTick);
+        const start = this.corners[i0].copy();
         start.setAt(dimension, tick);
         if (dimension === 2)
           start.scaleZ(this.zScale);
@@ -233,7 +233,7 @@ export class AxisThreeView extends BaseGroupThreeView
         end.z /= this.zScale;
 
         // Add label
-        const label = TreeLabel.createByPositionAndDirection(`${tick}`, end, tickDirection, dimension, tickFontSize, true);
+        const label = TreeLabel.createByPositionAndDirection(`${tick}`, end, tickDirection, tickFontSize, true);
         if (label)
         {
           group.add(label);
@@ -259,13 +259,11 @@ export class AxisThreeView extends BaseGroupThreeView
         {
           position = Vector3.getCenterOf2(this.corners[i0], this.corners[i1]);
         }
-        const vector = tickDirection.copy();
-        vector.multiplyByNumber(tickLength * 5);
-        position.add(vector);
+        position = Vector3.addFactor(position, tickDirection, tickLength * 5);
         position.z /= this.zScale;
 
         // Align the text
-        const label = TreeLabel.createByPositionAndDirection(Vector3.getAxisName(dimension), position, tickDirection, dimension, labelFontSize, true);
+        const label = TreeLabel.createByPositionAndDirection(Vector3.getAxisName(dimension), position, tickDirection, labelFontSize, true);
         if (label)
         {
           group.add(label);
@@ -273,7 +271,7 @@ export class AxisThreeView extends BaseGroupThreeView
         }
       }
       const threeColor = ThreeConverter.toColor(this.axisColor);
-      const material = new THREE.LineBasicMaterial({ color: threeColor, linewidth: 2 });
+      const material = new THREE.LineBasicMaterial({ color: threeColor, linewidth: 1 });
       const object = new THREE.LineSegments(geometry, material);
 
       this.setUserDataOnAxis(object, wallIndex0, wallIndex1, true);
@@ -303,7 +301,7 @@ export class AxisThreeView extends BaseGroupThreeView
     const threeColor = ThreeConverter.toColor(this.wallColor);
     const squareMaterial = new THREE.MeshBasicMaterial({
       color: threeColor,
-      side: THREE.DoubleSide, //BackSide,
+      side: THREE.BackSide,
       polygonOffset: true,
       polygonOffsetFactor: 1.0,
       polygonOffsetUnits: 4.0
@@ -355,7 +353,7 @@ export class AxisThreeView extends BaseGroupThreeView
     if (realRange.isEmpty)
       return;
 
-    const boldInc = AxisThreeView.getBoldInc(realRange, realInc);
+    const boldInc = realRange.getBoldInc(realInc);
     for (const anyTick of realRange.getTicks(realInc))
     {
       const tick = Number(anyTick);
@@ -414,10 +412,8 @@ export class AxisThreeView extends BaseGroupThreeView
 
   private isWallVisible(wallIndex: number, cameraPosition: Vector3): boolean
   {
-    const wallCenter = this.centers[wallIndex];
+    const cameraDirection = Vector3.substract(this.centers[wallIndex], cameraPosition);
     const normal = Range3.getWallNormal(wallIndex);
-    const cameraDirection = wallCenter.copy();
-    cameraDirection.substract(cameraPosition);
     return cameraDirection.getDot(normal) > 0;
   }
 
@@ -435,23 +431,6 @@ export class AxisThreeView extends BaseGroupThreeView
       inc = Math.max(inc, range.y.getBestInc(numTicks));
     if (range.z.hasSpan)
       inc = Math.max(inc, range.z.getBestInc(numTicks));
-    return inc;
-  }
-
-  private static getBoldInc(range: Range1, inc: number): number
-  {
-    let numTicks = 0;
-    const boldInc = inc * 2;
-    for (const anyTick of range.getTicks(inc))
-    {
-      const tick = Number(anyTick);
-      if (!Ma.isInc(tick, boldInc))
-        continue;
-
-      numTicks++;
-      if (numTicks > 2)
-        return boldInc;
-    }
     return inc;
   }
 

@@ -24,6 +24,7 @@ import { Colors } from '../Core/PrimitiveClasses/Colors';
 import { ColorType } from '../Core/Enums/ColorType';
 import { ThreeConverter } from './ThreeConverter';
 import { Range3 } from '../Core/Geometry/Range3';
+import { TextureKit } from './TextureKit';
 
 export class SurfaceThreeView extends BaseGroupThreeView
 {
@@ -63,7 +64,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
     const node = this.node;
     const style = this.style;
     const grid = node.data;
-    if (grid == null)
+    if (!grid)
       return null;
 
     let color = node.color;
@@ -71,21 +72,14 @@ export class SurfaceThreeView extends BaseGroupThreeView
       color = Colors.white; // Must be white because the colors are multiplicative
 
     const buffers = new RegularGrid2Buffers(grid);
-
-    const geometry = new THREE.BufferGeometry();
-    geometry.addAttribute('position', new THREE.Float32BufferAttribute(buffers.positions, 3, true));
-    geometry.addAttribute('normal', new THREE.Float32BufferAttribute(buffers.normals, 3, true));
-    geometry.setIndex(new THREE.Uint32BufferAttribute(buffers.triangleIndexes, 1, true));
-
+    const geometry = buffers.getBufferGeometry();
     const material = new THREE.MeshPhongMaterial({ color: ThreeConverter.toColor(color), side: THREE.DoubleSide, flatShading: false, shininess: 100 });
     //const material = createShader();
 
-    if (style.colorType === ColorType.DepthColor)
+    if (style.colorType === ColorType.DepthColor && buffers.uvs)
     {
-      geometry.addAttribute('uv', new THREE.Float32BufferAttribute(buffers.uvs, 2, true));
-      const texture = createTexture(grid.getZRange());
-      // texture.magFilter = THREE.NearestMipmapLinearFilter;
-      // texture.minFilter = THREE.NearestMipmapLinearFilter;
+      buffers.addUv(geometry);
+      const texture = TextureKit.create1D(grid.getZRange());
       texture.anisotropy = 4;
       material.map = texture;
     }
@@ -94,43 +88,6 @@ export class SurfaceThreeView extends BaseGroupThreeView
     mesh.drawMode = THREE.TrianglesDrawMode; //THREE.TriangleStripDrawMode (must use groups)
     return mesh;
   }
-}
-
-//==================================================
-// LOCAL FUNCTIONS: Helpers
-//==================================================
-
-function createTexture(range: Range1): THREE.DataTexture
-{
-  const darknessVolume = 0.3;
-
-  const width = 2000;
-  const height = 2;
-  const data = new Uint8Array(3 * width * height);
-  const inc = Math.round(width / 20);
-
-  let index1 = 0;
-  let index2 = 3 * width;
-
-  for (let i = 0; i < width; i++)
-  {
-    const hue = i / (width - 1);
-    let color = Color.hsv(hue * 360, 255, 200);
-
-    if (true)
-      color = Colors.getGammaCorrected(color);
-
-    if (true)
-    {
-      // Darkness correction
-      const darknessFraction = (i % inc) / inc;
-      color = color.darken(darknessVolume * (darknessFraction - 0.5));
-    }
-    data[index1++] = data[index2++] = color.red();
-    data[index1++] = data[index2++] = color.green();
-    data[index1++] = data[index2++] = color.blue();
-  }
-  return new THREE.DataTexture(data, width, height, THREE.RGBFormat);
 }
 
 //==================================================

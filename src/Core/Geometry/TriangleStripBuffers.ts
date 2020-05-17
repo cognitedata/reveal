@@ -12,6 +12,7 @@
 //=====================================================================================
 
 import { Vector3 } from "./Vector3";
+import * as THREE from 'three';
 
 export class TriangleStripBuffers
 {
@@ -19,26 +20,55 @@ export class TriangleStripBuffers
   // INSTANCE FIELDS
   //==================================================
 
+
   public positions: Float32Array;
   public normals: Float32Array;
-  public uvs: Float32Array;
+  public uvs: Float32Array | null = null;
   public triangleIndexes: number[] = [];
   public pointCount = 0;
   public uniqueIndex = 0;
 
-  public constructor(size: number)
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
+
+  public constructor(pointCount: number, makeUvs: boolean)
   {
-    this.pointCount = size
-    this.positions = new Float32Array(3 * size);
-    this.normals = new Float32Array(3 * size);
-    this.uvs = new Float32Array(2 * size);
+    this.pointCount = pointCount;
+    this.positions = new Float32Array(3 * pointCount);
+    this.normals = new Float32Array(3 * pointCount);
+    if (makeUvs)
+      this.uvs = new Float32Array(2 * pointCount);
   }
 
-  addPair(p1: Vector3, p2: Vector3, n1: Vector3, n2: Vector3)
+  //==================================================
+  // INSTANCE METHODS: Getters
+  //==================================================
+
+  public getBufferGeometry(): THREE.BufferGeometry
+  {
+    const geometry = new THREE.BufferGeometry();
+    geometry.addAttribute('position', new THREE.Float32BufferAttribute(this.positions, 3, true));
+    geometry.addAttribute('normal', new THREE.Float32BufferAttribute(this.normals, 3, true));
+    geometry.setIndex(new THREE.Uint32BufferAttribute(this.triangleIndexes, 1, true));
+    return geometry;
+  }
+
+  public addUv(geometry: THREE.BufferGeometry)
+  {
+    if (this.uvs)
+      geometry.addAttribute('uv', new THREE.Float32BufferAttribute(this.uvs, 2, true));
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Operations
+  //==================================================
+
+  public addPair(p1: Vector3, p2: Vector3, n1: Vector3, n2: Vector3, u = 0)
   {
     if (this.uniqueIndex >= 2)
     {
-      //     3------2
+      //     2------3
       //     |      |
       //     0------1
       const unique0 = this.uniqueIndex - 2;
@@ -46,38 +76,56 @@ export class TriangleStripBuffers
       const unique2 = this.uniqueIndex;
       const unique3 = this.uniqueIndex + 1;
 
-      this.addTriangle(unique0, unique1, unique2);
       this.addTriangle(unique0, unique2, unique3);
+      this.addTriangle(unique0, unique3, unique1);
     }
     {
-      const index = 3 * this.uniqueIndex;
-
-      this.positions[index + 0] = p1.x;
-      this.positions[index + 1] = p1.y;
-      this.positions[index + 2] = p1.z;
-
-      this.positions[index + 3] = p2.x;
-      this.positions[index + 4] = p2.y;
-      this.positions[index + 5] = p2.z;
-
-      this.normals[index + 0] = n1.x;
-      this.normals[index + 1] = n1.y;
-      this.normals[index + 2] = n1.z;
-
-      this.normals[index + 3] = n2.x;
-      this.normals[index + 4] = n2.y;
-      this.normals[index + 5] = n2.z;
+      this.add(p1, n1, u);
+      this.add(p2, n2, u);
     }
-    {
-      const uvindex = 2 * this.uniqueIndex;
-      this.uvs[uvindex + 0] = 0; //fraction;
-      this.uvs[uvindex + 1] = 0;
-    }
-    this.uniqueIndex += 2;
   }
 
+  protected add(position: Vector3, normal: Vector3, u = 0): void
+  {
+    {
+      const index = 3 * this.uniqueIndex;
+      this.positions[index + 0] = position.x;
+      this.positions[index + 1] = position.y;
+      this.positions[index + 2] = position.z;
+      this.normals[index + 0] = normal.x;
+      this.normals[index + 1] = normal.y;
+      this.normals[index + 2] = normal.z;
+    }
+    if (this.uvs)
+    {
+      const index = 2 * this.uniqueIndex;
+      this.uvs[index + 0] = u;
+      this.uvs[index + 1] = 0;
+    }
+    this.uniqueIndex++;
+  }
 
-  private addTriangle(index0: number, index1: number, index2: number): void
+  protected setXyzAt(uniqueIndex: number, x: number, y: number, z: number, normal: Vector3, u: number): void
+  {
+    {
+      const index = 3 * uniqueIndex;
+      this.positions[index + 0] = x;
+      this.positions[index + 1] = y;
+      this.positions[index + 2] = z;
+      this.normals[index + 0] = normal.x;
+      this.normals[index + 1] = normal.y;
+      this.normals[index + 2] = normal.z;
+    }
+    if (this.uvs)
+    {
+      const index = 2 * uniqueIndex;
+      this.uvs[index + 0] = u;
+      this.uvs[index + 1] = 0;
+    }
+    this.uniqueIndex++;
+  }
+
+  protected addTriangle(index0: number, index1: number, index2: number): void
   {
     this.triangleIndexes.push(index0, index1, index2);
   }

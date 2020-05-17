@@ -88,8 +88,15 @@ export class Vector3
     );
   }
 
+  public getNormal(other: Vector3): Vector3
+  {
+    const cross = this.getCross(other);
+    cross.normalize();
+    return cross;
+  }
+
   //==================================================
-  // INSTANCE METHODS: Operations
+  // INSTANCE METHODS: Setters
   //==================================================
 
   public setAt(dimension: number, value: number): void
@@ -108,6 +115,10 @@ export class Vector3
     this.y = y;
     this.z = z;
   }
+
+  //==================================================
+  // INSTANCE METHODS: Operations
+  //==================================================
 
   public add(point: Vector3): void
   {
@@ -167,15 +178,19 @@ export class Vector3
 
   public normalize(): boolean
   {
-    const len = this.length;
-    if (len < Number.EPSILON)
+    const length = this.length;
+    if (length < Number.EPSILON)
       return false;
 
-    this.x /= len;
-    this.y /= len;
-    this.z /= len;
+    this.x /= length;
+    this.y /= length;
+    this.z /= length;
     return true;
   }
+
+  //==================================================
+  // STATIC METHODS: Getters
+  //==================================================
 
   public static getRandom(range: Range3): Vector3
   {
@@ -224,4 +239,12 @@ export class Vector3
       default: return "Undefined";;
     }
   }
+
+  //==================================================
+  // STATIC METHODS: Arithmetical operations
+  //==================================================
+
+  public static substract(a: Vector3, b: Vector3): Vector3 { return new Vector3(a.x - b.x, a.y - b.y, a.z - b.z); }
+  public static add(a: Vector3, b: Vector3): Vector3 { return new Vector3(a.x + b.x, a.y + b.y, a.z + b.z); }
+  public static addFactor(a: Vector3, b: Vector3, f: number): Vector3 { return new Vector3(a.x + b.x * f, a.y + b.y * f, a.z + b.z * f); }
 }

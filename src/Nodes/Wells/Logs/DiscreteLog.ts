@@ -72,7 +72,7 @@ export class DiscreteLog extends BaseLog
   public static createByRandom(mdRange: Range1, valueRange: Range1): DiscreteLog
   {
     const log = new DiscreteLog();
-    const numSamples = 1000;
+    const numSamples = 100;
     const mdInc = mdRange.delta / (numSamples - 1);
 
     for (let k = 0, md = mdRange.min; k < numSamples; k++, md += mdInc)

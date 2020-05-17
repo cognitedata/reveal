@@ -90,7 +90,7 @@ export class FloatLog extends BaseLog
   public static createByRandom(mdRange: Range1, valueRange: Range1): FloatLog
   {
     const log = new FloatLog();
-    const numSamples = 1000;
+    const numSamples = 100;
     const mdInc = mdRange.delta / (numSamples - 1);
 
     for (let k = 0, md = mdRange.min; k < numSamples; k++, md += mdInc)

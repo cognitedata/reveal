@@ -12,7 +12,6 @@
 //=====================================================================================
 
 import * as THREE from 'three';
-import { Color } from "three";
 import { BaseGroupThreeView } from "./BaseGroupThreeView";
 import { WellTrajectoryNode } from "../Nodes/Wells/Wells/WellTrajectoryNode";
 import { WellRenderStyle } from "../Nodes/Wells/Wells/WellRenderStyle";
@@ -87,15 +86,13 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       const sample = baseSample as TrajectorySample;
       points.push(ThreeConverter.toVector(sample.point));
     }
-
     const curve = new THREE.CatmullRomCurve3(points);
     const geometry = new THREE.TubeGeometry(curve, 100, style.radius, 16);
-    const material = new THREE.MeshPhongMaterial(
+    const material = new THREE.MeshStandardMaterial(
       {
         color: threeColor,
         flatShading: false,
-        shininess: 100,
-        emissive: new Color(1, 1, 1),
+        emissive: threeColor,
         emissiveIntensity: 0.2
       });
 

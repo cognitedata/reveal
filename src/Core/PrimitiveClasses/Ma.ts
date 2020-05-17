@@ -44,8 +44,7 @@ export class Ma
     return Ma.isZero(diff);
   }
 
-  public static isInc(tick: number, inc: number): boolean { return Ma.isInt(tick / inc); }
-
+  public static isInc(value: number, inc: number): boolean { return Ma.isInt(value / inc); }
 
   //==================================================
   // STATIC METHODS: Returning a number

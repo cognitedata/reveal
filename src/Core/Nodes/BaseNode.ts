@@ -203,21 +203,6 @@ export abstract class BaseNode extends Identifiable
     return root ? root.activeTargetIdAccessor : null;
   }
 
-  public /*virtual*/ getDebugString(): string
-  {
-    let result = this.name;
-    result += cocatinate("typeName", this.typeName);
-    result += cocatinate("className", this.className);
-    if (this.canChangeColor)
-      result += cocatinate("color", this.color);
-    result += cocatinate("id", this.uniqueId.isEmpty ? "" : (this.uniqueId.toString().substring(0, 6) + "..."));
-    if (this.isActive)
-      result += cocatinate("active");
-    if (this.renderStyles.length > 0)
-      result += cocatinate("renderStyles", this.renderStyles.length);
-    return result;
-  }
-
   //==================================================
   // VIRTUAL METHODS: Draw styles
   //==================================================
@@ -623,6 +608,22 @@ export abstract class BaseNode extends Identifiable
   // INSTANCE METHODS: Debugging
   //==================================================
 
+
+  public /*virtual*/ getDebugString(): string
+  {
+    let result = this.name;
+    result += cocatinate("typeName", this.typeName);
+    result += cocatinate("className", this.className);
+    if (this.canChangeColor)
+      result += cocatinate("color", this.color);
+    result += cocatinate("id", this.uniqueId.isEmpty ? "" : (this.uniqueId.toString().substring(0, 6) + "..."));
+    if (this.isActive)
+      result += cocatinate("active");
+    if (this.renderStyles.length > 0)
+      result += cocatinate("renderStyles", this.renderStyles.length);
+    return result;
+  }
+
   public toHierarcyString(): string
   {
     let text = "";
@@ -648,4 +649,3 @@ export function cocatinate(name: string, value?: any): string
     return ", " + name;
   return ", " + name + ": " + value;
 }
-

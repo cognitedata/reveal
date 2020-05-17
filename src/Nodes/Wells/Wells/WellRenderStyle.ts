@@ -21,8 +21,8 @@ export class WellRenderStyle extends BaseRenderStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public radius: number = 10;
-  public colorType: ColorType = ColorType.DifferentColor;
+  public radius = 10;
+  public colorType = ColorType.DifferentColor;
 
   //==================================================
   // CONSTRUCTORS
