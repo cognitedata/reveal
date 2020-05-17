@@ -14,7 +14,13 @@ body {
   flex-direction: column; }
 
 .right-panel {
-  width: calc(100vw - 350px); }
+  position: relative;
+  width: calc(100vw - 350px);
+  height: 100vh; }
+
+.right-panel canvas {
+  width: 100% !important;
+  height: 100% !important; }
 
 .left-panel-section {
   border: 1px #f4f4f4 solid;
@@ -23,8 +29,18 @@ body {
 .explorer-container {
   height: 50vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center; }
+
+.explorer-container button {
+  width: 50%;
+  margin: 0.2rem;
+  background-color: white;
+  color: black;
+  border: 2px solid grey; }
+  .explorer-container button:hover {
+    background-color: #e7e7e7; }
 
 .settings-container {
   height: 50vh;

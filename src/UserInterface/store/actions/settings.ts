@@ -6,7 +6,7 @@ import
   ON_RANGE_INPUT_CHANGE,
   ON_COMPACT_COLOR_CHANGE,
   ON_EXPAND_CHANGE_FROM_TOOLBAR
-} from "../types/settings"
+} from "../types/settings";
 
 export const onExpandChange = (payload) =>
 {

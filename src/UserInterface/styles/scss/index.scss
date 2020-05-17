@@ -8,6 +8,9 @@ $root-container-height: 100vh;
 $left-panel-width: 350px;
 $left-panel-height: $root-container-height;
 
+$right-panel-width: calc(#{$root-container-width} - #{$left-panel-width});
+$right-panel-height: 100vh;
+
 .root-container {
   height: $root-container-height;
   width: $root-container-width;
@@ -22,7 +25,14 @@ $left-panel-height: $root-container-height;
 }
 
 .right-panel {
+  position: relative;
   width: calc(#{$root-container-width} - #{$left-panel-width});
+  height: $right-panel-height;
+}
+
+.right-panel canvas {
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .left-panel-section {
@@ -33,8 +43,20 @@ $left-panel-height: $root-container-height;
 .explorer-container {
   height: $left-panel-height/2;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.explorer-container button {
+  width: 50%;
+  margin: 0.2rem;
+  background-color: white;
+  color: black;
+  border: 2px solid grey;
+  &:hover {
+    background-color: #e7e7e7;
+  }
 }
 
 .settings-container {

@@ -150,7 +150,7 @@ export default function Input(props: { config, elementIndex, mainId, subIndex })
       case "range":
         return <input type="range"
           onChange={(event) =>
-            dispatch(onSelectChange({
+            dispatch(onRangeChange({
               mainId,
               subIndex,
               elementIndex,
