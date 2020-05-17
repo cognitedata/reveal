@@ -27,7 +27,7 @@ export default function SubSection(props: { elements, mainId, subIndex })
       config={element}
       mainId={mainId}
       subIndex={subIndex}
-      index={index}>
+      elementIndex={index}>
     </Input>)}
   </div>
 } 

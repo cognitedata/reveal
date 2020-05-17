@@ -22,6 +22,12 @@ export default function getIcon(iconType: string, iconName: string)
           return require("../resources/Icons/Actions/Copy.png");
         case "Paste":
           return require("../resources/Icons/Actions/Paste.png");
+        case "FontBold":
+          return require("../resources/Icons/Actions/FontBold.png");
+        case "FontItalic":
+          return require("../resources/Icons/Actions/FontItalic.png");
+        case "FontUnderline":
+          return require("../resources/Icons/Actions/FontUnderline.png");
       }
     case IconTypes.STATES:
       switch (iconName)

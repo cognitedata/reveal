@@ -61,25 +61,84 @@ export const state1 = {
               isReadOnly: true,
               label: "X(Min/Max/Delta)",
               type: "input-group",
-              value: [5924.44, 8102.53, 2178.09],
+              subElements: [
+                {
+                  type: "input",
+                  value: 8102.53,
+                  isReadOnly: true,
+                },
+                {
+                  type: "input",
+                  value: 8102.53,
+                  isReadOnly: true,
+                },
+                {
+                  type: "input",
+                  value: 5924.44,
+                  isReadOnly: true,
+                },
+              ],
             },
             {
               isReadOnly: true,
               label: "Y(Min/Max/Delta)",
               type: "input-group",
-              value: [5717.63, 8109.4, 2391.77],
+              subElements: [
+                {
+                  type: "input",
+                  value: 5717.63,
+                  isReadOnly: true,
+                },
+                {
+                  type: "input",
+                  value: 8109.4,
+                  isReadOnly: true,
+                },
+                {
+                  type: "input",
+                  value: 2391.77,
+                  isReadOnly: true,
+                },
+              ],
             },
             {
               isReadOnly: true,
               label: "Z(Min/Max/Delta)",
               type: "input-group",
-              value: [-2092.65, -723.08, 1369.57],
+              subElements: [
+                {
+                  type: "input",
+                  value: -2092.65,
+                  isReadOnly: true,
+                },
+                {
+                  type: "input",
+                  value: -723.08,
+                  isReadOnly: true,
+                },
+                {
+                  type: "input",
+                  value: 1369.57,
+                  isReadOnly: true,
+                },
+              ],
             },
             {
               isReadOnly: true,
               label: "Number of Polylines/Points",
               type: "input-group",
-              value: [10, 7140],
+              subElements: [
+                {
+                  type: "input",
+                  value: 10,
+                  isReadOnly: true,
+                },
+                {
+                  type: "input",
+                  value: 7140,
+                  isReadOnly: true,
+                },
+              ],
             },
           ],
         },
@@ -222,6 +281,36 @@ export const state1 = {
                 { name: "Sphere", icon: { type: IconTypes.POINT_SYMBOL, name: "Sphere" } },
                 { name: "Cube", icon: { type: IconTypes.POINT_SYMBOL, name: "Cube" } }
               ],
+            },
+            {
+              isReadOnly: false,
+              label: "Filter",
+              type: "input-group",
+              subElements: [
+                {
+                  type: "select",
+                  value: 0,
+                  options: [
+                    { name: "Decimate" },
+                    { name: "Every Nth" },
+                    { name: "First" },
+                    { name: "Last" }
+                  ],
+                },
+                {
+                  type: "select",
+                  value: 0,
+                  options: [
+                    { name: 2 },
+                  ],
+                }
+              ],
+            },
+            {
+              isReadOnly: false,
+              label: "Transparency",
+              type: "range",
+              value: 95,
             }
           ],
         }

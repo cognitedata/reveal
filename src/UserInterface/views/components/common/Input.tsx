@@ -4,7 +4,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select'
 import { useDispatch } from "react-redux";
 
-import { onTextInputChange, onSelectChange } from "../../../store/actions/settings"
+import { onTextInputChange, onSelectChange, onRangeChange } from "../../../store/actions/settings"
 import Icon from "./Icon";
 import CompactColorPicker from "./CompactColorPicker";
 
@@ -31,7 +31,8 @@ const useStyles = makeStyles((theme: Theme) =>
       display: "flex",
       marginLeft: ".5rem",
       fontSize: ".7rem",
-      fontWeight: 400,
+      alignItems: "center",
+      fontWeight: 500,
     },
     formInput: {
       flex: 1,
@@ -75,92 +76,114 @@ const useStyles = makeStyles((theme: Theme) =>
     optionText: {
       marginLeft: "0.5rem",
       color: "#6a0dad"
-    }
+    },
   }),
 );
 
-export default function Input(props: { config, index, mainId, subIndex })
+export default function Input(props: { config, elementIndex, mainId, subIndex })
 {
   const classes = useStyles();
-  const { config, index, mainId, subIndex } = props;
-  const { label, value, isReadOnly, options } = config;
+  const { config, elementIndex, mainId, subIndex } = props;
 
   const dispatch = useDispatch();
-  const labelElelent = (<label>{`${label}:`}</label>);
-  let inputElement = null;
+  const labelElelent = config.label ? (<label>{`${config.label}:`}</label>) : null;
 
-  switch (config.type)
+  const keyExtractor = (other, subElementIndex, elementType) =>
   {
-    case "input":
-      inputElement = (<input
-        onChange={(event) =>
-        {
-          if (!isReadOnly)
-            dispatch(onTextInputChange(
-              { mainId, subIndex, elementIndex: index, value: event.target.value }))
-        }}
-        value={value}
-        className={
-          isReadOnly ?
-            `${classes.textInput} ${classes.readOnlyInput}`
-            : classes.textInput}>
-      </input>
-      );
-      break;
-    case "input-group":
-      inputElement = value.map((val, idx) =>
-        <input
-          key={`${mainId}-${subIndex}-group-${idx}`}
-          className={`${classes.textInput} ${isReadOnly ? classes.readOnlyInput : ""}`}
-          value={val}
-          onChange={() => { }}
-        >
-        </input>);
-      break;
-    case "select":
-      inputElement = (
-        <Select
+    let key = `${mainId}-${subIndex}-${elementIndex}-${elementType}`;
+    if (other) key += `-${other}`
+    if (subElementIndex) key += `-${subElementIndex}`;
+    return { key }
+  }
+
+  const inputElement = (config, subElementIndex) =>
+  {
+    const { value, isReadOnly, options, subElements, icon } = config;
+    switch (config.type)
+    {
+      case "input":
+        return (<input
+          {...keyExtractor(null, subElementIndex, config.type)}
+          onChange={(event) => (!isReadOnly) ? dispatch(onTextInputChange(
+            { mainId, subIndex, elementIndex, value: event.target.value, subElementIndex })) : null}
           value={value}
+          className={
+            isReadOnly ?
+              `${classes.textInput} ${classes.readOnlyInput}`
+              : classes.textInput}>
+        </input >
+        );
+      case "select":
+        return (
+          <Select
+            {...keyExtractor(null, subElementIndex, config.type)}
+            value={value}
+            onChange={(event) =>
+              dispatch(onSelectChange({
+                mainId,
+                subIndex,
+                elementIndex,
+                subElementIndex,
+                value: event.target.value
+              }))}
+          >
+            {options.map((option, idx) =>
+              <MenuItem value={idx}
+                {...keyExtractor(idx, subElementIndex, config.type)}>
+                <div className={classes.option}>
+                  {option.icon ?
+                    <Icon
+                      name={option.icon.name}
+                      type={option.icon.type}>
+                    </Icon> : null}
+                  <span className={classes.optionText}>{option.name}</span>
+                </div>
+              </MenuItem>)}
+          </Select>);
+      case "color-table":
+        return (<CompactColorPicker
+          value={value}
+          mainId={mainId}
+          subIndex={subIndex}
+          elementIndex={elementIndex}
+        ></CompactColorPicker>);
+      case "range":
+        return <input type="range"
           onChange={(event) =>
             dispatch(onSelectChange({
               mainId,
               subIndex,
-              elementIndex: index,
+              elementIndex,
+              subElementIndex,
               value: event.target.value
             }))}
+          className="slider"
+          min="0"
+          max="100">
+        </input>;
+      case "image-button":
+        return <div
+          {...keyExtractor(null, subElementIndex, config.type)}
+          className={`input-icon ${icon.selected ? "input-icon-selected" : ""}`}
         >
-          {options.map((option, idx) =>
-            <MenuItem value={idx} key={
-              `${mainId}-${subIndex}-select-${index}-${idx}`}>
-              <div className={classes.option}>
-                {option.icon ?
-                  <Icon
-                    name={option.icon.name}
-                    type={option.icon.type}>
-                  </Icon> : null}
-                <span className={classes.optionText}>{option.name}</span>
-              </div>
-            </MenuItem>)}
-        </Select>);
-      break;
-    case "color-table":
-      inputElement = (<CompactColorPicker
-        value={value}
-        mainId={mainId}
-        subIndex={subIndex}
-        elementIndex={index}
-      ></CompactColorPicker>);
-      break;
-    default:
-      inputElement = (<input className={classes.textInput}></input>);
-  }
+          <Icon
+            type={icon.type}
+            name={icon.name}
+          />
+        </div>
+      case "input-group":
+        return subElements.map((element, idx) => inputElement(element, idx));
+      default:
+        return null;
+    }
+  };
 
   return <section className={classes.formField}>
     <div className={classes.formLabel}>
       {labelElelent}
     </div>
     <div className={classes.formInput}>
-      {inputElement}
+      {inputElement(config, null)}
     </div>
   </section>
 }
