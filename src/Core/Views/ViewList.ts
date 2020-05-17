@@ -23,13 +23,13 @@ export class ViewList
   public constructor() { }
 
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   public list: BaseView[] = [];
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   public get count(): number { return this.list.length; }
@@ -68,7 +68,7 @@ export class ViewList
   {
     // Used in unit testing
     for (const view of this.list)
-      if (!view.Verify())
+      if (!view.verify())
       return false;
     return true;
   }

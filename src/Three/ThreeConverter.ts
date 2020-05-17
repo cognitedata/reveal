@@ -24,7 +24,7 @@ export class ThreeConverter
   // STATIC METHODS
   //==================================================
 
-  public static toColor(value: color): THREE.Color { return new THREE.Color(value.red() / MaxByte, value.blue() / MaxByte, value.green() / MaxByte); }
+  public static toColor(value: color): THREE.Color { return new THREE.Color(value.red() / MaxByte, value.green() / MaxByte, value.blue() / MaxByte); }
   public static toVector(value: Vector3): THREE.Vector3 { return new THREE.Vector3(value.x, value.y, value.z); }
   public static fromVector(value: THREE.Vector3): Vector3 { return new Vector3(value.x, value.y, value.z); }
 

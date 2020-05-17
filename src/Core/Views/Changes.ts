@@ -20,6 +20,7 @@ export class Changes
   // States changed
   public static readonly visible: symbol = Symbol("visible");
   public static readonly active: symbol = Symbol("active");
+  public static readonly expanded: symbol = Symbol("expanded");
 
   // Fields changed
   public static readonly nodeName: symbol = Symbol("nodeName");

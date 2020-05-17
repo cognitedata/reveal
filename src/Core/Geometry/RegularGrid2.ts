@@ -14,14 +14,14 @@
 import { Index2 } from "./Index2";
 import { Grid2 } from "./Grid2";
 import { Vector3 } from "./Vector3";
-import { Random } from "../PrimitivClasses/Random";
+import { Random } from "../PrimitiveClasses/Random";
 import { Range1 } from "./Range1";
 import { Range3 } from "./Range3";
 
 export class RegularGrid2 extends Grid2
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   public xOrigin: number;
@@ -76,7 +76,7 @@ export class RegularGrid2 extends Grid2
   public getZ(i: number, j: number): number
   {
     const index = this.getNodeIndex(i, j);
-    return this.buffer[index]
+    return this.buffer[index];
   }
 
   public getPoint3(i: number, j: number): Vector3
@@ -275,6 +275,23 @@ export class RegularGrid2 extends Grid2
 // LOCAL FUNCTIONS: Helpers
 //==================================================
 
+function setValueBetween(grid: RegularGrid2, i0: number, j0: number, i2: number, j2: number, stdDev: number, zMean?: number): number
+{
+  const i1 = Math.trunc((i0 + i2) / 2);
+  const j1 = Math.trunc((j0 + j2) / 2);
+
+  const oldZ = grid.getZ(i1, j1);
+  if (oldZ !== 0)
+    return oldZ; // Assume already calculated (little bit dirty...)
+
+  if (zMean === undefined)
+    zMean = (grid.getZ(i0, j0) + grid.getZ(i2, j2)) / 2;
+
+  const newZ = Random.getGaussian(zMean, stdDev);
+  grid.setZ(i1, j1, newZ);
+  return newZ;
+}
+
 function subDivide(grid: RegularGrid2, i0: number, j0: number, i2: number, j2: number, stdDev: number, level: number, dampning: number): void
 {
   if (i2 - i0 <= 1 && j2 - j0 <= 1)
@@ -302,21 +319,4 @@ function subDivide(grid: RegularGrid2, i0: number, j0: number, i2: number, j2: n
   subDivide(grid, i0, j1, i1, j2, stdDev, level, dampning);
   subDivide(grid, i1, j0, i2, j1, stdDev, level, dampning);
   subDivide(grid, i1, j1, i2, j2, stdDev, level, dampning);
-}
-
-function setValueBetween(grid: RegularGrid2, i0: number, j0: number, i2: number, j2: number, stdDev: number, zMean?: number): number
-{
-  const i1 = Math.trunc((i0 + i2) / 2);
-  const j1 = Math.trunc((j0 + j2) / 2);
-
-  const oldZ = grid.getZ(i1, j1);
-  if (oldZ !== 0)
-    return oldZ; // Assume already calulated (little bit dirty...)
-
-  if (zMean === undefined)
-    zMean = (grid.getZ(i0, j0) + grid.getZ(i2, j2)) / 2;
-
-  const newZ = Random.getGaussian(zMean, stdDev);
-  grid.setZ(i1, j1, newZ);
-  return newZ;
 }

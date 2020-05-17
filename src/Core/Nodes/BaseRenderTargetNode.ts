@@ -1,6 +1,6 @@
 
 import { BaseCameraNode } from "./BaseCameraNode";
-import { Colors } from "../PrimitivClasses/Colors";
+import { Colors } from "../PrimitiveClasses/Colors";
 import { BaseTargetNode } from "./BaseTargetNode";
 import { Range3 } from "../Geometry/Range3";
 import { Base3DView } from "../Views/Base3DView";
@@ -9,7 +9,7 @@ import { ViewInfo } from "../Views/ViewInfo";
 export abstract class BaseRenderTargetNode extends BaseTargetNode 
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private static margin: number = 24;
@@ -39,7 +39,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
   {
     super();
     this._fractionRange = fractionRange ? fractionRange : Range3.newUnit;
-    this.color = Colors.black;
+    this.isLightBackground = false;
   }
 
   //==================================================
@@ -82,7 +82,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
     const boundingBox = new Range3();
     for (const view of this.viewsShownHere.list)
       if (view instanceof Base3DView)
-        boundingBox.addRange(view.boundingBox)
+        boundingBox.addRange(view.boundingBox);
     return boundingBox;
   }
 
@@ -99,7 +99,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
   {
     const camera = this.getActiveChildByType(BaseCameraNode);
     if (!camera)
-      throw Error("Can not find the camera, shoul be added");
+      throw Error("Can not find the camera, should be added");
     return camera as BaseCameraNode;
   }
 

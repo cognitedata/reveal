@@ -17,7 +17,7 @@ import { Range3 } from "./Range3";
 export class Polylines
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   public list: Polyline[] = [];
@@ -36,7 +36,7 @@ export class Polylines
   {
     const result = new Polylines();
     for (let i = 0; i < polylinesCount; i++)
-      result.list.push(Polyline.createByRandom(pointCount, boundingBox))
+      result.list.push(Polyline.createByRandom(pointCount, boundingBox));
     return result;
   }
 

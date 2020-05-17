@@ -1,5 +1,3 @@
-import { AddEquation } from "three";
-
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
@@ -16,7 +14,7 @@ import { AddEquation } from "three";
 export class NodeEventArgs
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private _changes: ChangedDecription[] | null = null;
@@ -47,7 +45,7 @@ export class NodeEventArgs
   // INSTANCE METHODS: Getters
   //==================================================
 
-  public getChangedDecription(changed: symbol): ChangedDecription | undefined
+  private getChangedDecription(changed: symbol): ChangedDecription | undefined
   {
     if (!this._changes)
       return undefined;
@@ -70,7 +68,7 @@ export class NodeEventArgs
       return;
     if (!this._changes)
       this._changes = [];
-    this._changes.push(new ChangedDecription(changed, fieldName))
+    this._changes.push(new ChangedDecription(changed, fieldName));
   }
 }
 

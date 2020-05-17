@@ -15,9 +15,46 @@ import { BaseRootNode } from "../Core/Nodes/BaseRootNode";
 import { WellTreeNode } from './WellTreeNode';
 import { ColorTableTreeNode } from './ColorTableTreeNode';
 import { SettingsTreeNode } from './SettingsTreeNode';
+import { OthersTreeNode } from './OthersTreeNode';
 
 export class RootNode extends BaseRootNode
 {
+  //==================================================
+  //PROPERTIES
+  //==================================================
+
+  public get wells(): WellTreeNode
+  {
+    const child = this.getChildByType(WellTreeNode);
+    if (!child)
+      throw new Error("Cannot find the " + WellTreeNode.name);
+    return child;
+  }
+
+  public get others(): OthersTreeNode
+  {
+    const child = this.getChildByType(OthersTreeNode);
+    if (!child)
+      throw new Error("Cannot find the " + OthersTreeNode.name);
+    return child;
+  }
+
+  public get colorTables(): ColorTableTreeNode
+  {
+    const child = this.getChildByType(ColorTableTreeNode);
+    if (!child)
+      throw new Error("Cannot find the " + ColorTableTreeNode.name);
+    return child;
+  }
+
+  public get settingsTree(): SettingsTreeNode
+  {
+    const child = this.getChildByType(SettingsTreeNode);
+    if (!child)
+      throw new Error("Cannot find the " + SettingsTreeNode.name);
+    return child;
+  }
+
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -38,8 +75,14 @@ export class RootNode extends BaseRootNode
   protected /*override*/ initializeCore(): void
   {
     super.initializeCore();
-    this.addChild(new WellTreeNode());
-    this.addChild(new ColorTableTreeNode());
-    this.addChild(new SettingsTreeNode());
+    if (!this.hasChildByType(WellTreeNode))
+      this.addChild(new WellTreeNode());
+
+    if (!this.hasChildByType(OthersTreeNode))
+      this.addChild(new OthersTreeNode());
+    if (!this.hasChildByType(ColorTableTreeNode))
+      this.addChild(new ColorTableTreeNode());
+    if (!this.hasChildByType(SettingsTreeNode))
+      this.addChild(new SettingsTreeNode());
   }
 }

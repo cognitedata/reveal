@@ -3,11 +3,14 @@
     "",
     "\\src",
     "\\src\\Core",
+    "\\src\\Core\\Enums",
     "\\src\\Core\\Nodes",
     "\\src\\Nodes",
+    "\\src\\Nodes\\Wells",
+    "\\src\\Nodes\\Wells\\Logs",
     "\\src\\Three",
-    "\\src\\TreeNodes"
+    "\\src\\Three\\Utilities"
   ],
-  "SelectedNode": "\\src\\Three\\TreeOverlay.ts",
+  "SelectedNode": "\\src\\Core\\Nodes\\BaseNode.ts",
   "PreviewInSolutionExplorer": false
 }

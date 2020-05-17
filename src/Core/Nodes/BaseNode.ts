@@ -11,19 +11,22 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { UniqueId } from "../PrimitivClasses/UniqueId";
-import { Identifiable } from "../PrimitivClasses/Identifiable";
-import { TargetId } from "../PrimitivClasses/TargetId";
-import { isInstanceOf, Class } from "../PrimitivClasses/ClassT";
+import { UniqueId } from "../PrimitiveClasses/UniqueId";
+import { Identifiable } from "../PrimitiveClasses/Identifiable";
+import { TargetId } from "../PrimitiveClasses/TargetId";
+import { isInstanceOf, Class } from "../PrimitiveClasses/ClassT";
 import { RenderStyleResolution } from "../Enums/RenderStyleResolution";
 import { NodeEventArgs } from "../Views/NodeEventArgs";
 import { TargetIdAccessor } from "../Interfaces/TargetIdAccessor";
 import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
 import * as color from 'color'
 import { ColorType } from "../Enums/ColorType";
-import { Colors } from "../PrimitivClasses/Colors";
+import { Colors } from "../PrimitiveClasses/Colors";
 import { Changes } from "../Views/Changes";
 import { Range3 } from "../Geometry/Range3";
+import { CheckBoxState } from "../Enums/CheckBoxState";
+import { Target } from "../Interfaces/Target";
+import { Util } from "../PrimitiveClasses/Util";
 
 export abstract class BaseNode extends Identifiable
 {
@@ -34,11 +37,12 @@ export abstract class BaseNode extends Identifiable
   protected constructor() { super(); }
 
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private _color: color | undefined = undefined;
   private _name: string | undefined = undefined;
+  private _isExpanded = false;
 
   private _isActive: boolean = false;
   private _isInitialized: boolean = false;
@@ -49,13 +53,14 @@ export abstract class BaseNode extends Identifiable
   private _renderStyles: BaseRenderStyle[] = [];
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   public get uniqueId(): UniqueId { return this._uniqueId; }
   public get renderStyles(): BaseRenderStyle[] { return this._renderStyles; }
   public get path(): string { return (this.parent ? this.parent.path : "") + "\\" + this.name; }
   public get isInitialized(): boolean { return this._isInitialized; }
+  public get activeTarget(): Target | null { return this.activeTargetIdAccessor as Target; }
 
   //==================================================
   // OVERRIDES of Identifiable
@@ -66,27 +71,132 @@ export abstract class BaseNode extends Identifiable
   public /*override*/ toString(): string { return this.getDebugString(); }
 
   //==================================================
-  // VIRTUAL FUNCTIONS
+  // VIRTUAL METHODS: Name
   //==================================================
 
   public abstract get typeName(): string;
   public /*virtual*/ set name(value: string) { this._name = value; }
   public /*virtual*/ get name(): string { if (this._name === undefined) this._name = this.generateNewName(); return this._name; }
   public /*virtual*/ get canChangeName(): boolean { return true; }
+  public /*virtual*/ get nameExtension(): string { return name; }
+
+  //==================================================
+  // VIRTUAL METHODS: Label
+  //==================================================
+
+  public  /*virtual*/ get isVisibleInTreeControl(): boolean { return true; } // If false, the icon and it children is not shown in the tree control
+  public /*virtual*/ get labelColor(): color { return Colors.black; }
+  public  /*virtual*/ get isLabelInBold(): boolean { return this.isActive; } // true shows the label in bold font
+  public  /*virtual*/ get isLabelInItalic(): boolean { return !this.canBeDeleted; } // true shows the label in italic font
+
+  public get label(): string // This is the text shown in the tree control
+  {
+    const nameExtension = this.nameExtension;
+    if (Util.isEmpty(nameExtension))
+      return name;
+    return `${name} [${nameExtension}]`;
+  }
+
+  //==================================================
+  // VIRTUAL METHODS: Color
+  //==================================================
 
   public /*virtual*/ get color(): color { if (this._color === undefined) this._color = this.generateNewColor(); return this._color; }
   public /*virtual*/ set color(value: color) { this._color = value; }
   public /*virtual*/ get canChangeColor() { return true; }
 
+  //==================================================
+  // VIRTUAL METHODS: Active
+  //==================================================
+
   public /*virtual*/ get isActive(): boolean { return this._isActive; }
   public /*virtual*/ set isActive(value: boolean) { this._isActive = value; }
   public /*virtual*/ get canBeActive(): boolean { return false; }
 
+  //==================================================
+  // VIRTUAL METHODS: Appearance in the explorer
+  //==================================================
+
+  public  /*virtual*/ get canBeDeleted(): boolean { return true; }
+
+  public  /*virtual*/ canBeChecked(target: Target | null): boolean { return true; }
+  public  /*virtual*/ isFilter(target: Target | null): boolean { return false; }
+  public  /*virtual*/ isRadio(target: Target | null): boolean { return false; }
+
+  //==================================================
+  // VIRTUAL METHODS: Visibility
+  //==================================================
+
+  public /*virtual*/ getCheckBoxState(target?: Target | null): CheckBoxState
+  {
+    if (!target)
+      target = this.activeTarget;
+
+    if (!target)
+      return CheckBoxState.Never;
+
+    let numCandidates = 0;
+    let numAll = 0;
+    let numNone = 0;
+
+    for (const child of this.children)
+    {
+      const childState = child.getCheckBoxState(target);
+      if (childState === CheckBoxState.Never)
+        continue;
+
+      numCandidates++;
+      if (childState === CheckBoxState.All)
+        numAll++;
+      else if (childState === CheckBoxState.None)
+        numNone++;
+
+      // Optimization, not tested
+      if (numNone < numCandidates && numCandidates < numAll)
+        return CheckBoxState.Some;
+    }
+    if (numCandidates === 0)
+      return CheckBoxState.Never;
+    if (numCandidates === numAll)
+      return CheckBoxState.All;
+    if (numCandidates === numNone)
+      return CheckBoxState.None;
+    return CheckBoxState.Some;
+  }
+
+  public /*virtual*/ setVisibleInteractive(visible: boolean, target?: Target | null): void
+  {
+    if (!target)
+      target = this.activeTarget;
+    if (!target)
+      return;
+    const checkBoxState = this.getCheckBoxState();
+    if (checkBoxState === CheckBoxState.Never)
+      return;
+    if (checkBoxState === CheckBoxState.None && !this.canBeChecked)
+      return;
+    for (const child of this.children)
+      child.setVisibleInteractive(visible, target);
+  }
+
+  public toogleVisibleInteractive(): void // Use this when clicking on the checkbox in the three control
+  {
+    const checkBoxState = this.getCheckBoxState();
+    if (checkBoxState === CheckBoxState.Never)
+      return;
+    if (checkBoxState === CheckBoxState.None)
+      this.setVisibleInteractive(true);
+    else
+      this.setVisibleInteractive(false);
+  }
+
+  //==================================================
+  // VIRTUAL METHODS: Others
+  //==================================================
+
   protected /*virtual*/ initializeCore(): void { }
   protected /*virtual*/ notifyCore(args: NodeEventArgs): void { }
-
   protected /*virtual*/ removeInteractiveCore(): void { }
-
   protected /*virtual*/ get activeTargetIdAccessor(): TargetIdAccessor | null
   {
     const root = this.root;
@@ -108,10 +218,8 @@ export abstract class BaseNode extends Identifiable
     return result;
   }
 
-  public /*virtual*/ get boundingBox(): Range3 | undefined { return undefined; }
-
   //==================================================
-  // VIRUAL METHODS: Draw styles
+  // VIRTUAL METHODS: Draw styles
   //==================================================
 
   public /*virtual*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null { return null; }
@@ -121,7 +229,42 @@ export abstract class BaseNode extends Identifiable
   public /*override*/ supportsColorType(colorType: ColorType): boolean { return true; } // To be overridden
 
   //==================================================
-  // PROPERTIES: Child-Parent relationship
+  // INSTANCE METHODS: Expand
+  //==================================================
+
+  public get isExpanded(): boolean { return this._isExpanded; }
+  public set isExpanded(value: boolean) { this._isExpanded = value; }
+
+  public toggleExpandInteractive() // Use this when clicking on the expand marker in the three control
+  {
+    this.setExpandedInteractive(!this.isExpanded);
+  }
+
+  public setExpandedInteractive(value: boolean)
+  {
+    if (this.isExpanded === value)
+      return false;
+
+    if (!this.canBeExpanded)
+      return false;
+
+    this.isExpanded = value;
+    this.notify(new NodeEventArgs(Changes.expanded));
+    return true;
+  }
+
+  public canBeExpanded(): boolean // if true show expander marker
+  {
+    for (const child of this.children)
+    {
+      if (child.isVisibleInTreeControl)
+        return true;
+    }
+    return false;
+  }
+
+  //==================================================
+  // INSTANCE PROPERTIES: Child-Parent relationship
   //==================================================
 
   public get children(): BaseNode[] { return this._children; }
@@ -134,6 +277,8 @@ export abstract class BaseNode extends Identifiable
   //==================================================
   // INSTANCE METHODS: Get a child or children
   //==================================================
+
+  public hasChildByType<T extends BaseNode>(classType: Class<T>): boolean { return this.getChildByType(classType) !== null; }
 
   public getChild(index: number): BaseNode { return this._children[index]; }
 
@@ -287,6 +432,16 @@ export abstract class BaseNode extends Identifiable
 
   public addChild(child: BaseNode): void
   {
+    if (child.hasParent)
+    {
+      Error(`The child ${child.typeName} already has a parent`);
+      return;
+    }
+    if (child === this)
+    {
+      Error(`Trying to add illegal child ${child.typeName}`);
+      return;
+    }
     this._children.push(child);
     child._parent = this;
   }
@@ -294,13 +449,17 @@ export abstract class BaseNode extends Identifiable
   public remove(): boolean
   {
     if (!this.parent)
+    {
+      Error(`The child ${this.typeName} don't have a parent`);
       return false;
-
-    const index = this.childIndex;
-    if (index === undefined)
+    }
+    const childIndex = this.childIndex;
+    if (childIndex === undefined)
+    {
+      Error(`The child ${this.typeName} is not child of it's parent`);
       return false;
-
-    this.parent.children.splice(index, 1);
+    }
+    this.parent.children.splice(childIndex, 1);
     this._parent = null;
     return true;
   }
@@ -334,7 +493,7 @@ export abstract class BaseNode extends Identifiable
     // To be called when a node is removed
     // It is not finished, because the children it not taken properly care of
     this.removeInteractiveCore();
-    const parent = this.parent
+    const parent = this.parent;
     this.remove();
     parent!.notify(new NodeEventArgs(Changes.childDeleted));
   }
@@ -450,14 +609,14 @@ export abstract class BaseNode extends Identifiable
   {
     let result = this.typeName;
     if (!this.canChangeName)
-      return result
+      return result;
 
     const childIndex = this.childIndex;
     if (childIndex === undefined)
       return result;
 
     result += " " + (childIndex + 1);
-    return result
+    return result;
   }
 
   //==================================================
@@ -482,44 +641,6 @@ export abstract class BaseNode extends Identifiable
   // tslint:disable-next-line: no-console
   public debugHierarcy(): void { console.log(this.toHierarcyString()); }
 }
-
-
-//==================================================
-// OLD TEMPLATE ACCESS CODE: Good to have
-//==================================================
-
-// public getChildOfType<T extends BaseNode>(constructor: new () => T): T | null
-// {
-//   for (const child of this.children)
-//   {
-//     if (child instanceof constructor)
-//       return child;
-//   }
-//   return null;
-// }
-
-// public *getChildrenByType<T extends BaseNode>(constructor: new () => T)
-// {
-//   for (const child of this.children)
-//     if (child instanceof constructor)
-//       yield child;
-// }
-
-// public *getDescendantsByType<T extends BaseNode>(constructor: new () => T)
-// {
-//   for (const child of this.children)
-//   {
-//     if (child instanceof constructor)
-//       yield child;
-
-//     for (const descendant of child.getDescendantsByType<T>(constructor))
-//     {
-//       const copy: BaseNode = descendant;
-//       if (copy instanceof constructor)
-//         yield copy;
-//     }
-//   }
-// }
 
 export function cocatinate(name: string, value?: any): string
 {

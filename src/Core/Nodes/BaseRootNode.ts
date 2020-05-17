@@ -11,11 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { TargetFolder } from "./TargetFolder";
-import { DataFolder } from "./DataFolder";
+import { TargetTreeNode } from "./TargetTreeNode";
 import { BaseNode } from "./BaseNode";
 import { BaseTargetNode } from "./BaseTargetNode";
 import { TargetIdAccessor } from "../Interfaces/TargetIdAccessor";
+import { AxisNode } from "../../Nodes/AxisNode";
 
 export class BaseRootNode extends BaseNode
 {
@@ -30,22 +30,14 @@ export class BaseRootNode extends BaseNode
   }
 
   //==================================================
-  //PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
-  public get dataFolder(): DataFolder
+  public get targets(): TargetTreeNode 
   {
-    const child = this.getChildByType(DataFolder);
+    const child = this.getChildByType(TargetTreeNode);
     if (!child)
-      throw new Error("Cannot find the " + DataFolder.name);
-    return child;
-  }
-
-  public get targetFolder(): TargetFolder 
-  {
-    const child = this.getChildByType(TargetFolder);
-    if (!child)
-      throw new Error("Cannot find the " + TargetFolder.name);
+      throw new Error("Cannot find the " + TargetTreeNode.name);
     return child;
   }
 
@@ -72,8 +64,11 @@ export class BaseRootNode extends BaseNode
   protected /*override*/ initializeCore(): void
   {
     super.initializeCore();
-    this.addChild(new TargetFolder());
-    this.addChild(new DataFolder());
+    if (!this.hasChildByType(TargetTreeNode))
+      this.addChild(new TargetTreeNode());
+
+    if (!this.targets.hasChildByType(AxisNode))
+     this.targets.addChild(new AxisNode());
   }
 
   //==================================================
@@ -82,6 +77,6 @@ export class BaseRootNode extends BaseNode
 
   public get activeTarget(): BaseTargetNode | null
   {
-    return this.targetFolder.getActiveDescendantByType(BaseTargetNode);
+    return this.targets.getActiveDescendantByType(BaseTargetNode);
   }
 }

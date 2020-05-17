@@ -16,7 +16,7 @@ export enum ColorType
   ModelColor, // Use the color in the model or the texture if any
   NodeColor, // Use the color of the node
   DifferentColor, // Use different colors (normally use for debugging)
-  TreeDepthColor, // Use diffent color for each depth if the data has tiles or somehow sorted in a tree
+  TreeDepthColor, // Use different color for each depth if the data has tiles or somehow sorted in a tree
   DepthColor, // Color by the Z value, using a color table
 };
 

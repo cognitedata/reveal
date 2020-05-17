@@ -13,7 +13,7 @@
 
 import { BaseVisualNode } from "../Core/Nodes/BaseVisualNode";
 import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
-import { TargetId } from "../Core/PrimitivClasses/TargetId";
+import { TargetId } from "../Core/PrimitiveClasses/TargetId";
 import { Points } from "../Core/Geometry/Points";
 import { PointsRenderStyle } from "./PointsRenderStyle";
 import { ColorType } from "../Core/Enums/ColorType";
@@ -28,13 +28,13 @@ export class PointsNode extends BaseVisualNode
   public constructor() { super(); }
 
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private _data: Points | null = null;
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   public get data(): Points | null { return this._data; }

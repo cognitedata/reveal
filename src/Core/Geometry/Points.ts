@@ -18,7 +18,7 @@ import { Range1 } from "./Range1";
 export class Points
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   public list: Vector3[] = [];
@@ -32,7 +32,7 @@ export class Points
 
   public copy(): Points
   {
-    const result = new Points()
+    const result = new Points();
     result.list = [...this.list]; // This syntax sucks!
     return result;
   }

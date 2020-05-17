@@ -43,7 +43,7 @@ export class ViewFactory
   // INSTANCE FIELDS
   //==================================================
 
-  private products = new Map<string, Product>()
+  private products = new Map<string, Product>();
 
   //==================================================
   // INSTANCE METHODS:

@@ -1,11 +1,13 @@
-import { TargetId } from "../PrimitivClasses/TargetId";
+import { TargetId } from "../PrimitiveClasses/TargetId";
 import { Target } from "../Interfaces/Target";
 import { ViewFactory } from "../Views/ViewFactory";
 import { ViewList } from "../Views/ViewList";
 import { BaseView } from "../Views/BaseView";
 import { BaseVisualNode } from "./BaseVisualNode";
 import { BaseNode, cocatinate } from "./BaseNode";
-import { Range3 } from "../Geometry/Range3";
+import { isInstanceOf, Class } from "../PrimitiveClasses/ClassT";
+import { Colors } from "../PrimitiveClasses/Colors";
+import * as color from 'color'
 
 export abstract class BaseTargetNode extends BaseNode implements Target
 {
@@ -16,17 +18,20 @@ export abstract class BaseTargetNode extends BaseNode implements Target
   protected constructor() { super(); }
 
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private _viewsShownHere: ViewList = new ViewList();
+  public isLightBackground: boolean = false;
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   public get viewsShownHere(): ViewList { return this._viewsShownHere; }
   public get targetId(): TargetId { return new TargetId(this.className, this.uniqueId); }
+  public get fgColor(): color { return this.isLightBackground ? Colors.black : Colors.white; }
+  public get bgColor(): color { return this.color; }
 
   //==================================================
   // OVERRIDES of Identifiable
@@ -39,6 +44,7 @@ export abstract class BaseTargetNode extends BaseNode implements Target
   // OVERRIDES of BaseNode
   //==================================================
 
+  public /*override*/ get color(): color { return this.isLightBackground ? Colors.white : Colors.black; }
   public /*override*/ get typeName(): string { return "Target" }
   public /*override*/ get canBeActive(): boolean { return true; }
 
@@ -57,7 +63,7 @@ export abstract class BaseTargetNode extends BaseNode implements Target
   }
 
   //==================================================
-  // IMPLEMETATION of Target
+  // IMPLEMENTATION of Target
   //==================================================
 
   public canShowView(node: BaseVisualNode): boolean
@@ -119,7 +125,7 @@ export abstract class BaseTargetNode extends BaseNode implements Target
     }
     else
     {
-      this.removeViewShownHere(view)
+      this.removeViewShownHere(view);
       node.views.remove(view);
     }
     return true;
@@ -141,6 +147,13 @@ export abstract class BaseTargetNode extends BaseNode implements Target
   // INSTANCE METHODS
   //==================================================
 
+  public getBgColor(hasAxis: boolean): color
+  {
+    if (!hasAxis)
+      return this.bgColor;
+    return this.isLightBackground ? Colors.lightGrey : Colors.darkGrey;
+  }
+
   private createViewCore(node: BaseVisualNode)
   {
     return ViewFactory.instance.create(node, this.className);
@@ -148,7 +161,7 @@ export abstract class BaseTargetNode extends BaseNode implements Target
 
   public removeAllViewsShownHere(): void
   {
-    for (const view of this._viewsShownHere.list)
+    for (const view of this.viewsShownHere.list)
     {
       view.onHide();
       view.isVisible = false;
@@ -159,5 +172,19 @@ export abstract class BaseTargetNode extends BaseNode implements Target
       view.detach();
     }
     this._viewsShownHere.clear();
+  }
+
+  public hasViewOfNodeType<T extends BaseNode>(classType: Class<T>): boolean
+  {
+    for (const view of this.viewsShownHere.list) 
+    {
+      const node = view.getNode();
+      if (!node)
+        continue;
+
+      if (isInstanceOf(node, classType))
+        return true;
+    }
+    return true;
   }
 }

@@ -16,7 +16,7 @@ import { RegularGrid2 } from "./RegularGrid2";
 export class RegularGrid2Buffers 
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   public positions: Float32Array;
@@ -32,7 +32,7 @@ export class RegularGrid2Buffers
     this.uvs = new Float32Array(2 * numUniqueIndex);
 
     this.makeBuffers(grid, uniqueIndexes);
-    this.makeTriangleIndexes(grid, uniqueIndexes)
+    this.makeTriangleIndexes(grid, uniqueIndexes);
   }
 
   makeBuffers(grid: RegularGrid2, uniqueIndexes: number[])

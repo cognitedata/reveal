@@ -12,13 +12,12 @@
 //=====================================================================================
 
 import * as THREE from 'three';
-import { Color } from "three";
 import { BaseGroupThreeView } from "./BaseGroupThreeView";
 import { PolylinesNode } from "../Nodes/PolylinesNode";
 import { PolylinesRenderStyle } from "../Nodes/PolylinesRenderStyle";
 import { ThreeConverter } from "./ThreeConverter";
 import { ColorType } from "../Core/Enums/ColorType";
-import { Colors } from "../Core/PrimitivClasses/Colors";
+import { Colors } from "../Core/PrimitiveClasses/Colors";
 import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
 import { Range3 } from '../Core/Geometry/Range3';
 
@@ -31,7 +30,7 @@ export class PolylinesThreeView extends BaseGroupThreeView
   public constructor() { super(); }
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   protected get node(): PolylinesNode { return super.getNode() as PolylinesNode; }
@@ -79,7 +78,7 @@ export class PolylinesThreeView extends BaseGroupThreeView
         color = Colors.getNextColor(group.children.length);
 
       const threeColor = ThreeConverter.toColor(color);
-      const material = new THREE.LineBasicMaterial({ color: threeColor, linewidth: style.lineWidth })
+      const material = new THREE.LineBasicMaterial({ color: threeColor, linewidth: style.lineWidth });
       const line = new THREE.Line(geometry, material);
       group.add(line);
     }

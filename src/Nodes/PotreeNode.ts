@@ -13,7 +13,7 @@
 
 import { BaseVisualNode } from "../Core/Nodes/BaseVisualNode";
 import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
-import { TargetId } from "../Core/PrimitivClasses/TargetId";
+import { TargetId } from "../Core/PrimitiveClasses/TargetId";
 import { PotreeRenderStyle } from "./PotreeRenderStyle";
 import { Range3 } from "../Core/Geometry/Range3";
 
@@ -26,14 +26,14 @@ export class PotreeNode extends BaseVisualNode
   public constructor() { super(); }
 
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private _url: string = "";
   private _boundingBox: Range3 | undefined = undefined;
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   public get url(): string { return this._url; }

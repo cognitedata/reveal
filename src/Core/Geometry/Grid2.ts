@@ -16,7 +16,7 @@ import { Index2 } from "./Index2";
 export class Grid2
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   public nodeSize: Index2;

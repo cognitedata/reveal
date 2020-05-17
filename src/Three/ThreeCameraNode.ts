@@ -13,13 +13,14 @@
 
 import CameraControls from 'camera-controls';
 import * as THREE from 'three';
+
 import { BaseCameraNode } from "../Core/Nodes/BaseCameraNode";
 import { BaseRenderTargetNode } from "../Core/Nodes/BaseRenderTargetNode";
 
 export class ThreeCameraNode extends BaseCameraNode
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private _camera: THREE.Camera | null = null;
@@ -39,7 +40,7 @@ export class ThreeCameraNode extends BaseCameraNode
   public /*override*/ isA(className: string): boolean { return className === ThreeCameraNode.name || super.isA(className); }
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   public get camera(): THREE.Camera
@@ -49,6 +50,7 @@ export class ThreeCameraNode extends BaseCameraNode
       const target = this.getTarget();
       const aspectRatio = target ? target.aspectRatio : undefined;
       const camera = new THREE.PerspectiveCamera(45, aspectRatio, 0.1, 10000);
+      camera.up.set(0, 0, 1);
       this._camera = camera;
     }
     return this._camera;
@@ -64,7 +66,7 @@ export class ThreeCameraNode extends BaseCameraNode
       if (!target)
         return null;;
 
-      const camera = this.camera as THREE.PerspectiveCamera | THREE.OrthographicCamera
+      const camera = this.camera as THREE.PerspectiveCamera | THREE.OrthographicCamera;
       if (!camera)
         return null;
 
@@ -81,7 +83,7 @@ export class ThreeCameraNode extends BaseCameraNode
   public /*override*/ updateAspect(value: number)
   {
     const camera = this._camera;
-    if (this._camera == null)
+    if (this._camera === null)
       return;
 
     if (!(camera instanceof THREE.PerspectiveCamera))

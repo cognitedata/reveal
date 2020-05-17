@@ -18,7 +18,7 @@ import { PolylinesNode } from "../../Nodes/PolylinesNode";
 import { StubPolylinesView } from "./StubPolylinesView";
 import { StubTargetNode } from "./StubTargetNode";
 import { BaseRootNode } from "../../Core/Nodes/BaseRootNode";
-import { StubRootNode } from "./StubRootNode";
+import { RootNode } from "../../TreeNodes/RootNode";
 
 export class StubModule extends BaseModule
 {
@@ -31,9 +31,6 @@ export class StubModule extends BaseModule
     factory.register(PolylinesNode.name, StubPolylinesView, StubTargetNode.name);
   }
 
-  protected /*override*/ createRootCore(): BaseRootNode
-  {
-    return new StubRootNode();
-  }
+  protected /*override*/ createRootCore(): BaseRootNode { return new RootNode(); }
 }
 

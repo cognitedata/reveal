@@ -18,7 +18,7 @@ import { Vector3 } from '../Core/Geometry/Vector3';
 export class TreeOverlay
 {
   //==================================================
-  // FILEDS
+  // INSTANCE FIELDS
   //==================================================
 
   private scene: THREE.Scene | null = null;
@@ -124,7 +124,7 @@ export class TreeOverlay
     this.camera = new THREE.OrthographicCamera(-this.delta.x / 2, this.delta.x / 2, this.delta.y / 2, -this.delta.y / 2, 0, 30);
 
     // Create texture from rendered graphics.
-    this.texture = new THREE.Texture(canvas)
+    this.texture = new THREE.Texture(canvas);
     this.texture.needsUpdate = true;
     this.texture.generateMipmaps = false;
     this.texture.minFilter = THREE.LinearFilter;

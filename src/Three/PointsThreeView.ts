@@ -18,7 +18,7 @@ import { PointsNode } from "../Nodes/PointsNode";
 import { PointsRenderStyle } from "../Nodes/PointsRenderStyle";
 import { ThreeConverter } from "./ThreeConverter";
 import { ColorType } from "../Core/Enums/ColorType";
-import { Colors } from "../Core/PrimitivClasses/Colors";
+import { Colors } from "../Core/PrimitiveClasses/Colors";
 import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
 import { Points } from '../Core/Geometry/Points';
 import { Range3 } from '../Core/Geometry/Range3';
@@ -32,7 +32,7 @@ export class PointsThreeView extends BaseGroupThreeView
   public constructor() { super(); }
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   protected get node(): PointsNode { return super.getNode() as PointsNode; }
@@ -49,8 +49,8 @@ export class PointsThreeView extends BaseGroupThreeView
 
   public calculateBoundingBoxCore(): Range3 | undefined
   {
-    var boundingBox = this.node.boundingBox;
-    if (boundingBox == undefined)
+    const boundingBox = this.node.boundingBox;
+    if (!boundingBox)
       return undefined;
 
     boundingBox.expandByMargin(this.style.size);
@@ -79,7 +79,7 @@ export class PointsThreeView extends BaseGroupThreeView
     const geometry = new THREE.BufferGeometry();
     geometry.addAttribute('position', new THREE.Float32BufferAttribute(createPositions(points), 3, true));
 
-    const material = new THREE.PointsMaterial({ color: threeColor, size: style.size, sizeAttenuation: true })
+    const material = new THREE.PointsMaterial({ color: threeColor, size: style.size, sizeAttenuation: true });
     if (style.colorType === ColorType.DepthColor)
     {
       geometry.addAttribute('color', new THREE.Uint8BufferAttribute(createColors(points), 3, true));

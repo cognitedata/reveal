@@ -1,3 +1,4 @@
+
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
@@ -26,10 +27,12 @@ import { PotreeNode } from "../Nodes/PotreeNode";
 import { PotreeThreeView } from "./PotreeThreeView";
 import { SurfaceNode } from '../Nodes/SurfaceNode';
 import { SurfaceThreeView } from './SurfaceThreeView';
-import { WellNode } from '../Nodes/WellNode';
-import { WellThreeView } from './WellThreeView';
+import { WellTrajectoryNode } from "../Nodes/Wells/Wells/WellTrajectoryNode";
+import { WellTrajectoryThreeView } from './WellTrajectoryThreeView';
 import { PointsNode } from '../Nodes/PointsNode';
 import { PointsThreeView } from './PointsThreeView';
+import { AxisNode } from '../Nodes/AxisNode';
+import { AxisThreeView } from './AxisThreeView';
 
 export class ThreeModule extends BaseModule
 {
@@ -44,11 +47,12 @@ export class ThreeModule extends BaseModule
 
   protected /*override*/ registerViewsCore(factory: ViewFactory): void
   {
-    factory.register(WellNode.name, WellThreeView, ThreeRenderTargetNode.name);
+    factory.register(WellTrajectoryNode.name, WellTrajectoryThreeView, ThreeRenderTargetNode.name);
     factory.register(PointsNode.name, PointsThreeView, ThreeRenderTargetNode.name);
     factory.register(PolylinesNode.name, PolylinesThreeView, ThreeRenderTargetNode.name);
     factory.register(SurfaceNode.name, SurfaceThreeView, ThreeRenderTargetNode.name);
     factory.register(PotreeNode.name, PotreeThreeView, ThreeRenderTargetNode.name);
+    factory.register(AxisNode.name, AxisThreeView, ThreeRenderTargetNode.name);
   }
 
   protected /*override*/ createRootCore(): BaseRootNode
@@ -60,9 +64,9 @@ export class ThreeModule extends BaseModule
   {
     root.initializeRecursive();
     document.body.onresize = () => {
-      for (const target of root.targetFolder.getChildrenByType(BaseRenderTargetNode))
+      for (const target of root.targets.getChildrenByType(BaseRenderTargetNode))
         target.onResize();
-    }
+    };
   }
 }
 

@@ -16,6 +16,7 @@ import { NodeEventArgs } from "../Views/NodeEventArgs";
 import { BaseNode, cocatinate } from "./BaseNode";
 import { Target } from "../Interfaces/Target";
 import { Changes } from "../Views/Changes";
+import { CheckBoxState } from "../Enums/CheckBoxState";
 
 export abstract class BaseVisualNode extends BaseNode
 {
@@ -26,17 +27,16 @@ export abstract class BaseVisualNode extends BaseNode
   protected constructor() { super(); }
 
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private _views: ViewList = new ViewList();
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   public get views(): ViewList { return this._views; }
-  private get activeTarget(): Target | null { return this.activeTargetIdAccessor as Target; }
 
   //==================================================
   // OVERRIDES of Identifiable
@@ -48,6 +48,33 @@ export abstract class BaseVisualNode extends BaseNode
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
+
+  public /*override*/ getCheckBoxState(target?: Target | null): CheckBoxState
+  {
+    if (!target)
+      target = this.activeTarget;
+
+    if (!target)
+      return CheckBoxState.Never;
+
+    if (this.isVisible(target))
+      return CheckBoxState.All;
+
+    if (this.canBeVisible(target))
+      return CheckBoxState.None;
+
+    return CheckBoxState.Never;
+  }
+
+  public /*override*/setVisibleInteractive(visible: boolean, target?: Target | null): void
+  {
+    if (!target)
+      target = this.activeTarget;
+    if (!target)
+      return;
+    if (this.setVisible(visible, target))
+      this.notify(new NodeEventArgs(Changes.visible));
+  }
 
   protected /*override*/ removeInteractiveCore(): void
   {
@@ -89,18 +116,8 @@ export abstract class BaseVisualNode extends BaseNode
     if (!target)
       return false;
     if (visible)
-      return target.showView(this)
+      return target.showView(this);
     return target.hideView(this);
-  }
-
-  public setVisibleInteractive(visible: boolean, target?: Target | null): void
-  {
-    if (!target)
-      target = this.activeTarget;
-    if (!target)
-      return;
-    if (this.setVisible(visible, target))
-      this.notify(new NodeEventArgs(Changes.visible))
   }
 
   public removeAllViews(): void

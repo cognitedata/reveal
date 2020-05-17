@@ -16,10 +16,6 @@ import { BaseTargetNode } from "../../Core/Nodes/BaseTargetNode";
 export class StubTargetNode extends BaseTargetNode
 {
   //==================================================
-  // PROPERTIES
-  //==================================================
-
-  //==================================================
   // CONSTRUCTORS
   //==================================================
 

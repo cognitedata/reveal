@@ -12,20 +12,20 @@
 //=====================================================================================
 
 import { BaseStyle } from "./BaseStyle";
-import { TargetId } from "../PrimitivClasses/TargetId";
+import { TargetId } from "../PrimitiveClasses/TargetId";
 import { TargetIdAccessor } from "../Interfaces/TargetIdAccessor";
 
 export abstract class BaseRenderStyle extends BaseStyle implements TargetIdAccessor
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private _targetId: TargetId;
   public isDefault: boolean = false;
 
   //==================================================
-  // PROPERTIES
+  // INSTANCE PROPERTIES
   //==================================================
 
   public get targetId(): TargetId { return this._targetId; }

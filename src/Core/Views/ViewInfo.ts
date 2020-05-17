@@ -14,7 +14,7 @@
 export class ViewInfo
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   private _texts: TextViewInfo[] = [];
