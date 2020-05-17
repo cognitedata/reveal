@@ -22,6 +22,7 @@ $right-panel-height: 100vh;
   height: $left-panel-height;
   display: flex;
   flex-direction: column;
+  background-image: linear-gradient(to right, white, lightgray);
 }
 
 .right-panel {
@@ -36,8 +37,7 @@ $right-panel-height: 100vh;
 }
 
 .left-panel-section {
-  border: 1px #f4f4f4 solid;
-  background-image: linear-gradient(to right, #f4f4f4, #d6d6d6);
+  border: 1px lightgrey solid;
 }
 
 .explorer-container {
@@ -48,20 +48,9 @@ $right-panel-height: 100vh;
   align-items: center;
 }
 
-.explorer-container button {
-  width: 50%;
-  margin: 0.2rem;
-  background-color: white;
-  color: black;
-  border: 2px solid grey;
-  &:hover {
-    background-color: #e7e7e7;
-  }
-}
-
 .settings-container {
   height: $left-panel-height/2;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .icon {

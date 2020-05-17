@@ -1,8 +1,6 @@
-
 import { combineReducers } from "redux";
 import explorerReducer from "./explorer";
 import settingsReducer from "./settings";
-import nodeReducer from "./nodes";
 
 /**
  * The combineReducers helper function turns an object whose values
@@ -12,5 +10,4 @@ import nodeReducer from "./nodes";
 export default combineReducers({
   explorer: explorerReducer,
   settings: settingsReducer,
-  nodes: nodeReducer
 });

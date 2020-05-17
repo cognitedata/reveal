@@ -1,102 +1,111 @@
-
 import { ThreeModule } from "../../Three/ThreeModule";
-import { PolylinesNode } from "../../Nodes/PolylinesNode";
-import { Polylines } from "../../Core/Geometry/Polylines";
-import { PotreeNode } from "../../Nodes/PotreeNode";
-import { SurfaceNode } from "../../Nodes/SurfaceNode";
-import { RegularGrid2 } from "../../Core/Geometry/RegularGrid2";
 import { ThreeRenderTargetNode } from "../../Three/ThreeRenderTargetNode";
 import { Range3 } from "../../Core/Geometry/Range3";
-import { WellNode } from "../../Nodes/WellNode";
-import { Well } from "../../Nodes/Well";
-import { PointsNode } from "../../Nodes/PointsNode";
-import { Points } from "../../Core/Geometry/Points";
-import { ColorType } from "../../Core/Enums/ColorType";
-import { Colors } from "../../Core/PrimitivClasses/Colors";
+import { Range1 } from "../../Core/Geometry/Range1";
+import { WellTrajectoryNode } from "../../Nodes/Wells/Wells/WellTrajectoryNode";
+import { FloatLogNode } from "../../Nodes/Wells/Wells/FloatLogNode";
+import { DiscreteLogNode } from "../../Nodes/Wells/Wells/DiscreteLogNode";
+import { WellNode } from "../../Nodes/Wells/Wells/WellNode";
+import { WellTrajectory } from "../../Nodes/Wells/Logs/WellTrajectory";
+import { FloatLog } from "../../Nodes/Wells/Logs/FloatLog";
+import { DiscreteLog } from "../../Nodes/Wells/Logs/DiscreteLog";
+import { RootNode } from "../../TreeNodes/RootNode";
+import { AxisNode } from "../../Nodes/AxisNode";
+import { Vector3 } from "../../Core/Geometry/Vector3";
+
+import { state1 } from "./settings-dummy-state1";
+import { state2 } from "./settings-dummy-state2";
 
 let module;
 let root;
 
-export function generateRoot()
-{
+export function generateRoot() {
   // Create the module and initialize it
-  module = new ThreeModule();
+  const module = new ThreeModule();
   module.install();
-  root = module.createRoot();
-  const range = Range3.createByMinAndMax(0, 0.5, 1, 1);
+  root = module.createRoot() as RootNode;
+  const range = Range3.createByMinAndMax(0, 0, 1, 1);
   const target = new ThreeRenderTargetNode(range);
-  root.targetFolder.addChild(target);
+  root.targets.addChild(target);
   module.initializeWhenPopulated(root);
   return root;
 }
 
-export function appendChildren()
-{
-  for (const target of root.targetFolder.getChildrenByType(ThreeRenderTargetNode))
-  {
-    const range = target.pixelRange;
-    const stats = target.stats;
-    // stats.dom.style.left = range.x.min.toFixed(0) + "px";
-    // stats.dom.style.top = range.y.min.toFixed(0) + "px";
-    // stats.dom.style.position = "absolute";
-    // stats.dom.style.background = "yellow";
-    document.getElementById("right-panel")?.appendChild(target.domElement);
-    // document.getElementById("right-panel")?.appendChild(stats.dom);
+export function appendChildren() {
+  for (const target of root.targets.getChildrenByType(ThreeRenderTargetNode)) {
+    document.getElementById("right-panel").appendChild(target.domElement);
+    target.setActiveInteractive();
   }
 }
 
-export function generatePointNodes()
-{
-  let nodesObj = {};
-  for (let i = 0; i < 1; i++)
-  {
-    const range = Range3.newTest;
-    range.expandByFraction(-0.3);
-    const node = new PointsNode();
-    nodesObj[node.uniqueId.toString()] = { node, type: "Point", isVisible: false };
-    node.data = Points.createByRandom(2000000, range);
-    root.dataFolder.addChild(node);
+export function generateWellNodes() {
+  const wellTree = root.wells;
+  const wells = {};
+  // Add 6 wells
+  for (let i = 0; i < 6; i++) {
+    const well = new WellNode();
+    wells[well.uniqueId.toString()] = {
+      node: well,
+      type: "Well",
+      isVisible: false,
+      isSelected: false,
+    };
+    wellTree.addChild(well);
+
+    well.wellHead = Vector3.getRandom(Range3.newTest);
+    well.wellHead.z = 0;
+
+    // Add 5 trajectories
+    for (let j = 0; j < 5; j++) {
+      const wellTrajectory = new WellTrajectoryNode();
+      wellTrajectory.data = WellTrajectory.createByRandom(well.wellHead);
+      well.addChild(wellTrajectory);
+
+      const mdRange = wellTrajectory.data.getMdRange();
+      mdRange.expandByFraction(-0.05);
+
+      // Add 2 float logs
+      for (let k = 0; k < 3; k++) {
+        const valueRange = new Range1(0, k + 1 + 0.5);
+        const logNode = new FloatLogNode();
+        logNode.data = FloatLog.createByRandom(mdRange, valueRange);
+        wellTrajectory.addChild(logNode);
+      }
+      // Add 3 discrete logs
+      for (let k = 0; k < 3; k++) {
+        const valueRange = new Range1(0, k + 1 + 0.5);
+        const logNode = new DiscreteLogNode();
+        logNode.data = DiscreteLog.createByRandom(mdRange, valueRange);
+        wellTrajectory.addChild(logNode);
+      }
+    }
   }
-  return nodesObj;
+  for (const node of root.getDescendantsByType(WellTrajectoryNode)) {
+    node.setVisibleInteractive(true);
+  }
+  for (const node of root.getDescendantsByType(AxisNode)) {
+    node.setVisibleInteractive(true);
+  }
+  for (const node of root.getDescendantsByType(WellTrajectoryNode)) {
+    node.toogleVisibleInteractive();
+  }
+  return wells;
 }
 
-export function generatePolylinesNodes()
-{
-  let nodesObj = {};
-  for (let i = 0; i < 1; i++)
-  {
-    const range = Range3.newTest;
-    range.expandByFraction(-0.2);
-    const node = new PolylinesNode();
-    nodesObj[node.uniqueId.toString()] = { node, type: "Pollyline", isVisible: false };
-    node.data = Polylines.createByRandom(20, 10, range);
-    root.dataFolder.addChild(node);
+export function updateWellNodeVisibility(id, visibility) {
+  for (const node of root.getDescendantsByType(WellTrajectoryNode)) {
+    if (node.parent.uniqueId.toString() === id) node.toogleVisibleInteractive();
   }
-  return nodesObj;
 }
 
-export function generateSubsurfaceNodes()
-{
-  let nodesObj = {};
-  for (let i = 0; i < 1; i++)
-  {
-    const node = new SurfaceNode();
-    nodesObj[node.uniqueId.toString()] = { node, type: "Subsurface", isVisible: false };
-    node.data = RegularGrid2.createFractal(Range3.newTest, 8, 0.8, 2);
-    root.dataFolder.addChild(node);
-  }
-  return nodesObj;
+export function updateRootNode() {
+  const activeTarget = root.activeTarget as ThreeRenderTargetNode;
+  if (activeTarget) activeTarget.viewAll();
 }
 
-export function generateWellNodes()
-{
-  let nodesObj = {};
-  for (let i = 0; i < 10; i++)
-  {
-    const node = new WellNode();
-    nodesObj[node.uniqueId.toString()] = { node, type: "Well" };
-    node.data = Well.createByRandom(20, Range3.newTest);
-    root.dataFolder.addChild(node);
-  }
-  return nodesObj;
+export function generateSettingsConfig(node) {
+  // const config = node.getConfig();
+  const random = Math.floor(Math.random() * 10) + 1;
+  if (random > 5) return state1;
+  return state2;
 }

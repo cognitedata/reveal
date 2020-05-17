@@ -1,18 +1,15 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 
-import { fetchDomainNodes } from "../../store/actions/nodes";
-import
-{
+import { fetchDomainNodes } from "../../store/actions/explorer";
+import {
   appendChildren,
 } from "../../data/generateNodes";
 
-export default function RightPanel()
-{
+export default function RightPanel() {
   const dispatch = useDispatch();
-  const root = useSelector(({ nodes }) => nodes.root);
-  useEffect(() =>
-  {
+  const root = useSelector(({ explorer }) => explorer.root);
+  useEffect(() => {
     appendChildren();
     dispatch(fetchDomainNodes());
   }, [root]);

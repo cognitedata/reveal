@@ -11,7 +11,8 @@ body {
   width: 350px;
   height: 100vh;
   display: flex;
-  flex-direction: column; }
+  flex-direction: column;
+  background-image: linear-gradient(to right, white, lightgray); }
 
 .right-panel {
   position: relative;
@@ -23,8 +24,7 @@ body {
   height: 100% !important; }
 
 .left-panel-section {
-  border: 1px #f4f4f4 solid;
-  background-image: linear-gradient(to right, #f4f4f4, #d6d6d6); }
+  border: 1px lightgrey solid; }
 
 .explorer-container {
   height: 50vh;
@@ -33,18 +33,9 @@ body {
   justify-content: center;
   align-items: center; }
 
-.explorer-container button {
-  width: 50%;
-  margin: 0.2rem;
-  background-color: white;
-  color: black;
-  border: 2px solid grey; }
-  .explorer-container button:hover {
-    background-color: #e7e7e7; }
-
 .settings-container {
   height: 50vh;
-  overflow-y: scroll; }
+  overflow-y: auto; }
 
 .icon {
   display: flex;
