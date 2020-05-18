@@ -32,7 +32,7 @@ export class TriangleStripBuffers
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(pointCount: number, makeUvs: boolean)
+  public constructor(pointCount: number, makeUvs = false)
   {
     this.pointCount = pointCount;
     this.positions = new Float32Array(3 * pointCount);
@@ -51,13 +51,9 @@ export class TriangleStripBuffers
     geometry.addAttribute('position', new THREE.Float32BufferAttribute(this.positions, 3, true));
     geometry.addAttribute('normal', new THREE.Float32BufferAttribute(this.normals, 3, true));
     geometry.setIndex(new THREE.Uint32BufferAttribute(this.triangleIndexes, 1, true));
-    return geometry;
-  }
-
-  public addUv(geometry: THREE.BufferGeometry)
-  {
     if (this.uvs)
       geometry.addAttribute('uv', new THREE.Float32BufferAttribute(this.uvs, 2, true));
+    return geometry;
   }
 
   //==================================================

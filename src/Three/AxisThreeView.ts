@@ -22,16 +22,36 @@ import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
 import { Range3 } from '../Core/Geometry/Range3';
 import { Range1 } from '../Core/Geometry/Range1';
 import { Vector3 } from '../Core/Geometry/Vector3';
-import { ThreeLabel as TreeLabel } from "./Utilities/ThreeLabel";
+import { ThreeLabel } from "./Utilities/ThreeLabel";
 import * as Color from 'color'
 
 export class AxisThreeView extends BaseGroupThreeView
 {
   //==================================================
+  // INSTANCE MEMBERS
+  //==================================================
+
+  private corners: Vector3[] = [];
+  private centers = new Array<Vector3>(6);
+
+  // Set to read in order to see if they change later on
+  private axisColor = Colors.red;
+  private gridColor = Colors.red;
+  private wallColor = Colors.red;
+
+  private zScale = 1;
+
+  //==================================================
   // CONSTRUCTORS
   //==================================================
 
   public constructor() { super(); }
+
+  //==================================================
+  // INSTANCE FIELDS
+  //==================================================
+
+  private boundingBoxFromViews: Range3 | undefined = undefined; // Caching the bounding box of the scene
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -49,7 +69,31 @@ export class AxisThreeView extends BaseGroupThreeView
     super.updateCore(args);
   }
 
-  public /*override*/ beforeRender(): void 
+  //==================================================
+  // OVERRIDES of BaseGroupThreeView
+  //==================================================
+
+  public calculateBoundingBoxCore(): Range3 | undefined
+  {
+    return undefined;
+  }
+
+  public /*override*/ mustTouch(): boolean
+  {
+    const target = this.renderTarget;
+
+    // Check if bounding box is different
+    const boundingBoxFromViews = target.getBoundingBoxFromViews();
+    if (boundingBoxFromViews.isEqual(this.boundingBoxFromViews))
+      return false;
+
+    console.log("bounding box is different");
+    this.boundingBoxFromViews = boundingBoxFromViews;
+    return true;
+  }
+
+
+  public /*override*/ beforeRender(): void
   {
     super.beforeRender();
     const object3D = this.object3D;
@@ -68,17 +112,7 @@ export class AxisThreeView extends BaseGroupThreeView
   // OVERRIDES of BaseGroupThreeView
   //==================================================
 
-  private corners: Vector3[] = [];
-  private centers = new Array<Vector3>(6);
-
-  // Set to read in order to see if they change later on
-  private axisColor = Colors.red;
-  private gridColor = Colors.red;
-  private wallColor = Colors.red;
-
-  private zScale = 1;
-
-  protected /*override*/ createObject3D(): THREE.Object3D | null
+  protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
     const target = this.renderTarget;
     const boundingBox = target.getBoundingBoxFromViews();
@@ -215,7 +249,7 @@ export class AxisThreeView extends BaseGroupThreeView
         const end = start.copy();
         const vector = tickDirection.copy();
 
-        vector.multiplyByNumber(tickLength);
+        vector.multiplyScalar(tickLength);
         end.add(vector);
 
         // Add tick mark
@@ -233,7 +267,7 @@ export class AxisThreeView extends BaseGroupThreeView
         end.z /= this.zScale;
 
         // Add label
-        const label = TreeLabel.createByPositionAndDirection(`${tick}`, end, tickDirection, tickFontSize, true);
+        const label = ThreeLabel.createByPositionAndDirection(`${tick}`, end, tickDirection, tickFontSize, true);
         if (label)
         {
           group.add(label);
@@ -259,11 +293,11 @@ export class AxisThreeView extends BaseGroupThreeView
         {
           position = Vector3.getCenterOf2(this.corners[i0], this.corners[i1]);
         }
-        position = Vector3.addFactor(position, tickDirection, tickLength * 5);
+        position = Vector3.addWithFactor(position, tickDirection, tickLength * 5);
         position.z /= this.zScale;
 
         // Align the text
-        const label = TreeLabel.createByPositionAndDirection(Vector3.getAxisName(dimension), position, tickDirection, labelFontSize, true);
+        const label = ThreeLabel.createByPositionAndDirection(Vector3.getAxisName(dimension), position, tickDirection, labelFontSize, true);
         if (label)
         {
           group.add(label);

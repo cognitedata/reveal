@@ -19,6 +19,13 @@ import { Colors } from '../Core/PrimitiveClasses/Colors';
 
 export class TextureKit 
 {
+  static add(array: Array<number>, color: Color)
+  {
+    array.push(color.red());
+    array.push(color.green());
+    array.push(color.blue());
+  }
+
   static create1D(range: Range1): THREE.DataTexture
   {
     const darknessVolume = 0.3;

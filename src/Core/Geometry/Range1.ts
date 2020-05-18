@@ -39,7 +39,9 @@ export class Range1
   public get isSingular(): boolean { return this.min === this.max; }
   public get hasSpan(): boolean { return !this.isEmpty && !this.isSingular; }
   public get min(): number { return this._min; }
+  public set min(value: number) { this._min = value; }
   public get max(): number { return this._max; }
+  public set max(value: number) { this._max = value; }
   public get delta(): number { return this._max - this._min; }
   public get center(): number { return (this._min + this._max) / 2; }
 
@@ -67,7 +69,19 @@ export class Range1
   }
 
   //==================================================
-  // INSTANCE METHODS; Getters
+  // INSTANCE METHODS: Requests
+  //==================================================
+
+  isEqual(other: Range1): boolean {
+    if (this._isEmpty && other._isEmpty)
+      return true;
+    if (this._isEmpty !== other._isEmpty)
+      return false;
+    return this.min === other.min && this.max === other.max;
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Getters
   //==================================================
 
   public toString(): string { return `(${this._min}, ${this._max})`; }

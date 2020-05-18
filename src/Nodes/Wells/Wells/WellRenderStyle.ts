@@ -37,7 +37,6 @@ export class WellRenderStyle extends BaseRenderStyle
     style.colorType = this.colorType;
     return style;
   }
-
 }
 
 

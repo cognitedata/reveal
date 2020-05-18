@@ -54,7 +54,7 @@ export class PolylinesThreeView extends BaseGroupThreeView
   // OVERRIDES of BaseGroupThreeView
   //==================================================
 
-  protected /*override*/ createObject3D(): THREE.Object3D | null
+  protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
     const node = this.node;
     const style = this.style;

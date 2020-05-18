@@ -18,7 +18,7 @@ import { WellRenderStyle } from "../Nodes/Wells/Wells/WellRenderStyle";
 import { ThreeConverter } from "./ThreeConverter";
 import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
 import { Range3 } from '../Core/Geometry/Range3';
-import { ThreeLabel as TreeLabel } from "./Utilities/ThreeLabel";
+import { ThreeLabel } from "./Utilities/ThreeLabel";
 import { TrajectorySample } from "../Nodes/Wells/Samples/TrajectorySample";
 
 export class WellTrajectoryThreeView extends BaseGroupThreeView
@@ -52,6 +52,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       return undefined;
 
     boundingBox.expandByMargin(this.style.radius);
+
+    boundingBox.z.max += 60;
     return boundingBox;
   }
 
@@ -59,7 +61,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
   // OVERRIDES of BaseGroupThreeView
   //==================================================
 
-  protected /*override*/ createObject3D(): THREE.Object3D | null
+  protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
     const node = this.node;
     const style = this.style;
@@ -72,7 +74,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     const well = node.well;
     if (well)
     {
-      const label = TreeLabel.createByPositionAndAlignment(well.name, well.wellHead, 1, 60, true);
+      const label = ThreeLabel.createByPositionAndAlignment(well.name, well.wellHead, 1, 60, true);
       if (label)
         group.add(label);
     }

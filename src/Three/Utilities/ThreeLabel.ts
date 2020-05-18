@@ -12,7 +12,6 @@
 //=====================================================================================
 
 import * as THREE from 'three';
-import { Ma } from "../../Core/PrimitiveClasses/Ma";
 import { Vector3 } from '../../Core/Geometry/Vector3';
 import { ThreeConverter } from "./../ThreeConverter";
 

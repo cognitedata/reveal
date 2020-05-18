@@ -30,6 +30,7 @@ import { SurfaceNode } from '../Nodes/SurfaceNode';
 import { PotreeNode } from "../Nodes/PotreeNode";
 import { WellTrajectoryNode } from "../Nodes/Wells/Wells/WellTrajectoryNode";
 import { FloatLogNode } from "../Nodes/Wells/Wells/FloatLogNode";
+import { DiscreteLogNode } from "../Nodes/Wells/Wells/DiscreteLogNode";
 
 import { AxisThreeView } from './AxisThreeView';
 import { PointsThreeView } from './PointsThreeView';
@@ -38,6 +39,7 @@ import { SurfaceThreeView } from './SurfaceThreeView';
 import { PotreeThreeView } from "./PotreeThreeView";
 import { WellTrajectoryThreeView } from './WellTrajectoryThreeView';
 import { FloatLogThreeView } from './FloatLogThreeView';
+import { DiscreteLogThreeView } from './DiscreteLogThreeView';
 
 
 export class ThreeModule extends BaseModule
@@ -60,6 +62,7 @@ export class ThreeModule extends BaseModule
     factory.register(PotreeNode.name, PotreeThreeView, ThreeRenderTargetNode.name);
     factory.register(WellTrajectoryNode.name, WellTrajectoryThreeView, ThreeRenderTargetNode.name);
     factory.register(FloatLogNode.name, FloatLogThreeView, ThreeRenderTargetNode.name);
+    factory.register(DiscreteLogNode.name, DiscreteLogThreeView, ThreeRenderTargetNode.name);
   }
 
   protected /*override*/ createRootCore(): BaseRootNode

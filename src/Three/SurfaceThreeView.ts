@@ -12,13 +12,11 @@
 //=====================================================================================
 
 import * as THREE from 'three';
-import * as Color from 'color'
 
 import { BaseGroupThreeView } from "./BaseGroupThreeView";
 import { SurfaceNode } from "../Nodes/SurfaceNode";
 import { SurfaceRenderStyle } from "../Nodes/SurfaceRenderStyle";
 import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
-import { Range1 } from '../Core/Geometry/Range1';
 import { RegularGrid2Buffers } from '../Core/Geometry/RegularGrid2Buffers';
 import { Colors } from '../Core/PrimitiveClasses/Colors';
 import { ColorType } from '../Core/Enums/ColorType';
@@ -59,7 +57,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
   // OVERRIDES of BaseGroupThreeView
   //==================================================
 
-  protected /*override*/ createObject3D(): THREE.Object3D | null
+  protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
     const node = this.node;
     const style = this.style;
@@ -78,7 +76,6 @@ export class SurfaceThreeView extends BaseGroupThreeView
 
     if (style.colorType === ColorType.DepthColor && buffers.uvs)
     {
-      buffers.addUv(geometry);
       const texture = TextureKit.create1D(grid.getZRange());
       texture.anisotropy = 4;
       material.map = texture;

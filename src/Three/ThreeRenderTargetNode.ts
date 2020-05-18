@@ -23,7 +23,6 @@ import { Range3 } from '../Core/Geometry/Range3';
 import { TreeOverlay } from './TreeOverlay';
 import { AxisNode } from './../Nodes/AxisNode';
 import { Colors } from '../Core/PrimitiveClasses/Colors';
-import * as Color from 'color'
 
 export class ThreeRenderTargetNode extends BaseRenderTargetNode
 {
@@ -116,41 +115,37 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ initializeCore()
+  private _light: THREE.DirectionalLight | null = null;
+
+  public /*override*/ initializeCore() 
   {
     super.initializeCore();
+
     this.addCameraNode(new ThreeCameraNode(), true);
     this.render();
 
-    // Add lights (TODO: move to TreeLightNode?)
-    const scene = this.scene;
-
-
-    // Light from the sky
-    const directions = new Array<THREE.Vector3>();
-    directions.push(new THREE.Vector3(2000, 0, 2000));
-    directions.push(new THREE.Vector3(-2000, 0, 2000));
-    directions.push(new THREE.Vector3(0, 2000, 2000));
-    directions.push(new THREE.Vector3(0, -2000, 2000));
-
+    // Set background
     const hasAxis = this.hasViewOfNodeType(AxisNode);
     this.scene.background = ThreeConverter.toColor(this.getBgColor(hasAxis));
 
-    const lightColor = ThreeConverter.toColor(Colors.white);
-    const group = new THREE.Group();
+    // Add light (TODO: move to TreeLightNode?)
+    const scene = this.scene;
+    const light = new THREE.DirectionalLight(ThreeConverter.toColor(Colors.white), 1);
+    const camera = this.activeCamera;
+    ThreeRenderTargetNode.updateLightPosition(camera, light);
 
-    for (const direction of directions)
+    function lightUpdate() 
     {
-      const intensity = 0.25;
-      const light = new THREE.DirectionalLight(lightColor, intensity);
-      light.position.copy(direction);
-      group.add(light);
+      ThreeRenderTargetNode.updateLightPosition(camera, light);
     }
+
+    this.domElement.addEventListener('mousemove', lightUpdate);
     {
-      const light = new THREE.AmbientLight(lightColor, 0.25)
-      group.add(light);
+      //const light = new THREE.AmbientLight(lightColor, 0.25);
+      //group.add(light);
     }
-    scene.add(group);
+    this._light = light;
+    scene.add(light);
   }
 
   //==================================================
@@ -175,6 +170,10 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     // controls.rotate(0, 0.8);
     // controls.setLookAt(boundingBox.x.center, boundingBox.y.center, boundingBox.z.center, 0, 0, 0);
     controls.moveTo(boundingBox.x.center, boundingBox.y.center, boundingBox.z.center);
+    controls.update(0);
+
+    if (this._light)
+      ThreeRenderTargetNode.updateLightPosition(this.activeCamera, this._light);
   }
 
   public /*override*/ get domElement(): HTMLElement { return this.renderer.domElement; }
@@ -218,5 +217,31 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
       this._overlay.render(this.renderer, viewInfo, this.pixelRange.delta);
       this.Invalidate(false);
     }
+  }
+
+  //==================================================
+  // STATIC METHODS
+  //==================================================
+
+  static updateLightPosition(camera: THREE.Camera, light: THREE.DirectionalLight): void
+  {
+    // The idea of this function is letting the llight follow the camera, 
+    // 45 deg off in XY plane and 30 off along the z-axis 
+
+    const vector = camera.position.clone();
+    vector.normalize();
+
+    const horizontalAxis = vector.clone();
+    const verticalAxis = new THREE.Vector3(0, 0, 1);
+
+    horizontalAxis.z = 0;
+    horizontalAxis.normalize();
+    horizontalAxis.applyAxisAngle(verticalAxis, Math.PI / 2);
+
+    vector.normalize();
+    vector.applyAxisAngle(horizontalAxis, -Math.PI / 6); // 30deg
+    vector.applyAxisAngle(verticalAxis, Math.PI / 6); // 45deg
+
+    light.position.copy(vector);
   }
 }

@@ -43,7 +43,7 @@ export class Points
 
   public getZRange(): Range1
   {
-    const range: Range1 = new Range1();
+    const range = new Range1();
     for (const point of this.list)
       range.add(point.z);
     return range;
@@ -51,7 +51,7 @@ export class Points
 
   public getRange(): Range3
   {
-    const range: Range3 = new Range3();
+    const range = new Range3();
     for (const point of this.list)
       range.add(point);
     return range;

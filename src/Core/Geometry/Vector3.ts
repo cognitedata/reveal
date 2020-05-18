@@ -77,7 +77,10 @@ export class Vector3
     }
   }
 
-  public getDot(other: Vector3): number { return this.x * other.x + this.y * other.y + this.z * other.z; }
+  public getDot(other: Vector3): number
+  {
+    return this.x * other.x + this.y * other.y + this.z * other.z;
+  }
 
   public getCross(other: Vector3): Vector3
   {
@@ -120,6 +123,23 @@ export class Vector3
   // INSTANCE METHODS: Operations
   //==================================================
 
+  public negate(): void
+  {
+    this.x = -this.x;
+    this.y = -this.y;
+    this.z = -this.z;
+  }
+
+  public normalize(): boolean
+  {
+    const length = this.length;
+    if (length < Number.EPSILON)
+      return false;
+
+    this.divideScalar(length);
+    return true;
+  }
+
   public add(point: Vector3): void
   {
     this.x += point.x;
@@ -141,7 +161,7 @@ export class Vector3
     this.z *= point.z;
   }
 
-  public multiplyByNumber(value: number): void
+  public multiplyScalar(value: number): void
   {
     this.x *= value;
     this.y *= value;
@@ -155,7 +175,7 @@ export class Vector3
     this.z /= point.z;
   }
 
-  public divideByNumber(value: number): void
+  public divideScalar(value: number): void
   {
     this.x /= value;
     this.y /= value;
@@ -176,18 +196,6 @@ export class Vector3
     );
   }
 
-  public normalize(): boolean
-  {
-    const length = this.length;
-    if (length < Number.EPSILON)
-      return false;
-
-    this.x /= length;
-    this.y /= length;
-    this.z /= length;
-    return true;
-  }
-
   //==================================================
   // STATIC METHODS: Getters
   //==================================================
@@ -198,24 +206,6 @@ export class Vector3
     const y = Random.getFloat(range.y);
     const z = Random.getFloat(range.z);
     return new Vector3(x, y, z);
-  }
-
-  public static getCenterOf2(a: Vector3, b: Vector3): Vector3
-  {
-    const result = a.copy();
-    result.add(b);
-    result.divideByNumber(2);
-    return result;
-  }
-
-  public static getCenterOf4(a: Vector3, b: Vector3, c: Vector3, d: Vector3): Vector3
-  {
-    const result = a.copy();
-    result.add(b);
-    result.add(c);
-    result.add(d);
-    result.divideByNumber(4);
-    return result;
   }
 
   public static getAxis(dimension: number): Vector3
@@ -244,7 +234,31 @@ export class Vector3
   // STATIC METHODS: Arithmetical operations
   //==================================================
 
-  public static substract(a: Vector3, b: Vector3): Vector3 { return new Vector3(a.x - b.x, a.y - b.y, a.z - b.z); }
+  // Return = (A + B) / 2
+  public static getCenterOf2(a: Vector3, b: Vector3): Vector3
+  {
+    return new Vector3((a.x + b.x) / 2, (a.y + b.y) / 2, (a.z + b.z) / 2);
+  }
+
+  // Return = (A + B + C + D) / 4
+  public static getCenterOf4(a: Vector3, b: Vector3, c: Vector3, d: Vector3): Vector3
+  {
+    return new Vector3((a.x + b.x + c.x + d.x) / 4, (a.y + b.y + c.y + d.y) / 4, (a.z + b.z + c.z + d.z) / 4);
+  }
+
+  // Return = A + B
   public static add(a: Vector3, b: Vector3): Vector3 { return new Vector3(a.x + b.x, a.y + b.y, a.z + b.z); }
-  public static addFactor(a: Vector3, b: Vector3, f: number): Vector3 { return new Vector3(a.x + b.x * f, a.y + b.y * f, a.z + b.z * f); }
+
+  // Return = A + B * fb
+  public static addWithFactor(a: Vector3, b: Vector3, fb: number): Vector3 { return new Vector3(a.x + b.x * fb, a.y + b.y * fb, a.z + b.z * fb); }
+
+  // Return = A * (1-fb) + B * fb
+  public static lerp(a: Vector3, b: Vector3, fb: number): Vector3
+  {
+    const fa = 1 - fb;
+    return new Vector3(a.x * fa + b.x * fb, a.y * fa + b.y * fb, a.z * fa + b.z * fb);
+  }
+
+  // Return = A - B
+  public static substract(a: Vector3, b: Vector3): Vector3 { return new Vector3(a.x - b.x, a.y - b.y, a.z - b.z); }
 }

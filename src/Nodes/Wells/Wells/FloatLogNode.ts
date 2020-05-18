@@ -44,12 +44,10 @@ export class FloatLogNode extends BaseLogNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "FloatLogNode" }
+  public /*override*/ get typeName(): string { return "FloatLog" }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
     return new WellRenderStyle(targetId);
   }
-
-
 }

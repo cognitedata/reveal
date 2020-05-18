@@ -21,6 +21,12 @@ import { Random } from "../../../Core/PrimitiveClasses/Random";
 export class FloatLog extends BaseLog
 {
   //==================================================
+  // INSTANCE FIELDS
+  //==================================================
+
+  private _range: Range1 | undefined;
+
+  //==================================================
   // OVERRIDES of BaseLog
   //==================================================
 
@@ -32,13 +38,6 @@ export class FloatLog extends BaseLog
   //==================================================
   // INSTANCE METHODS: Getter
   //==================================================
-
-  public getRange(): Range1
-  {
-    const range = new Range1();
-    this.expandRange(range);
-    return range;
-  }
 
   public getAt(index: number): FloatLogSample { return this.samples[index] as FloatLogSample; }
 
@@ -70,8 +69,28 @@ export class FloatLog extends BaseLog
   }
 
   //==================================================
-  // INSTANCE METHODS: Operations
+  // INSTANCE METHODS: Range
   //==================================================
+
+  public get range(): Range1
+  {
+    if (!this._range)
+      this._range = this.calculateRange();
+    return this._range;
+  }
+
+  public calculateRange(): Range1
+  {
+    const range = new Range1();
+    this.expandRange(range);
+    return range;
+  }
+
+  public touch(): void
+  {
+    super.touch();
+    this._range = undefined;
+  }
 
   public expandRange(range: Range1): void
   {
