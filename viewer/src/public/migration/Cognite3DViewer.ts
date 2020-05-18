@@ -25,7 +25,7 @@ import RenderController from './RenderController';
 import { CogniteModelBase } from './CogniteModelBase';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
-import { RevealManagerBase } from '../RevealManagerBase';
+import { RevealManagerBase, RevealOptions } from '../RevealManagerBase';
 
 export interface RelativeMouseEvent {
   offsetX: number;
@@ -114,11 +114,17 @@ export class Cognite3DViewer {
     const onDataUpdated = () => {
       this.modelsNeedUpdate = true;
     };
+    const managerOptions: RevealOptions = {
+      internal: {
+        sectorCuller: options._sectorCuller
+      }
+    };
     this.revealManager = new RevealManagerBase(
       this.sdkClient,
       this.sectorRepository,
       this.materialManager,
-      onDataUpdated
+      onDataUpdated,
+      managerOptions
     );
     this.startPointerEventListeners();
 

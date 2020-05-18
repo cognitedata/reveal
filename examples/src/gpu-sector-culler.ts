@@ -22,7 +22,7 @@ async function main() {
 
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight);
   const coverageUtil = new reveal.internal.GpuOrderSectorsByVisibilityCoverage();
-  const sectorCuller = new reveal.internal.ByVisibilityGpuSectorCuller(camera, {
+  const sectorCuller = new reveal.internal.ByVisibilityGpuSectorCuller({
     coverageUtil,
     costLimit: 70 * 1024 * 1024,
     logCallback: console.log
