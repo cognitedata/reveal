@@ -5,8 +5,8 @@
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
 import { PotreePointSizeType, PotreePointColorType, PotreePointShape } from './enums';
-import { fromThreeJsBox3 } from '../../../utilities/utilities';
-import { Box3 } from '../../../utilities/Box3';
+import { fromThreeJsBox3 } from '@/utilities';
+import { Box3 } from '@/utilities/Box3';
 import { vec3 } from 'gl-matrix';
 
 /**

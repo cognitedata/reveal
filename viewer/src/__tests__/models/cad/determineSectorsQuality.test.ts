@@ -1,16 +1,16 @@
 /*!
  * Copyright 2020 Cognite AS
  */
-import { SectorMetadata } from '../../../dataModels/cad/internal/sector/types';
-import { Box3 } from '../../../utilities/Box3';
-import { determineSectorsFromDetailed } from '../../../dataModels/cad/internal/sector/culling/determineSectors';
+import { SectorMetadata } from '@/dataModels/cad/internal/sector/types';
+import { Box3 } from '@/utilities/Box3';
+import { determineSectorsFromDetailed } from '@/dataModels/cad/internal/sector/culling/determineSectors';
 import { expectContainsSectorsWithLevelOfDetail } from '../../expects';
 import { createSceneFromRoot } from '../../testUtils/createSceneFromRoot';
-import { CadModel } from '../../../dataModels/cad/internal';
+import { CadModel } from '@/dataModels/cad/internal';
 import {
   fromCdfToThreeJsCoordinates,
   fromThreeJsToCdfCoordinates
-} from '../../../utilities/fromThreeCameraConfig';
+} from '@/utilities/fromThreeCameraConfig';
 
 function sectorNodeFromTreeNode(node: TreeNode, parent?: SectorMetadata): SectorMetadata {
   const result = {

@@ -3,16 +3,18 @@
  */
 
 import * as THREE from 'three';
-import { GpuOrderSectorsByVisibilityCoverage } from '../../../threejs';
-import { SectorMetadata, SectorModelTransformation } from '../../../dataModels/cad/internal/sector/types';
-import { SectorScene, SectorSceneImpl } from '../../../dataModels/cad/internal/sector/SectorScene';
-import { createSectorMetadata, SectorTree } from '../../testUtils/createSectorMetadata';
-import { traverseDepthFirst } from '../../../utilities/traversal';
-import { fromThreeMatrix } from '../../../utilities/utilities';
 import { mat4 } from 'gl-matrix';
-import { Box3 } from '../../../utilities/Box3';
-import { CadModel } from '../../../dataModels/cad/internal';
-import { ModelDataRetriever } from '../../../utilities/networking/ModelDataRetriever';
+
+import { SectorMetadata, SectorModelTransformation } from '@/dataModels/cad/internal/sector/types';
+import { SectorScene, SectorSceneImpl } from '@/dataModels/cad/internal/sector/SectorScene';
+import { GpuOrderSectorsByVisibilityCoverage } from '@/dataModels/cad/internal/sector/culling/OrderSectorsByVisibilityCoverage';
+import { CadModel } from '@/dataModels/cad/internal';
+import { traverseDepthFirst } from '@/utilities/traversal';
+import { fromThreeMatrix } from '@/utilities';
+import { Box3 } from '@/utilities/Box3';
+import { ModelDataRetriever } from '@/utilities/networking/ModelDataRetriever';
+
+import { createSectorMetadata, SectorTree } from '../../testUtils/createSectorMetadata';
 
 describe('GpuOrderSectorsByVisibilityCoverage', () => {
   const glContext: WebGLRenderingContext = require('gl')(64, 64);

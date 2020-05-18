@@ -2,8 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
-import { ParsedPrimitives } from '../../../utilities/workers/types/parser.types';
-import { Sector } from '../../../dataModels/cad/internal/sector/types';
+import { ParsedPrimitives } from '@/utilities/workers/types/parser.types';
+import { Sector } from '@/dataModels/cad/internal/sector/types';
 
 export function createEmptyPrimitive(): ParsedPrimitives {
   return {

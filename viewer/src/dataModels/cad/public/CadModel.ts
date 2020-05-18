@@ -4,7 +4,7 @@
 
 import { SectorModelTransformation } from '../internal/sector/types';
 import { SectorScene } from '../internal/sector/SectorScene';
-import { ModelDataRetriever } from '../../../utilities/networking/ModelDataRetriever';
+import { ModelDataRetriever } from '@/utilities/networking/ModelDataRetriever';
 
 export interface CadModel {
   identifier: string;

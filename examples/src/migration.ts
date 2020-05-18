@@ -3,8 +3,7 @@
  */
 
 import * as THREE from 'three';
-import * as reveal_migration from '@cognite/reveal/migration';
-import { BoundingBoxClipper } from '@cognite/reveal/threejs';
+import * as reveal from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk';
 import dat from 'dat.gui';
 
@@ -27,7 +26,7 @@ async function main() {
     showHelpers: false
   };
 
-  const boxClipper = new BoundingBoxClipper(
+  const boxClipper = new reveal.utilities.BoundingBoxClipper(
     new THREE.Box3(
       new THREE.Vector3(
         slicingParams.x - slicingParams.width / 2,
@@ -49,18 +48,18 @@ async function main() {
   await client.authenticate();
 
   // Prepare viewer
-  const viewer = new reveal_migration.Cognite3DViewer({ sdk: client, domElement });
+  const viewer = new reveal.migration.Cognite3DViewer({ sdk: client, domElement });
   (window as any).viewer = viewer;
 
-  async function addModel(options: reveal_migration.AddModelOptions) {
+  async function addModel(options: reveal.migration.AddModelOptions) {
     switch (await viewer.determineModelType(options.modelId, options.revisionId)) {
-      case reveal_migration.SupportedModelTypes.CAD:
+      case reveal.migration.SupportedModelTypes.CAD:
         const model = await viewer.addModel(options);
         viewer.fitCameraToModel(model);
         cadModels.push(model);
         break;
 
-      case reveal_migration.SupportedModelTypes.PointCloud:
+      case reveal.migration.SupportedModelTypes.PointCloud:
         const pointCloud = await viewer.addPointCloudModel(options);
         viewer.fitCameraToModel(pointCloud);
         break;
@@ -71,7 +70,7 @@ async function main() {
   }
 
   // Add GUI for loading models and such
-  const cadModels: reveal_migration.Cognite3DModel[] = [];
+  const cadModels: reveal.migration.Cognite3DModel[] = [];
   const guiState = { modelId: 0, revisionId: 0, showSectorBoundingBoxes: false };
   function applySettingsToModels() {
     cadModels.forEach(m => {

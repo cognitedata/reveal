@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { BoundingBoxClipper, RevealManager, CadNode } from '@cognite/reveal/threejs';
+import * as reveal from '@cognite/reveal';
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
 import { getParamsFromURL } from './utils/example-helpers';
@@ -23,10 +23,10 @@ async function main() {
   document.body.appendChild(renderer.domElement);
 
   let modelsNeedUpdate = true;
-  const revealManager = new RevealManager(client, () => {
+  const revealManager = new reveal.RevealManager(client, () => {
     modelsNeedUpdate = true;
   });
-  let model: CadNode;
+  let model: reveal.CadNode;
   if (modelUrl) {
     model = await revealManager.addModelFromUrl(modelUrl);
   } else if (modelRevision) {
@@ -57,7 +57,7 @@ async function main() {
 
   let planesNeedUpdate = true;
 
-  const boxClipper = new BoundingBoxClipper(
+  const boxClipper = new reveal.utilities.BoundingBoxClipper(
     new THREE.Box3(
       new THREE.Vector3(params.x - params.width / 2, params.y - params.height / 2, params.z - params.depth / 2),
       new THREE.Vector3(params.x + params.width / 2, params.y + params.height / 2, params.z + params.depth / 2)

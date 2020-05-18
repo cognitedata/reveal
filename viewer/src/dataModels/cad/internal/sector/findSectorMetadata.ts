@@ -3,7 +3,7 @@
  */
 
 import { SectorMetadata } from './types';
-import { traverseDepthFirst } from '../../../../utilities/traversal';
+import { traverseDepthFirst } from '@/utilities/traversal';
 
 export function findSectorMetadata(root: SectorMetadata, sectorId: number): SectorMetadata {
   let foundSector: SectorMetadata | null = null;

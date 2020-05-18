@@ -4,7 +4,7 @@
 
 import { SectorMetadata, SectorModelTransformation } from './types';
 import { LevelOfDetail } from './LevelOfDetail';
-import { ModelDataRetriever } from '../../../../utilities/networking/ModelDataRetriever';
+import { ModelDataRetriever } from '@/utilities/networking/ModelDataRetriever';
 import { SectorScene } from './SectorScene';
 
 export interface WantedSector {

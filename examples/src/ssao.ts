@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { CadNode, SsaoEffect, SsaoPassType, RevealManager } from '@cognite/reveal/threejs';
+import * as reveal from '@cognite/reveal';
 import dat from 'dat.gui';
 import { getParamsFromURL } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
@@ -18,10 +18,10 @@ async function main() {
 
   const scene = new THREE.Scene();
   let modelsNeedUpdate = true;
-  const revealManager = new RevealManager(client, () => {
+  const revealManager = new reveal.RevealManager(client, () => {
     modelsNeedUpdate = true;
   });
-  let model: CadNode;
+  let model: reveal.CadNode;
   if (modelUrl) {
     model = await revealManager.addModelFromUrl(modelUrl);
   } else if (modelRevision) {
@@ -31,7 +31,7 @@ async function main() {
   }
   scene.add(model);
 
-  const effect = new SsaoEffect();
+  const effect = new reveal.utilities.SsaoEffect();
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#444');
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -53,16 +53,16 @@ async function main() {
   };
 
   const renderSettings = {
-    pass: SsaoPassType.Antialias
+    pass: reveal.utilities.SsaoPassType.Antialias
   };
 
   const gui = new dat.GUI();
   gui
     .add(renderSettings, 'pass', {
-      Regular: SsaoPassType.Regular,
-      Ssao: SsaoPassType.Ssao,
-      SsaoFinal: SsaoPassType.SsaoFinal,
-      Antialias: SsaoPassType.Antialias
+      Regular: reveal.utilities.SsaoPassType.Regular,
+      Ssao: reveal.utilities.SsaoPassType.Ssao,
+      SsaoFinal: reveal.utilities.SsaoPassType.SsaoFinal,
+      Antialias: reveal.utilities.SsaoPassType.Antialias
     })
     .onChange(updateEffect);
 

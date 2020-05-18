@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { sectorShaders, shaderDefines } from './shaders';
 import { RenderMode } from './RenderMode';
-import { determinePowerOfTwoDimensions } from '../../../../utilities/determinePowerOfTwoDimensions';
+import { determinePowerOfTwoDimensions } from '@/utilities/determinePowerOfTwoDimensions';
 import matCapTextureImage from './matCapTextureData';
 
 export interface Materials {
