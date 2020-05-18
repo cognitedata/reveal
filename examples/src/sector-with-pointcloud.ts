@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
-import * as reveal from '@cognite/reveal';
+import * as reveal from '@cognite/reveal/experimental';
 
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
@@ -16,9 +16,7 @@ import {
   createDefaultRenderOptions
 } from './utils/renderer-debug-widget';
 import { CogniteClient } from '@cognite/sdk';
-import { RevealManager, CadNode } from '@cognite/reveal';
 import { getParamsFromURL } from './utils/example-helpers';
-import { PotreeNodeWrapper, PotreeGroupWrapper } from '@cognite/reveal/internal';
 
 CameraControls.install({ THREE });
 
@@ -49,10 +47,10 @@ async function main() {
   let modelsNeedUpdate = true;
 
   Potree.XHRFactory.config.customHeaders.push({ header: 'MyDummyHeader', value: 'MyDummyValue' });
-  const revealManager = new RevealManager(client, () => {
+  const revealManager = new reveal.RevealManager(client, () => {
     modelsNeedUpdate = true;
   });
-  let pointCloud: [PotreeGroupWrapper, PotreeNodeWrapper];
+  let pointCloud: [reveal.internal.PotreeGroupWrapper, reveal.internal.PotreeNodeWrapper];
   if (pointCloudUrl) {
     pointCloud = await revealManager.addPointCloudFromUrl(pointCloudUrl);
   } else if (pointCloudRevision) {
@@ -61,7 +59,7 @@ async function main() {
   } else {
     throw new Error('Need to provide either project & pointCloud OR pointCloudlUrl as query parameters');
   }
-  let model: CadNode;
+  let model: reveal.CadNode;
   if (modelUrl) {
     model = await revealManager.addModelFromUrl(modelUrl);
   } else if (modelRevision) {

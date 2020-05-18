@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { CadNode, RevealManager, ModelNodeAppearance } from '@cognite/reveal';
+import { CadNode, RevealManager, ModelNodeAppearance } from '@cognite/reveal/experimental';
 import dat from 'dat.gui';
 import { getParamsFromURL } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';

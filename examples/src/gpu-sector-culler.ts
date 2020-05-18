@@ -6,7 +6,7 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import * as reveal from '@cognite/reveal';
+import * as reveal from '@cognite/reveal/experimental';
 import { CogniteClient } from '@cognite/sdk';
 import { getParamsFromURL } from './utils/example-helpers';
 

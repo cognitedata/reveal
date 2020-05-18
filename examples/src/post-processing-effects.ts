@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import { getParamsFromURL } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
-import { RevealManager, CadNode } from '@cognite/reveal';
+import { RevealManager, CadNode } from '@cognite/reveal/experimental';
 
 const postprocessing = require('postprocessing');
 
