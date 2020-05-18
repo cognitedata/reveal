@@ -70,7 +70,7 @@ async function main() {
   }
 
   // Add GUI for loading models and such
-  const cadModels: reveal.Cognite3DModel[] = [];
+  const cadModels: Cognite3DModel[] = [];
   const guiState = { modelId: 0, revisionId: 0, showSectorBoundingBoxes: false };
   function applySettingsToModels() {
     cadModels.forEach(m => {
