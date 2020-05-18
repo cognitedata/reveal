@@ -40,6 +40,7 @@ export interface RelativeMouseEvent {
   offsetY: number;
 }
 
+type RequestParams = { modelRevision: IdEither; format: File3dFormat };
 type PointerEventDelegate = (event: RelativeMouseEvent) => void;
 type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
 
@@ -58,7 +59,7 @@ export class Cognite3DViewer {
   private readonly controls: ComboControls;
   private readonly sdkClient: CogniteClient;
   private readonly sectorRepository: CachedRepository;
-  private readonly revealManager: RevealManagerBase;
+  private readonly revealManager: RevealManagerBase<RequestParams>;
 
   private readonly eventListeners = {
     cameraChange: new Array<CameraChangeDelegate>(),
@@ -118,7 +119,6 @@ export class Cognite3DViewer {
     const cogniteClientExtension = new CogniteClient3dExtensions(this.sdkClient);
     const cadModelRepository = new CadModelMetadataRepository(
       cogniteClientExtension,
-      cogniteClientExtension,
       new DefaultCadTransformation(),
       new CadMetadataParser()
     );
@@ -126,7 +126,11 @@ export class Cognite3DViewer {
     const sectorCuller = new ProximitySectorCuller();
     this.sectorRepository = new CachedRepository(cogniteClientExtension, modelDataParser, modelDataTransformer);
     const cadModelUpdateHandler = new CadModelUpdateHandler(this.sectorRepository, sectorCuller);
-    const cadManager: CadManager = new CadManager(cadModelRepository, cadModelFactory, cadModelUpdateHandler);
+    const cadManager: CadManager<RequestParams> = new CadManager<RequestParams>(
+      cadModelRepository,
+      cadModelFactory,
+      cadModelUpdateHandler
+    );
 
     this.revealManager = new RevealManagerBase(this.sdkClient, cadManager, this.materialManager);
     this.startPointerEventListeners();
@@ -201,7 +205,10 @@ export class Cognite3DViewer {
       throw new NotSupportedInMigrationWrapperError();
     }
 
-    const cadNode = await this.revealManager.addModelFromCdf(options.revisionId);
+    const cadNode = await this.revealManager.addModel('cad', {
+      modelRevision: { id: options.revisionId },
+      format: File3dFormat.RevealCadModel
+    });
     const model3d = new Cognite3DModel(options.modelId, options.revisionId, cadNode, this.sdkClient);
     this.sectorRepository
       .getParsedData()

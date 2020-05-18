@@ -5,7 +5,7 @@
 import nock from 'nock';
 import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
 import { CogniteClient } from '@cognite/sdk';
-import { ModelOutputList } from '@/utilities/networking/ModelOutputList';
+import { Model3DOutputList } from '@/utilities/networking/Model3DOutputList';
 
 describe('CogniteClient3dExtensions', () => {
   const appId = 'reveal-CogniteClient3dV2Extensions-test';
@@ -103,17 +103,17 @@ describe('CogniteClient3dExtensions', () => {
 
 describe('Model3dOutputList', () => {
   test('findMostRecentOutput() with no outputs of type, returns undefined', () => {
-    const outputs = new ModelOutputList({ id: 42 }, [{ format: 'ept-pointcloud', version: 1, blobId: 1 }]);
+    const outputs = new Model3DOutputList({ id: 42 }, [{ format: 'ept-pointcloud', version: 1, blobId: 1 }]);
     expect(outputs.findMostRecentOutput('reveal')).toBeUndefined();
   });
 
   test('findMostRecentOutput() with single output of given type, returns version', () => {
-    const outputs = new ModelOutputList({ id: 42 }, [{ format: 'ept-pointcloud', version: 1, blobId: 1 }]);
+    const outputs = new Model3DOutputList({ id: 42 }, [{ format: 'ept-pointcloud', version: 1, blobId: 1 }]);
     expect(outputs.findMostRecentOutput('ept-pointcloud')).not.toBeUndefined();
   });
 
   test('findMostRecentOutput() with mulitple outputs of given type, returns most recent version', () => {
-    const outputs = new ModelOutputList({ id: 42 }, [
+    const outputs = new Model3DOutputList({ id: 42 }, [
       { format: 'ept-pointcloud', version: 1, blobId: 1 },
       { format: 'ept-pointcloud', version: 5, blobId: 5 },
       { format: 'ept-pointcloud', version: 3, blobId: 3 },
@@ -125,7 +125,7 @@ describe('Model3dOutputList', () => {
   });
 
   test('findMostRecentOutput() with list of supported formats, returns most recent supported', () => {
-    const outputs = new ModelOutputList({ id: 42 }, [
+    const outputs = new Model3DOutputList({ id: 42 }, [
       { format: 'ept-pointcloud', version: 1, blobId: 1 },
       { format: 'ept-pointcloud', version: 5, blobId: 5 },
       { format: 'ept-pointcloud', version: 3, blobId: 3 },

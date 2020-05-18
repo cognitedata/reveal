@@ -3,7 +3,6 @@
  */
 
 import * as THREE from 'three';
-import { IdEither } from '@cognite/sdk';
 import { CadNode } from './CadNode';
 import { CadModelFactory } from './CadModelFactory';
 import { CadModelMetadataRepository } from './CadModelMetadataRepository';
@@ -11,8 +10,8 @@ import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 import { discardSector } from './sector/discardSector';
 import { ModelNodeAppearance } from './ModelNodeAppearance';
 
-export class CadManager {
-  private readonly _cadModelMetadataRepository: CadModelMetadataRepository;
+export class CadManager<Params> {
+  private readonly _cadModelMetadataRepository: CadModelMetadataRepository<Params>;
   private readonly _cadModelFactory: CadModelFactory;
   private readonly _cadModelUpdateHandler: CadModelUpdateHandler;
 
@@ -21,7 +20,7 @@ export class CadManager {
   private _needsRedraw: boolean = false;
 
   constructor(
-    cadModelMetadataRepository: CadModelMetadataRepository,
+    cadModelMetadataRepository: CadModelMetadataRepository<Params>,
     cadModelFactory: CadModelFactory,
     cadModelUpdateHandler: CadModelUpdateHandler
   ) {
@@ -63,8 +62,8 @@ export class CadManager {
     this._cadModelUpdateHandler.updateCamera(camera);
   }
 
-  async addModel(modelRevisionId: IdEither, modelAppearance?: ModelNodeAppearance): Promise<CadNode> {
-    const metadata = await this._cadModelMetadataRepository.loadMetadata(modelRevisionId);
+  async addModel(params: Params, modelAppearance?: ModelNodeAppearance): Promise<CadNode> {
+    const metadata = await this._cadModelMetadataRepository.loadData(params);
     const model = this._cadModelFactory.createModel(metadata, modelAppearance);
     this._cadModelMap.set(metadata.blobUrl, model);
     this._cadModelUpdateHandler.updateModels(model);

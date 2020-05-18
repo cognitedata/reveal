@@ -4,7 +4,6 @@
 
 import * as THREE from 'three';
 import { Subject, Observable, combineLatest, animationFrameScheduler } from 'rxjs';
-import { CadLoadingHints } from '../public/CadLoadingHints';
 import { CadNode } from './CadNode';
 import { ConsumedSector } from './sector/ConsumedSector';
 import { scan, share, startWith, auditTime, filter, map, publish, switchAll, observeOn } from 'rxjs/operators';
@@ -15,6 +14,7 @@ import { filterCurrentWantedSectors } from './sector/filterCurrentWantedSectors'
 import { WantedSector } from './sector/WantedSector';
 import { CachedRepository } from './sector/CachedRepository';
 import { fromThreeCameraConfig } from '@/utilities/fromThreeCameraConfig';
+import { CadLoadingHints } from '@/dataModels/cad/public/CadLoadingHints';
 
 export class CadModelUpdateHandler {
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();

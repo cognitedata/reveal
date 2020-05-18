@@ -8,7 +8,7 @@ import { File3dFormat } from '../File3dFormat';
 import { CadSceneProvider } from '@/dataModels/cad/internal/CadSceneProvider';
 import { ModelUrlProvider } from './ModelUrlProvider';
 import { BlobOutputMetadata } from './BlobOutputMetadata';
-import { ModelOutputList } from './ModelOutputList';
+import { Model3DOutputList } from './Model3DOutputList';
 import { CadSectorProvider } from '@/dataModels/cad/internal/sector/CadSectorProvider';
 
 interface OutputsRequest {
@@ -19,7 +19,8 @@ interface OutputsRequest {
 /**
  * Provides 3D V2 specific extensions for the standard CogniteClient used by Reveal.
  */
-export class CogniteClient3dExtensions implements ModelUrlProvider, CadSceneProvider, CadSectorProvider {
+export class CogniteClient3dExtensions
+  implements ModelUrlProvider<{ modelRevision: IdEither; format: File3dFormat }>, CadSceneProvider, CadSectorProvider {
   private readonly client: CogniteClient;
 
   constructor(client: CogniteClient) {
@@ -40,13 +41,13 @@ export class CogniteClient3dExtensions implements ModelUrlProvider, CadSceneProv
     const response = await this.client.get(`${blobUrl}/scene.json`);
     return response.data;
   }
-  public async getModelUrl(modelRevisionId: IdEither, format: File3dFormat): Promise<string> {
-    const outputs = await this.getOutputs(modelRevisionId, [format]);
-    const blobId = outputs.findMostRecentOutput(format)!.blobId;
+  public async getModelUrl(params: { modelRevision: IdEither; format: File3dFormat }): Promise<string> {
+    const outputs = await this.getOutputs(params.modelRevision, [params.format]);
+    const blobId = outputs.findMostRecentOutput(params.format)!.blobId;
     return `${this.client.getBaseUrl()}/${this.buildBlobRequestPath(blobId)}`;
   }
 
-  public async getOutputs(modelRevisionId: IdEither, formats?: (File3dFormat | string)[]): Promise<ModelOutputList> {
+  public async getOutputs(modelRevisionId: IdEither, formats?: (File3dFormat | string)[]): Promise<Model3DOutputList> {
     const url = `/api/playground/projects/${this.client.project}/3d/v2/outputs`;
     const request: OutputsRequest = {
       models: [modelRevisionId],
@@ -57,7 +58,7 @@ export class CogniteClient3dExtensions implements ModelUrlProvider, CadSceneProv
     });
     if (response.status === 200) {
       const item = response.data.items[0];
-      return new ModelOutputList(item.model, item.outputs);
+      return new Model3DOutputList(item.model, item.outputs);
     }
     throw new Error(`Unexpected response ${response.status} (payload: '${response.data})`);
   }

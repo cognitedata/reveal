@@ -15,15 +15,12 @@ import { File3dFormat } from '@/utilities/File3dFormat';
 
 const identity = mat4.identity(mat4.create());
 
-export async function createPointCloudModel(
-  client: CogniteClient,
-  modelRevisionId: IdEither
-): Promise<PointCloudModel> {
+export async function createPointCloudModel(client: CogniteClient, modelRevision: IdEither): Promise<PointCloudModel> {
   initializeXhrRequestHeaders(client);
   const baseUrl = client.getBaseUrl();
 
   const clientExtensions = new CogniteClient3dExtensions(client);
-  const blobUrl = await clientExtensions.getModelUrl(modelRevisionId, File3dFormat.EptPointCloud);
+  const blobUrl = await clientExtensions.getModelUrl({ modelRevision, format: File3dFormat.EptPointCloud });
   const url = baseUrl + blobUrl + '/ept.json';
   const loaderPromise = EptLoader.load(url);
 

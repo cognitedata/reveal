@@ -27,13 +27,13 @@ export interface RevealOptions {
 
 export type OnDataUpdated = () => void;
 
-export class RevealManagerBase {
+export class RevealManagerBase<Params> {
+  protected readonly _cadManager: CadManager<Params>;
   protected readonly _materialManager: MaterialManager;
-  protected readonly _cadManager: CadManager;
 
   private _client: CogniteClient;
 
-  constructor(client: CogniteClient, cadManager: CadManager, materialManager: MaterialManager) {
+  constructor(client: CogniteClient, cadManager: CadManager<Params>, materialManager: MaterialManager) {
     // this._budget = (options && options.budget) || createDefaultCadBudget();
     this._client = client;
     this._cadManager = cadManager;
@@ -46,11 +46,6 @@ export class RevealManagerBase {
 
   get needsRedraw(): boolean {
     return this._cadManager.needsRedraw;
-  }
-
-  public addModelFromCdf(modelRevision: string | number, modelNodeAppearance?: ModelNodeAppearance): Promise<CadNode> {
-    const promise = this._cadManager.addModel(this.createModelIdentifier(modelRevision), modelNodeAppearance);
-    return promise;
   }
 
   public addModelFromUrl(_modelUrl: string, _modelNodeAppearance?: ModelNodeAppearance): Promise<CadNode> {
@@ -74,7 +69,29 @@ export class RevealManagerBase {
     this._cadManager.updateCamera(camera);
   }
 
-  private createModelIdentifier(id: string | number): IdEither {
+  public addModel(type: 'cad', params: Params, modelNodeAppearance?: ModelNodeAppearance): Promise<CadNode>;
+  public addModel(type: 'pointcloud', params: Params): Promise<[PotreeGroupWrapper, PotreeNodeWrapper]>;
+  public addModel(
+    type: 'cad' | 'pointcloud',
+    params: Params,
+    modelNodeAppearance?: ModelNodeAppearance
+  ): Promise<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper]> {
+    switch (type) {
+      case 'cad':
+        return this._cadManager.addModel(params, modelNodeAppearance);
+      case 'pointcloud':
+        throw new Error('Not yet implemented');
+      default:
+        throw new Error(`case: ${type} not handled`);
+    }
+  }
+
+  protected addCadModel(params: Params, modelNodeAppearance?: ModelNodeAppearance): Promise<CadNode> {
+    const promise = this._cadManager.addModel(params, modelNodeAppearance);
+    return promise;
+  }
+
+  protected createModelIdentifier(id: string | number): IdEither {
     if (typeof id === 'number') {
       return { id };
     }

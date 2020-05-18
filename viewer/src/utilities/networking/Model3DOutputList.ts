@@ -6,7 +6,7 @@ import { IdEither } from '@cognite/sdk';
 import { BlobOutputMetadata } from './BlobOutputMetadata';
 import { File3dFormat } from '../File3dFormat';
 
-export class ModelOutputList {
+export class Model3DOutputList {
   public readonly model: IdEither;
   public readonly outputs: BlobOutputMetadata[];
 
