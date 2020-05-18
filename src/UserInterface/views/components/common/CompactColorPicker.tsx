@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function CompactColorPicker(props) {
   const classes = useStyles();
 
-  const { value: color, mainId, subIndex, elementIndex } = props;
+  const { value: color, sectionId, subSectionId, elementIndex } = props;
   const dispatch = useDispatch();
   const [visible, setVisibility] = useState(false);
 
@@ -58,8 +58,8 @@ export default function CompactColorPicker(props) {
       <CompactPicker
         color={color}
         onChangeComplete={({ hex }) => dispatch(onCompactColorChange({
-          mainId,
-          subIndex,
+          sectionId,
+          subSectionId,
           elementIndex,
           value: hex
         }))}

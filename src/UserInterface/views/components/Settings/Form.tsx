@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     formContainer: {
       width: "100%",
-      backgroundImage: "linear-gradient(to right, #e9e9e9, #d5d5d5)",
+      backgroundImage: "linear-gradient(to right, #fff, #d5d5d5)",
       display: "flex",
       flexDirection: "column",
       padding: "0.5rem"
@@ -17,15 +17,15 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function SubSection(props: { elements, mainId, subIndex }) {
-  const { elements, mainId, subIndex } = props;
+export default function Form(props: { elements, sectionId, subSectionId }) {
+  const { elements, sectionId, subSectionId } = props;
   const classes = useStyles();
   return <div className={classes.formContainer}>
     {elements.map((element, index) => <Input
-      key={`${mainId}-${subIndex}-element-${index}`}
+      key={`${sectionId}-input-${subSectionId ? subSectionId : ""}-${index}`}
+      sectionId={sectionId}
+      subSectionId={subSectionId}
       config={element}
-      mainId={mainId}
-      subIndex={subIndex}
       elementIndex={index}>
     </Input>)}
   </div>

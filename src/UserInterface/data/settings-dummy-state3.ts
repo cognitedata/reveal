@@ -1,6 +1,6 @@
 import { IconTypes } from "../constants/Icons";
 
-export const state2 = {
+export const state3 = {
   titleBar: {
     name: "Random Polylines 1",
     icon: { type: IconTypes.NODES, name: "PolylinesNode" },

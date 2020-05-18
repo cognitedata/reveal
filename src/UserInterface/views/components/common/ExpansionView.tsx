@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
 import { onExpandChange } from "../../../redux/actions/settings"
+import ToolBar from './ToolBar';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -20,12 +21,12 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: "center",
       width: "100% !important",
       margin: "0 !important",
-      backgroundImage: "linear-gradient(to right, #f4f4f4, #d6d6d6)",
+      backgroundImage: "linear-gradient(to right, #fff, #e7e7e7)",
       minHeight: "1.8rem !important",
       paddingLeft: "0.2rem"
     },
     expansionTitle: {
-      marginLeft: ".5rem",
+      margin: "0 .5rem",
       fontSize: "0.7rem",
       fontWeight: 500
     },
@@ -40,6 +41,12 @@ const useStyles = makeStyles((theme: Theme) =>
       display: "flex",
       alignItems: "center",
       justifyContent: "center"
+    },
+    toolBar: {
+      position: "absolute",
+      left: "110px",
+      top: "-1.8rem",
+      zIndex: 9999
     }
   }),
 );
@@ -48,11 +55,13 @@ export default function ExpansionView(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const { subIndex, mainId, title, isExpanded, children, iconIndex } = props;
+  const { sectionId, title, isExpanded, toolBar, subSectionId, children } = props;
   return (
-    <ExpansionPanel expanded={isExpanded} onChange={(event) => {
-      dispatch(onExpandChange({ mainId, subIndex, iconIndex }))
-    }}>
+    <ExpansionPanel
+      expanded={isExpanded}
+      onChange={(event) => {
+        dispatch(onExpandChange({ sectionId, subSectionId }))
+      }}>
       <ExpansionPanelSummary className={classes.expansionSummaryRoot}>
         <div className={classes.expansionSummaryHeader}>
           <div className={classes.expandButton}>
@@ -64,6 +73,12 @@ export default function ExpansionView(props) {
           <span className={classes.expansionTitle}><b>{title}</b></span>
         </div>
       </ExpansionPanelSummary>
+      <div className={classes.toolBar}>
+        <ToolBar
+          toolBar={toolBar}
+          sectionId={sectionId}
+        ></ToolBar>
+      </div>
       <ExpansionPanelDetails>
         {children || null}
       </ExpansionPanelDetails>

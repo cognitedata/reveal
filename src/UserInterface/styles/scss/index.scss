@@ -37,7 +37,8 @@ $right-panel-height: 100vh;
 }
 
 .left-panel-section {
-  border: 1px lightgrey solid;
+  // border: 1px lightgrey solid;
+  width: 100%;
 }
 
 .explorer-container {
@@ -73,7 +74,7 @@ $right-panel-height: 100vh;
   padding: 0 !important;
 }
 
-$titleBarHeight: 2rem;
+$titleBarHeight: 1.6rem;
 $titleBarIconWidth: $titleBarHeight;
 
 /* Global title bar*/
@@ -82,7 +83,7 @@ $titleBarIconWidth: $titleBarHeight;
   display: flex;
   align-items: center;
   padding-left: 0.5rem;
-  // background-image: linear-gradient(to right, white, lightgray);
+  background-image: linear-gradient(to right, #fff, #efefef);
   h1 {
     font-weight: 500;
     font-size: 0.8rem;
@@ -91,6 +92,10 @@ $titleBarIconWidth: $titleBarHeight;
     overflow: hidden;
     text-overflow: ellipsis;
   }
+}
+
+.tool-bar {
+  display: flex;
   .tool-bar-icon {
     height: $titleBarHeight;
     width: $titleBarIconWidth;
@@ -106,6 +111,10 @@ $titleBarIconWidth: $titleBarHeight;
   .icon-selected {
     background-color: lightblue;
   }
+}
+
+.MuiCollapse-wrapperInner {
+  position: relative;
 }
 
 .input-icon {
@@ -172,4 +181,8 @@ $titleBarIconWidth: $titleBarHeight;
   cursor: pointer;
   border: 1px solid lightgray;
   border-radius: 2px;
+}
+
+.additional-padding {
+  padding-left: 0.3rem;
 }

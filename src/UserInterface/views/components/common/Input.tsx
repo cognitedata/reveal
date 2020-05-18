@@ -92,15 +92,15 @@ function isAvailable(checked) {
   return false;
 }
 
-export default function Input(props: { config, elementIndex, mainId, subIndex }) {
+export default function Input(props: { config, elementIndex, sectionId, subSectionId }) {
   const classes = useStyles();
-  const { config, elementIndex, mainId, subIndex } = props;
+  const { config, elementIndex, sectionId, subSectionId } = props;
 
   const dispatch = useDispatch();
   const labelElelent = config.label ? (<label>{`${config.label}:`}</label>) : null;
 
   const keyExtractor = (other, subElementIndex, elementType) => {
-    let key = `${mainId}-${subIndex}-${elementIndex}-${elementType}`;
+    let key = `${sectionId}-${elementIndex}-${elementType}`;
     if (other) key += `-${other}`
     if (subElementIndex) key += `-${subElementIndex}`;
     return { key }
@@ -114,7 +114,7 @@ export default function Input(props: { config, elementIndex, mainId, subIndex })
           disabled={!isAvailable(checked)}
           {...keyExtractor(null, subElementIndex, config.type)}
           onChange={(event) => (!isReadOnly) ? dispatch(onTextInputChange(
-            { mainId, subIndex, elementIndex, value: event.target.value, subElementIndex })) : null}
+            { sectionId, subSectionId, elementIndex, value: event.target.value, subElementIndex })) : null}
           value={value}
           className={
             isReadOnly ?
@@ -130,8 +130,8 @@ export default function Input(props: { config, elementIndex, mainId, subIndex })
             disabled={!isAvailable(checked)}
             onChange={(event) =>
               dispatch(onSelectChange({
-                mainId,
-                subIndex,
+                sectionId,
+                subSectionId,
                 elementIndex,
                 subElementIndex,
                 value: event.target.value
@@ -153,8 +153,8 @@ export default function Input(props: { config, elementIndex, mainId, subIndex })
       case "color-table":
         return (<CompactColorPicker
           value={value}
-          mainId={mainId}
-          subIndex={subIndex}
+          sectionId={sectionId}
+          subSectionId={subSectionId}
           elementIndex={elementIndex}
         ></CompactColorPicker>);
       case "range":
@@ -162,8 +162,8 @@ export default function Input(props: { config, elementIndex, mainId, subIndex })
           disabled={!isAvailable(checked)}
           onChange={(event) =>
             dispatch(onRangeChange({
-              mainId,
-              subIndex,
+              sectionId,
+              subSectionId,
               elementIndex,
               subElementIndex,
               value: event.target.value
@@ -200,8 +200,8 @@ export default function Input(props: { config, elementIndex, mainId, subIndex })
           className={classes.checkbox}
           checked={config.checked}
           onChange={(event) => dispatch(onChangeSettingAvailability({
-            mainId,
-            subIndex,
+            sectionId,
+            subSectionId,
             elementIndex,
           }))}
         >
