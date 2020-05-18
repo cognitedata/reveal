@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import dat from 'dat.gui';
-import { AddModelOptions, Cognite3DViewer, SupportedModelTypes, BoundingBoxClipper } from '@cognite/reveal';
+import { AddModelOptions, Cognite3DViewer, Cognite3DModel, SupportedModelTypes, BoundingBoxClipper } from '@cognite/reveal';
 
 async function main() {
   const urlParams = new URL(location.href).searchParams;
