@@ -12,14 +12,9 @@ export { PotreeGroupWrapper } from './dataModels/pointCloud/internal/PotreeGroup
 
 export { suggestCameraConfig } from './utilities/cameraUtils';
 export { traverseDepthFirst, traverseUpwards } from './utilities/traversal';
-export {
-  determineSectorsByProximity,
-  DetermineSectorsByProximityInput
-} from './dataModels/cad/internal/sector/culling/determineSectors';
 export { WantedSector } from './dataModels/cad/internal/sector/WantedSector';
 export { LevelOfDetail } from './dataModels/cad/internal/sector/LevelOfDetail';
 
 export { SectorCuller } from './dataModels/cad/internal/sector/culling/SectorCuller';
-export { ProximitySectorCuller } from './dataModels/cad/internal/sector/culling/ProximitySectorCuller';
 export { ByVisibilityGpuSectorCuller } from './dataModels/cad/internal/sector/culling/ByVisibilityGpuSectorCuller';
 export { GpuOrderSectorsByVisibilityCoverage } from './dataModels/cad/internal/sector/culling/OrderSectorsByVisibilityCoverage';
