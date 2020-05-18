@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   toggleNodeVisibility,
   toggleNodeSelection
-} from "../../store/actions/explorer";
+} from "../../redux/actions/explorer";
 import { updateRootNode } from "../../data/generateNodes";
 
 export default function Explorer() {

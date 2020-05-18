@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 
-import { fetchDomainNodes } from "../../store/actions/explorer";
+import { fetchDomainNodes } from "../../redux/actions/explorer";
 import {
   appendChildren,
 } from "../../data/generateNodes";

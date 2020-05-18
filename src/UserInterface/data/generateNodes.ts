@@ -16,7 +16,6 @@ import { Vector3 } from "../../Core/Geometry/Vector3";
 import { state1 } from "./settings-dummy-state1";
 import { state2 } from "./settings-dummy-state2";
 
-let module;
 let root;
 
 export function generateRoot() {

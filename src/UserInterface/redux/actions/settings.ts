@@ -6,6 +6,7 @@ import {
   ON_COMPACT_COLOR_CHANGE,
   ON_EXPAND_CHANGE_FROM_TOOLBAR,
   GENERATE_SETTINGS_CONFIG,
+  ON_CHANGE_SETTING_AVAILABILITY,
 } from "../types/settings";
 
 export const onExpandChange = (payload) => {
@@ -34,4 +35,8 @@ export const onExpandChangeFromToolbar = (payload) => {
 
 export const generateSettingsConfig = (payload) => {
   return { type: GENERATE_SETTINGS_CONFIG, payload };
+};
+
+export const onChangeSettingAvailability = (payload) => {
+  return { type: ON_CHANGE_SETTING_AVAILABILITY, payload };
 };

@@ -4,7 +4,12 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select'
 import { useDispatch } from "react-redux";
 
-import { onTextInputChange, onSelectChange, onRangeChange } from "../../../store/actions/settings"
+import {
+  onTextInputChange,
+  onSelectChange,
+  onRangeChange,
+  onChangeSettingAvailability
+} from "../../../redux/actions/settings"
 import Icon from "./Icon";
 import CompactColorPicker from "./CompactColorPicker";
 
@@ -38,6 +43,7 @@ const useStyles = makeStyles((theme: Theme) =>
       flex: 1,
       display: "flex",
       position: "relative",
+      alignItems: "center",
     },
     textInput: {
       height: "0.9rem",
@@ -64,7 +70,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     checkbox: {
       position: "absolute",
-      left: "-.8rem"
+      left: "-1.5rem",
+      border: "1px solid black"
     },
     option: {
       fontFamily: "Roboto",
@@ -80,29 +87,31 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function Input(props: { config, elementIndex, mainId, subIndex })
-{
+function isAvailable(checked) {
+  if (typeof checked !== "boolean" || checked) return true;
+  return false;
+}
+
+export default function Input(props: { config, elementIndex, mainId, subIndex }) {
   const classes = useStyles();
   const { config, elementIndex, mainId, subIndex } = props;
 
   const dispatch = useDispatch();
   const labelElelent = config.label ? (<label>{`${config.label}:`}</label>) : null;
 
-  const keyExtractor = (other, subElementIndex, elementType) =>
-  {
+  const keyExtractor = (other, subElementIndex, elementType) => {
     let key = `${mainId}-${subIndex}-${elementIndex}-${elementType}`;
     if (other) key += `-${other}`
     if (subElementIndex) key += `-${subElementIndex}`;
     return { key }
   }
 
-  const inputElement = (config, subElementIndex) =>
-  {
+  const inputElement = (config, subElementIndex, checked) => {
     const { value, isReadOnly, options, subElements, icon } = config;
-    switch (config.type)
-    {
+    switch (config.type) {
       case "input":
         return (<input
+          disabled={!isAvailable(checked)}
           {...keyExtractor(null, subElementIndex, config.type)}
           onChange={(event) => (!isReadOnly) ? dispatch(onTextInputChange(
             { mainId, subIndex, elementIndex, value: event.target.value, subElementIndex })) : null}
@@ -118,6 +127,7 @@ export default function Input(props: { config, elementIndex, mainId, subIndex })
           <Select
             {...keyExtractor(null, subElementIndex, config.type)}
             value={value}
+            disabled={!isAvailable(checked)}
             onChange={(event) =>
               dispatch(onSelectChange({
                 mainId,
@@ -149,6 +159,7 @@ export default function Input(props: { config, elementIndex, mainId, subIndex })
         ></CompactColorPicker>);
       case "range":
         return <input type="range"
+          disabled={!isAvailable(checked)}
           onChange={(event) =>
             dispatch(onRangeChange({
               mainId,
@@ -172,7 +183,7 @@ export default function Input(props: { config, elementIndex, mainId, subIndex })
           />
         </div>
       case "input-group":
-        return subElements.map((element, idx) => inputElement(element, idx));
+        return subElements.map((element, idx) => inputElement(element, idx, checked));
       default:
         return null;
     }
@@ -183,7 +194,20 @@ export default function Input(props: { config, elementIndex, mainId, subIndex })
       {labelElelent}
     </div>
     <div className={classes.formInput}>
-      {inputElement(config, null)}
+      {config.hasOwnProperty("checked") ?
+        <input
+          type="checkbox"
+          className={classes.checkbox}
+          checked={config.checked}
+          onChange={(event) => dispatch(onChangeSettingAvailability({
+            mainId,
+            subIndex,
+            elementIndex,
+          }))}
+        >
+        </input>
+        : null}
+      {inputElement(config, null, config.checked)}
     </div>
   </section>
 }

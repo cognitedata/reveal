@@ -1,76 +1,89 @@
-import
-{
+import {
   IconTypes
 } from "../constants/Icons";
 
-export default function getIcon(iconType: string, iconName: string)
-{
-  switch (iconType)
-  {
+import Close from "../assets/images/Icons/Actions/Close.png";
+import Clean from "../assets/images/Icons/Actions/Clean.png";
+import Reset from "../assets/images/Icons/Actions/Reset.png";
+import Solution from "../assets/images/Icons/Actions/Solution.png";
+import Copy from "../assets/images/Icons/Actions/Copy.png";
+import Paste from "../assets/images/Icons/Actions/Paste.png";
+import FontBold from "../assets/images/Icons/Actions/FontBold.png";
+import FontItalic from "../assets/images/Icons/Actions/FontItalic.png";
+import FontUnderline from "../assets/images/Icons/Actions/FontUnderline.png";
+import Pinned from "../assets/images/Icons/States/Pinned.png";
+import PolylinesNode from "../assets/images/Icons/Nodes/PolylinesNode.png";
+import PointCloudNode from "../assets/images/Icons/Nodes/PointCloudNode.png";
+import FolderNode from "../assets/images/Icons/Nodes/FolderNode.png";
+import MapIcon from "../assets/images/Icons/Nodes/Map.png";
+import PointsNode from "../assets/images/Icons/Nodes/PointsNode.png";
+import FatRight from "../assets/images/Icons/Arrows/FatRight.png";
+import FatLeft from "../assets/images/Icons/Arrows/FatLeft.png";
+import Cube from "../assets/images/Icons/PointSymbol/Cube.png";
+import Sphere from "../assets/images/Icons/PointSymbol/Sphere.png";
+import LabelImage from "../assets/images/Icons/Show/Label.png";
+
+
+export default function getIcon(iconType: string, iconName: string) {
+  switch (iconType) {
     case IconTypes.ACTIONS:
-      switch (iconName)
-      {
+      switch (iconName) {
         case "Close":
-          return require("../resources/Icons/Actions/Close.png");
+          return Close;
         case "Clean":
-          return require("../resources/Icons/Actions/Clean.png");
+          return Clean;
         case "Reset":
-          return require("../resources/Icons/Actions/Reset.png");
+          return Reset;
         case "Solution":
-          return require("../resources/Icons/Actions/Solution.png");
+          return Solution;
         case "Copy":
-          return require("../resources/Icons/Actions/Copy.png");
+          return Copy;
         case "Paste":
-          return require("../resources/Icons/Actions/Paste.png");
+          return Paste;
         case "FontBold":
-          return require("../resources/Icons/Actions/FontBold.png");
+          return FontBold;
         case "FontItalic":
-          return require("../resources/Icons/Actions/FontItalic.png");
+          return FontItalic;
         case "FontUnderline":
-          return require("../resources/Icons/Actions/FontUnderline.png");
+          return FontUnderline;
       }
     case IconTypes.STATES:
-      switch (iconName)
-      {
+      switch (iconName) {
         case "Pinned":
-          return require("../resources/Icons/States/Pinned.png")
+          return Pinned
       }
     case IconTypes.NODES:
-      switch (iconName)
-      {
+      switch (iconName) {
         case "PolylinesNode":
-          return require("../resources/Icons/Nodes/PolylinesNode.png")
+          return PolylinesNode;
         case "PointCloudNode":
-          return require("../resources/Icons/Nodes/PointCloudNode.png");
+          return PointCloudNode;
         case "FolderNode":
-          return require("../resources/Icons/Nodes/FolderNode.png");
+          return FolderNode;
         case "Map":
-          return require("../resources/Icons/Nodes/Map.png");
+          return MapIcon;
         case "PointsNode":
-          return require("../resources/Icons/Nodes/PointsNode.png");
+          return PointsNode;
       }
     case IconTypes.ARROWS:
-      switch (iconName)
-      {
+      switch (iconName) {
         case "FatRight":
-          return require("../resources/Icons/Arrows/FatRight.png");
+          return FatRight;
         case "FatLeft":
-          return require("../resources/Icons/Arrows/FatLeft.png");
+          return FatLeft;
       }
     case IconTypes.POINT_SYMBOL:
-      switch (iconName)
-      {
+      switch (iconName) {
         case "Cube":
-          return require("../resources/Icons/PointSymbol/Sphere.png");
+          return Cube;
         case "Sphere":
-          return require("../resources/Icons/PointSymbol/Cube.png");
+          return Sphere;
       }
     case IconTypes.SHOW:
-      switch (iconName)
-      {
+      switch (iconName) {
         case "Label":
-          return require("../resources/Icons/Show/Label.png");
+          return LabelImage;
       }
   }
-  return require("../resources/Icons/Actions/Close.png");
+  return null;
 };

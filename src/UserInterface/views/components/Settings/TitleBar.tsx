@@ -3,12 +3,10 @@ import { useDispatch } from "react-redux";
 
 import Icon from "../Common/Icon";
 import { ToolBarActionTypes } from "../../../constants/Icons";
-import { onExpandChangeFromToolbar } from "../../../store/actions/settings";
+import { onExpandChangeFromToolbar } from "../../../redux/actions/settings";
 
-function assignToolBarAction(sectionId, iconIndex, action)
-{
-  switch (action.type)
-  {
+function assignToolBarAction(sectionId, iconIndex, action) {
+  switch (action.type) {
     case ToolBarActionTypes.EXPAND:
       return {
         func: onExpandChangeFromToolbar,
@@ -23,19 +21,16 @@ function assignToolBarAction(sectionId, iconIndex, action)
   }
 }
 
-function generateToolBar(sectionId, nodeId, toolBar)
-{
+function generateToolBar(sectionId, nodeId, toolBar) {
   const dispatch = useDispatch();
   if (!toolBar || !toolBar.length) return null;
   return toolBar.map(({ icon, action }, idx) =>
     <div
       key={`${nodeId}-toolBar-${idx}`}
       className={`tool-bar-icon ${icon.selected ? "icon-selected" : ""}`}
-      onClick={() =>
-      {
+      onClick={() => {
         const { func, data } = assignToolBarAction(sectionId, idx, action);
-        if (func)
-        {
+        if (func) {
           dispatch(func(data))
         }
       }
@@ -55,8 +50,7 @@ export default function TitleBar(props: {
   title: string,
   icon,
   toolBar,
-})
-{
+}) {
   const { className, title, icon, toolBar, nodeId, sectionId } = props;
   return <div className={`title-bar ${className ? className : ""}`}>
     {icon ?

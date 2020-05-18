@@ -7,7 +7,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
-import { onExpandChange } from "../../../store/actions/settings"
+import { onExpandChange } from "../../../redux/actions/settings"
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -44,15 +44,13 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function ExpansionView(props)
-{
+export default function ExpansionView(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
 
   const { subIndex, mainId, title, isExpanded, children, iconIndex } = props;
   return (
-    <ExpansionPanel expanded={isExpanded} onChange={(event) =>
-    {
+    <ExpansionPanel expanded={isExpanded} onChange={(event) => {
       dispatch(onExpandChange({ mainId, subIndex, iconIndex }))
     }}>
       <ExpansionPanelSummary className={classes.expansionSummaryRoot}>

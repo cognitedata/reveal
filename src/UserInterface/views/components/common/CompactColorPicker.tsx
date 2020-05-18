@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { CompactPicker } from "react-color"
 
-import { onCompactColorChange } from "../../../store/actions/settings"
+import { onCompactColorChange } from "../../../redux/actions/settings"
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -41,8 +41,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function CompactColorPicker(props)
-{
+export default function CompactColorPicker(props) {
   const classes = useStyles();
 
   const { value: color, mainId, subIndex, elementIndex } = props;

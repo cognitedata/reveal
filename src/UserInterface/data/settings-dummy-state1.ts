@@ -293,6 +293,7 @@ export const state1 = {
             isReadOnly: false,
             label: "Filter",
             type: "input-group",
+            checked: false,
             subElements: [
               {
                 type: "select",
@@ -314,6 +315,7 @@ export const state1 = {
           {
             isReadOnly: false,
             label: "Transparency",
+            checked: false,
             type: "range",
             value: 95,
           },

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 
 import MainSection from './MainSection';
-import { generateSettingsConfig } from "../../../store/actions/settings"
+import { generateSettingsConfig } from "../../../redux/actions/settings"
 
 
 export default function Settings() {

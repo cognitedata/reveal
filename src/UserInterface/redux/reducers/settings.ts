@@ -7,7 +7,10 @@ import {
   ON_COMPACT_COLOR_CHANGE,
   ON_EXPAND_CHANGE_FROM_TOOLBAR,
   GENERATE_SETTINGS_CONFIG,
+  ON_CHANGE_SETTING_AVAILABILITY,
 } from "../types/settings";
+
+import { state1 } from "../../data/settings-dummy-state1";
 
 import { generateSettingsConfig } from "../../data/generateNodes";
 
@@ -46,6 +49,13 @@ export default (state = initialState, action: SettingsActionTypes) => {
       if (subElementIndex === 0 || subElementIndex)
         element.subElements[subElementIndex].value = value;
       else element.value = value;
+      return { ...state };
+    }
+    case ON_CHANGE_SETTING_AVAILABILITY: {
+      const { mainId, subIndex, elementIndex } = action.payload;
+      const element =
+        state.sections[mainId].subSections[subIndex].elements[elementIndex];
+      element.checked = !element.checked;
       return { ...state };
     }
     case ON_COMPACT_COLOR_CHANGE: {
