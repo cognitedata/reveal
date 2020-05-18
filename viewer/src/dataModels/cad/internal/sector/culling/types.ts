@@ -1,7 +1,7 @@
 /*!
  * Copyright 2020 Cognite AS
  */
-
+import * as THREE from 'three';
 import { WantedSector } from '../WantedSector';
 import { LevelOfDetail } from '../LevelOfDetail';
 import { SectorMetadata } from '../types';
