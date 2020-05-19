@@ -3,13 +3,12 @@
  */
 
 import * as THREE from 'three';
-import * as reveal from '@cognite/reveal';
+import * as reveal from '@cognite/reveal/experimental';
 import { CogniteClient } from '@cognite/sdk';
 
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
 import { vec3 } from 'gl-matrix';
-import { PotreeGroupWrapper, PotreeNodeWrapper } from '@cognite/reveal/internal';
 import { getParamsFromURL } from './utils/example-helpers';
 
 CameraControls.install({ THREE });
@@ -26,7 +25,7 @@ async function main() {
   document.body.appendChild(renderer.domElement);
 
   const revealManager = new reveal.RevealManager(client, () => {});
-  let model: [PotreeGroupWrapper, PotreeNodeWrapper];
+  let model: [reveal.internal.PotreeGroupWrapper, reveal.internal.PotreeNodeWrapper];
   if (modelUrl) {
     model = await revealManager.addPointCloudFromUrl(modelUrl);
   } else if (modelRevision) {

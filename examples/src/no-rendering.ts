@@ -4,7 +4,7 @@
 
 import { getParamsFromURL } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
-import { RevealManager, CadNode } from '@cognite/reveal';
+import { RevealManager, CadNode } from '@cognite/reveal/experimental';
 
 async function main() {
   const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'primitives' });
