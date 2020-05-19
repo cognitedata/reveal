@@ -112,18 +112,19 @@ export default function Input(props: {
   const labelElelent = config.label ? (<label>{`${config.label}:`}</label>) : null;
 
   // Generate keys for mapped components
-  const keyExtractor = (extraIdentifier: number | string | null, subElementIndex: number | null, elementType: string) => {
+  const keyExtractor = (extraIdentifier: number | string | null, elementType: string, subElementIndex?: number) => {
     let key = `${sectionId}-${elementIndex}-${elementType}`;
     if (extraIdentifier) key += `-${extraIdentifier}`
     if (subElementIndex) key += `-${subElementIndex}`;
     return { key }
   }
 
-  // Create random input elements
-  const inputElement = (
+  // Renders input elements dynamically
+  const renderInputElement = (
     config: SectionElement,
-    subElementIndex: number | null,
-    checked?: boolean): any => {
+    checked?: boolean,
+    subElementIndex?: number,
+  ): any => {
 
     const { value, isReadOnly, options, subElements, icon } = config;
 
@@ -131,7 +132,7 @@ export default function Input(props: {
       case Inputs.INPUT:
         return (<input
           disabled={!isAvailable(checked)}
-          {...keyExtractor(null, subElementIndex, config.type)}
+          {...keyExtractor(null, config.type, subElementIndex)}
           onChange={(event) => (!isReadOnly) ? dispatch(onTextInputChange(
             { sectionId, subSectionId, elementIndex, value: event.target.value, subElementIndex })) : null}
           value={value}
@@ -144,7 +145,7 @@ export default function Input(props: {
       case Inputs.SELECT:
         return (
           <Select
-            {...keyExtractor(null, subElementIndex, config.type)}
+            {...keyExtractor(null, config.type, subElementIndex)}
             value={value}
             disabled={!isAvailable(checked)}
             onChange={(event) =>
@@ -158,7 +159,7 @@ export default function Input(props: {
           >
             {options!.map((option, idx) =>
               <MenuItem value={idx}
-                {...keyExtractor(idx, subElementIndex, config.type)}>
+                {...keyExtractor(idx, config.type, subElementIndex)}>
                 <div className={classes.option}>
                   {option.icon ?
                     <Icon
@@ -193,7 +194,7 @@ export default function Input(props: {
         </input>;
       case Inputs.IMAGE_BUTTON:
         return <div
-          {...keyExtractor(null, subElementIndex, config.type)}
+          {...keyExtractor(null, config.type, subElementIndex)}
           className={`input-icon ${icon!.selected ? "input-icon-selected" : ""}`}
         >
           <Icon
@@ -202,7 +203,7 @@ export default function Input(props: {
           />
         </div>
       case Inputs.INPUT_GROUP:
-        return subElements!.map((element, idx) => inputElement(element, idx, checked));
+        return subElements!.map((element, idx) => renderInputElement(element, checked, idx));
       default:
         return null;
     }
@@ -226,7 +227,7 @@ export default function Input(props: {
         >
         </input>
         : null}
-      {inputElement(config, null, config.checked)}
+      {renderInputElement(config, config.checked)}
     </div>
   </section>
 }

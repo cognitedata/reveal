@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from "react-redux";
+import React from 'react';
+import { useSelector } from "react-redux";
 
 import TitleBar from './TitleBar';
 import Section from './Section';
 
-import { generateSettingsConfig } from "../../../redux/actions/settings";
 import { SettingsSectionInterface } from "../../../interfaces/settings"
 import { GlobalState } from "../../../interfaces/common"
 
@@ -13,16 +12,8 @@ import { GlobalState } from "../../../interfaces/common"
  */
 export default function Settings() {
 
-  const dispatch = useDispatch();
   const settings = useSelector((state: GlobalState) => state.settings);
-  const selectedNode = useSelector((state: GlobalState) => state.explorer.selectedNode);
   const { titleBar, sections, id } = settings;
-
-  useEffect(() => {
-    dispatch(generateSettingsConfig(selectedNode));
-  }, [
-    selectedNode
-  ]);
 
   return (
     <div className="settings-container">

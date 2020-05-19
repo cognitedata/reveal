@@ -1,6 +1,8 @@
 import { IconTypes } from "../constants/Icons";
 
-export const state1 = {
+// Dummy Settings State
+export const state = {
+  id: "435nj43kn5i",
   titleBar: {
     name: "Well 7",
     icon: { type: IconTypes.NODES, name: "WellNode" },

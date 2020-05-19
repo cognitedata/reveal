@@ -8,20 +8,18 @@ import {
   GENERATE_SETTINGS_CONFIG,
   ON_CHANGE_SETTING_AVAILABILITY,
 } from "../types/settings";
-
 import {
   SettingsActionInterface,
   SettingsStateInterface,
 } from "../../interfaces/settings";
-
-import { state1 } from "../../data/settings-dummy-state1";
-import { state3 } from "../../data/settings-dummy-state3";
-
+import { state } from "../../data/settings-dummy-state";
 import { isNumber } from "../../utils/Settings";
-import { generateSettingsConfig } from "../../data/generateNodes";
 
 // Initial settings state
-const initialState: SettingsStateInterface = { id: "sdfdsfsd", sections: [] };
+const initialState: SettingsStateInterface = {
+  id: null,
+  sections: [],
+};
 
 // Settings reducer to update state with actions
 export default (state = initialState, action: SettingsActionInterface) => {
@@ -30,7 +28,7 @@ export default (state = initialState, action: SettingsActionInterface) => {
       const { sectionId, subSectionId } = action.payload;
       const section = state.sections[sectionId!];
       if (isNumber(subSectionId)) {
-        const subSection = section.subSections![subSectionId];
+        const subSection = section.subSections![subSectionId!];
         subSection.isExpanded = !subSection.isExpanded;
       } else {
         section.isExpanded = !section.isExpanded;
@@ -51,7 +49,7 @@ export default (state = initialState, action: SettingsActionInterface) => {
       const section = state.sections[sectionId!];
       let element = null;
       if (isNumber(subSectionId))
-        element = section.subSections![subSectionId].elements[elementIndex];
+        element = section.subSections![subSectionId!].elements[elementIndex];
       else element = section.elements[elementIndex];
       if (isNumber(subElementIndex))
         element.subElements![subElementIndex!].value = value;
@@ -63,7 +61,7 @@ export default (state = initialState, action: SettingsActionInterface) => {
       const section = state.sections[sectionId ? sectionId : 0];
       let element = null;
       if (isNumber(subSectionId))
-        element = section.subSections![subSectionId].elements[elementIndex];
+        element = section.subSections![subSectionId!].elements[elementIndex];
       else element = section.elements[elementIndex];
       element.checked = !element.checked;
       return { ...state };
@@ -73,16 +71,11 @@ export default (state = initialState, action: SettingsActionInterface) => {
       const section = state.sections[sectionId!];
       const icon = section.toolBar![iconIndex!];
       icon.selected = !icon.selected;
-      const subSection = section.subSections![subSectionId];
+      const subSection = section.subSections![subSectionId!];
       subSection.isExpanded = !subSection.isExpanded;
       return { ...state };
     }
     case GENERATE_SETTINGS_CONFIG: {
-      if (action.payload) {
-        const { node } = action.payload;
-        const config = generateSettingsConfig(node);
-        return { id: node.uniqueId.toString(), ...config };
-      }
       return state;
     }
     default:

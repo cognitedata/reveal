@@ -8,5 +8,4 @@ export default function LeftPanel() {
     <Settings />
   </div>
   );
-
 }

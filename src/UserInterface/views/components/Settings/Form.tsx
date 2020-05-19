@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme: Theme) =>
     formContainer: {
       display: "flex",
       flexDirection: "column",
-      padding: "0rem .4rem 0rem .8rem",
+      padding: ".5rem .4rem .5rem .8rem",
       backgroundImage: "linear-gradient(to right, #fff, #d5d5d5)",
     },
   }),

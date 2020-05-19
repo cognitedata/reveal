@@ -1,5 +1,4 @@
 import { SettingsStateInterface } from "./settings";
-import { ExplorerStateInterface } from "./explorer";
 
 // TitleBar interface
 export interface TitleBarInterface {
@@ -21,5 +20,4 @@ export type ToolBarType = Array<{
 // Global State
 export interface GlobalState {
   settings: SettingsStateInterface;
-  explorer: ExplorerStateInterface;
 }
