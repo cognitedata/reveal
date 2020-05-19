@@ -40,7 +40,8 @@ module.exports = env => {
   const config = {
     mode: development ? "development" : "production",
     entry: {
-      index: './src/index.ts'
+      index: './src/index.ts',
+      experimental: './src/experimental.ts'
     },
     target: "web",
     resolve: {

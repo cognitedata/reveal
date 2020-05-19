@@ -15,7 +15,7 @@ import {
   RenderOptions
 } from './utils/renderer-debug-widget';
 import { CogniteClient } from '@cognite/sdk';
-import { CadNode, RevealManager } from '@cognite/reveal';
+import { CadNode, RevealManager } from '@cognite/reveal/experimental';
 import { getParamsFromURL } from './utils/example-helpers';
 
 CameraControls.install({ THREE });

@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import * as reveal from '@cognite/reveal';
+import * as reveal from '@cognite/reveal/experimental';
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
 import { getParamsFromURL } from './utils/example-helpers';

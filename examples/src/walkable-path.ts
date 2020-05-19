@@ -5,9 +5,8 @@
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import { CogniteClient, HttpError } from '@cognite/sdk';
-import * as reveal from '@cognite/reveal';
+import * as reveal from '@cognite/reveal/experimental';
 import { vec3 } from 'gl-matrix';
-import { SectorModelTransformation } from '@cognite/reveal';
 import { GUI, GUIController } from 'dat.gui';
 import { getParamsFromURL } from './utils/example-helpers';
 
@@ -151,7 +150,7 @@ function createWalkablePathMeshes(
 
 function convertToVector3Array(
   pointData: TransitPathResponse,
-  modelTransformation: SectorModelTransformation
+  modelTransformation: reveal.SectorModelTransformation
 ): THREE.Vector3[][] {
   const paths: THREE.Vector3[][] = [];
   const vector: vec3 = vec3.create();

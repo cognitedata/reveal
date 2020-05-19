@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import * as TWEEN from '@tweenjs/tween.js';
-import * as reveal from '@cognite/reveal';
+import * as reveal from '@cognite/reveal/experimental';
 
 import CameraControls from 'camera-controls';
 import { createPathNode, createTextSpriteNode } from './utils/scene-elements';
