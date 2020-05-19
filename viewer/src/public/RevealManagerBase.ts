@@ -18,13 +18,11 @@ import {
 import { loadCadModelByUrl, loadCadModelFromCdf, CadModel } from '@/dataModels/cad/internal';
 import { createLocalPointCloudModel, createPointCloudModel, PointCloudModel } from '@/dataModels/pointCloud';
 import { CogniteClient, IdEither } from '@cognite/sdk';
-import { fromThreeCameraConfig } from '@/utilities/fromThreeCameraConfig';
 import { distinctUntilLevelOfDetailChanged } from '@/dataModels/cad/internal/sector/distinctUntilLevelOfDetailChanged';
 import { filterCurrentWantedSectors } from '@/dataModels/cad/internal/sector/filterCurrentWantedSectors';
 import { discardSector } from '@/dataModels/cad/internal/sector/discardSector';
 import { CadLoadingHints } from '@/dataModels/cad/public/CadLoadingHints';
 import { CadNode } from '@/dataModels/cad/internal/CadNode';
-import { ProximitySectorCuller } from '@/dataModels/cad/internal/sector/culling/ProximitySectorCuller';
 import { CadBudget } from '@/dataModels/cad/public/CadBudget';
 import { ConsumedSector } from '@/dataModels/cad/internal/sector/ConsumedSector';
 import { ModelNodeAppearance } from '@/dataModels/cad/internal/ModelNodeAppearance';
@@ -38,6 +36,7 @@ import { PotreeNodeWrapper } from '@/dataModels/pointCloud/internal/PotreeNodeWr
 import { PointCloud } from '@/dataModels/pointCloud/internal/PointCloud';
 import { SectorCuller } from '@/dataModels/cad/internal/sector/culling/SectorCuller';
 import { WantedSector } from '@/dataModels/cad/internal/sector/WantedSector';
+import { ByVisibilityGpuSectorCuller } from '@/dataModels/cad/internal/sector/culling/ByVisibilityGpuSectorCuller';
 import { isCad, isPointCloud } from '@/utilities/dataTypeFilters';
 import { CdfSource } from '@/utilities/networking/CdfSource';
 import { ExternalSource } from '@/utilities/networking/ExternalSource';
@@ -77,7 +76,8 @@ export class RevealManagerBase {
     dataUpdatedCallback: OnDataUpdated,
     options?: RevealOptions
   ) {
-    this._sectorCuller = (options && options.internal && options.internal.sectorCuller) || new ProximitySectorCuller();
+    this._sectorCuller =
+      (options && options.internal && options.internal.sectorCuller) || new ByVisibilityGpuSectorCuller();
     // this._budget = (options && options.budget) || createDefaultCadBudget();
     this._sectorRepository = sectorRepository;
     this._materialManager = materialManager;
@@ -282,16 +282,12 @@ export class RevealManagerBase {
     pipeline
       .pipe(
         auditTime(100),
-        fromThreeCameraConfig(),
+        map(camera => camera.clone()),
         withLatestFrom(this._cadModelObservable, this._loadingHintsSubject.pipe(share())),
-        filter(
-          ([_cameraConfig, cadModels, loadingHints]) => cadModels.length > 0 && loadingHints.suspendLoading !== true
+        filter(([_camera, cadModels, loadingHints]) => cadModels.length > 0 && loadingHints.suspendLoading !== true),
+        map(([camera, cadModels, loadingHints]) =>
+          this._sectorCuller.determineSectors({ camera, cadModels, loadingHints })
         ),
-        map(([cameraConfig, cadModels, loadingHints]) =>
-          this._sectorCuller.determineSectors({ cameraConfig, cadModels, loadingHints })
-        ),
-        // Take sectors within budget
-        // map(wantedSectors => this._budget.filter(wantedSectors)), <-- Was removed since it requires scene which wanted sectors don't have
         // Load sectors from repository
         publish((wantedSectors: Observable<WantedSector[]>) =>
           wantedSectors.pipe(
