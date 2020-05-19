@@ -66,7 +66,7 @@ export default (state = initialState, action: SettingsActionInterface) => {
       let element = null;
       if (isNumber(subSectionId))
         element = section.subSections![subSectionId!].elements[elementIndex!];
-      else element = section.elements[elementIndex];
+      else element = section.elements[elementIndex!];
       element.checked = !element.checked;
       return { ...state };
     }

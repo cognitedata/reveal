@@ -1,7 +1,7 @@
 const path = require("path");
 module.exports = {
   // webpack will take the files from ./src/index
-  entry: "./src/UserInterface/views/App.tsx",
+  entry: "./src/UserInterface/views/SubsurfaceVisualizer.tsx",
 
   // and output it into /dist as bundle.js
   output: {

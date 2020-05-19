@@ -1,6 +1,6 @@
 import "regenerator-runtime/runtime";
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './views/App';
+import SubsurfaceVisualizer from "./views/SubsurfaceVisualizer"
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<SubsurfaceVisualizer />, document.getElementById('root'));

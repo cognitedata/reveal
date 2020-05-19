@@ -1,8 +1,8 @@
 {
-  "name": "reveal-architecture",
+  "name": "subsurface-visualizer",
   "version": "0.1.0",
   "description": "Reveal viewer architecture",
-  "main": "app.js",
+  "main": "lib/SubsurfaceVisualizer.js",
   "entry": "dist/app.js",
   "scripts": {
     "build": "webpack",
