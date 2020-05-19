@@ -1,25 +1,25 @@
 
 import { ThreeModule } from './src/Three/ThreeModule';
 import { ThreeRenderTargetNode } from './src/Three/ThreeRenderTargetNode';
-import { Range3 } from './src/Core/Geometry/Range3';
-import { Range1 } from './src/Core/Geometry/Range1';
 
 import { RootNode } from './src/TreeNodes/RootNode';
 import { AxisNode } from './src/Nodes/AxisNode';
-import { Vector3 } from "./src/Core/Geometry/Vector3";
 
 import { WellTrajectoryNode } from "./src/Nodes/Wells/Wells/WellTrajectoryNode";
 import { WellNode } from "./src/Nodes/Wells/Wells/WellNode";
 import { WellTrajectory } from './src/Nodes/Wells/Logs/WellTrajectory';
 
+import { PointLogNode } from "./src/Nodes/Wells/Wells/PointLogNode";
 import { FloatLogNode } from "./src/Nodes/Wells/Wells/FloatLogNode";
 import { DiscreteLogNode } from "./src/Nodes/Wells/Wells/DiscreteLogNode";
-import { PointLogNode } from "./src/Nodes/Wells/Wells/PointLogNode";
 
+import { PointLog } from './src/Nodes/Wells/Logs/PointLog';
 import { FloatLog } from './src/Nodes/Wells/Logs/FloatLog';
 import { DiscreteLog } from './src/Nodes/Wells/Logs/DiscreteLog';
-import { PointLog } from './src/Nodes/Wells/Logs/PointLog';
 
+import { Range3 } from './src/Core/Geometry/Range3';
+import { Range1 } from './src/Core/Geometry/Range1';
+import { Vector3 } from "./src/Core/Geometry/Vector3";
 
 main();
 
@@ -29,12 +29,10 @@ export function main()
   const module = new ThreeModule();
   module.install();
 
-  // Add some random wells
   const root = module.createRoot() as RootNode;
   const wellTree = root.wells;
 
-
-  // Add some wells
+  // Add some random wells
   for (let i = 0; i < 6; i++)
   {
     const well = new WellNode();
@@ -44,7 +42,7 @@ export function main()
     well.wellHead.z = 0;
     well.name = `well number ${i + 1}`;
 
-    // Add some trajectories to the well
+    // Add some random trajectories to the well
     for (let j = 0; j < 2; j++)
     {
       const wellTrajectory = new WellTrajectoryNode();
@@ -57,7 +55,7 @@ export function main()
       mdRange.min = (mdRange.center + mdRange.min) / 2;
       mdRange.expandByFraction(-0.05);
 
-      // Add some float logs to the trajectory
+      // Add some random float logs to the trajectory
       for (let k = 0; k < 2; k++)
       {
         const logNode = new FloatLogNode();
@@ -65,7 +63,7 @@ export function main()
         logNode.data = FloatLog.createByRandom(mdRange, valueRange);
         wellTrajectory.addChild(logNode);
       }
-      // Add some discrete logs to the trajectory
+      // Add some random discrete logs to the trajectory
       for (let k = 0; k < 2; k++)
       {
         const logNode = new DiscreteLogNode();
@@ -73,7 +71,7 @@ export function main()
         logNode.data = DiscreteLog.createByRandom(mdRange, valueRange);
         wellTrajectory.addChild(logNode);
       }
-      // Add some point logs to the trajectory
+      // Add some random point logs to the trajectory
       for (let k = 0; k < 3; k++)
       {
         const logNode = new PointLogNode();
@@ -107,9 +105,10 @@ export function main()
   // Set some nodes visible
   for (const well of root.getDescendantsByType(WellNode))
   {
-    let n = 0;
     for (const wellTrajectory of well.getDescendantsByType(WellTrajectoryNode))
     {
+      wellTrajectory.setVisibleInteractive(true);
+      let n = 0;
       for (const node of wellTrajectory.getDescendantsByType(FloatLogNode))
       {
         n++;
@@ -117,8 +116,16 @@ export function main()
         if (n === 2)
           break;
       }
-      n++;
+      n = 0;
       for (const node of wellTrajectory.getDescendantsByType(DiscreteLogNode))
+      {
+        n++;
+        node.setVisibleInteractive(true);
+        if (n === 1)
+          break;
+      }
+      n = 0;
+      for (const node of wellTrajectory.getDescendantsByType(PointLogNode))
       {
         n++;
         node.setVisibleInteractive(true);
@@ -128,9 +135,6 @@ export function main()
       break;
     }
   }
-  for (const node of root.getDescendantsByType(WellTrajectoryNode))
-    node.setVisibleInteractive(true);
-
   for (const node of root.getDescendantsByType(AxisNode))
     node.setVisibleInteractive(true);
 

@@ -115,7 +115,12 @@ export class AxisThreeView extends BaseGroupThreeView
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
     const target = this.renderTarget;
-    const boundingBox = target.getBoundingBoxFromViews();
+    const boundingBox = this.boundingBoxFromViews;
+    if (!boundingBox)
+      return null;
+
+    boundingBox.expandByFraction(0.02);
+
     const center = boundingBox.center;
     const tickLength = boundingBox.diagonal / 130;
 

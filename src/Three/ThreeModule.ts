@@ -22,24 +22,29 @@ import { BaseRootNode } from "../Core/Nodes/BaseRootNode";
 import { RootNode } from "../TreeNodes/RootNode";
 import { BaseRenderTargetNode } from "../Core/Nodes/BaseRenderTargetNode";
 
-
 import { AxisNode } from '../Nodes/AxisNode';
 import { PointsNode } from '../Nodes/PointsNode';
 import { PolylinesNode } from "../Nodes/PolylinesNode";
 import { SurfaceNode } from '../Nodes/SurfaceNode';
 import { PotreeNode } from "../Nodes/PotreeNode";
-import { WellTrajectoryNode } from "../Nodes/Wells/Wells/WellTrajectoryNode";
-import { FloatLogNode } from "../Nodes/Wells/Wells/FloatLogNode";
-import { DiscreteLogNode } from "../Nodes/Wells/Wells/DiscreteLogNode";
 
 import { AxisThreeView } from './AxisThreeView';
 import { PointsThreeView } from './PointsThreeView';
 import { PolylinesThreeView } from "./PolylinesThreeView";
 import { SurfaceThreeView } from './SurfaceThreeView';
 import { PotreeThreeView } from "./PotreeThreeView";
-import { WellTrajectoryThreeView } from './WellTrajectoryThreeView';
-import { FloatLogThreeView } from './FloatLogThreeView';
-import { DiscreteLogThreeView } from './DiscreteLogThreeView';
+
+// Wells:
+
+import { WellTrajectoryNode } from "../Nodes/Wells/Wells/WellTrajectoryNode";
+import { PointLogNode } from "../Nodes/Wells/Wells/PointLogNode";
+import { FloatLogNode } from "../Nodes/Wells/Wells/FloatLogNode";
+import { DiscreteLogNode } from "../Nodes/Wells/Wells/DiscreteLogNode";
+
+import { WellTrajectoryThreeView } from './Wells/WellTrajectoryThreeView';
+import { PointLogThreeView } from './Wells/PointLogThreeView';
+import { FloatLogThreeView } from './Wells/FloatLogThreeView';
+import { DiscreteLogThreeView } from './Wells/DiscreteLogThreeView';
 
 
 export class ThreeModule extends BaseModule
@@ -60,7 +65,11 @@ export class ThreeModule extends BaseModule
     factory.register(PolylinesNode.name, PolylinesThreeView, ThreeRenderTargetNode.name);
     factory.register(SurfaceNode.name, SurfaceThreeView, ThreeRenderTargetNode.name);
     factory.register(PotreeNode.name, PotreeThreeView, ThreeRenderTargetNode.name);
+
+    // Wells:
+
     factory.register(WellTrajectoryNode.name, WellTrajectoryThreeView, ThreeRenderTargetNode.name);
+    factory.register(PointLogNode.name, PointLogThreeView, ThreeRenderTargetNode.name);
     factory.register(FloatLogNode.name, FloatLogThreeView, ThreeRenderTargetNode.name);
     factory.register(DiscreteLogNode.name, DiscreteLogThreeView, ThreeRenderTargetNode.name);
   }

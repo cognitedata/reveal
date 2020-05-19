@@ -20,13 +20,11 @@ export class TriangleStripBuffers
   // INSTANCE FIELDS
   //==================================================
 
-
-  public positions: Float32Array;
-  public normals: Float32Array;
+  protected positions: Float32Array;
+  protected normals: Float32Array;
   public uvs: Float32Array | null = null;
-  public triangleIndexes: number[] = [];
-  public pointCount = 0;
-  public uniqueIndex = 0;
+  protected triangleIndexes: number[] = [];
+  protected uniqueIndex = 0;
 
   //==================================================
   // CONSTRUCTORS
@@ -34,7 +32,6 @@ export class TriangleStripBuffers
 
   public constructor(pointCount: number, makeUvs = false)
   {
-    this.pointCount = pointCount;
     this.positions = new Float32Array(3 * pointCount);
     this.normals = new Float32Array(3 * pointCount);
     if (makeUvs)

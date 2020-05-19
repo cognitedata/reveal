@@ -14,19 +14,20 @@
 import * as THREE from 'three';
 import * as Color from 'color'
 
-import { Range1 } from '../Core/Geometry/Range1';
-import { Colors } from '../Core/PrimitiveClasses/Colors';
-import { DiscreteLog } from "../Nodes/Wells/Logs/DiscreteLog";
-import { WellTrajectory } from "../Nodes/Wells/Logs/WellTrajectory";
-import { ThreeConverter } from "./ThreeConverter";
-import { ThreeLabel } from "./Utilities/ThreeLabel";
-import { DiscreteLogSample } from "../Nodes/Wells/Samples/DiscreteLogSample";
-import { Vector3 } from "../Core/Geometry/Vector3";
-import { TriangleStripBuffers } from "../Core/Geometry/TriangleStripBuffers";
-import { Ma } from "../Core/PrimitiveClasses/Ma";
-import { TextureKit } from './TextureKit';
-import { FloatLog } from "../Nodes/Wells/Logs/FloatLog";
-import { FloatLogSample } from "../Nodes/Wells/Samples/FloatLogSample";
+import { Range1 } from '../../Core/Geometry/Range1';
+import { Colors } from '../../Core/PrimitiveClasses/Colors';
+import { ThreeConverter } from "./../ThreeConverter";
+import { ThreeLabel } from "./../Utilities/ThreeLabel";
+import { Vector3 } from "../../Core/Geometry/Vector3";
+import { TriangleStripBuffers } from "../../Core/Geometry/TriangleStripBuffers";
+import { Ma } from "../../Core/PrimitiveClasses/Ma";
+import { TextureKit } from './../TextureKit';
+
+import { PointLog } from "../../Nodes/Wells/Logs/PointLog";
+import { FloatLog } from "../../Nodes/Wells/Logs/FloatLog";
+import { DiscreteLog } from "../../Nodes/Wells/Logs/DiscreteLog";
+import { FloatLogSample } from "../../Nodes/Wells/Samples/FloatLogSample";
+import { WellTrajectory } from "../../Nodes/Wells/Logs/WellTrajectory";
 
 export class LogRender 
 {
@@ -48,7 +49,6 @@ export class LogRender
     this.cameraPosition = cameraPosition;
     this.bandRange = bandRange;
   }
-
 
   //==================================================
   // INSTANCE METHODS: Band
@@ -80,7 +80,7 @@ export class LogRender
       const material = new THREE.MeshLambertMaterial({
         color: ThreeConverter.toColor(color),
         side: right ? THREE.FrontSide : THREE.BackSide,
-                emissive: ThreeConverter.toColor(color),
+        emissive: ThreeConverter.toColor(color),
         emissiveIntensity: 0.33,
       });
       LogRender.setPolygonOffset(material, 2);
@@ -201,7 +201,7 @@ export class LogRender
       const material = new THREE.MeshLambertMaterial({
         color: ThreeConverter.toColor(Colors.white),
         side: right ? THREE.FrontSide : THREE.BackSide,
-                map: texture
+        map: texture
       });
 
       LogRender.setPolygonOffset(material, 1);
@@ -218,13 +218,13 @@ export class LogRender
   public addSolidDiscreteLog(group: THREE.Group, log: DiscreteLog, right: boolean): void
   {
     const valueRange = log.range;
-    const buffers = new TriangleStripBuffers(log.count * 2);
+    const buffers = new TriangleStripBuffers(log.count * 4 -2);
     const colors = new Array<number>();
 
     let prevColor = Colors.white;
     for (let i = 0; i < log.samples.length; i++)
     {
-      const sample = log.samples[i] as DiscreteLogSample;
+      const sample = log.getAt(i);
       const position = this.trajectory.getAtMd(sample.md);
 
       // Get perpendicular
@@ -267,6 +267,27 @@ export class LogRender
       const mesh = new THREE.Mesh(geometry, material);
       mesh.drawMode = THREE.TrianglesDrawMode;
       group.add(mesh);
+    }
+  }
+
+  public addPointLog(group: THREE.Group, log: PointLog, color: Color): void
+  {
+    const radius = this.bandRange.min * 2;
+    const geometry = new THREE.SphereGeometry(radius, 16, 8);
+    const material = new THREE.MeshPhongMaterial({ color: ThreeConverter.toColor(color) });
+
+    for (let i = 0; i < log.samples.length; i++)
+    {
+      const sample = log.getAt(i);
+      const position = this.trajectory.getAtMd(sample.md);
+
+      const sphere = new THREE.Mesh(geometry, material);
+
+      sphere.position.x = position.x;
+      sphere.position.y = position.y;
+      sphere.position.z = position.z;
+
+      group.add(sphere);
     }
   }
 

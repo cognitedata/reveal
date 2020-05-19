@@ -12,14 +12,14 @@
 //=====================================================================================
 
 import * as THREE from 'three';
-import { BaseGroupThreeView } from "./BaseGroupThreeView";
-import { WellTrajectoryNode } from "../Nodes/Wells/Wells/WellTrajectoryNode";
-import { WellRenderStyle } from "../Nodes/Wells/Wells/WellRenderStyle";
-import { ThreeConverter } from "./ThreeConverter";
-import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
-import { Range3 } from '../Core/Geometry/Range3';
-import { ThreeLabel } from "./Utilities/ThreeLabel";
-import { TrajectorySample } from "../Nodes/Wells/Samples/TrajectorySample";
+import { BaseGroupThreeView } from "./../BaseGroupThreeView";
+import { WellTrajectoryNode } from "../../Nodes/Wells/Wells/WellTrajectoryNode";
+import { WellRenderStyle } from "../../Nodes/Wells/Wells/WellRenderStyle";
+import { ThreeConverter } from "./../ThreeConverter";
+import { NodeEventArgs } from "../../Core/Views/NodeEventArgs";
+import { Range3 } from '../../Core/Geometry/Range3';
+import { ThreeLabel } from "./../Utilities/ThreeLabel";
+import { TrajectorySample } from "../../Nodes/Wells/Samples/TrajectorySample";
 
 export class WellTrajectoryThreeView extends BaseGroupThreeView
 {

@@ -11,19 +11,16 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import * as THREE from 'three';
+import { BaseGroupThreeView } from "./../BaseGroupThreeView";
+import { BaseLogNode } from "../../Nodes/Wells/Wells/BaseLogNode";
+import { WellRenderStyle } from "../../Nodes/Wells/Wells/WellRenderStyle";
+import { ThreeConverter } from "./../ThreeConverter";
+import { Range3 } from '../../Core/Geometry/Range3';
+import { Vector3 } from "../../Core/Geometry/Vector3";
+import { WellTrajectory } from "../../Nodes/Wells/Logs/WellTrajectory";
+import { Range1 } from "../../Core/Geometry/Range1";
 
-import { BaseGroupThreeView } from "./BaseGroupThreeView";
-import { DiscreteLogNode } from "../Nodes/Wells/Wells/DiscreteLogNode";
-import { WellRenderStyle } from "../Nodes/Wells/Wells/WellRenderStyle";
-import { ThreeConverter } from "./ThreeConverter";
-import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
-import { Range3 } from '../Core/Geometry/Range3';
-import { Vector3 } from "../Core/Geometry/Vector3";
-import { Range1 } from "../Core/Geometry/Range1";
-import { LogRender } from './LogRender';
-
-export class DiscreteLogThreeView extends BaseGroupThreeView
+export abstract class BaseLogThreeView extends BaseGroupThreeView
 {
   //==================================================
   // INSTANCE FIELDS
@@ -31,7 +28,7 @@ export class DiscreteLogThreeView extends BaseGroupThreeView
 
   // Caching the bounding box of the scene
   private cameraDirection: Vector3 = new Vector3(0, 0, 1); // Direction to the center
-  private cameraPosition: Vector3 = new Vector3(0, 0, 1);
+  protected cameraPosition: Vector3 = new Vector3(0, 0, 1);
 
   //==================================================
   // CONSTRUCTORS
@@ -43,17 +40,35 @@ export class DiscreteLogThreeView extends BaseGroupThreeView
   // INSTANCE PROPERTIES
   //==================================================
 
-  protected get node(): DiscreteLogNode { return super.getNode() as DiscreteLogNode; }
   protected get style(): WellRenderStyle { return super.getStyle() as WellRenderStyle; }
+
+  protected get wellTrajectory(): WellTrajectory | null
+  {
+    const node = this.getNode() as BaseLogNode;
+    const wellTrajectoryNode = node.wellTrajectory;
+    if (!wellTrajectoryNode)
+      return null;
+
+    return wellTrajectoryNode.data;
+  }
+
+  protected get bandRange(): Range1 | undefined
+  {
+    const node = this.getNode() as BaseLogNode;
+    const wellTrajectoryNode = node.wellTrajectory;
+    if (!wellTrajectoryNode)
+      return undefined;
+
+    const wellRenderStyle = wellTrajectoryNode.getRenderStyle(this.renderTarget.targetId) as WellRenderStyle;
+    if (!wellRenderStyle)
+      return undefined;
+
+    return new Range1(wellRenderStyle.radius, 100);
+  }
 
   //==================================================
   // OVERRIDES of BaseView
   //==================================================
-
-  protected /*override*/ updateCore(args: NodeEventArgs): void
-  {
-    super.updateCore(args);
-  }
 
   public calculateBoundingBoxCore(): Range3 | undefined
   {
@@ -66,13 +81,7 @@ export class DiscreteLogThreeView extends BaseGroupThreeView
 
   public /*override*/ mustTouch(): boolean
   {
-    const node = this.node;
-
-    const wellTrajectoryNode = node.wellTrajectory;
-    if (!wellTrajectoryNode)
-      return false;
-
-    const wellTrajectory = wellTrajectoryNode.data;
+    const wellTrajectory = this.wellTrajectory;
     if (!wellTrajectory)
       return false;
 
@@ -92,37 +101,5 @@ export class DiscreteLogThreeView extends BaseGroupThreeView
     this.cameraDirection = cameraDirection;
     this.cameraPosition = cameraPosition;
     return true;
-  }
-
-  //==================================================
-  // OVERRIDES of BaseGroupThreeView
-  //==================================================
-
-  protected /*override*/ createObject3DCore(): THREE.Object3D | null
-  {
-    const node = this.node;
-
-    const wellTrajectoryNode = node.wellTrajectory;
-    if (!wellTrajectoryNode)
-      return null;
-
-    const wellRenderStyle = wellTrajectoryNode.getRenderStyle() as WellRenderStyle;;
-    if (!wellRenderStyle)
-      return null;
-
-    const trajectory = wellTrajectoryNode.data;
-    if (!trajectory)
-      return null;
-
-    const log = node.data;
-    if (!log)
-      throw Error("Well trajectory is missing");
-
-    const bandRange = new Range1(wellRenderStyle.radius, 100);
-    const group = new THREE.Group();
-
-    const logRender = new LogRender(trajectory, this.cameraPosition, bandRange);
-    logRender.addSolidDiscreteLog(group, log, false);
-    return group;
   }
 }
