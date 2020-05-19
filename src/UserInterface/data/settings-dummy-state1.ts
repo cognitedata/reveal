@@ -176,6 +176,13 @@ export const state1 = {
           },
         },
       ],
+      elements: [
+        {
+          label: "Inc.",
+          type: "input",
+          value: "5",
+        },
+      ],
       subSections: [
         {
           name: "Lines",

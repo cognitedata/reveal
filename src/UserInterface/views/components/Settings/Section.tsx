@@ -21,21 +21,22 @@ export default function Section(props: {
       toolBar={toolBar}
       subSectionId={subSectionId}
     >
-      {subSections ?
-        <div className="settings-section-container left-panel-section additional-padding">
-          {subSections.map((subSection, index: number) =>
-            (<Section
-              key={`${sectionId}-sub-${subSectionId}-${index}`}
-              section={subSection}
-              sectionId={sectionId}
-              subSectionId={index} />
-            ))}</div> :
-        <Form
+      <React.Fragment>
+        {elements ? <Form
           elements={elements}
           sectionId={sectionId}
           subSectionId={subSectionId}
-        />
-      }
+        /> : null}
+        {subSections ?
+          <div className="left-panel-section additional-padding">
+            {subSections.map((subSection, index: number) =>
+              (<Section
+                key={`${sectionId}-sub-${subSectionId}-${index}`}
+                section={subSection}
+                sectionId={sectionId}
+                subSectionId={index} />
+              ))}</div> : null}
+      </React.Fragment>
     </ExpansionView>
   );
 }

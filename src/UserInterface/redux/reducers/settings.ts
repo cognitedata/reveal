@@ -21,10 +21,7 @@ import { isNumber } from "../../utils/Settings";
 import { generateSettingsConfig } from "../../data/generateNodes";
 
 // Initial settings state
-const initialState: SettingsStateInterface = {
-  id: null,
-  sections: [],
-};
+const initialState: SettingsStateInterface = { id: "sdfdsfsd", sections: [] };
 
 // Settings reducer to update state with actions
 export default (state = initialState, action: SettingsActionInterface) => {

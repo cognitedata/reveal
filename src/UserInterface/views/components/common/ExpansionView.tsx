@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: "0 !important",
       backgroundImage: "linear-gradient(to right, #fff, #e7e7e7)",
       minHeight: "1.8rem !important",
-      paddingLeft: "0.2rem"
+      paddingLeft: "0.5rem"
     },
     expansionTitle: {
       margin: "0 .5rem",

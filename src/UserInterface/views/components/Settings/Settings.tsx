@@ -25,7 +25,7 @@ export default function Settings() {
   ]);
 
   return (
-    <div className="settings-container left-panel-section">
+    <div className="settings-container">
       {id ? <React.Fragment>
         {titleBar && <TitleBar
           sectionId={-1}
@@ -37,7 +37,7 @@ export default function Settings() {
         {sections.map((section: SettingsSectionInterface, idx: number) =>
           <div
             key={`${id}-section-${idx}`}
-            className="settings-section-container left-panel-section">
+            className="settings-section-container">
             <Section
               key={`${id}-section-${idx}`}
               section={section}

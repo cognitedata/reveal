@@ -26,6 +26,12 @@ body {
 .left-panel-section {
   width: 100%; }
 
+.settings-section-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden; }
+
 .explorer-container {
   height: 50vh;
   display: flex;
@@ -35,6 +41,7 @@ body {
 
 .settings-container {
   height: 50vh;
+  width: 100%;
   overflow-y: auto; }
 
 .icon {
@@ -46,12 +53,16 @@ body {
     height: 1rem; }
 
 /* Tweak expansion panel */
+.MuiExpansionPanel-root {
+  border-radius: 0 !important; }
+
 .MuiExpansionPanelSummary-content,
 .MuiExpansionPanel-root.Mui-expanded {
   margin: 0px !important; }
 
 .MuiExpansionPanelDetails-root {
-  padding: 0 !important; }
+  padding: 0 !important;
+  display: block !important; }
 
 /* Global title bar*/
 .title-bar {
@@ -143,4 +154,4 @@ body {
   border-radius: 2px; }
 
 .additional-padding {
-  padding-left: 0.3rem; }
+  padding-left: 0.15rem; }

@@ -6,15 +6,11 @@ import { SectionElement } from "../../../interfaces/settings";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      width: '100%',
-    },
     formContainer: {
-      width: "100%",
-      backgroundImage: "linear-gradient(to right, #fff, #d5d5d5)",
       display: "flex",
       flexDirection: "column",
-      padding: "0.5rem"
+      padding: "0rem .4rem 0rem .8rem",
+      backgroundImage: "linear-gradient(to right, #fff, #d5d5d5)",
     },
   }),
 );
