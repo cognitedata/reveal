@@ -11,8 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseLogSample } from "../Samples/BaseLogSample";
-import { MdSamples } from "../Logs/MdSamples";
+import { BaseLogSample } from "@/Nodes/Wells/Samples/BaseLogSample";
+import { MdSamples } from "@/Nodes/Wells/Logs/MdSamples";
 
 export abstract class BaseLog extends MdSamples
 {

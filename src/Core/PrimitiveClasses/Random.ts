@@ -12,7 +12,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Range1 } from "../Geometry/Range1";
+import { Range1 } from "@/Core/Geometry/Range1";
 
 export class Random
 {

@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseNode } from "../Nodes/BaseNode";
-import { BaseView } from "../Views/BaseView";
-import { TargetIdAccessor } from "./TargetIdAccessor";
+import { BaseNode } from "@/Core/Nodes/BaseNode";
+import { BaseView } from "@/Core/Views/BaseView";
+import { TargetIdAccessor } from "@/Core/Interfaces/TargetIdAccessor";
 
 export interface Target extends TargetIdAccessor
 {

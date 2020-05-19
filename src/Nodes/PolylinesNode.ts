@@ -11,13 +11,13 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseVisualNode } from "../Core/Nodes/BaseVisualNode";
-import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
-import { TargetId } from "../Core/PrimitiveClasses/TargetId";
-import { Polylines } from "../Core/Geometry/Polylines";
-import { PolylinesRenderStyle } from "./PolylinesRenderStyle";
-import { ColorType } from "../Core/Enums/ColorType";
-import { Range3 } from "../Core/Geometry/Range3";
+import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
+import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
+import { TargetId } from "@/Core/PrimitiveClasses/TargetId";
+import { Polylines } from "@/Core/Geometry/Polylines";
+import { PolylinesRenderStyle } from "@/Nodes/PolylinesRenderStyle";
+import { ColorType } from "@/Core/Enums/ColorType";
+import { Range3 } from "@/Core/Geometry/Range3";
 
 export class PolylinesNode extends BaseVisualNode
 {

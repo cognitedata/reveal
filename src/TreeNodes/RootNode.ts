@@ -11,11 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseRootNode } from "../Core/Nodes/BaseRootNode";
-import { WellTreeNode } from './WellTreeNode';
-import { ColorTableTreeNode } from './ColorTableTreeNode';
-import { SettingsTreeNode } from './SettingsTreeNode';
-import { OthersTreeNode } from './OthersTreeNode';
+import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
+import { WellTreeNode } from '@/TreeNodes/WellTreeNode';
+import { ColorTableTreeNode } from '@/TreeNodes/ColorTableTreeNode';
+import { SettingsTreeNode } from '@/TreeNodes/SettingsTreeNode';
+import { OthersTreeNode } from '@/TreeNodes/OthersTreeNode';
 
 export class RootNode extends BaseRootNode
 {

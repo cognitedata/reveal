@@ -12,8 +12,8 @@
 //=====================================================================================
 
 import * as THREE from 'three';
-import { Base3DView } from "../Core/Views/Base3DView";
-import { ThreeRenderTargetNode } from "./ThreeRenderTargetNode";
+import { Base3DView } from "@/Core/Views/Base3DView";
+import { ThreeRenderTargetNode } from "@/Three/ThreeRenderTargetNode";
 
 export abstract class BaseThreeView extends Base3DView
 {

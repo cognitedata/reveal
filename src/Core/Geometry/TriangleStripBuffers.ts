@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Vector3 } from "./Vector3";
+import { Vector3 } from "@/Core/Geometry/Vector3";
 import * as THREE from 'three';
 
 export class TriangleStripBuffers

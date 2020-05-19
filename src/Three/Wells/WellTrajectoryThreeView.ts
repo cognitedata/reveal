@@ -13,20 +13,20 @@
 
 import * as THREE from 'three';
 
-import { Range3 } from '../../Core/Geometry/Range3';
-import { Range1 } from '../../Core/Geometry/Range1';
-import { Colors } from '../../Core/PrimitiveClasses/Colors';
+import { Range3 } from '@/Core/Geometry/Range3';
+import { Range1 } from '@/Core/Geometry/Range1';
+import { Colors } from '@/Core/PrimitiveClasses/Colors';
 
-import { BaseLogNode } from "../../Nodes/Wells/Wells/BaseLogNode";
-import { WellRenderStyle } from "../../Nodes/Wells/Wells/WellRenderStyle";
-import { ThreeConverter } from "./../ThreeConverter";
-import { NodeEventArgs } from "../../Core/Views/NodeEventArgs";
-import { ThreeLabel } from "./../Utilities/ThreeLabel";
+import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
+import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
+import { ThreeConverter } from "@/Three/ThreeConverter";
+import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
+import { ThreeLabel } from "@/Three/Utilities/ThreeLabel";
 
-import { LogRender } from './LogRender';
-import { BaseLogThreeView } from './BaseLogThreeView';
-import { WellTrajectoryNode } from "../../Nodes/Wells/Wells/WellTrajectoryNode";
-import { TrajectorySample } from "../../Nodes/Wells/Samples/TrajectorySample";
+import { LogRender } from '@/Three/Wells/LogRender';
+import { BaseLogThreeView } from '@/Three/Wells/BaseLogThreeView';
+import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
+import { TrajectorySample } from "@/Nodes/Wells/Samples/TrajectorySample";
 
 
 export class WellTrajectoryThreeView extends BaseLogThreeView

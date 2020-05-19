@@ -13,8 +13,8 @@
 
 import * as THREE from 'three';
 import * as color from 'color'
-import { Vector3 } from "../Core/Geometry/Vector3";
-import { Range3 } from '../Core/Geometry/Range3';
+import { Vector3 } from "@/Core/Geometry/Vector3";
+import { Range3 } from '@/Core/Geometry/Range3';
 
 const MaxByte = 255;
 

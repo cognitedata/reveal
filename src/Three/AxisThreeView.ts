@@ -12,18 +12,19 @@
 //=====================================================================================
 
 import * as THREE from 'three';
-import { BaseGroupThreeView } from "./BaseGroupThreeView";
-import { PolylinesNode } from "../Nodes/PolylinesNode";
-import { PolylinesRenderStyle } from "../Nodes/PolylinesRenderStyle";
-import { ThreeConverter } from "./ThreeConverter";
-import { Colors } from "../Core/PrimitiveClasses/Colors";
-import { Ma } from "../Core/PrimitiveClasses/Ma";
-import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
-import { Range3 } from '../Core/Geometry/Range3';
-import { Range1 } from '../Core/Geometry/Range1';
-import { Vector3 } from '../Core/Geometry/Vector3';
-import { ThreeLabel } from "./Utilities/ThreeLabel";
 import * as Color from 'color'
+
+import { BaseGroupThreeView } from "@/Three/BaseGroupThreeView";
+import { PolylinesNode } from "@/Nodes/PolylinesNode";
+import { PolylinesRenderStyle } from "@/Nodes/PolylinesRenderStyle";
+import { ThreeConverter } from '@/Three/ThreeConverter';
+import { Colors } from "@/Core/PrimitiveClasses/Colors";
+import { Ma } from "@/Core/PrimitiveClasses/Ma";
+import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
+import { Range3 } from '@/Core/Geometry/Range3';
+import { Range1 } from '@/Core/Geometry/Range1';
+import { Vector3 } from '@/Core/Geometry/Vector3';
+import { ThreeLabel } from "@/Three/Utilities/ThreeLabel";
 
 export class AxisThreeView extends BaseGroupThreeView
 {

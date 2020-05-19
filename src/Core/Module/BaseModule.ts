@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseRootNode } from "../Nodes/BaseRootNode";
-import { BaseRenderTargetNode } from "../Nodes/BaseRenderTargetNode";
-import { ViewFactory } from "../Views/ViewFactory";
+import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
+import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
+import { ViewFactory } from "@/Core/Views/ViewFactory";
 
 export abstract class BaseModule
 {

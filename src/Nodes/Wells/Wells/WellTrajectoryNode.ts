@@ -11,14 +11,14 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseVisualNode } from "../../../Core/Nodes/BaseVisualNode";
-import { BaseRenderStyle } from "../../../Core/Styles/BaseRenderStyle";
-import { TargetId } from "../../../Core/PrimitiveClasses/TargetId";
-import { WellRenderStyle } from "./WellRenderStyle";
-import { ColorType } from "../../../Core/Enums/ColorType";
-import { Range3 } from "../../../Core/Geometry/Range3";
-import { WellTrajectory } from "../Logs/WellTrajectory";
-import { WellNode } from "./WellNode";
+import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
+import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
+import { TargetId } from "@/Core/PrimitiveClasses/TargetId";
+import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
+import { ColorType } from "@/Core/Enums/ColorType";
+import { Range3 } from "@/Core/Geometry/Range3";
+import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
+import { WellNode } from "@/Nodes/Wells/Wells/WellNode";
 
 export class WellTrajectoryNode extends BaseVisualNode
 {

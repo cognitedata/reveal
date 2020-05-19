@@ -12,8 +12,8 @@
 //=====================================================================================
 
 import * as THREE from 'three';
-import { Vector3 } from '../../Core/Geometry/Vector3';
-import { ThreeConverter } from "./../ThreeConverter";
+import { Vector3 } from '@/Core/Geometry/Vector3';
+import { ThreeConverter } from "@/Three/ThreeConverter";
 
 export class ThreeLabel 
 {

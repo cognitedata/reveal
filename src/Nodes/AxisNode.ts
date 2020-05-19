@@ -11,10 +11,10 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseVisualNode } from "../Core/Nodes/BaseVisualNode";
-import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
-import { TargetId } from "../Core/PrimitiveClasses/TargetId";
-import { PointsRenderStyle } from "./PointsRenderStyle";
+import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
+import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
+import { TargetId } from "@/Core/PrimitiveClasses/TargetId";
+import { PointsRenderStyle } from "@/Nodes/PointsRenderStyle";
 
 export class AxisNode extends BaseVisualNode
 {

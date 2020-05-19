@@ -11,11 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { TargetTreeNode } from "./TargetTreeNode";
-import { BaseNode } from "./BaseNode";
-import { BaseTargetNode } from "./BaseTargetNode";
-import { TargetIdAccessor } from "../Interfaces/TargetIdAccessor";
-import { AxisNode } from "../../Nodes/AxisNode";
+import { TargetTreeNode } from "@/Core/Nodes/TargetTreeNode";
+import { BaseNode } from "@/Core/Nodes/BaseNode";
+import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
+import { TargetIdAccessor } from "@/Core/Interfaces/TargetIdAccessor";
+import { AxisNode } from "@/Nodes/AxisNode";
 
 export class BaseRootNode extends BaseNode
 {

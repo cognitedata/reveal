@@ -16,13 +16,13 @@ import CameraControls from 'camera-controls';
 
 const Stats = require('stats-js');
 
-import { BaseRenderTargetNode } from "../Core/Nodes/BaseRenderTargetNode";
-import { ThreeCameraNode as ThreeCameraNode } from "./ThreeCameraNode";
-import { ThreeConverter } from "./ThreeConverter";
-import { Range3 } from '../Core/Geometry/Range3';
-import { TreeOverlay } from './TreeOverlay';
-import { AxisNode } from './../Nodes/AxisNode';
-import { Colors } from '../Core/PrimitiveClasses/Colors';
+import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
+import { ThreeCameraNode as ThreeCameraNode } from "@/Three/ThreeCameraNode";
+import { ThreeConverter } from '@/Three/ThreeConverter';
+import { Range3 } from '@/Core/Geometry/Range3';
+import { TreeOverlay } from '@/Three/TreeOverlay';
+import { AxisNode } from '@/Nodes/AxisNode';
+import { Colors } from '@/Core/PrimitiveClasses/Colors';
 
 export class ThreeRenderTargetNode extends BaseRenderTargetNode
 {

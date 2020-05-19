@@ -11,12 +11,12 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { ViewList } from "../Views/ViewList";
-import { NodeEventArgs } from "../Views/NodeEventArgs";
-import { BaseNode, cocatinate } from "./BaseNode";
-import { Target } from "../Interfaces/Target";
-import { Changes } from "../Views/Changes";
-import { CheckBoxState } from "../Enums/CheckBoxState";
+import { ViewList } from "@/Core/Views/ViewList";
+import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
+import { BaseNode, cocatinate } from "@/Core/Nodes/BaseNode";
+import { Target } from "@/Core/Interfaces/Target";
+import { Changes } from "@/Core/Views/Changes";
+import { CheckBoxState } from "@/Core/Enums/CheckBoxState";
 
 export abstract class BaseVisualNode extends BaseNode
 {

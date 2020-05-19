@@ -11,16 +11,16 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Range1 } from "../../Core/Geometry/Range1";
-import { Range3 } from '../../Core/Geometry/Range3';
-import { Vector3 } from "../../Core/Geometry/Vector3";
+import { Range1 } from "@/Core/Geometry/Range1";
+import { Range3 } from '@/Core/Geometry/Range3';
+import { Vector3 } from "@/Core/Geometry/Vector3";
 
-import { BaseGroupThreeView } from "./../BaseGroupThreeView";
-import { ThreeConverter } from "./../ThreeConverter";
-import { WellTrajectory } from "../../Nodes/Wells/Logs/WellTrajectory";
+import { BaseGroupThreeView } from "@/Three/BaseGroupThreeView";
+import { ThreeConverter } from "@/Three/ThreeConverter";
+import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
 
-import { WellRenderStyle } from "../../Nodes/Wells/Wells/WellRenderStyle";
-import { WellTrajectoryNode } from "../../Nodes/Wells/Wells/WellTrajectoryNode";
+import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
+import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
 
 export abstract class BaseLogThreeView extends BaseGroupThreeView
 {

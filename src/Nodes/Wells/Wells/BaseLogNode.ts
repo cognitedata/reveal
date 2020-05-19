@@ -11,10 +11,10 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseVisualNode } from "../../../Core/Nodes/BaseVisualNode";
-import { BaseLog } from "./../Logs/BaseLog";
-import { WellNode } from "./WellNode";
-import { WellTrajectoryNode } from "./WellTrajectoryNode";
+import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
+import { BaseLog } from "@/Nodes/Wells/Logs/BaseLog";
+import { WellNode } from "@/Nodes/Wells/Wells/WellNode";
+import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
 
 export abstract class BaseLogNode extends BaseVisualNode
 {

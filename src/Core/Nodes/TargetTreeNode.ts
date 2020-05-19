@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseTreeNode } from "./BaseTreeNode";
+import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 
 export class TargetTreeNode extends BaseTreeNode
 {

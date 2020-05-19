@@ -1,6 +1,6 @@
-import { Range3 } from "./Range3";
-import { Random } from "../PrimitiveClasses/Random";
-import { Ma } from "../PrimitiveClasses/Ma";
+import { Range3 } from "@/Core/Geometry/Range3";
+import { Random } from "@/Core/PrimitiveClasses/Random";
+import { Ma } from "@/Core/PrimitiveClasses/Ma";
 
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  

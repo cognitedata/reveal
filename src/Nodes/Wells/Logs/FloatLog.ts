@@ -11,12 +11,12 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseLogSample } from "../Samples/BaseLogSample";
-import { FloatLogSample } from "../Samples/FloatLogSample";
-import { BaseLog } from "../Logs/BaseLog";
-import { Range1 } from "../../../Core/Geometry/Range1";
-import { Ma } from "../../../Core/PrimitiveClasses/Ma";
-import { Random } from "../../../Core/PrimitiveClasses/Random";
+import { BaseLogSample } from "@/Nodes/Wells/Samples/BaseLogSample";
+import { FloatLogSample } from "@/Nodes/Wells/Samples/FloatLogSample";
+import { BaseLog } from "@/Nodes/Wells/Logs/BaseLog";
+import { Range1 } from "@/Core/Geometry/Range1";
+import { Ma } from "@/Core/PrimitiveClasses/Ma";
+import { Random } from "@/Core/PrimitiveClasses/Random";
 
 export class FloatLog extends BaseLog
 {

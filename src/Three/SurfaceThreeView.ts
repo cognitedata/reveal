@@ -13,16 +13,16 @@
 
 import * as THREE from 'three';
 
-import { BaseGroupThreeView } from "./BaseGroupThreeView";
-import { SurfaceNode } from "../Nodes/SurfaceNode";
-import { SurfaceRenderStyle } from "../Nodes/SurfaceRenderStyle";
-import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
-import { RegularGrid2Buffers } from '../Core/Geometry/RegularGrid2Buffers';
-import { Colors } from '../Core/PrimitiveClasses/Colors';
-import { ColorType } from '../Core/Enums/ColorType';
-import { ThreeConverter } from './ThreeConverter';
-import { Range3 } from '../Core/Geometry/Range3';
-import { TextureKit } from './TextureKit';
+import { BaseGroupThreeView } from "@/Three/BaseGroupThreeView";
+import { SurfaceNode } from "@/Nodes/SurfaceNode";
+import { SurfaceRenderStyle } from "@/Nodes/SurfaceRenderStyle";
+import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
+import { RegularGrid2Buffers } from '@/Core/Geometry/RegularGrid2Buffers';
+import { Colors } from '@/Core/PrimitiveClasses/Colors';
+import { ColorType } from '@/Core/Enums/ColorType';
+import { ThreeConverter } from '@/Three/ThreeConverter';
+import { Range3 } from '@/Core/Geometry/Range3';
+import { TextureKit } from '@/Three/TextureKit';
 
 export class SurfaceThreeView extends BaseGroupThreeView
 {

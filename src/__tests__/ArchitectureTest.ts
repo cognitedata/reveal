@@ -1,9 +1,9 @@
-import { PolylinesNode } from "../Nodes/PolylinesNode";
-import { BaseTargetNode } from "../Core/Nodes/BaseTargetNode";
-import { BaseVisualNode } from "../Core/Nodes/BaseVisualNode";
+import { PolylinesNode } from "@/Nodes/PolylinesNode";
+import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
+import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { StubRootCreator } from "./StubModule/StubRootCreator";
-import { isInstanceOf } from "../Core/PrimitiveClasses/ClassT";
-import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
+import { isInstanceOf } from "@/Core/PrimitiveClasses/ClassT";
+import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { StubTargetNode } from "./StubModule/StubTargetNode";
 
 describe('Hierarcy', () =>

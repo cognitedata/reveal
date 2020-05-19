@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Ma } from "../PrimitiveClasses/Ma";
+import { Ma } from "@/Core/PrimitiveClasses/Ma";
 
 export class Range1
 {

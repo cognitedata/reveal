@@ -12,8 +12,8 @@
 //=====================================================================================
 
 import * as THREE from 'three';
-import { ViewInfo } from '../Core/Views/ViewInfo';
-import { Vector3 } from '../Core/Geometry/Vector3';
+import { ViewInfo } from '@/Core/Views/ViewInfo';
+import { Vector3 } from '@/Core/Geometry/Vector3';
 
 export class TreeOverlay
 {

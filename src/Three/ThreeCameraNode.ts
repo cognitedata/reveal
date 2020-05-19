@@ -14,8 +14,8 @@
 import CameraControls from 'camera-controls';
 import * as THREE from 'three';
 
-import { BaseCameraNode } from "../Core/Nodes/BaseCameraNode";
-import { BaseRenderTargetNode } from "../Core/Nodes/BaseRenderTargetNode";
+import { BaseCameraNode } from "@/Core/Nodes/BaseCameraNode";
+import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
 
 export class ThreeCameraNode extends BaseCameraNode
 {

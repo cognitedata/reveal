@@ -12,14 +12,14 @@
 //=====================================================================================
 
 import * as THREE from 'three';
-import { BaseGroupThreeView } from "./BaseGroupThreeView";
-import { PolylinesNode } from "../Nodes/PolylinesNode";
-import { PolylinesRenderStyle } from "../Nodes/PolylinesRenderStyle";
-import { ThreeConverter } from "./ThreeConverter";
-import { ColorType } from "../Core/Enums/ColorType";
-import { Colors } from "../Core/PrimitiveClasses/Colors";
-import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
-import { Range3 } from '../Core/Geometry/Range3';
+import { BaseGroupThreeView } from "@/Three/BaseGroupThreeView";
+import { PolylinesNode } from "@/Nodes/PolylinesNode";
+import { PolylinesRenderStyle } from "@/Nodes/PolylinesRenderStyle";
+import { ThreeConverter } from '@/Three/ThreeConverter';
+import { ColorType } from "@/Core/Enums/ColorType";
+import { Colors } from "@/Core/PrimitiveClasses/Colors";
+import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
+import { Range3 } from '@/Core/Geometry/Range3';
 
 export class PolylinesThreeView extends BaseGroupThreeView
 {

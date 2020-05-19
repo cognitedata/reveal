@@ -13,12 +13,11 @@
 
 import * as THREE from 'three';
 
-import { BaseLogThreeView } from "./BaseLogThreeView";
-import { DiscreteLogNode } from "../../Nodes/Wells/Wells/DiscreteLogNode";
-import { WellRenderStyle } from "../../Nodes/Wells/Wells/WellRenderStyle";
-import { NodeEventArgs } from "../../Core/Views/NodeEventArgs";
-import { Range1 } from "../../Core/Geometry/Range1";
-import { LogRender } from './LogRender';
+import { BaseLogThreeView } from "@/Three/Wells/BaseLogThreeView";
+import { DiscreteLogNode } from "@/Nodes/Wells/Wells/DiscreteLogNode";
+import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
+import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
+import { LogRender } from '@/Three/Wells/LogRender';
 
 export class DiscreteLogThreeView extends BaseLogThreeView
 {

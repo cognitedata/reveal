@@ -11,11 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { PointLog } from "./../Logs/PointLog";
-import { BaseLogNode } from "./BaseLogNode";
-import { BaseRenderStyle } from "../../../Core/Styles/BaseRenderStyle";
-import { WellRenderStyle } from "./WellRenderStyle";
-import { TargetId } from "../../../Core/PrimitiveClasses/TargetId";
+import { PointLog } from "@/Nodes/Wells/Logs/PointLog";
+import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
+import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
+import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
+import { TargetId } from "@/Core/PrimitiveClasses/TargetId";
 
 export class PointLogNode extends BaseLogNode
 {

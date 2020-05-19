@@ -11,8 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { TargetId } from "../Core/PrimitiveClasses/TargetId";
-import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
+import { TargetId } from "@/Core/PrimitiveClasses/TargetId";
+import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 
 export class PotreeRenderStyle extends BaseRenderStyle
 {

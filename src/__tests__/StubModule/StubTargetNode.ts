@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseTargetNode } from "../../Core/Nodes/BaseTargetNode";
+import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
 
 export class StubTargetNode extends BaseTargetNode
 {

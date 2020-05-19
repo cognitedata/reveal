@@ -11,11 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseVisualNode } from "../Core/Nodes/BaseVisualNode";
-import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
-import { TargetId } from "../Core/PrimitiveClasses/TargetId";
-import { PotreeRenderStyle } from "./PotreeRenderStyle";
-import { Range3 } from "../Core/Geometry/Range3";
+import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
+import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
+import { TargetId } from "@/Core/PrimitiveClasses/TargetId";
+import { PotreeRenderStyle } from "@/Nodes/PotreeRenderStyle";
+import { Range3 } from "@/Core/Geometry/Range3";
 
 export class PotreeNode extends BaseVisualNode
 {

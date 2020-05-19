@@ -13,12 +13,12 @@
 
 import * as THREE from 'three';
 
-import { BaseLogThreeView } from "./BaseLogThreeView";
-import { PointLogNode } from "../../Nodes/Wells/Wells/PointLogNode";
-import { WellRenderStyle } from "../../Nodes/Wells/Wells/WellRenderStyle";
-import { NodeEventArgs } from "../../Core/Views/NodeEventArgs";
-import { LogRender } from './LogRender';
-import { Colors } from "../../Core/PrimitiveClasses/Colors";
+import { BaseLogThreeView } from "@/Three/Wells/BaseLogThreeView";
+import { PointLogNode } from "@/Nodes/Wells/Wells/PointLogNode";
+import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
+import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
+import { LogRender } from '@/Three/Wells/LogRender';
+import { Colors } from "@/Core/PrimitiveClasses/Colors";
 
 export class PointLogThreeView extends BaseLogThreeView
 {

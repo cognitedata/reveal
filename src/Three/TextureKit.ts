@@ -14,8 +14,8 @@
 import * as THREE from 'three';
 import * as Color from 'color'
 
-import { Range1 } from '../Core/Geometry/Range1';
-import { Colors } from '../Core/PrimitiveClasses/Colors';
+import { Range1 } from '@/Core/Geometry/Range1';
+import { Colors } from '@/Core/PrimitiveClasses/Colors';
 
 export class TextureKit 
 {

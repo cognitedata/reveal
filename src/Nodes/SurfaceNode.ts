@@ -11,13 +11,13 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseVisualNode } from "../Core/Nodes/BaseVisualNode";
-import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
-import { TargetId } from "../Core/PrimitiveClasses/TargetId";
-import { RegularGrid2 } from "../Core/Geometry/RegularGrid2";
-import { SurfaceRenderStyle } from "./SurfaceRenderStyle";
-import { ColorType } from "../Core/Enums/ColorType";
-import { Range3 } from "../Core/Geometry/Range3";
+import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
+import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
+import { TargetId } from "@/Core/PrimitiveClasses/TargetId";
+import { RegularGrid2 } from "@/Core/Geometry/RegularGrid2";
+import { SurfaceRenderStyle } from "@/Nodes/SurfaceRenderStyle";
+import { ColorType } from "@/Core/Enums/ColorType";
+import { Range3 } from "@/Core/Geometry/Range3";
 
 export class SurfaceNode extends BaseVisualNode
 {

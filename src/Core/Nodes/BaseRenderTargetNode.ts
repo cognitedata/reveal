@@ -1,10 +1,9 @@
 
-import { BaseCameraNode } from "./BaseCameraNode";
-import { Colors } from "../PrimitiveClasses/Colors";
-import { BaseTargetNode } from "./BaseTargetNode";
-import { Range3 } from "../Geometry/Range3";
-import { Base3DView } from "../Views/Base3DView";
-import { ViewInfo } from "../Views/ViewInfo";
+import { BaseCameraNode } from "@/Core/Nodes/BaseCameraNode";
+import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
+import { Range3 } from "@/Core/Geometry/Range3";
+import { Base3DView } from "@/Core/Views/Base3DView";
+import { ViewInfo } from "@/Core/Views/ViewInfo";
 
 export abstract class BaseRenderTargetNode extends BaseTargetNode 
 {

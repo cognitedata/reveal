@@ -12,11 +12,11 @@
 //=====================================================================================
 
 import * as THREE from 'three';
-import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
-import { Changes } from "../Core/Views/Changes";
-import { BaseThreeView } from "./BaseThreeView";
-import { Range3 } from '../Core/Geometry/Range3';
-import { BoundingBoxKit } from "./BoundingBoxKit";
+import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
+import { Changes } from "@/Core/Views/Changes";
+import { BaseThreeView } from "@/Three/BaseThreeView";
+import { Range3 } from '@/Core/Geometry/Range3';
+import { BoundingBoxKit } from "@/Three/BoundingBoxKit";
 
 export abstract class BaseGroupThreeView extends BaseThreeView
 {

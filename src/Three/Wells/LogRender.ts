@@ -14,22 +14,22 @@
 import * as THREE from 'three';
 import * as Color from 'color'
 
-import { Range1 } from '../../Core/Geometry/Range1';
-import { Vector3 } from "../../Core/Geometry/Vector3";
+import { Range1 } from '@/Core/Geometry/Range1';
+import { Vector3 } from "@/Core/Geometry/Vector3";
 
-import { Colors } from '../../Core/PrimitiveClasses/Colors';
-import { Ma } from "../../Core/PrimitiveClasses/Ma";
+import { Colors } from '@/Core/PrimitiveClasses/Colors';
+import { Ma } from "@/Core/PrimitiveClasses/Ma";
 
-import { ThreeConverter } from "./../ThreeConverter";
-import { ThreeLabel } from "./../Utilities/ThreeLabel";
-import { TriangleStripBuffers } from "../../Core/Geometry/TriangleStripBuffers";
-import { TextureKit } from './../TextureKit';
+import { ThreeConverter } from "@/Three/ThreeConverter";
+import { ThreeLabel } from "@/Three/Utilities/ThreeLabel";
+import { TriangleStripBuffers } from "@/Core/Geometry/TriangleStripBuffers";
+import { TextureKit } from '@/Three/TextureKit';
 
-import { PointLog } from "../../Nodes/Wells/Logs/PointLog";
-import { FloatLog } from "../../Nodes/Wells/Logs/FloatLog";
-import { DiscreteLog } from "../../Nodes/Wells/Logs/DiscreteLog";
-import { FloatLogSample } from "../../Nodes/Wells/Samples/FloatLogSample";
-import { WellTrajectory } from "../../Nodes/Wells/Logs/WellTrajectory";
+import { PointLog } from "@/Nodes/Wells/Logs/PointLog";
+import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
+import { DiscreteLog } from "@/Nodes/Wells/Logs/DiscreteLog";
+import { FloatLogSample } from "@/Nodes/Wells/Samples/FloatLogSample";
+import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
 
 export class LogRender 
 {

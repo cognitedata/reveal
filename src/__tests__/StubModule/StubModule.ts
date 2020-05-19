@@ -12,13 +12,13 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseModule } from "../../Core/Module/BaseModule";
-import { ViewFactory } from "../../Core/Views/ViewFactory";
-import { PolylinesNode } from "../../Nodes/PolylinesNode";
+import { BaseModule } from "@/Core/Module/BaseModule";
+import { ViewFactory } from "@/Core/Views/ViewFactory";
+import { PolylinesNode } from "@/Nodes/PolylinesNode";
 import { StubPolylinesView } from "./StubPolylinesView";
 import { StubTargetNode } from "./StubTargetNode";
-import { BaseRootNode } from "../../Core/Nodes/BaseRootNode";
-import { RootNode } from "../../TreeNodes/RootNode";
+import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
+import { RootNode } from "@/TreeNodes/RootNode";
 
 export class StubModule extends BaseModule
 {

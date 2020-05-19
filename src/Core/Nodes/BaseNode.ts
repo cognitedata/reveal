@@ -11,22 +11,22 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { UniqueId } from "../PrimitiveClasses/UniqueId";
-import { Identifiable } from "../PrimitiveClasses/Identifiable";
-import { TargetId } from "../PrimitiveClasses/TargetId";
-import { isInstanceOf, Class } from "../PrimitiveClasses/ClassT";
-import { RenderStyleResolution } from "../Enums/RenderStyleResolution";
-import { NodeEventArgs } from "../Views/NodeEventArgs";
-import { TargetIdAccessor } from "../Interfaces/TargetIdAccessor";
-import { BaseRenderStyle } from "../Styles/BaseRenderStyle";
 import * as color from 'color'
-import { ColorType } from "../Enums/ColorType";
-import { Colors } from "../PrimitiveClasses/Colors";
-import { Changes } from "../Views/Changes";
-import { Range3 } from "../Geometry/Range3";
-import { CheckBoxState } from "../Enums/CheckBoxState";
-import { Target } from "../Interfaces/Target";
-import { Util } from "../PrimitiveClasses/Util";
+
+import { UniqueId } from "@/Core/PrimitiveClasses/UniqueId";
+import { Identifiable } from "@/Core/PrimitiveClasses/Identifiable";
+import { TargetId } from "@/Core/PrimitiveClasses/TargetId";
+import { isInstanceOf, Class } from "@/Core/PrimitiveClasses/ClassT";
+import { RenderStyleResolution } from "@/Core/Enums/RenderStyleResolution";
+import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
+import { TargetIdAccessor } from "@/Core/Interfaces/TargetIdAccessor";
+import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
+import { ColorType } from "@/Core/Enums/ColorType";
+import { Colors } from "@/Core/PrimitiveClasses/Colors";
+import { Changes } from "@/Core/Views/Changes";
+import { CheckBoxState } from "@/Core/Enums/CheckBoxState";
+import { Target } from "@/Core/Interfaces/Target";
+import { Util } from "@/Core/PrimitiveClasses/Util";
 
 export abstract class BaseNode extends Identifiable
 {

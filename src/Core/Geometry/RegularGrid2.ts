@@ -11,12 +11,12 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Index2 } from "./Index2";
-import { Grid2 } from "./Grid2";
-import { Vector3 } from "./Vector3";
-import { Random } from "../PrimitiveClasses/Random";
-import { Range1 } from "./Range1";
-import { Range3 } from "./Range3";
+import { Index2 } from "@/Core/Geometry/Index2";
+import { Grid2 } from "@/Core/Geometry/Grid2";
+import { Vector3 } from "@/Core/Geometry/Vector3";
+import { Random } from "@/Core/PrimitiveClasses/Random";
+import { Range1 } from "@/Core/Geometry/Range1";
+import { Range3 } from "@/Core/Geometry/Range3";
 
 export class RegularGrid2 extends Grid2
 {

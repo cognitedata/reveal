@@ -12,16 +12,16 @@
 //=====================================================================================
 
 import * as THREE from 'three';
-import { BaseGroupThreeView } from "./BaseGroupThreeView";
-import { PotreeNode } from "../Nodes/PotreeNode";
-import { PotreeRenderStyle } from "../Nodes/PotreeRenderStyle";
-import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
-import { Range3 } from '../Core/Geometry/Range3';
+import { BaseGroupThreeView } from "@/Three/BaseGroupThreeView";
+import { PotreeNode } from "@/Nodes/PotreeNode";
+import { PotreeRenderStyle } from "@/Nodes/PotreeRenderStyle";
+import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
+import { Range3 } from '@/Core/Geometry/Range3';
 
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
-import { ThreeConverter } from './ThreeConverter';
-import { ViewInfo } from '../Core/Views/ViewInfo';
+import { ThreeConverter } from '@/Three/ThreeConverter';
+import { ViewInfo } from '@/Core/Views/ViewInfo';
 
 export class PotreeThreeView extends BaseGroupThreeView
 {

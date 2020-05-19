@@ -13,9 +13,9 @@
 
 import * as THREE from 'three';
 
-import { Colors } from '../Core/PrimitiveClasses/Colors';
-import { ThreeConverter } from "./ThreeConverter";
-import { Range3 } from '../Core/Geometry/Range3';
+import { Colors } from '@/Core/PrimitiveClasses/Colors';
+import { ThreeConverter } from '@/Three/ThreeConverter';
+import { Range3 } from '@/Core/Geometry/Range3';
 
 export class BoundingBoxKit 
 {

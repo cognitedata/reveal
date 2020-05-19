@@ -12,14 +12,14 @@
 //=====================================================================================
 
 import * as THREE from 'three';
-import { Vector3 } from "../../../Core/Geometry/Vector3";
-import { Random } from "../../../Core/PrimitiveClasses/Random";
-import { Range3 } from "../../../Core/Geometry/Range3";
-import { Range1 } from "../../../Core/Geometry/Range1";
-import { TrajectorySample } from "./../Samples/TrajectorySample";
-import { MdSamples } from "./MdSamples";
-import { Ma } from "../../../Core/PrimitiveClasses/Ma";
-import { ThreeConverter } from "../../../Three/ThreeConverter";
+import { Vector3 } from "@/Core/Geometry/Vector3";
+import { Random } from "@/Core/PrimitiveClasses/Random";
+import { Range3 } from "@/Core/Geometry/Range3";
+import { Range1 } from "@/Core/Geometry/Range1";
+import { TrajectorySample } from "@/Nodes/Wells/Samples/TrajectorySample";
+import { MdSamples } from "@/Nodes/Wells/Logs/MdSamples";
+import { Ma } from "@/Core/PrimitiveClasses/Ma";
+import { ThreeConverter } from "@/Three/ThreeConverter";
 
 export class WellTrajectory extends MdSamples
 {

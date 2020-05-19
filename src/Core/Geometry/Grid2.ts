@@ -1,4 +1,3 @@
-import { Index2 } from "./Index2";
 
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
@@ -12,6 +11,8 @@ import { Index2 } from "./Index2";
 // Put new code under the correct section, and make more sections if needed.
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
+
+import { Index2 } from "@/Core/Geometry/Index2";
 
 export class Grid2
 {

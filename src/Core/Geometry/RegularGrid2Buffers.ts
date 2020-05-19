@@ -11,8 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { RegularGrid2 } from "./RegularGrid2";
-import { TriangleStripBuffers } from "./TriangleStripBuffers";
+import { RegularGrid2 } from "@/Core/Geometry/RegularGrid2";
+import { TriangleStripBuffers } from "@/Core/Geometry/TriangleStripBuffers";
 
 export class RegularGrid2Buffers extends TriangleStripBuffers
 {

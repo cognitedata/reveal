@@ -11,6 +11,7 @@
 // Put new code under the correct section, and make more sections if needed.
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
+
 import { v4 as uuid } from 'uuid';
 
 export class UniqueId

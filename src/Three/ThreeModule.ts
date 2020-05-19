@@ -15,36 +15,36 @@
 import CameraControls from 'camera-controls';
 import * as THREE from 'three';
 
-import { BaseModule } from "../Core/Module/BaseModule";
-import { ViewFactory } from "../Core/Views/ViewFactory";
-import { ThreeRenderTargetNode } from "./ThreeRenderTargetNode";
-import { BaseRootNode } from "../Core/Nodes/BaseRootNode";
-import { RootNode } from "../TreeNodes/RootNode";
-import { BaseRenderTargetNode } from "../Core/Nodes/BaseRenderTargetNode";
+import { BaseModule } from "@/Core/Module/BaseModule";
+import { ViewFactory } from "@/Core/Views/ViewFactory";
+import { ThreeRenderTargetNode } from "@/Three/ThreeRenderTargetNode";
+import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
+import { RootNode } from "@/TreeNodes/RootNode";
+import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
 
-import { AxisNode } from '../Nodes/AxisNode';
-import { PointsNode } from '../Nodes/PointsNode';
-import { PolylinesNode } from "../Nodes/PolylinesNode";
-import { SurfaceNode } from '../Nodes/SurfaceNode';
-import { PotreeNode } from "../Nodes/PotreeNode";
+import { AxisNode }  from  '@/Nodes/AxisNode';
+import { PointsNode }  from  '@/Nodes/PointsNode';
+import { PolylinesNode } from "@/Nodes/PolylinesNode";
+import { SurfaceNode }  from  '@/Nodes/SurfaceNode';
+import { PotreeNode } from "@/Nodes/PotreeNode";
 
-import { AxisThreeView } from './AxisThreeView';
-import { PointsThreeView } from './PointsThreeView';
-import { PolylinesThreeView } from "./PolylinesThreeView";
-import { SurfaceThreeView } from './SurfaceThreeView';
-import { PotreeThreeView } from "./PotreeThreeView";
+import { AxisThreeView } from '@/Three/AxisThreeView';
+import { PointsThreeView } from '@/Three/PointsThreeView';
+import { PolylinesThreeView } from "@/Three/PolylinesThreeView";
+import { SurfaceThreeView } from '@/Three/SurfaceThreeView';
+import { PotreeThreeView } from "@/Three/PotreeThreeView";
 
 // Wells:
 
-import { WellTrajectoryNode } from "../Nodes/Wells/Wells/WellTrajectoryNode";
-import { PointLogNode } from "../Nodes/Wells/Wells/PointLogNode";
-import { FloatLogNode } from "../Nodes/Wells/Wells/FloatLogNode";
-import { DiscreteLogNode } from "../Nodes/Wells/Wells/DiscreteLogNode";
+import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
+import { PointLogNode } from "@/Nodes/Wells/Wells/PointLogNode";
+import { FloatLogNode } from "@/Nodes/Wells/Wells/FloatLogNode";
+import { DiscreteLogNode } from "@/Nodes/Wells/Wells/DiscreteLogNode";
 
-import { WellTrajectoryThreeView } from './Wells/WellTrajectoryThreeView';
-import { PointLogThreeView } from './Wells/PointLogThreeView';
-import { FloatLogThreeView } from './Wells/FloatLogThreeView';
-import { DiscreteLogThreeView } from './Wells/DiscreteLogThreeView';
+import { WellTrajectoryThreeView } from '@/Three/Wells/WellTrajectoryThreeView';
+import { PointLogThreeView } from '@/Three/Wells/PointLogThreeView';
+import { FloatLogThreeView } from '@/Three/Wells/FloatLogThreeView';
+import { DiscreteLogThreeView } from '@/Three/Wells/DiscreteLogThreeView';
 
 
 export class ThreeModule extends BaseModule
