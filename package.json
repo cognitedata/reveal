@@ -6,10 +6,11 @@
   "entry": "dist/app.js",
   "scripts": {
     "build": "webpack",
+    "build-prod": "webpack --config webpack.config.prod.js",
     "build:css": "node-sass src/UserInterface/styles/scss -o src/UserInterface/styles/css ",
     "watch:css": "npm run build:css && node-sass src/UserInterface/styles/scss -o src/UserInterface/styles/css -w -r",
     "start:react": "webpack-dev-server --mode development --open --hot --config webpack.config.dev.js",
-    "start": "npm-run-all -p watch:css start:react",
+    "start-dev": "npm-run-all -p watch:css start:react",
     "build-dev": "webpack --debug",
     "clean": "tsc --build --clean",
     "serve": "webpack-dev-server --debug --color --progress --watch",
@@ -20,6 +21,7 @@
     "@babel/core": "^7.9.6",
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-proposal-object-rest-spread": "^7.9.6",
+    "@babel/plugin-proposal-numeric-separator": "^7.8.3",
     "@babel/preset-env": "^7.9.6",
     "@babel/preset-react": "^7.9.4",
     "@babel/preset-typescript": "^7.9.0",
@@ -51,7 +53,6 @@
     "webpack-dev-server": "^3.8.2"
   },
   "dependencies": {
-    "@babel/plugin-proposal-numeric-separator": "^7.8.3",
     "@cognite/potree-core": "^1.0.6",
     "@fortawesome/fontawesome-svg-core": "^1.2.28",
     "@fortawesome/free-solid-svg-icons": "^5.13.0",
