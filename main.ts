@@ -3,18 +3,23 @@ import { ThreeModule } from './src/Three/ThreeModule';
 import { ThreeRenderTargetNode } from './src/Three/ThreeRenderTargetNode';
 import { Range3 } from './src/Core/Geometry/Range3';
 import { Range1 } from './src/Core/Geometry/Range1';
-import { WellTrajectoryNode } from "./src/Nodes/Wells/Wells/WellTrajectoryNode";
-import { FloatLogNode } from "./src/Nodes/Wells/Wells/FloatLogNode";
-import { DiscreteLogNode } from "./src/Nodes/Wells/Wells/DiscreteLogNode";
-import { WellNode } from "./src/Nodes/Wells/Wells/WellNode";
-import { WellTrajectory } from './src/Nodes/Wells/Logs/WellTrajectory';
-import { FloatLog } from './src/Nodes/Wells/Logs/FloatLog';
-import { DiscreteLog } from './src/Nodes/Wells/Logs/DiscreteLog';
+
 import { RootNode } from './src/TreeNodes/RootNode';
 import { AxisNode } from './src/Nodes/AxisNode';
 import { Vector3 } from "./src/Core/Geometry/Vector3";
-import { MdSample } from "./src/Nodes/Wells/Samples/MdSample";
-import { MdSamples } from "./src/Nodes/Wells/Logs/MdSamples";
+
+import { WellTrajectoryNode } from "./src/Nodes/Wells/Wells/WellTrajectoryNode";
+import { WellNode } from "./src/Nodes/Wells/Wells/WellNode";
+import { WellTrajectory } from './src/Nodes/Wells/Logs/WellTrajectory';
+
+import { FloatLogNode } from "./src/Nodes/Wells/Wells/FloatLogNode";
+import { DiscreteLogNode } from "./src/Nodes/Wells/Wells/DiscreteLogNode";
+import { PointLogNode } from "./src/Nodes/Wells/Wells/PointLogNode";
+
+import { FloatLog } from './src/Nodes/Wells/Logs/FloatLog';
+import { DiscreteLog } from './src/Nodes/Wells/Logs/DiscreteLog';
+import { PointLog } from './src/Nodes/Wells/Logs/PointLog';
+
 
 main();
 
@@ -29,7 +34,7 @@ export function main()
   const wellTree = root.wells;
 
 
-  // Add 6 wells
+  // Add some wells
   for (let i = 0; i < 6; i++)
   {
     const well = new WellNode();
@@ -37,31 +42,42 @@ export function main()
 
     well.wellHead = Vector3.getRandom(Range3.newTest);
     well.wellHead.z = 0;
+    well.name = `well number ${i + 1}`;
 
-    // Add 5 trajectories
-    for (let j = 0; j < i + 1; j++)
+    // Add some trajectories to the well
+    for (let j = 0; j < 2; j++)
     {
       const wellTrajectory = new WellTrajectoryNode();
+      wellTrajectory.name = `Trajectory number ${j + 1}`;
+
       wellTrajectory.data = WellTrajectory.createByRandom(well.wellHead);
       well.addChild(wellTrajectory);
 
       const mdRange = wellTrajectory.data.mdRange;
+      mdRange.min = (mdRange.center + mdRange.min) / 2;
       mdRange.expandByFraction(-0.05);
 
-      // Add 2 float logs
-      for (let k = 0; k < 3; k++)
+      // Add some float logs to the trajectory
+      for (let k = 0; k < 2; k++)
       {
-        const valueRange = new Range1(0, 100);
         const logNode = new FloatLogNode();
+        const valueRange = new Range1(0, 3.14);
         logNode.data = FloatLog.createByRandom(mdRange, valueRange);
         wellTrajectory.addChild(logNode);
       }
-      // Add 3 discrete logs
+      // Add some discrete logs to the trajectory
+      for (let k = 0; k < 2; k++)
+      {
+        const logNode = new DiscreteLogNode();
+        const valueRange = new Range1(0, 5);
+        logNode.data = DiscreteLog.createByRandom(mdRange, valueRange);
+        wellTrajectory.addChild(logNode);
+      }
+      // Add some point logs to the trajectory
       for (let k = 0; k < 3; k++)
       {
-        const valueRange = new Range1(0, 5);
-        const logNode = new DiscreteLogNode();
-        logNode.data = DiscreteLog.createByRandom(mdRange, valueRange);
+        const logNode = new PointLogNode();
+        logNode.data = PointLog.createByRandom(mdRange, 10);
         wellTrajectory.addChild(logNode);
       }
     }
@@ -87,38 +103,41 @@ export function main()
     document.body.appendChild(stats.dom);
     target.setActiveInteractive();
   }
-  // Set some visible in target 0
 
-  let n = 0;
-  for (const node of root.getDescendantsByType(FloatLogNode))
+  // Set some nodes visible
+  for (const well of root.getDescendantsByType(WellNode))
   {
-    node.setVisibleInteractive(true);
-    n++;
-    if (n > 3)
+    let n = 0;
+    for (const wellTrajectory of well.getDescendantsByType(WellTrajectoryNode))
+    {
+      for (const node of wellTrajectory.getDescendantsByType(FloatLogNode))
+      {
+        n++;
+        node.setVisibleInteractive(true);
+        if (n === 2)
+          break;
+      }
+      n++;
+      for (const node of wellTrajectory.getDescendantsByType(DiscreteLogNode))
+      {
+        n++;
+        node.setVisibleInteractive(true);
+        if (n === 1)
+          break;
+      }
       break;
+    }
   }
-  for (const node of root.getDescendantsByType(DiscreteLogNode))
-  {
-    node.setVisibleInteractive(true);
-    n++;
-    if (n > 3)
-      break;
-  }
-
-
   for (const node of root.getDescendantsByType(WellTrajectoryNode))
     node.setVisibleInteractive(true);
 
   for (const node of root.getDescendantsByType(AxisNode))
     node.setVisibleInteractive(true);
 
+  // View all
   const activeTarget = root.activeTarget as ThreeRenderTargetNode;
-  console.log(activeTarget.toString());
   if (activeTarget)
     activeTarget.viewAll();
-
-  // Trick
-  (window as any).camera = activeTarget.activeCamera;
 }
 
 
