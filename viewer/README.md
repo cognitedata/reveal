@@ -164,6 +164,8 @@ viewer.addModel({ modelId: 4715379429968321, revisionId: 5688854005909501 });
 
 # API Reference
 
+The API mostly matches the API of the previous Reveal viewer that can be found at [@cognite/3d-viewer](https://www.npmjs.com/package/@cognite/3d-viewer). See the [API refernece](https://www.npmjs.com/package/@cognite/3d-viewer#api-reference) for details.
+
 ## Cognite3DViewer
 
 **Cognite 3D Models**
@@ -210,26 +212,26 @@ viewer.addModel({ modelId: 4715379429968321, revisionId: 5688854005909501 });
 > Disables camera navigation with the keyboard
 
 > `getCameraPosition()`: THREE.Vector3;<br>
-> Get the x, y, z vector of the viewer's camera position
+> Get the camera position.
 
 > `setCameraPosition(`position: THREE.Vector3`)`: void;<br>
-> Set the x, y, z vector of the viewer's camera position
+> Set the camera position.
 
 > `getCameraTarget()`: THREE.Vector3;<br>
-> Get the x, y, z vector of the viewer's camera pivot point?
+> Get thecamera pivot point.
 
 > `setCameraTarget(`target: THREE.Vector3`)`: void;<br>
-> Set the x, y, z vector of the viewer's camera pivot point?
+> Set the camera pivot point and focal point.
 
 > `fitCameraToModel(`model: CogniteModelBase, duration?: number`)`: void;<br>
-> Change camera parameters in regards to model
+> Change camera parameters to fit the view to show an overview of the model provided.
 
 > `fitCameraToBoundingBox(`box: THREE.Box3, duration?: number, radiusFactor?: number`)`: void;<br>
-> Change camera parameters in regards to bounding box
+> Change camera parameters to fit the bounding box provided in the view.
 
 **Utilities**
 > `setSlicingPlanes(`slicingPlanes: THREE.Plane[]`)`: void;<br>
-> Set the slicing planes for visible culling
+> Set the slicing planes for visibility culling.
 
 > `worldToScreen(`_point: THREE.Vector3, _normalize?: boolean`)`: THREE.Vector2 | null;<br>
 > Transform a 3D position in the viewer into a 2D position on screen
@@ -252,11 +254,11 @@ viewer.addModel({ modelId: 4715379429968321, revisionId: 5688854005909501 });
 
 **Read-only Parameters**
 > `type`: SupportedModelTypes;<br>
->
+> Always retuns 'cad'.
 
 **Hints**
 > `renderHints()`: CadRenderHints;<br>
->
+> 
 
 > `renderHints(`hints: CadRenderHints`)`: void;<br>
 >
@@ -318,15 +320,33 @@ viewer.addModel({ modelId: 4715379429968321, revisionId: 5688854005909501 });
 > `getSubtreeNodeIds(`_nodeId: number, _subtreeSize?: number`)`: Promise\<number[]\>;<br>
 >
 
-> `updateNodeIdMaps(`sector: { lod: string; data: Sector | SectorQuads }`)`: void;<br>
->
-
-
 > `iterateNodes(`_action: (nodeId: number, treeIndex?: number) => void`)`: void;<br>
 >
 
 > `iterateSubtree(`_nodeId: number, _action: (nodeId: number, treeIndex?: number) => void, _treeIndex?: number, _subtreeSize?: number`)`: Promise\<boolean\>;<br>
+> @Not supported
+
+**Cleanup**
+> `dispose()`: void;<br>
 >
+
+
+## CognitePointCloudModel
+
+**Read-only Parameters**
+> `type`: SupportedModelTypes;<br>
+> Always retuns 'pointcloud'.
+
+**Hints**
+> `pointBudget()`: number;<br>
+> Get the maximum number of points to load and visualize.
+
+> `pointBudget(`count: number`)`: void;<br>
+> Sets the maximum number of points to load.
+
+**Bounding Box**
+> `getModelBoundingBox()`: THREE.Box3;<br>
+> Returns the full bounding box for the point cloud.
 
 **Cleanup**
 > `dispose()`: void;<br>
