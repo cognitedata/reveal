@@ -52,7 +52,7 @@ export class DiscreteLogThreeView extends BaseLogThreeView
   {
     const node = this.node;
 
-    const trajectory = this.wellTrajectory;
+    const trajectory = this.trajectory;
     if (!trajectory)
       return null;
 

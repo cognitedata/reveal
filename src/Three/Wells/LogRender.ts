@@ -15,12 +15,14 @@ import * as THREE from 'three';
 import * as Color from 'color'
 
 import { Range1 } from '../../Core/Geometry/Range1';
+import { Vector3 } from "../../Core/Geometry/Vector3";
+
 import { Colors } from '../../Core/PrimitiveClasses/Colors';
+import { Ma } from "../../Core/PrimitiveClasses/Ma";
+
 import { ThreeConverter } from "./../ThreeConverter";
 import { ThreeLabel } from "./../Utilities/ThreeLabel";
-import { Vector3 } from "../../Core/Geometry/Vector3";
 import { TriangleStripBuffers } from "../../Core/Geometry/TriangleStripBuffers";
-import { Ma } from "../../Core/PrimitiveClasses/Ma";
 import { TextureKit } from './../TextureKit';
 
 import { PointLog } from "../../Nodes/Wells/Logs/PointLog";
@@ -54,9 +56,11 @@ export class LogRender
   // INSTANCE METHODS: Band
   //==================================================
 
-  public addBand(group: THREE.Group, color: Color, right: boolean): void
+  public addBand(group: THREE.Group, mdRange: Range1, color: Color, right: boolean, left: boolean): void
   {
-    const buffers = new TriangleStripBuffers(2 * this.trajectory.count, false);
+    const rightBuffers = right ? new TriangleStripBuffers(2 * this.trajectory.count, false) : null;
+    const leftBuffers = left ? new TriangleStripBuffers(2 * this.trajectory.count, false) : null;
+
     for (const baseSample of this.trajectory.samples)
     {
       const position = this.trajectory.getAtMd(baseSample.md);
@@ -65,21 +69,30 @@ export class LogRender
       const tangent = this.trajectory.getTangentAtMd(baseSample.md);
       const cameraDirection = Vector3.substract(position, this.cameraPosition);
       const prependicular = cameraDirection.getNormal(tangent);
-      if (!right)
-        prependicular.negate();
-
       const normal = prependicular.getNormal(tangent);
 
-      const startPosition = Vector3.addWithFactor(position, prependicular, this.bandRange.min);
-      const bandEndPosition = Vector3.addWithFactor(position, prependicular, this.bandRange.max);
-
-      buffers.addPair(startPosition, bandEndPosition, normal, normal);
+      if (rightBuffers) 
+      {
+        const startPosition = Vector3.addWithFactor(position, prependicular, this.bandRange.min);
+        const endPosition = Vector3.addWithFactor(position, prependicular, this.bandRange.max);
+        rightBuffers.addPair(startPosition, endPosition, normal, normal);
+      }
+      if (leftBuffers)
+      {
+        const startPosition = Vector3.addWithFactor(position, prependicular, -this.bandRange.min);
+        const endPosition = Vector3.addWithFactor(position, prependicular, -this.bandRange.max);
+        leftBuffers.addPair(endPosition, startPosition, normal, normal);
+      }
     }
+    for (const buffers of [rightBuffers, leftBuffers])
     {
+      if (!buffers)
+        continue;
+
       const geometry = buffers.getBufferGeometry();
       const material = new THREE.MeshLambertMaterial({
         color: ThreeConverter.toColor(color),
-        side: right ? THREE.FrontSide : THREE.BackSide,
+        side: THREE.FrontSide,
         emissive: ThreeConverter.toColor(color),
         emissiveIntensity: 0.33,
       });
@@ -90,7 +103,7 @@ export class LogRender
     }
   }
 
-  public addTickMarks(group: THREE.Group, color: Color, mdRange: Range1, tickFontSize: number, inc: number, right: boolean)
+  public addTickMarks(group: THREE.Group, color: Color, mdRange: Range1, tickFontSize: number, inc: number, right: boolean, left: boolean)
   {
     const geometry = new THREE.Geometry();
 
@@ -218,7 +231,7 @@ export class LogRender
   public addSolidDiscreteLog(group: THREE.Group, log: DiscreteLog, right: boolean): void
   {
     const valueRange = log.range;
-    const buffers = new TriangleStripBuffers(log.count * 4 -2);
+    const buffers = new TriangleStripBuffers(log.count * 4 - 2);
     const colors = new Array<number>();
 
     let prevColor = Colors.white;
@@ -262,6 +275,7 @@ export class LogRender
       const material = new THREE.MeshLambertMaterial({
         side: right ? THREE.FrontSide : THREE.BackSide,
         vertexColors: THREE.VertexColors,
+        emissiveIntensity: 100,
       });
       LogRender.setPolygonOffset(material, 1);
       const mesh = new THREE.Mesh(geometry, material);

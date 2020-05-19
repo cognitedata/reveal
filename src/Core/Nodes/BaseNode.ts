@@ -384,6 +384,16 @@ export abstract class BaseNode extends Identifiable
   // INSTANCE METHODS: Get ancestors
   //==================================================
 
+  public * getThisAndAncestors(): Iterable<BaseNode>
+  {
+    let ancestor: BaseNode | null = this;
+    while (ancestor)
+    {
+      yield ancestor;
+      ancestor = ancestor.parent;
+    }
+  }
+
   public * getAncestors(): Iterable<BaseNode>
   {
     let ancestor = this.parent;
@@ -404,11 +414,14 @@ export abstract class BaseNode extends Identifiable
     return null;
   }
 
-  public * getThisAndAncestors(): Iterable<BaseNode>
+  public getThisOrAncestorByType<T>(classType: Class<T>): T | null
   {
-    yield this;
-    for (const ancestor of this.getAncestors())
-      yield ancestor;
+    for (const ancestor of this.getThisAndAncestors())
+    {
+      if (isInstanceOf(ancestor, classType))
+        return ancestor as T;
+    }
+    return null;
   }
 
   //==================================================

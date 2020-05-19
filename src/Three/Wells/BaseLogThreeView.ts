@@ -11,14 +11,16 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseGroupThreeView } from "./../BaseGroupThreeView";
-import { BaseLogNode } from "../../Nodes/Wells/Wells/BaseLogNode";
-import { WellRenderStyle } from "../../Nodes/Wells/Wells/WellRenderStyle";
-import { ThreeConverter } from "./../ThreeConverter";
+import { Range1 } from "../../Core/Geometry/Range1";
 import { Range3 } from '../../Core/Geometry/Range3';
 import { Vector3 } from "../../Core/Geometry/Vector3";
+
+import { BaseGroupThreeView } from "./../BaseGroupThreeView";
+import { ThreeConverter } from "./../ThreeConverter";
 import { WellTrajectory } from "../../Nodes/Wells/Logs/WellTrajectory";
-import { Range1 } from "../../Core/Geometry/Range1";
+
+import { WellRenderStyle } from "../../Nodes/Wells/Wells/WellRenderStyle";
+import { WellTrajectoryNode } from "../../Nodes/Wells/Wells/WellTrajectoryNode";
 
 export abstract class BaseLogThreeView extends BaseGroupThreeView
 {
@@ -42,10 +44,13 @@ export abstract class BaseLogThreeView extends BaseGroupThreeView
 
   protected get style(): WellRenderStyle { return super.getStyle() as WellRenderStyle; }
 
-  protected get wellTrajectory(): WellTrajectory | null
+  protected get trajectory(): WellTrajectory | null
   {
-    const node = this.getNode() as BaseLogNode;
-    const wellTrajectoryNode = node.wellTrajectory;
+    const node = this.getNode();
+    if (!node)
+      return null;
+
+    const wellTrajectoryNode = node.getThisOrAncestorByType(WellTrajectoryNode);
     if (!wellTrajectoryNode)
       return null;
 
@@ -54,12 +59,15 @@ export abstract class BaseLogThreeView extends BaseGroupThreeView
 
   protected get bandRange(): Range1 | undefined
   {
-    const node = this.getNode() as BaseLogNode;
-    const wellTrajectoryNode = node.wellTrajectory;
+    const node = this.getNode();
+    if (!node)
+      return undefined;
+
+    const wellTrajectoryNode = node.getThisOrAncestorByType(WellTrajectoryNode);
     if (!wellTrajectoryNode)
       return undefined;
 
-    const wellRenderStyle = wellTrajectoryNode.getRenderStyle(this.renderTarget.targetId) as WellRenderStyle;
+    const wellRenderStyle = wellTrajectoryNode.getRenderStyle(this.targetId) as WellRenderStyle;
     if (!wellRenderStyle)
       return undefined;
 
@@ -81,7 +89,7 @@ export abstract class BaseLogThreeView extends BaseGroupThreeView
 
   public /*override*/ mustTouch(): boolean
   {
-    const wellTrajectory = this.wellTrajectory;
+    const wellTrajectory = this.trajectory;
     if (!wellTrajectory)
       return false;
 

@@ -18,7 +18,6 @@ import { FloatLogNode } from "../../Nodes/Wells/Wells/FloatLogNode";
 import { WellRenderStyle } from "../../Nodes/Wells/Wells/WellRenderStyle";
 import { NodeEventArgs } from "../../Core/Views/NodeEventArgs";
 import { Colors } from '../../Core/PrimitiveClasses/Colors';
-import { Range1 } from "../../Core/Geometry/Range1";
 import { LogRender } from './LogRender';
 
 export class FloatLogThreeView extends BaseLogThreeView
@@ -53,7 +52,7 @@ export class FloatLogThreeView extends BaseLogThreeView
   {
     const node = this.node;
 
-    const trajectory = this.wellTrajectory;
+    const trajectory = this.trajectory;
     if (!trajectory)
       return null;
 
@@ -65,30 +64,22 @@ export class FloatLogThreeView extends BaseLogThreeView
     if (!bandRange)
       return null;
 
-    const mdRange = log.mdRange;
     const group = new THREE.Group();
-
-    const axisColor = Colors.grey;
-    const bandColor = Colors.white;
-    const logColor = node.color;
-
     const logRender = new LogRender(trajectory, this.cameraPosition, bandRange);
-
     const childIndex = node.childIndex;
+
     if (childIndex === undefined)
       return null;
 
     const right = childIndex % 2 === 0;
 
-    logRender.addTickMarks(group, axisColor, mdRange, 25, 50, right);
-    logRender.addBand(group, bandColor, right);
     if (childIndex <= 0)
     {
       logRender.addSolidFloatLog(group, log, right);
       logRender.addLineFloatLog(group, log, Colors.black, right);
     }
     else
-      logRender.addLineFloatLog(group, log, logColor, right);
+      logRender.addLineFloatLog(group, log, node.color, right);
 
     return group;
   }

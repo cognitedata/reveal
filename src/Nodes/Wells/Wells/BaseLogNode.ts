@@ -28,10 +28,10 @@ export abstract class BaseLogNode extends BaseVisualNode
   // INSTANCE PROPERTIES
   //==================================================
 
-  protected get data(): BaseLog | null { return this._data; }
-  protected set data(value: BaseLog | null) { this._data = value; }
+  public get data(): BaseLog | null { return this._data; }
+  public set data(value: BaseLog | null) { this._data = value; }
   public get well(): WellNode | null { return this.getAncestorByType(WellNode); }
-  public get wellTrajectory(): WellTrajectoryNode | null { return this.getAncestorByType(WellTrajectoryNode); }
+  public get trajectory(): WellTrajectoryNode | null { return this.getAncestorByType(WellTrajectoryNode); }
 
   //==================================================
   // CONSTRUCTORS

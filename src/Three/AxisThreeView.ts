@@ -84,6 +84,7 @@ export class AxisThreeView extends BaseGroupThreeView
 
     // Check if bounding box is different
     const boundingBoxFromViews = target.getBoundingBoxFromViews();
+    boundingBoxFromViews.expandByFraction(0.02);
     if (boundingBoxFromViews.isEqual(this.boundingBoxFromViews))
       return false;
 
@@ -118,8 +119,6 @@ export class AxisThreeView extends BaseGroupThreeView
     const boundingBox = this.boundingBoxFromViews;
     if (!boundingBox)
       return null;
-
-    boundingBox.expandByFraction(0.02);
 
     const center = boundingBox.center;
     const tickLength = boundingBox.diagonal / 130;

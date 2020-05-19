@@ -16,11 +16,7 @@ import * as THREE from 'three';
 import { BaseLogThreeView } from "./BaseLogThreeView";
 import { PointLogNode } from "../../Nodes/Wells/Wells/PointLogNode";
 import { WellRenderStyle } from "../../Nodes/Wells/Wells/WellRenderStyle";
-import { ThreeConverter } from "./../ThreeConverter";
 import { NodeEventArgs } from "../../Core/Views/NodeEventArgs";
-import { Range3 } from '../../Core/Geometry/Range3';
-import { Vector3 } from "../../Core/Geometry/Vector3";
-import { Range1 } from "../../Core/Geometry/Range1";
 import { LogRender } from './LogRender';
 import { Colors } from "../../Core/PrimitiveClasses/Colors";
 
@@ -56,7 +52,7 @@ export class PointLogThreeView extends BaseLogThreeView
   {
     const node = this.node;
 
-    const trajectory = this.wellTrajectory;
+    const trajectory = this.trajectory;
     if (!trajectory)
       return null;
 
