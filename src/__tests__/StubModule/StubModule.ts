@@ -14,11 +14,12 @@
 
 import { BaseModule } from "@/Core/Module/BaseModule";
 import { ViewFactory } from "@/Core/Views/ViewFactory";
-import { PolylinesNode } from "@/Nodes/PolylinesNode";
+import { PolylinesNode } from "@/Nodes/Misc/PolylinesNode";
+import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
+import { RootNode } from "@/Nodes/TreeNodes/RootNode";
+
 import { StubPolylinesView } from "./StubPolylinesView";
 import { StubTargetNode } from "./StubTargetNode";
-import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
-import { RootNode } from "@/TreeNodes/RootNode";
 
 export class StubModule extends BaseModule
 {

@@ -12,10 +12,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { PolylinesNode } from "@/Nodes/PolylinesNode";
-import { PolylinesRenderStyle } from "@/Nodes/PolylinesRenderStyle";
-import { StubTargetNode } from "./StubTargetNode";
+import { PolylinesNode } from "@/Nodes/Misc/PolylinesNode";
+import { PolylinesRenderStyle } from "@/Nodes/Misc/PolylinesRenderStyle";
 import { Base3DView } from "@/Core/Views/Base3DView";
+
+import { StubTargetNode } from "./StubTargetNode";
 
 export class StubPolylinesView extends Base3DView
 {

@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
-import { TargetId } from "@/Core/PrimitiveClasses/TargetId";
+import { TargetId } from "@/Core/Primitives/TargetId";
 import { TargetIdAccessor } from "@/Core/Interfaces/TargetIdAccessor";
 
 export abstract class BaseRenderStyle extends BaseStyle implements TargetIdAccessor

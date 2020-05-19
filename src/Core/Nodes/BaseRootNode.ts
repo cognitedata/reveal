@@ -15,7 +15,6 @@ import { TargetTreeNode } from "@/Core/Nodes/TargetTreeNode";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
 import { TargetIdAccessor } from "@/Core/Interfaces/TargetIdAccessor";
-import { AxisNode } from "@/Nodes/AxisNode";
 
 export class BaseRootNode extends BaseNode
 {
@@ -66,9 +65,6 @@ export class BaseRootNode extends BaseNode
     super.initializeCore();
     if (!this.hasChildByType(TargetTreeNode))
       this.addChild(new TargetTreeNode());
-
-    if (!this.targets.hasChildByType(AxisNode))
-     this.targets.addChild(new AxisNode());
   }
 
   //==================================================

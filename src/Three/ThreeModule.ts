@@ -12,27 +12,27 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import CameraControls from 'camera-controls';
-import * as THREE from 'three';
+import CameraControls from "camera-controls";
+import * as THREE from "three";
 
 import { BaseModule } from "@/Core/Module/BaseModule";
 import { ViewFactory } from "@/Core/Views/ViewFactory";
-import { ThreeRenderTargetNode } from "@/Three/ThreeRenderTargetNode";
+import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
-import { RootNode } from "@/TreeNodes/RootNode";
+import { RootNode } from "@/Nodes/TreeNodes/RootNode";
 import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
 
-import { AxisNode }  from  '@/Nodes/AxisNode';
-import { PointsNode }  from  '@/Nodes/PointsNode';
-import { PolylinesNode } from "@/Nodes/PolylinesNode";
-import { SurfaceNode }  from  '@/Nodes/SurfaceNode';
-import { PotreeNode } from "@/Nodes/PotreeNode";
+import { AxisNode } from "@/Nodes/Decorations/AxisNode";
+import { PointsNode } from  "@/Nodes/Misc/PointsNode";
+import { PolylinesNode } from "@/Nodes/Misc/PolylinesNode";
+import { SurfaceNode } from  "@/Nodes/Misc/SurfaceNode";
+import { PotreeNode } from "@/Nodes/Misc/PotreeNode";
 
-import { AxisThreeView } from '@/Three/AxisThreeView';
-import { PointsThreeView } from '@/Three/PointsThreeView';
-import { PolylinesThreeView } from "@/Three/PolylinesThreeView";
-import { SurfaceThreeView } from '@/Three/SurfaceThreeView';
-import { PotreeThreeView } from "@/Three/PotreeThreeView";
+import { AxisThreeView } from "@/Three/DecorationViews/AxisThreeView";
+import { PointsThreeView } from "@/Three/MiscViews/PointsThreeView";
+import { PolylinesThreeView } from "@/Three/MiscViews/PolylinesThreeView";
+import { SurfaceThreeView } from "@/Three/MiscViews/SurfaceThreeView";
+import { PotreeThreeView } from "@/Three/MiscViews/PotreeThreeView";
 
 // Wells:
 
@@ -41,10 +41,10 @@ import { PointLogNode } from "@/Nodes/Wells/Wells/PointLogNode";
 import { FloatLogNode } from "@/Nodes/Wells/Wells/FloatLogNode";
 import { DiscreteLogNode } from "@/Nodes/Wells/Wells/DiscreteLogNode";
 
-import { WellTrajectoryThreeView } from '@/Three/Wells/WellTrajectoryThreeView';
-import { PointLogThreeView } from '@/Three/Wells/PointLogThreeView';
-import { FloatLogThreeView } from '@/Three/Wells/FloatLogThreeView';
-import { DiscreteLogThreeView } from '@/Three/Wells/DiscreteLogThreeView';
+import { WellTrajectoryThreeView } from "@/Three/WellViews/WellTrajectoryThreeView";
+import { PointLogThreeView } from "@/Three/WellViews/PointLogThreeView";
+import { FloatLogThreeView } from "@/Three/WellViews/FloatLogThreeView";
+import { DiscreteLogThreeView } from "@/Three/WellViews/DiscreteLogThreeView";
 
 
 export class ThreeModule extends BaseModule

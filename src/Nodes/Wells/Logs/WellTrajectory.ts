@@ -11,15 +11,17 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import * as THREE from 'three';
+import * as THREE from "three";
+
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import { Random } from "@/Core/PrimitiveClasses/Random";
-import { Range3 } from "@/Core/Geometry/Range3";
 import { Range1 } from "@/Core/Geometry/Range1";
+import { Range3 } from "@/Core/Geometry/Range3";
+import { Random } from "@/Core/Primitives/Random";
+import { Ma } from "@/Core/Primitives/Ma";
+
 import { TrajectorySample } from "@/Nodes/Wells/Samples/TrajectorySample";
 import { MdSamples } from "@/Nodes/Wells/Logs/MdSamples";
-import { Ma } from "@/Core/PrimitiveClasses/Ma";
-import { ThreeConverter } from "@/Three/ThreeConverter";
+import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 
 export class WellTrajectory extends MdSamples
 {

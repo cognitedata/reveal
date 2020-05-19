@@ -1,7 +1,3 @@
-import { Range3 } from "@/Core/Geometry/Range3";
-import { Random } from "@/Core/PrimitiveClasses/Random";
-import { Ma } from "@/Core/PrimitiveClasses/Ma";
-
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
@@ -14,6 +10,10 @@ import { Ma } from "@/Core/PrimitiveClasses/Ma";
 // Put new code under the correct section, and make more sections if needed.
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
+
+import { Range3 } from "@/Core/Geometry/Range3";
+import { Random } from "@/Core/Primitives/Random";
+import { Ma } from "@/Core/Primitives/Ma";
 
 export class Vector3
 {

@@ -13,7 +13,7 @@
 
 import { Range1 } from "@/Core/Geometry/Range1";
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import { Ma } from "@/Core/PrimitiveClasses/Ma";
+import { Ma } from "@/Core/Primitives/Ma";
 
 export class Range3
 {

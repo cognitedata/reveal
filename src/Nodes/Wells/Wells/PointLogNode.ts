@@ -15,7 +15,7 @@ import { PointLog } from "@/Nodes/Wells/Logs/PointLog";
 import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
-import { TargetId } from "@/Core/PrimitiveClasses/TargetId";
+import { TargetId } from "@/Core/Primitives/TargetId";
 
 export class PointLogNode extends BaseLogNode
 {

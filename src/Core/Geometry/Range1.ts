@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Ma } from "@/Core/PrimitiveClasses/Ma";
+import { Ma } from "@/Core/Primitives/Ma";
 
 export class Range1
 {
@@ -72,7 +72,8 @@ export class Range1
   // INSTANCE METHODS: Requests
   //==================================================
 
-  isEqual(other: Range1): boolean {
+  isEqual(other: Range1): boolean
+  {
     if (this._isEmpty && other._isEmpty)
       return true;
     if (this._isEmpty !== other._isEmpty)

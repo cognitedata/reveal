@@ -11,10 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import { Range1 } from "@/Core/Geometry/Range1";
+import { Random } from "@/Core/Primitives/Random";
+
 import { PointLogSample } from "@/Nodes/Wells/Samples/PointLogSample";
 import { BaseLog } from "@/Nodes/Wells/Logs/BaseLog";
-import { Range1 } from "@/Core/Geometry/Range1";
-import { Random } from "@/Core/PrimitiveClasses/Random";
 
 export class PointLog extends BaseLog
 {

@@ -13,7 +13,7 @@
 
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { TargetId } from "@/Core/PrimitiveClasses/TargetId";
+import { TargetId } from "@/Core/Primitives/TargetId";
 import { TargetIdAccessor } from "@/Core/Interfaces/TargetIdAccessor";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 

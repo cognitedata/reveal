@@ -11,12 +11,13 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { TargetId } from "@/Core/PrimitiveClasses/TargetId";
-import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
 import { Range3 } from "@/Core/Geometry/Range3";
+
+import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
+import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
+import { TargetId } from "@/Core/Primitives/TargetId";
+import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
 import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
 import { WellNode } from "@/Nodes/Wells/Wells/WellNode";
 

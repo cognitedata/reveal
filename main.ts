@@ -1,26 +1,27 @@
 
 
-import { ThreeModule } from './src/Three/ThreeModule';
-import { ThreeRenderTargetNode } from './src/Three/ThreeRenderTargetNode';
+import { Range1 } from "./src/Core/Geometry/Range1";
+import { Range3 } from "./src/Core/Geometry/Range3";
+import { Vector3 } from "./src/Core/Geometry/Vector3";
 
-import { RootNode } from './src/TreeNodes/RootNode';
-import { AxisNode } from './src/Nodes/AxisNode';
+import { ThreeModule } from "./src/Three/ThreeModule";
+import { ThreeRenderTargetNode } from "./src/Three/Nodes/ThreeRenderTargetNode";
+
+import { RootNode } from "./src/Nodes/TreeNodes/RootNode";
+import { AxisNode } from "./src/Nodes/Decorations/AxisNode";
 
 import { WellTrajectoryNode } from "./src/Nodes/Wells/Wells/WellTrajectoryNode";
 import { WellNode } from "./src/Nodes/Wells/Wells/WellNode";
-import { WellTrajectory } from './src/Nodes/Wells/Logs/WellTrajectory';
+import { WellTrajectory } from "./src/Nodes/Wells/Logs/WellTrajectory";
 
 import { PointLogNode } from "./src/Nodes/Wells/Wells/PointLogNode";
 import { FloatLogNode } from "./src/Nodes/Wells/Wells/FloatLogNode";
 import { DiscreteLogNode } from "./src/Nodes/Wells/Wells/DiscreteLogNode";
 
-import { PointLog } from './src/Nodes/Wells/Logs/PointLog';
-import { FloatLog } from './src/Nodes/Wells/Logs/FloatLog';
-import { DiscreteLog } from './src/Nodes/Wells/Logs/DiscreteLog';
+import { PointLog } from "./src/Nodes/Wells/Logs/PointLog";
+import { FloatLog } from "./src/Nodes/Wells/Logs/FloatLog";
+import { DiscreteLog } from "./src/Nodes/Wells/Logs/DiscreteLog";
 
-import { Range3 } from './src/Core/Geometry/Range3';
-import { Range1 } from './src/Core/Geometry/Range1';
-import { Vector3 } from "./src/Core/Geometry/Vector3";
 
 
 main();
@@ -158,7 +159,7 @@ export function main()
 //import { PointsNode } from './src/Nodes/PointsNode';
 //import { Points } from './src/Core/Geometry/Points';
 //import { ColorType } from './src/Core/Enums/ColorType';
-//import { Colors } from './src/Core/PrimitiveClasses/Colors';
+//import { Colors } from './src/Core/Primitives/Colors';
   //{
   //  const range = Range3.createByMinAndMax(0, 0.5, 1, 1);
   //  const target = new ThreeRenderTargetNode(range);

@@ -1,9 +1,10 @@
+
+import { Range3 } from "@/Core/Geometry/Range3";
+import { Polylines } from "@/Core/Geometry/Polylines";
+import { PolylinesNode } from "@/Nodes/Misc/PolylinesNode";
+import { RootNode } from "@/Nodes/TreeNodes/RootNode";
 import { StubModule } from "./StubModule";
 import { StubTargetNode } from "./StubTargetNode";
-import { PolylinesNode } from "@/Nodes/PolylinesNode";
-import { Polylines } from "@/Core/Geometry/Polylines";
-import { Range3 } from "@/Core/Geometry/Range3";
-import { RootNode } from "@/TreeNodes/RootNode";
 
 export class StubRootCreator
 {

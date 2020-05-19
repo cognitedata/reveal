@@ -11,22 +11,22 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import * as color from 'color'
+import * as color from "color"
 
-import { UniqueId } from "@/Core/PrimitiveClasses/UniqueId";
-import { Identifiable } from "@/Core/PrimitiveClasses/Identifiable";
-import { TargetId } from "@/Core/PrimitiveClasses/TargetId";
-import { isInstanceOf, Class } from "@/Core/PrimitiveClasses/ClassT";
+import { UniqueId } from "@/Core/Primitives/UniqueId";
+import { Identifiable } from "@/Core/Primitives/Identifiable";
+import { TargetId } from "@/Core/Primitives/TargetId";
+import { isInstanceOf, Class } from "@/Core/Primitives/ClassT";
 import { RenderStyleResolution } from "@/Core/Enums/RenderStyleResolution";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { TargetIdAccessor } from "@/Core/Interfaces/TargetIdAccessor";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
-import { Colors } from "@/Core/PrimitiveClasses/Colors";
+import { Colors } from "@/Core/Primitives/Colors";
 import { Changes } from "@/Core/Views/Changes";
 import { CheckBoxState } from "@/Core/Enums/CheckBoxState";
 import { Target } from "@/Core/Interfaces/Target";
-import { Util } from "@/Core/PrimitiveClasses/Util";
+import { Util } from "@/Core/Primitives/Util";
 
 export abstract class BaseNode extends Identifiable
 {
