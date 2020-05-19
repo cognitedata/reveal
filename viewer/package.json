@@ -8,6 +8,7 @@
     "directory": "viewer",
     "url": "https://github.com/cognitedata/reveal.git"
   },
+  "homepage": "https://github.com/cognitedata/reveal/tree/master/viewer",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {

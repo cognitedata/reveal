@@ -1,8 +1,28 @@
 # Reveal viewer
 
-## Install
+## Code Example
 
-...
+```typescript
+import { Cognite3DViewer } from "@cognite/reveal";
+import { CogniteClient } from "@cognite/sdk";
+
+const appId = "com.cognite.reveal.example";
+const client = new CogniteClient({ appId });
+
+client.loginWithOAuth({ project: "publicdata" });
+
+const viewer = new Cognite3DViewer({
+  sdk: client,
+  domElement: document.querySelector("#your-element-for-viewer")
+});
+viewer.addModel({ modelId: 4715379429968321, revisionId: 5688854005909501 });
+```
+
+## Installation
+
+```bash
+npm install @cognite/reveal
+```
 
 ### Expose all `*.worker.js` and `*.wasm` files from `@cognite/reveal` 
 
@@ -119,16 +139,6 @@ const revealSource = 'node_modules/@cognite/reveal';
 }
 ```
 
-## Local development
-
-To run the test project on a local server:
-
-```bash
-npm run serve
-```
-
-Important: Node version 10 is necessary for wasm-pack to work.
-
 ## Coordinate systems
 
 The data served from Cognite Data Fusion is in a right-handed coordinate system with Z up,
@@ -142,25 +152,6 @@ Y up, X to the right and Z pointing out of the screen.
 The policy in this repository is to stick with the CDF coordinate system in any code that is not
 viewer-specific.
 For viewer-specific code, the conversion should happen as early as possible.
-
-# Code Example
-
-```typescript
-const wrapper = document.createElement('div');
-const wrapperStyle = wrapper.style;
-wrapperStyle.position = 'fixed';
-wrapperStyle.width = '800px';
-wrapperStyle.height = '600px';
-document.body.appendChild(wrapper);
-
-const appId = 'com.cognite.reveal.example';
-const client = new CogniteClient({ appId });
-client.loginWithOAuth({ project: 'publicdata' });
-
-const viewer = new Cognite3DViewer({ sdk: client, domElement: wrapper });
-viewer.addModel({ modelId: 4715379429968321, revisionId: 5688854005909501 });
-
-```
 
 # API Reference
 
