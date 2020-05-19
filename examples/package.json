@@ -34,7 +34,7 @@
     "@types/gl-matrix": "^2.4.5",
     "@types/jest": "^25.2.3",
     "@types/node": "^14.0.1",
-    "@types/tween.js": "^18.5.0",
+    "@types/tween.js": "^18.5.1",
     "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^3.5.3",
     "file-loader": "^6.0.0",
