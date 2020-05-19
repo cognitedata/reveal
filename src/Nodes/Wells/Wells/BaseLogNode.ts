@@ -14,6 +14,7 @@
 import { BaseVisualNode } from "../../../Core/Nodes/BaseVisualNode";
 import { BaseLog } from "./../Logs/BaseLog";
 import { WellNode } from "./WellNode";
+import { WellTrajectoryNode } from "./WellTrajectoryNode";
 
 export abstract class BaseLogNode extends BaseVisualNode
 {
@@ -30,6 +31,7 @@ export abstract class BaseLogNode extends BaseVisualNode
   protected get data(): BaseLog | null { return this._data; }
   protected set data(value: BaseLog | null) { this._data = value; }
   public get well(): WellNode | null { return this.getAncestorByType(WellNode); }
+  public get wellTrajectory(): WellTrajectoryNode | null { return this.getAncestorByType(WellTrajectoryNode); }
 
   //==================================================
   // CONSTRUCTORS

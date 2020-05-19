@@ -38,5 +38,4 @@ export default function Settings() {
       </React.Fragment> : null}
     </div>
   );
-
 }

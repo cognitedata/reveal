@@ -70,6 +70,7 @@ export class ThreeCameraNode extends BaseCameraNode
       if (!camera)
         return null;
 
+        // https://andreasrohner.at/posts/Web%20Development/JavaScript/Simple-orbital-camera-controls-for-THREE-js/
       this._controls = new CameraControls(camera, target.domElement);
       this._controls.setPosition(0, 0, 20);
     }

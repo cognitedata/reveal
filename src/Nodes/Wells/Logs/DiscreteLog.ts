@@ -20,6 +20,12 @@ import { Random } from "../../../Core/PrimitiveClasses/Random";
 export class DiscreteLog extends BaseLog
 {
   //==================================================
+  // INSTANCE FIELDS
+  //==================================================
+
+  private _range: Range1 | undefined;
+
+  //==================================================
   // OVERRIDES of BaseLog
   //==================================================
 
@@ -31,13 +37,6 @@ export class DiscreteLog extends BaseLog
   //==================================================
   // INSTANCE METHODS: Getter
   //==================================================
-
-  public getRange(): Range1
-  {
-    const range = new Range1();
-    this.expandRange(range);
-    return range;
-  }
 
   public getAt(index: number): DiscreteLogSample { return this.samples[index] as DiscreteLogSample; }
 
@@ -52,8 +51,28 @@ export class DiscreteLog extends BaseLog
   }
 
   //==================================================
-  // INSTANCE METHODS: Operations
+  // INSTANCE METHODS: Range
   //==================================================
+
+  public get range(): Range1
+  {
+    if (!this._range)
+      this._range = this.calculateRange();
+    return this._range;
+  }
+
+  public calculateRange(): Range1
+  {
+    const range = new Range1();
+    this.expandRange(range);
+    return range;
+  }
+
+  public touch(): void
+  {
+    super.touch();
+    this._range = undefined;
+  }
 
   public expandRange(range: Range1): void
   {
@@ -72,11 +91,10 @@ export class DiscreteLog extends BaseLog
   public static createByRandom(mdRange: Range1, valueRange: Range1): DiscreteLog
   {
     const log = new DiscreteLog();
-    const numSamples = 1000;
-    const mdInc = mdRange.delta / numSamples;
-    let md = mdRange.min;
+    const numSamples = 100;
+    const mdInc = mdRange.delta / (numSamples - 1);
 
-    for (let k = 0; k < numSamples; k++, md += mdInc)
+    for (let k = 0, md = mdRange.min; k < numSamples; k++, md += mdInc)
       log.samples.push(new DiscreteLogSample(Random.getInt(valueRange), md));
     return log;
   }

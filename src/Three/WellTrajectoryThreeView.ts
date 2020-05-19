@@ -12,14 +12,13 @@
 //=====================================================================================
 
 import * as THREE from 'three';
-import { Color } from "three";
 import { BaseGroupThreeView } from "./BaseGroupThreeView";
 import { WellTrajectoryNode } from "../Nodes/Wells/Wells/WellTrajectoryNode";
 import { WellRenderStyle } from "../Nodes/Wells/Wells/WellRenderStyle";
 import { ThreeConverter } from "./ThreeConverter";
 import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
 import { Range3 } from '../Core/Geometry/Range3';
-import { ThreeLabel as TreeLabel } from "./Utilities/ThreeLabel";
+import { ThreeLabel } from "./Utilities/ThreeLabel";
 import { TrajectorySample } from "../Nodes/Wells/Samples/TrajectorySample";
 
 export class WellTrajectoryThreeView extends BaseGroupThreeView
@@ -49,10 +48,12 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
   public calculateBoundingBoxCore(): Range3 | undefined
   {
     const boundingBox = this.node.boundingBox;
-    if (boundingBox == undefined)
+    if (!boundingBox)
       return undefined;
 
     boundingBox.expandByMargin(this.style.radius);
+
+    boundingBox.z.max += 60;
     return boundingBox;
   }
 
@@ -60,7 +61,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
   // OVERRIDES of BaseGroupThreeView
   //==================================================
 
-  protected /*override*/ createObject3D(): THREE.Object3D | null
+  protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
     const node = this.node;
     const style = this.style;
@@ -73,7 +74,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     const well = node.well;
     if (well)
     {
-      const label = TreeLabel.createByPositionAndAlignment(well.name, well.wellHead, 1, 60, true);
+      const label = ThreeLabel.createByPositionAndAlignment(well.name, well.wellHead, 1, 60, true);
       if (label)
         group.add(label);
     }
@@ -87,15 +88,13 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       const sample = baseSample as TrajectorySample;
       points.push(ThreeConverter.toVector(sample.point));
     }
-
     const curve = new THREE.CatmullRomCurve3(points);
     const geometry = new THREE.TubeGeometry(curve, 100, style.radius, 16);
-    const material = new THREE.MeshPhongMaterial(
+    const material = new THREE.MeshStandardMaterial(
       {
         color: threeColor,
         flatShading: false,
-        shininess: 100,
-        emissive: new Color(1, 1, 1),
+        emissive: threeColor,
         emissiveIntensity: 0.2
       });
 

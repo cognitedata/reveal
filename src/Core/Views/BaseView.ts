@@ -123,7 +123,7 @@ export abstract class BaseView
     else
       style = this.getNode().getRenderStyle(this._target.targetId);
     if (!style)
-      throw Error("The style is missing in the view");
+     throw Error("The style is missing in the view");
     return style;
   }
 

@@ -12,6 +12,8 @@ import { DiscreteLog } from "./src/Nodes/Wells/Logs/DiscreteLog";
 import { RootNode } from "./src/TreeNodes/RootNode";
 import { AxisNode } from "./src/Nodes/AxisNode";
 import { Vector3 } from "./src/Core/Geometry/Vector3";
+import { MdSample } from "./src/Nodes/Wells/Samples/MdSample";
+import { MdSamples } from "./src/Nodes/Wells/Logs/MdSamples";
 
 main();
 
@@ -33,24 +35,24 @@ export function main() {
     well.wellHead.z = 0;
 
     // Add 5 trajectories
-    for (let j = 0; j < 5; j++) {
+    for (let j = 0; j < i + 1; j++) {
       const wellTrajectory = new WellTrajectoryNode();
       wellTrajectory.data = WellTrajectory.createByRandom(well.wellHead);
       well.addChild(wellTrajectory);
 
-      const mdRange = wellTrajectory.data.getMdRange();
+      const mdRange = wellTrajectory.data.mdRange;
       mdRange.expandByFraction(-0.05);
 
       // Add 2 float logs
       for (let k = 0; k < 3; k++) {
-        const valueRange = new Range1(0, k + 1 + 0.5);
+        const valueRange = new Range1(0, 100);
         const logNode = new FloatLogNode();
         logNode.data = FloatLog.createByRandom(mdRange, valueRange);
         wellTrajectory.addChild(logNode);
       }
       // Add 3 discrete logs
       for (let k = 0; k < 3; k++) {
-        const valueRange = new Range1(0, k + 1 + 0.5);
+        const valueRange = new Range1(0, 5);
         const logNode = new DiscreteLogNode();
         logNode.data = DiscreteLog.createByRandom(mdRange, valueRange);
         wellTrajectory.addChild(logNode);
@@ -78,6 +80,18 @@ export function main() {
     target.setActiveInteractive();
   }
   // Set some visible in target 0
+
+  let n = 0;
+  for (const node of root.getDescendantsByType(FloatLogNode)) {
+    node.setVisibleInteractive(true);
+    n++;
+    if (n > 3) break;
+  }
+  for (const node of root.getDescendantsByType(DiscreteLogNode)) {
+    node.setVisibleInteractive(true);
+    n++;
+    if (n > 3) break;
+  }
 
   for (const node of root.getDescendantsByType(WellTrajectoryNode))
     node.setVisibleInteractive(true);

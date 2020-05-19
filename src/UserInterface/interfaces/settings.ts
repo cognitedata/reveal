@@ -10,7 +10,7 @@ export interface SettingsActionInterface {
 export type SettingsActionPayloadType = {
   sectionId: number;
   subSectionId?: number;
-  elementIndex: number;
+  elementIndex?: number;
   iconIndex?: number;
   subElementIndex?: number;
   value?: string;

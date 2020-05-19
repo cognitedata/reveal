@@ -49,8 +49,8 @@ export default (state = initialState, action: SettingsActionInterface) => {
       const section = state.sections[sectionId!];
       let element = null;
       if (isNumber(subSectionId))
-        element = section.subSections![subSectionId!].elements[elementIndex];
-      else element = section.elements[elementIndex];
+        element = section.subSections![subSectionId!].elements[elementIndex!];
+      else element = section.elements[elementIndex!];
       if (isNumber(subElementIndex))
         element.subElements![subElementIndex!].value = value;
       else element.value = value;
@@ -61,7 +61,7 @@ export default (state = initialState, action: SettingsActionInterface) => {
       const section = state.sections[sectionId ? sectionId : 0];
       let element = null;
       if (isNumber(subSectionId))
-        element = section.subSections![subSectionId!].elements[elementIndex];
+        element = section.subSections![subSectionId!].elements[elementIndex!];
       else element = section.elements[elementIndex];
       element.checked = !element.checked;
       return { ...state };

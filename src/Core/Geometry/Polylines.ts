@@ -42,7 +42,7 @@ export class Polylines
 
   public getRange(): Range3
   {
-    const range: Range3 = new Range3();
+    const range = new Range3();
     for (const polyline of this.list)
       range.addRange(polyline.getRange());
     return range;

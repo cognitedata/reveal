@@ -11,8 +11,4 @@ export const IconTypes = {
   POINT_SYMBOL: "PointSymbol",
   SHOW: "Show",
   STATES: "States",
-}
-
-export const ToolBarActionTypes = {
-  EXPAND: "EXPAND"
 };
