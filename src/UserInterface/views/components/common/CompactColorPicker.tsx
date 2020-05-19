@@ -41,9 +41,17 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function CompactColorPicker(props) {
-  const classes = useStyles();
+/**
+ * CompactColorPicker component
+ */
+export default function CompactColorPicker(props: {
+  value: string,
+  sectionId: number,
+  subSectionId?: number,
+  elementIndex: number
+}) {
 
+  const classes = useStyles();
   const { value: color, sectionId, subSectionId, elementIndex } = props;
   const dispatch = useDispatch();
   const [visible, setVisibility] = useState(false);

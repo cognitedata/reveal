@@ -7,7 +7,8 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
-import { onExpandChange } from "../../../redux/actions/settings"
+import { onExpandChange } from "../../../redux/actions/settings";
+import { ToolBarType } from "../../../interfaces/common";
 import ToolBar from './ToolBar';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -51,7 +52,18 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function ExpansionView(props) {
+/**
+ * ExpansionView Component
+ */
+export default function ExpansionView(props: {
+  sectionId: number,
+  title: string,
+  isExpanded: boolean,
+  subSectionId?: number,
+  toolBar?: ToolBarType,
+  children: JSX.Element
+}) {
+
   const classes = useStyles();
   const dispatch = useDispatch();
 

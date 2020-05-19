@@ -1,5 +1,4 @@
 import {
-  SettingsActionTypes,
   ON_EXPAND_CHANGE,
   ON_TEXT_INPUT_CHANGE,
   ON_SELECT_INPUT_CHANGE,
@@ -10,22 +9,31 @@ import {
   ON_CHANGE_SETTING_AVAILABILITY,
 } from "../types/settings";
 
+import {
+  SettingsActionInterface,
+  SettingsStateInterface,
+} from "../../interfaces/settings";
+
 import { state1 } from "../../data/settings-dummy-state1";
 import { state3 } from "../../data/settings-dummy-state3";
 
+import { isNumber } from "../../utils/Settings";
 import { generateSettingsConfig } from "../../data/generateNodes";
 
 // Initial settings state
-const initialState = {};
+const initialState: SettingsStateInterface = {
+  id: null,
+  sections: [],
+};
 
 // Settings reducer to update state with actions
-export default (state = initialState, action: SettingsActionTypes) => {
+export default (state = initialState, action: SettingsActionInterface) => {
   switch (action.type) {
     case ON_EXPAND_CHANGE: {
       const { sectionId, subSectionId } = action.payload;
-      const section = state.sections[sectionId];
-      if (subSectionId >= 0) {
-        const subSection = section.subSections[subSectionId];
+      const section = state.sections[sectionId!];
+      if (isNumber(subSectionId)) {
+        const subSection = section.subSections![subSectionId];
         subSection.isExpanded = !subSection.isExpanded;
       } else {
         section.isExpanded = !section.isExpanded;
@@ -34,6 +42,7 @@ export default (state = initialState, action: SettingsActionTypes) => {
     }
     case ON_RANGE_INPUT_CHANGE:
     case ON_TEXT_INPUT_CHANGE:
+    case ON_COMPACT_COLOR_CHANGE:
     case ON_SELECT_INPUT_CHANGE: {
       const {
         sectionId,
@@ -42,44 +51,32 @@ export default (state = initialState, action: SettingsActionTypes) => {
         subElementIndex,
         value,
       } = action.payload;
-      const section = state.sections[sectionId];
+      const section = state.sections[sectionId!];
       let element = null;
-      if (typeof subSectionId === "number")
-        element = section.subSections[subSectionId].elements[elementIndex];
+      if (isNumber(subSectionId))
+        element = section.subSections![subSectionId].elements[elementIndex];
       else element = section.elements[elementIndex];
-      if (typeof subElementIndex === "number")
-        element.subElements[subElementIndex].value = value;
+      if (isNumber(subElementIndex))
+        element.subElements![subElementIndex!].value = value;
       else element.value = value;
       return { ...state };
     }
     case ON_CHANGE_SETTING_AVAILABILITY: {
       const { sectionId, subSectionId, elementIndex } = action.payload;
-      const section = state.sections[sectionId];
+      const section = state.sections[sectionId ? sectionId : 0];
       let element = null;
-      if (subSectionId)
-        element = section.subSections[subSectionId].elements[elementIndex];
+      if (isNumber(subSectionId))
+        element = section.subSections![subSectionId].elements[elementIndex];
       else element = section.elements[elementIndex];
       element.checked = !element.checked;
       return { ...state };
     }
-    case ON_COMPACT_COLOR_CHANGE: {
-      const { sectionId, subSectionId, elementIndex, value } = action.payload;
-      const section = state.sections[sectionId];
-      let element = null;
-      if (typeof subSectionId === "number")
-        element = section.subSections[subSectionId].elements[elementIndex];
-      else element = section.elements[elementIndex];
-      if (typeof subElementIndex === "number")
-        element.subElements[subElementIndex].value = value;
-      else element.value = value;
-      return { ...state };
-    }
     case ON_EXPAND_CHANGE_FROM_TOOLBAR: {
-      const { sectionId, subSectionIndex, iconIndex } = action.payload;
-      const section = state.sections[sectionId];
-      const icon = section.toolBar[iconIndex];
+      const { sectionId, subSectionId, iconIndex } = action.payload;
+      const section = state.sections[sectionId!];
+      const icon = section.toolBar![iconIndex!];
       icon.selected = !icon.selected;
-      const subSection = section.subSections[subSectionIndex];
+      const subSection = section.subSections![subSectionId];
       subSection.isExpanded = !subSection.isExpanded;
       return { ...state };
     }

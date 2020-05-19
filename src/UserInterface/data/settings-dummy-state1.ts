@@ -2,8 +2,8 @@ import { IconTypes } from "../constants/Icons";
 
 export const state1 = {
   titleBar: {
-    name: "Random Polylines 1",
-    icon: { type: IconTypes.NODES, name: "PolylinesNode" },
+    name: "Well 7",
+    icon: { type: IconTypes.NODES, name: "WellNode" },
     toolBar: [
       {
         icon: { type: IconTypes.STATES, name: "Pinned" },
@@ -161,7 +161,7 @@ export const state1 = {
           selected: false,
           action: {
             type: "EXPAND",
-            subSectionIndex: 1,
+            subSectionId: 1,
           },
         },
         {
@@ -172,7 +172,7 @@ export const state1 = {
           selected: true,
           action: {
             type: "EXPAND",
-            subSectionIndex: 0,
+            subSectionId: 0,
           },
         },
       ],

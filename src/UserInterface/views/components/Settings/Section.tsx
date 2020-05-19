@@ -2,8 +2,13 @@ import React from 'react';
 
 import ExpansionView from "../Common/ExpansionView";
 import Form from './Form';
+import { SettingsSectionInterface } from "../../../interfaces/settings"
 
-export default function Section(props) {
+export default function Section(props: {
+  sectionId: number,
+  subSectionId?: number,
+  section: SettingsSectionInterface,
+}) {
 
   const { sectionId, subSectionId, section } = props;
   const { name, toolBar, elements, subSections } = section;
@@ -23,14 +28,14 @@ export default function Section(props) {
               key={`${sectionId}-sub-${subSectionId}-${index}`}
               section={subSection}
               sectionId={sectionId}
-              subSectionId={index}>
-            </Section>))}</div> :
+              subSectionId={index} />
+            ))}</div> :
         <Form
           elements={elements}
           sectionId={sectionId}
           subSectionId={subSectionId}
-        >
-        </Form>}
+        />
+      }
     </ExpansionView>
   );
 }

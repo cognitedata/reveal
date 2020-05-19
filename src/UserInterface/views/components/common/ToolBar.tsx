@@ -2,28 +2,43 @@ import React from 'react';
 import { useDispatch } from "react-redux";
 
 import Icon from './Icon';
+import { ToolBarType } from "../../../interfaces/common";
 import { onExpandChangeFromToolbar } from "../../../redux/actions/settings";
 
-function assignToolBarAction(sectionId, iconIndex, action) {
-    switch (action.type) {
-        case "EXPAND":
-            return {
-                func: onExpandChangeFromToolbar,
-                data: {
-                    sectionId,
-                    iconIndex,
-                    subSectionIndex: action.subSectionIndex
+// Assign toolbar actions
+function assignToolBarAction(
+    sectionId: number,
+    iconIndex: number,
+    action?: {
+        type: string,
+        subSectionId?: number
+    }) {
+    if (action) {
+        const { type, subSectionId } = action;
+        switch (type) {
+            case "EXPAND":
+                return {
+                    func: onExpandChangeFromToolbar,
+                    data: {
+                        sectionId,
+                        iconIndex,
+                        subSectionId: subSectionId
+                    }
                 }
-            }
-        default:
-            return {};
+        }
     }
+    return {};
 }
 
-
-export default function ToolBar(props) {
+/**
+ * ToolBar component
+ * @param props 
+ */
+export default function ToolBar(props: {
+    toolBar?: ToolBarType,
+    sectionId: number
+}) {
     const { toolBar, sectionId } = props;
-
     if (!toolBar || !toolBar.length) return null;
 
     const dispatch = useDispatch();
@@ -39,12 +54,11 @@ export default function ToolBar(props) {
                     if (func) {
                         dispatch(func(data))
                     }
-                }} >
+                }}>
                 <Icon
                     type={icon.type}
                     name={icon.name}
-                >
-                </Icon>
+                />
             </div>
         })}
     </div>

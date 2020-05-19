@@ -22,6 +22,7 @@ import FatLeft from "../assets/images/Icons/Arrows/FatLeft.png";
 import Cube from "../assets/images/Icons/PointSymbol/Cube.png";
 import Sphere from "../assets/images/Icons/PointSymbol/Sphere.png";
 import LabelImage from "../assets/images/Icons/Show/Label.png";
+import WellNode from "../assets/images/Icons/Nodes/WellNode.png";
 
 
 export default function getIcon(iconType: string, iconName: string) {
@@ -64,6 +65,8 @@ export default function getIcon(iconType: string, iconName: string) {
           return MapIcon;
         case "PointsNode":
           return PointsNode;
+        case "WellNode":
+          return WellNode;
       }
     case IconTypes.ARROWS:
       switch (iconName) {

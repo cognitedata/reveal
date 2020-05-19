@@ -161,7 +161,7 @@ export const state2 = {
           selected: false,
           action: {
             type: "EXPAND",
-            subSectionIndex: 1,
+            subSectionId: 1,
           },
         },
         {
@@ -172,7 +172,7 @@ export const state2 = {
           selected: true,
           action: {
             type: "EXPAND",
-            subSectionIndex: 0,
+            subSectionId: 0,
           },
         },
       ],

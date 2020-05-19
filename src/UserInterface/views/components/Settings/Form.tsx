@@ -1,6 +1,8 @@
 import React from "react";
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+
 import Input from "../Common/Input";
+import { SectionElement } from "../../../interfaces/settings";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -17,16 +19,25 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function Form(props: { elements, sectionId, subSectionId }) {
+/**
+ * Settings form component
+ */
+export default function Form(props: {
+  elements: Array<SectionElement>,
+  sectionId: number,
+  subSectionId?: number
+}) {
+
   const { elements, sectionId, subSectionId } = props;
   const classes = useStyles();
+
   return <div className={classes.formContainer}>
     {elements.map((element, index) => <Input
       key={`${sectionId}-input-${subSectionId ? subSectionId : ""}-${index}`}
       sectionId={sectionId}
       subSectionId={subSectionId}
       config={element}
-      elementIndex={index}>
-    </Input>)}
+      elementIndex={index} />
+    )}
   </div>
 } 

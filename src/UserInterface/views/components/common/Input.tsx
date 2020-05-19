@@ -12,6 +12,8 @@ import {
 } from "../../../redux/actions/settings"
 import Icon from "./Icon";
 import CompactColorPicker from "./CompactColorPicker";
+import { SectionElement } from "../../../interfaces/settings";
+import Inputs from "../../../constants/Inputs";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -87,29 +89,46 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-function isAvailable(checked) {
+function isAvailable(checked?: boolean) {
   if (typeof checked !== "boolean" || checked) return true;
   return false;
 }
 
-export default function Input(props: { config, elementIndex, sectionId, subSectionId }) {
+/**
+ * Responsible for rendering dynamic inputs
+ * @param props 
+ */
+export default function Input(props: {
+  config: SectionElement,
+  elementIndex: number,
+  sectionId: number,
+  subSectionId?: number
+}) {
+
   const classes = useStyles();
   const { config, elementIndex, sectionId, subSectionId } = props;
 
   const dispatch = useDispatch();
   const labelElelent = config.label ? (<label>{`${config.label}:`}</label>) : null;
 
-  const keyExtractor = (other, subElementIndex, elementType) => {
+  // Generate keys for mapped components
+  const keyExtractor = (extraIdentifier: number | string | null, subElementIndex: number | null, elementType: string) => {
     let key = `${sectionId}-${elementIndex}-${elementType}`;
-    if (other) key += `-${other}`
+    if (extraIdentifier) key += `-${extraIdentifier}`
     if (subElementIndex) key += `-${subElementIndex}`;
     return { key }
   }
 
-  const inputElement = (config, subElementIndex, checked) => {
+  // Create random input elements
+  const inputElement = (
+    config: SectionElement,
+    subElementIndex: number | null,
+    checked?: boolean): any => {
+
     const { value, isReadOnly, options, subElements, icon } = config;
+
     switch (config.type) {
-      case "input":
+      case Inputs.INPUT:
         return (<input
           disabled={!isAvailable(checked)}
           {...keyExtractor(null, subElementIndex, config.type)}
@@ -122,7 +141,7 @@ export default function Input(props: { config, elementIndex, sectionId, subSecti
               : classes.textInput}>
         </input >
         );
-      case "select":
+      case Inputs.SELECT:
         return (
           <Select
             {...keyExtractor(null, subElementIndex, config.type)}
@@ -137,27 +156,27 @@ export default function Input(props: { config, elementIndex, sectionId, subSecti
                 value: event.target.value
               }))}
           >
-            {options.map((option, idx) =>
+            {options!.map((option, idx) =>
               <MenuItem value={idx}
                 {...keyExtractor(idx, subElementIndex, config.type)}>
                 <div className={classes.option}>
                   {option.icon ?
                     <Icon
                       name={option.icon.name}
-                      type={option.icon.type}>
-                    </Icon> : null}
+                      type={option.icon.type} />
+                    : null}
                   <span className={classes.optionText}>{option.name}</span>
                 </div>
               </MenuItem>)}
           </Select>);
-      case "color-table":
+      case Inputs.COLOR_TABLE:
         return (<CompactColorPicker
-          value={value}
+          value={typeof value === "string" ? value : ""}
           sectionId={sectionId}
           subSectionId={subSectionId}
           elementIndex={elementIndex}
         ></CompactColorPicker>);
-      case "range":
+      case Inputs.RANGE:
         return <input type="range"
           disabled={!isAvailable(checked)}
           onChange={(event) =>
@@ -172,18 +191,18 @@ export default function Input(props: { config, elementIndex, sectionId, subSecti
           min="0"
           max="100">
         </input>;
-      case "image-button":
+      case Inputs.IMAGE_BUTTON:
         return <div
           {...keyExtractor(null, subElementIndex, config.type)}
-          className={`input-icon ${icon.selected ? "input-icon-selected" : ""}`}
+          className={`input-icon ${icon!.selected ? "input-icon-selected" : ""}`}
         >
           <Icon
-            type={icon.type}
-            name={icon.name}
+            type={icon!.type}
+            name={icon!.name}
           />
         </div>
-      case "input-group":
-        return subElements.map((element, idx) => inputElement(element, idx, checked));
+      case Inputs.INPUT_GROUP:
+        return subElements!.map((element, idx) => inputElement(element, idx, checked));
       default:
         return null;
     }
