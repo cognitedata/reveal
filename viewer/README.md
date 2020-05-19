@@ -258,70 +258,70 @@ The API mostly matches the API of the previous Reveal viewer that can be found a
 
 **Hints**
 > `renderHints()`: CadRenderHints;<br>
-> 
+> Get the render hints of a model
 
 > `renderHints(`hints: CadRenderHints`)`: void;<br>
->
+> Set the render hints of a model
 
 > `loadingHints()`: CadLoadingHints;<br>
->
+> Get the loading hints of a model
 
 > `renderHints(`hints: CadLoadingHints`)`: void;<br>
->
+> Set the loading hints of a model
 
 **Bounding Box**
 > `getBoundingBox(`nodeId?: number, box?: THREE.Box3`)`: THREE.Box3;<br>
->
+> Get the bounding of the entire model, bounding box of node is not supported, use `getBoundingBoxFromApi()`
 
 > async `getBoundingBoxFromApi(`nodeId: number, box?: THREE.Box3`)`: Promise\<THREE.Box3\>;<br>
->
+> Get the bounding box of a node.
 
 > `getModelBoundingBox()`: THREE.Box3;<br>
->
+> Get the bounding box of the entire model.
 
 **Visibility**
 > async `showNode(`nodeId: number`)`: Promise\<void\>;<br>
->
+> Make a node visible.
 
 > async `hideNode(`nodeId: number, makeGray?: boolean`)`: Promise\<void\>;<br>
->
+> Make a node invisible.
 
 > `showAllNodes()`: void;<br>
->
+> Make all nodes visisble.
 
 > `hideAllNodes(`makeGray?: boolean`)`: void;<br>
->
+> Make all nodes invisible.
 
 **Color**
 > async `getNodeColor(`nodeId: number`)`: Promise\<Color\>;<br>
->
+> Get the color of a node.
 
 > async `setNodeColor(`nodeId: number, r: number, g: number, b: number`)`: Promise\<void\>;<br>
->
+> Set the color of a node.
 
 > async `resetNodeColor(`nodeId: number`)`: Promise\<void\>;<br>
->
+> Reset the color of a node.
 
 **Selection**
 
 > `selectNode(`_nodeId: number`)`: void;<br>
->
+> Select a node.
 
 > `deselectNode(`_nodeId: number`)`: void;<br>
->
+> Deselect a node.
 
 > `deselectAllNodes()`: void;<br>
->
+> Deselect all nodes.
 
 **Utilities**
 > `tryGetNodeId(`treeIndex: number`)`: number | undefined;<br>
->
+> Get id of node through treeIndex
 
 > `getSubtreeNodeIds(`_nodeId: number, _subtreeSize?: number`)`: Promise\<number[]\>;<br>
->
+> Get node ids of children of a node.
 
 > `iterateNodes(`_action: (nodeId: number, treeIndex?: number) => void`)`: void;<br>
->
+> Iterate through the nodes.
 
 > `iterateSubtree(`_nodeId: number, _action: (nodeId: number, treeIndex?: number) => void, _treeIndex?: number, _subtreeSize?: number`)`: Promise\<boolean\>;<br>
 > @Not supported
