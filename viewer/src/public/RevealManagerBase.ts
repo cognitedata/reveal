@@ -10,7 +10,8 @@ import {
   animationFrameScheduler,
   OperatorFunction,
   pipe,
-  from
+  from,
+  of
 } from 'rxjs';
 import {
   publish,
@@ -292,20 +293,28 @@ export class RevealManagerBase {
       .pipe(
         auditTime(100),
         map(camera => camera.clone()),
-        withLatestFrom(
-          this._cadNodeObservable.pipe(
-            flatMap(nodeArray =>
-              from(nodeArray).pipe(
-                filter(node => node.loadingHints.suspendLoading !== true),
-                map(node => node.cadModel),
-                toArray()
-              )
-            )
-          ),
-          this._loadingHintsSubject.pipe(share())
-        ),
+        withLatestFrom(this._cadNodeObservable, this._loadingHintsSubject.pipe(share())),
         filter(([_camera, cadModels, loadingHints]) => cadModels.length > 0 && loadingHints.suspendLoading !== true),
-        map(([camera, cadModels, loadingHints]) =>
+        // TODO j-bjorne 19-05-2020: Currently pulling each update for cadnode array and iterating over it.
+        // Look into possibility of making it more push based to for instant react to changes of local loading hints regardless of camera update.
+        flatMap(([_camera, cadNodes, loadingHints]) => {
+          return of({ _camera, cadNodes, loadingHints }).pipe(
+            flatMap(
+              input =>
+                from(input.cadNodes).pipe(
+                  filter(cadNode => cadNode.loadingHints.suspendLoading !== true),
+                  map(cadNode => cadNode.cadModel),
+                  toArray()
+                ),
+              (input, cadModels) => ({
+                camera: input._camera,
+                cadModels,
+                loadingHints: input.loadingHints
+              })
+            )
+          );
+        }),
+        map(({ camera, cadModels, loadingHints }) =>
           this._sectorCuller.determineSectors({ camera, cadModels, loadingHints })
         ),
         // Load sectors from repository
