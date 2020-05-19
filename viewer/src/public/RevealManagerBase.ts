@@ -2,7 +2,16 @@
  * Copyright 2020 Cognite AS
  */
 
-import { Subject, Observable, merge, BehaviorSubject, animationFrameScheduler, OperatorFunction, pipe } from 'rxjs';
+import {
+  Subject,
+  Observable,
+  merge,
+  BehaviorSubject,
+  animationFrameScheduler,
+  OperatorFunction,
+  pipe,
+  from
+} from 'rxjs';
 import {
   publish,
   filter,
@@ -13,7 +22,8 @@ import {
   share,
   switchAll,
   observeOn,
-  scan
+  scan,
+  toArray
 } from 'rxjs/operators';
 import { loadCadModelByUrl, loadCadModelFromCdf, CadModel } from '@/dataModels/cad/internal';
 import { createLocalPointCloudModel, createPointCloudModel, PointCloudModel } from '@/dataModels/pointCloud';
@@ -62,7 +72,7 @@ export class RevealManagerBase {
   private readonly _loadingHintsSubject: Subject<CadLoadingHints> = new BehaviorSubject({});
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera>;
   private readonly _modelObservable: Observable<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper]>;
-  private readonly _cadModelObservable: Observable<CadModel[]>;
+  private readonly _cadNodeObservable: Observable<CadNode[]>;
 
   private readonly _cadNodeMap: Map<string, CadNode> = new Map();
 
@@ -82,7 +92,7 @@ export class RevealManagerBase {
     this._sectorRepository = sectorRepository;
     this._materialManager = materialManager;
     this._modelObservable = this._modelSubject.pipe(this.addCadOrPointcloudModel(client));
-    this._cadModelObservable = this._modelObservable.pipe(this.getAddedModels());
+    this._cadNodeObservable = this._modelObservable.pipe(this.getAddedModels());
     this._cameraSubject = this.createLoadSectorsPipeline(dataUpdatedCallback);
   }
 
@@ -265,11 +275,10 @@ export class RevealManagerBase {
     );
   }
 
-  private getAddedModels(): OperatorFunction<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper], CadModel[]> {
-    const cadNodeArray: CadModel[] = [];
+  private getAddedModels(): OperatorFunction<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper], CadNode[]> {
+    const cadNodeArray: CadNode[] = [];
     return pipe(
       filter((model): model is CadNode => model instanceof CadNode),
-      map(node => node.cadModel),
       scan((accumulator, cadnode) => {
         accumulator.push(cadnode);
         return accumulator;
@@ -283,7 +292,18 @@ export class RevealManagerBase {
       .pipe(
         auditTime(100),
         map(camera => camera.clone()),
-        withLatestFrom(this._cadModelObservable, this._loadingHintsSubject.pipe(share())),
+        withLatestFrom(
+          this._cadNodeObservable.pipe(
+            flatMap(nodeArray =>
+              from(nodeArray).pipe(
+                filter(node => node.loadingHints.suspendLoading !== true),
+                map(node => node.cadModel),
+                toArray()
+              )
+            )
+          ),
+          this._loadingHintsSubject.pipe(share())
+        ),
         filter(([_camera, cadModels, loadingHints]) => cadModels.length > 0 && loadingHints.suspendLoading !== true),
         map(([camera, cadModels, loadingHints]) =>
           this._sectorCuller.determineSectors({ camera, cadModels, loadingHints })
