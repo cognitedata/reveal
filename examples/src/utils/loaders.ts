@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import * as reveal from '@cognite/reveal';
+import * as reveal from '@cognite/reveal/experimental';
 import { CogniteClient } from '@cognite/sdk';
 
 export type CdfModelIdentifier = { modelId: number; project: string };

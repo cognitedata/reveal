@@ -4,8 +4,7 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import * as reveal from '@cognite/reveal';
-import { MOUSE } from 'three';
+import * as reveal from '@cognite/reveal/experimental';
 import { getParamsFromURL } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 
@@ -79,7 +78,7 @@ async function main() {
   };
 
   const onLeftMouseDown = (event: MouseEvent) => {
-    if (event.button === MOUSE.RIGHT) {
+    if (event.button === THREE.MOUSE.RIGHT) {
       return;
     }
     const rect = renderer.domElement.getBoundingClientRect();
