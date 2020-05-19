@@ -1,8 +1,8 @@
 {
   "name": "@cognite/reveal",
-  "version": "0.1.1",
+  "version": "1.0.0-alpha-1",
   "private": true,
-  "description": "Reveal streaming component",
+  "description": "WebGL based 3D viewer for CAD and point clouds processed in Cognite CDF.",
   "repository": {
     "type": "git",
     "directory": "viewer",
@@ -25,10 +25,11 @@
     "publishscript": "node script/copyPackage.js",
     "postpublishscript": "cd dist && npm publish"
   },
-  "author": "Svenn-Arne Dragly <dragly@cognite.com>",
+  "author": "Lars Moastuen <lars.moastuen@cognite.com>",
   "contributors": [
-    "Lars Moastuen <lars.moastuen@cognite.com>",
-    "Joachim Bjørne <joachim.bjorne@cognite.com>"
+    "Joachim Bjørne <joachim.bjorne@cognite.com>",
+    "Christopher Tannum <christopher.tannum@cognite.com>",
+    "Maksim Nesterenko <maksim.nesterenko@cognite.com>"
   ],
   "license": "Apache-2.0",
   "sideEffects": false,
