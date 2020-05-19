@@ -1,0 +1,100 @@
+.explorer {
+  background-color: white;
+  margin: 0;
+  padding: 2px 0 0 0;
+}
+
+ul {
+  margin: 0;
+  list-style: none;
+}
+
+.list-item ul {
+  padding-inline-start: 2em;
+}
+
+.tree-item {
+  height: 24px;
+  display: flex;
+  margin-bottom: 2px;
+  white-space: pre;
+  user-select: none;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.tree-domain-image {
+  width: 1.5em;
+  height: 100%;
+  margin-inline-end: 0.5em;
+}
+
+.tree-icon {
+  height: 100%;
+  width: 100%;
+  margin-inline-end: 0.5em;
+}
+
+.tree-icon img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.tree-item-lbl {
+  display: inline-flex;
+  align-items: center;
+  width: calc(100% - 5.5em);
+  padding: 2px 8px;
+  margin: 0 0.5em;
+  border-radius: 8px;
+  cursor: pointer;
+  height: 100%;
+  box-sizing: border-box;
+  font-size: 80%;
+}
+
+.tree-item:hover .tree-item-lbl:not(.selected) {
+  background: #dfedfc;
+  background: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(31%, white),
+    color-stop(100%, #dfedfc)
+  );
+  background: linear-gradient(to bottom, white 0%, #dfedfc 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#94c4fe', endColorstr='#d3f6fe',GradientType=0 );
+  text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.5);
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border: 1px solid #9fc8fa;
+  color: #000;
+}
+
+.expand-btn {
+  height: 0.7em;
+  width: 0.8em;
+  padding-inline-start: 0.5em;
+  margin-inline-end: 0.5em;
+  padding-inline-end: 0.2em;
+}
+
+.tree-picked-item {
+  width: 1em;
+  margin: 0 0.25em;
+}
+
+.selected {
+  background: #54bc3e;
+  background: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0%, white),
+    color-stop(100%, #b5d5fb)
+  );
+  background: linear-gradient(to bottom, white 0%, #b5d5fb 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#54bc3e', endColorstr='#aee850',GradientType=0 );
+  border: 2px solid #92c0f7;
+  border-radius: 8px;
+}
