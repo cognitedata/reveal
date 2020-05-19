@@ -15,8 +15,7 @@ export default ({ initialState = {}, children }:
   { initialState?: {}, children: JSX.Element }) => {
   return (
     <Provider
-      store={createStore(reducers, initialState)}
-    >
+      store={createStore(reducers, initialState)}>
       {children}
     </Provider>
   );

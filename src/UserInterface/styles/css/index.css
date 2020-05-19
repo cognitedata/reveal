@@ -8,16 +8,15 @@ body {
   display: flex; }
 
 .left-panel {
-  width: 350px;
-  height: 100vh;
+  min-width: 330px;
   display: flex;
   flex-direction: column;
   background-image: linear-gradient(to right, white, lightgray); }
 
 .right-panel {
   position: relative;
-  width: calc(100vw - 350px);
-  height: 100vh; }
+  height: 100vh;
+  background-color: grey; }
 
 .right-panel canvas {
   width: 100% !important;
@@ -33,16 +32,22 @@ body {
   overflow: hidden; }
 
 .explorer-container {
-  height: 50vh;
+  top: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center; }
 
 .settings-container {
-  height: 50vh;
   width: 100%;
-  overflow-y: auto; }
+  overflow-y: auto;
+  position: relative; }
+  .settings-container .settings-title-bar {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 9999;
+    flex: 1; }
 
 .icon {
   display: flex;
