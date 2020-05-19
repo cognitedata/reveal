@@ -15,5 +15,5 @@ import { TargetId } from "../PrimitiveClasses/TargetId";
 
 export interface TargetIdAccessor
 {
-  targetId :TargetId;
+  targetId: TargetId;
 }

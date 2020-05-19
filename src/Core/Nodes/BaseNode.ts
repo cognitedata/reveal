@@ -203,21 +203,6 @@ export abstract class BaseNode extends Identifiable
     return root ? root.activeTargetIdAccessor : null;
   }
 
-  public /*virtual*/ getDebugString(): string
-  {
-    let result = this.name;
-    result += cocatinate("typeName", this.typeName);
-    result += cocatinate("className", this.className);
-    if (this.canChangeColor)
-      result += cocatinate("color", this.color);
-    result += cocatinate("id", this.uniqueId.isEmpty ? "" : (this.uniqueId.toString().substring(0, 6) + "..."));
-    if (this.isActive)
-      result += cocatinate("active");
-    if (this.renderStyles.length > 0)
-      result += cocatinate("renderStyles", this.renderStyles.length);
-    return result;
-  }
-
   //==================================================
   // VIRTUAL METHODS: Draw styles
   //==================================================
@@ -399,6 +384,16 @@ export abstract class BaseNode extends Identifiable
   // INSTANCE METHODS: Get ancestors
   //==================================================
 
+  public * getThisAndAncestors(): Iterable<BaseNode>
+  {
+    let ancestor: BaseNode | null = this;
+    while (ancestor)
+    {
+      yield ancestor;
+      ancestor = ancestor.parent;
+    }
+  }
+
   public * getAncestors(): Iterable<BaseNode>
   {
     let ancestor = this.parent;
@@ -419,11 +414,14 @@ export abstract class BaseNode extends Identifiable
     return null;
   }
 
-  public * getThisAndAncestors(): Iterable<BaseNode>
+  public getThisOrAncestorByType<T>(classType: Class<T>): T | null
   {
-    yield this;
-    for (const ancestor of this.getAncestors())
-      yield ancestor;
+    for (const ancestor of this.getThisAndAncestors())
+    {
+      if (isInstanceOf(ancestor, classType))
+        return ancestor as T;
+    }
+    return null;
   }
 
   //==================================================
@@ -623,6 +621,22 @@ export abstract class BaseNode extends Identifiable
   // INSTANCE METHODS: Debugging
   //==================================================
 
+
+  public /*virtual*/ getDebugString(): string
+  {
+    let result = this.name;
+    result += cocatinate("typeName", this.typeName);
+    result += cocatinate("className", this.className);
+    if (this.canChangeColor)
+      result += cocatinate("color", this.color);
+    result += cocatinate("id", this.uniqueId.isEmpty ? "" : (this.uniqueId.toString().substring(0, 6) + "..."));
+    if (this.isActive)
+      result += cocatinate("active");
+    if (this.renderStyles.length > 0)
+      result += cocatinate("renderStyles", this.renderStyles.length);
+    return result;
+  }
+
   public toHierarcyString(): string
   {
     let text = "";
@@ -648,4 +662,3 @@ export function cocatinate(name: string, value?: any): string
     return ", " + name;
   return ", " + name + ": " + value;
 }
-

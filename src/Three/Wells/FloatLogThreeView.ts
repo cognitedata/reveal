@@ -12,16 +12,15 @@
 //=====================================================================================
 
 import * as THREE from 'three';
-import { BaseGroupThreeView } from "./BaseGroupThreeView";
-import { PolylinesNode } from "../Nodes/PolylinesNode";
-import { PolylinesRenderStyle } from "../Nodes/PolylinesRenderStyle";
-import { ThreeConverter } from "./ThreeConverter";
-import { ColorType } from "../Core/Enums/ColorType";
-import { Colors } from "../Core/PrimitiveClasses/Colors";
-import { NodeEventArgs } from "../Core/Views/NodeEventArgs";
-import { Range3 } from '../Core/Geometry/Range3';
 
-export class PolylinesThreeView extends BaseGroupThreeView
+import { BaseLogThreeView } from "./BaseLogThreeView";
+import { FloatLogNode } from "../../Nodes/Wells/Wells/FloatLogNode";
+import { WellRenderStyle } from "../../Nodes/Wells/Wells/WellRenderStyle";
+import { NodeEventArgs } from "../../Core/Views/NodeEventArgs";
+import { Colors } from '../../Core/PrimitiveClasses/Colors';
+import { LogRender } from './LogRender';
+
+export class FloatLogThreeView extends BaseLogThreeView
 {
   //==================================================
   // CONSTRUCTORS
@@ -33,8 +32,8 @@ export class PolylinesThreeView extends BaseGroupThreeView
   // INSTANCE PROPERTIES
   //==================================================
 
-  protected get node(): PolylinesNode { return super.getNode() as PolylinesNode; }
-  protected get style(): PolylinesRenderStyle { return super.getStyle() as PolylinesRenderStyle; }
+  protected get node(): FloatLogNode { return super.getNode() as FloatLogNode; }
+  protected get style(): WellRenderStyle { return super.getStyle() as WellRenderStyle; }
 
   //==================================================
   // OVERRIDES of BaseView
@@ -45,11 +44,6 @@ export class PolylinesThreeView extends BaseGroupThreeView
     super.updateCore(args);
   }
 
-  public calculateBoundingBoxCore(): Range3 | undefined
-  {
-    return this.node.boundingBox;
-  }
-
   //==================================================
   // OVERRIDES of BaseGroupThreeView
   //==================================================
@@ -57,30 +51,36 @@ export class PolylinesThreeView extends BaseGroupThreeView
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
     const node = this.node;
-    const style = this.style;
 
-    const polylines = node.data;
-    if (!polylines)
-      throw Error("polylines is missing in view");
+    const trajectory = this.trajectory;
+    if (!trajectory)
+      return null;
 
-    let color = node.color;
-    const colorType = style.colorType;
+    const log = node.data;
+    if (!log)
+      throw Error("Well trajectory is missing");
+
+    const bandRange = this.bandRange;
+    if (!bandRange)
+      return null;
 
     const group = new THREE.Group();
+    const logRender = new LogRender(trajectory, this.cameraPosition, bandRange);
+    const childIndex = node.childIndex;
 
-    for (const polyline of polylines.list)
+    if (childIndex === undefined)
+      return null;
+
+    const right = childIndex % 2 === 0;
+
+    if (childIndex <= 0)
     {
-      const geometry = new THREE.Geometry();
-      for (const point of polyline.list)
-        geometry.vertices.push(ThreeConverter.toVector(point));
-
-      if (colorType === ColorType.DifferentColor)
-        color = Colors.getNextColor(group.children.length);
-
-      const material = new THREE.LineBasicMaterial({ color: ThreeConverter.toColor(color), linewidth: style.lineWidth });
-      const line = new THREE.Line(geometry, material);
-      group.add(line);
+      logRender.addSolidFloatLog(group, log, right);
+      logRender.addLineFloatLog(group, log, Colors.black, right);
     }
+    else
+      logRender.addLineFloatLog(group, log, node.color, right);
+
     return group;
   }
 }

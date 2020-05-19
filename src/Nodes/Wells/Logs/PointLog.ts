@@ -11,40 +11,39 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Polyline } from "./Polyline";
-import { Range3 } from "./Range3";
+import { PointLogSample } from "../Samples/PointLogSample";
+import { BaseLog } from "../Logs/BaseLog";
+import { Range1 } from "../../../Core/Geometry/Range1";
+import { Random } from "../../../Core/PrimitiveClasses/Random";
 
-export class Polylines
+export class PointLog extends BaseLog
 {
   //==================================================
-  // INSTANCE FIELDS
+  // INSTANCE METHODS: Getter
   //==================================================
 
-  public list: Polyline[] = [];
+  public getAt(index: number): PointLogSample { return this.samples[index] as PointLogSample; }
 
   //==================================================
-  // CONSTRUCTORS
+  // INSTANCE METHODS: Operations
   //==================================================
 
-  public constructor() { }
-
-  //==================================================
-  // STATIC METHODS: 
-  //==================================================
-
-  public static createByRandom(polylinesCount: number, pointCount: number, boundingBox: Range3): Polylines
+  public static createByRandom(mdRange: Range1, numSamples: number): PointLog
   {
-    const result = new Polylines();
-    for (let i = 0; i < polylinesCount; i++)
-      result.list.push(Polyline.createByRandom(pointCount, boundingBox));
-    return result;
-  }
+    const log = new PointLog();
 
-  public getRange(): Range3
-  {
-    const range = new Range3();
-    for (const polyline of this.list)
-      range.addRange(polyline.getRange());
-    return range;
+    // Add some samples
+    for (let i = 0; i < numSamples; i++)
+    {
+      const md = Random.getFloat(mdRange);
+      log.samples.push(new PointLogSample(``, md));
+    }
+    log.sortByMd();
+
+    // Set in the labels so they are in order
+    for (let k = 0; k < log.samples.length; k++)
+      log.getAt(k).label = `Sample ${k} at md ${log.getAt(k).md}`;
+
+    return log;
   }
-}
+}  

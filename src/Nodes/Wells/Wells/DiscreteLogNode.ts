@@ -13,6 +13,9 @@
 
 import { DiscreteLog } from "./../Logs/DiscreteLog";
 import { BaseLogNode } from "./BaseLogNode";
+import { BaseRenderStyle } from "../../../Core/Styles/BaseRenderStyle";
+import { WellRenderStyle } from "./WellRenderStyle";
+import { TargetId } from "../../../Core/PrimitiveClasses/TargetId";
 
 export class DiscreteLogNode extends BaseLogNode
 {
@@ -22,6 +25,7 @@ export class DiscreteLogNode extends BaseLogNode
 
   public get data(): DiscreteLog | null { return this._data as DiscreteLog; }
   public set data(value: DiscreteLog | null) { this._data = value; }
+  public get renderStyle(): WellRenderStyle | null { return this.getRenderStyle() as WellRenderStyle; }
 
   //==================================================
   // CONSTRUCTORS
@@ -33,12 +37,18 @@ export class DiscreteLogNode extends BaseLogNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return BaseLogNode.name; }
+  public /*override*/ get className(): string { return DiscreteLogNode.name; }
   public /*override*/ isA(className: string): boolean { return className === BaseLogNode.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "_DiscreteLog" }
+  public /*override*/ get typeName(): string { return "DiscreteLog" }
+
+  public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
+  {
+    return new WellRenderStyle(targetId);
+  }
+
 }

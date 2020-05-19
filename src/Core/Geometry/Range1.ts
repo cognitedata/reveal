@@ -39,7 +39,9 @@ export class Range1
   public get isSingular(): boolean { return this.min === this.max; }
   public get hasSpan(): boolean { return !this.isEmpty && !this.isSingular; }
   public get min(): number { return this._min; }
+  public set min(value: number) { this._min = value; }
   public get max(): number { return this._max; }
+  public set max(value: number) { this._max = value; }
   public get delta(): number { return this._max - this._min; }
   public get center(): number { return (this._min + this._max) / 2; }
 
@@ -47,66 +49,96 @@ export class Range1
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(min ?: number, max ?: number)
-{
-  if (min === undefined && max !== undefined)
-    this.set(max, max);
-  else if (min !== undefined && max === undefined)
-    this.set(min, min);
-  else if (min !== undefined && max !== undefined)
-    this.set(min, max);
-}
+  public constructor(min?: number, max?: number)
+  {
+    if (min === undefined && max !== undefined)
+      this.set(max, max);
+    else if (min !== undefined && max === undefined)
+      this.set(min, min);
+    else if (min !== undefined && max !== undefined)
+      this.set(min, max);
+  }
 
   public /*copy constructor*/ copy(): Range1
-{
-  const range = new Range1();
-  range._min = this._min;
-  range._max = this._max;
-  range._isEmpty = this._isEmpty;
-  return range;
-}
+  {
+    const range = new Range1();
+    range._min = this._min;
+    range._max = this._max;
+    range._isEmpty = this._isEmpty;
+    return range;
+  }
 
   //==================================================
-  // INSTANCE METHODS; Getters
+  // INSTANCE METHODS: Requests
+  //==================================================
+
+  isEqual(other: Range1): boolean {
+    if (this._isEmpty && other._isEmpty)
+      return true;
+    if (this._isEmpty !== other._isEmpty)
+      return false;
+    return this.min === other.min && this.max === other.max;
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Getters
   //==================================================
 
   public toString(): string { return `(${this._min}, ${this._max})`; }
 
   public getFraction(value: number): number
-{
-  // Opposite of getValue
-  return (value - this.min) / this.delta;
-}
+  {
+    // Opposite of getValue
+    return (value - this.min) / this.delta;
+  }
 
   public getValue(fraction: number): number
-{
-  // Opposite of getFraction
-  return fraction * this.delta + this.min;
-}
+  {
+    // Opposite of getFraction
+    return fraction * this.delta + this.min;
+  }
 
   public getBestInc(numTicks = 50): number
-{
-  const inc = this.delta / numTicks;
-  return Ma.roundInc(inc);
-}
+  {
+    const inc = this.delta / numTicks;
+    return Ma.roundInc(inc);
+  }
 
   public getNumTicks(inc: number): number { return Math.round(this.delta / inc); }
 
-public * getTicks(inc: number): Iterable < number >
-{
-  if(this.getNumTicks(inc) > 1000) // This is a safety valve to prevent it going infinity loops
-  return;
+  public * getTicks(inc: number): Iterable<number>
+  {
+    if (this.getNumTicks(inc) > 1000) // This is a safety valve to prevent it going infinity loops
+      return;
 
-  const tolerance = inc / 10000;
-  const max = this.max + tolerance;
-  for(let tick = this.min; tick <= max; tick += inc)
-{
-  if (Math.abs(tick) < tolerance)
-    yield 0;
-  else
-    yield tick;
-}
+    const tolerance = inc / 10000;
+    const max = this.max + tolerance;
+    for (let tick = this.min; tick <= max; tick += inc)
+    {
+      if (Math.abs(tick) < tolerance)
+        yield 0;
+      else
+        yield tick;
+    }
   }
+
+  public getBoldInc(inc: number, every = 2): number
+  {
+    let numTicks = 0;
+    const boldInc = inc * every;
+    for (const anyTick of this.getTicks(inc))
+    {
+      const tick = Number(anyTick);
+      if (!Ma.isInc(tick, boldInc))
+        continue;
+
+      numTicks++;
+      if (numTicks > 2)
+        return boldInc;
+    }
+    return inc;
+  }
+
 
   //==================================================
   // INSTANCE METHODS: Operations
@@ -121,8 +153,8 @@ public * getTicks(inc: number): Iterable < number >
 
   public translate(value: number): void
   {
-    if(this._isEmpty)
-    return;
+    if (this._isEmpty)
+      return;
 
     this._min += value;
     this._max += value;
@@ -130,8 +162,8 @@ public * getTicks(inc: number): Iterable < number >
 
   public scale(value: number): void
   {
-    if(this._isEmpty)
-    return;
+    if (this._isEmpty)
+      return;
 
     this._min *= value;
     this._max *= value;
@@ -139,8 +171,8 @@ public * getTicks(inc: number): Iterable < number >
 
   public scaleDelta(scale: number): void
   {
-    if(this._isEmpty)
-    return;
+    if (this._isEmpty)
+      return;
 
     const center = this.center;
     this._min = (this._min - center) * scale + center;
@@ -149,22 +181,22 @@ public * getTicks(inc: number): Iterable < number >
 
   public add(value: number): void
   {
-    if(this._isEmpty)
+    if (this._isEmpty)
     {
-  this._isEmpty = false;
-  this._min = value;
-  this._max = value;
-}
+      this._isEmpty = false;
+      this._min = value;
+      this._max = value;
+    }
     else if (value < this._min)
-  this._min = value;
-else if (value > this._max)
-  this._max = value;
+      this._min = value;
+    else if (value > this._max)
+      this._max = value;
   }
 
   public addRange(value: Range1): void
   {
-    if(value.isEmpty)
-    return;
+    if (value.isEmpty)
+      return;
 
     this.add(value.min);
     this.add(value.max);
@@ -172,37 +204,37 @@ else if (value > this._max)
 
   public expandByMargin(margin: number): void
   {
-    if(this.isEmpty)
-    return;
+    if (this.isEmpty)
+      return;
     this._min -= margin;
     this._max += margin;
-    if(this._min > this._max)
-    [this._max, this._min] = [this._min, this._max]; //Swap
+    if (this._min > this._max)
+      [this._max, this._min] = [this._min, this._max]; //Swap
   }
 
   public expandByFraction(fraction: number): void
   {
-    if(!this.isEmpty)
-    this.expandByMargin(this.delta * fraction);
+    if (!this.isEmpty)
+      this.expandByMargin(this.delta * fraction);
   }
 
   public roundByInc(inc: number): boolean
-{
-  if (this.isEmpty)
-    return false;
-
-  if (inc < 0)
   {
-    this._min = Ma.ceil(this._min, -inc);
-    this._max = Ma.floor(this._max, -inc);
-    if (this._min > this._max)
+    if (this.isEmpty)
       return false;
+
+    if (inc < 0)
+    {
+      this._min = Ma.ceil(this._min, -inc);
+      this._max = Ma.floor(this._max, -inc);
+      if (this._min > this._max)
+        return false;
+    }
+    else if (inc > 0)
+    {
+      this._min = Ma.floor(this._min, inc);
+      this._max = Ma.ceil(this._max, inc);
+    }
+    return true;
   }
-  else if (inc > 0)
-  {
-    this._min = Ma.floor(this._min, inc);
-    this._max = Ma.ceil(this._max, inc);
-  }
-  return true;
-}
 }

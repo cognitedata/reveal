@@ -23,6 +23,7 @@ export abstract class MdSamples
   //==================================================
 
   public samples: MdSample[] = [];
+  private _mdRange: Range1 | undefined;
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -45,13 +46,6 @@ export abstract class MdSamples
   //==================================================
   // INSTANCE METHODS: Getter
   //==================================================
-
-  public getMdRange(): Range1
-  {
-    const range = new Range1();
-    this.expandMdRange(range);
-    return range;
-  }
 
   public getClosestIndexAtMd(md: number): number
   {
@@ -89,6 +83,35 @@ export abstract class MdSamples
   }
 
   //==================================================
+  // INSTANCE METHODS: Md range
+  //==================================================
+
+  public get mdRange(): Range1
+  {
+    if (!this._mdRange)
+      this._mdRange = this.calculateMdRange();
+    return this._mdRange;
+  }
+
+  public calculateMdRange(): Range1
+  {
+    const range = new Range1();
+    this.expandMdRange(range);
+    return range;
+  }
+
+  public touch(): void
+  {
+    this._mdRange = undefined;
+  }
+
+  public expandMdRange(range: Range1): void
+  {
+    for (const sample of this.samples)
+      range.add(sample.md);
+  }
+
+  //==================================================
   // INSTANCE METHODS: Operations
   //==================================================
 
@@ -100,12 +123,6 @@ export abstract class MdSamples
   public sortByMd(): void
   {
     this.samples.sort(MdSample.compareMd);
-  }
-
-  public expandMdRange(range: Range1): void
-  {
-    for (const sample of this.samples)
-      range.add(sample.md);
   }
 
   protected binarySearch(md: number): number

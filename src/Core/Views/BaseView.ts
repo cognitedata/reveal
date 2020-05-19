@@ -39,6 +39,7 @@ export abstract class BaseView
 
   public get isVisible(): boolean { return this._isVisible; }
   public set isVisible(value: boolean) { this._isVisible = value; }
+  public get targetId(): TargetId { return this.getTarget().targetId; }
 
   //==================================================
   // CONSTRUCTORS
@@ -121,7 +122,7 @@ export abstract class BaseView
     if (!this._target)
       style = this.getNode().getRenderStyle(TargetId.empty);
     else
-      style = this.getNode().getRenderStyle(this._target.targetId);
+      style = this.getNode().getRenderStyle(this.targetId);
     if (!style)
       throw Error("The style is missing in the view");
     return style;

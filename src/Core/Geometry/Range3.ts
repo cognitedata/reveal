@@ -84,7 +84,18 @@ export class Range3
   }
 
   //==================================================
-  // INSTANCE METHODS; Getters
+  // INSTANCE METHODS: Requests
+  //==================================================
+
+  public isEqual(other: Range3 | undefined): boolean
+  {
+    if (!other)
+      return false;
+    return this.x.isEqual(other.x) && this.y.isEqual(other.y) && this.z.isEqual(other.z);
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Getters
   //==================================================
 
   public toString(): string { return `(X: ${this.x.toString()}, Y: ${this.y.toString()}, Z: ${this.z.toString()})`; }

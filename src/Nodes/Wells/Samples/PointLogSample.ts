@@ -11,40 +11,54 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Polyline } from "./Polyline";
-import { Range3 } from "./Range3";
+import { BaseLogSample } from "./BaseLogSample";
 
-export class Polylines
+export class PointLogSample extends BaseLogSample 
 {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
 
-  public list: Polyline[] = [];
+  public label: string;
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor() { }
-
-  //==================================================
-  // STATIC METHODS: 
-  //==================================================
-
-  public static createByRandom(polylinesCount: number, pointCount: number, boundingBox: Range3): Polylines
+  public constructor(label: string, md: number)
   {
-    const result = new Polylines();
-    for (let i = 0; i < polylinesCount; i++)
-      result.list.push(Polyline.createByRandom(pointCount, boundingBox));
-    return result;
+    super(md);
+    this.label = label;
   }
 
-  public getRange(): Range3
+  //==================================================
+  // OVERRIDES of MdSample
+  //==================================================
+
+  public /*override*/ toString(): string { return `${super.toString()} Value: ${this.label}`; }
+  public /*override*/ sampleText(): string { return `Value: ${this.label}`; }
+
+  //==================================================
+  // OVERRIDES of BaseLogSample
+  //==================================================
+
+  public /*override*/ get isEmpty(): boolean { return false; }
+
+  public /*override*/ isEqual(other: BaseLogSample): boolean
   {
-    const range = new Range3();
-    for (const polyline of this.list)
-      range.addRange(polyline.getRange());
-    return range;
+    const otherSample = other as PointLogSample;
+    if (!otherSample)
+      return false;
+    return this.label === otherSample.label;
   }
-}
+
+  public /*override*/ copyValueFrom(other: BaseLogSample): void
+  {
+    const otherSample = other as PointLogSample;
+    if (!otherSample)
+      return;
+    this.label = otherSample.label;
+  }
+
+  public /*override*/  clone(): BaseLogSample { return new PointLogSample(this.label, this.md); }
+}  

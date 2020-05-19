@@ -11,31 +11,21 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseVisualNode } from "../../../Core/Nodes/BaseVisualNode";
+import { PointLog } from "./../Logs/PointLog";
+import { BaseLogNode } from "./BaseLogNode";
 import { BaseRenderStyle } from "../../../Core/Styles/BaseRenderStyle";
-import { TargetId } from "../../../Core/PrimitiveClasses/TargetId";
 import { WellRenderStyle } from "./WellRenderStyle";
-import { ColorType } from "../../../Core/Enums/ColorType";
-import { Range3 } from "../../../Core/Geometry/Range3";
-import { WellTrajectory } from "../Logs/WellTrajectory";
-import { WellNode } from "./WellNode";
+import { TargetId } from "../../../Core/PrimitiveClasses/TargetId";
 
-export class WellTrajectoryNode extends BaseVisualNode
+export class PointLogNode extends BaseLogNode
 {
-  //==================================================
-  // INSTANCE FIELDS
-  //==================================================
-
-  private _data: WellTrajectory | null = null;
-
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): WellTrajectory | null { return this._data; }
-  public set data(value: WellTrajectory | null) { this._data = value; }
+  public get data(): PointLog | null { return this._data as PointLog; }
+  public set data(value: PointLog | null) { this._data = value; }
   public get renderStyle(): WellRenderStyle | null { return this.getRenderStyle() as WellRenderStyle; }
-  public get well(): WellNode | null { return this.getAncestorByType(WellNode); }
 
   //==================================================
   // CONSTRUCTORS
@@ -47,40 +37,17 @@ export class WellTrajectoryNode extends BaseVisualNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return WellTrajectoryNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === WellTrajectoryNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return PointLogNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === BaseLogNode.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "WellTrajectory" }
-
-  public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.range : new Range3(); }
+  public /*override*/ get typeName(): string { return "PointLog" }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
     return new WellRenderStyle(targetId);
-  }
-
-  public /*override*/ verifyRenderStyle(style: BaseRenderStyle)
-  {
-    if (!(style instanceof WellRenderStyle))
-      return;
-
-    if (!this.supportsColorType(style.colorType))
-      style.colorType = ColorType.NodeColor;
-  }
-
-  public /*override*/ supportsColorType(colorType: ColorType): boolean
-  {
-    switch (colorType)
-    {
-      case ColorType.NodeColor:
-        return true;
-
-      default:
-        return false;
-    }
   }
 }

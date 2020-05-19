@@ -11,14 +11,15 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import * as THREE from 'three';
 import { Vector3 } from "../../../Core/Geometry/Vector3";
 import { Random } from "../../../Core/PrimitiveClasses/Random";
 import { Range3 } from "../../../Core/Geometry/Range3";
 import { Range1 } from "../../../Core/Geometry/Range1";
 import { TrajectorySample } from "./../Samples/TrajectorySample";
-import { MdSample } from "./../Samples/MdSample";
 import { MdSamples } from "./MdSamples";
 import { Ma } from "../../../Core/PrimitiveClasses/Ma";
+import { ThreeConverter } from "../../../Three/ThreeConverter";
 
 export class WellTrajectory extends MdSamples
 {
@@ -26,24 +27,46 @@ export class WellTrajectory extends MdSamples
   // INSTANCE FIELDS
   //==================================================
 
+  private _range: Range3 | undefined;
+
+  //==================================================
+  // INSTANCE FIELDS
+  //==================================================
+
   public kb = 0;
 
   //==================================================
-  // INSTANCE METHODS: Getters
+  // INSTANCE METHODS: Range
   //==================================================
 
-  public getZRange(): Range1
+  public get range(): Range3
   {
-    const range: Range1 = new Range1();
-    this.expandZRange(range);
+    if (!this._range)
+      this._range = this.calculateRange();
+    return this._range;
+  }
+
+  public calculateRange(): Range3
+  {
+    const range = new Range3();
+    this.expandRange(range);
     return range;
   }
 
-  public getRange(): Range3
+  public touch(): void
   {
-    const range: Range3 = new Range3();
-    this.expandRange(range);
-    return range;
+    super.touch();
+    this._range = undefined;
+  }
+
+  public expandRange(range: Range3): void
+  {
+    for (const baseSample of this.samples) 
+    {
+      const sample = baseSample as TrajectorySample;
+      if (sample)
+        range.add(sample.point);
+    }
   }
 
   //==================================================
@@ -76,13 +99,7 @@ export class WellTrajectory extends MdSamples
       return maxSample.point;
 
     const remainder = (md - minSample.md) / (maxSample.md - minSample.md);
-    const minPoint = minSample.point.copy();
-    const maxPoint = maxSample.point.copy();
-
-    minPoint.multiplyByNumber(1 - remainder);
-    maxPoint.multiplyByNumber(remainder);
-    minPoint.add(maxPoint);
-    return minPoint;
+    return Vector3.lerp(minSample.point, maxSample.point, remainder);
   }
 
   public getTangentAtMd(md: number): Vector3
@@ -122,14 +139,13 @@ export class WellTrajectory extends MdSamples
       }
     }
     if (index0 >= index1)
-      Error("Index rrror in tangent");
+      Error("Index error in tangent");
 
     const minSample = this.samples[index0] as TrajectorySample;
     const maxSample = this.samples[index1] as TrajectorySample;
 
     // Should pointing upwards
-    const tangent = minSample.point.copy();
-    tangent.substract(maxSample.point);
+    const tangent = Vector3.substract(minSample.point, maxSample.point);
     tangent.normalize();
 
     if (tangent.z < 0)
@@ -138,29 +154,6 @@ export class WellTrajectory extends MdSamples
     return tangent;
   }
 
-  //==================================================
-  // INSTANCE METHODS: Operations
-  //==================================================
-
-  public expandZRange(range: Range1): void
-  {
-    for (const baseSample of this.samples) 
-    {
-      const sample = baseSample as TrajectorySample;
-      if (sample)
-        range.add(sample.point.z);
-    }
-  }
-
-  public expandRange(range: Range3): void
-  {
-    for (const baseSample of this.samples) 
-    {
-      const sample = baseSample as TrajectorySample;
-      if (sample)
-        range.add(sample.point);
-    }
-  }
 
   //==================================================
   // STATIC METHODS: 
@@ -183,17 +176,71 @@ export class WellTrajectory extends MdSamples
     p3.y += Random.getFloat(new Range1(600, -600));
     p3.z += -300;
 
+    const points: THREE.Vector3[] = [];
+    points.push(ThreeConverter.toVector(p0));
+    points.push(ThreeConverter.toVector(p1));
+    points.push(ThreeConverter.toVector(p2));
+    points.push(ThreeConverter.toVector(p3));
+
+    const curve = new THREE.CatmullRomCurve3(points);
+    const curvePoints = curve.getPoints(64);
+
     let md = 0;
-    result.add(new TrajectorySample(p0, md));
-    md += p0.distance(p1);
-    result.add(new TrajectorySample(p1, md));
-    md += p1.distance(p2);
-    result.add(new TrajectorySample(p2, md));
-    md += p1.distance(p2);
-    result.add(new TrajectorySample(p3, md));
+    let prevPoint = ThreeConverter.fromVector(curvePoints[0]);
+    for (const curvePoint of curvePoints)
+    {
+      const point = ThreeConverter.fromVector(curvePoint);
+      md += prevPoint.distance(point);
+      result.add(new TrajectorySample(point, md));
+      prevPoint = point;
+    }
     return result;
   }
 
+  //public getStartIndexAboveMd(md: number): number
+  //{
+  //  const maxIndex = this.samples.length - 1;
+  //  if (maxIndex < 0)
+  //    return -1;
+
+  //  if (md < this.samples[0].md)
+  //    return -1;
+
+  //  if (this.samples[maxIndex].md < md)
+  //    return maxIndex;
+
+  //  const index = this.binarySearch(md);
+  //  if (index >= 0)
+  //    return index;
+
+  //  return ~index;
+  //}
+
+  //public getNextIndexAboveMd(index: number, md: number): [number, Vector3]
+  //{
+  //  if (index < 0)
+  //  {
+  //    index = this.getStartIndexAboveMd(md);
+  //    if (index < 0)
+  //      return [-1, Vector3.newEmpty];
+  //  }
+  //  const maxIndex = this.samples.length - 1;
+  //  if (index === maxIndex)
+  //    return [Number.MAX_VALUE, Vector3.newEmpty];
+
+
+  //  for (index + 1; index < maxIndex; index++)
+  //  {
+  //    const maxSample = this.samples[index] as TrajectorySample;
+  //    if (md <= maxSample.md)
+  //    {
+  //      const minSample = this.samples[index - 1] as TrajectorySample;
+  //      const remainder = (md - minSample.md) / (maxSample.md - minSample.md);
+  //      return [index, Vector3.lerp(minSample.point, maxSample.point, remainder)];
+  //    }
+  //  }
+  //  return [Number.MAX_VALUE, Vector3.newEmpty];
+  //}
 
 
 }

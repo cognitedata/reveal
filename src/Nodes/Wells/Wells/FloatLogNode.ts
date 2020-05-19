@@ -13,6 +13,9 @@
 
 import { FloatLog } from "./../Logs/FloatLog";
 import { BaseLogNode } from "./BaseLogNode";
+import { BaseRenderStyle } from "../../../Core/Styles/BaseRenderStyle";
+import { WellRenderStyle } from "./WellRenderStyle";
+import { TargetId } from "../../../Core/PrimitiveClasses/TargetId";
 
 export class FloatLogNode extends BaseLogNode
 {
@@ -22,6 +25,7 @@ export class FloatLogNode extends BaseLogNode
 
   public get data(): FloatLog | null { return this._data as FloatLog; }
   public set data(value: FloatLog | null) { this._data = value; }
+  public get renderStyle(): WellRenderStyle | null { return this.getRenderStyle() as WellRenderStyle; }
 
   //==================================================
   // CONSTRUCTORS
@@ -33,12 +37,17 @@ export class FloatLogNode extends BaseLogNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return BaseLogNode.name; }
+  public /*override*/ get className(): string { return FloatLogNode.name; }
   public /*override*/ isA(className: string): boolean { return className === BaseLogNode.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "FloatLogNode" }
+  public /*override*/ get typeName(): string { return "FloatLog" }
+
+  public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
+  {
+    return new WellRenderStyle(targetId);
+  }
 }

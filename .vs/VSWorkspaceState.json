@@ -3,14 +3,14 @@
     "",
     "\\src",
     "\\src\\Core",
-    "\\src\\Core\\Enums",
-    "\\src\\Core\\Nodes",
+    "\\src\\Core\\Geometry",
     "\\src\\Nodes",
     "\\src\\Nodes\\Wells",
     "\\src\\Nodes\\Wells\\Logs",
+    "\\src\\Nodes\\Wells\\Samples",
     "\\src\\Three",
-    "\\src\\Three\\Utilities"
+    "\\src\\Three\\Wells"
   ],
-  "SelectedNode": "\\src\\Core\\Nodes\\BaseNode.ts",
+  "SelectedNode": "\\src\\Three\\Wells\\WellTrajectoryThreeView.ts",
   "PreviewInSolutionExplorer": false
 }
