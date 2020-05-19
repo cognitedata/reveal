@@ -29,6 +29,10 @@ export default (state = initialState, action: SettingsActionInterface) => {
       const section = state.sections[sectionId!];
       if (isNumber(subSectionId)) {
         const subSection = section.subSections![subSectionId!];
+        if (subSection.iconIndex) {
+          const icon = section!.toolBar![subSection.iconIndex!];
+          icon.selected = !icon.selected;
+        }
         subSection.isExpanded = !subSection.isExpanded;
       } else {
         section.isExpanded = !section.isExpanded;

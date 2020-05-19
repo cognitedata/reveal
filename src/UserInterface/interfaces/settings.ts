@@ -13,7 +13,7 @@ export type SettingsActionPayloadType = {
   elementIndex?: number;
   iconIndex?: number;
   subElementIndex?: number;
-  value?: string;
+  value?: string | number | unknown;
   node?: any;
 };
 
@@ -31,6 +31,7 @@ export interface SettingsSectionInterface {
   titleBar?: TitleBarInterface;
   toolBar?: ToolBarType;
   elements: Array<SectionElement>;
+  iconIndex?: number;
   subSections?: Array<SettingsSectionInterface>;
 }
 

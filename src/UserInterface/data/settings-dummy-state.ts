@@ -25,7 +25,7 @@ export const state = {
       elements: [
         {
           label: "Name",
-          type: "input",
+          type: "text",
           value: "Random Polylines 5",
         },
         {
@@ -35,19 +35,19 @@ export const state = {
         },
         {
           label: "Type name",
-          type: "input",
+          type: "text",
           value: "Polylines",
           isReadOnly: true,
         },
         {
           label: "Data type",
-          type: "input",
+          type: "text",
           value: "Continuous",
           isReadOnly: true,
         },
         {
           label: "Unique id",
-          type: "input",
+          type: "text",
           value: "459ff014-c0aa-4267-8e77-02e0d917c67e",
           isReadOnly: true,
         },
@@ -63,17 +63,17 @@ export const state = {
           type: "input-group",
           subElements: [
             {
-              type: "input",
+              type: "text",
               value: 8102.53,
               isReadOnly: true,
             },
             {
-              type: "input",
+              type: "text",
               value: 8102.53,
               isReadOnly: true,
             },
             {
-              type: "input",
+              type: "text",
               value: 5924.44,
               isReadOnly: true,
             },
@@ -85,17 +85,17 @@ export const state = {
           type: "input-group",
           subElements: [
             {
-              type: "input",
+              type: "text",
               value: 5717.63,
               isReadOnly: true,
             },
             {
-              type: "input",
+              type: "text",
               value: 8109.4,
               isReadOnly: true,
             },
             {
-              type: "input",
+              type: "text",
               value: 2391.77,
               isReadOnly: true,
             },
@@ -107,17 +107,17 @@ export const state = {
           type: "input-group",
           subElements: [
             {
-              type: "input",
+              type: "text",
               value: -2092.65,
               isReadOnly: true,
             },
             {
-              type: "input",
+              type: "text",
               value: -723.08,
               isReadOnly: true,
             },
             {
-              type: "input",
+              type: "text",
               value: 1369.57,
               isReadOnly: true,
             },
@@ -129,12 +129,12 @@ export const state = {
           type: "input-group",
           subElements: [
             {
-              type: "input",
+              type: "text",
               value: 10,
               isReadOnly: true,
             },
             {
-              type: "input",
+              type: "text",
               value: 7140,
               isReadOnly: true,
             },
@@ -158,6 +158,17 @@ export const state = {
         {
           icon: {
             type: IconTypes.NODES,
+            name: "Map",
+          },
+          selected: true,
+          action: {
+            type: "EXPAND",
+            subSectionId: 0,
+          },
+        },
+        {
+          icon: {
+            type: IconTypes.NODES,
             name: "PointCloudNode",
           },
           selected: false,
@@ -174,21 +185,99 @@ export const state = {
           selected: true,
           action: {
             type: "EXPAND",
-            subSectionId: 0,
+            subSectionId: 2,
           },
         },
       ],
       elements: [
         {
-          label: "Inc.",
-          type: "input",
+          label: "Inc",
+          type: "text",
           value: "5",
         },
       ],
       subSections: [
         {
-          name: "Lines",
+          name: "Solid",
           isExpanded: true,
+          iconIndex: 3,
+          elements: [
+            {
+              isReadOnly: false,
+              label: "Color type",
+              type: "select",
+              value: 0,
+              options: [
+                {
+                  name: "Node",
+                  icon: {
+                    type: IconTypes.NODES,
+                    name: "PointCloudNode",
+                  },
+                },
+                {
+                  name: "Z values",
+                  icon: { type: IconTypes.NODES, name: "Map" },
+                },
+                {
+                  name: "Folder",
+                  icon: { type: IconTypes.NODES, name: "FolderNode" },
+                },
+              ],
+            },
+            {
+              isReadOnly: true,
+              label: "Contour Type",
+              type: "select",
+              value: 1,
+              options: [{ name: "Line" }, { name: "Continuous" }],
+            },
+            {
+              isReadOnly: false,
+              label: "Bump Map",
+              type: "select",
+              value: 3,
+              checked: false,
+              options: [
+                { name: "Noise" },
+                { name: "Line" },
+                { name: "Solid" },
+                { name: "Know" },
+              ],
+            },
+            {
+              isReadOnly: false,
+              label: "Transparency",
+              checked: false,
+              type: "range",
+              value: 95,
+            },
+            {
+              isReadOnly: false,
+              label: "Shadow",
+              checked: false,
+              type: "range",
+              value: 45,
+            },
+            {
+              isReadOnly: false,
+              label: "Specular",
+              checked: false,
+              type: "range",
+              value: 50,
+            },
+            {
+              isReadOnly: false,
+              label: "Specular Size",
+              checked: false,
+              type: "range",
+              value: 67,
+            },
+          ],
+        },
+        {
+          name: "Lines",
+          isExpanded: false,
           iconIndex: 4,
           elements: [
             {
@@ -248,8 +337,8 @@ export const state = {
         },
         {
           name: "Points",
-          iconIndex: 3,
-          isExpanded: false,
+          iconIndex: 5,
+          isExpanded: true,
           elements: [
             {
               isReadOnly: false,

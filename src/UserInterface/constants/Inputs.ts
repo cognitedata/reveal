@@ -1,6 +1,6 @@
 // Input Types
 export default {
-  INPUT: "input",
+  INPUT: "text",
   INPUT_GROUP: "input-group",
   SELECT: "select",
   COLOR_TABLE: "color-table",

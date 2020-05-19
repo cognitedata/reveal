@@ -3,6 +3,8 @@ import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select'
 import { useDispatch } from "react-redux";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
 
 import {
   onTextInputChange,
@@ -14,6 +16,7 @@ import Icon from "./Icon";
 import CompactColorPicker from "./CompactColorPicker";
 import { SectionElement } from "../../../interfaces/settings";
 import Inputs from "../../../constants/Inputs";
+import { isNumber } from "../../../utils/Settings"
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -31,7 +34,7 @@ const useStyles = makeStyles((theme: Theme) =>
       flex: 1,
       display: "flex",
       position: "relative",
-      marginBottom: "0.1rem"
+      margin: "0.05rem 0rem",
     },
     formLabel: {
       flex: 1,
@@ -48,8 +51,8 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: "center",
     },
     textInput: {
-      height: "0.9rem",
-      borderWidth: "1.2px",
+      height: "0.8rem",
+      borderWidth: "1px",
       borderColor: "#c4c4c4",
       borderStyle: "solid",
       fontSize: ".6rem",
@@ -61,21 +64,18 @@ const useStyles = makeStyles((theme: Theme) =>
     readOnlyInput: {
       background: "#ffffc4"
     },
-    select: {
-      height: "1.2rem",
-      borderWidth: "1.2px",
-      borderColor: "#c4c4c4",
-      borderStyle: "solid",
-      fontSize: ".6rem",
-      fontWeight: 500,
-      flex: 1
-    },
     checkbox: {
       position: "absolute",
       left: "-1.5rem",
       border: "1px solid black"
     },
+    select: {
+      width: "100%",
+      display: "flex",
+      background: "red"
+    },
     option: {
+      paddingLeft: "0.2rem",
       fontFamily: "Roboto",
       fontSize: ".6rem",
       display: "flex",
@@ -144,32 +144,56 @@ export default function Input(props: {
         );
       case Inputs.SELECT:
         return (
-          <Select
+          <div className="select-group"
             {...keyExtractor(null, config.type, subElementIndex)}
-            value={value}
-            disabled={!isAvailable(checked)}
-            onChange={(event) =>
-              dispatch(onSelectChange({
-                sectionId,
-                subSectionId,
-                elementIndex,
-                subElementIndex,
-                value: event.target.value
-              }))}
           >
-            {options!.map((option, idx) =>
-              <MenuItem value={idx}
-                {...keyExtractor(idx, config.type, subElementIndex)}>
-                <div className={classes.option}>
-                  {option.icon ?
-                    <Icon
-                      name={option.icon.name}
-                      type={option.icon.type} />
-                    : null}
-                  <span className={classes.optionText}>{option.name}</span>
-                </div>
-              </MenuItem>)}
-          </Select>);
+            <Select
+              value={value}
+              disabled={!isAvailable(checked)}
+              onChange={(event) =>
+                dispatch(onSelectChange({
+                  sectionId,
+                  subSectionId,
+                  elementIndex,
+                  subElementIndex,
+                  value: event.target.value
+                }))}
+            >
+              {options!.map((option, idx) =>
+                <MenuItem value={idx}
+                  {...keyExtractor(idx, config.type, subElementIndex)}>
+                  <div className={classes.option}>
+                    {option.icon ?
+                      <Icon
+                        name={option.icon.name}
+                        type={option.icon.type} />
+                      : null}
+                    <span className={classes.optionText}>{option.name}</span>
+                  </div>
+                </MenuItem>)}
+            </Select>
+            <div className="select-controls">
+              <FontAwesomeIcon icon={faSortUp}
+                onClick={() =>
+                  isAvailable(checked) &&
+                  dispatch(onSelectChange({
+                    sectionId,
+                    subSectionId,
+                    elementIndex,
+                    subElementIndex,
+                    value: (isNumber(value) && value! > 0 ? value - 1 : 0)
+                  }))}></FontAwesomeIcon>
+              <FontAwesomeIcon icon={faSortDown} onClick={() =>
+                isAvailable(checked) &&
+                dispatch(onSelectChange({
+                  sectionId,
+                  subSectionId,
+                  elementIndex,
+                  subElementIndex,
+                  value: (isNumber(value) && value! < options!.length - 1 ? value + 1 : options!.length - 1)
+                }))}></FontAwesomeIcon>
+            </div>
+          </div>)
       case Inputs.COLOR_TABLE:
         return (<CompactColorPicker
           value={typeof value === "string" ? value : ""}
