@@ -1,11 +1,27 @@
 import React, { useState } from "react";
-import IconElement from "./IconElement";
-import { IconTypes } from "../../../constants/Icons";
-import getIcon from "../../../utils/Icon";
+import styled from "styled-components";
+import {
+  ExpandOpen,
+  ExpandClosed,
+  ExpandOpenFocus,
+  ExpandClosedFocus
+} from "@/UserInterface/utils/Icon";
+interface ExpandProps {
+  readonly expanded?: boolean;
+}
 
-const ExpandClosed = getIcon(IconTypes.EXPANDERS, "ExpandClosed");
-const ExpandOpen = getIcon(IconTypes.EXPANDERS, "ExpandOpen");
-
+const Expand = styled.div<ExpandProps>`
+  height: 0.7em;
+  width: 0.8em;
+  background-image: ${(props) =>
+    props.expanded ? `url(${ExpandOpen})` : `url(${ExpandClosed})`};
+  background-repeat: no-repeat, no-repeat;
+  .expand-btn:hover & {
+    background-image: ${(props) =>
+      props.expanded ? `url(${ExpandOpenFocus})` : `url(${ExpandClosedFocus})`};
+    background-repeat: no-repeat, no-repeat;
+  }
+`;
 export function ExpandButton(props: {
   expandable: boolean;
   expanded: boolean;
@@ -24,12 +40,8 @@ export function ExpandButton(props: {
   };
   if (props.expandable) {
     return (
-      <div className="expand-btn clickable" onClick={handleClick}>
-        {expanded ? (
-          <IconElement src={ExpandOpen} alt="click to expand" size="100%" />
-        ) : (
-          <IconElement src={ExpandClosed} alt="click to expand" size="100%" />
-        )}
+      <div className="expand-btn clickable center" onClick={handleClick}>
+        <Expand expanded={props.expanded} />
       </div>
     );
   } else {

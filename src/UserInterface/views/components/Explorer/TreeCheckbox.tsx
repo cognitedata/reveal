@@ -1,20 +1,10 @@
 import React from "react";
 import styled from "styled-components";
-import { IconTypes } from "../../../constants/Icons";
-import getIcon from "../../../utils/Icon";
-
+import { Frame, FocusNormal, BackgroundFilter, FocusFilter, CheckedAll, FrameStippled, BackgroundNormal } from "@/UserInterface/utils/Icon";
 interface SpanProps {
   readonly checked?: boolean;
   readonly disabled?: boolean;
 }
-
-const CheckedAll = getIcon(IconTypes.CHECKBOXES, "CheckedAll");
-const BackgroundNormal = getIcon(IconTypes.CHECKBOXES, "BackgroundNormal");
-const BackgroundFilter = getIcon(IconTypes.CHECKBOXES, "BackgroundFilter");
-const Frame = getIcon(IconTypes.CHECKBOXES, "Frame");
-const FrameStippled = getIcon(IconTypes.CHECKBOXES, "FrameStippled");
-const FocusNormal = getIcon(IconTypes.CHECKBOXES, "FocusNormal");
-const FocusFilter = getIcon(IconTypes.CHECKBOXES, "FocusFilter");
 
 const Label = styled.label`
   position: relative;

@@ -74,11 +74,8 @@ ul {
   color: #000; }
 
 .expand-btn {
-  height: 0.7em;
-  width: 0.8em;
-  padding-inline-start: 0.5em;
-  margin-inline-end: 0.5em;
-  padding-inline-end: 0.2em; }
+  height: 100%;
+  width: 2em; }
 
 .tree-picked-item {
   width: 1em;
