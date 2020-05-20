@@ -1,22 +1,17 @@
 const path = require("path");
-
-function resolve(dir) {
-  return path.resolve(__dirname, dir);
-}
-
 module.exports = {
   // webpack will take the files from ./src/index
-  entry: "./src/UserInterface/views/SubsurfaceVisualizer.tsx",
+  entry: "./src/UserInterface/SubsurfaceVisualizer.tsx",
 
   // and output it into /dist as bundle.js
   output: {
     path: path.resolve("lib"),
-    filename: "SubsurfaceVisualizer.js"
+    filename: "SubsurfaceVisualizer.js",
   },
 
   // adding .ts and .tsx to resolve.extensions will help babel look for .ts and .tsx files to transpile
   resolve: {
-    extensions: [".ts", ".tsx", ".js"]
+    extensions: [".ts", ".tsx", ".js"],
   },
 
   module: {
@@ -26,13 +21,13 @@ module.exports = {
         test: /\.(ts|js)x?$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader"
-        }
+          loader: "babel-loader",
+        },
       },
       // sass-loader to bundle all the css files into one file and style-loader to add all the styles  inside the style tag of the document
       {
         test: /\.s?css$/,
-        use: ["style-loader", "css-loader", "sass-loader"]
+        use: ["style-loader", "css-loader", "sass-loader"],
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
@@ -40,11 +35,11 @@ module.exports = {
           {
             loader: "file-loader",
             options: {
-              esModule: false
-            }
-          }
-        ]
-      }
-    ]
-  }
+              esModule: false,
+            },
+          },
+        ],
+      },
+    ],
+  },
 };

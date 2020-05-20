@@ -1,13 +1,13 @@
 import { TitleBarInterface, ToolBarType } from "./common";
 
-// Settings action interfaces
-export interface SettingsActionInterface {
+// Describes the return type of actions fired from Settings component
+export interface SettingsCommandInterface {
   type: String;
-  payload: SettingsActionPayloadType;
+  payload: SettingsCommandPayloadType;
 }
 
-// Settings action payload type
-export type SettingsActionPayloadType = {
+// Describes the payload of actions fired from Settings component
+export type SettingsCommandPayloadType = {
   sectionId: number;
   subSectionId?: number;
   elementIndex?: number;
@@ -17,7 +17,7 @@ export type SettingsActionPayloadType = {
   node?: any;
 };
 
-// Settings state interface
+// Settings component state interface
 export interface SettingsStateInterface {
   id: string | null;
   titleBar?: TitleBarInterface;
@@ -37,11 +37,11 @@ export interface SettingsSectionInterface {
 
 // Settings Section Element
 export interface SectionElement {
-  label: string;
+  label?: string;
   type: string;
   value?: any;
   isReadOnly?: boolean;
-  checked: boolean;
+  checked?: boolean;
   options?: Array<{
     name: string;
     icon?: {

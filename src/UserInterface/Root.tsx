@@ -2,7 +2,6 @@ import 'reset-css';
 import React from "react";
 import { Provider } from "react-redux";
 import { createStore } from "redux";
-import { GlobalState } from "./interfaces/common"
 
 import './styles/css/index.css';
 import "./styles/css/react-split-pane.css"

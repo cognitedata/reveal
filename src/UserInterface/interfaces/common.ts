@@ -17,7 +17,7 @@ export type ToolBarType = Array<{
   };
 }>;
 
-// Global State
-export interface GlobalState {
+// Redux Store
+export interface ReduxStore {
   settings: SettingsStateInterface;
 }

@@ -158,7 +158,7 @@ export const state = {
         {
           icon: {
             type: IconTypes.NODES,
-            name: "Map",
+            name: "MapIcon",
           },
           selected: true,
           action: {
@@ -217,7 +217,7 @@ export const state = {
                 },
                 {
                   name: "Z values",
-                  icon: { type: IconTypes.NODES, name: "Map" },
+                  icon: { type: IconTypes.NODES, name: "MapIcon" },
                 },
                 {
                   name: "Folder",
@@ -295,7 +295,7 @@ export const state = {
                 },
                 {
                   name: "Z values",
-                  icon: { type: IconTypes.NODES, name: "Map" },
+                  icon: { type: IconTypes.NODES, name: "MapIcon" },
                 },
                 {
                   name: "Folder",
@@ -355,7 +355,7 @@ export const state = {
                 },
                 {
                   name: "Z values",
-                  icon: { type: IconTypes.NODES, name: "Map" },
+                  icon: { type: IconTypes.NODES, name: "MapIcon" },
                 },
                 {
                   name: "Folder",

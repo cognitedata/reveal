@@ -5,11 +5,10 @@ import {
   ON_RANGE_INPUT_CHANGE,
   ON_COMPACT_COLOR_CHANGE,
   ON_EXPAND_CHANGE_FROM_TOOLBAR,
-  GENERATE_SETTINGS_CONFIG,
   ON_CHANGE_SETTING_AVAILABILITY,
 } from "../types/settings";
 import {
-  SettingsActionInterface,
+  SettingsCommandInterface,
   SettingsStateInterface,
   SectionElement,
 } from "../../interfaces/settings";
@@ -17,13 +16,10 @@ import { state } from "../../data/settings-dummy-state";
 import { isNumber } from "../../utils/Settings";
 
 // Initial settings state
-const initialState: SettingsStateInterface = {
-  id: null,
-  sections: [],
-};
+const initialState: SettingsStateInterface = state;
 
 // Settings reducer to update state with actions
-export default (state = initialState, action: SettingsActionInterface) => {
+export default (state = initialState, action: SettingsCommandInterface) => {
   switch (action.type) {
     case ON_EXPAND_CHANGE: {
       const { sectionId, subSectionId } = action.payload;
@@ -81,9 +77,6 @@ export default (state = initialState, action: SettingsActionInterface) => {
       const subSection = section.subSections![subSectionId!];
       subSection.isExpanded = !subSection.isExpanded;
       return { ...state };
-    }
-    case GENERATE_SETTINGS_CONFIG: {
-      return state;
     }
     default:
       return state;

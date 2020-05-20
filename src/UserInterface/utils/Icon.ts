@@ -1,26 +1,26 @@
 import { IconTypes } from "../constants/Icons";
 
-import Close from "../assets/images/Icons/Actions/Close.png";
-import Clean from "../assets/images/Icons/Actions/Clean.png";
-import Reset from "../assets/images/Icons/Actions/Reset.png";
-import Solution from "../assets/images/Icons/Actions/Solution.png";
-import Copy from "../assets/images/Icons/Actions/Copy.png";
-import Paste from "../assets/images/Icons/Actions/Paste.png";
-import FontBold from "../assets/images/Icons/Actions/FontBold.png";
-import FontItalic from "../assets/images/Icons/Actions/FontItalic.png";
-import FontUnderline from "../assets/images/Icons/Actions/FontUnderline.png";
-import Pinned from "../assets/images/Icons/States/Pinned.png";
-import PolylinesNode from "../assets/images/Icons/Nodes/PolylinesNode.png";
-import PointCloudNode from "../assets/images/Icons/Nodes/PointCloudNode.png";
-import FolderNode from "../assets/images/Icons/Nodes/FolderNode.png";
-import MapIcon from "../assets/images/Icons/Nodes/Map.png";
-import PointsNode from "../assets/images/Icons/Nodes/PointsNode.png";
-import FatRight from "../assets/images/Icons/Arrows/FatRight.png";
-import FatLeft from "../assets/images/Icons/Arrows/FatLeft.png";
-import Cube from "../assets/images/Icons/PointSymbol/Cube.png";
-import Sphere from "../assets/images/Icons/PointSymbol/Sphere.png";
-import LabelImage from "../assets/images/Icons/Show/Label.png";
-import WellNode from "../assets/images/Icons/Nodes/WellNode.png";
+import Close from "../../../images/Arrows/FatLeft.png";
+import Clean from "../../../images/Actions/Clean.png";
+import Reset from "../../../images/Actions/Reset.png";
+import Solution from "../../../images/Actions/Solution.png";
+import Copy from "../../../images/Actions/Copy.png";
+import Paste from "../../../images/Actions/Paste.png";
+import FontBold from "../../../images/Actions/FontBold.png";
+import FontItalic from "../../../images/Actions/FontItalic.png";
+import FontUnderline from "../../../images/Actions/FontUnderline.png";
+import Pinned from "../../../images/States/Pinned.png";
+import PolylinesNode from "../../../images/Nodes/PolylinesNode.png";
+import PointCloudNode from "../../../images/Nodes/PointCloudNode.png";
+import FolderNode from "../../../images/Nodes/FolderNode.png";
+import MapIcon from "../../../images/Nodes/Map.png";
+import PointsNode from "../../../images/Nodes/PointsNode.png";
+import FatRight from "../../../images/Arrows/FatRight.png";
+import FatLeft from "../../../images/Arrows/FatLeft.png";
+import Cube from "../../../images/PointSymbol/Cube.png";
+import Sphere from "../../../images/PointSymbol/Sphere.png";
+import LabelImage from "../../../images/Show/Label.png";
+import WellNode from "../../../images/Nodes/WellNode.png";
 
 // checkboxes
 
@@ -91,7 +91,7 @@ export default function getIcon(iconType: string, iconName: string) {
           return PointCloudNode;
         case "FolderNode":
           return FolderNode;
-        case "Map":
+        case "MapIcon":
           return MapIcon;
         case "PointsNode":
           return PointsNode;
@@ -116,36 +116,6 @@ export default function getIcon(iconType: string, iconName: string) {
       switch (iconName) {
         case "Label":
           return LabelImage;
-      }
-    case IconTypes.CHECKBOXES:
-      switch (iconName) {
-        case "Frame":
-          return Frame;
-        case "FrameStippled":
-          return FrameStippled;
-        case "FocusNormal":
-          return FocusNormal;
-        case "FocusFilter":
-          return FocusFilter;
-        case "BackgroundNormal":
-          return BackgroundNormal;
-        case "BackgroundFilter":
-          return BackgroundFilter;
-        case "CheckedAll":
-          return CheckedAll;
-        case "CheckedSome":
-          return CheckedSome;
-        case "RadioOff":
-          return RadioOff;
-        case "RadioOn":
-          return RadioOn;
-      }
-    case IconTypes.EXPANDERS:
-      switch (iconName) {
-        case "ExpandOpen":
-          return ExpandOpen;
-        case "ExpandClosed":
-          return ExpandClosed;
       }
   }
   return undefined;
