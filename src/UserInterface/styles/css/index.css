@@ -1,0 +1,192 @@
+body {
+  box-sizing: border-box;
+  font-family: "Roboto", "Jost", sans-serif; }
+
+.root-container {
+  height: 100vh;
+  width: 100vw;
+  display: flex; }
+
+.left-panel {
+  min-width: 330px;
+  display: flex;
+  flex-direction: column;
+  background-image: linear-gradient(to right, white, lightgray); }
+
+.right-panel {
+  position: relative;
+  height: 100vh;
+  background-color: grey; }
+
+.right-panel canvas {
+  width: 100% !important;
+  height: 100% !important; }
+
+.left-panel-section {
+  width: 100%; }
+
+.settings-section-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden; }
+
+.explorer-container {
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; }
+
+.settings-container {
+  width: 100%;
+  overflow-y: auto;
+  position: relative; }
+  .settings-container .settings-title-bar {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 9999;
+    flex: 1; }
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center; }
+  .icon img {
+    width: 1rem;
+    height: 1rem; }
+
+/* Tweak expansion panel */
+.MuiExpansionPanel-root {
+  border-radius: 0 !important; }
+
+.MuiExpansionPanelSummary-content,
+.MuiExpansionPanel-root.Mui-expanded {
+  margin: 0px !important; }
+
+.MuiExpansionPanelDetails-root {
+  padding: 0 !important;
+  display: block !important; }
+
+/* Global title bar*/
+.title-bar {
+  height: 1.6rem;
+  display: flex;
+  align-items: center;
+  padding-left: 0.5rem;
+  background-image: linear-gradient(to right, #fff, #efefef); }
+  .title-bar h1 {
+    font-weight: 500;
+    font-size: 0.8rem;
+    margin: 0 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; }
+
+.tool-bar {
+  display: flex; }
+  .tool-bar .tool-bar-icon {
+    height: 1.6rem;
+    width: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+    cursor: pointer; }
+    .tool-bar .tool-bar-icon:hover {
+      background-color: lightblue; }
+  .tool-bar .icon-selected {
+    background-color: lightblue; }
+
+.MuiCollapse-wrapperInner {
+  position: relative; }
+
+.input-icon {
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+  cursor: pointer; }
+  .input-icon:hover {
+    background-color: lightblue; }
+
+.input-icon-selected {
+  background-color: lightblue; }
+
+.MuiInputBase-root {
+  height: 1.5rem;
+  border: 1.2px solid #c4c4c4;
+  font-size: 0.6rem;
+  flex: 1; }
+
+.MuiInput-underline:before {
+  content: "";
+  position: absolute;
+  border-bottom: 0 !important; }
+
+.MuiList-padding {
+  padding: 0 !important; }
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 2px;
+  background: white;
+  outline: none;
+  margin: 0.5rem 0; }
+
+.slider:hover {
+  opacity: 1; }
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 8px;
+  height: 15px;
+  background: white;
+  cursor: pointer;
+  border: 1px solid lightgray;
+  border-radius: 2px; }
+
+.slider::-moz-range-thumb {
+  width: 8px;
+  height: 15px;
+  background: white;
+  cursor: pointer;
+  border: 1px solid lightgray;
+  border-radius: 2px; }
+
+.additional-padding {
+  padding-left: 0.15rem; }
+
+.select-group {
+  width: 100%;
+  position: relative; }
+  .select-group .MuiInputBase-root {
+    height: 1.4rem;
+    width: 92%;
+    background: red;
+    background-color: #f0f0f0 !important;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 1px rgba(0, 0, 0, 0.3), 0 1px 1px rgba(255, 255, 255, 0.9); }
+  .select-group .select-controls {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    justify-content: center; }
+    .select-group .select-controls svg {
+      width: 0.7rem;
+      height: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      right: 0;
+      position: absolute;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 1px rgba(0, 0, 0, 0.3), 0 1px 1px rgba(255, 255, 255, 0.9); }
+      .select-group .select-controls svg:first-child {
+        top: -1.4rem; }
+      .select-group .select-controls svg:nth-child(2) {
+        bottom: 0; }
