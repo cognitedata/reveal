@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import IconElement from "./IconElement";
-import ExpandClosed from "../../../assets/images/Icons/Checkboxes/ExpandClosed.png";
-import ExpandOpen from "../../../assets/images/Icons/Checkboxes/ExpandOpen.png";
+import { IconTypes } from "../../../constants/Icons";
+import getIcon from "../../../utils/Icon";
+
+const ExpandClosed = getIcon(IconTypes.EXPANDERS, "ExpandClosed");
+const ExpandOpen = getIcon(IconTypes.EXPANDERS, "ExpandOpen");
 
 export function ExpandButton(props: {
   expandable: boolean;

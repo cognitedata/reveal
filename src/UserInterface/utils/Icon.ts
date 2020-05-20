@@ -1,6 +1,4 @@
-import {
-  IconTypes
-} from "../constants/Icons";
+import { IconTypes } from "../constants/Icons";
 
 import Close from "../assets/images/Icons/Actions/Close.png";
 import Clean from "../assets/images/Icons/Actions/Clean.png";
@@ -24,6 +22,22 @@ import Sphere from "../assets/images/Icons/PointSymbol/Sphere.png";
 import LabelImage from "../assets/images/Icons/Show/Label.png";
 import WellNode from "../assets/images/Icons/Nodes/WellNode.png";
 
+// checkboxes
+
+import Frame from "../../../images/Checkboxes/Frame.png";
+import FrameStippled from "../../../images/Checkboxes/FrameStippled.png";
+import FocusNormal from "../../../images/Checkboxes/FocusNormal.png";
+import FocusFilter from "../../../images/Checkboxes/FocusFilter.png";
+import BackgroundNormal from "../../../images/Checkboxes/BackgroundNormal.png";
+import BackgroundFilter from "../../../images/Checkboxes/BackgroundFilter.png";
+import CheckedAll from "../../../images/Checkboxes/CheckedAll.png";
+import CheckedSome from "../../../images/Checkboxes/CheckedSome.png";
+import RadioOff from "../../../images/Checkboxes/RadioOff.png";
+import RadioOn from "../../../images/Checkboxes/RadioOn.png";
+
+// expanders
+import ExpandOpen from "../../../images/Expanders/ExpandOpen.png";
+import ExpandClosed from "../../../images/Expanders/ExpandClosed.png";
 
 export default function getIcon(iconType: string, iconName: string) {
   switch (iconType) {
@@ -51,7 +65,7 @@ export default function getIcon(iconType: string, iconName: string) {
     case IconTypes.STATES:
       switch (iconName) {
         case "Pinned":
-          return Pinned
+          return Pinned;
       }
     case IconTypes.NODES:
       switch (iconName) {
@@ -87,6 +101,36 @@ export default function getIcon(iconType: string, iconName: string) {
         case "Label":
           return LabelImage;
       }
+    case IconTypes.CHECKBOXES:
+      switch (iconName) {
+        case "Frame":
+          return Frame;
+        case "FrameStippled":
+          return FrameStippled;
+        case "FocusNormal":
+          return FocusNormal;
+        case "FocusFilter":
+          return FocusFilter;
+        case "BackgroundNormal":
+          return BackgroundNormal;
+        case "BackgroundFilter":
+          return BackgroundFilter;
+        case "CheckedAll":
+          return CheckedAll;
+        case "CheckedSome":
+          return CheckedSome;
+        case "RadioOff":
+          return RadioOff;
+        case "RadioOn":
+          return RadioOn;
+      }
+    case IconTypes.EXPANDERS:
+      switch (iconName) {
+        case "ExpandOpen":
+          return ExpandOpen;
+        case "ExpandClosed":
+          return ExpandClosed;
+      }
   }
   return undefined;
-};
+}

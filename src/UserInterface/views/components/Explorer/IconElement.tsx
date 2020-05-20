@@ -1,9 +1,9 @@
 import React from "react";
 
 export default function IconElement(props: {
-  src: string;
-  alt: string;
-  size: string;
+  src?: string;
+  alt?: string;
+  size?: string;
 }) {
   return (
     <div className="tree-icon center">

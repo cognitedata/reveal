@@ -1,17 +1,20 @@
 import React from "react";
 import styled from "styled-components";
-import CheckedAll from "../../../assets/images/Icons/Checkboxes/Checked.png";
-import BackgroundNormal from "../../../assets/images/Icons/Checkboxes/BackgroundNormal.png";
-import BackgroundFilter from "../../../assets/images/Icons/Checkboxes/BackgroundFilter.png";
-import Frame from "../../../assets/images/Icons/Checkboxes/Frame.png";
-import FrameStippled from "../../../assets/images/icons/Checkboxes/FrameStippled.png";
-import FocusNormal from "../../../assets/images/icons/Checkboxes/FocusNormal.png";
-import FocusFilter from "../../../assets/images/icons/Checkboxes/FocusFilter.png";
+import { IconTypes } from "../../../constants/Icons";
+import getIcon from "../../../utils/Icon";
 
 interface SpanProps {
   readonly checked?: boolean;
   readonly disabled?: boolean;
 }
+
+const CheckedAll = getIcon(IconTypes.CHECKBOXES, "CheckedAll");
+const BackgroundNormal = getIcon(IconTypes.CHECKBOXES, "BackgroundNormal");
+const BackgroundFilter = getIcon(IconTypes.CHECKBOXES, "BackgroundFilter");
+const Frame = getIcon(IconTypes.CHECKBOXES, "Frame");
+const FrameStippled = getIcon(IconTypes.CHECKBOXES, "FrameStippled");
+const FocusNormal = getIcon(IconTypes.CHECKBOXES, "FocusNormal");
+const FocusFilter = getIcon(IconTypes.CHECKBOXES, "FocusFilter");
 
 const Label = styled.label`
   position: relative;
@@ -95,7 +98,7 @@ export function TreeCheckBox(props: {
     e.stopPropagation();
     let checkStatus = false;
     if (props.disabled) {
-      return true;
+      return;
     }
     if (!props.checked) {
       checkStatus = true;
@@ -110,14 +113,6 @@ export function TreeCheckBox(props: {
       className={props.class + ` center ${stateClassArr.join(" ")}`}
       htmlFor={props.id}
     >
-      {/* <Input
-        type="checkbox"
-        id={props.id}
-        name={props.id}
-        checked={props.checked}
-        value={props.value}
-        onChange={handleCheck}
-      /> */}
       <Span onClick={handleClick} />
     </Label>
   );
