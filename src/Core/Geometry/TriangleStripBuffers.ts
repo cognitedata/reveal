@@ -11,8 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Vector3 } from "./Vector3";
-import * as THREE from 'three';
+import * as THREE from "three";
+
+import { Vector3 } from "@/Core/Geometry/Vector3";
 
 export class TriangleStripBuffers
 {
@@ -20,13 +21,13 @@ export class TriangleStripBuffers
   // INSTANCE FIELDS
   //==================================================
 
+  protected positions: Float32Array;
+  protected normals: Float32Array;
+  protected uvs: Float32Array;
+  protected triangleIndexes: number[] = [];
+  protected uniqueIndex = 0;
 
-  public positions: Float32Array;
-  public normals: Float32Array;
-  public uvs: Float32Array | null = null;
-  public triangleIndexes: number[] = [];
-  public pointCount = 0;
-  public uniqueIndex = 0;
+  public get hasUvs(): boolean { return this.uvs.length > 0; }
 
   //==================================================
   // CONSTRUCTORS
@@ -34,11 +35,9 @@ export class TriangleStripBuffers
 
   public constructor(pointCount: number, makeUvs = false)
   {
-    this.pointCount = pointCount;
     this.positions = new Float32Array(3 * pointCount);
     this.normals = new Float32Array(3 * pointCount);
-    if (makeUvs)
-      this.uvs = new Float32Array(2 * pointCount);
+    this.uvs = new Float32Array(makeUvs ? 2 * pointCount : 0);
   }
 
   //==================================================
@@ -48,11 +47,11 @@ export class TriangleStripBuffers
   public getBufferGeometry(): THREE.BufferGeometry
   {
     const geometry = new THREE.BufferGeometry();
-    geometry.addAttribute('position', new THREE.Float32BufferAttribute(this.positions, 3, true));
-    geometry.addAttribute('normal', new THREE.Float32BufferAttribute(this.normals, 3, true));
+    geometry.addAttribute("position", new THREE.Float32BufferAttribute(this.positions, 3, true));
+    geometry.addAttribute("normal", new THREE.Float32BufferAttribute(this.normals, 3, true));
     geometry.setIndex(new THREE.Uint32BufferAttribute(this.triangleIndexes, 1, true));
-    if (this.uvs)
-      geometry.addAttribute('uv', new THREE.Float32BufferAttribute(this.uvs, 2, true));
+    if (this.hasUvs)
+      geometry.addAttribute("uv", new THREE.Float32BufferAttribute(this.uvs, 2, true));
     return geometry;
   }
 
@@ -92,7 +91,7 @@ export class TriangleStripBuffers
       this.normals[index + 1] = normal.y;
       this.normals[index + 2] = normal.z;
     }
-    if (this.uvs)
+    if (this.hasUvs)
     {
       const index = 2 * this.uniqueIndex;
       this.uvs[index + 0] = u;
@@ -112,7 +111,7 @@ export class TriangleStripBuffers
       this.normals[index + 1] = normal.y;
       this.normals[index + 2] = normal.z;
     }
-    if (this.uvs)
+    if (this.hasUvs)
     {
       const index = 2 * uniqueIndex;
       this.uvs[index + 0] = u;

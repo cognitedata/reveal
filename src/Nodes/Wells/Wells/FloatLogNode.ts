@@ -11,11 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { FloatLog } from "./../Logs/FloatLog";
-import { BaseLogNode } from "./BaseLogNode";
-import { BaseRenderStyle } from "../../../Core/Styles/BaseRenderStyle";
-import { WellRenderStyle } from "./WellRenderStyle";
-import { TargetId } from "../../../Core/PrimitiveClasses/TargetId";
+import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
+import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
+import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
+import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
+import { TargetId } from "@/Core/Primitives/TargetId";
 
 export class FloatLogNode extends BaseLogNode
 {

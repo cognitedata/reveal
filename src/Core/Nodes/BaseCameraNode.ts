@@ -11,8 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseNode } from "./BaseNode";
-import { BaseTargetNode } from "./BaseTargetNode";
+import { BaseNode } from "@/Core/Nodes/BaseNode";
+import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
 
 export abstract class BaseCameraNode extends BaseNode
 {

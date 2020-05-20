@@ -88,5 +88,5 @@ export default function getIcon(iconType: string, iconName: string) {
           return LabelImage;
       }
   }
-  return null;
+  return undefined;
 };

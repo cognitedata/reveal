@@ -11,8 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseVisualNode } from "../../../Core/Nodes/BaseVisualNode";
-import { Vector3 } from "../../../Core/Geometry/Vector3";
+import { Vector3 } from "@/Core/Geometry/Vector3";
+import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 
 export class WellNode extends BaseVisualNode
 {

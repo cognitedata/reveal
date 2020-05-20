@@ -11,11 +11,12 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseLogSample } from "../Samples/BaseLogSample";
-import { DiscreteLogSample } from "../Samples/DiscreteLogSample";
-import { BaseLog } from "../Logs/BaseLog";
-import { Range1 } from "../../../Core/Geometry/Range1";
-import { Random } from "../../../Core/PrimitiveClasses/Random";
+import { Range1 } from "@/Core/Geometry/Range1";
+import { Random } from "@/Core/Primitives/Random";
+
+import { BaseLogSample } from "@/Nodes/Wells/Samples/BaseLogSample";
+import { DiscreteLogSample } from "@/Nodes/Wells/Samples/DiscreteLogSample";
+import { BaseLog } from "@/Nodes/Wells/Logs/BaseLog";
 
 export class DiscreteLog extends BaseLog
 {
@@ -91,7 +92,7 @@ export class DiscreteLog extends BaseLog
   public static createByRandom(mdRange: Range1, valueRange: Range1): DiscreteLog
   {
     const log = new DiscreteLog();
-    const numSamples = 100;
+    const numSamples = 10;
     const mdInc = mdRange.delta / (numSamples - 1);
 
     for (let k = 0, md = mdRange.min; k < numSamples; k++, md += mdInc)

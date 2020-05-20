@@ -1,23 +1,24 @@
-import { PolylinesNode } from "../Nodes/PolylinesNode";
-import { BaseTargetNode } from "../Core/Nodes/BaseTargetNode";
-import { BaseVisualNode } from "../Core/Nodes/BaseVisualNode";
+import { PolylinesNode } from "@/Nodes/Misc/PolylinesNode";
+import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
+import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
+import { isInstanceOf } from "@/Core/Primitives/ClassT";
+import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
+
 import { StubRootCreator } from "./StubModule/StubRootCreator";
-import { isInstanceOf } from "../Core/PrimitiveClasses/ClassT";
-import { BaseRenderStyle } from "../Core/Styles/BaseRenderStyle";
 import { StubTargetNode } from "./StubModule/StubTargetNode";
 
-describe('Hierarcy', () =>
+describe("Hierarcy", () =>
 {
   // Create the root
-  test('Identifyable', () => testIdentifyable());
-  test('boundingBox', () => boundingBox());
+  test("Identifyable", () => testIdentifyable());
+  test("boundingBox", () => boundingBox());
 
-  test('getDescendantsByType', () => getDescendantsByType());
-  test('Hierarcy', () => testHierarcy());
-  test('isVisible/SetVisible', () => isVisibleSetVisible());
-  test('count views', () => countView());
+  test("getDescendantsByType", () => getDescendantsByType());
+  test("Hierarcy", () => testHierarcy());
+  test("isVisible/SetVisible", () => isVisibleSetVisible());
+  test("count views", () => countView());
 
-  test('renderStyle', () => 
+  test("renderStyle", () => 
   {
     const root = StubRootCreator.createTestRoot();
     for (const isVisible of [true, false])

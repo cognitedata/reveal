@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Vector3 } from "./Vector3";
-import { Range3 } from "./Range3";
-import { Range1 } from "./Range1";
+import { Vector3 } from "@/Core/Geometry/Vector3";
+import { Range1 } from "@/Core/Geometry/Range1";
+import { Range3 } from "@/Core/Geometry/Range3";
 
 export class Points
 {

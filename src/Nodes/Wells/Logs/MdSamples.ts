@@ -11,10 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseLogSample } from "../Samples/BaseLogSample";
-import { MdSample } from "../Samples/MdSample";
-import { Range1 } from "../../../Core/Geometry/Range1";
-import { Ma } from "../../../Core/PrimitiveClasses/Ma";
+import { Range1 } from "@/Core/Geometry/Range1";
+import { Ma } from "@/Core/Primitives/Ma";
+
+import { BaseLogSample } from "@/Nodes/Wells/Samples/BaseLogSample";
+import { MdSample } from "@/Nodes/Wells/Samples/MdSample";
 
 export abstract class MdSamples
 {

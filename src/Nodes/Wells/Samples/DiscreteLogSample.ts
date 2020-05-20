@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseLogSample } from "./BaseLogSample";
+import { BaseLogSample } from "@/Nodes/Wells/Samples/BaseLogSample";
 
 export class DiscreteLogSample extends BaseLogSample 
 {

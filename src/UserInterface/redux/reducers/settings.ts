@@ -11,6 +11,7 @@ import {
 import {
   SettingsActionInterface,
   SettingsStateInterface,
+  SectionElement,
 } from "../../interfaces/settings";
 import { state } from "../../data/settings-dummy-state";
 import { isNumber } from "../../utils/Settings";
@@ -51,10 +52,12 @@ export default (state = initialState, action: SettingsActionInterface) => {
         value,
       } = action.payload;
       const section = state.sections[sectionId!];
-      let element = null;
-      if (isNumber(subSectionId))
+      let element: SectionElement;
+      if (isNumber(subSectionId)) {
         element = section.subSections![subSectionId!].elements[elementIndex!];
-      else element = section.elements[elementIndex!];
+      } else {
+        element = section.elements[elementIndex!];
+      }
       if (isNumber(subElementIndex))
         element.subElements![subElementIndex!].value = value;
       else element.value = value;

@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseStyle } from "./BaseStyle";
-import { TargetId } from "../PrimitiveClasses/TargetId";
-import { TargetIdAccessor } from "../Interfaces/TargetIdAccessor";
+import { BaseStyle } from "@/Core/Styles/BaseStyle";
+import { TargetId } from "@/Core/Primitives/TargetId";
+import { TargetIdAccessor } from "@/Core/Interfaces/TargetIdAccessor";
 
 export abstract class BaseRenderStyle extends BaseStyle implements TargetIdAccessor
 {

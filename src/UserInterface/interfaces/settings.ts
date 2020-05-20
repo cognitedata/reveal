@@ -39,7 +39,7 @@ export interface SettingsSectionInterface {
 export interface SectionElement {
   label: string;
   type: string;
-  value?: string | number;
+  value?: any;
   isReadOnly?: boolean;
   checked: boolean;
   options?: Array<{

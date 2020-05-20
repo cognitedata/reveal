@@ -27,7 +27,7 @@ export class Index2
   public constructor(i: number, j?: number)
   {
     this.i = i;
-    this.j = j == undefined ? i : j;
+    this.j = j === undefined ? i : j;
   }
 
   public /*copy constructor*/ copy(): Index2

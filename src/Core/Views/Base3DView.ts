@@ -11,11 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Range3 } from "../Geometry/Range3";
-import { BaseView } from "./BaseView";
-import { Changes } from "./Changes";
-import { NodeEventArgs } from "./NodeEventArgs";
-import { ViewInfo } from "./ViewInfo";
+import { Range3 } from "@/Core/Geometry/Range3";
+import { BaseView } from "@/Core/Views/BaseView";
+import { Changes } from "@/Core/Views/Changes";
+import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
+import { ViewInfo } from "@/Core/Views/ViewInfo";
 
 export abstract class Base3DView extends BaseView
 {

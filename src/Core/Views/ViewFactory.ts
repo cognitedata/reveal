@@ -11,8 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseView } from "./BaseView";
-import { BaseNode } from "../Nodes/BaseNode";
+import { BaseView } from "@/Core/Views/BaseView";
+import { BaseNode } from "@/Core/Nodes/BaseNode";
 
 export class ViewFactory
 {

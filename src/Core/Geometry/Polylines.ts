@@ -11,8 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Polyline } from "./Polyline";
-import { Range3 } from "./Range3";
+import { Polyline } from "@/Core/Geometry/Polyline";
+import { Range3 } from "@/Core/Geometry/Range3";
 
 export class Polylines
 {

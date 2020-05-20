@@ -11,9 +11,10 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import * as THREE from 'three';
-import { Vector3 } from '../../Core/Geometry/Vector3';
-import { ThreeConverter } from "./../ThreeConverter";
+import * as THREE from "three";
+
+import { Vector3 } from "@/Core/Geometry/Vector3";
+import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 
 export class ThreeLabel 
 {
@@ -48,9 +49,9 @@ export class ThreeLabel
   public static create(text: string, worldHeight: number, white = true): THREE.Sprite | null
   {
     const borderSize = 2;
-    const canvas = document.createElement('canvas');
+    const canvas = document.createElement("canvas");
     {
-      const context = canvas.getContext('2d');
+      const context = canvas.getContext("2d");
       if (!context)
         return null;
 
@@ -69,15 +70,15 @@ export class ThreeLabel
 
       // need to set font again after resizing canvas
       context.font = font;
-      context.textBaseline = 'middle';
-      context.textAlign = 'center';
+      context.textBaseline = "middle";
+      context.textAlign = "center";
 
       //context.fillStyle = 'red';
       //context.fillRect(0, 0, width, height);
 
       // scale to fit but don't stretch
       context.translate(width / 2, height / 2);
-      context.fillStyle = white ? 'white' : 'black';
+      context.fillStyle = white ? "white" : "black";
       context.fillText(text, 0, 0);
     }
     const texture = new THREE.Texture(canvas);

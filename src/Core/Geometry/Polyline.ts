@@ -11,9 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Vector3 } from "./Vector3";
-import { Points } from "./Points";
-import { Range3 } from "./Range3";
+import { Vector3 } from "@/Core/Geometry/Vector3";
+import { Points } from "@/Core/Geometry/Points";
+import { Range3 } from "@/Core/Geometry/Range3";
 
 export class Polyline extends Points
 {

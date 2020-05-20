@@ -17,7 +17,12 @@
     "downlevelIteration": true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
-    "lib": ["dom", "es2015", "es2017"]
+    "lib": ["dom", "es2015", "es2017"],
+
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "exclude": ["node_modules", "dist"]
 }
