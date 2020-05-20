@@ -62,7 +62,7 @@ export class ThreeLabel
 
   public static createTexture(canvas: HTMLCanvasElement): THREE.Texture
   {
-    const texture = new THREE.Texture(canvas);
+    const texture = new THREE.CanvasTexture(canvas);
     texture.minFilter = THREE.LinearFilter;
     texture.generateMipmaps = true;
     texture.wrapS = THREE.ClampToEdgeWrapping;
@@ -73,7 +73,7 @@ export class ThreeLabel
 
   public static createCanvas(text: string, white = true): HTMLCanvasElement | null
   {
-    // Some constants
+    // https://www.javascripture.com/CanvasRenderingContext2D
     const borderSize = 2;
     const fontSize = 30;
     const font = `${fontSize}px Helvetica`;

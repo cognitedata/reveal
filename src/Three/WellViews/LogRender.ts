@@ -24,12 +24,15 @@ import { Ma } from "@/Core/Primitives/Ma";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { ThreeLabel } from "@/Three/Utilities/ThreeLabel";
 import { TextureKit } from "@/Three/Utilities/TextureKit";
+import { Canvas } from "@/Three/Utilities/Canvas";
+
 
 import { PointLog } from "@/Nodes/Wells/Logs/PointLog";
 import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
 import { DiscreteLog } from "@/Nodes/Wells/Logs/DiscreteLog";
 import { FloatLogSample } from "@/Nodes/Wells/Samples/FloatLogSample";
 import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
+import { Random } from "@/Core/Primitives/Random";
 
 export class LogRender 
 {
@@ -56,17 +59,35 @@ export class LogRender
   // INSTANCE METHODS: Band
   //==================================================
 
-  public addBand(group: THREE.Group, mdRange: Range1, color: Color, right: boolean, left: boolean): void
+  public addBand(group: THREE.Group, mdRange: Range1, right: boolean, left: boolean): void
   {
-    const rightBuffers = right ? new TriangleStripBuffers(2 * this.trajectory.count, false) : null;
-    const leftBuffers = left ? new TriangleStripBuffers(2 * this.trajectory.count, false) : null;
+    const mdInc = 10;
+    let more = true;
 
-    for (const baseSample of this.trajectory.samples)
+    let count = 0;
+    for (let md = mdRange.min; more; md += mdInc)
     {
-      const position = this.trajectory.getAtMd(baseSample.md);
+      more = md < mdRange.max;
+      count++;
+    }
+    const rightBuffers = right ? new TriangleStripBuffers(2 * count, true) : null;
+    const leftBuffers = left ? new TriangleStripBuffers(2 * count, true) : null;
+    if (leftBuffers)
+      leftBuffers.side = THREE.BackSide;
+
+
+    more = true;
+    for (let md = mdRange.min; more; md += mdInc)
+    {
+      more = md < mdRange.max;
+      if (!more)
+        md = mdRange.max;
+
+      const fraction = mdRange.getFraction(md);
+      const position = this.trajectory.getAtMd(md);
 
       // Get perpendicular
-      const tangent = this.trajectory.getTangentAtMd(baseSample.md);
+      const tangent = this.trajectory.getTangentAtMd(md);
       const cameraDirection = Vector3.substract(position, this.cameraPosition);
       const prependicular = cameraDirection.getNormal(tangent);
       const normal = prependicular.getNormal(tangent);
@@ -75,31 +96,129 @@ export class LogRender
       {
         const startPosition = Vector3.addWithFactor(position, prependicular, this.bandRange.min);
         const endPosition = Vector3.addWithFactor(position, prependicular, this.bandRange.max);
-        rightBuffers.addPair(startPosition, endPosition, normal, normal);
+        rightBuffers.addPair2(startPosition, endPosition, normal, fraction);
       }
       if (leftBuffers)
       {
+        normal.negate();
         const startPosition = Vector3.addWithFactor(position, prependicular, -this.bandRange.min);
         const endPosition = Vector3.addWithFactor(position, prependicular, -this.bandRange.max);
-        leftBuffers.addPair(endPosition, startPosition, normal, normal);
+        leftBuffers.addPair2(startPosition, endPosition, normal, fraction);
       }
     }
-    for (const buffers of [rightBuffers, leftBuffers])
+    let rightBand = false;
+    for (const buffers of [rightBuffers, leftBuffers]) 
     {
+      rightBand = !rightBand;
       if (!buffers)
         continue;
 
       const geometry = buffers.getBufferGeometry();
       const material = new THREE.MeshLambertMaterial({
-        color: ThreeConverter.toColor(color),
-        side: THREE.FrontSide,
-        emissive: ThreeConverter.toColor(color),
-        emissiveIntensity: 0.33,
+        side: buffers.side,
+        transparent: true,
       });
-      LogRender.setPolygonOffset(material, 2);
       const mesh = new THREE.Mesh(geometry, material);
       mesh.drawMode = THREE.TrianglesDrawMode;
+      mesh.name = rightBand ? "RightBand" : "LeftBand";
       group.add(mesh);
+    }
+  }
+
+  public setCanvas(group: THREE.Group, canvas: Canvas, rightBand: boolean): void
+  {
+    const object = group.getObjectByName(rightBand ? "RightBand" : "LeftBand");
+    if (!object)
+      return;
+
+    if (!(object instanceof THREE.Mesh))
+      return;
+
+    const mesh = object as THREE.Mesh;
+    const material = mesh.material as THREE.MeshLambertMaterial;
+    if (!material)
+      return;
+
+    material.map = canvas.createTexture();
+  }
+
+  public createCanvas(mdRange: Range1): Canvas
+  {
+    this.trajectory.touch();
+    const canvasDy = 100;
+    const canvasDx = canvasDy * mdRange.delta / this.bandRange.delta;
+    const canvas = new Canvas(canvasDx, canvasDy);
+    canvas.clear(Colors.white);
+    return canvas;
+  }
+
+
+  public addAnnotation(canvas: Canvas, mdRange: Range1, rightBand: boolean): void
+  {
+    const inc = 50;
+    canvas.beginPath();
+
+    let r = mdRange.copy();
+    r.roundByInc(-inc);
+    for (const anyTick of r.getTicks(inc))
+    {
+      const md = Number(anyTick);
+      const fraction = mdRange.getFraction(md);
+      canvas.addVerticalLine(fraction);
+    }
+    canvas.drawPath();
+
+    const labelInc = r.getBoldInc(inc, 4);
+    r = mdRange.copy();
+    r.roundByInc(-labelInc);
+
+    for (const anyTick of r.getTicks(labelInc))
+    {
+      const md = Number(anyTick);
+      const fraction = mdRange.getFraction(md);
+      canvas.drawText(fraction, `${md}`, null, rightBand);
+    }
+  }
+
+  public addFloatLogToBand(canvas: Canvas, mdRange: Range1, log: FloatLog | null, color: Color, rightBand: boolean): void
+  {
+    if (!log)
+      return;
+
+    const valueRange = log.range;
+    canvas.beginFunction();
+    for (let i = 0; i < log.samples.length; i++)
+    {
+      const sample = log.getAt(i);
+      const mdFraction = mdRange.getFraction(sample.md);
+      const valueFraction = valueRange.getFraction(sample.value);
+      canvas.addFunctionValue(mdFraction, valueFraction);
+    }
+    canvas.closeFunction();
+    canvas.setMixMode();
+    canvas.fillPathByGradient(color, 1);
+    canvas.drawPath(color, 2);
+    canvas.drawPath(Colors.black, 1);
+  }
+
+  public addDiscreteLogToBand(canvas: Canvas, mdRange: Range1, log: DiscreteLog | null): void
+  {
+    if (!log)
+      return;
+
+    let prevColor = Colors.white;
+    let prevMdFraction = Number.NaN;
+
+    for (let i = 0; i < log.samples.length; i++)
+    {
+      const sample = log.getAt(i);
+      const color = Colors.getNextColor(sample.value);
+      const mdFraction = mdRange.getFraction(sample.md);
+      if (i > 0)
+        canvas.fillRect(prevMdFraction, mdFraction, prevColor, 0.5);
+
+      prevColor = color;
+      prevMdFraction = mdFraction;
     }
   }
 

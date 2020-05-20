@@ -18,6 +18,8 @@ import { Range1 } from "@/Core/Geometry/Range1";
 import { Colors } from "@/Core/Primitives/Colors";
 
 import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
+import { FloatLogNode } from "@/Nodes/Wells/Wells/FloatLogNode";
+import { DiscreteLogNode } from "@/Nodes/Wells/Wells/DiscreteLogNode";
 import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
@@ -59,7 +61,7 @@ export class WellTrajectoryThreeView extends BaseLogThreeView
 
     const boundingBox = this.node.boundingBox.copy();
     if (!boundingBox)
-     return undefined;
+      return undefined;
 
     boundingBox.expandByMargin(this.style.radius);
 
@@ -93,25 +95,43 @@ export class WellTrajectoryThreeView extends BaseLogThreeView
 
       mdRange.addRange(log.mdRange);
     }
-    const group = new THREE.Group();
-
-
-    const axisColor = Colors.grey;
-    const bandColor = Colors.white;
     const bandRange = this.bandRange;
+    if (!bandRange)
+      return null;
 
-    if (bandRange && numVisible > 0)
+    const group = new THREE.Group();
+    const useRightBand = true;
+    const useLeftBand = true;
+
+    const logRender = new LogRender(trajectory, this.cameraPosition, bandRange);
+    if (numVisible > 0)
+      logRender.addBand(group, mdRange, useRightBand, useLeftBand);
+
+    for (const rightBand of [true, false])
     {
-      const right = true;
-      const logRender = new LogRender(trajectory, this.cameraPosition, bandRange);
-      logRender.addTickMarks(group, axisColor, mdRange, 25, 50, right, true);
-      logRender.addBand(group, mdRange, bandColor, right, true);
+      const canvas = logRender.createCanvas(mdRange);
+      for (const logNode of node.getDescendantsByType(FloatLogNode))
+      {
+        if (!logNode.isVisible(this.renderTarget))
+          continue;
+        if (rightBand)
+          logRender.addFloatLogToBand(canvas, mdRange, logNode.data, logNode.color, rightBand);
+      }
+      for (const logNode of node.getDescendantsByType(DiscreteLogNode))
+      {
+        if (!logNode.isVisible(this.renderTarget))
+          continue;
 
+        if (!rightBand)
+          logRender.addDiscreteLogToBand(canvas, mdRange, logNode.data);
+      }
+      logRender.addAnnotation(canvas, mdRange, rightBand);
+      logRender.setCanvas(group, canvas, rightBand);
     }
     const well = node.well;
     if (well)
     {
-      const label = ThreeLabel.createByPositionAndAlignment(well.name, well.wellHead, 1, 60, true);
+      const label = ThreeLabel.createByPositionAndAlignment(well.name, well.wellHead, 1, 60, false);
       if (label)
         group.add(label);
     }

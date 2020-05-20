@@ -74,13 +74,10 @@ export class FloatLogThreeView extends BaseLogThreeView
 
     const right = childIndex % 2 === 0;
 
-    if (childIndex <= 0)
-    {
-      logRender.addSolidFloatLog(group, log, right);
-      logRender.addLineFloatLog(group, log, Colors.black, right);
-    }
-    else
-      logRender.addLineFloatLog(group, log, node.color, right);
+    if (childIndex <= 0) {
+      //logRender.addSolidFloatLog(group, log, right);
+      //logRender.addLineFloatLog(group, log, Colors.black, right);
+    } else;//logRender.addLineFloatLog(group, log, node.color, right);
 
     return group;
   }

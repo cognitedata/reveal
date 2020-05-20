@@ -103,7 +103,7 @@ export abstract class BaseLogThreeView extends BaseGroupThreeView
 
     // Check if camera has move slightly
     const angle = Math.acos(cameraDirection.getDot(this.cameraDirection));
-    if (angle < Math.PI / 50)
+    if (angle < Math.PI / 20)
       return false;
 
     this.cameraDirection = cameraDirection;

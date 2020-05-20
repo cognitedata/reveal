@@ -67,7 +67,7 @@ export class DiscreteLogThreeView extends BaseLogThreeView
     const group = new THREE.Group();
 
     const logRender = new LogRender(trajectory, this.cameraPosition, bandRange);
-    logRender.addSolidDiscreteLog(group, log, false);
+    //logRender.addSolidDiscreteLog(group, log, false);
     return group;
   }
 }
