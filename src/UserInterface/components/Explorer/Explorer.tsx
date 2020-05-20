@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import VirtualTree from "./VirtualTree";
-import PointCloudNode from "../../../assets/images/Icons/Nodes/PointCloudNode.png";
-import PolylinesNode from "../../../assets/images/Icons/Nodes/PolylinesNode.png";
-import SurfaceNode from "../../../assets/images/Icons/Nodes/SurfaceNode.png";
+import PointCloudNode from "@images/Nodes/PointCloudNode.png";
+import PolylinesNode from "@images/Nodes/PolylinesNode.png";
+import SurfaceNode from "@images/Nodes/SurfaceNode.png";
 
 const RANDOM_WORDS = [
   "abstrusity",

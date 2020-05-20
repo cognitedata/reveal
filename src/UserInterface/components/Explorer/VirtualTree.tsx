@@ -3,7 +3,7 @@ import { AutoSizer, List as VirtualList } from "react-virtualized";
 import IconElement from "./IconElement";
 import { ExpandButton } from "./ExpandButton";
 import { TreeCheckBox } from "./TreeCheckbox";
-import { TreeDataItem } from "../../../interfaces/explorer";
+import { TreeDataItem } from "../../interfaces/explorer";
 
 const DEFAULT_ROW_HEIGHT = 26;
 
