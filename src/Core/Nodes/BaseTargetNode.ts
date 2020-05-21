@@ -22,7 +22,7 @@ export abstract class BaseTargetNode extends BaseNode implements Target
   //==================================================
 
   private _viewsShownHere: ViewList = new ViewList();
-  public isLightBackground: boolean = false;
+  public isLightBackground = false;
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -186,5 +186,19 @@ export abstract class BaseTargetNode extends BaseNode implements Target
         return true;
     }
     return true;
+  }
+
+  public getViewByNode(node: BaseNode): BaseView | null
+  {
+    for (const view of this.viewsShownHere.list) 
+    {
+      const otherNode = view.getNode();
+      if (!otherNode)
+        continue;
+
+      if (otherNode === node)
+        return view;
+    }
+    return null;
   }
 }

@@ -11,13 +11,33 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import { BaseNode } from "@/Core/Nodes/BaseNode";
+
+//==================================================
+// LOCAL HELPER CLASS
+//==================================================
+
+class ChangedDecription
+{
+  public changed: symbol;
+  public fieldName: string | undefined;
+  public origin: BaseNode | null;
+
+  public constructor(changed: symbol, fieldName?: string, origin: BaseNode | null = null)
+  {
+    this.changed = changed;
+    this.fieldName = fieldName;
+    this.origin = origin;
+  }
+}
+
 export class NodeEventArgs
 {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
 
-  private _changes: ChangedDecription[] | null = null;
+  private changes: ChangedDecription[] | null = null;
 
   //==================================================
   // CONSTRUCTORS
@@ -32,13 +52,13 @@ export class NodeEventArgs
   // INSTANCE METHODS: Requests
   //==================================================
 
-  public get isEmpty(): boolean { return this._changes === null || this._changes.length === 0; }
+  public get isEmpty(): boolean { return this.changes === null || this.changes.length === 0; }
 
   public isChanged(changed: symbol): boolean
   {
-    if (!this._changes)
+    if (!this.changes)
       return false;
-    return this._changes.some(((desc: ChangedDecription) => desc.changed === changed) as any);
+    return this.changes.some((desc: ChangedDecription) => desc.changed === changed);
   }
 
   //==================================================
@@ -47,43 +67,34 @@ export class NodeEventArgs
 
   private getChangedDecription(changed: symbol): ChangedDecription | undefined
   {
-    if (!this._changes)
+    if (!this.changes)
       return undefined;
-    return this._changes.find((desc: ChangedDecription) => desc.changed === changed);
+    return this.changes.find((desc: ChangedDecription) => desc.changed === changed);
   }
 
   public getFieldName(changed: symbol): string | undefined
   {
     const changedDecription = this.getChangedDecription(changed);
-    return (changedDecription === undefined) ? undefined : changedDecription.fieldName;
+    return changedDecription ? changedDecription.fieldName : undefined;
+  }
+
+  public getOrigin(changed: symbol): BaseNode | null
+  {
+    const changedDecription = this.getChangedDecription(changed);
+    return changedDecription ? changedDecription.origin : null;
   }
 
   //==================================================
   // INSTANCE METHODS: Operations
   //==================================================
 
-   public add(changed: symbol, fieldName?: string)
+  public add(changed: symbol, fieldName?: string)
   {
     if (changed === undefined)
       return;
-    if (!this._changes)
-      this._changes = [];
-    this._changes.push(new ChangedDecription(changed, fieldName));
-  }
-}
+    if (!this.changes)
+      this.changes = [];
 
-//==================================================
-// LOCAL HELPER CLASS
-//==================================================
-
-class ChangedDecription
-{
-  public changed: symbol;
-  public fieldName: string | undefined;
-
-  public constructor(changed: symbol, fieldName?: string)
-  {
-    this.changed = changed;
-    this.fieldName = fieldName;
+    this.changes.push(new ChangedDecription(changed, fieldName));
   }
 }

@@ -30,7 +30,14 @@ export class ThreeConverter
   public static toVector(value: Vector3): THREE.Vector3 { return new THREE.Vector3(value.x, value.y, value.z); }
   public static fromVector(value: THREE.Vector3): Vector3 { return new Vector3(value.x, value.y, value.z); }
 
-  public static fromBox(value: THREE.Box3, checkEmpty: boolean = true): Range3
+  public static copy(destination: THREE.Vector3, source: Vector3)
+  {
+    destination.x = source.x;
+    destination.y = source.y;
+    destination.z = source.z;
+  }
+
+  public static fromBox(value: THREE.Box3, checkEmpty = true): Range3
   {
     if (checkEmpty && value.isEmpty)
       return new Range3();

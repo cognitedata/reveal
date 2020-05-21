@@ -23,6 +23,7 @@ import { Colors } from "@/Core/Primitives/Colors";
 import { Canvas } from "@/Three/Utilities/Canvas";
 
 import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
+import { PointLog } from "@/Nodes/Wells/Logs/PointLog";
 import { DiscreteLog } from "@/Nodes/Wells/Logs/DiscreteLog";
 import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
 
@@ -32,8 +33,6 @@ export class LogRender
   // INSTANCE FIELDS
   //==================================================
 
-  private cameraPosition: Vector3;
-  private trajectoryNode: WellTrajectory;
   private bandRange: Range1;
   private mdRange: Range1;
 
@@ -41,10 +40,8 @@ export class LogRender
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(trajectory: WellTrajectory, cameraPosition: Vector3, bandRange: Range1, mdRange: Range1)
+  public constructor(bandRange: Range1, mdRange: Range1)
   {
-    this.trajectoryNode = trajectory;
-    this.cameraPosition = cameraPosition;
     this.bandRange = bandRange;
     this.mdRange = mdRange;
   }
@@ -52,25 +49,6 @@ export class LogRender
   //==================================================
   // INSTANCE METHODS: Band
   //==================================================
-
-  public static getBandName(rightBand: boolean): string { return rightBand ? "RightBand" : "LeftBand"; }
-
-  public static setCanvas(group: THREE.Group, canvas: Canvas, rightBand: boolean): void
-  {
-    const object = group.getObjectByName(this.getBandName(rightBand));
-    if (!object)
-      return;
-
-    if (!(object instanceof THREE.Mesh))
-      return;
-
-    const mesh = object as THREE.Mesh;
-    const material = mesh.material as THREE.MeshLambertMaterial;
-    if (!material)
-      return;
-
-    material.map = canvas.createTexture();
-  }
 
   public createCanvas(): Canvas
   {
@@ -85,7 +63,8 @@ export class LogRender
   // INSTANCE METHODS: Band
   //==================================================
 
-  public addBand(group: THREE.Group, useRightBand: boolean, useLeftBand: boolean): void
+  public createBands(parent: THREE.Object3D, trajectory: WellTrajectory, cameraPosition: Vector3, useRightBand: boolean, useLeftBand: boolean):
+    [THREE.Mesh | null, THREE.Mesh | null]
   {
     const mdInc = 10;
     let more = true;
@@ -101,6 +80,8 @@ export class LogRender
     if (leftBuffers)
       leftBuffers.side = THREE.BackSide;
 
+    const bands: [THREE.Mesh | null, THREE.Mesh | null] = [null, null];
+
     more = true;
     for (let md = this.mdRange.min; more; md += mdInc)
     {
@@ -109,11 +90,11 @@ export class LogRender
         md = this.mdRange.max;
 
       const fraction = this.mdRange.getFraction(md);
-      const position = this.trajectoryNode.getAtMd(md);
+      const position = trajectory.getAtMd(md);
 
       // Get perpendicular
-      const tangent = this.trajectoryNode.getTangentAtMd(md);
-      const cameraDirection = Vector3.substract(position, this.cameraPosition);
+      const tangent = trajectory.getTangentAtMd(md);
+      const cameraDirection = Vector3.substract(position, cameraPosition);
       const prependicular = cameraDirection.getNormal(tangent);
       const normal = prependicular.getNormal(tangent);
 
@@ -145,12 +126,12 @@ export class LogRender
       });
       const mesh = new THREE.Mesh(geometry, material);
       mesh.drawMode = THREE.TrianglesDrawMode;
-      mesh.name = LogRender.getBandName(rightBand);
-      group.add(mesh);
+      bands[rightBand ? 0 : 1] = mesh;
     }
+    return bands;
   }
 
-  public addAnnotation(canvas: Canvas, rightBand: boolean): void
+  public addAnnotation(canvas: Canvas, fontSize: number, rightBand: boolean): void
   {
     const inc = 50;
     canvas.beginPath();
@@ -167,11 +148,11 @@ export class LogRender
     {
       const md = Number(anyTick);
       const fraction = this.mdRange.getFraction(md);
-      canvas.drawText(fraction, `${md}`, null, rightBand);
+      canvas.drawText(fraction, `${md}`, fontSize, null, rightBand);
     }
   }
 
-  public addFloatLog(canvas: Canvas, log: FloatLog | null, color: Color): void
+  public addFloatLog(canvas: Canvas, log: FloatLog | null, color: Color, fill: boolean): void
   {
     if (!log)
       return;
@@ -186,10 +167,15 @@ export class LogRender
       canvas.addFunctionValue(mdFraction, valueFraction);
     }
     canvas.closeFunction();
-    canvas.setMixMode();
-    canvas.fillPathByGradient(color, 1);
-    canvas.drawPath(color, 2);
-    canvas.drawPath(null, 1);
+    if (fill)
+    {
+      canvas.fillPathBySemiTransparentGradient(color, 1);
+    }
+    else
+    {
+      canvas.drawPath(null, 3);
+      canvas.drawPath(color, 1);
+    }
   }
 
   public addDiscreteLog(canvas: Canvas, log: DiscreteLog | null): void
@@ -210,6 +196,20 @@ export class LogRender
 
       prevColor = color;
       prevMdFraction = mdFraction;
+    }
+  }
+
+  public addPointLog(canvas: Canvas, log: PointLog | null, fontSize: number, rightBand: boolean): void
+  {
+    if (!log)
+      return;
+
+    for (let i = 0; i < log.samples.length; i++)
+    {
+      const sample = log.getAt(i);
+      const mdFraction = this.mdRange.getFraction(sample.md);
+      canvas.drawText(mdFraction, sample.label, fontSize, null, rightBand);
+
     }
   }
 }

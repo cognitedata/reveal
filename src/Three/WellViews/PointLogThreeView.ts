@@ -13,14 +13,18 @@
 
 import * as THREE from "three";
 
+import { Vector3 } from "@/Core/Geometry/Vector3";
+import { Range3 } from "@/Core/Geometry/Range3";
+
+import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
+
 import { PointLogNode } from "@/Nodes/Wells/Wells/PointLogNode";
 import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
-import { BaseLogThreeView } from "@/Three/WellViews/BaseLogThreeView";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 
-export class PointLogThreeView extends BaseLogThreeView
+export class PointLogThreeView extends BaseGroupThreeView
 {
   //==================================================
   // CONSTRUCTORS
@@ -44,6 +48,29 @@ export class PointLogThreeView extends BaseLogThreeView
     super.updateCore(args);
   }
 
+  public calculateBoundingBoxCore(): Range3 | undefined
+  {
+    const node = this.node;
+    const trajectory = node.trajectory;
+    if (!trajectory)
+      return undefined;
+
+    const log = node.data;
+    if (!log)
+      return undefined;
+
+    const range = new Range3();
+    for (let i = 0; i < log.samples.length; i++)
+    {
+      const sample = log.getAt(i);
+      const position = trajectory.getAtMd(sample.md);
+      range.add(position);
+    }
+    const radius = Math.max(10, this.trajectoryRadius * 2);
+    range.expandByMargin(radius);
+    return range;
+  }
+
   //==================================================
   // OVERRIDES of BaseGroupThreeView
   //==================================================
@@ -60,13 +87,9 @@ export class PointLogThreeView extends BaseLogThreeView
     if (!log)
       throw Error("Well trajectory is missing");
 
-    const bandRange = this.bandRange;
-    if (!bandRange)
-      return null;
-
     const group = new THREE.Group();
 
-    const radius = bandRange.min * 2;
+    const radius = Math.max(10, this.trajectoryRadius * 2);
     const geometry = new THREE.SphereGeometry(radius, 16, 8);
     const material = new THREE.MeshPhongMaterial({ color: ThreeConverter.toColor(color) });
 
@@ -74,16 +97,43 @@ export class PointLogThreeView extends BaseLogThreeView
     {
       const sample = log.getAt(i);
       const position = trajectory.getAtMd(sample.md);
-
+      const tangent = trajectory.getTangentAtMd(sample.md);
       const sphere = new THREE.Mesh(geometry, material);
-
-      sphere.position.x = position.x;
-      sphere.position.y = position.y;
-      sphere.position.z = position.z;
       sphere.scale.z = 0.5;
 
+      if (Math.abs(tangent.z) < 0.999)
+      {
+        const up = new Vector3(0, 0, 1);
+        const axis = up.getCross(tangent);
+
+        // determine the amount to rotate
+        const radians = Math.acos(tangent.getDot(up));
+        sphere.rotateOnAxis(ThreeConverter.toVector(axis), radians);
+      }
+      ThreeConverter.copy(sphere.position, position);
       group.add(sphere);
     }
     return group;
+  }
+
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
+
+  protected get trajectoryRadius(): number
+  {
+    const node = this.node;
+    if (!node)
+      return 0;
+
+    const trajectoryNode = node.trajectoryNode;
+    if (!trajectoryNode)
+      return 0;
+
+    const wellRenderStyle = trajectoryNode.getRenderStyle(this.targetId) as WellRenderStyle;
+    if (!wellRenderStyle)
+      return 0;
+
+    return wellRenderStyle.radius;
   }
 }

@@ -32,12 +32,12 @@ export abstract class BaseGroupThreeView extends BaseThreeView
   // INSTANCE FIELDS
   //==================================================
 
-  private _object3D: THREE.Object3D | null = null;
+  protected _object3D: THREE.Object3D | null = null;
 
   protected get object3D(): THREE.Object3D | null 
   {
     if (this.mustTouch())
-      this.touch();
+      this.touchPart();
     if (!this._object3D)
       this.makeObject();
     return this._object3D;
@@ -106,6 +106,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
 
   protected abstract createObject3DCore(): THREE.Object3D | null;
   protected /*virtual*/ mustTouch(): boolean { return false; }
+  protected /*virtual*/ touchPart(): void { this.touch(); }
 
   //==================================================
   // INSTANCE METHODS

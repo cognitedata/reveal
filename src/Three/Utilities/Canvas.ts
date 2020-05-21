@@ -60,20 +60,17 @@ export class Canvas
     return ThreeLabel.createTexture(this.canvas);
   }
 
-  public setMixMode()
-  {
-    this.context.globalCompositeOperation = 'darker';
-  }
-
   //==================================================
   // INSTANCE METHODS: 
   //==================================================
 
   public clear(color: Color): void
   {
-    this.context.fillStyle = color.string();
+    this.context.fillStyle = Canvas.getColor(color);
     this.context.fillRect(0, 0, this.dx, this.dy);
   }
+
+  private static getColor(color: Color | null) { return color ? color.string() : "black" };
 
   //==================================================
   // INSTANCE METHODS: Path 
@@ -93,7 +90,7 @@ export class Canvas
   {
     this.context.lineCap = 'round';
     this.context.lineWidth = lineWidth;
-    this.context.strokeStyle = color ? color.string() : "black";
+    this.context.strokeStyle = Canvas.getColor(color);
     this.context.stroke();
   }
 
@@ -121,7 +118,6 @@ export class Canvas
     this.firstX = Number.NaN;
   }
 
-
   public addFunctionValue(x: number, y: number)
   {
     // assume: x and y in [0,1]
@@ -142,16 +138,15 @@ export class Canvas
   // INSTANCE METHODS: Path 
   //==================================================
 
-  public drawText(x: number, text: string, color: Color | null = null, rightBand: boolean)
+  public drawText(x: number, text: string, fontSize: number, color: Color | null, rightBand: boolean)
   {
     // https://www.javascripture.com/CanvasRenderingContext2D
-    const borderSize = 3;
-    const fontSize = 25;
+    const borderSize = fontSize * 0.1;
     const font = `bolder ${fontSize}px Helvetica`;
 
     this.context.font = font;
     this.context.textBaseline = "alphabetic";
-    this.context.fillStyle = color ? color.string() : "black";
+    this.context.fillStyle = Canvas.getColor(color);
 
     this.context.save();
     this.context.translate(x * this.dx - borderSize, borderSize);
@@ -179,7 +174,7 @@ export class Canvas
     if (alphaFraction !== 1)
       color = color.alpha(alphaFraction);
 
-    this.context.fillStyle = color.string();
+    this.context.fillStyle = Canvas.getColor(color);
     this.context.fill();
   }
 
@@ -190,21 +185,24 @@ export class Canvas
 
     x0 *= this.dx;
     x1 *= this.dx;
-    this.context.fillStyle = color.string();
+    this.context.fillStyle = Canvas.getColor(color);
     this.context.fillRect(x0, 0, x1 - x0, this.dy);
   }
 
 
-  public fillPathByGradient(color: Color, alphaFraction = 1)
+  public fillPathBySemiTransparentGradient(color: Color, alphaFraction = 1)
   {
+    const operation = this.context.globalCompositeOperation;
+    this.context.globalCompositeOperation = 'darker';
     if (alphaFraction !== 1)
       color = color.alpha(alphaFraction);
 
     const gradient = this.context.createLinearGradient(0, 0, 0, this.dy);
     gradient.addColorStop(0, 'transparent');
-    gradient.addColorStop(1, color.string());
+    gradient.addColorStop(1, Canvas.getColor(color));
 
     this.context.fillStyle = gradient;
     this.context.fill();
+    this.context.globalCompositeOperation = operation;
   }
 }

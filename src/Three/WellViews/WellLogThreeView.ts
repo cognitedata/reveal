@@ -11,15 +11,14 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import * as THREE from "three";
-
-import { DiscreteLogNode } from "@/Nodes/Wells/Wells/DiscreteLogNode";
-import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
+import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
+import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
+import { Changes } from "@/Core/Views/Changes";
 
-import { BaseLogThreeView } from "@/Three/WellViews/BaseLogThreeView";
+import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
 
-export class DiscreteLogThreeView extends BaseLogThreeView
+export class WellLogThreeView extends BaseThreeView
 {
   //==================================================
   // CONSTRUCTORS
@@ -31,8 +30,13 @@ export class DiscreteLogThreeView extends BaseLogThreeView
   // INSTANCE PROPERTIES
   //==================================================
 
-  protected get node(): DiscreteLogNode { return super.getNode() as DiscreteLogNode; }
-  protected get style(): WellRenderStyle { return super.getStyle() as WellRenderStyle; }
+  private get node(): BaseLogNode { return super.getNode() as BaseLogNode; }
+
+  private get trajectoryNode(): WellTrajectoryNode | null
+  {
+    const node = this.node;
+    return !node ? null : node.trajectoryNode;
+  }
 
   //==================================================
   // OVERRIDES of BaseView
@@ -43,13 +47,33 @@ export class DiscreteLogThreeView extends BaseLogThreeView
     super.updateCore(args);
   }
 
+  protected /*virtual*/ onShowCore(): void
+  {
+    super.onShowCore();
+    this.updateTrajectoryView();
+  }
+
+  protected /*virtual*/ onHideCore(): void
+  {
+    super.onHideCore();
+    this.updateTrajectoryView();
+  }
+
   //==================================================
-  // OVERRIDES of BaseGroupThreeView
+  // OVERRIDES of BaseView
   //==================================================
 
-  protected /*override*/ createObject3DCore(): THREE.Object3D | null
+  protected updateTrajectoryView(): void
   {
-    const group = new THREE.Group();
-    return group;
+    const trajectoryNode = this.trajectoryNode;
+    if (!trajectoryNode)
+      return;
+
+    const trajectoryView = this.renderTarget.getViewByNode(trajectoryNode);
+    if (!trajectoryView)
+      return;
+
+    super.update(new NodeEventArgs(Changes.filter));
   }
+
 }

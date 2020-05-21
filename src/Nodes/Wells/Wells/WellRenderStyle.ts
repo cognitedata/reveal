@@ -21,8 +21,11 @@ export class WellRenderStyle extends BaseRenderStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public radius = 10;
+  public radius = 5;
   public colorType = ColorType.DifferentColor;
+  public nameFontHeight = 60;
+  public bandWidth = 50;
+  public bandFontSize = 20;
 
   //==================================================
   // CONSTRUCTORS

@@ -76,6 +76,8 @@ export class WellTrajectory extends MdSamples
   //==================================================
 
   public getAt(index: number): TrajectorySample { return this.samples[index] as TrajectorySample; }
+  public getPointAt(i: number): Vector3 { return this.getAt(i).point; }
+
 
   public getAtMd(md: number): Vector3
   {
@@ -154,6 +156,38 @@ export class WellTrajectory extends MdSamples
 
     if (tangent.z < 0)
       Error("Direction error in tangent");
+
+    return tangent;
+  }
+
+  public getTangentAt(i: number): Vector3
+  {
+    let index0: number, index1: number;
+    if (i == 0)
+    {
+      index0 = 0;
+      index1 = 1;
+
+    }
+    else if (i >= this.samples.length - 1)
+    {
+      index0 = this.samples.length - 2;
+      index1 = this.samples.length - 1;
+    }
+    else
+    {
+      index0 = i - 1;
+      index1 = i + 1;
+    }
+    if (index0 >= index1)
+      Error("Index error in tangent");
+
+    const minSample = this.samples[index0] as TrajectorySample;
+    const maxSample = this.samples[index1] as TrajectorySample;
+
+    // Should pointing upwards
+    const tangent = Vector3.substract(minSample.point, maxSample.point);
+    tangent.normalize();
 
     return tangent;
   }

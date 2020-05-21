@@ -36,20 +36,20 @@ export function main()
   const wellTree = root.wells;
 
   // Add some random wells
-  for (let i = 0; i < 6; i++)
+  for (let i = 0; i < 40; i++)
   {
     const well = new WellNode();
     wellTree.addChild(well);
 
     well.wellHead = Vector3.getRandom(Range3.newTest);
     well.wellHead.z = 0;
-    well.name = `well number ${i + 1}`;
+    well.name = `well ${i + 1}`;
 
     // Add some random trajectories to the well
     for (let j = 0; j < 2; j++)
     {
       const wellTrajectory = new WellTrajectoryNode();
-      wellTrajectory.name = `Trajectory number ${j + 1}`;
+      wellTrajectory.name = `Trajectory ${j + 1}`;
 
       wellTrajectory.data = WellTrajectory.createByRandom(well.wellHead);
       well.addChild(wellTrajectory);
@@ -59,7 +59,7 @@ export function main()
       mdRange.expandByFraction(-0.05);
 
       // Add some random float logs to the trajectory
-      for (let k = 0; k < 2; k++)
+      for (let k = 0; k < 4; k++)
       {
         const logNode = new FloatLogNode();
         const valueRange = new Range1(0, 3.14);
@@ -70,7 +70,7 @@ export function main()
       for (let k = 0; k < 2; k++)
       {
         const logNode = new DiscreteLogNode();
-        const valueRange = new Range1(0, 5);
+        const valueRange = new Range1(0, 4);
         logNode.data = DiscreteLog.createByRandom(mdRange, valueRange);
         wellTrajectory.addChild(logNode);
       }
@@ -116,8 +116,6 @@ export function main()
       {
         n++;
         node.setVisibleInteractive(true);
-        if (n === 2)
-          break;
       }
       n = 0;
       for (const node of wellTrajectory.getDescendantsByType(DiscreteLogNode))
