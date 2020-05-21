@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "jsx": "react",
     "module": "es6",
     "target": "es5",
     "outDir": "dist",
@@ -20,7 +21,8 @@
 
     "baseUrl": "./",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@images/*": ["images/*"]
     }
   },
   "exclude": ["node_modules", "dist"]
