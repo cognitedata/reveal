@@ -1,7 +1,5 @@
-body {
-  box-sizing: border-box;
-  font-family: "Roboto", "Jost", sans-serif;
-}
+@import "reset";
+@import "utils";
 
 $root-container-width: 100vw;
 $root-container-height: 100vh;
@@ -12,6 +10,13 @@ $select-control-svg-width: $select-control-svg-height;
 
 $right-panel-width: calc(#{$root-container-width} - #{$left-panel-width});
 $right-panel-height: 100vh;
+
+@import "explorer";
+
+body {
+  box-sizing: border-box;
+  font-family: "Roboto", "Jost", sans-serif;
+}
 
 .root-container {
   height: $root-container-height;
@@ -39,11 +44,6 @@ $right-panel-height: 100vh;
   height: 100% !important;
 }
 
-.left-panel-section {
-  // border: 1px lightgrey solid;
-  width: 100%;
-}
-
 .settings-section-container {
   display: flex;
   flex-direction: column;
@@ -52,11 +52,8 @@ $right-panel-height: 100vh;
 }
 
 .explorer-container {
-  top: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  height: $left-panel-height/2;
+  width: 100%;
 }
 
 .settings-container {

@@ -1,8 +1,7 @@
 import React from 'react';
 import SplitPane from "react-split-pane";
-
-import Explorer from '../Explorer';
 import Settings from "../Settings/Settings";
+import { Explorer } from "../Explorer/Explorer";
 
 export default function LeftPanel() {
   return (<div className="left-panel">
