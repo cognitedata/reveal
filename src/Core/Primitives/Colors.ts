@@ -59,11 +59,11 @@ export class Colors
   // STATIC METHODS
   //==================================================
 
-  public static getNextColor(i: number): Color
+  public static getNextColor(index: number): Color
   {
     const colors = this.colors;
-    i = i % colors.length;
-    return colors[i];
+    index = index % colors.length;
+    return colors[index];
   }
 
   private static createDifferentColors(count: number): Color[]

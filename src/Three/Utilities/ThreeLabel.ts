@@ -48,50 +48,66 @@ export class ThreeLabel
 
   public static create(text: string, worldHeight: number, white = true): THREE.Sprite | null
   {
-    const borderSize = 2;
-    const canvas = document.createElement("canvas");
-    {
-      const context = canvas.getContext("2d");
-      if (!context)
-        return null;
+    const canvas = ThreeLabel.createCanvas(text, white);
+    if (!canvas)
+      return null;
 
-      const fontSize = 30;
-      const font = `${fontSize}px Helvetica`;
-      context.font = font;
-      // measure how long the name will be
-      const textWidth = context.measureText(text).width;
-
-      const doubleBorderSize = borderSize * 2;
-      const width = (textWidth + 2 * doubleBorderSize);
-      const height = fontSize + doubleBorderSize;
-
-      canvas.width = width;
-      canvas.height = height;
-
-      // need to set font again after resizing canvas
-      context.font = font;
-      context.textBaseline = "middle";
-      context.textAlign = "center";
-
-      //context.fillStyle = 'red';
-      //context.fillRect(0, 0, width, height);
-
-      // scale to fit but don't stretch
-      context.translate(width / 2, height / 2);
-      context.fillStyle = white ? "white" : "black";
-      context.fillText(text, 0, 0);
-    }
-    const texture = new THREE.Texture(canvas);
-    texture.minFilter = THREE.LinearFilter;
-    texture.generateMipmaps = true;
-    texture.wrapS = THREE.ClampToEdgeWrapping;
-    texture.wrapT = THREE.ClampToEdgeWrapping;
-    texture.needsUpdate = true;
+    const texture = ThreeLabel.createTexture(canvas);
 
     const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
     const sprite = new THREE.Sprite(spriteMaterial);
     sprite.scale.set(worldHeight * canvas.width / canvas.height, worldHeight, 1);
     return sprite;
+  }
+
+  public static createTexture(canvas: HTMLCanvasElement): THREE.Texture
+  {
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.minFilter = THREE.LinearFilter;
+    texture.generateMipmaps = true;
+    texture.wrapS = THREE.ClampToEdgeWrapping;
+    texture.wrapT = THREE.ClampToEdgeWrapping;
+    texture.needsUpdate = true;
+    return texture;
+  }
+
+  public static createCanvas(text: string, white = true): HTMLCanvasElement | null
+  {
+    // https://www.javascripture.com/CanvasRenderingContext2D
+    const borderSize = 2;
+    const fontSize = 30;
+    const font = `${fontSize}px Helvetica`;
+    const color = white ? "white" : "black";
+
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    if (!context)
+      return null;
+
+    // measure how long the name will be
+    context.font = font;
+    const textWidth = context.measureText(text).width;
+
+    const doubleBorderSize = borderSize * 2;
+    const width = (textWidth + 2 * doubleBorderSize);
+    const height = fontSize + doubleBorderSize;
+
+    canvas.width = width;
+    canvas.height = height;
+
+    // need to set font again after resizing canvas
+    context.font = font;
+    context.textBaseline = "middle";
+    context.textAlign = "center";
+
+    //context.fillStyle = 'red';
+    //context.fillRect(0, 0, width, height);
+
+    // scale to fit but don't stretch
+    context.translate(width / 2, height / 2);
+    context.fillStyle = color;
+    context.fillText(text, 0, 0);
+    return canvas;
   }
 
   //==================================================

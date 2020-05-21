@@ -27,6 +27,8 @@ export class TriangleStripBuffers
   protected triangleIndexes: number[] = [];
   protected uniqueIndex = 0;
 
+  public side = THREE.FrontSide;
+
   public get hasUvs(): boolean { return this.uvs.length > 0; }
 
   //==================================================
@@ -80,7 +82,29 @@ export class TriangleStripBuffers
     }
   }
 
-  protected add(position: Vector3, normal: Vector3, u = 0): void
+  public addPair2(p1: Vector3, p2: Vector3, n: Vector3, fraction: number)
+  {
+    if (this.uniqueIndex >= 2)
+    {
+      //     2------3
+      //     |      |
+      //     0------1
+      const unique0 = this.uniqueIndex - 2;
+      const unique1 = this.uniqueIndex - 1;
+      const unique2 = this.uniqueIndex;
+      const unique3 = this.uniqueIndex + 1;
+
+      this.addTriangle(unique0, unique2, unique3);
+      this.addTriangle(unique0, unique3, unique1);
+    }
+    if (this.hasUvs)
+    {
+      this.add(p1, n, fraction, 1);
+      this.add(p2, n, fraction, 0);
+    }
+  }
+
+    protected add(position: Vector3, normal: Vector3, u = 0, v = 0): void
   {
     {
       const index = 3 * this.uniqueIndex;
@@ -95,7 +119,7 @@ export class TriangleStripBuffers
     {
       const index = 2 * this.uniqueIndex;
       this.uvs[index + 0] = u;
-      this.uvs[index + 1] = 0;
+      this.uvs[index + 1] = v;
     }
     this.uniqueIndex++;
   }

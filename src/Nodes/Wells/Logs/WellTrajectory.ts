@@ -75,6 +75,8 @@ export class WellTrajectory extends MdSamples
   // INSTANCE METHODS: Getters
   //==================================================
 
+  public getAt(index: number): TrajectorySample { return this.samples[index] as TrajectorySample; }
+
   public getAtMd(md: number): Vector3
   {
     const maxIndex = this.samples.length - 1;

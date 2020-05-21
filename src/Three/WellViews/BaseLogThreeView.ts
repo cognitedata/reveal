@@ -13,25 +13,14 @@
 
 import { Range1 } from "@/Core/Geometry/Range1";
 import { Range3 } from "@/Core/Geometry/Range3";
-import { Vector3 } from "@/Core/Geometry/Vector3";
 
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
-import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
-import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
 
 import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
 import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
 
 export abstract class BaseLogThreeView extends BaseGroupThreeView
 {
-  //==================================================
-  // INSTANCE FIELDS
-  //==================================================
-
-  // Caching the bounding box of the scene
-  private cameraDirection: Vector3 = new Vector3(0, 0, 1); // Direction to the center
-  protected cameraPosition: Vector3 = new Vector3(0, 0, 1);
-
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -43,19 +32,6 @@ export abstract class BaseLogThreeView extends BaseGroupThreeView
   //==================================================
 
   protected get style(): WellRenderStyle { return super.getStyle() as WellRenderStyle; }
-
-  protected get trajectory(): WellTrajectory | null
-  {
-    const node = this.getNode();
-    if (!node)
-      return null;
-
-    const wellTrajectoryNode = node.getThisOrAncestorByType(WellTrajectoryNode);
-    if (!wellTrajectoryNode)
-      return null;
-
-    return wellTrajectoryNode.data;
-  }
 
   protected get bandRange(): Range1 | undefined
   {
@@ -81,33 +57,5 @@ export abstract class BaseLogThreeView extends BaseGroupThreeView
   public calculateBoundingBoxCore(): Range3 | undefined
   {
     return super.calculateBoundingBoxCore();
-  }
-
-  //==================================================
-  // OVERRIDES of BaseGroupThreeView
-  //==================================================
-
-  public /*override*/ mustTouch(): boolean
-  {
-    const wellTrajectory = this.trajectory;
-    if (!wellTrajectory)
-      return false;
-
-    const target = this.renderTarget;
-    const camera = target.activeCamera;
-    const cameraPosition = ThreeConverter.fromVector(camera.position);
-    const cameraDirection = wellTrajectory.range.center;
-
-    cameraDirection.substract(cameraPosition);
-    cameraDirection.normalize();
-
-    // Check if camera has move slightly
-    const angle = Math.acos(cameraDirection.getDot(this.cameraDirection));
-    if (angle < Math.PI / 50)
-      return false;
-
-    this.cameraDirection = cameraDirection;
-    this.cameraPosition = cameraPosition;
-    return true;
   }
 }
