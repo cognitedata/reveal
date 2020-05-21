@@ -3,6 +3,7 @@ export const IconTypes = {
   ACTIONS: "Actions",
   ARROWS: "Arrows",
   CHECKBOXES: "Checkboxes",
+  EXPANDERS: "Expanders",
   COMMANDS: "Commands",
   NODES: "Nodes",
   OVERLAYS: "Overlays",
