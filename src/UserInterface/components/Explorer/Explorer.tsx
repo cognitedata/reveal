@@ -4,6 +4,7 @@ import PointCloudNode from "@images/Nodes/PointCloudNode.png";
 import PolylinesNode from "@images/Nodes/PolylinesNode.png";
 import SurfaceNode from "@images/Nodes/SurfaceNode.png";
 
+// hardcoded test data 
 const RANDOM_WORDS = [
   "abstrusity",
   "advertisable",
@@ -21,6 +22,8 @@ const RANDOM_WORDS = [
 ];
 
 export function Explorer() {
+
+  /** Test data start */ // todo: remove this once redux state is linked 
   const [icon, setIcon] = useState("points");
   const [checkType, setCheckType] = useState("normal");
   const [checkState, setCheckState] = useState("normal");
@@ -83,6 +86,8 @@ export function Explorer() {
   };
 
   const data = createRandomizedData();
+
+  /** Test data end */ 
 
   return (
     <div className="explorer explorer-container">

@@ -13,8 +13,8 @@ export default function VirtualTree(props: {
   expandable?: boolean;
   selectedIds?: ReactText[];
 }) {
-  const [selectedItem, SetSelectedItem] = useState<TreeDataItem>();
-  const [checkedItemIdList, SetCheckedItemIdList] = useState<ReactText[]>(
+  const [selectedItem, SetSelectedItem] = useState<TreeDataItem>(); // temporary state until explorer handles events fired by tree control
+  const [checkedItemIdList, SetCheckedItemIdList] = useState<ReactText[]>( // temporary state until explorer handles events fired by tree control
     props.selectedIds || []
   );
   const data = props.data || [];
@@ -23,7 +23,7 @@ export default function VirtualTree(props: {
   function setRef(ref: any) {
     List = ref;
 
-    if (List) {
+    if (List) { // todo: remove once events fired by tree control are handled by parent explorer
       List.recomputeRowHeights();
       List.forceUpdate();
     }
@@ -32,14 +32,14 @@ export default function VirtualTree(props: {
   const renderItem = function(item: TreeDataItem, keyPrefix: string) {
     const onExpand = function(event: any) {
       event.stopPropagation();
-      item.expanded = !item.expanded;
-      List.recomputeRowHeights();
+      item.expanded = !item.expanded; // todo: remove once events fired by tree control are handled by parent explorer
+      List.recomputeRowHeights(); 
       List.forceUpdate();
     };
 
     const onSelect = function(event: any) {
       event.stopPropagation();
-      item.selected = !item.selected;
+      item.selected = !item.selected; // todo: remove once events fired by tree control are handled by parent explorer
       if (selectedItem && selectedItem.id !== item.id) {
         selectedItem.selected = false;
       }
@@ -51,7 +51,7 @@ export default function VirtualTree(props: {
     };
 
     const onCheckChange = function(event: any, status: boolean) {
-      item.checked = status;
+      item.checked = status; // todo: remove once events fired by tree control are handled by parent explorer
       if (status) {
         SetCheckedItemIdList([...checkedItemIdList, item.id]);
       } else {
