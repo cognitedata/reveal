@@ -73,7 +73,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
 
     const buffers = new RegularGrid2Buffers(grid);
     const geometry = buffers.getBufferGeometry();
-    const material = new THREE.MeshPhongMaterial({ color: ThreeConverter.toColor(color), side: THREE.DoubleSide, flatShading: false, shininess: 100 });
+    const material = new THREE.MeshPhongMaterial({ color: ThreeConverter.toColor(color), side: THREE.DoubleSide, shininess: 100 });
     //const material = createShader();
 
     if (style.colorType === ColorType.DepthColor && buffers.hasUvs)

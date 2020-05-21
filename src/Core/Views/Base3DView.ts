@@ -65,7 +65,7 @@ export abstract class Base3DView extends BaseView
 
   public get boundingBox(): Range3 | undefined
   {
-    if (this._boundingBox == undefined)
+    if (!this._boundingBox)
       this._boundingBox = this.calculateBoundingBoxCore();
     return this._boundingBox;
   }

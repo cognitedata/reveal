@@ -483,8 +483,6 @@ export class AxisThreeView extends BaseGroupThreeView
       range.scale(1 / zScale);
       inc = range.getBestInc(numTicks);
     }
-    if (!range.roundByInc(-inc))
-      return [new Range1(), 0];
     return [range, inc];
   }
 

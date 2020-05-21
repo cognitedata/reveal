@@ -13,13 +13,11 @@
 
 import * as THREE from "three";
 
-import { Colors } from "@/Core/Primitives/Colors";
 import { FloatLogNode } from "@/Nodes/Wells/Wells/FloatLogNode";
 import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
 import { BaseLogThreeView } from "@/Three/WellViews/BaseLogThreeView";
-import { LogRender } from "@/Three/WellViews/LogRender";
 
 export class FloatLogThreeView extends BaseLogThreeView
 {
@@ -51,34 +49,7 @@ export class FloatLogThreeView extends BaseLogThreeView
 
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
-    const node = this.node;
-
-    const trajectory = this.trajectory;
-    if (!trajectory)
-      return null;
-
-    const log = node.data;
-    if (!log)
-      throw Error("Well trajectory is missing");
-
-    const bandRange = this.bandRange;
-    if (!bandRange)
-      return null;
-
     const group = new THREE.Group();
-    const logRender = new LogRender(trajectory, this.cameraPosition, bandRange);
-    const childIndex = node.childIndex;
-
-    if (childIndex === undefined)
-      return null;
-
-    const right = childIndex % 2 === 0;
-
-    if (childIndex <= 0) {
-      //logRender.addSolidFloatLog(group, log, right);
-      //logRender.addLineFloatLog(group, log, Colors.black, right);
-    } else;//logRender.addLineFloatLog(group, log, node.color, right);
-
     return group;
   }
 }

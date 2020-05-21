@@ -109,12 +109,16 @@ export class Range1
 
   public * getTicks(inc: number): Iterable<number>
   {
-    if (this.getNumTicks(inc) > 1000) // This is a safety valve to prevent it going infinity loops
+    const copy = this.copy();
+    if (!copy.roundByInc(-inc))
+      return;
+
+    if (copy.getNumTicks(inc) > 1000) // This is a safety valve to prevent it going infinity loops
       return;
 
     const tolerance = inc / 10000;
-    const max = this.max + tolerance;
-    for (let tick = this.min; tick <= max; tick += inc)
+    const max = copy.max + tolerance;
+    for (let tick = copy.min; tick <= max; tick += inc)
     {
       if (Math.abs(tick) < tolerance)
         yield 0;

@@ -13,14 +13,12 @@
 
 import * as THREE from "three";
 
-import { Colors } from "@/Core/Primitives/Colors";
-
 import { PointLogNode } from "@/Nodes/Wells/Wells/PointLogNode";
 import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
 import { BaseLogThreeView } from "@/Three/WellViews/BaseLogThreeView";
-import { LogRender } from "@/Three/WellViews/LogRender";
+import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 
 export class PointLogThreeView extends BaseLogThreeView
 {
@@ -53,8 +51,8 @@ export class PointLogThreeView extends BaseLogThreeView
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
     const node = this.node;
-
-    const trajectory = this.trajectory;
+    const color = node.color;
+    const trajectory = node.trajectory;
     if (!trajectory)
       return null;
 
@@ -67,8 +65,25 @@ export class PointLogThreeView extends BaseLogThreeView
       return null;
 
     const group = new THREE.Group();
-    const logRender = new LogRender(trajectory, this.cameraPosition, bandRange);
-    logRender.addPointLog(group, log, Colors.blue);
+
+    const radius = bandRange.min * 2;
+    const geometry = new THREE.SphereGeometry(radius, 16, 8);
+    const material = new THREE.MeshPhongMaterial({ color: ThreeConverter.toColor(color) });
+
+    for (let i = 0; i < log.samples.length; i++)
+    {
+      const sample = log.getAt(i);
+      const position = trajectory.getAtMd(sample.md);
+
+      const sphere = new THREE.Mesh(geometry, material);
+
+      sphere.position.x = position.x;
+      sphere.position.y = position.y;
+      sphere.position.z = position.z;
+      sphere.scale.z = 0.5;
+
+      group.add(sphere);
+    }
     return group;
   }
 }

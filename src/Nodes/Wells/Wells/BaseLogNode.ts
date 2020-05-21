@@ -15,6 +15,7 @@ import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { BaseLog } from "@/Nodes/Wells/Logs/BaseLog";
 import { WellNode } from "@/Nodes/Wells/Wells/WellNode";
 import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
+import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
 
 export abstract class BaseLogNode extends BaseVisualNode
 {
@@ -31,7 +32,8 @@ export abstract class BaseLogNode extends BaseVisualNode
   public get data(): BaseLog | null { return this._data; }
   public set data(value: BaseLog | null) { this._data = value; }
   public get well(): WellNode | null { return this.getAncestorByType(WellNode); }
-  public get trajectory(): WellTrajectoryNode | null { return this.getAncestorByType(WellTrajectoryNode); }
+  public get trajectoryNode(): WellTrajectoryNode | null { return this.getAncestorByType(WellTrajectoryNode); }
+  public get trajectory(): WellTrajectory | null { const node = this.trajectoryNode; return node ? node.data : null; }
 
   //==================================================
   // CONSTRUCTORS
