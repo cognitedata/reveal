@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -56,10 +56,10 @@ const useStyles = makeStyles((theme: Theme) =>
  * ExpansionView Component
  */
 export default function ExpansionView(props: {
-  sectionId: number,
+  sectionId: string,
   title: string,
   isExpanded: boolean,
-  subSectionId?: number,
+  subSectionId?: string,
   toolBar?: ToolBarType,
   children: JSX.Element
 }) {
@@ -72,7 +72,11 @@ export default function ExpansionView(props: {
     <ExpansionPanel
       expanded={isExpanded}
       onChange={(event) => {
-        dispatch(onExpandChange({ sectionId, subSectionId }))
+        dispatch(onExpandChange({
+          sectionId,
+          subSectionId,
+          expandState: !isExpanded
+        }))
       }}>
       <ExpansionPanelSummary className={classes.expansionSummaryRoot}>
         <div className={classes.expansionSummaryHeader}>

@@ -8,11 +8,12 @@ export interface SettingsCommandInterface {
 
 // Describes the payload of actions fired from Settings component
 export type SettingsCommandPayloadType = {
-  sectionId: number;
-  subSectionId?: number;
-  elementIndex?: number;
+  sectionId?: string;
+  subSectionId?: string;
+  elementIndex?: string;
   iconIndex?: number;
-  subElementIndex?: number;
+  subElementIndex?: string;
+  expandState?: boolean;
   value?: string | number | unknown;
   node?: any;
 };
@@ -21,7 +22,10 @@ export type SettingsCommandPayloadType = {
 export interface SettingsStateInterface {
   id: string | null;
   titleBar?: TitleBarInterface;
-  sections: Array<SettingsSectionInterface>;
+  sections: { [key: string]: SettingsSectionInterface };
+  subSections: { [key: string]: SettingsSectionInterface };
+  elements: { [key: string]: SectionElement };
+  subElements: { [key: string]: SectionElement };
 }
 
 // Settings Section
@@ -30,9 +34,9 @@ export interface SettingsSectionInterface {
   isExpanded: boolean;
   titleBar?: TitleBarInterface;
   toolBar?: ToolBarType;
-  elements: Array<SectionElement>;
+  elementIds: Array<string>;
   iconIndex?: number;
-  subSections?: Array<SettingsSectionInterface>;
+  subSectionIds?: Array<string>;
 }
 
 // Settings Section Element
@@ -43,7 +47,7 @@ export interface SectionElement {
   isReadOnly?: boolean;
   checked?: boolean;
   options?: Array<{
-    name: string;
+    name: string | number;
     icon?: {
       type: string;
       name: string;
@@ -54,5 +58,5 @@ export interface SectionElement {
     name: string;
     selected?: boolean;
   };
-  subElements?: Array<SectionElement>;
+  subElementIds?: Array<string>;
 }

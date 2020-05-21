@@ -7,11 +7,11 @@ import { onExpandChangeFromToolbar } from "../../redux/actions/settings";
 
 // Assign toolbar actions
 function assignToolBarAction(
-    sectionId: number,
+    sectionId: string,
     iconIndex: number,
     action?: {
         type: string,
-        subSectionId?: number
+        subSectionId?: string
     }) {
     if (action) {
         const { type, subSectionId } = action;
@@ -35,8 +35,8 @@ function assignToolBarAction(
  * @param props 
  */
 export default function ToolBar(props: {
+    sectionId: string,
     toolBar?: ToolBarType,
-    sectionId: number
 }) {
     const { toolBar, sectionId } = props;
     if (!toolBar || !toolBar.length) return null;

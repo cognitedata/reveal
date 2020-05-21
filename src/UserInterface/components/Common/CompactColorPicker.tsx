@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { CompactPicker } from "react-color"
 
-import { onCompactColorChange } from "../../redux/actions/settings"
+import { onInputChange } from "../../redux/actions/settings"
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -46,13 +46,12 @@ const useStyles = makeStyles((theme: Theme) =>
  */
 export default function CompactColorPicker(props: {
   value: string,
-  sectionId: number,
-  subSectionId?: number,
-  elementIndex: number
+  elementIndex: string,
+  subElementIndex?: string
 }) {
 
   const classes = useStyles();
-  const { value: color, sectionId, subSectionId, elementIndex } = props;
+  const { value: color, elementIndex, subElementIndex } = props;
   const dispatch = useDispatch();
   const [visible, setVisibility] = useState(false);
 
@@ -65,10 +64,9 @@ export default function CompactColorPicker(props: {
     {visible && <div className={classes.picker}>
       <CompactPicker
         color={color}
-        onChangeComplete={({ hex }) => dispatch(onCompactColorChange({
-          sectionId,
-          subSectionId,
+        onChangeComplete={({ hex }) => dispatch(onInputChange({
           elementIndex,
+          subElementIndex,
           value: hex
         }))}
       /></div>}

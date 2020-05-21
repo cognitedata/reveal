@@ -3,8 +3,6 @@ import { useSelector } from "react-redux";
 
 import TitleBar from './TitleBar';
 import Section from './Section';
-
-import { SettingsSectionInterface } from "../../interfaces/settings"
 import { ReduxStore } from "../../interfaces/common"
 
 /**
@@ -13,28 +11,28 @@ import { ReduxStore } from "../../interfaces/common"
 export default function Settings() {
 
   const settings = useSelector((state: ReduxStore) => state.settings);
-  const { titleBar, sections, id } = settings;
+  const { id, titleBar, sections } = settings;
 
   return (
     <div className="settings-container">
       {id ? <React.Fragment>
         {titleBar && <TitleBar
-          sectionId={-1}
+          sectionId={"-1"}
           className="settings-title-bar"
           title={titleBar.name}
           icon={titleBar.icon}
           toolBar={titleBar.toolBar}
         />}
-        {sections.map((section: SettingsSectionInterface, idx: number) =>
-          <div
-            key={`${id}-section-${idx}`}
+        {Object.entries(sections).map(([index, section]) => {
+          return <div
+            key={`${id}-section-${index}`}
             className="settings-section-container">
             <Section
-              key={`${id}-section-${idx}`}
+              sectionId={index}
               section={section}
-              sectionId={idx}
             />
-          </div>)}
+          </div>
+        })}
       </React.Fragment> : null}
     </div>
   );

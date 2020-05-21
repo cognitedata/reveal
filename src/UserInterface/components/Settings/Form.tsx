@@ -1,8 +1,9 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 
 import Input from "../Common/Input";
-import { SectionElement } from "../../interfaces/settings";
+import { ReduxStore } from "../../interfaces/common";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -19,21 +20,23 @@ const useStyles = makeStyles((theme: Theme) =>
  * Settings form component
  */
 export default function Form(props: {
-  elements: Array<SectionElement>,
-  sectionId: number,
-  subSectionId?: number
+  elementIds: Array<string>,
+  sectionId: string,
+  subSectionId?: string
 }) {
-
-  const { elements, sectionId, subSectionId } = props;
   const classes = useStyles();
+  const { elementIds, sectionId, subSectionId } = props;
+  console.log(elementIds);
+  const settings = useSelector((state: ReduxStore) => state.settings);
+  const { elements } = settings;
 
   return <div className={classes.formContainer}>
-    {elements.map((element, index) => <Input
-      key={`${sectionId}-input-${subSectionId ? subSectionId : ""}-${index}`}
+    {elementIds.map((id) => <Input
+      key={`${sectionId}-input-${subSectionId ? subSectionId : ""}-${id}`}
       sectionId={sectionId}
       subSectionId={subSectionId}
-      config={element}
-      elementIndex={index} />
+      config={elements[id]}
+      elementIndex={id} />
     )}
   </div>
 } 

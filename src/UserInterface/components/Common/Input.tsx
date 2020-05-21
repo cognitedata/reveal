@@ -2,21 +2,21 @@ import React from "react";
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select'
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
 
 import {
-  onTextInputChange,
-  onSelectChange,
-  onRangeChange,
+  onInputChange,
   onChangeSettingAvailability
 } from "../../redux/actions/settings"
 import Icon from "./Icon";
 import CompactColorPicker from "./CompactColorPicker";
 import { SectionElement } from "../../interfaces/settings";
 import Inputs from "../../constants/Inputs";
-import { isNumber } from "../../utils/Settings"
+import { isNumber } from "../../utils/Settings";
+import { ReduxStore } from "../../interfaces/common";
+
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: ".6rem",
       padding: ".1rem",
       flex: 1,
-      fontWeight: 500,
+      fontWeight: 400,
       width: 0
     },
     readOnlyInput: {
@@ -100,19 +100,21 @@ function isAvailable(checked?: boolean) {
  */
 export default function Input(props: {
   config: SectionElement,
-  elementIndex: number,
-  sectionId: number,
-  subSectionId?: number
+  elementIndex: string,
+  sectionId: string,
+  subSectionId?: string
 }) {
 
   const classes = useStyles();
-  const { config, elementIndex, sectionId, subSectionId } = props;
+  const { config, elementIndex, sectionId } = props;
+  const settings = useSelector((state: ReduxStore) => state.settings);
+  const { subElements } = settings;
 
   const dispatch = useDispatch();
   const labelElelent = config.label ? (<label>{`${config.label}:`}</label>) : null;
 
   // Generate keys for mapped components
-  const keyExtractor = (extraIdentifier: number | string | null, elementType: string, subElementIndex?: number) => {
+  const keyExtractor = (extraIdentifier: number | string | null, elementType: string, subElementIndex?: string) => {
     let key = `${sectionId}-${elementIndex}-${elementType}`;
     if (extraIdentifier) key += `-${extraIdentifier}`
     if (subElementIndex) key += `-${subElementIndex}`;
@@ -123,18 +125,22 @@ export default function Input(props: {
   const renderInputElement = (
     config: SectionElement,
     checked?: boolean,
-    subElementIndex?: number,
+    subElementIndex?: string,
   ): any => {
 
-    const { value, isReadOnly, options, subElements, icon } = config;
+    const { value, isReadOnly, options, subElementIds, icon } = config;
 
     switch (config.type) {
       case Inputs.INPUT:
         return (<input
           disabled={!isAvailable(checked)}
           {...keyExtractor(null, config.type, subElementIndex)}
-          onChange={(event) => (!isReadOnly) ? dispatch(onTextInputChange(
-            { sectionId, subSectionId, elementIndex, value: event.target.value, subElementIndex })) : null}
+          onChange={(event) => (!isReadOnly) ? dispatch(onInputChange(
+            {
+              elementIndex,
+              subElementIndex,
+              value: event.target.value
+            })) : null}
           value={value}
           className={
             isReadOnly ?
@@ -151,9 +157,7 @@ export default function Input(props: {
               value={value}
               disabled={!isAvailable(checked)}
               onChange={(event) =>
-                dispatch(onSelectChange({
-                  sectionId,
-                  subSectionId,
+                dispatch(onInputChange({
                   elementIndex,
                   subElementIndex,
                   value: event.target.value
@@ -176,18 +180,14 @@ export default function Input(props: {
               <FontAwesomeIcon icon={faSortUp}
                 onClick={() =>
                   isAvailable(checked) &&
-                  dispatch(onSelectChange({
-                    sectionId,
-                    subSectionId,
+                  dispatch(onInputChange({
                     elementIndex,
                     subElementIndex,
                     value: (isNumber(value) && value! > 0 ? value - 1 : 0)
                   }))}></FontAwesomeIcon>
               <FontAwesomeIcon icon={faSortDown} onClick={() =>
                 isAvailable(checked) &&
-                dispatch(onSelectChange({
-                  sectionId,
-                  subSectionId,
+                dispatch(onInputChange({
                   elementIndex,
                   subElementIndex,
                   value: (isNumber(value) && value! < options!.length - 1 ? value + 1 : options!.length - 1)
@@ -197,17 +197,13 @@ export default function Input(props: {
       case Inputs.COLOR_TABLE:
         return (<CompactColorPicker
           value={typeof value === "string" ? value : ""}
-          sectionId={sectionId}
-          subSectionId={subSectionId}
           elementIndex={elementIndex}
         ></CompactColorPicker>);
       case Inputs.RANGE:
         return <input type="range"
           disabled={!isAvailable(checked)}
           onChange={(event) =>
-            dispatch(onRangeChange({
-              sectionId,
-              subSectionId,
+            dispatch(onInputChange({
               elementIndex,
               subElementIndex,
               value: event.target.value
@@ -227,7 +223,7 @@ export default function Input(props: {
           />
         </div>
       case Inputs.INPUT_GROUP:
-        return subElements!.map((element, idx) => renderInputElement(element, checked, idx));
+        return subElementIds!.map(id => renderInputElement(subElements[id], checked, id));
       default:
         return null;
     }
@@ -244,9 +240,8 @@ export default function Input(props: {
           className={classes.checkbox}
           checked={config.checked}
           onChange={(event) => dispatch(onChangeSettingAvailability({
-            sectionId,
-            subSectionId,
             elementIndex,
+            value: !config.checked
           }))}
         >
         </input>

@@ -13,7 +13,7 @@ export type ToolBarType = Array<{
   selected?: boolean;
   action?: {
     type: string;
-    subSectionId?: number;
+    subSectionId?: string;
   };
 }>;
 

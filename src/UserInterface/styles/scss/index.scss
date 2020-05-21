@@ -1,5 +1,6 @@
 @import "reset";
 @import "utils";
+@import "react-split-pane";
 
 $root-container-width: 100vw;
 $root-container-height: 100vh;
@@ -12,6 +13,10 @@ $right-panel-width: calc(#{$root-container-width} - #{$left-panel-width});
 $right-panel-height: 100vh;
 
 @import "explorer";
+
+* {
+  font-family: "Roboto", "Jost", sans-serif !important;
+}
 
 body {
   box-sizing: border-box;
@@ -52,7 +57,7 @@ body {
 }
 
 .explorer-container {
-  height: $left-panel-height/2;
+  height: 100%;
   width: 100%;
 }
 

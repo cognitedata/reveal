@@ -1,40 +1,44 @@
 import React from 'react';
+import { useSelector } from "react-redux";
 
 import ExpansionView from "../Common/ExpansionView";
 import Form from './Form';
-import { SettingsSectionInterface } from "../../interfaces/settings"
+import { SettingsSectionInterface } from "../../interfaces/settings";
+import { ReduxStore } from "../../interfaces/common";
 
+// Top level settings component
 export default function Section(props: {
-  sectionId: number,
-  subSectionId?: number,
   section: SettingsSectionInterface,
+  sectionId: string,
+  subSectionId?: string,
 }) {
 
   const { sectionId, subSectionId, section } = props;
-  const { name, toolBar, elements, subSections } = section;
+  const { name, isExpanded, toolBar, subSectionIds, elementIds } = section;
+  const settings = useSelector((state: ReduxStore) => state.settings);
+  const { subSections } = settings;
 
   return (
     <ExpansionView
       sectionId={sectionId}
-      title={name}
-      isExpanded={section.isExpanded}
-      toolBar={toolBar}
       subSectionId={subSectionId}
+      title={name}
+      isExpanded={isExpanded}
+      toolBar={toolBar}
     >
       <React.Fragment>
-        {elements ? <Form
-          elements={elements}
+        {elementIds ? <Form
+          elementIds={elementIds}
           sectionId={sectionId}
-          subSectionId={subSectionId}
         /> : null}
-        {subSections ?
+        {subSectionIds ?
           <div className="left-panel-section additional-padding">
-            {subSections.map((subSection, index: number) =>
+            {subSectionIds.map((id: string) =>
               (<Section
-                key={`${sectionId}-sub-${subSectionId}-${index}`}
-                section={subSection}
+                key={`${sectionId}-sub-${id}-${id}`}
+                section={subSections[id]}
                 sectionId={sectionId}
-                subSectionId={index} />
+                subSectionId={id} />
               ))}</div> : null}
       </React.Fragment>
     </ExpansionView>

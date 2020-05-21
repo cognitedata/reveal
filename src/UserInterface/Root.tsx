@@ -4,7 +4,6 @@ import { Provider } from "react-redux";
 import { createStore } from "redux";
 
 import './styles/css/index.css';
-import "./styles/css/react-split-pane.css"
 import reducers from "./redux/reducers";
 
 /**
