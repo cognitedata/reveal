@@ -30,12 +30,12 @@ export interface SuggestedCameraConfig {
 }
 
 export class CadNode extends THREE.Object3D {
-  public readonly _rootSector: RootSectorNode;
   public readonly modelTransformation: SectorModelTransformation;
 
   private _renderHints: CadRenderHints;
   private _loadingHints: CadLoadingHints;
 
+  private readonly _rootSector: RootSectorNode;
   private readonly _cadModel: CadModel;
   private readonly _materialManager: MaterialManager;
   private readonly _sectorScene: SectorScene;

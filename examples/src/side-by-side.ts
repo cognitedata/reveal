@@ -17,6 +17,8 @@ import {
 import { CogniteClient } from '@cognite/sdk';
 import { CadNode, RevealManager } from '@cognite/reveal/experimental';
 import { getParamsFromURL } from './utils/example-helpers';
+import { RevealOptions } from '@cognite/reveal/public/RevealManagerBase';
+import { OverrideSectorCuller } from './utils/OverrideSectorCuller';
 
 CameraControls.install({ THREE });
 
@@ -54,13 +56,30 @@ async function main() {
   client.loginWithOAuth({ project });
 
   let modelsNeedUpdate = true;
-  const revealManager1 = new RevealManager(client, () => {
-    modelsNeedUpdate = true;
-  });
-
-  const revealManager2 = new RevealManager(client, () => {
-    modelsNeedUpdate = true;
-  });
+  const sectorCuller1 = new OverrideSectorCuller();
+  const revealManager1 = new RevealManager(
+    client,
+    () => {
+      modelsNeedUpdate = true;
+    },
+    {
+      internal: {
+        sectorCuller: sectorCuller1
+      }
+    }
+  );
+  const sectorCuller2 = new OverrideSectorCuller();
+  const revealManager2 = new RevealManager(
+    client,
+    () => {
+      modelsNeedUpdate = true;
+    },
+    {
+      internal: {
+        sectorCuller: sectorCuller2
+      }
+    }
+  );
 
   let model1: CadNode;
   if (modelUrl) {
@@ -122,14 +141,14 @@ async function main() {
       options1.renderMode === RenderMode.AlwaysRender ||
       (options1.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || modelsNeedUpdate))
     ) {
-      applyRenderingFilters(scene1, options1.renderFilter);
+      applyRenderingFilters(scene1, options1.renderFilter, sectorCuller1, options1.overrideWantedSectors);
       renderer1.render(scene1, camera);
     }
     if (
       options2.renderMode === RenderMode.AlwaysRender ||
       (options2.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || modelsNeedUpdate))
     ) {
-      applyRenderingFilters(scene2, options2.renderFilter);
+      applyRenderingFilters(scene2, options2.renderFilter, sectorCuller2, options2.overrideWantedSectors);
       renderer2.render(scene2, camera);
     }
   };
