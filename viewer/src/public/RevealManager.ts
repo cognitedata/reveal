@@ -22,10 +22,6 @@ import { PotreeNodeWrapper } from '@/dataModels/pointCloud/internal/PotreeNodeWr
 import { PotreeGroupWrapper } from '@/dataModels/pointCloud/internal/PotreeGroupWrapper';
 import { ByVisibilityGpuSectorCuller } from '@/dataModels/cad/internal/sector/culling/ByVisibilityGpuSectorCuller';
 
-// First iteration of a RevealManager. Currently tailored to examples but should be tailored to external usecase.
-// Should move to example-helpers.ts as a function without extending
-// TODO: j-bjorne 15-05-2020: create a function that creates a default CadManager and place it in a util class?
-
 type CdfModelIdentifier = { modelRevision: IdEither; format: File3dFormat };
 export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
   constructor(client: CogniteClient, options?: RevealOptions) {
