@@ -85,6 +85,9 @@ export class Cognite3DViewer {
     if (options.logMetrics) {
       throw new NotSupportedInMigrationWrapperError('LogMetris is not supported');
     }
+    if (options.viewCube) {
+      throw new NotSupportedInMigrationWrapperError('ViewCube is not supported');
+    }
 
     this.renderer = options.renderer || new THREE.WebGLRenderer();
     this.canvas.style.width = '640px';
@@ -124,7 +127,7 @@ export class Cognite3DViewer {
       new CadMetadataParser()
     );
     const cadModelFactory = new CadModelFactory(this.materialManager);
-    const sectorCuller = new ByVisibilityGpuSectorCuller();
+    const sectorCuller = options._sectorCuller || new ByVisibilityGpuSectorCuller();
     this.sectorRepository = new CachedRepository(cogniteClientExtension, modelDataParser, modelDataTransformer);
     const cadModelUpdateHandler = new CadModelUpdateHandler(this.sectorRepository, sectorCuller);
     this.cadManager = new CadManager<RequestParams>(cadModelRepository, cadModelFactory, cadModelUpdateHandler);
