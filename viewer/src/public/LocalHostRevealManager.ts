@@ -21,9 +21,9 @@ import { PotreeNodeWrapper } from '@/dataModels/pointCloud/internal/PotreeNodeWr
 import { ModelNodeAppearance } from '@/dataModels/cad/internal/ModelNodeAppearance';
 import { ByVisibilityGpuSectorCuller } from '@/dataModels/cad/internal/sector/culling/ByVisibilityGpuSectorCuller';
 
-type Params = { fileName: string };
+type LocalModelIdentifier = { fileName: string };
 
-export class LocalHostRevealManager extends RevealManagerBase<Params> {
+export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifier> {
   constructor(client: CogniteClient, options?: RevealOptions) {
     const modelDataParser: CadSectorParser = new CadSectorParser();
     const materialManager: MaterialManager = new MaterialManager();
@@ -40,7 +40,7 @@ export class LocalHostRevealManager extends RevealManagerBase<Params> {
       (options && options.internal && options.internal.sectorCuller) || new ByVisibilityGpuSectorCuller();
     const sectorRepository = new CachedRepository(localClient, modelDataParser, modelDataTransformer);
     const cadModelUpdateHandler = new CadModelUpdateHandler(sectorRepository, sectorCuller);
-    const cadManager: CadManager<Params> = new CadManager<Params>(
+    const cadManager: CadManager<LocalModelIdentifier> = new CadManager<LocalModelIdentifier>(
       cadModelRepository,
       cadModelFactory,
       cadModelUpdateHandler
