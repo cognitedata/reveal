@@ -3,13 +3,13 @@
  */
 
 import { CogniteClient, IdEither, ItemsResponse } from '@cognite/sdk';
-import { HttpHeaders } from '@cognite/sdk/dist/src/utils/http/basicHttpClient';
-import { File3dFormat } from '../File3dFormat';
+
 import { CadSceneProvider } from '@/dataModels/cad/internal/CadSceneProvider';
-import { ModelUrlProvider } from './ModelUrlProvider';
-import { BlobOutputMetadata } from './BlobOutputMetadata';
-import { Model3DOutputList } from './Model3DOutputList';
 import { CadSectorProvider } from '@/dataModels/cad/internal/sector/CadSectorProvider';
+
+import { BlobOutputMetadata, ModelUrlProvider } from './types';
+import { Model3DOutputList } from './Model3DOutputList';
+import { File3dFormat } from '../File3dFormat';
 
 interface OutputsRequest {
   models: IdEither[];
@@ -29,7 +29,7 @@ export class CogniteClient3dExtensions
 
   public async getCadSectorFile(blobUrl: string, fileName: string): Promise<ArrayBuffer> {
     const url = `${blobUrl}/${fileName}`;
-    const headers: HttpHeaders = {
+    const headers = {
       ...this.client.getDefaultRequestHeaders(),
       Accept: '*/*'
     };
