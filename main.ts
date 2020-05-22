@@ -115,13 +115,13 @@ export function main()
       for (const node of wellTrajectory.getDescendantsByType(FloatLogNode))
       {
         n++;
-        node.setVisibleInteractive(true);
+        //node.setVisibleInteractive(true);
       }
       n = 0;
       for (const node of wellTrajectory.getDescendantsByType(DiscreteLogNode))
       {
         n++;
-        node.setVisibleInteractive(true);
+        //node.setVisibleInteractive(true);
         if (n === 1)
           break;
       }
@@ -129,7 +129,7 @@ export function main()
       for (const node of wellTrajectory.getDescendantsByType(PointLogNode))
       {
         n++;
-        node.setVisibleInteractive(true);
+        //node.setVisibleInteractive(true);
         if (n === 1)
           break;
       }

@@ -16,6 +16,7 @@ import * as THREE from "three";
 import { Range3 } from "@/Core/Geometry/Range3";
 import { Range1 } from "@/Core/Geometry/Range1";
 import { Vector3 } from "@/Core/Geometry/Vector3";
+import { Colors } from "@/Core/Primitives/Colors";
 
 import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
 import { FloatLogNode } from "@/Nodes/Wells/Wells/FloatLogNode";
@@ -146,7 +147,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
   {
     const parent = new THREE.Group();
 
-    this.addWellLabel(parent);
+    this.addLabel(parent);
     this.addTrajectory(parent);
     return parent;
   }
@@ -223,18 +224,21 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
   // INSTANCE FUNCTIONS: Add 3D objects
   //==================================================
 
-  private addWellLabel(parent: THREE.Object3D)
+  private addLabel(parent: THREE.Object3D)
   {
     const node = this.node;
-    const well = node.well;
-    if (!well)
+    const trajectory = node.data;
+    if (!trajectory)
       return;
+    //const well = node.well;
+    //if (!well)
+    //  return;
 
     const style = this.style;
     if (!style)
       return;
 
-    const label = ThreeLabel.createByPositionAndAlignment(well.name, well.wellHead, 1, style.nameFontHeight, true);
+    const label = ThreeLabel.createByPositionAndAlignment(node.name, trajectory.getPointAt(0), 1, style.nameFontHeight, true);
     if (!label)
       return;
 
@@ -253,11 +257,12 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       return;
 
     const geometry = new TrajectoryBufferGeometry(trajectory, style.radius, 16);
-    const material = new THREE.MeshStandardMaterial({ color: ThreeConverter.toColor(color) });
+    const material = new THREE.MeshStandardMaterial({ color: ThreeConverter.toColor(Colors.white), vertexColors: THREE.VertexColors, transparent: true, opacity:1 });
     const mesh = new THREE.Mesh(geometry, material);
     mesh.name = this.trajectoryName;
     parent.add(mesh);
   }
+
   private addBands(parent: THREE.Object3D): void
   {
     const node = this.node;

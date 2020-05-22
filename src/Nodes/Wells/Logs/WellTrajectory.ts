@@ -12,16 +12,20 @@
 //=====================================================================================
 
 import * as THREE from "three";
+import * as Color from "color"
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Range1 } from "@/Core/Geometry/Range1";
 import { Range3 } from "@/Core/Geometry/Range3";
 import { Random } from "@/Core/Primitives/Random";
+import { Colors } from "@/Core/Primitives/Colors";
 import { Ma } from "@/Core/Primitives/Ma";
+
+import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 
 import { TrajectorySample } from "@/Nodes/Wells/Samples/TrajectorySample";
 import { MdSamples } from "@/Nodes/Wells/Logs/MdSamples";
-import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
+import { RenderSample } from "@/Nodes/Wells/Samples/RenderSample";
 
 export class WellTrajectory extends MdSamples
 {
@@ -77,7 +81,6 @@ export class WellTrajectory extends MdSamples
 
   public getAt(index: number): TrajectorySample { return this.samples[index] as TrajectorySample; }
   public getPointAt(i: number): Vector3 { return this.getAt(i).point; }
-
 
   public getAtMd(md: number): Vector3
   {
@@ -192,6 +195,16 @@ export class WellTrajectory extends MdSamples
     return tangent;
   }
 
+  public createRenderSamples(color: Color, radius: number): RenderSample[]
+  {
+    const result: RenderSample[] = [];
+    for (let i = 0; i < this.count; i++)
+    {
+      const sample = this.getAt(i);
+      result.push(new RenderSample(sample.point, sample.md, color, radius));
+    }
+    return result;
+  }
 
   //==================================================
   // STATIC METHODS: 
@@ -232,6 +245,7 @@ export class WellTrajectory extends MdSamples
       result.add(new TrajectorySample(point, md));
       prevPoint = point;
     }
+    result.touch()
     return result;
   }
 

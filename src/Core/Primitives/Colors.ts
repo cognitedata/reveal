@@ -22,6 +22,7 @@ export class Colors
   // INSTANCE FIELDS
   //==================================================
 
+  public static get transparent(): Color { return Color.rgb(0, 0, 0, 0) };
   public static get white(): Color { return Color.rgb(MaxByte, MaxByte, MaxByte) };
   public static get darkGrey(): Color { return Color.rgb(MaxByte / 2, MaxByte / 2, MaxByte / 2) };
   public static get lightGrey(): Color { return Color.rgb(3 * MaxByte / 4, 3 * MaxByte / 4, 3 * MaxByte / 4) };
@@ -34,7 +35,7 @@ export class Colors
   public static get cyan(): Color { return Color.rgb(0, MaxByte, MaxByte) };
   public static get magenta(): Color { return Color.rgb(MaxByte, 0, MaxByte) };
 
-  private static _index: number = 0;
+  private static index = 0;
   private static _colors: Color[] | null = null;
 
   //==================================================
@@ -51,8 +52,8 @@ export class Colors
   public static get nextColor(): Color
   {
     const colors = this.colors;
-    Colors._index = (Colors._index + 1) % colors.length;
-    return colors[Colors._index];
+    Colors.index = (Colors.index + 1) % colors.length;
+    return colors[Colors.index];
   }
 
   //==================================================
