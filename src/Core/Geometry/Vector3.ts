@@ -70,7 +70,7 @@ export class Vector3
     this.z = z;
   }
 
-  public /*copy constructor*/ copy(): Vector3
+  public clone(): Vector3
   {
     return new Vector3(this.x, this.y, this.z);
   }
@@ -143,7 +143,7 @@ export class Vector3
     this.z = z;
   }
 
-  public copyFrom(other: Vector3): void
+  public copy(other: Vector3): void
   {
     this.x = other.x;
     this.y = other.y;

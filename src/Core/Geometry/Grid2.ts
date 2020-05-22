@@ -29,8 +29,8 @@ export class Grid2
 
   public constructor(numNodes: Index2)
   {
-    this.nodeSize = numNodes.copy();
-    this.cellSize = numNodes.copy();
+    this.nodeSize = numNodes.clone();
+    this.cellSize = numNodes.clone();
     this.cellSize.i--;
     this.cellSize.j--;
   }

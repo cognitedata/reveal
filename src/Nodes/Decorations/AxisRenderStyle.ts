@@ -28,7 +28,7 @@ export class AxisRenderStyle extends BaseRenderStyle
 
   public constructor(targetId: TargetId) { super(targetId); }
 
-  public /*copy constructor*/ copy(): BaseRenderStyle
+  public /*copy constructor*/ clone(): BaseRenderStyle
   {
     const style = new AxisRenderStyle(this.targetId);
     return style;

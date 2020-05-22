@@ -18,8 +18,7 @@ import { Changes } from "@/Core/Views/Changes";
 
 import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
 
-export class WellLogThreeView extends BaseThreeView
-{
+export class WellLogThreeView extends BaseThreeView {
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -32,8 +31,7 @@ export class WellLogThreeView extends BaseThreeView
 
   private get node(): BaseLogNode { return super.getNode() as BaseLogNode; }
 
-  private get trajectoryNode(): WellTrajectoryNode | null
-  {
+  private get trajectoryNode(): WellTrajectoryNode | null {
     const node = this.node;
     return !node ? null : node.trajectoryNode;
   }
@@ -42,19 +40,16 @@ export class WellLogThreeView extends BaseThreeView
   // OVERRIDES of BaseView
   //==================================================
 
-  protected /*override*/ updateCore(args: NodeEventArgs): void
-  {
+  protected /*override*/ updateCore(args: NodeEventArgs): void {
     super.updateCore(args);
   }
 
-  protected /*virtual*/ onShowCore(): void
-  {
+  protected /*virtual*/ onShowCore(): void {
     super.onShowCore();
     this.updateTrajectoryView();
   }
 
-  protected /*virtual*/ onHideCore(): void
-  {
+  protected /*virtual*/ onHideCore(): void {
     super.onHideCore();
     this.updateTrajectoryView();
   }
@@ -63,8 +58,7 @@ export class WellLogThreeView extends BaseThreeView
   // OVERRIDES of BaseView
   //==================================================
 
-  protected updateTrajectoryView(): void
-  {
+  protected updateTrajectoryView(): void {
     const trajectoryNode = this.trajectoryNode;
     if (!trajectoryNode)
       return;
@@ -73,7 +67,7 @@ export class WellLogThreeView extends BaseThreeView
     if (!trajectoryView)
       return;
 
-    super.update(new NodeEventArgs(Changes.filter));
+    trajectoryView.update(new NodeEventArgs(Changes.filter));
   }
 
 }

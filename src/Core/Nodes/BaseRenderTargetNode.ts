@@ -55,7 +55,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
   public /*override*/ initializeCore()
   {
     super.initializeCore();
-    this.Invalidate();
+    this.invalidate();
   }
 
   //==================================================
@@ -115,7 +115,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
     const aspect = this.aspectRatio;
     for (const cameraNode of this.getChildrenByType(BaseCameraNode))
       cameraNode.updateAspect(aspect);
-    this.Invalidate();
+    this.invalidate();
   }
 
   protected addCameraNode(child: BaseCameraNode, isActive: boolean): void
@@ -125,7 +125,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
     this.addChild(child);
   }
 
-  protected Invalidate(value?: boolean): void
+  public invalidate(value?: boolean): void
   {
     this._isInvalidated = (value === undefined) ? true : value;
   }

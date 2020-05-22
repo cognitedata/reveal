@@ -19,26 +19,30 @@ import { Colors } from "@/Core/Primitives/Colors";
 
 import { MdSample } from "@/Nodes/Wells/Samples/MdSample";
 
-export class RenderSample extends MdSample 
-{
+export class RenderSample extends MdSample {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
 
   public point: Vector3;
-  public color: Color;
   public radius: number;
+  public color: Color;
+
+  //==================================================
+  // INSTANCE PROPERTIES
+  //==================================================
+
+  public get isEmpty(): boolean { return this.radius <= 0 || Number.isNaN(this.radius); }
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  constructor(point: Vector3, md: number, color: Color = Colors.white, radius = 0)
-  {
+  constructor(point: Vector3, md: number, radius = 0, color: Color = Colors.white) {
     super(md);
     this.point = point;
-    this.color = color;
     this.radius = radius;
+    this.color = color;
   }
 
   //==================================================

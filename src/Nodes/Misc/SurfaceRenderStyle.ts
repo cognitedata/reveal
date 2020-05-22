@@ -29,7 +29,7 @@ export class SurfaceRenderStyle extends BaseRenderStyle
 
   public constructor(targetId: TargetId) { super(targetId); }
 
-  public /*copy constructor*/ copy(): BaseRenderStyle
+  public /*copy constructor*/ clone(): BaseRenderStyle
   {
     const style = new SurfaceRenderStyle(this.targetId);
     style.colorType = this.colorType;

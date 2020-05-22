@@ -26,7 +26,7 @@ export class TargetId
     this._uniqueId = uniqueId;
   }
 
-  public /*copy constructor*/ copy(): TargetId { return new TargetId(this.typeName, this.uniqueId); }
+  public /*copy constructor*/ clone(): TargetId { return new TargetId(this.typeName, this.uniqueId); }
 
   //==================================================
   // INSTANCE FIELDS

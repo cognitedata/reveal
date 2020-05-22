@@ -572,7 +572,7 @@ export abstract class BaseNode extends Identifiable
         if (!thisStyle.targetId.hasSameTypeName(targetId))
           continue;
 
-        style = thisStyle.copy();
+        style = thisStyle.clone();
         style.isDefault = false;
         style.targetId.set(targetId, this.renderStyleResolution);
         this.renderStyles.push(style);

@@ -21,13 +21,29 @@ import { DiscreteLogNode } from "./src/Nodes/Wells/Wells/DiscreteLogNode";
 import { PointLog } from "./src/Nodes/Wells/Logs/PointLog";
 import { FloatLog } from "./src/Nodes/Wells/Logs/FloatLog";
 import { DiscreteLog } from "./src/Nodes/Wells/Logs/DiscreteLog";
+import { CasingLogNode } from "@/Nodes/Wells/Wells/CasingLogNode";
+import { Random } from "@/Core/Primitives/Random";
+import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
+import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
 
+
+
+function toggleSomeLogs(root: RootNode) {
+  for (const node of root.wells.getDescendantsByType(BaseLogNode)) {
+    if (Random.isTrue(0.3))
+      node.toogleVisibleInteractive();
+  }
+  const target = root.activeTarget as BaseRenderTargetNode;
+  if (target)
+    target.invalidate();
+}
 
 
 main();
 
-export function main()
-{
+export function main() {
+
+
   // Create the module and initialize it
   const module = new ThreeModule();
   module.install();
@@ -36,8 +52,7 @@ export function main()
   const wellTree = root.wells;
 
   // Add some random wells
-  for (let i = 0; i < 40; i++)
-  {
+  for (let i = 0; i < 20; i++) {
     const well = new WellNode();
     wellTree.addChild(well);
 
@@ -46,37 +61,54 @@ export function main()
     well.name = `well ${i + 1}`;
 
     // Add some random trajectories to the well
-    for (let j = 0; j < 2; j++)
-    {
+    for (let j = 0; j < 2; j++) {
       const wellTrajectory = new WellTrajectoryNode();
-      wellTrajectory.name = `Trajectory ${j + 1}`;
+      wellTrajectory.name = `Traj ${i + 1}`;
 
       wellTrajectory.data = WellTrajectory.createByRandom(well.wellHead);
       well.addChild(wellTrajectory);
 
-      const mdRange = wellTrajectory.data.mdRange;
-      mdRange.min = (mdRange.center + mdRange.min) / 2;
-      mdRange.expandByFraction(-0.05);
 
       // Add some random float logs to the trajectory
-      for (let k = 0; k < 4; k++)
-      {
+      let n = 1//Random.getInt2(0, 1);
+      for (let k = 0; k < n; k++) {
+        const mdRange = wellTrajectory.data.mdRange.clone();
+        mdRange.expandByFraction(-0.05);
+        const logNode = new CasingLogNode();
+        logNode.data = FloatLog.createCasingByRandom(mdRange, 7);
+        wellTrajectory.addChild(logNode);
+      }
+      // Add some random float logs to the trajectory
+      n = Random.getInt2(2, 5);
+      for (let k = 0; k < n; k++) {
+        const mdRange = wellTrajectory.data.mdRange.clone();
+        mdRange.min = (mdRange.center + mdRange.min) / 2;
+        mdRange.expandByFraction(Random.getFloat2(-0.15, 0));
+
         const logNode = new FloatLogNode();
         const valueRange = new Range1(0, 3.14);
         logNode.data = FloatLog.createByRandom(mdRange, valueRange);
         wellTrajectory.addChild(logNode);
       }
       // Add some random discrete logs to the trajectory
-      for (let k = 0; k < 2; k++)
-      {
+      n = 1;//Random.getInt2(0, 1);
+      for (let k = 0; k < n; k++) {
+        const mdRange = wellTrajectory.data.mdRange.clone();
+        mdRange.min = (mdRange.center + mdRange.min) / 2;
+        mdRange.expandByFraction(Random.getFloat2(-0.25, 0));
+
         const logNode = new DiscreteLogNode();
         const valueRange = new Range1(0, 4);
         logNode.data = DiscreteLog.createByRandom(mdRange, valueRange);
         wellTrajectory.addChild(logNode);
       }
       // Add some random point logs to the trajectory
-      for (let k = 0; k < 3; k++)
-      {
+      n = Random.getInt2(1, 2);
+      for (let k = 0; k < n; k++) {
+        const mdRange = wellTrajectory.data.mdRange.clone();
+        mdRange.min = (mdRange.center + mdRange.min) / 2;
+        mdRange.expandByFraction(Random.getFloat2(-0.15, 0));
+
         const logNode = new PointLogNode();
         logNode.data = PointLog.createByRandom(mdRange, 10);
         wellTrajectory.addChild(logNode);
@@ -91,8 +123,7 @@ export function main()
   }
 
   module.initializeWhenPopulated(root);
-  for (const target of root.targets.getChildrenByType(ThreeRenderTargetNode))
-  {
+  for (const target of root.targets.getChildrenByType(ThreeRenderTargetNode)) {
     const range = target.pixelRange;
     const stats = target.stats;
     stats.dom.style.left = range.x.min.toFixed(0) + "px";
@@ -106,32 +137,20 @@ export function main()
   }
 
   // Set some nodes visible
-  for (const well of root.getDescendantsByType(WellNode))
-  {
-    for (const wellTrajectory of well.getDescendantsByType(WellTrajectoryNode))
-    {
+  for (const well of root.getDescendantsByType(WellNode)) {
+    for (const wellTrajectory of well.getDescendantsByType(WellTrajectoryNode)) {
       wellTrajectory.setVisibleInteractive(true);
-      let n = 0;
-      for (const node of wellTrajectory.getDescendantsByType(FloatLogNode))
-      {
-        n++;
-        //node.setVisibleInteractive(true);
+      for (const node of wellTrajectory.getDescendantsByType(FloatLogNode)) {
+        node.setVisibleInteractive(true);
       }
-      n = 0;
-      for (const node of wellTrajectory.getDescendantsByType(DiscreteLogNode))
-      {
-        n++;
-        //node.setVisibleInteractive(true);
-        if (n === 1)
-          break;
+      for (const node of wellTrajectory.getDescendantsByType(CasingLogNode)) {
+        node.setVisibleInteractive(true);
       }
-      n = 0;
-      for (const node of wellTrajectory.getDescendantsByType(PointLogNode))
-      {
-        n++;
-        //node.setVisibleInteractive(true);
-        if (n === 1)
-          break;
+      for (const node of wellTrajectory.getDescendantsByType(DiscreteLogNode)) {
+        node.setVisibleInteractive(true);
+      }
+      for (const node of wellTrajectory.getDescendantsByType(PointLogNode)) {
+        node.setVisibleInteractive(true);
       }
       break;
     }
@@ -143,6 +162,8 @@ export function main()
   const activeTarget = root.activeTarget as ThreeRenderTargetNode;
   if (activeTarget)
     activeTarget.viewAll();
+
+  setInterval(() => toggleSomeLogs(root), 1000);
 }
 
 

@@ -30,7 +30,7 @@ export class PolylinesRenderStyle extends BaseRenderStyle
 
   public constructor(targetId: TargetId) { super(targetId); }
 
-  public /*copy constructor*/ copy(): BaseRenderStyle
+  public /*copy constructor*/ clone(): BaseRenderStyle
   {
     const style = new PolylinesRenderStyle(this.targetId);
     style.lineWidth = this.lineWidth;

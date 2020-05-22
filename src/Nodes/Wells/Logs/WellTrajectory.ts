@@ -18,7 +18,6 @@ import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Range1 } from "@/Core/Geometry/Range1";
 import { Range3 } from "@/Core/Geometry/Range3";
 import { Random } from "@/Core/Primitives/Random";
-import { Colors } from "@/Core/Primitives/Colors";
 import { Ma } from "@/Core/Primitives/Ma";
 
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
@@ -195,15 +194,19 @@ export class WellTrajectory extends MdSamples
     return tangent;
   }
 
+  //==================================================
+  // INSTANCE METHODS: Creators
+  //==================================================
+
   public createRenderSamples(color: Color, radius: number): RenderSample[]
   {
-    const result: RenderSample[] = [];
-    for (let i = 0; i < this.count; i++)
+    const samples: RenderSample[] = [];
+    for (let i = 0; i < this.length; i++)
     {
       const sample = this.getAt(i);
-      result.push(new RenderSample(sample.point, sample.md, color, radius));
+      samples.push(new RenderSample(sample.point, sample.md, radius, color));
     }
-    return result;
+    return samples;
   }
 
   //==================================================
@@ -212,17 +215,17 @@ export class WellTrajectory extends MdSamples
 
   public static createByRandom(wellHead: Vector3): WellTrajectory
   {
-    const result = new WellTrajectory();
-    const p0 = wellHead.copy();
-    const p1 = p0.copy();
+    const trajectory = new WellTrajectory();
+    const p0 = wellHead.clone();
+    const p1 = p0.clone();
     p1.z += -800;
 
-    const p2 = p1.copy();
+    const p2 = p1.clone();
     p2.x += Random.getFloat(new Range1(200, -100));
     p2.y += Random.getFloat(new Range1(200, -100));
     p2.z += -400;
 
-    const p3 = p2.copy();
+    const p3 = p2.clone();
     p3.x += Random.getFloat(new Range1(600, -600));
     p3.y += Random.getFloat(new Range1(600, -600));
     p3.z += -300;
@@ -242,11 +245,10 @@ export class WellTrajectory extends MdSamples
     {
       const point = ThreeConverter.fromVector(curvePoint);
       md += prevPoint.distance(point);
-      result.add(new TrajectorySample(point, md));
+      trajectory.add(new TrajectorySample(point, md));
       prevPoint = point;
     }
-    result.touch()
-    return result;
+    return trajectory;
   }
 
   //public getStartIndexAboveMd(md: number): number

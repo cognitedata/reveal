@@ -30,7 +30,7 @@ export class Points
 
   public constructor() { }
 
-  public copy(): Points
+  public clone(): Points
   {
     const result = new Points();
     result.list = [...this.list]; // This syntax sucks!

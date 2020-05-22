@@ -28,7 +28,7 @@ export class PotreeRenderStyle extends BaseRenderStyle
 
   public constructor(targetId: TargetId) { super(targetId); }
 
-  public /*copy constructor*/ copy(): BaseRenderStyle
+  public /*copy constructor*/ clone(): BaseRenderStyle
   {
     const style = new PotreeRenderStyle(this.targetId);
     style.budget = this.budget;

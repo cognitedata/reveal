@@ -74,12 +74,12 @@ export class Range3
       this.set(min, max);
   }
 
-  public /*copy constructor*/ copy(): Range3
+  public /*copy constructor*/ clone(): Range3
   {
     const range = new Range3();
-    range.x = this.x.copy();
-    range.y = this.y.copy();
-    range.z = this.z.copy();
+    range.x = this.x.clone();
+    range.y = this.y.clone();
+    range.z = this.z.clone();
     return range;
   }
 

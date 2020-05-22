@@ -18,9 +18,9 @@ import { Random } from "@/Core/Primitives/Random";
 import { BaseLogSample } from "@/Nodes/Wells/Samples/BaseLogSample";
 import { FloatLogSample } from "@/Nodes/Wells/Samples/FloatLogSample";
 import { BaseLog } from "@/Nodes/Wells/Logs/BaseLog";
+import { RenderSample } from "@/Nodes/Wells/Samples/RenderSample";
 
-export class FloatLog extends BaseLog
-{
+export class FloatLog extends BaseLog {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
@@ -31,19 +31,17 @@ export class FloatLog extends BaseLog
   // OVERRIDES of BaseLog
   //==================================================
 
-  public /*override*/ getSampleByMd(md: number): BaseLogSample | null
-  {
+  public /*override*/ getSampleByMd(md: number): BaseLogSample | null {
     return this.getConcreteSampleByMd(md);
   }
 
   //==================================================
-  // INSTANCE METHODS: Getter
+  // INSTANCE METHODS: Getters
   //==================================================
 
   public getAt(index: number): FloatLogSample { return this.samples[index] as FloatLogSample; }
 
-  public getConcreteSampleByMd(md: number): FloatLogSample | null
-  {
+  public getConcreteSampleByMd(md: number): FloatLogSample | null {
     const floatIndex = this.getFloatIndexAtMd(md);
     if (floatIndex < 0)
       return null;
@@ -73,30 +71,25 @@ export class FloatLog extends BaseLog
   // INSTANCE METHODS: Range
   //==================================================
 
-  public get range(): Range1
-  {
+  public get range(): Range1 {
     if (!this._range)
       this._range = this.calculateRange();
     return this._range;
   }
 
-  public calculateRange(): Range1
-  {
+  public calculateRange(): Range1 {
     const range = new Range1();
     this.expandRange(range);
     return range;
   }
 
-  public touch(): void
-  {
+  public touch(): void {
     super.touch();
     this._range = undefined;
   }
 
-  public expandRange(range: Range1): void
-  {
-    for (const baseSample of this.samples) 
-    {
+  public expandRange(range: Range1): void {
+    for (const baseSample of this.samples) {
       const sample = baseSample as FloatLogSample;
       if (sample)
         range.add(sample.value);
@@ -107,14 +100,25 @@ export class FloatLog extends BaseLog
   // INSTANCE METHODS: Operations
   //==================================================
 
-  public static createByRandom(mdRange: Range1, valueRange: Range1): FloatLog
-  {
+  public static createByRandom(mdRange: Range1, valueRange: Range1): FloatLog {
     const log = new FloatLog();
     const numSamples = 500;
     const mdInc = mdRange.delta / (numSamples - 1);
 
     for (let k = 0, md = mdRange.min; k < numSamples; k++, md += mdInc)
       log.samples.push(new FloatLogSample(Random.getGaussian(valueRange.center, valueRange.delta), md));
+    return log;
+  }
+
+  public static createCasingByRandom(mdRange: Range1, numSamples: number): FloatLog {
+    const log = new FloatLog();
+    let mdInc = mdRange.delta / (numSamples - 1);
+    mdInc = Random.getGaussian(mdInc, mdInc / 10);
+
+    for (let k = 0, md = mdRange.min; k < numSamples; k++, md += mdInc) {
+      const radius = (numSamples - k) * 15 / numSamples;
+      log.samples.push(new FloatLogSample(radius, md));
+    }
     return log;
   }
 }  
