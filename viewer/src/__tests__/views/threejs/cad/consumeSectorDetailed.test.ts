@@ -103,7 +103,7 @@ function newTriangleMesh(): TriangleMesh {
     treeIndices: new Float32Array(10),
     indices: new Uint32Array(10),
     vertices: new Float32Array(5),
-    colors: new Float32Array(),
+    colors: new Uint8Array(30),
     normals: undefined
   };
 }

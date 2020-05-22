@@ -302,7 +302,7 @@ export class CachedRepository implements Repository {
         const fileName = `mesh_${fileId}.ctm`;
         const { indices, vertices, normals } = ctmFiles.get(fileName)!; // TODO: j-bjorne 16-04-2020: try catch error???
 
-        const sharedColors = new Float32Array(indices.length);
+        const sharedColors = new Uint8Array(3 * indices.length);
         const sharedTreeIndices = new Float32Array(indices.length);
 
         for (let i = 0; i < meshIndices.length; i++) {
@@ -310,8 +310,7 @@ export class CachedRepository implements Repository {
           const treeIndex = treeIndices[meshIdx];
           const triOffset = offsets[i];
           const triCount = fileTriangleCounts[i];
-          const [r, g, b] = this.readColorToFloat32s(colors, meshIdx);
-
+          const [r, g, b] = [colors[4 * meshIdx + 0], colors[4 * meshIdx + 1], colors[4 * meshIdx + 2]];
           for (let triIdx = triOffset; triIdx < triOffset + triCount; triIdx++) {
             for (let j = 0; j < 3; j++) {
               const vIdx = indices[3 * triIdx + j];
@@ -420,14 +419,6 @@ export class CachedRepository implements Repository {
       }
     }
     return meshesGroupedByFile;
-  }
-
-  private readColorToFloat32s(colors: Uint8Array, index: number): [number, number, number, number] {
-    const r = colors[4 * index] / 255;
-    const g = colors[4 * index + 1] / 255;
-    const b = colors[4 * index + 2] / 255;
-    const a = colors[4 * index + 3] / 255;
-    return [r, g, b, a];
   }
 
   private cacheKey(wantedSector: WantedSector) {
