@@ -329,8 +329,9 @@ export class RevealManagerBase {
         observeOn(animationFrameScheduler)
       ) // Consume sectors
       .subscribe((sector: ConsumedSector) => {
-        const cadNode = this._cadNodeMap.get(sector.cadModelIdentifier);
-        const sectorNodeParent = cadNode!.rootSector;
+        const cadNode = this._cadNodeMap.get(sector.cadModelIdentifier)!;
+        cadNode.updateSectorBoundingBox(sector);
+        const sectorNodeParent = cadNode.rootSector;
         const sectorNode = sectorNodeParent!.sectorNodeMap.get(sector.metadata.id);
         if (!sectorNode) {
           throw new Error(`Could not find 3D node for sector ${sector.metadata.id} - invalid id?`);
