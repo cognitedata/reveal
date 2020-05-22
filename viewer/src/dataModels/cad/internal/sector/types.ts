@@ -8,7 +8,7 @@ import { Box3 } from '@/utilities/Box3';
 import { ParsedPrimitives } from '@/utilities/workers/types/parser.types';
 
 // TODO 2019-11-12 larsmoa: Move and rename to something general (not specific
-// for sector data). 
+// for sector data).
 // TODO 2020-05-14 larsmoa: Move to SectorModelTransformation utilities and rename
 export type SectorModelTransformation = {
   readonly modelMatrix: mat4;
@@ -65,7 +65,7 @@ export type TriangleMesh = {
   readonly treeIndices: Float32Array;
   readonly vertices: Float32Array;
   readonly normals: Float32Array | undefined;
-  readonly colors: Float32Array;
+  readonly colors: Uint8Array;
 };
 
 export type InstancedMeshFile = {
