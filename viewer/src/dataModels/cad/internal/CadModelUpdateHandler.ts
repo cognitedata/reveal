@@ -17,8 +17,7 @@ import {
   switchAll,
   observeOn,
   flatMap,
-  toArray,
-  tap
+  toArray
 } from 'rxjs/operators';
 import { SectorCuller } from './sector/culling/SectorCuller';
 import { distinctUntilLevelOfDetailChanged } from './sector/distinctUntilLevelOfDetailChanged';
