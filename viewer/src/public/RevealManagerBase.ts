@@ -4,7 +4,6 @@
 
 import { createLocalPointCloudModel, createPointCloudModel } from '@/dataModels/pointCloud';
 import { CogniteClient, IdEither } from '@cognite/sdk';
-import { CadNode } from '@/dataModels/cad/internal/CadNode';
 import { CadBudget } from '@/dataModels/cad/public/CadBudget';
 import { ModelNodeAppearance } from '@/dataModels/cad/internal/ModelNodeAppearance';
 import { Sector, SectorQuads } from '@/dataModels/cad/internal/sector/types';
@@ -28,13 +27,13 @@ export interface RevealOptions {
 
 export type OnDataUpdated = () => void;
 
-export class RevealManagerBase<Params> implements RenderManager {
-  protected readonly _cadManager: CadManager<Params>;
+export class RevealManagerBase<TModelIdentifier> implements RenderManager {
+  protected readonly _cadManager: CadManager<TModelIdentifier>;
   protected readonly _materialManager: MaterialManager;
 
   private _client: CogniteClient;
 
-  constructor(client: CogniteClient, cadManager: CadManager<Params>, materialManager: MaterialManager) {
+  constructor(client: CogniteClient, cadManager: CadManager<TModelIdentifier>, materialManager: MaterialManager) {
     // this._budget = (options && options.budget) || createDefaultCadBudget();
     this._client = client;
     this._cadManager = cadManager;
@@ -47,10 +46,6 @@ export class RevealManagerBase<Params> implements RenderManager {
 
   get needsRedraw(): boolean {
     return this._cadManager.needsRedraw;
-  }
-
-  public addModelFromUrl(_modelUrl: string, _modelNodeAppearance?: ModelNodeAppearance): Promise<CadNode> {
-    throw new Error('Deprecated');
   }
 
   public async addPointCloudFromCdf(modelRevision: string | number): Promise<[PotreeGroupWrapper, PotreeNodeWrapper]> {

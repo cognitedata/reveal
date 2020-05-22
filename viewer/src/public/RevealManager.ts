@@ -26,8 +26,8 @@ import { ByVisibilityGpuSectorCuller } from '@/dataModels/cad/internal/sector/cu
 // Should move to example-helpers.ts as a function without extending
 // TODO: j-bjorne 15-05-2020: create a function that creates a default CadManager and place it in a util class?
 
-type Params = { modelRevision: IdEither; format: File3dFormat };
-export class RevealManager extends RevealManagerBase<Params> {
+type CdfModelIdentifier = { modelRevision: IdEither; format: File3dFormat };
+export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
   constructor(client: CogniteClient, options?: RevealOptions) {
     const modelDataParser: CadSectorParser = new CadSectorParser();
     const materialManager: MaterialManager = new MaterialManager();
@@ -43,7 +43,11 @@ export class RevealManager extends RevealManagerBase<Params> {
       (options && options.internal && options.internal.sectorCuller) || new ByVisibilityGpuSectorCuller();
     const sectorRepository = new CachedRepository(cogniteClientExtension, modelDataParser, modelDataTransformer);
     const cadModelUpdateHandler = new CadModelUpdateHandler(sectorRepository, sectorCuller);
-    const cadManager: CadManager<Params> = new CadManager(cadModelRepository, cadModelFactory, cadModelUpdateHandler);
+    const cadManager: CadManager<CdfModelIdentifier> = new CadManager(
+      cadModelRepository,
+      cadModelFactory,
+      cadModelUpdateHandler
+    );
     super(client, cadManager, materialManager);
   }
 
@@ -73,12 +77,4 @@ export class RevealManager extends RevealManagerBase<Params> {
         throw new Error(`case: ${type} not handled`);
     }
   }
-
-  // TODO 22-05-2020 j-bjorne: comment in and remove from base class one pointcloud model has been created.
-  // private createModelIdentifier(id: string | number): IdEither {
-  //   if (typeof id === 'number') {
-  //     return { id };
-  //   }
-  //   return { externalId: id };
-  // }
 }

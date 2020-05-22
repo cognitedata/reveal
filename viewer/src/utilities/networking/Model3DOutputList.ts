@@ -3,7 +3,7 @@
  */
 
 import { IdEither } from '@cognite/sdk';
-import { BlobOutputMetadata } from './BlobOutputMetadata';
+import { BlobOutputMetadata } from './types';
 import { File3dFormat } from '../File3dFormat';
 
 export class Model3DOutputList {

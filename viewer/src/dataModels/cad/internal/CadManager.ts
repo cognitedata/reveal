@@ -10,8 +10,8 @@ import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 import { discardSector } from './sector/discardSector';
 import { ModelNodeAppearance } from './ModelNodeAppearance';
 
-export class CadManager<Params> {
-  private readonly _cadModelMetadataRepository: CadModelMetadataRepository<Params>;
+export class CadManager<TModelIdentifier> {
+  private readonly _cadModelMetadataRepository: CadModelMetadataRepository<TModelIdentifier>;
   private readonly _cadModelFactory: CadModelFactory;
   private readonly _cadModelUpdateHandler: CadModelUpdateHandler;
 
@@ -20,7 +20,7 @@ export class CadManager<Params> {
   private _needsRedraw: boolean = false;
 
   constructor(
-    cadModelMetadataRepository: CadModelMetadataRepository<Params>,
+    cadModelMetadataRepository: CadModelMetadataRepository<TModelIdentifier>,
     cadModelFactory: CadModelFactory,
     cadModelUpdateHandler: CadModelUpdateHandler
   ) {
@@ -68,8 +68,8 @@ export class CadManager<Params> {
     this._cadModelUpdateHandler.updateCamera(camera);
   }
 
-  async addModel(params: Params, modelAppearance?: ModelNodeAppearance): Promise<CadNode> {
-    const metadata = await this._cadModelMetadataRepository.loadData(params);
+  async addModel(modelIdentifier: TModelIdentifier, modelAppearance?: ModelNodeAppearance): Promise<CadNode> {
+    const metadata = await this._cadModelMetadataRepository.loadData(modelIdentifier);
     const model = this._cadModelFactory.createModel(metadata, modelAppearance);
     this._cadModelMap.set(metadata.blobUrl, model);
     this._cadModelUpdateHandler.updateModels(model);

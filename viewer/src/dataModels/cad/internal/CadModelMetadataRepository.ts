@@ -3,7 +3,7 @@
  */
 
 import { CadModelMetadata } from '@/dataModels/cad/public/CadModelMetadata';
-import { ModelUrlProvider } from '@/utilities/networking/ModelUrlProvider';
+import { ModelUrlProvider } from '@/utilities/networking/types';
 import { CadSceneProvider } from './CadSceneProvider';
 import { CadMetadataParser } from './CadMetadataParser';
 import { SectorScene } from './sector/SectorScene';
