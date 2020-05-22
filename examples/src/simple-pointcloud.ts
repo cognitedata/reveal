@@ -3,14 +3,13 @@
  */
 
 import * as THREE from 'three';
+import * as reveal from '@cognite/reveal/experimental';
 import { CogniteClient } from '@cognite/sdk';
 
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
 import { vec3 } from 'gl-matrix';
 import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
-import { RevealManager, RenderManager, LocalHostRevealManager } from '@cognite/reveal';
-import * as reveal from '@cognite/reveal';
 
 CameraControls.install({ THREE });
 
@@ -25,12 +24,15 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const revealManager: RenderManager = createRenderManager(modelRevision !== undefined ? 'cdf' : 'local', client);
+  const revealManager: reveal.RevealManager = createRenderManager(
+    modelRevision !== undefined ? 'cdf' : 'local',
+    client
+  );
   let model: [reveal.internal.PotreeGroupWrapper, reveal.internal.PotreeNodeWrapper];
 
-  if (revealManager instanceof LocalHostRevealManager && modelUrl !== undefined) {
+  if (revealManager instanceof reveal.LocalHostRevealManager && modelUrl !== undefined) {
     model = await revealManager.addModel('pointcloud', modelUrl);
-  } else if (revealManager instanceof RevealManager && modelRevision !== undefined) {
+  } else if (revealManager instanceof reveal.RevealManager && modelRevision !== undefined) {
     model = await revealManager.addModel('pointcloud', modelRevision);
   } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');

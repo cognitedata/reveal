@@ -15,7 +15,7 @@ import {
   RenderOptions
 } from './utils/renderer-debug-widget';
 import { CogniteClient } from '@cognite/sdk';
-import { CadNode, RevealManager, LocalHostRevealManager, RenderManager } from '@cognite/reveal';
+import * as reveal from '@cognite/reveal/experimental';
 import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
 
 CameraControls.install({ THREE });
@@ -32,10 +32,10 @@ function getModel2Params() {
 }
 
 function initializeModel(
-  cadNode: CadNode,
+  cadNode: reveal.CadNode,
   canvas: HTMLCanvasElement,
   gui: dat.GUI
-): [THREE.WebGLRenderer, THREE.Scene, CadNode, RenderOptions] {
+): [THREE.WebGLRenderer, THREE.Scene, reveal.CadNode, RenderOptions] {
   const renderer = new THREE.WebGLRenderer({ canvas });
   renderer.setClearColor('#444');
   renderer.setSize(canvas.width, canvas.height);
@@ -53,23 +53,29 @@ async function main() {
   const client = new CogniteClient({ appId: 'reveal.example.side-by-side' });
   client.loginWithOAuth({ project });
 
-  const revealManager1: RenderManager = createRenderManager(modelRevision !== undefined ? 'cdf' : 'local', client);
+  const revealManager1: reveal.RevealManager = createRenderManager(
+    modelRevision !== undefined ? 'cdf' : 'local',
+    client
+  );
 
-  let model1: CadNode;
-  if (revealManager1 instanceof LocalHostRevealManager && modelUrl !== undefined) {
+  let model1: reveal.CadNode;
+  if (revealManager1 instanceof reveal.LocalHostRevealManager && modelUrl !== undefined) {
     model1 = await revealManager1.addModel('cad', modelUrl);
-  } else if (revealManager1 instanceof RevealManager && modelRevision !== undefined) {
+  } else if (revealManager1 instanceof reveal.RevealManager && modelRevision !== undefined) {
     model1 = await revealManager1.addModel('cad', modelRevision);
   } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');
   }
 
-  const revealManager2: RenderManager = createRenderManager(modelRevision !== undefined ? 'cdf' : 'local', client);
+  const revealManager2: reveal.RevealManager = createRenderManager(
+    modelRevision !== undefined ? 'cdf' : 'local',
+    client
+  );
 
-  let model2: CadNode;
-  if (revealManager2 instanceof LocalHostRevealManager && modelUrl2 !== undefined) {
+  let model2: reveal.CadNode;
+  if (revealManager2 instanceof reveal.LocalHostRevealManager && modelUrl2 !== undefined) {
     model2 = await revealManager2.addModel('cad', modelUrl2);
-  } else if (revealManager2 instanceof RevealManager && modelRevision2 !== undefined) {
+  } else if (revealManager2 instanceof reveal.RevealManager && modelRevision2 !== undefined) {
     model2 = await revealManager2.addModel('cad', modelRevision2);
   } else {
     throw new Error('Need to provide either model2 OR modelUrl2 as an additional query parameters');

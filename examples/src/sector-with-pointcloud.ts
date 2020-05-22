@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
+import * as reveal from '@cognite/reveal/experimental';
 
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
@@ -15,9 +16,7 @@ import {
   createDefaultRenderOptions
 } from './utils/renderer-debug-widget';
 import { CogniteClient } from '@cognite/sdk';
-import { RevealManager, CadNode, RenderManager, LocalHostRevealManager } from '@cognite/reveal';
 import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
-import * as reveal from '@cognite/reveal';
 
 CameraControls.install({ THREE });
 
@@ -47,12 +46,15 @@ async function main() {
 
   Potree.XHRFactory.config.customHeaders.push({ header: 'MyDummyHeader', value: 'MyDummyValue' });
 
-  const revealManager: RenderManager = createRenderManager(modelRevision !== undefined ? 'cdf' : 'local', client);
+  const revealManager: reveal.RevealManager = createRenderManager(
+    modelRevision !== undefined ? 'cdf' : 'local',
+    client
+  );
 
-  let model: CadNode;
-  if (revealManager instanceof LocalHostRevealManager && modelUrl !== undefined) {
+  let model: reveal.CadNode;
+  if (revealManager instanceof reveal.LocalHostRevealManager && modelUrl !== undefined) {
     model = await revealManager.addModel('cad', modelUrl);
-  } else if (revealManager instanceof RevealManager && modelRevision !== undefined) {
+  } else if (revealManager instanceof reveal.RevealManager && modelRevision !== undefined) {
     model = await revealManager.addModel('cad', modelRevision);
   } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');
@@ -60,9 +62,9 @@ async function main() {
   scene.add(model);
 
   let pointCloud: [reveal.internal.PotreeGroupWrapper, reveal.internal.PotreeNodeWrapper];
-  if (revealManager instanceof LocalHostRevealManager && pointCloudUrl !== undefined) {
+  if (revealManager instanceof reveal.LocalHostRevealManager && pointCloudUrl !== undefined) {
     pointCloud = await revealManager.addModel('pointcloud', pointCloudUrl);
-  } else if (revealManager instanceof RevealManager && pointCloudRevision !== undefined) {
+  } else if (revealManager instanceof reveal.RevealManager && pointCloudRevision !== undefined) {
     await client.authenticate();
     pointCloud = await revealManager.addModel('pointcloud', pointCloudRevision);
   } else {

@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { RevealManager, LocalHostRevealManager } from '@cognite/reveal';
+import { RevealManager, LocalHostRevealManager } from '@cognite/reveal/experimental';
 import { CogniteClient } from '@cognite/sdk';
 import { RevealOptions } from '@cognite/reveal/public/RevealManagerBase';
 

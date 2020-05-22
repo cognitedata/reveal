@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { CadNode, RevealManager, ModelNodeAppearance, intersectCadNodes, RenderManager, LocalHostRevealManager } from '@cognite/reveal';
+import * as reveal from '@cognite/reveal/experimental';
 import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 
@@ -25,7 +25,7 @@ async function main() {
   const pickedNodes: Set<number> = new Set();
   const pickedObjects: Set<THREE.Mesh> = new Set();
 
-  const nodeAppearance: ModelNodeAppearance = {
+  const nodeAppearance: reveal.ModelNodeAppearance = {
     color(treeIndex: number) {
       if (pickedNodes.has(treeIndex)) {
         return [255, 255, 0, 255];
@@ -34,12 +34,15 @@ async function main() {
     }
   };
 
-  const revealManager: RenderManager = createRenderManager(modelRevision !== undefined ? 'cdf' : 'local', client);
+  const revealManager: reveal.RevealManager = createRenderManager(
+    modelRevision !== undefined ? 'cdf' : 'local',
+    client
+  );
 
-  let model: CadNode;
-  if (revealManager instanceof LocalHostRevealManager && modelUrl !== undefined) {
+  let model: reveal.CadNode;
+  if (revealManager instanceof reveal.LocalHostRevealManager && modelUrl !== undefined) {
     model = await revealManager.addModel('cad', modelUrl, nodeAppearance);
-  } else if (revealManager instanceof RevealManager && modelRevision !== undefined) {
+  } else if (revealManager instanceof reveal.RevealManager && modelRevision !== undefined) {
     model = await revealManager.addModel('cad', modelRevision, nodeAppearance);
   } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');
@@ -105,7 +108,7 @@ async function main() {
     };
     // Pick in Reveal
     const revealPickResult = (() => {
-      const intersections = intersectCadNodes([model], { renderer, camera, coords });
+      const intersections = reveal.intersectCadNodes([model], { renderer, camera, coords });
       if (intersections.length === 0) {
         return;
       }

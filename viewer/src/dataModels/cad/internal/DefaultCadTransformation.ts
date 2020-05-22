@@ -4,7 +4,7 @@
 
 import { CadTransformationProvider } from './CadTransformationProvider';
 import { SectorModelTransformation } from './sector/types';
-import { fromCdfToThreeJsCoordinates, fromThreeJsToCdfCoordinates } from '@/utilities/fromThreeCameraConfig';
+import { fromCdfToThreeJsCoordinates, fromThreeJsToCdfCoordinates } from '@/utilities/constructMatrixFromRotation';
 
 export class DefaultCadTransformation implements CadTransformationProvider {
   getCadTransformation(): SectorModelTransformation {

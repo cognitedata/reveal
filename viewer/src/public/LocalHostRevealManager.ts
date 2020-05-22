@@ -14,12 +14,12 @@ import { CadManager } from '@/dataModels/cad/internal/CadManager';
 import { CadMetadataParser } from '@/dataModels/cad/internal/CadMetadataParser';
 import { DefaultCadTransformation } from '@/dataModels/cad/internal/DefaultCadTransformation';
 import { CadModelMetadataRepository } from '@/dataModels/cad/internal/CadModelMetadataRepository';
-import { ProximitySectorCuller } from '@/dataModels/cad/internal/sector/culling/ProximitySectorCuller';
 import { LocalUrlClient as LocalHostClient } from '@/utilities/networking/LocalUrlClient';
 import { CadNode } from '@/dataModels/cad/internal/CadNode';
 import { PotreeGroupWrapper } from '@/dataModels/pointCloud/internal/PotreeGroupWrapper';
 import { PotreeNodeWrapper } from '@/dataModels/pointCloud/internal/PotreeNodeWrapper';
 import { ModelNodeAppearance } from '@/dataModels/cad/internal/ModelNodeAppearance';
+import { ByVisibilityGpuSectorCuller } from '@/dataModels/cad/internal/sector/culling/ByVisibilityGpuSectorCuller';
 
 type Params = { fileName: string };
 
@@ -36,7 +36,8 @@ export class LocalHostRevealManager extends RevealManagerBase<Params> {
       new CadMetadataParser()
     );
     const cadModelFactory = new CadModelFactory(materialManager);
-    const sectorCuller = (options && options.internal && options.internal.sectorCuller) || new ProximitySectorCuller();
+    const sectorCuller =
+      (options && options.internal && options.internal.sectorCuller) || new ByVisibilityGpuSectorCuller();
     const sectorRepository = new CachedRepository(localClient, modelDataParser, modelDataTransformer);
     const cadModelUpdateHandler = new CadModelUpdateHandler(sectorRepository, sectorCuller);
     const cadManager: CadManager<Params> = new CadManager<Params>(

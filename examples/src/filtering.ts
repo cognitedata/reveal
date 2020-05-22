@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { CadNode, RevealManager, ModelNodeAppearance, RenderManager, LocalHostRevealManager } from '@cognite/reveal';
+import * as reveal from '@cognite/reveal/experimental';
 import dat from 'dat.gui';
 import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
@@ -23,16 +23,19 @@ async function main() {
     treeIndices: '1, 2, 8, 12'
   };
 
-  const revealManager: RenderManager = createRenderManager(modelRevision !== undefined ? 'cdf' : 'local', client);
-  let model: CadNode;
-  const nodeAppearance: ModelNodeAppearance = {
+  const revealManager: reveal.RevealManager = createRenderManager(
+    modelRevision !== undefined ? 'cdf' : 'local',
+    client
+  );
+  let model: reveal.CadNode;
+  const nodeAppearance: reveal.ModelNodeAppearance = {
     visible(treeIndex: number) {
       return visibleIndices.has(treeIndex);
     }
   };
-  if (revealManager instanceof LocalHostRevealManager && modelUrl !== undefined) {
+  if (revealManager instanceof reveal.LocalHostRevealManager && modelUrl !== undefined) {
     model = await revealManager.addModel('cad', modelUrl, nodeAppearance);
-  } else if (revealManager instanceof RevealManager && modelRevision !== undefined) {
+  } else if (revealManager instanceof reveal.RevealManager && modelRevision !== undefined) {
     model = await revealManager.addModel('cad', modelRevision, nodeAppearance);
   } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');

@@ -4,18 +4,9 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { MOUSE } from 'three';
+import * as reveal from '@cognite/reveal/experimental';
 import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
-import {
-  RenderManager,
-  ModelNodeAppearance,
-  CadNode,
-  LocalHostRevealManager,
-  RevealManager,
-  intersectCadNodes
-} from '@cognite/reveal';
-import * as reveal from '@cognite/reveal';
 
 CameraControls.install({ THREE });
 
@@ -35,7 +26,7 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(canvas);
 
-  const nodeAppearance: ModelNodeAppearance = {
+  const nodeAppearance: reveal.ModelNodeAppearance = {
     color(treeIndex: number) {
       if (treeIndex === pickedNode) {
         return [0, 255, 255, 255];
@@ -44,12 +35,15 @@ async function main() {
     }
   };
 
-  const revealManager: RenderManager = createRenderManager(modelRevision !== undefined ? 'cdf' : 'local', client);
+  const revealManager: reveal.RevealManager = createRenderManager(
+    modelRevision !== undefined ? 'cdf' : 'local',
+    client
+  );
 
-  let model: CadNode;
-  if (revealManager instanceof LocalHostRevealManager && modelUrl !== undefined) {
+  let model: reveal.CadNode;
+  if (revealManager instanceof reveal.LocalHostRevealManager && modelUrl !== undefined) {
     model = await revealManager.addModel('cad', modelUrl, nodeAppearance);
-  } else if (revealManager instanceof RevealManager && modelRevision !== undefined) {
+  } else if (revealManager instanceof reveal.RevealManager && modelRevision !== undefined) {
     model = await revealManager.addModel('cad', modelRevision, nodeAppearance);
   } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');
@@ -86,7 +80,7 @@ async function main() {
   };
 
   const onLeftMouseDown = (event: MouseEvent) => {
-    if (event.button === MOUSE.RIGHT) {
+    if (event.button === THREE.MOUSE.RIGHT) {
       return;
     }
 
@@ -97,7 +91,7 @@ async function main() {
     };
     // Pick in Reveal
     const revealPickResult = (() => {
-      const intersections = intersectCadNodes([model], { renderer, camera, coords });
+      const intersections = reveal.intersectCadNodes([model], { renderer, camera, coords });
       if (intersections.length === 0) {
         return;
       }

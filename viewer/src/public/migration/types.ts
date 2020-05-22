@@ -4,6 +4,8 @@
 
 import { CogniteClient } from '@cognite/sdk';
 
+import { SectorCuller } from '@/dataModels/cad/internal/sector/culling/SectorCuller';
+
 // import Color from '@/core/Cognite3DModel';
 
 export interface Color {
@@ -20,8 +22,18 @@ export interface Cognite3DViewerOptions {
   highlightColor?: THREE.Color;
   viewCube?: 'topleft' | 'topright' | 'bottomleft' | 'bottomright';
   enableCache?: boolean;
-
+  /**
+   * Renderer used to visualize model (optional).
+   */
   renderer?: THREE.WebGLRenderer;
+
+  /**
+   * Utility used to determine what parts of the model
+   * will be visible on screen and loaded. This is only meant for
+   * unit testing, and might change in the future.
+   * Do not use.
+   */
+  _sectorCuller?: SectorCuller;
 }
 
 export interface OnProgressData {

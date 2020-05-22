@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
-import { RevealManager, CadNode, RenderManager, LocalHostRevealManager } from '@cognite/reveal';
+import * as reveal from '@cognite/reveal/experimental';
 
 const postprocessing = require('postprocessing');
 
@@ -19,12 +19,15 @@ async function main() {
   client.loginWithOAuth({ project });
 
   const scene = new THREE.Scene();
-  const revealManager: RenderManager = createRenderManager(modelRevision !== undefined ? 'cdf' : 'local', client);
+  const revealManager: reveal.RevealManager = createRenderManager(
+    modelRevision !== undefined ? 'cdf' : 'local',
+    client
+  );
 
-  let model: CadNode;
-  if (revealManager instanceof LocalHostRevealManager && modelUrl !== undefined) {
+  let model: reveal.CadNode;
+  if (revealManager instanceof reveal.LocalHostRevealManager && modelUrl !== undefined) {
     model = await revealManager.addModel('cad', modelUrl);
-  } else if (revealManager instanceof RevealManager && modelRevision !== undefined) {
+  } else if (revealManager instanceof reveal.RevealManager && modelRevision !== undefined) {
     model = await revealManager.addModel('cad', modelRevision);
   } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');

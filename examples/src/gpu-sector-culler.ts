@@ -6,10 +6,9 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
+import * as reveal from '@cognite/reveal/experimental';
 import { CogniteClient } from '@cognite/sdk';
 import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
-import * as reveal from '@cognite/reveal';
-import { RenderManager, CadNode, LocalHostRevealManager, RevealManager } from '@cognite/reveal';
 
 CameraControls.install({ THREE });
 
@@ -22,20 +21,24 @@ async function main() {
 
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight);
   const coverageUtil = new reveal.internal.GpuOrderSectorsByVisibilityCoverage();
-  const sectorCuller = new reveal.internal.ByVisibilityGpuSectorCuller(camera, {
+  const sectorCuller = new reveal.internal.ByVisibilityGpuSectorCuller({
     coverageUtil,
     costLimit: 70 * 1024 * 1024,
     logCallback: console.log
   });
 
-  const revealManager: RenderManager = createRenderManager(modelRevision !== undefined ? 'cdf' : 'local', client, {
-    internal: { sectorCuller }
-  });
+  const revealManager: reveal.RevealManager = createRenderManager(
+    modelRevision !== undefined ? 'cdf' : 'local',
+    client,
+    {
+      internal: { sectorCuller }
+    }
+  );
 
-  let model: CadNode;
-  if (revealManager instanceof LocalHostRevealManager && modelUrl !== undefined) {
+  let model: reveal.CadNode;
+  if (revealManager instanceof reveal.LocalHostRevealManager && modelUrl !== undefined) {
     model = await revealManager.addModel('cad', modelUrl);
-  } else if (revealManager instanceof RevealManager && modelRevision !== undefined) {
+  } else if (revealManager instanceof reveal.RevealManager && modelRevision !== undefined) {
     model = await revealManager.addModel('cad', modelRevision);
   } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');

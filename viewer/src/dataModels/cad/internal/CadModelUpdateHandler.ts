@@ -24,7 +24,6 @@ import { distinctUntilLevelOfDetailChanged } from './sector/distinctUntilLevelOf
 import { filterCurrentWantedSectors } from './sector/filterCurrentWantedSectors';
 import { WantedSector } from './sector/WantedSector';
 import { CachedRepository } from './sector/CachedRepository';
-import { fromThreeCameraConfig } from '@/utilities/fromThreeCameraConfig';
 import { CadLoadingHints } from '@/dataModels/cad/public/CadLoadingHints';
 
 export class CadModelUpdateHandler {
@@ -37,7 +36,7 @@ export class CadModelUpdateHandler {
   constructor(sectorRepository: CachedRepository, sectorCuller: SectorCuller) {
     const modelsArray: CadNode[] = [];
     this._updateObservable = combineLatest(
-      this._cameraSubject.pipe(fromThreeCameraConfig()),
+      this._cameraSubject.pipe(),
       this._loadingHintsSubject.pipe(startWith({} as CadLoadingHints)),
       this._modelSubject.pipe(
         scan((array, next) => {
@@ -47,13 +46,13 @@ export class CadModelUpdateHandler {
       )
     ).pipe(
       auditTime(100),
-      filter(([_cameraConfig, loadingHints, cadNodes]) => cadNodes.length > 0 && loadingHints.suspendLoading !== true),
-      flatMap(([cameraConfig, loadingHints, cadNodes]) => {
+      filter(([_camera, loadingHints, cadNodes]) => cadNodes.length > 0 && loadingHints.suspendLoading !== true),
+      flatMap(([camera, loadingHints, cadNodes]) => {
         return from(cadNodes).pipe(
           filter(cadNode => cadNode.loadingHints.suspendLoading !== true),
           map(cadNode => cadNode.cadModelMetadata),
           toArray(),
-          map(cadModels => sectorCuller.determineSectors({ cameraConfig, loadingHints, cadModels }))
+          map(cadModels => sectorCuller.determineSectors({ camera, loadingHints, cadModelsMetadata: cadModels }))
         );
       }),
       // Load sectors from repository

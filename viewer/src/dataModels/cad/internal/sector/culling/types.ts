@@ -1,10 +1,18 @@
 /*!
  * Copyright 2020 Cognite AS
  */
-
+import * as THREE from 'three';
 import { WantedSector } from '../WantedSector';
 import { LevelOfDetail } from '../LevelOfDetail';
 import { SectorMetadata } from '../types';
+import { CadLoadingHints } from '../../../public/CadLoadingHints';
+import { CadModelMetadata } from '@/datamodels/cad/public/CadModelMetadata';
+
+export interface DetermineSectorsInput {
+  camera: THREE.PerspectiveCamera;
+  cadModelsMetadata: CadModelMetadata[];
+  loadingHints: CadLoadingHints;
+}
 
 export type PrioritizedWantedSector = WantedSector & { priority: number };
 

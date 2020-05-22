@@ -15,12 +15,12 @@ import { CadMetadataParser } from '@/dataModels/cad/internal/CadMetadataParser';
 import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
 import { CadModelFactory } from '@/dataModels/cad/internal/CadModelFactory';
 import { CadModelUpdateHandler } from '@/dataModels/cad/internal/CadModelUpdateHandler';
-import { ProximitySectorCuller } from '@/dataModels/cad/internal/sector/culling/ProximitySectorCuller';
 import { File3dFormat } from '@/utilities/File3dFormat';
 import { ModelNodeAppearance } from '@/dataModels/cad/internal/ModelNodeAppearance';
 import { CadNode } from '@/dataModels/cad/internal/CadNode';
 import { PotreeNodeWrapper } from '@/dataModels/pointCloud/internal/PotreeNodeWrapper';
 import { PotreeGroupWrapper } from '@/dataModels/pointCloud/internal/PotreeGroupWrapper';
+import { ByVisibilityGpuSectorCuller } from '@/dataModels/cad/internal/sector/culling/ByVisibilityGpuSectorCuller';
 
 // First iteration of a RevealManager. Currently tailored to examples but should be tailored to external usecase.
 // Should move to example-helpers.ts as a function without extending
@@ -39,7 +39,8 @@ export class RevealManager extends RevealManagerBase<Params> {
       new CadMetadataParser()
     );
     const cadModelFactory = new CadModelFactory(materialManager);
-    const sectorCuller = (options && options.internal && options.internal.sectorCuller) || new ProximitySectorCuller();
+    const sectorCuller =
+      (options && options.internal && options.internal.sectorCuller) || new ByVisibilityGpuSectorCuller();
     const sectorRepository = new CachedRepository(cogniteClientExtension, modelDataParser, modelDataTransformer);
     const cadModelUpdateHandler = new CadModelUpdateHandler(sectorRepository, sectorCuller);
     const cadManager: CadManager<Params> = new CadManager(cadModelRepository, cadModelFactory, cadModelUpdateHandler);

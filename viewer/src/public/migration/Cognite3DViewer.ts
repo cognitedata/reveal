@@ -25,7 +25,6 @@ import { CogniteModelBase } from './CogniteModelBase';
 import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
 import { File3dFormat } from '@/utilities/File3dFormat';
 import { CadModelFactory } from '@/dataModels/cad/internal/CadModelFactory';
-import { ProximitySectorCuller } from '@/dataModels/cad/internal/sector/culling/ProximitySectorCuller';
 import { CadModelUpdateHandler } from '@/dataModels/cad/internal/CadModelUpdateHandler';
 import { CadManager } from '@/dataModels/cad/internal/CadManager';
 import { CadMetadataParser } from '@/dataModels/cad/internal/CadMetadataParser';
@@ -34,6 +33,7 @@ import { CadModelMetadataRepository } from '@/dataModels/cad/internal/CadModelMe
 import { RevealManagerBase } from '@/public/RevealManagerBase';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
+import { ByVisibilityGpuSectorCuller } from '@/dataModels/cad/internal/sector/culling/ByVisibilityGpuSectorCuller';
 
 export interface RelativeMouseEvent {
   offsetX: number;
@@ -124,7 +124,7 @@ export class Cognite3DViewer {
       new CadMetadataParser()
     );
     const cadModelFactory = new CadModelFactory(this.materialManager);
-    const sectorCuller = new ProximitySectorCuller();
+    const sectorCuller = new ByVisibilityGpuSectorCuller();
     this.sectorRepository = new CachedRepository(cogniteClientExtension, modelDataParser, modelDataTransformer);
     const cadModelUpdateHandler = new CadModelUpdateHandler(this.sectorRepository, sectorCuller);
     this.cadManager = new CadManager<RequestParams>(cadModelRepository, cadModelFactory, cadModelUpdateHandler);

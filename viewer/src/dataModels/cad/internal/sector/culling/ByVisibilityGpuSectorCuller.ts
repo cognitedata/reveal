@@ -9,14 +9,13 @@ import * as THREE from 'three';
 import { mat4 } from 'gl-matrix';
 
 import { WantedSector } from '../WantedSector';
-import { DetermineSectorsByProximityInput } from './determineSectors';
 import {
   GpuOrderSectorsByVisibilityCoverage,
   OrderSectorsByVisibilityCoverage
 } from './OrderSectorsByVisibilityCoverage';
 import { SectorCuller } from './SectorCuller';
 import { TakenSectorTree } from './TakenSectorTree';
-import { PrioritizedWantedSector, DetermineSectorCostDelegate } from './types';
+import { PrioritizedWantedSector, DetermineSectorCostDelegate, DetermineSectorsInput } from './types';
 import { fromThreeMatrix } from '@/utilities';
 import { LevelOfDetail } from '../LevelOfDetail';
 import { SectorMetadata } from '../types';
@@ -128,10 +127,9 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   public static readonly DefaultHighDetailProximityThreshold = 10;
 
   private readonly options: Required<ByVisibilityGpuSectorCullerOptions>;
-  private readonly camera: THREE.PerspectiveCamera;
   private readonly takenSectors: TakenSectorMap;
 
-  constructor(camera: THREE.PerspectiveCamera, options?: ByVisibilityGpuSectorCullerOptions) {
+  constructor(options?: ByVisibilityGpuSectorCullerOptions) {
     this.options = {
       costLimit: options && options.costLimit ? options.costLimit : ByVisibilityGpuSectorCuller.DefaultCostLimit,
       determineSectorCost:
@@ -144,19 +142,18 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
         options && options.logCallback
           ? options.logCallback
           : // No logging
-          () => { },
+            () => {},
 
       coverageUtil: options && options.coverageUtil ? options.coverageUtil : new GpuOrderSectorsByVisibilityCoverage()
     };
     this.takenSectors = new TakenSectorMap(this.options.determineSectorCost);
-    this.camera = camera;
   }
 
-  determineSectors(input: DetermineSectorsByProximityInput): WantedSector[] {
-    const takenSectors = this.update(input.cadModels);
+  determineSectors(input: DetermineSectorsInput): WantedSector[] {
+    const takenSectors = this.update(input.camera, input.cadModelsMetadata);
     const wanted = takenSectors.collectWantedSectors();
 
-    const totalSectorCount = input.cadModels.reduce((sum, x) => sum + x.scene.sectorCount, 0);
+    const totalSectorCount = input.cadModelsMetadata.reduce((sum, x) => sum + x.scene.sectorCount, 0);
     const takenSectorCount = wanted.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded).length;
     const takenSimpleCount = wanted.filter(x => x.levelOfDetail === LevelOfDetail.Detailed).length;
     const takenDetailedPercent = ((100.0 * (takenSectorCount - takenSimpleCount)) / totalSectorCount).toPrecision(3);
@@ -164,7 +161,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
 
     this.log(
       `Scene: ${wanted.length} (${
-      wanted.filter(x => !Number.isFinite(x.priority)).length
+        wanted.filter(x => !Number.isFinite(x.priority)).length
       } required, ${totalSectorCount} sectors, ${takenPercent}% of all sectors - ${takenDetailedPercent}% detailed)`
     );
     return wanted;
@@ -174,7 +171,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     return this.takenSectors.collectWantedSectors();
   }
 
-  private update(models: CadModelMetadata[]): TakenSectorMap {
+  private update(camera: THREE.PerspectiveCamera, models: CadModelMetadata[]): TakenSectorMap {
     const { coverageUtil } = this.options;
     const takenSectors = this.takenSectors;
     takenSectors.clear();
@@ -182,12 +179,12 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
 
     // Update wanted sectors
     coverageUtil.setModels(models);
-    const prioritized = coverageUtil.orderSectorsByVisibility(this.camera);
+    const prioritized = coverageUtil.orderSectorsByVisibility(camera);
     const costLimit = this.options.costLimit;
 
     // Add high details for all sectors the camera is inside or near
     const proximityThreshold = this.options.highDetailProximityThreshold;
-    this.addHighDetailsForNearSectors(models, proximityThreshold, takenSectors);
+    this.addHighDetailsForNearSectors(camera, models, proximityThreshold, takenSectors);
 
     let debugAccumulatedPriority = 0.0;
     const prioritizedLength = prioritized.length;
@@ -202,15 +199,20 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     this.log(`Retrieving ${i} of ${prioritizedLength} (last: ${prioritized.length > 0 ? prioritized[i - 1] : null})`);
     this.log(
       `Total scheduled: ${takenSectors.getWantedSectorCount()} of ${prioritizedLength} (cost: ${takenSectors.totalCost /
-      1024 /
-      1024}/${costLimit / 1024 / 1024}, priority: ${debugAccumulatedPriority})`
+        1024 /
+        1024}/${costLimit / 1024 / 1024}, priority: ${debugAccumulatedPriority})`
     );
 
     return takenSectors;
   }
 
-  private addHighDetailsForNearSectors(models: CadModelMetadata[], proximityThreshold: number, takenSectors: TakenSectorMap) {
-    const shortRangeCamera = this.camera.clone(true);
+  private addHighDetailsForNearSectors(
+    camera: THREE.PerspectiveCamera,
+    models: CadModelMetadata[],
+    proximityThreshold: number,
+    takenSectors: TakenSectorMap
+  ) {
+    const shortRangeCamera = camera.clone(true);
     shortRangeCamera.far = proximityThreshold;
     shortRangeCamera.updateProjectionMatrix();
     const cameraMatrixWorldInverse = fromThreeMatrix(mat4.create(), shortRangeCamera.matrixWorldInverse);
