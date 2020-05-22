@@ -10,12 +10,13 @@ import { SectorScene } from './sector/SectorScene';
 import { CadTransformationProvider } from './CadTransformationProvider';
 import { DataRepository } from './DataRepository';
 
-export class CadModelMetadataRepository<Params> implements DataRepository<Params, Promise<CadModelMetadata>> {
-  private readonly _modelMetadataProvider: ModelUrlProvider<Params> & CadSceneProvider;
+export class CadModelMetadataRepository<TModelIdentifier>
+  implements DataRepository<TModelIdentifier, Promise<CadModelMetadata>> {
+  private readonly _modelMetadataProvider: ModelUrlProvider<TModelIdentifier> & CadSceneProvider;
   private readonly _cadTransformationProvider: CadTransformationProvider;
   private readonly _cadSceneParser: CadMetadataParser;
   constructor(
-    modelBlobProvider: ModelUrlProvider<Params> & CadSceneProvider,
+    modelBlobProvider: ModelUrlProvider<TModelIdentifier> & CadSceneProvider,
     cadTransformationProvider: CadTransformationProvider,
     cadMetadataParser: CadMetadataParser
   ) {
@@ -23,8 +24,8 @@ export class CadModelMetadataRepository<Params> implements DataRepository<Params
     this._cadTransformationProvider = cadTransformationProvider;
     this._cadSceneParser = cadMetadataParser;
   }
-  async loadData(params: Params): Promise<CadModelMetadata> {
-    const blobUrl = await this._modelMetadataProvider.getModelUrl(params);
+  async loadData(modelIdentifier: TModelIdentifier): Promise<CadModelMetadata> {
+    const blobUrl = await this._modelMetadataProvider.getModelUrl(modelIdentifier);
     const json = await this._modelMetadataProvider.getCadScene(blobUrl);
     const scene: SectorScene = this._cadSceneParser.parse(json);
     // TODO: j-bjorne 15-05-2020: Making provider to ready for getting it from network.
