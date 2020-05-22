@@ -6,9 +6,10 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import * as reveal from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk';
-import { getParamsFromURL } from './utils/example-helpers';
+import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
+import * as reveal from '@cognite/reveal';
+import { RenderManager, CadNode, LocalHostRevealManager, RevealManager } from '@cognite/reveal';
 
 CameraControls.install({ THREE });
 
@@ -26,12 +27,16 @@ async function main() {
     costLimit: 70 * 1024 * 1024,
     logCallback: console.log
   });
-  const revealManager = new reveal.RevealManager(client, { internal: { sectorCuller } });
-  let model: reveal.CadNode;
-  if (modelUrl) {
-    model = await revealManager.addModelFromUrl(modelUrl);
-  } else if (modelRevision) {
-    model = await revealManager.addModelFromCdf(modelRevision);
+
+  const revealManager: RenderManager = createRenderManager(modelRevision !== undefined ? 'cdf' : 'local', client, {
+    internal: { sectorCuller }
+  });
+
+  let model: CadNode;
+  if (revealManager instanceof LocalHostRevealManager && modelUrl !== undefined) {
+    model = await revealManager.addModel('cad', modelUrl);
+  } else if (revealManager instanceof RevealManager && modelRevision !== undefined) {
+    model = await revealManager.addModel('cad', modelRevision);
   } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');
   }

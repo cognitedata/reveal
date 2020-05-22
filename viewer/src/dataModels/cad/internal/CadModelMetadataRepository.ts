@@ -10,7 +10,6 @@ import { SectorScene } from './sector/SectorScene';
 import { CadTransformationProvider } from './CadTransformationProvider';
 import { DataRepository } from './DataRepository';
 
-// type Params = { modelRevision: IdEither; format: File3dFormat };
 export class CadModelMetadataRepository<Params> implements DataRepository<Params, Promise<CadModelMetadata>> {
   private readonly _modelMetadataProvider: ModelUrlProvider<Params> & CadSceneProvider;
   private readonly _cadTransformationProvider: CadTransformationProvider;

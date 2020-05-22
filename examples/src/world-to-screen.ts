@@ -4,10 +4,18 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import * as reveal from '@cognite/reveal';
 import { MOUSE } from 'three';
-import { getParamsFromURL } from './utils/example-helpers';
+import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
+import {
+  RenderManager,
+  ModelNodeAppearance,
+  CadNode,
+  LocalHostRevealManager,
+  RevealManager,
+  intersectCadNodes
+} from '@cognite/reveal';
+import * as reveal from '@cognite/reveal';
 
 CameraControls.install({ THREE });
 
@@ -27,9 +35,7 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(canvas);
 
-  const revealManager = new reveal.RevealManager(client);
-
-  const nodeAppearance: reveal.ModelNodeAppearance = {
+  const nodeAppearance: ModelNodeAppearance = {
     color(treeIndex: number) {
       if (treeIndex === pickedNode) {
         return [0, 255, 255, 255];
@@ -37,11 +43,14 @@ async function main() {
       return undefined;
     }
   };
-  let model: reveal.CadNode;
-  if (modelUrl) {
-    model = await revealManager.addModelFromUrl(modelUrl, nodeAppearance);
-  } else if (modelRevision) {
-    model = await revealManager.addModelFromCdf(modelRevision, nodeAppearance);
+
+  const revealManager: RenderManager = createRenderManager(modelRevision !== undefined ? 'cdf' : 'local', client);
+
+  let model: CadNode;
+  if (revealManager instanceof LocalHostRevealManager && modelUrl !== undefined) {
+    model = await revealManager.addModel('cad', modelUrl, nodeAppearance);
+  } else if (revealManager instanceof RevealManager && modelRevision !== undefined) {
+    model = await revealManager.addModel('cad', modelRevision, nodeAppearance);
   } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');
   }
@@ -80,6 +89,7 @@ async function main() {
     if (event.button === MOUSE.RIGHT) {
       return;
     }
+
     const rect = renderer.domElement.getBoundingClientRect();
     const coords = {
       x: ((event.clientX - rect.left) / renderer.domElement.clientWidth) * 2 - 1,
@@ -87,7 +97,7 @@ async function main() {
     };
     // Pick in Reveal
     const revealPickResult = (() => {
-      const intersections = reveal.intersectCadNodes([model], { renderer, camera, coords });
+      const intersections = intersectCadNodes([model], { renderer, camera, coords });
       if (intersections.length === 0) {
         return;
       }

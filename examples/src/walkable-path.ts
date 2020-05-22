@@ -5,11 +5,17 @@
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import { CogniteClient, HttpError } from '@cognite/sdk';
-import * as reveal from '@cognite/reveal';
 import { vec3 } from 'gl-matrix';
-import { SectorModelTransformation } from '@cognite/reveal';
+import {
+  SectorModelTransformation,
+  RenderManager,
+  CadNode,
+  LocalHostRevealManager,
+  RevealManager
+} from '@cognite/reveal';
 import { GUI, GUIController } from 'dat.gui';
-import { getParamsFromURL } from './utils/example-helpers';
+import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
+import * as reveal from '@cognite/reveal';
 
 CameraControls.install({ THREE });
 
@@ -43,26 +49,19 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const revealManager = new reveal.RevealManager(client);
-  let cameraConfig;
-  let cadNode: reveal.CadNode;
-  if (modelUrl) {
-    const model = await revealManager.addModelFromUrl(modelUrl);
-    cadNode = model;
-    cameraConfig = model.suggestCameraConfig();
-    scene.add(model);
-  }
-  if (modelRevision) {
-    const model = await revealManager.addModelFromCdf(modelRevision);
-    cameraConfig = model.suggestCameraConfig();
-    cadNode = model;
-    scene.add(model);
-  }
-  if (cameraConfig === undefined) {
+  const revealManager: RenderManager = createRenderManager(modelRevision !== undefined ? 'cdf' : 'local', client);
+
+  let model: CadNode;
+  if (revealManager instanceof LocalHostRevealManager && modelUrl !== undefined) {
+    model = await revealManager.addModel('cad', modelUrl);
+  } else if (revealManager instanceof RevealManager && modelRevision !== undefined) {
+    model = await revealManager.addModel('cad', modelRevision);
+  } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');
   }
+  scene.add(model);
 
-  const { position, target, near, far } = cameraConfig;
+  const { position, target, near, far } = model.suggestCameraConfig();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
   const controls = new CameraControls(camera, renderer.domElement);
   controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
@@ -86,7 +85,7 @@ async function main() {
     createWalkablePath: async (walkablePath: TransitPathRequest) => {
       const walkablePathResponse = await walkablePathSdkClient.getTransitPath(walkablePath);
       removeWalkablePath();
-      const vector3Path = convertToVector3Array(walkablePathResponse, cadNode.modelTransformation);
+      const vector3Path = convertToVector3Array(walkablePathResponse, model.modelTransformation);
       const meshes = createWalkablePathMeshes(vector3Path);
       for (const mesh of meshes) {
         scene.add(mesh);

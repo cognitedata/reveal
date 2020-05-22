@@ -15,8 +15,8 @@ import {
   RenderOptions
 } from './utils/renderer-debug-widget';
 import { CogniteClient } from '@cognite/sdk';
-import { CadNode, RevealManager } from '@cognite/reveal';
-import { getParamsFromURL } from './utils/example-helpers';
+import { CadNode, RevealManager, LocalHostRevealManager, RenderManager } from '@cognite/reveal';
+import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
 
 CameraControls.install({ THREE });
 
@@ -53,26 +53,28 @@ async function main() {
   const client = new CogniteClient({ appId: 'reveal.example.side-by-side' });
   client.loginWithOAuth({ project });
 
-  const revealManager1 = new RevealManager(client);
-
-  const revealManager2 = new RevealManager(client);
+  const revealManager1: RenderManager = createRenderManager(modelRevision !== undefined ? 'cdf' : 'local', client);
 
   let model1: CadNode;
-  if (modelUrl) {
-    model1 = await revealManager1.addModelFromUrl(modelUrl);
-  } else if (modelRevision) {
-    model1 = await revealManager1.addModelFromCdf(modelRevision);
+  if (revealManager1 instanceof LocalHostRevealManager && modelUrl !== undefined) {
+    model1 = await revealManager1.addModel('cad', modelUrl);
+  } else if (revealManager1 instanceof RevealManager && modelRevision !== undefined) {
+    model1 = await revealManager1.addModel('cad', modelRevision);
   } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');
   }
+
+  const revealManager2: RenderManager = createRenderManager(modelRevision !== undefined ? 'cdf' : 'local', client);
+
   let model2: CadNode;
-  if (modelUrl2) {
-    model2 = await revealManager2.addModelFromUrl(modelUrl2);
-  } else if (modelRevision2) {
-    model2 = await revealManager2.addModelFromCdf(modelRevision2);
+  if (revealManager2 instanceof LocalHostRevealManager && modelUrl2 !== undefined) {
+    model2 = await revealManager2.addModel('cad', modelUrl2);
+  } else if (revealManager2 instanceof RevealManager && modelRevision2 !== undefined) {
+    model2 = await revealManager2.addModel('cad', modelRevision2);
   } else {
     throw new Error('Need to provide either model2 OR modelUrl2 as an additional query parameters');
   }
+
   const params = new URL(location.href).searchParams;
   const modelHeader1 = params.get('modelUrl') || `${params.get('model')}@${params.get('project')}`;
   const modelHeader2 = params.get('modelUrl2') || `${params.get('model2')}@${params.get('project')}`;
@@ -89,7 +91,7 @@ async function main() {
 
   // Initialize models
   const [renderer1, scene1, modelNode1, options1] = initializeModel(model1, leftCanvas, gui1);
-  const [renderer2, scene2, modelNode2, options2] = initializeModel(model2, rightCanvas, gui2);
+  const [renderer2, scene2, _modelNode2, options2] = initializeModel(model2, rightCanvas, gui2);
 
   const { position, target, near, far } = modelNode1.suggestCameraConfig();
   const camera = new THREE.PerspectiveCamera(75, leftCanvas.width / leftCanvas.height, near, far);

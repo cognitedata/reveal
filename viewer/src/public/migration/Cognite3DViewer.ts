@@ -59,6 +59,7 @@ export class Cognite3DViewer {
   private readonly controls: ComboControls;
   private readonly sdkClient: CogniteClient;
   private readonly sectorRepository: CachedRepository;
+  private readonly cadManager: CadManager<RequestParams>;
   private readonly revealManager: RevealManagerBase<RequestParams>;
 
   private readonly eventListeners = {
@@ -126,13 +127,9 @@ export class Cognite3DViewer {
     const sectorCuller = new ProximitySectorCuller();
     this.sectorRepository = new CachedRepository(cogniteClientExtension, modelDataParser, modelDataTransformer);
     const cadModelUpdateHandler = new CadModelUpdateHandler(this.sectorRepository, sectorCuller);
-    const cadManager: CadManager<RequestParams> = new CadManager<RequestParams>(
-      cadModelRepository,
-      cadModelFactory,
-      cadModelUpdateHandler
-    );
+    this.cadManager = new CadManager<RequestParams>(cadModelRepository, cadModelFactory, cadModelUpdateHandler);
 
-    this.revealManager = new RevealManagerBase(this.sdkClient, cadManager, this.materialManager);
+    this.revealManager = new RevealManagerBase(this.sdkClient, this.cadManager, this.materialManager);
     this.startPointerEventListeners();
 
     this.animate(0);
@@ -205,7 +202,7 @@ export class Cognite3DViewer {
       throw new NotSupportedInMigrationWrapperError();
     }
 
-    const cadNode = await this.revealManager.addModel('cad', {
+    const cadNode = await this.cadManager.addModel({
       modelRevision: { id: options.revisionId },
       format: File3dFormat.RevealCadModel
     });

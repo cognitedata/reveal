@@ -17,6 +17,10 @@ import { CadModelFactory } from '@/dataModels/cad/internal/CadModelFactory';
 import { CadModelUpdateHandler } from '@/dataModels/cad/internal/CadModelUpdateHandler';
 import { ProximitySectorCuller } from '@/dataModels/cad/internal/sector/culling/ProximitySectorCuller';
 import { File3dFormat } from '@/utilities/File3dFormat';
+import { ModelNodeAppearance } from '@/dataModels/cad/internal/ModelNodeAppearance';
+import { CadNode } from '@/dataModels/cad/internal/CadNode';
+import { PotreeNodeWrapper } from '@/dataModels/pointCloud/internal/PotreeNodeWrapper';
+import { PotreeGroupWrapper } from '@/dataModels/pointCloud/internal/PotreeGroupWrapper';
 
 // First iteration of a RevealManager. Currently tailored to examples but should be tailored to external usecase.
 // Should move to example-helpers.ts as a function without extending
@@ -42,43 +46,38 @@ export class RevealManager extends RevealManagerBase<Params> {
     super(client, cadManager, materialManager);
   }
 
-  public set clippingPlanes(clippingPlanes: THREE.Plane[]) {
-    this._materialManager.clippingPlanes = clippingPlanes;
+  public addModel(
+    type: 'cad',
+    modelRevisionId: string | number,
+    modelNodeAppearance?: ModelNodeAppearance
+  ): Promise<CadNode>;
+  public addModel(
+    type: 'pointcloud',
+    modelRevisionId: string | number
+  ): Promise<[PotreeGroupWrapper, PotreeNodeWrapper]>;
+  public addModel(
+    type: 'cad' | 'pointcloud',
+    modelRevisionId: string | number,
+    modelNodeAppearance?: ModelNodeAppearance
+  ): Promise<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper]> {
+    switch (type) {
+      case 'cad':
+        return this._cadManager.addModel(
+          { modelRevision: this.createModelIdentifier(modelRevisionId), format: File3dFormat.RevealCadModel },
+          modelNodeAppearance
+        );
+      case 'pointcloud':
+        throw new Error('Not yet implemented');
+      default:
+        throw new Error(`case: ${type} not handled`);
+    }
   }
 
-  public get clippingPlanes() {
-    return this._materialManager.clippingPlanes;
-  }
-
-  public set clipIntersection(intersection: boolean) {
-    this._materialManager.clipIntersection = intersection;
-  }
-
-  public get clipIntersection() {
-    return this._materialManager.clipIntersection;
-  }
-
-  // public addModel(
-  //   type: 'cad',
-  //   modelRevision: string | number,
-  //   modelNodeAppearance?: ModelNodeAppearance
-  // ): Promise<CadNode>;
-  // public addModel(
-  //   type: 'cad',
-  //   modelRevision: string | number,
-  //   modelNodeAppearance?: ModelNodeAppearance
-  // ): Promise<CadNode> {
-  //   switch (type) {
-  //     case 'cad':
-  //       return this.addCadModel(
-  //         {
-  //           modelRevision: this.createModelIdentifier(modelRevision),
-  //           format: File3dFormat.RevealCadModel
-  //         },
-  //         modelNodeAppearance
-  //       );
-  //     default:
-  //       throw new Error(`${type} not handled`);
+  // TODO 22-05-2020 j-bjorne: comment in and remove from base class one pointcloud model has been created.
+  // private createModelIdentifier(id: string | number): IdEither {
+  //   if (typeof id === 'number') {
+  //     return { id };
   //   }
+  //   return { externalId: id };
   // }
 }

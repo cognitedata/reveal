@@ -3,11 +3,23 @@
  */
 
 import * as THREE from 'three';
-import { Subject, Observable, combineLatest, animationFrameScheduler } from 'rxjs';
+import { Subject, Observable, combineLatest, animationFrameScheduler, from } from 'rxjs';
 import { CadNode } from './CadNode';
 import { ConsumedSector } from './sector/ConsumedSector';
-import { scan, share, startWith, auditTime, filter, map, publish, switchAll, observeOn } from 'rxjs/operators';
-import { CadModelMetadata } from '.';
+import {
+  scan,
+  share,
+  startWith,
+  auditTime,
+  filter,
+  map,
+  publish,
+  switchAll,
+  observeOn,
+  flatMap,
+  toArray,
+  tap
+} from 'rxjs/operators';
 import { SectorCuller } from './sector/culling/SectorCuller';
 import { distinctUntilLevelOfDetailChanged } from './sector/distinctUntilLevelOfDetailChanged';
 import { filterCurrentWantedSectors } from './sector/filterCurrentWantedSectors';
@@ -24,26 +36,28 @@ export class CadModelUpdateHandler {
   private readonly _updateObservable: Observable<ConsumedSector>;
 
   constructor(sectorRepository: CachedRepository, sectorCuller: SectorCuller) {
-    const modelsArray: CadModelMetadata[] = [];
-    const modelsObservable: Observable<CadModelMetadata[]> = this._modelSubject.pipe(
-      map(cadNode => cadNode.cadModelMetadata),
-      scan((array, next) => {
-        array.push(next);
-        return array;
-      }, modelsArray)
-    );
+    const modelsArray: CadNode[] = [];
     this._updateObservable = combineLatest(
       this._cameraSubject.pipe(fromThreeCameraConfig()),
       this._loadingHintsSubject.pipe(startWith({} as CadLoadingHints)),
-      modelsObservable
+      this._modelSubject.pipe(
+        scan((array, next) => {
+          array.push(next);
+          return array;
+        }, modelsArray)
+      )
     ).pipe(
       auditTime(100),
-      filter(
-        ([_cameraConfig, loadingHints, cadModels]) => cadModels.length > 0 && loadingHints.suspendLoading !== true
-      ),
-      map(([cameraConfig, loadingHints, cadModels]) =>
-        sectorCuller.determineSectors({ cameraConfig, cadModels, loadingHints })
-      ),
+      filter(([_cameraConfig, loadingHints, cadNodes]) => cadNodes.length > 0 && loadingHints.suspendLoading !== true),
+      flatMap(([cameraConfig, loadingHints, cadNodes]) => {
+        return from(cadNodes).pipe(
+          filter(cadNode => cadNode.loadingHints.suspendLoading !== true),
+          map(cadNode => cadNode.cadModelMetadata),
+          toArray(),
+          map(cadModels => sectorCuller.determineSectors({ cameraConfig, loadingHints, cadModels }))
+        );
+      }),
+      // Load sectors from repository
       publish((wantedSectors: Observable<WantedSector[]>) =>
         wantedSectors.pipe(
           switchAll(),

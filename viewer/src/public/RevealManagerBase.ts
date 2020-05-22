@@ -14,6 +14,7 @@ import { PotreeNodeWrapper } from '@/dataModels/pointCloud/internal/PotreeNodeWr
 import { SectorCuller } from '@/dataModels/cad/internal/sector/culling/SectorCuller';
 import { createThreeJsPointCloudNode } from '@/dataModels/pointCloud/internal/createThreeJsPointCloudNode';
 import { CadManager } from '@/dataModels/cad/internal/CadManager';
+import { RenderManager } from './RenderManager';
 
 export interface RevealOptions {
   nodeAppearance?: ModelNodeAppearance;
@@ -27,7 +28,7 @@ export interface RevealOptions {
 
 export type OnDataUpdated = () => void;
 
-export class RevealManagerBase<Params> {
+export class RevealManagerBase<Params> implements RenderManager {
   protected readonly _cadManager: CadManager<Params>;
   protected readonly _materialManager: MaterialManager;
 
@@ -69,28 +70,23 @@ export class RevealManagerBase<Params> {
     this._cadManager.updateCamera(camera);
   }
 
-  public addModel(type: 'cad', params: Params, modelNodeAppearance?: ModelNodeAppearance): Promise<CadNode>;
-  public addModel(type: 'pointcloud', params: Params): Promise<[PotreeGroupWrapper, PotreeNodeWrapper]>;
-  public addModel(
-    type: 'cad' | 'pointcloud',
-    params: Params,
-    modelNodeAppearance?: ModelNodeAppearance
-  ): Promise<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper]> {
-    switch (type) {
-      case 'cad':
-        return this._cadManager.addModel(params, modelNodeAppearance);
-      case 'pointcloud':
-        throw new Error('Not yet implemented');
-      default:
-        throw new Error(`case: ${type} not handled`);
-    }
+  public set clippingPlanes(clippingPlanes: THREE.Plane[]) {
+    this._materialManager.clippingPlanes = clippingPlanes;
   }
 
-  protected addCadModel(params: Params, modelNodeAppearance?: ModelNodeAppearance): Promise<CadNode> {
-    const promise = this._cadManager.addModel(params, modelNodeAppearance);
-    return promise;
+  public get clippingPlanes() {
+    return this._materialManager.clippingPlanes;
   }
 
+  public set clipIntersection(intersection: boolean) {
+    this._materialManager.clipIntersection = intersection;
+  }
+
+  public get clipIntersection() {
+    return this._materialManager.clipIntersection;
+  }
+
+  // TODO 22-05-2020 j-bjorne: Remove once PointCloudManager is complete.
   protected createModelIdentifier(id: string | number): IdEither {
     if (typeof id === 'number') {
       return { id };

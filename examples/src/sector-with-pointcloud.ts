@@ -5,7 +5,6 @@
 import * as THREE from 'three';
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
-import * as reveal from '@cognite/reveal';
 
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
@@ -16,9 +15,9 @@ import {
   createDefaultRenderOptions
 } from './utils/renderer-debug-widget';
 import { CogniteClient } from '@cognite/sdk';
-import { RevealManager, CadNode } from '@cognite/reveal';
-import { getParamsFromURL } from './utils/example-helpers';
-import { PotreeNodeWrapper, PotreeGroupWrapper } from '@cognite/reveal/internal';
+import { RevealManager, CadNode, RenderManager, LocalHostRevealManager } from '@cognite/reveal';
+import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
+import * as reveal from '@cognite/reveal';
 
 CameraControls.install({ THREE });
 
@@ -47,25 +46,28 @@ async function main() {
   document.body.appendChild(renderer.domElement);
 
   Potree.XHRFactory.config.customHeaders.push({ header: 'MyDummyHeader', value: 'MyDummyValue' });
-  const revealManager = new RevealManager(client);
-  let pointCloud: [PotreeGroupWrapper, PotreeNodeWrapper];
-  if (pointCloudUrl) {
-    pointCloud = await revealManager.addPointCloudFromUrl(pointCloudUrl);
-  } else if (pointCloudRevision) {
-    await client.authenticate();
-    pointCloud = await revealManager.addPointCloudFromCdf(pointCloudRevision);
-  } else {
-    throw new Error('Need to provide either project & pointCloud OR pointCloudlUrl as query parameters');
-  }
+
+  const revealManager: RenderManager = createRenderManager(modelRevision !== undefined ? 'cdf' : 'local', client);
+
   let model: CadNode;
-  if (modelUrl) {
-    model = await revealManager.addModelFromUrl(modelUrl);
-  } else if (modelRevision) {
-    model = await revealManager.addModelFromCdf(modelRevision);
+  if (revealManager instanceof LocalHostRevealManager && modelUrl !== undefined) {
+    model = await revealManager.addModel('cad', modelUrl);
+  } else if (revealManager instanceof RevealManager && modelRevision !== undefined) {
+    model = await revealManager.addModel('cad', modelRevision);
   } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');
   }
+  scene.add(model);
 
+  let pointCloud: [reveal.internal.PotreeGroupWrapper, reveal.internal.PotreeNodeWrapper];
+  if (revealManager instanceof LocalHostRevealManager && pointCloudUrl !== undefined) {
+    pointCloud = await revealManager.addModel('pointcloud', pointCloudUrl);
+  } else if (revealManager instanceof RevealManager && pointCloudRevision !== undefined) {
+    await client.authenticate();
+    pointCloud = await revealManager.addModel('pointcloud', pointCloudRevision);
+  } else {
+    throw new Error('Need to provide either project & pointCloud OR pointCloudlUrl as query parameters');
+  }
   const [pointCloudGroup, pointCloudNode] = pointCloud;
   scene.add(pointCloudGroup);
 

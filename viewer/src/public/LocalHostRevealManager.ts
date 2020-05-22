@@ -2,7 +2,6 @@
  * Copyright 2020 Cognite AS
  */
 
-import * as THREE from 'three';
 import { RevealManagerBase, RevealOptions } from './RevealManagerBase';
 import { CogniteClient } from '@cognite/sdk';
 import { CadSectorParser } from '@/dataModels/cad/internal/sector/CadSectorParser';
@@ -17,6 +16,10 @@ import { DefaultCadTransformation } from '@/dataModels/cad/internal/DefaultCadTr
 import { CadModelMetadataRepository } from '@/dataModels/cad/internal/CadModelMetadataRepository';
 import { ProximitySectorCuller } from '@/dataModels/cad/internal/sector/culling/ProximitySectorCuller';
 import { LocalUrlClient as LocalHostClient } from '@/utilities/networking/LocalUrlClient';
+import { CadNode } from '@/dataModels/cad/internal/CadNode';
+import { PotreeGroupWrapper } from '@/dataModels/pointCloud/internal/PotreeGroupWrapper';
+import { PotreeNodeWrapper } from '@/dataModels/pointCloud/internal/PotreeNodeWrapper';
+import { ModelNodeAppearance } from '@/dataModels/cad/internal/ModelNodeAppearance';
 
 type Params = { fileName: string };
 
@@ -44,34 +47,20 @@ export class LocalHostRevealManager extends RevealManagerBase<Params> {
     super(client, cadManager, materialManager);
   }
 
-  public set clippingPlanes(clippingPlanes: THREE.Plane[]) {
-    this._materialManager.clippingPlanes = clippingPlanes;
+  public addModel(type: 'cad', fileName: string, modelNodeAppearance?: ModelNodeAppearance): Promise<CadNode>;
+  public addModel(type: 'pointcloud', fileName: string): Promise<[PotreeGroupWrapper, PotreeNodeWrapper]>;
+  public addModel(
+    type: 'cad' | 'pointcloud',
+    fileName: string,
+    modelNodeAppearance?: ModelNodeAppearance
+  ): Promise<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper]> {
+    switch (type) {
+      case 'cad':
+        return this._cadManager.addModel({ fileName }, modelNodeAppearance);
+      case 'pointcloud':
+        throw new Error('Not yet implemented');
+      default:
+        throw new Error(`case: ${type} not handled`);
+    }
   }
-
-  public get clippingPlanes() {
-    return this._materialManager.clippingPlanes;
-  }
-
-  public set clipIntersection(intersection: boolean) {
-    this._materialManager.clipIntersection = intersection;
-  }
-
-  public get clipIntersection() {
-    return this._materialManager.clipIntersection;
-  }
-
-  // public addModel(type: 'cad', url: string, modelNodeAppearance?: ModelNodeAppearance): Promise<CadNode>;
-  // public addModel(type: 'cad', url: string, modelNodeAppearance?: ModelNodeAppearance): Promise<CadNode> {
-  //   switch (type) {
-  //     case 'cad':
-  //       return this.addCadModel(
-  //         {
-  //           url
-  //         },
-  //         modelNodeAppearance
-  //       );
-  //     default:
-  //       throw new Error(`${type} not handled`);
-  //   }
-  // }
 }

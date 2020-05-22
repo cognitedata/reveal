@@ -4,8 +4,8 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { CadNode, RevealManager, ModelNodeAppearance, intersectCadNodes } from '@cognite/reveal';
-import { getParamsFromURL } from './utils/example-helpers';
+import { CadNode, RevealManager, ModelNodeAppearance, intersectCadNodes, RenderManager, LocalHostRevealManager } from '@cognite/reveal';
+import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 
 CameraControls.install({ THREE });
@@ -25,8 +25,6 @@ async function main() {
   const pickedNodes: Set<number> = new Set();
   const pickedObjects: Set<THREE.Mesh> = new Set();
 
-  const revealManager = new RevealManager(client);
-
   const nodeAppearance: ModelNodeAppearance = {
     color(treeIndex: number) {
       if (pickedNodes.has(treeIndex)) {
@@ -36,11 +34,13 @@ async function main() {
     }
   };
 
+  const revealManager: RenderManager = createRenderManager(modelRevision !== undefined ? 'cdf' : 'local', client);
+
   let model: CadNode;
-  if (modelUrl) {
-    model = await revealManager.addModelFromUrl(modelUrl, nodeAppearance);
-  } else if (modelRevision) {
-    model = await revealManager.addModelFromCdf(modelRevision, nodeAppearance);
+  if (revealManager instanceof LocalHostRevealManager && modelUrl !== undefined) {
+    model = await revealManager.addModel('cad', modelUrl, nodeAppearance);
+  } else if (revealManager instanceof RevealManager && modelRevision !== undefined) {
+    model = await revealManager.addModel('cad', modelRevision, nodeAppearance);
   } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');
   }

@@ -4,16 +4,19 @@
 
 import { RevealManager, LocalHostRevealManager } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk';
+import { RevealOptions } from '@cognite/reveal/public/RevealManagerBase';
 
-export function createRevealManager(
+// TODO 22-05-2020 j-bjorne: change to return render and added models
+export function createRenderManager(
   type: 'local' | 'cdf',
-  client: CogniteClient
+  client: CogniteClient,
+  options?: RevealOptions
 ): RevealManager | LocalHostRevealManager {
   switch (type) {
     case 'cdf':
-      return new RevealManager(client);
+      return new RevealManager(client, options);
     case 'local':
-      return new LocalHostRevealManager(client);
+      return new LocalHostRevealManager(client, options);
     default:
       throw new Error(`case ${type}: undefined in switch statement`);
   }
@@ -30,11 +33,6 @@ export function getParamsFromURL(defaults: { project: string; modelUrl?: string 
   return {
     project: project ? project : defaults.project,
     modelRevision: modelRevision ? Number.parseInt(modelRevision, 10) : undefined,
-    modelUrl:
-      modelUrl !== null
-        ? location.origin + '/' + modelUrl
-        : modelRevision === null && defaults.modelUrl
-        ? location.origin + '/' + defaults.modelUrl
-        : undefined
+    modelUrl: modelUrl !== null ? modelUrl : modelRevision === null && defaults.modelUrl ? defaults.modelUrl : undefined
   };
 }
