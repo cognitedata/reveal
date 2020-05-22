@@ -296,13 +296,7 @@ function updateSceneInfo(scene: THREE.Object3D, sceneInfo: SceneInfo) {
  * @param scene
  * @param filter
  */
-export function applyRenderingFilters(
-  scene: THREE.Scene,
-  filter: RenderFilter,
-  culler: OverrideSectorCuller,
-  wantedSectors: reveal.internal.WantedSector[] | undefined
-) {
-  culler.overrideWantedSectors = wantedSectors;
+export function applyRenderingFilters(scene: THREE.Scene, filter: RenderFilter) {
   scene.traverse(x => {
     if (x.name.startsWith('Primitives')) {
       x.visible = filter.renderPrimitives;
@@ -314,6 +308,16 @@ export function applyRenderingFilters(
       x.visible = filter.renderQuads;
     }
   });
+}
+
+/**
+ * Overrides sectors to load if wantedSectors is defined.
+ */
+export function applySectorOverride(
+  culler: OverrideSectorCuller,
+  wantedSectors: reveal.internal.WantedSector[] | undefined
+) {
+  culler.overrideWantedSectors = wantedSectors;
 }
 
 function getMaterials(mesh: THREE.Mesh): THREE.Material[] {

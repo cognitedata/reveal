@@ -12,12 +12,12 @@ import {
   createRendererDebugWidget,
   applyRenderingFilters,
   RenderMode,
-  RenderOptions
+  RenderOptions,
+  applySectorOverride
 } from './utils/renderer-debug-widget';
 import { CogniteClient } from '@cognite/sdk';
 import { CadNode, RevealManager } from '@cognite/reveal/experimental';
 import { getParamsFromURL } from './utils/example-helpers';
-import { RevealOptions } from '@cognite/reveal/public/RevealManagerBase';
 import { OverrideSectorCuller } from './utils/OverrideSectorCuller';
 
 CameraControls.install({ THREE });
@@ -33,12 +33,15 @@ function getModel2Params() {
   };
 }
 
+let isFirstCallToInit = true;
+
 function initializeModel(
   cadNode: CadNode,
   canvas: HTMLCanvasElement,
   gui: dat.GUI
 ): [THREE.WebGLRenderer, THREE.Scene, CadNode, RenderOptions] {
-  const renderer = new THREE.WebGLRenderer({ canvas });
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: isFirstCallToInit });
+  isFirstCallToInit = false;
   renderer.setClearColor('#444');
   renderer.setSize(canvas.width, canvas.height);
 
@@ -141,14 +144,16 @@ async function main() {
       options1.renderMode === RenderMode.AlwaysRender ||
       (options1.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || modelsNeedUpdate))
     ) {
-      applyRenderingFilters(scene1, options1.renderFilter, sectorCuller1, options1.overrideWantedSectors);
+      applyRenderingFilters(scene1, options1.renderFilter);
+      applySectorOverride(sectorCuller1, options1.overrideWantedSectors);
       renderer1.render(scene1, camera);
     }
     if (
       options2.renderMode === RenderMode.AlwaysRender ||
       (options2.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || modelsNeedUpdate))
     ) {
-      applyRenderingFilters(scene2, options2.renderFilter, sectorCuller2, options2.overrideWantedSectors);
+      applyRenderingFilters(scene2, options2.renderFilter);
+      applySectorOverride(sectorCuller2, options2.overrideWantedSectors);
       renderer2.render(scene2, camera);
     }
   };
