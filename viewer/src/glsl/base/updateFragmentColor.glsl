@@ -28,7 +28,7 @@ void updateFragmentColor(int renderMode, vec3 color, float treeIndex, vec3 norma
 
         vec4 mc = vec4(texture2D(matCapTexture, cap).rgb, 1);
         
-        gl_FragColor = albedo * mc * 2.0;
+        gl_FragColor = albedo * mc * 1.7;
 
 
     } else if (renderMode == RenderTypePackColorAndNormal) {
