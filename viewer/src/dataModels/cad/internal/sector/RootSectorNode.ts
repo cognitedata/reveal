@@ -5,7 +5,7 @@
 import { buildScene } from '../buildScene';
 import { SectorNode } from './SectorNode';
 import { toThreeMatrix4 } from '@/utilities';
-import { CadModelMetadata } from '@/datamodels/cad/public/CadModelMetadata';
+import { CadModelMetadata } from '@/dataModels/cad/public/CadModelMetadata';
 
 export class RootSectorNode extends SectorNode {
   public readonly sectorNodeMap: Map<number, SectorNode>;
