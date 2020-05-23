@@ -23,9 +23,9 @@ import { RootNode } from "@/Nodes/TreeNodes/RootNode";
 import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
 
 import { AxisNode } from "@/Nodes/Decorations/AxisNode";
-import { PointsNode } from  "@/Nodes/Misc/PointsNode";
+import { PointsNode } from "@/Nodes/Misc/PointsNode";
 import { PolylinesNode } from "@/Nodes/Misc/PolylinesNode";
-import { SurfaceNode } from  "@/Nodes/Misc/SurfaceNode";
+import { SurfaceNode } from "@/Nodes/Misc/SurfaceNode";
 import { PotreeNode } from "@/Nodes/Misc/PotreeNode";
 
 import { AxisThreeView } from "@/Three/DecorationViews/AxisThreeView";
@@ -48,19 +48,16 @@ import { CasingLogNode } from "@/Nodes/Wells/Wells/CasingLogNode";
 import { CasingLogThreeView } from "@/Three/WellViews/CasingLogThreeView";
 
 
-export class ThreeModule extends BaseModule
-{
+export class ThreeModule extends BaseModule {
   //==================================================
   // OVERRIDES of BaseModule
   //==================================================
 
-  protected /*override*/ installPackagesCore(): void
-  {
+  protected /*override*/ installPackagesCore(): void {
     CameraControls.install({ THREE });
   }
 
-  protected /*override*/ registerViewsCore(factory: ViewFactory): void
-  {
+  protected /*override*/ registerViewsCore(factory: ViewFactory): void {
     factory.register(AxisNode.name, AxisThreeView, ThreeRenderTargetNode.name);
     factory.register(PointsNode.name, PointsThreeView, ThreeRenderTargetNode.name);
     factory.register(PolylinesNode.name, PolylinesThreeView, ThreeRenderTargetNode.name);
@@ -75,14 +72,18 @@ export class ThreeModule extends BaseModule
     factory.register(CasingLogNode.name, CasingLogThreeView, ThreeRenderTargetNode.name);
   }
 
-  protected /*override*/ createRootCore(): BaseRootNode
-  {
+  protected /*override*/ createRootCore(): BaseRootNode {
     return new RootNode();
   }
 
-  public initializeWhenPopulated(root: BaseRootNode): void
-  {
+  public initializeWhenPopulated(root: BaseRootNode): void {
     root.initializeRecursive();
+
+    // Set all axis visible
+    for (const target of root.targets.getChildrenByType(BaseRenderTargetNode))
+      for (const node of root.getDescendantsByType(AxisNode))
+        node.setVisibleInteractive(true, target);
+
     document.body.onresize = () => {
       for (const target of root.targets.getChildrenByType(BaseRenderTargetNode))
         target.onResize();
