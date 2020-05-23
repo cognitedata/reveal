@@ -13,19 +13,20 @@
 
 import * as THREE from "three";
 
-import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Range3 } from "@/Core/Geometry/Range3";
 
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 
-import { PointLogNode } from "@/Nodes/Wells/Wells/PointLogNode";
+import { CasingLogNode } from "@/Nodes/Wells/Wells/CasingLogNode";
 import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
+import { RenderSample } from "@/Nodes/Wells/Samples/RenderSample";
+import { Colors } from "@/Core/Primitives/Colors";
+import { TrajectoryBufferGeometry } from "@/Three/WellViews/TrajectoryBufferGeometry";
 
-export class PointLogThreeView extends BaseGroupThreeView
-{
+export class CasingLogThreeView extends BaseGroupThreeView {
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -36,20 +37,18 @@ export class PointLogThreeView extends BaseGroupThreeView
   // INSTANCE PROPERTIES
   //==================================================
 
-  protected get node(): PointLogNode { return super.getNode() as PointLogNode; }
+  protected get node(): CasingLogNode { return super.getNode() as CasingLogNode; }
   protected get style(): WellRenderStyle { return super.getStyle() as WellRenderStyle; }
 
   //==================================================
   // OVERRIDES of BaseView
   //==================================================
 
-  protected /*override*/ updateCore(args: NodeEventArgs): void
-  {
+  protected /*override*/ updateCore(args: NodeEventArgs): void {
     super.updateCore(args);
   }
 
-  public calculateBoundingBoxCore(): Range3 | undefined
-  {
+  public calculateBoundingBoxCore(): Range3 | undefined {
     const node = this.node;
     const trajectory = node.trajectory;
     if (!trajectory)
@@ -60,14 +59,14 @@ export class PointLogThreeView extends BaseGroupThreeView
       return undefined;
 
     const range = new Range3();
-    for (let i = 0; i < log.samples.length; i++)
-    {
+    let maxRadius = 0;
+    for (let i = 0; i < log.samples.length; i++) {
       const sample = log.getAt(i);
+      maxRadius = Math.max(maxRadius, sample.value);
       const position = trajectory.getAtMd(sample.md);
       range.add(position);
     }
-    const radius = Math.max(10, this.trajectoryRadius * 2);
-    range.expandByMargin(radius);
+    range.expandByMargin(maxRadius);
     return range;
   }
 
@@ -75,10 +74,9 @@ export class PointLogThreeView extends BaseGroupThreeView
   // OVERRIDES of BaseGroupThreeView
   //==================================================
 
-  protected /*override*/ createObject3DCore(): THREE.Object3D | null
-  {
+  protected /*override*/ createObject3DCore(): THREE.Object3D | null {
     const node = this.node;
-    const color = node.color;
+    const color = Colors.grey; //node.color;
     const trajectory = node.trajectory;
     if (!trajectory)
       return null;
@@ -87,41 +85,45 @@ export class PointLogThreeView extends BaseGroupThreeView
     if (!log)
       throw Error("Well trajectory is missing");
 
-    const group = new THREE.Group();
+    const samples: RenderSample[] = [];
+    let wellIndex = 0;
+    for (let logIndex = 0; logIndex < log.length - 1; logIndex++) {
+      const minSample = log.getAt(logIndex);
+      const maxSample = log.getAt(logIndex + 1);
 
-    const radius = Math.max(10, this.trajectoryRadius * 2);
-    const geometry = new THREE.SphereGeometry(radius, 16, 8);
-    const material = new THREE.MeshPhongMaterial({ color: ThreeConverter.toColor(color) });
+      samples.push(new RenderSample(trajectory.getAtMd(minSample.md), minSample.md, minSample.value, color));
+      if (minSample.isEmpty)
+        continue;
 
-    for (let i = 0; i < log.samples.length; i++)
-    {
-      const sample = log.getAt(i);
-      const position = trajectory.getAtMd(sample.md);
-      const tangent = trajectory.getTangentAtMd(sample.md);
-      const sphere = new THREE.Mesh(geometry, material);
-      sphere.scale.z = 0.5;
-
-      if (Math.abs(tangent.z) < 0.999)
-      {
-        const up = new Vector3(0, 0, 1);
-        const axis = up.getCross(tangent);
-
-        // determine the amount to rotate
-        const radians = Math.acos(tangent.getDot(up));
-        sphere.rotateOnAxis(ThreeConverter.toVector(axis), radians);
+      // Push inn all values between <minSample.md, maxSample.md>
+      for (; wellIndex < trajectory.length; wellIndex++) {
+        const trajectorySample = trajectory.getAt(wellIndex);
+        if (trajectorySample.md >= maxSample.md)
+          break; // Too far
+        if (trajectorySample.md > minSample.md)
+          samples.push(new RenderSample(trajectorySample.point, trajectorySample.md, minSample.value, color));
       }
-      ThreeConverter.copy(sphere.position, position);
-      group.add(sphere);
+      if (logIndex == log.length - 1) {
+        // Push the last
+        samples.push(new RenderSample(trajectory.getAtMd(maxSample.md), maxSample.md, maxSample.value, color));
+        break;
+      }
     }
-    return group;
+    const geometry = new TrajectoryBufferGeometry(samples);
+    const material = new THREE.MeshStandardMaterial({
+      color: ThreeConverter.toColor(Colors.white),
+      vertexColors: THREE.VertexColors,
+      transparent: true,
+      opacity: 0.5
+    });
+    return new THREE.Mesh(geometry, material);
   }
 
   //==================================================
   // INSTANCE METHODS
   //==================================================
 
-  protected get trajectoryRadius(): number
-  {
+  protected get trajectoryRadius(): number {
     const node = this.node;
     if (!node)
       return 0;

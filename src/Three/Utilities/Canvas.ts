@@ -16,8 +16,7 @@ import * as THREE from "three";
 import { ThreeLabel } from "@/Three/Utilities/ThreeLabel";
 import * as Color from "color"
 
-export class Canvas
-{
+export class Canvas {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
@@ -34,12 +33,10 @@ export class Canvas
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(dx: number, dy: number)
-  {
+  public constructor(dx: number, dy: number) {
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
-    if (!context)
-    {
+    if (!context) {
       this.canvas = new HTMLCanvasElement();
       this.context = new CanvasRenderingContext2D();
       return;
@@ -55,50 +52,41 @@ export class Canvas
   // INSTANCE METHODS: Misc
   //==================================================
 
-  public createTexture(): THREE.CanvasTexture | null
-  {
+  public createTexture(): THREE.CanvasTexture | null {
     return ThreeLabel.createTexture(this.canvas);
-  }
-
-  public setMixMode()
-  {
-    this.context.globalCompositeOperation = 'darker';
   }
 
   //==================================================
   // INSTANCE METHODS: 
   //==================================================
 
-  public clear(color: Color): void
-  {
-    this.context.fillStyle = color.string();
+  public clear(color: Color): void {
+    this.context.fillStyle = Canvas.getColor(color);
     this.context.fillRect(0, 0, this.dx, this.dy);
   }
+
+  private static getColor(color: Color | null) { return color ? color.string() : "black" };
 
   //==================================================
   // INSTANCE METHODS: Path 
   //==================================================
 
-  public beginPath()
-  {
+  public beginPath() {
     this.context.beginPath();
   }
 
-  public closePath()
-  {
+  public closePath() {
     this.context.closePath();
   }
 
-  public drawPath(color: Color | null = null, lineWidth = 1)
-  {
+  public drawPath(color: Color | null = null, lineWidth = 1) {
     this.context.lineCap = 'round';
     this.context.lineWidth = lineWidth;
-    this.context.strokeStyle = color ? color.string() : "black";
+    this.context.strokeStyle = Canvas.getColor(color);
     this.context.stroke();
   }
 
-  public addVerticalLine(x: number)
-  {
+  public addVerticalLine(x: number) {
     x *= this.dx;
     this.context.moveTo(x, 0);
     this.context.lineTo(x, this.dy);
@@ -108,28 +96,23 @@ export class Canvas
   // INSTANCE METHODS: Function path
   //==================================================
 
-  public beginFunction()
-  {
+  public beginFunction() {
     this.beginPath();
     this.firstX = Number.NaN;
   }
 
-  public closeFunction()
-  {
+  public closeFunction() {
     this.context.lineTo(this.lastX, 0);
     this.lastX = Number.NaN;
     this.firstX = Number.NaN;
   }
 
-
-  public addFunctionValue(x: number, y: number)
-  {
+  public addFunctionValue(x: number, y: number) {
     // assume: x and y in [0,1]
     x *= this.dx;
     y *= this.dy;
 
-    if (Number.isNaN(this.firstX))
-    {
+    if (Number.isNaN(this.firstX)) {
       this.beginPath();
       this.firstX = x;
       this.context.moveTo(x, 0);
@@ -142,30 +125,27 @@ export class Canvas
   // INSTANCE METHODS: Path 
   //==================================================
 
-  public drawText(x: number, text: string, color: Color | null = null, rightBand: boolean)
-  {
+  public drawText(x: number, text: string, fontSize: number, color: Color | null, rightBand: boolean, outerMost: boolean = true) {
     // https://www.javascripture.com/CanvasRenderingContext2D
-    const borderSize = 3;
-    const fontSize = 25;
+    const borderSize = fontSize * 0.1;
     const font = `bolder ${fontSize}px Helvetica`;
 
     this.context.font = font;
     this.context.textBaseline = "alphabetic";
-    this.context.fillStyle = color ? color.string() : "black";
+    this.context.fillStyle = Canvas.getColor(color);
 
     this.context.save();
-    this.context.translate(x * this.dx - borderSize, borderSize);
-    this.context.rotate(-Math.PI / 2);
+    this.context.translate(x * this.dx - borderSize, outerMost ? this.dy - borderSize : borderSize);
 
+    this.context.rotate(-Math.PI / 2);
     if (rightBand)
-    {
-      this.context.textAlign = "left";
       this.context.scale(-1, 1);
-    }
-    else 
-    {
+
+    if (rightBand != outerMost)
+      this.context.textAlign = "left";
+    else
       this.context.textAlign = "right";
-    }
+
     this.context.fillText(text, 0, 0);
     this.context.restore();
   }
@@ -174,37 +154,37 @@ export class Canvas
   // INSTANCE METHODS: Filling
   //==================================================
 
-  public fillPath(color: Color, alphaFraction = 1)
-  {
+  public fillPath(color: Color, alphaFraction = 1) {
     if (alphaFraction !== 1)
       color = color.alpha(alphaFraction);
 
-    this.context.fillStyle = color.string();
+    this.context.fillStyle = Canvas.getColor(color);
     this.context.fill();
   }
 
-  public fillRect(x0: number, x1: number, color: Color, alphaFraction = 1)
-  {
+  public fillRect(x0: number, x1: number, color: Color, alphaFraction = 1) {
     if (alphaFraction !== 1)
       color = color.alpha(alphaFraction);
 
     x0 *= this.dx;
     x1 *= this.dx;
-    this.context.fillStyle = color.string();
+    this.context.fillStyle = Canvas.getColor(color);
     this.context.fillRect(x0, 0, x1 - x0, this.dy);
   }
 
 
-  public fillPathByGradient(color: Color, alphaFraction = 1)
-  {
+  public fillPathBySemiTransparentGradient(color: Color, alphaFraction = 1) {
+    const operation = this.context.globalCompositeOperation;
+    this.context.globalCompositeOperation = 'darker';
     if (alphaFraction !== 1)
       color = color.alpha(alphaFraction);
 
     const gradient = this.context.createLinearGradient(0, 0, 0, this.dy);
     gradient.addColorStop(0, 'transparent');
-    gradient.addColorStop(1, color.string());
+    gradient.addColorStop(1, Canvas.getColor(color));
 
     this.context.fillStyle = gradient;
     this.context.fill();
+    this.context.globalCompositeOperation = operation;
   }
 }

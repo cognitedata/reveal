@@ -30,7 +30,7 @@ export abstract class MdSamples
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get count(): number { return this.samples.length; }
+  public get length(): number { return this.samples.length; }
   public get first(): MdSample | null { return this.samples.length > 0 ? this.samples[0] : null; }
   public get last(): MdSample | null { return this.samples.length > 0 ? this.samples[this.samples.length - 1] : null; }
 
@@ -123,7 +123,12 @@ export abstract class MdSamples
 
   public sortByMd(): void
   {
-    this.samples.sort(MdSample.compareMd);
+    MdSamples.sortByMd(this.samples);
+  }
+
+  public static sortByMd(samples: MdSample[]): void
+  {
+    samples.sort(MdSample.compareMd);
   }
 
   protected binarySearch(md: number): number

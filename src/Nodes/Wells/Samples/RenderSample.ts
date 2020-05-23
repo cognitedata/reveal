@@ -1,4 +1,3 @@
-
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
@@ -12,33 +11,43 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Index2 } from "@/Core/Geometry/Index2";
+import * as Color from "color"
 
-export class Grid2
-{
+import { Ma } from "@/Core/Primitives/Ma";
+import { Vector3 } from "@/Core/Geometry/Vector3";
+import { Colors } from "@/Core/Primitives/Colors";
+
+import { MdSample } from "@/Nodes/Wells/Samples/MdSample";
+
+export class RenderSample extends MdSample {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
 
-  public nodeSize: Index2;
-  public cellSize: Index2;
+  public point: Vector3;
+  public radius: number;
+  public color: Color;
+
+  //==================================================
+  // INSTANCE PROPERTIES
+  //==================================================
+
+  public get isEmpty(): boolean { return this.radius <= 0 || Number.isNaN(this.radius); }
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(numNodes: Index2)
-  {
-    this.nodeSize = numNodes.clone();
-    this.cellSize = numNodes.clone();
-    this.cellSize.i--;
-    this.cellSize.j--;
+  constructor(point: Vector3, md: number, radius = 0, color: Color = Colors.white) {
+    super(md);
+    this.point = point;
+    this.radius = radius;
+    this.color = color;
   }
 
   //==================================================
-  // INSTANCE METHODS; Getters
+  // INSTANCE METHODS
   //==================================================
 
-  public toString(): string { return `(${this.nodeSize})`; }
-  public isNodeInside(i: number, j: number) { return i >= 0 && j >= 0 && i < this.nodeSize.i && j <= this.nodeSize.j; }
+  public isEqualColorAndRadius(other: RenderSample): boolean { return this.color === other.color && this.radius === other.radius; }
 }

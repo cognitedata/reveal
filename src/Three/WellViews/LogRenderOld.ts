@@ -126,7 +126,7 @@ export class LogRenderOld
   public addSolidFloatLog(group: THREE.Group, log: FloatLog, right: boolean): void
   {
     const valueRange = log.range;
-    const buffers = new TriangleStripBuffers(2 * log.count, true);
+    const buffers = new TriangleStripBuffers(2 * log.length, true);
 
     for (const baseSample of log.samples)
     {
@@ -176,7 +176,7 @@ export class LogRenderOld
   public addSolidDiscreteLog(group: THREE.Group, log: DiscreteLog, right: boolean): void
   {
     const valueRange = log.range;
-    const buffers = new TriangleStripBuffers(log.count * 4 - 2);
+    const buffers = new TriangleStripBuffers(log.length * 4 - 2);
     const colors = new Array<number>();
 
     let prevColor = Colors.white;

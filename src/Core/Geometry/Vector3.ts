@@ -35,6 +35,30 @@ export class Vector3
   public get length(): number { return Math.sqrt(this.squareLength); }
   public get isEmpty(): boolean { return isNaN(this.x) || isNaN(this.y) || isNaN(this.z); }
 
+  public get absMaxDimension(): number 
+  {
+    let result = 0;
+    let max = Math.abs(this.x);
+    if (Math.abs(this.y) > max)
+    {
+      result = 1;
+      max = Math.abs(this.y);
+    }
+    return Math.abs(this.z) > max ? 2 : result;
+  }
+
+  public get absMinDimension(): number 
+  {
+    let result = 0;
+    let min = Math.abs(this.x);
+    if (Math.abs(this.y) < min)
+    {
+      result = 1;
+      min = Math.abs(this.y);
+    }
+    return Math.abs(this.z) < min ? 2 : result;
+  }
+
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -46,7 +70,7 @@ export class Vector3
     this.z = z;
   }
 
-  public /*copy constructor*/ copy(): Vector3
+  public clone(): Vector3
   {
     return new Vector3(this.x, this.y, this.z);
   }
@@ -117,6 +141,13 @@ export class Vector3
     this.x = x;
     this.y = y;
     this.z = z;
+  }
+
+  public copy(other: Vector3): void
+  {
+    this.x = other.x;
+    this.y = other.y;
+    this.z = other.z;
   }
 
   //==================================================

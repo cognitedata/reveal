@@ -22,7 +22,7 @@ export class UniqueId
 
   public constructor(id: string) { this._id = id; }
 
-  public /*copy constructor*/ copy(): UniqueId { return new UniqueId(this._id); }
+  public /*copy constructor*/ clone(): UniqueId { return new UniqueId(this._id); }
 
   //==================================================
   // INSTANCE FIELDS

@@ -11,44 +11,43 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-export class Index2
+import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
+import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
+import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
+import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
+import { TargetId } from "@/Core/Primitives/TargetId";
+
+export class CasingLogNode extends BaseLogNode
 {
   //==================================================
-  // INSTANCE FIELDS
+  // INSTANCE PROPERTIES
   //==================================================
 
-  public i: number;
-  public j: number;
+  public get data(): FloatLog | null { return this._data as FloatLog; }
+  public set data(value: FloatLog | null) { this._data = value; }
+  public get renderStyle(): WellRenderStyle | null { return this.getRenderStyle() as WellRenderStyle; }
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(i: number, j?: number)
+  public constructor() { super(); }
+
+  //==================================================
+  // OVERRIDES of Identifiable
+  //==================================================
+
+  public /*override*/ get className(): string { return CasingLogNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === BaseLogNode.name || super.isA(className); }
+
+  //==================================================
+  // OVERRIDES of BaseNode
+  //==================================================
+
+  public /*override*/ get typeName(): string { return "Casing" }
+
+  public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
-    this.i = i;
-    this.j = j === undefined ? i : j;
+    return new WellRenderStyle(targetId);
   }
-
-  public /*copy constructor*/ clone(): Index2
-  {
-    return new Index2(this.i, this.j);
-  }
-
-  //==================================================
-  // INSTANCE PROPERTIES
-  //==================================================
-
-  public get size(): number { return this.i * this.j; }
-
-  //==================================================
-  // INSTANCE METHODS; Getters
-  //==================================================
-
-  public toString(): string { return `(${this.i}, ${this.j})`; }
-
-  //==================================================
-  // INSTANCE METHODS: Operations
-  //==================================================
-
 }

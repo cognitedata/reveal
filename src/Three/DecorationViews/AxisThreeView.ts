@@ -246,13 +246,13 @@ export class AxisThreeView extends BaseGroupThreeView
       for (const anyTick of realRange.getTicks(tickInc))
       {
         const tick = Number(anyTick);
-        const start = this.corners[i0].copy();
+        const start = this.corners[i0].clone();
         start.setAt(dimension, tick);
         if (dimension === 2)
           start.scaleZ(this.zScale);
 
-        const end = start.copy();
-        const vector = tickDirection.copy();
+        const end = start.clone();
+        const vector = tickDirection.clone();
 
         vector.multiplyScalar(tickLength);
         end.add(vector);
@@ -291,7 +291,7 @@ export class AxisThreeView extends BaseGroupThreeView
           else
             tick -= tickInc;
 
-          position = this.corners[i0].copy();
+          position = this.corners[i0].clone();
           position.setAt(dimension, tick);
         }
         else
@@ -383,9 +383,9 @@ export class AxisThreeView extends BaseGroupThreeView
     //     +-----------+
     //   p0            p1
 
-    const p0 = this.corners[i0].copy();
-    const p1 = this.corners[i1].copy();
-    const p2 = this.corners[i2].copy();
+    const p0 = this.corners[i0].clone();
+    const p1 = this.corners[i1].clone();
+    const p2 = this.corners[i2].clone();
 
     const [realRange, realInc] = AxisThreeView.getRealRange(inc, p0.getAt(dimension), p1.getAt(dimension), dimension, this.zScale);
 

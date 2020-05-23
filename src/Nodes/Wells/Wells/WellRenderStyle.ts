@@ -21,8 +21,11 @@ export class WellRenderStyle extends BaseRenderStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public radius = 10;
+  public radius = 2;
   public colorType = ColorType.DifferentColor;
+  public nameFontHeight = 60;
+  public bandWidth = 50;
+  public bandFontSize = 20;
 
   //==================================================
   // CONSTRUCTORS
@@ -30,7 +33,7 @@ export class WellRenderStyle extends BaseRenderStyle
 
   public constructor(targetId: TargetId) { super(targetId); }
 
-  public /*copy constructor*/ copy(): BaseRenderStyle
+  public /*copy constructor*/ clone(): BaseRenderStyle
   {
     const style = new WellRenderStyle(this.targetId);
     style.radius = this.radius;

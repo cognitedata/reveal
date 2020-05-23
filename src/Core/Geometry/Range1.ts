@@ -59,7 +59,7 @@ export class Range1
       this.set(min, max);
   }
 
-  public /*copy constructor*/ copy(): Range1
+  public /*copy constructor*/ clone(): Range1
   {
     const range = new Range1();
     range._min = this._min;
@@ -109,7 +109,7 @@ export class Range1
 
   public * getTicks(inc: number): Iterable<number>
   {
-    const copy = this.copy();
+    const copy = this.clone();
     if (!copy.roundByInc(-inc))
       return;
 

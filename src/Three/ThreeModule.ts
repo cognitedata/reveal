@@ -43,8 +43,9 @@ import { DiscreteLogNode } from "@/Nodes/Wells/Wells/DiscreteLogNode";
 
 import { WellTrajectoryThreeView } from "@/Three/WellViews/WellTrajectoryThreeView";
 import { PointLogThreeView } from "@/Three/WellViews/PointLogThreeView";
-import { FloatLogThreeView } from "@/Three/WellViews/FloatLogThreeView";
-import { DiscreteLogThreeView } from "@/Three/WellViews/DiscreteLogThreeView";
+import { WellLogThreeView } from "@/Three/WellViews/WellLogThreeView";
+import { CasingLogNode } from "@/Nodes/Wells/Wells/CasingLogNode";
+import { CasingLogThreeView } from "@/Three/WellViews/CasingLogThreeView";
 
 
 export class ThreeModule extends BaseModule
@@ -67,11 +68,11 @@ export class ThreeModule extends BaseModule
     factory.register(PotreeNode.name, PotreeThreeView, ThreeRenderTargetNode.name);
 
     // Wells:
-
     factory.register(WellTrajectoryNode.name, WellTrajectoryThreeView, ThreeRenderTargetNode.name);
     factory.register(PointLogNode.name, PointLogThreeView, ThreeRenderTargetNode.name);
-    factory.register(FloatLogNode.name, FloatLogThreeView, ThreeRenderTargetNode.name);
-    factory.register(DiscreteLogNode.name, DiscreteLogThreeView, ThreeRenderTargetNode.name);
+    factory.register(FloatLogNode.name, WellLogThreeView, ThreeRenderTargetNode.name);
+    factory.register(DiscreteLogNode.name, WellLogThreeView, ThreeRenderTargetNode.name);
+    factory.register(CasingLogNode.name, CasingLogThreeView, ThreeRenderTargetNode.name);
   }
 
   protected /*override*/ createRootCore(): BaseRootNode

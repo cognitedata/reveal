@@ -31,7 +31,7 @@ export class TrajectorySample extends MdSample
   public constructor(point: Vector3, md = 0)
   {
     super(md);
-    this.point = point.copy();
+    this.point = point.clone();
   }
 
   //==================================================

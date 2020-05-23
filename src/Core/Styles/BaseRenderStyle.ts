@@ -38,8 +38,8 @@ export abstract class BaseRenderStyle extends BaseStyle implements TargetIdAcces
   public constructor(targetId: TargetId) 
   {
     super();
-    this._targetId = targetId.copy();
+    this._targetId = targetId.clone();
   }
 
-  abstract copy(): BaseRenderStyle;
+  abstract clone(): BaseRenderStyle;
 }

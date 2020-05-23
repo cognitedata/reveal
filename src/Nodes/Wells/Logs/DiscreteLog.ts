@@ -92,11 +92,14 @@ export class DiscreteLog extends BaseLog
   public static createByRandom(mdRange: Range1, valueRange: Range1): DiscreteLog
   {
     const log = new DiscreteLog();
-    const numSamples = 10;
-    const mdInc = mdRange.delta / (numSamples - 1);
+    const numSamples = 20;
 
-    for (let k = 0, md = mdRange.min; k < numSamples; k++, md += mdInc)
+    for (let k = 0; k < numSamples; k++)
+    {
+      const md = Random.getFloat(mdRange);
       log.samples.push(new DiscreteLogSample(Random.getInt(valueRange), md));
+    }
+    log.sortByMd();
     return log;
   }
 
