@@ -56,6 +56,10 @@ export class Ma
 
   public static sign(value: number): number { return value < 0 ? -1 : 1; }
   public static strickSign(value: number): number { return value == 0 ? 0 : Ma.sign(value); }
+
+  public static toDeg(radians: number): number { return 180 * radians / Math.PI; }
+  public static toRad(degrees: number): number { return Math.PI * degrees / 180; }
+
   public static square(value: number): number { return value * value; }
 
   public static roundInc(inc: number): number

@@ -40,7 +40,7 @@ export function main() {
   const wellTree = root.wells;
 
   // Add some random wells
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < 10; i++) {
     const well = new WellNode();
     wellTree.addChild(well);
 
@@ -127,7 +127,7 @@ export function main() {
     target.setActiveInteractive();
   }
 
-  // Set some nodes visible
+  //Set some nodes visible
   for (const well of root.getDescendantsByType(WellNode)) {
     for (const wellTrajectory of well.getDescendantsByType(WellTrajectoryNode)) {
       wellTrajectory.setVisibleInteractive(true);
@@ -231,19 +231,41 @@ export function main() {
 
 
 function toggleSomeLogs(root: RootNode) {
+
+  return;
+  const target = root.activeTarget as BaseRenderTargetNode;
+  if (!target)
+    return;
+
+  let n = 0;
+  for (const node of root.wells.getDescendantsByType(WellTrajectoryNode)) {
+
+    if (node.isVisible())
+      continue;
+
+    n++;
+    if (Random.isTrue(0.025))
+      node.setVisibleInteractive(true);
+  }
+  if (n > 0) {
+    target.viewAll();
+    target.invalidate();
+    return;
+  }
   for (const node of root.wells.getDescendantsByType(BaseLogNode)) {
 
     const trajectoryNode = node.trajectoryNode;
     if (!trajectoryNode)
       continue;
 
-    if (!trajectoryNode.isVisible())
-      continue;
-
-    if (Random.isTrue(0.975))
-      node.toogleVisibleInteractive();
+    if (Random.isTrue(0.025))
+      node.setVisibleInteractive(true);
   }
-  const target = root.activeTarget as BaseRenderTargetNode;
+  // for (const node of root.wells.getDescendantsByType(WellTrajectoryNode)) {
+
+  //   if (Random.isTrue(0.025))
+  //     node.toogleVisibleInteractive();
+  // }
   if (target)
     target.invalidate();
 }

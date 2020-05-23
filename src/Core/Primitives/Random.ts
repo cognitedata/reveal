@@ -35,8 +35,8 @@ export class Random {
     return min + Math.random() * (max - min);
   }
 
-  public static isTrue(p: number = 0.5): boolean {
-    return Math.random() > p;
+  public static isTrue(probability: number = 0.5): boolean {
+    return Math.random() < probability;
   }
 
   public static getGaussian(mean = 0, stdDev = 1): number {

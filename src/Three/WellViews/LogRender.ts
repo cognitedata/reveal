@@ -26,6 +26,7 @@ import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
 import { PointLog } from "@/Nodes/Wells/Logs/PointLog";
 import { DiscreteLog } from "@/Nodes/Wells/Logs/DiscreteLog";
 import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
+import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 
 export class LogRender 
 {
@@ -123,6 +124,8 @@ export class LogRender
       const material = new THREE.MeshLambertMaterial({
         side: buffers.side,
         transparent: true,
+        emissive: ThreeConverter.toColor(Colors.white),
+        emissiveIntensity: 0.05,
       });
       const mesh = new THREE.Mesh(geometry, material);
       mesh.drawMode = THREE.TrianglesDrawMode;
