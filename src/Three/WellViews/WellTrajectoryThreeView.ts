@@ -35,6 +35,7 @@ import { LogRender } from "@/Three/WellViews/LogRender";
 import { TrajectoryBufferGeometry } from "@/Three/WellViews/TrajectoryBufferGeometry";
 import { isInstanceOf } from "@/Core/Primitives/ClassT";
 import { CasingLogNode } from "@/Nodes/Wells/Wells/CasingLogNode";
+import { BaseNode } from "@/Core/Nodes/BaseNode";
 
 
 export class WellTrajectoryThreeView extends BaseGroupThreeView {
@@ -195,14 +196,11 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
     const mdRange = new Range1();
     for (const logNode of node.getDescendantsByType(BaseLogNode)) {
 
-      if (logNode instanceof CasingLogNode)
+      if (!this.isInBand(logNode))
         continue;
 
       const log = logNode.data;
       if (!log)
-        continue;
-
-      if (!logNode.isVisible(this.renderTarget))
         continue;
 
       mdRange.addRange(log.mdRange);
@@ -211,6 +209,15 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
       return undefined;
 
     return mdRange;
+  }
+
+  private isInBand(node: BaseNode): boolean {
+    if (node instanceof FloatLogNode)
+      return true;
+    if (node instanceof DiscreteLogNode)
+      return true;
+
+    return false;
   }
 
   //==================================================
@@ -381,6 +388,10 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
         }
         i++;
       }
+      if (visibleCount == 0)
+        continue;
+
+      //Only of ther logs are shown
       for (const logNode of node.getDescendantsByType(PointLogNode)) {
         if (!logNode.isVisible(this.renderTarget))
           continue;
@@ -392,9 +403,6 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
         }
       }
       logRender.addAnnotation(canvas, style.bandFontSize, rightBand);
-      if (visibleCount == 0)
-        continue;
-
       textures[rightBand ? 0 : 1] = canvas.createTexture();
     }
     return textures;

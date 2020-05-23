@@ -28,21 +28,9 @@ import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
 
 
 
-function toggleSomeLogs(root: RootNode) {
-  for (const node of root.wells.getDescendantsByType(BaseLogNode)) {
-    if (Random.isTrue(0.3))
-      node.toogleVisibleInteractive();
-  }
-  const target = root.activeTarget as BaseRenderTargetNode;
-  if (target)
-    target.invalidate();
-}
-
-
 main();
 
 export function main() {
-
 
   // Create the module and initialize it
   const module = new ThreeModule();
@@ -52,7 +40,7 @@ export function main() {
   const wellTree = root.wells;
 
   // Add some random wells
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 40; i++) {
     const well = new WellNode();
     wellTree.addChild(well);
 
@@ -61,7 +49,7 @@ export function main() {
     well.name = `well ${i + 1}`;
 
     // Add some random trajectories to the well
-    for (let j = 0; j < 2; j++) {
+    for (let j = 0; j < 5; j++) {
       const wellTrajectory = new WellTrajectoryNode();
       wellTrajectory.name = `Traj ${i + 1}`;
 
@@ -71,6 +59,7 @@ export function main() {
 
       // Add some random float logs to the trajectory
       let n = 1//Random.getInt2(0, 1);
+      n = 1;
       for (let k = 0; k < n; k++) {
         const mdRange = wellTrajectory.data.mdRange.clone();
         mdRange.expandByFraction(-0.05);
@@ -103,7 +92,9 @@ export function main() {
         wellTrajectory.addChild(logNode);
       }
       // Add some random point logs to the trajectory
+
       n = Random.getInt2(1, 2);
+
       for (let k = 0; k < n; k++) {
         const mdRange = wellTrajectory.data.mdRange.clone();
         mdRange.min = (mdRange.center + mdRange.min) / 2;
@@ -140,18 +131,8 @@ export function main() {
   for (const well of root.getDescendantsByType(WellNode)) {
     for (const wellTrajectory of well.getDescendantsByType(WellTrajectoryNode)) {
       wellTrajectory.setVisibleInteractive(true);
-      for (const node of wellTrajectory.getDescendantsByType(FloatLogNode)) {
+      for (const node of wellTrajectory.getDescendantsByType(BaseLogNode))
         node.setVisibleInteractive(true);
-      }
-      for (const node of wellTrajectory.getDescendantsByType(CasingLogNode)) {
-        node.setVisibleInteractive(true);
-      }
-      for (const node of wellTrajectory.getDescendantsByType(DiscreteLogNode)) {
-        node.setVisibleInteractive(true);
-      }
-      for (const node of wellTrajectory.getDescendantsByType(PointLogNode)) {
-        node.setVisibleInteractive(true);
-      }
       break;
     }
   }
@@ -163,7 +144,7 @@ export function main() {
   if (activeTarget)
     activeTarget.viewAll();
 
-  setInterval(() => toggleSomeLogs(root), 1000);
+  setInterval(() => toggleSomeLogs(root), 100);
 }
 
 
@@ -179,73 +160,92 @@ export function main() {
 //import { Points } from './src/Core/Geometry/Points';
 //import { ColorType } from './src/Core/Enums/ColorType';
 //import { Colors } from './src/Core/Primitives/Colors';
-  //{
-  //  const range = Range3.createByMinAndMax(0, 0.5, 1, 1);
-  //  const target = new ThreeRenderTargetNode(range);
-  //  root.targets.addChild(target);
-  //}
-  // Add data
-  //for (let i = 0; i < 1; i++)
-  //{
-  //  const range = Range3.newTest;
-  //  range.expandByFraction(-0.3);
-  //  const node = new PointsNode();
-  //  node.data = Points.createByRandom(2_000_000, range);
-  //  root.dataFolder.addChild(node);
-  //}
-  //for (let i = 0; i < 1; i++)
-  //{
-  //  const range = Range3.newTest;
-  //  range.expandByFraction(-0.2);
-  //  const node = new PolylinesNode();
-  //  node.data = Polylines.createByRandom(20, 10, range);
-  //  root.dataFolder.addChild(node);
-  //}
-  //for (let i = 0; i < 1; i++)
-  //{
-  //  const node = new SurfaceNode();
-  //  node.data = RegularGrid2.createFractal(Range3.newTest, 8, 0.8, 2);
-  //  root.dataFolder.addChild(node);
-  //}
-  //{
-  //  const node = new PotreeNode();
-  //  //node.url = 'https://betaserver.icgc.cat/potree12/resources/pointclouds/barcelonasagradafamilia/cloud.js';
-  //  //node.name = 'Barcelona';
-  //  node.url = '/Real/ept.json';
-  //  node.name = 'Aerfugl';
-  //  root.dataFolder.addChild(node);
-  //}
-  //for (const node of root.getDescendantsByType(PotreeNode))
-  //  node.setVisible(true);
-  // Set some visible in target 1
-  // root.targets.children[0].setActiveInteractive();
-  //for (const node of root.getDescendantsByType(PointsNode))
-  //{
-  //  const style = node.renderStyle;
-  //  if (style)
-  //  {
-  //    style.colorType = ColorType.DepthColor;
-  //    style.size = 1;
-  //  }
-  //  node.setVisible(true);
-  //}
-  //for (const node of root.getDescendantsByType(PolylinesNode))
-  //{
-  //  const style = node.renderStyle;
-  //  if (style)
-  //    style.lineWidth = 10;
-  //  node.setVisible(true);
-  //}
-  //
-  //for (const node of root.getDescendantsByType(SurfaceNode))
-  //{
-  //  const style = node.renderStyle;
-  //  if (style)
-  //  {
-  //    style.colorType = ColorType.DepthColor;
-  //  }
-  //  node.setVisible(true);
-  //}
+//{
+//  const range = Range3.createByMinAndMax(0, 0.5, 1, 1);
+//  const target = new ThreeRenderTargetNode(range);
+//  root.targets.addChild(target);
+//}
+// Add data
+//for (let i = 0; i < 1; i++)
+//{
+//  const range = Range3.newTest;
+//  range.expandByFraction(-0.3);
+//  const node = new PointsNode();
+//  node.data = Points.createByRandom(2_000_000, range);
+//  root.dataFolder.addChild(node);
+//}
+//for (let i = 0; i < 1; i++)
+//{
+//  const range = Range3.newTest;
+//  range.expandByFraction(-0.2);
+//  const node = new PolylinesNode();
+//  node.data = Polylines.createByRandom(20, 10, range);
+//  root.dataFolder.addChild(node);
+//}
+//for (let i = 0; i < 1; i++)
+//{
+//  const node = new SurfaceNode();
+//  node.data = RegularGrid2.createFractal(Range3.newTest, 8, 0.8, 2);
+//  root.dataFolder.addChild(node);
+//}
+//{
+//  const node = new PotreeNode();
+//  //node.url = 'https://betaserver.icgc.cat/potree12/resources/pointclouds/barcelonasagradafamilia/cloud.js';
+//  //node.name = 'Barcelona';
+//  node.url = '/Real/ept.json';
+//  node.name = 'Aerfugl';
+//  root.dataFolder.addChild(node);
+//}
+//for (const node of root.getDescendantsByType(PotreeNode))
+//  node.setVisible(true);
+// Set some visible in target 1
+// root.targets.children[0].setActiveInteractive();
+//for (const node of root.getDescendantsByType(PointsNode))
+//{
+//  const style = node.renderStyle;
+//  if (style)
+//  {
+//    style.colorType = ColorType.DepthColor;
+//    style.size = 1;
+//  }
+//  node.setVisible(true);
+//}
+//for (const node of root.getDescendantsByType(PolylinesNode))
+//{
+//  const style = node.renderStyle;
+//  if (style)
+//    style.lineWidth = 10;
+//  node.setVisible(true);
+//}
+//
+//for (const node of root.getDescendantsByType(SurfaceNode))
+//{
+//  const style = node.renderStyle;
+//  if (style)
+//  {
+//    style.colorType = ColorType.DepthColor;
+//  }
+//  node.setVisible(true);
+//}
 
+
+
+function toggleSomeLogs(root: RootNode) {
+  for (const node of root.wells.getDescendantsByType(BaseLogNode)) {
+
+    const trajectoryNode = node.trajectoryNode;
+    if (!trajectoryNode)
+      continue;
+
+    if (!trajectoryNode.isVisible())
+      continue;
+
+    if (Random.isTrue(0.975))
+      node.toogleVisibleInteractive();
+  }
+  const target = root.activeTarget as BaseRenderTargetNode;
+  if (target)
+    target.invalidate();
+}
 
 

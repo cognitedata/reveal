@@ -1,16 +1,29 @@
 {
-  "extends": ["@cognite/tslint-config-cognite-3d", "tslint-no-circular-imports"],
+  "extends": [
+    "@cognite/tslint-config-cognite-3d",
+    "tslint-no-circular-imports"
+  ],
   "linterOptions": {
-    "exclude": ["node_modules/**/*.ts", "**/*.json"]
+    "exclude": [
+      "node_modules/**/*.ts",
+      "**/*.json"
+    ]
   },
   "rules": {
-    "comment-format": false,    
+    "comment-format": false,
     "no-irregular-whitespace": false,
     "quotemark": false,
     "member-ordering": false,
     "prettier": false,
     "curly": false,
-    "interface-name": false,    
+    "interface-name": false,
+    "brace-style": [
+      true,
+      "allman",
+      {
+        "allowSingleLine": true
+      }
+    ],
     "file-header": [
       false,
       {
