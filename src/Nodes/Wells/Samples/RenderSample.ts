@@ -20,6 +20,7 @@ import { Colors } from "@/Core/Primitives/Colors";
 import { MdSample } from "@/Nodes/Wells/Samples/MdSample";
 
 export class RenderSample extends MdSample {
+  
   //==================================================
   // INSTANCE FIELDS
   //==================================================
@@ -33,6 +34,12 @@ export class RenderSample extends MdSample {
   //==================================================
 
   public get isEmpty(): boolean { return this.radius <= 0 || Number.isNaN(this.radius); }
+
+  //==================================================
+  // OVERRIDES of MdSample
+  //==================================================
+
+  public /*override*/ toString(): string { return `${super.toString()} Point: ${this.point} radius: ${this.radius}`; }
 
   //==================================================
   // CONSTRUCTORS

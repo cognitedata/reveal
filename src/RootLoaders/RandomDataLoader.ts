@@ -20,6 +20,8 @@ import { Random } from "@/Core/Primitives/Random";
 import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
 import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
 import { BaseRootLoader } from "@/RootLoaders/BaseRootLoader";
+import { RegularGrid2 } from "@/Core/Geometry/RegularGrid2";
+import { SurfaceNode } from "@/Nodes/Misc/SurfaceNode";
 
 export class RandomDataLoader extends BaseRootLoader {
 
@@ -28,74 +30,86 @@ export class RandomDataLoader extends BaseRootLoader {
   //==================================================
 
   public /*override*/ load(root: RootNode): void {
+
+    const numberOfWells = 5;
+    const numberOfTrajectories = 5;
+
     const wellTree = root.wells;
 
     // Add some random wells
-    for (let i = 0; i < 10; i++) {
-      const well = new WellNode();
-      wellTree.addChild(well);
+    for (let wellIndex = 0; wellIndex < numberOfWells; wellIndex++) {
 
-      well.wellHead = Vector3.getRandom(Range3.newTest);
-      well.wellHead.z = 0;
-      well.name = `well ${i + 1}`;
+      const wellNode = new WellNode();
+      wellTree.addChild(wellNode);
+
+      wellNode.wellHead = Vector3.getRandom(Range3.newTest);
+      wellNode.wellHead.z = 0;
+      wellNode.name = `well ${wellIndex + 1}`;
 
       // Add some random trajectories to the well
-      for (let j = 0; j < 5; j++) {
-        const wellTrajectory = new WellTrajectoryNode();
-        wellTrajectory.name = `Traj ${i + 1}`;
+      for (let trajectoryIndex = 0; trajectoryIndex < numberOfTrajectories; trajectoryIndex++) {
+        const trajectoryNode = new WellTrajectoryNode();
+        trajectoryNode.name = `Traj ${wellIndex + 1}`;
 
-        wellTrajectory.data = WellTrajectory.createByRandom(well.wellHead);
-        well.addChild(wellTrajectory);
+        trajectoryNode.data = WellTrajectory.createByRandom(wellNode.wellHead);
+        wellNode.addChild(trajectoryNode);
 
         // Add some random float logs to the trajectory
-        let n = 1//Random.getInt2(0, 1);
-        n = 1;
-        for (let k = 0; k < n; k++) {
-          const mdRange = wellTrajectory.data.mdRange.clone();
+        let numberOfLogs = 1; //Random.getInt2(0, 1);
+        for (let logIndex = 0; logIndex < numberOfLogs; logIndex++) {
+          const mdRange = trajectoryNode.data.mdRange.clone();
           mdRange.expandByFraction(-0.05);
           const logNode = new CasingLogNode();
           logNode.data = FloatLog.createCasingByRandom(mdRange, 7);
-          wellTrajectory.addChild(logNode);
+          trajectoryNode.addChild(logNode);
         }
+
         // Add some random float logs to the trajectory
-        n = Random.getInt2(2, 5);
-        for (let k = 0; k < n; k++) {
-          const mdRange = wellTrajectory.data.mdRange.clone();
+        numberOfLogs = Random.getInt2(2, 5);
+        for (let logIndex = 0; logIndex < numberOfLogs; logIndex++) {
+          const mdRange = trajectoryNode.data.mdRange.clone();
           mdRange.min = (mdRange.center + mdRange.min) / 2;
           mdRange.expandByFraction(Random.getFloat2(-0.15, 0));
 
           const logNode = new FloatLogNode();
           const valueRange = new Range1(0, 3.14);
           logNode.data = FloatLog.createByRandom(mdRange, valueRange);
-          wellTrajectory.addChild(logNode);
+          trajectoryNode.addChild(logNode);
         }
+
         // Add some random discrete logs to the trajectory
-        n = 1;//Random.getInt2(0, 1);
-        for (let k = 0; k < n; k++) {
-          const mdRange = wellTrajectory.data.mdRange.clone();
+        numberOfLogs = 1;
+        for (let logIndex = 0; logIndex < numberOfLogs; logIndex++) {
+          const mdRange = trajectoryNode.data.mdRange.clone();
           mdRange.min = (mdRange.center + mdRange.min) / 2;
           mdRange.expandByFraction(Random.getFloat2(-0.25, 0));
 
           const logNode = new DiscreteLogNode();
           const valueRange = new Range1(0, 4);
           logNode.data = DiscreteLog.createByRandom(mdRange, valueRange);
-          wellTrajectory.addChild(logNode);
+          trajectoryNode.addChild(logNode);
         }
+
         // Add some random point logs to the trajectory
+        numberOfLogs = Random.getInt2(1, 2);
 
-        n = Random.getInt2(1, 2);
-
-        for (let k = 0; k < n; k++) {
-          const mdRange = wellTrajectory.data.mdRange.clone();
+        for (let k = 0; k < numberOfLogs; k++) {
+          const mdRange = trajectoryNode.data.mdRange.clone();
           mdRange.min = (mdRange.center + mdRange.min) / 2;
           mdRange.expandByFraction(Random.getFloat2(-0.15, 0));
 
           const logNode = new PointLogNode();
           logNode.data = PointLog.createByRandom(mdRange, 10);
-          wellTrajectory.addChild(logNode);
+          trajectoryNode.addChild(logNode);
         }
       }
     }
+    for (let i = 0; i < 1; i++) {
+      const node = new SurfaceNode();
+      node.data = RegularGrid2.createFractal(Range3.newTest, 7, 0.7, 5);
+      root.others.addChild(node);
+    }
+
   }
 
   public /*override*/  updatedVisible(root: RootNode): void {
@@ -108,6 +122,8 @@ export class RandomDataLoader extends BaseRootLoader {
         break;
       }
     }
+    for (const node of root.getDescendantsByType(SurfaceNode))
+      node.setVisibleInteractive(true);
   }
 
   public /*override*/  startAnimate(root: RootNode) {
@@ -163,13 +179,6 @@ export class RandomDataLoader extends BaseRootLoader {
 // Old test code:
 //===============
 
-//import { PolylinesNode } from './src/Nodes/PolylinesNode';
-//import { PotreeNode } from './src/Nodes/PotreeNode';
-//import { SurfaceNode } from './src/Nodes/SurfaceNode';
-//import { PointsNode } from './src/Nodes/PointsNode';
-//import { Points } from './src/Core/Geometry/Points';
-//import { ColorType } from './src/Core/Enums/ColorType';
-//import { Colors } from './src/Core/Primitives/Colors';
 //{
 //  const range = Range3.createByMinAndMax(0, 0.5, 1, 1);
 //  const target = new ThreeRenderTargetNode(range);

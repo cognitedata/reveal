@@ -21,7 +21,7 @@ export class Range1
 
   public static get newUnit(): Range1 { return new Range1(0, 1); }
   public static get newTest(): Range1 { return new Range1(-1000, 1000); }
-  public static get newZTest(): Range1 { return new Range1(-100, 100); }
+  public static get newZTest(): Range1 { return new Range1(-1000, -1500); }
 
   //==================================================
   // INSTANCE FIELDS
