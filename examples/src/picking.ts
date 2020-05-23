@@ -4,8 +4,8 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { CadNode, RevealManager, ModelNodeAppearance, intersectCadNodes } from '@cognite/reveal/experimental';
-import { getParamsFromURL } from './utils/example-helpers';
+import * as reveal from '@cognite/reveal/experimental';
+import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 
 CameraControls.install({ THREE });
@@ -25,12 +25,7 @@ async function main() {
   const pickedNodes: Set<number> = new Set();
   const pickedObjects: Set<THREE.Mesh> = new Set();
 
-  let modelsNeedUpdate = true;
-  const revealManager = new RevealManager(client, () => {
-    modelsNeedUpdate = true;
-  });
-
-  const nodeAppearance: ModelNodeAppearance = {
+  const nodeAppearance: reveal.ModelNodeAppearance = {
     color(treeIndex: number) {
       if (pickedNodes.has(treeIndex)) {
         return [255, 255, 0, 255];
@@ -39,11 +34,16 @@ async function main() {
     }
   };
 
-  let model: CadNode;
-  if (modelUrl) {
-    model = await revealManager.addModelFromUrl(modelUrl, nodeAppearance);
-  } else if (modelRevision) {
-    model = await revealManager.addModelFromCdf(modelRevision, nodeAppearance);
+  const revealManager: reveal.RevealManager = createRenderManager(
+    modelRevision !== undefined ? 'cdf' : 'local',
+    client
+  );
+
+  let model: reveal.CadNode;
+  if (revealManager instanceof reveal.LocalHostRevealManager && modelUrl !== undefined) {
+    model = await revealManager.addModel('cad', modelUrl, nodeAppearance);
+  } else if (revealManager instanceof reveal.RevealManager && modelRevision !== undefined) {
+    model = await revealManager.addModel('cad', modelRevision, nodeAppearance);
   } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');
   }
@@ -90,9 +90,10 @@ async function main() {
       revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || pickingNeedsUpdate || modelsNeedUpdate) {
+    if (controlsNeedUpdate || pickingNeedsUpdate || revealManager.needsRedraw) {
       renderer.render(scene, camera);
       pickingNeedsUpdate = false;
+      revealManager.resetRedraw();
     }
 
     requestAnimationFrame(render);
@@ -107,7 +108,7 @@ async function main() {
     };
     // Pick in Reveal
     const revealPickResult = (() => {
-      const intersections = intersectCadNodes([model], { renderer, camera, coords });
+      const intersections = reveal.intersectCadNodes([model], { renderer, camera, coords });
       if (intersections.length === 0) {
         return;
       }

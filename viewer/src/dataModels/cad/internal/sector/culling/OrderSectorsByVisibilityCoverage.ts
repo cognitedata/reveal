@@ -5,13 +5,13 @@
 import * as THREE from 'three';
 
 import { SectorModelTransformation, SectorMetadata } from '../types';
-import { CadModel } from '../..';
 import { toThreeJsBox3, toThreeMatrix4 } from '@/utilities';
 import { Box3 } from '@/utilities/Box3';
-import { coverageShaders } from '../../rendering/shaders';
+import { coverageShaders } from '@/dataModels/cad/internal/rendering/shaders';
+import { CadModelMetadata } from '@/dataModels/cad/public/CadModelMetadata';
 
 type SectorContainer = {
-  model: CadModel;
+  model: CadModelMetadata;
   sectors: SectorMetadata[];
   sectorIdOffset: number;
   renderable: THREE.Object3D;
@@ -47,7 +47,7 @@ export type PrioritizedSectorIdentifier = {
   /**
    * The CAD model that holds the sector.
    */
-  model: CadModel;
+  model: CadModelMetadata;
   /**
    * Sector ID contained in the model provided.
    */
@@ -66,7 +66,7 @@ export interface OrderSectorsByVisibilityCoverage {
    * Specifies what CAD models to estimate sector visibility for.
    * @param models Models to estimate sector visibility for.
    */
-  setModels(models: CadModel[]): void;
+  setModels(models: CadModelMetadata[]): void;
   /**
    * Estimates how visible the different sectors for the models added are and returns
    * a prioritized list.
@@ -129,12 +129,12 @@ export class GpuOrderSectorsByVisibilityCoverage {
     return this.debugRenderer.domElement;
   }
 
-  setModels(models: CadModel[]) {
+  setModels(models: CadModelMetadata[]) {
     const keepModelIdentifiers = new Set<string>();
     for (const model of models) {
-      const identifier = model.identifier;
-      keepModelIdentifiers.add(identifier);
-      if (!this.containers.has(identifier)) {
+      const blobUrl = model.blobUrl;
+      keepModelIdentifiers.add(blobUrl);
+      if (!this.containers.has(blobUrl)) {
         this.addModel(model);
       }
     }
@@ -211,10 +211,10 @@ export class GpuOrderSectorsByVisibilityCoverage {
     this.containers.delete(modelIdentifier);
   }
 
-  private addModel(model: CadModel) {
+  private addModel(model: CadModelMetadata) {
     const sectors = model.scene.getAllSectors();
     const mesh = this.createSectorTreeMesh(this.sectorIdOffset, sectors, model.modelTransformation);
-    this.containers.set(model.identifier, {
+    this.containers.set(model.blobUrl, {
       model,
       sectors,
       sectorIdOffset: this.sectorIdOffset,

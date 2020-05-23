@@ -33,7 +33,7 @@ export class SimpleAndDetailedToSector3D {
             consumeSectorDetailed(
               parsedSector.data as Sector,
               parsedSector.metadata,
-              this.materialManager.getModelMaterials(parsedSector.cadModelIdentifier)!
+              this.materialManager.getModelMaterials(parsedSector.blobUrl)!
             )
           )
         ),
@@ -41,7 +41,7 @@ export class SimpleAndDetailedToSector3D {
           map(parsedSector =>
             consumeSectorSimple(
               parsedSector.data as SectorQuads,
-              this.materialManager.getModelMaterials(parsedSector.cadModelIdentifier)!
+              this.materialManager.getModelMaterials(parsedSector.blobUrl)!
             )
           )
         )

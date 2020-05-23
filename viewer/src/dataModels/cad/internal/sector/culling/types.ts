@@ -5,12 +5,12 @@ import * as THREE from 'three';
 import { WantedSector } from '../WantedSector';
 import { LevelOfDetail } from '../LevelOfDetail';
 import { SectorMetadata } from '../types';
-import { CadModel } from '../../../public/CadModel';
 import { CadLoadingHints } from '../../../public/CadLoadingHints';
+import { CadModelMetadata } from '@/dataModels/cad/public/CadModelMetadata';
 
 export interface DetermineSectorsInput {
   camera: THREE.PerspectiveCamera;
-  cadModels: CadModel[];
+  cadModelsMetadata: CadModelMetadata[];
   loadingHints: CadLoadingHints;
 }
 

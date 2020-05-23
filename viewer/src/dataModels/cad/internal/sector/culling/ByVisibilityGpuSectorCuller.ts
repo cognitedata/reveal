@@ -19,7 +19,7 @@ import { PrioritizedWantedSector, DetermineSectorCostDelegate, DetermineSectorsI
 import { fromThreeMatrix } from '@/utilities';
 import { LevelOfDetail } from '../LevelOfDetail';
 import { SectorMetadata } from '../types';
-import { CadModel } from '../..';
+import { CadModelMetadata } from '@/dataModels/cad/public/CadModelMetadata';
 
 /**
  * Options for creating GpuBasedSectorCuller.
@@ -66,7 +66,7 @@ class TakenSectorMap {
     });
     return totalCost;
   }
-  private readonly maps: Map<CadModel, TakenSectorTree> = new Map();
+  private readonly maps: Map<CadModelMetadata, TakenSectorTree> = new Map();
   private readonly determineSectorCost: DetermineSectorCostDelegate;
 
   // TODO 2020-04-21 larsmoa: Unit test TakenSectorMap
@@ -74,8 +74,8 @@ class TakenSectorMap {
     this.determineSectorCost = determineSectorCost;
   }
 
-  initializeScene(model: CadModel) {
-    this.maps.set(model, new TakenSectorTree(model.scene.root, this.determineSectorCost));
+  initializeScene(modelMetadata: CadModelMetadata) {
+    this.maps.set(modelMetadata, new TakenSectorTree(modelMetadata.scene.root, this.determineSectorCost));
   }
 
   getWantedSectorCount(): number {
@@ -86,7 +86,7 @@ class TakenSectorMap {
     return count;
   }
 
-  markSectorDetailed(model: CadModel, sectorId: number, priority: number) {
+  markSectorDetailed(model: CadModelMetadata, sectorId: number, priority: number) {
     const tree = this.maps.get(model);
     assert(!!tree);
     tree!.markSectorDetailed(sectorId, priority);
@@ -150,10 +150,10 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   }
 
   determineSectors(input: DetermineSectorsInput): WantedSector[] {
-    const takenSectors = this.update(input.camera, input.cadModels);
+    const takenSectors = this.update(input.camera, input.cadModelsMetadata);
     const wanted = takenSectors.collectWantedSectors();
 
-    const totalSectorCount = input.cadModels.reduce((sum, x) => sum + x.scene.sectorCount, 0);
+    const totalSectorCount = input.cadModelsMetadata.reduce((sum, x) => sum + x.scene.sectorCount, 0);
     const takenSectorCount = wanted.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded).length;
     const takenSimpleCount = wanted.filter(x => x.levelOfDetail === LevelOfDetail.Detailed).length;
     const takenDetailedPercent = ((100.0 * (takenSectorCount - takenSimpleCount)) / totalSectorCount).toPrecision(3);
@@ -171,7 +171,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     return this.takenSectors.collectWantedSectors();
   }
 
-  private update(camera: THREE.PerspectiveCamera, models: CadModel[]): TakenSectorMap {
+  private update(camera: THREE.PerspectiveCamera, models: CadModelMetadata[]): TakenSectorMap {
     const { coverageUtil } = this.options;
     const takenSectors = this.takenSectors;
     takenSectors.clear();
@@ -208,7 +208,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
 
   private addHighDetailsForNearSectors(
     camera: THREE.PerspectiveCamera,
-    models: CadModel[],
+    models: CadModelMetadata[],
     proximityThreshold: number,
     takenSectors: TakenSectorMap
   ) {

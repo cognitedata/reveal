@@ -4,10 +4,10 @@
 
 import { mat4 } from 'gl-matrix';
 import { FetchPointCloudDelegate } from '../internal/delegates';
-import { SectorModelTransformation } from '../../cad/internal/sector/types';
 import { PointCloudLoader } from '../internal/potree/PointCloudLoader';
 import { EptLoader } from '../internal/potree/EptLoader';
 import { PointCloudModel } from './PointCloudModel';
+import { SectorModelTransformation } from '@/dataModels/cad/internal/sector/types';
 
 const identity = mat4.identity(mat4.create());
 
