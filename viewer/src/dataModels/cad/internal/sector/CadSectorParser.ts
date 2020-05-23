@@ -32,7 +32,6 @@ export class CadSectorParser {
     );
   }
 
-  // TODO: j-bjorne 16-04-2020: Move outside
   private finalizeSimple(parsedQuadsResult: ParseQuadsResult): SectorQuads {
     return {
       treeIndexToNodeIdMap: parsedQuadsResult.treeIndexToNodeIdMap,
