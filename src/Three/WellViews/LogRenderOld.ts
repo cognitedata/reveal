@@ -16,7 +16,7 @@ import * as Color from "color"
 
 import { Range1 } from "@/Core/Geometry/Range1";
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import { TriangleStripBuffers } from "@/Core/Geometry/TriangleStripBuffers";
+import { TrianglesBuffers } from "@/Core/Geometry/TrianglesBuffers";
 
 import { Colors } from "@/Core/Primitives/Colors";
 import { Ma } from "@/Core/Primitives/Ma";
@@ -30,42 +30,43 @@ import { DiscreteLog } from "@/Nodes/Wells/Logs/DiscreteLog";
 import { FloatLogSample } from "@/Nodes/Wells/Samples/FloatLogSample";
 import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
 
-export class LogRenderOld
-{
+export class LogRenderOld {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
 
   private cameraPosition: Vector3;
-  private trajectoryNode: WellTrajectory;
+  private trajectory: WellTrajectory;
   private bandRange: Range1;
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(trajectory: WellTrajectory, cameraPosition: Vector3, bandRange: Range1)
-  {
-    this.trajectoryNode = trajectory;
+  public constructor(trajectory: WellTrajectory, cameraPosition: Vector3, bandRange: Range1) {
+    this.trajectory = trajectory;
     this.cameraPosition = cameraPosition;
     this.bandRange = bandRange;
   }
 
-  public addTickMarks(group: THREE.Group, color: Color, mdRange: Range1, tickFontSize: number, inc: number, right: boolean, left: boolean)
-  {
-    const geometry = new THREE.Geometry();
+  public addTickMarks(group: THREE.Group, color: Color, mdRange: Range1, tickFontSize: number, inc: number, right: boolean, left: boolean) {
 
+    const geometry = new THREE.Geometry();
     const labelInc = mdRange.getBoldInc(inc, 5);
     const endTickmark = this.bandRange.max + this.bandRange.delta * 0.1;
     const startLabel = this.bandRange.max + this.bandRange.delta * 0.2;
+    const position = Vector3.newZero;
+    const tangent = Vector3.newZero;
 
-    for (const anyTick of mdRange.getTicks(inc))
-    {
+    for (const anyTick of mdRange.getTicks(inc)) {
       const md = Number(anyTick);
-      const position = this.trajectoryNode.getAtMd(md);
+      if (!this.trajectory.getPositionAtMd(md, position))
+        continue;
+
+      if (!this.trajectory.getTangentAtMd(md, tangent))
+        continue;
 
       // Get perpendicular
-      const tangent = this.trajectoryNode.getTangentAtMd(md);
       const cameraDirection = Vector3.substract(position, this.cameraPosition);
       const prependicular = cameraDirection.getNormal(tangent);
       if (!right)
@@ -96,16 +97,20 @@ export class LogRenderOld
   // INSTANCE METHODS: FloatLog
   //==================================================
 
-  public addLineFloatLog(group: THREE.Group, log: FloatLog, color: Color, right: boolean): void
-  {
+  public addLineFloatLog(group: THREE.Group, log: FloatLog, color: Color, right: boolean): void {
     const valueRange = log.range;
     const geometry = new THREE.Geometry();
-    for (const baseSample of log.samples)
-    {
-      const position = this.trajectoryNode.getAtMd(baseSample.md);
+    const position = Vector3.newZero;
+    const tangent = Vector3.newZero;
+
+    for (const baseSample of log.samples) {
+      if (!this.trajectory.getPositionAtMd(baseSample.md, position))
+        continue;
+
+      if (!this.trajectory.getTangentAtMd(baseSample.md, tangent))
+        continue;
 
       // Get perpendicular
-      const tangent = this.trajectoryNode.getTangentAtMd(baseSample.md);
       const cameraDirection = Vector3.substract(position, this.cameraPosition);
       const prependicular = cameraDirection.getNormal(tangent);
       if (!right)
@@ -123,17 +128,20 @@ export class LogRenderOld
     group.add(line);
   }
 
-  public addSolidFloatLog(group: THREE.Group, log: FloatLog, right: boolean): void
-  {
+  public addSolidFloatLog(group: THREE.Group, log: FloatLog, right: boolean): void {
     const valueRange = log.range;
-    const buffers = new TriangleStripBuffers(2 * log.length, true);
+    const buffers = new TrianglesBuffers(2 * log.length, true);
+    const position = Vector3.newZero;
+    const tangent = Vector3.newZero;
 
-    for (const baseSample of log.samples)
-    {
-      const position = this.trajectoryNode.getAtMd(baseSample.md);
+    for (const baseSample of log.samples) {
+      if (!this.trajectory.getPositionAtMd(baseSample.md, position))
+        continue;
+
+      if (!this.trajectory.getTangentAtMd(baseSample.md, tangent))
+        continue;
 
       // Get perpendicular
-      const tangent = this.trajectoryNode.getTangentAtMd(baseSample.md);
       const cameraDirection = Vector3.substract(position, this.cameraPosition);
       const prependicular = cameraDirection.getNormal(tangent);
       if (!right)
@@ -173,20 +181,23 @@ export class LogRenderOld
   // INSTANCE METHODS: DiscreteLog
   //==================================================
 
-  public addSolidDiscreteLog(group: THREE.Group, log: DiscreteLog, right: boolean): void
-  {
+  public addSolidDiscreteLog(group: THREE.Group, log: DiscreteLog, right: boolean): void {
     const valueRange = log.range;
-    const buffers = new TriangleStripBuffers(log.length * 4 - 2);
+    const buffers = new TrianglesBuffers(log.length * 4 - 2);
     const colors = new Array<number>();
+    const position = Vector3.newZero;
+    const tangent = Vector3.newZero;
 
     let prevColor = Colors.white;
-    for (let i = 0; i < log.samples.length; i++)
-    {
+    for (let i = 0; i < log.samples.length; i++) {
       const sample = log.getAt(i);
-      const position = this.trajectoryNode.getAtMd(sample.md);
+      if (!this.trajectory.getPositionAtMd(sample.md, position))
+        continue;   
+
+      if (!this.trajectory.getTangentAtMd(sample.md, tangent))
+        continue;
 
       // Get perpendicular
-      const tangent = this.trajectoryNode.getTangentAtMd(sample.md);
       const cameraDirection = Vector3.substract(position, this.cameraPosition);
       const prependicular = cameraDirection.getNormal(tangent);
       if (!right)
@@ -197,14 +208,12 @@ export class LogRenderOld
       const startPosition = Vector3.addWithFactor(position, prependicular, this.bandRange.min);
       const endPosition = Vector3.addWithFactor(position, prependicular, this.bandRange.max);
 
-      if (i > 0) 
-      {
+      if (i > 0) {
         buffers.addPair(startPosition, endPosition, normal, normal);
         TextureKit.add(colors, prevColor);
         TextureKit.add(colors, prevColor);
       }
-      if (i < log.samples.length - 1)
-      {
+      if (i < log.samples.length - 1) {
         const valueFraction = valueRange.getFraction(sample.value);
         const color = Color.hsv(valueFraction * 360, 255, 100);
         buffers.addPair(startPosition, endPosition, normal, normal);
@@ -233,8 +242,7 @@ export class LogRenderOld
   // STATIC METHODS: Helpers
   //==================================================
 
-  private static setPolygonOffset(material: THREE.Material, value: number): void
-  {
+  private static setPolygonOffset(material: THREE.Material, value: number): void {
     material.polygonOffset = true;
     material.polygonOffsetFactor = value / 2;
     material.polygonOffsetUnits = value * 4;

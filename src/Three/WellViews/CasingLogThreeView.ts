@@ -25,6 +25,7 @@ import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { RenderSample } from "@/Nodes/Wells/Samples/RenderSample";
 import { Colors } from "@/Core/Primitives/Colors";
 import { TrajectoryBufferGeometry } from "@/Three/WellViews/TrajectoryBufferGeometry";
+import { Vector3 } from "@/Core/Geometry/Vector3";
 
 export class CasingLogThreeView extends BaseGroupThreeView {
   //==================================================
@@ -60,11 +61,13 @@ export class CasingLogThreeView extends BaseGroupThreeView {
 
     const range = new Range3();
     let maxRadius = 0;
+    const position = Vector3.newZero;
+
     for (let i = 0; i < log.samples.length; i++) {
       const sample = log.getAt(i);
       maxRadius = Math.max(maxRadius, sample.value);
-      const position = trajectory.getAtMd(sample.md);
-      range.add(position);
+      if (trajectory.getPositionAtMd(sample.md, position))
+        range.add(position);
     }
     range.expandByMargin(maxRadius);
     return range;
@@ -87,11 +90,16 @@ export class CasingLogThreeView extends BaseGroupThreeView {
 
     const samples: RenderSample[] = [];
     let wellIndex = 0;
+    const position: Vector3 = Vector3.newZero;
+
     for (let logIndex = 0; logIndex < log.length - 1; logIndex++) {
       const minSample = log.getAt(logIndex);
       const maxSample = log.getAt(logIndex + 1);
 
-      samples.push(new RenderSample(trajectory.getAtMd(minSample.md), minSample.md, minSample.value, color));
+      if (!trajectory.getPositionAtMd(minSample.md, position))
+        continue;
+
+      samples.push(new RenderSample(position.clone(), minSample.md, minSample.value, color));
       if (minSample.isEmpty)
         continue;
 
@@ -105,7 +113,8 @@ export class CasingLogThreeView extends BaseGroupThreeView {
       }
       if (logIndex == log.length - 1) {
         // Push the last
-        samples.push(new RenderSample(trajectory.getAtMd(maxSample.md), maxSample.md, maxSample.value, color));
+        if (trajectory.getPositionAtMd(maxSample.md, position))
+          samples.push(new RenderSample(position.clone(), maxSample.md, maxSample.value, color));
         break;
       }
     }

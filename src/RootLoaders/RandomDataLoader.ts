@@ -106,7 +106,10 @@ export class RandomDataLoader extends BaseRootLoader {
     }
     for (let i = 0; i < 1; i++) {
       const node = new SurfaceNode();
-      node.data = RegularGrid2.createFractal(Range3.newTest, 7, 0.7, 5);
+      var range = Range3.newTest.clone();
+      range.expandByFraction(0.2);
+      range.z.set(-1400, -1800);
+      node.data = RegularGrid2.createFractal(range, 7, 0.7, 5);
       root.others.addChild(node);
     }
 

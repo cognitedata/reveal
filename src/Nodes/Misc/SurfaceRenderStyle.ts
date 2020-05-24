@@ -22,6 +22,7 @@ export class SurfaceRenderStyle extends BaseRenderStyle
   //==================================================
 
   public colorType: ColorType = ColorType.DepthColor;
+  public inc: number = 20;
 
   //==================================================
   // CONSTRUCTORS

@@ -24,8 +24,7 @@ import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 
-export class PointLogThreeView extends BaseGroupThreeView
-{
+export class PointLogThreeView extends BaseGroupThreeView {
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -43,13 +42,11 @@ export class PointLogThreeView extends BaseGroupThreeView
   // OVERRIDES of BaseView
   //==================================================
 
-  protected /*override*/ updateCore(args: NodeEventArgs): void
-  {
+  protected /*override*/ updateCore(args: NodeEventArgs): void {
     super.updateCore(args);
   }
 
-  public calculateBoundingBoxCore(): Range3 | undefined
-  {
+  public calculateBoundingBoxCore(): Range3 | undefined {
     const node = this.node;
     const trajectory = node.trajectory;
     if (!trajectory)
@@ -60,11 +57,11 @@ export class PointLogThreeView extends BaseGroupThreeView
       return undefined;
 
     const range = new Range3();
-    for (let i = 0; i < log.samples.length; i++)
-    {
+    const position: Vector3 = Vector3.newZero;
+    for (let i = 0; i < log.samples.length; i++) {
       const sample = log.getAt(i);
-      const position = trajectory.getAtMd(sample.md);
-      range.add(position);
+      if (trajectory.getPositionAtMd(sample.md, position))
+        range.add(position);
     }
     const radius = Math.max(10, this.trajectoryRadius * 2);
     range.expandByMargin(radius);
@@ -75,8 +72,7 @@ export class PointLogThreeView extends BaseGroupThreeView
   // OVERRIDES of BaseGroupThreeView
   //==================================================
 
-  protected /*override*/ createObject3DCore(): THREE.Object3D | null
-  {
+  protected /*override*/ createObject3DCore(): THREE.Object3D | null {
     const node = this.node;
     const color = node.color;
     const trajectory = node.trajectory;
@@ -93,19 +89,23 @@ export class PointLogThreeView extends BaseGroupThreeView
     const geometry = new THREE.SphereGeometry(radius, 16, 8);
     const material = new THREE.MeshPhongMaterial({ color: ThreeConverter.toColor(color) });
 
-    for (let i = 0; i < log.samples.length; i++)
-    {
+    const up = new Vector3(0, 0, 1);
+    const position: Vector3 = Vector3.newZero;
+    const tangent: Vector3 = Vector3.newZero;
+    for (let i = 0; i < log.samples.length; i++) {
+
       const sample = log.getAt(i);
-      const position = trajectory.getAtMd(sample.md);
-      const tangent = trajectory.getTangentAtMd(sample.md);
+      if (!trajectory.getPositionAtMd(sample.md, position))
+        continue;
+
+      if (!trajectory.getTangentAtMd(sample.md, tangent))
+        continue;
+
       const sphere = new THREE.Mesh(geometry, material);
       sphere.scale.z = 0.5;
 
-      if (Math.abs(tangent.z) < 0.999)
-      {
-        const up = new Vector3(0, 0, 1);
+      if (Math.abs(tangent.z) < 0.999) {
         const axis = up.getCross(tangent);
-
         // determine the amount to rotate
         const radians = Math.acos(tangent.getDot(up));
         sphere.rotateOnAxis(ThreeConverter.toVector(axis), radians);
@@ -120,8 +120,7 @@ export class PointLogThreeView extends BaseGroupThreeView
   // INSTANCE METHODS
   //==================================================
 
-  protected get trajectoryRadius(): number
-  {
+  protected get trajectoryRadius(): number {
     const node = this.node;
     if (!node)
       return 0;
