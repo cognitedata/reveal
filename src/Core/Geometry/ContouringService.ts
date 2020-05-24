@@ -11,8 +11,6 @@
 // Copyright (c) Cognite aS. all rights reserved.
 //=====================================================================================
 
-import * as THREE from "three";
-
 import { RegularGrid2 } from "@/Core/Geometry/RegularGrid2";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Ma } from "@/Core/Primitives/Ma";

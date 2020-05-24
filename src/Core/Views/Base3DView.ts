@@ -79,4 +79,10 @@ export abstract class Base3DView extends BaseView
   {
     this._boundingBox = undefined;
   }
+
+  protected invalidate(): void
+  {
+    this._boundingBox = undefined;
+  }
+
 }
