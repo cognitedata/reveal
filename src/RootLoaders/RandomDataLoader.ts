@@ -139,6 +139,7 @@ export class RandomDataLoader extends BaseRootLoader {
 
   private static animate(root: RootNode) {
 
+    return;
     const target = root.activeTarget as BaseRenderTargetNode;
     if (!target)
       return;
