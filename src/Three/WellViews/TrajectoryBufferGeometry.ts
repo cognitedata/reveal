@@ -81,7 +81,7 @@ export class TrajectoryBufferGeometry extends THREE.BufferGeometry {
       if (currSample.isEmpty) {
         // End the previous and add base cap
         this.addSegment(currSample.point, prevSample.radius, prevSample.color, tangent, true);
-        this.addBaseCap(currSample, tangent);
+        this.addBaseCap(currSample, tangent, prevSample);
       }
       else if (i === 0 || prevSample.isEmpty) {
         // Add a top cap and start sampling
@@ -115,9 +115,12 @@ export class TrajectoryBufferGeometry extends THREE.BufferGeometry {
     this.addSample(sample, tangent, true, normalDirection);
   }
 
-  private addBaseCap(sample: RenderSample, tangent: Vector3) {
+  private addBaseCap(sample: RenderSample, tangent: Vector3, prevSample: RenderSample|null = null) {
     const normalDirection = -1;
-    this.addSample(sample, tangent, false, normalDirection);
+    if (!prevSample)
+      this.addSample(sample, tangent, false, normalDirection);
+    else
+      this.addSegment(sample.point, prevSample.radius, prevSample.color, tangent, false, normalDirection);
     this.addSegment(sample.point, 0, sample.color, tangent, true, normalDirection);
   }
 

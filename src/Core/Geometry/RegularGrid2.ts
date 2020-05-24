@@ -18,8 +18,7 @@ import { Index2 } from "@/Core/Geometry/Index2";
 import { Grid2 } from "@/Core/Geometry/Grid2";
 import { Random } from "@/Core/Primitives/Random";
 
-export class RegularGrid2 extends Grid2
-{
+export class RegularGrid2 extends Grid2 {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
@@ -37,8 +36,7 @@ export class RegularGrid2 extends Grid2
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(nodeSize: Index2, xOrigin: number, yOrigin: number, inc: number)
-  {
+  public constructor(nodeSize: Index2, xOrigin: number, yOrigin: number, inc: number) {
     super(nodeSize);
     this.xOrigin = xOrigin;
     this.yOrigin = yOrigin;
@@ -56,13 +54,11 @@ export class RegularGrid2 extends Grid2
   // INSTANCE METHODS: Requests
   //==================================================
 
-  public isNodeDef(i: number, j: number): boolean
-  {
+  public isNodeDef(i: number, j: number): boolean {
     return !Number.isNaN(this.getZ(i, j));
   }
 
-  public isNodeInsideDef(i: number, j: number): boolean
-  {
+  public isNodeInsideDef(i: number, j: number): boolean {
     return this.isNodeInside(i, j) && this.isNodeDef(i, j);
   }
 
@@ -73,27 +69,30 @@ export class RegularGrid2 extends Grid2
   public getNodeIndex(i: number, j: number) { return i + this.nodeSize.i * j; }
   public getX(i: number, j: number): number { return this.xOrigin + this.inc * i; }
   public getY(i: number, j: number): number { return this.yOrigin + this.inc * j; }
-  public getZ(i: number, j: number): number
-  {
+  public getZ(i: number, j: number): number {
     const index = this.getNodeIndex(i, j);
     return this.buffer[index];
   }
 
-  public getPoint3(i: number, j: number): Vector3
-  {
-    return new Vector3(this.xOrigin + this.inc * i, this.yOrigin + this.inc * j, this.getZ(i, j));
+  public getRelativePoint3(i: number, j: number, result: Vector3): boolean {
+    const z = this.getZ(i, j);
+    if (Number.isNaN(z))
+      return false;
+
+    result.x = this.inc * i;
+    result.y = this.inc * j;
+    result.z = z;
+    return true;
   }
 
-  public getNormal(i: number, j: number, z?: number): Vector3
-  {
+  public getNormal(i: number, j: number, result: Vector3, z: number): Vector3 {
     if (!z)
       z = this.getZ(i, j);
 
     const a = RegularGrid2._staticHelperA;
     const b = RegularGrid2._staticHelperB;
-    const sum = RegularGrid2._staticHelperC;
 
-    sum.set(0, 0, 0);
+    result.set(0, 0, 0);
 
     const def0 = this.isNodeInsideDef(i + 1, j + 0);
     const def1 = this.isNodeInsideDef(i + 0, j + 1);
@@ -110,54 +109,47 @@ export class RegularGrid2 extends Grid2
     const z2 = def1 ? this.buffer[i2] - z : 0;
     const z3 = def1 ? this.buffer[i3] - z : 0;
 
-    if (def0 && def1)
-    {
+    if (def0 && def1) {
       a.set(+this.inc, 0, z0);
       b.set(0, +this.inc, z1);
       a.crossProduct(b);
-      sum.add(a);
+      result.add(a);
     }
-    if (def1 && def2)
-    {
+    if (def1 && def2) {
       a.set(0, +this.inc, z1);
       b.set(-this.inc, 0, z2);
       a.crossProduct(b);
-      sum.add(a);
+      result.add(a);
     }
-    if (def2 && def3)
-    {
+    if (def2 && def3) {
       a.set(-this.inc, 0, z2);
       b.set(0, -this.inc, z3);
       a.crossProduct(b);
-      sum.add(a);
+      result.add(a);
     }
-    if (def3 && def0)
-    {
+    if (def3 && def0) {
       a.set(0, -this.inc, z3);
       b.set(+this.inc, 0, z0);
       a.crossProduct(b);
-      sum.add(a);
+      result.add(a);
     }
-    if (!sum.normalize())
-      sum.set(0, 0, 1);
-    return sum;
+    if (!result.normalize())
+    result.set(0, 0, 1);
+    return result;
   }
 
-  public getTriplet(i: number, j: number): [number, number, number]
-  {
+  public getTriplet(i: number, j: number): [number, number, number] {
     return [this.xOrigin + this.inc * i, this.yOrigin + this.inc * j, this.getZ(i, j)];
   }
 
-  public getZRange(): Range1
-  {
+  public getZRange(): Range1 {
     const range = new Range1();
     for (const z of this.buffer)
       range.add(z);
     return range;
   }
 
-  public getRange(): Range3
-  {
+  public getRange(): Range3 {
     const range = new Range3();
     range.x.set(this.xOrigin, this.xOrigin + this.cellSize.i * this.inc);
     range.y.set(this.yOrigin, this.yOrigin + this.cellSize.j * this.inc);
@@ -169,13 +161,11 @@ export class RegularGrid2 extends Grid2
   // INSTANCE METHODS: Setters
   //==================================================
 
-  public setNodeUndef(i: number, j: number): void
-  {
+  public setNodeUndef(i: number, j: number): void {
     this.setZ(i, j, Number.NaN);
   }
 
-  public setZ(i: number, j: number, value: number): void
-  {
+  public setZ(i: number, j: number, value: number): void {
     const index = this.getNodeIndex(i, j);
     this.buffer[index] = value;
   }
@@ -184,11 +174,9 @@ export class RegularGrid2 extends Grid2
   // INSTANCE METHODS: Operation
   //==================================================
 
-  public normalizeZ(wantedRange?: Range1): void
-  {
+  public normalizeZ(wantedRange?: Range1): void {
     const currentRange = this.getZRange();
-    for (let i = this.buffer.length - 1; i >= 0; i--)
-    {
+    for (let i = this.buffer.length - 1; i >= 0; i--) {
       let z = this.buffer[i];
       z = currentRange.getFraction(z);
       if (wantedRange !== undefined)
@@ -197,16 +185,13 @@ export class RegularGrid2 extends Grid2
     }
   }
 
-  public smoothSimple(numberOfPasses: number = 1): void
-  {
+  public smoothSimple(numberOfPasses: number = 1): void {
     if (numberOfPasses <= 0)
       return;
     let buffer = new Float32Array(this.nodeSize.size);
-    for (let pass = 0; pass < numberOfPasses; pass++)
-    {
+    for (let pass = 0; pass < numberOfPasses; pass++) {
       for (let i = this.nodeSize.i - 1; i >= 0; i--)
-        for (let j = this.nodeSize.j - 1; j >= 0; j--)
-        {
+        for (let j = this.nodeSize.j - 1; j >= 0; j--) {
           if (!this.isNodeDef(i, j))
             continue;
 
@@ -220,8 +205,7 @@ export class RegularGrid2 extends Grid2
 
           // New value = (Sum the surrunding values + 2 * Current value) / N
           for (let ii = iMin; ii <= iMax; ii++)
-            for (let jj = jMin; jj <= jMax; jj++)
-            {
+            for (let jj = jMin; jj <= jMax; jj++) {
               if (ii === i && jj === j)
                 continue;
 
@@ -244,8 +228,7 @@ export class RegularGrid2 extends Grid2
   // STATIC METHODS: 
   //==================================================
 
-  static createFractal(boundingBox: Range3, powerOf2: number, dampning: number = 0.7, smoothNumberOfPasses: number = 0): RegularGrid2
-  {
+  static createFractal(boundingBox: Range3, powerOf2: number, dampning: number = 0.7, smoothNumberOfPasses: number = 0): RegularGrid2 {
     const stdDev = 1;
     const grid = new RegularGrid2(new Index2(Math.pow(2, powerOf2) + 1), 0, 0, 1);
 
@@ -275,8 +258,7 @@ export class RegularGrid2 extends Grid2
 // LOCAL FUNCTIONS: Helpers
 //==================================================
 
-function setValueBetween(grid: RegularGrid2, i0: number, j0: number, i2: number, j2: number, stdDev: number, zMean?: number): number
-{
+function setValueBetween(grid: RegularGrid2, i0: number, j0: number, i2: number, j2: number, stdDev: number, zMean?: number): number {
   const i1 = Math.trunc((i0 + i2) / 2);
   const j1 = Math.trunc((j0 + j2) / 2);
 
@@ -292,8 +274,7 @@ function setValueBetween(grid: RegularGrid2, i0: number, j0: number, i2: number,
   return newZ;
 }
 
-function subDivide(grid: RegularGrid2, i0: number, j0: number, i2: number, j2: number, stdDev: number, level: number, dampning: number): void
-{
+function subDivide(grid: RegularGrid2, i0: number, j0: number, i2: number, j2: number, stdDev: number, level: number, dampning: number): void {
   if (i2 - i0 <= 1 && j2 - j0 <= 1)
     return; // Nothing more to update
   if (i2 - i0 !== j2 - j0)

@@ -283,13 +283,16 @@ export class Vector3
   // Return = A + B * fb
   public static addWithFactor(a: Vector3, b: Vector3, fb: number): Vector3 { return new Vector3(a.x + b.x * fb, a.y + b.y * fb, a.z + b.z * fb); }
 
-  // Return = A * (1-fb) + B * fb
-  public static lerp(a: Vector3, b: Vector3, fb: number): Vector3
+  // Return = this = A * (1-fb) + B * fb
+  public  lerp(a: Vector3, b: Vector3, fb: number): void 
   {
     const fa = 1 - fb;
-    return new Vector3(a.x * fa + b.x * fb, a.y * fa + b.y * fb, a.z * fa + b.z * fb);
+    this.x = a.x * fa + b.x * fb;
+    this.y = a.y * fa + b.y * fb;
+    this.z =  a.z * fa + b.z * fb;
   }
 
   // Return = A - B
-  public static substract(a: Vector3, b: Vector3): Vector3 { return new Vector3(a.x - b.x, a.y - b.y, a.z - b.z); }
+  public static substract(a: Vector3, b: Vector3): Vector3 {
+     return new Vector3(a.x - b.x, a.y - b.y, a.z - b.z); }
 }

@@ -6,58 +6,60 @@
 // It is a C# to typescript port from the Modern Model architecture,   
 // based on the experience when building Petrel.  
 //
-// NOTE: Always keep the code according to the code style already applied in the file.
+// NOTE: always keep the code according to the code style already applied in the file.
 // Put new code under the correct section, and make more sections if needed.
-// Copyright (c) Cognite AS. All rights reserved.
+// Copyright (c) Cognite aS. all rights reserved.
 //=====================================================================================
 
 import { RegularGrid2 } from "@/Core/Geometry/RegularGrid2";
-import { TriangleStripBuffers } from "@/Core/Geometry/TriangleStripBuffers";
+import { TrianglesBuffers } from "@/Core/Geometry/TrianglesBuffers";
+import { Vector3 } from "@/Core/Geometry/Vector3";
 
-export class RegularGrid2Buffers extends TriangleStripBuffers
-{
+export class RegularGrid2Buffers extends TrianglesBuffers {
+
   //==================================================
-  // INSTANCE FIELDS
+  // CONSTRUCTORS
   //==================================================
 
-  public constructor(grid: RegularGrid2)
-  {
+  public constructor(grid: RegularGrid2) {
     const [uniqueIndexes, numUniqueIndex] = RegularGrid2Buffers.createUniqueIndexes(grid);
     super(numUniqueIndex, true);
     this.makeBuffers(grid, uniqueIndexes);
     this.makeTriangleIndexes(grid, uniqueIndexes);
   }
 
-  makeBuffers(grid: RegularGrid2, uniqueIndexes: number[])
-  {
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
+
+  makeBuffers(grid: RegularGrid2, uniqueIndexes: number[]) {
     // Generate the position, normal and uvs
     const zRange = grid.getZRange();
-    for (let j = grid.nodeSize.j - 1; j >= 0; j--)
-    {
-      for (let i = grid.nodeSize.i - 1; i >= 0; i--)
-      {
+    const position = Vector3.newZero;
+    const normal = Vector3.newZero;
+
+    for (let j = grid.nodeSize.j - 1; j >= 0; j--) {
+      for (let i = grid.nodeSize.i - 1; i >= 0; i--) {
         const nodeIndex = grid.getNodeIndex(i, j);
         const uniqueIndex = uniqueIndexes[nodeIndex];
         if (uniqueIndex < 0)
           continue;
 
-        const z = grid.getZ(i, j);
-        const normal = grid.getNormal(i, j, z);
-        const u = zRange.getFraction(z);
+        if (!grid.getRelativePoint3(i, j, position))
+          continue;
 
-        this.setXyzAt(uniqueIndex, grid.inc * i, grid.inc * j, z, normal, u);
+        grid.getNormal(i, j, normal, position.z);
+        const u = zRange.getFraction(position.z);
+        this.setAt(uniqueIndex, position, normal, u);
       }
     }
   }
 
-  private makeTriangleIndexes(grid: RegularGrid2, uniqueIndexes: number[])
-  {
+  private makeTriangleIndexes(grid: RegularGrid2, uniqueIndexes: number[]) {
     // Generate the triangle indices
     // Should be strip, but could not get it to work
-    for (let i = 0; i < grid.nodeSize.i - 1; i++)
-    {
-      for (let j = 0; j < grid.nodeSize.j - 1; j++)
-      {
+    for (let i = 0; i < grid.nodeSize.i - 1; i++) {
+      for (let j = 0; j < grid.nodeSize.j - 1; j++) {
         const nodeIndex0 = grid.getNodeIndex(i, j);
         const nodeIndex1 = grid.getNodeIndex(i + 1, j);
         const nodeIndex2 = grid.getNodeIndex(i + 1, j + 1);
@@ -73,6 +75,7 @@ export class RegularGrid2Buffers extends TriangleStripBuffers
         if (unique1 >= 0) triangleCount++;
         if (unique2 >= 0) triangleCount++;
         if (unique3 >= 0) triangleCount++;
+
         if (triangleCount < 3)
           continue;
 
@@ -94,17 +97,13 @@ export class RegularGrid2Buffers extends TriangleStripBuffers
     }
   }
 
-  private static createUniqueIndexes(grid: RegularGrid2): [number[], number]
-  {
+  private static createUniqueIndexes(grid: RegularGrid2): [number[], number] {
     const uniqueIndexes = new Array<number>(grid.nodeSize.size);
     let numUniqueIndex = 0;
-    for (let j = grid.nodeSize.j - 1; j >= 0; j--)
-    {
-      for (let i = grid.nodeSize.i - 1; i >= 0; i--)
-      {
+    for (let j = grid.nodeSize.j - 1; j >= 0; j--) {
+      for (let i = grid.nodeSize.i - 1; i >= 0; i--) {
         const nodeIndex = grid.getNodeIndex(i, j);
-        if (grid.isNodeDef(i, j))
-        {
+        if (grid.isNodeDef(i, j)) {
           uniqueIndexes[nodeIndex] = numUniqueIndex;
           numUniqueIndex++;
         }

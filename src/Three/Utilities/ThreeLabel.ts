@@ -41,7 +41,7 @@ export class ThreeLabel
     if (!sprite)
       return null;
 
-    sprite.position.copy(ThreeConverter.toVector(position));
+    ThreeConverter.copy(sprite.position, position);
     ThreeLabel.align(sprite, alignment);
     return sprite;
   }

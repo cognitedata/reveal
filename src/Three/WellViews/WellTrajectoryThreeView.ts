@@ -237,7 +237,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
     if (!style)
       return;
 
-    const label = ThreeLabel.createByPositionAndAlignment(node.name, trajectory.getPointAt(0), 1, style.nameFontHeight, true);
+    const label = ThreeLabel.createByPositionAndAlignment(node.name, trajectory.getPositionAt(0), 1, style.nameFontHeight, true);
     if (!label)
       return;
 

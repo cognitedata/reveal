@@ -43,7 +43,7 @@ export class PointLog extends BaseLog
 
     // Set in the labels so they are in order
     for (let k = 0; k < log.samples.length; k++)
-      log.getAt(k).label = `Sample ${k}}`;
+      log.getAt(k).label = `Sample ${k}`;
 
     return log;
   }

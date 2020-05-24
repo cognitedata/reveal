@@ -25,9 +25,10 @@ import { AxisNode } from "@/Nodes/Decorations/AxisNode";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { ThreeCameraNode } from "@/Three/Nodes/ThreeCameraNode";
 import { TreeOverlay } from "@/Three/Utilities/TreeOverlay";
+import { Ma } from "@/Core/Primitives/Ma";
+import { Vector3 } from "@/Core/Geometry/Vector3";
 
-export class ThreeRenderTargetNode extends BaseRenderTargetNode
-{
+export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
@@ -42,8 +43,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get scene(): THREE.Scene
-  {
+  public get scene(): THREE.Scene {
     if (!this._scene)
       this._scene = new THREE.Scene();
     return this._scene;
@@ -51,8 +51,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   public get activeCameraNode(): ThreeCameraNode { return super.getActiveCameraNode() as ThreeCameraNode };
 
-  public get activeCamera(): THREE.Camera
-  {
+  public get activeCamera(): THREE.Camera {
     const cameraNode = this.activeCameraNode;
     if (!cameraNode)
       throw Error("The camera is not set");
@@ -60,8 +59,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     return cameraNode.camera;
   }
 
-  public set activeCamera(value: THREE.Camera)
-  {
+  public set activeCamera(value: THREE.Camera) {
     const cameraNode = this.activeCameraNode;
     if (!cameraNode)
       throw Error("The camera is not set");
@@ -69,8 +67,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     cameraNode.camera = value;
   }
 
-  public get activeControls(): CameraControls | null
-  {
+  public get activeControls(): CameraControls | null {
     const cameraNode = this.activeCameraNode;
     if (!cameraNode)
       throw Error("The camera is not set");
@@ -78,11 +75,9 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     return cameraNode.controls;
   }
 
-  private get renderer(): THREE.WebGLRenderer
-  {
+  private get renderer(): THREE.WebGLRenderer {
 
-    if (!this._renderer)
-    {
+    if (!this._renderer) {
       const renderer = new THREE.WebGLRenderer({ antialias: true, });
       renderer.autoClear = false;
       renderer.gammaFactor = 2.2;
@@ -95,10 +90,8 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     return this._renderer;
   }
 
-  public get stats(): any
-  {
-    if (!this._stats)
-    {
+  public get stats(): any {
+    if (!this._stats) {
       this._stats = new Stats();
       this._stats.showPanel(0);
     }
@@ -124,8 +117,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   private _light: THREE.DirectionalLight | null = null;
 
-  public /*override*/ initializeCore() 
-  {
+  public /*override*/ initializeCore() {
     super.initializeCore();
 
     this.addCameraNode(new ThreeCameraNode(), true);
@@ -137,21 +129,23 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
     // Add light (TODO: move to TreeLightNode?)
     const scene = this.scene;
-    const light = new THREE.DirectionalLight(ThreeConverter.toColor(Colors.white), 1);
+    const light = new THREE.DirectionalLight(ThreeConverter.toColor(Colors.white), 0.75);
     const camera = this.activeCamera;
-    ThreeRenderTargetNode.updateLightPosition(camera, light);
+    const controls = this.activeControls;
 
-    function lightUpdate() 
-    {
-      ThreeRenderTargetNode.updateLightPosition(camera, light);
+    ThreeRenderTargetNode.updateLightPosition(camera, controls, light);
+
+    function lightUpdate() {
+      ThreeRenderTargetNode.updateLightPosition(camera, controls, light);
     }
-
     this.domElement.addEventListener("mousemove", lightUpdate);
-    {
-      //const light = new THREE.AmbientLight(lightColor, 0.25);
-      //group.add(light);
-    }
+    this.domElement.addEventListener("wheel", lightUpdate);
+
     this._light = light;
+
+    var ambientLight = new THREE.AmbientLight(0x404040, 0.25); // soft white light
+    scene.add(ambientLight);
+
     scene.add(light);
   }
 
@@ -159,8 +153,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   // OVERRIDES of RenderTargetNode
   //==================================================
 
-  public /*override*/ viewRange(boundingBox: Range3 | undefined): void
-  {
+  public /*override*/ viewRange(boundingBox: Range3 | undefined): void {
     if (!boundingBox)
       return;
 
@@ -180,13 +173,12 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     controls.update(0);
 
     if (this._light)
-      ThreeRenderTargetNode.updateLightPosition(this.activeCamera, this._light);
+      ThreeRenderTargetNode.updateLightPosition(this.activeCamera, controls, this._light);
   }
 
   public /*override*/ get domElement(): HTMLElement { return this.renderer.domElement; }
 
-  protected /*override*/ setRenderSize(): void
-  {
+  protected /*override*/ setRenderSize(): void {
     const pixelRange = this.pixelRange;
     this.renderer.setSize(pixelRange.x.delta, pixelRange.y.delta);
   }
@@ -195,8 +187,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   // INSTANCE METHODS
   //==================================================
 
-  private render(): void
-  {
+  private render(): void {
     requestAnimationFrame(() => { this.render(); });
 
     if (!this.isInitialized)
@@ -204,13 +195,11 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
     const controls = this.activeControls;
     let needsUpdate = true;
-    if (controls)
-    {
+    if (controls) {
       const delta = this._clock.getDelta();
       needsUpdate = controls.update(delta);
     }
-    if (this.isInvalidated || needsUpdate)
-    {
+    if (this.isInvalidated || needsUpdate) {
       this.stats.begin();
 
       for (const view of this.viewsShownHere.list)
@@ -230,25 +219,42 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   // STATIC METHODS
   //==================================================
 
-  static updateLightPosition(camera: THREE.Camera, light: THREE.DirectionalLight): void
-  {
-    // The idea of this function is letting the llight follow the camera, 
-    // 45 deg off in XY plane and 30 off along the z-axis 
+  static updateLightPosition(camera: THREE.Camera, controls: CameraControls | null, light: THREE.DirectionalLight): void {
 
-    const vector = camera.position.clone();
-    vector.normalize();
+    // The idea of this function is letting the light track the camera, 
+    if (!controls)
+      return;
 
-    const horizontalAxis = vector.clone();
+    const position = controls.getPosition();
+    const target = controls.getTarget();
+
+    const vectorToCenter = position.clone();
+    vectorToCenter.sub(target);
+
+    // Get camera direction
+    const cameraDirection = new THREE.Vector3();
+    camera.getWorldDirection(cameraDirection);
+
+    let vectorLength = vectorToCenter.length();
+    vectorToCenter.normalize();
+    // Vector direction is opposite to camera direction
+
+    const horizontalAxis = vectorToCenter.clone();
     const verticalAxis = new THREE.Vector3(0, 0, 1);
 
     horizontalAxis.z = 0;
     horizontalAxis.normalize();
     horizontalAxis.applyAxisAngle(verticalAxis, Math.PI / 2);
 
-    vector.normalize();
-    vector.applyAxisAngle(horizontalAxis, -Math.PI / 6); // 30deg
-    vector.applyAxisAngle(verticalAxis, Math.PI / 6); // 45deg
+    verticalAxis.crossVectors(horizontalAxis, vectorToCenter);
 
-    light.position.copy(vector);
+    vectorToCenter.applyAxisAngle(verticalAxis, Ma.toRad(0)); // Azimuth angle
+    vectorToCenter.applyAxisAngle(horizontalAxis, -Ma.toRad(30)); //Dip angle
+
+    vectorLength = Math.max(vectorLength, 5000); // Move the light far away
+    vectorToCenter.multiplyScalar(vectorLength);
+    vectorToCenter.add(target)
+
+    light.position.copy(vectorToCenter);
   }
 }
