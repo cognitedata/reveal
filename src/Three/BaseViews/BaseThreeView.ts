@@ -14,14 +14,36 @@
 import * as THREE from "three";
 import { Base3DView } from "@/Core/Views/Base3DView";
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
+import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
+import { basename } from "path";
+import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
-export abstract class BaseThreeView extends Base3DView
-{
+export abstract class BaseThreeView extends Base3DView {
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
   public constructor() { super(); }
+
+  //==================================================
+  // OVERRIDES of BaseView
+  //==================================================
+
+
+  protected /*override*/ updateCore(args: NodeEventArgs): void {
+    super.updateCore(args);
+    this.invalidateTarget();
+  }
+
+  protected /*virtual*/ onShowCore(): void {
+    super.onShowCore();
+    this.invalidateTarget();
+  }
+
+  protected /*virtual*/ onHideCore(): void {
+    super.onHideCore();
+    this.invalidateTarget();
+  }
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -30,4 +52,10 @@ export abstract class BaseThreeView extends Base3DView
   protected get scene(): THREE.Scene { return this.renderTarget.scene; }
   protected get camera(): THREE.Camera { return this.renderTarget.activeCamera; }
   protected get renderTarget(): ThreeRenderTargetNode { return super.getTarget() as ThreeRenderTargetNode; }
+
+  protected invalidateTarget(): void {
+    const target = this.renderTarget;
+    if (target)
+      target.invalidate();
+  }
 }

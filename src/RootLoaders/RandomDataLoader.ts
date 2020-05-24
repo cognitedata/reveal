@@ -139,7 +139,6 @@ export class RandomDataLoader extends BaseRootLoader {
 
   private static animate(root: RootNode) {
 
-    return;
     const target = root.activeTarget as BaseRenderTargetNode;
     if (!target)
       return;
@@ -152,11 +151,7 @@ export class RandomDataLoader extends BaseRootLoader {
 
       n++;
       if (Random.isTrue(0.025))
-        node.setVisibleInteractive(true);
-    }
-    if (n > 0) {
-      target.invalidate();
-      return;
+        node.toggleVisibleInteractive();
     }
     for (const node of root.wells.getDescendantsByType(BaseLogNode)) {
 
@@ -165,15 +160,13 @@ export class RandomDataLoader extends BaseRootLoader {
         continue;
 
       if (Random.isTrue(0.025))
-        node.setVisibleInteractive(true);
+        node.toggleVisibleInteractive();
     }
     // for (const node of root.wells.getDescendantsByType(WellTrajectoryNode)) {
 
     //   if (Random.isTrue(0.025))
     //     node.toogleVisibleInteractive();
     // }
-    if (target)
-      target.invalidate();
   }
 }
 
