@@ -26,9 +26,11 @@ jobs:
         rustup component add clippy
         rustup component add rustfmt
 
+    - name: Install wasm-pack
+      uses: jetli/wasm-pack-action
+
     - name: Build viewer
       working-directory: viewer
-      uses: jetli/wasm-pack-action
       run: |
         npm install
         npm run build
