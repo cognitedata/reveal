@@ -16,7 +16,7 @@ export function createRenderManager(
     case 'cdf':
       return new RevealManager(client, options);
     case 'local':
-      return new LocalHostRevealManager(client, options);
+      return new LocalHostRevealManager(options);
     default:
       throw new Error(`case ${type}: undefined in switch statement`);
   }
