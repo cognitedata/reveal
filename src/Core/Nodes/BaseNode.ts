@@ -179,15 +179,15 @@ export abstract class BaseNode extends Identifiable
       child.setVisibleInteractive(visible, target);
   }
 
-  public toggleVisibleInteractive(): void // Use this when clicking on the checkbox in the three control
+  public toggleVisibleInteractive(target?: Target | null): void // Use this when clicking on the checkbox in the three control
   {
-    const checkBoxState = this.getCheckBoxState();
+    const checkBoxState = this.getCheckBoxState(target);
     if (checkBoxState === CheckBoxState.Never)
       return;
     if (checkBoxState === CheckBoxState.None)
-      this.setVisibleInteractive(true);
+      this.setVisibleInteractive(true, target);
     else
-      this.setVisibleInteractive(false);
+      this.setVisibleInteractive(false, target);
   }
 
   //==================================================
