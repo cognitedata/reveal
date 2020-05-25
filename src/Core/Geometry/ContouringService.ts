@@ -11,6 +11,8 @@
 // Copyright (c) Cognite aS. all rights reserved.
 //=====================================================================================
 
+import * as THREE from "three";
+
 import { RegularGrid2 } from "@/Core/Geometry/RegularGrid2";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Ma } from "@/Core/Primitives/Ma";
@@ -33,14 +35,14 @@ export class ContouringService {
   public constructor(inc: number) {
 
     this.inc = inc;
-    this.tolerance = this.inc / 10000;
+    this.tolerance = this.inc / 1000;
   }
-  
+
   //==================================================
   // INSTANCE METHODS: Create functions
   //==================================================
 
-  public createContoursAsXyzArray(grid: RegularGrid2) : number[]{
+  public createContoursAsXyzArray(grid: RegularGrid2): number[] {
 
     const p0 = Vector3.newZero;
     const p1 = Vector3.newZero;
@@ -97,6 +99,17 @@ export class ContouringService {
   }
 
   private addLevelAt(z: number, a: Vector3, b: Vector3, c: Vector3): boolean {
+
+    // Make sure we don't run into numerical problems
+    if (Ma.IsAbsEqual(a.z, z, this.tolerance))
+      a.z = z + this.tolerance;
+    if (Ma.IsAbsEqual(b.z, z, this.tolerance))
+      b.z = z + this.tolerance;
+    if (Ma.IsAbsEqual(c.z, z, this.tolerance))
+      c.z = z + this.tolerance;
+    if (Ma.IsAbsEqual(a.z, b.z, this.tolerance))
+      b.z = a.z + this.tolerance;
+
     // Special cases, check exact intersection on the corner or along the edges
     if (a.z == z) {
       if (Ma.isInside(b.z, z, c.z)) {

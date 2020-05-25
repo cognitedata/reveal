@@ -25,20 +25,19 @@ export abstract class BaseView
 
   private _node: BaseNode | null = null;
   private _target: TargetIdAccessor | null = null;
-  private _isVisible: boolean = false;
+  //private _isVisible: boolean = false;
 
   //==================================================
   // VIRTUAL METHODS
   //==================================================
 
-  public /*virtual*/ get stayAliveIfInvisible(): boolean { return false; }
+  //  public /*virtual*/ get stayAliveIfInvisible(): boolean { return false; }
 
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get isVisible(): boolean { return this._isVisible; }
-  public set isVisible(value: boolean) { this._isVisible = value; }
+  //public set isVisible(value: boolean) { this._isVisible = value; }
   public get targetId(): TargetId { return this.getTarget().targetId; }
 
   //==================================================
@@ -50,6 +49,8 @@ export abstract class BaseView
   //==================================================
   // VIRTUAL METHODS: 
   //==================================================
+
+  public get /*virtual*/ isVisible(): boolean { return true; }
 
   protected /*virtual*/ initializeCore(): void
   {

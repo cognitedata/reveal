@@ -20,8 +20,8 @@ import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { SurfaceRenderStyle } from "@/Nodes/Misc/SurfaceRenderStyle";
 
-export class SurfaceNode extends BaseVisualNode
-{
+export class SurfaceNode extends BaseVisualNode {
+
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -57,26 +57,26 @@ export class SurfaceNode extends BaseVisualNode
 
   public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
 
-  public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
-  {
+  public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null {
     return new SurfaceRenderStyle(targetId);
   }
 
-  public /*override*/ verifyRenderStyle(style: BaseRenderStyle)
-  {
+  public /*override*/ verifyRenderStyle(style: BaseRenderStyle) {
     if (!(style instanceof SurfaceRenderStyle))
       return;
 
-    if (!this.supportsColorType(style.colorType))
-      style.colorType = ColorType.NodeColor;
+    if (!this.supportsColorType(style.solid.colorType))
+      style.solid.colorType = ColorType.DepthColor;
+    if (!this.supportsColorType(style.contours.colorType))
+      style.contours.colorType = ColorType.Black;
   }
 
-  public /*override*/ supportsColorType(colorType: ColorType): boolean
-  {
-    switch (colorType)
-    {
+  public /*override*/ supportsColorType(colorType: ColorType): boolean {
+    switch (colorType) {
       case ColorType.DepthColor:
       case ColorType.NodeColor:
+      case ColorType.Black:
+      case ColorType.White:
         return true;
 
       default:

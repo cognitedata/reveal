@@ -31,8 +31,8 @@ export class RandomDataLoader extends BaseRootLoader {
 
   public /*override*/ load(root: RootNode): void {
 
-    const numberOfWells = 5;
-    const numberOfTrajectories = 5;
+    const numberOfWells = 20;
+    const numberOfTrajectories = 2;
 
     const wellTree = root.wells;
 
@@ -54,8 +54,8 @@ export class RandomDataLoader extends BaseRootLoader {
         trajectoryNode.data = WellTrajectory.createByRandom(wellNode.wellHead);
         wellNode.addChild(trajectoryNode);
 
-        // Add some random float logs to the trajectory
-        let numberOfLogs = 1; //Random.getInt2(0, 1);
+        // Add some random casing logs to the trajectory
+        let numberOfLogs = Random.getInt2(0, 1);
         for (let logIndex = 0; logIndex < numberOfLogs; logIndex++) {
           const mdRange = trajectoryNode.data.mdRange.clone();
           mdRange.expandByFraction(-0.05);
@@ -91,8 +91,7 @@ export class RandomDataLoader extends BaseRootLoader {
         }
 
         // Add some random point logs to the trajectory
-        numberOfLogs = Random.getInt2(1, 2);
-
+        numberOfLogs = Random.getInt2(0, 2);
         for (let k = 0; k < numberOfLogs; k++) {
           const mdRange = trajectoryNode.data.mdRange.clone();
           mdRange.min = (mdRange.center + mdRange.min) / 2;
@@ -104,7 +103,7 @@ export class RandomDataLoader extends BaseRootLoader {
         }
       }
     }
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < 5; i++) {
       const node = new SurfaceNode();
       var range = Range3.newTest.clone();
       range.expandByFraction(0.2);
@@ -125,12 +124,14 @@ export class RandomDataLoader extends BaseRootLoader {
         break;
       }
     }
-    for (const node of root.getDescendantsByType(SurfaceNode))
+    for (const node of root.getDescendantsByType(SurfaceNode)) {
       node.setVisibleInteractive(true);
+      break;
+    }
   }
 
   public /*override*/  startAnimate(root: RootNode) {
-    setInterval(() => RandomDataLoader.animate(root), 100);
+    setInterval(() => RandomDataLoader.animate(root), 200);
   }
 
   //==================================================
@@ -140,34 +141,24 @@ export class RandomDataLoader extends BaseRootLoader {
   private static animate(root: RootNode) {
 
     return;
-    const target = root.activeTarget as BaseRenderTargetNode;
-    if (!target)
-      return;
-
-    let n = 0;
     for (const node of root.wells.getDescendantsByType(WellTrajectoryNode)) {
 
-      if (node.isVisible())
-        continue;
-
-      n++;
       if (Random.isTrue(0.025))
         node.toggleVisibleInteractive();
     }
     for (const node of root.wells.getDescendantsByType(BaseLogNode)) {
-
-      const trajectoryNode = node.trajectoryNode;
-      if (!trajectoryNode)
-        continue;
-
-      if (Random.isTrue(0.025))
+      if (Random.isTrue(0.05))
         node.toggleVisibleInteractive();
     }
-    // for (const node of root.wells.getDescendantsByType(WellTrajectoryNode)) {
+    if (!Random.isTrue(0.05))
+      return;
 
-    //   if (Random.isTrue(0.025))
-    //     node.toogleVisibleInteractive();
-    // }
+    var n = Random.getInt2(0, 4);
+    var i = 0;
+    for (const node of root.getDescendantsByType(SurfaceNode)) {
+      node.setVisibleInteractive(i == n);
+      i++;
+    }
   }
 }
 

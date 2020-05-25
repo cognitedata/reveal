@@ -26,6 +26,7 @@ import { RenderSample } from "@/Nodes/Wells/Samples/RenderSample";
 import { Colors } from "@/Core/Primitives/Colors";
 import { TrajectoryBufferGeometry } from "@/Three/WellViews/TrajectoryBufferGeometry";
 import { Vector3 } from "@/Core/Geometry/Vector3";
+import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
 
 export class CasingLogThreeView extends BaseGroupThreeView {
   //==================================================
@@ -44,6 +45,11 @@ export class CasingLogThreeView extends BaseGroupThreeView {
   //==================================================
   // OVERRIDES of BaseView
   //==================================================
+
+  public get /*override*/ isVisible(): boolean {
+    const parent = this.node.getAncestorByType(WellTrajectoryNode);
+    return parent != null && parent.isVisible(this.renderTarget)
+  }
 
   protected /*override*/ updateCore(args: NodeEventArgs): void {
     super.updateCore(args);

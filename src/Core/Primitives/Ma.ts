@@ -24,6 +24,14 @@ export class Ma {
 
   public static isZero(x: number): boolean { return x < 0 ? x > -Ma.errorTolerance : x < Ma.errorTolerance; }
 
+  public static IsAbsEqual(x: number, y: number, tolerance:number): boolean {
+    const error = x - y;
+    if (error < 0)
+      return error > tolerance;
+    else
+      return error < tolerance;
+  }
+
   public static isEqual(x: number, y: number): boolean {
     // ||x-y||/(1 + (|x|+|y|)/2)
     let error = x - y;
