@@ -52,7 +52,7 @@ jobs:
       run: |
         sudo apt-get install xvfb mesa-utils libgl1-mesa-dri libglapi-mesa libosmesa6
         export DISPLAY=:99.0
-        npm install -g codecov
+        sudo npm install -g codecov
 
     - name: Run coverage tests
       working-directory: viewer
