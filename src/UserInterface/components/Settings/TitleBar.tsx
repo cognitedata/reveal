@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 
 import Icon from "../Common/Icon";
 import ToolBar from '../Common/ToolBar';
-import { ToolBarType } from "../../interfaces/common"
+import { ToolBarType } from "@/UserInterface/interfaces/common"
 
 /**
  * TitleBAr component

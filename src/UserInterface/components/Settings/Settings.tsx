@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 import { useSelector } from "react-redux";
 
-import TitleBar from './TitleBar';
-import Section from './Section';
-import { ReduxStore } from "../../interfaces/common"
+import TitleBar from "./TitleBar";
+import Section from "./Section";
+import { ReduxStore } from "@/UserInterface/interfaces/common";
 
 /**
  * Settings component

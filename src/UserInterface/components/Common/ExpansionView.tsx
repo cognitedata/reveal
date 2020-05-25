@@ -1,15 +1,16 @@
-import React from 'react';
-import { useDispatch, useSelector } from "react-redux";
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import React from "react";
+import { useDispatch } from "react-redux";
+import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
+import ExpansionPanel from "@material-ui/core/ExpansionPanel";
+import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronUp } from "@fortawesome/free-solid-svg-icons/faChevronUp";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons/faChevronDown";
 
-import { onExpandChange } from "../../redux/actions/settings";
-import { ToolBarType } from "../../interfaces/common";
-import ToolBar from './ToolBar';
+import { onExpandChange } from "@/UserInterface/redux/actions/settings";
+import { ToolBarType } from "@/UserInterface/interfaces/common";
+import ToolBar from "./ToolBar";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

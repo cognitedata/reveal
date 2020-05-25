@@ -44,5 +44,5 @@ export default createReducer(initialState, {
     const expandState = state.subSections[subSectionId].isExpanded;
     icon.selected = !expandState;
     state.subSections[subSectionId].isExpanded = !expandState;
-  },
+  }
 });

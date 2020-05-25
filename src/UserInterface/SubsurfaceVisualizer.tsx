@@ -1,26 +1,15 @@
-import React from 'react';
-
-import RightPanel from "./components/Panels/RightPanel";
-import LeftPanel from "./components/Panels/LeftPanel";
+import React from "react";
 import Root from "./Root";
-import SplitPane from "react-split-pane";
+import { Provider } from "react-redux";
 
 /**
  * Subsurface Visualizer Component of the application
  * This will render all the components (Settings/Explorer/3D viewers etc.)
  */
-export default function SubsurfaceVisualizer() {
+export default function SubsurfaceVisualizer(props: { store: any }) {
   return (
-    <Root>
-      <div className="root-container">
-        <SplitPane
-          split="vertical"
-          defaultSize={1200}
-          primary="second">
-          <LeftPanel />
-          <RightPanel />
-        </SplitPane>
-      </div>
-    </Root>
+    <Provider store={props.store}>
+      <Root />
+    </Provider>
   );
 }

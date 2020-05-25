@@ -1,0 +1,42 @@
+{
+  "name": "standalone",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "react": "file:../node_modules/react",
+    "react-dom": "file:../node_modules/react-dom",
+    "subsurface-visualizer": "0.1.0",
+    "react-redux": "file:../node_modules/react-redux",
+    "redux": "file:../node_modules/redux"
+  },
+  "devDependencies": {
+    "@types/jest": "file:../node_modules/@types/jest",
+    "@types/node": "file:../node_modules/@types/node",
+    "@types/react": "file:../node_modules/@types/react",
+    "@types/react-dom": "file:../node_modules/@types/react-dom",
+    "@types/react-redux": "file:../node_modules/@types/react-redux",
+    "react-scripts": "^3.4.1",
+    "typescript": "file:../node_modules/typescript"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

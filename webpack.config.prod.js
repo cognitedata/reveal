@@ -1,33 +1,29 @@
 const path = require("path");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+  .BundleAnalyzerPlugin;
+
+function resolve(dir) {
+  return path.resolve(__dirname, dir);
+}
+
 module.exports = {
-  // webpack will take the files from ./src/index
-  entry: "./src/UserInterface/SubsurfaceVisualizer.tsx",
-
-  // and output it into /dist as bundle.js
-  output: {
-    path: path.resolve("lib"),
-    filename: "SubsurfaceVisualizer.js",
+  mode: "production",
+  entry: {
+    "subsurface-visualizer": "./src/index.ts"
   },
-
-  // adding .ts and .tsx to resolve.extensions will help babel look for .ts and .tsx files to transpile
-  resolve: {
-    extensions: [".ts", ".tsx", ".js"],
-  },
-
   module: {
     rules: [
-      // use babel-loader to load our tsx files
       {
         test: /\.(ts|js)x?$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader",
-        },
+          loader: "babel-loader"
+        }
       },
-      // sass-loader to bundle all the css files into one file and style-loader to add all the styles  inside the style tag of the document
       {
         test: /\.s?css$/,
-        use: ["style-loader", "css-loader", "sass-loader"],
+        use: ["style-loader", "css-loader", "sass-loader"]
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
@@ -36,10 +32,48 @@ module.exports = {
             loader: "file-loader",
             options: {
               esModule: false,
-            },
-          },
-        ],
-      },
-    ],
+              outputPath: "assets"
+            }
+          }
+        ]
+      }
+    ]
   },
+  resolve: {
+    extensions: [".tsx", ".ts", ".js", ".png", ".svg"],
+    alias: {
+      "@": resolve("src"),
+      "@images": resolve("images")
+    }
+  },
+  output: {
+    filename: "[name].js",
+    path: path.resolve(__dirname, "dist"),
+    sourceMapFilename: "[name].map",
+    library: "[name]",
+    libraryTarget: "umd"
+  },
+  devtool: "false",
+  plugins: [
+    new CleanWebpackPlugin()
+    //  new BundleAnalyzerPlugin()
+  ],
+  externals: {
+    react: {
+      root: "React",
+      commonjs2: "react",
+      commonjs: "react",
+      amd: "react",
+      umd: "react"
+    },
+    "react-dom": {
+      root: "ReactDOM",
+      commonjs2: "react-dom",
+      commonjs: "react-dom",
+      amd: "react-dom",
+      umd: "react-dom"
+    },
+    redux: "redux",
+    "react-redux": "react-redux"
+  }
 };

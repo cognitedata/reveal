@@ -1,9 +1,9 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 
 import Input from "../Common/Input";
-import { ReduxStore } from "../../interfaces/common";
+import { ReduxStore } from "@/UserInterface/interfaces/common";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

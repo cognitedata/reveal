@@ -2,8 +2,8 @@ import React from 'react';
 import { useDispatch } from "react-redux";
 
 import Icon from './Icon';
-import { ToolBarType } from "../../interfaces/common";
-import { onExpandChangeFromToolbar } from "../../redux/actions/settings";
+import { ToolBarType } from "@/UserInterface/interfaces/common";
+import { onExpandChangeFromToolbar } from "@/UserInterface/redux/actions/settings";
 
 // Assign toolbar actions
 function assignToolBarAction(

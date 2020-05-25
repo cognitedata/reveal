@@ -4,7 +4,7 @@
     "module": "es6",
     "target": "es5",
     "outDir": "dist",
-    "declarationDir": "dist",
+    "declarationDir": "dist/types",
     "declaration": true,
     "strict": true,
     "allowSyntheticDefaultImports": true,
@@ -17,6 +17,7 @@
     "downlevelIteration": true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
+    "skipLibCheck": true,
     "lib": ["dom", "es2015", "es2017"],
 
     "baseUrl": "./",
@@ -25,5 +26,5 @@
       "@images/*": ["images/*"]
     }
   },
-  "exclude": ["node_modules", "dist"]
+  "include": ["src"]
 }

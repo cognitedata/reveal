@@ -1,5 +1,3 @@
-
-
 import { Range3 } from "./src/Core/Geometry/Range3";
 
 import { ThreeModule } from "./src/Three/ThreeModule";
@@ -11,10 +9,9 @@ import { BaseRootLoader } from "@/RootLoaders/BaseRootLoader";
 import { RealDataLoader } from "@/RootLoaders/RealDataLoader";
 import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
 
-main();
+main(document.body);
 
-export function main() {
-
+export default function main(elm: HTMLElement) {
   const useRealData = false;
 
   // Create the module and install it it
@@ -25,10 +22,8 @@ export function main() {
   const root = module.createRoot() as RootNode;
 
   let loader: BaseRootLoader;
-  if (useRealData)
-    loader = new RealDataLoader();
-  else
-    loader = new RandomDataLoader();
+  if (useRealData) loader = new RealDataLoader();
+  else loader = new RandomDataLoader();
   loader.load(root);
 
   // Add a render target
@@ -48,21 +43,14 @@ export function main() {
     stats.dom.style.margin = "10px";
     stats.dom.style.position = "absolute";
 
-    document.body.appendChild(target.domElement);
-    document.body.appendChild(stats.dom);
+    elm.appendChild(target.domElement);
+    elm.appendChild(stats.dom);
     target.setActiveInteractive();
   }
   loader.updatedVisible(root);
 
   const target = root.activeTarget as BaseRenderTargetNode;
-  if (target)
-    target.viewAll();
+  if (target) target.viewAll();
 
   loader.startAnimate(root);
 }
-
-
-
-
-
-

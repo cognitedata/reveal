@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 
 import ExpansionView from "../Common/ExpansionView";
 import Form from './Form';
-import { SettingsSectionInterface } from "../../interfaces/settings";
-import { ReduxStore } from "../../interfaces/common";
+import { SettingsSectionInterface } from "@/UserInterface/interfaces/settings";
+import { ReduxStore } from "@/UserInterface/interfaces/common";
 
 // Top level settings component
 export default function Section(props: {

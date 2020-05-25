@@ -1,3 +1,4 @@
+@import url(~react-virtualized/styles.css);
 div:focus {
   outline: none; }
 

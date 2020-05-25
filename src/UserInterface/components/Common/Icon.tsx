@@ -1,5 +1,5 @@
 import React from 'react';
-import getIcon from "../../utils/Icon";
+import getIcon from "@/UserInterface/utils/Icon";
 
 /**
  * Icon component

@@ -1,21 +1,22 @@
 import React from "react";
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select'
+import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
 import { useDispatch, useSelector } from "react-redux";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSortUp } from "@fortawesome/free-solid-svg-icons/faSortUp";
+import { faSortDown } from "@fortawesome/free-solid-svg-icons/faSortDown";
 
 import {
   onInputChange,
   onChangeSettingAvailability
-} from "../../redux/actions/settings"
+} from "@/UserInterface/redux/actions/settings";
 import Icon from "./Icon";
 import CompactColorPicker from "./CompactColorPicker";
-import { SectionElement } from "../../interfaces/settings";
-import Inputs from "../../constants/Inputs";
-import { isNumber } from "../../utils/Settings";
-import { ReduxStore } from "../../interfaces/common";
+import { SectionElement } from "@/UserInterface/interfaces/settings";
+import Inputs from "@/UserInterface/constants/Inputs";
+import { isNumber } from "@/UserInterface/utils/Settings";
+import { ReduxStore } from "@/UserInterface/interfaces/common";
 
 
 const useStyles = makeStyles((theme: Theme) =>

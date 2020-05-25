@@ -1,9 +1,10 @@
 import React, { useState, ReactText } from "react";
-import { AutoSizer, List as VirtualList } from "react-virtualized";
+import { AutoSizer } from "react-virtualized/dist/es/AutoSizer";
+import { List as VirtualList } from "react-virtualized/dist/es/List";
 import IconElement from "./IconElement";
 import { ExpandButton } from "./ExpandButton";
 import { TreeCheckBox } from "./TreeCheckbox";
-import { TreeDataItem } from "../../interfaces/explorer";
+import { TreeDataItem } from "@/UserInterface/interfaces/explorer";
 
 const DEFAULT_ROW_HEIGHT = 26;
 
@@ -23,7 +24,8 @@ export default function VirtualTree(props: {
   function setRef(ref: any) {
     List = ref;
 
-    if (List) { // todo: remove once events fired by tree control are handled by parent explorer
+    if (List) {
+      // todo: remove once events fired by tree control are handled by parent explorer
       List.recomputeRowHeights();
       List.forceUpdate();
     }
@@ -33,7 +35,7 @@ export default function VirtualTree(props: {
     const onExpand = function(event: any) {
       event.stopPropagation();
       item.expanded = !item.expanded; // todo: remove once events fired by tree control are handled by parent explorer
-      List.recomputeRowHeights(); 
+      List.recomputeRowHeights();
       List.forceUpdate();
     };
 

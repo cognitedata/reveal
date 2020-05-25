@@ -6,6 +6,9 @@ import settingsReducer from "./settings";
  * are different reducing functions into a single reducing function
  * that can pass to createStore.
  */
-export default combineReducers({
-  settings: settingsReducer,
+
+const SubsurfaceReducer = combineReducers({
+  settings: settingsReducer
 });
+
+export default SubsurfaceReducer;

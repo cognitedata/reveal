@@ -1,20 +1,21 @@
-import 'reset-css';
+import "reset-css";
+import "./styles/css/index.css";
+import "./styles/css/react-split-pane.css";
 import React from "react";
-import { Provider } from "react-redux";
-import { createStore } from "redux";
-
-import './styles/css/index.css';
-import reducers from "./redux/reducers";
+import SplitPane from "react-split-pane";
+import RightPanel from "./components/Panels/RightPanel";
+import LeftPanel from "./components/Panels/LeftPanel";
 
 /**
  * Root component
  */
-export default ({ initialState = {}, children }:
-  { initialState?: {}, children: JSX.Element }) => {
+export default () => {
   return (
-    <Provider
-      store={createStore(reducers, initialState)}>
-      {children}
-    </Provider>
+    <div className="root-container">
+      <SplitPane split="vertical" defaultSize={1200} primary="second">
+        <LeftPanel />
+        <RightPanel />
+      </SplitPane>
+    </div>
   );
 };
