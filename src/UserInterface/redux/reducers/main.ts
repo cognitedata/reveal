@@ -1,5 +1,10 @@
 import { combineReducers } from "redux";
+import { enableMapSet } from "immer";
 import settingsReducer from "./settings";
+import explorerReducer from "./explorer";
+
+// Enable immer MapSet
+enableMapSet();
 
 /**
  * The combineReducers helper function turns an object whose values
@@ -8,7 +13,8 @@ import settingsReducer from "./settings";
  */
 
 const SubsurfaceReducer = combineReducers({
-  settings: settingsReducer
+  settings: settingsReducer,
+  explorer: explorerReducer,
 });
 
 export default SubsurfaceReducer;

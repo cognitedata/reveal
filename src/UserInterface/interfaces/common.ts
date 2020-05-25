@@ -1,4 +1,5 @@
 import { SettingsStateInterface } from "./settings";
+import { ExplorerStateInterface } from "./explorer";
 
 // TitleBar interface
 export interface TitleBarInterface {
@@ -20,4 +21,5 @@ export type ToolBarType = Array<{
 // Redux Store
 export interface ReduxStore {
   settings: SettingsStateInterface;
+  explorer: ExplorerStateInterface;
 }

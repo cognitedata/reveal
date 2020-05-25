@@ -1,97 +1,91 @@
-import React, { useState } from "react";
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+
 import VirtualTree from "./VirtualTree";
-import PointCloudNode from "@images/Nodes/PointCloudNode.png";
-import PolylinesNode from "@images/Nodes/PolylinesNode.png";
-import SurfaceNode from "@images/Nodes/SurfaceNode.png";
+import { ReduxStore } from "../../interfaces/common"
+import { TreeDataItem, TreeNode } from "@/UserInterface/interfaces/explorer";
+import {
+  onToggleNodeSelect,
+  onToggleNodeExpand,
+  onToggleNodeCheck
+} from "../../redux/actions/explorer";
 
-// hardcoded test data 
-const RANDOM_WORDS = [
-  "abstrusity",
-  "advertisable",
-  "bellwood",
-  "benzole",
-  "boreum",
-  "brenda",
-  "cassiopeian",
-  "chansonnier",
-  "cleric",
-  "conclusional",
-  "conventicle",
-  "copalm",
-  "cornopion"
-];
+// Get a copy of nodes
+function getCopyOfNodes(nodes?: {
+  [key: string]: TreeDataItem
+}): { [key: string]: TreeNode } {
+  const nodesCopy: { [key: string]: TreeNode } = {};
+  if (nodes) {
+    for (const id in nodes) {
+      nodesCopy[id] = { ...nodes[id], children: [] }
+    }
+  }
+  return nodesCopy;
+}
 
+// Generate tree data structure
+function generateTree(nodes?: {
+  [key: string]: TreeDataItem
+}) {
+  const data = [];
+  if (nodes) {
+    const nodesCopy = getCopyOfNodes(nodes);
+    for (const id in nodesCopy) {
+      const node = nodesCopy[id];
+      if (node.parentId) {
+        const parent = nodesCopy[node.parentId];
+        if (parent.children) {
+          parent.children.push(node);
+        } else {
+          parent.children = [node];
+        }
+      } else {
+        data.push(node)
+      }
+    }
+  }
+  return data;
+}
+
+// Renders Tree Controller
 export function Explorer() {
 
-  /** Test data start */ // todo: remove this once redux state is linked 
-  const [icon, setIcon] = useState("points");
-  const [checkType, setCheckType] = useState("normal");
-  const [checkState, setCheckState] = useState("normal");
+  const dispatch = useDispatch();
 
-  const handleIconChange = (event: any) => {
-    setIcon(event.target.value);
-  };
-  const handleCheckTypeChange = (event: any) => {
-    setCheckType(event.target.value);
-  };
-  const handleCheckStateChange = (event: any) => {
-    setCheckState(event.target.value);
+  const explorer = useSelector((state: ReduxStore) => state.explorer);
+  const { nodes } = explorer;
+  const data = generateTree(nodes);
+
+  // Handle Node Check
+  const handleToggleNodeCheck = (
+    uniqueId: string,
+    checkState: boolean) => {
+    dispatch(onToggleNodeCheck({ uniqueId, checkState }))
   };
 
-  let iconImage = PointCloudNode;
-
-  if (icon === "lines") {
-    iconImage = PolylinesNode;
-  } else if (icon === "surface") {
-    iconImage = SurfaceNode;
-  }
-
-  const createRandomizedItem = (depth: number) => {
-    const item: any = {
-      id: "",
-      expanded: false,
-      children: [],
-      name: "",
-      icon: iconImage,
-      iconDescription: "node",
-      selected: false,
-      checked: false,
-      indeterminate: false,
-      isFilter: checkType === "filter" ? true : false,
-      isRadio: false,
-      disabled: checkState === "disabled" ? true : false,
-      visible: true
-    };
-    item.name = RANDOM_WORDS[Math.floor(Math.random() * RANDOM_WORDS.length)];
-    item.id = item.name;
-
-    var numChildren = depth < 3 ? Math.floor(Math.random() * 5) : 0;
-    for (var i = 0; i < numChildren; i++) {
-      item.children.push(createRandomizedItem(depth + 1));
-    }
-
-    item.expanded = numChildren > 0 && Math.random() < 0.25;
-
-    return item;
+  // Handle Node Expand
+  const handleToggleNodeExpand = (
+    uniqueId: string,
+    expandState: boolean) => {
+    dispatch(onToggleNodeExpand({ uniqueId, expandState }));
   };
 
-  const createRandomizedData = () => {
-    var data = [];
-
-    for (var i = 0; i < 100; i++) {
-      data.push(createRandomizedItem(0));
-    }
-
-    return data;
+  // Handle Node Select
+  const handleToggleNodeSelect = (
+    uniqueId: string,
+    selectState: boolean) => {
+    dispatch(onToggleNodeSelect({ uniqueId, selectState }))
   };
 
-  const data = createRandomizedData();
-
-  /** Test data end */ 
 
   return (
     <div className="explorer explorer-container">
-      <VirtualTree data={data} />
+      <VirtualTree
+        data={data}
+        onToggleNodeSelect={handleToggleNodeSelect}
+        onToggleNodeExpand={handleToggleNodeExpand}
+        onToggleNodeCheck={handleToggleNodeCheck}
+      />
     </div>
   );
 }

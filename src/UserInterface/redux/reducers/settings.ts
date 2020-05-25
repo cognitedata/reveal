@@ -1,6 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit";
 
-import {} from "../types/settings";
 import { SettingsStateInterface } from "../../interfaces/settings";
 import { state } from "../../data/settings-dummy-state";
 

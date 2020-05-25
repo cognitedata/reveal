@@ -24,15 +24,14 @@ ul {
 }
 
 .tree-domain-image {
-  width: 1.5em;
-  height: 100%;
-  margin-inline-end: 0.5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .tree-icon {
   height: 100%;
   width: 100%;
-  margin-inline-end: 0.5em;
 }
 
 .tree-icon img {
@@ -44,13 +43,11 @@ ul {
   display: inline-flex;
   align-items: center;
   width: calc(100% - 5.5em);
-  padding: 2px 8px;
-  margin: 0 0.5em;
   border-radius: 8px;
   cursor: pointer;
   height: 100%;
   box-sizing: border-box;
-  font-size: 80%;
+  font-size: 0.7rem;
 }
 
 .tree-item:hover .tree-item-lbl:not(.selected) {
@@ -66,8 +63,8 @@ ul {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#94c4fe', endColorstr='#d3f6fe',GradientType=0 );
   text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.5);
   box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
-  border: 1px solid #9fc8fa;
+  border-radius: 7px;
+  border: 0.5px solid #9fc8fa;
   color: #000;
 }
 

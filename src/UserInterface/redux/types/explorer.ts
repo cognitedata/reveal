@@ -1,1 +1,4 @@
-//Explorere types
+//Explorer action types
+export const ON_TOGGLE_NODE_SELECT = "ON_TOGGLE_NODE_SELECT";
+export const ON_TOGGLE_NODE_EXPAND = "ON_TOGGLE_NODE_EXPAND";
+export const ON_TOGGLE_NODE_CHECK = "ON_TOGGLE_NODE_CHECK";

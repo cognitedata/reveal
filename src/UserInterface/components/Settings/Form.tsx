@@ -26,7 +26,6 @@ export default function Form(props: {
 }) {
   const classes = useStyles();
   const { elementIds, sectionId, subSectionId } = props;
-  console.log(elementIds);
   const settings = useSelector((state: ReduxStore) => state.settings);
   const { elements } = settings;
 
