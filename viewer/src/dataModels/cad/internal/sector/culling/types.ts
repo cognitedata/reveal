@@ -10,6 +10,7 @@ import { CadModelMetadata } from '@/dataModels/cad/public/CadModelMetadata';
 
 export interface DetermineSectorsInput {
   camera: THREE.PerspectiveCamera;
+  clippingPlanes: THREE.Plane[];
   cadModelsMetadata: CadModelMetadata[];
   loadingHints: CadLoadingHints;
 }

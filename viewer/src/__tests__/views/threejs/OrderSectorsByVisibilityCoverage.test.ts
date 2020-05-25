@@ -90,6 +90,20 @@ describe('GpuOrderSectorsByVisibilityCoverage', () => {
     expect(result[0].priority).toBe(1.0);
     expect(result[0].model).toBe(model2);
   });
+
+  test('with clipping plane, removes clipped sectors', () => {
+    // Arrange
+    // Scene has one root with two children
+    const scene = createStubScene([
+      0,
+      [
+        // Split space in two along X axis
+        [1, [], Box3.fromBounds(-1, -1, -1, -0.1, 1, 1)],
+        [2, [], Box3.fromBounds(0.1, -1, -1, 1, 1, 1)]
+      ],
+      Box3.fromBounds(-1, -1, -1, 1, 1, 1)
+    ]);
+  });
 });
 
 function createStubScene(tree: SectorTree): SectorScene {

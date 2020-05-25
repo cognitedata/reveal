@@ -25,9 +25,11 @@ import { filterCurrentWantedSectors } from './sector/filterCurrentWantedSectors'
 import { WantedSector } from './sector/WantedSector';
 import { CachedRepository } from './sector/CachedRepository';
 import { CadLoadingHints } from '@/dataModels/cad/public/CadLoadingHints';
+import { DetermineSectorsInput } from './sector/culling/types';
 
 export class CadModelUpdateHandler {
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
+  private readonly _clippingPlaneSubject: Subject<THREE.Plane[]> = new Subject();
   private readonly _loadingHintsSubject: Subject<CadLoadingHints> = new Subject();
   private readonly _modelSubject: Subject<CadNode> = new Subject();
 
@@ -37,6 +39,7 @@ export class CadModelUpdateHandler {
     const modelsArray: CadNode[] = [];
     this._updateObservable = combineLatest(
       this._cameraSubject.pipe(),
+      this._clippingPlaneSubject.pipe(startWith([])),
       this._loadingHintsSubject.pipe(startWith({} as CadLoadingHints)),
       this._modelSubject.pipe(
         scan((array, next) => {
@@ -46,13 +49,24 @@ export class CadModelUpdateHandler {
       )
     ).pipe(
       auditTime(100),
-      filter(([_camera, loadingHints, cadNodes]) => cadNodes.length > 0 && loadingHints.suspendLoading !== true),
-      flatMap(([camera, loadingHints, cadNodes]) => {
+      filter(
+        ([_camera, _clippingPlanes, loadingHints, cadNodes]) =>
+          cadNodes.length > 0 && loadingHints.suspendLoading !== true
+      ),
+      flatMap(([camera, clippingPlanes, loadingHints, cadNodes]) => {
         return from(cadNodes).pipe(
           filter(cadNode => cadNode.loadingHints.suspendLoading !== true),
           map(cadNode => cadNode.cadModelMetadata),
           toArray(),
-          map(cadModels => sectorCuller.determineSectors({ camera, loadingHints, cadModelsMetadata: cadModels }))
+          map(cadModels => {
+            const input: DetermineSectorsInput = {
+              camera,
+              clippingPlanes,
+              loadingHints,
+              cadModelsMetadata: cadModels
+            };
+            return sectorCuller.determineSectors(input);
+          })
         );
       }),
       // Load sectors from repository
@@ -70,6 +84,10 @@ export class CadModelUpdateHandler {
 
   updateCamera(camera: THREE.PerspectiveCamera) {
     this._cameraSubject.next(camera);
+  }
+
+  updateClipPlanes(clipPlanes: THREE.Plane[]) {
+    this._clippingPlaneSubject.next(clipPlanes);
   }
 
   updateModels(cadModel: CadNode) {

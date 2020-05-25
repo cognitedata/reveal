@@ -146,7 +146,8 @@ export class GpuOrderSectorsByVisibilityCoverage {
     }
   }
 
-  orderSectorsByVisibility(camera: THREE.Camera): PrioritizedSectorIdentifier[] {
+  orderSectorsByVisibility(camera: THREE.Camera, clippingPlanes: THREE.Plane[] = []): PrioritizedSectorIdentifier[] {
+    this.renderer.clippingPlanes = clippingPlanes;
     // 1. Render to offscreen buffer
     this.renderer.render(this.scene, camera);
     if (this.debugRenderer) {

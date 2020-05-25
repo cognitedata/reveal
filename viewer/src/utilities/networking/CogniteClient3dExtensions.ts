@@ -62,6 +62,7 @@ export class CogniteClient3dExtensions
     }
     throw new Error(`Unexpected response ${response.status} (payload: '${response.data})`);
   }
+
   private buildBlobRequestPath(blobId: number): string {
     const url = `/api/playground/projects/${this.client.project}/3d/v2/blobs/${blobId}`;
     return url;
