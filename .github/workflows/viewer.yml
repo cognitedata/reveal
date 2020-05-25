@@ -76,13 +76,14 @@ jobs:
       run: |
         sudo apt-get install xvfb mesa-utils libgl1-mesa-dri libglapi-mesa libosmesa6
         export DISPLAY=:99.0
-        sudo npm install -g codecov
 
     - name: Run coverage tests
       working-directory: viewer
       run: |
         xvfb-run npm run coverage
-        codecov
+      
+    - name: Publish to codecov
+      uses: codecov/codecov-action@v1
 
     - name: Install examples-dependencies
       working-directory: examples
