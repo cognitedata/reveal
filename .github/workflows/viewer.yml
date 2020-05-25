@@ -6,7 +6,7 @@ on:
   push:
     branches: [ master ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, dependency-updates ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -71,11 +71,6 @@ jobs:
       continue-on-error: true
       run: npm run lint
     
-  tests:
-    runs-on: ubuntu-latest
-    needs: viewer
-    steps:
-    - uses: actions/checkout@v2
     - name: Setup tools for coverage tests
       working-directory: viewer
       run: |
@@ -89,15 +84,10 @@ jobs:
         xvfb-run npm run coverage
         codecov
 
-  examples:
-    runs-on: ubuntu-latest
-    needs: viewer
-    steps:
-    - uses: actions/checkout@v2
-    - name: Install dependencies
+    - name: Install examples-dependencies
       working-directory: examples
       run: npm install
-    - name: Build release
+    - name: Build examples
       working-directory: examples
       run: |
         export NODE_OPTIONS=--max-old-space-size=8192 
