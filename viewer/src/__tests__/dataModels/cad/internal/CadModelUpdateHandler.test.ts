@@ -42,14 +42,13 @@ describe('CadModelUpdateHandler', () => {
     jest.advanceTimersByTime(1000);
     expect(mockCuller.determineSectors).toBeCalledTimes(1);
 
-    jest.resetAllMocks();
-    updateHandler.updateLoadingHints({ maxQuadSize: 10 });
-    jest.advanceTimersByTime(1000);
-    expect(mockCuller.determineSectors).toBeCalledTimes(1);
-
-    jest.resetAllMocks();
     updateHandler.updateClipPlanes([new THREE.Plane()]);
     jest.advanceTimersByTime(1000);
-    expect(mockCuller.determineSectors).toBeCalledTimes(1);
+    expect(mockCuller.determineSectors).toBeCalledTimes(2);
+
+    updateHandler.updateLoadingHints({ maxQuadSize: 10 });
+    jest.advanceTimersByTime(1000);
+    expect(mockCuller.determineSectors).toBeCalledTimes(3);
+
   });
 });
