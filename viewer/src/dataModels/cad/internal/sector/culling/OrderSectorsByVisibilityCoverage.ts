@@ -82,7 +82,7 @@ export interface OrderSectorsByVisibilityCoverage {
 export class GpuOrderSectorsByVisibilityCoverage {
   private sectorIdOffset = 0;
   private readonly scene = new THREE.Scene();
-  private readonly renderer: THREE.WebGLRenderer;
+  private readonly _renderer: THREE.WebGLRenderer;
   private debugRenderer?: THREE.WebGLRenderer;
   private readonly renderTarget: THREE.WebGLRenderTarget;
   private readonly containers: Map<string, SectorContainer> = new Map();
@@ -94,21 +94,25 @@ export class GpuOrderSectorsByVisibilityCoverage {
   constructor(options?: OrderSectorsByVisibleCoverageOptions) {
     const context = (options || {}).glContext;
     const renderSize = (options || {}).renderSize || new THREE.Vector2(640, 480);
-    this.renderer = new THREE.WebGLRenderer({
+    this._renderer = new THREE.WebGLRenderer({
       context,
       antialias: false,
       alpha: false,
       precision: 'lowp',
       stencil: false
     });
-    this.renderer.setClearColor('#FFFFFF');
+    this._renderer.setClearColor('#FFFFFF');
     this.renderTarget = new THREE.WebGLRenderTarget(renderSize.width, renderSize.height, {
       generateMipmaps: false,
       type: THREE.UnsignedByteType,
       format: THREE.RGBAFormat,
       stencilBuffer: false
     });
-    this.renderer.setRenderTarget(this.renderTarget);
+    this._renderer.setRenderTarget(this.renderTarget);
+  }
+
+  get renderer(): THREE.WebGLRenderer {
+    return this._renderer;
   }
 
   createDebugCanvas(options?: { width: number; height: number }): HTMLCanvasElement {
@@ -147,9 +151,9 @@ export class GpuOrderSectorsByVisibilityCoverage {
   }
 
   orderSectorsByVisibility(camera: THREE.Camera, clippingPlanes: THREE.Plane[] = []): PrioritizedSectorIdentifier[] {
-    this.renderer.clippingPlanes = clippingPlanes;
+    this._renderer.clippingPlanes = clippingPlanes;
     // 1. Render to offscreen buffer
-    this.renderer.render(this.scene, camera);
+    this._renderer.render(this.scene, camera);
     if (this.debugRenderer) {
       this.debugRenderer.render(this.scene, camera);
     }
@@ -158,7 +162,7 @@ export class GpuOrderSectorsByVisibilityCoverage {
     this.prepareBuffers();
 
     // 3. Read back result from GPU
-    this.renderer.readRenderTargetPixels(
+    this._renderer.readRenderTargetPixels(
       this.renderTarget,
       0,
       0,

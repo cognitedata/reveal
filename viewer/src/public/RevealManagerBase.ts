@@ -28,6 +28,26 @@ export interface RevealOptions {
 export type OnDataUpdated = () => void;
 
 export class RevealManagerBase<TModelIdentifier> implements RenderManager {
+  get needsRedraw(): boolean {
+    return this._cadManager.needsRedraw;
+  }
+
+  public set clippingPlanes(clippingPlanes: THREE.Plane[]) {
+    this._materialManager.clippingPlanes = clippingPlanes;
+  }
+
+  public get clippingPlanes() {
+    return this._materialManager.clippingPlanes;
+  }
+
+  public set clipIntersection(intersection: boolean) {
+    this._materialManager.clipIntersection = intersection;
+  }
+
+  public get clipIntersection() {
+    return this._materialManager.clipIntersection;
+  }
+
   protected readonly _cadManager: CadManager<TModelIdentifier>;
   protected readonly _materialManager: MaterialManager;
 
@@ -42,10 +62,6 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
 
   public resetRedraw(): void {
     this._cadManager.resetRedraw();
-  }
-
-  get needsRedraw(): boolean {
-    return this._cadManager.needsRedraw;
   }
 
   public async addPointCloudFromCdf(modelRevision: string | number): Promise<[PotreeGroupWrapper, PotreeNodeWrapper]> {
@@ -63,22 +79,6 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
 
   public update(camera: THREE.PerspectiveCamera) {
     this._cadManager.updateCamera(camera);
-  }
-
-  public set clippingPlanes(clippingPlanes: THREE.Plane[]) {
-    this._materialManager.clippingPlanes = clippingPlanes;
-  }
-
-  public get clippingPlanes() {
-    return this._materialManager.clippingPlanes;
-  }
-
-  public set clipIntersection(intersection: boolean) {
-    this._materialManager.clipIntersection = intersection;
-  }
-
-  public get clipIntersection() {
-    return this._materialManager.clipIntersection;
   }
 
   // TODO 22-05-2020 j-bjorne: Remove once PointCloudManager is complete.

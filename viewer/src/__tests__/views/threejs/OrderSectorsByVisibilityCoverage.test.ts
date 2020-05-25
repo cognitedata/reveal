@@ -15,7 +15,7 @@ import { Box3 } from '@/utilities/Box3';
 
 import { createSectorMetadata, SectorTree } from '../../testUtils/createSectorMetadata';
 
-describe('GpuOrderSectorsByVisibilityCoverage', () => {
+describe('OrderSectorsByVisibilityCoverage', () => {
   const glContext: WebGLRenderingContext = require('gl')(64, 64);
   const renderSize = new THREE.Vector2(64, 64);
   const identityTransform = createModelTransformation(new THREE.Matrix4().identity());
@@ -91,7 +91,7 @@ describe('GpuOrderSectorsByVisibilityCoverage', () => {
     expect(result[0].model).toBe(model2);
   });
 
-  test('with clipping plane, removes clipped sectors', () => {
+  test('with clipping plane, sets renderer clipping planes', () => {
     // Arrange
     // Scene has one root with two children
     const scene = createStubScene([
@@ -103,6 +103,24 @@ describe('GpuOrderSectorsByVisibilityCoverage', () => {
       ],
       Box3.fromBounds(-1, -1, -1, 1, 1, 1)
     ]);
+    const model = createStubModel('model1', scene, identityTransform);
+    const util = new GpuOrderSectorsByVisibilityCoverage({ glContext, renderSize });
+    util.setModels([model]);
+
+    const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 20.0);
+    camera.position.set(0, 0, -10.0);
+    camera.lookAt(0, 0, 0);
+    camera.updateProjectionMatrix();
+    glContext.clearColor(0, 0, 0, 1);
+
+    // Act
+    const planes = [
+      new THREE.Plane().setFromNormalAndCoplanarPoint(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 0, 0))
+    ];
+    util.orderSectorsByVisibility(camera, planes);
+
+    // Assert
+    expect(util.renderer.clippingPlanes).toBe(planes);
   });
 });
 
