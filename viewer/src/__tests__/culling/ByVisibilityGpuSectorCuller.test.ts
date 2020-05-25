@@ -59,8 +59,8 @@ describe('ByVisibilityGpuSectorCuller', () => {
 
     // Assert
     expect(orderSectorsByVisibilityMock).toBeCalledTimes(1); // Only render scene once
-    const sectors1 = sectors.filter(x => x.scene === model1.scene);
-    const sectors2 = sectors.filter(x => x.scene === model2.scene);
+    const sectors1 = sectors.filter(x => x.blobUrl === model1.blobUrl);
+    const sectors2 = sectors.filter(x => x.blobUrl === model2.blobUrl);
     expect(sectors1).not.toBeEmpty();
     expect(model1.scene.getAllSectors()).toContainAllValues(sectors1.map(x => x.metadata));
     expect(sectors2).not.toBeEmpty();
