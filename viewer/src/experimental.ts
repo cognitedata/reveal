@@ -12,11 +12,12 @@ export { CadNode } from './dataModels/cad/';
 export { ModelNodeAppearance } from './dataModels/cad/';
 
 // CAD
-export { CadModelMetadata } from './dataModels/cad/';
+export { CadModelMetadata, SsaoEffect, SsaoPassType } from './dataModels/cad/';
 export { SectorMetadata, SectorModelTransformation } from './dataModels/cad/sector/types';
 export { CadRenderHints } from './dataModels/cad/rendering/CadRenderHints';
 export { CadLoadingHints } from './dataModels/cad/CadLoadingHints';
 export { intersectCadNodes } from './dataModels/cad/picking';
+
 // Point cloud
 export { PointCloudModel, createPointCloudModel, createLocalPointCloudModel } from './dataModels/point-cloud';
 
