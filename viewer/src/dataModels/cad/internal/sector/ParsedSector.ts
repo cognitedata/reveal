@@ -7,7 +7,7 @@ import { SectorQuads, SectorMetadata, Sector } from './types';
 import { ParseSectorResult, ParseCtmResult } from '@/utilities/workers/types/parser.types';
 
 export interface ParsedSector {
-  cadModelIdentifier: string;
+  blobUrl: string;
   metadata: SectorMetadata;
   data: null | ParseSectorResult | ParseCtmResult | Sector | SectorQuads;
   levelOfDetail: LevelOfDetail;

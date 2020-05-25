@@ -7,7 +7,7 @@ import { LevelOfDetail } from './LevelOfDetail';
 import { SectorMetadata } from './types';
 
 export interface ConsumedSector {
-  cadModelIdentifier: string;
+  blobUrl: string;
   metadata: SectorMetadata;
   levelOfDetail: LevelOfDetail;
   group: THREE.Group | undefined;

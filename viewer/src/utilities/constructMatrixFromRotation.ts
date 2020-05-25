@@ -5,8 +5,9 @@
 import { mat4, quat } from 'gl-matrix';
 
 // Roate +Y to -Z
-export const DefaultSectorRotationMatrix = mat4.fromValues(1, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 1);
-export const DefaultInverseSectorRotationMatrix = mat4.invert(mat4.create(), DefaultSectorRotationMatrix)!;
+// TODO: j-bjorne 15-05-2020: These already exist in fromThreeCameraConfig. Should be defined one place?
+export const fromCdfToThreeJsCoordinates = mat4.fromValues(1, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 1);
+export const fromThreeJsToCdfCoordinates = mat4.invert(mat4.create(), fromCdfToThreeJsCoordinates)!;
 
 export function constructMatrixFromRotation(rotation: [number, number, number] | null): mat4 {
   const matrix = mat4.identity(mat4.create());
@@ -18,5 +19,5 @@ export function constructMatrixFromRotation(rotation: [number, number, number] |
   }
   // TODO 20191018 larsmoa: ThreeJS specific - move to "view".
   // Always rotate Z up to Y up as three.js uses this coordinate system.
-  return mat4.mul(mat4.create(), DefaultSectorRotationMatrix, matrix);
+  return mat4.mul(mat4.create(), fromCdfToThreeJsCoordinates, matrix);
 }

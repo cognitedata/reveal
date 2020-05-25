@@ -6,8 +6,9 @@ import * as THREE from 'three';
 import * as reveal from '@cognite/reveal/experimental';
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
-import { getParamsFromURL } from './utils/example-helpers';
+import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
+import { BoundingBoxClipper } from '@cognite/reveal';
 
 CameraControls.install({ THREE });
 
@@ -22,15 +23,16 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  let modelsNeedUpdate = true;
-  const revealManager = new reveal.RevealManager(client, () => {
-    modelsNeedUpdate = true;
-  });
+  const revealManager: reveal.RevealManager = createRenderManager(
+    modelRevision !== undefined ? 'cdf' : 'local',
+    client
+  );
+
   let model: reveal.CadNode;
-  if (modelUrl) {
-    model = await revealManager.addModelFromUrl(modelUrl);
-  } else if (modelRevision) {
-    model = await revealManager.addModelFromCdf(modelRevision);
+  if (revealManager instanceof reveal.LocalHostRevealManager && modelUrl !== undefined) {
+    model = await revealManager.addModel('cad', modelUrl);
+  } else if (revealManager instanceof reveal.RevealManager && modelRevision !== undefined) {
+    model = await revealManager.addModel('cad', modelRevision);
   } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');
   }
@@ -57,7 +59,7 @@ async function main() {
 
   let planesNeedUpdate = true;
 
-  const boxClipper = new reveal.utilities.BoundingBoxClipper(
+  const boxClipper = new BoundingBoxClipper(
     new THREE.Box3(
       new THREE.Vector3(params.x - params.width / 2, params.y - params.height / 2, params.z - params.depth / 2),
       new THREE.Vector3(params.x + params.width / 2, params.y + params.height / 2, params.z + params.depth / 2)
@@ -88,10 +90,10 @@ async function main() {
       revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || modelsNeedUpdate || planesNeedUpdate) {
+    if (controlsNeedUpdate || revealManager.needsRedraw || planesNeedUpdate) {
       renderer.render(scene, camera);
       planesNeedUpdate = false;
-      modelsNeedUpdate = false;
+      revealManager.resetRedraw();
     }
 
     requestAnimationFrame(render);

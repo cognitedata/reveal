@@ -8,11 +8,10 @@ import { mat4 } from 'gl-matrix';
 import { SectorMetadata, SectorModelTransformation } from '@/dataModels/cad/internal/sector/types';
 import { SectorScene, SectorSceneImpl } from '@/dataModels/cad/internal/sector/SectorScene';
 import { GpuOrderSectorsByVisibilityCoverage } from '@/dataModels/cad/internal/sector/culling/OrderSectorsByVisibilityCoverage';
-import { CadModel } from '@/dataModels/cad/internal';
+import { CadModelMetadata } from '@/dataModels/cad/internal';
 import { traverseDepthFirst } from '@/utilities/traversal';
 import { fromThreeMatrix } from '@/utilities';
 import { Box3 } from '@/utilities/Box3';
-import { ModelDataRetriever } from '@/utilities/networking/ModelDataRetriever';
 
 import { createSectorMetadata, SectorTree } from '../../testUtils/createSectorMetadata';
 
@@ -111,14 +110,9 @@ function createModelTransformation(modelTransform?: THREE.Matrix4): SectorModelT
   };
 }
 
-function createStubModel(identifier: string, scene: SectorScene, modelTransformation: SectorModelTransformation) {
-  const dataRetriever: ModelDataRetriever = {
-    fetchJson: jest.fn(),
-    fetchData: jest.fn()
-  };
-  const cadModel: CadModel = {
-    identifier,
-    dataRetriever,
+function createStubModel(blobUrl: string, scene: SectorScene, modelTransformation: SectorModelTransformation) {
+  const cadModel: CadModelMetadata = {
+    blobUrl,
     modelTransformation,
     scene
   };

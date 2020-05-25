@@ -7,7 +7,6 @@ import * as THREE from 'three';
 import { SectorModelTransformation, SectorMetadata, Sector, SectorQuads } from './sector/types';
 import { SectorScene } from './sector/SectorScene';
 import { CadLoadingHints } from '@/dataModels/cad/public/CadLoadingHints';
-import { CadModel } from '.';
 import { CadRenderHints } from '@/dataModels/cad/public/CadRenderHints';
 import { suggestCameraConfig } from '@/utilities/cameraUtils';
 import { toThreeJsBox3, toThreeVector3, toThreeMatrix4 } from '@/utilities';
@@ -17,6 +16,7 @@ import { ModelNodeAppearance } from './ModelNodeAppearance';
 import { MaterialManager } from './MaterialManager';
 import { LevelOfDetail } from './sector/LevelOfDetail';
 import { ConsumedSector } from './sector/ConsumedSector';
+import { CadModelMetadata } from '../public/CadModelMetadata';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: Sector | SectorQuads }) => void;
 
@@ -38,20 +38,20 @@ export class CadNode extends THREE.Object3D {
   private _loadingHints: CadLoadingHints;
 
   private readonly _rootSector: RootSectorNode;
-  private readonly _cadModel: CadModel;
+  private readonly _cadModelMetadata: CadModelMetadata;
   private readonly _materialManager: MaterialManager;
   private readonly _sectorScene: SectorScene;
   private readonly _previousCameraMatrix = new THREE.Matrix4();
   private readonly _boundingBoxNode: THREE.Object3D;
 
-  constructor(model: CadModel, materialManager: MaterialManager) {
+  constructor(model: CadModelMetadata, materialManager: MaterialManager) {
     super();
     this.type = 'CadNode';
     this.name = 'Sector model';
     this._materialManager = materialManager;
 
     const rootSector = new RootSectorNode(model);
-    this._cadModel = model;
+    this._cadModelMetadata = model;
     const { scene, modelTransformation } = model;
 
     this._sectorScene = scene;
@@ -89,12 +89,12 @@ export class CadNode extends THREE.Object3D {
   }
 
   requestNodeUpdate(treeIndices: number[]) {
-    this._materialManager.updateModelNodes(this._cadModel.identifier, treeIndices);
+    this._materialManager.updateModelNodes(this._cadModelMetadata.blobUrl, treeIndices);
     this.dispatchEvent({ type: 'update' });
   }
 
-  get cadModel() {
-    return this._cadModel;
+  get cadModelMetadata() {
+    return this._cadModelMetadata;
   }
 
   get sectorScene() {

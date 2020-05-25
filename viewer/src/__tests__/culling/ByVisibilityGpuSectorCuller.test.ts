@@ -4,11 +4,9 @@
 import * as THREE from 'three';
 import { mat4 } from 'gl-matrix';
 
-import { ModelDataRetriever } from '@/utilities/networking/ModelDataRetriever';
-
 import { OrderSectorsByVisibilityCoverage } from '@/dataModels/cad/internal/sector/culling/OrderSectorsByVisibilityCoverage';
 import { ByVisibilityGpuSectorCuller } from '@/dataModels/cad/internal/sector/culling/ByVisibilityGpuSectorCuller';
-import { CadModel } from '@/dataModels/cad/internal';
+import { CadModelMetadata } from '@/dataModels/cad/internal';
 import { SectorMetadata } from '@/dataModels/cad/internal/sector/types';
 import { SectorSceneImpl } from '@/dataModels/cad/internal/sector/SectorScene';
 import { LevelOfDetail } from '@/dataModels/cad/internal/sector/LevelOfDetail';
@@ -106,13 +104,11 @@ describe('ByVisibilityGpuSectorCuller', () => {
   });
 });
 
-function createModel(root: SectorMetadata): CadModel {
-  const dataRetriever: ModelDataRetriever = jest.fn() as any;
+function createModel(root: SectorMetadata): CadModelMetadata {
   const scene = SectorSceneImpl.createFromRootSector(8, 1, root);
 
-  const model: CadModel = {
-    identifier: 'test',
-    dataRetriever,
+  const model: CadModelMetadata = {
+    blobUrl: 'test',
     modelTransformation: {
       inverseModelMatrix: mat4.identity(mat4.create()),
       modelMatrix: mat4.identity(mat4.create())
@@ -124,11 +120,11 @@ function createModel(root: SectorMetadata): CadModel {
 
 function createDetermineSectorInput(
   camera: THREE.PerspectiveCamera,
-  models: CadModel | CadModel[]
+  models: CadModelMetadata | CadModelMetadata[]
 ): DetermineSectorsInput {
   const determineSectorsInput: DetermineSectorsInput = {
     camera,
-    cadModels: Array.isArray(models) ? models : [models],
+    cadModelsMetadata: Array.isArray(models) ? models : [models],
     loadingHints: {}
   };
   return determineSectorsInput;

@@ -5,18 +5,17 @@
 import * as THREE from 'three';
 import { CogniteClient } from '@cognite/sdk';
 
-import { toThreeJsBox3, toThreeMatrix4 } from '@/utilities';
-import { CadModel } from '@/dataModels/cad/internal';
 import { CadRenderHints } from '@/dataModels/cad/public/CadRenderHints';
 import { CadLoadingHints } from '@/dataModels/cad/public/CadLoadingHints';
-import { SectorQuads, Sector } from '@/dataModels/cad/internal/sector/types';
-import { CadNode } from '@/dataModels/cad/internal/CadNode';
-import { ModelNodeAppearance } from '@/dataModels/cad/internal/ModelNodeAppearance';
-
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { Color, SupportedModelTypes } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
+import { CadNode } from '@/dataModels/cad/internal/CadNode';
+import { ModelNodeAppearance } from '@/dataModels/cad/internal/ModelNodeAppearance';
+import { toThreeJsBox3, toThreeMatrix4 } from '@/utilities/utilities';
+import { Sector, SectorQuads } from '@/dataModels/cad/internal/sector/types';
+import { CadModelMetadata } from '@/dataModels/cad/public/CadModelMetadata';
 
 export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = SupportedModelTypes.CAD;
@@ -38,7 +37,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
   readonly modelId: number;
   readonly revisionId: number;
-  readonly cadModel: CadModel;
+  readonly cadModel: CadModelMetadata;
   readonly cadNode: CadNode;
   readonly nodeColors: Map<number, [number, number, number, number]>;
   readonly hiddenNodes: Set<number>;
@@ -49,7 +48,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     super();
     this.modelId = modelId;
     this.revisionId = revisionId;
-    this.cadModel = cadNode.cadModel;
+    this.cadModel = cadNode.cadModelMetadata;
     this.client = client;
     this.nodeColors = new Map();
     this.hiddenNodes = new Set();
@@ -62,7 +61,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
         return this.hiddenNodes.has(treeIndex) ? false : true;
       }
     };
-    cadNode.materialManager.updateLocalAppearance(this.cadModel.identifier, nodeAppearance);
+    cadNode.materialManager.updateLocalAppearance(this.cadModel.blobUrl, nodeAppearance);
 
     this.cadNode = cadNode;
 

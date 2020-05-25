@@ -6,7 +6,8 @@ import { LevelOfDetail } from '../LevelOfDetail';
 import { SectorMetadata } from '../types';
 import { traverseUpwards, traverseDepthFirst } from '@/utilities/traversal';
 import { PrioritizedWantedSector, DetermineSectorCostDelegate } from './types';
-import { CadModel } from '../..';
+import { CadModelMetadata } from '@/dataModels/cad/public/CadModelMetadata';
+
 
 export class TakenSectorTree {
   get totalCost(): number {
@@ -40,7 +41,7 @@ export class TakenSectorTree {
     }, 0);
   }
 
-  toWantedSectors(model: CadModel): PrioritizedWantedSector[] {
+  toWantedSectors(model: CadModelMetadata): PrioritizedWantedSector[] {
     return this.sectors
       .map(sector => {
         const wanted: PrioritizedWantedSector = {
@@ -49,8 +50,7 @@ export class TakenSectorTree {
           priority: sector.priority,
 
           // TODO 2020-05-05 larsmoa: Reduce the number of fields here
-          cadModelIdentifier: model.identifier,
-          dataRetriever: model.dataRetriever,
+          blobUrl: model.blobUrl,
           scene: model.scene,
           cadModelTransformation: model.modelTransformation
         };

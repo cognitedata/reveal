@@ -15,5 +15,5 @@ export interface Repository {
   clearSemaphore(): void;
 
   // Remove later:
-  getParsedData(): Observable<{ cadModelIdentifier: string; lod: string; data: Sector | SectorQuads }>;
+  getParsedData(): Observable<{ blobUrl: string; lod: string; data: Sector | SectorQuads }>;
 }
