@@ -17,8 +17,6 @@ export { SectorMetadata, SectorModelTransformation } from './dataModels/cad/inte
 export { CadRenderHints } from './dataModels/cad/public/CadRenderHints';
 export { CadLoadingHints } from './dataModels/cad/public/CadLoadingHints';
 export { intersectCadNodes } from './dataModels/cad/internal/picking';
-// Point cloud
-export { PointCloudModel, createPointCloudModel, createLocalPointCloudModel } from './dataModels/pointCloud';
 
 // Internals
 import * as internal from './internal';

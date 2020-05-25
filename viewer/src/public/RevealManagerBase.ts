@@ -2,18 +2,15 @@
  * Copyright 2020 Cognite AS
  */
 
-import { createLocalPointCloudModel, createPointCloudModel } from '@/dataModels/pointCloud';
-import { CogniteClient, IdEither } from '@cognite/sdk';
+
 import { CadBudget } from '@/dataModels/cad/public/CadBudget';
 import { ModelNodeAppearance } from '@/dataModels/cad/internal/ModelNodeAppearance';
 import { Sector, SectorQuads } from '@/dataModels/cad/internal/sector/types';
 import { MaterialManager } from '@/dataModels/cad/internal/MaterialManager';
-import { PotreeGroupWrapper } from '@/dataModels/pointCloud/internal/PotreeGroupWrapper';
-import { PotreeNodeWrapper } from '@/dataModels/pointCloud/internal/PotreeNodeWrapper';
 import { SectorCuller } from '@/dataModels/cad/internal/sector/culling/SectorCuller';
-import { createThreeJsPointCloudNode } from '@/dataModels/pointCloud/internal/createThreeJsPointCloudNode';
 import { CadManager } from '@/dataModels/cad/internal/CadManager';
 import { RenderManager } from './RenderManager';
+import { PointCloudManager } from '@/dataModels/pointCloud/internal/PointCloudManager';
 
 export interface RevealOptions {
   nodeAppearance?: ModelNodeAppearance;
@@ -28,16 +25,21 @@ export interface RevealOptions {
 export type OnDataUpdated = () => void;
 
 export class RevealManagerBase<TModelIdentifier> implements RenderManager {
+  // CAD
   protected readonly _cadManager: CadManager<TModelIdentifier>;
   protected readonly _materialManager: MaterialManager;
 
-  private _client: CogniteClient;
+  // PointCloud
+  protected readonly _pointCloudManager: PointCloudManager<TModelIdentifier>;
 
-  constructor(client: CogniteClient, cadManager: CadManager<TModelIdentifier>, materialManager: MaterialManager) {
-    // this._budget = (options && options.budget) || createDefaultCadBudget();
-    this._client = client;
+  constructor(
+    cadManager: CadManager<TModelIdentifier>,
+    materialManager: MaterialManager,
+    pointCloudManager: PointCloudManager<TModelIdentifier>
+  ) {
     this._cadManager = cadManager;
     this._materialManager = materialManager;
+    this._pointCloudManager = pointCloudManager;
   }
 
   public resetRedraw(): void {
@@ -45,20 +47,7 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
   }
 
   get needsRedraw(): boolean {
-    return this._cadManager.needsRedraw;
-  }
-
-  public async addPointCloudFromCdf(modelRevision: string | number): Promise<[PotreeGroupWrapper, PotreeNodeWrapper]> {
-    const modelMetadata = await createPointCloudModel(this._client, this.createModelIdentifier(modelRevision));
-    const wrappers = createThreeJsPointCloudNode(modelMetadata);
-
-    return wrappers;
-  }
-
-  public async addPointCloudFromUrl(url: string): Promise<[PotreeGroupWrapper, PotreeNodeWrapper]> {
-    const modelMetadata = await createLocalPointCloudModel(url);
-    const wrappers = createThreeJsPointCloudNode(modelMetadata);
-    return wrappers;
+    return this._cadManager.needsRedraw || this._pointCloudManager.needsRedraw;
   }
 
   public update(camera: THREE.PerspectiveCamera) {
@@ -79,13 +68,5 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
 
   public get clipIntersection() {
     return this._materialManager.clipIntersection;
-  }
-
-  // TODO 22-05-2020 j-bjorne: Remove once PointCloudManager is complete.
-  protected createModelIdentifier(id: string | number): IdEither {
-    if (typeof id === 'number') {
-      return { id };
-    }
-    return { externalId: id };
   }
 }

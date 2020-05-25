@@ -10,6 +10,7 @@ import { CadSectorProvider } from '@/dataModels/cad/internal/sector/CadSectorPro
 import { BlobOutputMetadata, ModelUrlProvider } from './types';
 import { Model3DOutputList } from './Model3DOutputList';
 import { File3dFormat } from '../File3dFormat';
+import { EptSceneProvider } from '@/dataModels/pointCloud/internal/EptSceneProvider';
 
 interface OutputsRequest {
   models: IdEither[];
@@ -20,7 +21,11 @@ interface OutputsRequest {
  * Provides 3D V2 specific extensions for the standard CogniteClient used by Reveal.
  */
 export class CogniteClient3dExtensions
-  implements ModelUrlProvider<{ modelRevision: IdEither; format: File3dFormat }>, CadSceneProvider, CadSectorProvider {
+  implements
+    ModelUrlProvider<{ modelRevision: IdEither; format: File3dFormat }>,
+    CadSceneProvider,
+    CadSectorProvider,
+    EptSceneProvider {
   private readonly client: CogniteClient;
 
   constructor(client: CogniteClient) {
@@ -41,6 +46,12 @@ export class CogniteClient3dExtensions
     const response = await this.client.get(`${blobUrl}/scene.json`);
     return response.data;
   }
+
+  public async getEptScene(blobUrl: string): Promise<any> {
+    const response = await this.client.get(`${blobUrl}/ept.json`);
+    return response.data;
+  }
+
   public async getModelUrl(params: { modelRevision: IdEither; format: File3dFormat }): Promise<string> {
     const outputs = await this.getOutputs(params.modelRevision, [params.format]);
     const blobId = outputs.findMostRecentOutput(params.format)!.blobId;

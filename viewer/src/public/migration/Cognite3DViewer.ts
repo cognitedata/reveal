@@ -34,6 +34,9 @@ import { RevealManagerBase } from '@/public/RevealManagerBase';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { ByVisibilityGpuSectorCuller } from '@/dataModels/cad/internal/sector/culling/ByVisibilityGpuSectorCuller';
+import { PointCloudManager } from '@/dataModels/pointCloud/internal/PointCloudManager';
+import { PointCloudMetadataRepository } from '@/dataModels/pointCloud/internal/PointCloudMetadataRepository';
+import { PointCloudFactory } from '@/dataModels/pointCloud/internal/PointCloudFactory';
 
 export interface RelativeMouseEvent {
   offsetX: number;
@@ -60,6 +63,7 @@ export class Cognite3DViewer {
   private readonly sdkClient: CogniteClient;
   private readonly sectorRepository: CachedRepository;
   private readonly cadManager: CadManager<RequestParams>;
+  private readonly pointCloudManager: PointCloudManager<RequestParams>;
   private readonly revealManager: RevealManagerBase<RequestParams>;
 
   private readonly eventListeners = {
@@ -132,7 +136,14 @@ export class Cognite3DViewer {
     const cadModelUpdateHandler = new CadModelUpdateHandler(this.sectorRepository, sectorCuller);
     this.cadManager = new CadManager<RequestParams>(cadModelRepository, cadModelFactory, cadModelUpdateHandler);
 
-    this.revealManager = new RevealManagerBase(this.sdkClient, this.cadManager, this.materialManager);
+    const pointCloudModelRepository: PointCloudMetadataRepository<RequestParams> = new PointCloudMetadataRepository(
+      cogniteClientExtension,
+      new DefaultCadTransformation()
+    );
+    const pointCloudFactory: PointCloudFactory = new PointCloudFactory();
+    this.pointCloudManager = new PointCloudManager(pointCloudModelRepository, pointCloudFactory);
+    this.scene.add(this.pointCloudManager.pointCloudGroup);
+    this.revealManager = new RevealManagerBase(this.cadManager, this.materialManager, this.pointCloudManager);
     this.startPointerEventListeners();
 
     this.animate(0);
@@ -235,10 +246,13 @@ export class Cognite3DViewer {
       throw new NotSupportedInMigrationWrapperError();
     }
 
-    const [potreeGroup, potreeNode] = await this.revealManager.addPointCloudFromCdf(options.revisionId);
+    const [potreeGroup, potreeNode] = await this.pointCloudManager.addModel({
+      modelRevision: { id: options.revisionId },
+      format: File3dFormat.EptPointCloud
+    });
     const model = new CognitePointCloudModel(options.modelId, options.revisionId, potreeGroup, potreeNode);
     this.models.push(model);
-    this.scene.add(model);
+    // this.scene.add(model);
     return model;
   }
 
