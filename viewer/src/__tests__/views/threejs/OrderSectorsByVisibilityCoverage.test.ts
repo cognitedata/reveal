@@ -5,10 +5,10 @@
 import * as THREE from 'three';
 import { mat4 } from 'gl-matrix';
 
-import { SectorMetadata, SectorModelTransformation } from '@/dataModels/cad/internal/sector/types';
-import { SectorScene, SectorSceneImpl } from '@/dataModels/cad/internal/sector/SectorScene';
-import { GpuOrderSectorsByVisibilityCoverage } from '@/dataModels/cad/internal/sector/culling/OrderSectorsByVisibilityCoverage';
-import { CadModel } from '@/dataModels/cad/internal';
+import { SectorMetadata, SectorModelTransformation } from '@/dataModels/cad/sector/types';
+import { SectorScene, SectorSceneImpl } from '@/dataModels/cad/sector/SectorScene';
+import { GpuOrderSectorsByVisibilityCoverage } from '@/dataModels/cad/sector/culling/OrderSectorsByVisibilityCoverage';
+import { CadModel } from '@/dataModels/cad';
 import { traverseDepthFirst } from '@/utilities/traversal';
 import { fromThreeMatrix } from '@/utilities';
 import { Box3 } from '@/utilities/Box3';

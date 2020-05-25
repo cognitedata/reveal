@@ -12,11 +12,11 @@ import { share, filter } from 'rxjs/operators';
 import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
 import { File3dFormat } from '@/utilities/File3dFormat';
 import { from3DPositionToRelativeViewportCoordinates } from '@/utilities/worldToViewport';
-import { CadSectorParser } from '@/dataModels/cad/internal/sector/CadSectorParser';
-import { SimpleAndDetailedToSector3D } from '@/dataModels/cad/internal/sector/SimpleAndDetailedToSector3D';
-import { CachedRepository } from '@/dataModels/cad/internal/sector/CachedRepository';
-import { MaterialManager } from '@/dataModels/cad/internal/MaterialManager';
-import { intersectCadNodes } from '@/dataModels/cad/internal/picking';
+import { CadSectorParser } from '@/dataModels/cad/sector/CadSectorParser';
+import { SimpleAndDetailedToSector3D } from '@/dataModels/cad/sector/SimpleAndDetailedToSector3D';
+import { CachedRepository } from '@/dataModels/cad/sector/CachedRepository';
+import { MaterialManager } from '@/dataModels/cad/MaterialManager';
+import { intersectCadNodes } from '@/dataModels/cad/picking';
 
 import { Cognite3DViewerOptions, AddModelOptions, SupportedModelTypes } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';

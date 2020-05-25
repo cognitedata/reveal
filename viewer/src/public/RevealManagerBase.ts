@@ -15,40 +15,39 @@ import {
   observeOn,
   scan
 } from 'rxjs/operators';
-import { loadCadModelByUrl, loadCadModelFromCdf, CadModel } from '@/dataModels/cad/internal';
-import { createLocalPointCloudModel, createPointCloudModel, PointCloudModel } from '@/dataModels/pointCloud';
+import { loadCadModelByUrl, loadCadModelFromCdf, CadModel } from '@/dataModels/cad';
+import { createLocalPointCloudModel, createPointCloudModel, PointCloudModel } from '@/dataModels/point-cloud';
 import { CogniteClient, IdEither } from '@cognite/sdk';
-import { distinctUntilLevelOfDetailChanged } from '@/dataModels/cad/internal/sector/distinctUntilLevelOfDetailChanged';
-import { filterCurrentWantedSectors } from '@/dataModels/cad/internal/sector/filterCurrentWantedSectors';
-import { discardSector } from '@/dataModels/cad/internal/sector/discardSector';
-import { CadLoadingHints } from '@/dataModels/cad/public/CadLoadingHints';
-import { CadNode } from '@/dataModels/cad/internal/CadNode';
-import { CadBudget } from '@/dataModels/cad/public/CadBudget';
-import { ConsumedSector } from '@/dataModels/cad/internal/sector/ConsumedSector';
-import { ModelNodeAppearance } from '@/dataModels/cad/internal/ModelNodeAppearance';
-import { Sector, SectorQuads } from '@/dataModels/cad/internal/sector/types';
+import { CadLoadingHints } from '@/dataModels/cad/CadLoadingHints';
+import { CadNode } from '@/dataModels/cad/CadNode';
+import { ModelNodeAppearance } from '@/dataModels/cad/ModelNodeAppearance';
+import { SectorGeometry, ConsumedSector, WantedSector } from '@/dataModels/cad/sector/types';
 import { File3dFormat } from '@/utilities/File3dFormat';
-import { Repository } from '@/dataModels/cad/internal/sector/Repository';
-import { MaterialManager } from '@/dataModels/cad/internal/MaterialManager';
-import { Cad } from '@/dataModels/cad/internal/Cad';
-import { PotreeGroupWrapper } from '@/dataModels/pointCloud/internal/PotreeGroupWrapper';
-import { PotreeNodeWrapper } from '@/dataModels/pointCloud/internal/PotreeNodeWrapper';
-import { PointCloud } from '@/dataModels/pointCloud/internal/PointCloud';
-import { SectorCuller } from '@/dataModels/cad/internal/sector/culling/SectorCuller';
-import { WantedSector } from '@/dataModels/cad/internal/sector/WantedSector';
-import { ByVisibilityGpuSectorCuller } from '@/dataModels/cad/internal/sector/culling/ByVisibilityGpuSectorCuller';
+import { Repository } from '@/dataModels/cad/sector/Repository';
+import { MaterialManager } from '@/dataModels/cad/MaterialManager';
+import { Cad } from '@/dataModels/cad/cad-model-loading/Cad';
+import { PotreeGroupWrapper } from '@/dataModels/point-cloud/internal/PotreeGroupWrapper';
+import { PotreeNodeWrapper } from '@/dataModels/point-cloud/internal/PotreeNodeWrapper';
+import { PointCloud } from '@/dataModels/point-cloud/internal/PointCloud';
+import { SectorCuller } from '@/dataModels/cad/sector/culling/SectorCuller';
+import { ByVisibilityGpuSectorCuller } from '@/dataModels/cad/sector/culling/ByVisibilityGpuSectorCuller';
 import { isCad, isPointCloud } from '@/utilities/dataTypeFilters';
 import { CdfSource } from '@/utilities/networking/CdfSource';
 import { ExternalSource } from '@/utilities/networking/ExternalSource';
 import { PromiseCallbacks } from '@/utilities/PromiseCallbacks';
-import { createThreeJsPointCloudNode } from '@/dataModels/pointCloud/internal/createThreeJsPointCloudNode';
+import { createThreeJsPointCloudNode } from '@/dataModels/point-cloud/internal/createThreeJsPointCloudNode';
+import { SectorQuads } from '@/dataModels/cad/rendering/types';
+import {
+  distinctUntilLevelOfDetailChanged,
+  filterCurrentWantedSectors,
+  discardSector
+} from '@/dataModels/cad/sector/sectorUtilities';
 
 export interface RevealOptions {
   nodeAppearance?: ModelNodeAppearance;
-  budget?: CadBudget;
   // internal options are experimental and may change in the future
   internal?: {
-    parseCallback?: (parsed: { lod: string; data: Sector | SectorQuads }) => void;
+    parseCallback?: (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
     sectorCuller?: SectorCuller;
   };
 }

@@ -6,17 +6,18 @@ import * as THREE from 'three';
 import { CogniteClient } from '@cognite/sdk';
 
 import { toThreeJsBox3, toThreeMatrix4 } from '@/utilities';
-import { CadModel } from '@/dataModels/cad/internal';
-import { CadRenderHints } from '@/dataModels/cad/public/CadRenderHints';
-import { CadLoadingHints } from '@/dataModels/cad/public/CadLoadingHints';
-import { SectorQuads, Sector } from '@/dataModels/cad/internal/sector/types';
-import { CadNode } from '@/dataModels/cad/internal/CadNode';
-import { ModelNodeAppearance } from '@/dataModels/cad/internal/ModelNodeAppearance';
+import { CadModel } from '@/dataModels/cad';
+import { CadRenderHints } from '@/dataModels/cad/rendering/CadRenderHints';
+import { CadLoadingHints } from '@/dataModels/cad/CadLoadingHints';
+import { SectorGeometry } from '@/dataModels/cad/sector/types';
+import { CadNode } from '@/dataModels/cad/CadNode';
+import { ModelNodeAppearance } from '@/dataModels/cad/ModelNodeAppearance';
 
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { Color, SupportedModelTypes } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
+import { SectorQuads } from '@/dataModels/cad/rendering/types';
 
 export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = SupportedModelTypes.CAD;
@@ -90,7 +91,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return this.getBoundingBox();
   }
 
-  updateNodeIdMaps(sector: { lod: string; data: Sector | SectorQuads }) {
+  updateNodeIdMaps(sector: { lod: string; data: SectorGeometry | SectorQuads }) {
     this.nodeIdAndTreeIndexMaps.updateMaps(sector);
   }
 

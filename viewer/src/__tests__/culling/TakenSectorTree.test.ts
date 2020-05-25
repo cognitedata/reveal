@@ -2,11 +2,11 @@
  * Copyright 2020 Cognite AS
  */
 
-import { TakenSectorTree } from '@/dataModels/cad/internal/sector/culling/TakenSectorTree';
-import { SectorMetadata } from '@/dataModels/cad/internal/sector/types';
-import { PrioritizedWantedSector, DetermineSectorCostDelegate } from '@/dataModels/cad/internal/sector/culling/types';
-import { LevelOfDetail } from '@/dataModels/cad/internal/sector/LevelOfDetail';
-import { CadModel } from '@/dataModels/cad/internal';
+import { TakenSectorTree } from '@/dataModels/cad/sector/culling/TakenSectorTree';
+import { SectorMetadata } from '@/dataModels/cad/sector/types';
+import { PrioritizedWantedSector, DetermineSectorCostDelegate } from '@/dataModels/cad/sector/culling/types';
+import { LevelOfDetail } from '@/dataModels/cad/sector/LevelOfDetail';
+import { CadModel } from '@/dataModels/cad';
 import { traverseDepthFirst } from '@/utilities/traversal';
 
 import { expectContainsSectorsWithLevelOfDetail } from '../expects';

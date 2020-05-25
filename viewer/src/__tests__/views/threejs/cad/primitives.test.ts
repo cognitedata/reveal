@@ -2,13 +2,13 @@
  * Copyright 2020 Cognite AS
  */
 
-import { Sector } from '@/dataModels/cad/internal/sector/types';
-import { createPrimitives } from '@/dataModels/cad/internal/rendering/primitives';
+import { SectorGeometry } from '@/dataModels/cad/sector/types';
+import { createPrimitives } from '@/dataModels/cad/rendering/primitives';
 import { createEmptySector } from '../../../models/cad/emptySector';
-import { createMaterials, Materials } from '@/dataModels/cad/internal/rendering/materials';
+import { createMaterials, Materials } from '@/dataModels/cad/rendering/materials';
 import { ParsePrimitiveAttribute } from '@/utilities/workers/types/parser.types';
 import { InstancedBufferGeometry, LOD, Mesh } from 'three';
-import { RenderMode } from '@/dataModels/cad/internal/rendering/RenderMode';
+import { RenderMode } from '@/dataModels/cad/rendering/RenderMode';
 
 function createMockAttributes(): Map<string, ParsePrimitiveAttribute> {
   const map = new Map<string, ParsePrimitiveAttribute>();
@@ -36,7 +36,7 @@ function createMockAttributeBufferFromAttributes(attributes: Map<string, ParsePr
 
 describe('createPrimitives', () => {
   const materials = createMaterials(64, RenderMode.Color, []);
-  let emptySector: Sector;
+  let emptySector: SectorGeometry;
   let mockAttributes: Map<string, ParsePrimitiveAttribute>;
   let mockAttributeBuffer: Uint8Array;
 
@@ -171,7 +171,7 @@ describe('createPrimitives', () => {
 });
 
 function testPrimitiveBase(
-  sector: Sector,
+  sector: SectorGeometry,
   materials: Materials,
   mockAttributes: Map<string, ParsePrimitiveAttribute>,
   expectedNameSubstring: string,

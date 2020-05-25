@@ -144,15 +144,7 @@ export function createRendererDebugWidget(
   loadOverrideGui
     .add(loadOverride, 'maxQuadSize', 0, 0.05, 0.0001)
     .name('Max quad size %')
-    .onFinishChange(() => {
-      const override: reveal.CadLoadingHints = {
-        maxQuadSize: loadOverride.maxQuadSize > 0.0 ? loadOverride.maxQuadSize : undefined
-      };
-      cadNode.loadingHints = {
-        ...cadNode.loadingHints,
-        ...override
-      };
-    });
+    .onFinishChange(() => { });
   loadOverrideGui
     .add(loadOverride, 'quadsFilter')
     .name('Quads (low detail)')
