@@ -7,7 +7,7 @@ import { FetchPointCloudDelegate } from '../internal/delegates';
 import { PointCloudLoader } from '../internal/potree/PointCloudLoader';
 import { EptLoader } from '../internal/potree/EptLoader';
 import { PointCloudModel } from './PointCloudModel';
-import { SectorModelTransformation } from '@/experimental';
+import { SectorModelTransformation } from '@/dataModels/cad/sector/types';
 
 const identity = mat4.identity(mat4.create());
 

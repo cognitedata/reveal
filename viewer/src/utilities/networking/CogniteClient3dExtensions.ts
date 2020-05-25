@@ -43,7 +43,7 @@ export class CogniteClient3dExtensions
   public async getModelUrl(params: { modelRevision: IdEither; format: File3dFormat }): Promise<string> {
     const outputs = await this.getOutputs(params.modelRevision, [params.format]);
     const blobId = outputs.findMostRecentOutput(params.format)!.blobId;
-    return `${this.client.getBaseUrl()}/${this.buildBlobRequestPath(blobId)}`;
+    return `${this.client.getBaseUrl()}${this.buildBlobRequestPath(blobId)}`;
   }
 
   public async getOutputs(modelRevisionId: IdEither, formats?: (File3dFormat | string)[]): Promise<Model3DOutputList> {

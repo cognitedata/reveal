@@ -2,8 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
-import { SectorScene } from '../sector/SectorScene';
 import { parseCadMetadataV8 } from './CadMetadataParserV8';
+import { SectorScene } from '../sector/types';
 
 interface VersionHeader {
   readonly version: number;

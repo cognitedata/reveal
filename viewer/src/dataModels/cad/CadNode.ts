@@ -4,8 +4,7 @@
 
 import * as THREE from 'three';
 
-import { SectorModelTransformation, SectorMetadata, SectorGeometry } from './sector/types';
-import { SectorScene } from './sector/SectorScene';
+import { SectorModelTransformation, SectorMetadata, SectorGeometry, SectorScene } from './sector/types';
 import { SectorQuads } from './rendering/types';
 import { ModelNodeAppearance } from './ModelNodeAppearance';
 import { CadRenderHints } from './rendering/CadRenderHints';
@@ -13,9 +12,9 @@ import { CadLoadingHints } from './CadLoadingHints';
 import { CadModelMetadata } from './CadModelMetadata';
 import { MaterialManager } from './MaterialManager';
 import { RenderMode } from './rendering/RenderMode';
-import { suggestCameraConfig } from '@/internal';
-import { toThreeVector3, toThreeMatrix4, toThreeJsBox3 } from '@/utilities';
+import { toThreeVector3, toThreeMatrix4, toThreeJsBox3 } from '@/utilities/';
 import { RootSectorNode } from './sector/RootSectorNode';
+import { suggestCameraConfig } from '@/utilities/cameraUtils';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 

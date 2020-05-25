@@ -16,7 +16,7 @@ import { CachedRepository } from '@/dataModels/cad/sector/CachedRepository';
 import { CadModelUpdateHandler } from '@/dataModels/cad/CadModelUpdateHandler';
 import { CadManager } from '@/dataModels/cad/CadManager';
 import { LocalUrlClient as LocalHostClient } from '@/utilities/networking/LocalUrlClient';
-import { ModelNodeAppearance, CadNode } from '@/experimental';
+import { ModelNodeAppearance, CadNode } from '@/dataModels/cad';
 
 type LocalModelIdentifier = { fileName: string };
 

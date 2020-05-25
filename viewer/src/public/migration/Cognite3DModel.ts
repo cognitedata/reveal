@@ -11,7 +11,7 @@ import { CogniteModelBase } from './CogniteModelBase';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { toThreeJsBox3, toThreeMatrix4 } from '@/utilities/utilities';
 import { CadRenderHints, CadNode, ModelNodeAppearance } from '@/experimental';
-import { CadLoadingHints } from '@/index';
+import { CadLoadingHints } from '@/dataModels/cad/CadLoadingHints';
 import { CadModelMetadata } from '@/dataModels/cad/CadModelMetadata';
 import { SectorGeometry } from '@/dataModels/cad/sector/types';
 import { SectorQuads } from '@/dataModels/cad/rendering/types';

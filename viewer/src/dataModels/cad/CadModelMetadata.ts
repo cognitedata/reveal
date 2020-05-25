@@ -2,8 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { SectorModelTransformation } from './sector/types';
-import { SectorScene } from './sector/SectorScene';
+import { SectorModelTransformation, SectorScene } from './sector/types';
 
 export interface CadModelMetadata {
   blobUrl: string;

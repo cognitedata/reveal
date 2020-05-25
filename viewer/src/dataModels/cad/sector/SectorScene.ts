@@ -5,54 +5,9 @@
 import * as THREE from 'three';
 import { mat4, vec3 } from 'gl-matrix';
 import { Box3 } from '@/utilities/Box3';
-import { SectorMetadata } from '..';
 import { traverseDepthFirst } from '@/utilities/traversal';
-import { toThreeJsBox3, toThreeMatrix4 } from '@/utilities';
-
-export interface SectorScene {
-  readonly version: number;
-  readonly maxTreeIndex: number;
-  readonly root: SectorMetadata;
-
-  readonly sectorCount: number;
-  getSectorById(sectorId: number): SectorMetadata | undefined;
-  getSectorsContainingPoint(p: vec3): SectorMetadata[];
-  getSectorsIntersectingBox(b: Box3): SectorMetadata[];
-
-  /**
-   * Gets the sectors intersecting the frustum provided from the projection and inverse
-   * camera matrix. Note that this function expects matrices in the the coordinate system
-   * of the metadata. See below how to convert ThreeJS camera matrices to the correct format.
-   *
-   * @example Converting a ThreeJS camera to a frustum
-   * const cameraMatrixWorldInverse = fromThreeMatrix(mat4.create(), camera.matrixWorldInverse);
-   * const cameraProjectionMatrix = fromThreeMatrix(mat4.create(), camera.projectionMatrix);
-   *
-   * const transformedCameraMatrixWorldInverse =
-   *   mat4.multiply(
-   *     transformedCameraMatrixWorldInverse,
-   *     cameraMatrixWorldInverse,
-   *     model.modelTransformation.modelMatrix
-   *   );
-   *
-   * const intersectingSectors = model.scene.getSectorsIntersectingFrustum(
-   *   cameraProjectionMatrix,
-   *   transformedCameraMatrixWorldInverse
-   * );
-   *
-   * @param projectionMatrix
-   * @param inverseCameraModelMatrix
-   */
-  getSectorsIntersectingFrustum(projectionMatrix: mat4, inverseCameraModelMatrix: mat4): SectorMetadata[];
-  getAllSectors(): SectorMetadata[];
-
-  // Available, but not supported:
-  // readonly projectId: number;
-  // readonly modelId: number;
-  // readonly revisionId: number;
-  // readonly subRevisionId: number;
-  // readonly unit: string | null;
-}
+import { toThreeJsBox3, toThreeMatrix4 } from '@/utilities/utilities';
+import { SectorMetadata, SectorScene } from './types';
 
 export class SectorSceneImpl implements SectorScene {
   static createFromRootSector(version: number, maxTreeIndex: number, root: SectorMetadata): SectorScene {

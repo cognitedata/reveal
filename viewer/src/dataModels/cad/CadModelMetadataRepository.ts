@@ -5,10 +5,10 @@
 import { CadModelMetadata } from '@/dataModels/cad/CadModelMetadata';
 import { ModelUrlProvider } from '@/utilities/networking/types';
 import { CadSceneProvider } from './CadSceneProvider';
-import { SectorScene } from './sector/SectorScene';
 import { CadTransformationProvider } from './CadTransformationProvider';
 import { DataRepository } from './DataRepository';
 import { CadMetadataParser } from './parsers/CadMetadataParser';
+import { SectorScene } from './sector/types';
 
 export class CadModelMetadataRepository<TModelIdentifier>
   implements DataRepository<TModelIdentifier, Promise<CadModelMetadata>> {
