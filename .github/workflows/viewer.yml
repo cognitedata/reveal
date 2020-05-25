@@ -10,9 +10,24 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build-viewer:
+  rust:
     runs-on: ubuntu-latest
+    steps:
+    - name: Setup Rust      
+        - rustup component add clippy
+        - rustup component add rustfmt
+    - name: Build
+      run: |
+        # fail on warnings, test all features
+        - cargo fmt -- --check
+        # NOTE: as of 2020-03-17, Rust 1.42, mem_replace_with_default is triggered by a macro in wasm_bindgen
+        # and needs to be disabled
+        - cargo clippy --all-targets --all-features -- -D warnings -A clippy::mem_replace_with_default
+        - cargo test --all --verbose
 
+  viewer:
+    runs-on: ubuntu-latest
+   
     steps:
     - uses: actions/checkout@v2
 
@@ -41,12 +56,23 @@ jobs:
     - name: Install wasm-pack
       uses: jetli/wasm-pack-action@v0.3.0
 
-    - name: Build viewer
+    - name: Install NPM dependencies
       working-directory: viewer
-      run: |
-        npm install
-        npm run build
+      run: npm install
 
+    - name: Build release
+      working-directory: viewer
+      run: npm run release
+
+    - name: Lint
+      working-directory: viewer
+      continue-on-error: true
+      run: npm run lint
+    
+  tests:
+    runs-on: ubuntu-latest
+    needs: viewer
+    steps:
     - name: Setup tools for coverage tests
       working-directory: viewer
       run: |
@@ -59,3 +85,14 @@ jobs:
       run: |
         xvfb-run npm run coverage
         codecov
+
+  examples:
+    runs-on: ubuntu-latest
+    needs: viewer
+    steps:
+      - name: Install dependencies
+        working-directory: examples
+        run: npm install
+      - name: Build release
+        working-directory: examples
+        run: npm run release
