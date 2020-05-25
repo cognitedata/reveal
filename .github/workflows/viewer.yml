@@ -57,5 +57,5 @@ jobs:
     - name: Run coverage tests
       working-directory: viewer
       run: |
-        xvbf-run npm run coverage
+        xvfb-run npm run coverage
         codecov
