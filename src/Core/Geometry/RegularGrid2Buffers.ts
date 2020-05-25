@@ -21,9 +21,9 @@ export class RegularGrid2Buffers extends TrianglesBuffers {
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(grid: RegularGrid2) {
+  public constructor(grid: RegularGrid2, makeUvs:boolean) {
     const [uniqueIndexes, numUniqueIndex] = RegularGrid2Buffers.createUniqueIndexes(grid);
-    super(numUniqueIndex, true);
+    super(numUniqueIndex, makeUvs);
     this.makeBuffers(grid, uniqueIndexes);
     this.makeTriangleIndexes(grid, uniqueIndexes);
   }

@@ -19,6 +19,7 @@ import { Changes } from "@/Core/Views/Changes";
 import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
 
 export class WellLogThreeView extends BaseThreeView {
+  
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -39,6 +40,11 @@ export class WellLogThreeView extends BaseThreeView {
   //==================================================
   // OVERRIDES of BaseView
   //==================================================
+
+  public get /*override*/ isVisible(): boolean {
+    const parent = this.node.getAncestorByType(WellTrajectoryNode);
+    return parent != null && parent.isVisible(this.renderTarget)
+  }
 
   protected /*override*/ updateCore(args: NodeEventArgs): void {
     super.updateCore(args);
@@ -69,5 +75,4 @@ export class WellLogThreeView extends BaseThreeView {
 
     trajectoryView.update(new NodeEventArgs(Changes.filter));
   }
-
 }

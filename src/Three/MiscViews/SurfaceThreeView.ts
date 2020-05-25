@@ -15,7 +15,6 @@ import * as THREE from "three";
 
 import { ColorType } from "@/Core/Enums/ColorType";
 import { Range3 } from "@/Core/Geometry/Range3";
-import { Colors } from "@/Core/Primitives/Colors";
 
 import { SurfaceNode } from "@/Nodes/Misc/SurfaceNode";
 import { SurfaceRenderStyle } from "@/Nodes/Misc/SurfaceRenderStyle";
@@ -81,24 +80,22 @@ export class SurfaceThreeView extends BaseGroupThreeView {
   protected /*override*/ createSolid(): THREE.Object3D | null {
 
     const node = this.node;
-    const style = this.style;
+    const style = this.style.solid;
     const grid = node.data;
     if (!grid)
       return null;
 
-    let color = node.color;
-    if (style.colorType !== ColorType.NodeColor)
-      color = Colors.white; // Must be white because the colors are multiplicative
-
-    const buffers = new RegularGrid2Buffers(grid);
+    const color = node.getColorByColorType(style.colorType);
+    const buffers = new RegularGrid2Buffers(grid, style.colorType == ColorType.DepthColor);
     const geometry = buffers.getBufferGeometry();
-    const material = new THREE.MeshPhongMaterial({ 
-      color: ThreeConverter.toColor(color), 
-      side: THREE.DoubleSide, 
-      shininess: 100,
+
+    const material = new THREE.MeshPhongMaterial({
+      color: ThreeConverter.toColor(color),
+      side: THREE.DoubleSide,
+      shininess: 100 * style.shininess,      
       polygonOffset: true,
-      polygonOffsetFactor: 0,
-      polygonOffsetUnits: 3.0    
+      polygonOffsetFactor: 1,
+      polygonOffsetUnits: 4.0
     });
     //const material = createShader();
 
@@ -114,21 +111,21 @@ export class SurfaceThreeView extends BaseGroupThreeView {
 
   createContours(): THREE.Object3D | null {
     const node = this.node;
-    const style = this.style;
+    const style = this.style.contours;
     const grid = node.data;
     if (!grid)
       return null;
 
+    const color = node.getColorByColorType(style.colorType);
     const service = new ContouringService(style.inc);
 
-   const contours = service.createContoursAsXyzArray(grid);
+    const contours = service.createContoursAsXyzArray(grid);
     if (contours.length == 0)
-       return null;
+      return null;
 
     var geometry = new THREE.BufferGeometry();
-    geometry.addAttribute('position', new  THREE.Float32BufferAttribute(contours, 3));
+    geometry.addAttribute('position', new THREE.Float32BufferAttribute(contours, 3));
 
-    const color = Colors.black;
     const material = new THREE.LineBasicMaterial({ color: ThreeConverter.toColor(color), linewidth: 1 });
     return new THREE.LineSegments(geometry, material);
   }

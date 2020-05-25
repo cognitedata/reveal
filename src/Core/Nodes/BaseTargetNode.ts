@@ -92,16 +92,16 @@ export abstract class BaseTargetNode extends BaseNode implements Target
       view.attach(node, this);
       node.views.add(view);
       this._viewsShownHere.add(view);
-      view.isVisible = true;
+      //view.isVisible = true;
       view.initialize();
     }
-    else if (view.stayAliveIfInvisible)
-    {
-      if (view.isVisible)
-        return false;
-      else
-        view.isVisible = true;
-    }
+    // else if (view.stayAliveIfInvisible)
+    // {
+    //   if (view.isVisible)
+    //     return false;
+    //   else
+    //     view.isVisible = true;
+    // }
     else
       return false;
 
@@ -115,15 +115,15 @@ export abstract class BaseTargetNode extends BaseNode implements Target
     if (!view)
       return false;
 
-    if (view.stayAliveIfInvisible)
-    {
-      if (!view.isVisible)
-        return false;
+    // if (view.stayAliveIfInvisible)
+    // {
+    //   if (!view.isVisible)
+    //     return false;
 
-      view.onHide();
-      view.isVisible = false;
-    }
-    else
+    //   view.onHide();
+    //   view.isVisible = false;
+    // }
+    // else
     {
       this.removeViewShownHere(view);
       node.views.remove(view);
@@ -133,11 +133,14 @@ export abstract class BaseTargetNode extends BaseNode implements Target
 
   public removeViewShownHere(view: BaseView): void
   {
-    if (!view.stayAliveIfInvisible || !view.isVisible)
-    {
+    // if (!view.stayAliveIfInvisible || !view.isVisible)
+    // {
+    //   view.onHide();
+    //   view.isVisible = false;
+    // }
+    if (view.isVisible)
       view.onHide();
-      view.isVisible = false;
-    }
+
     view.dispose();
     this._viewsShownHere.remove(view);
     view.detach();
@@ -164,7 +167,7 @@ export abstract class BaseTargetNode extends BaseNode implements Target
     for (const view of this.viewsShownHere.list)
     {
       view.onHide();
-      view.isVisible = false;
+      //view.isVisible = false;
       view.dispose();
       const node = view.getNode();
       if (node instanceof BaseVisualNode)

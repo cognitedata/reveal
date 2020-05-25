@@ -23,6 +23,7 @@ import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
+import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
 
 export class PointLogThreeView extends BaseGroupThreeView {
   //==================================================
@@ -41,6 +42,11 @@ export class PointLogThreeView extends BaseGroupThreeView {
   //==================================================
   // OVERRIDES of BaseView
   //==================================================
+
+  public get /*override*/ isVisible(): boolean {
+    const parent = this.node.getAncestorByType(WellTrajectoryNode);
+    return parent != null && parent.isVisible(this.renderTarget)
+  }
 
   protected /*override*/ updateCore(args: NodeEventArgs): void {
     super.updateCore(args);

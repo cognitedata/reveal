@@ -11,34 +11,31 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { TargetId } from "@/Core/Primitives/TargetId";
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { ContoursStyle } from "@/Nodes/Misc/ContoursStyle";
-import { SolidStyle } from "@/Nodes/Misc/SolidStyle";
+import { ColorType } from "@/Core/Enums/ColorType";
+import { BaseStyle } from "@/Core/Styles/BaseStyle";
 
-export class SurfaceRenderStyle extends BaseRenderStyle {
+export class SolidStyle extends BaseStyle
+{
   //==================================================
   // INSTANCE FIELDS
   //==================================================
 
-  public solid = new SolidStyle();
-  public contours = new ContoursStyle;
+  public colorType = ColorType.DepthColor;
+  public shininess = 0.5;
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(targetId: TargetId) {
-    super(targetId);
-  }
+  public constructor() { super(); }
 
-  public /*copy constructor*/ clone(): BaseRenderStyle {
-    const style = new SurfaceRenderStyle(this.targetId);
-    style.solid = this.solid.clone();
-    style.contours = this.contours.clone();
+  public /*copy constructor*/ clone(): SolidStyle
+  {
+    const style = new SolidStyle();
+    style.colorType = this.colorType;
+    style.colorType = this.colorType;
     return style;
   }
-
 }
 
 

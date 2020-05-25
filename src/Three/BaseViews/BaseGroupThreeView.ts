@@ -20,8 +20,7 @@ import { Changes } from "@/Core/Views/Changes";
 import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
 import { BoundingBoxKit } from "@/Three/Utilities/BoundingBoxKit";
 
-export abstract class BaseGroupThreeView extends BaseThreeView
-{
+export abstract class BaseGroupThreeView extends BaseThreeView {
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -34,8 +33,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
 
   protected _object3D: THREE.Object3D | null = null;
 
-  protected get object3D(): THREE.Object3D | null 
-  {
+  protected get object3D(): THREE.Object3D | null {
     if (this.mustTouch())
       this.touchPart();
     if (!this._object3D)
@@ -47,57 +45,59 @@ export abstract class BaseGroupThreeView extends BaseThreeView
   // OVERRIDES of BaseView
   //==================================================
 
-  public /*override*/ get stayAliveIfInvisible(): boolean { return true; }
+  //public /*override*/ get stayAliveIfInvisible(): boolean { return true; }
 
-  protected /*override*/ updateCore(args: NodeEventArgs): void
-  {
+  protected /*override*/ updateCore(args: NodeEventArgs): void {
     super.updateCore(args);
-    if (args.isChanged(Changes.geometry) || args.isChanged(Changes.renderStyle))
-    {
-      if (this.isVisible)
-        this.touch();
-      else
-        this._object3D = null;
+    if (args.isChanged(Changes.geometry) || args.isChanged(Changes.renderStyle)) {
+      this.touch();
     }
   }
 
-  protected /*override*/ clearMemoryCore(): void
-  {
+  protected /*override*/ clearMemoryCore(): void {
     if (!this.isVisible)
-      this._object3D = null; // Remove the group from the memory
+      this.touch(); // Remove the group from the memory
   }
 
-  protected /*override*/ onShowCore(): void
-  {
+  protected /*override*/ onShowCore(): void {
     super.onShowCore();
     // Create the group and add it to the scene
     if (this._object3D)
       this._object3D.visible = true;
   }
 
-  protected /*override*/ onHideCore(): void
-  {
+  protected /*override*/ onHideCore(): void {
     if (!this._object3D)
       return;
 
-    if (!this.stayAliveIfInvisible)
-      this.touch();
-    else
-      this._object3D.visible = false;
+    // if (!this.stayAliveIfInvisible)
+    //   this.touch();
+    // else
+    this._object3D.visible = false;
     super.onHideCore();
   }
 
-  public calculateBoundingBoxCore(): Range3 | undefined
-  {
+  public calculateBoundingBoxCore(): Range3 | undefined {
     if (this.object3D === null)
       return undefined;
     return BoundingBoxKit.getBoundingBox(this.object3D);
   }
 
-  public /*override*/ beforeRender(): void
-  {
+  public /*override*/ beforeRender(): void {
     super.beforeRender();
-    const unused = this.object3D; // In order to regenerate it
+
+    if (this.isVisible) {
+      const object = this.object3D; // In order to regenerate it
+      if (object)
+        object.visible = true;
+    }
+    else
+    {
+      if (!this._object3D)
+        return;
+
+      this._object3D.visible = this.isVisible;
+    }
   }
 
   //==================================================
@@ -112,8 +112,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
   // INSTANCE METHODS
   //==================================================
 
-  private makeObject(): void
-  {
+  private makeObject(): void {
     this._object3D = this.createObject3DCore();
     if (!this._object3D)
       return;
@@ -123,8 +122,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
     this.touchBoundingBox();
   }
 
-  private touch(): void
-  {
+  private touch(): void {
     const scene = this.scene;
     if (this._object3D)
       scene.remove(this._object3D);

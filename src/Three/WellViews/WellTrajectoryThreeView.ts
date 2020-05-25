@@ -33,8 +33,6 @@ import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { ThreeLabel } from "@/Three/Utilities/ThreeLabel";
 import { LogRender } from "@/Three/WellViews/LogRender";
 import { TrajectoryBufferGeometry } from "@/Three/WellViews/TrajectoryBufferGeometry";
-import { isInstanceOf } from "@/Core/Primitives/ClassT";
-import { CasingLogNode } from "@/Nodes/Wells/Wells/CasingLogNode";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 
 

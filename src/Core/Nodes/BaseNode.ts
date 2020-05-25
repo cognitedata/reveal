@@ -260,6 +260,20 @@ export abstract class BaseNode extends Identifiable
   public get hasParent(): boolean { return this._parent != null; }
 
   //==================================================
+  // INSTANCE METHODS: Getters
+  //==================================================
+
+   public getColorByColorType(colorType: ColorType) {
+     switch (colorType)
+     {
+      case ColorType.NodeColor: return this.color;
+      case ColorType.Black: return Colors.black;
+      case ColorType.White: return Colors.white;
+      default: return Colors.white; // Must be white because texture colors are multiplicative
+     }
+  }
+
+    //==================================================
   // INSTANCE METHODS: Get a child or children
   //==================================================
 
