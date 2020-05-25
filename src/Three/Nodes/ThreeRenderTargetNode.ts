@@ -26,7 +26,6 @@ import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { ThreeCameraNode } from "@/Three/Nodes/ThreeCameraNode";
 import { TreeOverlay } from "@/Three/Utilities/TreeOverlay";
 import { Ma } from "@/Core/Primitives/Ma";
-import { Vector3 } from "@/Core/Geometry/Vector3";
 
 export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   //==================================================
@@ -75,6 +74,12 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     return cameraNode.controls;
   }
 
+  private get directionalLight(): THREE.DirectionalLight | null {
+    if (!this._scene)
+      return null;
+    return this._scene.getObjectByName("DirectionalLight") as THREE.DirectionalLight;
+  }
+
   private get renderer(): THREE.WebGLRenderer {
 
     if (!this._renderer) {
@@ -115,8 +120,6 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   // OVERRIDES of BaseNode
   //==================================================
 
-  private _light: THREE.DirectionalLight | null = null;
-
   public /*override*/ initializeCore() {
     super.initializeCore();
 
@@ -130,23 +133,21 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     // Add light (TODO: move to TreeLightNode?)
     const scene = this.scene;
     const light = new THREE.DirectionalLight(ThreeConverter.toColor(Colors.white), 0.75);
-    const camera = this.activeCamera;
-    const controls = this.activeControls;
+    light.name = "DirectionalLight";
 
-    ThreeRenderTargetNode.updateLightPosition(camera, controls, light);
-
+    scene.add(light);
+    //camera.add(light);
+    //scene.add(camera);
+    var self = this;
     function lightUpdate() {
-      ThreeRenderTargetNode.updateLightPosition(camera, controls, light);
+      ThreeRenderTargetNode.updateLightPositionStatic(self);
     }
     this.domElement.addEventListener("mousemove", lightUpdate);
     this.domElement.addEventListener("wheel", lightUpdate);
 
-    this._light = light;
-
     var ambientLight = new THREE.AmbientLight(0x404040, 0.25); // soft white light
     scene.add(ambientLight);
-
-    scene.add(light);
+    this.updateLightPosition();
   }
 
   //==================================================
@@ -171,9 +172,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     // controls.setLookAt(boundingBox.x.center, boundingBox.y.center, boundingBox.z.center, 0, 0, 0);
     controls.moveTo(boundingBox.x.center, boundingBox.y.center, boundingBox.z.center);
     controls.update(0);
-
-    if (this._light)
-      ThreeRenderTargetNode.updateLightPosition(this.activeCamera, controls, this._light);
+    this.updateLightPosition();
   }
 
   public /*override*/ get domElement(): HTMLElement { return this.renderer.domElement; }
@@ -188,6 +187,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   //==================================================
 
   private render(): void {
+
     requestAnimationFrame(() => { this.render(); });
 
     if (!this.isInitialized)
@@ -219,10 +219,22 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   // STATIC METHODS
   //==================================================
 
-  static updateLightPosition(camera: THREE.Camera, controls: CameraControls | null, light: THREE.DirectionalLight): void {
+  public updateLightPosition(): void {
 
-    // The idea of this function is letting the light track the camera, 
+    const camera = this.activeCamera
+    if (!camera)
+      return;
+
+      const controls = this.activeControls
     if (!controls)
+      return;
+
+    const light = this.directionalLight
+    if (!light)
+      return;
+      
+    //The idea of this function is letting the light track the camera, 
+    if (!camera || !controls || !light)
       return;
 
     const position = controls.getPosition();
@@ -256,5 +268,9 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     vectorToCenter.add(target)
 
     light.position.copy(vectorToCenter);
+  }
+
+  static updateLightPositionStatic(node: ThreeRenderTargetNode): void {
+    node.updateLightPosition();
   }
 }

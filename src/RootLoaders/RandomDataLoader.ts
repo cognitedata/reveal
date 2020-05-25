@@ -22,6 +22,8 @@ import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
 import { BaseRootLoader } from "@/RootLoaders/BaseRootLoader";
 import { RegularGrid2 } from "@/Core/Geometry/RegularGrid2";
 import { SurfaceNode } from "@/Nodes/Misc/SurfaceNode";
+import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
+import THREE from "three";
 
 export class RandomDataLoader extends BaseRootLoader {
 
@@ -150,15 +152,25 @@ export class RandomDataLoader extends BaseRootLoader {
       if (Random.isTrue(0.05))
         node.toggleVisibleInteractive();
     }
-    if (!Random.isTrue(0.05))
+    if (Random.isTrue(0.05)) {
+      var n = Random.getInt2(0, 4);
+      var i = 0;
+      for (const node of root.getDescendantsByType(SurfaceNode)) {
+        node.setVisibleInteractive(i == n);
+        i++;
+      }
+    }
+    const target = root.activeTarget as ThreeRenderTargetNode;
+    if (!target)
       return;
 
-    var n = Random.getInt2(0, 4);
-    var i = 0;
-    for (const node of root.getDescendantsByType(SurfaceNode)) {
-      node.setVisibleInteractive(i == n);
-      i++;
-    }
+    const controls = target.activeControls;
+    if (!controls)
+      return;
+
+    // controls.rotate(Math.PI * 0.02, 0, true);
+    // controls.update(0);
+    // target.updateLight();
   }
 }
 
