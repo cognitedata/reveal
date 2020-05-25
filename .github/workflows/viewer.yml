@@ -75,6 +75,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: viewer
     steps:
+    - uses: actions/checkout@v2
     - name: Setup tools for coverage tests
       working-directory: viewer
       run: |
@@ -92,11 +93,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: viewer
     steps:
-      - name: Install dependencies
-        working-directory: examples
-        run: npm install
-      - name: Build release
-        working-directory: examples
-        run: |
-          export NODE_OPTIONS=--max-old-space-size=8192 
-          npm run release
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      working-directory: examples
+      run: npm install
+    - name: Build release
+      working-directory: examples
+      run: |
+        export NODE_OPTIONS=--max-old-space-size=8192 
+        npm run release
