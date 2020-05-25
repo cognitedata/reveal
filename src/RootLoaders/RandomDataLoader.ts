@@ -24,6 +24,9 @@ import { RegularGrid2 } from "@/Core/Geometry/RegularGrid2";
 import { SurfaceNode } from "@/Nodes/Misc/SurfaceNode";
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import THREE from "three";
+import { ToggleAxisVisibleCommand } from "@/Three/Commands/ToggleAxisVisibleCommand";
+import { ViewAllCommand } from "@/Three/Commands/ViewAllCommand";
+import { ToggleBgColorCommand } from "@/Three/Commands/ToggleBgColorCommand";
 
 export class RandomDataLoader extends BaseRootLoader {
 
@@ -142,7 +145,28 @@ export class RandomDataLoader extends BaseRootLoader {
 
   private static animate(root: RootNode) {
 
+    const target = root.activeTarget as ThreeRenderTargetNode;
+    if (!target)
+      return;
+
+    // controls.rotate(Math.PI * 0.02, 0, true);
+    // controls.update(0);
+    // target.updateLight();
+
     return;
+
+    if (Random.isTrue(0.05)) {
+      const command = new ToggleAxisVisibleCommand(target);
+      command.invoke();
+    }
+    if (Random.isTrue(0.2)) {
+      const command = new ViewAllCommand(target);
+      command.invoke();
+    }
+    if (Random.isTrue(0.2)) {
+      const command = new ToggleBgColorCommand(target);
+      command.invoke();
+    }
     for (const node of root.wells.getDescendantsByType(WellTrajectoryNode)) {
 
       if (Random.isTrue(0.025))
@@ -160,10 +184,6 @@ export class RandomDataLoader extends BaseRootLoader {
         i++;
       }
     }
-    const target = root.activeTarget as ThreeRenderTargetNode;
-    if (!target)
-      return;
-
     const controls = target.activeControls;
     if (!controls)
       return;

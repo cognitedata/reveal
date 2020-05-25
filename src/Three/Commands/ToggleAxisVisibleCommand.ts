@@ -24,7 +24,7 @@ export class ToggleAxisVisibleCommand extends ThreeRenderTargetCommand {
 
   public /*virtual*/ get isChecked(): boolean { return this.target ? this.target.hasViewOfNodeType(AxisNode) : false; }
 
-  public invokeCore(): boolean {
+  protected invokeCore(): boolean {
     if (!this.target)
       return false;
 

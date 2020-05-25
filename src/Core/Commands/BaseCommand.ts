@@ -28,5 +28,13 @@ export abstract class BaseCommand {
   // VIRTUAL METHODS
   //==================================================
 
-  public abstract invokeCore(): boolean; // Returns true if executed ok
+  protected abstract invokeCore(): boolean; // Returns true if executed ok
+
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
+
+  public invoke(): boolean{
+    return this.invokeCore();
+  }
 }

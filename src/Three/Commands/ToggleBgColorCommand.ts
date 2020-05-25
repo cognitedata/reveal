@@ -23,7 +23,7 @@ export class ToggleBgColorCommand extends ThreeRenderTargetCommand {
 
   public /*virtual*/ get isChecked(): boolean { return this.target ? this.target.isLightBackground : false; }
 
-  public invokeCore(): boolean {
+  protected invokeCore(): boolean {
     if (!this.target)
       return false;
 
