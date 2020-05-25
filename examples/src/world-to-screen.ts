@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import * as reveal from '@cognite/reveal/experimental';
-import { getParamsFromURL } from './utils/example-helpers';
+import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 
 CameraControls.install({ THREE });
@@ -26,11 +26,6 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(canvas);
 
-  let modelsNeedUpdate = true;
-  const revealManager = new reveal.RevealManager(client, () => {
-    modelsNeedUpdate = true;
-  });
-
   const nodeAppearance: reveal.ModelNodeAppearance = {
     color(treeIndex: number) {
       if (treeIndex === pickedNode) {
@@ -39,11 +34,17 @@ async function main() {
       return undefined;
     }
   };
+
+  const revealManager: reveal.RevealManager = createRenderManager(
+    modelRevision !== undefined ? 'cdf' : 'local',
+    client
+  );
+
   let model: reveal.CadNode;
-  if (modelUrl) {
-    model = await revealManager.addModelFromUrl(modelUrl, nodeAppearance);
-  } else if (modelRevision) {
-    model = await revealManager.addModelFromCdf(modelRevision, nodeAppearance);
+  if (revealManager instanceof reveal.LocalHostRevealManager && modelUrl !== undefined) {
+    model = await revealManager.addModel('cad', modelUrl, nodeAppearance);
+  } else if (revealManager instanceof reveal.RevealManager && modelRevision !== undefined) {
+    model = await revealManager.addModel('cad', modelRevision, nodeAppearance);
   } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');
   }
@@ -70,9 +71,10 @@ async function main() {
       revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || modelsNeedUpdate || pickingNeedsUpdate) {
+    if (controlsNeedUpdate || revealManager.needsRedraw || pickingNeedsUpdate) {
       renderer.render(scene, camera);
       htmlOverlayHelper.updatePositions(renderer, camera);
+      revealManager.resetRedraw();
     }
     requestAnimationFrame(render);
   };
@@ -81,6 +83,7 @@ async function main() {
     if (event.button === THREE.MOUSE.RIGHT) {
       return;
     }
+
     const rect = renderer.domElement.getBoundingClientRect();
     const coords = {
       x: ((event.clientX - rect.left) / renderer.domElement.clientWidth) * 2 - 1,

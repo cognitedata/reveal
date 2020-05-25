@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { mat4, vec3 } from 'gl-matrix';
 import { Box3 } from '@/utilities/Box3';
-import { SectorMetadata } from './types';
+import { SectorMetadata } from '..';
 import { traverseDepthFirst } from '@/utilities/traversal';
 import { toThreeJsBox3, toThreeMatrix4 } from '@/utilities';
 

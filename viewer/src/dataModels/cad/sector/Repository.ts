@@ -3,7 +3,7 @@
  */
 
 import { OperatorFunction, Observable } from 'rxjs';
-import { SectorGeometry, ConsumedSector, WantedSector } from './types';
+import { ConsumedSector, WantedSector, SectorGeometry } from './types';
 import { SectorQuads } from '../rendering/types';
 
 // TODO move
@@ -14,5 +14,5 @@ export interface Repository {
   clearSemaphore(): void;
 
   // Remove later:
-  getParsedData(): Observable<{ cadModelIdentifier: string; lod: string; data: SectorGeometry | SectorQuads }>;
+  getParsedData(): Observable<{ blobUrl: string; lod: string; data: SectorGeometry | SectorQuads }>;
 }

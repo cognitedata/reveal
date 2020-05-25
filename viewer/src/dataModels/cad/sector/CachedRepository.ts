@@ -3,6 +3,7 @@
  */
 
 import { Repository } from './Repository';
+import { WantedSector, SectorGeometry, ConsumedSector } from './types';
 import { LevelOfDetail } from './LevelOfDetail';
 import { OperatorFunction, pipe, Observable, from, merge, partition, of, asapScheduler, zip, Subject } from 'rxjs';
 import {
@@ -22,15 +23,14 @@ import {
   distinct,
   catchError
 } from 'rxjs/operators';
-import { ModelDataRetriever } from '@/utilities/networking/ModelDataRetriever';
 import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
+import { CadSectorProvider } from './CadSectorProvider';
 import { MemoryRequestCache } from '@/utilities/cache/MemoryRequestCache';
 import { ParseCtmResult, ParseSectorResult } from '@/utilities/workers/types/parser.types';
-import { SectorGeometry, ConsumedSector, WantedSector, ParsedSector } from './types';
+import { TriangleMesh, InstancedMeshFile, InstancedMesh, SectorQuads } from '../rendering/types';
 import { createOffsetsArray } from '@/utilities/arrayUtils';
 import { RateLimiter } from '@/utilities/RateLimiter';
-import { SectorQuads, InstancedMeshFile, InstancedMesh, TriangleMesh } from '../rendering/types';
 
 // TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
 export class CachedRepository implements Repository {
@@ -40,19 +40,25 @@ export class CachedRepository implements Repository {
   private readonly _ctmFileCache: MemoryRequestCache<string, Observable<ParseCtmResult>> = new MemoryRequestCache({
     maxElementsInCache: 300
   });
+  private readonly _modelSectorProvider: CadSectorProvider;
   private readonly _modelDataParser: CadSectorParser;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
   private readonly _rateLimiter = new RateLimiter(50);
 
   // Adding this to support parse map for migration wrapper. Should be removed later.
   private readonly _parsedDataSubject: Subject<{
-    cadModelIdentifier: string;
+    blobUrl: string;
     sectorId: number;
     lod: string;
     data: SectorGeometry | SectorQuads;
   }> = new Subject();
 
-  constructor(modelDataParser: CadSectorParser, modelDataTransformer: SimpleAndDetailedToSector3D) {
+  constructor(
+    modelSectorProvider: CadSectorProvider,
+    modelDataParser: CadSectorParser,
+    modelDataTransformer: SimpleAndDetailedToSector3D
+  ) {
+    this._modelSectorProvider = modelSectorProvider;
     this._modelDataParser = modelDataParser;
     this._modelDataTransformer = modelDataTransformer;
   }
@@ -127,10 +133,8 @@ export class CachedRepository implements Repository {
     this._modelDataCache.clear();
   }
 
-  getParsedData(): Observable<{ cadModelIdentifier: string; lod: string; data: SectorGeometry | SectorQuads }> {
-    return this._parsedDataSubject.pipe(
-      distinct(keySelector => '' + keySelector.cadModelIdentifier + '.' + keySelector.sectorId)
-    ); // TODO: Should we do replay subject here instead of variable type?
+  getParsedData(): Observable<{ blobUrl: string; lod: string; data: SectorGeometry | SectorQuads }> {
+    return this._parsedDataSubject.pipe(distinct(keySelector => '' + keySelector.blobUrl + '.' + keySelector.sectorId)); // TODO: Should we do replay subject here instead of variable type?
   }
 
   private loadSectorFromNetwork(): OperatorFunction<WantedSector, ConsumedSector> {
@@ -139,25 +143,25 @@ export class CachedRepository implements Repository {
         filter(wantedSector => wantedSector.levelOfDetail === LevelOfDetail.Simple),
         flatMap((wantedSector: WantedSector) => {
           const networkObservable: Observable<ConsumedSector> = from(
-            wantedSector.dataRetriever.fetchData(wantedSector.metadata.facesFile.fileName!)
+            this._modelSectorProvider.getCadSectorFile(wantedSector.blobUrl, wantedSector.metadata.facesFile.fileName!)
           ).pipe(
             retry(3),
             map(arrayBuffer => ({ format: 'f3d', data: new Uint8Array(arrayBuffer) })),
             this._modelDataParser.parse(),
             map(data => {
               this._parsedDataSubject.next({
-                cadModelIdentifier: wantedSector.cadModelIdentifier,
+                blobUrl: wantedSector.blobUrl,
                 sectorId: wantedSector.metadata.id,
                 lod: 'simple',
                 data: data as SectorQuads
               }); // TODO: Remove when migration is gone.
-              return { ...wantedSector, data } as ParsedSector;
+              return { ...wantedSector, data };
             }),
             this._modelDataTransformer.transform(),
             tap(group => {
               group.name = `Quads ${wantedSector.metadata.id}`;
             }),
-            map(group => ({ ...wantedSector, group } as ConsumedSector)),
+            map(group => ({ ...wantedSector, group })),
             shareReplay(1),
             take(1)
           );
@@ -177,7 +181,7 @@ export class CachedRepository implements Repository {
         // tap(e => this.requestSet.add(this.cacheKey(e))),
         flatMap(wantedSector => {
           const i3dFileObservable = of(wantedSector.metadata.indexFile).pipe(
-            flatMap(indexFile => wantedSector.dataRetriever.fetchData(indexFile.fileName)),
+            flatMap(indexFile => this._modelSectorProvider.getCadSectorFile(wantedSector.blobUrl, indexFile.fileName)),
             map(response => ({
               format: 'i3d',
               data: new Uint8Array(response)
@@ -188,8 +192,7 @@ export class CachedRepository implements Repository {
 
           const ctmFilesObservable = from(wantedSector.metadata.indexFile.peripheralFiles).pipe(
             map(fileName => ({
-              identifier: wantedSector.cadModelIdentifier,
-              dataRetriever: wantedSector.dataRetriever,
+              blobUrl: wantedSector.blobUrl,
               fileName
             })),
             this.loadCtmFile(),
@@ -202,15 +205,15 @@ export class CachedRepository implements Repository {
             map(([i3dFile, ctmFiles]) => this.finalizeDetailed(i3dFile as ParseSectorResult, ctmFiles)),
             map(data => {
               this._parsedDataSubject.next({
-                cadModelIdentifier: wantedSector.cadModelIdentifier,
+                blobUrl: wantedSector.blobUrl,
                 sectorId: wantedSector.metadata.id,
                 lod: 'detailed',
                 data
               }); // TODO: Remove when migration is gone.
-              return { ...wantedSector, data } as ParsedSector;
+              return { ...wantedSector, data };
             }),
             this._modelDataTransformer.transform(),
-            map(group => ({ ...wantedSector, group } as ConsumedSector)),
+            map(group => ({ ...wantedSector, group })),
             shareReplay(1),
             take(1)
           );
@@ -230,7 +233,7 @@ export class CachedRepository implements Repository {
   }
 
   private loadCtmFile(): OperatorFunction<
-    { identifier: string; dataRetriever: ModelDataRetriever; fileName: string },
+    { blobUrl: string; fileName: string },
     { fileName: string; data: ParseCtmResult }
   > {
     return publish(ctmRequestObservable => {
@@ -250,13 +253,15 @@ export class CachedRepository implements Repository {
   }
 
   private loadCtmFileFromNetwork(): OperatorFunction<
-    { identifier: string; dataRetriever: ModelDataRetriever; fileName: string },
+    { blobUrl: string; fileName: string },
     { fileName: string; data: ParseCtmResult }
   > {
     return pipe(
       flatMap(
         ctmRequest => {
-          const networkObservable = from(ctmRequest.dataRetriever.fetchData(ctmRequest.fileName)).pipe(
+          const networkObservable = from(
+            this._modelSectorProvider.getCadSectorFile(ctmRequest.blobUrl, ctmRequest.fileName)
+          ).pipe(
             retry(3),
             map(arrayBuffer => ({ format: 'ctm', data: new Uint8Array(arrayBuffer) })),
             this._modelDataParser.parse(),
@@ -296,7 +301,7 @@ export class CachedRepository implements Repository {
         const fileName = `mesh_${fileId}.ctm`;
         const { indices, vertices, normals } = ctmFiles.get(fileName)!; // TODO: j-bjorne 16-04-2020: try catch error???
 
-        const sharedColors = new Float32Array(indices.length * 3);
+        const sharedColors = new Uint8Array(3 * indices.length);
         const sharedTreeIndices = new Float32Array(indices.length);
 
         for (let i = 0; i < meshIndices.length; i++) {
@@ -304,8 +309,7 @@ export class CachedRepository implements Repository {
           const treeIndex = treeIndices[meshIdx];
           const triOffset = offsets[i];
           const triCount = fileTriangleCounts[i];
-          const [r, g, b] = this.readColorToFloat32s(colors, meshIdx);
-
+          const [r, g, b] = [colors[4 * meshIdx + 0], colors[4 * meshIdx + 1], colors[4 * meshIdx + 2]];
           for (let triIdx = triOffset; triIdx < triOffset + triCount; triIdx++) {
             for (let j = 0; j < 3; j++) {
               const vIdx = indices[3 * triIdx + j];
@@ -416,19 +420,11 @@ export class CachedRepository implements Repository {
     return meshesGroupedByFile;
   }
 
-  private readColorToFloat32s(colors: Uint8Array, index: number): [number, number, number, number] {
-    const r = colors[4 * index] / 255;
-    const g = colors[4 * index + 1] / 255;
-    const b = colors[4 * index + 2] / 255;
-    const a = colors[4 * index + 3] / 255;
-    return [r, g, b, a];
-  }
-
   private cacheKey(wantedSector: WantedSector) {
-    return '' + wantedSector.cadModelIdentifier + '.' + wantedSector.metadata.id + '.' + wantedSector.levelOfDetail;
+    return '' + wantedSector.blobUrl + '.' + wantedSector.metadata.id + '.' + wantedSector.levelOfDetail;
   }
 
-  private ctmKey(request: { identifier: string; fileName: string }) {
-    return '' + request.identifier + '.' + request.fileName;
+  private ctmKey(request: { blobUrl: string; fileName: string }) {
+    return '' + request.blobUrl + '.' + request.fileName;
   }
 }

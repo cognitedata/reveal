@@ -7,7 +7,7 @@ import * as Potree from '@cognite/potree-core';
 import { createLocalPointCloudModel } from '@/dataModels/point-cloud/public/createLocalPointCloudModel';
 
 const mockPointCloudLoad = jest.fn();
-jest.mock('../../../../dataModels/point-cloud/internal/potree/PointCloudLoader', () => ({
+jest.mock('@/dataModels/point-cloud/internal/potree/PointCloudLoader', () => ({
   PointCloudLoader: class {
     static async load(url: string) {
       mockPointCloudLoad(url);

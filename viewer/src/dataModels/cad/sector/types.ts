@@ -9,7 +9,6 @@ import { mat4 } from 'gl-matrix';
 import { Box3 } from '@/utilities/Box3';
 import { ParsedPrimitives, ParseSectorResult, ParseCtmResult } from '@/utilities/workers/types/parser.types';
 import { InstancedMeshFile, TriangleMesh, SectorQuads } from '../rendering/types';
-import { ModelDataRetriever } from '@/utilities/networking/ModelDataRetriever';
 import { SectorScene } from './SectorScene';
 
 // TODO 2020-05-14 larsmoa: Move to SectorModelTransformation utilities and rename
@@ -19,22 +18,23 @@ export type SectorModelTransformation = {
 };
 
 export interface ConsumedSector {
-  cadModelIdentifier: string;
+  blobUrl: string;
   metadata: SectorMetadata;
   levelOfDetail: LevelOfDetail;
   group: THREE.Group | undefined;
 }
 
 export interface ParsedSector {
-  cadModelIdentifier: string;
+  blobUrl: string;
   metadata: SectorMetadata;
   data: null | ParseSectorResult | ParseCtmResult | SectorGeometry | SectorQuads;
   levelOfDetail: LevelOfDetail;
 }
 
 export interface WantedSector {
-  cadModelIdentifier: string;
-  dataRetriever: ModelDataRetriever;
+  blobUrl: string;
+  // TODO 2020-05-05 larsmoa: Remove SectorModelTransformation in WantedSector
+  cadModelTransformation: SectorModelTransformation;
   scene: SectorScene;
   levelOfDetail: LevelOfDetail;
   metadata: SectorMetadata;

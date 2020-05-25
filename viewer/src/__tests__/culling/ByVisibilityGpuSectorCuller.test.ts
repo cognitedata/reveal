@@ -4,19 +4,14 @@
 import * as THREE from 'three';
 import { mat4 } from 'gl-matrix';
 
-import { ModelDataRetriever } from '@/utilities/networking/ModelDataRetriever';
-
-import { OrderSectorsByVisibilityCoverage } from '@/dataModels/cad/sector/culling/OrderSectorsByVisibilityCoverage';
-import { ByVisibilityGpuSectorCuller } from '@/dataModels/cad/sector/culling/ByVisibilityGpuSectorCuller';
-import { CadModel } from '@/dataModels/cad';
-import { SectorMetadata } from '@/dataModels/cad/sector/types';
-import { SectorSceneImpl } from '@/dataModels/cad/sector/SectorScene';
-import { LevelOfDetail } from '@/dataModels/cad/sector/LevelOfDetail';
-import { MaterialManager } from '@/dataModels/cad/MaterialManager';
-import { CadNode } from '@/dataModels/cad/CadNode';
-
 import { generateSectorTree } from '../testUtils/createSectorMetadata';
 import { DetermineSectorsInput } from '@/dataModels/cad/sector/culling/types';
+import { MaterialManager } from '@/dataModels/cad/MaterialManager';
+import { OrderSectorsByVisibilityCoverage } from '@/dataModels/cad/sector/culling/OrderSectorsByVisibilityCoverage';
+import { ByVisibilityGpuSectorCuller, LevelOfDetail } from '@/internal';
+import { SectorMetadata, CadNode } from '@/experimental';
+import { SectorSceneImpl } from '@/dataModels/cad/sector/SectorScene';
+import { CadModelMetadata } from '@/dataModels/cad/internal';
 
 type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 
@@ -106,13 +101,11 @@ describe('ByVisibilityGpuSectorCuller', () => {
   });
 });
 
-function createModel(root: SectorMetadata): CadModel {
-  const dataRetriever: ModelDataRetriever = jest.fn() as any;
+function createModel(root: SectorMetadata): CadModelMetadata {
   const scene = SectorSceneImpl.createFromRootSector(8, 1, root);
 
-  const model: CadModel = {
-    identifier: 'test',
-    dataRetriever,
+  const model: CadModelMetadata = {
+    blobUrl: 'test',
     modelTransformation: {
       inverseModelMatrix: mat4.identity(mat4.create()),
       modelMatrix: mat4.identity(mat4.create())
@@ -124,11 +117,11 @@ function createModel(root: SectorMetadata): CadModel {
 
 function createDetermineSectorInput(
   camera: THREE.PerspectiveCamera,
-  models: CadModel | CadModel[]
+  models: CadModelMetadata | CadModelMetadata[]
 ): DetermineSectorsInput {
   const determineSectorsInput: DetermineSectorsInput = {
     camera,
-    cadModels: Array.isArray(models) ? models : [models],
+    cadModelsMetadata: Array.isArray(models) ? models : [models],
     loadingHints: {}
   };
   return determineSectorsInput;

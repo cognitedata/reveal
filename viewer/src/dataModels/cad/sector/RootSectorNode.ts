@@ -4,15 +4,15 @@
 
 import { SectorNode } from './SectorNode';
 import { toThreeMatrix4 } from '@/utilities';
-import { CadModel } from '..';
+import { CadModelMetadata } from '@/dataModels/cad/CadModelMetadata';
 import { SectorMetadata } from './types';
 
 export class RootSectorNode extends SectorNode {
   public readonly sectorNodeMap: Map<number, SectorNode>;
 
-  constructor(model: CadModel) {
+  constructor(modelMetadata: CadModelMetadata) {
     super(0, '/');
-    const { scene, modelTransformation } = model;
+    const { scene, modelTransformation } = modelMetadata;
     this.applyMatrix4(toThreeMatrix4(modelTransformation.modelMatrix));
     this.sectorNodeMap = new Map();
     buildScene(scene.root, this, this.sectorNodeMap);
