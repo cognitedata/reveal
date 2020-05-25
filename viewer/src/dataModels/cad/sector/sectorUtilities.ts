@@ -5,7 +5,7 @@
 import { SectorGeometry, SectorMetadata, WantedSector, ConsumedSector } from './types';
 import { Materials } from '../rendering/materials';
 import { toThreeJsBox3 } from '@/utilities';
-import THREE from 'three';
+import * as THREE from 'three';
 import { createPrimitives } from '../rendering/primitives';
 import { createTriangleMeshes } from '../rendering/triangleMeshes';
 import { createInstancedMeshes } from '../rendering/instancedMeshes';
