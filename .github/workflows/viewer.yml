@@ -21,7 +21,13 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Setup Rust
-      run: rustup component add clippy && rustup component add rustfmt
+      working-directory: viewer
+      run: |
+        rustup component add clippy
+        rustup component add rustfmt
 
     - name: Build viewer
-      run: cd viewer && npm install && npm run build
+      working-directory: viewer
+      run: |
+        npm install
+        npm run build
