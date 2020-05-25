@@ -1,7 +1,8 @@
 /*!
  * Copyright 2020 Cognite AS
  */
-
+// @ts-ignore
+import * as Potree from '@cognite/potree-core';
 import { CogniteClient, IdEither, ItemsResponse } from '@cognite/sdk';
 
 import { CadSceneProvider } from '@/dataModels/cad/internal/CadSceneProvider';
@@ -11,6 +12,7 @@ import { BlobOutputMetadata, ModelUrlProvider } from './types';
 import { Model3DOutputList } from './Model3DOutputList';
 import { File3dFormat } from '../File3dFormat';
 import { EptSceneProvider } from '@/dataModels/pointCloud/internal/EptSceneProvider';
+import { HttpHeadersProvider } from './HttpHeadersProvider';
 
 interface OutputsRequest {
   models: IdEither[];
@@ -23,6 +25,7 @@ interface OutputsRequest {
 export class CogniteClient3dExtensions
   implements
     ModelUrlProvider<{ modelRevision: IdEither; format: File3dFormat }>,
+    HttpHeadersProvider,
     CadSceneProvider,
     CadSectorProvider,
     EptSceneProvider {
@@ -30,6 +33,10 @@ export class CogniteClient3dExtensions
 
   constructor(client: CogniteClient) {
     this.client = client;
+  }
+
+  get headers() {
+    return this.client.getDefaultRequestHeaders();
   }
 
   public async getCadSectorFile(blobUrl: string, fileName: string): Promise<ArrayBuffer> {
@@ -55,7 +62,7 @@ export class CogniteClient3dExtensions
   public async getModelUrl(params: { modelRevision: IdEither; format: File3dFormat }): Promise<string> {
     const outputs = await this.getOutputs(params.modelRevision, [params.format]);
     const blobId = outputs.findMostRecentOutput(params.format)!.blobId;
-    return `${this.client.getBaseUrl()}/${this.buildBlobRequestPath(blobId)}`;
+    return `${this.client.getBaseUrl()}${this.buildBlobRequestPath(blobId)}`;
   }
 
   public async getOutputs(modelRevisionId: IdEither, formats?: (File3dFormat | string)[]): Promise<Model3DOutputList> {

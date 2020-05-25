@@ -2,7 +2,6 @@
  * Copyright 2020 Cognite AS
  */
 
-
 import { CadBudget } from '@/dataModels/cad/public/CadBudget';
 import { ModelNodeAppearance } from '@/dataModels/cad/internal/ModelNodeAppearance';
 import { Sector, SectorQuads } from '@/dataModels/cad/internal/sector/types';

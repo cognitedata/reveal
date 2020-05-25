@@ -53,7 +53,7 @@ async function main() {
   const client = new CogniteClient({ appId: 'reveal.example.side-by-side' });
   client.loginWithOAuth({ project });
 
-  const revealManager1: reveal.RevealManager = createRenderManager(
+  const revealManager1: reveal.RenderManager = createRenderManager(
     modelRevision !== undefined ? 'cdf' : 'local',
     client
   );
@@ -67,7 +67,7 @@ async function main() {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');
   }
 
-  const revealManager2: reveal.RevealManager = createRenderManager(
+  const revealManager2: reveal.RenderManager = createRenderManager(
     modelRevision !== undefined ? 'cdf' : 'local',
     client
   );

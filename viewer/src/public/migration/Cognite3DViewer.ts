@@ -140,9 +140,8 @@ export class Cognite3DViewer {
       cogniteClientExtension,
       new DefaultCadTransformation()
     );
-    const pointCloudFactory: PointCloudFactory = new PointCloudFactory();
+    const pointCloudFactory: PointCloudFactory = new PointCloudFactory(cogniteClientExtension);
     this.pointCloudManager = new PointCloudManager(pointCloudModelRepository, pointCloudFactory);
-    this.scene.add(this.pointCloudManager.pointCloudGroup);
     this.revealManager = new RevealManagerBase(this.cadManager, this.materialManager, this.pointCloudManager);
     this.startPointerEventListeners();
 
@@ -246,13 +245,14 @@ export class Cognite3DViewer {
       throw new NotSupportedInMigrationWrapperError();
     }
 
+    // TODO 25-05-2020 j-bjorne: fix this hot mess, 1 group added multiple times
     const [potreeGroup, potreeNode] = await this.pointCloudManager.addModel({
       modelRevision: { id: options.revisionId },
       format: File3dFormat.EptPointCloud
     });
     const model = new CognitePointCloudModel(options.modelId, options.revisionId, potreeGroup, potreeNode);
     this.models.push(model);
-    // this.scene.add(model);
+    this.scene.add(model);
     return model;
   }
 

@@ -7,11 +7,21 @@ import { CadSectorProvider } from '@/dataModels/cad/internal/sector/CadSectorPro
 import { HttpError } from '@cognite/sdk';
 import { ModelUrlProvider } from './types';
 import { EptSceneProvider } from '@/dataModels/pointCloud/internal/EptSceneProvider';
+import { HttpHeadersProvider } from './HttpHeadersProvider';
 
 export class LocalUrlClient
-  implements ModelUrlProvider<{ fileName: string }>, CadSceneProvider, CadSectorProvider, EptSceneProvider {
+  implements
+    ModelUrlProvider<{ fileName: string }>,
+    CadSceneProvider,
+    CadSectorProvider,
+    HttpHeadersProvider,
+    EptSceneProvider {
   getModelUrl(params: { fileName: string }): Promise<string> {
     return Promise.resolve(`${location.origin}/${params.fileName}`);
+  }
+
+  get headers() {
+    return {};
   }
 
   async getCadSectorFile(blobUrl: string, fileName: string): Promise<ArrayBuffer> {

@@ -52,7 +52,7 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
       cogniteClientExtension,
       new DefaultCadTransformation()
     );
-    const pointCloudFactory: PointCloudFactory = new PointCloudFactory();
+    const pointCloudFactory: PointCloudFactory = new PointCloudFactory(cogniteClientExtension);
     const pointCloudManager: PointCloudManager<CdfModelIdentifier> = new PointCloudManager(
       pointCloudModelRepository,
       pointCloudFactory

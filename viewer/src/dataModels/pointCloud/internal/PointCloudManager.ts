@@ -11,7 +11,8 @@ import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 export class PointCloudManager<TModelIdentifier> {
   private readonly _pointCloudMetadataRepository: PointCloudMetadataRepository<TModelIdentifier>;
   private readonly _pointCloudFactory: PointCloudFactory;
-  private readonly _pointCloudGroupWrapper: PotreeGroupWrapper;
+
+  private _pointCloudGroupWrapper?: PotreeGroupWrapper;
 
   constructor(
     cadModelMetadataRepository: PointCloudMetadataRepository<TModelIdentifier>,
@@ -19,11 +20,6 @@ export class PointCloudManager<TModelIdentifier> {
   ) {
     this._pointCloudMetadataRepository = cadModelMetadataRepository;
     this._pointCloudFactory = cadModelFactory;
-    this._pointCloudGroupWrapper = new PotreeGroupWrapper();
-  }
-
-  get pointCloudGroup(): PotreeGroupWrapper {
-    return this._pointCloudGroupWrapper;
   }
 
   resetRedraw(): void {
@@ -31,7 +27,7 @@ export class PointCloudManager<TModelIdentifier> {
   }
 
   get needsRedraw(): boolean {
-    return this._pointCloudGroupWrapper.needsRedraw;
+    return this._pointCloudGroupWrapper ? this._pointCloudGroupWrapper.needsRedraw : false;
   }
 
   updateCamera(_camera: THREE.PerspectiveCamera) {}
@@ -39,6 +35,9 @@ export class PointCloudManager<TModelIdentifier> {
   async addModel(modelIdentifier: TModelIdentifier): Promise<[PotreeGroupWrapper, PotreeNodeWrapper]> {
     const metadata = await this._pointCloudMetadataRepository.loadData(modelIdentifier);
     const model = this._pointCloudFactory.createModel(metadata);
+    if (!this._pointCloudGroupWrapper) {
+      this._pointCloudGroupWrapper = new PotreeGroupWrapper();
+    }
     this._pointCloudGroupWrapper.addPointCloud(model);
     return [this._pointCloudGroupWrapper, model];
   }

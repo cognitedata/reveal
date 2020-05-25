@@ -52,7 +52,7 @@ export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifi
       localClient,
       new DefaultCadTransformation()
     );
-    const pointCloudFactory: PointCloudFactory = new PointCloudFactory();
+    const pointCloudFactory: PointCloudFactory = new PointCloudFactory(localClient);
     const pointCloudManager: PointCloudManager<LocalModelIdentifier> = new PointCloudManager(
       pointCloudModelRepository,
       pointCloudFactory
