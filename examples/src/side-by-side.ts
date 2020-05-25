@@ -62,15 +62,11 @@ async function main() {
     }
   });
   const sectorCuller2 = new OverrideSectorCuller();
-  const revealManager2: reveal.RevealManager = createRenderManager(
-    modelRevision !== undefined ? 'cdf' : 'local',
-    client,
-    {
-      internal: {
-        sectorCuller: sectorCuller2
-      }
+  const revealManager2: RevealManager = createRenderManager(modelRevision !== undefined ? 'cdf' : 'local', client, {
+    internal: {
+      sectorCuller: sectorCuller2
     }
-  );
+  });
 
   let model1: CadNode;
   if (revealManager1 instanceof LocalHostRevealManager && modelUrl !== undefined) {
