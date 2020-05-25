@@ -58,3 +58,4 @@ jobs:
       working-directory: viewer
       run: |
         npm run coverage
+        codecov
