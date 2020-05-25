@@ -9,9 +9,8 @@ import { DetermineSectorsInput } from '@/dataModels/cad/sector/culling/types';
 import { MaterialManager } from '@/dataModels/cad/MaterialManager';
 import { OrderSectorsByVisibilityCoverage } from '@/dataModels/cad/sector/culling/OrderSectorsByVisibilityCoverage';
 import { ByVisibilityGpuSectorCuller, LevelOfDetail } from '@/internal';
-import { SectorMetadata, CadNode } from '@/experimental';
+import { SectorMetadata, CadNode, CadModelMetadata } from '@/experimental';
 import { SectorSceneImpl } from '@/dataModels/cad/sector/SectorScene';
-import { CadModelMetadata } from '@/dataModels/cad/internal';
 
 type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 

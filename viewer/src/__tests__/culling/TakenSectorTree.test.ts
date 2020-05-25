@@ -7,8 +7,7 @@ import { generateSectorTree } from '../testUtils/createSectorMetadata';
 import { DetermineSectorCostDelegate, PrioritizedWantedSector } from '@/dataModels/cad/sector/culling/types';
 import { TakenSectorTree } from '@/dataModels/cad/sector/culling/TakenSectorTree';
 import { LevelOfDetail, traverseDepthFirst } from '@/internal';
-import { SectorMetadata } from '@/experimental';
-import { CadModelMetadata } from '@/dataModels/cad/internal';
+import { SectorMetadata, CadModelMetadata } from '@/experimental';
 
 type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 type Mutable<T> = { -readonly [P in keyof T]: T[P] };
