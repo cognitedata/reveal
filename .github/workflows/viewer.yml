@@ -13,7 +13,8 @@ jobs:
   rust:
     runs-on: ubuntu-latest
     steps:
-    - name: Setup Rust      
+    - name: Setup Rust
+      run: |
         - rustup component add clippy
         - rustup component add rustfmt
     - name: Build
@@ -95,4 +96,6 @@ jobs:
         run: npm install
       - name: Build release
         working-directory: examples
-        run: npm run release
+        run: |
+          export NODE_OPTIONS=--max-old-space-size=8192 
+          npm run release
