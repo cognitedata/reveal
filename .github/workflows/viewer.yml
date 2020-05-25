@@ -10,15 +10,27 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  build-viewer:
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
+
+    - name: Cache cargo registry
+      uses: actions/cache@v1
+      with:
+        path: ~/.cargo/registry
+        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+    - name: Cache cargo index
+      uses: actions/cache@v1
+      with:
+        path: ~/.cargo/git
+        key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+    - name: Cache cargo build
+      uses: actions/cache@v1
+      with:
+        path: target
+        key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Setup Rust
       working-directory: viewer
@@ -35,3 +47,14 @@ jobs:
         npm install
         npm run build
 
+    - name: Setup tools for coverage tests
+      working-directory: viewer
+      run: |
+        sudo apt-get install xvfb mesa-utils libgl1-mesa-dri libglapi-mesa libosmesa6
+        export DISPLAY=:99.0; sh -e /etc/init.d/xvfb start
+        npm install -g codecov
+
+    - name: Run coverage tests
+      working-directory: viewer
+      run: |
+        npm run coverage
