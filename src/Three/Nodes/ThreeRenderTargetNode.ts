@@ -126,10 +126,6 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     this.addCameraNode(new ThreeCameraNode(), true);
     this.render();
 
-    // Set background
-    const hasAxis = this.hasViewOfNodeType(AxisNode);
-    this.scene.background = ThreeConverter.toColor(this.getBgColor(hasAxis));
-
     // Add light (TODO: move to TreeLightNode?)
     const scene = this.scene;
     const light = new THREE.DirectionalLight(ThreeConverter.toColor(Colors.white), 0.75);
@@ -201,7 +197,10 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     }
     if (this.isInvalidated || needsUpdate) {
       this.stats.begin();
-
+      
+      const hasAxis = this.hasViewOfNodeType(AxisNode);
+      this.scene.background = ThreeConverter.toColor(this.getBgColor(hasAxis));
+  
       for (const view of this.viewsShownHere.list)
         view.beforeRender();
 

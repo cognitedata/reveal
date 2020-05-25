@@ -18,7 +18,7 @@ export class ViewAllCommand extends ThreeRenderTargetCommand {
 
   public get name(): string { return "View all" }
   
-  public invokeCore(): boolean {
+  protected invokeCore(): boolean {
     if (!this.target)
       return false;
 
