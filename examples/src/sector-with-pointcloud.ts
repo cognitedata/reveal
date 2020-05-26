@@ -46,7 +46,7 @@ async function main() {
 
   Potree.XHRFactory.config.customHeaders.push({ header: 'MyDummyHeader', value: 'MyDummyValue' });
 
-  const revealManager: reveal.RevealManager = createRenderManager(
+  const revealManager: reveal.RenderManager = createRenderManager(
     modelRevision !== undefined ? 'cdf' : 'local',
     client
   );
@@ -55,6 +55,7 @@ async function main() {
   if (revealManager instanceof reveal.LocalHostRevealManager && modelUrl !== undefined) {
     model = await revealManager.addModel('cad', modelUrl);
   } else if (revealManager instanceof reveal.RevealManager && modelRevision !== undefined) {
+    await client.authenticate();
     model = await revealManager.addModel('cad', modelRevision);
   } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');

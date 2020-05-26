@@ -3,7 +3,7 @@
  */
 
 import { RevealManagerBase, RevealOptions } from './RevealManagerBase';
-import { CogniteClient } from '@cognite/sdk';
+
 import { CadSectorParser } from '@/dataModels/cad/sector/CadSectorParser';
 import { MaterialManager } from '@/dataModels/cad/MaterialManager';
 import { SimpleAndDetailedToSector3D } from '@/dataModels/cad/sector/SimpleAndDetailedToSector3D';
@@ -17,11 +17,14 @@ import { CadModelUpdateHandler } from '@/dataModels/cad/CadModelUpdateHandler';
 import { CadManager } from '@/dataModels/cad/CadManager';
 import { LocalUrlClient as LocalHostClient } from '@/utilities/networking/LocalUrlClient';
 import { ModelNodeAppearance, CadNode } from '@/dataModels/cad';
+import { PointCloudMetadataRepository } from '@/dataModels/pointCloud/internal/PointCloudMetadataRepository';
+import { PointCloudFactory } from '@/dataModels/pointCloud/internal/PointCloudFactory';
+import { PointCloudManager } from '@/dataModels/pointCloud/internal/PointCloudManager';
 
 type LocalModelIdentifier = { fileName: string };
 
 export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifier> {
-  constructor(client: CogniteClient, options?: RevealOptions) {
+  constructor(options?: RevealOptions) {
     const modelDataParser: CadSectorParser = new CadSectorParser();
     const materialManager: MaterialManager = new MaterialManager();
     const modelDataTransformer = new SimpleAndDetailedToSector3D(materialManager);
@@ -42,7 +45,17 @@ export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifi
       cadModelFactory,
       cadModelUpdateHandler
     );
-    super(client, cadManager, materialManager);
+
+    const pointCloudModelRepository: PointCloudMetadataRepository<LocalModelIdentifier> = new PointCloudMetadataRepository(
+      localClient,
+      new DefaultCadTransformation()
+    );
+    const pointCloudFactory: PointCloudFactory = new PointCloudFactory(localClient);
+    const pointCloudManager: PointCloudManager<LocalModelIdentifier> = new PointCloudManager(
+      pointCloudModelRepository,
+      pointCloudFactory
+    );
+    super(cadManager, materialManager, pointCloudManager);
   }
 
   public addModel(type: 'cad', fileName: string, modelNodeAppearance?: ModelNodeAppearance): Promise<CadNode>;
@@ -56,7 +69,7 @@ export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifi
       case 'cad':
         return this._cadManager.addModel({ fileName }, modelNodeAppearance);
       case 'pointcloud':
-        throw new Error('Not yet implemented');
+        return this._pointCloudManager.addModel({ fileName });
       default:
         throw new Error(`case: ${type} not handled`);
     }
