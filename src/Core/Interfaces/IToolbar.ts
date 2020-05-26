@@ -11,15 +11,14 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { BaseView } from "@/Core/Views/BaseView";
-import { TargetIdAccessor } from "@/Core/Interfaces/TargetIdAccessor";
+import { BaseCommand } from "@/Core/Commands/BaseCommand";
 
-export interface Target extends TargetIdAccessor
+export interface IToolbar
 {
-  canShowView(node: BaseNode): boolean;
-  isVisibleView(node: BaseNode): boolean;
-  showView(node: BaseNode): boolean;
-  hideView(node: BaseNode): boolean;
-  removeViewShownHere(view: BaseView): void;
+  add(command: BaseCommand) : void;
+
+  // These methods are ment to be used to create option menu. The selected should be visible in the toolbar
+  beginOptionMenu() : void;
+  addOptionMenu(command: BaseCommand) : void;
+  endOptionMenu() : void;
 }

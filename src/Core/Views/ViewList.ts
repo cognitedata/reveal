@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import { BaseView } from "@/Core/Views/BaseView";
-import { TargetIdAccessor } from "@/Core/Interfaces/TargetIdAccessor";
+import { TargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
 
 export class ViewList
 {

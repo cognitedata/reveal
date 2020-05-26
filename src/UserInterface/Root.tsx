@@ -38,11 +38,11 @@ export default () => {
   }, [root.childCount]);
 
   // Initialy show all nodes
-  useEffect(() => {
-    if (explorer.nodes) {
-      dispatch(viewAllNodes({ root }));
-    }
-  }, [explorer.nodes && Object.keys(explorer.nodes).length]);
+  // useEffect(() => {
+  //   if (explorer.nodes) {
+  //     dispatch(viewAllNodes({ root }));
+  //   }
+  // }, [explorer.nodes && Object.keys(explorer.nodes).length]);
 
   return (
     <div className="root-container">

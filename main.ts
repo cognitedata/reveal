@@ -7,7 +7,6 @@ import { RootNode } from "./src/Nodes/TreeNodes/RootNode";
 import { RandomDataLoader } from "./src/RootLoaders/RandomDataLoader";
 import { BaseRootLoader } from "./src/RootLoaders/BaseRootLoader";
 import { RealDataLoader } from "./src/RootLoaders/RealDataLoader";
-import { BaseRenderTargetNode } from "./src/Core/Nodes/BaseRenderTargetNode";
 
 main(document.body);
 
@@ -49,7 +48,7 @@ export default function main(elm: HTMLElement) {
   }
   loader.updatedVisible(root);
 
-  const target = root.activeTarget as BaseRenderTargetNode;
+  const target = root.activeTarget as ThreeRenderTargetNode;
   if (target)
     target.viewAll();
 

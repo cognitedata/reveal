@@ -105,7 +105,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
   public viewAll(): void 
   {
     const boundingBox = this.getBoundingBoxFromViews();
-    if (boundingBox)
+    if (!boundingBox.isEmpty)
       this.viewRange(boundingBox);
   }
 

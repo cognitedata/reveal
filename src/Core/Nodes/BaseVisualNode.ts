@@ -14,7 +14,7 @@
 import { ViewList } from "@/Core/Views/ViewList";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { BaseNode, cocatinate } from "@/Core/Nodes/BaseNode";
-import { Target } from "@/Core/Interfaces/Target";
+import { ITarget } from "@/Core/Interfaces/ITarget";
 import { Changes } from "@/Core/Views/Changes";
 import { CheckBoxState } from "@/Core/Enums/CheckBoxState";
 
@@ -49,7 +49,7 @@ export abstract class BaseVisualNode extends BaseNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ getCheckBoxState(target?: Target | null): CheckBoxState
+  public /*override*/ getCheckBoxState(target?: ITarget | null): CheckBoxState
   {
     if (!target)
       target = this.activeTarget;
@@ -66,7 +66,7 @@ export abstract class BaseVisualNode extends BaseNode
     return CheckBoxState.Never;
   }
 
-  public /*override*/setVisibleInteractive(visible: boolean, target?: Target | null): void
+  public /*override*/setVisibleInteractive(visible: boolean, target?: ITarget | null): void
   {
     if (!target)
       target = this.activeTarget;
@@ -94,21 +94,21 @@ export abstract class BaseVisualNode extends BaseNode
   // INSTANCE METHODS: Visibility and notifying
   //==================================================
 
-  public canBeVisible(target?: Target | null): boolean
+  public canBeVisible(target?: ITarget | null): boolean
   {
     if (!target)
       target = this.activeTarget;
     return target ? target.canShowView(this) : false;
   }
 
-  public isVisible(target?: Target | null): boolean
+  public isVisible(target?: ITarget | null): boolean
   {
     if (!target)
       target = this.activeTarget;
     return target ? target.isVisibleView(this) : false;
   }
 
-  public setVisible(visible: boolean, target?: Target | null): boolean
+  public setVisible(visible: boolean, target?: ITarget | null): boolean
   {
     // Returns true if changed.
     if (!target)
@@ -124,7 +124,7 @@ export abstract class BaseVisualNode extends BaseNode
   {
     for (const view of this.views.list)
     {
-      const target = view.getTarget() as Target;
+      const target = view.getTarget() as ITarget;
       if (!target)
         continue;
 

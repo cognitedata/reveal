@@ -1,8 +1,8 @@
 import { BaseNode } from "@/Core/Nodes//BaseNode";
 import { CheckBoxState } from "@/Core/Enums/CheckBoxState";
-import { Target } from "@/Core/Interfaces/Target";
+import { ITarget } from "@/Core/Interfaces/ITarget";
 
-function getCheckBoxImage(node: BaseNode, target: Target | null): void
+function getCheckBoxImage(node: BaseNode, target: ITarget | null): void
 {
   if (!target)
     target = node.activeTarget;

@@ -46,6 +46,7 @@ import { PointLogThreeView } from "@/Three/WellViews/PointLogThreeView";
 import { WellLogThreeView } from "@/Three/WellViews/WellLogThreeView";
 import { CasingLogNode } from "@/Nodes/Wells/Wells/CasingLogNode";
 import { CasingLogThreeView } from "@/Three/WellViews/CasingLogThreeView";
+import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
 
 
 export class ThreeModule extends BaseModule {
@@ -80,7 +81,7 @@ export class ThreeModule extends BaseModule {
     root.initializeRecursive();
 
     // Set all axis visible
-    for (const target of root.targets.getChildrenByType(BaseRenderTargetNode))
+    for (const target of root.targets.getChildrenByType(BaseTargetNode))
       for (const node of root.getDescendantsByType(AxisNode))
         node.setVisibleInteractive(true, target);
 

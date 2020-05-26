@@ -11,12 +11,13 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import * as Lodash from 'lodash';
+
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
 
-export class PolylinesRenderStyle extends BaseRenderStyle
-{
+export class PolylinesRenderStyle extends BaseRenderStyle {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
@@ -30,14 +31,13 @@ export class PolylinesRenderStyle extends BaseRenderStyle
 
   public constructor(targetId: TargetId) { super(targetId); }
 
-  public /*copy constructor*/ clone(): BaseRenderStyle
-  {
-    const style = new PolylinesRenderStyle(this.targetId);
-    style.lineWidth = this.lineWidth;
-    style.colorType = this.colorType;
-    return style;
-  }
+  //==================================================
+  // OVERRIDES of BaseRenderStyle
+  //==================================================
 
+  public clone(): BaseRenderStyle {
+    return Lodash.cloneDeep<PolylinesRenderStyle>(this);
+  }
 }
 
 

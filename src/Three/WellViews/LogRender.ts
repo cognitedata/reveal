@@ -121,7 +121,6 @@ export class LogRender {
       const geometry = buffers.getBufferGeometry();
       const material = new THREE.MeshLambertMaterial({
         side: buffers.side,
-        transparent: true,
         emissive: ThreeConverter.toColor(Colors.white),
         emissiveIntensity: 0.05,
       });

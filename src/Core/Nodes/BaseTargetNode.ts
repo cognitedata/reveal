@@ -1,5 +1,5 @@
 import { TargetId } from "@/Core/Primitives/TargetId";
-import { Target } from "@/Core/Interfaces/Target";
+import { ITarget } from "@/Core/Interfaces/ITarget";
 import { ViewFactory } from "@/Core/Views/ViewFactory";
 import { ViewList } from "@/Core/Views/ViewList";
 import { BaseView } from "@/Core/Views/BaseView";
@@ -9,7 +9,7 @@ import { isInstanceOf, Class } from "@/Core/Primitives/ClassT";
 import { Colors } from "@/Core/Primitives/Colors";
 import * as color from "color"
 
-export abstract class BaseTargetNode extends BaseNode implements Target {
+export abstract class BaseTargetNode extends BaseNode implements ITarget {
   //==================================================
   // CONSTRUCTORS
   //==================================================

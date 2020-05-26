@@ -26,6 +26,11 @@ import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { ThreeCameraNode } from "@/Three/Nodes/ThreeCameraNode";
 import { TreeOverlay } from "@/Three/Utilities/TreeOverlay";
 import { Ma } from "@/Core/Primitives/Ma";
+import { ViewAllCommand } from "@/Three/Commands/ViewAllCommand";
+import { ToggleAxisVisibleCommand } from "@/Three/Commands/ToggleAxisVisibleCommand";
+import { ToggleBgColorCommand } from "@/Three/Commands/ToggleBgColorCommand";
+import { IToolbar } from "@/Core/Interfaces/IToolbar";
+import { ViewFromCommand } from "@/Three/Commands/ViewFromCommand";
 
 export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   //==================================================
@@ -34,9 +39,10 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
 
   private _scene: THREE.Scene | null = null;
   private _renderer: THREE.WebGLRenderer | null = null;
-  private _clock = new THREE.Clock();
   private _overlay = new TreeOverlay();
   private _stats: any | null; // NILS: Why any here? Compiler error if not
+  private isEmpty = true;
+  private clock = new THREE.Clock();
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -66,12 +72,9 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     cameraNode.camera = value;
   }
 
-  public get activeControls(): CameraControls | null {
+  public get controls(): CameraControls | null {
     const cameraNode = this.activeCameraNode;
-    if (!cameraNode)
-      throw Error("The camera is not set");
-
-    return cameraNode.controls;
+    return cameraNode ? cameraNode.controls : null;
   }
 
   private get directionalLight(): THREE.DirectionalLight | null {
@@ -157,17 +160,19 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     if (boundingBox.isEmpty)
       return;
 
-    const controls = this.activeControls;
+    const controls = this.controls;
     if (!controls)
       return;
 
     //https://github.com/yomotsu/camera-controls
-    controls.fitTo(ThreeConverter.toBox(boundingBox));
     // The below stuff doesn't work!!
     // controls.rotate(0, 0.8);
-    // controls.setLookAt(boundingBox.x.center, boundingBox.y.center, boundingBox.z.center, 0, 0, 0);
-    controls.moveTo(boundingBox.x.center, boundingBox.y.center, boundingBox.z.center);
+
+    const center = boundingBox.center;
+    controls.fitTo(ThreeConverter.toBox(boundingBox));
+    controls.moveTo(center.x, center.y, center.z);
     controls.update(0);
+
     this.updateLightPosition();
   }
 
@@ -182,6 +187,17 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   // INSTANCE METHODS
   //==================================================
 
+  public addTools(toolbar: IToolbar) {
+    toolbar.add(new ViewAllCommand(this));
+    toolbar.add(new ToggleAxisVisibleCommand(this));
+    toolbar.add(new ToggleBgColorCommand(this));
+
+    toolbar.beginOptionMenu();
+    for (let viewFrom = 0; viewFrom < 6; viewFrom++)
+      toolbar.add(new ViewFromCommand(this, viewFrom));
+    toolbar.beginOptionMenu();
+  }
+
   private render(): void {
 
     requestAnimationFrame(() => { this.render(); });
@@ -189,18 +205,26 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     if (!this.isInitialized)
       return;
 
-    const controls = this.activeControls;
+    const controls = this.controls;
     let needsUpdate = true;
     if (controls) {
-      const delta = this._clock.getDelta();
+      const delta = this.clock.getDelta();
       needsUpdate = controls.update(delta);
     }
     if (this.isInvalidated || needsUpdate) {
+
+      if (this.isEmpty) {
+        const boundingBox = this.getBoundingBoxFromViews();
+        if (!boundingBox.isEmpty) {
+          this.viewRange(boundingBox)
+          this.isEmpty = false;
+        }
+      }
       this.stats.begin();
-      
+
       const hasAxis = this.hasViewOfNodeType(AxisNode);
       this.scene.background = ThreeConverter.toColor(this.getBgColor(hasAxis));
-  
+
       for (const view of this.viewsShownHere.list)
         view.beforeRender();
 
@@ -208,7 +232,6 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
       this.stats.end();
 
       const viewInfo = this.getViewInfo();
-
       this._overlay.render(this.renderer, viewInfo, this.pixelRange.delta);
       this.invalidate(false);
     }
@@ -224,14 +247,14 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     if (!camera)
       return;
 
-      const controls = this.activeControls
+    const controls = this.controls
     if (!controls)
       return;
 
     const light = this.directionalLight
     if (!light)
       return;
-      
+
     //The idea of this function is letting the light track the camera, 
     if (!camera || !controls || !light)
       return;

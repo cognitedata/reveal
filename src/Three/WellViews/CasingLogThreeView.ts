@@ -129,7 +129,7 @@ export class CasingLogThreeView extends BaseGroupThreeView {
       color: ThreeConverter.toColor(Colors.white),
       vertexColors: THREE.VertexColors,
       transparent: true,
-      opacity: 0.5
+      opacity: 0.7
     });
     return new THREE.Mesh(geometry, material);
   }
