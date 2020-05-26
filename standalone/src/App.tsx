@@ -1,14 +1,14 @@
 import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import {
   SubsurfaceVisualizer,
-  SubsurfaceReducer
+  SubsurfaceReducer,
+  SubsurfaceMiddleware
 } from "@cognitedata/subsurface-visualizer";
-import { createStore } from "redux";
+import { createStore, applyMiddleware } from "redux";
 
 function App() {
-  const store = createStore(SubsurfaceReducer, {});
+  const store = createStore(SubsurfaceReducer, {}, applyMiddleware(...SubsurfaceMiddleware));
   return (
     <div className="App">
       <SubsurfaceVisualizer store={store} />

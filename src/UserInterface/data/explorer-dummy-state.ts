@@ -1,5 +1,6 @@
 import { TreeDataItem } from "../interfaces/explorer";
 import { IconTypes } from "../constants/Icons";
+import Nodes from "../constants/Nodes";
 
 const names = ["Polylines Nodes", "Subsurface Nodes", "Well Nodes"];
 
@@ -17,13 +18,14 @@ export function generateData(numItems: number, parentIdx: number) {
   for (let i = 0; i < numItems; i++) {
     const dataLength = Object.keys(data).length;
     const item = {
+      type: "wells",
       id: i.toString(),
       name: randomString(),
       parentId: randomParent(dataLength),
       checked: false,
       disabled: false,
       expanded: false,
-      icon: { type: IconTypes.NODES, name: "PointsNode" },
+      icon: "ba8c2cf8d98eff705cf9c4d3236cda9a.png",
       iconDescription: "node",
       indeterminate: false,
       isFilter: false,
@@ -39,7 +41,34 @@ export function generateData(numItems: number, parentIdx: number) {
 
 // Dummy tree state
 export const state = {
+  tabConfig: [
+    {
+      name: "Others",
+      value: Nodes.NODE_TYPES.OTHERS,
+      icon: {
+        type: IconTypes.NODES,
+        name: "FolderNode",
+      },
+    },
+    {
+      name: "Wells",
+      value: Nodes.NODE_TYPES.WELLS,
+      icon: {
+        type: IconTypes.NODES,
+        name: "WellNode",
+      },
+    },
+    {
+      name: "Seismic",
+      value: Nodes.NODE_TYPES.SEISMIC,
+      icon: {
+        type: IconTypes.NODES,
+        name: "PointsNode",
+      },
+    },
+  ],
+  selectedNodeType: null,
   selectedNode: null,
   checkedNodeIds: new Set<string>(),
-  nodes: generateData(500, 0.9),
+  nodes: {},
 };
