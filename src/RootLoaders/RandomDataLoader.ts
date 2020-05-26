@@ -153,6 +153,7 @@ export class RandomDataLoader extends BaseRootLoader {
 
     return;
 
+
     if (Random.isTrue(0.05)) {
       const command = new ToggleAxisVisibleCommand(target);
       command.invoke();
