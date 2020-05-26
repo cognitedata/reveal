@@ -4,12 +4,11 @@
 
 import { CogniteClient, IdEither, ItemsResponse } from '@cognite/sdk';
 
-import { CadSceneProvider } from '@/dataModels/cad/internal/CadSceneProvider';
-import { CadSectorProvider } from '@/dataModels/cad/internal/sector/CadSectorProvider';
-
 import { BlobOutputMetadata, ModelUrlProvider } from './types';
 import { Model3DOutputList } from './Model3DOutputList';
 import { File3dFormat } from '../File3dFormat';
+import { CadSceneProvider } from '@/dataModels/cad/CadSceneProvider';
+import { CadSectorProvider } from '@/dataModels/cad/sector/CadSectorProvider';
 
 interface OutputsRequest {
   models: IdEither[];
@@ -44,7 +43,7 @@ export class CogniteClient3dExtensions
   public async getModelUrl(params: { modelRevision: IdEither; format: File3dFormat }): Promise<string> {
     const outputs = await this.getOutputs(params.modelRevision, [params.format]);
     const blobId = outputs.findMostRecentOutput(params.format)!.blobId;
-    return `${this.client.getBaseUrl()}/${this.buildBlobRequestPath(blobId)}`;
+    return `${this.client.getBaseUrl()}${this.buildBlobRequestPath(blobId)}`;
   }
 
   public async getOutputs(modelRevisionId: IdEither, formats?: (File3dFormat | string)[]): Promise<Model3DOutputList> {

@@ -2,25 +2,23 @@
  * Copyright 2020 Cognite AS
  */
 
-import { createLocalPointCloudModel, createPointCloudModel } from '@/dataModels/pointCloud';
 import { CogniteClient, IdEither } from '@cognite/sdk';
-import { CadBudget } from '@/dataModels/cad/public/CadBudget';
-import { ModelNodeAppearance } from '@/dataModels/cad/internal/ModelNodeAppearance';
-import { Sector, SectorQuads } from '@/dataModels/cad/internal/sector/types';
-import { MaterialManager } from '@/dataModels/cad/internal/MaterialManager';
-import { PotreeGroupWrapper } from '@/dataModels/pointCloud/internal/PotreeGroupWrapper';
-import { PotreeNodeWrapper } from '@/dataModels/pointCloud/internal/PotreeNodeWrapper';
-import { SectorCuller } from '@/dataModels/cad/internal/sector/culling/SectorCuller';
-import { createThreeJsPointCloudNode } from '@/dataModels/pointCloud/internal/createThreeJsPointCloudNode';
-import { CadManager } from '@/dataModels/cad/internal/CadManager';
+
 import { RenderManager } from './RenderManager';
+import { SectorGeometry } from '@/dataModels/cad/sector/types';
+import { SectorQuads } from '@/dataModels/cad/rendering/types';
+import { SectorCuller, PotreeGroupWrapper, PotreeNodeWrapper } from '@/internal';
+import { CadManager } from '@/dataModels/cad/CadManager';
+import { MaterialManager } from '@/dataModels/cad/MaterialManager';
+import { createThreeJsPointCloudNode } from '@/dataModels/pointCloud/internal/createThreeJsPointCloudNode';
+import { ModelNodeAppearance } from '@/dataModels/cad';
+import { createPointCloudModel, createLocalPointCloudModel } from '@/dataModels/pointCloud';
 
 export interface RevealOptions {
   nodeAppearance?: ModelNodeAppearance;
-  budget?: CadBudget;
   // internal options are experimental and may change in the future
   internal?: {
-    parseCallback?: (parsed: { lod: string; data: Sector | SectorQuads }) => void;
+    parseCallback?: (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
     sectorCuller?: SectorCuller;
   };
 }

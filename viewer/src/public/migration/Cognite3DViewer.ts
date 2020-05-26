@@ -10,11 +10,11 @@ import { CogniteClient, IdEither } from '@cognite/sdk';
 import { share, filter } from 'rxjs/operators';
 
 import { from3DPositionToRelativeViewportCoordinates } from '@/utilities/worldToViewport';
-import { CadSectorParser } from '@/dataModels/cad/internal/sector/CadSectorParser';
-import { SimpleAndDetailedToSector3D } from '@/dataModels/cad/internal/sector/SimpleAndDetailedToSector3D';
-import { CachedRepository } from '@/dataModels/cad/internal/sector/CachedRepository';
-import { MaterialManager } from '@/dataModels/cad/internal/MaterialManager';
-import { intersectCadNodes } from '@/dataModels/cad/internal/picking';
+import { CadSectorParser } from '@/dataModels/cad/sector/CadSectorParser';
+import { SimpleAndDetailedToSector3D } from '@/dataModels/cad/sector/SimpleAndDetailedToSector3D';
+import { CachedRepository } from '@/dataModels/cad/sector/CachedRepository';
+import { MaterialManager } from '@/dataModels/cad/MaterialManager';
+import { intersectCadNodes } from '@/dataModels/cad/picking';
 
 import { Cognite3DViewerOptions, AddModelOptions, SupportedModelTypes } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
@@ -24,16 +24,16 @@ import { CogniteModelBase } from './CogniteModelBase';
 
 import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
 import { File3dFormat } from '@/utilities/File3dFormat';
-import { CadModelFactory } from '@/dataModels/cad/internal/CadModelFactory';
-import { CadModelUpdateHandler } from '@/dataModels/cad/internal/CadModelUpdateHandler';
-import { CadManager } from '@/dataModels/cad/internal/CadManager';
-import { CadMetadataParser } from '@/dataModels/cad/internal/CadMetadataParser';
-import { DefaultCadTransformation } from '@/dataModels/cad/internal/DefaultCadTransformation';
-import { CadModelMetadataRepository } from '@/dataModels/cad/internal/CadModelMetadataRepository';
 import { RevealManagerBase } from '@/public/RevealManagerBase';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
-import { ByVisibilityGpuSectorCuller } from '@/dataModels/cad/internal/sector/culling/ByVisibilityGpuSectorCuller';
+import { CadManager } from '@/dataModels/cad/CadManager';
+import { CadModelMetadataRepository } from '@/dataModels/cad/CadModelMetadataRepository';
+import { DefaultCadTransformation } from '@/dataModels/cad/DefaultCadTransformation';
+import { CadMetadataParser } from '@/dataModels/cad/parsers/CadMetadataParser';
+import { CadModelFactory } from '@/dataModels/cad/CadModelFactory';
+import { ByVisibilityGpuSectorCuller } from '@/internal';
+import { CadModelUpdateHandler } from '@/dataModels/cad/CadModelUpdateHandler';
 
 export interface RelativeMouseEvent {
   offsetX: number;

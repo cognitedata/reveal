@@ -2,10 +2,10 @@
  * Copyright 2020 Cognite AS
  */
 
-import { CadSceneProvider } from '@/dataModels/cad/internal/CadSceneProvider';
-import { CadSectorProvider } from '@/dataModels/cad/internal/sector/CadSectorProvider';
 import { HttpError } from '@cognite/sdk';
 import { ModelUrlProvider } from './types';
+import { CadSceneProvider } from '@/dataModels/cad/CadSceneProvider';
+import { CadSectorProvider } from '@/dataModels/cad/sector/CadSectorProvider';
 
 export class LocalUrlClient implements ModelUrlProvider<{ fileName: string }>, CadSceneProvider, CadSectorProvider {
   getModelUrl(params: { fileName: string }): Promise<string> {
