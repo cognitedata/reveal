@@ -14,7 +14,7 @@
 import { TargetTreeNode } from "@/Core/Nodes/TargetTreeNode";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
-import { TargetIdAccessor } from "@/Core/Interfaces/TargetIdAccessor";
+import { TargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
 
 export class BaseRootNode extends BaseNode
 {

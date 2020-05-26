@@ -19,13 +19,13 @@ import { TargetId } from "@/Core/Primitives/TargetId";
 import { isInstanceOf, Class } from "@/Core/Primitives/ClassT";
 import { RenderStyleResolution } from "@/Core/Enums/RenderStyleResolution";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { TargetIdAccessor } from "@/Core/Interfaces/TargetIdAccessor";
+import { TargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
 import { Colors } from "@/Core/Primitives/Colors";
 import { Changes } from "@/Core/Views/Changes";
 import { CheckBoxState } from "@/Core/Enums/CheckBoxState";
-import { Target } from "@/Core/Interfaces/Target";
+import { ITarget } from "@/Core/Interfaces/ITarget";
 import { Util } from "@/Core/Primitives/Util";
 
 export abstract class BaseNode extends Identifiable
@@ -60,7 +60,7 @@ export abstract class BaseNode extends Identifiable
   public get renderStyles(): BaseRenderStyle[] { return this._renderStyles; }
   public get path(): string { return (this.parent ? this.parent.path : "") + "\\" + this.name; }
   public get isInitialized(): boolean { return this._isInitialized; }
-  public get activeTarget(): Target | null { return this.activeTargetIdAccessor as Target; }
+  public get activeTarget(): ITarget | null { return this.activeTargetIdAccessor as ITarget; }
 
   //==================================================
   // OVERRIDES of Identifiable
@@ -119,15 +119,15 @@ export abstract class BaseNode extends Identifiable
 
   public  /*virtual*/ get canBeDeleted(): boolean { return true; }
 
-  public  /*virtual*/ canBeChecked(target: Target | null): boolean { return true; }
-  public  /*virtual*/ isFilter(target: Target | null): boolean { return false; }
-  public  /*virtual*/ isRadio(target: Target | null): boolean { return false; }
+  public  /*virtual*/ canBeChecked(target: ITarget | null): boolean { return true; }
+  public  /*virtual*/ isFilter(target: ITarget | null): boolean { return false; }
+  public  /*virtual*/ isRadio(target: ITarget | null): boolean { return false; }
 
   //==================================================
   // VIRTUAL METHODS: Visibility
   //==================================================
 
-  public /*virtual*/ getCheckBoxState(target?: Target | null): CheckBoxState
+  public /*virtual*/ getCheckBoxState(target?: ITarget | null): CheckBoxState
   {
     if (!target)
       target = this.activeTarget;
@@ -164,7 +164,7 @@ export abstract class BaseNode extends Identifiable
     return CheckBoxState.Some;
   }
 
-  public /*virtual*/ setVisibleInteractive(visible: boolean, target?: Target | null): void
+  public /*virtual*/ setVisibleInteractive(visible: boolean, target?: ITarget | null): void
   {
     if (!target)
       target = this.activeTarget;
@@ -179,7 +179,7 @@ export abstract class BaseNode extends Identifiable
       child.setVisibleInteractive(visible, target);
   }
 
-  public toggleVisibleInteractive(target?: Target | null): void // Use this when clicking on the checkbox in the three control
+  public toggleVisibleInteractive(target?: ITarget | null): void // Use this when clicking on the checkbox in the three control
   {
     const checkBoxState = this.getCheckBoxState(target);
     if (checkBoxState === CheckBoxState.Never)

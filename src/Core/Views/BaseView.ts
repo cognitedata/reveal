@@ -14,7 +14,7 @@
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
-import { TargetIdAccessor } from "@/Core/Interfaces/TargetIdAccessor";
+import { TargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 
 export abstract class BaseView
