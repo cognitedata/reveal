@@ -16,7 +16,7 @@ import {
   applySectorOverride
 } from './utils/renderer-debug-widget';
 import { CogniteClient } from '@cognite/sdk';
-import { CadNode, RevealManager, LocalHostRevealManager } from '@cognite/reveal/experimental';
+import { CadNode, RevealManager, LocalHostRevealManager, RenderManager } from '@cognite/reveal/experimental';
 import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
 import { OverrideSectorCuller } from './utils/OverrideSectorCuller';
 
@@ -56,13 +56,13 @@ async function main() {
   client.loginWithOAuth({ project });
 
   const sectorCuller1 = new OverrideSectorCuller();
-  const revealManager1: RevealManager = createRenderManager(modelRevision !== undefined ? 'cdf' : 'local', client, {
+  const revealManager1: RenderManager = createRenderManager(modelRevision !== undefined ? 'cdf' : 'local', client, {
     internal: {
       sectorCuller: sectorCuller1
     }
   });
   const sectorCuller2 = new OverrideSectorCuller();
-  const revealManager2: RevealManager = createRenderManager(modelRevision !== undefined ? 'cdf' : 'local', client, {
+  const revealManager2: RenderManager = createRenderManager(modelRevision !== undefined ? 'cdf' : 'local', client, {
     internal: {
       sectorCuller: sectorCuller2
     }

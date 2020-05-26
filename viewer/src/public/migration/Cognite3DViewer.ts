@@ -34,6 +34,9 @@ import { CadMetadataParser } from '@/datamodels/cad/parsers/CadMetadataParser';
 import { CadModelFactory } from '@/datamodels/cad/CadModelFactory';
 import { ByVisibilityGpuSectorCuller } from '@/internal';
 import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
+import { PointCloudManager } from '@/datamodels/pointcloud/internal/PointCloudManager';
+import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/internal/PointCloudMetadataRepository';
+import { PointCloudFactory } from '@/datamodels/pointcloud/internal/PointCloudFactory';
 
 export interface RelativeMouseEvent {
   offsetX: number;
@@ -60,6 +63,7 @@ export class Cognite3DViewer {
   private readonly sdkClient: CogniteClient;
   private readonly sectorRepository: CachedRepository;
   private readonly cadManager: CadManager<RequestParams>;
+  private readonly pointCloudManager: PointCloudManager<RequestParams>;
   private readonly revealManager: RevealManagerBase<RequestParams>;
 
   private readonly eventListeners = {
@@ -132,7 +136,13 @@ export class Cognite3DViewer {
     const cadModelUpdateHandler = new CadModelUpdateHandler(this.sectorRepository, sectorCuller);
     this.cadManager = new CadManager<RequestParams>(cadModelRepository, cadModelFactory, cadModelUpdateHandler);
 
-    this.revealManager = new RevealManagerBase(this.sdkClient, this.cadManager, this.materialManager);
+    const pointCloudModelRepository: PointCloudMetadataRepository<RequestParams> = new PointCloudMetadataRepository(
+      cogniteClientExtension,
+      new DefaultCadTransformation()
+    );
+    const pointCloudFactory: PointCloudFactory = new PointCloudFactory(cogniteClientExtension);
+    this.pointCloudManager = new PointCloudManager(pointCloudModelRepository, pointCloudFactory);
+    this.revealManager = new RevealManagerBase(this.cadManager, this.materialManager, this.pointCloudManager);
     this.startPointerEventListeners();
 
     this.animate(0);
@@ -235,7 +245,11 @@ export class Cognite3DViewer {
       throw new NotSupportedInMigrationWrapperError();
     }
 
-    const [potreeGroup, potreeNode] = await this.revealManager.addPointCloudFromCdf(options.revisionId);
+    // TODO 25-05-2020 j-bjorne: fix this hot mess, 1 group added multiple times
+    const [potreeGroup, potreeNode] = await this.pointCloudManager.addModel({
+      modelRevision: { id: options.revisionId },
+      format: File3dFormat.EptPointCloud
+    });
     const model = new CognitePointCloudModel(options.modelId, options.revisionId, potreeGroup, potreeNode);
     this.models.push(model);
     this.scene.add(model);

@@ -23,7 +23,7 @@ async function main() {
     treeIndices: '1, 2, 8, 12'
   };
 
-  const revealManager: reveal.RevealManager = createRenderManager(
+  const revealManager: reveal.RenderManager = createRenderManager(
     modelRevision !== undefined ? 'cdf' : 'local',
     client
   );

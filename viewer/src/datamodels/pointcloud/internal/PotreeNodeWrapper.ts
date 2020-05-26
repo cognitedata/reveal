@@ -49,6 +49,7 @@ export class PotreeNodeWrapper {
     return this.octtree.numVisiblePoints || 0;
   }
 
+  // TODO: 25-05-2020 j-bjorne: Look into splitting debug bounding box from node wrapper.
   get boundingBox(): Box3 {
     const bbox: THREE.Box3 = this.octtree.root.tightBoundingBox;
     const box = fromThreeJsBox3(bbox);

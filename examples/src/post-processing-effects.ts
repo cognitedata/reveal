@@ -19,7 +19,7 @@ async function main() {
   client.loginWithOAuth({ project });
 
   const scene = new THREE.Scene();
-  const revealManager: reveal.RevealManager = createRenderManager(
+  const revealManager: reveal.RenderManager = createRenderManager(
     modelRevision !== undefined ? 'cdf' : 'local',
     client
   );

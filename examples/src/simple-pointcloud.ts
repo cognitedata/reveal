@@ -24,7 +24,7 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const revealManager: reveal.RevealManager = createRenderManager(
+  const revealManager: reveal.RenderManager = createRenderManager(
     modelRevision !== undefined ? 'cdf' : 'local',
     client
   );
@@ -33,6 +33,7 @@ async function main() {
   if (revealManager instanceof reveal.LocalHostRevealManager && modelUrl !== undefined) {
     model = await revealManager.addModel('pointcloud', modelUrl);
   } else if (revealManager instanceof reveal.RevealManager && modelRevision !== undefined) {
+    await client.authenticate();
     model = await revealManager.addModel('pointcloud', modelRevision);
   } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');

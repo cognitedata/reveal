@@ -1,12 +1,15 @@
 /*!
  * Copyright 2020 Cognite AS
  */
-
+// @ts-ignore
+import * as Potree from '@cognite/potree-core';
 import { CogniteClient, IdEither, ItemsResponse } from '@cognite/sdk';
 
 import { BlobOutputMetadata, ModelUrlProvider } from './types';
 import { Model3DOutputList } from './Model3DOutputList';
 import { File3dFormat } from '../File3dFormat';
+import { EptSceneProvider } from '@/datamodels/pointcloud/internal/EptSceneProvider';
+import { HttpHeadersProvider } from './HttpHeadersProvider';
 import { CadSceneProvider } from '@/datamodels/cad/CadSceneProvider';
 import { CadSectorProvider } from '@/datamodels/cad/sector/CadSectorProvider';
 
@@ -19,11 +22,20 @@ interface OutputsRequest {
  * Provides 3D V2 specific extensions for the standard CogniteClient used by Reveal.
  */
 export class CogniteClient3dExtensions
-  implements ModelUrlProvider<{ modelRevision: IdEither; format: File3dFormat }>, CadSceneProvider, CadSectorProvider {
+  implements
+    ModelUrlProvider<{ modelRevision: IdEither; format: File3dFormat }>,
+    HttpHeadersProvider,
+    CadSceneProvider,
+    CadSectorProvider,
+    EptSceneProvider {
   private readonly client: CogniteClient;
 
   constructor(client: CogniteClient) {
     this.client = client;
+  }
+
+  get headers() {
+    return this.client.getDefaultRequestHeaders();
   }
 
   public async getCadSectorFile(blobUrl: string, fileName: string): Promise<ArrayBuffer> {
@@ -40,6 +52,12 @@ export class CogniteClient3dExtensions
     const response = await this.client.get(`${blobUrl}/scene.json`);
     return response.data;
   }
+
+  public async getEptScene(blobUrl: string): Promise<any> {
+    const response = await this.client.get(`${blobUrl}/ept.json`);
+    return response.data;
+  }
+
   public async getModelUrl(params: { modelRevision: IdEither; format: File3dFormat }): Promise<string> {
     const outputs = await this.getOutputs(params.modelRevision, [params.format]);
     const blobId = outputs.findMostRecentOutput(params.format)!.blobId;

@@ -12,6 +12,7 @@ export { CadNode } from './datamodels/cad';
 export { ModelNodeAppearance } from './datamodels/cad/';
 
 // CAD
+
 export { CadModelMetadata, SsaoEffect, SsaoPassType } from './datamodels/cad/';
 export { SectorMetadata, SectorModelTransformation } from './datamodels/cad/sector/types';
 export { CadRenderHints } from './datamodels/cad/rendering/CadRenderHints';
@@ -19,7 +20,7 @@ export { CadLoadingHints } from './datamodels/cad/CadLoadingHints';
 export { intersectCadNodes } from './datamodels/cad/picking';
 
 // Point cloud
-export { PointCloudModel, createPointCloudModel, createLocalPointCloudModel } from './datamodels/pointCloud';
+export { PointCloudMetadata } from './datamodels/pointcloud';
 
 // Internals
 import * as internal from './internal';
