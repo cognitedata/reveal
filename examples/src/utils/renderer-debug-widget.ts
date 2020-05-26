@@ -144,10 +144,6 @@ export function createRendererDebugWidget(
       loadOverride.detailedFilter
     );
   loadOverrideGui
-    .add(loadOverride, 'maxQuadSize', 0, 0.05, 0.0001)
-    .name('Max quad size %')
-    .onFinishChange(() => { });
-  loadOverrideGui
     .add(loadOverride, 'quadsFilter')
     .name('Quads (low detail)')
     .onFinishChange(updateWantedNodesFilter);
