@@ -10,14 +10,23 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  rust:
+  setup:
+    name: Setup dependencies
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
     - name: Setup Rust
       run: |
         rustup component add clippy
         rustup component add rustfmt
+    - name: Install wasm-pack
+      uses: jetli/wasm-pack-action@v0.3.0
+
+  rust:
+    name: Rust
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
     - name: Build
       run: |
         # fail on warnings, test all features
@@ -28,7 +37,9 @@ jobs:
         cargo test --all --verbose
 
   viewer:
+    name: Viewer 
     runs-on: ubuntu-latest
+    needs: setup
     strategy:
       matrix:
         node-version: [12.x]
@@ -51,15 +62,6 @@ jobs:
       with:
         path: target
         key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
-
-    - name: Setup Rust
-      working-directory: viewer
-      run: |
-        rustup component add clippy
-        rustup component add rustfmt
-
-    - name: Install wasm-pack
-      uses: jetli/wasm-pack-action@v0.3.0
 
     - name: Install NPM dependencies
       working-directory: viewer
@@ -90,6 +92,42 @@ jobs:
       
     - name: Publish to codecov
       uses: codecov/codecov-action@v1
+
+
+  examples:
+    name: Examples    
+    runs-on: ubuntu-latest
+    needs: setup
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Cache cargo registry
+      uses: actions/cache@v1
+      with:
+        path: ~/.cargo/registry
+        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+    - name: Cache cargo index
+      uses: actions/cache@v1
+      with:
+        path: ~/.cargo/git
+        key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+    - name: Cache cargo build
+      uses: actions/cache@v1
+      with:
+        path: target
+        key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Install NPM dependencies
+      working-directory: viewer
+      run: npm install
+
+    - name: Build release
+      working-directory: viewer
+      run: npm run release
 
     - name: Install examples-dependencies
       working-directory: examples
