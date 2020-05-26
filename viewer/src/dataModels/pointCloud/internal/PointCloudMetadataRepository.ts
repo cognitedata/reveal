@@ -16,10 +16,10 @@ export class PointCloudMetadataRepository<TModelIdentifier>
   private readonly _modelMetadataProvider: ModelMetadataProvider<TModelIdentifier>;
   private readonly _cadTransformationProvider: CadTransformationProvider;
   constructor(
-    modelBlobProvider: ModelMetadataProvider<TModelIdentifier>,
+    modelMetadataProvider: ModelMetadataProvider<TModelIdentifier>,
     cadTransformationProvider: CadTransformationProvider
   ) {
-    this._modelMetadataProvider = modelBlobProvider;
+    this._modelMetadataProvider = modelMetadataProvider;
     this._cadTransformationProvider = cadTransformationProvider;
   }
   async loadData(modelIdentifier: TModelIdentifier): Promise<PointCloudMetadata> {
