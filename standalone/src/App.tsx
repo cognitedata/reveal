@@ -1,7 +1,10 @@
 import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import { SubsurfaceVisualizer, SubsurfaceReducer } from "subsurface-visualizer";
+import {
+  SubsurfaceVisualizer,
+  SubsurfaceReducer
+} from "@cognitedata/subsurface-visualizer";
 import { createStore } from "redux";
 
 function App() {

@@ -2,6 +2,7 @@ const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
   .BundleAnalyzerPlugin;
+const CopyPlugin = require("copy-webpack-plugin");
 
 function resolve(dir) {
   return path.resolve(__dirname, dir);
@@ -29,10 +30,9 @@ module.exports = {
         test: /\.(png|svg|jpg|gif)$/,
         use: [
           {
-            loader: "file-loader",
+            loader: "url-loader",
             options: {
-              esModule: false,
-              outputPath: "assets"
+              limit: 8192
             }
           }
         ]
@@ -55,7 +55,10 @@ module.exports = {
   },
   devtool: "false",
   plugins: [
-    new CleanWebpackPlugin()
+    new CleanWebpackPlugin(),
+    new CopyPlugin({
+      patterns: [{ from: "package.json" }]
+    })
     //  new BundleAnalyzerPlugin()
   ],
   externals: {
