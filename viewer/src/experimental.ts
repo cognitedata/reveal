@@ -19,7 +19,7 @@ export { CadLoadingHints } from './dataModels/cad/CadLoadingHints';
 export { intersectCadNodes } from './dataModels/cad/picking';
 
 // Point cloud
-export { PointCloudModel, createPointCloudModel, createLocalPointCloudModel } from './dataModels/point-cloud';
+export { PointCloudModel, createPointCloudModel, createLocalPointCloudModel } from './dataModels/pointCloud';
 
 // Internals
 import * as internal from './internal';

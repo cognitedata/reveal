@@ -4,7 +4,7 @@
 
 import nock from 'nock';
 import { CogniteClient } from '@cognite/sdk';
-import { createPointCloudModel } from '@/dataModels/point-cloud/public/createPointCloudModel';
+import { createPointCloudModel } from '@/dataModels/pointCloud/public/createPointCloudModel';
 
 describe('createPointCloudModel', () => {
   const appId = 'reveal-creatPointCloudModel-test';

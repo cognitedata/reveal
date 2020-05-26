@@ -4,8 +4,8 @@
 
 import * as THREE from 'three';
 import { toThreeJsBox3 } from '@/utilities';
-import { PotreeNodeWrapper } from '@/dataModels/point-cloud/internal/PotreeNodeWrapper';
-import { PotreeGroupWrapper } from '@/dataModels/point-cloud/internal/PotreeGroupWrapper';
+import { PotreeNodeWrapper } from '@/dataModels/pointCloud/internal/PotreeNodeWrapper';
+import { PotreeGroupWrapper } from '@/dataModels/pointCloud/internal/PotreeGroupWrapper';
 import { CogniteModelBase } from './CogniteModelBase';
 import { SupportedModelTypes } from './types';
 

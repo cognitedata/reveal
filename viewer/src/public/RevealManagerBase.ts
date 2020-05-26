@@ -10,9 +10,9 @@ import { SectorQuads } from '@/dataModels/cad/rendering/types';
 import { SectorCuller, PotreeGroupWrapper, PotreeNodeWrapper } from '@/internal';
 import { CadManager } from '@/dataModels/cad/CadManager';
 import { MaterialManager } from '@/dataModels/cad/MaterialManager';
-import { createThreeJsPointCloudNode } from '@/dataModels/point-cloud/internal/createThreeJsPointCloudNode';
+import { createThreeJsPointCloudNode } from '@/dataModels/pointCloud/internal/createThreeJsPointCloudNode';
 import { ModelNodeAppearance } from '@/dataModels/cad';
-import { createPointCloudModel, createLocalPointCloudModel } from '@/dataModels/point-cloud';
+import { createPointCloudModel, createLocalPointCloudModel } from '@/dataModels/pointCloud';
 
 export interface RevealOptions {
   nodeAppearance?: ModelNodeAppearance;

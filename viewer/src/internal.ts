@@ -3,9 +3,9 @@
  */
 
 // TODO move these types into potree-core as TypeScript definitions and remove them from here
-export { PotreePointColorType, PotreePointShape } from './dataModels/point-cloud/internal/enums';
-export { PotreeNodeWrapper } from './dataModels/point-cloud/internal/PotreeNodeWrapper';
-export { PotreeGroupWrapper } from './dataModels/point-cloud/internal/PotreeGroupWrapper';
+export { PotreePointColorType, PotreePointShape } from './dataModels/pointCloud/internal/enums';
+export { PotreeNodeWrapper } from './dataModels/pointCloud/internal/PotreeNodeWrapper';
+export { PotreeGroupWrapper } from './dataModels/pointCloud/internal/PotreeGroupWrapper';
 
 export { suggestCameraConfig } from './utilities/cameraUtils';
 export { traverseDepthFirst, traverseUpwards } from './utilities/traversal';
