@@ -18,12 +18,10 @@ import { DiscreteLog } from "../Nodes/Wells/Logs/DiscreteLog";
 import { CasingLogNode } from "@/Nodes/Wells/Wells/CasingLogNode";
 import { Random } from "@/Core/Primitives/Random";
 import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
-import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
 import { BaseRootLoader } from "@/RootLoaders/BaseRootLoader";
 import { RegularGrid2 } from "@/Core/Geometry/RegularGrid2";
 import { SurfaceNode } from "@/Nodes/Misc/SurfaceNode";
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
-import THREE from "three";
 import { ToggleAxisVisibleCommand } from "@/Three/Commands/ToggleAxisVisibleCommand";
 import { ViewAllCommand } from "@/Three/Commands/ViewAllCommand";
 import { ToggleBgColorCommand } from "@/Three/Commands/ToggleBgColorCommand";
@@ -184,9 +182,9 @@ export class RandomDataLoader extends BaseRootLoader {
         i++;
       }
     }
-    const controls = target.activeControls;
-    if (!controls)
-      return;
+    // const controls = target.controls;
+    // if (!controls)
+    //   return;
 
     // controls.rotate(Math.PI * 0.02, 0, true);
     // controls.update(0);

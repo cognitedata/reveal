@@ -49,7 +49,7 @@ export default function main(elm: HTMLElement) {
   }
   loader.updatedVisible(root);
 
-  const target = root.activeTarget as BaseRenderTargetNode;
+  const target = root.activeTarget as ThreeRenderTargetNode;
   if (target)
     target.viewAll();
 

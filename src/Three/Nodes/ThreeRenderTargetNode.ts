@@ -66,12 +66,9 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     cameraNode.camera = value;
   }
 
-  public get activeControls(): CameraControls | null {
+  private get controls(): CameraControls | null {
     const cameraNode = this.activeCameraNode;
-    if (!cameraNode)
-      throw Error("The camera is not set");
-
-    return cameraNode.controls;
+    return cameraNode ? cameraNode.controls : null;
   }
 
   private get directionalLight(): THREE.DirectionalLight | null {
@@ -157,7 +154,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     if (boundingBox.isEmpty)
       return;
 
-    const controls = this.activeControls;
+    const controls = this.controls;
     if (!controls)
       return;
 
@@ -189,7 +186,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     if (!this.isInitialized)
       return;
 
-    const controls = this.activeControls;
+    const controls = this.controls;
     let needsUpdate = true;
     if (controls) {
       const delta = this._clock.getDelta();
@@ -197,10 +194,10 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     }
     if (this.isInvalidated || needsUpdate) {
       this.stats.begin();
-      
+
       const hasAxis = this.hasViewOfNodeType(AxisNode);
       this.scene.background = ThreeConverter.toColor(this.getBgColor(hasAxis));
-  
+
       for (const view of this.viewsShownHere.list)
         view.beforeRender();
 
@@ -224,14 +221,14 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     if (!camera)
       return;
 
-      const controls = this.activeControls
+    const controls = this.controls
     if (!controls)
       return;
 
     const light = this.directionalLight
     if (!light)
       return;
-      
+
     //The idea of this function is letting the light track the camera, 
     if (!camera || !controls || !light)
       return;
