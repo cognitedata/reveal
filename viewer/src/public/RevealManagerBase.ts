@@ -5,14 +5,14 @@
 import { CogniteClient, IdEither } from '@cognite/sdk';
 
 import { RenderManager } from './RenderManager';
-import { SectorGeometry } from '@/dataModels/cad/sector/types';
-import { SectorQuads } from '@/dataModels/cad/rendering/types';
+import { SectorGeometry } from '@/datamodels/cad/sector/types';
+import { SectorQuads } from '@/datamodels/cad/rendering/types';
 import { SectorCuller, PotreeGroupWrapper, PotreeNodeWrapper } from '@/internal';
-import { CadManager } from '@/dataModels/cad/CadManager';
-import { MaterialManager } from '@/dataModels/cad/MaterialManager';
-import { createThreeJsPointCloudNode } from '@/dataModels/pointCloud/internal/createThreeJsPointCloudNode';
-import { ModelNodeAppearance } from '@/dataModels/cad';
-import { createPointCloudModel, createLocalPointCloudModel } from '@/dataModels/pointCloud';
+import { CadManager } from '@/datamodels/cad/CadManager';
+import { MaterialManager } from '@/datamodels/cad/MaterialManager';
+import { createThreeJsPointCloudNode } from '@/datamodels/pointcloud/internal/createThreeJsPointCloudNode';
+import { ModelNodeAppearance } from '@/datamodels/cad';
+import { createPointCloudModel, createLocalPointCloudModel } from '@/datamodels/pointCloud';
 
 export interface RevealOptions {
   nodeAppearance?: ModelNodeAppearance;

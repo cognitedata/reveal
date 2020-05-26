@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { SectorMetadata } from '@/dataModels/cad/sector/types';
+import { SectorMetadata } from '@/datamodels/cad/sector/types';
 import { Box3 } from '@/utilities/Box3';
 import { vec3 } from 'gl-matrix';
 

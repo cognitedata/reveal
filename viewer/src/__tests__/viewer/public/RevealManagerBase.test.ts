@@ -6,8 +6,8 @@ import * as THREE from 'three';
 
 import { RevealManagerBase } from '@/public/RevealManagerBase';
 import { CogniteClient } from '@cognite/sdk';
-import { MaterialManager } from '@/dataModels/cad/MaterialManager';
-import { CadManager } from '@/dataModels/cad/CadManager';
+import { MaterialManager } from '@/datamodels/cad/MaterialManager';
+import { CadManager } from '@/datamodels/cad/CadManager';
 
 describe('RevealManagerBase', () => {
   const mockCadManager: Omit<CadManager<number>, ''> = {

@@ -11,7 +11,7 @@ import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3
 import * as Potree from '@cognite/potree-core';
 import { File3dFormat } from '@/utilities/File3dFormat';
 import { PointCloudModel } from './PointCloudModel';
-import { SectorModelTransformation } from '@/dataModels/cad/sector/types';
+import { SectorModelTransformation } from '@/datamodels/cad/sector/types';
 
 const identity = mat4.identity(mat4.create());
 

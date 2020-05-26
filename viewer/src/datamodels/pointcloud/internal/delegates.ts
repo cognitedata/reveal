@@ -3,6 +3,6 @@
  */
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
-import { SectorModelTransformation } from '@/dataModels/cad/sector/types';
+import { SectorModelTransformation } from '@/datamodels/cad/sector/types';
 
 export type FetchPointCloudDelegate = () => Promise<[Potree.PointCloudOctreeGeometry, SectorModelTransformation]>;

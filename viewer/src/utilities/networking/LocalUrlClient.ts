@@ -4,8 +4,8 @@
 
 import { HttpError } from '@cognite/sdk';
 import { ModelUrlProvider } from './types';
-import { CadSceneProvider } from '@/dataModels/cad/CadSceneProvider';
-import { CadSectorProvider } from '@/dataModels/cad/sector/CadSectorProvider';
+import { CadSceneProvider } from '@/datamodels/cad/CadSceneProvider';
+import { CadSectorProvider } from '@/datamodels/cad/sector/CadSectorProvider';
 
 export class LocalUrlClient implements ModelUrlProvider<{ fileName: string }>, CadSceneProvider, CadSectorProvider {
   getModelUrl(params: { fileName: string }): Promise<string> {

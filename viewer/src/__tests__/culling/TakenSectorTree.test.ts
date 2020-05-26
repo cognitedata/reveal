@@ -4,8 +4,8 @@
 
 import { expectContainsSectorsWithLevelOfDetail } from '../expects';
 import { generateSectorTree } from '../testUtils/createSectorMetadata';
-import { DetermineSectorCostDelegate, PrioritizedWantedSector } from '@/dataModels/cad/sector/culling/types';
-import { TakenSectorTree } from '@/dataModels/cad/sector/culling/TakenSectorTree';
+import { DetermineSectorCostDelegate, PrioritizedWantedSector } from '@/datamodels/cad/sector/culling/types';
+import { TakenSectorTree } from '@/datamodels/cad/sector/culling/TakenSectorTree';
 import { LevelOfDetail, traverseDepthFirst } from '@/internal';
 import { SectorMetadata, CadModelMetadata } from '@/experimental';
 

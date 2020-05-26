@@ -11,10 +11,10 @@ import { CogniteModelBase } from './CogniteModelBase';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { toThreeJsBox3, toThreeMatrix4 } from '@/utilities/utilities';
 import { CadRenderHints, CadNode, ModelNodeAppearance } from '@/experimental';
-import { CadLoadingHints } from '@/dataModels/cad/CadLoadingHints';
-import { CadModelMetadata } from '@/dataModels/cad/CadModelMetadata';
-import { SectorGeometry } from '@/dataModels/cad/sector/types';
-import { SectorQuads } from '@/dataModels/cad/rendering/types';
+import { CadLoadingHints } from '@/datamodels/cad/CadLoadingHints';
+import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
+import { SectorGeometry } from '@/datamodels/cad/sector/types';
+import { SectorQuads } from '@/datamodels/cad/rendering/types';
 
 export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = SupportedModelTypes.CAD;

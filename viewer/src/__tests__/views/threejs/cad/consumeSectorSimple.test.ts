@@ -2,11 +2,11 @@
  * Copyright 2020 Cognite AS
  */
 
-import { createMaterials } from '@/dataModels/cad/rendering/materials';
+import { createMaterials } from '@/datamodels/cad/rendering/materials';
 import 'jest-extended';
-import { RenderMode } from '@/dataModels/cad/rendering/RenderMode';
-import { SectorQuads } from '@/dataModels/cad/rendering/types';
-import { consumeSectorSimple } from '@/dataModels/cad/sector/sectorUtilities';
+import { RenderMode } from '@/datamodels/cad/rendering/RenderMode';
+import { SectorQuads } from '@/datamodels/cad/rendering/types';
+import { consumeSectorSimple } from '@/datamodels/cad/sector/sectorUtilities';
 
 const materials = createMaterials(64, RenderMode.Color, []);
 
