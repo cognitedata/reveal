@@ -3,7 +3,7 @@
  */
 
 // TODO 25-05-2020 j-bjorne Move SectorModelTransformation to a common place of data types.
-import { SectorModelTransformation } from '@/dataModels/cad/internal/sector/types';
+import { SectorModelTransformation } from '@/dataModels/cad/sector/types';
 
 export interface PointCloudMetadata {
   blobUrl: string;

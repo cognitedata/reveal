@@ -2,20 +2,15 @@
  * Copyright 2020 Cognite AS
  */
 
-import {
-  SectorMetadata,
-  TriangleMesh,
-  InstancedMeshFile,
-  InstancedMesh,
-  Sector
-} from '@/dataModels/cad/internal/sector/types';
+import { SectorMetadata, SectorGeometry } from '@/dataModels/cad/sector/types';
 import { Box3 } from '@/utilities/Box3';
 import { vec3 } from 'gl-matrix';
-import { consumeSectorDetailed } from '@/dataModels/cad/internal/sector/consumeSectorDetailed';
 import { createEmptySector } from '../../../models/cad/emptySector';
-import { createMaterials } from '@/dataModels/cad/internal/rendering/materials';
+import { createMaterials } from '@/dataModels/cad/rendering/materials';
 import 'jest-extended';
-import { RenderMode } from '@/dataModels/cad/internal/rendering/RenderMode';
+import { RenderMode } from '@/dataModels/cad/rendering/RenderMode';
+import { consumeSectorDetailed } from '@/dataModels/cad/sector/sectorUtilities';
+import { TriangleMesh, InstancedMeshFile, InstancedMesh } from '@/dataModels/cad/rendering/types';
 
 const materials = createMaterials(10, RenderMode.Color, []);
 
@@ -64,7 +59,7 @@ describe('consumeSectorDetailed', () => {
   test('single triangle mesh, adds geometry', () => {
     // Arrange
     const triangleMeshes = [newTriangleMesh()];
-    const sector: Sector = Object.assign(createEmptySector(), { triangleMeshes } as Sector);
+    const sector: SectorGeometry = Object.assign(createEmptySector(), { triangleMeshes } as SectorGeometry);
 
     // Act
     const group = consumeSectorDetailed(sector, metadata, materials);
@@ -76,7 +71,7 @@ describe('consumeSectorDetailed', () => {
   test('single instance mesh, adds geometry', () => {
     // Arrange
     const instanceMeshes = [newInstanceMeshFile()];
-    const sector: Sector = Object.assign(createEmptySector(), { instanceMeshes } as Sector);
+    const sector: SectorGeometry = Object.assign(createEmptySector(), { instanceMeshes } as SectorGeometry);
 
     // Act
     const group = consumeSectorDetailed(sector, metadata, materials);

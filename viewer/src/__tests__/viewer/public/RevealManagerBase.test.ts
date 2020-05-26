@@ -5,8 +5,8 @@
 import * as THREE from 'three';
 
 import { RevealManagerBase } from '@/public/RevealManagerBase';
-import { MaterialManager } from '@/dataModels/cad/internal/MaterialManager';
-import { CadManager } from '@/dataModels/cad/internal/CadManager';
+import { MaterialManager } from '@/dataModels/cad/MaterialManager';
+import { CadManager } from '@/dataModels/cad/CadManager';
 import { PointCloudManager } from '@/dataModels/pointCloud/internal/PointCloudManager';
 
 describe('RevealManagerBase', () => {

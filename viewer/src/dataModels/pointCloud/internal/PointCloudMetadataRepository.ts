@@ -7,8 +7,8 @@ import { EptSceneProvider } from './EptSceneProvider';
 import { PointCloudMetadata } from '@/dataModels/pointCloud/public/PointCloudMetadata';
 
 // TODO 25-05-2020 j-bjorne: Move into common type folder
-import { DataRepository } from '@/dataModels/cad/internal/DataRepository';
-import { CadTransformationProvider } from '@/dataModels/cad/internal/CadTransformationProvider';
+import { DataRepository } from '@/dataModels/cad/DataRepository';
+import { CadTransformationProvider } from '@/dataModels/cad/CadTransformationProvider';
 
 type ModelMetadataProvider<TModelIdentifier> = ModelUrlProvider<TModelIdentifier> & EptSceneProvider;
 export class PointCloudMetadataRepository<TModelIdentifier>

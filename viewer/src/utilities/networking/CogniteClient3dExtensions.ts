@@ -5,14 +5,13 @@
 import * as Potree from '@cognite/potree-core';
 import { CogniteClient, IdEither, ItemsResponse } from '@cognite/sdk';
 
-import { CadSceneProvider } from '@/dataModels/cad/internal/CadSceneProvider';
-import { CadSectorProvider } from '@/dataModels/cad/internal/sector/CadSectorProvider';
-
 import { BlobOutputMetadata, ModelUrlProvider } from './types';
 import { Model3DOutputList } from './Model3DOutputList';
 import { File3dFormat } from '../File3dFormat';
 import { EptSceneProvider } from '@/dataModels/pointCloud/internal/EptSceneProvider';
 import { HttpHeadersProvider } from './HttpHeadersProvider';
+import { CadSceneProvider } from '@/dataModels/cad/CadSceneProvider';
+import { CadSectorProvider } from '@/dataModels/cad/sector/CadSectorProvider';
 
 interface OutputsRequest {
   models: IdEither[];

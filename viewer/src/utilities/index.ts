@@ -13,5 +13,4 @@ export {
   fromThreeVector3,
   fromThreeMatrix
 } from './utilities';
-export { SsaoEffect, SsaoPassType } from './post-processing/ssao';
 export { BoundingBoxClipper } from './BoundingBoxClipper';

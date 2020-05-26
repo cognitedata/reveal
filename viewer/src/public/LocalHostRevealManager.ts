@@ -3,25 +3,23 @@
  */
 
 import { RevealManagerBase, RevealOptions } from './RevealManagerBase';
-import { CadSectorParser } from '@/dataModels/cad/internal/sector/CadSectorParser';
-import { MaterialManager } from '@/dataModels/cad/internal/MaterialManager';
-import { SimpleAndDetailedToSector3D } from '@/dataModels/cad/internal/sector/SimpleAndDetailedToSector3D';
-import { CadModelFactory } from '@/dataModels/cad/internal/CadModelFactory';
-import { CachedRepository } from '@/dataModels/cad/internal/sector/CachedRepository';
-import { CadModelUpdateHandler } from '@/dataModels/cad/internal/CadModelUpdateHandler';
-import { CadManager } from '@/dataModels/cad/internal/CadManager';
-import { CadMetadataParser } from '@/dataModels/cad/internal/CadMetadataParser';
-import { DefaultCadTransformation } from '@/dataModels/cad/internal/DefaultCadTransformation';
-import { CadModelMetadataRepository } from '@/dataModels/cad/internal/CadModelMetadataRepository';
+
+import { CadSectorParser } from '@/dataModels/cad/sector/CadSectorParser';
+import { MaterialManager } from '@/dataModels/cad/MaterialManager';
+import { SimpleAndDetailedToSector3D } from '@/dataModels/cad/sector/SimpleAndDetailedToSector3D';
+import { CadModelMetadataRepository } from '@/dataModels/cad/CadModelMetadataRepository';
+import { DefaultCadTransformation } from '@/dataModels/cad/DefaultCadTransformation';
+import { CadMetadataParser } from '@/dataModels/cad/parsers/CadMetadataParser';
+import { CadModelFactory } from '@/dataModels/cad/CadModelFactory';
+import { ByVisibilityGpuSectorCuller, PotreeGroupWrapper, PotreeNodeWrapper } from '@/internal';
+import { CachedRepository } from '@/dataModels/cad/sector/CachedRepository';
+import { CadModelUpdateHandler } from '@/dataModels/cad/CadModelUpdateHandler';
+import { CadManager } from '@/dataModels/cad/CadManager';
 import { LocalUrlClient as LocalHostClient } from '@/utilities/networking/LocalUrlClient';
-import { CadNode } from '@/dataModels/cad/internal/CadNode';
-import { PotreeGroupWrapper } from '@/dataModels/pointCloud/internal/PotreeGroupWrapper';
-import { PotreeNodeWrapper } from '@/dataModels/pointCloud/internal/PotreeNodeWrapper';
-import { ModelNodeAppearance } from '@/dataModels/cad/internal/ModelNodeAppearance';
-import { ByVisibilityGpuSectorCuller } from '@/dataModels/cad/internal/sector/culling/ByVisibilityGpuSectorCuller';
-import { PointCloudManager } from '@/dataModels/pointCloud/internal/PointCloudManager';
-import { PointCloudFactory } from '@/dataModels/pointCloud/internal/PointCloudFactory';
+import { ModelNodeAppearance, CadNode } from '@/dataModels/cad';
 import { PointCloudMetadataRepository } from '@/dataModels/pointCloud/internal/PointCloudMetadataRepository';
+import { PointCloudFactory } from '@/dataModels/pointCloud/internal/PointCloudFactory';
+import { PointCloudManager } from '@/dataModels/pointCloud/internal/PointCloudManager';
 
 type LocalModelIdentifier = { fileName: string };
 

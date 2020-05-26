@@ -2,21 +2,20 @@
  * Copyright 2020 Cognite AS
  */
 
-import { CadBudget } from '@/dataModels/cad/public/CadBudget';
-import { ModelNodeAppearance } from '@/dataModels/cad/internal/ModelNodeAppearance';
-import { Sector, SectorQuads } from '@/dataModels/cad/internal/sector/types';
-import { MaterialManager } from '@/dataModels/cad/internal/MaterialManager';
-import { SectorCuller } from '@/dataModels/cad/internal/sector/culling/SectorCuller';
-import { CadManager } from '@/dataModels/cad/internal/CadManager';
 import { RenderManager } from './RenderManager';
+import { SectorGeometry } from '@/dataModels/cad/sector/types';
+import { SectorQuads } from '@/dataModels/cad/rendering/types';
+import { SectorCuller } from '@/internal';
+import { CadManager } from '@/dataModels/cad/CadManager';
+import { MaterialManager } from '@/dataModels/cad/MaterialManager';
+import { ModelNodeAppearance } from '@/dataModels/cad';
 import { PointCloudManager } from '@/dataModels/pointCloud/internal/PointCloudManager';
 
 export interface RevealOptions {
   nodeAppearance?: ModelNodeAppearance;
-  budget?: CadBudget;
   // internal options are experimental and may change in the future
   internal?: {
-    parseCallback?: (parsed: { lod: string; data: Sector | SectorQuads }) => void;
+    parseCallback?: (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
     sectorCuller?: SectorCuller;
   };
 }

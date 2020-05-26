@@ -4,17 +4,13 @@
 import * as THREE from 'three';
 import { mat4 } from 'gl-matrix';
 
-import { OrderSectorsByVisibilityCoverage } from '@/dataModels/cad/internal/sector/culling/OrderSectorsByVisibilityCoverage';
-import { ByVisibilityGpuSectorCuller } from '@/dataModels/cad/internal/sector/culling/ByVisibilityGpuSectorCuller';
-import { CadModelMetadata } from '@/dataModels/cad/internal';
-import { SectorMetadata } from '@/dataModels/cad/internal/sector/types';
-import { SectorSceneImpl } from '@/dataModels/cad/internal/sector/SectorScene';
-import { LevelOfDetail } from '@/dataModels/cad/internal/sector/LevelOfDetail';
-import { MaterialManager } from '@/dataModels/cad/internal/MaterialManager';
-import { CadNode } from '@/dataModels/cad/internal/CadNode';
-
 import { generateSectorTree } from '../testUtils/createSectorMetadata';
-import { DetermineSectorsInput } from '@/dataModels/cad/internal/sector/culling/types';
+import { DetermineSectorsInput } from '@/dataModels/cad/sector/culling/types';
+import { MaterialManager } from '@/dataModels/cad/MaterialManager';
+import { OrderSectorsByVisibilityCoverage } from '@/dataModels/cad/sector/culling/OrderSectorsByVisibilityCoverage';
+import { ByVisibilityGpuSectorCuller, LevelOfDetail } from '@/internal';
+import { SectorMetadata, CadNode, CadModelMetadata } from '@/experimental';
+import { SectorSceneImpl } from '@/dataModels/cad/sector/SectorScene';
 
 type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 
