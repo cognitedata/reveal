@@ -11,6 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import * as Lodash from 'lodash';
+
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 
@@ -28,11 +30,13 @@ export class PotreeRenderStyle extends BaseRenderStyle
 
   public constructor(targetId: TargetId) { super(targetId); }
 
-  public /*copy constructor*/ clone(): BaseRenderStyle
+  //==================================================
+  // OVERRIDES of BaseRenderStyle
+  //==================================================
+
+  public clone(): BaseRenderStyle
   {
-    const style = new PotreeRenderStyle(this.targetId);
-    style.budget = this.budget;
-    return style;
+    return Lodash.cloneDeep<PotreeRenderStyle>(this);
   }
 }
 

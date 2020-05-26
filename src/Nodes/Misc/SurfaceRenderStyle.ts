@@ -11,10 +11,12 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import * as Lodash from 'lodash';
+
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { ContoursStyle } from "@/Nodes/Misc/ContoursStyle";
-import { SolidStyle } from "@/Nodes/Misc/SolidStyle";
+import { ContoursStyle } from "@/Nodes/Misc/Parts/ContoursStyle";
+import { SolidStyle } from "@/Nodes/Misc/Parts/SolidStyle";
 
 export class SurfaceRenderStyle extends BaseRenderStyle {
   //==================================================
@@ -32,13 +34,13 @@ export class SurfaceRenderStyle extends BaseRenderStyle {
     super(targetId);
   }
 
-  public /*copy constructor*/ clone(): BaseRenderStyle {
-    const style = new SurfaceRenderStyle(this.targetId);
-    style.solid = this.solid.clone();
-    style.contours = this.contours.clone();
-    return style;
-  }
+  //==================================================
+  // OVERRIDES of BaseRenderStyle
+  //==================================================
 
+  public clone(): BaseRenderStyle {
+    return Lodash.cloneDeep<SurfaceRenderStyle>(this);
+  }
 }
 
 

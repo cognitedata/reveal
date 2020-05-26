@@ -14,14 +14,14 @@
 import { ColorType } from "@/Core/Enums/ColorType";
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
 
-export class SolidStyle extends BaseStyle
+export class ContoursStyle extends BaseStyle
 {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
 
-  public colorType = ColorType.DepthColor;
-  public shininess = 0.5;
+  public colorType = ColorType.Black;
+  public inc = 20;
 
   //==================================================
   // CONSTRUCTORS
@@ -29,14 +29,7 @@ export class SolidStyle extends BaseStyle
 
   public constructor() { super(); }
 
-  public /*copy constructor*/ clone(): SolidStyle
-  {
-    const style = new SolidStyle();
-    style.colorType = this.colorType;
-    style.colorType = this.colorType;
-    return style;
   }
-}
 
 
 

@@ -11,12 +11,13 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import * as Lodash from 'lodash';
+
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
 
-export class WellRenderStyle extends BaseRenderStyle
-{
+export class WellRenderStyle extends BaseRenderStyle {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
@@ -33,12 +34,12 @@ export class WellRenderStyle extends BaseRenderStyle
 
   public constructor(targetId: TargetId) { super(targetId); }
 
-  public /*copy constructor*/ clone(): BaseRenderStyle
-  {
-    const style = new WellRenderStyle(this.targetId);
-    style.radius = this.radius;
-    style.colorType = this.colorType;
-    return style;
+  //==================================================
+  // OVERRIDES of BaseRenderStyle
+  //==================================================
+
+  public clone(): BaseRenderStyle {
+    return Lodash.cloneDeep<WellRenderStyle>(this);
   }
 }
 

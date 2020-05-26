@@ -11,6 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import * as Lodash from 'lodash';
+
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
@@ -29,15 +31,14 @@ export class PointsRenderStyle extends BaseRenderStyle
   //==================================================
 
   public constructor(targetId: TargetId) { super(targetId); }
+  
+  //==================================================
+  // OVERRIDES of BaseRenderStyle
+  //==================================================
 
-  public /*copy constructor*/ clone(): BaseRenderStyle
-  {
-    const style = new PointsRenderStyle(this.targetId);
-    style.size = this.size;
-    style.colorType = this.colorType;
-    return style;
+  public clone(): BaseRenderStyle {
+    return Lodash.cloneDeep<PointsRenderStyle>(this);
   }
-
 }
 
 
