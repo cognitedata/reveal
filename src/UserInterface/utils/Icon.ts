@@ -52,7 +52,7 @@ export {
   CheckedAll,
   CheckedSome,
   RadioOff,
-  RadioOn
+  RadioOn,
 };
 
 export default function getIcon(iconType: string, iconName: string) {

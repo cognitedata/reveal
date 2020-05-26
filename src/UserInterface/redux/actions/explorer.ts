@@ -1,7 +1,10 @@
 import {
-  ON_TOGGLE_NODE_SELECT,
-  ON_TOGGLE_NODE_EXPAND,
-  ON_TOGGLE_NODE_CHECK,
+  TOGGLE_NODE_SELECT,
+  TOGGLE_NODE_EXPAND,
+  TOGGLE_NODE_CHECK,
+  GENERATE_NODE_TREE,
+  VIEW_ALL_NODES,
+  CHANGE_NODE_TYPE,
 } from "../types/explorer";
 
 import { ExplorerCommandPayloadType } from "../../interfaces/explorer";
@@ -9,13 +12,25 @@ import { ExplorerCommandPayloadType } from "../../interfaces/explorer";
 // Explorer Actions
 
 export const onToggleNodeSelect = (payload: ExplorerCommandPayloadType) => {
-  return { type: ON_TOGGLE_NODE_SELECT, payload };
+  return { type: TOGGLE_NODE_SELECT, payload };
 };
 
 export const onToggleNodeExpand = (payload: ExplorerCommandPayloadType) => {
-  return { type: ON_TOGGLE_NODE_EXPAND, payload };
+  return { type: TOGGLE_NODE_EXPAND, payload };
 };
 
 export const onToggleNodeCheck = (payload: ExplorerCommandPayloadType) => {
-  return { type: ON_TOGGLE_NODE_CHECK, payload };
+  return { type: TOGGLE_NODE_CHECK, payload };
+};
+
+export const generateNodeTree = (payload: ExplorerCommandPayloadType) => {
+  return { type: GENERATE_NODE_TREE, payload };
+};
+
+export const viewAllNodes = (payload: ExplorerCommandPayloadType) => {
+  return { type: VIEW_ALL_NODES, payload };
+};
+
+export const changeNodeType = (payload: ExplorerCommandPayloadType) => {
+  return { type: CHANGE_NODE_TYPE, payload };
 };

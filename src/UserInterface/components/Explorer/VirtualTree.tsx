@@ -1,11 +1,11 @@
 import React from "react";
-import { AutoSizer, List as VirtualList } from "react-virtualized";
+import { AutoSizer } from "react-virtualized/dist/es/AutoSizer";
+import { List as VirtualList } from "react-virtualized/dist/es/List";
 
 import IconElement from "./IconElement";
 import { ExpandButton } from "./ExpandButton";
 import { TreeCheckBox } from "./TreeCheckbox";
-import { TreeNode } from "../../interfaces/explorer";
-import Icon from "../Common/Icon";
+import { TreeNode } from "@/UserInterface/interfaces/explorer";
 
 const DEFAULT_ROW_HEIGHT = 26;
 
@@ -27,8 +27,7 @@ export default function VirtualTree(props: {
   function setRef(ref: any) {
     List = ref;
 
-    if (List) {
-      // todo: remove once events fired by tree control are handled by parent explorer
+    if (List) { // todo: remove once events fired by tree control are handled by parent explorer
       List.recomputeRowHeights();
       List.forceUpdate();
     }
@@ -66,9 +65,7 @@ export default function VirtualTree(props: {
           onCollapse={onExpand}
         />
         <div className="tree-domain-image">
-          <Icon
-            name={item.icon.name}
-            type={item.icon.type} />
+          <IconElement src={item.icon} alt={item.iconDescription} size="24px" />
         </div>
         <div className="tree-picked-item">
           <TreeCheckBox
@@ -122,20 +119,22 @@ export default function VirtualTree(props: {
   };
 
   return (
-    <AutoSizer
-      children={function (params) {
-        return (
-          <VirtualList
-            height={params.height}
-            overscanRowCount={10}
-            ref={setRef}
-            rowHeight={rowHeight}
-            rowRenderer={cellRenderer}
-            width={params.width}
-            rowCount={data.length}
-          />
-        );
-      }}
-    />
+    <div className="virtual-tree-container">
+      <AutoSizer
+        children={function (params) {
+          return (
+            <VirtualList
+              height={params.height}
+              overscanRowCount={10}
+              ref={setRef}
+              rowHeight={rowHeight}
+              rowRenderer={cellRenderer}
+              width={params.width}
+              rowCount={data.length}
+            />
+          );
+        }}
+      />
+    </div>
   );
 }

@@ -81,13 +81,14 @@ ul {
   width: 100%; }
 
 .tree-domain-image {
-  display: flex;
-  align-items: center;
-  justify-content: center; }
+  width: 1.5em;
+  height: 100%;
+  margin-inline-end: 0.5em; }
 
 .tree-icon {
   height: 100%;
-  width: 100%; }
+  width: 100%;
+  margin-inline-end: 0.5em; }
 
 .tree-icon img {
   display: block;
@@ -98,11 +99,13 @@ ul {
   display: inline-flex;
   align-items: center;
   width: calc(100% - 5.5em);
+  padding: 2px 8px;
+  margin: 0 0.5em;
   border-radius: 8px;
   cursor: pointer;
   height: 100%;
   box-sizing: border-box;
-  font-size: 0.7rem; }
+  font-size: 80%; }
 
 .tree-item:hover .tree-item-lbl:not(.selected) {
   background: #dfedfc;
@@ -111,8 +114,8 @@ ul {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#94c4fe', endColorstr='#d3f6fe',GradientType=0 );
   text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.5);
   box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2);
-  border-radius: 7px;
-  border: 0.5px solid #9fc8fa;
+  border-radius: 8px;
+  border: 1px solid #9fc8fa;
   color: #000; }
 
 .expand-btn {
@@ -130,6 +133,42 @@ ul {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#54bc3e', endColorstr='#aee850',GradientType=0 );
   border: 2px solid #92c0f7;
   border-radius: 8px; }
+
+.node-tabs {
+  height: 25px !important;
+  background-color: white; }
+  .node-tabs .node-tab {
+    display: flex;
+    justify-content: center;
+    align-items: center; }
+    .node-tabs .node-tab .img {
+      z-index: 9999;
+      border: 0 !important; }
+    .node-tabs .node-tab span {
+      margin-left: 5px; }
+  .node-tabs .MuiTabs-flexContainer {
+    height: 30px; }
+  .node-tabs .MuiTabs-root {
+    width: 100% !important; }
+  .node-tabs .MuiTab-root {
+    padding: 0px !important;
+    text-transform: none !important;
+    min-width: 80px !important;
+    min-height: 20px !important;
+    color: black !important;
+    background: #e4e4e4;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 0px;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 1px rgba(0, 0, 0, 0.3), 0 1px 1px rgba(255, 255, 255, 0.9); }
+  .node-tabs .Mui-selected {
+    background: white !important;
+    color: black !important; }
+  .node-tabs .MuiTab-wrapper {
+    font-size: 0.6rem !important;
+    margin-top: -5px; }
+
+.virtual-tree-container {
+  flex: 15; }
 
 * {
   font-family: "Roboto", "Jost", sans-serif !important; }
@@ -152,7 +191,7 @@ body {
 .right-panel {
   position: relative;
   height: 100vh;
-  background-color: grey; }
+  background-color: linear-gradient(to right, white, lightgray); }
 
 .right-panel canvas {
   width: 100% !important;
@@ -167,7 +206,10 @@ body {
 .explorer-container {
   height: 100%;
   width: 100%;
-  background-image: linear-gradient(to right, white, lightgray); }
+  background-image: linear-gradient(to right, white, lightgray);
+  display: flex;
+  flex-direction: column;
+  position: relative; }
 
 .settings-container {
   width: 100%;
@@ -321,3 +363,11 @@ body {
         top: -1.4rem; }
       .select-group .select-controls svg:nth-child(2) {
         bottom: 0; }
+
+.viewer-3d {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center; }
