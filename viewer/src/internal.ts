@@ -15,6 +15,7 @@ export { traverseDepthFirst, traverseUpwards } from './utilities/traversal';
 export { WantedSector } from './dataModels/cad/internal/sector/WantedSector';
 export { LevelOfDetail } from './dataModels/cad/internal/sector/LevelOfDetail';
 
+export { DetermineSectorsInput } from './dataModels/cad/internal/sector/culling/types';
 export { SectorCuller } from './dataModels/cad/internal/sector/culling/SectorCuller';
 export { ByVisibilityGpuSectorCuller } from './dataModels/cad/internal/sector/culling/ByVisibilityGpuSectorCuller';
 export { GpuOrderSectorsByVisibilityCoverage } from './dataModels/cad/internal/sector/culling/OrderSectorsByVisibilityCoverage';
