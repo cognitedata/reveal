@@ -1,0 +1,140 @@
+name: CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master, dependency-updates ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  ci-setup:
+    name: Setup dependencies
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup Rust
+      run: |
+        rustup component add clippy
+        rustup component add rustfmt
+
+  ci-rust:
+    name: Rust
+    needs: ci-setup
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build
+      run: |
+        # fail on warnings, test all features
+        cargo fmt -- --check
+        # NOTE: as of 2020-03-17, Rust 1.42, mem_replace_with_default is triggered by a macro in wasm_bindgen
+        # and needs to be disabled
+        cargo clippy --all-targets --all-features -- -D warnings -A clippy::mem_replace_with_default
+        cargo test --all --verbose
+
+  ci-viewer:
+    name: Viewer 
+    runs-on: ubuntu-latest
+    needs: ci-setup
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install wasm-pack
+      uses: jetli/wasm-pack-action@v0.3.0     
+
+    - name: Cache cargo registry
+      uses: actions/cache@v1
+      with:
+        path: ~/.cargo/registry
+        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+    - name: Cache cargo index
+      uses: actions/cache@v1
+      with:
+        path: ~/.cargo/git
+        key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+    - name: Cache cargo build
+      uses: actions/cache@v1
+      with:
+        path: target
+        key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Install NPM dependencies
+      working-directory: viewer
+      run: npm install
+
+    - name: Build release
+      working-directory: viewer
+      run: npm run release
+
+    - name: Lint
+      working-directory: viewer
+      continue-on-error: true
+      run: npm run lint
+    
+    - name: Setup tools for coverage tests
+      working-directory: viewer
+      run: |
+        sudo apt-get install xvfb mesa-utils libgl1-mesa-dri libglapi-mesa libosmesa6
+        export DISPLAY=:99.0
+
+    - name: Run coverage tests
+      working-directory: viewer
+      run: |
+        xvfb-run npm run coverage
+      
+    - name: Publish to codecov
+      uses: codecov/codecov-action@v1
+
+
+  ci-examples:
+    name: Examples    
+    runs-on: ubuntu-latest
+    needs: ci-setup
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install wasm-pack
+      uses: jetli/wasm-pack-action@v0.3.0     
+
+    - name: Cache cargo registry
+      uses: actions/cache@v1
+      with:
+        path: ~/.cargo/registry
+        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+    - name: Cache cargo index
+      uses: actions/cache@v1
+      with:
+        path: ~/.cargo/git
+        key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+    - name: Cache cargo build
+      uses: actions/cache@v1
+      with:
+        path: target
+        key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Install NPM dependencies
+      working-directory: viewer
+      run: npm install
+
+    - name: Build release
+      working-directory: viewer
+      run: npm run release
+
+    - name: Install examples-dependencies
+      working-directory: examples
+      run: npm install
+    - name: Build examples
+      working-directory: examples
+      run: |
+        export NODE_OPTIONS=--max-old-space-size=8192 
+        npm run release

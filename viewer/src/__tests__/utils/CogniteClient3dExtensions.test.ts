@@ -139,6 +139,4 @@ describe('Model3dOutputList', () => {
       blobId: 4
     });
   });
-
-  test('findMostRecentOutput() with ', () => { });
 });
