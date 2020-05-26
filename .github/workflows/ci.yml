@@ -21,7 +21,7 @@ jobs:
 
   ci-rust:
     name: Rust
-    needs: setup
+    needs: ci-setup
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -37,7 +37,7 @@ jobs:
   ci-viewer:
     name: Viewer 
     runs-on: ubuntu-latest
-    needs: setup
+    needs: ci-setup
     strategy:
       matrix:
         node-version: [12.x]
@@ -95,7 +95,7 @@ jobs:
   ci-examples:
     name: Examples    
     runs-on: ubuntu-latest
-    needs: setup
+    needs: ci-setup
     strategy:
       matrix:
         node-version: [12.x]
