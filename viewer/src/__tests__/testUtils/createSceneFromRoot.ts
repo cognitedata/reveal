@@ -3,8 +3,8 @@
  */
 
 import { traverseDepthFirst } from '@/utilities/traversal';
-import { SectorMetadata } from '@/dataModels/cad/internal/sector/types';
-import { SectorScene, SectorSceneImpl } from '@/dataModels/cad/internal/sector/SectorScene';
+import { SectorMetadata } from '@/datamodels/cad/sector/types';
+import { SectorScene, SectorSceneImpl } from '@/datamodels/cad/sector/SectorScene';
 
 export function createSceneFromRoot(root: SectorMetadata): SectorScene {
   const sectors = new Map<number, SectorMetadata>();

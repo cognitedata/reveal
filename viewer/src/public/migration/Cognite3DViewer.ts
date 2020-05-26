@@ -9,29 +9,41 @@ import ComboControls from '@cognite/three-combo-controls';
 import { CogniteClient, IdEither } from '@cognite/sdk';
 import { share, filter } from 'rxjs/operators';
 
-import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
-import { File3dFormat } from '@/utilities/File3dFormat';
 import { from3DPositionToRelativeViewportCoordinates } from '@/utilities/worldToViewport';
-import { CadSectorParser } from '@/dataModels/cad/internal/sector/CadSectorParser';
-import { SimpleAndDetailedToSector3D } from '@/dataModels/cad/internal/sector/SimpleAndDetailedToSector3D';
-import { CachedRepository } from '@/dataModels/cad/internal/sector/CachedRepository';
-import { MaterialManager } from '@/dataModels/cad/internal/MaterialManager';
-import { intersectCadNodes } from '@/dataModels/cad/internal/picking';
+import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
+import { SimpleAndDetailedToSector3D } from '@/datamodels/cad/sector/SimpleAndDetailedToSector3D';
+import { CachedRepository } from '@/datamodels/cad/sector/CachedRepository';
+import { MaterialManager } from '@/datamodels/cad/MaterialManager';
+import { intersectCadNodes } from '@/datamodels/cad/picking';
 
 import { Cognite3DViewerOptions, AddModelOptions, SupportedModelTypes } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { Intersection } from './intersection';
 import RenderController from './RenderController';
 import { CogniteModelBase } from './CogniteModelBase';
+
+import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
+import { File3dFormat } from '@/utilities/File3dFormat';
+import { RevealManagerBase } from '@/public/RevealManagerBase';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
-import { RevealManagerBase, RevealOptions } from '../RevealManagerBase';
+import { CadManager } from '@/datamodels/cad/CadManager';
+import { CadModelMetadataRepository } from '@/datamodels/cad/CadModelMetadataRepository';
+import { DefaultCadTransformation } from '@/datamodels/cad/DefaultCadTransformation';
+import { CadMetadataParser } from '@/datamodels/cad/parsers/CadMetadataParser';
+import { CadModelFactory } from '@/datamodels/cad/CadModelFactory';
+import { ByVisibilityGpuSectorCuller } from '@/internal';
+import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
+import { PointCloudManager } from '@/datamodels/pointcloud/internal/PointCloudManager';
+import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/internal/PointCloudMetadataRepository';
+import { PointCloudFactory } from '@/datamodels/pointcloud/internal/PointCloudFactory';
 
 export interface RelativeMouseEvent {
   offsetX: number;
   offsetY: number;
 }
 
+type RequestParams = { modelRevision: IdEither; format: File3dFormat };
 type PointerEventDelegate = (event: RelativeMouseEvent) => void;
 type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
 
@@ -49,10 +61,10 @@ export class Cognite3DViewer {
   private readonly scene: THREE.Scene;
   private readonly controls: ComboControls;
   private readonly sdkClient: CogniteClient;
-  private readonly modelDataTransformer: SimpleAndDetailedToSector3D;
   private readonly sectorRepository: CachedRepository;
-  private readonly revealManager: RevealManagerBase;
-  private modelsNeedUpdate = true;
+  private readonly cadManager: CadManager<RequestParams>;
+  private readonly pointCloudManager: PointCloudManager<RequestParams>;
+  private readonly revealManager: RevealManagerBase<RequestParams>;
 
   private readonly eventListeners = {
     cameraChange: new Array<CameraChangeDelegate>(),
@@ -76,6 +88,9 @@ export class Cognite3DViewer {
     }
     if (options.logMetrics) {
       throw new NotSupportedInMigrationWrapperError('LogMetris is not supported');
+    }
+    if (options.viewCube) {
+      throw new NotSupportedInMigrationWrapperError('ViewCube is not supported');
     }
 
     this.renderer = options.renderer || new THREE.WebGLRenderer();
@@ -106,26 +121,28 @@ export class Cognite3DViewer {
 
     this.sdkClient = options.sdk;
     this.renderController = new RenderController(this.camera);
-
-    const modelDataParser: CadSectorParser = new CadSectorParser();
     this.materialManager = new MaterialManager();
-    this.modelDataTransformer = new SimpleAndDetailedToSector3D(this.materialManager);
-    this.sectorRepository = new CachedRepository(modelDataParser, this.modelDataTransformer);
-    const onDataUpdated = () => {
-      this.modelsNeedUpdate = true;
-    };
-    const managerOptions: RevealOptions = {
-      internal: {
-        sectorCuller: options._sectorCuller
-      }
-    };
-    this.revealManager = new RevealManagerBase(
-      this.sdkClient,
-      this.sectorRepository,
-      this.materialManager,
-      onDataUpdated,
-      managerOptions
+    const modelDataParser: CadSectorParser = new CadSectorParser();
+    const modelDataTransformer = new SimpleAndDetailedToSector3D(this.materialManager);
+    const cogniteClientExtension = new CogniteClient3dExtensions(this.sdkClient);
+    const cadModelRepository = new CadModelMetadataRepository(
+      cogniteClientExtension,
+      new DefaultCadTransformation(),
+      new CadMetadataParser()
     );
+    const cadModelFactory = new CadModelFactory(this.materialManager);
+    const sectorCuller = options._sectorCuller || new ByVisibilityGpuSectorCuller();
+    this.sectorRepository = new CachedRepository(cogniteClientExtension, modelDataParser, modelDataTransformer);
+    const cadModelUpdateHandler = new CadModelUpdateHandler(this.sectorRepository, sectorCuller);
+    this.cadManager = new CadManager<RequestParams>(cadModelRepository, cadModelFactory, cadModelUpdateHandler);
+
+    const pointCloudModelRepository: PointCloudMetadataRepository<RequestParams> = new PointCloudMetadataRepository(
+      cogniteClientExtension,
+      new DefaultCadTransformation()
+    );
+    const pointCloudFactory: PointCloudFactory = new PointCloudFactory(cogniteClientExtension);
+    this.pointCloudManager = new PointCloudManager(pointCloudModelRepository, pointCloudFactory);
+    this.revealManager = new RevealManagerBase(this.cadManager, this.materialManager, this.pointCloudManager);
     this.startPointerEventListeners();
 
     this.animate(0);
@@ -198,13 +215,16 @@ export class Cognite3DViewer {
       throw new NotSupportedInMigrationWrapperError();
     }
 
-    const cadNode = await this.revealManager.addModelFromCdf(options.revisionId);
+    const cadNode = await this.cadManager.addModel({
+      modelRevision: { id: options.revisionId },
+      format: File3dFormat.RevealCadModel
+    });
     const model3d = new Cognite3DModel(options.modelId, options.revisionId, cadNode, this.sdkClient);
     this.sectorRepository
       .getParsedData()
       .pipe(
         share(),
-        filter(x => x.cadModelIdentifier === cadNode.cadModel.identifier)
+        filter(x => x.blobUrl === cadNode.cadModelMetadata.blobUrl)
       )
       .subscribe(parseSector => model3d.updateNodeIdMaps(parseSector));
 
@@ -225,7 +245,11 @@ export class Cognite3DViewer {
       throw new NotSupportedInMigrationWrapperError();
     }
 
-    const [potreeGroup, potreeNode] = await this.revealManager.addPointCloudFromCdf(options.revisionId);
+    // TODO 25-05-2020 j-bjorne: fix this hot mess, 1 group added multiple times
+    const [potreeGroup, potreeNode] = await this.pointCloudManager.addModel({
+      modelRevision: { id: options.revisionId },
+      format: File3dFormat.EptPointCloud
+    });
     const model = new CognitePointCloudModel(options.modelId, options.revisionId, potreeGroup, potreeNode);
     this.models.push(model);
     this.scene.add(model);
@@ -482,11 +506,16 @@ export class Cognite3DViewer {
       this.controls.update(this.clock.getDelta());
       renderController.update();
       this.revealManager.update(this.camera);
-      if (renderController.needsRedraw || this.forceRendering || this.modelsNeedUpdate || this._slicingNeedsUpdate) {
+      if (
+        renderController.needsRedraw ||
+        this.forceRendering ||
+        this.revealManager.needsRedraw ||
+        this._slicingNeedsUpdate
+      ) {
         this.updateNearAndFarPlane(this.camera);
         this.renderer.render(this.scene, this.camera);
         renderController.clearNeedsRedraw();
-        this.modelsNeedUpdate = false;
+        this.revealManager.resetRedraw();
         this._slicingNeedsUpdate = false;
       }
     }

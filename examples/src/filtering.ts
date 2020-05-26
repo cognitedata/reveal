@@ -4,9 +4,9 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { CadNode, RevealManager, ModelNodeAppearance } from '@cognite/reveal/experimental';
+import * as reveal from '@cognite/reveal/experimental';
 import dat from 'dat.gui';
-import { getParamsFromURL } from './utils/example-helpers';
+import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 
 CameraControls.install({ THREE });
@@ -22,20 +22,21 @@ async function main() {
   const settings = {
     treeIndices: '1, 2, 8, 12'
   };
-  let modelsNeedUpdate = true;
-  const revealManager = new RevealManager(client, () => {
-    modelsNeedUpdate = true;
-  });
-  let model: CadNode;
-  const nodeAppearance: ModelNodeAppearance = {
+
+  const revealManager: reveal.RenderManager = createRenderManager(
+    modelRevision !== undefined ? 'cdf' : 'local',
+    client
+  );
+  let model: reveal.CadNode;
+  const nodeAppearance: reveal.ModelNodeAppearance = {
     visible(treeIndex: number) {
       return visibleIndices.has(treeIndex);
     }
   };
-  if (modelUrl) {
-    model = await revealManager.addModelFromUrl(modelUrl, nodeAppearance);
-  } else if (modelRevision) {
-    model = await revealManager.addModelFromCdf(modelRevision, nodeAppearance);
+  if (revealManager instanceof reveal.LocalHostRevealManager && modelUrl !== undefined) {
+    model = await revealManager.addModel('cad', modelUrl, nodeAppearance);
+  } else if (revealManager instanceof reveal.RevealManager && modelRevision !== undefined) {
+    model = await revealManager.addModel('cad', modelRevision, nodeAppearance);
   } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');
   }
@@ -76,9 +77,10 @@ async function main() {
       revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || modelsNeedUpdate || shadingNeedsUpdate) {
+    if (controlsNeedUpdate || revealManager.needsRedraw || shadingNeedsUpdate) {
       renderer.render(scene, camera);
       shadingNeedsUpdate = false;
+      revealManager.resetRedraw();
     }
 
     requestAnimationFrame(render);

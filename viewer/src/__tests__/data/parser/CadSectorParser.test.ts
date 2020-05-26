@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { CadSectorParser } from '@/dataModels/cad/internal/sector/CadSectorParser';
+import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
 import { WorkerPool } from '@/utilities/workers/WorkerPool';
 import { of } from 'rxjs';
 

@@ -16,7 +16,7 @@ import {
   createDefaultRenderOptions
 } from './utils/renderer-debug-widget';
 import { CogniteClient } from '@cognite/sdk';
-import { getParamsFromURL } from './utils/example-helpers';
+import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
 
 CameraControls.install({ THREE });
 
@@ -44,30 +44,33 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  let modelsNeedUpdate = true;
-
   Potree.XHRFactory.config.customHeaders.push({ header: 'MyDummyHeader', value: 'MyDummyValue' });
-  const revealManager = new reveal.RevealManager(client, () => {
-    modelsNeedUpdate = true;
-  });
-  let pointCloud: [reveal.internal.PotreeGroupWrapper, reveal.internal.PotreeNodeWrapper];
-  if (pointCloudUrl) {
-    pointCloud = await revealManager.addPointCloudFromUrl(pointCloudUrl);
-  } else if (pointCloudRevision) {
-    await client.authenticate();
-    pointCloud = await revealManager.addPointCloudFromCdf(pointCloudRevision);
-  } else {
-    throw new Error('Need to provide either project & pointCloud OR pointCloudlUrl as query parameters');
-  }
+
+  const revealManager: reveal.RenderManager = createRenderManager(
+    modelRevision !== undefined ? 'cdf' : 'local',
+    client
+  );
+
   let model: reveal.CadNode;
-  if (modelUrl) {
-    model = await revealManager.addModelFromUrl(modelUrl);
-  } else if (modelRevision) {
-    model = await revealManager.addModelFromCdf(modelRevision);
+  if (revealManager instanceof reveal.LocalHostRevealManager && modelUrl !== undefined) {
+    model = await revealManager.addModel('cad', modelUrl);
+  } else if (revealManager instanceof reveal.RevealManager && modelRevision !== undefined) {
+    await client.authenticate();
+    model = await revealManager.addModel('cad', modelRevision);
   } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');
   }
+  scene.add(model);
 
+  let pointCloud: [reveal.internal.PotreeGroupWrapper, reveal.internal.PotreeNodeWrapper];
+  if (revealManager instanceof reveal.LocalHostRevealManager && pointCloudUrl !== undefined) {
+    pointCloud = await revealManager.addModel('pointcloud', pointCloudUrl);
+  } else if (revealManager instanceof reveal.RevealManager && pointCloudRevision !== undefined) {
+    await client.authenticate();
+    pointCloud = await revealManager.addModel('pointcloud', pointCloudRevision);
+  } else {
+    throw new Error('Need to provide either project & pointCloud OR pointCloudlUrl as query parameters');
+  }
   const [pointCloudGroup, pointCloudNode] = pointCloud;
   scene.add(pointCloudGroup);
 
@@ -99,12 +102,13 @@ async function main() {
     const needsUpdate =
       renderOptions.renderMode === RenderMode.AlwaysRender ||
       (renderOptions.renderMode === RenderMode.WhenNecessary &&
-        (controlsNeedUpdate || modelsNeedUpdate || pointCloudGroup.needsRedraw || settingsChanged));
+        (controlsNeedUpdate || revealManager.needsRedraw || pointCloudGroup.needsRedraw || settingsChanged));
 
     if (needsUpdate) {
       applyRenderingFilters(scene, renderOptions.renderFilter);
       renderer.render(scene, camera);
       settingsChanged = false;
+      revealManager.resetRedraw();
     }
     requestAnimationFrame(render);
   };

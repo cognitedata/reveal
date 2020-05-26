@@ -4,7 +4,7 @@
 
 import { CogniteClient } from '@cognite/sdk';
 
-import { SectorCuller } from '@/dataModels/cad/internal/sector/culling/SectorCuller';
+import { SectorCuller } from '@/datamodels/cad/sector/culling/SectorCuller';
 
 // import Color from '@/core/Cognite3DModel';
 

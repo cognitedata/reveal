@@ -3,8 +3,8 @@
  */
 
 import * as THREE from 'three';
-import { discardSector } from '@/dataModels/cad/internal/sector/discardSector';
 import 'jest-extended';
+import { discardSector } from '@/datamodels/cad/sector/sectorUtilities';
 
 describe('discardSector', () => {
   let node: THREE.Group;

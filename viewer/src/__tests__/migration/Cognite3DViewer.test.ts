@@ -9,7 +9,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer } from '@/public/migration/Cognite3DViewer';
 
 import nock from 'nock';
-import { SectorCuller } from '@/dataModels/cad/internal/sector/culling/SectorCuller';
+import { SectorCuller } from '@/datamodels/cad/sector/culling/SectorCuller';
 
 const sceneJson = require('./scene.json');
 
@@ -24,10 +24,9 @@ describe('Cognite3DViewer', () => {
   jest.useFakeTimers();
 
   test('constructor throws error when unsupported options are set', () => {
-    expect(() => new Cognite3DViewer({ sdk, enableCache: true })).toThrowError();
-    expect(() => new Cognite3DViewer({ sdk, enableCache: false, logMetrics: true })).toThrowError();
-    expect(() => new Cognite3DViewer({ sdk, enableCache: false, viewCube: 'topleft' })).toThrowError();
-    expect(() => new Cognite3DViewer({ sdk, enableCache: false })).toThrowError();
+    expect(() => new Cognite3DViewer({ sdk, renderer, _sectorCuller, enableCache: true })).toThrowError();
+    expect(() => new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: true })).toThrowError();
+    expect(() => new Cognite3DViewer({ sdk, renderer, _sectorCuller, viewCube: 'topleft' })).toThrowError();
   });
 
   test('dispose disposes WebGL resources', () => {

@@ -8,7 +8,7 @@ import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import * as reveal from '@cognite/reveal/experimental';
 import { CogniteClient } from '@cognite/sdk';
-import { getParamsFromURL } from './utils/example-helpers';
+import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
 
 CameraControls.install({ THREE });
 
@@ -18,7 +18,6 @@ async function main() {
   client.loginWithOAuth({ project });
 
   const scene = new THREE.Scene();
-  let modelsNeedUpdate = true;
 
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight);
   const coverageUtil = new reveal.internal.GpuOrderSectorsByVisibilityCoverage();
@@ -27,18 +26,20 @@ async function main() {
     costLimit: 70 * 1024 * 1024,
     logCallback: console.log
   });
-  const revealManager = new reveal.RevealManager(
+
+  const revealManager: reveal.RenderManager = createRenderManager(
+    modelRevision !== undefined ? 'cdf' : 'local',
     client,
-    () => {
-      modelsNeedUpdate = true;
-    },
-    { internal: { sectorCuller } }
+    {
+      internal: { sectorCuller }
+    }
   );
+
   let model: reveal.CadNode;
-  if (modelUrl) {
-    model = await revealManager.addModelFromUrl(modelUrl);
-  } else if (modelRevision) {
-    model = await revealManager.addModelFromCdf(modelRevision);
+  if (revealManager instanceof reveal.LocalHostRevealManager && modelUrl !== undefined) {
+    model = await revealManager.addModel('cad', modelUrl);
+  } else if (revealManager instanceof reveal.RevealManager && modelRevision !== undefined) {
+    model = await revealManager.addModel('cad', modelRevision);
   } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');
   }
@@ -108,9 +109,9 @@ async function main() {
       revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || modelsNeedUpdate) {
+    if (controlsNeedUpdate || revealManager.needsRedraw) {
       renderer.render(scene, camera);
-      modelsNeedUpdate = false;
+      revealManager.resetRedraw();
     }
 
     requestAnimationFrame(render);

@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { Box3 } from './Box3';
 import { vec3, mat4 } from 'gl-matrix';
-import { SectorModelTransformation } from '@/dataModels/cad/internal/sector/types';
+import { SectorModelTransformation } from '@/datamodels/cad/sector/types';
 
 export function fitCameraToBoundingBox(camera: THREE.Camera, bounds: Box3, radiusFactor: number = 4) {
   const min = new THREE.Vector3(bounds.min[0], bounds.min[1], bounds.min[2]);

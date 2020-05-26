@@ -9,7 +9,7 @@ import { CogniteClient } from '@cognite/sdk';
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
 import { vec3 } from 'gl-matrix';
-import { getParamsFromURL } from './utils/example-helpers';
+import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
 
 CameraControls.install({ THREE });
 
@@ -24,13 +24,17 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const revealManager = new reveal.RevealManager(client, () => {});
+  const revealManager: reveal.RenderManager = createRenderManager(
+    modelRevision !== undefined ? 'cdf' : 'local',
+    client
+  );
   let model: [reveal.internal.PotreeGroupWrapper, reveal.internal.PotreeNodeWrapper];
-  if (modelUrl) {
-    model = await revealManager.addPointCloudFromUrl(modelUrl);
-  } else if (modelRevision) {
-    await client.authenticate(); // Hack to make authentication flow work, required for pointcloud from cdf.
-    model = await revealManager.addPointCloudFromCdf(modelRevision);
+
+  if (revealManager instanceof reveal.LocalHostRevealManager && modelUrl !== undefined) {
+    model = await revealManager.addModel('pointcloud', modelUrl);
+  } else if (revealManager instanceof reveal.RevealManager && modelRevision !== undefined) {
+    await client.authenticate();
+    model = await revealManager.addModel('pointcloud', modelRevision);
   } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');
   }

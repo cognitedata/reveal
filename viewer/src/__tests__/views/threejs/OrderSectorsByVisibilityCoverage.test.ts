@@ -5,16 +5,14 @@
 import * as THREE from 'three';
 import { mat4 } from 'gl-matrix';
 
-import { SectorMetadata, SectorModelTransformation } from '@/dataModels/cad/internal/sector/types';
-import { SectorScene, SectorSceneImpl } from '@/dataModels/cad/internal/sector/SectorScene';
-import { GpuOrderSectorsByVisibilityCoverage } from '@/dataModels/cad/internal/sector/culling/OrderSectorsByVisibilityCoverage';
-import { CadModel } from '@/dataModels/cad/internal';
-import { traverseDepthFirst } from '@/utilities/traversal';
-import { fromThreeMatrix } from '@/utilities';
-import { Box3 } from '@/utilities/Box3';
-import { ModelDataRetriever } from '@/utilities/networking/ModelDataRetriever';
-
 import { createSectorMetadata, SectorTree } from '../../testUtils/createSectorMetadata';
+import { Box3 } from '@/utilities/Box3';
+import { GpuOrderSectorsByVisibilityCoverage, traverseDepthFirst } from '@/internal';
+import { SectorSceneImpl } from '@/datamodels/cad/sector/SectorScene';
+import { SectorMetadata, SectorModelTransformation } from '@/experimental';
+import { fromThreeMatrix } from '@/utilities';
+import { CadModelMetadata } from '@/datamodels/cad/';
+import { SectorScene } from '@/datamodels/cad/sector/types';
 
 describe('GpuOrderSectorsByVisibilityCoverage', () => {
   const glContext: WebGLRenderingContext = require('gl')(64, 64);
@@ -111,14 +109,9 @@ function createModelTransformation(modelTransform?: THREE.Matrix4): SectorModelT
   };
 }
 
-function createStubModel(identifier: string, scene: SectorScene, modelTransformation: SectorModelTransformation) {
-  const dataRetriever: ModelDataRetriever = {
-    fetchJson: jest.fn(),
-    fetchData: jest.fn()
-  };
-  const cadModel: CadModel = {
-    identifier,
-    dataRetriever,
+function createStubModel(blobUrl: string, scene: SectorScene, modelTransformation: SectorModelTransformation) {
+  const cadModel: CadModelMetadata = {
+    blobUrl,
     modelTransformation,
     scene
   };

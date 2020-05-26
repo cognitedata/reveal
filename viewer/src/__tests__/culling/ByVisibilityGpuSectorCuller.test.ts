@@ -4,19 +4,13 @@
 import * as THREE from 'three';
 import { mat4 } from 'gl-matrix';
 
-import { ModelDataRetriever } from '@/utilities/networking/ModelDataRetriever';
-
-import { OrderSectorsByVisibilityCoverage } from '@/dataModels/cad/internal/sector/culling/OrderSectorsByVisibilityCoverage';
-import { ByVisibilityGpuSectorCuller } from '@/dataModels/cad/internal/sector/culling/ByVisibilityGpuSectorCuller';
-import { CadModel } from '@/dataModels/cad/internal';
-import { SectorMetadata } from '@/dataModels/cad/internal/sector/types';
-import { SectorSceneImpl } from '@/dataModels/cad/internal/sector/SectorScene';
-import { LevelOfDetail } from '@/dataModels/cad/internal/sector/LevelOfDetail';
-import { MaterialManager } from '@/dataModels/cad/internal/MaterialManager';
-import { CadNode } from '@/dataModels/cad/internal/CadNode';
-
 import { generateSectorTree } from '../testUtils/createSectorMetadata';
-import { DetermineSectorsInput } from '@/dataModels/cad/internal/sector/culling/types';
+import { DetermineSectorsInput } from '@/datamodels/cad/sector/culling/types';
+import { MaterialManager } from '@/datamodels/cad/MaterialManager';
+import { OrderSectorsByVisibilityCoverage } from '@/datamodels/cad/sector/culling/OrderSectorsByVisibilityCoverage';
+import { ByVisibilityGpuSectorCuller, LevelOfDetail } from '@/internal';
+import { SectorMetadata, CadNode, CadModelMetadata } from '@/experimental';
+import { SectorSceneImpl } from '@/datamodels/cad/sector/SectorScene';
 
 type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 
@@ -61,12 +55,12 @@ describe('ByVisibilityGpuSectorCuller', () => {
 
     // Assert
     expect(orderSectorsByVisibilityMock).toBeCalledTimes(1); // Only render scene once
-    const sectors1 = sectors.filter(x => x.scene === model1.scene);
-    const sectors2 = sectors.filter(x => x.scene === model2.scene);
+    const sectors1 = sectors.filter(x => x.blobUrl === model1.blobUrl);
+    const sectors2 = sectors.filter(x => x.blobUrl === model2.blobUrl);
     expect(sectors1).not.toBeEmpty();
-    expect(model1.scene.getAllSectors()).toContainAllValues(sectors1.map(x => x.metadata));
+    expect(model1.scene.getAllSectors().map(x => x.id)).toContainAllValues(sectors1.map(x => x.metadata.id));
     expect(sectors2).not.toBeEmpty();
-    expect(model2.scene.getAllSectors()).toContainAllValues(sectors2.map(x => x.metadata));
+    expect(model2.scene.getAllSectors().map(x => x.id)).toContainAllValues(sectors2.map(x => x.metadata.id));
   });
 
   test('determineSectors returns sector from coverage utility by priority', () => {
@@ -106,13 +100,11 @@ describe('ByVisibilityGpuSectorCuller', () => {
   });
 });
 
-function createModel(root: SectorMetadata): CadModel {
-  const dataRetriever: ModelDataRetriever = jest.fn() as any;
+function createModel(root: SectorMetadata): CadModelMetadata {
   const scene = SectorSceneImpl.createFromRootSector(8, 1, root);
 
-  const model: CadModel = {
-    identifier: 'test',
-    dataRetriever,
+  const model: CadModelMetadata = {
+    blobUrl: `test_${Math.random()}`,
     modelTransformation: {
       inverseModelMatrix: mat4.identity(mat4.create()),
       modelMatrix: mat4.identity(mat4.create())
@@ -124,11 +116,11 @@ function createModel(root: SectorMetadata): CadModel {
 
 function createDetermineSectorInput(
   camera: THREE.PerspectiveCamera,
-  models: CadModel | CadModel[]
+  models: CadModelMetadata | CadModelMetadata[]
 ): DetermineSectorsInput {
   const determineSectorsInput: DetermineSectorsInput = {
     camera,
-    cadModels: Array.isArray(models) ? models : [models],
+    cadModelsMetadata: Array.isArray(models) ? models : [models],
     loadingHints: {}
   };
   return determineSectorsInput;

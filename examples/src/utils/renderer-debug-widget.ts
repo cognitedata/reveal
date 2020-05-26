@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 import * as reveal from '@cognite/reveal/experimental';
 import dat from 'dat.gui';
+import { OverrideSectorCuller } from './OverrideSectorCuller';
 
 export type RenderFilter = {
   renderQuads: boolean;
@@ -136,23 +137,12 @@ export function createRendererDebugWidget(
   const loadOverride = { maxQuadSize: 0.0025, quadsFilter: '', detailedFilter: '' };
   const updateWantedNodesFilter = () =>
     updateWantedSectorOverride(
+      cadNode,
       renderOptions,
       sectorMetadataRoot,
       loadOverride.quadsFilter,
       loadOverride.detailedFilter
     );
-  loadOverrideGui
-    .add(loadOverride, 'maxQuadSize', 0, 0.05, 0.0001)
-    .name('Max quad size %')
-    .onFinishChange(() => {
-      const override: reveal.CadLoadingHints = {
-        maxQuadSize: loadOverride.maxQuadSize > 0.0 ? loadOverride.maxQuadSize : undefined
-      };
-      cadNode.loadingHints = {
-        ...cadNode.loadingHints,
-        ...override
-      };
-    });
   loadOverrideGui
     .add(loadOverride, 'quadsFilter')
     .name('Quads (low detail)')
@@ -308,6 +298,16 @@ export function applyRenderingFilters(scene: THREE.Scene, filter: RenderFilter) 
   });
 }
 
+/**
+ * Overrides sectors to load if wantedSectors is defined.
+ */
+export function applySectorOverride(
+  culler: OverrideSectorCuller,
+  wantedSectors: reveal.internal.WantedSector[] | undefined
+) {
+  culler.overrideWantedSectors = wantedSectors;
+}
+
 function getMaterials(mesh: THREE.Mesh): THREE.Material[] {
   if (!mesh.material) {
     return [];
@@ -344,32 +344,33 @@ function filterSectorNodes(filter: string, root: reveal.SectorMetadata): reveal.
 }
 
 function updateWantedSectorOverride(
+  cadNode: reveal.CadNode,
   renderOptions: RenderOptions,
   root: reveal.SectorMetadata,
   quadsFilter: string,
   detailedFilter: string
 ) {
+  function createWantedSector(
+    node: reveal.SectorMetadata,
+    levelOfDetail: reveal.internal.LevelOfDetail
+  ): reveal.internal.WantedSector {
+    return {
+      blobUrl: cadNode.cadModelMetadata.blobUrl,
+      levelOfDetail,
+      metadata: node
+    };
+  }
+
   if (quadsFilter === '' && detailedFilter === '') {
     renderOptions.overrideWantedSectors = undefined;
   } else {
     const acceptedSimple = filterSectorNodes(quadsFilter, root);
     const acceptedDetailed = filterSectorNodes(detailedFilter, root);
-    const wanted: reveal.internal.WantedSector[] = [];
-    for (const node of acceptedSimple) {
-      /* TODO: j-bjorne 29-04-2020: How to add these again?
-      wanted.push({
-        sectorId: node.id,
-        levelOfDetail: reveal.internal.LevelOfDetail.Simple,
-        metadata: node
-      });*/
-    }
-    for (const node of acceptedDetailed) {
-      /*wanted.push({
-        id: node.id,
-        levelOfDetail: reveal.internal.LevelOfDetail.Detailed,
-        metadata: node
-      });*/
-    }
+    const wanted: reveal.internal.WantedSector[] = [
+      ...cadNode.sectorScene.getAllSectors().map(x => createWantedSector(x, reveal.internal.LevelOfDetail.Discarded)),
+      ...acceptedSimple.map(x => createWantedSector(x, reveal.internal.LevelOfDetail.Simple)),
+      ...acceptedDetailed.map(x => createWantedSector(x, reveal.internal.LevelOfDetail.Detailed))
+    ];
     renderOptions.overrideWantedSectors = wanted;
   }
 }

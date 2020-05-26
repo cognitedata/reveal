@@ -4,9 +4,9 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { getParamsFromURL } from './utils/example-helpers';
+import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
-import { RevealManager, CadNode } from '@cognite/reveal/experimental';
+import * as reveal from '@cognite/reveal/experimental';
 
 CameraControls.install({ THREE });
 
@@ -16,15 +16,16 @@ async function main() {
   client.loginWithOAuth({ project });
 
   const scene = new THREE.Scene();
-  let modelsNeedUpdate = true;
-  const revealManager = new RevealManager(client, () => {
-    modelsNeedUpdate = true;
-  });
-  let model: CadNode;
-  if (modelUrl) {
-    model = await revealManager.addModelFromUrl(modelUrl);
-  } else if (modelRevision) {
-    model = await revealManager.addModelFromCdf(modelRevision);
+  const revealManager: reveal.RenderManager = createRenderManager(
+    modelRevision !== undefined ? 'cdf' : 'local',
+    client
+  );
+
+  let model: reveal.CadNode;
+  if (revealManager instanceof reveal.LocalHostRevealManager && modelUrl !== undefined) {
+    model = await revealManager.addModel('cad', modelUrl);
+  } else if (revealManager instanceof reveal.RevealManager && modelRevision !== undefined) {
+    model = await revealManager.addModel('cad', modelRevision);
   } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');
   }
@@ -50,9 +51,9 @@ async function main() {
       revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || modelsNeedUpdate) {
+    if (controlsNeedUpdate || revealManager.needsRedraw) {
       renderer.render(scene, camera);
-      modelsNeedUpdate = false;
+      revealManager.resetRedraw();
     }
 
     requestAnimationFrame(render);
