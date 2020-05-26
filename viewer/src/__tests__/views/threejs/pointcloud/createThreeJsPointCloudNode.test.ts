@@ -5,9 +5,9 @@
 import * as THREE from 'three';
 import { mat4 } from 'gl-matrix';
 
-import { PointCloudModel } from '@/dataModels/pointCloud/';
+import { PointCloudModel } from '@/dataModels/pointCloud';
 import { FetchPointCloudDelegate } from '@/dataModels/pointCloud/internal/delegates';
-import { SectorModelTransformation } from '@/dataModels/cad/internal/sector/types';
+import { SectorModelTransformation } from '@/dataModels/cad/sector/types';
 import { PotreeGroupWrapper } from '@/dataModels/pointCloud/internal/PotreeGroupWrapper';
 import { createThreeJsPointCloudNode } from '@/dataModels/pointCloud/internal/createThreeJsPointCloudNode';
 

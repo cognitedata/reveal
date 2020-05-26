@@ -5,15 +5,14 @@
 import * as THREE from 'three';
 import { mat4 } from 'gl-matrix';
 
-import { SectorMetadata, SectorModelTransformation } from '@/dataModels/cad/internal/sector/types';
-import { SectorScene, SectorSceneImpl } from '@/dataModels/cad/internal/sector/SectorScene';
-import { GpuOrderSectorsByVisibilityCoverage } from '@/dataModels/cad/internal/sector/culling/OrderSectorsByVisibilityCoverage';
-import { CadModelMetadata } from '@/dataModels/cad/internal';
-import { traverseDepthFirst } from '@/utilities/traversal';
-import { fromThreeMatrix } from '@/utilities';
-import { Box3 } from '@/utilities/Box3';
-
 import { createSectorMetadata, SectorTree } from '../../testUtils/createSectorMetadata';
+import { Box3 } from '@/utilities/Box3';
+import { GpuOrderSectorsByVisibilityCoverage, traverseDepthFirst } from '@/internal';
+import { SectorSceneImpl } from '@/dataModels/cad/sector/SectorScene';
+import { SectorMetadata, SectorModelTransformation } from '@/experimental';
+import { fromThreeMatrix } from '@/utilities';
+import { CadModelMetadata } from '@/dataModels/cad/';
+import { SectorScene } from '@/dataModels/cad/sector/types';
 
 describe('GpuOrderSectorsByVisibilityCoverage', () => {
   const glContext: WebGLRenderingContext = require('gl')(64, 64);

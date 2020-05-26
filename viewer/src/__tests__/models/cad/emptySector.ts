@@ -3,7 +3,7 @@
  */
 
 import { ParsedPrimitives } from '@/utilities/workers/types/parser.types';
-import { Sector } from '@/dataModels/cad/internal/sector/types';
+import { SectorGeometry } from '@/dataModels/cad/sector/types';
 
 export function createEmptyPrimitive(): ParsedPrimitives {
   return {
@@ -34,7 +34,7 @@ export function createEmptyPrimitive(): ParsedPrimitives {
   };
 }
 
-export function createEmptySector(): Sector {
+export function createEmptySector(): SectorGeometry {
   return {
     nodeIdToTreeIndexMap: new Map(),
     treeIndexToNodeIdMap: new Map(),
