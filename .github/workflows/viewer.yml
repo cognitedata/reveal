@@ -18,8 +18,6 @@ jobs:
       run: |
         rustup component add clippy
         rustup component add rustfmt
-    - name: Install wasm-pack
-      uses: jetli/wasm-pack-action@v0.3.0
 
   rust:
     name: Rust
@@ -46,6 +44,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Install wasm-pack
+      uses: jetli/wasm-pack-action@v0.3.0     
 
     - name: Cache cargo registry
       uses: actions/cache@v1
@@ -104,6 +105,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Install wasm-pack
+      uses: jetli/wasm-pack-action@v0.3.0     
 
     - name: Cache cargo registry
       uses: actions/cache@v1
