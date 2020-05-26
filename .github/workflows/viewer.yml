@@ -66,6 +66,9 @@ jobs:
       working-directory: viewer
       run: npm run release
 
+    - name: Typecheck
+      uses: andoshin11/typescript-error-reporter-action@v1.0.2
+
     - name: Lint
       working-directory: viewer
       continue-on-error: true
