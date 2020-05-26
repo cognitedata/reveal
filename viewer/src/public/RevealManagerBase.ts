@@ -3,13 +3,13 @@
  */
 
 import { RenderManager } from './RenderManager';
-import { SectorGeometry } from '@/dataModels/cad/sector/types';
-import { SectorQuads } from '@/dataModels/cad/rendering/types';
+import { SectorGeometry } from '@/datamodels/cad/sector/types';
+import { SectorQuads } from '@/datamodels/cad/rendering/types';
 import { SectorCuller } from '@/internal';
-import { CadManager } from '@/dataModels/cad/CadManager';
-import { MaterialManager } from '@/dataModels/cad/MaterialManager';
-import { ModelNodeAppearance } from '@/dataModels/cad';
-import { PointCloudManager } from '@/dataModels/pointCloud/internal/PointCloudManager';
+import { CadManager } from '@/datamodels/cad/CadManager';
+import { MaterialManager } from '@/datamodels/cad/MaterialManager';
+import { ModelNodeAppearance } from '@/datamodels/cad';
+import { PointCloudManager } from '@/datamodels/pointcloud/internal/PointCloudManager';
 
 export interface RevealOptions {
   nodeAppearance?: ModelNodeAppearance;

@@ -4,22 +4,22 @@
 
 import { RevealManagerBase, RevealOptions } from './RevealManagerBase';
 
-import { CadSectorParser } from '@/dataModels/cad/sector/CadSectorParser';
-import { MaterialManager } from '@/dataModels/cad/MaterialManager';
-import { SimpleAndDetailedToSector3D } from '@/dataModels/cad/sector/SimpleAndDetailedToSector3D';
-import { CadModelMetadataRepository } from '@/dataModels/cad/CadModelMetadataRepository';
-import { DefaultCadTransformation } from '@/dataModels/cad/DefaultCadTransformation';
-import { CadMetadataParser } from '@/dataModels/cad/parsers/CadMetadataParser';
-import { CadModelFactory } from '@/dataModels/cad/CadModelFactory';
+import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
+import { MaterialManager } from '@/datamodels/cad/MaterialManager';
+import { SimpleAndDetailedToSector3D } from '@/datamodels/cad/sector/SimpleAndDetailedToSector3D';
+import { CadModelMetadataRepository } from '@/datamodels/cad/CadModelMetadataRepository';
+import { DefaultCadTransformation } from '@/datamodels/cad/DefaultCadTransformation';
+import { CadMetadataParser } from '@/datamodels/cad/parsers/CadMetadataParser';
+import { CadModelFactory } from '@/datamodels/cad/CadModelFactory';
 import { ByVisibilityGpuSectorCuller, PotreeGroupWrapper, PotreeNodeWrapper } from '@/internal';
-import { CachedRepository } from '@/dataModels/cad/sector/CachedRepository';
-import { CadModelUpdateHandler } from '@/dataModels/cad/CadModelUpdateHandler';
-import { CadManager } from '@/dataModels/cad/CadManager';
+import { CachedRepository } from '@/datamodels/cad/sector/CachedRepository';
+import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
+import { CadManager } from '@/datamodels/cad/CadManager';
 import { LocalUrlClient as LocalHostClient } from '@/utilities/networking/LocalUrlClient';
-import { ModelNodeAppearance, CadNode } from '@/dataModels/cad';
-import { PointCloudMetadataRepository } from '@/dataModels/pointCloud/internal/PointCloudMetadataRepository';
-import { PointCloudFactory } from '@/dataModels/pointCloud/internal/PointCloudFactory';
-import { PointCloudManager } from '@/dataModels/pointCloud/internal/PointCloudManager';
+import { ModelNodeAppearance, CadNode } from '@/datamodels/cad';
+import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/internal/PointCloudMetadataRepository';
+import { PointCloudFactory } from '@/datamodels/pointcloud/internal/PointCloudFactory';
+import { PointCloudManager } from '@/datamodels/pointcloud/internal/PointCloudManager';
 
 type LocalModelIdentifier = { fileName: string };
 

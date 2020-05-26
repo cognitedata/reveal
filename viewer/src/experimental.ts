@@ -8,19 +8,19 @@ export { RevealManager } from './public/RevealManager';
 export { LocalHostRevealManager } from './public/LocalHostRevealManager';
 export { RenderManager } from './public/RenderManager';
 // TODO 2020-05-15 larsmoa: reveal.CadNode is _internal_ and should not be exported
-export { CadNode } from './dataModels/cad';
-export { ModelNodeAppearance } from './dataModels/cad/';
+export { CadNode } from './datamodels/cad';
+export { ModelNodeAppearance } from './datamodels/cad/';
 
 // CAD
 
-export { CadModelMetadata, SsaoEffect, SsaoPassType } from './dataModels/cad/';
-export { SectorMetadata, SectorModelTransformation } from './dataModels/cad/sector/types';
-export { CadRenderHints } from './dataModels/cad/rendering/CadRenderHints';
-export { CadLoadingHints } from './dataModels/cad/CadLoadingHints';
-export { intersectCadNodes } from './dataModels/cad/picking';
+export { CadModelMetadata, SsaoEffect, SsaoPassType } from './datamodels/cad/';
+export { SectorMetadata, SectorModelTransformation } from './datamodels/cad/sector/types';
+export { CadRenderHints } from './datamodels/cad/rendering/CadRenderHints';
+export { CadLoadingHints } from './datamodels/cad/CadLoadingHints';
+export { intersectCadNodes } from './datamodels/cad/picking';
 
 // Point cloud
-export { PointCloudMetadata } from './dataModels/pointCloud';
+export { PointCloudMetadata } from './datamodels/pointcloud';
 
 // Internals
 import * as internal from './internal';

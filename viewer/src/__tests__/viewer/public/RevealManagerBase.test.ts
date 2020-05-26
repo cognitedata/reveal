@@ -5,9 +5,9 @@
 import * as THREE from 'three';
 
 import { RevealManagerBase } from '@/public/RevealManagerBase';
-import { MaterialManager } from '@/dataModels/cad/MaterialManager';
-import { CadManager } from '@/dataModels/cad/CadManager';
-import { PointCloudManager } from '@/dataModels/pointCloud/internal/PointCloudManager';
+import { MaterialManager } from '@/datamodels/cad/MaterialManager';
+import { CadManager } from '@/datamodels/cad/CadManager';
+import { PointCloudManager } from '@/datamodels/pointcloud/internal/PointCloudManager';
 
 describe('RevealManagerBase', () => {
   const mockCadManager: Omit<CadManager<number>, ''> = {

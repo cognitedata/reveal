@@ -18,7 +18,7 @@ import { PrioritizedWantedSector, DetermineSectorCostDelegate, DetermineSectorsI
 import { fromThreeMatrix } from '@/utilities';
 import { LevelOfDetail } from '../LevelOfDetail';
 import { SectorMetadata, WantedSector } from '../types';
-import { CadModelMetadata } from '@/dataModels/cad/CadModelMetadata';
+import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
 
 /**
  * Options for creating GpuBasedSectorCuller.
