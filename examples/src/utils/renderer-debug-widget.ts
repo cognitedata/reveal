@@ -356,8 +356,6 @@ function updateWantedSectorOverride(
   ): reveal.internal.WantedSector {
     return {
       blobUrl: cadNode.cadModelMetadata.blobUrl,
-      cadModelTransformation: cadNode.modelTransformation,
-      scene: cadNode.sectorScene,
       levelOfDetail,
       metadata: node
     };
