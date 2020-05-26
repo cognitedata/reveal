@@ -18,6 +18,9 @@ import { CachedRepository } from '@/dataModels/cad/sector/CachedRepository';
 import { CadModelUpdateHandler } from '@/dataModels/cad/CadModelUpdateHandler';
 import { CadManager } from '@/dataModels/cad/CadManager';
 import { ModelNodeAppearance, CadNode } from '@/dataModels/cad';
+import { PointCloudMetadataRepository } from '@/dataModels/pointCloud/internal/PointCloudMetadataRepository';
+import { PointCloudFactory } from '@/dataModels/pointCloud/internal/PointCloudFactory';
+import { PointCloudManager } from '@/dataModels/pointCloud/internal/PointCloudManager';
 
 type CdfModelIdentifier = { modelRevision: IdEither; format: File3dFormat };
 export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
@@ -41,7 +44,18 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
       cadModelFactory,
       cadModelUpdateHandler
     );
-    super(client, cadManager, materialManager);
+
+    const pointCloudModelRepository: PointCloudMetadataRepository<CdfModelIdentifier> = new PointCloudMetadataRepository(
+      cogniteClientExtension,
+      new DefaultCadTransformation()
+    );
+    const pointCloudFactory: PointCloudFactory = new PointCloudFactory(cogniteClientExtension);
+    const pointCloudManager: PointCloudManager<CdfModelIdentifier> = new PointCloudManager(
+      pointCloudModelRepository,
+      pointCloudFactory
+    );
+
+    super(cadManager, materialManager, pointCloudManager);
   }
 
   public addModel(
@@ -65,9 +79,19 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
           modelNodeAppearance
         );
       case 'pointcloud':
-        throw new Error('Not yet implemented');
+        return this._pointCloudManager.addModel({
+          modelRevision: this.createModelIdentifier(modelRevisionId),
+          format: File3dFormat.EptPointCloud
+        });
       default:
         throw new Error(`case: ${type} not handled`);
     }
+  }
+
+  private createModelIdentifier(id: string | number): IdEither {
+    if (typeof id === 'number') {
+      return { id };
+    }
+    return { externalId: id };
   }
 }
