@@ -102,7 +102,7 @@ async function main() {
 
   // Initialize models
   const [renderer1, scene1, modelNode1, options1] = initializeModel(model1, leftCanvas, gui1);
-  const [renderer2, scene2, _modelNode2, options2] = initializeModel(model2, rightCanvas, gui2);
+  const [renderer2, scene2, , options2] = initializeModel(model2, rightCanvas, gui2);
 
   const { position, target, near, far } = modelNode1.suggestCameraConfig();
   const camera = new THREE.PerspectiveCamera(75, leftCanvas.width / leftCanvas.height, near, far);
