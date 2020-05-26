@@ -9,7 +9,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer } from '@/public/migration/Cognite3DViewer';
 
 import nock from 'nock';
-import { SectorCuller } from '@/dataModels/cad/sector/culling/SectorCuller';
+import { SectorCuller } from '@/datamodels/cad/sector/culling/SectorCuller';
 
 const sceneJson = require('./scene.json');
 

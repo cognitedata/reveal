@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { CadModelMetadata } from '@/dataModels/cad/CadModelMetadata';
+import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
 import { ModelUrlProvider } from '@/utilities/networking/types';
 import { CadSceneProvider } from './CadSceneProvider';
 import { CadTransformationProvider } from './CadTransformationProvider';

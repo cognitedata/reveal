@@ -5,12 +5,12 @@ import * as THREE from 'three';
 import { mat4 } from 'gl-matrix';
 
 import { generateSectorTree } from '../testUtils/createSectorMetadata';
-import { DetermineSectorsInput } from '@/dataModels/cad/sector/culling/types';
-import { MaterialManager } from '@/dataModels/cad/MaterialManager';
-import { OrderSectorsByVisibilityCoverage } from '@/dataModels/cad/sector/culling/OrderSectorsByVisibilityCoverage';
+import { DetermineSectorsInput } from '@/datamodels/cad/sector/culling/types';
+import { MaterialManager } from '@/datamodels/cad/MaterialManager';
+import { OrderSectorsByVisibilityCoverage } from '@/datamodels/cad/sector/culling/OrderSectorsByVisibilityCoverage';
 import { ByVisibilityGpuSectorCuller, LevelOfDetail } from '@/internal';
 import { SectorMetadata, CadNode, CadModelMetadata } from '@/experimental';
-import { SectorSceneImpl } from '@/dataModels/cad/sector/SectorScene';
+import { SectorSceneImpl } from '@/datamodels/cad/sector/SectorScene';
 
 type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 

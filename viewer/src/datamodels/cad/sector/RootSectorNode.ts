@@ -4,7 +4,7 @@
 
 import { SectorNode } from './SectorNode';
 import { toThreeMatrix4 } from '@/utilities';
-import { CadModelMetadata } from '@/dataModels/cad/CadModelMetadata';
+import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
 import { SectorMetadata } from './types';
 
 export class RootSectorNode extends SectorNode {

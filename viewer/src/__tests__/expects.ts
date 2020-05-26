@@ -3,8 +3,8 @@
  */
 
 import 'jest-extended';
-import { LevelOfDetail } from '@/dataModels/cad/sector/LevelOfDetail';
-import { WantedSector } from '@/dataModels/cad/sector/types';
+import { LevelOfDetail } from '@/datamodels/cad/sector/LevelOfDetail';
+import { WantedSector } from '@/datamodels/cad/sector/types';
 
 interface Matrix4 {
   elements: Float32Array;

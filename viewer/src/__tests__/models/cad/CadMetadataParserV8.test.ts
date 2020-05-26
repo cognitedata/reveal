@@ -2,8 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
-import { CadMetadataV8, parseCadMetadataV8, CadSectorMetadataV8 } from '@/dataModels/cad/parsers/CadMetadataParserV8';
-import { SectorMetadata } from '@/dataModels/cad/sector/types';
+import { CadMetadataV8, parseCadMetadataV8, CadSectorMetadataV8 } from '@/datamodels/cad/parsers/CadMetadataParserV8';
+import { SectorMetadata } from '@/datamodels/cad/sector/types';
 import { Box3 } from '@/utilities/Box3';
 import { traverseDepthFirst } from '@/utilities/traversal';
 
