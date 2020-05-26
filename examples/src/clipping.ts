@@ -47,10 +47,10 @@ async function main() {
   revealManager.update(camera);
 
   const params = {
-    clipIntersection: true,
-    width: 10,
-    height: 10,
-    depth: 10,
+    clipIntersection: false,
+    width: 670,
+    height: 1010,
+    depth: 200,
     x: 0,
     y: 0,
     z: 0,
@@ -142,7 +142,7 @@ async function main() {
     });
 
   gui
-    .add(params, 'width', 0, 100)
+    .add(params, 'width', 0, 10000)
     .step(0.1)
     .name('width')
     .onChange(_ => {
@@ -152,7 +152,7 @@ async function main() {
     });
 
   gui
-    .add(params, 'height', 0, 100)
+    .add(params, 'height', 0, 10000)
     .step(0.1)
     .name('height')
     .onChange(_ => {
@@ -162,7 +162,7 @@ async function main() {
     });
 
   gui
-    .add(params, 'depth', 0, 100)
+    .add(params, 'depth', 0, 10000)
     .step(0.1)
     .name('depth')
     .onChange(_ => {
