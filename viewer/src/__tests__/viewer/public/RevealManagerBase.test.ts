@@ -22,9 +22,7 @@ describe('RevealManagerBase', () => {
 
   const mockPointCloudManager: Omit<PointCloudManager<number>, ''> = {
     addModel: jest.fn(),
-    resetRedraw: jest.fn(),
     needsRedraw: false,
-    pointCloudGroup: new PotreeGroupWrapper(),
     updateCamera: jest.fn()
   };
   const pointCloudManager = mockPointCloudManager as PointCloudManager<number>;

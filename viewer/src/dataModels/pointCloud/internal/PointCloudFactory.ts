@@ -27,7 +27,7 @@ export class PointCloudFactory {
     geometry.root.load();
 
     const octtree = new Potree.PointCloudOctree(geometry);
-    octtree.name = 'PointCloudOctree'; // TODO: 25-05-2020 j-bjorne Should we just name it like this?
+    octtree.name = `PointCloudOctree: ${blobUrl}`;
     octtree.applyMatrix(toThreeMatrix4(modelTransformation.modelMatrix));
     const node = new PotreeNodeWrapper(octtree);
     return node;

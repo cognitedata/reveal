@@ -2,11 +2,11 @@
  * Copyright 2020 Cognite AS
  */
 
+import { HttpError } from '@cognite/sdk';
 import { CadSceneProvider } from '@/dataModels/cad/internal/CadSceneProvider';
 import { CadSectorProvider } from '@/dataModels/cad/internal/sector/CadSectorProvider';
-import { HttpError } from '@cognite/sdk';
-import { ModelUrlProvider } from './types';
 import { EptSceneProvider } from '@/dataModels/pointCloud/internal/EptSceneProvider';
+import { ModelUrlProvider } from './types';
 import { HttpHeadersProvider } from './HttpHeadersProvider';
 
 export class LocalUrlClient

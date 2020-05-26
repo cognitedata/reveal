@@ -22,10 +22,6 @@ export class PointCloudManager<TModelIdentifier> {
     this._pointCloudFactory = cadModelFactory;
   }
 
-  resetRedraw(): void {
-    // reset is handled inside.
-  }
-
   get needsRedraw(): boolean {
     return this._pointCloudGroupWrapper ? this._pointCloudGroupWrapper.needsRedraw : false;
   }
