@@ -55,12 +55,12 @@ describe('ByVisibilityGpuSectorCuller', () => {
 
     // Assert
     expect(orderSectorsByVisibilityMock).toBeCalledTimes(1); // Only render scene once
-    const sectors1 = sectors.filter(x => x.scene === model1.scene);
-    const sectors2 = sectors.filter(x => x.scene === model2.scene);
+    const sectors1 = sectors.filter(x => x.blobUrl === model1.blobUrl);
+    const sectors2 = sectors.filter(x => x.blobUrl === model2.blobUrl);
     expect(sectors1).not.toBeEmpty();
-    expect(model1.scene.getAllSectors()).toContainAllValues(sectors1.map(x => x.metadata));
+    expect(model1.scene.getAllSectors().map(x => x.id)).toContainAllValues(sectors1.map(x => x.metadata.id));
     expect(sectors2).not.toBeEmpty();
-    expect(model2.scene.getAllSectors()).toContainAllValues(sectors2.map(x => x.metadata));
+    expect(model2.scene.getAllSectors().map(x => x.id)).toContainAllValues(sectors2.map(x => x.metadata.id));
   });
 
   test('determineSectors returns sector from coverage utility by priority', () => {
@@ -104,7 +104,7 @@ function createModel(root: SectorMetadata): CadModelMetadata {
   const scene = SectorSceneImpl.createFromRootSector(8, 1, root);
 
   const model: CadModelMetadata = {
-    blobUrl: 'test',
+    blobUrl: `test_${Math.random()}`,
     modelTransformation: {
       inverseModelMatrix: mat4.identity(mat4.create()),
       modelMatrix: mat4.identity(mat4.create())

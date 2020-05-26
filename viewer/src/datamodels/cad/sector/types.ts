@@ -32,9 +32,6 @@ export interface ParsedSector {
 
 export interface WantedSector {
   blobUrl: string;
-  // TODO 2020-05-05 larsmoa: Remove SectorModelTransformation in WantedSector
-  cadModelTransformation: SectorModelTransformation;
-  scene: SectorScene;
   levelOfDetail: LevelOfDetail;
   metadata: SectorMetadata;
 }

@@ -47,11 +47,7 @@ export class TakenSectorTree {
           levelOfDetail: sector.lod,
           metadata: sector.sector,
           priority: sector.priority,
-
-          // TODO 2020-05-05 larsmoa: Reduce the number of fields here
-          blobUrl: model.blobUrl,
-          scene: model.scene,
-          cadModelTransformation: model.modelTransformation
+          blobUrl: model.blobUrl
         };
         return wanted;
       })
