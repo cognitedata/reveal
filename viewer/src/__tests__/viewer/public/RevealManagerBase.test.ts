@@ -8,7 +8,6 @@ import { RevealManagerBase } from '@/public/RevealManagerBase';
 import { MaterialManager } from '@/dataModels/cad/internal/MaterialManager';
 import { CadManager } from '@/dataModels/cad/internal/CadManager';
 import { PointCloudManager } from '@/dataModels/pointCloud/internal/PointCloudManager';
-import { PotreeGroupWrapper } from '@/dataModels/pointCloud/internal/PotreeGroupWrapper';
 
 describe('RevealManagerBase', () => {
   const mockCadManager: Omit<CadManager<number>, ''> = {
