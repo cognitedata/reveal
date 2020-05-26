@@ -17,7 +17,7 @@ void main()
     // doesn't produce the same noise pattern
     v_seed = vec2(a_sectorId / 255.0, a_sectorId / 65025.0);
 
-    vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+    vec4 mvPosition = modelViewMatrix * instanceMatrix * vec4( position, 1.0 );
 
     v_viewPosition = mvPosition.xyz;
 

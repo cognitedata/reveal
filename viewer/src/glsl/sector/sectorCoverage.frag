@@ -9,8 +9,8 @@ varying vec3 v_viewPosition;
 
 void main() {
     
-    if(!isSliced(v_viewPosition)){
-      discard
+    if(isSliced(v_viewPosition)){
+      discard;
     }
 
     float v = rand2d(gl_FragCoord.xy + v_seed);
