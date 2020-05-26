@@ -12,11 +12,13 @@ import {
   createRendererDebugWidget,
   applyRenderingFilters,
   RenderMode,
-  RenderOptions
+  RenderOptions,
+  applySectorOverride
 } from './utils/renderer-debug-widget';
 import { CogniteClient } from '@cognite/sdk';
-import * as reveal from '@cognite/reveal/experimental';
+import { CadNode, RevealManager, LocalHostRevealManager } from '@cognite/reveal/experimental';
 import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
+import { OverrideSectorCuller } from './utils/OverrideSectorCuller';
 
 CameraControls.install({ THREE });
 
@@ -32,10 +34,10 @@ function getModel2Params() {
 }
 
 function initializeModel(
-  cadNode: reveal.CadNode,
+  cadNode: CadNode,
   canvas: HTMLCanvasElement,
   gui: dat.GUI
-): [THREE.WebGLRenderer, THREE.Scene, reveal.CadNode, RenderOptions] {
+): [THREE.WebGLRenderer, THREE.Scene, CadNode, RenderOptions] {
   const renderer = new THREE.WebGLRenderer({ canvas });
   renderer.setClearColor('#444');
   renderer.setSize(canvas.width, canvas.height);
@@ -53,29 +55,32 @@ async function main() {
   const client = new CogniteClient({ appId: 'reveal.example.side-by-side' });
   client.loginWithOAuth({ project });
 
-  const revealManager1: reveal.RevealManager = createRenderManager(
-    modelRevision !== undefined ? 'cdf' : 'local',
-    client
-  );
+  const sectorCuller1 = new OverrideSectorCuller();
+  const revealManager1: RevealManager = createRenderManager(modelRevision !== undefined ? 'cdf' : 'local', client, {
+    internal: {
+      sectorCuller: sectorCuller1
+    }
+  });
+  const sectorCuller2 = new OverrideSectorCuller();
+  const revealManager2: RevealManager = createRenderManager(modelRevision !== undefined ? 'cdf' : 'local', client, {
+    internal: {
+      sectorCuller: sectorCuller2
+    }
+  });
 
-  let model1: reveal.CadNode;
-  if (revealManager1 instanceof reveal.LocalHostRevealManager && modelUrl !== undefined) {
+  let model1: CadNode;
+  if (revealManager1 instanceof LocalHostRevealManager && modelUrl !== undefined) {
     model1 = await revealManager1.addModel('cad', modelUrl);
-  } else if (revealManager1 instanceof reveal.RevealManager && modelRevision !== undefined) {
+  } else if (revealManager1 instanceof RevealManager && modelRevision !== undefined) {
     model1 = await revealManager1.addModel('cad', modelRevision);
   } else {
     throw new Error('Need to provide either project & model OR modelUrl as query parameters');
   }
 
-  const revealManager2: reveal.RevealManager = createRenderManager(
-    modelRevision !== undefined ? 'cdf' : 'local',
-    client
-  );
-
-  let model2: reveal.CadNode;
-  if (revealManager2 instanceof reveal.LocalHostRevealManager && modelUrl2 !== undefined) {
+  let model2: CadNode;
+  if (revealManager2 instanceof LocalHostRevealManager && modelUrl2 !== undefined) {
     model2 = await revealManager2.addModel('cad', modelUrl2);
-  } else if (revealManager2 instanceof reveal.RevealManager && modelRevision2 !== undefined) {
+  } else if (revealManager2 instanceof RevealManager && modelRevision2 !== undefined) {
     model2 = await revealManager2.addModel('cad', modelRevision2);
   } else {
     throw new Error('Need to provide either model2 OR modelUrl2 as an additional query parameters');
@@ -126,6 +131,7 @@ async function main() {
       (options1.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || revealManager1.needsRedraw))
     ) {
       applyRenderingFilters(scene1, options1.renderFilter);
+      applySectorOverride(sectorCuller1, options1.overrideWantedSectors);
       renderer1.render(scene1, camera);
       revealManager1.resetRedraw();
     }
@@ -134,6 +140,7 @@ async function main() {
       (options2.renderMode === RenderMode.WhenNecessary && (controlsNeedUpdate || revealManager2.needsRedraw))
     ) {
       applyRenderingFilters(scene2, options2.renderFilter);
+      applySectorOverride(sectorCuller2, options2.overrideWantedSectors);
       renderer2.render(scene2, camera);
       revealManager2.resetRedraw();
     }
