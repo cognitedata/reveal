@@ -9,11 +9,13 @@ import { SectorQuads } from './rendering/types';
 import { ModelNodeAppearance } from './ModelNodeAppearance';
 import { CadRenderHints } from './rendering/CadRenderHints';
 import { CadLoadingHints } from './CadLoadingHints';
-import { CadModelMetadata } from './CadModelMetadata';
 import { MaterialManager } from './MaterialManager';
-import { RenderMode } from './rendering/RenderMode';
-import { toThreeVector3, toThreeMatrix4, toThreeJsBox3 } from '@/utilities/';
+import { LevelOfDetail } from './sector/LevelOfDetail';
+import { ConsumedSector } from './sector/types';
+import { CadModelMetadata } from './CadModelMetadata';
 import { RootSectorNode } from './sector/RootSectorNode';
+import { RenderMode } from './rendering/RenderMode';
+import { toThreeVector3, toThreeMatrix4, toThreeJsBox3 } from '@/utilities';
 import { suggestCameraConfig } from '@/utilities/cameraUtils';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
@@ -30,12 +32,12 @@ export interface SuggestedCameraConfig {
 }
 
 export class CadNode extends THREE.Object3D {
-  public readonly _rootSector: RootSectorNode;
   public readonly modelTransformation: SectorModelTransformation;
 
   private _renderHints: CadRenderHints;
   private _loadingHints: CadLoadingHints;
 
+  private readonly _rootSector: RootSectorNode;
   private readonly _cadModelMetadata: CadModelMetadata;
   private readonly _materialManager: MaterialManager;
   private readonly _sectorScene: SectorScene;
@@ -147,11 +149,11 @@ export class CadNode extends THREE.Object3D {
     };
   }
 
-  // TODO: j-bjorne 29-04-2020: Check if still needed!
-  // private updateSectorBoundingBoxes(sector: ConsumedSector) {
-  //   const bboxNode = this._boundingBoxNode.children.find(x => x.userData.sectorId === sector.metadata.id)!;
-  //   bboxNode.visible = sector.levelOfDetail !== LevelOfDetail.Discarded;
-  // }
+  // TODO 2020-05-22 larsmoa: Remove this function and move bounding box tree outside CadNode.
+  updateSectorBoundingBox(sector: ConsumedSector) {
+    const bboxNode = this._boundingBoxNode.children.find(x => x.userData.sectorId === sector.metadata.id)!;
+    bboxNode.visible = sector.levelOfDetail !== LevelOfDetail.Discarded;
+  }
 
   private createBoundingBoxNode(sectors: SectorMetadata[]): THREE.Object3D {
     function sectorDepth(s: SectorMetadata) {
