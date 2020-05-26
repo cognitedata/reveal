@@ -4,10 +4,7 @@
     "tslint-no-circular-imports"
   ],
   "linterOptions": {
-    "exclude": [
-      "node_modules/**/*.ts",
-      "**/*.json"
-    ]
+    "exclude": ["node_modules/**/*.ts", "**/*.json"]
   },
   "rules": {
     "comment-format": false,
@@ -32,6 +29,7 @@
         "allow-single-line-comments": true,
         "enforce-trailing-newline": true
       }
-    ]
+    ],
+    "trailing-comma": [true, { "multiline": "never", "singleline": "never" }]
   }
 }
