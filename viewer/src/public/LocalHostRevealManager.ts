@@ -17,9 +17,9 @@ import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
 import { CadManager } from '@/datamodels/cad/CadManager';
 import { LocalUrlClient as LocalHostClient } from '@/utilities/networking/LocalUrlClient';
 import { ModelNodeAppearance, CadNode } from '@/datamodels/cad';
-import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/internal/PointCloudMetadataRepository';
-import { PointCloudFactory } from '@/datamodels/pointcloud/internal/PointCloudFactory';
-import { PointCloudManager } from '@/datamodels/pointcloud/internal/PointCloudManager';
+import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloudMetadataRepository';
+import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
+import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 
 type LocalModelIdentifier = { fileName: string };
 

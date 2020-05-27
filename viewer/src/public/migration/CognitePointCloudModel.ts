@@ -3,11 +3,11 @@
  */
 
 import * as THREE from 'three';
-import { toThreeJsBox3 } from '@/utilities';
-import { PotreeNodeWrapper } from '@/datamodels/pointcloud/internal/PotreeNodeWrapper';
-import { PotreeGroupWrapper } from '@/datamodels/pointcloud/internal/PotreeGroupWrapper';
 import { CogniteModelBase } from './CogniteModelBase';
 import { SupportedModelTypes } from './types';
+import { toThreeJsBox3 } from '@/utilities';
+import { PotreeNodeWrapper } from '@/datamodels/pointcloud/PotreeNodeWrapper';
+import { PotreeGroupWrapper } from '@/datamodels/pointcloud/PotreeGroupWrapper';
 
 export class CognitePointCloudModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = SupportedModelTypes.PointCloud;
