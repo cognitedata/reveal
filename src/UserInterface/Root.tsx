@@ -26,7 +26,7 @@ export default () => {
 
   const root = explorer.root;
 
-  // Srtup root and generate domain nodes
+  // Setup root and generate domain nodes
   useEffect(() => {
     RootManager.addTargets(root);
     RootManager.appendDOM(root, "viewer-3d", "3d");
