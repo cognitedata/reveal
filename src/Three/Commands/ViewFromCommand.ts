@@ -36,22 +36,7 @@ export class ViewFromCommand extends ThreeRenderTargetCommand {
     if (!this.target)
       return false;
 
-    const controls = this.target.controls;
-    if (!controls)
-      return false;
-
-    const camera = this.target.activeCamera;
-    if (!camera)
-      return false;
-
-    const boundingBox = this.target.getBoundingBoxFromViews();
-    const center = boundingBox.center;
-
-    // TODO: 
-    const dz = Math.max(boundingBox.x.delta, boundingBox.y.delta);
-    camera.up.set(0,1,0);
-    controls.setLookAt(center.x, center.y, center.z + dz, center.x, center.y, center.z);
-    this.target.updateLightPosition();
+    this.target.viewFrom(0);
     return true;
   }
 }

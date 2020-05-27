@@ -137,16 +137,18 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     scene.add(light);
     //camera.add(light);
     //scene.add(camera);
+
+    const controls = this.controls;
+    if (controls)
+      controls.addEventListener("update", lightUpdate);
+
     var self = this;
     function lightUpdate() {
       ThreeRenderTargetNode.updateLightPositionStatic(self);
     }
-    this.domElement.addEventListener("mousemove", lightUpdate);
-    this.domElement.addEventListener("wheel", lightUpdate);
-
     var ambientLight = new THREE.AmbientLight(0x404040, 0.25); // soft white light
     scene.add(ambientLight);
-    this.updateLightPosition();
+    //this.updateLightPosition();
   }
 
   //==================================================
@@ -164,6 +166,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     if (!controls)
       return;
 
+
     //https://github.com/yomotsu/camera-controls
     // The below stuff doesn't work!!
     // controls.rotate(0, 0.8);
@@ -171,9 +174,6 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     const center = boundingBox.center;
     controls.fitTo(ThreeConverter.toBox(boundingBox));
     controls.moveTo(center.x, center.y, center.z);
-    controls.update(0);
-
-    this.updateLightPosition();
   }
 
   public /*override*/ get domElement(): HTMLElement { return this.renderer.domElement; }
@@ -197,6 +197,28 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
       toolbar.add(new ViewFromCommand(this, viewFrom));
     toolbar.beginOptionMenu();
   }
+
+  public viewFrom(index: number): boolean {
+
+    const controls = this.controls;
+    if (!controls)
+      return false;
+
+    const camera = this.activeCamera;
+    if (!camera)
+      return false;
+
+    const boundingBox = this.getBoundingBoxFromViews();
+    const center = boundingBox.center;
+
+    if ()
+
+      controls.rotateTo(Math.PI / 2, Math.PI / 2, false)
+    const dz = Math.max(boundingBox.x.delta, boundingBox.y.delta);
+    controls.setLookAt(center.x, center.y, center.z + dz, center.x, center.y, center.z);
+    return true;
+  }
+
 
   private render(): void {
 
@@ -255,10 +277,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     if (!light)
       return;
 
-    //The idea of this function is letting the light track the camera, 
-    if (!camera || !controls || !light)
-      return;
-
+    // The idea of this function is letting the light track the camera, 
     const position = controls.getPosition();
     const target = controls.getTarget();
 
