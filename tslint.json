@@ -6,6 +6,7 @@
   "linterOptions": {
     "exclude": ["node_modules/**/*.ts", "**/*.json"]
   },
+  "rulesDirectory": ["node_modules/tslint-eslint-rules/dist/rules", "tslint-plugin-prettier"],
   "rules": {
     "comment-format": false,
     "no-irregular-whitespace": false,

@@ -7,7 +7,7 @@ function resolve(dir) {
 
 module.exports = {
   mode: "none",
-  entry: "./main.ts",
+  entry: "./src/main.ts",
   module: {
     rules: [
       {

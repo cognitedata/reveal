@@ -676,3 +676,12 @@ export function cocatinate(name: string, value?: any): string
     return ", " + name;
   return ", " + name + ": " + value;
 }
+
+ //==================================================
+ // INSTANCE METHODS: Populate Settings
+ //==================================================
+
+ export function populateGeneralSettings()
+ {
+
+ }
