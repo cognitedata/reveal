@@ -5,6 +5,7 @@ import "./styles/css/react-split-pane.css";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SplitPane from "react-split-pane";
+import _ from "lodash";
 
 import RightPanel from "./components/Panels/RightPanel";
 import LeftPanel from "./components/Panels/LeftPanel";
@@ -25,24 +26,23 @@ export default () => {
 
   const root = explorer.root;
 
+  // Srtup root and generate domain nodes
   useEffect(() => {
     RootManager.addTargets(root);
+    RootManager.appendDOM(root, "viewer-3d", "3d");
     RootManager.initializeWhenPopulated(root);
     const loader: BaseRootLoader = new RandomDataLoader();
     loader.load(root);
+    dispatch(generateNodeTree({ root }));
   }, [root]);
 
-  // Generate node tree
   useEffect(() => {
-    dispatch(generateNodeTree({ root }));
-  }, [root.childCount]);
-
-  // Initialy show all nodes
-  // useEffect(() => {
-  //   if (explorer.nodes) {
-  //     dispatch(viewAllNodes({ root }));
-  //   }
-  // }, [explorer.nodes && Object.keys(explorer.nodes).length]);
+    if (!_.isEmpty(explorer.nodes)) {
+      // Uncommenting this breaks standalone application
+      // Needs to investigate this further 
+      // dispatch(viewAllNodes({ root }));
+    }
+  }, [_.size(explorer.nodes)]);
 
   return (
     <div className="root-container">
