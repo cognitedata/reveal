@@ -24,10 +24,10 @@ export class ViewFromCommand extends ThreeRenderTargetCommand {
     switch (this.viewFrom) {
       case 0: return "View from top";
       case 1: return "View from bottom";
-      case 2: return "View from north";
-      case 3: return "View from south";
-      case 4: return "View from east";
-      case 5: return "View from west";
+      case 2: return "View from south";
+      case 3: return "View from north";
+      case 4: return "View from west";
+      case 5: return "View from east";
       default: return "";
     }
   }
@@ -36,7 +36,7 @@ export class ViewFromCommand extends ThreeRenderTargetCommand {
     if (!this.target)
       return false;
 
-    this.target.viewFrom(0);
+    this.target.viewFrom(this.viewFrom);
     return true;
   }
 }

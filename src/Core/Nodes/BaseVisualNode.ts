@@ -13,13 +13,13 @@
 
 import { ViewList } from "@/Core/Views/ViewList";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { BaseNode, cocatinate } from "@/Core/Nodes/BaseNode";
+import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { ITarget } from "@/Core/Interfaces/ITarget";
 import { Changes } from "@/Core/Views/Changes";
 import { CheckBoxState } from "@/Core/Enums/CheckBoxState";
+import { Util } from "@/Core/Primitives/Util";
 
-export abstract class BaseVisualNode extends BaseNode
-{
+export abstract class BaseVisualNode extends BaseNode {
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -49,8 +49,7 @@ export abstract class BaseVisualNode extends BaseNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ getCheckBoxState(target?: ITarget | null): CheckBoxState
-  {
+  public /*override*/ getCheckBoxState(target?: ITarget | null): CheckBoxState {
     if (!target)
       target = this.activeTarget;
 
@@ -66,27 +65,32 @@ export abstract class BaseVisualNode extends BaseNode
     return CheckBoxState.Never;
   }
 
-  public /*override*/setVisibleInteractive(visible: boolean, target?: ITarget | null): void
-  {
+  public /*override*/setVisibleInteractive(visible: boolean, target?: ITarget | null, topLevel = true): boolean {
     if (!target)
       target = this.activeTarget;
     if (!target)
-      return;
-    if (this.setVisible(visible, target))
-      this.notify(new NodeEventArgs(Changes.visible));
+      return false;
+    if (!this.setVisible(visible, target))
+      return false;
+
+    // Notify
+    this.notify(new NodeEventArgs(Changes.visibleState));
+    if (topLevel) {
+      for (const ancestor of this.getAncestorsExceptRoot())
+        ancestor.notify(new NodeEventArgs(Changes.visibleState));
+    }
+    return true;
   }
 
-  protected /*override*/ removeInteractiveCore(): void
-  {
+  protected /*override*/ removeInteractiveCore(): void {
     this.removeAllViews();
     super.removeInteractiveCore();
   }
 
-  public /*override*/ getDebugString(): string
-  {
+  public /*override*/ getDebugString(): string {
     let result = super.getDebugString();
     if (this.views.count > 0)
-      result += cocatinate("views", this.views.count);
+      result += Util.cocatinate("views", this.views.count);
     return result;
   }
 
@@ -94,22 +98,19 @@ export abstract class BaseVisualNode extends BaseNode
   // INSTANCE METHODS: Visibility and notifying
   //==================================================
 
-  public canBeVisible(target?: ITarget | null): boolean
-  {
+  public canBeVisible(target?: ITarget | null): boolean {
     if (!target)
       target = this.activeTarget;
     return target ? target.canShowView(this) : false;
   }
 
-  public isVisible(target?: ITarget | null): boolean
-  {
+  public isVisible(target?: ITarget | null): boolean {
     if (!target)
       target = this.activeTarget;
     return target ? target.isVisibleView(this) : false;
   }
 
-  public setVisible(visible: boolean, target?: ITarget | null): boolean
-  {
+  public setVisible(visible: boolean, target?: ITarget | null): boolean {
     // Returns true if changed.
     if (!target)
       target = this.activeTarget;
@@ -120,10 +121,8 @@ export abstract class BaseVisualNode extends BaseNode
     return target.hideView(this);
   }
 
-  public removeAllViews(): void
-  {
-    for (const view of this.views.list)
-    {
+  public removeAllViews(): void {
+    for (const view of this.views.list) {
       const target = view.getTarget() as ITarget;
       if (!target)
         continue;
@@ -133,10 +132,9 @@ export abstract class BaseVisualNode extends BaseNode
     this.views.clear();
   }
 
-  public notifyCore(args: NodeEventArgs): void
-  {
+  public notifyCore(args: NodeEventArgs): void {
     super.notifyCore(args);
-    for (const view of this._views.list)
+    for (const view of this.views.list)
       view.update(args);
   }
 }

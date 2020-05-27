@@ -11,14 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-export class Util
-{
-  public static isEmpty(text: string): boolean { return !text || 0 === text.length; }
+import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
+import { BaseNode } from "@/Core/Nodes/BaseNode";
 
-  public static cocatinate(name: string, value?: any): string {
-    if (value === undefined || value === null)
-      return ", " + name;
-    return ", " + name + ": " + value;
-  }
+export interface IEventListener {
+  processEvent(sender: BaseNode, args: NodeEventArgs): void;
 }
-
