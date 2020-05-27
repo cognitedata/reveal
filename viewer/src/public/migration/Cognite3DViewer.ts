@@ -10,11 +10,11 @@ import { CogniteClient, IdEither } from '@cognite/sdk';
 import { share, filter } from 'rxjs/operators';
 
 import { from3DPositionToRelativeViewportCoordinates } from '@/utilities/worldToViewport';
-import { CadSectorParser } from '@/dataModels/cad/internal/sector/CadSectorParser';
-import { SimpleAndDetailedToSector3D } from '@/dataModels/cad/internal/sector/SimpleAndDetailedToSector3D';
-import { CachedRepository } from '@/dataModels/cad/internal/sector/CachedRepository';
-import { MaterialManager } from '@/dataModels/cad/internal/MaterialManager';
-import { intersectCadNodes } from '@/dataModels/cad/internal/picking';
+import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
+import { SimpleAndDetailedToSector3D } from '@/datamodels/cad/sector/SimpleAndDetailedToSector3D';
+import { CachedRepository } from '@/datamodels/cad/sector/CachedRepository';
+import { MaterialManager } from '@/datamodels/cad/MaterialManager';
+import { intersectCadNodes } from '@/datamodels/cad/picking';
 
 import { Cognite3DViewerOptions, AddModelOptions, SupportedModelTypes } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
@@ -24,16 +24,19 @@ import { CogniteModelBase } from './CogniteModelBase';
 
 import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
 import { File3dFormat } from '@/utilities/File3dFormat';
-import { CadModelFactory } from '@/dataModels/cad/internal/CadModelFactory';
-import { CadModelUpdateHandler } from '@/dataModels/cad/internal/CadModelUpdateHandler';
-import { CadManager } from '@/dataModels/cad/internal/CadManager';
-import { CadMetadataParser } from '@/dataModels/cad/internal/CadMetadataParser';
-import { DefaultCadTransformation } from '@/dataModels/cad/internal/DefaultCadTransformation';
-import { CadModelMetadataRepository } from '@/dataModels/cad/internal/CadModelMetadataRepository';
 import { RevealManagerBase } from '@/public/RevealManagerBase';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
-import { ByVisibilityGpuSectorCuller } from '@/dataModels/cad/internal/sector/culling/ByVisibilityGpuSectorCuller';
+import { CadManager } from '@/datamodels/cad/CadManager';
+import { CadModelMetadataRepository } from '@/datamodels/cad/CadModelMetadataRepository';
+import { DefaultCadTransformation } from '@/datamodels/cad/DefaultCadTransformation';
+import { CadMetadataParser } from '@/datamodels/cad/parsers/CadMetadataParser';
+import { CadModelFactory } from '@/datamodels/cad/CadModelFactory';
+import { ByVisibilityGpuSectorCuller } from '@/internal';
+import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
+import { PointCloudManager } from '@/datamodels/pointcloud/internal/PointCloudManager';
+import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/internal/PointCloudMetadataRepository';
+import { PointCloudFactory } from '@/datamodels/pointcloud/internal/PointCloudFactory';
 
 export interface RelativeMouseEvent {
   offsetX: number;
@@ -60,6 +63,7 @@ export class Cognite3DViewer {
   private readonly sdkClient: CogniteClient;
   private readonly sectorRepository: CachedRepository;
   private readonly cadManager: CadManager<RequestParams>;
+  private readonly pointCloudManager: PointCloudManager<RequestParams>;
   private readonly revealManager: RevealManagerBase<RequestParams>;
 
   private readonly eventListeners = {
@@ -132,7 +136,13 @@ export class Cognite3DViewer {
     const cadModelUpdateHandler = new CadModelUpdateHandler(this.sectorRepository, sectorCuller);
     this.cadManager = new CadManager<RequestParams>(cadModelRepository, cadModelFactory, cadModelUpdateHandler);
 
-    this.revealManager = new RevealManagerBase(this.sdkClient, this.cadManager, this.materialManager);
+    const pointCloudModelRepository: PointCloudMetadataRepository<RequestParams> = new PointCloudMetadataRepository(
+      cogniteClientExtension,
+      new DefaultCadTransformation()
+    );
+    const pointCloudFactory: PointCloudFactory = new PointCloudFactory(cogniteClientExtension);
+    this.pointCloudManager = new PointCloudManager(pointCloudModelRepository, pointCloudFactory);
+    this.revealManager = new RevealManagerBase(this.cadManager, this.materialManager, this.pointCloudManager);
     this.startPointerEventListeners();
 
     this.animate(0);
@@ -235,7 +245,11 @@ export class Cognite3DViewer {
       throw new NotSupportedInMigrationWrapperError();
     }
 
-    const [potreeGroup, potreeNode] = await this.revealManager.addPointCloudFromCdf(options.revisionId);
+    // TODO 25-05-2020 j-bjorne: fix this hot mess, 1 group added multiple times
+    const [potreeGroup, potreeNode] = await this.pointCloudManager.addModel({
+      modelRevision: { id: options.revisionId },
+      format: File3dFormat.EptPointCloud
+    });
     const model = new CognitePointCloudModel(options.modelId, options.revisionId, potreeGroup, potreeNode);
     this.models.push(model);
     this.scene.add(model);

@@ -5,15 +5,14 @@
 import * as THREE from 'three';
 import { mat4 } from 'gl-matrix';
 
-import { SectorMetadata, SectorModelTransformation } from '@/dataModels/cad/internal/sector/types';
-import { SectorScene, SectorSceneImpl } from '@/dataModels/cad/internal/sector/SectorScene';
-import { GpuOrderSectorsByVisibilityCoverage } from '@/dataModels/cad/internal/sector/culling/OrderSectorsByVisibilityCoverage';
-import { CadModelMetadata } from '@/dataModels/cad/internal';
-import { traverseDepthFirst } from '@/utilities/traversal';
-import { fromThreeMatrix } from '@/utilities';
-import { Box3 } from '@/utilities/Box3';
-
 import { createSectorMetadata, SectorTree } from '../../testUtils/createSectorMetadata';
+import { Box3 } from '@/utilities/Box3';
+import { GpuOrderSectorsByVisibilityCoverage, traverseDepthFirst } from '@/internal';
+import { SectorSceneImpl } from '@/datamodels/cad/sector/SectorScene';
+import { SectorMetadata, SectorModelTransformation } from '@/experimental';
+import { fromThreeMatrix } from '@/utilities';
+import { CadModelMetadata } from '@/datamodels/cad/';
+import { SectorScene } from '@/datamodels/cad/sector/types';
 
 describe('OrderSectorsByVisibilityCoverage', () => {
   const glContext: WebGLRenderingContext = require('gl')(64, 64);
@@ -28,7 +27,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
     const coverageUtil = new GpuOrderSectorsByVisibilityCoverage({ glContext, renderSize });
 
     // Act
-    const arrays = coverageUtil.orderSectorsByVisibility(camera);
+    const arrays = coverageUtil.orderSectorsByVisibility(camera, []);
 
     // Assert
     expect(arrays).toBeEmpty();
@@ -42,7 +41,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
 
     // Act
     glContext.clearColor(1, 1, 1, 1);
-    const result = util.orderSectorsByVisibility(camera);
+    const result = util.orderSectorsByVisibility(camera, []);
 
     // Assert
     expect(result).toBeEmpty();
@@ -59,7 +58,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
 
     // Act
     glContext.clearColor(0, 0, 0, 1); // Store 0 in output
-    const result = util.orderSectorsByVisibility(camera);
+    const result = util.orderSectorsByVisibility(camera, []);
 
     // Assert
     expect(result.length).toBe(1);
@@ -82,7 +81,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
 
     // Act
     glContext.clearColor(0, 0, 1.0 / 255, 1); // Store 1 in output
-    const result = util.orderSectorsByVisibility(camera);
+    const result = util.orderSectorsByVisibility(camera, []);
 
     // Assert - ensure output is first sector in second model
     expect(result.length).toBe(1);

@@ -17,7 +17,7 @@ async function main() {
   client.loginWithOAuth({ project });
 
   const scene = new THREE.Scene();
-  const revealManager: reveal.RevealManager = createRenderManager(
+  const revealManager: reveal.RenderManager = createRenderManager(
     modelRevision !== undefined ? 'cdf' : 'local',
     client
   );
@@ -32,7 +32,7 @@ async function main() {
   }
   scene.add(model);
 
-  const effect = new reveal.utilities.SsaoEffect();
+  const effect = new reveal.SsaoEffect();
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor('#444');
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -54,16 +54,16 @@ async function main() {
   };
 
   const renderSettings = {
-    pass: reveal.utilities.SsaoPassType.Antialias
+    pass: reveal.SsaoPassType.Antialias
   };
 
   const gui = new dat.GUI();
   gui
     .add(renderSettings, 'pass', {
-      Regular: reveal.utilities.SsaoPassType.Regular,
-      Ssao: reveal.utilities.SsaoPassType.Ssao,
-      SsaoFinal: reveal.utilities.SsaoPassType.SsaoFinal,
-      Antialias: reveal.utilities.SsaoPassType.Antialias
+      Regular: reveal.SsaoPassType.Regular,
+      Ssao: reveal.SsaoPassType.Ssao,
+      SsaoFinal: reveal.SsaoPassType.SsaoFinal,
+      Antialias: reveal.SsaoPassType.Antialias
     })
     .onChange(updateEffect);
 

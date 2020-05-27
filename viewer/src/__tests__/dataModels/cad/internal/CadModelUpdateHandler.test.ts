@@ -4,14 +4,15 @@
 
 import * as THREE from 'three';
 
-import { SectorCuller } from '@/dataModels/cad/internal/sector/culling/SectorCuller';
-import { CachedRepository } from '@/dataModels/cad/internal/sector/CachedRepository';
-import { CadModelUpdateHandler } from '@/dataModels/cad/internal/CadModelUpdateHandler';
-import { CadSectorProvider } from '@/dataModels/cad/internal/sector/CadSectorProvider';
-import { CadSectorParser } from '@/dataModels/cad/internal/sector/CadSectorParser';
-import { SimpleAndDetailedToSector3D } from '@/dataModels/cad/internal/sector/SimpleAndDetailedToSector3D';
-import { MaterialManager } from '@/dataModels/cad/internal/MaterialManager';
-import { CadNode } from '@/dataModels/cad/internal/CadNode';
+import { CadNode } from '@/datamodels/cad';
+import { CadSectorProvider } from '@/datamodels/cad/sector/CadSectorProvider';
+import { MaterialManager } from '@/datamodels/cad/MaterialManager';
+import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
+import { SimpleAndDetailedToSector3D } from '@/datamodels/cad/sector/SimpleAndDetailedToSector3D';
+import { CachedRepository } from '@/datamodels/cad/sector/CachedRepository';
+import { SectorCuller } from '@/datamodels/cad/sector/culling/SectorCuller';
+
+import { CadModelUpdateHandler } from '@/dataModels/cad/CadModelUpdateHandler';
 
 import { createCadModelMetadata } from '../../../testUtils/createCadModelMetadata';
 import { generateSectorTree } from '../../../testUtils/createSectorMetadata';
@@ -46,9 +47,8 @@ describe('CadModelUpdateHandler', () => {
     jest.advanceTimersByTime(1000);
     expect(mockCuller.determineSectors).toBeCalledTimes(2);
 
-    updateHandler.updateLoadingHints({ maxQuadSize: 10 });
+    updateHandler.updateLoadingHints({});
     jest.advanceTimersByTime(1000);
     expect(mockCuller.determineSectors).toBeCalledTimes(3);
-
   });
 });

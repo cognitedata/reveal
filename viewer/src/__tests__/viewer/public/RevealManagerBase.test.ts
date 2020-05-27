@@ -5,9 +5,9 @@
 import * as THREE from 'three';
 
 import { RevealManagerBase } from '@/public/RevealManagerBase';
-import { MaterialManager } from '@/dataModels/cad/internal/MaterialManager';
-import { CogniteClient } from '@cognite/sdk';
-import { CadManager } from '@/dataModels/cad/internal/CadManager';
+import { MaterialManager } from '@/datamodels/cad/MaterialManager';
+import { CadManager } from '@/datamodels/cad/CadManager';
+import { PointCloudManager } from '@/datamodels/pointcloud/internal/PointCloudManager';
 
 describe('RevealManagerBase', () => {
   const mockCadManager: Omit<CadManager<number>, ''> = {
@@ -18,9 +18,15 @@ describe('RevealManagerBase', () => {
   };
 
   const cadManager = mockCadManager as CadManager<number>;
-  const client = new CogniteClient({ appId: 'test' });
+
+  const mockPointCloudManager: Omit<PointCloudManager<number>, ''> = {
+    addModel: jest.fn(),
+    needsRedraw: false,
+    updateCamera: jest.fn()
+  };
+  const pointCloudManager = mockPointCloudManager as PointCloudManager<number>;
   const materialManager = new MaterialManager();
-  const manager = new RevealManagerBase<number>(client, cadManager, materialManager);
+  const manager = new RevealManagerBase<number>(cadManager, materialManager, pointCloudManager);
 
   test('update() calls CadManager.updateCamera()', () => {
     const camera = new THREE.PerspectiveCamera();

@@ -13,7 +13,7 @@ async function main() {
 
   // tslint:disable-next-line: no-console
   console.log(project, modelUrl, modelRevision);
-  const revealManager: reveal.RevealManager = createRenderManager(
+  const revealManager: reveal.RenderManager = createRenderManager(
     modelRevision !== undefined ? 'cdf' : 'local',
     client
   );

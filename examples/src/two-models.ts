@@ -34,7 +34,7 @@ async function main() {
   document.body.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
-  const revealManager: reveal.RevealManager = createRenderManager(
+  const revealManager: reveal.RenderManager = createRenderManager(
     modelRevision !== undefined ? 'cdf' : 'local',
     client
   );

@@ -3,14 +3,11 @@
  */
 import * as THREE from 'three';
 
-import { OrderSectorsByVisibilityCoverage } from '@/dataModels/cad/internal/sector/culling/OrderSectorsByVisibilityCoverage';
-import { ByVisibilityGpuSectorCuller } from '@/dataModels/cad/internal/sector/culling/ByVisibilityGpuSectorCuller';
-import { CadModelMetadata } from '@/dataModels/cad/internal';
-import { SectorMetadata } from '@/dataModels/cad/internal/sector/types';
-import { LevelOfDetail } from '@/dataModels/cad/internal/sector/LevelOfDetail';
-import { MaterialManager } from '@/dataModels/cad/internal/MaterialManager';
-import { CadNode } from '@/dataModels/cad/internal/CadNode';
-import { DetermineSectorsInput } from '@/dataModels/cad/internal/sector/culling/types';
+import { DetermineSectorsInput } from '@/datamodels/cad/sector/culling/types';
+import { MaterialManager } from '@/datamodels/cad/MaterialManager';
+import { OrderSectorsByVisibilityCoverage } from '@/datamodels/cad/sector/culling/OrderSectorsByVisibilityCoverage';
+import { ByVisibilityGpuSectorCuller, LevelOfDetail } from '@/internal';
+import { SectorMetadata, CadNode, CadModelMetadata } from '@/experimental';
 
 import { generateSectorTree } from '../testUtils/createSectorMetadata';
 import { createCadModelMetadata } from '../testUtils/createCadModelMetadata';
@@ -27,8 +24,8 @@ describe('ByVisibilityGpuSectorCuller', () => {
 
   const coverageUtil: OrderSectorsByVisibilityCoverage = {
     setModels: setModelsMock,
-    orderSectorsByVisibility: c => {
-      orderSectorsByVisibilityMock(c);
+    orderSectorsByVisibility: (camera, clippingPlanes) => {
+      orderSectorsByVisibilityMock(camera, clippingPlanes);
       return [];
     }
   };
@@ -58,12 +55,12 @@ describe('ByVisibilityGpuSectorCuller', () => {
 
     // Assert
     expect(orderSectorsByVisibilityMock).toBeCalledTimes(1); // Only render scene once
-    const sectors1 = sectors.filter(x => x.scene === model1.scene);
-    const sectors2 = sectors.filter(x => x.scene === model2.scene);
+    const sectors1 = sectors.filter(x => x.blobUrl === model1.blobUrl);
+    const sectors2 = sectors.filter(x => x.blobUrl === model2.blobUrl);
     expect(sectors1).not.toBeEmpty();
-    expect(model1.scene.getAllSectors()).toContainAllValues(sectors1.map(x => x.metadata));
+    expect(model1.scene.getAllSectors().map(x => x.id)).toContainAllValues(sectors1.map(x => x.metadata.id));
     expect(sectors2).not.toBeEmpty();
-    expect(model2.scene.getAllSectors()).toContainAllValues(sectors2.map(x => x.metadata));
+    expect(model2.scene.getAllSectors().map(x => x.id)).toContainAllValues(sectors2.map(x => x.metadata.id));
   });
 
   test('determineSectors returns sector from coverage utility by priority', () => {

@@ -3,28 +3,28 @@
  */
 
 import { RevealManagerBase, RevealOptions } from './RevealManagerBase';
-import { CogniteClient } from '@cognite/sdk';
-import { CadSectorParser } from '@/dataModels/cad/internal/sector/CadSectorParser';
-import { MaterialManager } from '@/dataModels/cad/internal/MaterialManager';
-import { SimpleAndDetailedToSector3D } from '@/dataModels/cad/internal/sector/SimpleAndDetailedToSector3D';
-import { CadModelFactory } from '@/dataModels/cad/internal/CadModelFactory';
-import { CachedRepository } from '@/dataModels/cad/internal/sector/CachedRepository';
-import { CadModelUpdateHandler } from '@/dataModels/cad/internal/CadModelUpdateHandler';
-import { CadManager } from '@/dataModels/cad/internal/CadManager';
-import { CadMetadataParser } from '@/dataModels/cad/internal/CadMetadataParser';
-import { DefaultCadTransformation } from '@/dataModels/cad/internal/DefaultCadTransformation';
-import { CadModelMetadataRepository } from '@/dataModels/cad/internal/CadModelMetadataRepository';
+
+import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
+import { MaterialManager } from '@/datamodels/cad/MaterialManager';
+import { SimpleAndDetailedToSector3D } from '@/datamodels/cad/sector/SimpleAndDetailedToSector3D';
+import { CadModelMetadataRepository } from '@/datamodels/cad/CadModelMetadataRepository';
+import { DefaultCadTransformation } from '@/datamodels/cad/DefaultCadTransformation';
+import { CadMetadataParser } from '@/datamodels/cad/parsers/CadMetadataParser';
+import { CadModelFactory } from '@/datamodels/cad/CadModelFactory';
+import { ByVisibilityGpuSectorCuller, PotreeGroupWrapper, PotreeNodeWrapper } from '@/internal';
+import { CachedRepository } from '@/datamodels/cad/sector/CachedRepository';
+import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
+import { CadManager } from '@/datamodels/cad/CadManager';
 import { LocalUrlClient as LocalHostClient } from '@/utilities/networking/LocalUrlClient';
-import { CadNode } from '@/dataModels/cad/internal/CadNode';
-import { PotreeGroupWrapper } from '@/dataModels/pointCloud/internal/PotreeGroupWrapper';
-import { PotreeNodeWrapper } from '@/dataModels/pointCloud/internal/PotreeNodeWrapper';
-import { ModelNodeAppearance } from '@/dataModels/cad/internal/ModelNodeAppearance';
-import { ByVisibilityGpuSectorCuller } from '@/dataModels/cad/internal/sector/culling/ByVisibilityGpuSectorCuller';
+import { ModelNodeAppearance, CadNode } from '@/datamodels/cad';
+import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/internal/PointCloudMetadataRepository';
+import { PointCloudFactory } from '@/datamodels/pointcloud/internal/PointCloudFactory';
+import { PointCloudManager } from '@/datamodels/pointcloud/internal/PointCloudManager';
 
 type LocalModelIdentifier = { fileName: string };
 
 export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifier> {
-  constructor(client: CogniteClient, options?: RevealOptions) {
+  constructor(options?: RevealOptions) {
     const modelDataParser: CadSectorParser = new CadSectorParser();
     const materialManager: MaterialManager = new MaterialManager();
     const modelDataTransformer = new SimpleAndDetailedToSector3D(materialManager);
@@ -45,7 +45,17 @@ export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifi
       cadModelFactory,
       cadModelUpdateHandler
     );
-    super(client, cadManager, materialManager);
+
+    const pointCloudModelRepository: PointCloudMetadataRepository<LocalModelIdentifier> = new PointCloudMetadataRepository(
+      localClient,
+      new DefaultCadTransformation()
+    );
+    const pointCloudFactory: PointCloudFactory = new PointCloudFactory(localClient);
+    const pointCloudManager: PointCloudManager<LocalModelIdentifier> = new PointCloudManager(
+      pointCloudModelRepository,
+      pointCloudFactory
+    );
+    super(cadManager, materialManager, pointCloudManager);
   }
 
   public addModel(type: 'cad', fileName: string, modelNodeAppearance?: ModelNodeAppearance): Promise<CadNode>;
@@ -59,7 +69,7 @@ export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifi
       case 'cad':
         return this._cadManager.addModel({ fileName }, modelNodeAppearance);
       case 'pointcloud':
-        throw new Error('Not yet implemented');
+        return this._pointCloudManager.addModel({ fileName });
       default:
         throw new Error(`case: ${type} not handled`);
     }
