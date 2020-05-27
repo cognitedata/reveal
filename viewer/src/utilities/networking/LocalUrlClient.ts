@@ -3,11 +3,11 @@
  */
 
 import { HttpError } from '@cognite/sdk';
-import { EptSceneProvider } from '@/datamodels/pointcloud/internal/EptSceneProvider';
 import { HttpHeadersProvider } from './HttpHeadersProvider';
 import { ModelUrlProvider } from './types';
 import { CadSceneProvider } from '@/datamodels/cad/CadSceneProvider';
 import { CadSectorProvider } from '@/datamodels/cad/sector/CadSectorProvider';
+import { EptSceneProvider } from '@/datamodels/pointcloud/EptSceneProvider';
 
 export class LocalUrlClient
   implements
