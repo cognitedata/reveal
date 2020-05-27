@@ -2,6 +2,6 @@
  * Copyright 2020 Cognite AS
  */
 
-import { PointCloudMetadata } from './public/PointCloudMetadata';
+import { PointCloudMetadata } from './PointCloudMetadata';
 
 export { PointCloudMetadata };

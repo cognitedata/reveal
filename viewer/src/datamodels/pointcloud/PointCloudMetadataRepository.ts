@@ -4,7 +4,7 @@
 
 import { ModelUrlProvider } from '@/utilities/networking/types';
 import { EptSceneProvider } from './EptSceneProvider';
-import { PointCloudMetadata } from '@/datamodels/pointcloud/public/PointCloudMetadata';
+import { PointCloudMetadata } from '@/datamodels/pointcloud/PointCloudMetadata';
 
 // TODO 25-05-2020 j-bjorne: Move into common type folder
 import { DataRepository } from '@/datamodels/cad/DataRepository';
