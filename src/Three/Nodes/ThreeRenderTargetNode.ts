@@ -31,6 +31,7 @@ import { ToggleAxisVisibleCommand } from "@/Three/Commands/ToggleAxisVisibleComm
 import { ToggleBgColorCommand } from "@/Three/Commands/ToggleBgColorCommand";
 import { IToolbar } from "@/Core/Interfaces/IToolbar";
 import { ViewFromCommand } from "@/Three/Commands/ViewFromCommand";
+import { PerspectiveCamera } from "three";
 
 export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   //==================================================
@@ -209,13 +210,61 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
       return false;
 
     const boundingBox = this.getBoundingBoxFromViews();
-    const center = boundingBox.center;
 
-    if ()
+    let fov = 0;
+    if (camera instanceof PerspectiveCamera) {
+      const perspectiveCamera = camera as PerspectiveCamera;
+      fov = perspectiveCamera.fov;
+    }
+    const f = 0.8 / Math.tan(fov / 2);
 
-      controls.rotateTo(Math.PI / 2, Math.PI / 2, false)
-    const dz = Math.max(boundingBox.x.delta, boundingBox.y.delta);
-    controls.setLookAt(center.x, center.y, center.z + dz, center.x, center.y, center.z);
+    console.log(fov);
+    console.log(f);
+
+    index = 4;
+
+    const target = boundingBox.center;
+    const position = boundingBox.center;
+
+    // https://www.npmjs.com/package/camera-controls
+    if (index === 0) {
+      // Top
+      const delta = Math.max(boundingBox.x.delta, boundingBox.y.delta) * f;
+      controls.rotateTo(0, Math.PI / 2, false)
+      position.z = boundingBox.max.z + delta;
+    }
+    if (index === 1) {
+      //Bottom
+      const delta = Math.max(boundingBox.x.delta, boundingBox.y.delta) * f;
+      controls.rotateTo(Math.PI, Math.PI / 2, false)
+      position.z = boundingBox.min.z - delta;
+    }
+    else if (index === 2) {
+      //South
+      const delta = Math.max(boundingBox.x.delta, boundingBox.z.delta) * f;
+      controls.rotateTo(Math.PI / 2, 0, false)
+      position.y  = boundingBox.min.y - delta;
+    }
+    else if (index === 3) {
+      //North
+      const delta = Math.max(boundingBox.x.delta, boundingBox.z.delta) * f;
+      controls.rotateTo(-Math.PI / 2, 0, false)
+      position.y  = boundingBox.max.y + delta;
+    }
+    else if (index === 4) {
+      //West
+      const delta = Math.max(boundingBox.y.delta, boundingBox.z.delta) * f;
+      controls.rotateTo(0, 0, false)
+      position.x  = boundingBox.min.x - delta;
+    }
+    else if (index === 5) {
+      //East
+      const delta = Math.max(boundingBox.y.delta, boundingBox.z.delta) * f;
+      controls.rotateTo(Math.PI, 0, false)
+      position.x  = boundingBox.max.x + delta;
+    }
+    controls.setTarget(target.x, target.y, target.z);
+    controls.setPosition(position.x, position.y, position.z);
     return true;
   }
 
@@ -239,6 +288,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
         const boundingBox = this.getBoundingBoxFromViews();
         if (!boundingBox.isEmpty) {
           this.viewRange(boundingBox)
+          this.viewFrom(1);
           this.isEmpty = false;
         }
       }
