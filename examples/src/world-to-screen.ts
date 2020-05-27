@@ -71,7 +71,7 @@ async function main() {
       revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || modelsNeedUpdate || pickingNeedsUpdate) {
+    if (controlsNeedUpdate || pickingNeedsUpdate || revealManager.needsRedraw) {
       renderer.render(scene, camera);
       htmlOverlayHelper.updatePositions(renderer, camera);
       revealManager.resetRedraw();
