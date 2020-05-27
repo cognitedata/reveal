@@ -18,7 +18,7 @@ export class Changes
   //==================================================
 
   // States changed
-  public static readonly visible: symbol = Symbol("visible");
+  public static readonly visibleState: symbol = Symbol("visibleState");
   public static readonly filter: symbol = Symbol("filter");
   public static readonly active: symbol = Symbol("active");
   public static readonly expanded: symbol = Symbol("expanded");

@@ -31,6 +31,8 @@ import { ToggleAxisVisibleCommand } from "@/Three/Commands/ToggleAxisVisibleComm
 import { ToggleBgColorCommand } from "@/Three/Commands/ToggleBgColorCommand";
 import { IToolbar } from "@/Core/Interfaces/IToolbar";
 import { ViewFromCommand } from "@/Three/Commands/ViewFromCommand";
+import { PerspectiveCamera } from "three";
+import { SingleEntryPlugin } from "webpack";
 
 export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   //==================================================
@@ -137,16 +139,18 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     scene.add(light);
     //camera.add(light);
     //scene.add(camera);
+
+    const controls = this.controls;
+    if (controls)
+      controls.addEventListener("update", lightUpdate);
+
     var self = this;
     function lightUpdate() {
       ThreeRenderTargetNode.updateLightPositionStatic(self);
     }
-    this.domElement.addEventListener("mousemove", lightUpdate);
-    this.domElement.addEventListener("wheel", lightUpdate);
-
     var ambientLight = new THREE.AmbientLight(0x404040, 0.25); // soft white light
     scene.add(ambientLight);
-    this.updateLightPosition();
+    //this.updateLightPosition();
   }
 
   //==================================================
@@ -164,16 +168,13 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     if (!controls)
       return;
 
+
     //https://github.com/yomotsu/camera-controls
     // The below stuff doesn't work!!
     // controls.rotate(0, 0.8);
-
-    const center = boundingBox.center;
+    const target = boundingBox.center;
+    controls.setTarget(target.x, target.y, target.z);
     controls.fitTo(ThreeConverter.toBox(boundingBox));
-    controls.moveTo(center.x, center.y, center.z);
-    controls.update(0);
-
-    this.updateLightPosition();
   }
 
   public /*override*/ get domElement(): HTMLElement { return this.renderer.domElement; }
@@ -198,6 +199,86 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     toolbar.beginOptionMenu();
   }
 
+  public viewFrom(index: number): boolean {
+
+    const controls = this.controls;
+    if (!controls)
+      return false;
+
+    const camera = this.activeCamera;
+    if (!camera)
+      return false;
+
+    const boundingBox = this.getBoundingBoxFromViews();
+
+    let distanceFactor = 1;
+    if (camera instanceof PerspectiveCamera) {
+      const perspectiveCamera = camera as PerspectiveCamera;
+      
+      const fov = Ma.toRad(perspectiveCamera.fov);
+      distanceFactor = 0.66 / (camera.aspect * Math.tan(fov / 2));
+      console.log(fov);
+      console.log(distanceFactor);
+    }
+    const target = boundingBox.center;
+    const position = boundingBox.center;
+
+    // https://www.npmjs.com/package/camera-controls
+    if (index < 0) {
+      distanceFactor /= 2;
+      const distanceX = Math.max(boundingBox.y.delta, boundingBox.z.delta) * distanceFactor * Math.sin(Math.PI / 4);
+      const distanceY = Math.max(boundingBox.x.delta, boundingBox.z.delta) * distanceFactor * Math.sin(Math.PI / 4);
+      const distanceZ = Math.max(boundingBox.x.delta, boundingBox.y.delta) * distanceFactor * Math.sin(Math.PI / 8);
+      position.x = boundingBox.max.x + distanceX;
+      position.y = boundingBox.max.y + distanceY;
+      position.z = boundingBox.max.z + distanceZ;
+    }
+    else if (index === 0 || index === 1) {
+      const distance = Math.max(boundingBox.x.delta, boundingBox.y.delta) * distanceFactor;
+      if (index === 0) {
+        // Top
+        controls.rotateTo(0, Math.PI / 2, false)
+        position.z = boundingBox.max.z + distance;
+      }
+      if (index === 1) {
+        //Bottom
+        controls.rotateTo(Math.PI, Math.PI / 2, false)
+        position.z = boundingBox.min.z - distance;
+      }
+    }
+    else if (index === 2 || index === 3) {
+      const distance = Math.max(boundingBox.x.delta, boundingBox.z.delta) * distanceFactor;
+      if (index === 2) {
+        //South
+        controls.rotateTo(Math.PI / 2, 0, false)
+        position.y = boundingBox.min.y - distance;
+      }
+      else {
+        //North
+        controls.rotateTo(-Math.PI / 2, 0, false)
+        position.y = boundingBox.max.y + distance;
+      }
+    }
+    else if (index === 4 || index === 5) {
+      const distance = Math.max(boundingBox.y.delta, boundingBox.z.delta) * distanceFactor;
+      if (index === 4) {
+        //West
+        controls.rotateTo(0, 0, false)
+        position.x = boundingBox.min.x - distance;
+      }
+      else {
+        //East
+        controls.rotateTo(Math.PI, 0, false)
+        position.x = boundingBox.max.x + distance;
+      }
+    }
+    controls.setTarget(target.x, target.y, target.z);
+    controls.setPosition(position.x, position.y, position.z);
+    this.updateLightPosition();
+    return true;
+  }
+
+
   private render(): void {
 
     requestAnimationFrame(() => { this.render(); });
@@ -216,7 +297,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
       if (this.isEmpty) {
         const boundingBox = this.getBoundingBoxFromViews();
         if (!boundingBox.isEmpty) {
-          this.viewRange(boundingBox)
+          this.viewFrom(-1);
           this.isEmpty = false;
         }
       }
@@ -255,10 +336,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     if (!light)
       return;
 
-    //The idea of this function is letting the light track the camera, 
-    if (!camera || !controls || !light)
-      return;
-
+    // The idea of this function is letting the light track the camera, 
     const position = controls.getPosition();
     const target = controls.getTarget();
 
