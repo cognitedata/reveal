@@ -8,10 +8,10 @@ import { CogniteClient, IdEither, ItemsResponse } from '@cognite/sdk';
 import { BlobOutputMetadata, ModelUrlProvider } from './types';
 import { Model3DOutputList } from './Model3DOutputList';
 import { File3dFormat } from '../File3dFormat';
-import { EptSceneProvider } from '@/datamodels/pointcloud/internal/EptSceneProvider';
 import { HttpHeadersProvider } from './HttpHeadersProvider';
 import { CadSceneProvider } from '@/datamodels/cad/CadSceneProvider';
 import { CadSectorProvider } from '@/datamodels/cad/sector/CadSectorProvider';
+import { EptSceneProvider } from '@/datamodels/pointcloud/EptSceneProvider';
 
 interface OutputsRequest {
   models: IdEither[];

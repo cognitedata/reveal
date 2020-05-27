@@ -3,7 +3,7 @@
  */
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
-import { PointCloudMetadata } from '@/datamodels/pointcloud/public/PointCloudMetadata';
+import { PointCloudMetadata } from '@/datamodels/pointcloud/PointCloudMetadata';
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 import { toThreeMatrix4 } from '@/utilities/utilities';
 import { HttpHeadersProvider } from '@/utilities/networking/HttpHeadersProvider';

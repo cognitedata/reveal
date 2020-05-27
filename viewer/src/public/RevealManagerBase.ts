@@ -9,7 +9,7 @@ import { SectorCuller } from '@/internal';
 import { CadManager } from '@/datamodels/cad/CadManager';
 import { MaterialManager } from '@/datamodels/cad/MaterialManager';
 import { ModelNodeAppearance } from '@/datamodels/cad';
-import { PointCloudManager } from '@/datamodels/pointcloud/internal/PointCloudManager';
+import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 
 export interface RevealOptions {
   nodeAppearance?: ModelNodeAppearance;
