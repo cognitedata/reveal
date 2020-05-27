@@ -7,13 +7,15 @@ import * as THREE from "three";
 import {
   CadNode,
   intersectCadNodes,
+  RenderManager,
+  LocalHostRevealManager,
   RevealManager,
   utilities
 } from "@cognite/reveal/experimental";
 import CameraControls from "camera-controls";
 import dat from "dat.gui";
 
-import { getParamsFromURL } from "./utils/example-helpers";
+import { createRenderManager, getParamsFromURL } from './utils/example-helpers'
 import { addWASDHandling } from "./utils/cameraControls";
 
 CameraControls.install({ THREE });
@@ -46,7 +48,7 @@ function getMiddlePoint(p1: THREE.Vector3, p2: THREE.Vector3) {
 }
 
 async function main() {
-  const { project, modelUrl } = getParamsFromURL({
+  const { project, modelUrl, modelRevision } = getParamsFromURL({
     project: "publicdata",
     modelUrl: "primitives"
   });
@@ -55,11 +57,20 @@ async function main() {
 
   const scene = new THREE.Scene();
   let isRenderRequired = true;
-  const revealManager = new RevealManager(client, () => {
-    isRenderRequired = true;
-  });
+  const revealManager: RenderManager = createRenderManager(
+    modelRevision !== undefined ? 'cdf' : 'local',
+    client
+  );
 
-  const model: CadNode = await revealManager.addModelFromUrl(modelUrl!);
+  let model: CadNode;
+  if (revealManager instanceof LocalHostRevealManager && modelUrl !== undefined) {
+    model = await revealManager.addModel('cad', modelUrl);
+  } else if (revealManager instanceof RevealManager && modelRevision !== undefined) {
+    model = await revealManager.addModel('cad', modelRevision);
+  } else {
+    throw new Error('Need to provide either project & model OR modelUrl as query parameters');
+  }
+
   scene.add(model);
 
   // without light there is no colors for custom geometry (like our spheres)
@@ -103,9 +114,10 @@ async function main() {
       isRenderRequired = true;
       revealManager.update(camera);
     }
-    if (isRenderRequired) {
+    if (isRenderRequired || revealManager.needsRedraw) {
       renderer.render(scene, camera);
       htmlOverlayHelper.updatePositions(renderer, camera);
+      revealManager.resetRedraw();
       isRenderRequired = false;
     }
     requestAnimationFrame(render);
