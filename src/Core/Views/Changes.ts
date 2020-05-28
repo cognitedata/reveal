@@ -29,7 +29,7 @@ export class Changes
   public static readonly geometry: symbol = Symbol("geometry");
   public static readonly renderStyle: symbol = Symbol("renderStyle");
 
-  // Parent-child relation chips changed
+  // Parent-child relationship changed
   public static readonly childDeleted: symbol = Symbol("childDeleted");
   public static readonly childAdded: symbol = Symbol("childAdded");
 }

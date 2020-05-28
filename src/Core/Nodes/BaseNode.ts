@@ -167,7 +167,7 @@ export abstract class BaseNode extends Identifiable {
       target = this.activeTarget;
     if (!target)
       return false;
-    const checkBoxState = this.getCheckBoxState();
+    const checkBoxState = this.getCheckBoxState(target);
     if (checkBoxState === CheckBoxState.Never)
       return false;
     if (checkBoxState === CheckBoxState.None && !this.canBeChecked)
@@ -182,10 +182,11 @@ export abstract class BaseNode extends Identifiable {
       return false;
 
     // Notify
-    this.notify(new NodeEventArgs(Changes.visibleState));
+    const args = new NodeEventArgs(Changes.visibleState);
+    this.notify(args);
     if (topLevel) {
       for (const ancestor of this.getAncestorsExceptRoot())
-        ancestor.notify(new NodeEventArgs(Changes.visibleState));
+        ancestor.notify(args);
     }
     return true;
   }
@@ -463,8 +464,6 @@ export abstract class BaseNode extends Identifiable {
   //==================================================
 
   public notify(args: NodeEventArgs): void {
-
-    if (args.isChanged(Changes.visibleState))
     for (const eventListener of this.eventListeners)
       eventListener.processEvent(this, args);
     this.notifyCore(args);

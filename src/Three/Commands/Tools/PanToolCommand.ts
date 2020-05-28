@@ -1,8 +1,8 @@
 
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
-import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetCommand";
+import { ToolCommand } from "@/Three/Commands/Tools/ToolCommand";
 
-export class ViewAllCommand extends ThreeRenderTargetCommand {
+export class PanToolCommand extends ToolCommand {
 
   //==================================================
   // CONSTRUCTORS
@@ -16,15 +16,7 @@ export class ViewAllCommand extends ThreeRenderTargetCommand {
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*virtual*/ get name(): string { return "View all" }
-  
-  protected /*virtual*/ invokeCore(): boolean {
-    if (!this.target)
-      return false;
-
-    this.target.viewAll();
-    return true;
-  }
+  public get name(): string { return "Pan/Rotate/Zoom" }
 }
 
 

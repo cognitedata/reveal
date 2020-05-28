@@ -1,6 +1,5 @@
 
-import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { ThreeRenderTargetNode } from "../Nodes/ThreeRenderTargetNode";
+import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { BaseCommand } from "@/Core/Commands/BaseCommand";
 
 export abstract class ThreeRenderTargetCommand extends BaseCommand {
@@ -20,7 +19,8 @@ export abstract class ThreeRenderTargetCommand extends BaseCommand {
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public get isEnabled() : boolean { return this.target != null;  }
+  public /*virtual*/get isEnabled() : boolean { return this.target != null;  }
+  public /*virtual*/ get isChecked() { return false; } // Is checked?
 }
 
 

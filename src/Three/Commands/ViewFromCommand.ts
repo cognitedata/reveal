@@ -1,7 +1,6 @@
 
-import { ThreeRenderTargetNode } from "../Nodes/ThreeRenderTargetNode";
-import { ThreeRenderTargetCommand } from "./ThreeRenderTargetCommand";
-import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
+import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
+import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetCommand";
 
 export class ViewFromCommand extends ThreeRenderTargetCommand {
 
@@ -19,25 +18,32 @@ export class ViewFromCommand extends ThreeRenderTargetCommand {
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public get name(): string {
+  public /*virtual*/ get name(): string { return "View from " + this.directionName; }
 
-    switch (this.viewFrom) {
-      case 0: return "View from top";
-      case 1: return "View from bottom";
-      case 2: return "View from south";
-      case 3: return "View from north";
-      case 4: return "View from west";
-      case 5: return "View from east";
-      default: return "";
-    }
-  }
-
-  protected invokeCore(): boolean {
+  protected /*virtual*/ invokeCore(): boolean {
     if (!this.target)
       return false;
 
     this.target.viewFrom(this.viewFrom);
     return true;
+  }
+
+  //==================================================
+  // OVERRIDES of BaseCommand
+  //==================================================
+
+  private get directionName(): string {
+
+    switch (this.viewFrom) {
+      case -1: return "Side";
+      case 0: return "Top";
+      case 1: return "Bottom";
+      case 2: return "South";
+      case 3: return "North";
+      case 4: return "West";
+      case 5: return "East";
+      default: return "";
+    }
   }
 }
 

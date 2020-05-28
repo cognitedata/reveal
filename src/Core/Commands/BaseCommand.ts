@@ -14,6 +14,7 @@ export abstract class BaseCommand {
   public abstract get name(): string; // Get the name of the command
   public /*virtual*/ get displayName(): string { return this.name; } // Get the name of the command
   public /*virtual*/ get tooltip(): string { return this.name; }  // Get the tooltip text
+  public /*virtual*/ get shortCutKeys(): string | undefined { return undefined }; // Somehow gets the shortcut key (default none)
 
   public /*virtual*/ get isEnabled() { return true; } // Is enabled? (default true)
   public /*virtual*/ get isChecked() { return false; } // Is checked?
@@ -21,8 +22,7 @@ export abstract class BaseCommand {
   public /*virtual*/ get isVisible() { return this.isEnabled; } // Is visible? 
 
   // THESE TO MUST BE FILLED OUT 
-  // protected abstract get ImageCore(): Image  // Get the image
-  //protected abstract get  shortCutKeysCore() { return null} ; // Somehow gets the shortcut key (default none)
+  // protected abstract get Image(): Image  // Get the image
 
   //==================================================
   // VIRTUAL METHODS
@@ -34,7 +34,7 @@ export abstract class BaseCommand {
   // INSTANCE METHODS
   //==================================================
 
-  public invoke(): boolean{
+  public invoke(): boolean {
     return this.invokeCore();
   }
 }

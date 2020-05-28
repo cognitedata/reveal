@@ -63,15 +63,10 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     if (!cameraNode)
       throw Error("The camera is not set");
 
-    return cameraNode.camera;
-  }
-
-  public set activeCamera(value: THREE.Camera) {
-    const cameraNode = this.activeCameraNode;
-    if (!cameraNode)
+    if (!cameraNode.camera)
       throw Error("The camera is not set");
 
-    cameraNode.camera = value;
+    return cameraNode.camera;
   }
 
   public get controls(): CameraControls | null {
@@ -214,7 +209,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     let distanceFactor = 1;
     if (camera instanceof PerspectiveCamera) {
       const perspectiveCamera = camera as PerspectiveCamera;
-      
+
       const fov = Ma.toRad(perspectiveCamera.fov);
       distanceFactor = 0.66 / (camera.aspect * Math.tan(fov / 2));
       console.log(fov);
@@ -237,12 +232,12 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
       const distance = Math.max(boundingBox.x.delta, boundingBox.y.delta) * distanceFactor;
       if (index === 0) {
         // Top
-        controls.rotateTo(0, Math.PI / 2, false)
+        controls.rotateTo(0, Math.PI / 2, false);
         position.z = boundingBox.max.z + distance;
       }
       if (index === 1) {
         //Bottom
-        controls.rotateTo(Math.PI, Math.PI / 2, false)
+        controls.rotateTo(Math.PI, Math.PI / 2, false);
         position.z = boundingBox.min.z - distance;
       }
     }
@@ -250,12 +245,12 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
       const distance = Math.max(boundingBox.x.delta, boundingBox.z.delta) * distanceFactor;
       if (index === 2) {
         //South
-        controls.rotateTo(Math.PI / 2, 0, false)
+        controls.rotateTo(Math.PI / 2, 0, false);
         position.y = boundingBox.min.y - distance;
       }
       else {
         //North
-        controls.rotateTo(-Math.PI / 2, 0, false)
+        controls.rotateTo(-Math.PI / 2, 0, false);
         position.y = boundingBox.max.y + distance;
       }
     }
@@ -263,12 +258,12 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
       const distance = Math.max(boundingBox.y.delta, boundingBox.z.delta) * distanceFactor;
       if (index === 4) {
         //West
-        controls.rotateTo(0, 0, false)
+        controls.rotateTo(0, 0, false);
         position.x = boundingBox.min.x - distance;
       }
       else {
         //East
-        controls.rotateTo(Math.PI, 0, false)
+        controls.rotateTo(Math.PI, 0, false);
         position.x = boundingBox.max.x + distance;
       }
     }

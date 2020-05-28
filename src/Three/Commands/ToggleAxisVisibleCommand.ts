@@ -1,6 +1,6 @@
 
-import { ThreeRenderTargetNode } from "../Nodes/ThreeRenderTargetNode";
-import { ThreeRenderTargetCommand } from "./ThreeRenderTargetCommand";
+import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
+import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetCommand";
 import { AxisNode } from "@/Nodes/Decorations/AxisNode";
 
 export class ToggleAxisVisibleCommand extends ThreeRenderTargetCommand {
@@ -17,8 +17,7 @@ export class ToggleAxisVisibleCommand extends ThreeRenderTargetCommand {
   // OVERRIDES of BaseCommand
   //==================================================
 
-
-  public get name(): string { return "Hide or show axis" }
+  public /*virtual*/get name(): string { return "Hide or show axis" }
 
   public /*virtual*/ get isCheckable() { return true; } // Can be checked? (default false)
 
