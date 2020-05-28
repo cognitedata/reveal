@@ -1,35 +1,3 @@
 {
-  "extends": [
-    "@cognite/tslint-config-cognite-3d",
-    "tslint-no-circular-imports"
-  ],
-  "linterOptions": {
-    "exclude": ["node_modules/**/*.ts", "**/*.json"]
-  },
-  "rules": {
-    "comment-format": false,
-    "no-irregular-whitespace": false,
-    "quotemark": false,
-    "member-ordering": false,
-    "prettier": false,
-    "curly": false,
-    "interface-name": false,
-    "brace-style": [
-      true,
-      "allman",
-      {
-        "allowSingleLine": true
-      }
-    ],
-    "file-header": [
-      false,
-      {
-        "default": "Copyright 2019 Cognite AS",
-        "match": "Copyright \\d{4} Cognite AS",
-        "allow-single-line-comments": true,
-        "enforce-trailing-newline": true
-      }
-    ],
-    "trailing-comma": [true, { "multiline": "never", "singleline": "never" }]
-  }
+  "extends": ["./tslint-rules.json", "tslint-config-prettier"]
 }

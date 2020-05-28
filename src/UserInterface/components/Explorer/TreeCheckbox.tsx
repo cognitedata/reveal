@@ -1,6 +1,14 @@
 import React from "react";
 import styled from "styled-components";
-import { Frame, FocusNormal, BackgroundFilter, FocusFilter, CheckedAll, FrameStippled, BackgroundNormal } from "@/UserInterface/utils/Icon";
+import {
+  Frame,
+  FocusNormal,
+  BackgroundFilter,
+  FocusFilter,
+  CheckedAll,
+  FrameStippled,
+  BackgroundNormal
+} from "@/UserInterface/utils/Icon";
 interface SpanProps {
   readonly checked?: boolean;
   readonly disabled?: boolean;
@@ -14,11 +22,14 @@ const Label = styled.label`
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 `;
 
 const Span = styled.span<SpanProps>`
-  height: 1em;
-  width: 1em;
+  height: 0.875em;
+  width: 0.875em;
   cursor: pointer;
   background-image: url(${Frame});
   background-size: cover;
@@ -71,7 +82,7 @@ export function TreeCheckBox(props: {
   filter?: boolean;
   onToggleCheck?: (e: any, state: boolean) => void;
 }) {
-  let stateClassArr = [];
+  const stateClassArr = [];
   if (props.filter) {
     stateClassArr.push("filter");
   }
@@ -84,7 +95,7 @@ export function TreeCheckBox(props: {
   if (props.indeterminate) {
     stateClassArr.push("indeterminate");
   }
-  const handleClick = function(e: any) {
+  const handleClick = (e: any) => {
     e.stopPropagation();
     let checkStatus = false;
     if (props.disabled) {
@@ -100,7 +111,7 @@ export function TreeCheckBox(props: {
 
   return (
     <Label
-      className={props.class + ` center ${stateClassArr.join(" ")}`}
+      className={props.class + ` ${stateClassArr.join(" ")}`}
       htmlFor={props.id}
     >
       <Span onClick={handleClick} />

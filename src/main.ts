@@ -1,12 +1,12 @@
-import { Range3 } from "./src/Core/Geometry/Range3";
+import { Range3 } from "./Core/Geometry/Range3";
 
-import { ThreeModule } from "./src/Three/ThreeModule";
-import { ThreeRenderTargetNode } from "./src/Three/Nodes/ThreeRenderTargetNode";
+import { ThreeModule } from "./Three/ThreeModule";
+import { ThreeRenderTargetNode } from "./Three/Nodes/ThreeRenderTargetNode";
 
-import { RootNode } from "./src/Nodes/TreeNodes/RootNode";
-import { RandomDataLoader } from "./src/RootLoaders/RandomDataLoader";
-import { BaseRootLoader } from "./src/RootLoaders/BaseRootLoader";
-import { RealDataLoader } from "./src/RootLoaders/RealDataLoader";
+import { RootNode } from "./Nodes/TreeNodes/RootNode";
+import { RandomDataLoader } from "./RootLoaders/RandomDataLoader";
+import { BaseRootLoader } from "./RootLoaders/BaseRootLoader";
+import { RealDataLoader } from "./RootLoaders/RealDataLoader";
 
 main(document.body);
 

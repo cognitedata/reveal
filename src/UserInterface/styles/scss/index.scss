@@ -12,6 +12,7 @@ $select-control-svg-width: $select-control-svg-height;
 
 $right-panel-width: calc(#{$root-container-width} - #{$left-panel-width});
 $right-panel-height: 100vh;
+$icon-size: 1.125rem;
 
 @import "explorer";
 
@@ -84,8 +85,8 @@ body {
   align-items: center;
   justify-content: center;
   img {
-    width: 1rem;
-    height: 1rem;
+    width: $icon-size;
+    height: $icon-size;
   }
 }
 

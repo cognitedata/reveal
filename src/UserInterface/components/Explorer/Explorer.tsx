@@ -15,35 +15,41 @@ import getIcon from "@/UserInterface/utils/Icon";
 
 // Get a copy of nodes
 function getCopyOfNodes(nodes?: {
-  [key: string]: TreeDataItem
+  [key: string]: TreeDataItem;
 }): { [key: string]: TreeNode } {
   const nodesCopy: { [key: string]: TreeNode } = {};
   if (nodes) {
     for (const id in nodes) {
-      nodesCopy[id] = { ...nodes[id], icon: getIcon("Nodes", "PointsNode") || "", children: [] }
+      if (nodes.hasOwnProperty(id)) {
+        nodesCopy[id] = {
+          ...nodes[id],
+          icon: getIcon("Nodes", "PointsNode") || "",
+          children: []
+        };
+      }
     }
   }
   return nodesCopy;
 }
 
 // Generate tree data structure
-function generateTree(nodes?: {
-  [key: string]: TreeDataItem
-}) {
+function generateTree(nodes?: { [key: string]: TreeDataItem }) {
   const data = [];
   if (nodes) {
     const nodesCopy = getCopyOfNodes(nodes);
     for (const id in nodesCopy) {
-      const node = nodesCopy[id];
-      if (node.parentId) {
-        const parent = nodesCopy[node.parentId];
-        if (parent.children) {
-          parent.children.push(node);
+      if (nodesCopy.hasOwnProperty(id)) {
+        const node = nodesCopy[id];
+        if (node.parentId) {
+          const parent = nodesCopy[node.parentId];
+          if (parent.children) {
+            parent.children.push(node);
+          } else {
+            parent.children = [node];
+          }
         } else {
-          parent.children = [node];
+          data.push(node);
         }
-      } else {
-        data.push(node)
       }
     }
   }
@@ -52,7 +58,6 @@ function generateTree(nodes?: {
 
 // Renders Tree Controller
 export function Explorer() {
-
   const root = useSelector((state: ReduxStore) => state.explorer.root);
   const dispatch = useDispatch();
 
@@ -60,24 +65,18 @@ export function Explorer() {
   const data = generateTree(nodes);
 
   // Handle Node Check
-  const handleToggleNodeCheck = (
-    uniqueId: string,
-    checkState: boolean) => {
-    dispatch(onToggleNodeCheck({ uniqueId, checkState, root }))
+  const handleToggleNodeCheck = (uniqueId: string, checkState: boolean) => {
+    dispatch(onToggleNodeCheck({ uniqueId, checkState, root }));
   };
 
   // Handle Node Expand
-  const handleToggleNodeExpand = (
-    uniqueId: string,
-    expandState: boolean) => {
+  const handleToggleNodeExpand = (uniqueId: string, expandState: boolean) => {
     dispatch(onToggleNodeExpand({ uniqueId, expandState }));
   };
 
   // Handle Node Select
-  const handleToggleNodeSelect = (
-    uniqueId: string,
-    selectState: boolean) => {
-    dispatch(onToggleNodeSelect({ uniqueId, selectState }))
+  const handleToggleNodeSelect = (uniqueId: string, selectState: boolean) => {
+    dispatch(onToggleNodeSelect({ uniqueId, selectState }));
   };
 
   return (
@@ -88,9 +87,7 @@ export function Explorer() {
         onToggleNodeExpand={handleToggleNodeExpand}
         onToggleNodeCheck={handleToggleNodeCheck}
       />
-      <NodeTabs></NodeTabs>
+      <NodeTabs />
     </div>
   );
 }
-
-

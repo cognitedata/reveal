@@ -5,7 +5,7 @@
   "repository": "cognitedata/subsurface-visualizer",
   "main": "subsurface-visualizer.js",
   "module": "subsurface-visualizer.js",
-  "source": "src/index.ts",
+  "source": "../src/index.ts",
   "types": "types/index.d.ts",
   "engines": {
     "node": ">=10"
@@ -71,8 +71,10 @@
     "ts-loader": "^6.2.0",
     "tslint": "^5.20.0",
     "tslint-config-prettier": "^1.18.0",
+    "tslint-eslint-rules": "^5.4.0",
     "tslint-no-circular-imports": "^0.7.0",
-    "tslint-plugin-prettier": "^2.0.1",
+    "tslint-plugin-prettier": "^2.3.0",
+    "tslint-react": "^5.0.0",
     "typescript": "^3.9.3",
     "url-loader": "^4.1.0",
     "webpack": "4.42.0",

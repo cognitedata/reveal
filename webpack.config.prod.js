@@ -54,11 +54,12 @@ module.exports = {
     libraryTarget: "umd"
   },
   devtool: "false",
+  // devtool: "inline-source-map",
   plugins: [
     new CleanWebpackPlugin(),
     new CopyPlugin({
       patterns: [{ from: "package.json" }]
-    })
+    }),
     //  new BundleAnalyzerPlugin()
   ],
   externals: {

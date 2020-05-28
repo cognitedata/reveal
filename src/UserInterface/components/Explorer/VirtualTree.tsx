@@ -7,19 +7,18 @@ import { ExpandButton } from "./ExpandButton";
 import { TreeCheckBox } from "./TreeCheckbox";
 import { TreeNode } from "@/UserInterface/interfaces/explorer";
 
-const DEFAULT_ROW_HEIGHT = 26;
+const DEFAULT_ROW_HEIGHT = 22;
 
 export default function VirtualTree(props: {
   data?: TreeNode[];
   rowHeight?: number;
   expandable?: boolean;
   selectedIds?: string[];
-  onToggleNodeSelect: Function,
-  onToggleNodeExpand: Function,
-  onToggleNodeCheck: Function,
+  onToggleNodeSelect: (id: string, state: boolean) => void;
+  onToggleNodeExpand: (id: string, state: boolean) => void;
+  onToggleNodeCheck: (id: string, state: boolean) => void;
 }) {
-
-  const { onToggleNodeSelect, onToggleNodeExpand, onToggleNodeCheck, } = props;
+  const { onToggleNodeSelect, onToggleNodeExpand, onToggleNodeCheck } = props;
 
   const data = props.data || [];
   const singleRowHeight = props.rowHeight || DEFAULT_ROW_HEIGHT;
@@ -27,28 +26,28 @@ export default function VirtualTree(props: {
   function setRef(ref: any) {
     List = ref;
 
-    if (List) { // todo: remove once events fired by tree control are handled by parent explorer
+    if (List) {
+      // todo: remove once events fired by tree control are handled by parent explorer
       List.recomputeRowHeights();
       List.forceUpdate();
     }
   }
 
-  const renderItem = function (item: TreeNode, keyPrefix: string) {
-
-    const onExpand = function (event: any) {
+  const renderItem = (item: TreeNode, keyPrefix: string) => {
+    const onExpand = (event: any) => {
       event.stopPropagation();
       onToggleNodeExpand(item.uniqueId, !item.expanded);
       List.recomputeRowHeights();
       List.forceUpdate();
     };
 
-    const props = { key: keyPrefix };
+    const itemProps = { key: keyPrefix };
     let children: any = [];
-    let itemText = item.name;
+    const itemText = item.name;
 
     if (item.children.length) {
       if (item.expanded) {
-        children = item.children.map(function (child: any, index: number) {
+        children = item.children.map((child: any, index: number) => {
           return renderItem(child, keyPrefix + "-" + index);
         });
       } else {
@@ -58,16 +57,18 @@ export default function VirtualTree(props: {
 
     children.unshift(
       <div className="tree-item center" key="label">
-        <ExpandButton
-          expandable={item.children.length > 0}
-          expanded={item.expanded}
-          onExpand={onExpand}
-          onCollapse={onExpand}
-        />
-        <div className="tree-domain-image">
-          <IconElement src={item.icon} alt={item.iconDescription} size="24px" />
+        <div className="tree-item-comp">
+          <ExpandButton
+            expandable={item.children.length > 0}
+            expanded={item.expanded}
+            onExpand={onExpand}
+            onCollapse={onExpand}
+          />
         </div>
-        <div className="tree-picked-item">
+        <div className="tree-item-comp">
+          <IconElement src={item.icon} alt={item.iconDescription} size="100%" />
+        </div>
+        <div className="tree-item-comp">
           <TreeCheckBox
             class="tree-checkbox"
             id={keyPrefix}
@@ -75,37 +76,41 @@ export default function VirtualTree(props: {
             checked={item.checked}
             indeterminate={item.indeterminate}
             disabled={item.disabled}
-            onToggleCheck={() => onToggleNodeCheck(item.uniqueId, !item.checked)}
+            onToggleCheck={() =>
+              onToggleNodeCheck(item.uniqueId, !item.checked)
+            }
           />
         </div>
-        <span
-          className={"tree-item-lbl" + (item.selected ? " selected" : "")}
-          onClick={() => onToggleNodeSelect(item.uniqueId, !item.selected)}
-        >
-          {itemText}
-        </span>
-      </div >
+        <div className="tree-item-comp tree-item-lbl-container">
+          <span
+            className={"tree-item-lbl" + (item.selected ? " selected" : "")}
+            onClick={() => onToggleNodeSelect(item.uniqueId, !item.selected)}
+          >
+            {itemText}
+          </span>
+        </div>
+      </div>
     );
     return (
       <ul key={keyPrefix} className="list">
-        <li {...props} children={children} className="list-item"></li>
+        <li {...itemProps} children={children} className="list-item" />
       </ul>
     );
   };
 
-  const getExpandedItemCount = function (item: TreeNode) {
-    var count = 1;
+  const getExpandedItemCount = (item: TreeNode) => {
+    let count = 1;
     if (item.expanded) {
       count += item.children
         .map(getExpandedItemCount)
-        .reduce(function (total: number, count: number) {
-          return total + count;
+        .reduce((total: number, num: number) => {
+          return total + num;
         }, 0);
     }
     return count;
   };
 
-  const cellRenderer = function cellRenderer(params: any) {
+  const cellRenderer = (params: any) => {
     const renderedCell = renderItem(data[params.index], params.index);
     return (
       <div key={params.key} style={params.style}>
@@ -114,14 +119,14 @@ export default function VirtualTree(props: {
     );
   };
 
-  const rowHeight = function rowHeight(params: any) {
+  const rowHeight = (params: any) => {
     return getExpandedItemCount(data[params.index]) * singleRowHeight;
   };
 
   return (
     <div className="virtual-tree-container">
       <AutoSizer
-        children={function (params) {
+        children={params => {
           return (
             <VirtualList
               height={params.height}

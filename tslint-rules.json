@@ -1,0 +1,50 @@
+{
+  "extends": [
+    "tslint-react",
+    "@cognite/tslint-config-cognite-3d",
+    "tslint-no-circular-imports"
+  ],
+  "linterOptions": {
+    "exclude": [
+      "node_modules/**/*.ts",
+      "**/*.json"
+    ]
+  },
+  "rulesDirectory": [
+    "node_modules/tslint-eslint-rules/dist/rules",
+    "tslint-plugin-prettier"
+  ],
+  "rules": {
+    "comment-format": false,
+    "no-irregular-whitespace": false,
+    "quotemark": false,
+    "member-ordering": false,
+    "prettier": true,
+    "curly": false,
+    "interface-name": false,
+    "brace-style": [
+      true,
+      "allman",
+      {
+        "allowSingleLine": true
+      }
+    ],
+    "file-header": [
+      false,
+      {
+        "default": "Copyright 2019 Cognite AS",
+        "match": "Copyright \\d{4} Cognite AS",
+        "allow-single-line-comments": true,
+        "enforce-trailing-newline": true
+      }
+    ],
+    "trailing-comma": [
+      true,
+      {
+        "multiline": "never",
+        "singleline": "never"
+      }
+    ],
+    "jsx-no-lambda": false
+  }
+}

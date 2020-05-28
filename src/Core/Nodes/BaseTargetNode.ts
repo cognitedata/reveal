@@ -4,10 +4,13 @@ import { ViewFactory } from "@/Core/Views/ViewFactory";
 import { ViewList } from "@/Core/Views/ViewList";
 import { BaseView } from "@/Core/Views/BaseView";
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
-import { BaseNode, cocatinate } from "@/Core/Nodes/BaseNode";
+import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { isInstanceOf, Class } from "@/Core/Primitives/ClassT";
 import { Colors } from "@/Core/Primitives/Colors";
 import * as color from "color"
+import { Util } from "@/Core/Primitives/Util";
+import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
+import { Changes } from "@/Core/Views/Changes";
 
 export abstract class BaseTargetNode extends BaseNode implements ITarget {
   //==================================================
@@ -50,7 +53,7 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget {
   public /*override*/ getDebugString(): string {
     let result = super.getDebugString();
     if (this.viewsShownHere.count > 0)
-      result += cocatinate("viewsShownHere", this.viewsShownHere.count);
+      result += Util.cocatinate("viewsShownHere", this.viewsShownHere.count);
     return result;
   }
 
@@ -99,6 +102,7 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget {
       return false;
 
     view.onShow();
+
     return true;
   }
 

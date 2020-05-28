@@ -4,10 +4,10 @@ import {
   ExplorerStateInterface,
   TreeDataItem,
 } from "../../interfaces/explorer";
-import { state } from "../../data/explorer-dummy-state";
+import { state as dummyState } from "@/UserInterface/data/explorer-dummy-state";
 import { RootNode } from "@/Nodes/TreeNodes/RootNode";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
-import Nodes from "../../constants/Nodes";
+import Nodes from "@/UserInterface/constants/Nodes";
 import RootManager from "@/UserInterface/managers/rootManager";
 
 // Generate redux store compatible nodes data structure from root node
@@ -18,7 +18,7 @@ function generateNodeStructure(
   node: BaseNode
 ): TreeDataItem {
   return {
-    parentId: parentId,
+    parentId,
     id: uniqueId,
     name: node.name,
     expanded: false,
@@ -32,7 +32,7 @@ function generateNodeStructure(
     isFilter: false,
     disabled: false,
     visible: false,
-    uniqueId: uniqueId,
+    uniqueId,
     domainObject: node,
   };
 }
@@ -80,7 +80,7 @@ function makeNodes(root: RootNode) {
 }
 
 const initialState: ExplorerStateInterface = {
-  ...state,
+  ...dummyState,
   root: RootManager.createRoot(),
   selectedNodeType: { value: 0, name: Nodes.NODE_TYPES.OTHERS },
   selectedNode: null,
@@ -116,7 +116,9 @@ export default createReducer(initialState, {
   VIEW_ALL_NODES_SUCCESS: (state, action) => {
     const nodes = state.nodes;
     for (const id in nodes) {
-      nodes[id].checked = true;
+      if(nodes.hasOwnProperty(id)){
+          nodes[id].checked = true;
+      }
     }
   },
   CHANGE_NODE_TYPE: (state, action) => {
