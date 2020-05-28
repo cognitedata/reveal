@@ -66,6 +66,7 @@
     "dat.gui": "^0.7.7",
     "gl-matrix": "^3.3.0",
     "glslify": "^7.0.0",
+    "hold-event": "0.0.1",
     "postprocessing": "^6.13.5",
     "rxjs": "^6.5.5",
     "three": "^0.115.0"

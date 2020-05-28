@@ -129,6 +129,12 @@ const allExamples = [
     title: "GPU based sector culler",
     entry: './src/gpu-sector-culler.ts',
     template: 'template-example.ejs'
+  },
+  {
+    name: "distance-measurement",
+    title: "Distance Measurement",
+    entry: './src/distance-measurement.ts',
+    template: 'template-example.ejs'
   }
 ];
 
