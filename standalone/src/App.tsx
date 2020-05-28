@@ -5,13 +5,21 @@ import {
   SubsurfaceReducer,
   SubsurfaceMiddleware
 } from "@cognitedata/subsurface-visualizer";
-import { createStore, applyMiddleware } from "redux";
+
+import { createStore, combineReducers, applyMiddleware } from "redux";
+import { Provider } from "react-redux";
+
+const store = createStore(
+  combineReducers({ ...SubsurfaceReducer }),
+  applyMiddleware(...SubsurfaceMiddleware)
+);
 
 function App() {
-  const store = createStore(SubsurfaceReducer, {}, applyMiddleware(...SubsurfaceMiddleware));
   return (
     <div className="App">
-      <SubsurfaceVisualizer store={store} />
+      <Provider store={store}>
+        <SubsurfaceVisualizer store={store} />
+      </Provider>
     </div>
   );
 }

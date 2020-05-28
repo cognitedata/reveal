@@ -53,14 +53,14 @@ module.exports = {
     library: "[name]",
     libraryTarget: "umd"
   },
-  devtool: "false",
-  // devtool: "inline-source-map",
+  // devtool: "false",
+  devtool: "inline-source-map",
   plugins: [
     new CleanWebpackPlugin(),
     new CopyPlugin({
       patterns: [{ from: "package.json" }]
-    }),
-    //  new BundleAnalyzerPlugin()
+    })
+    //new BundleAnalyzerPlugin()
   ],
   externals: {
     react: {
