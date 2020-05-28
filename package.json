@@ -74,6 +74,7 @@
     "tslint-eslint-rules": "^5.4.0",
     "tslint-no-circular-imports": "^0.7.0",
     "tslint-plugin-prettier": "^2.3.0",
+    "tslint-react": "^5.0.0",
     "typescript": "^3.9.3",
     "url-loader": "^4.1.0",
     "webpack": "4.42.0",

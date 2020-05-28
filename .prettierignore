@@ -1,0 +1,4 @@
+**/*.ts
+dist
+node_modules
+standalone
