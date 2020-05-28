@@ -23,11 +23,6 @@ type SectorVisibility = {
   distance: number;
 };
 
-const coverageMaterial = new THREE.ShaderMaterial({
-  vertexShader: coverageShaders.vertex,
-  fragmentShader: coverageShaders.fragment,
-  clipping: true
-});
 const identityRotation = new THREE.Quaternion();
 
 /**
@@ -92,6 +87,12 @@ export class GpuOrderSectorsByVisibilityCoverage {
     sectorVisibilityBuffer: [] as SectorVisibility[]
   };
 
+  private readonly coverageMaterial = new THREE.ShaderMaterial({
+    vertexShader: coverageShaders.vertex,
+    fragmentShader: coverageShaders.fragment,
+    clipping: true
+  });
+
   constructor(options?: OrderSectorsByVisibleCoverageOptions) {
     const context = (options || {}).glContext;
     const renderSize = (options || {}).renderSize || new THREE.Vector2(640, 480);
@@ -153,10 +154,15 @@ export class GpuOrderSectorsByVisibilityCoverage {
     }
   }
 
-  orderSectorsByVisibility(camera: THREE.Camera, clippingPlanes: THREE.Plane[]): PrioritizedSectorIdentifier[] {
-    console.log('numplanes: ' + clippingPlanes.length);
-    // this._renderer.clippingPlanes = [new THREE.Plane()];
-    coverageMaterial.clippingPlanes = clippingPlanes;
+  set clippingPlanes(planes: THREE.Plane[]) {
+    this.coverageMaterial.clippingPlanes = planes;
+  }
+
+  set clipIntersection(value: boolean) {
+    this.coverageMaterial.clipIntersection = value;
+  }
+
+  orderSectorsByVisibility(camera: THREE.Camera): PrioritizedSectorIdentifier[] {
     // 1. Render to offscreen buffer
     this._renderer.render(this.scene, camera);
     if (this.debugRenderer) {
