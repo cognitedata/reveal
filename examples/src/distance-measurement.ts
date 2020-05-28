@@ -15,7 +15,7 @@ import {
 import CameraControls from "camera-controls";
 import dat from "dat.gui";
 
-import { createRenderManager, getParamsFromURL } from './utils/example-helpers'
+import { createRenderManager, getParamsFromURL } from "./utils/example-helpers";
 import { addWASDHandling } from "./utils/cameraControls";
 
 CameraControls.install({ THREE });
@@ -58,17 +58,25 @@ async function main() {
   const scene = new THREE.Scene();
   let isRenderRequired = true;
   const revealManager: RenderManager = createRenderManager(
-    modelRevision !== undefined ? 'cdf' : 'local',
+    modelRevision !== undefined ? "cdf" : "local",
     client
   );
 
   let model: CadNode;
-  if (revealManager instanceof LocalHostRevealManager && modelUrl !== undefined) {
-    model = await revealManager.addModel('cad', modelUrl);
-  } else if (revealManager instanceof RevealManager && modelRevision !== undefined) {
-    model = await revealManager.addModel('cad', modelRevision);
+  if (
+    revealManager instanceof LocalHostRevealManager &&
+    modelUrl !== undefined
+  ) {
+    model = await revealManager.addModel("cad", modelUrl);
+  } else if (
+    revealManager instanceof RevealManager &&
+    modelRevision !== undefined
+  ) {
+    model = await revealManager.addModel("cad", modelRevision);
   } else {
-    throw new Error('Need to provide either project & model OR modelUrl as query parameters');
+    throw new Error(
+      "Need to provide either project & model OR modelUrl as query parameters"
+    );
   }
 
   scene.add(model);
@@ -127,7 +135,6 @@ async function main() {
 
   let points: Array<THREE.Mesh> = [];
   let line: THREE.Line | null = null;
-  let distance = "";
   let distanceLabelHtmlEl = createLabelHtmlElement();
   document.body.appendChild(distanceLabelHtmlEl);
 
@@ -138,11 +145,10 @@ async function main() {
     }
     scene.remove(...points);
     points = [];
-    distance = "";
     htmlOverlayHelper.removeOverlayElement(distanceLabelHtmlEl);
     distanceLabelHtmlEl.style.display = "none";
-    isRenderRequired = true
-  }
+    isRenderRequired = true;
+  };
 
   const guiState = {
     measureMode: true,
@@ -153,12 +159,14 @@ async function main() {
   gui.add(guiState, "removeMeasures");
 
   const addMeasurementPoint = (event: MouseEvent | TouchEvent) => {
-    if (!guiState.measureMode) {
+    if (
+      !guiState.measureMode ||
+      ("button" in event && event.button !== THREE.MOUSE.LEFT)
+    ) {
       return;
     }
     const coords = getNormalizedCoords(event, renderer.domElement);
 
-    // Pick in Reveal
     const revealPickResult = (() => {
       const intersections = intersectCadNodes([model], {
         renderer,
@@ -175,7 +183,7 @@ async function main() {
       isRenderRequired = true;
 
       if (line) {
-        removeMeasures()
+        removeMeasures();
       }
 
       points.push(pointMesh);
@@ -188,17 +196,20 @@ async function main() {
         line = new THREE.Line(geometry, material);
         scene.add(line);
 
+        const distance = points[0].position
+          .distanceTo(points[1].position)
+          .toFixed(4);
+        distanceLabelHtmlEl.innerText = `${distance} m`;
+        distanceLabelHtmlEl.style.display = "block";
+
         htmlOverlayHelper.addOverlayElement(
           distanceLabelHtmlEl,
           getMiddlePoint(points[0].position, points[1].position)
         );
-        distance = points[0].position.distanceTo(points[1].position).toFixed(4);
-        distanceLabelHtmlEl.style.display = "block";
         isRenderRequired = true;
       }
-      distanceLabelHtmlEl.innerText = distance;
     }
-  }
+  };
 
   renderer.domElement.addEventListener("mousedown", addMeasurementPoint);
   renderer.domElement.addEventListener("touchstart", addMeasurementPoint);
