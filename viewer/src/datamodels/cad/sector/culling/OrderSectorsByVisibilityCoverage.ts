@@ -103,11 +103,12 @@ export class GpuOrderSectorsByVisibilityCoverage {
       stencil: false
     });
     this._renderer.setClearColor('#FFFFFF');
+    this._renderer.localClippingEnabled = true;
     this.renderTarget = new THREE.WebGLRenderTarget(renderSize.width, renderSize.height, {
       generateMipmaps: false,
       type: THREE.UnsignedByteType,
       format: THREE.RGBAFormat,
-      stencilBuffer: false
+      stencilBuffer: true
     });
     this._renderer.setRenderTarget(this.renderTarget);
   }
@@ -128,6 +129,7 @@ export class GpuOrderSectorsByVisibilityCoverage {
       alpha: false,
       stencil: false
     });
+    this.debugRenderer.localClippingEnabled = true;
     this.debugRenderer.setClearColor('white');
     this.debugRenderer.setSize(width, height);
 
@@ -152,7 +154,8 @@ export class GpuOrderSectorsByVisibilityCoverage {
   }
 
   orderSectorsByVisibility(camera: THREE.Camera, clippingPlanes: THREE.Plane[]): PrioritizedSectorIdentifier[] {
-    this._renderer.clippingPlanes = clippingPlanes;
+    console.log('numplanes: ' + clippingPlanes.length);
+    // this._renderer.clippingPlanes = [new THREE.Plane()];
     coverageMaterial.clippingPlanes = clippingPlanes;
     // 1. Render to offscreen buffer
     this._renderer.render(this.scene, camera);

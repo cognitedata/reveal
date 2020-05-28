@@ -23,9 +23,24 @@ async function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
+  const coverageUtil = new reveal.internal.GpuOrderSectorsByVisibilityCoverage();
+  const sectorCuller = new reveal.internal.ByVisibilityGpuSectorCuller({
+    coverageUtil,
+    costLimit: 70 * 1024 * 1024,
+    logCallback: console.log
+  });
+  const debugCanvas = coverageUtil.createDebugCanvas({ width: 160, height: 100 });
+  debugCanvas.style.position = 'fixed';
+  debugCanvas.style.left = '8px';
+  debugCanvas.style.top = '8px';
+  document.body.appendChild(debugCanvas);
+
   const revealManager: reveal.RenderManager = createRenderManager(
     modelRevision !== undefined ? 'cdf' : 'local',
-    client
+    client,
+    {
+      internal: { sectorCuller }
+    }
   );
 
   let model: reveal.CadNode;
