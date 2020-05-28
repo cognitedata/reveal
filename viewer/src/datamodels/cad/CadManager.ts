@@ -68,8 +68,12 @@ export class CadManager<TModelIdentifier> {
     this._cadModelUpdateHandler.updateCamera(camera);
   }
 
-  updateClippingPlanes(clipPlanes: THREE.Plane[]) {
-    this._cadModelUpdateHandler.updateClipPlanes(clipPlanes);
+  set clippingPlanes(value: THREE.Plane[]) {
+    this._cadModelUpdateHandler.clippingPlanes = value;
+  }
+
+  set clipIntersection(value: boolean) {
+    this._cadModelUpdateHandler.clipIntersection = value;
   }
 
   async addModel(modelIdentifier: TModelIdentifier, modelAppearance?: ModelNodeAppearance): Promise<CadNode> {

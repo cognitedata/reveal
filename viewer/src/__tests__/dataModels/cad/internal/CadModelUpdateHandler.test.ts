@@ -43,12 +43,16 @@ describe('CadModelUpdateHandler', () => {
     jest.advanceTimersByTime(1000);
     expect(mockCuller.determineSectors).toBeCalledTimes(1);
 
-    updateHandler.updateClipPlanes([new THREE.Plane()]);
+    updateHandler.clippingPlanes = [new THREE.Plane()];
     jest.advanceTimersByTime(1000);
     expect(mockCuller.determineSectors).toBeCalledTimes(2);
 
-    updateHandler.updateLoadingHints({});
+    updateHandler.clipIntersection = true;
     jest.advanceTimersByTime(1000);
     expect(mockCuller.determineSectors).toBeCalledTimes(3);
+
+    updateHandler.updateLoadingHints({});
+    jest.advanceTimersByTime(1000);
+    expect(mockCuller.determineSectors).toBeCalledTimes(4);
   });
 });

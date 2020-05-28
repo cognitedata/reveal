@@ -28,6 +28,7 @@ import { distinctUntilLevelOfDetailChanged, filterCurrentWantedSectors } from '.
 export class CadModelUpdateHandler {
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
   private readonly _clippingPlaneSubject: Subject<THREE.Plane[]> = new Subject();
+  private readonly _clipIntersectionSubject: Subject<boolean> = new Subject();
   private readonly _loadingHintsSubject: Subject<CadLoadingHints> = new Subject();
   private readonly _modelSubject: Subject<CadNode> = new Subject();
 
@@ -38,6 +39,7 @@ export class CadModelUpdateHandler {
     this._updateObservable = combineLatest(
       this._cameraSubject.pipe(),
       this._clippingPlaneSubject.pipe(startWith([])),
+      this._clipIntersectionSubject.pipe(startWith(false)),
       this._loadingHintsSubject.pipe(startWith({} as CadLoadingHints)),
       this._modelSubject.pipe(
         scan((array, next) => {
@@ -48,10 +50,10 @@ export class CadModelUpdateHandler {
     ).pipe(
       auditTime(100),
       filter(
-        ([_camera, _clippingPlanes, loadingHints, cadNodes]) =>
+        ([_camera, _clippingPlanes, _clipIntersection, loadingHints, cadNodes]) =>
           cadNodes.length > 0 && loadingHints.suspendLoading !== true
       ),
-      flatMap(([camera, clippingPlanes, loadingHints, cadNodes]) => {
+      flatMap(([camera, clippingPlanes, clipIntersection, loadingHints, cadNodes]) => {
         return from(cadNodes).pipe(
           filter(cadNode => cadNode.loadingHints.suspendLoading !== true),
           map(cadNode => cadNode.cadModelMetadata),
@@ -60,6 +62,7 @@ export class CadModelUpdateHandler {
             const input: DetermineSectorsInput = {
               camera,
               clippingPlanes,
+              clipIntersection,
               loadingHints,
               cadModelsMetadata: cadModels
             };
@@ -84,8 +87,12 @@ export class CadModelUpdateHandler {
     this._cameraSubject.next(camera);
   }
 
-  updateClipPlanes(clipPlanes: THREE.Plane[]) {
-    this._clippingPlaneSubject.next(clipPlanes);
+  set clippingPlanes(value: THREE.Plane[]) {
+    this._clippingPlaneSubject.next(value);
+  }
+
+  set clipIntersection(value: boolean) {
+    this._clipIntersectionSubject.next(value);
   }
 
   updateModels(cadModel: CadNode) {

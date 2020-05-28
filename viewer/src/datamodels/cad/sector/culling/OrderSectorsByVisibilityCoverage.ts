@@ -63,12 +63,20 @@ export interface OrderSectorsByVisibilityCoverage {
    * @param models Models to estimate sector visibility for.
    */
   setModels(models: CadModelMetadata[]): void;
+
+  /**
+   * Specify clipping planes.
+   * @param planes            A list of clip planes or null to disable clipping.
+   * @param clipIntersection  When true, intersection clipping is enabled.
+   */
+  setClipping(planes: THREE.Plane[] | null, clipIntersection: boolean): void;
+
   /**
    * Estimates how visible the different sectors for the models added are and returns
    * a prioritized list.
    * @param camera The current viewpoint.
    */
-  orderSectorsByVisibility(camera: THREE.Camera, clippingPlanes: THREE.Plane[]): PrioritizedSectorIdentifier[];
+  orderSectorsByVisibility(camera: THREE.Camera): PrioritizedSectorIdentifier[];
 }
 
 /**
@@ -154,12 +162,9 @@ export class GpuOrderSectorsByVisibilityCoverage {
     }
   }
 
-  set clippingPlanes(planes: THREE.Plane[]) {
+  setClipping(planes: THREE.Plane[] | null, clipIntersection: boolean) {
     this.coverageMaterial.clippingPlanes = planes;
-  }
-
-  set clipIntersection(value: boolean) {
-    this.coverageMaterial.clipIntersection = value;
+    this.coverageMaterial.clipIntersection = clipIntersection;
   }
 
   orderSectorsByVisibility(camera: THREE.Camera): PrioritizedSectorIdentifier[] {
@@ -302,7 +307,7 @@ export class GpuOrderSectorsByVisibilityCoverage {
 
     const instanceValues = new Float32Array(4 * sectorCount); // sectorId, coverageFactor[3]
     const boxGeometry = new THREE.BoxBufferGeometry();
-    const mesh = new THREE.InstancedMesh(boxGeometry, coverageMaterial, sectorCount);
+    const mesh = new THREE.InstancedMesh(boxGeometry, this.coverageMaterial, sectorCount);
 
     const bounds = new THREE.Box3();
     const addSector = (sectorBounds: Box3, sectorId: number, coverage: THREE.Vector3) => {

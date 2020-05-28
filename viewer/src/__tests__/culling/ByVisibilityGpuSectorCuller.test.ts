@@ -17,6 +17,7 @@ type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 describe('ByVisibilityGpuSectorCuller', () => {
   const materialManager = new MaterialManager();
   const setModelsMock: PropType<OrderSectorsByVisibilityCoverage, 'setModels'> = jest.fn();
+  const setClippingMock: PropType<OrderSectorsByVisibilityCoverage, 'setClipping'> = jest.fn();
   const orderSectorsByVisibilityMock: PropType<
     OrderSectorsByVisibilityCoverage,
     'orderSectorsByVisibility'
@@ -24,8 +25,9 @@ describe('ByVisibilityGpuSectorCuller', () => {
 
   const coverageUtil: OrderSectorsByVisibilityCoverage = {
     setModels: setModelsMock,
-    orderSectorsByVisibility: (camera, clippingPlanes) => {
-      orderSectorsByVisibilityMock(camera, clippingPlanes);
+    setClipping: setClippingMock,
+    orderSectorsByVisibility: camera => {
+      orderSectorsByVisibilityMock(camera);
       return [];
     }
   };
@@ -41,6 +43,17 @@ describe('ByVisibilityGpuSectorCuller', () => {
     const input = createDetermineSectorInput(camera, model);
     culler.determineSectors(input);
     expect(setModelsMock).toBeCalled();
+  });
+
+  test('determineSectors sets clip planes to coverage utility', () => {
+    const clippingPlanes = [new THREE.Plane(), new THREE.Plane()];
+    const culler = new ByVisibilityGpuSectorCuller({ coverageUtil });
+    const model = createCadModelMetadata(generateSectorTree(1));
+    const input = createDetermineSectorInput(camera, model);
+    input.clippingPlanes = clippingPlanes;
+    input.clipIntersection = true;
+    culler.determineSectors(input);
+    expect(setClippingMock).toBeCalledWith(clippingPlanes, true);
   });
 
   test('determineSectors returns sectors for all models', () => {
@@ -107,6 +120,7 @@ function createDetermineSectorInput(
   const determineSectorsInput: DetermineSectorsInput = {
     camera,
     clippingPlanes: [],
+    clipIntersection: false,
     cadModelsMetadata: Array.isArray(models) ? models : [models],
     loadingHints: {}
   };

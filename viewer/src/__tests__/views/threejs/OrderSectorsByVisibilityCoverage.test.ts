@@ -27,7 +27,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
     const coverageUtil = new GpuOrderSectorsByVisibilityCoverage({ glContext, renderSize });
 
     // Act
-    const arrays = coverageUtil.orderSectorsByVisibility(camera, []);
+    const arrays = coverageUtil.orderSectorsByVisibility(camera);
 
     // Assert
     expect(arrays).toBeEmpty();
@@ -41,7 +41,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
 
     // Act
     glContext.clearColor(1, 1, 1, 1);
-    const result = util.orderSectorsByVisibility(camera, []);
+    const result = util.orderSectorsByVisibility(camera);
 
     // Assert
     expect(result).toBeEmpty();
@@ -58,7 +58,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
 
     // Act
     glContext.clearColor(0, 0, 0, 1); // Store 0 in output
-    const result = util.orderSectorsByVisibility(camera, []);
+    const result = util.orderSectorsByVisibility(camera);
 
     // Assert
     expect(result.length).toBe(1);
@@ -81,7 +81,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
 
     // Act
     glContext.clearColor(0, 0, 1.0 / 255, 1); // Store 1 in output
-    const result = util.orderSectorsByVisibility(camera, []);
+    const result = util.orderSectorsByVisibility(camera);
 
     // Assert - ensure output is first sector in second model
     expect(result.length).toBe(1);
@@ -116,10 +116,11 @@ describe('OrderSectorsByVisibilityCoverage', () => {
     const planes = [
       new THREE.Plane().setFromNormalAndCoplanarPoint(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 0, 0))
     ];
-    util.orderSectorsByVisibility(camera, planes);
+    util.setClipping(planes, false);
+    util.orderSectorsByVisibility(camera);
 
     // Assert
-    expect(util.renderer.clippingPlanes).toBe(planes);
+    expect(util.renderer.localClippingEnabled).toBeTrue();
   });
 });
 
