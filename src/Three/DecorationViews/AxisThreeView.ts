@@ -36,6 +36,7 @@ export class AxisThreeView extends BaseGroupThreeView {
   private centers = new Array<Vector3>(6);
 
   // Set to read in order to see if they change later on
+  private textColor = Colors.red;
   private axisColor = Colors.red;
   private gridColor = Colors.red;
   private wallColor = Colors.red;
@@ -127,6 +128,7 @@ export class AxisThreeView extends BaseGroupThreeView {
     this.axisColor = target.fgColor;
     this.gridColor = target.isLightBackground ? Colors.darkGrey : Colors.lightGrey;
     this.wallColor = target.bgColor;
+    this.textColor = target.fgColor;
 
     // Initialize the corners and the centers
     this.corners = boundingBox.getCornerPoints();
@@ -260,7 +262,7 @@ export class AxisThreeView extends BaseGroupThreeView {
         end.z /= this.zScale;
 
         // Add label
-        const label = ThreeLabel.createByPositionAndDirection(`${tick}`, end, tickDirection, tickFontSize, true);
+        const label = ThreeLabel.createByPositionAndDirection(`${tick}`, end, tickDirection, tickFontSize, this.textColor);
         if (label) {
           group.add(label);
           this.setUserDataOnAxis(label, wallIndex0, wallIndex1, true);
@@ -287,7 +289,7 @@ export class AxisThreeView extends BaseGroupThreeView {
         position.z /= this.zScale;
 
         // Align the text
-        const label = ThreeLabel.createByPositionAndDirection(Vector3.getAxisName(dimension), position, tickDirection, labelFontSize, true);
+        const label = ThreeLabel.createByPositionAndDirection(Vector3.getAxisName(dimension), position, tickDirection, labelFontSize, this.textColor);
         if (label) {
           group.add(label);
           this.setUserDataOnAxis(label, wallIndex0, wallIndex1, true);

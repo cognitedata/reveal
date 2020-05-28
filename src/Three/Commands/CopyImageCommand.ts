@@ -1,8 +1,9 @@
 
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetCommand";
+import { AxisNode } from "@/Nodes/Decorations/AxisNode";
 
-export class ToggleBgColorCommand extends ThreeRenderTargetCommand {
+export class CopyImageCommand extends ThreeRenderTargetCommand {
 
   //==================================================
   // CONSTRUCTORS
@@ -16,18 +17,9 @@ export class ToggleBgColorCommand extends ThreeRenderTargetCommand {
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public/*virtual*/ get name(): string { return "Toggle between black and white backgroud" }
+  public /*virtual*/get name(): string { return "Copy a image of the viewer to the clipboard" }
 
-  public /*virtual*/ get isCheckable() { return true; } // Can be checked? (default false)
-
-  public /*virtual*/ get isChecked(): boolean { return this.target ? this.target.isLightBackground : false; }
-
-  protected /*virtual*/ invokeCore(): boolean {
-    if (!this.target)
-      return false;
-
-    this.target.isLightBackground = !this.target.isLightBackground;
-    this.target.invalidate();
+  protected invokeCore(): boolean {
     return true;
   }
 }

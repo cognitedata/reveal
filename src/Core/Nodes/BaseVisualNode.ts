@@ -74,10 +74,11 @@ export abstract class BaseVisualNode extends BaseNode {
       return false;
 
     // Notify
-    this.notify(new NodeEventArgs(Changes.visibleState));
+    const args = new NodeEventArgs(Changes.visibleState);
+    this.notify(args);
     if (topLevel) {
       for (const ancestor of this.getAncestorsExceptRoot())
-        ancestor.notify(new NodeEventArgs(Changes.visibleState));
+        ancestor.notify(args);
     }
     return true;
   }
