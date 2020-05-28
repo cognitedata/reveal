@@ -71,7 +71,7 @@ async function main() {
       revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || revealManager.needsRedraw || pickingNeedsUpdate) {
+    if (controlsNeedUpdate || pickingNeedsUpdate || revealManager.needsRedraw) {
       renderer.render(scene, camera);
       htmlOverlayHelper.updatePositions(renderer, camera);
       revealManager.resetRedraw();
@@ -79,11 +79,11 @@ async function main() {
     requestAnimationFrame(render);
   };
 
-  const onLeftMouseDown = (event: MouseEvent) => {
-    if (event.button === THREE.MOUSE.RIGHT) {
+  const onLeftMouseDown = (e: MouseEvent | TouchEvent) => {
+    if ('button' in e && e.button === THREE.MOUSE.RIGHT) {
       return;
     }
-
+    const event = 'clientX' in e ? e : e.touches[0]
     const rect = renderer.domElement.getBoundingClientRect();
     const coords = {
       x: ((event.clientX - rect.left) / renderer.domElement.clientWidth) * 2 - 1,
@@ -120,6 +120,7 @@ async function main() {
     }
   };
   renderer.domElement.addEventListener('mousedown', onLeftMouseDown);
+  renderer.domElement.addEventListener('touchstart', onLeftMouseDown);
 
   requestAnimationFrame(render);
   (window as any).scene = scene;
