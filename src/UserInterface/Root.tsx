@@ -12,15 +12,14 @@ import LeftPanel from "./components/Panels/LeftPanel";
 
 import RootManager from "./managers/rootManager";
 import { generateNodeTree, viewAllNodes } from "./redux/actions/explorer";
-import { BaseRootLoader } from '@/RootLoaders/BaseRootLoader';
-import { RandomDataLoader } from '@/RootLoaders/RandomDataLoader';
-import { ReduxStore } from './interfaces/common';
+import { BaseRootLoader } from "@/RootLoaders/BaseRootLoader";
+import { RandomDataLoader } from "@/RootLoaders/RandomDataLoader";
+import { ReduxStore } from "./interfaces/common";
 
 /**
  * Root component
  */
 export default () => {
-
   const dispatch = useDispatch();
   const explorer = useSelector((state: ReduxStore) => state.explorer);
 
@@ -39,7 +38,7 @@ export default () => {
   useEffect(() => {
     if (!_.isEmpty(explorer.nodes)) {
       // Uncommenting this breaks standalone application
-      // Needs to investigate this further 
+      // Needs to investigate this further
       // dispatch(viewAllNodes({ root }));
     }
   }, [_.size(explorer.nodes)]);
