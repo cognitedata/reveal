@@ -68,6 +68,10 @@ export class CadManager<TModelIdentifier> {
     this._cadModelUpdateHandler.updateCamera(camera);
   }
 
+  updateClippingPlanes(clipPlanes: THREE.Plane[]) {
+    this._cadModelUpdateHandler.updateClipPlanes(clipPlanes);
+  }
+
   async addModel(modelIdentifier: TModelIdentifier, modelAppearance?: ModelNodeAppearance): Promise<CadNode> {
     const metadata = await this._cadModelMetadataRepository.loadData(modelIdentifier);
     const model = this._cadModelFactory.createModel(metadata, modelAppearance);

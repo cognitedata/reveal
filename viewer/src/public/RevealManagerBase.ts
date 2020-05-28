@@ -34,6 +34,7 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
 
   public set clippingPlanes(clippingPlanes: THREE.Plane[]) {
     this._materialManager.clippingPlanes = clippingPlanes;
+    this._cadManager.updateClippingPlanes(clippingPlanes);
   }
 
   public get clippingPlanes() {
