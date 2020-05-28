@@ -150,17 +150,26 @@ async function main() {
     isRenderRequired = true;
   };
 
+  let measureMode = false
   const guiState = {
-    measureMode: true,
+    measure() {
+      if (!measureMode) {
+        renderer.domElement.style.cursor = 'pointer';
+      } else {
+        removeMeasures()
+        renderer.domElement.style.cursor = 'default';
+      }
+      measureMode = !measureMode
+    },
     removeMeasures
   };
   const gui = new dat.GUI();
-  gui.add(guiState, "measureMode");
+  gui.add(guiState, "measure");
   gui.add(guiState, "removeMeasures");
 
   const addMeasurementPoint = (event: MouseEvent | TouchEvent) => {
     if (
-      !guiState.measureMode ||
+      !measureMode ||
       ("button" in event && event.button !== THREE.MOUSE.LEFT)
     ) {
       return;
@@ -206,6 +215,8 @@ async function main() {
           distanceLabelHtmlEl,
           getMiddlePoint(points[0].position, points[1].position)
         );
+        measureMode = false;
+        renderer.domElement.style.cursor = 'default';
         isRenderRequired = true;
       }
     }
