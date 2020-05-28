@@ -26,8 +26,7 @@ type SectorVisibility = {
 const coverageMaterial = new THREE.ShaderMaterial({
   vertexShader: coverageShaders.vertex,
   fragmentShader: coverageShaders.fragment,
-  clipping: true,
-  clippingPlanes: [new THREE.Plane()]
+  clipping: true
 });
 const identityRotation = new THREE.Quaternion();
 
@@ -130,6 +129,7 @@ export class GpuOrderSectorsByVisibilityCoverage {
       alpha: false,
       stencil: false
     });
+    this.debugRenderer.localClippingEnabled = true;
     this.debugRenderer.setClearColor('white');
     this.debugRenderer.setSize(width, height);
 
@@ -156,7 +156,7 @@ export class GpuOrderSectorsByVisibilityCoverage {
   orderSectorsByVisibility(camera: THREE.Camera, clippingPlanes: THREE.Plane[]): PrioritizedSectorIdentifier[] {
     console.log('numplanes: ' + clippingPlanes.length);
     // this._renderer.clippingPlanes = [new THREE.Plane()];
-    // coverageMaterial.clippingPlanes = clippingPlanes;
+    coverageMaterial.clippingPlanes = clippingPlanes;
     // 1. Render to offscreen buffer
     this._renderer.render(this.scene, camera);
     if (this.debugRenderer) {
