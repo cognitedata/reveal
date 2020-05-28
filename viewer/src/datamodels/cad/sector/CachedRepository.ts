@@ -29,8 +29,7 @@ import { CadSectorProvider } from './CadSectorProvider';
 import { MemoryRequestCache } from '@/utilities/cache/MemoryRequestCache';
 import { ParseCtmResult, ParseSectorResult } from '@/utilities/workers/types/parser.types';
 import { TriangleMesh, InstancedMeshFile, InstancedMesh, SectorQuads } from '../rendering/types';
-import { createOffsetsArray } from '@/utilities/arrayUtils';
-import { RateLimiter } from '@/utilities/RateLimiter';
+import { RateLimiter, createOffsetsArray } from '@/utilities';
 
 // TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
 export class CachedRepository implements Repository {
