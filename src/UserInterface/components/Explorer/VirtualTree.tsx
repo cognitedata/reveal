@@ -14,9 +14,9 @@ export default function VirtualTree(props: {
   rowHeight?: number;
   expandable?: boolean;
   selectedIds?: string[];
-  onToggleNodeSelect: (id: string, state: boolean) => {};
-  onToggleNodeExpand: (id: string, state: boolean) => {};
-  onToggleNodeCheck: (id: string, state: boolean) => {};
+  onToggleNodeSelect: (id: string, state: boolean) => void;
+  onToggleNodeExpand: (id: string, state: boolean) => void;
+  onToggleNodeCheck: (id: string, state: boolean) => void;
 }) {
   const { onToggleNodeSelect, onToggleNodeExpand, onToggleNodeCheck } = props;
 
