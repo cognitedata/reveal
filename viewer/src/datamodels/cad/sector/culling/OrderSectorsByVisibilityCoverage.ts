@@ -110,7 +110,10 @@ export class GpuOrderSectorsByVisibilityCoverage {
       antialias: false,
       alpha: false,
       precision: 'lowp',
-      stencil: false
+      stencil: false,
+      // Avoid double buffering that may cause results from previous call to orderSectorsByVisibility
+      // to leak to the 'current' call
+      preserveDrawingBuffer: true
     });
     this._renderer.setClearColor('#FFFFFF');
     this._renderer.localClippingEnabled = true;
@@ -137,7 +140,8 @@ export class GpuOrderSectorsByVisibilityCoverage {
     this.debugRenderer = new THREE.WebGLRenderer({
       antialias: false,
       alpha: false,
-      stencil: false
+      stencil: false,
+      preserveDrawingBuffer: true
     });
     this.debugRenderer.localClippingEnabled = true;
     this.debugRenderer.setClearColor('white');
