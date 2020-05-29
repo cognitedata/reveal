@@ -174,10 +174,11 @@ export class GpuOrderSectorsByVisibilityCoverage {
 
   orderSectorsByVisibility(camera: THREE.Camera): PrioritizedSectorIdentifier[] {
     // 1. Render to offscreen buffer
-    this._renderer.render(this.scene, camera);
     if (this.debugRenderer) {
       this.debugRenderer.render(this.scene, camera);
     }
+
+    this._renderer.render(this.scene, camera);
 
     // 2. Prepare buffer for reading from GPU
     this.prepareBuffers();
