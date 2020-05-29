@@ -40,6 +40,7 @@
     ]
   },
   "devDependencies": {
+    "@cognite/sdk": "^2.28.0",
     "@cognite/tslint-config-cognite-3d": "^1.0.4",
     "@types/gl-matrix": "^2.4.5",
     "@types/jest": "^25.2.3",
@@ -59,6 +60,7 @@
     "raw-loader": "^4.0.1",
     "rimraf": "^3.0.2",
     "run-script-os": "^1.1.1",
+    "three": "^0.115.0",
     "ts-jest": "^25.5.1",
     "ts-loader": "7.0.4",
     "tslint": "^5.20.1",
