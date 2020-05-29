@@ -49,7 +49,7 @@ export class LogRenderOld {
     this.bandRange = bandRange;
   }
 
-  public addTickMarks(group: THREE.Group, color: Color, mdRange: Range1, tickFontSize: number, inc: number, right: boolean, left: boolean) {
+  public addTickMarks(group: THREE.Group, bandColor: Color, textColor: Color, mdRange: Range1, tickFontSize: number, inc: number, right: boolean, left: boolean) {
 
     const geometry = new THREE.Geometry();
     const labelInc = mdRange.getBoldInc(inc, 5);
@@ -84,11 +84,11 @@ export class LogRenderOld {
 
       // Add label
       const labelEndPosition = Vector3.addWithFactor(position, prependicular, startLabel);
-      const label = ThreeLabel.createByPositionAndDirection(`${md}`, labelEndPosition, prependicular, tickFontSize, true);
+      const label = ThreeLabel.createByPositionAndDirection(`${md}`, labelEndPosition, prependicular, tickFontSize, textColor);
       if (label)
         group.add(label);
     }
-    const material = new THREE.LineBasicMaterial({ color: ThreeConverter.toColor(color) });
+    const material = new THREE.LineBasicMaterial({ color: ThreeConverter.toColor(bandColor) });
     const object = new THREE.LineSegments(geometry, material);
     group.add(object);
   }
@@ -192,7 +192,7 @@ export class LogRenderOld {
     for (let i = 0; i < log.samples.length; i++) {
       const sample = log.getAt(i);
       if (!this.trajectory.getPositionAtMd(sample.md, position))
-        continue;   
+        continue;
 
       if (!this.trajectory.getTangentAtMd(sample.md, tangent))
         continue;

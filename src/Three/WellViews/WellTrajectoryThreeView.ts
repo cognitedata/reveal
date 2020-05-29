@@ -34,6 +34,7 @@ import { ThreeLabel } from "@/Three/Utilities/ThreeLabel";
 import { LogRender } from "@/Three/WellViews/LogRender";
 import { TrajectoryBufferGeometry } from "@/Three/WellViews/TrajectoryBufferGeometry";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
+import Color from "color";
 
 
 export class WellTrajectoryThreeView extends BaseGroupThreeView {
@@ -44,6 +45,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
   // Caching the bounding box of the scene
   private cameraDirection = new Vector3(0, 0, 1); // Direction to the center
   protected cameraPosition = new Vector3(0, 0, 1);
+  private fgColor: Color = Colors.white;
+
   private trajectoryName = "trajectory";
   private labelName = "label";
   private bandTextures: [THREE.CanvasTexture | null, THREE.CanvasTexture | null] = [null, null];
@@ -151,21 +154,31 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
       return false;
 
     const target = this.renderTarget;
-    const camera = target.activeCamera;
-    const cameraPosition = ThreeConverter.fromVector(camera.position);
-    const cameraDirection = trajectory.range.center;
+    let colorChanged = false;
+    {
+      if (this.fgColor !== target.fgColor) {
+        this.fgColor = target.fgColor;
+        colorChanged = true;
+      }
+    }
+    let cameraChanged = false;
+    {
+      const camera = target.activeCamera;
+      const cameraPosition = ThreeConverter.fromVector(camera.position);
+      const cameraDirection = trajectory.range.center;
 
-    cameraDirection.substract(cameraPosition);
-    cameraDirection.normalize();
+      cameraDirection.substract(cameraPosition);
+      cameraDirection.normalize();
 
-    // Check if camera has move slightly
-    const angle = Math.acos(cameraDirection.getDot(this.cameraDirection));
-    if (angle < Math.PI / 100)
-      return false;
-
-    this.cameraDirection = cameraDirection;
-    this.cameraPosition = cameraPosition;
-    return true;
+      // Check if camera has move slightly
+      const angle = Math.acos(cameraDirection.getDot(this.cameraDirection));
+      if (angle > Math.PI / 100) {
+        this.cameraDirection = cameraDirection;
+        this.cameraPosition = cameraPosition;
+        cameraChanged = true;
+      }
+    }
+    return cameraChanged || colorChanged;
   }
 
   public /*override*/ touchPart(): void {
@@ -235,7 +248,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
     if (!style)
       return;
 
-    const label = ThreeLabel.createByPositionAndAlignment(node.name, trajectory.getPositionAt(0), 1, style.nameFontHeight, true);
+    const target = this.renderTarget;
+    const label = ThreeLabel.createByPositionAndAlignment(node.name, trajectory.getPositionAt(0), 1, style.nameFontHeight, target.fgColor);
     if (!label)
       return;
 

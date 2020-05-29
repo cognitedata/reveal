@@ -25,6 +25,7 @@ import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ToggleAxisVisibleCommand } from "@/Three/Commands/ToggleAxisVisibleCommand";
 import { ViewAllCommand } from "@/Three/Commands/ViewAllCommand";
 import { ToggleBgColorCommand } from "@/Three/Commands/ToggleBgColorCommand";
+import { FolderNode } from "@/Core/Nodes/FolderNode";
 
 export class RandomDataLoader extends BaseRootLoader {
 
@@ -106,15 +107,24 @@ export class RandomDataLoader extends BaseRootLoader {
         }
       }
     }
-    for (let i = 0; i < 5; i++) {
-      const node = new SurfaceNode();
-      var range = Range3.newTest.clone();
-      range.expandByFraction(0.2);
-      range.z.set(-1400, -1800);
-      node.data = RegularGrid2.createFractal(range, 7, 0.7, 5);
-      root.others.addChild(node);
-    }
+    for (let i = 0; i < 3; i++) {
+      const parent0 = new FolderNode();
+      root.others.addChild(parent0);
 
+      for (let j = 0; j < 2; j++) {
+        const parent1 = new FolderNode();
+        parent0.addChild(parent1);
+
+        for (let k = 0; k < 3; k++) {
+          const node = new SurfaceNode();
+          var range = Range3.newTest.clone();
+          range.expandByFraction(0.2);
+          range.z.set(-1400, -1800);
+          node.data = RegularGrid2.createFractal(range, 7, 0.7, 5);
+          parent1.addChild(node);
+        }
+      }
+    }
   }
 
   public /*override*/  updatedVisible(root: RootNode): void {

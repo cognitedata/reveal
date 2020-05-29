@@ -17,8 +17,7 @@ import * as THREE from "three";
 import { BaseCameraNode } from "@/Core/Nodes/BaseCameraNode";
 import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
 
-export class ThreeCameraNode extends BaseCameraNode
-{
+export class ThreeCameraNode extends BaseCameraNode {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
@@ -43,25 +42,43 @@ export class ThreeCameraNode extends BaseCameraNode
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get camera(): THREE.Camera
-  {
-    if (!this._camera)
-    {
+  public get camera(): THREE.Camera | null {
+
+    if (!this._camera) {
       const target = this.getTarget();
-      const aspectRatio = target ? target.aspectRatio : undefined;
-      const camera = new THREE.PerspectiveCamera(45, aspectRatio, 0.1, 10000);
-      camera.up.set(0, 0, 1);
+      if (!target)
+        return null;
+
+      const camera = this.createPerspectiveCamera();
       this._camera = camera;
     }
     return this._camera;
   }
 
-  public set camera(value: THREE.Camera) { this._camera = value; this._controls = null; }
+  public createPerspectiveCamera(): THREE.Camera | null {
+    const target = this.getTarget();
+    if (!target)
+      return null;
 
-  public get controls(): CameraControls | null
-  {
-    if (!this._controls)
-    {
+    const aspectRatio = target ? target.aspectRatio : undefined;
+    const camera = new THREE.PerspectiveCamera(45, aspectRatio, 0.1, 10_000);
+    camera.up.set(0, 0, 1);
+    return camera;
+  }
+
+  public createOrthographicCamera(): THREE.Camera | null {
+    const target = this.getTarget();
+    if (!target)
+      return null;
+
+    const range = target.pixelRange;
+    const camera = new THREE.OrthographicCamera(-range.x.delta / 2, range.x.delta / 2, range.x.delta / 2, -range.x.delta / 2, 0.1, 10_000);
+    camera.up.set(0, 0, 1);
+    return camera;
+  }
+
+  public get controls(): CameraControls | null {
+    if (!this._controls) {
       const target = this.getTarget();
       if (!target)
         return null;;
@@ -70,7 +87,7 @@ export class ThreeCameraNode extends BaseCameraNode
       if (!camera)
         return null;
 
-        // https://andreasrohner.at/posts/Web%20Development/JavaScript/Simple-orbital-camera-controls-for-THREE-js/
+      // https://andreasrohner.at/posts/Web%20Development/JavaScript/Simple-orbital-camera-controls-for-THREE-js/
       this._controls = new CameraControls(camera, target.domElement);
       this._controls.setPosition(0, 0, 20);
     }
@@ -81,8 +98,7 @@ export class ThreeCameraNode extends BaseCameraNode
   // OVERRIDES of BaseCameraNode
   //==================================================
 
-  public /*override*/ updateAspect(value: number)
-  {
+  public /*override*/ updateAspect(value: number) {
     const camera = this._camera;
     if (this._camera === null)
       return;
@@ -93,6 +109,35 @@ export class ThreeCameraNode extends BaseCameraNode
     camera.aspect = value;
     camera.updateProjectionMatrix();
   }
+
+
+  // public switchCamera(isOrthographic) {
+
+  //   if (!this._camera)
+  //     return;
+  //   if (!this._controls)
+  //     return;
+
+  //   var cameraPosition = this._camera.position.clone();
+  //   var cameraMatrix = this._camera.matrix.clone();
+
+
+
+  //   var oControlsTarget = oControls.target.clone();
+  //   var oControlsPosition = oControls.position0.clone();
+  //   if (isOrthographic == false) {
+  //     aCamera = pCamera;
+  //   } else {
+  //     aCamera = oCamera;
+  //   }
+  //   aCamera.position.copy(cameraPosition);
+  //   aCamera.matrix.copy(cameraMatrix);
+  //   aCamera.updateProjectionMatrix();
+  //   this._controls.object = aCamera;
+  //   this._cControls.update();
+  //   render();
+  // }
+
 
   //==================================================
   // INSTANCE METHODS

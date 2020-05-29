@@ -1,7 +1,6 @@
-import { combineReducers } from "redux";
 import { enableMapSet } from "immer";
-import settingsReducer from "./settings";
-import explorerReducer from "./explorer";
+import settingsReducer from "./SettingsReducer";
+import explorerReducer from "./ExplorerReducer";
 
 // Enable immer MapSet
 enableMapSet();
@@ -12,9 +11,9 @@ enableMapSet();
  * that can pass to createStore.
  */
 
-const SubsurfaceReducer = combineReducers({
+const SubsurfaceReducer = {
   settings: settingsReducer,
   explorer: explorerReducer,
-});
+};
 
 export default SubsurfaceReducer;
