@@ -98,7 +98,8 @@ export class GpuOrderSectorsByVisibilityCoverage {
   private readonly coverageMaterial = new THREE.ShaderMaterial({
     vertexShader: coverageShaders.vertex,
     fragmentShader: coverageShaders.fragment,
-    clipping: true
+    clipping: true,
+    side: THREE.DoubleSide
   });
 
   constructor(options?: OrderSectorsByVisibleCoverageOptions) {
