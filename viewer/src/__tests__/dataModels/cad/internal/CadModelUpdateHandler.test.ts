@@ -12,7 +12,7 @@ import { SimpleAndDetailedToSector3D } from '@/datamodels/cad/sector/SimpleAndDe
 import { CachedRepository } from '@/datamodels/cad/sector/CachedRepository';
 import { SectorCuller } from '@/datamodels/cad/sector/culling/SectorCuller';
 
-import { CadModelUpdateHandler } from '@/dataModels/cad/CadModelUpdateHandler';
+import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
 
 import { createCadModelMetadata } from '../../../testUtils/createCadModelMetadata';
 import { generateSectorTree } from '../../../testUtils/createSectorMetadata';
