@@ -28,7 +28,8 @@ import { TrajectoryBufferGeometry } from "@/Three/WellViews/TrajectoryBufferGeom
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
 
-export class CasingLogThreeView extends BaseGroupThreeView {
+export class CasingLogThreeView extends BaseGroupThreeView
+{
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -46,16 +47,19 @@ export class CasingLogThreeView extends BaseGroupThreeView {
   // OVERRIDES of BaseView
   //==================================================
 
-  public get /*override*/ isVisible(): boolean {
+  public get /*override*/ isVisible(): boolean
+  {
     const parent = this.node.getAncestorByType(WellTrajectoryNode);
     return parent != null && parent.isVisible(this.renderTarget)
   }
 
-  protected /*override*/ updateCore(args: NodeEventArgs): void {
+  protected /*override*/ updateCore(args: NodeEventArgs): void
+  {
     super.updateCore(args);
   }
 
-  public calculateBoundingBoxCore(): Range3 | undefined {
+  public calculateBoundingBoxCore(): Range3 | undefined
+  {
     const node = this.node;
     const trajectory = node.trajectory;
     if (!trajectory)
@@ -69,7 +73,8 @@ export class CasingLogThreeView extends BaseGroupThreeView {
     let maxRadius = 0;
     const position = Vector3.newZero;
 
-    for (let i = 0; i < log.samples.length; i++) {
+    for (let i = 0; i < log.samples.length; i++)
+    {
       const sample = log.getAt(i);
       maxRadius = Math.max(maxRadius, sample.value);
       if (trajectory.getPositionAtMd(sample.md, position))
@@ -83,7 +88,8 @@ export class CasingLogThreeView extends BaseGroupThreeView {
   // OVERRIDES of BaseGroupThreeView
   //==================================================
 
-  protected /*override*/ createObject3DCore(): THREE.Object3D | null {
+  protected /*override*/ createObject3DCore(): THREE.Object3D | null
+  {
     const node = this.node;
     const color = Colors.grey; //node.color;
     const trajectory = node.trajectory;
@@ -98,7 +104,8 @@ export class CasingLogThreeView extends BaseGroupThreeView {
     let wellIndex = 0;
     const position: Vector3 = Vector3.newZero;
 
-    for (let logIndex = 0; logIndex < log.length - 1; logIndex++) {
+    for (let logIndex = 0; logIndex < log.length - 1; logIndex++)
+    {
       const minSample = log.getAt(logIndex);
       const maxSample = log.getAt(logIndex + 1);
 
@@ -110,14 +117,16 @@ export class CasingLogThreeView extends BaseGroupThreeView {
         continue;
 
       // Push inn all values between <minSample.md, maxSample.md>
-      for (; wellIndex < trajectory.length; wellIndex++) {
+      for (; wellIndex < trajectory.length; wellIndex++)
+      {
         const trajectorySample = trajectory.getAt(wellIndex);
         if (trajectorySample.md >= maxSample.md)
           break; // Too far
         if (trajectorySample.md > minSample.md)
           samples.push(new RenderSample(trajectorySample.point, trajectorySample.md, minSample.value, color));
       }
-      if (logIndex == log.length - 1) {
+      if (logIndex == log.length - 1)
+      {
         // Push the last
         if (trajectory.getPositionAtMd(maxSample.md, position))
           samples.push(new RenderSample(position.clone(), maxSample.md, maxSample.value, color));
@@ -138,7 +147,8 @@ export class CasingLogThreeView extends BaseGroupThreeView {
   // INSTANCE METHODS
   //==================================================
 
-  protected get trajectoryRadius(): number {
+  protected get trajectoryRadius(): number
+  {
     const node = this.node;
     if (!node)
       return 0;
