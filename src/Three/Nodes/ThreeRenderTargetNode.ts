@@ -23,7 +23,6 @@ import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
 import { AxisNode } from "@/Nodes/Decorations/AxisNode";
 
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
-import { ThreeCameraNode } from "@/Three/Nodes/ThreeCameraNode";
 import { TreeOverlay } from "@/Three/Utilities/TreeOverlay";
 import { Ma } from "@/Core/Primitives/Ma";
 import { ViewAllCommand } from "@/Three/Commands/ViewAllCommand";
@@ -31,10 +30,12 @@ import { ToggleAxisVisibleCommand } from "@/Three/Commands/ToggleAxisVisibleComm
 import { ToggleBgColorCommand } from "@/Three/Commands/ToggleBgColorCommand";
 import { IToolbar } from "@/Core/Interfaces/IToolbar";
 import { ViewFromCommand } from "@/Three/Commands/ViewFromCommand";
-import { PerspectiveCamera } from "three";
-import { SingleEntryPlugin } from "webpack";
+import { Camera } from "@/Three/Nodes/Camera";
 
-export class ThreeRenderTargetNode extends BaseRenderTargetNode {
+const directionalLightName = "DirectionalLight";
+
+export class ThreeRenderTargetNode extends BaseRenderTargetNode
+{
   //==================================================
   // INSTANCE FIELDS
   //==================================================
@@ -45,44 +46,43 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   private _stats: any | null; // NILS: Why any here? Compiler error if not
   private isEmpty = true;
   private clock = new THREE.Clock();
+  private _camera: Camera | null = null;
 
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get scene(): THREE.Scene {
+  public get scene(): THREE.Scene
+  {
     if (!this._scene)
-      this._scene = new THREE.Scene();
+      throw Error("Scene is not set");
     return this._scene;
   }
 
-  public get activeCameraNode(): ThreeCameraNode { return super.getActiveCameraNode() as ThreeCameraNode };
-
-  public get activeCamera(): THREE.Camera {
-    const cameraNode = this.activeCameraNode;
-    if (!cameraNode)
-      throw Error("The camera is not set");
-
-    if (!cameraNode.camera)
-      throw Error("The camera is not set");
-
-    return cameraNode.camera;
+  public get camera(): THREE.Camera
+  {
+    if (!this._camera)
+      throw Error("Camera is not set");
+    return this._camera.camera;
   }
 
-  public get controls(): CameraControls | null {
-    const cameraNode = this.activeCameraNode;
-    return cameraNode ? cameraNode.controls : null;
+  private get controls(): CameraControls
+  {
+    if (!this._camera)
+      throw Error("CameraControls is not set");
+    return this._camera.controls;
   }
 
-  private get directionalLight(): THREE.DirectionalLight | null {
-    if (!this._scene)
-      return null;
-    return this._scene.getObjectByName("DirectionalLight") as THREE.DirectionalLight;
+  private get directionalLight(): THREE.DirectionalLight | null
+  {
+    return this.scene.getObjectByName(directionalLightName) as THREE.DirectionalLight;
   }
 
-  private get renderer(): THREE.WebGLRenderer {
+  private get renderer(): THREE.WebGLRenderer
+  {
 
-    if (!this._renderer) {
+    if (!this._renderer)
+    {
       const renderer = new THREE.WebGLRenderer({ antialias: true, });
       renderer.autoClear = false;
       renderer.gammaFactor = 2.2;
@@ -90,13 +90,14 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
 
       this._renderer = renderer;
       this.setRenderSize();
-
     }
     return this._renderer;
   }
 
-  public get stats(): any {
-    if (!this._stats) {
+  public get stats(): any
+  {
+    if (!this._stats)
+    {
       this._stats = new Stats();
       this._stats.showPanel(0);
     }
@@ -120,70 +121,94 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ initializeCore() {
+  public /*override*/ initializeCore()
+  {
     super.initializeCore();
 
-    this.addCameraNode(new ThreeCameraNode(), true);
-    this.render();
+    this._scene = new THREE.Scene();
+    this._camera = new Camera(this);
 
-    // Add light (TODO: move to TreeLightNode?)
-    const scene = this.scene;
-    const light = new THREE.DirectionalLight(ThreeConverter.toColor(Colors.white), 0.75);
-    light.name = "DirectionalLight";
-
-    scene.add(light);
-    //camera.add(light);
-    //scene.add(camera);
-
+    // Create lights
+    const ambientLight = new THREE.AmbientLight(0x404040, 0.25); // soft white light
+    const directionalLight = new THREE.DirectionalLight(ThreeConverter.toColor(Colors.white), 0.95);
+    directionalLight.name = directionalLightName;
     const controls = this.controls;
-    if (controls)
-      controls.addEventListener("update", lightUpdate);
-
     var self = this;
-    function lightUpdate() {
-      ThreeRenderTargetNode.updateLightPositionStatic(self);
-    }
-    var ambientLight = new THREE.AmbientLight(0x404040, 0.25); // soft white light
-    scene.add(ambientLight);
-    //this.updateLightPosition();
+    if (controls)
+      controls.addEventListener("update", () => ThreeRenderTargetNode.updateLightPositionStatic(self));
+
+
+    this._scene.add(ambientLight);
+    this._scene.add(directionalLight);
+    this.render();
   }
 
   //==================================================
   // OVERRIDES of RenderTargetNode
   //==================================================
 
-  public /*override*/ viewRange(boundingBox: Range3 | undefined): void {
-    if (!boundingBox)
-      return;
-
-    if (boundingBox.isEmpty)
-      return;
-
-    const controls = this.controls;
-    if (!controls)
-      return;
-
-
-    //https://github.com/yomotsu/camera-controls
-    // The below stuff doesn't work!!
-    // controls.rotate(0, 0.8);
-    const target = boundingBox.center;
-    controls.setTarget(target.x, target.y, target.z);
-    controls.fitTo(ThreeConverter.toBox(boundingBox));
-  }
-
   public /*override*/ get domElement(): HTMLElement { return this.renderer.domElement; }
 
-  protected /*override*/ setRenderSize(): void {
+  protected /*override*/ setRenderSize(): void
+  {
     const pixelRange = this.pixelRange;
     this.renderer.setSize(pixelRange.x.delta, pixelRange.y.delta);
   }
 
+  public /*override*/ onResize()
+  {
+    super.onResize();
+    if (this._camera)
+      this._camera.onResize(this);
+    this.invalidate();
+  }
+
   //==================================================
-  // INSTANCE METHODS
+  // INSTANCE METHODS: Render
   //==================================================
 
-  public addTools(toolbar: IToolbar) {
+  private render(): void
+  {
+    requestAnimationFrame(() => { this.render(); });
+
+    if (!this.isInitialized)
+      return;
+
+    const controls = this.controls;
+    let needsUpdate = true;
+    if (controls)
+    {
+      const delta = this.clock.getDelta();
+      needsUpdate = controls.update(delta);
+    }
+    if (this.isInvalidated || needsUpdate)
+    {
+      if (this.isEmpty)
+        this.isEmpty = !this.viewFrom(-1);
+
+      this.stats.begin();
+
+      const hasAxis = this.hasViewOfNodeType(AxisNode);
+      this.scene.background = ThreeConverter.toColor(this.getBgColor(hasAxis));
+
+      for (const view of this.viewsShownHere.list)
+        view.beforeRender();
+
+      this.renderer.render(this.scene, this.camera);
+      this.stats.end();
+
+      const viewInfo = this.getViewInfo();
+      this._overlay.render(this.renderer, viewInfo, this.pixelRange.delta);
+      this.invalidate(false);
+    }
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Add toolbar
+  //==================================================
+
+  public addTools(toolbar: IToolbar)
+  {
     toolbar.add(new ViewAllCommand(this));
     toolbar.add(new ToggleAxisVisibleCommand(this));
     toolbar.add(new ToggleBgColorCommand(this));
@@ -194,139 +219,24 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     toolbar.beginOptionMenu();
   }
 
-  public viewFrom(index: number): boolean {
-
-    const controls = this.controls;
-    if (!controls)
-      return false;
-
-    const camera = this.activeCamera;
-    if (!camera)
-      return false;
-
-    const boundingBox = this.getBoundingBoxFromViews();
-
-    let distanceFactor = 1;
-    if (camera instanceof PerspectiveCamera) {
-      const perspectiveCamera = camera as PerspectiveCamera;
-
-      const fov = Ma.toRad(perspectiveCamera.fov);
-      distanceFactor = 0.66 / (camera.aspect * Math.tan(fov / 2));
-      console.log(fov);
-      console.log(distanceFactor);
-    }
-    const target = boundingBox.center;
-    const position = boundingBox.center;
-
-    // https://www.npmjs.com/package/camera-controls
-    if (index < 0) {
-      distanceFactor /= 2;
-      const distanceX = Math.max(boundingBox.y.delta, boundingBox.z.delta) * distanceFactor * Math.sin(Math.PI / 4);
-      const distanceY = Math.max(boundingBox.x.delta, boundingBox.z.delta) * distanceFactor * Math.sin(Math.PI / 4);
-      const distanceZ = Math.max(boundingBox.x.delta, boundingBox.y.delta) * distanceFactor * Math.sin(Math.PI / 8);
-      position.x = boundingBox.max.x + distanceX;
-      position.y = boundingBox.max.y + distanceY;
-      position.z = boundingBox.max.z + distanceZ;
-    }
-    else if (index === 0 || index === 1) {
-      const distance = Math.max(boundingBox.x.delta, boundingBox.y.delta) * distanceFactor;
-      if (index === 0) {
-        // Top
-        controls.rotateTo(0, Math.PI / 2, false);
-        position.z = boundingBox.max.z + distance;
-      }
-      if (index === 1) {
-        //Bottom
-        controls.rotateTo(Math.PI, Math.PI / 2, false);
-        position.z = boundingBox.min.z - distance;
-      }
-    }
-    else if (index === 2 || index === 3) {
-      const distance = Math.max(boundingBox.x.delta, boundingBox.z.delta) * distanceFactor;
-      if (index === 2) {
-        //South
-        controls.rotateTo(Math.PI / 2, 0, false);
-        position.y = boundingBox.min.y - distance;
-      }
-      else {
-        //North
-        controls.rotateTo(-Math.PI / 2, 0, false);
-        position.y = boundingBox.max.y + distance;
-      }
-    }
-    else if (index === 4 || index === 5) {
-      const distance = Math.max(boundingBox.y.delta, boundingBox.z.delta) * distanceFactor;
-      if (index === 4) {
-        //West
-        controls.rotateTo(0, 0, false);
-        position.x = boundingBox.min.x - distance;
-      }
-      else {
-        //East
-        controls.rotateTo(Math.PI, 0, false);
-        position.x = boundingBox.max.x + distance;
-      }
-    }
-    controls.setTarget(target.x, target.y, target.z);
-    controls.setPosition(position.x, position.y, position.z);
-    this.updateLightPosition();
-    return true;
-  }
-
-
-  private render(): void {
-
-    requestAnimationFrame(() => { this.render(); });
-
-    if (!this.isInitialized)
-      return;
-
-    const controls = this.controls;
-    let needsUpdate = true;
-    if (controls) {
-      const delta = this.clock.getDelta();
-      needsUpdate = controls.update(delta);
-    }
-    if (this.isInvalidated || needsUpdate) {
-
-      if (this.isEmpty) {
-        const boundingBox = this.getBoundingBoxFromViews();
-        if (!boundingBox.isEmpty) {
-          this.viewFrom(-1);
-          this.isEmpty = false;
-        }
-      }
-      this.stats.begin();
-
-      const hasAxis = this.hasViewOfNodeType(AxisNode);
-      this.scene.background = ThreeConverter.toColor(this.getBgColor(hasAxis));
-
-      for (const view of this.viewsShownHere.list)
-        view.beforeRender();
-
-      this.renderer.render(this.scene, this.activeCamera);
-      this.stats.end();
-
-      const viewInfo = this.getViewInfo();
-      this._overlay.render(this.renderer, viewInfo, this.pixelRange.delta);
-      this.invalidate(false);
-    }
-  }
-
   //==================================================
-  // STATIC METHODS
+  // INSTANCE METHODS: Operations on camera or light
   //==================================================
 
-  public updateLightPosition(): void {
+  public viewAll(): boolean 
+  {
+    return !this._camera ? false : this._camera.viewRange(this.getBoundingBoxFromViews());
+  }
 
-    const camera = this.activeCamera
-    if (!camera)
-      return;
+  public viewFrom(index: number): boolean
+  {
+    return !this._camera ? false : this._camera.viewFrom(this.getBoundingBoxFromViews(), index);
+  }
 
+  private updateLightPosition(): void
+  {
+    const camera = this.camera
     const controls = this.controls
-    if (!controls)
-      return;
-
     const light = this.directionalLight
     if (!light)
       return;
@@ -365,44 +275,12 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
     light.position.copy(vectorToCenter);
   }
 
-  static updateLightPositionStatic(node: ThreeRenderTargetNode): void {
+  //==================================================
+  // STATIC METHODS
+  //==================================================
+
+  static updateLightPositionStatic(node: ThreeRenderTargetNode): void
+  {
     node.updateLightPosition();
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  public viewAll(): void 
-  {
-    const boundingBox = this.getBoundingBoxFromViews();
-    if (!boundingBox.isEmpty)
-      this.viewRange(boundingBox);
-  }
-
-  public onResize()
-  {
-    this.setRenderSize();
-    const aspect = this.aspectRatio;
-    for (const cameraNode of this.getChildrenByType(BaseCameraNode))
-      cameraNode.updateAspect(aspect);
-    this.invalidate();
-  }
-
-
 }

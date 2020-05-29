@@ -63,7 +63,6 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
 
   protected abstract setRenderSize(): void;
   public abstract get domElement(): HTMLElement;
-  public /*virtual*/ viewRange(boundingBox: Range3): void { }
   public /*virtual*/ onResize() { this.setRenderSize(); }
 
   //==================================================
