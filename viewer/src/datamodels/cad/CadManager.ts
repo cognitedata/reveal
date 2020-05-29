@@ -70,10 +70,12 @@ export class CadManager<TModelIdentifier> {
 
   set clippingPlanes(value: THREE.Plane[]) {
     this._cadModelUpdateHandler.clippingPlanes = value;
+    this._needsRedraw = true;
   }
 
   set clipIntersection(value: boolean) {
     this._cadModelUpdateHandler.clipIntersection = value;
+    this._needsRedraw = true;
   }
 
   async addModel(modelIdentifier: TModelIdentifier, modelAppearance?: ModelNodeAppearance): Promise<CadNode> {

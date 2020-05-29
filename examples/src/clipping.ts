@@ -19,6 +19,7 @@ async function main() {
 
   const scene = new THREE.Scene();
   const renderer = new THREE.WebGLRenderer();
+  renderer.localClippingEnabled = true;
   renderer.setClearColor('#444');
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
@@ -72,7 +73,7 @@ async function main() {
     showHelpers: false
   };
 
-  let planesNeedUpdate = true;
+  let guiNeedsUpdate = true;
 
   const boxClipper = new BoundingBoxClipper(
     new THREE.Box3(
@@ -82,10 +83,11 @@ async function main() {
     params.clipIntersection
   );
 
-  revealManager.clippingPlanes = boxClipper.clippingPlanes;
-  revealManager.clipIntersection = boxClipper.intersection;
-  renderer.localClippingEnabled = true;
-  // renderer.clippingPlanes = [new THREE.Plane(new THREE.Vector3(0, -1, 0), 0.0)];
+  function updateClippingPlanes() {
+    revealManager.clippingPlanes = boxClipper.clippingPlanes;
+    revealManager.clipIntersection = boxClipper.intersection;
+  }
+  updateClippingPlanes();
 
   const helpers = new THREE.Group();
   helpers.add(new THREE.PlaneHelper(boxClipper.clippingPlanes[0], 2, 0xff0000));
@@ -94,7 +96,7 @@ async function main() {
   helpers.add(new THREE.PlaneHelper(boxClipper.clippingPlanes[3], 2, 0x00ff00));
   helpers.add(new THREE.PlaneHelper(boxClipper.clippingPlanes[4], 2, 0x0000ff));
   helpers.add(new THREE.PlaneHelper(boxClipper.clippingPlanes[5], 2, 0x0000ff));
-  // helpers.visible = false;
+  updateClippingPlanes();
   scene.add(helpers);
 
   const clock = new THREE.Clock();
@@ -105,9 +107,9 @@ async function main() {
       revealManager.update(camera);
     }
 
-    if (controlsNeedUpdate || revealManager.needsRedraw || planesNeedUpdate) {
+    if (controlsNeedUpdate || revealManager.needsRedraw || guiNeedsUpdate) {
       renderer.render(scene, camera);
-      planesNeedUpdate = false;
+      guiNeedsUpdate = false;
       revealManager.resetRedraw();
     }
 
@@ -116,14 +118,13 @@ async function main() {
   render();
 
   const gui = new dat.GUI();
-
   gui
     .add(params, 'clipIntersection')
     .name('clip intersection')
     .onChange(value => {
       revealManager.clipIntersection = value;
       boxClipper.intersection = value;
-      planesNeedUpdate = true;
+      updateClippingPlanes();
     });
 
   gui
@@ -133,7 +134,7 @@ async function main() {
     .onChange(_ => {
       boxClipper.minX = params.x - params.width / 2;
       boxClipper.maxX = params.x + params.width / 2;
-      planesNeedUpdate = true;
+      updateClippingPlanes();
     });
 
   gui
@@ -143,7 +144,7 @@ async function main() {
     .onChange(_ => {
       boxClipper.minY = params.y - params.height / 2;
       boxClipper.maxY = params.y + params.height / 2;
-      planesNeedUpdate = true;
+      updateClippingPlanes();
     });
 
   gui
@@ -153,7 +154,7 @@ async function main() {
     .onChange(_ => {
       boxClipper.minZ = params.z - params.depth / 2;
       boxClipper.maxZ = params.z + params.depth / 2;
-      planesNeedUpdate = true;
+      updateClippingPlanes();
     });
 
   gui
@@ -163,7 +164,7 @@ async function main() {
     .onChange(_ => {
       boxClipper.minX = params.x - params.width / 2;
       boxClipper.maxX = params.x + params.width / 2;
-      planesNeedUpdate = true;
+      updateClippingPlanes();
     });
 
   gui
@@ -173,7 +174,7 @@ async function main() {
     .onChange(_ => {
       boxClipper.minY = params.y - params.height / 2;
       boxClipper.maxY = params.y + params.height / 2;
-      planesNeedUpdate = true;
+      updateClippingPlanes();
     });
 
   gui
@@ -183,15 +184,15 @@ async function main() {
     .onChange(_ => {
       boxClipper.minZ = params.z - params.depth / 2;
       boxClipper.maxZ = params.z + params.depth / 2;
-      planesNeedUpdate = true;
+      updateClippingPlanes();
     });
 
   gui
     .add(params, 'showHelpers')
     .name('show helpers')
-    .onChange(_ => {
-      // helpers.visible = value;
-      planesNeedUpdate = true;
+    .onChange(value => {
+      helpers.visible = value;
+      guiNeedsUpdate = true;
     });
 
   (window as any).scene = scene;
