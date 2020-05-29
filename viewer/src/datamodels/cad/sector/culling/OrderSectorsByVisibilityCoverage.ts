@@ -110,10 +110,7 @@ export class GpuOrderSectorsByVisibilityCoverage {
       antialias: false,
       alpha: false,
       precision: 'lowp',
-      stencil: false,
-      // Avoid double buffering that may cause results from previous call to orderSectorsByVisibility
-      // to leak to the 'current' call
-      preserveDrawingBuffer: true
+      stencil: false
     });
     this._renderer.setClearColor('#FFFFFF');
     this._renderer.localClippingEnabled = true;
@@ -140,8 +137,7 @@ export class GpuOrderSectorsByVisibilityCoverage {
     this.debugRenderer = new THREE.WebGLRenderer({
       antialias: false,
       alpha: false,
-      stencil: false,
-      preserveDrawingBuffer: true
+      stencil: false
     });
     this.debugRenderer.localClippingEnabled = true;
     this.debugRenderer.setClearColor('white');
@@ -173,11 +169,13 @@ export class GpuOrderSectorsByVisibilityCoverage {
   }
 
   orderSectorsByVisibility(camera: THREE.Camera): PrioritizedSectorIdentifier[] {
-    // 1. Render to offscreen buffer
+    // render to debug renderer first as rendering to offscreen buffer
+    // first causes last frame to be read in step 3.
     if (this.debugRenderer) {
       this.debugRenderer.render(this.scene, camera);
     }
 
+    // 1. Render to offscreen buffer
     this._renderer.render(this.scene, camera);
 
     // 2. Prepare buffer for reading from GPU
