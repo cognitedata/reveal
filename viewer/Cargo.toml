@@ -24,7 +24,7 @@ i3df = { path = "../i3df" }
 f3df = { path = "../f3df" }
 
 [dependencies.web-sys]
-version = "0.3.39"
+version = "0.3.40"
 features = [
   'console',
   'Headers',
