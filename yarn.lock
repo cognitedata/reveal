@@ -7114,10 +7114,10 @@ i18next-localstorage-backend@^3.1.1:
   dependencies:
     "@babel/runtime" "^7.4.5"
 
-i18next-locize-backend@^4.0.9:
-  version "4.0.9"
-  resolved "https://registry.yarnpkg.com/i18next-locize-backend/-/i18next-locize-backend-4.0.9.tgz#bbec3c3785708a9b844dd397d12e970809d446d8"
-  integrity sha512-bGbeGR6rfXHENQqfcE7BlDhH/03O2I7vgrYQrq+dx0AzOH7pRobGJHibE1Ki7YVD29/IkDZoZ8TP12CPO0ZXWQ==
+i18next-locize-backend@^4.0.10:
+  version "4.0.10"
+  resolved "https://registry.yarnpkg.com/i18next-locize-backend/-/i18next-locize-backend-4.0.10.tgz#0a411cf698f800f9cb1e62f59f72f19e0e2fe1af"
+  integrity sha512-fI7NeuKFrAQ4P2Xx+YzDcyXPwog9KOH3zSCeKnotF7oeBePF9Os0P8ynrs8KDXvdrlXHkzIZwERpFIiJjpl8Zg==
   dependencies:
     node-fetch "2.6.0"
 
