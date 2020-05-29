@@ -20,6 +20,7 @@ import { ModelNodeAppearance, CadNode } from '@/datamodels/cad';
 import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloudMetadataRepository';
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
+import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
 
 type LocalModelIdentifier = { fileName: string };
 
@@ -48,7 +49,7 @@ export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifi
 
     const pointCloudModelRepository: PointCloudMetadataRepository<LocalModelIdentifier> = new PointCloudMetadataRepository(
       localClient,
-      new DefaultCadTransformation()
+      new DefaultPointCloudTransformation()
     );
     const pointCloudFactory: PointCloudFactory = new PointCloudFactory(localClient);
     const pointCloudManager: PointCloudManager<LocalModelIdentifier> = new PointCloudManager(

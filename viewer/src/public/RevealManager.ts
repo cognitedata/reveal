@@ -21,6 +21,7 @@ import { ModelNodeAppearance, CadNode } from '@/datamodels/cad';
 import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloudMetadataRepository';
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
+import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
 
 type CdfModelIdentifier = { modelRevision: IdEither; format: File3dFormat };
 export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
@@ -47,7 +48,7 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
 
     const pointCloudModelRepository: PointCloudMetadataRepository<CdfModelIdentifier> = new PointCloudMetadataRepository(
       cogniteClientExtension,
-      new DefaultCadTransformation()
+      new DefaultPointCloudTransformation()
     );
     const pointCloudFactory: PointCloudFactory = new PointCloudFactory(cogniteClientExtension);
     const pointCloudManager: PointCloudManager<CdfModelIdentifier> = new PointCloudManager(
