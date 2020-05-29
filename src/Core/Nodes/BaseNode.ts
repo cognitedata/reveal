@@ -28,6 +28,7 @@ import { CheckBoxState } from "@/Core/Enums/CheckBoxState";
 import { ITarget } from "@/Core/Interfaces/ITarget";
 import { Util } from "@/Core/Primitives/Util";
 import { IEventListener } from "@/Core/Interfaces/IEventListener";
+import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 
 export abstract class BaseNode extends Identifiable {
   //==================================================
@@ -473,6 +474,7 @@ export abstract class BaseNode extends Identifiable {
     if (this._isInitialized)
       return; // This should be done once
     this.initializeCore();
+    VirtualUserInterface.registerNode(this);
     this._isInitialized = true;
   }
 
