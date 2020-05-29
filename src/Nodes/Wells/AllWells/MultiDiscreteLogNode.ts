@@ -11,20 +11,20 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
-import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
-import { TargetId } from "@/Core/Primitives/TargetId";
+import { DiscreteLog } from "./node_modules/@/Nodes/Wells/Logs/DiscreteLog";
+import { BaseLogNode } from "./node_modules/@/Nodes/Wells/Wells/BaseLogNode";
+import { BaseRenderStyle } from "./node_modules/@/Core/Styles/BaseRenderStyle";
+import { WellRenderStyle } from "./node_modules/@/Nodes/Wells/Wells/WellRenderStyle";
+import { TargetId } from "./node_modules/@/Core/Primitives/TargetId";
 
-export class CasingLogNode extends BaseLogNode
+export class DiscreteLogNode extends MultiBaseLogNode
 {
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): FloatLog | null { return this._data as FloatLog; }
-  public set data(value: FloatLog | null) { this._data = value; }
+  public get data(): DiscreteLog | null { return this._data as DiscreteLog; }
+  public set data(value: DiscreteLog | null) { this._data = value; }
   public get renderStyle(): WellRenderStyle | null { return this.getRenderStyle() as WellRenderStyle; }
 
   //==================================================
@@ -37,17 +37,18 @@ export class CasingLogNode extends BaseLogNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return CasingLogNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === CasingLogNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return DiscreteLogNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === BaseLogNode.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Casing" }
+  public /*override*/ get typeName(): string { return "DiscreteLog" }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
     return new WellRenderStyle(targetId);
   }
+
 }

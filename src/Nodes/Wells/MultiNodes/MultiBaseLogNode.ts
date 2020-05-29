@@ -11,21 +11,21 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
-import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
-import { TargetId } from "@/Core/Primitives/TargetId";
+import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
+import { MultiWellTrajectoryNode } from "@/Nodes/Wells/MultiNodes/MultiWellTrajectoryNode";
 
-export class CasingLogNode extends BaseLogNode
+export abstract class MultiBaseLogNode extends BaseVisualNode
 {
+  //==================================================
+  // FIELDS
+  //==================================================
+
+
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): FloatLog | null { return this._data as FloatLog; }
-  public set data(value: FloatLog | null) { this._data = value; }
-  public get renderStyle(): WellRenderStyle | null { return this.getRenderStyle() as WellRenderStyle; }
+  public get trajectoryNode(): MultiWellTrajectoryNode | null { return this.getAncestorByType(MultiWellTrajectoryNode); }
 
   //==================================================
   // CONSTRUCTORS
@@ -37,17 +37,6 @@ export class CasingLogNode extends BaseLogNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return CasingLogNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === CasingLogNode.name || super.isA(className); }
-
-  //==================================================
-  // OVERRIDES of BaseNode
-  //==================================================
-
-  public /*override*/ get typeName(): string { return "Casing" }
-
-  public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
-  {
-    return new WellRenderStyle(targetId);
-  }
+  public /*override*/ get className(): string { return MultiBaseLogNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === MultiBaseLogNode.name || super.isA(className); }
 }

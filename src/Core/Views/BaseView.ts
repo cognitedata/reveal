@@ -16,6 +16,7 @@ import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { TargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
+import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
 
 export abstract class BaseView
 {
@@ -39,6 +40,7 @@ export abstract class BaseView
 
   //public set isVisible(value: boolean) { this._isVisible = value; }
   public get targetId(): TargetId { return this.getTarget().targetId; }
+  protected get renderTarget(): BaseTargetNode { return this.getTarget() as BaseTargetNode; }
 
   //==================================================
   // CONSTRUCTORS

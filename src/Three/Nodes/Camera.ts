@@ -15,8 +15,11 @@ import CameraControls from "camera-controls";
 import * as THREE from "three";
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { Range3 } from "@/Core/Geometry/Range3";
-import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { Ma } from "@/Core/Primitives/Ma";
+
+// https://andreasrohner.at/posts/Web%20Development/JavaScript/Simple-orbital-camera-controls-for-THREE-js/
+// https://github.com/yomotsu/camera-controls
+// https://www.npmjs.com/package/camera-controls
 
 export class Camera
 {
@@ -41,7 +44,6 @@ export class Camera
   constructor(target: ThreeRenderTargetNode)
   {
     this._camera = this.createPerspectiveCamera(target);
-    // https://andreasrohner.at/posts/Web%20Development/JavaScript/Simple-orbital-camera-controls-for-THREE-js/
     this._controls = new CameraControls(this._camera, target.domElement);
   }
 
@@ -82,7 +84,6 @@ export class Camera
     const targetPosition = boundingBox.center;
     const position = boundingBox.center;
 
-    // https://www.npmjs.com/package/camera-controls
     if (index < 0)
     {
       distanceFactor /= 2;
@@ -151,12 +152,23 @@ export class Camera
     if (!boundingBox || boundingBox.isEmpty)
       return false;
 
-    const controls = this.controls;
+    const perspectiveCamera = this.camera as THREE.PerspectiveCamera;
+    if (!perspectiveCamera)
+      return false;
 
-    // https://github.com/yomotsu/camera-controls
-    const targetPosition = boundingBox.center;
-    controls.setTarget(targetPosition.x, targetPosition.y, targetPosition.z);
-    controls.fitTo(ThreeConverter.toBox(boundingBox));
+    const fov = Ma.toRad(perspectiveCamera.fov);
+    const padding = 48;
+    const w = Math.max(boundingBox.x.delta, boundingBox.y.delta) + padding;
+    const h = boundingBox.z.delta + padding;
+
+    const fovX = fov * perspectiveCamera.aspect;
+    const fovY = fov;
+
+    const distanceX = (w / 2) / Math.tan(fovX / 2) + (w / 2);
+    const distanceY = (h / 2) / Math.tan(fovY / 2) + (h / 2);
+    const distance = Math.max(distanceX, distanceY);
+    const controls = this.controls;
+    controls.dolly(distance);
     return true;
   }
 
@@ -179,8 +191,6 @@ export class Camera
     camera.up.set(0, 0, 1);
     return camera;
   }
-
-
 
   // public switchCamera(isOrthographic) {
 

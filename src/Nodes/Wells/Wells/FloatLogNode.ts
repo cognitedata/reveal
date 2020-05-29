@@ -38,7 +38,7 @@ export class FloatLogNode extends BaseLogNode
   //==================================================
 
   public /*override*/ get className(): string { return FloatLogNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === BaseLogNode.name || super.isA(className); }
+  public /*override*/ isA(className: string): boolean { return className === FloatLogNode.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

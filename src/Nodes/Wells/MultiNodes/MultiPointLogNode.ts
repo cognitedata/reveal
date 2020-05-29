@@ -11,20 +11,17 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
-import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
+import { MultiBaseLogNode } from "@/Nodes/Wells/MultiNodes/MultiBaseLogNode";
 
-export class CasingLogNode extends BaseLogNode
+export class MultiPointLogNode extends MultiBaseLogNode
 {
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): FloatLog | null { return this._data as FloatLog; }
-  public set data(value: FloatLog | null) { this._data = value; }
   public get renderStyle(): WellRenderStyle | null { return this.getRenderStyle() as WellRenderStyle; }
 
   //==================================================
@@ -37,14 +34,14 @@ export class CasingLogNode extends BaseLogNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return CasingLogNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === CasingLogNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return MultiPointLogNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === MultiPointLogNode.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Casing" }
+  public /*override*/ get typeName(): string { return "PointLog" }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {

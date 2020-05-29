@@ -137,7 +137,6 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     if (controls)
       controls.addEventListener("update", () => ThreeRenderTargetNode.updateLightPositionStatic(self));
 
-
     this._scene.add(ambientLight);
     this._scene.add(directionalLight);
     this.render();

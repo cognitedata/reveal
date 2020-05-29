@@ -11,16 +11,16 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
-import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { Changes } from "@/Core/Views/Changes";
 
 import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
+import { MultiBaseLogNode } from "@/Nodes/Wells/MultiNodes/MultiBaseLogNode";
+import { MultiWellTrajectoryNode } from "@/Nodes/Wells/MultiNodes/MultiWellTrajectoryNode";
+import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 
-export class WellLogThreeView extends BaseThreeView
-{
-
+export class MultiWellLogThreeView extends BaseThreeView {
+  
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -31,10 +31,9 @@ export class WellLogThreeView extends BaseThreeView
   // INSTANCE PROPERTIES
   //==================================================
 
-  private get node(): BaseLogNode { return super.getNode() as BaseLogNode; }
+  private get node(): MultiBaseLogNode { return super.getNode() as MultiBaseLogNode; }
 
-  private get trajectoryNode(): WellTrajectoryNode | null
-  {
+  private get trajectoryNode(): MultiWellTrajectoryNode | null {
     const node = this.node;
     return !node ? null : node.trajectoryNode;
   }
@@ -43,26 +42,35 @@ export class WellLogThreeView extends BaseThreeView
   // OVERRIDES of BaseView
   //==================================================
 
-  public get /*override*/ isVisible(): boolean
-  {
+  public get /*override*/ isVisible(): boolean {
     const parent = this.trajectoryNode;
     return parent != null && parent.isVisible(this.renderTarget)
   }
 
-  protected /*override*/ updateCore(args: NodeEventArgs): void
-  {
+  protected /*override*/ updateCore(args: NodeEventArgs): void {
     super.updateCore(args);
   }
 
-  protected /*virtual*/ onShowCore(): void
-  {
+  protected /*virtual*/ onShowCore(): void {
     super.onShowCore();
     this.updateTrajectoryView();
   }
 
-  protected /*virtual*/ onHideCore(): void
-  {
+  protected /*virtual*/ onHideCore(): void {
     super.onHideCore();
+
+    const node = this.node;
+    const tree = node.getAncestorByType(BaseTreeNode);
+    if (!tree)
+    return;
+
+    for (const child of tree.getAncestors())
+    {
+      if (child.name == node.name && 
+    }
+
+
+    
     this.updateTrajectoryView();
   }
 
@@ -70,8 +78,7 @@ export class WellLogThreeView extends BaseThreeView
   // OVERRIDES of BaseView
   //==================================================
 
-  protected updateTrajectoryView(): void
-  {
+  protected updateTrajectoryView(): void {
     const trajectoryNode = this.trajectoryNode;
     if (!trajectoryNode)
       return;
