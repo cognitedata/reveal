@@ -69,7 +69,7 @@ async function main() {
     const delta = clock.getDelta();
     const controlsNeedUpdate = controls.update(delta);
 
-    const needsUpdate = controlsNeedUpdate || pointCloudGroup.needsRedraw || settingsChanged;
+    const needsUpdate = controlsNeedUpdate || revealManager.needsRedraw || settingsChanged;
 
     if (needsUpdate) {
       renderer.render(scene, camera);
