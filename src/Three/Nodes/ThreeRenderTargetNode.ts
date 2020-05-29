@@ -368,4 +368,41 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
   static updateLightPositionStatic(node: ThreeRenderTargetNode): void {
     node.updateLightPosition();
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public viewAll(): void 
+  {
+    const boundingBox = this.getBoundingBoxFromViews();
+    if (!boundingBox.isEmpty)
+      this.viewRange(boundingBox);
+  }
+
+  public onResize()
+  {
+    this.setRenderSize();
+    const aspect = this.aspectRatio;
+    for (const cameraNode of this.getChildrenByType(BaseCameraNode))
+      cameraNode.updateAspect(aspect);
+    this.invalidate();
+  }
+
+
 }

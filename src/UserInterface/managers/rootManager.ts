@@ -57,7 +57,8 @@ export default class RootManager {
 
   // View all nodes
   static viewNodes(root: RootNode) {
-    const target = root.activeTarget as BaseRenderTargetNode;
-    if (target) target.viewAll();
+    //const target = root.activeTarget as BaseRenderTargetNode;
+    //if (target)
+    //  target.viewAll();
   }
 }
