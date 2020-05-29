@@ -1,6 +1,5 @@
 
 import { Range3 } from "@/Core/Geometry/Range3";
-import { BaseCameraNode } from "@/Core/Nodes/BaseCameraNode";
 import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
 import { Base3DView } from "@/Core/Views/Base3DView";
 import { ViewInfo } from "@/Core/Views/ViewInfo";
@@ -11,7 +10,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
   // INSTANCE FIELDS
   //==================================================
 
-  private static margin: number = 24;
+  private static margin = 24;
   public static get windowWidth(): number { return window.innerWidth - 1 * BaseRenderTargetNode.margin; }
   public static get windowHeight(): number { return window.innerHeight - 1 * BaseRenderTargetNode.margin; }
 
@@ -64,7 +63,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
 
   protected abstract setRenderSize(): void;
   public abstract get domElement(): HTMLElement;
-  public /*virtual*/ viewRange(boundingBox: Range3): void { }
+  public /*virtual*/ onResize() { this.setRenderSize(); }
 
   //==================================================
   // INSTANCE METHODS
@@ -92,37 +91,6 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
       if (view instanceof Base3DView)
         view.getViewInfo(viewInfo);
     return viewInfo;
-  }
-
-  public getActiveCameraNode(): BaseCameraNode
-  {
-    const camera = this.getActiveChildByType(BaseCameraNode);
-    if (!camera)
-      throw Error("Can not find the camera, should be added");
-    return camera as BaseCameraNode;
-  }
-
-  public viewAll(): void 
-  {
-    const boundingBox = this.getBoundingBoxFromViews();
-    if (!boundingBox.isEmpty)
-      this.viewRange(boundingBox);
-  }
-
-  public onResize()
-  {
-    this.setRenderSize();
-    const aspect = this.aspectRatio;
-    for (const cameraNode of this.getChildrenByType(BaseCameraNode))
-      cameraNode.updateAspect(aspect);
-    this.invalidate();
-  }
-
-  protected addCameraNode(child: BaseCameraNode, isActive: boolean): void
-  {
-    // Convenience method, no checking that there is any other active or no updating. (use addChildInteractive() for that)
-    child.isActive = isActive;
-    this.addChild(child);
   }
 
   public invalidate(value?: boolean): void

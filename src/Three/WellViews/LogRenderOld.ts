@@ -30,7 +30,8 @@ import { DiscreteLog } from "@/Nodes/Wells/Logs/DiscreteLog";
 import { FloatLogSample } from "@/Nodes/Wells/Samples/FloatLogSample";
 import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
 
-export class LogRenderOld {
+export class LogRenderOld
+{
   //==================================================
   // INSTANCE FIELDS
   //==================================================
@@ -43,13 +44,15 @@ export class LogRenderOld {
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(trajectory: WellTrajectory, cameraPosition: Vector3, bandRange: Range1) {
+  public constructor(trajectory: WellTrajectory, cameraPosition: Vector3, bandRange: Range1)
+  {
     this.trajectory = trajectory;
     this.cameraPosition = cameraPosition;
     this.bandRange = bandRange;
   }
 
-  public addTickMarks(group: THREE.Group, bandColor: Color, textColor: Color, mdRange: Range1, tickFontSize: number, inc: number, right: boolean, left: boolean) {
+  public addTickMarks(group: THREE.Group, bandColor: Color, textColor: Color, mdRange: Range1, tickFontSize: number, inc: number, right: boolean, left: boolean)
+  {
 
     const geometry = new THREE.Geometry();
     const labelInc = mdRange.getBoldInc(inc, 5);
@@ -58,7 +61,8 @@ export class LogRenderOld {
     const position = Vector3.newZero;
     const tangent = Vector3.newZero;
 
-    for (const anyTick of mdRange.getTicks(inc)) {
+    for (const anyTick of mdRange.getTicks(inc))
+    {
       const md = Number(anyTick);
       if (!this.trajectory.getPositionAtMd(md, position))
         continue;
@@ -97,13 +101,15 @@ export class LogRenderOld {
   // INSTANCE METHODS: FloatLog
   //==================================================
 
-  public addLineFloatLog(group: THREE.Group, log: FloatLog, color: Color, right: boolean): void {
+  public addLineFloatLog(group: THREE.Group, log: FloatLog, color: Color, right: boolean): void
+  {
     const valueRange = log.range;
     const geometry = new THREE.Geometry();
     const position = Vector3.newZero;
     const tangent = Vector3.newZero;
 
-    for (const baseSample of log.samples) {
+    for (const baseSample of log.samples)
+    {
       if (!this.trajectory.getPositionAtMd(baseSample.md, position))
         continue;
 
@@ -128,13 +134,15 @@ export class LogRenderOld {
     group.add(line);
   }
 
-  public addSolidFloatLog(group: THREE.Group, log: FloatLog, right: boolean): void {
+  public addSolidFloatLog(group: THREE.Group, log: FloatLog, right: boolean): void
+  {
     const valueRange = log.range;
     const buffers = new TrianglesBuffers(2 * log.length, true);
     const position = Vector3.newZero;
     const tangent = Vector3.newZero;
 
-    for (const baseSample of log.samples) {
+    for (const baseSample of log.samples)
+    {
       if (!this.trajectory.getPositionAtMd(baseSample.md, position))
         continue;
 
@@ -181,7 +189,8 @@ export class LogRenderOld {
   // INSTANCE METHODS: DiscreteLog
   //==================================================
 
-  public addSolidDiscreteLog(group: THREE.Group, log: DiscreteLog, right: boolean): void {
+  public addSolidDiscreteLog(group: THREE.Group, log: DiscreteLog, right: boolean): void
+  {
     const valueRange = log.range;
     const buffers = new TrianglesBuffers(log.length * 4 - 2);
     const colors = new Array<number>();
@@ -189,7 +198,8 @@ export class LogRenderOld {
     const tangent = Vector3.newZero;
 
     let prevColor = Colors.white;
-    for (let i = 0; i < log.samples.length; i++) {
+    for (let i = 0; i < log.samples.length; i++)
+    {
       const sample = log.getAt(i);
       if (!this.trajectory.getPositionAtMd(sample.md, position))
         continue;
@@ -208,12 +218,14 @@ export class LogRenderOld {
       const startPosition = Vector3.addWithFactor(position, prependicular, this.bandRange.min);
       const endPosition = Vector3.addWithFactor(position, prependicular, this.bandRange.max);
 
-      if (i > 0) {
+      if (i > 0)
+      {
         buffers.addPair(startPosition, endPosition, normal, normal);
         TextureKit.add(colors, prevColor);
         TextureKit.add(colors, prevColor);
       }
-      if (i < log.samples.length - 1) {
+      if (i < log.samples.length - 1)
+      {
         const valueFraction = valueRange.getFraction(sample.value);
         const color = Color.hsv(valueFraction * 360, 255, 100);
         buffers.addPair(startPosition, endPosition, normal, normal);
@@ -242,7 +254,8 @@ export class LogRenderOld {
   // STATIC METHODS: Helpers
   //==================================================
 
-  private static setPolygonOffset(material: THREE.Material, value: number): void {
+  private static setPolygonOffset(material: THREE.Material, value: number): void
+  {
     material.polygonOffset = true;
     material.polygonOffsetFactor = value / 2;
     material.polygonOffsetUnits = value * 4;

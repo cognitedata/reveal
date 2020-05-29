@@ -163,7 +163,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
     }
     let cameraChanged = false;
     {
-      const camera = target.activeCamera;
+      const camera = this.camera;
       const cameraPosition = ThreeConverter.fromVector(camera.position);
       const cameraDirection = trajectory.range.center;
 

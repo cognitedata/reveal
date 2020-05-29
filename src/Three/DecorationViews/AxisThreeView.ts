@@ -41,7 +41,6 @@ export class AxisThreeView extends BaseGroupThreeView {
   private gridColor = Colors.red;
   private wallColor = Colors.red;
   private bgColor: Color = Colors.black;
-
   private zScale = 1;
 
   //==================================================
@@ -100,8 +99,7 @@ export class AxisThreeView extends BaseGroupThreeView {
     if (!object3D)
       return;
 
-    const target = this.renderTarget;
-    const camera = target.activeCamera;
+    const camera = this.camera;
     const cameraPosition = ThreeConverter.fromVector(camera.position);
 
     for (const child of object3D.children)
