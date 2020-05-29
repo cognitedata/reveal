@@ -9,8 +9,8 @@ import { OrderSectorsByVisibilityCoverage } from '@/datamodels/cad/sector/cullin
 import { ByVisibilityGpuSectorCuller, LevelOfDetail } from '@/internal';
 import { SectorMetadata, CadNode, CadModelMetadata } from '@/experimental';
 
-import { generateSectorTree } from '../testUtils/createSectorMetadata';
-import { createCadModelMetadata } from '../testUtils/createCadModelMetadata';
+import { generateSectorTree } from '../testutils/createSectorMetadata';
+import { createCadModelMetadata } from '../testutils/createCadModelMetadata';
 
 type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 

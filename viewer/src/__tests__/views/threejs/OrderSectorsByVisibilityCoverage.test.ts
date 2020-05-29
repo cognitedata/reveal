@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { mat4 } from 'gl-matrix';
 
-import { createSectorMetadata, SectorTree } from '../../testUtils/createSectorMetadata';
+import { createSectorMetadata, SectorTree } from '../../testutils/createSectorMetadata';
 import { Box3 } from '@/utilities/Box3';
 import { GpuOrderSectorsByVisibilityCoverage, traverseDepthFirst } from '@/internal';
 import { SectorSceneImpl } from '@/datamodels/cad/sector/SectorScene';

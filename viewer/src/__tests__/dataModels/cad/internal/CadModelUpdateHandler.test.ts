@@ -14,8 +14,8 @@ import { SectorCuller } from '@/datamodels/cad/sector/culling/SectorCuller';
 
 import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
 
-import { createCadModelMetadata } from '../../../testUtils/createCadModelMetadata';
-import { generateSectorTree } from '../../../testUtils/createSectorMetadata';
+import { createCadModelMetadata } from '../../../testutils/createCadModelMetadata';
+import { generateSectorTree } from '../../../testutils/createSectorMetadata';
 
 describe('CadModelUpdateHandler', () => {
   const modelSectorProvider: CadSectorProvider = {
