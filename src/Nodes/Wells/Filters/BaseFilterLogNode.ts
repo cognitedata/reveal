@@ -11,20 +11,20 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { ColorType } from "@/Core/Enums/ColorType";
+import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
+import { FilterLogFolder } from "@/Nodes/Wells/Filters/FilterLogFolder";
+import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
+import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
+import { Util } from "@/Core/Primitives/Util";
+import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { TargetId } from "@/Core/Primitives/TargetId";
-import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
-import { MultiBaseLogNode } from "@/Nodes/Wells/MultiNodes/MultiBaseLogNode";
-
-export class MultiWellTrajectoryNode extends MultiBaseLogNode
+export abstract class BaseFilterLogNode extends BaseVisualNode
 {
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get renderStyle(): WellRenderStyle | null { return this.getRenderStyle() as WellRenderStyle; }
+  public get filterLogFolder(): FilterLogFolder | null { return this.getAncestorByType(FilterLogFolder); }
 
   //==================================================
   // CONSTRUCTORS
@@ -36,38 +36,34 @@ export class MultiWellTrajectoryNode extends MultiBaseLogNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return MultiWellTrajectoryNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === MultiWellTrajectoryNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return BaseFilterLogNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === BaseFilterLogNode.name || super.isA(className); }
 
   //==================================================
-  // OVERRIDES of BaseNode
+  // VIRTUAL METHODS
   //==================================================
 
-  public /*override*/ get typeName(): string { return "WellTrajectory" }
+  public abstract get wellLogType(): WellLogType;
 
-  public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
+
+  public isEqual(other: BaseLogNode): boolean
   {
-    return new WellRenderStyle(targetId);
+    return this.wellLogType == other.wellLogType && Util.equalsIgnoreCase(this.name, other.name);
   }
 
-  public /*override*/ verifyRenderStyle(style: BaseRenderStyle)
+  public * getAllLogs(): Iterable<BaseLogNode>
   {
-    if (!(style instanceof WellRenderStyle))
+    const tree = this.getAncestorByType(BaseTreeNode);
+    if (!tree)
       return;
 
-    if (!this.supportsColorType(style.colorType))
-      style.colorType = ColorType.NodeColor;
-  }
-
-  public /*override*/ supportsColorType(colorType: ColorType): boolean
-  {
-    switch (colorType)
+    for (const logNode of tree.getDescendantsByType(BaseLogNode))
     {
-      case ColorType.NodeColor:
-        return true;
-
-      default:
-        return false;
+      if (logNode.isEqual(this))
+        yield logNode;
     }
   }
 }

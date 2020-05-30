@@ -23,15 +23,9 @@ import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
-import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
 
-export class PointLogThreeView extends BaseGroupThreeView {
-  //==================================================
-  // CONSTRUCTORS
-  //==================================================
-
-  public constructor() { super(); }
-
+export class PointLogFilterView extends BaseGroupThreeView
+{
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
@@ -40,19 +34,32 @@ export class PointLogThreeView extends BaseGroupThreeView {
   protected get style(): WellRenderStyle { return super.getStyle() as WellRenderStyle; }
 
   //==================================================
+  // CONSTRUCTORS
+  //==================================================
+
+  public constructor() { super(); }
+
+  //==================================================
   // OVERRIDES of BaseView
   //==================================================
 
-  public get /*override*/ isVisible(): boolean {
-    const parent = this.node.getAncestorByType(WellTrajectoryNode);
+  public get /*override*/ isVisible(): boolean
+  {
+    const parent = this.node.trajectoryNode;
     return parent != null && parent.isVisible(this.renderTarget)
   }
 
-  protected /*override*/ updateCore(args: NodeEventArgs): void {
+  protected /*override*/ updateCore(args: NodeEventArgs): void
+  {
     super.updateCore(args);
   }
 
-  public calculateBoundingBoxCore(): Range3 | undefined {
+  //==================================================
+  // OVERRIDES of Base3DView
+  //==================================================
+
+  public /*override*/ calculateBoundingBoxCore(): Range3 | undefined
+  {
     const node = this.node;
     const trajectory = node.trajectory;
     if (!trajectory)
@@ -64,7 +71,8 @@ export class PointLogThreeView extends BaseGroupThreeView {
 
     const range = new Range3();
     const position: Vector3 = Vector3.newZero;
-    for (let i = 0; i < log.samples.length; i++) {
+    for (let i = 0; i < log.samples.length; i++)
+    {
       const sample = log.getAt(i);
       if (trajectory.getPositionAtMd(sample.md, position))
         range.add(position);
@@ -78,7 +86,8 @@ export class PointLogThreeView extends BaseGroupThreeView {
   // OVERRIDES of BaseGroupThreeView
   //==================================================
 
-  protected /*override*/ createObject3DCore(): THREE.Object3D | null {
+  protected /*override*/ createObject3DCore(): THREE.Object3D | null
+  {
     const node = this.node;
     const color = node.color;
     const trajectory = node.trajectory;
@@ -98,7 +107,8 @@ export class PointLogThreeView extends BaseGroupThreeView {
     const up = new Vector3(0, 0, 1);
     const position: Vector3 = Vector3.newZero;
     const tangent: Vector3 = Vector3.newZero;
-    for (let i = 0; i < log.samples.length; i++) {
+    for (let i = 0; i < log.samples.length; i++)
+    {
 
       const sample = log.getAt(i);
       if (!trajectory.getPositionAtMd(sample.md, position))
@@ -110,7 +120,8 @@ export class PointLogThreeView extends BaseGroupThreeView {
       const sphere = new THREE.Mesh(geometry, material);
       sphere.scale.z = 0.5;
 
-      if (Math.abs(tangent.z) < 0.999) {
+      if (Math.abs(tangent.z) < 0.999)
+      {
         const axis = up.getCross(tangent);
         // determine the amount to rotate
         const radians = Math.acos(tangent.getDot(up));
@@ -126,7 +137,8 @@ export class PointLogThreeView extends BaseGroupThreeView {
   // INSTANCE METHODS
   //==================================================
 
-  protected get trajectoryRadius(): number {
+  protected get trajectoryRadius(): number
+  {
     const node = this.node;
     if (!node)
       return 0;

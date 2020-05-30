@@ -28,7 +28,8 @@ import { DiscreteLog } from "@/Nodes/Wells/Logs/DiscreteLog";
 import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 
-export class LogRender {
+export class LogRender
+{
   //==================================================
   // INSTANCE FIELDS
   //==================================================
@@ -40,7 +41,8 @@ export class LogRender {
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(bandRange: Range1, mdRange: Range1) {
+  public constructor(bandRange: Range1, mdRange: Range1)
+  {
     this.bandRange = bandRange;
     this.mdRange = mdRange;
   }
@@ -49,7 +51,8 @@ export class LogRender {
   // INSTANCE METHODS: Band
   //==================================================
 
-  public createCanvas(): Canvas {
+  public createCanvas(): Canvas
+  {
     const canvasDy = 100;
     const canvasDx = canvasDy * this.mdRange.delta / this.bandRange.delta;
     const canvas = new Canvas(canvasDx, canvasDy);
@@ -62,12 +65,14 @@ export class LogRender {
   //==================================================
 
   public createBands(parent: THREE.Object3D, trajectory: WellTrajectory, cameraPosition: Vector3, useRightBand: boolean, useLeftBand: boolean):
-    [THREE.Mesh | null, THREE.Mesh | null] {
+    [THREE.Mesh | null, THREE.Mesh | null]
+  {
     const mdInc = 10;
     let more = true;
 
     let sampleCount = 0;
-    for (let md = this.mdRange.min; more; md += mdInc) {
+    for (let md = this.mdRange.min; more; md += mdInc)
+    {
       more = md < this.mdRange.max;
       sampleCount++;
     }
@@ -82,7 +87,8 @@ export class LogRender {
     const position = Vector3.newZero;
     const tangent = Vector3.newZero;
 
-    for (let md = this.mdRange.min; more; md += mdInc) {
+    for (let md = this.mdRange.min; more; md += mdInc)
+    {
       more = md < this.mdRange.max;
       if (!more)
         md = this.mdRange.max;
@@ -100,12 +106,14 @@ export class LogRender {
       const prependicular = cameraDirection.getNormal(tangent);
       const normal = prependicular.getNormal(tangent);
 
-      if (rightBuffers) {
+      if (rightBuffers)
+      {
         const startPosition = Vector3.addWithFactor(position, prependicular, this.bandRange.min);
         const endPosition = Vector3.addWithFactor(position, prependicular, this.bandRange.max);
         rightBuffers.addPair2(startPosition, endPosition, normal, fraction);
       }
-      if (leftBuffers) {
+      if (leftBuffers)
+      {
         normal.negate();
         const startPosition = Vector3.addWithFactor(position, prependicular, -this.bandRange.min);
         const endPosition = Vector3.addWithFactor(position, prependicular, -this.bandRange.max);
@@ -113,7 +121,8 @@ export class LogRender {
       }
     }
     let rightBand = false;
-    for (const buffers of [rightBuffers, leftBuffers]) {
+    for (const buffers of [rightBuffers, leftBuffers])
+    {
       rightBand = !rightBand;
       if (!buffers)
         continue;
@@ -131,54 +140,63 @@ export class LogRender {
     return bands;
   }
 
-  public addAnnotation(canvas: Canvas, fontSize: number, rightBand: boolean): void {
+  public addAnnotation(canvas: Canvas, fontSize: number, rightBand: boolean): void
+  {
     const inc = 50;
     canvas.beginPath();
 
-    for (const anyTick of this.mdRange.getTicks(inc)) {
+    for (const anyTick of this.mdRange.getTicks(inc))
+    {
       const md = Number(anyTick);
       const fraction = this.mdRange.getFraction(md);
       canvas.addVerticalLine(fraction);
     }
     canvas.drawPath();
     const labelInc = this.mdRange.getBoldInc(inc, 4);
-    for (const anyTick of this.mdRange.getTicks(labelInc)) {
+    for (const anyTick of this.mdRange.getTicks(labelInc))
+    {
       const md = Number(anyTick);
       const fraction = this.mdRange.getFraction(md);
       canvas.drawText(fraction, `${md}`, fontSize, null, rightBand);
     }
   }
 
-  public addFloatLog(canvas: Canvas, log: FloatLog | null, color: Color, fill: boolean): void {
+  public addFloatLog(canvas: Canvas, log: FloatLog | null, color: Color, fill: boolean): void
+  {
     if (!log)
       return;
 
     const valueRange = log.range;
     canvas.beginFunction();
-    for (let i = 0; i < log.samples.length; i++) {
+    for (let i = 0; i < log.samples.length; i++)
+    {
       const sample = log.getAt(i);
       const mdFraction = this.mdRange.getFraction(sample.md);
       const valueFraction = valueRange.getFraction(sample.value);
       canvas.addFunctionValue(mdFraction, valueFraction);
     }
     canvas.closeFunction();
-    if (fill) {
+    if (fill)
+    {
       canvas.fillPathBySemiTransparentGradient(color, 1);
     }
-    else {
+    else
+    {
       canvas.drawPath(null, 3);
       canvas.drawPath(color, 1);
     }
   }
 
-  public addDiscreteLog(canvas: Canvas, log: DiscreteLog | null): void {
+  public addDiscreteLog(canvas: Canvas, log: DiscreteLog | null): void
+  {
     if (!log)
       return;
 
     let prevColor = Colors.white;
     let prevMdFraction = Number.NaN;
 
-    for (let i = 0; i < log.samples.length; i++) {
+    for (let i = 0; i < log.samples.length; i++)
+    {
       const sample = log.getAt(i);
       const color = Colors.getNextColor(sample.value);
       const mdFraction = this.mdRange.getFraction(sample.md);
@@ -190,11 +208,13 @@ export class LogRender {
     }
   }
 
-  public addPointLog(canvas: Canvas, log: PointLog | null, fontSize: number, rightBand: boolean): void {
+  public addPointLog(canvas: Canvas, log: PointLog | null, fontSize: number, rightBand: boolean): void
+  {
     if (!log)
       return;
 
-    for (let i = 0; i < log.samples.length; i++) {
+    for (let i = 0; i < log.samples.length; i++)
+    {
       const sample = log.getAt(i);
       const mdFraction = this.mdRange.getFraction(sample.md);
       canvas.drawText(mdFraction, sample.label, fontSize, null, rightBand);

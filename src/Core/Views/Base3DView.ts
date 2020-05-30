@@ -58,7 +58,7 @@ export abstract class Base3DView extends BaseView
   // INSTANCE METHODS: 
   //==================================================
 
-  public /*virtual*/ getViewInfo(viewInfo: ViewInfo): void
+  public getViewInfo(viewInfo: ViewInfo): void
   {
     return this.getViewInfoCore(viewInfo);
   }

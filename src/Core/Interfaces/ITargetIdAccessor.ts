@@ -13,7 +13,7 @@
 
 import { TargetId } from "@/Core/Primitives/TargetId";
 
-export interface TargetIdAccessor
+export interface ITargetIdAccessor
 {
   targetId: TargetId;
 }

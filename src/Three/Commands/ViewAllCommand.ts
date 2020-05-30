@@ -16,9 +16,9 @@ export class ViewAllCommand extends ThreeRenderTargetCommand {
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*virtual*/ get name(): string { return "View all" }
+  public /*override*/ get name(): string { return "View all" }
   
-  protected /*virtual*/ invokeCore(): boolean {
+  protected /*override*/ invokeCore(): boolean {
     if (!this.target)
       return false;
 

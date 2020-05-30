@@ -20,6 +20,8 @@ import { TargetId } from "@/Core/Primitives/TargetId";
 import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
 import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
 import { WellNode } from "@/Nodes/Wells/Wells/WellNode";
+import { FilterLogFolder } from "@/Nodes/Wells/Filters/FilterLogFolder";
+import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 
 export class WellTrajectoryNode extends BaseVisualNode
 {
@@ -84,4 +86,18 @@ export class WellTrajectoryNode extends BaseVisualNode
         return false;
     }
   }
+
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
+
+  public getFilterLogFolder(): FilterLogFolder | null
+  {
+    const tree = this.getAncestorByType(BaseTreeNode);
+    if (!tree)
+      return null;
+
+    return tree.getChildByType(FilterLogFolder);
+  }
+
 }

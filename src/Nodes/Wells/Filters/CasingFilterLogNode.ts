@@ -14,9 +14,10 @@
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
-import { MultiBaseLogNode } from "@/Nodes/Wells/MultiNodes/MultiBaseLogNode";
+import { BaseFilterLogNode } from "@/Nodes/Wells/Filters/BaseFilterLogNode";
+import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
 
-export class MultiCasingLogNode extends MultiBaseLogNode
+export class CasingFilterLogNode extends BaseFilterLogNode
 {
   //==================================================
   // INSTANCE PROPERTIES
@@ -34,8 +35,8 @@ export class MultiCasingLogNode extends MultiBaseLogNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return MultiCasingLogNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === MultiCasingLogNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return CasingFilterLogNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === CasingFilterLogNode.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
@@ -47,4 +48,10 @@ export class MultiCasingLogNode extends MultiBaseLogNode
   {
     return new WellRenderStyle(targetId);
   }
+
+  //==================================================
+  // OVERRIDES of BaseLogNode
+  //==================================================
+
+  public /*override*/  get wellLogType(): WellLogType { return WellLogType.Casing; }
 }

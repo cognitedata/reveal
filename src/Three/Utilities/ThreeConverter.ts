@@ -17,16 +17,15 @@ import * as color from "color"
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Range3 } from "@/Core/Geometry/Range3";
 
+const MaxByte = 255;
 
 export class ThreeConverter
 {
-  static readonly MaxByte = 255;
-
   //==================================================
   // STATIC METHODS
   //==================================================
 
-  public static toColor(value: color): THREE.Color { return new THREE.Color(value.red() / this.MaxByte, value.green() / this.MaxByte, value.blue() / this.MaxByte); }
+  public static toColor(value: color): THREE.Color { return new THREE.Color(value.red() / MaxByte, value.green() / MaxByte, value.blue() / MaxByte); }
   public static toVector(value: Vector3): THREE.Vector3 { return new THREE.Vector3(value.x, value.y, value.z); }
   public static fromVector(value: THREE.Vector3): Vector3 { return new Vector3(value.x, value.y, value.z); }
 

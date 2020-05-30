@@ -11,12 +11,15 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import { ColorType } from "@/Core/Enums/ColorType";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
-import { MultiBaseLogNode } from "@/Nodes/Wells/MultiNodes/MultiBaseLogNode";
+import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
+import { BaseNode } from "@/Core/Nodes/BaseNode";
+import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
+import { BaseFilterLogNode } from "@/Nodes/Wells/Filters/BaseFilterLogNode";
 
-export class MultiPointLogNode extends MultiBaseLogNode
+export class FilterLogFolder extends BaseNode
 {
   //==================================================
   // INSTANCE PROPERTIES
@@ -34,17 +37,52 @@ export class MultiPointLogNode extends MultiBaseLogNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return MultiPointLogNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === MultiPointLogNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return FilterLogFolder.name; }
+  public /*override*/ isA(className: string): boolean { return className === FilterLogFolder.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "PointLog" }
+  public /*override*/ get typeName(): string { return "WellTrajectory" }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
     return new WellRenderStyle(targetId);
+  }
+
+  public /*override*/ verifyRenderStyle(style: BaseRenderStyle)
+  {
+    if (!(style instanceof WellRenderStyle))
+      return;
+
+    if (!this.supportsColorType(style.colorType))
+      style.colorType = ColorType.NodeColor;
+  }
+
+  public /*override*/ supportsColorType(colorType: ColorType): boolean
+  {
+    switch (colorType)
+    {
+      case ColorType.NodeColor:
+        return true;
+
+      default:
+        return false;
+    }
+  }
+
+  //==================================================
+  // INSTANCE FUNCTIONS
+  //==================================================
+
+  public getFilterLogNode(logNode: BaseLogNode): BaseFilterLogNode | null
+  {
+    for (const filterLogNode of this.getChildrenByType(BaseFilterLogNode))
+    {
+      if (filterLogNode.isEqual(logNode))
+        return filterLogNode;
+    }
+    return null;
   }
 }

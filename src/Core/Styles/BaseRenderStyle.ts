@@ -13,9 +13,9 @@
 
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
-import { TargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
+import { ITargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
 
-export abstract class BaseRenderStyle extends BaseStyle implements TargetIdAccessor
+export abstract class BaseRenderStyle extends BaseStyle implements ITargetIdAccessor
 {
   //==================================================
   // INSTANCE FIELDS

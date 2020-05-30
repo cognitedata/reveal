@@ -16,7 +16,8 @@ import * as THREE from "three";
 import { ThreeLabel } from "@/Three/Utilities/ThreeLabel";
 import * as Color from "color"
 
-export class Canvas {
+export class Canvas
+{
   //==================================================
   // INSTANCE FIELDS
   //==================================================
@@ -33,10 +34,12 @@ export class Canvas {
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(dx: number, dy: number) {
+  public constructor(dx: number, dy: number)
+  {
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
-    if (!context) {
+    if (!context)
+    {
       this.canvas = new HTMLCanvasElement();
       this.context = new CanvasRenderingContext2D();
       return;
@@ -52,7 +55,8 @@ export class Canvas {
   // INSTANCE METHODS: Misc
   //==================================================
 
-  public createTexture(): THREE.CanvasTexture | null {
+  public createTexture(): THREE.CanvasTexture | null
+  {
     return ThreeLabel.createTexture(this.canvas);
   }
 
@@ -60,7 +64,8 @@ export class Canvas {
   // INSTANCE METHODS: 
   //==================================================
 
-  public clear(color: Color): void {
+  public clear(color: Color): void
+  {
     this.context.fillStyle = Canvas.getColor(color);
     this.context.fillRect(0, 0, this.dx, this.dy);
   }
@@ -71,22 +76,26 @@ export class Canvas {
   // INSTANCE METHODS: Path 
   //==================================================
 
-  public beginPath() {
+  public beginPath()
+  {
     this.context.beginPath();
   }
 
-  public closePath() {
+  public closePath()
+  {
     this.context.closePath();
   }
 
-  public drawPath(color: Color | null = null, lineWidth = 1) {
+  public drawPath(color: Color | null = null, lineWidth = 1)
+  {
     this.context.lineCap = 'round';
     this.context.lineWidth = lineWidth;
     this.context.strokeStyle = Canvas.getColor(color);
     this.context.stroke();
   }
 
-  public addVerticalLine(x: number) {
+  public addVerticalLine(x: number)
+  {
     x *= this.dx;
     this.context.moveTo(x, 0);
     this.context.lineTo(x, this.dy);
@@ -96,23 +105,27 @@ export class Canvas {
   // INSTANCE METHODS: Function path
   //==================================================
 
-  public beginFunction() {
+  public beginFunction()
+  {
     this.beginPath();
     this.firstX = Number.NaN;
   }
 
-  public closeFunction() {
+  public closeFunction()
+  {
     this.context.lineTo(this.lastX, 0);
     this.lastX = Number.NaN;
     this.firstX = Number.NaN;
   }
 
-  public addFunctionValue(x: number, y: number) {
+  public addFunctionValue(x: number, y: number)
+  {
     // assume: x and y in [0,1]
     x *= this.dx;
     y *= this.dy;
 
-    if (Number.isNaN(this.firstX)) {
+    if (Number.isNaN(this.firstX))
+    {
       this.beginPath();
       this.firstX = x;
       this.context.moveTo(x, 0);
@@ -125,7 +138,8 @@ export class Canvas {
   // INSTANCE METHODS: Path 
   //==================================================
 
-  public drawText(x: number, text: string, fontSize: number, color: Color | null, rightBand: boolean, outerMost: boolean = true) {
+  public drawText(x: number, text: string, fontSize: number, color: Color | null, rightBand: boolean, outerMost: boolean = true)
+  {
     // https://www.javascripture.com/CanvasRenderingContext2D
     const borderSize = fontSize * 0.1;
     const font = `bolder ${fontSize}px Helvetica`;
@@ -154,7 +168,8 @@ export class Canvas {
   // INSTANCE METHODS: Filling
   //==================================================
 
-  public fillPath(color: Color, alphaFraction = 1) {
+  public fillPath(color: Color, alphaFraction = 1)
+  {
     if (alphaFraction !== 1)
       color = color.alpha(alphaFraction);
 
@@ -162,7 +177,8 @@ export class Canvas {
     this.context.fill();
   }
 
-  public fillRect(x0: number, x1: number, color: Color, alphaFraction = 1) {
+  public fillRect(x0: number, x1: number, color: Color, alphaFraction = 1)
+  {
     if (alphaFraction !== 1)
       color = color.alpha(alphaFraction);
 
@@ -173,7 +189,8 @@ export class Canvas {
   }
 
 
-  public fillPathBySemiTransparentGradient(color: Color, alphaFraction = 1) {
+  public fillPathBySemiTransparentGradient(color: Color, alphaFraction = 1)
+  {
     const operation = this.context.globalCompositeOperation;
     this.context.globalCompositeOperation = 'darker';
     if (alphaFraction !== 1)

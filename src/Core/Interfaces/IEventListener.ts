@@ -14,6 +14,7 @@
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 
-export interface IEventListener {
+export interface IEventListener
+{
   processEvent(sender: BaseNode, args: NodeEventArgs): void;
 }

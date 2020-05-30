@@ -13,8 +13,8 @@
 
 export enum WellLogType
 {
+  Casing,
+  Discrete, 
   Float, 
   Point, 
-  Discrete, 
-  Casing,
 }

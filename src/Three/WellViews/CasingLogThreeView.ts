@@ -24,18 +24,12 @@ import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { RenderSample } from "@/Nodes/Wells/Samples/RenderSample";
 import { Colors } from "@/Core/Primitives/Colors";
-import { TrajectoryBufferGeometry } from "@/Three/WellViews/TrajectoryBufferGeometry";
+import { TrajectoryBufferGeometry } from "@/Three/WellViews/Helpers/TrajectoryBufferGeometry";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
 
 export class CasingLogThreeView extends BaseGroupThreeView
 {
-  //==================================================
-  // CONSTRUCTORS
-  //==================================================
-
-  public constructor() { super(); }
-
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
@@ -44,12 +38,18 @@ export class CasingLogThreeView extends BaseGroupThreeView
   protected get style(): WellRenderStyle { return super.getStyle() as WellRenderStyle; }
 
   //==================================================
+  // CONSTRUCTORS
+  //==================================================
+
+  public constructor() { super(); }
+
+  //==================================================
   // OVERRIDES of BaseView
   //==================================================
 
   public get /*override*/ isVisible(): boolean
   {
-    const parent = this.node.getAncestorByType(WellTrajectoryNode);
+    const parent = this.node.trajectoryNode;
     return parent != null && parent.isVisible(this.renderTarget)
   }
 
@@ -58,7 +58,11 @@ export class CasingLogThreeView extends BaseGroupThreeView
     super.updateCore(args);
   }
 
-  public calculateBoundingBoxCore(): Range3 | undefined
+  //==================================================
+  // OVERRIDES of Base3DView
+  //==================================================
+
+  public /*override*/ calculateBoundingBoxCore(): Range3 | undefined
   {
     const node = this.node;
     const trajectory = node.trajectory;

@@ -17,7 +17,7 @@ import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 export class WellNode extends BaseVisualNode
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   public wellHead = Vector3.newZero;

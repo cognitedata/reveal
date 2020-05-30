@@ -43,13 +43,13 @@ export abstract class BaseThreeView extends Base3DView
     this.invalidateTarget();
   }
 
-  protected /*virtual*/ onShowCore(): void
+  protected /*override*/ onShowCore(): void
   {
     super.onShowCore();
     this.invalidateTarget();
   }
 
-  protected /*virtual*/ onHideCore(): void
+  protected /*override*/ onHideCore(): void
   {
     super.onHideCore();
     this.invalidateTarget();

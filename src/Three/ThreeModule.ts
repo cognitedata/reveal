@@ -42,23 +42,31 @@ import { FloatLogNode } from "@/Nodes/Wells/Wells/FloatLogNode";
 import { DiscreteLogNode } from "@/Nodes/Wells/Wells/DiscreteLogNode";
 
 import { WellTrajectoryThreeView } from "@/Three/WellViews/WellTrajectoryThreeView";
-import { PointLogThreeView } from "@/Three/WellViews/PointLogThreeView";
-import { WellLogThreeView } from "@/Three/WellViews/WellLogThreeView";
+import { PointLogFilterView } from "@/Three/WellViews/PointLogFilterView";
+import { BaseLogFilterView } from "@/Three/WellViews/BaseLogFilterView";
 import { CasingLogNode } from "@/Nodes/Wells/Wells/CasingLogNode";
 import { CasingLogThreeView } from "@/Three/WellViews/CasingLogThreeView";
 import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
+import { CasingFilterLogNode } from "@/Nodes/Wells/Filters/CasingFilterLogNode";
+import { PointFilterLogNode } from "@/Nodes/Wells/Filters/PointFilterLogNode";
+import { FloatFilterLogNode } from "@/Nodes/Wells/Filters/FloatFilterLogNode";
+import { DiscreteFilterLogNode } from "@/Nodes/Wells/Filters/DiscreteFilterLogNode";
+import { FilterLogFilterView } from "@/Three/WellViews/FilterLogFilterView";
 
 
-export class ThreeModule extends BaseModule {
+export class ThreeModule extends BaseModule
+{
   //==================================================
   // OVERRIDES of BaseModule
   //==================================================
 
-  protected /*override*/ installPackagesCore(): void {
+  protected /*override*/ installPackagesCore(): void
+  {
     CameraControls.install({ THREE });
   }
 
-  protected /*override*/ registerViewsCore(factory: ViewFactory): void {
+  protected /*override*/ registerViewsCore(factory: ViewFactory): void
+  {
     factory.register(AxisNode.name, AxisThreeView, ThreeRenderTargetNode.name);
     factory.register(PointsNode.name, PointsThreeView, ThreeRenderTargetNode.name);
     factory.register(PolylinesNode.name, PolylinesThreeView, ThreeRenderTargetNode.name);
@@ -67,17 +75,25 @@ export class ThreeModule extends BaseModule {
 
     // Wells:
     factory.register(WellTrajectoryNode.name, WellTrajectoryThreeView, ThreeRenderTargetNode.name);
-    factory.register(PointLogNode.name, PointLogThreeView, ThreeRenderTargetNode.name);
-    factory.register(FloatLogNode.name, WellLogThreeView, ThreeRenderTargetNode.name);
-    factory.register(DiscreteLogNode.name, WellLogThreeView, ThreeRenderTargetNode.name);
+    factory.register(PointLogNode.name, PointLogFilterView, ThreeRenderTargetNode.name);
+    factory.register(FloatLogNode.name, BaseLogFilterView, ThreeRenderTargetNode.name);
+    factory.register(DiscreteLogNode.name, BaseLogFilterView, ThreeRenderTargetNode.name);
     factory.register(CasingLogNode.name, CasingLogThreeView, ThreeRenderTargetNode.name);
+
+    // Log filters
+    factory.register(PointFilterLogNode.name, FilterLogFilterView, ThreeRenderTargetNode.name);
+    factory.register(FloatFilterLogNode.name, FilterLogFilterView, ThreeRenderTargetNode.name);
+    factory.register(DiscreteFilterLogNode.name, FilterLogFilterView, ThreeRenderTargetNode.name);
+    factory.register(CasingFilterLogNode.name, FilterLogFilterView, ThreeRenderTargetNode.name);
   }
 
-  protected /*override*/ createRootCore(): BaseRootNode {
+  protected /*override*/ createRootCore(): BaseRootNode
+  {
     return new RootNode();
   }
 
-  public initializeWhenPopulated(root: BaseRootNode): void {
+  public initializeWhenPopulated(root: BaseRootNode): void
+  {
     root.initializeRecursive();
 
     // Set all axis visible
@@ -85,7 +101,8 @@ export class ThreeModule extends BaseModule {
       for (const node of root.getDescendantsByType(AxisNode))
         node.setVisibleInteractive(true, target);
 
-    document.body.onresize = () => {
+    document.body.onresize = () =>
+    {
       for (const target of root.targets.getChildrenByType(BaseRenderTargetNode))
         target.onResize();
     };

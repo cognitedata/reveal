@@ -16,6 +16,7 @@ import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
+import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
 
 export class DiscreteLogNode extends BaseLogNode
 {
@@ -51,4 +52,9 @@ export class DiscreteLogNode extends BaseLogNode
     return new WellRenderStyle(targetId);
   }
 
+  //==================================================
+  // OVERRIDES of BaseLogNode
+  //==================================================
+
+  public /*override*/  get wellLogType(): WellLogType { return WellLogType.Discrete; }
 }

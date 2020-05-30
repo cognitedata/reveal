@@ -28,17 +28,17 @@ import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 export class PointsThreeView extends BaseGroupThreeView
 {
   //==================================================
-  // CONSTRUCTORS
-  //==================================================
-
-  public constructor() { super(); }
-
-  //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
   protected get node(): PointsNode { return super.getNode() as PointsNode; }
   protected get style(): PointsRenderStyle { return super.getStyle() as PointsRenderStyle; }
+
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
+
+  public constructor() { super(); }
 
   //==================================================
   // OVERRIDES of BaseView
@@ -49,7 +49,11 @@ export class PointsThreeView extends BaseGroupThreeView
     super.updateCore(args);
   }
 
-  public calculateBoundingBoxCore(): Range3 | undefined
+  //==================================================
+  // OVERRIDES of Base3DView
+  //==================================================
+
+  public /*override*/ calculateBoundingBoxCore(): Range3 | undefined
   {
     const boundingBox = this.node.boundingBox;
     if (!boundingBox)

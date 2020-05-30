@@ -14,9 +14,10 @@
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
-import { MultiBaseLogNode } from "@/Nodes/Wells/MultiNodes/MultiBaseLogNode";
+import { BaseFilterLogNode } from "@/Nodes/Wells/Filters/BaseFilterLogNode";
+import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
 
-export class MultiFloatLogNode extends MultiBaseLogNode
+export class FloatFilterLogNode extends BaseFilterLogNode
 {
   //==================================================
   // INSTANCE PROPERTIES
@@ -34,8 +35,8 @@ export class MultiFloatLogNode extends MultiBaseLogNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return MultiFloatLogNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === MultiFloatLogNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return FloatFilterLogNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === FloatFilterLogNode.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
@@ -47,4 +48,10 @@ export class MultiFloatLogNode extends MultiBaseLogNode
   {
     return new WellRenderStyle(targetId);
   }
+
+  //==================================================
+  // OVERRIDES of BaseLogNode
+  //==================================================
+
+  public /*override*/  get wellLogType(): WellLogType { return WellLogType.Float; }
 }

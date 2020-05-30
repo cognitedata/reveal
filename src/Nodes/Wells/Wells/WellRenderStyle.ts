@@ -17,7 +17,8 @@ import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
 
-export class WellRenderStyle extends BaseRenderStyle {
+export class WellRenderStyle extends BaseRenderStyle
+{
   //==================================================
   // INSTANCE FIELDS
   //==================================================
@@ -38,7 +39,8 @@ export class WellRenderStyle extends BaseRenderStyle {
   // OVERRIDES of BaseRenderStyle
   //==================================================
 
-  public clone(): BaseRenderStyle {
+  public clone(): BaseRenderStyle
+  {
     return Lodash.cloneDeep<WellRenderStyle>(this);
   }
 }

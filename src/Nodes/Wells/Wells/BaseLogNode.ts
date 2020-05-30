@@ -16,11 +16,16 @@ import { BaseLog } from "@/Nodes/Wells/Logs/BaseLog";
 import { WellNode } from "@/Nodes/Wells/Wells/WellNode";
 import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
 import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
+import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
+import { BaseFilterLogNode } from "@/Nodes/Wells/Filters/BaseFilterLogNode";
+import { Util } from "@/Core/Primitives/Util";
+import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
+import { FilterLogFolder } from "@/Nodes/Wells/Filters/FilterLogFolder";
 
 export abstract class BaseLogNode extends BaseVisualNode
 {
   //==================================================
-  // FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
   protected _data: BaseLog | null = null;
@@ -47,4 +52,19 @@ export abstract class BaseLogNode extends BaseVisualNode
 
   public /*override*/ get className(): string { return BaseLogNode.name; }
   public /*override*/ isA(className: string): boolean { return className === BaseLogNode.name || super.isA(className); }
+
+  //==================================================
+  // VIRTUAL METHODS
+  //==================================================
+
+  public abstract get wellLogType(): WellLogType;
+
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
+
+  public isEqual(other: BaseFilterLogNode): boolean
+  {
+    return this.wellLogType == other.wellLogType && Util.equalsIgnoreCase(this.name, other.name);
+  }
 }

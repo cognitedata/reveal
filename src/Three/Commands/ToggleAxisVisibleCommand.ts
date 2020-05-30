@@ -17,11 +17,11 @@ export class ToggleAxisVisibleCommand extends ThreeRenderTargetCommand {
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*virtual*/get name(): string { return "Hide or show axis" }
+  public /*override*/get name(): string { return "Hide or show axis" }
 
-  public /*virtual*/ get isCheckable() { return true; } // Can be checked? (default false)
+  public /*override*/ get isCheckable() { return true; } // Can be checked? (default false)
 
-  public /*virtual*/ get isChecked(): boolean { return this.target ? this.target.hasViewOfNodeType(AxisNode) : false; }
+  public /*override*/ get isChecked(): boolean { return this.target ? this.target.hasViewOfNodeType(AxisNode) : false; }
 
   protected invokeCore(): boolean {
     if (!this.target)
