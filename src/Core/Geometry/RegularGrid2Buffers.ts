@@ -15,13 +15,14 @@ import { RegularGrid2 } from "@/Core/Geometry/RegularGrid2";
 import { TrianglesBuffers } from "@/Core/Geometry/TrianglesBuffers";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 
-export class RegularGrid2Buffers extends TrianglesBuffers {
-
+export class RegularGrid2Buffers extends TrianglesBuffers
+{
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(grid: RegularGrid2, makeUvs:boolean) {
+  public constructor(grid: RegularGrid2, makeUvs: boolean)
+  {
     const [uniqueIndexes, numUniqueIndex] = RegularGrid2Buffers.createUniqueIndexes(grid);
     super(numUniqueIndex, makeUvs);
     this.makeBuffers(grid, uniqueIndexes);
@@ -32,14 +33,17 @@ export class RegularGrid2Buffers extends TrianglesBuffers {
   // INSTANCE METHODS
   //==================================================
 
-  makeBuffers(grid: RegularGrid2, uniqueIndexes: number[]) {
+  makeBuffers(grid: RegularGrid2, uniqueIndexes: number[])
+  {
     // Generate the position, normal and uvs
     const zRange = grid.getZRange();
     const position = Vector3.newZero;
     const normal = Vector3.newZero;
 
-    for (let j = grid.nodeSize.j - 1; j >= 0; j--) {
-      for (let i = grid.nodeSize.i - 1; i >= 0; i--) {
+    for (let j = grid.nodeSize.j - 1; j >= 0; j--)
+    {
+      for (let i = grid.nodeSize.i - 1; i >= 0; i--)
+      {
         const nodeIndex = grid.getNodeIndex(i, j);
         const uniqueIndex = uniqueIndexes[nodeIndex];
         if (uniqueIndex < 0)
@@ -55,11 +59,14 @@ export class RegularGrid2Buffers extends TrianglesBuffers {
     }
   }
 
-  private makeTriangleIndexes(grid: RegularGrid2, uniqueIndexes: number[]) {
+  private makeTriangleIndexes(grid: RegularGrid2, uniqueIndexes: number[])
+  {
     // Generate the triangle indices
     // Should be strip, but could not get it to work
-    for (let i = 0; i < grid.nodeSize.i - 1; i++) {
-      for (let j = 0; j < grid.nodeSize.j - 1; j++) {
+    for (let i = 0; i < grid.nodeSize.i - 1; i++)
+    {
+      for (let j = 0; j < grid.nodeSize.j - 1; j++)
+      {
         const nodeIndex0 = grid.getNodeIndex(i, j);
         const nodeIndex1 = grid.getNodeIndex(i + 1, j);
         const nodeIndex2 = grid.getNodeIndex(i + 1, j + 1);
@@ -97,13 +104,17 @@ export class RegularGrid2Buffers extends TrianglesBuffers {
     }
   }
 
-  private static createUniqueIndexes(grid: RegularGrid2): [number[], number] {
+  private static createUniqueIndexes(grid: RegularGrid2): [number[], number]
+  {
     const uniqueIndexes = new Array<number>(grid.nodeSize.size);
     let numUniqueIndex = 0;
-    for (let j = grid.nodeSize.j - 1; j >= 0; j--) {
-      for (let i = grid.nodeSize.i - 1; i >= 0; i--) {
+    for (let j = grid.nodeSize.j - 1; j >= 0; j--)
+    {
+      for (let i = grid.nodeSize.i - 1; i >= 0; i--)
+      {
         const nodeIndex = grid.getNodeIndex(i, j);
-        if (grid.isNodeDef(i, j)) {
+        if (grid.isNodeDef(i, j))
+        {
           uniqueIndexes[nodeIndex] = numUniqueIndex;
           numUniqueIndex++;
         }

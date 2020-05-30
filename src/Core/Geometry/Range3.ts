@@ -187,7 +187,7 @@ export class Range3
     this.z.expandByMargin(margin.z);
   }
 
-    expandByFraction(fraction: number)
+  expandByFraction(fraction: number)
   {
     this.x.expandByFraction(fraction);
     this.y.expandByFraction(fraction);

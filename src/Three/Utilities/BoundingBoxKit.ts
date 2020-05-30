@@ -19,7 +19,8 @@ import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 
 export class BoundingBoxKit 
 {
-  static getBoundingBox(object: THREE.Object3D | null): Range3 | undefined {
+  static getBoundingBox(object: THREE.Object3D | null): Range3 | undefined
+  {
     if (!object)
       return undefined;
 

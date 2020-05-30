@@ -58,7 +58,7 @@ export abstract class Base3DView extends BaseView
   // INSTANCE METHODS: 
   //==================================================
 
-  public /*virtual*/ getViewInfo(viewInfo: ViewInfo): void
+  public getViewInfo(viewInfo: ViewInfo): void
   {
     return this.getViewInfoCore(viewInfo);
   }
@@ -79,10 +79,4 @@ export abstract class Base3DView extends BaseView
   {
     this._boundingBox = undefined;
   }
-
-  protected invalidate(): void
-  {
-    this._boundingBox = undefined;
-  }
-
 }

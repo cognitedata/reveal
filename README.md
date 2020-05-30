@@ -16,7 +16,7 @@ Recommended extensions:
 
 - start react app: `npm install && npm run start-dev`
 
-## Standalone React application that uses library outpu of this project
+## Standalone React application that uses library output of this project
 
 - Navigate to _standalone_ directory: `cd standalone`
 - Start react app with web server: `npm run start`

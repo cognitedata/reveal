@@ -60,7 +60,7 @@ export class TrajectoryBufferGeometry extends THREE.BufferGeometry
   }
 
   //==================================================
-  // INSTANCE FUNCTIONS: Generate the data
+  // INSTANCE METHODS: Generate the data
   //==================================================
 
 

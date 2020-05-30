@@ -17,11 +17,11 @@ export class ToggleCameraTypeCommand extends ThreeRenderTargetCommand {
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*virtual*/get name(): string { return "Toggle between orthographic and perspective view" }
+  public /*override*/get name(): string { return "Toggle between orthographic and perspective view" }
 
-  public /*virtual*/ get isCheckable() { return true; } // Can be checked? (default false)
+  public /*override*/ get isCheckable() { return true; } // Can be checked? (default false)
 
-  public /*virtual*/ get isChecked(): boolean { return this.target ? this.target.hasViewOfNodeType(AxisNode) : false; }
+  public /*override*/ get isChecked(): boolean { return this.target ? this.target.hasViewOfNodeType(AxisNode) : false; }
 
   protected invokeCore(): boolean {
     if (!this.target)

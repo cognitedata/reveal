@@ -27,18 +27,17 @@ import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 export class PotreeThreeView extends BaseGroupThreeView
 {
   //==================================================
-  // CONSTRUCTORS
-  //==================================================
-
-  public constructor() { super(); }
-
-  //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
   protected get node(): PotreeNode { return super.getNode() as PotreeNode; }
   protected get style(): PotreeRenderStyle { return super.getStyle() as PotreeRenderStyle; }
 
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
+
+  public constructor() { super(); }
 
   //==================================================
   // OVERRIDES of BaseView
@@ -49,7 +48,7 @@ export class PotreeThreeView extends BaseGroupThreeView
     super.updateCore(args);
   }
 
-  public calculateBoundingBoxCore(): Range3 | undefined
+  public /*override*/ calculateBoundingBoxCore(): Range3 | undefined
   {
     return PotreeThreeView.getBoundingBoxFromGroup(this.object3D as Potree.Group);
   }
@@ -58,8 +57,7 @@ export class PotreeThreeView extends BaseGroupThreeView
   // OVERRIDES of Base3DView
   //==================================================
 
-
-  protected /*virtual*/ getViewInfoCore(viewInfo: ViewInfo): void
+  protected /*override*/ getViewInfoCore(viewInfo: ViewInfo): void
   {
     super.getViewInfoCore(viewInfo);
     viewInfo.addText("Potree", 1);

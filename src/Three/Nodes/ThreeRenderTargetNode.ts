@@ -32,7 +32,7 @@ import { IToolbar } from "@/Core/Interfaces/IToolbar";
 import { ViewFromCommand } from "@/Three/Commands/ViewFromCommand";
 import { Camera } from "@/Three/Nodes/Camera";
 
-const directionalLightName = "DirectionalLight";
+const DirectionalLightName = "DirectionalLight";
 
 export class ThreeRenderTargetNode extends BaseRenderTargetNode
 {
@@ -75,7 +75,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   private get directionalLight(): THREE.DirectionalLight | null
   {
-    return this.scene.getObjectByName(directionalLightName) as THREE.DirectionalLight;
+    return this.scene.getObjectByName(DirectionalLightName) as THREE.DirectionalLight;
   }
 
   private get renderer(): THREE.WebGLRenderer
@@ -131,12 +131,11 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     // Create lights
     const ambientLight = new THREE.AmbientLight(0x404040, 0.25); // soft white light
     const directionalLight = new THREE.DirectionalLight(ThreeConverter.toColor(Colors.white), 0.95);
-    directionalLight.name = directionalLightName;
+    directionalLight.name = DirectionalLightName;
     const controls = this.controls;
     var self = this;
     if (controls)
       controls.addEventListener("update", () => ThreeRenderTargetNode.updateLightPositionStatic(self));
-
 
     this._scene.add(ambientLight);
     this._scene.add(directionalLight);

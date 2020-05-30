@@ -54,7 +54,7 @@ export class PotreeNode extends BaseVisualNode
 
   public /*override*/ get typeName(): string { return "Potree" }
 
-  public /*virtual*/ get boundingBox(): Range3 | undefined { return this._boundingBox; }
+  public /*override*/ get boundingBox(): Range3 | undefined { return this._boundingBox; }
 
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null

@@ -31,13 +31,14 @@ import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { ThreeLabel } from "@/Three/Utilities/ThreeLabel";
-import { LogRender } from "@/Three/WellViews/LogRender";
-import { TrajectoryBufferGeometry } from "@/Three/WellViews/TrajectoryBufferGeometry";
+import { LogRender } from "@/Three/WellViews/Helpers/LogRender";
+import { TrajectoryBufferGeometry } from "@/Three/WellViews/Helpers/TrajectoryBufferGeometry";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import Color from "color";
 
 
-export class WellTrajectoryThreeView extends BaseGroupThreeView {
+export class WellTrajectoryThreeView extends BaseGroupThreeView
+{
   //==================================================
   // INSTANCE FIELDS
   //==================================================
@@ -54,35 +55,64 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
   public getBandName(rightBand: boolean): string { return rightBand ? "RightBand" : "LeftBand"; }
 
   //==================================================
-  // CONSTRUCTORS
-  //==================================================
-
-  public constructor() { super(); }
-
-  //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
   private get node(): WellTrajectoryNode { return super.getNode() as WellTrajectoryNode; }
   private get style(): WellRenderStyle { return super.getStyle() as WellRenderStyle; }
 
-  private get bandRange(): Range1 | undefined {
+  private get bandRange(): Range1 | undefined
+  {
     const style = this.style;
     return !style ? undefined : new Range1(style.radius, style.bandWidth);
   }
 
   //==================================================
+  // CONSTRUCTORS
+  //==================================================
+
+  public constructor() { super(); }
+
+  //==================================================
   // OVERRIDES of BaseView
   //==================================================
 
-  protected /*override*/ updateCore(args: NodeEventArgs): void {
+  protected /*override*/ updateCore(args: NodeEventArgs): void
+  {
     super.updateCore(args);
 
     if (args.isChanged(Changes.filter) && this._object3D)
       this.clearTextures(this._object3D);
   }
 
-  public /*override*/ beforeRender(): void {
+  protected /*override*/ onShowCore(): void
+  {
+    // Pattern: SYNC_LOGS_AND_FILTERLOGS
+    super.onShowCore();
+
+    const trajectoryNode = this.node;
+    const filterLogFolder = trajectoryNode.getFilterLogFolder();
+    if (!filterLogFolder)
+      return;
+
+    for (const logNode of trajectoryNode.getDescendantsByType(BaseLogNode))
+    {
+      const filterLogNode = filterLogFolder.getFilterLogNode(logNode);
+      if (!filterLogNode)
+        continue;
+
+      if (filterLogNode.isVisible(this.renderTarget))
+        logNode.setVisibleInteractive(true, this.renderTarget);
+    }
+  }
+
+  protected /*override*/ onHideCore(): void
+  {
+    super.onHideCore();
+  }
+
+  public /*override*/ beforeRender(): void
+  {
     super.beforeRender();
     const parent = this.object3D;
     if (!parent)
@@ -92,7 +122,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
     let hasBands = false;
     let hasTexture = false;
 
-    for (const rightBand of [true, false]) {
+    for (const rightBand of [true, false])
+    {
       const band = parent.getObjectByName(this.getBandName(rightBand));
       if (band)
         hasBands = true;
@@ -101,7 +132,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
       if (texture)
         hasTexture = true;
     }
-    if (!hasBands || !hasTexture) {
+    if (!hasBands || !hasTexture)
+    {
       if (!hasBands)
         this.addBands(parent);
 
@@ -112,7 +144,12 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
     }
   }
 
-  public calculateBoundingBoxCore(): Range3 | undefined {
+  //==================================================
+  // OVERRIDES of Base3DView
+  //==================================================
+
+  public /*override*/ calculateBoundingBoxCore(): Range3 | undefined
+  {
     const trajectory = this.node.data;
     if (!trajectory)
       return undefined;
@@ -140,14 +177,16 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
   // OVERRIDES of BaseGroupThreeView
   //==================================================
 
-  protected /*override*/ createObject3DCore(): THREE.Object3D | null {
+  protected /*override*/ createObject3DCore(): THREE.Object3D | null
+  {
     const parent = new THREE.Group();
     this.addTrajectory(parent);
     this.addLabel(parent);
     return parent;
   }
 
-  public /*override*/ mustTouch(): boolean {
+  public /*override*/ mustTouch(): boolean
+  {
     const node = this.node;
     const trajectory = node.data;
     if (!trajectory)
@@ -156,7 +195,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
     const target = this.renderTarget;
     let colorChanged = false;
     {
-      if (this.fgColor !== target.fgColor) {
+      if (this.fgColor !== target.fgColor)
+      {
         this.fgColor = target.fgColor;
         colorChanged = true;
       }
@@ -172,7 +212,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
 
       // Check if camera has move slightly
       const angle = Math.acos(cameraDirection.getDot(this.cameraDirection));
-      if (angle > Math.PI / 100) {
+      if (angle > Math.PI / 100)
+      {
         this.cameraDirection = cameraDirection;
         this.cameraPosition = cameraPosition;
         cameraChanged = true;
@@ -181,7 +222,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
     return cameraChanged || colorChanged;
   }
 
-  public /*override*/ touchPart(): void {
+  public /*override*/ touchPart(): void
+  {
     // This will be called when the camera has rotated
     const parent = this._object3D;
     if (parent)
@@ -191,10 +233,11 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
   }
 
   //==================================================
-  // INSTANCE FUNCTIONS: Getters
+  // INSTANCE METHODS: Getters
   //==================================================
 
-  private getMdRange(): Range1 | undefined {
+  private getMdRange(): Range1 | undefined
+  {
     const node = this.node;
     const bandRange = this.bandRange;
     if (!bandRange)
@@ -205,7 +248,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
       return undefined;
 
     const mdRange = new Range1();
-    for (const logNode of node.getDescendantsByType(BaseLogNode)) {
+    for (const logNode of node.getDescendantsByType(BaseLogNode))
+    {
 
       if (!this.isInBand(logNode))
         continue;
@@ -222,7 +266,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
     return mdRange;
   }
 
-  private isInBand(node: BaseNode): boolean {
+  private isInBand(node: BaseNode): boolean
+  {
     if (node instanceof FloatLogNode)
       return true;
     if (node instanceof DiscreteLogNode)
@@ -232,10 +277,11 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
   }
 
   //==================================================
-  // INSTANCE FUNCTIONS: Add 3D objects
+  // INSTANCE METHODS: Add 3D objects
   //==================================================
 
-  private addLabel(parent: THREE.Object3D) {
+  private addLabel(parent: THREE.Object3D)
+  {
     const node = this.node;
     const trajectory = node.data;
     if (!trajectory)
@@ -257,7 +303,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
     parent.add(label);
   }
 
-  private addTrajectory(parent: THREE.Object3D): void {
+  private addTrajectory(parent: THREE.Object3D): void
+  {
     const node = this.node;
     const style = this.style;
     const color = node.color;
@@ -278,7 +325,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
     parent.add(mesh);
   }
 
-  private addBands(parent: THREE.Object3D): void {
+  private addBands(parent: THREE.Object3D): void
+  {
     const node = this.node;
     const bandRange = this.bandRange;
     if (!bandRange)
@@ -298,7 +346,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
     const logRender = new LogRender(bandRange, mdRange);
     const bands = logRender.createBands(parent, trajectory, this.cameraPosition, useRightBand, useLeftBand);
 
-    for (const rightBand of [true, false]) {
+    for (const rightBand of [true, false])
+    {
       const band = bands[rightBand ? 0 : 1];
       if (!band)
         continue;
@@ -309,25 +358,30 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
   }
 
   //==================================================
-  // INSTANCE FUNCTIONS: Add 3D objects
+  // INSTANCE METHODS: Add 3D objects
   //==================================================
 
-  private clearTextures(parent: THREE.Object3D): void {
+  private clearTextures(parent: THREE.Object3D): void
+  {
     // Clear the textures
     this.bandTextures = [null, null];
     this.setBandTextures(parent);
   }
 
-  private clearBands(parent: THREE.Object3D): void {
-    for (const rightBand of [true, false]) {
+  private clearBands(parent: THREE.Object3D): void
+  {
+    for (const rightBand of [true, false])
+    {
       const band = parent.getObjectByName(this.getBandName(rightBand));
       if (band)
         parent.remove(band);
     }
   }
 
-  private setBandTextures(parent: THREE.Object3D): void {
-    for (const rightBand of [true, false]) {
+  private setBandTextures(parent: THREE.Object3D): void
+  {
+    for (const rightBand of [true, false])
+    {
       const object = parent.getObjectByName(this.getBandName(rightBand));
       if (!object)
         continue;
@@ -346,7 +400,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
     }
   }
 
-  private createBandTextures(): [THREE.CanvasTexture | null, THREE.CanvasTexture | null] {
+  private createBandTextures(): [THREE.CanvasTexture | null, THREE.CanvasTexture | null]
+  {
     const textures: [THREE.CanvasTexture | null, THREE.CanvasTexture | null] = [null, null];
     if (!parent)
       return textures;
@@ -362,27 +417,32 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
       return textures;
 
     const logRender = new LogRender(bandRange, mdRange);
-    for (const rightBand of [true, false]) {
+    for (const rightBand of [true, false])
+    {
       const canvas = logRender.createCanvas();
       let filled = 0;
       let visibleCount = 0;
 
-      for (const logNode of node.getDescendantsByType(DiscreteLogNode)) {
+      for (const logNode of node.getDescendantsByType(DiscreteLogNode))
+      {
         if (!logNode.isVisible(this.renderTarget))
           continue;
 
-        if (!rightBand) {
+        if (!rightBand)
+        {
           logRender.addDiscreteLog(canvas, logNode.data);
           visibleCount++;
           filled++;
         }
       }
       let i = 0;
-      for (const logNode of node.getDescendantsByType(FloatLogNode)) {
+      for (const logNode of node.getDescendantsByType(FloatLogNode))
+      {
         if (!logNode.isVisible(this.renderTarget))
           continue;
 
-        if ((i % 2 === 0) === rightBand && filled < 2) {
+        if ((i % 2 === 0) === rightBand && filled < 2)
+        {
           logRender.addFloatLog(canvas, logNode.data, logNode.color, true);
           filled++;
           visibleCount++;
@@ -390,11 +450,13 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
         i++;
       }
       i = 0;
-      for (const logNode of node.getDescendantsByType(FloatLogNode)) {
+      for (const logNode of node.getDescendantsByType(FloatLogNode))
+      {
         if (!logNode.isVisible(this.renderTarget))
           continue;
 
-        if ((i % 2 === 0) === rightBand) {
+        if ((i % 2 === 0) === rightBand)
+        {
           logRender.addFloatLog(canvas, logNode.data, logNode.color, false);
           visibleCount++;
         }
@@ -404,11 +466,13 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView {
         continue;
 
       //Only of ther logs are shown
-      for (const logNode of node.getDescendantsByType(PointLogNode)) {
+      for (const logNode of node.getDescendantsByType(PointLogNode))
+      {
         if (!logNode.isVisible(this.renderTarget))
           continue;
 
-        if (!rightBand) {
+        if (!rightBand)
+        {
           logRender.addPointLog(canvas, logNode.data, style.bandFontSize, rightBand);
           filled++;
           visibleCount++;

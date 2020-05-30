@@ -15,7 +15,8 @@ import * as THREE from "three";
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
 
-export class TrianglesBuffers {
+export class TrianglesBuffers
+{
   //==================================================
   // INSTANCE FIELDS
   //==================================================
@@ -33,11 +34,12 @@ export class TrianglesBuffers {
 
   public get hasUvs(): boolean { return this.uvs.length > 0; }
 
-    //==================================================
-    // CONSTRUCTORS
-    //==================================================
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
 
-  public constructor(pointCount: number, makeUvs = false) {
+  public constructor(pointCount: number, makeUvs = false)
+  {
     this.positions = new Float32Array(3 * pointCount);
     this.normals = new Float32Array(3 * pointCount);
     this.uvs = new Float32Array(makeUvs ? 2 * pointCount : 0);
@@ -47,7 +49,8 @@ export class TrianglesBuffers {
   // INSTANCE METHODS: Getters
   //==================================================
 
-  public getBufferGeometry(): THREE.BufferGeometry {
+  public getBufferGeometry(): THREE.BufferGeometry
+  {
     const geometry = new THREE.BufferGeometry();
     geometry.addAttribute("position", new THREE.Float32BufferAttribute(this.positions, 3, true));
     geometry.addAttribute("normal", new THREE.Float32BufferAttribute(this.normals, 3, true));
@@ -61,8 +64,10 @@ export class TrianglesBuffers {
   // INSTANCE METHODS: Operations
   //==================================================
 
-  public addPair(p1: Vector3, p2: Vector3, n1: Vector3, n2: Vector3, u = 0) {
-    if (this.uniqueIndex >= 2) {
+  public addPair(p1: Vector3, p2: Vector3, n1: Vector3, n2: Vector3, u = 0)
+  {
+    if (this.uniqueIndex >= 2)
+    {
       //     2------3
       //     |      |
       //     0------1
@@ -80,8 +85,10 @@ export class TrianglesBuffers {
     }
   }
 
-  public addPair2(p1: Vector3, p2: Vector3, n: Vector3, fraction: number) {
-    if (this.uniqueIndex >= 2) {
+  public addPair2(p1: Vector3, p2: Vector3, n: Vector3, fraction: number)
+  {
+    if (this.uniqueIndex >= 2)
+    {
       //     2------3
       //     |      |
       //     0------1
@@ -93,13 +100,15 @@ export class TrianglesBuffers {
       this.addTriangle(unique0, unique2, unique3);
       this.addTriangle(unique0, unique3, unique1);
     }
-    if (this.hasUvs) {
+    if (this.hasUvs)
+    {
       this.add(p1, n, fraction, 1);
       this.add(p2, n, fraction, 0);
     }
   }
 
-  protected add(position: Vector3, normal: Vector3, u = 0, v = 0): void {
+  protected add(position: Vector3, normal: Vector3, u = 0, v = 0): void
+  {
     {
       const index = 3 * this.uniqueIndex;
       this.positions[index + 0] = position.x;
@@ -109,7 +118,8 @@ export class TrianglesBuffers {
       this.normals[index + 1] = normal.y;
       this.normals[index + 2] = normal.z;
     }
-    if (this.hasUvs) {
+    if (this.hasUvs)
+    {
       const index = 2 * this.uniqueIndex;
       this.uvs[index + 0] = u;
       this.uvs[index + 1] = v;
@@ -117,7 +127,8 @@ export class TrianglesBuffers {
     this.uniqueIndex++;
   }
 
-  protected setAt(uniqueIndex: number, position: Vector3, normal: Vector3, u: number): void {
+  protected setAt(uniqueIndex: number, position: Vector3, normal: Vector3, u: number): void
+  {
     {
       const index = 3 * uniqueIndex;
       this.positions[index + 0] = position.x;
@@ -127,7 +138,8 @@ export class TrianglesBuffers {
       this.normals[index + 1] = normal.y;
       this.normals[index + 2] = normal.z;
     }
-    if (this.hasUvs) {
+    if (this.hasUvs)
+    {
       const index = 2 * uniqueIndex;
       this.uvs[index + 0] = u;
       this.uvs[index + 1] = 0;
@@ -135,7 +147,8 @@ export class TrianglesBuffers {
     this.uniqueIndex++;
   }
 
-  protected addTriangle(index0: number, index1: number, index2: number): void {
+  protected addTriangle(index0: number, index1: number, index2: number): void
+  {
     this.triangleIndexes.push(index0, index1, index2);
   }
 }

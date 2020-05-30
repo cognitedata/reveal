@@ -27,13 +27,15 @@ import { ViewAllCommand } from "@/Three/Commands/ViewAllCommand";
 import { ToggleBgColorCommand } from "@/Three/Commands/ToggleBgColorCommand";
 import { FolderNode } from "@/Core/Nodes/FolderNode";
 
-export class RandomDataLoader extends BaseRootLoader {
+export class RandomDataLoader extends BaseRootLoader
+{
 
   //==================================================
   // OVERRIDES of BaseRootLoader
   //==================================================
 
-  public /*override*/ load(root: RootNode): void {
+  public /*override*/ load(root: RootNode): void
+  {
 
     const numberOfWells = 20;
     const numberOfTrajectories = 2;
@@ -41,8 +43,8 @@ export class RandomDataLoader extends BaseRootLoader {
     const wellTree = root.wells;
 
     // Add some random wells
-    for (let wellIndex = 0; wellIndex < numberOfWells; wellIndex++) {
-
+    for (let wellIndex = 0; wellIndex < numberOfWells; wellIndex++)
+    {
       const wellNode = new WellNode();
       wellTree.addChild(wellNode);
 
@@ -51,7 +53,8 @@ export class RandomDataLoader extends BaseRootLoader {
       wellNode.name = `well ${wellIndex + 1}`;
 
       // Add some random trajectories to the well
-      for (let trajectoryIndex = 0; trajectoryIndex < numberOfTrajectories; trajectoryIndex++) {
+      for (let trajectoryIndex = 0; trajectoryIndex < numberOfTrajectories; trajectoryIndex++)
+      {
         const trajectoryNode = new WellTrajectoryNode();
         trajectoryNode.name = `Traj ${wellIndex + 1}`;
 
@@ -60,7 +63,8 @@ export class RandomDataLoader extends BaseRootLoader {
 
         // Add some random casing logs to the trajectory
         let numberOfLogs = Random.getInt2(0, 1);
-        for (let logIndex = 0; logIndex < numberOfLogs; logIndex++) {
+        for (let logIndex = 0; logIndex < numberOfLogs; logIndex++)
+        {
           const mdRange = trajectoryNode.data.mdRange.clone();
           mdRange.expandByFraction(-0.05);
           const logNode = new CasingLogNode();
@@ -70,7 +74,8 @@ export class RandomDataLoader extends BaseRootLoader {
 
         // Add some random float logs to the trajectory
         numberOfLogs = Random.getInt2(2, 5);
-        for (let logIndex = 0; logIndex < numberOfLogs; logIndex++) {
+        for (let logIndex = 0; logIndex < numberOfLogs; logIndex++)
+        {
           const mdRange = trajectoryNode.data.mdRange.clone();
           mdRange.min = (mdRange.center + mdRange.min) / 2;
           mdRange.expandByFraction(Random.getFloat2(-0.15, 0));
@@ -83,7 +88,8 @@ export class RandomDataLoader extends BaseRootLoader {
 
         // Add some random discrete logs to the trajectory
         numberOfLogs = 1;
-        for (let logIndex = 0; logIndex < numberOfLogs; logIndex++) {
+        for (let logIndex = 0; logIndex < numberOfLogs; logIndex++)
+        {
           const mdRange = trajectoryNode.data.mdRange.clone();
           mdRange.min = (mdRange.center + mdRange.min) / 2;
           mdRange.expandByFraction(Random.getFloat2(-0.25, 0));
@@ -96,7 +102,8 @@ export class RandomDataLoader extends BaseRootLoader {
 
         // Add some random point logs to the trajectory
         numberOfLogs = Random.getInt2(0, 2);
-        for (let k = 0; k < numberOfLogs; k++) {
+        for (let k = 0; k < numberOfLogs; k++)
+        {
           const mdRange = trajectoryNode.data.mdRange.clone();
           mdRange.min = (mdRange.center + mdRange.min) / 2;
           mdRange.expandByFraction(Random.getFloat2(-0.15, 0));
@@ -107,15 +114,18 @@ export class RandomDataLoader extends BaseRootLoader {
         }
       }
     }
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 3; i++)
+    {
       const parent0 = new FolderNode();
       root.others.addChild(parent0);
 
-      for (let j = 0; j < 2; j++) {
+      for (let j = 0; j < 2; j++)
+      {
         const parent1 = new FolderNode();
         parent0.addChild(parent1);
 
-        for (let k = 0; k < 3; k++) {
+        for (let k = 0; k < 3; k++)
+        {
           const node = new SurfaceNode();
           var range = Range3.newTest.clone();
           range.expandByFraction(0.2);
@@ -125,25 +135,31 @@ export class RandomDataLoader extends BaseRootLoader {
         }
       }
     }
+    wellTree.synchronize();
   }
 
-  public /*override*/  updatedVisible(root: RootNode): void {
+  public /*override*/  updatedVisible(root: RootNode): void
+  {
     // Set all wells ands logs visible
-    for (const well of root.getDescendantsByType(WellNode)) {
-      for (const wellTrajectory of well.getDescendantsByType(WellTrajectoryNode)) {
+    for (const well of root.getDescendantsByType(WellNode))
+    {
+      for (const wellTrajectory of well.getDescendantsByType(WellTrajectoryNode))
+      {
         wellTrajectory.setVisibleInteractive(true);
         for (const node of wellTrajectory.getDescendantsByType(BaseLogNode))
           node.setVisibleInteractive(true);
         break;
       }
     }
-    for (const node of root.getDescendantsByType(SurfaceNode)) {
+    for (const node of root.getDescendantsByType(SurfaceNode))
+    {
       node.setVisibleInteractive(true);
       break;
     }
   }
 
-  public /*override*/  startAnimate(root: RootNode) {
+  public /*override*/  startAnimate(root: RootNode)
+  {
     setInterval(() => RandomDataLoader.animate(root), 200);
   }
 
@@ -151,7 +167,8 @@ export class RandomDataLoader extends BaseRootLoader {
   // STATIC METHODS
   //==================================================
 
-  private static animate(root: RootNode) {
+  private static animate(root: RootNode)
+  {
 
     const target = root.activeTarget as ThreeRenderTargetNode;
     if (!target)
@@ -164,31 +181,38 @@ export class RandomDataLoader extends BaseRootLoader {
     return;
 
 
-    if (Random.isTrue(0.05)) {
+    if (Random.isTrue(0.05))
+    {
       const command = new ToggleAxisVisibleCommand(target);
       command.invoke();
     }
-    if (Random.isTrue(0.2)) {
+    if (Random.isTrue(0.2))
+    {
       const command = new ViewAllCommand(target);
       command.invoke();
     }
-    if (Random.isTrue(0.2)) {
+    if (Random.isTrue(0.2))
+    {
       const command = new ToggleBgColorCommand(target);
       command.invoke();
     }
-    for (const node of root.wells.getDescendantsByType(WellTrajectoryNode)) {
+    for (const node of root.wells.getDescendantsByType(WellTrajectoryNode))
+    {
 
       if (Random.isTrue(0.025))
         node.toggleVisibleInteractive();
     }
-    for (const node of root.wells.getDescendantsByType(BaseLogNode)) {
+    for (const node of root.wells.getDescendantsByType(BaseLogNode))
+    {
       if (Random.isTrue(0.05))
         node.toggleVisibleInteractive();
     }
-    if (Random.isTrue(0.05)) {
+    if (Random.isTrue(0.05))
+    {
       var n = Random.getInt2(0, 4);
       var i = 0;
-      for (const node of root.getDescendantsByType(SurfaceNode)) {
+      for (const node of root.getDescendantsByType(SurfaceNode))
+      {
         node.setVisibleInteractive(i == n);
         i++;
       }

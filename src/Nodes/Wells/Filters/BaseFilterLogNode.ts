@@ -12,33 +12,20 @@
 //=====================================================================================
 
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
-import { BaseLog } from "@/Nodes/Wells/Logs/BaseLog";
-import { WellNode } from "@/Nodes/Wells/Wells/WellNode";
-import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
-import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
+import { FilterLogFolder } from "@/Nodes/Wells/Filters/FilterLogFolder";
 import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
-import { BaseFilterLogNode } from "@/Nodes/Wells/Filters/BaseFilterLogNode";
+import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
 import { Util } from "@/Core/Primitives/Util";
 import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
-import { FilterLogFolder } from "@/Nodes/Wells/Filters/FilterLogFolder";
+import { ITarget } from "@/Core/Interfaces/ITarget";
 
-export abstract class BaseLogNode extends BaseVisualNode
+export abstract class BaseFilterLogNode extends BaseVisualNode
 {
-  //==================================================
-  // INSTANCE FIELDS
-  //==================================================
-
-  protected _data: BaseLog | null = null;
-
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): BaseLog | null { return this._data; }
-  public set data(value: BaseLog | null) { this._data = value; }
-  public get well(): WellNode | null { return this.getAncestorByType(WellNode); }
-  public get trajectoryNode(): WellTrajectoryNode | null { return this.getAncestorByType(WellTrajectoryNode); }
-  public get trajectory(): WellTrajectory | null { const node = this.trajectoryNode; return node ? node.data : null; }
+  public get filterLogFolder(): FilterLogFolder | null { return this.getAncestorByType(FilterLogFolder); }
 
   //==================================================
   // CONSTRUCTORS
@@ -50,8 +37,15 @@ export abstract class BaseLogNode extends BaseVisualNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return BaseLogNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === BaseLogNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return BaseFilterLogNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === BaseFilterLogNode.name || super.isA(className); }
+
+  //==================================================
+  // OVERRIDES of BaseNode
+  //==================================================
+
+  public  /*virtual*/ get isLabelInItalic(): boolean { return true; }
+  public  /*virtual*/ isFilter(target: ITarget | null): boolean { return true; }
 
   //==================================================
   // VIRTUAL METHODS
@@ -63,8 +57,21 @@ export abstract class BaseLogNode extends BaseVisualNode
   // INSTANCE METHODS
   //==================================================
 
-  public isEqual(other: BaseFilterLogNode): boolean
+  public isEqual(other: BaseLogNode): boolean
   {
     return this.wellLogType == other.wellLogType && Util.equalsIgnoreCase(this.name, other.name);
+  }
+
+  public * getAllLogs(): Iterable<BaseLogNode>
+  {
+    const tree = this.getAncestorByType(BaseTreeNode);
+    if (!tree)
+      return;
+
+    for (const logNode of tree.getDescendantsByType(BaseLogNode))
+    {
+      if (logNode.isEqual(this))
+        yield logNode;
+    }
   }
 }

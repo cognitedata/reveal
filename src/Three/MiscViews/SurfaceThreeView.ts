@@ -26,13 +26,8 @@ import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { TextureKit } from "@/Three/Utilities/TextureKit";
 import { ContouringService } from "@/Core/Geometry/ContouringService";
 
-export class SurfaceThreeView extends BaseGroupThreeView {
-  //==================================================
-  // CONSTRUCTORS
-  //==================================================
-
-  public constructor() { super(); }
-
+export class SurfaceThreeView extends BaseGroupThreeView
+{
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
@@ -41,22 +36,32 @@ export class SurfaceThreeView extends BaseGroupThreeView {
   protected get style(): SurfaceRenderStyle { return super.getStyle() as SurfaceRenderStyle; }
 
   //==================================================
+  // CONSTRUCTORS
+  //==================================================
+
+  public constructor() { super(); }
+
+  //==================================================
   // OVERRIDES of BaseView
   //==================================================
 
-  protected /*override*/ updateCore(args: NodeEventArgs): void {
+  protected /*override*/ updateCore(args: NodeEventArgs): void
+  {
     super.updateCore(args);
   }
 
-  public calculateBoundingBoxCore(): Range3 | undefined {
-    return this.node.boundingBox;
-  }
+  //==================================================
+  // OVERRIDES of Base3DView
+  //==================================================
+
+  public /*override*/ calculateBoundingBoxCore(): Range3 | undefined { return this.node.boundingBox; }
 
   //==================================================
   // OVERRIDES of BaseGroupThreeView
   //==================================================
 
-  protected /*override*/ createObject3DCore(): THREE.Object3D | null {
+  protected /*override*/ createObject3DCore(): THREE.Object3D | null
+  {
 
     const node = this.node;
     const grid = node.data;
@@ -77,7 +82,8 @@ export class SurfaceThreeView extends BaseGroupThreeView {
   }
 
 
-  protected /*override*/ createSolid(): THREE.Object3D | null {
+  protected /*override*/ createSolid(): THREE.Object3D | null
+  {
 
     const node = this.node;
     const style = this.style.solid;
@@ -92,14 +98,15 @@ export class SurfaceThreeView extends BaseGroupThreeView {
     const material = new THREE.MeshPhongMaterial({
       color: ThreeConverter.toColor(color),
       side: THREE.DoubleSide,
-      shininess: 100 * style.shininess,      
+      shininess: 100 * style.shininess,
       polygonOffset: true,
       polygonOffsetFactor: 1,
       polygonOffsetUnits: 4.0
     });
     //const material = createShader();
 
-    if (style.colorType === ColorType.DepthColor && buffers.hasUvs) {
+    if (style.colorType === ColorType.DepthColor && buffers.hasUvs)
+    {
       const texture = TextureKit.create1D(grid.getZRange());
       texture.anisotropy = 4;
       material.map = texture;
@@ -109,7 +116,8 @@ export class SurfaceThreeView extends BaseGroupThreeView {
     return mesh;
   }
 
-  createContours(): THREE.Object3D | null {
+  createContours(): THREE.Object3D | null
+  {
     const node = this.node;
     const style = this.style.contours;
     const grid = node.data;
@@ -133,10 +141,11 @@ export class SurfaceThreeView extends BaseGroupThreeView {
 
 
 //==================================================
-// LOCAL FUNCTIONS: Shader experiments
+// LOCAL METHODS: Shader experiments
 //==================================================
 
-function vertexShader(): string {
+function vertexShader(): string
+{
   return `
     varying vec3 vUv; 
 
@@ -149,7 +158,8 @@ function vertexShader(): string {
   `;
 }
 
-function fragmentShader(): string {
+function fragmentShader(): string
+{
   return `
       uniform vec3 colorA; 
       uniform vec3 colorB; 
@@ -161,7 +171,8 @@ function fragmentShader(): string {
   `;
 }
 
-function createShader(): THREE.ShaderMaterial {
+function createShader(): THREE.ShaderMaterial
+{
 
   const uniforms = {
     colorB: { type: "vec3", value: new THREE.Color(0xFF00000) },

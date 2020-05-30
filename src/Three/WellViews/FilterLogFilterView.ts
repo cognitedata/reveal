@@ -11,15 +11,18 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
-import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { Changes } from "@/Core/Views/Changes";
+import { BaseFilterLogNode } from "@/Nodes/Wells/Filters/BaseFilterLogNode";
+import { BaseView } from "@/Core/Views/BaseView";
 
-import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
+export class FilterLogFilterView extends BaseView
+{
+  //==================================================
+  // INSTANCE PROPERTIES
+  //==================================================
 
-export class WellLogThreeView extends BaseThreeView {
-  
+  private get node(): BaseFilterLogNode { return super.getNode() as BaseFilterLogNode; }
+
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -27,52 +30,49 @@ export class WellLogThreeView extends BaseThreeView {
   public constructor() { super(); }
 
   //==================================================
-  // INSTANCE PROPERTIES
-  //==================================================
-
-  private get node(): BaseLogNode { return super.getNode() as BaseLogNode; }
-
-  private get trajectoryNode(): WellTrajectoryNode | null {
-    const node = this.node;
-    return !node ? null : node.trajectoryNode;
-  }
-
-  //==================================================
   // OVERRIDES of BaseView
   //==================================================
 
-  public get /*override*/ isVisible(): boolean {
-    const parent = this.node.getAncestorByType(WellTrajectoryNode);
-    return parent != null && parent.isVisible(this.renderTarget)
-  }
-
-  protected /*override*/ updateCore(args: NodeEventArgs): void {
+  protected /*override*/ updateCore(args: NodeEventArgs): void
+  {
     super.updateCore(args);
+    const node = this.node;
+    for (const logNode of node.getAllLogs())
+    {
+      const view = logNode.getViewByTarget(this.renderTarget);
+      if (view)
+        view.update(args);
+    }
   }
 
-  protected /*virtual*/ onShowCore(): void {
+  protected /*override*/ onShowCore(): void
+  {
     super.onShowCore();
-    this.updateTrajectoryView();
+    this.onHideOrShowCore(true);
   }
 
-  protected /*virtual*/ onHideCore(): void {
+  protected /*override*/ onHideCore(): void
+  {
     super.onHideCore();
-    this.updateTrajectoryView();
+    this.onHideOrShowCore(false);
   }
 
   //==================================================
   // OVERRIDES of BaseView
   //==================================================
 
-  protected updateTrajectoryView(): void {
-    const trajectoryNode = this.trajectoryNode;
-    if (!trajectoryNode)
-      return;
+  protected onHideOrShowCore( visible:boolean): void
+  {
+    // Pattern: SYNC_LOGS_AND_FILTERLOGS
+    const node = this.node;
+    for (const logNode of node.getAllLogs())
+    {
+      const trajectoryNode = logNode.trajectoryNode;
+      if (!trajectoryNode)
+        continue;
 
-    const trajectoryView = this.renderTarget.getViewByNode(trajectoryNode);
-    if (!trajectoryView)
-      return;
-
-    trajectoryView.update(new NodeEventArgs(Changes.filter));
+      if (trajectoryNode.isVisible(this.renderTarget))
+        logNode.setVisibleInteractive(visible, this.renderTarget);
+    }
   }
 }
