@@ -109,7 +109,6 @@ export class PointLogFilterView extends BaseGroupThreeView
     const tangent: Vector3 = Vector3.newZero;
     for (let i = 0; i < log.samples.length; i++)
     {
-
       const sample = log.getAt(i);
       if (!trajectory.getPositionAtMd(sample.md, position))
         continue;

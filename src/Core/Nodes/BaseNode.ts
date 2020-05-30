@@ -95,8 +95,8 @@ export abstract class BaseNode extends Identifiable
   {
     const nameExtension = this.nameExtension;
     if (Util.isEmpty(nameExtension))
-      return name;
-    return `${name} [${nameExtension}]`;
+      return this.name;
+    return `${this.name} [${nameExtension}]`;
   }
 
   //==================================================
@@ -228,8 +228,8 @@ export abstract class BaseNode extends Identifiable
   public /*virtual*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null { return null; }
   public /*virtual*/ verifyRenderStyle(style: BaseRenderStyle) { /* overide when validating the render style*/ }
   public /*virtual*/ get renderStyleResolution(): RenderStyleResolution { return RenderStyleResolution.Unique; }
-  public /*virtual*/ get renderStyleRoot(): BaseNode | null { return null; } // To be overridden
-  public /*override*/ supportsColorType(colorType: ColorType): boolean { return true; } // To be overridden
+  public /*virtual*/ get renderStyleRoot(): BaseNode | null { return null; }
+  public /*virtual*/ supportsColorType(colorType: ColorType): boolean { return true; }
 
   //==================================================
   // INSTANCE METHODS: Expand
@@ -471,7 +471,7 @@ export abstract class BaseNode extends Identifiable
   // INSTANCE METHODS: Child-Parent relationship
   //==================================================
 
-  public addChild(child: BaseNode): void
+  public addChild(child: BaseNode, insertFirst = false): void
   {
     if (child.hasParent)
     {
@@ -483,7 +483,10 @@ export abstract class BaseNode extends Identifiable
       Error(`Trying to add illegal child ${child.typeName}`);
       return;
     }
-    this._children.push(child);
+    if (insertFirst)
+      this._children.unshift(child)
+    else
+      this._children.push(child);
     child._parent = this;
   }
 
@@ -503,6 +506,11 @@ export abstract class BaseNode extends Identifiable
     this.parent.children.splice(childIndex, 1);
     this._parent = null;
     return true;
+  }
+
+  public sortChildrenByName(): void
+  {
+    this.children.sort((a, b) => a.name.localeCompare(b.name));
   }
 
   //==================================================
@@ -677,10 +685,17 @@ export abstract class BaseNode extends Identifiable
     if (!this.canChangeName)
       return result;
 
-    const childIndex = this.childIndex;
-    if (childIndex === undefined)
+    if (!this.parent)
       return result;
 
+    let childIndex = 0;
+    for (const child of this.parent.children)
+    {
+      if (child === this)
+        break;
+      if (this.typeName === child.typeName)
+        childIndex++;
+    }
     result += " " + (childIndex + 1);
     return result;
   }

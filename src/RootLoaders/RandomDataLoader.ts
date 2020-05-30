@@ -135,6 +135,7 @@ export class RandomDataLoader extends BaseRootLoader
         }
       }
     }
+    wellTree.synchronize();
   }
 
   public /*override*/  updatedVisible(root: RootNode): void

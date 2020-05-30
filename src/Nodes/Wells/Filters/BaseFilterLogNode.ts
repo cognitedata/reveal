@@ -17,6 +17,7 @@ import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
 import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
 import { Util } from "@/Core/Primitives/Util";
 import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
+import { ITarget } from "@/Core/Interfaces/ITarget";
 
 export abstract class BaseFilterLogNode extends BaseVisualNode
 {
@@ -38,6 +39,13 @@ export abstract class BaseFilterLogNode extends BaseVisualNode
 
   public /*override*/ get className(): string { return BaseFilterLogNode.name; }
   public /*override*/ isA(className: string): boolean { return className === BaseFilterLogNode.name || super.isA(className); }
+
+  //==================================================
+  // OVERRIDES of BaseNode
+  //==================================================
+
+  public  /*virtual*/ get isLabelInItalic(): boolean { return true; }
+  public  /*virtual*/ isFilter(target: ITarget | null): boolean { return true; }
 
   //==================================================
   // VIRTUAL METHODS

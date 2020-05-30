@@ -12,9 +12,9 @@
 //=====================================================================================
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
+import { BaseNode } from "@/Core/Nodes/BaseNode";
 
-export class WellNode extends BaseVisualNode
+export class WellNode extends BaseNode
 {
   //==================================================
   // INSTANCE FIELDS

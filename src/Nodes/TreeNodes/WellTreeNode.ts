@@ -12,6 +12,7 @@
 //=====================================================================================
 
 import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
+import { FilterLogFolder } from "@/Nodes/Wells/Filters/FilterLogFolder";
 
 export class WellTreeNode extends BaseTreeNode
 {
@@ -35,4 +36,19 @@ export class WellTreeNode extends BaseTreeNode
   public /*override*/ get typeName(): string { return "WellTree" }
   public /*override*/ get name(): string { return "Wells" }
 
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
+
+  public synchronize(): void
+  {
+    let filterLogFolder = this.getChildByType(FilterLogFolder);
+    if (!filterLogFolder)
+    {
+      filterLogFolder = new FilterLogFolder();
+      this.addChild(filterLogFolder, true);
+      filterLogFolder.initialize();
+    }
+    filterLogFolder.synchronize();
+  }
 }
