@@ -19,7 +19,7 @@ import { TargetId } from "@/Core/Primitives/TargetId";
 import { isInstanceOf, Class } from "@/Core/Primitives/ClassT";
 import { RenderStyleResolution } from "@/Core/Enums/RenderStyleResolution";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { TargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
+import { ITargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
 import { Colors } from "@/Core/Primitives/Colors";
@@ -30,7 +30,8 @@ import { Util } from "@/Core/Primitives/Util";
 import { IEventListener } from "@/Core/Interfaces/IEventListener";
 import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 
-export abstract class BaseNode extends Identifiable {
+export abstract class BaseNode extends Identifiable
+{
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -94,8 +95,8 @@ export abstract class BaseNode extends Identifiable {
   {
     const nameExtension = this.nameExtension;
     if (Util.isEmpty(nameExtension))
-      return name;
-    return `${name} [${nameExtension}]`;
+      return this.name;
+    return `${this.name} [${nameExtension}]`;
   }
 
   //==================================================
@@ -128,7 +129,8 @@ export abstract class BaseNode extends Identifiable {
   // VIRTUAL METHODS: Visibility
   //==================================================
 
-  public /*virtual*/ getCheckBoxState(target?: ITarget | null): CheckBoxState {
+  public /*virtual*/ getCheckBoxState(target?: ITarget | null): CheckBoxState
+  {
     if (!target)
       target = this.activeTarget;
 
@@ -139,7 +141,8 @@ export abstract class BaseNode extends Identifiable {
     let numAll = 0;
     let numNone = 0;
 
-    for (const child of this.children) {
+    for (const child of this.children)
+    {
       const childState = child.getCheckBoxState(target);
       if (childState === CheckBoxState.Never)
         continue;
@@ -163,7 +166,8 @@ export abstract class BaseNode extends Identifiable {
     return CheckBoxState.Some;
   }
 
-  public /*virtual*/ setVisibleInteractive(visible: boolean, target?: ITarget | null, topLevel = true): boolean {
+  public /*virtual*/ setVisibleInteractive(visible: boolean, target?: ITarget | null, topLevel = true): boolean
+  {
     if (!target)
       target = this.activeTarget;
     if (!target)
@@ -185,7 +189,8 @@ export abstract class BaseNode extends Identifiable {
     // Notify
     const args = new NodeEventArgs(Changes.visibleState);
     this.notify(args);
-    if (topLevel) {
+    if (topLevel)
+    {
       for (const ancestor of this.getAncestorsExceptRoot())
         ancestor.notify(args);
     }
@@ -210,7 +215,8 @@ export abstract class BaseNode extends Identifiable {
   protected /*virtual*/ initializeCore(): void { }
   protected /*virtual*/ notifyCore(args: NodeEventArgs): void { }
   protected /*virtual*/ removeInteractiveCore(): void { }
-  protected /*virtual*/ get activeTargetIdAccessor(): TargetIdAccessor | null {
+  protected /*virtual*/ get activeTargetIdAccessor(): ITargetIdAccessor | null
+  {
     const root = this.root;
     return root ? root.activeTargetIdAccessor : null;
   }
@@ -222,8 +228,8 @@ export abstract class BaseNode extends Identifiable {
   public /*virtual*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null { return null; }
   public /*virtual*/ verifyRenderStyle(style: BaseRenderStyle) { /* overide when validating the render style*/ }
   public /*virtual*/ get renderStyleResolution(): RenderStyleResolution { return RenderStyleResolution.Unique; }
-  public /*virtual*/ get renderStyleRoot(): BaseNode | null { return null; } // To be overridden
-  public /*override*/ supportsColorType(colorType: ColorType): boolean { return true; } // To be overridden
+  public /*virtual*/ get renderStyleRoot(): BaseNode | null { return null; }
+  public /*virtual*/ supportsColorType(colorType: ColorType): boolean { return true; }
 
   //==================================================
   // INSTANCE METHODS: Expand
@@ -237,7 +243,8 @@ export abstract class BaseNode extends Identifiable {
     this.setExpandedInteractive(!this.isExpanded);
   }
 
-  public setExpandedInteractive(value: boolean) {
+  public setExpandedInteractive(value: boolean)
+  {
     if (this.isExpanded === value)
       return false;
 
@@ -251,7 +258,8 @@ export abstract class BaseNode extends Identifiable {
 
   public canBeExpanded(): boolean // if true show expander marker
   {
-    for (const child of this.children) {
+    for (const child of this.children)
+    {
       if (child.isVisibleInTreeControl)
         return true;
     }
@@ -273,8 +281,10 @@ export abstract class BaseNode extends Identifiable {
   // INSTANCE METHODS: Getters
   //==================================================
 
-  public getColorByColorType(colorType: ColorType) {
-    switch (colorType) {
+  public getColorByColorType(colorType: ColorType)
+  {
+    switch (colorType)
+    {
       case ColorType.NodeColor: return this.color;
       case ColorType.Black: return Colors.black;
       case ColorType.White: return Colors.white;
@@ -290,38 +300,46 @@ export abstract class BaseNode extends Identifiable {
 
   public getChild(index: number): BaseNode { return this._children[index]; }
 
-  public getChildByName(name: string): BaseNode | null {
+  public getChildByName(name: string): BaseNode | null
+  {
     for (const child of this.children)
       if (child.name === name)
         return child;
     return null;
   }
 
-  public getChildByUniqueId(uniqueId: UniqueId): BaseNode | null {
+  public getChildByUniqueId(uniqueId: UniqueId): BaseNode | null
+  {
     for (const child of this.children)
       if (child.uniqueId.equals(uniqueId))
         return child;
     return null;
   }
 
-  public getChildByType<T extends BaseNode>(classType: Class<T>): T | null {
-    for (const child of this.children) {
+  public getChildByType<T extends BaseNode>(classType: Class<T>): T | null
+  {
+    for (const child of this.children)
+    {
       if (isInstanceOf(child, classType))
         return child as T;
     }
     return null;
   }
 
-  public getActiveChildByType<T extends BaseNode>(classType: Class<T>): T | null {
-    for (const child of this.children) {
+  public getActiveChildByType<T extends BaseNode>(classType: Class<T>): T | null
+  {
+    for (const child of this.children)
+    {
       if (child.isActive && isInstanceOf(child, classType))
         return child as T;
     }
     return null;
   }
 
-  public *getChildrenByType<T extends BaseNode>(classType: Class<T>): Iterable<T> {
-    for (const child of this.children) {
+  public *getChildrenByType<T extends BaseNode>(classType: Class<T>): Iterable<T>
+  {
+    for (const child of this.children)
+    {
       if (isInstanceOf(child, classType))
         yield child as T;
     }
@@ -331,28 +349,35 @@ export abstract class BaseNode extends Identifiable {
   // INSTANCE METHODS: Get descendants
   //==================================================
 
-  public * getDescendants(): Iterable<BaseNode> {
-    for (const child of this.children) {
+  public * getDescendants(): Iterable<BaseNode>
+  {
+    for (const child of this.children)
+    {
       yield child;
-      for (const descendant of child.getDescendants()) {
+      for (const descendant of child.getDescendants())
+      {
         const copy: BaseNode = descendant;
         yield copy;
       }
     }
   }
 
-  public * getThisAndDescendants(): Iterable<BaseNode> {
+  public * getThisAndDescendants(): Iterable<BaseNode>
+  {
     yield this;
     for (const descendant of this.getDescendants())
       yield descendant;
   }
 
-  public * getDescendantsByType<T extends BaseNode>(classType: Class<T>): Iterable<T> {
-    for (const child of this.children) {
+  public * getDescendantsByType<T extends BaseNode>(classType: Class<T>): Iterable<T>
+  {
+    for (const child of this.children)
+    {
       if (isInstanceOf(child, classType))
         yield child as T;
 
-      for (const descendant of child.getDescendantsByType<T>(classType)) {
+      for (const descendant of child.getDescendantsByType<T>(classType))
+      {
         const copy: BaseNode = descendant;
         if (isInstanceOf(copy, classType))
           yield copy as T;
@@ -360,8 +385,10 @@ export abstract class BaseNode extends Identifiable {
     }
   }
 
-  public getActiveDescendantByType<T extends BaseNode>(classType: Class<T>): T | null {
-    for (const child of this.children) {
+  public getActiveDescendantByType<T extends BaseNode>(classType: Class<T>): T | null
+  {
+    for (const child of this.children)
+    {
       if (child.isActive && isInstanceOf(child, classType))
         return child as T;
 
@@ -372,8 +399,10 @@ export abstract class BaseNode extends Identifiable {
     return null;
   }
 
-  public getDescendantByUniqueId(uniqueId: UniqueId): BaseNode | null {
-    for (const child of this.children) {
+  public getDescendantByUniqueId(uniqueId: UniqueId): BaseNode | null
+  {
+    for (const child of this.children)
+    {
       if (child.uniqueId.equals(uniqueId))
         return child;
 
@@ -388,40 +417,50 @@ export abstract class BaseNode extends Identifiable {
   // INSTANCE METHODS: Get ancestors
   //==================================================
 
-  public * getThisAndAncestors(): Iterable<BaseNode> {
+  public * getThisAndAncestors(): Iterable<BaseNode>
+  {
     let ancestor: BaseNode | null = this;
-    while (ancestor) {
+    while (ancestor)
+    {
       yield ancestor;
       ancestor = ancestor.parent;
     }
   }
 
-  public * getAncestors(): Iterable<BaseNode> {
+  public * getAncestors(): Iterable<BaseNode>
+  {
     let ancestor = this.parent;
-    while (ancestor) {
+    while (ancestor)
+    {
       yield ancestor;
       ancestor = ancestor.parent;
     }
   }
 
-  public * getAncestorsExceptRoot(): Iterable<BaseNode> {
+  public * getAncestorsExceptRoot(): Iterable<BaseNode>
+  {
     let ancestor = this.parent;
-    while (ancestor && ancestor.hasParent) {
+    while (ancestor && ancestor.hasParent)
+    {
       yield ancestor;
       ancestor = ancestor.parent;
     }
   }
 
-  public getAncestorByType<T>(classType: Class<T>): T | null {
-    for (const ancestor of this.getAncestors()) {
+  public getAncestorByType<T>(classType: Class<T>): T | null
+  {
+    for (const ancestor of this.getAncestors())
+    {
       if (isInstanceOf(ancestor, classType))
         return ancestor as T;
     }
     return null;
   }
 
-  public getThisOrAncestorByType<T>(classType: Class<T>): T | null {
-    for (const ancestor of this.getThisAndAncestors()) {
+  public getThisOrAncestorByType<T>(classType: Class<T>): T | null
+  {
+    for (const ancestor of this.getThisAndAncestors())
+    {
       if (isInstanceOf(ancestor, classType))
         return ancestor as T;
     }
@@ -432,26 +471,35 @@ export abstract class BaseNode extends Identifiable {
   // INSTANCE METHODS: Child-Parent relationship
   //==================================================
 
-  public addChild(child: BaseNode): void {
-    if (child.hasParent) {
+  public addChild(child: BaseNode, insertFirst = false): void
+  {
+    if (child.hasParent)
+    {
       Error(`The child ${child.typeName} already has a parent`);
       return;
     }
-    if (child === this) {
+    if (child === this)
+    {
       Error(`Trying to add illegal child ${child.typeName}`);
       return;
     }
-    this._children.push(child);
+    if (insertFirst)
+      this._children.unshift(child)
+    else
+      this._children.push(child);
     child._parent = this;
   }
 
-  public remove(): boolean {
-    if (!this.parent) {
+  public remove(): boolean
+  {
+    if (!this.parent)
+    {
       Error(`The child ${this.typeName} don't have a parent`);
       return false;
     }
     const childIndex = this.childIndex;
-    if (childIndex === undefined) {
+    if (childIndex === undefined)
+    {
       Error(`The child ${this.typeName} is not child of it's parent`);
       return false;
     }
@@ -460,17 +508,24 @@ export abstract class BaseNode extends Identifiable {
     return true;
   }
 
+  public sortChildrenByName(): void
+  {
+    this.children.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
   //==================================================
   // INSTANCE METHODS: Misc
   //==================================================
 
-  public notify(args: NodeEventArgs): void {
+  public notify(args: NodeEventArgs): void
+  {
     for (const eventListener of this.eventListeners)
       eventListener.processEvent(this, args);
     this.notifyCore(args);
   }
 
-  public initialize(): void {
+  public initialize(): void
+  {
     if (this._isInitialized)
       return; // This should be done once
     this.initializeCore();
@@ -478,13 +533,15 @@ export abstract class BaseNode extends Identifiable {
     this._isInitialized = true;
   }
 
-  public initializeRecursive(): void {
+  public initializeRecursive(): void
+  {
     this.initialize();
     for (const child of this.children)
       child.initializeRecursive();
   }
 
-  public removeInteractive(): void {
+  public removeInteractive(): void
+  {
     // To be called when a node is removed
     // It is not finished, because the children it not taken properly care of
     this.eventListeners.length = 0;
@@ -494,7 +551,8 @@ export abstract class BaseNode extends Identifiable {
     parent!.notify(new NodeEventArgs(Changes.childDeleted));
   }
 
-  public setActiveInteractive(): void {
+  public setActiveInteractive(): void
+  {
     // To be called when a object should be active
     if (this.isActive)
       return;
@@ -502,9 +560,11 @@ export abstract class BaseNode extends Identifiable {
     if (!this.canBeActive)
       return;
 
-    if (this.parent) {
+    if (this.parent)
+    {
       // Turn the others off
-      for (const child of this.parent.children) {
+      for (const child of this.parent.children)
+      {
         if (child === this)
           continue;
         if (child.className !== this.className)
@@ -529,11 +589,13 @@ export abstract class BaseNode extends Identifiable {
 
   private eventListeners: IEventListener[] = [];
 
-  public addEventListener(eventListener: IEventListener) {
+  public addEventListener(eventListener: IEventListener)
+  {
     this.eventListeners.push(eventListener);
   }
 
-  public removeEventListener(eventListener: IEventListener) {
+  public removeEventListener(eventListener: IEventListener)
+  {
     const index = this.eventListeners.indexOf(eventListener, 0);
     if (index < 0)
       return;
@@ -545,13 +607,15 @@ export abstract class BaseNode extends Identifiable {
   // INSTANCE METHODS: Draw styles
   //==================================================
 
-  public getRenderStyle(targetId?: TargetId): BaseRenderStyle | null {
+  public getRenderStyle(targetId?: TargetId): BaseRenderStyle | null
+  {
     const root = this.renderStyleRoot;
     if (root != null && root !== this)
       return root.getRenderStyle(targetId);
 
     // Find the targetId if not present
-    if (!targetId) {
+    if (!targetId)
+    {
       const target = this.activeTargetIdAccessor;
       if (target)
         targetId = target.targetId;
@@ -562,7 +626,8 @@ export abstract class BaseNode extends Identifiable {
     }
     // Find the style in the node itself
     let style: BaseRenderStyle | null = null;
-    for (const thisStyle of this.renderStyles) {
+    for (const thisStyle of this.renderStyles)
+    {
       if (thisStyle.isDefault)
         continue;
 
@@ -573,8 +638,10 @@ export abstract class BaseNode extends Identifiable {
       break;
     }
     // If still not find and unique, copy one of the existing
-    if (!style && this.renderStyleResolution === RenderStyleResolution.Unique) {
-      for (const thisStyle of this.renderStyles) {
+    if (!style && this.renderStyleResolution === RenderStyleResolution.Unique)
+    {
+      for (const thisStyle of this.renderStyles)
+      {
         if (thisStyle.isDefault)
           continue;
 
@@ -589,9 +656,11 @@ export abstract class BaseNode extends Identifiable {
       }
     }
     // If still not found: Create it
-    if (!style) {
+    if (!style)
+    {
       style = this.createRenderStyle(targetId);
-      if (style) {
+      if (style)
+      {
         style.targetId.set(targetId, this.renderStyleResolution);
         this.renderStyles.push(style);
       }
@@ -605,19 +674,28 @@ export abstract class BaseNode extends Identifiable {
   // INSTANCE METHODS: Some helpers
   //==================================================
 
-  protected generateNewColor(): color {
+  protected generateNewColor(): color
+  {
     return this.canChangeColor ? Colors.nextColor : Colors.white;
   }
 
-  protected generateNewName(): string {
+  protected generateNewName(): string
+  {
     let result = this.typeName;
     if (!this.canChangeName)
       return result;
 
-    const childIndex = this.childIndex;
-    if (childIndex === undefined)
+    if (!this.parent)
       return result;
 
+    let childIndex = 0;
+    for (const child of this.parent.children)
+    {
+      if (child === this)
+        break;
+      if (this.typeName === child.typeName)
+        childIndex++;
+    }
     result += " " + (childIndex + 1);
     return result;
   }
@@ -626,7 +704,8 @@ export abstract class BaseNode extends Identifiable {
   // INSTANCE METHODS: Debugging
   //==================================================
 
-  public /*virtual*/ getDebugString(): string {
+  public /*virtual*/ getDebugString(): string
+  {
     let result = this.name;
     result += Util.cocatinate("typeName", this.typeName);
     result += Util.cocatinate("className", this.className);
@@ -640,9 +719,11 @@ export abstract class BaseNode extends Identifiable {
     return result;
   }
 
-  public toHierarcyString(): string {
+  public toHierarcyString(): string
+  {
     let text = "";
-    for (const node of this.getThisAndDescendants()) {
+    for (const node of this.getThisAndDescendants())
+    {
       let padding = 0;
       for (const { } of node.getAncestors())
         padding++;

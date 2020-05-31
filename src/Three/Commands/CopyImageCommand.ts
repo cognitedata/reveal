@@ -17,7 +17,7 @@ export class CopyImageCommand extends ThreeRenderTargetCommand {
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*virtual*/get name(): string { return "Copy a image of the viewer to the clipboard" }
+  public /*override*/get name(): string { return "Copy a image of the viewer to the clipboard" }
 
   protected invokeCore(): boolean {
     return true;

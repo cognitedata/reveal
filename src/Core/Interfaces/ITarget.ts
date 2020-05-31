@@ -13,7 +13,7 @@
 
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { BaseView } from "@/Core/Views/BaseView";
-import { TargetIdAccessor as ITargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
+import { ITargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
 
 export interface ITarget extends ITargetIdAccessor
 {

@@ -16,6 +16,7 @@ import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
+import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
 
 export class CasingLogNode extends BaseLogNode
 {
@@ -38,7 +39,7 @@ export class CasingLogNode extends BaseLogNode
   //==================================================
 
   public /*override*/ get className(): string { return CasingLogNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === BaseLogNode.name || super.isA(className); }
+  public /*override*/ isA(className: string): boolean { return className === CasingLogNode.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
@@ -50,4 +51,10 @@ export class CasingLogNode extends BaseLogNode
   {
     return new WellRenderStyle(targetId);
   }
+
+  //==================================================
+  // OVERRIDES of BaseLogNode
+  //==================================================
+
+  public /*override*/  get wellLogType(): WellLogType { return WellLogType.Casing; }
 }

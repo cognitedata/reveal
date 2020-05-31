@@ -17,12 +17,14 @@ import { Vector3 } from "@/Core/Geometry/Vector3";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import Color from "color";
 
-export class ThreeLabel {
+export class ThreeLabel
+{
   //==================================================
   // STATIC METHODS: 
   //==================================================
 
-  public static createByPositionAndDirection(text: string, position: Vector3, tickDirection: Vector3, worldHeight: number, color: Color): THREE.Sprite | null {
+  public static createByPositionAndDirection(text: string, position: Vector3, tickDirection: Vector3, worldHeight: number, color: Color): THREE.Sprite | null
+  {
     const label = ThreeLabel.create(text, worldHeight, color);
     if (!label)
       return null;
@@ -34,7 +36,8 @@ export class ThreeLabel {
     return label;
   }
 
-  public static createByPositionAndAlignment(text: string, position: Vector3, alignment: number, worldHeight: number, color: Color): THREE.Sprite | null {
+  public static createByPositionAndAlignment(text: string, position: Vector3, alignment: number, worldHeight: number, color: Color): THREE.Sprite | null
+  {
     const sprite = ThreeLabel.create(text, worldHeight, color);
     if (!sprite)
       return null;
@@ -44,7 +47,8 @@ export class ThreeLabel {
     return sprite;
   }
 
-  public static create(text: string, worldHeight: number, color: Color): THREE.Sprite | null {
+  public static create(text: string, worldHeight: number, color: Color): THREE.Sprite | null
+  {
     const canvas = ThreeLabel.createCanvasWithText(text, color);
     if (!canvas)
       return null;
@@ -57,7 +61,8 @@ export class ThreeLabel {
     return sprite;
   }
 
-  public static createTexture(canvas: HTMLCanvasElement): THREE.Texture {
+  public static createTexture(canvas: HTMLCanvasElement): THREE.Texture
+  {
     const texture = new THREE.CanvasTexture(canvas);
     texture.minFilter = THREE.LinearFilter;
     texture.generateMipmaps = true;
@@ -67,7 +72,8 @@ export class ThreeLabel {
     return texture;
   }
 
-  public static createCanvasWithText(text: string, color:Color): HTMLCanvasElement | null {
+  public static createCanvasWithText(text: string, color: Color): HTMLCanvasElement | null
+  {
     // https://www.javascripture.com/CanvasRenderingContext2D
     const borderSize = 2;
     const fontSize = 30;
@@ -99,7 +105,7 @@ export class ThreeLabel {
 
     // scale to fit but don't stretch
     context.translate(width / 2, height / 2);
-    context.fillStyle =  color.string();
+    context.fillStyle = color.string();
     context.fillText(text, 0, 0);
     return canvas;
   }
@@ -108,7 +114,8 @@ export class ThreeLabel {
   // STATIC METHODS: Helpers
   //==================================================
 
-  private static align(sprite: THREE.Sprite, alignment: number): void {
+  private static align(sprite: THREE.Sprite, alignment: number): void
+  {
     //     alignment
     //   6     7     8
     //   3     4     5
@@ -122,7 +129,8 @@ export class ThreeLabel {
     //            + <--- Point
     //   Text Here
 
-    switch (alignment) {
+    switch (alignment)
+    {
       case 0:
       case 3:
       case 6:
@@ -135,7 +143,8 @@ export class ThreeLabel {
         sprite.position.x += sprite.scale.x / 2;
         break;
     }
-    switch (alignment) {
+    switch (alignment)
+    {
       case 0:
       case 1:
       case 2:

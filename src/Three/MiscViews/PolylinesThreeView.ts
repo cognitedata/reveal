@@ -26,17 +26,17 @@ import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 export class PolylinesThreeView extends BaseGroupThreeView
 {
   //==================================================
-  // CONSTRUCTORS
-  //==================================================
-
-  public constructor() { super(); }
-
-  //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
   protected get node(): PolylinesNode { return super.getNode() as PolylinesNode; }
   protected get style(): PolylinesRenderStyle { return super.getStyle() as PolylinesRenderStyle; }
+
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
+
+  public constructor() { super(); }
 
   //==================================================
   // OVERRIDES of BaseView
@@ -47,10 +47,11 @@ export class PolylinesThreeView extends BaseGroupThreeView
     super.updateCore(args);
   }
 
-  public calculateBoundingBoxCore(): Range3 | undefined
-  {
-    return this.node.boundingBox;
-  }
+  //==================================================
+  // OVERRIDES of Base3DView
+  //==================================================
+
+  public /*override*/ calculateBoundingBoxCore(): Range3 | undefined { return this.node.boundingBox; }
 
   //==================================================
   // OVERRIDES of BaseGroupThreeView

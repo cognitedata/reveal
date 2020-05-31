@@ -18,9 +18,9 @@ export class ViewFromCommand extends ThreeRenderTargetCommand {
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*virtual*/ get name(): string { return "View from " + this.directionName; }
+  public /*override*/ get name(): string { return "View from " + this.directionName; }
 
-  protected /*virtual*/ invokeCore(): boolean {
+  protected /*override*/ invokeCore(): boolean {
     if (!this.target)
       return false;
 
@@ -29,7 +29,7 @@ export class ViewFromCommand extends ThreeRenderTargetCommand {
   }
 
   //==================================================
-  // OVERRIDES of BaseCommand
+  // INSTANCE METHODS
   //==================================================
 
   private get directionName(): string {

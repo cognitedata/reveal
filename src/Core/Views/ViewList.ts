@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import { BaseView } from "@/Core/Views/BaseView";
-import { TargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
+import { ITargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
 
 export class ViewList
 {
@@ -58,7 +58,7 @@ export class ViewList
     this.list.splice(0, this.list.length);
   }
 
-  public getViewByTarget(target: TargetIdAccessor): BaseView | null
+  public getViewByTarget(target: ITargetIdAccessor): BaseView | null
   {
     const resultView = this.list.find((view: BaseView) => view.getTarget() === target);
     return resultView === undefined ? null : resultView;

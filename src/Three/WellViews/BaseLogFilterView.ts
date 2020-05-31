@@ -11,20 +11,25 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import * as THREE from "three";
-import { Base3DView } from "@/Core/Views/Base3DView";
-import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
+import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
+import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
+import { Changes } from "@/Core/Views/Changes";
+import { BaseView } from "@/Core/Views/BaseView";
 
-export abstract class BaseThreeView extends Base3DView
+export class BaseLogFilterView extends BaseView
 {
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  protected get scene(): THREE.Scene { return this.renderTarget.scene; }
-  protected get camera(): THREE.Camera { return this.renderTarget.camera; }
-  protected get renderTarget(): ThreeRenderTargetNode { return super.getTarget() as ThreeRenderTargetNode; }
+  private get node(): BaseLogNode { return super.getNode() as BaseLogNode; }
+
+  private get trajectoryNode(): WellTrajectoryNode | null
+  {
+    const node = this.node;
+    return !node ? null : node.trajectoryNode;
+  }
 
   //==================================================
   // CONSTRUCTORS
@@ -36,33 +41,45 @@ export abstract class BaseThreeView extends Base3DView
   // OVERRIDES of BaseView
   //==================================================
 
+  public get /*override*/ isVisible(): boolean
+  {
+    const parent = this.trajectoryNode;
+    return parent != null && parent.isVisible(this.renderTarget)
+  }
 
   protected /*override*/ updateCore(args: NodeEventArgs): void
   {
     super.updateCore(args);
-    this.invalidateTarget();
+    if (args.isChanged(Changes.renderStyle))
+      this.updateTrajectory(args);
   }
 
   protected /*override*/ onShowCore(): void
   {
     super.onShowCore();
-    this.invalidateTarget();
+    this.updateTrajectory();
   }
 
   protected /*override*/ onHideCore(): void
   {
     super.onHideCore();
-    this.invalidateTarget();
+    this.updateTrajectory();
   }
 
   //==================================================
-  // INSTANCE METHODS
+  // OVERRIDES of BaseView
   //==================================================
 
-  protected invalidateTarget(): void
+  protected updateTrajectory(args: NodeEventArgs | null = null): void
   {
-    const target = this.renderTarget;
-    if (target)
-      target.invalidate();
+    const trajectoryNode = this.trajectoryNode;
+    if (!trajectoryNode)
+      return;
+
+    const trajectoryView = trajectoryNode.getViewByTarget(this.renderTarget);
+    if (!trajectoryView)
+      return;
+
+    trajectoryView.update(args ?? new NodeEventArgs(Changes.filter));
   }
 }

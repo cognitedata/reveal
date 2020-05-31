@@ -14,7 +14,7 @@
 import { TargetTreeNode } from "@/Core/Nodes/TargetTreeNode";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
-import { TargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
+import { ITargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
 
 export class BaseRootNode extends BaseNode
 {
@@ -54,10 +54,10 @@ export class BaseRootNode extends BaseNode
   public /*override*/ get canChangeColor(): boolean { return false; }
   public /*override*/ get typeName(): string { return "Root" }
 
-  protected /*override*/ get activeTargetIdAccessor(): TargetIdAccessor | null
+  protected /*override*/ get activeTargetIdAccessor(): ITargetIdAccessor | null
   {
     const targetNode = this.activeTarget;
-    return targetNode as TargetIdAccessor;
+    return targetNode as ITargetIdAccessor;
   }
 
   protected /*override*/ initializeCore(): void

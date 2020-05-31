@@ -14,8 +14,9 @@
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
-import { TargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
+import { ITargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
+import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
 
 export abstract class BaseView
 {
@@ -24,7 +25,7 @@ export abstract class BaseView
   //==================================================
 
   private _node: BaseNode | null = null;
-  private _target: TargetIdAccessor | null = null;
+  private _target: ITargetIdAccessor | null = null;
   //private _isVisible: boolean = false;
 
   //==================================================
@@ -39,6 +40,7 @@ export abstract class BaseView
 
   //public set isVisible(value: boolean) { this._isVisible = value; }
   public get targetId(): TargetId { return this.getTarget().targetId; }
+  protected get renderTarget(): BaseTargetNode { return this.getTarget() as BaseTargetNode; }
 
   //==================================================
   // CONSTRUCTORS
@@ -110,7 +112,7 @@ export abstract class BaseView
     return this._node;
   }
 
-  public getTarget(): TargetIdAccessor 
+  public getTarget(): ITargetIdAccessor 
   {
     if (!this._target)
       throw Error("The target is missing in the view");
@@ -175,7 +177,7 @@ export abstract class BaseView
     this._target = null;
   }
 
-  public attach(node: BaseNode, target: TargetIdAccessor): void
+  public attach(node: BaseNode, target: ITargetIdAccessor): void
   {
     // This is called after dispose
     this._node = node;

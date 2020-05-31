@@ -15,10 +15,10 @@ import { BaseCommand } from "@/Core/Commands/BaseCommand";
 
 export interface IToolbar
 {
-  add(command: BaseCommand) : void;
+  add(command: BaseCommand): void;
 
   // These methods are ment to be used to create option menu. The selected should be visible in the toolbar
-  beginOptionMenu() : void;
-  addOptionMenu(command: BaseCommand) : void;
-  endOptionMenu() : void;
+  beginOptionMenu(): void;
+  addOptionMenu(command: BaseCommand): void;
+  endOptionMenu(): void;
 }
