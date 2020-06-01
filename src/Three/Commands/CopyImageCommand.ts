@@ -2,6 +2,7 @@
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetCommand";
 import { AxisNode } from "@/Nodes/Decorations/AxisNode";
+import CopyImageIcon from "@images/Commands/CopyImage.png";
 
 export class CopyImageCommand extends ThreeRenderTargetCommand {
 
@@ -16,6 +17,8 @@ export class CopyImageCommand extends ThreeRenderTargetCommand {
   //==================================================
   // OVERRIDES of BaseCommand
   //==================================================
+
+  public /*virtual*/ get icon(): string { return CopyImageIcon; }
 
   public /*override*/get name(): string { return "Copy a image of the viewer to the clipboard" }
 

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, connect } from "react-redux";
 import Draggable from "react-draggable";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExpandArrowsAlt } from "@fortawesome/free-solid-svg-icons/faExpandArrowsAlt";
-import { faCompressArrowsAlt } from "@fortawesome/free-solid-svg-icons/faCompressArrowsAlt";
+import InIcon from "@images/Actions/In.png";
+import OutIcon from "@images/Actions/Out.png";
 
 import { IToolbar } from "@/Core/Interfaces/IToolbar";
 import { BaseCommand } from "@/Core/Commands/BaseCommand";
@@ -71,37 +70,51 @@ const VisualizerToolbar = (props: { visualizerId: string, visualizers: Visualize
     handle=".handle"
     onDrag={() => setDragging(true)}
     onStop={onStop}>
-    <div
-      className="visuaizer-toolbar"
-      style={{ flexDirection: horizontal ? "row" : "column" }}>
-      <div className="handle" style={{ cursor: dragging ? "move" : "pointer" }}>
-        {horizontal ?
-          <FontAwesomeIcon icon={faCompressArrowsAlt} /> :
-          <FontAwesomeIcon icon={faExpandArrowsAlt} />}
-      </div>
-      {commandTypes.map((commandType: string, index) =>
+    <div className="visualizer-toolbar-wrapper"
+      style={{
+        marginRight: horizontal ? "27rem" : "6rem",
+        marginBottom: horizontal ? "3rem" : "20rem",
+      }}>
+      <div className="visualizer-toolbar-container">
+        <div className="handle" style={{
+          cursor: dragging ? "move" : "pointer",
+        }}>
+          {horizontal ?
+            <img src={InIcon} /> :
+            <img src={OutIcon} />}
+        </div>
         <div
-          key={`toolbar-${commandType}-${index}`}
-          className="visuaizer-toolbar-group"
-          style={{ flexDirection: horizontal ? "row" : "column" }}
-        >
-          {toolBar[commandType].map((command, commandIndex) => command.icon ? <div
-            onClick={() => dispatch(executeToolBarCommand({
-              visualizerId,
-              commandType,
-              index: commandIndex
-            }))}
-            key={`visualizer-toolbar-icon-${commandType}${commandIndex}`}
-            className={`visualizer-tool-bar-icon 
+          className="visuaizer-toolbar"
+          style={{
+            flexDirection: horizontal ? "row" : "column",
+            left: horizontal ? "0.3rem" : "-1rem",
+            top: horizontal ? "0rem" : "1.2rem"
+          }}>
+          {commandTypes.map((commandType: string, index) =>
+            <div
+              key={`toolbar-${commandType}-${index}`}
+              className="visuaizer-toolbar-group"
+              style={{ flexDirection: horizontal ? "row" : "column" }}
+            >
+              {toolBar[commandType].map((command, commandIndex) => command.icon ? <div
+                onClick={() => dispatch(executeToolBarCommand({
+                  visualizerId,
+                  commandType,
+                  index: commandIndex
+                }))}
+                key={`visualizer-toolbar-icon-${commandType}${commandIndex}`}
+                className={`visualizer-tool-bar-icon 
                         ${command.isChecked ?
-                "visualizer-tool-bar-icon-selected" : ""}`}>
-            {command.icon && <Icon
-              src={command.icon}
-              tooltip={command.command.name}
-              placement={horizontal ? "bottom" : "right-start"}
-            />}
-          </div> : null)}
-        </div>)}
+                    "visualizer-tool-bar-icon-selected" : ""}`}>
+                {command.icon && <Icon
+                  src={command.icon}
+                  tooltip={command.command.name}
+                  placement={horizontal ? "bottom" : "right-start"}
+                />}
+              </div> : null)}
+            </div>)}
+        </div>
+      </div>
     </div>
   </Draggable>
 
