@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal",
-  "version": "1.0.0-alpha-3",
+  "version": "1.0.0-alpha-4",
   "private": true,
   "description": "WebGL based 3D viewer for CAD and point clouds processed in Cognite CDF.",
   "repository": {
