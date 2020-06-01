@@ -12,6 +12,7 @@
 //=====================================================================================
 
 import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
+import SettingsTreeNodeIcon from "@images/Nodes/SettingsTreeNode.png";
 
 export class SettingsTreeNode extends BaseTreeNode
 {
@@ -26,6 +27,7 @@ export class SettingsTreeNode extends BaseTreeNode
   //==================================================
 
   public /*override*/ get className(): string { return SettingsTreeNode.name; }
+  public /*override*/ get icon(): string { return SettingsTreeNodeIcon }
   public /*override*/ isA(className: string): boolean { return className === SettingsTreeNode.name || super.isA(className); }
 
   //==================================================

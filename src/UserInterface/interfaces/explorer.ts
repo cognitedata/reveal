@@ -27,6 +27,7 @@ export interface TreeDataItem {
   expanded: boolean;
   icon: string;
   iconDescription: string;
+  iconVisible: boolean;
   selected: boolean;
   checked: boolean;
   indeterminate: boolean;
@@ -47,6 +48,7 @@ export interface TreeNode {
   type: string;
   icon: string;
   iconDescription: string;
+  iconVisible: boolean;
   selected: boolean;
   checked: boolean;
   indeterminate: boolean;
@@ -55,7 +57,7 @@ export interface TreeNode {
   disabled: boolean;
   visible: boolean;
   uniqueId: string;
-  children: Array<TreeNode>;
+  children: TreeNode[];
 }
 
 export type ExplorerCommandPayloadType = {

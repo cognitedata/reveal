@@ -29,6 +29,7 @@ import { ITarget } from "@/Core/Interfaces/ITarget";
 import { Util } from "@/Core/Primitives/Util";
 import { IEventListener } from "@/Core/Interfaces/IEventListener";
 import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
+import { FileType } from "@/Core/Enums/FileType";
 
 export abstract class BaseNode extends Identifiable
 {
@@ -108,6 +109,12 @@ export abstract class BaseNode extends Identifiable
   public /*virtual*/ get canChangeColor() { return true; }
 
   //==================================================
+  // VIRTUAL METHODS: Icon
+  //==================================================
+
+  public /*virtual*/ get icon(): string { return (this.typeName + FileType.png); }
+
+  //==================================================
   // VIRTUAL METHODS: Active
   //==================================================
 
@@ -175,7 +182,7 @@ export abstract class BaseNode extends Identifiable
     const checkBoxState = this.getCheckBoxState(target);
     if (checkBoxState === CheckBoxState.Never)
       return false;
-    if (checkBoxState === CheckBoxState.None && !this.canBeChecked)
+    if (checkBoxState === CheckBoxState.None && !this.canBeChecked(target))
       return false;
 
     let hasChanged = false;
@@ -519,11 +526,9 @@ export abstract class BaseNode extends Identifiable
 
   public notify(args: NodeEventArgs): void
   {
-    // Alternative 1. (To be removed?)
     for (const eventListener of this.eventListeners)
       eventListener.processEvent(this, args);
 
-    // Alternative 2.
     VirtualUserInterface.updateNode(this, args);
     this.notifyCore(args);
   }
@@ -533,7 +538,6 @@ export abstract class BaseNode extends Identifiable
     if (this._isInitialized)
       return; // This should be done once
     this.initializeCore();
-    VirtualUserInterface.registerNode(this);
     this._isInitialized = true;
   }
 

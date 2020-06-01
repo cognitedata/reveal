@@ -65,9 +65,15 @@ export default function VirtualTree(props: {
             onCollapse={onExpand}
           />
         </div>
-        <div className="tree-item-comp">
-          <IconElement src={item.icon} alt={item.iconDescription} size="100%" />
-        </div>
+        {item.iconVisible && (
+          <div className="tree-item-comp">
+            <IconElement
+              src={item.icon}
+              alt={item.iconDescription}
+              size="100%"
+            />
+          </div>
+        )}
         <div className="tree-item-comp">
           <TreeCheckBox
             class="tree-checkbox"

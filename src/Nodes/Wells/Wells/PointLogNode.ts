@@ -17,6 +17,7 @@ import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
+import PointLogNodeIcon from "@images/Nodes/PointLogNode.png";
 
 export class PointLogNode extends BaseLogNode
 {
@@ -46,6 +47,8 @@ export class PointLogNode extends BaseLogNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "PointLog" }
+
+  public /*override*/ get icon(): string { return PointLogNodeIcon }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {

@@ -12,6 +12,7 @@
 //=====================================================================================
 
 import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
+import FolderNodeIcon from "@images/Nodes/FolderNode.png";
 
 export class OthersTreeNode extends BaseTreeNode
 {
@@ -33,5 +34,6 @@ export class OthersTreeNode extends BaseTreeNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "OthersTree" }
+  public /*override*/ get icon(): string { return FolderNodeIcon }
   public /*override*/ get name(): string { return "Others" }
 }

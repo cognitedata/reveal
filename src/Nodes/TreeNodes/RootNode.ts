@@ -19,6 +19,7 @@ import { SettingsTreeNode } from "@/Nodes/TreeNodes/SettingsTreeNode";
 import { AxisNode } from "@/Nodes/Decorations/AxisNode";
 
 import { OthersTreeNode } from "@/Nodes/TreeNodes/OthersTreeNode";
+import RootNodeIcon from "@images/Nodes/RootNode.png";
 
 export class RootNode extends BaseRootNode
 {
@@ -75,6 +76,7 @@ export class RootNode extends BaseRootNode
   // OVERRIDES of BaseNode
   //==================================================
 
+  public /*override*/ get icon(): string { return RootNodeIcon }
   protected /*override*/ initializeCore(): void
   {
     super.initializeCore();

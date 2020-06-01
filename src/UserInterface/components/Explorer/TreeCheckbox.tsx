@@ -6,6 +6,7 @@ import {
   BackgroundFilter,
   FocusFilter,
   CheckedAll,
+  CheckedSome,
   FrameStippled,
   BackgroundNormal
 } from "@/UserInterface/utils/Icon";
@@ -45,20 +46,16 @@ const Span = styled.span<SpanProps>`
     background-image: url(${Frame}), url(${FocusFilter});
     background-repeat: no-repeat, no-repeat;
   }
-  .checked & {
-    background-image: url(${Frame}), url(${CheckedAll});
-    background-repeat: no-repeat, no-repeat;
-  }
-  .checked &:hover {
-    background-image: url(${Frame}), url(${FocusNormal}), url(${CheckedAll});
-    background-repeat: no-repeat, no-repeat;
-  }
-  .checked.filter &:hover {
+  .filter &:hover {
     background-image: url(${Frame}), url(${FocusFilter}), url(${CheckedAll});
     background-repeat: no-repeat, no-repeat;
   }
   .checked & {
     background-image: url(${Frame}), url(${CheckedAll});
+    background-repeat: no-repeat, no-repeat;
+  }
+  .indeterminate & {
+    background-image: url(${Frame}), url(${CheckedSome});
     background-repeat: no-repeat, no-repeat;
   }
   .disabled & {
@@ -70,6 +67,10 @@ const Span = styled.span<SpanProps>`
     background-image: url(${FrameStippled}), url(${BackgroundFilter});
     background-repeat: no-repeat, no-repeat;
     cursor: initial;
+  }
+  &:hover {
+    background-image: url(${Frame}), url(${FocusNormal}), url(${CheckedAll});
+    background-repeat: no-repeat, no-repeat;
   }
 `;
 

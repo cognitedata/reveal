@@ -11,7 +11,6 @@ import {
 import NodeTabs from "./NodeTabs";
 import { getVisibleNodes } from "@/UserInterface/redux/selectors/explorer";
 import { ReduxStore } from "@/UserInterface/interfaces/common";
-import getIcon from "@/UserInterface/utils/Icon";
 
 // Get a copy of nodes
 function getCopyOfNodes(nodes?: {
@@ -23,7 +22,7 @@ function getCopyOfNodes(nodes?: {
       if (nodes.hasOwnProperty(id)) {
         nodesCopy[id] = {
           ...nodes[id],
-          icon: getIcon("Nodes", "PointsNode") || "",
+          icon: nodes[id].icon || "",
           children: []
         };
       }

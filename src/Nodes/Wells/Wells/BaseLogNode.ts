@@ -21,6 +21,7 @@ import { BaseFilterLogNode } from "@/Nodes/Wells/Filters/BaseFilterLogNode";
 import { Util } from "@/Core/Primitives/Util";
 import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 import { FilterLogFolder } from "@/Nodes/Wells/Filters/FilterLogFolder";
+import { ITarget } from "@/Core/Interfaces/ITarget";
 
 export abstract class BaseLogNode extends BaseVisualNode
 {
@@ -52,6 +53,16 @@ export abstract class BaseLogNode extends BaseVisualNode
 
   public /*override*/ get className(): string { return BaseLogNode.name; }
   public /*override*/ isA(className: string): boolean { return className === BaseLogNode.name || super.isA(className); }
+
+  //==================================================
+  // OVERRIDES of BaseNode
+  //==================================================
+
+  public /*override*/ canBeChecked(target: ITarget | null): boolean
+  {
+    var trajectoryNode = this.trajectoryNode;
+    return trajectoryNode ? trajectoryNode.isVisible(target) : false;
+  }
 
   //==================================================
   // VIRTUAL METHODS

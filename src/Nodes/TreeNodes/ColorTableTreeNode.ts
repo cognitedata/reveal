@@ -12,6 +12,7 @@
 //=====================================================================================
 
 import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
+import ColorTableTreeNodeIcon from "@images/Nodes/ColorTableTreeNode.png";
 
 export class ColorTableTreeNode extends BaseTreeNode
 {
@@ -33,5 +34,6 @@ export class ColorTableTreeNode extends BaseTreeNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "ColorTables" }
+  public /*override*/ get icon(): string { return ColorTableTreeNodeIcon }
   public /*override*/ get name(): string { return "Colors" }
 }

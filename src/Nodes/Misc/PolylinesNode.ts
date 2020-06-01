@@ -19,6 +19,7 @@ import { Polylines } from "@/Core/Geometry/Polylines";
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { PolylinesRenderStyle } from "@/Nodes/Misc/PolylinesRenderStyle";
+import PolylinesNodeIcon from "@images/Nodes/PolylinesNode.png";
 
 export class PolylinesNode extends BaseVisualNode
 {
@@ -54,6 +55,8 @@ export class PolylinesNode extends BaseVisualNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Polylines" }
+
+  public /*override*/ get icon(): string { return PolylinesNodeIcon }
 
   public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
 

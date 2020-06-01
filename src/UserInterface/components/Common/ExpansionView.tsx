@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     expansionSummaryRoot: {
       padding: "0 !important",
-      minHeight: "1.8rem !important",
+      minHeight: "1.8rem !important"
     },
     expansionSummaryHeader: {
       display: "flex",
@@ -50,55 +50,62 @@ const useStyles = makeStyles((theme: Theme) =>
       top: "-1.8rem",
       zIndex: 9998
     }
-  }),
+  })
 );
 
 /**
  * ExpansionView Component
  */
 export default function ExpansionView(props: {
-  sectionId: string,
-  title: string,
-  isExpanded: boolean,
-  subSectionId?: string,
-  toolBar?: ToolBarType,
-  children: JSX.Element
+  sectionId: string;
+  title: string;
+  isExpanded: boolean;
+  subSectionId?: string;
+  toolBar?: ToolBarType;
+  children: JSX.Element;
 }) {
-
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const { sectionId, title, isExpanded, toolBar, subSectionId, children } = props;
+  const {
+    sectionId,
+    title,
+    isExpanded,
+    toolBar,
+    subSectionId,
+    children
+  } = props;
   return (
     <ExpansionPanel
       expanded={isExpanded}
-      onChange={(event) => {
-        dispatch(onExpandChange({
-          sectionId,
-          subSectionId,
-          expandState: !isExpanded
-        }))
-      }}>
+      onChange={event => {
+        dispatch(
+          onExpandChange({
+            sectionId,
+            subSectionId,
+            expandState: !isExpanded
+          })
+        );
+      }}
+    >
       <ExpansionPanelSummary className={classes.expansionSummaryRoot}>
         <div className={classes.expansionSummaryHeader}>
           <div className={classes.expandButton}>
-            {isExpanded ?
-
+            {isExpanded ? (
               <FontAwesomeIcon icon={faChevronUp} />
-              : <FontAwesomeIcon icon={faChevronDown} />}
+            ) : (
+              <FontAwesomeIcon icon={faChevronDown} />
+            )}
           </div>
-          <span className={classes.expansionTitle}><b>{title}</b></span>
+          <span className={classes.expansionTitle}>
+            <b>{title}</b>
+          </span>
         </div>
       </ExpansionPanelSummary>
       <div className={classes.toolBar}>
-        <ToolBar
-          toolBar={toolBar}
-          sectionId={sectionId}
-        ></ToolBar>
+        <ToolBar toolBar={toolBar} sectionId={sectionId} />
       </div>
-      <ExpansionPanelDetails>
-        {children || null}
-      </ExpansionPanelDetails>
-    </ExpansionPanel >
+      <ExpansionPanelDetails>{children || null}</ExpansionPanelDetails>
+    </ExpansionPanel>
   );
 }
