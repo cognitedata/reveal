@@ -74,7 +74,12 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget
     return ViewFactory.instance.canCreate(node, this.className);
   }
 
-  public isVisibleView(node: BaseVisualNode): boolean
+  public hasView(node: BaseVisualNode): boolean
+  {
+    return node.views.getViewByTarget(this) != null;
+  }
+
+  public hasVisibleView(node: BaseVisualNode): boolean
   {
     const view = node.views.getViewByTarget(this);
     if (!view)
