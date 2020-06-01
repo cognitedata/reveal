@@ -13,6 +13,7 @@
 
 import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 import { FilterLogFolder } from "@/Nodes/Wells/Filters/FilterLogFolder";
+import WellNodeIcon from "@images/Nodes/WellNode.png";
 
 export class WellTreeNode extends BaseTreeNode
 {
@@ -34,6 +35,7 @@ export class WellTreeNode extends BaseTreeNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "WellTree" }
+  public /*override*/ get icon(): string { return WellNodeIcon }
   public /*override*/ get name(): string { return "Wells" }
 
   //==================================================

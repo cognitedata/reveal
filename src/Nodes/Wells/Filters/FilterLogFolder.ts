@@ -28,6 +28,7 @@ import { DiscreteLogNode } from "@/Nodes/Wells/Wells/DiscreteLogNode";
 import { CasingFilterLogNode } from "@/Nodes/Wells/Filters/CasingFilterLogNode";
 import { CasingLogNode } from "@/Nodes/Wells/Wells/CasingLogNode";
 import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
+import FilterLogFolderIcon from "@images/Nodes/FilterLogFolder.png";
 
 export class FilterLogFolder extends BaseNode
 {
@@ -55,6 +56,7 @@ export class FilterLogFolder extends BaseNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Log filter"; }
+  public /*override*/ get icon(): string { return FilterLogFolderIcon }
   public /*override*/ get canChangeName(): boolean { return false }
   public /*override*/ get canChangeColor(): boolean { return false; }
   public  /*virtual*/ get isLabelInItalic(): boolean { return true; }

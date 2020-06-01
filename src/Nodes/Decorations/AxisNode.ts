@@ -15,6 +15,7 @@ import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { AxisRenderStyle } from "@/Nodes/Decorations/AxisRenderStyle";
+import AxisNodeIcon from "@images/Nodes/AxisNode.png";
 
 export class AxisNode extends BaseVisualNode
 {
@@ -46,6 +47,8 @@ export class AxisNode extends BaseVisualNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Axis" }
+
+  public /*override*/ get icon(): string { return AxisNodeIcon }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {

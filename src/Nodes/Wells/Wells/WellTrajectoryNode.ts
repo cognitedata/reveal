@@ -23,6 +23,8 @@ import { WellNode } from "@/Nodes/Wells/Wells/WellNode";
 import { FilterLogFolder } from "@/Nodes/Wells/Filters/FilterLogFolder";
 import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 
+import WellTrajectoryNodeIcon from "@images/Nodes/WellTrajectoryNode.png";
+
 export class WellTrajectoryNode extends BaseVisualNode
 {
   //==================================================
@@ -58,6 +60,8 @@ export class WellTrajectoryNode extends BaseVisualNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "WellTrajectory" }
+
+  public /*override*/ get icon(): string { return WellTrajectoryNodeIcon }
 
   public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.range : new Range3(); }
 

@@ -19,6 +19,7 @@ import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { PointsRenderStyle } from "@/Nodes/Misc/PointsRenderStyle";
+import PointsNodeIcon from "@images/Nodes/PointsNode.png";
 
 export class PointsNode extends BaseVisualNode
 {
@@ -54,6 +55,8 @@ export class PointsNode extends BaseVisualNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Points" }
+
+  public /*override*/ get icon(): string { return PointsNodeIcon }
 
   public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
 

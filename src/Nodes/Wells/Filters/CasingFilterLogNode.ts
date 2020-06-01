@@ -16,6 +16,7 @@ import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseFilterLogNode } from "@/Nodes/Wells/Filters/BaseFilterLogNode";
 import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
+import CasingLogNodeIcon from "@images/Nodes/CasingLogNode.png";
 
 export class CasingFilterLogNode extends BaseFilterLogNode
 {
@@ -43,6 +44,8 @@ export class CasingFilterLogNode extends BaseFilterLogNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Casing" }
+
+  public /*override*/ get icon(): string { return CasingLogNodeIcon }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {

@@ -5,10 +5,7 @@
     "tslint-no-circular-imports"
   ],
   "linterOptions": {
-    "exclude": [
-      "node_modules/**/*.ts",
-      "**/*.json"
-    ]
+    "exclude": ["node_modules/**/*.ts", "**/*.json"]
   },
   "rulesDirectory": [
     "node_modules/tslint-eslint-rules/dist/rules",
@@ -19,7 +16,7 @@
     "no-irregular-whitespace": false,
     "quotemark": false,
     "member-ordering": false,
-    "prettier": true,
+    "prettier": [true, "./.prettierrc"],
     "curly": false,
     "interface-name": false,
     "brace-style": [
