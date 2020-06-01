@@ -72,7 +72,7 @@ export class ThreeModule extends BaseModule
     factory.register(PolylinesNode.name, PolylinesThreeView, ThreeRenderTargetNode.name);
     factory.register(SurfaceNode.name, SurfaceThreeView, ThreeRenderTargetNode.name);
     factory.register(PotreeNode.name, PotreeThreeView, ThreeRenderTargetNode.name);
-
+    
     // Wells:
     factory.register(WellTrajectoryNode.name, WellTrajectoryThreeView, ThreeRenderTargetNode.name);
     factory.register(PointLogNode.name, PointLogFilterView, ThreeRenderTargetNode.name);

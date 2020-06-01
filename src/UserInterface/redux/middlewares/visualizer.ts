@@ -39,8 +39,8 @@ export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
         const node = nodes![uniqueId!].domainObject;
         if (node) {
           node.toggleVisibleInteractive();
-          const newAction = { ...action, type: TOGGLE_NODE_CHECK_SUCCESS };
-          store.dispatch(newAction);
+          // const newAction = { ...action, type: TOGGLE_NODE_CHECK_SUCCESS };
+          // store.dispatch(newAction);
         }
       } catch (err) {}
       break;

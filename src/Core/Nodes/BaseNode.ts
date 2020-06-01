@@ -519,8 +519,12 @@ export abstract class BaseNode extends Identifiable
 
   public notify(args: NodeEventArgs): void
   {
+    // Alternative 1. (To be removed?)
     for (const eventListener of this.eventListeners)
       eventListener.processEvent(this, args);
+
+    // Alternative 2.
+    VirtualUserInterface.updateNode(this, args);
     this.notifyCore(args);
   }
 
