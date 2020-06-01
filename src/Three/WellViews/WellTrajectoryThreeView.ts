@@ -37,6 +37,10 @@ import { BaseNode } from "@/Core/Nodes/BaseNode";
 import Color from "color";
 
 
+const TrajectoryName = "trajectory";
+const TrajectoryLabelName = "trajectoryLabel";
+const WellLabelName = "wellLabel";
+
 export class WellTrajectoryThreeView extends BaseGroupThreeView
 {
   //==================================================
@@ -48,8 +52,6 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
   protected cameraPosition = new Vector3(0, 0, 1);
   private fgColor: Color = Colors.white;
 
-  private trajectoryName = "trajectory";
-  private labelName = "label";
   private bandTextures: [THREE.CanvasTexture | null, THREE.CanvasTexture | null] = [null, null];
 
   public getBandName(rightBand: boolean): string { return rightBand ? "RightBand" : "LeftBand"; }
@@ -142,6 +144,10 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
       this.setBandTextures(parent);
     }
+    if (parent.getObjectByName(TrajectoryLabelName) == null)
+      this.addTrajectoryLabel(parent);
+    if (parent.getObjectByName(WellLabelName) == null)
+      this.addWellLabel(parent);
   }
 
   //==================================================
@@ -181,7 +187,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
   {
     const parent = new THREE.Group();
     this.addTrajectory(parent);
-    this.addLabel(parent);
+    this.addTrajectoryLabel(parent);
+    this.addWellLabel(parent);
     return parent;
   }
 
@@ -280,26 +287,41 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
   // INSTANCE METHODS: Add 3D objects
   //==================================================
 
-  private addLabel(parent: THREE.Object3D)
+  private addTrajectoryLabel(parent: THREE.Object3D)
   {
     const node = this.node;
     const trajectory = node.data;
     if (!trajectory)
       return;
-    //const well = node.well;
-    //if (!well)
-    //  return;
 
     const style = this.style;
     if (!style)
       return;
 
-    const target = this.renderTarget;
-    const label = ThreeLabel.createByPositionAndAlignment(node.name, trajectory.getPositionAt(0), 1, style.nameFontHeight, target.fgColor);
+    const label = ThreeLabel.createByPositionAndAlignment(node.name, trajectory.getBasePosition(), 7, style.nameFontHeight, this.fgColor);
     if (!label)
       return;
 
-    label.name = this.labelName;
+    label.name = TrajectoryLabelName;
+    parent.add(label);
+  }
+
+  private addWellLabel(parent: THREE.Object3D)
+  {
+    const node = this.node;
+    const well = node.well;
+    if (!well)
+      return;
+
+    const style = this.style;
+    if (!style)
+      return;
+
+    const label = ThreeLabel.createByPositionAndAlignment(well.name, well.wellHead, 1, style.nameFontHeight, this.fgColor);
+    if (!label)
+      return;
+
+    label.name = WellLabelName;
     parent.add(label);
   }
 
@@ -321,7 +343,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       opacity: 1
     });
     const mesh = new THREE.Mesh(geometry, material);
-    mesh.name = this.trajectoryName;
+    mesh.name = TrajectoryName;
     parent.add(mesh);
   }
 
@@ -375,6 +397,14 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       const band = parent.getObjectByName(this.getBandName(rightBand));
       if (band)
         parent.remove(band);
+
+      const trajectoryLabel = parent.getObjectByName(TrajectoryLabelName);
+      if (trajectoryLabel)
+        parent.remove(trajectoryLabel);
+
+      const wellLabel = parent.getObjectByName(WellLabelName);
+      if (wellLabel)
+        parent.remove(wellLabel);
     }
   }
 

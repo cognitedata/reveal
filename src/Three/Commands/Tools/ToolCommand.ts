@@ -16,7 +16,7 @@ export abstract class ToolCommand extends ThreeRenderTargetCommand {
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*override*/ get isCheckable() { return true; } // Can be checked? (default false)
+  public /*override*/ get isCheckable(): boolean  { return true; } // Can be checked? (default false)
 
   protected /*override*/ invokeCore(): boolean {
 

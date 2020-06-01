@@ -16,6 +16,8 @@ import * as THREE from "three";
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { Range3 } from "@/Core/Geometry/Range3";
 import { Ma } from "@/Core/Primitives/Ma";
+import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
+import { Vector3 } from "@/Core/Geometry/Vector3";
 
 // https://andreasrohner.at/posts/Web%20Development/JavaScript/Simple-orbital-camera-controls-for-THREE-js/
 // https://github.com/yomotsu/camera-controls
@@ -64,7 +66,12 @@ export class Camera
     camera.updateProjectionMatrix();
   }
 
-  public viewFrom(boundingBox: Range3, index: number): boolean
+  public viewRange(boundingBox: Range3 | undefined): boolean
+  {
+    return this.viewFrom(boundingBox, -2);
+  }
+
+  public viewFrom(boundingBox: Range3|undefined, index: number): boolean
   {
     if (!boundingBox || boundingBox.isEmpty)
       return false;
@@ -77,15 +84,35 @@ export class Camera
     {
       const perspectiveCamera = camera as THREE.PerspectiveCamera;
       const fov = Ma.toRad(perspectiveCamera.fov);
-      distanceFactor = 0.66 / (camera.aspect * Math.tan(fov / 2));
-      console.log(fov);
-      console.log(distanceFactor);
+      distanceFactor = 0.65 / (camera.aspect * Math.tan(fov / 2));
     }
     const targetPosition = boundingBox.center;
     const position = boundingBox.center;
 
-    if (index < 0)
+    if (index < -1)
     {
+      // View all
+      const direction = Vector3.substract(ThreeConverter.fromVector(controls.getPosition()), ThreeConverter.fromVector(controls.getTarget()));
+      direction.normalize();
+
+      const dots = new Vector3(Vector3.getAxis(0).getDot(direction), Vector3.getAxis(1).getDot(direction), Vector3.getAxis(2).getDot(direction));
+      const deltaWeight = dots.clone();
+      deltaWeight.abs();
+      deltaWeight.negate();
+      deltaWeight.addScalar(1);
+      deltaWeight.multiply(boundingBox.delta);
+
+      dots.multiply(boundingBox.delta);
+      dots.divideScalar(2); // Dots are now distance from the center to the edge
+
+      let distance = deltaWeight.absMaxCoord * distanceFactor; // Distance from edge
+      distance += dots.length; // Distance center to edge
+      direction.multiplyScalar(distance);
+      position.add(direction);
+    }
+    if (index == -1)
+    {
+      // View all with a slope
       distanceFactor /= 2;
       const distanceX = Math.max(boundingBox.y.delta, boundingBox.z.delta) * distanceFactor * Math.sin(Math.PI / 4);
       const distanceY = Math.max(boundingBox.x.delta, boundingBox.z.delta) * distanceFactor * Math.sin(Math.PI / 4);
@@ -144,31 +171,6 @@ export class Camera
     }
     controls.setTarget(targetPosition.x, targetPosition.y, targetPosition.z);
     controls.setPosition(position.x, position.y, position.z);
-    return true;
-  }
-
-  public viewRange(boundingBox: Range3 | undefined): boolean
-  {
-    if (!boundingBox || boundingBox.isEmpty)
-      return false;
-
-    const perspectiveCamera = this.camera as THREE.PerspectiveCamera;
-    if (!perspectiveCamera)
-      return false;
-
-    const fov = Ma.toRad(perspectiveCamera.fov);
-    const padding = 48;
-    const w = Math.max(boundingBox.x.delta, boundingBox.y.delta) + padding;
-    const h = boundingBox.z.delta + padding;
-
-    const fovX = fov * perspectiveCamera.aspect;
-    const fovY = fov;
-
-    const distanceX = (w / 2) / Math.tan(fovX / 2) + (w / 2);
-    const distanceY = (h / 2) / Math.tan(fovY / 2) + (h / 2);
-    const distance = Math.max(distanceX, distanceY);
-    const controls = this.controls;
-    controls.dolly(distance);
     return true;
   }
 

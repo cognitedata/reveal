@@ -35,17 +35,8 @@ export class Vector3
   public get length(): number { return Math.sqrt(this.squareLength); }
   public get isEmpty(): boolean { return isNaN(this.x) || isNaN(this.y) || isNaN(this.z); }
 
-  public get absMaxDimension(): number
-  {
-    let result = 0;
-    let max = Math.abs(this.x);
-    if (Math.abs(this.y) > max)
-    {
-      result = 1;
-      max = Math.abs(this.y);
-    }
-    return Math.abs(this.z) > max ? 2 : result;
-  }
+  public get absMinCoord(): number {return Math.min(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z));}
+  public get absMaxCoord(): number {return Math.max(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z));}
 
   public get absMinDimension(): number
   {
@@ -57,6 +48,18 @@ export class Vector3
       min = Math.abs(this.y);
     }
     return Math.abs(this.z) < min ? 2 : result;
+  }
+
+  public get absMaxDimension(): number
+  {
+    let result = 0;
+    let max = Math.abs(this.x);
+    if (Math.abs(this.y) > max)
+    {
+      result = 1;
+      max = Math.abs(this.y);
+    }
+    return Math.abs(this.z) > max ? 2 : result;
   }
 
   //==================================================
@@ -161,6 +164,13 @@ export class Vector3
     this.z = -this.z;
   }
 
+  public abs(): void
+  {
+    this.x = Math.abs(this.x);
+    this.y = Math.abs(this.y);
+    this.z = Math.abs(this.z);
+  }
+
   public normalize(): boolean
   {
     const length = this.length;
@@ -176,6 +186,13 @@ export class Vector3
     this.x += point.x;
     this.y += point.y;
     this.z += point.z;
+  }
+
+  public addScalar(value: number): void
+  {
+    this.x += value;
+    this.y += value;
+    this.z += value;
   }
 
   public substract(point: Vector3): void
