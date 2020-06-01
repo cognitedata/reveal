@@ -1,0 +1,45 @@
+import { MiddlewareAPI, Dispatch } from "redux";
+import { ReduxStore } from "@/UserInterface/interfaces/common";
+import {
+    EXECUTE_VISUALIZER_TOOLBAR_COMMAND,
+    EXECUTE_VISUALIZER_TOOLBAR_COMMAND_SUCCESS
+} from "../types/visualizers";
+
+// Visualizer middleware
+export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
+    type: string;
+    payload: any;
+}) => {
+    const state: ReduxStore = store.getState();
+    const { visualizers } = state;
+    const { type, payload } = action;;
+    switch (type) {
+        case EXECUTE_VISUALIZER_TOOLBAR_COMMAND: {
+            // A toolbar commad is executed
+            try {
+                const { visualizerId, commandType, index } = payload;
+                const { command } = visualizers.toolBars[visualizerId][commandType][index];
+                if (command.invoke) {
+                    // Has command definition and execute it
+                    command.invoke();
+                    // Commad execution successful. Fire a new action
+                    const newAction = {
+                        type: EXECUTE_VISUALIZER_TOOLBAR_COMMAND_SUCCESS, payload: {
+                            icon: command.icon,
+                            isChecked: command.isChecked,
+                            visualizerId,
+                            commandType,
+                            index
+                        }
+                    };
+                    store.dispatch(newAction);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+            break;
+        }
+        default:
+            next(action);
+    }
+};

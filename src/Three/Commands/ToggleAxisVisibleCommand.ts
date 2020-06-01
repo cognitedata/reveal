@@ -2,6 +2,7 @@
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetCommand";
 import { AxisNode } from "@/Nodes/Decorations/AxisNode";
+import ToggleAxisVisibleCommandIcon from "@images/Commands/ToggleAxisVisibleCommand.png";
 
 export class ToggleAxisVisibleCommand extends ThreeRenderTargetCommand {
 
@@ -23,12 +24,14 @@ export class ToggleAxisVisibleCommand extends ThreeRenderTargetCommand {
 
   public /*override*/ get isChecked(): boolean { return this.target ? this.target.hasViewOfNodeType(AxisNode) : false; }
 
+  public /*virtual*/ get icon(): string { return ToggleAxisVisibleCommandIcon; }
+
   protected invokeCore(): boolean {
     if (!this.target)
       return false;
 
     for (const node of this.target.root.getDescendantsByType(AxisNode))
-        node.toggleVisibleInteractive(this.target);
+      node.toggleVisibleInteractive(this.target);
     return true;
   }
 }

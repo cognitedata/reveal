@@ -2,11 +2,10 @@ import { Range3 } from "../../Core/Geometry/Range3";
 import { ThreeModule } from "../../Three/ThreeModule";
 import { ThreeRenderTargetNode } from "../../Three/Nodes/ThreeRenderTargetNode";
 import { RootNode } from "../../Nodes/TreeNodes/RootNode";
-import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
+import { Toolbar } from "@/UserInterface/components/Viewers/VisualizerToolbar";
 
 // Manages Root Node
-export default class RootManager
-{
+export default class RootManager {
   private static module: ThreeModule;
   private static root: RootNode;
   private static RENDER_TARGETS = 1;
@@ -23,7 +22,7 @@ export default class RootManager
    * Should only be call onced root is ready to be displayed
    */
   public static getRoot(): RootNode {
-    if (!RootManager.root){
+    if (!RootManager.root) {
       throw Error("Need to call createRoot() and do necessary loading before acquiring root!");
     }
     return RootManager.root;
@@ -45,12 +44,15 @@ export default class RootManager
   }
 
   // Add 3D and 2D viewer
-  static addTargets(root: RootNode): void {
+  static addTargets(root: RootNode, setToolBars: (visualizerToolBar: { id: string, toolBar: Toolbar }) => void): void {
     for (let idx = 0; idx < RootManager.RENDER_TARGETS; idx++) {
       const range = Range3.createByMinAndMax(0, 0, 1, 1);
       const target = new ThreeRenderTargetNode(range);
       target.name = "3d";
+      const toolBar = new Toolbar();
+      target.addTools(toolBar);
       root.targets.addChild(target);
+      setToolBars({ id: "3d", toolBar });
     }
   }
 
@@ -80,12 +82,5 @@ export default class RootManager
         this.appendedViewers.push(target.name);
       }
     }
-  }
-
-  // View all nodes
-  static viewNodes(root: RootNode) {
-    //const target = root.activeTarget as BaseRenderTargetNode;
-    //if (target)
-    //  target.viewAll();
   }
 }

@@ -3,7 +3,6 @@ import {
   TOGGLE_NODE_EXPAND,
   TOGGLE_NODE_CHECK,
   GENERATE_NODE_TREE,
-  VIEW_ALL_NODES,
   CHANGE_NODE_TYPE,
 } from "../types/explorer";
 
@@ -25,10 +24,6 @@ export const onToggleNodeCheck = (payload: ExplorerCommandPayloadType) => {
 
 export const generateNodeTree = (payload: ExplorerCommandPayloadType) => {
   return { type: GENERATE_NODE_TREE, payload };
-};
-
-export const viewAllNodes = (payload: ExplorerCommandPayloadType) => {
-  return { type: VIEW_ALL_NODES, payload };
 };
 
 export const changeNodeType = (payload: ExplorerCommandPayloadType) => {

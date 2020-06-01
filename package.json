@@ -101,6 +101,7 @@
     "immer": "^6.0.6",
     "lodash": "^4.17.15",
     "react-color": "^2.18.1",
+    "react-draggable": "^4.4.2",
     "react-split-pane": "^0.1.91",
     "react-virtualized": "^9.21.2",
     "regenerator-runtime": "^0.13.5",

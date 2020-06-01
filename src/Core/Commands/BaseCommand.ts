@@ -20,6 +20,7 @@ export abstract class BaseCommand {
   public /*virtual*/ get isChecked() { return false; } // Is checked?
   public /*virtual*/ get isCheckable() { return false; } // Can be checked? (default false)
   public /*virtual*/ get isVisible() { return this.isEnabled; } // Is visible? 
+  public /*virtual*/ get icon() { return ""; } // Icon
 
   // THESE TO MUST BE FILLED OUT 
   // protected abstract get Image(): Image  // Get the image
