@@ -8,6 +8,7 @@ import { RandomDataLoader } from "./RootLoaders/RandomDataLoader";
 import { BaseRootLoader } from "./RootLoaders/BaseRootLoader";
 import { RealDataLoader } from "./RootLoaders/RealDataLoader";
 
+
 main(document.body);
 
 export default function main(elm: HTMLElement) {

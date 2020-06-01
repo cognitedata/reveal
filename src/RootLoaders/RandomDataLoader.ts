@@ -7,6 +7,7 @@ import { RootNode } from "../Nodes/TreeNodes/RootNode";
 import { WellTrajectoryNode } from "../Nodes/Wells/Wells/WellTrajectoryNode";
 import { WellNode } from "../Nodes/Wells/Wells/WellNode";
 import { WellTrajectory } from "../Nodes/Wells/Logs/WellTrajectory";
+import { FolderNode } from "@/Core/Nodes/FolderNode";
 
 import { PointLogNode } from "../Nodes/Wells/Wells/PointLogNode";
 import { FloatLogNode } from "../Nodes/Wells/Wells/FloatLogNode";
@@ -25,11 +26,9 @@ import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ToggleAxisVisibleCommand } from "@/Three/Commands/ToggleAxisVisibleCommand";
 import { ViewAllCommand } from "@/Three/Commands/ViewAllCommand";
 import { ToggleBgColorCommand } from "@/Three/Commands/ToggleBgColorCommand";
-import { FolderNode } from "@/Core/Nodes/FolderNode";
 
 export class RandomDataLoader extends BaseRootLoader
 {
-
   //==================================================
   // OVERRIDES of BaseRootLoader
   //==================================================
@@ -57,7 +56,6 @@ export class RandomDataLoader extends BaseRootLoader
       {
         const trajectoryNode = new WellTrajectoryNode();
         trajectoryNode.name = `Traj ${wellIndex + 1}`;
-
         trajectoryNode.data = WellTrajectory.createByRandom(wellNode.wellHead);
         wellNode.addChild(trajectoryNode);
 
