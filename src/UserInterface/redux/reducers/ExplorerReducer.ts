@@ -1,5 +1,4 @@
 import { createReducer } from "@reduxjs/toolkit";
-
 import {
   ExplorerStateInterface,
   TreeDataItem,
@@ -96,8 +95,7 @@ const initialState: ExplorerStateInterface = {
 export default createReducer(initialState, {
   GENERATE_NODE_TREE: (state, action) => {
     const { root } = action.payload;
-    const nodes = makeNodes(root);
-    state.nodes = nodes;
+    state.nodes = makeNodes(root);
   },
   TOGGLE_NODE_SELECT: (state, action) => {
     const { uniqueId, selectState } = action.payload;
@@ -111,10 +109,25 @@ export default createReducer(initialState, {
     const { uniqueId, expandState } = action.payload;
     state.nodes![uniqueId].expanded = expandState;
   },
-  TOGGLE_NODE_CHECK_SUCCESS: (state, action) => {
-    const { uniqueId, checkState } = action.payload;
-    state.nodes![uniqueId].checked = checkState;
-    if (checkState) state.checkedNodeIds.add(uniqueId);
+  CHANGE_CHECKBOX_STATE: (state, action) => {
+    const uniqueId = action.appliesTo;
+    const treeNodeState = state.nodes![uniqueId];
+    if(treeNodeState == undefined) return; //TODO: When could this happen?
+    switch(action.payload) {
+      case 'checked':
+        state.nodes![uniqueId].checked = true;
+        console.log('changed state of ', state.nodes![uniqueId].name, ' to checked');
+        state.checkedNodeIds.add(uniqueId);
+        break;
+      case 'unchecked':
+        state.nodes![uniqueId].checked = false;
+        console.log('changed state of ', state.nodes![uniqueId].name, ' to un-checked');
+        break;
+      case 'partial':
+        state.nodes![uniqueId].checked = true;  //TODO: handle this when tree node state support partial
+        console.log('changed state of ', state.nodes![uniqueId].name, ' to partial');
+        break;
+    }
   },
   VIEW_ALL_NODES_SUCCESS: (state, action) => {
     const nodes = state.nodes;

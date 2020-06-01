@@ -60,7 +60,7 @@ export abstract class BaseVisualNode extends BaseNode
     if (!target)
       return CheckBoxState.Never;
 
-    if (this.isVisible(target))
+    if (this.hasView(target)) // TODO: Not sure? this.isVisible() and remove hasView()
       return CheckBoxState.All;
 
     if (this.canBeVisible(target))
@@ -75,6 +75,10 @@ export abstract class BaseVisualNode extends BaseNode
       target = this.activeTarget;
     if (!target)
       return false;
+
+    if (visible && !this.canBeChecked(target))
+      return false;
+
     if (!this.setVisible(visible, target))
       return false;
 
@@ -123,7 +127,14 @@ export abstract class BaseVisualNode extends BaseNode
   {
     if (!target)
       target = this.activeTarget;
-    return target ? target.isVisibleView(this) : false;
+    return target ? target.hasVisibleView(this) : false;
+  }
+
+  public hasView(target?: ITarget | null): boolean
+  {
+    if (!target)
+      target = this.activeTarget;
+    return target ? target.hasView(this) : false;
   }
 
   public setVisible(visible: boolean, target?: ITarget | null): boolean

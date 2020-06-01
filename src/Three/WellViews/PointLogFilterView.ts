@@ -60,6 +60,9 @@ export class PointLogFilterView extends BaseGroupThreeView
 
   public /*override*/ calculateBoundingBoxCore(): Range3 | undefined
   {
+    if (!this.isVisible)
+      return undefined;
+
     const node = this.node;
     const trajectory = node.trajectory;
     if (!trajectory)

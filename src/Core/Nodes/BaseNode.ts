@@ -182,7 +182,7 @@ export abstract class BaseNode extends Identifiable
     const checkBoxState = this.getCheckBoxState(target);
     if (checkBoxState === CheckBoxState.Never)
       return false;
-    if (checkBoxState === CheckBoxState.None && !this.canBeChecked)
+    if (checkBoxState === CheckBoxState.None && !this.canBeChecked(target))
       return false;
 
     let hasChanged = false;
@@ -528,6 +528,8 @@ export abstract class BaseNode extends Identifiable
   {
     for (const eventListener of this.eventListeners)
       eventListener.processEvent(this, args);
+
+    VirtualUserInterface.updateNode(this, args);
     this.notifyCore(args);
   }
 
@@ -536,7 +538,6 @@ export abstract class BaseNode extends Identifiable
     if (this._isInitialized)
       return; // This should be done once
     this.initializeCore();
-    VirtualUserInterface.registerNode(this);
     this._isInitialized = true;
   }
 

@@ -1,7 +1,8 @@
 
 import { BaseNode } from "@/Core/Nodes/BaseNode";
+import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
 export interface IUserInterface
 {
-  registerNode(node: BaseNode) : void;
+  updateNode(node: BaseNode, args: NodeEventArgs): void;
 }
