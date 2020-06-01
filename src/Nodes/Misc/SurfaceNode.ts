@@ -20,6 +20,8 @@ import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { SurfaceRenderStyle } from "@/Nodes/Misc/SurfaceRenderStyle";
 
+import SurfaceNodeIcon from "@images/Nodes/SurfaceNode.png";
+
 export class SurfaceNode extends BaseVisualNode {
 
   //==================================================
@@ -54,6 +56,8 @@ export class SurfaceNode extends BaseVisualNode {
   //==================================================
 
   public /*override*/ get typeName(): string { return "Surface" }
+
+  public /*override*/ get icon(): string { return SurfaceNodeIcon }
 
   public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
 

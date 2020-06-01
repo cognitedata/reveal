@@ -29,6 +29,7 @@ import { ITarget } from "@/Core/Interfaces/ITarget";
 import { Util } from "@/Core/Primitives/Util";
 import { IEventListener } from "@/Core/Interfaces/IEventListener";
 import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
+import { FileType } from "@/Core/Enums/FileType";
 
 export abstract class BaseNode extends Identifiable
 {
@@ -106,6 +107,12 @@ export abstract class BaseNode extends Identifiable
   public /*virtual*/ get color(): color { if (this._color === undefined) this._color = this.generateNewColor(); return this._color; }
   public /*virtual*/ set color(value: color) { this._color = value; }
   public /*virtual*/ get canChangeColor() { return true; }
+
+  //==================================================
+  // VIRTUAL METHODS: Icon
+  //==================================================
+
+  public /*virtual*/ get icon(): string { return (this.typeName + FileType.png); }
 
   //==================================================
   // VIRTUAL METHODS: Active

@@ -2,12 +2,14 @@ import { createReducer } from "@reduxjs/toolkit";
 import {
   ExplorerStateInterface,
   TreeDataItem,
-} from "../../interfaces/explorer";
+} from "@/UserInterface/interfaces/explorer";
 import { state as dummyState } from "@/UserInterface/data/explorer-dummy-state";
 import { RootNode } from "@/Nodes/TreeNodes/RootNode";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import Nodes from "@/UserInterface/constants/Nodes";
 import RootManager from "@/UserInterface/managers/rootManager";
+import { BaseTreeNode } from '@/Core/Nodes/BaseTreeNode';
+import { CheckBoxState } from '@/Core/Enums/CheckBoxState';
 
 // Generate redux store compatible nodes data structure from root node
 function generateNodeStructure(
@@ -20,17 +22,18 @@ function generateNodeStructure(
     parentId,
     id: uniqueId,
     name: node.name,
-    expanded: false,
+    expanded: (node.isExpanded),
     type,
-    icon: "ba8c2cf8d98eff705cf9c4d3236cda9a.png",
+    icon: node.icon,
     iconDescription: "nodes",
-    selected: false,
-    checked: false,
-    indeterminate: false,
-    isRadio: false,
-    isFilter: false,
-    disabled: false,
-    visible: false,
+    iconVisible: ((node instanceof BaseTreeNode)? false: true),
+    selected: node.isActive,
+    checked: (node.getCheckBoxState() === CheckBoxState.All),
+    indeterminate: (node.getCheckBoxState() === CheckBoxState.Some),
+    isRadio: (node.isRadio(null)),
+    isFilter: node.isFilter(null),
+    disabled: (!node.canBeChecked(null)),
+    visible: node.isVisibleInTreeControl,
     uniqueId,
     domainObject: node,
   };

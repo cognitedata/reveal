@@ -12,6 +12,7 @@
 //=====================================================================================
 
 import { BaseNode } from "@/Core/Nodes//BaseNode";
+import FolderNodeIcon from "@images/Nodes/FolderNode.png";
 
 export class FolderNode extends BaseNode
 {
@@ -33,4 +34,6 @@ export class FolderNode extends BaseNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Folder" }
+
+  public /*override*/ get icon(): string { return FolderNodeIcon }
 }
