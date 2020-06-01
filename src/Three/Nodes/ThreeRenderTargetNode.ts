@@ -31,6 +31,8 @@ import { ToggleBgColorCommand } from "@/Three/Commands/ToggleBgColorCommand";
 import { IToolbar } from "@/Core/Interfaces/IToolbar";
 import { ViewFromCommand } from "@/Three/Commands/ViewFromCommand";
 import { Camera } from "@/Three/Nodes/Camera";
+import { ToggleCameraTypeCommand } from "../Commands/ToggleCameraTypeCommand";
+import { CopyImageCommand } from "../Commands/CopyImageCommand";
 
 const DirectionalLightName = "DirectionalLight";
 
@@ -211,6 +213,8 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     toolbar.add(new ViewAllCommand(this));
     toolbar.add(new ToggleAxisVisibleCommand(this));
     toolbar.add(new ToggleBgColorCommand(this));
+    toolbar.add(new ToggleCameraTypeCommand(this));
+    toolbar.add(new CopyImageCommand(this));
 
     toolbar.beginOptionMenu();
     for (let viewFrom = 0; viewFrom < 6; viewFrom++)

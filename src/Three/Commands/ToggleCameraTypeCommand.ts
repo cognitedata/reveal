@@ -2,6 +2,8 @@
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetCommand";
 import { AxisNode } from "@/Nodes/Decorations/AxisNode";
+import ToggleCameraTypeCommandOrthographicIcon from "@images/Commands/ToggleCameraTypeCommandOrthographic.png";
+import ToggleCameraTypeCommandPerspectiveIcon from "@images/Commands/ToggleCameraTypeCommandPerspective.png";
 
 export class ToggleCameraTypeCommand extends ThreeRenderTargetCommand {
 
@@ -16,6 +18,12 @@ export class ToggleCameraTypeCommand extends ThreeRenderTargetCommand {
   //==================================================
   // OVERRIDES of BaseCommand
   //==================================================
+
+  public /*virtual*/ get icon(): string {
+    return this.isChecked ?
+      ToggleCameraTypeCommandOrthographicIcon :
+      ToggleCameraTypeCommandPerspectiveIcon;
+  }
 
   public /*override*/get name(): string { return "Toggle between orthographic and perspective view" }
 

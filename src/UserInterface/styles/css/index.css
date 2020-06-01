@@ -363,28 +363,27 @@ body {
 
 .visualizer {
   width: calc(100vw - 290px);
-  height: 100%;
-  position: relative; }
+  height: 100%; }
+  .visualizer .visualizer-toolbar-wrapper {
+    position: absolute;
+    z-index: 9999; }
+  .visualizer .visualizer-toolbar-container {
+    position: relative;
+    z-index: 9999; }
   .visualizer .visuaizer-toolbar {
     margin: 0.5rem 4rem 0.5rem 1.5rem;
     position: absolute;
-    top: 1em;
-    left: 1.5em;
     z-index: 9999;
     display: flex;
     border: 1px solid black;
     background-color: rgba(223, 223, 223, 0.6);
     border-radius: 0.2rem; }
     .visualizer .visuaizer-toolbar .visuaizer-toolbar-group {
-      margin-right: 0.2rem;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 0.1rem 0.1rem; }
     .visualizer .visuaizer-toolbar .visualizer-tool-bar-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
       transition: background-color 0.3s;
       padding: 0.1rem 0;
       cursor: pointer; }
@@ -396,16 +395,13 @@ body {
         margin: 0 0.2rem; }
     .visualizer .visuaizer-toolbar .visualizer-tool-bar-icon-selected {
       background-color: lightblue !important; }
-    .visualizer .visuaizer-toolbar .handle {
-      position: absolute;
-      top: -.1rem;
-      left: -1.2rem;
-      display: flex;
-      justify-content: center;
-      align-items: center; }
-      .visualizer .visuaizer-toolbar .handle svg {
-        font-size: 0.9rem;
-        color: #41a0e4; }
+  .visualizer .handle {
+    position: absolute;
+    left: 0.6rem;
+    top: 0.5rem; }
+    .visualizer .handle img {
+      width: 0.9rem;
+      height: 0.9rem; }
   .visualizer .visualizer-3d {
     height: 100%;
     position: relative;
