@@ -26,7 +26,8 @@ import { TrajectorySample } from "@/Nodes/Wells/Samples/TrajectorySample";
 import { MdSamples } from "@/Nodes/Wells/Logs/MdSamples";
 import { RenderSample } from "@/Nodes/Wells/Samples/RenderSample";
 
-export class WellTrajectory extends MdSamples {
+export class WellTrajectory extends MdSamples
+{
   //==================================================
   // INSTANCE FIELDS
   //==================================================
@@ -43,25 +44,30 @@ export class WellTrajectory extends MdSamples {
   // INSTANCE METHODS: Range
   //==================================================
 
-  public get range(): Range3 {
+  public get range(): Range3
+  {
     if (!this._range)
       this._range = this.calculateRange();
     return this._range;
   }
 
-  public calculateRange(): Range3 {
+  public calculateRange(): Range3
+  {
     const range = new Range3();
     this.expandRange(range);
     return range;
   }
 
-  public touch(): void {
+  public touch(): void
+  {
     super.touch();
     this._range = undefined;
   }
 
-  public expandRange(range: Range3): void {
-    for (const baseSample of this.samples) {
+  public expandRange(range: Range3): void
+  {
+    for (const baseSample of this.samples)
+    {
       const sample = baseSample as TrajectorySample;
       if (sample)
         range.add(sample.point);
@@ -74,8 +80,11 @@ export class WellTrajectory extends MdSamples {
 
   public getAt(index: number): TrajectorySample { return this.samples[index] as TrajectorySample; }
   public getPositionAt(i: number): Vector3 { return this.getAt(i).point; }
+  public getTopPosition(): Vector3 { return this.getAt(0).point; }
+  public getBasePosition(): Vector3 { return this.getAt(this.length - 1).point; }
 
-  public getPositionAtMd(md: number, result: Vector3): boolean {
+  public getPositionAtMd(md: number, result: Vector3): boolean
+  {
     const maxIndex = this.samples.length - 1;
     if (maxIndex < 0)
       false;
@@ -84,7 +93,8 @@ export class WellTrajectory extends MdSamples {
       return false;
 
     let index = this.binarySearch(md);
-    if (index >= 0) {
+    if (index >= 0)
+    {
       const sample = this.samples[index] as TrajectorySample;
       result.copy(sample.point);
       return true;
@@ -92,12 +102,14 @@ export class WellTrajectory extends MdSamples {
     index = ~index;
 
     const minSample = this.samples[index - 1] as TrajectorySample;
-    if (Ma.isEqual(md, minSample.md)) {
+    if (Ma.isEqual(md, minSample.md))
+    {
       result.copy(minSample.point);
       return true;
     }
     const maxSample = this.samples[index] as TrajectorySample;
-    if (Ma.isEqual(md, maxSample.md)) {
+    if (Ma.isEqual(md, maxSample.md))
+    {
       result.copy(maxSample.point);
       return true;
     }
@@ -106,36 +118,44 @@ export class WellTrajectory extends MdSamples {
     return true;
   }
 
-  public getTangentAtMd(md: number, result: Vector3): boolean {
+  public getTangentAtMd(md: number, result: Vector3): boolean
+  {
     const maxIndex = this.samples.length - 1;
     if (maxIndex < 0)
       return false;
 
     let index0: number, index1: number;
-    if (md <= this.samples[0].md) {
+    if (md <= this.samples[0].md)
+    {
       index0 = 0;
       index1 = 1;
 
     }
-    else if (md >= this.samples[maxIndex].md) {
+    else if (md >= this.samples[maxIndex].md)
+    {
       index0 = maxIndex - 1;
       index1 = maxIndex;
     }
-    else {
+    else
+    {
       index0 = this.getClosestIndexAtMd(md);
       index1 = index0;
-      if (index0 === 0) {
+      if (index0 === 0)
+      {
         index1++;
       }
-      else if (index0 === maxIndex) {
+      else if (index0 === maxIndex)
+      {
         index0--;
       }
-      else {
+      else
+      {
         index0--;
         index1++;
       }
     }
-    if (index0 >= index1) {
+    if (index0 >= index1)
+    {
       Error("Index error in tangent");
       return false;
     }
@@ -149,22 +169,27 @@ export class WellTrajectory extends MdSamples {
     return true;
   }
 
-  public getTangentAt(i: number, result: Vector3): boolean {
+  public getTangentAt(i: number, result: Vector3): boolean
+  {
     let index0: number, index1: number;
-    if (i == 0) {
+    if (i == 0)
+    {
       index0 = 0;
       index1 = 1;
 
     }
-    else if (i >= this.samples.length - 1) {
+    else if (i >= this.samples.length - 1)
+    {
       index0 = this.samples.length - 2;
       index1 = this.samples.length - 1;
     }
-    else {
+    else
+    {
       index0 = i - 1;
       index1 = i + 1;
     }
-    if (index0 >= index1) {
+    if (index0 >= index1)
+    {
       Error("Index error in tangent");
       return false;
     }
@@ -182,9 +207,11 @@ export class WellTrajectory extends MdSamples {
   // INSTANCE METHODS: Creators
   //==================================================
 
-  public createRenderSamples(color: Color, radius: number): RenderSample[] {
+  public createRenderSamples(color: Color, radius: number): RenderSample[]
+  {
     const samples: RenderSample[] = [];
-    for (let i = 0; i < this.length; i++) {
+    for (let i = 0; i < this.length; i++)
+    {
       const sample = this.getAt(i);
       samples.push(new RenderSample(sample.point, sample.md, radius, color));
     }
@@ -195,7 +222,8 @@ export class WellTrajectory extends MdSamples {
   // STATIC METHODS: 
   //==================================================
 
-  public static createByRandom(wellHead: Vector3): WellTrajectory {
+  public static createByRandom(wellHead: Vector3): WellTrajectory
+  {
     const trajectory = new WellTrajectory();
     const p0 = wellHead.clone();
     const p1 = p0.clone();
@@ -222,7 +250,8 @@ export class WellTrajectory extends MdSamples {
 
     let md = 0;
     let prevPoint = ThreeConverter.fromVector(curvePoints[0]);
-    for (const curvePoint of curvePoints) {
+    for (const curvePoint of curvePoints)
+    {
       const point = ThreeConverter.fromVector(curvePoint);
       md += prevPoint.distance(point);
       trajectory.add(new TrajectorySample(point, md));

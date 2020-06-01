@@ -77,9 +77,7 @@ export class Camera
     {
       const perspectiveCamera = camera as THREE.PerspectiveCamera;
       const fov = Ma.toRad(perspectiveCamera.fov);
-      distanceFactor = 0.66 / (camera.aspect * Math.tan(fov / 2));
-      console.log(fov);
-      console.log(distanceFactor);
+      distanceFactor = 0.65 / (camera.aspect * Math.tan(fov / 2));
     }
     const targetPosition = boundingBox.center;
     const position = boundingBox.center;

@@ -11,7 +11,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
   //==================================================
 
   private static margin = 24;
-  public static get windowWidth(): number { return window.innerWidth - 1 * BaseRenderTargetNode.margin; }
+  public static get windowWidth(): number { return window.innerWidth-280 - 1 * BaseRenderTargetNode.margin; }
   public static get windowHeight(): number { return window.innerHeight - 1 * BaseRenderTargetNode.margin; }
 
   public get aspectRatio(): number { return this.pixelRange.aspectRatio2; }

@@ -25,7 +25,7 @@ export class WellRenderStyle extends BaseRenderStyle
 
   public radius = 2;
   public colorType = ColorType.DifferentColor;
-  public nameFontHeight = 60;
+  public nameFontHeight = 30;
   public bandWidth = 50;
   public bandFontSize = 20;
 
