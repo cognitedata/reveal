@@ -27,7 +27,7 @@ export interface TreeDataItem {
   expanded: boolean;
   icon: string;
   iconDescription: string;
-  iconVisible: boolean;
+  iconVisible?: boolean;
   selected: boolean;
   checked: boolean;
   indeterminate: boolean;
@@ -48,7 +48,7 @@ export interface TreeNode {
   type: string;
   icon: string;
   iconDescription: string;
-  iconVisible: boolean;
+  iconVisible?: boolean;
   selected: boolean;
   checked: boolean;
   indeterminate: boolean;
