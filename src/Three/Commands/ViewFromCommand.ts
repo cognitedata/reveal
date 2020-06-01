@@ -41,9 +41,9 @@ export class ViewFromCommand extends ThreeRenderTargetCommand {
       case 0: return ViewFromCommandTopIcon;
       case 1: return ViewFromCommand_BottomIcon;
       case 2: return ViewFromCommandSouthIcon;
-      case 3: return ViewFromCommandSouthIcon;
+      case 3: return ViewFromCommandNorthIcon;
       case 4: return ViewFromCommandWestIcon;
-      case 5: return ViewFromCommandWestIcon;
+      case 5: return ViewFromCommandEastIcon;
       default: return "";
     }
   }
