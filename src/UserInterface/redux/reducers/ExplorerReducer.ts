@@ -112,21 +112,25 @@ export default createReducer(initialState, {
   CHANGE_CHECKBOX_STATE: (state, action) => {
     const uniqueId = action.appliesTo;
     const treeNodeState = state.nodes![uniqueId];
-    if(treeNodeState == undefined) return; //TODO: When could this happen?
+    if(treeNodeState === undefined) return; //TODO: When could this happen?
     switch(action.payload) {
       case 'checked':
         state.nodes![uniqueId].checked = true;
+        state.nodes![uniqueId].indeterminate = false;
         console.log('changed state of ', state.nodes![uniqueId].name, ' to checked');
         state.checkedNodeIds.add(uniqueId);
         break;
       case 'unchecked':
         state.nodes![uniqueId].checked = false;
+        state.nodes![uniqueId].indeterminate = false;
         console.log('changed state of ', state.nodes![uniqueId].name, ' to un-checked');
         break;
       case 'partial':
-        state.nodes![uniqueId].checked = true;  //TODO: handle this when tree node state support partial
+        state.nodes![uniqueId].indeterminate = true;
         console.log('changed state of ', state.nodes![uniqueId].name, ' to partial');
         break;
+      default:
+        // do nothing
     }
   },
   VIEW_ALL_NODES_SUCCESS: (state, action) => {
