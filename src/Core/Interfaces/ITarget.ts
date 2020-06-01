@@ -18,7 +18,8 @@ import { ITargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
 export interface ITarget extends ITargetIdAccessor
 {
   canShowView(node: BaseNode): boolean;
-  isVisibleView(node: BaseNode): boolean;
+  hasVisibleView(node: BaseNode): boolean;
+  hasView(node: BaseNode): boolean;
   showView(node: BaseNode): boolean;
   hideView(node: BaseNode): boolean;
   removeViewShownHere(view: BaseView): void;

@@ -19,13 +19,6 @@ export class VirtualUserInterface
     this.userInterface = userInterface;
   }
 
-  // Alternative 1. (To be removed?)
-  static registerNode(node: BaseNode): void
-  {
-    VirtualUserInterface.userInterface?.registerNode(node);
-  }
-
-  // Alternative 2.
   static updateNode(node: BaseNode, args: NodeEventArgs): void
   {
     VirtualUserInterface.userInterface?.updateNode(node, args);

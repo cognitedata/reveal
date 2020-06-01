@@ -19,10 +19,6 @@ class UserInterfaceListener implements IUserInterface {
   updateNode(node: BaseNode, args: NodeEventArgs): void {
     this.notificationAdaptor.processEvent(node, args);
   }
-
-  registerNode(node: BaseNode): void {
-    console.error('Deprecated function called');
-  }
 }
 
 export default UserInterfaceListener;

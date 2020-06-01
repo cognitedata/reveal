@@ -60,6 +60,8 @@ export class FilterLogFolder extends BaseNode
   public  /*virtual*/ get isLabelInItalic(): boolean { return true; }
   public  /*virtual*/ isFilter(target: ITarget | null): boolean { return true; }
 
+  public /*override*/ canBeChecked(target: ITarget | null): boolean { return false; }
+
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
     return new WellRenderStyle(targetId);
