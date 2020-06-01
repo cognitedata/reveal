@@ -1,6 +1,7 @@
 import { enableMapSet } from "immer";
 import settingsReducer from "./SettingsReducer";
 import explorerReducer from "./ExplorerReducer";
+import visualizerReducer from "./VisualizersReducer";
 
 // Enable immer MapSet
 enableMapSet();
@@ -14,6 +15,7 @@ enableMapSet();
 const SubsurfaceReducer = {
   settings: settingsReducer,
   explorer: explorerReducer,
+  visualizers: visualizerReducer
 };
 
 export default SubsurfaceReducer;

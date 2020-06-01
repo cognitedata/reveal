@@ -15,11 +15,11 @@ import { generateNodeTree } from "./redux/actions/explorer";
 import { BaseRootLoader } from "@/RootLoaders/BaseRootLoader";
 import { RandomDataLoader } from "@/RootLoaders/RandomDataLoader";
 import { ReduxStore } from "./interfaces/common";
+import { setVisualizerToolbars } from "./redux/actions/visualizers";
 
 import NotificationsToActionsAdaptor from "./adaptors/NotificationToAction";
 import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 import UserInterfaceListener from "./adaptors/UserInterfaceListener";
-
 
 /**
  * Root component
@@ -31,26 +31,21 @@ export default () => {
 
   // Setup root and generate domain nodes
   useEffect(() => {
-    const notificationAdaptor: NotificationsToActionsAdaptor = new NotificationsToActionsAdaptor(dispatch);
-    VirtualUserInterface.install(new UserInterfaceListener(notificationAdaptor));
+    const notificationAdaptor: NotificationsToActionsAdaptor = new NotificationsToActionsAdaptor(
+      dispatch
+    );
+    VirtualUserInterface.install(
+      new UserInterfaceListener(notificationAdaptor)
+    );
 
-    RootManager.addTargets(root);
-    RootManager.appendDOM(root, "viewer-3d", "3d");
+    RootManager.addTargets(root, (viewerToolBar) => dispatch(setVisualizerToolbars(viewerToolBar)));
+    RootManager.appendDOM(root, "visualizer-3d", "3d");
 
     const loader: BaseRootLoader = new RandomDataLoader();
     loader.load(root);
     dispatch(generateNodeTree({ root }));
     RootManager.initializeWhenPopulated(root);
-
   }, [root]);
-
-  useEffect(() => {
-    if (!_.isEmpty(explorer.nodes)) {
-      // Uncommenting this breaks standalone application
-      // Needs to investigate this further
-      // dispatch(viewAllNodes({ root }));
-    }
-  }, [_.size(explorer.nodes)]);
 
   return (
     <div className="root-container">

@@ -1,6 +1,8 @@
 
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetCommand";
+import ToggleBgColorCommandBlackIcon from "@images/Commands/ToggleBgColorCommandBlack.png";
+import ToggleBgColorCommandWhiteIcon from "@images/Commands/ToggleBgColorCommandWhite.png";
 
 export class ToggleBgColorCommand extends ThreeRenderTargetCommand {
 
@@ -17,6 +19,12 @@ export class ToggleBgColorCommand extends ThreeRenderTargetCommand {
   //==================================================
 
   public/*override*/ get name(): string { return "Toggle between black and white backgroud" }
+
+  public /*virtual*/ get icon(): string {
+    return this.isChecked ?
+      ToggleBgColorCommandWhiteIcon :
+      ToggleBgColorCommandBlackIcon;
+  }
 
   public /*override*/ get isCheckable() { return true; } // Can be checked? (default false)
 
