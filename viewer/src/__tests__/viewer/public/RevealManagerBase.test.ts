@@ -14,7 +14,9 @@ describe('RevealManagerBase', () => {
     addModel: jest.fn(),
     resetRedraw: jest.fn(),
     needsRedraw: false,
-    updateCamera: jest.fn()
+    updateCamera: jest.fn(),
+    clippingPlanes: [],
+    clipIntersection: false
   };
 
   const cadManager = mockCadManager as CadManager<number>;
@@ -47,6 +49,7 @@ describe('RevealManagerBase', () => {
     manager.clippingPlanes = planes;
     expect(setClippingPlanesSpy).toBeCalled();
     expect(materialManager.clippingPlanes).toBe(planes);
+    expect(mockCadManager.clippingPlanes).toBe(planes);
   });
 
   test('set clipIntersection, updates materials', () => {
@@ -54,5 +57,6 @@ describe('RevealManagerBase', () => {
     manager.clipIntersection = true;
     expect(setClipIntersectionSpy).toBeCalled();
     expect(materialManager.clipIntersection).toBeTrue();
+    expect(mockCadManager.clipIntersection).toBeTrue();
   });
 });
