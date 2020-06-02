@@ -5,7 +5,7 @@
 
 $root-container-width: 100vw;
 $root-container-height: 100vh;
-$left-panel-width: 290px;
+$left-panel-min-width: 290px;
 $left-panel-height: $root-container-height;
 $select-control-svg-height: 0.7rem;
 $select-control-svg-width: $select-control-svg-height;
@@ -32,22 +32,24 @@ body {
 }
 
 .left-panel {
-  min-width: $left-panel-width;
-  // height: $left-panel-height;
+  min-width: $left-panel-min-width;
   display: flex;
   flex-direction: column;
   background-image: linear-gradient(to right, white, lightgray);
 }
 
 .right-panel {
+  overflow: hidden;
   position: relative;
-  // width: calc(#{$root-container-width} - #{$left-panel-width});
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: $right-panel-height;
 }
 
 .right-panel canvas {
-  width: 100% !important;
-  height: 100% !important;
+   width: 100% !important;
+   height: 100% !important;
 }
 
 .settings-section-container {

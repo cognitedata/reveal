@@ -188,7 +188,11 @@ body {
   background-image: linear-gradient(to right, white, lightgray); }
 
 .right-panel {
+  overflow: hidden;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 100vh; }
 
 .right-panel canvas {
