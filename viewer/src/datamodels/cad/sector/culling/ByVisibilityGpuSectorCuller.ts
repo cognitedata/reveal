@@ -141,7 +141,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
         options && options.logCallback
           ? options.logCallback
           : // No logging
-          () => { },
+            () => {},
 
       coverageUtil: options && options.coverageUtil ? options.coverageUtil : new GpuOrderSectorsByVisibilityCoverage()
     };
@@ -149,7 +149,12 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   }
 
   determineSectors(input: DetermineSectorsInput): WantedSector[] {
-    const takenSectors = this.update(input.camera, input.cadModelsMetadata);
+    const takenSectors = this.update(
+      input.camera,
+      input.cadModelsMetadata,
+      input.clippingPlanes,
+      input.clipIntersection
+    );
     const wanted = takenSectors.collectWantedSectors();
 
     const totalSectorCount = input.cadModelsMetadata.reduce((sum, x) => sum + x.scene.sectorCount, 0);
@@ -160,7 +165,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
 
     this.log(
       `Scene: ${wanted.length} (${
-      wanted.filter(x => !Number.isFinite(x.priority)).length
+        wanted.filter(x => !Number.isFinite(x.priority)).length
       } required, ${totalSectorCount} sectors, ${takenPercent}% of all sectors - ${takenDetailedPercent}% detailed)`
     );
     return wanted;
@@ -170,7 +175,12 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     return this.takenSectors.collectWantedSectors();
   }
 
-  private update(camera: THREE.PerspectiveCamera, models: CadModelMetadata[]): TakenSectorMap {
+  private update(
+    camera: THREE.PerspectiveCamera,
+    models: CadModelMetadata[],
+    clippingPlanes: THREE.Plane[] | null,
+    clipIntersection: boolean
+  ): TakenSectorMap {
     const { coverageUtil } = this.options;
     const takenSectors = this.takenSectors;
     takenSectors.clear();
@@ -178,6 +188,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
 
     // Update wanted sectors
     coverageUtil.setModels(models);
+    coverageUtil.setClipping(clippingPlanes, clipIntersection);
     const prioritized = coverageUtil.orderSectorsByVisibility(camera);
     const costLimit = this.options.costLimit;
 
@@ -198,8 +209,8 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     this.log(`Retrieving ${i} of ${prioritizedLength} (last: ${prioritized.length > 0 ? prioritized[i - 1] : null})`);
     this.log(
       `Total scheduled: ${takenSectors.getWantedSectorCount()} of ${prioritizedLength} (cost: ${takenSectors.totalCost /
-      1024 /
-      1024}/${costLimit / 1024 / 1024}, priority: ${debugAccumulatedPriority})`
+        1024 /
+        1024}/${costLimit / 1024 / 1024}, priority: ${debugAccumulatedPriority})`
     );
 
     return takenSectors;

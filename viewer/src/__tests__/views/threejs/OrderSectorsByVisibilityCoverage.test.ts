@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { mat4 } from 'gl-matrix';
 
-import { createSectorMetadata, SectorTree } from '../../testUtils/createSectorMetadata';
+import { createSectorMetadata, SectorTree } from '../../testutils/createSectorMetadata';
 import { Box3 } from '@/utilities/Box3';
 import { GpuOrderSectorsByVisibilityCoverage, traverseDepthFirst } from '@/internal';
 import { SectorSceneImpl } from '@/datamodels/cad/sector/SectorScene';
@@ -14,7 +14,7 @@ import { fromThreeMatrix } from '@/utilities';
 import { CadModelMetadata } from '@/datamodels/cad/';
 import { SectorScene } from '@/datamodels/cad/sector/types';
 
-describe('GpuOrderSectorsByVisibilityCoverage', () => {
+describe('OrderSectorsByVisibilityCoverage', () => {
   const glContext: WebGLRenderingContext = require('gl')(64, 64);
   const renderSize = new THREE.Vector2(64, 64);
   const identityTransform = createModelTransformation(new THREE.Matrix4().identity());
@@ -88,6 +88,39 @@ describe('GpuOrderSectorsByVisibilityCoverage', () => {
     expect(result[0].sectorId).toBe(0);
     expect(result[0].priority).toBe(1.0);
     expect(result[0].model).toBe(model2);
+  });
+
+  test('with clipping plane, sets renderer clipping planes', () => {
+    // Arrange
+    // Scene has one root with two children
+    const scene = createStubScene([
+      0,
+      [
+        // Split space in two along X axis
+        [1, [], Box3.fromBounds(-1, -1, -1, -0.1, 1, 1)],
+        [2, [], Box3.fromBounds(0.1, -1, -1, 1, 1, 1)]
+      ],
+      Box3.fromBounds(-1, -1, -1, 1, 1, 1)
+    ]);
+    const model = createStubModel('model1', scene, identityTransform);
+    const util = new GpuOrderSectorsByVisibilityCoverage({ glContext, renderSize });
+    util.setModels([model]);
+
+    const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 20.0);
+    camera.position.set(0, 0, -10.0);
+    camera.lookAt(0, 0, 0);
+    camera.updateProjectionMatrix();
+    glContext.clearColor(0, 0, 0, 1);
+
+    // Act
+    const planes = [
+      new THREE.Plane().setFromNormalAndCoplanarPoint(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 0, 0))
+    ];
+    util.setClipping(planes, false);
+    util.orderSectorsByVisibility(camera);
+
+    // Assert
+    expect(util.renderer.localClippingEnabled).toBeTrue();
   });
 });
 

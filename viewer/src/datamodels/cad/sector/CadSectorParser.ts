@@ -2,8 +2,6 @@
  * Copyright 2020 Cognite AS
  */
 
-import { OperatorFunction, merge } from 'rxjs';
-import { publish, filter, flatMap, map } from 'rxjs/operators';
 import { WorkerPool } from '@/utilities/workers/WorkerPool';
 import { ParseSectorResult, ParseCtmResult, ParseQuadsResult } from '@/utilities/workers/types/parser.types';
 import { ParserWorker } from '@/utilities/workers/parser.worker';
@@ -15,23 +13,17 @@ export class CadSectorParser {
     this.workerPool = workerPool;
   }
 
-  parse(): OperatorFunction<{ format: string; data: Uint8Array }, ParseSectorResult | ParseCtmResult | SectorQuads> {
-    return publish(dataObservable => {
-      const i3dObservable = dataObservable.pipe(
-        filter(data => data.format === 'i3d'),
-        flatMap(data => this.parseDetailed(data.data))
-      );
-      const f3dObservable = dataObservable.pipe(
-        filter(data => data.format === 'f3d'),
-        flatMap(data => this.parseSimple(data.data)),
-        map(parsedQuadsResult => this.finalizeSimple(parsedQuadsResult))
-      );
-      const ctmObservable = dataObservable.pipe(
-        filter(data => data.format === 'ctm'),
-        flatMap(data => this.parseCtm(data.data))
-      );
-      return merge(i3dObservable, f3dObservable, ctmObservable);
-    });
+  parseI3D(data: Uint8Array): Promise<ParseSectorResult> {
+    return this.parseDetailed(data);
+  }
+
+  async parseF3D(data: Uint8Array): Promise<SectorQuads> {
+    const parsed = await this.parseSimple(data);
+    return this.finalizeSimple(parsed);
+  }
+
+  parseCTM(data: Uint8Array): Promise<ParseCtmResult> {
+    return this.parseCtm(data);
   }
 
   private async parseSimple(quadsArrayBuffer: Uint8Array): Promise<ParseQuadsResult> {
@@ -40,7 +32,6 @@ export class CadSectorParser {
     );
   }
 
-  // TODO: j-bjorne 16-04-2020: Move outside
   private finalizeSimple(parsedQuadsResult: ParseQuadsResult): SectorQuads {
     return {
       treeIndexToNodeIdMap: parsedQuadsResult.treeIndexToNodeIdMap,

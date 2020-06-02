@@ -2,22 +2,26 @@
  * Copyright 2020 Cognite AS
  */
 
-import { SectorGeometry, ParsedSector } from './types';
+import * as THREE from 'three';
+
 import { OperatorFunction, merge, Observable } from 'rxjs';
-import { Group } from 'three';
 import { publish, filter, map } from 'rxjs/operators';
-import { LevelOfDetail } from './LevelOfDetail';
+
 import { MaterialManager } from '../MaterialManager';
 import { SectorQuads } from '../rendering/types';
+
+import { SectorGeometry, ParsedSector } from './types';
+import { LevelOfDetail } from './LevelOfDetail';
 import { consumeSectorDetailed, consumeSectorSimple } from './sectorUtilities';
 
 export class SimpleAndDetailedToSector3D {
   private readonly materialManager: MaterialManager;
+
   constructor(materialManager: MaterialManager) {
     this.materialManager = materialManager;
   }
 
-  transform(): OperatorFunction<ParsedSector, Group> {
+  transform(): OperatorFunction<ParsedSector, THREE.Group> {
     return publish(dataObservable => {
       const detailedObservable: Observable<ParsedSector> = dataObservable.pipe(
         filter((parsedSector: ParsedSector) => parsedSector.levelOfDetail === LevelOfDetail.Detailed)
