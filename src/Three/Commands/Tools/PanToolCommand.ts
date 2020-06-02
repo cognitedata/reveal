@@ -1,6 +1,7 @@
 
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ToolCommand } from "@/Three/Commands/Tools/ToolCommand";
+import PanToolCommandIcon from "@images/Commands/PanToolCommand.png";
 
 export class PanToolCommand extends ToolCommand {
 
@@ -15,6 +16,8 @@ export class PanToolCommand extends ToolCommand {
   //==================================================
   // OVERRIDES of BaseCommand
   //==================================================
+
+  public /*virtual*/ get icon(): string { return PanToolCommandIcon; }
 
   public get name(): string { return "Pan/Rotate/Zoom" }
 }

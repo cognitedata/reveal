@@ -72,8 +72,8 @@ const VisualizerToolbar = (props: { visualizerId: string, visualizers: Visualize
     onStop={onStop}>
     <div className="visualizer-toolbar-wrapper"
       style={{
-        marginRight: horizontal ? "22rem" : "3rem",
-        marginBottom: horizontal ? "3rem" : "20rem",
+        marginRight: horizontal ? "26rem" : "3rem",
+        marginBottom: horizontal ? "3rem" : "24rem",
       }}>
       <div className="visualizer-toolbar-container">
         <div className="handle" style={{

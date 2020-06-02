@@ -33,6 +33,8 @@ import { ViewFromCommand } from "@/Three/Commands/ViewFromCommand";
 import { Camera } from "@/Three/Nodes/Camera";
 import { ToggleCameraTypeCommand } from "../Commands/ToggleCameraTypeCommand";
 import { CopyImageCommand } from "../Commands/CopyImageCommand";
+import { MeasureDistanceTool } from "../Commands/Tools/MeasureDistanceTool";
+import { PanToolCommand } from "../Commands/Tools/PanToolCommand";
 
 const DirectionalLightName = "DirectionalLight";
 
@@ -220,6 +222,11 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     for (let viewFrom = 0; viewFrom < 6; viewFrom++)
       toolbar.add(new ViewFromCommand(this, viewFrom));
     toolbar.beginOptionMenu();
+
+    // Tools
+    toolbar.add(new MeasureDistanceTool(this));
+    toolbar.add(new PanToolCommand(this));
+    
   }
 
   //==================================================
