@@ -151,8 +151,8 @@ export class RandomDataLoader extends BaseRootLoader
           const node = new SurfaceNode();
           var range = Range3.newTest.clone();
           range.expandByFraction(0.2);
-          range.z.set(-1400, -1800);
-          node.data = RegularGrid2.createFractal(range, 7, 0.7, 5);
+          range.z.set(-1400 + (k - 1) * 300, -1800 + (k - 1) * 300);
+          node.data = RegularGrid2.createFractal(range, 7, 0.9, 5);
           parent1.addChild(node);
         }
       }
