@@ -20,6 +20,7 @@ import { setVisualizerToolbars } from "./redux/actions/visualizers";
 import NotificationsToActionsAdaptor from "./adaptors/NotificationToAction";
 import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 import UserInterfaceListener from "./adaptors/UserInterfaceListener";
+import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 
 /**
  * Root component
@@ -27,6 +28,7 @@ import UserInterfaceListener from "./adaptors/UserInterfaceListener";
 export default () => {
   const dispatch = useDispatch();
   const explorer = useSelector((state: ReduxStore) => state.explorer);
+  const visualizers = useSelector((state: ReduxStore) => state.visualizers);
   const root = explorer.root;
 
   // Setup root and generate domain nodes
@@ -49,7 +51,9 @@ export default () => {
 
   return (
     <div className="root-container">
-      <SplitPane split="vertical" defaultSize={1200} primary="second">
+      <SplitPane
+        split="vertical"
+        minSize={"290"}>
         <LeftPanel />
         <RightPanel />
       </SplitPane>
