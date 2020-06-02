@@ -2,21 +2,22 @@
  * Copyright 2020 Cognite AS
  */
 import * as THREE from 'three';
-import { mat4 } from 'gl-matrix';
 
-import { generateSectorTree } from '../testUtils/createSectorMetadata';
 import { DetermineSectorsInput } from '@/datamodels/cad/sector/culling/types';
 import { MaterialManager } from '@/datamodels/cad/MaterialManager';
 import { OrderSectorsByVisibilityCoverage } from '@/datamodels/cad/sector/culling/OrderSectorsByVisibilityCoverage';
 import { ByVisibilityGpuSectorCuller, LevelOfDetail } from '@/internal';
 import { SectorMetadata, CadNode, CadModelMetadata } from '@/experimental';
-import { SectorSceneImpl } from '@/datamodels/cad/sector/SectorScene';
+
+import { generateSectorTree } from '../testutils/createSectorMetadata';
+import { createCadModelMetadata } from '../testutils/createCadModelMetadata';
 
 type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 
 describe('ByVisibilityGpuSectorCuller', () => {
   const materialManager = new MaterialManager();
   const setModelsMock: PropType<OrderSectorsByVisibilityCoverage, 'setModels'> = jest.fn();
+  const setClippingMock: PropType<OrderSectorsByVisibilityCoverage, 'setClipping'> = jest.fn();
   const orderSectorsByVisibilityMock: PropType<
     OrderSectorsByVisibilityCoverage,
     'orderSectorsByVisibility'
@@ -24,8 +25,9 @@ describe('ByVisibilityGpuSectorCuller', () => {
 
   const coverageUtil: OrderSectorsByVisibilityCoverage = {
     setModels: setModelsMock,
-    orderSectorsByVisibility: c => {
-      orderSectorsByVisibilityMock(c);
+    setClipping: setClippingMock,
+    orderSectorsByVisibility: camera => {
+      orderSectorsByVisibilityMock(camera);
       return [];
     }
   };
@@ -37,17 +39,28 @@ describe('ByVisibilityGpuSectorCuller', () => {
 
   test('determineSectors sets models to coverage utility', () => {
     const culler = new ByVisibilityGpuSectorCuller({ coverageUtil });
-    const model = createModel(generateSectorTree(1));
+    const model = createCadModelMetadata(generateSectorTree(1));
     const input = createDetermineSectorInput(camera, model);
     culler.determineSectors(input);
     expect(setModelsMock).toBeCalled();
   });
 
+  test('determineSectors sets clip planes to coverage utility', () => {
+    const clippingPlanes = [new THREE.Plane(), new THREE.Plane()];
+    const culler = new ByVisibilityGpuSectorCuller({ coverageUtil });
+    const model = createCadModelMetadata(generateSectorTree(1));
+    const input = createDetermineSectorInput(camera, model);
+    input.clippingPlanes = clippingPlanes;
+    input.clipIntersection = true;
+    culler.determineSectors(input);
+    expect(setClippingMock).toBeCalledWith(clippingPlanes, true);
+  });
+
   test('determineSectors returns sectors for all models', () => {
     // Arrange
     const culler = new ByVisibilityGpuSectorCuller({ coverageUtil });
-    const model1 = createModel(generateSectorTree(1));
-    const model2 = createModel(generateSectorTree(1));
+    const model1 = createCadModelMetadata(generateSectorTree(1));
+    const model2 = createCadModelMetadata(generateSectorTree(1));
     const input = createDetermineSectorInput(camera, [model1, model2]);
 
     // Act
@@ -76,7 +89,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
       }
     };
     const culler = new ByVisibilityGpuSectorCuller({ coverageUtil, determineSectorCost, costLimit: 20 });
-    const model = createModel(generateSectorTree(2, 2));
+    const model = createCadModelMetadata(generateSectorTree(2, 2));
     const cadNode = new CadNode(model, materialManager);
     Object.defineProperty(cadNode, 'cadModel', { get: jest.fn().mockReturnValue(model) });
     // culler.(model);
@@ -100,26 +113,14 @@ describe('ByVisibilityGpuSectorCuller', () => {
   });
 });
 
-function createModel(root: SectorMetadata): CadModelMetadata {
-  const scene = SectorSceneImpl.createFromRootSector(8, 1, root);
-
-  const model: CadModelMetadata = {
-    blobUrl: `test_${Math.random()}`,
-    modelTransformation: {
-      inverseModelMatrix: mat4.identity(mat4.create()),
-      modelMatrix: mat4.identity(mat4.create())
-    },
-    scene
-  };
-  return model;
-}
-
 function createDetermineSectorInput(
   camera: THREE.PerspectiveCamera,
   models: CadModelMetadata | CadModelMetadata[]
 ): DetermineSectorsInput {
   const determineSectorsInput: DetermineSectorsInput = {
     camera,
+    clippingPlanes: [],
+    clipIntersection: false,
     cadModelsMetadata: Array.isArray(models) ? models : [models],
     loadingHints: {}
   };
