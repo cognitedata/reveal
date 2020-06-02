@@ -58,9 +58,16 @@ export class CogniteClient3dExtensions
     return response.data;
   }
 
-  public async getModelUrl(params: { modelRevision: IdEither; format: File3dFormat }): Promise<string> {
-    const outputs = await this.getOutputs(params.modelRevision, [params.format]);
-    const blobId = outputs.findMostRecentOutput(params.format)!.blobId;
+  public async getModelUrl(modelIdentifier: { modelRevision: IdEither; format: File3dFormat }): Promise<string> {
+    const { modelRevision, format } = modelIdentifier;
+    const outputs = await this.getOutputs(modelRevision, [format]);
+    const mostRecentOutput = outputs.findMostRecentOutput(format);
+    if (!mostRecentOutput) {
+      throw new Error(
+        `Model '${modelRevision}' is not compatible with this version of Reveal. If this model works with a previous version of Reveal it must be reconverted to support this version.`
+      );
+    }
+    const blobId = mostRecentOutput.blobId;
     return `${this.client.getBaseUrl()}${this.buildBlobRequestPath(blobId)}`;
   }
 
