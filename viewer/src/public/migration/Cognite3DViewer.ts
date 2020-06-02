@@ -37,6 +37,7 @@ import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
 import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloudMetadataRepository';
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
+import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
 
 export interface RelativeMouseEvent {
   offsetX: number;
@@ -138,7 +139,7 @@ export class Cognite3DViewer {
 
     const pointCloudModelRepository: PointCloudMetadataRepository<RequestParams> = new PointCloudMetadataRepository(
       cogniteClientExtension,
-      new DefaultCadTransformation()
+      new DefaultPointCloudTransformation()
     );
     const pointCloudFactory: PointCloudFactory = new PointCloudFactory(cogniteClientExtension);
     this.pointCloudManager = new PointCloudManager(pointCloudModelRepository, pointCloudFactory);
