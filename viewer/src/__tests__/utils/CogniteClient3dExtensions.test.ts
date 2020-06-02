@@ -6,6 +6,7 @@ import nock from 'nock';
 import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
 import { CogniteClient } from '@cognite/sdk';
 import { Model3DOutputList } from '@/utilities/networking/Model3DOutputList';
+import { File3dFormat } from '@/utilities/File3dFormat';
 
 describe('CogniteClient3dExtensions', () => {
   const appId = 'reveal-CogniteClient3dV2Extensions-test';
@@ -98,6 +99,34 @@ describe('CogniteClient3dExtensions', () => {
     }
     const view = new Uint8Array(result);
     expect(view.toString()).toEqual(expected.toString());
+  });
+
+  test('getModelUrl throw error if no compatible output is found', async () => {
+    // Arrange
+    const response = {
+      items: [
+        {
+          model: {
+            id: 42
+          },
+          outputs: [
+            {
+              format: 'unsupported-format',
+              version: 1,
+              blobId: 1
+            }
+          ]
+        }
+      ]
+    };
+    nock(/.*/)
+      .post(/.*/)
+      .reply(200, response);
+
+    // Act & Assert
+    expect(
+      clientExt.getModelUrl({ modelRevision: { id: 42 }, format: File3dFormat.RevealCadModel })
+    ).rejects.toThrowError();
   });
 });
 
