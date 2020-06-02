@@ -127,6 +127,7 @@ export default createReducer(initialState, {
         break;
       case 'partial':
         state.nodes![uniqueId].indeterminate = true;
+        state.nodes![uniqueId].checked = false;
         console.log('changed state of ', state.nodes![uniqueId].name, ' to partial');
         break;
       default:

@@ -79,7 +79,7 @@ export function Explorer() {
   };
 
   return (
-    <div className="explorer explorer-container">
+    <div className="explorer">
       <VirtualTree
         data={data}
         onToggleNodeSelect={handleToggleNodeSelect}

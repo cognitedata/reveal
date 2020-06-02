@@ -58,15 +58,6 @@ body {
   overflow: hidden;
 }
 
-.explorer-container {
-  height: 100%;
-  width: 100%;
-  background-image: linear-gradient(to right, white, lightgray);
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
-
 .settings-container {
   width: 100%;
   overflow-y: auto;

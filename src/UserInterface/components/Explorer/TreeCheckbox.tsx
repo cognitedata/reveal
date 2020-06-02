@@ -29,48 +29,64 @@ const Label = styled.label`
 `;
 
 const Span = styled.span<SpanProps>`
-  height: 0.875em;
-  width: 0.875em;
+  height: 0.83em;
+  width: 0.83em;
   cursor: pointer;
-  background-image: url(${Frame});
+  background-image: url(${Frame}), url(${BackgroundNormal});
   background-size: cover;
-  ${Label}:not(.disabled):not(.checked) &:hover {
-    background-image: url(${Frame}), url(${FocusNormal});
-    background-repeat: no-repeat, no-repeat;
+  ${Label}:not(.disabled):not(.checked):not(.indeterminate) &:hover {
+    background-image: url(${Frame}), url(${FocusNormal}), url(${BackgroundNormal});
+    background-repeat: no-repeat, no-repeat, no-repeat;
   }
-  .filter & {
+  .checked:not(.filter) & {
+    background-image: url(${Frame}), url(${CheckedAll}), url(${BackgroundNormal});
+    background-repeat: no-repeat, no-repeat, no-repeat;
+  }
+  .indeterminate:not(.filter) & {
+    background-image: url(${Frame}), url(${CheckedSome}), url(${BackgroundNormal});
+    background-repeat: no-repeat, no-repeat, no-repeat;
+  }
+  .disabled:not(.filter) & {
+    background-image: url(${FrameStippled}), url(${BackgroundNormal});
+    background-repeat: no-repeat, no-repeat, no-repeat;
+    cursor: initial;
+  }
+  .checked:not(.filter) &:hover {
+    background-image: url(${Frame}), url(${CheckedAll}), url(${FocusNormal});
+    background-repeat: no-repeat, no-repeat, no-repeat;
+  }
+  .indeterminate:not(.filter) &:hover {
+    background-image: url(${Frame}), url(${CheckedSome}), url(${FocusNormal});
+    background-repeat: no-repeat, no-repeat, no-repeat;
+  }
+   .filter & {
     background-image: url(${Frame}), url(${BackgroundFilter});
     background-repeat: no-repeat, no-repeat;
   }
-  .filter:not(.disabled):not(.checked) &:hover {
-    background-image: url(${Frame}), url(${FocusFilter});
-    background-repeat: no-repeat, no-repeat;
+  .filter.checked & {
+    background-image: url(${Frame}), url(${CheckedAll}), url(${BackgroundFilter});
+    background-repeat: no-repeat, no-repeat, no-repeat;
   }
-  .filter &:hover {
-    background-image: url(${Frame}), url(${FocusFilter}), url(${CheckedAll});
-    background-repeat: no-repeat, no-repeat;
+  .filter.indeterminate & {
+    background-image: url(${Frame}), url(${CheckedSome}), url(${BackgroundFilter});
+    background-repeat: no-repeat, no-repeat, no-repeat;
   }
-  .checked & {
-    background-image: url(${Frame}), url(${CheckedAll});
-    background-repeat: no-repeat, no-repeat;
-  }
-  .indeterminate & {
-    background-image: url(${Frame}), url(${CheckedSome});
-    background-repeat: no-repeat, no-repeat;
-  }
-  .disabled & {
-    background-image: url(${FrameStippled}), url(${BackgroundNormal});
-    background-repeat: no-repeat, no-repeat;
-    cursor: initial;
-  }
-  .disabled.filter & {
+  .filter.disabled & {
     background-image: url(${FrameStippled}), url(${BackgroundFilter});
     background-repeat: no-repeat, no-repeat;
     cursor: initial;
   }
-  &:hover {
-    background-image: url(${Frame}), url(${FocusNormal}), url(${CheckedAll});
-    background-repeat: no-repeat, no-repeat;
+  .filter:not(.disabled):not(.checked):not(.indeterminate) &:hover {
+    background-image: url(${Frame}), url(${FocusFilter}), url(${BackgroundFilter});
+    background-repeat: no-repeat, no-repeat, no-repeat;
+  }
+  .filter.checked &:hover {
+    background-image: url(${Frame}), url(${CheckedAll}), url(${FocusFilter}), url(${BackgroundFilter});
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+  }
+  .filter.indeterminate &:hover {
+    background-image: url(${Frame}), url(${CheckedSome}), url(${FocusFilter}), url(${BackgroundFilter});
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
   }
 `;
 
@@ -111,10 +127,7 @@ export function TreeCheckBox(props: {
   };
 
   return (
-    <Label
-      className={props.class + ` ${stateClassArr.join(" ")}`}
-      htmlFor={props.id}
-    >
+    <Label className={props.class + ` ${stateClassArr.join(" ")}`} htmlFor={props.id}>
       <Span onClick={handleClick} />
     </Label>
   );
