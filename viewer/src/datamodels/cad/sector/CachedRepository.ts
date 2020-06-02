@@ -146,15 +146,14 @@ export class CachedRepository implements Repository {
             this._modelSectorProvider.getCadSectorFile(wantedSector.blobUrl, wantedSector.metadata.facesFile.fileName!)
           ).pipe(
             retry(3),
-            map(arrayBuffer => ({ format: 'f3d', data: new Uint8Array(arrayBuffer) })),
-            this._modelDataParser.parse(),
+            flatMap(data => this._modelDataParser.parseF3D(new Uint8Array(data))),
             map(data => {
               this._parsedDataSubject.next({
                 blobUrl: wantedSector.blobUrl,
                 sectorId: wantedSector.metadata.id,
                 lod: 'simple',
-                data: data as SectorQuads
-              }); // TODO: Remove when migration is gone.
+                data
+              });
               return { ...wantedSector, data };
             }),
             this._modelDataTransformer.transform(),
@@ -182,12 +181,8 @@ export class CachedRepository implements Repository {
         flatMap(wantedSector => {
           const i3dFileObservable = of(wantedSector.metadata.indexFile).pipe(
             flatMap(indexFile => this._modelSectorProvider.getCadSectorFile(wantedSector.blobUrl, indexFile.fileName)),
-            map(response => ({
-              format: 'i3d',
-              data: new Uint8Array(response)
-            })),
             retry(3),
-            this._modelDataParser.parse()
+            flatMap(buffer => this._modelDataParser.parseI3D(new Uint8Array(buffer)))
           );
 
           const ctmFilesObservable = from(wantedSector.metadata.indexFile.peripheralFiles).pipe(
@@ -263,8 +258,7 @@ export class CachedRepository implements Repository {
             this._modelSectorProvider.getCadSectorFile(ctmRequest.blobUrl, ctmRequest.fileName)
           ).pipe(
             retry(3),
-            map(arrayBuffer => ({ format: 'ctm', data: new Uint8Array(arrayBuffer) })),
-            this._modelDataParser.parse(),
+            flatMap(buffer => this._modelDataParser.parseCTM(new Uint8Array(buffer))),
             shareReplay(1),
             take(1)
           );
