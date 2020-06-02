@@ -23,10 +23,6 @@ type SectorVisibility = {
   distance: number;
 };
 
-const coverageMaterial = new THREE.ShaderMaterial({
-  vertexShader: coverageShaders.vertex,
-  fragmentShader: coverageShaders.fragment
-});
 const identityRotation = new THREE.Quaternion();
 
 /**
@@ -67,6 +63,14 @@ export interface OrderSectorsByVisibilityCoverage {
    * @param models Models to estimate sector visibility for.
    */
   setModels(models: CadModelMetadata[]): void;
+
+  /**
+   * Specify clipping planes.
+   * @param planes            A list of clip planes or null to disable clipping.
+   * @param clipIntersection  When true, intersection clipping is enabled.
+   */
+  setClipping(planes: THREE.Plane[] | null, clipIntersection: boolean): void;
+
   /**
    * Estimates how visible the different sectors for the models added are and returns
    * a prioritized list.
@@ -82,7 +86,7 @@ export interface OrderSectorsByVisibilityCoverage {
 export class GpuOrderSectorsByVisibilityCoverage {
   private sectorIdOffset = 0;
   private readonly scene = new THREE.Scene();
-  private readonly renderer: THREE.WebGLRenderer;
+  private readonly _renderer: THREE.WebGLRenderer;
   private debugRenderer?: THREE.WebGLRenderer;
   private readonly renderTarget: THREE.WebGLRenderTarget;
   private readonly containers: Map<string, SectorContainer> = new Map();
@@ -91,24 +95,36 @@ export class GpuOrderSectorsByVisibilityCoverage {
     sectorVisibilityBuffer: [] as SectorVisibility[]
   };
 
+  private readonly coverageMaterial = new THREE.ShaderMaterial({
+    vertexShader: coverageShaders.vertex,
+    fragmentShader: coverageShaders.fragment,
+    clipping: true,
+    side: THREE.DoubleSide
+  });
+
   constructor(options?: OrderSectorsByVisibleCoverageOptions) {
     const context = (options || {}).glContext;
     const renderSize = (options || {}).renderSize || new THREE.Vector2(640, 480);
-    this.renderer = new THREE.WebGLRenderer({
+    this._renderer = new THREE.WebGLRenderer({
       context,
       antialias: false,
       alpha: false,
       precision: 'lowp',
       stencil: false
     });
-    this.renderer.setClearColor('#FFFFFF');
+    this._renderer.setClearColor('#FFFFFF');
+    this._renderer.localClippingEnabled = true;
     this.renderTarget = new THREE.WebGLRenderTarget(renderSize.width, renderSize.height, {
       generateMipmaps: false,
       type: THREE.UnsignedByteType,
       format: THREE.RGBAFormat,
-      stencilBuffer: false
+      stencilBuffer: true
     });
-    this.renderer.setRenderTarget(this.renderTarget);
+    this._renderer.setRenderTarget(this.renderTarget);
+  }
+
+  get renderer(): THREE.WebGLRenderer {
+    return this._renderer;
   }
 
   createDebugCanvas(options?: { width: number; height: number }): HTMLCanvasElement {
@@ -123,6 +139,7 @@ export class GpuOrderSectorsByVisibilityCoverage {
       alpha: false,
       stencil: false
     });
+    this.debugRenderer.localClippingEnabled = true;
     this.debugRenderer.setClearColor('white');
     this.debugRenderer.setSize(width, height);
 
@@ -146,18 +163,26 @@ export class GpuOrderSectorsByVisibilityCoverage {
     }
   }
 
+  setClipping(planes: THREE.Plane[] | null, clipIntersection: boolean) {
+    this.coverageMaterial.clippingPlanes = planes;
+    this.coverageMaterial.clipIntersection = clipIntersection;
+  }
+
   orderSectorsByVisibility(camera: THREE.Camera): PrioritizedSectorIdentifier[] {
-    // 1. Render to offscreen buffer
-    this.renderer.render(this.scene, camera);
+    // render to debug renderer first as rendering to offscreen buffer
+    // first causes last frame to be read in step 3.
     if (this.debugRenderer) {
       this.debugRenderer.render(this.scene, camera);
     }
+
+    // 1. Render to offscreen buffer
+    this._renderer.render(this.scene, camera);
 
     // 2. Prepare buffer for reading from GPU
     this.prepareBuffers();
 
     // 3. Read back result from GPU
-    this.renderer.readRenderTargetPixels(
+    this._renderer.readRenderTargetPixels(
       this.renderTarget,
       0,
       0,
@@ -286,7 +311,7 @@ export class GpuOrderSectorsByVisibilityCoverage {
 
     const instanceValues = new Float32Array(4 * sectorCount); // sectorId, coverageFactor[3]
     const boxGeometry = new THREE.BoxBufferGeometry();
-    const mesh = new THREE.InstancedMesh(boxGeometry, coverageMaterial, sectorCount);
+    const mesh = new THREE.InstancedMesh(boxGeometry, this.coverageMaterial, sectorCount);
 
     const bounds = new THREE.Box3();
     const addSector = (sectorBounds: Box3, sectorId: number, coverage: THREE.Vector3) => {

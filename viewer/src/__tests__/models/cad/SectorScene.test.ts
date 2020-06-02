@@ -7,7 +7,7 @@ import { vec3, mat4 } from 'gl-matrix';
 
 import { SectorMetadata } from '@/datamodels/cad/sector/types';
 import { SectorSceneImpl } from '@/datamodels/cad/sector/SectorScene';
-import { createSectorMetadata } from '../../testUtils/createSectorMetadata';
+import { createSectorMetadata } from '../../testutils/createSectorMetadata';
 import { traverseDepthFirst } from '@/utilities/traversal';
 import { Box3 } from '@/utilities/Box3';
 import { fromThreeMatrix } from '@/utilities';
