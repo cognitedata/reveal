@@ -5,7 +5,7 @@
 import * as Potree from '@cognite/potree-core';
 import { PointCloudMetadata } from '@/datamodels/pointcloud/PointCloudMetadata';
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
-import { toThreeMatrix4 } from '@/utilities/utilities';
+import { toThreeMatrix4 } from '@/utilities/';
 import { HttpHeadersProvider } from '@/utilities/networking/HttpHeadersProvider';
 
 export class PointCloudFactory {

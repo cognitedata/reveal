@@ -2,9 +2,9 @@
  * Copyright 2020 Cognite AS
  */
 
-import { traverseDepthFirst } from '@/utilities/traversal';
-import { SectorMetadata } from '@/datamodels/cad/sector/types';
-import { SectorScene, SectorSceneImpl } from '@/datamodels/cad/sector/SectorScene';
+import { traverseDepthFirst } from '@/utilities/objectTraversal';
+import { SectorMetadata, SectorScene } from '@/datamodels/cad/sector/types';
+import { SectorSceneImpl } from '@/datamodels/cad/sector/SectorScene';
 
 export function createSceneFromRoot(root: SectorMetadata): SectorScene {
   const sectors = new Map<number, SectorMetadata>();
