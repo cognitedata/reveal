@@ -5,7 +5,6 @@
 
 $root-container-width: 100vw;
 $root-container-height: 100vh;
-
 $left-panel-min-width: 290px;
 $left-panel-height: $root-container-height;
 
@@ -48,8 +47,8 @@ body {
 }
 
 .right-panel canvas {
-  width: 100% !important;
-  height: 100% !important;
+   width: 100% !important;
+   height: 100% !important;
 }
 
 .settings-section-container {
@@ -269,7 +268,7 @@ $z-index-max: 9999;
   height: 100%;
   .visualizer-toolbar-wrapper {
     position: absolute;
-    z-index: $z-index-max;
+    z-index: 10;
   }
   .visualizer-toolbar-container {
     position: relative;
@@ -278,6 +277,7 @@ $z-index-max: 9999;
 
   .visuaizer-toolbar {
     display: flex;
+    flex-wrap: wrap;
     margin: 0.5rem 4rem 0.5rem 1.5rem;
     position: absolute;
     z-index: $z-index-max;

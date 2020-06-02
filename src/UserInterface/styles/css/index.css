@@ -370,12 +370,13 @@ body {
   height: 100%; }
   .visualizer .visualizer-toolbar-wrapper {
     position: absolute;
-    z-index: 9999; }
+    z-index: 10; }
   .visualizer .visualizer-toolbar-container {
     position: relative;
     z-index: 9999; }
   .visualizer .visuaizer-toolbar {
     display: flex;
+    flex-wrap: wrap;
     margin: 0.5rem 4rem 0.5rem 1.5rem;
     position: absolute;
     z-index: 9999;

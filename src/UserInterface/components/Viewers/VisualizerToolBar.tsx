@@ -71,9 +71,10 @@ const VisualizerToolbar = (props: { visualizerId: string, visualizers: Visualize
     onDrag={() => setDragging(true)}
     onStop={onStop}>
     <div className="visualizer-toolbar-wrapper"
+      // TODO - Add flex wrap dynamically using refs
       style={{
-        marginRight: horizontal ? "26rem" : "3rem",
-        marginBottom: horizontal ? "3rem" : "24rem",
+        marginRight: horizontal ? "23rem" : "5rem",
+        marginBottom: horizontal ? "5rem" : "21rem",
       }}>
       <div className="visualizer-toolbar-container">
         <div className="handle" style={{
@@ -85,7 +86,10 @@ const VisualizerToolbar = (props: { visualizerId: string, visualizers: Visualize
         </div>
         <div
           className="visuaizer-toolbar"
+          // TODO - Add refs and do this
           style={{
+            width: horizontal ? "20rem" : "4rem",
+            height: horizontal ? "inherit" : "18rem",
             flexDirection: horizontal ? "row" : "column",
             left: horizontal ? "0.3rem" : "-1rem",
             top: horizontal ? "0rem" : "1.2rem"
