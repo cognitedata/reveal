@@ -5,7 +5,7 @@
 import { RevealManagerBase, RevealOptions } from './RevealManagerBase';
 import { CogniteClient, IdEither } from '@cognite/sdk';
 import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
-import { File3dFormat } from '@/utilities/File3dFormat';
+import { File3dFormat } from '@/utilities';
 import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
 import { MaterialManager } from '@/datamodels/cad/MaterialManager';
 import { SimpleAndDetailedToSector3D } from '@/datamodels/cad/sector/SimpleAndDetailedToSector3D';
