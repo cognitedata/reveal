@@ -63,10 +63,10 @@ async function main() {
   revealManager.update(camera);
 
   const params = {
-    clipIntersection: false,
-    width: 670,
-    height: 1010,
-    depth: 200,
+    clipIntersection: true,
+    width: 10,
+    height: 10,
+    depth: 10,
     x: 0,
     y: 0,
     z: 0,
