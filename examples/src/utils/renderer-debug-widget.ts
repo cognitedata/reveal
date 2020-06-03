@@ -17,18 +17,13 @@ const everythingRenderFilter: RenderFilter = {
   renderQuads: true,
   renderPrimitives: true,
   renderTriangleMeshes: true,
-  renderInstancedMeshes: true
+  renderInstancedMeshes: true,
 };
 
 export enum RenderMode {
   WhenNecessary = 'WhenNecessary',
   DisableRendering = 'DisableRendering',
-  AlwaysRender = 'AlwaysRender'
-}
-
-export enum SectorLevelOfDetail {
-  High,
-  Low
+  AlwaysRender = 'AlwaysRender',
 }
 
 export type RenderOptions = {
@@ -43,7 +38,7 @@ export function createDefaultRenderOptions(): RenderOptions {
     loadingEnabled: true,
     renderMode: RenderMode.WhenNecessary,
     renderFilter: everythingRenderFilter,
-    overrideWantedSectors: undefined
+    overrideWantedSectors: undefined,
   };
 }
 
@@ -51,35 +46,35 @@ function createEmptySceneInfo() {
   return {
     sectors: {
       count: 0,
-      loadedDetailedCount: 0
+      loadedDetailedCount: 0,
     },
     primitives: {
       meshCount: 0,
       instanceCount: 0,
-      templateTriangleCount: 0
+      templateTriangleCount: 0,
     },
     triangleMeshes: {
       meshCount: 0,
-      triangleCount: 0
+      triangleCount: 0,
     },
     instanceMeshes: {
       meshCount: 0,
       instanceCount: 0,
       avgInstancesPerMesh: 0.0,
-      templateTriangleCount: 0
+      templateTriangleCount: 0,
     },
     quads: {
       meshCount: 0,
       quadCount: 0,
-      templateTriangleCount: 0
+      templateTriangleCount: 0,
     },
     distinctMaterialCount: 0,
     // Stuff to compute FPS
     lastUpdate: {
       timestamp: Date.now(),
-      frame: 0
+      frame: 0,
     },
-    fps: 0
+    fps: 0,
   };
 }
 type SceneInfo = ReturnType<typeof createEmptySceneInfo>;
@@ -97,7 +92,11 @@ export function createRendererDebugWidget(
 
   const controls: dat.GUIController[] = []; // List of controls that must be manually updated
 
-  const renderModes = [RenderMode.WhenNecessary, RenderMode.AlwaysRender, RenderMode.DisableRendering];
+  const renderModes = [
+    RenderMode.WhenNecessary,
+    RenderMode.AlwaysRender,
+    RenderMode.DisableRendering,
+  ];
   const renderStyleOptions = { showBoundingBoxes: false };
   gui.add(renderOptions, 'loadingEnabled').name('Loading enabled');
   gui.add(renderOptions, 'renderMode', renderModes).name('Render mode');
@@ -106,7 +105,7 @@ export function createRendererDebugWidget(
     .name('Show bounding boxes')
     .onChange(() => {
       cadNode.renderHints = Object.assign(cadNode.renderHints || {}, {
-        showSectorBoundingBoxes: renderStyleOptions.showBoundingBoxes
+        showSectorBoundingBoxes: renderStyleOptions.showBoundingBoxes,
       });
     });
 
@@ -115,26 +114,46 @@ export function createRendererDebugWidget(
   controls.push(statsGui.add(sceneInfo, 'fps').name('FPS'));
   controls.push(statsGui.add(renderInfo.render, 'calls').name('Draw calls'));
   controls.push(statsGui.add(renderInfo.render, 'triangles').name('Triangles'));
-  controls.push(statsGui.add(renderInfo.programs || [], 'length').name('Shaders'));
-  controls.push(statsGui.add(sceneInfo, 'distinctMaterialCount').name('Materials'));
+  controls.push(
+    statsGui.add(renderInfo.programs || [], 'length').name('Shaders')
+  );
+  controls.push(
+    statsGui.add(sceneInfo, 'distinctMaterialCount').name('Materials')
+  );
   statsGui.open();
 
   // Render filtering
   const filterGui = gui.addFolder('Filtering');
-  filterGui.add(renderOptions.renderFilter, 'renderInstancedMeshes').name('Instanced meshes');
-  filterGui.add(renderOptions.renderFilter, 'renderPrimitives').name('Primitives');
-  filterGui.add(renderOptions.renderFilter, 'renderTriangleMeshes').name('Triangle meshes');
+  filterGui
+    .add(renderOptions.renderFilter, 'renderInstancedMeshes')
+    .name('Instanced meshes');
+  filterGui
+    .add(renderOptions.renderFilter, 'renderPrimitives')
+    .name('Primitives');
+  filterGui
+    .add(renderOptions.renderFilter, 'renderTriangleMeshes')
+    .name('Triangle meshes');
   filterGui.add(renderOptions.renderFilter, 'renderQuads').name('Quads');
 
   // Sectors
   const sectorsGui = gui.addFolder('Sectors');
   controls.push(sectorsGui.add(sceneInfo.sectors, 'count').name('Total'));
-  controls.push(sectorsGui.add(sceneInfo.sectors, 'loadedDetailedCount').name('Loaded detailed'));
-  controls.push(sectorsGui.add(sceneInfo.quads, 'meshCount').name('Loaded quads'));
+  controls.push(
+    sectorsGui
+      .add(sceneInfo.sectors, 'loadedDetailedCount')
+      .name('Loaded detailed')
+  );
+  controls.push(
+    sectorsGui.add(sceneInfo.quads, 'meshCount').name('Loaded quads')
+  );
 
   // Sectors to load
   const loadOverrideGui = sectorsGui.addFolder('Override loading');
-  const loadOverride = { maxQuadSize: 0.0025, quadsFilter: '', detailedFilter: '' };
+  const loadOverride = {
+    maxQuadSize: 0.0025,
+    quadsFilter: '',
+    detailedFilter: '',
+  };
   const updateWantedNodesFilter = () =>
     updateWantedSectorOverride(
       cadNode,
@@ -154,17 +173,45 @@ export function createRendererDebugWidget(
 
   // Details about different geometries
   const primitivesGui = gui.addFolder('Primitives');
-  controls.push(primitivesGui.add(sceneInfo.primitives, 'meshCount').name('Mesh count'));
-  controls.push(primitivesGui.add(sceneInfo.primitives, 'instanceCount').name('Instance count'));
-  controls.push(primitivesGui.add(sceneInfo.primitives, 'templateTriangleCount').name('Triangles'));
+  controls.push(
+    primitivesGui.add(sceneInfo.primitives, 'meshCount').name('Mesh count')
+  );
+  controls.push(
+    primitivesGui
+      .add(sceneInfo.primitives, 'instanceCount')
+      .name('Instance count')
+  );
+  controls.push(
+    primitivesGui
+      .add(sceneInfo.primitives, 'templateTriangleCount')
+      .name('Triangles')
+  );
   const instancesGui = gui.addFolder('Instances');
-  controls.push(instancesGui.add(sceneInfo.instanceMeshes, 'meshCount').name('Mesh count'));
-  controls.push(instancesGui.add(sceneInfo.instanceMeshes, 'instanceCount').name('Instance count'));
-  controls.push(instancesGui.add(sceneInfo.instanceMeshes, 'templateTriangleCount').name('Triangles'));
-  controls.push(instancesGui.add(sceneInfo.instanceMeshes, 'avgInstancesPerMesh').name('Avg instances per mesh'));
+  controls.push(
+    instancesGui.add(sceneInfo.instanceMeshes, 'meshCount').name('Mesh count')
+  );
+  controls.push(
+    instancesGui
+      .add(sceneInfo.instanceMeshes, 'instanceCount')
+      .name('Instance count')
+  );
+  controls.push(
+    instancesGui
+      .add(sceneInfo.instanceMeshes, 'templateTriangleCount')
+      .name('Triangles')
+  );
+  controls.push(
+    instancesGui
+      .add(sceneInfo.instanceMeshes, 'avgInstancesPerMesh')
+      .name('Avg instances per mesh')
+  );
   const meshesGui = gui.addFolder('Meshes');
-  controls.push(meshesGui.add(sceneInfo.triangleMeshes, 'meshCount').name('Mesh count'));
-  controls.push(meshesGui.add(sceneInfo.triangleMeshes, 'triangleCount').name('Triangles'));
+  controls.push(
+    meshesGui.add(sceneInfo.triangleMeshes, 'meshCount').name('Mesh count')
+  );
+  controls.push(
+    meshesGui.add(sceneInfo.triangleMeshes, 'triangleCount').name('Triangles')
+  );
 
   const quadsGui = gui.addFolder('Quads (low detail geometry)');
   controls.push(quadsGui.add(sceneInfo.quads, 'meshCount').name('Mesh count'));
@@ -175,7 +222,8 @@ export function createRendererDebugWidget(
     logVisible: () => logVisibleSectorsInScene(cadNode),
     logActiveSectors: () => logActiveSectors(cadNode),
     logMaterials: () => logActiveMaterialsInScene(cadNode),
-    saveWindowVariables: () => saveWindowVariables(renderer, cadNode, sectorMetadataRoot)
+    saveWindowVariables: () =>
+      saveWindowVariables(renderer, cadNode, sectorMetadataRoot),
   };
   const actionsGui = gui.addFolder('Actions');
   actionsGui.add(actions, 'logVisible').name('Log visible meshes');
@@ -187,13 +235,16 @@ export function createRendererDebugWidget(
   setInterval(() => {
     computeFramesPerSecond(renderer, sceneInfo);
     updateSceneInfo(cadNode, sceneInfo);
-    controls.forEach(ctrl => ctrl.updateDisplay());
+    controls.forEach((ctrl) => ctrl.updateDisplay());
   }, intervalMs);
 
   return renderOptions;
 }
 
-function computeFramesPerSecond(renderer: THREE.WebGLRenderer, sceneInfo: SceneInfo) {
+function computeFramesPerSecond(
+  renderer: THREE.WebGLRenderer,
+  sceneInfo: SceneInfo
+) {
   const timestamp = Date.now();
   const currentFrame = renderer.info.render.frame;
 
@@ -215,10 +266,10 @@ function isHighDetailSectorRoot(object: THREE.Object3D): boolean {
     isSectorRoot(object) &&
     !!object.children.find(
       // Container has a group
-      y =>
+      (y) =>
         y.type === 'Group' &&
         // The group contains mesh that isn't quad
-        y.children.find(z => z.type === 'Mesh' && !z.name.startsWith('Quads'))
+        y.children.find((z) => z.type === 'Mesh' && !z.name.startsWith('Quads'))
     )
   );
 }
@@ -239,10 +290,12 @@ function updateSceneInfo(scene: THREE.Object3D, sceneInfo: SceneInfo) {
   sceneInfo.quads.quadCount = 0;
 
   const materialIds = new Set<number>();
-  scene.traverseVisible(x => {
+  scene.traverseVisible((x) => {
     if (isSectorRoot(x)) {
       sceneInfo.sectors.count++;
-      sceneInfo.sectors.loadedDetailedCount += isHighDetailSectorRoot(x) ? 1 : 0;
+      sceneInfo.sectors.loadedDetailedCount += isHighDetailSectorRoot(x)
+        ? 1
+        : 0;
     }
 
     if (x.type !== 'Mesh') {
@@ -252,21 +305,24 @@ function updateSceneInfo(scene: THREE.Object3D, sceneInfo: SceneInfo) {
     const geometry = mesh.geometry as THREE.BufferGeometry;
 
     const materials = getMaterials(mesh);
-    materials.forEach(m => materialIds.add(m.id));
+    materials.forEach((m) => materialIds.add(m.id));
 
     if (x.name.startsWith('Primitives')) {
       const indexAttribute = geometry.index!;
       sceneInfo.primitives.meshCount++;
       sceneInfo.primitives.templateTriangleCount += indexAttribute.count / 3;
-      sceneInfo.primitives.instanceCount += geometry.attributes.a_treeIndex.count;
+      sceneInfo.primitives.instanceCount +=
+        geometry.attributes.a_treeIndex.count;
     } else if (x.name.startsWith('Triangle mesh')) {
       const indexAttribute = geometry.index!;
       sceneInfo.triangleMeshes.meshCount++;
       sceneInfo.triangleMeshes.triangleCount += indexAttribute.count / 3;
     } else if (x.name.startsWith('Instanced mesh')) {
       sceneInfo.instanceMeshes.meshCount++;
-      sceneInfo.instanceMeshes.templateTriangleCount += geometry.drawRange.count;
-      sceneInfo.instanceMeshes.instanceCount += geometry.attributes.a_treeIndex.count;
+      sceneInfo.instanceMeshes.templateTriangleCount +=
+        geometry.drawRange.count;
+      sceneInfo.instanceMeshes.instanceCount +=
+        geometry.attributes.a_treeIndex.count;
     } else if (x.name.startsWith('Quads')) {
       sceneInfo.quads.meshCount++;
       sceneInfo.quads.quadCount += geometry.attributes.color.count;
@@ -284,8 +340,11 @@ function updateSceneInfo(scene: THREE.Object3D, sceneInfo: SceneInfo) {
  * @param scene
  * @param filter
  */
-export function applyRenderingFilters(scene: THREE.Scene, filter: RenderFilter) {
-  scene.traverse(x => {
+export function applyRenderingFilters(
+  scene: THREE.Scene,
+  filter: RenderFilter
+) {
+  scene.traverse((x) => {
     if (x.name.startsWith('Primitives')) {
       x.visible = filter.renderPrimitives;
     } else if (x.name.startsWith('Triangle mesh')) {
@@ -324,16 +383,19 @@ function getMaterials(mesh: THREE.Mesh): THREE.Material[] {
  *               format x/y/z/ where x,y,z is a number).
  * @param root   The root of the sector tree.
  */
-function filterSectorNodes(filter: string, root: reveal.SectorMetadata): reveal.SectorMetadata[] {
+function filterSectorNodes(
+  filter: string,
+  root: reveal.SectorMetadata
+): reveal.SectorMetadata[] {
   const acceptedNodes: reveal.SectorMetadata[] = [];
-  for (let pathRegex of filter.split('|').map(x => x.trim())) {
+  for (let pathRegex of filter.split('|').map((x) => x.trim())) {
     if (!pathRegex.startsWith('^')) {
       pathRegex = '^' + pathRegex;
     }
     if (!pathRegex.endsWith('$')) {
       pathRegex = pathRegex + '$';
     }
-    reveal.internal.traverseDepthFirst(root, node => {
+    reveal.internal.traverseDepthFirst(root, (node) => {
       if (node.path.match(pathRegex)) {
         acceptedNodes.push(node);
       }
@@ -357,7 +419,7 @@ function updateWantedSectorOverride(
     return {
       blobUrl: cadNode.cadModelMetadata.blobUrl,
       levelOfDetail,
-      metadata: node
+      metadata: node,
     };
   }
 
@@ -367,9 +429,17 @@ function updateWantedSectorOverride(
     const acceptedSimple = filterSectorNodes(quadsFilter, root);
     const acceptedDetailed = filterSectorNodes(detailedFilter, root);
     const wanted: reveal.internal.WantedSector[] = [
-      ...cadNode.sectorScene.getAllSectors().map(x => createWantedSector(x, reveal.internal.LevelOfDetail.Discarded)),
-      ...acceptedSimple.map(x => createWantedSector(x, reveal.internal.LevelOfDetail.Simple)),
-      ...acceptedDetailed.map(x => createWantedSector(x, reveal.internal.LevelOfDetail.Detailed))
+      ...cadNode.sectorScene
+        .getAllSectors()
+        .map((x) =>
+          createWantedSector(x, reveal.internal.LevelOfDetail.Discarded)
+        ),
+      ...acceptedSimple.map((x) =>
+        createWantedSector(x, reveal.internal.LevelOfDetail.Simple)
+      ),
+      ...acceptedDetailed.map((x) =>
+        createWantedSector(x, reveal.internal.LevelOfDetail.Detailed)
+      ),
     ];
     renderOptions.overrideWantedSectors = wanted;
   }
@@ -377,10 +447,10 @@ function updateWantedSectorOverride(
 
 function logVisibleSectorsInScene(scene: THREE.Object3D) {
   const visibleMeshes: Record<string, THREE.Mesh> = {};
-  scene.traverseVisible(x => {
+  scene.traverseVisible((x) => {
     if (x.type === 'Mesh' || x.type === 'LOD') {
       let path = '';
-      x.traverseAncestors(y => {
+      x.traverseAncestors((y) => {
         path = y.name + '/' + path;
       });
       visibleMeshes[path + x.name] = x as THREE.Mesh;
@@ -392,11 +462,11 @@ function logVisibleSectorsInScene(scene: THREE.Object3D) {
 
 function logActiveMaterialsInScene(scene: THREE.Object3D) {
   const uniqueMaterials: Record<number, THREE.Material> = {};
-  scene.traverseVisible(x => {
+  scene.traverseVisible((x) => {
     if (x.type === 'Mesh') {
       const mesh = x as THREE.Mesh;
       const materials = getMaterials(mesh);
-      materials.forEach(m => (uniqueMaterials[m.id] = m));
+      materials.forEach((m) => (uniqueMaterials[m.id] = m));
     }
   });
   // tslint:disable-next-line: no-console
@@ -406,9 +476,12 @@ function logActiveMaterialsInScene(scene: THREE.Object3D) {
 function logActiveSectors(scene: THREE.Object3D) {
   const activeDetailedRoots: THREE.Object3D[] = [];
   const activeQuadsRoots: THREE.Object3D[] = [];
-  scene.traverseVisible(x => {
-    if (x.name.startsWith('Sector') && x.children.find(y => y.type === 'Mesh')) {
-      if (x.children.find(y => y.name.startsWith('Quads'))) {
+  scene.traverseVisible((x) => {
+    if (
+      x.name.startsWith('Sector') &&
+      x.children.find((y) => y.type === 'Mesh')
+    ) {
+      if (x.children.find((y) => y.name.startsWith('Quads'))) {
         activeQuadsRoots.push(x);
       } else {
         activeDetailedRoots.push(x);
@@ -431,7 +504,9 @@ function saveWindowVariables(
   (window as any).renderer = renderer;
   (window as any).sectorRoot = sectorMetadataRoot;
   // tslint:disable-next-line: no-console
-  console.log('Set window.scene, window.renderer, window.THREE and window.sectorRoot');
+  console.log(
+    'Set window.scene, window.renderer, window.THREE and window.sectorRoot'
+  );
   // tslint:disable-next-line: no-console
   console.log(
     'See https://github.com/jeromeetienne/threejs-inspector/blob/master/README.md for details on the ThreeJS inspector'

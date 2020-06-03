@@ -1,14 +1,19 @@
-/*!
+/*
  * Copyright 2020 Cognite AS
  */
 
+import React, { useEffect, useRef } from 'react';
+import { CanvasWrapper } from '../components/styled';
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import { CogniteClient, HttpError } from '@cognite/sdk';
 import * as reveal from '@cognite/reveal/experimental';
 import { vec3 } from 'gl-matrix';
 import { GUI, GUIController } from 'dat.gui';
-import { getParamsFromURL, createRenderManager } from './utils/example-helpers';
+import {
+  getParamsFromURL,
+  createRenderManager,
+} from '../utils/example-helpers';
 
 CameraControls.install({ THREE });
 
@@ -31,90 +36,160 @@ interface TransitPathRequest {
   }[];
 }
 
-async function main() {
-  const { project, modelUrl, modelRevision } = getParamsFromURL({ project: 'publicdata', modelUrl: 'primitives' });
-  const client = new CogniteClient({ appId: 'reveal.example.walkable-path' });
-  client.loginWithOAuth({ project });
+enum Type {
+  coordinates = 'coordinates',
+  nodeId = 'nodeId',
+}
 
-  const scene = new THREE.Scene();
-  const renderer = new THREE.WebGLRenderer();
-  renderer.setClearColor('#444');
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
+interface Waypoint {
+  type: Type;
+  coordinates: Coordinates;
+  nodeId: NodeIdReference;
+}
 
-  const revealManager: reveal.RenderManager = createRenderManager(
-    modelRevision !== undefined ? 'cdf' : 'local',
-    client
-  );
+interface TransitPathItem {
+  from: Waypoint;
+  to: Waypoint;
+  movingObjectSize: { diameter: number; height: number };
+}
 
-  let model: reveal.CadNode;
-  if (revealManager instanceof reveal.LocalHostRevealManager && modelUrl !== undefined) {
-    model = await revealManager.addModel('cad', modelUrl);
-  } else if (revealManager instanceof reveal.RevealManager && modelRevision !== undefined) {
-    model = await revealManager.addModel('cad', modelRevision);
-  } else {
-    throw new Error('Need to provide either project & model OR modelUrl as query parameters');
-  }
-  scene.add(model);
+interface TransitPathData {
+  modelId: number;
+  items: TransitPathItem[];
+}
 
-  const { position, target, near, far } = model.suggestCameraConfig();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, near, far);
-  const controls = new CameraControls(camera, renderer.domElement);
-  controls.setLookAt(position.x, position.y, position.z, target.x, target.y, target.z);
-  controls.update(0.0);
-  camera.updateMatrixWorld();
+export function WalkablePath() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    async function main() {
+      const { project, modelUrl, modelRevision } = getParamsFromURL({
+        project: 'publicdata',
+        modelUrl: 'primitives',
+      });
+      const client = new CogniteClient({
+        appId: 'reveal.example.walkable-path',
+      });
+      client.loginWithOAuth({ project });
 
-  const walkablePathSdkClient = createNetworkDataSource(client);
+      const scene = new THREE.Scene();
+      const renderer = new THREE.WebGLRenderer({
+        canvas: canvasRef.current!,
+      });
+      renderer.setClearColor('#444');
+      renderer.setSize(window.innerWidth, window.innerHeight);
 
-  let updated = false;
-  const pathMeshes: THREE.Mesh[] = [];
+      const revealManager: reveal.RenderManager = createRenderManager(
+        modelRevision !== undefined ? 'cdf' : 'local',
+        client
+      );
 
-  const removeWalkablePath = () => {
-    for (const pathMesh of pathMeshes) {
-      scene.remove(pathMesh);
-    }
-    pathMeshes.splice(0, pathMeshes.length);
-    updated = true;
-  };
-
-  createGUIWrapper(modelRevision ? modelRevision : 0, {
-    createWalkablePath: async (walkablePath: TransitPathRequest) => {
-      const walkablePathResponse = await walkablePathSdkClient.getTransitPath(walkablePath);
-      removeWalkablePath();
-      const vector3Path = convertToVector3Array(walkablePathResponse, model.modelTransformation);
-      const meshes = createWalkablePathMeshes(vector3Path);
-      for (const mesh of meshes) {
-        scene.add(mesh);
-        pathMeshes.push(mesh);
+      let model: reveal.CadNode;
+      if (
+        revealManager instanceof reveal.LocalHostRevealManager &&
+        modelUrl !== undefined
+      ) {
+        model = await revealManager.addModel('cad', modelUrl);
+      } else if (
+        revealManager instanceof reveal.RevealManager &&
+        modelRevision !== undefined
+      ) {
+        model = await revealManager.addModel('cad', modelRevision);
+      } else {
+        throw new Error(
+          'Need to provide either project & model OR modelUrl as query parameters'
+        );
       }
-      updated = true;
-    },
-    removeWalkablePath
-  });
+      scene.add(model);
 
-  const clock = new THREE.Clock();
-  const render = () => {
-    const delta = clock.getDelta();
-    const controlsNeedUpdate = controls.update(delta);
-    if (controlsNeedUpdate) {
+      const { position, target, near, far } = model.suggestCameraConfig();
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        near,
+        far
+      );
+      const controls = new CameraControls(camera, renderer.domElement);
+      controls.setLookAt(
+        position.x,
+        position.y,
+        position.z,
+        target.x,
+        target.y,
+        target.z
+      );
+      controls.update(0.0);
+      camera.updateMatrixWorld();
+
+      const walkablePathSdkClient = createNetworkDataSource(client);
+
+      let updated = false;
+      const pathMeshes: THREE.Mesh[] = [];
+
+      const removeWalkablePath = () => {
+        for (const pathMesh of pathMeshes) {
+          scene.remove(pathMesh);
+        }
+        pathMeshes.splice(0, pathMeshes.length);
+        updated = true;
+      };
+
+      createGUIWrapper(modelRevision ? modelRevision : 0, {
+        createWalkablePath: async (walkablePath: TransitPathRequest) => {
+          const walkablePathResponse = await walkablePathSdkClient.getTransitPath(
+            walkablePath
+          );
+          removeWalkablePath();
+          const vector3Path = convertToVector3Array(
+            walkablePathResponse,
+            model.modelTransformation
+          );
+          const meshes = createWalkablePathMeshes(vector3Path);
+          for (const mesh of meshes) {
+            scene.add(mesh);
+            pathMeshes.push(mesh);
+          }
+          updated = true;
+        },
+        removeWalkablePath,
+      });
+
+      const clock = new THREE.Clock();
+      const render = () => {
+        const delta = clock.getDelta();
+        const controlsNeedUpdate = controls.update(delta);
+        if (controlsNeedUpdate) {
+          revealManager.update(camera);
+        }
+        const walkablePathUpdated = updated;
+
+        if (
+          controlsNeedUpdate ||
+          revealManager.needsRedraw ||
+          walkablePathUpdated
+        ) {
+          updated = false;
+          renderer.render(scene, camera);
+          revealManager.resetRedraw();
+        }
+
+        requestAnimationFrame(render);
+      };
       revealManager.update(camera);
+      requestAnimationFrame(render);
+      (window as any).scene = scene;
+      (window as any).THREE = THREE;
+      (window as any).camera = camera;
+      (window as any).controls = controls;
+      (window as any).renderer = renderer;
     }
-    const walkablePathUpdated = updated;
 
-    if (controlsNeedUpdate || revealManager.needsRedraw || walkablePathUpdated) {
-      updated = false;
-      renderer.render(scene, camera);
-      revealManager.resetRedraw();
-    }
-
-    requestAnimationFrame(render);
-  };
-  requestAnimationFrame(render);
-  (window as any).scene = scene;
-  (window as any).THREE = THREE;
-  (window as any).camera = camera;
-  (window as any).controls = controls;
-  (window as any).renderer = renderer;
+    main();
+  });
+  return (
+    <CanvasWrapper>
+      <canvas ref={canvasRef} />
+    </CanvasWrapper>
+  );
 }
 
 // TODO: Add to some kind of primitives like class in reveal viewer?
@@ -130,7 +205,13 @@ function createWalkablePathMeshes(
   try {
     for (const path of pathArrays) {
       const curve = new THREE.CatmullRomCurve3(path);
-      const geometry = new THREE.TubeBufferGeometry(curve, 2 * (path.length - 1), radius, radiusSegments, closed);
+      const geometry = new THREE.TubeBufferGeometry(
+        curve,
+        2 * (path.length - 1),
+        radius,
+        radiusSegments,
+        closed
+      );
       const material = new THREE.MeshPhongMaterial({ color: 0xfeafeafe });
       const mesh = new THREE.Mesh(geometry, material);
       mesh.position.y += heightOffset;
@@ -153,7 +234,13 @@ function convertToVector3Array(
     for (const segment of item.segments) {
       for (const path of segment.path) {
         vec3.set(vector, path.x, path.y, path.z);
-        pathVectors.push(reveal.utilities.toThreeVector3(new THREE.Vector3(), vector, modelTransformation));
+        pathVectors.push(
+          reveal.utilities.toThreeVector3(
+            new THREE.Vector3(),
+            vector,
+            modelTransformation
+          )
+        );
       }
     }
     paths.push(pathVectors);
@@ -165,13 +252,13 @@ function convertToVector3Array(
 function transformDataToRequest(data: TransitPathData): TransitPathRequest {
   return {
     modelId: data.modelId,
-    items: data.items.map(item => {
+    items: data.items.map((item) => {
       return {
         from: transformWaypoint(item.from),
         to: transformWaypoint(item.to),
-        movingObjectSize: item.movingObjectSize
+        movingObjectSize: item.movingObjectSize,
       };
-    })
+    }),
   };
 }
 // Helper Parser from GUI Data, to API format
@@ -203,47 +290,28 @@ function createGUIWrapper(
         transitPathData = defaultPathData(modelId);
         gui.destroy();
         createGUIWrapper(modelId, callbacks);
-      }
+      },
     },
     'resetToDefault'
   );
   gui.add(
     {
       createWalkablePath: () => {
-        callbacks.createWalkablePath.call(gui, transformDataToRequest(transitPathData));
-      }
+        callbacks.createWalkablePath.call(
+          gui,
+          transformDataToRequest(transitPathData)
+        );
+      },
     },
     'createWalkablePath'
   );
   gui.add(callbacks, 'removeWalkablePath');
 }
 
-enum Type {
-  coordinates = 'coordinates',
-  nodeId = 'nodeId'
-}
-
-interface Waypoint {
-  type: Type;
-  coordinates: Coordinates;
-  nodeId: NodeIdReference;
-}
-
-interface TransitPathItem {
-  from: Waypoint;
-  to: Waypoint;
-  movingObjectSize: { diameter: number; height: number };
-}
-
-interface TransitPathData {
-  modelId: number;
-  items: TransitPathItem[];
-}
-
 function defaultPathData(modelId: number): TransitPathData {
   return {
     modelId,
-    items: [defaultPathItem()]
+    items: [defaultPathItem()],
   };
 }
 
@@ -252,14 +320,14 @@ function defaultPathItem(): TransitPathItem {
     from: {
       type: Type.coordinates,
       coordinates: { x: 332.4, y: 117.6, z: 500.21 },
-      nodeId: { nodeId: 0 }
+      nodeId: { nodeId: 0 },
     },
     to: {
       type: Type.coordinates,
       coordinates: { x: 332.38, y: 114.6, z: 517.02 },
-      nodeId: { nodeId: 0 }
+      nodeId: { nodeId: 0 },
     },
-    movingObjectSize: { diameter: 0.55, height: 1.6 }
+    movingObjectSize: { diameter: 0.55, height: 1.6 },
   };
 }
 
@@ -275,7 +343,11 @@ function updateQueryGUI(parent: GUI, data: TransitPathData): GUI {
   return queryFolder;
 }
 
-function updateItemsGUI(parent: GUI, items: TransitPathItem[], onItemsUpdated: () => void) {
+function updateItemsGUI(
+  parent: GUI,
+  items: TransitPathItem[],
+  onItemsUpdated: () => void
+) {
   const itemsFolder = parent.addFolder('items');
   itemsFolder.open();
   itemsFolder.add(
@@ -284,7 +356,7 @@ function updateItemsGUI(parent: GUI, items: TransitPathItem[], onItemsUpdated: (
         const newItem = defaultPathItem();
         items.push(newItem);
         onItemsUpdated();
-      }
+      },
     },
     'addItem'
   );
@@ -302,10 +374,14 @@ function updateItemsGUI(parent: GUI, items: TransitPathItem[], onItemsUpdated: (
   return itemsFolder;
 }
 
-function createItemGUI(parent: GUI, item: TransitPathItem, onDelete: () => void) {
+function createItemGUI(
+  parent: GUI,
+  item: TransitPathItem,
+  onDelete: () => void
+) {
   parent.add(
     {
-      delete: onDelete
+      delete: onDelete,
     },
     'delete'
   );
@@ -368,11 +444,17 @@ interface TransitPathResponse {
 
 function createNetworkDataSource(
   client: CogniteClient
-): { getTransitPath: (transitRequest: TransitPathRequest) => Promise<TransitPathResponse> } {
-  const getTransitPath = async (transitRequest: TransitPathRequest): Promise<TransitPathResponse> => {
+): {
+  getTransitPath: (
+    transitRequest: TransitPathRequest
+  ) => Promise<TransitPathResponse>;
+} {
+  const getTransitPath = async (
+    transitRequest: TransitPathRequest
+  ): Promise<TransitPathResponse> => {
     const url = `https://api.cognitedata.com/api/playground/projects/${client.project}/3d/pathfinder/transit`;
     const response = await client.post<TransitPathResponse>(url, {
-      data: transitRequest
+      data: transitRequest,
     });
     if (response.status === 200) {
       return response.data;
@@ -383,5 +465,3 @@ function createNetworkDataSource(
 
   return { getTransitPath };
 }
-
-main();
