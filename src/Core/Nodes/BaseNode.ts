@@ -169,7 +169,7 @@ export abstract class BaseNode extends Identifiable
     if (numCandidates === numAll)
       return CheckBoxState.All;
     if (numCandidates === numNone)
-      return CheckBoxState.None;
+      return this.canBeChecked(target) ? CheckBoxState.None: CheckBoxState.Disabled;
     return CheckBoxState.Some;
   }
 

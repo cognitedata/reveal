@@ -8,6 +8,7 @@ const mapToCheckboxStateStr = (cbState: CheckBoxState) => {
     switch(cbState) {
         case CheckBoxState.All: return 'checked';
         case CheckBoxState.None: return 'unchecked';
+        case CheckBoxState.Disabled: return 'disabled';
         case CheckBoxState.Some: return 'partial';
         default: return 'undefined';
     }

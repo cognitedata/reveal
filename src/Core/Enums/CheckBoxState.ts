@@ -16,6 +16,7 @@ export enum CheckBoxState
   All, // Checked
   Some, // Checked with faded color
   None, // Empty checkbox
+  Disabled, // checkbox disabled
   Never, // No checkbox
   Unknown // The state when it is not pre calculated (Not in use)
 }

@@ -63,9 +63,13 @@ export abstract class BaseVisualNode extends BaseNode
     if (this.hasView(target)) // TODO: Not sure? this.isVisible() and remove hasView()
       return CheckBoxState.All;
 
-    if (this.canBeVisible(target))
-      return CheckBoxState.None;
-
+    if (this.canBeVisible(target)){
+      
+      if(this.canBeChecked(target))
+        return CheckBoxState.None;
+      else
+        return CheckBoxState.Disabled;
+    }
     return CheckBoxState.Never;
   }
 
@@ -90,6 +94,8 @@ export abstract class BaseVisualNode extends BaseNode
       for (const ancestor of this.getAncestorsExceptRoot())
         ancestor.notify(args);
     }
+     for (const child of this.children)
+        child.notify(args);
     return true;
   }
 
