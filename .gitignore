@@ -9,3 +9,4 @@ node_modules
 .vscode/settings.json
 .vscode/launch.json
 .vs/reveal-architecture/v16/.suo
+src/UserInterface/styles/css/index.css

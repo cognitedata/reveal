@@ -2,13 +2,14 @@
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetCommand";
 
-export abstract class ToolCommand extends ThreeRenderTargetCommand {
-
+export abstract class ToolCommand extends ThreeRenderTargetCommand
+{
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(target: ThreeRenderTargetNode | null = null) {
+  public constructor(target: ThreeRenderTargetNode | null = null)
+  {
     super(target);
   }
 
@@ -16,9 +17,10 @@ export abstract class ToolCommand extends ThreeRenderTargetCommand {
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*override*/ get isCheckable(): boolean  { return true; } // Can be checked? (default false)
+  public /*override*/ get isCheckable(): boolean { return true; } // Can be checked? (default false)
 
-  protected /*override*/ invokeCore(): boolean {
+  protected /*override*/ invokeCore(): boolean
+  {
 
     if (!this.target)
       return false;

@@ -3,13 +3,15 @@ import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetCommand";
 import ViewAllCommandIcon from "@images/Commands/ViewAllCommand.png";
 
-export class ViewAllCommand extends ThreeRenderTargetCommand {
+export class ViewAllCommand extends ThreeRenderTargetCommand
+{
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(target: ThreeRenderTargetNode | null = null) {
+  public constructor(target: ThreeRenderTargetNode | null = null)
+  {
     super(target);
   }
 
@@ -17,11 +19,11 @@ export class ViewAllCommand extends ThreeRenderTargetCommand {
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*virtual*/ get icon(): string { return ViewAllCommandIcon; }
-
   public /*override*/ get name(): string { return "View all" }
+  public /*override*/ get icon(): string { return ViewAllCommandIcon; }
 
-  protected /*override*/ invokeCore(): boolean {
+  protected /*override*/ invokeCore(): boolean
+  {
     if (!this.target)
       return false;
 

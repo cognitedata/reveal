@@ -4,13 +4,15 @@ import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetComm
 import { AxisNode } from "@/Nodes/Decorations/AxisNode";
 import ToggleAxisVisibleCommandIcon from "@images/Commands/ToggleAxisVisibleCommand.png";
 
-export class ToggleAxisVisibleCommand extends ThreeRenderTargetCommand {
+export class ToggleAxisVisibleCommand extends ThreeRenderTargetCommand
+{
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(target: ThreeRenderTargetNode | null = null) {
+  public constructor(target: ThreeRenderTargetNode | null = null)
+  {
     super(target);
   }
 
@@ -19,14 +21,12 @@ export class ToggleAxisVisibleCommand extends ThreeRenderTargetCommand {
   //==================================================
 
   public /*override*/get name(): string { return "Hide or show axis" }
-
-  public /*override*/ get isCheckable() : boolean { return true; } // Can be checked? (default false)
-
+  public /*override*/ get icon(): string { return ToggleAxisVisibleCommandIcon; }
+  public /*override*/ get isCheckable(): boolean { return true; } // Can be checked? (default false)
   public /*override*/ get isChecked(): boolean { return this.target ? this.target.hasViewOfNodeType(AxisNode) : false; }
 
-  public /*virtual*/ get icon(): string { return ToggleAxisVisibleCommandIcon; }
-
-  protected invokeCore(): boolean {
+  protected /*override*/ invokeCore(): boolean
+  {
     if (!this.target)
       return false;
 
