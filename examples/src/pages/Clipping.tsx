@@ -34,12 +34,29 @@ export function Clipping() {
       const renderer = new THREE.WebGLRenderer({
         canvas: canvasRef.current!,
       });
+      renderer.localClippingEnabled = true;
       renderer.setClearColor('#444');
       renderer.setSize(window.innerWidth, window.innerHeight);
 
+      const coverageUtil = new reveal.internal.GpuOrderSectorsByVisibilityCoverage();
+      const sectorCuller = new reveal.internal.ByVisibilityGpuSectorCuller({
+        coverageUtil,
+        costLimit: 70 * 1024 * 1024,
+        logCallback: console.log,
+      });
+      const debugCanvas = coverageUtil.createDebugCanvas({
+        width: 160,
+        height: 100,
+      });
+      debugCanvas.style.position = 'absolute';
+      canvasRef.current!.parentElement!.appendChild(debugCanvas);
+
       const revealManager: reveal.RenderManager = createRenderManager(
         modelRevision !== undefined ? 'cdf' : 'local',
-        client
+        client,
+        {
+          internal: { sectorCuller },
+        }
       );
 
       let model: reveal.CadNode;
@@ -91,7 +108,7 @@ export function Clipping() {
         showHelpers: false,
       };
 
-      let planesNeedUpdate = true;
+      let guiNeedsUpdate = true;
 
       const boxClipper = new BoundingBoxClipper(
         new THREE.Box3(
@@ -109,10 +126,11 @@ export function Clipping() {
         params.clipIntersection
       );
 
-      revealManager.clippingPlanes = boxClipper.clippingPlanes;
-      revealManager.clipIntersection = boxClipper.intersection;
-      renderer.localClippingEnabled = true;
-      // renderer.clippingPlanes = [new THREE.Plane(new THREE.Vector3(0, -1, 0), 0.0)];
+      function updateClippingPlanes() {
+        revealManager.clippingPlanes = boxClipper.clippingPlanes;
+        revealManager.clipIntersection = boxClipper.intersection;
+      }
+      updateClippingPlanes();
 
       const helpers = new THREE.Group();
       helpers.add(
@@ -133,7 +151,7 @@ export function Clipping() {
       helpers.add(
         new THREE.PlaneHelper(boxClipper.clippingPlanes[5], 2, 0x0000ff)
       );
-      // helpers.visible = false;
+      updateClippingPlanes();
       scene.add(helpers);
 
       const clock = new THREE.Clock();
@@ -144,13 +162,9 @@ export function Clipping() {
           revealManager.update(camera);
         }
 
-        if (
-          controlsNeedUpdate ||
-          revealManager.needsRedraw ||
-          planesNeedUpdate
-        ) {
+        if (controlsNeedUpdate || revealManager.needsRedraw || guiNeedsUpdate) {
           renderer.render(scene, camera);
-          planesNeedUpdate = false;
+          guiNeedsUpdate = false;
           revealManager.resetRedraw();
         }
 
@@ -164,7 +178,7 @@ export function Clipping() {
         .onChange((value) => {
           revealManager.clipIntersection = value;
           boxClipper.intersection = value;
-          planesNeedUpdate = true;
+          updateClippingPlanes();
         });
 
       gui
@@ -174,7 +188,7 @@ export function Clipping() {
         .onChange((_) => {
           boxClipper.minX = params.x - params.width / 2;
           boxClipper.maxX = params.x + params.width / 2;
-          planesNeedUpdate = true;
+          updateClippingPlanes();
         });
 
       gui
@@ -184,7 +198,7 @@ export function Clipping() {
         .onChange((_) => {
           boxClipper.minY = params.y - params.height / 2;
           boxClipper.maxY = params.y + params.height / 2;
-          planesNeedUpdate = true;
+          updateClippingPlanes();
         });
 
       gui
@@ -194,45 +208,45 @@ export function Clipping() {
         .onChange((_) => {
           boxClipper.minZ = params.z - params.depth / 2;
           boxClipper.maxZ = params.z + params.depth / 2;
-          planesNeedUpdate = true;
+          updateClippingPlanes();
         });
 
       gui
-        .add(params, 'width', 0, 100)
+        .add(params, 'width', 0, 10000)
         .step(0.1)
         .name('width')
         .onChange((_) => {
           boxClipper.minX = params.x - params.width / 2;
           boxClipper.maxX = params.x + params.width / 2;
-          planesNeedUpdate = true;
+          updateClippingPlanes();
         });
 
       gui
-        .add(params, 'height', 0, 100)
+        .add(params, 'height', 0, 10000)
         .step(0.1)
         .name('height')
         .onChange((_) => {
           boxClipper.minY = params.y - params.height / 2;
           boxClipper.maxY = params.y + params.height / 2;
-          planesNeedUpdate = true;
+          updateClippingPlanes();
         });
 
       gui
-        .add(params, 'depth', 0, 100)
+        .add(params, 'depth', 0, 10000)
         .step(0.1)
         .name('depth')
         .onChange((_) => {
           boxClipper.minZ = params.z - params.depth / 2;
           boxClipper.maxZ = params.z + params.depth / 2;
-          planesNeedUpdate = true;
+          updateClippingPlanes();
         });
 
       gui
         .add(params, 'showHelpers')
         .name('show helpers')
-        .onChange((_) => {
-          // helpers.visible = value;
-          planesNeedUpdate = true;
+        .onChange((value) => {
+          helpers.visible = value;
+          guiNeedsUpdate = true;
         });
 
       (window as any).scene = scene;
