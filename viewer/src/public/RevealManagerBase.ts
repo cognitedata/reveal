@@ -2,6 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
+import * as THREE from 'three';
+
 import { RenderManager } from './RenderManager';
 import { SectorGeometry } from '@/datamodels/cad/sector/types';
 import { SectorQuads } from '@/datamodels/cad/rendering/types';
@@ -30,6 +32,12 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
   // PointCloud
   protected readonly _pointCloudManager: PointCloudManager<TModelIdentifier>;
 
+  private readonly _lastCamera = {
+    position: new THREE.Vector3(NaN, NaN, NaN),
+    quaternion: new THREE.Quaternion(NaN, NaN, NaN, NaN),
+    zoom: NaN
+  };
+
   constructor(
     cadManager: CadManager<TModelIdentifier>,
     materialManager: MaterialManager,
@@ -49,7 +57,18 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
   }
 
   public update(camera: THREE.PerspectiveCamera) {
-    this._cadManager.updateCamera(camera);
+    const hasCameraChanged =
+      this._lastCamera.zoom !== camera.zoom ||
+      !this._lastCamera.position.equals(camera.position) ||
+      !this._lastCamera.quaternion.equals(camera.quaternion);
+
+    if (hasCameraChanged) {
+      this._lastCamera.position.copy(camera.position);
+      this._lastCamera.quaternion.copy(camera.quaternion);
+      this._lastCamera.zoom = camera.zoom;
+
+      this._cadManager.updateCamera(camera);
+    }
   }
 
   public set clippingPlanes(clippingPlanes: THREE.Plane[]) {
