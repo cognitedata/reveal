@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import {
   Frame,
@@ -11,7 +11,7 @@ import {
   BackgroundNormal
 } from "@/UserInterface/utils/Icon";
 interface SpanProps {
-  readonly checked?: boolean;
+  readonly background?: string;
   readonly disabled?: boolean;
 }
 
@@ -31,63 +31,10 @@ const Label = styled.label`
 const Span = styled.span<SpanProps>`
   height: 0.83em;
   width: 0.83em;
-  cursor: pointer;
-  background-image: url(${Frame}), url(${BackgroundNormal});
+  cursor: ${props => (props.disabled ? "auto" : "pointer")};
+  background-image: ${props => props.background};
+  background-repeat: no-repeat;
   background-size: cover;
-  ${Label}:not(.disabled):not(.checked):not(.indeterminate) &:hover {
-    background-image: url(${Frame}), url(${FocusNormal}), url(${BackgroundNormal});
-    background-repeat: no-repeat, no-repeat, no-repeat;
-  }
-  .checked:not(.filter) & {
-    background-image: url(${Frame}), url(${CheckedAll}), url(${BackgroundNormal});
-    background-repeat: no-repeat, no-repeat, no-repeat;
-  }
-  .indeterminate:not(.filter) & {
-    background-image: url(${Frame}), url(${CheckedSome}), url(${BackgroundNormal});
-    background-repeat: no-repeat, no-repeat, no-repeat;
-  }
-  .disabled:not(.filter) & {
-    background-image: url(${FrameStippled}), url(${BackgroundNormal});
-    background-repeat: no-repeat, no-repeat, no-repeat;
-    cursor: initial;
-  }
-  .checked:not(.filter) &:hover {
-    background-image: url(${Frame}), url(${CheckedAll}), url(${FocusNormal});
-    background-repeat: no-repeat, no-repeat, no-repeat;
-  }
-  .indeterminate:not(.filter) &:hover {
-    background-image: url(${Frame}), url(${CheckedSome}), url(${FocusNormal});
-    background-repeat: no-repeat, no-repeat, no-repeat;
-  }
-   .filter & {
-    background-image: url(${Frame}), url(${BackgroundFilter});
-    background-repeat: no-repeat, no-repeat;
-  }
-  .filter.checked & {
-    background-image: url(${Frame}), url(${CheckedAll}), url(${BackgroundFilter});
-    background-repeat: no-repeat, no-repeat, no-repeat;
-  }
-  .filter.indeterminate & {
-    background-image: url(${Frame}), url(${CheckedSome}), url(${BackgroundFilter});
-    background-repeat: no-repeat, no-repeat, no-repeat;
-  }
-  .filter.disabled & {
-    background-image: url(${FrameStippled}), url(${BackgroundFilter});
-    background-repeat: no-repeat, no-repeat;
-    cursor: initial;
-  }
-  .filter:not(.disabled):not(.checked):not(.indeterminate) &:hover {
-    background-image: url(${Frame}), url(${FocusFilter}), url(${BackgroundFilter});
-    background-repeat: no-repeat, no-repeat, no-repeat;
-  }
-  .filter.checked &:hover {
-    background-image: url(${Frame}), url(${CheckedAll}), url(${FocusFilter}), url(${BackgroundFilter});
-    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-  }
-  .filter.indeterminate &:hover {
-    background-image: url(${Frame}), url(${CheckedSome}), url(${FocusFilter}), url(${BackgroundFilter});
-    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-  }
 `;
 
 export function TreeCheckBox(props: {
@@ -99,6 +46,7 @@ export function TreeCheckBox(props: {
   filter?: boolean;
   onToggleCheck?: (e: any, state: boolean) => void;
 }) {
+  const [hover, hoverChanged] = useState(false);
   const stateClassArr = [];
   if (props.filter) {
     stateClassArr.push("filter");
@@ -126,9 +74,66 @@ export function TreeCheckBox(props: {
     }
   };
 
+  const handleHover = (e: any) => {
+    hoverChanged(true);
+  };
+
+  const handleHoverLeave = (e: any) => {
+    hoverChanged(false);
+  };
+
+  const backgroundImage = getBackgroundImage(
+    props.disabled,
+    hover,
+    props.filter,
+    props.checked,
+    props.indeterminate
+  );
+
   return (
     <Label className={props.class + ` ${stateClassArr.join(" ")}`} htmlFor={props.id}>
-      <Span onClick={handleClick} />
+      <Span
+        onClick={handleClick}
+        onMouseEnter={handleHover}
+        onMouseLeave={handleHoverLeave}
+        background={backgroundImage}
+        disabled={props.disabled}
+      />
     </Label>
   );
 }
+
+const getBackgroundImage = (
+  disabled = false,
+  hover = false,
+  filter = false,
+  checked = false,
+  indeterminate = false
+) => {
+  const imageStringArr = [];
+  if (disabled) {
+    imageStringArr.push(`url(${FrameStippled})`);
+  } else {
+    imageStringArr.push(`url(${Frame})`);
+
+    if (checked) {
+      imageStringArr.push(`url(${CheckedAll})`);
+    } else if (indeterminate) {
+      imageStringArr.push(`url(${CheckedSome})`);
+    }
+    if (hover) {
+      if (filter) {
+        imageStringArr.push(`url(${FocusFilter})`);
+      } else {
+        imageStringArr.push(`url(${FocusNormal})`);
+      }
+    }
+  }
+  if (filter) {
+    imageStringArr.push(`url(${BackgroundFilter})`);
+  } else {
+    imageStringArr.push(`url(${BackgroundNormal})`);
+  }
+
+  return imageStringArr.join(",");
+};

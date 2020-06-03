@@ -61,9 +61,8 @@ export abstract class BaseLogNode extends BaseVisualNode
 
   public /*override*/ canBeChecked(target: ITarget | null): boolean
   {
-    return true;
-    // var trajectoryNode = this.trajectoryNode;
-    // return trajectoryNode ? trajectoryNode.isVisible(target) : false;
+    const trajectoryNode = this.trajectoryNode;
+    return trajectoryNode ? trajectoryNode.isVisible(target) : false;
   }
 
   //==================================================

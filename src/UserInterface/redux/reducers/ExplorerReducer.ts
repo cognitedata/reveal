@@ -26,13 +26,14 @@ function generateNodeStructure(
     type,
     icon: node.icon,
     iconDescription: "nodes",
+    iconColor: "3bf75b",
     iconVisible: ((node instanceof BaseTreeNode)? false: true),
     selected: node.isActive,
     checked: (node.getCheckBoxState() === CheckBoxState.All),
     indeterminate: (node.getCheckBoxState() === CheckBoxState.Some),
     isRadio: (node.isRadio(null)),
     isFilter: node.isFilter(null),
-    disabled: (!node.canBeChecked(null)),
+    disabled: (node.getCheckBoxState() === CheckBoxState.Disabled),
     visible: node.isVisibleInTreeControl,
     uniqueId,
     domainObject: node,
@@ -113,22 +114,32 @@ export default createReducer(initialState, {
     const uniqueId = action.appliesTo;
     const treeNodeState = state.nodes![uniqueId];
     if(treeNodeState === undefined) return; //TODO: When could this happen?
+    const checkNode =  state.nodes![uniqueId];
     switch(action.payload) {
       case 'checked':
-        state.nodes![uniqueId].checked = true;
-        state.nodes![uniqueId].indeterminate = false;
-        console.log('changed state of ', state.nodes![uniqueId].name, ' to checked');
+        checkNode.checked = true;
+        checkNode.indeterminate = false;
+        checkNode.disabled = false;
+        console.log('changed state of ', checkNode.name, ' to checked');
         state.checkedNodeIds.add(uniqueId);
         break;
       case 'unchecked':
-        state.nodes![uniqueId].checked = false;
-        state.nodes![uniqueId].indeterminate = false;
-        console.log('changed state of ', state.nodes![uniqueId].name, ' to un-checked');
+        checkNode.checked = false;
+        checkNode.indeterminate = false;
+        checkNode.disabled = false;
+        console.log('changed state of ', checkNode.name, ' to un-checked');
+        break;
+      case 'disabled':
+        checkNode.checked = false;
+        checkNode.indeterminate = false;
+        checkNode.disabled = true;
+        console.log('changed state of ', checkNode.name, ' to un-checked');
         break;
       case 'partial':
-        state.nodes![uniqueId].indeterminate = true;
-        state.nodes![uniqueId].checked = false;
-        console.log('changed state of ', state.nodes![uniqueId].name, ' to partial');
+        checkNode.indeterminate = true;
+        checkNode.checked = false;
+        checkNode.disabled = false;
+        console.log('changed state of ', checkNode.name, ' to partial');
         break;
       default:
         // do nothing
