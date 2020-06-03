@@ -27,7 +27,7 @@ function generateNodeStructure(
     type,
     icon: node.icon,
     iconDescription: "nodes",
-    iconColor: node.canChangeColor ? node.color : undefined,
+    iconColor: node.hasIconColor() ? node.color : undefined,
     selected: node.isActive,
     checked: (node.getCheckBoxState() === CheckBoxState.All),
     indeterminate: (node.getCheckBoxState() === CheckBoxState.Some),

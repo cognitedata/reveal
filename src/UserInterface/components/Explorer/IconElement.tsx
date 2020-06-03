@@ -39,6 +39,9 @@ export default function IconElement(props: {
 
       if (color)
       {
+        const minFaction = 0.0;
+        const maxFaction = 0.667;
+
         for (let i = 0; i < data.length; i += 4)
         {
           let r = data[i];
@@ -48,7 +51,8 @@ export default function IconElement(props: {
           if (r === g && g === b && r > 0) 
           {
             const fraction = r / 255; // white is 1, black is 0
-            const newColorFrac = (0.5 + fraction) / 2; // white is 0.75. black is 0.25
+
+            const newColorFrac = minFaction + fraction * (maxFaction - minFaction); // white is 0.75. black is 0.25
             const oldColorFrac = 1 - newColorFrac;
 
             r = newColorFrac * color.red() + oldColorFrac * r;
