@@ -55,9 +55,7 @@ export class PointsNode extends BaseVisualNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Points" }
-
   public /*override*/ get icon(): string { return PointsNodeIcon }
-
   public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null

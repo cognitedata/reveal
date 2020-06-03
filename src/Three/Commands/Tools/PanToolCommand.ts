@@ -3,13 +3,14 @@ import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ToolCommand } from "@/Three/Commands/Tools/ToolCommand";
 import PanToolCommandIcon from "@images/Commands/PanToolCommand.png";
 
-export class PanToolCommand extends ToolCommand {
-
+export class PanToolCommand extends ToolCommand
+{
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(target: ThreeRenderTargetNode | null = null) {
+  public constructor(target: ThreeRenderTargetNode | null = null)
+  {
     super(target);
   }
 
@@ -17,9 +18,8 @@ export class PanToolCommand extends ToolCommand {
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*virtual*/ get icon(): string { return PanToolCommandIcon; }
-
-  public get name(): string { return "Pan/Rotate/Zoom" }
+  public /*override*/ get name(): string { return "Pan/Rotate/Zoom" }
+  public /*override*/ get icon(): string { return PanToolCommandIcon; }
 }
 
 

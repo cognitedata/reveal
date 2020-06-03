@@ -5,13 +5,15 @@ import { AxisNode } from "@/Nodes/Decorations/AxisNode";
 import ToggleCameraTypeCommandOrthographicIcon from "@images/Commands/ToggleCameraTypeCommandOrthographic.png";
 import ToggleCameraTypeCommandPerspectiveIcon from "@images/Commands/ToggleCameraTypeCommandPerspective.png";
 
-export class ToggleCameraTypeCommand extends ThreeRenderTargetCommand {
+export class ToggleCameraTypeCommand extends ThreeRenderTargetCommand
+{
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(target: ThreeRenderTargetNode | null = null) {
+  public constructor(target: ThreeRenderTargetNode | null = null)
+  {
     super(target);
   }
 
@@ -19,19 +21,13 @@ export class ToggleCameraTypeCommand extends ThreeRenderTargetCommand {
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*virtual*/ get icon(): string {
-    return this.isChecked ?
-      ToggleCameraTypeCommandOrthographicIcon :
-      ToggleCameraTypeCommandPerspectiveIcon;
-  }
-
   public /*override*/get name(): string { return "Toggle between orthographic and perspective view" }
-
-  public /*override*/ get isCheckable() : boolean { return true; } // Can be checked? (default false)
-
+  public /*override*/ get icon(): string { return this.isChecked ? ToggleCameraTypeCommandOrthographicIcon : ToggleCameraTypeCommandPerspectiveIcon; }
+  public /*override*/ get isCheckable(): boolean { return true; } // Can be checked? (default false)
   public /*override*/ get isChecked(): boolean { return this.target ? this.target.hasViewOfNodeType(AxisNode) : false; }
 
-  protected invokeCore(): boolean {
+  protected /*override*/ invokeCore(): boolean
+  {
     if (!this.target)
       return false;
 

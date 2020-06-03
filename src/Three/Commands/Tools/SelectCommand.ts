@@ -17,9 +17,8 @@ export class SelectCommand extends ToolCommand {
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public get name(): string { return "Select or pick" }
-
-  public /*virtual*/ get icon(): string { return SelectCommandIcon; }
+  public /*override*/ get name(): string { return "Select or pick" }
+  public /*override*/ get icon(): string { return SelectCommandIcon; }
 
 }
 

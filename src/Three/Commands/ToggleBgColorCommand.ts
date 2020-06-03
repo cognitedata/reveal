@@ -21,14 +21,8 @@ export class ToggleBgColorCommand extends ThreeRenderTargetCommand
   //==================================================
 
   public/*override*/ get name(): string { return "Toggle between black and white backgroud" }
-
-  public /*virtual*/ get icon(): string
-  {
-    return this.isChecked ? ToggleBgColorCommandWhiteIcon : ToggleBgColorCommandBlackIcon;
-  }
-
+  public /*override*/ get icon(): string { return this.isChecked ? ToggleBgColorCommandWhiteIcon : ToggleBgColorCommandBlackIcon; }
   public /*override*/ get isCheckable(): boolean { return true; } // Can be checked? (default false)
-
   public /*override*/ get isChecked(): boolean { return this.target ? this.target.isLightBackground : false; }
 
   protected /*override*/ invokeCore(): boolean

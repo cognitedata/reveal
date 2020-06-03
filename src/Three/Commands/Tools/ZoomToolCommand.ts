@@ -3,13 +3,14 @@ import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ToolCommand } from "@/Three/Commands/Tools/ToolCommand";
 import ZoomToolCommandIcon from "@images/Commands/ZoomToolCommand.png";
 
-export class ZoomToolCommand extends ToolCommand {
-
+export class ZoomToolCommand extends ToolCommand
+{
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(target: ThreeRenderTargetNode | null = null) {
+  public constructor(target: ThreeRenderTargetNode | null = null)
+  {
     super(target);
   }
 
@@ -17,10 +18,8 @@ export class ZoomToolCommand extends ToolCommand {
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public get name(): string { return "Rectangle zoom" }
-
-  public /*virtual*/ get icon(): string { return ZoomToolCommandIcon; }
-
+  public /*override*/ get name(): string { return "Rectangle zoom" }
+  public /*override*/ get icon(): string { return ZoomToolCommandIcon; }
 }
 
 
