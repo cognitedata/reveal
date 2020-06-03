@@ -5,7 +5,14 @@
 import * as THREE from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import dat from 'dat.gui';
-import { AddModelOptions, Cognite3DViewer, Cognite3DModel, SupportedModelTypes, BoundingBoxClipper } from '@cognite/reveal';
+import {
+  AddModelOptions,
+  Cognite3DViewer,
+  Cognite3DModel,
+  SupportedModelTypes,
+  BoundingBoxClipper
+} from '@cognite/reveal';
+import { Box3, Vector3 } from 'three';
 
 async function main() {
   const urlParams = new URL(location.href).searchParams;
@@ -133,7 +140,7 @@ async function main() {
     });
 
   slicing
-    .add(slicingParams, 'width', 0, 100)
+    .add(slicingParams, 'width', 0, 1000)
     .step(0.1)
     .name('width')
     .onChange(_ => {
@@ -143,7 +150,7 @@ async function main() {
     });
 
   slicing
-    .add(slicingParams, 'height', 0, 100)
+    .add(slicingParams, 'height', 0, 1000)
     .step(0.1)
     .name('height')
     .onChange(_ => {
@@ -153,7 +160,7 @@ async function main() {
     });
 
   slicing
-    .add(slicingParams, 'depth', 0, 100)
+    .add(slicingParams, 'depth', 0, 1000)
     .step(0.1)
     .name('depth')
     .onChange(_ => {
@@ -170,7 +177,7 @@ async function main() {
     const revisionId = Number.parseInt(revisionIdStr, 10);
     addModel({ modelId, revisionId });
   }
-  viewer.on('click', function(event) {
+  viewer.on('click', function (event) {
     const { offsetX, offsetY } = event;
     console.log('2D coordinates', event);
     const intersection = viewer.getIntersectionFromPixel(offsetX, offsetY);
