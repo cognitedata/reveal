@@ -114,8 +114,15 @@ export function discardSector(group: THREE.Group) {
 
 export function distinctUntilLevelOfDetailChanged() {
   return pipe(
-    groupBy((sector: WantedSector) => sector.metadata.id),
-    mergeMap((group: GroupedObservable<number, WantedSector>) => group.pipe(distinctUntilKeyChanged('levelOfDetail')))
+    groupBy((sector: WantedSector) => sector.blobUrl),
+    mergeMap((modelGroup: GroupedObservable<string, WantedSector>) => {
+      return modelGroup.pipe(
+        groupBy((sector: WantedSector) => sector.metadata.id),
+        mergeMap((group: GroupedObservable<number, WantedSector>) =>
+          group.pipe(distinctUntilKeyChanged('levelOfDetail'))
+        )
+      );
+    })
   );
 }
 
