@@ -26,6 +26,7 @@ function generateNodeStructure(
     type,
     icon: node.icon,
     iconDescription: "nodes",
+    iconColor: "3bf75b",
     iconVisible: ((node instanceof BaseTreeNode)? false: true),
     selected: node.isActive,
     checked: (node.getCheckBoxState() === CheckBoxState.All),

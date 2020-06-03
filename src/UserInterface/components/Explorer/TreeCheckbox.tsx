@@ -31,7 +31,7 @@ const Label = styled.label`
 const Span = styled.span<SpanProps>`
   height: 0.83em;
   width: 0.83em;
-  cursor: ${props => props.disabled ? "auto" : "pointer"};
+  cursor: ${props => (props.disabled ? "auto" : "pointer")};
   background-image: ${props => props.background};
   background-repeat: no-repeat;
   background-size: cover;
@@ -76,45 +76,64 @@ export function TreeCheckBox(props: {
 
   const handleHover = (e: any) => {
     hoverChanged(true);
-  }
+  };
 
-  const handleHoverLeave = (e: any) =>{
+  const handleHoverLeave = (e: any) => {
     hoverChanged(false);
-  }
+  };
 
-  const backgroundImage = getBackgroundImage(props.disabled, hover, props.filter, props.checked, props.indeterminate);
+  const backgroundImage = getBackgroundImage(
+    props.disabled,
+    hover,
+    props.filter,
+    props.checked,
+    props.indeterminate
+  );
 
   return (
     <Label className={props.class + ` ${stateClassArr.join(" ")}`} htmlFor={props.id}>
-      <Span onClick={handleClick} onMouseEnter={handleHover} onMouseLeave={handleHoverLeave} background={backgroundImage} disabled={props.disabled}/>
+      <Span
+        onClick={handleClick}
+        onMouseEnter={handleHover}
+        onMouseLeave={handleHoverLeave}
+        background={backgroundImage}
+        disabled={props.disabled}
+      />
     </Label>
   );
 }
 
-const getBackgroundImage = (disabled = false, hover = false, filter = false, checked = false,  indeterminate = false) =>{
-
+const getBackgroundImage = (
+  disabled = false,
+  hover = false,
+  filter = false,
+  checked = false,
+  indeterminate = false
+) => {
   const imageStringArr = [];
-  if (disabled){
+  if (disabled) {
     imageStringArr.push(`url(${FrameStippled})`);
-  } else{
+  } else {
     imageStringArr.push(`url(${Frame})`);
 
-    if (checked){
+    if (checked) {
       imageStringArr.push(`url(${CheckedAll})`);
-    } else if (indeterminate){
+    } else if (indeterminate) {
       imageStringArr.push(`url(${CheckedSome})`);
     }
     if (hover) {
-      if (filter)
+      if (filter) {
         imageStringArr.push(`url(${FocusFilter})`);
-      else
+      } else {
         imageStringArr.push(`url(${FocusNormal})`);
+      }
     }
   }
-  if(filter)
+  if (filter) {
     imageStringArr.push(`url(${BackgroundFilter})`);
-  else
+  } else {
     imageStringArr.push(`url(${BackgroundNormal})`);
+  }
 
-  return imageStringArr.join(',');
+  return imageStringArr.join(",");
 };

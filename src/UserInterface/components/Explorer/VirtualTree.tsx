@@ -70,6 +70,7 @@ export default function VirtualTree(props: {
             <IconElement
               src={item.icon}
               alt={item.iconDescription}
+              color={item.iconColor}
               size="100%"
             />
           </div>
@@ -82,9 +83,7 @@ export default function VirtualTree(props: {
             checked={item.checked}
             indeterminate={item.indeterminate}
             disabled={item.disabled}
-            onToggleCheck={() =>
-              onToggleNodeCheck(item.uniqueId, !item.checked)
-            }
+            onToggleCheck={() => onToggleNodeCheck(item.uniqueId, !item.checked)}
           />
         </div>
         <div className="tree-item-comp tree-item-lbl-container">
@@ -107,11 +106,9 @@ export default function VirtualTree(props: {
   const getExpandedItemCount = (item: TreeNode) => {
     let count = 1;
     if (item.expanded) {
-      count += item.children
-        .map(getExpandedItemCount)
-        .reduce((total: number, num: number) => {
-          return total + num;
-        }, 0);
+      count += item.children.map(getExpandedItemCount).reduce((total: number, num: number) => {
+        return total + num;
+      }, 0);
     }
     return count;
   };
