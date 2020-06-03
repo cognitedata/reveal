@@ -3,8 +3,8 @@ and extended with [react-app-rewired](https://github.com/timarney/react-app-rewi
 
 ## [Environment files](https://create-react-app.dev/docs/adding-custom-environment-variables/)
 
-See `.env.example` file to create your own `.env` file for development.
-It helps you to have useful defaults such a project and models used.
+Create a copy of `.env.example` file and rename it to `.env`.
+This file can be used to set environment variables which provides defaults for things like project name or model ids used in examples. 
 
 ## Available Scripts
 

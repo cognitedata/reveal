@@ -17,7 +17,7 @@ viewer/public/
 viewer/pkg/
 viewer/node_modules/
 
-# Exapmles
+# Examples
 examples/.env
 examples/.env.*
 !examples/.env.example
