@@ -23,8 +23,10 @@ type ExampleRoute = {
   component: ReactNode;
 };
 
-const DEFAULTS = process.env;
-console.log(DEFAULTS);
+function getEnv(key: keyof typeof process.env) {
+  return process.env[key] || '';
+}
+
 export const routes: Array<ExampleRoute> = [
   {
     path: '/simple',
@@ -52,7 +54,7 @@ export const routes: Array<ExampleRoute> = [
     component: <GpuSectorCuller />,
   },
   {
-    path: `/migration?project=${DEFAULTS.REACT_APP_PROJECT}`,
+    path: `/migration?project=${getEnv('REACT_APP_PROJECT')}`,
     menuTitle: 'Migration',
     component: <Migration />,
   },
@@ -62,17 +64,25 @@ export const routes: Array<ExampleRoute> = [
     component: <Picking />,
   },
   {
-    path: `/sector-with-pointcloud?project=${DEFAULTS.REACT_APP_PROJECT}&model=${DEFAULTS.REACT_APP_CAD_ID}&pointCloud=${DEFAULTS.REACT_APP_POINTCLOUD_ID}`,
+    path: `/sector-with-pointcloud?project=${getEnv(
+      'REACT_APP_PROJECT'
+    )}&model=${getEnv('REACT_APP_CAD_ID')}&pointCloud=${getEnv(
+      'REACT_APP_POINTCLOUD_ID'
+    )}`,
     menuTitle: 'Sector With Pointcloud',
     component: <SectorWithPointcloud />,
   },
   {
-    path: `/side-by-side?project=${DEFAULTS.REACT_APP_PROJECT}&model2=${DEFAULTS.REACT_APP_CAD_2_ID}`,
+    path: `/side-by-side?project=${getEnv('REACT_APP_PROJECT')}&model2=${getEnv(
+      'REACT_APP_CAD_2_ID'
+    )}`,
     menuTitle: 'Side-by-side debugger for sector models',
     component: <SideBySide />,
   },
   {
-    path: `/simple-point-cloud?project=${DEFAULTS.REACT_APP_PROJECT}&model=${DEFAULTS.REACT_APP_POINTCLOUD_ID}`,
+    path: `/simple-point-cloud?project=${getEnv(
+      'REACT_APP_PROJECT'
+    )}&model=${getEnv('REACT_APP_POINTCLOUD_ID')}`,
     menuTitle: 'Simple Point Cloud',
     component: <SimplePointcloud />,
   },
@@ -83,7 +93,9 @@ export const routes: Array<ExampleRoute> = [
   },
   {
     // not really good defaults, provide something more meaningful
-    path: `/two-models?project=${DEFAULTS.REACT_APP_PROJECT}&model=${DEFAULTS.REACT_APP_CAD_ID}&model2=${DEFAULTS.REACT_APP_CAD_2_ID}`,
+    path: `/two-models?project=${getEnv('REACT_APP_PROJECT')}&model=${getEnv(
+      'REACT_APP_CAD_ID'
+    )}&model2=${getEnv('REACT_APP_CAD_2_ID')}`,
     menuTitle: 'Two models',
     component: <TwoModels />,
   },

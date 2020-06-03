@@ -14,7 +14,6 @@ import {
   SupportedModelTypes,
   BoundingBoxClipper,
 } from '@cognite/reveal';
-import { getParamsFromURL } from '../utils/example-helpers';
 
 export function Migration() {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
