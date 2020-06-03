@@ -64,6 +64,21 @@ function registerValidSW(swUrl: string, config?: Config) {
   navigator.serviceWorker
     .register(swUrl)
     .then((registration) => {
+      const waitingWorker = registration.waiting;
+      if (waitingWorker) {
+        // SW is waiting to be activated, this will happen only after page reload
+        waitingWorker.addEventListener('statechange', (event) => {
+          // Proper event type is to be implemented here
+          // https://github.com/microsoft/TypeScript/issues/37842
+          if ((event.target as ServiceWorker).state === 'activated') {
+            // Reload the page whenever a new service worker has been activated
+            // in order for the sw to take a full controll over all the clients
+            window.location.reload();
+          }
+        });
+        waitingWorker.postMessage({ type: 'SKIP_WAITING' });
+      }
+
       // eslint-disable-next-line no-param-reassign
       registration.onupdatefound = () => {
         const installingWorker = registration.installing;
