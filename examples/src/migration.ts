@@ -12,7 +12,6 @@ import {
   SupportedModelTypes,
   BoundingBoxClipper
 } from '@cognite/reveal';
-import { Box3, Vector3 } from 'three';
 
 async function main() {
   const urlParams = new URL(location.href).searchParams;
