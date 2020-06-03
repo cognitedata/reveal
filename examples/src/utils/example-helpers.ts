@@ -2,7 +2,10 @@
  * Copyright 2020 Cognite AS
  */
 
-import { RevealManager, LocalHostRevealManager } from '@cognite/reveal/experimental';
+import {
+  RevealManager,
+  LocalHostRevealManager,
+} from '@cognite/reveal/experimental';
 import { CogniteClient } from '@cognite/sdk';
 import { RevealOptions } from '@cognite/reveal/public/RevealManagerBase';
 
@@ -22,8 +25,11 @@ export function createRenderManager(
   }
 }
 
-export function getParamsFromURL(defaults: { project: string; modelUrl?: string }) {
-  const url = new URL(location.href);
+export function getParamsFromURL(defaults: {
+  project: string;
+  modelUrl?: string;
+}) {
+  const url = new URL(window.location.href);
   const searchParams = url.searchParams;
 
   const project = searchParams.get('project');
@@ -32,7 +38,14 @@ export function getParamsFromURL(defaults: { project: string; modelUrl?: string 
 
   return {
     project: project ? project : defaults.project,
-    modelRevision: modelRevision ? Number.parseInt(modelRevision, 10) : undefined,
-    modelUrl: modelUrl !== null ? modelUrl : modelRevision === null && defaults.modelUrl ? defaults.modelUrl : undefined
+    modelRevision: modelRevision
+      ? Number.parseInt(modelRevision, 10)
+      : undefined,
+    modelUrl:
+      modelUrl !== null
+        ? modelUrl
+        : modelRevision === null && defaults.modelUrl
+        ? defaults.modelUrl
+        : undefined,
   };
 }
