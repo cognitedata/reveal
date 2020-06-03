@@ -35,6 +35,9 @@ import { ToggleCameraTypeCommand } from "../Commands/ToggleCameraTypeCommand";
 import { CopyImageCommand } from "../Commands/CopyImageCommand";
 import { MeasureDistanceTool } from "../Commands/Tools/MeasureDistanceTool";
 import { PanToolCommand } from "../Commands/Tools/PanToolCommand";
+import { SelectCommand } from "../Commands/Tools/SelectCommand";
+import { ZoomToolCommand } from "../Commands/Tools/ZoomToolCommand";
+import { ZoomToTargetToolCommand } from "../Commands/Tools/ZoomToTargetToolCommand";
 
 const DirectionalLightName = "DirectionalLight";
 
@@ -212,6 +215,15 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   public addTools(toolbar: IToolbar)
   {
+    
+    // Tools
+    toolbar.add(new SelectCommand(this));
+    toolbar.add(new PanToolCommand(this));
+    toolbar.add(new ZoomToolCommand(this));
+    toolbar.add(new ZoomToTargetToolCommand(this));
+    toolbar.add(new MeasureDistanceTool(this));
+
+    // Views
     toolbar.add(new ViewAllCommand(this));
     toolbar.add(new ToggleAxisVisibleCommand(this));
     toolbar.add(new ToggleBgColorCommand(this));
@@ -221,12 +233,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     toolbar.beginOptionMenu();
     for (let viewFrom = 0; viewFrom < 6; viewFrom++)
       toolbar.add(new ViewFromCommand(this, viewFrom));
-    toolbar.beginOptionMenu();
-
-    // Tools
-    toolbar.add(new MeasureDistanceTool(this));
-    toolbar.add(new PanToolCommand(this));
-    
+    toolbar.beginOptionMenu();    
   }
 
   //==================================================

@@ -377,20 +377,19 @@ body {
     margin: 0.5rem 4rem 0.5rem 1.5rem;
     position: absolute;
     z-index: 9999;
-    border: 1px solid black;
+    border: 0.01rem solid black;
     background-color: rgba(223, 223, 223, 0.6);
     border-radius: 0.2rem; }
-    .visualizer .visuaizer-toolbar .visuaizer-toolbar-group {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.1rem 0.1rem; }
     .visualizer .visuaizer-toolbar .visualizer-tool-bar-icon {
       transition: background-color 0.3s;
-      padding: 0.1rem 0;
+      margin: 0.02rem;
+      padding: 0.2rem 0;
+      border: 0.01rem solid none;
+      border-radius: 0.2rem;
       cursor: pointer; }
       .visualizer .visuaizer-toolbar .visualizer-tool-bar-icon:hover {
-        background-color: lightblue; }
+        background-color: lightblue;
+        border-color: lightblue; }
       .visualizer .visuaizer-toolbar .visualizer-tool-bar-icon img {
         height: 1.3rem;
         width: 1.3rem;

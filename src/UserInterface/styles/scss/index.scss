@@ -271,21 +271,26 @@ $z-index-max: 9999;
     margin: 0.5rem 4rem 0.5rem 1.5rem;
     position: absolute;
     z-index: $z-index-max;
-    border: 1px solid black;
+    border: 0.01rem solid black;
     background-color: rgba(223, 223, 223, 0.6);
     border-radius: 0.2rem;
-    .visuaizer-toolbar-group {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.1rem 0.1rem;
-    }
+    // .visuaizer-toolbar-group {
+    //   flex:1;
+    //   display: flex;
+    //   align-items: center;
+    //   justify-content: flex-start;
+    //   padding: 0.1rem 0.1rem;
+    // }
     .visualizer-tool-bar-icon {
       transition: background-color 0.3s;
-      padding: 0.1rem 0;
+      margin: 0.02rem;
+      padding: 0.2rem 0;
+      border: 0.01rem solid none;
+      border-radius: 0.2rem;
       cursor: pointer;
       &:hover {
         background-color: lightblue;
+        border-color: lightblue;
       }
       img {
         height: $visualizer-tool-bar-diemension;

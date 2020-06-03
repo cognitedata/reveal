@@ -1,6 +1,7 @@
 
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ToolCommand } from "@/Three/Commands/Tools/ToolCommand";
+import SelectCommandIcon from "@images/Commands/SelectCommand.png"
 
 export class SelectCommand extends ToolCommand {
 
@@ -17,6 +18,9 @@ export class SelectCommand extends ToolCommand {
   //==================================================
 
   public get name(): string { return "Select or pick" }
+
+  public /*virtual*/ get icon(): string { return SelectCommandIcon; }
+
 }
 
 

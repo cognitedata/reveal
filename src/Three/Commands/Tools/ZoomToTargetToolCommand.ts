@@ -1,6 +1,7 @@
 
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ToolCommand } from "@/Three/Commands/Tools/ToolCommand";
+import ZoomToTargetToolCommandIcon from "@images/Commands/ZoomToTargetToolCommand.png";
 
 export class ZoomToTargetToolCommand extends ToolCommand {
 
@@ -18,6 +19,8 @@ export class ZoomToTargetToolCommand extends ToolCommand {
 
   public get name(): string { return "Zoom to target" }
   public get shortcut(): string { return "S" }
+  public /*virtual*/ get icon(): string { return ZoomToTargetToolCommandIcon; }
+
 }
 
 

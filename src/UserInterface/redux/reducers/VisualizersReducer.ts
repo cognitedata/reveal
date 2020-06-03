@@ -5,7 +5,8 @@ import ToolbarAdaptor from "@/UserInterface/adaptors/ToolbarAdaptor";
 // Initial settings state
 // TODO: Normalize state
 const initialState: VisualizerStateInterface = {
-    toolBars: {}
+    toolBars: {},
+    noOfCommands: 0
 };
 
 // Redux Toolkit package includes a createReducer utility that uses Immer internally.
@@ -14,7 +15,10 @@ const initialState: VisualizerStateInterface = {
 export default createReducer(initialState, {
     SET_VISUALIZER_TOOLBARS: (state, action) => {
         const { id, toolBar } = action.payload;
-        state.toolBars[id] = ToolbarAdaptor.convert(toolBar.commands);
+        if (toolBar.commands) {
+            state.noOfCommands += Object.keys(toolBar.commands).length;
+            state.toolBars[id] = ToolbarAdaptor.convert(toolBar.commands);
+        }
     }, EXECUTE_VISUALIZER_TOOLBAR_COMMAND_SUCCESS: (state, action) => {
         const { icon, isChecked, visualizerId, commandType, index } = action.payload;
         state.toolBars[visualizerId][commandType][index].icon = icon;
