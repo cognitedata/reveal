@@ -16,7 +16,7 @@ import { CachedRepository } from '@/datamodels/cad/sector/CachedRepository';
 import { MaterialManager } from '@/datamodels/cad/MaterialManager';
 import { intersectCadNodes } from '@/datamodels/cad/picking';
 
-import { Cognite3DViewerOptions, AddModelOptions, SupportedModelTypes } from './types';
+import { Cognite3DViewerOptions, AddModelOptions, SupportedModelTypes, GeometryFilter } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { Intersection } from './intersection';
 import RenderController from './RenderController';
@@ -38,6 +38,7 @@ import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloudMetadataRepository';
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
+import { BoundingBoxClipper } from '@/utilities';
 
 export interface RelativeMouseEvent {
   offsetX: number;
@@ -82,6 +83,7 @@ export class Cognite3DViewer {
   private readonly clock = new THREE.Clock();
   private readonly materialManager: MaterialManager;
   private _slicingNeedsUpdate: boolean = false;
+  private _geometryFilters: GeometryFilter[] = [];
 
   constructor(options: Cognite3DViewerOptions) {
     if (options.enableCache) {
@@ -220,6 +222,12 @@ export class Cognite3DViewer {
       modelRevision: { id: options.revisionId },
       format: File3dFormat.RevealCadModel
     });
+
+    if (options.geometryFilter) {
+      this._geometryFilters.push(options.geometryFilter);
+      this.setSlicingPlanes(this.revealManager.clippingPlanes);
+    }
+
     const model3d = new Cognite3DModel(options.modelId, options.revisionId, cadNode, this.sdkClient);
     this.sectorRepository
       .getParsedData()
@@ -277,9 +285,13 @@ export class Cognite3DViewer {
   }
 
   setSlicingPlanes(slicingPlanes: THREE.Plane[]): void {
-    // this._slicingPlanes = slicingPlanes;
-    this.renderer.localClippingEnabled = slicingPlanes.length > 0;
-    this.materialManager.clippingPlanes = slicingPlanes;
+    const geometryFilterPlanes = this._geometryFilters
+      .map(x => new BoundingBoxClipper(x.boundingBox).clippingPlanes)
+      .reduce((a, b) => a.concat(b), []);
+
+    const combinedSlicingPlanes = slicingPlanes.concat(geometryFilterPlanes);
+    this.renderer.localClippingEnabled = combinedSlicingPlanes.length > 0;
+    this.revealManager.clippingPlanes = combinedSlicingPlanes;
     this._slicingNeedsUpdate = true;
   }
 
