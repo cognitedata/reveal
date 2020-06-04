@@ -11,6 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import * as Color from "color"
 import * as THREE from "three";
 
 import { Range3 } from "@/Core/Geometry/Range3";
@@ -34,7 +35,6 @@ import { ThreeLabel } from "@/Three/Utilities/ThreeLabel";
 import { LogRender } from "@/Three/WellViews/Helpers/LogRender";
 import { TrajectoryBufferGeometry } from "@/Three/WellViews/Helpers/TrajectoryBufferGeometry";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
-import Color from "color";
 
 
 const TrajectoryName = "trajectory";

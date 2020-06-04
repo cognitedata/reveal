@@ -13,7 +13,6 @@
 
 import * as Color from "color"
 
-import { Ma } from "@/Core/Primitives/Ma";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Colors } from "@/Core/Primitives/Colors";
 

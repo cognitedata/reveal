@@ -1,3 +1,6 @@
+
+import * as Color from "color"
+
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { ITarget } from "@/Core/Interfaces/ITarget";
 import { ViewFactory } from "@/Core/Views/ViewFactory";
@@ -7,10 +10,7 @@ import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { isInstanceOf, Class } from "@/Core/Primitives/ClassT";
 import { Colors } from "@/Core/Primitives/Colors";
-import * as color from "color"
 import { Util } from "@/Core/Primitives/Util";
-import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { Changes } from "@/Core/Views/Changes";
 
 export abstract class BaseTargetNode extends BaseNode implements ITarget
 {
@@ -33,8 +33,8 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget
 
   public get viewsShownHere(): ViewList { return this._viewsShownHere; }
   public get targetId(): TargetId { return new TargetId(this.className, this.uniqueId); }
-  public get fgColor(): color { return this.isLightBackground ? Colors.black : Colors.white; }
-  public get bgColor(): color { return this.color; }
+  public get fgColor(): Color { return this.isLightBackground ? Colors.black : Colors.white; }
+  public get bgColor(): Color { return this.color; }
 
   //==================================================
   // OVERRIDES of Identifiable
@@ -47,7 +47,7 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get color(): color { return this.isLightBackground ? Colors.white : Colors.black; }
+  public /*override*/ get color(): Color { return this.isLightBackground ? Colors.white : Colors.black; }
   public /*override*/ get typeName(): string { return "Target" }
   public /*override*/ get canBeActive(): boolean { return true; }
 
@@ -159,7 +159,7 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget
   // INSTANCE METHODS
   //==================================================
 
-  public getBgColor(hasAxis: boolean): color
+  public getBgColor(hasAxis: boolean): Color
   {
     if (!hasAxis)
       return this.bgColor;

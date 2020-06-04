@@ -12,10 +12,10 @@
 //=====================================================================================
 
 import * as THREE from "three";
+import * as Color from "color"
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
-import Color from "color";
 
 export class ThreeLabel
 {

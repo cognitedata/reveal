@@ -5,7 +5,7 @@ import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 export class VirtualUserInterface
 {
   //==================================================
-  // STATIV PROPERTIES AND FIELDS
+  // STATIC FIELDS
   //==================================================
 
   private static userInterface: IUserInterface | null = null;
@@ -23,5 +23,4 @@ export class VirtualUserInterface
   {
     VirtualUserInterface.userInterface?.updateNode(node, args);
   }
-
 }
