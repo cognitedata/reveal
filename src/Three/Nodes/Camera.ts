@@ -53,7 +53,7 @@ export class Camera
   // INSTANCE METHODS: Operations
   //==================================================
 
-  public onResize(target: ThreeRenderTargetNode)
+  public onResize(aspectRatio: number)
   {
     const camera = this._camera;
     if (this._camera === null)
@@ -61,9 +61,10 @@ export class Camera
 
     if (!(camera instanceof THREE.PerspectiveCamera))
       return;
-
-    camera.aspect = target.aspectRatio;
+      
+    camera.aspect = aspectRatio;
     camera.updateProjectionMatrix();
+
   }
 
   public viewRange(boundingBox: Range3 | undefined): boolean

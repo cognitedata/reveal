@@ -15,7 +15,7 @@ import { generateNodeTree } from "./redux/actions/explorer";
 import { BaseRootLoader } from "@/RootLoaders/BaseRootLoader";
 import { RandomDataLoader } from "@/RootLoaders/RandomDataLoader";
 import { ReduxStore } from "./interfaces/common";
-import { setVisualizerToolbars } from "./redux/actions/visualizers";
+import { setVisualizerData } from "./redux/actions/visualizers";
 
 import NotificationsToActionsAdaptor from "./adaptors/NotificationToAction";
 import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
@@ -36,13 +36,14 @@ export default () => {
     const notificationAdaptor: NotificationsToActionsAdaptor = new NotificationsToActionsAdaptor(
       dispatch
     );
-    VirtualUserInterface.install(
-      new UserInterfaceListener(notificationAdaptor)
-    );
+    VirtualUserInterface.install(new UserInterfaceListener(notificationAdaptor));
 
-    RootManager.addTargets(root, (viewerToolBar) => dispatch(setVisualizerToolbars(viewerToolBar)));
+    // Targets and Toolbars
+    const targets = RootManager.targets(root, "visualizer-3d");
+    const toolBars = RootManager.toolbars(root);
+    dispatch(setVisualizerData({ targets, toolBars }));
+
     RootManager.appendDOM(root, "visualizer-3d", "3d");
-
     const loader: BaseRootLoader = new RandomDataLoader();
     loader.load(root);
     dispatch(generateNodeTree({ root }));
@@ -53,7 +54,12 @@ export default () => {
     <div className="root-container">
       <SplitPane
         split="vertical"
-        minSize={"290"}>
+        minSize={290}
+        onChange={() => {
+          // TODO: Add all targets to resize event handler
+          visualizers.targets["3d"].onResize();
+        }}
+      >
         <LeftPanel />
         <RightPanel />
       </SplitPane>

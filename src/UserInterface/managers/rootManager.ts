@@ -43,17 +43,35 @@ export default class RootManager {
 
   }
 
-  // Add 3D and 2D viewer
-  static addTargets(root: RootNode, setToolBars: (visualizerToolBar: { id: string, toolBar: Toolbar }) => void): void {
-    for (let idx = 0; idx < RootManager.RENDER_TARGETS; idx++) {
-      const range = Range3.createByMinAndMax(0, 0, 1, 1);
-      const target = new ThreeRenderTargetNode(range);
-      target.name = "3d";
+  // Targets
+  static targets(
+    root: RootNode,
+    elementId: string,
+  ): { [key: string]: ThreeRenderTargetNode } {
+    const targets: { [key: string]: ThreeRenderTargetNode } = {};
+    const element = document.getElementById(elementId);
+    if (element) {
+      for (let idx = 0; idx < RootManager.RENDER_TARGETS; idx++) {
+        const range = Range3.createByMinAndMax(0, 0, 1, 1);
+        const target = new ThreeRenderTargetNode(range);
+        target.setWindowDimensions(element.clientHeight, element.clientWidth);
+        target.name = "3d";
+        targets[target.name] = target;
+        root.targets.addChild(target);
+      }
+    }
+    return targets;
+  }
+
+  // Toolbars
+  static toolbars(root: RootNode): { [key: string]: Toolbar } {
+    const toolBars: { [key: string]: Toolbar } = {};
+    for (const target of root.targets.getChildrenByType(ThreeRenderTargetNode)) {
       const toolBar = new Toolbar();
       target.addTools(toolBar);
-      root.targets.addChild(target);
-      setToolBars({ id: "3d", toolBar });
+      toolBars[target.name] = toolBar;
     }
+    return toolBars;
   }
 
   // Initialize when populated

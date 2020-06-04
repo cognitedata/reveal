@@ -43,6 +43,8 @@ body {
   align-items: center;
   justify-content: center;
   height: 100%;
+  width: 100%;
+  background: yellow;
 }
 
 .right-panel canvas {
@@ -249,7 +251,6 @@ $multi-input-base-width: 100% - $select-controls-width;
   }
 }
 
-$visualizer-3d-height: 94%;
 $visualizer-tool-bar-diemension: 1.3rem;
 $z-index-max: 9999;
 
@@ -314,10 +315,8 @@ $z-index-max: 9999;
   }
   .visualizer-3d {
     height: 100%;
+    width: 100%;
     position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 }
 

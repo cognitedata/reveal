@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import Viewer3D from '@/UserInterface/components/Viewers/Viewer3D';
+import Viewer3D from "@/UserInterface/components/Viewers/Viewer3D";
 // import main from "@/../main"; //add this once you need to show 3d part
 
 /**
@@ -21,8 +21,7 @@ import Viewer3D from '@/UserInterface/components/Viewers/Viewer3D';
  */
 export default function RightPanel() {
   return (
-    <div
-      className="right-panel">
+    <div className="right-panel">
       <Viewer3D />
     </div>
   );

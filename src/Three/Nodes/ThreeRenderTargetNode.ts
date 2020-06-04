@@ -164,8 +164,10 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   public /*override*/ onResize()
   {
     super.onResize();
-    if (this._camera)
-      this._camera.onResize(this);
+    if (this._camera){
+      const canvas = this.renderer.domElement;
+      this._camera.onResize(canvas.clientWidth / canvas.clientHeight);
+    }
     this.invalidate();
   }
 

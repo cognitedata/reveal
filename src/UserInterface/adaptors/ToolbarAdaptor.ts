@@ -4,19 +4,15 @@
 export default class ToolbarAdaptor {
 
     // Convert to redux state
-    static convert(commands: any[]): { [key: string]: any[] } {
-        const output: { [key: string]: any[] } = {};
-        commands.map(command => {
-            const commandType = command.constructor.name;
-            if (!output[commandType]) {
-                output[commandType] = [];
-            }
-            output[commandType].push({
+    static convert(commands: any[]): any[] {
+        const output: any[] = [];
+        commands.forEach(command => {
+            output.push({
                 command,
                 icon: command.icon,
                 isChecked: command.isChecked
             });
-        });
+        })
         return output;
     }
 }

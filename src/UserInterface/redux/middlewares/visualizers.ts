@@ -17,8 +17,8 @@ export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
         case EXECUTE_VISUALIZER_TOOLBAR_COMMAND: {
             // A toolbar commad is executed
             try {
-                const { visualizerId, commandType, index } = payload;
-                const { command } = visualizers.toolBars[visualizerId][commandType][index];
+                const { visualizerId, index } = payload;
+                const { command } = visualizers.toolBars[visualizerId][index];
                 if (command.invoke) {
                     // Has command definition and execute it
                     command.invoke();
@@ -28,7 +28,6 @@ export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
                             icon: command.icon,
                             isChecked: command.isChecked,
                             visualizerId,
-                            commandType,
                             index
                         }
                     };

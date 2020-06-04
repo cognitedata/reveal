@@ -98,8 +98,8 @@ const VisualizerToolbar = (props: { visualizerId: string, visualizers: Visualize
     }
   }
 
-  // Command types
-  const commandTypes = Object.keys(toolBar);
+  // Number of commands
+  const noOfCommands = toolBar.length;
 
   // Render toolbar
   return <Draggable
@@ -108,9 +108,8 @@ const VisualizerToolbar = (props: { visualizerId: string, visualizers: Visualize
     onDrag={() => setDragging(true)}
     onStop={onStop}>
     <div className="visualizer-toolbar-wrapper"
-      // TODO - Add flex wrap dynamically using refs
       style={{
-        ...toolBarWrapperMargins(visualizers.noOfCommands, horizontal)
+        ...toolBarWrapperMargins(noOfCommands, horizontal)
       }}>
       <div className="visualizer-toolbar-container">
         <div className="handle" style={{
@@ -123,24 +122,18 @@ const VisualizerToolbar = (props: { visualizerId: string, visualizers: Visualize
         <div
           className="visuaizer-toolbar"
           style={{
-            ...toolBarDimensions(visualizers.noOfCommands, horizontal),
+            ...toolBarDimensions(noOfCommands, horizontal),
             flexDirection: horizontal ? "row" : "column",
             left: horizontal ? "0.3rem" : "-1rem",
             top: horizontal ? "0rem" : "1.2rem"
           }}>
-          {commandTypes.map((commandType: string, index) =>
-            // <div
-            //   key={`toolbar-${commandType}-${index}`}
-            //   className="visuaizer-toolbar-group"
-            //   style={{ flexDirection: horizontal ? "row" : "column" }}
-            // >
-            toolBar[commandType].map((command, commandIndex) => command.icon ? <div
+          {toolBar.map((command, index) =>
+            command.icon ? <div
               onClick={() => dispatch(executeToolBarCommand({
                 visualizerId,
-                commandType,
-                index: commandIndex
+                index
               }))}
-              key={`visualizer-toolbar-icon-${commandType}${commandIndex}`}
+              key={`visualizer-toolbar-icon-${index}`}
               className={`visualizer-tool-bar-icon 
                         ${command.isChecked ?
                   "visualizer-tool-bar-icon-selected" : ""}`}>
@@ -149,9 +142,7 @@ const VisualizerToolbar = (props: { visualizerId: string, visualizers: Visualize
                 tooltip={command.command.name}
                 placement={horizontal ? "bottom" : "right-start"}
               />}
-            </div> : null)
-            // </div>
-          )}
+            </div> : null)}
         </div>
       </div>
     </div>
