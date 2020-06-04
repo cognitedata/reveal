@@ -262,9 +262,9 @@ The API mostly matches the API of the previous Reveal viewer that can be found a
 
 **Bounding Box**
 > `getBoundingBox(`nodeId?: number, box?: THREE.Box3`)`: THREE.Box3;<br>
-> Get the bounding of the entire model, bounding box of node is not supported, use `getBoundingBoxFromApi()`
+> Get the bounding of the entire model, bounding box of node is not supported, use `getBoundingBoxFromCdf()`
 
-> async `getBoundingBoxFromApi(`nodeId: number, box?: THREE.Box3`)`: Promise\<THREE.Box3\>;<br>
+> async `getBoundingBoxFromCdf(`nodeId: number, box?: THREE.Box3`)`: Promise\<THREE.Box3\>;<br>
 > Get the bounding box of a node.
 
 > `getModelBoundingBox()`: THREE.Box3;<br>
