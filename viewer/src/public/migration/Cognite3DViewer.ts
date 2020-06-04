@@ -283,6 +283,13 @@ export class Cognite3DViewer {
     this._slicingNeedsUpdate = true;
   }
 
+  getCamera(): THREE.Camera {
+    return this.camera;
+  }
+  getScene(): THREE.Scene {
+    return this.scene;
+  }
+
   getCameraPosition(): THREE.Vector3 {
     if (this.isDisposed) {
       return new THREE.Vector3(-Infinity, -Infinity, -Infinity);
