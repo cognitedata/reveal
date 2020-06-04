@@ -55,7 +55,7 @@
     "prettier": "^2.0.5",
     "pretty-quick": "^2.0.1",
     "sinon": "^9.0.2",
-    "typescript": "^3.9.3"
+    "typescript": "^3.9.5"
   },
   "eslintConfig": {
     "extends": "react-app"
