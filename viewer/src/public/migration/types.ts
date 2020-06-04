@@ -22,6 +22,7 @@ export interface Cognite3DViewerOptions {
   highlightColor?: THREE.Color;
   viewCube?: 'topleft' | 'topright' | 'bottomleft' | 'bottomright';
   enableCache?: boolean;
+
   /**
    * Renderer used to visualize model (optional).
    */
