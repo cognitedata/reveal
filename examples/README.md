@@ -17,6 +17,14 @@ yarn start
 
 Examples are not bounded to specific viewer release, but use the latest code from master branch.
 
+### Viewer development
+
+In case if you want to get live changes from viewer in examples you need to link viewer with yarn link. It's already addressed in `serve` script in `viewer/package.json`, so you can do:
+
+```bash
+cd ./viewer
+npm run serve
+```
 
 ## [Environment files](https://create-react-app.dev/docs/adding-custom-environment-variables/)
 
