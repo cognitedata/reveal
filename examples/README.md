@@ -15,7 +15,7 @@ yarn install
 yarn start
 ```
 
-Examples are not bounded to specific viewer release, but use the latest code from master branch.
+Examples are not bounded to specific viewer release from npm. They just use whatever you have in local viewer build.
 
 ### Viewer development
 
