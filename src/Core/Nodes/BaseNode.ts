@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import * as color from "color"
+import * as Color from "color"
 
 import { UniqueId } from "@/Core/Primitives/UniqueId";
 import { Identifiable } from "@/Core/Primitives/Identifiable";
@@ -43,7 +43,7 @@ export abstract class BaseNode extends Identifiable
   // INSTANCE FIELDS
   //==================================================
 
-  private _color: color | undefined = undefined;
+  private _color: Color | undefined = undefined;
   private _name: string | undefined = undefined;
   private _isExpanded = false;
 
@@ -88,7 +88,7 @@ export abstract class BaseNode extends Identifiable
   //==================================================
 
   public /*virtual*/ get isVisibleInTreeControl(): boolean { return true; } // If false, the icon and it children is not shown in the tree control
-  public /*virtual*/ get labelColor(): color { return Colors.black; }
+  public /*virtual*/ get labelColor(): Color { return Colors.black; }
   public /*virtual*/ get isLabelInBold(): boolean { return this.isActive; } // true shows the label in bold font
   public /*virtual*/ get isLabelInItalic(): boolean { return !this.canBeDeleted; } // true shows the label in italic font
 
@@ -104,13 +104,13 @@ export abstract class BaseNode extends Identifiable
   // VIRTUAL METHODS: Color
   //==================================================
 
-  public /*virtual*/ get color(): color { if (this._color === undefined) this._color = this.generateNewColor(); return this._color; }
-  public /*virtual*/ set color(value: color) { this._color = value; }
+  public /*virtual*/ get color(): Color { if (this._color === undefined) this._color = this.generateNewColor(); return this._color; }
+  public /*virtual*/ set color(value: Color) { this._color = value; }
   public /*virtual*/ get canChangeColor(): boolean { return true; }
 
   public /*virtual*/ hasIconColor(): boolean { return this.canChangeColor; }
 
-  public getColor(): color { if (this._color === undefined) this._color = this.generateNewColor(); return this._color; } // Nils TODO: Drop virtual properties, use methods instead
+  public getColor(): Color { if (this._color === undefined) this._color = this.generateNewColor(); return this._color; } // Nils TODO: Drop virtual properties, use methods instead
 
   //==================================================
   // VIRTUAL METHODS: Icon
@@ -686,7 +686,7 @@ export abstract class BaseNode extends Identifiable
   // INSTANCE METHODS: Some helpers
   //==================================================
 
-  protected generateNewColor(): color
+  protected generateNewColor(): Color
   {
     return this.canChangeColor ? Colors.nextColor : Colors.white;
   }

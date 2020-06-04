@@ -26,19 +26,11 @@ export abstract class BaseView
 
   private _node: BaseNode | null = null;
   private _target: ITargetIdAccessor | null = null;
-  //private _isVisible: boolean = false;
-
-  //==================================================
-  // VIRTUAL METHODS
-  //==================================================
-
-  //  public /*virtual*/ get stayAliveIfInvisible(): boolean { return false; }
 
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  //public set isVisible(value: boolean) { this._isVisible = value; }
   public get targetId(): TargetId { return this.getTarget().targetId; }
   protected get renderTarget(): BaseTargetNode { return this.getTarget() as BaseTargetNode; }
 

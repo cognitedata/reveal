@@ -12,9 +12,9 @@
 //=====================================================================================
 
 import * as THREE from "three";
+import * as Color from "color"
 
 import { ThreeLabel } from "@/Three/Utilities/ThreeLabel";
-import * as Color from "color"
 
 export class Canvas
 {

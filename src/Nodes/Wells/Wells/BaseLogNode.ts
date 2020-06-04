@@ -11,6 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import * as Color from "color"
+
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { BaseLog } from "@/Nodes/Wells/Logs/BaseLog";
 import { WellNode } from "@/Nodes/Wells/Wells/WellNode";
@@ -19,11 +21,7 @@ import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
 import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
 import { BaseFilterLogNode } from "@/Nodes/Wells/Filters/BaseFilterLogNode";
 import { Util } from "@/Core/Primitives/Util";
-import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
-import { FilterLogFolder } from "@/Nodes/Wells/Filters/FilterLogFolder";
 import { ITarget } from "@/Core/Interfaces/ITarget";
-import { CheckBoxState } from "@/Core/Enums/CheckBoxState";
-import Color from "color";
 
 export abstract class BaseLogNode extends BaseVisualNode
 {

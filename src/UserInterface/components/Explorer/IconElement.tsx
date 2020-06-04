@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
-import Color from "color";
+import * as Color from "color"
 
 const DEFAULT_CANVAS_SIZE = 18; // NILS: What is this value?  How can I change icon size?  This value will not do it
 
