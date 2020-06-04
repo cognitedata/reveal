@@ -1,6 +1,5 @@
 import "reset-css";
-import "./styles/css/index.css";
-import "./styles/css/react-split-pane.css";
+import "./styles/scss/index.scss";
 
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
