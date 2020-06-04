@@ -87,10 +87,10 @@ export abstract class BaseNode extends Identifiable
   // VIRTUAL METHODS: Label
   //==================================================
 
-  public  /*virtual*/ get isVisibleInTreeControl(): boolean { return true; } // If false, the icon and it children is not shown in the tree control
+  public /*virtual*/ get isVisibleInTreeControl(): boolean { return true; } // If false, the icon and it children is not shown in the tree control
   public /*virtual*/ get labelColor(): color { return Colors.black; }
-  public  /*virtual*/ get isLabelInBold(): boolean { return this.isActive; } // true shows the label in bold font
-  public  /*virtual*/ get isLabelInItalic(): boolean { return !this.canBeDeleted; } // true shows the label in italic font
+  public /*virtual*/ get isLabelInBold(): boolean { return this.isActive; } // true shows the label in bold font
+  public /*virtual*/ get isLabelInItalic(): boolean { return !this.canBeDeleted; } // true shows the label in italic font
 
   public get label(): string // This is the text shown in the tree control
   {
@@ -106,7 +106,11 @@ export abstract class BaseNode extends Identifiable
 
   public /*virtual*/ get color(): color { if (this._color === undefined) this._color = this.generateNewColor(); return this._color; }
   public /*virtual*/ set color(value: color) { this._color = value; }
-  public /*virtual*/ get canChangeColor() { return true; }
+  public /*virtual*/ get canChangeColor(): boolean { return true; }
+
+  public /*virtual*/ hasIconColor(): boolean { return this.canChangeColor; }
+
+  public getColor(): color { if (this._color === undefined) this._color = this.generateNewColor(); return this._color; } // Nils TODO: Drop virtual properties, use methods instead
 
   //==================================================
   // VIRTUAL METHODS: Icon
@@ -126,11 +130,11 @@ export abstract class BaseNode extends Identifiable
   // VIRTUAL METHODS: Appearance in the explorer
   //==================================================
 
-  public  /*virtual*/ get canBeDeleted(): boolean { return true; }
+  public /*virtual*/ get canBeDeleted(): boolean { return true; }
 
-  public  /*virtual*/ canBeChecked(target: ITarget | null): boolean { return true; }
-  public  /*virtual*/ isFilter(target: ITarget | null): boolean { return false; }
-  public  /*virtual*/ isRadio(target: ITarget | null): boolean { return false; }
+  public /*virtual*/ canBeChecked(target: ITarget | null): boolean { return true; }
+  public /*virtual*/ isFilter(target: ITarget | null): boolean { return false; }
+  public /*virtual*/ isRadio(target: ITarget | null): boolean { return false; }
 
   //==================================================
   // VIRTUAL METHODS: Visibility
@@ -169,7 +173,7 @@ export abstract class BaseNode extends Identifiable
     if (numCandidates === numAll)
       return CheckBoxState.All;
     if (numCandidates === numNone)
-      return this.canBeChecked(target) ? CheckBoxState.None: CheckBoxState.Disabled;
+      return this.canBeChecked(target) ? CheckBoxState.None : CheckBoxState.Disabled;
     return CheckBoxState.Some;
   }
 

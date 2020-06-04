@@ -59,8 +59,8 @@ export class FilterLogFolder extends BaseNode
   public /*override*/ get icon(): string { return FilterLogFolderIcon }
   public /*override*/ get canChangeName(): boolean { return false }
   public /*override*/ get canChangeColor(): boolean { return false; }
-  public  /*virtual*/ get isLabelInItalic(): boolean { return true; }
-  public  /*virtual*/ isFilter(target: ITarget | null): boolean { return true; }
+  public /*virtual*/ get isLabelInItalic(): boolean { return true; }
+  public /*virtual*/ isFilter(target: ITarget | null): boolean { return true; }
 
   public /*override*/ canBeChecked(target: ITarget | null): boolean { return false; }
 

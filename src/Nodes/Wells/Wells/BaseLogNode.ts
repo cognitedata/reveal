@@ -23,6 +23,7 @@ import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 import { FilterLogFolder } from "@/Nodes/Wells/Filters/FilterLogFolder";
 import { ITarget } from "@/Core/Interfaces/ITarget";
 import { CheckBoxState } from "@/Core/Enums/CheckBoxState";
+import Color from "color";
 
 export abstract class BaseLogNode extends BaseVisualNode
 {
@@ -58,6 +59,27 @@ export abstract class BaseLogNode extends BaseVisualNode
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
+
+  public /*virtual*/ hasIconColor(): boolean { return true; }
+
+  public /*override*/ get color(): Color
+  {
+    const trajectoryNode = this.trajectoryNode;
+    if (!trajectoryNode)
+      return super.getColor();
+
+    const filterLogFolder = trajectoryNode.getFilterLogFolder();
+    if (!filterLogFolder)
+      return super.getColor();
+
+    const filterLogNode = filterLogFolder.getFilterLogNode(this);
+    if (!filterLogNode)
+      return super.getColor();
+
+    return filterLogNode.color;
+  }
+
+  public /*override*/ get canChangeColor(): boolean { return false; }
 
   public /*override*/ canBeChecked(target: ITarget | null): boolean
   {

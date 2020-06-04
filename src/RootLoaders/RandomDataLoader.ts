@@ -130,7 +130,7 @@ export class RandomDataLoader extends BaseRootLoader
 
             const logNode = new PointLogNode();
             logNode.data = PointLog.createByRandom(mdRange, 10);
-            logNode.name = "Uncertainty" + logIndex;
+            logNode.name = "Risk " + logIndex;
             trajectoryNode.addChild(logNode);
           }
         }

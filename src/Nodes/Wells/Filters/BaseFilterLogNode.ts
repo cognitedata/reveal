@@ -44,8 +44,8 @@ export abstract class BaseFilterLogNode extends BaseVisualNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  public  /*virtual*/ get isLabelInItalic(): boolean { return true; }
-  public  /*virtual*/ isFilter(target: ITarget | null): boolean { return true; }
+  public /*virtual*/ get isLabelInItalic(): boolean { return true; }
+  public /*virtual*/ isFilter(target: ITarget | null): boolean { return true; }
 
   //==================================================
   // VIRTUAL METHODS

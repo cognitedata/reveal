@@ -12,6 +12,7 @@
 //=====================================================================================
 
 import { FolderNode } from "@/Core/Nodes/FolderNode";
+import FolderNodeGreyscale from "@images/Nodes/FolderNodeGreyscale.png";
 
 export class WellFolder extends FolderNode
 {
@@ -33,4 +34,6 @@ export class WellFolder extends FolderNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Well folder" }
+  public /*override*/ get icon(): string { return FolderNodeGreyscale }
+  public /*virtual*/ get canChangeColor(): boolean { return true; }
 }

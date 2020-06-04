@@ -1,5 +1,6 @@
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { RootNode } from "@/Nodes/TreeNodes/RootNode";
+import Color from "color";
 
 // Explorer component state interface
 export interface ExplorerStateInterface {
@@ -27,8 +28,7 @@ export interface TreeDataItem {
   expanded: boolean;
   icon: string;
   iconDescription: string;
-  iconVisible?: boolean;
-  iconColor?: string;
+  iconColor?: Color;
   selected: boolean;
   checked: boolean;
   indeterminate: boolean;
@@ -49,8 +49,7 @@ export interface TreeNode {
   type: string;
   icon: string;
   iconDescription: string;
-  iconColor?: string;
-  iconVisible?: boolean;
+  iconColor?: Color;
   selected: boolean;
   checked: boolean;
   indeterminate: boolean;
