@@ -1,0 +1,14 @@
+name: Auto approve PRs by dependabot
+
+# Trigger the workflow on pull request
+on: pull_request
+
+jobs:
+  autoapprove:
+    name: Auto-Approve a PR by dependabot
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auto approve
+        uses: cognitedata/auto-approve-dependabot-action@v2.0.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
