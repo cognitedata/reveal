@@ -22,7 +22,7 @@
     "test": "jest",
     "coverage": "jest --coverage",
     "lint": "tslint --project .",
-    "serve": "npm install && yarn link && cd ../examples && yarn && yarn link @cognite/reveal && yarn start",
+    "serve": "cd ./dist && yarn link && cd ../../examples && yarn && yarn link @cognite/reveal && yarn run start",
     "prepublishscript": "npm run release && npm run coverage",
     "publishscript": "node script/copyPackage.js",
     "postpublishscript": "cd dist && npm publish"
