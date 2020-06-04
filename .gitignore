@@ -27,6 +27,11 @@ examples/coverage
 examples/npm-debug.log*
 examples/yarn-debug.log*
 examples/yarn-error.log*
+# Public is also used for temorary local models so ignore everything
+examples/public/
+!examples/public/index.html
+!examples/public/favicon.ico
+!examples/public/manifest.json
 
 # Typescript
 tsconfig.tsbuildinfo
