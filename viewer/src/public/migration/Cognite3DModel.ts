@@ -148,10 +148,25 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.setNodeColorByTreeIndex(treeIndex, r, g, b);
   }
 
+  setNodeColorByTreeIndex(treeIndex: number, r: number, g: number, b: number) {
+    this.nodeColors.set(treeIndex, [r, g, b, 255]);
+    this.cadNode.requestNodeUpdate([treeIndex]);
+  }
+
   async resetNodeColor(nodeId: number): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.resetNodeColorByTreeIndex(treeIndex);
+  }
+
+  resetNodeColorByTreeIndex(treeIndex: number) {
     this.nodeColors.delete(treeIndex);
     this.cadNode.requestNodeUpdate([treeIndex]);
+  }
+
+  resetAllNodeColors() {
+    const nodeIds = Array.from(this.nodeColors.keys());
+    this.nodeColors.clear();
+    this.cadNode.requestNodeUpdate(nodeIds);
   }
 
   selectNode(_nodeId: number): void {
@@ -168,6 +183,10 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   async showNode(nodeId: number): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.showNodeByTreeIndex(nodeId);
+  }
+
+  showNodeByTreeIndex(treeIndex: number): void {
     this.hiddenNodes.delete(treeIndex);
     this.cadNode.requestNodeUpdate([treeIndex]);
   }
@@ -189,20 +208,19 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   async hideNode(nodeId: number, makeGray?: boolean): Promise<void> {
+    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.hideNodeByTreeIndex(treeIndex, makeGray);
+  }
+
+  hideNodeByTreeIndex(treeIndex: number, makeGray?: boolean): void {
     if (makeGray) {
       throw new NotSupportedInMigrationWrapperError();
     }
-    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
     this.hiddenNodes.add(treeIndex);
     this.cadNode.requestNodeUpdate([treeIndex]);
   }
 
   tryGetNodeId(treeIndex: number): number | undefined {
     return this.nodeIdAndTreeIndexMaps.getNodeId(treeIndex);
-  }
-
-  private setNodeColorByTreeIndex(treeIndex: number, r: number, g: number, b: number) {
-    this.nodeColors.set(treeIndex, [r, g, b, 255]);
-    this.cadNode.requestNodeUpdate([treeIndex]);
   }
 }

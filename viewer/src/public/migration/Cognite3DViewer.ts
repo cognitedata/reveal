@@ -279,7 +279,7 @@ export class Cognite3DViewer {
   setSlicingPlanes(slicingPlanes: THREE.Plane[]): void {
     // this._slicingPlanes = slicingPlanes;
     this.renderer.localClippingEnabled = slicingPlanes.length > 0;
-    this.materialManager.clippingPlanes = slicingPlanes;
+    this.revealManager.clippingPlanes = slicingPlanes;
     this._slicingNeedsUpdate = true;
   }
 
