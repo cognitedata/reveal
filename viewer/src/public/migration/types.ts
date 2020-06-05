@@ -36,13 +36,6 @@ export interface Cognite3DViewerOptions {
   _sectorCuller?: SectorCuller;
 }
 
-export interface OnProgressData {
-  step: number;
-  numSteps: number;
-  title: string;
-  progress: number;
-  max: number;
-}
 export interface GeometryFilter {
   boundingBox?: THREE.Box3;
 }
@@ -54,7 +47,6 @@ export interface AddModelOptions {
   localPath?: string;
   geometryFilter?: GeometryFilter;
   orthographicCamera?: boolean;
-  onProgress?: (progress: OnProgressData) => void;
   onComplete?: () => void;
 }
 
