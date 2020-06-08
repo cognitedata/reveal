@@ -76,7 +76,11 @@ export function DistanceMeasurement() {
 
       const scene = new THREE.Scene();
       let isRenderRequired = true;
-      const revealManager = createRenderManager('local', client);
+
+      const revealManager = createRenderManager(
+        modelRevision !== undefined ? 'cdf' : 'local',
+        client
+      );
 
       let model: CadNode;
       if (
