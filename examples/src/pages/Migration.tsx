@@ -207,15 +207,6 @@ export function Migration() {
         await addModel({ modelId, revisionId });
       }
 
-
-
-      if (cadModels.length > 0) {
-        const arr = [...Array(10).keys()]
-        //arr.forEach(num => cadModels[0].setNodeColor(num, 100, 100, 100));
-      }
-
-
-
       viewer.on('click', async function (event) {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
