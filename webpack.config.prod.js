@@ -22,11 +22,15 @@ module.exports = {
       {
         test: /\.tsx?$/,
         include: resolve("src"),
-        use: "ts-loader",
-        exclude: /node_modules/
+        loader: "ts-loader",
+        exclude: /node_modules/,
+        options: {
+          instance: "subsurface-visualizer",
+          configFile: resolve("tsconfig.json")
+        }
       },
       {
-        test: /\.ts$/,
+        test: /\.tsx?$/,
         include: resolve(SUBSURFACE_COMPONENTS_PATH),
         loader: "ts-loader",
         options: {
@@ -35,7 +39,7 @@ module.exports = {
         }
       },
       {
-        test: /\.ts$/,
+        test: /\.tsx?$/,
         include: resolve(SUBSURFACE_INTERFACES_PATH),
         loader: "ts-loader",
         options: {
@@ -65,7 +69,7 @@ module.exports = {
     alias: {
       "@": resolve("src"),
       "@images": resolve("images"),
-      "@cognitedata/subsurface-components": resolve(SUBSURFACE_COMPONENTS_PATH),
+      "@cognite/subsurface-components": resolve(SUBSURFACE_COMPONENTS_PATH),
       "@cognite/subsurface-interfaces": resolve(SUBSURFACE_INTERFACES_PATH)
     }
   },

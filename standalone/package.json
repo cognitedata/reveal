@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@cognitedata/subsurface-visualizer": "file:../dist",
+    "@cognite/subsurface-visualizer": "file:../dist/subsurface-visualizer",
     "react": "file:../node_modules/react",
     "react-dom": "file:../node_modules/react-dom",
     "react-redux": "file:../node_modules/react-redux",

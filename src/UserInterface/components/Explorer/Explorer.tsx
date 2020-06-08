@@ -9,7 +9,7 @@ import {
 import NodeTabs from "./NodeTabs";
 import { getVisibleNodes } from "@/UserInterface/redux/selectors/explorer";
 import { ReduxStore } from "@/UserInterface/interfaces/common";
-import { TreeNode, VirtualTree } from "@cognitedata/subsurface-components";
+import { TreeNode, VirtualTree } from "@cognite/subsurface-components";
 import { Appearance } from "@/Core/States/Appearance";
 
 // Get a copy of nodes

@@ -24,7 +24,7 @@ module.exports = {
     alias: {
       "@": resolve("src"),
       "@images": resolve("images"),
-      "@cognitedata/subsurface-components": resolve(SUBSURFACE_COMPONENTS_PATH)
+      "@cognite/subsurface-components": resolve(SUBSURFACE_COMPONENTS_PATH)
     }
   },
 

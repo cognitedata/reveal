@@ -21,7 +21,7 @@
     "lib": ["dom", "es2015", "es2017"],
     "baseUrl": "./",
     "paths": {
-      "@cognitedata/subsurface-components": ["./src/Components"],
+      "@cognite/subsurface-components": ["./src/Components"],
       "@/*": ["src/*"],
       "@images/*": ["images/*"]
     }

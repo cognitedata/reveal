@@ -4,7 +4,7 @@ import {
   SubsurfaceVisualizer,
   SubsurfaceReducer,
   SubsurfaceMiddleware
-} from "@cognitedata/subsurface-visualizer";
+} from "@cognite/subsurface-visualizer";
 
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import { Provider } from "react-redux";

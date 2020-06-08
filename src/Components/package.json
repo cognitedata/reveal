@@ -1,7 +1,7 @@
 {
-  "name": "@cognitedata/subsurface-components",
+  "name": "@cognite/subsurface-components",
   "version": "0.0.1",
-  "description": "Subsurface React components",
+  "description": "Subsurface React components for cognite",
   "main": "subsurface-components.js",
   "module": "subsurface-components.js",
   "types": "types/Components/index.d.ts",
@@ -24,7 +24,7 @@
   "bugs": {
     "url": "https://github.com/cognitedata/subsurface-visualization/issues"
   },
-  "homepage": "https://github.com/cognitedata/subsurface-visualization#readme",
+  "homepage": "https://github.com/cognitedata/subsurface-visualization/tree/master/src/Components#readme",
   "peer-dependencies": {
     "react": "^16.13.1",
     "react-dom": "^16.13.1"

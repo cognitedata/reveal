@@ -1,8 +1,7 @@
 {
-  "name": "@cognitedata/subsurface-visualizer",
-  "version": "0.1.0",
-  "description": "Reveal viewer architecture",
-  "repository": "cognitedata/subsurface-visualizer",
+  "name": "@cognite/subsurface-visualizer",
+  "version": "0.0.1",
+  "description": "Subsurface visualizer for cognite",
   "main": "subsurface-visualizer.js",
   "module": "subsurface-visualizer.js",
   "types": "types/index.d.ts",
@@ -26,7 +25,22 @@
     "predeploy": "cd standalone && npm install && npm run build",
     "deploy": "gh-pages -d standalone/build"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cognitedata/subsurface-visualization.git"
+  },
+  "keywords": [
+    "subsurface",
+    "cognite",
+    "subsurface-visualization",
+    "react",
+    "subsurface-visualizer"
+  ],
   "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/cognitedata/subsurface-visualization/issues"
+  },
+  "homepage": "https://github.com/cognitedata/subsurface-visualization#readme",
   "devDependencies": {
     "@babel/core": "^7.9.6",
     "@babel/plugin-proposal-class-properties": "^7.8.3",

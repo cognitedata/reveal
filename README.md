@@ -2,11 +2,11 @@
 
 This is a monorepo for all subsurface visualization features in cognite. Please find the links below to eachof the packages available in this repo.
 
-| Project               |              Package               |                                                                                              Readme |
-| --------------------- | :--------------------------------: | --------------------------------------------------------------------------------------------------: |
-| Subsurface Visualizer | @cognitedata/subsurface-visualizer |                                                                                         This Readme |
-| Subsurface Components |   @cognite/subsurface-interfaces   |  [Readme]{https://github.com/cognitedata/subsurface-visualization/blob/master/src/Interface#readme} |
-| Subsurface Interfaces | @cognitedata/subsurface-components | [Readme]{https://github.com/cognitedata/subsurface-visualization/blob/master/src/Components#readme} |
+| Project               |            Package             |                                                                                              Readme |
+| --------------------- | :----------------------------: | --------------------------------------------------------------------------------------------------: |
+| Subsurface Visualizer | @cognite/subsurface-visualizer |                                                                                         This Readme |
+| Subsurface Interfaces | @cognite/subsurface-interfaces |  [Readme](https://github.com/cognitedata/subsurface-visualization/blob/master/src/Interface#readme) |
+| Subsurface Components | @cognite/subsurface-components | [Readme](https://github.com/cognitedata/subsurface-visualization/blob/master/src/Components#readme) |
 
 ## Developing on Visual Studio Code
 
@@ -33,24 +33,34 @@ Recommended extensions:
 
 Web server will restart and browser will automatically update whenever a file changes.
 
-# Output Production Bundles - Subsurface Visualizer
+## Output Production Bundles - Subsurface Visualizer
 
 This project exposes the application as a react component library and as well as a standalone react application.
 
-## Standalone application
+### Standalone application
 
 - Navigate to _standalone_ directory: `cd standalone`
 - Produce standalone application build: `npm run build`
 
 Optimized standalone application build will be created in **standalone/build** directory.
 
-## React component
+### React component
 
 - Run build command in project base directory: `npm run build`
 
 Project build as a library will be created in **dist/subsurface-visualizer** folder.
 
-# Subsurface-visualizer library output usage
+## Subsurface-visualizer library usage
+
+### for cognite org users in npm
+
+This package is available as a private package in [npm](https://www.npmjs.com/package/@cognite/subsurface-visualizer).
+To use this library user must be a member of cognite organization in npm.
+
+- login to npm and follow steps : `npm login`
+- install library : `npm i @cognite/subsurface-visualizer`
+
+### For using without - npm login
 
 If you are planning to use this project library output in another project follow these steps.
 
@@ -60,7 +70,7 @@ First,
 - navigate to this project folder and run - `npm install`
 - Build the library output: `npm run build`
 - Navigate to build output and link: `cd dist/subsurface-visualizer && npm link`
-- Go to the project that you intend to use the library and link:`<navigate to project> && npm link @cognitedata/subsurface-visualizer`
+- Go to the project that you intend to use the library and link:`<navigate to project> && npm link @cognite/subsurface-visualizer`
 - Import React component and reducer and store enhancers:
 
 ```javascript
@@ -68,7 +78,7 @@ import {
   SubsurfaceVisualizer,
   SubsurfaceReducer,
   SubsurfaceMiddleware
-} from "@cognitedata/subsurface-visualizer";
+} from "@cognite/subsurface-visualizer";
 ```
 
 - Add the component and provide a store
