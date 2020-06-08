@@ -22,9 +22,12 @@ import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloud
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
+import { Observable } from 'rxjs';
 
 type CdfModelIdentifier = { modelRevision: IdEither; format: File3dFormat };
 export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
+  private readonly loadingStateObserver: Observable<boolean>;
+
   constructor(client: CogniteClient, options?: RevealOptions) {
     const modelDataParser: CadSectorParser = new CadSectorParser();
     const materialManager: MaterialManager = new MaterialManager();
@@ -57,6 +60,8 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
     );
 
     super(cadManager, materialManager, pointCloudManager);
+
+    this.loadingStateObserver = sectorRepository.getLoadingStateObserver();
   }
 
   public addModel(
@@ -87,6 +92,10 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
       default:
         throw new Error(`case: ${type} not handled`);
     }
+  }
+
+  public getLoadingStateObserver(): Observable<boolean> {
+    return this.loadingStateObserver;
   }
 
   private createModelIdentifier(id: string | number): IdEither {
