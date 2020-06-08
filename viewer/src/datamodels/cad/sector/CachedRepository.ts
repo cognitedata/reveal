@@ -21,7 +21,8 @@ import {
   retryWhen,
   delay,
   distinct,
-  catchError
+  catchError,
+  distinctUntilChanged
 } from 'rxjs/operators';
 import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
@@ -44,6 +45,7 @@ export class CachedRepository implements Repository {
   private readonly _modelDataParser: CadSectorParser;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
   private readonly _rateLimiter = new RateLimiter(50);
+  private readonly _isLoadingSubject: Subject<boolean> = new Subject();
 
   // Adding this to support parse map for migration wrapper. Should be removed later.
   private readonly _parsedDataSubject: Subject<{
@@ -90,6 +92,12 @@ export class CachedRepository implements Repository {
           filter(wantedSector => wantedSector.levelOfDetail === LevelOfDetail.Discarded),
           map(wantedSector => ({ ...wantedSector, group: undefined }))
         );
+
+        const releaseSlot = () => {
+          this._rateLimiter.release();
+          this._isLoadingSubject.next(this._rateLimiter.usedSlots() > 0);
+        };
+
         return merge(
           cachedSectorObservable.pipe(flatMap(wantedSector => this._modelDataCache.get(this.cacheKey(wantedSector)))),
           uncachedSectorObservable.pipe(
@@ -111,22 +119,26 @@ export class CachedRepository implements Repository {
             catchError(e => {
               // If there are any errors, release the slot and pass the error on further down the
               // pipe for handling.
-              this._rateLimiter.release();
+              releaseSlot();
               return of(e);
             }),
-            // Release the slot
-            tap(_ => this._rateLimiter.release())
+            tap(releaseSlot)
           ),
           discardedSectorObservable
         );
       }),
       retryWhen(errors => {
         return errors.pipe(
+          // tslint:disable-next-line:no-console
           tap(e => console.error(e)),
           delay(5000)
         );
       })
     );
+  }
+
+  getLoadingStateObserver(): Observable<boolean> {
+    return this._isLoadingSubject.pipe(distinctUntilChanged(), share());
   }
 
   clearCache() {
