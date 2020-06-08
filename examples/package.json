@@ -61,7 +61,7 @@
     "@cognite/reveal": "../viewer/dist",
     "@cognite/sdk": "^2.28.0",
     "@xailabs/three-renderer-stats": "^1.0.4",
-    "camera-controls": "^1.21.0",
+    "camera-controls": "^1.22.0",
     "comlink": "^4.3.0",
     "dat.gui": "^0.7.7",
     "gl-matrix": "^3.3.0",
