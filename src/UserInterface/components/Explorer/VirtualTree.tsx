@@ -2,7 +2,7 @@ import React from "react";
 import { AutoSizer } from "react-virtualized/dist/es/AutoSizer";
 import { List as VirtualList } from "react-virtualized/dist/es/List";
 
-import IconElement from "./IconElement";
+import TreeIcon from "./TreeIcon";
 import { ExpandButton } from "./ExpandButton";
 import { TreeCheckBox } from "./TreeCheckbox";
 import { TreeNode } from "@/UserInterface/interfaces/explorer";
@@ -11,6 +11,7 @@ const DEFAULT_ROW_HEIGHT = 22;
 
 export default function VirtualTree(props: {
   data?: TreeNode[];
+  iconSize?: number;
   rowHeight?: number;
   expandable?: boolean;
   selectedIds?: string[];
@@ -50,59 +51,66 @@ export default function VirtualTree(props: {
         children = item.children.map((child: any, index: number) => {
           return renderItem(child, keyPrefix + "-" + index);
         });
-      } else {
       }
-    } else {
     }
 
-    children.unshift(
-      <div className="tree-item center" key="label">
-        <div className="tree-item-comp">
-          <ExpandButton
-            expandable={item.children.length > 0}
-            expanded={item.expanded}
-            onExpand={onExpand}
-            onCollapse={onExpand}
-          />
+    if (item.visible) {
+      children.unshift(
+        <div className="tree-item center" key="label">
+          <div className="tree-item-comp">
+            <ExpandButton
+              expandable={item.children.length > 0}
+              expanded={item.expanded}
+              onExpand={onExpand}
+              onCollapse={onExpand}
+            />
+          </div>
+          {item.icon && (
+            <div className="tree-item-comp">
+              <TreeIcon
+                src={item.icon.path}
+                alt={item.icon.description}
+                color={item.icon.color}
+                size={props.iconSize}
+              />
+            </div>
+          )}
+          <div className="tree-item-comp">
+            <TreeCheckBox
+              class="tree-checkbox"
+              id={keyPrefix}
+              filter={item.isFilter}
+              checked={item.checked}
+              indeterminate={item.indeterminate}
+              disabled={item.disabled}
+              onToggleCheck={() => onToggleNodeCheck(item.uniqueId, !item.checked)}
+            />
+          </div>
+          <div className="tree-item-comp tree-item-lbl-container">
+            <span
+              className={"tree-item-lbl" + (item.selected ? " selected" : "")}
+              onClick={() => onToggleNodeSelect(item.uniqueId, !item.selected)}
+            >
+              {itemText}
+            </span>
+          </div>
         </div>
-        <div className="tree-item-comp">
-          <IconElement
-            src={item.icon}
-            alt={item.iconDescription}
-            color={item.iconColor}
-            size="100%"
-          />
-        </div>
-        <div className="tree-item-comp">
-          <TreeCheckBox
-            class="tree-checkbox"
-            id={keyPrefix}
-            filter={item.isFilter}
-            checked={item.checked}
-            indeterminate={item.indeterminate}
-            disabled={item.disabled}
-            onToggleCheck={() => onToggleNodeCheck(item.uniqueId, !item.checked)}
-          />
-        </div>
-        <div className="tree-item-comp tree-item-lbl-container">
-          <span
-            className={"tree-item-lbl" + (item.selected ? " selected" : "")}
-            onClick={() => onToggleNodeSelect(item.uniqueId, !item.selected)}
-          >
-            {itemText}
-          </span>
-        </div>
-      </div>
-    );
-    return (
-      <ul key={keyPrefix} className="list">
-        <li {...itemProps} children={children} className="list-item" />
-      </ul>
-    );
+      );
+    }
+
+    if (item.visible) {
+      return (
+        <ul key={keyPrefix} className="list">
+          <li {...itemProps} children={children} className="list-item" />
+        </ul>
+      );
+    } else {
+      return <React.Fragment {...itemProps} children={children} />;
+    }
   };
 
   const getExpandedItemCount = (item: TreeNode) => {
-    let count = 1;
+    let count = item.visible ? 1 : 0; // depends on visibility  of containing item
     if (item.expanded) {
       count += item.children.map(getExpandedItemCount).reduce((total: number, num: number) => {
         return total + num;

@@ -22,13 +22,15 @@ export interface ExplorerStateInterface {
 // Explorer redux Node interface
 export interface TreeDataItem {
   parentId?: string | null;
-  id: string;
+  uniqueId: string;
   name: string;
   type: string;
   expanded: boolean;
-  icon: string;
-  iconDescription: string;
-  iconColor?: Color;
+  icon?: {
+    path: string;
+    description?: string;
+    color?: Color;
+  };
   selected: boolean;
   checked: boolean;
   indeterminate: boolean;
@@ -36,20 +38,20 @@ export interface TreeDataItem {
   isFilter: boolean;
   disabled: boolean;
   visible: boolean;
-  uniqueId: string;
   domainObject?: BaseNode; // Reference to BaseNode/WellNode/SurfaceNode..etc
 }
 
 // Explorer UI Tree Node interface
 export interface TreeNode {
-  parentId?: string | null;
-  id: string;
+  uniqueId: string;
   name: string;
   expanded: boolean;
   type: string;
-  icon: string;
-  iconDescription: string;
-  iconColor?: Color;
+  icon?: {
+    path: string;
+    description?: string;
+    color?: Color;
+  };
   selected: boolean;
   checked: boolean;
   indeterminate: boolean;
@@ -57,7 +59,6 @@ export interface TreeNode {
   isFilter: boolean;
   disabled: boolean;
   visible: boolean;
-  uniqueId: string;
   children: TreeNode[];
 }
 

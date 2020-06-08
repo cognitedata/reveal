@@ -76,6 +76,7 @@ export class RootNode extends BaseRootNode
   // OVERRIDES of BaseNode
   //==================================================
 
+  public  /*override*/ get isVisibleInTreeControl(): boolean { return false; }
   public /*override*/ get icon(): string { return RootNodeIcon }
   protected /*override*/ initializeCore(): void
   {

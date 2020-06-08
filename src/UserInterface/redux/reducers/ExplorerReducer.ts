@@ -21,13 +21,15 @@ function generateNodeStructure(
 {
   return {
     parentId,
-    id: uniqueId, // NILS: Why is this stored twice
+    uniqueId,
     name: node.name,
     expanded: (node.isExpanded),
     type,
-    icon: node.icon,
-    iconDescription: "nodes",
-    iconColor: node.hasIconColor() ? node.color : undefined,
+    icon: {
+      path: node.icon,
+      description: node.name,
+      color: (node.hasIconColor() ? node.color : undefined)
+    },
     selected: node.isActive,
     checked: (node.getCheckBoxState() === CheckBoxState.All),
     indeterminate: (node.getCheckBoxState() === CheckBoxState.Some),
@@ -35,7 +37,6 @@ function generateNodeStructure(
     isFilter: node.isFilter(null),
     disabled: (node.getCheckBoxState() === CheckBoxState.Disabled),
     visible: node.isVisibleInTreeControl,
-    uniqueId, // NILS: Why is this stored twice
     domainObject: node,
   };
 }

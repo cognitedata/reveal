@@ -19,7 +19,10 @@ export abstract class BaseTreeNode extends BaseNode
   // CONSTRUCTORS
   //==================================================
 
-  public constructor() { super(); }
+  public constructor() {
+    super();
+    this.isExpanded = true;
+  }
 
   //==================================================
   // OVERRIDES of Identifiable
@@ -32,6 +35,7 @@ export abstract class BaseTreeNode extends BaseNode
   // OVERRIDES of BaseNode
   //==================================================
 
+  public /*override*/ get isVisibleInTreeControl(): boolean { return false; }
   public /*override*/ get canChangeName(): boolean { return false }
   public /*override*/ get canChangeColor(): boolean { return false; }
 }

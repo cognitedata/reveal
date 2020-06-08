@@ -13,9 +13,7 @@ import { getVisibleNodes } from "@/UserInterface/redux/selectors/explorer";
 import { ReduxStore } from "@/UserInterface/interfaces/common";
 
 // Get a copy of nodes
-function getCopyOfNodes(nodes?: {
-  [key: string]: TreeDataItem;
-}): { [key: string]: TreeNode } {
+function getCopyOfNodes(nodes?: { [key: string]: TreeDataItem }): { [key: string]: TreeNode } {
   const nodesCopy: { [key: string]: TreeNode } = {};
   if (nodes) {
     for (const id in nodes) {
@@ -82,6 +80,7 @@ export function Explorer() {
     <div className="explorer">
       <VirtualTree
         data={data}
+        iconSize={18}
         onToggleNodeSelect={handleToggleNodeSelect}
         onToggleNodeExpand={handleToggleNodeExpand}
         onToggleNodeCheck={handleToggleNodeCheck}
