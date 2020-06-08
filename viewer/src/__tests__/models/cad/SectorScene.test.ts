@@ -11,7 +11,7 @@ import { traverseDepthFirst } from '@/utilities/objectTraversal';
 import { Box3 } from '@/utilities';
 import { fromThreeMatrix } from '@/utilities';
 
-import { createSectorMetadata } from '../../testUtils/createSectorMetadata';
+import { createSectorMetadata } from '../../testutils/createSectorMetadata';
 
 describe('SectorSceneImpl', () => {
   const root = createSectorMetadata([
