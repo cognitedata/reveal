@@ -7,10 +7,11 @@ import { vec3, mat4 } from 'gl-matrix';
 
 import { SectorMetadata } from '@/datamodels/cad';
 import { SectorSceneImpl } from '@/datamodels/cad/sector/SectorScene';
-import { createSectorMetadata } from '@/__tests__/testUtils/createSectorMetadata';
 import { traverseDepthFirst } from '@/utilities/objectTraversal';
 import { Box3 } from '@/utilities';
 import { fromThreeMatrix } from '@/utilities';
+
+import { createSectorMetadata } from '../../testUtils/createSectorMetadata';
 
 describe('SectorSceneImpl', () => {
   const root = createSectorMetadata([
