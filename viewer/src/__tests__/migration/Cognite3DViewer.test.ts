@@ -103,4 +103,16 @@ describe('Cognite3DViewer', () => {
     expect(viewer.getCameraTarget()).toEqual(bbox.getCenter(new THREE.Vector3()));
     expect(bSphere.containsPoint(viewer.getCameraPosition())).toBeTrue();
   });
+
+  test('viewer can add/remove Object3d on scene', () => {
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+    const scene = viewer.getScene();
+    const obj = new THREE.Mesh(new THREE.SphereBufferGeometry(), new THREE.MeshBasicMaterial());
+
+    viewer.addObject3D(obj);
+    expect(scene.getObjectById(obj.id)).toEqual(obj);
+
+    viewer.removeObject3D(obj);
+    expect(scene.getObjectById(obj.id)).toBeFalsy();
+  });
 });
