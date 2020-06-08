@@ -277,11 +277,20 @@ export class Cognite3DViewer {
     return SupportedModelTypes.NotSupported;
   }
 
-  addObject3D(_object: THREE.Object3D): void {
-    throw new NotSupportedInMigrationWrapperError();
+  addObject3D(object: THREE.Object3D): void {
+    if (this.isDisposed) {
+      return;
+    }
+    this.scene.add(object);
+    this.renderController.redraw();
   }
-  removeObject3D(_object: THREE.Object3D): void {
-    throw new NotSupportedInMigrationWrapperError();
+
+  removeObject3D(object: THREE.Object3D): void {
+    if (this.isDisposed) {
+      return;
+    }
+    this.scene.remove(object);
+    this.renderController.redraw();
   }
 
   setSlicingPlanes(slicingPlanes: THREE.Plane[]): void {
