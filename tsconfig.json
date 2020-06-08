@@ -2,9 +2,9 @@
   "compilerOptions": {
     "jsx": "react",
     "module": "esnext",
-    "target": "es5",
+    "target": "es2015",
     "outDir": "dist",
-    "declarationDir": "dist/types",
+    "declarationDir": "dist/subsurface-visualizer/types",
     "declaration": true,
     "strict": true,
     "allowSyntheticDefaultImports": true,
@@ -19,9 +19,9 @@
     "moduleResolution": "node",
     "skipLibCheck": true,
     "lib": ["dom", "es2015", "es2017"],
-
     "baseUrl": "./",
     "paths": {
+      "@cognitedata/subsurface-components": ["./src/Components"],
       "@/*": ["src/*"],
       "@images/*": ["images/*"]
     }

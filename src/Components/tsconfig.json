@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "..",
+    "baseUrl": ".",
+    "declarationDir": "../../dist/subsurface-components/types",
+    "paths": {
+      "@cognitedata/subsurface-components": ["."]
+    }
+  },
+  "include": ["../Components/**/*.ts", "../Components/**/*.tsx"]
+}

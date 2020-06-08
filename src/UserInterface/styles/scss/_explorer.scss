@@ -1,10 +1,5 @@
 $tree-padding-left: 20px;
 $tree-padding-top: 5px;
-$tree-item-height: 20px;
-$tree-item-bottom-margin: 2px;
-$tree-item-comp-width: 20px;
-$tree-icon-size: $icon-size;
-$tree-lbl-border-radius: 5px;
 
 .explorer {
   height: calc(100% - #{$tree-padding-top});
@@ -17,103 +12,6 @@ $tree-lbl-border-radius: 5px;
   display: flex;
   flex-direction: column;
 }
-
-// *********** Virtual Tree Start ************ //
-ul {
-  margin: 0;
-  list-style: none;
-}
-
-.list-item ul {
-  padding-inline-start: $tree-item-comp-width;
-}
-
-.tree-item {
-  height: $tree-item-height;
-  display: flex;
-  margin-bottom: $tree-item-bottom-margin;
-  white-space: pre;
-  user-select: none;
-  box-sizing: border-box;
-  width: 100%;
-}
-
-.tree-item-comp {
-  height: $tree-item-height;
-  width: $tree-item-comp-width;
-}
-
-.tree-icon {
-  height: $tree-icon-size;
-  width: $tree-icon-size;
-}
-
-.tree-icon img {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.tree-item-lbl-container {
-  flex-grow: 1;
-  padding: 0 5px;
-}
-
-.tree-item-lbl {
-  display: inline-flex;
-  align-items: center;
-  border-radius: $tree-lbl-border-radius;
-  cursor: pointer;
-  height: 100%;
-  width: 100%;
-  box-sizing: border-box;
-  font-size: 0.75em;
-
-  &.selected {
-    background: #f9fcff;
-    background: -webkit-gradient(
-      linear,
-      left top,
-      left bottom,
-      color-stop(0%, white),
-      color-stop(100%, #b5d5fb)
-    );
-    background: linear-gradient(to bottom, white 0%, #b5d5fb 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#54bc3e', endColorstr='#aee850',GradientType=0 );
-    border: 1px solid #92c0f7;
-    border-radius: $tree-lbl-border-radius;
-  }
-}
-
-.tree-item:hover .tree-item-lbl:not(.selected) {
-  background: #dfedfc;
-  background: -webkit-gradient(
-    linear,
-    left top,
-    left bottom,
-    color-stop(31%, white),
-    color-stop(100%, #dfedfc)
-  );
-  background: linear-gradient(to bottom, white 0%, #dfedfc 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#94c4fe', endColorstr='#d3f6fe',GradientType=0 );
-  text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.5);
-  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2);
-  border-radius: $tree-lbl-border-radius;
-  border: 1px solid #9fc8fa;
-  color: #000;
-}
-
-.expand-btn {
-  height: 100%;
-  width: 100%;
-}
-
-.tree-picked-item {
-  width: 1em;
-  margin: 0 0.25em;
-}
-
-// *********** Virtual Tree End ************ //
 
 .node-tabs {
   height: 25px !important;

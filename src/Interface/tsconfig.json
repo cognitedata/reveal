@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "..",
+    "baseUrl": ".",
+    "declarationDir": "../../dist/subsurface-interfaces/types",
+    "paths": {}
+  },
+  "include": ["../Interface/**/*.ts"]
+}

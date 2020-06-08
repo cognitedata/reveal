@@ -16,7 +16,7 @@
     "no-irregular-whitespace": false,
     "quotemark": false,
     "member-ordering": false,
-    "prettier": [true, ".prettierc"],
+    "prettier": [true, "./.prettierc"],
     "curly": false,
     "interface-name": false,
     "brace-style": [

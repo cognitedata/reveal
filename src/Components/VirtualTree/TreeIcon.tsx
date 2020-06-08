@@ -4,6 +4,7 @@ import * as Color from "color";
 import { fabric } from "fabric";
 
 const DEFAULT_ICON_SIZE = 18;
+const USE_FABRIC = false; // todo: Mihil - remove once fabric.js evaluation is completed
 
 export interface ImageProps {
   readonly degree?: number;
@@ -21,34 +22,47 @@ export default function TreeIcon(props: {
   const containerRef = useRef<null | HTMLDivElement>(null);
   const iconSize = props.size || DEFAULT_ICON_SIZE;
 
-  // fabric js
+  // fabric js - start // todo: Mihil - remove once fabric.js evaluation is completed
 
-  // const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  // useEffect(() => {
-  //   if (props.src && canvasRef.current) {
-  //     const canvas = new fabric.Canvas(canvasRef.current);
-  //     const imgInstance = fabric.Image.fromURL(props.src!, oImg => {
-  //       //do nothing
-  //       oImg.scaleToHeight(iconSize);
-  //       oImg.scaleToWidth(iconSize);
-  //       canvas.add(oImg);
-  //     });
-  //   }
-  // }, [props.src, canvasRef.current]);
+  useEffect(() => {
+    // only works when USE_FABRIC is true
+    if (props.src && canvasRef.current) {
+      const canvas = new fabric.Canvas(canvasRef.current);
+      const imgInstance = fabric.Image.fromURL(props.src!, oImg => {
+        if (oImg) {
+          oImg.scaleToHeight(iconSize);
+          oImg.scaleToWidth(iconSize);
+
+          const filter = new fabric.Image.filters.BlendColor({
+            color: props.color ? props.color.hex() : undefined,
+            mode: "add",
+            alpha: 0.2
+          });
+          oImg.applyFilters([filter]);
+          canvas.renderAll();
+          canvas.add(oImg);
+        }
+      });
+    }
+  }, [props.src, canvasRef.current]);
+
+  // fabric.js - end
 
   const paintImage = (container: HTMLElement) => {
     const canvas = container.getElementsByTagName("canvas")[0] || document.createElement("canvas");
     const image = container.getElementsByClassName("tree-img")[0] as HTMLImageElement;
-    canvas.height = iconSize + 2;
-    canvas.width = iconSize + 2;
+    canvas.height = iconSize + 4;
+    canvas.width = iconSize + 4;
     container.appendChild(canvas);
 
     const ctx = canvas.getContext("2d");
     if (ctx) {
       ctx.imageSmoothingEnabled = false;
       ctx.imageSmoothingQuality = "high";
-      ctx.drawImage(image, 0, 0, iconSize, iconSize);
+      ctx.drawImage(image, 2, 2, iconSize, iconSize);
+
       image.style.display = "none";
 
       const imageData = ctx.getImageData(0, 0, iconSize, iconSize);
@@ -94,18 +108,25 @@ export default function TreeIcon(props: {
     }
   };
 
-  const degree = 200;
-
-  return (
-    <div className="tree-icon center" ref={containerRef}>
-      <Image
-        className="tree-img"
-        src={props.src}
-        alt={props.alt}
-        degree={degree}
-        onLoad={handleImageLoad}
-      />
-      {/* <canvas ref={canvasRef} height={iconSize} width={iconSize} /> */}
-    </div>
-  );
+  if (USE_FABRIC) {
+    // todo: Mihil - remove this check once fabric.js evaluation is completed
+    return (
+      <div className="tree-icon center" ref={containerRef}>
+        <canvas ref={canvasRef} height={iconSize} width={iconSize} />
+      </div>
+    );
+  } else {
+    return (
+      <div className="tree-icon center" ref={containerRef}>
+        <img
+          className="tree-img"
+          src={props.src}
+          alt={props.alt}
+          height={iconSize}
+          width={iconSize}
+          onLoad={handleImageLoad}
+        />
+      </div>
+    );
+  }
 }

@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import {
-  Frame,
-  FocusNormal,
-  BackgroundFilter,
-  FocusFilter,
-  CheckedAll,
-  CheckedSome,
-  FrameStippled,
-  BackgroundNormal
-} from "@/UserInterface/utils/Icon";
+
+// icons
+import Frame from "@images/Checkboxes/Frame.png";
+import FrameStippled from "@images/Checkboxes/FrameStippled.png";
+import FocusNormal from "@images/Checkboxes/FocusNormal.png";
+import FocusFilter from "@images/Checkboxes/FocusFilter.png";
+import BackgroundNormal from "@images/Checkboxes/BackgroundNormal.png";
+import BackgroundFilter from "@images/Checkboxes/BackgroundFilter.png";
+import CheckedAll from "@images/Checkboxes/CheckedAll.png";
+import CheckedSome from "@images/Checkboxes/CheckedSome.png";
+import RadioOff from "@images/Checkboxes/RadioOff.png";
+import RadioOn from "@images/Checkboxes/RadioOn.png";
 interface SpanProps {
   readonly background?: string;
   readonly disabled?: boolean;

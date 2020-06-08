@@ -17,20 +17,20 @@
 // { "name":"x_offset" ,    "valueType":"DOUBLE" }
 // { "name":"y_offset" ,    "valueType":"DOUBLE" }
 
-interface TrajectoryColumnR {
+export interface TrajectoryColumnR {
     "name":string,
     "externalId":string,
     "valueType": string, // DOUBLE | STRING | LONG
 }
 
-interface TrajectoryRow {
+export interface TrajectoryRow {
     "rowNumber": number,
     "values": [number]
 }
 
 // note: the size of the TrajectoryRows "columns" array is identical to the size of the TrajectoryRow "values" array
 
-interface TrajectoryRows {
+export interface TrajectoryRows {
     "id": number,
     "externalId": string,
     "columns": [TrajectoryColumnR],

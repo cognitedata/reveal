@@ -41,27 +41,6 @@ export interface TreeDataItem {
   domainObject?: BaseNode; // Reference to BaseNode/WellNode/SurfaceNode..etc
 }
 
-// Explorer UI Tree Node interface
-export interface TreeNode {
-  uniqueId: string;
-  name: string;
-  expanded: boolean;
-  type: string;
-  icon?: {
-    path: string;
-    description?: string;
-    color?: Color;
-  };
-  selected: boolean;
-  checked: boolean;
-  indeterminate: boolean;
-  isRadio: boolean;
-  isFilter: boolean;
-  disabled: boolean;
-  visible: boolean;
-  children: TreeNode[];
-}
-
 export type ExplorerCommandPayloadType = {
   uniqueId?: string;
   expandState?: boolean;

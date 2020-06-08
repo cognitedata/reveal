@@ -5,6 +5,8 @@ function resolve(dir) {
   return path.resolve(__dirname, dir);
 }
 
+const SUBSURFACE_COMPONENTS_PATH = "src/Components";
+
 module.exports = {
   mode: "none",
   entry: "./src/main.ts",
@@ -32,7 +34,8 @@ module.exports = {
     extensions: [".tsx", ".ts", ".js", ".png", ".svg"],
     alias: {
       "@": resolve("src"),
-      "@images": resolve("images")
+      "@images": resolve("images"),
+      "@cognitedata/subsurface-components": resolve(SUBSURFACE_COMPONENTS_PATH)
     }
   },
   output: {

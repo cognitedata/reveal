@@ -1,8 +1,10 @@
 const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
-  .BundleAnalyzerPlugin;
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const CopyPlugin = require("copy-webpack-plugin");
+
+const SUBSURFACE_COMPONENTS_PATH = "src/Components";
+const SUBSURFACE_INTERFACES_PATH = "src/Interface";
 
 function resolve(dir) {
   return path.resolve(__dirname, dir);
@@ -11,15 +13,34 @@ function resolve(dir) {
 module.exports = {
   mode: "production",
   entry: {
-    "subsurface-visualizer": "./src/index.ts"
+    "subsurface-visualizer/subsurface-visualizer": "./src/index.ts",
+    "subsurface-components/subsurface-components": `./${SUBSURFACE_COMPONENTS_PATH}/index.ts`,
+    "subsurface-interfaces/subsurface-interfaces": `./${SUBSURFACE_INTERFACES_PATH}/index.ts`
   },
   module: {
     rules: [
       {
-        test: /\.(ts|js)x?$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader"
+        test: /\.tsx?$/,
+        include: resolve("src"),
+        use: "ts-loader",
+        exclude: /node_modules/
+      },
+      {
+        test: /\.ts$/,
+        include: resolve(SUBSURFACE_COMPONENTS_PATH),
+        loader: "ts-loader",
+        options: {
+          instance: "subsurface-components",
+          configFile: resolve(SUBSURFACE_COMPONENTS_PATH + "/tsconfig.json")
+        }
+      },
+      {
+        test: /\.ts$/,
+        include: resolve(SUBSURFACE_INTERFACES_PATH),
+        loader: "ts-loader",
+        options: {
+          instance: "subsurface-interfaces",
+          configFile: resolve(SUBSURFACE_INTERFACES_PATH + "/tsconfig.json")
         }
       },
       {
@@ -43,24 +64,49 @@ module.exports = {
     extensions: [".tsx", ".ts", ".js", ".png", ".svg"],
     alias: {
       "@": resolve("src"),
-      "@images": resolve("images")
+      "@images": resolve("images"),
+      "@cognitedata/subsurface-components": resolve(SUBSURFACE_COMPONENTS_PATH),
+      "@cognite/subsurface-interfaces": resolve(SUBSURFACE_INTERFACES_PATH)
     }
   },
   output: {
     filename: "[name].js",
-    path: path.resolve(__dirname, "dist"),
+    path: resolve("dist"),
     sourceMapFilename: "[name].map",
     library: "[name]",
     libraryTarget: "umd"
   },
-  // devtool: "false",
-  devtool: "inline-source-map",
+  devtool: "false",
+  //devtool: "inline-source-map",
   plugins: [
     new CleanWebpackPlugin(),
     new CopyPlugin({
-      patterns: [{ from: "package.json" }]
+      patterns: [
+        { from: "package.json", to: resolve("dist/subsurface-visualizer") },
+        { from: "README.md", to: resolve("dist/subsurface-visualizer") },
+        {
+          context: resolve(SUBSURFACE_COMPONENTS_PATH),
+          from: "package.json",
+          to: resolve("dist/subsurface-components")
+        },
+        {
+          context: resolve(SUBSURFACE_COMPONENTS_PATH),
+          from: "README.md",
+          to: resolve("dist/subsurface-components")
+        },
+        {
+          context: resolve(SUBSURFACE_INTERFACES_PATH),
+          from: "package.json",
+          to: resolve("dist/subsurface-interfaces")
+        },
+        {
+          context: resolve(SUBSURFACE_INTERFACES_PATH),
+          from: "README.md",
+          to: resolve("dist/subsurface-interfaces")
+        }
+      ]
     })
-    //new BundleAnalyzerPlugin()
+    // new BundleAnalyzerPlugin()
   ],
   externals: {
     react: {

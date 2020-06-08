@@ -7,7 +7,7 @@
  * This is the interface for the Well object
  */
 
-interface WellMeta {
+export interface WellMeta {
     "active_indicator": string,
     "basin_name": string,
     "country_name": string,
@@ -31,7 +31,7 @@ interface WellMeta {
 
 }
 
-interface Well {
+export interface Well {
     "externalId": string,
     "name": string,
     "parentId": number,

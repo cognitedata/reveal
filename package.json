@@ -5,7 +5,6 @@
   "repository": "cognitedata/subsurface-visualizer",
   "main": "subsurface-visualizer.js",
   "module": "subsurface-visualizer.js",
-  "source": "../src/index.ts",
   "types": "types/index.d.ts",
   "engines": {
     "node": ">=10"
@@ -14,7 +13,7 @@
     "types"
   ],
   "scripts": {
-    "build": "webpack --config webpack.config.prod.js && npm run build:types",
+    "build": "webpack --config webpack.config.prod.js",
     "build:types": "tsc --emitDeclarationOnly",
     "build-dev": "webpack --debug",
     "build:css": "node-sass src/UserInterface/styles/scss -o src/UserInterface/styles/css ",

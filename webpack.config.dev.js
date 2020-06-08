@@ -1,6 +1,8 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
+const SUBSURFACE_COMPONENTS_PATH = "src/Components";
+
 function resolve(dir) {
   return path.resolve(__dirname, dir);
 }
@@ -21,7 +23,8 @@ module.exports = {
     extensions: [".tsx", ".ts", ".js", ".png", ".svg"],
     alias: {
       "@": resolve("src"),
-      "@images": resolve("images")
+      "@images": resolve("images"),
+      "@cognitedata/subsurface-components": resolve(SUBSURFACE_COMPONENTS_PATH)
     }
   },
 
@@ -29,11 +32,9 @@ module.exports = {
     rules: [
       // use babel-loader to load our tsx files
       {
-        test: /\.(ts|js)x?$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader"
-        }
+        test: /\.tsx?$/,
+        use: "ts-loader",
+        exclude: /node_modules/
       },
       // sass-loader to bundle all the css files into one file and style-loader to add all the styles  inside the style tag of the document
       {
@@ -54,5 +55,5 @@ module.exports = {
     ]
   },
   plugins: [new HtmlWebpackPlugin()],
-  devtool: "inline-source-map"
+  devtool: "source-map"
 };

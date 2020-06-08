@@ -1,8 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-
-import VirtualTree from "./VirtualTree";
-import { TreeDataItem, TreeNode } from "@/UserInterface/interfaces/explorer";
+import { TreeDataItem } from "@/UserInterface/interfaces/explorer";
 import {
   onToggleNodeSelect,
   onToggleNodeExpand,
@@ -11,6 +9,8 @@ import {
 import NodeTabs from "./NodeTabs";
 import { getVisibleNodes } from "@/UserInterface/redux/selectors/explorer";
 import { ReduxStore } from "@/UserInterface/interfaces/common";
+import { TreeNode, VirtualTree } from "@cognitedata/subsurface-components";
+import { Appearance } from "@/Core/States/Appearance";
 
 // Get a copy of nodes
 function getCopyOfNodes(nodes?: { [key: string]: TreeDataItem }): { [key: string]: TreeNode } {
@@ -20,7 +20,6 @@ function getCopyOfNodes(nodes?: { [key: string]: TreeDataItem }): { [key: string
       if (nodes.hasOwnProperty(id)) {
         nodesCopy[id] = {
           ...nodes[id],
-          icon: nodes[id].icon || "",
           children: []
         };
       }
@@ -80,7 +79,7 @@ export function Explorer() {
     <div className="explorer">
       <VirtualTree
         data={data}
-        iconSize={18}
+        iconSize={Appearance.treeIconSize}
         onToggleNodeSelect={handleToggleNodeSelect}
         onToggleNodeExpand={handleToggleNodeExpand}
         onToggleNodeCheck={handleToggleNodeCheck}

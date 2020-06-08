@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import {
-  ExpandOpen,
-  ExpandClosed,
-  ExpandOpenFocus,
-  ExpandClosedFocus
-} from "@/UserInterface/utils/Icon";
+// images
+import ExpandOpen from "@images/Expanders/ExpandOpen.png";
+import ExpandClosed from "@images/Expanders/ExpandClosed.png";
+import ExpandOpenFocus from "@images/Expanders/ExpandOpenFocus.png";
+import ExpandClosedFocus from "@images/Expanders/ExpandClosedFocus.png";
 interface ExpandProps {
   readonly expanded?: boolean;
 }
@@ -13,24 +12,23 @@ interface ExpandProps {
 const Expand = styled.div<ExpandProps>`
   height: 0.7em;
   width: 0.8em;
-  background-image: ${(props) =>
-    props.expanded ? `url(${ExpandOpen})` : `url(${ExpandClosed})`};
+  background-image: ${props => (props.expanded ? `url(${ExpandOpen})` : `url(${ExpandClosed})`)};
   background-repeat: no-repeat, no-repeat;
   .expand-btn:hover & {
-    background-image: ${(props) =>
+    background-image: ${props =>
       props.expanded ? `url(${ExpandOpenFocus})` : `url(${ExpandClosedFocus})`};
     background-repeat: no-repeat, no-repeat;
   }
 `;
 export function ExpandButton(props: {
   expandable: boolean;
-  expanded: boolean;
+  expanded?: boolean;
   onExpand: (e: any) => void;
   onCollapse: (e: any) => void;
 }) {
-  const [expanded, setExpanded] = useState(props.expanded);
+  const [expanded, setExpanded] = useState(props.expanded || true);
 
-  const handleClick = function(e: any) {
+  const handleClick = (e: any) => {
     if (expanded) {
       props.onCollapse(e);
     } else {

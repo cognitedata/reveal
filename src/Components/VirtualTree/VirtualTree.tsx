@@ -1,28 +1,25 @@
+import "./virtual-tree.scss";
 import React from "react";
 import { AutoSizer } from "react-virtualized/dist/es/AutoSizer";
 import { List as VirtualList } from "react-virtualized/dist/es/List";
-
 import TreeIcon from "./TreeIcon";
 import { ExpandButton } from "./ExpandButton";
 import { TreeCheckBox } from "./TreeCheckbox";
-import { TreeNode } from "@/UserInterface/interfaces/explorer";
+import { VirtualTreeProps } from "./VirtualTreeProps";
+import { TreeNode } from "./TreeNode";
 
-const DEFAULT_ROW_HEIGHT = 22;
+const readCssVariable = (property: string): number => {
+  return parseInt(getComputedStyle(document.documentElement).getPropertyValue(property), 10);
+};
+const TREE_ITEM_HEIGHT =
+  readCssVariable("--v-tree-item-height") + readCssVariable("--v-tree-item-bottom-margin");
 
-export default function VirtualTree(props: {
-  data?: TreeNode[];
-  iconSize?: number;
-  rowHeight?: number;
-  expandable?: boolean;
-  selectedIds?: string[];
-  onToggleNodeSelect: (id: string, state: boolean) => void;
-  onToggleNodeExpand: (id: string, state: boolean) => void;
-  onToggleNodeCheck: (id: string, state: boolean) => void;
-}) {
+export default function VirtualTree(props: VirtualTreeProps) {
   const { onToggleNodeSelect, onToggleNodeExpand, onToggleNodeCheck } = props;
 
   const data = props.data || [];
-  const singleRowHeight = props.rowHeight || DEFAULT_ROW_HEIGHT;
+  const singleRowHeight = props.rowHeight || TREE_ITEM_HEIGHT;
+
   let List: any;
   function setRef(ref: any) {
     List = ref;

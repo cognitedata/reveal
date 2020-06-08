@@ -7,7 +7,7 @@
  * This is the interface for the Trajectory object
  */
 
-interface TrajectoryMeta {
+export interface TrajectoryMeta {
     "type":"Trajectory",
     "object_state": string,
     "effective_data": string,
@@ -57,7 +57,7 @@ interface TrajectoryMeta {
     "is_survey_program_read_only": string,
 }
 
-interface TrajectoryColumn {
+export interface TrajectoryColumn {
     "name":string,
     "externalId":string,
     "description":string,
@@ -73,7 +73,7 @@ interface TrajectoryColumn {
 
 
 
-interface Trajectory {
+export interface Trajectory {
     "id": number,
     "externalId": string,
     "name": string,
