@@ -68,7 +68,7 @@ export function Migration() {
 
       async function addModel(options: AddModelOptions) {
         switch (
-          await viewer.determineModelType(options.modelId, options.revisionId)
+        await viewer.determineModelType(options.modelId, options.revisionId)
         ) {
           case SupportedModelTypes.CAD:
             const model = await viewer.addModel(options);
@@ -204,9 +204,19 @@ export function Migration() {
       if (modelIdStr && revisionIdStr) {
         const modelId = Number.parseInt(modelIdStr, 10);
         const revisionId = Number.parseInt(revisionIdStr, 10);
-        addModel({ modelId, revisionId });
+        await addModel({ modelId, revisionId });
       }
-      viewer.on('click', function (event) {
+
+
+
+      if (cadModels.length > 0) {
+        const arr = [...Array(10).keys()]
+        //arr.forEach(num => cadModels[0].setNodeColor(num, 100, 100, 100));
+      }
+
+
+
+      viewer.on('click', async function (event) {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
         const intersection = viewer.getIntersectionFromPixel(offsetX, offsetY);
