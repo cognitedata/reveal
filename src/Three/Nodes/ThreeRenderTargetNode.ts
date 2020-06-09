@@ -38,6 +38,7 @@ import { PanToolCommand } from "../Commands/Tools/PanToolCommand";
 import { SelectCommand } from "../Commands/Tools/SelectCommand";
 import { ZoomToolCommand } from "../Commands/Tools/ZoomToolCommand";
 import { ZoomToTargetToolCommand } from "../Commands/Tools/ZoomToTargetToolCommand";
+import { ToolCommand } from "@/Three/Commands/Tools/ToolCommand";
 
 const DirectionalLightName = "DirectionalLight";
 
@@ -54,6 +55,28 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   private isEmpty = true;
   private clock = new THREE.Clock();
   private _camera: Camera | null = null;
+
+  public _activeTool: ToolCommand | null = null;
+
+  public setActiveTool(tool: ToolCommand)
+  {
+    this._activeTool = tool;
+    if (!this._camera)
+      return;
+
+    const controls = this._camera.controls;
+
+    if (tool instanceof PanToolCommand)
+      controls.enabled = true;
+    else
+      controls.enabled = false;
+  }
+
+  public getActiveTool()
+  {
+    return this._activeTool;
+  }
+
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -87,16 +110,13 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   private get renderer(): THREE.WebGLRenderer
   {
-
     if (!this._renderer)
     {
       const renderer = new THREE.WebGLRenderer({ antialias: true, });
       renderer.autoClear = false;
       renderer.gammaFactor = 2.2;
       renderer.gammaOutput = true;
-
       this._renderer = renderer;
-      this.setRenderSize();
     }
     return this._renderer;
   }
@@ -139,35 +159,62 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     const ambientLight = new THREE.AmbientLight(0x404040, 0.25); // soft white light
     const directionalLight = new THREE.DirectionalLight(ThreeConverter.toColor(Colors.white), 0.95);
     directionalLight.name = DirectionalLightName;
-    const controls = this.controls;
-    var self = this;
-    if (controls)
-      controls.addEventListener("update", () => ThreeRenderTargetNode.updateLightPositionStatic(self));
-
     this._scene.add(ambientLight);
     this._scene.add(directionalLight);
+
+    this.controls.addEventListener("update", () => this.updateLightPosition());
+    this.domElement.addEventListener('click', (event) => this.clickEvent(event), false);
     this.render();
   }
 
+  private getCanvasRelativePosition(event: MouseEvent): THREE.Vector2 
+  {
+    const rect = this.domElement.getBoundingClientRect();
+
+    let x = (event.clientX - rect.left) / rect.width;
+    let y = (event.clientY - rect.top) / rect.height;
+
+    x = +x * 2 - 1;
+    y = -y * 2 + 1;
+    return new THREE.Vector2(x, y);
+  }
+
+  private clickEvent(event: MouseEvent): void
+  {
+    if (!(this.getActiveTool() instanceof ZoomToTargetToolCommand))
+      return;
+
+    if (!this._camera)
+      return;
+
+    const pixel = this.getCanvasRelativePosition(event);
+
+    //https://threejsfundamentals.org/threejs/lessons/threejs-picking.html 
+
+    const raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(pixel, this._camera.camera);
+    var intersects = raycaster.intersectObjects(this.scene.children, true);
+
+    for (var i = 0; i < intersects.length; i++)
+    {
+      const intersection = intersects[i];
+      this._camera.zoomToTarget(intersection.point);
+      break;
+    }
+  }  
+  
   //==================================================
   // OVERRIDES of RenderTargetNode
   //==================================================
 
   public /*override*/ get domElement(): HTMLElement { return this.renderer.domElement; }
 
-  protected /*override*/ setRenderSize(): void
+  public /*override*/ onResize()
   {
     const pixelRange = this.pixelRange;
     this.renderer.setSize(pixelRange.x.delta, pixelRange.y.delta);
-  }
-
-  public /*override*/ onResize()
-  {
-    super.onResize();
-    if (this._camera){
-      const canvas = this.renderer.domElement;
-      this._camera.onResize(canvas.clientWidth / canvas.clientHeight);
-    }
+    if (this._camera)
+      this._camera.onResize(this.aspectRatio);
     this.invalidate();
   }
 
@@ -217,7 +264,6 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   public addTools(toolbar: IToolbar)
   {
-    
     // Tools
     toolbar.add(new SelectCommand(this));
     toolbar.add(new PanToolCommand(this));
@@ -235,14 +281,14 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     toolbar.beginOptionMenu();
     for (let viewFrom = 0; viewFrom < 6; viewFrom++)
       toolbar.add(new ViewFromCommand(this, viewFrom));
-    toolbar.beginOptionMenu();    
+    toolbar.beginOptionMenu();
   }
 
   //==================================================
   // INSTANCE METHODS: Operations on camera or light
   //==================================================
 
-  public viewAll(): boolean 
+  public viewAll(): boolean
   {
     return !this._camera ? false : this._camera.viewRange(this.getBoundingBoxFromViews());
   }
@@ -292,14 +338,5 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     vectorToCenter.add(target)
 
     light.position.copy(vectorToCenter);
-  }
-
-  //==================================================
-  // STATIC METHODS
-  //==================================================
-
-  static updateLightPositionStatic(node: ThreeRenderTargetNode): void
-  {
-    node.updateLightPosition();
   }
 }

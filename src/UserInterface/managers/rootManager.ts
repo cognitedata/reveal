@@ -54,7 +54,6 @@ export default class RootManager {
       for (let idx = 0; idx < RootManager.RENDER_TARGETS; idx++) {
         const range = Range3.createByMinAndMax(0, 0, 1, 1);
         const target = new ThreeRenderTargetNode(range);
-        target.setWindowDimensions(element.clientHeight, element.clientWidth);
         target.name = "3d";
         targets[target.name] = target;
         root.targets.addChild(target);
