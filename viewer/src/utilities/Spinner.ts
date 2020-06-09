@@ -19,7 +19,7 @@ export class Spinner {
     document.head.appendChild(style);
   }
 
-  private el: HTMLElement;
+  private readonly el: HTMLElement;
 
   constructor(parent: HTMLElement) {
     Spinner.loadStyles();
