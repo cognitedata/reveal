@@ -49,7 +49,7 @@ export function Simple() {
         modelRevision !== undefined
       ) {
         model = await revealManager.addModel('cad', modelRevision);
-        revealManager.getLoadingStateObserver().subscribe(setIsLoading);
+        revealManager.on('loadingStateChanged', setIsLoading);
       } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'

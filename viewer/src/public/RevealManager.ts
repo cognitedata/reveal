@@ -22,11 +22,12 @@ import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloud
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
-import { Observable } from 'rxjs';
 
 type CdfModelIdentifier = { modelRevision: IdEither; format: File3dFormat };
+type LoadingStateChangeListener = (isLoading: boolean) => any;
+
 export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
-  private readonly loadingStateObserver: Observable<boolean>;
+  private readonly eventListeners: { loadingStateChanged: LoadingStateChangeListener[] };
 
   constructor(client: CogniteClient, options?: RevealOptions) {
     const modelDataParser: CadSectorParser = new CadSectorParser();
@@ -61,7 +62,10 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
 
     super(cadManager, materialManager, pointCloudManager);
 
-    this.loadingStateObserver = sectorRepository.getLoadingStateObserver();
+    this.eventListeners = {
+      loadingStateChanged: new Array<LoadingStateChangeListener>()
+    };
+    sectorRepository.getLoadingStateObserver().subscribe(this.notifyLoadingStateListeners.bind(this));
   }
 
   public addModel(
@@ -94,8 +98,23 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
     }
   }
 
-  public getLoadingStateObserver(): Observable<boolean> {
-    return this.loadingStateObserver;
+  public on(event: 'loadingStateChanged', listener: LoadingStateChangeListener): void {
+    if (event !== 'loadingStateChanged') {
+      throw new Error(`Unsupported event "${event}"`);
+    }
+    this.eventListeners[event].push(listener);
+  }
+  public off(event: 'loadingStateChanged', listener: LoadingStateChangeListener): void {
+    if (event !== 'loadingStateChanged') {
+      throw new Error(`Unsupported event "${event}"`);
+    }
+    this.eventListeners[event] = this.eventListeners[event].filter(fn => fn !== listener);
+  }
+
+  private notifyLoadingStateListeners(isLoaded: boolean) {
+    this.eventListeners.loadingStateChanged.forEach(handler => {
+      handler(isLoaded);
+    });
   }
 
   private createModelIdentifier(id: string | number): IdEither {
