@@ -3,9 +3,9 @@
  */
 
 import { vec3 } from 'gl-matrix';
-import { Box3 } from './Box3';
+import { Box3 } from '@/utilities/Box3';
 import { SectorMetadata } from '@/datamodels/cad/sector/types';
-import { traverseDepthFirst } from './traversal';
+import { traverseDepthFirst } from '@/utilities/objectTraversal';
 
 export interface SuggestedCameraConfig {
   position: vec3;
