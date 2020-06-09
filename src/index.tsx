@@ -7,6 +7,7 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 import '@cognite/cogs.js/dist/cogs.css';
+import I18nContainer from './containers/I18nContainer';
 
 if (process.env.REACT_APP_SENTRY_DSN) {
   Sentry.init({
@@ -20,7 +21,12 @@ if (process.env.REACT_APP_SENTRY_DSN) {
   });
 }
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(
+  <I18nContainer>
+    <App />
+  </I18nContainer>,
+  document.getElementById('root')
+);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
