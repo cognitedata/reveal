@@ -14,3 +14,4 @@ export {
   fromThreeMatrix
 } from './utilities';
 export { BoundingBoxClipper } from './BoundingBoxClipper';
+export { isMobileOrTablet } from './isMobileOrTablet';
