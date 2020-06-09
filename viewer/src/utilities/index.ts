@@ -19,3 +19,4 @@ export {
   fromThreeMatrix
 } from './threeConverters';
 export { BoundingBoxClipper } from './BoundingBoxClipper';
+export { isMobileOrTablet } from './isMobileOrTablet';
