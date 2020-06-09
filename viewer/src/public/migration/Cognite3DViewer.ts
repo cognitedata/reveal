@@ -38,7 +38,7 @@ import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloudMetadataRepository';
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
-import { BoundingBoxClipper } from '@/utilities';
+import { BoundingBoxClipper, isMobileOrTablet } from '@/utilities';
 
 export interface RelativeMouseEvent {
   offsetX: number;
@@ -96,7 +96,11 @@ export class Cognite3DViewer {
       throw new NotSupportedInMigrationWrapperError('ViewCube is not supported');
     }
 
-    this.renderer = options.renderer || new THREE.WebGLRenderer();
+    this.renderer =
+      options.renderer ||
+      new THREE.WebGLRenderer({
+        antialias: shouldEnableAntialiasing()
+      });
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
     this.canvas.style.minWidth = '100%';
@@ -723,6 +727,10 @@ export class Cognite3DViewer {
     // on hover callback
     canvas.addEventListener('mousemove', onHoverCallback);
   };
+}
+
+function shouldEnableAntialiasing(): boolean {
+  return !isMobileOrTablet();
 }
 
 function adjustCamera(camera: THREE.Camera, width: number, height: number) {
