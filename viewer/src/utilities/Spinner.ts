@@ -2,8 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-// @ts-ignore
-import css from 'raw-loader!./spinnerStyles.css';
+import css from './spinnerStyles.css';
 
 export class Spinner {
   private static readonly stylesId = 'reveal-viewer-spinner-styles';
