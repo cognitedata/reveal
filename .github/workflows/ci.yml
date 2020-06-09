@@ -85,10 +85,6 @@ jobs:
       working-directory: viewer
       run: npm install
 
-    - name: Build release
-      working-directory: viewer
-      run: npm run release
-
     - name: Lint
       working-directory: viewer
       continue-on-error: true
@@ -104,6 +100,10 @@ jobs:
       working-directory: viewer
       run: |
         xvfb-run npm run coverage
+
+    - name: Build release
+      working-directory: viewer
+      run: npm run release
 
     - name: Publish to codecov
       uses: codecov/codecov-action@v1
