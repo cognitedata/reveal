@@ -13,7 +13,7 @@ import { SectorQuads } from '../rendering/types';
 import { disposeAttributeArrayOnUpload } from '@/utilities/disposeAttributeArrayOnUpload';
 import { pipe, GroupedObservable, Observable, OperatorFunction, of, empty } from 'rxjs';
 import { groupBy, mergeMap, distinctUntilKeyChanged, withLatestFrom, flatMap } from 'rxjs/operators';
-import { traverseDepthFirst } from '@/utilities/traversal';
+import { traverseDepthFirst } from '@/utilities/objectTraversal';
 
 const emptyGeometry = new THREE.Geometry();
 
@@ -70,7 +70,7 @@ export function consumeSectorSimple(sector: SectorQuads, materials: Materials): 
   const obj = new THREE.Mesh(geometry, materials.simple);
   obj.onAfterRender = () => {
     disposeAttributeArrayOnUpload.bind(interleavedBuffer32)();
-    obj.onAfterRender = () => { };
+    obj.onAfterRender = () => {};
   };
 
   // obj.name = `Quads ${sectorId}`;
