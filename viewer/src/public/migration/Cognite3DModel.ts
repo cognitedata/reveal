@@ -9,7 +9,7 @@ import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { Color, SupportedModelTypes } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
-import { toThreeJsBox3, toThreeMatrix4 } from '@/utilities/utilities';
+import { toThreeJsBox3, toThreeMatrix4 } from '@/utilities';
 import { CadRenderHints, CadNode, ModelNodeAppearance } from '@/experimental';
 import { CadLoadingHints } from '@/datamodels/cad/CadLoadingHints';
 import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
@@ -134,6 +134,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
         b
       };
     } catch (error) {
+      // tslint:disable-next-line: no-console
       console.error(`Cannot get color of ${nodeId} because of error:`, error);
       return {
         r: 255,

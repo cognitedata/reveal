@@ -16,7 +16,7 @@ import { CadModelMetadata } from './CadModelMetadata';
 import { RootSectorNode } from './sector/RootSectorNode';
 import { RenderMode } from './rendering/RenderMode';
 import { toThreeVector3, toThreeMatrix4, toThreeJsBox3 } from '@/utilities';
-import { suggestCameraConfig } from '@/utilities/cameraUtils';
+import { suggestCameraConfig } from './cameraconfig';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 

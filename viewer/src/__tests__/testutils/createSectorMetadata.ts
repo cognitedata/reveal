@@ -2,8 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
-import { SectorMetadata } from '@/datamodels/cad/sector/types';
-import { Box3 } from '@/utilities/Box3';
+import { SectorMetadata } from '@/datamodels/cad';
+import { Box3 } from '@/utilities';
 import { vec3 } from 'gl-matrix';
 
 export type SectorTree = [number, SectorTree[], Box3?];
