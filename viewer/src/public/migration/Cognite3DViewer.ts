@@ -38,6 +38,7 @@ import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloud
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
 import { BoundingBoxClipper, isMobileOrTablet, File3dFormat } from '@/utilities';
+import { Spinner } from '@/utilities/Spinner';
 
 export interface RelativeMouseEvent {
   offsetX: number;
@@ -84,6 +85,8 @@ export class Cognite3DViewer {
   private _slicingNeedsUpdate: boolean = false;
   private _geometryFilters: GeometryFilter[] = [];
 
+  private readonly spinner: Spinner;
+
   constructor(options: Cognite3DViewerOptions) {
     if (options.enableCache) {
       throw new NotSupportedInMigrationWrapperError('Cache is not supported');
@@ -108,6 +111,7 @@ export class Cognite3DViewer {
     this.canvas.style.maxHeight = '100%';
     this.domElement = options.domElement || createCanvasWrapper();
     this.domElement.appendChild(this.canvas);
+    this.spinner = new Spinner(this.domElement);
 
     this.camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
     this.camera.position.x = 30;
@@ -151,6 +155,14 @@ export class Cognite3DViewer {
     this.revealManager = new RevealManagerBase(this.cadManager, this.materialManager, this.pointCloudManager);
     this.startPointerEventListeners();
 
+    this.sectorRepository.getLoadingStateObserver().subscribe(isLoading => {
+      if (isLoading) {
+        this.spinner.show();
+      } else {
+        this.spinner.hide();
+      }
+    });
+
     this.animate(0);
   }
 
@@ -172,6 +184,7 @@ export class Cognite3DViewer {
       model.dispose();
     }
     this.models.splice(0);
+    this.spinner.dispose();
   }
 
   on(event: 'click' | 'hover', _callback: PointerEventDelegate): void;
