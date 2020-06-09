@@ -183,6 +183,14 @@ export class Camera
     return true;
   }
 
+  public zoomToTarget(position: THREE.Vector3): void
+  {
+    const controls = this.controls;
+    const distance = controls.getPosition().distanceTo(position);
+    controls.setTarget(position.x, position.y, position.z, true);
+    controls.dollyTo(distance / 2, true)
+  }
+
   //==================================================
   // INSTANCE METHODS: Creators
   //==================================================

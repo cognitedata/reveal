@@ -159,55 +159,51 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     const ambientLight = new THREE.AmbientLight(0x404040, 0.25); // soft white light
     const directionalLight = new THREE.DirectionalLight(ThreeConverter.toColor(Colors.white), 0.95);
     directionalLight.name = DirectionalLightName;
-    const controls = this.controls;
-    var self = this;
-    if (controls)
-      controls.addEventListener("update", () => ThreeRenderTargetNode.updateLightPositionStatic(self));
-
     this._scene.add(ambientLight);
     this._scene.add(directionalLight);
 
-    this.domElement.addEventListener('click', (event) => this.raycast(event), false);
+    this.controls.addEventListener("update", () => this.updateLightPosition());
+    this.domElement.addEventListener('click', (event) => this.clickEvent(event), false);
     this.render();
   }
 
-  raycast(e: MouseEvent): void
+  private getCanvasRelativePosition(event: MouseEvent): THREE.Vector2 
   {
+    const rect = this.domElement.getBoundingClientRect();
+
+    let x = (event.clientX - rect.left) / rect.width;
+    let y = (event.clientY - rect.top) / rect.height;
+
+    x = +x * 2 - 1;
+    y = -y * 2 + 1;
+    return new THREE.Vector2(x, y);
+  }
+
+  private clickEvent(event: MouseEvent): void
+  {
+    if (!(this.getActiveTool() instanceof ZoomToTargetToolCommand))
+      return;
+
     if (!this._camera)
       return;
 
-    const raycaster = new THREE.Raycaster();
-    //1. sets the mouse position with a coordinate system where the center
-    //   of the screen is the origin
-    const x = (e.clientX / window.innerWidth) * 2 - 1;
-    const y = - (e.clientY / window.innerHeight) * 2 + 1;
+    const pixel = this.getCanvasRelativePosition(event);
 
     //https://threejsfundamentals.org/threejs/lessons/threejs-picking.html 
-    console.log(pixelRange.toString());
 
-
-    //2. set the picking ray from the camera position and mouse coordinates
-    raycaster.setFromCamera({ x, y }, this._camera.camera);
-
-    //3. compute intersections
-    var intersects = raycaster.intersectObjects(this.scene.children);
-
+    const raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(pixel, this._camera.camera);
+    var intersects = raycaster.intersectObjects(this.scene.children, true);
 
     for (var i = 0; i < intersects.length; i++)
     {
-      console.log(intersects[i]);
-      /*
-          An intersection has the following properties :
-              - object : intersected object (THREE.Mesh)
-              - distance : distance from camera to intersection (number)
-              - face : intersected face (THREE.Face3)
-              - faceIndex : intersected face index (number)
-              - point : intersection point (THREE.Vector3)
-              - uv : intersection point in the object's UV coordinates (THREE.Vector2)
-      */
+      const intersection = intersects[i];
+      this._camera.zoomToTarget(intersection.point);
+      break;
     }
-
-  }  //==================================================
+  }  
+  
+  //==================================================
   // OVERRIDES of RenderTargetNode
   //==================================================
 
@@ -292,7 +288,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   // INSTANCE METHODS: Operations on camera or light
   //==================================================
 
-  public viewAll(): boolean 
+  public viewAll(): boolean
   {
     return !this._camera ? false : this._camera.viewRange(this.getBoundingBoxFromViews());
   }
@@ -342,14 +338,5 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     vectorToCenter.add(target)
 
     light.position.copy(vectorToCenter);
-  }
-
-  //==================================================
-  // STATIC METHODS
-  //==================================================
-
-  static updateLightPositionStatic(node: ThreeRenderTargetNode): void
-  {
-    node.updateLightPosition();
   }
 }

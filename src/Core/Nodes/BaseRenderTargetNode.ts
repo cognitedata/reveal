@@ -10,10 +10,14 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
   // INSTANCE FIELDS
   //==================================================
 
-  public get aspectRatio(): number { return this.pixelRange.aspectRatio2; }
-
   private _isInvalidated = true;
   private _fractionRange: Range3;
+
+  //==================================================
+  // INSTANCE PROPERTIES
+  //==================================================
+
+  public get aspectRatio(): number { return this.pixelRange.aspectRatio2; }
 
   public get pixelRange(): Range3
   {
