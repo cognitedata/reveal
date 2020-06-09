@@ -166,10 +166,48 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
     this._scene.add(ambientLight);
     this._scene.add(directionalLight);
+
+    this.domElement.addEventListener('click', (event) => this.raycast(event), false);
     this.render();
   }
 
-  //==================================================
+  raycast(e: MouseEvent): void
+  {
+    if (!this._camera)
+      return;
+
+    const raycaster = new THREE.Raycaster();
+    //1. sets the mouse position with a coordinate system where the center
+    //   of the screen is the origin
+    const x = (e.clientX / window.innerWidth) * 2 - 1;
+    const y = - (e.clientY / window.innerHeight) * 2 + 1;
+
+    //https://threejsfundamentals.org/threejs/lessons/threejs-picking.html 
+    console.log(pixelRange.toString());
+
+
+    //2. set the picking ray from the camera position and mouse coordinates
+    raycaster.setFromCamera({ x, y }, this._camera.camera);
+
+    //3. compute intersections
+    var intersects = raycaster.intersectObjects(this.scene.children);
+
+
+    for (var i = 0; i < intersects.length; i++)
+    {
+      console.log(intersects[i]);
+      /*
+          An intersection has the following properties :
+              - object : intersected object (THREE.Mesh)
+              - distance : distance from camera to intersection (number)
+              - face : intersected face (THREE.Face3)
+              - faceIndex : intersected face index (number)
+              - point : intersection point (THREE.Vector3)
+              - uv : intersection point in the object's UV coordinates (THREE.Vector2)
+      */
+    }
+
+  }  //==================================================
   // OVERRIDES of RenderTargetNode
   //==================================================
 

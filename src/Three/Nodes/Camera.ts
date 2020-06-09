@@ -29,15 +29,20 @@ export class Camera
   // INSTANCE FIELDS
   //==================================================
 
-  private _camera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
-  private _controls: CameraControls;
+  private _camera: THREE.Camera;
+  private _controls: CameraControls | null = null;
 
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
   public get camera(): THREE.Camera { return this._camera; }
-  public get controls(): CameraControls { return this._controls; }
+  public get controls(): CameraControls
+  {
+    if (!this._controls)
+      throw Error("Controls is not set");
+    return this._controls;
+  }
 
   //==================================================
   // CONSTRUCTOR
@@ -46,7 +51,10 @@ export class Camera
   constructor(target: ThreeRenderTargetNode)
   {
     this._camera = this.createPerspectiveCamera(target);
-    this._controls = new CameraControls(this._camera, target.domElement);
+    if (this._camera instanceof THREE.PerspectiveCamera)
+      this._controls = new CameraControls(this._camera, target.domElement);
+    else if (this._camera instanceof THREE.OrthographicCamera)
+      this._controls = new CameraControls(this._camera, target.domElement);
   }
 
   //==================================================
@@ -61,7 +69,7 @@ export class Camera
 
     if (!(camera instanceof THREE.PerspectiveCamera))
       return;
-      
+
     camera.aspect = aspectRatio;
     camera.updateProjectionMatrix();
 
@@ -72,7 +80,7 @@ export class Camera
     return this.viewFrom(boundingBox, -2);
   }
 
-  public viewFrom(boundingBox: Range3|undefined, index: number): boolean
+  public viewFrom(boundingBox: Range3 | undefined, index: number): boolean
   {
     if (!boundingBox || boundingBox.isEmpty)
       return false;
