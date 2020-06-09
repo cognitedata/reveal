@@ -30,7 +30,7 @@ export default function main(elm: HTMLElement) {
   {
     const range = Range3.createByMinAndMax(0, 0, 1, 1);
     const target = new ThreeRenderTargetNode(range);
-    target.setWindowDimensions(window.innerHeight, window.innerWidth);
+    target.onResize();
     root.targets.addChild(target);
   }
   module.initializeWhenPopulated(root);

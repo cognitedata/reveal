@@ -38,6 +38,7 @@ import { PanToolCommand } from "../Commands/Tools/PanToolCommand";
 import { SelectCommand } from "../Commands/Tools/SelectCommand";
 import { ZoomToolCommand } from "../Commands/Tools/ZoomToolCommand";
 import { ZoomToTargetToolCommand } from "../Commands/Tools/ZoomToTargetToolCommand";
+import { ToolCommand } from "@/Three/Commands/Tools/ToolCommand";
 
 const DirectionalLightName = "DirectionalLight";
 
@@ -54,6 +55,28 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   private isEmpty = true;
   private clock = new THREE.Clock();
   private _camera: Camera | null = null;
+
+  public _activeTool: ToolCommand | null = null;
+
+  public setActiveTool(tool: ToolCommand)
+  {
+    this._activeTool = tool;
+    if (!this._camera)
+      return;
+
+    const controls = this._camera.controls;
+
+    if (tool instanceof PanToolCommand)
+      controls.enabled = true;
+    else
+      controls.enabled = false;
+  }
+
+  public getActiveTool()
+  {
+    return this._activeTool;
+  }
+
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -87,16 +110,13 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   private get renderer(): THREE.WebGLRenderer
   {
-
     if (!this._renderer)
     {
       const renderer = new THREE.WebGLRenderer({ antialias: true, });
       renderer.autoClear = false;
       renderer.gammaFactor = 2.2;
       renderer.gammaOutput = true;
-
       this._renderer = renderer;
-      this.setRenderSize();
     }
     return this._renderer;
   }
@@ -155,19 +175,12 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   public /*override*/ get domElement(): HTMLElement { return this.renderer.domElement; }
 
-  protected /*override*/ setRenderSize(): void
+  public /*override*/ onResize()
   {
     const pixelRange = this.pixelRange;
     this.renderer.setSize(pixelRange.x.delta, pixelRange.y.delta);
-  }
-
-  public /*override*/ onResize()
-  {
-    super.onResize();
-    if (this._camera){
-      const canvas = this.renderer.domElement;
-      this._camera.onResize(canvas.clientWidth / canvas.clientHeight);
-    }
+    if (this._camera)
+      this._camera.onResize(this.aspectRatio);
     this.invalidate();
   }
 
@@ -217,7 +230,6 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   public addTools(toolbar: IToolbar)
   {
-    
     // Tools
     toolbar.add(new SelectCommand(this));
     toolbar.add(new PanToolCommand(this));
@@ -235,7 +247,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     toolbar.beginOptionMenu();
     for (let viewFrom = 0; viewFrom < 6; viewFrom++)
       toolbar.add(new ViewFromCommand(this, viewFrom));
-    toolbar.beginOptionMenu();    
+    toolbar.beginOptionMenu();
   }
 
   //==================================================

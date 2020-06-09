@@ -10,18 +10,6 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
   // INSTANCE FIELDS
   //==================================================
 
-  private static margin = 24;
-  // Height of the visualizer container
-  private static windowHeight: number = 0;
-  // Width of the visualizer container 
-  private static windowWidth: number = 0;
-
-  // Set visualizer container dimensions
-  public setWindowDimensions(windowHeight: number, windowWidth: number) {
-    BaseRenderTargetNode.windowHeight = windowHeight - 1 * BaseRenderTargetNode.margin;
-    BaseRenderTargetNode.windowWidth = windowWidth - 1 * BaseRenderTargetNode.margin;
-  }
-
   public get aspectRatio(): number { return this.pixelRange.aspectRatio2; }
 
   private _isInvalidated = true;
@@ -29,11 +17,13 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
 
   public get pixelRange(): Range3
   {
-    const x = this._fractionRange.x.min * BaseRenderTargetNode.windowWidth;
-    const y = this._fractionRange.y.min * BaseRenderTargetNode.windowHeight;
-    const dx = BaseRenderTargetNode.windowWidth * this._fractionRange.x.delta;
-    const dy = BaseRenderTargetNode.windowHeight * this._fractionRange.y.delta;
-
+    const domElement = this.domElement;
+    const windowWidth = domElement.clientWidth;
+    const windowHeight = domElement.clientHeight;
+    const x = this._fractionRange.x.min * windowWidth;
+    const y = this._fractionRange.y.min * windowHeight;
+    const dx = windowWidth * this._fractionRange.x.delta;
+    const dy = windowHeight * this._fractionRange.y.delta;
     return Range3.createByMinAndDelta(x, y, dx, dy);
   }
 
@@ -69,9 +59,8 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
   // VIRTUAL METHODS
   //==================================================
 
-  protected abstract setRenderSize(): void;
   public abstract get domElement(): HTMLElement;
-  public /*virtual*/ onResize() { this.setRenderSize(); }
+  public /*virtual*/ onResize() { }
 
   //==================================================
   // INSTANCE METHODS
