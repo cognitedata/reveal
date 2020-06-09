@@ -19,7 +19,7 @@ export function Migration() {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const gui = new dat.GUI();
-    let viewer: Cognite3DViewer
+    let viewer: Cognite3DViewer;
 
     async function main() {
       const urlParams = new URL(window.location.href).searchParams;
@@ -227,7 +227,7 @@ export function Migration() {
 
     return () => {
       gui.destroy();
-      viewer.dispose();
+      viewer?.dispose();
     };
   });
   return <CanvasWrapper ref={canvasWrapperRef} />;
