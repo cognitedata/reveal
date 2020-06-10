@@ -23,7 +23,7 @@ import RenderController from './RenderController';
 import { CogniteModelBase } from './CogniteModelBase';
 
 import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
-import { File3dFormat } from '@/utilities/File3dFormat';
+import { File3dFormat } from '@/utilities';
 import { RevealManagerBase } from '@/public/RevealManagerBase';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
@@ -38,7 +38,7 @@ import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloudMetadataRepository';
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
-import { BoundingBoxClipper } from '@/utilities';
+import { BoundingBoxClipper, isMobileOrTablet } from '@/utilities';
 
 export interface RelativeMouseEvent {
   offsetX: number;
@@ -96,7 +96,11 @@ export class Cognite3DViewer {
       throw new NotSupportedInMigrationWrapperError('ViewCube is not supported');
     }
 
-    this.renderer = options.renderer || new THREE.WebGLRenderer();
+    this.renderer =
+      options.renderer ||
+      new THREE.WebGLRenderer({
+        antialias: shouldEnableAntialiasing()
+      });
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
     this.canvas.style.minWidth = '100%';
@@ -277,11 +281,20 @@ export class Cognite3DViewer {
     return SupportedModelTypes.NotSupported;
   }
 
-  addObject3D(_object: THREE.Object3D): void {
-    throw new NotSupportedInMigrationWrapperError();
+  addObject3D(object: THREE.Object3D): void {
+    if (this.isDisposed) {
+      return;
+    }
+    this.scene.add(object);
+    this.renderController.redraw();
   }
-  removeObject3D(_object: THREE.Object3D): void {
-    throw new NotSupportedInMigrationWrapperError();
+
+  removeObject3D(object: THREE.Object3D): void {
+    if (this.isDisposed) {
+      return;
+    }
+    this.scene.remove(object);
+    this.renderController.redraw();
   }
 
   setSlicingPlanes(slicingPlanes: THREE.Plane[]): void {
@@ -714,6 +727,10 @@ export class Cognite3DViewer {
     // on hover callback
     canvas.addEventListener('mousemove', onHoverCallback);
   };
+}
+
+function shouldEnableAntialiasing(): boolean {
+  return !isMobileOrTablet();
 }
 
 function adjustCamera(camera: THREE.Camera, width: number, height: number) {

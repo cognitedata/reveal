@@ -5,7 +5,7 @@
 import { CadMetadataV8, parseCadMetadataV8, CadSectorMetadataV8 } from '@/datamodels/cad/parsers/CadMetadataParserV8';
 import { SectorMetadata } from '@/datamodels/cad/sector/types';
 import { Box3 } from '@/utilities/Box3';
-import { traverseDepthFirst } from '@/utilities/traversal';
+import { traverseDepthFirst } from '@/utilities/objectTraversal';
 
 import { vec3 } from 'gl-matrix';
 

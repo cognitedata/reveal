@@ -4,7 +4,7 @@
 
 import { IdEither } from '@cognite/sdk';
 import { BlobOutputMetadata } from './types';
-import { File3dFormat } from '../File3dFormat';
+import { File3dFormat } from '../types';
 
 export class Model3DOutputList {
   public readonly model: IdEither;
