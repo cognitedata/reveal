@@ -19,6 +19,7 @@ export function Migration() {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const gui = new dat.GUI();
+    let viewer: Cognite3DViewer;
 
     async function main() {
       const urlParams = new URL(window.location.href).searchParams;
@@ -60,7 +61,7 @@ export function Migration() {
       await client.authenticate();
 
       // Prepare viewer
-      const viewer = new Cognite3DViewer({
+      viewer = new Cognite3DViewer({
         sdk: client,
         domElement: canvasWrapperRef.current!,
       });
@@ -226,6 +227,7 @@ export function Migration() {
 
     return () => {
       gui.destroy();
+      viewer?.dispose();
     };
   });
   return <CanvasWrapper ref={canvasWrapperRef} />;
