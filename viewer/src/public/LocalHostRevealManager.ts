@@ -25,6 +25,8 @@ import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/Default
 type LocalModelIdentifier = { fileName: string };
 
 export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifier> {
+  private readonly sectorRepository: CachedRepository;
+
   constructor(options?: RevealOptions) {
     const modelDataParser: CadSectorParser = new CadSectorParser();
     const materialManager: MaterialManager = new MaterialManager();
@@ -57,6 +59,8 @@ export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifi
       pointCloudFactory
     );
     super(cadManager, materialManager, pointCloudManager);
+
+    this.sectorRepository = sectorRepository;
   }
 
   public addModel(type: 'cad', fileName: string, modelNodeAppearance?: ModelNodeAppearance): Promise<CadNode>;
@@ -74,5 +78,13 @@ export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifi
       default:
         throw new Error(`case: ${type} not handled`);
     }
+  }
+
+  public dispose(): void {
+    if (this.isDisposed) {
+      return;
+    }
+    this.sectorRepository.dispose();
+    super.dispose();
   }
 }

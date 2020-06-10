@@ -21,6 +21,8 @@ export function Simple() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    let revealManager: reveal.RevealManager | reveal.LocalHostRevealManager;
+
     async function main() {
       if (!canvas.current) {
         return;
@@ -33,7 +35,7 @@ export function Simple() {
       client.loginWithOAuth({ project });
 
       const scene = new THREE.Scene();
-      const revealManager: reveal.RenderManager = createRenderManager(
+      revealManager = createRenderManager(
         modelRevision !== undefined ? 'cdf' : 'local',
         client
       );
@@ -121,6 +123,10 @@ export function Simple() {
     }
 
     main();
+
+    return () => {
+      revealManager?.dispose();
+    };
   }, []);
   return (
     <CanvasWrapper>
