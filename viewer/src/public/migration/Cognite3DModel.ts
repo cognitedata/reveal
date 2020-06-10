@@ -107,7 +107,12 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   iterateNodes(_action: (nodeId: number, treeIndex?: number) => void): void {
-    throw new NotSupportedInMigrationWrapperError();
+    throw new NotSupportedInMigrationWrapperError('Use iterateNodesByTreeIndex(action: (treeIndex: number) => void)');
+  }
+  iterateNodesByTreeIndex(action: (treeIndex: number) => void): void {
+    for (let i = 0; i < this.cadModel.scene.maxTreeIndex; i++) {
+      action(i);
+    }
   }
 
   iterateSubtree(
