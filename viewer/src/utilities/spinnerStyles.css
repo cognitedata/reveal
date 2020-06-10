@@ -1,0 +1,37 @@
+.reveal-viewer-spinner,
+.reveal-viewer-spinner:after {
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+}
+.reveal-viewer-spinner {
+    margin: 10px;
+    position: relative;
+    border: 5px solid rgba(255, 255, 255, 0.22);
+    border-left: 5px solid #ffffff;
+    -webkit-transform: translateZ(0);
+    -ms-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-animation: reveal-spinner-animation 0.7s infinite linear;
+    animation: reveal-spinner-animation 0.7s infinite linear;
+}
+@-webkit-keyframes reveal-spinner-animation {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+@keyframes reveal-spinner-animation {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
