@@ -307,8 +307,10 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
       return;
 
     // The idea of this function is letting the light track the camera, 
-    const position = controls.getPosition();
-    const target = controls.getTarget();
+    let position = new THREE.Vector3();
+    let target = new THREE.Vector3();
+    position = controls.getPosition(position);
+    target = controls.getTarget(target);
 
     const vectorToCenter = position.clone();
     vectorToCenter.sub(target);

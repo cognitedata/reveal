@@ -48,8 +48,15 @@ export class Camera
   // CONSTRUCTOR
   //==================================================
 
+  private static _isInstalled = false;
+
   constructor(target: ThreeRenderTargetNode)
   {
+    if (!Camera._isInstalled)
+    {
+      CameraControls.install({ THREE: THREE });
+      Camera._isInstalled = true;
+    }
     this._camera = this.createPerspectiveCamera(target);
     if (this._camera instanceof THREE.PerspectiveCamera)
       this._controls = new CameraControls(this._camera, target.domElement);
@@ -100,8 +107,13 @@ export class Camera
 
     if (index < -1)
     {
+      let tempPosition = new THREE.Vector3();
+      let tempTarget = new THREE.Vector3();
+      tempPosition = controls.getPosition(tempPosition);
+      tempTarget = controls.getTarget(tempTarget);
+
       // View all
-      const direction = Vector3.substract(ThreeConverter.fromVector(controls.getPosition()), ThreeConverter.fromVector(controls.getTarget()));
+      const direction = Vector3.substract(ThreeConverter.fromVector(tempPosition), ThreeConverter.fromVector(tempTarget));
       direction.normalize();
 
       const dots = new Vector3(Vector3.getAxis(0).getDot(direction), Vector3.getAxis(1).getDot(direction), Vector3.getAxis(2).getDot(direction));
@@ -186,7 +198,8 @@ export class Camera
   public zoomToTarget(position: THREE.Vector3): void
   {
     const controls = this.controls;
-    const distance = controls.getPosition().distanceTo(position);
+    const tmp = new THREE.Vector3();
+    const distance = controls.getPosition(tmp).distanceTo(position);
     controls.setTarget(position.x, position.y, position.z, true);
     controls.dollyTo(distance / 2, true)
   }
