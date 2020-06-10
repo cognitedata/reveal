@@ -26,7 +26,6 @@ import { RenderSample } from "@/Nodes/Wells/Samples/RenderSample";
 import { Colors } from "@/Core/Primitives/Colors";
 import { TrajectoryBufferGeometry } from "@/Three/WellViews/Helpers/TrajectoryBufferGeometry";
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
 
 export class CasingLogThreeView extends BaseGroupThreeView
 {

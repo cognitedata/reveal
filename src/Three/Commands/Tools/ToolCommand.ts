@@ -24,7 +24,7 @@ export abstract class ToolCommand extends ThreeRenderTargetCommand
     if (!this.target)
       return false;
 
-    return this.target.getActiveTool() != null;
+    return this.target.activeTool != null;
   }
 
   protected /*override*/ invokeCore(): boolean
@@ -32,8 +32,31 @@ export abstract class ToolCommand extends ThreeRenderTargetCommand
     if (!this.target)
       return false;
 
-      this.target.setActiveTool(this);
-      return true;
+    this.target.activeTool = this;
+    return true;
+  }
+
+  //==================================================
+  // VIRTUAL METHODS
+  //==================================================
+
+  public hasMouseClick(): boolean { return false; }
+  public onMouseClick(event: MouseEvent): void { }
+
+  public onMouseMove(event: MouseEvent): void
+  {
+    const target = this.target;
+    if (!target)
+      return;
+
+    const pixel = target.getMouseRelativePosition(event);
+    const intersection = target.getIntersection(pixel);
+    if (!intersection)
+      return;
+
+    const node = target.getNodeByObject(intersection.object);
+    if (!node)
+      return;
   }
 }
 

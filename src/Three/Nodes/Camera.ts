@@ -23,7 +23,7 @@ import { Vector3 } from "@/Core/Geometry/Vector3";
 // https://github.com/yomotsu/camera-controls
 // https://www.npmjs.com/package/camera-controls
 
-export class Camera
+export class CameraControl
 {
   //==================================================
   // INSTANCE FIELDS
@@ -52,10 +52,10 @@ export class Camera
 
   constructor(target: ThreeRenderTargetNode)
   {
-    if (!Camera._isInstalled)
+    if (!CameraControl._isInstalled)
     {
       CameraControls.install({ THREE: THREE });
-      Camera._isInstalled = true;
+      CameraControl._isInstalled = true;
     }
     this._camera = this.createPerspectiveCamera(target);
     if (this._camera instanceof THREE.PerspectiveCamera)

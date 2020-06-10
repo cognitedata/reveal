@@ -23,9 +23,19 @@ import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
+import { ThreeLabel } from "@/Three/Utilities/ThreeLabel";
+
+import * as Color from "color"
+import { Colors } from "@/Core/Primitives/Colors";
 
 export class PointLogFilterView extends BaseGroupThreeView
 {
+  //==================================================
+  // INSTANCE FIELDS
+  //==================================================
+
+  private fgColor: Color = Colors.white;
+
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
@@ -130,7 +140,22 @@ export class PointLogFilterView extends BaseGroupThreeView
         sphere.rotateOnAxis(ThreeConverter.toVector(axis), radians);
       }
       ThreeConverter.copy(sphere.position, position);
+      sphere.userData["i"] = i;
+
       group.add(sphere);
+      const label = ThreeLabel.createByPositionAndAlignment(sample.label, position, 0, 30, this.fgColor);
+      if (label)  
+      {
+        if (i === 0)
+          label.center = new THREE.Vector2(0, 0);
+        else if (i === 1)
+          label.center = new THREE.Vector2(0, 1);
+        else if (i === 2)
+          label.center = new THREE.Vector2(1, 0);
+        else if (i === 3)
+          label.center = new THREE.Vector2(1, 1);
+        group.add(label);
+      }
     }
     return group;
   }

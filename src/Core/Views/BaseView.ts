@@ -93,6 +93,8 @@ export abstract class BaseView
     // NOTE: Always call super.disposeCore() in the overrides
   }
 
+  public /*virtual*/ shouldPick(): boolean { return true; }
+
   //==================================================
   // INSTANCE METHODS: Getters
   //==================================================
