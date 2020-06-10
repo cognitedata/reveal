@@ -207,7 +207,7 @@ export function Migration() {
         await addModel({ modelId, revisionId });
       }
 
-      viewer.on('click', async function (event) {
+      viewer.on('click', function (event) {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
         const intersection = viewer.getIntersectionFromPixel(offsetX, offsetY);
