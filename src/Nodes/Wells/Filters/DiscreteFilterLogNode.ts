@@ -44,8 +44,8 @@ export class DiscreteFilterLogNode extends BaseFilterLogNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "DiscreteLog" }
-
   public /*override*/ get icon(): string { return DiscreteLogNodeIcon }
+  public /*override*/ get canChangeColor(): boolean { return false; }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {

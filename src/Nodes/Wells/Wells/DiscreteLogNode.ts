@@ -47,8 +47,8 @@ export class DiscreteLogNode extends BaseLogNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "DiscreteLog" }
-
   public /*override*/ get icon(): string { return DiscreteLogNodeIcon }
+  public /*override*/ hasIconColor(): boolean { return false; }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {

@@ -58,7 +58,7 @@ export abstract class BaseLogNode extends BaseVisualNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*virtual*/ hasIconColor(): boolean { return true; }
+  public /*override*/ hasIconColor(): boolean { return true; }
 
   public /*override*/ get color(): Color
   {
