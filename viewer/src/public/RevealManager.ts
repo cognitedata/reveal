@@ -24,7 +24,11 @@ import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
 
 type CdfModelIdentifier = { modelRevision: IdEither; format: File3dFormat };
+type LoadingStateChangeListener = (isLoading: boolean) => any;
+
 export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
+  private readonly eventListeners: { loadingStateChanged: LoadingStateChangeListener[] };
+
   constructor(client: CogniteClient, options?: RevealOptions) {
     const modelDataParser: CadSectorParser = new CadSectorParser();
     const materialManager: MaterialManager = new MaterialManager();
@@ -57,6 +61,11 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
     );
 
     super(cadManager, materialManager, pointCloudManager);
+
+    this.eventListeners = {
+      loadingStateChanged: new Array<LoadingStateChangeListener>()
+    };
+    sectorRepository.getLoadingStateObserver().subscribe(this.notifyLoadingStateListeners.bind(this));
   }
 
   public addModel(
@@ -87,6 +96,25 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
       default:
         throw new Error(`case: ${type} not handled`);
     }
+  }
+
+  public on(event: 'loadingStateChanged', listener: LoadingStateChangeListener): void {
+    if (event !== 'loadingStateChanged') {
+      throw new Error(`Unsupported event "${event}"`);
+    }
+    this.eventListeners[event].push(listener);
+  }
+  public off(event: 'loadingStateChanged', listener: LoadingStateChangeListener): void {
+    if (event !== 'loadingStateChanged') {
+      throw new Error(`Unsupported event "${event}"`);
+    }
+    this.eventListeners[event] = this.eventListeners[event].filter(fn => fn !== listener);
+  }
+
+  private notifyLoadingStateListeners(isLoaded: boolean) {
+    this.eventListeners.loadingStateChanged.forEach(handler => {
+      handler(isLoaded);
+    });
   }
 
   private createModelIdentifier(id: string | number): IdEither {
