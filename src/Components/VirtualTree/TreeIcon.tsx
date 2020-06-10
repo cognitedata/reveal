@@ -44,7 +44,7 @@ export default function TreeIcon(props: {
             const filter = new fabric.Image.filters.BlendColor({
               color: props.color.hex(),
               mode: "multiply",
-              alpha: 1
+              alpha: 1.5
             });
             oImg.applyFilters([filter]);
           }
