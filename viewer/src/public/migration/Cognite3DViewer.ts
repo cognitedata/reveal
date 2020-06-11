@@ -189,9 +189,9 @@ export class Cognite3DViewer {
     this.spinner.dispose();
   }
 
-  on(event: 'click' | 'hover', _callback: PointerEventDelegate): void;
-  on(event: 'cameraChanged', _callback: CameraChangeDelegate): void;
-  on(event: 'click' | 'hover' | 'cameraChanged', callback: any): void {
+  on(event: 'click' | 'hover', callback: PointerEventDelegate): void;
+  on(event: 'cameraChange', callback: CameraChangeDelegate): void;
+  on(event: 'click' | 'hover' | 'cameraChange', callback: any): void {
     switch (event) {
       case 'click':
         this.eventListeners.click.push(callback);
@@ -201,7 +201,7 @@ export class Cognite3DViewer {
         this.eventListeners.hover.push(callback);
         break;
 
-      case 'cameraChanged':
+      case 'cameraChange':
         this.eventListeners.cameraChange.push(callback);
         break;
 
@@ -210,9 +210,9 @@ export class Cognite3DViewer {
     }
   }
 
-  off(event: 'click' | 'hover', _callback: (event: PointerEvent) => void): void;
-  off(event: 'cameraChanged', _callback: (position: THREE.Vector3, target: THREE.Vector3) => void): void;
-  off(event: 'click' | 'hover' | 'cameraChanged', callback: any): void {
+  off(event: 'click' | 'hover', callback: (event: PointerEvent) => void): void;
+  off(event: 'cameraChange', callback: (position: THREE.Vector3, target: THREE.Vector3) => void): void;
+  off(event: 'click' | 'hover' | 'cameraChange', callback: any): void {
     switch (event) {
       case 'click':
         this.eventListeners.click = this.eventListeners.click.filter(x => x !== callback);
@@ -222,7 +222,7 @@ export class Cognite3DViewer {
         this.eventListeners.hover = this.eventListeners.hover.filter(x => x !== callback);
         break;
 
-      case 'cameraChanged':
+      case 'cameraChange':
         this.eventListeners.cameraChange = this.eventListeners.cameraChange.filter(x => x !== callback);
         break;
 
