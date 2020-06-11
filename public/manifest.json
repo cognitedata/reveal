@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Tenant selector",
+  "name": "Tenant selector",
   "icons": [
     {
       "src": "favicon.ico",

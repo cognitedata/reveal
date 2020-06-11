@@ -18,7 +18,7 @@ const LoginTip = ({ helpLink }: Props) => {
           target="blank"
           rel="noopener noreferrer"
         >
-          {t('loggin-trouble_link', { defaultValue: 'Troble logging in?' })}
+          {t('loggin-trouble_link', { defaultValue: 'Trouble logging in?' })}
         </a>
         <span className="separator" />
         <a

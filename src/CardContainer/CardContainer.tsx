@@ -159,8 +159,8 @@ const CardContainer = ({
             />
           )}
         </StyledContentWrapper>
-        {/* Can we provide some default link? */}
-        <LoginTip helpLink={helpLink || ''} />
+        {/* Can we provide a better default link? */}
+        <LoginTip helpLink={helpLink || 'https://docs.cognite.com/'} />
       </div>
     </StyledCardContainer>
   );
