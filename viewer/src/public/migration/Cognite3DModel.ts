@@ -167,12 +167,20 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   async selectNode(nodeId: number): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.selectNodeByTreeIndex(treeIndex);
+  }
+
+  selectNodeByTreeIndex(treeIndex: number) {
     this.selectedNodes.add(treeIndex);
     this.cadNode.requestNodeUpdate([treeIndex]);
   }
 
   async deselectNode(nodeId: number): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.deselectNodeByTreeIndex(treeIndex);
+  }
+
+  deselectNodeByTreeIndex(treeIndex: number) {
     this.selectedNodes.delete(treeIndex);
     this.cadNode.requestNodeUpdate([treeIndex]);
   }
