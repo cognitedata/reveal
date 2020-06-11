@@ -24,7 +24,7 @@ serde = "1.0.111"
 serde_derive = "1.0.104"
 serde_json = { version = "1.0.55", optional = true }
 serde_yaml = { version = "0.8.13", optional = true }
-serde_bytes = { version = "0.11.4", optional = true }
+serde_bytes = { version = "0.11.5", optional = true }
 #js-sys = { version = "0.3.27", optional = true }
 #wasm-bindgen = { version = "0.2.50", optional = true }
 js-sys = "0.3.40"
