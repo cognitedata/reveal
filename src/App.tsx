@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { getSidecar } from 'utils';
 import useTenantSelector from 'useTenantSelector';
+import useClusterSelector from 'useClusterSelector';
 import background from 'assets/background.jpg';
 import TenantSelectorBackground from 'TenantSelectorBackground';
 import I18nContainer from 'containers/I18nContainer';
@@ -34,10 +35,19 @@ const App = () => {
     initialTenant,
   } = useTenantSelector(applicationId);
 
+  const {
+    onClusterSelected,
+    checkClusterValidity,
+    redirectingToCluster,
+    validatingCluster,
+  } = useClusterSelector(applicationId);
+
   const isLoading =
     redirecting ||
     authenticating ||
     validatingTenant ||
+    validatingCluster ||
+    redirectingToCluster ||
     initialTenant === possibleTenant;
 
   // TODO: Set a timeout here so that we detect if we're ever in this loading
@@ -53,6 +63,16 @@ const App = () => {
     [checkTenantValidity]
   );
 
+  const performClusterValidation = useCallback(
+    (tenant: string, cluster: string) => {
+      setAuthenticating(true);
+      return checkClusterValidity(tenant, cluster).finally(() => {
+        setAuthenticating(false);
+      });
+    },
+    [checkClusterValidity]
+  );
+
   return (
     <>
       <GlobalStyles />
@@ -60,7 +80,9 @@ const App = () => {
         <I18nContainer>
           <CardContainer
             validateTenant={performValidation}
+            validateCluster={performClusterValidation}
             handleSubmit={onTenantSelected}
+            handleClusterSubmit={onClusterSelected}
             loading={isLoading}
             initialTenant={initialTenant || ''}
             helpLink={helpLink || ''}

@@ -14,9 +14,16 @@ const clusterSelectorProps = {
       isValid: false,
       error: '',
     },
+    cluster: {
+      value: '',
+      isValid: true,
+      error: '',
+    },
   },
   handleOnChange: action('handleOnChange'),
-  setClusterSelectorShown: action('setClusterSelectorShown'),
+  backToTenantSelector: action('backToTenantSelector'),
+  loading: false,
+  onSubmit: action('onSubmit'),
 };
 
 export const Base = () => {

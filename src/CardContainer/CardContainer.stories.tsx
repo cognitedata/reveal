@@ -8,7 +8,9 @@ export default {
 
 const cardContainerProps = {
   handleSubmit: action('handleSubmit'),
+  handleClusterSubmit: action('handleClusterSubmit'),
   validateTenant: () => Promise.resolve(true),
+  validateCluster: () => Promise.resolve(true),
   loading: false,
   initialTenant: '',
 };

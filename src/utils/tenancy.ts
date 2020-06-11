@@ -51,4 +51,8 @@ export const errorSchema: ErrorSchema = {
     requiredMessage: 'Company ID is required',
     validationMessage: 'This is an unknown configuration',
   },
+  cluster: {
+    requiredMessage: '',
+    validationMessage: 'This is an unknown configuration',
+  },
 };

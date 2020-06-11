@@ -18,7 +18,9 @@ export type FormState = {
 
 type Props = {
   handleSubmit: (tenant: string) => void;
+  handleClusterSubmit: (tenant: string, cluster: string) => void;
   validateTenant: (tenant: string) => Promise<boolean>;
+  validateCluster: (tenant: string, cluster: string) => Promise<boolean>;
   loading: boolean;
   initialTenant?: string;
   errors?: React.ReactNode[];
@@ -27,7 +29,9 @@ type Props = {
 
 const CardContainer = ({
   handleSubmit,
+  handleClusterSubmit,
   validateTenant,
+  validateCluster,
   initialTenant,
   loading,
   errors,
@@ -38,6 +42,12 @@ const CardContainer = ({
     tenant: {
       value: initialTenant || '',
       isValid: !!initialTenant,
+      error: '',
+    },
+    cluster: {
+      value: '',
+      // Cluster is not required field
+      isValid: true,
       error: '',
     },
   });
@@ -95,31 +105,47 @@ const CardContainer = ({
     });
   };
 
-  const onSubmit = (event: React.FormEvent) => {
+  const runValidateTenantProcess = () => {
+    if (formState.tenant.isValid) {
+      validateTenant(formState.tenant.value)
+        .then((isValid) => {
+          if (isValid) {
+            handleSubmit(formState.tenant.value);
+          } else {
+            setUnknownConfigurationError('tenant');
+          }
+        })
+        .catch((_) => {
+          setUnknownConfigurationError('tenant');
+        });
+    } else {
+      setRequiredError('tenant');
+    }
+  };
+
+  const runValidateClusterProcess = () => {
+    validateCluster(formState.tenant.value, formState.cluster.value)
+      .then((isValid) => {
+        if (isValid) {
+          handleClusterSubmit(formState.tenant.value, formState.cluster.value);
+        } else {
+          setUnknownConfigurationError('cluster');
+        }
+      })
+      .catch((_) => {
+        setUnknownConfigurationError('cluster');
+      });
+  };
+
+  const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     event.stopPropagation();
 
     if (!loading) {
-      // if there is going to be more that one input field in the form we would
-      // need to loop through fieldsName array and submit only if all validation
-      // functions return isValid = true
-      const formValid = Object.values(formState).every(
-        ({ isValid }) => isValid
-      );
-      if (formValid) {
-        validateTenant(formState.tenant.value)
-          .then((isValid) => {
-            if (isValid) {
-              handleSubmit(formState.tenant.value);
-            } else {
-              setUnknownConfigurationError('tenant');
-            }
-          })
-          .catch((_) => {
-            setUnknownConfigurationError('tenant');
-          });
+      if (!formState.cluster.value) {
+        runValidateTenantProcess();
       } else {
-        setRequiredError('tenant');
+        runValidateClusterProcess();
       }
     }
   };
@@ -134,6 +160,18 @@ const CardContainer = ({
       );
     });
   }, [errors]);
+
+  const backToTenantSelector = () => {
+    setClusterSelectorShown(false);
+    setFormState({
+      ...formState,
+      cluster: {
+        ...formState.cluster,
+        value: '',
+        error: '',
+      },
+    });
+  };
 
   return (
     <StyledCardContainer style={{ height: `${containerHeight}` }}>
@@ -153,9 +191,11 @@ const CardContainer = ({
             />
           ) : (
             <ClusterSelector
-              setClusterSelectorShown={setClusterSelectorShown}
+              backToTenantSelector={backToTenantSelector}
               handleOnChange={handleOnChange}
               formState={formState}
+              loading={loading}
+              onSubmit={onSubmit}
             />
           )}
         </StyledContentWrapper>
