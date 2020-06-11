@@ -83,6 +83,10 @@ module.exports = env => {
             'raw-loader',
             'glslify-loader'
           ]
+        },
+        {
+          test: /\.css$/,
+          use: ['raw-loader']
         }
       ],
     },

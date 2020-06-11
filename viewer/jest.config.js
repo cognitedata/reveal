@@ -8,6 +8,7 @@ module.exports = {
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   moduleNameMapper: {
     '\\.(frag|vert)$': '<rootDir>/src/__mocks__/glslMocks.js',
+    '\\.css$': '<rootDir>/src/__mocks__/cssMock.js',
     '^@/(.*)': '<rootDir>/src/$1',
   },
   coverageDirectory: '../coverage',
