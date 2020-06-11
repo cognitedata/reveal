@@ -177,6 +177,8 @@ export class Cognite3DViewer {
       cancelAnimationFrame(this.latestRequestId);
     }
 
+    this.sectorRepository.dispose();
+    this.revealManager.dispose();
     this.domElement.removeChild(this.canvas);
     this.renderer.dispose();
     this.scene.dispose();
