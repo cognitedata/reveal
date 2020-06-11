@@ -54,6 +54,8 @@ export class CachedRepository implements Repository {
     data: SectorGeometry | SectorQuads;
   }> = new Subject();
 
+  private isDisposed = false;
+
   constructor(
     modelSectorProvider: CadSectorProvider,
     modelDataParser: CadSectorParser,
@@ -66,6 +68,16 @@ export class CachedRepository implements Repository {
 
   clearSemaphore() {
     this._rateLimiter.clearPendingRequests();
+  }
+
+  public dispose(): void {
+    if (this.isDisposed) {
+      return;
+    }
+    this.isDisposed = true;
+    this._isLoadingSubject.complete();
+    this.clearSemaphore();
+    this.clearCache();
   }
 
   // TODO j-bjorne 16-04-2020: Should look into ways of not sending in discarded sectors,
