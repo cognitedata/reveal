@@ -39,6 +39,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   readonly cadModel: CadModelMetadata;
   readonly cadNode: CadNode;
   readonly nodeColors: Map<number, [number, number, number, number]>;
+  readonly selectedNodes: Set<number>;
   readonly hiddenNodes: Set<number>;
   readonly client: CogniteClient;
   readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
@@ -51,9 +52,13 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.client = client;
     this.nodeColors = new Map();
     this.hiddenNodes = new Set();
+    this.selectedNodes = new Set();
     this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client);
     const nodeAppearance: ModelNodeAppearance = {
       color: (treeIndex: number) => {
+        if (this.selectedNodes.has(treeIndex)) {
+          return [0, 0, 200, 255];
+        }
         return this.nodeColors.get(treeIndex);
       },
       visible: (treeIndex: number) => {
@@ -155,16 +160,22 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.cadNode.requestNodeUpdate([treeIndex]);
   }
 
-  selectNode(_nodeId: number): void {
-    throw new NotSupportedInMigrationWrapperError();
+  async selectNode(nodeId: number): Promise<void> {
+    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.selectedNodes.add(treeIndex);
+    this.cadNode.requestNodeUpdate([treeIndex]);
   }
 
-  deselectNode(_nodeId: number): void {
-    throw new NotSupportedInMigrationWrapperError();
+  async deselectNode(nodeId: number): Promise<void> {
+    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.selectedNodes.delete(treeIndex);
+    this.cadNode.requestNodeUpdate([treeIndex]);
   }
 
   deselectAllNodes(): void {
-    throw new NotSupportedInMigrationWrapperError();
+    const selectedNodes = Array.from(this.selectedNodes);
+    this.selectedNodes.clear();
+    this.cadNode.requestNodeUpdate(selectedNodes);
   }
 
   async showNode(nodeId: number): Promise<void> {
