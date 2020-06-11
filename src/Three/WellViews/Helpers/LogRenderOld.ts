@@ -22,7 +22,7 @@ import { Colors } from "@/Core/Primitives/Colors";
 import { Ma } from "@/Core/Primitives/Ma";
 
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
-import { ThreeLabel } from "@/Three/Utilities/ThreeLabel";
+import { SpriteCreator } from "@/Three/Utilities/SpriteCreator";
 import { TextureKit } from "@/Three/Utilities/TextureKit";
 
 import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
@@ -88,7 +88,7 @@ export class LogRenderOld
 
       // Add label
       const labelEndPosition = Vector3.addWithFactor(position, prependicular, startLabel);
-      const label = ThreeLabel.createByPositionAndDirection(`${md}`, labelEndPosition, prependicular, tickFontSize, textColor);
+      const label = SpriteCreator.createByPositionAndDirection(`${md}`, labelEndPosition, prependicular, tickFontSize, textColor);
       if (label)
         group.add(label);
     }

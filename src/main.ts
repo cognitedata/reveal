@@ -8,10 +8,10 @@ import { RandomDataLoader } from "./RootLoaders/RandomDataLoader";
 import { BaseRootLoader } from "./RootLoaders/BaseRootLoader";
 import { RealDataLoader } from "./RootLoaders/RealDataLoader";
 
-
 main(document.body);
 
-export default function main(elm: HTMLElement) {
+export default function main(elm: HTMLElement)
+{
   const useRealData = false;
 
   // Create the module and install it it
@@ -22,21 +22,23 @@ export default function main(elm: HTMLElement) {
   const root = module.createRoot() as RootNode;
 
   let loader: BaseRootLoader;
-  if (useRealData) loader = new RealDataLoader();
-  else loader = new RandomDataLoader();
+  if (useRealData)
+    loader = new RealDataLoader();
+  else
+    loader = new RandomDataLoader();
   loader.load(root);
 
-  // Add a render target
+  // Set up the draw target
   {
-    const range = Range3.createByMinAndMax(0, 0, 1, 1);
-    const target = new ThreeRenderTargetNode(range);
-    target.onResize();
-    root.targets.addChild(target);
-  }
-  module.initializeWhenPopulated(root);
+    const fractionRange = Range3.createByMinAndMax(0, 0, 1, 1);
+    const target = new ThreeRenderTargetNode(fractionRange);
 
-  // Set up the window size
-  for (const target of root.targets.getChildrenByType(ThreeRenderTargetNode)) {
+    target.domElement.style.height = 1200 + "px";
+    target.domElement.style.width = 1000 + "px";
+    target.domElement.style.position = "absolute";
+
+    elm.appendChild(target.domElement);
+
     const range = target.pixelRange;
     const stats = target.stats;
     stats.dom.style.left = range.x.min.toFixed(0) + "px";
@@ -44,10 +46,13 @@ export default function main(elm: HTMLElement) {
     stats.dom.style.margin = "10px";
     stats.dom.style.position = "absolute";
 
-    elm.appendChild(target.domElement);
     elm.appendChild(stats.dom);
+
+    root.targets.addChild(target);
     target.setActiveInteractive();
+    target.onResize();
   }
+  module.initializeWhenPopulated(root);
   loader.updatedVisible(root);
 
   const target = root.activeTarget as ThreeRenderTargetNode;

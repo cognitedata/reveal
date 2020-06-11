@@ -31,11 +31,10 @@ import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
 
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
-import { ThreeLabel } from "@/Three/Utilities/ThreeLabel";
+import { SpriteCreator } from "@/Three/Utilities/SpriteCreator";
 import { LogRender } from "@/Three/WellViews/Helpers/LogRender";
 import { TrajectoryBufferGeometry } from "@/Three/WellViews/Helpers/TrajectoryBufferGeometry";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
-
 
 const TrajectoryName = "trajectory";
 const TrajectoryLabelName = "trajectoryLabel";
@@ -298,7 +297,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     if (!style)
       return;
 
-    const label = ThreeLabel.createByPositionAndAlignment(node.name, trajectory.getBasePosition(), 7, style.nameFontHeight, this.fgColor);
+    const label = SpriteCreator.createByPositionAndAlignment(node.name, trajectory.getBasePosition(), 7, style.nameFontHeight, this.fgColor);
     if (!label)
       return;
 
@@ -317,7 +316,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     if (!style)
       return;
 
-    const label = ThreeLabel.createByPositionAndAlignment(well.name, well.wellHead, 1, style.nameFontHeight, this.fgColor);
+    const label = SpriteCreator.createByPositionAndAlignment(well.name, well.wellHead, 1, style.nameFontHeight, this.fgColor);
     if (!label)
       return;
 
@@ -495,7 +494,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       if (visibleCount == 0)
         continue;
 
-      //Only of ther logs are shown
+      // Only of ther logs are shown
+      if (false)
       for (const logNode of node.getDescendantsByType(PointLogNode))
       {
         if (!logNode.isVisible(this.renderTarget))

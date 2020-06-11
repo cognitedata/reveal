@@ -14,10 +14,13 @@
 import * as THREE from "three";
 import * as Color from "color"
 
-import { ThreeLabel } from "@/Three/Utilities/ThreeLabel";
+import { SpriteCreator } from "@/Three/Utilities/SpriteCreator";
 
 export class Canvas
 {
+  // A lot of tips here:
+  // https://www.javascripture.com/CanvasRenderingContext2D
+
   //==================================================
   // INSTANCE FIELDS
   //==================================================
@@ -57,7 +60,7 @@ export class Canvas
 
   public createTexture(): THREE.CanvasTexture | null
   {
-    return ThreeLabel.createTexture(this.canvas);
+    return SpriteCreator.createTexture(this.canvas);
   }
 
   //==================================================
@@ -70,7 +73,7 @@ export class Canvas
     this.context.fillRect(0, 0, this.dx, this.dy);
   }
 
-  private static getColor(color: Color | null) { return color ? color.string() : "black" };
+  public static getColor(color: Color | null) { return color ? color.string() : "black" };
 
   //==================================================
   // INSTANCE METHODS: Path 

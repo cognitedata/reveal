@@ -62,7 +62,7 @@ export default function TreeIcon(props: {
     const canvas = container.getElementsByTagName("canvas")[0] || document.createElement("canvas");
     const image = container.getElementsByClassName("tree-img")[0] as HTMLImageElement;
 
-    const padding = 1;
+    const padding = 0;
     canvas.height = iconSize + padding * 2;
     canvas.width = iconSize + padding * 2;
     container.appendChild(canvas);

@@ -42,9 +42,23 @@ export class PointLog extends BaseLog
     log.sortByMd();
 
     // Set in the labels so they are in order
+    var all = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut";
+    var labels = all.split(' ');
+    const p = Random.getFloat2(0, 1);
     for (let k = 0; k < log.samples.length; k++)
-      log.getAt(k).label = `Sample ${k}`;
+    {
+      let label = "";
+      for (let i = 0; i < labels.length; i++)
+      {
+        if (!Random.isTrue(p))
+          continue;
 
+        if (label.length > 0)
+          label += " "
+        label += labels[i];
+      }
+      log.getAt(k).label = label;
+    }
     return log;
   }
 }  

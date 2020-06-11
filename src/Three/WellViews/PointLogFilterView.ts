@@ -23,10 +23,11 @@ import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
-import { ThreeLabel } from "@/Three/Utilities/ThreeLabel";
+import { SpriteCreator } from "@/Three/Utilities/SpriteCreator";
 
 import * as Color from "color"
 import { Colors } from "@/Core/Primitives/Colors";
+import { Canvas } from "@/Three/Utilities/Canvas";
 
 export class PointLogFilterView extends BaseGroupThreeView
 {
@@ -143,17 +144,10 @@ export class PointLogFilterView extends BaseGroupThreeView
       sphere.userData["i"] = i;
 
       group.add(sphere);
-      const label = ThreeLabel.createByPositionAndAlignment(sample.label, position, 0, 30, this.fgColor);
+      const label = PointLogFilterView.createLabel(sample.label, position, 30, this.fgColor);
       if (label)  
       {
-        if (i === 0)
-          label.center = new THREE.Vector2(0, 0);
-        else if (i === 1)
-          label.center = new THREE.Vector2(0, 1);
-        else if (i === 2)
-          label.center = new THREE.Vector2(1, 0);
-        else if (i === 3)
-          label.center = new THREE.Vector2(1, 1);
+        label.center = new THREE.Vector2(0, 1);
         group.add(label);
       }
     }
@@ -180,4 +174,137 @@ export class PointLogFilterView extends BaseGroupThreeView
 
     return wellRenderStyle.radius;
   }
+
+
+  public static createLabel(text: string, position: Vector3, worldHeight: number, color: Color): THREE.Sprite | null
+  {
+    const outValue = { toChange: 0 };
+    const canvas = PointLogFilterView.createCanvasWithText(text, color, outValue);
+    if (!canvas)
+      return null;
+
+    const texture = SpriteCreator.createTexture(canvas);
+    const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+    const sprite = new THREE.Sprite(spriteMaterial);
+
+    sprite.scale.set(worldHeight * canvas.width / outValue.toChange, worldHeight, 1);
+    ThreeConverter.copy(sprite.position, position);
+    return sprite;
+  }
+
+  public static createCanvasWithText(text: string, color: Color, outValue: { toChange: number }): HTMLCanvasElement | null
+  {
+    const maxWidth = 500;
+    const outerMargin = 50;
+    const innerMargin = 10;
+    const fontSize = 30;
+    const lineSpacing = 0.5;
+    const lineHeight = fontSize * (1 + lineSpacing);
+    const font = `${fontSize}pt Helvetica`;
+
+    // https://www.javascripture.com/CanvasRenderingContext2D
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    if (!context)
+      return null;
+
+    // Initialize text size
+    context.font = font;
+    let textHeight;
+    let multiLine;
+    let textWidth = context.measureText(text).width;
+    if (textWidth > maxWidth)
+    {
+      multiLine = true;
+      textWidth = maxWidth;
+      textHeight = measureTextHeight(context, text, maxWidth, lineHeight);
+      textHeight -= fontSize * lineSpacing / 2;
+    }
+    else
+    {
+      multiLine = false;
+      textHeight = fontSize;
+    }
+    outValue.toChange = fontSize;
+
+    canvas.width = textWidth + 2 * (outerMargin + innerMargin);
+    canvas.height = textHeight + 2 * (outerMargin + innerMargin);
+
+    const gradient = context.createLinearGradient(0, 0, canvas.width, 0);
+    gradient.addColorStop(0, Canvas.getColor(Colors.white));
+    gradient.addColorStop(1, Canvas.getColor(Colors.lightGrey));
+
+    context.fillStyle = "transparent";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    context.fillStyle = gradient;;//"white";
+    context.fillRect(outerMargin, outerMargin, canvas.width - outerMargin * 2, canvas.height - outerMargin * 2);
+
+    context.strokeStyle = Canvas.getColor(Colors.darkGrey);
+    context.lineWidth = 2;
+    context.strokeRect(outerMargin, outerMargin, canvas.width - outerMargin * 2, canvas.height - outerMargin * 2);
+
+    // need to set font again after resizing canvas
+    context.font = font;
+    context.textBaseline = "top";
+    context.textAlign = "start";
+
+    //context.fillStyle = 'red';
+    //context.fillRect(0, 0, width, height);
+
+    // scale to fit but don't stretch
+    //context.translate(width / 2, height / 2);
+    context.fillStyle = Canvas.getColor(Colors.black);
+    const x = outerMargin + innerMargin;
+    const y = x;
+    if (multiLine)
+      wrapText(context, text, x, y, maxWidth, lineHeight);
+    else
+      context.fillText(text, x, y);
+
+    return canvas;
+  }
+}
+
+function measureTextHeight(context: CanvasRenderingContext2D, text: string, maxWidth: number, lineHeight: number): number
+{
+  const words = text.split(' ');
+  var line = '';
+  var height = 0;
+  for (let n = 0; n < words.length; n++)
+  {
+    const testLine = line + words[n] + ' ';
+    const metrics = context.measureText(testLine);
+    const testWidth = metrics.width;
+    if (testWidth > maxWidth && n > 0)
+    {
+      line = words[n] + ' ';
+      height += lineHeight;
+    }
+    else
+      line = testLine;
+  }
+  height += lineHeight;
+  return height;
+}
+
+function wrapText(context: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number)
+{
+  const words = text.split(' ');
+  var line = '';
+  for (let n = 0; n < words.length; n++)
+  {
+    const testLine = line + words[n] + ' ';
+    const metrics = context.measureText(testLine);
+    const testWidth = metrics.width;
+    if (testWidth > maxWidth && n > 0)
+    {
+      context.fillText(line, x, y);
+      line = words[n] + ' ';
+      y += lineHeight;
+    }
+    else
+      line = testLine;
+  }
+  context.fillText(line, x, y);
 }
