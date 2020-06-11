@@ -46,7 +46,7 @@ export interface RelativeMouseEvent {
 }
 
 type RequestParams = { modelRevision: IdEither; format: File3dFormat };
-type PointerEventDelegate = (event: RelativeMouseEvent) => void;
+type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
 type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
 
 export class Cognite3DViewer {
@@ -210,8 +210,8 @@ export class Cognite3DViewer {
     }
   }
 
-  off(event: 'click' | 'hover', callback: (event: PointerEvent) => void): void;
-  off(event: 'cameraChange', callback: (position: THREE.Vector3, target: THREE.Vector3) => void): void;
+  off(event: 'click' | 'hover', callback: PointerEventDelegate): void;
+  off(event: 'cameraChange', callback: CameraChangeDelegate): void;
   off(event: 'click' | 'hover' | 'cameraChange', callback: any): void {
     switch (event) {
       case 'click':
