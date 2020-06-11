@@ -28,6 +28,7 @@ type LoadingStateChangeListener = (isLoading: boolean) => any;
 
 export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
   private readonly eventListeners: { loadingStateChanged: LoadingStateChangeListener[] };
+  private readonly sectorRepository: CachedRepository;
 
   constructor(client: CogniteClient, options?: RevealOptions) {
     const modelDataParser: CadSectorParser = new CadSectorParser();
@@ -62,6 +63,7 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
 
     super(cadManager, materialManager, pointCloudManager);
 
+    this.sectorRepository = sectorRepository;
     this.eventListeners = {
       loadingStateChanged: new Array<LoadingStateChangeListener>()
     };
@@ -109,6 +111,14 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
       throw new Error(`Unsupported event "${event}"`);
     }
     this.eventListeners[event] = this.eventListeners[event].filter(fn => fn !== listener);
+  }
+
+  public dispose() {
+    if (this.isDisposed) {
+      return;
+    }
+    this.eventListeners.loadingStateChanged.splice(0);
+    this.sectorRepository.dispose();
   }
 
   private notifyLoadingStateListeners(isLoaded: boolean) {
