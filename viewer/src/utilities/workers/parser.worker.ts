@@ -16,9 +16,7 @@ const rustModule = import('../../../pkg');
 export class ParserWorker {
   public async parseSector(buffer: Uint8Array): Promise<ParseSectorResult> {
     const rust = await rustModule;
-    // TODO dragly 2020-04-22 could this be just one call that returns renderables?
-    const sectorDataHandle = rust.parse_sector(buffer);
-    const sectorData = rust.convert_sector(sectorDataHandle);
+    const sectorData = rust.parse_and_convert_sector(buffer);
 
     const instanceMeshes = this.extractInstanceMeshes(sectorData);
 
@@ -35,7 +33,6 @@ export class ParserWorker {
     };
 
     sectorData.free();
-    sectorDataHandle.free();
 
     return parseResult;
   }

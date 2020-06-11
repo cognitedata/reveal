@@ -81,13 +81,7 @@ pub fn parse_ctm(input: &[u8]) -> Result<CtmResult, JsValue> {
 }
 
 #[wasm_bindgen]
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct SectorHandle {
-    sector: i3df::Sector,
-}
-
-#[wasm_bindgen]
-pub fn parse_sector(input: &[u8]) -> Result<SectorHandle, JsValue> {
+pub fn parse_and_convert_sector(input: &[u8]) -> Result<i3df::renderables::Sector, JsValue> {
     // TODO read https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/building-your-project.html
     // and see if this can be moved to one common place
     panic::set_hook(Box::new(console_error_panic_hook::hook));
@@ -95,16 +89,10 @@ pub fn parse_sector(input: &[u8]) -> Result<SectorHandle, JsValue> {
     let cursor = std::io::Cursor::new(input);
 
     // TODO see if it is possible to simplify this so we can use the ? operator instead
-    let sector = match i3df::parse_sector(cursor) {
-        Ok(x) => x,
-        Err(e) => return Err(JsValue::from(error::ParserError::from(e))),
-    };
-    Ok(SectorHandle { sector })
-}
-
-#[wasm_bindgen]
-pub fn convert_sector(sector: &SectorHandle) -> i3df::renderables::Sector {
-    i3df::renderables::convert_sector(&sector.sector)
+    match i3df::parse_sector(cursor) {
+        Ok(x) => Ok(i3df::renderables::convert_sector(&x)),
+        Err(e) => return Err(JsValue::from(error::ParserError::from(e)))
+    }
 }
 
 #[wasm_bindgen]
