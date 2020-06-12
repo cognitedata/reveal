@@ -54,17 +54,6 @@ export class PotreeThreeView extends BaseGroupThreeView
   }
 
   //==================================================
-  // OVERRIDES of Base3DView
-  //==================================================
-
-  protected /*override*/ getViewInfoCore(viewInfo: ViewInfo): void
-  {
-    super.getViewInfoCore(viewInfo);
-    viewInfo.addText("Potree", 1);
-  }
-
-
-  //==================================================
   // OVERRIDES of BaseGroupThreeView
   //==================================================
 

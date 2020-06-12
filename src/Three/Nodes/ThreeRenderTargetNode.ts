@@ -215,7 +215,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
       this.stats.end();
 
       const viewInfo = this.getViewInfo();
-      this._overlay.render(this.renderer, viewInfo, this.pixelRange.delta);
+      this._overlay.render(this.renderer, viewInfo, this.pixelRange.delta, this.fgColor);
       this.invalidate(false);
     }
   }

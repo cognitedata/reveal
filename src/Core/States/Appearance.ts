@@ -12,4 +12,5 @@ export class Appearance
   static toolbarIconSize = 24; // Toolbar icon size  in pixel
   static treeFontSize = 10; // Realative or absolute? Do what best
   static treeBackgoundColor: Color = new Color(); // Use brush instead here?
+  static fontIn3D = "Helvetica"; // Use brush instead here?
 }

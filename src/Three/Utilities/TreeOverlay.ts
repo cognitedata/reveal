@@ -15,6 +15,8 @@ import * as THREE from "three";
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { ViewInfo } from "@/Core/Views/ViewInfo";
+import Color from "color";
+import { Canvas } from "@/Three/Utilities/Canvas";
 
 export class TreeOverlay
 {
@@ -24,7 +26,7 @@ export class TreeOverlay
 
   private scene: THREE.Scene | null = null;
   private camera: THREE.Camera | null = null;
-  private bitmap: CanvasRenderingContext2D | null = null;
+  private context: CanvasRenderingContext2D | null = null;
   private texture: THREE.Texture | null = null;
   private delta: Vector3 = new Vector3(-1, -1);
 
@@ -32,7 +34,7 @@ export class TreeOverlay
   // INSTANCE METHODS: 
   //==================================================
 
-  public render(renderer: THREE.WebGLRenderer, viewInfo: ViewInfo, delta: Vector3): void
+  public render(renderer: THREE.WebGLRenderer, viewInfo: ViewInfo, delta: Vector3, fgColor: Color): void
   {
     if (viewInfo.isEmpty)
       return;
@@ -40,7 +42,7 @@ export class TreeOverlay
     if (!this.delta.equals(delta))
       this.initialize(delta);
 
-    if (!this.bitmap)
+    if (!this.context)
       return;
 
     if (!this.texture)
@@ -56,13 +58,19 @@ export class TreeOverlay
 
     if (text && text.length)
     {
-      this.bitmap.font = "Normal 10px Arial";
-      this.bitmap.textAlign = "right";
-      this.bitmap.textBaseline = "bottom";
-      this.bitmap.fillStyle = "rgba(255,255,255, 180)";
+      this.context.clearRect(0, 0, this.delta.x, this.delta.y);
 
-      this.bitmap.clearRect(0, 0, this.delta.x, this.delta.y);
-      this.bitmap.fillText(text, this.delta.x, this.delta.y);
+      this.context.shadowBlur = 2;
+      this.context.shadowColor = 'rgba(0, 0, 0, 0.5)';
+      this.context.shadowOffsetX = 3;
+      this.context.shadowOffsetY = 3;
+      
+      this.context.font = Canvas.getFont(14);
+      this.context.textAlign = "right";
+      this.context.textBaseline = "bottom";
+      this.context.fillStyle = fgColor.string();
+
+      this.context.fillText(text, this.delta.x-6, this.delta.y-3);
       this.texture.needsUpdate = true;
     }
     renderer.render(this.scene, this.camera);
@@ -79,8 +87,8 @@ export class TreeOverlay
       this.texture.dispose();
       this.texture = null;
     }
-    if (this.bitmap)
-      this.bitmap = null;
+    if (this.context)
+      this.context = null;
     if (this.camera)
       this.camera = null;
     if (this.scene)
@@ -117,8 +125,8 @@ export class TreeOverlay
     canvas.width = this.delta.x;
     canvas.height = this.delta.y;
 
-    this.bitmap = canvas.getContext("2d");
-    if (!this.bitmap)
+    this.context = canvas.getContext("2d");
+    if (!this.context)
       return;
 
     // Create the camera and set the viewport to match the screen dimensions.

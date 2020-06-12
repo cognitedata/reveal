@@ -16,6 +16,7 @@ import * as Color from "color"
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
+import { Canvas } from "@/Three/Utilities/Canvas";
 
 export class SpriteCreator
 {
@@ -80,7 +81,7 @@ export class SpriteCreator
     // https://www.javascripture.com/CanvasRenderingContext2D
     const borderSize = 2;
     const fontSize = 30;
-    const font = `${fontSize}px Helvetica`;
+    const font = Canvas.getFont(fontSize);
 
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");

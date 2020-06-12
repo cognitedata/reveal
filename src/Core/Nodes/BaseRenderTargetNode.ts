@@ -88,6 +88,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
   public getViewInfo(): ViewInfo
   {
     const viewInfo = new ViewInfo();
+    viewInfo.addText("Cognite subsurface viewer");    
     for (const view of this.viewsShownHere.list)
       if (view instanceof Base3DView)
         view.getViewInfo(viewInfo);
