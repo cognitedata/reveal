@@ -73,8 +73,6 @@ export class Canvas
     this.context.fillRect(0, 0, this.dx, this.dy);
   }
 
-  public static getColor(color: Color | null) { return color ? color.string() : "black" };
-
   //==================================================
   // INSTANCE METHODS: Path 
   //==================================================
@@ -207,4 +205,52 @@ export class Canvas
     this.context.fill();
     this.context.globalCompositeOperation = operation;
   }
+
+  //==================================================
+  // STATIC METHODS: Filling
+  //==================================================
+
+  public static getColor(color: Color | null) { return color ? color.string() : "black" };
+
+
+  public static measureTextHeight(context: CanvasRenderingContext2D, text: string, maxWidth: number, lineHeight: number): number
+  {
+    return Canvas.fillOrTextHeightText(context, text, -1, -1, maxWidth, lineHeight);
+  }
+
+  public static fillText(context: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number): void
+  {
+    Canvas.fillOrTextHeightText(context, text, x, y, maxWidth, lineHeight);
+  }
+
+  private static fillOrTextHeightText(context: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number): number
+  {
+    const words = text.split(' ');
+    var line = '';
+    var height = 0;
+    const draw = x >= 0 && y >= 0;
+    for (let n = 0; n < words.length; n++)
+    {
+      let testLine = line;
+      if (line.length > 0)
+        testLine += ' ';
+      testLine += words[n]
+      const metrics = context.measureText(testLine);
+      const testWidth = metrics.width;
+      if (testWidth > maxWidth && n > 0)
+      {
+        if (draw)
+          context.fillText(line, x, y + height);
+        line = words[n];
+        height += lineHeight;
+      }
+      else
+        line = testLine;
+    }
+    if (draw)
+      context.fillText(line, x, y + height);
+    height += lineHeight;
+    return height;
+  }
+
 }

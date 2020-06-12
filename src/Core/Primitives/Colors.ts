@@ -31,9 +31,11 @@ export class Colors
   public static get red(): Color { return Color.rgb(MaxByte, 0, 0) };
   public static get green(): Color { return Color.rgb(0, MaxByte, 0) };
   public static get blue(): Color { return Color.rgb(0, 0, MaxByte) };
+  public static get orange(): Color { return Color.rgb(MaxByte, 102, 0) };
   public static get yellow(): Color { return Color.rgb(MaxByte, MaxByte, 0) };
   public static get cyan(): Color { return Color.rgb(0, MaxByte, MaxByte) };
   public static get magenta(): Color { return Color.rgb(MaxByte, 0, MaxByte) };
+  public static get selectedEmissive(): Color { return Color.rgb(128, 128, 0) };
 
   private static index = 0;
   private static _colors: Color[] | null = null;

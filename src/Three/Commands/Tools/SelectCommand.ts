@@ -40,9 +40,11 @@ export class SelectCommand extends ToolCommand
     if (!intersection)
       return;
 
-    const node = target.getNodeByObject(intersection.object);
-    if (!node)
+    const view = target.getViewByObject(intersection.object);
+    if (!view)
       return;
+
+    view.Pick(intersection)
   }
 }
 

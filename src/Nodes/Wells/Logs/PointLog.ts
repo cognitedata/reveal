@@ -44,10 +44,10 @@ export class PointLog extends BaseLog
     // Set in the labels so they are in order
     var all = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut";
     var labels = all.split(' ');
-    const p = Random.getFloat2(0, 1);
     for (let k = 0; k < log.samples.length; k++)
     {
       let label = "";
+      const p = Random.getFloat2(0.2, 1);
       for (let i = 0; i < labels.length; i++)
       {
         if (!Random.isTrue(p))

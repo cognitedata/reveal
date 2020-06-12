@@ -18,6 +18,8 @@ import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
 export abstract class BaseThreeView extends Base3DView
 {
+  static noPicking = "noPicking";
+  
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
@@ -36,7 +38,6 @@ export abstract class BaseThreeView extends Base3DView
   // OVERRIDES of BaseView
   //==================================================
 
-
   protected /*override*/ updateCore(args: NodeEventArgs): void
   {
     super.updateCore(args);
@@ -54,6 +55,14 @@ export abstract class BaseThreeView extends Base3DView
     super.onHideCore();
     this.invalidateTarget();
   }
+
+  //==================================================
+  // VIRTUAL METHODS
+  //==================================================
+
+  public /*virtual*/ shouldPick(): boolean { return true; }
+
+  public /*virtual*/ Pick(intersection: THREE.Intersection) {  }
 
   //==================================================
   // INSTANCE METHODS

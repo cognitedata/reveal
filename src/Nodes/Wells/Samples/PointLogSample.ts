@@ -20,6 +20,7 @@ export class PointLogSample extends BaseLogSample
   //==================================================
 
   public label: string;
+  public isOpen = false;
 
   //==================================================
   // CONSTRUCTORS

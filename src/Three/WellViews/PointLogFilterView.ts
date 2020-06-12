@@ -28,6 +28,8 @@ import { SpriteCreator } from "@/Three/Utilities/SpriteCreator";
 import * as Color from "color"
 import { Colors } from "@/Core/Primitives/Colors";
 import { Canvas } from "@/Three/Utilities/Canvas";
+import { Changes } from "@/Core/Views/Changes";
+import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
 
 export class PointLogFilterView extends BaseGroupThreeView
 {
@@ -63,6 +65,8 @@ export class PointLogFilterView extends BaseGroupThreeView
   protected /*override*/ updateCore(args: NodeEventArgs): void
   {
     super.updateCore(args);
+    if (args.isChanged(Changes.pointOpenOrClosed))
+      this.touch();
   }
 
   //==================================================
@@ -97,6 +101,35 @@ export class PointLogFilterView extends BaseGroupThreeView
   }
 
   //==================================================
+  // OVERRIDES of BaseThreeView
+  //==================================================
+
+  public /*override*/ Pick(intersection: THREE.Intersection)
+  {
+    const parent = this.object3D;
+    if (!parent)
+      return;
+
+    var index = intersection.object.userData["sphere"];
+    if (index == undefined)
+      return;
+
+    const node = this.node;
+    const trajectory = node.trajectory;
+    if (!trajectory)
+      return;
+
+    const log = node.data;
+    if (!log)
+      return;
+
+    const sample = log.getAt(index);
+    sample.isOpen = !sample.isOpen;
+
+    node.notify(new NodeEventArgs(Changes.pointOpenOrClosed));
+  }
+
+  //==================================================
   // OVERRIDES of BaseGroupThreeView
   //==================================================
 
@@ -115,22 +148,27 @@ export class PointLogFilterView extends BaseGroupThreeView
     const group = new THREE.Group();
 
     const radius = Math.max(10, this.trajectoryRadius * 2);
-    const geometry = new THREE.SphereGeometry(radius, 16, 8);
-    const material = new THREE.MeshPhongMaterial({ color: ThreeConverter.toColor(color) });
+    const closedGeometry = new THREE.SphereGeometry(radius, 16, 8);
+    const openGeometry = new THREE.SphereGeometry(radius * 1.2, 16, 8);
+
+    const closedMaterial = new THREE.MeshPhongMaterial({ color: ThreeConverter.toColor(color) });
+    const openMaterial = new THREE.MeshPhongMaterial({ color: ThreeConverter.toColor(color) });
+    openMaterial.emissive = ThreeConverter.toColor(Colors.selectedEmissive);
 
     const up = new Vector3(0, 0, 1);
     const position: Vector3 = Vector3.newZero;
     const tangent: Vector3 = Vector3.newZero;
-    for (let i = 0; i < log.samples.length; i++)
+
+    for (let index = 0; index < log.samples.length; index++)
     {
-      const sample = log.getAt(i);
+      const sample = log.getAt(index);
       if (!trajectory.getPositionAtMd(sample.md, position))
         continue;
 
       if (!trajectory.getTangentAtMd(sample.md, tangent))
         continue;
 
-      const sphere = new THREE.Mesh(geometry, material);
+      const sphere = new THREE.Mesh(sample.isOpen ? openGeometry : closedGeometry, sample.isOpen ? openMaterial : closedMaterial);
       sphere.scale.z = 0.5;
 
       if (Math.abs(tangent.z) < 0.999)
@@ -141,14 +179,20 @@ export class PointLogFilterView extends BaseGroupThreeView
         sphere.rotateOnAxis(ThreeConverter.toVector(axis), radians);
       }
       ThreeConverter.copy(sphere.position, position);
-      sphere.userData["i"] = i;
+      sphere.userData["sphere"] = index;
 
       group.add(sphere);
-      const label = PointLogFilterView.createLabel(sample.label, position, 30, this.fgColor);
-      if (label)  
+
+      if (sample.isOpen)
       {
-        label.center = new THREE.Vector2(0, 1);
-        group.add(label);
+        const label = PointLogFilterView.createLabel(sample.label, position, 20);
+        if (label)  
+        {
+          label.center = new THREE.Vector2(0, 1);
+          label.userData["label"] = index;
+          label.userData[BaseThreeView.noPicking] = true;
+          group.add(label);
+        }
       }
     }
     return group;
@@ -176,10 +220,12 @@ export class PointLogFilterView extends BaseGroupThreeView
   }
 
 
-  public static createLabel(text: string, position: Vector3, worldHeight: number, color: Color): THREE.Sprite | null
+  public static createLabel(text: string, position: Vector3, worldfontSize: number): THREE.Sprite | null
   {
-    const outValue = { toChange: 0 };
-    const canvas = PointLogFilterView.createCanvasWithText(text, color, outValue);
+    const pixelfontSize = 30;
+    const maxWidth = pixelfontSize * 20;
+
+    const canvas = PointLogFilterView.createCanvasWithText(text, maxWidth, pixelfontSize);
     if (!canvas)
       return null;
 
@@ -187,17 +233,19 @@ export class PointLogFilterView extends BaseGroupThreeView
     const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
     const sprite = new THREE.Sprite(spriteMaterial);
 
-    sprite.scale.set(worldHeight * canvas.width / outValue.toChange, worldHeight, 1);
+    const width = worldfontSize * canvas.width / pixelfontSize;
+    const height = worldfontSize * canvas.height / pixelfontSize;
+
+    sprite.scale.set(width, height, 1);
+
     ThreeConverter.copy(sprite.position, position);
     return sprite;
   }
 
-  public static createCanvasWithText(text: string, color: Color, outValue: { toChange: number }): HTMLCanvasElement | null
+  public static createCanvasWithText(text: string, maxWidth: number, fontSize: number): HTMLCanvasElement | null
   {
-    const maxWidth = 500;
-    const outerMargin = 50;
-    const innerMargin = 10;
-    const fontSize = 30;
+    const outerMargin = 0.1 * maxWidth;
+    const innerMargin = 0.025 * maxWidth;
     const lineSpacing = 0.5;
     const lineHeight = fontSize * (1 + lineSpacing);
     const font = `${fontSize}pt Helvetica`;
@@ -217,7 +265,7 @@ export class PointLogFilterView extends BaseGroupThreeView
     {
       multiLine = true;
       textWidth = maxWidth;
-      textHeight = measureTextHeight(context, text, maxWidth, lineHeight);
+      textHeight = Canvas.measureTextHeight(context, text, maxWidth + innerMargin, lineHeight);
       textHeight -= fontSize * lineSpacing / 2;
     }
     else
@@ -225,40 +273,36 @@ export class PointLogFilterView extends BaseGroupThreeView
       multiLine = false;
       textHeight = fontSize;
     }
-    outValue.toChange = fontSize;
+    let margin = 2 * (outerMargin + innerMargin);
+    canvas.width = textWidth + margin;
+    canvas.height = textHeight + margin;
 
-    canvas.width = textWidth + 2 * (outerMargin + innerMargin);
-    canvas.height = textHeight + 2 * (outerMargin + innerMargin);
-
-    const gradient = context.createLinearGradient(0, 0, canvas.width, 0);
+    const gradient = context.createLinearGradient(outerMargin, 0, canvas.width - outerMargin, 0);
     gradient.addColorStop(0, Canvas.getColor(Colors.white));
-    gradient.addColorStop(1, Canvas.getColor(Colors.lightGrey));
+    gradient.addColorStop(1, Canvas.getColor(Colors.grey));
 
     context.fillStyle = "transparent";
     context.fillRect(0, 0, canvas.width, canvas.height);
 
-    context.fillStyle = gradient;;//"white";
-    context.fillRect(outerMargin, outerMargin, canvas.width - outerMargin * 2, canvas.height - outerMargin * 2);
+    context.fillStyle = gradient;
+    margin = outerMargin;
+    context.fillRect(margin, margin, canvas.width - 2 * margin, canvas.height - 2 * margin);
 
-    context.strokeStyle = Canvas.getColor(Colors.darkGrey);
-    context.lineWidth = 2;
-    context.strokeRect(outerMargin, outerMargin, canvas.width - outerMargin * 2, canvas.height - outerMargin * 2);
+    context.strokeStyle = Canvas.getColor(Colors.orange);
+    context.lineWidth = 3;
+    margin = outerMargin - 1;
+    context.strokeRect(margin, margin, canvas.width - 2 * margin, canvas.height - 2 * margin);
 
     // need to set font again after resizing canvas
     context.font = font;
     context.textBaseline = "top";
     context.textAlign = "start";
 
-    //context.fillStyle = 'red';
-    //context.fillRect(0, 0, width, height);
-
-    // scale to fit but don't stretch
-    //context.translate(width / 2, height / 2);
     context.fillStyle = Canvas.getColor(Colors.black);
     const x = outerMargin + innerMargin;
     const y = x;
     if (multiLine)
-      wrapText(context, text, x, y, maxWidth, lineHeight);
+      Canvas.fillText(context, text, x, y, maxWidth + innerMargin, lineHeight);
     else
       context.fillText(text, x, y);
 
@@ -266,45 +310,3 @@ export class PointLogFilterView extends BaseGroupThreeView
   }
 }
 
-function measureTextHeight(context: CanvasRenderingContext2D, text: string, maxWidth: number, lineHeight: number): number
-{
-  const words = text.split(' ');
-  var line = '';
-  var height = 0;
-  for (let n = 0; n < words.length; n++)
-  {
-    const testLine = line + words[n] + ' ';
-    const metrics = context.measureText(testLine);
-    const testWidth = metrics.width;
-    if (testWidth > maxWidth && n > 0)
-    {
-      line = words[n] + ' ';
-      height += lineHeight;
-    }
-    else
-      line = testLine;
-  }
-  height += lineHeight;
-  return height;
-}
-
-function wrapText(context: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number)
-{
-  const words = text.split(' ');
-  var line = '';
-  for (let n = 0; n < words.length; n++)
-  {
-    const testLine = line + words[n] + ' ';
-    const metrics = context.measureText(testLine);
-    const testWidth = metrics.width;
-    if (testWidth > maxWidth && n > 0)
-    {
-      context.fillText(line, x, y);
-      line = words[n] + ' ';
-      y += lineHeight;
-    }
-    else
-      line = testLine;
-  }
-  context.fillText(line, x, y);
-}

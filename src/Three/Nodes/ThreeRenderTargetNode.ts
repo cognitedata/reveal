@@ -42,6 +42,8 @@ import { ToolCommand } from "@/Three/Commands/Tools/ToolCommand";
 import { ToolController } from "@/Three/Nodes/ToolController";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { UniqueId } from "@/Core/Primitives/UniqueId";
+import { BaseView } from "@/Core/Views/BaseView";
+import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
 
 const DirectionalLightName = "DirectionalLight";
 
@@ -334,15 +336,22 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     return new THREE.Vector2(x, y);
   }
 
-  public getNodeByObject(object: THREE.Object3D): BaseNode | null
+  public getViewByObject(object: THREE.Object3D): BaseThreeView | null
   {
     while (true)
     {
+      // If the object is marked by noPicking, no picking should be done
+      if (object.userData[BaseThreeView.noPicking])
+        return null;
+
       if (object.name)
       {
         const id = new UniqueId(object.name);
         for (const view of this.viewsShownHere.list)
         {
+          if (!(view instanceof BaseThreeView))
+            continue;
+
           if (!view.shouldPick())
             continue;
 
@@ -351,7 +360,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
             continue;
 
           if (node.uniqueId.equals(id))
-            return node;
+            return view;
         }
       }
       if (!object.parent)
@@ -360,5 +369,11 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
       object = object.parent;
     }
     return null;
+  }
+
+  public getNodeByObject(object: THREE.Object3D): BaseNode | null
+  {
+    const view = this.getViewByObject(object);
+    return view ? view.getNode() : null;
   }
 }

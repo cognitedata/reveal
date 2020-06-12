@@ -67,7 +67,7 @@ export class RandomDataLoader extends BaseRootLoader
           wellNode.addChild(trajectoryNode);
 
           // Add some random casing logs to the trajectory
-          let numberOfLogs = 0;
+          let numberOfLogs = 1;
           for (let logIndex = 0; logIndex < numberOfLogs; logIndex++)
           {
             const mdRange = trajectoryNode.data.mdRange.clone();
@@ -79,7 +79,7 @@ export class RandomDataLoader extends BaseRootLoader
           }
 
           // Add some float logs to the trajectory
-          numberOfLogs = 0;//Random.getInt2(2, 5);
+          numberOfLogs = Random.getInt2(2, 5);
           for (let logIndex = 0; logIndex < numberOfLogs; logIndex++)
           {
             const mdRange = trajectoryNode.data.mdRange.clone();
@@ -105,7 +105,7 @@ export class RandomDataLoader extends BaseRootLoader
           }
 
           // Add some discrete logs to the trajectory
-          numberOfLogs = 0;
+          numberOfLogs = 1;
           for (let logIndex = 0; logIndex < numberOfLogs; logIndex++)
           {
             const mdRange = trajectoryNode.data.mdRange.clone();

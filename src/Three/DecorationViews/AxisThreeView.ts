@@ -76,7 +76,11 @@ export class AxisThreeView extends BaseGroupThreeView
     super.updateCore(args);
   }
 
-  public /*virtual*/ shouldPick(): boolean { return false; }
+  //==================================================
+  // OVERRIDES of BaseThreeView
+  //==================================================
+
+  public /*virtual*/ shouldPick(): boolean { return false; } // Newer pick on axis
 
   //==================================================
   // OVERRIDES of Base3DView
