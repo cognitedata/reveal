@@ -7,9 +7,6 @@
  * This is the interface for the TrajectoryRows object
  */
 
-
-
-
 // Note: the first TrajectoryColumns we will have will be
 // { "name":"inclination" , "valueType":"DOUBLE"}
 // { "name":"md" ,          "valueType":"DOUBLE" }
@@ -18,21 +15,21 @@
 // { "name":"y_offset" ,    "valueType":"DOUBLE" }
 
 export interface TrajectoryColumnR {
-    "name":string,
-    "externalId":string,
-    "valueType": string, // DOUBLE | STRING | LONG
+    name: string,
+    externalId?: string,
+    valueType: string, // DOUBLE | STRING | LONG
 }
 
 export interface TrajectoryRow {
-    "rowNumber": number,
-    "values": [number]
+    rowNumber: number,
+    values: number[]
 }
 
 // note: the size of the TrajectoryRows "columns" array is identical to the size of the TrajectoryRow "values" array
 
 export interface TrajectoryRows {
-    "id": number,
-    "externalId": string,
-    "columns": [TrajectoryColumnR],
-    "rows": [TrajectoryRow]
+    id: number,
+    externalId: string,
+    columns: TrajectoryColumnR[],
+    rows: TrajectoryRow[]
 }
