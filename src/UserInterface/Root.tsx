@@ -19,7 +19,6 @@ import { setVisualizerData } from "./redux/actions/visualizers";
 import NotificationsToActionsAdaptor from "./adaptors/NotificationToAction";
 import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 import UserInterfaceListener from "./adaptors/UserInterfaceListener";
-import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 
 /**
  * Root component
