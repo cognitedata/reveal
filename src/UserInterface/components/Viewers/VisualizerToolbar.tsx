@@ -139,7 +139,7 @@ const VisualizerToolbar = (props: { visualizerId: string, visualizers: Visualize
                   "visualizer-tool-bar-icon-selected" : ""}`}>
               {command.icon && <Icon
                 src={command.icon}
-                tooltip={command.command.name}
+                tooltip={command.command.getTooltip()}
                 placement={horizontal ? "bottom" : "right-start"}
               />}
             </div> : null)}

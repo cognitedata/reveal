@@ -20,7 +20,7 @@ export class ZoomToTargetToolCommand extends ToolCommand
 
   public /*override*/ getName(): string { return "Zoom to target" }
   public /*override*/ getIcon(): string { return ZoomToTargetToolCommandIcon; }
-  public /*override*/ get shortcut(): string { return "S" }
+  public /*override*/ getShortCutKeys(): string { return "S" }
 
   //==================================================
   // OVERRIDES of ToolCommand
@@ -34,13 +34,13 @@ export class ZoomToTargetToolCommand extends ToolCommand
     if (!target)
       return;
 
-    const pixel = target.getMouseRelativePosition(event);
-    const world = target.getClickPosition(pixel);
-    if (world == null)
+    const pixelCoords = target.getMouseRelativePosition(event);
+    const worldCoords = target.getClickPosition(pixelCoords);
+    if (worldCoords == null)
       return;
 
     const cameraControl = target.cameraControl;
-    cameraControl.zoomToTarget(world);
+    cameraControl.zoomToTarget(worldCoords);
     target.setDefaultTool();
   }
 }

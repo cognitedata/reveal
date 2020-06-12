@@ -20,8 +20,8 @@ export class MeasureDistanceTool extends ToolCommand
 
   public /*override*/ getName(): string { return "Measure distance" }
   public /*override*/ getIcon(): string { return MeasureDistanceToolIcon; }
-  public /*override*/ get tooltip(): string { return "Measure distance by click and drag to wantet position. You must hit a 3D object to see the distance." }
-  public /*override*/ get shortcut(): string { return "S" }
+  public /*override*/ getTooltip(): string { return "Measure distance by click and drag to wantet position. You must hit a 3D object to see the distance." }
+  public /*override*/ getShortCutKeys(): string { return "M" }
 }
 
 

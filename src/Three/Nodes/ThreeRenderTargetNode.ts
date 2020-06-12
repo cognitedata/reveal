@@ -322,9 +322,9 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     return null;
   }
 
-  public getClickPosition(pixel: THREE.Vector2): THREE.Vector3 | null
+  public getClickPosition(pixelCoords: THREE.Vector2): THREE.Vector3 | null
   {
-    const intersection = this.getIntersection(pixel);
+    const intersection = this.getIntersection(pixelCoords);
     return intersection ? intersection.point : null;
   }
 
