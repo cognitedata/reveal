@@ -81,11 +81,11 @@ pub trait GeometryCollection<G: Geometry> {
     fn count(&self) -> usize;
 }
 
-impl<G: Geometry> GeometryCollection<G> for Vec<G>{
-    fn with_capacity(capacity:usize) -> Vec<G>{
+impl<G: Geometry> GeometryCollection<G> for Vec<G> {
+    fn with_capacity(capacity: usize) -> Vec<G> {
         Vec::with_capacity(capacity)
     }
-    fn push(&mut self, geometry: G){
+    fn push(&mut self, geometry: G) {
         self.push(geometry);
     }
     fn count(&self) -> usize {
@@ -109,7 +109,7 @@ pub struct Sector {
 #[wasm_bindgen]
 pub struct Attribute {
     pub size: usize,
-    pub offset: usize
+    pub offset: usize,
 }
 
 // TODO move statistics out of here - rather create a macro that can be used to create
