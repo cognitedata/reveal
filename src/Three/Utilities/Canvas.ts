@@ -15,6 +15,7 @@ import * as THREE from "three";
 import * as Color from "color"
 
 import { SpriteCreator } from "@/Three/Utilities/SpriteCreator";
+import { Appearance } from "@/Core/States/Appearance";
 
 export class Canvas
 {
@@ -51,7 +52,6 @@ export class Canvas
     this.dy = canvas.height = dy;
     this.canvas = canvas;
     this.context = context;
-    //this.context.clearRect(0, 0, this.dx, this.dy);
   }
 
   //==================================================
@@ -143,7 +143,7 @@ export class Canvas
   {
     // https://www.javascripture.com/CanvasRenderingContext2D
     const borderSize = fontSize * 0.1;
-    const font = `bolder ${fontSize}px Helvetica`;
+    const font = Canvas.getBoldFont(fontSize);
 
     this.context.font = font;
     this.context.textBaseline = "alphabetic";
@@ -211,7 +211,8 @@ export class Canvas
   //==================================================
 
   public static getColor(color: Color | null) { return color ? color.string() : "black" };
-
+  public static getFont(fontSize: number): string { return `Normal ${fontSize}px ${Appearance.fontIn3D}`; }
+  public static getBoldFont(fontSize: number): string { return `Bolder ` + Canvas.getFont(fontSize); }
 
   public static measureTextHeight(context: CanvasRenderingContext2D, text: string, maxWidth: number, lineHeight: number): number
   {

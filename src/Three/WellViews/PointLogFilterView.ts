@@ -242,7 +242,7 @@ export class PointLogFilterView extends BaseGroupThreeView
     const innerMargin = 0.025 * maxWidth;
     const lineSpacing = 0.5;
     const lineHeight = fontSize * (1 + lineSpacing);
-    const font = `${fontSize}pt Helvetica`;
+    const font = Canvas.getFont(fontSize);
 
     // https://www.javascripture.com/CanvasRenderingContext2D
     const canvas = document.createElement("canvas");
