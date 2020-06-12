@@ -6,6 +6,7 @@ import { WorkerPool } from '@/utilities/workers/WorkerPool';
 import { ParseSectorResult, ParseCtmResult, ParseQuadsResult } from '@/utilities/workers/types/parser.types';
 import { ParserWorker } from '@/utilities/workers/parser.worker';
 import { SectorQuads } from '../rendering/types';
+import { SectorGeometry } from './types';
 
 export class CadSectorParser {
   private readonly workerPool: WorkerPool;
@@ -24,6 +25,10 @@ export class CadSectorParser {
 
   parseCTM(data: Uint8Array): Promise<ParseCtmResult> {
     return this.parseCtm(data);
+  }
+
+  async_finalizeDetailed(i3dFile: ParseSectorResult, ctmFiles: Map<string, ParseCtmResult>): Promise<SectorGeometry> {
+    return this.workerPool.postWorkToAvailable(async (worker: ParserWorker) => worker.finalizeDetailed(i3dFile, ctmFiles));
   }
 
   private async parseSimple(quadsArrayBuffer: Uint8Array): Promise<ParseQuadsResult> {
