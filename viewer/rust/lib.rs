@@ -91,7 +91,7 @@ pub fn parse_and_convert_sector(input: &[u8]) -> Result<i3df::renderables::Secto
     // TODO see if it is possible to simplify this so we can use the ? operator instead
     match i3df::parse_sector(cursor) {
         Ok(x) => Ok(i3df::renderables::convert_sector(&x)),
-        Err(e) => Err(JsValue::from(error::ParserError::from(e)))
+        Err(e) => Err(JsValue::from(error::ParserError::from(e))),
     }
 }
 
