@@ -80,7 +80,7 @@ export class PotreeThreeView extends BaseGroupThreeView
     const group: Potree.Group = new Potree.Group();
     group.setPointBudget(style.budget);
 
-    Potree.loadPointCloud(path, node.name, (data: any) =>
+    Potree.loadPointCloud(path, node.getName(), (data: any) =>
     {
       const pointcloud: Potree.PointcloudOctree = data.pointcloud;
       group.add(pointcloud);

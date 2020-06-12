@@ -154,8 +154,10 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
     this.controls.addEventListener("update", () => this.updateLightPosition());
     this.domElement.addEventListener('click', (event) => this._toolController.onMouseClick(this, event), false);
+    this.domElement.addEventListener('mousedown', (event) => this._toolController.onMouseDown(this, event), false);
+    this.domElement.addEventListener('mouseup', (event) => this._toolController.onMouseUp(this, event), false);
     this.domElement.addEventListener('mousemove', (event) => this._toolController.onMouseMove(this, event), false);
-
+    
     //mousedown
     //mouseup
     //mousemove
@@ -320,9 +322,9 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     return null;
   }
 
-  public getClickPosition(pixel: THREE.Vector2): THREE.Vector3 | null
+  public getClickPosition(pixelCoords: THREE.Vector2): THREE.Vector3 | null
   {
-    const intersection = this.getIntersection(pixel);
+    const intersection = this.getIntersection(pixelCoords);
     return intersection ? intersection.point : null;
   }
 

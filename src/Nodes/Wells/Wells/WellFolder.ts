@@ -34,6 +34,6 @@ export class WellFolder extends FolderNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Well folder" }
-  public /*override*/ get icon(): string { return FolderNodeGreyscale }
-  public /*virtual*/ get canChangeColor(): boolean { return true; }
+  public /*override*/ getIcon(): string { return FolderNodeGreyscale }
+  public /*virtual*/ canChangeColor(): boolean { return true; }
 }

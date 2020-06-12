@@ -27,9 +27,9 @@ export class ViewFromCommand extends ThreeRenderTargetCommand
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*override*/ get name(): string { return "View from " + this.directionName; }
+  public /*override*/ getName(): string { return "View from " + this.directionName; }
 
-  public /*override*/ get icon(): string
+  public /*override*/ getIcon(): string
   {
     switch (this.viewFrom)
     {

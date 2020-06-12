@@ -34,7 +34,7 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget
   public get viewsShownHere(): ViewList { return this._viewsShownHere; }
   public get targetId(): TargetId { return new TargetId(this.className, this.uniqueId); }
   public get fgColor(): Color { return this.isLightBackground ? Colors.black : Colors.white; }
-  public get bgColor(): Color { return this.color; }
+  public get bgColor(): Color { return this.getColor(); }
 
   //==================================================
   // OVERRIDES of Identifiable
@@ -47,9 +47,9 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get color(): Color { return this.isLightBackground ? Colors.white : Colors.black; }
+  public /*override*/ getColor(): Color { return this.isLightBackground ? Colors.white : Colors.black; }
   public /*override*/ get typeName(): string { return "Target" }
-  public /*override*/ get canBeActive(): boolean { return true; }
+  public /*override*/ canBeActive(): boolean { return true; }
 
   public /*override*/ getDebugString(): string
   {

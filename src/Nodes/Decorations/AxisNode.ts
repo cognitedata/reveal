@@ -48,7 +48,7 @@ export class AxisNode extends BaseVisualNode
 
   public /*override*/ get typeName(): string { return "Axis" }
 
-  public /*override*/ get icon(): string { return AxisNodeIcon }
+  public /*override*/ getIcon(): string { return AxisNodeIcon }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {

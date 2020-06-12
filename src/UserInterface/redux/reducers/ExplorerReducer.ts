@@ -22,13 +22,13 @@ function generateNodeStructure(
   return {
     parentId,
     uniqueId,
-    name: node.name,
+    name: node.getName(),
     expanded: (node.isExpanded),
     type,
     icon: {
-      path: node.icon,
-      description: node.name,
-      color: (node.hasIconColor() ? node.color : undefined)
+      path: node.getIcon(),
+      description: node.getName(),
+      color: (node.hasIconColor() ? node.getColor() : undefined)
     },
     selected: node.isActive,
     checked: (node.getCheckBoxState() === CheckBoxState.All),
@@ -36,7 +36,7 @@ function generateNodeStructure(
     isRadio: (node.isRadio(null)),
     isFilter: node.isFilter(null),
     disabled: (node.getCheckBoxState() === CheckBoxState.Disabled),
-    visible: node.isVisibleInTreeControl,
+    visible: node.isVisibleInTreeControl(),
     domainObject: node,
   };
 }

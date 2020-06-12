@@ -44,7 +44,7 @@ export abstract class BaseFilterLogNode extends BaseVisualNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*virtual*/ get isLabelInItalic(): boolean { return true; }
+  public /*virtual*/ isLabelInItalic(): boolean { return true; }
   public /*virtual*/ isFilter(target: ITarget | null): boolean { return true; }
 
   //==================================================
@@ -59,7 +59,7 @@ export abstract class BaseFilterLogNode extends BaseVisualNode
 
   public isEqual(other: BaseLogNode): boolean
   {
-    return this.wellLogType == other.wellLogType && Util.equalsIgnoreCase(this.name, other.name);
+    return this.wellLogType == other.wellLogType && Util.equalsIgnoreCase(this.getName(), other.getName());
   }
 
   public * getAllLogs(): Iterable<BaseLogNode>

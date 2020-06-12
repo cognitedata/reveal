@@ -45,7 +45,7 @@ export class CasingFilterLogNode extends BaseFilterLogNode
 
   public /*override*/ get typeName(): string { return "Casing" }
 
-  public /*override*/ get icon(): string { return CasingLogNodeIcon }
+  public /*override*/ getIcon(): string { return CasingLogNodeIcon }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {

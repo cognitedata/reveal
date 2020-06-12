@@ -297,7 +297,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     if (!style)
       return;
 
-    const label = SpriteCreator.createByPositionAndAlignment(node.name, trajectory.getBasePosition(), 7, style.nameFontHeight, this.fgColor);
+    const label = SpriteCreator.createByPositionAndAlignment(node.getName(), trajectory.getBasePosition(), 7, style.nameFontHeight, this.fgColor);
     if (!label)
       return;
 
@@ -316,7 +316,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     if (!style)
       return;
 
-    const label = SpriteCreator.createByPositionAndAlignment(well.name, well.wellHead, 1, style.nameFontHeight, this.fgColor);
+    const label = SpriteCreator.createByPositionAndAlignment(well.getName(), well.wellHead, 1, style.nameFontHeight, this.fgColor);
     if (!label)
       return;
 
@@ -328,7 +328,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
   {
     const node = this.node;
     const style = this.style;
-    const color = node.color;
+    const color = node.getColor();
     const trajectory = node.data;
     if (!trajectory)
       return;
@@ -472,7 +472,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
         if ((i % 2 === 0) === rightBand && filled < 2)
         {
-          logRender.addFloatLog(canvas, logNode.data, logNode.color, true);
+          logRender.addFloatLog(canvas, logNode.data, logNode.getColor(), true);
           filled++;
           visibleCount++;
         }
@@ -486,7 +486,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
         if ((i % 2 === 0) === rightBand)
         {
-          logRender.addFloatLog(canvas, logNode.data, logNode.color, false);
+          logRender.addFloatLog(canvas, logNode.data, logNode.getColor(), false);
           visibleCount++;
         }
         i++;

@@ -61,7 +61,7 @@ export class WellTrajectoryNode extends BaseVisualNode
 
   public /*override*/ get typeName(): string { return "WellTrajectory" }
 
-  public /*override*/ get icon(): string { return WellTrajectoryNodeIcon }
+  public /*override*/ getIcon(): string { return WellTrajectoryNodeIcon }
 
   public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.range : new Range3(); }
 

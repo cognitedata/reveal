@@ -46,7 +46,7 @@ export class RandomDataLoader extends BaseRootLoader
     {
       const folder = new WellFolder();
       wellTree.addChild(folder);
-      folder.name = `Area ${folderIndex + 1}`;
+      folder.setName(`Area ${folderIndex + 1}`);
 
       const numberOfWells = Random.getInt2(2, 6);
       for (let wellIndex = 0; wellIndex < numberOfWells; wellIndex++)
@@ -56,13 +56,13 @@ export class RandomDataLoader extends BaseRootLoader
 
         wellNode.wellHead = Vector3.getRandom(Range3.newTest);
         wellNode.wellHead.z = 0;
-        wellNode.name = `${folderIndex + 1}-${Random.getInt2(10000, 20000)}`;
+        wellNode.setName(`${folderIndex + 1}-${Random.getInt2(10000, 20000)}`);
 
         // Add some random trajectories to the well
         for (let trajectoryIndex = 0; trajectoryIndex < numberOfTrajectories; trajectoryIndex++)
         {
           const trajectoryNode = new WellTrajectoryNode();
-          trajectoryNode.name = `Traj ${trajectoryIndex + 1}`;
+          trajectoryNode.setName(`Traj ${trajectoryIndex + 1}`);
           trajectoryNode.data = WellTrajectory.createByRandom(wellNode.wellHead);
           wellNode.addChild(trajectoryNode);
 
@@ -74,7 +74,7 @@ export class RandomDataLoader extends BaseRootLoader
             mdRange.expandByFraction(-0.05);
             const logNode = new CasingLogNode();
             logNode.data = FloatLog.createCasingByRandom(mdRange, 7);
-            logNode.name = "Casing";
+            logNode.setName("Casing");
             trajectoryNode.addChild(logNode);
           }
 
@@ -90,16 +90,19 @@ export class RandomDataLoader extends BaseRootLoader
             const valueRange = new Range1(0, 3.14);
             logNode.data = FloatLog.createByRandom(mdRange, valueRange);
 
+            let name: string | null = null;
             if (logIndex == 0)
-              logNode.name = "Gamma ray";
+              name = "Gamma ray";
             else if (logIndex == 1)
-              logNode.name = "Resisivity";
+              name = "Resisivity";
             else if (logIndex == 2)
-              logNode.name = "Neutron density";
+              name = "Neutron density";
             else if (logIndex == 3)
-              logNode.name = "Permeability";
+              name = "Permeability";
             else if (logIndex == 4)
-              logNode.name = "Permeability";
+              name = "Permeability";
+            if (name)
+              logNode.setName(name);
 
             trajectoryNode.addChild(logNode);
           }
@@ -115,7 +118,7 @@ export class RandomDataLoader extends BaseRootLoader
             const logNode = new DiscreteLogNode();
             const valueRange = new Range1(0, 4);
             logNode.data = DiscreteLog.createByRandom(mdRange, valueRange);
-            logNode.name = "Zone log";
+            logNode.setName("Zone log");
             trajectoryNode.addChild(logNode);
           }
 
@@ -129,7 +132,7 @@ export class RandomDataLoader extends BaseRootLoader
 
             const logNode = new PointLogNode();
             logNode.data = PointLog.createByRandom(mdRange, 10);
-            logNode.name = "Risk " + logIndex;
+            logNode.setName("Risk " + logIndex);
             trajectoryNode.addChild(logNode);
           }
         }

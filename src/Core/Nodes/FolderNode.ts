@@ -34,6 +34,6 @@ export class FolderNode extends BaseNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Folder" }
-  public /*override*/ get icon(): string { return FolderNodeIcon }
-  public /*virtual*/ get canChangeColor(): boolean { return false; }
+  public /*override*/ getIcon(): string { return FolderNodeIcon }
+  public /*virtual*/ canChangeColor(): boolean { return false; }
 }

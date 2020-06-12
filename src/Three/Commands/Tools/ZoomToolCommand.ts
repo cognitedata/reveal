@@ -18,8 +18,8 @@ export class ZoomToolCommand extends ToolCommand
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*override*/ get name(): string { return "Rectangle zoom" }
-  public /*override*/ get icon(): string { return ZoomToolCommandIcon; }
+  public /*override*/ getName(): string { return "Rectangle zoom" }
+  public /*override*/ getIcon(): string { return ZoomToolCommandIcon; }
 }
 
 

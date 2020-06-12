@@ -48,6 +48,7 @@ export abstract class BaseNode extends Identifiable
   private _isExpanded = false;
 
   private _isActive: boolean = false;
+  private _isSelected: boolean = false;
   private _isInitialized: boolean = false;
 
   private _uniqueId: UniqueId = UniqueId.new();
@@ -61,7 +62,7 @@ export abstract class BaseNode extends Identifiable
 
   public get uniqueId(): UniqueId { return this._uniqueId; }
   public get renderStyles(): BaseRenderStyle[] { return this._renderStyles; }
-  public get path(): string { return (this.parent ? this.parent.path : "") + "\\" + this.name; }
+  public get path(): string { return (this.parent ? this.parent.path : "") + "\\" + this.getName(); }
   public get isInitialized(): boolean { return this._isInitialized; }
   public get activeTarget(): ITarget | null { return this.activeTargetIdAccessor as ITarget; }
 
@@ -78,60 +79,57 @@ export abstract class BaseNode extends Identifiable
   //==================================================
 
   public abstract get typeName(): string;
-  public /*virtual*/ set name(value: string) { this._name = value; }
-  public /*virtual*/ get name(): string { if (this._name === undefined) this._name = this.generateNewName(); return this._name; }
-  public /*virtual*/ get canChangeName(): boolean { return true; }
-  public /*virtual*/ get nameExtension(): string { return name; }
+  public /*virtual*/ setName(value: string) { this._name = value; }
+  public /*virtual*/ getName(): string { if (this._name === undefined) this._name = this.generateNewName(); return this._name; }
+  public /*virtual*/ canChangeName(): boolean { return true; }
+  public /*virtual*/ getNameExtension(): string { return name; }
 
   //==================================================
   // VIRTUAL METHODS: Label
   //==================================================
 
-  public /*virtual*/ get isVisibleInTreeControl(): boolean { return true; } // If false, the icon and it children is not shown in the tree control
-  public /*virtual*/ get labelColor(): Color { return Colors.black; }
-  public /*virtual*/ get isLabelInBold(): boolean { return this.isActive; } // true shows the label in bold font
-  public /*virtual*/ get isLabelInItalic(): boolean { return !this.canBeDeleted; } // true shows the label in italic font
+  public /*virtual*/ isVisibleInTreeControl(): boolean { return true; } // If false, the icon and it children is not shown in the tree control
+  public /*virtual*/ getLabelColor(): Color { return Colors.black; }
+  public /*virtual*/ isLabelInBold(): boolean { return this.isActive; } // true shows the label in bold font
+  public /*virtual*/ isLabelInItalic(): boolean { return !this.canBeDeleted(); } // true shows the label in italic font
 
   public get label(): string // This is the text shown in the tree control
   {
-    const nameExtension = this.nameExtension;
+    const nameExtension = this.getNameExtension();
     if (Util.isEmpty(nameExtension))
-      return this.name;
-    return `${this.name} [${nameExtension}]`;
+      return this.getName();
+    return `${this.getName()} [${nameExtension}]`;
   }
 
   //==================================================
   // VIRTUAL METHODS: Color
   //==================================================
 
-  public /*virtual*/ get color(): Color { if (this._color === undefined) this._color = this.generateNewColor(); return this._color; }
-  public /*virtual*/ set color(value: Color) { this._color = value; }
-  public /*virtual*/ get canChangeColor(): boolean { return true; }
-
-  public /*virtual*/ hasIconColor(): boolean { return this.canChangeColor; }
-
-  public getColor(): Color { if (this._color === undefined) this._color = this.generateNewColor(); return this._color; } // Nils TODO: Drop virtual properties, use methods instead
+  public /*virtual*/ getColor(): Color { if (this._color === undefined) this._color = this.generateNewColor(); return this._color; }
+  public /*virtual*/ setColor(value: Color) { this._color = value; }
+  public /*virtual*/ canChangeColor(): boolean { return true; }
+  public /*virtual*/ hasIconColor(): boolean { return this.canChangeColor(); }
 
   //==================================================
   // VIRTUAL METHODS: Icon
   //==================================================
 
-  public /*virtual*/ get icon(): string { return (this.typeName + FileType.png); }
+  public /*virtual*/ getIcon(): string { return (this.typeName + FileType.png); }
 
   //==================================================
-  // VIRTUAL METHODS: Active
+  // VIRTUAL METHODS: Active / Selected
   //==================================================
 
   public /*virtual*/ get isActive(): boolean { return this._isActive; }
   public /*virtual*/ set isActive(value: boolean) { this._isActive = value; }
-  public /*virtual*/ get canBeActive(): boolean { return false; }
+  public /*virtual*/ canBeActive(): boolean { return false; }
+  public /*virtual*/ canBeSelected(): boolean {return true; }
 
   //==================================================
   // VIRTUAL METHODS: Appearance in the explorer
   //==================================================
 
-  public /*virtual*/ get canBeDeleted(): boolean { return true; }
-
+  public /*virtual*/ canBeDeleted(): boolean { return true; }
   public /*virtual*/ canBeChecked(target: ITarget | null): boolean { return true; }
   public /*virtual*/ isFilter(target: ITarget | null): boolean { return false; }
   public /*virtual*/ isRadio(target: ITarget | null): boolean { return false; }
@@ -243,6 +241,26 @@ export abstract class BaseNode extends Identifiable
   public /*virtual*/ supportsColorType(colorType: ColorType): boolean { return true; }
 
   //==================================================
+  // INSTANCE METHODS: Selected
+  //==================================================
+
+  public IsSelected(): boolean { return this._isSelected; }
+  public SetSelected(value: boolean) { this._isSelected = value; }
+
+  public SetSelectedInteractive(value: boolean)
+  {
+    if (this._isSelected === value)
+      return false;
+
+    if (!this.canBeExpanded)
+      return false;
+
+    this._isSelected = value;
+    this.notify(new NodeEventArgs(Changes.selected));
+    return true;
+  }
+
+  //==================================================
   // INSTANCE METHODS: Expand
   //==================================================
 
@@ -271,7 +289,7 @@ export abstract class BaseNode extends Identifiable
   {
     for (const child of this.children)
     {
-      if (child.isVisibleInTreeControl)
+      if (child.isVisibleInTreeControl())
         return true;
     }
     return false;
@@ -296,7 +314,7 @@ export abstract class BaseNode extends Identifiable
   {
     switch (colorType)
     {
-      case ColorType.NodeColor: return this.color;
+      case ColorType.NodeColor: return this.getColor();
       case ColorType.Black: return Colors.black;
       case ColorType.White: return Colors.white;
       default: return Colors.white; // Must be white because texture colors are multiplicative
@@ -314,7 +332,7 @@ export abstract class BaseNode extends Identifiable
   public getChildByName(name: string): BaseNode | null
   {
     for (const child of this.children)
-      if (child.name === name)
+      if (child.getName() === name)
         return child;
     return null;
   }
@@ -521,7 +539,7 @@ export abstract class BaseNode extends Identifiable
 
   public sortChildrenByName(): void
   {
-    this.children.sort((a, b) => a.name.localeCompare(b.name));
+    this.children.sort((a, b) => a.getName().localeCompare(b.getName()));
   }
 
   //==================================================
@@ -569,7 +587,7 @@ export abstract class BaseNode extends Identifiable
     if (this.isActive)
       return;
 
-    if (!this.canBeActive)
+    if (!this.canBeActive())
       return;
 
     if (this.parent)
@@ -581,7 +599,7 @@ export abstract class BaseNode extends Identifiable
           continue;
         if (child.className !== this.className)
           continue;
-        if (!child.canBeActive)
+        if (!child.canBeActive())
           return;
         if (!child.isActive)
           continue;
@@ -688,13 +706,13 @@ export abstract class BaseNode extends Identifiable
 
   protected generateNewColor(): Color
   {
-    return this.canChangeColor ? Colors.nextColor : Colors.white;
+    return this.canChangeColor() ? Colors.nextColor : Colors.white;
   }
 
   protected generateNewName(): string
   {
     let result = this.typeName;
-    if (!this.canChangeName)
+    if (!this.canChangeName())
       return result;
 
     if (!this.parent)
@@ -718,11 +736,11 @@ export abstract class BaseNode extends Identifiable
 
   public /*virtual*/ getDebugString(): string
   {
-    let result = this.name;
+    let result = this.getName();
     result += Util.cocatinate("typeName", this.typeName);
     result += Util.cocatinate("className", this.className);
-    if (this.canChangeColor)
-      result += Util.cocatinate("color", this.color);
+    if (this.canChangeColor())
+      result += Util.cocatinate("color", this.getColor());
     result += Util.cocatinate("id", this.uniqueId.isEmpty ? "" : (this.uniqueId.toString().substring(0, 6) + "..."));
     if (this.isActive)
       result += Util.cocatinate("active");

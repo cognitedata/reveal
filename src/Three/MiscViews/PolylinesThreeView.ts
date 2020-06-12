@@ -66,7 +66,7 @@ export class PolylinesThreeView extends BaseGroupThreeView
     if (!polylines)
       throw Error("polylines is missing in view");
 
-    let color = node.color;
+    let color = node.getColor();
     const colorType = style.colorType;
 
     const group = new THREE.Group();

@@ -57,7 +57,7 @@ export class SurfaceNode extends BaseVisualNode {
 
   public /*override*/ get typeName(): string { return "Surface" }
 
-  public /*override*/ get icon(): string { return SurfaceNodeIcon }
+  public /*override*/ getIcon(): string { return SurfaceNodeIcon }
 
   public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
 

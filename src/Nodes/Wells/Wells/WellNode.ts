@@ -42,7 +42,7 @@ export class WellNode extends BaseNode
 
   public /*override*/ get typeName(): string { return "Well" }
 
-  public /*override*/ get icon(): string { return WellNodeIcon }
+  public /*override*/ getIcon(): string { return WellNodeIcon }
 
   //public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
 }

@@ -19,8 +19,8 @@ export class ViewAllCommand extends ThreeRenderTargetCommand
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*override*/ get name(): string { return "View all" }
-  public /*override*/ get icon(): string { return ViewAllCommandIcon; }
+  public /*override*/ getName(): string { return "View all" }
+  public /*override*/ getIcon(): string { return ViewAllCommandIcon; }
 
   protected /*override*/ invokeCore(): boolean
   {

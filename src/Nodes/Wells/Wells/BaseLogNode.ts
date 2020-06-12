@@ -60,7 +60,7 @@ export abstract class BaseLogNode extends BaseVisualNode
 
   public /*override*/ hasIconColor(): boolean { return true; }
 
-  public /*override*/ get color(): Color
+  public /*override*/ getColor(): Color
   {
     const trajectoryNode = this.trajectoryNode;
     if (!trajectoryNode)
@@ -74,10 +74,10 @@ export abstract class BaseLogNode extends BaseVisualNode
     if (!filterLogNode)
       return super.getColor();
 
-    return filterLogNode.color;
+    return filterLogNode.getColor();
   }
 
-  public /*override*/ get canChangeColor(): boolean { return false; }
+  public /*override*/ canChangeColor(): boolean { return false; }
 
   public /*override*/ canBeChecked(target: ITarget | null): boolean
   {
@@ -97,6 +97,6 @@ export abstract class BaseLogNode extends BaseVisualNode
 
   public isEqual(other: BaseFilterLogNode): boolean
   {
-    return this.wellLogType == other.wellLogType && Util.equalsIgnoreCase(this.name, other.name);
+    return this.wellLogType == other.wellLogType && Util.equalsIgnoreCase(this.getName(), other.getName());
   }
 }

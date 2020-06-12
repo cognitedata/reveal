@@ -40,24 +40,11 @@ export abstract class ToolCommand extends ThreeRenderTargetCommand
   // VIRTUAL METHODS
   //==================================================
 
-  public hasMouseClick(): boolean { return false; }
-  public onMouseClick(event: MouseEvent): void { }
-
-  public onMouseMove(event: MouseEvent): void
-  {
-    const target = this.target;
-    if (!target)
-      return;
-
-    const pixel = target.getMouseRelativePosition(event);
-    const intersection = target.getIntersection(pixel);
-    if (!intersection)
-      return;
-
-    const node = target.getNodeByObject(intersection.object);
-    if (!node)
-      return;
-  }
+  public /*virtual*/ overrideLeftButton(): boolean { return false; }
+  public /*virtual*/ onMouseClick(event: MouseEvent): void { }
+  public /*virtual*/ onMouseDown(event: MouseEvent): void { }
+  public /*virtual*/ onMouseUp(event: MouseEvent): void { }
+  public /*virtual*/ onMouseMove(event: MouseEvent): void  { }
 }
 
 
