@@ -54,8 +54,8 @@ export default class RootManager {
       for (let idx = 0; idx < RootManager.RENDER_TARGETS; idx++) {
         const range = Range3.createByMinAndMax(0, 0, 1, 1);
         const target = new ThreeRenderTargetNode(range);
-        target.name = "3d";
-        targets[target.name] = target;
+        target.setName("3d");
+        targets[target.getName()] = target;
         root.targets.addChild(target);
       }
     }
@@ -68,7 +68,7 @@ export default class RootManager {
     for (const target of root.targets.getChildrenByType(ThreeRenderTargetNode)) {
       const toolBar = new Toolbar();
       target.addTools(toolBar);
-      toolBars[target.name] = toolBar;
+      toolBars[target.getName()] = toolBar;
     }
     return toolBars;
   }
@@ -93,10 +93,10 @@ export default class RootManager {
     for (const target of root.targets.getChildrenByType(
       ThreeRenderTargetNode
     )) {
-      if (parent && target.name === targetName) {
+      if (parent && target.getName() === targetName) {
         parent.appendChild(target.domElement);
         target.setActiveInteractive();
-        this.appendedViewers.push(target.name);
+        this.appendedViewers.push(target.getName());
       }
     }
   }

@@ -25,7 +25,7 @@ export class BaseRootNode extends BaseNode
   public constructor()
   {
     super();
-    this.name = "Root";
+    this.setName("Root");
   }
 
   //==================================================
@@ -51,7 +51,7 @@ export class BaseRootNode extends BaseNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get canChangeColor(): boolean { return false; }
+  public /*override*/ canChangeColor(): boolean { return false; }
   public /*override*/ get typeName(): string { return "Root" }
 
   protected /*override*/ get activeTargetIdAccessor(): ITargetIdAccessor | null

@@ -25,7 +25,7 @@ export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
                     // Commad execution successful. Fire a new action
                     const newAction = {
                         type: EXECUTE_VISUALIZER_TOOLBAR_COMMAND_SUCCESS, payload: {
-                            icon: command.icon,
+                            icon: command.getIcon(),
                             isChecked: command.isChecked,
                             visualizerId,
                             index

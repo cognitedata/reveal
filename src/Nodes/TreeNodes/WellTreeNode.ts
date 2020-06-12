@@ -35,8 +35,8 @@ export class WellTreeNode extends BaseTreeNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "WellTree" }
-  public /*override*/ get icon(): string { return WellNodeIcon }
-  public /*override*/ get name(): string { return "Wells" }
+  public /*override*/ getIcon(): string { return WellNodeIcon }
+  public /*override*/ getName(): string { return "Wells" }
 
   //==================================================
   // INSTANCE METHODS

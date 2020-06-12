@@ -34,6 +34,6 @@ export class OthersTreeNode extends BaseTreeNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "OthersTree" }
-  public /*override*/ get icon(): string { return FolderNodeIcon }
-  public /*override*/ get name(): string { return "Others" }
+  public /*override*/ getIcon(): string { return FolderNodeIcon }
+  public /*override*/ getName(): string { return "Others" }
 }

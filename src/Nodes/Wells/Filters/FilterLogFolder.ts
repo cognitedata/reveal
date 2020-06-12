@@ -56,10 +56,10 @@ export class FilterLogFolder extends BaseNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Log filter"; }
-  public /*override*/ get icon(): string { return FilterLogFolderIcon }
-  public /*override*/ get canChangeName(): boolean { return false }
-  public /*override*/ get canChangeColor(): boolean { return false; }
-  public /*virtual*/ get isLabelInItalic(): boolean { return true; }
+  public /*override*/ getIcon(): string { return FilterLogFolderIcon }
+  public /*override*/ canChangeName(): boolean { return false }
+  public /*override*/ canChangeColor(): boolean { return false; }
+  public /*virtual*/ isLabelInItalic(): boolean { return true; }
   public /*virtual*/ isFilter(target: ITarget | null): boolean { return true; }
 
   public /*override*/ canBeChecked(target: ITarget | null): boolean { return false; }
@@ -121,7 +121,7 @@ export class FilterLogFolder extends BaseNode
       if (!filterLogNode)
         continue;
 
-      filterLogNode.name = logNode.name;
+      filterLogNode.setName(logNode.getName());
       this.addChild(filterLogNode);
       filterLogNode.initialize();
     }

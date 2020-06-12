@@ -22,6 +22,7 @@ export class Changes
   public static readonly filter: symbol = Symbol("filter");
   public static readonly active: symbol = Symbol("active");
   public static readonly expanded: symbol = Symbol("expanded");
+  public static readonly selected: symbol = Symbol("selected");
 
   // Fields changed
   public static readonly nodeName: symbol = Symbol("nodeName");

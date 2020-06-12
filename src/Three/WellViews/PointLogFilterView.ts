@@ -34,12 +34,6 @@ import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
 export class PointLogFilterView extends BaseGroupThreeView
 {
   //==================================================
-  // INSTANCE FIELDS
-  //==================================================
-
-  private fgColor: Color = Colors.white;
-
-  //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
@@ -104,7 +98,7 @@ export class PointLogFilterView extends BaseGroupThreeView
   // OVERRIDES of BaseThreeView
   //==================================================
 
-  public /*override*/ Pick(intersection: THREE.Intersection)
+  public /*override*/ onMouseClick(intersection: THREE.Intersection)
   {
     const parent = this.object3D;
     if (!parent)
@@ -136,7 +130,7 @@ export class PointLogFilterView extends BaseGroupThreeView
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
     const node = this.node;
-    const color = node.color;
+    const color = node.getColor();
     const trajectory = node.trajectory;
     if (!trajectory)
       return null;
@@ -185,7 +179,7 @@ export class PointLogFilterView extends BaseGroupThreeView
 
       if (sample.isOpen)
       {
-        const label = PointLogFilterView.createLabel(sample.label, position, 20);
+        const label = PointLogFilterView.createLabel(sample.label, position, 5);
         if (label)  
         {
           label.center = new THREE.Vector2(0, 1);

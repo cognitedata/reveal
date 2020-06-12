@@ -45,7 +45,7 @@ export class PointFilterLogNode extends BaseFilterLogNode
 
   public /*override*/ get typeName(): string { return "PointLog" }
 
-  public /*override*/ get icon(): string { return PointLogNodeIcon }
+  public /*override*/ getIcon(): string { return PointLogNodeIcon }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {

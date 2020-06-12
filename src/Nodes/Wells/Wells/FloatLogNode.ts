@@ -48,7 +48,7 @@ export class FloatLogNode extends BaseLogNode
 
   public /*override*/ get typeName(): string { return "FloatLog" }
 
-  public /*override*/ get icon(): string { return FloatLogNodeIcon }
+  public /*override*/ getIcon(): string { return FloatLogNodeIcon }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {

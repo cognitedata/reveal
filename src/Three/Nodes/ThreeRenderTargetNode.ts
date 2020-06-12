@@ -154,8 +154,10 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
     this.controls.addEventListener("update", () => this.updateLightPosition());
     this.domElement.addEventListener('click', (event) => this._toolController.onMouseClick(this, event), false);
+    this.domElement.addEventListener('mousedown', (event) => this._toolController.onMouseDown(this, event), false);
+    this.domElement.addEventListener('mouseup', (event) => this._toolController.onMouseUp(this, event), false);
     this.domElement.addEventListener('mousemove', (event) => this._toolController.onMouseMove(this, event), false);
-
+    
     //mousedown
     //mouseup
     //mousemove

@@ -27,7 +27,7 @@ export class SettingsTreeNode extends BaseTreeNode
   //==================================================
 
   public /*override*/ get className(): string { return SettingsTreeNode.name; }
-  public /*override*/ get icon(): string { return SettingsTreeNodeIcon }
+  public /*override*/ getIcon(): string { return SettingsTreeNodeIcon }
   public /*override*/ isA(className: string): boolean { return className === SettingsTreeNode.name || super.isA(className); }
 
   //==================================================
@@ -35,6 +35,6 @@ export class SettingsTreeNode extends BaseTreeNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "SettingsTree" }
-  public /*override*/ get name(): string { return "Settings" }
+  public /*override*/ getName(): string { return "Settings" }
 
 }

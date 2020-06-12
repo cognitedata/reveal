@@ -9,7 +9,7 @@ export default class ToolbarAdaptor {
         commands.forEach(command => {
             output.push({
                 command,
-                icon: command.icon,
+                icon: command.getIcon(),
                 isChecked: command.isChecked
             });
         })

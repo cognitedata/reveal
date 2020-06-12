@@ -34,6 +34,6 @@ export class ColorTableTreeNode extends BaseTreeNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "ColorTables" }
-  public /*override*/ get icon(): string { return ColorTableTreeNodeIcon }
-  public /*override*/ get name(): string { return "Colors" }
+  public /*override*/ getIcon(): string { return ColorTableTreeNodeIcon }
+  public /*override*/ getName(): string { return "Colors" }
 }

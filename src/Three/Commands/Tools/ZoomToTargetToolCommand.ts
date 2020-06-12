@@ -18,15 +18,15 @@ export class ZoomToTargetToolCommand extends ToolCommand
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*override*/ get name(): string { return "Zoom to target" }
-  public /*override*/ get icon(): string { return ZoomToTargetToolCommandIcon; }
+  public /*override*/ getName(): string { return "Zoom to target" }
+  public /*override*/ getIcon(): string { return ZoomToTargetToolCommandIcon; }
   public /*override*/ get shortcut(): string { return "S" }
 
   //==================================================
   // OVERRIDES of ToolCommand
   //==================================================
 
-  public /*override*/ hasMouseClick(): boolean { return true; }
+  public /*override*/ overrideLeftButton(): boolean { return true; }
 
   public /*override*/ onMouseClick(event: MouseEvent): void
   {

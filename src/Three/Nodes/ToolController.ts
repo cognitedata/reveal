@@ -54,12 +54,15 @@ export class ToolController
     if (tool == null)
       return;
 
+    if (this._activeTool === tool)
+      return;
+
     this._activeTool = tool;
     if (!cameraControl)
       return;
 
     const controls = cameraControl.controls;
-    if (tool.hasMouseClick())
+    if (tool.overrideLeftButton())
       controls.mouseButtons.left = CameraControls.ACTION.NONE;
     else
       controls.mouseButtons.left = CameraControls.ACTION.ROTATE;
@@ -77,8 +80,24 @@ export class ToolController
   public onMouseClick(target: ThreeRenderTargetNode, event: MouseEvent): void
   {
     const tool = this.activeTool;
-    if (tool && tool.hasMouseClick())
+    if (tool)
       tool.onMouseClick(event);
+  }
+
+  public onMouseDown(target: ThreeRenderTargetNode, event: MouseEvent): void
+  {
+    // https://www.w3schools.com/jsref/obj_mouseevent.asp
+    const tool = this.activeTool;
+    if (tool)
+      tool.onMouseDown(event);
+  }
+
+  public onMouseUp(target: ThreeRenderTargetNode, event: MouseEvent): void
+  {
+    // https://www.w3schools.com/jsref/obj_mouseevent.asp
+    const tool = this.activeTool;
+    if (tool)
+      tool.onMouseUp(event);
   }
 
   public onMouseMove(target: ThreeRenderTargetNode, event: MouseEvent): void

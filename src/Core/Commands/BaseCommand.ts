@@ -11,10 +11,10 @@ export abstract class BaseCommand
   // VIRTUAL PROPERTIES
   //==================================================
 
-  public /*virtual*/ get icon(): string { return ""; } // Icon
-  public /*virtual*/ get name(): string { return ""; }; // Get the name of the command
-  public /*virtual*/ get displayName(): string { return this.name; } // Get the name of the command
-  public /*virtual*/ get tooltip(): string { return this.name; }  // Get the tooltip text
+  public /*virtual*/ getIcon(): string { return ""; } // Icon
+  public /*virtual*/ getName(): string { return ""; }; // Get the name of the command
+  public /*virtual*/ get displayName(): string { return this.getName(); } // Get the name of the command
+  public /*virtual*/ get tooltip(): string { return this.getName(); }  // Get the tooltip text
   public /*virtual*/ get shortCutKeys(): string | undefined { return undefined }; // Somehow gets the shortcut key (default none)
 
   public /*virtual*/ get isEnabled(): boolean { return true; } // Is enabled? (default true)

@@ -76,7 +76,7 @@ export class PointsThreeView extends BaseGroupThreeView
     if (!points)
       throw Error("points is missing in view");
 
-    let color = node.color;
+    let color = node.getColor();
     if (style.colorType !== ColorType.NodeColor)
       color = Colors.white; // Must be white because the colors are multiplicated
 
