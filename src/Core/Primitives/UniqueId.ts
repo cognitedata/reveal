@@ -37,6 +37,7 @@ export class UniqueId
 
   public static new(): UniqueId { return new UniqueId(uuid()); }
   public get isEmpty(): boolean { return (!this._id || this._id === ""); }
+  public get id(): string { return this._id; }
   public /*override*/ toString(): string { return `${this._id}`; }
 
   //==================================================

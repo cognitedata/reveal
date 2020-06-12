@@ -47,8 +47,6 @@ export abstract class BaseGroupThreeView extends BaseThreeView
   // OVERRIDES of BaseView
   //==================================================
 
-  //public /*override*/ get stayAliveIfInvisible(): boolean { return true; }
-
   protected /*override*/ updateCore(args: NodeEventArgs): void
   {
     super.updateCore(args);
@@ -77,9 +75,6 @@ export abstract class BaseGroupThreeView extends BaseThreeView
     if (!this._object3D)
       return;
 
-    // if (!this.stayAliveIfInvisible)
-    //   this.touch();
-    // else
     this._object3D.visible = false;
     super.onHideCore();
   }
@@ -132,12 +127,13 @@ export abstract class BaseGroupThreeView extends BaseThreeView
     if (!this._object3D)
       return;
 
+    this._object3D.name = this.getNode().uniqueId.id;
     this._object3D.visible = true;
     this.scene.add(this._object3D);
     this.touchBoundingBox();
   }
 
-  private touch(): void
+  protected touch(): void
   {
     const scene = this.scene;
     if (this._object3D)

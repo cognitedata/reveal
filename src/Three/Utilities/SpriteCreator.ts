@@ -17,7 +17,7 @@ import * as Color from "color"
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 
-export class ThreeLabel
+export class SpriteCreator
 {
   //==================================================
   // STATIC METHODS: 
@@ -25,7 +25,7 @@ export class ThreeLabel
 
   public static createByPositionAndDirection(text: string, position: Vector3, tickDirection: Vector3, worldHeight: number, color: Color): THREE.Sprite | null
   {
-    const label = ThreeLabel.create(text, worldHeight, color);
+    const label = SpriteCreator.create(text, worldHeight, color);
     if (!label)
       return null;
 
@@ -38,23 +38,26 @@ export class ThreeLabel
 
   public static createByPositionAndAlignment(text: string, position: Vector3, alignment: number, worldHeight: number, color: Color): THREE.Sprite | null
   {
-    const sprite = ThreeLabel.create(text, worldHeight, color);
+    const sprite = SpriteCreator.create(text, worldHeight, color);
     if (!sprite)
       return null;
 
     ThreeConverter.copy(sprite.position, position);
-    ThreeLabel.align(sprite, alignment);
+    SpriteCreator.align(sprite, alignment);
     return sprite;
   }
 
   public static create(text: string, worldHeight: number, color: Color): THREE.Sprite | null
   {
-    const canvas = ThreeLabel.createCanvasWithText(text, color);
+    const canvas = SpriteCreator.createCanvasWithText(text, color);
     if (!canvas)
       return null;
+    return SpriteCreator.createSprite(canvas, worldHeight);
+  }
 
-    const texture = ThreeLabel.createTexture(canvas);
-
+  public static createSprite(canvas: HTMLCanvasElement, worldHeight: number): THREE.Sprite
+  {
+    const texture = SpriteCreator.createTexture(canvas);
     const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
     const sprite = new THREE.Sprite(spriteMaterial);
     sprite.scale.set(worldHeight * canvas.width / canvas.height, worldHeight, 1);

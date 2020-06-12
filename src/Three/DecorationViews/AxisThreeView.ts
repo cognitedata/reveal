@@ -24,7 +24,7 @@ import { AxisNode } from "@/Nodes/Decorations/AxisNode";
 import { AxisRenderStyle } from "@/Nodes/Decorations/AxisRenderStyle";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { ThreeLabel } from "@/Three/Utilities/ThreeLabel";
+import { SpriteCreator } from "@/Three/Utilities/SpriteCreator";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 
 const WallIndex0Name = "wallIndex0";
@@ -75,6 +75,12 @@ export class AxisThreeView extends BaseGroupThreeView
   {
     super.updateCore(args);
   }
+
+  //==================================================
+  // OVERRIDES of BaseThreeView
+  //==================================================
+
+  public /*virtual*/ shouldPick(): boolean { return false; } // Newer pick on axis
 
   //==================================================
   // OVERRIDES of Base3DView
@@ -279,7 +285,7 @@ export class AxisThreeView extends BaseGroupThreeView
         end.z /= this.zScale;
 
         // Add label
-        const label = ThreeLabel.createByPositionAndDirection(`${tick}`, end, tickDirection, tickFontSize, this.textColor);
+        const label = SpriteCreator.createByPositionAndDirection(`${tick}`, end, tickDirection, tickFontSize, this.textColor);
         if (label)
         {
           group.add(label);
@@ -309,7 +315,7 @@ export class AxisThreeView extends BaseGroupThreeView
         position.z /= this.zScale;
 
         // Align the text
-        const label = ThreeLabel.createByPositionAndDirection(Vector3.getAxisName(dimension), position, tickDirection, labelFontSize, this.textColor);
+        const label = SpriteCreator.createByPositionAndDirection(Vector3.getAxisName(dimension), position, tickDirection, labelFontSize, this.textColor);
         if (label)
         {
           group.add(label);

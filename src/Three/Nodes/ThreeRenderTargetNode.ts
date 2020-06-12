@@ -30,7 +30,7 @@ import { ToggleAxisVisibleCommand } from "@/Three/Commands/ToggleAxisVisibleComm
 import { ToggleBgColorCommand } from "@/Three/Commands/ToggleBgColorCommand";
 import { IToolbar } from "@/Core/Interfaces/IToolbar";
 import { ViewFromCommand } from "@/Three/Commands/ViewFromCommand";
-import { Camera } from "@/Three/Nodes/Camera";
+import { CameraControl } from "@/Three/Nodes/Camera";
 import { ToggleCameraTypeCommand } from "../Commands/ToggleCameraTypeCommand";
 import { CopyImageCommand } from "../Commands/CopyImageCommand";
 import { MeasureDistanceTool } from "../Commands/Tools/MeasureDistanceTool";
@@ -39,6 +39,11 @@ import { SelectCommand } from "../Commands/Tools/SelectCommand";
 import { ZoomToolCommand } from "../Commands/Tools/ZoomToolCommand";
 import { ZoomToTargetToolCommand } from "../Commands/Tools/ZoomToTargetToolCommand";
 import { ToolCommand } from "@/Three/Commands/Tools/ToolCommand";
+import { ToolController } from "@/Three/Nodes/ToolController";
+import { BaseNode } from "@/Core/Nodes/BaseNode";
+import { UniqueId } from "@/Core/Primitives/UniqueId";
+import { BaseView } from "@/Core/Views/BaseView";
+import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
 
 const DirectionalLightName = "DirectionalLight";
 
@@ -54,29 +59,17 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   private _stats: any | null; // NILS: Why any here? Compiler error if not
   private isEmpty = true;
   private clock = new THREE.Clock();
-  private _camera: Camera | null = null;
+  private _cameraControl: CameraControl | null = null;
+  private _toolController = new ToolController();
+  private _raycaster = new THREE.Raycaster();
 
-  public _activeTool: ToolCommand | null = null;
+  //==================================================
+  // INSTANCE PROPERTIES: Tools
+  //==================================================
 
-  public setActiveTool(tool: ToolCommand)
-  {
-    this._activeTool = tool;
-    if (!this._camera)
-      return;
-
-    const controls = this._camera.controls;
-
-    if (tool instanceof PanToolCommand)
-      controls.enabled = true;
-    else
-      controls.enabled = false;
-  }
-
-  public getActiveTool()
-  {
-    return this._activeTool;
-  }
-
+  public setDefaultTool(tool: ToolCommand | null = null) { this._toolController.setDefaultTool(tool, this._cameraControl); }
+  public set activeTool(tool: ToolCommand | null) { this._toolController.setActiveTool(tool, this._cameraControl); }
+  public get activeTool(): ToolCommand | null { return this._toolController._activeTool; }
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -89,19 +82,16 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     return this._scene;
   }
 
-  public get camera(): THREE.Camera
+
+  public get cameraControl(): CameraControl
   {
-    if (!this._camera)
+    if (!this._cameraControl)
       throw Error("Camera is not set");
-    return this._camera.camera;
+    return this._cameraControl;
   }
 
-  private get controls(): CameraControls
-  {
-    if (!this._camera)
-      throw Error("CameraControls is not set");
-    return this._camera.controls;
-  }
+  public get camera(): THREE.Camera { return this.cameraControl.camera; }
+  private get controls(): CameraControls { return this.cameraControl.controls; }
 
   private get directionalLight(): THREE.DirectionalLight | null
   {
@@ -153,7 +143,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     super.initializeCore();
 
     this._scene = new THREE.Scene();
-    this._camera = new Camera(this);
+    this._cameraControl = new CameraControl(this);
 
     // Create lights
     const ambientLight = new THREE.AmbientLight(0x404040, 0.25); // soft white light
@@ -163,46 +153,16 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     this._scene.add(directionalLight);
 
     this.controls.addEventListener("update", () => this.updateLightPosition());
-    this.domElement.addEventListener('click', (event) => this.clickEvent(event), false);
+    this.domElement.addEventListener('click', (event) => this._toolController.onMouseClick(this, event), false);
+    this.domElement.addEventListener('mousemove', (event) => this._toolController.onMouseMove(this, event), false);
+
+    //mousedown
+    //mouseup
+    //mousemove
+    //dblclick
     this.render();
   }
 
-  private getCanvasRelativePosition(event: MouseEvent): THREE.Vector2 
-  {
-    const rect = this.domElement.getBoundingClientRect();
-
-    let x = (event.clientX - rect.left) / rect.width;
-    let y = (event.clientY - rect.top) / rect.height;
-
-    x = +x * 2 - 1;
-    y = -y * 2 + 1;
-    return new THREE.Vector2(x, y);
-  }
-
-  private clickEvent(event: MouseEvent): void
-  {
-    if (!(this.getActiveTool() instanceof ZoomToTargetToolCommand))
-      return;
-
-    if (!this._camera)
-      return;
-
-    const pixel = this.getCanvasRelativePosition(event);
-
-    //https://threejsfundamentals.org/threejs/lessons/threejs-picking.html 
-
-    const raycaster = new THREE.Raycaster();
-    raycaster.setFromCamera(pixel, this._camera.camera);
-    var intersects = raycaster.intersectObjects(this.scene.children, true);
-
-    for (var i = 0; i < intersects.length; i++)
-    {
-      const intersection = intersects[i];
-      this._camera.zoomToTarget(intersection.point);
-      break;
-    }
-  }  
-  
   //==================================================
   // OVERRIDES of RenderTargetNode
   //==================================================
@@ -213,8 +173,8 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   {
     const pixelRange = this.pixelRange;
     this.renderer.setSize(pixelRange.x.delta, pixelRange.y.delta);
-    if (this._camera)
-      this._camera.onResize(this.aspectRatio);
+    if (this._cameraControl)
+      this._cameraControl.onResize(this.aspectRatio);
     this.invalidate();
   }
 
@@ -264,9 +224,12 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   public addTools(toolbar: IToolbar)
   {
+    var panTool = new PanToolCommand(this);
+    this.setDefaultTool(panTool);
+
     // Tools
+    toolbar.add(panTool);
     toolbar.add(new SelectCommand(this));
-    toolbar.add(new PanToolCommand(this));
     toolbar.add(new ZoomToolCommand(this));
     toolbar.add(new ZoomToTargetToolCommand(this));
     toolbar.add(new MeasureDistanceTool(this));
@@ -290,12 +253,12 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   public viewAll(): boolean
   {
-    return !this._camera ? false : this._camera.viewRange(this.getBoundingBoxFromViews());
+    return !this._cameraControl ? false : this._cameraControl.viewRange(this.getBoundingBoxFromViews());
   }
 
   public viewFrom(index: number): boolean
   {
-    return !this._camera ? false : this._camera.viewFrom(this.getBoundingBoxFromViews(), index);
+    return !this._cameraControl ? false : this._cameraControl.viewFrom(this.getBoundingBoxFromViews(), index);
   }
 
   private updateLightPosition(): void
@@ -307,8 +270,10 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
       return;
 
     // The idea of this function is letting the light track the camera, 
-    const position = controls.getPosition();
-    const target = controls.getTarget();
+    let position = new THREE.Vector3();
+    let target = new THREE.Vector3();
+    position = controls.getPosition(position);
+    target = controls.getTarget(target);
 
     const vectorToCenter = position.clone();
     vectorToCenter.sub(target);
@@ -338,5 +303,77 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     vectorToCenter.add(target)
 
     light.position.copy(vectorToCenter);
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Getters
+  //==================================================
+
+  public getIntersection(pixel: THREE.Vector2): THREE.Intersection | null
+  {
+    //https://threejsfundamentals.org/threejs/lessons/threejs-picking.html 
+    this._raycaster.setFromCamera(pixel, this.camera);
+    var intersects = this._raycaster.intersectObjects(this.scene.children, true);
+
+    if (intersects.length > 0)
+      return intersects[0];
+    return null;
+  }
+
+  public getClickPosition(pixel: THREE.Vector2): THREE.Vector3 | null
+  {
+    const intersection = this.getIntersection(pixel);
+    return intersection ? intersection.point : null;
+  }
+
+  public getMouseRelativePosition(event: MouseEvent): THREE.Vector2 
+  {
+    const rect = this.domElement.getBoundingClientRect();
+    let x = (event.clientX - rect.left) / rect.width;
+    let y = (event.clientY - rect.top) / rect.height;
+    x = +x * 2 - 1;
+    y = -y * 2 + 1;
+    return new THREE.Vector2(x, y);
+  }
+
+  public getViewByObject(object: THREE.Object3D): BaseThreeView | null
+  {
+    while (true)
+    {
+      // If the object is marked by noPicking, no picking should be done
+      if (object.userData[BaseThreeView.noPicking])
+        return null;
+
+      if (object.name)
+      {
+        const id = new UniqueId(object.name);
+        for (const view of this.viewsShownHere.list)
+        {
+          if (!(view instanceof BaseThreeView))
+            continue;
+
+          if (!view.shouldPick())
+            continue;
+
+          const node = view.getNode();
+          if (!node)
+            continue;
+
+          if (node.uniqueId.equals(id))
+            return view;
+        }
+      }
+      if (!object.parent)
+        break;
+
+      object = object.parent;
+    }
+    return null;
+  }
+
+  public getNodeByObject(object: THREE.Object3D): BaseNode | null
+  {
+    const view = this.getViewByObject(object);
+    return view ? view.getNode() : null;
   }
 }
