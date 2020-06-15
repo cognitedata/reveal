@@ -12,8 +12,8 @@ import { createInstancedMeshes } from '../rendering/instancedMeshes';
 import { SectorQuads } from '../rendering/types';
 import { disposeAttributeArrayOnUpload } from '@/utilities/disposeAttributeArrayOnUpload';
 import { pipe, GroupedObservable, Observable, OperatorFunction, of, empty } from 'rxjs';
-import { groupBy, mergeMap, distinctUntilKeyChanged, withLatestFrom, flatMap, publish } from 'rxjs/operators';
-import { traverseDepthFirst } from '@/utilities/traversal';
+import { groupBy, mergeMap, distinctUntilKeyChanged, withLatestFrom, flatMap } from 'rxjs/operators';
+import { traverseDepthFirst } from '@/utilities/objectTraversal';
 
 const emptyGeometry = new THREE.Geometry();
 

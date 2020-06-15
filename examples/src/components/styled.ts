@@ -18,3 +18,9 @@ export const CanvasWrapper = styled(Container)`
     max-height: 100vh;
   }
 `;
+
+export const Loader = styled.div<{ isLoading: boolean }>`
+  background: black;
+  color: white;
+  display: ${(props) => (props.isLoading ? 'block' : 'none')};
+`;

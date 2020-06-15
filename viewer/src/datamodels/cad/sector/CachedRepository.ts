@@ -18,7 +18,10 @@ import {
   reduce,
   distinct,
   catchError,
-  switchMap
+  switchMap,
+  distinctUntilChanged,
+  share,
+  finalize
 } from 'rxjs/operators';
 import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
@@ -26,7 +29,7 @@ import { CadSectorProvider } from './CadSectorProvider';
 import { MemoryRequestCache } from '@/utilities/cache/MemoryRequestCache';
 import { ParseCtmResult, ParseSectorResult } from '@/utilities/workers/types/parser.types';
 import { TriangleMesh, InstancedMeshFile, InstancedMesh, SectorQuads } from '../rendering/types';
-import { createOffsetsArray } from '@/utilities/arrayUtils';
+import { createOffsetsArray } from '@/utilities';
 
 // TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
 export class CachedRepository implements Repository {
@@ -42,6 +45,7 @@ export class CachedRepository implements Repository {
   private readonly _modelSectorProvider: CadSectorProvider;
   private readonly _modelDataParser: CadSectorParser;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
+  private readonly _isLoadingSubject: Subject<boolean> = new Subject();
 
   // Adding this to support parse map for migration wrapper. Should be removed later.
   private readonly _parsedDataSubject: Subject<{
@@ -52,6 +56,7 @@ export class CachedRepository implements Repository {
   }> = new Subject();
 
   private readonly _concurrentNetworkOperations: number;
+  private isDisposed = false;
 
   constructor(
     modelSectorProvider: CadSectorProvider,
@@ -72,11 +77,29 @@ export class CachedRepository implements Repository {
   getParsedData(): Observable<{ blobUrl: string; lod: string; data: SectorGeometry | SectorQuads }> {
     return this._parsedDataSubject.pipe(distinct(keySelector => '' + keySelector.blobUrl + '.' + keySelector.sectorId)); // TODO: Should we do replay subject here instead of variable type?
   }
+  public dispose(): void {
+    if (this.isDisposed) {
+      return;
+    }
+    this.isDisposed = true;
+    this._isLoadingSubject.complete();
+    this.clearCache();
+  }
+  
+  getLoadingStateObserver(): Observable<boolean> {
+    return this._isLoadingSubject.pipe(distinctUntilChanged(), share());
+  }
+
+  // TODO j-bjorne 16-04-2020: Should look into ways of not sending in discarded sectors,
+  // unless we want them to eventually set their priority to lower in the cache.
 
   loadSector(): OperatorFunction<WantedSector[], ConsumedSector> {
     return pipe(
       switchMap(wantedSectorsArray => {
         return from(wantedSectorsArray).pipe(
+          tap(_ => {
+            this._isLoadingSubject.next(true);
+          }),
           publish(wantedSectorsObservable => {
             const simpleAndDetailedObservable = wantedSectorsObservable.pipe(
               filter(
@@ -93,7 +116,8 @@ export class CachedRepository implements Repository {
             );
 
             return merge(simpleAndDetailedObservable, discardedSectorObservable);
-          })
+          }),
+          finalize(() => this._isLoadingSubject.next(false))
         );
       })
     );

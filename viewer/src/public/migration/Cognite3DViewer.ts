@@ -16,14 +16,13 @@ import { CachedRepository } from '@/datamodels/cad/sector/CachedRepository';
 import { MaterialManager } from '@/datamodels/cad/MaterialManager';
 import { intersectCadNodes } from '@/datamodels/cad/picking';
 
-import { Cognite3DViewerOptions, AddModelOptions, SupportedModelTypes } from './types';
+import { Cognite3DViewerOptions, AddModelOptions, SupportedModelTypes, GeometryFilter } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { Intersection } from './intersection';
 import RenderController from './RenderController';
 import { CogniteModelBase } from './CogniteModelBase';
 
 import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
-import { File3dFormat } from '@/utilities/File3dFormat';
 import { RevealManagerBase } from '@/public/RevealManagerBase';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
@@ -38,6 +37,8 @@ import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloudMetadataRepository';
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
+import { BoundingBoxClipper, isMobileOrTablet, File3dFormat } from '@/utilities';
+import { Spinner } from '@/utilities/Spinner';
 
 export interface RelativeMouseEvent {
   offsetX: number;
@@ -82,6 +83,9 @@ export class Cognite3DViewer {
   private readonly clock = new THREE.Clock();
   private readonly materialManager: MaterialManager;
   private _slicingNeedsUpdate: boolean = false;
+  private _geometryFilters: GeometryFilter[] = [];
+
+  private readonly spinner: Spinner;
 
   constructor(options: Cognite3DViewerOptions) {
     if (options.enableCache) {
@@ -94,7 +98,11 @@ export class Cognite3DViewer {
       throw new NotSupportedInMigrationWrapperError('ViewCube is not supported');
     }
 
-    this.renderer = options.renderer || new THREE.WebGLRenderer();
+    this.renderer =
+      options.renderer ||
+      new THREE.WebGLRenderer({
+        antialias: shouldEnableAntialiasing()
+      });
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
     this.canvas.style.minWidth = '100%';
@@ -103,6 +111,7 @@ export class Cognite3DViewer {
     this.canvas.style.maxHeight = '100%';
     this.domElement = options.domElement || createCanvasWrapper();
     this.domElement.appendChild(this.canvas);
+    this.spinner = new Spinner(this.domElement);
 
     this.camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
     this.camera.position.x = 30;
@@ -146,6 +155,14 @@ export class Cognite3DViewer {
     this.revealManager = new RevealManagerBase(this.cadManager, this.materialManager, this.pointCloudManager);
     this.startPointerEventListeners();
 
+    this.sectorRepository.getLoadingStateObserver().subscribe(isLoading => {
+      if (isLoading) {
+        this.spinner.show();
+      } else {
+        this.spinner.hide();
+      }
+    });
+
     this.animate(0);
   }
 
@@ -160,6 +177,8 @@ export class Cognite3DViewer {
       cancelAnimationFrame(this.latestRequestId);
     }
 
+    this.sectorRepository.dispose();
+    this.revealManager.dispose();
     this.domElement.removeChild(this.canvas);
     this.renderer.dispose();
     this.scene.dispose();
@@ -167,6 +186,7 @@ export class Cognite3DViewer {
       model.dispose();
     }
     this.models.splice(0);
+    this.spinner.dispose();
   }
 
   on(event: 'click' | 'hover', _callback: PointerEventDelegate): void;
@@ -220,6 +240,12 @@ export class Cognite3DViewer {
       modelRevision: { id: options.revisionId },
       format: File3dFormat.RevealCadModel
     });
+
+    if (options.geometryFilter) {
+      this._geometryFilters.push(options.geometryFilter);
+      this.setSlicingPlanes(this.revealManager.clippingPlanes);
+    }
+
     const model3d = new Cognite3DModel(options.modelId, options.revisionId, cadNode, this.sdkClient);
     this.sectorRepository
       .getParsedData()
@@ -269,18 +295,38 @@ export class Cognite3DViewer {
     return SupportedModelTypes.NotSupported;
   }
 
-  addObject3D(_object: THREE.Object3D): void {
-    throw new NotSupportedInMigrationWrapperError();
+  addObject3D(object: THREE.Object3D): void {
+    if (this.isDisposed) {
+      return;
+    }
+    this.scene.add(object);
+    this.renderController.redraw();
   }
-  removeObject3D(_object: THREE.Object3D): void {
-    throw new NotSupportedInMigrationWrapperError();
+
+  removeObject3D(object: THREE.Object3D): void {
+    if (this.isDisposed) {
+      return;
+    }
+    this.scene.remove(object);
+    this.renderController.redraw();
   }
 
   setSlicingPlanes(slicingPlanes: THREE.Plane[]): void {
-    // this._slicingPlanes = slicingPlanes;
-    this.renderer.localClippingEnabled = slicingPlanes.length > 0;
-    this.materialManager.clippingPlanes = slicingPlanes;
+    const geometryFilterPlanes = this._geometryFilters
+      .map(x => new BoundingBoxClipper(x.boundingBox).clippingPlanes)
+      .reduce((a, b) => a.concat(b), []);
+
+    const combinedSlicingPlanes = slicingPlanes.concat(geometryFilterPlanes);
+    this.renderer.localClippingEnabled = combinedSlicingPlanes.length > 0;
+    this.revealManager.clippingPlanes = combinedSlicingPlanes;
     this._slicingNeedsUpdate = true;
+  }
+
+  getCamera(): THREE.Camera {
+    return this.camera;
+  }
+  getScene(): THREE.Scene {
+    return this.scene;
   }
 
   getCameraPosition(): THREE.Vector3 {
@@ -695,6 +741,10 @@ export class Cognite3DViewer {
     // on hover callback
     canvas.addEventListener('mousemove', onHoverCallback);
   };
+}
+
+function shouldEnableAntialiasing(): boolean {
+  return !isMobileOrTablet();
 }
 
 function adjustCamera(camera: THREE.Camera, width: number, height: number) {
