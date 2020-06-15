@@ -7,7 +7,7 @@ import { CogniteModelBase } from './CogniteModelBase';
 import { SupportedModelTypes } from './types';
 import { toThreeJsBox3 } from '@/utilities';
 import { PotreeNodeWrapper } from '@/datamodels/pointcloud/PotreeNodeWrapper';
-import { PotreeGroupWrapper, Redrawable } from '@/datamodels/pointcloud/PotreeGroupWrapper';
+import { PotreeGroupWrapper } from '@/datamodels/pointcloud/PotreeGroupWrapper';
 import { PotreePointColorType } from '@/datamodels/pointcloud/types';
 
 export class CognitePointCloudModel extends THREE.Object3D implements CogniteModelBase {
@@ -15,7 +15,6 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   public readonly modelId: number;
   public readonly revisionId: number;
   private readonly potreeNode: PotreeNodeWrapper;
-  private readonly redrawable: Redrawable;
 
   constructor(modelId: number, revisionId: number, potreeGroup: PotreeGroupWrapper, potreeNode: PotreeNodeWrapper) {
     super();
@@ -23,7 +22,6 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
     this.revisionId = revisionId;
     this.potreeNode = potreeNode;
     this.add(potreeGroup);
-    this.redrawable = potreeGroup;
   }
 
   dispose() {
@@ -39,7 +37,6 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   }
 
   set pointBudget(count: number) {
-    this.redrawable.requestRedraw();
     this.potreeNode.pointBudget = count;
   }
 
@@ -48,7 +45,6 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   }
 
   set pointColorType(type: PotreePointColorType) {
-    this.redrawable.requestRedraw();
     this.potreeNode.pointColorType = type;
   }
 }

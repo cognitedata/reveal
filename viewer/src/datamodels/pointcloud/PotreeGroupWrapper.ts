@@ -8,27 +8,23 @@ import * as THREE from 'three';
 
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 
-export interface Redrawable {
-  requestRedraw: () => void;
-}
-
 /**
  * Wrapper around Potree.Group with type information and
  * basic functionality.
  */
-export class PotreeGroupWrapper extends THREE.Object3D implements Redrawable {
+export class PotreeGroupWrapper extends THREE.Object3D {
   get needsRedraw(): boolean {
     return (
-      this.redrawRequested ||
       Potree.Global.numNodesLoading !== this.numNodesLoadingAfterLastRedraw ||
-      this.numChildrenAfterLastRedraw !== this.potreeGroup.children.length
+      this.numChildrenAfterLastRedraw !== this.potreeGroup.children.length ||
+      this.nodes.some(n => n.needsRedraw)
     );
   }
 
+  private readonly nodes: PotreeNodeWrapper[] = [];
   private readonly potreeGroup: Potree.Group;
   private numNodesLoadingAfterLastRedraw = 0;
   private numChildrenAfterLastRedraw = 0;
-  private redrawRequested: boolean = false;
 
   constructor() {
     super();
@@ -44,6 +40,7 @@ export class PotreeGroupWrapper extends THREE.Object3D implements Redrawable {
 
   addPointCloud(node: PotreeNodeWrapper): void {
     this.potreeGroup.add(node.octtree);
+    this.nodes.push(node);
   }
 
   *pointClouds(): Generator<PotreeNodeWrapper> {
@@ -52,13 +49,9 @@ export class PotreeGroupWrapper extends THREE.Object3D implements Redrawable {
     }
   }
 
-  requestRedraw() {
-    this.redrawRequested = true;
-  }
-
   private resetNeedsRedraw() {
-    this.redrawRequested = false;
     this.numNodesLoadingAfterLastRedraw = Potree.Global.numNodesLoading;
     this.numChildrenAfterLastRedraw = this.potreeGroup.children.length;
+    this.nodes.forEach(n => n.resetNeedsRedraw());
   }
 }
