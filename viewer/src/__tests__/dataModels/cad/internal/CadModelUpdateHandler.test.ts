@@ -12,10 +12,9 @@ import { SimpleAndDetailedToSector3D } from '@/datamodels/cad/sector/SimpleAndDe
 import { CachedRepository } from '@/datamodels/cad/sector/CachedRepository';
 import { SectorCuller } from '@/datamodels/cad/sector/culling/SectorCuller';
 
-import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
-
 import { createCadModelMetadata } from '../../../testutils/createCadModelMetadata';
 import { generateSectorTree } from '../../../testutils/createSectorMetadata';
+import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
 
 describe('CadModelUpdateHandler', () => {
   const modelSectorProvider: CadSectorProvider = {
@@ -40,7 +39,7 @@ describe('CadModelUpdateHandler', () => {
     updateHandler.updateModels(cadModel);
 
     updateHandler.updateCamera(new THREE.PerspectiveCamera());
-    jest.advanceTimersByTime(1000);
+    jest.advanceTimersByTime(2000);
     expect(mockCuller.determineSectors).toBeCalledTimes(1);
 
     updateHandler.clippingPlanes = [new THREE.Plane()];
