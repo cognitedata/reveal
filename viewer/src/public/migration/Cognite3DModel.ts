@@ -39,6 +39,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   readonly cadModel: CadModelMetadata;
   readonly cadNode: CadNode;
   readonly nodeColors: Map<number, [number, number, number, number]>;
+  readonly selectedNodes: Set<number>;
   readonly hiddenNodes: Set<number>;
   readonly client: CogniteClient;
   readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
@@ -51,9 +52,13 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.client = client;
     this.nodeColors = new Map();
     this.hiddenNodes = new Set();
+    this.selectedNodes = new Set();
     this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client);
     const nodeAppearance: ModelNodeAppearance = {
       color: (treeIndex: number) => {
+        if (this.selectedNodes.has(treeIndex)) {
+          return [0, 0, 200, 255];
+        }
         return this.nodeColors.get(treeIndex);
       },
       visible: (treeIndex: number) => {
@@ -107,7 +112,12 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   iterateNodes(_action: (nodeId: number, treeIndex?: number) => void): void {
-    throw new NotSupportedInMigrationWrapperError();
+    throw new NotSupportedInMigrationWrapperError('Use iterateNodesByTreeIndex(action: (treeIndex: number) => void)');
+  }
+  iterateNodesByTreeIndex(action: (treeIndex: number) => void): void {
+    for (let i = 0; i < this.cadModel.scene.maxTreeIndex; i++) {
+      action(i);
+    }
   }
 
   iterateSubtree(
@@ -149,26 +159,51 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.setNodeColorByTreeIndex(treeIndex, r, g, b);
   }
 
+  setNodeColorByTreeIndex(treeIndex: number, r: number, g: number, b: number) {
+    this.nodeColors.set(treeIndex, [r, g, b, 255]);
+    this.cadNode.requestNodeUpdate([treeIndex]);
+  }
+
   async resetNodeColor(nodeId: number): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.resetNodeColorByTreeIndex(treeIndex);
+  }
+
+  resetNodeColorByTreeIndex(treeIndex: number) {
     this.nodeColors.delete(treeIndex);
     this.cadNode.requestNodeUpdate([treeIndex]);
   }
 
-  selectNode(_nodeId: number): void {
-    throw new NotSupportedInMigrationWrapperError();
+  resetAllNodeColors() {
+    const nodeIds = Array.from(this.nodeColors.keys());
+    this.nodeColors.clear();
+    this.cadNode.requestNodeUpdate(nodeIds);
   }
 
-  deselectNode(_nodeId: number): void {
-    throw new NotSupportedInMigrationWrapperError();
+  async selectNode(nodeId: number): Promise<void> {
+    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.selectedNodes.add(treeIndex);
+    this.cadNode.requestNodeUpdate([treeIndex]);
+  }
+
+  async deselectNode(nodeId: number): Promise<void> {
+    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.selectedNodes.delete(treeIndex);
+    this.cadNode.requestNodeUpdate([treeIndex]);
   }
 
   deselectAllNodes(): void {
-    throw new NotSupportedInMigrationWrapperError();
+    const selectedNodes = Array.from(this.selectedNodes);
+    this.selectedNodes.clear();
+    this.cadNode.requestNodeUpdate(selectedNodes);
   }
 
   async showNode(nodeId: number): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.showNodeByTreeIndex(treeIndex);
+  }
+
+  showNodeByTreeIndex(treeIndex: number): void {
     this.hiddenNodes.delete(treeIndex);
     this.cadNode.requestNodeUpdate([treeIndex]);
   }
@@ -190,20 +225,19 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   async hideNode(nodeId: number, makeGray?: boolean): Promise<void> {
+    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.hideNodeByTreeIndex(treeIndex, makeGray);
+  }
+
+  hideNodeByTreeIndex(treeIndex: number, makeGray?: boolean): void {
     if (makeGray) {
       throw new NotSupportedInMigrationWrapperError();
     }
-    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
     this.hiddenNodes.add(treeIndex);
     this.cadNode.requestNodeUpdate([treeIndex]);
   }
 
   tryGetNodeId(treeIndex: number): number | undefined {
     return this.nodeIdAndTreeIndexMaps.getNodeId(treeIndex);
-  }
-
-  private setNodeColorByTreeIndex(treeIndex: number, r: number, g: number, b: number) {
-    this.nodeColors.set(treeIndex, [r, g, b, 255]);
-    this.cadNode.requestNodeUpdate([treeIndex]);
   }
 }

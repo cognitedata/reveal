@@ -19,6 +19,7 @@ export function Migration() {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const gui = new dat.GUI();
+    let viewer: Cognite3DViewer;
 
     async function main() {
       const urlParams = new URL(window.location.href).searchParams;
@@ -60,7 +61,7 @@ export function Migration() {
       await client.authenticate();
 
       // Prepare viewer
-      const viewer = new Cognite3DViewer({
+      viewer = new Cognite3DViewer({
         sdk: client,
         domElement: canvasWrapperRef.current!,
       });
@@ -68,7 +69,7 @@ export function Migration() {
 
       async function addModel(options: AddModelOptions) {
         switch (
-          await viewer.determineModelType(options.modelId, options.revisionId)
+        await viewer.determineModelType(options.modelId, options.revisionId)
         ) {
           case SupportedModelTypes.CAD:
             const model = await viewer.addModel(options);
@@ -204,8 +205,9 @@ export function Migration() {
       if (modelIdStr && revisionIdStr) {
         const modelId = Number.parseInt(modelIdStr, 10);
         const revisionId = Number.parseInt(revisionIdStr, 10);
-        addModel({ modelId, revisionId });
+        await addModel({ modelId, revisionId });
       }
+
       viewer.on('click', function (event) {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
@@ -226,6 +228,7 @@ export function Migration() {
 
     return () => {
       gui.destroy();
+      viewer?.dispose();
     };
   });
   return <CanvasWrapper ref={canvasWrapperRef} />;
