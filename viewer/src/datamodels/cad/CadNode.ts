@@ -62,6 +62,7 @@ export class CadNode extends THREE.Object3D {
     // Prepare renderables
     this._rootSector = rootSector;
     this.add(rootSector);
+
     this._boundingBoxNode = this.createBoundingBoxNode(scene.getAllSectors());
     this.add(this._boundingBoxNode);
 
