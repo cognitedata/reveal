@@ -69,7 +69,6 @@ export class CachedRepository implements Repository {
   }> = new Subject();
 
   private readonly _concurrentNetworkOperations: number;
-  private isDisposed = false;
 
   constructor(
     modelSectorProvider: CadSectorProvider,
@@ -89,14 +88,6 @@ export class CachedRepository implements Repository {
 
   getParsedData(): Observable<{ blobUrl: string; lod: string; data: SectorGeometry | SectorQuads }> {
     return this._parsedDataSubject.pipe(distinct(keySelector => '' + keySelector.blobUrl + '.' + keySelector.sectorId)); // TODO: Should we do replay subject here instead of variable type?
-  }
-  public dispose(): void {
-    if (this.isDisposed) {
-      return;
-    }
-    this.isDisposed = true;
-    this._isLoadingSubject.complete();
-    this.clearCache();
   }
 
   getLoadingStateObserver(): Observable<boolean> {
@@ -133,6 +124,9 @@ export class CachedRepository implements Repository {
           }),
           finalize(() => this._isLoadingSubject.next(false))
         );
+      }),
+      finalize(() => {
+        this.clearCache();
       })
     );
   }
