@@ -311,6 +311,14 @@ export class Cognite3DViewer {
     this.renderController.redraw();
   }
 
+  setBackgroundColor(color: THREE.Color) {
+    if (this.isDisposed) {
+      return;
+    }
+
+    this.renderer.setClearColor(color);
+  }
+
   setSlicingPlanes(slicingPlanes: THREE.Plane[]): void {
     const geometryFilterPlanes = this._geometryFilters
       .map(x => new BoundingBoxClipper(x.boundingBox).clippingPlanes)
