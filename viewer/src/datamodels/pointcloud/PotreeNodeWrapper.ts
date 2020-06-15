@@ -14,6 +14,11 @@ import { vec3 } from 'gl-matrix';
  */
 export class PotreeNodeWrapper {
   readonly octtree: Potree.PointCloudOctreeNode;
+  private _needsRedraw = false;
+
+  get needsRedraw() {
+    return this._needsRedraw;
+  }
 
   constructor(octtree: Potree.PointCloudOctreeNode) {
     this.octtree = octtree;
@@ -30,6 +35,7 @@ export class PotreeNodeWrapper {
   }
   set pointSize(size: number) {
     this.octtree.material.size = size;
+    this._needsRedraw = true;
   }
 
   get pointSizeType(): PotreePointSizeType {
@@ -37,6 +43,7 @@ export class PotreeNodeWrapper {
   }
   set pointSizeType(type: PotreePointSizeType) {
     this.octtree.material.pointSizeType = type;
+    this._needsRedraw = true;
   }
 
   get pointBudget(): number {
@@ -44,6 +51,7 @@ export class PotreeNodeWrapper {
   }
   set pointBudget(count: number) {
     this.octtree.pointBudget = count;
+    this._needsRedraw = true;
   }
   get visiblePointCount(): number {
     return this.octtree.numVisiblePoints || 0;
@@ -64,6 +72,7 @@ export class PotreeNodeWrapper {
   }
   set pointColorType(type: PotreePointColorType) {
     this.octtree.material.pointColorType = type;
+    this._needsRedraw = true;
   }
 
   get pointShape(): PotreePointShape {
@@ -71,5 +80,10 @@ export class PotreeNodeWrapper {
   }
   set pointShape(shape: PotreePointShape) {
     this.octtree.material.shape = shape;
+    this._needsRedraw = true;
+  }
+
+  resetNeedsRedraw() {
+    this._needsRedraw = false;
   }
 }
