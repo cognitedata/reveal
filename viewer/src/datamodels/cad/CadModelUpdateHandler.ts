@@ -50,7 +50,7 @@ export class CadModelUpdateHandler {
         }, modelsArray)
       )
     ).pipe(
-      auditTime(700),
+      auditTime(250),
       filter(
         ([_camera, _clippingPlanes, _clipIntersection, loadingHints, cadNodes]) =>
           cadNodes.length > 0 && loadingHints.suspendLoading !== true

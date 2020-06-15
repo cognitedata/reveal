@@ -5,7 +5,19 @@
 import { Repository } from './Repository';
 import { WantedSector, SectorGeometry, ConsumedSector } from './types';
 import { LevelOfDetail } from './LevelOfDetail';
-import { OperatorFunction, pipe, Observable, from, merge, partition, of, zip, Subject, onErrorResumeNext } from 'rxjs';
+import {
+  OperatorFunction,
+  pipe,
+  Observable,
+  from,
+  merge,
+  partition,
+  of,
+  zip,
+  Subject,
+  onErrorResumeNext,
+  asapScheduler
+} from 'rxjs';
 import {
   publish,
   filter,
@@ -21,7 +33,8 @@ import {
   switchMap,
   distinctUntilChanged,
   share,
-  finalize
+  finalize,
+  subscribeOn
 } from 'rxjs/operators';
 import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
@@ -85,7 +98,7 @@ export class CachedRepository implements Repository {
     this._isLoadingSubject.complete();
     this.clearCache();
   }
-  
+
   getLoadingStateObserver(): Observable<boolean> {
     return this._isLoadingSubject.pipe(distinctUntilChanged(), share());
   }
@@ -95,6 +108,7 @@ export class CachedRepository implements Repository {
 
   loadSector(): OperatorFunction<WantedSector[], ConsumedSector> {
     return pipe(
+      subscribeOn(asapScheduler),
       switchMap(wantedSectorsArray => {
         return from(wantedSectorsArray).pipe(
           tap(_ => {
@@ -154,6 +168,7 @@ export class CachedRepository implements Repository {
         this._modelSectorProvider.getCadSectorFile(wantedSector.blobUrl, wantedSector.metadata.facesFile.fileName!)
       ).pipe(
         catchError(error => {
+          // tslint:disable-next-line: no-console
           console.error('loadSimple request', error);
           this._modelDataCache.remove(this.cacheKey(wantedSector));
           throw error;
@@ -204,6 +219,7 @@ export class CachedRepository implements Repository {
     const networkObservable = onErrorResumeNext(
       zip(i3dFileObservable, ctmFilesObservable).pipe(
         catchError(error => {
+          // tslint:disable-next-line: no-console
           console.error('loadDetailed request', error);
           this._modelDataCache.remove(this.cacheKey(wantedSector));
           throw error;
@@ -255,6 +271,7 @@ export class CachedRepository implements Repository {
         const networkObservable: Observable<{ fileName: string; data: ParseCtmResult }> = onErrorResumeNext(
           from(this._modelSectorProvider.getCadSectorFile(ctmRequest.blobUrl, ctmRequest.fileName)).pipe(
             catchError(error => {
+              // tslint:disable-next-line: no-console
               console.error('loadCtm request', error);
               this._ctmFileCache.remove(this.ctmKey(ctmRequest));
               throw error;
