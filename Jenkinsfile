@@ -1,4 +1,4 @@
-@Library('jenkins-helpers') _
+@Library('jenkins-helpers@fas-tools') _
 
 // This is your staging domain. Staging deployments are protected by Cognite
 // IAP, meaning they're only accessible to Cogniters.
