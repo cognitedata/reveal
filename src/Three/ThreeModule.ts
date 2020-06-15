@@ -42,8 +42,8 @@ import { FloatLogNode } from "@/Nodes/Wells/Wells/FloatLogNode";
 import { DiscreteLogNode } from "@/Nodes/Wells/Wells/DiscreteLogNode";
 
 import { WellTrajectoryThreeView } from "@/Three/WellViews/WellTrajectoryThreeView";
-import { PointLogFilterView } from "@/Three/WellViews/PointLogFilterView";
-import { BaseLogFilterView } from "@/Three/WellViews/BaseLogFilterView";
+import { PointLogThreeView } from "@/Three/WellViews/PointLogThreeView";
+import { LogFilterView } from "@/Three/WellViews/LogFilterView";
 import { CasingLogNode } from "@/Nodes/Wells/Wells/CasingLogNode";
 import { CasingLogThreeView } from "@/Three/WellViews/CasingLogThreeView";
 import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
@@ -75,9 +75,9 @@ export class ThreeModule extends BaseModule
 
     // Wells:
     factory.register(WellTrajectoryNode.name, WellTrajectoryThreeView, ThreeRenderTargetNode.name);
-    factory.register(PointLogNode.name, PointLogFilterView, ThreeRenderTargetNode.name);
-    factory.register(FloatLogNode.name, BaseLogFilterView, ThreeRenderTargetNode.name);
-    factory.register(DiscreteLogNode.name, BaseLogFilterView, ThreeRenderTargetNode.name);
+    factory.register(PointLogNode.name, PointLogThreeView, ThreeRenderTargetNode.name);
+    factory.register(FloatLogNode.name, LogFilterView, ThreeRenderTargetNode.name);
+    factory.register(DiscreteLogNode.name, LogFilterView, ThreeRenderTargetNode.name);
     factory.register(CasingLogNode.name, CasingLogThreeView, ThreeRenderTargetNode.name);
 
     // Log filters

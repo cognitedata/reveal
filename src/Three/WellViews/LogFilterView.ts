@@ -17,7 +17,7 @@ import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { Changes } from "@/Core/Views/Changes";
 import { BaseView } from "@/Core/Views/BaseView";
 
-export class BaseLogFilterView extends BaseView
+export class LogFilterView extends BaseView
 {
   //==================================================
   // INSTANCE PROPERTIES

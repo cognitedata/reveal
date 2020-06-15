@@ -188,6 +188,13 @@ export class Vector3
     this.z += point.z;
   }
 
+  public addWithFactor(point: Vector3, factor:number): void
+  {
+    this.x += point.x * factor;
+    this.y += point.y * factor;
+    this.z += point.z * factor;
+  }
+
   public addScalar(value: number): void
   {
     this.x += value;
