@@ -51,14 +51,18 @@ export class CachedRepository implements Repository {
     data: SectorGeometry | SectorQuads;
   }> = new Subject();
 
+  private readonly _concurrentNetworkOperations: number;
+
   constructor(
     modelSectorProvider: CadSectorProvider,
     modelDataParser: CadSectorParser,
-    modelDataTransformer: SimpleAndDetailedToSector3D
+    modelDataTransformer: SimpleAndDetailedToSector3D,
+    concurrentNetworkOperations: number = 50
   ) {
     this._modelSectorProvider = modelSectorProvider;
     this._modelDataParser = modelDataParser;
     this._modelDataTransformer = modelDataTransformer;
+    this._concurrentNetworkOperations = concurrentNetworkOperations;
   }
 
   clearCache() {
@@ -117,7 +121,7 @@ export class CachedRepository implements Repository {
       } else {
         throw new Error('Unhandled LevelOfDetail');
       }
-    }, 50);
+    }, this._concurrentNetworkOperations);
   }
 
   private loadSimpleSectorFromNetwork(wantedSector: WantedSector): Observable<ConsumedSector> {
