@@ -64,13 +64,13 @@ export class TreeOverlay
       this.context.shadowColor = 'rgba(0, 0, 0, 0.5)';
       this.context.shadowOffsetX = 3;
       this.context.shadowOffsetY = 3;
-      
+
       this.context.font = Canvas.getFont(14);
       this.context.textAlign = "right";
       this.context.textBaseline = "bottom";
       this.context.fillStyle = fgColor.string();
 
-      this.context.fillText(text, this.delta.x-6, this.delta.y-3);
+      this.context.fillText(text, this.delta.x - 6, this.delta.y - 3);
       this.texture.needsUpdate = true;
     }
     renderer.render(this.scene, this.camera);

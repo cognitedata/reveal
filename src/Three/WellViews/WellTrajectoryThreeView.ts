@@ -35,6 +35,7 @@ import { SpriteCreator } from "@/Three/Utilities/SpriteCreator";
 import { LogRender } from "@/Three/WellViews/Helpers/LogRender";
 import { TrajectoryBufferGeometry } from "@/Three/WellViews/Helpers/TrajectoryBufferGeometry";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
+import { Appearance } from "@/Core/States/Appearance";
 
 const TrajectoryName = "trajectory";
 const TrajectoryLabelName = "trajectoryLabel";
@@ -46,14 +47,12 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
   // INSTANCE FIELDS
   //==================================================
 
-  // Caching the bounding box of the scene
   private cameraDirection = new Vector3(0, 0, 1); // Direction to the center
-  protected cameraPosition = new Vector3(0, 0, 1);
+  private cameraPosition = new Vector3(0, 0, 1);
   private fgColor: Color = Colors.white;
-
   private bandTextures: [THREE.CanvasTexture | null, THREE.CanvasTexture | null] = [null, null];
 
-  public getBandName(rightBand: boolean): string { return rightBand ? "RightBand" : "LeftBand"; }
+  private getBandName(rightBand: boolean): string { return rightBand ? "RightBand" : "LeftBand"; }
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -218,7 +217,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
       // Check if camera has move slightly
       const angle = Math.acos(cameraDirection.getDot(this.cameraDirection));
-      if (angle > Math.PI / 100)
+      if (angle > Appearance.maxCameraDifferenceAngle)
       {
         this.cameraDirection = cameraDirection;
         this.cameraPosition = cameraPosition;
@@ -365,7 +364,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     const useLeftBand = true;
 
     const logRender = new LogRender(bandRange, mdRange);
-    const bands = logRender.createBands(parent, trajectory, this.cameraPosition, useRightBand, useLeftBand);
+    const bands = logRender.createBands(trajectory, this.cameraPosition, useRightBand, useLeftBand);
 
     for (const rightBand of [true, false])
     {
@@ -494,20 +493,6 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       if (visibleCount == 0)
         continue;
 
-      // Only of ther logs are shown
-      if (false)
-      for (const logNode of node.getDescendantsByType(PointLogNode))
-      {
-        if (!logNode.isVisible(this.renderTarget))
-          continue;
-
-        if (!rightBand)
-        {
-          logRender.addPointLog(canvas, logNode.data, style.bandFontSize, rightBand);
-          filled++;
-          visibleCount++;
-        }
-      }
       logRender.addAnnotation(canvas, style.bandFontSize, rightBand);
       textures[rightBand ? 0 : 1] = canvas.createTexture();
     }

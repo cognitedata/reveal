@@ -64,7 +64,7 @@ export class LogRender
   // INSTANCE METHODS: Band
   //==================================================
 
-  public createBands(parent: THREE.Object3D, trajectory: WellTrajectory, cameraPosition: Vector3, useRightBand: boolean, useLeftBand: boolean):
+  public createBands(trajectory: WellTrajectory, cameraPosition: Vector3, useRightBand: boolean, useLeftBand: boolean):
     [THREE.Mesh | null, THREE.Mesh | null]
   {
     const mdInc = 10;

@@ -30,9 +30,19 @@ import { Colors } from "@/Core/Primitives/Colors";
 import { Canvas } from "@/Three/Utilities/Canvas";
 import { Changes } from "@/Core/Views/Changes";
 import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
+import { Appearance } from "@/Core/States/Appearance";
 
-export class PointLogFilterView extends BaseGroupThreeView
+const selectedRadiusFactor = 1.2;
+
+export class PointLogThreeView extends BaseGroupThreeView
 {
+  //==================================================
+  // INSTANCE FIELDS
+  //==================================================
+
+  private cameraDirection = new Vector3(0, 0, 1); // Direction to the center
+  private cameraPosition = new Vector3(0, 0, 1);
+
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
@@ -89,7 +99,7 @@ export class PointLogFilterView extends BaseGroupThreeView
       if (trajectory.getPositionAtMd(sample.md, position))
         range.add(position);
     }
-    const radius = Math.max(10, this.trajectoryRadius * 2);
+    const radius = this.radius * selectedRadiusFactor;
     range.expandByMargin(radius);
     return range;
   }
@@ -97,6 +107,63 @@ export class PointLogFilterView extends BaseGroupThreeView
   //==================================================
   // OVERRIDES of BaseThreeView
   //==================================================
+
+  public /*override*/ beforeRender(): void
+  {
+    super.beforeRender();
+    const parent = this.object3D;
+    if (!parent)
+      return;
+
+    const node = this.node;
+    const log = node.data;
+    if (!log)
+      return;
+
+    const trajectory = node.trajectory;
+    if (!trajectory)
+      return;
+
+    const camera = this.camera;
+    const cameraPosition = ThreeConverter.fromVector(camera.position);
+    const cameraDirection = trajectory.range.center;
+
+    cameraDirection.substract(cameraPosition);
+    cameraDirection.normalize();
+
+    // Check if camera has move slightly
+    const angle = Math.acos(cameraDirection.getDot(this.cameraDirection));
+    if (angle < Appearance.maxCameraDifferenceAngle)
+      return;
+
+    this.cameraDirection = cameraDirection;
+    this.cameraPosition = cameraPosition;
+
+    let position = Vector3.newZero;
+    const tangent = Vector3.newZero;
+    const selectedRadius = this.radius * selectedRadiusFactor;
+
+    for (const child of parent.children)
+    {
+      const index = child.userData["label"];
+      if (index == undefined)
+        continue;
+
+      var sample = log.getAt(index);
+      if (!trajectory.getPositionAtMd(sample.md, position))
+        continue;
+
+      if (!trajectory.getTangentAtMd(sample.md, tangent))
+        continue;
+
+      // Get perpendicular
+      const cameraDirection = Vector3.substract(position, this.cameraPosition);
+      const prependicular = cameraDirection.getNormal(tangent);
+      position.addWithFactor(prependicular, selectedRadius);
+
+      ThreeConverter.copy(child.position, position);
+    }
+  }
 
   public /*override*/ onMouseClick(intersection: THREE.Intersection)
   {
@@ -141,9 +208,10 @@ export class PointLogFilterView extends BaseGroupThreeView
 
     const group = new THREE.Group();
 
-    const radius = Math.max(10, this.trajectoryRadius * 2);
+    const radius = this.radius;
+    const selectedRadius = radius * selectedRadiusFactor;
     const closedGeometry = new THREE.SphereGeometry(radius, 16, 8);
-    const openGeometry = new THREE.SphereGeometry(radius * 1.2, 16, 8);
+    const openGeometry = new THREE.SphereGeometry(selectedRadius, 16, 8);
 
     const closedMaterial = new THREE.MeshPhongMaterial({ color: ThreeConverter.toColor(color) });
     const openMaterial = new THREE.MeshPhongMaterial({ color: ThreeConverter.toColor(color) });
@@ -172,6 +240,8 @@ export class PointLogFilterView extends BaseGroupThreeView
         const radians = Math.acos(tangent.getDot(up));
         sphere.rotateOnAxis(ThreeConverter.toVector(axis), radians);
       }
+
+      // Get perpendicular
       ThreeConverter.copy(sphere.position, position);
       sphere.userData["sphere"] = index;
 
@@ -179,7 +249,11 @@ export class PointLogFilterView extends BaseGroupThreeView
 
       if (sample.isOpen)
       {
-        const label = PointLogFilterView.createLabel(sample.label, position, 5);
+        const cameraDirection = Vector3.substract(position, this.cameraPosition);
+        const prependicular = cameraDirection.getNormal(tangent);
+        position.addWithFactor(prependicular, selectedRadius);
+
+        const label = PointLogThreeView.createLabel(node.getName(), sample.label, position, 5);
         if (label)  
         {
           label.center = new THREE.Vector2(0, 1);
@@ -196,7 +270,7 @@ export class PointLogFilterView extends BaseGroupThreeView
   // INSTANCE METHODS
   //==================================================
 
-  protected get trajectoryRadius(): number
+  protected get radius(): number
   {
     const node = this.node;
     if (!node)
@@ -210,16 +284,15 @@ export class PointLogFilterView extends BaseGroupThreeView
     if (!wellRenderStyle)
       return 0;
 
-    return wellRenderStyle.radius;
+    return Math.max(10, wellRenderStyle.radius * 2);
   }
 
 
-  public static createLabel(text: string, position: Vector3, worldfontSize: number): THREE.Sprite | null
+  public static createLabel(header: string, text: string, position: Vector3, worldfontSize: number): THREE.Sprite | null
   {
     const pixelfontSize = 30;
     const maxWidth = pixelfontSize * 20;
-
-    const canvas = PointLogFilterView.createCanvasWithText(text, maxWidth, pixelfontSize);
+    const canvas = PointLogThreeView.createCanvasWithText(header, text, maxWidth, pixelfontSize);
     if (!canvas)
       return null;
 
@@ -236,13 +309,13 @@ export class PointLogFilterView extends BaseGroupThreeView
     return sprite;
   }
 
-  public static createCanvasWithText(text: string, maxWidth: number, fontSize: number): HTMLCanvasElement | null
+  public static createCanvasWithText(header: string, text: string, maxWidth: number, fontSize: number): HTMLCanvasElement | null
   {
-    const outerMargin = 0.1 * maxWidth;
-    const innerMargin = 0.025 * maxWidth;
+    const margin = 0.025 * maxWidth;
     const lineSpacing = 0.5;
     const lineHeight = fontSize * (1 + lineSpacing);
-    const font = Canvas.getFont(fontSize);
+    const textFont = Canvas.getFont(fontSize);
+    const headerFont = Canvas.getBoldFont(fontSize + 2);
 
     // https://www.javascripture.com/CanvasRenderingContext2D
     const canvas = document.createElement("canvas");
@@ -250,55 +323,74 @@ export class PointLogFilterView extends BaseGroupThreeView
     if (!context)
       return null;
 
+    // Initialize header size
+    context.font = headerFont;
+    let headerHeight;
+    let headerMultiLine;
+    let headerWidth = context.measureText(header).width;
+    if (headerWidth > maxWidth)
+    {
+      headerMultiLine = true;
+      headerWidth = maxWidth;
+      headerHeight = Canvas.measureTextHeight(context, header, maxWidth + margin, lineHeight);
+      headerHeight -= fontSize * lineSpacing / 2;
+    }
+    else
+    {
+      headerMultiLine = false;
+      headerHeight = fontSize;
+    }
     // Initialize text size
-    context.font = font;
+    context.font = textFont;
     let textHeight;
-    let multiLine;
+    let textMultiLine;
     let textWidth = context.measureText(text).width;
     if (textWidth > maxWidth)
     {
-      multiLine = true;
+      textMultiLine = true;
       textWidth = maxWidth;
-      textHeight = Canvas.measureTextHeight(context, text, maxWidth + innerMargin, lineHeight);
+      textHeight = Canvas.measureTextHeight(context, text, maxWidth + margin, lineHeight);
       textHeight -= fontSize * lineSpacing / 2;
     }
     else
     {
-      multiLine = false;
+      textMultiLine = false;
       textHeight = fontSize;
     }
-    let margin = 2 * (outerMargin + innerMargin);
-    canvas.width = textWidth + margin;
-    canvas.height = textHeight + margin;
+    canvas.width = Math.max(headerWidth, textWidth) + 2 * margin;
+    canvas.height = headerHeight + 0.5 * fontSize + textHeight + 2 * margin;
 
-    const gradient = context.createLinearGradient(outerMargin, 0, canvas.width - outerMargin, 0);
+    const gradient = context.createLinearGradient(0, 0, canvas.width, 0);
     gradient.addColorStop(0, Canvas.getColor(Colors.white));
     gradient.addColorStop(1, Canvas.getColor(Colors.grey));
 
-    context.fillStyle = "transparent";
+    context.fillStyle = gradient;
     context.fillRect(0, 0, canvas.width, canvas.height);
 
-    context.fillStyle = gradient;
-    margin = outerMargin;
-    context.fillRect(margin, margin, canvas.width - 2 * margin, canvas.height - 2 * margin);
-
     context.strokeStyle = Canvas.getColor(Colors.orange);
-    context.lineWidth = 3;
-    margin = outerMargin - 1;
-    context.strokeRect(margin, margin, canvas.width - 2 * margin, canvas.height - 2 * margin);
+    context.lineWidth = 4;
+    context.strokeRect(2, 2, canvas.width - 4, canvas.height - 4);
 
     // need to set font again after resizing canvas
-    context.font = font;
     context.textBaseline = "top";
     context.textAlign = "start";
-
     context.fillStyle = Canvas.getColor(Colors.black);
-    const x = outerMargin + innerMargin;
-    const y = x;
-    if (multiLine)
-      Canvas.fillText(context, text, x, y, maxWidth + innerMargin, lineHeight);
-    else
-      context.fillText(text, x, y);
+    let y = margin;
+    {
+      context.font = headerFont;
+      if (headerMultiLine)
+        Canvas.fillText(context, header, margin, y, maxWidth + margin, lineHeight);
+      else
+        context.fillText(header, margin, y);
+    }
+    {
+      y += headerHeight + 0.5 * fontSize;
+      context.font = textFont;
+      if (textMultiLine)
+        Canvas.fillText(context, text, margin, y, maxWidth + margin, lineHeight);
+      else
+        context.fillText(text, margin, y);
+    }
 
     return canvas;
   }
