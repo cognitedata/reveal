@@ -53,6 +53,10 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
     }
   }
 
+  remove(id: Key) {
+    this._data.delete(id);
+  }
+
   get(id: Key): Data {
     const data = this._data.get(id);
     if (data !== undefined) {
@@ -61,6 +65,10 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
       return data.value;
     }
     throw new Error(`Cache element ${id} does not exist`);
+  }
+
+  isFull(): boolean {
+    return !(this._data.size < this._maxElementsInCache);
   }
 
   cleanCache(count: number) {
