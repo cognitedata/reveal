@@ -28,7 +28,9 @@ export class CadSectorParser {
   }
 
   async_finalizeDetailed(i3dFile: ParseSectorResult, ctmFiles: Map<string, ParseCtmResult>): Promise<SectorGeometry> {
-    return this.workerPool.postWorkToAvailable(async (worker: ParserWorker) => worker.finalizeDetailed(i3dFile, ctmFiles));
+    return this.workerPool.postWorkToAvailable(async (worker: ParserWorker) =>
+      worker.finalizeDetailed(i3dFile, ctmFiles)
+    );
   }
 
   private async parseSimple(quadsArrayBuffer: Uint8Array): Promise<ParseQuadsResult> {
