@@ -22,13 +22,14 @@ import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloud
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
+import { Subscription } from 'rxjs';
 
 type CdfModelIdentifier = { modelRevision: IdEither; format: File3dFormat };
 type LoadingStateChangeListener = (isLoading: boolean) => any;
 
 export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
   private readonly eventListeners: { loadingStateChanged: LoadingStateChangeListener[] };
-  private readonly sectorRepository: CachedRepository;
+  private readonly _subscription: Subscription;
 
   constructor(client: CogniteClient, options?: RevealOptions) {
     const modelDataParser: CadSectorParser = new CadSectorParser();
@@ -63,11 +64,13 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
 
     super(cadManager, materialManager, pointCloudManager);
 
-    this.sectorRepository = sectorRepository;
     this.eventListeners = {
       loadingStateChanged: new Array<LoadingStateChangeListener>()
     };
-    sectorRepository.getLoadingStateObserver().subscribe(this.notifyLoadingStateListeners.bind(this));
+    this._subscription = new Subscription();
+    this._subscription.add(
+      sectorRepository.getLoadingStateObserver().subscribe(this.notifyLoadingStateListeners.bind(this))
+    );
   }
 
   public addModel(
@@ -118,7 +121,8 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
       return;
     }
     this.eventListeners.loadingStateChanged.splice(0);
-    this.sectorRepository.dispose();
+    this._cadManager.dispose();
+    this._subscription.unsubscribe();
   }
 
   private notifyLoadingStateListeners(isLoaded: boolean) {

@@ -36,21 +36,35 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
   private readonly _maxElementsInCache: number;
   private readonly _data: Map<Key, TimestampedContainer<Data>>;
 
-  constructor(options?: MemoryRequestCacheOptions) {
+  private _defaultCleanupCount: number;
+
+  constructor(options?: MemoryRequestCacheOptions, defaultCleanupCount: number = 10) {
     this._data = new Map();
     this._maxElementsInCache = (options && options.maxElementsInCache) || 50;
+    this._defaultCleanupCount = defaultCleanupCount;
   }
 
   has(id: Key) {
     return this._data.has(id);
   }
 
-  add(id: Key, data: Data) {
+  forceInsert(id: Key, data: Data) {
+    if(this.isFull()) {
+      this.cleanCache(this._defaultCleanupCount);
+    }
+    this.insert(id, data);
+  }
+
+  insert(id: Key, data: Data) {
     if (this._data.size < this._maxElementsInCache) {
       this._data.set(id, new TimestampedContainer(data));
     } else {
       throw new Error('Cache full, please clean Cache and retry adding data');
     }
+  }
+
+  remove(id: Key) {
+    this._data.delete(id);
   }
 
   get(id: Key): Data {
@@ -61,6 +75,10 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
       return data.value;
     }
     throw new Error(`Cache element ${id} does not exist`);
+  }
+
+  isFull(): boolean {
+    return !(this._data.size < this._maxElementsInCache);
   }
 
   cleanCache(count: number) {
