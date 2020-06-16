@@ -79,13 +79,12 @@ export class CadModelUpdateHandler {
           flatMap(wantedSectorArray => {
             return from(wantedSectorArray).pipe(
               filter(wantedSector => {
-                try {
-                  const sectorStates = modelSectorStates[wantedSector.blobUrl];
+                const sectorStates = modelSectorStates[wantedSector.blobUrl];
+                if (sectorStates) {
                   const sectorState = sectorStates[wantedSector.metadata.id];
-                  return !(sectorState && sectorState === wantedSector.levelOfDetail);
-                } catch (error) {
-                  return true;
+                  return sectorState !== wantedSector.levelOfDetail;
                 }
+                return true;
               }),
               toArray()
             );

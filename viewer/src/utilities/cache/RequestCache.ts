@@ -5,8 +5,10 @@
 export interface RequestCache<Key, Data> {
   has(key: Key): boolean;
   get(key: Key): Data;
-  add(key: Key, data: Data): void;
+  insert(key: Key, data: Data): void;
+  forceInsert(key: Key, data: Data): void;
   remove(key: Key): void;
   isFull(): boolean;
+  cleanCache(count: number): void;
   clear(): void;
 }

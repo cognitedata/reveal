@@ -39,6 +39,7 @@ import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
 import { BoundingBoxClipper, isMobileOrTablet, File3dFormat } from '@/utilities';
 import { Spinner } from '@/utilities/Spinner';
+import { Subscription } from 'rxjs';
 
 export interface RelativeMouseEvent {
   offsetX: number;
@@ -67,6 +68,8 @@ export class Cognite3DViewer {
   private readonly cadManager: CadManager<RequestParams>;
   private readonly pointCloudManager: PointCloudManager<RequestParams>;
   private readonly revealManager: RevealManagerBase<RequestParams>;
+
+  private readonly _subscription: Subscription = new Subscription();
 
   private readonly eventListeners = {
     cameraChange: new Array<CameraChangeDelegate>(),
@@ -155,13 +158,15 @@ export class Cognite3DViewer {
     this.revealManager = new RevealManagerBase(this.cadManager, this.materialManager, this.pointCloudManager);
     this.startPointerEventListeners();
 
-    this.sectorRepository.getLoadingStateObserver().subscribe(isLoading => {
-      if (isLoading) {
-        this.spinner.show();
-      } else {
-        this.spinner.hide();
-      }
-    });
+    this._subscription.add(
+      this.sectorRepository.getLoadingStateObserver().subscribe(isLoading => {
+        if (isLoading) {
+          this.spinner.show();
+        } else {
+          this.spinner.hide();
+        }
+      })
+    );
 
     this.animate(0);
   }
@@ -177,7 +182,7 @@ export class Cognite3DViewer {
       cancelAnimationFrame(this.latestRequestId);
     }
 
-    this.sectorRepository.dispose();
+    this._subscription.unsubscribe();
     this.revealManager.dispose();
     this.domElement.removeChild(this.canvas);
     this.renderer.dispose();
@@ -247,13 +252,15 @@ export class Cognite3DViewer {
     }
 
     const model3d = new Cognite3DModel(options.modelId, options.revisionId, cadNode, this.sdkClient);
-    this.sectorRepository
-      .getParsedData()
-      .pipe(
-        share(),
-        filter(x => x.blobUrl === cadNode.cadModelMetadata.blobUrl)
-      )
-      .subscribe(parseSector => model3d.updateNodeIdMaps(parseSector));
+    this._subscription.add(
+      this.sectorRepository
+        .getParsedData()
+        .pipe(
+          share(),
+          filter(x => x.blobUrl === cadNode.cadModelMetadata.blobUrl)
+        )
+        .subscribe(parseSector => model3d.updateNodeIdMaps(parseSector))
+    );
 
     this.models.push(model3d);
     this.scene.add(model3d);

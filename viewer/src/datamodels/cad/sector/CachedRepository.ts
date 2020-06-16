@@ -44,15 +44,16 @@ import { ParseCtmResult, ParseSectorResult } from '@/utilities/workers/types/par
 import { TriangleMesh, InstancedMeshFile, InstancedMesh, SectorQuads } from '../rendering/types';
 import { createOffsetsArray } from '@/utilities';
 
+type CtmFileRequest = { blobUrl: string; fileName: string };
+type CtmFileResult = { fileName: string; data: ParseCtmResult };
+type ParsedData = { blobUrl: string; lod: string; data: SectorGeometry | SectorQuads };
+
 // TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
 export class CachedRepository implements Repository {
-  private readonly _modelDataCache: MemoryRequestCache<string, Observable<ConsumedSector>> = new MemoryRequestCache({
+  private readonly _consumedSectorCache: MemoryRequestCache<string, Observable<ConsumedSector>> = new MemoryRequestCache({
     maxElementsInCache: 50
   });
-  private readonly _ctmFileCache: MemoryRequestCache<
-    string,
-    Observable<{ fileName: string; data: ParseCtmResult }>
-  > = new MemoryRequestCache({
+  private readonly _ctmFileCache: MemoryRequestCache<string, Observable<CtmFileResult>> = new MemoryRequestCache({
     maxElementsInCache: 300
   });
   private readonly _modelSectorProvider: CadSectorProvider;
@@ -69,7 +70,6 @@ export class CachedRepository implements Repository {
   }> = new Subject();
 
   private readonly _concurrentNetworkOperations: number;
-  private isDisposed = false;
 
   constructor(
     modelSectorProvider: CadSectorProvider,
@@ -83,20 +83,13 @@ export class CachedRepository implements Repository {
     this._concurrentNetworkOperations = concurrentNetworkOperations;
   }
 
-  clearCache() {
-    this._modelDataCache.clear();
+  clearCaches() {
+    this._consumedSectorCache.clear();
+    this._ctmFileCache.clear();
   }
 
-  getParsedData(): Observable<{ blobUrl: string; lod: string; data: SectorGeometry | SectorQuads }> {
-    return this._parsedDataSubject.pipe(distinct(keySelector => '' + keySelector.blobUrl + '.' + keySelector.sectorId)); // TODO: Should we do replay subject here instead of variable type?
-  }
-  public dispose(): void {
-    if (this.isDisposed) {
-      return;
-    }
-    this.isDisposed = true;
-    this._isLoadingSubject.complete();
-    this.clearCache();
+  getParsedData(): Observable<ParsedData> {
+    return this._parsedDataSubject.pipe(distinct(keySelector => '' + keySelector.blobUrl + '.' + keySelector.sectorId + '.' + keySelector.lod)); // TODO: Should we do replay subject here instead of variable type?
   }
 
   getLoadingStateObserver(): Observable<boolean> {
@@ -133,6 +126,9 @@ export class CachedRepository implements Repository {
           }),
           finalize(() => this._isLoadingSubject.next(false))
         );
+      }),
+      finalize(() => {
+        this.clearCaches();
       })
     );
   }
@@ -140,11 +136,11 @@ export class CachedRepository implements Repository {
   private loadSimpleAndDetailedSector(): OperatorFunction<WantedSector, ConsumedSector> {
     return publish(wantedSectorObservable => {
       const [cachedSectorObservable, uncachedSectorObservable] = partition(wantedSectorObservable, wantedSector =>
-        this._modelDataCache.has(this.cacheKey(wantedSector))
+        this._consumedSectorCache.has(this.wantedSectorCacheKey(wantedSector))
       );
 
       return merge(
-        cachedSectorObservable.pipe(flatMap(wantedSector => this._modelDataCache.get(this.cacheKey(wantedSector)))),
+        cachedSectorObservable.pipe(flatMap(wantedSector => this._consumedSectorCache.get(this.wantedSectorCacheKey(wantedSector)))),
         uncachedSectorObservable.pipe(this.loadSimpleAndDetailedSectorFromNetwork())
       );
     });
@@ -170,7 +166,7 @@ export class CachedRepository implements Repository {
         catchError(error => {
           // tslint:disable-next-line: no-console
           console.error('loadSimple request', error);
-          this._modelDataCache.remove(this.cacheKey(wantedSector));
+          this._consumedSectorCache.remove(this.wantedSectorCacheKey(wantedSector));
           throw error;
         }),
         flatMap(buffer => this._modelDataParser.parseF3D(new Uint8Array(buffer))),
@@ -192,12 +188,10 @@ export class CachedRepository implements Repository {
         take(1)
       )
     );
-    if (this._modelDataCache.isFull()) {
-      this._modelDataCache.cleanCache(10);
-    }
-    this._modelDataCache.add(this.cacheKey(wantedSector), networkObservable);
+    this._consumedSectorCache.forceInsert(this.wantedSectorCacheKey(wantedSector), networkObservable);
     return networkObservable;
   }
+
   private loadDetailedSectorFromNetwork(wantedSector: WantedSector): Observable<ConsumedSector> {
     const i3dFileObservable = of(wantedSector.metadata.indexFile).pipe(
       flatMap(indexFile => this._modelSectorProvider.getCadSectorFile(wantedSector.blobUrl, indexFile.fileName)),
@@ -221,7 +215,7 @@ export class CachedRepository implements Repository {
         catchError(error => {
           // tslint:disable-next-line: no-console
           console.error('loadDetailed request', error);
-          this._modelDataCache.remove(this.cacheKey(wantedSector));
+          this._consumedSectorCache.remove(this.wantedSectorCacheKey(wantedSector));
           throw error;
         }),
         map(([i3dFile, ctmFiles]) => this.finalizeDetailed(i3dFile as ParseSectorResult, ctmFiles)),
@@ -240,32 +234,23 @@ export class CachedRepository implements Repository {
         take(1)
       )
     );
-    if (this._modelDataCache.isFull()) {
-      this._modelDataCache.cleanCache(10);
-    }
-    this._modelDataCache.add(this.cacheKey(wantedSector), networkObservable);
+    this._consumedSectorCache.forceInsert(this.wantedSectorCacheKey(wantedSector), networkObservable);
     return networkObservable;
   }
 
-  private loadCtmFile(): OperatorFunction<
-    { blobUrl: string; fileName: string },
-    { fileName: string; data: ParseCtmResult }
-  > {
+  private loadCtmFile(): OperatorFunction<CtmFileRequest, CtmFileResult> {
     return publish(ctmRequestObservable => {
       const [cachedCtmFileObservable, uncachedCtmFileObservable] = partition(ctmRequestObservable, ctmRequest =>
-        this._ctmFileCache.has(this.ctmKey(ctmRequest))
+        this._ctmFileCache.has(this.ctmFileCacheKey(ctmRequest))
       );
       return merge(
-        cachedCtmFileObservable.pipe(flatMap(ctmRequest => this._ctmFileCache.get(this.ctmKey(ctmRequest)))),
+        cachedCtmFileObservable.pipe(flatMap(ctmRequest => this._ctmFileCache.get(this.ctmFileCacheKey(ctmRequest)))),
         uncachedCtmFileObservable.pipe(this.loadCtmFileFromNetwork())
       );
     });
   }
 
-  private loadCtmFileFromNetwork(): OperatorFunction<
-    { blobUrl: string; fileName: string },
-    { fileName: string; data: ParseCtmResult }
-  > {
+  private loadCtmFileFromNetwork(): OperatorFunction<CtmFileRequest, CtmFileResult> {
     return pipe(
       flatMap(ctmRequest => {
         const networkObservable: Observable<{ fileName: string; data: ParseCtmResult }> = onErrorResumeNext(
@@ -273,7 +258,7 @@ export class CachedRepository implements Repository {
             catchError(error => {
               // tslint:disable-next-line: no-console
               console.error('loadCtm request', error);
-              this._ctmFileCache.remove(this.ctmKey(ctmRequest));
+              this._ctmFileCache.remove(this.ctmFileCacheKey(ctmRequest));
               throw error;
             }),
             retry(3),
@@ -283,11 +268,7 @@ export class CachedRepository implements Repository {
             take(1)
           )
         );
-
-        if (this._ctmFileCache.isFull()) {
-          this._ctmFileCache.cleanCache(10);
-        }
-        this._ctmFileCache.add(this.ctmKey(ctmRequest), networkObservable);
+        this._ctmFileCache.forceInsert(this.ctmFileCacheKey(ctmRequest), networkObservable);
         return networkObservable;
       })
     );
@@ -430,11 +411,11 @@ export class CachedRepository implements Repository {
     return meshesGroupedByFile;
   }
 
-  private cacheKey(wantedSector: WantedSector) {
+  private wantedSectorCacheKey(wantedSector: WantedSector) {
     return '' + wantedSector.blobUrl + '.' + wantedSector.metadata.id + '.' + wantedSector.levelOfDetail;
   }
 
-  private ctmKey(request: { blobUrl: string; fileName: string }) {
+  private ctmFileCacheKey(request: { blobUrl: string; fileName: string }) {
     return '' + request.blobUrl + '.' + request.fileName;
   }
 }
