@@ -66,14 +66,20 @@ export class MaterialManager {
     this._globalAppearance = globalAppearance;
   }
 
-  addModelMaterials(modelIdentifier: string, maxTreeIndex: number, nodeAppearance?: ModelNodeAppearance) {
+  addModelMaterials(modelIdentifier: string, maxTreeIndex: number) {
     const materials = createMaterials(maxTreeIndex + 1, this._renderMode, this._clippingPlanes);
-    this.materialsMap.set(modelIdentifier, { materials, nodeAppearance });
+    this.materialsMap.set(modelIdentifier, { materials });
     const indices = [];
     for (let i = 0; i < maxTreeIndex; i++) {
       indices.push(i);
     }
     this.updateModelNodes(modelIdentifier, indices);
+  }
+
+  setNodeApprearance(modelIdentifier: string, nodeAppearance: ModelNodeAppearance | undefined) {
+    const wrapper = this.materialsMap.get(modelIdentifier)!;
+    const newWrapper: MaterialsWrapper = { ...wrapper, nodeAppearance };
+    this.materialsMap.set(modelIdentifier, newWrapper);
   }
 
   getModelMaterials(modelIdentifier: string): Materials {

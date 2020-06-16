@@ -15,7 +15,8 @@ export class CadModelFactory {
   createModel(modelMetadata: CadModelMetadata, modelAppearance?: ModelNodeAppearance): CadNode {
     const { blobUrl, scene } = modelMetadata;
     const cadModel = new CadNode(modelMetadata, this._materialManager);
-    this._materialManager.addModelMaterials(blobUrl, scene.maxTreeIndex, modelAppearance);
+    this._materialManager.addModelMaterials(blobUrl, scene.maxTreeIndex);
+    this._materialManager.setNodeApprearance(blobUrl, modelAppearance)
     return cadModel;
   }
 }
