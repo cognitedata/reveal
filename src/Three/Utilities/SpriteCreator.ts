@@ -68,10 +68,11 @@ export class SpriteCreator
   public static createTexture(canvas: HTMLCanvasElement): THREE.Texture
   {
     const texture = new THREE.CanvasTexture(canvas);
-    texture.minFilter = THREE.LinearFilter;
-    texture.generateMipmaps = true;
-    texture.wrapS = THREE.ClampToEdgeWrapping;
-    texture.wrapT = THREE.ClampToEdgeWrapping;
+    texture.minFilter = THREE.LinearMipMapLinearFilter;
+    texture.magFilter = THREE.NearestFilter;
+    // texture.generateMipmaps = true;
+    // texture.wrapS = THREE.ClampToEdgeWrapping;
+    // texture.wrapT = THREE.ClampToEdgeWrapping;
     texture.needsUpdate = true;
     return texture;
   }
@@ -81,7 +82,7 @@ export class SpriteCreator
     // https://www.javascripture.com/CanvasRenderingContext2D
     const borderSize = 2;
     const fontSize = 30;
-    const font = Canvas.getFont(fontSize);
+    const font = Canvas.getNormalFont(fontSize);
 
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
