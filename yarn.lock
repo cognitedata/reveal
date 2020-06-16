@@ -1940,10 +1940,10 @@
     pretty-hrtime "^1.0.3"
     regenerator-runtime "^0.13.3"
 
-"@storybook/preset-create-react-app@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@storybook/preset-create-react-app/-/preset-create-react-app-3.0.1.tgz#b1e1cdd9392331bd10eee9345292aee9e9cc08da"
-  integrity sha512-eEWbYVwh//iqKUhIDmqthC3C2qbgBnBAst/EUjO+dctQWS9DgY03OCuDSU4zSDJgMPpf4PeCBlysCqpADcF+cg==
+"@storybook/preset-create-react-app@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@storybook/preset-create-react-app/-/preset-create-react-app-3.1.0.tgz#50f75c59b5ca226fda1173c21e945889d97d7aba"
+  integrity sha512-lJt5LQVccpJCVJbfo6oFetx05ossHP38UknUQx3VI/nM6Ec/CWTcn+Wxdoc+YjK5TaVNd84f0BMOYs3UYfTuoA==
   dependencies:
     "@storybook/node-logger" "*"
     "@types/babel__core" "^7.1.7"
