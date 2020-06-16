@@ -65,7 +65,7 @@ export class TreeOverlay
       this.context.shadowOffsetX = 3;
       this.context.shadowOffsetY = 3;
 
-      this.context.font = Canvas.getFont(14);
+      this.context.font = Canvas.getNormalFont(14);
       this.context.textAlign = "right";
       this.context.textBaseline = "bottom";
       this.context.fillStyle = fgColor.string();
