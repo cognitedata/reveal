@@ -30,10 +30,13 @@ export class CadManager<TModelIdentifier> {
     this._cadModelUpdateHandler.observable().subscribe(
       sector => {
         const cadModel = this._cadModelMap.get(sector.blobUrl);
-        if (cadModel!.renderHints.showSectorBoundingBoxes) {
+        if (!cadModel) {
+          throw new Error(`Model ${sector.blobUrl} not found`);
+        }
+        if (cadModel.renderHints.showSectorBoundingBoxes) {
           cadModel!.updateSectorBoundingBox(sector);
         }
-        const sectorNodeParent = cadModel!.rootSector;
+        const sectorNodeParent = cadModel.rootSector;
         const sectorNode = sectorNodeParent!.sectorNodeMap.get(sector.metadata.id);
         if (!sectorNode) {
           throw new Error(`Could not find 3D node for sector ${sector.metadata.id} - invalid id?`);
