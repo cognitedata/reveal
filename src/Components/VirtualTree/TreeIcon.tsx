@@ -27,34 +27,58 @@ export default function TreeIcon(props: {
   // fabric js - start // todo: Mihil - remove once fabric.js evaluation is completed
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const fabricRef = useRef<fabric.Canvas>(null);
+  const imageRef = useRef<fabric.Image>(null);
 
+  const setImage = (fabricImage: fabric.Image, fabricCanvas: fabric.Canvas, size?: number, color?: Color) => {
+    if(fabricImage && fabricCanvas){
+      fabricImage.scaleToHeight(iconSize);
+      if (color)
+      {
+        const filter = new fabric.Image.filters.BlendColor({
+          color: color.hex(),
+          mode: "multiply",
+          alpha: 1.5
+        });
+        fabricImage.applyFilters([filter]);
+      }
+      fabricImage.selectable = false;
+      fabricCanvas.hoverCursor = "default";
+      fabricCanvas.renderAll();
+      fabricCanvas.add(fabricImage);
+    }
+  };
+
+  // add image
   useEffect(() =>
   {
     // only works when USE_FABRIC is true
     if (props.src && canvasRef.current)
     {
-      const canvas = new fabric.Canvas(canvasRef.current);
+      const canvas = new fabric.Canvas(canvasRef.current, { selection: false });
+      // @ts-ignore
+      fabricRef.current = canvas;
+
       const imgInstance = fabric.Image.fromURL(props.src!, oImg =>
       {
-        if (oImg)
-        {
-          oImg.scaleToHeight(iconSize);
-          if (props.color)
-          {
-            const filter = new fabric.Image.filters.BlendColor({
-              color: props.color.hex(),
-              mode: "multiply",
-              alpha: 1.5
-            });
-            oImg.applyFilters([filter]);
-          }
-          canvas.renderAll();
-          canvas.add(oImg);
-        }
+        setImage(oImg, canvas, props.size, props.color);
+        // @ts-ignore
+        imageRef.current = oImg;
       });
-    }
-  }, [props.src, canvasRef.current]);
 
+    }
+  }, [canvasRef.current]);
+
+  // change Color
+
+  useEffect(()=>{
+    const fabricCanvas = fabricRef.current;
+    const fabricImage = imageRef.current;
+
+    if(fabricImage && fabricCanvas){
+      setImage(fabricImage, fabricCanvas, props.size, props.color);
+    }
+    },[props.color, props.size, imageRef, fabricRef]);
   // fabric.js - end
 
   const paintImage = (container: HTMLElement) =>

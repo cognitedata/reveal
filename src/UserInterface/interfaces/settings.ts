@@ -2,7 +2,7 @@ import { TitleBarInterface, ToolBarType } from "./common";
 
 // Describes the return type of actions fired from Settings component
 export interface SettingsCommandInterface {
-  type: String;
+  type: string;
   payload: SettingsCommandPayloadType;
 }
 
@@ -34,9 +34,9 @@ export interface SettingsSectionInterface {
   isExpanded: boolean;
   titleBar?: TitleBarInterface;
   toolBar?: ToolBarType;
-  elementIds: Array<string>;
+  elementIds: string[];
   iconIndex?: number;
-  subSectionIds?: Array<string>;
+  subSectionIds?: string[];
 }
 
 // Settings Section Element
@@ -46,17 +46,17 @@ export interface SectionElement {
   value?: any;
   isReadOnly?: boolean;
   checked?: boolean;
-  options?: Array<{
+  options?: {
     name: string | number;
     icon?: {
       type: string;
       name: string;
     };
-  }>;
+  }[];
   icon?: {
     type: string;
     name: string;
     selected?: boolean;
   };
-  subElementIds?: Array<string>;
+  subElementIds?: string[];
 }

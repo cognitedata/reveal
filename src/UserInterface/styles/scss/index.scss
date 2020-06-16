@@ -14,6 +14,7 @@ $select-control-svg-width: $select-control-svg-height;
 $icon-size: 1.125rem;
 
 @import "explorer";
+@import "settings";
 
 * {
   font-family: "Roboto", "Jost", sans-serif !important;
@@ -30,7 +31,8 @@ body {
 }
 
 .left-panel {
-  min-width: $left-panel-min-width;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   background-image: linear-gradient(to right, white, lightgray);
@@ -56,7 +58,6 @@ body {
   display: flex;
   flex-direction: column;
   width: 100%;
-  overflow: hidden;
 }
 
 .settings-container {
@@ -90,7 +91,7 @@ body {
 
 .MuiExpansionPanelSummary-content,
 .MuiExpansionPanel-root.Mui-expanded {
-  margin: 0px !important;
+  margin: 0 !important;
 }
 
 .MuiExpansionPanelDetails-root {
@@ -286,7 +287,7 @@ $z-index-max: 9999;
       transition: background-color 0.3s;
       margin: 0.02rem;
       padding: 0.2rem 0;
-      border: 0.01rem solid none;
+      border: 0.01rem solid;
       border-radius: 0.2rem;
       cursor: pointer;
       &:hover {

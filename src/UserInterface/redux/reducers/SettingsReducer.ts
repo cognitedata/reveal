@@ -1,10 +1,11 @@
 import { createReducer } from "@reduxjs/toolkit";
 
 import { SettingsStateInterface } from "../../interfaces/settings";
-import { state } from "../../data/settings-dummy-state";
+import { settingsDummyState } from "../../data/settings-dummy-state";
 
 // Initial settings state
-const initialState: SettingsStateInterface = state;
+
+const initialState: SettingsStateInterface = settingsDummyState; // dummy state
 
 // Redux Toolkit package includes a createReducer utility that uses Immer internally.
 // Because of this, we can write reducers that appear to "mutate" state, but the updates

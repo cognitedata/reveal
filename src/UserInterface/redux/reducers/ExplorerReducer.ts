@@ -4,7 +4,7 @@ import
   ExplorerStateInterface,
   TreeDataItem,
 } from "@/UserInterface/interfaces/explorer";
-import { state as dummyState } from "@/UserInterface/data/explorer-dummy-state";
+import dummyExplorerState from "@/UserInterface/data/explorer-dummy-state";
 import { RootNode } from "@/Nodes/TreeNodes/RootNode";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import Nodes from "@/UserInterface/constants/Nodes";
@@ -30,7 +30,7 @@ function generateNodeStructure(
       description: node.getName(),
       color: (node.hasIconColor() ? node.getColor() : undefined)
     },
-    selected: node.isActive,
+    selected: node.IsSelected(),
     checked: (node.getCheckBoxState() === CheckBoxState.All),
     indeterminate: (node.getCheckBoxState() === CheckBoxState.Some),
     isRadio: (node.isRadio(null)),
@@ -91,7 +91,7 @@ function makeNodes(root: RootNode)
 }
 
 const initialState: ExplorerStateInterface = {
-  ...dummyState,
+  ...dummyExplorerState,
   root: RootManager.createRoot(),
   selectedNodeType: { value: 0, name: Nodes.NODE_TYPES.OTHERS },
   selectedNode: null,
@@ -134,6 +134,7 @@ export default createReducer(initialState, {
         checkNode.checked = true;
         checkNode.indeterminate = false;
         checkNode.disabled = false;
+        // tslint:disable-next-line:no-console
         console.log('changed state of ', checkNode.name, ' to checked');
         state.checkedNodeIds.add(uniqueId);
         break;
@@ -141,18 +142,21 @@ export default createReducer(initialState, {
         checkNode.checked = false;
         checkNode.indeterminate = false;
         checkNode.disabled = false;
+        // tslint:disable-next-line:no-console
         console.log('changed state of ', checkNode.name, ' to un-checked');
         break;
       case 'disabled':
         checkNode.checked = false;
         checkNode.indeterminate = false;
         checkNode.disabled = true;
+        // tslint:disable-next-line:no-console
         console.log('changed state of ', checkNode.name, ' to un-checked');
         break;
       case 'partial':
         checkNode.indeterminate = true;
         checkNode.checked = false;
         checkNode.disabled = false;
+        // tslint:disable-next-line:no-console
         console.log('changed state of ', checkNode.name, ' to partial');
         break;
       default:

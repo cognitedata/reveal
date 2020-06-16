@@ -1,16 +1,9 @@
 {
-  "extends": [
-    "tslint-react",
-    "@cognite/tslint-config-cognite-3d",
-    "tslint-no-circular-imports"
-  ],
+  "extends": ["tslint-react", "@cognite/tslint-config-cognite-3d", "tslint-no-circular-imports"],
   "linterOptions": {
     "exclude": ["node_modules/**/*.ts", "**/*.json"]
   },
-  "rulesDirectory": [
-    "node_modules/tslint-eslint-rules/dist/rules",
-    "tslint-plugin-prettier"
-  ],
+  "rulesDirectory": ["node_modules/tslint-eslint-rules/dist/rules", "tslint-plugin-prettier"],
   "rules": {
     "comment-format": false,
     "no-irregular-whitespace": false,
@@ -35,6 +28,7 @@
         "enforce-trailing-newline": true
       }
     ],
+    "jsx-no-lambda": false,
     "trailing-comma": [
       true,
       {
@@ -42,6 +36,6 @@
         "singleline": "never"
       }
     ],
-    "jsx-no-lambda": false
+    "whitespace": [true, "check-module"]
   }
 }

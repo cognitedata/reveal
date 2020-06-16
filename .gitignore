@@ -1,6 +1,7 @@
 dist
 lib
 node_modules
+.idea
 .vs/slnx.sqlite
 .vs/subsurface-visualization/config/applicationhost.config
 .vs/subsurface-visualization/v16/.suo

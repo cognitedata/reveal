@@ -11,31 +11,36 @@ const useStyles = makeStyles((theme: Theme) =>
       display: "flex",
       flexDirection: "column",
       padding: ".5rem .4rem .5rem .8rem",
-      backgroundImage: "linear-gradient(to right, #fff, #d5d5d5)",
-    },
-  }),
+      backgroundImage: "linear-gradient(to right, #fff, #d5d5d5)"
+    }
+  })
 );
 
 /**
  * Settings form component
  */
 export default function Form(props: {
-  elementIds: Array<string>,
-  sectionId: string,
-  subSectionId?: string
+  elementIds: string[];
+  sectionId: string;
+  subSectionId?: string;
 }) {
   const classes = useStyles();
+
   const { elementIds, sectionId, subSectionId } = props;
   const settings = useSelector((state: ReduxStore) => state.settings);
   const { elements } = settings;
 
-  return <div className={classes.formContainer}>
-    {elementIds.map((id) => <Input
-      key={`${sectionId}-input-${subSectionId ? subSectionId : ""}-${id}`}
-      sectionId={sectionId}
-      subSectionId={subSectionId}
-      config={elements[id]}
-      elementIndex={id} />
-    )}
-  </div>
-} 
+  return (
+    <div className={classes.formContainer}>
+      {elementIds.map(id => (
+        <Input
+          key={`${sectionId}-input-${subSectionId ? subSectionId : ""}-${id}`}
+          sectionId={sectionId}
+          subSectionId={subSectionId}
+          config={elements[id]}
+          elementIndex={id}
+        />
+      ))}
+    </div>
+  );
+}

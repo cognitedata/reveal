@@ -1,8 +1,8 @@
 import { IconTypes } from "../constants/Icons";
 import Nodes from "../constants/Nodes";
 
-// Dummy tree state
-export const state = {
+// Dummy Explorer state
+export default {
   tabConfig: [
     {
       name: "Others",

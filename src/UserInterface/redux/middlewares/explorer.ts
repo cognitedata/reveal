@@ -5,7 +5,7 @@ import {
   TOGGLE_NODE_CHECK,
 } from "../types/explorer";
 
-// Visualizer middleware
+// Explorer middleware
 export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
   type: string;
   payload: ExplorerCommandPayloadType;

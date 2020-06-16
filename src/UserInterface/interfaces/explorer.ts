@@ -1,6 +1,6 @@
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { RootNode } from "@/Nodes/TreeNodes/RootNode";
-import * as Color from "color"
+import Color from "color";
 
 // Explorer component state interface
 export interface ExplorerStateInterface {
