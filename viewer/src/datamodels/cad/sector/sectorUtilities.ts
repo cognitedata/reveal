@@ -114,11 +114,11 @@ export function discardSector(group: THREE.Group) {
 
 export function distinctUntilLevelOfDetailChanged() {
   return pipe(
-    groupBy((sector: WantedSector) => sector.blobUrl),
-    mergeMap((modelGroup: GroupedObservable<string, WantedSector>) => {
+    groupBy((sector: ConsumedSector) => sector.blobUrl),
+    mergeMap((modelGroup: GroupedObservable<string, ConsumedSector>) => {
       return modelGroup.pipe(
-        groupBy((sector: WantedSector) => sector.metadata.id),
-        mergeMap((group: GroupedObservable<number, WantedSector>) =>
+        groupBy((sector: ConsumedSector) => sector.metadata.id),
+        mergeMap((group: GroupedObservable<number, ConsumedSector>) =>
           group.pipe(distinctUntilKeyChanged('levelOfDetail'))
         )
       );
@@ -133,8 +133,13 @@ export function filterCurrentWantedSectors(
     withLatestFrom(wantedObservable),
     flatMap(([loaded, wanted]) => {
       for (const wantedSector of wanted) {
-        if (loaded.metadata.id === wantedSector.metadata.id && loaded.levelOfDetail === wantedSector.levelOfDetail) {
-          return of(loaded);
+        try {
+          if (loaded.metadata.id === wantedSector.metadata.id && loaded.levelOfDetail === wantedSector.levelOfDetail) {
+            return of(loaded);
+          }
+        } catch (error) {
+          // tslint:disable-next-line: no-console
+          console.log(error);
         }
       }
       return empty();

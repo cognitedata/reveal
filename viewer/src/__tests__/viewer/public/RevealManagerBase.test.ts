@@ -15,6 +15,7 @@ describe('RevealManagerBase', () => {
     resetRedraw: jest.fn(),
     needsRedraw: false,
     updateCamera: jest.fn(),
+    dispose: jest.fn(),
     clippingPlanes: [],
     clipIntersection: false
   };
