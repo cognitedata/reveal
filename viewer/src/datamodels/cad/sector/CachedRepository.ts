@@ -166,7 +166,7 @@ export class CachedRepository implements Repository {
         catchError(error => {
           // tslint:disable-next-line: no-console
           console.error('loadSimple request', error);
-          this.updateConsumedSectorCache(wantedSector);
+          this._consumedSectorCache.remove(this.wantedSectorCacheKey(wantedSector));
           throw error;
         }),
         flatMap(buffer => this._modelDataParser.parseF3D(new Uint8Array(buffer))),
@@ -188,7 +188,7 @@ export class CachedRepository implements Repository {
         take(1)
       )
     );
-    this.updateConsumedSectorCache(wantedSector, networkObservable);
+    this._consumedSectorCache.forceInsert(this.wantedSectorCacheKey(wantedSector), networkObservable);
     return networkObservable;
   }
 
@@ -215,7 +215,7 @@ export class CachedRepository implements Repository {
         catchError(error => {
           // tslint:disable-next-line: no-console
           console.error('loadDetailed request', error);
-          this.updateConsumedSectorCache(wantedSector);
+          this._consumedSectorCache.remove(this.wantedSectorCacheKey(wantedSector));
           throw error;
         }),
         map(([i3dFile, ctmFiles]) => this.finalizeDetailed(i3dFile as ParseSectorResult, ctmFiles)),
@@ -234,7 +234,7 @@ export class CachedRepository implements Repository {
         take(1)
       )
     );
-    this.updateConsumedSectorCache(wantedSector, networkObservable);
+    this._consumedSectorCache.forceInsert(this.wantedSectorCacheKey(wantedSector), networkObservable);
     return networkObservable;
   }
 
@@ -258,7 +258,7 @@ export class CachedRepository implements Repository {
             catchError(error => {
               // tslint:disable-next-line: no-console
               console.error('loadCtm request', error);
-              this.updateCtmFileCache(ctmRequest);
+              this._ctmFileCache.remove(this.ctmFileCacheKey(ctmRequest));
               throw error;
             }),
             retry(3),
@@ -268,7 +268,7 @@ export class CachedRepository implements Repository {
             take(1)
           )
         );
-        this.updateCtmFileCache(ctmRequest, networkObservable);
+        this._ctmFileCache.forceInsert(this.ctmFileCacheKey(ctmRequest), networkObservable);
         return networkObservable;
       })
     );
@@ -415,32 +415,7 @@ export class CachedRepository implements Repository {
     return '' + wantedSector.blobUrl + '.' + wantedSector.metadata.id + '.' + wantedSector.levelOfDetail;
   }
 
-  private updateConsumedSectorCache(wantedSector: WantedSector, networkObservable?: Observable<ConsumedSector>) {
-    const cacheKey = this.wantedSectorCacheKey(wantedSector);
-    if(networkObservable) {    
-      if (this._consumedSectorCache.isFull()) {
-        this._consumedSectorCache.cleanCache(10);
-      }
-      this._consumedSectorCache.add(cacheKey, networkObservable);
-    } else {
-      this._consumedSectorCache.remove(cacheKey);
-    }
-  }
-
   private ctmFileCacheKey(request: { blobUrl: string; fileName: string }) {
     return '' + request.blobUrl + '.' + request.fileName;
-  }
-
-  private updateCtmFileCache(ctmRequest: 
-    { blobUrl: string; fileName: string }, networkObservable?: Observable<{ fileName: string; data: ParseCtmResult }>) {
-      const cacheKey = this.ctmFileCacheKey(ctmRequest);
-      if(networkObservable) {    
-      if (this._ctmFileCache.isFull()) {
-        this._ctmFileCache.cleanCache(10);
-      }
-      this._ctmFileCache.add(cacheKey, networkObservable);
-    } else {
-      this._consumedSectorCache.remove(cacheKey);
-    }
   }
 }

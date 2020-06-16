@@ -36,16 +36,26 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
   private readonly _maxElementsInCache: number;
   private readonly _data: Map<Key, TimestampedContainer<Data>>;
 
-  constructor(options?: MemoryRequestCacheOptions) {
+  private _defaultCleanupCount: number;
+
+  constructor(options?: MemoryRequestCacheOptions, defaultCleanupCount: number = 10) {
     this._data = new Map();
     this._maxElementsInCache = (options && options.maxElementsInCache) || 50;
+    this._defaultCleanupCount = defaultCleanupCount;
   }
 
   has(id: Key) {
     return this._data.has(id);
   }
 
-  add(id: Key, data: Data) {
+  forceInsert(id: Key, data: Data) {
+    if(this.isFull()) {
+      this.cleanCache(this._defaultCleanupCount);
+    }
+    this.insert(id, data);
+  }
+
+  insert(id: Key, data: Data) {
     if (this._data.size < this._maxElementsInCache) {
       this._data.set(id, new TimestampedContainer(data));
     } else {
