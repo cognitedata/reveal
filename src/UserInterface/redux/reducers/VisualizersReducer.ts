@@ -3,7 +3,6 @@ import { VisualizerStateInterface } from "@/UserInterface/interfaces/visualizers
 import ToolbarAdaptor from "@/UserInterface/adaptors/ToolbarAdaptor";
 
 // Initial settings state
-// TODO: Normalize state
 const initialState: VisualizerStateInterface = {
     toolBars: {},
     targets: {},
@@ -20,8 +19,12 @@ export default createReducer(initialState, {
             state.toolBars[viewerId] = ToolbarAdaptor.convert(toolBars[viewerId].commands)
         })
     }, EXECUTE_VISUALIZER_TOOLBAR_COMMAND_SUCCESS: (state, action) => {
-        const { icon, isChecked, visualizerId, index } = action.payload;
-        state.toolBars[visualizerId][index].icon = icon;
-        state.toolBars[visualizerId][index].isChecked = isChecked;
+        const { visualizerId } = action.payload;
+        const toolbar = state.toolBars[visualizerId];
+        toolbar.map((item) => {
+            const command = item.command;
+            item.isChecked = command.isChecked;
+            item.icon = command.getIcon();
+        });
     }
 });

@@ -21,13 +21,18 @@ export default function Icon(props: {
   type?: string;
   name?: string;
   src?: string;
-  tooltip?: string;
-  placement?: "bottom" | "right-start";
+  tooltip?: {
+    text: string;
+    placement?: "bottom" | "right-start";
+  };
+  iconSize?: { width: number; height: number };
 }) {
-  const { type, name, src, tooltip, placement } = props;
+  const { type, name, src, tooltip, iconSize } = props;
+  // TODO - Remove getIcon once Settings implementation complete
+  const imgSrc = src ? src : type && name ? getIcon(type, name) : "";
+  const style = iconSize ? { width: iconSize.width, height: iconSize.height } : {};
 
-  // Remove getIcon once Settings implementation complete
-  const image = <img src={src ? src : type && name ? getIcon(type, name) : ""} />;
+  const image = <img src={imgSrc} style={style} />;
 
   return (
     <div className="icon">
@@ -36,16 +41,16 @@ export default function Icon(props: {
           title={
             <div className="image-tooltip">
               {image}
-              <span>{tooltip}</span>
+              <span>{tooltip.text}</span>
             </div>
           }
-          placement={placement}
+          placement={tooltip.placement}
         >
           {image}
         </CustomToolTip>
       ) : (
-          image
-        )}
+        image
+      )}
     </div>
   );
 }

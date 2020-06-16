@@ -2,7 +2,7 @@ import { Range3 } from "../../Core/Geometry/Range3";
 import { ThreeModule } from "../../Three/ThreeModule";
 import { ThreeRenderTargetNode } from "../../Three/Nodes/ThreeRenderTargetNode";
 import { RootNode } from "../../Nodes/TreeNodes/RootNode";
-import { Toolbar } from "@/UserInterface/components/Viewers/VisualizerToolbar";
+import Toolbar from "@/UserInterface/impl/Toolbar";
 
 // Manages Root Node
 export default class RootManager {
