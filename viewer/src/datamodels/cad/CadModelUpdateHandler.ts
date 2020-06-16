@@ -38,7 +38,7 @@ export class CadModelUpdateHandler {
   constructor(sectorRepository: CachedRepository, sectorCuller: SectorCuller) {
     const modelsArray: CadNode[] = [];
     this._updateObservable = combineLatest(
-      this._cameraSubject.pipe(auditTime(1000)),
+      this._cameraSubject.pipe(auditTime(700)),
       this._clippingPlaneSubject.pipe(startWith([])),
       this._clipIntersectionSubject.pipe(startWith(false)),
       this._loadingHintsSubject.pipe(startWith({} as CadLoadingHints)),
@@ -79,13 +79,12 @@ export class CadModelUpdateHandler {
           flatMap(wantedSectorArray => {
             return from(wantedSectorArray).pipe(
               filter(wantedSector => {
-                try {
-                  const sectorStates = modelSectorStates[wantedSector.blobUrl];
+                const sectorStates = modelSectorStates[wantedSector.blobUrl];
+                if(sectorStates) {
                   const sectorState = sectorStates[wantedSector.metadata.id];
-                  return !(sectorState && sectorState === wantedSector.levelOfDetail);
-                } catch (error) {
-                  return true;
+                  return sectorState !== wantedSector.levelOfDetail;
                 }
+                return true;
               }),
               toArray()
             );
