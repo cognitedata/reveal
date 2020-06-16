@@ -10,16 +10,19 @@ import {
 } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import * as reveal from '@cognite/reveal/experimental';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { WebGLRenderer } from 'three';
-import { CanvasWrapper } from '../components/styled';
+import { CanvasWrapper, Loader } from '../components/styled';
 
 CameraControls.install({ THREE });
 
 export function Simple() {
   const canvas = useRef<HTMLCanvasElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    let revealManager: reveal.RevealManager | reveal.LocalHostRevealManager;
+
     async function main() {
       if (!canvas.current) {
         return;
@@ -32,7 +35,7 @@ export function Simple() {
       client.loginWithOAuth({ project });
 
       const scene = new THREE.Scene();
-      const revealManager: reveal.RenderManager = createRenderManager(
+      revealManager = createRenderManager(
         modelRevision !== undefined ? 'cdf' : 'local',
         client
       );
@@ -48,6 +51,7 @@ export function Simple() {
         modelRevision !== undefined
       ) {
         model = await revealManager.addModel('cad', modelRevision);
+        revealManager.on('loadingStateChanged', setIsLoading);
       } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'
@@ -119,9 +123,16 @@ export function Simple() {
     }
 
     main();
-  });
+
+    return () => {
+      revealManager?.dispose();
+    };
+  }, []);
   return (
     <CanvasWrapper>
+      <Loader isLoading={isLoading} style={{ position: 'absolute' }}>
+        Loading...
+      </Loader>
       <canvas ref={canvas} />
     </CanvasWrapper>
   );

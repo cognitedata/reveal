@@ -25,6 +25,8 @@ export interface RevealOptions {
 export type OnDataUpdated = () => void;
 
 export class RevealManagerBase<TModelIdentifier> implements RenderManager {
+  protected isDisposed = false;
+
   // CAD
   protected readonly _cadManager: CadManager<TModelIdentifier>;
   protected readonly _materialManager: MaterialManager;
@@ -46,6 +48,13 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
     this._cadManager = cadManager;
     this._materialManager = materialManager;
     this._pointCloudManager = pointCloudManager;
+  }
+
+  public dispose(): void {
+    if (this.isDisposed) {
+      return;
+    }
+    this.isDisposed = true;
   }
 
   public resetRedraw(): void {
