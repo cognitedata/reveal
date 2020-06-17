@@ -9,13 +9,18 @@ import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { Color, SupportedModelTypes } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
-import { toThreeJsBox3, toThreeMatrix4 } from '@/utilities';
+import { toThreeJsBox3, toThreeMatrix4, toThreeVector3, fromThreeVector3 } from '@/utilities';
 import { CadRenderHints, CadNode, ModelNodeAppearance } from '@/experimental';
 import { CadLoadingHints } from '@/datamodels/cad/CadLoadingHints';
 import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
 import { SectorGeometry } from '@/datamodels/cad/sector/types';
 import { SectorQuads } from '@/datamodels/cad/rendering/types';
 import { ModelRenderAppearance } from '@/datamodels/cad';
+import { vec3 } from 'gl-matrix';
+
+const mapCoordinatesBuffers = {
+  v: vec3.create()
+};
 
 export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = SupportedModelTypes.CAD;
@@ -81,6 +86,34 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.cadNode = cadNode;
 
     this.children.push(this.cadNode);
+  }
+
+  /**
+   * Maps a position retrieved from the CDF API (e.g. 3D node information) to
+   * coordinates in "ThreeJS model space". This is necessary because CDF has a right-handed
+   * Z-up coordinate system while ThreeJS uses a right-hand Y-up coordinate system.
+   * @param p     The CDF coordinate to transform
+   * @param out   Optional preallocated buffer for storing the result
+   */
+  mapFromCdfToModelCoordinates(p: THREE.Vector3, out?: THREE.Vector3): THREE.Vector3 {
+    out = out !== undefined ? out : new THREE.Vector3();
+    const { v } = mapCoordinatesBuffers;
+    fromThreeVector3(v, p);
+    return toThreeVector3(out, v, this.cadModel.modelTransformation);
+  }
+
+  /**
+   * Maps from a 3D position in "ThreeJS model space" (e.g. a ray intersection coordinate)
+   * to coordinates in "CDF space". This is necessary because CDF has a right-handed
+   * Z-up coordinate system while ThreeJS uses a right-hand Y-up coordinate system.
+   * @param p       The ThreeJS coordinate to transform
+   * @param out     Optional preallocated buffer for storing the result
+   */
+  mapPositionFromModelToCdfCoordinates(p: THREE.Vector3, out?: THREE.Vector3): THREE.Vector3 {
+    out = out !== undefined ? out : new THREE.Vector3();
+    const { v } = mapCoordinatesBuffers;
+    fromThreeVector3(v, p, this.cadModel.modelTransformation);
+    return toThreeVector3(out, v);
   }
 
   dispose() {
@@ -193,12 +226,20 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   async selectNode(nodeId: number): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.selectNodeByTreeIndex(treeIndex);
+  }
+
+  selectNodeByTreeIndex(treeIndex: number) {
     this.selectedNodes.add(treeIndex);
     this.cadNode.requestNodeUpdate([treeIndex]);
   }
 
   async deselectNode(nodeId: number): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.deselectNodeByTreeIndex(treeIndex);
+  }
+
+  deselectNodeByTreeIndex(treeIndex: number) {
     this.selectedNodes.delete(treeIndex);
     this.cadNode.requestNodeUpdate([treeIndex]);
   }

@@ -16,10 +16,12 @@ export class PotreeGroupWrapper extends THREE.Object3D {
   get needsRedraw(): boolean {
     return (
       Potree.Global.numNodesLoading !== this.numNodesLoadingAfterLastRedraw ||
-      this.numChildrenAfterLastRedraw !== this.potreeGroup.children.length
+      this.numChildrenAfterLastRedraw !== this.potreeGroup.children.length ||
+      this.nodes.some(n => n.needsRedraw)
     );
   }
 
+  private readonly nodes: PotreeNodeWrapper[] = [];
   private readonly potreeGroup: Potree.Group;
   private numNodesLoadingAfterLastRedraw = 0;
   private numChildrenAfterLastRedraw = 0;
@@ -38,6 +40,7 @@ export class PotreeGroupWrapper extends THREE.Object3D {
 
   addPointCloud(node: PotreeNodeWrapper): void {
     this.potreeGroup.add(node.octtree);
+    this.nodes.push(node);
   }
 
   *pointClouds(): Generator<PotreeNodeWrapper> {
@@ -49,5 +52,6 @@ export class PotreeGroupWrapper extends THREE.Object3D {
   private resetNeedsRedraw() {
     this.numNodesLoadingAfterLastRedraw = Potree.Global.numNodesLoading;
     this.numChildrenAfterLastRedraw = this.potreeGroup.children.length;
+    this.nodes.forEach(n => n.resetNeedsRedraw());
   }
 }

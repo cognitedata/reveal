@@ -10,3 +10,7 @@ export { Intersection } from './public/migration/intersection';
 export { Color, Cognite3DViewerOptions, AddModelOptions, SupportedModelTypes } from './public/migration/types';
 export { CadLoadingHints } from './datamodels/cad/CadLoadingHints';
 export { BoundingBoxClipper } from './utilities';
+
+// Export ThreeJS to enable easy import for our users
+import * as THREE from 'three';
+export { THREE };
