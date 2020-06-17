@@ -25,6 +25,7 @@ import { CadLoadingHints } from './CadLoadingHints';
 import { ConsumedSector, WantedSector } from './sector/types';
 import { distinctUntilLevelOfDetailChanged, filterCurrentWantedSectors } from './sector/sectorUtilities';
 import { LevelOfDetail } from './sector/LevelOfDetail';
+import { emissionLastMillis } from '@/utilities';
 
 export class CadModelUpdateHandler {
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
@@ -42,6 +43,7 @@ export class CadModelUpdateHandler {
       this._clippingPlaneSubject.pipe(startWith([])),
       this._clipIntersectionSubject.pipe(startWith(false)),
       this._loadingHintsSubject.pipe(startWith({} as CadLoadingHints)),
+      this._cameraSubject.pipe(auditTime(300), emissionLastMillis(1500)),
       this._modelSubject.pipe(
         share(),
         scan((array, next) => {
@@ -52,10 +54,10 @@ export class CadModelUpdateHandler {
     ).pipe(
       auditTime(250),
       filter(
-        ([_camera, _clippingPlanes, _clipIntersection, loadingHints, cadNodes]) =>
+        ([_camera, _clippingPlanes, _clipIntersection, loadingHints, _cameraInMotion, cadNodes]) =>
           cadNodes.length > 0 && loadingHints.suspendLoading !== true
       ),
-      flatMap(([camera, clippingPlanes, clipIntersection, loadingHints, cadNodes]) => {
+      flatMap(([camera, clippingPlanes, clipIntersection, loadingHints, cameraInMotion, cadNodes]) => {
         return from(cadNodes).pipe(
           filter(cadNode => cadNode.loadingHints.suspendLoading !== true),
           map(cadNode => cadNode.cadModelMetadata),
@@ -63,6 +65,7 @@ export class CadModelUpdateHandler {
           map(cadModels => {
             const input: DetermineSectorsInput = {
               camera,
+              cameraInMotion,
               clippingPlanes,
               clipIntersection,
               loadingHints,
