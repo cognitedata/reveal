@@ -5,6 +5,7 @@
 4. [Arrays](#arrays)
 5. [Functions](#functions)
 6. [Destructuring](#destructuring)
+7. [Strings](#strings)
 
 # Types
 ### [Primitives](#primitives)
@@ -319,5 +320,96 @@ const authenticate = (credentials: Credentials): boolean => {
 // And the reward goes to!
 const authenticate = ({ username, password }: Credentials): boolean => {
   return this._apiService(username, password);
+}
+```
+
+You should also use destructuring when working with arrays that have set positions.
+
+```typescript
+const arr = [100, 250];
+
+// Don't assign variables from arrays in this way.
+// const min = arr[0];
+// const max = arr[1];
+
+const [min, max] = arr;
+```
+
+### [Scalability with Destructuring](#scalability-with-destructuring)
+One of the huge benefits of destructuring is that it scales well when working with multiple return values.
+```typescript
+...
+// Carefully consider when you use array destructuring.
+const getBoundingBox = () => {
+  return [this._left, this._top, this._right, this._bottom];
+}
+...
+
+// Object destructuring scales a lot better than array destructuring.
+const getBoundingBox = () => {
+  return {
+    left: this._left,
+    top: this._top,
+    right: this._right,
+    bottom: this._bottom
+  };
+}
+```
+Due to how destructuring works, the latter example scales a lot better. You can add elements to the return statement without breaking the existing calls to the same function. You also do not need to use all of the returned variables.
+
+```typescript
+// Select the data you need from a function.
+const { top, bottom } = getBoundingBox();
+
+// You can change the base function without breaking the places it is used.
+const getBoundingBox = () => {
+  return {
+    visible: this._visible,
+    left: this._left,
+    top: this._top,
+    right: this._right,
+    bottom: this._bottom
+  };
+}
+
+```
+
+# Strings
+
+### [Single Quotes](#single-quotes)
+A string variable should be enclosed by single quotes.
+```typescript
+// const name = "Kane Doe"; No!
+const name = 'Kane Doe';
+```
+> **Note:** Make sure you use `string` and not `String`
+
+### [String Breaks](#string-breaks)
+If a string is longer than 80 characters, it should be written across multiple lines using breaks.
+```typescript
+// Why would you do this towards anyone??
+const errorMessage = 'Unable to acquire the correct asset requested. Please make sure you provide the correct identifiers to the requested asset. If this error persists, please make sure to check your internet connection.';
+
+// Yes
+const errorMessage = 'Unable to acquire the correct asset requested. Please make \
+sure you provide the correct identifiers to the requested asset. If this error \
+persists, please make sure to check your internet connection.';
+```
+### [String Concatenation](#string-concatenation)
+Another alternative to using `\` for linebreaks is to use string concatenation.
+```typescript
+const errorMessage = 'Unable to acquire the correct asset requested. ' +
+'Please make sure you provide the correct identifiers to the requested asset. ' +
+'If this error persists, please make sure to check your internet connection.'
+```
+> **Note:** Make sure that you do not overuse string concatenation as it has a noticable impact on performance.
+
+### [String Generation](#string-generation)
+For strings that are generated programatically use templates instead of concatenation.
+```typescript
+const debug = (tag:string, message: string) => {
+  // console.log('Tag: ' + tag + ', message: ' + message); // No!
+  // console.log(['Tag: ', tag, ', message: ', message].join()); // No again!
+  console.log(`Tag: ${tag}, message: ${message}`); // Yay for templates.
 }
 ```
