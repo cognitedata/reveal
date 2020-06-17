@@ -40,7 +40,6 @@ import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/Default
 import { BoundingBoxClipper, isMobileOrTablet, File3dFormat } from '@/utilities';
 import { Spinner } from '@/utilities/Spinner';
 import { addPostRenderEffects } from '@/datamodels/cad/rendering/postRenderEffects';
-import { CadNode } from '@/datamodels/cad';
 import { Subscription } from 'rxjs';
 
 export interface RelativeMouseEvent {
