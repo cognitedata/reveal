@@ -63,7 +63,7 @@ export class PotreeThreeView extends BaseGroupThreeView
     const style = this.style;
 
     const path = node.url;
-    if (path == null || path === "")
+    if (!path || path === "")
       return null;
 
     const group: Potree.Group = new Potree.Group();

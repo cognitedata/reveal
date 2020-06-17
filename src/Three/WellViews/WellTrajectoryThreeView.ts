@@ -142,9 +142,9 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
       this.setBandTextures(parent);
     }
-    if (parent.getObjectByName(TrajectoryLabelName) == null)
+    if (!parent.getObjectByName(TrajectoryLabelName))
       this.addTrajectoryLabel(parent);
-    if (parent.getObjectByName(WellLabelName) == null)
+    if (!parent.getObjectByName(WellLabelName))
       this.addWellLabel(parent);
   }
 

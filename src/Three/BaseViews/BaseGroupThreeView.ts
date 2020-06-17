@@ -104,7 +104,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
 
   public /*override*/ calculateBoundingBoxCore(): Range3 | undefined
   {
-    if (this.object3D === null)
+    if (!this.object3D)
       return undefined;
     return BoundingBoxKit.getBoundingBox(this.object3D);
   }

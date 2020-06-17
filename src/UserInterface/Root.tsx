@@ -11,14 +11,13 @@ import LeftPanel from "./components/Panels/LeftPanel";
 
 import RootManager from "./managers/rootManager";
 import { generateNodeTree } from "./redux/actions/explorer";
-import { BaseRootLoader } from "@/RootLoaders/BaseRootLoader";
-import { RandomDataLoader } from "@/RootLoaders/RandomDataLoader";
 import { ReduxStore } from "./interfaces/common";
 import { setVisualizerData } from "./redux/actions/visualizers";
 
 import NotificationsToActionsAdaptor from "./adaptors/NotificationToAction";
 import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 import UserInterfaceListener from "./adaptors/UserInterfaceListener";
+import { Modules } from "@/Core/Module/Modules";
 
 /**
  * Root component
@@ -37,15 +36,15 @@ export default () => {
     VirtualUserInterface.install(new UserInterfaceListener(notificationAdaptor));
 
     // Targets and Toolbars
-    const targets = RootManager.targets(root, "visualizer-3d");
-    const toolBars = RootManager.toolbars(root);
+    const targets = RootManager.getTargets(root, "visualizer-3d");
+    const toolBars = RootManager.getToolbars(root);
     dispatch(setVisualizerData({ targets, toolBars }));
 
     RootManager.appendDOM(root, "visualizer-3d", "3d");
-    const loader: BaseRootLoader = new RandomDataLoader();
-    loader.load(root);
+    // const loader: BaseRootLoader = new RandomDataLoader();
+    // loader.load(root);
     dispatch(generateNodeTree({ root }));
-    RootManager.initializeWhenPopulated(root);
+    Modules.instance.initializeWhenPopulated(root);
   }, [root]);
 
   return (

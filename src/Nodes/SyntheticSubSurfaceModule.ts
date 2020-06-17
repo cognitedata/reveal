@@ -2,24 +2,23 @@ import { Range1 } from "../Core/Geometry/Range1";
 import { Range3 } from "../Core/Geometry/Range3";
 import { Vector3 } from "../Core/Geometry/Vector3";
 
-import { RootNode } from "../Nodes/TreeNodes/RootNode";
+import { SubSurfaceRootNode } from "./TreeNodes/SubSurfaceRootNode";
 
-import { WellTrajectoryNode } from "../Nodes/Wells/Wells/WellTrajectoryNode";
-import { WellNode } from "../Nodes/Wells/Wells/WellNode";
-import { WellTrajectory } from "../Nodes/Wells/Logs/WellTrajectory";
+import { WellTrajectoryNode } from "./Wells/Wells/WellTrajectoryNode";
+import { WellNode } from "./Wells/Wells/WellNode";
+import { WellTrajectory } from "./Wells/Logs/WellTrajectory";
 import { FolderNode } from "@/Core/Nodes/FolderNode";
 
-import { PointLogNode } from "../Nodes/Wells/Wells/PointLogNode";
-import { FloatLogNode } from "../Nodes/Wells/Wells/FloatLogNode";
-import { DiscreteLogNode } from "../Nodes/Wells/Wells/DiscreteLogNode";
+import { PointLogNode } from "./Wells/Wells/PointLogNode";
+import { FloatLogNode } from "./Wells/Wells/FloatLogNode";
+import { DiscreteLogNode } from "./Wells/Wells/DiscreteLogNode";
 
-import { PointLog } from "../Nodes/Wells/Logs/PointLog";
-import { FloatLog } from "../Nodes/Wells/Logs/FloatLog";
-import { DiscreteLog } from "../Nodes/Wells/Logs/DiscreteLog";
+import { PointLog } from "./Wells/Logs/PointLog";
+import { FloatLog } from "./Wells/Logs/FloatLog";
+import { DiscreteLog } from "./Wells/Logs/DiscreteLog";
 import { CasingLogNode } from "@/Nodes/Wells/Wells/CasingLogNode";
 import { Random } from "@/Core/Primitives/Random";
 import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
-import { BaseRootLoader } from "@/RootLoaders/BaseRootLoader";
 import { RegularGrid2 } from "@/Core/Geometry/RegularGrid2";
 import { SurfaceNode } from "@/Nodes/Misc/SurfaceNode";
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
@@ -27,15 +26,25 @@ import { ToggleAxisVisibleCommand } from "@/Three/Commands/ToggleAxisVisibleComm
 import { ViewAllCommand } from "@/Three/Commands/ViewAllCommand";
 import { ToggleBgColorCommand } from "@/Three/Commands/ToggleBgColorCommand";
 import { WellFolder } from "@/Nodes/Wells/Wells/WellFolder";
+import { BaseModule } from "@/Core/Module/BaseModule";
+import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 
-export class RandomDataLoader extends BaseRootLoader
+export class SyntheticSubSurfaceModule extends BaseModule
 {
   //==================================================
-  // OVERRIDES of BaseRootLoader
+  // OVERRIDES of BaseModule
   //==================================================
 
-  public /*override*/ load(root: RootNode): void
+  public /*override*/ createRoot(): BaseRootNode | null
   {
+    return new SubSurfaceRootNode();
+  }
+
+  public /*override*/ loadData(root: BaseRootNode)
+  {
+    if (!(root instanceof SubSurfaceRootNode))
+      return;
+
     const numberOfFolder = 5;
     const numberOfTrajectories = 2;
 
@@ -160,9 +169,10 @@ export class RandomDataLoader extends BaseRootLoader
       }
     }
     wellTree.synchronize();
+    return root;
   }
 
-  public /*override*/  updatedVisible(root: RootNode): void
+  public /*override*/ setDefaultVisible(root: BaseRootNode): void
   {
     // Set all wells ands logs visible
     for (const well of root.getDescendantsByType(WellNode))
@@ -182,28 +192,26 @@ export class RandomDataLoader extends BaseRootLoader
     }
   }
 
-  public /*override*/  startAnimate(root: RootNode)
+  public /*override*/ startAnimate(root: BaseRootNode)
   {
-    setInterval(() => RandomDataLoader.animate(root), 200);
+    setInterval(() => SyntheticSubSurfaceModule.animate(root), 200);
   }
 
   //==================================================
   // STATIC METHODS
   //==================================================
 
-  private static animate(root: RootNode)
+  private static animate(root: BaseRootNode)
   {
+    if (!(root instanceof SubSurfaceRootNode))
+      return;
 
     const target = root.activeTarget as ThreeRenderTargetNode;
     if (!target)
       return;
 
-    // controls.rotate(Math.PI * 0.02, 0, true);
-    // controls.update(0);
-    // target.updateLight();
-
+    const wells = root.wells
     return;
-
 
     if (Random.isTrue(0.05))
     {
@@ -220,13 +228,13 @@ export class RandomDataLoader extends BaseRootLoader
       const command = new ToggleBgColorCommand(target);
       command.invoke();
     }
-    for (const node of root.wells.getDescendantsByType(WellTrajectoryNode))
+    for (const node of wells.getDescendantsByType(WellTrajectoryNode))
     {
 
       if (Random.isTrue(0.025))
         node.toggleVisibleInteractive();
     }
-    for (const node of root.wells.getDescendantsByType(BaseLogNode))
+    for (const node of wells.getDescendantsByType(BaseLogNode))
     {
       if (Random.isTrue(0.05))
         node.toggleVisibleInteractive();
@@ -241,13 +249,6 @@ export class RandomDataLoader extends BaseRootLoader
         i++;
       }
     }
-    // const controls = target.controls;
-    // if (!controls)
-    //   return;
-
-    // controls.rotate(Math.PI * 0.02, 0, true);
-    // controls.update(0);
-    // target.updateLight();
   }
 }
 
@@ -255,12 +256,7 @@ export class RandomDataLoader extends BaseRootLoader
 
 // Old test code:
 //===============
-
-//{
-//  const range = Range3.createByMinAndMax(0, 0.5, 1, 1);
-//  const target = new ThreeRenderTargetNode(range);
-//  root.targets.addChild(target);
-//}
+//
 // Add data
 //for (let i = 0; i < 1; i++)
 //{
@@ -294,8 +290,6 @@ export class RandomDataLoader extends BaseRootLoader
 //}
 //for (const node of root.getDescendantsByType(PotreeNode))
 //  node.setVisible(true);
-// Set some visible in target 1
-// root.targets.children[0].setActiveInteractive();
 //for (const node of root.getDescendantsByType(PointsNode))
 //{
 //  const style = node.renderStyle;
@@ -306,14 +300,6 @@ export class RandomDataLoader extends BaseRootLoader
 //  }
 //  node.setVisible(true);
 //}
-//for (const node of root.getDescendantsByType(PolylinesNode))
-//{
-//  const style = node.renderStyle;
-//  if (style)
-//    style.lineWidth = 10;
-//  node.setVisible(true);
-//}
-//
 //for (const node of root.getDescendantsByType(SurfaceNode))
 //{
 //  const style = node.renderStyle;

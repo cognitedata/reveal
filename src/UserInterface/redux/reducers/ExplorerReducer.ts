@@ -5,7 +5,7 @@ import
   TreeDataItem,
 } from "@/UserInterface/interfaces/explorer";
 import dummyExplorerState from "@/UserInterface/data/explorer-dummy-state";
-import { RootNode } from "@/Nodes/TreeNodes/RootNode";
+import { SubSurfaceRootNode } from "@/Nodes/TreeNodes/SubSurfaceRootNode";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import Nodes from "@/UserInterface/constants/Nodes";
 import RootManager from "@/UserInterface/managers/rootManager";
@@ -47,7 +47,7 @@ function generateNodeStructure(
 }
 
 // Generate redux store compatible nodes data from root node
-function makeNodes(root: RootNode)
+function makeNodes(root: SubSurfaceRootNode)
 {
   const rootId = root.uniqueId.toString();
   const nodes: { [key: string]: any } = {};

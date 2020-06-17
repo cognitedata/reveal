@@ -65,6 +65,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
 
   public abstract get domElement(): HTMLElement;
   public /*virtual*/ onResize() { }
+  public /*virtual*/ viewAll() { }
 
   //==================================================
   // INSTANCE METHODS

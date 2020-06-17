@@ -2,19 +2,21 @@
 import { Range3 } from "@/Core/Geometry/Range3";
 import { Polylines } from "@/Core/Geometry/Polylines";
 import { PolylinesNode } from "@/Nodes/Misc/PolylinesNode";
-import { RootNode } from "@/Nodes/TreeNodes/RootNode";
+import { SubSurfaceRootNode } from "@/Nodes/TreeNodes/SubSurfaceRootNode";
 import { StubModule } from "./StubModule";
 import { StubTargetNode } from "./StubTargetNode";
+import { Modules } from "@/Core/Module/Modules";
 
 export class StubRootCreator
 {
-  public static createTestRoot(): RootNode 
+  public static createTestRoot(): SubSurfaceRootNode 
   {
     // Create the module
-    const module = new StubModule();
-    module.install();
+    const modules = Modules.instance;
+    modules.add(new StubModule());
+    modules.install();
 
-    const root = module.createRoot() as RootNode;
+    const root = modules.createRoot() as SubSurfaceRootNode;
 
     // Create the 2 viewers
     for (let i = 0; i < 2; i++) 
@@ -35,7 +37,7 @@ export class StubRootCreator
       root.others.addChild(node);
       node.initialize();
     }
-    module.initializeWhenPopulated(root);
+    modules.initializeWhenPopulated(root);
 
     // root.debugHierarcy();
     return root;
