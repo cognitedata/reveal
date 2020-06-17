@@ -6,6 +6,8 @@ import { createMaterials, Materials } from './rendering/materials';
 import { ModelVisibilityDelegate, ModelColorDelegate, ModelNodeAppearance } from './ModelNodeAppearance';
 import { RenderMode } from './rendering/RenderMode';
 import { GlobalColorDelegate, GlobalVisibilityDelegate, GlobalNodeAppearance } from './GlobalNodeAppearance';
+import { ModelRenderAppearance } from './ModelRenderAppearance';
+import { toThreeJsBox3 } from '@/utilities';
 
 function updateColors(getColor: ModelColorDelegate, materials: Materials, treeIndices: number[]) {
   for (const treeIndex of treeIndices) {
@@ -52,6 +54,7 @@ function updateGlobalVisibility(
 interface MaterialsWrapper {
   materials: Materials;
   nodeAppearance?: ModelNodeAppearance;
+  renderAppearance?: ModelRenderAppearance;
 }
 
 export class MaterialManager {
@@ -69,16 +72,17 @@ export class MaterialManager {
   addModelMaterials(modelIdentifier: string, maxTreeIndex: number) {
     const materials = createMaterials(maxTreeIndex + 1, this._renderMode, this._clippingPlanes);
     this.materialsMap.set(modelIdentifier, { materials });
-    const indices = [];
-    for (let i = 0; i < maxTreeIndex; i++) {
-      indices.push(i);
-    }
-    this.updateModelNodes(modelIdentifier, indices);
   }
 
-  setNodeApprearance(modelIdentifier: string, nodeAppearance: ModelNodeAppearance | undefined) {
+  setNodeAppearance(modelIdentifier: string, nodeAppearance: ModelNodeAppearance) {
     const wrapper = this.materialsMap.get(modelIdentifier)!;
     const newWrapper: MaterialsWrapper = { ...wrapper, nodeAppearance };
+    this.materialsMap.set(modelIdentifier, newWrapper);
+  }
+
+  setRenderAppearance(modelIdentifier: string, renderAppearance: ModelRenderAppearance) {
+    const wrapper: MaterialsWrapper = this.materialsMap.get(modelIdentifier)!;
+    const newWrapper: MaterialsWrapper = { ...wrapper, renderAppearance };
     this.materialsMap.set(modelIdentifier, newWrapper);
   }
 
@@ -104,7 +108,6 @@ export class MaterialManager {
     this._clippingPlanes = clippingPlanes;
     this.applyToAllMaterials(material => {
       material.clippingPlanes = clippingPlanes;
-      // console.log('Setting', material, clippingPlanes);
     });
   }
 
@@ -133,28 +136,60 @@ export class MaterialManager {
   updateModelNodes(modelIdentifier: string, treeIndices: number[]) {
     const materialsWrapper = this.materialsMap.get(modelIdentifier);
     const materials = materialsWrapper!.materials;
-    const localAppearance = materialsWrapper!.nodeAppearance;
-    if (!localAppearance && !this._globalAppearance) {
+    const localNodeAppearance = materialsWrapper!.nodeAppearance;
+    const renderAppearance = materialsWrapper!.renderAppearance;
+    // TODO Set visibility green channel with renderAppearance
+    if (!localNodeAppearance && !this._globalAppearance) {
       return;
     }
     if (treeIndices.length === 0) {
       return;
     }
-    if (localAppearance && localAppearance.color !== undefined) {
-      updateColors(localAppearance.color, materials, treeIndices);
-      materials.overrideColorPerTreeIndex.needsUpdate = true;
-    }
-    if (localAppearance && localAppearance.visible !== undefined) {
-      updateVisibility(localAppearance.visible, materials, treeIndices);
-      materials.overrideVisibilityPerTreeIndex.needsUpdate = true;
+
+    this.updateLocalNodeAppearance(localNodeAppearance, materials, treeIndices);
+    this.updateRenderAppearance(renderAppearance, materials, treeIndices);
+    this.updateGlobalNodeAppearance(modelIdentifier, materials, treeIndices);
+  }
+
+  private updateRenderAppearance(
+    renderAppearance: ModelRenderAppearance | undefined,
+    materials: Materials,
+    treeIndices: number[]
+  ) {
+    if (!renderAppearance || renderAppearance.renderInFront === undefined) {
+      return;
     }
 
+    for (const treeIndex of treeIndices) {
+      materials.overrideVisibilityPerTreeIndex.image.data[4 * treeIndex + 1] = renderAppearance.renderInFront(treeIndex)
+        ? 255
+        : 0;
+    }
+    materials.overrideVisibilityPerTreeIndex.needsUpdate = true;
+  }
+
+  private updateGlobalNodeAppearance(modelIdentifier: string, materials: Materials, treeIndices: number[]) {
     if (this._globalAppearance && this._globalAppearance.color !== undefined) {
       updateGlobalColors(modelIdentifier, this._globalAppearance.color, materials, treeIndices);
       materials.overrideColorPerTreeIndex.needsUpdate = true;
     }
     if (this._globalAppearance && this._globalAppearance.visible !== undefined) {
       updateGlobalVisibility(modelIdentifier, this._globalAppearance.visible, materials, treeIndices);
+      materials.overrideVisibilityPerTreeIndex.needsUpdate = true;
+    }
+  }
+
+  private updateLocalNodeAppearance(
+    localAppearance: ModelNodeAppearance | undefined,
+    materials: Materials,
+    treeIndices: number[]
+  ) {
+    if (localAppearance && localAppearance.color !== undefined) {
+      updateColors(localAppearance.color, materials, treeIndices);
+      materials.overrideColorPerTreeIndex.needsUpdate = true;
+    }
+    if (localAppearance && localAppearance.visible !== undefined) {
+      updateVisibility(localAppearance.visible, materials, treeIndices);
       materials.overrideVisibilityPerTreeIndex.needsUpdate = true;
     }
   }

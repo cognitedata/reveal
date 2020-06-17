@@ -22,6 +22,7 @@ import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloud
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
+import { ModelRenderAppearance } from '@/datamodels/cad/ModelRenderAppearance';
 
 type CdfModelIdentifier = { modelRevision: IdEither; format: File3dFormat };
 type LoadingStateChangeListener = (isLoading: boolean) => any;
@@ -73,7 +74,8 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
   public addModel(
     type: 'cad',
     modelRevisionId: string | number,
-    modelNodeAppearance?: ModelNodeAppearance
+    modelNodeAppearance?: ModelNodeAppearance,
+    modelRenderAppearance?: ModelRenderAppearance
   ): Promise<CadNode>;
   public addModel(
     type: 'pointcloud',
@@ -82,13 +84,15 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
   public addModel(
     type: 'cad' | 'pointcloud',
     modelRevisionId: string | number,
-    modelNodeAppearance?: ModelNodeAppearance
+    modelNodeAppearance?: ModelNodeAppearance,
+    modelRenderAppearance?: ModelRenderAppearance
   ): Promise<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper]> {
     switch (type) {
       case 'cad':
         return this._cadManager.addModel(
           { modelRevision: this.createModelIdentifier(modelRevisionId), format: File3dFormat.RevealCadModel },
-          modelNodeAppearance
+          modelNodeAppearance,
+          modelRenderAppearance
         );
       case 'pointcloud':
         return this._pointCloudManager.addModel({

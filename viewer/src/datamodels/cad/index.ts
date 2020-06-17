@@ -7,5 +7,14 @@ import { ModelNodeAppearance } from './ModelNodeAppearance';
 import { CadModelMetadata } from './CadModelMetadata';
 import { SectorMetadata } from './sector/types';
 import { SsaoEffect, SsaoPassType } from './rendering/post-processing/ssao';
+import { ModelRenderAppearance } from './ModelRenderAppearance';
 
-export { CadNode, ModelNodeAppearance, CadModelMetadata, SectorMetadata, SsaoEffect, SsaoPassType };
+export {
+  CadNode,
+  ModelNodeAppearance,
+  ModelRenderAppearance,
+  CadModelMetadata,
+  SectorMetadata,
+  SsaoEffect,
+  SsaoPassType
+};

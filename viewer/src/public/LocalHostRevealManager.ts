@@ -16,7 +16,7 @@ import { CachedRepository } from '@/datamodels/cad/sector/CachedRepository';
 import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
 import { CadManager } from '@/datamodels/cad/CadManager';
 import { LocalUrlClient as LocalHostClient } from '@/utilities/networking/LocalUrlClient';
-import { ModelNodeAppearance, CadNode } from '@/datamodels/cad';
+import { ModelNodeAppearance, CadNode, ModelRenderAppearance } from '@/datamodels/cad';
 import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloudMetadataRepository';
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
@@ -63,16 +63,22 @@ export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifi
     this.sectorRepository = sectorRepository;
   }
 
-  public addModel(type: 'cad', fileName: string, modelNodeAppearance?: ModelNodeAppearance): Promise<CadNode>;
+  public addModel(
+    type: 'cad',
+    fileName: string,
+    modelNodeAppearance?: ModelNodeAppearance,
+    modelRenderAppearance?: ModelRenderAppearance
+  ): Promise<CadNode>;
   public addModel(type: 'pointcloud', fileName: string): Promise<[PotreeGroupWrapper, PotreeNodeWrapper]>;
   public addModel(
     type: 'cad' | 'pointcloud',
     fileName: string,
-    modelNodeAppearance?: ModelNodeAppearance
+    modelNodeAppearance?: ModelNodeAppearance,
+    modelRenderAppearance?: ModelRenderAppearance
   ): Promise<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper]> {
     switch (type) {
       case 'cad':
-        return this._cadManager.addModel({ fileName }, modelNodeAppearance);
+        return this._cadManager.addModel({ fileName }, modelNodeAppearance, modelRenderAppearance);
       case 'pointcloud':
         return this._pointCloudManager.addModel({ fileName });
       default:
