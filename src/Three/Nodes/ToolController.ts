@@ -37,7 +37,7 @@ export class ToolController
 
   public setDefaultTool(tool: ToolCommand | null, cameraControl: CameraControl | null)
   {
-    if (tool == null)
+    if (!tool)
     {
       if (this._defaultTool)
         this.setActiveTool(this._defaultTool, cameraControl);
@@ -51,7 +51,7 @@ export class ToolController
 
   public setActiveTool(tool: ToolCommand | null, cameraControl: CameraControl | null)
   {
-    if (tool == null)
+    if (!tool)
       return;
 
     if (this._activeTool === tool)

@@ -12,7 +12,6 @@
 //=====================================================================================
 
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
-import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
 import { ViewFactory } from "@/Core/Views/ViewFactory";
 
 export abstract class BaseModule
@@ -21,39 +20,12 @@ export abstract class BaseModule
   // VIRTUAL METHODS: 
   //==================================================
 
-  protected /*virtual*/ installPackagesCore(): void { }
-  protected /*virtual*/ registerViewsCore(factory: ViewFactory): void { }
-  protected /*virtual*/ initializeWhenPopulatedCore(root: BaseRootNode): void { }
-
-  protected /*virtual*/ abstract createRootCore(): BaseRootNode;
-
-  //==================================================
-  // INSTANCE METHODS: 
-  //==================================================
-
-  public install(): void
-  {
-    this.installPackagesCore();
-    this.registerViewsCore(ViewFactory.instance);
-  }
-
-  public initializeWhenPopulated(root: BaseRootNode): void
-  {
-    this.initializeWhenPopulatedCore(root);
-    root.initializeRecursive();
-  }
-
-  public createRoot(): BaseRootNode
-  {
-    const root = this.createRootCore();
-    root.initializeRecursive();
-    return root;
-  }
-
-  public *getDomElements(root: BaseRootNode): Iterable<HTMLElement>
-  {
-    for (const target of root.targets.getChildrenByType(BaseRenderTargetNode))
-      yield target.domElement;
-  }
+  public /*virtual*/ installPackages(): void { }
+  public /*virtual*/ registerViews(factory: ViewFactory): void { }
+  public /*virtual*/ createRoot(): BaseRootNode | null { return null; }  
+  public /*virtual*/ loadData(root: BaseRootNode) {  }  
+  public /*virtual*/ initializeWhenPopulated(root: BaseRootNode): void { }
+  public /*virtual*/ setDefaultVisible(root: BaseRootNode): void { }
+  public /*virtual*/ startAnimate(root: BaseRootNode) { }
 }
 

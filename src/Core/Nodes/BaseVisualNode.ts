@@ -55,17 +55,18 @@ export abstract class BaseVisualNode extends BaseNode
   public /*override*/ getCheckBoxState(target?: ITarget | null): CheckBoxState
   {
     if (!target)
+    {
       target = this.activeTarget;
-
-    if (!target)
-      return CheckBoxState.Never;
-
+      if (!target)
+        return CheckBoxState.Never;
+    }
     if (this.hasView(target)) // TODO: Not sure? this.isVisible() and remove hasView()
       return CheckBoxState.All;
 
-    if (this.canBeVisible(target)){
-      
-      if(this.canBeChecked(target))
+    if (this.canBeVisible(target))
+    {
+
+      if (this.canBeChecked(target))
         return CheckBoxState.None;
       else
         return CheckBoxState.Disabled;
@@ -76,10 +77,11 @@ export abstract class BaseVisualNode extends BaseNode
   public /*override*/setVisibleInteractive(visible: boolean, target?: ITarget | null, topLevel = true): boolean
   {
     if (!target)
+    {
       target = this.activeTarget;
-    if (!target)
-      return false;
-
+      if (!target)
+        return false;
+    }
     if (visible && !this.canBeChecked(target))
       return false;
 
@@ -94,8 +96,8 @@ export abstract class BaseVisualNode extends BaseNode
       for (const ancestor of this.getAncestorsExceptRoot())
         ancestor.notify(args);
     }
-     for (const child of this.children)
-        child.notify(args);
+    for (const child of this.children)
+      child.notify(args);
     return true;
   }
 
@@ -147,9 +149,11 @@ export abstract class BaseVisualNode extends BaseNode
   {
     // Returns true if changed.
     if (!target)
+    {
       target = this.activeTarget;
-    if (!target)
-      return false;
+      if (!target)
+        return false;
+    }
     if (visible)
       return target.showView(this);
     return target.hideView(this);

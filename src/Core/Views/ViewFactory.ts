@@ -17,17 +17,23 @@ import { BaseNode } from "@/Core/Nodes/BaseNode";
 export class ViewFactory
 {
   //==================================================
+  // INSTANCE FIELDS
+  //==================================================
+
+  private products = new Map<string, Product>();
+
+  //==================================================
   // CONSTRUCTORS
   //==================================================
 
   private constructor()
   {
     if (ViewFactory._instance)
-      throw new Error("Error - use ViewFactory.getInstance()");
+      throw new Error("Error - use ViewFactory.instance");
   }
 
   //==================================================
-  // INSTANCE PATTERN
+  // STATIC METHODS: Instance pattern
   //==================================================
 
   private static _instance: ViewFactory | null = null;
@@ -38,12 +44,6 @@ export class ViewFactory
       ViewFactory._instance = new ViewFactory();
     return ViewFactory._instance;
   }
-
-  //==================================================
-  // INSTANCE FIELDS
-  //==================================================
-
-  private products = new Map<string, Product>();
 
   //==================================================
   // INSTANCE METHODS:

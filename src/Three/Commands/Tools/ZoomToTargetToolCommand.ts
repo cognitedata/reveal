@@ -36,7 +36,7 @@ export class ZoomToTargetToolCommand extends ToolCommand
 
     const pixelCoords = target.getMouseRelativePosition(event);
     const worldCoords = target.getClickPosition(pixelCoords);
-    if (worldCoords == null)
+    if (!worldCoords)
       return;
 
     const cameraControl = target.cameraControl;

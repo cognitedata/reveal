@@ -71,7 +71,7 @@ export class CameraControl
   public onResize(aspectRatio: number)
   {
     const camera = this._camera;
-    if (this._camera === null)
+    if (!this._camera)
       return;
 
     if (!(camera instanceof THREE.PerspectiveCamera))

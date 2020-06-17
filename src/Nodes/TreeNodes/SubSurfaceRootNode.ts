@@ -21,7 +21,7 @@ import { AxisNode } from "@/Nodes/Decorations/AxisNode";
 import { OthersTreeNode } from "@/Nodes/TreeNodes/OthersTreeNode";
 import RootNodeIcon from "@images/Nodes/RootNode.png";
 
-export class RootNode extends BaseRootNode
+export class SubSurfaceRootNode extends BaseRootNode
 {
   //==================================================
   //PROPERTIES
@@ -69,8 +69,8 @@ export class RootNode extends BaseRootNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return RootNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === RootNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return SubSurfaceRootNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === SubSurfaceRootNode.name || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

@@ -1,10 +1,10 @@
 import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { RootNode } from "@/Nodes/TreeNodes/RootNode";
+import { SubSurfaceRootNode } from "@/Nodes/TreeNodes/SubSurfaceRootNode";
 import Color from "color";
 
 // Explorer component state interface
 export interface ExplorerStateInterface {
-  root: RootNode;
+  root: SubSurfaceRootNode;
   tabConfig?: {
     name: string;
     value: string;
@@ -51,7 +51,7 @@ export type ExplorerCommandPayloadType = {
   expandState?: boolean;
   checkState?: boolean;
   selectState?: boolean;
-  root?: RootNode;
+  root?: SubSurfaceRootNode;
   nodeType?: string;
   nodeTypeIndex?: number;
 };

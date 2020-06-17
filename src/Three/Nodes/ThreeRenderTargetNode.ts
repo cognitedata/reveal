@@ -42,7 +42,6 @@ import { ToolCommand } from "@/Three/Commands/Tools/ToolCommand";
 import { ToolController } from "@/Three/Nodes/ToolController";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { UniqueId } from "@/Core/Primitives/UniqueId";
-import { BaseView } from "@/Core/Views/BaseView";
 import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
 
 const DirectionalLightName = "DirectionalLight";
@@ -156,11 +155,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     this.domElement.addEventListener('click', (event) => this._toolController.onMouseClick(this, event), false);
     this.domElement.addEventListener('mousedown', (event) => this._toolController.onMouseDown(this, event), false);
     this.domElement.addEventListener('mouseup', (event) => this._toolController.onMouseUp(this, event), false);
-    this.domElement.addEventListener('mousemove', (event) => this._toolController.onMouseMove(this, event), false);
-    
-    //mousedown
-    //mouseup
-    //mousemove
+    this.domElement.addEventListener('mousemove', (event) => this._toolController.onMouseMove(this, event), false);    
     //dblclick
     this.render();
   }
@@ -178,6 +173,11 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     if (this._cameraControl)
       this._cameraControl.onResize(this.aspectRatio);
     this.invalidate();
+  }
+
+  public  /*override*/ viewAll(): boolean
+  {
+    return !this._cameraControl ? false : this._cameraControl.viewRange(this.getBoundingBoxFromViews());
   }
 
   //==================================================
@@ -252,11 +252,6 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   //==================================================
   // INSTANCE METHODS: Operations on camera or light
   //==================================================
-
-  public viewAll(): boolean
-  {
-    return !this._cameraControl ? false : this._cameraControl.viewRange(this.getBoundingBoxFromViews());
-  }
 
   public viewFrom(index: number): boolean
   {

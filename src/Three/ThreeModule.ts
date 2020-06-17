@@ -19,7 +19,7 @@ import { BaseModule } from "@/Core/Module/BaseModule";
 import { ViewFactory } from "@/Core/Views/ViewFactory";
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
-import { RootNode } from "@/Nodes/TreeNodes/RootNode";
+import { SubSurfaceRootNode } from "@/Nodes/TreeNodes/SubSurfaceRootNode";
 import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
 
 import { AxisNode } from "@/Nodes/Decorations/AxisNode";
@@ -53,19 +53,18 @@ import { FloatFilterLogNode } from "@/Nodes/Wells/Filters/FloatFilterLogNode";
 import { DiscreteFilterLogNode } from "@/Nodes/Wells/Filters/DiscreteFilterLogNode";
 import { FilterLogFilterView } from "@/Three/WellViews/FilterLogFilterView";
 
-
 export class ThreeModule extends BaseModule
 {
   //==================================================
   // OVERRIDES of BaseModule
   //==================================================
 
-  protected /*override*/ installPackagesCore(): void
+  public /*override*/ installPackages(): void
   {
     CameraControls.install({ THREE });
   }
 
-  protected /*override*/ registerViewsCore(factory: ViewFactory): void
+  public /*override*/ registerViews(factory: ViewFactory): void
   {
     factory.register(AxisNode.name, AxisThreeView, ThreeRenderTargetNode.name);
     factory.register(PointsNode.name, PointsThreeView, ThreeRenderTargetNode.name);
@@ -87,20 +86,13 @@ export class ThreeModule extends BaseModule
     factory.register(CasingFilterLogNode.name, FilterLogFilterView, ThreeRenderTargetNode.name);
   }
 
-  protected /*override*/ createRootCore(): BaseRootNode
+  public /*override*/ createRoot(): BaseRootNode
   {
-    return new RootNode();
+    return new SubSurfaceRootNode();
   }
 
   public initializeWhenPopulated(root: BaseRootNode): void
   {
-    root.initializeRecursive();
-
-    // Set all axis visible
-    for (const target of root.targets.getChildrenByType(BaseTargetNode))
-      for (const node of root.getDescendantsByType(AxisNode))
-        node.setVisibleInteractive(true, target);
-
     for (const target of root.targets.getChildrenByType(BaseRenderTargetNode))
       target.onResize();
 
@@ -109,6 +101,14 @@ export class ThreeModule extends BaseModule
       for (const target of root.targets.getChildrenByType(BaseRenderTargetNode))
         target.onResize();
     };
+  }
+  
+  public setDefaultVisible(root: BaseRootNode): void
+  {
+    // Set all axis visible
+    for (const target of root.targets.getChildrenByType(BaseTargetNode))
+      for (const node of root.getDescendantsByType(AxisNode))
+        node.setVisibleInteractive(true, target);
   }
 }
 

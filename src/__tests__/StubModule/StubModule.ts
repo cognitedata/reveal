@@ -16,7 +16,7 @@ import { BaseModule } from "@/Core/Module/BaseModule";
 import { ViewFactory } from "@/Core/Views/ViewFactory";
 import { PolylinesNode } from "@/Nodes/Misc/PolylinesNode";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
-import { RootNode } from "@/Nodes/TreeNodes/RootNode";
+import { SubSurfaceRootNode } from "@/Nodes/TreeNodes/SubSurfaceRootNode";
 
 import { StubPolylinesView } from "./StubPolylinesView";
 import { StubTargetNode } from "./StubTargetNode";
@@ -27,11 +27,11 @@ export class StubModule extends BaseModule
   // OVERRIDES of BaseModule
   //==================================================
 
-  protected /*override*/ registerViewsCore(factory: ViewFactory): void
+  public /*override*/ registerViews(factory: ViewFactory): void
   {
     factory.register(PolylinesNode.name, StubPolylinesView, StubTargetNode.name);
   }
 
-  protected /*override*/ createRootCore(): BaseRootNode { return new RootNode(); }
+  public /*override*/ createRoot(): BaseRootNode { return new SubSurfaceRootNode(); }
 }
 
