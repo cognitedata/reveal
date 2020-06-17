@@ -18,5 +18,10 @@ export interface TreeNode {
   isFilter?: boolean;
   disabled?: boolean;
   visible?: boolean;
+  label: {
+    italic: boolean;
+    bold: boolean;
+    color: Color;
+  };
   children: TreeNode[];
 }

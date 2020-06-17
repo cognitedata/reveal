@@ -38,6 +38,11 @@ export interface TreeDataItem {
   isFilter: boolean;
   disabled: boolean;
   visible: boolean;
+  label: {
+    italic: boolean;
+    bold: boolean;
+    color: Color
+  }
   domainObject?: BaseNode; // Reference to BaseNode/WellNode/SurfaceNode..etc
 }
 

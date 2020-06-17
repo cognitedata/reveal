@@ -37,6 +37,11 @@ function generateNodeStructure(
     isFilter: node.isFilter(null),
     disabled: (node.getCheckBoxState() === CheckBoxState.Disabled),
     visible: node.isVisibleInTreeControl(),
+    label: {
+      italic: node.isLabelInItalic(),
+      bold: node.isLabelInBold(),
+      color: node.getLabelColor(),
+    },
     domainObject: node,
   };
 }

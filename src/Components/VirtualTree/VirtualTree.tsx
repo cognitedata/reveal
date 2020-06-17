@@ -42,7 +42,6 @@ export default function VirtualTree(props: VirtualTreeProps) {
     const itemProps = { key: keyPrefix };
     let children: any = [];
     const itemText = item.name;
-
     if (item.children.length) {
       if (item.expanded) {
         children = item.children.map((child: any, index: number) => {
@@ -50,7 +49,8 @@ export default function VirtualTree(props: VirtualTreeProps) {
         });
       }
     }
-
+    // Label properties
+    const { bold, italic, color } = item.label;
     if (item.visible) {
       children.unshift(
         <div className="tree-item center" key="label">
@@ -87,6 +87,11 @@ export default function VirtualTree(props: VirtualTreeProps) {
             <span
               className={"tree-item-lbl" + (item.selected ? " selected" : "")}
               onClick={() => onToggleNodeSelect(item.uniqueId, !item.selected)}
+              style={{
+                fontWeight: bold ? "bold" : "normal",
+                fontStyle: italic ? "italic" : "normal",
+                color: color ? color.hex() : "black"
+              }}
             >
               {itemText}
             </span>
