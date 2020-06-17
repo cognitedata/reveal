@@ -7,7 +7,6 @@ import { ModelVisibilityDelegate, ModelColorDelegate, ModelNodeAppearance } from
 import { RenderMode } from './rendering/RenderMode';
 import { GlobalColorDelegate, GlobalVisibilityDelegate, GlobalNodeAppearance } from './GlobalNodeAppearance';
 import { ModelRenderAppearance } from './ModelRenderAppearance';
-import { toThreeJsBox3 } from '@/utilities';
 
 function updateColors(getColor: ModelColorDelegate, materials: Materials, treeIndices: number[]) {
   for (const treeIndex of treeIndices) {

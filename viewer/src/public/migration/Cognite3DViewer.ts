@@ -79,7 +79,6 @@ export class Cognite3DViewer {
     hover: new Array<PointerEventDelegate>()
   };
   private readonly models: CogniteModelBase[] = [];
-  private readonly cadNodes: CadNode[] = [];
 
   private isDisposed = false;
   private readonly forceRendering = false; // For future support
@@ -195,7 +194,6 @@ export class Cognite3DViewer {
       model.dispose();
     }
     this.models.splice(0);
-    this.cadNodes.splice(0);
     this.spinner.dispose();
   }
 
@@ -267,7 +265,6 @@ export class Cognite3DViewer {
         .subscribe(parseSector => model3d.updateNodeIdMaps(parseSector))
     );
 
-    this.cadNodes.push(cadNode);
     this.models.push(model3d);
     this.scene.add(model3d);
 
@@ -582,7 +579,7 @@ export class Cognite3DViewer {
       ) {
         this.updateNearAndFarPlane(this.camera);
         this.renderer.render(this.scene, this.camera);
-        addPostRenderEffects(this.cadNodes, this.renderer, this.camera, this.scene);
+        addPostRenderEffects(this.materialManager, this.renderer, this.camera, this.scene);
         renderController.clearNeedsRedraw();
         this.revealManager.resetRedraw();
         this._slicingNeedsUpdate = false;
