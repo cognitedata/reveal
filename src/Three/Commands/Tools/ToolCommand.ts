@@ -24,7 +24,7 @@ export abstract class ToolCommand extends ThreeRenderTargetCommand
     if (!this.target)
       return false;
 
-    return this.target.activeTool != null;
+    return this.target.activeTool === this;
   }
 
   protected /*override*/ invokeCore(): boolean
