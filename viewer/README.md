@@ -198,13 +198,13 @@ The API mostly matches the API of the previous Reveal viewer that can be found a
 > `on(`event: 'click' | 'hover', _callback: PointerEventDelegate`)`: void;<br>
 > Add a **click** or **hover** mouse event callback
 
-> `on(`event: 'cameraChanged', _callback: CameraChangeDelegate`)`: void;<br>
+> `on(`event: 'cameraChange', _callback: CameraChangeDelegate`)`: void;<br>
 > Add a **camera changed** event callback
 
 > `off(`event: 'click' | 'hover', _callback: (event: PointerEvent) => void`)`: void;<br>
 > Remove a **click** or **hover** mouse event callback
 
-> `off(`event: 'cameraChanged', _callback: (position: THREE.Vector3, target: THREE.Vector3) => void`)`: void;<br>
+> `off(`event: 'cameraChange', _callback: (position: THREE.Vector3, target: THREE.Vector3) => void`)`: void;<br>
 > Remove a **camera changed** event callback
 
 **Camera**
