@@ -12,6 +12,12 @@ export function addPostRenderEffects(
   camera: THREE.PerspectiveCamera,
   scene: THREE.Scene
 ) {
+  const { preserveDrawingBuffer } = renderer.getContextAttributes();
+
+  if (!preserveDrawingBuffer) {
+    throw new Error('The renderer must have the parameter: preserveDrawingBuffer set to true');
+  }
+
   const currentRenderMode = materialManager.getRenderMode();
   materialManager.setRenderMode(RenderMode.Effects);
   renderer.clearDepth();
