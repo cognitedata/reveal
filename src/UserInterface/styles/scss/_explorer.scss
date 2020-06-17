@@ -1,14 +1,12 @@
-$tree-padding-left: 20px;
+$tree-padding-left: 7px;
 $tree-padding-top: 5px;
 
 .explorer {
   height: calc(100% - #{$tree-padding-top});
-  width: calc(100% - #{$tree-padding-left});
   background-color: white;
   background-image: linear-gradient(to right, white, lightgray);
   margin: 0;
   padding-top: $tree-padding-top;
-  padding-inline-start: $tree-padding-left;
   display: flex;
   flex-direction: column;
 }
@@ -57,5 +55,6 @@ $tree-padding-top: 5px;
 }
 
 .virtual-tree-container {
+  padding-inline-start: $tree-padding-left;
   flex: 15;
 }
