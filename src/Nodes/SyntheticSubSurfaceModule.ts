@@ -40,7 +40,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
     return new SubSurfaceRootNode();
   }
 
-  public /*override*/ loadData(root: BaseRootNode)
+  public /*override*/ loadData(root: BaseRootNode): void
   {
     if (!(root instanceof SubSurfaceRootNode))
       return;
@@ -169,7 +169,6 @@ export class SyntheticSubSurfaceModule extends BaseModule
       }
     }
     wellTree.synchronize();
-    return root;
   }
 
   public /*override*/ setDefaultVisible(root: BaseRootNode): void
@@ -192,7 +191,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
     }
   }
 
-  public /*override*/ startAnimate(root: BaseRootNode)
+  public /*override*/ startAnimate(root: BaseRootNode): void
   {
     setInterval(() => SyntheticSubSurfaceModule.animate(root), 200);
   }

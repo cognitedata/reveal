@@ -5,11 +5,11 @@ import
   TreeDataItem,
 } from "@/UserInterface/interfaces/explorer";
 import dummyExplorerState from "@/UserInterface/data/explorer-dummy-state";
-import { SubSurfaceRootNode } from "@/Nodes/TreeNodes/SubSurfaceRootNode";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import Nodes from "@/UserInterface/constants/Nodes";
 import RootManager from "@/UserInterface/managers/rootManager";
 import { CheckBoxState } from '@/Core/Enums/CheckBoxState';
+import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 
 // Generate redux store compatible nodes data structure from root node
 function generateNodeStructure(
@@ -47,7 +47,7 @@ function generateNodeStructure(
 }
 
 // Generate redux store compatible nodes data from root node
-function makeNodes(root: SubSurfaceRootNode)
+function makeNodes(root: BaseRootNode)
 {
   const rootId = root.uniqueId.toString();
   const nodes: { [key: string]: any } = {};
