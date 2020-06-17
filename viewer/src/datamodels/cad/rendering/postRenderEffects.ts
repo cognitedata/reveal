@@ -7,17 +7,16 @@ import * as THREE from 'three';
 import { RenderMode } from './RenderMode';
 
 export function addPostRenderEffects(
-  cadNode: CadNode,
+  cadNode: CadNode[],
   renderer: THREE.WebGLRenderer,
   camera: THREE.PerspectiveCamera,
   scene: THREE.Scene
 ) {
-  const currentRenderMode = cadNode.renderMode;
-
+  const currentRenderModes = cadNode.map(x => x.renderMode);
+  cadNode.forEach(x => (x.renderMode = RenderMode.Effects));
   renderer.clearDepth();
   renderer.autoClearColor = false;
-  cadNode.renderMode = RenderMode.Effects;
   renderer.render(scene, camera);
   renderer.autoClearColor = true;
-  cadNode.renderMode = currentRenderMode;
+  cadNode.forEach((x, n) => (x.renderMode = currentRenderModes[n]));
 }

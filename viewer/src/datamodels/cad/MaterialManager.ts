@@ -100,6 +100,12 @@ export class MaterialManager {
     this.materialsMap.set(modelIdentifier, materialWrapper);
   }
 
+  updateRenderAppearance(modelIdentifier: string, renderAppearance: ModelRenderAppearance) {
+    const materialWrapper = this.materialsMap.get(modelIdentifier)!;
+    materialWrapper.renderAppearance = renderAppearance;
+    this.materialsMap.set(modelIdentifier, materialWrapper);
+  }
+
   get clippingPlanes(): THREE.Plane[] {
     return this._clippingPlanes;
   }
@@ -147,11 +153,11 @@ export class MaterialManager {
     }
 
     this.updateLocalNodeAppearance(localNodeAppearance, materials, treeIndices);
-    this.updateRenderAppearance(renderAppearance, materials, treeIndices);
+    this.updateRenderEffectBuffers(renderAppearance, materials, treeIndices);
     this.updateGlobalNodeAppearance(modelIdentifier, materials, treeIndices);
   }
 
-  private updateRenderAppearance(
+  private updateRenderEffectBuffers(
     renderAppearance: ModelRenderAppearance | undefined,
     materials: Materials,
     treeIndices: number[]

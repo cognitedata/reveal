@@ -15,6 +15,7 @@ import { CadLoadingHints } from '@/datamodels/cad/CadLoadingHints';
 import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
 import { SectorGeometry } from '@/datamodels/cad/sector/types';
 import { SectorQuads } from '@/datamodels/cad/rendering/types';
+import { ModelRenderAppearance } from '@/datamodels/cad';
 
 export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = SupportedModelTypes.CAD;
@@ -57,7 +58,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     const nodeAppearance: ModelNodeAppearance = {
       color: (treeIndex: number) => {
         if (this.selectedNodes.has(treeIndex)) {
-          return [0, 0, 200, 255];
+          return [100, 100, 255, 255];
         }
         return this.nodeColors.get(treeIndex);
       },
@@ -65,7 +66,17 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
         return this.hiddenNodes.has(treeIndex) ? false : true;
       }
     };
+
+    const renderAppearance: ModelRenderAppearance = {
+      renderInFront: (treeIndex: number) => {
+        return this.selectedNodes.has(treeIndex);
+      }
+    };
+
     cadNode.materialManager.updateLocalAppearance(this.cadModel.blobUrl, nodeAppearance);
+    cadNode.materialManager.updateRenderAppearance(this.cadModel.blobUrl, renderAppearance);
+
+    cadNode.requestNodeUpdate([...Array(cadNode.sectorScene.maxTreeIndex + 1).keys()]);
 
     this.cadNode = cadNode;
 
