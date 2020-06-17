@@ -1,28 +1,28 @@
 import { Range3 } from "../../Core/Geometry/Range3";
 import { ThreeModule } from "../../Three/ThreeModule";
 import { ThreeRenderTargetNode } from "../../Three/Nodes/ThreeRenderTargetNode";
-import { SubSurfaceRootNode } from "../../Nodes/TreeNodes/SubSurfaceRootNode";
 import Toolbar from "@/UserInterface/impl/Toolbar";
 import { Modules } from "@/Core/Module/Modules";
 import { SyntheticSubSurfaceModule } from "@/Nodes/SyntheticSubSurfaceModule";
+import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 
 // Manages Root Node
 export default class RootManager
 {
   private static NumberOfRenderTargets = 1;
 
-  static createRoot(): SubSurfaceRootNode
+  static createRoot(): BaseRootNode
   {
     const modules = Modules.instance;
     modules.add(new ThreeModule());
     modules.add(new SyntheticSubSurfaceModule());
     modules.install();
-    return modules.createRoot() as SubSurfaceRootNode;
+    return modules.createRoot();
   }
 
 
   static getTargets(
-    root: SubSurfaceRootNode,
+    root: BaseRootNode,
     elementId: string,
   ): { [key: string]: ThreeRenderTargetNode }
   {
@@ -42,7 +42,7 @@ export default class RootManager
     return targets;
   }
 
-  static getToolbars(root: SubSurfaceRootNode): { [key: string]: Toolbar }
+  static getToolbars(root: BaseRootNode): { [key: string]: Toolbar }
   {
     const toolBars: { [key: string]: Toolbar } = {};
     for (const target of root.targets.getChildrenByType(ThreeRenderTargetNode))
@@ -56,7 +56,7 @@ export default class RootManager
 
   // Setup window
   static appendDOM(
-    root: SubSurfaceRootNode,
+    root: BaseRootNode,
     parentElementId: string,
     targetName?: string
   )

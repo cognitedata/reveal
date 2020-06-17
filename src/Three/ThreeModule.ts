@@ -19,7 +19,6 @@ import { BaseModule } from "@/Core/Module/BaseModule";
 import { ViewFactory } from "@/Core/Views/ViewFactory";
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
-import { SubSurfaceRootNode } from "@/Nodes/TreeNodes/SubSurfaceRootNode";
 import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
 
 import { AxisNode } from "@/Nodes/Decorations/AxisNode";
@@ -86,11 +85,6 @@ export class ThreeModule extends BaseModule
     factory.register(CasingFilterLogNode.name, FilterLogFilterView, ThreeRenderTargetNode.name);
   }
 
-  public /*override*/ createRoot(): BaseRootNode
-  {
-    return new SubSurfaceRootNode();
-  }
-
   public initializeWhenPopulated(root: BaseRootNode): void
   {
     for (const target of root.targets.getChildrenByType(BaseRenderTargetNode))
@@ -102,7 +96,7 @@ export class ThreeModule extends BaseModule
         target.onResize();
     };
   }
-  
+
   public setDefaultVisible(root: BaseRootNode): void
   {
     // Set all axis visible
