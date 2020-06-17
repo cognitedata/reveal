@@ -16,7 +16,7 @@ import { CachedRepository } from '@/datamodels/cad/sector/CachedRepository';
 import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
 import { CadManager } from '@/datamodels/cad/CadManager';
 import { LocalUrlClient as LocalHostClient } from '@/utilities/networking/LocalUrlClient';
-import { ModelNodeAppearance, CadNode, ModelRenderAppearance } from '@/datamodels/cad';
+import { CadNode, NodeAppearanceProvider } from '@/datamodels/cad';
 import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloudMetadataRepository';
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
@@ -25,7 +25,6 @@ import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/Default
 type LocalModelIdentifier = { fileName: string };
 
 export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifier> {
-
   constructor(options?: RevealOptions) {
     const modelDataParser: CadSectorParser = new CadSectorParser();
     const materialManager: MaterialManager = new MaterialManager();
@@ -60,22 +59,16 @@ export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifi
     super(cadManager, materialManager, pointCloudManager);
   }
 
-  public addModel(
-    type: 'cad',
-    fileName: string,
-    modelNodeAppearance?: ModelNodeAppearance,
-    modelRenderAppearance?: ModelRenderAppearance
-  ): Promise<CadNode>;
+  public addModel(type: 'cad', fileName: string, nodeApperanceProvider?: NodeAppearanceProvider): Promise<CadNode>;
   public addModel(type: 'pointcloud', fileName: string): Promise<[PotreeGroupWrapper, PotreeNodeWrapper]>;
   public addModel(
     type: 'cad' | 'pointcloud',
     fileName: string,
-    modelNodeAppearance?: ModelNodeAppearance,
-    modelRenderAppearance?: ModelRenderAppearance
+    nodeApperanceProvider?: NodeAppearanceProvider
   ): Promise<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper]> {
     switch (type) {
       case 'cad':
-        return this._cadManager.addModel({ fileName }, modelNodeAppearance, modelRenderAppearance);
+        return this._cadManager.addModel({ fileName }, nodeApperanceProvider);
       case 'pointcloud':
         return this._pointCloudManager.addModel({ fileName });
       default:

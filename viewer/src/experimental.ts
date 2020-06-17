@@ -9,9 +9,7 @@ export { LocalHostRevealManager } from './public/LocalHostRevealManager';
 export { RenderManager } from './public/RenderManager';
 // TODO 2020-05-15 larsmoa: reveal.CadNode is _internal_ and should not be exported
 export { CadNode } from './datamodels/cad';
-export { ModelNodeAppearance } from './datamodels/cad/';
-export { ModelRenderAppearance } from './datamodels/cad';
-
+export { NodeAppearance, NodeAppearanceProvider, DefaultNodeAppearance } from './datamodels/cad';
 // CAD
 
 export { CadModelMetadata, SsaoEffect, SsaoPassType } from './datamodels/cad/';
