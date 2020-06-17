@@ -26,6 +26,7 @@ import { ConsumedSector, WantedSector } from './sector/types';
 import { distinctUntilLevelOfDetailChanged, filterCurrentWantedSectors } from './sector/sectorUtilities';
 import { LevelOfDetail } from './sector/LevelOfDetail';
 import { emissionLastMillis } from '@/utilities';
+import { debug } from '@/utilities/rxOperations';
 
 export class CadModelUpdateHandler {
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
@@ -43,7 +44,7 @@ export class CadModelUpdateHandler {
       this._clippingPlaneSubject.pipe(startWith([])),
       this._clipIntersectionSubject.pipe(startWith(false)),
       this._loadingHintsSubject.pipe(startWith({} as CadLoadingHints)),
-      this._cameraSubject.pipe(auditTime(300), emissionLastMillis(1500)),
+      this._cameraSubject.pipe(auditTime(250), emissionLastMillis(600)),
       this._modelSubject.pipe(
         share(),
         scan((array, next) => {
