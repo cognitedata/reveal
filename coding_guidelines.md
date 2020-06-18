@@ -554,8 +554,32 @@ export function clampValueToMinMax(value: number, min: number, max: number) {
 
 When using function expressions use arrow expressions instead of anonymous and named functions.
 
+**!!** Example of **incorrect** code for this rule.
+
 ```typescript
+[1, 2, 3].map(function (x: number): number {
+  return x * x;
+});
 ```
+
+If the function body fits on one line you can omit the braces and use the implicit return. Example of **correct** code for this rule.
+
+```typescript
+[1, 2, 3].map((x: number) => return x * x)
+```
+
+> **Note:** If there is a single argument you might get tempted to remove the parantheses, but having type safety on the variable is more secure.
+
+If you have a function body spanning multiple lines then use braces and use a `return` statement.
+Example of **correct** code for this rule.
+
+```typescript
+[1, 2, 3].map((x: number): number => {
+  return x * x;
+});
+```
+
+>
 
 # Destructuring
 
