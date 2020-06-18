@@ -39,13 +39,13 @@ export function Picking() {
       const pickedNodes: Set<number> = new Set();
       const pickedObjects: Set<THREE.Mesh> = new Set();
 
-      const nodeAppearance: reveal.ModelNodeAppearance = {
-        color(treeIndex: number) {
+      const nodeAppearanceProvider: reveal.NodeAppearanceProvider = {
+        styleNode(treeIndex: number) {
           if (pickedNodes.has(treeIndex)) {
-            return [255, 255, 0, 255];
+            return reveal.DefaultNodeAppearance.Highlighted;
           }
-          return undefined;
-        },
+          return reveal.DefaultNodeAppearance.NoOverrides;
+        }
       };
 
       const revealManager: reveal.RenderManager = createRenderManager(
@@ -58,7 +58,7 @@ export function Picking() {
         revealManager instanceof reveal.LocalHostRevealManager &&
         modelUrl !== undefined
       ) {
-        model = await revealManager.addModel('cad', modelUrl, nodeAppearance);
+        model = await revealManager.addModel('cad', modelUrl, nodeAppearanceProvider);
       } else if (
         revealManager instanceof reveal.RevealManager &&
         modelRevision !== undefined
@@ -66,7 +66,7 @@ export function Picking() {
         model = await revealManager.addModel(
           'cad',
           modelRevision,
-          nodeAppearance
+          nodeAppearanceProvider
         );
       } else {
         throw new Error(

@@ -14,7 +14,7 @@ import { SectorCuller } from '@/datamodels/cad/sector/culling/SectorCuller';
 const sceneJson = require('./scene.json');
 
 describe('Cognite3DViewer', () => {
-  const context: WebGLRenderingContext = require('gl')(64, 64);
+  const context: WebGLRenderingContext = require('gl')(64, 64, { preserveDrawingBuffer: true });
 
   const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
   const renderer = new THREE.WebGLRenderer({ context });
