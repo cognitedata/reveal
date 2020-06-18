@@ -16,6 +16,7 @@ type TableProps = {
     title: string;
     dataIndex: string;
     key: React.Key;
+    render?: () => JSX.Element;
   }[];
 };
 
@@ -53,13 +54,22 @@ const Table = ({ dataSource, columns }: TableProps) => {
       </thead>
       <tbody>
         {dataSource.map((data) => (
-          <tr key={data.key}>
-            <td>{data?.options?.icon && data?.options?.icon}</td>
-            {columns.map((column) => (
-              <td key={column.key}>{data[column.dataIndex]}</td>
-            ))}
-            <td>{data?.actions?.map((action) => action)}</td>
-          </tr>
+          <React.Fragment key={data.key}>
+            <tr>
+              <td>{data?.options?.icon && data?.options?.icon}</td>
+              {columns.map((column) => (
+                <td key={column.key}>
+                  {column.render ? column.render() : data[column.dataIndex]}
+                </td>
+              ))}
+              <td>{data?.actions?.map((action) => action)}</td>
+            </tr>
+            {data?.options?.expandable && (
+              <tr>
+                <td colSpan={columns.length + 2}>This is expandable data</td>
+              </tr>
+            )}
+          </React.Fragment>
         ))}
       </tbody>
     </CogTable>
