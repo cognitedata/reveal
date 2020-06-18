@@ -25,6 +25,8 @@ export class Spinner {
     this.el = document.createElement('div');
     this.el.title = 'Loading...';
     this.el.style.position = 'absolute';
+    this.el.style.top = '0';
+    this.el.style.left = '0';
     this.el.style.display = 'none';
 
     const spinner = document.createElement('div');
