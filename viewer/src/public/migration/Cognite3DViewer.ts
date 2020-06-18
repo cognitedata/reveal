@@ -7,7 +7,7 @@ import TWEEN from '@tweenjs/tween.js';
 import debounce from 'lodash/debounce';
 import ComboControls from '@cognite/three-combo-controls';
 import { CogniteClient, IdEither } from '@cognite/sdk';
-import { share, filter } from 'rxjs/operators';
+import { filter, share } from 'rxjs/operators';
 
 import { from3DPositionToRelativeViewportCoordinates } from '@/utilities/worldToViewport';
 import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
@@ -16,7 +16,7 @@ import { CachedRepository } from '@/datamodels/cad/sector/CachedRepository';
 import { MaterialManager } from '@/datamodels/cad/MaterialManager';
 import { intersectCadNodes } from '@/datamodels/cad/picking';
 
-import { Cognite3DViewerOptions, AddModelOptions, SupportedModelTypes, GeometryFilter } from './types';
+import { AddModelOptions, Cognite3DViewerOptions, GeometryFilter, SupportedModelTypes } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { Intersection } from './intersection';
 import RenderController from './RenderController';
@@ -37,7 +37,7 @@ import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloudMetadataRepository';
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
-import { BoundingBoxClipper, isMobileOrTablet, File3dFormat } from '@/utilities';
+import { BoundingBoxClipper, File3dFormat, isMobileOrTablet } from '@/utilities';
 import { Spinner } from '@/utilities/Spinner';
 import { Subscription } from 'rxjs';
 
@@ -417,8 +417,24 @@ export class Cognite3DViewer {
     return new THREE.Vector2(p.x, p.y);
   }
 
-  getScreenshot(_width?: number, _height?: number): Promise<string> {
-    throw new NotSupportedInMigrationWrapperError();
+  async getScreenshot(width = this.canvas.width, height = this.canvas.height): Promise<string> {
+    if (this.isDisposed) {
+      throw new Error('Viewer is disposed');
+    }
+
+    const { width: originalWidth, height: originalHeight } = this.canvas;
+
+    const screenshotCamera = this.camera.clone();
+    adjustCamera(screenshotCamera, width, height);
+
+    this.renderer.setSize(width, height);
+    this.renderer.render(this.scene, screenshotCamera);
+    const url = this.renderer.domElement.toDataURL();
+
+    this.renderer.setSize(originalWidth, originalHeight);
+    this.renderer.render(this.scene, this.camera);
+
+    return url;
   }
 
   getIntersectionFromPixel(offsetX: number, offsetY: number, _cognite3DModel?: Cognite3DModel): null | Intersection {
