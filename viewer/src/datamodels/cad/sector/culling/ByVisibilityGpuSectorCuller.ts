@@ -15,9 +15,9 @@ import {
 import { SectorCuller } from './SectorCuller';
 import { TakenSectorTree } from './TakenSectorTree';
 import { PrioritizedWantedSector, DetermineSectorCostDelegate, DetermineSectorsInput } from './types';
-import { fromThreeMatrix } from '@/utilities';
+import { fromThreeMatrix, toThreeVector3 } from '@/utilities';
 import { LevelOfDetail } from '../LevelOfDetail';
-import { SectorMetadata, WantedSector } from '../types';
+import { SectorMetadata, WantedSector, SectorModelTransformation } from '../types';
 import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
 
 /**
@@ -149,7 +149,12 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   }
 
   determineSectors(input: DetermineSectorsInput): WantedSector[] {
-    const takenSectors = this.update(input.camera, input.cadModelsMetadata);
+    const takenSectors = this.update(
+      input.camera,
+      input.cadModelsMetadata,
+      input.clippingPlanes,
+      input.clipIntersection
+    );
     const wanted = takenSectors.collectWantedSectors();
 
     const totalSectorCount = input.cadModelsMetadata.reduce((sum, x) => sum + x.scene.sectorCount, 0);
@@ -170,7 +175,12 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     return this.takenSectors.collectWantedSectors();
   }
 
-  private update(camera: THREE.PerspectiveCamera, models: CadModelMetadata[]): TakenSectorMap {
+  private update(
+    camera: THREE.PerspectiveCamera,
+    models: CadModelMetadata[],
+    clippingPlanes: THREE.Plane[] | null,
+    clipIntersection: boolean
+  ): TakenSectorMap {
     const { coverageUtil } = this.options;
     const takenSectors = this.takenSectors;
     takenSectors.clear();
@@ -178,12 +188,20 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
 
     // Update wanted sectors
     coverageUtil.setModels(models);
+    coverageUtil.setClipping(clippingPlanes, clipIntersection);
     const prioritized = coverageUtil.orderSectorsByVisibility(camera);
     const costLimit = this.options.costLimit;
 
     // Add high details for all sectors the camera is inside or near
     const proximityThreshold = this.options.highDetailProximityThreshold;
-    this.addHighDetailsForNearSectors(camera, models, proximityThreshold, takenSectors);
+    this.addHighDetailsForNearSectors(
+      camera,
+      models,
+      proximityThreshold,
+      takenSectors,
+      clippingPlanes,
+      clipIntersection
+    );
 
     let debugAccumulatedPriority = 0.0;
     const prioritizedLength = prioritized.length;
@@ -209,7 +227,9 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     camera: THREE.PerspectiveCamera,
     models: CadModelMetadata[],
     proximityThreshold: number,
-    takenSectors: TakenSectorMap
+    takenSectors: TakenSectorMap,
+    clippingPlanes: THREE.Plane[] | null,
+    clipIntersection: boolean
   ) {
     const shortRangeCamera = camera.clone(true);
     shortRangeCamera.far = proximityThreshold;
@@ -226,14 +246,71 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
         model.modelTransformation.modelMatrix
       );
 
-      const intersectingSectors = model.scene.getSectorsIntersectingFrustum(
+      let intersectingSectors = model.scene.getSectorsIntersectingFrustum(
         cameraProjectionMatrix,
         transformedCameraMatrixWorldInverse
       );
-      for (let i = 0; i < intersectingSectors.length; i++) {
-        takenSectors.markSectorDetailed(model, intersectingSectors[i].id, Infinity);
+
+      if (clippingPlanes != null && clippingPlanes.length > 0) {
+        intersectingSectors = this.testForClippingOcclusion(
+          intersectingSectors,
+          clippingPlanes,
+          model.modelTransformation,
+          clipIntersection
+        );
       }
+
+      this.markSectorsAsDetailed(intersectingSectors, takenSectors, model);
     });
+  }
+
+  private testForClippingOcclusion(
+    intersectingSectors: SectorMetadata[],
+    clippingPlanes: THREE.Plane[],
+    modelTransform: SectorModelTransformation,
+    clipIntersection: boolean
+  ): SectorMetadata[] {
+    const passingSectors = [];
+
+    for (let i = 0; i < intersectingSectors.length; i++) {
+      const boundPoints = intersectingSectors[i].bounds.getCornerPoints().map(p => {
+        const outvec = new THREE.Vector3();
+
+        toThreeVector3(outvec, p, modelTransform);
+
+        return outvec;
+      });
+
+      let shouldKeep = !clipIntersection;
+      for (let k = 0; k < clippingPlanes.length; k++) {
+        let planeAccepts = false;
+
+        for (let j = 0; j < boundPoints.length; j++) {
+          planeAccepts = clippingPlanes[k].distanceToPoint(boundPoints[j]) >= 0 || planeAccepts;
+        }
+
+        if (clipIntersection) {
+          shouldKeep = shouldKeep || planeAccepts;
+        } else {
+          shouldKeep = shouldKeep && planeAccepts;
+        }
+      }
+
+      if (shouldKeep) {
+        passingSectors.push(intersectingSectors[i]);
+      }
+    }
+    return passingSectors;
+  }
+
+  private markSectorsAsDetailed(
+    intersectingSectors: SectorMetadata[],
+    takenSectors: TakenSectorMap,
+    model: CadModelMetadata
+  ) {
+    for (let i = 0; i < intersectingSectors.length; i++) {
+      takenSectors.markSectorDetailed(model, intersectingSectors[i].id, Infinity);
+    }
   }
 
   private log(message?: any, ...optionalParameters: any[]) {

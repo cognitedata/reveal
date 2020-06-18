@@ -13,7 +13,7 @@ import { SectorQuads } from '../rendering/types';
 import { disposeAttributeArrayOnUpload } from '@/utilities/disposeAttributeArrayOnUpload';
 import { pipe, GroupedObservable, Observable, OperatorFunction, of, empty } from 'rxjs';
 import { groupBy, mergeMap, distinctUntilKeyChanged, withLatestFrom, flatMap } from 'rxjs/operators';
-import { traverseDepthFirst } from '@/utilities/traversal';
+import { traverseDepthFirst } from '@/utilities/objectTraversal';
 
 const emptyGeometry = new THREE.Geometry();
 
@@ -70,7 +70,7 @@ export function consumeSectorSimple(sector: SectorQuads, materials: Materials): 
   const obj = new THREE.Mesh(geometry, materials.simple);
   obj.onAfterRender = () => {
     disposeAttributeArrayOnUpload.bind(interleavedBuffer32)();
-    obj.onAfterRender = () => { };
+    obj.onAfterRender = () => {};
   };
 
   // obj.name = `Quads ${sectorId}`;
@@ -114,8 +114,15 @@ export function discardSector(group: THREE.Group) {
 
 export function distinctUntilLevelOfDetailChanged() {
   return pipe(
-    groupBy((sector: WantedSector) => sector.metadata.id),
-    mergeMap((group: GroupedObservable<number, WantedSector>) => group.pipe(distinctUntilKeyChanged('levelOfDetail')))
+    groupBy((sector: ConsumedSector) => sector.blobUrl),
+    mergeMap((modelGroup: GroupedObservable<string, ConsumedSector>) => {
+      return modelGroup.pipe(
+        groupBy((sector: ConsumedSector) => sector.metadata.id),
+        mergeMap((group: GroupedObservable<number, ConsumedSector>) =>
+          group.pipe(distinctUntilKeyChanged('levelOfDetail'))
+        )
+      );
+    })
   );
 }
 
@@ -126,8 +133,13 @@ export function filterCurrentWantedSectors(
     withLatestFrom(wantedObservable),
     flatMap(([loaded, wanted]) => {
       for (const wantedSector of wanted) {
-        if (loaded.metadata.id === wantedSector.metadata.id && loaded.levelOfDetail === wantedSector.levelOfDetail) {
-          return of(loaded);
+        try {
+          if (loaded.metadata.id === wantedSector.metadata.id && loaded.levelOfDetail === wantedSector.levelOfDetail) {
+            return of(loaded);
+          }
+        } catch (error) {
+          // tslint:disable-next-line: no-console
+          console.log(error);
         }
       }
       return empty();

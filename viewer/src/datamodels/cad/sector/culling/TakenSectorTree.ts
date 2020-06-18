@@ -4,7 +4,7 @@
 
 import { LevelOfDetail } from '../LevelOfDetail';
 import { SectorMetadata } from '../types';
-import { traverseUpwards, traverseDepthFirst } from '@/utilities/traversal';
+import { traverseUpwards, traverseDepthFirst } from '@/utilities/objectTraversal';
 import { PrioritizedWantedSector, DetermineSectorCostDelegate } from './types';
 import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
 

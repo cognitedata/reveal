@@ -3,29 +3,10 @@
  */
 
 import * as THREE from 'three';
-import { fitCameraToBoundingBox, toThreeJsBox3, toThreeVector3 } from '@/utilities';
+import { toThreeJsBox3, toThreeVector3 } from '@/utilities';
 import { Box3 } from '@/utilities/Box3';
 import { vec3, mat4 } from 'gl-matrix';
 import { SectorModelTransformation } from '@/datamodels/cad/sector/types';
-
-describe('fitCameraToBoundingBox', () => {
-  test('unit boundingbox, camera is placed outside box', () => {
-    // Arrange
-    const unitBox = new Box3([vec3.fromValues(-1, -1, -1), vec3.fromValues(1, 1, 1)]);
-    const camera = new THREE.Camera();
-    const threeBox = toThreeJsBox3(new THREE.Box3(), unitBox);
-
-    // Act
-    fitCameraToBoundingBox(camera, unitBox);
-    camera.updateMatrixWorld();
-
-    // Assert
-    expect(threeBox.distanceToPoint(camera.position)).toBeGreaterThan(1);
-    const lookDir = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
-    const viewDirIntersectsBox = new THREE.Ray(camera.position, lookDir).intersectsBox(threeBox);
-    expect(viewDirIntersectsBox).toBeTruthy();
-  });
-});
 
 describe('toThreeVector3', () => {
   test('modifies provided out parameter', () => {

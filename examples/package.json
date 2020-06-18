@@ -1,74 +1,66 @@
 {
   "name": "@cognite/reveal-examples",
-  "version": "0.1.0",
   "description": "Reveal examples",
-  "main": "dist/index.js",
-  "types": "dist/src/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "release": "webpack",
-    "build": "webpack --env.development",
-    "clean": "rimraf -rf dist/ target/",
-    "serve": "webpack-dev-server --env.development --debug --color --progress --watch",
-    "test": "jest",
-    "coverage": "jest --coverage",
-    "lint": "tslint --project ."
+    "start": "cross-env HTTPS=true react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
+    "eject": "react-scripts eject"
   },
-  "author": "Svenn-Arne Dragly <dragly@cognite.com>",
+  "author": "Lars Moastuen <lars.moastuen@cognite.com>",
   "contributors": [
     "Lars Moastuen <lars.moastuen@cognite.com>",
-    "Joachim Bjørne <joachim.bjorne@cognite.com>"
+    "Joachim Bjørne <joachim.bjorne@cognite.com>",
+    "Christopher Tannum <christopher.tannum@cognite.com>",
+    "Maksim Nesterenko <maksim.nesterenko@cognite.com>"
   ],
   "license": "Apache-2.0",
-  "glslify": {
-    "transform": [
-      "glslify-import"
-    ]
+  "dependencies": {
+    "@cognite/reveal": "../viewer/dist",
+    "@cognite/sdk": "^2.29.0",
+    "camera-controls": "^1.21.0",
+    "dat.gui": "^0.7.7",
+    "hold-event": "^0.0.1",
+    "install": "^0.13.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-router-dom": "^5.2.0",
+    "styled-components": "^5.1.1",
+    "three": "^0.115.0"
   },
   "devDependencies": {
-    "@cognite/tslint-config-cognite-3d": "^1.0.4",
-    "@tweenjs/tween.js": "^18.5.0",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
     "@types/dat.gui": "^0.7.5",
-    "@types/gl-matrix": "^2.4.5",
-    "@types/jest": "^25.2.3",
-    "@types/node": "^14.0.5",
-    "@types/tween.js": "^18.5.1",
-    "copy-webpack-plugin": "^5.1.1",
-    "css-loader": "^3.5.3",
-    "file-loader": "^6.0.0",
-    "html-webpack-plugin": "4.3.0",
-    "prettier": "^1.19.1",
-    "raw-loader": "^4.0.1",
-    "rimraf": "^3.0.2",
-    "source-map-loader": "^0.2.4",
-    "ts-loader": "7.0.4",
-    "tslint": "^5.20.1",
-    "tslint-config-prettier": "^1.18.0",
-    "tslint-no-circular-imports": "^0.7.0",
-    "tslint-plugin-prettier": "^2.3.0",
-    "typescript": "3.9.3",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.11.0",
-    "webpack-log": "^3.0.1",
-    "webpack-node-externals": "^1.7.2",
-    "worker-plugin": "^4.0.3"
+    "@types/jest": "^24.0.0",
+    "@types/node": "^12.0.0",
+    "@types/react": "^16.9.0",
+    "@types/react-dom": "^16.9.0",
+    "@types/react-router-dom": "^5.1.5",
+    "@types/styled-components": "^5.1.0",
+    "copy-webpack-plugin": "^6.0.1",
+    "cross-env": "^7.0.2",
+    "prettier": "^2.0.5",
+    "react-app-rewired": "^2.1.6",
+    "react-scripts": "3.4.1",
+    "typescript": "~3.7.2"
   },
-  "dependencies": {
-    "@cognite/potree-core": "^1.1.3",
-    "@cognite/reveal": "../viewer/dist",
-    "@cognite/sdk": "^2.28.0",
-    "@xailabs/three-renderer-stats": "^1.0.4",
-    "camera-controls": "^1.21.0",
-    "comlink": "^4.3.0",
-    "dat.gui": "^0.7.7",
-    "gl-matrix": "^3.3.0",
-    "glslify": "^7.0.0",
-    "hold-event": "0.0.1",
-    "postprocessing": "^6.13.5",
-    "rxjs": "^6.5.5",
-    "three": "^0.115.0"
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

@@ -139,6 +139,24 @@ const revealSource = 'node_modules/@cognite/reveal';
 }
 ```
 
+### Make sure your server sends `*.wasm` files with `Content-type: application/wasm` header.
+
+Sometimes servers don't have correct MIME type set for wasm files. 
+In that case you might notice this message in a browser console when it fetches a `.wasm` file:
+
+> Uncaught (in promise) TypeError: Failed to execute 'compile' on 'WebAssembly': Incorrect response MIME type. Expected 'application/wasm'.
+
+In that case you need to configure your server to set the `Content-type: application/wasm` header for `*.wasm` files. 
+If you use the nginx add [types](https://nginx.org/en/docs/http/ngx_http_core_module.html#types) in the config 
+or edit the [mime.types file](https://www.nginx.com/resources/wiki/start/topics/examples/full/#mime-types). 
+
+```types
+types {
+    application/wasm wasm;
+}
+```
+
+
 ## Coordinate systems
 
 The data served from Cognite Data Fusion is in a right-handed coordinate system with Z up,
@@ -180,13 +198,13 @@ The API mostly matches the API of the previous Reveal viewer that can be found a
 > `on(`event: 'click' | 'hover', _callback: PointerEventDelegate`)`: void;<br>
 > Add a **click** or **hover** mouse event callback
 
-> `on(`event: 'cameraChanged', _callback: CameraChangeDelegate`)`: void;<br>
+> `on(`event: 'cameraChange', _callback: CameraChangeDelegate`)`: void;<br>
 > Add a **camera changed** event callback
 
 > `off(`event: 'click' | 'hover', _callback: (event: PointerEvent) => void`)`: void;<br>
 > Remove a **click** or **hover** mouse event callback
 
-> `off(`event: 'cameraChanged', _callback: (position: THREE.Vector3, target: THREE.Vector3) => void`)`: void;<br>
+> `off(`event: 'cameraChange', _callback: (position: THREE.Vector3, target: THREE.Vector3) => void`)`: void;<br>
 > Remove a **camera changed** event callback
 
 **Camera**
@@ -262,9 +280,9 @@ The API mostly matches the API of the previous Reveal viewer that can be found a
 
 **Bounding Box**
 > `getBoundingBox(`nodeId?: number, box?: THREE.Box3`)`: THREE.Box3;<br>
-> Get the bounding of the entire model, bounding box of node is not supported, use `getBoundingBoxFromApi()`
+> Get the bounding of the entire model, bounding box of node is not supported, use `getBoundingBoxFromCdf()`
 
-> async `getBoundingBoxFromApi(`nodeId: number, box?: THREE.Box3`)`: Promise\<THREE.Box3\>;<br>
+> async `getBoundingBoxFromCdf(`nodeId: number, box?: THREE.Box3`)`: Promise\<THREE.Box3\>;<br>
 > Get the bounding box of a node.
 
 > `getModelBoundingBox()`: THREE.Box3;<br>

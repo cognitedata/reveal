@@ -2,10 +2,10 @@
  * Copyright 2020 Cognite AS
  */
 
-import { RevealManagerBase, RevealOptions } from './RevealManagerBase';
+import { RevealManagerBase } from './RevealManagerBase';
 import { CogniteClient, IdEither } from '@cognite/sdk';
 import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
-import { File3dFormat } from '@/utilities/File3dFormat';
+import { File3dFormat } from '@/utilities';
 import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
 import { MaterialManager } from '@/datamodels/cad/MaterialManager';
 import { SimpleAndDetailedToSector3D } from '@/datamodels/cad/sector/SimpleAndDetailedToSector3D';
@@ -17,14 +17,21 @@ import { ByVisibilityGpuSectorCuller, PotreeGroupWrapper, PotreeNodeWrapper } fr
 import { CachedRepository } from '@/datamodels/cad/sector/CachedRepository';
 import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
 import { CadManager } from '@/datamodels/cad/CadManager';
-import { ModelNodeAppearance, CadNode } from '@/datamodels/cad';
+import { CadNode, NodeAppearanceProvider } from '@/datamodels/cad';
 import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloudMetadataRepository';
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
+import { Subscription } from 'rxjs';
+import { RevealOptions } from './types';
 
 type CdfModelIdentifier = { modelRevision: IdEither; format: File3dFormat };
+type LoadingStateChangeListener = (isLoading: boolean) => any;
+
 export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
+  private readonly eventListeners: { loadingStateChanged: LoadingStateChangeListener[] };
+  private readonly _subscription: Subscription;
+
   constructor(client: CogniteClient, options?: RevealOptions) {
     const modelDataParser: CadSectorParser = new CadSectorParser();
     const materialManager: MaterialManager = new MaterialManager();
@@ -57,12 +64,20 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
     );
 
     super(cadManager, materialManager, pointCloudManager);
+
+    this.eventListeners = {
+      loadingStateChanged: new Array<LoadingStateChangeListener>()
+    };
+    this._subscription = new Subscription();
+    this._subscription.add(
+      sectorRepository.getLoadingStateObserver().subscribe(this.notifyLoadingStateListeners.bind(this))
+    );
   }
 
   public addModel(
     type: 'cad',
     modelRevisionId: string | number,
-    modelNodeAppearance?: ModelNodeAppearance
+    nodeApperanceProvider?: NodeAppearanceProvider
   ): Promise<CadNode>;
   public addModel(
     type: 'pointcloud',
@@ -71,13 +86,13 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
   public addModel(
     type: 'cad' | 'pointcloud',
     modelRevisionId: string | number,
-    modelNodeAppearance?: ModelNodeAppearance
+    nodeApperanceProvider?: NodeAppearanceProvider
   ): Promise<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper]> {
     switch (type) {
       case 'cad':
         return this._cadManager.addModel(
           { modelRevision: this.createModelIdentifier(modelRevisionId), format: File3dFormat.RevealCadModel },
-          modelNodeAppearance
+          nodeApperanceProvider
         );
       case 'pointcloud':
         return this._pointCloudManager.addModel({
@@ -87,6 +102,34 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
       default:
         throw new Error(`case: ${type} not handled`);
     }
+  }
+
+  public on(event: 'loadingStateChanged', listener: LoadingStateChangeListener): void {
+    if (event !== 'loadingStateChanged') {
+      throw new Error(`Unsupported event "${event}"`);
+    }
+    this.eventListeners[event].push(listener);
+  }
+  public off(event: 'loadingStateChanged', listener: LoadingStateChangeListener): void {
+    if (event !== 'loadingStateChanged') {
+      throw new Error(`Unsupported event "${event}"`);
+    }
+    this.eventListeners[event] = this.eventListeners[event].filter(fn => fn !== listener);
+  }
+
+  public dispose() {
+    if (this.isDisposed) {
+      return;
+    }
+    this.eventListeners.loadingStateChanged.splice(0);
+    this._cadManager.dispose();
+    this._subscription.unsubscribe();
+  }
+
+  private notifyLoadingStateListeners(isLoaded: boolean) {
+    this.eventListeners.loadingStateChanged.forEach(handler => {
+      handler(isLoaded);
+    });
   }
 
   private createModelIdentifier(id: string | number): IdEither {

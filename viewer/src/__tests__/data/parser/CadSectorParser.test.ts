@@ -2,33 +2,35 @@
  * Copyright 2020 Cognite AS
  */
 
+import { of } from 'rxjs';
+import { flatMap } from 'rxjs/operators';
+
 import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
 import { WorkerPool } from '@/utilities/workers/WorkerPool';
-import { of } from 'rxjs';
+import { SectorQuads } from '@/datamodels/cad/rendering/types';
 
 jest.mock('@/utilities/workers/WorkerPool');
-// jest.mock('../../../data/parser/CadSectorParser');
-
-const workerPool: WorkerPool = new WorkerPool();
-const parser = new CadSectorParser(workerPool);
 
 describe('CadSectorParser', () => {
+  const workerPool: WorkerPool = new WorkerPool();
+  const parser = new CadSectorParser(workerPool);
+
+  jest.useFakeTimers();
+
   test('parse i3d format', done => {
     // Arrange
     let events = 0;
     let errors = 0;
     // Act
-    const observable = of({ format: 'i3d', data: new Uint8Array() }).pipe(parser.parse());
+    const observable = of({ format: 'i3d', data: new Uint8Array() }).pipe(flatMap(x => parser.parseI3D(x.data)));
 
     // Assert
     observable.subscribe(
       _next => {
         events += 1;
-        // expect(next).toBeInstanceOf; Check if return type of data is correct.
       },
       _error => {
         errors += 1;
-        // done(error)??
       },
       () => {
         expect(events).toBe(1);
@@ -36,56 +38,42 @@ describe('CadSectorParser', () => {
         done();
       }
     );
+    jest.advanceTimersByTime(1000);
   });
 
   // TODO: j-bjorne 17-04-2020: No idea why this fails. Will look into it later.
-  /*
-  test('parse f3d format', done => {
+  test('parse f3d format', async () => {
     // Arrange
     let events = 0;
     let errors = 0;
+    const result: SectorQuads = {
+      treeIndexToNodeIdMap: new Map(),
+      nodeIdToTreeIndexMap: new Map(),
+      buffer: new Float32Array()
+    };
+    jest.spyOn(workerPool, 'postWorkToAvailable').mockImplementation(() => {
+      return Promise.resolve(result);
+    });
+
     // Act
-    const observable = of({ format: 'f3d', data: new Uint8Array() }).pipe(parser.parse());
+    const observable = of({ format: 'f3d', data: new Uint8Array() }).pipe(flatMap(x => parser.parseF3D(x.data)));
 
     // Assert
     observable.subscribe(
       _next => {
         events += 1;
-        // expect(next).toBeInstanceOf; Check if return type of data is correct.
       },
       _error => {
         errors += 1;
-        // done(error)??
       },
       () => {
         expect(events).toBe(1);
         expect(errors).toBe(0);
-        done();
+        // done();
       }
     );
-  });
-  */
-  test('parse other format, ignored', done => {
-    // Arrange
-    let events = 0;
-    let errors = 0;
-    // Act
-    const observable = of({ format: 'no-known-format', data: new Uint8Array() }).pipe(parser.parse());
-
-    // Assert
-    observable.subscribe(
-      _next => {
-        events += 1;
-      },
-      _error => {
-        errors += 1;
-        // done(error)??
-      },
-      () => {
-        expect(events).toBe(0);
-        expect(errors).toBe(0);
-        done();
-      }
-    );
+    await observable.toPromise();
+    jest.advanceTimersByTime(1000);
+    jest.runAllTimers();
   });
 });

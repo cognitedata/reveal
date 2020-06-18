@@ -41,7 +41,9 @@ export function createMaterials(
 
   const colors = new Uint8Array(4 * textureElementCount);
   const visibility = new Uint8Array(4 * textureElementCount);
-  visibility.fill(255);
+  for (let i = 0; i < textureElementCount; i++) {
+    visibility[4 * i] = 255;
+  }
   const overrideColorPerTreeIndex = new THREE.DataTexture(colors, textureDims.width, textureDims.height);
   const overrideVisibilityPerTreeIndex = new THREE.DataTexture(visibility, textureDims.width, textureDims.height);
 

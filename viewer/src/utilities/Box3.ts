@@ -47,6 +47,19 @@ export class Box3 {
     return new Box3([pMin, pMax]);
   }
 
+  getCornerPoints(): vec3[] {
+    return [
+      vec3.fromValues(this.min[0], this.min[1], this.min[2]), // 000
+      vec3.fromValues(this.min[0], this.min[1], this.max[2]), // 001
+      vec3.fromValues(this.min[0], this.max[1], this.min[2]), // 010
+      vec3.fromValues(this.min[0], this.max[1], this.max[2]), // 011
+      vec3.fromValues(this.max[0], this.min[1], this.min[2]), // 100
+      vec3.fromValues(this.max[0], this.min[1], this.max[2]), // 101
+      vec3.fromValues(this.max[0], this.max[1], this.min[2]), // 110
+      vec3.fromValues(this.max[0], this.max[1], this.max[2]) // 111
+    ];
+  }
+
   containsPoint(p: vec3): boolean {
     return (
       p[0] >= this.min[0] &&
