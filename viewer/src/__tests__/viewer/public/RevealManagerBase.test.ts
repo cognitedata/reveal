@@ -14,7 +14,10 @@ describe('RevealManagerBase', () => {
     addModel: jest.fn(),
     resetRedraw: jest.fn(),
     needsRedraw: false,
-    updateCamera: jest.fn()
+    updateCamera: jest.fn(),
+    dispose: jest.fn(),
+    clippingPlanes: [],
+    clipIntersection: false
   };
 
   const cadManager = mockCadManager as CadManager<number>;
@@ -28,11 +31,8 @@ describe('RevealManagerBase', () => {
   const materialManager = new MaterialManager();
   const manager = new RevealManagerBase<number>(cadManager, materialManager, pointCloudManager);
 
-  test('update() calls CadManager.updateCamera()', () => {
-    const camera = new THREE.PerspectiveCamera();
-    const updateSpy = jest.spyOn(mockCadManager, 'updateCamera');
-    manager.update(camera);
-    expect(updateSpy).toBeCalled();
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
   test('resetRedraw() calls CadManager.resetRedraw()', () => {
@@ -47,6 +47,7 @@ describe('RevealManagerBase', () => {
     manager.clippingPlanes = planes;
     expect(setClippingPlanesSpy).toBeCalled();
     expect(materialManager.clippingPlanes).toBe(planes);
+    expect(mockCadManager.clippingPlanes).toBe(planes);
   });
 
   test('set clipIntersection, updates materials', () => {
@@ -54,5 +55,19 @@ describe('RevealManagerBase', () => {
     manager.clipIntersection = true;
     expect(setClipIntersectionSpy).toBeCalled();
     expect(materialManager.clipIntersection).toBeTrue();
+    expect(mockCadManager.clipIntersection).toBeTrue();
+  });
+
+  test('update only triggers update when camera changes', () => {
+    const camera = new THREE.PerspectiveCamera(60, 1, 0.5, 100);
+    const updateCameraSpy = jest.spyOn(mockCadManager, 'updateCamera');
+    manager.update(camera);
+    expect(updateCameraSpy).toBeCalledTimes(1); // Changed
+    manager.update(camera);
+    expect(updateCameraSpy).toBeCalledTimes(1); // Unchanged
+    camera.position.set(1, 2, 3);
+    manager.update(camera);
+    expect(updateCameraSpy).toBeCalledTimes(2); // Changed again
+    updateCameraSpy.mockClear();
   });
 });

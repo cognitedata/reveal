@@ -1,32 +1,20 @@
 {
   "compilerOptions": {
-    "incremental": true,
-    "target": "esnext",
-    "module": "esnext",
-    "declaration": true,
-    "declarationDir": "dist",
-    "outDir": "dist",
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
     "esModuleInterop": true,
-    "downlevelIteration": true,
-    "sourceMap": true,
-    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "typeRoots": [
-        "node_modules/@types",
-        "src/@types"
-    ],
-    "lib": [
-        "dom",
-        "esnext"
-    ],
-
-    // Workaround for TS2345
-    "baseUrl": ".",
-    "paths": {
-      "@cognite/sdk": ["node_modules/@cognite/sdk"]
-    },
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "downlevelIteration": true,
+    "jsx": "react"
   },
-  
+  "include": ["src"]
 }

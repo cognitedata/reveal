@@ -14,6 +14,7 @@
   "scripts": {
     "release": "npm run mkdist && webpack",
     "build": "npm run mkdist && webpack --env.development",
+    "build:watch": "npm run build -- --watch",
     "mkdist": "run-script-os",
     "mkdist:win32": "@powershell $(if(-not(Test-Path dist -PathType Container)) { mkdir dist;$? } else { $true;$? }) -and $(Copy-Item -Path package.json, README.md -Destination dist;$?)",
     "mkdist:linux:darwin": "mkdir -p dist && cp package.json README.md dist",
@@ -21,7 +22,7 @@
     "test": "jest",
     "coverage": "jest --coverage",
     "lint": "tslint --project .",
-    "serve": "npm install && npm link && cd examples && npm install && npm link @cognite/reveal && npm run serve",
+    "serve": "cd ./dist && yarn link && cd ../../examples && yarn && yarn link @cognite/reveal && yarn run start",
     "prepublishscript": "npm run release && npm run coverage",
     "publishscript": "node script/copyPackage.js",
     "postpublishscript": "cd dist && npm publish"
@@ -40,6 +41,7 @@
     ]
   },
   "devDependencies": {
+    "@cognite/sdk": "^2.29.0",
     "@cognite/tslint-config-cognite-3d": "^1.0.4",
     "@types/gl-matrix": "^2.4.5",
     "@types/jest": "^25.2.3",
@@ -59,6 +61,7 @@
     "raw-loader": "^4.0.1",
     "rimraf": "^3.0.2",
     "run-script-os": "^1.1.1",
+    "three": "^0.115.0",
     "ts-jest": "^25.5.1",
     "ts-loader": "7.0.4",
     "tslint": "^5.20.1",
@@ -76,7 +79,6 @@
   },
   "dependencies": {
     "@cognite/potree-core": "^1.1.3",
-    "@cognite/sdk": "^2.28.0",
     "@cognite/three-combo-controls": "^1.4.1",
     "@tweenjs/tween.js": "^18.5.0",
     "@types/lodash": "^4.14.152",
@@ -85,7 +87,10 @@
     "glslify": "^7.0.0",
     "glslify-import": "^3.1.0",
     "lodash": "^4.17.15",
-    "rxjs": "^6.5.5",
+    "rxjs": "^6.5.5"
+  },
+  "peerDependencies": {
+    "@cognite/sdk": "^2.29.0",
     "three": "^0.115.0"
   }
 }

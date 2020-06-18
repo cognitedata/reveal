@@ -5,8 +5,8 @@
 import * as THREE from 'three';
 import { mat4, vec3 } from 'gl-matrix';
 import { Box3 } from '@/utilities/Box3';
-import { traverseDepthFirst } from '@/utilities/traversal';
-import { toThreeJsBox3, toThreeMatrix4 } from '@/utilities/utilities';
+import { traverseDepthFirst } from '@/utilities/objectTraversal';
+import { toThreeJsBox3, toThreeMatrix4 } from '@/utilities/threeConverters';
 import { SectorMetadata, SectorScene } from './types';
 
 export class SectorSceneImpl implements SectorScene {
