@@ -38,7 +38,7 @@ Complex types are passed by reference.
 const favoriteNumberArray: number[] = [88, 42];
 const newFavoriteNumberArray: number[] = favoriteNumberArray;
 newFavoriteNumberArray[1] = 1337;
-console.log(favoriteNumberArray[1], newFavoriteNumberArrayp[1]); // => 1337, 1337
+console.log(favoriteNumberArray[1], newFavoriteNumberArray[1]); // => 1337, 1337
 ```
 
 #### Complex types
