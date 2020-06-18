@@ -9,6 +9,7 @@ export const colors = {
   grey10: '#262626',
   mainBackground: '#e7e2e2',
   midBlue: '#4a67fb',
+  success: '#2acf58',
 };
 
 export default createGlobalStyle`
