@@ -4,50 +4,7 @@
 
 import { createMaterials, Materials } from './rendering/materials';
 import { RenderMode } from './rendering/RenderMode';
-import { GlobalNodeAppearance } from './GlobalNodeAppearance';
 import { NodeAppearanceProvider } from './NodeAppearance';
-
-// function updateColors(getColor: ModelColorDelegate, materials: Materials, treeIndices: number[]) {
-//   for (const treeIndex of treeIndices) {
-//     const color = getColor(treeIndex) || [0, 0, 0, 0];
-//     materials.overrideColorPerTreeIndex.image.data[4 * treeIndex] = color[0];
-//     materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 1] = color[1];
-//     materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 2] = color[2];
-//     materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 3] = color[3];
-//   }
-// }
-
-// function updateGlobalColors(
-//   modelIdentifier: string,
-//   getColor: GlobalColorDelegate,
-//   materials: Materials,
-//   treeIndices: number[]
-// ) {
-//   for (const treeIndex of treeIndices) {
-//     const color = getColor(modelIdentifier, treeIndex) || [0, 0, 0, 0];
-//     materials.overrideColorPerTreeIndex.image.data[4 * treeIndex] = color[0];
-//     materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 1] = color[1];
-//     materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 2] = color[2];
-//     materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 3] = color[3];
-//   }
-// }
-
-// function updateVisibility(visible: ModelVisibilityDelegate, materials: Materials, treeIndices: number[]) {
-//   for (const treeIndex of treeIndices) {
-//     materials.overrideVisibilityPerTreeIndex.image.data[4 * treeIndex] = visible(treeIndex) ? 255 : 0;
-//   }
-// }
-
-// function updateGlobalVisibility(
-//   modelIdentifier: string,
-//   visible: GlobalVisibilityDelegate,
-//   materials: Materials,
-//   treeIndices: number[]
-// ) {
-//   for (const treeIndex of treeIndices) {
-//     materials.overrideVisibilityPerTreeIndex.image.data[4 * treeIndex] = visible(modelIdentifier, treeIndex) ? 255 : 0;
-//   }
-// }
 
 interface MaterialsWrapper {
   materials: Materials;
@@ -78,14 +35,9 @@ export class MaterialManager {
   }
   private _renderMode: RenderMode = RenderMode.Color;
   private readonly materialsMap: Map<string, MaterialsWrapper> = new Map();
-  private _globalAppearance?: GlobalNodeAppearance;
   // TODO: j-bjorne 29-04-2020: Move into separate cliping manager?
   private _clippingPlanes: THREE.Plane[] = [];
   private _clipIntersection: boolean = false;
-
-  constructor(globalAppearance?: GlobalNodeAppearance) {
-    this._globalAppearance = globalAppearance;
-  }
 
   addModelMaterials(modelIdentifier: string, maxTreeIndex: number) {
     const materials = createMaterials(maxTreeIndex + 1, this._renderMode, this._clippingPlanes);
@@ -95,16 +47,11 @@ export class MaterialManager {
   setNodeAppearanceProvider(modelIdentifier: string, nodeAppearanceProvider?: NodeAppearanceProvider) {
     const wrapper = this.materialsMap.get(modelIdentifier)!;
     const newWrapper: MaterialsWrapper = { ...wrapper, nodeAppearanceProvider };
-    console.log(newWrapper);
     this.materialsMap.set(modelIdentifier, newWrapper);
   }
 
   getModelMaterials(modelIdentifier: string): Materials {
     return this.materialsMap.get(modelIdentifier)!.materials;
-  }
-
-  updateGlobalAppearance(nodeAppearance: GlobalNodeAppearance) {
-    this._globalAppearance = nodeAppearance;
   }
 
   setRenderMode(mode: RenderMode) {
@@ -122,7 +69,7 @@ export class MaterialManager {
     const materialsWrapper = this.materialsMap.get(modelIdentifier);
     const materials = materialsWrapper!.materials;
     const appearanceProvider = materialsWrapper!.nodeAppearanceProvider;
-    if (!appearanceProvider && !this._globalAppearance) {
+    if (!appearanceProvider) {
       return;
     }
     if (treeIndices.length === 0) {
@@ -170,7 +117,6 @@ export class MaterialManager {
     if (!appearanceProvider) {
       return;
     }
-    console.log(appearanceProvider);
 
     const count = treeIndices.length;
     for (let i = 0; i < count; ++i) {
@@ -194,7 +140,7 @@ export class MaterialManager {
 
       // Render in front of everything (i.e. skip depth testing)?
       if (style && style.renderInFront !== undefined) {
-        console.log(treeIndex);
+        console.log('inFront:', treeIndex, style.renderInFront, style);
         materials.overrideVisibilityPerTreeIndex.image.data[4 * treeIndex + 1] = style.renderInFront ? 255 : 0;
         materials.overrideVisibilityPerTreeIndex.needsUpdate = true;
       }
