@@ -4,8 +4,9 @@
 3. [Objects](#objects)
 4. [Arrays](#arrays)
 5. [Functions](#functions)
-6. [Destructuring](#destructuring)
-7. [Strings](#strings)
+6. [Arrow Functions](#arrow-functions)
+7. [Destructuring](#destructuring)
+8. [Strings](#strings)
 
 # Types
 ### [Primitives](#primitives)
@@ -257,13 +258,15 @@ items.push(14);
 # Functions
 
 ### [Expression Vs Declaration](#expression-vs-declaration)
-When it comes to functions, we try our utmost to avoid declaration of functions and rather use arrow expressions.
+When defining a function we prefer function declaration over function expression, and when dealing with assigned functions we prefer using using an anonymous [arrow function](#arrow-functions) expression.
 ```typescript
-function helloWorld() {} // No
-const helloWorld = function() => {}; // No
-const helloWorld = () => {}; // Yes
+function helloWorld(): void {} // Yes
+const helloWorld = function(): Void => {}; // No
+const helloWorld = (): void => {}; // No
 ```
-> Declaring a function in a non-function block (if, while etc) has had a history of having different behavior across browsers. It is recommended to assign the function to a variable instead.
+> **Note:** Performance based on numbers from: https://jsperf.com/function-vs-arrow-function/14.
+
+> **Warning:** Declaring a function in a non-function block (if, while etc) has had a history of having different behavior across browsers. It is recommended to assign the function to a variable instead.
 
 ### [Don't use Arguments](#dont-use-arguments)
 To clarify, your functions can have arguments, but you should never name a parameter `arguments` as this will take precedence over the similarly named object on the function scope, and you don't want to do that.
@@ -272,7 +275,7 @@ To clarify, your functions can have arguments, but you should never name a param
 Instead of having mutating function arguments, consider using default parameters.
 ```typescript
 // Worst implementation
-const handleThings = (opts) => {
+function handleThings(opts): void {
   // No! We shouldn't mutate function arguments.
   // Double bad: if opts is falsy it'll be set to an object which may
   // be what you want but it can introduce subtle bugs.
@@ -280,17 +283,99 @@ const handleThings = (opts) => {
 }
 
 // Not much better
-const handleThings = (opts) => {
+function handleThings(opts): void {
   if(opts === void 0) {
     opts = {};
   }
 }
 
 // Correct way
-const handleThings = (opts = {}) => {
+
+function handleThings(opts = {}): void {
 
 }
 ```
+
+### [Function Signature](#function-signature)
+When creating a stand-alone function for usage across different files there are some rules that must be followed.
+- Function name
+  - descriptive & precise
+  - camelCased
+  - non-abbreviated
+- Function variables
+  - descriptive & precise
+  - camelCased
+  - [destructured](#when-should-you-use-destructuring)
+  - typed
+- Function returntype
+  - always defined
+
+```typescript
+
+// Silly example, obviously don't do this.
+function hepp(a: number, b: number) {
+  return Math.floor(Math.random() * (max - min) + min);
+}
+
+// Small improvement
+function randomValue(min: number, max: number) {
+  return Math.round(Math.random() * (max - min) + min);
+}
+
+// Eureka
+function randomNumberBetween(min: number, max: number): number {
+  return Math.round(Math.random() * (max - min) + min);
+}
+```
+
+### [Class Functions](#class-functions)
+Functions defined in class should follow the strict rules of function signatures. In addition to the general rules, class functions require defining the access level of the function.
+```typescript
+class Thermostat {
+  
+  private _targetTemperature: number;
+  private _maximumTemperatureLimit: number;
+  private _minimumTemperatureLimit: number;
+
+  constructor(
+    targetTemperature: number = 22,
+    minimumTemperatureLimit: number = 5,
+    maximumTemperatureLimit: number = 35
+  ) {
+    this._targetTemperature = targetTemperature;
+    this.minimumTemperatureLimit = minimumTemperatureLimit;
+    this.maximumTemperatureLimit = maximumTemperatureLimit;
+  }
+
+  // Bad function
+  change(num: number) {
+    this._targetTemperature += num;
+    if(this._targetTemperature > this._maximumTemperaturLimit) {
+      this._targetTemperature = this._maximumTemperatureLimit;
+    }
+    else if(this._targetTemperature < this._minimumTemperaturLimit) {
+      this._targetTemperature = this._minimumTemperatureLimit;
+    }
+    return this._targetTemperature;
+  }
+
+  // Good function
+  public getTargetTemperatureAfterUpdatingTemperatureBy(degrees: number): number {
+    this._targetTemperature = getClampedTemperature(this._targetTemperature + degrees);
+    return this._targetTemperature;
+  }
+
+  private getClampedTemperature(temperature: number): number {
+    return temperature > this._maximumTemperatureLimit ? this._maximumTemperatureLimit : degrees < this._minimumTemperatureLimit ? this._minimumTemperatureLimit : temperature;
+  }
+}
+
+```
+
+
+# Arrow Functions
+
+### Arrow
 
 # Destructuring
 
@@ -304,7 +389,7 @@ interface Credentials {
 
 
 // No destructuring, avoid doing this.
-const authenticate = (credentials: Credentials): boolean => {
+function authenticate(credentials: Credentials): boolean {
   const username: string = credentials.username;
   const password: string = credentials.password;
 
@@ -312,13 +397,13 @@ const authenticate = (credentials: Credentials): boolean => {
 }
 
 // Getting there!
-const authenticate = (credentials: Credentials): boolean => {
+function authenticate(credentials: Credentials): boolean {
   const { username, password } = credentials;
   return this._apiService(username, password);
 }
 
 // And the reward goes to!
-const authenticate = ({ username, password }: Credentials): boolean => {
+function authenticate({ username, password }: Credentials): boolean {
   return this._apiService(username, password);
 }
 ```
@@ -340,13 +425,13 @@ One of the huge benefits of destructuring is that it scales well when working wi
 ```typescript
 ...
 // Carefully consider when you use array destructuring.
-const getBoundingBox = () => {
+function getBoundingBox(): BoundingBox {
   return [this._left, this._top, this._right, this._bottom];
 }
 ...
 
 // Object destructuring scales a lot better than array destructuring.
-const getBoundingBox = () => {
+function getBoundingBox(): BoundingBox {
   return {
     left: this._left,
     top: this._top,
@@ -362,7 +447,7 @@ Due to how destructuring works, the latter example scales a lot better. You can 
 const { top, bottom } = getBoundingBox();
 
 // You can change the base function without breaking the places it is used.
-const getBoundingBox = () => {
+function getBoundingBox(): BoundingBox {
   return {
     visible: this._visible,
     left: this._left,
@@ -407,7 +492,7 @@ const errorMessage = 'Unable to acquire the correct asset requested. ' +
 ### [String Generation](#string-generation)
 For strings that are generated programatically use templates instead of concatenation.
 ```typescript
-const debug = (tag:string, message: string) => {
+function debug(tag:string, message: string) {
   // console.log('Tag: ' + tag + ', message: ' + message); // No!
   // console.log(['Tag: ', tag, ', message: ', message].join()); // No again!
   console.log(`Tag: ${tag}, message: ${message}`); // Yay for templates.
