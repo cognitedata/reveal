@@ -1,6 +1,7 @@
 import { createGlobalStyle } from 'styled-components';
 
 export const colors = {
+  grey4: '#d9d9d9',
   grey5: '#bfbfbf',
   grey7: '#595959',
   grey8: '#404040',

@@ -3,6 +3,7 @@ import GlobalStyles from 'global-styles';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Trans } from 'react-i18next';
 import Home from 'pages/Home';
+import { Button } from '@cognite/cogs.js';
 import Configurations from './pages/Configurations';
 import Translations from './pages/Translations';
 import Status from './pages/Status';
@@ -13,7 +14,6 @@ import {
   Main,
   MainMenu,
   MenuLink,
-  NewButton,
   Sidebar,
   Title,
 } from './elements';
@@ -30,9 +30,9 @@ const App = () => {
                 <h1>
                   <Trans i18nKey="Global:MainTitle" />
                 </h1>
-                <NewButton icon="Plus">
+                <Button type="primary" size="large" icon="Plus">
                   <Trans i18nKey="Global:BtnNewConfiguration" />
-                </NewButton>
+                </Button>
               </Title>
               <MainMenu>
                 <ul>
