@@ -38,65 +38,6 @@ pub struct CtmResult {
 }
 
 #[wasm_bindgen]
-#[derive(Default, Clone, Debug, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct TriangleMeshResult {
-    file_id: u64,
-    indices: Vec<u32>,
-    tree_indices: Vec<f32>,
-    vertices: Vec<openctm::Vertex>,
-    normals: Option<Vec<openctm::Normal>>,
-    colors: Vec<u8>,
-}
-
-#[wasm_bindgen]
-#[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct InstanceMeshResult {
-    triangle_count: f64,
-    triangle_offset: u64,
-    colors: Vec<u8>,
-    instance_matrices: Vec<f32>,
-    tree_indices: Vec<f32>,
-}
-
-#[wasm_bindgen]
-#[derive(Default, Clone, Debug, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct InstanceMeshFileResult {
-    file_id: u64,
-    indices: Vec<u32>,
-    vertices: Vec<openctm::Vertex>,
-    normals: Option<Vec<openctm::Normal>>,
-    instances: Vec<InstanceMeshResult>,
-}
-
-// TODO: Convert tree_index_to_node_id_map and node_id_to_tree_index_map into
-// more efficient single array of tuples or remove if no longer needed
-#[wasm_bindgen]
-#[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct SectorGeometry {
-    // Note: These fields may need to be added back when everything is moved to Rust
-    // tree_index_to_node_id_map: HashMap<u64, u64>,
-    // node_id_to_tree_index_map: HashMap<u64, u64>,
-    // primatives: i3df::renderables::PrimitiveCollections,
-    instance_meshes: Vec<InstanceMeshFileResult>,
-    triangle_meshes: Vec<TriangleMeshResult>,
-}
-
-#[wasm_bindgen]
-impl SectorGeometry {
-    pub fn instance_meshes(&self) -> Result<JsValue, JsValue> {
-        serde_wasm_bindgen::to_value(&self.instance_meshes).map_err(|e| e.into())
-    }
-
-    pub fn triangle_meshes(&self) -> Result<JsValue, JsValue> {
-        serde_wasm_bindgen::to_value(&self.triangle_meshes).map_err(|e| e.into())
-    }
-}
-
-#[wasm_bindgen]
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ParsedSector {
@@ -124,6 +65,71 @@ pub struct InstancedMeshInput {
     triangle_counts: Vec<f64>,
     triangle_offsets: Vec<f64>,
     instance_matrices: Vec<f32>,
+}
+
+#[wasm_bindgen]
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct CtmInput {
+    indices: Vec<u32>,
+    vertices: Vec<f32>,
+    normals: Option<Vec<f32>>,
+}
+
+#[wasm_bindgen]
+#[derive(Default, Clone, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TriangleMeshResult {
+    file_id: u64,
+    indices: Vec<u32>,
+    tree_indices: Vec<f32>,
+    vertices: Vec<f32>,
+    normals: Option<Vec<f32>>,
+    colors: Vec<u8>,
+}
+
+#[wasm_bindgen]
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct InstanceMeshResult {
+    triangle_count: f64,
+    triangle_offset: u64,
+    colors: Vec<u8>,
+    instance_matrices: Vec<f32>,
+    tree_indices: Vec<f32>,
+}
+
+#[wasm_bindgen]
+#[derive(Default, Clone, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct InstanceMeshFileResult {
+    file_id: u64,
+    indices: Vec<u32>,
+    vertices: Vec<f32>,
+    normals: Option<Vec<f32>>,
+    instances: Vec<InstanceMeshResult>,
+}
+
+#[wasm_bindgen]
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SectorGeometry {
+    // Note: These fields may need to be added back when everything is moved to Rust
+    // tree_index_to_node_id_map: HashMap<u64, u64>,
+    // node_id_to_tree_index_map: HashMap<u64, u64>,
+    // primatives: i3df::renderables::PrimitiveCollections,
+    instance_meshes: Vec<InstanceMeshFileResult>,
+    triangle_meshes: Vec<TriangleMeshResult>,
+}
+
+#[wasm_bindgen]
+impl SectorGeometry {
+    pub fn instance_meshes(&self) -> Result<JsValue, JsValue> {
+        serde_wasm_bindgen::to_value(&self.instance_meshes).map_err(|e| e.into())
+    }
+
+    pub fn triangle_meshes(&self) -> Result<JsValue, JsValue> {
+        serde_wasm_bindgen::to_value(&self.triangle_meshes).map_err(|e| e.into())
+    }
 }
 
 #[wasm_bindgen]
@@ -189,15 +195,19 @@ pub fn parse_and_convert_sector(input: &[u8]) -> Result<i3df::renderables::Secto
 // TODO: Reduce use of clone in finalize functions
 #[wasm_bindgen]
 pub fn finalize_detailed(i3d_file: JsValue, ctm_files: JsValue) -> Result<SectorGeometry, JsValue> {
+    // TODO read https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/building-your-project.html
+    // and see if this can be moved to one common place
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
     let i3d_file: ParsedSector =
         serde_wasm_bindgen::from_value(i3d_file).map_err(|e| e.to_string())?;
-    let ctm_map: HashMap<String, CtmResult> = ctm_files.into_serde().map_err(|e| e.to_string())?;
+    let ctm_map: HashMap<String, CtmInput> =
+        serde_wasm_bindgen::from_value(ctm_files).map_err(|e| e.to_string())?;
     let triangle_meshes = i3d_file.triangle_meshes;
     let instance_meshes = i3d_file.instance_meshes;
 
-    let final_triangle_meshes = finalize_triagle_meshes(triangle_meshes, ctm_map.clone());
+    let final_triangle_meshes = finalize_triagle_meshes(triangle_meshes, ctm_map.clone())?;
 
-    let final_instance_meshes = finalize_instance_meshes(instance_meshes, ctm_map);
+    let final_instance_meshes = finalize_instance_meshes(instance_meshes, ctm_map)?;
 
     Ok(SectorGeometry {
         instance_meshes: final_instance_meshes,
@@ -207,8 +217,8 @@ pub fn finalize_detailed(i3d_file: JsValue, ctm_files: JsValue) -> Result<Sector
 
 fn finalize_triagle_meshes(
     triangle_meshes: TriangleMeshInput,
-    ctm_map: HashMap<String, CtmResult>,
-) -> Vec<TriangleMeshResult> {
+    ctm_map: HashMap<String, CtmInput>,
+) -> Result<Vec<TriangleMeshResult>, JsValue> {
     let file_ids = triangle_meshes.file_ids;
     let colors = triangle_meshes.colors;
     let tree_indices = triangle_meshes.tree_indices;
@@ -225,9 +235,9 @@ fn finalize_triagle_meshes(
         let filename = format!("mesh_{}.ctm", file_id);
 
         if let Some(ctm_result) = ctm_map.get(&filename) {
-            let indices = ctm_result.file.indices.clone();
-            let vertices = ctm_result.file.vertices.clone();
-            let normals = ctm_result.file.normals.clone();
+            let indices = ctm_result.indices.clone();
+            let vertices = ctm_result.vertices.clone();
+            let normals = ctm_result.normals.clone();
             let mut shared_colors = vec![0; 3 * indices.len()];
             let mut shared_tree_indices = vec![0.; indices.len()];
 
@@ -265,16 +275,16 @@ fn finalize_triagle_meshes(
             };
             final_triangle_meshes.push(mesh);
         } else {
-            // TODO: Case where CTM File is not found
+            return Err("CTM file not found".into());
         }
     }
-    final_triangle_meshes
+    Ok(final_triangle_meshes)
 }
 
 fn finalize_instance_meshes(
     instance_meshes: InstancedMeshInput,
-    ctm_map: HashMap<String, CtmResult>,
-) -> Vec<InstanceMeshFileResult> {
+    ctm_map: HashMap<String, CtmInput>,
+) -> Result<Vec<InstanceMeshFileResult>, JsValue> {
     let file_ids = instance_meshes.file_ids.clone();
     let triangle_offsets = instance_meshes.triangle_offsets.clone();
     let triangle_counts = instance_meshes.triangle_counts.clone();
@@ -287,9 +297,9 @@ fn finalize_instance_meshes(
     for (file_id, mesh_indices) in meshes_grouped_by_file {
         let filename = format!("mesh_{}.ctm", file_id);
         if let Some(ctm_result) = ctm_map.get(&filename) {
-            let indices = ctm_result.file.indices.clone();
-            let vertices = ctm_result.file.vertices.clone();
-            let normals = ctm_result.file.normals.clone();
+            let indices = ctm_result.indices.clone();
+            let vertices = ctm_result.vertices.clone();
+            let normals = ctm_result.normals.clone();
             let mut instance_meshes = Vec::new();
 
             let file_triangle_offsets = mesh_indices
@@ -337,11 +347,11 @@ fn finalize_instance_meshes(
             };
             final_instance_meshes.push(mesh_file);
         } else {
-            // TODO: Case where CTM file is not found
+            return Err("CTM file not found".into());
         }
     }
 
-    final_instance_meshes
+    Ok(final_instance_meshes)
 }
 
 fn create_offsets_array(array: &Vec<u64>) -> Vec<u64> {
