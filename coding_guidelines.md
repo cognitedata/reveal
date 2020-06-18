@@ -1,4 +1,5 @@
 # Table of Contents
+
 1. [Types](#types)
 2. [References](#references)
 3. [Objects](#objects)
@@ -9,15 +10,20 @@
 8. [Strings](#strings)
 
 # Types
+
 ### [Primitives](#primitives)
+
 Primitives are passed by value.
+
 ```typescript
 const favoriteNumber: number = 88;
 let newFavoriteNumber: number = favoriteNumber;
 newFavoriteNumber = 42;
 console.log(favoriteNumber, newFavoriteNumber); // => 88, 42
 ```
+
 #### Primitive types
+
 - `string`
 - `number`
 - `boolean`
@@ -25,36 +31,53 @@ console.log(favoriteNumber, newFavoriteNumber); // => 88, 42
 - `undefined`
 
 ### [Complex](#complex)
+
 Complex types are passed by reference.
+
 ```typescript
 const favoriteNumberArray: number[] = [88, 42];
 const newFavoriteNumberArray: number[] = favoriteNumberArray;
 newFavoriteNumberArray[1] = 1337;
 console.log(favoriteNumberArray[1], newFavoriteNumberArrayp[1]); // => 1337, 1337
 ```
+
 #### Complex types
+
 - `object`
 - `array`
 - `function`
 
 # References
+
 Mosst reference rules are defined in our linter, and will give lint errors if misshandled.
+
 > **Note:** Please make sure to include the type on all references, e.g.
+
 ```typescript
 const months: number = 12;
 let currentMonth: number = 6;
 ```
+
 ### [Immutable References](#imutable-references)
+
 Use `const` instead of `var` for all of your immutable references.
+
 ### [Mutable References](#mutable-references)
+
 Use `let` instead of `var` if you need a mutable reference.
+
 > `let` is block-scoped rather than function scoped
 
 # Objects
+
 ### [Object Instansiation](#object-instansiation)
 
 #### Literal Syntax
-Literal syntax is prefered when dealing with simple cases. Perfectly valid usage of literal syntax:
+
+Literal syntax is prefered when dealing with simple cases. If an object has a function defined do not create it using literlal syntax, but rather create a [class](#classes) which extends the interface and construct it using it's constructor.
+
+Example of **correct** code for this rule.
+
 ```typescript
 interface User {
   username: string;
@@ -62,11 +85,13 @@ interface User {
 }
 
 const user: User = {
-  username: 'kanedoe',
-  age: 42
-}
+  username: "kanedoe",
+  age: 42,
+};
 ```
-**Avoid!!!** using literal syntax if function are defined in the object!
+
+**!!** Example of **incorrect** code for this rule.
+
 ```typescript
 interface Store {
   name: string;
@@ -75,23 +100,29 @@ interface Store {
 
 const isOpen = (hour24: number) => {
   return hour24 > 6 && hour24 < 20;
-}
+};
 
 const butcherShop = {
-  name: 'Meaty',
-  isOpen // AVOID!
-}
+  name: "Meaty",
+  isOpen, // AVOID!
+};
 ```
 
 #### Interfaces
+
 Interfaces can be created through literal syntax as long as the following rules apply.
+
 - The interface does not contain any functions.
 - The interface is a mock-up used for a test class.
 
-If an interface contains a function you should instead make a class implementing said interface for instantiation. 
+If an interface contains a function you should instead make a class implementing said interface for instantiation.
 
 #### Classes
+
 Instead of using literal syntax on complex interfaces, create a class which implements the interface.
+
+Example of **correct** code for this rule.
+
 ```typescript
 interface Store {
   readonly name: string;
@@ -118,11 +149,15 @@ class ButcherShop implements Store {
   }
 }
 ```
+
 > **Note:** Make sure to create the correct access level of variables. The Store in the example above has a readonly name to prevent the name of the shop to be changed, in this case where the readonly variable is a primitive it gets passed by value.
 
 > **Note:** Place readonly variables above mutable variables in classes.
+
 ### [Getters and Setters](#getters-and-setters)
+
 Getters and setters are used to make sure that data is not manipulated in the wrong way. In the example above a getter on the name is safe since the variable itself is passed by reference. But what happens when the getter returns an object?
+
 ```typescript
 interface Owner {
   name: string;
@@ -151,66 +186,109 @@ class CandyShop implements Store {
   }
 }
 ```
+
 By this example it would be easy to assume that the owner is `readonly` and cannot be manipulated, and in some sense it is. Unfortunately since the creator of the Owner interface has not made the name `readonly`, this makes it possible to manipulate the ownername.
+
 ```typescript
-const candyShop = new CandyShop('CandyPlusPlus', { name: 'Willy' });
+const candyShop = new CandyShop("CandyPlusPlus", { name: "Willy" });
 let name = candyShop.name;
 name = "CandySharp";
 const owner = candyShop.owner;
 
-owner.name = 'Billy';
+owner.name = "Billy";
 
 console.log(candyShop.name); // CandyPlusPlus
 console.log(candyShop.owner.name); // Billy
 ```
-> In this example it might make more sense if the owner name was `readonly` and the owner had both a setter and a getter.
 
-### [Private Variables](#private-variables)
-Prefix private variables with `_`, e.g. `_name`, `_age`, `_height`.
+> In this example it might make more sense if the owner name was `readonly` and the owner had both a setter and a getter in the shop class.
 
-### [Naming Guidelines](#naming-guidelines)
-Naming convention is important for others reading your code and contributing. A lot of emphasis should be put on correctly naming a function or a variable.
+Example of **correct** code for this rule.
+
 ```typescript
-// DON'T MAKE A CLASS LIKE THIS!
-class Kek {
-  private readonly m: number;
-  private bleurg: number = 0;
-  constructor(m: number){
-    this.m = m;
+interface Owner {
+  readonly name: string;
+}
+
+interface Store {
+  readonly name: string;
+  owner: Owner;
+}
+
+class CandyShop implements Store {
+  private readonly _name: string;
+  private readonly _owner: Owner;
+
+  constructor(name: string, owner: Owner) {
+    this._name = name;
+    this._owner = owner;
   }
-  
-  add(n: number): boolean {
-    if(this.bleurg + n < this.m) {
-      this.bleurg =+ n;
-      return true;
-    }
-    return false;
-    
+
+  get name(): string {
+    return this._name;
+  }
+
+  get owner(): Owner {
+    return this._owner;
+  }
+
+  set owner(owner: Owner): void {
+    this._owner = owner;
   }
 }
 ```
-Excuse the hyperbole example, but even the `add` function which has a descriptive name does do additional work which someone unfamiliar with the code will not catch. The more logic that gets entered into a function, the more likely it is that the name of the function no longer describes the code.
+
+### [Private Variables](#private-variables)
+
+Prefix private variables with `_`, e.g. `_name`, `_age`, `_height`.
+
+### [Naming Guidelines](#naming-guidelines)
+
+Naming convention is important for others reading your code and contributing. A lot of emphasis should be put on correctly naming a function or a variable.
+
+**!!** Example of **incorrect** code for this rule.
 
 ```typescript
-// DON'T MAKE A CLASS LIKE THIS!
+class Kek {
+  private readonly m: number;
+  private bleurg: number = 0;
+  constructor(m: number) {
+    this.m = m;
+  }
+
+  add(n: number): boolean {
+    if (this.bleurg + n < this.m) {
+      this.bleurg = +n;
+      return true;
+    }
+    return false;
+  }
+}
+```
+
+Excuse the hyperbole example, but even the `add` function which has a descriptive name does do additional work which someone unfamiliar with the code will not catch. The more logic that gets entered into a function, the more likely it is that the name of the function no longer describes the code.
+
+**!!** Example of **incorrect** code for this rule.
+
+```typescript
 class Wallet {
   private _amount: number;
   private _loan: number = 0;
-  
+
   constructor(amount: number) {
     this._amount = amount;
   }
 
   pay(price: number): boolean {
-    if(this._amount - price > 0) {
+    if (this._amount - price > 0) {
       this._amount -= price;
       return true;
-    } else if(this._loan < 5000 && this._amount !== 0) {
+    } else if (this._loan < 5000 && this._amount !== 0) {
       const loanAmount = price - this._amount;
       this._amount = 0;
       loan += loanAmount;
       return true;
-    } else if(this._loan < 5000 && this._amount === 0) {
+    } else if (this._loan < 5000 && this._amount === 0) {
       loan += price;
       return true;
     }
@@ -218,9 +296,13 @@ class Wallet {
   }
 }
 ```
+
 > **Note:** In addition to the naming convention this price doesn't check if the price number is > 0 to verify that they aren't adding funcs into the wallet buy "paying" for negative values.
 
-The above example illustrates in a way that the function name is no longer discriptive of what the code does. It also starts to blend into a section covered later [Single Responsibility Pattern](#single-responsibility-pattern), but first let's cover the naming convention. A way to make the function more discriptive would be:
+The above example illustrates in a way that the function name is no longer discriptive of what the code does. It also starts to blend into a section covered later [Single Responsibility Pattern](#single-responsibility-pattern), but first let's cover the naming convention.
+
+Example of **better** code for this rule.
+
 ```typescript
 ...
 payFromWalletOrAttemptToLendMoneyToBuy(price: number): boolean {
@@ -228,7 +310,11 @@ payFromWalletOrAttemptToLendMoneyToBuy(price: number): boolean {
 }
 ...
 ```
+
 Now the function name mirrors to an extend the behavior of the function, but in a way the function is still a bit wrong. We return a boolean to see if the purchase was accepted, so a better name might have been.
+
+Example of **correct** code for this rule.
+
 ```typescript
 ...
 successfullyPaidFromWalletOrLentMoneyToBuy(price: number): boolean {
@@ -236,68 +322,109 @@ successfullyPaidFromWalletOrLentMoneyToBuy(price: number): boolean {
 }
 ...
 ```
+
 Now in addition to describing what happens inside the function it also matches with the return type of the function.
+
+> **Note:** These names are really important if the function is not documented. If the function is not self explanatory then it needs to be documented.
 
 # Arrays
 
 ### [Array Instantiation](#array-instantiation)
+
 For array instantiation you should use the literal syntax instead of `new` constructor.
+
+**!!** Example of **incorrect** code for this rule.
+
 ```typescript
-// const items: number[] = new Array(); Don't do this.
+const items: number[] = new Array();
+```
+
+Example of **correct** code for this rule.
+
+```typescript
 const items: number[] = [];
 ```
 
 ### [Array Operations](#array-operations)
+
 For operations on arrays use push etc instead of direct assignment.
+
+**!!** Example of **incorrect** code for this rule.
+
 ```typescript
 const items: number[] = [];
-// items[items.length] = 14; No, don't do this.
+items[items.length] = 14;
+```
+
+Example of **correct** code for this rule.
+
+```typescript
+const items: number[] = [];
+//
 items.push(14);
 ```
 
 # Functions
 
 ### [Expression Vs Declaration](#expression-vs-declaration)
+
 When defining a function we prefer function declaration over function expression, and when dealing with assigned functions we prefer using using an anonymous [arrow function](#arrow-functions) expression.
+
+**!!** Examples of **incorrect** code for this rule.
+
 ```typescript
-function helloWorld(): void {} // Yes
-const helloWorld = function(): Void => {}; // No
-const helloWorld = (): void => {}; // No
+const helloWorld = function(): Void => {};
 ```
-> **Note:** Performance based on numbers from: https://jsperf.com/function-vs-arrow-function/14.
+
+```typescript
+const helloWorld = (): void => {};
+```
+
+Example of **correct** code for this rule.
+
+```typescript
+function helloWorld(): void {}
+```
 
 > **Warning:** Declaring a function in a non-function block (if, while etc) has had a history of having different behavior across browsers. It is recommended to assign the function to a variable instead.
 
 ### [Don't use Arguments](#dont-use-arguments)
+
 To clarify, your functions can have arguments, but you should never name a parameter `arguments` as this will take precedence over the similarly named object on the function scope, and you don't want to do that.
 
 ### [Default Parameters](#default-parameters)
+
 Instead of having mutating function arguments, consider using default parameters.
+
+**!!** Example of **incorrect** code for this rule.
+
 ```typescript
-// Worst implementation
 function handleThings(opts): void {
   // No! We shouldn't mutate function arguments.
   // Double bad: if opts is falsy it'll be set to an object which may
   // be what you want but it can introduce subtle bugs.
   opts = opts || {};
 }
+```
 
-// Not much better
+```typescript
 function handleThings(opts): void {
-  if(opts === void 0) {
+  if (opts === void 0) {
     opts = {};
   }
 }
+```
 
-// Correct way
+Example of **correct** code for this rule.
 
-function handleThings(opts = {}): void {
-
-}
+```typescript
+function handleThings(opts = {}): void {}
 ```
 
 ### [Function Signature](#function-signature)
+
 When creating a stand-alone function for usage across different files there are some rules that must be followed.
+
 - Function name
   - descriptive & precise
   - camelCased
@@ -310,29 +437,38 @@ When creating a stand-alone function for usage across different files there are 
 - Function returntype
   - always defined
 
-```typescript
+**!!** Example of **incorrect** code for this rule.
 
-// Silly example, obviously don't do this.
+```typescript
 function hepp(a: number, b: number) {
   return Math.floor(Math.random() * (max - min) + min);
 }
+```
 
-// Small improvement
+Example of **better** code for this rule.
+
+```typescript
 function randomValue(min: number, max: number) {
   return Math.round(Math.random() * (max - min) + min);
 }
+```
 
-// Eureka
+Example of **correct** code for this rule.
+
+```typescript
 function randomNumberBetween(min: number, max: number): number {
   return Math.round(Math.random() * (max - min) + min);
 }
 ```
 
 ### [Class Functions](#class-functions)
+
 Functions defined in class should follow the strict rules of function signatures. In addition to the general rules, class functions require defining the access level of the function.
+
+Base class of example. Let's try and add some functions to this class.
+
 ```typescript
 class Thermostat {
-  
   private _targetTemperature: number;
   private _maximumTemperatureLimit: number;
   private _minimumTemperatureLimit: number;
@@ -346,47 +482,92 @@ class Thermostat {
     this.minimumTemperatureLimit = minimumTemperatureLimit;
     this.maximumTemperatureLimit = maximumTemperatureLimit;
   }
+}
+```
 
-  // Bad function
+**!!** Example of **incorrect** code for this rule.
+
+```typescript
   change(num: number) {
     this._targetTemperature += num;
-    if(this._targetTemperature > this._maximumTemperaturLimit) {
+    if (this._targetTemperature > this._maximumTemperaturLimit) {
       this._targetTemperature = this._maximumTemperatureLimit;
-    }
-    else if(this._targetTemperature < this._minimumTemperaturLimit) {
+    } else if (this._targetTemperature < this._minimumTemperaturLimit) {
       this._targetTemperature = this._minimumTemperatureLimit;
     }
     return this._targetTemperature;
   }
+```
 
-  // Good function
-  public getTargetTemperatureAfterUpdatingTemperatureBy(degrees: number): number {
-    this._targetTemperature = getClampedTemperature(this._targetTemperature + degrees);
+Example of **better** code for this rule.
+
+```typescript
+  /**
+   * Function to update the target temperature of the thermostat.
+   *
+   * @param {number} degrees - Amount of degrees to change target temperature.
+   * @return {number} - The target temperature of the thermostat.
+   */
+  public updatingTemperatureBy(degrees: number): number {
+    this._targetTemperature = getClampedTemperature(
+      this._targetTemperature + degrees
+    );
     return this._targetTemperature;
   }
 
+  // Moving out some logic to a separate private function is an alternative.
   private getClampedTemperature(temperature: number): number {
-    return temperature > this._maximumTemperatureLimit ? this._maximumTemperatureLimit : degrees < this._minimumTemperatureLimit ? this._minimumTemperatureLimit : temperature;
+    return temperature > this._maximumTemperatureLimit
+      ? this._maximumTemperatureLimit
+      : temperature < this._minimumTemperatureLimit
+      ? this._minimumTemperatureLimit
+      : temperature;
   }
-}
-
 ```
 
+> **Note:** You are required to provide documentation if the function name has any ambiguity. In this example since the return value of the function is ambigious we need the function documented.
+
+Example of **correct** code for this rule. First of all, since the clamp functionality is so generic and most likely an operation that will be used for multiple things, we move it into a separate file.
+
+#### someUtilitiesFile.ts
+
+```typescript
+export function clampValueToMinMax(value: number, min: number, max: number) {
+  return value > max ? max : value < min ? min : value;
+}
+```
+
+#### Thermostat.ts
+
+```typescript
+  public getTargetTemperatureAfterUpdatingTemperatureBy(degrees: number): number {
+    const newTargetTemperature = this._targetTemperature + degrees;
+    this._targetTemperature = clampValueToMinMax(newTargetTemperature, this._minimumTemperatureLimit, this._maximumTemperatureLimit);
+    return this._targetTemperature;
+  }
+}
+```
 
 # Arrow Functions
 
-### Arrow
+### [Function expressions as arrow functions](#function-expressions-as-arrow-functions)
+
+When using function expressions use arrow expressions instead of anonymous and named functions.
+
+```typescript
+```
 
 # Destructuring
 
 ### [When should you use destructuring](#when-should-you-use-destructuring)
+
 You should use destructuring whenever you need to create several temporary references of a complex unit.
+
 ```typescript
 interface Credentials {
   username: string;
   password: string;
 }
-
 
 // No destructuring, avoid doing this.
 function authenticate(credentials: Credentials): boolean {
@@ -421,7 +602,9 @@ const [min, max] = arr;
 ```
 
 ### [Scalability with Destructuring](#scalability-with-destructuring)
+
 One of the huge benefits of destructuring is that it scales well when working with multiple return values.
+
 ```typescript
 ...
 // Carefully consider when you use array destructuring.
@@ -440,6 +623,7 @@ function getBoundingBox(): BoundingBox {
   };
 }
 ```
+
 Due to how destructuring works, the latter example scales a lot better. You can add elements to the return statement without breaking the existing calls to the same function. You also do not need to use all of the returned variables.
 
 ```typescript
@@ -453,46 +637,59 @@ function getBoundingBox(): BoundingBox {
     left: this._left,
     top: this._top,
     right: this._right,
-    bottom: this._bottom
+    bottom: this._bottom,
   };
 }
-
 ```
 
 # Strings
 
 ### [Single Quotes](#single-quotes)
+
 A string variable should be enclosed by single quotes.
+
 ```typescript
 // const name = "Kane Doe"; No!
-const name = 'Kane Doe';
+const name = "Kane Doe";
 ```
+
 > **Note:** Make sure you use `string` and not `String`
 
 ### [String Breaks](#string-breaks)
+
 If a string is longer than 80 characters, it should be written across multiple lines using breaks.
+
 ```typescript
 // Why would you do this towards anyone??
-const errorMessage = 'Unable to acquire the correct asset requested. Please make sure you provide the correct identifiers to the requested asset. If this error persists, please make sure to check your internet connection.';
+const errorMessage =
+  "Unable to acquire the correct asset requested. Please make sure you provide the correct identifiers to the requested asset. If this error persists, please make sure to check your internet connection.";
 
 // Yes
-const errorMessage = 'Unable to acquire the correct asset requested. Please make \
+const errorMessage =
+  "Unable to acquire the correct asset requested. Please make \
 sure you provide the correct identifiers to the requested asset. If this error \
-persists, please make sure to check your internet connection.';
+persists, please make sure to check your internet connection.";
 ```
+
 ### [String Concatenation](#string-concatenation)
+
 Another alternative to using `\` for linebreaks is to use string concatenation.
+
 ```typescript
-const errorMessage = 'Unable to acquire the correct asset requested. ' +
-'Please make sure you provide the correct identifiers to the requested asset. ' +
-'If this error persists, please make sure to check your internet connection.'
+const errorMessage =
+  "Unable to acquire the correct asset requested. " +
+  "Please make sure you provide the correct identifiers to the requested asset. " +
+  "If this error persists, please make sure to check your internet connection.";
 ```
+
 > **Note:** Make sure that you do not overuse string concatenation as it has a noticable impact on performance.
 
 ### [String Generation](#string-generation)
+
 For strings that are generated programatically use templates instead of concatenation.
+
 ```typescript
-function debug(tag:string, message: string) {
+function debug(tag: string, message: string) {
   // console.log('Tag: ' + tag + ', message: ' + message); // No!
   // console.log(['Tag: ', tag, ', message: ', message].join()); // No again!
   console.log(`Tag: ${tag}, message: ${message}`); // Yay for templates.
