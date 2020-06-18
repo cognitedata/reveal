@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { RevealManagerBase, RevealOptions } from './RevealManagerBase';
+import { RevealManagerBase } from './RevealManagerBase';
 import { CogniteClient, IdEither } from '@cognite/sdk';
 import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
 import { File3dFormat } from '@/utilities';
@@ -23,6 +23,7 @@ import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
 import { Subscription } from 'rxjs';
+import { RevealOptions } from './types';
 
 type CdfModelIdentifier = { modelRevision: IdEither; format: File3dFormat };
 type LoadingStateChangeListener = (isLoading: boolean) => any;

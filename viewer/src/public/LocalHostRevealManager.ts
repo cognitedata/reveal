@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { RevealManagerBase, RevealOptions } from './RevealManagerBase';
+import { RevealManagerBase } from './RevealManagerBase';
 
 import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
 import { MaterialManager } from '@/datamodels/cad/MaterialManager';
@@ -21,6 +21,7 @@ import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloud
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
+import { RevealOptions } from './types';
 
 type LocalModelIdentifier = { fileName: string };
 
