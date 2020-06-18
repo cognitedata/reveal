@@ -3,14 +3,9 @@
  */
 
 import * as Comlink from 'comlink';
-import {
-  ParseSectorResult,
-  ParseCtmResult,
-  ParseQuadsResult,
-  ParsedPrimitives,
-  ParsePrimitiveAttribute
-} from './types/parser.types';
+import { ParseSectorResult, ParseCtmResult, ParsedPrimitives, ParsePrimitiveAttribute } from './types/parser.types';
 import * as rustTypes from '../../../pkg';
+import { SectorQuads } from '@/datamodels/cad/rendering/types';
 const rustModule = import('../../../pkg');
 
 export class ParserWorker {
@@ -54,13 +49,13 @@ export class ParserWorker {
     return result;
   }
 
-  public async parseQuads(buffer: Uint8Array): Promise<ParseQuadsResult> {
+  public async parseQuads(buffer: Uint8Array): Promise<SectorQuads> {
     const rust = await rustModule;
 
     const sectorData = rust.parse_and_convert_f3df(buffer);
 
     const result = {
-      faces: sectorData.faces(),
+      buffer: sectorData.faces(),
       treeIndexToNodeIdMap: sectorData.tree_index_to_node_id_map(),
       nodeIdToTreeIndexMap: sectorData.node_id_to_tree_index_map()
     };

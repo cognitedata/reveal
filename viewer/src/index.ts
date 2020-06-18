@@ -11,6 +11,8 @@ export { Color, Cognite3DViewerOptions, AddModelOptions, SupportedModelTypes } f
 export { CadLoadingHints } from './datamodels/cad/CadLoadingHints';
 export { BoundingBoxClipper } from './utilities';
 
+export { PotreePointColorType } from './datamodels/pointcloud/types';
+
 // Export ThreeJS to enable easy import for our users
 import * as THREE from 'three';
 export { THREE };
