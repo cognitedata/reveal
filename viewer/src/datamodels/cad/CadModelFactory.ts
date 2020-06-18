@@ -3,9 +3,8 @@
  */
 import { CadNode } from './CadNode';
 import { MaterialManager } from './MaterialManager';
-import { ModelNodeAppearance } from './ModelNodeAppearance';
-import { CadModelMetadata } from './CadModelMetadata';
-import { ModelRenderAppearance } from './ModelRenderAppearance';
+import { NodeAppearanceProvider } from './NodeAppearance';
+import { CadModelMetadata } from '.';
 
 export class CadModelFactory {
   private readonly _materialManager: MaterialManager;
@@ -13,20 +12,13 @@ export class CadModelFactory {
     this._materialManager = materialManager;
   }
 
-  createModel(
-    modelMetadata: CadModelMetadata,
-    modelNodeAppearance?: ModelNodeAppearance,
-    modelRenderAppearance?: ModelRenderAppearance
-  ): CadNode {
+  createModel(modelMetadata: CadModelMetadata, nodeApperanceProvider?: NodeAppearanceProvider): CadNode {
     const { blobUrl, scene } = modelMetadata;
     const cadModel = new CadNode(modelMetadata, this._materialManager);
     this._materialManager.addModelMaterials(blobUrl, scene.maxTreeIndex);
 
-    if (modelNodeAppearance) {
-      this._materialManager.setNodeAppearance(blobUrl, modelNodeAppearance);
-    }
-    if (modelRenderAppearance) {
-      this._materialManager.setRenderAppearance(blobUrl, modelRenderAppearance);
+    if (nodeApperanceProvider) {
+      this._materialManager.setNodeAppearanceProvider(blobUrl, nodeApperanceProvider);
     }
 
     this._materialManager.updateModelNodes(blobUrl, [...Array(scene.maxTreeIndex + 1).keys()]);

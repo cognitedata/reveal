@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { RevealManagerBase, RevealOptions } from './RevealManagerBase';
+import { RevealManagerBase } from './RevealManagerBase';
 import { CogniteClient, IdEither } from '@cognite/sdk';
 import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
 import { File3dFormat } from '@/utilities';
@@ -17,13 +17,13 @@ import { ByVisibilityGpuSectorCuller, PotreeGroupWrapper, PotreeNodeWrapper } fr
 import { CachedRepository } from '@/datamodels/cad/sector/CachedRepository';
 import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
 import { CadManager } from '@/datamodels/cad/CadManager';
-import { ModelNodeAppearance, CadNode } from '@/datamodels/cad';
+import { CadNode, NodeAppearanceProvider } from '@/datamodels/cad';
 import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloudMetadataRepository';
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
-import { ModelRenderAppearance } from '@/datamodels/cad/ModelRenderAppearance';
 import { Subscription } from 'rxjs';
+import { RevealOptions } from './types';
 
 type CdfModelIdentifier = { modelRevision: IdEither; format: File3dFormat };
 type LoadingStateChangeListener = (isLoading: boolean) => any;
@@ -77,8 +77,7 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
   public addModel(
     type: 'cad',
     modelRevisionId: string | number,
-    modelNodeAppearance?: ModelNodeAppearance,
-    modelRenderAppearance?: ModelRenderAppearance
+    nodeApperanceProvider?: NodeAppearanceProvider
   ): Promise<CadNode>;
   public addModel(
     type: 'pointcloud',
@@ -87,15 +86,13 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
   public addModel(
     type: 'cad' | 'pointcloud',
     modelRevisionId: string | number,
-    modelNodeAppearance?: ModelNodeAppearance,
-    modelRenderAppearance?: ModelRenderAppearance
+    nodeApperanceProvider?: NodeAppearanceProvider
   ): Promise<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper]> {
     switch (type) {
       case 'cad':
         return this._cadManager.addModel(
           { modelRevision: this.createModelIdentifier(modelRevisionId), format: File3dFormat.RevealCadModel },
-          modelNodeAppearance,
-          modelRenderAppearance
+          nodeApperanceProvider
         );
       case 'pointcloud':
         return this._pointCloudManager.addModel({
