@@ -213,10 +213,10 @@ export function Migration() {
         console.log('2D coordinates', event);
         const intersection = viewer.getIntersectionFromPixel(offsetX, offsetY);
         if (intersection !== null) {
-          const { nodeId, point, model } = intersection;
+          const { nodeId, treeIndex, point, model } = intersection;
           console.log(`Clicked node ${nodeId} at`, point);
           // highlight the object
-          model.setNodeColor(nodeId, 0, 255, 0);
+          model.selectNodeByTreeIndex(treeIndex);
           // TODO make the camera zoom to the object
           // const boundingBox = model.getBoundingBox(nodeId);
           // viewer.fitCameraToBoundingBox(boundingBox, 2000); // 2 sec

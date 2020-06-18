@@ -10,12 +10,13 @@ import { Color, SupportedModelTypes } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { toThreeJsBox3, toThreeMatrix4, toThreeVector3, fromThreeVector3 } from '@/utilities';
-import { CadRenderHints, CadNode, ModelNodeAppearance } from '@/experimental';
+import { CadRenderHints, CadNode } from '@/experimental';
 import { CadLoadingHints } from '@/datamodels/cad/CadLoadingHints';
 import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
 import { SectorGeometry } from '@/datamodels/cad/sector/types';
 import { SectorQuads } from '@/datamodels/cad/rendering/types';
 import { vec3 } from 'gl-matrix';
+import { NodeAppearanceProvider, DefaultNodeAppearance } from '@/datamodels/cad/NodeAppearance';
 
 const mapCoordinatesBuffers = {
   v: vec3.create()
@@ -59,18 +60,25 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.hiddenNodes = new Set();
     this.selectedNodes = new Set();
     this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client);
-    const nodeAppearance: ModelNodeAppearance = {
-      color: (treeIndex: number) => {
-        if (this.selectedNodes.has(treeIndex)) {
-          return [0, 0, 200, 255];
+
+    const nodeAppearanceProvider: NodeAppearanceProvider = {
+      styleNode: (treeIndex: number) => {
+        let style = DefaultNodeAppearance.NoOverrides;
+        if (this.hiddenNodes.has(treeIndex)) {
+          style = { ...style, ...DefaultNodeAppearance.Hidden };
         }
-        return this.nodeColors.get(treeIndex);
-      },
-      visible: (treeIndex: number) => {
-        return this.hiddenNodes.has(treeIndex) ? false : true;
+        if (this.nodeColors.has(treeIndex)) {
+          style = { ...style, color: this.nodeColors.get(treeIndex) };
+        }
+        if (this.selectedNodes.has(treeIndex)) {
+          style = { ...style, ...DefaultNodeAppearance.Highlighted };
+        }
+        return style;
       }
     };
-    cadNode.materialManager.updateLocalAppearance(this.cadModel.blobUrl, nodeAppearance);
+
+    cadNode.materialManager.setNodeAppearanceProvider(this.cadModel.blobUrl, nodeAppearanceProvider);
+    cadNode.requestNodeUpdate([...Array(cadNode.sectorScene.maxTreeIndex + 1).keys()]);
 
     this.cadNode = cadNode;
 

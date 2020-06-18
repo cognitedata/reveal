@@ -7,7 +7,7 @@ import {
   LocalHostRevealManager,
 } from '@cognite/reveal/experimental';
 import { CogniteClient } from '@cognite/sdk';
-import { RevealOptions } from '@cognite/reveal/public/RevealManagerBase';
+import { RevealOptions } from '@cognite/reveal/public/types';
 
 // TODO 22-05-2020 j-bjorne: change to return render and added models
 export function createRenderManager(
