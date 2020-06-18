@@ -110,7 +110,6 @@ export class MaterialManager {
 
       // Render in front of everything (i.e. skip depth testing)?
       if (style && style.renderInFront !== undefined) {
-        console.log('inFront:', treeIndex, style.renderInFront, style);
         materials.overrideVisibilityPerTreeIndex.image.data[4 * treeIndex + 1] = style.renderInFront ? 255 : 0;
         materials.overrideVisibilityPerTreeIndex.needsUpdate = true;
       }
