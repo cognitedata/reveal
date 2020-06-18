@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
-import { Button } from '@cognite/cogs.js';
 import { colors } from './global-styles';
 
 export const Layout = styled.div`
@@ -42,15 +41,6 @@ export const Title = styled.div`
   }
 `;
 
-export const NewButton = styled(Button)`
-  background-color: ${colors.midBlue};
-  color: white;
-  font-size: 15px;
-  font-style: normal;
-  font-weight: 600;
-  height: 40px;
-`;
-
 export const MainMenu = styled.nav`
   ul {
     list-style: none;
@@ -70,8 +60,9 @@ export const MenuLink = styled(NavLink)`
   color: ${colors.grey8};
   font-weight: 600;
   font-size: 14px;
+  border-bottom: 3px solid transparent;
   &.active {
-    border-bottom: 3px solid ${colors.midBlue};
+    border-bottom-color: ${colors.midBlue};
     color: ${colors.grey10};
   }
 `;
