@@ -9,12 +9,6 @@ export const Layout = styled.div`
   background-color: ${colors.mainBackground};
 `;
 
-export const Sidebar = styled.nav`
-  background-color: white;
-  box-shadow: 0 8px 48px rgba(0, 0, 0, 0.1);
-  width: 80px;
-`;
-
 export const Main = styled.div`
   background-color: ${colors.mainBackground};
   flex-grow: 1;

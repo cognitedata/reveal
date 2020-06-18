@@ -14,7 +14,6 @@ import {
   Main,
   MainMenu,
   MenuLink,
-  Sidebar,
   Title,
 } from './elements';
 
@@ -71,7 +70,6 @@ const App = () => {
               </Switch>
             </Content>
           </Main>
-          <Sidebar />
         </Layout>
       </Router>
     </>
