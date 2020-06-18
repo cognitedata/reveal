@@ -51,7 +51,7 @@ const InFrontAppearance: NodeAppearance = {
 };
 
 const HighlightedColorApperance: NodeAppearance = {
-  color: [100, 100, 100, 255]
+  color: [100, 100, 255, 255]
 };
 
 export const DefaultNodeAppearance = {
