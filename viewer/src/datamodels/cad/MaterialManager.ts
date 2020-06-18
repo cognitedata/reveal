@@ -77,37 +77,7 @@ export class MaterialManager {
     }
 
     this.updateNodeAppearance(appearanceProvider, materials, treeIndices);
-    // this.updateRenderEffectBuffers(appearanceProvider, materials, treeIndices);
-    // this.updateGlobalNodeAppearance(modelIdentifier, materials, treeIndices);
   }
-
-  // private updateRenderEffectBuffers(
-  //   appearanceProvider: NodeApperanceProvider | undefined,
-  //   materials: Materials,
-  //   treeIndices: number[]
-  // ) {
-  //   if (!renderAppearance || renderAppearance.renderInFront === undefined) {
-  //     return;
-  //   }
-
-  //   for (const treeIndex of treeIndices) {
-  //     materials.overrideVisibilityPerTreeIndex.image.data[4 * treeIndex + 1] = renderAppearance.renderInFront(treeIndex)
-  //       ? 255
-  //       : 0;
-  //   }
-  //   materials.overrideVisibilityPerTreeIndex.needsUpdate = true;
-  // }
-
-  // private updateGlobalNodeAppearance(modelIdentifier: string, materials: Materials, treeIndices: number[]) {
-  //   if (this._globalAppearance && this._globalAppearance.color !== undefined) {
-  //     updateGlobalColors(modelIdentifier, this._globalAppearance.color, materials, treeIndices);
-  //     materials.overrideColorPerTreeIndex.needsUpdate = true;
-  //   }
-  //   if (this._globalAppearance && this._globalAppearance.visible !== undefined) {
-  //     updateGlobalVisibility(modelIdentifier, this._globalAppearance.visible, materials, treeIndices);
-  //     materials.overrideVisibilityPerTreeIndex.needsUpdate = true;
-  //   }
-  // }
 
   private updateNodeAppearance(
     appearanceProvider: NodeAppearanceProvider | undefined,
