@@ -3,9 +3,18 @@
  */
 
 import { CadNode } from './CadNode';
-import { ModelNodeAppearance } from './ModelNodeAppearance';
 import { CadModelMetadata } from './CadModelMetadata';
 import { SectorMetadata } from './sector/types';
 import { SsaoEffect, SsaoPassType } from './rendering/post-processing/ssao';
+import { NodeAppearance, NodeAppearanceProvider, DefaultNodeAppearance } from './NodeAppearance';
 
-export { CadNode, ModelNodeAppearance, CadModelMetadata, SectorMetadata, SsaoEffect, SsaoPassType };
+export {
+  CadNode,
+  NodeAppearance,
+  NodeAppearanceProvider,
+  DefaultNodeAppearance,
+  CadModelMetadata,
+  SectorMetadata,
+  SsaoEffect,
+  SsaoPassType
+};

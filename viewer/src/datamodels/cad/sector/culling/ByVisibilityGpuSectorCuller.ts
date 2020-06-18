@@ -260,8 +260,6 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
         );
       }
 
-      console.log('Scheduled for detailed: ' + intersectingSectors.length);
-
       this.markSectorsAsDetailed(intersectingSectors, takenSectors, model);
     });
   }

@@ -1174,7 +1174,7 @@
     lodash "^4.17.15"
     rxjs "^6.5.5"
 
-"@cognite/sdk@2.29.0":
+"@cognite/sdk@^2.29.0":
   version "2.29.0"
   resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-2.29.0.tgz#a983767459588ceb5a62fd301d16ff7f3aaf989f"
   integrity sha512-pkL96d56iHCEmVkeqfAXOOstDK0oxw06zCrxWjr9Ux+hIqGjyVXBnzUf5aqxN2o0q/1+B3uwP4YPr/rKkR9B1A==
