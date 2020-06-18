@@ -314,8 +314,8 @@ export class PointLogThreeView extends BaseGroupThreeView
     const margin = 0.025 * maxWidth;
     const lineSpacing = 0.5;
     const lineHeight = fontSize * (1 + lineSpacing);
-    const textFont = Canvas.getNormalFont(fontSize);
-    const headerFont = Canvas.getBoldFont(fontSize + 2);
+    const textFont = Canvas.getBoldFont(fontSize);
+    const headerFont = Canvas.getBolderFont(fontSize + 2);
 
     // https://www.javascripture.com/CanvasRenderingContext2D
     const canvas = document.createElement("canvas");

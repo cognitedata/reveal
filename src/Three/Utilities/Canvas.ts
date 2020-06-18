@@ -143,7 +143,7 @@ export class Canvas
   {
     // https://www.javascripture.com/CanvasRenderingContext2D
     const borderSize = fontSize * 0.1;
-    const font = Canvas.getBoldFont(fontSize);
+    const font = Canvas.getBolderFont(fontSize);
 
     this.context.font = font;
     this.context.textBaseline = "alphabetic";
@@ -211,9 +211,9 @@ export class Canvas
   //==================================================
 
   public static getColor(color: Color | null) { return color ? color.string() : "black" };
-  public static getFont(fontSize: number): string { return `${fontSize}px ${Appearance.fontIn3D}`; }
-  public static getNormalFont(fontSize: number): string { return `Bold ` + Canvas.getFont(fontSize); }
-  public static getBoldFont(fontSize: number): string { return `Bolder ` + Canvas.getFont(fontSize); }
+  public static getNormalFont(fontSize: number): string { return `${fontSize}px ${Appearance.fontIn3D}`; }
+  public static getBoldFont(fontSize: number): string { return `Bold ` + Canvas.getNormalFont(fontSize); }
+  public static getBolderFont(fontSize: number): string { return `Bolder ` + Canvas.getNormalFont(fontSize); }
 
   public static measureTextHeight(context: CanvasRenderingContext2D, text: string, maxWidth: number, lineHeight: number): number
   {
