@@ -2,18 +2,14 @@ $tree-padding-left: 7px;
 $tree-padding-top: 5px;
 
 .explorer {
-  height: calc(100% - #{$tree-padding-top});
-  background-color: white;
-  background-image: linear-gradient(to right, white, lightgray);
+  height: 100%;
   margin: 0;
-  padding-top: $tree-padding-top;
   display: flex;
   flex-direction: column;
 }
 
 .node-tabs {
   height: 25px !important;
-  background-color: white;
   .node-tab {
     display: flex;
     justify-content: center;
@@ -30,7 +26,8 @@ $tree-padding-top: 5px;
     height: 30px;
   }
   .MuiTabs-root {
-    width: 100% !important;
+    width: 100%;
+    height: 100%
   }
   .MuiTab-root {
     padding: 0px !important;
@@ -38,15 +35,15 @@ $tree-padding-top: 5px;
     min-width: 80px !important;
     min-height: 20px !important;
     color: black !important;
-    background: #e4e4e4;
+    background: var(--subsurface-viz-tab-background, $tab-background);
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-bottom: 0px;
     box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 1px rgba(0, 0, 0, 0.3),
       0 1px 1px rgba(255, 255, 255, 0.9);
   }
   .Mui-selected {
-    background: white !important;
-    color: black !important;
+    background: var(--subsurface-viz-tab-select-background, $tab-select-background);
+    color: var(--subsurface-viz-tab-select-color, $tab-select-color);
   }
   .MuiTab-wrapper {
     font-size: 0.6rem !important;
@@ -56,5 +53,6 @@ $tree-padding-top: 5px;
 
 .virtual-tree-container {
   padding-inline-start: $tree-padding-left;
+  padding-top: $tree-padding-top;
   flex: 15;
 }

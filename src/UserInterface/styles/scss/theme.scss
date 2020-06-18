@@ -1,0 +1,34 @@
+/** Theme **/
+$panel-background: white linear-gradient(to right, white, lightgray);
+$tab-background: #e4e4e4;
+$tab-select-background: white;
+$tab-select-color: black;
+$title-bar-background: white linear-gradient(to right, white, #efefef);
+$title-bar-color: black;
+$expansion-header-background: white linear-gradient(to right, white, #e7e7e7);
+$expansion-header-color: black;
+$expansion-detail-background: white linear-gradient(to right, white, #d5d5d5);
+$expansion-detail-color: black;
+$tool-bar-icon-selected-background: lightblue;
+$tool-bar-icon-hover-background: lightblue;
+$select-input-background: #f0f0f0;
+$select-input-option-color: #6a0dad;
+$slider-input-background: white;
+
+:root {
+  --subsurface-viz-background: #{$panel-background};
+  --subsurface-viz-tab-background: #{$tab-background};
+  --subsurface-viz-tab-select-background: #{$tab-select-background};
+  --subsurface-viz-tab-select-color: #{$tab-select-color};
+  --subsurface-viz-title-bar-background: #{$title-bar-background};
+  --subsurface-viz-title-bar-color: #{$title-bar-color};
+  --subsurface-viz-expansion-header-background: #{$expansion-header-background};
+  --subsurface-viz-expansion-header-color: #{$expansion-header-color};
+  --subsurface-viz-expansion-detail-background: #{$expansion-detail-background};
+  --subsurface-viz-expansion-detail-color: #{$expansion-detail-color};
+  --subsurface-viz-toolbar-icon-selected-background: #{$tool-bar-icon-selected-background};
+  --subsurface-viz-toolbar-icon-hover-background: #{$tool-bar-icon-hover-background};
+  --subsurface-viz-select-input-background: #{$select-input-background};
+  --subsurface-viz-select-input-option-color: #{$select-input-option-color};
+  --subsurface-viz-slider-input-background: #{$slider-input-background};
+}

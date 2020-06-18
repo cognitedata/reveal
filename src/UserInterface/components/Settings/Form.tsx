@@ -10,8 +10,7 @@ const useStyles = makeStyles((theme: Theme) =>
     formContainer: {
       display: "flex",
       flexDirection: "column",
-      padding: ".5rem .4rem .5rem .8rem",
-      backgroundImage: "linear-gradient(to right, #fff, #d5d5d5)"
+      padding: ".5rem .4rem .5rem .8rem"
     }
   })
 );

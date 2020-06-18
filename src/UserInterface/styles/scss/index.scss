@@ -13,64 +13,222 @@ $select-control-svg-width: $select-control-svg-height;
 
 $icon-size: 1.125rem;
 
-@import "explorer";
-@import "settings";
+$titleBarHeight: 1.6rem;
+$titleBarIconWidth: $titleBarHeight;
 
-* {
-  font-family: "Roboto", "Jost", sans-serif !important;
-}
+$multi-input-base-height: 1.4rem;
+$select-controls-width: 8%;
+$select-controls-margin-start: 2%;
+$multi-input-base-width: 100% - ($select-controls-width + $select-controls-margin-start);
+
+/** Default Theme **/
+$panel-background: white;
+$tab-background: white;
+$tab-select-background: #e4e4e4;
+$tab-select-color: black;
+$title-bar-background: white;
+$title-bar-color: black;
+$expansion-header-background: white;
+$expansion-header-color: black;
+$expansion-detail-background: white;
+$expansion-detail-color: black;
+$tool-bar-icon-selected-background: lightblue;
+$tool-bar-icon-hover-background: lightblue;
+$select-input-background: inherit;
+$select-input-option-color: #6a0dad;
+$slider-input-background: #d5d5d5;
+
 
 body {
   box-sizing: border-box;
-  font-family: "Roboto", "Jost", sans-serif;
 }
 
-.root-container {
+.subsurface-container {
   height: $root-container-height;
   width: $root-container-width;
-}
+  font-family: "Roboto", "Jost", sans-serif;
 
-.left-panel {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  background-image: linear-gradient(to right, white, lightgray);
-}
+  /** imports **/
+  @import "explorer";
+  @import "settings";
+  @import "visualizer";
 
-.right-panel {
-  overflow: hidden;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  width: 100%;
-}
+  .left-panel {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--subsurface-viz-background, $panel-background);
+  }
 
-.right-panel canvas {
-   width: 100% !important;
-   height: 100% !important;
-}
+  .right-panel {
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+  }
 
-.settings-section-container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
+  /* Global title bar*/
+  .title-bar {
+    height: $titleBarHeight;
+    display: flex;
+    align-items: center;
+    padding-left: 0.5rem;
+    background: var(--subsurface-viz-title-bar-background, $title-bar-background);
+    color: var(--subsurface-viz-title-bar-color, $title-bar-color);
 
-.settings-container {
-  width: 100%;
-  overflow-y: auto;
-  position: relative;
-  .settings-title-bar {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0;
-    z-index: 9999;
+    h1 {
+      font-weight: 500;
+      font-size: 0.8rem;
+      margin: 0 0.5rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .tool-bar {
+    display: flex;
+
+    .tool-bar-icon {
+      height: $titleBarHeight;
+      width: $titleBarIconWidth;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s;
+      cursor: pointer;
+
+      &:hover {
+        background: var(--subsurface-viz-toolbar-icon-hover-background, $tool-bar-icon-hover-background);
+      }
+    }
+
+    .icon-selected {
+      background: var(--subsurface-viz-toolbar-icon-selected-background, $tool-bar-icon-selected-background);
+    }
+  }
+
+  .input-icon {
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--subsurface-viz-toolbar-icon-hover-background, $tool-bar-icon-hover-background);
+    }
+  }
+
+  .input-icon-selected {
+    background: var(--subsurface-viz-toolbar-icon-selected-background, $tool-bar-icon-selected-background);
+  }
+
+  // Input styles
+
+
+  .MuiInputBase-root {
+    height: 1.5rem;
+    border: 1.2px solid #c4c4c4;
+    font-size: 0.6rem;
     flex: 1;
   }
+
+  .MuiInput-underline:before {
+    content: "";
+    position: absolute;
+    border-bottom: 0 !important;
+  }
+
+  .slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 2px;
+    background: var(--subsurface-viz-slider-input-background, $slider-input-background);
+    outline: none;
+    margin: 0.5rem 0;
+  }
+  /** Slider Styles **/
+  .slider:hover {
+    opacity: 1;
+  }
+
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 8px;
+    height: 15px;
+    background: var(--subsurface-viz-slider-input-background, $slider-input-background);
+    cursor: pointer;
+    border: 1px solid lightgray;
+    border-radius: 2px;
+  }
+
+  .slider::-moz-range-thumb {
+    width: 8px;
+    height: 15px;
+    background: white;
+    cursor: pointer;
+    border: 1px solid lightgray;
+    border-radius: 2px;
+  }
+
+  .additional-padding {
+    padding-left: 0.15rem;
+  }
+
+
+  .select-group { // todo: instead styling this way create custom control
+    width: 100%;
+    position: relative;
+    background: var(--subsurface-viz-select-input-background, $select-input-background);
+
+    .MuiInputBase-root {
+      height: $multi-input-base-height;
+      width: $multi-input-base-width;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 1px rgba(0, 0, 0, 0.3),
+      0 1px 1px rgba(255, 255, 255, 0.9);
+    }
+    .MuiSelect-root.MuiSelect-select:focus {
+      background: inherit;
+    }
+
+    .select-controls { //todo: replace with off the shelf component
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      justify-content: center;
+
+      svg {
+        width: $select-control-svg-width;
+        height: $select-control-svg-height;
+        font-weight: 700;
+        cursor: pointer;
+        right: 0;
+        position: absolute;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 1px rgba(0, 0, 0, 0.3),
+        0 1px 1px rgba(255, 255, 255, 0.9);
+        &:first-child {
+          top: -1.4rem;
+        }
+        &:nth-child(2) {
+          bottom: 0;
+        }
+      }
+    }
+  }
+
 }
+
+/** Outside main container changes **/
 
 .icon {
   display: flex;
@@ -82,227 +240,8 @@ body {
   }
 }
 
-/* Tweak expansion panel */
-
-.MuiExpansionPanel-root {
-  border-radius: 0 !important;
-}
-
-.MuiExpansionPanelSummary-content,
-.MuiExpansionPanel-root.Mui-expanded {
-  margin: 0 !important;
-}
-
-.MuiExpansionPanelDetails-root {
-  padding: 0 !important;
-  display: block !important;
-}
-
-$titleBarHeight: 1.6rem;
-$titleBarIconWidth: $titleBarHeight;
-
-/* Global title bar*/
-.title-bar {
-  height: $titleBarHeight;
-  display: flex;
-  align-items: center;
-  padding-left: 0.5rem;
-  background-image: linear-gradient(to right, #fff, #efefef);
-  h1 {
-    font-weight: 500;
-    font-size: 0.8rem;
-    margin: 0 0.5rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
-
-.tool-bar {
-  display: flex;
-  .tool-bar-icon {
-    height: $titleBarHeight;
-    width: $titleBarIconWidth;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.3s;
-    cursor: pointer;
-    &:hover {
-      background-color: lightblue;
-    }
-  }
-  .icon-selected {
-    background-color: lightblue;
-  }
-}
-
-.MuiCollapse-wrapperInner {
-  position: relative;
-}
-
-.input-icon {
-  height: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.3s;
-  cursor: pointer;
-  &:hover {
-    background-color: lightblue;
-  }
-}
-
-.input-icon-selected {
-  background-color: lightblue;
-}
-
-.MuiInputBase-root {
-  height: 1.5rem;
-  border: 1.2px solid #c4c4c4;
-  font-size: 0.6rem;
-  flex: 1;
-}
-
-.MuiInput-underline:before {
-  content: "";
-  position: absolute;
-  border-bottom: 0 !important;
-}
-
-.MuiList-padding {
-  padding: 0 !important;
-}
-
-.slider {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 2px;
-  background: white;
-  outline: none;
-  margin: 0.5rem 0;
-}
-
-.slider:hover {
-  opacity: 1;
-}
-
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 8px;
-  height: 15px;
-  background: white;
-  cursor: pointer;
-  border: 1px solid lightgray;
-  border-radius: 2px;
-}
-
-.slider::-moz-range-thumb {
-  width: 8px;
-  height: 15px;
-  background: white;
-  cursor: pointer;
-  border: 1px solid lightgray;
-  border-radius: 2px;
-}
-
-.additional-padding {
-  padding-left: 0.15rem;
-}
-
-$select-controls-width: 8%;
-$multi-input-base-width: 100% - $select-controls-width;
-
-.select-group {
-  width: 100%;
-  position: relative;
-  .MuiInputBase-root {
-    height: 1.4rem;
-    width: $multi-input-base-width;
-    background-color: #f0f0f0 !important;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 1px rgba(0, 0, 0, 0.3),
-      0 1px 1px rgba(255, 255, 255, 0.9);
-  }
-  .select-controls {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    justify-content: center;
-    svg {
-      width: $select-control-svg-width;
-      height: $select-control-svg-height;
-      font-weight: 700;
-      cursor: pointer;
-      right: 0;
-      position: absolute;
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 1px rgba(0, 0, 0, 0.3),
-        0 1px 1px rgba(255, 255, 255, 0.9);
-      &:first-child {
-        top: -1.4rem;
-      }
-      &:nth-child(2) {
-        bottom: 0;
-      }
-    }
-  }
-}
-
-.visualizer {
-  width: 100%;
-  height: 100%;
-  .visualizer-toolbar-wrapper {
-    position: absolute;
-    z-index: 10;
-  }
-  .visualizer-toolbar-container {
-    position: relative;
-  }
-  .visuaizer-toolbar {
-    display: flex;
-    align-items: center;
-    position: absolute;
-    flex-wrap: wrap;
-    margin: 0.5rem 4rem 0.5rem 1.5rem;
-    border: 0.01rem solid black;
-    background-color: rgba(223, 223, 223, 0.6);
-    border-radius: 0.2rem;
-    overflow: hidden;
-    .visualizer-tool-bar-icon {
-      transition: background-color 0.3s;
-      margin:0.025rem;
-      padding: 0.2rem 0;
-      cursor: pointer;
-      &:hover {
-        background-color: lightblue;
-        border-color: lightblue;
-      }
-      img {
-        margin: 0 0.2rem;
-      }
-    }
-    .visualizer-tool-bar-icon-selected {
-      background-color: lightblue !important;
-    }
-  }
-
-  .handle {
-    position: absolute;
-    left: 0.6rem;
-    top: 0.5rem;
-    img {
-      width: 0.9rem;
-      height: 0.9rem;
-    }
-  }
-  .visualizer-3d {
-    height: 100%;
-    width: 100%;
-    position: relative;
-  }
+.select-option{
+  color: var(--subsurface-viz-select-input-option-color, $select-input-option-color);
 }
 
 .image-tooltip {
@@ -320,4 +259,8 @@ $multi-input-base-width: 100% - $select-controls-width;
     margin-left: 0.4rem;
     max-width: 6rem;
   }
+}
+
+.MuiList-padding {
+  padding: 0 !important;
 }

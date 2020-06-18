@@ -23,14 +23,13 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: "center",
       width: "100% !important",
       margin: "0 !important",
-      backgroundImage: "linear-gradient(to right, #fff, #e7e7e7)",
       minHeight: "1.8rem !important",
       paddingLeft: "0.5rem"
     },
     expansionTitle: {
       margin: "0 .5rem",
       fontSize: "0.7rem",
-      fontWeight: 500
+      fontWeight: 700
     },
     expandButton: {
       width: "0.8rem",
@@ -67,14 +66,7 @@ export default function ExpansionView(props: {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const {
-    sectionId,
-    title,
-    isExpanded,
-    toolBar,
-    subSectionId,
-    children
-  } = props;
+  const { sectionId, title, isExpanded, toolBar, subSectionId, children } = props;
   return (
     <ExpansionPanel
       expanded={isExpanded}

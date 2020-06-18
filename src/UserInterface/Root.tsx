@@ -4,7 +4,6 @@ import "./styles/scss/index.scss";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SplitPane from "react-split-pane";
-import _ from "lodash";
 
 import RightPanel from "./components/Panels/RightPanel";
 import LeftPanel from "./components/Panels/LeftPanel";
@@ -48,7 +47,7 @@ export default () => {
   }, [root]);
 
   return (
-    <div className="root-container">
+    <div className="subsurface-container">
       <SplitPane
         split="vertical"
         minSize={290}

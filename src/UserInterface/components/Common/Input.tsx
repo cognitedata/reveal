@@ -21,13 +21,6 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       width: "100%"
     },
-    formContainer: {
-      width: "100%",
-      backgroundImage: "linear-gradient(to right, #e9e9e9, #d5d5d5)",
-      display: "flex",
-      flexDirection: "column",
-      padding: "0.5rem 0"
-    },
     formField: {
       flex: 1,
       display: "flex",
@@ -65,24 +58,22 @@ const useStyles = makeStyles((theme: Theme) =>
     checkbox: {
       position: "absolute",
       left: "-1.5rem",
-      border: "1px solid black"
+      border: "1px solid black",
+      margin: 0
     },
     select: {
       width: "100%",
-      display: "flex",
-      background: "red"
+      display: "flex"
     },
     option: {
       paddingLeft: "0.2rem",
-      fontFamily: "Roboto",
       fontSize: ".6rem",
       display: "flex",
       alignItems: "center",
       justifyContent: "flex-start"
     },
     optionText: {
-      marginLeft: "0.5rem",
-      color: "#6a0dad"
+      marginLeft: "0.5rem"
     }
   })
 );
@@ -171,7 +162,7 @@ export default function Input(props: {
                   {...keyExtractor(idx, elmConfig.type, subElementIndex)}
                   key={idx}
                 >
-                  <div className={classes.option}>
+                  <div className={"select-option " + classes.option}>
                     {option.icon ? <Icon name={option.icon.name} type={option.icon.type} /> : null}
                     <span className={classes.optionText}>{option.name}</span>
                   </div>

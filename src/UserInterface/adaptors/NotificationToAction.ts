@@ -12,7 +12,7 @@ const mapToCheckboxStateStr = (cbState: CheckBoxState) => {
         case CheckBoxState.Some: return 'partial';
         default: return 'undefined';
     }
-}
+};
 
 class NotificationsToActionsAdaptor {
 

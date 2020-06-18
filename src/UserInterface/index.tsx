@@ -5,13 +5,14 @@ import SubsurfaceVisualizer from "./SubsurfaceVisualizer";
 import SubsurfaceReducer from "./redux/reducers/SubsurfaceReducer";
 import SubsurfaceMiddleware from "./redux/middlewares/main";
 import { createStore, applyMiddleware, combineReducers, compose } from "redux";
+import "./styles/scss/theme.scss";
 
 // @ts-ignore
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store = createStore(
   combineReducers({ ...SubsurfaceReducer }),
-  compose(applyMiddleware(...SubsurfaceMiddleware))     // comment this line to enable redux dev tools
+  compose(applyMiddleware(...SubsurfaceMiddleware)) // comment this line to enable redux dev tools
   //composeEnhancers(applyMiddleware(...SubsurfaceMiddleware))  // uncomment to enable redux dev tools
 );
 

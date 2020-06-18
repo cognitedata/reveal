@@ -1,0 +1,60 @@
+
+.visualizer {
+  width: 100%;
+  height: 100%;
+
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .visualizer-toolbar-wrapper {
+    position: absolute;
+    z-index: 10;
+  }
+  .visualizer-toolbar-container {
+    position: relative;
+  }
+  .visuaizer-toolbar {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    flex-wrap: wrap;
+    margin: 0.5rem 4rem 0.5rem 1.5rem;
+    border: 0.01rem solid black;
+    background-color: rgba(223, 223, 223, 0.6);
+    border-radius: 0.2rem;
+    overflow: hidden;
+    .visualizer-tool-bar-icon {
+      transition: background-color 0.3s;
+      margin:0.025rem;
+      padding: 0.2rem 0;
+      cursor: pointer;
+      &:hover {
+        background-color: lightblue;
+        border-color: lightblue;
+      }
+      img {
+        margin: 0 0.2rem;
+      }
+    }
+    .visualizer-tool-bar-icon-selected {
+      background-color: lightblue !important;
+    }
+  }
+
+  .handle {
+    position: absolute;
+    left: 0.6rem;
+    top: 0.5rem;
+    img {
+      width: 0.9rem;
+      height: 0.9rem;
+    }
+  }
+  .visualizer-3d {
+    height: 100%;
+    width: 100%;
+    position: relative;
+  }
+}
