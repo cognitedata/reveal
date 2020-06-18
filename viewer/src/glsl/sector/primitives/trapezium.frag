@@ -18,7 +18,7 @@ uniform int renderMode;
 varying vec3 vViewPosition;
 
 void main() {
-    if (!determineVisibility(overrideVisibilityPerTreeIndex, dataTextureSize, v_treeIndex)) {
+    if (!determineVisibility(overrideVisibilityPerTreeIndex, dataTextureSize, v_treeIndex, renderMode)) {
         discard;
     }
 

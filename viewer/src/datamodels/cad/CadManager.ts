@@ -7,9 +7,9 @@ import { CadNode } from './CadNode';
 import { CadModelFactory } from './CadModelFactory';
 import { CadModelMetadataRepository } from './CadModelMetadataRepository';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
-import { ModelNodeAppearance } from './ModelNodeAppearance';
 import { discardSector } from './sector/sectorUtilities';
 import { Subscription } from 'rxjs';
+import { NodeAppearanceProvider } from './NodeAppearance';
 
 export class CadManager<TModelIdentifier> {
   private readonly _cadModelMetadataRepository: CadModelMetadataRepository<TModelIdentifier>;
@@ -92,9 +92,9 @@ export class CadManager<TModelIdentifier> {
     this._needsRedraw = true;
   }
 
-  async addModel(modelIdentifier: TModelIdentifier, modelAppearance?: ModelNodeAppearance): Promise<CadNode> {
+  async addModel(modelIdentifier: TModelIdentifier, nodeApperanceProvider?: NodeAppearanceProvider): Promise<CadNode> {
     const metadata = await this._cadModelMetadataRepository.loadData(modelIdentifier);
-    const model = this._cadModelFactory.createModel(metadata, modelAppearance);
+    const model = this._cadModelFactory.createModel(metadata, nodeApperanceProvider);
     this._cadModelMap.set(metadata.blobUrl, model);
     this._cadModelUpdateHandler.updateModels(model);
     return model;
