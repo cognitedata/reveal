@@ -4,9 +4,9 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Trans } from 'react-i18next';
 import Home from 'pages/Home';
 import { Button } from '@cognite/cogs.js';
-import Configurations from './pages/Configurations';
-import Translations from './pages/Translations';
-import Status from './pages/Status';
+import Configurations from 'pages/Configurations';
+import Translations from 'pages/Translations';
+import Status from 'pages/Status';
 import {
   Content,
   Header,
