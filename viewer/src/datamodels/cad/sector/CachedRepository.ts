@@ -16,7 +16,8 @@ import {
   zip,
   Subject,
   onErrorResumeNext,
-  asapScheduler
+  asapScheduler,
+  BehaviorSubject
 } from 'rxjs';
 import {
   publish,
@@ -50,7 +51,10 @@ type ParsedData = { blobUrl: string; lod: string; data: SectorGeometry | SectorQ
 
 // TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
 export class CachedRepository implements Repository {
-  private readonly _consumedSectorCache: MemoryRequestCache<string, Observable<ConsumedSector>> = new MemoryRequestCache({
+  private readonly _consumedSectorCache: MemoryRequestCache<
+    string,
+    Observable<ConsumedSector>
+  > = new MemoryRequestCache({
     maxElementsInCache: 50
   });
   private readonly _ctmFileCache: MemoryRequestCache<string, Observable<CtmFileResult>> = new MemoryRequestCache({
@@ -59,7 +63,7 @@ export class CachedRepository implements Repository {
   private readonly _modelSectorProvider: CadSectorProvider;
   private readonly _modelDataParser: CadSectorParser;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
-  private readonly _isLoadingSubject: Subject<boolean> = new Subject();
+  private readonly _isLoadingSubject: Subject<boolean> = new BehaviorSubject<boolean>(false);
 
   // Adding this to support parse map for migration wrapper. Should be removed later.
   private readonly _parsedDataSubject: Subject<{
@@ -89,7 +93,9 @@ export class CachedRepository implements Repository {
   }
 
   getParsedData(): Observable<ParsedData> {
-    return this._parsedDataSubject.pipe(distinct(keySelector => '' + keySelector.blobUrl + '.' + keySelector.sectorId + '.' + keySelector.lod)); // TODO: Should we do replay subject here instead of variable type?
+    return this._parsedDataSubject.pipe(
+      distinct(keySelector => '' + keySelector.blobUrl + '.' + keySelector.sectorId + '.' + keySelector.lod)
+    ); // TODO: Should we do replay subject here instead of variable type?
   }
 
   getLoadingStateObserver(): Observable<boolean> {
@@ -140,7 +146,9 @@ export class CachedRepository implements Repository {
       );
 
       return merge(
-        cachedSectorObservable.pipe(flatMap(wantedSector => this._consumedSectorCache.get(this.wantedSectorCacheKey(wantedSector)))),
+        cachedSectorObservable.pipe(
+          flatMap(wantedSector => this._consumedSectorCache.get(this.wantedSectorCacheKey(wantedSector)))
+        ),
         uncachedSectorObservable.pipe(this.loadSimpleAndDetailedSectorFromNetwork())
       );
     });
