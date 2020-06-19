@@ -78,7 +78,7 @@ const columns = [
     title: '',
     dataIndex: '',
     key: 'expander',
-    render: () => <Icon type="CaretDown" />,
+    render: () => <Icon type="Down" />,
   },
   {
     title: 'Name',
