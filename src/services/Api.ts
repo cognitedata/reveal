@@ -25,7 +25,7 @@ export function buildQueryString(parameters: QueryParameters): string {
 }
 
 class Api {
-  private static async get(
+  public static async get(
     url: string,
     parameters?: QueryParameters
   ): Promise<any> {
@@ -35,6 +35,22 @@ class Api {
     const response = await fetch(urlWithStringQuery, {
       method: 'GET',
       headers,
+    });
+    return response.json();
+  }
+
+  public static async post(
+    url: string,
+    parameters?: QueryParameters,
+    body?: QueryParameters
+  ): Promise<any> {
+    const urlWithStringQuery: string = `${url}?${buildQueryString(
+      parameters || {}
+    )}`;
+    const response = await fetch(urlWithStringQuery, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body),
     });
     return response.json();
   }
@@ -50,6 +66,29 @@ class Api {
       const mergedParams = { ...DEFAULT_QUERY_PARAMS, ...queryParameters };
       return Api.get(
         `${config.api.url}${config.api.project}/objects`,
+        mergedParams
+      );
+    },
+    filter: async (
+      queryParameters: QueryParameters = DEFAULT_QUERY_PARAMS,
+      body: QueryParameters = {}
+    ): Promise<any> => {
+      const mergedParams = { ...DEFAULT_QUERY_PARAMS, ...queryParameters };
+      return Api.post(
+        `${config.api.url}${config.api.project}/objects/filter`,
+        mergedParams,
+        body
+      );
+    },
+  };
+
+  public static projects = {
+    get: async (
+      queryParameters: QueryParameters = DEFAULT_QUERY_PARAMS
+    ): Promise<any> => {
+      const mergedParams = { ...DEFAULT_QUERY_PARAMS, ...queryParameters };
+      return Api.get(
+        `${config.api.url}${config.api.project}/projects`,
         mergedParams
       );
     },

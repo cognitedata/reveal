@@ -2,6 +2,8 @@
 import React from 'react';
 import { Button, Icon } from '@cognite/cogs.js';
 import Table from 'components/Organisms/Table';
+import { Trans } from 'react-i18next';
+import Api from 'services/Api';
 import { ContentContainer } from './elements';
 
 const dataSource = [
@@ -21,7 +23,7 @@ const dataSource = [
         size="small"
         onClick={() => console.log('Edit CWP_session_1')}
       >
-        Edit
+        <Trans i18nKey="Global:BtnEdit" />
       </Button>,
     ],
   },
@@ -44,7 +46,7 @@ const dataSource = [
         size="small"
         onClick={() => console.log('Edit CWP_session_2')}
       >
-        Edit
+        <Trans i18nKey="Global:BtnEdit" />
       </Button>,
     ],
   },
@@ -66,7 +68,7 @@ const dataSource = [
         size="small"
         onClick={() => console.log('Edit CWP_session_3')}
       >
-        Edit
+        <Trans i18nKey="Global:BtnEdit" />
       </Button>,
     ],
   },
@@ -107,6 +109,7 @@ const columns = [
 ];
 
 const Configurations = () => {
+  Api.projects.get().then((r) => console.log('PROJECTS', r));
   return (
     <ContentContainer>
       <Table dataSource={dataSource} columns={columns} />
