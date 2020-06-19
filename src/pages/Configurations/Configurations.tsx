@@ -1,9 +1,7 @@
 /* eslint-disable no-console */
-import React, { useContext } from 'react';
+import React from 'react';
 import { Button, Icon } from '@cognite/cogs.js';
-import { colors } from 'global-styles';
 import Table from 'components/Organisms/Table';
-import ApiContext, { ApiContextType } from 'contexts/ApiContext';
 import { ContentContainer } from './elements';
 
 const dataSource = [
@@ -15,7 +13,7 @@ const dataSource = [
     author: 'Erland Glad Solstrand',
     repositoryProject: 'Valhall_2212/Proj_29991',
     options: {
-      icon: <Icon type="Circle" style={{ color: colors.success }} />,
+      icon: <Icon type="Circle" style={{ color: 'var(--cogs-success)' }} />,
     },
     actions: [
       <Button
@@ -35,7 +33,9 @@ const dataSource = [
     author: 'Adam Tombleson',
     repositoryProject: 'Ivar_Aasen_foobar/Proj_29991',
     options: {
-      icon: <Icon type="Circle" style={{ color: colors.grey5 }} />,
+      icon: (
+        <Icon type="Circle" style={{ color: 'var(--cogs-greyscale-grey5)' }} />
+      ),
       expandable: true,
     },
     actions: [
@@ -56,7 +56,9 @@ const dataSource = [
     author: 'Rui Martins',
     repositoryProject: 'Alvheim/Proj_29991',
     options: {
-      icon: <Icon type="Circle" style={{ color: colors.grey5 }} />,
+      icon: (
+        <Icon type="Circle" style={{ color: 'var(--cogs-greyscale-grey5)' }} />
+      ),
     },
     actions: [
       <Button
@@ -105,9 +107,6 @@ const columns = [
 ];
 
 const Configurations = () => {
-  const { getHello, objects } = useContext<ApiContextType>(ApiContext);
-  getHello().then((response: { msg: string }) => console.log(response));
-  objects.get().then((r: any) => console.log(r));
   return (
     <ContentContainer>
       <Table dataSource={dataSource} columns={columns} />
