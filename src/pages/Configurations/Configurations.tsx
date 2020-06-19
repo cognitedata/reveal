@@ -1,8 +1,10 @@
-import React from 'react';
+/* eslint-disable no-console */
+import React, { useContext } from 'react';
 import { Button, Icon } from '@cognite/cogs.js';
+import { colors } from 'global-styles';
+import Table from 'components/Organisms/Table';
+import ApiContext from 'contexts/ApiContext';
 import { ContentContainer } from './elements';
-import Table from '../../components/Organisms/Table';
-import { colors } from '../../global-styles';
 
 const dataSource = [
   {
@@ -103,6 +105,13 @@ const columns = [
 ];
 
 const Configurations = () => {
+  const { getHello, objects } = useContext<any>(ApiContext);
+  if (getHello) {
+    getHello().then((response: { msg: string }) => console.log(response));
+  }
+  if (objects) {
+    objects.getAll().then((r: any) => console.log(r));
+  }
   return (
     <ContentContainer>
       <Table dataSource={dataSource} columns={columns} />
