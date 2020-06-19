@@ -1,23 +1,22 @@
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
-import { colors } from './global-styles';
 
 export const Layout = styled.div`
   height: 100%;
   display: flex;
   flex-direction: row-reverse;
-  background-color: ${colors.mainBackground};
+  background-color: var(--cogs-greyscale-grey3);
 `;
 
 export const Main = styled.div`
-  background-color: ${colors.mainBackground};
+  background-color: var(--cogs-greyscale-grey3);
   flex-grow: 1;
 `;
 
 export const Header = styled.header`
   height: 144px;
   padding: 40px 48px 0 48px;
-  background-color: white;
+  background-color: var(--cogs-white);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -31,7 +30,7 @@ export const Title = styled.div`
     font-family: 'Inter', sans-serif;
     font-weight: 700;
     font-size: 32px;
-    color: ${colors.grey7};
+    color: var(--cogs-greyscale-grey7);
   }
 `;
 
@@ -51,13 +50,13 @@ export const MenuLink = styled(NavLink)`
   text-decoration: none;
   padding: 8px 12px 10px 12px;
   display: block;
-  color: ${colors.grey8};
+  color: var(--cogs-greyscale-grey8);
   font-weight: 600;
   font-size: 14px;
   border-bottom: 3px solid transparent;
   &.active {
-    border-bottom-color: ${colors.midBlue};
-    color: ${colors.grey10};
+    border-bottom-color: var(--cogs-midblue);
+    color: var(--cogs-greyscale-grey10);
   }
 `;
 
