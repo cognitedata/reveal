@@ -155,7 +155,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     this.domElement.addEventListener('click', (event) => this._toolController.onMouseClick(this, event), false);
     this.domElement.addEventListener('mousedown', (event) => this._toolController.onMouseDown(this, event), false);
     this.domElement.addEventListener('mouseup', (event) => this._toolController.onMouseUp(this, event), false);
-    this.domElement.addEventListener('mousemove', (event) => this._toolController.onMouseMove(this, event), false);    
+    this.domElement.addEventListener('mousemove', (event) => this._toolController.onMouseMove(this, event), false);
     //dblclick
     this.render();
   }
@@ -200,6 +200,20 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     }
     if (this.isInvalidated || needsUpdate)
     {
+      const camera = this.camera;
+      if (camera instanceof THREE.PerspectiveCamera)
+      {
+        const boundingBox = this.getBoundingBoxFromViews();
+        const diagonal = boundingBox.diagonal;
+        const near = 0.001 * diagonal;
+        const far = 2 * diagonal + this.cameraControl.distance;
+        if (!Ma.IsAbsEqual(camera.near, near, 0.1 * near) || !Ma.IsAbsEqual(camera.far, far, 0.1 * far))
+        {
+          camera.near = near;
+          camera.far = far;
+          camera.updateProjectionMatrix();
+        }
+      }
       if (this.isEmpty)
         this.isEmpty = !this.viewFrom(-1);
 

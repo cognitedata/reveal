@@ -44,6 +44,16 @@ export class CameraControl
     return this._controls;
   }
 
+  public get distance(): number
+  {
+    const controls = this.controls;
+    let position = new THREE.Vector3();
+    let target = new THREE.Vector3();
+    position = controls.getPosition(position);
+    target = controls.getTarget(target);
+    return target.distanceTo(position);
+  }
+
   //==================================================
   // CONSTRUCTOR
   //==================================================
@@ -98,8 +108,7 @@ export class CameraControl
     let distanceFactor = 1;
     if (camera instanceof THREE.PerspectiveCamera)
     {
-      const perspectiveCamera = camera as THREE.PerspectiveCamera;
-      const fov = Ma.toRad(perspectiveCamera.fov);
+      const fov = Ma.toRad(camera.fov);
       distanceFactor = 0.65 / (camera.aspect * Math.tan(fov / 2));
     }
     const targetPosition = boundingBox.center;
@@ -107,6 +116,9 @@ export class CameraControl
 
     if (index < -1)
     {
+      // this.viewAllAlternative(camera as THREE.PerspectiveCamera, this.controls, boundingBox);
+      // return true;
+
       let tempPosition = new THREE.Vector3();
       let tempTarget = new THREE.Vector3();
       tempPosition = controls.getPosition(tempPosition);
@@ -202,6 +214,38 @@ export class CameraControl
     const distance = controls.getPosition(tmp).distanceTo(position);
     controls.setTarget(position.x, position.y, position.z, true);
     controls.dollyTo(distance / 2, true)
+  }
+
+  public viewAllAlternative(camera: THREE.PerspectiveCamera, controls: CameraControls, boundingBox: Range3 | undefined, fitOffset = 1.2)
+  {
+    if (!boundingBox)
+      return;
+
+    const box = new THREE.Box3();
+    const size = ThreeConverter.toVector(boundingBox.delta);
+    const center = ThreeConverter.toVector(boundingBox.center);
+
+    const maxSize = Math.max(size.x, size.y, size.z);
+    const fitHeightDistance = maxSize / (2 * Math.atan(Math.PI * camera.fov / 360));
+    const fitWidthDistance = fitHeightDistance / camera.aspect;
+    const distance = fitOffset * Math.max(fitHeightDistance, fitWidthDistance);
+
+    let position = new THREE.Vector3();
+    let target = new THREE.Vector3();
+    position = controls.getPosition(position);
+    target = controls.getTarget(target);
+
+    const direction = target.clone()
+      .sub(camera.position)
+      .normalize()
+      .multiplyScalar(distance);
+
+    controls.maxDistance = distance * 10;
+    target.sub(direction);
+
+
+    controls.setTarget(center.x, center.y, center.z);
+    controls.setPosition(target.x, target.y, target.z);
   }
 
   //==================================================
