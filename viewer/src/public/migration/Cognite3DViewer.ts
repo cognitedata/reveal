@@ -7,7 +7,7 @@ import TWEEN from '@tweenjs/tween.js';
 import debounce from 'lodash/debounce';
 import ComboControls from '@cognite/three-combo-controls';
 import { CogniteClient, IdEither } from '@cognite/sdk';
-import { filter, share } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, share } from 'rxjs/operators';
 
 import { from3DPositionToRelativeViewportCoordinates } from '@/utilities/worldToViewport';
 import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
@@ -40,7 +40,7 @@ import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/Default
 import { BoundingBoxClipper, File3dFormat, isMobileOrTablet } from '@/utilities';
 import { Spinner } from '@/utilities/Spinner';
 import { addPostRenderEffects } from '@/datamodels/cad/rendering/postRenderEffects';
-import { Subscription } from 'rxjs';
+import { combineLatest, Subscription } from 'rxjs';
 
 export interface RelativeMouseEvent {
   offsetX: number;
@@ -161,13 +161,19 @@ export class Cognite3DViewer {
     this.startPointerEventListeners();
 
     this._subscription.add(
-      this.sectorRepository.getLoadingStateObserver().subscribe(isLoading => {
-        if (isLoading) {
-          this.spinner.show();
-        } else {
-          this.spinner.hide();
-        }
-      })
+      combineLatest([this.sectorRepository.getLoadingStateObserver(), this.pointCloudManager.getLoadingStateObserver()])
+        .pipe(
+          map(([pointCloudLoading, cadLoading]) => pointCloudLoading || cadLoading),
+          distinctUntilChanged()
+        )
+        .subscribe(isLoading => {
+          if (isLoading) {
+            this.spinner.show();
+          } else {
+            this.spinner.hide();
+          }
+          // tslint:disable-next-line:no-console
+        }, console.error)
     );
 
     this.animate(0);
