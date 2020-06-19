@@ -8,6 +8,8 @@
 6. [Arrow Functions](#arrow-functions)
 7. [Destructuring](#destructuring)
 8. [Strings](#strings)
+9. [Modules](#strings)
+10. [Properties](#properties)
 
 # Types
 
@@ -154,6 +156,53 @@ class ButcherShop implements Store {
 
 > **Note:** Place readonly variables above mutable variables in classes.
 
+### Inheritance(#inheritance)
+
+Use `extends` to inherit prototype functionality without breaking `instanceof`.
+
+Example of **correct** code for this rule.
+
+```typescript
+abstract class Geometry {
+  abstract areal(): number;
+}
+
+class Square extends Geometry {
+  private readonly _width: number;
+  private readonly _height: number;
+
+  constructor(width: number, height: number) {
+    super();
+    this._width = width;
+    this._height = height;
+  }
+
+  get width(): number {
+    return this._width;
+  }
+
+  get height(): number {
+    return this._height;
+  }
+
+  public areal(): number {
+    return this._width * this._height;
+  }
+}
+
+class Block extends Square {
+  private readonly _color: string;
+  constructor(width: number, height: number, color: string) {
+    super(width, height);
+    this._color = color;
+  }
+
+  get color(): string {
+    return this._color;
+  }
+}
+```
+
 ### [Getters and Setters](#getters-and-setters)
 
 Getters and setters are used to make sure that data is not manipulated in the wrong way. In the example above a getter on the name is safe since the variable itself is passed by reference. But what happens when the getter returns an object?
@@ -199,6 +248,39 @@ owner.name = "Billy";
 
 console.log(candyShop.name); // CandyPlusPlus
 console.log(candyShop.owner.name); // Billy
+```
+
+You can change the return of `get owner()` to return a `Readonly<Owner>` instead, to prevent the user from manipulating child objects.
+
+Example of **correct** code for this rule.
+
+```typescript
+interface Owner {
+  name: string;
+}
+
+interface Store {
+  readonly name: string;
+  readonly owner: Owner;
+}
+
+class CandyShop implements Store {
+  private readonly _name: string;
+  private readonly _owner: Owner;
+
+  constructor(name: string, owner: Owner) {
+    this._name = name;
+    this._owner = owner;
+  }
+
+  get name(): string {
+    return this._name;
+  }
+
+  get owner(): Readonly<Owner> {
+    return this._owner;
+  }
+}
 ```
 
 > In this example it might make more sense if the owner name was `readonly` and the owner had both a setter and a getter in the shop class.
@@ -396,16 +478,15 @@ To clarify, your functions can have arguments, but you should never name a param
 
 Instead of having mutating function arguments, consider using default parameters.
 
-**!!** Example of **incorrect** code for this rule.
+**!!** Examples of **incorrect** code for this rule.
 
 ```typescript
 function handleThings(opts): void {
-  // No! We shouldn't mutate function arguments.
-  // Double bad: if opts is falsy it'll be set to an object which may
-  // be what you want but it can introduce subtle bugs.
   opts = opts || {};
 }
 ```
+
+> **Note:** This can cause subtle bugs if opts is an object that can be falsly
 
 ```typescript
 function handleThings(opts): void {
@@ -587,27 +668,38 @@ Example of **correct** code for this rule.
 
 You should use destructuring whenever you need to create several temporary references of a complex unit.
 
+Let's take a closer look at destructuring using this `Credentials` interface.
+
 ```typescript
 interface Credentials {
   username: string;
   password: string;
 }
+```
 
-// No destructuring, avoid doing this.
+**!!** Example of **incorrect** code for this rule.
+
+```typescript
 function authenticate(credentials: Credentials): boolean {
   const username: string = credentials.username;
   const password: string = credentials.password;
 
   return this._apiService(username, password);
 }
+```
 
-// Getting there!
+Example of **better** code for this rule.
+
+```typescript
 function authenticate(credentials: Credentials): boolean {
   const { username, password } = credentials;
   return this._apiService(username, password);
 }
+```
 
-// And the reward goes to!
+Example of **correct** code for this rule.
+
+```
 function authenticate({ username, password }: Credentials): boolean {
   return this._apiService(username, password);
 }
@@ -617,11 +709,18 @@ You should also use destructuring when working with arrays that have set positio
 
 ```typescript
 const arr = [100, 250];
+```
 
-// Don't assign variables from arrays in this way.
-// const min = arr[0];
-// const max = arr[1];
+**!!** Example of **incorrect** code for this rule.
 
+```typescript
+const min = arr[0];
+const max = arr[1];
+```
+
+Example of **correct** code for this rule.
+
+```typescript
 const [min, max] = arr;
 ```
 
@@ -629,21 +728,31 @@ const [min, max] = arr;
 
 One of the huge benefits of destructuring is that it scales well when working with multiple return values.
 
+**!!** Example of **incorrect** code for this rule.
+
 ```typescript
-...
-// Carefully consider when you use array destructuring.
 function getBoundingBox(): BoundingBox {
   return [this._left, this._top, this._right, this._bottom];
 }
-...
+```
 
-// Object destructuring scales a lot better than array destructuring.
+> **Note:** When using array destructuring you are required to have all the entries when assigning them to a variable.
+
+**!!** Example of why you should consider object over array destructuring.
+
+```typescript
+const [_, top, _, bottom] = getBoundingBox();
+```
+
+Example of **correct** code for this rule.
+
+```typescript
 function getBoundingBox(): BoundingBox {
   return {
     left: this._left,
     top: this._top,
     right: this._right,
-    bottom: this._bottom
+    bottom: this._bottom,
   };
 }
 ```
@@ -651,10 +760,12 @@ function getBoundingBox(): BoundingBox {
 Due to how destructuring works, the latter example scales a lot better. You can add elements to the return statement without breaking the existing calls to the same function. You also do not need to use all of the returned variables.
 
 ```typescript
-// Select the data you need from a function.
 const { top, bottom } = getBoundingBox();
+```
 
-// You can change the base function without breaking the places it is used.
+In addition, when adding information to the interface, you don't break the code where destructuring is used.
+
+```typescript
 function getBoundingBox(): BoundingBox {
   return {
     visible: this._visible,
@@ -672,8 +783,16 @@ function getBoundingBox(): BoundingBox {
 
 A string variable should be enclosed by single quotes.
 
+**!!** Example of **incorrect** code for this rule.
+
 ```typescript
-// const name = "Kane Doe"; No!
+const name = "Kane Doe";
+No!;
+```
+
+Example of **correct** code for this rule.
+
+```typescript
 const name = "Kane Doe";
 ```
 
@@ -683,12 +802,16 @@ const name = "Kane Doe";
 
 If a string is longer than 80 characters, it should be written across multiple lines using breaks.
 
+**!!** Example of **incorrect** code for this rule.
+
 ```typescript
-// Why would you do this towards anyone??
 const errorMessage =
   "Unable to acquire the correct asset requested. Please make sure you provide the correct identifiers to the requested asset. If this error persists, please make sure to check your internet connection.";
+```
 
-// Yes
+Example of **correct** code for this rule.
+
+```typescript
 const errorMessage =
   "Unable to acquire the correct asset requested. Please make \
 sure you provide the correct identifiers to the requested asset. If this error \
@@ -698,6 +821,7 @@ persists, please make sure to check your internet connection.";
 ### [String Concatenation](#string-concatenation)
 
 Another alternative to using `\` for linebreaks is to use string concatenation.
+Example of **correct** code for this rule.
 
 ```typescript
 const errorMessage =
@@ -712,10 +836,128 @@ const errorMessage =
 
 For strings that are generated programatically use templates instead of concatenation.
 
+**!!** Examples of **incorrect** code for this rule.
+
 ```typescript
 function debug(tag: string, message: string) {
-  // console.log('Tag: ' + tag + ', message: ' + message); // No!
-  // console.log(['Tag: ', tag, ', message: ', message].join()); // No again!
-  console.log(`Tag: ${tag}, message: ${message}`); // Yay for templates.
+  console.log("Tag: " + tag + ", message: " + message);
 }
+```
+
+```typescript
+function debug(tag: string, message: string) {
+  console.log(["Tag: ", tag, ", message: ", message].join());
+}
+```
+
+Example of **correct** code for this rule.
+
+```typescript
+function debug(tag: string, message: string) {
+  console.log(`Tag: ${tag}, message: ${message}`);
+}
+```
+
+# Modules
+
+### [Import Method](#import-method)
+
+Use typescript import instead of import/require.
+
+**!!** Example of **incorrect** code for this rule.
+
+```typescript
+import RevealManager = require("./RevealManager");
+```
+
+Example of **correct** code for this rule.
+
+```typescript
+import RevealManager from "./RevealManager";
+```
+
+You can also scope specific exports from a collection of exports.
+
+Example of **correct** code for this rule.
+
+```typescript
+import { of, interval } from "rxjs";
+```
+
+# Iterators and Generators
+
+### [Don't use Iterators](#dont-use-iterators) / [Use Iterators](#use-iterators)
+
+Depending on our choise we change the do's and don'ts.
+
+Given you have an array like this.
+
+```typescript
+const numbers = [1, 2, 3, 4, 5];
+```
+
+**!!** Example of **incorrect** code for this rule.
+
+```typescript
+let sum = 0;
+for (let num of numbers) {
+  sum += num;
+}
+```
+
+Examples of **correct** code for this rule.
+
+```typescript
+let sum = 0;
+numbers.forEach((num) => (sum += num));
+```
+
+```typescript
+const sum = numbers.reduce((total, num) => total + num, 0);
+```
+
+# Properties
+
+### Dot Notation
+
+When accessing properties, use the dot notation.
+
+**!!** Example of **incorrect** code for this rule.
+
+```typescript
+interface Person {
+  readonly name: string;
+}
+
+const suspect: Person = { name: "Oscar" };
+const name = suspect["name"];
+```
+
+Example of **correct** code for this rule.
+
+```typescript
+interface Person {
+  readonly name: string;
+}
+
+const suspect: Person = { name: "Oscar" };
+const name = suspect.name;
+```
+
+# Comparison Operators & Equality
+
+### [Strict Compare](#strict-compare)
+
+**Don't** use
+
+```typescript
+==
+!=
+```
+
+**Do** use
+
+```typescript
+===
+!==
 ```
