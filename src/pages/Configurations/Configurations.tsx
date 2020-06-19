@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import { Button, Icon } from '@cognite/cogs.js';
 import { colors } from 'global-styles';
 import Table from 'components/Organisms/Table';
-import ApiContext from 'contexts/ApiContext';
+import ApiContext, { ApiContextType } from 'contexts/ApiContext';
 import { ContentContainer } from './elements';
 
 const dataSource = [
@@ -105,13 +105,9 @@ const columns = [
 ];
 
 const Configurations = () => {
-  const { getHello, objects } = useContext<any>(ApiContext);
-  if (getHello) {
-    getHello().then((response: { msg: string }) => console.log(response));
-  }
-  if (objects) {
-    objects.getAll().then((r: any) => console.log(r));
-  }
+  const { getHello, objects } = useContext<ApiContextType>(ApiContext);
+  getHello().then((response: { msg: string }) => console.log(response));
+  objects.get().then((r: any) => console.log(r));
   return (
     <ContentContainer>
       <Table dataSource={dataSource} columns={columns} />

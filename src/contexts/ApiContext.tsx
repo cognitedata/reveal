@@ -5,19 +5,19 @@ type ApiProviderProps = {
   children: React.ReactNode;
 };
 
-export type ApiContextProps = {
+export type ApiContextType = {
   getHello: () => Promise<{ msg: string }>;
   objects: {
-    getAll: () => Promise<any>;
+    get: () => Promise<any>;
   };
-} | null;
+};
 
 const headers = {
   'Access-Control-Allow-Origin': '*',
   'api-key': config.api.key,
 };
 
-const ApiContext = React.createContext<ApiContextProps>(null);
+const ApiContext = React.createContext<ApiContextType>(undefined!);
 
 export const ApiProvider = ({ children }: ApiProviderProps) => {
   async function getHello(): Promise<{ msg: string }> {
@@ -29,9 +29,19 @@ export const ApiProvider = ({ children }: ApiProviderProps) => {
   }
 
   const objects = {
-    async getAll(): Promise<any> {
+    async get(
+      skip: number = 0,
+      limit: number = 3000,
+      include_related: boolean = false
+    ): Promise<any> {
+      const queryParams = new URLSearchParams();
+      queryParams.set('skip', skip.toString());
+      queryParams.set('limit', limit.toString());
+      queryParams.set('include_related', include_related.toString());
       const response = await fetch(
-        `${config.api.url}${config.api.project}/objects`,
+        `${config.api.url}${
+          config.api.project
+        }/objects?${queryParams.toString()}`,
         {
           method: 'GET',
           headers,
