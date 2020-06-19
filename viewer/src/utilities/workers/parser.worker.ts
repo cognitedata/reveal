@@ -86,15 +86,15 @@ export class ParserWorker {
       for (let j = 0; j < x.instances.length; j++) {
         const y = x.instances[j];
         ints.push({
-          triangleCount: y.triangleCount,
-          triangleOffset: y.triangleOffset,
+          triangleCount: Number(y.triangleCount),
+          triangleOffset: Number(y.triangleOffset),
           colors: Uint8Array.from(y.colors),
           instanceMatrices: Float32Array.from(y.instanceMatrices),
           treeIndices: Float32Array.from(y.treeIndices)
         });
       }
       iMeshes.push({
-        fileId: x.fileId as number,
+        fileId: Number(x.fileId),
         indices: Uint32Array.from(x.indices),
         vertices: Float32Array.from(x.vertices),
         normals: this.convertToFloat32Array(x.normals),
@@ -106,7 +106,7 @@ export class ParserWorker {
     for (let i = 0; i < tMesh.length; i++) {
       const x = tMesh[i];
       tMeshes.push({
-        fileId: x.fileId,
+        fileId: Number(x.fileId),
         indices: Uint32Array.from(x.indices),
         treeIndices: Float32Array.from(x.treeIndices),
         vertices: Float32Array.from(x.vertices),
