@@ -51,7 +51,7 @@ export abstract class BaseLogNode extends BaseVisualNode
 
     const filterLogFolder = trajectoryNode.getFilterLogFolder();
     if (!filterLogFolder)
-    return null;
+      return null;
 
     const filterLogNode = filterLogFolder.getFilterLogNode(this);
     if (!filterLogNode)
@@ -89,8 +89,8 @@ export abstract class BaseLogNode extends BaseVisualNode
 
   public /*override*/ canBeChecked(target: ITarget | null): boolean
   {
-    const filterLogNode = this.filterLogNode;
-    return filterLogNode ? filterLogNode.isVisible(target) : false;
+    const trajectoryNode = this.trajectoryNode;
+    return trajectoryNode ? trajectoryNode.isVisible(target) : false;
   }
 
   //==================================================
