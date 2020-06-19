@@ -22,8 +22,9 @@ import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloud
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
-import { Subscription } from 'rxjs';
+import { combineLatest, Subscription } from 'rxjs';
 import { RevealOptions } from './types';
+import { distinctUntilChanged, map } from 'rxjs/operators';
 
 type CdfModelIdentifier = { modelRevision: IdEither; format: File3dFormat };
 type LoadingStateChangeListener = (isLoading: boolean) => any;
@@ -68,9 +69,22 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
     this.eventListeners = {
       loadingStateChanged: new Array<LoadingStateChangeListener>()
     };
+    this.notifyLoadingStateListeners = this.notifyLoadingStateListeners.bind(this);
+
     this._subscription = new Subscription();
     this._subscription.add(
-      sectorRepository.getLoadingStateObserver().subscribe(this.notifyLoadingStateListeners.bind(this))
+      combineLatest([sectorRepository.getLoadingStateObserver(), pointCloudManager.getLoadingStateObserver()])
+        .pipe(
+          map(([pointCloudLoading, cadLoading]) => {
+            return pointCloudLoading || cadLoading;
+          }),
+          distinctUntilChanged()
+        )
+        .subscribe(
+          this.notifyLoadingStateListeners,
+          // tslint:disable-next-line:no-console
+          console.error
+        )
     );
   }
 
