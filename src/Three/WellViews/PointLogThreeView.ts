@@ -19,18 +19,18 @@ import { Range3 } from "@/Core/Geometry/Range3";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 
 import { PointLogNode } from "@/Nodes/Wells/Wells/PointLogNode";
-import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { SpriteCreator } from "@/Three/Utilities/SpriteCreator";
 
-import * as Color from "color"
 import { Colors } from "@/Core/Primitives/Colors";
 import { Canvas } from "@/Three/Utilities/Canvas";
 import { Changes } from "@/Core/Views/Changes";
 import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
 import { Appearance } from "@/Core/States/Appearance";
+import { WellTrajectoryStyle } from "@/Nodes/Wells/Styles/WellTrajectoryStyle";
+import { PointLogStyle } from "@/Nodes/Wells/Styles/PointLogStyle";
 
 const selectedRadiusFactor = 1.2;
 
@@ -48,7 +48,7 @@ export class PointLogThreeView extends BaseGroupThreeView
   //==================================================
 
   protected get node(): PointLogNode { return super.getNode() as PointLogNode; }
-  protected get style(): WellRenderStyle { return super.getStyle() as WellRenderStyle; }
+  private get style(): PointLogStyle { return super.getStyle() as PointLogStyle; }
 
   //==================================================
   // CONSTRUCTORS
@@ -197,18 +197,22 @@ export class PointLogThreeView extends BaseGroupThreeView
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
     const node = this.node;
-    const color = node.getColor();
     const trajectory = node.trajectory;
     if (!trajectory)
       return null;
 
+    const style = this.style;
+    if (!style)
+      return null;
+
+    const color = node.getColorByColorType(style.colorType)
     const log = node.data;
     if (!log)
       throw Error("Well trajectory is missing");
 
     const group = new THREE.Group();
 
-    const radius = this.radius;
+    const radius = style.radius;
     const selectedRadius = radius * selectedRadiusFactor;
     const closedGeometry = new THREE.SphereGeometry(radius, 16, 8);
     const openGeometry = new THREE.SphereGeometry(selectedRadius, 16, 8);
@@ -253,7 +257,7 @@ export class PointLogThreeView extends BaseGroupThreeView
         const prependicular = cameraDirection.getNormal(tangent);
         position.addWithFactor(prependicular, selectedRadius);
 
-        const label = PointLogThreeView.createLabel(node.getName(), sample.label, position, 5);
+        const label = PointLogThreeView.createLabel(node.getName(), sample.label, position, style.fontSize);
         if (label)  
         {
           label.center = new THREE.Vector2(0, 1);
@@ -280,7 +284,7 @@ export class PointLogThreeView extends BaseGroupThreeView
     if (!trajectoryNode)
       return 0;
 
-    const wellRenderStyle = trajectoryNode.getRenderStyle(this.targetId) as WellRenderStyle;
+    const wellRenderStyle = trajectoryNode.getRenderStyle(this.targetId) as WellTrajectoryStyle;
     if (!wellRenderStyle)
       return 0;
 

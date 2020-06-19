@@ -22,6 +22,8 @@ import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
 import { BaseFilterLogNode } from "@/Nodes/Wells/Filters/BaseFilterLogNode";
 import { Util } from "@/Core/Primitives/Util";
 import { ITarget } from "@/Core/Interfaces/ITarget";
+import { TargetId } from "@/Core/Primitives/TargetId";
+import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 
 export abstract class BaseLogNode extends BaseVisualNode
 {
@@ -40,6 +42,23 @@ export abstract class BaseLogNode extends BaseVisualNode
   public get well(): WellNode | null { return this.getAncestorByType(WellNode); }
   public get trajectoryNode(): WellTrajectoryNode | null { return this.getAncestorByType(WellTrajectoryNode); }
   public get trajectory(): WellTrajectory | null { const node = this.trajectoryNode; return node ? node.data : null; }
+
+  public get filterLogNode(): BaseFilterLogNode | null
+  {
+    const trajectoryNode = this.trajectoryNode;
+    if (!trajectoryNode)
+      return null;
+
+    const filterLogFolder = trajectoryNode.getFilterLogFolder();
+    if (!filterLogFolder)
+    return null;
+
+    const filterLogNode = filterLogFolder.getFilterLogNode(this);
+    if (!filterLogNode)
+      return null;
+
+    return filterLogNode;
+  }
 
   //==================================================
   // CONSTRUCTORS
@@ -62,27 +81,26 @@ export abstract class BaseLogNode extends BaseVisualNode
 
   public /*override*/ getColor(): Color
   {
-    const trajectoryNode = this.trajectoryNode;
-    if (!trajectoryNode)
-      return super.getColor();
-
-    const filterLogFolder = trajectoryNode.getFilterLogFolder();
-    if (!filterLogFolder)
-      return super.getColor();
-
-    const filterLogNode = filterLogFolder.getFilterLogNode(this);
-    if (!filterLogNode)
-      return super.getColor();
-
-    return filterLogNode.getColor();
+    const filterLogNode = this.filterLogNode;
+    return filterLogNode ? filterLogNode.getColor() : super.getColor();
   }
 
   public /*override*/ canChangeColor(): boolean { return false; }
 
   public /*override*/ canBeChecked(target: ITarget | null): boolean
   {
-    const trajectoryNode = this.trajectoryNode;
-    return trajectoryNode ? trajectoryNode.isVisible(target) : false;
+    const filterLogNode = this.filterLogNode;
+    return filterLogNode ? filterLogNode.isVisible(target) : false;
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Draw styles
+  //==================================================
+
+  public getRenderStyle(targetId?: TargetId): BaseRenderStyle | null
+  {
+    const filterLogNode = this.filterLogNode;
+    return filterLogNode ? filterLogNode.getRenderStyle(targetId) : null;
   }
 
   //==================================================

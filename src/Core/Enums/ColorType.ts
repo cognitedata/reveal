@@ -13,7 +13,8 @@
 
 export enum ColorType
 {
-  NodeColor, // Use the color of the node
+  Specified, // Use the color of the node
+  Parent, // Use the color of the parent node
   Black,
   White,
   DepthColor, // Color by the Z value, using a color table

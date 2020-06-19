@@ -17,17 +17,14 @@ import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
 
-export class WellRenderStyle extends BaseRenderStyle
+export class CasingLogStyle extends BaseRenderStyle
 {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
 
-  public radius = 2;
-  public colorType = ColorType.DifferentColor;
-  public nameFontHeight = 30;
-  public bandWidth = 50;
-  public bandFontSize = 20;
+  public colorType = ColorType.White;
+  public opacity = 0.7;
 
   //==================================================
   // CONSTRUCTORS
@@ -41,7 +38,7 @@ export class WellRenderStyle extends BaseRenderStyle
 
   public clone(): BaseRenderStyle
   {
-    return Lodash.cloneDeep<WellRenderStyle>(this);
+    return Lodash.cloneDeep<CasingLogStyle>(this);
   }
 }
 

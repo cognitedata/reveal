@@ -123,7 +123,7 @@ export abstract class BaseNode extends Identifiable
   public /*virtual*/ get isActive(): boolean { return this._isActive; }
   public /*virtual*/ set isActive(value: boolean) { this._isActive = value; }
   public /*virtual*/ canBeActive(): boolean { return false; }
-  public /*virtual*/ canBeSelected(): boolean {return true; }
+  public /*virtual*/ canBeSelected(): boolean { return true; }
 
   //==================================================
   // VIRTUAL METHODS: Appearance in the explorer
@@ -314,7 +314,8 @@ export abstract class BaseNode extends Identifiable
   {
     switch (colorType)
     {
-      case ColorType.NodeColor: return this.getColor();
+      case ColorType.Specified: return this.getColor();
+      case ColorType.Parent: return this.parent ? this.parent.getColor() : Colors.grey;
       case ColorType.Black: return Colors.black;
       case ColorType.White: return Colors.white;
       default: return Colors.white; // Must be white because texture colors are multiplicative

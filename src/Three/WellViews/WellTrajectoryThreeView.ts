@@ -22,8 +22,7 @@ import { Colors } from "@/Core/Primitives/Colors";
 import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
 import { FloatLogNode } from "@/Nodes/Wells/Wells/FloatLogNode";
 import { DiscreteLogNode } from "@/Nodes/Wells/Wells/DiscreteLogNode";
-import { PointLogNode } from "@/Nodes/Wells/Wells/PointLogNode";
-import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
+import { WellTrajectoryStyle } from "@/Nodes/Wells/Styles/WellTrajectoryStyle";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { Changes } from "@/Core/Views/Changes";
 
@@ -59,7 +58,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
   //==================================================
 
   private get node(): WellTrajectoryNode { return super.getNode() as WellTrajectoryNode; }
-  private get style(): WellRenderStyle { return super.getStyle() as WellRenderStyle; }
+  private get style(): WellTrajectoryStyle { return super.getStyle() as WellTrajectoryStyle; }
 
   private get bandRange(): Range1 | undefined
   {
@@ -327,11 +326,11 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
   {
     const node = this.node;
     const style = this.style;
-    const color = node.getColor();
     const trajectory = node.data;
     if (!trajectory)
       return;
 
+    const color = node.getColorByColorType(style.colorType);
     const samples = trajectory.createRenderSamples(color, style.radius);
     const geometry = new TrajectoryBufferGeometry(samples);
     const material = new THREE.MeshStandardMaterial({

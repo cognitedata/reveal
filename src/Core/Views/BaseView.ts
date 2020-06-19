@@ -183,8 +183,6 @@ export abstract class BaseView
       return false;
     if (!this.getTarget())
       return false;
-    if (!this.getStyle())
-      return false;
     if (!this.getNode().isInitialized)
       return false;
     return true;

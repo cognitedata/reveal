@@ -12,11 +12,12 @@
 //=====================================================================================
 
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
+import { DiscreteLogStyle } from "@/Nodes/Wells/Styles/DiscreteLogStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseFilterLogNode } from "@/Nodes/Wells/Filters/BaseFilterLogNode";
 import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
 import DiscreteLogNodeIcon from "@images/Nodes/DiscreteLogNode.png";
+import { ColorType } from "@/Core/Enums/ColorType";
 
 export class DiscreteFilterLogNode extends BaseFilterLogNode
 {
@@ -24,7 +25,7 @@ export class DiscreteFilterLogNode extends BaseFilterLogNode
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get renderStyle(): WellRenderStyle | null { return this.getRenderStyle() as WellRenderStyle; }
+  public get renderStyle(): DiscreteLogStyle | null { return this.getRenderStyle() as DiscreteLogStyle; }
 
   //==================================================
   // CONSTRUCTORS
@@ -49,9 +50,24 @@ export class DiscreteFilterLogNode extends BaseFilterLogNode
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
-    return new WellRenderStyle(targetId);
+    return new DiscreteLogStyle(targetId);
   }
   
+  public /*override*/ supportsColorType(colorType: ColorType): boolean
+  {
+    switch (colorType)
+    {
+      case ColorType.Specified:
+      case ColorType.Parent:
+      case ColorType.Black:
+      case ColorType.White:
+        return true;
+
+      default:
+        return false;
+    }
+  }
+
   //==================================================
   // OVERRIDES of BaseLogNode
   //==================================================

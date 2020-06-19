@@ -11,10 +11,6 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { ColorType } from "@/Core/Enums/ColorType";
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { TargetId } from "@/Core/Primitives/TargetId";
-import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
 import { BaseFilterLogNode } from "@/Nodes/Wells/Filters/BaseFilterLogNode";
@@ -32,12 +28,6 @@ import FilterLogFolderIcon from "@images/Nodes/FilterLogFolder.png";
 
 export class FilterLogFolder extends BaseNode
 {
-  //==================================================
-  // INSTANCE PROPERTIES
-  //==================================================
-
-  public get renderStyle(): WellRenderStyle | null { return this.getRenderStyle() as WellRenderStyle; }
-
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -59,36 +49,9 @@ export class FilterLogFolder extends BaseNode
   public /*override*/ getIcon(): string { return FilterLogFolderIcon }
   public /*override*/ canChangeName(): boolean { return false }
   public /*override*/ canChangeColor(): boolean { return false; }
-  public /*virtual*/ isLabelInItalic(): boolean { return true; }
-  public /*virtual*/ isFilter(target: ITarget | null): boolean { return true; }
-
+  public /*override*/ isLabelInItalic(): boolean { return true; }
+  public /*override*/ isFilter(target: ITarget | null): boolean { return true; }
   public /*override*/ canBeChecked(target: ITarget | null): boolean { return false; }
-
-  public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
-  {
-    return new WellRenderStyle(targetId);
-  }
-
-  public /*override*/ verifyRenderStyle(style: BaseRenderStyle)
-  {
-    if (!(style instanceof WellRenderStyle))
-      return;
-
-    if (!this.supportsColorType(style.colorType))
-      style.colorType = ColorType.NodeColor;
-  }
-
-  public /*override*/ supportsColorType(colorType: ColorType): boolean
-  {
-    switch (colorType)
-    {
-      case ColorType.NodeColor:
-        return true;
-
-      default:
-        return false;
-    }
-  }
 
   //==================================================
   // INSTANCE FUNCTIONS
