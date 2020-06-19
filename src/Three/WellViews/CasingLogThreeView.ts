@@ -18,7 +18,6 @@ import { Range3 } from "@/Core/Geometry/Range3";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 
 import { CasingLogNode } from "@/Nodes/Wells/Wells/CasingLogNode";
-import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
@@ -26,6 +25,8 @@ import { RenderSample } from "@/Nodes/Wells/Samples/RenderSample";
 import { Colors } from "@/Core/Primitives/Colors";
 import { TrajectoryBufferGeometry } from "@/Three/WellViews/Helpers/TrajectoryBufferGeometry";
 import { Vector3 } from "@/Core/Geometry/Vector3";
+import { WellTrajectoryStyle } from "@/Nodes/Wells/Styles/WellTrajectoryStyle";
+import { CasingLogStyle } from "@/Nodes/Wells/Styles/CasingLogStyle";
 
 export class CasingLogThreeView extends BaseGroupThreeView
 {
@@ -34,7 +35,7 @@ export class CasingLogThreeView extends BaseGroupThreeView
   //==================================================
 
   protected get node(): CasingLogNode { return super.getNode() as CasingLogNode; }
-  protected get style(): WellRenderStyle { return super.getStyle() as WellRenderStyle; }
+  private get style(): CasingLogStyle { return super.getStyle() as CasingLogStyle; }
 
   //==================================================
   // CONSTRUCTORS
@@ -97,7 +98,11 @@ export class CasingLogThreeView extends BaseGroupThreeView
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
     const node = this.node;
-    const color = Colors.grey; //node.color;
+    const style = this.style;
+    if (!style)
+      return null;
+
+    const color = node.getColorByColorType(style.colorType);
     const trajectory = node.trajectory;
     if (!trajectory)
       return null;
@@ -144,7 +149,7 @@ export class CasingLogThreeView extends BaseGroupThreeView
       color: ThreeConverter.toColor(Colors.white),
       vertexColors: THREE.VertexColors,
       transparent: true,
-      opacity: 0.7
+      opacity: style.opacity
     });
     return new THREE.Mesh(geometry, material);
   }
@@ -163,7 +168,7 @@ export class CasingLogThreeView extends BaseGroupThreeView
     if (!trajectoryNode)
       return 0;
 
-    const wellRenderStyle = trajectoryNode.getRenderStyle(this.targetId) as WellRenderStyle;
+    const wellRenderStyle = trajectoryNode.getRenderStyle(this.targetId) as WellTrajectoryStyle;
     if (!wellRenderStyle)
       return 0;
 

@@ -71,7 +71,7 @@ export class PolylinesNode extends BaseVisualNode
       return;
 
     if (!this.supportsColorType(style.colorType))
-      style.colorType = ColorType.NodeColor;
+      style.colorType = ColorType.Specified;
   }
 
   public /*override*/ supportsColorType(colorType: ColorType): boolean
@@ -79,7 +79,7 @@ export class PolylinesNode extends BaseVisualNode
     switch (colorType)
     {
       case ColorType.DifferentColor:
-      case ColorType.NodeColor:
+      case ColorType.Specified:
         return true;
 
       default:

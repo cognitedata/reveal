@@ -13,9 +13,6 @@
 
 import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
 import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
-import { TargetId } from "@/Core/Primitives/TargetId";
 import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
 import CasingLogNodeIcon from "@images/Nodes/CasingLogNode.png";
 
@@ -27,7 +24,6 @@ export class CasingLogNode extends BaseLogNode
 
   public get data(): FloatLog | null { return this._data as FloatLog; }
   public set data(value: FloatLog | null) { this._data = value; }
-  public get renderStyle(): WellRenderStyle | null { return this.getRenderStyle() as WellRenderStyle; }
 
   //==================================================
   // CONSTRUCTORS
@@ -49,11 +45,6 @@ export class CasingLogNode extends BaseLogNode
   public /*override*/ get typeName(): string { return "Casing" }
 
   public /*override*/ getIcon(): string { return CasingLogNodeIcon }
-
-  public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
-  {
-    return new WellRenderStyle(targetId);
-  }
 
   //==================================================
   // OVERRIDES of BaseLogNode

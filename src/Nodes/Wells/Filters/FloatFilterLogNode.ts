@@ -12,11 +12,12 @@
 //=====================================================================================
 
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
+import { FloatLogStyle } from "@/Nodes/Wells/Styles/FloatLogStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseFilterLogNode } from "@/Nodes/Wells/Filters/BaseFilterLogNode";
 import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
 import FloatLogNodeIcon from "@images/Nodes/FloatLogNode.png";
+import { ColorType } from "@/Core/Enums/ColorType";
 
 export class FloatFilterLogNode extends BaseFilterLogNode
 {
@@ -24,7 +25,7 @@ export class FloatFilterLogNode extends BaseFilterLogNode
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get renderStyle(): WellRenderStyle | null { return this.getRenderStyle() as WellRenderStyle; }
+  public get renderStyle(): FloatLogStyle | null { return this.getRenderStyle() as FloatLogStyle; }
 
   //==================================================
   // CONSTRUCTORS
@@ -49,7 +50,22 @@ export class FloatFilterLogNode extends BaseFilterLogNode
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
-    return new WellRenderStyle(targetId);
+    return new FloatLogStyle(targetId);
+  }
+
+  public /*override*/ supportsColorType(colorType: ColorType): boolean
+  {
+    switch (colorType)
+    {
+      case ColorType.Specified:
+      case ColorType.Parent:
+      case ColorType.Black:
+      case ColorType.White:
+        return true;
+
+      default:
+        return false;
+    }
   }
 
   //==================================================

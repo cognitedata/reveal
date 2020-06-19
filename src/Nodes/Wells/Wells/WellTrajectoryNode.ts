@@ -17,7 +17,7 @@ import { Range3 } from "@/Core/Geometry/Range3";
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
-import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
+import { WellTrajectoryStyle } from "@/Nodes/Wells/Styles/WellTrajectoryStyle";
 import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
 import { WellNode } from "@/Nodes/Wells/Wells/WellNode";
 import { FilterLogFolder } from "@/Nodes/Wells/Filters/FilterLogFolder";
@@ -39,7 +39,7 @@ export class WellTrajectoryNode extends BaseVisualNode
 
   public get data(): WellTrajectory | null { return this._data; }
   public set data(value: WellTrajectory | null) { this._data = value; }
-  public get renderStyle(): WellRenderStyle | null { return this.getRenderStyle() as WellRenderStyle; }
+  public get renderStyle(): WellTrajectoryStyle | null { return this.getRenderStyle() as WellTrajectoryStyle; }
   public get well(): WellNode | null { return this.getAncestorByType(WellNode); }
 
   //==================================================
@@ -67,23 +67,26 @@ export class WellTrajectoryNode extends BaseVisualNode
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
-    return new WellRenderStyle(targetId);
+    return new WellTrajectoryStyle(targetId);
   }
 
   public /*override*/ verifyRenderStyle(style: BaseRenderStyle)
   {
-    if (!(style instanceof WellRenderStyle))
+    if (!(style instanceof WellTrajectoryStyle))
       return;
 
     if (!this.supportsColorType(style.colorType))
-      style.colorType = ColorType.NodeColor;
+      style.colorType = ColorType.Specified;
   }
 
   public /*override*/ supportsColorType(colorType: ColorType): boolean
   {
     switch (colorType)
     {
-      case ColorType.NodeColor:
+      case ColorType.Specified:
+      case ColorType.Parent:
+      case ColorType.Black:
+      case ColorType.White:
         return true;
 
       default:

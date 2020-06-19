@@ -13,9 +13,6 @@
 
 import { PointLog } from "@/Nodes/Wells/Logs/PointLog";
 import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
-import { TargetId } from "@/Core/Primitives/TargetId";
 import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
 import PointLogNodeIcon from "@images/Nodes/PointLogNode.png";
 
@@ -27,7 +24,6 @@ export class PointLogNode extends BaseLogNode
 
   public get data(): PointLog | null { return this._data as PointLog; }
   public set data(value: PointLog | null) { this._data = value; }
-  public get renderStyle(): WellRenderStyle | null { return this.getRenderStyle() as WellRenderStyle; }
 
   //==================================================
   // CONSTRUCTORS
@@ -47,13 +43,7 @@ export class PointLogNode extends BaseLogNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "PointLog" }
-
   public /*override*/ getIcon(): string { return PointLogNodeIcon }
-
-  public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
-  {
-    return new WellRenderStyle(targetId);
-  }
 
   //==================================================
   // OVERRIDES of BaseLogNode

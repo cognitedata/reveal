@@ -12,11 +12,12 @@
 //=====================================================================================
 
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { WellRenderStyle } from "@/Nodes/Wells/Wells/WellRenderStyle";
+import { PointLogStyle } from "@/Nodes/Wells/Styles/PointLogStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseFilterLogNode } from "@/Nodes/Wells/Filters/BaseFilterLogNode";
 import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
 import PointLogNodeIcon from "@images/Nodes/PointLogNode.png";
+import { ColorType } from "@/Core/Enums/ColorType";
 
 export class PointFilterLogNode extends BaseFilterLogNode
 {
@@ -24,7 +25,7 @@ export class PointFilterLogNode extends BaseFilterLogNode
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get renderStyle(): WellRenderStyle | null { return this.getRenderStyle() as WellRenderStyle; }
+  public get renderStyle(): PointLogStyle | null { return this.getRenderStyle() as PointLogStyle; }
 
   //==================================================
   // CONSTRUCTORS
@@ -49,7 +50,22 @@ export class PointFilterLogNode extends BaseFilterLogNode
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
-    return new WellRenderStyle(targetId);
+    return new PointLogStyle(targetId);
+  }
+
+  public /*override*/ supportsColorType(colorType: ColorType): boolean
+  {
+    switch (colorType)
+    {
+      case ColorType.Specified:
+      case ColorType.Parent:
+      case ColorType.Black:
+      case ColorType.White:
+        return true;
+
+      default:
+        return false;
+    }
   }
 
   //==================================================
