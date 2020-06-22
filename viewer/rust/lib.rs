@@ -40,14 +40,6 @@ pub struct CtmResult {
 #[wasm_bindgen]
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct ParsedSector {
-    instance_meshes: InstancedMeshInput,
-    triangle_meshes: TriangleMeshInput,
-}
-
-#[wasm_bindgen]
-#[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
 pub struct TriangleMeshInput {
     file_ids: Vec<f64>,
     colors: Vec<u8>,
@@ -123,10 +115,11 @@ pub struct SectorGeometry {
 
 #[wasm_bindgen]
 impl SectorGeometry {
+    #[wasm_bindgen(getter)]
     pub fn instance_meshes(&self) -> Result<JsValue, JsValue> {
         serde_wasm_bindgen::to_value(&self.instance_meshes).map_err(|e| e.into())
     }
-
+    #[wasm_bindgen(getter)]
     pub fn triangle_meshes(&self) -> Result<JsValue, JsValue> {
         serde_wasm_bindgen::to_value(&self.triangle_meshes).map_err(|e| e.into())
     }
@@ -193,16 +186,20 @@ pub fn parse_and_convert_sector(input: &[u8]) -> Result<i3df::renderables::Secto
 }
 
 #[wasm_bindgen]
-pub fn finalize_detailed(i3d_file: JsValue, ctm_files: JsValue) -> Result<SectorGeometry, JsValue> {
+pub fn finalize_detailed(
+    i_meshes: JsValue,
+    t_meshes: JsValue,
+    ctm_files: JsValue,
+) -> Result<SectorGeometry, JsValue> {
     // TODO read https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/building-your-project.html
     // and see if this can be moved to one common place
     panic::set_hook(Box::new(console_error_panic_hook::hook));
-    let i3d_file: ParsedSector =
-        serde_wasm_bindgen::from_value(i3d_file).map_err(|e| e.to_string())?;
+    let instance_meshes: InstancedMeshInput =
+        serde_wasm_bindgen::from_value(i_meshes).map_err(|e| e.to_string())?;
+    let triangle_meshes: TriangleMeshInput =
+        serde_wasm_bindgen::from_value(t_meshes).map_err(|e| e.to_string())?;
     let ctm_map: HashMap<String, CtmInput> =
         serde_wasm_bindgen::from_value(ctm_files).map_err(|e| e.to_string())?;
-    let triangle_meshes = i3d_file.triangle_meshes;
-    let instance_meshes = i3d_file.instance_meshes;
 
     let final_triangle_meshes = finalize_triagle_meshes(&triangle_meshes, &ctm_map)?;
 

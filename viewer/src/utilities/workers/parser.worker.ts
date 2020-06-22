@@ -71,8 +71,8 @@ export class ParserWorker {
     ctmFiles: Map<string, ParseCtmResult>
   ): Promise<SectorGeometry> {
     const rust = await rustModule;
-    const sectorData = rust.finalize_detailed(i3dFile, ctmFiles);
-    const iMesh = sectorData.instance_meshes();
+    const sectorData = rust.finalize_detailed(i3dFile.instanceMeshes, i3dFile.triangleMeshes, ctmFiles);
+    const iMesh = sectorData.instance_meshes;
     const iMeshes: InstancedMeshFile[] = [];
     for (let i = 0; i < iMesh.length; i++) {
       const x = iMesh[i];
@@ -95,7 +95,7 @@ export class ParserWorker {
         instances: ints
       });
     }
-    const tMesh = sectorData.triangle_meshes();
+    const tMesh = sectorData.triangle_meshes;
     const tMeshes: TriangleMesh[] = [];
     for (let i = 0; i < tMesh.length; i++) {
       const x = tMesh[i];
