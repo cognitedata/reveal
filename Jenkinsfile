@@ -3,12 +3,12 @@
 //  Staging deployments are protected by CogniteIAP, meaning they're only accessible to Cogniters.
 static final String STAGING_DOMAIN_NAME = "staging.cwp.cogniteapp.com"
 // We do not have a production app yet
-static final String RELEASE_DOMAIN_NAME = ""
+// static final String RELEASE_DOMAIN_NAME = ""
 
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
 // one (or do not have access to Sentry), stop by #frontend to ask for help. :)
-static final String SENTRY_PROJECT_NAME = ""
+static final String SENTRY_PROJECT_NAME = "react-demo-app"
 // The Sentry DSN is the URL used to report issues into Sentry. This can be
 // found on your Sentry's project page, or by going here:
 // https://docs.sentry.io/error-reporting/quickstart/?platform=browser
@@ -22,7 +22,6 @@ static final String SENTRY_DSN = ""
 static final String LOCIZE_PROJECT_ID = ""
 
 static final String PR_COMMENT_MARKER = "[pr-server]\n"
-static final String STORYBOOK_COMMENT_MARKER = "[storybook-server]\n"
 
 static final String NODE_VERSION = 'node:12'
 
@@ -32,8 +31,8 @@ def pods = { body ->
       fas.pod(
         nodeVersion: NODE_VERSION,
         sentryProjectName: SENTRY_PROJECT_NAME,
-        sentryDsn: SENTRY_DSN,
-        locizeProjectId: LOCIZE_PROJECT_ID
+//        sentryDsn: SENTRY_DSN,
+//        locizeProjectId: LOCIZE_PROJECT_ID
       ) {
         properties([
           buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))
