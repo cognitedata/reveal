@@ -7,7 +7,8 @@ import TWEEN from '@tweenjs/tween.js';
 import debounce from 'lodash/debounce';
 import ComboControls from '@cognite/three-combo-controls';
 import { CogniteClient, IdEither } from '@cognite/sdk';
-import { filter, share, debounceTime, publish, map } from 'rxjs/operators';
+import { distinctUntilChanged, filter, share, debounceTime, publish, map } from 'rxjs/operators';
+import { Subscription, Subject, combineLatest, merge } from 'rxjs';
 
 import { from3DPositionToRelativeViewportCoordinates } from '@/utilities/worldToViewport';
 import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
@@ -40,7 +41,6 @@ import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/Default
 import { BoundingBoxClipper, File3dFormat, isMobileOrTablet } from '@/utilities';
 import { Spinner } from '@/utilities/Spinner';
 import { addPostRenderEffects } from '@/datamodels/cad/rendering/postRenderEffects';
-import { Subscription, Subject, merge } from 'rxjs';
 
 export interface RelativeMouseEvent {
   offsetX: number;
@@ -180,13 +180,22 @@ export class Cognite3DViewer {
     this.startPointerEventListeners();
 
     this._loadingSubscription.add(
-      this.sectorRepository.getLoadingStateObserver().subscribe(isLoading => {
-        if (isLoading) {
-          this.spinner.show();
-        } else {
-          this.spinner.hide();
-        }
-      })
+      combineLatest([this.sectorRepository.getLoadingStateObserver(), this.pointCloudManager.getLoadingStateObserver()])
+        .pipe(
+          map(([pointCloudLoading, cadLoading]) => pointCloudLoading || cadLoading),
+          distinctUntilChanged()
+        )
+        .subscribe(
+          isLoading => {
+            if (isLoading) {
+              this.spinner.show();
+            } else {
+              this.spinner.hide();
+            }
+          },
+          // tslint:disable-next-line:no-console
+          (message, ...optionalArgs) => console.error(message, ...optionalArgs)
+        )
     );
 
     this._updateCameraNearAndFarSubject = this.setupUpdateCameraNearAndFar();
