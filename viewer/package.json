@@ -79,7 +79,7 @@
     "@cognite/sdk": "^2.30.0",
     "@cognite/three-combo-controls": "^1.4.1",
     "@tweenjs/tween.js": "^18.5.0",
-    "@types/lodash": "^4.14.155",
+    "@types/lodash": "^4.14.156",
     "comlink": "^4.3.0",
     "gl-matrix": "^3.3.0",
     "glslify": "^7.0.0",
