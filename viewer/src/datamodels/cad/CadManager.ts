@@ -7,8 +7,9 @@ import { CadNode } from './CadNode';
 import { CadModelFactory } from './CadModelFactory';
 import { CadModelMetadataRepository } from './CadModelMetadataRepository';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
-import { ModelNodeAppearance } from './ModelNodeAppearance';
 import { discardSector } from './sector/sectorUtilities';
+import { Subscription } from 'rxjs';
+import { NodeAppearanceProvider } from './NodeAppearance';
 
 export class CadManager<TModelIdentifier> {
   private readonly _cadModelMetadataRepository: CadModelMetadataRepository<TModelIdentifier>;
@@ -16,6 +17,7 @@ export class CadManager<TModelIdentifier> {
   private readonly _cadModelUpdateHandler: CadModelUpdateHandler;
 
   private readonly _cadModelMap: Map<string, CadNode> = new Map();
+  private readonly _subscription: Subscription = new Subscription();
 
   private _needsRedraw: boolean = false;
 
@@ -27,33 +29,45 @@ export class CadManager<TModelIdentifier> {
     this._cadModelMetadataRepository = cadModelMetadataRepository;
     this._cadModelFactory = cadModelFactory;
     this._cadModelUpdateHandler = cadModelUpdateHandler;
-    this._cadModelUpdateHandler.observable().subscribe(
-      sector => {
-        const cadModel = this._cadModelMap.get(sector.blobUrl);
-        const sectorNodeParent = cadModel!.rootSector;
-        const sectorNode = sectorNodeParent!.sectorNodeMap.get(sector.metadata.id);
-        if (!sectorNode) {
-          throw new Error(`Could not find 3D node for sector ${sector.metadata.id} - invalid id?`);
-        }
-        if (sectorNode.group) {
-          sectorNode.group.userData.refCount -= 1;
-          if (sectorNode.group.userData.refCount === 0) {
-            discardSector(sectorNode.group);
+    this._subscription.add(
+      this._cadModelUpdateHandler.observable().subscribe(
+        sector => {
+          const cadModel = this._cadModelMap.get(sector.blobUrl);
+          if (!cadModel) {
+            throw new Error(`Model ${sector.blobUrl} not found`);
           }
-          sectorNode.remove(sectorNode.group);
+          if (cadModel.renderHints.showSectorBoundingBoxes) {
+            cadModel!.updateSectorBoundingBox(sector);
+          }
+          const sectorNodeParent = cadModel.rootSector;
+          const sectorNode = sectorNodeParent!.sectorNodeMap.get(sector.metadata.id);
+          if (!sectorNode) {
+            throw new Error(`Could not find 3D node for sector ${sector.metadata.id} - invalid id?`);
+          }
+          if (sectorNode.group) {
+            sectorNode.group.userData.refCount -= 1;
+            if (sectorNode.group.userData.refCount === 0) {
+              discardSector(sectorNode.group);
+            }
+            sectorNode.remove(sectorNode.group);
+          }
+          if (sector.group) {
+            // Is this correct now?
+            sectorNode.add(sector.group);
+          }
+          sectorNode.group = sector.group;
+          this._needsRedraw = true;
+        },
+        error => {
+          // tslint:disable-next-line: no-console
+          console.error(error);
         }
-        if (sector.group) {
-          // Is this correct now?
-          sectorNode.add(sector.group);
-        }
-        sectorNode.group = sector.group;
-        this._needsRedraw = true;
-      },
-      error => {
-        // tslint:disable-next-line: no-console
-        console.error(error);
-      }
+      )
     );
+  }
+
+  dispose() {
+    this._subscription.unsubscribe();
   }
 
   resetRedraw(): void {
@@ -78,9 +92,9 @@ export class CadManager<TModelIdentifier> {
     this._needsRedraw = true;
   }
 
-  async addModel(modelIdentifier: TModelIdentifier, modelAppearance?: ModelNodeAppearance): Promise<CadNode> {
+  async addModel(modelIdentifier: TModelIdentifier, nodeApperanceProvider?: NodeAppearanceProvider): Promise<CadNode> {
     const metadata = await this._cadModelMetadataRepository.loadData(modelIdentifier);
-    const model = this._cadModelFactory.createModel(metadata, modelAppearance);
+    const model = this._cadModelFactory.createModel(metadata, nodeApperanceProvider);
     this._cadModelMap.set(metadata.blobUrl, model);
     this._cadModelUpdateHandler.updateModels(model);
     return model;

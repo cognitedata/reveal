@@ -7,7 +7,7 @@ import TWEEN from '@tweenjs/tween.js';
 import debounce from 'lodash/debounce';
 import ComboControls from '@cognite/three-combo-controls';
 import { CogniteClient, IdEither } from '@cognite/sdk';
-import { share, filter } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, share } from 'rxjs/operators';
 
 import { from3DPositionToRelativeViewportCoordinates } from '@/utilities/worldToViewport';
 import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
@@ -16,7 +16,7 @@ import { CachedRepository } from '@/datamodels/cad/sector/CachedRepository';
 import { MaterialManager } from '@/datamodels/cad/MaterialManager';
 import { intersectCadNodes } from '@/datamodels/cad/picking';
 
-import { Cognite3DViewerOptions, AddModelOptions, SupportedModelTypes, GeometryFilter } from './types';
+import { AddModelOptions, Cognite3DViewerOptions, GeometryFilter, SupportedModelTypes } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { Intersection } from './intersection';
 import RenderController from './RenderController';
@@ -37,8 +37,10 @@ import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloudMetadataRepository';
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
-import { BoundingBoxClipper, isMobileOrTablet, File3dFormat } from '@/utilities';
+import { BoundingBoxClipper, File3dFormat, isMobileOrTablet } from '@/utilities';
 import { Spinner } from '@/utilities/Spinner';
+import { addPostRenderEffects } from '@/datamodels/cad/rendering/postRenderEffects';
+import { combineLatest, Subscription } from 'rxjs';
 
 export interface RelativeMouseEvent {
   offsetX: number;
@@ -46,7 +48,7 @@ export interface RelativeMouseEvent {
 }
 
 type RequestParams = { modelRevision: IdEither; format: File3dFormat };
-type PointerEventDelegate = (event: RelativeMouseEvent) => void;
+type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
 type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
 
 export class Cognite3DViewer {
@@ -67,6 +69,8 @@ export class Cognite3DViewer {
   private readonly cadManager: CadManager<RequestParams>;
   private readonly pointCloudManager: PointCloudManager<RequestParams>;
   private readonly revealManager: RevealManagerBase<RequestParams>;
+
+  private readonly _subscription: Subscription = new Subscription();
 
   private readonly eventListeners = {
     cameraChange: new Array<CameraChangeDelegate>(),
@@ -101,7 +105,8 @@ export class Cognite3DViewer {
     this.renderer =
       options.renderer ||
       new THREE.WebGLRenderer({
-        antialias: shouldEnableAntialiasing()
+        antialias: shouldEnableAntialiasing(),
+        preserveDrawingBuffer: true
       });
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
@@ -155,13 +160,21 @@ export class Cognite3DViewer {
     this.revealManager = new RevealManagerBase(this.cadManager, this.materialManager, this.pointCloudManager);
     this.startPointerEventListeners();
 
-    this.sectorRepository.getLoadingStateObserver().subscribe(isLoading => {
-      if (isLoading) {
-        this.spinner.show();
-      } else {
-        this.spinner.hide();
-      }
-    });
+    this._subscription.add(
+      combineLatest([this.sectorRepository.getLoadingStateObserver(), this.pointCloudManager.getLoadingStateObserver()])
+        .pipe(
+          map(([pointCloudLoading, cadLoading]) => pointCloudLoading || cadLoading),
+          distinctUntilChanged()
+        )
+        .subscribe(isLoading => {
+          if (isLoading) {
+            this.spinner.show();
+          } else {
+            this.spinner.hide();
+          }
+          // tslint:disable-next-line:no-console
+        }, console.error)
+    );
 
     this.animate(0);
   }
@@ -177,7 +190,7 @@ export class Cognite3DViewer {
       cancelAnimationFrame(this.latestRequestId);
     }
 
-    this.sectorRepository.dispose();
+    this._subscription.unsubscribe();
     this.revealManager.dispose();
     this.domElement.removeChild(this.canvas);
     this.renderer.dispose();
@@ -189,9 +202,9 @@ export class Cognite3DViewer {
     this.spinner.dispose();
   }
 
-  on(event: 'click' | 'hover', _callback: PointerEventDelegate): void;
-  on(event: 'cameraChanged', _callback: CameraChangeDelegate): void;
-  on(event: 'click' | 'hover' | 'cameraChanged', callback: any): void {
+  on(event: 'click' | 'hover', callback: PointerEventDelegate): void;
+  on(event: 'cameraChange', callback: CameraChangeDelegate): void;
+  on(event: 'click' | 'hover' | 'cameraChange', callback: any): void {
     switch (event) {
       case 'click':
         this.eventListeners.click.push(callback);
@@ -201,7 +214,7 @@ export class Cognite3DViewer {
         this.eventListeners.hover.push(callback);
         break;
 
-      case 'cameraChanged':
+      case 'cameraChange':
         this.eventListeners.cameraChange.push(callback);
         break;
 
@@ -210,9 +223,9 @@ export class Cognite3DViewer {
     }
   }
 
-  off(event: 'click' | 'hover', _callback: (event: PointerEvent) => void): void;
-  off(event: 'cameraChanged', _callback: (position: THREE.Vector3, target: THREE.Vector3) => void): void;
-  off(event: 'click' | 'hover' | 'cameraChanged', callback: any): void {
+  off(event: 'click' | 'hover', callback: PointerEventDelegate): void;
+  off(event: 'cameraChange', callback: CameraChangeDelegate): void;
+  off(event: 'click' | 'hover' | 'cameraChange', callback: any): void {
     switch (event) {
       case 'click':
         this.eventListeners.click = this.eventListeners.click.filter(x => x !== callback);
@@ -222,7 +235,7 @@ export class Cognite3DViewer {
         this.eventListeners.hover = this.eventListeners.hover.filter(x => x !== callback);
         break;
 
-      case 'cameraChanged':
+      case 'cameraChange':
         this.eventListeners.cameraChange = this.eventListeners.cameraChange.filter(x => x !== callback);
         break;
 
@@ -247,13 +260,15 @@ export class Cognite3DViewer {
     }
 
     const model3d = new Cognite3DModel(options.modelId, options.revisionId, cadNode, this.sdkClient);
-    this.sectorRepository
-      .getParsedData()
-      .pipe(
-        share(),
-        filter(x => x.blobUrl === cadNode.cadModelMetadata.blobUrl)
-      )
-      .subscribe(parseSector => model3d.updateNodeIdMaps(parseSector));
+    this._subscription.add(
+      this.sectorRepository
+        .getParsedData()
+        .pipe(
+          share(),
+          filter(x => x.blobUrl === cadNode.cadModelMetadata.blobUrl)
+        )
+        .subscribe(parseSector => model3d.updateNodeIdMaps(parseSector))
+    );
 
     this.models.push(model3d);
     this.scene.add(model3d);
@@ -309,6 +324,14 @@ export class Cognite3DViewer {
     }
     this.scene.remove(object);
     this.renderController.redraw();
+  }
+
+  setBackgroundColor(color: THREE.Color) {
+    if (this.isDisposed) {
+      return;
+    }
+
+    this.renderer.setClearColor(color);
   }
 
   setSlicingPlanes(slicingPlanes: THREE.Plane[]): void {
@@ -402,8 +425,25 @@ export class Cognite3DViewer {
     return new THREE.Vector2(p.x, p.y);
   }
 
-  getScreenshot(_width?: number, _height?: number): Promise<string> {
-    throw new NotSupportedInMigrationWrapperError();
+  async getScreenshot(width = this.canvas.width, height = this.canvas.height): Promise<string> {
+    if (this.isDisposed) {
+      throw new Error('Viewer is disposed');
+    }
+
+    const { width: originalWidth, height: originalHeight } = this.canvas;
+
+    const screenshotCamera = this.camera.clone();
+    adjustCamera(screenshotCamera, width, height);
+
+    this.renderer.setSize(width, height);
+    this.renderer.render(this.scene, screenshotCamera);
+    addPostRenderEffects(this.materialManager, this.renderer, screenshotCamera, this.scene);
+    const url = this.renderer.domElement.toDataURL();
+
+    this.renderer.setSize(originalWidth, originalHeight);
+    this.renderer.render(this.scene, this.camera);
+
+    return url;
   }
 
   getIntersectionFromPixel(offsetX: number, offsetY: number, _cognite3DModel?: Cognite3DModel): null | Intersection {
@@ -561,6 +601,7 @@ export class Cognite3DViewer {
       ) {
         this.updateNearAndFarPlane(this.camera);
         this.renderer.render(this.scene, this.camera);
+        addPostRenderEffects(this.materialManager, this.renderer, this.camera, this.scene);
         renderController.clearNeedsRedraw();
         this.revealManager.resetRedraw();
         this._slicingNeedsUpdate = false;

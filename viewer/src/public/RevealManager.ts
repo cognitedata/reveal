@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { RevealManagerBase, RevealOptions } from './RevealManagerBase';
+import { RevealManagerBase } from './RevealManagerBase';
 import { CogniteClient, IdEither } from '@cognite/sdk';
 import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
 import { File3dFormat } from '@/utilities';
@@ -17,18 +17,21 @@ import { ByVisibilityGpuSectorCuller, PotreeGroupWrapper, PotreeNodeWrapper } fr
 import { CachedRepository } from '@/datamodels/cad/sector/CachedRepository';
 import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
 import { CadManager } from '@/datamodels/cad/CadManager';
-import { ModelNodeAppearance, CadNode } from '@/datamodels/cad';
+import { CadNode, NodeAppearanceProvider } from '@/datamodels/cad';
 import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloudMetadataRepository';
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
+import { combineLatest, Subscription } from 'rxjs';
+import { RevealOptions } from './types';
+import { distinctUntilChanged, map } from 'rxjs/operators';
 
 type CdfModelIdentifier = { modelRevision: IdEither; format: File3dFormat };
 type LoadingStateChangeListener = (isLoading: boolean) => any;
 
 export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
   private readonly eventListeners: { loadingStateChanged: LoadingStateChangeListener[] };
-  private readonly sectorRepository: CachedRepository;
+  private readonly _subscription: Subscription;
 
   constructor(client: CogniteClient, options?: RevealOptions) {
     const modelDataParser: CadSectorParser = new CadSectorParser();
@@ -63,17 +66,32 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
 
     super(cadManager, materialManager, pointCloudManager);
 
-    this.sectorRepository = sectorRepository;
     this.eventListeners = {
       loadingStateChanged: new Array<LoadingStateChangeListener>()
     };
-    sectorRepository.getLoadingStateObserver().subscribe(this.notifyLoadingStateListeners.bind(this));
+    this.notifyLoadingStateListeners = this.notifyLoadingStateListeners.bind(this);
+
+    this._subscription = new Subscription();
+    this._subscription.add(
+      combineLatest([sectorRepository.getLoadingStateObserver(), pointCloudManager.getLoadingStateObserver()])
+        .pipe(
+          map(([pointCloudLoading, cadLoading]) => {
+            return pointCloudLoading || cadLoading;
+          }),
+          distinctUntilChanged()
+        )
+        .subscribe(
+          this.notifyLoadingStateListeners,
+          // tslint:disable-next-line:no-console
+          console.error
+        )
+    );
   }
 
   public addModel(
     type: 'cad',
     modelRevisionId: string | number,
-    modelNodeAppearance?: ModelNodeAppearance
+    nodeApperanceProvider?: NodeAppearanceProvider
   ): Promise<CadNode>;
   public addModel(
     type: 'pointcloud',
@@ -82,13 +100,13 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
   public addModel(
     type: 'cad' | 'pointcloud',
     modelRevisionId: string | number,
-    modelNodeAppearance?: ModelNodeAppearance
+    nodeApperanceProvider?: NodeAppearanceProvider
   ): Promise<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper]> {
     switch (type) {
       case 'cad':
         return this._cadManager.addModel(
           { modelRevision: this.createModelIdentifier(modelRevisionId), format: File3dFormat.RevealCadModel },
-          modelNodeAppearance
+          nodeApperanceProvider
         );
       case 'pointcloud':
         return this._pointCloudManager.addModel({
@@ -118,7 +136,8 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
       return;
     }
     this.eventListeners.loadingStateChanged.splice(0);
-    this.sectorRepository.dispose();
+    this._cadManager.dispose();
+    this._subscription.unsubscribe();
   }
 
   private notifyLoadingStateListeners(isLoaded: boolean) {

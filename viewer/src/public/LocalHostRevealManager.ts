@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { RevealManagerBase, RevealOptions } from './RevealManagerBase';
+import { RevealManagerBase } from './RevealManagerBase';
 
 import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
 import { MaterialManager } from '@/datamodels/cad/MaterialManager';
@@ -16,17 +16,16 @@ import { CachedRepository } from '@/datamodels/cad/sector/CachedRepository';
 import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
 import { CadManager } from '@/datamodels/cad/CadManager';
 import { LocalUrlClient as LocalHostClient } from '@/utilities/networking/LocalUrlClient';
-import { ModelNodeAppearance, CadNode } from '@/datamodels/cad';
+import { CadNode, NodeAppearanceProvider } from '@/datamodels/cad';
 import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloudMetadataRepository';
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
+import { RevealOptions } from './types';
 
 type LocalModelIdentifier = { fileName: string };
 
 export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifier> {
-  private readonly sectorRepository: CachedRepository;
-
   constructor(options?: RevealOptions) {
     const modelDataParser: CadSectorParser = new CadSectorParser();
     const materialManager: MaterialManager = new MaterialManager();
@@ -59,20 +58,18 @@ export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifi
       pointCloudFactory
     );
     super(cadManager, materialManager, pointCloudManager);
-
-    this.sectorRepository = sectorRepository;
   }
 
-  public addModel(type: 'cad', fileName: string, modelNodeAppearance?: ModelNodeAppearance): Promise<CadNode>;
+  public addModel(type: 'cad', fileName: string, nodeApperanceProvider?: NodeAppearanceProvider): Promise<CadNode>;
   public addModel(type: 'pointcloud', fileName: string): Promise<[PotreeGroupWrapper, PotreeNodeWrapper]>;
   public addModel(
     type: 'cad' | 'pointcloud',
     fileName: string,
-    modelNodeAppearance?: ModelNodeAppearance
+    nodeApperanceProvider?: NodeAppearanceProvider
   ): Promise<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper]> {
     switch (type) {
       case 'cad':
-        return this._cadManager.addModel({ fileName }, modelNodeAppearance);
+        return this._cadManager.addModel({ fileName }, nodeApperanceProvider);
       case 'pointcloud':
         return this._pointCloudManager.addModel({ fileName });
       default:
@@ -84,7 +81,7 @@ export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifi
     if (this.isDisposed) {
       return;
     }
-    this.sectorRepository.dispose();
+    this._cadManager.dispose();
     super.dispose();
   }
 }

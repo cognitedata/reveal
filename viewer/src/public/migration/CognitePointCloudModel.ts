@@ -8,6 +8,7 @@ import { SupportedModelTypes } from './types';
 import { toThreeJsBox3 } from '@/utilities';
 import { PotreeNodeWrapper } from '@/datamodels/pointcloud/PotreeNodeWrapper';
 import { PotreeGroupWrapper } from '@/datamodels/pointcloud/PotreeGroupWrapper';
+import { PotreePointColorType } from '@/datamodels/pointcloud/types';
 
 export class CognitePointCloudModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = SupportedModelTypes.PointCloud;
@@ -37,5 +38,13 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
 
   set pointBudget(count: number) {
     this.potreeNode.pointBudget = count;
+  }
+
+  get pointColorType() {
+    return this.potreeNode.pointColorType;
+  }
+
+  set pointColorType(type: PotreePointColorType) {
+    this.potreeNode.pointColorType = type;
   }
 }

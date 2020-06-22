@@ -14,7 +14,7 @@ import { SectorCuller } from '@/datamodels/cad/sector/culling/SectorCuller';
 const sceneJson = require('./scene.json');
 
 describe('Cognite3DViewer', () => {
-  const context: WebGLRenderingContext = require('gl')(64, 64);
+  const context: WebGLRenderingContext = require('gl')(64, 64, { preserveDrawingBuffer: true });
 
   const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
   const renderer = new THREE.WebGLRenderer({ context });
@@ -36,11 +36,11 @@ describe('Cognite3DViewer', () => {
     expect(disposeSpy).toBeCalledTimes(1);
   });
 
-  test('on cameraChanged triggers when position and target is changed', () => {
+  test('on cameraChange triggers when position and target is changed', () => {
     // Arrange
     const onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void = jest.fn();
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
-    viewer.on('cameraChanged', onCameraChange);
+    viewer.on('cameraChange', onCameraChange);
 
     // Act
     viewer.setCameraTarget(new THREE.Vector3(123, 456, 789));
@@ -77,7 +77,7 @@ describe('Cognite3DViewer', () => {
 
     const onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void = jest.fn();
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
-    viewer.on('cameraChanged', onCameraChange);
+    viewer.on('cameraChange', onCameraChange);
 
     // Act
     const model = await viewer.addModel({ modelId: 1, revisionId: 2 });
