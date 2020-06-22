@@ -130,8 +130,8 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return toThreeJsBox3(box || new THREE.Box3(), bounds, this.cadModel.modelTransformation);
   }
 
-  getModelBoundingBox(): THREE.Box3 {
-    return this.getBoundingBox();
+  getModelBoundingBox(outBbox?: THREE.Box3): THREE.Box3 {
+    return this.getBoundingBox(undefined, outBbox);
   }
 
   updateNodeIdMaps(sector: { lod: string; data: SectorGeometry | SectorQuads }) {
