@@ -70,6 +70,10 @@ export class CadManager<TModelIdentifier> {
     this._subscription.unsubscribe();
   }
 
+  requestRedraw(): void {
+    this._needsRedraw = true;
+  }
+
   resetRedraw(): void {
     this._needsRedraw = false;
   }

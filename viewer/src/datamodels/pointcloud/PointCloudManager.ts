@@ -25,6 +25,12 @@ export class PointCloudManager<TModelIdentifier> {
     this._potreeLoadHandler = new PotreeLoadHandler();
   }
 
+  requestRedraw(): void {
+    if (this._pointCloudGroupWrapper) {
+      this._pointCloudGroupWrapper.requestRedraw();
+    }
+  }
+
   get needsRedraw(): boolean {
     return this._pointCloudGroupWrapper ? this._pointCloudGroupWrapper.needsRedraw : false;
   }
