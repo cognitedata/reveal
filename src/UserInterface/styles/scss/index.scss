@@ -3,8 +3,8 @@
 @import "react-split-pane";
 @import "~react-virtualized/styles.css";
 
-$root-container-width: 100vw;
-$root-container-height: 100vh;
+$root-container-width: 100%;
+$root-container-height: 100%;
 $left-panel-min-width: 290px;
 $left-panel-height: $root-container-height;
 
@@ -23,6 +23,8 @@ $multi-input-base-width: 100% - ($select-controls-width + $select-controls-margi
 
 /** Default Theme **/
 $panel-background: white;
+$tree-background: inherit;
+$tree-color: inherit;
 $tab-background: white;
 $tab-select-background: #e4e4e4;
 $tab-select-color: black;
@@ -37,16 +39,14 @@ $tool-bar-icon-hover-background: lightblue;
 $select-input-background: inherit;
 $select-input-option-color: #6a0dad;
 $slider-input-background: #d5d5d5;
-
-
-body {
-  box-sizing: border-box;
-}
+$explorer-font-size: 16px;
 
 .subsurface-container {
   height: $root-container-height;
   width: $root-container-width;
   font-family: "Roboto", "Jost", sans-serif;
+  position: relative;
+  overflow: hidden;
 
   /** imports **/
   @import "explorer";

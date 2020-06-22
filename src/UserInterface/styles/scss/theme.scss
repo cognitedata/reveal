@@ -1,5 +1,7 @@
 /** Theme **/
 $panel-background: white linear-gradient(to right, white, lightgray);
+$tree-background: inherit;
+$tree-color: inherit;
 $tab-background: #e4e4e4;
 $tab-select-background: white;
 $tab-select-color: black;
@@ -15,8 +17,11 @@ $select-input-background: #f0f0f0;
 $select-input-option-color: #6a0dad;
 $slider-input-background: white;
 
+// Color and Background
 :root {
   --subsurface-viz-background: #{$panel-background};
+  --subsurface-viz-tree-background: #{$tree-background};
+  --subsurface-viz-tree-color: #{$tree-color};
   --subsurface-viz-tab-background: #{$tab-background};
   --subsurface-viz-tab-select-background: #{$tab-select-background};
   --subsurface-viz-tab-select-color: #{$tab-select-color};
@@ -31,4 +36,20 @@ $slider-input-background: white;
   --subsurface-viz-select-input-background: #{$select-input-background};
   --subsurface-viz-select-input-option-color: #{$select-input-option-color};
   --subsurface-viz-slider-input-background: #{$slider-input-background};
+}
+
+// Virtual Tree Customizations
+
+:root {
+  --v-tree-item-height:20px;
+  --v-tree-item-bottom-margin:2px;
+  --v-tree-item-comp-width: 20px;
+  --v-tree-icon-size: 20px;
+  --v-tree-item-indentation: 20px;
+}
+
+// Font
+
+:root{
+  --subsurface-viz-explorer-font-size: 16px;
 }

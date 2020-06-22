@@ -110,7 +110,7 @@ module.exports = {
         }
       ]
     })
-    // new BundleAnalyzerPlugin()
+    // ,new BundleAnalyzerPlugin()
   ],
   externals: {
     react: {

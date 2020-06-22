@@ -6,6 +6,7 @@ $tree-padding-top: 5px;
   margin: 0;
   display: flex;
   flex-direction: column;
+  font-size: var(--subsurface-viz-explorer-font-size, $explorer-font-size);
 }
 
 .node-tabs {
@@ -54,5 +55,7 @@ $tree-padding-top: 5px;
 .virtual-tree-container {
   padding-inline-start: $tree-padding-left;
   padding-top: $tree-padding-top;
+  background: var(--subsurface-viz-tree-background, $tree-background);
+  color: var(--subsurface-viz-tree-color, $tree-color);
   flex: 15;
 }

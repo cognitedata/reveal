@@ -2,8 +2,9 @@ import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import * as Color from "color";
 import { fabric } from "fabric";
+import {readCssVariablePixelNumber} from "../Utils";
 
-const DEFAULT_ICON_SIZE = 18;
+const DEF_ICON_SIZE = 18;
 const USE_FABRIC = true; // todo: Mihil - remove once fabric.js evaluation is completed
 
 export interface ImageProps
@@ -21,6 +22,8 @@ export default function TreeIcon(props: {
   color?: Color;
 })
 {
+  const DEFAULT_ICON_SIZE = readCssVariablePixelNumber("--v-tree-icon-size") || DEF_ICON_SIZE;
+
   const containerRef = useRef<null | HTMLDivElement>(null);
   const iconSize = props.size || DEFAULT_ICON_SIZE;
 

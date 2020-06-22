@@ -79,7 +79,6 @@ export function Explorer() {
     <div className="explorer">
       <VirtualTree
         data={data}
-        iconSize={Appearance.treeIconSize}
         onToggleNodeSelect={handleToggleNodeSelect}
         onToggleNodeExpand={handleToggleNodeExpand}
         onToggleNodeCheck={handleToggleNodeCheck}

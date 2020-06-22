@@ -7,18 +7,18 @@ import { ExpandButton } from "./ExpandButton";
 import { TreeCheckBox } from "./TreeCheckbox";
 import { VirtualTreeProps } from "./VirtualTreeProps";
 import { TreeNode } from "./TreeNode";
+import {readCssVariablePixelNumber} from "../Utils";
 
-const readCssVariable = (property: string): number => {
-  return parseInt(getComputedStyle(document.documentElement).getPropertyValue(property), 10);
-};
-const TREE_ITEM_HEIGHT =
-  readCssVariable("--v-tree-item-height") + readCssVariable("--v-tree-item-bottom-margin");
+const DEFAULT_ROW_HEIGHT = 22;
 
 export default function VirtualTree(props: VirtualTreeProps) {
   const { onToggleNodeSelect, onToggleNodeExpand, onToggleNodeCheck } = props;
 
+  const TREE_ITEM_HEIGHT =
+    readCssVariablePixelNumber("--v-tree-item-height") + readCssVariablePixelNumber("--v-tree-item-bottom-margin");
+
   const data = props.data || [];
-  const singleRowHeight = props.rowHeight || TREE_ITEM_HEIGHT;
+  const singleRowHeight = (props.rowHeight || TREE_ITEM_HEIGHT) || DEFAULT_ROW_HEIGHT;
 
   let List: any;
   function setRef(ref: any) {
