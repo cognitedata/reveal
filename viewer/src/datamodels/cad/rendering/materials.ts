@@ -146,6 +146,7 @@ export function createMaterials(
         value: new THREE.Matrix4()
       }
     },
+
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.ellipsoidSegmentPrimitive.vertex,
     fragmentShader: sectorShaders.ellipsoidSegmentPrimitive.fragment,

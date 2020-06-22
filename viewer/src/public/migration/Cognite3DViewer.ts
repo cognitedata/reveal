@@ -39,7 +39,6 @@ import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
 import { BoundingBoxClipper, File3dFormat, isMobileOrTablet } from '@/utilities';
 import { Spinner } from '@/utilities/Spinner';
-import { addPostRenderEffects } from '@/datamodels/cad/rendering/postRenderEffects';
 import { Subscription } from 'rxjs';
 
 export interface RelativeMouseEvent {
@@ -594,7 +593,7 @@ export class Cognite3DViewer {
       ) {
         this.updateNearAndFarPlane(this.camera);
         this.renderer.render(this.scene, this.camera);
-        addPostRenderEffects(this.materialManager, this.renderer, this.camera, this.scene);
+        this.revealManager.effectRenderManager.addPostRenderEffects(this.renderer, this.camera, this.scene);
         renderController.clearNeedsRedraw();
         this.revealManager.resetRedraw();
         this._slicingNeedsUpdate = false;

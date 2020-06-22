@@ -75,6 +75,10 @@ export function Picking() {
       }
       scene.add(model);
 
+
+      const effectRenderManager: reveal.EffectRenderManager = revealManager.effectRenderManager;
+
+
       // Set up the renderer
       const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current! });
       renderer.setClearColor('#444');
@@ -133,7 +137,8 @@ export function Picking() {
           pickingNeedsUpdate ||
           revealManager.needsRedraw
         ) {
-          renderer.render(scene, camera);
+          //renderer.render(scene, camera);
+          effectRenderManager.addPostRenderEffects(renderer, camera, scene);
           pickingNeedsUpdate = false;
           revealManager.resetRedraw();
         }
@@ -149,11 +154,11 @@ export function Picking() {
         const coords = {
           x:
             ((event.clientX - rect.left) / renderer.domElement.clientWidth) *
-              2 -
+            2 -
             1,
           y:
             ((event.clientY - rect.top) / renderer.domElement.clientHeight) *
-              -2 +
+            -2 +
             1,
         };
         // Pick in Reveal
