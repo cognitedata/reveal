@@ -7,7 +7,7 @@ import TWEEN from '@tweenjs/tween.js';
 import debounce from 'lodash/debounce';
 import ComboControls from '@cognite/three-combo-controls';
 import { CogniteClient, IdEither } from '@cognite/sdk';
-import { filter, share } from 'rxjs/operators';
+import { filter, share, debounceTime, publish, map } from 'rxjs/operators';
 
 import { from3DPositionToRelativeViewportCoordinates } from '@/utilities/worldToViewport';
 import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
@@ -40,8 +40,7 @@ import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/Default
 import { BoundingBoxClipper, File3dFormat, isMobileOrTablet } from '@/utilities';
 import { Spinner } from '@/utilities/Spinner';
 import { addPostRenderEffects } from '@/datamodels/cad/rendering/postRenderEffects';
-import { Subscription } from 'rxjs';
-import { HotModuleReplacementPlugin } from 'webpack';
+import { Subscription, Subject, merge } from 'rxjs';
 
 export interface RelativeMouseEvent {
   offsetX: number;
@@ -88,7 +87,8 @@ export class Cognite3DViewer {
   private readonly pointCloudManager: PointCloudManager<RequestParams>;
   private readonly revealManager: RevealManagerBase<RequestParams>;
 
-  private readonly _subscription: Subscription = new Subscription();
+  private readonly _loadingSubscription: Subscription = new Subscription();
+  private readonly _updateCameraNearAndFarSubject: Subject<THREE.PerspectiveCamera>;
 
   private readonly eventListeners = {
     cameraChange: new Array<CameraChangeDelegate>(),
@@ -179,7 +179,7 @@ export class Cognite3DViewer {
     this.revealManager = new RevealManagerBase(this.cadManager, this.materialManager, this.pointCloudManager);
     this.startPointerEventListeners();
 
-    this._subscription.add(
+    this._loadingSubscription.add(
       this.sectorRepository.getLoadingStateObserver().subscribe(isLoading => {
         if (isLoading) {
           this.spinner.show();
@@ -188,6 +188,8 @@ export class Cognite3DViewer {
         }
       })
     );
+
+    this._updateCameraNearAndFarSubject = this.setupUpdateCameraNearAndFar();
 
     this.animate(0);
   }
@@ -203,7 +205,7 @@ export class Cognite3DViewer {
       cancelAnimationFrame(this.latestRequestId);
     }
 
-    this._subscription.unsubscribe();
+    this._loadingSubscription.unsubscribe();
     this.revealManager.dispose();
     this.domElement.removeChild(this.canvas);
     this.renderer.dispose();
@@ -273,7 +275,7 @@ export class Cognite3DViewer {
     }
 
     const model3d = new Cognite3DModel(options.modelId, options.revisionId, cadNode, this.sdkClient);
-    this._subscription.add(
+    this._loadingSubscription.add(
       this.sectorRepository
         .getParsedData()
         .pipe(
@@ -617,9 +619,7 @@ export class Cognite3DViewer {
         this.revealManager.needsRedraw ||
         this._slicingNeedsUpdate
       ) {
-        if (Math.random() > 0.95) {
-          this.updateNearAndFarPlane(this.camera);
-        }
+        this.triggerUpdateCameraNearAndFar();
         this.renderer.render(this.scene, this.camera);
         addPostRenderEffects(this.materialManager, this.renderer, this.camera, this.scene);
         renderController.clearNeedsRedraw();
@@ -631,8 +631,38 @@ export class Cognite3DViewer {
     this.latestRequestId = requestAnimationFrame(this.animate.bind(this));
   }
 
-  private updateNearAndFarPlane(camera: THREE.PerspectiveCamera) {
-    console.time('updateNearAndFarPlane');
+  private setupUpdateCameraNearAndFar(): Subject<THREE.PerspectiveCamera> {
+    const lastUpdatePosition = new THREE.Vector3(Infinity, Infinity, Infinity);
+    const camPosition = new THREE.Vector3();
+
+    const updateNearFarSubject = new Subject<THREE.PerspectiveCamera>();
+    updateNearFarSubject
+      .pipe(
+        map(cam => lastUpdatePosition.distanceToSquared(cam.getWorldPosition(camPosition))),
+        publish(observable => {
+          return merge(
+            // When camera is moved more than 10 meters
+            observable.pipe(filter(distanceMoved => distanceMoved > 10.0)),
+            // Or it's been a while since we last update near/far and camera has moved slightly
+            observable.pipe(
+              debounceTime(250),
+              filter(distanceMoved => distanceMoved > 0.0)
+            )
+          );
+        })
+      )
+      .subscribe(() => {
+        lastUpdatePosition.copy(camPosition);
+        this.updateCameraNearAndFar(this.camera);
+      });
+    return updateNearFarSubject;
+  }
+
+  private triggerUpdateCameraNearAndFar() {
+    this._updateCameraNearAndFarSubject.next(this.camera);
+  }
+
+  private updateCameraNearAndFar(camera: THREE.PerspectiveCamera) {
     if (this.isDisposed) {
       return;
     }
@@ -641,82 +671,39 @@ export class Cognite3DViewer {
 
     this.models.forEach(model => {
       model.getModelBoundingBox(bbox);
-      combinedBbox.union(bbox);
+      combinedBbox.expandByPoint(bbox.min);
+      combinedBbox.expandByPoint(bbox.max);
     });
     this.extraObjects.forEach(obj => {
       bbox.setFromObject(obj);
-      combinedBbox.union(bbox);
+      combinedBbox.expandByPoint(bbox.min);
+      combinedBbox.expandByPoint(bbox.max);
     });
     getBoundingBoxCorners(combinedBbox, corners);
     let nearest = Infinity;
     let farthest = -Infinity;
     const cameraPosition = camera.getWorldPosition(point);
-    // for (let i = 0; i < 8; ++i) {
-    //   const dist = corners[i].distanceTo(cameraPosition);
-    //   nearest = Math.min(nearest, dist);
-    //   farthest = Math.max(farthest, dist);
-    // }
-    nearest = combinedBbox.distanceToPoint(cameraPosition);
+    for (let i = 0; i < 8; ++i) {
+      const dist = corners[i].distanceTo(cameraPosition);
+      nearest = Math.min(nearest, dist);
+      farthest = Math.max(farthest, dist);
+    }
 
     // Handle when camera is inside the model
     const diagonal = combinedBbox.min.distanceTo(combinedBbox.max);
     if (combinedBbox.containsPoint(cameraPosition)) {
       nearest = Math.min(0.1, farthest / 1000.0);
     }
-
     farthest = nearest + diagonal;
-
-    // Update near and far
-    const forward = camera.getWorldDirection(new THREE.Vector3());
-    const nearPlanePoint = new THREE.Vector3().copy(cameraPosition).addScaledVector(forward, nearest);
-    const farPlanePoint = new THREE.Vector3().copy(cameraPosition).addScaledVector(forward, 5 * farthest);
-    // const farPlanePoint = new THRE
-
-    const rot = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, -1), forward);
-
-    const nearPlaneHelper = new THREE.Mesh(
-      new THREE.PlaneGeometry(50, 50, 10, 10),
-      new THREE.MeshBasicMaterial({ color: 0xff00ff })
-    );
-    nearPlaneHelper.position.copy(nearPlanePoint);
-    nearPlaneHelper.setRotationFromQuaternion(rot);
-    nearPlaneHelper.name = 'nearPlaneHelper';
-
-    const farPlaneHelper = new THREE.Mesh(
-      new THREE.PlaneGeometry(5000, 5000, 10, 10),
-      new THREE.MeshBasicMaterial({ color: 0xffff00 })
-    );
-    farPlaneHelper.position.copy(farPlanePoint);
-    farPlaneHelper.setRotationFromQuaternion(rot);
-    farPlaneHelper.name = 'farPlaneHelper';
-
-    if (this.scene.getObjectByName('nearPlaneHelper')) {
-      this.scene.remove(this.scene.getObjectByName('nearPlaneHelper')!);
-    }
-    if (this.scene.getObjectByName('farPlaneHelper')) {
-      this.scene.remove(this.scene.getObjectByName('farPlaneHelper')!);
-    }
-
-    console.log(nearPlanePoint, farPlanePoint);
-
-    this.scene.add(farPlaneHelper);
-    this.scene.add(nearPlaneHelper);
-
-    // camera.near = nearest !== Infinity ? nearest : 0.1;
-    // camera.far = farthest !== -Infinity ? farthest : 10000;
-    // camera.updateProjectionMatrix();
-
+    camera.near = nearest;
+    camera.far = farthest;
+    camera.updateProjectionMatrix();
     // The minDistance of the camera controller determines at which distance
     // we will push the target in front of us instead of getting closer to it.
     // This is also used to determine the speed of the camera when flying with ASDW.
     // We want to either let it be controlled by the near plane if we are far away,
     // but no more than a fraction of the bounding box of the system if inside
     this.controls.minDistance = Math.max(diagonal * 0.02, 0.1 * nearest);
-
-    console.log(
-      `near: ${nearest} far: ${farthest} minDistance: ${this.controls.minDistance}, camDir: <${forward.x},${forward.y},${forward.z}>`
-    );
-    console.timeEnd('updateNearAndFarPlane');
   }
 
   private resizeIfNecessary(): boolean {
