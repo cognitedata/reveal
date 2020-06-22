@@ -30,7 +30,7 @@ def pods = { body ->
   yarn.pod(nodeVersion: NODE_VERSION) {
     previewServer.pod(nodeVersion: NODE_VERSION) {
       fas.pod(
-        nodeVersion: NODE_VERSION
+        nodeVersion: NODE_VERSION,
         sentryProjectName: SENTRY_PROJECT_NAME,
         sentryDsn: SENTRY_DSN,
         locizeProjectId: LOCIZE_PROJECT_ID
