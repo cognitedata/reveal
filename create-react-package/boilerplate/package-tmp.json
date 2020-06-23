@@ -2,14 +2,10 @@
   "name": "@cognite/__REPOSITORY_NAME__",
   "version": "1.0.0",
   "description": "",
-  "contributors": [
-    ""
-  ],
+  "contributors": [""],
   "main": "dist/index.js",
   "module": "dist/index.es.js",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "build": "yarn clean && rollup -c && yarn esCheck",
     "build:watch": "yarn clean && rollup -c --watch && yarn esCheck",
@@ -26,7 +22,8 @@
     "type": "git",
     "url": "__REPOSITORY_NAME__"
   },
-  "license": "Apache-2.0",
+  "author": "",
+  "license": "UNLICENSED",
   "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.3.3",
@@ -68,10 +65,7 @@
     "react-dom": "16"
   },
   "lint-staged": {
-    "*.{ts,tsx}": [
-      "prettier -- --write",
-      "git add"
-    ]
+    "*.{ts,tsx}": ["prettier -- --write", "git add"]
   },
   "husky": {
     "hooks": {
