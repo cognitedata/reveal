@@ -1,9 +1,8 @@
 /* eslint-disable no-console */
 import React from 'react';
 import { Button, Icon } from '@cognite/cogs.js';
+import Table from 'components/Organisms/Table';
 import { ContentContainer } from './elements';
-import Table from '../../components/Organisms/Table';
-import { colors } from '../../global-styles';
 import ExpandableInput from '../../components/Molecules/ExpandableInput';
 
 const dataSource = [
@@ -15,7 +14,7 @@ const dataSource = [
     author: 'Erland Glad Solstrand',
     repositoryProject: 'Valhall_2212/Proj_29991',
     options: {
-      icon: <Icon type="Circle" style={{ color: colors.success }} />,
+      icon: <Icon type="Circle" style={{ color: 'var(--cogs-success)' }} />,
     },
     actions: [
       <Button
@@ -35,7 +34,9 @@ const dataSource = [
     author: 'Adam Tombleson',
     repositoryProject: 'Ivar_Aasen_foobar/Proj_29991',
     options: {
-      icon: <Icon type="Circle" style={{ color: colors.grey5 }} />,
+      icon: (
+        <Icon type="Circle" style={{ color: 'var(--cogs-greyscale-grey5)' }} />
+      ),
       expandable: true,
     },
     actions: [
@@ -56,7 +57,9 @@ const dataSource = [
     author: 'Rui Martins',
     repositoryProject: 'Alvheim/Proj_29991',
     options: {
-      icon: <Icon type="Circle" style={{ color: colors.grey5 }} />,
+      icon: (
+        <Icon type="Circle" style={{ color: 'var(--cogs-greyscale-grey5)' }} />
+      ),
     },
     actions: [
       <Button

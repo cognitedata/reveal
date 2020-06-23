@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { colors } from '../../global-styles';
 
 type TableProps = {
   dataSource: {
@@ -29,13 +28,13 @@ const CogTable = styled.table`
   th {
     font-weight: 600;
     text-align: left;
-    border-bottom: 1px solid ${colors.grey4};
+    border-bottom: 1px solid var(--cogs-greyscale-grey4);
     padding: 22px;
   }
   td {
     font-weight: 500;
     padding: 22px;
-    border-bottom: 1px solid ${colors.grey4};
+    border-bottom: 1px solid var(--cogs-greyscale-grey4);
     vertical-align: center;
   }
 `;
