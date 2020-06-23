@@ -29,8 +29,8 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
     this.children = [];
   }
 
-  getModelBoundingBox(): THREE.Box3 {
-    return toThreeJsBox3(new THREE.Box3(), this.potreeNode.boundingBox);
+  getModelBoundingBox(outBbox?: THREE.Box3): THREE.Box3 {
+    return toThreeJsBox3(outBbox || new THREE.Box3(), this.potreeNode.boundingBox);
   }
 
   updateTransformation(matrix: Matrix4): void {
