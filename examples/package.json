@@ -19,7 +19,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@cognite/reveal": "../viewer/dist",
-    "@cognite/sdk": "^2.29.0",
+    "@cognite/sdk": "^2.31.0",
     "camera-controls": "^1.21.0",
     "dat.gui": "^0.7.7",
     "hold-event": "^0.0.1",
