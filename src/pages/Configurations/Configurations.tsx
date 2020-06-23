@@ -1,8 +1,10 @@
+/* eslint-disable no-console */
 import React from 'react';
 import { Button, Icon } from '@cognite/cogs.js';
 import { ContentContainer } from './elements';
 import Table from '../../components/Organisms/Table';
 import { colors } from '../../global-styles';
+import ExpandableInput from '../../components/Molecules/ExpandableInput';
 
 const dataSource = [
   {
@@ -104,9 +106,12 @@ const columns = [
 
 const Configurations = () => {
   return (
-    <ContentContainer>
-      <Table dataSource={dataSource} columns={columns} />
-    </ContentContainer>
+    <>
+      <ExpandableInput />
+      <ContentContainer>
+        <Table dataSource={dataSource} columns={columns} />
+      </ContentContainer>
+    </>
   );
 };
 
