@@ -1,6 +1,7 @@
-export { };
+import { MatchImageSnapshotOptions } from "jest-image-snapshot";
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+const matchImageSnapshotOptions: MatchImageSnapshotOptions = { dumpDiffToConsole: true }
 
 async function getLoadingDiv() {
     let divs = await page.$$('div');
@@ -24,7 +25,7 @@ async function waitForRender() {
     let loadingDiv = await getLoadingDiv();
 
     await delay(2000); // TODO
-    while(await loadingDiv.boundingBox() != null) {
+    while (await loadingDiv.boundingBox() != null) {
         await delay(100);
     }
 }
