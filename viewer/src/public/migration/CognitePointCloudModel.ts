@@ -9,6 +9,7 @@ import { toThreeJsBox3 } from '@/utilities';
 import { PotreeNodeWrapper } from '@/datamodels/pointcloud/PotreeNodeWrapper';
 import { PotreeGroupWrapper } from '@/datamodels/pointcloud/PotreeGroupWrapper';
 import { PotreePointColorType } from '@/datamodels/pointcloud/types';
+import { Matrix4 } from 'three';
 
 export class CognitePointCloudModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = SupportedModelTypes.PointCloud;
@@ -30,6 +31,11 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
 
   getModelBoundingBox(): THREE.Box3 {
     return toThreeJsBox3(new THREE.Box3(), this.potreeNode.boundingBox);
+  }
+
+  updateTransformation(matrix: Matrix4): void {
+    this.applyMatrix4(matrix);
+    this.updateMatrixWorld(false);
   }
 
   get pointBudget(): number {
