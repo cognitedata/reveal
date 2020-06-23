@@ -13,8 +13,11 @@ import { PotreeNodeWrapper } from './PotreeNodeWrapper';
  * basic functionality.
  */
 export class PotreeGroupWrapper extends THREE.Object3D {
+  private _needsRedraw: boolean = true;
+
   get needsRedraw(): boolean {
     return (
+      this._needsRedraw ||
       Potree.Global.numNodesLoading !== this.numNodesLoadingAfterLastRedraw ||
       this.numChildrenAfterLastRedraw !== this.potreeGroup.children.length ||
       this.nodes.some(n => n.needsRedraw)
@@ -47,6 +50,10 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     for (const child of this.potreeGroup.children) {
       yield new PotreeNodeWrapper(child as Potree.PointCloudOcttree);
     }
+  }
+
+  requestRedraw() {
+    this._needsRedraw = true;
   }
 
   private resetNeedsRedraw() {

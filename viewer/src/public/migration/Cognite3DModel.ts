@@ -17,6 +17,7 @@ import { SectorGeometry } from '@/datamodels/cad/sector/types';
 import { SectorQuads } from '@/datamodels/cad/rendering/types';
 import { vec3 } from 'gl-matrix';
 import { NodeAppearanceProvider, DefaultNodeAppearance } from '@/datamodels/cad/NodeAppearance';
+import { Matrix4 } from 'three';
 
 const mapCoordinatesBuffers = {
   v: vec3.create()
@@ -130,8 +131,13 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return toThreeJsBox3(box || new THREE.Box3(), bounds, this.cadModel.modelTransformation);
   }
 
-  getModelBoundingBox(): THREE.Box3 {
-    return this.getBoundingBox();
+  getModelBoundingBox(outBbox?: THREE.Box3): THREE.Box3 {
+    return this.getBoundingBox(undefined, outBbox);
+  }
+
+  updateTransformation(matrix: Matrix4): void {
+    this.cadNode.applyMatrix4(matrix);
+    this.cadNode.updateMatrixWorld(false);
   }
 
   updateNodeIdMaps(sector: { lod: string; data: SectorGeometry | SectorQuads }) {
