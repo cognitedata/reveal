@@ -12,20 +12,23 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
-    "release": "npm run mkdist && webpack",
-    "build": "npm run mkdist && webpack --env.development",
-    "build:watch": "npm run build -- --watch",
+    "release": "yarn run mkdist && webpack",
+    "build": "yarn run mkdist && webpack --env.development",
+    "build:watch": "yarn run build -- --watch",
+    "serve": "cd ./dist && yarn link && cd ../../examples && yarn && yarn link @cognite/reveal && yarn run start",
+
     "mkdist": "run-script-os",
     "mkdist:win32": "@powershell $(if(-not(Test-Path dist -PathType Container)) { mkdir dist;$? } else { $true;$? }) -and $(Copy-Item -Path package.json, README.md -Destination dist;$?)",
     "mkdist:linux:darwin": "mkdir -p dist && cp package.json README.md dist",
+
     "clean": "rimraf -rf dist/ target/ pkg/",
     "test": "jest",
     "coverage": "jest --coverage",
     "lint": "tslint --project .",
-    "serve": "cd ./dist && yarn link && cd ../../examples && yarn && yarn link @cognite/reveal && yarn run start",
-    "prepublishscript": "npm run release && npm run coverage",
+
+    "prepublishscript": "yarn run release && yarn run coverage",
     "publishscript": "node script/copyPackage.js",
-    "postpublishscript": "cd dist && npm publish"
+    "postpublishscript": "cd dist && yarn publish"
   },
   "author": "Lars Moastuen <lars.moastuen@cognite.com>",
   "contributors": [
