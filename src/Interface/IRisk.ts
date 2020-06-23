@@ -2,7 +2,7 @@
  * Interface for the Risk object at BP
  */
 
-export interface IRiskMetadata {
+export interface RiskMetadata {
   archived: string;
   contingency: string;
   country: string;
@@ -46,7 +46,7 @@ export interface RiskEvent {
   endTime: number;
   subtype: number;
   description: string;
-  metadata: IRiskMetadata;
+  metadata: RiskMetadata;
   assetIds: number[];
   source: string;
   id: number;
