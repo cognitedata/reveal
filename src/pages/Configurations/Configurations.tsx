@@ -5,6 +5,7 @@ import Table from 'components/Organisms/Table';
 import { Trans } from 'react-i18next';
 import Api from 'services/Api';
 import { ContentContainer } from './elements';
+import ExpandableInput from '../../components/Molecules/ExpandableInput';
 
 const dataSource = [
   {
@@ -111,9 +112,12 @@ const columns = [
 const Configurations = () => {
   Api.projects.get().then((r) => console.log('PROJECTS', r));
   return (
-    <ContentContainer>
-      <Table dataSource={dataSource} columns={columns} />
-    </ContentContainer>
+    <>
+      <ExpandableInput />
+      <ContentContainer>
+        <Table dataSource={dataSource} columns={columns} />
+      </ContentContainer>
+    </>
   );
 };
 
