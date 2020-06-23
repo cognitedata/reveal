@@ -82,7 +82,7 @@ export class Cognite3DViewer {
   private readonly extraObjects: THREE.Object3D[] = [];
 
   private isDisposed = false;
-  private readonly forceRendering = false; // For future support
+  private forceRendering = false; // For future support
 
   private readonly renderController: RenderController;
   private latestRequestId: number = -1;
@@ -435,6 +435,10 @@ export class Cognite3DViewer {
     this.moveCameraTo(position, target, duration);
   }
 
+  forceRerender(): void {
+    this.revealManager.requestRedraw();
+  }
+
   enableKeyboardNavigation(): void {
     this.controls.enableKeyboardNavigation = true;
   }
@@ -624,6 +628,7 @@ export class Cognite3DViewer {
       this.controls.update(this.clock.getDelta());
       renderController.update();
       this.revealManager.update(this.camera);
+
       if (
         renderController.needsRedraw ||
         this.forceRendering ||
