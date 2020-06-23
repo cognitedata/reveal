@@ -10,6 +10,10 @@
 8. [Strings](#strings)
 9. [Modules](#strings)
 10. [Properties](#properties)
+11. [Comparison Operators & Equality](#comparison-operators-&-equality)
+12. [Naming Conventions](#naming-conventions)
+13. [Accessors](#accessors)
+14. [Packages](#packages)
 
 # Types
 
@@ -323,91 +327,6 @@ class CandyShop implements Store {
 ### [Private Variables](#private-variables)
 
 Prefix private variables with `_`, e.g. `_name`, `_age`, `_height`.
-
-### [Naming Guidelines](#naming-guidelines)
-
-Naming convention is important for others reading your code and contributing. A lot of emphasis should be put on correctly naming a function or a variable.
-
-**!!** Example of **incorrect** code for this rule.
-
-```typescript
-class Kek {
-  private readonly m: number;
-  private bleurg: number = 0;
-  constructor(m: number) {
-    this.m = m;
-  }
-
-  add(n: number): boolean {
-    if (this.bleurg + n < this.m) {
-      this.bleurg = +n;
-      return true;
-    }
-    return false;
-  }
-}
-```
-
-Excuse the hyperbole example, but even the `add` function which has a descriptive name does do additional work which someone unfamiliar with the code will not catch. The more logic that gets entered into a function, the more likely it is that the name of the function no longer describes the code.
-
-**!!** Example of **incorrect** code for this rule.
-
-```typescript
-class Wallet {
-  private _amount: number;
-  private _loan: number = 0;
-
-  constructor(amount: number) {
-    this._amount = amount;
-  }
-
-  pay(price: number): boolean {
-    if (this._amount - price > 0) {
-      this._amount -= price;
-      return true;
-    } else if (this._loan < 5000 && this._amount !== 0) {
-      const loanAmount = price - this._amount;
-      this._amount = 0;
-      loan += loanAmount;
-      return true;
-    } else if (this._loan < 5000 && this._amount === 0) {
-      loan += price;
-      return true;
-    }
-    return false;
-  }
-}
-```
-
-> **Note:** In addition to the naming convention this price doesn't check if the price number is > 0 to verify that they aren't adding funcs into the wallet buy "paying" for negative values.
-
-The above example illustrates in a way that the function name is no longer discriptive of what the code does. It also starts to blend into a section covered later [Single Responsibility Pattern](#single-responsibility-pattern), but first let's cover the naming convention.
-
-Example of **better** code for this rule.
-
-```typescript
-...
-payFromWalletOrAttemptToLendMoneyToBuy(price: number): boolean {
-  ...
-}
-...
-```
-
-Now the function name mirrors to an extend the behavior of the function, but in a way the function is still a bit wrong. We return a boolean to see if the purchase was accepted, so a better name might have been.
-
-Example of **correct** code for this rule.
-
-```typescript
-...
-successfullyPaidFromWalletOrLentMoneyToBuy(price: number): boolean {
-  ...
-}
-...
-```
-
-Now in addition to describing what happens inside the function it also matches with the return type of the function.
-
-> **Note:** These names are really important if the function is not documented. If the function is not self explanatory then it needs to be documented.
 
 # Arrays
 
@@ -960,4 +879,267 @@ const name = suspect.name;
 ```typescript
 ===
 !==
+```
+
+### [Shortcuts](#shortcuts)
+
+
+**Don't** use
+
+```typescript
+if (name !== '') {}
+if (collection.length > 0) {}
+```
+
+**Do** use
+
+```typescript
+if (name) {}
+if (collection.length) {}
+!==
+```
+
+# Naming Conventions
+
+### [When to use camelCase](#when-to-use-camelcase)
+Use `camelCase` when naming objects, functions and instances.
+
+**!!** Examples of **incorrect** code for this rule.
+```typescript
+const RenderManager = new RevealManager();
+const reveal_manager = new RevealManager();
+```
+```typescript
+class Manager {
+
+  public DoStuff(): void {}
+}
+```
+Examples of **correct** code for this rule.
+```typescript
+const revealManager = new RevealManager();
+```
+```typescript
+class Manager {
+
+  public doStuff(): void {}
+}
+```
+
+### [When to use PascalCase](#when-to-use-pascalcase)
+Use `PascalCase` when naming classes and interfaces.
+
+**!!** Example of **incorrect** code for this rule.
+```typescript
+interface coffeMachine {}
+class material_manager {}
+```
+Examples of **correct** code for this rule.
+```typescript
+interface CoffeMachine {}
+class MaterialManager {}
+```
+
+
+### [Descriptive naming](#descriptive-naming)
+
+Naming convention is important for others reading your code and contributing. A lot of emphasis should be put on correctly naming a function or a variable.
+
+**!!** Example of **incorrect** code for this rule.
+
+```typescript
+class Kek {
+  private readonly m: number;
+  private bleurg: number = 0;
+  constructor(m: number) {
+    this.m = m;
+  }
+
+  add(n: number): boolean {
+    if (this.bleurg + n < this.m) {
+      this.bleurg = +n;
+      return true;
+    }
+    return false;
+  }
+}
+```
+
+Excuse the hyperbole example, but even the `add` function which has a descriptive name does do additional work which someone unfamiliar with the code will not catch. The more logic that gets entered into a function, the more likely it is that the name of the function no longer describes the code.
+
+**!!** Example of **incorrect** code for this rule.
+
+```typescript
+class Wallet {
+  private _amount: number;
+  private _loan: number = 0;
+
+  constructor(amount: number) {
+    this._amount = amount;
+  }
+
+  pay(price: number): boolean {
+    if (this._amount - price > 0) {
+      this._amount -= price;
+      return true;
+    } else if (this._loan < 5000 && this._amount !== 0) {
+      const loanAmount = price - this._amount;
+      this._amount = 0;
+      loan += loanAmount;
+      return true;
+    } else if (this._loan < 5000 && this._amount === 0) {
+      loan += price;
+      return true;
+    }
+    return false;
+  }
+}
+```
+
+> **Note:** In addition to the naming convention this price doesn't check if the price number is > 0 to verify that they aren't adding funcs into the wallet buy "paying" for negative values.
+
+The above example illustrates in a way that the function name is no longer discriptive of what the code does. It also starts to blend into a section covered later [Single Responsibility Pattern](#single-responsibility-pattern), but first let's cover the naming convention.
+
+Example of **better** code for this rule.
+
+```typescript
+...
+payFromWalletOrAttemptToLendMoneyToBuy(price: number): boolean {
+  ...
+}
+...
+```
+
+Now the function name mirrors to an extend the behavior of the function, but in a way the function is still a bit wrong. We return a boolean to see if the purchase was accepted, so a better name might have been.
+
+Example of **correct** code for this rule.
+
+```typescript
+...
+successfullyPaidFromWalletOrLentMoneyToBuy(price: number): boolean {
+  ...
+}
+...
+```
+
+Now in addition to describing what happens inside the function it also matches with the return type of the function.
+
+> **Note:** These names are really important if the function is not documented. If the function is not self explanatory then it needs to be documented.
+
+# Accessors
+
+### [Accessor Functions](#accessor-functions)
+Althoug accessor functions for properties are not required, if you do create them, use `get__` and `set__`.
+
+**!!** Example of **incorrect** code for this rule.
+```typescript
+person.firstName();
+person.firstName('John');
+```
+Example of **correct** code for this rule.
+```typescript
+person.getFirstName();
+person.setFirstName('John');
+```
+
+### [Boolean Accessors](#boolean-accessors)
+In the case of booleans, use a descriptive prefix e.g. `is__`, `has__`.
+**!!** Example of **incorrect** code for this rule.
+```typescript
+if (!person.firstName()) {
+  return false;
+}
+```
+Example of **correct** code for this rule.
+```typescript
+if(!person.hasFirstName()) {
+  return false;
+}
+```
+> **Note:** Sometimes `is` and `has` doesn't cover the function operation, at this point you might want to consider if a function is doing too much. On insert functions that return a boolean that represents the result of the operation, add a comment explaining this.
+
+# Packages
+
+### [Feature Structure](#feature-structure)
+The package structure of this project is split on feature. Currently there are a handful of root folders in `src`.
+
+### [Datamodels](#datamodels)
+Datamodels contains the data types used in the project. In the beginning we have split between `cad` and `pointcloud`, but there should also be a `core` or `common` package containing shared resources.
+> **Note:** A shared `abstract class` / `interface` BaseModel which both cad and pointcloud models inherits, belongs in the shared datamodel package.
+
+#### New Features
+Depending on whether or not you are adding new or extending features, you will add a new file to the already existing folders, or create a new one inside the appropriate `datamodel` folder.
+
+### [Glsl](#glsl)
+Contains shading language. Here you can find fragment and vertex shaders.
+
+### [Public](#public)
+The public folder ...
+> **Note:** This needs to be updated. The public folder should maybe be moved away and RevealManager should be moved to say the common folder of datamodels, and then we make migration the base folder here.
+
+### [Migration](#migration)
+Contains the classes used for migrating from the old viewer `[insert link](link to old 3d viewer repo)` to the new reveal viewer. These classes are the only classes exported from the library at the beginning, meaning everything inside here should change at a much slower pace than classes elsewhere in the project.
+
+### [Utilities](#utilities)
+Common folder for utility classes. Common network operations and checks belongs in this folder.
+
+### [Import Alias](#import-alias)
+When importing from other files use the `@` alias to make import statements more readable.
+
+### [Package Dependencies](#package-dependencies)
+Cross package import statements should be unidirectional. Meaning, classes in the `datamodels` folder can import from `utilities` but not the other way around. If you happen to need data in an `utilities` class from a file in `datamodels` you should create an interface in the `utilities` folder which the class in `datamodels` implements.
+
+
+**!!** Example of **incorrect** code for this rule.
+
+`datamodels/common/BaseModel.ts`
+```typescript
+export class BaseModel {
+  private _blobUrl: string;
+
+  get blobUrl(): string {
+    return this._blobUrl;
+  }
+}
+```
+`utilities/network/TransformationProvider.ts`
+```typescript
+import BaseModel from '@datamodels/common/BaseModel';
+
+export interface TransformationProvider {
+  getTransformation(model: BaseModel);
+}
+```
+
+Example of **correct** code for this rule. (Please excuse the horrible name `BlobMember`)
+
+`utilities/network/BlobMember.ts`
+```typescript
+export interface BlobMember {
+  readonly blobUrl: string;
+}
+```
+
+```typescript
+import BlobMember from '@utilities/network/BlobMember';
+
+export class BaseModel implements BlobMember {
+  private _blobUrl: string;
+
+  get blobUrl(): string {
+    return this._blobUrl;
+  }
+}
+```
+`utilities/network/TransformationProvider.ts`
+```typescript
+import BlobMember from './BlobMember';
+
+export interface TransformationProvider {
+  getTransformation(blobMember: BlobMember);
+}
+```
+> **Note:** Remember you can use [destructuring](#destructuring) to aquire the specific properties you require.
+```typescript
+  getTransformation({ blobUrl: string }: BlobMember);
 ```
