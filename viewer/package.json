@@ -1,7 +1,6 @@
 {
   "name": "@cognite/reveal",
   "version": "1.0.0-alpha-1",
-  "private": true,
   "description": "WebGL based 3D viewer for CAD and point clouds processed in Cognite CDF.",
   "repository": {
     "type": "git",
@@ -9,8 +8,11 @@
     "url": "https://github.com/cognitedata/reveal.git"
   },
   "homepage": "https://github.com/cognitedata/reveal/tree/master/viewer",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
   "scripts": {
     "release": "yarn run mkdist && webpack",
     "build": "yarn run mkdist && webpack --env.development",
@@ -18,17 +20,15 @@
     "serve": "cd ./dist && yarn link && cd ../../examples && yarn && yarn link @cognite/reveal && yarn run start",
 
     "mkdist": "run-script-os",
-    "mkdist:win32": "@powershell $(if(-not(Test-Path dist -PathType Container)) { mkdir dist;$? } else { $true;$? }) -and $(Copy-Item -Path package.json, README.md -Destination dist;$?)",
-    "mkdist:linux:darwin": "mkdir -p dist && cp package.json README.md dist",
+    "mkdist:win32": "@powershell $(if(-not(Test-Path dist -PathType Container)) { mkdir dist;$? } else { $true;$? })",
+    "mkdist:linux:darwin": "mkdir -p dist",
 
-    "clean": "rimraf -rf dist/ target/ pkg/",
+    "clean": "rimraf -rf dist/ ../target pkg/",
     "test": "jest",
     "coverage": "jest --coverage",
     "lint": "tslint --project .",
 
-    "prepublishscript": "yarn run release && yarn run coverage",
-    "publishscript": "node script/copyPackage.js",
-    "postpublishscript": "cd dist && yarn publish"
+    "prepublishscript": "yarn run coverage && yarn run clean && yarn run release"
   },
   "author": "Lars Moastuen <lars.moastuen@cognite.com>",
   "contributors": [

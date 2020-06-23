@@ -22,6 +22,7 @@
     "@cognite/sdk": "^2.31.0",
     "camera-controls": "^1.21.0",
     "dat.gui": "^0.7.7",
+    "gl-matrix": "^3.3.0",
     "hold-event": "^0.0.1",
     "install": "^0.13.0",
     "react": "^16.13.1",
