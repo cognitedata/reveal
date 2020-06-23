@@ -84,40 +84,57 @@ export class MaterialManager {
     materials: Materials,
     treeIndices: number[]
   ) {
-    if (!appearanceProvider) {
+    if (!appearanceProvider || treeIndices.length === 0) {
       return;
     }
+
+    const colorData = materials.overrideColorPerTreeIndex.image.data;
+    const visibilityData = materials.overrideVisibilityPerTreeIndex.image.data;
 
     const count = treeIndices.length;
     for (let i = 0; i < count; ++i) {
       const treeIndex = treeIndices[i];
+
+      // Reset to original style (matches defaults from materials.ts)
+      colorData[4 * treeIndex + 0] = 0;
+      colorData[4 * treeIndex + 1] = 0;
+      colorData[4 * treeIndex + 2] = 0;
+      colorData[4 * treeIndex + 3] = 0;
+      visibilityData[4 * treeIndex + 0] = 255;
+      visibilityData[4 * treeIndex + 1] = 0;
+      visibilityData[4 * treeIndex + 2] = 0;
+      visibilityData[4 * treeIndex + 3] = 0;
+
+      // Apply overrides
       const style = appearanceProvider.styleNode(treeIndex);
 
       // Override color
       if (style && style.color !== undefined) {
-        materials.overrideColorPerTreeIndex.image.data[4 * treeIndex] = style.color[0];
-        materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 1] = style.color[1];
-        materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 2] = style.color[2];
-        materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 3] = style.color[3];
-        materials.overrideColorPerTreeIndex.needsUpdate = true;
+        colorData[4 * treeIndex] = style.color[0];
+        colorData[4 * treeIndex + 1] = style.color[1];
+        colorData[4 * treeIndex + 2] = style.color[2];
+        colorData[4 * treeIndex + 3] = style.color[3];
+      } else {
       }
 
       // Hide node?
       if (style && style.visible !== undefined) {
-        materials.overrideVisibilityPerTreeIndex.image.data[4 * treeIndex] = style.visible ? 255 : 0;
-        materials.overrideVisibilityPerTreeIndex.needsUpdate = true;
+        visibilityData[4 * treeIndex] = style.visible ? 255 : 0;
       }
 
       // Render in front of everything?
       if (style && style.renderInFront !== undefined) {
-        materials.overrideVisibilityPerTreeIndex.image.data[4 * treeIndex + 1] = style.renderInFront ? 255 : 0;
-        materials.overrideVisibilityPerTreeIndex.needsUpdate = true;
+        visibilityData[4 * treeIndex + 1] = style.renderInFront ? 255 : 0;
       }
 
       if (style && style.outline !== undefined) {
         throw new Error('Outline is not supported yet');
       }
     }
+
+    // Make sure new textures are uploaded to the GPU
+    materials.overrideColorPerTreeIndex.needsUpdate = true;
+    materials.overrideVisibilityPerTreeIndex.needsUpdate = true;
   }
 
   private applyToAllMaterials(callback: (material: THREE.ShaderMaterial) => void) {
@@ -140,4 +157,8 @@ export class MaterialManager {
       callback(materials.simple);
     }
   }
+}
+
+function updateTexel(texture: THREE.DataTexture, treeIndex: number, component: number, value: number) {
+  texture.image.data[4 * treeIndex + component] = value;
 }
