@@ -1,6 +1,6 @@
 {
   "name": "@cognite/subsurface-interfaces",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Interfaces for Subsurface Packages",
   "main": "subsurface-interfaces.js",
   "module": "subsurface-interfaces.js",
