@@ -51,23 +51,6 @@ type RequestParams = { modelRevision: IdEither; format: File3dFormat };
 type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
 type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
 
-// Reusable buffers used by functions in Cognite3dViewer to avoid allocations
-const UpdateNearAndFarPlaneBuffers = {
-  combinedBbox: new THREE.Box3(),
-  bbox: new THREE.Box3(),
-  point: new THREE.Vector3(),
-  corners: new Array<THREE.Vector3>(
-    new THREE.Vector3(),
-    new THREE.Vector3(),
-    new THREE.Vector3(),
-    new THREE.Vector3(),
-    new THREE.Vector3(),
-    new THREE.Vector3(),
-    new THREE.Vector3(),
-    new THREE.Vector3()
-  )
-};
-
 export class Cognite3DViewer {
   private get canvas(): HTMLCanvasElement {
     return this.renderer.domElement;
@@ -109,6 +92,25 @@ export class Cognite3DViewer {
   private _geometryFilters: GeometryFilter[] = [];
 
   private readonly spinner: Spinner;
+
+  /**
+   * Reusable buffers used by functions in Cognite3dViewer to avoid allocations
+   */
+  private readonly _updateNearAndFarPlaneBuffers = {
+    combinedBbox: new THREE.Box3(),
+    bbox: new THREE.Box3(),
+    point: new THREE.Vector3(),
+    corners: new Array<THREE.Vector3>(
+      new THREE.Vector3(),
+      new THREE.Vector3(),
+      new THREE.Vector3(),
+      new THREE.Vector3(),
+      new THREE.Vector3(),
+      new THREE.Vector3(),
+      new THREE.Vector3(),
+      new THREE.Vector3()
+    )
+  };
 
   constructor(options: Cognite3DViewerOptions) {
     if (options.enableCache) {
@@ -675,7 +677,7 @@ export class Cognite3DViewer {
     if (this.isDisposed) {
       return;
     }
-    const { combinedBbox, bbox, point, corners } = UpdateNearAndFarPlaneBuffers;
+    const { combinedBbox, bbox, point, corners } = this._updateNearAndFarPlaneBuffers;
     combinedBbox.makeEmpty();
 
     this.models.forEach(model => {
