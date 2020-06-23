@@ -159,3 +159,6 @@ jobs:
       run: |
         export NODE_OPTIONS=--max-old-space-size=8192
         yarn build
+    - name: Visual regression tests
+      working-directory: examples
+      run: 'yarn ci:nossl'
