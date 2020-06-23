@@ -661,7 +661,7 @@ export class Cognite3DViewer {
         })
       )
       .subscribe(() => {
-        lastUpdatePosition.copy(camPosition);
+        this.camera.getWorldPosition(lastUpdatePosition);
         this.updateCameraNearAndFar(this.camera);
       });
     return updateNearFarSubject;
@@ -689,12 +689,11 @@ export class Cognite3DViewer {
       combinedBbox.expandByPoint(bbox.max);
     });
     getBoundingBoxCorners(combinedBbox, corners);
-    let nearest = Infinity;
-    let farthest = -Infinity;
     const cameraPosition = camera.getWorldPosition(point);
+    let nearest = Math.max(0.1, combinedBbox.distanceToPoint(cameraPosition));
+    let farthest = -Infinity;
     for (let i = 0; i < 8; ++i) {
       const dist = corners[i].distanceTo(cameraPosition);
-      nearest = Math.min(nearest, dist);
       farthest = Math.max(farthest, dist);
     }
 
