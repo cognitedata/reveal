@@ -217,7 +217,7 @@ export class LogRender
     {
       const sample = log.getAt(i);
       const mdFraction = this.mdRange.getFraction(sample.md);
-      canvas.drawText(mdFraction, sample.label, fontSize, null, rightBand);
+      canvas.drawText(mdFraction, sample.decription, fontSize, null, rightBand);
 
     }
   }

@@ -12,6 +12,7 @@
 //=====================================================================================
 
 import { BaseLogSample } from "@/Nodes/Wells/Samples/BaseLogSample";
+import { LoDashImplicitNumberArrayWrapper } from "lodash";
 
 export class PointLogSample extends BaseLogSample 
 {
@@ -19,25 +20,33 @@ export class PointLogSample extends BaseLogSample
   // INSTANCE FIELDS
   //==================================================
 
-  public label: string;
+  public mdEnd: number;
+  public decription: string;
+  public subtype: string = "";
+  public riskSubCategory: string = "";
+  public details: string = "";
   public isOpen = false;
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(label: string, md: number)
+  public constructor(decription: string, mdStart: number, mdEnd?: number)
   {
-    super(md);
-    this.label = label;
+    super(mdStart);
+    this.decription = decription;
+    if (mdEnd === undefined)
+      this.mdEnd = mdStart;
+    else
+      this.mdEnd = mdEnd;
   }
 
   //==================================================
   // OVERRIDES of MdSample
   //==================================================
 
-  public /*override*/ toString(): string { return `${super.toString()} Value: ${this.label}`; }
-  public /*override*/ sampleText(): string { return `Value: ${this.label}`; }
+  public /*override*/ toString(): string { return `${super.toString()} Value: ${this.decription}`; }
+  public /*override*/ sampleText(): string { return `Value: ${this.decription}`; }
 
   //==================================================
   // OVERRIDES of BaseLogSample
@@ -50,7 +59,7 @@ export class PointLogSample extends BaseLogSample
     const otherSample = other as PointLogSample;
     if (!otherSample)
       return false;
-    return this.label === otherSample.label;
+    return this.decription === otherSample.decription;
   }
 
   public /*override*/ copyValueFrom(other: BaseLogSample): void
@@ -58,8 +67,8 @@ export class PointLogSample extends BaseLogSample
     const otherSample = other as PointLogSample;
     if (!otherSample)
       return;
-    this.label = otherSample.label;
+    this.decription = otherSample.decription;
   }
 
-  public /*override*/  clone(): BaseLogSample { return new PointLogSample(this.label, this.md); }
+  public /*override*/  clone(): BaseLogSample { return new PointLogSample(this.decription, this.md); }
 }  
