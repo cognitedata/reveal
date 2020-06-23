@@ -34,6 +34,10 @@ describe('Simple', () => {
     it('visually looks correct', async () => {
         await waitForRender();
 
+        await page.evaluate(() => {
+            (document.querySelectorAll('h1, a') || []).forEach(el => el.remove());
+        });
+
         const image = await page.screenshot();
         expect(image).toMatchImageSnapshot(matchImageSnapshotOptions);
     });
