@@ -82,7 +82,7 @@ module.exports = {
       return convertToRegExp(term, issuePattern);
     }
 
-    const warningRegExps = warningTerms.map(warningTerm =>
+    const warningRegExps = warningTerms.map((warningTerm) =>
       convertToRegExp(warningTerm)
     );
 
@@ -98,10 +98,7 @@ module.exports = {
     function generateIssuePatternMatchExample(regex) {
       const randexp = new RandExp(regex);
       randexp.max = 2;
-      return randexp
-        .gen()
-        .toUpperCase()
-        .trim();
+      return randexp.gen().toUpperCase().trim();
     }
 
     function reportIssue(node, matchedTerm, commentIssuedRegEx) {
@@ -129,7 +126,7 @@ module.exports = {
       }
 
       const warningTermMatches = findWarningTermMatches(comment);
-      warningTermMatches.forEach(matchedTerm => {
+      warningTermMatches.forEach((matchedTerm) => {
         const commentIssuedRegEx = convertToCommentIssuedRegEx(matchedTerm);
         if (!commentIssuedRegEx.test(comment)) {
           reportIssue(node, matchedTerm, commentIssuedRegEx);

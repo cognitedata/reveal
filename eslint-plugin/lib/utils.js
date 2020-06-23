@@ -1,8 +1,8 @@
-const getDocsUrl = ruleName => {
+const getDocsUrl = (ruleName) => {
   return `https://github.com/cognitedata/eslint-config/tree/master/docs/rules/${ruleName}.md`;
 };
 
-const isDirectiveComment = node => {
+const isDirectiveComment = (node) => {
   const comment = node.value.trim();
 
   return (

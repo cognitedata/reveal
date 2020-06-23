@@ -33,7 +33,7 @@ module.exports = {
         ) {
           const rawArray = node.value.raw.split('\n ');
           const zIndexLine = rawArray.findIndex(
-            ele => ele.indexOf(zIndex) > -1
+            (ele) => ele.indexOf(zIndex) > -1
           );
           const line = zIndexLine + node.loc.start.line;
           context.report({

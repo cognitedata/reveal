@@ -28,7 +28,7 @@ module.exports = {
       JSXOpeningElement(node) {
         if (node.name && node.name.name === 'Trans') {
           let isTPassed = false;
-          node.attributes.forEach(attribute => {
+          node.attributes.forEach((attribute) => {
             if (attribute.name && attribute.name.name === 't') {
               isTPassed = true;
             }

@@ -35,7 +35,7 @@ module.exports = {
           context.report({
             node,
             messageId: 'require-styled-macro',
-            fix: fixer => {
+            fix: (fixer) => {
               return fixer.replaceTextRange(
                 node.source.range,
                 `'${name}/macro'`
