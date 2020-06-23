@@ -206,20 +206,6 @@ export class Cognite3DViewer {
     this._updateCameraNearAndFarSubject = this.setupUpdateCameraNearAndFar();
 
     this.animate(0);
-
-    document.addEventListener('keydown', (event: KeyboardEvent) => {
-      if (event.key === 'k') {
-        const oldHelper = this.scene.getObjectByName('cameraHelper');
-        if (oldHelper) {
-          this.scene.remove(oldHelper);
-        }
-        const cloneCamera = this.getCamera().clone();
-        const helper = new THREE.CameraHelper(cloneCamera);
-        helper.name = 'cameraHelper';
-        this.scene.add(helper);
-      }
-      return 0;
-    });
   }
 
   dispose(): void {
