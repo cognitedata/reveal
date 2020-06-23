@@ -35,6 +35,6 @@ describe('Simple', () => {
         await waitForRender();
 
         const image = await page.screenshot();
-        expect(image).toMatchImageSnapshot();
+        expect(image).toMatchImageSnapshot(matchImageSnapshotOptions);
     });
 });
