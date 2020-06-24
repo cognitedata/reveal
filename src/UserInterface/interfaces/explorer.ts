@@ -4,7 +4,6 @@ import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 
 // Explorer component state interface
 export interface ExplorerStateInterface {
-  root: BaseRootNode;
   tabConfig?: {
     name: string;
     value: string;

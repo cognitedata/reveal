@@ -7,6 +7,7 @@ import InIcon from "@images/Actions/In.png";
 import OutIcon from "@images/Actions/Out.png";
 import Icon from "../Common/Icon";
 import { executeToolBarCommand } from "@/UserInterface/redux/actions/visualizers";
+import { ToolbarCommand } from "@/UserInterface/interfaces/visualizers";
 
 /**
  * Get width and height of toolbar
@@ -31,7 +32,10 @@ const toolBarWrapperMargins = (dimension1: number, dimension2: number, isHorizon
 };
 
 // Visualizer ToolBar Component
-export default function VisualizerToolbar(props: { toolbar: any[]; visualizerId: string }) {
+export default function VisualizerToolbar(props: {
+  toolbar: ToolbarCommand[];
+  visualizerId: string;
+}) {
   const { visualizerId, toolbar } = props;
   if (!toolbar) return null;
   const dispatch = useDispatch();

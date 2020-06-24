@@ -1,11 +1,13 @@
 import "regenerator-runtime/runtime";
 import React from "react";
 import ReactDOM from "react-dom";
-import SubsurfaceVisualizer from "./SubsurfaceVisualizer";
-import SubsurfaceReducer from "./redux/reducers/SubsurfaceReducer";
-import SubsurfaceMiddleware from "./redux/middlewares/main";
+import { Provider } from "react-redux";
 import { createStore, applyMiddleware, combineReducers, compose } from "redux";
-import "./styles/scss/theme.scss";
+
+import App from "@/UserInterface/App";
+import SubsurfaceReducer from "@/UserInterface/redux/reducers/SubsurfaceReducer";
+import SubsurfaceMiddleware from "@/UserInterface/redux/middlewares/main";
+import "@/UserInterface/styles/scss/theme.scss";
 import { Appearance } from "@/Core/States/Appearance";
 import { setCssVariable } from "@/Components/Utils";
 
@@ -36,4 +38,9 @@ setCssVariable(
   (Appearance.treeBackgroundColor && Appearance.treeBackgroundColor.hex()) || "inherit"
 );
 
-ReactDOM.render(<SubsurfaceVisualizer store={store} />, root);
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  root
+);

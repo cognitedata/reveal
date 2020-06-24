@@ -86,8 +86,7 @@ export class Modules
   {
     // Create the root from the last installed
     let root: BaseRootNode | null = null;
-    for (var i = this.modules.length - 1; i >= 0; --i) 
-    {
+    for (let i = this.modules.length - 1; i >= 0; --i) {
       const module = this.modules[i];
       root = module.createRoot();
       if (root)

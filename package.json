@@ -63,6 +63,7 @@
     "@types/react-virtualized": "^9.21.10",
     "@types/styled-components": "^5.1.0",
     "@types/ts-nameof": "^4.0.0",
+    "@types/utm": "^1.1.1",
     "@types/uuid": "^3.4.5",
     "babel-loader": "^8.1.0",
     "clean-webpack-plugin": "^3.0.0",
@@ -126,6 +127,7 @@
     "stats.js": "^0.17.0",
     "styled-components": "^5.1.0",
     "three": "^0.109.0",
-    "ts-nameof": "^4.0.3"
+    "ts-nameof": "^4.0.3",
+    "utm": "^1.1.1"
   }
 }

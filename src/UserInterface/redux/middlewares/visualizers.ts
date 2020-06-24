@@ -18,7 +18,7 @@ export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
             // A toolbar commad is executed
             try {
                 const { visualizerId, index } = payload;
-                const { command } = visualizers.toolBars[visualizerId][index];
+                const { command } = visualizers.toolbars[visualizerId][index];
                 if (command.invoke) {
                     // Has command definition and execute it
                     command.invoke();
@@ -29,6 +29,7 @@ export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
                     store.dispatch(newAction);
                 }
             } catch (err) {
+                // tslint:disable-next-line: no-console
                 console.error(err);
             }
             break;

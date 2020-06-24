@@ -54,7 +54,6 @@ function generateTree(nodes?: { [key: string]: TreeDataItem }) {
 
 // Renders Tree Controller
 export function Explorer() {
-  const root = useSelector((state: ReduxStore) => state.explorer.root);
   const dispatch = useDispatch();
 
   const nodes = useSelector(getVisibleNodes);
@@ -62,7 +61,7 @@ export function Explorer() {
 
   // Handle Node Check
   const handleToggleNodeCheck = (uniqueId: string, checkState: boolean) => {
-    dispatch(onToggleNodeCheck({ uniqueId, checkState, root }));
+    dispatch(onToggleNodeCheck({ uniqueId, checkState }));
   };
 
   // Handle Node Expand

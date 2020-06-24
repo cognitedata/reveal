@@ -1,10 +1,10 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { VisualizerStateInterface } from "@/UserInterface/interfaces/visualizers";
-import ToolbarAdaptor from "@/UserInterface/adaptors/ToolbarAdaptor";
+import Viewer from "@/UserInterface/info/Viewer";
 
 // Initial settings state
 const initialState: VisualizerStateInterface = {
-    toolBars: {},
+    toolbars: {},
     targets: {},
 };
 
@@ -13,14 +13,14 @@ const initialState: VisualizerStateInterface = {
 // are actually applied immutably.
 export default createReducer(initialState, {
     SET_VISUALIZER_DATA: (state, action) => {
-        const { toolBars, targets } = action.payload;
-        state.targets = targets;
-        Object.keys(toolBars).forEach(viewerId => {
-            state.toolBars[viewerId] = ToolbarAdaptor.convert(toolBars[viewerId].commands)
-        })
+        for (const viewer of action.payload.viewers as Viewer[]) {
+            const viewerName = viewer.getName();
+            state.toolbars[viewerName] = viewer.getToolbar()!; 
+            state.targets[viewerName] = viewer.getTarget();
+        }
     }, EXECUTE_VISUALIZER_TOOLBAR_COMMAND_SUCCESS: (state, action) => {
         const { visualizerId } = action.payload;
-        const toolbar = state.toolBars[visualizerId];
+        const toolbar = state.toolbars[visualizerId];
         toolbar.map((item) => {
             const command = item.command;
             item.isChecked = command.isChecked;

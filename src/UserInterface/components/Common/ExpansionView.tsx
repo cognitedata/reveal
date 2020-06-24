@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme: Theme) =>
       position: "absolute",
       left: "110px",
       top: "-1.8rem",
-      zIndex: 9998
+      zIndex: 2
     }
   })
 );

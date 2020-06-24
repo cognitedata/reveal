@@ -7,9 +7,10 @@ import
 import dummyExplorerState from "@/UserInterface/data/explorer-dummy-state";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import Nodes from "@/UserInterface/constants/Nodes";
-import RootManager from "@/UserInterface/managers/rootManager";
 import { CheckBoxState } from '@/Core/Enums/CheckBoxState';
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
+import { WellTreeNode } from "@/Nodes/TreeNodes/WellTreeNode";
+import { OthersTreeNode } from "@/Nodes/TreeNodes/OthersTreeNode";
 
 // Generate redux store compatible nodes data structure from root node
 function generateNodeStructure(
@@ -51,7 +52,8 @@ function makeNodes(root: BaseRootNode)
 {
   const rootId = root.uniqueId.toString();
   const nodes: { [key: string]: any } = {};
-  let queue: BaseNode[] = [root.children[1]];
+  // TODO - Remove this.
+  let queue: [BaseNode | null] = [root.getChildByType(WellTreeNode)];
   let node;
   while (queue.length)
   {
@@ -72,7 +74,8 @@ function makeNodes(root: BaseRootNode)
       }
     }
   }
-  queue = [root.children[2]];
+  // TODO - Remove this.
+  queue = [root.getChildByType(OthersTreeNode)];
   while (queue.length)
   {
     node = queue.shift();
@@ -97,7 +100,6 @@ function makeNodes(root: BaseRootNode)
 
 const initialState: ExplorerStateInterface = {
   ...dummyExplorerState,
-  root: RootManager.createRoot(),
   selectedNodeType: { value: 0, name: Nodes.NODE_TYPES.OTHERS },
   selectedNode: null,
   checkedNodeIds: new Set<string>(),

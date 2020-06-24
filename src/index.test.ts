@@ -1,4 +1,4 @@
-import { SubsurfaceVisualizer } from ".";
+import NodeVisualizer  from "@/UserInterface/NodeVisualizer";
 
 // describe('SubsurfaceVisualizer', () => {
 //   it('is truthy', () => {
