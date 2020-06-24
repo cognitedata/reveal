@@ -15,10 +15,8 @@ export function traverseDepthFirst<T extends WithChildren<T>>(root: T, visitor: 
     return;
   }
 
-  if (root.children) {
-    for (const child of root.children) {
-      traverseDepthFirst(child, visitor);
-    }
+  for (let i = 0; i < root.children.length; i++) {
+    traverseDepthFirst(root.children[i], visitor);
   }
 }
 
