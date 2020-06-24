@@ -3,7 +3,6 @@ import React from 'react';
 import { Button, Icon } from '@cognite/cogs.js';
 import Table from 'components/Organisms/Table';
 import { Trans } from 'react-i18next';
-import Api from 'services/Api';
 import { ContentContainer } from './elements';
 import ExpandableInput from '../../components/Molecules/ExpandableInput';
 
@@ -110,7 +109,6 @@ const columns = [
 ];
 
 const Configurations = () => {
-  Api.projects.get().then((r) => console.log('PROJECTS', r));
   return (
     <>
       <ExpandableInput />
