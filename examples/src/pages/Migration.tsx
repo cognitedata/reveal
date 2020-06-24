@@ -216,6 +216,7 @@ export function Migration() {
           const { nodeId, treeIndex, point, model } = intersection;
           console.log(`Clicked node ${nodeId} at`, point);
           // highlight the object
+          model.deselectAllNodes();
           model.selectNodeByTreeIndex(treeIndex);
           // TODO make the camera zoom to the object
           // const boundingBox = model.getBoundingBox(nodeId);
