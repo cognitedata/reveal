@@ -289,7 +289,7 @@ class CandyShop implements Store {
 
 > In this example it might make more sense if the owner name was `readonly` and the owner had both a setter and a getter in the shop class.
 
-Example of **correct** code for this rule.
+Example of **incorrect** code for this rule.
 
 ```typescript
 interface Owner {
