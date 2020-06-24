@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { useEffect } from 'react';
 
 const SuspenseFallback = () => {
