@@ -158,7 +158,3 @@ export class MaterialManager {
     }
   }
 }
-
-function updateTexel(texture: THREE.DataTexture, treeIndex: number, component: number, value: number) {
-  texture.image.data[4 * treeIndex + component] = value;
-}
