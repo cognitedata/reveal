@@ -99,7 +99,10 @@ export class Cognite3DViewer {
   private readonly _updateNearAndFarPlaneBuffers = {
     combinedBbox: new THREE.Box3(),
     bbox: new THREE.Box3(),
-    point: new THREE.Vector3(),
+    cameraPosition: new THREE.Vector3(),
+    cameraDirection: new THREE.Vector3(),
+    nearPlaneCoplanarPoint: new THREE.Vector3(),
+    nearPlane: new THREE.Plane(),
     corners: new Array<THREE.Vector3>(
       new THREE.Vector3(),
       new THREE.Vector3(),
@@ -279,7 +282,6 @@ export class Cognite3DViewer {
       modelRevision: { id: options.revisionId },
       format: File3dFormat.RevealCadModel
     });
-
     if (options.geometryFilter) {
       this._geometryFilters.push(options.geometryFilter);
       this.setSlicingPlanes(this.revealManager.clippingPlanes);
@@ -679,12 +681,21 @@ export class Cognite3DViewer {
   }
 
   private updateCameraNearAndFar(camera: THREE.PerspectiveCamera) {
+    // See https://stackoverflow.com/questions/8101119/how-do-i-methodically-choose-the-near-clip-plane-distance-for-a-perspective-proj
     if (this.isDisposed) {
       return;
     }
-    const { combinedBbox, bbox, point, corners } = this._updateNearAndFarPlaneBuffers;
+    const {
+      combinedBbox,
+      bbox,
+      cameraPosition,
+      cameraDirection,
+      corners,
+      nearPlane,
+      nearPlaneCoplanarPoint
+    } = this._updateNearAndFarPlaneBuffers;
+    // 1. Compute the bounds of all geometry
     combinedBbox.makeEmpty();
-
     this.models.forEach(model => {
       model.getModelBoundingBox(bbox);
       combinedBbox.expandByPoint(bbox.min);
@@ -696,29 +707,44 @@ export class Cognite3DViewer {
       combinedBbox.expandByPoint(bbox.max);
     });
     getBoundingBoxCorners(combinedBbox, corners);
-    const cameraPosition = camera.getWorldPosition(point);
-    let nearest = Math.max(0.1, combinedBbox.distanceToPoint(cameraPosition));
-    let farthest = -Infinity;
-    for (let i = 0; i < 8; ++i) {
-      const dist = corners[i].distanceTo(cameraPosition);
-      farthest = Math.max(farthest, dist);
-    }
+    camera.getWorldPosition(cameraPosition);
+    camera.getWorldDirection(cameraDirection);
 
-    // Handle when camera is inside the model
+    // 1. Compute nearest to fit the whole bbox (the case
+    // where the camera is inside the box for now is ignored for now)
+    let near = combinedBbox.distanceToPoint(cameraPosition);
+    near /= Math.sqrt(1 + Math.tan(((camera.fov / 180) * Math.PI) / 2) ** 2 * (camera.aspect ** 2 + 1));
+    near = Math.max(0.1, near);
+
+    // 2. Compute the far distance to the distance from camera to furthest
+    // corner of the boundingbox that is "in front" of the near plane
+    nearPlaneCoplanarPoint.copy(cameraPosition).addScaledVector(cameraDirection, near);
+    nearPlane.setFromNormalAndCoplanarPoint(cameraDirection, nearPlaneCoplanarPoint);
+    let far = -Infinity;
+    for (let i = 0; i < 8; ++i) {
+      if (nearPlane.distanceToPoint(corners[i]) >= 0) {
+        const dist = corners[i].distanceTo(cameraPosition);
+        far = Math.max(far, dist);
+      }
+    }
+    far = Math.max(near * 2, far);
+
+    // 3. Handle when camera is inside the model by adjusting the near value
     const diagonal = combinedBbox.min.distanceTo(combinedBbox.max);
     if (combinedBbox.containsPoint(cameraPosition)) {
-      nearest = Math.min(0.1, farthest / 1000.0);
+      near = Math.min(0.1, far / 1000.0);
     }
-    farthest = nearest + diagonal;
-    camera.near = nearest;
-    camera.far = farthest;
+
+    // Apply
+    camera.near = near;
+    camera.far = far;
     camera.updateProjectionMatrix();
     // The minDistance of the camera controller determines at which distance
     // we will push the target in front of us instead of getting closer to it.
     // This is also used to determine the speed of the camera when flying with ASDW.
     // We want to either let it be controlled by the near plane if we are far away,
     // but no more than a fraction of the bounding box of the system if inside
-    this.controls.minDistance = Math.max(diagonal * 0.02, 0.1 * nearest);
+    this.controls.minDistance = Math.max(diagonal * 0.02, 0.1 * near);
   }
 
   private resizeIfNecessary(): boolean {
