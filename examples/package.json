@@ -11,7 +11,6 @@
     "test:visual": "jest --runInBand --detectOpenHandles --verbose false -c src/visual_tests/jest.config.js",
     "snapshots:update": "start-server-and-test 'yarn start:nossl' http://localhost:3000 'yarn snapshots:capture'",
     "snapshots:capture": "jest --runInBand --detectOpenHandles --updateSnapshot -c src/visual_tests/jest.config.js",
-    "ci": "START_SERVER_AND_TEST_INSECURE=1 start-server-and-test 'yarn start' https://localhost:3000 'yarn test:visual'",
     "ci:nossl": "start-server-and-test 'yarn start:nossl' http://localhost:3000 'yarn test:visual'",
     "eject": "react-scripts eject"
   },
