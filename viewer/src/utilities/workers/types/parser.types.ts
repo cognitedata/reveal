@@ -82,6 +82,11 @@ export interface ParseCtmResult {
   normals: Float32Array | undefined;
 }
 
+export interface ParseCtmInput {
+  fileNames: string[];
+  lengths: number[];
+  buffer: number[];
+}
 export interface ParseQuadsArguments {
   parseQuads: {
     buffer: ArrayBuffer;

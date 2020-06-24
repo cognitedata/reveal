@@ -41,11 +41,11 @@ import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
 import { CadSectorProvider } from './CadSectorProvider';
 import { MemoryRequestCache } from '@/utilities/cache/MemoryRequestCache';
-import { ParseCtmResult } from '@/utilities/workers/types/parser.types';
 import { SectorQuads } from '../rendering/types';
+import { ParseCtmInput } from '@/utilities/workers/types/parser.types';
 
 type CtmFileRequest = { blobUrl: string; fileName: string };
-type CtmFileResult = { fileName: string; data: ParseCtmResult };
+type CtmFileResult = { fileName: string; data: ArrayBuffer };
 type ParsedData = { blobUrl: string; lod: string; data: SectorGeometry | SectorQuads };
 
 // TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
@@ -202,8 +202,7 @@ export class CachedRepository implements Repository {
   private loadDetailedSectorFromNetwork(wantedSector: WantedSector): Observable<ConsumedSector> {
     const i3dFileObservable = of(wantedSector.metadata.indexFile).pipe(
       flatMap(indexFile => this._modelSectorProvider.getCadSectorFile(wantedSector.blobUrl, indexFile.fileName)),
-      retry(3),
-      flatMap(buffer => this._modelDataParser.parseI3D(new Uint8Array(buffer)))
+      retry(3)
     );
 
     const ctmFilesObservable = from(wantedSector.metadata.indexFile.peripheralFiles).pipe(
@@ -212,10 +211,19 @@ export class CachedRepository implements Repository {
         fileName
       })),
       this.loadCtmFile(),
-      reduce((accumulator, value) => {
-        accumulator.set(value.fileName, value.data);
-        return accumulator;
-      }, new Map())
+      reduce(
+        (accumulator, value) => {
+          accumulator.fileNames.push(value.fileName);
+          accumulator.lengths.push(value.data.byteLength);
+          accumulator.buffer = [...accumulator.buffer, ...new Uint8Array(value.data)];
+          return accumulator;
+        },
+        {
+          fileNames: [],
+          lengths: [],
+          buffer: []
+        } as ParseCtmInput
+      )
     );
     const networkObservable = onErrorResumeNext(
       zip(i3dFileObservable, ctmFilesObservable).pipe(
@@ -225,7 +233,9 @@ export class CachedRepository implements Repository {
           this._consumedSectorCache.remove(this.wantedSectorCacheKey(wantedSector));
           throw error;
         }),
-        flatMap(([i3dFile, ctmFiles]) => this._modelDataParser.async_finalizeDetailed(i3dFile, ctmFiles)),
+        flatMap(([i3dFile, ctmFiles]) =>
+          this._modelDataParser.parseAndFinalizeDetailed(new Uint8Array(i3dFile), ctmFiles)
+        ),
         map(data => {
           this._parsedDataSubject.next({
             blobUrl: wantedSector.blobUrl,
@@ -260,7 +270,7 @@ export class CachedRepository implements Repository {
   private loadCtmFileFromNetwork(): OperatorFunction<CtmFileRequest, CtmFileResult> {
     return pipe(
       flatMap(ctmRequest => {
-        const networkObservable: Observable<{ fileName: string; data: ParseCtmResult }> = onErrorResumeNext(
+        const networkObservable: Observable<{ fileName: string; data: ArrayBuffer }> = onErrorResumeNext(
           from(this._modelSectorProvider.getCadSectorFile(ctmRequest.blobUrl, ctmRequest.fileName)).pipe(
             catchError(error => {
               // tslint:disable-next-line: no-console
@@ -269,8 +279,7 @@ export class CachedRepository implements Repository {
               throw error;
             }),
             retry(3),
-            flatMap(buffer => this._modelDataParser.parseCTM(new Uint8Array(buffer))),
-            map(data => ({ fileName: ctmRequest.fileName, data: data as ParseCtmResult })),
+            map(data => ({ fileName: ctmRequest.fileName, data })),
             shareReplay(1),
             take(1)
           )

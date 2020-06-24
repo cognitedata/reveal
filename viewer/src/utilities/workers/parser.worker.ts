@@ -3,53 +3,13 @@
  */
 
 import * as Comlink from 'comlink';
-import { ParseSectorResult, ParseCtmResult, ParsedPrimitives, ParsePrimitiveAttribute } from './types/parser.types';
+import { ParsedPrimitives, ParsePrimitiveAttribute, ParseCtmInput } from './types/parser.types';
 import * as rustTypes from '../../../pkg';
 import { SectorGeometry } from '@/datamodels/cad/sector/types';
 import { InstancedMeshFile, TriangleMesh, InstancedMesh, SectorQuads } from '@/datamodels/cad/rendering/types';
 const rustModule = import('../../../pkg');
 
 export class ParserWorker {
-  public async parseSector(buffer: Uint8Array): Promise<ParseSectorResult> {
-    const rust = await rustModule;
-    const sectorData = rust.parse_and_convert_sector(buffer);
-
-    const instanceMeshes = this.extractInstanceMeshes(sectorData);
-
-    const triangleMeshes = this.extractTriangleMeshes(sectorData);
-
-    const parsedPrimitives = this.extractParsedPrimitives(sectorData);
-
-    const parseResult: ParseSectorResult = {
-      treeIndexToNodeIdMap: sectorData.tree_index_to_node_id_map(),
-      nodeIdToTreeIndexMap: sectorData.node_id_to_tree_index_map(),
-      primitives: parsedPrimitives,
-      instanceMeshes,
-      triangleMeshes
-    };
-
-    sectorData.free();
-
-    return parseResult;
-  }
-
-  public async parseCtm(buffer: Uint8Array): Promise<ParseCtmResult> {
-    const rust = await rustModule;
-
-    // TODO handle parsing failure
-    const ctm = rust.parse_ctm(buffer);
-
-    const indices = ctm.indices();
-    const vertices = ctm.vertices();
-    const normals = ctm.normals();
-
-    const result = { indices, vertices, normals };
-
-    ctm.free();
-
-    return result;
-  }
-
   public async parseQuads(buffer: Uint8Array): Promise<SectorQuads> {
     const rust = await rustModule;
 
@@ -66,12 +26,16 @@ export class ParserWorker {
     return result;
   }
 
-  public async finalizeDetailed(
-    i3dFile: ParseSectorResult,
-    ctmFiles: Map<string, ParseCtmResult>
-  ): Promise<SectorGeometry> {
+  public async parseAndFinalizeDetailed(i3dFile: Uint8Array, ctmFiles: ParseCtmInput): Promise<SectorGeometry> {
     const rust = await rustModule;
-    const sectorData = rust.finalize_detailed(i3dFile.instanceMeshes, i3dFile.triangleMeshes, ctmFiles);
+    // TODO mattman22 2020-6-24 Handle parse/finalize errors
+    const sectorData = rust.parse_and_finalize_detailed(
+      i3dFile,
+      ctmFiles.fileNames,
+      new Uint32Array(ctmFiles.lengths),
+      new Uint8Array(ctmFiles.buffer)
+    );
+
     const iMesh = sectorData.instance_meshes;
     const iMeshes: InstancedMeshFile[] = [];
     for (let i = 0; i < iMesh.length; i++) {
@@ -95,6 +59,7 @@ export class ParserWorker {
         instances: ints
       });
     }
+
     const tMesh = sectorData.triangle_meshes;
     const tMeshes: TriangleMesh[] = [];
     for (let i = 0; i < tMesh.length; i++) {
@@ -108,10 +73,16 @@ export class ParserWorker {
         colors: Uint8Array.from(x.colors)
       });
     }
+
+    const sector = sectorData.sector;
+    const primitives = this.extractParsedPrimitives(sector);
+    const nodeIdToTreeIndexMap = sector.node_id_to_tree_index_map();
+    const treeIndexToNodeIdMap = sector.tree_index_to_node_id_map();
+
     const result: SectorGeometry = {
-      nodeIdToTreeIndexMap: i3dFile.nodeIdToTreeIndexMap,
-      treeIndexToNodeIdMap: i3dFile.treeIndexToNodeIdMap,
-      primitives: i3dFile.primitives,
+      nodeIdToTreeIndexMap,
+      treeIndexToNodeIdMap,
+      primitives,
       instanceMeshes: iMeshes,
       triangleMeshes: tMeshes
     };
@@ -206,40 +177,6 @@ export class ParserWorker {
     };
 
     return parsedPrimitives;
-  }
-
-  private extractTriangleMeshes(sectorData: rustTypes.Sector) {
-    const collection = sectorData.triangle_mesh_collection();
-
-    const result = {
-      fileIds: collection.file_id().slice(),
-      treeIndices: collection.tree_index().slice(),
-      colors: collection.color().slice(),
-      triangleCounts: collection.triangle_count().slice(),
-      sizes: collection.size().slice()
-    };
-
-    collection.free();
-
-    return result;
-  }
-
-  private extractInstanceMeshes(sectorData: rustTypes.Sector) {
-    const collection = sectorData.instanced_mesh_collection();
-
-    const result = {
-      fileIds: collection.file_id().slice(),
-      treeIndices: collection.tree_index().slice(),
-      colors: collection.color().slice(),
-      triangleOffsets: collection.triangle_offset().slice(),
-      triangleCounts: collection.triangle_count().slice(),
-      sizes: collection.size().slice(),
-      instanceMatrices: collection.instance_matrix().slice()
-    };
-
-    collection.free();
-
-    return result;
   }
 
   private convertToJSMemory(rustAttributes: Map<string, rustTypes.Attribute>): Map<string, ParsePrimitiveAttribute> {

@@ -8,6 +8,8 @@ import { flatMap } from 'rxjs/operators';
 import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
 import { WorkerPool } from '@/utilities/workers/WorkerPool';
 import { SectorQuads } from '@/datamodels/cad/rendering/types';
+import { SectorGeometry } from '@/datamodels/cad/sector/types';
+import { ParsedPrimitives } from '@/utilities/workers/types/parser.types';
 
 jest.mock('@/utilities/workers/WorkerPool');
 
@@ -17,12 +19,24 @@ describe('CadSectorParser', () => {
 
   jest.useFakeTimers();
 
-  test('parse i3d format', done => {
+  test('parse and finalize i3d format', async () => {
     // Arrange
     let events = 0;
     let errors = 0;
+    const result: SectorGeometry = {
+      treeIndexToNodeIdMap: new Map(),
+      nodeIdToTreeIndexMap: new Map(),
+      primitives: {} as ParsedPrimitives,
+      instanceMeshes: [],
+      triangleMeshes: []
+    };
+    jest.spyOn(workerPool, 'postWorkToAvailable').mockImplementation(() => {
+      return Promise.resolve(result);
+    });
     // Act
-    const observable = of({ format: 'i3d', data: new Uint8Array() }).pipe(flatMap(x => parser.parseI3D(x.data)));
+    const observable = of({ format: 'i3d', data: new Uint8Array() }).pipe(
+      flatMap(x => parser.parseAndFinalizeDetailed(x.data, { fileNames: [], lengths: [], buffer: [] }))
+    );
 
     // Assert
     observable.subscribe(
@@ -35,9 +49,10 @@ describe('CadSectorParser', () => {
       () => {
         expect(events).toBe(1);
         expect(errors).toBe(0);
-        done();
+        // done();
       }
     );
+    await observable.toPromise();
     jest.advanceTimersByTime(1000);
   });
 

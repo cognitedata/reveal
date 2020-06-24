@@ -1,3 +1,4 @@
+use i3df::renderables::{InstancedMesh, PrimitiveCollections, Sector, TriangleMesh};
 use js_sys::{Float32Array, Map, Uint32Array};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -38,40 +39,10 @@ pub struct CtmResult {
 }
 
 #[wasm_bindgen]
-#[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct TriangleMeshInput {
-    file_ids: Vec<f64>,
-    colors: Vec<u8>,
-    tree_indices: Vec<f32>,
-    triangle_counts: Vec<f64>,
-}
-
-#[wasm_bindgen]
-#[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct InstancedMeshInput {
-    file_ids: Vec<f64>,
-    colors: Vec<u8>,
-    tree_indices: Vec<f32>,
-    triangle_counts: Vec<f64>,
-    triangle_offsets: Vec<f64>,
-    instance_matrices: Vec<f32>,
-}
-
-#[wasm_bindgen]
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct CtmInput {
-    indices: Vec<u32>,
-    vertices: Vec<f32>,
-    normals: Option<Vec<f32>>,
-}
-
-#[wasm_bindgen]
 #[derive(Default, Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TriangleMeshResult {
-    file_id: f64,
+    file_id: u64,
     indices: Vec<u32>,
     tree_indices: Vec<f32>,
     vertices: Vec<f32>,
@@ -84,7 +55,7 @@ pub struct TriangleMeshResult {
 #[serde(rename_all = "camelCase")]
 pub struct InstanceMeshResult {
     triangle_count: f64,
-    triangle_offset: f64,
+    triangle_offset: u64,
     colors: Vec<u8>,
     instance_matrices: Vec<f32>,
     tree_indices: Vec<f32>,
@@ -94,7 +65,7 @@ pub struct InstanceMeshResult {
 #[derive(Default, Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct InstanceMeshFileResult {
-    file_id: f64,
+    file_id: u64,
     indices: Vec<u32>,
     vertices: Vec<f32>,
     normals: Option<Vec<f32>>,
@@ -105,10 +76,7 @@ pub struct InstanceMeshFileResult {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SectorGeometry {
-    // Note: These fields may need to be added back when everything is moved to Rust
-    // tree_index_to_node_id_map: HashMap<u64, u64>,
-    // node_id_to_tree_index_map: HashMap<u64, u64>,
-    // primatives: i3df::renderables::PrimitiveCollections,
+    sector: Sector,
     instance_meshes: Vec<InstanceMeshFileResult>,
     triangle_meshes: Vec<TriangleMeshResult>,
 }
@@ -122,6 +90,19 @@ impl SectorGeometry {
     #[wasm_bindgen(getter)]
     pub fn triangle_meshes(&self) -> Result<JsValue, JsValue> {
         serde_wasm_bindgen::to_value(&self.triangle_meshes).map_err(|e| e.into())
+    }
+    #[wasm_bindgen(getter)]
+    pub fn sector(&mut self) -> Sector {
+        // Note: User can only get sector once
+        // Done to avoid cloning or moving `self`
+        let dummy_sector = Sector {
+            id: self.sector.id,
+            parent_id: self.sector.parent_id,
+            bbox_min: self.sector.bbox_min,
+            bbox_max: self.sector.bbox_max,
+            primitive_collections: PrimitiveCollections::with_capacity(0),
+        };
+        std::mem::replace(&mut self.sector, dummy_sector)
     }
 }
 
@@ -156,22 +137,20 @@ impl CtmResult {
     // TODO 2019-10-23 dragly: add UV maps
 }
 
-#[wasm_bindgen]
-pub fn parse_ctm(input: &[u8]) -> Result<CtmResult, JsValue> {
+fn parse_ctm(input: &[u8]) -> Result<CtmResult, JsValue> {
     // TODO read https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/building-your-project.html
     // and see if this can be moved to one common place
     panic::set_hook(Box::new(console_error_panic_hook::hook));
 
     let cursor = std::io::Cursor::new(input);
-    let file = openctm::parse(cursor).unwrap();
+    let file = openctm::parse(cursor).map_err(|e| e.to_string())?;
 
     let result = CtmResult { file };
 
     Ok(result)
 }
 
-#[wasm_bindgen]
-pub fn parse_and_convert_sector(input: &[u8]) -> Result<i3df::renderables::Sector, JsValue> {
+fn parse_and_convert_sector(input: &[u8]) -> Result<Sector, JsValue> {
     // TODO read https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/building-your-project.html
     // and see if this can be moved to one common place
     panic::set_hook(Box::new(console_error_panic_hook::hook));
@@ -186,51 +165,70 @@ pub fn parse_and_convert_sector(input: &[u8]) -> Result<i3df::renderables::Secto
 }
 
 #[wasm_bindgen]
-pub fn finalize_detailed(
-    i_meshes: JsValue,
-    t_meshes: JsValue,
-    ctm_files: JsValue,
+pub fn parse_and_finalize_detailed(
+    i3df_input: &[u8],
+    filenames: JsValue,
+    lengths: &[u32],
+    buffer: &[u8],
 ) -> Result<SectorGeometry, JsValue> {
     // TODO read https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/building-your-project.html
     // and see if this can be moved to one common place
     panic::set_hook(Box::new(console_error_panic_hook::hook));
-    let instance_meshes: InstancedMeshInput =
-        serde_wasm_bindgen::from_value(i_meshes).map_err(|e| e.to_string())?;
-    let triangle_meshes: TriangleMeshInput =
-        serde_wasm_bindgen::from_value(t_meshes).map_err(|e| e.to_string())?;
-    let ctm_map: HashMap<String, CtmInput> =
-        serde_wasm_bindgen::from_value(ctm_files).map_err(|e| e.to_string())?;
 
-    let final_triangle_meshes = finalize_triagle_meshes(&triangle_meshes, &ctm_map)?;
+    let i3d_file = parse_and_convert_sector(i3df_input)?;
+    let mut ctm_files: HashMap<String, CtmResult> = HashMap::new();
+    let names: Vec<String> =
+        serde_wasm_bindgen::from_value(filenames).map_err(|e| e.to_string())?;
+    let mut offset = 0;
+    for (i, name) in names.into_iter().enumerate() {
+        ctm_files.insert(
+            name,
+            parse_ctm(&buffer[offset..offset + lengths[i] as usize])?,
+        );
+        offset += lengths[i] as usize;
+    }
 
-    let final_instance_meshes = finalize_instance_meshes(&instance_meshes, &ctm_map)?;
+    finalize_detailed(i3d_file, ctm_files)
+}
+
+fn finalize_detailed(
+    i3d_file: Sector,
+    ctm_map: HashMap<String, CtmResult>,
+) -> Result<SectorGeometry, JsValue> {
+    let instance_meshes = &i3d_file.primitive_collections.instanced_mesh_collection;
+    let triangle_meshes = &i3d_file.primitive_collections.triangle_mesh_collection;
+
+    let final_triangle_meshes = finalize_triagle_meshes(triangle_meshes, &ctm_map)?;
+
+    let final_instance_meshes = finalize_instance_meshes(instance_meshes, &ctm_map)?;
 
     Ok(SectorGeometry {
+        sector: i3d_file,
         instance_meshes: final_instance_meshes,
         triangle_meshes: final_triangle_meshes,
     })
 }
 
 fn finalize_triagle_meshes(
-    triangle_meshes: &TriangleMeshInput,
-    ctm_map: &HashMap<String, CtmInput>,
+    triangle_meshes: &TriangleMesh,
+    ctm_map: &HashMap<String, CtmResult>,
 ) -> Result<Vec<TriangleMeshResult>, JsValue> {
-    let file_ids = &triangle_meshes.file_ids;
-    let colors = &triangle_meshes.colors;
-    let tree_indices = &triangle_meshes.tree_indices;
+    let file_ids = &triangle_meshes.file_id;
+    let colors = &triangle_meshes.color;
+    let tree_indices = &triangle_meshes.tree_index;
+    let triangle_counts = &triangle_meshes.triangle_count;
     let meshes_grouped_by_file = group_meshes_by_number(&file_ids);
     let mut final_triangle_meshes = Vec::new();
-    let triangle_counts = &triangle_meshes.triangle_counts;
 
     for (file_id, mesh_indices) in meshes_grouped_by_file {
         let file_triangle_counts = mesh_indices.iter().map(|i| triangle_counts[*i]).collect();
         let offsets = create_offsets_array(&file_triangle_counts);
-        let filename = format!("mesh_{}.ctm", f64::from_bits(file_id) as u64);
+        let filename = format!("mesh_{}.ctm", file_id);
 
         if let Some(ctm_result) = ctm_map.get(&filename) {
-            let indices = ctm_result.indices.clone();
-            let vertices = ctm_result.vertices.clone();
-            let normals = ctm_result.normals.clone();
+            let indices = ctm_result.file.indices.clone();
+            let vertices = ctm_result.vertices().to_vec();
+            let normals = ctm_result.normals().map(|x| x.to_vec());
             let mut shared_colors = vec![0; 3 * indices.len()];
             let mut shared_tree_indices = vec![0.; indices.len()];
 
@@ -240,9 +238,9 @@ fn finalize_triagle_meshes(
                 let tri_offset = offsets[i];
                 let tri_count = file_triangle_counts[i];
                 let (r, g, b) = (
-                    colors[4 * mesh_idx + 0],
-                    colors[4 * mesh_idx + 1],
-                    colors[4 * mesh_idx + 2],
+                    colors[mesh_idx][0],
+                    colors[mesh_idx][1],
+                    colors[mesh_idx][2],
                 );
 
                 for tri_idx in tri_offset as usize..(tri_offset + tri_count) as usize {
@@ -260,7 +258,7 @@ fn finalize_triagle_meshes(
 
             let mesh = TriangleMeshResult {
                 colors: shared_colors,
-                file_id: f64::from_bits(file_id),
+                file_id: file_id,
                 tree_indices: shared_tree_indices,
                 indices,
                 vertices,
@@ -275,27 +273,30 @@ fn finalize_triagle_meshes(
 }
 
 fn finalize_instance_meshes(
-    instance_meshes: &InstancedMeshInput,
-    ctm_map: &HashMap<String, CtmInput>,
+    instance_meshes: &InstancedMesh,
+    ctm_map: &HashMap<String, CtmResult>,
 ) -> Result<Vec<InstanceMeshFileResult>, JsValue> {
-    let file_ids = &instance_meshes.file_ids;
-    let triangle_offsets = &instance_meshes.triangle_offsets;
-    let triangle_counts = &instance_meshes.triangle_counts;
-    let tree_indices = &instance_meshes.tree_indices;
-    let instance_matrices = &instance_meshes.instance_matrices;
-    let colors = &instance_meshes.colors;
+    let file_ids = &instance_meshes.file_id;
+    let triangle_offsets = &instance_meshes.triangle_offset;
+    let triangle_counts = &instance_meshes.triangle_count;
+    let tree_indices = &instance_meshes.tree_index;
+    let instance_matrices = &instance_meshes.instance_matrix().to_vec();
+    let colors = &instance_meshes.color;
     let meshes_grouped_by_file = group_meshes_by_number(&file_ids);
     let mut final_instance_meshes = Vec::new();
 
     for (file_id, mesh_indices) in meshes_grouped_by_file {
-        let filename = format!("mesh_{}.ctm", f64::from_bits(file_id) as u64);
+        let filename = format!("mesh_{}.ctm", file_id);
         if let Some(ctm_result) = ctm_map.get(&filename) {
-            let indices = ctm_result.indices.clone();
-            let vertices = ctm_result.vertices.clone();
-            let normals = ctm_result.normals.clone();
+            let indices = ctm_result.file.indices.clone();
+            let vertices = ctm_result.vertices().to_vec();
+            let normals = ctm_result.normals().map(|x| x.to_vec());
             let mut instance_meshes = Vec::new();
 
-            let file_triangle_offsets = mesh_indices.iter().map(|i| triangle_offsets[*i]).collect();
+            let file_triangle_offsets = mesh_indices
+                .iter()
+                .map(|i| triangle_offsets[*i] as u64)
+                .collect();
             let file_triangle_counts: Vec<f64> =
                 mesh_indices.iter().map(|i| triangle_counts[*i]).collect();
             let file_meshes_grouped_by_offsets = group_meshes_by_number(&file_triangle_offsets);
@@ -314,11 +315,11 @@ fn finalize_instance_meshes(
                     instance_matrix_buffer
                         .extend_from_slice(&instance_matrices[mesh_idx * 16..mesh_idx * 16 + 16]);
                     tree_indices_buffer.push(tree_index);
-                    color_buffer.extend_from_slice(&colors[mesh_idx * 4..mesh_idx * 4 + 4]);
+                    color_buffer.extend_from_slice(&colors[mesh_idx]);
                 }
                 let mesh = InstanceMeshResult {
                     triangle_count,
-                    triangle_offset: f64::from_bits(triangle_offset),
+                    triangle_offset: triangle_offset,
                     instance_matrices: instance_matrix_buffer,
                     colors: color_buffer,
                     tree_indices: tree_indices_buffer,
@@ -327,7 +328,7 @@ fn finalize_instance_meshes(
             }
 
             let mesh_file = InstanceMeshFileResult {
-                file_id: f64::from_bits(file_id),
+                file_id: file_id,
                 indices,
                 vertices,
                 normals,
@@ -342,19 +343,19 @@ fn finalize_instance_meshes(
     Ok(final_instance_meshes)
 }
 
-fn create_offsets_array(array: &Vec<f64>) -> Vec<f64> {
+fn create_offsets_array(array: &Vec<u64>) -> Vec<u64> {
     let mut offsets = Vec::with_capacity(array.len());
-    offsets.push(0.0);
+    offsets.push(0);
     for i in 1..array.len() {
         offsets.push(offsets[i - 1] + array[i - 1]);
     }
     offsets
 }
 
-fn group_meshes_by_number(file_ids: &Vec<f64>) -> HashMap<u64, Vec<usize>> {
+fn group_meshes_by_number(file_ids: &Vec<u64>) -> HashMap<u64, Vec<usize>> {
     let mut meshes_grouped_by_file: HashMap<u64, Vec<usize>> = HashMap::new();
     for (i, file_id) in file_ids.iter().enumerate() {
-        let old_value = meshes_grouped_by_file.entry(file_id.to_bits()).or_default();
+        let old_value = meshes_grouped_by_file.entry(*file_id).or_default();
         old_value.push(i);
     }
     meshes_grouped_by_file
