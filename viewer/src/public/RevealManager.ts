@@ -138,6 +138,7 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
     this.eventListeners.loadingStateChanged.splice(0);
     this._cadManager.dispose();
     this._subscription.unsubscribe();
+    super.dispose();
   }
 
   private notifyLoadingStateListeners(isLoaded: boolean) {

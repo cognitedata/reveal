@@ -18,7 +18,7 @@ CameraControls.install({ THREE });
 
 export function Simple() {
   const canvas = useRef<HTMLCanvasElement>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let revealManager: reveal.RevealManager | reveal.LocalHostRevealManager;
@@ -46,6 +46,7 @@ export function Simple() {
         modelUrl !== undefined
       ) {
         model = await revealManager.addModel('cad', modelUrl);
+        revealManager.on('loadingStateChanged', setIsLoading);
       } else if (
         revealManager instanceof reveal.RevealManager &&
         modelRevision !== undefined
