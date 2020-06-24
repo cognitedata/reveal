@@ -1174,10 +1174,10 @@
     lodash "^4.17.15"
     rxjs "^6.5.5"
 
-"@cognite/sdk@^2.29.0":
-  version "2.29.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-2.29.0.tgz#a983767459588ceb5a62fd301d16ff7f3aaf989f"
-  integrity sha512-pkL96d56iHCEmVkeqfAXOOstDK0oxw06zCrxWjr9Ux+hIqGjyVXBnzUf5aqxN2o0q/1+B3uwP4YPr/rKkR9B1A==
+"@cognite/sdk@^2.31.0":
+  version "2.31.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-2.31.0.tgz#9d35413d90c14cfb494e8fad2d0753c1626e5823"
+  integrity sha512-0AmlqFoEGub3nJac4xnL7gw3h4Un2f10td4kXOR3BzDx7ywBVvrgtKgHA66gfHiI36TZRbEH06AdgdjGgPPpBA==
   dependencies:
     cross-fetch "^3.0.4"
     lodash "^4.17.11"
