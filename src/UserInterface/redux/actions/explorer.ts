@@ -3,10 +3,10 @@ import {
   TOGGLE_NODE_EXPAND,
   TOGGLE_NODE_CHECK,
   GENERATE_NODE_TREE,
-  CHANGE_NODE_TYPE,
-} from "../types/explorer";
+  CHANGE_SELECTED_TAB,
+} from "@/UserInterface/redux/types/explorer";
 
-import { ExplorerCommandPayloadType } from "../../interfaces/explorer";
+import { ExplorerCommandPayloadType } from "@/UserInterface/interfaces/explorer";
 
 // Explorer Actions
 
@@ -26,6 +26,6 @@ export const generateNodeTree = (payload: ExplorerCommandPayloadType) => {
   return { type: GENERATE_NODE_TREE, payload };
 };
 
-export const changeNodeType = (payload: ExplorerCommandPayloadType) => {
-  return { type: CHANGE_NODE_TYPE, payload };
+export const changeSelectedTab = (payload: ExplorerCommandPayloadType) => {
+  return { type: CHANGE_SELECTED_TAB, payload };
 };

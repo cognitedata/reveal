@@ -4,15 +4,12 @@ import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 
 // Explorer component state interface
 export interface ExplorerStateInterface {
-  tabConfig?: {
+  tabs: {
     name: string;
-    value: string;
-    icon: {
-      type: string;
-      name: string;
-    };
+    icon: string;
+    nodeIds: string[]
   }[];
-  selectedNodeType: { value: number; name: string };
+  selectedTabIndex: number;
   selectedNode: string | null;
   checkedNodeIds: Set<string>;
   nodes?: { [key: string]: TreeDataItem };
@@ -23,7 +20,6 @@ export interface TreeDataItem {
   parentId?: string | null;
   uniqueId: string;
   name: string;
-  type: string;
   expanded: boolean;
   icon?: {
     path: string;
@@ -51,6 +47,5 @@ export type ExplorerCommandPayloadType = {
   checkState?: boolean;
   selectState?: boolean;
   root?: BaseRootNode;
-  nodeType?: string;
-  nodeTypeIndex?: number;
+  tabIndex?: number;
 };

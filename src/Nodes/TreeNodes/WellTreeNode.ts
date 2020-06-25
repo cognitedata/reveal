@@ -37,6 +37,7 @@ export class WellTreeNode extends BaseTreeNode
   public /*override*/ get typeName(): string { return "WellTree" }
   public /*override*/ getIcon(): string { return WellNodeIcon }
   public /*override*/ getName(): string { return "Wells" }
+  public /*virtual*/ get isTab(): boolean { return true; }
 
   //==================================================
   // INSTANCE METHODS

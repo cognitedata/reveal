@@ -102,6 +102,12 @@ export abstract class BaseNode extends Identifiable
   }
 
   //==================================================
+  // VIRTUAL METHODS: Tabs
+  //==================================================
+
+  public /*virtual*/ get isTab(): boolean { return false; }
+
+  //==================================================
   // VIRTUAL METHODS: Color
   //==================================================
 

@@ -1,29 +1,34 @@
 import { createSelector } from "reselect";
 
-import { ReduxStore } from "../../interfaces/common";
-import { TreeDataItem } from "../../interfaces/explorer";
+import { ReduxStore } from "@/UserInterface/interfaces/common";
+import { TreeDataItem } from "@/UserInterface/interfaces/explorer";
 
 // creating memoized, composable selector functions.
-const getNodeFilter = (state: ReduxStore) => state.explorer.selectedNodeType;
+const getSelectedNodeIds = (state: ReduxStore) => {
+  const { tabs, selectedTabIndex } = state.explorer;
+  if (tabs.length) {
+    return tabs[selectedTabIndex].nodeIds;
+  }
+  return [];
+}
+
 const getNodes = (state: ReduxStore) => state.explorer.nodes;
 
 // Get filtered node list
-const filterNodes = (nodes: { [key: string]: TreeDataItem }, type: string) => {
+const filterNodes = (nodes: { [key: string]: TreeDataItem }, nodeIds: string[]) => {
   const filtered: { [key: string]: TreeDataItem } = {};
-  for (const id in nodes) {
-    if (nodes[id].type === type) {
-      filtered[id] = nodes[id];
-    }
+  for (const id of nodeIds) {
+    filtered[id] = nodes[id];
   }
   return filtered;
 };
 
 // select nodes based on node type
 export const getVisibleNodes = createSelector(
-  [getNodeFilter, getNodes],
-  (nodesFilter, nodes) => {
+  [getSelectedNodeIds, getNodes],
+  (nodeIds, nodes) => {
     if (nodes) {
-      return filterNodes(nodes, nodesFilter.name);
+      return filterNodes(nodes, nodeIds);
     } else {
       return;
     }

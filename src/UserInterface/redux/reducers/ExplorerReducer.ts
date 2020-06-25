@@ -1,31 +1,31 @@
 import { createReducer } from "@reduxjs/toolkit";
-import
-{
+import {
   ExplorerStateInterface,
   TreeDataItem,
 } from "@/UserInterface/interfaces/explorer";
-import dummyExplorerState from "@/UserInterface/data/explorer-dummy-state";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
-import Nodes from "@/UserInterface/constants/Nodes";
 import { CheckBoxState } from '@/Core/Enums/CheckBoxState';
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
-import { WellTreeNode } from "@/Nodes/TreeNodes/WellTreeNode";
-import { OthersTreeNode } from "@/Nodes/TreeNodes/OthersTreeNode";
+import {
+  CHANGE_SELECTED_TAB,
+  GENERATE_NODE_TREE,
+  TOGGLE_NODE_EXPAND,
+  CHANGE_CHECKBOX_STATE,
+  VIEW_ALL_NODES_SUCCESS,
+  TOGGLE_NODE_SELECT
+} from "@/UserInterface/redux/types/explorer";
 
 // Generate redux store compatible nodes data structure from root node
 function generateNodeStructure(
   uniqueId: string,
   parentId: string | null,
-  type: string,
   node: BaseNode
-): TreeDataItem
-{
+): TreeDataItem {
   return {
     parentId,
     uniqueId,
     name: node.getName(),
     expanded: (node.isExpanded),
-    type,
     icon: {
       path: node.getIcon(),
       description: node.getName(),
@@ -48,59 +48,38 @@ function generateNodeStructure(
 }
 
 // Generate redux store compatible nodes data from root node
-function makeNodes(root: BaseRootNode)
-{
+function generateExplorerData(root: BaseRootNode) {
   const rootId = root.uniqueId.toString();
   const nodes: { [key: string]: any } = {};
-  // TODO - Remove this.
-  let queue: [BaseNode | null] = [root.getChildByType(WellTreeNode)];
-  let node;
-  while (queue.length)
-  {
-    node = queue.shift();
-    if (node)
-    {
+  const tabs: { name: string; icon: string; nodeIds: string[] }[] = [];
+  for (const child of root.children) {
+    if (!child.isTab) {
+      continue;
+    }
+    const nodeIds: string[] = [];
+    const nodeList: [BaseNode] = [child];
+    while (nodeList.length) {
+      const node = nodeList.shift()!;
       const uniqueId = node.uniqueId.toString();
       const parentId = node.parent ? node.parent.uniqueId.toString() : null;
       nodes[uniqueId] = generateNodeStructure(
         uniqueId,
         parentId === rootId ? null : parentId,
-        Nodes.NODE_TYPES.WELLS,
         node
-      );
-      if (node.childCount)
-      {
-        queue.push(...node.children);
+      )
+      if (node.childCount) {
+        nodeList.push(...node.children);
       }
+      nodeIds.push(uniqueId);
     }
+    tabs.push({ name: child.getName(), icon: child.getIcon(), nodeIds });
   }
-  // TODO - Remove this.
-  queue = [root.getChildByType(OthersTreeNode)];
-  while (queue.length)
-  {
-    node = queue.shift();
-    if (node)
-    {
-      const uniqueId = node.uniqueId.toString();
-      const parentId = node.parent ? node.parent.uniqueId.toString() : null;
-      nodes[uniqueId] = generateNodeStructure(
-        uniqueId,
-        parentId === rootId ? null : parentId,
-        Nodes.NODE_TYPES.OTHERS,
-        node
-      );
-      if (node.childCount)
-      {
-        queue.push(...node.children);
-      }
-    }
-  }
-  return nodes;
+  return { nodes, tabs };
 }
 
 const initialState: ExplorerStateInterface = {
-  ...dummyExplorerState,
-  selectedNodeType: { value: 0, name: Nodes.NODE_TYPES.OTHERS },
+  tabs: [],
+  selectedTabIndex: 0,
   selectedNode: null,
   checkedNodeIds: new Set<string>(),
 };
@@ -109,34 +88,30 @@ const initialState: ExplorerStateInterface = {
 // Because of this, we can write reducers that appear to "mutate" state, but the updates
 // are actually applied immutably.
 export default createReducer(initialState, {
-  GENERATE_NODE_TREE: (state, action) =>
-  {
+  [GENERATE_NODE_TREE]: (state, action) => {
     const { root } = action.payload;
-    state.nodes = makeNodes(root);
+    const { nodes, tabs } = generateExplorerData(root);
+    state.nodes = nodes;
+    state.tabs = tabs;
   },
-  TOGGLE_NODE_SELECT: (state, action) =>
-  {
+  [TOGGLE_NODE_SELECT]: (state, action) => {
     const { uniqueId, selectState } = action.payload;
     state.nodes![uniqueId].selected = selectState;
-    if (selectState)
-    {
+    if (selectState) {
       if (state.selectedNode) state.nodes![state.selectedNode].selected = false;
       state.selectedNode = uniqueId;
     }
   },
-  TOGGLE_NODE_EXPAND: (state, action) =>
-  {
+  [TOGGLE_NODE_EXPAND]: (state, action) => {
     const { uniqueId, expandState } = action.payload;
     state.nodes![uniqueId].expanded = expandState;
   },
-  CHANGE_CHECKBOX_STATE: (state, action) =>
-  {
+  [CHANGE_CHECKBOX_STATE]: (state, action) => {
     const uniqueId = action.appliesTo;
     const treeNodeState = state.nodes![uniqueId];
     if (treeNodeState === undefined) return; //TODO: When could this happen?
     const checkNode = state.nodes![uniqueId];
-    switch (action.payload)
-    {
+    switch (action.payload) {
       case 'checked':
         checkNode.checked = true;
         checkNode.indeterminate = false;
@@ -170,20 +145,16 @@ export default createReducer(initialState, {
       // do nothing
     }
   },
-  VIEW_ALL_NODES_SUCCESS: (state, action) =>
-  {
+  [VIEW_ALL_NODES_SUCCESS]: (state, action) => {
     const nodes = state.nodes;
-    for (const id in nodes)
-    {
-      if (nodes.hasOwnProperty(id))
-      {
+    for (const id in nodes) {
+      if (nodes.hasOwnProperty(id)) {
         nodes[id].checked = true;
       }
     }
   },
-  CHANGE_NODE_TYPE: (state, action) =>
-  {
-    const { nodeTypeIndex, nodeType } = action.payload;
-    state.selectedNodeType = { value: nodeTypeIndex, name: nodeType };
+  [CHANGE_SELECTED_TAB]: (state, action) => {
+    const { tabIndex } = action.payload;
+    state.selectedTabIndex = tabIndex;
   },
 });
