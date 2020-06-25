@@ -4,7 +4,7 @@
 
 import { createMaterials, Materials } from './rendering/materials';
 import { RenderMode } from './rendering/RenderMode';
-import { NodeAppearanceProvider, DefaultNodeAppearance } from './NodeAppearance';
+import { NodeAppearanceProvider } from './NodeAppearance';
 
 interface MaterialsWrapper {
   materials: Materials;

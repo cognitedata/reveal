@@ -137,7 +137,6 @@ export function Picking() {
           pickingNeedsUpdate ||
           revealManager.needsRedraw
         ) {
-          //renderer.render(scene, camera);
           effectRenderManager.addPostRenderEffects(renderer, camera, scene);
           pickingNeedsUpdate = false;
           revealManager.resetRedraw();
