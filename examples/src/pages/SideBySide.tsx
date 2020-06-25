@@ -33,16 +33,14 @@ import { OverrideSectorCuller } from '../utils/OverrideSectorCuller';
 CameraControls.install({ THREE });
 
 function getModel2Params() {
-  const url = new URL(window.location.href);
-  const searchParams = url.searchParams;
-  const modelRevision2 = searchParams.get('model2');
-  const modelUrl2 = searchParams.get('modelUrl2');
-  return {
-    modelRevision2: modelRevision2
-      ? Number.parseInt(modelRevision2, 10)
-      : undefined,
-    modelUrl2: modelUrl2 ? window.location.origin + '/' + modelUrl2 : undefined,
-  };
+  return getParamsFromURL({
+    project: 'publicdata',
+    modelUrl: 'primitives'
+  }, {
+    modelId: 'modelId2',
+    revisionId: 'revisionId2',
+    modelUrl: 'modelUrl2'
+  });
 }
 
 function initializeModel(
@@ -73,7 +71,7 @@ export function SideBySide() {
         project: 'publicdata',
         modelUrl: 'primitives',
       });
-      const { modelUrl2, modelRevision2 } = getModel2Params();
+      const { modelUrl: modelUrl2, modelRevision: modelRevision2 } = getModel2Params();
       const client = new CogniteClient({
         appId: 'reveal.example.side-by-side',
       });
