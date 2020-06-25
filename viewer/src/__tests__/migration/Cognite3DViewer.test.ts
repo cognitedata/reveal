@@ -55,21 +55,14 @@ describe('Cognite3DViewer', () => {
     const outputs = {
       items: [
         {
-          model: {
-            id: 42
-          },
-          outputs: [
-            {
-              format: 'reveal-directory',
-              version: 8,
-              blobId: 1
-            }
-          ]
+          format: 'reveal-directory',
+          version: 8,
+          blobId: 1
         }
       ]
     };
     nock(/.*/)
-      .post(/.*\/outputs/)
+      .get(/.*\/outputs/)
       .reply(200, outputs);
     nock(/.*/)
       .get(/.*\/scene.json/)
