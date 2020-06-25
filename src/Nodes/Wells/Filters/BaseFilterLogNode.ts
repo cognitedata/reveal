@@ -62,7 +62,7 @@ export abstract class BaseFilterLogNode extends BaseVisualNode
     return this.wellLogType == other.wellLogType && Util.equalsIgnoreCase(this.getName(), other.getName());
   }
 
-  public * getAllLogs(): Iterable<BaseLogNode>
+  public * getAllLogs(): Generator<BaseLogNode>
   {
     const tree = this.getAncestorByType(BaseTreeNode);
     if (!tree)

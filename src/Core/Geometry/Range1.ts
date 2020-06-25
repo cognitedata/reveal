@@ -108,7 +108,7 @@ export class Range1
 
   public getNumTicks(inc: number): number { return Math.round(this.delta / inc); }
 
-  public * getTicks(inc: number): Iterable<number>
+  public * getTicks(inc: number): Generator<number>
   {
     const copy = this.clone();
     if (!copy.roundByInc(-inc))
@@ -128,7 +128,7 @@ export class Range1
     }
   }
 
-  public * getFastTicks(inc: number, tolerance: number): Iterable<number>
+  public * getFastTicks(inc: number, tolerance: number): Generator<number>
   {
     // This overwrites this
     if (!this.roundByInc(-inc))

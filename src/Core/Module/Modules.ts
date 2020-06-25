@@ -103,7 +103,7 @@ export class Modules
     return root;
   }
 
-  public *getDomElements(root: BaseRootNode): Iterable<HTMLElement>
+  public *getDomElements(root: BaseRootNode): Generator<HTMLElement>
   {
     for (const target of root.targets.getChildrenByType(BaseRenderTargetNode))
       yield target.domElement;

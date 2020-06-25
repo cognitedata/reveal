@@ -372,7 +372,7 @@ export abstract class BaseNode extends Identifiable
     return null;
   }
 
-  public *getChildrenByType<T extends BaseNode>(classType: Class<T>): Iterable<T>
+  public *getChildrenByType<T extends BaseNode>(classType: Class<T>): Generator<T>
   {
     for (const child of this.children)
     {
@@ -385,27 +385,24 @@ export abstract class BaseNode extends Identifiable
   // INSTANCE METHODS: Get descendants
   //==================================================
 
-  public * getDescendants(): Iterable<BaseNode>
+  public * getDescendants(): Generator<BaseNode>
   {
     for (const child of this.children)
     {
       yield child;
       for (const descendant of child.getDescendants())
-      {
-        const copy: BaseNode = descendant;
-        yield copy;
-      }
+        yield descendant;
     }
   }
 
-  public * getThisAndDescendants(): Iterable<BaseNode>
+  public * getThisAndDescendants(): Generator<BaseNode>
   {
     yield this;
     for (const descendant of this.getDescendants())
       yield descendant;
   }
 
-  public * getDescendantsByType<T extends BaseNode>(classType: Class<T>): Iterable<T>
+  public * getDescendantsByType<T extends BaseNode>(classType: Class<T>): Generator<T>
   {
     for (const child of this.children)
     {
@@ -414,9 +411,8 @@ export abstract class BaseNode extends Identifiable
 
       for (const descendant of child.getDescendantsByType<T>(classType))
       {
-        const copy: BaseNode = descendant;
-        if (isInstanceOf(copy, classType))
-          yield copy as T;
+        if (isInstanceOf(descendant, classType))
+          yield descendant as T;
       }
     }
   }
@@ -453,7 +449,7 @@ export abstract class BaseNode extends Identifiable
   // INSTANCE METHODS: Get ancestors
   //==================================================
 
-  public * getThisAndAncestors(): Iterable<BaseNode>
+  public * getThisAndAncestors(): Generator<BaseNode>
   {
     let ancestor: BaseNode | null = this;
     while (ancestor)
@@ -463,7 +459,7 @@ export abstract class BaseNode extends Identifiable
     }
   }
 
-  public * getAncestors(): Iterable<BaseNode>
+  public * getAncestors(): Generator<BaseNode>
   {
     let ancestor = this.parent;
     while (ancestor)
@@ -473,7 +469,7 @@ export abstract class BaseNode extends Identifiable
     }
   }
 
-  public * getAncestorsExceptRoot(): Iterable<BaseNode>
+  public * getAncestorsExceptRoot(): Generator<BaseNode>
   {
     let ancestor = this.parent;
     while (ancestor && ancestor.hasParent)
