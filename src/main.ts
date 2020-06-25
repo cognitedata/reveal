@@ -35,15 +35,6 @@ function addRenderTarget(element: HTMLElement, root: BaseRootNode)
 
   element.appendChild(target.domElement);
 
-  const range = target.pixelRange;
-  const stats = target.stats;
-  stats.dom.style.left = range.x.min.toFixed(0) + "px";
-  stats.dom.style.top = range.y.min.toFixed(0) + "px";
-  stats.dom.style.margin = "10px";
-  stats.dom.style.position = "absolute";
-
-  element.appendChild(stats.dom);
-
   root.targets.addChild(target);
   target.setActiveInteractive();
   target.onResize();

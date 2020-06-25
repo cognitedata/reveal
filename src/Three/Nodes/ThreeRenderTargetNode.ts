@@ -55,7 +55,6 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   private _scene: THREE.Scene | null = null;
   private _renderer: THREE.WebGLRenderer | null = null;
   private _overlay = new TreeOverlay();
-  private _stats: any | null; // NILS: Why any here? Compiler error if not
   private isEmpty = true;
   private clock = new THREE.Clock();
   private _cameraControl: CameraControl | null = null;
@@ -108,16 +107,6 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
       this._renderer = renderer;
     }
     return this._renderer;
-  }
-
-  public get stats(): any
-  {
-    if (!this._stats)
-    {
-      this._stats = new Stats();
-      this._stats.showPanel(0);
-    }
-    return this._stats;
   }
 
   //==================================================
@@ -217,8 +206,6 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
       if (this.isEmpty)
         this.isEmpty = !this.viewFrom(-1);
 
-      this.stats.begin();
-
       const hasAxis = this.hasViewOfNodeType(AxisNode);
       this.scene.background = ThreeConverter.toColor(this.getBgColor(hasAxis));
 
@@ -226,7 +213,6 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
         view.beforeRender();
 
       this.renderer.render(this.scene, this.camera);
-      this.stats.end();
 
       const viewInfo = this.getViewInfo();
       this._overlay.render(this.renderer, viewInfo, this.pixelRange.delta, this.fgColor);
