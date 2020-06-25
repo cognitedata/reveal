@@ -6,8 +6,9 @@ on:
   push:
     branches: [ master ]
   pull_request:
-    branches: [ master, dependency-updates ]
-
+    branches:
+      - '**'
+      
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   ci-setup:
@@ -83,12 +84,12 @@ jobs:
 
     - name: Install NPM dependencies
       working-directory: viewer
-      run: npm install
+      run: yarn
 
     - name: Lint
       working-directory: viewer
       continue-on-error: true
-      run: npm run lint
+      run: yarn run lint
 
     - name: Setup tools for coverage tests
       working-directory: viewer
@@ -99,11 +100,11 @@ jobs:
     - name: Run coverage tests
       working-directory: viewer
       run: |
-        xvfb-run npm run coverage
+        xvfb-run yarn run coverage
 
     - name: Build release
       working-directory: viewer
-      run: npm run release
+      run: yarn run release
 
     - name: Publish to codecov
       uses: codecov/codecov-action@v1
@@ -128,11 +129,13 @@ jobs:
       with:
         path: ~/.cargo/registry
         key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+
     - name: Cache cargo index
       uses: actions/cache@v1
       with:
         path: ~/.cargo/git
         key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+
     - name: Cache cargo build
       uses: actions/cache@v1
       with:
@@ -141,15 +144,16 @@ jobs:
 
     - name: Install NPM dependencies
       working-directory: viewer
-      run: npm install
+      run: yarn
 
     - name: Build release
       working-directory: viewer
-      run: npm run release
+      run: yarn run release
 
     - name: Install examples-dependencies
       working-directory: examples
       run: yarn
+
     - name: Build examples
       working-directory: examples
       run: |

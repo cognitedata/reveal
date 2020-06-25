@@ -73,6 +73,11 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
     this.isDisposed = true;
   }
 
+  public requestRedraw(): void {
+    this._cadManager.requestRedraw();
+    this._pointCloudManager.requestRedraw();
+  }
+
   public resetRedraw(): void {
     this._cadManager.resetRedraw();
   }

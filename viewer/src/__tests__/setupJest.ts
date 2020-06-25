@@ -17,3 +17,14 @@ class StubWorker {
   public postMessage(_: any) {}
 }
 (window as any).Worker = StubWorker;
+
+// Filter away warning from ThreeJS about "THREE.WebGLRenderer: EXT_xxx extension not supported."
+// which is caused by using a mock WebGL implementation for unit testing
+// tslint:disable-next-line: no-console
+const consoleWarn = console.warn.bind(console);
+(console as any).warn = (message?: any, ...optionalParams: any[]) => {
+  const messageStr = message + '';
+  if (!messageStr.match(/THREE\.WebGLRenderer: .* extension not supported\./)) {
+    consoleWarn(message, ...optionalParams);
+  }
+};

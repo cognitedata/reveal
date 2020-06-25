@@ -3,7 +3,7 @@
  */
 
 import { RevealManagerBase } from './RevealManagerBase';
-import { CogniteClient, IdEither } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk';
 import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
 import { File3dFormat } from '@/utilities';
 import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
@@ -22,10 +22,11 @@ import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloud
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
-import { Subscription } from 'rxjs';
+import { combineLatest, Subscription } from 'rxjs';
 import { RevealOptions } from './types';
+import { distinctUntilChanged, map } from 'rxjs/operators';
 
-type CdfModelIdentifier = { modelRevision: IdEither; format: File3dFormat };
+type CdfModelIdentifier = { modelId: number; revisionId: number; format: File3dFormat };
 type LoadingStateChangeListener = (isLoading: boolean) => any;
 
 export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
@@ -68,39 +69,50 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
     this.eventListeners = {
       loadingStateChanged: new Array<LoadingStateChangeListener>()
     };
+    this.notifyLoadingStateListeners = this.notifyLoadingStateListeners.bind(this);
+
     this._subscription = new Subscription();
     this._subscription.add(
-      sectorRepository.getLoadingStateObserver().subscribe(this.notifyLoadingStateListeners.bind(this))
+      combineLatest([sectorRepository.getLoadingStateObserver(), pointCloudManager.getLoadingStateObserver()])
+        .pipe(
+          map(([pointCloudLoading, cadLoading]) => {
+            return pointCloudLoading || cadLoading;
+          }),
+          distinctUntilChanged()
+        )
+        .subscribe(
+          this.notifyLoadingStateListeners.bind(this),
+          // tslint:disable-next-line: no-console
+          console.error.bind(console)
+        )
     );
   }
 
   public addModel(
     type: 'cad',
-    modelRevisionId: string | number,
+    modelRevisionId: { modelId: number; revisionId: number },
     nodeApperanceProvider?: NodeAppearanceProvider
   ): Promise<CadNode>;
   public addModel(
     type: 'pointcloud',
-    modelRevisionId: string | number
+    modelRevisionId: { modelId: number; revisionId: number }
   ): Promise<[PotreeGroupWrapper, PotreeNodeWrapper]>;
   public addModel(
     type: 'cad' | 'pointcloud',
-    modelRevisionId: string | number,
+    modelRevisionId: { modelId: number; revisionId: number },
     nodeApperanceProvider?: NodeAppearanceProvider
   ): Promise<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper]> {
     switch (type) {
       case 'cad':
         return this._cadManager.addModel(
-          { modelRevision: this.createModelIdentifier(modelRevisionId), format: File3dFormat.RevealCadModel },
+          { ...modelRevisionId, format: File3dFormat.RevealCadModel },
           nodeApperanceProvider
         );
       case 'pointcloud':
-        return this._pointCloudManager.addModel({
-          modelRevision: this.createModelIdentifier(modelRevisionId),
-          format: File3dFormat.EptPointCloud
-        });
+        return this._pointCloudManager.addModel({ ...modelRevisionId, format: File3dFormat.EptPointCloud });
+
       default:
-        throw new Error(`case: ${type} not handled`);
+        throw new Error(`Model type '${type}' is not supported`);
     }
   }
 
@@ -130,12 +142,5 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
     this.eventListeners.loadingStateChanged.forEach(handler => {
       handler(isLoaded);
     });
-  }
-
-  private createModelIdentifier(id: string | number): IdEither {
-    if (typeof id === 'number') {
-      return { id };
-    }
-    return { externalId: id };
   }
 }

@@ -2,8 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
-import React, { useEffect, useRef } from 'react';
-import { CanvasWrapper } from '../components/styled';
+import React, { useEffect, useRef, useState } from 'react'
+import { CanvasWrapper, Loader } from '../components/styled'
 
 import * as THREE from 'three';
 import * as reveal from '@cognite/reveal/experimental';
@@ -61,7 +61,12 @@ function initializeGui(
 
 export function SimplePointcloud() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
+    if (!canvasRef.current) {
+      return
+    }
     const gui = new dat.GUI();
 
     async function main() {
@@ -100,6 +105,7 @@ export function SimplePointcloud() {
       ) {
         await client.authenticate();
         model = await revealManager.addModel('pointcloud', modelRevision);
+        revealManager.on('loadingStateChanged', setIsLoading);
       } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'
@@ -182,9 +188,13 @@ export function SimplePointcloud() {
     return () => {
       gui.destroy();
     };
-  });
+  }, []);
+
   return (
     <CanvasWrapper>
+      <Loader isLoading={isLoading} style={{ position: 'absolute' }}>
+        Loading...
+      </Loader>
       <canvas ref={canvasRef} />
     </CanvasWrapper>
   );
