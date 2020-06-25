@@ -19,7 +19,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@cognite/potree-core": "^1.1.3",
-    "@cognite/reveal": "../viewer/dist",
+    "@cognite/reveal": "link:../viewer/dist",
     "@cognite/sdk": "^2.31.0",
     "camera-controls": "^1.21.0",
     "dat.gui": "^0.7.7",

@@ -1160,19 +1160,9 @@
     webpack-cli "^3.3.9"
     worker-loader "^2.0.0"
 
-"@cognite/reveal@../viewer/dist":
-  version "1.0.0-alpha-1"
-  dependencies:
-    "@cognite/potree-core" "^1.1.3"
-    "@cognite/three-combo-controls" "^1.4.1"
-    "@tweenjs/tween.js" "^18.5.0"
-    "@types/lodash" "^4.14.152"
-    comlink "^4.3.0"
-    gl-matrix "^3.3.0"
-    glslify "^7.0.0"
-    glslify-import "^3.1.0"
-    lodash "^4.17.15"
-    rxjs "^6.5.5"
+"@cognite/reveal@link:../viewer/dist":
+  version "0.0.0"
+  uid ""
 
 "@cognite/sdk@^2.31.0":
   version "2.31.0"
