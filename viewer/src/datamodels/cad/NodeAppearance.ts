@@ -59,6 +59,5 @@ export const DefaultNodeAppearance = {
   Outlined: OutlinedAppearance,
   Hidden: HiddenAppearance,
   InFront: InFrontAppearance,
-  // TODO 2020-06-18 larsmoa: Add outline for Highlighted nodes
   Highlighted: { ...InFrontAppearance, ...HighlightedColorApperance, ...OutlinedAppearance }
 };

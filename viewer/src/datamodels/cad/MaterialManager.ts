@@ -4,7 +4,7 @@
 
 import { createMaterials, Materials } from './rendering/materials';
 import { RenderMode } from './rendering/RenderMode';
-import { NodeAppearanceProvider } from './NodeAppearance';
+import { NodeAppearanceProvider, DefaultNodeAppearance } from './NodeAppearance';
 
 interface MaterialsWrapper {
   materials: Materials;
@@ -91,29 +91,24 @@ export class MaterialManager {
     const count = treeIndices.length;
     for (let i = 0; i < count; ++i) {
       const treeIndex = treeIndices[i];
-      const style = appearanceProvider.styleNode(treeIndex);
+      let style = appearanceProvider.styleNode(treeIndex);
+
+      style = style ? style : {};
 
       // Override color
-      if (style && style.color !== undefined) {
-        materials.overrideColorPerTreeIndex.image.data[4 * treeIndex] = style.color[0];
-        materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 1] = style.color[1];
-        materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 2] = style.color[2];
-        materials.overrideColorPerTreeIndex.needsUpdate = true;
-      }
+      materials.overrideColorPerTreeIndex.image.data[4 * treeIndex] = style.color ? style.color[0] : 0;
+      materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 1] = style.color ? style.color[1] : 0;
+      materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 2] = style.color ? style.color[2] : 0;
+      materials.overrideColorPerTreeIndex.needsUpdate = true;
 
-      if (
-        style &&
-        (style.visible !== undefined || style.renderInFront !== undefined || style.outlineColor !== undefined)
-      ) {
-        const visible = style.visible === undefined ? true : style.visible;
-        // tslint:disable: no-bitwise
-        materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 3] =
-          (visible ? 1 << 0 : 0) +
-          (style.renderInFront ? 1 << 1 : 0) +
-          (style.outlineColor ? style.outlineColor << 2 : 0);
-        // tslint:enable: no-bitwise
-        materials.overrideColorPerTreeIndex.needsUpdate = true;
-      }
+      const visible = style!.visible === undefined ? true : style.visible;
+      // tslint:disable: no-bitwise
+      materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 3] =
+        (visible ? 1 << 0 : 0) +
+        (style.renderInFront ? 1 << 1 : 0) +
+        (style.outlineColor ? style.outlineColor << 2 : 0);
+      // tslint:enable: no-bitwise
+      materials.overrideColorPerTreeIndex.needsUpdate = true;
     }
   }
 
