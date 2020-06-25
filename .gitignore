@@ -16,6 +16,9 @@ viewer/dist/
 viewer/public/
 viewer/pkg/
 viewer/node_modules/
+viewer/npm-debug.log*
+viewer/yarn-debug.log*
+viewer/yarn-error.log*
 
 # Examples
 examples/.env
