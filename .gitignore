@@ -16,6 +16,7 @@ viewer/dist/
 viewer/public/
 viewer/pkg/
 viewer/node_modules/
+viewer/false
 
 # Examples
 examples/.env
