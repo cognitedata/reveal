@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import debounce from 'lodash/debounce';
 import ComboControls from '@cognite/three-combo-controls';
-import { CogniteClient, IdEither } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk';
 import { distinctUntilChanged, filter, share, debounceTime, publish, map } from 'rxjs/operators';
 import { Subscription, Subject, combineLatest, merge } from 'rxjs';
 
@@ -47,7 +47,7 @@ export interface RelativeMouseEvent {
   offsetY: number;
 }
 
-type RequestParams = { modelRevision: IdEither; format: File3dFormat };
+type RequestParams = { modelId: number; revisionId: number; format: File3dFormat };
 type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
 type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
 
@@ -279,7 +279,8 @@ export class Cognite3DViewer {
     }
 
     const cadNode = await this.cadManager.addModel({
-      modelRevision: { id: options.revisionId },
+      modelId: options.modelId,
+      revisionId: options.revisionId,
       format: File3dFormat.RevealCadModel
     });
     if (options.geometryFilter) {
@@ -317,7 +318,8 @@ export class Cognite3DViewer {
 
     // TODO 25-05-2020 j-bjorne: fix this hot mess, 1 group added multiple times
     const [potreeGroup, potreeNode] = await this.pointCloudManager.addModel({
-      modelRevision: { id: options.revisionId },
+      modelId: options.modelId,
+      revisionId: options.revisionId,
       format: File3dFormat.EptPointCloud
     });
     const model = new CognitePointCloudModel(options.modelId, options.revisionId, potreeGroup, potreeNode);
@@ -326,10 +328,9 @@ export class Cognite3DViewer {
     return model;
   }
 
-  async determineModelType(_modelId: number, revisionId: number): Promise<SupportedModelTypes> {
+  async determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes> {
     const clientExt = new CogniteClient3dExtensions(this.sdkClient);
-    const id: IdEither = { id: revisionId };
-    const outputs = await clientExt.getOutputs(id, [File3dFormat.RevealCadModel, File3dFormat.EptPointCloud]);
+    const outputs = await clientExt.getOutputs({ modelId, revisionId, format: File3dFormat.AnyFormat });
     if (outputs.findMostRecentOutput(File3dFormat.RevealCadModel) !== undefined) {
       return SupportedModelTypes.CAD;
     } else if (outputs.findMostRecentOutput(File3dFormat.EptPointCloud) !== undefined) {
