@@ -7,6 +7,7 @@ import { RenderMode } from './RenderMode';
 import * as THREE from 'three';
 import { Vector2, DataTexture } from 'three';
 import { edgeDetectionShaders } from './shaders';
+import { CogniteColors } from '@/utilities';
 
 export class EffectRenderManager {
   private _materialManager: MaterialManager;
@@ -96,48 +97,14 @@ export class EffectRenderManager {
     const outlineColorBuffer = new Uint8Array(8 * 4);
     const outlineColorTexture = new DataTexture(outlineColorBuffer, 8, 1);
 
-    // red
-    outlineColorTexture.image.data[4] = 255;
-    outlineColorTexture.image.data[5] = 0;
-    outlineColorTexture.image.data[6] = 0;
-    outlineColorTexture.image.data[7] = 255;
-
-    // green
-    outlineColorTexture.image.data[8] = 0;
-    outlineColorTexture.image.data[9] = 255;
-    outlineColorTexture.image.data[10] = 0;
-    outlineColorTexture.image.data[11] = 255;
-
-    // blue
-    outlineColorTexture.image.data[12] = 0;
-    outlineColorTexture.image.data[13] = 0;
-    outlineColorTexture.image.data[14] = 255;
-    outlineColorTexture.image.data[15] = 255;
-
-    // yellow
-    outlineColorTexture.image.data[16] = 255;
-    outlineColorTexture.image.data[17] = 255;
-    outlineColorTexture.image.data[18] = 0;
-    outlineColorTexture.image.data[19] = 255;
-
-    // purple
-    outlineColorTexture.image.data[20] = 255;
-    outlineColorTexture.image.data[21] = 0;
-    outlineColorTexture.image.data[22] = 255;
-    outlineColorTexture.image.data[23] = 255;
-
-    // light blue
-    outlineColorTexture.image.data[24] = 0;
-    outlineColorTexture.image.data[25] = 255;
-    outlineColorTexture.image.data[26] = 255;
-    outlineColorTexture.image.data[27] = 255;
-
-    // white
-    outlineColorTexture.image.data[28] = 255;
-    outlineColorTexture.image.data[29] = 255;
-    outlineColorTexture.image.data[30] = 255;
-    outlineColorTexture.image.data[31] = 255;
-
+    setOutlineColor(outlineColorTexture.image.data, 1, CogniteColors.White);
+    setOutlineColor(outlineColorTexture.image.data, 2, CogniteColors.Black);
+    setOutlineColor(outlineColorTexture.image.data, 3, CogniteColors.Cyan);
+    setOutlineColor(outlineColorTexture.image.data, 4, CogniteColors.Blue);
+    setOutlineColor(outlineColorTexture.image.data, 5, CogniteColors.Purple);
+    setOutlineColor(outlineColorTexture.image.data, 6, CogniteColors.Pink);
+    setOutlineColor(outlineColorTexture.image.data, 7, CogniteColors.Orange);
+    setOutlineColor(outlineColorTexture.image.data, 8, CogniteColors.Yellow);
     return outlineColorTexture;
   }
 
@@ -156,4 +123,11 @@ export class EffectRenderManager {
 
     this._triScene.add(mesh);
   }
+}
+
+function setOutlineColor(outlineTextureData: Uint8ClampedArray, colorIndex: number, color: THREE.Color) {
+  outlineTextureData[4 * colorIndex + 0] = Math.floor(255 * color.r);
+  outlineTextureData[4 * colorIndex + 1] = Math.floor(255 * color.g);
+  outlineTextureData[4 * colorIndex + 2] = Math.floor(255 * color.b);
+  outlineTextureData[4 * colorIndex + 3] = 255;
 }
