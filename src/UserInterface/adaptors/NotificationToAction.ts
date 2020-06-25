@@ -23,7 +23,7 @@ class NotificationsToActionsAdaptor {
     }
 
     processEvent(sender: import("../../Core/Nodes/BaseNode").BaseNode, args: import("../../Core/Views/NodeEventArgs").NodeEventArgs): void {
-        console.log('notification ', sender, args);
+        // console.log('notification ', sender, args);
         if(args.isEmpty) { return; }
 
         // test for all changes that are relevant for us

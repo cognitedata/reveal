@@ -35,18 +35,4 @@ export class ThreeConverter
     destination.y = source.y;
     destination.z = source.z;
   }
-
-  public static fromBox(value: THREE.Box3, checkEmpty = true): Range3
-  {
-    if (checkEmpty && value.isEmpty)
-      return new Range3();
-    return new Range3(ThreeConverter.fromVector(value.min), ThreeConverter.fromVector(value.max));
-  }
-
-  public static toBox(value: Range3): THREE.Box3
-  {
-    if (value.isEmpty)
-      return new THREE.Box3();
-    return new THREE.Box3(ThreeConverter.toVector(value.min), ThreeConverter.toVector(value.max));
-  }
 }

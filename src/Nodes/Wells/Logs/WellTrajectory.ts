@@ -213,7 +213,7 @@ export class WellTrajectory extends MdSamples
     for (let i = 0; i < this.length; i++)
     {
       const sample = this.getAt(i);
-      samples.push(new RenderSample(sample.point, sample.md, radius, color));
+      samples.push(new RenderSample(sample.point.clone(), sample.md, radius, color));
     }
     return samples;
   }

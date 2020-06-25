@@ -83,6 +83,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
     for (const view of this.viewsShownHere.list)
       if (view instanceof Base3DView)
         boundingBox.addRange(view.boundingBox);
+
     return boundingBox;
   }
 

@@ -43,6 +43,7 @@ import { ToolController } from "@/Three/Nodes/ToolController";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { UniqueId } from "@/Core/Primitives/UniqueId";
 import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
+import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
 
 const DirectionalLightName = "DirectionalLight";
 
@@ -55,12 +56,12 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   private _scene: THREE.Scene | null = null;
   private _renderer: THREE.WebGLRenderer | null = null;
   private _overlay = new TreeOverlay();
-  private _stats: any | null; // NILS: Why any here? Compiler error if not
   private isEmpty = true;
   private clock = new THREE.Clock();
   private _cameraControl: CameraControl | null = null;
   private _toolController = new ToolController();
   private _raycaster = new THREE.Raycaster();
+  private _transformer = new ThreeTransformer();
 
   //==================================================
   // INSTANCE PROPERTIES: Tools
@@ -73,6 +74,11 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
+
+  public get camera(): THREE.Camera { return this.cameraControl.camera; }
+  private get controls(): CameraControls { return this.cameraControl.controls; }
+  public get transformer(): ThreeTransformer { return this._transformer; }
+  private get directionalLight(): THREE.DirectionalLight | null { return this.scene.getObjectByName(DirectionalLightName) as THREE.DirectionalLight; }
 
   public get scene(): THREE.Scene
   {
@@ -89,14 +95,6 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     return this._cameraControl;
   }
 
-  public get camera(): THREE.Camera { return this.cameraControl.camera; }
-  private get controls(): CameraControls { return this.cameraControl.controls; }
-
-  private get directionalLight(): THREE.DirectionalLight | null
-  {
-    return this.scene.getObjectByName(DirectionalLightName) as THREE.DirectionalLight;
-  }
-
   private get renderer(): THREE.WebGLRenderer
   {
     if (!this._renderer)
@@ -108,16 +106,6 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
       this._renderer = renderer;
     }
     return this._renderer;
-  }
-
-  public get stats(): any
-  {
-    if (!this._stats)
-    {
-      this._stats = new Stats();
-      this._stats.showPanel(0);
-    }
-    return this._stats;
   }
 
   //==================================================
@@ -177,7 +165,9 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   public  /*override*/ viewAll(): boolean
   {
-    return !this._cameraControl ? false : this._cameraControl.viewRange(this.getBoundingBoxFromViews());
+    const boundingBox = this.getBoundingBoxFromViews()
+    this.transformer.transformRangeTo3D(boundingBox);
+    return !this._cameraControl ? false : this._cameraControl.viewRange(boundingBox);
   }
 
   //==================================================
@@ -204,6 +194,8 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
       if (camera instanceof THREE.PerspectiveCamera)
       {
         const boundingBox = this.getBoundingBoxFromViews();
+        this.transformer.transformRangeTo3D(boundingBox);
+        
         const diagonal = boundingBox.diagonal;
         const near = 0.001 * diagonal;
         const far = 2 * diagonal + this.cameraControl.distance;
@@ -217,8 +209,6 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
       if (this.isEmpty)
         this.isEmpty = !this.viewFrom(-1);
 
-      this.stats.begin();
-
       const hasAxis = this.hasViewOfNodeType(AxisNode);
       this.scene.background = ThreeConverter.toColor(this.getBgColor(hasAxis));
 
@@ -226,7 +216,6 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
         view.beforeRender();
 
       this.renderer.render(this.scene, this.camera);
-      this.stats.end();
 
       const viewInfo = this.getViewInfo();
       this._overlay.render(this.renderer, viewInfo, this.pixelRange.delta, this.fgColor);
@@ -269,7 +258,9 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   public viewFrom(index: number): boolean
   {
-    return !this._cameraControl ? false : this._cameraControl.viewFrom(this.getBoundingBoxFromViews(), index);
+    const boundingBox = this.getBoundingBoxFromViews()
+    this.transformer.transformRangeTo3D(boundingBox);
+    return !this._cameraControl ? false : this._cameraControl.viewFrom(boundingBox, index);
   }
 
   private updateLightPosition(): void

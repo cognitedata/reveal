@@ -221,6 +221,7 @@ export class CameraControl
     if (!boundingBox)
       return;
 
+      // Transform it......
     const box = new THREE.Box3();
     const size = ThreeConverter.toVector(boundingBox.delta);
     const center = ThreeConverter.toVector(boundingBox.center);
@@ -242,7 +243,6 @@ export class CameraControl
 
     controls.maxDistance = distance * 10;
     target.sub(direction);
-
 
     controls.setTarget(center.x, center.y, center.z);
     controls.setPosition(target.x, target.y, target.z);

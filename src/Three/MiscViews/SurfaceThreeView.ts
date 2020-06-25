@@ -25,6 +25,7 @@ import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { TextureKit } from "@/Three/Utilities/TextureKit";
 import { ContouringService } from "@/Core/Geometry/ContouringService";
+import { Vector3 } from "@/Core/Geometry/Vector3";
 
 export class SurfaceThreeView extends BaseGroupThreeView
 {
@@ -77,14 +78,18 @@ export class SurfaceThreeView extends BaseGroupThreeView
     if (contours)
       group.add(contours);
 
-    group.position.set(grid.xOrigin, grid.yOrigin, 0);
+    const transformer = this.transformer;
+
+    var origin = new Vector3(grid.xOrigin, grid.yOrigin, 0);
+
+    group.position.copy(transformer.to3D(origin));
+    group.scale.copy(transformer.scale);
     return group;
   }
 
 
   protected /*override*/ createSolid(): THREE.Object3D | null
   {
-
     const node = this.node;
     const style = this.style.solid;
     const grid = node.data;

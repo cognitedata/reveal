@@ -28,7 +28,7 @@ export class TreeOverlay
   private camera: THREE.Camera | null = null;
   private context: CanvasRenderingContext2D | null = null;
   private texture: THREE.Texture | null = null;
-  private delta: Vector3 = new Vector3(-1, -1);
+  private delta = new Vector3(-1, -1);
 
   //==================================================
   // INSTANCE METHODS: 

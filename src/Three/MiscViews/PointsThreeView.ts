@@ -24,6 +24,7 @@ import { PointsRenderStyle } from "@/Nodes/Misc/PointsRenderStyle";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
+import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
 
 export class PointsThreeView extends BaseGroupThreeView
 {
@@ -80,51 +81,67 @@ export class PointsThreeView extends BaseGroupThreeView
     if (style.colorType !== ColorType.Specified)
       color = Colors.white; // Must be white because the colors are multiplicated
 
-    const threeColor: THREE.Color = ThreeConverter.toColor(color);
-
-    const geometry = new THREE.BufferGeometry();
-    geometry.addAttribute("position", new THREE.Float32BufferAttribute(createPositions(points), 3, true));
-
-    const material = new THREE.PointsMaterial({ color: threeColor, size: style.size, sizeAttenuation: true });
+    const geometry = PointsThreeView.createBufferGeometry(points, this.transformer);
+    const material = new THREE.PointsMaterial({ color: ThreeConverter.toColor(color), size: style.size, sizeAttenuation: true });
     if (style.colorType === ColorType.DepthColor)
     {
-      geometry.addAttribute("color", new THREE.Uint8BufferAttribute(createColors(points), 3, true));
+      geometry.addAttribute("color", PointsThreeView.createColorsAttribute(points));
       material.vertexColors = THREE.VertexColors;
     }
     return new THREE.Points(geometry, material);
   }
-}
 
-function createColors(points: Points): Uint8Array
-{
-  const zRange = points.getZRange();
-  let index = 0;
+  //==================================================
+  // STATIC METHODS
+  //==================================================
 
-  const colors = new Uint8Array(points.count * 3);
-  for (let i = 0; i < points.count; i++)
+  public static createBufferGeometry(points: Points, transformer: ThreeTransformer): THREE.BufferGeometry
   {
-    const z = points.list[i].z;
-    const fraction = zRange.getFraction(z);
-    const color = Color.hsv(fraction * 360, 255, 200);
-
-    colors[index++] = color.red();
-    colors[index++] = color.green();
-    colors[index++] = color.blue();
+    const geometry = new THREE.BufferGeometry();
+    geometry.addAttribute("position", new THREE.Float32BufferAttribute(PointsThreeView.createPositions(points, transformer), 3, true));
+    return geometry;
   }
-  return colors;
-}
 
-function createPositions(points: Points): Float32Array
-{
-  const positions = new Float32Array(points.count * 3);
-  let index = 0;
-  for (let i = 0; i < points.count; i++)
+  public static createColorsAttribute(points: Points): THREE.Uint8BufferAttribute
   {
-    const point = points.list[i];
-    positions[index++] = point.x;
-    positions[index++] = point.y;
-    positions[index++] = point.z;
+    return new THREE.Uint8BufferAttribute(PointsThreeView.createColors(points), 3, true);
   }
-  return positions;
+
+  private static createPositions(points: Points, transformer: ThreeTransformer): Float32Array
+  {
+    const positions = new Float32Array(points.count * 3);
+    let index = 0;
+    for (let i = 0; i < points.count; i++)
+    {
+      const point = points.list[i].clone();
+      transformer.transformTo3D(point);
+
+      positions[index++] = point.x;
+      positions[index++] = point.y;
+      positions[index++] = point.z;
+    }
+    return positions;
+  }
+
+  private static createColors(points: Points): Uint8Array
+  {
+    const zRange = points.getZRange();
+    let index = 0;
+
+    const colors = new Uint8Array(points.count * 3);
+    for (let i = 0; i < points.count; i++)
+    {
+      const z = points.list[i].z;
+      const fraction = zRange.getFraction(z);
+      const color = Color.hsv(fraction * 360, 255, 200);
+
+      colors[index++] = color.red();
+      colors[index++] = color.green();
+      colors[index++] = color.blue();
+    }
+    return colors;
+  }
+
 }
+
 

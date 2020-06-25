@@ -29,6 +29,7 @@ export class Vector3
   // INSTANCE PROPERTIES
   //==================================================
 
+  public static get newUp(): Vector3 { return new Vector3(0, 0, 1); }
   public static get newZero(): Vector3 { return new Vector3(0, 0, 0); }
   public static get newEmpty(): Vector3 { return new Vector3(Number.NaN, Number.NaN, Number.NaN); }
   public get squareLength(): number { return this.x * this.x + this.y * this.y + this.z * this.z; }
@@ -290,7 +291,7 @@ export class Vector3
       case 0: return "X";
       case 1: return "Y";
       case 2: return "Z";
-      default: return "Undefined";;
+      default: return "Undefined";
     }
   }
 

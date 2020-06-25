@@ -12,7 +12,7 @@ export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
 }) => {
     const state: ReduxStore = store.getState();
     const { visualizers } = state;
-    const { type, payload } = action;;
+    const { type, payload } = action;
     switch (type) {
         case EXECUTE_VISUALIZER_TOOLBAR_COMMAND: {
             // A toolbar commad is executed

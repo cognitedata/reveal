@@ -106,7 +106,12 @@ export abstract class BaseGroupThreeView extends BaseThreeView
   {
     if (!this.object3D)
       return undefined;
-    return BoundingBoxKit.getBoundingBox(this.object3D);
+
+     const boundingBox = BoundingBoxKit.getBoundingBox(this.object3D, this.transformer);
+     if (!boundingBox)
+       return undefined;
+
+     return boundingBox;
   }
 
   //==================================================
