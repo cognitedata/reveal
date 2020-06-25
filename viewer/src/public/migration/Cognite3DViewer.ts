@@ -611,9 +611,8 @@ export class Cognite3DViewer {
     if (this.isDisposed) {
       return;
     }
-    // if (this._onBeforeRender) {
-    //   this._onBeforeRender();
-    // }
+    this.latestRequestId = requestAnimationFrame(this.animate.bind(this));
+    
     const { display, visibility } = window.getComputedStyle(this.canvas);
     const isVisible = visibility === 'visible' && display !== 'none';
 
@@ -644,8 +643,6 @@ export class Cognite3DViewer {
         this._slicingNeedsUpdate = false;
       }
     }
-
-    this.latestRequestId = requestAnimationFrame(this.animate.bind(this));
   }
 
   private setupUpdateCameraNearAndFar(): Subject<THREE.PerspectiveCamera> {
