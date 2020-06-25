@@ -82,7 +82,7 @@ export abstract class BaseNode extends Identifiable
   public /*virtual*/ setName(value: string) { this._name = value; }
   public /*virtual*/ getName(): string { if (this._name === undefined) this._name = this.generateNewName(); return this._name; }
   public /*virtual*/ canChangeName(): boolean { return true; }
-  public /*virtual*/ getNameExtension(): string { return name; }
+  public /*virtual*/ getNameExtension(): string | null { return null; }
 
   //==================================================
   // VIRTUAL METHODS: Label
@@ -93,7 +93,7 @@ export abstract class BaseNode extends Identifiable
   public /*virtual*/ isLabelInBold(): boolean { return this.isActive; } // true shows the label in bold font
   public /*virtual*/ isLabelInItalic(): boolean { return !this.canBeDeleted(); } // true shows the label in italic font
 
-  public get label(): string // This is the text shown in the tree control
+  public get displayName(): string // This is the text shown in the tree control
   {
     const nameExtension = this.getNameExtension();
     if (Util.isEmpty(nameExtension))

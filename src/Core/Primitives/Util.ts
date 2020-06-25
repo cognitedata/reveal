@@ -13,7 +13,7 @@
 
 export class Util
 {
-  public static isEmpty(value: string): boolean { return !value || value.length === 0; }
+  public static isEmpty(value: string | null | undefined): boolean { return !value || value.length === 0; }
   public static equalsIgnoreCase(value1: string, value2: string): boolean { return value1.toLowerCase() === value2.toLowerCase(); }
 
   public static cocatinate(name: string, value?: any): string
