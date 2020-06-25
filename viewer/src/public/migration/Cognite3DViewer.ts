@@ -604,7 +604,7 @@ export class Cognite3DViewer {
         }
         this.canvas.removeEventListener('pointerdown', stopTween);
       })
-      .start();
+      .start(0);
   }
 
   private async animate(time: number) {

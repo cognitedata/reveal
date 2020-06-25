@@ -82,7 +82,7 @@ describe('Cognite3DViewer', () => {
     // Act
     const model = await viewer.addModel({ modelId: 1, revisionId: 2 });
     viewer.fitCameraToModel(model);
-    TWEEN.update();
+    TWEEN.update(0);
 
     // Assert
     expect(onCameraChange).toBeCalled();
@@ -97,7 +97,7 @@ describe('Cognite3DViewer', () => {
 
     // Act
     viewer.fitCameraToBoundingBox(bbox, 0);
-    TWEEN.update();
+    TWEEN.update(0);
 
     // Assert
     expect(viewer.getCameraTarget()).toEqual(bbox.getCenter(new THREE.Vector3()));
