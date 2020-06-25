@@ -27,9 +27,7 @@ describe('intersectCadNodes', () => {
     renderer,
     camera
   };
-  const cadNode: CadNode = {
-    add: jest.fn()
-  } as any;
+  const cadNode: CadNode = new THREE.Object3D() as any;
 
   test('no nodes, returns empty array', () => {
     const intersections = intersectCadNodes([], input);
