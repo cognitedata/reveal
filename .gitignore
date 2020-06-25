@@ -19,6 +19,7 @@ viewer/node_modules/
 viewer/npm-debug.log*
 viewer/yarn-debug.log*
 viewer/yarn-error.log*
+viewer/false
 
 # Examples
 examples/.env
