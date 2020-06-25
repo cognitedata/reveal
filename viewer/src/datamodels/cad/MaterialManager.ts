@@ -106,10 +106,12 @@ export class MaterialManager {
         (style.visible !== undefined || style.renderInFront !== undefined || style.outlineColor !== undefined)
       ) {
         const visible = style.visible === undefined ? true : style.visible;
+        // tslint:disable: no-bitwise
         materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 3] =
           (visible ? 1 << 0 : 0) +
           (style.renderInFront ? 1 << 1 : 0) +
           (style.outlineColor ? style.outlineColor << 2 : 0);
+        // tslint:enable: no-bitwise
         materials.overrideColorPerTreeIndex.needsUpdate = true;
       }
     }
