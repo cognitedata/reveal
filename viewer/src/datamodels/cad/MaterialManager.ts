@@ -98,24 +98,19 @@ export class MaterialManager {
         materials.overrideColorPerTreeIndex.image.data[4 * treeIndex] = style.color[0];
         materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 1] = style.color[1];
         materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 2] = style.color[2];
-        materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 3] = style.color[3];
         materials.overrideColorPerTreeIndex.needsUpdate = true;
       }
 
-      // Hide node?
-      if (style && style.visible !== undefined) {
-        materials.overrideVisibilityPerTreeIndex.image.data[4 * treeIndex] = style.visible ? 255 : 0;
-        materials.overrideVisibilityPerTreeIndex.needsUpdate = true;
-      }
-
-      // Render in front of everything?
-      if (style && style.renderInFront !== undefined) {
-        materials.overrideVisibilityPerTreeIndex.image.data[4 * treeIndex + 1] = style.renderInFront ? 255 : 0;
-        materials.overrideVisibilityPerTreeIndex.needsUpdate = true;
-      }
-
-      if (style && style.outline !== undefined) {
-        throw new Error('Outline is not supported yet');
+      if (
+        style &&
+        (style.visible !== undefined || style.renderInFront !== undefined || style.outlineColor !== undefined)
+      ) {
+        const visible = style.visible === undefined ? true : style.visible;
+        materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 3] =
+          (visible ? 1 << 0 : 0) +
+          (style.renderInFront ? 1 << 1 : 0) +
+          (style.outlineColor ? style.outlineColor << 2 : 0);
+        materials.overrideColorPerTreeIndex.needsUpdate = true;
       }
     }
   }

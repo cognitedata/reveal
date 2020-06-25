@@ -2,22 +2,22 @@
  * Copyright 2020 Cognite AS
  */
 
-export type NodeAppearanceOutline = {
-  /**
-   * The color of the outline.
-   */
-  color: [number, number, number, number];
-  /**
-   * The size of the outline.
-   */
-  thickness: number;
-};
+export enum OutlineColor {
+  NoOutline = 0,
+  Red,
+  Green,
+  Blue,
+  Yellow,
+  Purple,
+  LightBlue,
+  White
+}
 
 export type NodeAppearance = {
   /**
    * Overrides the default color of the node.
    */
-  readonly color?: [number, number, number, number];
+  readonly color?: [number, number, number];
   /**
    * Overrides the visibility of the node.
    */
@@ -31,7 +31,7 @@ export type NodeAppearance = {
    * When set, an outline is drawn around the
    * node to make it stand out.
    */
-  readonly outline?: NodeAppearanceOutline;
+  readonly outlineColor?: OutlineColor;
 };
 
 export interface NodeAppearanceProvider {
@@ -39,7 +39,7 @@ export interface NodeAppearanceProvider {
 }
 
 const OutlinedAppearance: NodeAppearance = {
-  outline: { color: [255, 255, 255, 255], thickness: 4 }
+  outlineColor: OutlineColor.LightBlue
 };
 
 const HiddenAppearance: NodeAppearance = {
@@ -51,7 +51,7 @@ const InFrontAppearance: NodeAppearance = {
 };
 
 const HighlightedColorApperance: NodeAppearance = {
-  color: [100, 100, 255, 255]
+  color: [100, 100, 255]
 };
 
 export const DefaultNodeAppearance = {
@@ -60,5 +60,5 @@ export const DefaultNodeAppearance = {
   Hidden: HiddenAppearance,
   InFront: InFrontAppearance,
   // TODO 2020-06-18 larsmoa: Add outline for Highlighted nodes
-  Highlighted: { ...InFrontAppearance, ...HighlightedColorApperance /*,...OutlinedAppearance */ }
+  Highlighted: { ...InFrontAppearance, ...HighlightedColorApperance, ...OutlinedAppearance }
 };
