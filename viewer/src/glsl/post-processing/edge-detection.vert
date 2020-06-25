@@ -12,8 +12,8 @@ void main() {
 
   // selection outline
   vUv0 = vec2(uv.x + texelSize.x, uv.y);
-	vUv1 = vec2(uv.x - texelSize.x, uv.y);
-	vUv2 = vec2(uv.x, uv.y + texelSize.y);
+  vUv1 = vec2(uv.x - texelSize.x, uv.y);
+  vUv2 = vec2(uv.x, uv.y + texelSize.y);
   vUv3 = vec2(uv.x, uv.y - texelSize.y);
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
