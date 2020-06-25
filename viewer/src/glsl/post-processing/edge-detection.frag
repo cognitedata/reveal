@@ -16,11 +16,8 @@ void main() {
   vec4 t0 = texture2D(tBase, vUv);
   vec4 t1 = texture2D(tSelected, vUv);
 
-  if(ceil(t1.a) == 1.0){
-    float a = 0.0;
-    if(ceil(t0.a) == 1.0){
-      a = 0.5;
-    }
+  if(t1.a > 0.0){
+    float a = ceil(t0.a) * 0.5;
     gl_FragColor = vec4(t1.rgb, 1.0) * (1.0 - a) + vec4(t0.rgb, 1.0) * a;
     return;
   }
@@ -29,15 +26,14 @@ void main() {
   float a1 = floatBitsSubset(floor((texture2D(tSelected, vUv1).a * 255.0) + 0.5), 2, 5);
   float a2 = floatBitsSubset(floor((texture2D(tSelected, vUv2).a * 255.0) + 0.5), 2, 5);
   float a3 = floatBitsSubset(floor((texture2D(tSelected, vUv3).a * 255.0) + 0.5), 2, 5);
-  vec4 visibilityFactor = vec4(a0, a1, a2, a3);
 
-  if(any(greaterThan(visibilityFactor, vec4(0.0)))){
-    float borderColorIndex = max(max(max(visibilityFactor.x, visibilityFactor.y), visibilityFactor.z), visibilityFactor.w);
+  if(a0 + a1 + a2 + a3 > 0.0) {
+    float borderColorIndex = max(max(a0, a1), max(a2, a3));
     gl_FragColor = texture2D(tOutlineColors, vec2(0.125 * borderColorIndex + (0.125 / 2.0), 0.5));
     return;
   }
 
-  if(ceil(t0.a) == 1.0){
+  if(t0.a > 0.0){
     gl_FragColor = vec4(t0.rgb, 1.0);
     return;
   }
@@ -46,10 +42,9 @@ void main() {
   float b1 = floatBitsSubset(floor((texture2D(tBase, vUv1).a * 255.0) + 0.5), 2, 5);
   float b2 = floatBitsSubset(floor((texture2D(tBase, vUv2).a * 255.0) + 0.5), 2, 5);
   float b3 = floatBitsSubset(floor((texture2D(tBase, vUv3).a * 255.0) + 0.5), 2, 5);
-  vec4 visibilityFactorTwo = vec4(b0, b1, b2, b3);
 
-  if(any(greaterThan(visibilityFactorTwo, vec4(0.0)))){
-    float borderColorIndex = max(max(max(visibilityFactorTwo.x, visibilityFactorTwo.y), visibilityFactorTwo.z), visibilityFactorTwo.w);
+  if(b0 + b1 + b2 + b3 > 0.0) {
+    float borderColorIndex = max(max(b0, b1), max(b2, b3));
     gl_FragColor = texture2D(tOutlineColors, vec2(0.125 * borderColorIndex + (0.125 / 2.0), 0.5));
     return;
   }
