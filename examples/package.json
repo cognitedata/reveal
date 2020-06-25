@@ -9,9 +9,9 @@
     "build": "react-app-rewired build",
     "test": "react-app-rewired test --testPathIgnorePatterns 'src/visual_tests'",
     "test:visual": "jest --runInBand --detectOpenHandles --verbose false -c src/visual_tests/jest.config.js",
-    "snapshots:update": "start-server-and-test 'yarn start:nossl' http://localhost:3000 'yarn snapshots:capture'",
+    "snapshots:update": "start-server-and-test start:nossl http://localhost:3000 snapshots:capture",
     "snapshots:capture": "jest --runInBand --detectOpenHandles --updateSnapshot -c src/visual_tests/jest.config.js",
-    "ci:nossl": "start-server-and-test 'yarn start:nossl' http://localhost:3000 'yarn test:visual'",
+    "ci:nossl": "start-server-and-test start:nossl http://localhost:3000 test:visual",
     "eject": "react-scripts eject"
   },
   "author": "Lars Moastuen <lars.moastuen@cognite.com>",
