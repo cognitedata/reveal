@@ -3,7 +3,7 @@
  */
 // @ts-ignore
 import * as Potree from '@cognite/potree-core';
-import { CogniteClient, IdEither, ItemsResponse } from '@cognite/sdk';
+import { CogniteClient, ItemsResponse } from '@cognite/sdk';
 
 import { BlobOutputMetadata, ModelUrlProvider } from './types';
 import { Model3DOutputList } from './Model3DOutputList';
@@ -13,17 +13,14 @@ import { CadSceneProvider } from '@/datamodels/cad/CadSceneProvider';
 import { CadSectorProvider } from '@/datamodels/cad/sector/CadSectorProvider';
 import { EptSceneProvider } from '@/datamodels/pointcloud/EptSceneProvider';
 
-interface OutputsRequest {
-  models: IdEither[];
-  formats?: (string | File3dFormat)[];
-}
-
+// TODO 2020-06-25 larsmoa: Extend CogniteClient.files3d.retrieve() to support subpath instead of
+// using URLs directly. Also add support for listing outputs in the SDK.
 /**
  * Provides 3D V2 specific extensions for the standard CogniteClient used by Reveal.
  */
 export class CogniteClient3dExtensions
   implements
-    ModelUrlProvider<{ modelRevision: IdEither; format: File3dFormat }>,
+    ModelUrlProvider<{ modelId: number; revisionId: number; format: File3dFormat }>,
     HttpHeadersProvider,
     CadSceneProvider,
     CadSectorProvider,
@@ -58,37 +55,40 @@ export class CogniteClient3dExtensions
     return response.data;
   }
 
-  public async getModelUrl(modelIdentifier: { modelRevision: IdEither; format: File3dFormat }): Promise<string> {
-    const { modelRevision, format } = modelIdentifier;
-    const outputs = await this.getOutputs(modelRevision, [format]);
+  public async getModelUrl(modelIdentififer: {
+    modelId: number;
+    revisionId: number;
+    format: File3dFormat | string;
+  }): Promise<string> {
+    const { modelId, revisionId, format } = modelIdentififer;
+    const outputs = await this.getOutputs({ modelId, revisionId, format });
     const mostRecentOutput = outputs.findMostRecentOutput(format);
     if (!mostRecentOutput) {
       throw new Error(
-        `Model '${modelRevision}' is not compatible with this version of Reveal. If this model works with a previous version of Reveal it must be reconverted to support this version.`
+        `Model '${modelId}/${revisionId}' is not compatible with this version of Reveal. If this model works with a previous version of Reveal it must be reconverted to support this version.`
       );
     }
     const blobId = mostRecentOutput.blobId;
     return `${this.client.getBaseUrl()}${this.buildBlobRequestPath(blobId)}`;
   }
 
-  public async getOutputs(modelRevisionId: IdEither, formats?: (File3dFormat | string)[]): Promise<Model3DOutputList> {
-    const url = `/api/playground/projects/${this.client.project}/3d/v2/outputs`;
-    const request: OutputsRequest = {
-      models: [modelRevisionId],
-      formats
-    };
-    const response = await this.client.post<ItemsResponse<{ model: IdEither; outputs: BlobOutputMetadata[] }>>(url, {
-      data: request
-    });
+  public async getOutputs(modelIdentifier: {
+    modelId: number;
+    revisionId: number;
+    format?: File3dFormat | string;
+  }): Promise<Model3DOutputList> {
+    const { modelId, revisionId, format } = modelIdentifier;
+    const url = `/api/v1/projects/${this.client.project}/3d/models/${modelId}/revisions/${revisionId}/outputs`;
+    const params = format !== undefined ? { params: { format } } : undefined;
+    const response = await this.client.get<ItemsResponse<BlobOutputMetadata>>(url, params);
     if (response.status === 200) {
-      const item = response.data.items[0];
-      return new Model3DOutputList(item.model, item.outputs);
+      return new Model3DOutputList(modelId, revisionId, response.data.items);
     }
     throw new Error(`Unexpected response ${response.status} (payload: '${response.data})`);
   }
 
   private buildBlobRequestPath(blobId: number): string {
-    const url = `/api/playground/projects/${this.client.project}/3d/v2/blobs/${blobId}`;
+    const url = `/api/v1/projects/${this.client.project}/3d/files/${blobId}`;
     return url;
   }
 }
