@@ -24,11 +24,11 @@ function generateNodeStructure(
   return {
     parentId,
     uniqueId,
-    name: node.getName(),
+    name: node.displayName,
     expanded: (node.isExpanded),
     icon: {
       path: node.getIcon(),
-      description: node.getName(),
+      description: node.displayName,
       color: (node.hasIconColor() ? node.getColor() : undefined)
     },
     selected: node.IsSelected(),
@@ -72,7 +72,7 @@ function generateExplorerData(root: BaseRootNode) {
       }
       nodeIds.push(uniqueId);
     }
-    tabs.push({ name: child.getName(), icon: child.getIcon(), nodeIds });
+    tabs.push({ name: child.displayName, icon: child.getIcon(), nodeIds });
   }
   return { nodes, tabs };
 }
