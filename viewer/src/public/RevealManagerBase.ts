@@ -5,22 +5,9 @@
 import * as THREE from 'three';
 
 import { RenderManager } from './RenderManager';
-import { SectorGeometry } from '@/datamodels/cad/sector/types';
-import { SectorQuads } from '@/datamodels/cad/rendering/types';
-import { SectorCuller } from '@/internal';
 import { CadManager } from '@/datamodels/cad/CadManager';
 import { MaterialManager } from '@/datamodels/cad/MaterialManager';
-import { ModelNodeAppearance } from '@/datamodels/cad';
 import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
-
-export interface RevealOptions {
-  nodeAppearance?: ModelNodeAppearance;
-  // internal options are experimental and may change in the future
-  internal?: {
-    parseCallback?: (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
-    sectorCuller?: SectorCuller;
-  };
-}
 
 export type OnDataUpdated = () => void;
 
@@ -55,6 +42,11 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
       return;
     }
     this.isDisposed = true;
+  }
+
+  public requestRedraw(): void {
+    this._cadManager.requestRedraw();
+    this._pointCloudManager.requestRedraw();
   }
 
   public resetRedraw(): void {

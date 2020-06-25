@@ -7,7 +7,7 @@ import {
   LocalHostRevealManager,
 } from '@cognite/reveal/experimental';
 import { CogniteClient } from '@cognite/sdk';
-import { RevealOptions } from '@cognite/reveal/public/RevealManagerBase';
+import { RevealOptions } from '@cognite/reveal/public/types';
 
 // TODO 22-05-2020 j-bjorne: change to return render and added models
 export function createRenderManager(
@@ -28,23 +28,31 @@ export function createRenderManager(
 export function getParamsFromURL(defaults: {
   project: string;
   modelUrl?: string;
+}, queryParameters? : {
+  project?: string,
+  modelId?: string,
+  revisionId?: string,
+  modelUrl?: string
 }) {
+  const params = {project: 'project', modelId: 'modelId', revisionId: 'revisionId', modelUrl: 'modelUrl', ...queryParameters};
   const url = new URL(window.location.href);
   const searchParams = url.searchParams;
 
-  const project = searchParams.get('project');
-  const modelRevision = searchParams.get('model');
-  const modelUrl = searchParams.get('modelUrl');
+  const project = searchParams.get(params.project);
+  const modelId = searchParams.get(params.modelId);
+  const revisionId = searchParams.get(params.revisionId);
+  const modelUrl = searchParams.get(params.modelUrl);
 
+  const modelRevision = modelId !== null && revisionId !== null
+    ? {modelId: Number.parseInt(modelId, 10), revisionId: Number.parseInt(revisionId, 10)} 
+    : undefined;
   return {
     project: project ? project : defaults.project,
-    modelRevision: modelRevision
-      ? Number.parseInt(modelRevision, 10)
-      : undefined,
+    modelRevision,
     modelUrl:
       modelUrl !== null
         ? modelUrl
-        : modelRevision === null && defaults.modelUrl
+        : modelId === null && defaults.modelUrl
         ? defaults.modelUrl
         : undefined,
   };

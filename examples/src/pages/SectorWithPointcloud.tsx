@@ -26,18 +26,10 @@ import {
 CameraControls.install({ THREE });
 
 function getPointCloudParams() {
-  const url = new URL(window.location.href);
-  const searchParams = url.searchParams;
-  const pointCloudRevision = searchParams.get('pointCloud');
-  const pointCloudUrl = searchParams.get('pointCloudUrl');
-  return {
-    pointCloudRevision: pointCloudRevision
-      ? Number.parseInt(pointCloudRevision, 10)
-      : undefined,
-    pointCloudUrl: pointCloudUrl
-      ? window.location.origin + '/' + pointCloudUrl
-      : undefined,
-  };
+  return getParamsFromURL({
+    project: 'publicdata',
+    modelUrl: 'primitives',
+  }, {modelId: 'pointCloudModelId', revisionId: 'pointCloudRevisionId', modelUrl: 'pointCloudUrl'});
 }
 
 function initializeGui(
@@ -124,7 +116,7 @@ export function SectorWithPointcloud() {
         project: 'publicdata',
         modelUrl: 'primitives',
       });
-      const { pointCloudRevision, pointCloudUrl } = getPointCloudParams();
+      const { modelRevision: pointCloudModelRevision, modelUrl: pointCloudUrl } = getPointCloudParams();
       const client = new CogniteClient({
         appId: 'reveal.example.hybrid-cad-pointcloud',
       });
@@ -161,7 +153,7 @@ export function SectorWithPointcloud() {
         await client.authenticate();
         model = await revealManager.addModel('cad', modelRevision);
       } else {
-        console.log(pointCloudRevision);
+        console.log(pointCloudModelRevision);
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'
         );
@@ -179,15 +171,15 @@ export function SectorWithPointcloud() {
         pointCloud = await revealManager.addModel('pointcloud', pointCloudUrl);
       } else if (
         revealManager instanceof reveal.RevealManager &&
-        pointCloudRevision !== undefined
+        pointCloudModelRevision !== undefined
       ) {
         await client.authenticate();
         pointCloud = await revealManager.addModel(
           'pointcloud',
-          pointCloudRevision
+          pointCloudModelRevision
         );
       } else {
-        console.log(pointCloudRevision);
+        console.log(pointCloudModelRevision);
         throw new Error(
           'Need to provide either project & pointCloud OR pointCloudlUrl as query parameters'
         );

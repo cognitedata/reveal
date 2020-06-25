@@ -4,5 +4,6 @@
 
 export enum File3dFormat {
   EptPointCloud = 'ept-pointcloud',
-  RevealCadModel = 'reveal-directory'
+  RevealCadModel = 'reveal-directory',
+  AnyFormat = 'all-outputs'
 }

@@ -9,8 +9,7 @@ export { LocalHostRevealManager } from './public/LocalHostRevealManager';
 export { RenderManager } from './public/RenderManager';
 // TODO 2020-05-15 larsmoa: reveal.CadNode is _internal_ and should not be exported
 export { CadNode } from './datamodels/cad';
-export { ModelNodeAppearance } from './datamodels/cad/';
-
+export { NodeAppearance, NodeAppearanceProvider, DefaultNodeAppearance } from './datamodels/cad';
 // CAD
 
 export { CadModelMetadata, SsaoEffect, SsaoPassType } from './datamodels/cad/';
@@ -18,6 +17,7 @@ export { SectorMetadata, SectorModelTransformation } from './datamodels/cad/sect
 export { CadRenderHints } from './datamodels/cad/rendering/CadRenderHints';
 export { CadLoadingHints } from './datamodels/cad/CadLoadingHints';
 export { intersectCadNodes } from './datamodels/cad/picking';
+export { addPostRenderEffects } from './datamodels/cad/rendering/postRenderEffects';
 
 // Point cloud
 export { PointCloudMetadata } from './datamodels/pointcloud';

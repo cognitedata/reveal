@@ -28,7 +28,7 @@ interface NodeIdReference {
 }
 
 interface TransitPathRequest {
-  modelId: number;
+  revisionId: number;
   items: {
     from: Coordinates | NodeIdReference;
     to: Coordinates | NodeIdReference;
@@ -54,7 +54,7 @@ interface TransitPathItem {
 }
 
 interface TransitPathData {
-  modelId: number;
+  revisionId: number;
   items: TransitPathItem[];
 }
 
@@ -133,7 +133,7 @@ export function WalkablePath() {
         updated = true;
       };
 
-      createGUIWrapper(modelRevision ? modelRevision : 0, {
+      createGUIWrapper(modelRevision ? modelRevision.revisionId : 0, {
         createWalkablePath: async (walkablePath: TransitPathRequest) => {
           const walkablePathResponse = await walkablePathSdkClient.getTransitPath(
             walkablePath
@@ -251,7 +251,7 @@ function convertToVector3Array(
 // Parser from GUI Data, to API request
 function transformDataToRequest(data: TransitPathData): TransitPathRequest {
   return {
-    modelId: data.modelId,
+    revisionId: data.revisionId,
     items: data.items.map((item) => {
       return {
         from: transformWaypoint(item.from),
@@ -275,21 +275,21 @@ function transformWaypoint(data: Waypoint): Coordinates | NodeIdReference {
 
 // GUI Wrapper with callbacks on create / remove path
 function createGUIWrapper(
-  modelId: number,
+  revisionId: number,
   callbacks: {
     createWalkablePath: (data: TransitPathRequest) => void;
     removeWalkablePath: () => void;
   }
 ) {
-  let transitPathData = defaultPathData(modelId);
+  let transitPathData = defaultPathData(revisionId);
   const gui = new GUI({ width: 300 });
   updateQueryGUI(gui, transitPathData);
   gui.add(
     {
       resetToDefault: () => {
-        transitPathData = defaultPathData(modelId);
+        transitPathData = defaultPathData(revisionId);
         gui.destroy();
-        createGUIWrapper(modelId, callbacks);
+        createGUIWrapper(revisionId, callbacks);
       },
     },
     'resetToDefault'
@@ -308,9 +308,9 @@ function createGUIWrapper(
   gui.add(callbacks, 'removeWalkablePath');
 }
 
-function defaultPathData(modelId: number): TransitPathData {
+function defaultPathData(revisionId: number): TransitPathData {
   return {
-    modelId,
+    revisionId,
     items: [defaultPathItem()],
   };
 }

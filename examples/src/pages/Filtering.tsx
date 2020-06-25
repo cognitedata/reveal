@@ -41,16 +41,19 @@ export function Filtering() {
         client
       );
       let model: reveal.CadNode;
-      const nodeAppearance: reveal.ModelNodeAppearance = {
-        visible(treeIndex: number) {
-          return visibleIndices.has(treeIndex);
-        },
+      const nodeAppearanceProvider: reveal.NodeAppearanceProvider = {
+        styleNode(treeIndex: number) {
+          if (visibleIndices.has(treeIndex)) {
+            return reveal.DefaultNodeAppearance.Hidden;
+          }
+          return reveal.DefaultNodeAppearance.NoOverrides;
+        }
       };
       if (
         revealManager instanceof reveal.LocalHostRevealManager &&
         modelUrl !== undefined
       ) {
-        model = await revealManager.addModel('cad', modelUrl, nodeAppearance);
+        model = await revealManager.addModel('cad', modelUrl, nodeAppearanceProvider);
       } else if (
         revealManager instanceof reveal.RevealManager &&
         modelRevision !== undefined
@@ -58,7 +61,7 @@ export function Filtering() {
         model = await revealManager.addModel(
           'cad',
           modelRevision,
-          nodeAppearance
+          nodeAppearanceProvider
         );
       } else {
         throw new Error(
