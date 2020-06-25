@@ -4,13 +4,13 @@
 
 export enum OutlineColor {
   NoOutline = 0,
-  Red,
-  Green,
+  White,
+  Black,
+  Cyan,
   Blue,
-  Yellow,
   Purple,
-  LightBlue,
-  White
+  Pink,
+  Orange
 }
 
 export type NodeAppearance = {
@@ -39,7 +39,7 @@ export interface NodeAppearanceProvider {
 }
 
 const OutlinedAppearance: NodeAppearance = {
-  outlineColor: OutlineColor.LightBlue
+  outlineColor: OutlineColor.Pink
 };
 
 const HiddenAppearance: NodeAppearance = {

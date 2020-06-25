@@ -104,7 +104,6 @@ export class EffectRenderManager {
     setOutlineColor(outlineColorTexture.image.data, 5, CogniteColors.Purple);
     setOutlineColor(outlineColorTexture.image.data, 6, CogniteColors.Pink);
     setOutlineColor(outlineColorTexture.image.data, 7, CogniteColors.Orange);
-    setOutlineColor(outlineColorTexture.image.data, 8, CogniteColors.Yellow);
     return outlineColorTexture;
   }
 
