@@ -15,14 +15,17 @@ describe('CogniteClient3dExtensions', () => {
     appId,
     baseUrl
   });
+  client.loginWithApiKey({ apiKey: 'dummy', project: 'unittest' });
   const clientExt = new CogniteClient3dExtensions(client);
+  const apiPath: RegExp = /\/api\/v1\/projects\/unittest\/3d\/.*/;
 
   test('getOutputs() throws error when server returns 400', async () => {
-    nock(/.*/)
-      .post(/.*/)
+    const scope = nock(/.*/)
+      .post(apiPath)
       .reply(400, {});
 
-    expect(clientExt.getOutputs({ externalId: 'externalId' })).rejects.toThrowError();
+    await expect(clientExt.getOutputs({ modelId: 1337, revisionId: 42 })).rejects.toThrowError();
+    expect(scope.isDone()).toBeTrue();
   });
 
   test('getOutputs() with empty outputs in response, returns empty list', async () => {
@@ -38,11 +41,11 @@ describe('CogniteClient3dExtensions', () => {
       ]
     };
     nock(/.*/)
-      .post(/.*/)
+      .post(apiPath)
       .reply(200, response);
 
     // Act
-    const result = await clientExt.getOutputs({ externalId: 'externalId' });
+    const result = await clientExt.getOutputs({ modelId: 1337, revisionId: 42 });
 
     // Assert
     expect(result).toEqual({ ...response.items[0] });
@@ -72,11 +75,11 @@ describe('CogniteClient3dExtensions', () => {
       ]
     };
     nock(/.*/)
-      .post(/.*/)
+      .post(apiPath)
       .reply(200, response);
 
     // Act
-    const result = await clientExt.getOutputs({ id: 42 });
+    const result = await clientExt.getOutputs({ modelId: 1337, revisionId: 42 });
 
     // Assert
     expect(result).toEqual({ ...response.items[0] });
@@ -86,7 +89,7 @@ describe('CogniteClient3dExtensions', () => {
     // Arrange
     const response = '0123456789';
     nock(/.*/)
-      .get(/.*/)
+      .get(apiPath)
       .reply(200, response, { 'content-type': 'binary' });
 
     // Act
@@ -120,29 +123,29 @@ describe('CogniteClient3dExtensions', () => {
       ]
     };
     nock(/.*/)
-      .post(/.*/)
+      .post(apiPath)
       .reply(200, response);
 
     // Act & Assert
     expect(
-      clientExt.getModelUrl({ modelRevision: { id: 42 }, format: File3dFormat.RevealCadModel })
+      clientExt.getModelUrl({ modelId: 1337, revisionId: 42, format: File3dFormat.RevealCadModel })
     ).rejects.toThrowError();
   });
 });
 
 describe('Model3dOutputList', () => {
   test('findMostRecentOutput() with no outputs of type, returns undefined', () => {
-    const outputs = new Model3DOutputList({ id: 42 }, [{ format: 'ept-pointcloud', version: 1, blobId: 1 }]);
+    const outputs = new Model3DOutputList(1337, 42, [{ format: 'ept-pointcloud', version: 1, blobId: 1 }]);
     expect(outputs.findMostRecentOutput('reveal')).toBeUndefined();
   });
 
   test('findMostRecentOutput() with single output of given type, returns version', () => {
-    const outputs = new Model3DOutputList({ id: 42 }, [{ format: 'ept-pointcloud', version: 1, blobId: 1 }]);
+    const outputs = new Model3DOutputList(1337, 42, [{ format: 'ept-pointcloud', version: 1, blobId: 1 }]);
     expect(outputs.findMostRecentOutput('ept-pointcloud')).not.toBeUndefined();
   });
 
   test('findMostRecentOutput() with mulitple outputs of given type, returns most recent version', () => {
-    const outputs = new Model3DOutputList({ id: 42 }, [
+    const outputs = new Model3DOutputList(1337, 42, [
       { format: 'ept-pointcloud', version: 1, blobId: 1 },
       { format: 'ept-pointcloud', version: 5, blobId: 5 },
       { format: 'ept-pointcloud', version: 3, blobId: 3 },
@@ -154,7 +157,7 @@ describe('Model3dOutputList', () => {
   });
 
   test('findMostRecentOutput() with list of supported formats, returns most recent supported', () => {
-    const outputs = new Model3DOutputList({ id: 42 }, [
+    const outputs = new Model3DOutputList(1337, 42, [
       { format: 'ept-pointcloud', version: 1, blobId: 1 },
       { format: 'ept-pointcloud', version: 5, blobId: 5 },
       { format: 'ept-pointcloud', version: 3, blobId: 3 },
