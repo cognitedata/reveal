@@ -28,6 +28,7 @@ import { ToggleBgColorCommand } from "@/Three/Commands/ToggleBgColorCommand";
 import { WellFolder } from "@/Nodes/Wells/Wells/WellFolder";
 import { BaseModule } from "@/Core/Module/BaseModule";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
+import { LogFolder } from "@/Nodes/Wells/Wells/LogFolder";
 
 export class SyntheticSubSurfaceModule extends BaseModule
 {
@@ -87,6 +88,10 @@ export class SyntheticSubSurfaceModule extends BaseModule
             trajectoryNode.addChild(logNode);
           }
 
+          let folder = new LogFolder();
+          trajectoryNode.addChild(folder);
+          
+
           // Add some float logs to the trajectory
           numberOfLogs = Random.getInt2(2, 5);
           for (let logIndex = 0; logIndex < numberOfLogs; logIndex++)
@@ -113,8 +118,10 @@ export class SyntheticSubSurfaceModule extends BaseModule
             if (name)
               logNode.setName(name);
 
-            trajectoryNode.addChild(logNode);
+              folder.addChild(logNode);
           }
+          folder = new LogFolder();
+          trajectoryNode.addChild(folder);
 
           // Add some discrete logs to the trajectory
           numberOfLogs = 1;
@@ -128,7 +135,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
             const valueRange = new Range1(0, 4);
             logNode.data = DiscreteLog.createByRandom(mdRange, valueRange);
             logNode.setName("Zone log");
-            trajectoryNode.addChild(logNode);
+            folder.addChild(logNode);
           }
 
           // Add some random point logs to the trajectory
@@ -142,7 +149,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
             const logNode = new PointLogNode();
             logNode.data = PointLog.createByRandom(mdRange, 10);
             logNode.setName("Risk " + logIndex);
-            trajectoryNode.addChild(logNode);
+            folder.addChild(logNode);
           }
         }
       }
