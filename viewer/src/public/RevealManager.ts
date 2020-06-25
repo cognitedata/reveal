@@ -3,7 +3,7 @@
  */
 
 import { RevealManagerBase } from './RevealManagerBase';
-import { CogniteClient, IdEither } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk';
 import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
 import { File3dFormat } from '@/utilities';
 import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';

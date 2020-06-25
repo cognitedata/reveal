@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import debounce from 'lodash/debounce';
 import ComboControls from '@cognite/three-combo-controls';
-import { CogniteClient, IdEither } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk';
 import { distinctUntilChanged, filter, share, debounceTime, publish, map } from 'rxjs/operators';
 import { Subscription, Subject, combineLatest, merge } from 'rxjs';
 

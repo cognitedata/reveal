@@ -21,7 +21,7 @@ describe('CogniteClient3dExtensions', () => {
 
   test('getOutputs() throws error when server returns 400', async () => {
     const scope = nock(/.*/)
-      .post(apiPath)
+      .get(apiPath)
       .reply(400, {});
 
     await expect(clientExt.getOutputs({ modelId: 1337, revisionId: 42 })).rejects.toThrowError();
@@ -31,65 +31,51 @@ describe('CogniteClient3dExtensions', () => {
   test('getOutputs() with empty outputs in response, returns empty list', async () => {
     // Arrange
     const response = {
-      items: [
-        {
-          model: {
-            externalId: 'externalId'
-          },
-          outputs: []
-        }
-      ]
+      items: []
     };
     nock(/.*/)
-      .post(apiPath)
+      .get(apiPath)
       .reply(200, response);
 
     // Act
     const result = await clientExt.getOutputs({ modelId: 1337, revisionId: 42 });
 
     // Assert
-    expect(result).toEqual({ ...response.items[0] });
+    expect(result).toEqual({ modelId: 1337, revisionId: 42, outputs: [] });
   });
 
-  test('getOuputs() with two outputs, returns both outputs', async () => {
+  test('getOutputs() with two outputs, returns both outputs', async () => {
     // Arrange
     const response = {
       items: [
         {
-          model: {
-            id: 42
-          },
-          outputs: [
-            {
-              format: 'ept-pointcloud',
-              version: 1,
-              blobId: 1
-            },
-            {
-              format: 'ept-pointcloud',
-              version: 2,
-              blobId: 2
-            }
-          ]
+          format: 'ept-pointcloud',
+          version: 1,
+          blobId: 1
+        },
+        {
+          format: 'ept-pointcloud',
+          version: 2,
+          blobId: 2
         }
       ]
     };
     nock(/.*/)
-      .post(apiPath)
+      .get(apiPath)
       .reply(200, response);
 
     // Act
     const result = await clientExt.getOutputs({ modelId: 1337, revisionId: 42 });
 
     // Assert
-    expect(result).toEqual({ ...response.items[0] });
+    expect(result).toEqual({ modelId: 1337, revisionId: 42, outputs: response.items });
   });
 
   test('retrieveBinaryBlob() with binary data returns valid ArrayBuffer', async () => {
     // Arrange
     const response = '0123456789';
     nock(/.*/)
-      .get(apiPath)
+      .get(/.*/)
       .reply(200, response, { 'content-type': 'binary' });
 
     // Act
@@ -109,16 +95,9 @@ describe('CogniteClient3dExtensions', () => {
     const response = {
       items: [
         {
-          model: {
-            id: 42
-          },
-          outputs: [
-            {
-              format: 'unsupported-format',
-              version: 1,
-              blobId: 1
-            }
-          ]
+          format: 'unsupported-format',
+          version: 1,
+          blobId: 1
         }
       ]
     };
