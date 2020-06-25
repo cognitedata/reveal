@@ -33,9 +33,9 @@ export class Range3
   public static get newTest(): Range3
   {
     const range = new Range3();
-    range.x = Range1.newTest;
-    range.y = Range1.newTest;
-    range.z = Range1.newZTest;
+    range.x = new Range1(21_000, 23_000);
+    range.y = new Range1(46_000, 48_000);
+    range.z = new Range1(-1_000, -1_500);
     return range;
   }
 

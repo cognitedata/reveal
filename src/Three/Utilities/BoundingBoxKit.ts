@@ -12,22 +12,21 @@
 //=====================================================================================
 
 import * as THREE from "three";
-
 import { Range3 } from "@/Core/Geometry/Range3";
 import { Colors } from "@/Core/Primitives/Colors";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
+import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
 
 export class BoundingBoxKit 
 {
-  static getBoundingBox(object: THREE.Object3D | null): Range3 | undefined
+  static getBoundingBox(object: THREE.Object3D | null, transformer: ThreeTransformer ): Range3 | undefined
   {
     if (!object)
       return undefined;
 
     const helper = new THREE.BoxHelper(object, ThreeConverter.toColor(Colors.white));
-    //helper.update();
     helper.geometry.computeBoundingBox();
-    return ThreeConverter.fromBox(helper.geometry.boundingBox, false);
+    return transformer.rangeToWorld(helper.geometry.boundingBox, false);
   }
 }
 

@@ -117,7 +117,7 @@ export default createReducer(initialState, {
         checkNode.indeterminate = false;
         checkNode.disabled = false;
         // tslint:disable-next-line:no-console
-        console.log('changed state of ', checkNode.name, ' to checked');
+        //console.log('changed state of ', checkNode.name, ' to checked');
         state.checkedNodeIds.add(uniqueId);
         break;
       case 'unchecked':
@@ -125,21 +125,21 @@ export default createReducer(initialState, {
         checkNode.indeterminate = false;
         checkNode.disabled = false;
         // tslint:disable-next-line:no-console
-        console.log('changed state of ', checkNode.name, ' to un-checked');
+        //console.log('changed state of ', checkNode.name, ' to un-checked');
         break;
       case 'disabled':
         checkNode.checked = false;
         checkNode.indeterminate = false;
         checkNode.disabled = true;
         // tslint:disable-next-line:no-console
-        console.log('changed state of ', checkNode.name, ' to un-checked');
+        //console.log('changed state of ', checkNode.name, ' to un-checked');
         break;
       case 'partial':
         checkNode.indeterminate = true;
         checkNode.checked = false;
         checkNode.disabled = false;
         // tslint:disable-next-line:no-console
-        console.log('changed state of ', checkNode.name, ' to partial');
+        //console.log('changed state of ', checkNode.name, ' to partial');
         break;
       default:
       // do nothing

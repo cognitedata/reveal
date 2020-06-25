@@ -92,7 +92,7 @@ export class PointLogThreeView extends BaseGroupThreeView
       return undefined;
 
     const range = new Range3();
-    const position: Vector3 = Vector3.newZero;
+    const position = Vector3.newZero;
     for (let i = 0; i < log.samples.length; i++)
     {
       const sample = log.getAt(i);
@@ -127,6 +127,7 @@ export class PointLogThreeView extends BaseGroupThreeView
     const camera = this.camera;
     const cameraPosition = ThreeConverter.fromVector(camera.position);
     const cameraDirection = trajectory.range.center;
+    this.transformer.transformTo3D(cameraDirection);
 
     cameraDirection.substract(cameraPosition);
     cameraDirection.normalize();
@@ -139,7 +140,8 @@ export class PointLogThreeView extends BaseGroupThreeView
     this.cameraDirection = cameraDirection;
     this.cameraPosition = cameraPosition;
 
-    let position = Vector3.newZero;
+    const transformer = this.transformer;
+    const position = Vector3.newZero;
     const tangent = Vector3.newZero;
     const selectedRadius = this.radius * selectedRadiusFactor;
 
@@ -155,6 +157,8 @@ export class PointLogThreeView extends BaseGroupThreeView
 
       if (!trajectory.getTangentAtMd(sample.md, tangent))
         continue;
+
+      transformer.transformTo3D(position);
 
       // Get perpendicular
       const cameraDirection = Vector3.substract(position, this.cameraPosition);
@@ -211,6 +215,7 @@ export class PointLogThreeView extends BaseGroupThreeView
       throw Error("Well trajectory is missing");
 
     const group = new THREE.Group();
+    const transformer = this.transformer;
 
     const radius = style.radius;
     const selectedRadius = radius * selectedRadiusFactor;
@@ -221,9 +226,9 @@ export class PointLogThreeView extends BaseGroupThreeView
     const openMaterial = new THREE.MeshPhongMaterial({ color: ThreeConverter.toColor(color) });
     openMaterial.emissive = ThreeConverter.toColor(Colors.selectedEmissive);
 
-    const up = new Vector3(0, 0, 1);
-    const position: Vector3 = Vector3.newZero;
-    const tangent: Vector3 = Vector3.newZero;
+    const up = Vector3.newUp;
+    const tangent = Vector3.newZero;
+    const position = Vector3.newZero;
 
     for (let index = 0; index < log.samples.length; index++)
     {
@@ -233,6 +238,8 @@ export class PointLogThreeView extends BaseGroupThreeView
 
       if (!trajectory.getTangentAtMd(sample.md, tangent))
         continue;
+
+      transformer.transformTo3D(position);
 
       const sphere = new THREE.Mesh(sample.isOpen ? openGeometry : closedGeometry, sample.isOpen ? openMaterial : closedMaterial);
       sphere.scale.z = 0.5;

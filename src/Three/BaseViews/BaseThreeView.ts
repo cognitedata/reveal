@@ -15,10 +15,11 @@ import * as THREE from "three";
 import { Base3DView } from "@/Core/Views/Base3DView";
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
+import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
 
 export abstract class BaseThreeView extends Base3DView
 {
-  static noPicking = "noPicking";
+  public static readonly noPicking = "noPicking";
   
   //==================================================
   // INSTANCE PROPERTIES
@@ -26,6 +27,7 @@ export abstract class BaseThreeView extends Base3DView
 
   protected get scene(): THREE.Scene { return this.renderTarget.scene; }
   protected get camera(): THREE.Camera { return this.renderTarget.camera; }
+  protected get transformer(): ThreeTransformer { return this.renderTarget.transformer; }
   protected get renderTarget(): ThreeRenderTargetNode { return super.getTarget() as ThreeRenderTargetNode; }
 
   //==================================================

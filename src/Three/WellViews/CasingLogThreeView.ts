@@ -27,6 +27,9 @@ import { TrajectoryBufferGeometry } from "@/Three/WellViews/Helpers/TrajectoryBu
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { WellTrajectoryStyle } from "@/Nodes/Wells/Styles/WellTrajectoryStyle";
 import { CasingLogStyle } from "@/Nodes/Wells/Styles/CasingLogStyle";
+import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
+import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
+import Color from "color";
 
 export class CasingLogThreeView extends BaseGroupThreeView
 {
@@ -111,19 +114,35 @@ export class CasingLogThreeView extends BaseGroupThreeView
     if (!log)
       throw Error("Well trajectory is missing");
 
-    const samples: RenderSample[] = [];
-    let wellIndex = 0;
-    const position: Vector3 = Vector3.newZero;
+    const samples = this.createRenderSamples(trajectory, log, color);
+    const geometry = new TrajectoryBufferGeometry(samples);
+    const material = new THREE.MeshStandardMaterial({
+      color: ThreeConverter.toColor(Colors.white),
+      vertexColors: THREE.VertexColors,
+      transparent: true,
+      opacity: style.opacity
+    });
+    return new THREE.Mesh(geometry, material);
+  }
 
+  //==================================================
+  // INSTANCE METHODS: Creators
+  //==================================================
+
+  public createRenderSamples(trajectory: WellTrajectory, log: FloatLog, color: Color): RenderSample[]
+  {
+    let wellIndex = 0;
+    const samples: RenderSample[] = [];
     for (let logIndex = 0; logIndex < log.length - 1; logIndex++)
     {
       const minSample = log.getAt(logIndex);
       const maxSample = log.getAt(logIndex + 1);
 
+      const position = Vector3.newZero;
       if (!trajectory.getPositionAtMd(minSample.md, position))
         continue;
 
-      samples.push(new RenderSample(position.clone(), minSample.md, minSample.value, color));
+      samples.push(new RenderSample(position, minSample.md, minSample.value, color));
       if (minSample.isEmpty)
         continue;
 
@@ -134,24 +153,21 @@ export class CasingLogThreeView extends BaseGroupThreeView
         if (trajectorySample.md >= maxSample.md)
           break; // Too far
         if (trajectorySample.md > minSample.md)
-          samples.push(new RenderSample(trajectorySample.point, trajectorySample.md, minSample.value, color));
+          samples.push(new RenderSample(trajectorySample.point.clone(), trajectorySample.md, minSample.value, color));
       }
       if (logIndex == log.length - 1)
       {
         // Push the last
+        const position = Vector3.newZero;
         if (trajectory.getPositionAtMd(maxSample.md, position))
-          samples.push(new RenderSample(position.clone(), maxSample.md, maxSample.value, color));
+          samples.push(new RenderSample(position, maxSample.md, maxSample.value, color));
         break;
       }
     }
-    const geometry = new TrajectoryBufferGeometry(samples);
-    const material = new THREE.MeshStandardMaterial({
-      color: ThreeConverter.toColor(Colors.white),
-      vertexColors: THREE.VertexColors,
-      transparent: true,
-      opacity: style.opacity
-    });
-    return new THREE.Mesh(geometry, material);
+    const transformer = this.transformer;
+    for (const sample of samples)
+      transformer.transformTo3D(sample.point);
+    return samples;
   }
 
   //==================================================

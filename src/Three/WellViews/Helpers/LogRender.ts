@@ -27,6 +27,7 @@ import { PointLog } from "@/Nodes/Wells/Logs/PointLog";
 import { DiscreteLog } from "@/Nodes/Wells/Logs/DiscreteLog";
 import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
+import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
 
 export class LogRender
 {
@@ -64,7 +65,7 @@ export class LogRender
   // INSTANCE METHODS: Band
   //==================================================
 
-  public createBands(trajectory: WellTrajectory, cameraPosition: Vector3, useRightBand: boolean, useLeftBand: boolean):
+  public createBands(trajectory: WellTrajectory, transformer: ThreeTransformer, cameraPosition: Vector3, useRightBand: boolean, useLeftBand: boolean):
     [THREE.Mesh | null, THREE.Mesh | null]
   {
     const mdInc = 10;
@@ -95,6 +96,8 @@ export class LogRender
 
       if (!trajectory.getPositionAtMd(md, position))
         continue;
+
+      transformer.transformTo3D(position);
 
       if (!trajectory.getTangentAtMd(md, tangent))
         continue;

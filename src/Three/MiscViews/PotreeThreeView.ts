@@ -16,12 +16,9 @@ import * as THREE from "three";
 // @ts-ignore 
 import * as Potree from "@cognite/potree-core";
 
-import { Range3 } from "@/Core/Geometry/Range3";
 import { PotreeNode } from "@/Nodes/Misc/PotreeNode";
 import { PotreeRenderStyle } from "@/Nodes/Misc/PotreeRenderStyle";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
-import { ViewInfo } from "@/Core/Views/ViewInfo";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 
 export class PotreeThreeView extends BaseGroupThreeView
@@ -46,11 +43,6 @@ export class PotreeThreeView extends BaseGroupThreeView
   protected /*override*/ updateCore(args: NodeEventArgs): void
   {
     super.updateCore(args);
-  }
-
-  public /*override*/ calculateBoundingBoxCore(): Range3 | undefined
-  {
-    return PotreeThreeView.getBoundingBoxFromGroup(this.object3D as Potree.Group);
   }
 
   //==================================================
@@ -90,15 +82,4 @@ export class PotreeThreeView extends BaseGroupThreeView
     });
     return group;
   }
-
-  public static getBoundingBoxFromGroup(group: Potree.Group): Range3 | undefined
-  {
-    if (!group)
-      return undefined;
-    const boundingBox = group.getBoundingBox();
-    if (!boundingBox)
-      return undefined;
-    return ThreeConverter.fromBox(boundingBox, false); //// BUG in the potree code (again!!!!), pass false here
-  }
-
 }

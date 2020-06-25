@@ -210,6 +210,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       const camera = this.camera;
       const cameraPosition = ThreeConverter.fromVector(camera.position);
       const cameraDirection = trajectory.range.center;
+      this.transformer.transformTo3D(cameraDirection);
 
       cameraDirection.substract(cameraPosition);
       cameraDirection.normalize();
@@ -295,7 +296,9 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     if (!style)
       return;
 
-    const label = SpriteCreator.createByPositionAndAlignment(node.getName(), trajectory.getBasePosition(), 7, style.nameFontHeight, this.fgColor);
+    const position = trajectory.getBasePosition().clone();
+    this.transformer.transformTo3D(position);
+    const label = SpriteCreator.createByPositionAndAlignment(node.getName(), position, 7, style.nameFontHeight, this.fgColor);
     if (!label)
       return;
 
@@ -314,7 +317,9 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     if (!style)
       return;
 
-    const label = SpriteCreator.createByPositionAndAlignment(well.getName(), well.wellHead, 1, style.nameFontHeight, this.fgColor);
+    const position = well.wellHead.clone();
+    this.transformer.transformTo3D(position);
+    const label = SpriteCreator.createByPositionAndAlignment(well.getName(), position, 1, style.nameFontHeight, this.fgColor);
     if (!label)
       return;
 
@@ -331,7 +336,12 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       return;
 
     const color = node.getColorByColorType(style.colorType);
+
     const samples = trajectory.createRenderSamples(color, style.radius);
+    const transformer = this.transformer;
+    for (const sample of samples)
+      transformer.transformTo3D(sample.point);
+
     const geometry = new TrajectoryBufferGeometry(samples);
     const material = new THREE.MeshStandardMaterial({
       color: ThreeConverter.toColor(Colors.white),
@@ -363,7 +373,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     const useLeftBand = true;
 
     const logRender = new LogRender(bandRange, mdRange);
-    const bands = logRender.createBands(trajectory, this.cameraPosition, useRightBand, useLeftBand);
+    const bands = logRender.createBands(trajectory, this.transformer, this.cameraPosition, useRightBand, useLeftBand);
 
     for (const rightBand of [true, false])
     {

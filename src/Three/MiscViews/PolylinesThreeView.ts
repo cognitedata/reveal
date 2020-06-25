@@ -22,6 +22,7 @@ import { PolylinesRenderStyle } from "@/Nodes/Misc/PolylinesRenderStyle";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
+import { PointsThreeView } from "@/Three/MiscViews/PointsThreeView";
 
 export class PolylinesThreeView extends BaseGroupThreeView
 {
@@ -70,13 +71,11 @@ export class PolylinesThreeView extends BaseGroupThreeView
     const colorType = style.colorType;
 
     const group = new THREE.Group();
-
+    const transformer = this.transformer;
+  
     for (const polyline of polylines.list)
     {
-      const geometry = new THREE.Geometry();
-      for (const point of polyline.list)
-        geometry.vertices.push(ThreeConverter.toVector(point));
-
+      const geometry = PointsThreeView.createBufferGeometry(polyline, transformer);
       if (colorType === ColorType.DifferentColor)
         color = Colors.getNextColor(group.children.length);
 
