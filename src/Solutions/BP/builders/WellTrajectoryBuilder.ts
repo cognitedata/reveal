@@ -76,17 +76,12 @@ export default class WellTrajectoryBuilder {
         // tslint:disable-next-line: no-console
         console.log("NodeVisualizer: Adding NPT events", nptEvents.length);
         const pointLog = new PointLog();
-        for (let index = 0; index < nptEvents.length; index++) {
-            const nptEvent = nptEvents[index];
+        for (const nptEvent of nptEvents) {
             const md = parseFloat(nptEvent.metadata.md_hole_start) * FEAT_TO_METER;
-            const { type } = nptEvent.metadata;
-            const pointLogSample = new PointLogSample(`${type} ${index + 1}`, md);
+            const pointLogSample = new PointLogSample(nptEvent.description, md);
             pointLog.samples.push(pointLogSample);
         }
         pointLog.sortByMd();
-        for (let index = 0; index < pointLog.samples.length; index++) {
-            pointLog.getAt(index).decription = nptEvents[index].description;
-        }
         const poinitLogNode = new PointLogNode();
         poinitLogNode.data = pointLog;
         this.wellTrajectoryNode.addChild(poinitLogNode);
@@ -105,17 +100,12 @@ export default class WellTrajectoryBuilder {
         // tslint:disable-next-line: no-console
         console.log("NodeVisualizer: Adding NDS events", ndsEvents.length);
         const pointLog = new PointLog();
-        for (let index = 0; index < ndsEvents.length; index++) {
-            const ndsEvent = ndsEvents[index];
+        for (const ndsEvent of ndsEvents) {
             const md = parseFloat(ndsEvent.metadata.md_hole_start) * FEAT_TO_METER;
-            const { type } = ndsEvent.metadata;
-            const pointLogSample = new PointLogSample(`${type} ${index + 1}`, md);
+            const pointLogSample = new PointLogSample(ndsEvent.description, md);
             pointLog.samples.push(pointLogSample);
         }
         pointLog.sortByMd();
-        for (let index = 0; index < pointLog.samples.length; index++) {
-            pointLog.getAt(index).decription = ndsEvents[index].description;
-        }
         const poinitLogNode = new PointLogNode();
         poinitLogNode.data = pointLog;
         this.wellTrajectoryNode.addChild(poinitLogNode);
