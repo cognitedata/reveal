@@ -198,7 +198,6 @@ export class Cognite3DViewer {
               this.spinner.hide();
             }
           },
-          // tslint:disable-next-line:no-console
           (message, ...optionalArgs) => console.error(message, ...optionalArgs)
         )
     );
@@ -613,7 +612,7 @@ export class Cognite3DViewer {
       return;
     }
     this.latestRequestId = requestAnimationFrame(this.animate.bind(this));
-    
+
     const { display, visibility } = window.getComputedStyle(this.canvas);
     const isVisible = visibility === 'visible' && display !== 'none';
 

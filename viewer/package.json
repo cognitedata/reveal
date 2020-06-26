@@ -24,7 +24,7 @@
     "clean": "rimraf -rf dist/ ../target pkg/",
     "test": "jest",
     "coverage": "jest --coverage",
-    "lint": "eslint . --ext .ts,.js --max-warnings 0 --quiet",
+    "lint": "eslint . --ext .ts,.js --max-warnings 0",
     "prepublishscript": "yarn run coverage && yarn run clean && yarn run release"
   },
   "author": "Lars Moastuen <lars.moastuen@cognite.com>",

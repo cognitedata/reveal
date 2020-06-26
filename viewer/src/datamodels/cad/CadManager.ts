@@ -59,7 +59,6 @@ export class CadManager<TModelIdentifier> {
           this._needsRedraw = true;
         },
         error => {
-          // tslint:disable-next-line: no-console
           console.error(error);
         }
       )

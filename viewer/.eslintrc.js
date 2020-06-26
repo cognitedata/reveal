@@ -36,11 +36,13 @@ module.exports = {
     'no-empty': 'off',
     'object-literal-sort-keys': 'off',
     'default-case': 'error',
+    'no-console': ['warn', { allow: ['warn', 'error', 'assert'] }],
 
     '@typescript-eslint/unbound-method': 'error',
     '@typescript-eslint/prefer-for-of': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-var-requires': 'off',
+    '@typescript-eslint/ban-ts-comment': 'off',
 
     // to be discussed
     '@typescript-eslint/no-inferrable-types': 'off'

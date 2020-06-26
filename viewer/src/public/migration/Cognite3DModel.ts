@@ -191,7 +191,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
         b
       };
     } catch (error) {
-      // tslint:disable-next-line: no-console
       console.error(`Cannot get color of ${nodeId} because of error:`, error);
       return {
         r: 255,
