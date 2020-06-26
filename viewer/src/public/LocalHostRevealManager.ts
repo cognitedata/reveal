@@ -79,11 +79,7 @@ export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifi
           }),
           distinctUntilChanged()
         )
-        .subscribe(
-          this.notifyLoadingStateListeners,
-          // tslint:disable-next-line:no-console
-          console.error
-        )
+        .subscribe(this.notifyLoadingStateListeners.bind(this), console.error)
     );
   }
 
