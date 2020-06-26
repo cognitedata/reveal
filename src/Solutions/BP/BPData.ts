@@ -1,44 +1,112 @@
-import { Well, Wellbore, Trajectory, TrajectoryRows } from "@/Interface";
+import { Well, Wellbore, Trajectory, TrajectoryRows, RiskEvent } from "@/Interface";
 
 // Represent BP data
 export default class BPData {
 
     private _wells: Well[];
-    private _wellBores: Wellbore[];
     private _trajectories: Trajectory[];
-    private _trajectoryData?: TrajectoryRows[];
+    private _trajectoryDataMap = new Map<number, TrajectoryRows>();
+    private _wellBoreToWellMap = new Map<number, { wellId: number, data: Wellbore }>();
+    private _wellBoreToNDSEventsMap = new Map<number, RiskEvent[]>();
+    private _wellBoreToNPTEventsMap = new Map<number, RiskEvent[]>();
+    private _trajectoryDataColumnindexes: { [key: string]: number } = {};
 
-    constructor(wells: Well[], wellBores: Wellbore[], trajectories: Trajectory[], trajectoryData?: TrajectoryRows[]) {
+
+    // Pass BP data coming from the BP application
+    constructor(
+        wells: Well[],
+        wellBores: Wellbore[],
+        trajectories: Trajectory[],
+        trajectoryData?: TrajectoryRows[],
+        ndsEvents?: RiskEvent[],
+        nptEvents?: RiskEvent[]) {
         this._wells = wells;
-        this._wellBores = wellBores;
         this._trajectories = trajectories;
-        this._trajectoryData = trajectoryData;
+        this.generateBoreToWellMap(wellBores);
+        this.generateTrajectoryDataMap(trajectoryData);
+        this.generateWellBoreToNDSEventsMap(ndsEvents);
+        this.generateWellBoreToNPTEventsMap(nptEvents);
+        this.generateTrajectoryDataColumnindexes(trajectoryData);
     }
 
     //==================================================
     // INSTANCE METHODS
     //==================================================
 
-    public get wellBoreToWellMap() {
-        const wellBoreToWellMap = new Map<number, { wellId: number, data: Wellbore }>();
-        for (const wellBore of this._wellBores) {
-            wellBoreToWellMap.set(wellBore.id, { wellId: wellBore.parentId, data: wellBore });
+    private generateBoreToWellMap(wellBores: Wellbore[]) {
+        for (const wellBore of wellBores) {
+            this._wellBoreToWellMap.set(wellBore.id, { wellId: wellBore.parentId, data: wellBore });
         }
-        return wellBoreToWellMap;
     }
 
-    public get trajectoryDataMap() {
-        const trajectoryData = this._trajectoryData;
+    private generateTrajectoryDataMap(trajectoryData?: TrajectoryRows[]) {
         if (!trajectoryData) {
-            return null;
+            return;
         }
-        const trajectoryDataMap = new Map<number, TrajectoryRows>();
-        for (const row of trajectoryData) {
-            trajectoryDataMap.set(row.id, row)
+        for (const data of trajectoryData) {
+            this._trajectoryDataMap.set(data.id, data)
         }
-        return trajectoryDataMap;
     }
 
-    public get wells() { return this._wells };
-    public get trajectories() { return this._trajectories };
+    private generateWellBoreToNDSEventsMap(ndsEvents?: RiskEvent[]) {
+        if (!ndsEvents) {
+            return;
+        }
+        const wellBoreToNDSEventsMap = this._wellBoreToNDSEventsMap;
+        for (const ndsEvent of ndsEvents) {
+            const assetIds = ndsEvent.assetIds;
+            if (!assetIds || !assetIds.length) {
+                continue;
+            }
+            for (const assetId of assetIds) {
+                if (!wellBoreToNDSEventsMap.get(assetId)) {
+                    wellBoreToNDSEventsMap.set(assetId, []);
+                }
+                wellBoreToNDSEventsMap.get(assetId)?.push(ndsEvent);
+            }
+        }
+        // tslint:disable-next-line: no-console
+        console.log("NodeVisualizer: NDSEvents", wellBoreToNDSEventsMap);
+    }
+
+    private generateWellBoreToNPTEventsMap(nptEvents?: RiskEvent[]) {
+        if (!nptEvents) {
+            return;
+        }
+        const wellBoreToNPTEventsMap = this._wellBoreToNPTEventsMap;
+        for (const nptEvent of nptEvents) {
+            const assetIds = nptEvent.assetIds;
+            if (!assetIds || !assetIds.length) {
+                continue;
+            }
+            for (const assetId of assetIds) {
+                if (!wellBoreToNPTEventsMap.get(assetId)) {
+                    wellBoreToNPTEventsMap.set(assetId, []);
+                }
+                wellBoreToNPTEventsMap.get(assetId)?.push(nptEvent);
+            }
+        }
+        // tslint:disable-next-line: no-console
+        console.log("NodeVisualizer: NPTEvents", wellBoreToNPTEventsMap);
+    }
+
+    private generateTrajectoryDataColumnindexes(trajectoryData?: TrajectoryRows[]) {
+        if (!trajectoryData || !trajectoryData.length) {
+            return;
+        }
+        const indexes: { [key: string]: number } = this._trajectoryDataColumnindexes;
+        const column = trajectoryData[0].columns;
+        for (let index = 0; index < column.length; index++) {
+            const columnName = column[index].name;
+            indexes[columnName] = index;
+        }
+    }
+
+    public get wells() { return this._wells; }
+    public get trajectories() { return this._trajectories; }
+    public get trajectoryDataMap() { return this._trajectoryDataMap; }
+    public get wellBoreToWellMap() { return this._wellBoreToWellMap; }
+    public get wellBoreToNDSEventsMap() { return this._wellBoreToNDSEventsMap; }
+    public get wellBoreToNPTEventsMap() { return this._wellBoreToNPTEventsMap };
+    public get trajectoryDataColumnindexes() { return this._trajectoryDataColumnindexes };
 }

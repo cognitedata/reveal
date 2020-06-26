@@ -4,9 +4,10 @@ import NodeFactory from "@/Solutions/BP/NodeFactory";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { WellNode } from "@/Nodes/Wells/Wells/WellNode";
 import BPData from "@/Solutions/BP/BPData";
+import { RiskEvent } from "@/Interface";
 
 /**
- * Converts IWell, ITrajectory and IBore to BaseNode
+ * Converts IWell and ITrajectory to BaseNode
  */
 export default class NodeAdaptor {
 
@@ -38,10 +39,19 @@ export default class NodeAdaptor {
         const trajectories = bpData.trajectories;
         const wellBoreToWellMap = bpData.wellBoreToWellMap;
         const trajectoryDataMap = bpData.trajectoryDataMap;
-        
+
         if (!trajectories || !wellBoreToWellMap || !trajectoryDataMap) {
             return wellNodes;
         }
+
+        // Get WellBore to NDS events map
+        const wellBoreToNDSEventsMap = bpData.wellBoreToNDSEventsMap;
+        // Get WellBore to NPT events map
+        const wellBoreToNPTEventsMap = bpData.wellBoreToNPTEventsMap;
+        // Indexes of md,x_offset and y_offset
+        const { md, x_offset, y_offset } = bpData.trajectoryDataColumnindexes;
+        // tslint:disable-next-line: no-console
+        console.log("NodeVisualizer:Data indexes", md, x_offset, y_offset);
 
         // Iterate Trajectoies and build TrajectoryNodes
         for (const trajectory of trajectories) {
@@ -59,9 +69,33 @@ export default class NodeAdaptor {
             if (!trajectoryRows || !trajectoryRows.rows.length) {
                 continue;
             }
+
             // Make trajectory name the relavant parent wellbore description
             const trajectoryName = wellBoreToWell.data.description;
-            const trajectoryNode = NodeFactory.createTrajectoryNode(trajectoryName, trajectory, wellNode, trajectoryRows);
+
+            let ndsEvents: RiskEvent[] | undefined;
+            if (wellBoreToNDSEventsMap) {
+                ndsEvents = wellBoreToNDSEventsMap.get(wellBoreId);
+                // tslint:disable-next-line: no-console
+                console.log("NodeVisualizer: TrajectoryNDSEvent", wellBoreId, ndsEvents);
+            }
+
+            let nptEvents: RiskEvent[] | undefined;
+            if (wellBoreToNPTEventsMap) {
+                nptEvents = wellBoreToNPTEventsMap.get(wellBoreId);
+                // tslint:disable-next-line: no-console
+                console.log("NodeVisualizer: TrajectoryNPTEvent", wellBoreId, nptEvents);
+            }
+
+            // TODO - Move data to a class and reduce arguments
+            const trajectoryNode = NodeFactory.createTrajectoryNode(
+                trajectoryName, // Relavant wellbore description
+                trajectory, // Trajectory data coming from BP
+                wellNode, // Parent well node
+                trajectoryRows,
+                [md, x_offset, y_offset], // Indexces of md, x_offset and y_offset
+                ndsEvents,
+                nptEvents);
             wellNode.addChild(trajectoryNode);
         }
         return wellNodes;

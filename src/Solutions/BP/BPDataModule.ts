@@ -3,7 +3,7 @@ import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import NodeAdaptor from "@/Solutions/BP/NodeAdaptor";
 import { SubSurfaceRootNode } from "@/Nodes/TreeNodes/SubSurfaceRootNode";
 import { WellTreeNode } from "@/Nodes/TreeNodes/WellTreeNode";
-import { Well, Wellbore, Trajectory, TrajectoryRows } from "@/Interface";
+import { Well, Wellbore, Trajectory, TrajectoryRows, RiskEvent } from "@/Interface";
 import BPData from "@/Solutions/BP/BPData";
 
 export default class BPDataModule extends BaseModule {
@@ -24,6 +24,7 @@ export default class BPDataModule extends BaseModule {
             return;
 
         // Clear Root WellTreeNode
+        // TODO - Get a proper implementation for this from Nils
         if (root.hasChildByType(WellTreeNode)) {
             // tslint:disable-next-line: no-console
             console.log("SubsurfaceVisualizer: Cleaning root");
@@ -31,6 +32,8 @@ export default class BPDataModule extends BaseModule {
             root.addChild(new WellTreeNode());
         }
         const nodeTree = NodeAdaptor.getInitialNodeTree(this.bpData);
+        // tslint:disable-next-line: no-console
+        console.log("NodeVisualizer: Nodetree", nodeTree ? nodeTree.length : 0);
         const wellTree = root.wells;
         if (nodeTree) {
             for (const node of nodeTree) {
@@ -49,8 +52,10 @@ export default class BPDataModule extends BaseModule {
         wellBores: Wellbore[],
         trajectories: Trajectory[],
         trajectoryData?: TrajectoryRows[]
+        ndsEvents?: RiskEvent[],
+        nptEvents?: RiskEvent[]
     }) {
-        const { wells, wellBores, trajectories, trajectoryData } = data;
-        this.bpData = new BPData(wells, wellBores, trajectories, trajectoryData);
+        const { wells, wellBores, trajectories, trajectoryData, ndsEvents, nptEvents } = data;
+        this.bpData = new BPData(wells, wellBores, trajectories, trajectoryData, ndsEvents, nptEvents);
     }
 }

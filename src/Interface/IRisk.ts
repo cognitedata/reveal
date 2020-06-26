@@ -44,7 +44,7 @@ export interface RiskEvent {
   dataSetId: number;
   startTime: number;
   endTime: number;
-  subtype: number;
+  subtype: string;
   description: string;
   metadata: RiskMetadata;
   assetIds: number[];

@@ -30,7 +30,7 @@ export default function NodeVisualizer(props: {
   renderFlag?: number | string | boolean;
 }) {
   const dispatch = useDispatch();
-  const root = props.root;
+  const { root, renderFlag } = props;
   // Add viewer ref here
   const visualizers = useSelector((state: ReduxStore) => state.visualizers);
 
@@ -40,7 +40,7 @@ export default function NodeVisualizer(props: {
       console.log("SubsurfaceVisualizer: Generating new node tree");
       dispatch(generateNodeTree({ root }));
     }
-  }, [props.renderFlag]);
+  }, [renderFlag]);
 
   // success callback for registering viewers to DOM
   const viewerElementCallback = useCallback(
