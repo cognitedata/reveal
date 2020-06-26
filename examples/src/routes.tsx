@@ -16,6 +16,7 @@ import { SimplePointcloud } from './pages/SimplePointcloud';
 import { SSAO } from './pages/SSAO';
 import { TwoModels } from './pages/TwoModels';
 import { WalkablePath } from './pages/WalkablePath';
+import { Testable } from './pages/Testable';
 
 type ExampleRoute = {
   path: string;
@@ -103,6 +104,11 @@ export const routes: Array<ExampleRoute> = [
     path: '/walkable-path',
     menuTitle: 'Walkable Path',
     component: <WalkablePath />,
+  },
+  {
+    path: '/testable',
+    menuTitle: 'Automatically testable in CI',
+    component: <Testable />,
   },
 ].sort((a, b) =>
   a.menuTitle < b.menuTitle ? -1 : a.menuTitle === b.menuTitle ? 0 : 1
