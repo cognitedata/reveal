@@ -44,6 +44,9 @@ module.exports = {
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',
 
+    // TODO: maksnester 26-06-2020 we need to fix our codebase to play well with these rules
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+
     // to be discussed
     '@typescript-eslint/no-inferrable-types': 'off'
   }
