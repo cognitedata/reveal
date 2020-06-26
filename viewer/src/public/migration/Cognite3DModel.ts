@@ -10,7 +10,7 @@ import { Color, SupportedModelTypes } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { toThreeJsBox3, toThreeMatrix4, toThreeVector3, fromThreeVector3 } from '@/utilities';
-import { CadRenderHints, CadNode } from '@/experimental';
+import { CadRenderHints, CadNode, internal } from '@/experimental';
 import { CadLoadingHints } from '@/datamodels/cad/CadLoadingHints';
 import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
 import { SectorGeometry } from '@/datamodels/cad/sector/types';
@@ -41,8 +41,10 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   set loadingHints(hints: CadLoadingHints) {
     this.cadNode.loadingHints = hints;
   }
+
   readonly modelId: number;
   readonly revisionId: number;
+  /** @internal */
   readonly cadNode: CadNode;
 
   private readonly cadModel: CadModelMetadata;
@@ -52,6 +54,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   private readonly client: CogniteClient;
   private readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
 
+  /** @internal */
   constructor(modelId: number, revisionId: number, cadNode: CadNode, client: CogniteClient) {
     super();
     this.modelId = modelId;

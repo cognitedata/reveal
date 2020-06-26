@@ -12,6 +12,7 @@
     "sourceMap": true,
     "moduleResolution": "node",
     "strict": true,
+    "stripInternal": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "typeRoots": [
