@@ -28,6 +28,6 @@
       "@/*": ["*"]
     }
   },
-  "include": [".*js", ".*ts", "src/**/*"],
+  "include": ["*.js", "*.ts", "src/**/*"],
   "exclude": ["node_modules/**/*", "dist/**/*", "src/@types/**/*"]
 }
