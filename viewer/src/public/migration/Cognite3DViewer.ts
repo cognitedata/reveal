@@ -232,6 +232,8 @@ export class Cognite3DViewer {
 
   on(event: 'click' | 'hover', callback: PointerEventDelegate): void;
   on(event: 'cameraChange', callback: CameraChangeDelegate): void;
+  // fixme: no any
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   on(event: 'click' | 'hover' | 'cameraChange', callback: any): void {
     switch (event) {
       case 'click':
@@ -429,10 +431,7 @@ export class Cognite3DViewer {
     direction.applyQuaternion(this.camera.quaternion);
 
     const position = new THREE.Vector3();
-    position
-      .copy(direction)
-      .multiplyScalar(-distance)
-      .add(target);
+    position.copy(direction).multiplyScalar(-distance).add(target);
 
     this.moveCameraTo(position, target, duration);
   }
@@ -483,6 +482,7 @@ export class Cognite3DViewer {
     return url;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getIntersectionFromPixel(offsetX: number, offsetY: number, _cognite3DModel?: Cognite3DModel): null | Intersection {
     const cadModels = this.getModels(SupportedModelTypes.CAD);
     const nodes = cadModels.map(x => x.cadNode);
@@ -798,9 +798,7 @@ export class Cognite3DViewer {
     let validClick = false;
 
     const onHoverCallback = debounce((e: MouseEvent) => {
-      for (const _ of this.eventListeners.hover) {
-        this.eventListeners.hover[0](mouseEventOffset(e, canvas));
-      }
+      this.eventListeners.hover.forEach(fn => fn(mouseEventOffset(e, canvas)));
     }, 100);
 
     const onMove = (e: MouseEvent | TouchEvent) => {
