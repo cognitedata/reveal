@@ -9,8 +9,6 @@ vec4 determineColor(vec3 originalColor, sampler2D colorDataTexture, vec2 texture
     vec2 treeIndexUv = vec2(uCoord, vCoord);
     vec4 overrideColor = texture2D(colorDataTexture, treeIndexUv);
 
-    float len = length(overrideColor);
-
     if (any(greaterThan(overrideColor.rgb, vec3(0.0)))) {
       return overrideColor;
     }
