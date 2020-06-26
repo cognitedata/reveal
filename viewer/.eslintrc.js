@@ -30,5 +30,6 @@ module.exports = {
         },
       ],
     ],
+    'no-return-await': 'error',
   },
 };
