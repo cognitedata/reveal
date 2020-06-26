@@ -6,8 +6,10 @@ module.exports = {
   root: true,
   parser: '@typescript-eslint/parser', // Specifies the ESLint parser
   parserOptions: {
+    project: './tsconfig.json',
+    tsconfigRootDir: __dirname,
     ecmaVersion: 2020, // Allows for the parsing of modern ECMAScript features
-    sourceType: 'module', // Allows for the use of imports
+    sourceType: 'module' // Allows for the use of imports
   },
   plugins: ['header'],
   extends: [
@@ -17,7 +19,7 @@ module.exports = {
     'prettier/@typescript-eslint',
 
     // This will display prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
-    'plugin:prettier/recommended',
+    'plugin:prettier/recommended'
   ],
   rules: {
     'header/header': [
@@ -26,10 +28,13 @@ module.exports = {
       [
         {
           pattern: 'Copyright \\d{4}',
-          template: `!\n * Copyright ${new Date().getFullYear()} Cognite AS\n `,
-        },
-      ],
+          template: `!\n * Copyright ${new Date().getFullYear()} Cognite AS\n `
+        }
+      ]
     ],
     'no-return-await': 'error',
-  },
+    '@typescript-eslint/unbound-method': 'error',
+    '@typescript-eslint/prefer-for-of': 'off',
+    '@typescript-eslint/no-explicit-any': 'off'
+  }
 };
