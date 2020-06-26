@@ -5,7 +5,7 @@ const matchImageSnapshotOptions: MatchImageSnapshotOptions = { dumpDiffToConsole
 
 describe('Simple', () => {
     it('visually looks correct', async () => {
-        await gotoAndWaitForRender('http://localhost:3000/simple');
+        await gotoAndWaitForRender('http://localhost:3000/testable');
 
         // Remove text elements
         await page.evaluate(() => {
