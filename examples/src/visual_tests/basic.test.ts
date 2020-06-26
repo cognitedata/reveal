@@ -8,9 +8,9 @@ describe('Testable', () => {
         await gotoAndWaitForRender('http://localhost:3000/testable');
 
         // Remove text elements
-        await page.evaluate(() => {
-            (document.querySelectorAll('h1, a') || []).forEach(el => el.remove());
-        });
+        //await page.evaluate(() => {
+        //    (document.querySelectorAll('h1, a') || []).forEach(el => el.remove());
+        //});
 
         const image = await page.screenshot();
         expect(image).toMatchImageSnapshot(matchImageSnapshotOptions);

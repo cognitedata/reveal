@@ -166,3 +166,9 @@ jobs:
     - name: Visual regression tests
       working-directory: examples
       run: 'yarn ci:nossl'
+
+    - uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: visual-test-image-diffs-${{ github.sha }}
+        path: examples/src/visual_tests/__image_snapshots__/__diff_output__/*
