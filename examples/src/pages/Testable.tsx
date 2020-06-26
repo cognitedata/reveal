@@ -16,9 +16,9 @@ import { CanvasWrapper, Loader } from '../components/styled';
 
 CameraControls.install({ THREE });
 
-export function Simple() {
+export function Testable() {
   const canvas = useRef<HTMLCanvasElement>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let revealManager: reveal.RevealManager | reveal.LocalHostRevealManager;
@@ -31,7 +31,7 @@ export function Simple() {
         project: 'publicdata',
         modelUrl: 'primitives',
       });
-      const client = new CogniteClient({ appId: 'reveal.example.simple' });
+      const client = new CogniteClient({ appId: 'reveal.example.testable' });
       client.loginWithOAuth({ project });
 
       const scene = new THREE.Scene();
@@ -132,7 +132,7 @@ export function Simple() {
   return (
     <CanvasWrapper>
       <Loader isLoading={isLoading} style={{ position: 'absolute' }}>
-        Loading...
+        Not ready...
       </Loader>
       <canvas ref={canvas} />
     </CanvasWrapper>
