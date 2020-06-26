@@ -76,9 +76,6 @@ export function Picking() {
       scene.add(model);
 
 
-      const effectRenderManager: reveal.EffectRenderManager = revealManager.effectRenderManager;
-
-
       // Set up the renderer
       const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current! });
       renderer.setClearColor('#444');
@@ -137,7 +134,7 @@ export function Picking() {
           pickingNeedsUpdate ||
           revealManager.needsRedraw
         ) {
-          effectRenderManager.addPostRenderEffects(renderer, camera, scene);
+          revealManager.render(renderer, camera, scene);
           pickingNeedsUpdate = false;
           revealManager.resetRedraw();
         }

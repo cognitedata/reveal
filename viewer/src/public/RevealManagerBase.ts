@@ -13,10 +13,6 @@ import { EffectRenderManager } from '@/datamodels/cad/rendering/EffectRenderMana
 export type OnDataUpdated = () => void;
 
 export class RevealManagerBase<TModelIdentifier> implements RenderManager {
-  public get effectRenderManager(): EffectRenderManager {
-    return this._effectRenderManager;
-  }
-
   get needsRedraw(): boolean {
     return this._cadManager.needsRedraw || this._pointCloudManager.needsRedraw;
   }
@@ -47,7 +43,7 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
   // PointCloud
   protected readonly _pointCloudManager: PointCloudManager<TModelIdentifier>;
 
-  private _effectRenderManager: EffectRenderManager;
+  private readonly _effectRenderManager: EffectRenderManager;
 
   private readonly _lastCamera = {
     position: new THREE.Vector3(NaN, NaN, NaN),
@@ -80,6 +76,10 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
 
   public resetRedraw(): void {
     this._cadManager.resetRedraw();
+  }
+
+  public render(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera, scene: THREE.Scene): void {
+    this._effectRenderManager.render(renderer, camera, scene);
   }
 
   public update(camera: THREE.PerspectiveCamera) {

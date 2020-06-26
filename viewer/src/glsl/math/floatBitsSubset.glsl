@@ -2,8 +2,7 @@ const int MAX_ITER = 24;
 
 float floatBitsSubset(float inNumber, int fromLeastSignificantBitIndex,  int toMostSignificantBitIndex) {
     float lsbif = float(fromLeastSignificantBitIndex);
-    float msbif = float(toMostSignificantBitIndex);
-
+    
     int a = int(toMostSignificantBitIndex - fromLeastSignificantBitIndex);
 
     float denominator = pow(2.0, lsbif);

@@ -474,7 +474,7 @@ export class Cognite3DViewer {
 
     this.renderer.setSize(width, height);
     this.renderer.render(this.scene, screenshotCamera);
-    this.revealManager.effectRenderManager.addPostRenderEffects(this.renderer, screenshotCamera, this.scene);
+    this.revealManager.render(this.renderer, screenshotCamera, this.scene);
     const url = this.renderer.domElement.toDataURL();
 
     this.renderer.setSize(originalWidth, originalHeight);
@@ -612,15 +612,12 @@ export class Cognite3DViewer {
       return;
     }
     this.latestRequestId = requestAnimationFrame(this.animate.bind(this));
-    
+
     const { display, visibility } = window.getComputedStyle(this.canvas);
     const isVisible = visibility === 'visible' && display !== 'none';
 
     if (isVisible) {
       const { renderController } = this;
-      // if (this._enableProfiler) {
-      //   this._performanceMonitor.begin();
-      // }
       TWEEN.update(time);
       const didResize = this.resizeIfNecessary();
       if (didResize) {
@@ -637,7 +634,7 @@ export class Cognite3DViewer {
         this._slicingNeedsUpdate
       ) {
         this.triggerUpdateCameraNearAndFar();
-        this.revealManager.effectRenderManager.addPostRenderEffects(this.renderer, this.camera, this.scene);
+        this.revealManager.render(this.renderer, this.camera, this.scene);
         renderController.clearNeedsRedraw();
         this.revealManager.resetRedraw();
         this._slicingNeedsUpdate = false;

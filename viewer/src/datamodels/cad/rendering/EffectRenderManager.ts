@@ -40,7 +40,7 @@ export class EffectRenderManager {
     this._highlightedModelTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
   }
 
-  public addPostRenderEffects(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera, scene: THREE.Scene) {
+  public render(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera, scene: THREE.Scene) {
     this.updateRenderSize(renderer);
 
     renderer.setClearAlpha(0);

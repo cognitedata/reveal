@@ -11,7 +11,7 @@ vec4 determineColor(vec3 originalColor, sampler2D colorDataTexture, vec2 texture
 
     float len = length(overrideColor);
 
-    if (all(greaterThan(overrideColor.rgb, vec3(0.0)))) {
+    if (any(greaterThan(overrideColor.rgb, vec3(0.0)))) {
       return overrideColor;
     }
 
