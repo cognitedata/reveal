@@ -2,6 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
+import { HttpHeaders } from '@cognite/sdk/dist/src/utils/http/basicHttpClient';
+
 export interface ParseRootSectorArguments {
   parseRootSector: {
     buffer: ArrayBuffer;
@@ -83,9 +85,8 @@ export interface ParseCtmResult {
 }
 
 export interface ParseCtmInput {
-  fileNames: string[];
-  lengths: number[];
-  buffer: number[];
+  blobUrl: string;
+  headers: HttpHeaders;
 }
 export interface ParseQuadsArguments {
   parseQuads: {

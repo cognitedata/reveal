@@ -1,10 +1,11 @@
 use i3df::renderables::{InstancedMesh, PrimitiveCollections, Sector, TriangleMesh};
-use js_sys::{Float32Array, Map, Uint32Array};
+use js_sys::{Float32Array, Map, Promise, Uint32Array, Uint8Array};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::panic;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
+use wasm_bindgen_futures::JsFuture;
 
 #[macro_use]
 pub mod error;
@@ -164,31 +165,47 @@ fn parse_and_convert_sector(input: &[u8]) -> Result<Sector, JsValue> {
     }
 }
 
+async fn load_file(
+    blob_url: &String,
+    file_name: &String,
+    headers: JsValue,
+) -> Result<Uint8Array, JsValue> {
+    let value = JsFuture::from(getCadSectorFile(&blob_url, &file_name, headers)).await?;
+    Ok(Uint8Array::new(&value))
+}
+
+#[wasm_bindgen(module = "/src/utilities/networking/utilities.ts")]
+extern "C" {
+    fn getCadSectorFile(blob_url: &str, file_name: &str, headers: JsValue) -> Promise;
+}
+
 #[wasm_bindgen]
-pub fn parse_and_finalize_detailed(
-    i3df_input: &[u8],
-    filenames: JsValue,
-    lengths: &[u32],
-    buffer: &[u8],
+pub async fn load_parse_finalize_detailed(
+    file_name: String,
+    blob_url: String,
+    headers: JsValue,
 ) -> Result<SectorGeometry, JsValue> {
-    // TODO read https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/building-your-project.html
-    // and see if this can be moved to one common place
-    panic::set_hook(Box::new(console_error_panic_hook::hook));
-
-    let i3d_file = parse_and_convert_sector(i3df_input)?;
-    let mut ctm_files: HashMap<String, CtmResult> = HashMap::new();
-    let names: Vec<String> =
-        serde_wasm_bindgen::from_value(filenames).map_err(|e| e.to_string())?;
-    let mut offset = 0;
-    for (i, name) in names.into_iter().enumerate() {
-        ctm_files.insert(
-            name,
-            parse_ctm(&buffer[offset..offset + lengths[i] as usize])?,
-        );
-        offset += lengths[i] as usize;
+    let i3d_file = parse_and_convert_sector(
+        &load_file(&blob_url, &file_name, headers.clone())
+            .await?
+            .to_vec(),
+    )?;
+    let triangle_meshes = &i3d_file.primitive_collections.triangle_mesh_collection;
+    let instanced_meshes = &i3d_file.primitive_collections.instanced_mesh_collection;
+    let mut ctm_map = HashMap::new();
+    for file_id in triangle_meshes
+        .file_id
+        .iter()
+        .chain(instanced_meshes.file_id.iter())
+    {
+        let file = format!("mesh_{}.ctm", file_id);
+        if !ctm_map.contains_key(&file) {
+            let ctm_input: Uint8Array = load_file(&blob_url, &file, headers.clone()).await?;
+            let data = parse_ctm(&ctm_input.to_vec())?;
+            ctm_map.insert(file, data);
+        }
     }
-
-    finalize_detailed(i3d_file, ctm_files)
+    finalize_detailed(i3d_file, ctm_map)
 }
 
 fn finalize_detailed(

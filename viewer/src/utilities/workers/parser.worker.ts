@@ -6,7 +6,7 @@ import * as Comlink from 'comlink';
 import { ParsedPrimitives, ParsePrimitiveAttribute, ParseCtmInput } from './types/parser.types';
 import * as rustTypes from '../../../pkg';
 import { SectorGeometry } from '@/datamodels/cad/sector/types';
-import { InstancedMeshFile, TriangleMesh, InstancedMesh, SectorQuads } from '@/datamodels/cad/rendering/types';
+import { SectorQuads } from '@/datamodels/cad/rendering/types';
 const rustModule = import('../../../pkg');
 
 export class ParserWorker {
@@ -26,54 +26,12 @@ export class ParserWorker {
     return result;
   }
 
-  public async parseAndFinalizeDetailed(i3dFile: Uint8Array, ctmFiles: ParseCtmInput): Promise<SectorGeometry> {
+  public async parseAndFinalizeDetailed(i3dFile: string, ctmFiles: ParseCtmInput): Promise<SectorGeometry> {
     const rust = await rustModule;
     // TODO mattman22 2020-6-24 Handle parse/finalize errors
-    const sectorData = rust.parse_and_finalize_detailed(
-      i3dFile,
-      ctmFiles.fileNames,
-      new Uint32Array(ctmFiles.lengths),
-      new Uint8Array(ctmFiles.buffer)
-    );
-
+    const sectorData = await rust.load_parse_finalize_detailed(i3dFile, ctmFiles.blobUrl, ctmFiles.headers);
     const iMesh = sectorData.instance_meshes;
-    const iMeshes: InstancedMeshFile[] = [];
-    for (let i = 0; i < iMesh.length; i++) {
-      const x = iMesh[i];
-      const ints: InstancedMesh[] = [];
-      for (let j = 0; j < x.instances.length; j++) {
-        const y = x.instances[j];
-        ints.push({
-          triangleCount: Number(y.triangleCount),
-          triangleOffset: Number(y.triangleOffset),
-          colors: Uint8Array.from(y.colors),
-          instanceMatrices: Float32Array.from(y.instanceMatrices),
-          treeIndices: Float32Array.from(y.treeIndices)
-        });
-      }
-      iMeshes.push({
-        fileId: Number(x.fileId),
-        indices: Uint32Array.from(x.indices),
-        vertices: Float32Array.from(x.vertices),
-        normals: this.convertToFloat32Array(x.normals),
-        instances: ints
-      });
-    }
-
     const tMesh = sectorData.triangle_meshes;
-    const tMeshes: TriangleMesh[] = [];
-    for (let i = 0; i < tMesh.length; i++) {
-      const x = tMesh[i];
-      tMeshes.push({
-        fileId: Number(x.fileId),
-        indices: Uint32Array.from(x.indices),
-        treeIndices: Float32Array.from(x.treeIndices),
-        vertices: Float32Array.from(x.vertices),
-        normals: this.convertToFloat32Array(x.normals),
-        colors: Uint8Array.from(x.colors)
-      });
-    }
-
     const sector = sectorData.sector;
     const primitives = this.extractParsedPrimitives(sector);
     const nodeIdToTreeIndexMap = sector.node_id_to_tree_index_map();
@@ -83,19 +41,11 @@ export class ParserWorker {
       nodeIdToTreeIndexMap,
       treeIndexToNodeIdMap,
       primitives,
-      instanceMeshes: iMeshes,
-      triangleMeshes: tMeshes
+      instanceMeshes: iMesh,
+      triangleMeshes: tMesh
     };
     sectorData.free();
     return result;
-  }
-
-  private convertToFloat32Array(input: any): Float32Array | undefined {
-    try {
-      return Float32Array.from(input);
-    } catch (TypeError) {
-      return undefined;
-    }
   }
 
   private extractParsedPrimitives(sectorData: rustTypes.Sector) {

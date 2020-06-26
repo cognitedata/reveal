@@ -18,7 +18,7 @@ export class CadSectorParser {
     return this.parseSimple(data);
   }
 
-  parseAndFinalizeDetailed(i3dFile: Uint8Array, ctmFiles: ParseCtmInput): Promise<SectorGeometry> {
+  parseAndFinalizeDetailed(i3dFile: string, ctmFiles: ParseCtmInput): Promise<SectorGeometry> {
     return this.workerPool.postWorkToAvailable(async (worker: ParserWorker) =>
       worker.parseAndFinalizeDetailed(i3dFile, ctmFiles)
     );

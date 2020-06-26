@@ -35,7 +35,7 @@ describe('CadSectorParser', () => {
     });
     // Act
     const observable = of({ format: 'i3d', data: new Uint8Array() }).pipe(
-      flatMap(x => parser.parseAndFinalizeDetailed(x.data, { fileNames: [], lengths: [], buffer: [] }))
+      flatMap(_ => parser.parseAndFinalizeDetailed('', { blobUrl: '', headers: {} }))
     );
 
     // Assert

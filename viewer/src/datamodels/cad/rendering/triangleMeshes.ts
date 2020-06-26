@@ -14,12 +14,10 @@ export function createTriangleMeshes(
   const result: THREE.Mesh[] = [];
   for (const mesh of triangleMeshes) {
     const geometry = new THREE.BufferGeometry();
-    const indices = new THREE.Uint32BufferAttribute(mesh.indices.buffer, 1).onUpload(disposeAttributeArrayOnUpload);
-    const vertices = new THREE.Float32BufferAttribute(mesh.vertices.buffer, 3).onUpload(disposeAttributeArrayOnUpload);
-    const colors = new THREE.Uint8BufferAttribute(mesh.colors.buffer, 3).onUpload(disposeAttributeArrayOnUpload);
-    const treeIndices = new THREE.Float32BufferAttribute(mesh.treeIndices.buffer, 1).onUpload(
-      disposeAttributeArrayOnUpload
-    );
+    const indices = new THREE.Uint32BufferAttribute(mesh.indices, 1).onUpload(disposeAttributeArrayOnUpload);
+    const vertices = new THREE.Float32BufferAttribute(mesh.vertices, 3).onUpload(disposeAttributeArrayOnUpload);
+    const colors = new THREE.Uint8BufferAttribute(mesh.colors, 3).onUpload(disposeAttributeArrayOnUpload);
+    const treeIndices = new THREE.Float32BufferAttribute(mesh.treeIndices, 1).onUpload(disposeAttributeArrayOnUpload);
     geometry.setIndex(indices);
     geometry.setAttribute('color', colors);
     geometry.setAttribute('position', vertices);

@@ -14,10 +14,8 @@ export function createInstancedMeshes(
   const result: THREE.Mesh[] = [];
 
   for (const meshFile of meshes) {
-    const indices = new THREE.Uint32BufferAttribute(meshFile.indices.buffer, 1).onUpload(disposeAttributeArrayOnUpload);
-    const vertices = new THREE.Float32BufferAttribute(meshFile.vertices.buffer, 3).onUpload(
-      disposeAttributeArrayOnUpload
-    );
+    const indices = new THREE.Uint32BufferAttribute(meshFile.indices, 1).onUpload(disposeAttributeArrayOnUpload);
+    const vertices = new THREE.Float32BufferAttribute(meshFile.vertices, 3).onUpload(disposeAttributeArrayOnUpload);
     for (const instancedMesh of meshFile.instances) {
       const triangleCount = instancedMesh.triangleCount;
       const triangleOffset = instancedMesh.triangleOffset;
@@ -30,14 +28,18 @@ export function createInstancedMeshes(
       geometry.setAttribute('position', vertices);
       geometry.setAttribute(
         'a_treeIndex',
-        new THREE.InstancedBufferAttribute(instancedMesh.treeIndices, 1).onUpload(disposeAttributeArrayOnUpload)
+        new THREE.InstancedBufferAttribute(new Float32Array(instancedMesh.treeIndices), 1).onUpload(
+          disposeAttributeArrayOnUpload
+        )
       );
       geometry.setAttribute(
         `a_color`,
-        new THREE.InstancedBufferAttribute(instancedMesh.colors, 4, true).onUpload(disposeAttributeArrayOnUpload)
+        new THREE.InstancedBufferAttribute(new Uint8Array(instancedMesh.colors), 4, true).onUpload(
+          disposeAttributeArrayOnUpload
+        )
       );
       // TODO de-duplicate this, which is the same as in setAttributes
-      const buffer = new THREE.InstancedInterleavedBuffer(instancedMesh.instanceMatrices, 16);
+      const buffer = new THREE.InstancedInterleavedBuffer(new Float32Array(instancedMesh.instanceMatrices), 16);
       for (let column = 0; column < 4; column++) {
         const attribute = new THREE.InterleavedBufferAttribute(buffer, 4, column * 4);
         geometry.setAttribute(`a_instanceMatrix_column_${column}`, attribute);

@@ -3,6 +3,7 @@
  */
 
 import { Versioned3DFile } from '@cognite/sdk';
+import { HttpHeaders } from '@cognite/sdk/dist/src/utils/http/basicHttpClient';
 
 export const supportedVersions = [8];
 
@@ -13,4 +14,18 @@ export function getNewestVersionedFile(files: Versioned3DFile[]): Versioned3DFil
       fileId: -1,
       version: -1
     });
+}
+
+export async function getCadSectorFile(
+  blobUrl: string,
+  fileName: string,
+  defaultHeaders: HttpHeaders
+): Promise<ArrayBuffer> {
+  const url = `${blobUrl}/${fileName}`;
+  const headers = {
+    ...defaultHeaders,
+    Accept: '*/*'
+  };
+  const response = await fetch(url, { headers, method: 'GET' });
+  return response.arrayBuffer();
 }
