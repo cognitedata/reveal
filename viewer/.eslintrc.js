@@ -45,6 +45,13 @@ module.exports = {
     '@typescript-eslint/ban-ts-comment': 'off',
     '@typescript-eslint/no-empty-function': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars-expiremental': [
+      'off',
+      {
+        ignoredNamesRegex: '^_'
+      }
+    ],
 
     // TODO: maksnester 26-06-2020 we need to fix our codebase to play well with these rules
     '@typescript-eslint/explicit-module-boundary-types': 'off',
