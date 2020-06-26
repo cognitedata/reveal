@@ -27,7 +27,7 @@ module.exports = {
       'block',
       [
         {
-          pattern: 'Copyright \\d{4}',
+          pattern: '(Copyright \\d{4}|istanbul ignore)',
           template: `!\n * Copyright ${new Date().getFullYear()} Cognite AS\n `
         }
       ]
@@ -51,5 +51,14 @@ module.exports = {
 
     // to be discussed
     '@typescript-eslint/no-inferrable-types': 'off'
-  }
+  },
+  overrides: [
+    {
+      files: ['*.test.ts'],
+      rules: {
+        // complains when you do expect(mockObj.mockFn).toBeCalled() in tests
+        '@typescript-eslint/unbound-method': 'off'
+      }
+    }
+  ]
 };
