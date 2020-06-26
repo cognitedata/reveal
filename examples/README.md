@@ -7,8 +7,8 @@ You need to build the viewer first and then the examples:
 
 ```bash
 cd ./viewer
-npm install
-npm run build
+yarn install
+yarn build
 
 cd ../examples
 yarn install
@@ -23,7 +23,7 @@ In case if you want to get live changes from viewer in examples you need to link
 
 ```bash
 cd ./viewer
-npm run serve
+yarn serve
 ```
 
 ## [Environment files](https://create-react-app.dev/docs/adding-custom-environment-variables/)
