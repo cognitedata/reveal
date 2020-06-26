@@ -81,6 +81,54 @@ pub trait GeometryCollection<G: Geometry> {
     fn count(&self) -> usize;
 }
 
+impl<G: Geometry> GeometryCollection<G> for Vec<G> {
+    fn with_capacity(capacity: usize) -> Vec<G> {
+        Vec::with_capacity(capacity)
+    }
+    fn push(&mut self, geometry: G) {
+        self.push(geometry);
+    }
+    fn count(&self) -> usize {
+        self.len()
+    }
+}
+
+#[wasm_bindgen]
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Sector {
+    pub id: usize,
+    pub parent_id: Option<usize>,
+    #[wasm_bindgen(skip)]
+    pub bbox_min: Vector3,
+    #[wasm_bindgen(skip)]
+    pub bbox_max: Vector3,
+    #[wasm_bindgen(skip)]
+    pub primitive_collections: PrimitiveCollections,
+}
+
+#[wasm_bindgen]
+pub struct Attribute {
+    pub size: usize,
+    pub offset: usize,
+}
+
+// TODO move statistics out of here - rather create a macro that can be used to create
+// other macros that iterate over all the different renderable types, so that for instance
+// a statistics class can be made in the dump program
+#[wasm_bindgen]
+#[derive(Copy, Clone, Debug, Deserialize, Serialize)]
+pub struct SectorStatistics {
+    pub id: usize,
+    pub collections: CollectionStatistics,
+}
+
+#[wasm_bindgen]
+#[derive(Copy, Clone, Debug, Deserialize, Serialize)]
+pub struct SceneStatistics {
+    pub sectors: usize,
+    pub collections: CollectionStatistics,
+}
+
 macro_rules! triangle_mesh_types{
     (
         $(
@@ -200,21 +248,6 @@ macro_rules! new_geometry_types {
             }
 
             impl Geometry for $struct_name { }
-
-            impl GeometryCollection<$struct_name> for Vec<$struct_name> {
-                fn with_capacity(capacity: usize) -> Vec<$struct_name> {
-                    Vec::with_capacity(capacity)
-                }
-
-                fn push(&mut self, geometry: $struct_name) {
-                    self.push(geometry);
-                }
-
-                fn count(&self) -> usize {
-                    self.len()
-                }
-            }
-
         )*
 
         #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -250,22 +283,6 @@ macro_rules! new_geometry_types {
             )*
         }
 
-        // TODO move statistics out of here - rather create a macro that can be used to create
-        // other macros that iterate over all the different renderable types, so that for instance
-        // a statistics class can be made in the dump program
-        #[wasm_bindgen]
-        #[derive(Copy, Clone, Debug, Deserialize, Serialize)]
-        pub struct SectorStatistics {
-            pub id: usize,
-            pub collections: CollectionStatistics,
-        }
-
-        #[wasm_bindgen]
-        #[derive(Copy, Clone, Debug, Deserialize, Serialize)]
-        pub struct SceneStatistics {
-            pub sectors: usize,
-            pub collections: CollectionStatistics,
-        }
 
         #[wasm_bindgen]
         impl Scene {
@@ -281,26 +298,6 @@ macro_rules! new_geometry_types {
             }
         }
 
-        #[wasm_bindgen]
-        #[derive(Clone, Debug, Deserialize, Serialize)]
-        pub struct Sector {
-            pub id: usize,
-
-            pub parent_id: Option<usize>,
-            #[wasm_bindgen(skip)]
-            pub bbox_min: Vector3,
-            #[wasm_bindgen(skip)]
-            pub bbox_max: Vector3,
-
-            #[wasm_bindgen(skip)]
-            pub primitive_collections: PrimitiveCollections,
-        }
-
-        #[wasm_bindgen]
-        pub struct Attribute {
-            pub size: usize,
-            pub offset: usize
-        }
 
         #[wasm_bindgen]
         impl Sector {
