@@ -25,6 +25,7 @@
     "test": "jest",
     "coverage": "jest --coverage",
     "lint": "eslint . --ext .ts,.js --max-warnings 0",
+    "lint:fix": "yarn run lint --fix",
     "prepublishscript": "yarn run coverage && yarn run clean && yarn run release"
   },
   "author": "Lars Moastuen <lars.moastuen@cognite.com>",

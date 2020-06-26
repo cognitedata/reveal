@@ -140,7 +140,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
         options && options.logCallback
           ? options.logCallback
           : // No logging
-          () => { },
+            () => {},
 
       coverageUtil: options && options.coverageUtil ? options.coverageUtil : new GpuOrderSectorsByVisibilityCoverage()
     };
@@ -164,7 +164,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
 
     this.log(
       `Scene: ${wanted.length} (${
-      wanted.filter(x => !Number.isFinite(x.priority)).length
+        wanted.filter(x => !Number.isFinite(x.priority)).length
       } required, ${totalSectorCount} sectors, ${takenPercent}% of all sectors - ${takenDetailedPercent}% detailed)`
     );
     return wanted;
@@ -214,9 +214,9 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
 
     this.log(`Retrieving ${i} of ${prioritizedLength} (last: ${prioritized.length > 0 ? prioritized[i - 1] : null})`);
     this.log(
-      `Total scheduled: ${takenSectors.getWantedSectorCount()} of ${prioritizedLength} (cost: ${takenSectors.totalCost /
-      1024 /
-      1024}/${costLimit / 1024 / 1024}, priority: ${debugAccumulatedPriority})`
+      `Total scheduled: ${takenSectors.getWantedSectorCount()} of ${prioritizedLength} (cost: ${
+        takenSectors.totalCost / 1024 / 1024
+      }/${costLimit / 1024 / 1024}, priority: ${debugAccumulatedPriority})`
     );
 
     return takenSectors;

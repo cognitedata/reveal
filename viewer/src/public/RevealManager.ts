@@ -79,10 +79,7 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
           }),
           distinctUntilChanged()
         )
-        .subscribe(
-          this.notifyLoadingStateListeners.bind(this),
-          console.error.bind(console)
-        )
+        .subscribe(this.notifyLoadingStateListeners.bind(this), console.error.bind(console))
     );
   }
 
