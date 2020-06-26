@@ -33,8 +33,16 @@ module.exports = {
       ]
     ],
     'no-return-await': 'error',
+    'no-empty': 'off',
+    'object-literal-sort-keys': 'off',
+    'default-case': 'error',
+
     '@typescript-eslint/unbound-method': 'error',
     '@typescript-eslint/prefer-for-of': 'off',
-    '@typescript-eslint/no-explicit-any': 'off'
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-var-requires': 'off',
+
+    // to be discussed
+    '@typescript-eslint/no-inferrable-types': 'off'
   }
 };
