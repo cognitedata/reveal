@@ -3,8 +3,8 @@ import { gotoAndWaitForRender } from "./VisualTestUtils";
 
 const matchImageSnapshotOptions: MatchImageSnapshotOptions = { dumpDiffToConsole: true }
 
-describe('Simple', () => {
-    it('visually looks correct', async () => {
+describe('Testable', () => {
+    it('correctly renders primitives test scene', async () => {
         await gotoAndWaitForRender('http://localhost:3000/testable');
 
         // Remove text elements
