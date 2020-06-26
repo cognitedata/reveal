@@ -1,9 +1,15 @@
+/*!
+ * Copyright 2020 Cognite AS
+ */
+
 module.exports = {
+  root: true,
   parser: '@typescript-eslint/parser', // Specifies the ESLint parser
   parserOptions: {
     ecmaVersion: 2020, // Allows for the parsing of modern ECMAScript features
     sourceType: 'module', // Allows for the use of imports
   },
+  plugins: ['header'],
   extends: [
     'plugin:@typescript-eslint/recommended',
 
@@ -14,7 +20,15 @@ module.exports = {
     'plugin:prettier/recommended',
   ],
   rules: {
-    // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
-    // e.g. "@typescript-eslint/explicit-function-return-type": "off",
+    'header/header': [
+      'error',
+      'block',
+      [
+        {
+          pattern: 'Copyright \\d{4}',
+          template: `!\n * Copyright ${new Date().getFullYear()} Cognite AS\n `,
+        },
+      ],
+    ],
   },
 };
