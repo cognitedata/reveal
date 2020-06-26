@@ -43,6 +43,8 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',
+    '@typescript-eslint/no-empty-function': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off',
 
     // TODO: maksnester 26-06-2020 we need to fix our codebase to play well with these rules
     '@typescript-eslint/explicit-module-boundary-types': 'off',
