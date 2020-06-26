@@ -15,7 +15,7 @@ export class EffectRenderManager {
   private _triScene: THREE.Scene;
   private _windowTriangleMaterial: THREE.ShaderMaterial;
   private _baseModelTarget: THREE.WebGLRenderTarget;
-  private _highlightedModelTarget: THREE.WebGLRenderTarget;
+  private _inFrontTarget: THREE.WebGLRenderTarget;
 
   private readonly outlineTexelSize = 2;
 
@@ -37,27 +37,42 @@ export class EffectRenderManager {
     this.setupTextureRenderScene();
 
     this._baseModelTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
-    this._highlightedModelTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
+    this._inFrontTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
   }
 
   public render(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera, scene: THREE.Scene) {
+    const original = {
+      clearAlpha: renderer.getClearAlpha(),
+      renderTarget: renderer.getRenderTarget(),
+      renderMode: this._materialManager.getRenderMode()
+    };
     this.updateRenderSize(renderer);
 
-    renderer.setClearAlpha(0);
+    try {
+      this.updateRenderSize(renderer);
 
-    renderer.setRenderTarget(this._baseModelTarget);
-    renderer.render(scene, camera);
+      renderer.setClearAlpha(0);
 
-    this._materialManager.setRenderMode(RenderMode.Effects);
+      // Render all geometry
+      renderer.setRenderTarget(this._baseModelTarget);
+      renderer.render(scene, camera);
 
-    renderer.setRenderTarget(this._highlightedModelTarget);
-    renderer.render(scene, camera);
+      this._materialManager.setRenderMode(RenderMode.Effects);
 
-    this._materialManager.setRenderMode(RenderMode.Color);
+      renderer.setRenderTarget(this._inFrontTarget);
+      renderer.render(scene, camera);
 
-    renderer.setClearAlpha(1);
+      this._materialManager.setRenderMode(RenderMode.Color);
 
-    this.renderTargetToCanvas(renderer);
+      renderer.setClearAlpha(1);
+
+      this.renderTargetToCanvas(renderer);
+    } finally {
+      // Restore state
+      renderer.setClearAlpha(original.clearAlpha);
+      renderer.setRenderTarget(original.renderTarget);
+      this._materialManager.setRenderMode(original.renderMode);
+    }
   }
 
   private updateRenderSize(renderer: THREE.WebGLRenderer) {
@@ -66,7 +81,7 @@ export class EffectRenderManager {
 
     if (renderSize.x !== this._baseModelTarget.width || renderSize.y !== this._baseModelTarget.height) {
       this._baseModelTarget.setSize(renderSize.x, renderSize.y);
-      this._highlightedModelTarget.setSize(renderSize.x, renderSize.y);
+      this._inFrontTarget.setSize(renderSize.x, renderSize.y);
 
       this._windowTriangleMaterial.setValues({
         uniforms: {
@@ -84,7 +99,7 @@ export class EffectRenderManager {
     this._windowTriangleMaterial.setValues({
       uniforms: {
         ...this._windowTriangleMaterial.uniforms,
-        tSelected: { value: this._highlightedModelTarget.texture },
+        tSelected: { value: this._inFrontTarget.texture },
         tBase: { value: this._baseModelTarget.texture }
       }
     });
@@ -96,7 +111,6 @@ export class EffectRenderManager {
   private createOutlineColorTexture(): THREE.DataTexture {
     const outlineColorBuffer = new Uint8Array(8 * 4);
     const outlineColorTexture = new DataTexture(outlineColorBuffer, 8, 1);
-
     setOutlineColor(outlineColorTexture.image.data, 1, CogniteColors.White);
     setOutlineColor(outlineColorTexture.image.data, 2, CogniteColors.Black);
     setOutlineColor(outlineColorTexture.image.data, 3, CogniteColors.Cyan);

@@ -39,7 +39,7 @@ export interface NodeAppearanceProvider {
 }
 
 const OutlinedAppearance: NodeAppearance = {
-  outlineColor: OutlineColor.Pink
+  outlineColor: OutlineColor.White
 };
 
 const HiddenAppearance: NodeAppearance = {
