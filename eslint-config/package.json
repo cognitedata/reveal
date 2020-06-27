@@ -11,7 +11,8 @@
   ],
   "author": "Cognite AS",
   "license": "Apache-2.0",
-  "repository": "https://github.com/cognitedata/packages/dev/eslint-config",
+  "repository": "https://github.com/cognitedata/frontend",
+  "homepage": "https://github.com/cognitedata/frontend/blob/master/packages/dev/eslint-config#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
