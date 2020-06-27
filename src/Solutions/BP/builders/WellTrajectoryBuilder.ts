@@ -36,18 +36,20 @@ export default class WellTrajectoryBuilder {
     public setTrajectoryData(well: WellNode, dataIndexes: number[], trajectoryData?: TrajectoryRows) {
         // Some trajectories missing data
         if (!trajectoryData || !trajectoryData.rows.length) {
+            // tslint:disable-next-line: no-console
+            console.log("NodeVisualizer: No curve points available for", this.wellTrajectoryNode.getName());
             return this;
         }
         const trajectory = new WellTrajectory();
         const wellHead = well.wellHead;
         const [mdIndex, xOffsetIndex, yOffsetIndex] = dataIndexes;
-        const curvePointRef = trajectoryData.rows[mdIndex].values;
+        const curvePointRef = trajectoryData.rows[0].values;
         let md = wellHead.z - curvePointRef[mdIndex] * FEAT_TO_METER;
 
         let prevPoint = new Vector3(
             curvePointRef[xOffsetIndex] * FEAT_TO_METER + wellHead.x,
             curvePointRef[yOffsetIndex] * FEAT_TO_METER + wellHead.y,
-            wellHead.z - curvePointRef[mdIndex] * FEAT_TO_METER);
+            md);
 
         // Iterate through rows array
         for (const curvePointData of trajectoryData.rows) {
@@ -55,7 +57,7 @@ export default class WellTrajectoryBuilder {
             const point = new Vector3(
                 curvePoint[xOffsetIndex] * FEAT_TO_METER + wellHead.x,
                 curvePoint[yOffsetIndex] * FEAT_TO_METER + wellHead.y,
-                wellHead.z - curvePoint[0] * FEAT_TO_METER);
+                wellHead.z - curvePoint[mdIndex] * FEAT_TO_METER);
             md += prevPoint.distance(point);
             trajectory.add(new TrajectorySample(point, md));
             prevPoint = point;
