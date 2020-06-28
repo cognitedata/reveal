@@ -52,10 +52,10 @@ export class LogRender
   // INSTANCE METHODS: Band
   //==================================================
 
-  public createCanvas(): Canvas
+  public createCanvas(zscale: number): Canvas
   {
-    const canvasDy = 100;
-    const canvasDx = canvasDy * this.mdRange.delta / this.bandRange.delta;
+    const canvasDy = 128;
+    const canvasDx = Math.max(1, zscale) * canvasDy * this.mdRange.delta / this.bandRange.delta;
     const canvas = new Canvas(canvasDx, canvasDy);
     canvas.clear(Colors.white);
     return canvas;
@@ -97,17 +97,19 @@ export class LogRender
       if (!trajectory.getPositionAtMd(md, position))
         continue;
 
-      transformer.transformTo3D(position);
 
       if (!trajectory.getTangentAtMd(md, tangent))
         continue;
+
+      transformer.transformTo3D(position);
+      transformer.transformTangentTo3D(tangent);
 
       const fraction = this.mdRange.getFraction(md);
 
       // Get perpendicular
       const cameraDirection = Vector3.substract(position, cameraPosition);
       const prependicular = cameraDirection.getNormal(tangent);
-      const normal = prependicular.getNormal(tangent);
+      const normal = prependicular.getCross(tangent);
 
       if (rightBuffers)
       {

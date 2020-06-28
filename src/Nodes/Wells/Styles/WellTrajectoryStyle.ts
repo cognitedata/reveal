@@ -25,9 +25,9 @@ export class WellTrajectoryStyle extends BaseRenderStyle
 
   public radius = 2;
   public colorType = ColorType.White;
-  public nameFontHeight = 30;
+  public nameFontHeight = 50;
   public bandWidth = 50;
-  public bandFontSize = 20;
+  public bandFontSize = 30;
 
   //==================================================
   // CONSTRUCTORS

@@ -159,6 +159,7 @@ export class PointLogThreeView extends BaseGroupThreeView
         continue;
 
       transformer.transformTo3D(position);
+      transformer.transformTangentTo3D(tangent);
 
       // Get perpendicular
       const cameraDirection = Vector3.substract(position, this.cameraPosition);
@@ -240,9 +241,10 @@ export class PointLogThreeView extends BaseGroupThreeView
         continue;
 
       transformer.transformTo3D(position);
+      transformer.transformTangentTo3D(tangent);
 
       const sphere = new THREE.Mesh(sample.isOpen ? openGeometry : closedGeometry, sample.isOpen ? openMaterial : closedMaterial);
-      sphere.scale.z = 0.5;
+      sphere.scale.z = 0.3333;
 
       if (Math.abs(tangent.z) < 0.999)
       {
