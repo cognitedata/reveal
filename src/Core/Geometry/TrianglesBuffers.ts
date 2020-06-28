@@ -53,7 +53,7 @@ export class TrianglesBuffers
   {
     const geometry = new THREE.BufferGeometry();
     geometry.addAttribute("position", new THREE.Float32BufferAttribute(this.positions, 3, true));
-    geometry.addAttribute("normal", new THREE.Float32BufferAttribute(this.normals, 3, true));
+    geometry.addAttribute("normal", new THREE.Float32BufferAttribute(this.normals, 3, false)); // Auto normalizing
     geometry.setIndex(new THREE.Uint32BufferAttribute(this.triangleIndexes, 1, true));
     if (this.hasUvs)
       geometry.addAttribute("uv", new THREE.Float32BufferAttribute(this.uvs, 2, true));
@@ -85,7 +85,7 @@ export class TrianglesBuffers
     }
   }
 
-  public addPair2(p1: Vector3, p2: Vector3, n: Vector3, fraction: number)
+  public addPair2(p1: Vector3, p2: Vector3, normal: Vector3, fraction: number)
   {
     if (this.uniqueIndex >= 2)
     {
@@ -102,8 +102,8 @@ export class TrianglesBuffers
     }
     if (this.hasUvs)
     {
-      this.add(p1, n, fraction, 1);
-      this.add(p2, n, fraction, 0);
+      this.add(p1, normal, fraction, 1);
+      this.add(p2, normal, fraction, 0);
     }
   }
 
@@ -144,7 +144,6 @@ export class TrianglesBuffers
       this.uvs[index + 0] = u;
       this.uvs[index + 1] = 0;
     }
-    this.uniqueIndex++;
   }
 
   protected addTriangle(index0: number, index1: number, index2: number): void

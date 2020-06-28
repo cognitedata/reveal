@@ -40,5 +40,5 @@ export class Grid2
   //==================================================
 
   public toString(): string { return `(${this.nodeSize})`; }
-  public isNodeInside(i: number, j: number) { return i >= 0 && j >= 0 && i < this.nodeSize.i && j <= this.nodeSize.j; }
+  public isNodeInside(i: number, j: number) { return i >= 0 && j >= 0 && i < this.nodeSize.i && j < this.nodeSize.j; }
 }

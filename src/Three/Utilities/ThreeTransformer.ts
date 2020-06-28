@@ -40,11 +40,11 @@ export class ThreeTransformer
   // INSTANCE FIELDS: World => 3D
   //==================================================
 
-  public to3D(point: Vector3): THREE.Vector3
+  public to3D(position: Vector3): THREE.Vector3
   {
     if (!this._initialized)
-      this.initialize(point);
-    return new THREE.Vector3(point.x - this._xTranslation, point.y - this._yTranslation, point.z * this._zScale);
+      this.initialize(position);
+    return new THREE.Vector3(position.x - this._xTranslation, position.y - this._yTranslation, position.z * this._zScale);
   }
 
   public rangeTo3D(range: Range3): THREE.Box3
@@ -58,14 +58,26 @@ export class ThreeTransformer
     return new THREE.Box3(this.to3D(range.min), this.to3D(range.max));
   }
 
-  public transformTo3D(point: Vector3): void
+  public transformTo3D(position: Vector3): void
   {
     if (!this._initialized)
-      this.initialize(point);
+      this.initialize(position);
 
-    point.x -= this._xTranslation;
-    point.y -= this._yTranslation;
-    point.z *= this._zScale;
+    position.x -= this._xTranslation;
+    position.y -= this._yTranslation;
+    position.z *= this._zScale;
+  }
+
+  public transformTangentTo3D(vector: Vector3): void
+  {
+    vector.z *= this._zScale;
+    vector.normalize();
+  }
+
+  public transformNormalTo3D(vector: Vector3): void
+  {
+    vector.z /= this._zScale;
+    vector.normalize();
   }
 
   public transformRangeTo3D(range: Range3): void
@@ -85,9 +97,9 @@ export class ThreeTransformer
   // INSTANCE FIELDS: 3D => World
   //==================================================
 
-  public toWorld(point: THREE.Vector3): Vector3
+  public toWorld(position: THREE.Vector3): Vector3
   {
-    return new Vector3(point.x + this._xTranslation, point.y + this._yTranslation, point.z / this._zScale);
+    return new Vector3(position.x + this._xTranslation, position.y + this._yTranslation, position.z / this._zScale);
   }
 
   public rangeToWorld(value: THREE.Box3, checkEmpty = true): Range3
@@ -111,14 +123,14 @@ export class ThreeTransformer
   // INSTANCE FIELDS: Helpers
   //==================================================
 
-  private initialize(point: Vector3): void
+  private initialize(position: Vector3): void
   {
     if (!this._initialized)
     {
-      console.log(point.toString())
+      console.log(position.toString())
       this._initialized = true;
-      this._xTranslation = point.x;
-      this._yTranslation = point.y;
+      this._xTranslation = position.x;
+      this._yTranslation = position.y;
     }
   }
 }

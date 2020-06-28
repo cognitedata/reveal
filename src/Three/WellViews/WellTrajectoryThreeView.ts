@@ -170,7 +170,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
     margin.x = Math.max(margin.x, style.bandWidth);
     margin.y = Math.max(margin.y, style.bandWidth);
-    margin.z = Math.max(margin.z, style.nameFontHeight);
+    margin.z = Math.max(margin.z, style.nameFontHeight / this.transformer.zScale);
 
     boundingBox.expandByMargin3(margin);
     return boundingBox;
@@ -456,7 +456,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     const logRender = new LogRender(bandRange, mdRange);
     for (const rightBand of [true, false])
     {
-      const canvas = logRender.createCanvas();
+      const canvas = logRender.createCanvas(this.transformer.zScale);
       let filled = 0;
       let visibleCount = 0;
 

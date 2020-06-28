@@ -300,7 +300,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     vectorToCenter.applyAxisAngle(verticalAxis, Ma.toRad(0)); // Azimuth angle
     vectorToCenter.applyAxisAngle(horizontalAxis, -Ma.toRad(30)); //Dip angle
 
-    vectorLength = Math.max(vectorLength, 5000); // Move the light far away
+    vectorLength = Math.max(vectorLength, 100_000); // Move the light far away
     vectorToCenter.multiplyScalar(vectorLength);
     vectorToCenter.add(target)
 

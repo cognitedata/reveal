@@ -142,7 +142,7 @@ export class AxisThreeView extends BaseGroupThreeView
     const style = this.style;
 
     this.axisColor = target.fgColor;
-    this.gridColor = target.isLightBackground ? Colors.darkGrey : Colors.lightGrey;
+    this.gridColor = target.isLightBackground ? Colors.darkGrey : Colors.darkGrey;
     this.wallColor = target.bgColor;
     this.textColor = target.fgColor;
 
@@ -257,7 +257,6 @@ export class AxisThreeView extends BaseGroupThreeView
 
       // Draw ticks
       const labelInc = realRange.getBoldInc(tickInc);
-
       const tickDirection = Range3.getTickDirection(wallIndex0, wallIndex1);
 
       // Add tick marks and labels
@@ -413,7 +412,7 @@ export class AxisThreeView extends BaseGroupThreeView
     if (realRange.isEmpty)
       return;
 
-    const boldInc = realRange.getBoldInc(realInc);
+    const boldInc = realRange.getBoldInc(realInc);    
     for (const anyTick of realRange.getTicks(realInc))
     {
       const tick = Number(anyTick);
@@ -496,8 +495,7 @@ export class AxisThreeView extends BaseGroupThreeView
     if (dimension === 2 && zScale !== 1) // If z scale:
     {
       const numTicks = range.getNumTicks(inc);
-      range.scale(1 / zScale);
-      inc = range.getBestInc(numTicks);
+      inc = range.getBestInc(numTicks * zScale * 2);
     }
     return [range, inc];
   }

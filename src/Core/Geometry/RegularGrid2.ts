@@ -91,7 +91,7 @@ export class RegularGrid2 extends Grid2
     return true;
   }
 
-  public getNormal(i: number, j: number, result: Vector3, z: number): Vector3
+  public getNormal(i: number, j: number, result: Vector3, z: number, normalize: boolean): Vector3
   {
     if (!z)
       z = this.getZ(i, j);
@@ -101,20 +101,25 @@ export class RegularGrid2 extends Grid2
 
     result.set(0, 0, 0);
 
-    const def0 = this.isNodeInsideDef(i + 1, j + 0);
-    const def1 = this.isNodeInsideDef(i + 0, j + 1);
-    const def2 = this.isNodeInsideDef(i - 1, j + 0);
-    const def3 = this.isNodeInsideDef(i + 0, j - 1);
+    let def0 = this.isNodeInside(i + 1, j + 0);
+    let def1 = this.isNodeInside(i + 0, j + 1);
+    let def2 = this.isNodeInside(i - 1, j + 0);
+    let def3 = this.isNodeInside(i + 0, j - 1);
 
     const i0 = def0 ? this.getNodeIndex(i + 1, j + 0) : -1;
     const i1 = def1 ? this.getNodeIndex(i + 0, j + 1) : -1;
     const i2 = def2 ? this.getNodeIndex(i - 1, j + 0) : -1;
     const i3 = def3 ? this.getNodeIndex(i + 0, j - 1) : -1;
 
-    const z0 = def0 ? this.buffer[i0] - z : 0;
-    const z1 = def1 ? this.buffer[i1] - z : 0;
-    const z2 = def1 ? this.buffer[i2] - z : 0;
-    const z3 = def1 ? this.buffer[i3] - z : 0;
+    let z0 = def0 ? this.buffer[i0] : 0;
+    let z1 = def1 ? this.buffer[i1] : 0;
+    let z2 = def2 ? this.buffer[i2] : 0;
+    let z3 = def3 ? this.buffer[i3] : 0;
+
+    if (def0) { if (Number.isNaN(z0)) def0 = false; else z0 -= z; }
+    if (def1) { if (Number.isNaN(z1)) def1 = false; else z1 -= z; }
+    if (def2) { if (Number.isNaN(z2)) def2 = false; else z2 -= z; }
+    if (def3) { if (Number.isNaN(z3)) def3 = false; else z3 -= z; }
 
     if (def0 && def1)
     {
@@ -144,7 +149,7 @@ export class RegularGrid2 extends Grid2
       a.crossProduct(b);
       result.add(a);
     }
-    if (!result.normalize())
+    if (normalize && !result.normalize())
       result.set(0, 0, 1);
     return result;
   }
