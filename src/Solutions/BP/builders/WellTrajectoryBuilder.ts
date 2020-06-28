@@ -12,10 +12,10 @@ import { DiscreteLog } from "@/Nodes/Wells/Logs/DiscreteLog";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { TrajectoryRows, RiskEvent } from "@/Interface";
 import { TrajectorySample } from "@/Nodes/Wells/Samples/TrajectorySample";
-import { FEAT_TO_METER } from "@/Solutions/BP/Constants";
 import { PointLog } from "@/Nodes/Wells/Logs/PointLog";
 import { PointLogSample } from "@/Nodes/Wells/Samples/PointLogSample";
 import { PointLogNode } from "@/Nodes/Wells/Wells/PointLogNode";
+import { Units } from "@/Core/Primitives/Units";
 
 /**
  * Build WellTrajectoryNode from BP Data
@@ -44,20 +44,20 @@ export default class WellTrajectoryBuilder {
         const wellHead = well.wellHead;
         const [mdIndex, xOffsetIndex, yOffsetIndex] = dataIndexes;
         const curvePointRef = trajectoryData.rows[0].values;
-        let md = wellHead.z - curvePointRef[mdIndex] * FEAT_TO_METER;
+        let md = wellHead.z - curvePointRef[mdIndex] * Units.Feet;
 
         let prevPoint = new Vector3(
-            curvePointRef[xOffsetIndex] * FEAT_TO_METER + wellHead.x,
-            curvePointRef[yOffsetIndex] * FEAT_TO_METER + wellHead.y,
+            curvePointRef[xOffsetIndex] * Units.Feet + wellHead.x,
+            curvePointRef[yOffsetIndex] * Units.Feet + wellHead.y,
             md);
 
         // Iterate through rows array
         for (const curvePointData of trajectoryData.rows) {
             const curvePoint = curvePointData.values;
             const point = new Vector3(
-                curvePoint[xOffsetIndex] * FEAT_TO_METER + wellHead.x,
-                curvePoint[yOffsetIndex] * FEAT_TO_METER + wellHead.y,
-                wellHead.z - curvePoint[mdIndex] * FEAT_TO_METER);
+                curvePoint[xOffsetIndex] * Units.Feet + wellHead.x,
+                curvePoint[yOffsetIndex] * Units.Feet + wellHead.y,
+                wellHead.z - curvePoint[mdIndex] * Units.Feet);
             md += prevPoint.distance(point);
             trajectory.add(new TrajectorySample(point, md));
             prevPoint = point;
@@ -79,7 +79,7 @@ export default class WellTrajectoryBuilder {
         console.log("NodeVisualizer: Adding NPT events", nptEvents.length);
         const pointLog = new PointLog();
         for (const nptEvent of nptEvents) {
-            const md = parseFloat(nptEvent.metadata.md_hole_start) * FEAT_TO_METER;
+            const md = parseFloat(nptEvent.metadata.md_hole_start) * Units.Feet;
             const pointLogSample = new PointLogSample(nptEvent.description, md);
             pointLog.samples.push(pointLogSample);
         }
@@ -103,7 +103,7 @@ export default class WellTrajectoryBuilder {
         console.log("NodeVisualizer: Adding NDS events", ndsEvents.length);
         const pointLog = new PointLog();
         for (const ndsEvent of ndsEvents) {
-            const md = parseFloat(ndsEvent.metadata.md_hole_start) * FEAT_TO_METER;
+            const md = parseFloat(ndsEvent.metadata.md_hole_start) * Units.Feet;
             const pointLogSample = new PointLogSample(ndsEvent.description, md);
             pointLog.samples.push(pointLogSample);
         }
