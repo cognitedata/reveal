@@ -11,20 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
-import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
-import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
-import CasingLogNodeIcon from "@images/Nodes/CasingLogNode.png";
+import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
+import { IDataLoader } from "@/Core/Interfaces/IDataLoader";
 
-export class CasingLogNode extends BaseLogNode
+export abstract class DataNode extends BaseVisualNode
 {
-  //==================================================
-  // INSTANCE PROPERTIES
-  //==================================================
-
-  public get data(): FloatLog | null { return this.anyData as FloatLog; }
-  public set data(value: FloatLog | null) { this.anyData = value; }
-
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -32,23 +23,47 @@ export class CasingLogNode extends BaseLogNode
   public constructor() { super(); }
 
   //==================================================
+  // INSTANCE FIELDS
+  //==================================================
+
+  private _data: any = null;
+  private _dataIsLost = false;
+  private _dataLoader: IDataLoader | null = null;
+
+  //==================================================
+  // INSTANCE PROPERTIES
+  //==================================================
+
+  protected get dataLoader(): IDataLoader | null { return this._dataLoader; }
+  protected set dataLoader(value: IDataLoader | null) { this._dataLoader = value; }
+
+  public get hasData(): boolean { return this._data != null; }
+  public get dataIsLost(): boolean { return this._dataIsLost; }
+
+  protected get anyData(): any
+  {
+    if (this._data != null || this.dataIsLost)
+      return this._data;
+
+    if (!this.dataLoader)
+      return null;
+
+    const data = this.dataLoader.load();
+    return this.anyData = data;
+  }
+
+  protected set anyData(value: any)
+  {
+    this._data = value
+    this._dataIsLost = this._data == null;
+    if (this.dataIsLost)
+      console.warn("The data is lost");
+  }
+
+  //==================================================
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return CasingLogNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === CasingLogNode.name || super.isA(className); }
-
-  //==================================================
-  // OVERRIDES of BaseNode
-  //==================================================
-
-  public /*override*/ get typeName(): string { return "Casing" }
-
-  public /*override*/ getIcon(): string { return CasingLogNodeIcon }
-
-  //==================================================
-  // OVERRIDES of BaseLogNode
-  //==================================================
-
-  public /*override*/  get wellLogType(): WellLogType { return WellLogType.Casing; }
+  public /*override*/ get className(): string { return DataNode.name; }
+  public /*override*/ isA(className: string): boolean { return className === DataNode.name || super.isA(className); }
 }

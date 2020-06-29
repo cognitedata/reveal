@@ -16,12 +16,12 @@ import { TargetId } from "@/Core/Primitives/TargetId";
 import { ColorType } from "@/Core/Enums/ColorType";
 import { Polylines } from "@/Core/Geometry/Polylines";
 
-import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { PolylinesRenderStyle } from "@/Nodes/Misc/PolylinesRenderStyle";
 import PolylinesNodeIcon from "@images/Nodes/PolylinesNode.png";
+import { DataNode } from "@/Core/Nodes/DataNode";
 
-export class PolylinesNode extends BaseVisualNode
+export class PolylinesNode extends DataNode
 {
   //==================================================
   // CONSTRUCTORS
@@ -30,17 +30,11 @@ export class PolylinesNode extends BaseVisualNode
   public constructor() { super(); }
 
   //==================================================
-  // INSTANCE FIELDS
-  //==================================================
-
-  private _data: Polylines | null = null;
-
-  //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): Polylines | null { return this._data; }
-  public set data(value: Polylines | null) { this._data = value; }
+  public get data(): Polylines | null { return this.anyData; }
+  public set data(value: Polylines | null) { this.anyData = value; }
   public get renderStyle(): PolylinesRenderStyle | null { return this.getRenderStyle() as PolylinesRenderStyle; }
 
   //==================================================

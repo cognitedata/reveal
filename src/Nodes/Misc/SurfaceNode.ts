@@ -15,16 +15,15 @@ import { Range3 } from "@/Core/Geometry/Range3";
 import { RegularGrid2 } from "@/Core/Geometry/RegularGrid2";
 import { ColorType } from "@/Core/Enums/ColorType";
 
-import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { SurfaceRenderStyle } from "@/Nodes/Misc/SurfaceRenderStyle";
 
 import SurfaceNodeIcon from "@images/Nodes/SurfaceNode.png";
+import { DataNode } from "@/Core/Nodes/DataNode";
 
-export class SurfaceNode extends BaseVisualNode
+export class SurfaceNode extends DataNode
 {
-
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -32,17 +31,11 @@ export class SurfaceNode extends BaseVisualNode
   public constructor() { super(); }
 
   //==================================================
-  // INSTANCE FIELDS
-  //==================================================
-
-  private _data: RegularGrid2 | null = null;
-
-  //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): RegularGrid2 | null { return this._data; }
-  public set data(value: RegularGrid2 | null) { this._data = value; }
+  public get data(): RegularGrid2 | null { return this.anyData; }
+  public set data(value: RegularGrid2 | null) { this.anyData = value; }
   public get renderStyle(): SurfaceRenderStyle | null { return this.getRenderStyle() as SurfaceRenderStyle; }
 
   //==================================================

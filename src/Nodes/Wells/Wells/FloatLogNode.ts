@@ -22,8 +22,8 @@ export class FloatLogNode extends BaseLogNode
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): FloatLog | null { return this._data as FloatLog; }
-  public set data(value: FloatLog | null) { this._data = value; }
+  public get data(): FloatLog | null { return this.anyData as FloatLog; }
+  public set data(value: FloatLog | null) { this.anyData = value; }
 
   //==================================================
   // CONSTRUCTORS
