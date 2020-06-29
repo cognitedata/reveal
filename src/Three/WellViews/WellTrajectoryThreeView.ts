@@ -308,17 +308,17 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
   private addWellLabel(parent: THREE.Object3D)
   {
     const node = this.node;
-    const well = node.well;
-    if (!well)
+    const wellNode = node.wellNode;
+    if (!wellNode)
       return;
 
     const style = this.style;
     if (!style)
       return;
 
-    const position = well.wellHead.clone();
+    const position = wellNode.wellHead.clone();
     this.transformer.transformTo3D(position);
-    const label = SpriteCreator.createByPositionAndAlignment(well.getName(), position, 1, style.nameFontHeight, this.fgColor);
+    const label = SpriteCreator.createByPositionAndAlignment(wellNode.getName(), position, 1, style.nameFontHeight, this.fgColor);
     if (!label)
       return;
 
