@@ -21,6 +21,8 @@ function generateNodeStructure(
   parentId: string | null,
   node: BaseNode
 ): TreeDataItem {
+
+  const checkBoxState = node.getCheckBoxState();
   return {
     parentId,
     uniqueId,
@@ -32,11 +34,11 @@ function generateNodeStructure(
       color: (node.hasIconColor() ? node.getColor() : undefined)
     },
     selected: node.IsSelected(),
-    checked: (node.getCheckBoxState() === CheckBoxState.All),
-    indeterminate: (node.getCheckBoxState() === CheckBoxState.Some),
+    checked: (checkBoxState === CheckBoxState.All),
+    indeterminate: (checkBoxState === CheckBoxState.Some),
+    disabled: (checkBoxState === CheckBoxState.Disabled),
     isRadio: (node.isRadio(null)),
     isFilter: node.isFilter(null),
-    disabled: (node.getCheckBoxState() === CheckBoxState.Disabled),
     visible: node.isVisibleInTreeControl(),
     label: {
       italic: node.isLabelInItalic(),
