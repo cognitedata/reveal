@@ -65,7 +65,6 @@ export abstract class BaseVisualNode extends BaseNode
 
     if (this.canBeVisible(target))
     {
-
       if (this.canBeChecked(target))
         return CheckBoxState.None;
       else
@@ -88,16 +87,7 @@ export abstract class BaseVisualNode extends BaseNode
     if (!this.setVisible(visible, target))
       return false;
 
-    // Notify
-    const args = new NodeEventArgs(Changes.visibleState);
-    this.notify(args);
-    if (topLevel)
-    {
-      for (const ancestor of this.getAncestorsExceptRoot())
-        ancestor.notify(args);
-    }
-    for (const child of this.children)
-      child.notify(args);
+    this.notifyVisibleStateChange(topLevel);
     return true;
   }
 
@@ -115,6 +105,26 @@ export abstract class BaseVisualNode extends BaseNode
     return result;
   }
 
+  public /*override*/notifyCore(args: NodeEventArgs): void
+  {
+    super.notifyCore(args);
+    for (const view of this.views.list)
+      view.update(args);
+  }
+
+  //==================================================
+  // VIRTUAL METHODS: 
+  //==================================================
+
+  public canBeVisible(target?: ITarget | null): boolean
+  {
+    if (!target)
+      target = this.activeTarget;
+    return target ? target.canShowView(this) : false;
+  }
+
+  public canBeVisibleNow(): boolean { return true; }
+
   //==================================================
   // INSTANCE METHODS: Visibility and notifying
   //==================================================
@@ -122,13 +132,6 @@ export abstract class BaseVisualNode extends BaseNode
   public getViewByTarget(target: ITargetIdAccessor): BaseView | null
   {
     return this.views.getViewByTarget(target);
-  }
-
-  public canBeVisible(target?: ITarget | null): boolean
-  {
-    if (!target)
-      target = this.activeTarget;
-    return target ? target.canShowView(this) : false;
   }
 
   public isVisible(target?: ITarget | null): boolean
@@ -147,6 +150,9 @@ export abstract class BaseVisualNode extends BaseNode
 
   public setVisible(visible: boolean, target?: ITarget | null): boolean
   {
+    if (visible && !this.canBeVisibleNow())
+      return false;
+
     // Returns true if changed.
     if (!target)
     {
@@ -172,10 +178,16 @@ export abstract class BaseVisualNode extends BaseNode
     this.views.clear();
   }
 
-  public notifyCore(args: NodeEventArgs): void
+  protected notifyVisibleStateChange(topLevel: boolean): void
   {
-    super.notifyCore(args);
-    for (const view of this.views.list)
-      view.update(args);
+    const args = new NodeEventArgs(Changes.visibleState);
+    this.notify(args);
+    if (topLevel)
+    {
+      for (const ancestor of this.getAncestorsExceptRoot())
+        ancestor.notify(args);
+    }
+    for (const child of this.children)
+      child.notify(args);
   }
 }

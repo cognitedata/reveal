@@ -13,6 +13,7 @@
 
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { IDataLoader } from "@/Core/Interfaces/IDataLoader";
+import { ITarget } from "@/Core/Interfaces/ITarget";
 
 export abstract class DataNode extends BaseVisualNode
 {
@@ -57,7 +58,10 @@ export abstract class DataNode extends BaseVisualNode
     this._data = value
     this._dataIsLost = this._data == null;
     if (this.dataIsLost)
+    {
       console.warn("The data is lost");
+      this.notifyVisibleStateChange(true);
+    }
   }
 
   //==================================================
@@ -66,4 +70,17 @@ export abstract class DataNode extends BaseVisualNode
 
   public /*override*/ get className(): string { return DataNode.name; }
   public /*override*/ isA(className: string): boolean { return className === DataNode.name || super.isA(className); }
+
+  //==================================================
+  // OVERRIDES of BaseVisualNode
+  //==================================================
+
+  public canBeVisible(target?: ITarget | null): boolean
+  {
+    if (this.dataIsLost)
+      return false;
+    return super.canBeVisible(target);
+  }
+
+  public canBeVisibleNow(): boolean { return this.hasData; }
 }
