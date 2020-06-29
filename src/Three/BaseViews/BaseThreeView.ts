@@ -20,7 +20,7 @@ import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
 export abstract class BaseThreeView extends Base3DView
 {
   public static readonly noPicking = "noPicking";
-  
+
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
@@ -63,7 +63,7 @@ export abstract class BaseThreeView extends Base3DView
   //==================================================
 
   public /*virtual*/ shouldPick(): boolean { return true; }
-  public /*virtual*/ onMouseClick(intersection: THREE.Intersection) {  }
+  public /*virtual*/ onMouseClick(intersection: THREE.Intersection) { }
 
   //==================================================
   // INSTANCE METHODS
@@ -72,7 +72,10 @@ export abstract class BaseThreeView extends Base3DView
   protected invalidateTarget(): void
   {
     const target = this.renderTarget;
-    if (target)
-      target.invalidate();
+    if (!target)
+      return;
+
+    target.invalidate();
+    target.invalidateNearAndFarPlane();
   }
 }
