@@ -34,7 +34,7 @@ export class WellTrajectoryNode extends DataNode
   public get data(): WellTrajectory | null { return this.anyData; }
   public set data(value: WellTrajectory | null) { this.anyData = value; }
   public get renderStyle(): WellTrajectoryStyle | null { return this.getRenderStyle() as WellTrajectoryStyle; }
-  public get well(): WellNode | null { return this.getAncestorByType(WellNode); }
+  public get wellNode(): WellNode | null { return this.getAncestorByType(WellNode); }
 
   //==================================================
   // CONSTRUCTORS

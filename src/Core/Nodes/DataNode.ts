@@ -35,10 +35,10 @@ export abstract class DataNode extends BaseVisualNode
   // INSTANCE PROPERTIES
   //==================================================
 
-  protected get dataLoader(): IDataLoader | null { return this._dataLoader; }
-  protected set dataLoader(value: IDataLoader | null) { this._dataLoader = value; }
+  public get dataLoader(): IDataLoader | null { return this._dataLoader; }
+  public set dataLoader(value: IDataLoader | null) { this._dataLoader = value; }
 
-  public get hasData(): boolean { return this._data != null; }
+  public get hasDataInMemory(): boolean { return this._data != null; }
   public get dataIsLost(): boolean { return this._dataIsLost; }
 
   protected get anyData(): any
@@ -50,13 +50,14 @@ export abstract class DataNode extends BaseVisualNode
       return null;
 
     const data = this.dataLoader.load(this);
-    return this.anyData = data;
+    this.anyData = data;
+    return data;
   }
 
   protected set anyData(value: any)
   {
     this._data = value
-    this._dataIsLost = this._data == null;
+    this._dataIsLost = !value;
     if (this.dataIsLost)
     {
       console.warn("The data is lost");
@@ -82,5 +83,5 @@ export abstract class DataNode extends BaseVisualNode
     return super.canBeVisible(target);
   }
 
-  public canBeVisibleNow(): boolean { return this.hasData; }
+  public canBeVisibleNow(): boolean { return this.anyData != null; }
 }

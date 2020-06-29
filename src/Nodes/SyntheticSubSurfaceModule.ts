@@ -30,6 +30,8 @@ import { BaseModule } from "@/Core/Module/BaseModule";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import { LogFolder } from "@/Nodes/Wells/Wells/LogFolder";
 import { BaseFilterLogNode } from "@/Nodes/Wells/Filters/BaseFilterLogNode";
+import { IDataLoader } from "@/Core/Interfaces/IDataLoader";
+import { DataNode } from "@/Core/Nodes/DataNode";
 
 export class SyntheticSubSurfaceModule extends BaseModule
 {
@@ -42,6 +44,8 @@ export class SyntheticSubSurfaceModule extends BaseModule
     return new SubSurfaceRootNode();
   }
 
+
+
   public /*override*/ loadData(root: BaseRootNode): void
   {
     if (!(root instanceof SubSurfaceRootNode))
@@ -51,6 +55,8 @@ export class SyntheticSubSurfaceModule extends BaseModule
     const numberOfTrajectories = 2;
 
     const wellTree = root.wells;
+    const logDataLoader = new LogDataLoader();
+    const trajectoryDataLoader = new TrajectoryDataLoader();
 
     // Add some random wells
     for (let folderIndex = 0; folderIndex < numberOfFolder; folderIndex++)
@@ -74,28 +80,17 @@ export class SyntheticSubSurfaceModule extends BaseModule
         {
           const trajectoryNode = new WellTrajectoryNode();
           trajectoryNode.setName(`Traj ${trajectoryIndex + 1}`);
-          trajectoryNode.data = WellTrajectory.createByRandom(wellNode.wellHead);
+          trajectoryNode.dataLoader = trajectoryDataLoader;
           wellNode.addChild(trajectoryNode);
-
-          let trajectoryMdRange = new Range1()
-          if (trajectoryNode.data)
-            trajectoryMdRange = trajectoryNode.data.mdRange;
-
 
           // Add some random casing logs to the trajectory
           let numberOfLogs = 1;
           for (let logIndex = 0; logIndex < numberOfLogs; logIndex++)
           {
             const logNode = new CasingLogNode();
+            logNode.dataLoader = logDataLoader;
             logNode.setName("Casing");
             trajectoryNode.addChild(logNode);
-
-            if (!trajectoryMdRange.isEmpty)
-            {
-              const mdRange = trajectoryMdRange.clone();
-              mdRange.expandByFraction(-0.05);
-              logNode.data = FloatLog.createCasingByRandom(mdRange, 7);
-            }
           }
           let folder = new LogFolder();
           trajectoryNode.addChild(folder);
@@ -105,7 +100,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
           for (let logIndex = 0; logIndex < numberOfLogs; logIndex++)
           {
             const logNode = new FloatLogNode();
-            folder.addChild(logNode);
+            logNode.dataLoader = logDataLoader;
             let name: string | null = null;
             if (logIndex == 0)
               name = "Gamma ray";
@@ -119,16 +114,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
               name = "Permeability";
             if (name)
               logNode.setName(name);
-
-            if (!trajectoryMdRange.isEmpty)
-            {
-              const mdRange = trajectoryMdRange.clone();
-              mdRange.min = (mdRange.center + mdRange.min) / 2;
-              mdRange.expandByFraction(Random.getFloat2(-0.15, 0));
-
-              const valueRange = new Range1(0, 3.14);
-              logNode.data = FloatLog.createByRandom(mdRange, valueRange);
-            }
+            folder.addChild(logNode);
           }
           folder = new LogFolder();
           trajectoryNode.addChild(folder);
@@ -138,34 +124,18 @@ export class SyntheticSubSurfaceModule extends BaseModule
           for (let logIndex = 0; logIndex < numberOfLogs; logIndex++)
           {
             const logNode = new DiscreteLogNode();
+            logNode.dataLoader = logDataLoader;
             logNode.setName("Zone log");
             folder.addChild(logNode);
-            if (!trajectoryMdRange.isEmpty)
-            {
-              const mdRange = trajectoryMdRange.clone();
-              mdRange.min = (mdRange.center + mdRange.min) / 2;
-              mdRange.expandByFraction(Random.getFloat2(-0.25, 0));
-
-              const valueRange = new Range1(0, 4);
-              logNode.data = DiscreteLog.createByRandom(mdRange, valueRange);
-            }
           }
           // Add some random point logs to the trajectory
           numberOfLogs = Random.getInt2(1, 2);
           for (let logIndex = 0; logIndex < numberOfLogs; logIndex++)
           {
             const logNode = new PointLogNode();
+            logNode.dataLoader = logDataLoader;
             logNode.setName("Risk " + logIndex);
             folder.addChild(logNode);
-
-            if (!trajectoryMdRange.isEmpty)
-            {
-              const mdRange = trajectoryMdRange.clone();
-              mdRange.min = (mdRange.center + mdRange.min) / 2;
-              mdRange.expandByFraction(Random.getFloat2(-0.15, 0));
-
-              logNode.data = PointLog.createByRandom(mdRange, 10);
-            }
           }
         }
       }
@@ -273,6 +243,62 @@ export class SyntheticSubSurfaceModule extends BaseModule
         i++;
       }
     }
+  }
+}
+
+class TrajectoryDataLoader implements IDataLoader
+{
+  load(origin: DataNode): any
+  {
+    if (!(origin instanceof WellTrajectoryNode))
+      return null;
+
+    const wellNode = origin.wellNode;
+    if (!wellNode)
+      return null;
+
+    return WellTrajectory.createByRandom(wellNode.wellHead);
+  }
+}
+
+
+class LogDataLoader implements IDataLoader
+{
+  load(origin: DataNode): any
+  {
+    if (!(origin instanceof BaseLogNode))
+      return null;
+
+    const trajectory = origin.trajectory;
+    if (!trajectory)
+      return null;
+
+    const mdRange = trajectory.mdRange.clone();
+    if (origin instanceof CasingLogNode)
+    {
+      mdRange.expandByFraction(-0.05);
+      return FloatLog.createCasingByRandom(mdRange, 7);
+    }
+
+    mdRange.min = (mdRange.center + mdRange.min) / 2;
+    mdRange.expandByFraction(Random.getFloat2(-0.25, 0));
+
+    if (origin instanceof FloatLogNode)
+    {
+      const valueRange = new Range1(0, 3.14);
+      return FloatLog.createByRandom(mdRange, valueRange);
+    }
+    if (origin instanceof DiscreteLogNode)
+    {
+      const valueRange = new Range1(0, 4);
+      return DiscreteLog.createByRandom(mdRange, valueRange);
+    }
+    if (origin instanceof PointLogNode)
+    {
+      return PointLog.createByRandom(mdRange, 10);
+    }
+    Error("Can not load these data");
+    return null;
   }
 }
 
