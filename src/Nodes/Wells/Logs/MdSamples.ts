@@ -109,7 +109,8 @@ export abstract class MdSamples
   public expandMdRange(range: Range1): void
   {
     for (const sample of this.samples)
-      range.add(sample.md);
+      if (!sample.isMdEmpty)
+        range.add(sample.md);
   }
 
   //==================================================
