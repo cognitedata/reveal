@@ -90,7 +90,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
   public getViewInfo(): ViewInfo
   {
     const viewInfo = new ViewInfo();
-    viewInfo.addText("Cognite subsurface viewer");    
+    viewInfo.addText("Cognite subsurface viewer");
     for (const view of this.viewsShownHere.list)
       if (view instanceof Base3DView)
         view.getViewInfo(viewInfo);
@@ -99,6 +99,8 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
 
   public invalidate(value?: boolean): void
   {
-    this._isInvalidated = (value === undefined) ? true : value;
+    if (value === undefined)
+      value = true;
+    this._isInvalidated = value;
   }
 }

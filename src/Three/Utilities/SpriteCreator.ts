@@ -68,7 +68,7 @@ export class SpriteCreator
   public static createTexture(canvas: HTMLCanvasElement): THREE.Texture
   {
     const texture = new THREE.CanvasTexture(canvas);
-    texture.minFilter = THREE.LinearMipMapNearestFilter;
+    texture.minFilter = THREE.LinearFilter; // Don't change this, https://stackoverflow.com/questions/55175351/remove-texture-has-been-resized-console-logs-in-three-js
     texture.magFilter = THREE.NearestFilter;
 
     // texture.generateMipmaps = true; // Default

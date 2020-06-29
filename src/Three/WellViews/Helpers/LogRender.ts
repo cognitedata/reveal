@@ -97,7 +97,6 @@ export class LogRender
       if (!trajectory.getPositionAtMd(md, position))
         continue;
 
-
       if (!trajectory.getTangentAtMd(md, tangent))
         continue;
 
@@ -172,19 +171,30 @@ export class LogRender
       return;
 
     const valueRange = log.range;
-    canvas.beginFunction();
+    canvas.beginFunction(fill);
     for (let i = 0; i < log.samples.length; i++)
     {
       const sample = log.getAt(i);
+      if (sample.isEmpty || sample.isMdEmpty)
+      {
+        this.closePath(canvas, color, fill);
+        canvas.beginFunction(fill);
+        continue;
+      }
       const mdFraction = this.mdRange.getFraction(sample.md);
       const valueFraction = valueRange.getFraction(sample.value);
       canvas.addFunctionValue(mdFraction, valueFraction);
     }
-    canvas.closeFunction();
+    this.closePath(canvas, color, fill);
+  }
+
+  private closePath(canvas: Canvas, color: Color, fill: boolean): void
+  {
+    if (!canvas.closeFunction())
+      return;
+
     if (fill)
-    {
       canvas.fillPathBySemiTransparentGradient(color, 1);
-    }
     else
     {
       canvas.drawPath(null, 3);
@@ -203,7 +213,10 @@ export class LogRender
     for (let i = 0; i < log.samples.length; i++)
     {
       const sample = log.getAt(i);
-      const color = Colors.getNextColor(sample.value);
+      if (sample.isMdEmpty)
+        continue;
+
+      const color = sample.isEmpty ? Colors.grey : Colors.getNextColor(sample.value);
       const mdFraction = this.mdRange.getFraction(sample.md);
       if (i > 0)
         canvas.fillRect(prevMdFraction, mdFraction, prevColor, 0.75);
@@ -221,6 +234,9 @@ export class LogRender
     for (let i = 0; i < log.samples.length; i++)
     {
       const sample = log.getAt(i);
+      if (sample.isMdEmpty)
+        continue;
+
       const mdFraction = this.mdRange.getFraction(sample.md);
       canvas.drawText(mdFraction, sample.decription, fontSize, null, rightBand);
 

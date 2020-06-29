@@ -93,9 +93,12 @@ export class PointLogThreeView extends BaseGroupThreeView
 
     const range = new Range3();
     const position = Vector3.newZero;
-    for (let i = 0; i < log.samples.length; i++)
+    for (let i = log.samples.length - 1; i >= 0; i--)
     {
       const sample = log.getAt(i);
+      if (sample.isMdEmpty)
+        continue;
+
       if (trajectory.getPositionAtMd(sample.md, position))
         range.add(position);
     }
@@ -152,6 +155,9 @@ export class PointLogThreeView extends BaseGroupThreeView
         continue;
 
       var sample = log.getAt(index);
+      if (sample.isMdEmpty)
+        continue;
+
       if (!trajectory.getPositionAtMd(sample.md, position))
         continue;
 
@@ -234,6 +240,9 @@ export class PointLogThreeView extends BaseGroupThreeView
     for (let index = 0; index < log.samples.length; index++)
     {
       const sample = log.getAt(index);
+      if (sample.isMdEmpty)
+        continue;
+
       if (!trajectory.getPositionAtMd(sample.md, position))
         continue;
 
@@ -404,7 +413,6 @@ export class PointLogThreeView extends BaseGroupThreeView
       else
         context.fillText(text, margin, y);
     }
-
     return canvas;
   }
 }

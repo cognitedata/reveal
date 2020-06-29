@@ -83,9 +83,12 @@ export class CasingLogThreeView extends BaseGroupThreeView
     let maxRadius = 0;
     const position = Vector3.newZero;
 
-    for (let i = 0; i < log.samples.length; i++)
+    for (let i = log.samples.length - 1; i >= 0; i--)
     {
       const sample = log.getAt(i);
+      if (sample.isMdEmpty || sample.isEmpty)
+        continue;
+
       maxRadius = Math.max(maxRadius, sample.value);
       if (trajectory.getPositionAtMd(sample.md, position))
         range.add(position);
@@ -136,7 +139,12 @@ export class CasingLogThreeView extends BaseGroupThreeView
     for (let logIndex = 0; logIndex < log.length - 1; logIndex++)
     {
       const minSample = log.getAt(logIndex);
+      if (Number.isNaN(minSample.md))
+        continue;
+
       const maxSample = log.getAt(logIndex + 1);
+      if (Number.isNaN(maxSample.md))
+        continue;
 
       const position = Vector3.newZero;
       if (!trajectory.getPositionAtMd(minSample.md, position))

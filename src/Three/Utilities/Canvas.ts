@@ -28,8 +28,11 @@ export class Canvas
 
   private dx = 0;
   private dy = 0;
+
+  // These 3 values af for beginFunction, fillFunction and addFunctionValue
   private firstX = Number.NaN;
   private lastX = Number.NaN;
+  private fillFunction = false;
 
   private canvas: HTMLCanvasElement
   private context: CanvasRenderingContext2D;
@@ -106,17 +109,23 @@ export class Canvas
   // INSTANCE METHODS: Function path
   //==================================================
 
-  public beginFunction()
+  public beginFunction(fillPath: boolean)
   {
-    this.beginPath();
+    this.fillFunction = fillPath;
     this.firstX = Number.NaN;
   }
 
-  public closeFunction()
+  public closeFunction(): boolean
   {
-    this.context.lineTo(this.lastX, 0);
+    if (Number.isNaN(this.firstX))
+      return false;
+
+    if (this.fillFunction)
+      this.context.lineTo(this.lastX, 0);
+
     this.lastX = Number.NaN;
     this.firstX = Number.NaN;
+    return true;
   }
 
   public addFunctionValue(x: number, y: number)
@@ -129,7 +138,8 @@ export class Canvas
     {
       this.beginPath();
       this.firstX = x;
-      this.context.moveTo(x, 0);
+      if (this.fillFunction)
+        this.context.moveTo(x, 0);
     }
     this.context.lineTo(x, y);
     this.lastX = x;

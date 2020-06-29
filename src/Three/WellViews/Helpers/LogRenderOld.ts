@@ -226,8 +226,7 @@ export class LogRenderOld
       }
       if (i < log.samples.length - 1)
       {
-        const valueFraction = valueRange.getFraction(sample.value);
-        const color = Color.hsv(valueFraction * 360, 255, 100);
+        const color = sample.isEmpty ? Colors.grey : Colors.getNextColor(sample.value);
         buffers.addPair(startPosition, endPosition, normal, normal);
         TextureKit.add(colors, color);
         TextureKit.add(colors, color);
