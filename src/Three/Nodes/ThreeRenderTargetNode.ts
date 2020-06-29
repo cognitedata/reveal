@@ -190,6 +190,8 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     }
     if (this.isInvalidated || needsUpdate)
     {
+      console.log("Invalidated");
+
       const camera = this.camera;
       if (camera instanceof THREE.PerspectiveCamera)
       {

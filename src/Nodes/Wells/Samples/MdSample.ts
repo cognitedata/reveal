@@ -21,6 +21,8 @@ export class MdSample
 
   public md: number;
 
+  public get isMdEmpty(): boolean { return Number.isNaN(this.md); }
+
   //==================================================
   // CONSTRUCTORS
   //==================================================

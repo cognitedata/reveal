@@ -77,11 +77,13 @@ export class DiscreteLog extends BaseLog
 
   public expandRange(range: Range1): void
   {
-    for (const baseSample of this.samples) 
+    for (let i = this.samples.length - 1; i >= 0; i--)
     {
-      const sample = baseSample as DiscreteLogSample;
-      if (sample)
-        range.add(sample.value);
+      const sample = this.getAt(i);
+      if (sample.isMdEmpty || sample.isEmpty)
+        continue;
+
+      range.add(sample.value);
     }
   }
 

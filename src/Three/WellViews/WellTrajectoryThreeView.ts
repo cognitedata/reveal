@@ -277,7 +277,6 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       return true;
     if (node instanceof DiscreteLogNode)
       return true;
-
     return false;
   }
 
