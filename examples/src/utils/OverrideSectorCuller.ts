@@ -12,7 +12,9 @@ export class OverrideSectorCuller implements reveal.internal.SectorCuller {
     this._culler = new reveal.internal.ByVisibilityGpuSectorCuller();
   }
 
-  set overrideWantedSectors(sectors: reveal.internal.WantedSector[] | undefined) {
+  set overrideWantedSectors(
+    sectors: reveal.internal.WantedSector[] | undefined
+  ) {
     this._wantedSectors = sectors;
   }
 
@@ -20,7 +22,9 @@ export class OverrideSectorCuller implements reveal.internal.SectorCuller {
     return this._wantedSectors;
   }
 
-  determineSectors(input: reveal.internal.DetermineSectorsInput): reveal.internal.WantedSector[] {
+  determineSectors(
+    input: reveal.internal.DetermineSectorsInput
+  ): reveal.internal.WantedSector[] {
     if (this._wantedSectors) {
       return this._wantedSectors;
     }

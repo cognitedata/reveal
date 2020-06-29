@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { RevealManagerBase, RevealOptions } from './RevealManagerBase';
+import { RevealManagerBase } from './RevealManagerBase';
 
 import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
 import { MaterialManager } from '@/datamodels/cad/MaterialManager';
@@ -16,15 +16,22 @@ import { CachedRepository } from '@/datamodels/cad/sector/CachedRepository';
 import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
 import { CadManager } from '@/datamodels/cad/CadManager';
 import { LocalUrlClient as LocalHostClient } from '@/utilities/networking/LocalUrlClient';
-import { ModelNodeAppearance, CadNode } from '@/datamodels/cad';
+import { CadNode, NodeAppearanceProvider } from '@/datamodels/cad';
 import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloudMetadataRepository';
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
+import { RevealOptions } from './types';
+import { Subscription, combineLatest } from 'rxjs';
+import { distinctUntilChanged, map } from 'rxjs/operators';
 
 type LocalModelIdentifier = { fileName: string };
+type LoadingStateChangeListener = (isLoading: boolean) => any;
 
 export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifier> {
+  private readonly eventListeners: { loadingStateChanged: LoadingStateChangeListener[] };
+  private readonly _subscription: Subscription;
+
   constructor(options?: RevealOptions) {
     const modelDataParser: CadSectorParser = new CadSectorParser();
     const materialManager: MaterialManager = new MaterialManager();
@@ -57,22 +64,72 @@ export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifi
       pointCloudFactory
     );
     super(cadManager, materialManager, pointCloudManager);
+
+    this.eventListeners = {
+      loadingStateChanged: new Array<LoadingStateChangeListener>()
+    };
+    this.notifyLoadingStateListeners = this.notifyLoadingStateListeners.bind(this);
+
+    this._subscription = new Subscription();
+    this._subscription.add(
+      combineLatest([sectorRepository.getLoadingStateObserver(), pointCloudManager.getLoadingStateObserver()])
+        .pipe(
+          map(([pointCloudLoading, cadLoading]) => {
+            return pointCloudLoading || cadLoading;
+          }),
+          distinctUntilChanged()
+        )
+        .subscribe(
+          this.notifyLoadingStateListeners,
+          // tslint:disable-next-line:no-console
+          console.error
+        )
+    );
   }
 
-  public addModel(type: 'cad', fileName: string, modelNodeAppearance?: ModelNodeAppearance): Promise<CadNode>;
+  public addModel(type: 'cad', fileName: string, nodeApperanceProvider?: NodeAppearanceProvider): Promise<CadNode>;
   public addModel(type: 'pointcloud', fileName: string): Promise<[PotreeGroupWrapper, PotreeNodeWrapper]>;
   public addModel(
     type: 'cad' | 'pointcloud',
     fileName: string,
-    modelNodeAppearance?: ModelNodeAppearance
+    nodeApperanceProvider?: NodeAppearanceProvider
   ): Promise<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper]> {
     switch (type) {
       case 'cad':
-        return this._cadManager.addModel({ fileName }, modelNodeAppearance);
+        return this._cadManager.addModel({ fileName }, nodeApperanceProvider);
       case 'pointcloud':
         return this._pointCloudManager.addModel({ fileName });
       default:
         throw new Error(`case: ${type} not handled`);
     }
+  }
+
+  public on(event: 'loadingStateChanged', listener: LoadingStateChangeListener): void {
+    if (event !== 'loadingStateChanged') {
+      throw new Error(`Unsupported event "${event}"`);
+    }
+    this.eventListeners[event].push(listener);
+  }
+  public off(event: 'loadingStateChanged', listener: LoadingStateChangeListener): void {
+    if (event !== 'loadingStateChanged') {
+      throw new Error(`Unsupported event "${event}"`);
+    }
+    this.eventListeners[event] = this.eventListeners[event].filter(fn => fn !== listener);
+  }
+
+  public dispose(): void {
+    if (this.isDisposed) {
+      return;
+    }
+    this.eventListeners.loadingStateChanged.splice(0);
+    this._cadManager.dispose();
+    this._subscription.unsubscribe();
+    super.dispose();
+  }
+
+  private notifyLoadingStateListeners(isLoaded: boolean) {
+    this.eventListeners.loadingStateChanged.forEach(handler => {
+      handler(isLoaded);
+    });
   }
 }

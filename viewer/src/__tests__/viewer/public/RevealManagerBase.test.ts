@@ -12,9 +12,11 @@ import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 describe('RevealManagerBase', () => {
   const mockCadManager: Omit<CadManager<number>, ''> = {
     addModel: jest.fn(),
+    requestRedraw: jest.fn(),
     resetRedraw: jest.fn(),
     needsRedraw: false,
     updateCamera: jest.fn(),
+    dispose: jest.fn(),
     clippingPlanes: [],
     clipIntersection: false
   };
@@ -24,17 +26,16 @@ describe('RevealManagerBase', () => {
   const mockPointCloudManager: Omit<PointCloudManager<number>, ''> = {
     addModel: jest.fn(),
     needsRedraw: false,
-    updateCamera: jest.fn()
+    updateCamera: jest.fn(),
+    getLoadingStateObserver: jest.fn(),
+    requestRedraw: jest.fn()
   };
   const pointCloudManager = mockPointCloudManager as PointCloudManager<number>;
   const materialManager = new MaterialManager();
   const manager = new RevealManagerBase<number>(cadManager, materialManager, pointCloudManager);
 
-  test('update() calls CadManager.updateCamera()', () => {
-    const camera = new THREE.PerspectiveCamera();
-    const updateSpy = jest.spyOn(mockCadManager, 'updateCamera');
-    manager.update(camera);
-    expect(updateSpy).toBeCalled();
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
   test('resetRedraw() calls CadManager.resetRedraw()', () => {
@@ -58,5 +59,18 @@ describe('RevealManagerBase', () => {
     expect(setClipIntersectionSpy).toBeCalled();
     expect(materialManager.clipIntersection).toBeTrue();
     expect(mockCadManager.clipIntersection).toBeTrue();
+  });
+
+  test('update only triggers update when camera changes', () => {
+    const camera = new THREE.PerspectiveCamera(60, 1, 0.5, 100);
+    const updateCameraSpy = jest.spyOn(mockCadManager, 'updateCamera');
+    manager.update(camera);
+    expect(updateCameraSpy).toBeCalledTimes(1); // Changed
+    manager.update(camera);
+    expect(updateCameraSpy).toBeCalledTimes(1); // Unchanged
+    camera.position.set(1, 2, 3);
+    manager.update(camera);
+    expect(updateCameraSpy).toBeCalledTimes(2); // Changed again
+    updateCameraSpy.mockClear();
   });
 });

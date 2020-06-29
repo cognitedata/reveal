@@ -7,6 +7,7 @@ const int RenderTypeNormal = 2;
 const int RenderTypeTreeIndex = 3;
 const int RenderTypePackColorAndNormal = 4;
 const int RenderTypeDepth = 5;
+const int RenderTypeEffects = 6;
 
 #include <packing>
 
@@ -15,7 +16,7 @@ vec3 packNormalToRgb( const in vec3 normal ) {
 }
 
 void updateFragmentColor(int renderMode, vec3 color, float treeIndex, vec3 normal, float depth, sampler2D matCapTexture) {
-    if (renderMode == RenderTypeColor) {
+    if (renderMode == RenderTypeColor || renderMode == RenderTypeEffects) {
         vec3 hsv = rgb2hsv(color);
         float h = hsv.x;
         hsv.z = min(0.6 * hsv.z + 0.4, 1.0);

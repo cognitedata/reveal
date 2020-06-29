@@ -1,7 +1,6 @@
 {
   "name": "@cognite/reveal",
   "version": "1.0.0-alpha-1",
-  "private": true,
   "description": "WebGL based 3D viewer for CAD and point clouds processed in Cognite CDF.",
   "repository": {
     "type": "git",
@@ -9,22 +8,24 @@
     "url": "https://github.com/cognitedata/reveal.git"
   },
   "homepage": "https://github.com/cognitedata/reveal/tree/master/viewer",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
   "scripts": {
-    "release": "npm run mkdist && webpack",
-    "build": "npm run mkdist && webpack --env.development",
+    "release": "yarn run mkdist && webpack",
+    "build": "yarn run mkdist && webpack --env.development",
+    "build:watch": "yarn run build -- --watch",
+    "serve": "cd ./dist && yarn link && cd ../../examples && yarn && yarn link @cognite/reveal && yarn run start",
     "mkdist": "run-script-os",
-    "mkdist:win32": "@powershell $(if(-not(Test-Path dist -PathType Container)) { mkdir dist;$? } else { $true;$? }) -and $(Copy-Item -Path package.json, README.md -Destination dist;$?)",
-    "mkdist:linux:darwin": "mkdir -p dist && cp package.json README.md dist",
-    "clean": "rimraf -rf dist/ target/ pkg/",
+    "mkdist:win32": "@powershell $(if(-not(Test-Path dist -PathType Container)) { mkdir dist;$? } else { $true;$? })",
+    "mkdist:linux:darwin": "mkdir -p dist",
+    "clean": "rimraf -rf dist/ ../target pkg/",
     "test": "jest",
     "coverage": "jest --coverage",
     "lint": "tslint --project .",
-    "serve": "npm install && npm link && cd examples && npm install && npm link @cognite/reveal && npm run serve",
-    "prepublishscript": "npm run release && npm run coverage",
-    "publishscript": "node script/copyPackage.js",
-    "postpublishscript": "cd dist && npm publish"
+    "prepublishscript": "yarn run coverage && yarn run clean && yarn run release"
   },
   "author": "Lars Moastuen <lars.moastuen@cognite.com>",
   "contributors": [
@@ -40,6 +41,7 @@
     ]
   },
   "devDependencies": {
+    "@cognite/sdk": "^2.29.0",
     "@cognite/tslint-config-cognite-3d": "^1.0.4",
     "@types/gl-matrix": "^2.4.5",
     "@types/jest": "^26.0.3",
@@ -59,6 +61,7 @@
     "raw-loader": "^4.0.1",
     "rimraf": "^3.0.2",
     "run-script-os": "^1.1.1",
+    "three": "^0.115.0",
     "ts-jest": "^25.5.1",
     "ts-loader": "7.0.5",
     "tslint": "^5.20.1",
@@ -85,7 +88,10 @@
     "glslify": "^7.0.0",
     "glslify-import": "^3.1.0",
     "lodash": "^4.17.15",
-    "rxjs": "^6.5.5",
+    "rxjs": "^6.5.5"
+  },
+  "peerDependencies": {
+    "@cognite/sdk": "^2.32.0",
     "three": "^0.115.0"
   }
 }

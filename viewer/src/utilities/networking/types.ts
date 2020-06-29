@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { File3dFormat } from '../File3dFormat';
+import { File3dFormat } from '../types';
 
 export interface BlobOutputMetadata {
   blobId: number;
@@ -11,5 +11,5 @@ export interface BlobOutputMetadata {
 }
 
 export interface ModelUrlProvider<TModelIdentifier> {
-  getModelUrl(params: TModelIdentifier): Promise<string>;
+  getModelUrl(identifier: TModelIdentifier): Promise<string>;
 }

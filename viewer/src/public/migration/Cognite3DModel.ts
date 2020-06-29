@@ -9,12 +9,19 @@ import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { Color, SupportedModelTypes } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
-import { toThreeJsBox3, toThreeMatrix4 } from '@/utilities/utilities';
-import { CadRenderHints, CadNode, ModelNodeAppearance } from '@/experimental';
+import { toThreeJsBox3, toThreeMatrix4, toThreeVector3, fromThreeVector3 } from '@/utilities';
+import { CadRenderHints, CadNode } from '@/experimental';
 import { CadLoadingHints } from '@/datamodels/cad/CadLoadingHints';
 import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
 import { SectorGeometry } from '@/datamodels/cad/sector/types';
 import { SectorQuads } from '@/datamodels/cad/rendering/types';
+import { vec3 } from 'gl-matrix';
+import { NodeAppearanceProvider, DefaultNodeAppearance } from '@/datamodels/cad/NodeAppearance';
+import { Matrix4 } from 'three';
+
+const mapCoordinatesBuffers = {
+  v: vec3.create()
+};
 
 export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = SupportedModelTypes.CAD;
@@ -39,6 +46,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   readonly cadModel: CadModelMetadata;
   readonly cadNode: CadNode;
   readonly nodeColors: Map<number, [number, number, number, number]>;
+  readonly selectedNodes: Set<number>;
   readonly hiddenNodes: Set<number>;
   readonly client: CogniteClient;
   readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
@@ -51,20 +59,59 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.client = client;
     this.nodeColors = new Map();
     this.hiddenNodes = new Set();
+    this.selectedNodes = new Set();
     this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client);
-    const nodeAppearance: ModelNodeAppearance = {
-      color: (treeIndex: number) => {
-        return this.nodeColors.get(treeIndex);
-      },
-      visible: (treeIndex: number) => {
-        return this.hiddenNodes.has(treeIndex) ? false : true;
+
+    const nodeAppearanceProvider: NodeAppearanceProvider = {
+      styleNode: (treeIndex: number) => {
+        let style = DefaultNodeAppearance.NoOverrides;
+        if (this.hiddenNodes.has(treeIndex)) {
+          style = { ...style, ...DefaultNodeAppearance.Hidden };
+        }
+        if (this.nodeColors.has(treeIndex)) {
+          style = { ...style, color: this.nodeColors.get(treeIndex) };
+        }
+        if (this.selectedNodes.has(treeIndex)) {
+          style = { ...style, ...DefaultNodeAppearance.Highlighted };
+        }
+        return style;
       }
     };
-    cadNode.materialManager.updateLocalAppearance(this.cadModel.blobUrl, nodeAppearance);
+
+    cadNode.materialManager.setNodeAppearanceProvider(this.cadModel.blobUrl, nodeAppearanceProvider);
+    cadNode.requestNodeUpdate([...Array(cadNode.sectorScene.maxTreeIndex + 1).keys()]);
 
     this.cadNode = cadNode;
 
     this.children.push(this.cadNode);
+  }
+
+  /**
+   * Maps a position retrieved from the CDF API (e.g. 3D node information) to
+   * coordinates in "ThreeJS model space". This is necessary because CDF has a right-handed
+   * Z-up coordinate system while ThreeJS uses a right-hand Y-up coordinate system.
+   * @param p     The CDF coordinate to transform
+   * @param out   Optional preallocated buffer for storing the result
+   */
+  mapFromCdfToModelCoordinates(p: THREE.Vector3, out?: THREE.Vector3): THREE.Vector3 {
+    out = out !== undefined ? out : new THREE.Vector3();
+    const { v } = mapCoordinatesBuffers;
+    fromThreeVector3(v, p);
+    return toThreeVector3(out, v, this.cadModel.modelTransformation);
+  }
+
+  /**
+   * Maps from a 3D position in "ThreeJS model space" (e.g. a ray intersection coordinate)
+   * to coordinates in "CDF space". This is necessary because CDF has a right-handed
+   * Z-up coordinate system while ThreeJS uses a right-hand Y-up coordinate system.
+   * @param p       The ThreeJS coordinate to transform
+   * @param out     Optional preallocated buffer for storing the result
+   */
+  mapPositionFromModelToCdfCoordinates(p: THREE.Vector3, out?: THREE.Vector3): THREE.Vector3 {
+    out = out !== undefined ? out : new THREE.Vector3();
+    const { v } = mapCoordinatesBuffers;
+    fromThreeVector3(v, p, this.cadModel.modelTransformation);
+    return toThreeVector3(out, v);
   }
 
   dispose() {
@@ -77,22 +124,27 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   getBoundingBox(nodeId?: number, box?: THREE.Box3): THREE.Box3 {
     if (nodeId) {
-      throw new NotSupportedInMigrationWrapperError('Use getBoundingBoxFromApi(nodeId: number)');
+      throw new NotSupportedInMigrationWrapperError('Use getBoundingBoxFromCdf(nodeId: number)');
     }
 
     const bounds = this.cadModel.scene.root.bounds;
     return toThreeJsBox3(box || new THREE.Box3(), bounds, this.cadModel.modelTransformation);
   }
 
-  getModelBoundingBox(): THREE.Box3 {
-    return this.getBoundingBox();
+  getModelBoundingBox(outBbox?: THREE.Box3): THREE.Box3 {
+    return this.getBoundingBox(undefined, outBbox);
+  }
+
+  updateTransformation(matrix: Matrix4): void {
+    this.cadNode.applyMatrix4(matrix);
+    this.cadNode.updateMatrixWorld(false);
   }
 
   updateNodeIdMaps(sector: { lod: string; data: SectorGeometry | SectorQuads }) {
     this.nodeIdAndTreeIndexMaps.updateMaps(sector);
   }
 
-  async getBoundingBoxFromApi(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
+  async getBoundingBoxFromCdf(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
     const response = await this.client.revisions3D.retrieve3DNodes(this.modelId, this.revisionId, [{ id: nodeId }]);
     if (response.length < 1) {
       throw new Error('NodeId not found');
@@ -107,7 +159,12 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   iterateNodes(_action: (nodeId: number, treeIndex?: number) => void): void {
-    throw new NotSupportedInMigrationWrapperError();
+    throw new NotSupportedInMigrationWrapperError('Use iterateNodesByTreeIndex(action: (treeIndex: number) => void)');
+  }
+  iterateNodesByTreeIndex(action: (treeIndex: number) => void): void {
+    for (let i = 0; i < this.cadModel.scene.maxTreeIndex; i++) {
+      action(i);
+    }
   }
 
   iterateSubtree(
@@ -134,6 +191,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
         b
       };
     } catch (error) {
+      // tslint:disable-next-line: no-console
       console.error(`Cannot get color of ${nodeId} because of error:`, error);
       return {
         r: 255,
@@ -148,26 +206,59 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.setNodeColorByTreeIndex(treeIndex, r, g, b);
   }
 
+  setNodeColorByTreeIndex(treeIndex: number, r: number, g: number, b: number) {
+    this.nodeColors.set(treeIndex, [r, g, b, 255]);
+    this.cadNode.requestNodeUpdate([treeIndex]);
+  }
+
   async resetNodeColor(nodeId: number): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.resetNodeColorByTreeIndex(treeIndex);
+  }
+
+  resetNodeColorByTreeIndex(treeIndex: number) {
     this.nodeColors.delete(treeIndex);
     this.cadNode.requestNodeUpdate([treeIndex]);
   }
 
-  selectNode(_nodeId: number): void {
-    throw new NotSupportedInMigrationWrapperError();
+  resetAllNodeColors() {
+    const nodeIds = Array.from(this.nodeColors.keys());
+    this.nodeColors.clear();
+    this.cadNode.requestNodeUpdate(nodeIds);
   }
 
-  deselectNode(_nodeId: number): void {
-    throw new NotSupportedInMigrationWrapperError();
+  async selectNode(nodeId: number): Promise<void> {
+    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.selectNodeByTreeIndex(treeIndex);
+  }
+
+  selectNodeByTreeIndex(treeIndex: number) {
+    this.selectedNodes.add(treeIndex);
+    this.cadNode.requestNodeUpdate([treeIndex]);
+  }
+
+  async deselectNode(nodeId: number): Promise<void> {
+    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.deselectNodeByTreeIndex(treeIndex);
+  }
+
+  deselectNodeByTreeIndex(treeIndex: number) {
+    this.selectedNodes.delete(treeIndex);
+    this.cadNode.requestNodeUpdate([treeIndex]);
   }
 
   deselectAllNodes(): void {
-    throw new NotSupportedInMigrationWrapperError();
+    const selectedNodes = Array.from(this.selectedNodes);
+    this.selectedNodes.clear();
+    this.cadNode.requestNodeUpdate(selectedNodes);
   }
 
   async showNode(nodeId: number): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.showNodeByTreeIndex(treeIndex);
+  }
+
+  showNodeByTreeIndex(treeIndex: number): void {
     this.hiddenNodes.delete(treeIndex);
     this.cadNode.requestNodeUpdate([treeIndex]);
   }
@@ -189,20 +280,19 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   async hideNode(nodeId: number, makeGray?: boolean): Promise<void> {
+    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.hideNodeByTreeIndex(treeIndex, makeGray);
+  }
+
+  hideNodeByTreeIndex(treeIndex: number, makeGray?: boolean): void {
     if (makeGray) {
       throw new NotSupportedInMigrationWrapperError();
     }
-    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
     this.hiddenNodes.add(treeIndex);
     this.cadNode.requestNodeUpdate([treeIndex]);
   }
 
   tryGetNodeId(treeIndex: number): number | undefined {
     return this.nodeIdAndTreeIndexMaps.getNodeId(treeIndex);
-  }
-
-  private setNodeColorByTreeIndex(treeIndex: number, r: number, g: number, b: number) {
-    this.nodeColors.set(treeIndex, [r, g, b, 255]);
-    this.cadNode.requestNodeUpdate([treeIndex]);
   }
 }

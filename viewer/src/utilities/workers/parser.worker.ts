@@ -3,22 +3,15 @@
  */
 
 import * as Comlink from 'comlink';
-import {
-  ParseSectorResult,
-  ParseCtmResult,
-  ParseQuadsResult,
-  ParsedPrimitives,
-  ParsePrimitiveAttribute
-} from './types/parser.types';
+import { ParseSectorResult, ParseCtmResult, ParsedPrimitives, ParsePrimitiveAttribute } from './types/parser.types';
 import * as rustTypes from '../../../pkg';
+import { SectorQuads } from '@/datamodels/cad/rendering/types';
 const rustModule = import('../../../pkg');
 
 export class ParserWorker {
   public async parseSector(buffer: Uint8Array): Promise<ParseSectorResult> {
     const rust = await rustModule;
-    // TODO dragly 2020-04-22 could this be just one call that returns renderables?
-    const sectorDataHandle = rust.parse_sector(buffer);
-    const sectorData = rust.convert_sector(sectorDataHandle);
+    const sectorData = rust.parse_and_convert_sector(buffer);
 
     const instanceMeshes = this.extractInstanceMeshes(sectorData);
 
@@ -35,7 +28,6 @@ export class ParserWorker {
     };
 
     sectorData.free();
-    sectorDataHandle.free();
 
     return parseResult;
   }
@@ -57,13 +49,13 @@ export class ParserWorker {
     return result;
   }
 
-  public async parseQuads(buffer: Uint8Array): Promise<ParseQuadsResult> {
+  public async parseQuads(buffer: Uint8Array): Promise<SectorQuads> {
     const rust = await rustModule;
 
     const sectorData = rust.parse_and_convert_f3df(buffer);
 
     const result = {
-      faces: sectorData.faces(),
+      buffer: sectorData.faces(),
       treeIndexToNodeIdMap: sectorData.tree_index_to_node_id_map(),
       nodeIdToTreeIndexMap: sectorData.node_id_to_tree_index_map()
     };

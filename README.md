@@ -27,20 +27,16 @@ You can either run the same command as in Windows, or install it faster through 
 
 ## Getting started ##
 
-To test the viewer, you need to build the viewer first and then the examples:
+To test the viewer, you need to build the viewer and then the serve script will handle dependencies for examples:
 
 ```
 cd viewer
-npm install
-npm run build
-cd ..
-
-cd examples
-npm install
-npm run serve
+yarn install
+yarn build
+yarn serve
 ```
 
-If you now navigate to [localhost:8080](https://localhost:8080), you will see a list of examples
+If you now navigate to [localhost:3000](https://localhost:3000), you will see a list of examples
 that can be explored in the browser.
 
 ## Publishing Viewer (Dev only)
@@ -51,5 +47,5 @@ To publish a new version of a viewer follow these steps.
 2) Bump up the version in the `viewer/package.json` file
 > **Note**: When bumping up major and minor version remember that you need to make a new release branch.
 3) Change directory to the viewer folder, `cd viewer`
-4) Run in terminal `npm run publishscript`
+4) Run in terminal `yarn publishscript`
 

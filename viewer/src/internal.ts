@@ -7,8 +7,7 @@ export { PotreePointColorType, PotreePointShape } from './datamodels/pointcloud/
 export { PotreeNodeWrapper } from './datamodels/pointcloud/PotreeNodeWrapper';
 export { PotreeGroupWrapper } from './datamodels/pointcloud/PotreeGroupWrapper';
 
-export { suggestCameraConfig } from './utilities/cameraUtils';
-export { traverseDepthFirst, traverseUpwards } from './utilities/traversal';
+export { traverseDepthFirst, traverseUpwards } from './utilities/objectTraversal';
 export { WantedSector } from './datamodels/cad/sector/types';
 export { LevelOfDetail } from './datamodels/cad/sector/LevelOfDetail';
 

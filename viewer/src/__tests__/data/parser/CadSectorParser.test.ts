@@ -7,7 +7,7 @@ import { flatMap } from 'rxjs/operators';
 
 import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
 import { WorkerPool } from '@/utilities/workers/WorkerPool';
-import { ParseQuadsResult } from '@/utilities/workers/types/parser.types';
+import { SectorQuads } from '@/datamodels/cad/rendering/types';
 
 jest.mock('@/utilities/workers/WorkerPool');
 
@@ -46,10 +46,10 @@ describe('CadSectorParser', () => {
     // Arrange
     let events = 0;
     let errors = 0;
-    const result: ParseQuadsResult = {
+    const result: SectorQuads = {
       treeIndexToNodeIdMap: new Map(),
       nodeIdToTreeIndexMap: new Map(),
-      faces: new Float32Array()
+      buffer: new Float32Array()
     };
     jest.spyOn(workerPool, 'postWorkToAvailable').mockImplementation(() => {
       return Promise.resolve(result);

@@ -2,16 +2,17 @@
  * Copyright 2020 Cognite AS
  */
 
-import { IdEither } from '@cognite/sdk';
 import { BlobOutputMetadata } from './types';
-import { File3dFormat } from '../File3dFormat';
+import { File3dFormat } from '../types';
 
 export class Model3DOutputList {
-  public readonly model: IdEither;
+  public readonly modelId: number;
+  public readonly revisionId: number;
   public readonly outputs: BlobOutputMetadata[];
 
-  constructor(model: IdEither, outputs: BlobOutputMetadata[]) {
-    this.model = model;
+  constructor(modelId: number, revisionId: number, outputs: BlobOutputMetadata[]) {
+    this.modelId = modelId;
+    this.revisionId = revisionId;
     this.outputs = outputs;
   }
 
