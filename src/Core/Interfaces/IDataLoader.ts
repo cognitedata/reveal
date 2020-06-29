@@ -11,7 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import { DataNode } from "@/Core/Nodes/DataNode";
+
 export interface  IDataLoader
 {
-  load(): any;
+  load(origin: DataNode): any;
 }
