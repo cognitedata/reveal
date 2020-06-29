@@ -13,7 +13,6 @@
 
 import * as Color from "color"
 
-import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { BaseLog } from "@/Nodes/Wells/Logs/BaseLog";
 import { WellNode } from "@/Nodes/Wells/Wells/WellNode";
 import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
@@ -24,21 +23,16 @@ import { Util } from "@/Core/Primitives/Util";
 import { ITarget } from "@/Core/Interfaces/ITarget";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
+import { DataNode } from "@/Core/Nodes/DataNode";
 
-export abstract class BaseLogNode extends BaseVisualNode
+export abstract class BaseLogNode extends DataNode
 {
-  //==================================================
-  // INSTANCE FIELDS
-  //==================================================
-
-  protected _data: BaseLog | null = null;
-
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): BaseLog | null { return this._data; }
-  public set data(value: BaseLog | null) { this._data = value; }
+  public get data(): BaseLog | null { return this.anyData; }
+  public set data(value: BaseLog | null) { this.anyData = value; }
   public get well(): WellNode | null { return this.getAncestorByType(WellNode); }
   public get trajectoryNode(): WellTrajectoryNode | null { return this.getAncestorByType(WellTrajectoryNode); }
   public get trajectory(): WellTrajectory | null { const node = this.trajectoryNode; return node ? node.data : null; }

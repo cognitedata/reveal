@@ -14,7 +14,6 @@
 import { ColorType } from "@/Core/Enums/ColorType";
 import { Range3 } from "@/Core/Geometry/Range3";
 
-import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { WellTrajectoryStyle } from "@/Nodes/Wells/Styles/WellTrajectoryStyle";
@@ -24,21 +23,16 @@ import { FilterLogFolder } from "@/Nodes/Wells/Filters/FilterLogFolder";
 import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 
 import WellTrajectoryNodeIcon from "@images/Nodes/WellTrajectoryNode.png";
+import { DataNode } from "@/Core/Nodes/DataNode";
 
-export class WellTrajectoryNode extends BaseVisualNode
+export class WellTrajectoryNode extends DataNode
 {
-  //==================================================
-  // INSTANCE FIELDS
-  //==================================================
-
-  private _data: WellTrajectory | null = null;
-
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): WellTrajectory | null { return this._data; }
-  public set data(value: WellTrajectory | null) { this._data = value; }
+  public get data(): WellTrajectory | null { return this.anyData; }
+  public set data(value: WellTrajectory | null) { this.anyData = value; }
   public get renderStyle(): WellTrajectoryStyle | null { return this.getRenderStyle() as WellTrajectoryStyle; }
   public get well(): WellNode | null { return this.getAncestorByType(WellNode); }
 

@@ -15,13 +15,13 @@ import { ColorType } from "@/Core/Enums/ColorType";
 import { Range3 } from "@/Core/Geometry/Range3";
 import { Points } from "@/Core/Geometry/Points";
 
-import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { PointsRenderStyle } from "@/Nodes/Misc/PointsRenderStyle";
 import PointsNodeIcon from "@images/Nodes/PointsNode.png";
+import { DataNode } from "@/Core/Nodes/DataNode";
 
-export class PointsNode extends BaseVisualNode
+export class PointsNode extends DataNode
 {
   //==================================================
   // CONSTRUCTORS
@@ -30,17 +30,11 @@ export class PointsNode extends BaseVisualNode
   public constructor() { super(); }
 
   //==================================================
-  // INSTANCE FIELDS
-  //==================================================
-
-  private _data: Points | null = null;
-
-  //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): Points | null { return this._data; }
-  public set data(value: Points | null) { this._data = value; }
+  public get data(): Points | null { return this.anyData; }
+  public set data(value: Points | null) { this.anyData = value; }
   public get renderStyle(): PointsRenderStyle | null { return this.getRenderStyle() as PointsRenderStyle; }
 
   //==================================================

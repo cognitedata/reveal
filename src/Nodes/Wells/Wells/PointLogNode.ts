@@ -22,8 +22,8 @@ export class PointLogNode extends BaseLogNode
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): PointLog | null { return this._data as PointLog; }
-  public set data(value: PointLog | null) { this._data = value; }
+  public get data(): PointLog | null { return this.anyData as PointLog; }
+  public set data(value: PointLog | null) { this.anyData = value; }
 
   //==================================================
   // CONSTRUCTORS
