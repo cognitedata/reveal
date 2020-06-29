@@ -49,7 +49,7 @@ export abstract class DataNode extends BaseVisualNode
     if (!this.dataLoader)
       return null;
 
-    const data = this.dataLoader.load();
+    const data = this.dataLoader.load(this);
     return this.anyData = data;
   }
 
