@@ -62,6 +62,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   private _toolController = new ToolController();
   private _raycaster = new THREE.Raycaster();
   private _transformer = new ThreeTransformer();
+  private _isInvalidatedNearAndFarPlane = true;
 
   //==================================================
   // INSTANCE PROPERTIES: Tools
@@ -170,6 +171,43 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     return !this._cameraControl ? false : this._cameraControl.viewRange(boundingBox);
   }
 
+  public invalidateNearAndFarPlane(value?: boolean): void
+  {
+    if (value === undefined)
+      value = true;
+    this._isInvalidatedNearAndFarPlane = value;
+  }
+
+  private updateNearAndFarPlane(): void
+  {
+    if (!this.isInitialized)
+      return;
+
+    if (!this._isInvalidatedNearAndFarPlane)
+      return;
+
+    const camera = this.camera;
+    if (camera instanceof THREE.PerspectiveCamera)
+    {
+      const boundingBox = this.getBoundingBoxFromViews();
+      if (!boundingBox || boundingBox.isEmpty)
+        return;
+
+      this.transformer.transformRangeTo3D(boundingBox);
+
+      const diagonal = boundingBox.diagonal;
+      const near = 0.001 * diagonal;
+      const far = 2 * diagonal + this.cameraControl.distance;
+      if (!Ma.IsAbsEqual(camera.near, near, 0.1 * near) || !Ma.IsAbsEqual(camera.far, far, 0.1 * far))
+      {
+        camera.near = near;
+        camera.far = far;
+        camera.updateProjectionMatrix();
+      }
+    }
+    this._isInvalidatedNearAndFarPlane = false;
+  }
+
   //==================================================
   // INSTANCE METHODS: Render
   //==================================================
@@ -190,24 +228,8 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     }
     if (this.isInvalidated || needsUpdate)
     {
-      console.log("Invalidated");
+      this.updateNearAndFarPlane();
 
-      const camera = this.camera;
-      if (camera instanceof THREE.PerspectiveCamera)
-      {
-        const boundingBox = this.getBoundingBoxFromViews();
-        this.transformer.transformRangeTo3D(boundingBox);
-        
-        const diagonal = boundingBox.diagonal;
-        const near = 0.001 * diagonal;
-        const far = 2 * diagonal + this.cameraControl.distance;
-        if (!Ma.IsAbsEqual(camera.near, near, 0.1 * near) || !Ma.IsAbsEqual(camera.far, far, 0.1 * far))
-        {
-          camera.near = near;
-          camera.far = far;
-          camera.updateProjectionMatrix();
-        }
-      }
       if (this.isEmpty)
         this.isEmpty = !this.viewFrom(-1);
 
@@ -330,7 +352,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     return intersection ? intersection.point : null;
   }
 
-  public getMouseRelativePosition(event: MouseEvent): THREE.Vector2 
+  public getMouseRelativePosition(event: MouseEvent): THREE.Vector2
   {
     const rect = this.domElement.getBoundingClientRect();
     let x = (event.clientX - rect.left) / rect.width;
