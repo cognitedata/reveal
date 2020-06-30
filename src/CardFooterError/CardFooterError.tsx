@@ -1,5 +1,6 @@
 import React from 'react';
-import { Icon } from 'antd';
+import { Icon } from '@cognite/cogs.js';
+
 import { Centered } from 'styles/elements';
 
 import styled from 'styled-components';
@@ -17,7 +18,7 @@ const CardFooterError = ({ children, style }: Props) => {
     <StyledCardFooterError style={style}>
       <div className="color-overlay" />
       <Centered style={{ padding: '0 16px' }}>
-        <Icon type="warning" style={{ fontSize: '14px' }} />
+        <Icon type="Warning" style={{ fontSize: '14px' }} />
       </Centered>
       <VerticalAligned>
         <div className="message">{children}</div>

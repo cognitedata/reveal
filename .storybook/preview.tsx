@@ -1,5 +1,4 @@
 import React, { Suspense } from 'react';
-import 'antd/dist/antd.css';
 import '@cognite/cogs.js/dist/cogs.css';
 import { addDecorator } from '@storybook/react';
 import Metrics from '@cognite/metrics';
