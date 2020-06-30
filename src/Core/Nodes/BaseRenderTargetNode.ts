@@ -81,7 +81,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
   {
     const boundingBox = new Range3();
     for (const view of this.viewsShownHere.list)
-      if (view instanceof Base3DView)
+      if (view instanceof Base3DView && view.isVisible)
         boundingBox.addRange(view.boundingBox);
 
     return boundingBox;

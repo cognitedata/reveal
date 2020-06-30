@@ -12,7 +12,6 @@
 //=====================================================================================
 
 import { BaseLogSample } from "@/Nodes/Wells/Samples/BaseLogSample";
-import { LoDashImplicitNumberArrayWrapper } from "lodash";
 
 export class PointLogSample extends BaseLogSample 
 {
