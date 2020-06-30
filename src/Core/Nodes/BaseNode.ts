@@ -322,7 +322,7 @@ export abstract class BaseNode extends Identifiable
   // INSTANCE METHODS: Getters
   //==================================================
 
-  public getColorByColorType(colorType: ColorType)
+  public getColorByColorType(colorType: ColorType): Color
   {
     switch (colorType)
     {

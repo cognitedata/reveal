@@ -128,7 +128,7 @@ export class PointLogThreeView extends BaseGroupThreeView
       return;
 
     const camera = this.camera;
-    const cameraPosition = ThreeConverter.fromVector(camera.position);
+    const cameraPosition = ThreeConverter.toWorld(camera.position);
     const cameraDirection = trajectory.range.center;
     this.transformer.transformTo3D(cameraDirection);
 
@@ -172,7 +172,7 @@ export class PointLogThreeView extends BaseGroupThreeView
       const prependicular = cameraDirection.getNormal(tangent);
       position.addWithFactor(prependicular, selectedRadius);
 
-      ThreeConverter.copy(child.position, position);
+      ThreeConverter.copyTo3D(child.position, position);
     }
   }
 
@@ -229,9 +229,9 @@ export class PointLogThreeView extends BaseGroupThreeView
     const closedGeometry = new THREE.SphereGeometry(radius, 16, 8);
     const openGeometry = new THREE.SphereGeometry(selectedRadius, 16, 8);
 
-    const closedMaterial = new THREE.MeshPhongMaterial({ color: ThreeConverter.toColor(color) });
-    const openMaterial = new THREE.MeshPhongMaterial({ color: ThreeConverter.toColor(color) });
-    openMaterial.emissive = ThreeConverter.toColor(Colors.selectedEmissive);
+    const closedMaterial = new THREE.MeshPhongMaterial({ color: ThreeConverter.to3DColor(color) });
+    const openMaterial = new THREE.MeshPhongMaterial({ color: ThreeConverter.to3DColor(color) });
+    openMaterial.emissive = ThreeConverter.to3DColor(Colors.selectedEmissive);
 
     const up = Vector3.newUp;
     const tangent = Vector3.newZero;
@@ -260,11 +260,11 @@ export class PointLogThreeView extends BaseGroupThreeView
         const axis = up.getCross(tangent);
         // determine the amount to rotate
         const radians = Math.acos(tangent.getDot(up));
-        sphere.rotateOnAxis(ThreeConverter.toVector(axis), radians);
+        sphere.rotateOnAxis(ThreeConverter.to3D(axis), radians);
       }
 
       // Get perpendicular
-      ThreeConverter.copy(sphere.position, position);
+      ThreeConverter.copyTo3D(sphere.position, position);
       sphere.userData["sphere"] = index;
 
       group.add(sphere);
@@ -327,7 +327,7 @@ export class PointLogThreeView extends BaseGroupThreeView
 
     sprite.scale.set(width, height, 1);
 
-    ThreeConverter.copy(sprite.position, position);
+    ThreeConverter.copyTo3D(sprite.position, position);
     return sprite;
   }
 

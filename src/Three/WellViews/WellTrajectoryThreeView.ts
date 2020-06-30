@@ -210,7 +210,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     let cameraChanged = false;
     {
       const camera = this.camera;
-      const cameraPosition = ThreeConverter.fromVector(camera.position);
+      const cameraPosition = ThreeConverter.toWorld(camera.position);
       const cameraDirection = trajectory.range.center;
       this.transformer.transformTo3D(cameraDirection);
 
@@ -345,7 +345,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
     const geometry = new TrajectoryBufferGeometry(samples);
     const material = new THREE.MeshStandardMaterial({
-      color: ThreeConverter.toColor(Colors.white),
+      color: ThreeConverter.to3DColor(Colors.white),
       vertexColors: THREE.VertexColors,
       transparent: true,
       opacity: 1

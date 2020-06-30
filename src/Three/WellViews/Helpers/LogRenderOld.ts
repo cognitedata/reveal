@@ -80,8 +80,8 @@ export class LogRenderOld
       const endPosition = Vector3.addWithFactor(position, prependicular, endTickmark);
 
       // Add tick mark
-      geometry.vertices.push(ThreeConverter.toVector(startPosition));
-      geometry.vertices.push(ThreeConverter.toVector(endPosition));
+      geometry.vertices.push(ThreeConverter.to3D(startPosition));
+      geometry.vertices.push(ThreeConverter.to3D(endPosition));
 
       if (!Ma.isInc(md, labelInc))
         continue;
@@ -92,7 +92,7 @@ export class LogRenderOld
       if (label)
         group.add(label);
     }
-    const material = new THREE.LineBasicMaterial({ color: ThreeConverter.toColor(bandColor) });
+    const material = new THREE.LineBasicMaterial({ color: ThreeConverter.to3DColor(bandColor) });
     const object = new THREE.LineSegments(geometry, material);
     group.add(object);
   }
@@ -127,9 +127,9 @@ export class LogRenderOld
       const value = this.bandRange.getValue(fraction);
 
       const endPosition = Vector3.addWithFactor(position, prependicular, value);
-      geometry.vertices.push(ThreeConverter.toVector(endPosition));
+      geometry.vertices.push(ThreeConverter.to3D(endPosition));
     }
-    const material = new THREE.LineBasicMaterial({ color: ThreeConverter.toColor(color) });
+    const material = new THREE.LineBasicMaterial({ color: ThreeConverter.to3DColor(color) });
     const line = new THREE.Line(geometry, material);
     group.add(line);
   }
@@ -173,7 +173,7 @@ export class LogRenderOld
       texture.anisotropy = 4;
 
       const material = new THREE.MeshLambertMaterial({
-        color: ThreeConverter.toColor(Colors.white),
+        color: ThreeConverter.to3DColor(Colors.white),
         side: right ? THREE.FrontSide : THREE.BackSide,
         map: texture
       });

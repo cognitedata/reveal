@@ -20,7 +20,7 @@ import { Range3 } from "@/Core/Geometry/Range3";
 import { Colors } from "@/Core/Primitives/Colors";
 
 import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
-import { AxisNode } from "@/Nodes/Decorations/AxisNode";
+import { AxisNode } from "@/Core/Nodes/Decorations/AxisNode";
 
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { TreeOverlay } from "@/Three/Utilities/TreeOverlay";
@@ -141,7 +141,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
     // Create lights
     const ambientLight = new THREE.AmbientLight(0x404040, 0.25); // soft white light
-    const directionalLight = new THREE.DirectionalLight(ThreeConverter.toColor(Colors.white), 0.95);
+    const directionalLight = new THREE.DirectionalLight(ThreeConverter.to3DColor(Colors.white), 0.95);
     directionalLight.name = DirectionalLightName;
     this._scene.add(ambientLight);
     this._scene.add(directionalLight);
@@ -240,7 +240,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
         this.isEmpty = !this.viewFrom(-1);
 
       const hasAxis = this.hasViewOfNodeType(AxisNode);
-      this.scene.background = ThreeConverter.toColor(this.getBgColor(hasAxis));
+      this.scene.background = ThreeConverter.to3DColor(this.getBgColor(hasAxis));
 
       for (const view of this.viewsShownHere.list)
         view.beforeRender();

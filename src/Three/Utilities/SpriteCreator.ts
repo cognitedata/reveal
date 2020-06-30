@@ -43,7 +43,7 @@ export class SpriteCreator
     if (!sprite)
       return null;
 
-    ThreeConverter.copy(sprite.position, position);
+    ThreeConverter.copyTo3D(sprite.position, position);
     SpriteCreator.align(sprite, alignment);
     return sprite;
   }

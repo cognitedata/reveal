@@ -79,7 +79,7 @@ export class PolylinesThreeView extends BaseGroupThreeView
       if (colorType === ColorType.DifferentColor)
         color = Colors.getNextColor(group.children.length);
 
-      const material = new THREE.LineBasicMaterial({ color: ThreeConverter.toColor(color), linewidth: style.lineWidth });
+      const material = new THREE.LineBasicMaterial({ color: ThreeConverter.to3DColor(color), linewidth: style.lineWidth });
       const line = new THREE.Line(geometry, material);
       group.add(line);
     }

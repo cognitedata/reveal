@@ -21,8 +21,8 @@ import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Colors } from "@/Core/Primitives/Colors";
 import { Ma } from "@/Core/Primitives/Ma";
 
-import { AxisNode } from "@/Nodes/Decorations/AxisNode";
-import { AxisRenderStyle } from "@/Nodes/Decorations/AxisRenderStyle";
+import { AxisNode } from "@/Core/Nodes/Decorations/AxisNode";
+import { AxisRenderStyle } from "@/Core/Nodes/Decorations/AxisRenderStyle";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { SpriteCreator } from "@/Three/Utilities/SpriteCreator";
@@ -116,7 +116,7 @@ export class AxisThreeView extends BaseGroupThreeView
       return;
 
     const camera = this.camera;
-    const cameraPosition = ThreeConverter.fromVector(camera.position);
+    const cameraPosition = ThreeConverter.toWorld(camera.position);
 
     for (const child of object3D.children)
       this.updateVisible(child, cameraPosition);
@@ -235,7 +235,7 @@ export class AxisThreeView extends BaseGroupThreeView
       geometry.vertices.push(transformer.to3D(this.corners[i0]));
       geometry.vertices.push(transformer.to3D(this.corners[i1]));
 
-      const material = new THREE.LineBasicMaterial({ color: ThreeConverter.toColor(color), linewidth: lineWidth });
+      const material = new THREE.LineBasicMaterial({ color: ThreeConverter.to3DColor(color), linewidth: lineWidth });
       const object = new THREE.LineSegments(geometry, material);
 
       this.setUserDataOnAxis(object, wallIndex0, wallIndex1, isMainAxis);
@@ -324,7 +324,7 @@ export class AxisThreeView extends BaseGroupThreeView
           this.setUserDataOnAxis(label, wallIndex0, wallIndex1, true);
         }
       }
-      const threeColor = ThreeConverter.toColor(this.axisColor);
+      const threeColor = ThreeConverter.to3DColor(this.axisColor);
       const material = new THREE.LineBasicMaterial({ color: threeColor, linewidth: 1 });
       const object = new THREE.LineSegments(geometry, material);
 
@@ -353,7 +353,7 @@ export class AxisThreeView extends BaseGroupThreeView
     geometry.faces.push(new THREE.Face3(0, 1, 2));
     geometry.faces.push(new THREE.Face3(0, 2, 3));
 
-    const threeColor = ThreeConverter.toColor(this.wallColor);
+    const threeColor = ThreeConverter.to3DColor(this.wallColor);
     const squareMaterial = new THREE.MeshBasicMaterial({
       color: threeColor,
       side: THREE.BackSide,
@@ -381,7 +381,7 @@ export class AxisThreeView extends BaseGroupThreeView
     this.addGridInOneDirection(geometry, inc, indexes[0], indexes[1], indexes[3], dim1);
     this.addGridInOneDirection(geometry, inc, indexes[0], indexes[3], indexes[1], dim2);
 
-    const threeColor = ThreeConverter.toColor(this.gridColor);
+    const threeColor = ThreeConverter.to3DColor(this.gridColor);
     const material = new THREE.LineBasicMaterial({ color: threeColor, linewidth: 1 });
     const object = new THREE.LineSegments(geometry, material);
 

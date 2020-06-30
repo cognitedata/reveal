@@ -24,7 +24,7 @@ export class BoundingBoxKit
     if (!object)
       return undefined;
 
-    const helper = new THREE.BoxHelper(object, ThreeConverter.toColor(Colors.white));
+    const helper = new THREE.BoxHelper(object, ThreeConverter.to3DColor(Colors.white));
     helper.geometry.computeBoundingBox();
     return transformer.rangeToWorld(helper.geometry.boundingBox, false);
   }

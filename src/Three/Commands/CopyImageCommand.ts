@@ -1,7 +1,7 @@
 
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetCommand";
-import { AxisNode } from "@/Nodes/Decorations/AxisNode";
+import { AxisNode } from "@/Core/Nodes/Decorations/AxisNode";
 import CopyImageIcon from "@images/Commands/CopyImage.png";
 
 export class CopyImageCommand extends ThreeRenderTargetCommand

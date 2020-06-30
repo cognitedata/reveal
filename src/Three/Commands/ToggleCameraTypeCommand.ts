@@ -1,7 +1,7 @@
 
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetCommand";
-import { AxisNode } from "@/Nodes/Decorations/AxisNode";
+import { AxisNode } from "@/Core/Nodes/Decorations/AxisNode";
 import ToggleCameraTypeCommandOrthographicIcon from "@images/Commands/ToggleCameraTypeCommandOrthographic.png";
 import ToggleCameraTypeCommandPerspectiveIcon from "@images/Commands/ToggleCameraTypeCommandPerspective.png";
 

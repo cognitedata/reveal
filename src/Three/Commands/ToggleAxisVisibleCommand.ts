@@ -1,7 +1,7 @@
 
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetCommand";
-import { AxisNode } from "@/Nodes/Decorations/AxisNode";
+import { AxisNode } from "@/Core/Nodes/Decorations/AxisNode";
 import ToggleAxisVisibleCommandIcon from "@images/Commands/ToggleAxisVisibleCommand.png";
 
 export class ToggleAxisVisibleCommand extends ThreeRenderTargetCommand

@@ -82,7 +82,7 @@ export class PointsThreeView extends BaseGroupThreeView
       color = Colors.white; // Must be white because the colors are multiplicated
 
     const geometry = PointsThreeView.createBufferGeometry(points, this.transformer);
-    const material = new THREE.PointsMaterial({ color: ThreeConverter.toColor(color), size: style.size, sizeAttenuation: true });
+    const material = new THREE.PointsMaterial({ color: ThreeConverter.to3DColor(color), size: style.size, sizeAttenuation: true });
     if (style.colorType === ColorType.DepthColor)
     {
       geometry.addAttribute("color", PointsThreeView.createColorsAttribute(points));
