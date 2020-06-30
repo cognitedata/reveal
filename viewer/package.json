@@ -17,7 +17,7 @@
     "release": "yarn run mkdist && webpack",
     "build": "yarn run mkdist && webpack --env.development",
     "build:watch": "yarn run build -- --watch",
-    "serve": "cd ./dist && yarn link && cd ../../examples && yarn && yarn link @cognite/reveal && yarn run start",
+    "serve": "cd ../../examples && yarn && yarn run start",
     "mkdist": "run-script-os",
     "mkdist:win32": "@powershell $(if(-not(Test-Path dist -PathType Container)) { mkdir dist;$? } else { $true;$? })",
     "mkdist:linux:darwin": "mkdir -p dist",
@@ -41,7 +41,7 @@
     ]
   },
   "devDependencies": {
-    "@cognite/sdk": "^2.29.0",
+    "@cognite/sdk": "^2.32.0",
     "@cognite/tslint-config-cognite-3d": "^1.0.4",
     "@types/gl-matrix": "^2.4.5",
     "@types/jest": "^26.0.3",
@@ -79,7 +79,6 @@
   },
   "dependencies": {
     "@cognite/potree-core": "^1.1.3",
-    "@cognite/sdk": "^2.32.0",
     "@cognite/three-combo-controls": "^1.4.1",
     "@tweenjs/tween.js": "^18.5.0",
     "@types/lodash": "^4.14.157",
