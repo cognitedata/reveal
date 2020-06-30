@@ -16,6 +16,12 @@ import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 export class TargetTreeNode extends BaseTreeNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "TargetTreeNode";
+
+  //==================================================
   // CONSTRUCTORS
   //==================================================
 
@@ -25,8 +31,8 @@ export class TargetTreeNode extends BaseTreeNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return TargetTreeNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === TargetTreeNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return TargetTreeNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === TargetTreeNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

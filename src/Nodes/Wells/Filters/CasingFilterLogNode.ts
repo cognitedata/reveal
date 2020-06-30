@@ -22,6 +22,12 @@ import { ColorType } from "@/Core/Enums/ColorType";
 export class CasingFilterLogNode extends BaseFilterLogNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "CasingFilterLogNode";
+
+  //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
@@ -37,8 +43,8 @@ export class CasingFilterLogNode extends BaseFilterLogNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return CasingFilterLogNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === CasingFilterLogNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return CasingFilterLogNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === CasingFilterLogNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

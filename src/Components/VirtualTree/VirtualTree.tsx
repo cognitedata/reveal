@@ -11,7 +11,7 @@ import {readCssVariablePixelNumber} from "../Utils";
 
 const DEFAULT_ROW_HEIGHT = 22;
 
-export default function VirtualTree(props: VirtualTreeProps) {
+export function VirtualTree(props: VirtualTreeProps) {
   const { onToggleNodeSelect, onToggleNodeExpand, onToggleNodeCheck } = props;
 
   const TREE_ITEM_HEIGHT =
@@ -73,15 +73,17 @@ export default function VirtualTree(props: VirtualTreeProps) {
             </div>
           )}
           <div className="tree-item-comp">
-            <TreeCheckBox
-              class="tree-checkbox"
-              id={keyPrefix}
-              filter={item.isFilter}
-              checked={item.checked}
-              indeterminate={item.indeterminate}
-              disabled={item.disabled}
-              onToggleCheck={() => onToggleNodeCheck(item.uniqueId, !item.checked)}
-            />
+            { item.checkVisible &&
+                <TreeCheckBox
+                  class="tree-checkbox"
+                  id={keyPrefix}
+                  filter={item.isFilter}
+                  checked={item.checked}
+                  indeterminate={item.indeterminate}
+                  disabled={item.disabled}
+                  onToggleCheck={() => onToggleNodeCheck(item.uniqueId, !item.checked)}
+                />
+            }
           </div>
           <div className="tree-item-comp tree-item-lbl-container">
             <span

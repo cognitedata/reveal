@@ -18,7 +18,7 @@ describe("Hierarcy", () =>
   test("isVisible/SetVisible", () => isVisibleSetVisible());
   test("count views", () => countView());
 
-  test("renderStyle", () => 
+  test("renderStyle", () =>
   {
     const root = StubRootCreator.createTestRoot();
     for (const isVisible of [true, false])
@@ -43,17 +43,17 @@ describe("Hierarcy", () =>
   });
 
   //==================================================
-  // METHODS: 
+  // METHODS:
   //==================================================
 
   function testIdentifyable(): void
   {
     const node = new PolylinesNode();
     expect("PolylinesNode").toBe(node.className);
-    expect("PolylinesNode").toBe(PolylinesNode.name);
+    expect("PolylinesNode").toBe(PolylinesNode.className);
 
     expect(node.isA(node.className)).toBe(true);
-    expect(node.isA(BaseVisualNode.name)).toBe(true);
+    expect(node.isA(BaseVisualNode.className)).toBe(true);
 
     expect(isInstanceOf(node, PolylinesNode).valueOf()); //Ask F2 about this syntax
   }
@@ -73,9 +73,9 @@ describe("Hierarcy", () =>
     const root = StubRootCreator.createTestRoot();
 
     for (const descendant of root.getDescendantsByType(PolylinesNode))
-      expect(PolylinesNode.name).toBe(descendant.className);
+      expect(PolylinesNode.className).toBe(descendant.className);
     for (const descendant of root.getDescendantsByType(StubTargetNode))
-      expect(StubTargetNode.name).toBe(descendant.className);
+      expect(StubTargetNode.className).toBe(descendant.className);
   }
 
   function testHierarcy(): void
@@ -198,7 +198,7 @@ describe("Hierarcy", () =>
 
   function countView(): void
   {
-    for (const testType of [0, 1, 2, 3]) 
+    for (const testType of [0, 1, 2, 3])
     {
       const root = StubRootCreator.createTestRoot();
 

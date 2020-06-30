@@ -19,6 +19,12 @@ import { ITargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
 export class BaseRootNode extends BaseNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "BaseRootNode";
+
+  //==================================================
   // CONSTRUCTORS
   //==================================================
 
@@ -32,11 +38,11 @@ export class BaseRootNode extends BaseNode
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get targets(): TargetTreeNode 
+  public get targets(): TargetTreeNode
   {
     const child = this.getChildByType(TargetTreeNode);
     if (!child)
-      throw new Error("Cannot find the " + TargetTreeNode.name);
+      throw new Error("Cannot find the " + TargetTreeNode.className);
     return child;
   }
 
@@ -44,8 +50,8 @@ export class BaseRootNode extends BaseNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return BaseRootNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === BaseRootNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return BaseRootNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === BaseRootNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

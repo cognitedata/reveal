@@ -50,6 +50,12 @@ const DirectionalLightName = "DirectionalLight";
 export class ThreeRenderTargetNode extends BaseRenderTargetNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "ThreeRenderTargetNode";
+
+  //==================================================
   // INSTANCE FIELDS
   //==================================================
 
@@ -119,8 +125,8 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   // OVERRIDES of TargetNode
   //==================================================
 
-  public /*override*/ get className(): string { return ThreeRenderTargetNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === ThreeRenderTargetNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return ThreeRenderTargetNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === ThreeRenderTargetNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
@@ -253,7 +259,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   public addTools(toolbar: IToolbar)
   {
-    var panTool = new PanToolCommand(this);
+    const panTool = new PanToolCommand(this);
     this.setDefaultTool(panTool);
 
     // Tools
@@ -289,13 +295,13 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   private updateLightPosition(): void
   {
-    const camera = this.camera
-    const controls = this.controls
-    const light = this.directionalLight
+    const camera = this.camera;
+    const controls = this.controls;
+    const light = this.directionalLight;
     if (!light)
       return;
 
-    // The idea of this function is letting the light track the camera, 
+    // The idea of this function is letting the light track the camera,
     let position = new THREE.Vector3();
     let target = new THREE.Vector3();
     position = controls.getPosition(position);
@@ -326,7 +332,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
     vectorLength = Math.max(vectorLength, 100_000); // Move the light far away
     vectorToCenter.multiplyScalar(vectorLength);
-    vectorToCenter.add(target)
+    vectorToCenter.add(target);
 
     light.position.copy(vectorToCenter);
   }
@@ -337,9 +343,9 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   public getIntersection(pixel: THREE.Vector2): THREE.Intersection | null
   {
-    //https://threejsfundamentals.org/threejs/lessons/threejs-picking.html 
+    //https://threejsfundamentals.org/threejs/lessons/threejs-picking.html
     this._raycaster.setFromCamera(pixel, this.camera);
-    var intersects = this._raycaster.intersectObjects(this.scene.children, true);
+    const intersects = this._raycaster.intersectObjects(this.scene.children, true);
 
     if (intersects.length > 0)
       return intersects[0];

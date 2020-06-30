@@ -15,6 +15,12 @@ import { Util } from "@/Core/Primitives/Util";
 export abstract class BaseTargetNode extends BaseNode implements ITarget
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "BaseTargetNode";
+
+  //==================================================
   // CONSTRUCTORS
   //==================================================
 
@@ -40,8 +46,8 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return BaseTargetNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === BaseTargetNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return BaseTargetNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === BaseTargetNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

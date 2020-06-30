@@ -1,18 +1,14 @@
 import { createReducer } from "@reduxjs/toolkit";
-import {
-  ExplorerStateInterface,
-  TreeDataItem,
-} from "@/UserInterface/interfaces/explorer";
+import { ExplorerStateInterface, TreeDataItem } from "@/UserInterface/interfaces/explorer";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { CheckBoxState } from '@/Core/Enums/CheckBoxState';
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import {
+  CHANGE_CHECKBOX_STATE,
   CHANGE_SELECTED_TAB,
   GENERATE_NODE_TREE,
   TOGGLE_NODE_EXPAND,
-  CHANGE_CHECKBOX_STATE,
-  VIEW_ALL_NODES_SUCCESS,
-  TOGGLE_NODE_SELECT
+  TOGGLE_NODE_SELECT,
 } from "@/UserInterface/redux/types/explorer";
 
 // Generate redux store compatible nodes data structure from root node
@@ -39,6 +35,7 @@ function generateNodeStructure(
     disabled: (checkBoxState === CheckBoxState.Disabled),
     isRadio: (node.isRadio(null)),
     isFilter: node.isFilter(null),
+    checkVisible: !(checkBoxState === CheckBoxState.Never),
     visible: node.isVisibleInTreeControl(),
     label: {
       italic: node.isLabelInItalic(),
@@ -68,7 +65,7 @@ function generateExplorerData(root: BaseRootNode) {
         uniqueId,
         parentId === rootId ? null : parentId,
         node
-      )
+      );
       if (node.childCount) {
         nodeList.push(...node.children);
       }
@@ -145,14 +142,6 @@ export default createReducer(initialState, {
         break;
       default:
       // do nothing
-    }
-  },
-  [VIEW_ALL_NODES_SUCCESS]: (state, action) => {
-    const nodes = state.nodes;
-    for (const id in nodes) {
-      if (nodes.hasOwnProperty(id)) {
-        nodes[id].checked = true;
-      }
     }
   },
   [CHANGE_SELECTED_TAB]: (state, action) => {

@@ -24,6 +24,12 @@ import RootNodeIcon from "@images/Nodes/RootNode.png";
 export class SubSurfaceRootNode extends BaseRootNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "SubSurfaceRootNode";
+
+  //==================================================
   //PROPERTIES
   //==================================================
 
@@ -31,7 +37,7 @@ export class SubSurfaceRootNode extends BaseRootNode
   {
     const child = this.getChildByType(WellTreeNode);
     if (!child)
-      throw new Error("Cannot find the " + WellTreeNode.name);
+      throw new Error("Cannot find the " + WellTreeNode.className);
     return child;
   }
 
@@ -39,7 +45,7 @@ export class SubSurfaceRootNode extends BaseRootNode
   {
     const child = this.getChildByType(OthersTreeNode);
     if (!child)
-      throw new Error("Cannot find the " + OthersTreeNode.name);
+      throw new Error("Cannot find the " + OthersTreeNode.className);
     return child;
   }
 
@@ -47,7 +53,7 @@ export class SubSurfaceRootNode extends BaseRootNode
   {
     const child = this.getChildByType(ColorTableTreeNode);
     if (!child)
-      throw new Error("Cannot find the " + ColorTableTreeNode.name);
+      throw new Error("Cannot find the " + ColorTableTreeNode.className);
     return child;
   }
 
@@ -55,7 +61,7 @@ export class SubSurfaceRootNode extends BaseRootNode
   {
     const child = this.getChildByType(SettingsTreeNode);
     if (!child)
-      throw new Error("Cannot find the " + SettingsTreeNode.name);
+      throw new Error("Cannot find the " + SettingsTreeNode.className);
     return child;
   }
 
@@ -69,8 +75,8 @@ export class SubSurfaceRootNode extends BaseRootNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return SubSurfaceRootNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === SubSurfaceRootNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return SubSurfaceRootNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === SubSurfaceRootNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

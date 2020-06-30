@@ -1,7 +1,7 @@
 import * as utm from "utm";
 import { WellNode } from "@/Nodes/Wells/Wells/WellNode";
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import { Well } from "@/Interface/IWell";
+import { Well } from "@/Interface";
 
 /**
  * Build WellNode from BP Data

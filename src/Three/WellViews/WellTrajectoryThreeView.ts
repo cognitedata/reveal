@@ -90,7 +90,9 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     super.onShowCore();
 
     const trajectoryNode = this.node;
+
     const filterLogFolder = trajectoryNode.getFilterLogFolder();
+
     if (!filterLogFolder)
       return;
 
@@ -498,7 +500,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
         }
         i++;
       }
-      if (visibleCount == 0)
+      if (visibleCount === 0)
         continue;
 
       logRender.addAnnotation(canvas, style.bandFontSize, rightBand);

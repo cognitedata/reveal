@@ -65,24 +65,24 @@ export class ThreeModule extends BaseModule
 
   public /*override*/ registerViews(factory: ViewFactory): void
   {
-    factory.register(AxisNode.name, AxisThreeView, ThreeRenderTargetNode.name);
-    factory.register(PointsNode.name, PointsThreeView, ThreeRenderTargetNode.name);
-    factory.register(PolylinesNode.name, PolylinesThreeView, ThreeRenderTargetNode.name);
-    factory.register(SurfaceNode.name, SurfaceThreeView, ThreeRenderTargetNode.name);
-    factory.register(PotreeNode.name, PotreeThreeView, ThreeRenderTargetNode.name);
+    factory.register(AxisNode.className, AxisThreeView, ThreeRenderTargetNode.className);
+    factory.register(PointsNode.className, PointsThreeView, ThreeRenderTargetNode.className);
+    factory.register(PolylinesNode.className, PolylinesThreeView, ThreeRenderTargetNode.className);
+    factory.register(SurfaceNode.className, SurfaceThreeView, ThreeRenderTargetNode.className);
+    factory.register(PotreeNode.className, PotreeThreeView, ThreeRenderTargetNode.className);
 
     // Wells:
-    factory.register(WellTrajectoryNode.name, WellTrajectoryThreeView, ThreeRenderTargetNode.name);
-    factory.register(PointLogNode.name, PointLogThreeView, ThreeRenderTargetNode.name);
-    factory.register(FloatLogNode.name, LogFilterView, ThreeRenderTargetNode.name);
-    factory.register(DiscreteLogNode.name, LogFilterView, ThreeRenderTargetNode.name);
-    factory.register(CasingLogNode.name, CasingLogThreeView, ThreeRenderTargetNode.name);
+    factory.register(WellTrajectoryNode.className, WellTrajectoryThreeView, ThreeRenderTargetNode.className);
+    factory.register(PointLogNode.className, PointLogThreeView, ThreeRenderTargetNode.className);
+    factory.register(FloatLogNode.className, LogFilterView, ThreeRenderTargetNode.className);
+    factory.register(DiscreteLogNode.className, LogFilterView, ThreeRenderTargetNode.className);
+    factory.register(CasingLogNode.className, CasingLogThreeView, ThreeRenderTargetNode.className);
 
     // Log filters
-    factory.register(PointFilterLogNode.name, FilterLogFilterView, ThreeRenderTargetNode.name);
-    factory.register(FloatFilterLogNode.name, FilterLogFilterView, ThreeRenderTargetNode.name);
-    factory.register(DiscreteFilterLogNode.name, FilterLogFilterView, ThreeRenderTargetNode.name);
-    factory.register(CasingFilterLogNode.name, FilterLogFilterView, ThreeRenderTargetNode.name);
+    factory.register(PointFilterLogNode.className, FilterLogFilterView, ThreeRenderTargetNode.className);
+    factory.register(FloatFilterLogNode.className, FilterLogFilterView, ThreeRenderTargetNode.className);
+    factory.register(DiscreteFilterLogNode.className, FilterLogFilterView, ThreeRenderTargetNode.className);
+    factory.register(CasingFilterLogNode.className, FilterLogFilterView, ThreeRenderTargetNode.className);
   }
 
   public initializeWhenPopulated(root: BaseRootNode): void

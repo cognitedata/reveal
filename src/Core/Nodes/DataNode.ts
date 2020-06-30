@@ -18,6 +18,12 @@ import { ITarget } from "@/Core/Interfaces/ITarget";
 export abstract class DataNode extends BaseVisualNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "DataNode";
+
+  //==================================================
   // CONSTRUCTORS
   //==================================================
 
@@ -56,10 +62,11 @@ export abstract class DataNode extends BaseVisualNode
 
   protected set anyData(value: any)
   {
-    this._data = value
+    this._data = value;
     this._dataIsLost = !value;
     if (this.dataIsLost)
     {
+      // tslint:disable-next-line:no-console
       console.warn("The data is lost");
       this.notifyVisibleStateChange(true);
     }
@@ -69,8 +76,8 @@ export abstract class DataNode extends BaseVisualNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return DataNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === DataNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return DataNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === DataNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseVisualNode

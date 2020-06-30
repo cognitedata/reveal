@@ -25,6 +25,12 @@ import { DataNode } from "@/Core/Nodes/DataNode";
 export class SurfaceNode extends DataNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "SurfaceNode";
+
+  //==================================================
   // CONSTRUCTORS
   //==================================================
 
@@ -42,8 +48,8 @@ export class SurfaceNode extends DataNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return SurfaceNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === SurfaceNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return SurfaceNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === SurfaceNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

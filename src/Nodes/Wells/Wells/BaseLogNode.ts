@@ -28,6 +28,12 @@ import { DataNode } from "@/Core/Nodes/DataNode";
 export abstract class BaseLogNode extends DataNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "BaseLogNode";
+
+  //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
@@ -64,8 +70,8 @@ export abstract class BaseLogNode extends DataNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return BaseLogNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === BaseLogNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return BaseLogNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === BaseLogNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

@@ -22,6 +22,12 @@ import { ColorType } from "@/Core/Enums/ColorType";
 export class FloatFilterLogNode extends BaseFilterLogNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "FloatFilterLogNode";
+
+  //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
@@ -37,8 +43,8 @@ export class FloatFilterLogNode extends BaseFilterLogNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return FloatFilterLogNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === FloatFilterLogNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return FloatFilterLogNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === FloatFilterLogNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

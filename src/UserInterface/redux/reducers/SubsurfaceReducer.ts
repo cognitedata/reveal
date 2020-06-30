@@ -1,10 +1,11 @@
-import { enableMapSet } from "immer";
+import { enableMapSet, enableES5 } from "immer";
+// Enable immer MapSet
+enableMapSet();
+enableES5();
+
 import settingsReducer from "./SettingsReducer";
 import explorerReducer from "./ExplorerReducer";
 import visualizerReducer from "./VisualizersReducer";
-
-// Enable immer MapSet
-enableMapSet();
 
 /**
  * The combineReducers helper function turns an object whose values

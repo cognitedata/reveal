@@ -18,6 +18,12 @@ import WellNodeIcon from "@images/Nodes/WellNode.png";
 export class WellNode extends BaseNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "WellNode";
+
+  //==================================================
   // INSTANCE FIELDS
   //==================================================
 
@@ -33,8 +39,8 @@ export class WellNode extends BaseNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return WellNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === WellNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return WellNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === WellNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

@@ -11,3 +11,4 @@ node_modules
 .vscode/launch.json
 .vs/reveal-architecture/v16/.suo
 src/UserInterface/styles/css
+yarn.lock

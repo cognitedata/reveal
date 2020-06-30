@@ -18,6 +18,12 @@ import WellNodeIcon from "@images/Nodes/WellNode.png";
 export class WellTreeNode extends BaseTreeNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "WellTreeNode";
+
+  //==================================================
   // CONSTRUCTORS
   //==================================================
 
@@ -27,8 +33,8 @@ export class WellTreeNode extends BaseTreeNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return WellTreeNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === WellTreeNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return WellTreeNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === WellTreeNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

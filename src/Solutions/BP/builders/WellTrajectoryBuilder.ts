@@ -1,7 +1,6 @@
 import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
 import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
 import { WellNode } from "@/Nodes/Wells/Wells/WellNode";
-import { Trajectory } from "@/Interface/ITrajectory";
 import { CasingLogNode } from "@/Nodes/Wells/Wells/CasingLogNode";
 import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
 import { FloatLogNode } from "@/Nodes/Wells/Wells/FloatLogNode";
@@ -10,7 +9,7 @@ import { Random } from "@/Core/Primitives/Random";
 import { DiscreteLogNode } from "@/Nodes/Wells/Wells/DiscreteLogNode";
 import { DiscreteLog } from "@/Nodes/Wells/Logs/DiscreteLog";
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import { TrajectoryRows, RiskEvent } from "@/Interface";
+import { Trajectory, TrajectoryRows, RiskEvent } from "@/Interface";
 import { TrajectorySample } from "@/Nodes/Wells/Samples/TrajectorySample";
 import { PointLog } from "@/Nodes/Wells/Logs/PointLog";
 import { PointLogSample } from "@/Nodes/Wells/Samples/PointLogSample";

@@ -28,6 +28,12 @@ import { DataNode } from "@/Core/Nodes/DataNode";
 export class WellTrajectoryNode extends DataNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "WellTrajectoryNode";
+
+  //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
@@ -46,8 +52,8 @@ export class WellTrajectoryNode extends DataNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return WellTrajectoryNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === WellTrajectoryNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return WellTrajectoryNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === WellTrajectoryNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

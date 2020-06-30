@@ -24,6 +24,12 @@ import { BaseView } from "@/Core/Views/BaseView";
 export abstract class BaseVisualNode extends BaseNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "BaseVisualNode";
+
+  //==================================================
   // CONSTRUCTORS
   //==================================================
 
@@ -45,8 +51,8 @@ export abstract class BaseVisualNode extends BaseNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return BaseVisualNode.name }
-  public /*override*/ isA(className: string): boolean { return className === BaseVisualNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return BaseVisualNode.className }
+  public /*override*/ isA(className: string): boolean { return className === BaseVisualNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

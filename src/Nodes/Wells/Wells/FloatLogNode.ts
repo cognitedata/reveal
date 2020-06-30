@@ -19,6 +19,12 @@ import FloatLogNodeIcon from "@images/Nodes/FloatLogNode.png";
 export class FloatLogNode extends BaseLogNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "FloatLogNode";
+
+  //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
@@ -35,8 +41,8 @@ export class FloatLogNode extends BaseLogNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return FloatLogNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === FloatLogNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return FloatLogNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === FloatLogNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

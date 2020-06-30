@@ -17,6 +17,12 @@ import FolderNodeGreyscale from "@images/Nodes/FolderNodeGreyscale.png";
 export class WellFolder extends FolderNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "WellFolder";
+
+  //==================================================
   // CONSTRUCTORS
   //==================================================
 
@@ -26,8 +32,8 @@ export class WellFolder extends FolderNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return WellFolder.name; }
-  public /*override*/ isA(className: string): boolean { return className === WellFolder.name || super.isA(className); }
+  public /*override*/ get className(): string { return WellFolder.className; }
+  public /*override*/ isA(className: string): boolean { return className === WellFolder.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

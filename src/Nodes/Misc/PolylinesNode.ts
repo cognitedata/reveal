@@ -24,6 +24,12 @@ import { DataNode } from "@/Core/Nodes/DataNode";
 export class PolylinesNode extends DataNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "PolylinesNode";
+
+  //==================================================
   // CONSTRUCTORS
   //==================================================
 
@@ -41,8 +47,8 @@ export class PolylinesNode extends DataNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return PolylinesNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === PolylinesNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return PolylinesNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === PolylinesNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

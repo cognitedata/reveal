@@ -22,6 +22,12 @@ import { ColorType } from "@/Core/Enums/ColorType";
 export class DiscreteFilterLogNode extends BaseFilterLogNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "DiscreteFilterLogNode";
+
+  //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
@@ -37,8 +43,8 @@ export class DiscreteFilterLogNode extends BaseFilterLogNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return DiscreteFilterLogNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === DiscreteFilterLogNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return DiscreteFilterLogNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === DiscreteFilterLogNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
@@ -52,7 +58,7 @@ export class DiscreteFilterLogNode extends BaseFilterLogNode
   {
     return new DiscreteLogStyle(targetId);
   }
-  
+
   public /*override*/ supportsColorType(colorType: ColorType): boolean
   {
     switch (colorType)

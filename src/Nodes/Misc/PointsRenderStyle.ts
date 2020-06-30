@@ -31,7 +31,7 @@ export class PointsRenderStyle extends BaseRenderStyle
   //==================================================
 
   public constructor(targetId: TargetId) { super(targetId); }
-  
+
   //==================================================
   // OVERRIDES of BaseRenderStyle
   //==================================================

@@ -20,32 +20,51 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
+        test: /\.(ts|js)x?$/,
         include: resolve("src"),
-        loader: "ts-loader",
         exclude: /node_modules/,
-        options: {
-          instance: "subsurface-visualizer",
-          configFile: resolve("tsconfig.json")
-        }
+        use: [
+          // {
+          //   loader: 'babel-loader',
+          // },
+          {
+            loader: 'ts-loader',
+          }
+        ]
       },
       {
-        test: /\.tsx?$/,
+        test: /\.(ts|js)x?$/,
         include: resolve(SUBSURFACE_COMPONENTS_PATH),
-        loader: "ts-loader",
-        options: {
-          instance: "subsurface-components",
-          configFile: resolve(SUBSURFACE_COMPONENTS_PATH + "/tsconfig.json")
-        }
+        exclude: /node_modules/,
+        use: [
+          // {
+          //   loader: 'babel-loader',
+          // },
+          {
+            loader: 'ts-loader',
+            options: {
+              instance: "subsurface-components",
+              configFile: resolve(SUBSURFACE_COMPONENTS_PATH + "/tsconfig.json")
+            }
+          }
+        ]
       },
       {
-        test: /\.tsx?$/,
+        test: /\.(ts|js)x?$/,
         include: resolve(SUBSURFACE_INTERFACES_PATH),
-        loader: "ts-loader",
-        options: {
-          instance: "subsurface-interfaces",
-          configFile: resolve(SUBSURFACE_INTERFACES_PATH + "/tsconfig.json")
-        }
+        exclude: /node_modules/,
+        use: [
+          // {
+          //   loader: 'babel-loader',
+          // },
+          {
+            loader: 'ts-loader',
+            options: {
+              instance: "subsurface-interfaces",
+              configFile: resolve(SUBSURFACE_INTERFACES_PATH + "/tsconfig.json")
+            }
+          }
+        ]
       },
       {
         test: /\.s?css$/,
@@ -61,7 +80,7 @@ module.exports = {
             }
           }
         ]
-      }
+      },
     ]
   },
   resolve: {
@@ -80,8 +99,7 @@ module.exports = {
     library: "[name]",
     libraryTarget: "umd"
   },
-  devtool: "false",
-  //devtool: "inline-source-map",
+  devtool: "inline-source-map",
   plugins: [
     new CleanWebpackPlugin(),
     new CopyPlugin({
@@ -110,9 +128,9 @@ module.exports = {
         }
       ]
     })
-    // ,new BundleAnalyzerPlugin()
+    //,new BundleAnalyzerPlugin()
   ],
-  externals: {
+  externals: [{
     react: {
       root: "React",
       commonjs2: "react",
@@ -128,6 +146,9 @@ module.exports = {
       umd: "react-dom"
     },
     redux: "redux",
-    "react-redux": "react-redux"
-  }
+    "react-redux": "react-redux",
+    // "three": "three",
+    // "fabric": "fabric"
+  },
+    /@material-ui\/[a-z,\/]*/i]
 };

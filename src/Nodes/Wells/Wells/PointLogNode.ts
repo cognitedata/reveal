@@ -19,6 +19,12 @@ import PointLogNodeIcon from "@images/Nodes/PointLogNode.png";
 export class PointLogNode extends BaseLogNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "PointLogNode";
+
+  //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
@@ -35,8 +41,8 @@ export class PointLogNode extends BaseLogNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return PointLogNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === PointLogNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return PointLogNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === PointLogNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

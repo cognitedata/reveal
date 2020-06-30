@@ -29,7 +29,7 @@ export class StubModule extends BaseModule
 
   public /*override*/ registerViews(factory: ViewFactory): void
   {
-    factory.register(PolylinesNode.name, StubPolylinesView, StubTargetNode.name);
+    factory.register(PolylinesNode.className, StubPolylinesView, StubTargetNode.className);
   }
 
   public /*override*/ createRoot(): BaseRootNode { return new SubSurfaceRootNode(); }

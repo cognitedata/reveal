@@ -17,6 +17,12 @@ import ColorTableTreeNodeIcon from "@images/Nodes/ColorTableTreeNode.png";
 export class ColorTableTreeNode extends BaseTreeNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "ColorTableTreeNode";
+
+  //==================================================
   // CONSTRUCTORS
   //==================================================
 
@@ -26,8 +32,8 @@ export class ColorTableTreeNode extends BaseTreeNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return ColorTableTreeNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === ColorTableTreeNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return ColorTableTreeNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === ColorTableTreeNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

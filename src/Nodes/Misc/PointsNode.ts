@@ -24,6 +24,12 @@ import { DataNode } from "@/Core/Nodes/DataNode";
 export class PointsNode extends DataNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "PointsNode";
+
+  //==================================================
   // CONSTRUCTORS
   //==================================================
 
@@ -41,8 +47,8 @@ export class PointsNode extends DataNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return PointsNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === PointsNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return PointsNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === PointsNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

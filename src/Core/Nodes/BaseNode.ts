@@ -34,6 +34,12 @@ import { FileType } from "@/Core/Enums/FileType";
 export abstract class BaseNode extends Identifiable
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "BaseNode";
+
+  //==================================================
   // CONSTRUCTORS
   //==================================================
 
@@ -70,8 +76,8 @@ export abstract class BaseNode extends Identifiable
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return BaseNode.name }
-  public /*override*/ isA(className: string): boolean { return className === BaseNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return BaseNode.className }
+  public /*override*/ isA(className: string): boolean { return className === BaseNode.className || super.isA(className); }
   public /*override*/ toString(): string { return this.getDebugString(); }
 
   //==================================================

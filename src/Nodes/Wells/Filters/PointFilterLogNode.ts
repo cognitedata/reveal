@@ -22,6 +22,12 @@ import { ColorType } from "@/Core/Enums/ColorType";
 export class PointFilterLogNode extends BaseFilterLogNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "PointFilterLogNode";
+
+  //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
@@ -37,8 +43,8 @@ export class PointFilterLogNode extends BaseFilterLogNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return PointFilterLogNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === PointFilterLogNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return PointFilterLogNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === PointFilterLogNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

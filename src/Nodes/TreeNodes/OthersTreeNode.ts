@@ -17,6 +17,12 @@ import FolderNodeIcon from "@images/Nodes/FolderNode.png";
 export class OthersTreeNode extends BaseTreeNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "OthersTreeNode";
+
+  //==================================================
   // CONSTRUCTORS
   //==================================================
 
@@ -26,8 +32,8 @@ export class OthersTreeNode extends BaseTreeNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return OthersTreeNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === OthersTreeNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return OthersTreeNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === OthersTreeNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

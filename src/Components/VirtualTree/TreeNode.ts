@@ -17,6 +17,7 @@ export interface TreeNode {
   isRadio?: boolean;
   isFilter?: boolean;
   disabled?: boolean;
+  checkVisible?: boolean;
   visible?: boolean;
   label: {
     italic: boolean;

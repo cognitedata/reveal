@@ -19,6 +19,12 @@ import DiscreteLogNodeIcon from "@images/Nodes/DiscreteLogNode.png";
 export class DiscreteLogNode extends BaseLogNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "DiscreteLogNode";
+
+  //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
@@ -35,8 +41,8 @@ export class DiscreteLogNode extends BaseLogNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return DiscreteLogNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === DiscreteLogNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return DiscreteLogNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === DiscreteLogNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

@@ -10,7 +10,7 @@ const getSelectedNodeIds = (state: ReduxStore) => {
     return tabs[selectedTabIndex].nodeIds;
   }
   return [];
-}
+};
 
 const getNodes = (state: ReduxStore) => state.explorer.nodes;
 

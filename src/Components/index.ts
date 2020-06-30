@@ -1,5 +1,3 @@
-import { VirtualTreeProps } from "./VirtualTree/VirtualTreeProps";
-import { TreeNode } from "./VirtualTree/TreeNode";
-import VirtualTree from "./VirtualTree/VirtualTree";
+export { VirtualTree } from "./VirtualTree/VirtualTree";
+export * from "./VirtualTree/TreeNode";
 
-export { TreeNode, VirtualTreeProps, VirtualTree };

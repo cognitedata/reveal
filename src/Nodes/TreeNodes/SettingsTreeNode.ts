@@ -17,6 +17,12 @@ import SettingsTreeNodeIcon from "@images/Nodes/SettingsTreeNode.png";
 export class SettingsTreeNode extends BaseTreeNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "SettingsTreeNode";
+
+  //==================================================
   // CONSTRUCTORS
   //==================================================
 
@@ -26,9 +32,9 @@ export class SettingsTreeNode extends BaseTreeNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return SettingsTreeNode.name; }
+  public /*override*/ get className(): string { return SettingsTreeNode.className; }
   public /*override*/ getIcon(): string { return SettingsTreeNodeIcon }
-  public /*override*/ isA(className: string): boolean { return className === SettingsTreeNode.name || super.isA(className); }
+  public /*override*/ isA(className: string): boolean { return className === SettingsTreeNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

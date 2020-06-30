@@ -32,6 +32,7 @@ export interface TreeDataItem {
   isRadio: boolean;
   isFilter: boolean;
   disabled: boolean;
+  checkVisible: boolean;
   visible: boolean;
   label: {
     italic: boolean;

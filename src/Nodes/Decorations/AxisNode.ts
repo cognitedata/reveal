@@ -20,6 +20,12 @@ import AxisNodeIcon from "@images/Nodes/AxisNode.png";
 export class AxisNode extends BaseVisualNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "AxisNode";
+
+  //==================================================
   // CONSTRUCTORS
   //==================================================
 
@@ -39,8 +45,8 @@ export class AxisNode extends BaseVisualNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return AxisNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === AxisNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return AxisNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === AxisNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

@@ -17,6 +17,12 @@ import FolderNodeGreyscale from "@images/Nodes/FolderNodeGreyscale.png";
 export class LogFolder extends FolderNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "LogFolder";
+
+  //==================================================
   // CONSTRUCTORS
   //==================================================
 
@@ -26,8 +32,8 @@ export class LogFolder extends FolderNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return LogFolder.name; }
-  public /*override*/ isA(className: string): boolean { return className === LogFolder.name || super.isA(className); }
+  public /*override*/ get className(): string { return LogFolder.className; }
+  public /*override*/ isA(className: string): boolean { return className === LogFolder.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

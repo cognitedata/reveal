@@ -29,6 +29,12 @@ import FilterLogFolderIcon from "@images/Nodes/FilterLogFolder.png";
 export class FilterLogFolder extends BaseNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "FilterLogFolder";
+
+  //==================================================
   // CONSTRUCTORS
   //==================================================
 
@@ -38,8 +44,8 @@ export class FilterLogFolder extends BaseNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return FilterLogFolder.name; }
-  public /*override*/ isA(className: string): boolean { return className === FilterLogFolder.name || super.isA(className); }
+  public /*override*/ get className(): string { return FilterLogFolder.className; }
+  public /*override*/ isA(className: string): boolean { return className === FilterLogFolder.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

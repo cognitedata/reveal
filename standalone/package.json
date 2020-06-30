@@ -5,9 +5,11 @@
   "dependencies": {
     "@cognite/subsurface-visualizer": "file:../dist/subsurface-visualizer",
     "react": "file:../node_modules/react",
+    "react-app-polyfill": "^1.0.6",
     "react-dom": "file:../node_modules/react-dom",
     "react-redux": "file:../node_modules/react-redux",
-    "redux": "file:../node_modules/redux"
+    "redux": "file:../node_modules/redux",
+    "regenerator-runtime": "file:../node_modules/regenerator-runtime"
   },
   "devDependencies": {
     "@types/jest": "file:../node_modules/@types/jest",
@@ -19,8 +21,8 @@
     "typescript": "file:../node_modules/typescript"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-scripts --max_old_space_size=8192 start",
+    "build": "react-scripts --max_old_space_size=8192 build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

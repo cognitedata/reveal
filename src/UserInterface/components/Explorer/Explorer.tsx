@@ -30,7 +30,7 @@ function getCopyOfNodes(nodes?: { [key: string]: TreeDataItem }): { [key: string
 
 // Generate tree data structure
 function generateTree(nodes?: { [key: string]: TreeDataItem }) {
-  const data = [];
+  const data: TreeNode[] = [];
   if (nodes) {
     const nodesCopy = getCopyOfNodes(nodes);
     for (const id in nodesCopy) {

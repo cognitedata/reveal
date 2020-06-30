@@ -15,7 +15,7 @@ export default class ToolbarAdaptor {
                 icon: command.getIcon(),
                 isChecked: command.isChecked
             });
-        })
+        });
         return output;
     }
 }

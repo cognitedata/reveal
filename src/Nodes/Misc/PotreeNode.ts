@@ -21,6 +21,12 @@ import { PotreeRenderStyle } from "@/Nodes/Misc/PotreeRenderStyle";
 export class PotreeNode extends BaseVisualNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "PotreeNode";
+
+  //==================================================
   // CONSTRUCTORS
   //==================================================
 
@@ -45,8 +51,8 @@ export class PotreeNode extends BaseVisualNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return PotreeNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === PotreeNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return PotreeNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === PotreeNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

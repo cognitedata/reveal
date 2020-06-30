@@ -37,10 +37,10 @@ export default function NodeVisualizer(props: {
   useEffect(() => {
     if (root) {
       // tslint:disable-next-line: no-console
-      console.log("SubsurfaceVisualizer: Generating new node tree");
+      console.log("SubsurfaceVisualizer: Generating new node tree", root);
       dispatch(generateNodeTree({ root }));
     }
-  }, [renderFlag]);
+  }, [root, renderFlag]);
 
   // success callback for registering viewers to DOM
   const viewerElementCallback = useCallback(

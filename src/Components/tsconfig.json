@@ -6,7 +6,9 @@
     "declarationDir": "../../dist/subsurface-components/types",
     "paths": {
       "@cognite/subsurface-components": ["."]
-    }
+    },
+    "typeRoots": [
+      "./typings.d.ts", "./node_modules/@types"]
   },
   "include": ["../Components/**/*.ts", "../Components/**/*.tsx"]
 }

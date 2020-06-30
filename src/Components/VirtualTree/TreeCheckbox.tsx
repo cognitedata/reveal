@@ -49,7 +49,8 @@ export function TreeCheckBox(props: {
   onToggleCheck?: (e: any, state: boolean) => void;
 }) {
   const [hover, hoverChanged] = useState(false);
-  const stateClassArr = [];
+  const stateClassArr: string[] = [];
+
   if (props.filter) {
     stateClassArr.push("filter");
   }
@@ -93,7 +94,7 @@ export function TreeCheckBox(props: {
   );
 
   return (
-    <Label className={props.class + ` ${stateClassArr.join(" ")}`} htmlFor={props.id}>
+    <Label className={`${props.class} ${stateClassArr.join(" ")}`} htmlFor={props.id}>
       <Span
         onClick={handleClick}
         onMouseEnter={handleHover}
@@ -112,7 +113,7 @@ const getBackgroundImage = (
   checked = false,
   indeterminate = false
 ) => {
-  const imageStringArr = [];
+  const imageStringArr: string[] = [];
   if (disabled) {
     imageStringArr.push(`url(${FrameStippled})`);
   } else {

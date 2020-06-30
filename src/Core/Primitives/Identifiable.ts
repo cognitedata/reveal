@@ -14,10 +14,16 @@
 export abstract class Identifiable
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "Identifiable";
+
+  //==================================================
   // VIRTUAL METHODS
   //==================================================
 
-  public /*virtual*/ get className(): string { return Identifiable.name; }
-  public /*virtual*/ isA(className: string): boolean { return className === Identifiable.name; }
+  public /*virtual*/ get className(): string { return Identifiable.className; }
+  public /*virtual*/ isA(className: string): boolean { return className === Identifiable.className; }
   public /*override*/ toString(): string { return this.className; }
 }

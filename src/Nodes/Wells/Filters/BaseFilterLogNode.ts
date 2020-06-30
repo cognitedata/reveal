@@ -22,6 +22,12 @@ import { ITarget } from "@/Core/Interfaces/ITarget";
 export abstract class BaseFilterLogNode extends BaseVisualNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "BaseFilterLogNode";
+
+  //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
@@ -37,8 +43,8 @@ export abstract class BaseFilterLogNode extends BaseVisualNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return BaseFilterLogNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === BaseFilterLogNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return BaseFilterLogNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === BaseFilterLogNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

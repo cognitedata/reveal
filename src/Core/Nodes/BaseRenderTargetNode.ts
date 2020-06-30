@@ -4,8 +4,14 @@ import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
 import { Base3DView } from "@/Core/Views/Base3DView";
 import { ViewInfo } from "@/Core/Views/ViewInfo";
 
-export abstract class BaseRenderTargetNode extends BaseTargetNode 
+export abstract class BaseRenderTargetNode extends BaseTargetNode
 {
+  //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "BaseRenderTargetNode";
+
   //==================================================
   // INSTANCE FIELDS
   //==================================================
@@ -46,8 +52,8 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return BaseRenderTargetNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === BaseRenderTargetNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return BaseRenderTargetNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === BaseRenderTargetNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

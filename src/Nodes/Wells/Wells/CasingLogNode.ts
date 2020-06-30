@@ -19,6 +19,12 @@ import CasingLogNodeIcon from "@images/Nodes/CasingLogNode.png";
 export class CasingLogNode extends BaseLogNode
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  static className = "CasingLogNode";
+
+  //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
@@ -35,8 +41,8 @@ export class CasingLogNode extends BaseLogNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return CasingLogNode.name; }
-  public /*override*/ isA(className: string): boolean { return className === CasingLogNode.name || super.isA(className); }
+  public /*override*/ get className(): string { return CasingLogNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === CasingLogNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
