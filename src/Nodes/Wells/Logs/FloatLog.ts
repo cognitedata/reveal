@@ -18,7 +18,6 @@ import { Random } from "@/Core/Primitives/Random";
 import { BaseLogSample } from "@/Nodes/Wells/Samples/BaseLogSample";
 import { FloatLogSample } from "@/Nodes/Wells/Samples/FloatLogSample";
 import { BaseLog } from "@/Nodes/Wells/Logs/BaseLog";
-import { RenderSample } from "@/Nodes/Wells/Samples/RenderSample";
 
 export class FloatLog extends BaseLog
 {

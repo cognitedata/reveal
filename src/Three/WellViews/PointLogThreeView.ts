@@ -275,7 +275,7 @@ export class PointLogThreeView extends BaseGroupThreeView
         const prependicular = cameraDirection.getNormal(tangent);
         position.addWithFactor(prependicular, selectedRadius);
 
-        const label = PointLogThreeView.createLabel(node.getName(), sample.decription, position, style.fontSize);
+        const label = PointLogThreeView.createLabel(node.getName(), sample.description, position, style.fontSize);
         if (label)  
         {
           label.center = new THREE.Vector2(0, 1);
