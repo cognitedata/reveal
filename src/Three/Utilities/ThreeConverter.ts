@@ -25,11 +25,11 @@ export class ThreeConverter
   // STATIC METHODS
   //==================================================
 
-  public static toColor(value: Color): THREE.Color { return new THREE.Color(value.red() / MaxByte, value.green() / MaxByte, value.blue() / MaxByte); }
-  public static toVector(value: Vector3): THREE.Vector3 { return new THREE.Vector3(value.x, value.y, value.z); }
-  public static fromVector(value: THREE.Vector3): Vector3 { return new Vector3(value.x, value.y, value.z); }
+  public static to3DColor(value: Color): THREE.Color { return new THREE.Color(value.red() / MaxByte, value.green() / MaxByte, value.blue() / MaxByte); }
+  public static to3D(value: Vector3): THREE.Vector3 { return new THREE.Vector3(value.x, value.y, value.z); }
+  public static toWorld(value: THREE.Vector3): Vector3 { return new Vector3(value.x, value.y, value.z); }
 
-  public static copy(destination: THREE.Vector3, source: Vector3)
+  public static copyTo3D(destination: THREE.Vector3, source: Vector3)
   {
     destination.x = source.x;
     destination.y = source.y;

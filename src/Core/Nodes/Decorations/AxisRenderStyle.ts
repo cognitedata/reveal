@@ -16,7 +16,8 @@ import * as Lodash from 'lodash';
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 
-export class AxisRenderStyle extends BaseRenderStyle {
+export class AxisRenderStyle extends BaseRenderStyle
+{
   //==================================================
   // INSTANCE FIELDS
   //==================================================
@@ -31,9 +32,7 @@ export class AxisRenderStyle extends BaseRenderStyle {
   // OVERRIDES of BaseRenderStyle
   //==================================================
 
-  public clone(): BaseRenderStyle {
-    return Lodash.cloneDeep<AxisRenderStyle>(this);
-  }
+  public clone(): BaseRenderStyle { return Lodash.cloneDeep<AxisRenderStyle>(this); }
 }
 
 

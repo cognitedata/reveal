@@ -21,7 +21,7 @@ import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
 
-import { AxisNode } from "@/Nodes/Decorations/AxisNode";
+import { AxisNode } from "@/Core/Nodes/Decorations/AxisNode";
 import { PointsNode } from "@/Nodes/Misc/PointsNode";
 import { PolylinesNode } from "@/Nodes/Misc/PolylinesNode";
 import { SurfaceNode } from "@/Nodes/Misc/SurfaceNode";

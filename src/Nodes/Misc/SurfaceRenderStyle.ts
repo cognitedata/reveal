@@ -15,8 +15,8 @@ import * as Lodash from 'lodash';
 
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { ContoursStyle } from "@/Nodes/Misc/Parts/ContoursStyle";
-import { SolidStyle } from "@/Nodes/Misc/Parts/SolidStyle";
+import { ContoursStyle } from "@/Core/Styles/ContoursStyle";
+import { SolidStyle } from "@/Core/Styles/SolidStyle";
 
 export class SurfaceRenderStyle extends BaseRenderStyle {
   //==================================================

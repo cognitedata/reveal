@@ -14,7 +14,7 @@
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
-import { AxisRenderStyle } from "@/Nodes/Decorations/AxisRenderStyle";
+import { AxisRenderStyle } from "@/Core/Nodes/Decorations/AxisRenderStyle";
 import AxisNodeIcon from "@images/Nodes/AxisNode.png";
 
 export class AxisNode extends BaseVisualNode
