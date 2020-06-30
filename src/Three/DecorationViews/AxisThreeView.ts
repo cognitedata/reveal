@@ -13,6 +13,7 @@
 
 import * as THREE from "three";
 import * as Color from "color"
+import * as Lodash from 'lodash';
 
 import { Range1 } from "@/Core/Geometry/Range1";
 import { Range3 } from "@/Core/Geometry/Range3";
@@ -85,7 +86,7 @@ export class AxisThreeView extends BaseGroupThreeView
   // OVERRIDES of Base3DView
   //==================================================
 
-  public /*override*/ calculateBoundingBoxCore(): Range3 | undefined { return undefined; }
+  public /*override*/ calculateBoundingBoxCore(): Range3 | undefined { return new Range3(); }
 
   //==================================================
   // OVERRIDES of BaseGroupThreeView
@@ -97,11 +98,9 @@ export class AxisThreeView extends BaseGroupThreeView
 
     // Check if bounding box is different
     const boundingBoxFromViews = target.getBoundingBoxFromViews();
-    if (boundingBoxFromViews.isEmpty)
-      return false;
-
-    boundingBoxFromViews.expandByFraction(0.02);
-    if (boundingBoxFromViews.isEqual(this.boundingBoxFromViews) && target.bgColor == this.bgColor)
+    if (!boundingBoxFromViews.isEmpty)
+      boundingBoxFromViews.expandByFraction(0.02);
+    if (boundingBoxFromViews.isEqual(this.boundingBoxFromViews) && Lodash.isEqual(target.bgColor, this.bgColor))
       return false;
 
     this.bgColor = target.bgColor;
@@ -111,7 +110,6 @@ export class AxisThreeView extends BaseGroupThreeView
 
   public /*override*/ beforeRender(): void
   {
-
     super.beforeRender();
     const object3D = this.object3D;
     if (!object3D)
@@ -412,7 +410,7 @@ export class AxisThreeView extends BaseGroupThreeView
     if (realRange.isEmpty)
       return;
 
-    const boldInc = realRange.getBoldInc(realInc);    
+    const boldInc = realRange.getBoldInc(realInc);
     for (const anyTick of realRange.getTicks(realInc))
     {
       const tick = Number(anyTick);
