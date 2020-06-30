@@ -61,7 +61,7 @@ export default function TreeIcon(props: {
     // only works when USE_FABRIC is true
     if (props.src && canvasRef.current)
     {
-      const canvas = new fabric.Canvas(canvasRef.current, { selection: false });
+      const canvas = new fabric.Canvas(canvasRef.current, { selection: false, width: iconSize, height: iconSize });
       // @ts-ignore
       fabricRef.current = canvas;
 
@@ -73,7 +73,7 @@ export default function TreeIcon(props: {
       });
 
     }
-  }, [canvasRef.current]);
+  }, [canvasRef.current, props.src, props.color, props.size]);
 
   // change Color
 
