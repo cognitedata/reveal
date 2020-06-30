@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { vec3, mat4 } from 'gl-matrix';
-import { Box3 } from '@/utilities/Box3';
+import { Box3 } from './Box3';
 import { SectorModelTransformation } from '@/datamodels/cad/sector/types';
 
 const toThreeVector3Vars = {

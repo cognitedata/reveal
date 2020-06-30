@@ -9,9 +9,6 @@ import { BlobOutputMetadata, ModelUrlProvider } from './types';
 import { Model3DOutputList } from './Model3DOutputList';
 import { File3dFormat } from '../types';
 import { HttpHeadersProvider } from './HttpHeadersProvider';
-import { CadSceneProvider } from '@/datamodels/cad/CadSceneProvider';
-import { CadSectorProvider } from '@/datamodels/cad/sector/CadSectorProvider';
-import { EptSceneProvider } from '@/datamodels/pointcloud/EptSceneProvider';
 
 // TODO 2020-06-25 larsmoa: Extend CogniteClient.files3d.retrieve() to support subpath instead of
 // using URLs directly. Also add support for listing outputs in the SDK.
@@ -21,10 +18,7 @@ import { EptSceneProvider } from '@/datamodels/pointcloud/EptSceneProvider';
 export class CogniteClient3dExtensions
   implements
     ModelUrlProvider<{ modelId: number; revisionId: number; format: File3dFormat }>,
-    HttpHeadersProvider,
-    CadSceneProvider,
-    CadSectorProvider,
-    EptSceneProvider {
+    HttpHeadersProvider {
   private readonly client: CogniteClient;
 
   constructor(client: CogniteClient) {
