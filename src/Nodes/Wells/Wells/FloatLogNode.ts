@@ -15,6 +15,7 @@ import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
 import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
 import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
 import FloatLogNodeIcon from "@images/Nodes/FloatLogNode.png";
+import { DH_NOT_SUITABLE_GENERATOR } from "constants";
 
 export class FloatLogNode extends BaseLogNode
 {
@@ -23,6 +24,15 @@ export class FloatLogNode extends BaseLogNode
   //==================================================
 
   static className = "FloatLogNode";
+
+  //==================================================
+  // INSTANCE FIEDLS
+  //==================================================
+
+  public unit: string | null = null;
+
+  // TODO: NILS June, 30, 2020:
+  // Add unit, take it from the metadata of the BP data
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -50,6 +60,7 @@ export class FloatLogNode extends BaseLogNode
 
   public /*override*/ get typeName(): string { return "FloatLog" }
   public /*override*/ getIcon(): string { return FloatLogNodeIcon }
+  public /*override*/ getNameExtension(): string | null { return this.unit; }
 
   //==================================================
   // OVERRIDES of BaseLogNode

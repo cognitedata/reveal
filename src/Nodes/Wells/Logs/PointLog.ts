@@ -33,32 +33,27 @@ export class PointLog extends BaseLog
   {
     const log = new PointLog();
 
+    var allWords = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut";
+    var words = allWords.split(' ');
+
     // Add some samples
     for (let i = 0; i < numSamples; i++)
     {
-      const md = Random.getFloat(mdRange);
-      log.samples.push(new PointLogSample(``, md));
-    }
-    log.sortByMd();
-
-    // Set in the labels so they are in order
-    var all = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut";
-    var descriptions = all.split(' ');
-    for (let k = 0; k < log.samples.length; k++)
-    {
       let description = "";
       const p = Random.getFloat2(0.2, 1);
-      for (let i = 0; i < descriptions.length; i++)
+      for (let k = 0; k < words.length; k++)
       {
         if (!Random.isTrue(p))
           continue;
 
         if (description.length > 0)
           description += " "
-        description += descriptions[i];
+        description += words[k];
       }
-      log.getAt(k).decription = description;
+      const md = Random.getFloat(mdRange);
+      log.samples.push(new PointLogSample(description, md));
     }
+    log.sortByMd();
     return log;
   }
 }  

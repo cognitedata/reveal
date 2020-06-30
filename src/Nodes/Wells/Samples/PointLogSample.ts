@@ -20,20 +20,27 @@ export class PointLogSample extends BaseLogSample
   //==================================================
 
   public mdEnd: number;
-  public decription: string;
+  public description: string;
   public subtype: string = "";
   public riskSubCategory: string = "";
   public details: string = "";
   public isOpen = false;
 
+  // TODO: NILS June, 30, 2020:
+  // Take this from the BP data;
+  // In the constructor you set the description and mdStart and mdEnd
+  // from "md_hole_start", "md_hole_end" in the metadata. 
+  // riskSubCategory/details: copy from metadata
+  // subtype: copy from "subtype" 
+
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(decription: string, mdStart: number, mdEnd?: number)
+  public constructor(description: string, mdStart: number, mdEnd?: number)
   {
     super(mdStart);
-    this.decription = decription;
+    this.description = description;
     if (mdEnd === undefined)
       this.mdEnd = mdStart;
     else
@@ -44,8 +51,8 @@ export class PointLogSample extends BaseLogSample
   // OVERRIDES of MdSample
   //==================================================
 
-  public /*override*/ toString(): string { return `${super.toString()} Value: ${this.decription}`; }
-  public /*override*/ sampleText(): string { return `Value: ${this.decription}`; }
+  public /*override*/ toString(): string { return `${super.toString()} Value: ${this.description}`; }
+  public /*override*/ sampleText(): string { return `Value: ${this.description}`; }
 
   //==================================================
   // OVERRIDES of BaseLogSample
@@ -58,7 +65,7 @@ export class PointLogSample extends BaseLogSample
     const otherSample = other as PointLogSample;
     if (!otherSample)
       return false;
-    return this.decription === otherSample.decription;
+    return this.description === otherSample.description;
   }
 
   public /*override*/ copyValueFrom(other: BaseLogSample): void
@@ -66,8 +73,8 @@ export class PointLogSample extends BaseLogSample
     const otherSample = other as PointLogSample;
     if (!otherSample)
       return;
-    this.decription = otherSample.decription;
+    this.description = otherSample.description;
   }
 
-  public /*override*/  clone(): BaseLogSample { return new PointLogSample(this.decription, this.md); }
+  public /*override*/  clone(): BaseLogSample { return new PointLogSample(this.description, this.md); }
 }  

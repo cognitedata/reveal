@@ -17,7 +17,7 @@ import { BaseNode } from "@/Core/Nodes/BaseNode";
 // LOCAL HELPER CLASS
 //==================================================
 
-class ChangedDecription
+class ChangedDescription
 {
   public changed: symbol;
   public fieldName: string | undefined;
@@ -37,7 +37,7 @@ export class NodeEventArgs
   // INSTANCE FIELDS
   //==================================================
 
-  private changes: ChangedDecription[] | null = null;
+  private changes: ChangedDescription[] | null = null;
 
   //==================================================
   // CONSTRUCTORS
@@ -58,30 +58,30 @@ export class NodeEventArgs
   {
     if (!this.changes)
       return false;
-    return this.changes.some((desc: ChangedDecription) => desc.changed === changed);
+    return this.changes.some((desc: ChangedDescription) => desc.changed === changed);
   }
 
   //==================================================
   // INSTANCE METHODS: Getters
   //==================================================
 
-  private getChangedDecription(changed: symbol): ChangedDecription | undefined
+  private getChangedDescription(changed: symbol): ChangedDescription | undefined
   {
     if (!this.changes)
       return undefined;
-    return this.changes.find((desc: ChangedDecription) => desc.changed === changed);
+    return this.changes.find((desc: ChangedDescription) => desc.changed === changed);
   }
 
   public getFieldName(changed: symbol): string | undefined
   {
-    const changedDecription = this.getChangedDecription(changed);
-    return changedDecription ? changedDecription.fieldName : undefined;
+    const changedDescription = this.getChangedDescription(changed);
+    return changedDescription ? changedDescription.fieldName : undefined;
   }
 
   public getOrigin(changed: symbol): BaseNode | null
   {
-    const changedDecription = this.getChangedDecription(changed);
-    return changedDecription ? changedDecription.origin : null;
+    const changedDescription = this.getChangedDescription(changed);
+    return changedDescription ? changedDescription.origin : null;
   }
 
   //==================================================
@@ -95,6 +95,6 @@ export class NodeEventArgs
     if (!this.changes)
       this.changes = [];
 
-    this.changes.push(new ChangedDecription(changed, fieldName));
+    this.changes.push(new ChangedDescription(changed, fieldName));
   }
 }
