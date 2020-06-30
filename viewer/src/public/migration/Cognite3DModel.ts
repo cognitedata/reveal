@@ -41,16 +41,20 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   set loadingHints(hints: CadLoadingHints) {
     this.cadNode.loadingHints = hints;
   }
+
   readonly modelId: number;
   readonly revisionId: number;
-  readonly cadModel: CadModelMetadata;
+  /** @internal */
   readonly cadNode: CadNode;
-  readonly nodeColors: Map<number, [number, number, number]>;
-  readonly selectedNodes: Set<number>;
-  readonly hiddenNodes: Set<number>;
-  readonly client: CogniteClient;
-  readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
 
+  private readonly cadModel: CadModelMetadata;
+  private readonly nodeColors: Map<number, [number, number, number]>;
+  private readonly selectedNodes: Set<number>;
+  private readonly hiddenNodes: Set<number>;
+  private readonly client: CogniteClient;
+  private readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
+
+  /** @internal */
   constructor(modelId: number, revisionId: number, cadNode: CadNode, client: CogniteClient) {
     super();
     this.modelId = modelId;

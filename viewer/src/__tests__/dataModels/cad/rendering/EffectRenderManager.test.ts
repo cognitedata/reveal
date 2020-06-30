@@ -29,7 +29,7 @@ describe('EffectRenderManager', () => {
     const effectManager = new EffectRenderManager(materialManager);
 
     // Act
-    effectManager.addPostRenderEffects(renderer, camera, scene);
+    effectManager.render(renderer, camera, scene);
 
     // Assert
     expect(renderer.getRenderTarget()).toBe(target);
