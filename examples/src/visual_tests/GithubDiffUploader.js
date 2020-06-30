@@ -7,7 +7,7 @@ const fs = require('fs');
 //      https://github.com/facebook/jest/issues/8810 is resolved
 
 async function findFiles(path) {
-  const globber = await glob.create(searchPath)
+  const globber = await glob.create(path)
   const rawSearchResults = await globber.glob()
 
   // Remove directories
