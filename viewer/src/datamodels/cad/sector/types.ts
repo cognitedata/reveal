@@ -7,7 +7,7 @@ import { LevelOfDetail } from './LevelOfDetail';
 import { mat4, vec3 } from 'gl-matrix';
 
 import { Box3 } from '@/utilities/Box3';
-import { ParsedPrimitives, ParseSectorResult, ParseCtmResult } from '@/utilities/workers/types/parser.types';
+import { ParsedPrimitives, ParseSectorResult, ParseCtmResult } from '@/utilities/workers/types/reveal.parser.types';
 import { InstancedMeshFile, TriangleMesh, SectorQuads } from '../rendering/types';
 
 // TODO 2020-05-14 larsmoa: Move to SectorModelTransformation utilities and rename
