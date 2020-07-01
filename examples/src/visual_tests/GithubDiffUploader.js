@@ -1,6 +1,7 @@
 const core = require('@actions/core');
 const glob = require('@actions/glob');
-const artifact = require('@actions/artifact');
+//const artifact = require('@actions/artifact');
+const github = require('@actions/github')
 const fs = require('fs');
 
 // TODO this should be converted to an actual reporter in TS registered with jest when
@@ -21,6 +22,23 @@ async function findFiles(path) {
   return searchResults;
 }
 
+async function commentOnPR(octokit) {
+  const context = github.context;
+  if (context.payload.pull_request == null) {
+    console.log("Not running in a PR");
+    return;
+  }
+
+  const message = core.getInput('message');
+  const prNumber = context.payload.pull_request.number;
+
+  await octokit.issues.createComment({
+    ...context.repo,
+    issue_number: prNumber,
+    body: message
+  });
+}
+
 async function run() {
   const commitHash = process.env["GITHUB_SHA"];
   if (!commitHash) {
@@ -37,13 +55,19 @@ async function run() {
     }
 
     const artifactName = "image-diffs-" + commitHash;
-    const client = artifact.create();
+    //const client = artifact.create();
+    const github_token = process.env['ACTIONS_RUNTIME_TOKEN'];
+    const octokit = github.getOctokit(github_token);
+    const client = octokit.artifact.client.create();
 
     const uploadResponse = await client.uploadArtifact(artifactName, files, ".", { continueOnError: false });
 
     if (uploadResponse.failedItems.length > 0) {
       core.setFailed(uploadResponse.failedItems.length + ' images failed to upload.');
     }
+
+    await commentOnPR(octokit);
+
   } catch (err) {
     core.setFailed(err.message);
   }
