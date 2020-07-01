@@ -3,7 +3,7 @@
  */
 
 import * as Comlink from 'comlink';
-import { ParsedPrimitives, ParsePrimitiveAttribute, ParseCtmInput } from './types/parser.types';
+import { ParsedPrimitives, ParsePrimitiveAttribute, ParseCtmInput } from './types/reveal.parser.types';
 import * as rustTypes from '../../../pkg';
 import { SectorGeometry } from '@/datamodels/cad/sector/types';
 import { SectorQuads, InstancedMesh, InstancedMeshFile, TriangleMesh } from '@/datamodels/cad/rendering/types';
@@ -11,7 +11,7 @@ import { DetailedSector } from '@/datamodels/cad/sector/detailedSector_generated
 import { flatbuffers } from 'flatbuffers';
 const rustModule = import('../../../pkg');
 
-export class ParserWorker {
+export class RevealParserWorker {
   public async parseQuads(buffer: Uint8Array): Promise<SectorQuads> {
     const rust = await rustModule;
 
@@ -200,6 +200,6 @@ export class ParserWorker {
   }
 }
 
-const obj = new ParserWorker();
+const obj = new RevealParserWorker();
 
 Comlink.expose(obj);

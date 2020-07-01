@@ -3,10 +3,10 @@
  */
 
 import { WorkerPool } from '@/utilities/workers/WorkerPool';
-import { ParserWorker } from '@/utilities/workers/parser.worker';
+import { RevealParserWorker } from '@/utilities/workers/reveal.parser.worker';
 import { SectorQuads } from '../rendering/types';
 import { SectorGeometry } from './types';
-import { ParseCtmInput } from '@/utilities/workers/types/parser.types';
+import { ParseCtmInput } from '@/utilities/workers/types/reveal.parser.types';
 
 export class CadSectorParser {
   private readonly workerPool: WorkerPool;
@@ -19,13 +19,13 @@ export class CadSectorParser {
   }
 
   parseAndFinalizeDetailed(i3dFile: string, ctmFiles: ParseCtmInput): Promise<SectorGeometry> {
-    return this.workerPool.postWorkToAvailable(async (worker: ParserWorker) =>
+    return this.workerPool.postWorkToAvailable(async (worker: RevealParserWorker) =>
       worker.parseAndFinalizeDetailed(i3dFile, ctmFiles)
     );
   }
 
   private async parseSimple(quadsArrayBuffer: Uint8Array): Promise<SectorQuads> {
-    return this.workerPool.postWorkToAvailable<SectorQuads>(async (worker: ParserWorker) =>
+    return this.workerPool.postWorkToAvailable<SectorQuads>(async (worker: RevealParserWorker) =>
       worker.parseQuads(quadsArrayBuffer)
     );
   }
