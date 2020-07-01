@@ -49,7 +49,7 @@ export default class NodeAdaptor {
         // Get WellBore to NPT events map
         const wellBoreToNPTEventsMap = bpData.wellBoreToNPTEventsMap;
         // Indexes of md,x_offset and y_offset
-        const { md, x_offset, y_offset } = bpData.trajectoryDataColumnindexes;
+        const { md, x_offset, y_offset } = bpData.trajectoryDataColumnIndexes;
         // tslint:disable-next-line: no-console
         console.log("NodeVisualizer:Data indexes", md, x_offset, y_offset);
 
