@@ -1,7 +1,4 @@
-import { MatchImageSnapshotOptions } from "jest-image-snapshot";
 import { gotoAndWaitForRender } from "./VisualTestUtils";
-
-const matchImageSnapshotOptions: MatchImageSnapshotOptions = { dumpDiffToConsole: true }
 
 describe('Testable', () => {
     it('correctly renders primitives test scene', async () => {
@@ -13,6 +10,6 @@ describe('Testable', () => {
         });
 
         const image = await page.screenshot();
-        expect(image).toMatchImageSnapshot(matchImageSnapshotOptions);
+        expect(image).toMatchImageSnapshot();
     });
 });
