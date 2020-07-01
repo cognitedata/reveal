@@ -15,11 +15,6 @@ module.exports = function override(config) {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: `${revealSource}/**/reveal.*.worker.js`,
-          to: ".",
-          flatten: true,
-        },
-        {
           from: `${revealSource}/**/*.worker.js`,
           to: ".",
           flatten: true,
