@@ -41,7 +41,7 @@ import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
 import { CadSectorProvider } from './CadSectorProvider';
 import { MemoryRequestCache } from '@/utilities/cache/MemoryRequestCache';
-import { ParseCtmResult, ParseSectorResult } from '@/utilities/workers/types/parser.types';
+import { ParseCtmResult, ParseSectorResult } from '@/utilities/workers/types/reveal.parser.types';
 import { TriangleMesh, InstancedMeshFile, InstancedMesh, SectorQuads } from '../rendering/types';
 import { createOffsetsArray } from '@/utilities';
 
