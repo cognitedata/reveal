@@ -55,21 +55,14 @@ describe('Cognite3DViewer', () => {
     const outputs = {
       items: [
         {
-          model: {
-            id: 42
-          },
-          outputs: [
-            {
-              format: 'reveal-directory',
-              version: 8,
-              blobId: 1
-            }
-          ]
+          format: 'reveal-directory',
+          version: 8,
+          blobId: 1
         }
       ]
     };
     nock(/.*/)
-      .post(/.*\/outputs/)
+      .get(/.*\/outputs/)
       .reply(200, outputs);
     nock(/.*/)
       .get(/.*\/scene.json/)
@@ -82,7 +75,7 @@ describe('Cognite3DViewer', () => {
     // Act
     const model = await viewer.addModel({ modelId: 1, revisionId: 2 });
     viewer.fitCameraToModel(model);
-    TWEEN.update();
+    TWEEN.update(0);
 
     // Assert
     expect(onCameraChange).toBeCalled();
@@ -97,7 +90,7 @@ describe('Cognite3DViewer', () => {
 
     // Act
     viewer.fitCameraToBoundingBox(bbox, 0);
-    TWEEN.update();
+    TWEEN.update(0);
 
     // Assert
     expect(viewer.getCameraTarget()).toEqual(bbox.getCenter(new THREE.Vector3()));

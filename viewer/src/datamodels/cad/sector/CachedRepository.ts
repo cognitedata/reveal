@@ -166,7 +166,6 @@ export class CachedRepository implements Repository {
         this._modelSectorProvider.getCadSectorFile(wantedSector.blobUrl, wantedSector.metadata.facesFile.fileName!)
       ).pipe(
         catchError(error => {
-          // tslint:disable-next-line: no-console
           console.error('loadSimple request', error);
           this._consumedSectorCache.remove(this.wantedSectorCacheKey(wantedSector));
           throw error;
@@ -199,7 +198,6 @@ export class CachedRepository implements Repository {
     const networkObservable = onErrorResumeNext(
       i3dFileObservable.pipe(
         catchError(error => {
-          // tslint:disable-next-line: no-console
           console.error('loadDetailed request', error);
           this._consumedSectorCache.remove(this.wantedSectorCacheKey(wantedSector));
           throw error;

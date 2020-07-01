@@ -12,13 +12,13 @@ path = "rust/lib.rs"
 [dependencies]
 wasm-bindgen = { version = "0.2.60", features = ["serde-serialize"] }
 wasm-bindgen-futures = "0.4.13"
-js-sys = "0.3.39"
-serde = { version = "1.0.110", features = ["derive"] }
+js-sys = "0.3.40"
+serde = { version = "1.0.114", features = ["derive"] }
 serde_derive = "1.0.104"
 arraymap = "0.1.1"
 console_error_panic_hook = "0.1.6"
 serde-wasm-bindgen = "0.1.3"
-serde_bytes = "0.11.4"
+serde_bytes = "0.11.5"
 byteorder = "1.3.4"
 openctm = { git = "https://github.com/cognitedata/openctm-rs", rev="aaee843a4788188ed4e4dfc3f8e0836c9a39240a" }
 i3df = { path = "../i3df" }
@@ -30,7 +30,7 @@ version = "0.13.1"
 default-features = false
 
 [dependencies.web-sys]
-version = "0.3.39"
+version = "0.3.40"
 features = [
   'console',
   'Headers',

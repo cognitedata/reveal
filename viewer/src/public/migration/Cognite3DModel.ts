@@ -17,6 +17,7 @@ import { SectorGeometry } from '@/datamodels/cad/sector/types';
 import { SectorQuads } from '@/datamodels/cad/rendering/types';
 import { vec3 } from 'gl-matrix';
 import { NodeAppearanceProvider, DefaultNodeAppearance } from '@/datamodels/cad/NodeAppearance';
+import { Matrix4 } from 'three';
 
 const mapCoordinatesBuffers = {
   v: vec3.create()
@@ -40,16 +41,20 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   set loadingHints(hints: CadLoadingHints) {
     this.cadNode.loadingHints = hints;
   }
+
   readonly modelId: number;
   readonly revisionId: number;
-  readonly cadModel: CadModelMetadata;
+  /** @internal */
   readonly cadNode: CadNode;
-  readonly nodeColors: Map<number, [number, number, number, number]>;
-  readonly selectedNodes: Set<number>;
-  readonly hiddenNodes: Set<number>;
-  readonly client: CogniteClient;
-  readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
 
+  private readonly cadModel: CadModelMetadata;
+  private readonly nodeColors: Map<number, [number, number, number, number]>;
+  private readonly selectedNodes: Set<number>;
+  private readonly hiddenNodes: Set<number>;
+  private readonly client: CogniteClient;
+  private readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
+
+  /** @internal */
   constructor(modelId: number, revisionId: number, cadNode: CadNode, client: CogniteClient) {
     super();
     this.modelId = modelId;
@@ -130,8 +135,13 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return toThreeJsBox3(box || new THREE.Box3(), bounds, this.cadModel.modelTransformation);
   }
 
-  getModelBoundingBox(): THREE.Box3 {
-    return this.getBoundingBox();
+  getModelBoundingBox(outBbox?: THREE.Box3): THREE.Box3 {
+    return this.getBoundingBox(undefined, outBbox);
+  }
+
+  updateTransformation(matrix: Matrix4): void {
+    this.cadNode.applyMatrix4(matrix);
+    this.cadNode.updateMatrixWorld(false);
   }
 
   updateNodeIdMaps(sector: { lod: string; data: SectorGeometry | SectorQuads }) {
@@ -185,7 +195,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
         b
       };
     } catch (error) {
-      // tslint:disable-next-line: no-console
       console.error(`Cannot get color of ${nodeId} because of error:`, error);
       return {
         r: 255,

@@ -59,7 +59,6 @@ export class CadManager<TModelIdentifier> {
           this._needsRedraw = true;
         },
         error => {
-          // tslint:disable-next-line: no-console
           console.error(error);
         }
       )
@@ -68,6 +67,10 @@ export class CadManager<TModelIdentifier> {
 
   dispose() {
     this._subscription.unsubscribe();
+  }
+
+  requestRedraw(): void {
+    this._needsRedraw = true;
   }
 
   resetRedraw(): void {

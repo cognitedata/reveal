@@ -12,6 +12,7 @@ import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 describe('RevealManagerBase', () => {
   const mockCadManager: Omit<CadManager<number>, ''> = {
     addModel: jest.fn(),
+    requestRedraw: jest.fn(),
     resetRedraw: jest.fn(),
     needsRedraw: false,
     updateCamera: jest.fn(),
@@ -26,7 +27,8 @@ describe('RevealManagerBase', () => {
     addModel: jest.fn(),
     needsRedraw: false,
     updateCamera: jest.fn(),
-    getLoadingStateObserver: jest.fn()
+    getLoadingStateObserver: jest.fn(),
+    requestRedraw: jest.fn()
   };
   const pointCloudManager = mockPointCloudManager as PointCloudManager<number>;
   const materialManager = new MaterialManager();

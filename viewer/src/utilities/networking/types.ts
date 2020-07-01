@@ -11,5 +11,5 @@ export interface BlobOutputMetadata {
 }
 
 export interface ModelUrlProvider<TModelIdentifier> {
-  getModelUrl(params: TModelIdentifier): Promise<string>;
+  getModelUrl(identifier: TModelIdentifier): Promise<string>;
 }

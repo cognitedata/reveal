@@ -12,6 +12,7 @@
     "sourceMap": true,
     "moduleResolution": "node",
     "strict": true,
+    "stripInternal": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "typeRoots": [
@@ -28,6 +29,7 @@
       "@/*": ["*"]
     }
   },
-  "include": ["src/**/*"],
+  // include is also used for eslint to understand which files should be linted
+  "include": ["*.js", "*.ts", "src/**/*", ".eslintrc.js"],
   "exclude": ["node_modules/**/*", "dist/**/*", "src/@types/**/*"]
 }

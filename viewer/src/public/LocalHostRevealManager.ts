@@ -22,10 +22,16 @@ import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
 import { RevealOptions } from './types';
+import { Subscription, combineLatest } from 'rxjs';
+import { distinctUntilChanged, map } from 'rxjs/operators';
 
 type LocalModelIdentifier = { fileName: string };
+type LoadingStateChangeListener = (isLoading: boolean) => any;
 
 export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifier> {
+  private readonly eventListeners: { loadingStateChanged: LoadingStateChangeListener[] };
+  private readonly _subscription: Subscription;
+
   constructor(options?: RevealOptions) {
     const modelDataParser: CadSectorParser = new CadSectorParser();
     const materialManager: MaterialManager = new MaterialManager();
@@ -58,6 +64,23 @@ export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifi
       pointCloudFactory
     );
     super(cadManager, materialManager, pointCloudManager);
+
+    this.eventListeners = {
+      loadingStateChanged: new Array<LoadingStateChangeListener>()
+    };
+    this.notifyLoadingStateListeners = this.notifyLoadingStateListeners.bind(this);
+
+    this._subscription = new Subscription();
+    this._subscription.add(
+      combineLatest([sectorRepository.getLoadingStateObserver(), pointCloudManager.getLoadingStateObserver()])
+        .pipe(
+          map(([pointCloudLoading, cadLoading]) => {
+            return pointCloudLoading || cadLoading;
+          }),
+          distinctUntilChanged()
+        )
+        .subscribe(this.notifyLoadingStateListeners.bind(this), console.error)
+    );
   }
 
   public addModel(type: 'cad', fileName: string, nodeApperanceProvider?: NodeAppearanceProvider): Promise<CadNode>;
@@ -77,11 +100,32 @@ export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifi
     }
   }
 
+  public on(event: 'loadingStateChanged', listener: LoadingStateChangeListener): void {
+    if (event !== 'loadingStateChanged') {
+      throw new Error(`Unsupported event "${event}"`);
+    }
+    this.eventListeners[event].push(listener);
+  }
+  public off(event: 'loadingStateChanged', listener: LoadingStateChangeListener): void {
+    if (event !== 'loadingStateChanged') {
+      throw new Error(`Unsupported event "${event}"`);
+    }
+    this.eventListeners[event] = this.eventListeners[event].filter(fn => fn !== listener);
+  }
+
   public dispose(): void {
     if (this.isDisposed) {
       return;
     }
+    this.eventListeners.loadingStateChanged.splice(0);
     this._cadManager.dispose();
+    this._subscription.unsubscribe();
     super.dispose();
+  }
+
+  private notifyLoadingStateListeners(isLoaded: boolean) {
+    this.eventListeners.loadingStateChanged.forEach(handler => {
+      handler(isLoaded);
+    });
   }
 }
