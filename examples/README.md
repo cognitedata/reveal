@@ -15,16 +15,8 @@ yarn install
 yarn start
 ```
 
-Examples are not bounded to specific viewer release from npm. They just use whatever you have in local viewer build.
-
-### Viewer development
-
-In case if you want to get live changes from viewer in examples you need to link viewer with yarn link. It's already addressed in `serve` script in `viewer/package.json`, so you can do:
-
-```bash
-cd ./viewer
-yarn serve
-```
+Because we have local dependency on reveal like `"@cognite/reveal": "link:../viewer/dist"`, 
+examples are not bound to specific viewer release from npm. They just use whatever you have in local viewer build.
 
 ## [Environment files](https://create-react-app.dev/docs/adding-custom-environment-variables/)
 
