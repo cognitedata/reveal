@@ -1,12 +1,13 @@
 const core = require('@actions/core');
-const glob = require('@actions/glob');
+//const glob = require('@actions/glob');
 //const artifact = require('@actions/artifact');
 const github = require('@actions/github')
-const fs = require('fs');
+//const fs = require('fs');
 
 // TODO this should be converted to an actual reporter in TS registered with jest when
 //      https://github.com/facebook/jest/issues/8810 is resolved
 
+/*
 async function findFiles(path) {
   const globber = await glob.create(path)
   const rawSearchResults = await globber.glob()
@@ -21,6 +22,7 @@ async function findFiles(path) {
 
   return searchResults;
 }
+*/
 
 async function commentOnPR(octokit) {
   const context = github.context;
@@ -29,8 +31,9 @@ async function commentOnPR(octokit) {
     return;
   }
 
-  const message = core.getInput('message');
   const prNumber = context.payload.pull_request.number;
+  //const url = "https://github.com/cognitedata/reveal/pull/" + prNumber + "/checks?check_run_id=825583458";
+  const message = "There were failures during the visual regression test stage.";
 
   await octokit.issues.createComment({
     ...context.repo,
@@ -46,26 +49,30 @@ async function run() {
     process.exit();
   }
   try {
-    const files = await findFiles("src/visual_tests/__image_snapshots__/__diff_output__/*");
-    const numberOfFiles = files.length;
-    console.log(numberOfFiles + " file(s) found");
+    //const files = await findFiles("src/visual_tests/__image_snapshots__/__diff_output__/*");
+    //const numberOfFiles = files.length;
+    /*console.log(numberOfFiles + " file(s) found");
     if (numberOfFiles == 0) {
       console.log("Ran GithubDiffUploader.js but no diff files were found. Did you mean to run this file?");
       process.exit();
     }
 
+
     const artifactName = "image-diffs-" + commitHash;
     //const client = artifact.create();
     const github_token = process.env['ACTIONS_RUNTIME_TOKEN'];
     const octokit = github.getOctokit(github_token);
-    const client = octokit.artifact.client.create();
 
-    const uploadResponse = await client.uploadArtifact(artifactName, files, ".", { continueOnError: false });
+    //const uploadResponse = await client.uploadArtifact(artifactName, files, ".", { continueOnError: false });
 
     if (uploadResponse.failedItems.length > 0) {
       core.setFailed(uploadResponse.failedItems.length + ' images failed to upload.');
     }
-
+    */
+    const github_token = process.env['ACTIONS_RUNTIME_TOKEN'];
+    const octokit = github.getOctokit(github_token);
+    console.log("GITHUB_RUN_ID: " + process.env["GITHUB_RUN_ID"]);
+    console.log("GITHUB_ACTION: ", process.env["GITHUB_ACTION"]);
     await commentOnPR(octokit);
 
   } catch (err) {

@@ -167,15 +167,16 @@ jobs:
       working-directory: examples
       run: 'yarn ci:nossl'
 
-    - name: Upload image diffs for failed visual tests
+    - name: Check for failed visual test diffs
       if: failure()
       working-directory: examples
       run: 'yarn test:ghdiffs'
       env:
         ACTIONS_RUNTIME_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - uses: actions/upload-artifact@v2
+    - name: Upload image diffs for failed visual tests
       if: failure()
+      uses: actions/upload-artifact@v2
       with:
-        name: visual-test-image-diffs-${{ github.sha }}
+        name: image-diffs-${{ github.sha }}
         path: examples/src/visual_tests/__image_snapshots__/__diff_output__/*
