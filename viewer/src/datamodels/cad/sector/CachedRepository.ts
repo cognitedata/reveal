@@ -172,7 +172,6 @@ export class CachedRepository implements Repository {
         this._modelSectorProvider.getCadSectorFile(wantedSector.blobUrl, wantedSector.metadata.facesFile.fileName!)
       ).pipe(
         catchError(error => {
-          // tslint:disable-next-line: no-console
           console.error('loadSimple request', error);
           this._consumedSectorCache.remove(this.wantedSectorCacheKey(wantedSector));
           throw error;
@@ -221,7 +220,6 @@ export class CachedRepository implements Repository {
     const networkObservable = onErrorResumeNext(
       zip(i3dFileObservable, ctmFilesObservable).pipe(
         catchError(error => {
-          // tslint:disable-next-line: no-console
           console.error('loadDetailed request', error);
           this._consumedSectorCache.remove(this.wantedSectorCacheKey(wantedSector));
           throw error;
@@ -264,7 +262,6 @@ export class CachedRepository implements Repository {
         const networkObservable: Observable<{ fileName: string; data: ParseCtmResult }> = onErrorResumeNext(
           from(this._modelSectorProvider.getCadSectorFile(ctmRequest.blobUrl, ctmRequest.fileName)).pipe(
             catchError(error => {
-              // tslint:disable-next-line: no-console
               console.error('loadCtm request', error);
               this._ctmFileCache.remove(this.ctmFileCacheKey(ctmRequest));
               throw error;

@@ -32,7 +32,7 @@ describe('consumeSectorDetailed', () => {
       nodeIdToTreeIndexMap: new Map(),
       treeIndexToNodeIdMap: new Map(),
       buffer: new Float32Array([
-        // tslint:disable: prettier
+        /* eslint-disable prettier/prettier */
         0.0, 0.0, 0.0,
         0.0, 0.0, 0.0,
         42.0,
@@ -40,7 +40,7 @@ describe('consumeSectorDetailed', () => {
         0.0, 1.0, 0.0, 0.0,
         0.0, 0.0, 1.0, 0.0,
         0.0, 0.0, 0.0, 1.0
-        // tslint:enable: prettier
+        /* eslint-enable prettier/prettier */
       ])
     };
 
@@ -57,7 +57,7 @@ describe('consumeSectorDetailed', () => {
       nodeIdToTreeIndexMap: new Map(),
       treeIndexToNodeIdMap: new Map(),
       buffer: new Float32Array([
-        // tslint:disable: prettier
+        /* eslint-disable prettier/prettier */
         // First element
         0.0, 0.0, 0.0,
         0.0, 0.0, 0.0,
@@ -74,7 +74,7 @@ describe('consumeSectorDetailed', () => {
         0.0, 1.0, 0.0, 0.0,
         0.0, 0.0, 1.0, 0.0,
         0.0, 0.0, 0.0, 1.0
-        // tslint:enable: prettier
+        /* eslint-enable prettier/prettier */
       ])
     };
 
@@ -91,7 +91,7 @@ describe('consumeSectorDetailed', () => {
       nodeIdToTreeIndexMap: new Map(),
       treeIndexToNodeIdMap: new Map(),
       buffer: new Float32Array([
-        // tslint:disable: prettier
+        /* eslint-disable prettier/prettier */
         0.0, 0.0, 0.0,
         0.0, 0.0, 0.0,
         42.0,
@@ -101,7 +101,7 @@ describe('consumeSectorDetailed', () => {
         0.0, 0.0, 0.0, 1.0,
 
         0.13337,
-        // tslint:enable: prettier
+        /* eslint-enable prettier/prettier */
       ])
     };
 
@@ -115,9 +115,9 @@ describe('consumeSectorDetailed', () => {
       nodeIdToTreeIndexMap: new Map(),
       treeIndexToNodeIdMap: new Map(),
       buffer: new Float32Array([
-        // tslint:disable: prettier
+        /* eslint-disable prettier/prettier */
         0.0, 0.0, 0.0,
-        // tslint:enable: prettier
+        /* eslint-enable prettier/prettier */
       ])
     };
 
