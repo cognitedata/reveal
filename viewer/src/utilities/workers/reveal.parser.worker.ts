@@ -3,12 +3,17 @@
  */
 
 import * as Comlink from 'comlink';
-import { ParseSectorResult, ParseCtmResult, ParsedPrimitives, ParsePrimitiveAttribute } from './types/parser.types';
+import {
+  ParseSectorResult,
+  ParseCtmResult,
+  ParsedPrimitives,
+  ParsePrimitiveAttribute
+} from './types/reveal.parser.types';
 import * as rustTypes from '../../../pkg';
 import { SectorQuads } from '@/datamodels/cad/rendering/types';
 const rustModule = import('../../../pkg');
 
-export class ParserWorker {
+export class RevealParserWorker {
   public async parseSector(buffer: Uint8Array): Promise<ParseSectorResult> {
     const rust = await rustModule;
     const sectorData = rust.parse_and_convert_sector(buffer);
@@ -195,6 +200,6 @@ export class ParserWorker {
   }
 }
 
-const obj = new ParserWorker();
+const obj = new RevealParserWorker();
 
 Comlink.expose(obj);
