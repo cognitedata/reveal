@@ -21,7 +21,7 @@
     "schema:rust": "flatc --force-empty --rust -o rust/ detailedSector.fbs",
     "schema": "yarn run schema:ts && yarn run schema:rust",
     "build:schema": "yarn run schema && yarn run build",
-    "serve": "cd ../../examples && yarn && yarn run start",
+    "serve": "cd ../examples && yarn && yarn run start",
     "mkdist": "run-script-os",
     "mkdist:win32": "@powershell $(if(-not(Test-Path dist -PathType Container)) { mkdir dist;$? } else { $true;$? })",
     "mkdist:linux:darwin": "mkdir -p dist",
