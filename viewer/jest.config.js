@@ -1,7 +1,10 @@
+/*!
+ * Copyright 2020 Cognite AS
+ */
 module.exports = {
   roots: ['<rootDir>/src'],
   transform: {
-    '^.+\\.tsx?$': 'ts-jest',
+    '^.+\\.tsx?$': 'ts-jest'
   },
   testRegex: '(/__tests__/.*\\.test\\..*|\\.(test|spec|Test))\\.tsx?$',
   moduleDirectories: ['node_modules'],
@@ -9,20 +12,11 @@ module.exports = {
   moduleNameMapper: {
     '\\.(frag|vert)$': '<rootDir>/src/__mocks__/glslMocks.js',
     '\\.css$': '<rootDir>/src/__mocks__/cssMock.js',
-    '^@/(.*)': '<rootDir>/src/$1',
+    '^@/(.*)': '<rootDir>/src/$1'
   },
   coverageDirectory: '../coverage',
-  collectCoverageFrom: [
-    "!src/__tests__/**/*.ts",
-    "!**/*.d.ts",
-    "!**/*.json"
-  ],
+  collectCoverageFrom: ['!src/__tests__/**/*.ts', '!**/*.d.ts', '!**/*.json'],
   automock: false,
-  setupFiles: [
-    "./src/__tests__/setupJest.ts",
-    "jest-canvas-mock"
-  ],
-  setupFilesAfterEnv: [
-    "jest-extended"
-  ],
+  setupFiles: ['./src/__tests__/setupJest.ts', 'jest-canvas-mock'],
+  setupFilesAfterEnv: ['jest-extended']
 };

@@ -116,6 +116,5 @@ export class TakenSectorTree {
 }
 
 function assert(condition: boolean, message: string = 'assertion hit') {
-  // tslint:disable-next-line: no-console
   console.assert(condition, message);
 }
