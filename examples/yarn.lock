@@ -2,18 +2,7 @@
 # yarn lockfile v1
 
 
-"@actions/artifact@^0.3.2":
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/@actions/artifact/-/artifact-0.3.2.tgz#46f6a14d8daac4503448a115ab21a9bb4efcdbe2"
-  integrity sha512-KzUe5DEeVXprAodxfGKtx9f7ukuVKE6V6pge6t5GDGk0cdkfiMEfahoq7HfBsOsmVy4J7rr1YZQPUTvXveYinw==
-  dependencies:
-    "@actions/core" "^1.2.1"
-    "@actions/http-client" "^1.0.7"
-    "@types/tmp" "^0.1.0"
-    tmp "^0.1.0"
-    tmp-promise "^2.0.2"
-
-"@actions/core@^1.2.0", "@actions/core@^1.2.1", "@actions/core@^1.2.4":
+"@actions/core@^1.2.4":
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/@actions/core/-/core-1.2.4.tgz#96179dbf9f8d951dd74b40a0dbd5c22555d186ab"
   integrity sha512-YJCEq8BE3CdN8+7HPZ/4DxJjk/OkZV2FFIf+DlZTC/4iBlzYCD5yjRR6eiOS5llO11zbRltIRuKAjMKaWTE6cg==
@@ -28,15 +17,7 @@
     "@octokit/plugin-paginate-rest" "^2.2.3"
     "@octokit/plugin-rest-endpoint-methods" "^4.0.0"
 
-"@actions/glob@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@actions/glob/-/glob-0.1.0.tgz#969ceda7e089c39343bca3306329f41799732e40"
-  integrity sha512-lx8SzyQ2FE9+UUvjqY1f28QbTJv+w8qP7kHHbfQRhphrlcx0Mdmm1tZdGJzfxv1jxREa/sLW4Oy8CbGQKCJySA==
-  dependencies:
-    "@actions/core" "^1.2.0"
-    minimatch "^3.0.4"
-
-"@actions/http-client@^1.0.7", "@actions/http-client@^1.0.8":
+"@actions/http-client@^1.0.8":
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/@actions/http-client/-/http-client-1.0.8.tgz#8bd76e8eca89dc8bcf619aa128eba85f7a39af45"
   integrity sha512-G4JjJ6f9Hb3Zvejj+ewLLKLf99ZC+9v+yCxoYf9vSyH+WkzPLB2LuUtRMGNkooMqdugGBFStIKXOuvH1W+EctA==
@@ -1968,11 +1949,6 @@
     "@types/react-dom" "*"
     "@types/testing-library__dom" "*"
     pretty-format "^25.1.0"
-
-"@types/tmp@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@types/tmp/-/tmp-0.1.0.tgz#19cf73a7bcf641965485119726397a096f0049bd"
-  integrity sha512-6IwZ9HzWbCq6XoQWhxLpDjuADodH/MKXRUIDFudvgjcVdjFknvmR+DNsoUeer4XPrEnrZs04Jj+kfV9pFsrhmA==
 
 "@types/yargs-parser@*":
   version "15.0.0"
@@ -11643,20 +11619,6 @@ tiny-warning@^1.0.0, tiny-warning@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/tiny-warning/-/tiny-warning-1.0.3.tgz#94a30db453df4c643d0fd566060d60a875d84754"
   integrity sha512-lBN9zLN/oAf68o3zNXYrdCt1kP8WsiGW8Oo2ka41b2IM5JL/S1CTyX1rW0mb/zSuJun0ZUrDxx4sqvYS2FWzPA==
-
-tmp-promise@^2.0.2:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/tmp-promise/-/tmp-promise-2.1.1.tgz#eb97c038995af74efbfe8156f5e07fdd0c935539"
-  integrity sha512-Z048AOz/w9b6lCbJUpevIJpRpUztENl8zdv1bmAKVHimfqRFl92ROkmT9rp7TVBnrEw2gtMTol/2Cp2S2kJa4Q==
-  dependencies:
-    tmp "0.1.0"
-
-tmp@0.1.0, tmp@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/tmp/-/tmp-0.1.0.tgz#ee434a4e22543082e294ba6201dcc6eafefa2877"
-  integrity sha512-J7Z2K08jbGcdA1kkQpJSqLF6T0tdQqpR2pnSUXsIchbPdTI9v3e85cLW0d6WDhwuAleOV71j2xWs8qMPfK7nKw==
-  dependencies:
-    rimraf "^2.6.3"
 
 tmp@^0.0.33:
   version "0.0.33"
