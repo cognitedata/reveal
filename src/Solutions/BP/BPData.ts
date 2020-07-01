@@ -9,7 +9,7 @@ export default class BPData {
     private _wellBoreToWellMap = new Map<number, { wellId: number, data: Wellbore }>();
     private _wellBoreToNDSEventsMap = new Map<number, RiskEvent[]>();
     private _wellBoreToNPTEventsMap = new Map<number, RiskEvent[]>();
-    private _trajectoryDataColumnindexes: { [key: string]: number } = {};
+    private _trajectoryDataColumnIndexes: { [key: string]: number } = {};
 
 
     // Pass BP data coming from the BP application
@@ -26,7 +26,7 @@ export default class BPData {
         this.generateTrajectoryDataMap(trajectoryData);
         this.generateWellBoreToNDSEventsMap(ndsEvents);
         this.generateWellBoreToNPTEventsMap(nptEvents);
-        this.generateTrajectoryDataColumnindexes(trajectoryData);
+        this.generateTrajectoryDataColumnIndexes(trajectoryData);
     }
 
     //==================================================
@@ -58,7 +58,7 @@ export default class BPData {
             if (!assetIds || !assetIds.length) {
                 continue;
             }
-            for (const assetId of assetIds) {
+            for (const assetId of assetIds) { // Mihil : Shouldn't assetIds contain just 1 item
                 if (!wellBoreToNDSEventsMap.get(assetId)) {
                     wellBoreToNDSEventsMap.set(assetId, []);
                 }
@@ -90,11 +90,11 @@ export default class BPData {
         console.log("NodeVisualizer: NPTEvents", wellBoreToNPTEventsMap);
     }
 
-    private generateTrajectoryDataColumnindexes(trajectoryData?: TrajectoryRows[]) {
+    private generateTrajectoryDataColumnIndexes(trajectoryData?: TrajectoryRows[]) {
         if (!trajectoryData || !trajectoryData.length) {
             return;
         }
-        const indexes: { [key: string]: number } = this._trajectoryDataColumnindexes;
+        const indexes: { [key: string]: number } = this._trajectoryDataColumnIndexes;
         const column = trajectoryData[0].columns;
         for (let index = 0; index < column.length; index++) {
             const columnName = column[index].name;
@@ -108,5 +108,5 @@ export default class BPData {
     public get wellBoreToWellMap() { return this._wellBoreToWellMap; }
     public get wellBoreToNDSEventsMap() { return this._wellBoreToNDSEventsMap; }
     public get wellBoreToNPTEventsMap() { return this._wellBoreToNPTEventsMap };
-    public get trajectoryDataColumnindexes() { return this._trajectoryDataColumnindexes };
+    public get trajectoryDataColumnIndexes() { return this._trajectoryDataColumnIndexes };
 }

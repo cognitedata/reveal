@@ -1,6 +1,6 @@
 {
   "name": "@cognite/subsurface-visualizer",
-  "version": "0.0.54-dev",
+  "version": "0.0.54-dev.1",
   "description": "Subsurface visualizer for cognite",
   "main": "subsurface-visualizer.js",
   "module": "subsurface-visualizer.js",
@@ -85,6 +85,7 @@
     "react-redux": "^7.2.0",
     "redux": "^4.0.5",
     "sass-loader": "^8.0.2",
+    "source-map-loader": "^1.0.1",
     "style-loader": "^1.2.1",
     "ts-jest": "^26.1.1",
     "ts-loader": "^7.0.5",

@@ -37,7 +37,7 @@ class NotificationsToActionsAdaptor {
 
 
 const changeCheckboxState = (appliesTo: string, payload: any) => {
-    return { type: CHANGE_CHECKBOX_STATE, appliesTo: appliesTo, payload: payload};
+    return { type: CHANGE_CHECKBOX_STATE, appliesTo, payload };
 };
 
 export default NotificationsToActionsAdaptor;

@@ -20,6 +20,11 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.js$/,
+        enforce: 'pre',
+        use: ['source-map-loader'],
+      },
+      {
         test: /\.(ts|js)x?$/,
         include: resolve("src"),
         exclude: /node_modules/,
@@ -100,6 +105,9 @@ module.exports = {
     libraryTarget: "umd"
   },
   devtool: "inline-source-map",
+  optimization: {
+    minimize: false
+  },
   plugins: [
     new CleanWebpackPlugin(),
     new CopyPlugin({

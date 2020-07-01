@@ -36,7 +36,7 @@ export default class WellTrajectoryBuilder {
         // Some trajectories missing data
         if (!trajectoryData || !trajectoryData.rows.length) {
             // tslint:disable-next-line: no-console
-            console.log("NodeVisualizer: No curve points available for", this.wellTrajectoryNode.getName());
+            console.error("NodeVisualizer: No curve points available for", this.wellTrajectoryNode.getName());
             return this;
         }
         const trajectory = new WellTrajectory();
