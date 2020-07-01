@@ -3,15 +3,15 @@
  */
 
 import * as Comlink from 'comlink';
-import { ParserWorker } from './parser.worker';
-// IMPORTANT NOTE! The path to the ParserWorker needs to be the same in the new Worker constructor
+import { RevealParserWorker } from './reveal.parser.worker';
+// IMPORTANT NOTE! The path to the RevealParserWorker needs to be the same in the new Worker constructor
 
-type WorkDelegate<T> = (worker: ParserWorker) => Promise<T>;
+type WorkDelegate<T> = (worker: RevealParserWorker) => Promise<T>;
 
 interface PooledWorker {
-  // The worker returned by Comlink.wrap is not strictly speaking a ParserWorker,
+  // The worker returned by Comlink.wrap is not strictly speaking a RevealParserWorker,
   // but it should expose the same functions
-  worker: ParserWorker;
+  worker: RevealParserWorker;
   activeJobCount: number;
   messageIdCounter: number;
 }
@@ -31,11 +31,11 @@ export class WorkerPool {
 
     for (let i = 0; i < numberOfWorkers; i++) {
       const newWorker = {
-        // NOTE: As of Comlink 4.2.0 we need to go through unknown before ParserWorker
+        // NOTE: As of Comlink 4.2.0 we need to go through unknown before RevealParserWorker
         // Please feel free to remove `as unknown` if possible.
         worker: (Comlink.wrap(
-          new Worker('./parser.worker', { name: 'parser', type: 'module' })
-        ) as unknown) as ParserWorker,
+          new Worker('./reveal.parser.worker', { name: 'reveal.parser', type: 'module' })
+        ) as unknown) as RevealParserWorker,
         activeJobCount: 0,
         messageIdCounter: 0
       };
