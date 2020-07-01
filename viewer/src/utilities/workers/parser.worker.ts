@@ -6,7 +6,9 @@ import * as Comlink from 'comlink';
 import { ParsedPrimitives, ParsePrimitiveAttribute, ParseCtmInput } from './types/parser.types';
 import * as rustTypes from '../../../pkg';
 import { SectorGeometry } from '@/datamodels/cad/sector/types';
-import { SectorQuads } from '@/datamodels/cad/rendering/types';
+import { SectorQuads, InstancedMesh, InstancedMeshFile, TriangleMesh } from '@/datamodels/cad/rendering/types';
+import { DetailedSector } from '@/datamodels/cad/sector/detailedSector_generated';
+import { flatbuffers } from 'flatbuffers';
 const rustModule = import('../../../pkg');
 
 export class ParserWorker {
@@ -30,10 +32,64 @@ export class ParserWorker {
     const rust = await rustModule;
     // TODO mattman22 2020-6-24 Handle parse/finalize errors
     const sectorData = await rust.load_parse_finalize_detailed(i3dFile, ctmFiles.blobUrl, ctmFiles.headers);
-    const iMesh = sectorData.instance_meshes;
-    const tMesh = sectorData.triangle_meshes;
+    const buf = new flatbuffers.ByteBuffer(sectorData.data);
+    const sectorG = DetailedSector.SectorGeometry.getRootAsSectorGeometry(buf);
+    const iMeshes: InstancedMeshFile[] = [];
+    for (let i = 0; i < sectorG.instanceMeshesLength(); i++) {
+      const instances: InstancedMesh[] = [];
+      const meshFile = sectorG.instanceMeshes(i)!;
+      for (let j = 0; j < meshFile.instancesLength(); j++) {
+        const int = meshFile.instances(j)!;
+        const colors = int.colorsArray();
+        const instanceMatrices = int.instanceMatricesArray();
+        const treeIndices = int.treeIndicesArray();
+        instances.push({
+          triangleCount: int.triangleCount(),
+          triangleOffset: int.triangleOffset(),
+          colors: colors ? colors : new Uint8Array(),
+          instanceMatrices: instanceMatrices ? instanceMatrices : new Float32Array(),
+          treeIndices: treeIndices ? treeIndices : new Float32Array()
+        });
+      }
+      const indices = meshFile.indicesArray();
+      const vertices = meshFile.verticesArray();
+      const norm = meshFile.normalsArray();
+      iMeshes.push({
+        fileId: meshFile.fileId(),
+        indices: indices ? indices : new Uint32Array(),
+        vertices: vertices ? vertices : new Float32Array(),
+        normals: norm ? norm : undefined,
+        instances
+      });
+    }
+    const tMeshes: TriangleMesh[] = [];
+    for (let i = 0; i < sectorG.triangleMeshesLength(); i++) {
+      const tri = sectorG.triangleMeshes(i)!;
+      const indices = tri.indicesArray();
+      const treeIndices = tri.treeIndicesArray();
+      const vertices = tri.verticesArray();
+      const colors = tri.colorsArray();
+      const norm = tri.normalsArray();
+      tMeshes.push({
+        fileId: tri.fileId(),
+        indices: indices ? indices : new Uint32Array(),
+        treeIndices: treeIndices ? treeIndices : new Float32Array(),
+        vertices: vertices ? vertices : new Float32Array(),
+        normals: norm ? norm : undefined,
+        colors: colors ? colors : new Uint8Array()
+      });
+    }
+    // const iMesh = sectorData.instance_meshes;
+    // const tMesh = sectorData.triangle_meshes;
     const sector = sectorData.sector;
+
     const primitives = this.extractParsedPrimitives(sector);
+    // const nodeIdToTreeIndexMap = new Map();
+    // const treeIndexToNodeIdMap = new Map();
+    // for (let i = 0; i < sectorG.nodeIdsLength(); i++) {
+    //   nodeIdToTreeIndexMap.set(sectorG.nodeIds(i), sectorG.treeIndices(i));
+    //   treeIndexToNodeIdMap.set(sectorG.treeIndices(i), sectorG.nodeIds(i));
+    // }
     const nodeIdToTreeIndexMap = sector.node_id_to_tree_index_map();
     const treeIndexToNodeIdMap = sector.tree_index_to_node_id_map();
 
@@ -41,8 +97,8 @@ export class ParserWorker {
       nodeIdToTreeIndexMap,
       treeIndexToNodeIdMap,
       primitives,
-      instanceMeshes: iMesh,
-      triangleMeshes: tMesh
+      instanceMeshes: iMeshes,
+      triangleMeshes: tMeshes
     };
     sectorData.free();
     return result;

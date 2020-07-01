@@ -4,7 +4,7 @@
     "tslint-no-circular-imports"
   ],
   "linterOptions": {
-    "exclude": ["node_modules/**/*.ts", "**/*.json"]
+    "exclude": ["node_modules/**/*.ts", "**/*.json", "src/datamodels/cad/sector/detailedSector_generated.ts"]
   },
   "rules": {
     "file-header": [

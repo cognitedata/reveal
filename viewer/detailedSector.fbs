@@ -1,0 +1,31 @@
+namespace DetailedSector;
+
+table TriangleMesh {
+    file_id:double;
+    indices:[uint];
+    tree_indices:[float];
+    vertices:[float];
+    normals:[float];
+    colors:[ubyte];
+}
+
+table InstanceMesh {
+    triangle_count:double;
+    triangle_offset:double;
+    colors:[ubyte];
+    instance_matrices:[float];
+    tree_indices:[float];
+}
+
+table InstanceMeshFile {
+    file_id:double;
+    indices:[uint];
+    vertices:[float];
+    normals:[float];
+    instances:[InstanceMesh];
+}
+
+table SectorGeometry {
+    instance_meshes:[InstanceMeshFile];
+    triangle_meshes:[TriangleMesh];
+}

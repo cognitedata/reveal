@@ -18,7 +18,8 @@ import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
 
 describe('CadModelUpdateHandler', () => {
   const modelSectorProvider: CadSectorProvider = {
-    getCadSectorFile: jest.fn()
+    getCadSectorFile: jest.fn(),
+    headers: {}
   };
   const materialManager = new MaterialManager();
   const modelDataParser = new CadSectorParser();

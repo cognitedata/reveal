@@ -15,6 +15,10 @@
     "release": "npm run mkdist && webpack",
     "build": "npm run mkdist && webpack --env.development",
     "build:watch": "npm run build -- --watch",
+    "schema:ts": "flatc --force-empty --no-fb-import --ts -o src/datamodels/cad/sector/ detailedSector.fbs",
+    "schema:rust": "flatc --force-empty --rust -o rust/ detailedSector.fbs",
+    "schema": "npm run schema:ts && npm run schema:rust",
+    "build:schema": "npm run schema && npm run build",
     "mkdist": "run-script-os",
     "mkdist:win32": "@powershell $(if(-not(Test-Path dist -PathType Container)) { mkdir dist;$? } else { $true;$? }) -and $(Copy-Item -Path package.json, README.md -Destination dist;$?)",
     "mkdist:linux:darwin": "mkdir -p dist && cp package.json README.md dist",
@@ -87,7 +91,9 @@
     "glslify": "^7.0.0",
     "glslify-import": "^3.1.0",
     "lodash": "^4.17.15",
-    "rxjs": "^6.5.5"
+    "rxjs": "^6.5.5",
+    "flatbuffers": "^1.12.0",
+    "@types/flatbuffers": "^1.10.0"
   },
   "peerDependencies": {
     "@cognite/sdk": "^2.29.0",
