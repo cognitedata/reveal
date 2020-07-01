@@ -4,7 +4,7 @@ import NodeFactory from "@/Solutions/BP/NodeFactory";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { WellNode } from "@/Nodes/Wells/Wells/WellNode";
 import BPData from "@/Solutions/BP/BPData";
-import { RiskEvent } from "@/Interface";
+import { RiskEvent, ILog } from "@/Interface";
 
 /**
  * Converts IWell and ITrajectory to BaseNode
@@ -52,6 +52,8 @@ export default class NodeAdaptor {
         const { md, x_offset, y_offset } = bpData.trajectoryDataColumnIndexes;
         // tslint:disable-next-line: no-console
         console.log("NodeVisualizer:Data indexes", md, x_offset, y_offset);
+        // Get wellbore to logs map
+        const wellBoreToLogsMap = bpData.wellBoreToLogsMap;
 
         // Iterate Trajectoies and build TrajectoryNodes
         for (const trajectory of trajectories) {
@@ -87,6 +89,11 @@ export default class NodeAdaptor {
                 console.log("NodeVisualizer: TrajectoryNPTEvent", wellBoreId, nptEvents);
             }
 
+            let trajectoryLogs: ILog[] | undefined;
+            if (wellBoreToLogsMap) {
+                trajectoryLogs = wellBoreToLogsMap[wellBoreId]; // here are the logs related to the current trajectory
+            }
+
             // TODO - Move data to a class and reduce arguments
             const trajectoryNode = NodeFactory.createTrajectoryNode(
                 trajectoryName, // Relavant wellbore description
@@ -95,7 +102,8 @@ export default class NodeAdaptor {
                 trajectoryRows,
                 [md, x_offset, y_offset], // Indexces of md, x_offset and y_offset
                 ndsEvents,
-                nptEvents);
+                nptEvents,
+                trajectoryLogs);
             wellNode.addChild(trajectoryNode);
         }
         return wellNodes;

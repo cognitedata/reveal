@@ -9,12 +9,13 @@ import { Random } from "@/Core/Primitives/Random";
 import { DiscreteLogNode } from "@/Nodes/Wells/Wells/DiscreteLogNode";
 import { DiscreteLog } from "@/Nodes/Wells/Logs/DiscreteLog";
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import { Trajectory, TrajectoryRows, RiskEvent } from "@/Interface";
+import { Trajectory, TrajectoryRows, RiskEvent, ILog } from "@/Interface";
 import { TrajectorySample } from "@/Nodes/Wells/Samples/TrajectorySample";
 import { PointLog } from "@/Nodes/Wells/Logs/PointLog";
 import { PointLogSample } from "@/Nodes/Wells/Samples/PointLogSample";
 import { PointLogNode } from "@/Nodes/Wells/Wells/PointLogNode";
 import { Units } from "@/Core/Primitives/Units";
+import { LogFolder } from "@/Nodes/Wells/Wells/LogFolder";
 
 /**
  * Build WellTrajectoryNode from BP Data
@@ -148,6 +149,54 @@ export default class WellTrajectoryBuilder {
         }
         return this;
     }
+
+    // Add Logs
+    public addLogs(logs?: ILog[]) { // here are the logs related to the current trajectory from NodeAdaptor
+        const wellTrajectory = this.wellTrajectoryNode.data;
+        if (!logs || !wellTrajectory) {
+            return this;
+        }
+
+        for (let logIndex = 0; logIndex < logs.length; logIndex++) {
+            const logFolder = new LogFolder();
+            this.wellTrajectoryNode.addChild(logFolder);
+            const items = logs[logIndex].items;
+            if (items.length === 0) {
+                continue;
+            }
+
+            let mdIndex: number = -1;
+            const logTypeIndexes: number[] = [];
+            items[0].columns.forEach((column, index) => {
+                if (column.externalId === "DEPT") {
+                    mdIndex = index;
+                }
+                else {
+                    logTypeIndexes.push(index)
+                }
+            });
+
+            // if there is no DEPT colomn or no any log colomns
+            if (mdIndex == -1 || logTypeIndexes.length === 0) {
+                continue;
+            }
+
+            logTypeIndexes.forEach(index => {
+                const floatLogNode = new FloatLogNode();
+                logFolder.addChild(floatLogNode);
+
+                floatLogNode.data = FloatLog.createFloatLog(items, mdIndex, index);
+
+                // geting the name from first item
+                const name = items[0].columns[index].name;
+                if (name) {
+                    floatLogNode.setName(name);
+                }
+            });
+        }
+        return this;
+    }
+
 
     // Add discrete logs
     public addDiscreteLogs() {

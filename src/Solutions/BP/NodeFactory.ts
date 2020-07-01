@@ -2,7 +2,7 @@ import WellBuilder from "@/Solutions/BP/builders/WellBuilder";
 import WellTrajectoryBuilder from "@/Solutions/BP/builders/WellTrajectoryBuilder";
 import { WellNode } from "@/Nodes/Wells/Wells/WellNode";
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import { TrajectoryRows, Well, Trajectory, RiskEvent } from "@/Interface";
+import { TrajectoryRows, Well, Trajectory, RiskEvent, ILog } from "@/Interface";
 import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
 
 export default class NodeFactory {
@@ -20,14 +20,15 @@ export default class NodeFactory {
         trajectoryRows: TrajectoryRows,
         dataIndexes: number[],
         ndsEvents?: RiskEvent[],
-        nptEvents?: RiskEvent[]
+        nptEvents?: RiskEvent[],
+        logs?: ILog[]
     ): WellTrajectoryNode {
         return new WellTrajectoryBuilder(name, data)
             .setTrajectoryData(well, dataIndexes, trajectoryRows)
             .addNDSEvents(ndsEvents)
             .addNPTEvents(nptEvents)
             .addCasings()
-            .addFloatLogs()
+            .addLogs(logs)
             .addDiscreteLogs()
             .getTrajectory();
     }

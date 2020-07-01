@@ -18,6 +18,8 @@ import { Random } from "@/Core/Primitives/Random";
 import { BaseLogSample } from "@/Nodes/Wells/Samples/BaseLogSample";
 import { FloatLogSample } from "@/Nodes/Wells/Samples/FloatLogSample";
 import { BaseLog } from "@/Nodes/Wells/Logs/BaseLog";
+import { RenderSample } from "@/Nodes/Wells/Samples/RenderSample";
+import { ILogRow } from "@/Interface";
 
 export class FloatLog extends BaseLog
 {
@@ -123,7 +125,16 @@ export class FloatLog extends BaseLog
     return log;
   }
 
-  public static createCasingByRandom(mdRange: Range1, numSamples: number): FloatLog
+  public static createFloatLog(items: ILogRow[], mdIndex: number, logTypeIndex: number): FloatLog 
+  {
+    const log = new FloatLog();
+    items.forEach(item => {
+      log.samples.push(new FloatLogSample(item[mdIndex]!!, item[logTypeIndex]!!));
+    });
+    return log;
+  }
+
+  public static createCasingByRandom(mdRange: Range1, numSamples: number): FloatLog 
   {
     const log = new FloatLog();
     let mdInc = mdRange.delta / (numSamples - 1);

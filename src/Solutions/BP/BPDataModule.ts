@@ -3,7 +3,7 @@ import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import NodeAdaptor from "@/Solutions/BP/NodeAdaptor";
 import { SubSurfaceRootNode } from "@/Nodes/TreeNodes/SubSurfaceRootNode";
 import { WellTreeNode } from "@/Nodes/TreeNodes/WellTreeNode";
-import { Well, Wellbore, Trajectory, TrajectoryRows, RiskEvent } from "@/Interface";
+import { Well, Wellbore, Trajectory, TrajectoryRows, RiskEvent, ILog } from "@/Interface";
 import BPData from "@/Solutions/BP/BPData";
 
 export default class BPDataModule extends BaseModule {
@@ -53,9 +53,10 @@ export default class BPDataModule extends BaseModule {
         trajectories: Trajectory[],
         trajectoryData?: TrajectoryRows[]
         ndsEvents?: RiskEvent[],
-        nptEvents?: RiskEvent[]
+        nptEvents?: RiskEvent[],
+        logs?: { [key: number]: ILog[] }
     }) {
-        const { wells, wellBores, trajectories, trajectoryData, ndsEvents, nptEvents } = data;
-        this.bpData = new BPData(wells, wellBores, trajectories, trajectoryData, ndsEvents, nptEvents);
+        const { wells, wellBores, trajectories, trajectoryData, ndsEvents, nptEvents, logs } = data;
+        this.bpData = new BPData(wells, wellBores, trajectories, trajectoryData, ndsEvents, nptEvents, logs);
     }
 }

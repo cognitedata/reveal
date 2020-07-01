@@ -1,4 +1,4 @@
-import { Well, Wellbore, Trajectory, TrajectoryRows, RiskEvent } from "@/Interface";
+import { Well, Wellbore, Trajectory, TrajectoryRows, RiskEvent, ILog } from "@/Interface";
 
 // Represent BP data
 export default class BPData {
@@ -9,6 +9,7 @@ export default class BPData {
     private _wellBoreToWellMap = new Map<number, { wellId: number, data: Wellbore }>();
     private _wellBoreToNDSEventsMap = new Map<number, RiskEvent[]>();
     private _wellBoreToNPTEventsMap = new Map<number, RiskEvent[]>();
+    private _wellBoreToLogsMap?: { [key: number]: ILog[] };
     private _trajectoryDataColumnIndexes: { [key: string]: number } = {};
 
 
@@ -19,9 +20,11 @@ export default class BPData {
         trajectories: Trajectory[],
         trajectoryData?: TrajectoryRows[],
         ndsEvents?: RiskEvent[],
-        nptEvents?: RiskEvent[]) {
+        nptEvents?: RiskEvent[],
+        logs?: { [key: number]: ILog[] }) {
         this._wells = wells;
         this._trajectories = trajectories;
+        this._wellBoreToLogsMap = logs;
         this.generateBoreToWellMap(wellBores);
         this.generateTrajectoryDataMap(trajectoryData);
         this.generateWellBoreToNDSEventsMap(ndsEvents);
@@ -108,5 +111,6 @@ export default class BPData {
     public get wellBoreToWellMap() { return this._wellBoreToWellMap; }
     public get wellBoreToNDSEventsMap() { return this._wellBoreToNDSEventsMap; }
     public get wellBoreToNPTEventsMap() { return this._wellBoreToNPTEventsMap };
+    public get wellBoreToLogsMap() { return this._wellBoreToLogsMap };
     public get trajectoryDataColumnIndexes() { return this._trajectoryDataColumnIndexes };
 }
