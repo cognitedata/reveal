@@ -134,7 +134,7 @@ function setAttributes(
   mesh.onAfterRender = () => {
     disposeAttributeArrayOnUpload.bind(interleavedBuffer32)();
     disposeAttributeArrayOnUpload.bind(interleavedBuffer8)();
-    mesh.onAfterRender = () => { };
+    mesh.onAfterRender = () => {};
   };
 
   geometry.maxInstancedCount = collection.length / attributesByteSize;
