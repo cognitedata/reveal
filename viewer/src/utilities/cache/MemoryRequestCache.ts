@@ -49,7 +49,7 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
   }
 
   forceInsert(id: Key, data: Data) {
-    if(this.isFull()) {
+    if (this.isFull()) {
       this.cleanCache(this._defaultCleanupCount);
     }
     this.insert(id, data);

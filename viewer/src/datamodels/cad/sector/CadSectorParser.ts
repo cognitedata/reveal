@@ -17,8 +17,8 @@ export class CadSectorParser {
     return this.parseDetailed(data);
   }
 
-  async parseF3D(data: Uint8Array): Promise<SectorQuads> {
-    return await this.parseSimple(data);
+  parseF3D(data: Uint8Array): Promise<SectorQuads> {
+    return this.parseSimple(data);
   }
 
   parseCTM(data: Uint8Array): Promise<ParseCtmResult> {
