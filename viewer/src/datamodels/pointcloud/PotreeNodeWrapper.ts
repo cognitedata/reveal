@@ -2,7 +2,6 @@
  * Copyright 2020 Cognite AS
  */
 
-// @ts-ignore
 import * as Potree from '@cognite/potree-core';
 import { PotreePointSizeType, PotreePointColorType, PotreePointShape } from './types';
 import { fromThreeJsBox3 } from '@/utilities';

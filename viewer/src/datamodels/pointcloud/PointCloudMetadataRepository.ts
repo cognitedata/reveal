@@ -2,10 +2,10 @@
  * Copyright 2020 Cognite AS
  */
 
-import { ModelUrlProvider } from '@/utilities/networking/types';
 import { EptSceneProvider } from './EptSceneProvider';
-import { PointCloudMetadata } from '@/datamodels/pointcloud/PointCloudMetadata';
 
+import { ModelUrlProvider } from '@/utilities/networking/types';
+import { PointCloudMetadata } from '@/datamodels/pointcloud/PointCloudMetadata';
 import { DataRepository, TransformationProvider } from '@/datamodels/base';
 
 type ModelMetadataProvider<TModelIdentifier> = ModelUrlProvider<TModelIdentifier> & EptSceneProvider;
