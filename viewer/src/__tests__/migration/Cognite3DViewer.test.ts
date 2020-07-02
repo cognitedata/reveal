@@ -25,7 +25,6 @@ describe('Cognite3DViewer', () => {
 
   test('constructor throws error when unsupported options are set', () => {
     expect(() => new Cognite3DViewer({ sdk, renderer, _sectorCuller, enableCache: true })).toThrowError();
-    expect(() => new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: true })).toThrowError();
     expect(() => new Cognite3DViewer({ sdk, renderer, _sectorCuller, viewCube: 'topleft' })).toThrowError();
   });
 
