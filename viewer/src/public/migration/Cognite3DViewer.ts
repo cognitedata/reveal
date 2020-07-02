@@ -5,10 +5,11 @@
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import debounce from 'lodash/debounce';
+import omit from 'lodash/omit';
 import ComboControls from '@cognite/three-combo-controls';
 import { CogniteClient } from '@cognite/sdk';
-import { distinctUntilChanged, filter, share, debounceTime, publish, map } from 'rxjs/operators';
-import { Subscription, Subject, combineLatest, merge } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, map, publish, share } from 'rxjs/operators';
+import { combineLatest, merge, Subject, Subscription } from 'rxjs';
 
 import { from3DPositionToRelativeViewportCoordinates } from '@/utilities/worldToViewport';
 import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
@@ -41,11 +42,7 @@ import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/Default
 import { BoundingBoxClipper, File3dFormat, isMobileOrTablet } from '@/utilities';
 import { Spinner } from '@/utilities/Spinner';
 import { addPostRenderEffects } from '@/datamodels/cad/rendering/postRenderEffects';
-
-export interface RelativeMouseEvent {
-  offsetX: number;
-  offsetY: number;
-}
+import { trackError, initMetrics, trackAddModel } from '@/utilities/metrics';
 
 type RequestParams = { modelId: number; revisionId: number; format: File3dFormat };
 type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
@@ -119,12 +116,15 @@ export class Cognite3DViewer {
     if (options.enableCache) {
       throw new NotSupportedInMigrationWrapperError('Cache is not supported');
     }
-    if (options.logMetrics) {
-      throw new NotSupportedInMigrationWrapperError('LogMetris is not supported');
-    }
     if (options.viewCube) {
       throw new NotSupportedInMigrationWrapperError('ViewCube is not supported');
     }
+
+    initMetrics(options.logMetrics !== false, options.sdk.project, {
+      moduleName: 'Cognite3DViewer',
+      methodName: 'constructor',
+      constructorOptions: omit(options, ['sdk', 'domElement', 'renderer', '_sectorCuller'])
+    });
 
     this.renderer =
       options.renderer ||
@@ -198,7 +198,11 @@ export class Cognite3DViewer {
               this.spinner.hide();
             }
           },
-          (message, ...optionalArgs) => console.error(message, ...optionalArgs)
+          error =>
+            trackError(error, {
+              moduleName: 'Cognite3DViewer',
+              methodName: 'constructor'
+            })
         )
     );
 
@@ -275,6 +279,15 @@ export class Cognite3DViewer {
   }
 
   async addModel(options: AddModelOptions): Promise<Cognite3DModel> {
+    trackAddModel({
+      options: omit(options, ['modelId', 'revisionId']),
+      modelId: options.modelId,
+      revisionId: options.revisionId,
+      type: SupportedModelTypes.CAD,
+      moduleName: 'Cognite3DViewer',
+      methodName: 'addModel'
+    });
+
     if (options.localPath) {
       throw new NotSupportedInMigrationWrapperError();
     }
@@ -307,6 +320,15 @@ export class Cognite3DViewer {
   }
 
   async addPointCloudModel(options: AddModelOptions): Promise<CognitePointCloudModel> {
+    trackAddModel({
+      modelId: options.modelId,
+      revisionId: options.revisionId,
+      options: omit(options, ['modelId', 'revisionId']),
+      type: SupportedModelTypes.PointCloud,
+      moduleName: 'Cognite3DViewer',
+      methodName: 'addPointCloudModel'
+    });
+
     if (options.localPath) {
       throw new NotSupportedInMigrationWrapperError();
     }
