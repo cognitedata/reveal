@@ -8,6 +8,7 @@ import { SectorQuads } from '@/datamodels/cad/rendering/types';
 import { SectorCuller } from '@/internal';
 
 export type RevealOptions = {
+  logMetrics?: boolean;
   nodeAppearanceProvider?: NodeAppearanceProvider;
   // internal options are experimental and may change in the future
   internal?: {
