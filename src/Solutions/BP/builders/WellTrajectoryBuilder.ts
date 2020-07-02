@@ -177,7 +177,7 @@ export default class WellTrajectoryBuilder {
             });
 
             // if there is no DEPT colomn or no any log colomns
-            if (mdIndex == -1 || logTypeIndexes.length === 0) {
+            if (mdIndex === -1 || logTypeIndexes.length === 0) {
                 continue;
             }
 

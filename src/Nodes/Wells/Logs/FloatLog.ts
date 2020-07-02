@@ -129,7 +129,7 @@ export class FloatLog extends BaseLog
   {
     const log = new FloatLog();
     items.forEach(item => {
-      log.samples.push(new FloatLogSample(item[mdIndex]!!, item[logTypeIndex]!!));
+      log.samples.push(new FloatLogSample(item[logTypeIndex]!!, item[mdIndex]!!));
     });
     return log;
   }
