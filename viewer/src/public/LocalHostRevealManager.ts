@@ -24,6 +24,7 @@ import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/Default
 import { RevealOptions } from './types';
 import { Subscription, combineLatest } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
+import { trackError } from '@/utilities/metrics';
 
 type LocalModelIdentifier = { fileName: string };
 type LoadingStateChangeListener = (isLoading: boolean) => any;
@@ -79,7 +80,12 @@ export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifi
           }),
           distinctUntilChanged()
         )
-        .subscribe(this.notifyLoadingStateListeners.bind(this), console.error)
+        .subscribe(this.notifyLoadingStateListeners.bind(this), error =>
+          trackError(error, {
+            moduleName: 'LocalHostRevealManager',
+            methodName: 'constructor'
+          })
+        )
     );
   }
 

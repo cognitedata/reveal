@@ -25,6 +25,8 @@ import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/Default
 import { combineLatest, Subscription } from 'rxjs';
 import { RevealOptions } from './types';
 import { distinctUntilChanged, map } from 'rxjs/operators';
+import omit from 'lodash/omit';
+import { initMetrics, trackAddModel, trackError } from '@/utilities/metrics';
 
 type CdfModelIdentifier = { modelId: number; revisionId: number; format: File3dFormat };
 type LoadingStateChangeListener = (isLoading: boolean) => any;
@@ -33,7 +35,13 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
   private readonly eventListeners: { loadingStateChanged: LoadingStateChangeListener[] };
   private readonly _subscription: Subscription;
 
-  constructor(client: CogniteClient, options?: RevealOptions) {
+  constructor(client: CogniteClient, options: RevealOptions = {}) {
+    initMetrics(options.logMetrics !== false, client.project, {
+      moduleName: 'Cognite3DViewer',
+      methodName: 'constructor',
+      constructorOptions: omit(options, ['internal'])
+    });
+
     const modelDataParser: CadSectorParser = new CadSectorParser();
     const materialManager: MaterialManager = new MaterialManager();
     const modelDataTransformer = new SimpleAndDetailedToSector3D(materialManager);
@@ -44,8 +52,7 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
       new CadMetadataParser()
     );
     const cadModelFactory = new CadModelFactory(materialManager);
-    const sectorCuller =
-      (options && options.internal && options.internal.sectorCuller) || new ByVisibilityGpuSectorCuller();
+    const sectorCuller = (options.internal && options.internal.sectorCuller) || new ByVisibilityGpuSectorCuller();
     const sectorRepository = new CachedRepository(cogniteClientExtension, modelDataParser, modelDataTransformer);
     const cadModelUpdateHandler = new CadModelUpdateHandler(sectorRepository, sectorCuller);
     const cadManager: CadManager<CdfModelIdentifier> = new CadManager(
@@ -79,7 +86,12 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
           }),
           distinctUntilChanged()
         )
-        .subscribe(this.notifyLoadingStateListeners.bind(this), console.error.bind(console))
+        .subscribe(this.notifyLoadingStateListeners.bind(this), error =>
+          trackError(error, {
+            moduleName: 'RevealManager',
+            methodName: 'constructor'
+          })
+        )
     );
   }
 
@@ -97,6 +109,14 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
     modelRevisionId: { modelId: number; revisionId: number },
     nodeApperanceProvider?: NodeAppearanceProvider
   ): Promise<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper]> {
+    trackAddModel({
+      moduleName: 'RevealManager',
+      methodName: 'addModel',
+      type,
+      ...modelRevisionId,
+      options: { nodeApperanceProvider }
+    });
+
     switch (type) {
       case 'cad':
         return this._cadManager.addModel(

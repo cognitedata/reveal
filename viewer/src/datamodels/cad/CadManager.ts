@@ -10,6 +10,7 @@ import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 import { discardSector } from './sector/sectorUtilities';
 import { Subscription } from 'rxjs';
 import { NodeAppearanceProvider } from './NodeAppearance';
+import { trackError } from '@/utilities/metrics';
 
 export class CadManager<TModelIdentifier> {
   private readonly _cadModelMetadataRepository: CadModelMetadataRepository<TModelIdentifier>;
@@ -59,7 +60,10 @@ export class CadManager<TModelIdentifier> {
           this._needsRedraw = true;
         },
         error => {
-          console.error(error);
+          trackError(error, {
+            moduleName: 'CadManager',
+            methodName: 'constructor'
+          });
         }
       )
     );
