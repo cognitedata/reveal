@@ -4,9 +4,9 @@
 
 import { LevelOfDetail } from '../LevelOfDetail';
 import { SectorMetadata } from '../types';
-import { traverseUpwards, traverseDepthFirst } from '@/utilities/objectTraversal';
 import { PrioritizedWantedSector, DetermineSectorCostDelegate } from './types';
-import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
+import { CadModelMetadata } from '../../CadModelMetadata';
+import { traverseUpwards, traverseDepthFirst } from '@/utilities/objectTraversal';
 
 export class TakenSectorTree {
   get totalCost(): number {

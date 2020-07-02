@@ -6,8 +6,8 @@ import * as THREE from 'three';
 
 import { SectorMetadata } from '../types';
 import { coverageShaders } from '../../rendering/shaders';
+import { CadModelMetadata } from '../../CadModelMetadata';
 import { toThreeJsBox3, toThreeMatrix4, ModelTransformation, Box3 } from '@/utilities';
-import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
 
 type SectorContainer = {
   model: CadModelMetadata;

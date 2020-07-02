@@ -16,9 +16,9 @@ import { SectorCuller } from './SectorCuller';
 import { TakenSectorTree } from './TakenSectorTree';
 import { PrioritizedWantedSector, DetermineSectorCostDelegate, DetermineSectorsInput } from './types';
 import { LevelOfDetail } from '../LevelOfDetail';
+import { CadModelMetadata } from '../../CadModelMetadata';
 import { SectorMetadata, WantedSector } from '../types';
 import { fromThreeMatrix, toThreeVector3, ModelTransformation } from '@/utilities';
-import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
 
 /**
  * Options for creating GpuBasedSectorCuller.
