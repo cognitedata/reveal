@@ -1,8 +1,6 @@
 /*!
  * Copyright 2020 Cognite AS
  */
-// @ts-ignore
-import * as Potree from '@cognite/potree-core';
 import { CogniteClient, ItemsResponse } from '@cognite/sdk';
 
 import { BlobOutputMetadata, ModelUrlProvider } from './types';
@@ -16,9 +14,7 @@ import { HttpHeadersProvider } from './HttpHeadersProvider';
  * Provides 3D V2 specific extensions for the standard CogniteClient used by Reveal.
  */
 export class CogniteClient3dExtensions
-  implements
-    ModelUrlProvider<{ modelId: number; revisionId: number; format: File3dFormat }>,
-    HttpHeadersProvider {
+  implements ModelUrlProvider<{ modelId: number; revisionId: number; format: File3dFormat }>, HttpHeadersProvider {
   private readonly client: CogniteClient;
 
   constructor(client: CogniteClient) {

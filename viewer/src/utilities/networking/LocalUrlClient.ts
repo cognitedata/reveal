@@ -6,10 +6,7 @@ import { HttpError } from '@cognite/sdk';
 import { HttpHeadersProvider } from './HttpHeadersProvider';
 import { ModelUrlProvider } from './types';
 
-export class LocalUrlClient
-  implements
-    ModelUrlProvider<{ fileName: string }>,
-    HttpHeadersProvider {
+export class LocalUrlClient implements ModelUrlProvider<{ fileName: string }>, HttpHeadersProvider {
   getModelUrl(params: { fileName: string }): Promise<string> {
     return Promise.resolve(`${location.origin}/${params.fileName}`);
   }
