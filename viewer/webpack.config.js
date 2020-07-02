@@ -7,6 +7,11 @@ const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 const getLogger = require('webpack-log');
 const logger = getLogger('reveal');
+const packageJSON = require('./package.json');
+const webpack = require('webpack');
+
+const MIXPANEL_TOKEN_DEV = '00193ed55feefdfcf8a70a76bc97ec6f';
+const MIXPANEL_TOKEN_PROD = '8c900bdfe458e32b768450c20750853d';
 
 function resolve(dir) {
   return path.join(__dirname, dir);
@@ -104,6 +109,10 @@ module.exports = env => {
       usedExports: true
     },
     plugins: [
+      new webpack.DefinePlugin({
+        VERSION: JSON.stringify(packageJSON.version),
+        MIXPANEL_TOKEN: JSON.stringify(development ? MIXPANEL_TOKEN_DEV : MIXPANEL_TOKEN_PROD)
+      }),
       new WasmPackPlugin({
         crateDirectory: '.',
         forceMode: 'production',

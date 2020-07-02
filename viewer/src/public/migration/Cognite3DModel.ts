@@ -18,6 +18,7 @@ import { SectorQuads } from '@/datamodels/cad/rendering/types';
 import { vec3 } from 'gl-matrix';
 import { NodeAppearanceProvider, DefaultNodeAppearance } from '@/datamodels/cad/NodeAppearance';
 import { Matrix4 } from 'three';
+import { trackError } from '@/utilities/metrics';
 
 const mapCoordinatesBuffers = {
   v: vec3.create()
@@ -195,7 +196,10 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
         b
       };
     } catch (error) {
-      console.error(`Cannot get color of ${nodeId} because of error:`, error);
+      trackError(error, {
+        moduleName: 'Cognite3DModel',
+        methodName: 'getNodeColor'
+      });
       return {
         r: 255,
         g: 255,

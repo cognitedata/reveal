@@ -44,6 +44,7 @@ import { MemoryRequestCache } from '@/utilities/cache/MemoryRequestCache';
 import { ParseCtmResult, ParseSectorResult } from '@/utilities/workers/types/reveal.parser.types';
 import { TriangleMesh, InstancedMeshFile, InstancedMesh, SectorQuads } from '../rendering/types';
 import { createOffsetsArray } from '@/utilities';
+import { trackError } from '@/utilities/metrics';
 
 type CtmFileRequest = { blobUrl: string; fileName: string };
 type CtmFileResult = { fileName: string; data: ParseCtmResult };
@@ -172,7 +173,10 @@ export class CachedRepository implements Repository {
         this._modelSectorProvider.getCadSectorFile(wantedSector.blobUrl, wantedSector.metadata.facesFile.fileName!)
       ).pipe(
         catchError(error => {
-          console.error('loadSimple request', error);
+          trackError(error, {
+            moduleName: 'CachedRepository',
+            methodName: 'loadSimpleSectorFromNetwork'
+          });
           this._consumedSectorCache.remove(this.wantedSectorCacheKey(wantedSector));
           throw error;
         }),
@@ -220,7 +224,10 @@ export class CachedRepository implements Repository {
     const networkObservable = onErrorResumeNext(
       zip(i3dFileObservable, ctmFilesObservable).pipe(
         catchError(error => {
-          console.error('loadDetailed request', error);
+          trackError(error, {
+            moduleName: 'CachedRepository',
+            methodName: 'loadDetailedSectorFromNetwork'
+          });
           this._consumedSectorCache.remove(this.wantedSectorCacheKey(wantedSector));
           throw error;
         }),
@@ -262,7 +269,10 @@ export class CachedRepository implements Repository {
         const networkObservable: Observable<{ fileName: string; data: ParseCtmResult }> = onErrorResumeNext(
           from(this._modelSectorProvider.getCadSectorFile(ctmRequest.blobUrl, ctmRequest.fileName)).pipe(
             catchError(error => {
-              console.error('loadCtm request', error);
+              trackError(error, {
+                moduleName: 'CachedRepository',
+                methodName: 'loadCtmFileFromNetwork'
+              });
               this._ctmFileCache.remove(this.ctmFileCacheKey(ctmRequest));
               throw error;
             }),
