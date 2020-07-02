@@ -1,50 +1,45 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import NodeVisualizer from "@/UserInterface/NodeVisualizer";
 import { Modules } from "@/Core/Module/Modules";
 import { ThreeModule } from "@/Three/ThreeModule";
-import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import BPDataModule from "@/Solutions/BP/BPDataModule";
-import { RiskEvent } from "@/Interface";
-
-import { wells, wellBores, trajectories, trajData, logs } from '@/Solutions/BP/MockData';
+import { wells, wellBores, trajectories, trajData, logs } from "@/Solutions/BP/MockData";
 
 /**
  * App component acts as a container application. Eg- BP
  */
 export default function App() {
-  const [root, setRoot] = useState<BaseRootNode>();
-  const [bpDataModule, setDataModule] = useState<BPDataModule>(new BPDataModule());
-  const [renderFlag, setRenderFlag] = useState(false);
   const modules = Modules.instance;
 
+  useEffect(() => {
+    return () => {
+      // clean modules on unmount
+      modules.clearModules();
+    };
+  });
+
   // Setup modules
-  useEffect(() => {
-    modules.add(new ThreeModule());
-    modules.add(bpDataModule);
-    modules.install();
-    setRoot(modules.createRoot());
-  }, []);
+  const module = new BPDataModule();
 
-  useEffect(() => {
-    if (!root) return;
-    const emptyRiskEvents:RiskEvent[] = [];
+  module.setModuleData({
+    wells,
+    wellBores,
+    trajectories,
+    trajectoryData: trajData,
+    ndsEvents: [],
+    nptEvents: [],
+    logs
+  });
 
-    bpDataModule.setModuleData({
-      wells,
-      wellBores,
-      trajectories,
-      trajectoryData: trajData,
-      ndsEvents:emptyRiskEvents,
-      nptEvents:emptyRiskEvents,
-      logs
-    });
-    bpDataModule.loadData(root);
-    setRenderFlag(!renderFlag);
-  }, [root, wells]);
+  modules.add(new ThreeModule());
+  modules.add(module);
+  modules.install();
+
+  const rootObj = modules.createRoot();
 
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
-      <NodeVisualizer root={root} renderFlag={renderFlag} />
+      <NodeVisualizer root={rootObj} />
     </div>
   );
 }

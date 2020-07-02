@@ -48,7 +48,7 @@ export class Modules
   }
 
   //==================================================
-  // INSTANCE METHODS: 
+  // INSTANCE METHODS:
   //==================================================
 
   public add(module: BaseModule): void
@@ -60,6 +60,10 @@ export class Modules
   {
     this.installPackages();
     this.registerViews();
+  }
+
+  public clearModules() {
+    this.modules = [];
   }
 
   public initializeWhenPopulated(root: BaseRootNode): void
@@ -115,7 +119,7 @@ export class Modules
 
   private installPackages(): void
   {
-    for (var module of this.modules)
+    for (const module of this.modules)
       module.installPackages();
   }
 

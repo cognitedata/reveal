@@ -2,7 +2,6 @@ import { BaseModule } from "@/Core/Module/BaseModule";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import NodeAdaptor from "@/Solutions/BP/NodeAdaptor";
 import { SubSurfaceRootNode } from "@/Nodes/TreeNodes/SubSurfaceRootNode";
-import { WellTreeNode } from "@/Nodes/TreeNodes/WellTreeNode";
 import { Well, Wellbore, Trajectory, TrajectoryRows, RiskEvent, ILog } from "@/Interface";
 import BPData from "@/Solutions/BP/BPData";
 
@@ -22,15 +21,8 @@ export default class BPDataModule extends BaseModule {
     public /*override*/ loadData(root: BaseRootNode): void {
         if (!(root instanceof SubSurfaceRootNode))
             return;
+        // todo: clear rootNode if needed in the future using proper function
 
-        // Clear Root WellTreeNode
-        // TODO - Get a proper implementation for this from Nils
-        if (root.hasChildByType(WellTreeNode)) {
-            // tslint:disable-next-line: no-console
-            console.log("SubsurfaceVisualizer: Cleaning root");
-            root.getChildByType(WellTreeNode)?.remove();
-            root.addChild(new WellTreeNode());
-        }
         const nodeTree = NodeAdaptor.getInitialNodeTree(this.bpData);
         // tslint:disable-next-line: no-console
         console.log("NodeVisualizer: Nodetree", nodeTree ? nodeTree.length : 0);

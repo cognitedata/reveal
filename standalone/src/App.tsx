@@ -1,10 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import "./App.css";
 import {
   NodeVisualizer,
   SubsurfaceReducer,
   SubsurfaceMiddleware,
-  BaseRootNode,
   SyntheticSubSurfaceModule,
   ThreeModule,
   Modules
@@ -22,23 +21,28 @@ const store = createStore(
 );
 
 function App() {
-  const [root, setRoot] = useState<BaseRootNode>(null);
-  const [syntheticModule, setSyntheticModule] = useState<SyntheticSubSurfaceModule>(new SyntheticSubSurfaceModule());
-  const [renderFlag, setRenderFlag] = useState(false);
-  const modules = Modules.instance;
 
   // Setup modules
+  const modules = Modules.instance;
+
   useEffect(() => {
-    modules.add(new ThreeModule());
-    modules.add(syntheticModule);
-    modules.install();
-    setRoot(modules.createRoot());
-  }, []);
+    return () => {
+      // clean modules on unmount
+      modules.clearModules();
+    };
+  });
+
+  // Setup modules
+  modules.add(new ThreeModule());
+  modules.add(new SyntheticSubSurfaceModule());
+  modules.install();
+
+  const rootObj = modules.createRoot();
 
   return (
     <div className="App">
       <Provider store={store}>
-        <NodeVisualizer root={root} renderFlag={renderFlag} />
+        <NodeVisualizer root={rootObj}/>
       </Provider>
     </div>
   );

@@ -15,7 +15,7 @@ export default class WellBuilder {
     constructor(data: Well) {
         this.wellData = data;
         this.wellNode = new WellNode();
-        this.wellNode.setName(data.name);
+        this.wellNode.setName(data.description);
     }
 
     // Create the well head relative to the reference vector

@@ -5,6 +5,7 @@ import { Vector3 } from "@/Core/Geometry/Vector3";
 import { WellNode } from "@/Nodes/Wells/Wells/WellNode";
 import BPData from "@/Solutions/BP/BPData";
 import { RiskEvent, ILog } from "@/Interface";
+import { Util } from "@/Solutions/BP/Util";
 
 /**
  * Converts IWell and ITrajectory to BaseNode
@@ -17,7 +18,23 @@ export default class NodeAdaptor {
         if (!bpData) {
             return [];
         }
-        const wells = bpData.wells;
+
+      // filter wells with no coordinates
+
+        const wells = bpData.wells.filter( well =>{
+          const coords = well.metadata;
+          const xCoord = coords.x_coordinate;
+          const yCoord = coords.y_coordinate;
+
+          if(Util.isValidNumber(xCoord) && Util.isValidNumber(yCoord)) {
+            return true;
+          } else {
+            // tslint:disable-next-line:no-console
+            console.error("Well cannot have empty or invalid coordinates!", well);
+            return false;
+          }
+        });
+
         if (!wells || !wells.length) {
             return [];
         }

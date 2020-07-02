@@ -1,6 +1,6 @@
 import "reset-css";
 import "@/UserInterface/styles/scss/index.scss";
-import React, { useEffect, useCallback } from "react";
+import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SplitPane from "react-split-pane";
 
@@ -25,29 +25,21 @@ import Toolbar from "@/UserInterface/impl/Toolbar";
  * Subsurface Visualizer Component of the application
  * This will render all the components (Settings/Explorer/3D viewers etc.)
  */
-export default function NodeVisualizer(props: {
-  root?: BaseRootNode;
-  renderFlag?: number | string | boolean;
-}) {
+export default function NodeVisualizer(props: { root?: BaseRootNode }) {
   const dispatch = useDispatch();
-  const { root, renderFlag } = props;
+  const { root } = props;
   // Add viewer ref here
   const visualizers = useSelector((state: ReduxStore) => state.visualizers);
 
-  useEffect(() => {
-    if (root) {
-      // tslint:disable-next-line: no-console
-      console.log("SubsurfaceVisualizer: Generating new node tree", root);
-      dispatch(generateNodeTree({ root }));
-    }
-  }, [root, renderFlag]);
-
   // success callback for registering viewers to DOM
   const viewerElementCallback = useCallback(
-    element => {
+    (element: HTMLElement) => {
       if (!element || !root) {
         return;
       }
+      // clear Node
+      element.innerHTML = "";
+
       const notificationAdaptor = new NotificationsToActionsAdaptor(dispatch);
       VirtualUserInterface.install(new UserInterfaceListener(notificationAdaptor));
       // Add new viewers here Eg - new Viewer("2D", htmlElement2D)

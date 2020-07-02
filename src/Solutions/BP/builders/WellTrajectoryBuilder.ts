@@ -16,14 +16,15 @@ import { PointLogSample } from "@/Nodes/Wells/Samples/PointLogSample";
 import { PointLogNode } from "@/Nodes/Wells/Wells/PointLogNode";
 import { Units } from "@/Core/Primitives/Units";
 import { LogFolder } from "@/Nodes/Wells/Wells/LogFolder";
+import { Util } from "@/Solutions/BP/Util";
 
 /**
  * Build WellTrajectoryNode from BP Data
  */
 export default class WellTrajectoryBuilder {
 
-    private wellTrajectoryNode: WellTrajectoryNode;
-    private wellTrajectoryData: Trajectory;
+    private readonly wellTrajectoryNode: WellTrajectoryNode;
+    private readonly wellTrajectoryData: Trajectory;
 
     // Initialize wellTrajectoryNode
     constructor(name: string, data: Trajectory) {
@@ -44,6 +45,15 @@ export default class WellTrajectoryBuilder {
         const wellHead = well.wellHead;
         const [mdIndex, xOffsetIndex, yOffsetIndex] = dataIndexes;
         const curvePointRef = trajectoryData.rows[0].values;
+
+        // Validate trajectory data
+        if(!Util.isValidNumber(curvePointRef[mdIndex]) || !Util.isValidNumber(curvePointRef[xOffsetIndex])
+          || !Util.isValidNumber(curvePointRef[xOffsetIndex])) {
+          // tslint:disable-next-line:no-console
+          console.error("Trajectory Curve point reference is not a valid number!", trajectoryData);
+          return this;
+        }
+
         let md = wellHead.z - curvePointRef[mdIndex] * Units.Feet;
 
         let prevPoint = new Vector3(

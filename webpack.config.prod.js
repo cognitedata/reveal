@@ -135,7 +135,7 @@ module.exports = {
           to: resolve("dist/subsurface-interfaces")
         }
       ]
-    })
+    }),
     //,new BundleAnalyzerPlugin()
   ],
   externals: [{
