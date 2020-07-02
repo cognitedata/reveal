@@ -8,7 +8,7 @@
     "start:nossl": "cross-env HTTPS=false react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test --testPathIgnorePatterns 'src/visual_tests'",
-    "test:visual": "jest --runInBand --detectOpenHandles --verbose false -c src/visual_tests/jest.config.js",
+    "test:visual": "jest --testTimeout=15000 --runInBand --detectOpenHandles --verbose false -c src/visual_tests/jest.config.js",
     "test:ghdiffs": "node src/visual_tests/GithubDiffUploader.js",
     "snapshots:update": "start-server-and-test start:nossl http://localhost:3000 snapshots:capture",
     "snapshots:capture": "jest --runInBand --detectOpenHandles --updateSnapshot -c src/visual_tests/jest.config.js",
