@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { vec3, mat4 } from 'gl-matrix';
 import { Box3 } from './Box3';
-import { ModelTransformation } from '@/utilities';
+import { ModelTransformation } from './types';
 
 const toThreeVector3Vars = {
   result: vec3.create()
