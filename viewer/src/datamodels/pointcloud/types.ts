@@ -15,7 +15,8 @@ export enum PotreePointColorType {
   Height = Potree.PointColorType.HEIGHT,
   PointIndex = Potree.PointColorType.POINT_INDEX,
   LevelOfDetail = Potree.PointColorType.LOD,
-  Classification = Potree.PointColorType.CLASSIFICATION
+  Classification = Potree.PointColorType.CLASSIFICATION,
+  Intensity = Potree.PointColorType.INTENSITY
 }
 
 export enum PotreePointSizeType {
