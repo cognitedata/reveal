@@ -4,11 +4,10 @@
 
 import * as THREE from 'three';
 
-import { SectorModelTransformation, SectorMetadata } from '../types';
-import { toThreeJsBox3, toThreeMatrix4 } from '@/utilities';
-import { Box3 } from '@/utilities/Box3';
-import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
+import { SectorMetadata } from '../types';
 import { coverageShaders } from '../../rendering/shaders';
+import { toThreeJsBox3, toThreeMatrix4, ModelTransformation, Box3 } from '@/utilities';
+import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
 
 type SectorContainer = {
   model: CadModelMetadata;
@@ -301,7 +300,7 @@ export class GpuOrderSectorsByVisibilityCoverage {
   private createSectorTreeMesh(
     sectorIdOffset: number,
     sectors: SectorMetadata[],
-    modelTransformation: SectorModelTransformation
+    modelTransformation: ModelTransformation
   ): THREE.Object3D {
     const transformMatrix = toThreeMatrix4(modelTransformation.modelMatrix);
     const group = new THREE.Group();

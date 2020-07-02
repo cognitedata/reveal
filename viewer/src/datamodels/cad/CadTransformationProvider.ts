@@ -2,8 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
-import { SectorModelTransformation } from './sector/types';
+import { ModelTransformation } from '@/utilities';
 
 export interface CadTransformationProvider {
-  getCadTransformation(): SectorModelTransformation;
+  getCadTransformation(): ModelTransformation;
 }

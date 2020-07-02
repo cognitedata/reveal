@@ -15,9 +15,9 @@ import {
 import { SectorCuller } from './SectorCuller';
 import { TakenSectorTree } from './TakenSectorTree';
 import { PrioritizedWantedSector, DetermineSectorCostDelegate, DetermineSectorsInput } from './types';
-import { fromThreeMatrix, toThreeVector3 } from '@/utilities';
 import { LevelOfDetail } from '../LevelOfDetail';
-import { SectorMetadata, WantedSector, SectorModelTransformation } from '../types';
+import { SectorMetadata, WantedSector } from '../types';
+import { fromThreeMatrix, toThreeVector3, ModelTransformation } from '@/utilities';
 import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
 
 /**
@@ -266,7 +266,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   private testForClippingOcclusion(
     intersectingSectors: SectorMetadata[],
     clippingPlanes: THREE.Plane[],
-    modelTransform: SectorModelTransformation,
+    modelTransform: ModelTransformation,
     clipIntersection: boolean
   ): SectorMetadata[] {
     const passingSectors = [];
