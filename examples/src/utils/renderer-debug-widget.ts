@@ -456,7 +456,6 @@ function logVisibleSectorsInScene(scene: THREE.Object3D) {
       visibleMeshes[path + x.name] = x as THREE.Mesh;
     }
   });
-  // tslint:disable-next-line: no-console
   console.log('Visible meshes:', visibleMeshes);
 }
 
@@ -469,7 +468,6 @@ function logActiveMaterialsInScene(scene: THREE.Object3D) {
       materials.forEach((m) => (uniqueMaterials[m.id] = m));
     }
   });
-  // tslint:disable-next-line: no-console
   console.log('Unique materials:', uniqueMaterials);
 }
 
@@ -488,9 +486,7 @@ function logActiveSectors(scene: THREE.Object3D) {
       }
     }
   });
-  // tslint:disable-next-line: no-console
   console.log('Active detailed sectors:', activeDetailedRoots);
-  // tslint:disable-next-line: no-console
   console.log('Active quads sectors:', activeQuadsRoots);
 }
 
@@ -503,11 +499,9 @@ function saveWindowVariables(
   (window as any).scene = scene;
   (window as any).renderer = renderer;
   (window as any).sectorRoot = sectorMetadataRoot;
-  // tslint:disable-next-line: no-console
   console.log(
     'Set window.scene, window.renderer, window.THREE and window.sectorRoot'
   );
-  // tslint:disable-next-line: no-console
   console.log(
     'See https://github.com/jeromeetienne/threejs-inspector/blob/master/README.md for details on the ThreeJS inspector'
   );

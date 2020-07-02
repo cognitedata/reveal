@@ -18,7 +18,7 @@ import { traverseDepthFirst } from '@/utilities/objectTraversal';
 const emptyGeometry = new THREE.Geometry();
 
 const quadVertexData = new Float32Array([
-  // tslint:disable: prettier
+  /* eslint-disable prettier/prettier */
   -0.5, -0.5, 0.0,
   0.5, -0.5, 0.0,
   0.5, 0.5, 0.0,
@@ -26,7 +26,7 @@ const quadVertexData = new Float32Array([
   0.5, 0.5, 0.0,
   -0.5, 0.5, 0.0,
   -0.5, -0.5, 0.0,
-  // tslint:enable: prettier
+  /*  eslint-enable prettier/prettier  */
 ]);
 
 const quadVertexBufferAttribute = new THREE.Float32BufferAttribute(quadVertexData.buffer, 3);
@@ -138,8 +138,7 @@ export function filterCurrentWantedSectors(
             return of(loaded);
           }
         } catch (error) {
-          // tslint:disable-next-line: no-console
-          console.log(error);
+          console.error(error);
         }
       }
       return empty();

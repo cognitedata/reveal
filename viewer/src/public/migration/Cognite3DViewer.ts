@@ -198,7 +198,6 @@ export class Cognite3DViewer {
               this.spinner.hide();
             }
           },
-          // tslint:disable-next-line:no-console
           (message, ...optionalArgs) => console.error(message, ...optionalArgs)
         )
     );
@@ -233,6 +232,8 @@ export class Cognite3DViewer {
 
   on(event: 'click' | 'hover', callback: PointerEventDelegate): void;
   on(event: 'cameraChange', callback: CameraChangeDelegate): void;
+  // fixme: no any
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   on(event: 'click' | 'hover' | 'cameraChange', callback: any): void {
     switch (event) {
       case 'click':
@@ -430,10 +431,7 @@ export class Cognite3DViewer {
     direction.applyQuaternion(this.camera.quaternion);
 
     const position = new THREE.Vector3();
-    position
-      .copy(direction)
-      .multiplyScalar(-distance)
-      .add(target);
+    position.copy(direction).multiplyScalar(-distance).add(target);
 
     this.moveCameraTo(position, target, duration);
   }
@@ -484,6 +482,7 @@ export class Cognite3DViewer {
     return url;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getIntersectionFromPixel(offsetX: number, offsetY: number, _cognite3DModel?: Cognite3DModel): null | Intersection {
     const cadModels = this.getModels(SupportedModelTypes.CAD);
     const nodes = cadModels.map(x => x.cadNode);
@@ -612,9 +611,8 @@ export class Cognite3DViewer {
     if (this.isDisposed) {
       return;
     }
-    // if (this._onBeforeRender) {
-    //   this._onBeforeRender();
-    // }
+    this.latestRequestId = requestAnimationFrame(this.animate.bind(this));
+
     const { display, visibility } = window.getComputedStyle(this.canvas);
     const isVisible = visibility === 'visible' && display !== 'none';
 
@@ -646,8 +644,6 @@ export class Cognite3DViewer {
         this._slicingNeedsUpdate = false;
       }
     }
-
-    this.latestRequestId = requestAnimationFrame(this.animate.bind(this));
   }
 
   private setupUpdateCameraNearAndFar(): Subject<THREE.PerspectiveCamera> {
@@ -802,9 +798,7 @@ export class Cognite3DViewer {
     let validClick = false;
 
     const onHoverCallback = debounce((e: MouseEvent) => {
-      for (const _ of this.eventListeners.hover) {
-        this.eventListeners.hover[0](mouseEventOffset(e, canvas));
-      }
+      this.eventListeners.hover.forEach(fn => fn(mouseEventOffset(e, canvas)));
     }, 100);
 
     const onMove = (e: MouseEvent | TouchEvent) => {

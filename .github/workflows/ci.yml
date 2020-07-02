@@ -159,3 +159,24 @@ jobs:
       run: |
         export NODE_OPTIONS=--max-old-space-size=8192
         yarn build
+
+    - name: Increase number of inotify watches
+      run: 'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p'
+
+    - name: Visual regression tests
+      working-directory: examples
+      run: 'yarn ci:nossl'
+
+    - name: Check for failed visual test diffs
+      if: failure()
+      working-directory: examples
+      run: 'yarn test:ghdiffs'
+      env:
+        ACTIONS_RUNTIME_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload image diffs for failed visual tests
+      if: failure()
+      uses: actions/upload-artifact@v2
+      with:
+        name: image-diffs-${{ github.sha }}
+        path: examples/src/visual_tests/__image_snapshots__/__diff_output__/*

@@ -17,18 +17,18 @@ default = []
 dump = ["clap", "serde_yaml", "serde_json"]
 
 [dependencies]
-serde = { version = "1.0.110", features = ["derive"] }
+serde = { version = "1.0.114", features = ["derive"] }
 serde_derive = "1.0.104"
-serde_json = { version = "1.0.53", optional = true }
+serde_json = { version = "1.0.55", optional = true }
 byteorder = "1.3.4"
-serde_yaml = { version = "0.8.12", optional = true }
+serde_yaml = { version = "0.8.13", optional = true }
 bitflags = "1.2.1"
 glsl-to-spirv = { version = "0.1.7", optional = true }
 clap = { version = "2.33.1", optional = true }
 arraymap = { version = "0.1.1", optional = true }
-nalgebra = { version = "0.21.0", features = [ "serde-serialize" ] }
-js-sys = "0.3.39"
+nalgebra = { version = "0.21.1", features = [ "serde-serialize" ] }
+js-sys = "0.3.40"
 wasm-bindgen = "0.2.58"
 serde-wasm-bindgen = "0.1.3"
 approx = "0.3.2"
-structopt = "0.3.14"
+structopt = "0.3.15"
