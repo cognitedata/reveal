@@ -41,7 +41,7 @@ import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
 import { CadSectorProvider } from './CadSectorProvider';
 import { MemoryRequestCache } from '@/utilities/cache/MemoryRequestCache';
-import { ParseCtmResult, ParseSectorResult } from '@/utilities/workers/types/parser.types';
+import { ParseCtmResult, ParseSectorResult } from '@/utilities/workers/types/reveal.parser.types';
 import { TriangleMesh, InstancedMeshFile, InstancedMesh, SectorQuads } from '../rendering/types';
 import { createOffsetsArray } from '@/utilities';
 
@@ -172,7 +172,6 @@ export class CachedRepository implements Repository {
         this._modelSectorProvider.getCadSectorFile(wantedSector.blobUrl, wantedSector.metadata.facesFile.fileName!)
       ).pipe(
         catchError(error => {
-          // tslint:disable-next-line: no-console
           console.error('loadSimple request', error);
           this._consumedSectorCache.remove(this.wantedSectorCacheKey(wantedSector));
           throw error;
@@ -221,7 +220,6 @@ export class CachedRepository implements Repository {
     const networkObservable = onErrorResumeNext(
       zip(i3dFileObservable, ctmFilesObservable).pipe(
         catchError(error => {
-          // tslint:disable-next-line: no-console
           console.error('loadDetailed request', error);
           this._consumedSectorCache.remove(this.wantedSectorCacheKey(wantedSector));
           throw error;
@@ -264,7 +262,6 @@ export class CachedRepository implements Repository {
         const networkObservable: Observable<{ fileName: string; data: ParseCtmResult }> = onErrorResumeNext(
           from(this._modelSectorProvider.getCadSectorFile(ctmRequest.blobUrl, ctmRequest.fileName)).pipe(
             catchError(error => {
-              // tslint:disable-next-line: no-console
               console.error('loadCtm request', error);
               this._ctmFileCache.remove(this.ctmFileCacheKey(ctmRequest));
               throw error;

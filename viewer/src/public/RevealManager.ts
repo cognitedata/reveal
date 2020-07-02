@@ -69,7 +69,6 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
     this.eventListeners = {
       loadingStateChanged: new Array<LoadingStateChangeListener>()
     };
-    this.notifyLoadingStateListeners = this.notifyLoadingStateListeners.bind(this);
 
     this._subscription = new Subscription();
     this._subscription.add(
@@ -80,11 +79,7 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
           }),
           distinctUntilChanged()
         )
-        .subscribe(
-          this.notifyLoadingStateListeners.bind(this),
-          // tslint:disable-next-line: no-console
-          console.error.bind(console)
-        )
+        .subscribe(this.notifyLoadingStateListeners.bind(this), console.error.bind(console))
     );
   }
 
@@ -129,7 +124,7 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
     this.eventListeners[event] = this.eventListeners[event].filter(fn => fn !== listener);
   }
 
-  public dispose() {
+  public dispose(): void {
     if (this.isDisposed) {
       return;
     }
