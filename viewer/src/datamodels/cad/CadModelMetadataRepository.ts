@@ -3,12 +3,11 @@
  */
 
 import { CadSceneProvider } from './CadSceneProvider';
-import { TransformationProvider } from '../base/TransformationProvider';
 import { CadMetadataParser } from './parsers/CadMetadataParser';
 import { SectorScene } from './sector/types';
 
 import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
-import { DataRepository } from '@/datamodels/base';
+import { DataRepository, TransformationProvider } from '@/datamodels/base';
 import { ModelUrlProvider } from '@/utilities/networking/types';
 
 type ModelMetadataProvider<TModelIdentifier> = ModelUrlProvider<TModelIdentifier> & CadSceneProvider;
