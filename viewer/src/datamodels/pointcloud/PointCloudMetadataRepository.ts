@@ -6,18 +6,16 @@ import { ModelUrlProvider } from '@/utilities/networking/types';
 import { EptSceneProvider } from './EptSceneProvider';
 import { PointCloudMetadata } from '@/datamodels/pointcloud/PointCloudMetadata';
 
-// TODO 25-05-2020 j-bjorne: Move into common type folder
-import { DataRepository } from '@/datamodels/cad/DataRepository';
-import { CadTransformationProvider } from '@/datamodels/cad/CadTransformationProvider';
+import { DataRepository, TransformationProvider } from '@/datamodels/base';
 
 type ModelMetadataProvider<TModelIdentifier> = ModelUrlProvider<TModelIdentifier> & EptSceneProvider;
 export class PointCloudMetadataRepository<TModelIdentifier>
   implements DataRepository<TModelIdentifier, Promise<PointCloudMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider<TModelIdentifier>;
-  private readonly _cadTransformationProvider: CadTransformationProvider;
+  private readonly _cadTransformationProvider: TransformationProvider;
   constructor(
     modelMetadataProvider: ModelMetadataProvider<TModelIdentifier>,
-    cadTransformationProvider: CadTransformationProvider
+    cadTransformationProvider: TransformationProvider
   ) {
     this._modelMetadataProvider = modelMetadataProvider;
     this._cadTransformationProvider = cadTransformationProvider;
@@ -27,7 +25,7 @@ export class PointCloudMetadataRepository<TModelIdentifier>
     const scene = await this._modelMetadataProvider.getEptScene(blobUrl);
     // TODO: j-bjorne 15-05-2020: Making provider to ready for getting it from network.
     // This provider should change its input and return type once we have a functioning api call.
-    const modelTransformation = this._cadTransformationProvider.getCadTransformation();
+    const modelTransformation = this._cadTransformationProvider.getModelTransformation();
     return {
       blobUrl,
       modelTransformation,

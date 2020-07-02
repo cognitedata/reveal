@@ -2,23 +2,24 @@
  * Copyright 2020 Cognite AS
  */
 
-import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
-import { ModelUrlProvider } from '@/utilities/networking/types';
 import { CadSceneProvider } from './CadSceneProvider';
-import { CadTransformationProvider } from './CadTransformationProvider';
-import { DataRepository } from './DataRepository';
+import { TransformationProvider } from '../base/TransformationProvider';
 import { CadMetadataParser } from './parsers/CadMetadataParser';
 import { SectorScene } from './sector/types';
+
+import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
+import { DataRepository } from '@/datamodels/base';
+import { ModelUrlProvider } from '@/utilities/networking/types';
 
 type ModelMetadataProvider<TModelIdentifier> = ModelUrlProvider<TModelIdentifier> & CadSceneProvider;
 export class CadModelMetadataRepository<TModelIdentifier>
   implements DataRepository<TModelIdentifier, Promise<CadModelMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider<TModelIdentifier>;
-  private readonly _cadTransformationProvider: CadTransformationProvider;
+  private readonly _cadTransformationProvider: TransformationProvider;
   private readonly _cadSceneParser: CadMetadataParser;
   constructor(
     modelMetadataProvider: ModelMetadataProvider<TModelIdentifier>,
-    cadTransformationProvider: CadTransformationProvider,
+    cadTransformationProvider: TransformationProvider,
     cadMetadataParser: CadMetadataParser
   ) {
     this._modelMetadataProvider = modelMetadataProvider;
@@ -30,7 +31,7 @@ export class CadModelMetadataRepository<TModelIdentifier>
     const json = await this._modelMetadataProvider.getCadScene(blobUrl);
     const scene: SectorScene = this._cadSceneParser.parse(json);
     // TODO: j-bjorne 15-05-2020: Making provider to ready for getting it from network.
-    const modelTransformation = this._cadTransformationProvider.getCadTransformation();
+    const modelTransformation = this._cadTransformationProvider.getModelTransformation();
     return {
       blobUrl,
       modelTransformation,

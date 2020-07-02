@@ -4,6 +4,6 @@
 
 import { ModelTransformation } from '@/utilities';
 
-export interface CadTransformationProvider {
-  getCadTransformation(): ModelTransformation;
+export interface TransformationProvider {
+  getModelTransformation(): ModelTransformation;
 }
