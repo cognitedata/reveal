@@ -8,8 +8,8 @@ import debounce from 'lodash/debounce';
 import omit from 'lodash/omit';
 import ComboControls from '@cognite/three-combo-controls';
 import { CogniteClient } from '@cognite/sdk';
-import { debounceTime, distinctUntilChanged, filter, map, publish, share } from 'rxjs/operators';
-import { combineLatest, merge, Subject, Subscription } from 'rxjs';
+import { debounceTime, filter, map, publish } from 'rxjs/operators';
+import { merge, Subject, Subscription } from 'rxjs';
 
 import { from3DPositionToRelativeViewportCoordinates } from '@/utilities/worldToViewport';
 import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';

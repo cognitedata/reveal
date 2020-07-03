@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { Observable, Subscription, merge, combineLatest } from 'rxjs';
+import { Observable, Subscription, combineLatest } from 'rxjs';
 import { CogniteClient } from '@cognite/sdk';
 
 import { Cognite3DModel } from './Cognite3DModel';
