@@ -24,15 +24,15 @@ export async function getCadSectorFile(
   const url = `${blobUrl}/${fileName}`;
   const headers = {
     ...defaultHeaders,
-    Accept: '*/*',
-    method: 'GET'
+    Accept: '*/*'
   };
+  const request = { headers, method: 'GET' };
   return (
-    fetch(url, headers)
+    fetch(url, request)
       // Retry 3 times
-      .catch(() => fetch(url, headers))
-      .catch(() => fetch(url, headers))
-      .catch(() => fetch(url, headers))
+      .catch(() => fetch(url, request))
+      .catch(() => fetch(url, request))
+      .catch(() => fetch(url, request))
       .then(x => x.arrayBuffer())
   );
 }
