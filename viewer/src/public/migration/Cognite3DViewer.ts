@@ -9,7 +9,7 @@ import omit from 'lodash/omit';
 import ComboControls from '@cognite/three-combo-controls';
 import { CogniteClient } from '@cognite/sdk';
 import { debounceTime, distinctUntilChanged, filter, map, publish, share } from 'rxjs/operators';
-import { combineLatest, merge, Subject, Subscription, asapScheduler, asyncScheduler } from 'rxjs';
+import { combineLatest, merge, Subject, Subscription, asyncScheduler } from 'rxjs';
 
 import { from3DPositionToRelativeViewportCoordinates } from '@/utilities/worldToViewport';
 import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';

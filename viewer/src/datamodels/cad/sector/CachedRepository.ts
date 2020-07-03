@@ -34,8 +34,7 @@ import {
   switchMap,
   distinctUntilChanged,
   share,
-  finalize,
-  subscribeOn
+  finalize
 } from 'rxjs/operators';
 import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
