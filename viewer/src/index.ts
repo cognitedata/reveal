@@ -1,6 +1,10 @@
 /*!
  * Copyright 2020 Cognite AS
  */
+declare let VERSION: string;
+const globalProps = {
+  VERSION: VERSION
+};
 
 export { CogniteModelBase } from './public/migration/CogniteModelBase';
 export { Cognite3DModel } from './public/migration/Cognite3DModel';

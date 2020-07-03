@@ -48,6 +48,9 @@ type RequestParams = { modelId: number; revisionId: number; format: File3dFormat
 type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
 type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
 
+declare const VERSION: string;
+const globalProps = { VERSION: VERSION };
+
 export class Cognite3DViewer {
   private get canvas(): HTMLCanvasElement {
     return this.renderer.domElement;
@@ -209,6 +212,10 @@ export class Cognite3DViewer {
     this._updateCameraNearAndFarSubject = this.setupUpdateCameraNearAndFar();
 
     this.animate(0);
+  }
+
+  getVersion(): string {
+    return globalProps.VERSION;
   }
 
   dispose(): void {
