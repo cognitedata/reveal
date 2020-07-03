@@ -15,7 +15,7 @@ module.exports = {
     '^@/(.*)': '<rootDir>/src/$1'
   },
   coverageDirectory: '../coverage',
-  collectCoverageFrom: ['!src/__tests__/**/*.ts', '!**/*.d.ts', '!**/*.json'],
+  collectCoverageFrom: ['!src/__tests__/**/*.ts', '!**/*.d.ts', '!**/*.json', '!**/*_generated.ts'],
   automock: false,
   setupFiles: ['./src/__tests__/setupJest.ts', 'jest-canvas-mock'],
   setupFilesAfterEnv: ['jest-extended'],
