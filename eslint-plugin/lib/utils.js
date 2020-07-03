@@ -1,5 +1,5 @@
 const getDocsUrl = (ruleName) => {
-  return `https://github.com/cognitedata/eslint-config/tree/master/docs/rules/${ruleName}.md`;
+  return `https://github.com/cognitedata/frontend/tree/master/packages/dev/eslint-plugin/docs/rules/${ruleName}.md`;
 };
 
 const isDirectiveComment = (node) => {
