@@ -3,7 +3,7 @@
  */
 
 import { Repository } from './Repository';
-import { WantedSector, SectorGeometry, ConsumedSector } from './types';
+import { WantedSector, SectorGeometry, FlatSectorGeometry, ConsumedSector } from './types';
 import { LevelOfDetail } from './LevelOfDetail';
 import {
   OperatorFunction,
@@ -38,7 +38,9 @@ import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
 import { CadSectorProvider } from './CadSectorProvider';
 import { MemoryRequestCache } from '@/utilities/cache/MemoryRequestCache';
-import { SectorQuads } from '../rendering/types';
+import { SectorQuads, InstancedMesh, InstancedMeshFile, TriangleMesh } from '@/datamodels/cad/rendering/types';
+import { DetailedSector } from '@/datamodels/cad/sector/detailedSector_generated';
+import { flatbuffers } from 'flatbuffers';
 
 type CtmFileResult = { fileName: string; data: ArrayBuffer };
 type ParsedData = { blobUrl: string; lod: string; data: SectorGeometry | SectorQuads };
@@ -209,13 +211,14 @@ export class CachedRepository implements Repository {
           })
         ),
         map(data => {
+          const sector = this.unflattenSector(data);
           this._parsedDataSubject.next({
             blobUrl: wantedSector.blobUrl,
             sectorId: wantedSector.metadata.id,
             lod: 'detailed',
-            data
+            data: sector
           }); // TODO: Remove when migration is gone.
-          return { ...wantedSector, data };
+          return { ...wantedSector, data: sector };
         }),
         this._modelDataTransformer.transform(),
         map(group => ({ ...wantedSector, group })),
@@ -229,5 +232,60 @@ export class CachedRepository implements Repository {
 
   private wantedSectorCacheKey(wantedSector: WantedSector) {
     return '' + wantedSector.blobUrl + '.' + wantedSector.metadata.id + '.' + wantedSector.levelOfDetail;
+  }
+
+  private unflattenSector(data: FlatSectorGeometry): SectorGeometry {
+    const buf = new flatbuffers.ByteBuffer(data.buffer);
+    const sectorG = DetailedSector.SectorGeometry.getRootAsSectorGeometry(buf);
+    const iMeshes: InstancedMeshFile[] = [];
+    for (let i = 0; i < sectorG.instanceMeshesLength(); i++) {
+      const instances: InstancedMesh[] = [];
+      const meshFile = sectorG.instanceMeshes(i)!;
+      for (let j = 0; j < meshFile.instancesLength(); j++) {
+        const int = meshFile.instances(j)!;
+        const colors = int.colorsArray()!;
+        const instanceMatrices = int.instanceMatricesArray()!;
+        const treeIndices = int.treeIndicesArray()!;
+        instances.push({
+          triangleCount: int.triangleCount(),
+          triangleOffset: int.triangleOffset(),
+          colors,
+          instanceMatrices,
+          treeIndices
+        });
+      }
+      const indices = meshFile.indicesArray()!;
+      const vertices = meshFile.verticesArray()!;
+      const norm = meshFile.normalsArray();
+      iMeshes.push({
+        fileId: meshFile.fileId(),
+        indices,
+        vertices,
+        normals: norm ? norm : undefined,
+        instances
+      });
+    }
+    const tMeshes: TriangleMesh[] = [];
+    for (let i = 0; i < sectorG.triangleMeshesLength(); i++) {
+      const tri = sectorG.triangleMeshes(i)!;
+      const indices = tri.indicesArray()!;
+      const treeIndices = tri.treeIndicesArray()!;
+      const vertices = tri.verticesArray()!;
+      const colors = tri.colorsArray()!;
+      const norm = tri.normalsArray();
+      tMeshes.push({
+        fileId: tri.fileId(),
+        indices,
+        treeIndices,
+        vertices,
+        normals: norm ? norm : undefined,
+        colors
+      });
+    }
+    return {
+      instanceMeshes: iMeshes,
+      triangleMeshes: tMeshes,
+      ...data
+    };
   }
 }

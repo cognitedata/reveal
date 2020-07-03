@@ -158,8 +158,8 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
 
     const totalSectorCount = input.cadModelsMetadata.reduce((sum, x) => sum + x.scene.sectorCount, 0);
     const takenSectorCount = wanted.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded).length;
-    const takenSimpleCount = wanted.filter(x => x.levelOfDetail === LevelOfDetail.Detailed).length;
-    const takenDetailedPercent = ((100.0 * (takenSectorCount - takenSimpleCount)) / totalSectorCount).toPrecision(3);
+    const takenDetailedCount = wanted.filter(x => x.levelOfDetail === LevelOfDetail.Detailed).length;
+    const takenDetailedPercent = ((100.0 * takenDetailedCount) / totalSectorCount).toPrecision(3);
     const takenPercent = ((100.0 * takenSectorCount) / totalSectorCount).toPrecision(3);
 
     this.log(

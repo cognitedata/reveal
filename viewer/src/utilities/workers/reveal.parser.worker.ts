@@ -5,16 +5,13 @@
 import * as Comlink from 'comlink';
 import { ParsedPrimitives, ParsePrimitiveAttribute, ParseCtmInput } from './types/reveal.parser.types';
 import * as rustTypes from '../../../pkg';
-import { SectorGeometry } from '@/datamodels/cad/sector/types';
-import { SectorQuads, InstancedMesh, InstancedMeshFile, TriangleMesh } from '@/datamodels/cad/rendering/types';
-import { DetailedSector } from '@/datamodels/cad/sector/detailedSector_generated';
-import { flatbuffers } from 'flatbuffers';
+import { FlatSectorGeometry } from '@/datamodels/cad/sector/types';
+import { SectorQuads } from '@/datamodels/cad/rendering/types';
 const rustModule = import('../../../pkg');
 
 export class RevealParserWorker {
   public async parseQuads(buffer: Uint8Array): Promise<SectorQuads> {
     const rust = await rustModule;
-
     const sectorData = rust.parse_and_convert_f3df(buffer);
 
     const result = {
@@ -28,80 +25,36 @@ export class RevealParserWorker {
     return result;
   }
 
-  public async parseAndFinalizeDetailed(i3dFile: string, ctmFiles: ParseCtmInput): Promise<SectorGeometry> {
+  public async parseAndFinalizeDetailed(i3dFile: string, ctmFiles: ParseCtmInput): Promise<FlatSectorGeometry> {
     const rust = await rustModule;
     // TODO mattman22 2020-6-24 Handle parse/finalize errors
     const sectorData = await rust.load_parse_finalize_detailed(i3dFile, ctmFiles.blobUrl, ctmFiles.headers);
-    const buf = new flatbuffers.ByteBuffer(sectorData.data);
-    const sectorG = DetailedSector.SectorGeometry.getRootAsSectorGeometry(buf);
-    const iMeshes: InstancedMeshFile[] = [];
-    for (let i = 0; i < sectorG.instanceMeshesLength(); i++) {
-      const instances: InstancedMesh[] = [];
-      const meshFile = sectorG.instanceMeshes(i)!;
-      for (let j = 0; j < meshFile.instancesLength(); j++) {
-        const int = meshFile.instances(j)!;
-        const colors = int.colorsArray();
-        const instanceMatrices = int.instanceMatricesArray();
-        const treeIndices = int.treeIndicesArray();
-        instances.push({
-          triangleCount: int.triangleCount(),
-          triangleOffset: int.triangleOffset(),
-          colors: colors ? colors : new Uint8Array(),
-          instanceMatrices: instanceMatrices ? instanceMatrices : new Float32Array(),
-          treeIndices: treeIndices ? treeIndices : new Float32Array()
-        });
-      }
-      const indices = meshFile.indicesArray();
-      const vertices = meshFile.verticesArray();
-      const norm = meshFile.normalsArray();
-      iMeshes.push({
-        fileId: meshFile.fileId(),
-        indices: indices ? indices : new Uint32Array(),
-        vertices: vertices ? vertices : new Float32Array(),
-        normals: norm ? norm : undefined,
-        instances
-      });
-    }
-    const tMeshes: TriangleMesh[] = [];
-    for (let i = 0; i < sectorG.triangleMeshesLength(); i++) {
-      const tri = sectorG.triangleMeshes(i)!;
-      const indices = tri.indicesArray();
-      const treeIndices = tri.treeIndicesArray();
-      const vertices = tri.verticesArray();
-      const colors = tri.colorsArray();
-      const norm = tri.normalsArray();
-      tMeshes.push({
-        fileId: tri.fileId(),
-        indices: indices ? indices : new Uint32Array(),
-        treeIndices: treeIndices ? treeIndices : new Float32Array(),
-        vertices: vertices ? vertices : new Float32Array(),
-        normals: norm ? norm : undefined,
-        colors: colors ? colors : new Uint8Array()
-      });
-    }
-    // const iMesh = sectorData.instance_meshes;
-    // const tMesh = sectorData.triangle_meshes;
     const sector = sectorData.sector;
-
     const primitives = this.extractParsedPrimitives(sector);
-    // const nodeIdToTreeIndexMap = new Map();
-    // const treeIndexToNodeIdMap = new Map();
-    // for (let i = 0; i < sectorG.nodeIdsLength(); i++) {
-    //   nodeIdToTreeIndexMap.set(sectorG.nodeIds(i), sectorG.treeIndices(i));
-    //   treeIndexToNodeIdMap.set(sectorG.treeIndices(i), sectorG.nodeIds(i));
-    // }
     const nodeIdToTreeIndexMap = sector.node_id_to_tree_index_map();
     const treeIndexToNodeIdMap = sector.tree_index_to_node_id_map();
 
-    const result: SectorGeometry = {
+    const result: FlatSectorGeometry = {
       nodeIdToTreeIndexMap,
       treeIndexToNodeIdMap,
       primitives,
-      instanceMeshes: iMeshes,
-      triangleMeshes: tMeshes
+      buffer: sectorData.data
     };
     sectorData.free();
-    return result;
+    return Comlink.transfer(result, [
+      result.primitives.boxCollection.buffer,
+      result.primitives.circleCollection.buffer,
+      result.primitives.eccentricConeCollection.buffer,
+      result.primitives.ellipsoidSegmentCollection.buffer,
+      result.primitives.generalCylinderCollection.buffer,
+      result.primitives.generalRingCollection.buffer,
+      result.primitives.nutCollection.buffer,
+      result.primitives.quadCollection.buffer,
+      result.primitives.sphericalSegmentCollection.buffer,
+      result.primitives.torusSegmentCollection.buffer,
+      result.primitives.trapeziumCollection.buffer,
+      result.buffer.buffer
+    ]);
   }
 
   private extractParsedPrimitives(sectorData: rustTypes.Sector) {

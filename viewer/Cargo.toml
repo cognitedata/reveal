@@ -24,6 +24,7 @@ openctm = { git = "https://github.com/cognitedata/openctm-rs", rev="aaee843a4788
 i3df = { path = "../i3df" }
 f3df = { path = "../f3df" }
 flatbuffers = "0.6.1"
+futures = "0.3.5"
 
 [dependencies.cached]
 version = "0.13.1"

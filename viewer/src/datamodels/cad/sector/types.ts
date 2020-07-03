@@ -128,7 +128,13 @@ export interface SectorGeometry {
   readonly treeIndexToNodeIdMap: Map<number, number>;
 
   readonly primitives: ParsedPrimitives;
-
   readonly instanceMeshes: InstancedMeshFile[];
   readonly triangleMeshes: TriangleMesh[];
+}
+export interface FlatSectorGeometry {
+  readonly nodeIdToTreeIndexMap: Map<number, number>;
+  readonly treeIndexToNodeIdMap: Map<number, number>;
+
+  readonly primitives: ParsedPrimitives;
+  readonly buffer: Uint8Array;
 }

@@ -26,10 +26,12 @@ export async function getCadSectorFile(
     ...defaultHeaders,
     Accept: '*/*'
   };
-  const response = await fetch(url, { headers, method: 'GET' })
-    // Retry 3 times
-    .catch(() => fetch(url, { headers, method: 'GET' }))
-    .catch(() => fetch(url, { headers, method: 'GET' }))
-    .catch(() => fetch(url, { headers, method: 'GET' }));
-  return response.arrayBuffer();
+  return (
+    fetch(url, { headers, method: 'GET' })
+      // Retry 3 times
+      .catch(() => fetch(url, { headers, method: 'GET' }))
+      .catch(() => fetch(url, { headers, method: 'GET' }))
+      .catch(() => fetch(url, { headers, method: 'GET' }))
+      .then(x => x.arrayBuffer())
+  );
 }

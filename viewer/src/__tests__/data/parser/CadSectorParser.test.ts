@@ -9,7 +9,7 @@ import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
 import { WorkerPool } from '@/utilities/workers/WorkerPool';
 import { SectorQuads } from '@/datamodels/cad/rendering/types';
 import { SectorGeometry } from '@/datamodels/cad/sector/types';
-import { ParsedPrimitives } from '@/utilities/workers/types/parser.types';
+import { ParsedPrimitives } from '@/utilities/workers/types/reveal.parser.types';
 
 jest.mock('@/utilities/workers/WorkerPool');
 

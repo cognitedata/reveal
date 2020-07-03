@@ -1,14 +1,16 @@
+use futures::stream::{FuturesUnordered, StreamExt};
 use i3df::renderables::{PrimitiveCollections, Sector};
 use js_sys::{Float32Array, Map, Promise, Uint32Array, Uint8Array};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::panic;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::JsFuture;
+
 #[macro_use]
 extern crate cached;
-use cached::SizedCache;
+use cached::{Cached, SizedCache};
 
 #[allow(non_snake_case, unused_imports, unknown_lints, clippy::all)]
 #[rustfmt::skip]
@@ -169,11 +171,11 @@ cached_key_result! {
 
 async fn load_file(
     blob_url: &str,
-    file_name: &str,
+    file_name: String,
     headers: JsValue,
-) -> Result<Uint8Array, JsValue> {
+) -> Result<(String, Uint8Array), JsValue> {
     let value = JsFuture::from(getCadSectorFile(&blob_url, &file_name, headers)).await?;
-    Ok(Uint8Array::new(&value))
+    Ok((file_name, Uint8Array::new(&value)))
 }
 
 #[wasm_bindgen(module = "/src/utilities/networking/utilities.ts")]
@@ -187,28 +189,65 @@ pub async fn load_parse_finalize_detailed(
     blob_url: String,
     headers: JsValue,
 ) -> Result<SectorGeometry, JsValue> {
-    let i3d_file = parse_and_convert_sector(
-        format!("{}/{}", &blob_url, &file_name),
-        &load_file(&blob_url, &file_name, headers.clone())
-            .await?
-            .to_vec(),
-    )?;
+    // TODO read https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/building-your-project.html
+    // and see if this can be moved to one common place
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
+
+    // Check if sector is cached
+    let i3d_file;
+    let res;
+    {
+        let mut cache = PARSE_AND_CONVERT_SECTOR.lock().unwrap();
+        res = Cached::cache_get(&mut *cache, &file_name).cloned();
+    }
+    if let Some(res) = res {
+        // Cache hit
+        i3d_file = res;
+    } else {
+        // Cache miss
+        let (file_name, data) = load_file(&blob_url, file_name, headers.clone()).await?;
+        i3d_file = parse_and_convert_sector(file_name, &data.to_vec())?;
+    }
+
     let triangle_meshes = &i3d_file.primitive_collections.triangle_mesh_collection;
     let instanced_meshes = &i3d_file.primitive_collections.instanced_mesh_collection;
     let mut ctm_map = HashMap::new();
-    for file_id in triangle_meshes
+
+    // Add all cached CtmResults to map
+    let ids = triangle_meshes
         .file_id
         .iter()
         .chain(instanced_meshes.file_id.iter())
-    {
-        let file = format!("mesh_{}.ctm", file_id);
-        #[allow(clippy::map_entry)]
-        if !ctm_map.contains_key(&file) {
-            let ctm_input: Uint8Array = load_file(&blob_url, &file, headers.clone()).await?;
-            let data = parse_ctm(format!("{}/{}", &blob_url, &file), &ctm_input.to_vec());
-            ctm_map.insert(file, data);
-        }
-    }
+        .collect::<HashSet<_>>();
+
+    ids.iter()
+        .map(|x| format!("mesh_{}.ctm", x))
+        .map(|file_name| {
+            let mut cache = PARSE_CTM.lock().unwrap();
+            (
+                Cached::cache_get(&mut *cache, &file_name).cloned(),
+                file_name,
+            )
+        })
+        .filter(|(res, _)| res.is_some())
+        .for_each(|(v, k)| {
+            ctm_map.insert(k, v.unwrap());
+        });
+
+    // Load, parse, and add CtmResults to map
+    ids.iter()
+        .map(|x| format!("mesh_{}.ctm", x))
+        .filter(|file_name| !ctm_map.contains_key(file_name))
+        .map(|x| load_file(&blob_url, x, headers.clone()))
+        .collect::<FuturesUnordered<_>>()
+        .for_each_concurrent(None, |x| {
+            if let Ok((file_name, buf)) = x {
+                ctm_map.insert(file_name.clone(), parse_ctm(file_name, &buf.to_vec()));
+            }
+            futures::future::ready(())
+        })
+        .await;
+
     finalize_detailed(i3d_file, ctm_map)
 }
 
@@ -293,7 +332,6 @@ fn finalize_detailed(
     let mut final_instance_meshes = Vec::new();
     // Finalize Instance Meshes
     {
-        // let final_instance_meshes = finalize_instance_meshes(instance_meshes, &ctm_map)?;
         let file_ids = &instance_meshes.file_id;
         let triangle_offsets = &instance_meshes.triangle_offset;
         let triangle_counts = &instance_meshes.triangle_count;
