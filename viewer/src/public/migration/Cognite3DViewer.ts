@@ -25,26 +25,21 @@ import RenderController from './RenderController';
 import { CogniteModelBase } from './CogniteModelBase';
 
 import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
-import { RevealManagerBase } from '@/public/RevealManagerBase';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
-import { CadManager } from '@/datamodels/cad/CadManager';
 import { CadModelMetadataRepository } from '@/datamodels/cad/CadModelMetadataRepository';
 import { DefaultCadTransformation } from '@/datamodels/cad/DefaultCadTransformation';
 import { CadMetadataParser } from '@/datamodels/cad/parsers/CadMetadataParser';
-import { CadModelFactory } from '@/datamodels/cad/CadModelFactory';
 import { ByVisibilityGpuSectorCuller } from '@/internal';
-import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
-import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloudMetadataRepository';
-import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
 import { BoundingBoxClipper, File3dFormat, isMobileOrTablet } from '@/utilities';
 import { Spinner } from '@/utilities/Spinner';
 import { addPostRenderEffects } from '@/datamodels/cad/rendering/postRenderEffects';
 import { trackError, initMetrics, trackAddModel } from '@/utilities/metrics';
+import { CdfModelManager } from './CdfModelManager';
 
-type RequestParams = { modelId: number; revisionId: number; format: File3dFormat };
+type CdfModelIdentifier = { modelId: number; revisionId: number; format: File3dFormat };
 type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
 type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
 
@@ -62,13 +57,9 @@ export class Cognite3DViewer {
   private readonly scene: THREE.Scene;
   private readonly controls: ComboControls;
   private readonly sdkClient: CogniteClient;
-  private readonly sectorRepository: CachedRepository;
-  private readonly cadManager: CadManager<RequestParams>;
-  private readonly pointCloudManager: PointCloudManager<RequestParams>;
-  private readonly revealManager: RevealManagerBase<RequestParams>;
-
-  private readonly _loadingSubscription: Subscription = new Subscription();
   private readonly _updateCameraNearAndFarSubject: Subject<THREE.PerspectiveCamera>;
+  private readonly _loadingSubscription = new Subscription();
+  private readonly cdfModelManager: CdfModelManager;
 
   private readonly eventListeners = {
     cameraChange: new Array<CameraChangeDelegate>(),
@@ -161,49 +152,47 @@ export class Cognite3DViewer {
     this.sdkClient = options.sdk;
     this.renderController = new RenderController(this.camera);
     this.materialManager = new MaterialManager();
-    const modelDataParser: CadSectorParser = new CadSectorParser();
-    const modelDataTransformer = new SimpleAndDetailedToSector3D(this.materialManager);
+    const cadSectorParser: CadSectorParser = new CadSectorParser();
+    const cadDataTransformer = new SimpleAndDetailedToSector3D(this.materialManager);
     const cogniteClientExtension = new CogniteClient3dExtensions(this.sdkClient);
     const cadModelRepository = new CadModelMetadataRepository(
       cogniteClientExtension,
       new DefaultCadTransformation(),
       new CadMetadataParser()
     );
-    const cadModelFactory = new CadModelFactory(this.materialManager);
     const sectorCuller = options._sectorCuller || new ByVisibilityGpuSectorCuller();
-    this.sectorRepository = new CachedRepository(cogniteClientExtension, modelDataParser, modelDataTransformer);
-    const cadModelUpdateHandler = new CadModelUpdateHandler(this.sectorRepository, sectorCuller);
-    this.cadManager = new CadManager<RequestParams>(cadModelRepository, cadModelFactory, cadModelUpdateHandler);
-
-    const pointCloudModelRepository: PointCloudMetadataRepository<RequestParams> = new PointCloudMetadataRepository(
+    const pointCloudModelRepository: PointCloudMetadataRepository<CdfModelIdentifier> = new PointCloudMetadataRepository(
       cogniteClientExtension,
       new DefaultPointCloudTransformation()
     );
-    const pointCloudFactory: PointCloudFactory = new PointCloudFactory(cogniteClientExtension);
-    this.pointCloudManager = new PointCloudManager(pointCloudModelRepository, pointCloudFactory);
-    this.revealManager = new RevealManagerBase(this.cadManager, this.materialManager, this.pointCloudManager);
+
+    const cadRepository = new CachedRepository(cogniteClientExtension, cadSectorParser, cadDataTransformer);
+    this.cdfModelManager = new CdfModelManager(
+      this.sdkClient,
+      cadRepository,
+      this.materialManager,
+      sectorCuller,
+      cadModelRepository,
+      pointCloudModelRepository
+    );
+
     this.startPointerEventListeners();
 
     this._loadingSubscription.add(
-      combineLatest([this.sectorRepository.getLoadingStateObserver(), this.pointCloudManager.getLoadingStateObserver()])
-        .pipe(
-          map(([pointCloudLoading, cadLoading]) => pointCloudLoading || cadLoading),
-          distinctUntilChanged()
-        )
-        .subscribe(
-          isLoading => {
-            if (isLoading) {
-              this.spinner.show();
-            } else {
-              this.spinner.hide();
-            }
-          },
-          error =>
-            trackError(error, {
-              moduleName: 'Cognite3DViewer',
-              methodName: 'constructor'
-            })
-        )
+      this.cdfModelManager.getLoadingStateObserver().subscribe(
+        isLoading => {
+          if (isLoading) {
+            this.spinner.show();
+          } else {
+            this.spinner.hide();
+          }
+        },
+        error =>
+          trackError(error, {
+            moduleName: 'Cognite3DViewer',
+            methodName: 'constructor'
+          })
+      )
     );
 
     this._updateCameraNearAndFarSubject = this.setupUpdateCameraNearAndFar();
@@ -223,7 +212,7 @@ export class Cognite3DViewer {
     }
 
     this._loadingSubscription.unsubscribe();
-    this.revealManager.dispose();
+    this.cdfModelManager.dispose();
     this.domElement.removeChild(this.canvas);
     this.renderer.dispose();
     this.scene.dispose();
@@ -291,28 +280,12 @@ export class Cognite3DViewer {
     if (options.localPath) {
       throw new NotSupportedInMigrationWrapperError();
     }
-
-    const cadNode = await this.cadManager.addModel({
-      modelId: options.modelId,
-      revisionId: options.revisionId,
-      format: File3dFormat.RevealCadModel
-    });
     if (options.geometryFilter) {
       this._geometryFilters.push(options.geometryFilter);
-      this.setSlicingPlanes(this.revealManager.clippingPlanes);
+      this.setSlicingPlanes(this.cdfModelManager.getSlicingPlanes());
     }
 
-    const model3d = new Cognite3DModel(options.modelId, options.revisionId, cadNode, this.sdkClient);
-    this._loadingSubscription.add(
-      this.sectorRepository
-        .getParsedData()
-        .pipe(
-          share(),
-          filter(x => x.blobUrl === cadNode.cadModelMetadata.blobUrl)
-        )
-        .subscribe(parseSector => model3d.updateNodeIdMaps(parseSector))
-    );
-
+    const model3d = await this.cdfModelManager.createCadModel(options);
     this.models.push(model3d);
     this.scene.add(model3d);
 
@@ -339,13 +312,7 @@ export class Cognite3DViewer {
       throw new NotSupportedInMigrationWrapperError();
     }
 
-    // TODO 25-05-2020 j-bjorne: fix this hot mess, 1 group added multiple times
-    const [potreeGroup, potreeNode] = await this.pointCloudManager.addModel({
-      modelId: options.modelId,
-      revisionId: options.revisionId,
-      format: File3dFormat.EptPointCloud
-    });
-    const model = new CognitePointCloudModel(options.modelId, options.revisionId, potreeGroup, potreeNode);
+    const model = await this.cdfModelManager.createPointCloudModel(options.modelId, options.revisionId);
     this.models.push(model);
     this.scene.add(model);
     return model;
@@ -398,7 +365,7 @@ export class Cognite3DViewer {
 
     const combinedSlicingPlanes = slicingPlanes.concat(geometryFilterPlanes);
     this.renderer.localClippingEnabled = combinedSlicingPlanes.length > 0;
-    this.revealManager.clippingPlanes = combinedSlicingPlanes;
+    this.cdfModelManager.setSlicingPlanes(combinedSlicingPlanes);
     this._slicingNeedsUpdate = true;
   }
 
@@ -459,7 +426,7 @@ export class Cognite3DViewer {
   }
 
   forceRerender(): void {
-    this.revealManager.requestRedraw();
+    this.cdfModelManager.requestRedraw();
   }
 
   enableKeyboardNavigation(): void {
@@ -650,19 +617,19 @@ export class Cognite3DViewer {
       }
       this.controls.update(this.clock.getDelta());
       renderController.update();
-      this.revealManager.update(this.camera);
+      this.cdfModelManager.update(this.camera);
 
       if (
         renderController.needsRedraw ||
         this.forceRendering ||
-        this.revealManager.needsRedraw ||
+        this.cdfModelManager.needsRedraw ||
         this._slicingNeedsUpdate
       ) {
         this.triggerUpdateCameraNearAndFar();
         this.renderer.render(this.scene, this.camera);
         addPostRenderEffects(this.materialManager, this.renderer, this.camera, this.scene);
         renderController.clearNeedsRedraw();
-        this.revealManager.resetRedraw();
+        this.cdfModelManager.resetRedraw();
         this._slicingNeedsUpdate = false;
       }
     }
