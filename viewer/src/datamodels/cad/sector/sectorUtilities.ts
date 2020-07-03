@@ -14,6 +14,7 @@ import { disposeAttributeArrayOnUpload } from '@/utilities/disposeAttributeArray
 import { pipe, GroupedObservable, Observable, OperatorFunction, of, empty } from 'rxjs';
 import { groupBy, mergeMap, distinctUntilKeyChanged, withLatestFrom, flatMap } from 'rxjs/operators';
 import { traverseDepthFirst } from '@/utilities/objectTraversal';
+import { trackError } from '@/utilities/metrics';
 
 const emptyGeometry = new THREE.Geometry();
 
@@ -138,7 +139,10 @@ export function filterCurrentWantedSectors(
             return of(loaded);
           }
         } catch (error) {
-          console.error(error);
+          trackError(error, {
+            moduleName: 'sectorUtilities',
+            methodName: 'filterCurrentWantedSectors'
+          });
         }
       }
       return empty();

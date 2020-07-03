@@ -39,6 +39,7 @@ import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
 import { CadSectorProvider } from './CadSectorProvider';
 import { MemoryRequestCache } from '@/utilities/cache/MemoryRequestCache';
 import { SectorQuads, InstancedMesh, InstancedMeshFile, TriangleMesh } from '@/datamodels/cad/rendering/types';
+import { trackError } from '@/utilities/metrics';
 import { DetailedSector } from '@/datamodels/cad/sector/detailedSector_generated';
 import { flatbuffers } from 'flatbuffers';
 
@@ -168,7 +169,10 @@ export class CachedRepository implements Repository {
         this._modelSectorProvider.getCadSectorFile(wantedSector.blobUrl, wantedSector.metadata.facesFile.fileName!)
       ).pipe(
         catchError(error => {
-          console.error('loadSimple request', error);
+          trackError(error, {
+            moduleName: 'CachedRepository',
+            methodName: 'loadSimpleSectorFromNetwork'
+          });
           this._consumedSectorCache.remove(this.wantedSectorCacheKey(wantedSector));
           throw error;
         }),
@@ -200,7 +204,10 @@ export class CachedRepository implements Repository {
     const networkObservable = onErrorResumeNext(
       i3dFileObservable.pipe(
         catchError(error => {
-          console.error('loadDetailed request', error);
+          trackError(error, {
+            moduleName: 'CachedRepository',
+            methodName: 'loadDetailedSectorFromNetwork'
+          });
           this._consumedSectorCache.remove(this.wantedSectorCacheKey(wantedSector));
           throw error;
         }),

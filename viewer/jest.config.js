@@ -18,5 +18,9 @@ module.exports = {
   collectCoverageFrom: ['!src/__tests__/**/*.ts', '!**/*.d.ts', '!**/*.json'],
   automock: false,
   setupFiles: ['./src/__tests__/setupJest.ts', 'jest-canvas-mock'],
-  setupFilesAfterEnv: ['jest-extended']
+  setupFilesAfterEnv: ['jest-extended'],
+  globals: {
+    VERSION: 'test',
+    MIXPANEL_TOKEN: 'test'
+  }
 };

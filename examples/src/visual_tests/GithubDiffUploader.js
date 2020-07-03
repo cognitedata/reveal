@@ -9,9 +9,11 @@ async function commentOnPR(octokit) {
   }
 
   const url = "https://github.com/cognitedata/reveal/actions/runs/" + process.env["GITHUB_RUN_ID"];
-  const message = "There were failures during the visual regression test stage. " +
-    `Any image diffs for visual tests can be downloaded as an artifact [here](${url}). ` +
-    "If the changes are intentional you can update the snapshots by running `yarn snapshots:update` in `examples/`";
+  const message = "There were failures in the examples workflow. " +
+    "This usually means a visual regression test has failed. " +
+    `Image diffs for visual tests can be downloaded as an artifact [here](${url}). ` +
+    "If there are no artifacts there's an error somewhere else in the examples workflow. " +
+    "If you have made intentional changes you can update the image snapshots by running `yarn snapshots:update` in `examples/`";
 
   const prNumber = context.payload.pull_request.number;
   await octokit.issues.createComment({

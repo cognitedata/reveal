@@ -692,6 +692,11 @@
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
   integrity sha512-tHq6qdbT9U1IRSGf14CL0pUlULksvY9OZ+5eEgl1N7t+OA3tGvNpxJCzuKQlsNgCVwbAs670L1vcVQi8j9HjnA==
 
+"@types/mixpanel-browser@^2.35.3":
+  version "2.35.3"
+  resolved "https://registry.yarnpkg.com/@types/mixpanel-browser/-/mixpanel-browser-2.35.3.tgz#012c3c5046ffcc65c6a144c961f0cf257b3fc414"
+  integrity sha512-4HdDE5x85zQd6SEeRJc7J4gjzOzraErdIZtwpeicOyLojRN1jERTvw14ZMt0FOLqhLUF5lnblmP5eNbdrKZ1pg==
+
 "@types/node@*":
   version "14.0.13"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.0.13.tgz#ee1128e881b874c371374c1f72201893616417c9"
@@ -5129,6 +5134,11 @@ lodash.memoize@4.x:
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
   integrity sha1-vMbEmkKihA7Zl/Mj6tpezRguC/4=
 
+lodash.set@^4.3.2:
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/lodash.set/-/lodash.set-4.3.2.tgz#d8757b1da807dde24816b0d6a84bea1a76230b23"
+  integrity sha1-2HV7HagH3eJIFrDWqEvqGnYjCyM=
+
 lodash.sortby@^4.7.0:
   version "4.7.0"
   resolved "https://registry.yarnpkg.com/lodash.sortby/-/lodash.sortby-4.7.0.tgz#edd14c824e2cc9c1e0b0a1b42bb5210516a42438"
@@ -5454,6 +5464,11 @@ mixin-deep@^1.2.0:
     for-in "^1.0.2"
     is-extendable "^1.0.1"
 
+mixpanel-browser@^2.38.0:
+  version "2.38.0"
+  resolved "https://registry.yarnpkg.com/mixpanel-browser/-/mixpanel-browser-2.38.0.tgz#cfcc9105cbec47b67589b97d755c398dfc13b621"
+  integrity sha512-6Gl95g91PWKBV6E25ga9coD7i4wWl3DgTgtaBPXG+ijNvvj6rQD1tOHJvcZgT4tucGbaNk4oYJC5lmrR0rnOBQ==
+
 mkdirp-classic@^0.5.2:
   version "0.5.3"
   resolved "https://registry.yarnpkg.com/mkdirp-classic/-/mkdirp-classic-0.5.3.tgz#fa10c9115cc6d8865be221ba47ee9bed78601113"
@@ -5576,14 +5591,14 @@ no-case@^3.0.3:
     lower-case "^2.0.1"
     tslib "^1.10.0"
 
-nock@^12.0.3:
-  version "12.0.3"
-  resolved "https://registry.yarnpkg.com/nock/-/nock-12.0.3.tgz#83f25076dbc4c9aa82b5cdf54c9604c7a778d1c9"
-  integrity sha512-QNb/j8kbFnKCiyqi9C5DD0jH/FubFGj5rt9NQFONXwQm3IPB0CULECg/eS3AU1KgZb/6SwUa4/DTRKhVxkGABw==
+nock@^13.0.0:
+  version "13.0.0"
+  resolved "https://registry.yarnpkg.com/nock/-/nock-13.0.0.tgz#e07276d558245386a2872cebf4d5570583c0d225"
+  integrity sha512-FiW8t91Je5yG5MVT1r+go1Z9bX3rCYIEjenUYeZrEl2v8aTWdIX336itrmQaKUO8Ske5Z7RHR7OIzr/9p0Ujjg==
   dependencies:
     debug "^4.1.0"
     json-stringify-safe "^5.0.1"
-    lodash "^4.17.13"
+    lodash.set "^4.3.2"
     propagate "^2.0.0"
 
 node-abi@^2.16.0, node-abi@^2.7.0:
