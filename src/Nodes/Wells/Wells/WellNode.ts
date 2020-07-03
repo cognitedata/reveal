@@ -28,6 +28,7 @@ export class WellNode extends BaseNode
   //==================================================
 
   public wellHead = Vector3.newZero;
+  public waterDepth = 0;
 
   //==================================================
   // CONSTRUCTORS

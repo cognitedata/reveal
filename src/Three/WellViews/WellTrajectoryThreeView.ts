@@ -159,6 +159,10 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     if (!trajectory)
       return undefined;
 
+    const wellNode = this.node.wellNode;
+    if (!wellNode)
+      return undefined;
+
     const style = this.style;
     if (!style)
       return undefined;
@@ -175,6 +179,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     margin.z = Math.max(margin.z, style.nameFontHeight / this.transformer.zScale);
 
     boundingBox.expandByMargin3(margin);
+    boundingBox.translate(wellNode.wellHead);
     return boundingBox;
   }
 
@@ -184,10 +189,17 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
+    const node = this.node;
+    const wellNode = node.wellNode;
+    if (!wellNode)
+      return null;
+
     const parent = new THREE.Group();
     this.addTrajectory(parent);
     this.addTrajectoryLabel(parent);
     this.addWellLabel(parent);
+
+    parent.position.copy(this.transformer.to3D(wellNode.wellHead));
     return parent;
   }
 
@@ -196,6 +208,10 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     const node = this.node;
     const trajectory = node.data;
     if (!trajectory)
+      return false;
+
+    const wellNode = node.wellNode;
+    if (!wellNode)
       return false;
 
     const target = this.renderTarget;
@@ -208,11 +224,16 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       }
     }
     let cameraChanged = false;
+    const transformer = this.transformer;
     {
       const camera = this.camera;
-      const cameraPosition = ThreeConverter.toWorld(camera.position);
+      const cameraPosition = transformer.toWorld(camera.position);
+      cameraPosition.substract(wellNode.wellHead);
+      
       const cameraDirection = trajectory.range.center;
-      this.transformer.transformTo3D(cameraDirection);
+
+      transformer.transformRelativeTo3D(cameraPosition);
+      transformer.transformRelativeTo3D(cameraDirection);
 
       cameraDirection.substract(cameraPosition);
       cameraDirection.normalize();
@@ -257,7 +278,6 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     const mdRange = new Range1();
     for (const logNode of node.getDescendantsByType(BaseLogNode))
     {
-
       if (!this.isInBand(logNode))
         continue;
 
@@ -298,7 +318,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       return;
 
     const position = trajectory.getBasePosition().clone();
-    this.transformer.transformTo3D(position);
+    this.transformer.transformRelativeTo3D(position);
     const label = SpriteCreator.createByPositionAndAlignment(node.getName(), position, 7, style.nameFontHeight, this.fgColor);
     if (!label)
       return;
@@ -318,8 +338,9 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     if (!style)
       return;
 
-    const position = wellNode.wellHead.clone();
-    this.transformer.transformTo3D(position);
+    const position = Vector3.newZero;
+    position.z -= wellNode.waterDepth;
+    this.transformer.transformRelativeTo3D(position);
     const label = SpriteCreator.createByPositionAndAlignment(wellNode.getName(), position, 1, style.nameFontHeight, this.fgColor);
     if (!label)
       return;
@@ -331,6 +352,10 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
   private addTrajectory(parent: THREE.Object3D): void
   {
     const node = this.node;
+    const wellNode = node.wellNode;
+    if (!wellNode)
+      return;
+
     const style = this.style;
     const trajectory = node.data;
     if (!trajectory)
@@ -341,7 +366,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     const samples = trajectory.createRenderSamples(color, style.radius);
     const transformer = this.transformer;
     for (const sample of samples)
-      transformer.transformTo3D(sample.point);
+      transformer.transformRelativeTo3D(sample.point);
 
     const geometry = new TrajectoryBufferGeometry(samples);
     const material = new THREE.MeshStandardMaterial({

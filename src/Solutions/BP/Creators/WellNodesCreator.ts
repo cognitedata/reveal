@@ -1,0 +1,94 @@
+import { WellNode } from "@/Nodes/Wells/Wells/WellNode";
+import BPData from "@/Solutions/BP/BPData";
+import WellNodeCreator from "@/Solutions/BP/Creators/WellNodeCreator";
+import WellTrajectoryNodeCreator from "@/Solutions/BP/Creators/WellTrajectoryNodeCreator";
+import WellLogCreator from "@/Solutions/BP/Creators/WellLogCreator";
+import { Util } from "@/Core/Primitives/Util";
+
+export default class WellNodesCreator
+{
+    static create(bpData: BPData | null): WellNode[] | null
+    {
+        if (!bpData)
+            return null;
+
+        const wellsData = bpData.wells;
+        if (!wellsData || !wellsData.length)
+            return null;
+
+        const wellNodeMap = new Map<number, WellNode>();
+        const wellNodes: WellNode[] = [];
+        for (const wellData of wellsData)
+        {
+            const wellNode = WellNodeCreator.create(wellData);
+            if (!wellNode)
+                continue;
+
+            wellNodeMap.set(wellData.id, wellNode);
+            wellNodes.push(wellNode);
+        }
+        if (!wellNodes.length)
+            return null;
+
+        const trajectories = bpData.trajectories;
+        if (!trajectories)
+            return wellNodes;
+
+        const wellBoreToWellMap = bpData.wellBoreToWellMap;
+        if (!wellBoreToWellMap)
+            return wellNodes;
+
+        const trajectoryDataMap = bpData.trajectoryDataMap;
+        if (!trajectoryDataMap)
+            return wellNodes;
+
+        const wellBoreToNDSEventsMap = bpData.wellBoreToNDSEventsMap;
+        const wellBoreToNPTEventsMap = bpData.wellBoreToNPTEventsMap;
+        const wellBoreToLogsMap = bpData.wellBoreToLogsMap;
+
+        for (const trajectory of trajectories)
+        {
+            const wellBoreId = trajectory.assetId;
+            const wellBoreToWell = wellBoreToWellMap.get(wellBoreId);
+            if (!wellBoreToWell)
+                continue;
+
+            const wellNode = wellNodeMap.get(wellBoreToWell.wellId);
+            if (!wellNode)
+                continue;
+
+            const trajectoryRows = trajectoryDataMap.get(trajectory.id);
+            const trajectoryNode = WellTrajectoryNodeCreator.create(bpData.trajectoryDataColumnIndexes, trajectoryRows);
+            if (!trajectoryNode)
+                continue;
+
+            if (!Util.isEmpty(wellBoreToWell.data.description))
+                trajectoryNode.setName(wellBoreToWell.data.description);
+            wellNode.addChild(trajectoryNode);
+
+            if (wellBoreToNDSEventsMap)
+            {
+                const ndsEvents = wellBoreToNDSEventsMap.get(wellBoreId);
+                const ndsEventLog = WellLogCreator.createRiskLogNode(ndsEvents);
+                if (ndsEventLog)
+                {
+                    ndsEventLog.setName("NDS Risk Events");
+                    trajectoryNode.addChild(ndsEventLog);
+                }
+            }
+            if (wellBoreToNPTEventsMap)
+            {
+                const nptEvents = wellBoreToNPTEventsMap.get(wellBoreId);
+                const nptEventsLog = WellLogCreator.createRiskLogNode(nptEvents);
+                if (nptEventsLog)
+                {
+                    nptEventsLog.setName("NPT Risk Events");
+                    trajectoryNode.addChild(nptEventsLog);
+                }
+            }
+            if (wellBoreToLogsMap)
+                WellLogCreator.addLogNodes(trajectoryNode, wellBoreToLogsMap[wellBoreId]);
+        }
+        return wellNodes;
+    }
+}

@@ -1,6 +1,8 @@
 import { Dispatch } from 'redux'
 import { Changes } from '@/Core/Views/Changes'
 import { CheckBoxState } from '@/Core/Enums/CheckBoxState'
+import { BaseNode } from "@/Core/Nodes/BaseNode";
+import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
 export const CHANGE_CHECKBOX_STATE: string = "CHANGE_CHECKBOX_STATE";
 
@@ -22,7 +24,7 @@ class NotificationsToActionsAdaptor {
         this.dispatcher = dispatcher;
     }
 
-    processEvent(sender: import("../../Core/Nodes/BaseNode").BaseNode, args: import("../../Core/Views/NodeEventArgs").NodeEventArgs): void {
+    processEvent(sender: BaseNode, args: NodeEventArgs): void {
         // console.log('notification ', sender, args);
         if(args.isEmpty) { return; }
 

@@ -18,8 +18,6 @@ import { Random } from "@/Core/Primitives/Random";
 import { BaseLogSample } from "@/Nodes/Wells/Samples/BaseLogSample";
 import { FloatLogSample } from "@/Nodes/Wells/Samples/FloatLogSample";
 import { BaseLog } from "@/Nodes/Wells/Logs/BaseLog";
-import { RenderSample } from "@/Nodes/Wells/Samples/RenderSample";
-import { ILogRow } from "@/Interface";
 
 export class FloatLog extends BaseLog
 {
@@ -122,15 +120,6 @@ export class FloatLog extends BaseLog
       const value = k % 10 == 0 ? Number.NaN : Random.getGaussian(valueRange.center, valueRange.delta);
       log.samples.push(new FloatLogSample(value, md));
     }
-    return log;
-  }
-
-  public static createFloatLog(items: ILogRow[], mdIndex: number, logTypeIndex: number): FloatLog 
-  {
-    const log = new FloatLog();
-    items.forEach(item => {
-      log.samples.push(new FloatLogSample(item[logTypeIndex]!!, item[mdIndex]!!));
-    });
     return log;
   }
 

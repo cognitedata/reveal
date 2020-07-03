@@ -19,7 +19,11 @@ import { Colors } from "@/Core/Primitives/Colors";
 
 export class TextureKit 
 {
-  static add(array: Array<number>, color: Color)
+  //==================================================
+  // STATIC METHODS
+  //==================================================
+
+  static add(array: Array<number>, color: Color): void
   {
     array.push(color.red());
     array.push(color.green());

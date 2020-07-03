@@ -100,7 +100,7 @@ export class LogRender
       if (!trajectory.getTangentAtMd(md, tangent))
         continue;
 
-      transformer.transformTo3D(position);
+      transformer.transformRelativeTo3D(position);
       transformer.transformTangentTo3D(tangent);
 
       const fraction = this.mdRange.getFraction(md);

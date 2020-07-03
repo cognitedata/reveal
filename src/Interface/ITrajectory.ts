@@ -7,7 +7,7 @@
  * This is the interface for the Trajectory object
  */
 
-export interface TrajectoryMeta {
+export interface ITrajectoryMeta {
   type: string;
   object_state: string;
   effective_data?: string;
@@ -57,7 +57,7 @@ export interface TrajectoryMeta {
   is_survey_program_read_only: string;
 }
 
-export interface TrajectoryColumn {
+export interface ITrajectoryColumn {
   name: string;
   externalId: string;
   description?: string;
@@ -71,7 +71,7 @@ export interface TrajectoryColumn {
 // { "name":"x_offset" ,    "valueType":"DOUBLE" }
 // { "name":"y_offset" ,    "valueType":"DOUBLE" }
 
-export interface Trajectory {
+export interface ITrajectory {
   id: number;
   assetId: number;
   externalId: string;
@@ -80,6 +80,6 @@ export interface Trajectory {
   dataSetId: number;
   createdTime: string;
   lastUpdatedTime: string;
-  metadata: TrajectoryMeta;
-  columns: TrajectoryColumn[];
+  metadata: ITrajectoryMeta;
+  columns: ITrajectoryColumn[];
 }

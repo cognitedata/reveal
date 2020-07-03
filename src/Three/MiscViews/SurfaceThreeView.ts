@@ -63,28 +63,27 @@ export class SurfaceThreeView extends BaseGroupThreeView
 
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
-
     const node = this.node;
     const grid = node.data;
     if (!grid)
       return null;
 
-    const group = new THREE.Group();
+    const parent = new THREE.Group();
     var solid = this.createSolid();
     if (solid)
-      group.add(solid);
+      parent.add(solid);
 
     var contours = this.createContours();
     if (contours)
-      group.add(contours);
+      parent.add(contours);
 
     const transformer = this.transformer;
 
     var origin = new Vector3(grid.xOrigin, grid.yOrigin, 0);
 
-    group.position.copy(transformer.to3D(origin));
-    group.scale.copy(transformer.scale);
-    return group;
+    parent.position.copy(transformer.to3D(origin));
+    parent.scale.copy(transformer.scale);
+    return parent;
   }
 
 

@@ -87,11 +87,15 @@ export class PointLogThreeView extends BaseGroupThreeView
     if (!trajectory)
       return undefined;
 
+    const wellNode = this.node.wellNode;
+    if (!wellNode)
+      return undefined;
+
     const log = node.data;
     if (!log)
       return undefined;
 
-    const range = new Range3();
+    const boundingBox = new Range3();
     const position = Vector3.newZero;
     for (let i = log.samples.length - 1; i >= 0; i--)
     {
@@ -100,11 +104,12 @@ export class PointLogThreeView extends BaseGroupThreeView
         continue;
 
       if (trajectory.getPositionAtMd(sample.md, position))
-        range.add(position);
+        boundingBox.add(position);
     }
     const radius = this.radius * selectedRadiusFactor;
-    range.expandByMargin(radius);
-    return range;
+    boundingBox.expandByMargin(radius);
+    boundingBox.translate(wellNode.wellHead);
+    return boundingBox;
   }
 
   //==================================================
@@ -164,7 +169,7 @@ export class PointLogThreeView extends BaseGroupThreeView
       if (!trajectory.getTangentAtMd(sample.md, tangent))
         continue;
 
-      transformer.transformTo3D(position);
+      transformer.transformRelativeTo3D(position);
       transformer.transformTangentTo3D(tangent);
 
       // Get perpendicular
@@ -208,6 +213,10 @@ export class PointLogThreeView extends BaseGroupThreeView
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
     const node = this.node;
+    const wellNode = node.wellNode;
+    if (!wellNode)
+      return null;
+
     const trajectory = node.trajectory;
     if (!trajectory)
       return null;
@@ -249,7 +258,7 @@ export class PointLogThreeView extends BaseGroupThreeView
       if (!trajectory.getTangentAtMd(sample.md, tangent))
         continue;
 
-      transformer.transformTo3D(position);
+      transformer.transformRelativeTo3D(position);
       transformer.transformTangentTo3D(tangent);
 
       const sphere = new THREE.Mesh(sample.isOpen ? openGeometry : closedGeometry, sample.isOpen ? openMaterial : closedMaterial);
@@ -285,6 +294,7 @@ export class PointLogThreeView extends BaseGroupThreeView
         }
       }
     }
+    group.position.copy(transformer.to3D(wellNode.wellHead));
     return group;
   }
 

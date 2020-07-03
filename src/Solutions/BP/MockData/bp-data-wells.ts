@@ -1,6 +1,6 @@
-import { Well } from "@/Interface";
+import { IWell } from "@/Interface";
 
-export const wells: Well[] = [
+export const wells: IWell[] = [
     {
         "id": 32508289116008,
         "externalId": "USA00006167",

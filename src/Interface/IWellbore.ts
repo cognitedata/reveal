@@ -7,7 +7,7 @@
  * This is the interface for the Wellbore object
  */
 
-export interface WellboreMeta {
+export interface IWellboreMeta {
   type: string;
   active_indicator: string;
   asset_rig: string;
@@ -35,7 +35,7 @@ export interface WellboreMeta {
   wellbore_remark: string;
 }
 
-export interface Wellbore {
+export interface IWellbore {
   externalId: string;
   name: string;
   parentId: number;
@@ -47,5 +47,5 @@ export interface Wellbore {
   createdTime: string;
   lastUpdatedTime: string;
   rootId: number;
-  metadata: WellboreMeta;
+  metadata: IWellboreMeta;
 }

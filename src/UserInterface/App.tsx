@@ -4,6 +4,7 @@ import { Modules } from "@/Core/Module/Modules";
 import { ThreeModule } from "@/Three/ThreeModule";
 import BPDataModule from "@/Solutions/BP/BPDataModule";
 import { wells, wellBores, trajectories, trajData, logs } from "@/Solutions/BP/MockData";
+import { SyntheticSubSurfaceModule } from "@/Nodes/SyntheticSubSurfaceModule";
 
 /**
  * App component acts as a container application. Eg- BP
@@ -32,14 +33,15 @@ export default function App() {
   });
 
   modules.add(new ThreeModule());
+  // modules.add(new SyntheticSubSurfaceModule());
   modules.add(module);
   modules.install();
 
-  const rootObj = modules.createRoot();
+  const root = modules.createRoot();
 
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
-      <NodeVisualizer root={rootObj} />
+      <NodeVisualizer root={root} />
     </div>
   );
 }

@@ -4,18 +4,18 @@ import { Vector3 } from "@/Core/Geometry/Vector3";
 
 import { SubSurfaceRootNode } from "./TreeNodes/SubSurfaceRootNode";
 
-import { WellTrajectoryNode } from "./Wells/Wells/WellTrajectoryNode";
-import { WellNode } from "./Wells/Wells/WellNode";
-import { WellTrajectory } from "./Wells/Logs/WellTrajectory";
+import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
+import { WellNode } from "@/Nodes/Wells/Wells/WellNode";
+import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
 import { FolderNode } from "@/Core/Nodes/FolderNode";
 
-import { PointLogNode } from "./Wells/Wells/PointLogNode";
-import { FloatLogNode } from "./Wells/Wells/FloatLogNode";
-import { DiscreteLogNode } from "./Wells/Wells/DiscreteLogNode";
+import { PointLogNode } from "@/Nodes/Wells/Wells/PointLogNode";
+import { FloatLogNode } from "@/Nodes/Wells/Wells/FloatLogNode";
+import { DiscreteLogNode } from "@/Nodes/Wells/Wells/DiscreteLogNode";
 
-import { PointLog } from "./Wells/Logs/PointLog";
-import { FloatLog } from "./Wells/Logs/FloatLog";
-import { DiscreteLog } from "./Wells/Logs/DiscreteLog";
+import { PointLog } from "@/Nodes/Wells/Logs/PointLog";
+import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
+import { DiscreteLog } from "@/Nodes/Wells/Logs/DiscreteLog";
 import { CasingLogNode } from "@/Nodes/Wells/Wells/CasingLogNode";
 import { Random } from "@/Core/Primitives/Random";
 import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
@@ -43,7 +43,6 @@ export class SyntheticSubSurfaceModule extends BaseModule
   {
     return new SubSurfaceRootNode();
   }
-
 
 
   public /*override*/ loadData(root: BaseRootNode): void
@@ -253,11 +252,7 @@ class TrajectoryDataLoader implements IDataLoader
     if (!(origin instanceof WellTrajectoryNode))
       return null;
 
-    const wellNode = origin.wellNode;
-    if (!wellNode)
-      return null;
-
-    return WellTrajectory.createByRandom(wellNode.wellHead);
+    return WellTrajectory.createByRandom(Vector3.newZero);
   }
 }
 

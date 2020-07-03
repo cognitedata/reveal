@@ -75,11 +75,15 @@ export class CasingLogThreeView extends BaseGroupThreeView
     if (!trajectory)
       return undefined;
 
+    const wellNode = this.node.wellNode;
+    if (!wellNode)
+      return undefined;
+
     const log = node.data;
     if (!log)
       return undefined;
 
-    const range = new Range3();
+    const boundingBox = new Range3();
     let maxRadius = 0;
     const position = Vector3.newZero;
 
@@ -91,10 +95,11 @@ export class CasingLogThreeView extends BaseGroupThreeView
 
       maxRadius = Math.max(maxRadius, sample.value);
       if (trajectory.getPositionAtMd(sample.md, position))
-        range.add(position);
+      boundingBox.add(position);
     }
-    range.expandByMargin(maxRadius);
-    return range;
+    boundingBox.expandByMargin(maxRadius);
+    boundingBox.translate(wellNode.wellHead);
+    return boundingBox;
   }
 
   //==================================================
@@ -104,6 +109,10 @@ export class CasingLogThreeView extends BaseGroupThreeView
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
     const node = this.node;
+    const wellNode = node.wellNode;
+    if (!wellNode)
+      return null;
+
     const style = this.style;
     if (!style)
       return null;
@@ -125,7 +134,9 @@ export class CasingLogThreeView extends BaseGroupThreeView
       transparent: true,
       opacity: style.opacity
     });
-    return new THREE.Mesh(geometry, material);
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.copy(this.transformer.to3D(wellNode.wellHead));
+    return mesh;
   }
 
   //==================================================
@@ -174,7 +185,7 @@ export class CasingLogThreeView extends BaseGroupThreeView
     }
     const transformer = this.transformer;
     for (const sample of samples)
-      transformer.transformTo3D(sample.point);
+      transformer.transformRelativeTo3D(sample.point);
     return samples;
   }
 

@@ -68,6 +68,11 @@ export class ThreeTransformer
     position.z *= this._zScale;
   }
 
+  public transformRelativeTo3D(position: Vector3): void
+  {
+    position.z *= this._zScale;
+  }
+
   public transformTangentTo3D(vector: Vector3): void
   {
     vector.z *= this._zScale;
@@ -102,6 +107,13 @@ export class ThreeTransformer
     return new Vector3(position.x + this._xTranslation, position.y + this._yTranslation, position.z / this._zScale);
   }
 
+  public transformToWorld(position: Vector3): void
+  {
+    position.x += this._xTranslation;
+    position.y += this._yTranslation;
+    position.z /= this._zScale;
+  }
+
   public rangeToWorld(value: THREE.Box3, checkEmpty = true): Range3
   {
     if (checkEmpty && value.isEmpty)
@@ -127,7 +139,7 @@ export class ThreeTransformer
   {
     if (!this._initialized)
     {
-      console.log(position.toString())
+      console.log("3D translation is ", position.toString())
       this._initialized = true;
       this._xTranslation = position.x;
       this._yTranslation = position.y;

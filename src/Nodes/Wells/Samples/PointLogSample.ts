@@ -26,13 +26,6 @@ export class PointLogSample extends BaseLogSample
   public details: string = "";
   public isOpen = false;
 
-  // TODO: NILS June, 30, 2020:
-  // Take this from the BP data;
-  // In the constructor you set the description and mdStart and mdEnd
-  // from "md_hole_start", "md_hole_end" in the metadata. 
-  // riskSubCategory/details: copy from metadata
-  // subtype: copy from "subtype" 
-
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -41,7 +34,7 @@ export class PointLogSample extends BaseLogSample
   {
     super(mdStart);
     this.description = description;
-    if (mdEnd === undefined)
+    if (mdEnd === undefined || Number.isNaN(mdEnd))
       this.mdEnd = mdStart;
     else
       this.mdEnd = mdEnd;

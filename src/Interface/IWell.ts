@@ -7,7 +7,7 @@
  * This is the interface for the Well object
  */
 
-export interface WellMeta {
+export interface IWellMeta {
   active_indicator: string;
   basin_name: string;
   country_name: string;
@@ -30,7 +30,7 @@ export interface WellMeta {
   y_coordinate: string;
 }
 
-export interface Well {
+export interface IWell {
   externalId: string;
   name: string;
   parentId: number;
@@ -42,5 +42,5 @@ export interface Well {
   createdTime: string;
   lastUpdatedTime: string;
   rootId: number;
-  metadata: WellMeta;
+  metadata: IWellMeta;
 }

@@ -39,7 +39,7 @@ export abstract class BaseLogNode extends DataNode
 
   public get data(): BaseLog | null { return this.anyData; }
   public set data(value: BaseLog | null) { this.anyData = value; }
-  public get well(): WellNode | null { return this.getAncestorByType(WellNode); }
+  public get wellNode(): WellNode | null { return this.getAncestorByType(WellNode); }
   public get trajectoryNode(): WellTrajectoryNode | null { return this.getAncestorByType(WellTrajectoryNode); }
   public get trajectory(): WellTrajectory | null { const node = this.trajectoryNode; return node ? node.data : null; }
 
