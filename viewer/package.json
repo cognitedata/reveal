@@ -28,8 +28,9 @@
     "clean": "rimraf -rf dist/ ../target pkg/",
     "test": "jest",
     "coverage": "jest --coverage",
-    "lint": "eslint . --ext .ts,.js --max-warnings 0",
+    "lint": "eslint . --ext .ts,.js --max-warnings 0 && yarn run tsc",
     "lint:fix": "yarn run lint --fix",
+    "tsc": "tsc --noEmit --incremental false --skipLibCheck true",
     "prepublishscript": "yarn run coverage && yarn run clean && yarn run release"
   },
   "author": "Lars Moastuen <lars.moastuen@cognite.com>",
@@ -107,7 +108,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged -q"
+      "pre-commit": "lint-staged -q && yarn run tsc"
     }
   },
   "lint-staged": {
