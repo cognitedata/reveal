@@ -3,21 +3,9 @@
  */
 
 import * as THREE from 'three';
-import { Subject, Observable, combineLatest, animationFrameScheduler, from } from 'rxjs';
+import { Subject, Observable, combineLatest, from, asapScheduler } from 'rxjs';
 import { CadNode } from './CadNode';
-import {
-  scan,
-  share,
-  startWith,
-  auditTime,
-  filter,
-  map,
-  publish,
-  observeOn,
-  flatMap,
-  toArray,
-  tap
-} from 'rxjs/operators';
+import { scan, share, startWith, auditTime, filter, map, publish, flatMap, toArray, tap } from 'rxjs/operators';
 import { SectorCuller } from './sector/culling/SectorCuller';
 import { CachedRepository } from './sector/CachedRepository';
 import { DetermineSectorsInput } from './sector/culling/types';
@@ -36,19 +24,21 @@ export class CadModelUpdateHandler {
   private readonly _updateObservable: Observable<ConsumedSector>;
 
   constructor(sectorRepository: CachedRepository, sectorCuller: SectorCuller) {
-    const modelsArray: CadNode[] = [];
     this._updateObservable = combineLatest(
-      this._cameraSubject.pipe(auditTime(1000)),
-      this._clippingPlaneSubject.pipe(startWith([])),
-      this._clipIntersectionSubject.pipe(startWith(false)),
-      this._loadingHintsSubject.pipe(startWith({} as CadLoadingHints)),
-      this._modelSubject.pipe(
-        share(),
-        scan((array, next) => {
-          array.push(next);
-          return array;
-        }, modelsArray)
-      )
+      [
+        this._cameraSubject.pipe(auditTime(1000)),
+        this._clippingPlaneSubject.pipe(startWith([])),
+        this._clipIntersectionSubject.pipe(startWith(false)),
+        this._loadingHintsSubject.pipe(startWith({} as CadLoadingHints)),
+        this._modelSubject.pipe(
+          share(),
+          scan((array, next) => {
+            array.push(next);
+            return array;
+          }, [] as CadNode[])
+        )
+      ],
+      asapScheduler
     ).pipe(
       auditTime(250),
       filter(
@@ -56,7 +46,7 @@ export class CadModelUpdateHandler {
           cadNodes.length > 0 && loadingHints.suspendLoading !== true
       ),
       flatMap(([camera, clippingPlanes, clipIntersection, loadingHints, cadNodes]) => {
-        return from(cadNodes).pipe(
+        return from(cadNodes, asapScheduler).pipe(
           filter(cadNode => cadNode.loadingHints.suspendLoading !== true),
           map(cadNode => cadNode.cadModelMetadata),
           toArray(),
@@ -77,7 +67,7 @@ export class CadModelUpdateHandler {
         const modelSectorStates: { [blobUrl: string]: { [id: number]: LevelOfDetail } } = {};
         const unloadedSectorsObservable = wantedSectors.pipe(
           flatMap(wantedSectorArray => {
-            return from(wantedSectorArray).pipe(
+            return from(wantedSectorArray, asapScheduler).pipe(
               filter(wantedSector => {
                 const sectorStates = modelSectorStates[wantedSector.blobUrl];
                 if (sectorStates) {
@@ -108,8 +98,7 @@ export class CadModelUpdateHandler {
             }
           })
         );
-      }),
-      observeOn(animationFrameScheduler)
+      })
     );
   }
 

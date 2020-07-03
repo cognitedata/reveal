@@ -108,9 +108,8 @@ export class CachedRepository implements Repository {
 
   loadSector(): OperatorFunction<WantedSector[], ConsumedSector> {
     return pipe(
-      subscribeOn(asapScheduler),
       switchMap(wantedSectorsArray => {
-        return from(wantedSectorsArray).pipe(
+        return from(wantedSectorsArray, asapScheduler).pipe(
           tap(_ => {
             this._isLoadingSubject.next(true);
           }),
@@ -129,7 +128,7 @@ export class CachedRepository implements Repository {
               map(wantedSector => ({ ...wantedSector, group: undefined } as ConsumedSector))
             );
 
-            return merge(simpleAndDetailedObservable, discardedSectorObservable);
+            return merge(simpleAndDetailedObservable, discardedSectorObservable, asapScheduler);
           }),
           finalize(() => this._isLoadingSubject.next(false))
         );
@@ -150,7 +149,8 @@ export class CachedRepository implements Repository {
         cachedSectorObservable.pipe(
           flatMap(wantedSector => this._consumedSectorCache.get(this.wantedSectorCacheKey(wantedSector)))
         ),
-        uncachedSectorObservable.pipe(this.loadSimpleAndDetailedSectorFromNetwork())
+        uncachedSectorObservable.pipe(this.loadSimpleAndDetailedSectorFromNetwork()),
+        asapScheduler
       );
     });
   }
@@ -170,7 +170,8 @@ export class CachedRepository implements Repository {
   private loadSimpleSectorFromNetwork(wantedSector: WantedSector): Observable<ConsumedSector> {
     const networkObservable: Observable<ConsumedSector> = onErrorResumeNext(
       from(
-        this._modelSectorProvider.getCadSectorFile(wantedSector.blobUrl, wantedSector.metadata.facesFile.fileName!)
+        this._modelSectorProvider.getCadSectorFile(wantedSector.blobUrl, wantedSector.metadata.facesFile.fileName!),
+        asapScheduler
       ).pipe(
         catchError(error => {
           trackError(error, {
@@ -204,13 +205,13 @@ export class CachedRepository implements Repository {
   }
 
   private loadDetailedSectorFromNetwork(wantedSector: WantedSector): Observable<ConsumedSector> {
-    const i3dFileObservable = of(wantedSector.metadata.indexFile).pipe(
+    const i3dFileObservable = of(wantedSector.metadata.indexFile, asapScheduler).pipe(
       flatMap(indexFile => this._modelSectorProvider.getCadSectorFile(wantedSector.blobUrl, indexFile.fileName)),
       retry(3),
       flatMap(buffer => this._modelDataParser.parseI3D(new Uint8Array(buffer)))
     );
 
-    const ctmFilesObservable = from(wantedSector.metadata.indexFile.peripheralFiles).pipe(
+    const ctmFilesObservable = from(wantedSector.metadata.indexFile.peripheralFiles, asapScheduler).pipe(
       map(fileName => ({
         blobUrl: wantedSector.blobUrl,
         fileName
@@ -267,7 +268,7 @@ export class CachedRepository implements Repository {
     return pipe(
       flatMap(ctmRequest => {
         const networkObservable: Observable<{ fileName: string; data: ParseCtmResult }> = onErrorResumeNext(
-          from(this._modelSectorProvider.getCadSectorFile(ctmRequest.blobUrl, ctmRequest.fileName)).pipe(
+          from(this._modelSectorProvider.getCadSectorFile(ctmRequest.blobUrl, ctmRequest.fileName), asapScheduler).pipe(
             catchError(error => {
               trackError(error, {
                 moduleName: 'CachedRepository',

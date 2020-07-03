@@ -11,7 +11,7 @@ import { createTriangleMeshes } from '../rendering/triangleMeshes';
 import { createInstancedMeshes } from '../rendering/instancedMeshes';
 import { SectorQuads } from '../rendering/types';
 import { disposeAttributeArrayOnUpload } from '@/utilities/disposeAttributeArrayOnUpload';
-import { pipe, GroupedObservable, Observable, OperatorFunction, of, empty } from 'rxjs';
+import { pipe, GroupedObservable, Observable, OperatorFunction, of, empty, asapScheduler } from 'rxjs';
 import { groupBy, mergeMap, distinctUntilKeyChanged, withLatestFrom, flatMap } from 'rxjs/operators';
 import { traverseDepthFirst } from '@/utilities/objectTraversal';
 import { trackError } from '@/utilities/metrics';
@@ -136,7 +136,7 @@ export function filterCurrentWantedSectors(
       for (const wantedSector of wanted) {
         try {
           if (loaded.metadata.id === wantedSector.metadata.id && loaded.levelOfDetail === wantedSector.levelOfDetail) {
-            return of(loaded);
+            return of(loaded, asapScheduler);
           }
         } catch (error) {
           trackError(error, {

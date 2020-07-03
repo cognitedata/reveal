@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-import { OperatorFunction, merge, Observable } from 'rxjs';
+import { OperatorFunction, merge, Observable, asapScheduler } from 'rxjs';
 import { publish, filter, map } from 'rxjs/operators';
 
 import { MaterialManager } from '../MaterialManager';
@@ -47,7 +47,8 @@ export class SimpleAndDetailedToSector3D {
               this.materialManager.getModelMaterials(parsedSector.blobUrl)!
             )
           )
-        )
+        ),
+        asapScheduler
       );
     });
   }
