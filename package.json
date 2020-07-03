@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "react-scripts start",
+    "start:ssl": "HTTPS=true yarn start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "lint": "concurrently \"yarn prettier\" \"yarn eslint\"",
@@ -15,6 +16,7 @@
   "dependencies": {
     "@cognite/cogs.js": "^1.0.17",
     "@cognite/metrics": "^0.0.32",
+    "@cognite/sdk": "^2.31.0",
     "@sentry/browser": "^5.17.0",
     "i18next": "^19.4.5",
     "i18next-chained-backend": "^2.0.1",
