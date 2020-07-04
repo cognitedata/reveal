@@ -16,12 +16,9 @@ export class PointCloudManager<TModelIdentifier> {
   private _pointCloudGroupWrapper?: PotreeGroupWrapper;
   private _potreeLoadHandler: PotreeLoadHandler;
 
-  constructor(
-    cadModelMetadataRepository: PointCloudMetadataRepository<TModelIdentifier>,
-    cadModelFactory: PointCloudFactory
-  ) {
-    this._pointCloudMetadataRepository = cadModelMetadataRepository;
-    this._pointCloudFactory = cadModelFactory;
+  constructor(metadataRepository: PointCloudMetadataRepository<TModelIdentifier>, modelFactory: PointCloudFactory) {
+    this._pointCloudMetadataRepository = metadataRepository;
+    this._pointCloudFactory = modelFactory;
     this._potreeLoadHandler = new PotreeLoadHandler();
   }
 
