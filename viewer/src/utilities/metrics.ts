@@ -53,9 +53,8 @@ export function trackEvent(eventName: TrackedEvents, eventProps: EventProps) {
   mixpanel.track(eventName, combined);
 }
 
-// failed to overload it correctly, if you know how - just do it like `track('addModel', /* required event props */)`
-export function trackAddModel(eventProps: EventProps & { modelId: number; revisionId: number }) {
-  trackEvent('addModel', eventProps);
+export function trackAddModel<TModelIdentifier>(eventProps: EventProps, modelIdentifier: TModelIdentifier) {
+  trackEvent('addModel', { ...eventProps, modelIdentifier });
 }
 
 export function trackError(error: Error, eventProps: EventProps) {

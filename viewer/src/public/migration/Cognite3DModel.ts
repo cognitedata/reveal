@@ -13,8 +13,6 @@ import { toThreeJsBox3, toThreeMatrix4, toThreeVector3, fromThreeVector3 } from 
 import { CadRenderHints, CadNode } from '@/experimental';
 import { CadLoadingHints } from '@/datamodels/cad/CadLoadingHints';
 import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
-import { SectorGeometry } from '@/datamodels/cad/sector/types';
-import { SectorQuads } from '@/datamodels/cad/rendering/types';
 import { vec3 } from 'gl-matrix';
 import { NodeAppearanceProvider, DefaultNodeAppearance } from '@/datamodels/cad/NodeAppearance';
 import { Matrix4 } from 'three';
@@ -145,7 +143,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.cadNode.updateMatrixWorld(false);
   }
 
-  updateNodeIdMaps(sector: { lod: string; data: SectorGeometry | SectorQuads }) {
+  updateNodeIdMaps(sector: Map<number, number>) {
     this.nodeIdAndTreeIndexMaps.updateMaps(sector);
   }
 
