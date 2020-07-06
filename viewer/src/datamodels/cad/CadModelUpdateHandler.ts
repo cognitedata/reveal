@@ -19,14 +19,16 @@ import {
   tap
 } from 'rxjs/operators';
 import { SectorCuller } from './sector/culling/SectorCuller';
-import { CachedRepository } from './sector/CachedRepository';
 import { DetermineSectorsInput } from './sector/culling/types';
 import { CadLoadingHints } from './CadLoadingHints';
-import { ConsumedSector, WantedSector } from './sector/types';
+import { ConsumedSector, WantedSector, SectorGeometry } from './sector/types';
 import { distinctUntilLevelOfDetailChanged, filterCurrentWantedSectors } from './sector/sectorUtilities';
 import { LevelOfDetail } from './sector/LevelOfDetail';
+import { Repository } from './sector/Repository';
+import { SectorQuads } from './rendering/types';
 
 export class CadModelUpdateHandler {
+  private readonly _sectorRepository: Repository;
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
   private readonly _clippingPlaneSubject: Subject<THREE.Plane[]> = new Subject();
   private readonly _clipIntersectionSubject: Subject<boolean> = new Subject();
@@ -35,7 +37,8 @@ export class CadModelUpdateHandler {
 
   private readonly _updateObservable: Observable<ConsumedSector>;
 
-  constructor(sectorRepository: CachedRepository, sectorCuller: SectorCuller) {
+  constructor(sectorRepository: Repository, sectorCuller: SectorCuller) {
+    this._sectorRepository = sectorRepository;
     const modelsArray: CadNode[] = [];
     this._updateObservable = combineLatest(
       this._cameraSubject.pipe(auditTime(1000)),
@@ -113,7 +116,7 @@ export class CadModelUpdateHandler {
     );
   }
 
-  updateCamera(camera: THREE.PerspectiveCamera) {
+  updateCamera(camera: THREE.PerspectiveCamera): void {
     this._cameraSubject.next(camera);
   }
 
@@ -125,15 +128,23 @@ export class CadModelUpdateHandler {
     this._clipIntersectionSubject.next(value);
   }
 
-  updateModels(cadModel: CadNode) {
+  updateModels(cadModel: CadNode): void {
     this._modelSubject.next(cadModel);
   }
 
-  updateLoadingHints(cadLoadingHints: CadLoadingHints) {
+  updateLoadingHints(cadLoadingHints: CadLoadingHints): void {
     this._loadingHintsSubject.next(cadLoadingHints);
   }
 
-  observable() {
+  consumedSectorObservable(): Observable<ConsumedSector> {
     return this._updateObservable.pipe(share());
+  }
+
+  getLoadingStateObserver(): Observable<boolean> {
+    return this._sectorRepository.getLoadingStateObserver();
+  }
+
+  getParsedData(): Observable<{ blobUrl: string; lod: string; data: SectorGeometry | SectorQuads }> {
+    return this._sectorRepository.getParsedData();
   }
 }

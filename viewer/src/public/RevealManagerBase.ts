@@ -40,12 +40,7 @@ import { File3dFormat } from '@/utilities';
 type ModelIdentifierWithFormat<T> = T & { format: File3dFormat };
 
 export class RevealManagerBase<TModelIdentifier> implements RenderManager {
-  // CAD
-  private readonly _cadRepository: CachedRepository;
   private readonly _cadManager: CadManager<TModelIdentifier>;
-  private readonly _materialManager: MaterialManager;
-
-  // PointCloud
   private readonly _pointCloudManager: PointCloudManager<TModelIdentifier>;
 
   private readonly _lastCamera = {
@@ -61,15 +56,25 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
     loadingStateChanged: new Array<LoadingStateChangeListener>()
   };
 
-  constructor(client: ModelDataClient<ModelIdentifierWithFormat<TModelIdentifier>>, options: RevealOptions) {
-    const materialManager = new MaterialManager();
-    const sectorCuller = (options.internal && options.internal.sectorCuller) || new ByVisibilityGpuSectorCuller();
-
-    this._materialManager = materialManager;
-    this._cadRepository = this.initCadRepository(client, materialManager);
-    this._cadManager = this.initCadManager(client, this._cadRepository, materialManager, sectorCuller);
-    this._pointCloudManager = this.initPointCloudManager(client);
-    this._subscriptions = this.initLoadingStateObserver(this._cadRepository, this._pointCloudManager);
+  constructor(cadManager: CadManager<TModelIdentifier>, pointCloudManager: PointCloudManager<TModelIdentifier>);
+  constructor(client: ModelDataClient<ModelIdentifierWithFormat<TModelIdentifier>>, options: RevealOptions);
+  constructor(
+    clientOrCadManager: ModelDataClient<ModelIdentifierWithFormat<TModelIdentifier>> | CadManager<TModelIdentifier>,
+    optionsOrPointCloudManager: RevealOptions | PointCloudManager<TModelIdentifier>
+  ) {
+    if (clientOrCadManager instanceof CadManager) {
+      this._cadManager = clientOrCadManager;
+      this._pointCloudManager = optionsOrPointCloudManager as PointCloudManager<TModelIdentifier>;
+    } else {
+      const client = clientOrCadManager;
+      const options = optionsOrPointCloudManager as RevealOptions;
+      const sectorCuller = (options.internal && options.internal.sectorCuller) || new ByVisibilityGpuSectorCuller();
+      const materialManager = new MaterialManager();
+      const cadRepository = this.initCadRepository(client, materialManager);
+      this._cadManager = this.initCadManager(client, cadRepository, materialManager, sectorCuller);
+      this._pointCloudManager = this.initPointCloudManager(client);
+    }
+    this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
   }
 
   public dispose(): void {
@@ -110,29 +115,27 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
   }
 
   public get renderMode(): RenderMode {
-    return this._materialManager.getRenderMode();
+    return this._cadManager.renderMode;
   }
 
-  public set renderMode(mode: RenderMode) {
-    this._materialManager.setRenderMode(mode);
+  public set renderMode(renderMode: RenderMode) {
+    this._cadManager.renderMode = renderMode;
   }
 
   public set clippingPlanes(clippingPlanes: THREE.Plane[]) {
-    this._materialManager.clippingPlanes = clippingPlanes;
     this._cadManager.clippingPlanes = clippingPlanes;
   }
 
   public get clippingPlanes(): THREE.Plane[] {
-    return this._materialManager.clippingPlanes;
+    return this._cadManager.clippingPlanes;
   }
 
   public set clipIntersection(intersection: boolean) {
-    this._materialManager.clipIntersection = intersection;
     this._cadManager.clipIntersection = intersection;
   }
 
   public get clipIntersection() {
-    return this._materialManager.clipIntersection;
+    return this._cadManager.clipIntersection;
   }
 
   public on(event: 'loadingStateChanged', listener: LoadingStateChangeListener): void;
@@ -202,7 +205,7 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
       case 'cad': {
         const cadNode = await this._cadManager.addModel(modelIdentifier);
         this._subscriptions.add(
-          this._cadRepository
+          this._cadManager
             .getParsedData()
             .pipe(
               share(),
@@ -261,7 +264,12 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
     );
     const updateHandler = new CadModelUpdateHandler(repository, sectorCuller);
 
-    const manager: CadManager<TModelIdentifier> = new CadManager(metadataRepository, modelFactory, updateHandler);
+    const manager: CadManager<TModelIdentifier> = new CadManager(
+      materialManager,
+      metadataRepository,
+      modelFactory,
+      updateHandler
+    );
     return manager;
   }
 
@@ -276,12 +284,11 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
   }
 
   private initLoadingStateObserver(
-    cadRepository: CachedRepository,
+    cadManager: CadManager<TModelIdentifier>,
     pointCloudManager: PointCloudManager<TModelIdentifier>
-  ): Subscription {
-    const subscription = new Subscription();
-    subscription.add(
-      combineLatest([cadRepository.getLoadingStateObserver(), pointCloudManager.getLoadingStateObserver()])
+  ) {
+    this._subscriptions.add(
+      combineLatest([cadManager.getLoadingStateObserver(), pointCloudManager.getLoadingStateObserver()])
         .pipe(
           map(loading => loading.some(x => x)),
           distinctUntilChanged()
@@ -293,6 +300,5 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
           })
         )
     );
-    return subscription;
   }
 }
