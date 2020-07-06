@@ -9,7 +9,7 @@ import { LocalModelDataClient as LocalHostClient } from '@/utilities/networking/
 import { CadNode, NodeAppearanceProvider } from '@/datamodels/cad';
 import { RevealOptions } from './types';
 import { initMetrics } from '@/utilities/metrics';
-import { omit } from 'lodash';
+import omit from 'lodash/omit';
 
 type LocalModelIdentifier = { fileName: string };
 
