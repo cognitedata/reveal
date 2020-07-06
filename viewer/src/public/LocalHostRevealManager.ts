@@ -33,9 +33,9 @@ export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifi
   ): Promise<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper]> {
     switch (type) {
       case 'cad':
-        return super.addModelImpl('cad', { fileName }, nodeApperanceProvider);
+        return super.loadModel('cad', { fileName }, nodeApperanceProvider);
       case 'pointcloud':
-        return super.addModelImpl('pointcloud', { fileName });
+        return super.loadModel('pointcloud', { fileName });
 
       default:
         throw new Error(`case: ${type} not handled`);

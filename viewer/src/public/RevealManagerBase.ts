@@ -175,16 +175,16 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
     }
   }
 
-  protected addModelImpl(
+  protected loadModel(
     type: 'cad',
     modelIdentifier: TModelIdentifier,
     nodeApperanceProvider?: NodeAppearanceProvider
   ): Promise<CadNode>;
-  protected addModelImpl(
+  protected loadModel(
     type: 'pointcloud',
     modelIdentifier: TModelIdentifier
   ): Promise<[PotreeGroupWrapper, PotreeNodeWrapper]>;
-  protected async addModelImpl(
+  protected async loadModel(
     type: 'cad' | 'pointcloud',
     modelIdentifier: TModelIdentifier,
     nodeApperanceProvider?: NodeAppearanceProvider

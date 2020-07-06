@@ -40,9 +40,9 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
   ): Promise<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper]> {
     switch (type) {
       case 'cad':
-        return super.addModelImpl('cad', modelRevisionId, nodeApperanceProvider);
+        return super.loadModel('cad', modelRevisionId, nodeApperanceProvider);
       case 'pointcloud':
-        return super.addModelImpl('pointcloud', modelRevisionId);
+        return super.loadModel('pointcloud', modelRevisionId);
 
       default:
         throw new Error(`Model type '${type}' is not supported`);
