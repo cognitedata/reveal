@@ -29,6 +29,9 @@ export class WellNode extends BaseNode
 
   public wellHead = Vector3.newZero;
   public waterDepth = 0;
+  public elevationType: string = "";
+
+  public get origin(): Vector3 { return new Vector3(this.wellHead.x, this.wellHead.y, 0); }
 
   //==================================================
   // CONSTRUCTORS

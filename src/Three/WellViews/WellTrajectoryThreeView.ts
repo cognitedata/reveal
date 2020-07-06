@@ -155,32 +155,33 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
   public /*override*/ calculateBoundingBoxCore(): Range3 | undefined
   {
-    const trajectory = this.node.data;
-    if (!trajectory)
-      return undefined;
+    return super.calculateBoundingBoxCore();
+    // const trajectory = this.node.data;
+    // if (!trajectory)
+    //   return undefined;
 
-    const wellNode = this.node.wellNode;
-    if (!wellNode)
-      return undefined;
+    // const wellNode = this.node.wellNode;
+    // if (!wellNode)
+    //   return undefined;
 
-    const style = this.style;
-    if (!style)
-      return undefined;
+    // const style = this.style;
+    // if (!style)
+    //   return undefined;
 
-    const boundingBox = trajectory.range.clone();
-    if (!boundingBox)
-      return undefined;
+    // const boundingBox = trajectory.range.clone();
+    // if (!boundingBox)
+    //   return undefined;
 
-    const radius = this.style.radius;
-    const margin = new Vector3(radius, radius, radius);
+    // const radius = this.style.radius;
+    // const margin = new Vector3(radius, radius, radius);
 
-    margin.x = Math.max(margin.x, style.bandWidth);
-    margin.y = Math.max(margin.y, style.bandWidth);
-    margin.z = Math.max(margin.z, style.nameFontHeight / this.transformer.zScale);
+    // margin.x = Math.max(margin.x, style.bandWidth);
+    // margin.y = Math.max(margin.y, style.bandWidth);
+    // margin.z = Math.max(margin.z, style.nameFontHeight / this.transformer.zScale);
 
-    boundingBox.expandByMargin3(margin);
-    boundingBox.translate(wellNode.wellHead);
-    return boundingBox;
+    // boundingBox.expandByMargin3(margin);
+    // boundingBox.translate(wellNode.origin);
+    // return boundingBox;
   }
 
   //==================================================
@@ -199,7 +200,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     this.addTrajectoryLabel(parent);
     this.addWellLabel(parent);
 
-    parent.position.copy(this.transformer.to3D(wellNode.wellHead));
+    parent.position.copy(this.transformer.to3D(wellNode.origin));
     return parent;
   }
 
@@ -228,8 +229,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     {
       const camera = this.camera;
       const cameraPosition = transformer.toWorld(camera.position);
-      cameraPosition.substract(wellNode.wellHead);
-      
+      cameraPosition.substract(wellNode.origin);
+
       const cameraDirection = trajectory.range.center;
 
       transformer.transformRelativeTo3D(cameraPosition);
@@ -334,12 +335,15 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     if (!wellNode)
       return;
 
+      const trajectory = node.data;
+      if (!trajectory)
+        return;
+  
     const style = this.style;
     if (!style)
       return;
 
-    const position = Vector3.newZero;
-    position.z -= wellNode.waterDepth;
+    const position = trajectory.getTopPosition().clone();
     this.transformer.transformRelativeTo3D(position);
     const label = SpriteCreator.createByPositionAndAlignment(wellNode.getName(), position, 1, style.nameFontHeight, this.fgColor);
     if (!label)

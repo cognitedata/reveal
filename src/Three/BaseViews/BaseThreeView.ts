@@ -76,6 +76,5 @@ export abstract class BaseThreeView extends Base3DView
       return;
 
     target.invalidate();
-    target.invalidateNearAndFarPlane();
   }
 }

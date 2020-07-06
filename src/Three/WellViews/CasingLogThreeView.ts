@@ -98,7 +98,7 @@ export class CasingLogThreeView extends BaseGroupThreeView
       boundingBox.add(position);
     }
     boundingBox.expandByMargin(maxRadius);
-    boundingBox.translate(wellNode.wellHead);
+    boundingBox.translate(wellNode.origin);
     return boundingBox;
   }
 
@@ -135,7 +135,7 @@ export class CasingLogThreeView extends BaseGroupThreeView
       opacity: style.opacity
     });
     const mesh = new THREE.Mesh(geometry, material);
-    mesh.position.copy(this.transformer.to3D(wellNode.wellHead));
+    mesh.position.copy(this.transformer.to3D(wellNode.origin));
     return mesh;
   }
 

@@ -34,14 +34,14 @@ export default class WellLogCreator
         return node;
     }
 
-    public static addLogNodes(parent: BaseNode, logs: ILog[] | null): void
+    public static addLogNodes(parent: BaseNode, logs: ILog[] | null, unit: number): void
     {
         if (!logs)
             return;
 
         for (let index = 0; index < logs.length; index++)
         {
-            const folder = WellLogCreator.createLogFolder(logs[index].items);
+            const folder = WellLogCreator.createLogFolder(logs[index].items, unit);
             if (folder)
                 parent.addChild(folder);
         }
@@ -51,7 +51,7 @@ export default class WellLogCreator
     // STATIC METHODS: Helpers
     //==================================================
 
-    private static createLogFolder(items: ILogRow[] | null): LogFolder | null
+    private static createLogFolder(items: ILogRow[] | null, unit: number): LogFolder | null
     {
         if (items == null || items.length === 0)
             return null;
@@ -67,7 +67,7 @@ export default class WellLogCreator
             if (logIndex == mdIndex)
                 continue;
 
-            const logNode = WellLogCreator.createLogNode(items, mdIndex, logIndex);
+            const logNode = WellLogCreator.createLogNode(items, mdIndex, logIndex, unit);
             if (!logNode)
                 continue;
 
@@ -89,15 +89,15 @@ export default class WellLogCreator
         return - 1;
     }
 
-    private static createLogNode(items: ILogRow[], mdIndex: number, logIndex: number): BaseLogNode | null
+    private static createLogNode(items: ILogRow[], mdIndex: number, logIndex: number, unit: number): BaseLogNode | null
     {
         const firstColumns = items[0].columns;
         const valueType = firstColumns[logIndex].valueType.toUpperCase();
         let logNode: BaseLogNode;
-        
+
         if (valueType == "FLOAT" || valueType == "DOUBLE")
         {
-            const log = WellLogCreator.createFloatLog(items, mdIndex, logIndex);
+            const log = WellLogCreator.createFloatLog(items, mdIndex, logIndex, unit);
             if (!log)
                 return null;
 
@@ -106,7 +106,7 @@ export default class WellLogCreator
         }
         else if (valueType == "INTEGER" || valueType == "LONG")
         {
-            const log = WellLogCreator.createDiscreteLog(items, mdIndex, logIndex);
+            const log = WellLogCreator.createDiscreteLog(items, mdIndex, logIndex, unit);
             if (!log)
                 return null;
 
@@ -128,43 +128,47 @@ export default class WellLogCreator
     // STATIC METHODS: Creating logs
     //==================================================
 
-    private static createDiscreteLog(items: ILogRow[], mdIndex: number, logIndex: number): DiscreteLog | null
+    private static createDiscreteLog(items: ILogRow[], mdIndex: number, logIndex: number, unit: number): DiscreteLog | null
     {
         const log = new DiscreteLog();
         for (const item of items)
         {
             const md = item[mdIndex];
-            if (md == null)
+            if (md == null || Number.isNaN(md))
                 continue;
 
-            const value = item[logIndex];
+            let value = item[logIndex];
             if (value == null)
-                continue;
+                value = Number.NaN; // NaN value is supported in the visualization
 
-            log.samples.push(new DiscreteLogSample(value, md * Units.Feet));
+            log.samples.push(new DiscreteLogSample(value, md * unit));
         }
         if (log.length === 0)
             return null;
+
+        log.sortByMd();
         return log;
     }
 
-    private static createFloatLog(items: ILogRow[], mdIndex: number, logIndex: number): FloatLog | null
+    private static createFloatLog(items: ILogRow[], mdIndex: number, logIndex: number, unit: number): FloatLog | null
     {
         const log = new FloatLog();
         for (const item of items)
         {
             const md = item[mdIndex];
-            if (md == null)
+            if (md == null || Number.isNaN(md))
                 continue;
 
-            const value = item[logIndex];
+            let value = item[logIndex];
             if (value == null)
-                continue;
+                value = Number.NaN; // NaN value is supported in the visualization
 
-            log.samples.push(new FloatLogSample(value, md * Units.Feet));
+            log.samples.push(new FloatLogSample(value, md * unit));
         }
         if (log.length === 0)
             return null;
+
+        log.sortByMd();
         return log;
     }
 
@@ -189,9 +193,10 @@ export default class WellLogCreator
             sample.details = metadata.details;
             log.samples.push(sample);
         }
-        log.sortByMd();
         if (log.length === 0)
             return null;
+
+        log.sortByMd();
         return log;
     }
 }

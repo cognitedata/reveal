@@ -108,7 +108,7 @@ export class PointLogThreeView extends BaseGroupThreeView
     }
     const radius = this.radius * selectedRadiusFactor;
     boundingBox.expandByMargin(radius);
-    boundingBox.translate(wellNode.wellHead);
+    boundingBox.translate(wellNode.origin);
     return boundingBox;
   }
 
@@ -294,7 +294,7 @@ export class PointLogThreeView extends BaseGroupThreeView
         }
       }
     }
-    group.position.copy(transformer.to3D(wellNode.wellHead));
+    group.position.copy(transformer.to3D(wellNode.origin));
     return group;
   }
 

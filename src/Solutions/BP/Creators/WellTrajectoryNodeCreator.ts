@@ -8,74 +8,97 @@ import { Ma } from "@/Core/Primitives/Ma";
 
 export default class WellTrajectoryNodeCreator
 {
-    public static create(trajectoryDataColumnIndexes: { [key: string]: number }, trajectoryRows: ITrajectoryRows | null | undefined): WellTrajectoryNode | null
+    public static create(trajectoryDataColumnIndexes: { [key: string]: number }, trajectoryRows: ITrajectoryRows | null | undefined, elevation: number, unit: number): WellTrajectoryNode | null
     {
         // Some trajectories missing data
         if (!trajectoryRows || !trajectoryRows.rows.length)
         {
             // tslint:disable-next-line: no-console
-            console.warn("NodeVisualizer: No curve points available");
+            console.warn("NodeVisualizer: No trajectory available for well");
             return null;
         }
-        // The values are
-        //inclination
-        //md
-        //tvd
-        //x_offset
-        //y_offset
-        const mdIndex = trajectoryDataColumnIndexes["md"]
-        const azimuthIndex = trajectoryDataColumnIndexes["azimuth "]
-        const inclinationIndex = trajectoryDataColumnIndexes["inclination"]
-        const tvdIndex = trajectoryDataColumnIndexes["tvd"]
-        const xOffsetIndex = trajectoryDataColumnIndexes["x_offset"]
-        const yOffsetIndex = trajectoryDataColumnIndexes["y_offset"]
+        const mdIndex = trajectoryDataColumnIndexes["md"];
+        const azimuthIndex = trajectoryDataColumnIndexes["azimuth"];
+        const inclinationIndex = trajectoryDataColumnIndexes["inclination"];
+        const tvdIndex = trajectoryDataColumnIndexes["tvd"];
+        const xOffsetIndex = trajectoryDataColumnIndexes["x_offset"];
+        const yOffsetIndex = trajectoryDataColumnIndexes["y_offset"];
 
-        // Iterate through rows array
         const trajectory = new WellTrajectory();
-        for (const curvePointData of trajectoryRows.rows)
+
+        console.log("======================");
+        if (mdIndex >= 0 && azimuthIndex >= 0 && inclinationIndex >= 0)
         {
-            const curvePoint = curvePointData.values;
-            let z = curvePoint[mdIndex]; // Assume md is same as z
-            const azimuth = curvePoint[azimuthIndex];
-            const inclination = curvePoint[inclinationIndex];
-            const x = curvePoint[xOffsetIndex];
-            const y = curvePoint[yOffsetIndex];
-
-            if (Number.isNaN(x) || Number.isNaN(y) || Number.isNaN(z))
+            for (const curvePointData of trajectoryRows.rows)
             {
-                // tslint:disable-next-line:no-console
-                console.warn("Trajectory Curve point reference is not a valid number!", trajectoryRows);
-                return null;
-            }
-            const point = new Vector3(x, y, -z);
-            point.z *= Units.Feet; // CHECK? Is this correct
+                const curvePoint = curvePointData.values;
+                let md = curvePoint[mdIndex]; // Assume md is same as z
+                if (Number.isNaN(md))
+                    continue;
 
-            const length = trajectory.length;
-            let sample: TrajectorySample;
-            if (length == 0)
-                sample = new TrajectorySample(point, Math.abs(point.z));
-            else
-            {
-                const prevSample = trajectory.getAt(length - 1);
-                const md = prevSample.md + prevSample.point.distance(point);
-                sample = new TrajectorySample(point, md);
+                const azimuth = curvePoint[azimuthIndex];
+                if (Number.isNaN(azimuth))
+                    continue;
+
+                const inclination = curvePoint[inclinationIndex];
+                if (Number.isNaN(inclination))
+                    continue;
+
+                md *= unit;
+
+                const sample = new TrajectorySample(new Vector3(0, 0, elevation), md);
+                sample.inclination = inclination;
+                sample.azimuth = azimuth;
+
+                const length = trajectory.length;
+                if (length > 0 && !sample.updatePointFromPrevSample(trajectory.getAt(length - 1)))
+                    break;
+
+                trajectory.add(sample);
+                console.log(sample.point.toString());
             }
-            sample.inclination = inclination;
-            sample.azimuth = azimuth;
-            trajectory.add(sample);
+        }
+        // Iterate through rows array
+        else if (xOffsetIndex >= 0 && yOffsetIndex >= 0 && tvdIndex >= 0)
+        {
+            for (const curvePointData of trajectoryRows.rows)
+            {
+                const curvePoint = curvePointData.values;
+                const x = curvePoint[xOffsetIndex];
+                if (Number.isNaN(x))
+                    continue;
+
+                const y = curvePoint[yOffsetIndex];
+                if (Number.isNaN(y))
+                    continue;
+
+                let z = curvePoint[tvdIndex]; // Assume md is same as z
+                if (Number.isNaN(z))
+                    continue;
+
+                let md = Number.NaN;
+                if (mdIndex >= 0)
+                {
+                    md = curvePoint[mdIndex]; // Assume md is same as z
+                    if (!Number.isNaN(md))
+                        md *= unit;
+                }
+                z = z * unit;
+
+                const sample = new TrajectorySample(new Vector3(x, y, elevation - z), Number.isNaN(md) ? z : md);
+                sample.inclination = curvePoint[inclinationIndex];
+                sample.azimuth = curvePoint[azimuthIndex];
+
+                const length = trajectory.length;
+                if (length > 0 && Number.isNaN(md))
+                    sample.updateMdFromPrevSample(trajectory.getAt(length - 1));
+
+                trajectory.add(sample);
+            }
         }
 
-        // Dodo implement by the azimuth and inclination
-        // dMD = Distance2 - Distance1
-        // B = acos(cos(I2 - I1) - (sin(I1)*sin(I2)*(1-cos(A2-A1))))
-        // RF = 2 / B * tan(B / 2)
-        // dX = dMD/2 * (sin(I1)*sin(A1) + sin(I2)*sin(A2))*RF
-        // dY = dMD/2 * (sin(I1)*cos(A1) + sin(I2)*cos(A2))*RF
-        // dZ = dMD/2 * (cos(I1) + cos(I2))*RF
-        
-        // X2 = X1 + dX
-        // Y2 = Y1 + dX
-        // Z2 = Z1 + dX
+        if (trajectory.length < 2)
+            return null;
 
         const node = new WellTrajectoryNode();
         node.data = trajectory;

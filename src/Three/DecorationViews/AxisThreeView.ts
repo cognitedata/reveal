@@ -133,6 +133,9 @@ export class AxisThreeView extends BaseGroupThreeView
     if (!boundingBox)
       return null;
 
+    if (boundingBox.isEmpty)
+      return null;
+
     const center = boundingBox.center;
     const tickLength = boundingBox.diagonal / 130;
 

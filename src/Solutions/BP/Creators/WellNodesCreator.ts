@@ -4,6 +4,7 @@ import WellNodeCreator from "@/Solutions/BP/Creators/WellNodeCreator";
 import WellTrajectoryNodeCreator from "@/Solutions/BP/Creators/WellTrajectoryNodeCreator";
 import WellLogCreator from "@/Solutions/BP/Creators/WellLogCreator";
 import { Util } from "@/Core/Primitives/Util";
+import { Units } from '@/Core/Primitives/Units';
 
 export default class WellNodesCreator
 {
@@ -57,13 +58,22 @@ export default class WellNodesCreator
             if (!wellNode)
                 continue;
 
+            const metadata = wellBoreToWell.data.metadata;
+            wellNode.elevationType = metadata.elevation_type; //KB
+            const elevationUnit = metadata.elevation_value_unit;
+            const elevation = Util.getNumberWithUnit(metadata.elevation_value, elevationUnit);
+            if (!Number.isNaN(elevation))
+                wellNode.wellHead.z = elevation;
+
+            const unit = Units.isFeet(elevationUnit) ? Units.Feet : 1;
             const trajectoryRows = trajectoryDataMap.get(trajectory.id);
-            const trajectoryNode = WellTrajectoryNodeCreator.create(bpData.trajectoryDataColumnIndexes, trajectoryRows);
+            const trajectoryNode = WellTrajectoryNodeCreator.create(bpData.trajectoryDataColumnIndexes, trajectoryRows, elevation, unit);
             if (!trajectoryNode)
                 continue;
 
             if (!Util.isEmpty(wellBoreToWell.data.description))
                 trajectoryNode.setName(wellBoreToWell.data.description);
+
             wellNode.addChild(trajectoryNode);
 
             if (wellBoreToNDSEventsMap)
@@ -87,7 +97,7 @@ export default class WellNodesCreator
                 }
             }
             if (wellBoreToLogsMap)
-                WellLogCreator.addLogNodes(trajectoryNode, wellBoreToLogsMap[wellBoreId]);
+                WellLogCreator.addLogNodes(trajectoryNode, wellBoreToLogsMap[wellBoreId], unit);
         }
         return wellNodes;
     }

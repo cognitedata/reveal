@@ -110,7 +110,6 @@ export default class BPData
         {
             const columnName = column[index].name;
             indexes[columnName] = index;
-            console.log(columnName, ": ", index);
         }
     }
 
