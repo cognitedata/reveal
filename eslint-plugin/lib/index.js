@@ -7,6 +7,7 @@ const allRules = {
   'no-unissued-todos': require('./rules/no-unissued-todos'),
   'require-styled-macro': require('./rules/require-styled-macro'),
   'require-t-function': require('./rules/require-t-function'),
+  'rtl-use-custom-render-function': require('./rules/rtl-use-custom-render-function'),
 };
 
 const pluginsAllRules = Object.keys(allRules).reduce(
