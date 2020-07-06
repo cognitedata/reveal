@@ -28,18 +28,14 @@ export function createInstancedMeshes(
       geometry.setAttribute('position', vertices);
       geometry.setAttribute(
         'a_treeIndex',
-        new THREE.InstancedBufferAttribute(new Float32Array(instancedMesh.treeIndices), 1).onUpload(
-          disposeAttributeArrayOnUpload
-        )
+        new THREE.InstancedBufferAttribute(instancedMesh.treeIndices, 1).onUpload(disposeAttributeArrayOnUpload)
       );
       geometry.setAttribute(
         `a_color`,
-        new THREE.InstancedBufferAttribute(new Uint8Array(instancedMesh.colors), 4, true).onUpload(
-          disposeAttributeArrayOnUpload
-        )
+        new THREE.InstancedBufferAttribute(instancedMesh.colors, 4, true).onUpload(disposeAttributeArrayOnUpload)
       );
       // TODO de-duplicate this, which is the same as in setAttributes
-      const buffer = new THREE.InstancedInterleavedBuffer(new Float32Array(instancedMesh.instanceMatrices), 16);
+      const buffer = new THREE.InstancedInterleavedBuffer(instancedMesh.instanceMatrices, 16);
       for (let column = 0; column < 4; column++) {
         const attribute = new THREE.InterleavedBufferAttribute(buffer, 4, column * 4);
         geometry.setAttribute(`a_instanceMatrix_column_${column}`, attribute);

@@ -274,7 +274,7 @@ fn finalize_detailed(
             let filename = format!("mesh_{}.ctm", file_id);
 
             if let Some(ctm_result) = ctm_map.get(&filename) {
-                let indices = ctm_result.file.indices.clone();
+                let indices = &ctm_result.file.indices;
                 let vertices = ctm_result.vertices().to_vec();
                 let normals = ctm_result.normals().map(|x| x.to_vec());
                 let mut shared_colors = vec![0; 3 * indices.len()];
@@ -304,7 +304,7 @@ fn finalize_detailed(
                     }
                 }
 
-                let indices_flat = builder.create_vector_direct(&indices);
+                let indices_flat = builder.create_vector_direct(indices);
                 let vertices_flat = builder.create_vector_direct(&vertices);
                 let normals_flat = normals.map(|x| builder.create_vector_direct(&x));
                 let shared_colors_flat = builder.create_vector_direct(&shared_colors);
@@ -342,7 +342,7 @@ fn finalize_detailed(
         for (file_id, mesh_indices) in meshes_grouped_by_file {
             let filename = format!("mesh_{}.ctm", file_id);
             if let Some(ctm_result) = ctm_map.get(&filename) {
-                let indices = ctm_result.file.indices.clone();
+                let indices = &ctm_result.file.indices;
                 let vertices = ctm_result.vertices().to_vec();
                 let normals = ctm_result.normals().map(|x| x.to_vec());
                 let mut i_meshes: Vec<flatbuffers::WIPOffset<detailed_sector::InstanceMesh>> =
@@ -393,7 +393,7 @@ fn finalize_detailed(
                 }
 
                 let i_buf = builder.create_vector(&i_meshes);
-                let indices_flat = builder.create_vector_direct(&indices);
+                let indices_flat = builder.create_vector_direct(indices);
                 let vertices_flat = builder.create_vector_direct(&vertices);
                 let normals_flat = normals.map(|x| builder.create_vector_direct(&x));
                 let mesh_file = detailed_sector::InstanceMeshFile::create(
