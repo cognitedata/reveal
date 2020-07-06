@@ -40,8 +40,10 @@ void main() {
 
   // There exsists fragments of rendered objects within the edge width that should have boarder
   if(b0 + b1 + b2 + b3 > 0.0 && any(equal(vec4(b0, b1, b2, b3), vec4(0.0))) && ba > 0.0) { 
-    vec4 neighborDepthDifference = (vec4(d0) - vec4(d1, d2, d3, d4)) * (cameraFar - cameraNear);
-    if(!any(greaterThan(neighborDepthDifference, vec4((cameraFar - cameraNear) / 1500.0)))){
+    
+    float averageNeighbourFragmentDepth = (d1 + d2 + d3 + d4) / 4.0;
+
+    if(d0 < averageNeighbourFragmentDepth){
       float borderColorIndex = max(max(b0, b1), max(b2, b3));
       gl_FragColor = texture2D(tOutlineColors, vec2(0.125 * borderColorIndex + (0.125 / 2.0), 0.5));
       return;
