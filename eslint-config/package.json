@@ -1,6 +1,6 @@
 {
   "name": "@cognite/eslint-config",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Cognite eslint config",
   "main": "index.js",
   "keywords": [
@@ -23,6 +23,7 @@
     "lint:fix": "yarn lint --fix"
   },
   "peerDependencies": {
+    "@cognite/eslint-plugin": "^1.2.0",
     "babel-eslint": ">=10.0",
     "eslint": "^6.5",
     "eslint-config-airbnb": ">=18.0",

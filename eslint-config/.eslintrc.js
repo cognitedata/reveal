@@ -1,6 +1,6 @@
 module.exports = {
   extends: ['airbnb', 'prettier', 'prettier/react', 'plugin:jest/recommended'],
-  plugins: ['react', 'prettier', 'jest', 'react-hooks', 'import'],
+  plugins: ['react', 'prettier', 'jest', 'react-hooks', 'import', '@cognite'],
   parser: 'babel-eslint',
   parserOptions: {
     ecmaVersion: 2018,
@@ -68,9 +68,9 @@ module.exports = {
         '@typescript-eslint/no-unused-vars': [
           'error',
           {
-            "vars": "all",
-            "args": "after-used",
-            "ignoreRestSiblings": true
+            vars: 'all',
+            args: 'after-used',
+            ignoreRestSiblings: true,
           },
         ],
         'no-useless-constructor': 'off',
@@ -79,6 +79,12 @@ module.exports = {
     },
   ],
   rules: {
+    '@cognite/no-number-z-index-inline-styling': 'error',
+    '@cognite/no-number-z-index-property': 'error',
+    '@cognite/no-number-z-index-styled-components': 'error',
+    '@cognite/no-sdk-submodule-imports': 'error',
+    '@cognite/no-unissued-todos': 'warn',
+    '@cognite/require-t-function': 'error',
     'react/destructuring-assignment': 0,
     'react/jsx-filename-extension': [0],
     'import/no-extraneous-dependencies': 0,
