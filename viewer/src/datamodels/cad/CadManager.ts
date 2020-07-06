@@ -87,6 +87,7 @@ export class CadManager<TModelIdentifier> {
 
   updateCamera(camera: THREE.PerspectiveCamera) {
     this._cadModelUpdateHandler.updateCamera(camera);
+    this._needsRedraw = true;
   }
 
   set clippingPlanes(value: THREE.Plane[]) {
