@@ -18,7 +18,7 @@ export interface ModelUrlProvider<TModelIdentifier> {
   getModelUrl(identifier: TModelIdentifier): Promise<string>;
 }
 
-export interface Client<TModelIdentifier>
+export interface ModelDataClient<TModelIdentifier>
   extends ModelUrlProvider<TModelIdentifier>,
     CadSceneProvider,
     CadSectorProvider,

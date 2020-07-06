@@ -5,7 +5,7 @@
 import { RevealManagerBase } from './RevealManagerBase';
 
 import { PotreeGroupWrapper, PotreeNodeWrapper } from '@/internal';
-import { LocalUrlClient as LocalHostClient } from '@/utilities/networking/LocalUrlClient';
+import { LocalModelDataClient as LocalHostClient } from '@/utilities/networking/LocalModelDataClient';
 import { CadNode, NodeAppearanceProvider } from '@/datamodels/cad';
 import { RevealOptions } from './types';
 import { initMetrics } from '@/utilities/metrics';

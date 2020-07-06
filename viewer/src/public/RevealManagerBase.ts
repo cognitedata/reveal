@@ -21,7 +21,7 @@ import { SimpleAndDetailedToSector3D } from '@/datamodels/cad/sector/SimpleAndDe
 import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
 import { ByVisibilityGpuSectorCuller } from '@/datamodels/cad/sector/culling/ByVisibilityGpuSectorCuller';
 import { CadModelMetadataRepository } from '@/datamodels/cad/CadModelMetadataRepository';
-import { Client } from '@/utilities/networking/types';
+import { ModelDataClient } from '@/utilities/networking/types';
 import { DefaultCadTransformation } from '@/datamodels/cad/DefaultCadTransformation';
 import { CadMetadataParser } from '@/datamodels/cad/parsers/CadMetadataParser';
 import { CadModelFactory } from '@/datamodels/cad/CadModelFactory';
@@ -61,7 +61,7 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
     loadingStateChanged: new Array<LoadingStateChangeListener>()
   };
 
-  constructor(client: Client<ModelIdentifierWithFormat<TModelIdentifier>>, options: RevealOptions) {
+  constructor(client: ModelDataClient<ModelIdentifierWithFormat<TModelIdentifier>>, options: RevealOptions) {
     const materialManager = new MaterialManager();
     const sectorCuller = (options.internal && options.internal.sectorCuller) || new ByVisibilityGpuSectorCuller();
 
@@ -237,7 +237,10 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
     });
   }
 
-  private initCadRepository(client: Client<TModelIdentifier>, materialManager: MaterialManager): CachedRepository {
+  private initCadRepository(
+    client: ModelDataClient<TModelIdentifier>,
+    materialManager: MaterialManager
+  ): CachedRepository {
     const dataParser: CadSectorParser = new CadSectorParser();
     const dataTransformer = new SimpleAndDetailedToSector3D(materialManager);
     const repository = new CachedRepository(client, dataParser, dataTransformer);
@@ -245,7 +248,7 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
   }
 
   private initCadManager(
-    client: Client<TModelIdentifier>,
+    client: ModelDataClient<TModelIdentifier>,
     repository: CachedRepository,
     materialManager: MaterialManager,
     sectorCuller: SectorCuller
@@ -262,7 +265,7 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
     return manager;
   }
 
-  private initPointCloudManager(client: Client<TModelIdentifier>): PointCloudManager<TModelIdentifier> {
+  private initPointCloudManager(client: ModelDataClient<TModelIdentifier>): PointCloudManager<TModelIdentifier> {
     const metadataRepository: PointCloudMetadataRepository<TModelIdentifier> = new PointCloudMetadataRepository(
       client,
       new DefaultPointCloudTransformation()

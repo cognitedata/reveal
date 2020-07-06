@@ -4,7 +4,7 @@
 
 import { RevealManagerBase } from './RevealManagerBase';
 import { CogniteClient } from '@cognite/sdk';
-import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
+import { CdfModelDataClient } from '@/utilities/networking/CdfModelDataClient';
 import { PotreeGroupWrapper, PotreeNodeWrapper } from '@/internal';
 import { CadNode, NodeAppearanceProvider } from '@/datamodels/cad';
 import { RevealOptions } from './types';
@@ -20,7 +20,7 @@ export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
       methodName: 'constructor',
       constructorOptions: omit(options, ['internal'])
     });
-    const clientExt = new CogniteClient3dExtensions(client);
+    const clientExt = new CdfModelDataClient(client);
     super(clientExt, options);
   }
 

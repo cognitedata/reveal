@@ -18,7 +18,7 @@ import { EptSceneProvider } from '@/datamodels/pointcloud/EptSceneProvider';
 /**
  * Provides 3D V2 specific extensions for the standard CogniteClient used by Reveal.
  */
-export class CogniteClient3dExtensions
+export class CdfModelDataClient
   implements
     ModelUrlProvider<{ modelId: number; revisionId: number; format: File3dFormat }>,
     HttpHeadersProvider,

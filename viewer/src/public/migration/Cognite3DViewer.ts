@@ -20,7 +20,7 @@ import { Intersection } from './intersection';
 import RenderController from './RenderController';
 import { CogniteModelBase } from './CogniteModelBase';
 
-import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
+import { CdfModelDataClient } from '@/utilities/networking/CdfModelDataClient';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { BoundingBoxClipper, File3dFormat, isMobileOrTablet } from '@/utilities';
@@ -293,7 +293,7 @@ export class Cognite3DViewer {
   }
 
   async determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes> {
-    const clientExt = new CogniteClient3dExtensions(this.sdkClient);
+    const clientExt = new CdfModelDataClient(this.sdkClient);
     const outputs = await clientExt.getOutputs({ modelId, revisionId, format: File3dFormat.AnyFormat });
     if (outputs.findMostRecentOutput(File3dFormat.RevealCadModel) !== undefined) {
       return SupportedModelTypes.CAD;

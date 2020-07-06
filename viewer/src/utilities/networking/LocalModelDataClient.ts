@@ -9,7 +9,7 @@ import { CadSceneProvider } from '@/datamodels/cad/CadSceneProvider';
 import { CadSectorProvider } from '@/datamodels/cad/sector/CadSectorProvider';
 import { EptSceneProvider } from '@/datamodels/pointcloud/EptSceneProvider';
 
-export class LocalUrlClient
+export class LocalModelDataClient
   implements
     ModelUrlProvider<{ fileName: string }>,
     CadSceneProvider,

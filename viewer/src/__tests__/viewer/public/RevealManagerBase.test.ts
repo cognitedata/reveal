@@ -6,11 +6,11 @@ import * as THREE from 'three';
 
 import { RevealManagerBase } from '@/public/RevealManagerBase';
 import { File3dFormat } from '@/utilities';
-import { Client } from '@/utilities/networking/types';
+import { ModelDataClient } from '@/utilities/networking/types';
 import { SectorCuller } from '@/internal';
 
 describe('RevealManagerBase', () => {
-  const mockClient: Client<{ id: number; format: File3dFormat }> = jest.fn() as any;
+  const mockClient: ModelDataClient<{ id: number; format: File3dFormat }> = jest.fn() as any;
   const sectorCuller: SectorCuller = {
     determineSectors: jest.fn()
   };

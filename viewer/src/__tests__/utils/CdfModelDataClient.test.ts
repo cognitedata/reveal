@@ -3,20 +3,20 @@
  */
 
 import nock from 'nock';
-import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
+import { CdfModelDataClient } from '@/utilities/networking/CdfModelDataClient';
 import { CogniteClient } from '@cognite/sdk';
 import { Model3DOutputList } from '@/utilities/networking/Model3DOutputList';
 import { File3dFormat } from '@/utilities';
 
-describe('CogniteClient3dExtensions', () => {
-  const appId = 'reveal-CogniteClient3dV2Extensions-test';
+describe('CdfModelDataClient', () => {
+  const appId = 'reveal-CdfModelDataClient-test';
   const baseUrl = 'http://localhost';
   const client = new CogniteClient({
     appId,
     baseUrl
   });
   client.loginWithApiKey({ apiKey: 'dummy', project: 'unittest' });
-  const clientExt = new CogniteClient3dExtensions(client);
+  const clientExt = new CdfModelDataClient(client);
   const apiPath: RegExp = /\/api\/v1\/projects\/unittest\/3d\/.*/;
 
   test('getOutputs() throws error when server returns 400', async () => {
