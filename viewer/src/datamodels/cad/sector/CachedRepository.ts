@@ -213,6 +213,7 @@ export class CachedRepository implements Repository {
         }),
         flatMap(i3dFile =>
           this._modelDataParser.parseAndFinalizeDetailed(i3dFile, {
+            fileNames: wantedSector.metadata.indexFile.peripheralFiles,
             blobUrl: wantedSector.blobUrl,
             headers: this._modelSectorProvider.headers
           })

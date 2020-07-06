@@ -28,7 +28,12 @@ export class RevealParserWorker {
   public async parseAndFinalizeDetailed(i3dFile: string, ctmFiles: ParseCtmInput): Promise<FlatSectorGeometry> {
     const rust = await rustModule;
     // TODO mattman22 2020-6-24 Handle parse/finalize errors
-    const sectorData = await rust.load_parse_finalize_detailed(i3dFile, ctmFiles.blobUrl, ctmFiles.headers);
+    const sectorData = await rust.load_parse_finalize_detailed(
+      i3dFile,
+      ctmFiles.fileNames,
+      ctmFiles.blobUrl,
+      ctmFiles.headers
+    );
     const sector = sectorData.sector;
     const primitives = this.extractParsedPrimitives(sector);
     const nodeIdToTreeIndexMap = sector.node_id_to_tree_index_map();

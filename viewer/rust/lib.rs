@@ -1,3 +1,4 @@
+use futures::future::FutureExt;
 use futures::stream::{FuturesUnordered, StreamExt};
 use i3df::renderables::{PrimitiveCollections, Sector};
 use js_sys::{Float32Array, Map, Promise, Uint32Array, Uint8Array};
@@ -186,15 +187,16 @@ extern "C" {
 #[wasm_bindgen]
 pub async fn load_parse_finalize_detailed(
     file_name: String,
+    peripheral_files: JsValue,
     blob_url: String,
     headers: JsValue,
 ) -> Result<SectorGeometry, JsValue> {
     // TODO read https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/building-your-project.html
     // and see if this can be moved to one common place
     panic::set_hook(Box::new(console_error_panic_hook::hook));
-
+    wasm_bindgen::intern(&blob_url);
     // Check if sector is cached
-    let i3d_file;
+    let i3d_future;
     let res;
     {
         let mut cache = PARSE_AND_CONVERT_SECTOR.lock().unwrap();
@@ -202,41 +204,39 @@ pub async fn load_parse_finalize_detailed(
     }
     if let Some(res) = res {
         // Cache hit
-        i3d_file = res;
+        i3d_future = futures::future::ready(Ok(res)).left_future();
     } else {
         // Cache miss
-        let (file_name, data) = load_file(&blob_url, file_name, headers.clone()).await?;
-        i3d_file = parse_and_convert_sector(file_name, &data.to_vec())?;
+        i3d_future = load_file(&blob_url, file_name.clone(), headers.clone())
+            .map(|v| {
+                let (file_name, data) = v.unwrap();
+                parse_and_convert_sector(file_name, &data.to_vec())
+            })
+            .right_future();
     }
 
-    let triangle_meshes = &i3d_file.primitive_collections.triangle_mesh_collection;
-    let instanced_meshes = &i3d_file.primitive_collections.instanced_mesh_collection;
+    let ctm_file_names: HashSet<String> =
+        serde_wasm_bindgen::from_value(peripheral_files).map_err(|e| e.to_string())?;
     let mut ctm_map = HashMap::new();
 
     // Add all cached CtmResults to map
-    let ids = triangle_meshes
-        .file_id
+    ctm_file_names
         .iter()
-        .chain(instanced_meshes.file_id.iter())
-        .collect::<HashSet<_>>();
-
-    ids.iter()
-        .map(|x| format!("mesh_{}.ctm", x))
         .map(|file_name| {
             let mut cache = PARSE_CTM.lock().unwrap();
             (
-                Cached::cache_get(&mut *cache, &file_name).cloned(),
+                Cached::cache_get(&mut *cache, file_name).cloned(),
                 file_name,
             )
         })
         .filter(|(res, _)| res.is_some())
         .for_each(|(v, k)| {
-            ctm_map.insert(k, v.unwrap());
+            ctm_map.insert(k.clone(), v.unwrap());
         });
 
     // Load, parse, and add CtmResults to map
-    ids.iter()
-        .map(|x| format!("mesh_{}.ctm", x))
+    let ctm_future = ctm_file_names
+        .into_iter()
         .filter(|file_name| !ctm_map.contains_key(file_name))
         .map(|x| load_file(&blob_url, x, headers.clone()))
         .collect::<FuturesUnordered<_>>()
@@ -245,10 +245,9 @@ pub async fn load_parse_finalize_detailed(
                 ctm_map.insert(file_name.clone(), parse_ctm(file_name, &buf.to_vec()));
             }
             futures::future::ready(())
-        })
-        .await;
-
-    finalize_detailed(i3d_file, ctm_map)
+        });
+    let (i3d_file, _) = futures::future::join(i3d_future, ctm_future).await;
+    finalize_detailed(i3d_file?, ctm_map)
 }
 
 fn finalize_detailed(

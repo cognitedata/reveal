@@ -85,6 +85,7 @@ export interface ParseCtmResult {
 }
 
 export interface ParseCtmInput {
+  fileNames: string[];
   blobUrl: string;
   headers: HttpHeaders;
 }
