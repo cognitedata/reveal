@@ -5,7 +5,6 @@
 import { MaterialManager } from '../MaterialManager';
 import { RenderMode } from './RenderMode';
 import * as THREE from 'three';
-import { Vector2, DataTexture } from 'three';
 import { edgeDetectionShaders } from './shaders';
 import { CogniteColors } from '@/utilities';
 
@@ -27,17 +26,23 @@ export class EffectRenderManager {
 
     const outlineColorTexture = this.createOutlineColorTexture();
 
+    this._baseModelTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
+    this._inFrontTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
+    this._baseModelTarget.depthTexture = new THREE.DepthTexture(0, 0);
+    this._baseModelTarget.depthTexture.format = THREE.DepthFormat;
+    this._baseModelTarget.depthTexture.type = THREE.UnsignedIntType;
+
     this._windowTriangleMaterial = new THREE.ShaderMaterial({
       vertexShader: edgeDetectionShaders.vertex,
       fragmentShader: edgeDetectionShaders.fragment,
       uniforms: {
-        tOutlineColors: { value: outlineColorTexture }
-      }
+        tOutlineColors: { value: outlineColorTexture },
+        tDepth: { value: this._baseModelTarget.depthTexture },
+        tSource: { value: this._baseModelTarget.texture }
+      },
+      depthTest: false
     });
     this.setupTextureRenderScene();
-
-    this._baseModelTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
-    this._inFrontTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
   }
 
   public render(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera, scene: THREE.Scene) {
@@ -54,6 +59,7 @@ export class EffectRenderManager {
       renderer.setClearAlpha(0);
 
       // Render all geometry
+
       renderer.setRenderTarget(this._baseModelTarget);
       renderer.render(scene, camera);
 
@@ -66,7 +72,7 @@ export class EffectRenderManager {
 
       renderer.setClearAlpha(1);
 
-      this.renderTargetToCanvas(renderer);
+      this.renderTargetToCanvas(renderer, camera);
     } finally {
       // Restore state
       renderer.setClearAlpha(original.clearAlpha);
@@ -95,12 +101,12 @@ export class EffectRenderManager {
     return renderSize;
   }
 
-  private renderTargetToCanvas(renderer: THREE.WebGLRenderer) {
+  private renderTargetToCanvas(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
     this._windowTriangleMaterial.setValues({
       uniforms: {
         ...this._windowTriangleMaterial.uniforms,
-        tSelected: { value: this._inFrontTarget.texture },
-        tBase: { value: this._baseModelTarget.texture }
+        cameraNear: { value: camera.near },
+        cameraFar: { value: camera.far }
       }
     });
 
@@ -110,7 +116,7 @@ export class EffectRenderManager {
 
   private createOutlineColorTexture(): THREE.DataTexture {
     const outlineColorBuffer = new Uint8Array(8 * 4);
-    const outlineColorTexture = new DataTexture(outlineColorBuffer, 8, 1);
+    const outlineColorTexture = new THREE.DataTexture(outlineColorBuffer, 8, 1);
     setOutlineColor(outlineColorTexture.image.data, 1, CogniteColors.White);
     setOutlineColor(outlineColorTexture.image.data, 2, CogniteColors.Black);
     setOutlineColor(outlineColorTexture.image.data, 3, CogniteColors.Cyan);
@@ -130,7 +136,7 @@ export class EffectRenderManager {
     const face = new THREE.Face3(0, 1, 2);
     geometry.faces.push(face);
 
-    geometry.faceVertexUvs[0].push([new Vector2(0, 0), new Vector2(2, 0), new Vector2(0, 2)]);
+    geometry.faceVertexUvs[0].push([new THREE.Vector2(0, 0), new THREE.Vector2(2, 0), new THREE.Vector2(0, 2)]);
 
     const mesh = new THREE.Mesh(geometry, this._windowTriangleMaterial);
 

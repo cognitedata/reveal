@@ -138,6 +138,21 @@ function setAttributes(
   };
 
   geometry.maxInstancedCount = collection.length / attributesByteSize;
+
+  setTreeIndeciesToUserData();
+
+  function setTreeIndeciesToUserData() {
+    const collectionView = new DataView(collection.buffer);
+    const treeIndexAttribute = attributes.get('treeIndex')!;
+    const treeIndexAttributeOffset = treeIndexAttribute.offset;
+
+    const treeIndecies = new Set();
+
+    for (let i = 0; i < geometry.maxInstancedCount; i++) {
+      treeIndecies.add(collectionView.getFloat32(i * attributesByteSize + treeIndexAttributeOffset, true));
+    }
+    mesh.userData.treeIndecies = treeIndecies;
+  }
 }
 
 function createBoxes(
@@ -155,8 +170,8 @@ function createBoxes(
 
   // TODO add frustum culling back for all meshes after adding proper boudning boxes
   mesh.frustumCulled = false;
-
   mesh.name = `Primitives (Boxes)`;
+
   return mesh;
 }
 
