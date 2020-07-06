@@ -25,7 +25,7 @@
     "test": "jest",
     "coverage": "jest --coverage",
     "lint": "eslint . --ext .ts,.js --max-warnings 0 && yarn run tsc",
-    "lint:fix": "yarn run lint --fix",
+    "lint:fix": "eslint . --ext .ts,.js --max-warnings 0 --fix",
     "tsc": "tsc --noEmit --incremental false --skipLibCheck true",
     "prepublishscript": "yarn run coverage && yarn run clean && yarn run release"
   },
