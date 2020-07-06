@@ -42,12 +42,16 @@ describe('RevealManagerBase', () => {
   });
 
   test('update only triggers update when camera changes', () => {
-    expect(manager.needsRedraw).toBeFalse();
+    manager.resetRedraw();
     const camera = new THREE.PerspectiveCamera(60, 1, 0.5, 100);
     manager.update(camera);
     expect(manager.needsRedraw).toBeTrue(); // Changed
+
+    manager.resetRedraw();
     manager.update(camera);
     expect(manager.needsRedraw).toBeFalse(); // Unhanged
+
+    manager.resetRedraw();
     camera.position.set(1, 2, 3);
     manager.update(camera);
     expect(manager.needsRedraw).toBeTrue(); // Changed again
