@@ -12,7 +12,6 @@ import {
   from,
   merge,
   partition,
-  of,
   Subject,
   onErrorResumeNext,
   asapScheduler,
@@ -200,9 +199,14 @@ export class CachedRepository implements Repository {
   }
 
   private loadDetailedSectorFromNetwork(wantedSector: WantedSector): Observable<ConsumedSector> {
-    const i3dFileObservable = of(wantedSector.metadata.indexFile).pipe(map(indexFile => indexFile.fileName));
-    const networkObservable = onErrorResumeNext(
-      i3dFileObservable.pipe(
+    const detailedSectorObservable = onErrorResumeNext(
+      from(
+        this._modelDataParser.parseAndFinalizeDetailed(wantedSector.metadata.indexFile.fileName, {
+          fileNames: wantedSector.metadata.indexFile.peripheralFiles,
+          blobUrl: wantedSector.blobUrl,
+          headers: this._modelSectorProvider.headers
+        })
+      ).pipe(
         catchError(error => {
           trackError(error, {
             moduleName: 'CachedRepository',
@@ -211,13 +215,6 @@ export class CachedRepository implements Repository {
           this._consumedSectorCache.remove(this.wantedSectorCacheKey(wantedSector));
           throw error;
         }),
-        flatMap(i3dFile =>
-          this._modelDataParser.parseAndFinalizeDetailed(i3dFile, {
-            fileNames: wantedSector.metadata.indexFile.peripheralFiles,
-            blobUrl: wantedSector.blobUrl,
-            headers: this._modelSectorProvider.headers
-          })
-        ),
         map(data => {
           const sector = this.unflattenSector(data);
           this._parsedDataSubject.next({
@@ -234,8 +231,8 @@ export class CachedRepository implements Repository {
         take(1)
       )
     );
-    this._consumedSectorCache.forceInsert(this.wantedSectorCacheKey(wantedSector), networkObservable);
-    return networkObservable;
+    this._consumedSectorCache.forceInsert(this.wantedSectorCacheKey(wantedSector), detailedSectorObservable);
+    return detailedSectorObservable;
   }
 
   private wantedSectorCacheKey(wantedSector: WantedSector) {
