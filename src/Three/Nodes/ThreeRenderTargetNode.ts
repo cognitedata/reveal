@@ -158,7 +158,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   // OVERRIDES of RenderTargetNode
   //==================================================
 
-  public /*override*/ get domElement(): HTMLElement { return this.renderer.domElement; }
+  public /*override*/ get domElement(): HTMLCanvasElement { return this.renderer.domElement; }
 
   public /*override*/ onResize()
   {
