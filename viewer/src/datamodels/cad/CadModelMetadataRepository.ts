@@ -9,11 +9,14 @@ import { CadTransformationProvider } from './CadTransformationProvider';
 import { DataRepository } from './DataRepository';
 import { CadMetadataParser } from './parsers/CadMetadataParser';
 import { SectorScene } from './sector/types';
+import { File3dFormat } from '@/utilities';
 
+type ModelIdentifierWithFormat<T> = T & { format: File3dFormat };
 type ModelMetadataProvider<TModelIdentifier> = ModelUrlProvider<TModelIdentifier> & CadSceneProvider;
+
 export class CadModelMetadataRepository<TModelIdentifier>
   implements DataRepository<TModelIdentifier, Promise<CadModelMetadata>> {
-  private readonly _modelMetadataProvider: ModelMetadataProvider<TModelIdentifier>;
+  private readonly _modelMetadataProvider: ModelMetadataProvider<ModelIdentifierWithFormat<TModelIdentifier>>;
   private readonly _cadTransformationProvider: CadTransformationProvider;
   private readonly _cadSceneParser: CadMetadataParser;
   constructor(
@@ -26,7 +29,8 @@ export class CadModelMetadataRepository<TModelIdentifier>
     this._cadSceneParser = cadMetadataParser;
   }
   async loadData(modelIdentifier: TModelIdentifier): Promise<CadModelMetadata> {
-    const blobUrl = await this._modelMetadataProvider.getModelUrl(modelIdentifier);
+    const identifierWithFormat = { format: File3dFormat.RevealCadModel, ...modelIdentifier };
+    const blobUrl = await this._modelMetadataProvider.getModelUrl(identifierWithFormat);
     const json = await this._modelMetadataProvider.getCadScene(blobUrl);
     const scene: SectorScene = this._cadSceneParser.parse(json);
     // TODO: j-bjorne 15-05-2020: Making provider to ready for getting it from network.

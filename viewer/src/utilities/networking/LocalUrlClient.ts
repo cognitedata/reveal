@@ -10,9 +10,14 @@ import { CadSectorProvider } from '@/datamodels/cad/sector/CadSectorProvider';
 import { EptSceneProvider } from '@/datamodels/pointcloud/EptSceneProvider';
 
 export class LocalUrlClient
-  implements ModelUrlProvider<string>, CadSceneProvider, CadSectorProvider, HttpHeadersProvider, EptSceneProvider {
-  getModelUrl(fileName: string): Promise<string> {
-    return Promise.resolve(`${location.origin}/${fileName}`);
+  implements
+    ModelUrlProvider<{ fileName: string }>,
+    CadSceneProvider,
+    CadSectorProvider,
+    HttpHeadersProvider,
+    EptSceneProvider {
+  getModelUrl(modelIdentifier: { fileName: string }): Promise<string> {
+    return Promise.resolve(`${location.origin}/${modelIdentifier.fileName}`);
   }
 
   get headers() {

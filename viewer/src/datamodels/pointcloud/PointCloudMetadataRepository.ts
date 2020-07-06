@@ -9,11 +9,14 @@ import { PointCloudMetadata } from '@/datamodels/pointcloud/PointCloudMetadata';
 // TODO 25-05-2020 j-bjorne: Move into common type folder
 import { DataRepository } from '@/datamodels/cad/DataRepository';
 import { CadTransformationProvider } from '@/datamodels/cad/CadTransformationProvider';
+import { File3dFormat } from '@/utilities';
 
+type ModelIdentifierWithFormat<T> = T & { format: File3dFormat };
 type ModelMetadataProvider<TModelIdentifier> = ModelUrlProvider<TModelIdentifier> & EptSceneProvider;
+
 export class PointCloudMetadataRepository<TModelIdentifier>
   implements DataRepository<TModelIdentifier, Promise<PointCloudMetadata>> {
-  private readonly _modelMetadataProvider: ModelMetadataProvider<TModelIdentifier>;
+  private readonly _modelMetadataProvider: ModelMetadataProvider<ModelIdentifierWithFormat<TModelIdentifier>>;
   private readonly _cadTransformationProvider: CadTransformationProvider;
   constructor(
     modelMetadataProvider: ModelMetadataProvider<TModelIdentifier>,
@@ -23,7 +26,8 @@ export class PointCloudMetadataRepository<TModelIdentifier>
     this._cadTransformationProvider = cadTransformationProvider;
   }
   async loadData(modelIdentifier: TModelIdentifier): Promise<PointCloudMetadata> {
-    const blobUrl = await this._modelMetadataProvider.getModelUrl(modelIdentifier);
+    const idWithFormat = { format: File3dFormat.EptPointCloud, ...modelIdentifier };
+    const blobUrl = await this._modelMetadataProvider.getModelUrl(idWithFormat);
     const scene = await this._modelMetadataProvider.getEptScene(blobUrl);
     // TODO: j-bjorne 15-05-2020: Making provider to ready for getting it from network.
     // This provider should change its input and return type once we have a functioning api call.

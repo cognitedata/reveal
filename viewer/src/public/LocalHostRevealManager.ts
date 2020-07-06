@@ -11,7 +11,7 @@ import { RevealOptions } from './types';
 import { initMetrics } from '@/utilities/metrics';
 import { omit } from 'lodash';
 
-type LocalModelIdentifier = string;
+type LocalModelIdentifier = { fileName: string };
 
 export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifier> {
   constructor(options: RevealOptions = {}) {
@@ -33,9 +33,9 @@ export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifi
   ): Promise<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper]> {
     switch (type) {
       case 'cad':
-        return super.addModel('cad', fileName, nodeApperanceProvider);
+        return super.addModelImpl('cad', { fileName }, nodeApperanceProvider);
       case 'pointcloud':
-        return super.addModel('pointcloud', fileName);
+        return super.addModelImpl('pointcloud', { fileName });
 
       default:
         throw new Error(`case: ${type} not handled`);

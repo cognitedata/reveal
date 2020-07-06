@@ -140,7 +140,7 @@ export class Cognite3DViewer {
     this.sdkClient = options.sdk;
     this.renderController = new RenderController(this.camera);
 
-    this.cdfModelManager = new CdfModelManager(this.sdkClient);
+    this.cdfModelManager = new CdfModelManager(this.sdkClient, options);
 
     this.startPointerEventListeners();
 

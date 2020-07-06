@@ -35,6 +35,9 @@ import { NodeAppearanceProvider, CadNode } from '@/datamodels/cad';
 import { PotreeGroupWrapper } from '@/datamodels/pointcloud/PotreeGroupWrapper';
 import { PotreeNodeWrapper } from '@/datamodels/pointcloud/PotreeNodeWrapper';
 import { RenderMode } from '@/datamodels/cad/rendering/RenderMode';
+import { File3dFormat } from '@/utilities';
+
+type ModelIdentifierWithFormat<T> = T & { format: File3dFormat };
 
 export class RevealManagerBase<TModelIdentifier> implements RenderManager {
   // CAD
@@ -58,7 +61,7 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
     loadingStateChanged: new Array<LoadingStateChangeListener>()
   };
 
-  constructor(client: Client<TModelIdentifier>, options: RevealOptions) {
+  constructor(client: Client<ModelIdentifierWithFormat<TModelIdentifier>>, options: RevealOptions) {
     const materialManager = new MaterialManager();
     const sectorCuller = (options.internal && options.internal.sectorCuller) || new ByVisibilityGpuSectorCuller();
 
@@ -172,16 +175,16 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
     }
   }
 
-  protected addModel(
+  protected addModelImpl(
     type: 'cad',
     modelIdentifier: TModelIdentifier,
     nodeApperanceProvider?: NodeAppearanceProvider
   ): Promise<CadNode>;
-  protected addModel(
+  protected addModelImpl(
     type: 'pointcloud',
     modelIdentifier: TModelIdentifier
   ): Promise<[PotreeGroupWrapper, PotreeNodeWrapper]>;
-  protected async addModel(
+  protected async addModelImpl(
     type: 'cad' | 'pointcloud',
     modelIdentifier: TModelIdentifier,
     nodeApperanceProvider?: NodeAppearanceProvider
@@ -212,8 +215,9 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
         return cadNode;
       }
 
-      case 'pointcloud':
+      case 'pointcloud': {
         return this._pointCloudManager.addModel(modelIdentifier);
+      }
 
       default:
         throw new Error(`Model type '${type}' is not supported`);

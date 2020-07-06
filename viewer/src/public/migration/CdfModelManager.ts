@@ -6,21 +6,22 @@ import { Observable, Subscription, fromEventPattern } from 'rxjs';
 import { CogniteClient } from '@cognite/sdk';
 
 import { Cognite3DModel } from './Cognite3DModel';
-import { AddModelOptions } from './types';
+import { AddModelOptions, Cognite3DViewerOptions } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 
 import { RevealManager } from '../RevealManager';
-import { SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
+import { SectorNodeIdToTreeIndexMapLoadedEvent, RevealOptions } from '../types';
 
 export class CdfModelManager {
   private readonly _sdkClient: CogniteClient;
   private readonly _revealManager: RevealManager;
   private readonly _subscriptions = new Subscription();
 
-  constructor(sdkClient: CogniteClient) {
+  constructor(sdkClient: CogniteClient, options: Cognite3DViewerOptions) {
+    const revealManagerOptions = transformOptions(options);
     this._sdkClient = sdkClient;
-    this._revealManager = new RevealManager(sdkClient, {});
+    this._revealManager = new RevealManager(sdkClient, revealManagerOptions);
   }
 
   get revealManager(): RevealManager {
@@ -98,4 +99,12 @@ export class CdfModelManager {
       h => this._revealManager.off('nodeIdToTreeIndexMapLoaded', h)
     );
   }
+}
+
+function transformOptions(options: Cognite3DViewerOptions): RevealOptions {
+  const result: RevealOptions = {};
+  if (options._sectorCuller) {
+    result.internal = { sectorCuller: options._sectorCuller };
+  }
+  return result;
 }
