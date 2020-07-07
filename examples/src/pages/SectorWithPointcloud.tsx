@@ -22,6 +22,7 @@ import {
   getParamsFromURL,
   createRenderManager,
 } from '../utils/example-helpers';
+import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 CameraControls.install({ THREE });
 
@@ -110,6 +111,7 @@ export function SectorWithPointcloud() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const gui = new dat.GUI();
+    const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
 
     async function main() {
       const { project, modelUrl, modelRevision } = getParamsFromURL({
@@ -223,10 +225,8 @@ export function SectorWithPointcloud() {
       controls.update(0.0);
       camera.updateMatrixWorld();
 
-      const clock = new THREE.Clock();
-      const render = async () => {
-        const delta = clock.getDelta();
-        const controlsNeedUpdate = controls.update(delta);
+      animationLoopHandler.setOnAnimationFrameListener(async (deltaTime) => {
+        const controlsNeedUpdate = controls.update(deltaTime);
         if (renderOptions.loadingEnabled) {
           revealManager.update(camera);
         }
@@ -244,9 +244,8 @@ export function SectorWithPointcloud() {
           settingsChanged = false;
           revealManager.resetRedraw();
         }
-        requestAnimationFrame(render);
-      };
-      render();
+      });
+      animationLoopHandler.start();
 
       (window as any).scene = scene;
       (window as any).THREE = THREE;
