@@ -13,7 +13,7 @@ export { NodeAppearance, NodeAppearanceProvider, DefaultNodeAppearance } from '.
 // CAD
 
 export { CadModelMetadata, SsaoEffect, SsaoPassType } from './datamodels/cad/';
-export { SectorMetadata, SectorModelTransformation } from './datamodels/cad/sector/types';
+export { SectorMetadata } from './datamodels/cad/sector/types';
 export { CadRenderHints } from './datamodels/cad/rendering/CadRenderHints';
 export { CadLoadingHints } from './datamodels/cad/CadLoadingHints';
 export { intersectCadNodes } from './datamodels/cad/picking';

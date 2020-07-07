@@ -4,8 +4,9 @@
 
 import glsl from 'glslify';
 import * as THREE from 'three';
-import { RenderMode } from '@/datamodels/cad/rendering/RenderMode';
-import { CadNode } from '@/datamodels/cad/CadNode';
+
+import { RenderMode } from '../RenderMode';
+import { CadNode } from '../../CadNode';
 
 const vertexShaderAntialias = glsl(require('@/glsl/post-processing/fxaa.vert').default);
 const fragmentShaderAntialias = glsl(require('@/glsl/post-processing/fxaa.frag').default);
