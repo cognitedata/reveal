@@ -32,6 +32,7 @@ import { LogFolder } from "@/Nodes/Wells/Wells/LogFolder";
 import { BaseFilterLogNode } from "@/Nodes/Wells/Filters/BaseFilterLogNode";
 import { IDataLoader } from "@/Core/Interfaces/IDataLoader";
 import { DataNode } from "@/Core/Nodes/DataNode";
+import { Ma } from '@/Core/Primitives/Ma';
 
 export class SyntheticSubSurfaceModule extends BaseModule
 {
@@ -155,7 +156,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
           var range = Range3.newTest.clone();
           range.expandByFraction(0.2);
           range.z.set(-1400 + (k - 1) * 300, -1800 + (k - 1) * 300);
-          node.data = RegularGrid2.createFractal(range, 7, 0.9, 5);
+          node.data = RegularGrid2.createFractal(range, 7, 0.9, 5, Ma.toRad(45));
           parent1.addChild(node);
         }
       }

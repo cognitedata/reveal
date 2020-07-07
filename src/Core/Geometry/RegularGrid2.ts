@@ -24,33 +24,61 @@ export class RegularGrid2 extends Grid2
   // INSTANCE FIELDS
   //==================================================
 
-  public xOrigin: number;
-  public yOrigin: number;
-  public inc: number;
-  public buffer: Float32Array;
+  public origin: Vector3; // Z is translation in Z
+  public inc: Vector3; // Z is ignord
+
+  private _hasRotationAngle = false;
+  private _rotationAngle = 0;
+  private _sinRotationAngle = 0;
+  private _cosRotationAngle = 1;
+  private _buffer: Float32Array;
 
   static readonly _staticHelperA = Vector3.newZero;
   static readonly _staticHelperB = Vector3.newZero;
   static readonly _staticHelperC = Vector3.newZero;
 
   //==================================================
+  // INSTANCE PROPERTIES
+  //==================================================
+
+  public get rotationAngle(): number { return this._rotationAngle; }
+
+  public set rotationAngle(value: number)
+  {
+    this._hasRotationAngle = value != 0;
+    if (this._hasRotationAngle)
+    {
+      this._rotationAngle = value;
+      this._sinRotationAngle = Math.sin(this._rotationAngle);
+      this._cosRotationAngle = Math.cos(this._rotationAngle);
+    }
+    else
+    {
+      this._rotationAngle = 0;
+      this._sinRotationAngle = 0;
+      this._cosRotationAngle = 1;
+    }
+  }
+
+  //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(nodeSize: Index2, xOrigin: number, yOrigin: number, inc: number)
+  public constructor(nodeSize: Index2, origin: Vector3, inc: Vector3, rotationAngle: number | undefined = undefined)
   {
     super(nodeSize);
-    this.xOrigin = xOrigin;
-    this.yOrigin = yOrigin;
+    this.origin = origin;
     this.inc = inc;
-    this.buffer = new Float32Array(nodeSize.size);
+    if (rotationAngle != undefined)
+      this.rotationAngle = rotationAngle;
+    this._buffer = new Float32Array(nodeSize.size);
   }
 
   //==================================================
   // OVERRIDES of object
   //==================================================
 
-  public /*override*/ toString(): string { return `nodeSize: (${this.nodeSize}) origin: (${this.xOrigin}, ${this.yOrigin}) inc: ${this.inc}`; }
+  public /*override*/ toString(): string { return `nodeSize: (${this.nodeSize}) origin: (${this.origin.x}, ${this.origin.y}) inc: (${this.inc.x}, ${this.inc.y})`; }
 
   //==================================================
   // INSTANCE METHODS: Requests
@@ -71,22 +99,62 @@ export class RegularGrid2 extends Grid2
   //==================================================
 
   public getNodeIndex(i: number, j: number) { return i + this.nodeSize.i * j; }
-  public getX(i: number, j: number): number { return this.xOrigin + this.inc * i; }
-  public getY(i: number, j: number): number { return this.yOrigin + this.inc * j; }
+
   public getZ(i: number, j: number): number
   {
     const index = this.getNodeIndex(i, j);
-    return this.buffer[index];
+    return this._buffer[index];
   }
 
-  public getRelativePoint3(i: number, j: number, result: Vector3): boolean
+  public getPosition(i: number, j: number, result: Vector3): boolean
   {
     const z = this.getZ(i, j);
     if (Number.isNaN(z))
       return false;
 
-    result.x = this.inc * i;
-    result.y = this.inc * j;
+    if (this._hasRotationAngle)
+    {
+      var dx = this.inc.x * i;
+      var dy = this.inc.y * j;
+      result.x = dx * this._cosRotationAngle - dy * this._sinRotationAngle;
+      result.y = dx * this._sinRotationAngle + dy * this._cosRotationAngle;
+    }
+    else
+    {
+      result.x = this.inc.x * i;
+      result.y = this.inc.y * j;
+    }
+    result.z = z;
+    result.add(this.origin);
+    return true;
+  }
+
+  public getPosition2(i: number, j: number, result: Vector3): void
+  {
+    if (this._hasRotationAngle)
+    {
+      var dx = this.inc.x * i;
+      var dy = this.inc.y * j;
+      result.x = dx * this._cosRotationAngle - dy * this._sinRotationAngle;
+      result.y = dx * this._sinRotationAngle + dy * this._cosRotationAngle;
+    }
+    else
+    {
+      result.x = this.inc.x * i;
+      result.y = this.inc.y * j;
+    }
+    result.x += this.origin.x;
+    result.y += this.origin.y;
+  }
+
+  public getRelativePosition(i: number, j: number, result: Vector3): boolean
+  {
+    const z = this.getZ(i, j);
+    if (Number.isNaN(z))
+      return false;
+
+    result.x = this.inc.x * i;
+    result.y = this.inc.y * j;
     result.z = z;
     return true;
   }
@@ -111,10 +179,10 @@ export class RegularGrid2 extends Grid2
     const i2 = def2 ? this.getNodeIndex(i - 1, j + 0) : -1;
     const i3 = def3 ? this.getNodeIndex(i + 0, j - 1) : -1;
 
-    let z0 = def0 ? this.buffer[i0] : 0;
-    let z1 = def1 ? this.buffer[i1] : 0;
-    let z2 = def2 ? this.buffer[i2] : 0;
-    let z3 = def3 ? this.buffer[i3] : 0;
+    let z0 = def0 ? this._buffer[i0] : 0;
+    let z1 = def1 ? this._buffer[i1] : 0;
+    let z2 = def2 ? this._buffer[i2] : 0;
+    let z3 = def3 ? this._buffer[i3] : 0;
 
     if (def0) { if (Number.isNaN(z0)) def0 = false; else z0 -= z; }
     if (def1) { if (Number.isNaN(z1)) def1 = false; else z1 -= z; }
@@ -123,29 +191,29 @@ export class RegularGrid2 extends Grid2
 
     if (def0 && def1)
     {
-      a.set(+this.inc, 0, z0);
-      b.set(0, +this.inc, z1);
+      a.set(+this.inc.x, 0, z0);
+      b.set(0, +this.inc.y, z1);
       a.crossProduct(b);
       result.add(a);
     }
     if (def1 && def2)
     {
-      a.set(0, +this.inc, z1);
-      b.set(-this.inc, 0, z2);
+      a.set(0, +this.inc.y, z1);
+      b.set(-this.inc.x, 0, z2);
       a.crossProduct(b);
       result.add(a);
     }
     if (def2 && def3)
     {
-      a.set(-this.inc, 0, z2);
-      b.set(0, -this.inc, z3);
+      a.set(-this.inc.x, 0, z2);
+      b.set(0, -this.inc.y, z3);
       a.crossProduct(b);
       result.add(a);
     }
     if (def3 && def0)
     {
-      a.set(0, -this.inc, z3);
-      b.set(+this.inc, 0, z0);
+      a.set(0, -this.inc.y, z3);
+      b.set(+this.inc.x, 0, z0);
       a.crossProduct(b);
       result.add(a);
     }
@@ -154,24 +222,25 @@ export class RegularGrid2 extends Grid2
     return result;
   }
 
-  public getTriplet(i: number, j: number): [number, number, number]
-  {
-    return [this.xOrigin + this.inc * i, this.yOrigin + this.inc * j, this.getZ(i, j)];
-  }
-
   public getZRange(): Range1
   {
     const range = new Range1();
-    for (const z of this.buffer)
+    for (const z of this._buffer)
       range.add(z);
     return range;
   }
 
   public getRange(): Range3
   {
+    const corner = Vector3.newZero;
     const range = new Range3();
-    range.x.set(this.xOrigin, this.xOrigin + this.cellSize.i * this.inc);
-    range.y.set(this.yOrigin, this.yOrigin + this.cellSize.j * this.inc);
+    range.add(this.origin);
+    this.getPosition2(0, this.nodeSize.j - 1, corner);
+    range.add(corner);
+    this.getPosition2(this.nodeSize.i - 1, 0, corner);
+    range.add(corner);
+    this.getPosition2(this.nodeSize.i - 1, this.nodeSize.j - 1, corner);
+    range.add(corner);
     range.z = this.getZRange();
     return range;
   }
@@ -188,7 +257,7 @@ export class RegularGrid2 extends Grid2
   public setZ(i: number, j: number, value: number): void
   {
     const index = this.getNodeIndex(i, j);
-    this.buffer[index] = value;
+    this._buffer[index] = value;
   }
 
   //==================================================
@@ -198,13 +267,13 @@ export class RegularGrid2 extends Grid2
   public normalizeZ(wantedRange?: Range1): void
   {
     const currentRange = this.getZRange();
-    for (let i = this.buffer.length - 1; i >= 0; i--)
+    for (let i = this._buffer.length - 1; i >= 0; i--)
     {
-      let z = this.buffer[i];
+      let z = this._buffer[i];
       z = currentRange.getFraction(z);
       if (wantedRange !== undefined)
         z = wantedRange.getValue(z);
-      this.buffer[i] = z;
+      this._buffer[i] = z;
     }
   }
 
@@ -247,7 +316,7 @@ export class RegularGrid2 extends Grid2
           const index = this.getNodeIndex(i, j);
           buffer[index] = sum / count;
         }
-      [this.buffer, buffer] = [buffer, this.buffer]; // Swap buffers
+      [this._buffer, buffer] = [buffer, this._buffer]; // Swap buffers
     }
   }
 
@@ -255,10 +324,13 @@ export class RegularGrid2 extends Grid2
   // STATIC METHODS: 
   //==================================================
 
-  static createFractal(boundingBox: Range3, powerOf2: number, dampning: number = 0.7, smoothNumberOfPasses: number = 0): RegularGrid2
+  static createFractal(boundingBox: Range3, powerOf2: number, dampning: number = 0.7, smoothNumberOfPasses: number = 0, rotationAngle: number): RegularGrid2
   {
+    const origin = Vector3.newZero;
+    const inc = new Vector3(1, 1, 0);
+    const nodeSize = new Index2(Math.pow(2, powerOf2) + 1);
     const stdDev = 1;
-    const grid = new RegularGrid2(new Index2(Math.pow(2, powerOf2) + 1), 0, 0, 1);
+    const grid = new RegularGrid2(nodeSize, origin, inc, rotationAngle);
 
     const i0 = 0;
     const j0 = 0;
@@ -272,9 +344,10 @@ export class RegularGrid2 extends Grid2
 
     subDivide(grid, i0, j0, i1, j1, stdDev, powerOf2, dampning);
 
-    grid.xOrigin = boundingBox.x.min;
-    grid.yOrigin = boundingBox.y.min;
-    grid.inc = boundingBox.x.delta / grid.cellSize.i;
+    grid.origin.x = boundingBox.x.min;
+    grid.origin.y = boundingBox.y.min;
+    grid.inc.x = boundingBox.x.delta / grid.cellSize.i;
+    grid.inc.y = boundingBox.y.delta / grid.cellSize.j;
 
     grid.normalizeZ(boundingBox.z);
     grid.smoothSimple(smoothNumberOfPasses);
