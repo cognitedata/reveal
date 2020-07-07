@@ -9,6 +9,7 @@ import { CadLoadingHints } from '../../CadLoadingHints';
 
 export interface DetermineSectorsInput {
   camera: THREE.PerspectiveCamera;
+  cameraInMotion: boolean;
   clippingPlanes: THREE.Plane[];
   clipIntersection: boolean;
   cadModelsMetadata: CadModelMetadata[];
