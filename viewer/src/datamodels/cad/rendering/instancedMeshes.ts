@@ -47,6 +47,9 @@ export function createInstancedMeshes(
       bounds.getBoundingSphere(geometry.boundingSphere);
       const obj = new THREE.Mesh(geometry, material);
       obj.name = `Instanced mesh ${meshFile.fileId}`;
+
+      obj.userData.treeIndecies = new Set(instancedMesh.treeIndices);
+
       result.push(obj);
     }
   }

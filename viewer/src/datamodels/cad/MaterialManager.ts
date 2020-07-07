@@ -54,6 +54,10 @@ export class MaterialManager {
     return this.materialsMap.get(modelIdentifier)!.materials;
   }
 
+  getModelNodeAppearanceProvider(modelIdentifier: string): NodeAppearanceProvider | undefined {
+    return this.materialsMap.get(modelIdentifier)!.nodeAppearanceProvider;
+  }
+
   setRenderMode(mode: RenderMode) {
     this._renderMode = mode;
     this.applyToAllMaterials(material => {

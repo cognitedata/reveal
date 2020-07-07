@@ -7,14 +7,22 @@ import { RenderMode } from './RenderMode';
 import * as THREE from 'three';
 import { edgeDetectionShaders } from './shaders';
 import { CogniteColors } from '@/utilities';
+import { CadNode } from '..';
 
 export class EffectRenderManager {
   private _materialManager: MaterialManager;
   private _orthographicCamera: THREE.OrthographicCamera;
+
   private _triScene: THREE.Scene;
-  private _windowTriangleMaterial: THREE.ShaderMaterial;
-  private _baseModelTarget: THREE.WebGLRenderTarget;
-  private _inFrontTarget: THREE.WebGLRenderTarget;
+  private _cadScene: THREE.Scene;
+
+  private _combineEdgeDetectionMaterial: THREE.ShaderMaterial;
+
+  private _customObjectRenderTarget: THREE.WebGLRenderTarget;
+  private _backRenderedCadModelTarget: THREE.WebGLRenderTarget;
+  private _frontRenderedCadModelTarget: THREE.WebGLRenderTarget;
+
+  private _cadModelBuffer: Set<CadNode> = new Set();
 
   private readonly outlineTexelSize = 2;
 
@@ -22,27 +30,38 @@ export class EffectRenderManager {
     this._materialManager = materialManager;
     this._orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
+    this._cadScene = new THREE.Scene();
     this._triScene = new THREE.Scene();
 
     const outlineColorTexture = this.createOutlineColorTexture();
 
-    this._baseModelTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
-    this._inFrontTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
-    this._baseModelTarget.depthTexture = new THREE.DepthTexture(0, 0);
-    this._baseModelTarget.depthTexture.format = THREE.DepthFormat;
-    this._baseModelTarget.depthTexture.type = THREE.UnsignedIntType;
+    this._frontRenderedCadModelTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
 
-    this._windowTriangleMaterial = new THREE.ShaderMaterial({
+    this._backRenderedCadModelTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
+    this._backRenderedCadModelTarget.depthTexture = new THREE.DepthTexture(0, 0);
+    this._backRenderedCadModelTarget.depthTexture.format = THREE.DepthFormat;
+    this._backRenderedCadModelTarget.depthTexture.type = THREE.UnsignedIntType;
+
+    this._customObjectRenderTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
+    this._customObjectRenderTarget.depthTexture = new THREE.DepthTexture(0, 0);
+    this._customObjectRenderTarget.depthTexture.format = THREE.DepthFormat;
+    this._customObjectRenderTarget.depthTexture.type = THREE.UnsignedIntType;
+
+    this._combineEdgeDetectionMaterial = new THREE.ShaderMaterial({
       vertexShader: edgeDetectionShaders.vertex,
-      fragmentShader: edgeDetectionShaders.fragment,
+      fragmentShader: edgeDetectionShaders.combine,
       uniforms: {
-        tOutlineColors: { value: outlineColorTexture },
-        tDepth: { value: this._baseModelTarget.depthTexture },
-        tSource: { value: this._baseModelTarget.texture }
+        tFront: { value: this._frontRenderedCadModelTarget.texture },
+        tBack: { value: this._backRenderedCadModelTarget.texture },
+        tBackDepth: { value: this._backRenderedCadModelTarget.depthTexture },
+        tCustom: { value: this._customObjectRenderTarget.texture },
+        tCustomDepth: { value: this._customObjectRenderTarget.depthTexture },
+        tOutlineColors: { value: outlineColorTexture }
       },
       depthTest: false
     });
-    this.setupTextureRenderScene();
+
+    this.setupTextureRenderScene(this._combineEdgeDetectionMaterial);
   }
 
   public render(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera, scene: THREE.Scene) {
@@ -53,22 +72,32 @@ export class EffectRenderManager {
     };
     this.updateRenderSize(renderer);
 
+    scene.traverseVisible(p => {
+      if (p instanceof CadNode) {
+        this._cadModelBuffer.add(p);
+      }
+    });
+
+    this._cadModelBuffer.forEach(p => {
+      if (p.parent !== scene) {
+        throw new Error('CadNode must be put at scene root');
+      }
+      this._cadScene.add(p);
+    });
+
     try {
       this.updateRenderSize(renderer);
 
       renderer.setClearAlpha(0);
 
-      // Render all geometry
+      // Render behind cad models
+      this.renderBackCadModels(renderer, camera);
 
-      renderer.setRenderTarget(this._baseModelTarget);
-      renderer.render(scene, camera);
+      // Render in -front cad models
+      this.renderInFrontCadModels(renderer, camera);
 
-      this._materialManager.setRenderMode(RenderMode.Effects);
-
-      renderer.setRenderTarget(this._inFrontTarget);
-      renderer.render(scene, camera);
-
-      this._materialManager.setRenderMode(RenderMode.Color);
+      // Render custom objects
+      this.renderCustomObjects(renderer, scene, camera);
 
       renderer.setClearAlpha(1);
 
@@ -78,20 +107,82 @@ export class EffectRenderManager {
       renderer.setClearAlpha(original.clearAlpha);
       renderer.setRenderTarget(original.renderTarget);
       this._materialManager.setRenderMode(original.renderMode);
+
+      this._cadModelBuffer.forEach(p => {
+        scene.add(p);
+      });
     }
+  }
+
+  private renderBackCadModels(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
+    renderer.setRenderTarget(this._backRenderedCadModelTarget);
+    renderer.render(this._cadScene, camera);
+  }
+
+  private renderInFrontCadModels(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
+    renderer.setRenderTarget(this._frontRenderedCadModelTarget);
+
+    let containsRenderInFront = false;
+    this._cadModelBuffer.forEach(cadModel => {
+      const cadModelNodeAppearanceProvider = this._materialManager.getModelNodeAppearanceProvider(
+        cadModel.cadModelMetadata.blobUrl
+      );
+
+      if (!cadModelNodeAppearanceProvider) {
+        return;
+      }
+
+      cadModel.traverseVisible(object => {
+        const treeIndecies = object.userData.treeIndecies as Set<number>;
+        if (treeIndecies) {
+          treeIndecies.forEach(treeIndex => {
+            const treeIndexStyle = cadModelNodeAppearanceProvider.styleNode(treeIndex);
+
+            if (treeIndexStyle && treeIndexStyle.renderInFront) {
+              containsRenderInFront = true;
+              return;
+            }
+          });
+        }
+      });
+    });
+
+    if (!containsRenderInFront) {
+      renderer.clear();
+      return;
+    }
+
+    this._materialManager.setRenderMode(RenderMode.Effects);
+
+    renderer.render(this._cadScene, camera);
+
+    this._materialManager.setRenderMode(RenderMode.Color);
+  }
+
+  private renderCustomObjects(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
+    if (scene.children.length === 0) {
+      return;
+    }
+
+    renderer.setRenderTarget(this._customObjectRenderTarget);
+    renderer.render(scene, camera);
   }
 
   private updateRenderSize(renderer: THREE.WebGLRenderer) {
     const renderSize = new THREE.Vector2();
     renderer.getSize(renderSize);
 
-    if (renderSize.x !== this._baseModelTarget.width || renderSize.y !== this._baseModelTarget.height) {
-      this._baseModelTarget.setSize(renderSize.x, renderSize.y);
-      this._inFrontTarget.setSize(renderSize.x, renderSize.y);
+    if (
+      renderSize.x !== this._backRenderedCadModelTarget.width ||
+      renderSize.y !== this._backRenderedCadModelTarget.height
+    ) {
+      this._backRenderedCadModelTarget.setSize(renderSize.x, renderSize.y);
+      this._frontRenderedCadModelTarget.setSize(renderSize.x, renderSize.y);
+      this._customObjectRenderTarget.setSize(renderSize.x, renderSize.y);
 
-      this._windowTriangleMaterial.setValues({
+      this._combineEdgeDetectionMaterial.setValues({
         uniforms: {
-          ...this._windowTriangleMaterial.uniforms,
+          ...this._combineEdgeDetectionMaterial.uniforms,
           texelSize: {
             value: new THREE.Vector2(this.outlineTexelSize / renderSize.x, this.outlineTexelSize / renderSize.y)
           }
@@ -102,9 +193,9 @@ export class EffectRenderManager {
   }
 
   private renderTargetToCanvas(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
-    this._windowTriangleMaterial.setValues({
+    this._combineEdgeDetectionMaterial.setValues({
       uniforms: {
-        ...this._windowTriangleMaterial.uniforms,
+        ...this._combineEdgeDetectionMaterial.uniforms,
         cameraNear: { value: camera.near },
         cameraFar: { value: camera.far }
       }
@@ -127,7 +218,7 @@ export class EffectRenderManager {
     return outlineColorTexture;
   }
 
-  private setupTextureRenderScene() {
+  private setupTextureRenderScene(material: THREE.ShaderMaterial) {
     const geometry = new THREE.Geometry();
     geometry.vertices.push(new THREE.Vector3(-1, -1, 0));
     geometry.vertices.push(new THREE.Vector3(3, -1, 0));
@@ -138,7 +229,7 @@ export class EffectRenderManager {
 
     geometry.faceVertexUvs[0].push([new THREE.Vector2(0, 0), new THREE.Vector2(2, 0), new THREE.Vector2(0, 2)]);
 
-    const mesh = new THREE.Mesh(geometry, this._windowTriangleMaterial);
+    const mesh = new THREE.Mesh(geometry, material);
 
     this._triScene.add(mesh);
   }

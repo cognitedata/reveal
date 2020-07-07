@@ -41,6 +41,9 @@ export function Picking() {
 
       const nodeAppearanceProvider: reveal.NodeAppearanceProvider = {
         styleNode(treeIndex: number) {
+          if (treeIndex < 20) {
+            return { outlineColor: 3 }
+          }
           if (pickedNodes.has(treeIndex)) {
             return reveal.DefaultNodeAppearance.Highlighted;
           }
@@ -73,8 +76,8 @@ export function Picking() {
           'Need to provide either project & model OR modelUrl as query parameters'
         );
       }
-      scene.add(model);
 
+      scene.add(model);
 
       // Set up the renderer
       const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current! });
