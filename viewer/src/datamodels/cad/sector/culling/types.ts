@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 import { LevelOfDetail } from '../LevelOfDetail';
 import { SectorMetadata, WantedSector } from '../types';
-import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
+import { CadModelMetadata } from '../../CadModelMetadata';
 import { CadLoadingHints } from '../../CadLoadingHints';
 
 export interface DetermineSectorsInput {

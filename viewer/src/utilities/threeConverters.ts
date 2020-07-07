@@ -4,18 +4,14 @@
 
 import * as THREE from 'three';
 import { vec3, mat4 } from 'gl-matrix';
-import { Box3 } from '@/utilities/Box3';
-import { SectorModelTransformation } from '@/datamodels/cad/sector/types';
+import { Box3 } from './Box3';
+import { ModelTransformation } from './types';
 
 const toThreeVector3Vars = {
   result: vec3.create()
 };
 
-export function toThreeVector3(
-  out: THREE.Vector3,
-  v: vec3,
-  modelTransformation?: SectorModelTransformation
-): THREE.Vector3 {
+export function toThreeVector3(out: THREE.Vector3, v: vec3, modelTransformation?: ModelTransformation): THREE.Vector3 {
   if (!modelTransformation) {
     out.set(v[0], v[1], v[2]);
     return out;
@@ -31,7 +27,7 @@ const toThreeMatrix4Vars = {
 };
 
 // TODO add out parameter
-export function toThreeMatrix4(m: mat4, modelTransformation?: SectorModelTransformation): THREE.Matrix4 {
+export function toThreeMatrix4(m: mat4, modelTransformation?: ModelTransformation): THREE.Matrix4 {
   if (!modelTransformation) {
     return new THREE.Matrix4().fromArray(m);
   }
@@ -40,7 +36,7 @@ export function toThreeMatrix4(m: mat4, modelTransformation?: SectorModelTransfo
   return new THREE.Matrix4().fromArray(result);
 }
 
-export function fromThreeVector3(out: vec3, m: THREE.Vector3, modelTransformation?: SectorModelTransformation): vec3 {
+export function fromThreeVector3(out: vec3, m: THREE.Vector3, modelTransformation?: ModelTransformation): vec3 {
   const original = vec3.set(out, m.x, m.y, m.z);
   if (!modelTransformation) {
     return original;
@@ -49,7 +45,7 @@ export function fromThreeVector3(out: vec3, m: THREE.Vector3, modelTransformatio
   return vec3.transformMat4(out, original, modelTransformation.inverseModelMatrix);
 }
 
-export function fromThreeMatrix(out: mat4, m: THREE.Matrix4, modelTransformation?: SectorModelTransformation): mat4 {
+export function fromThreeMatrix(out: mat4, m: THREE.Matrix4, modelTransformation?: ModelTransformation): mat4 {
   out[0] = m.elements[0];
   out[1] = m.elements[1];
   out[2] = m.elements[2];
@@ -77,7 +73,7 @@ const toThreeJsBox3Vars = {
   outMax: new THREE.Vector3()
 };
 
-export function toThreeJsBox3(out: THREE.Box3, box: Box3, modelTransformation?: SectorModelTransformation): THREE.Box3 {
+export function toThreeJsBox3(out: THREE.Box3, box: Box3, modelTransformation?: ModelTransformation): THREE.Box3 {
   const { outMin, outMax } = toThreeJsBox3Vars;
   out.set(toThreeVector3(outMin, box.min, modelTransformation), toThreeVector3(outMax, box.max, modelTransformation));
   return out;
