@@ -24,8 +24,9 @@
     "clean": "rimraf -rf dist/ ../target pkg/",
     "test": "jest",
     "coverage": "jest --coverage",
-    "lint": "eslint . --ext .ts,.js --max-warnings 0",
-    "lint:fix": "yarn run lint --fix",
+    "lint": "eslint . --ext .ts,.js --max-warnings 0 && yarn run tsc",
+    "lint:fix": "eslint . --ext .ts,.js --max-warnings 0 --fix",
+    "tsc": "tsc --noEmit --incremental false --skipLibCheck true",
     "prepublishscript": "yarn run coverage && yarn run clean && yarn run release"
   },
   "author": "Lars Moastuen <lars.moastuen@cognite.com>",
@@ -45,6 +46,7 @@
     "@cognite/sdk": "^2.32.0",
     "@types/gl-matrix": "^2.4.5",
     "@types/jest": "^26.0.3",
+    "@types/mixpanel-browser": "^2.35.3",
     "@types/node": "^14.0.14",
     "@types/tween.js": "^18.5.1",
     "@typescript-eslint/eslint-plugin": "^3.4.0",
@@ -60,7 +62,7 @@
     "glslify-loader": "^2.0.0",
     "html-webpack-plugin": "4.3.0",
     "husky": "^4.2.5",
-    "jest": "^25.5.4",
+    "jest": "^26.1.0",
     "jest-canvas-mock": "^2.2.0",
     "jest-extended": "^0.11.5",
     "lint-staged": "^10.2.11",
@@ -70,7 +72,7 @@
     "rimraf": "^3.0.2",
     "run-script-os": "^1.1.1",
     "three": "^0.115.0",
-    "ts-jest": "^25.5.1",
+    "ts-jest": "^26.1.1",
     "ts-loader": "7.0.5",
     "typescript": "3.9.5",
     "webpack": "^4.43.0",
@@ -91,6 +93,7 @@
     "glslify": "^7.0.0",
     "glslify-import": "^3.1.0",
     "lodash": "^4.17.15",
+    "mixpanel-browser": "^2.38.0",
     "rxjs": "^6.5.5"
   },
   "peerDependencies": {
@@ -99,7 +102,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged -q"
+      "pre-commit": "lint-staged -q && yarn run tsc"
     }
   },
   "lint-staged": {

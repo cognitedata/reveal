@@ -15,6 +15,7 @@ import { SectorQuads } from '../rendering/types';
 import { disposeAttributeArrayOnUpload } from '@/utilities/disposeAttributeArrayOnUpload';
 import { toThreeJsBox3 } from '@/utilities';
 import { traverseDepthFirst } from '@/utilities/objectTraversal';
+import { trackError } from '@/utilities/metrics';
 
 const emptyGeometry = new THREE.Geometry();
 
@@ -139,7 +140,10 @@ export function filterCurrentWantedSectors(
             return of(loaded);
           }
         } catch (error) {
-          console.error(error);
+          trackError(error, {
+            moduleName: 'sectorUtilities',
+            methodName: 'filterCurrentWantedSectors'
+          });
         }
       }
       return empty();

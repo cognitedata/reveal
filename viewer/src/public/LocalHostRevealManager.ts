@@ -24,6 +24,7 @@ import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloud
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
+import { trackError } from '@/utilities/metrics';
 
 type LocalModelIdentifier = { fileName: string };
 type LoadingStateChangeListener = (isLoading: boolean) => any;
@@ -79,7 +80,12 @@ export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifi
           }),
           distinctUntilChanged()
         )
-        .subscribe(this.notifyLoadingStateListeners.bind(this), console.error)
+        .subscribe(this.notifyLoadingStateListeners.bind(this), error =>
+          trackError(error, {
+            moduleName: 'LocalHostRevealManager',
+            methodName: 'constructor'
+          })
+        )
     );
   }
 
