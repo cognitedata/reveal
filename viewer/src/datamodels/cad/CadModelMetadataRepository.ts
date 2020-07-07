@@ -7,18 +7,18 @@ import { CadMetadataParser } from './parsers/CadMetadataParser';
 import { SectorScene } from './sector/types';
 
 import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
-import { DataRepository, TransformationProvider } from '@/datamodels/base';
-import { ModelUrlProvider } from '@/utilities/networking/types';
+import { DataRepository } from '@/datamodels/base';
+import { ModelUrlProvider, ModelTransformationProvider } from '@/utilities/networking/types';
 
 type ModelMetadataProvider<TModelIdentifier> = ModelUrlProvider<TModelIdentifier> & CadSceneProvider;
 export class CadModelMetadataRepository<TModelIdentifier>
   implements DataRepository<TModelIdentifier, Promise<CadModelMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider<TModelIdentifier>;
-  private readonly _cadTransformationProvider: TransformationProvider;
+  private readonly _cadTransformationProvider: ModelTransformationProvider;
   private readonly _cadSceneParser: CadMetadataParser;
   constructor(
     modelMetadataProvider: ModelMetadataProvider<TModelIdentifier>,
-    cadTransformationProvider: TransformationProvider,
+    cadTransformationProvider: ModelTransformationProvider,
     cadMetadataParser: CadMetadataParser
   ) {
     this._modelMetadataProvider = modelMetadataProvider;

@@ -3,10 +3,10 @@
  */
 
 import { fromCdfToThreeJsCoordinates, fromThreeJsToCdfCoordinates } from '@/utilities/constructMatrixFromRotation';
-import { TransformationProvider } from '@/datamodels/base';
 import { ModelTransformation } from '@/utilities';
+import { ModelTransformationProvider } from '@/utilities/networking/types';
 
-export class DefaultCadTransformation implements TransformationProvider {
+export class DefaultCadTransformation implements ModelTransformationProvider {
   getModelTransformation(): ModelTransformation {
     return {
       modelMatrix: fromCdfToThreeJsCoordinates,

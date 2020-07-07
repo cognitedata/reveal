@@ -4,18 +4,18 @@
 
 import { EptSceneProvider } from './EptSceneProvider';
 
-import { ModelUrlProvider } from '@/utilities/networking/types';
+import { ModelUrlProvider, ModelTransformationProvider } from '@/utilities/networking/types';
 import { PointCloudMetadata } from '@/datamodels/pointcloud/PointCloudMetadata';
-import { DataRepository, TransformationProvider } from '@/datamodels/base';
+import { DataRepository } from '@/datamodels/base';
 
 type ModelMetadataProvider<TModelIdentifier> = ModelUrlProvider<TModelIdentifier> & EptSceneProvider;
 export class PointCloudMetadataRepository<TModelIdentifier>
   implements DataRepository<TModelIdentifier, Promise<PointCloudMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider<TModelIdentifier>;
-  private readonly _cadTransformationProvider: TransformationProvider;
+  private readonly _cadTransformationProvider: ModelTransformationProvider;
   constructor(
     modelMetadataProvider: ModelMetadataProvider<TModelIdentifier>,
-    cadTransformationProvider: TransformationProvider
+    cadTransformationProvider: ModelTransformationProvider
   ) {
     this._modelMetadataProvider = modelMetadataProvider;
     this._cadTransformationProvider = cadTransformationProvider;

@@ -3,4 +3,3 @@
  */
 
 export { DataRepository } from './DataRepository';
-export { TransformationProvider } from './TransformationProvider';

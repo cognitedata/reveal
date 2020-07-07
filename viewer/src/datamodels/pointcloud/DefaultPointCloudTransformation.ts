@@ -4,12 +4,12 @@
 
 import { mat4 } from 'gl-matrix';
 
-import { TransformationProvider } from '@/datamodels/base';
 import { ModelTransformation } from '@/utilities';
+import { ModelTransformationProvider } from '@/utilities/networking/types';
 
 const identity = mat4.identity(mat4.create());
 
-export class DefaultPointCloudTransformation implements TransformationProvider {
+export class DefaultPointCloudTransformation implements ModelTransformationProvider {
   getModelTransformation(): ModelTransformation {
     return {
       modelMatrix: identity,
