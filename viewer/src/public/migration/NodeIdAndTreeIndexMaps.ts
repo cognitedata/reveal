@@ -5,8 +5,6 @@
 import { Subject, Observable } from 'rxjs';
 import { bufferTime, flatMap, filter, mergeAll, map, share, tap, first } from 'rxjs/operators';
 import { CogniteClient, InternalId, Node3D } from '@cognite/sdk';
-import { SectorGeometry } from '@/datamodels/cad/sector/types';
-import { SectorQuads } from '@/datamodels/cad/rendering/types';
 
 type NodeIdRequest = InternalId;
 
@@ -15,6 +13,7 @@ export class NodeIdAndTreeIndexMaps {
   readonly treeIndexToNodeIdMap: Map<number, number>;
   readonly nodeIdRequestObservable: Subject<NodeIdRequest>;
   readonly nodeIdResponse: Observable<Node3D>;
+
   constructor(modelId: number, revisionId: number, client: CogniteClient) {
     this.nodeIdToTreeIndexMap = new Map();
     this.treeIndexToNodeIdMap = new Map();
@@ -58,25 +57,7 @@ export class NodeIdAndTreeIndexMaps {
     return this.treeIndexToNodeIdMap.get(treeIndex);
   }
 
-  updateMaps(sector: { lod: string; data: SectorGeometry | SectorQuads }) {
-    switch (sector.lod) {
-      case 'simple': {
-        const simpleData = sector.data as SectorQuads;
-        this.updateMapsFromMap(simpleData.nodeIdToTreeIndexMap);
-        break;
-      }
-      case 'detailed': {
-        const detailedData = sector.data as SectorGeometry;
-        this.updateMapsFromMap(detailedData.nodeIdToTreeIndexMap);
-        break;
-      }
-      default: {
-        break;
-      }
-    }
-  }
-
-  private updateMapsFromMap(nodeIdToTreeIndexMap: Map<number, number>) {
+  updateMaps(nodeIdToTreeIndexMap: Map<number, number>) {
     for (const [nodeId, treeIndex] of nodeIdToTreeIndexMap) {
       this.nodeIdToTreeIndexMap.set(nodeId, treeIndex);
       this.treeIndexToNodeIdMap.set(treeIndex, nodeId);
