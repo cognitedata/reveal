@@ -2,9 +2,6 @@
  * Copyright 2020 Cognite AS
  */
 
-declare let VERSION: string;
-declare let MIXPANEL_TOKEN: string;
-
 import mixpanel from 'mixpanel-browser';
 
 type TrackedEvents = 'init' | 'addModel' | 'error';
@@ -23,9 +20,11 @@ type EventProps = {
   methodName: string;
 };
 
+const { VERSION, MIXPANEL_TOKEN } = process.env;
+
 let globalLogMetrics = true;
 const globalProps = {
-  VERSION: VERSION,
+  VERSION,
   project: 'unknown'
 };
 
@@ -37,7 +36,6 @@ export function initMetrics(logMetrics: boolean, project: string, eventProps: Ev
     return;
   }
   mixpanel.init(MIXPANEL_TOKEN, { persistence: 'localStorage' });
-  globalProps.VERSION = VERSION;
   if (project) {
     globalProps.project = project;
   }
