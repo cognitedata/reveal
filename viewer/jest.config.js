@@ -1,6 +1,10 @@
 /*!
  * Copyright 2020 Cognite AS
  */
+
+process.env.VERSION = 'test';
+process.env.MIXPANEL_TOKEN = 'test';
+
 module.exports = {
   roots: ['<rootDir>/src'],
   transform: {
@@ -18,9 +22,5 @@ module.exports = {
   collectCoverageFrom: ['!src/__tests__/**/*.ts', '!**/*.d.ts', '!**/*.json'],
   automock: false,
   setupFiles: ['./src/__tests__/setupJest.ts', 'jest-canvas-mock'],
-  setupFilesAfterEnv: ['jest-extended'],
-  globals: {
-    VERSION: 'test',
-    MIXPANEL_TOKEN: 'test'
-  }
+  setupFilesAfterEnv: ['jest-extended']
 };
