@@ -2,10 +2,11 @@
  * Copyright 2020 Cognite AS
  */
 
+import * as THREE from 'three';
+
 import { CadNode } from './CadNode';
 import { pickPixelColor, PickingInput } from '@/utilities/pickPixelColor';
 import { RenderMode } from './rendering/RenderMode';
-import * as THREE from 'three';
 
 export interface TreeIndexPickingInput extends PickingInput {
   cadNode: CadNode;

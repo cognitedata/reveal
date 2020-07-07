@@ -1,8 +1,11 @@
 /*!
  * Copyright 2020 Cognite AS
  */
+import { Subscription, combineLatest } from 'rxjs';
+import { distinctUntilChanged, map } from 'rxjs/operators';
 
 import { RevealManagerBase } from './RevealManagerBase';
+import { RevealOptions } from './types';
 
 import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
 import { MaterialManager } from '@/datamodels/cad/MaterialManager';
@@ -21,9 +24,6 @@ import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloud
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
-import { RevealOptions } from './types';
-import { Subscription, combineLatest } from 'rxjs';
-import { distinctUntilChanged, map } from 'rxjs/operators';
 import { trackError } from '@/utilities/metrics';
 
 type LocalModelIdentifier = { fileName: string };

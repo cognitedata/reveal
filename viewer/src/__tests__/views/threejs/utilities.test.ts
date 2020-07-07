@@ -3,10 +3,8 @@
  */
 
 import * as THREE from 'three';
-import { toThreeJsBox3, toThreeVector3 } from '@/utilities';
-import { Box3 } from '@/utilities/Box3';
 import { vec3, mat4 } from 'gl-matrix';
-import { SectorModelTransformation } from '@/datamodels/cad/sector/types';
+import { toThreeJsBox3, toThreeVector3, Box3, ModelTransformation } from '@/utilities';
 
 describe('toThreeVector3', () => {
   test('modifies provided out parameter', () => {
@@ -17,7 +15,7 @@ describe('toThreeVector3', () => {
   });
 
   test('applies model transformation matrix', () => {
-    const transform: SectorModelTransformation = {
+    const transform: ModelTransformation = {
       inverseModelMatrix: mat4.identity(mat4.create()),
       modelMatrix: mat4.fromScaling(mat4.create(), [2.0, 3.0, 4.0])
     };
@@ -45,7 +43,7 @@ describe('toThreeJsBox3', () => {
     // Arrange
     const out = new THREE.Box3();
     const inputBox = new Box3([vec3.fromValues(-1.0, -1.0, -1.0), vec3.fromValues(1.0, 1.0, 1.0)]);
-    const transform: SectorModelTransformation = {
+    const transform: ModelTransformation = {
       inverseModelMatrix: mat4.identity(mat4.create()),
       modelMatrix: mat4.fromScaling(mat4.create(), [2.0, 3.0, 4.0])
     };

@@ -225,7 +225,7 @@ function createWalkablePathMeshes(
 
 function convertToVector3Array(
   pointData: TransitPathResponse,
-  modelTransformation: reveal.SectorModelTransformation
+  modelTransformation: reveal.utilities.ModelTransformation
 ): THREE.Vector3[][] {
   const paths: THREE.Vector3[][] = [];
   const vector: vec3 = vec3.create();
