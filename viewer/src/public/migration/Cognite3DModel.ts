@@ -4,6 +4,7 @@
 
 import * as THREE from 'three';
 import { CogniteClient } from '@cognite/sdk';
+import { vec3 } from 'gl-matrix';
 
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { Color, SupportedModelTypes } from './types';
@@ -13,9 +14,7 @@ import { toThreeJsBox3, toThreeMatrix4, toThreeVector3, fromThreeVector3 } from 
 import { CadRenderHints, CadNode } from '@/experimental';
 import { CadLoadingHints } from '@/datamodels/cad/CadLoadingHints';
 import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
-import { vec3 } from 'gl-matrix';
 import { NodeAppearanceProvider, DefaultNodeAppearance } from '@/datamodels/cad/NodeAppearance';
-import { Matrix4 } from 'three';
 import { trackError } from '@/utilities/metrics';
 
 const mapCoordinatesBuffers = {
@@ -138,7 +137,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return this.getBoundingBox(undefined, outBbox);
   }
 
-  updateTransformation(matrix: Matrix4): void {
+  updateTransformation(matrix: THREE.Matrix4): void {
     this.cadNode.applyMatrix4(matrix);
     this.cadNode.updateMatrixWorld(false);
   }

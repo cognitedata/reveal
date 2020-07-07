@@ -1,13 +1,12 @@
 /*!
  * Copyright 2020 Cognite AS
  */
-
 import { RevealManagerBase } from './RevealManagerBase';
+import { RevealOptions } from './types';
 
 import { PotreeGroupWrapper, PotreeNodeWrapper } from '@/internal';
-import { LocalModelDataClient as LocalHostClient } from '@/utilities/networking/LocalModelDataClient';
+import { LocalModelDataClient } from '@/utilities/networking/LocalModelDataClient';
 import { CadNode, NodeAppearanceProvider } from '@/datamodels/cad';
-import { RevealOptions } from './types';
 import { initMetrics } from '@/utilities/metrics';
 import omit from 'lodash/omit';
 
@@ -20,7 +19,7 @@ export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifi
       methodName: 'constructor',
       constructorOptions: omit(options, ['internal'])
     });
-    const localClient: LocalHostClient = new LocalHostClient();
+    const localClient: LocalModelDataClient = new LocalModelDataClient();
     super(localClient, options);
   }
 

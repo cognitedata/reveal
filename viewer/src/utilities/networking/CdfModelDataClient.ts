@@ -1,17 +1,11 @@
 /*!
  * Copyright 2020 Cognite AS
  */
-// @ts-ignore
-import * as Potree from '@cognite/potree-core';
 import { CogniteClient, ItemsResponse } from '@cognite/sdk';
 
-import { BlobOutputMetadata, ModelUrlProvider } from './types';
+import { BlobOutputMetadata, ModelDataClient } from './types';
 import { Model3DOutputList } from './Model3DOutputList';
 import { File3dFormat } from '../types';
-import { HttpHeadersProvider } from './HttpHeadersProvider';
-import { CadSceneProvider } from '@/datamodels/cad/CadSceneProvider';
-import { CadSectorProvider } from '@/datamodels/cad/sector/CadSectorProvider';
-import { EptSceneProvider } from '@/datamodels/pointcloud/EptSceneProvider';
 
 // TODO 2020-06-25 larsmoa: Extend CogniteClient.files3d.retrieve() to support subpath instead of
 // using URLs directly. Also add support for listing outputs in the SDK.
@@ -19,12 +13,7 @@ import { EptSceneProvider } from '@/datamodels/pointcloud/EptSceneProvider';
  * Provides 3D V2 specific extensions for the standard CogniteClient used by Reveal.
  */
 export class CdfModelDataClient
-  implements
-    ModelUrlProvider<{ modelId: number; revisionId: number; format: File3dFormat }>,
-    HttpHeadersProvider,
-    CadSceneProvider,
-    CadSectorProvider,
-    EptSceneProvider {
+  implements ModelDataClient<{ modelId: number; revisionId: number; format: File3dFormat }> {
   private readonly client: CogniteClient;
 
   constructor(client: CogniteClient) {
