@@ -11,10 +11,10 @@ import {
 import { CogniteClient } from '@cognite/sdk';
 import * as reveal from '@cognite/reveal/experimental';
 import React, { useEffect, useRef, useState } from 'react';
-import { WebGLRenderer } from 'three';
 import { CanvasWrapper, Loader } from '../components/styled';
-import { resizeRendererToDisplaySize } from '../utils/sceneHelpers';
+import { BoundingBoxClipper } from '@cognite/reveal';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
+import { resizeRendererToDisplaySize } from '../utils/sceneHelpers';
 
 CameraControls.install({ THREE });
 
@@ -68,9 +68,53 @@ export function Testable() {
       });
       renderer.setClearColor('#444');
       renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.localClippingEnabled = true;
 
-      const { position, target, near, far } = model.suggestCameraConfig();
-      const camera = new THREE.PerspectiveCamera(75, 2, near, far);
+      let { position, target, near, far } = model.suggestCameraConfig();
+      let camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(75, 2, near, far);;
+
+      // Test presets
+      const url = new URL(window.location.href);
+      const searchParams = url.searchParams;
+      const test = searchParams.get('test');
+
+      if (test === "default_camera") {
+        camera = new THREE.PerspectiveCamera();
+      } else if (test === "suggested_camera") {
+        // Nothing - the suggested camera is default
+      } else if (test === "clipping") {
+        camera = new THREE.PerspectiveCamera();
+        const params = {
+          clipIntersection: true,
+          width: 10,
+          height: 10,
+          depth: 10,
+          x: 0,
+          y: 0,
+          z: 0,
+          showHelpers: false,
+        };
+
+        const boxClipper = new BoundingBoxClipper(
+          new THREE.Box3(
+            new THREE.Vector3(
+              params.x - params.width / 2,
+              params.y - params.height / 2,
+              params.z - params.depth / 1.5
+            ),
+            new THREE.Vector3(
+              params.x + params.width / 1.5,
+              params.y + params.height / 2,
+              params.z + params.depth / 2
+            )
+          ),
+          params.clipIntersection
+        );
+
+        revealManager.clippingPlanes = boxClipper.clippingPlanes;
+        revealManager.clipIntersection = boxClipper.intersection;
+      }
+
       const controls = new CameraControls(camera, renderer.domElement);
       controls.setLookAt(
         position.x,
