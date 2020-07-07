@@ -7,7 +7,7 @@ import { RenderMode } from './RenderMode';
 import { RevealManagerBase } from '@/public/RevealManagerBase';
 
 export function addPostRenderEffects(
-  materialManager: RevealManagerBase<unknown>,
+  renderManager: RevealManagerBase<unknown>,
   renderer: THREE.WebGLRenderer,
   camera: THREE.PerspectiveCamera,
   scene: THREE.Scene
@@ -18,11 +18,11 @@ export function addPostRenderEffects(
     throw new Error('The renderer must have the parameter: preserveDrawingBuffer set to true');
   }
 
-  const currentRenderMode = materialManager.renderMode;
-  materialManager.renderMode = RenderMode.Effects;
+  const currentRenderMode = renderManager.renderMode;
+  renderManager.renderMode = RenderMode.Effects;
   renderer.clearDepth();
   renderer.autoClearColor = false;
   renderer.render(scene, camera);
   renderer.autoClearColor = true;
-  materialManager.renderMode = currentRenderMode;
+  renderManager.renderMode = currentRenderMode;
 }
