@@ -9,10 +9,9 @@ import { createSectorMetadata, SectorTree } from '../../testutils/createSectorMe
 import { Box3 } from '@/utilities/Box3';
 import { GpuOrderSectorsByVisibilityCoverage, traverseDepthFirst } from '@/internal';
 import { SectorSceneImpl } from '@/datamodels/cad/sector/SectorScene';
-import { SectorMetadata, SectorModelTransformation } from '@/experimental';
-import { fromThreeMatrix } from '@/utilities';
+import { fromThreeMatrix, ModelTransformation } from '@/utilities';
 import { CadModelMetadata } from '@/datamodels/cad/';
-import { SectorScene } from '@/datamodels/cad/sector/types';
+import { SectorScene, SectorMetadata } from '@/datamodels/cad/sector/types';
 
 describe('OrderSectorsByVisibilityCoverage', () => {
   const glContext: WebGLRenderingContext = require('gl')(64, 64);
@@ -134,7 +133,7 @@ function createStubScene(tree: SectorTree): SectorScene {
   return new SectorSceneImpl(8, 1, root, sectorsMap);
 }
 
-function createModelTransformation(modelTransform?: THREE.Matrix4): SectorModelTransformation {
+function createModelTransformation(modelTransform?: THREE.Matrix4): ModelTransformation {
   modelTransform = modelTransform || new THREE.Matrix4().identity();
   return {
     modelMatrix: fromThreeMatrix(mat4.create(), modelTransform),
@@ -142,7 +141,7 @@ function createModelTransformation(modelTransform?: THREE.Matrix4): SectorModelT
   };
 }
 
-function createStubModel(blobUrl: string, scene: SectorScene, modelTransformation: SectorModelTransformation) {
+function createStubModel(blobUrl: string, scene: SectorScene, modelTransformation: ModelTransformation) {
   const cadModel: CadModelMetadata = {
     blobUrl,
     modelTransformation,
