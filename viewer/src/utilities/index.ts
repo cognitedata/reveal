@@ -19,3 +19,4 @@ export {
 } from './threeConverters';
 export { BoundingBoxClipper } from './BoundingBoxClipper';
 export { isMobileOrTablet } from './isMobileOrTablet';
+export { emissionLastMillis } from './rxOperations';
