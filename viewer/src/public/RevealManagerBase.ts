@@ -30,7 +30,7 @@ import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/Default
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { SectorCuller } from '@/datamodels/cad/sector/culling/SectorCuller';
 import { distinctUntilChanged, map, share, filter } from 'rxjs/operators';
-import { trackError, trackAddModel } from '@/utilities/metrics';
+import { trackError, trackLoadModel } from '@/utilities/metrics';
 import { NodeAppearanceProvider, CadNode } from '@/datamodels/cad';
 import { PotreeGroupWrapper } from '@/datamodels/pointcloud/PotreeGroupWrapper';
 import { PotreeNodeWrapper } from '@/datamodels/pointcloud/PotreeNodeWrapper';
@@ -192,10 +192,10 @@ export class RevealManagerBase<TModelIdentifier> implements RenderManager {
     modelIdentifier: TModelIdentifier,
     nodeApperanceProvider?: NodeAppearanceProvider
   ): Promise<[PotreeGroupWrapper, PotreeNodeWrapper] | CadNode> {
-    trackAddModel(
+    trackLoadModel(
       {
-        moduleName: 'RevealManager',
-        methodName: 'addModel',
+        moduleName: 'RevealManagerBase',
+        methodName: 'loadModel',
         options: { nodeApperanceProvider }
       },
       modelIdentifier

@@ -26,7 +26,7 @@ import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { BoundingBoxClipper, File3dFormat, isMobileOrTablet } from '@/utilities';
 import { Spinner } from '@/utilities/Spinner';
 import { addPostRenderEffects } from '@/datamodels/cad/rendering/postRenderEffects';
-import { trackError, initMetrics, trackAddModel } from '@/utilities/metrics';
+import { trackError, initMetrics, trackLoadModel } from '@/utilities/metrics';
 import { CdfModelManager } from './CdfModelManager';
 
 type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
@@ -238,7 +238,7 @@ export class Cognite3DViewer {
   }
 
   async addModel(options: AddModelOptions): Promise<Cognite3DModel> {
-    trackAddModel(
+    trackLoadModel(
       {
         options: omit(options, ['modelId', 'revisionId']),
         type: SupportedModelTypes.CAD,
@@ -267,7 +267,7 @@ export class Cognite3DViewer {
   }
 
   async addPointCloudModel(options: AddModelOptions): Promise<CognitePointCloudModel> {
-    trackAddModel(
+    trackLoadModel(
       {
         options: omit(options, ['modelId', 'revisionId']),
         type: SupportedModelTypes.PointCloud,
