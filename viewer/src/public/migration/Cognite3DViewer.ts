@@ -211,6 +211,10 @@ export class Cognite3DViewer {
     this.animate(0);
   }
 
+  getVersion(): string {
+    return process.env.VERSION;
+  }
+
   dispose(): void {
     if (this.isDisposed) {
       return;
