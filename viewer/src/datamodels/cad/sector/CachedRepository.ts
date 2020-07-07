@@ -42,7 +42,6 @@ import { trackError } from '@/utilities/metrics';
 import { DetailedSector } from '@/datamodels/cad/sector/detailedSector_generated';
 import { flatbuffers } from 'flatbuffers';
 
-type CtmFileResult = { fileName: string; data: ArrayBuffer };
 type ParsedData = { blobUrl: string; lod: string; data: SectorGeometry | SectorQuads };
 
 // TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
@@ -53,9 +52,7 @@ export class CachedRepository implements Repository {
   > = new MemoryRequestCache({
     maxElementsInCache: 50
   });
-  private readonly _ctmFileCache: MemoryRequestCache<string, Observable<CtmFileResult>> = new MemoryRequestCache({
-    maxElementsInCache: 300
-  });
+
   private readonly _modelSectorProvider: CadSectorProvider;
   private readonly _modelDataParser: CadSectorParser;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
@@ -85,7 +82,6 @@ export class CachedRepository implements Repository {
 
   clearCaches() {
     this._consumedSectorCache.clear();
-    this._ctmFileCache.clear();
   }
 
   getParsedData(): Observable<ParsedData> {
@@ -248,9 +244,9 @@ export class CachedRepository implements Repository {
       const meshFile = sectorG.instanceMeshes(i)!;
       for (let j = 0; j < meshFile.instancesLength(); j++) {
         const int = meshFile.instances(j)!;
-        const colors = int.colorsArray()!;
-        const instanceMatrices = int.instanceMatricesArray()!;
-        const treeIndices = int.treeIndicesArray()!;
+        const colors = new Uint8Array(int.colorsArray()!);
+        const instanceMatrices = new Float32Array(int.instanceMatricesArray()!);
+        const treeIndices = new Float32Array(int.treeIndicesArray()!);
         instances.push({
           triangleCount: int.triangleCount(),
           triangleOffset: int.triangleOffset(),
@@ -259,31 +255,31 @@ export class CachedRepository implements Repository {
           treeIndices
         });
       }
-      const indices = meshFile.indicesArray()!;
-      const vertices = meshFile.verticesArray()!;
+      const indices = new Uint32Array(meshFile.indicesArray()!);
+      const vertices = new Float32Array(meshFile.verticesArray()!);
       const norm = meshFile.normalsArray();
       iMeshes.push({
         fileId: meshFile.fileId(),
         indices,
         vertices,
-        normals: norm ? norm : undefined,
+        normals: norm ? new Float32Array(norm) : undefined,
         instances
       });
     }
     const tMeshes: TriangleMesh[] = [];
     for (let i = 0; i < sectorG.triangleMeshesLength(); i++) {
       const tri = sectorG.triangleMeshes(i)!;
-      const indices = tri.indicesArray()!;
-      const treeIndices = tri.treeIndicesArray()!;
-      const vertices = tri.verticesArray()!;
-      const colors = tri.colorsArray()!;
+      const indices = new Uint32Array(tri.indicesArray()!);
+      const treeIndices = new Float32Array(tri.treeIndicesArray()!);
+      const vertices = new Float32Array(tri.verticesArray()!);
+      const colors = new Uint8Array(tri.colorsArray()!);
       const norm = tri.normalsArray();
       tMeshes.push({
         fileId: tri.fileId(),
         indices,
         treeIndices,
         vertices,
-        normals: norm ? norm : undefined,
+        normals: norm ? new Float32Array(norm) : undefined,
         colors
       });
     }

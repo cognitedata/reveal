@@ -45,6 +45,7 @@ export class RevealParserWorker {
       primitives,
       buffer: sectorData.data
     };
+    sector.free();
     sectorData.free();
     return Comlink.transfer(result, [
       result.primitives.boxCollection.buffer,
