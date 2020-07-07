@@ -3,8 +3,8 @@
  */
 
 import { vec3 } from 'gl-matrix';
-import { Box3 } from '@/utilities/Box3';
-import { SectorMetadata } from '@/datamodels/cad/sector/types';
+import { SectorMetadata } from './sector/types';
+import { Box3 } from '@/utilities';
 import { traverseDepthFirst } from '@/utilities/objectTraversal';
 
 export interface SuggestedCameraConfig {

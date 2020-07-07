@@ -3,9 +3,9 @@
  */
 
 import { SectorNode } from './SectorNode';
-import { toThreeMatrix4 } from '@/utilities';
-import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
+import { CadModelMetadata } from '../CadModelMetadata';
 import { SectorMetadata } from './types';
+import { toThreeMatrix4 } from '@/utilities';
 
 export class RootSectorNode extends SectorNode {
   public readonly sectorNodeMap: Map<number, SectorNode>;

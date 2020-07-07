@@ -5,17 +5,8 @@
 import { HttpError } from '@cognite/sdk';
 import { HttpHeadersProvider } from './HttpHeadersProvider';
 import { ModelUrlProvider } from './types';
-import { CadSceneProvider } from '@/datamodels/cad/CadSceneProvider';
-import { CadSectorProvider } from '@/datamodels/cad/sector/CadSectorProvider';
-import { EptSceneProvider } from '@/datamodels/pointcloud/EptSceneProvider';
 
-export class LocalUrlClient
-  implements
-    ModelUrlProvider<{ fileName: string }>,
-    CadSceneProvider,
-    CadSectorProvider,
-    HttpHeadersProvider,
-    EptSceneProvider {
+export class LocalUrlClient implements ModelUrlProvider<{ fileName: string }>, HttpHeadersProvider {
   getModelUrl(params: { fileName: string }): Promise<string> {
     return Promise.resolve(`${location.origin}/${params.fileName}`);
   }
