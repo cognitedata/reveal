@@ -5,9 +5,7 @@
 import { of, pipe, OperatorFunction } from 'rxjs';
 import { delay, startWith, switchMap, distinctUntilChanged, tap } from 'rxjs/operators';
 
-type AnyObject = Record<string, unknown>;
-
-export const debug = <T extends AnyObject>(tag: string = 'none'): OperatorFunction<T, T> => {
+export const debug = <T>(tag: string = 'none'): OperatorFunction<T, T> => {
   return tap(
     // eslint-disable-next-line no-console
     (obj: T) => console.log(`next ${tag}`, obj),
