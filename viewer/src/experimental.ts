@@ -6,7 +6,6 @@
 
 export { RevealManager } from './public/RevealManager';
 export { createLocalRevealManager, createCdfRevealManager } from './public/createRevealManager';
-export { RenderManager } from './public/RenderManager';
 // TODO 2020-05-15 larsmoa: reveal.CadNode is _internal_ and should not be exported
 export { CadNode } from './datamodels/cad';
 export { NodeAppearance, NodeAppearanceProvider, DefaultNodeAppearance } from './datamodels/cad';

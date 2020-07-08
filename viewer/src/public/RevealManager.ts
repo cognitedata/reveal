@@ -4,7 +4,6 @@
 
 import * as THREE from 'three';
 
-import { RenderManager } from './RenderManager';
 import { CadManager } from '@/datamodels/cad/CadManager';
 import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import {
@@ -20,7 +19,7 @@ import { PotreeGroupWrapper } from '@/datamodels/pointcloud/PotreeGroupWrapper';
 import { PotreeNodeWrapper } from '@/datamodels/pointcloud/PotreeNodeWrapper';
 import { RenderMode } from '@/datamodels/cad/rendering/RenderMode';
 
-export class RevealManager<TModelIdentifier> implements RenderManager {
+export class RevealManager<TModelIdentifier> {
   private readonly _cadManager: CadManager<TModelIdentifier>;
   private readonly _pointCloudManager: PointCloudManager<TModelIdentifier>;
 
