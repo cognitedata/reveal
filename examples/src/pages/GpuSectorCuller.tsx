@@ -12,6 +12,7 @@ import {
   getParamsFromURL,
   createRenderManager,
 } from '../utils/example-helpers';
+import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 CameraControls.install({ THREE });
 
@@ -19,6 +20,7 @@ export function GpuSectorCuller() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
     async function main() {
       const { project, modelUrl, modelRevision } = getParamsFromURL({
         project: 'publicdata',
@@ -87,7 +89,6 @@ export function GpuSectorCuller() {
       controls.update(0.0);
       camera.updateMatrixWorld();
       revealManager.update(camera);
-      const clock = new THREE.Clock();
 
       // revealManager.renderHints = { showSectorBoundingBoxes: false }; Not yet supported.
       // Debug overlay for "determineSectors"
@@ -131,9 +132,8 @@ export function GpuSectorCuller() {
       // });
 
       revealManager.update(camera);
-      const render = async () => {
-        const delta = clock.getDelta();
-        const controlsNeedUpdate = controls.update(delta);
+      animationLoopHandler.setOnAnimationFrameListener(async (deltaTime) => {
+        const controlsNeedUpdate = controls.update(deltaTime);
         if (controlsNeedUpdate) {
           revealManager.update(camera);
         }
@@ -142,10 +142,8 @@ export function GpuSectorCuller() {
           renderer.render(scene, camera);
           revealManager.resetRedraw();
         }
-
-        requestAnimationFrame(render);
-      };
-      render();
+      });
+      animationLoopHandler.start();
 
       (window as any).scene = scene;
       (window as any).THREE = THREE;
