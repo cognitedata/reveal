@@ -1,13 +1,14 @@
 import { Dispatch } from 'redux'
 import { Changes } from '@/Core/Views/Changes'
 import { CheckBoxState } from '@/Core/Enums/CheckBoxState'
+import { setFullScreeen } from "@/UserInterface/redux/actions/common";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
 export const CHANGE_CHECKBOX_STATE: string = "CHANGE_CHECKBOX_STATE";
 
 const mapToCheckboxStateStr = (cbState: CheckBoxState) => {
-    switch(cbState) {
+    switch (cbState) {
         case CheckBoxState.All: return 'checked';
         case CheckBoxState.None: return 'unchecked';
         case CheckBoxState.Disabled: return 'disabled';
@@ -34,6 +35,10 @@ class NotificationsToActionsAdaptor {
         } else {
             //TODO: handle other conversions
         }
+    }
+
+    setFullScreeen(isFullScreen: boolean) {
+        this.dispatcher(setFullScreeen(isFullScreen));
     }
 }
 

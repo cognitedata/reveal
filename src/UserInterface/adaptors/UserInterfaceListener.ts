@@ -1,8 +1,8 @@
-
 import { IUserInterface } from "@/Core/Interfaces/IUserInterface";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import NotificationsToActionsAdaptor from "@/UserInterface/adaptors/NotificationToAction";
-import {NodeEventArgs} from "@/Core/Views/NodeEventArgs";
+import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
+
 
 /**
  * Gets callbacks from Core components when various events happen
@@ -18,6 +18,10 @@ class UserInterfaceListener implements IUserInterface {
 
   updateNode(node: BaseNode, args: NodeEventArgs): void {
     this.notificationAdaptor.processEvent(node, args);
+  }
+
+  setFullScreen(isFullScreen: boolean): void {
+    this.notificationAdaptor.setFullScreeen(isFullScreen);
   }
 }
 

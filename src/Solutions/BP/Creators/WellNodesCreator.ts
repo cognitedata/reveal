@@ -3,8 +3,9 @@ import BPData from "@/Solutions/BP/BPData";
 import WellNodeCreator from "@/Solutions/BP/Creators/WellNodeCreator";
 import WellTrajectoryNodeCreator from "@/Solutions/BP/Creators/WellTrajectoryNodeCreator";
 import WellLogCreator from "@/Solutions/BP/Creators/WellLogCreator";
+import WellCasingCreator from "@/Solutions/BP/Creators/WellCasingCreator";
 import { Util } from "@/Core/Primitives/Util";
-import { Units } from '@/Core/Primitives/Units';
+import { Units } from "@/Core/Primitives/Units";
 
 export default class WellNodesCreator
 {
@@ -13,13 +14,15 @@ export default class WellNodesCreator
         if (!bpData)
             return null;
 
-        const wellsData = bpData.wells;
-        if (!wellsData || !wellsData.length)
+        const wellMap = bpData.wellMap;
+
+        if (!wellMap || wellMap.size === 0)
             return null;
 
         const wellNodeMap = new Map<number, WellNode>();
         const wellNodes: WellNode[] = [];
-        for (const wellData of wellsData)
+
+        for (const wellData of wellMap.values())
         {
             const wellNode = WellNodeCreator.create(wellData);
             if (!wellNode)
@@ -31,23 +34,24 @@ export default class WellNodesCreator
         if (!wellNodes.length)
             return null;
 
-        const trajectories = bpData.trajectories;
-        if (!trajectories)
+        const trajectoryMap = bpData.trajectoryMap;
+        if (!trajectoryMap || !(trajectoryMap.size > 0))
             return wellNodes;
 
         const wellBoreToWellMap = bpData.wellBoreToWellMap;
-        if (!wellBoreToWellMap)
+        if (!wellBoreToWellMap || !(wellBoreToWellMap.size > 0))
             return wellNodes;
 
         const trajectoryDataMap = bpData.trajectoryDataMap;
-        if (!trajectoryDataMap)
+        if (!trajectoryDataMap || !(trajectoryDataMap.size > 0))
             return wellNodes;
 
         const wellBoreToNDSEventsMap = bpData.wellBoreToNDSEventsMap;
         const wellBoreToNPTEventsMap = bpData.wellBoreToNPTEventsMap;
         const wellBoreToLogsMap = bpData.wellBoreToLogsMap;
+        const wellBoreToCasingDataMap = bpData.wellBoreToCasingDataMap;
 
-        for (const trajectory of trajectories)
+        for (const trajectory of trajectoryMap.values())
         {
             const wellBoreId = trajectory.assetId;
             const wellBoreToWell = wellBoreToWellMap.get(wellBoreId);
@@ -71,8 +75,8 @@ export default class WellNodesCreator
             if (!trajectoryNode)
                 continue;
 
-            if (!Util.isEmpty(wellBoreToWell.data.description))
-                trajectoryNode.setName(wellBoreToWell.data.description);
+            if (!Util.isEmpty(wellBoreToWell.data.name))
+                trajectoryNode.setName(wellBoreToWell.data.name);
 
             wellNode.addChild(trajectoryNode);
 
@@ -98,6 +102,12 @@ export default class WellNodesCreator
             }
             if (wellBoreToLogsMap)
                 WellLogCreator.addLogNodes(trajectoryNode, wellBoreToLogsMap[wellBoreId], unit);
+
+            if (wellBoreToCasingDataMap)
+            {
+                const casingData = wellBoreToCasingDataMap.get(wellBoreId);
+                WellCasingCreator.addCasingNodes(trajectoryNode, casingData, unit);
+            }
         }
         return wellNodes;
     }

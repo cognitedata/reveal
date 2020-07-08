@@ -1,7 +1,7 @@
 import { BaseModule } from "@/Core/Module/BaseModule";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import { SubSurfaceRootNode } from "@/Nodes/TreeNodes/SubSurfaceRootNode";
-import { IWell, IWellbore, ITrajectory, ITrajectoryRows, IRiskEvent, ILog } from "@/Interface";
+import { ILog, ICasing, IWell, IWellbore, ITrajectory, ITrajectoryRows, IRiskEvent } from "@/Interface";
 import BPData from "@/Solutions/BP/BPData";
 import WellsCreator from "@/Solutions/BP/Creators/WellNodesCreator";
 
@@ -50,10 +50,10 @@ export default class BPDataModule extends BaseModule
         trajectoryData?: ITrajectoryRows[]
         ndsEvents?: IRiskEvent[],
         nptEvents?: IRiskEvent[],
-        logs?: { [key: number]: ILog[] }
-    })
-    {
-        const { wells, wellBores, trajectories, trajectoryData, ndsEvents, nptEvents, logs } = data;
-        this.bpData = new BPData(wells, wellBores, trajectories, trajectoryData, ndsEvents, nptEvents, logs);
+        logs?: { [key: number]: ILog[] },
+        casings: ICasing[],
+    }) {
+        const { wells, wellBores, trajectories, trajectoryData, ndsEvents, nptEvents, logs, casings } = data;
+        this.bpData = new BPData(wells, wellBores, trajectories, trajectoryData, ndsEvents, nptEvents, logs, casings);
     }
 }

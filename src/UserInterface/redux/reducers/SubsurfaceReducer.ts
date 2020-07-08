@@ -1,4 +1,5 @@
 import { enableMapSet, enableES5 } from "immer";
+import commonReducer from "./CommonReducer";
 // Enable immer MapSet
 enableMapSet();
 enableES5();
@@ -14,6 +15,7 @@ import visualizerReducer from "./VisualizersReducer";
  */
 
 const SubsurfaceReducer = {
+  common: commonReducer,
   settings: settingsReducer,
   explorer: explorerReducer,
   visualizers: visualizerReducer
