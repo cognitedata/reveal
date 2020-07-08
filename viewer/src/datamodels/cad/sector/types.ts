@@ -2,19 +2,12 @@
  * Copyright 2020 Cognite AS
  */
 
-import { LevelOfDetail } from './LevelOfDetail';
-
 import { mat4, vec3 } from 'gl-matrix';
 
-import { Box3 } from '@/utilities/Box3';
-import { ParsedPrimitives, ParseSectorResult, ParseCtmResult } from '@/utilities/workers/types/reveal.parser.types';
+import { LevelOfDetail } from './LevelOfDetail';
 import { InstancedMeshFile, TriangleMesh, SectorQuads } from '../rendering/types';
-
-// TODO 2020-05-14 larsmoa: Move to SectorModelTransformation utilities and rename
-export type SectorModelTransformation = {
-  readonly modelMatrix: mat4;
-  readonly inverseModelMatrix: mat4;
-};
+import { Box3 } from '@/utilities';
+import { ParsedPrimitives, ParseSectorResult, ParseCtmResult } from '@/utilities/workers/types/reveal.parser.types';
 
 export interface ConsumedSector {
   blobUrl: string;

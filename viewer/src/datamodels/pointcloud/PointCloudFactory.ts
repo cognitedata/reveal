@@ -1,10 +1,11 @@
 /*!
  * Copyright 2020 Cognite AS
  */
-// @ts-ignore
 import * as Potree from '@cognite/potree-core';
-import { PointCloudMetadata } from '@/datamodels/pointcloud/PointCloudMetadata';
+
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
+
+import { PointCloudMetadata } from '@/datamodels/pointcloud/PointCloudMetadata';
 import { toThreeMatrix4 } from '@/utilities/';
 import { HttpHeadersProvider } from '@/utilities/networking/HttpHeadersProvider';
 

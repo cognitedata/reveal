@@ -2,12 +2,12 @@
  * Copyright 2020 Cognite AS
  */
 
-import { CadTransformationProvider } from './CadTransformationProvider';
-import { SectorModelTransformation } from './sector/types';
 import { fromCdfToThreeJsCoordinates, fromThreeJsToCdfCoordinates } from '@/utilities/constructMatrixFromRotation';
+import { ModelTransformation } from '@/utilities';
+import { ModelTransformationProvider } from '@/utilities/networking/types';
 
-export class DefaultCadTransformation implements CadTransformationProvider {
-  getCadTransformation(): SectorModelTransformation {
+export class DefaultCadTransformation implements ModelTransformationProvider {
+  getModelTransformation(): ModelTransformation {
     return {
       modelMatrix: fromCdfToThreeJsCoordinates,
       inverseModelMatrix: fromThreeJsToCdfCoordinates
