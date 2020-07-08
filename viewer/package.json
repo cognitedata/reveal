@@ -72,7 +72,7 @@
     "run-script-os": "^1.1.1",
     "three": "^0.115.0",
     "ts-jest": "^25.5.1",
-    "ts-loader": "7.0.5",
+    "ts-loader": "8.0.0",
     "typescript": "3.9.6",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12",
