@@ -175,7 +175,7 @@ export function SimplePointcloud() {
     return () => {
       gui.destroy();
       animationLoopHandler.dispose();
-      revealManager.dispose();
+      revealManager?.dispose();
     };
   }, []);
 

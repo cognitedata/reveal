@@ -245,7 +245,7 @@ export function Clipping() {
 
     return () => {
       gui.destroy();
-      revealManager.dispose();
+      revealManager?.dispose();
       animationLoopHandler.dispose();
     };
   });

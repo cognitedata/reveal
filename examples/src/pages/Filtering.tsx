@@ -132,7 +132,7 @@ export function Filtering() {
 
     return () => {
       gui.destroy();
-      revealManager.dispose();
+      revealManager?.dispose();
       animationLoopHandler.dispose();
     };
   });

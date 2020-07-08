@@ -145,7 +145,7 @@ export function Testable() {
     return () => {
       revealManager?.dispose();
       animationLoopHandler.dispose();
-      revealManager.dispose();
+      revealManager?.dispose();
     };
   }, []);
   return (

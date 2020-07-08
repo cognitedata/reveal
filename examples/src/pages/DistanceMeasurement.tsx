@@ -236,7 +236,7 @@ export function DistanceMeasurement() {
       renderer?.dispose();
       animationLoopHandler.dispose();
       gui.destroy();
-      revealManager.dispose();
+      revealManager?.dispose();
     };
   }, []);
 

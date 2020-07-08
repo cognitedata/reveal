@@ -119,7 +119,7 @@ export function SSAO() {
     return () => {
       gui.destroy();
       animationLoopHandler.dispose();
-      revealManager.dispose();
+      revealManager?.dispose();
     };
   });
   return (

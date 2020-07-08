@@ -208,8 +208,8 @@ export function SideBySide() {
     main();
     return () => {
       animationLoopHandler.dispose();
-      revealManager1.dispose();
-      revealManager2.dispose();
+      revealManager1?.dispose();
+      revealManager2?.dispose();
     }
   });
   return (

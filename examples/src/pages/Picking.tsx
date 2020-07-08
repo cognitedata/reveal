@@ -227,7 +227,7 @@ export function Picking() {
     main();
     return () => {
       animationLoopHandler.dispose();
-      revealManager.dispose();
+      revealManager?.dispose();
     }
   });
   return (
