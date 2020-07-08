@@ -13,6 +13,7 @@ import {
   createRenderManager,
 } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
+import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 CameraControls.install({ THREE });
 
@@ -20,6 +21,7 @@ export function SSAO() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const gui = new dat.GUI();
+    const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
 
     async function main() {
       const { project, modelUrl, modelRevision } = getParamsFromURL({
@@ -80,8 +82,6 @@ export function SSAO() {
       camera.updateMatrixWorld();
       revealManager.update(camera);
 
-      const clock = new THREE.Clock();
-
       let effectNeedsUpdate = false;
       const updateEffect = () => {
         effectNeedsUpdate = true;
@@ -106,9 +106,8 @@ export function SSAO() {
 
       gui.add(effect, 'maxDistance').min(0.0).max(0.2).onChange(updateEffect);
 
-      const render = () => {
-        const delta = clock.getDelta();
-        const controlsNeedUpdate = controls.update(delta);
+      animationLoopHandler.setOnAnimationFrameListener((deltaTime) => {
+        const controlsNeedUpdate = controls.update(deltaTime);
         if (controlsNeedUpdate) {
           revealManager.update(camera);
         }
@@ -122,16 +121,15 @@ export function SSAO() {
           effectNeedsUpdate = false;
           revealManager.resetRedraw();
         }
-
-        requestAnimationFrame(render);
-      };
-      render();
+      });
+      animationLoopHandler.start();
     }
 
     main();
 
     return () => {
       gui.destroy();
+      animationLoopHandler.dispose();
     };
   });
   return (

@@ -29,6 +29,7 @@ import {
   createRenderManager,
 } from '../utils/example-helpers';
 import { OverrideSectorCuller } from '../utils/OverrideSectorCuller';
+import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 CameraControls.install({ THREE });
 
@@ -66,6 +67,7 @@ function initializeModel(
 
 export function SideBySide() {
   useEffect(() => {
+    const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
     async function main() {
       const { project, modelUrl, modelRevision } = getParamsFromURL({
         project: 'publicdata',
@@ -191,12 +193,8 @@ export function SideBySide() {
       revealManager1.update(camera);
       revealManager2.update(camera);
 
-      const clock = new THREE.Clock();
-      const render = async () => {
-        requestAnimationFrame(render);
-
-        const delta = clock.getDelta();
-        const controlsNeedUpdate = controls.update(delta);
+      animationLoopHandler.setOnAnimationFrameListener(async (deltaTime) => {
+        const controlsNeedUpdate = controls.update(deltaTime);
         if (options1.loadingEnabled) {
           revealManager1.update(camera);
         }
@@ -224,11 +222,14 @@ export function SideBySide() {
           renderer2.render(scene2, camera);
           revealManager2.resetRedraw();
         }
-      };
-      render();
+      });
+      animationLoopHandler.start();
     }
 
     main();
+    return () => {
+      animationLoopHandler.dispose();
+    }
   });
   return (
     <Container>

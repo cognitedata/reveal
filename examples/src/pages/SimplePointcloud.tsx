@@ -16,6 +16,7 @@ import {
   getParamsFromURL,
   createRenderManager,
 } from '../utils/example-helpers';
+import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 CameraControls.install({ THREE });
 
@@ -67,6 +68,7 @@ export function SimplePointcloud() {
     if (!canvasRef.current) {
       return
     }
+    const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
     const gui = new dat.GUI();
 
     async function main() {
@@ -160,10 +162,8 @@ export function SimplePointcloud() {
       controls.update(0.0);
       camera.updateMatrixWorld();
 
-      const clock = new THREE.Clock();
-      const render = async () => {
-        const delta = clock.getDelta();
-        const controlsNeedUpdate = controls.update(delta);
+      animationLoopHandler.setOnAnimationFrameListener((deltaTime) => {
+        const controlsNeedUpdate = controls.update(deltaTime);
 
         const needsUpdate =
           controlsNeedUpdate || revealManager.needsRedraw || settingsChanged;
@@ -172,9 +172,8 @@ export function SimplePointcloud() {
           renderer.render(scene, camera);
           settingsChanged = false;
         }
-        requestAnimationFrame(render);
-      };
-      render();
+      });
+      animationLoopHandler.start();
 
       (window as any).scene = scene;
       (window as any).renderer = renderer;
@@ -187,6 +186,7 @@ export function SimplePointcloud() {
 
     return () => {
       gui.destroy();
+      animationLoopHandler.dispose();
     };
   }, []);
 
