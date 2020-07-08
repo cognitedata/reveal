@@ -11,46 +11,47 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-export class Index3
+export class Trace 
 {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
 
-  public i: number;
-  public j: number;
-  public k: number;
-
-  //==================================================
-  // CONSTRUCTORS
-  //==================================================
-
-  public constructor(i: number, j: number, k: number)
-  {
-    this.i = i;
-    this.j = j;
-    this.k = k;
-  }
-
-  public /*copy constructor*/ clone(): Index3
-  {
-    return new Index3(this.i, this.j, this.k);
-  }
+  private values: Float32Array;
 
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get size(): number { return this.i * this.j * this.k; }
+  public get length(): number { return this.values.length; }
 
   //==================================================
-  // INSTANCE METHODS: Getters
+  // CONSTRUCTORS
   //==================================================
 
-  public toString(): string { return `(${this.i}, ${this.j}, ${this.k})`; }
+  public constructor(length: number)
+  {
+    this.values = new Float32Array(length);
+  }
 
   //==================================================
-  // INSTANCE METHODS: Operations
+  // CONSTRUCTORS
   //==================================================
 
+  public getAt(index: number): number { return this.values[index]; }
+  public setAt(index: number, value: number): void { this.values[index] = value; }
+
+  public generateSynthetic(x: number, y: number)
+  {
+    // x and y is [0,1]
+    x = Math.sin(x * Math.PI / 3);
+    y = Math.sin(y * Math.PI / 2);
+    for (let k = length - 1; k >= 0; k--)
+    {
+      const z = k / (length - 1); // Z is [0,1]
+      const value = (x + y) * Math.sin(2 * Math.PI * z / 20);
+      this.values[k] = value;
+    }
+  }
 }
+
