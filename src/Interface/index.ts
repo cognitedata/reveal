@@ -4,3 +4,4 @@ export * from "./IWell";
 export * from "./IWellbore";
 export * from "./IRisk";
 export * from "./ILog";
+export * from "./ICasing";

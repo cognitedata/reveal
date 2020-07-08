@@ -1,17 +1,28 @@
-import { IWell, IWellbore, ITrajectory, ITrajectoryRows, IRiskEvent, ILog } from "@/Interface";
+import {
+    IWell,
+    IWellbore,
+    ITrajectory,
+    ITrajectoryRows,
+    IRiskEvent,
+    ILog,
+    ICasing,
+    ITrajectoryColumnIndices
+} from "@/Interface";
+import { Util } from "@/Core/Primitives/Util";
 
 // Represent BP data
 export default class BPData
 {
 
-    private _wells: IWell[];
-    private _trajectories: ITrajectory[];
+    private _wellMap = new Map<number, IWell>();
+    private _trajectoryMap = new Map<number, ITrajectory>();
     private _trajectoryDataMap = new Map<number, ITrajectoryRows>();
     private _wellBoreToWellMap = new Map<number, { wellId: number, data: IWellbore }>();
     private _wellBoreToNDSEventsMap = new Map<number, IRiskEvent[]>();
     private _wellBoreToNPTEventsMap = new Map<number, IRiskEvent[]>();
     private _wellBoreToLogsMap?: { [key: number]: ILog[] };
-    private _trajectoryDataColumnIndexes: { [key: string]: number } = {};
+    private _trajectoryDataColumnIndexes: ITrajectoryColumnIndices = {};
+    private _wellBoreToCasingDataMap = new Map<number, ICasing[]>();
 
 
     // Pass BP data coming from the BP application
@@ -22,103 +33,308 @@ export default class BPData
         trajectoryData?: ITrajectoryRows[],
         ndsEvents?: IRiskEvent[],
         nptEvents?: IRiskEvent[],
-        logs?: { [key: number]: ILog[] })
+        logs?: { [key: number]: ILog[] },
+        casing?: ICasing[])
     {
-        this._wells = wells;
-        this._trajectories = trajectories;
-        this._wellBoreToLogsMap = logs;
+        this.generateWellMap(wells);
         this.generateBoreToWellMap(wellBores);
-        this.generateTrajectoryDataMap(trajectoryData);
-        this.generateWellBoreToNDSEventsMap(ndsEvents);
-        this.generateWellBoreToNPTEventsMap(nptEvents);
+        this.generateTrajectoryMap(trajectories);
         this.generateTrajectoryDataColumnIndexes(trajectoryData);
+        this.generateTrajectoryDataMap(trajectoryData);
+        this.generateWellBoreRiskEventMap(this.wellBoreToNDSEventsMap, ndsEvents);
+        this.generateWellBoreRiskEventMap(this.wellBoreToNPTEventsMap, nptEvents);
+        this._wellBoreToLogsMap = logs;
+        this.generateWellBoreToCasingDataMap(casing);
     }
 
     //==================================================
     // INSTANCE METHODS
     //==================================================
 
-    private generateBoreToWellMap(wellBores: IWellbore[]): void
+    private generateWellMap(wells: IWell[])
     {
-        for (const wellBore of wellBores)
-            this._wellBoreToWellMap.set(wellBore.id, { wellId: wellBore.parentId, data: wellBore });
-    }
-
-    private generateTrajectoryDataMap(trajectoryData?: ITrajectoryRows[]): void
-    {
-        if (!trajectoryData)
-            return;
-        for (const data of trajectoryData)
-            this._trajectoryDataMap.set(data.id, data)
-    }
-
-    private generateWellBoreToNDSEventsMap(ndsEvents?: IRiskEvent[]): void
-    {
-        if (!ndsEvents)
-            return;
-
-        const wellBoreToNDSEventsMap = this._wellBoreToNDSEventsMap;
-        for (const ndsEvent of ndsEvents)
+        if (!wells || !wells.length)
         {
-            const assetIds = ndsEvent.assetIds;
-            if (!assetIds || !assetIds.length)
-                continue;
-
-            for (const assetId of assetIds)
-            { // Mihil : Shouldn't assetIds contain just 1 item
-                if (!wellBoreToNDSEventsMap.get(assetId))
-                    wellBoreToNDSEventsMap.set(assetId, []);
-                wellBoreToNDSEventsMap.get(assetId)?.push(ndsEvent);
-            }
+            // tslint:disable-next-line:no-console
+            console.warn("Wells are empty!");
+            return;
         }
-        // tslint:disable-next-line: no-console
-        console.log("NodeVisualizer: NDSEvents", wellBoreToNDSEventsMap);
-    }
 
-    private generateWellBoreToNPTEventsMap(nptEvents?: IRiskEvent[]): void
-    {
-        if (!nptEvents)
-            return;
-
-        const wellBoreToNPTEventsMap = this._wellBoreToNPTEventsMap;
-        for (const nptEvent of nptEvents)
+        for (const well of wells)
         {
-            const assetIds = nptEvent.assetIds;
-            if (!assetIds || !assetIds.length)
-                continue;
-
-            for (const assetId of assetIds)
+            const valid = this.validateWell(well);
+            if (valid)
             {
-                if (!wellBoreToNPTEventsMap.get(assetId))
-                    wellBoreToNPTEventsMap.set(assetId, []);
-                wellBoreToNPTEventsMap.get(assetId)?.push(nptEvent);
+                this.wellMap.set(well.id, well);
             }
         }
-        // tslint:disable-next-line: no-console
-        console.log("NodeVisualizer: NPTEvents", wellBoreToNPTEventsMap);
+    }
+
+    private generateBoreToWellMap(wellBores: IWellbore[])
+    {
+        if (!wellBores || !wellBores.length)
+        {
+            // tslint:disable-next-line:no-console
+            console.warn("Well Bores are empty!");
+            return;
+        }
+
+        for (const wellBore of wellBores)
+        {
+            const valid = this.validateWellBore(wellBore);
+            if (valid)
+            {
+                this._wellBoreToWellMap.set(wellBore.id, { wellId: wellBore.parentId, data: wellBore });
+            }
+        }
+    }
+
+    private generateTrajectoryMap(trajectories: ITrajectory[])
+    {
+        if (!trajectories || !trajectories.length)
+        {
+            // tslint:disable-next-line:no-console
+            console.warn("trajectories are empty!");
+            return;
+        }
+
+        for (const trajectory of trajectories)
+        {
+            const valid = this.validateTrajectory(trajectory);
+            if (valid)
+                this.trajectoryMap.set(trajectory.id, trajectory);
+        }
     }
 
     private generateTrajectoryDataColumnIndexes(trajectoryData?: ITrajectoryRows[])
     {
         if (!trajectoryData || !trajectoryData.length)
         {
+            // tslint:disable-next-line:no-console
+            console.warn("Trajectory Data are empty, Cannot create Column Indexes!");
             return;
         }
-        const indexes: { [key: string]: number } = this._trajectoryDataColumnIndexes;
-        const column = trajectoryData[0].columns;
-        for (let index = 0; index < column.length; index++)
+        const columnIndexes = this._trajectoryDataColumnIndexes;
+        const columns = trajectoryData[0].columns;
+
+        if (!columns || !columns.length)
         {
-            const columnName = column[index].name;
-            indexes[columnName] = index;
+            // tslint:disable-next-line:no-console
+            console.warn("First trajectory data item does not contain columns", trajectoryData);
+            return;
+        }
+
+        for (let index = 0; index < columns.length; index++)
+        {
+            const columnName = columns[index].name;
+            columnIndexes[columnName] = index;
         }
     }
 
-    public get wells() { return this._wells; }
-    public get trajectories() { return this._trajectories; }
+
+    private generateTrajectoryDataMap(trajectoryData?: ITrajectoryRows[])
+    {
+
+        if (!trajectoryData || !trajectoryData.length)
+        {
+            // tslint:disable-next-line:no-console
+            console.warn("Trajectory Data are empty");
+            return;
+        }
+
+        for (const data of trajectoryData)
+        {
+            const valid = this.validateTrajectoryData(data);
+            if (valid)
+            {
+                this._trajectoryDataMap.set(data.id, data);
+            }
+        }
+    }
+
+    private generateWellBoreRiskEventMap(riskEventMap: Map<number, IRiskEvent[]>, riskEvents?: IRiskEvent[])
+    {
+        if (!riskEvents || !riskEvents.length)
+            return;
+
+        for (const event of riskEvents)
+        {
+            const assetIds = event.assetIds;
+            const valid = this.validateRiskEvent(event, assetIds);
+
+            if (valid)
+            {
+                for (const assetId of assetIds)
+                {
+                    if (this.wellBoreToWellMap.has(assetId))
+                    {
+                        if (!riskEventMap.get(assetId))
+                            riskEventMap.set(assetId, []);
+
+                        riskEventMap.get(assetId)?.push(event);
+                    }
+                }
+            }
+        }
+    }
+
+    private generateWellBoreToCasingDataMap(casings?: ICasing[])
+    {
+        if (!casings || !casings.length)
+        {
+            // tslint:disable-next-line:no-console
+            console.warn("casings are empty!");
+            return;
+        }
+
+        for (const casing of casings)
+        {
+            const boreId = casing.assetId;
+            const valid = this.validateCasing(casing);
+
+            if (valid)
+            {
+                if (!this.wellBoreToCasingDataMap.get(boreId))
+                {
+                    this.wellBoreToCasingDataMap.set(boreId, []);
+                }
+                this.wellBoreToCasingDataMap.get(boreId)?.push(casing);
+            }
+        }
+    }
+
+    //==================================================
+    // PRIVATE METHODS: Validators
+    //==================================================
+
+    private validateWell(well: IWell): boolean
+    {
+        //  wells with no coordinates are invalid
+
+        const coords = well.metadata;
+        const xCoord = Util.getNumber(coords.x_coordinate);
+        const yCoord = Util.getNumber(coords.y_coordinate);
+
+        if (!Number.isNaN(xCoord) && !Number.isNaN(yCoord))
+        {
+            return true;
+        }
+        else
+        {
+            // tslint:disable-next-line:no-console
+            console.error("Well cannot have empty or invalid coordinates!", well);
+            return false;
+        }
+    }
+
+    private validateWellBore(bore: IWellbore): boolean
+    {
+        if (this.wellMap.has(bore.parentId))
+        {
+            return true;
+        }
+        else
+        {
+            // tslint:disable-next-line:no-console
+            console.warn("Orphan WllBore, Parent Well not found!", bore);
+            return false;
+        }
+    }
+
+    private validateTrajectory(trajectory: ITrajectory): boolean
+    {
+        const boreId = trajectory.assetId;
+        if (this.wellBoreToWellMap.has(boreId))
+        {
+            return true;
+        }
+        else
+        {
+            // tslint:disable-next-line:no-console
+            console.warn("Orphan Trajectory, Parent Well Bore not found!", trajectory);
+            return false;
+        }
+    }
+
+    private validateTrajectoryData(trajectoryData: ITrajectoryRows): boolean
+    {
+        if (!trajectoryData.rows || !trajectoryData.rows.length)
+        {
+            // tslint:disable-next-line:no-console
+            console.warn("Trajectory Data Rows are empty", trajectoryData);
+            return false;
+        }
+
+        if (this.trajectoryMap.has(trajectoryData.id))
+        {
+            return true;
+        }
+        else
+        {
+            // tslint:disable-next-line:no-console
+            console.warn("Orphan Trajectory Data Item, Parent Trajectory not found!", trajectoryData);
+            return false;
+        }
+    }
+
+    private validateRiskEvent(event: IRiskEvent, boreIds: any[]): boolean
+    {
+
+        if (!boreIds || !boreIds.length)
+        {
+            // tslint:disable-next-line:no-console
+            console.warn("Risk Event Bore Id not found, AssetIds are empty!", event);
+            return false;
+        }
+
+        if (boreIds.some(assetId => this.wellBoreToWellMap.has(assetId)))
+        {
+            return true;
+        }
+        else
+        {
+            // tslint:disable-next-line:no-console
+            console.warn("Orphan Risk Event, Parent Bore not found!", event);
+            return false;
+        }
+    }
+
+    private validateCasing(casing: ICasing): boolean
+    {
+        const boreId = casing.assetId;
+
+        if (this.wellBoreToWellMap.has(boreId))
+        {
+            return true;
+        }
+        else
+        {
+            // tslint:disable-next-line:no-console
+            console.warn("Orphan Casing, Parent Well Bore not found!", casing);
+            return false;
+        }
+    }
+
+    //==================================================
+    // Properties
+    //==================================================
+
+
+    public get wellMap() { return this._wellMap; }
+
+    public get trajectoryMap() { return this._trajectoryMap; }
+
     public get trajectoryDataMap() { return this._trajectoryDataMap; }
+
     public get wellBoreToWellMap() { return this._wellBoreToWellMap; }
+
     public get wellBoreToNDSEventsMap() { return this._wellBoreToNDSEventsMap; }
-    public get wellBoreToNPTEventsMap() { return this._wellBoreToNPTEventsMap };
-    public get wellBoreToLogsMap() { return this._wellBoreToLogsMap };
-    public get trajectoryDataColumnIndexes() { return this._trajectoryDataColumnIndexes };
+
+    public get wellBoreToNPTEventsMap() { return this._wellBoreToNPTEventsMap; };
+
+    public get wellBoreToLogsMap() { return this._wellBoreToLogsMap; };
+
+    public get trajectoryDataColumnIndexes() { return this._trajectoryDataColumnIndexes; };
+
+    public get wellBoreToCasingDataMap(): Map<number, ICasing[]> { return this._wellBoreToCasingDataMap; }
 }

@@ -1,10 +1,9 @@
 import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
 import { FloatLogNode } from "@/Nodes/Wells/Wells/FloatLogNode";
-import { IRiskEvent, ILog, ILogRow, ILogRowColumn } from "@/Interface";
+import { IRiskEvent, ILog, ILogRow, ILogRowColumn, INdsMetadata, INptMetaData } from "@/Interface";
 import { PointLog } from "@/Nodes/Wells/Logs/PointLog";
 import { PointLogSample } from "@/Nodes/Wells/Samples/PointLogSample";
 import { PointLogNode } from "@/Nodes/Wells/Wells/PointLogNode";
-import { Units } from "@/Core/Primitives/Units";
 import { LogFolder } from "@/Nodes/Wells/Wells/LogFolder";
 import { Util } from "@/Core/Primitives/Util";
 import { FloatLogSample } from "@/Nodes/Wells/Samples/FloatLogSample";
@@ -39,9 +38,9 @@ export default class WellLogCreator
         if (!logs)
             return;
 
-        for (let index = 0; index < logs.length; index++)
+        for (const log of logs)
         {
-            const folder = WellLogCreator.createLogFolder(logs[index].items, unit);
+            const folder = WellLogCreator.createLogFolder(log.items, unit);
             if (folder)
                 parent.addChild(folder);
         }
@@ -57,14 +56,14 @@ export default class WellLogCreator
             return null;
 
         const firstColumns = items[0].columns;
-        let mdIndex: number = WellLogCreator.getMdIndex(firstColumns);
+        const mdIndex: number = WellLogCreator.getMdIndex(firstColumns);
         if (mdIndex < 0)
             return null;
 
         let folder: LogFolder | null = null; // Lazy creation of this
         for (let logIndex = 0; logIndex < firstColumns.length; logIndex++)
         {
-            if (logIndex == mdIndex)
+            if (logIndex === mdIndex)
                 continue;
 
             const logNode = WellLogCreator.createLogNode(items, mdIndex, logIndex, unit);
@@ -82,11 +81,11 @@ export default class WellLogCreator
     {
         for (let logIndex = 0; logIndex < columns.length; logIndex++)
         {
-            let column = columns[logIndex];
+            const column = columns[logIndex];
             if (column.externalId === "DEPT")
                 return logIndex;
         }
-        return - 1;
+        return -1;
     }
 
     private static createLogNode(items: ILogRow[], mdIndex: number, logIndex: number, unit: number): BaseLogNode | null
@@ -95,7 +94,7 @@ export default class WellLogCreator
         const valueType = firstColumns[logIndex].valueType.toUpperCase();
         let logNode: BaseLogNode;
 
-        if (valueType == "FLOAT" || valueType == "DOUBLE")
+        if (valueType === "FLOAT" || valueType === "DOUBLE")
         {
             const log = WellLogCreator.createFloatLog(items, mdIndex, logIndex, unit);
             if (!log)
@@ -104,7 +103,7 @@ export default class WellLogCreator
             logNode = new FloatLogNode();
             logNode.data = log;
         }
-        else if (valueType == "INTEGER" || valueType == "LONG")
+        else if (valueType === "INTEGER" || valueType === "LONG")
         {
             const log = WellLogCreator.createDiscreteLog(items, mdIndex, logIndex, unit);
             if (!log)
@@ -115,6 +114,7 @@ export default class WellLogCreator
         }
         else
         {
+            // tslint:disable-next-line:no-console
             console.warn("Unsupported log type", valueType);
             return null;
         }
@@ -181,16 +181,25 @@ export default class WellLogCreator
         for (const event of events)
         {
             const metadata = event.metadata;
-            const mdStart = Util.getNumberWithUnit(metadata.md_hole_start, metadata.md_hole_start_unit);
+
+            let mdStart;
+            if ((metadata as INdsMetadata).md_hole_start !== undefined)
+            {
+                mdStart = Util.getNumberWithUnit((metadata as INdsMetadata).md_hole_start, (metadata as INdsMetadata).md_hole_start_unit);
+            }
+            else
+            {
+                mdStart = Util.getNumber((metadata as INptMetaData).npt_md);
+            }
             if (Number.isNaN(mdStart))
                 continue;
 
-            const mdEnd = Util.getNumberWithUnit(metadata.md_hole_end, metadata.md_hole_end_unit);
+            const mdEnd = Util.getNumberWithUnit((metadata as INdsMetadata).md_hole_end, (metadata as INdsMetadata).md_hole_end_unit);
             const sample = new PointLogSample(event.description, mdStart, mdEnd);
 
             sample.subtype = event.subtype;
-            sample.riskSubCategory = metadata.risk_sub_category;
-            sample.details = metadata.details;
+            sample.riskSubCategory = (metadata as INdsMetadata).risk_sub_category;
+            sample.details = (metadata as INdsMetadata).details;
             log.samples.push(sample);
         }
         if (log.length === 0)

@@ -31,7 +31,7 @@ export default class WellNodeCreator
 
         wellNode.wellHead = new Vector3(xy.easting, xy.northing, 0);
 
-        const waterDepth = Util.getNumberWithUnit(metadata.water_depth, metadata.water_depth_unit)
+        const waterDepth = Util.getNumberWithUnit(metadata.water_depth, metadata.water_depth_unit);
         if (!Number.isNaN(waterDepth))
             wellNode.waterDepth = waterDepth;
 

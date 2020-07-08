@@ -25,6 +25,16 @@ export interface ITrajectoryRow {
   values: number[];
 }
 
+export interface ITrajectoryColumnIndices
+{
+  md?: number;
+  tvd?: number;
+  azimuth?: number;
+  inclination?: number;
+  x_offset?: number;
+  y_offset?: number;
+}
+
 // note: the size of the TrajectoryRows "columns" array is identical to the size of the TrajectoryRow "values" array
 
 export interface ITrajectoryRows {

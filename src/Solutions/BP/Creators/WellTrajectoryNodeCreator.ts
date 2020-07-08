@@ -1,14 +1,12 @@
 import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
 import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import { ITrajectoryRows } from "@/Interface";
+import { ITrajectoryColumnIndices, ITrajectoryRows } from "@/Interface";
 import { TrajectorySample } from "@/Nodes/Wells/Samples/TrajectorySample";
-import { Units } from "@/Core/Primitives/Units";
-import { Ma } from "@/Core/Primitives/Ma";
 
 export default class WellTrajectoryNodeCreator
 {
-    public static create(trajectoryDataColumnIndexes: { [key: string]: number }, trajectoryRows: ITrajectoryRows | null | undefined, elevation: number, unit: number): WellTrajectoryNode | null
+    public static create(trajectoryDataColumnIndices: ITrajectoryColumnIndices, trajectoryRows: ITrajectoryRows | null | undefined, elevation: number, unit: number): WellTrajectoryNode | null
     {
         // Some trajectories missing data
         if (!trajectoryRows || !trajectoryRows.rows.length)
@@ -17,15 +15,17 @@ export default class WellTrajectoryNodeCreator
             console.warn("NodeVisualizer: No trajectory available for well");
             return null;
         }
-        const mdIndex = trajectoryDataColumnIndexes["md"];
-        const azimuthIndex = trajectoryDataColumnIndexes["azimuth"];
-        const inclinationIndex = trajectoryDataColumnIndexes["inclination"];
-        const tvdIndex = trajectoryDataColumnIndexes["tvd"];
-        const xOffsetIndex = trajectoryDataColumnIndexes["x_offset"];
-        const yOffsetIndex = trajectoryDataColumnIndexes["y_offset"];
+
+        const mdIndex = trajectoryDataColumnIndices.md!;
+        const azimuthIndex = trajectoryDataColumnIndices.azimuth!;
+        const inclinationIndex = trajectoryDataColumnIndices.inclination!;
+        const tvdIndex = trajectoryDataColumnIndices.tvd!;
+        const xOffsetIndex = trajectoryDataColumnIndices.x_offset!;
+        const yOffsetIndex = trajectoryDataColumnIndices.y_offset!;
 
         const trajectory = new WellTrajectory();
 
+        // tslint:disable-next-line:no-console
         console.log("======================");
         if (mdIndex >= 0 && azimuthIndex >= 0 && inclinationIndex >= 0)
         {
@@ -55,6 +55,7 @@ export default class WellTrajectoryNodeCreator
                     break;
 
                 trajectory.add(sample);
+                // tslint:disable-next-line:no-console
                 console.log(sample.point.toString());
             }
         }

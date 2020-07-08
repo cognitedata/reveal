@@ -117,13 +117,13 @@ export class FloatLog extends BaseLog
 
     for (let k = 0, md = mdRange.min; k < numSamples; k++, md += mdInc)
     {
-      const value = k % 10 == 0 ? Number.NaN : Random.getGaussian(valueRange.center, valueRange.delta);
+      const value = k % 10 === 0 ? Number.NaN : Random.getGaussian(valueRange.center, valueRange.delta);
       log.samples.push(new FloatLogSample(value, md));
     }
     return log;
   }
 
-  public static createCasingByRandom(mdRange: Range1, numSamples: number): FloatLog 
+  public static createCasingByRandom(mdRange: Range1, numSamples: number): FloatLog
   {
     const log = new FloatLog();
     let mdInc = mdRange.delta / (numSamples - 1);
@@ -136,4 +136,4 @@ export class FloatLog extends BaseLog
     }
     return log;
   }
-}  
+}

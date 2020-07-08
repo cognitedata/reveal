@@ -13,6 +13,7 @@ export interface ILogRow {
 export interface ILog {
     assetId: number;
     id: number;
+    name: string;
     state: string;
     items: ILogRow[];
 }
