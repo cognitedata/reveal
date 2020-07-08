@@ -11,25 +11,22 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { CasingLog } from "@/Nodes/Wells/Logs/CasingLog";
-import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
-import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
-import CasingLogNodeIcon from "@images/Nodes/CasingLogNode.png";
+import { Range3 } from "@/Core/Geometry/Range3";
+import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
+import { TargetId } from "@/Core/Primitives/TargetId";
+import { SurfaceRenderStyle } from "@/Nodes/Misc/SurfaceRenderStyle";
 
-export class CasingLogNode extends BaseLogNode
+import SurfaceNodeIcon from "@images/Nodes/SurfaceNode.png";
+import { DataNode } from "@/Core/Nodes/DataNode";
+import { SeismicCube } from '@/SeismicDomain/Data/SeismicCube';
+
+export class SeismicCubeDataNode extends DataNode
 {
   //==================================================
   // STATIC FIELDS
   //==================================================
 
-  static className = "CasingLogNode";
-
-  //==================================================
-  // INSTANCE PROPERTIES
-  //==================================================
-
-  public get data(): CasingLog | null { return this.anyData as CasingLog; }
-  public set data(value: CasingLog | null) { this.anyData = value; }
+  static className = "SeismicCubeDataNode";
 
   //==================================================
   // CONSTRUCTORS
@@ -38,23 +35,32 @@ export class CasingLogNode extends BaseLogNode
   public constructor() { super(); }
 
   //==================================================
+  // INSTANCE PROPERTIES
+  //==================================================
+
+  public get data(): SeismicCube | null { return this.anyData; }
+  public set data(value: SeismicCube | null) { this.anyData = value; }
+  public get renderStyle(): SurfaceRenderStyle | null { return this.getRenderStyle() as SurfaceRenderStyle; }
+
+  //==================================================
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return CasingLogNode.className; }
-  public /*override*/ isA(className: string): boolean { return className === CasingLogNode.className || super.isA(className); }
+  public /*override*/ get className(): string { return SeismicCubeDataNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === SeismicCubeDataNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Casing" }
+  public /*override*/ get typeName(): string { return "Seismic Cube" }
 
-  public /*override*/ getIcon(): string { return CasingLogNodeIcon }
+  public /*override*/ getIcon(): string { return SurfaceNodeIcon }
 
-  //==================================================
-  // OVERRIDES of BaseLogNode
-  //==================================================
+  public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
 
-  public /*override*/  get wellLogType(): WellLogType { return WellLogType.Casing; }
+  public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
+  {
+    return new SurfaceRenderStyle(targetId);
+  }
 }

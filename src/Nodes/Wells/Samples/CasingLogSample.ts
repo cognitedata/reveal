@@ -13,36 +13,39 @@
 
 import { BaseLogSample } from "@/Nodes/Wells/Samples/BaseLogSample";
 
-export class FloatLogSample extends BaseLogSample 
+export class CasingLogSample extends BaseLogSample 
 {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
 
-  public value: number;
+  public radius: number;
+  public name:string = "";
+  public comments: string = "";
+  public currentStatusComment: string = "";
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(value: number, md: number)
+  public constructor(radius: number, md: number)
   {
     super(md);
-    this.value = value;
+    this.radius = radius;
   }
 
   //==================================================
   // OVERRIDES of MdSample
   //==================================================
 
-  public /*override*/ toString(): string { return `${super.toString()} Value: ${this.value}`; }
-  public /*override*/ sampleText(): string { return `Value: ${this.value}`; }
+  public /*override*/ toString(): string { return `${super.toString()} Value: ${this.radius}`; }
+  public /*override*/ sampleText(): string { return `Value: ${this.radius}`; }
 
   //==================================================
   // OVERRIDES of BaseLogSample
   //==================================================
 
-  public /*override*/ get isEmpty(): boolean { return Number.isNaN(this.value); }
+  public /*override*/ get isEmpty(): boolean { return Number.isNaN(this.radius); }
 
-  public /*override*/  clone(): BaseLogSample { return new FloatLogSample(this.value, this.md); }
+  public /*override*/  clone(): BaseLogSample { return new CasingLogSample(this.radius, this.md); }
 }  

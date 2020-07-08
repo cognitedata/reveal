@@ -1,3 +1,4 @@
+
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
@@ -11,38 +12,39 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseLogSample } from "@/Nodes/Wells/Samples/BaseLogSample";
+import { Index3 } from "@/Core/Geometry/Index3";
 
-export class FloatLogSample extends BaseLogSample 
+export class Grid3
 {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
 
-  public value: number;
+  public readonly nodeSize: Index3;
+  public readonly cellSize: Index3;
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(value: number, md: number)
+  public constructor(numNodes: Index3)
   {
-    super(md);
-    this.value = value;
+    this.nodeSize = numNodes.clone();
+    this.cellSize = numNodes.clone();
+    this.cellSize.i--;
+    this.cellSize.j--;
   }
 
   //==================================================
-  // OVERRIDES of MdSample
+  // INSTANCE METHODS: Getters
   //==================================================
 
-  public /*override*/ toString(): string { return `${super.toString()} Value: ${this.value}`; }
-  public /*override*/ sampleText(): string { return `Value: ${this.value}`; }
+  public toString(): string { return `(${this.nodeSize})`; }
+  public getCellIndex2(i: number, j: number) { return i + this.cellSize.i * j; }
 
   //==================================================
-  // OVERRIDES of BaseLogSample
+  // INSTANCE METHODS: Requests
   //==================================================
 
-  public /*override*/ get isEmpty(): boolean { return Number.isNaN(this.value); }
-
-  public /*override*/  clone(): BaseLogSample { return new FloatLogSample(this.value, this.md); }
-}  
+  public isNodeInside(i: number, j: number, k: number) { return i >= 0 && j >= 0 && k >= 0 && i < this.nodeSize.i && j < this.nodeSize.j && k < this.nodeSize.k; }
+}

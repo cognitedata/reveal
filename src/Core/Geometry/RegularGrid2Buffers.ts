@@ -49,7 +49,7 @@ export class RegularGrid2Buffers extends TrianglesBuffers
         if (uniqueIndex < 0)
           continue;
 
-        if (!grid.getRelativePoint3(i, j, position))
+        if (!grid.getRelativePosition(i, j, position))
           continue;
 
         grid.getNormal(i, j, normal, position.z, false);

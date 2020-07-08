@@ -56,10 +56,10 @@ export class ContouringService
     {
       for (let j = 0; j < grid.nodeSize.j - 1; j++)
       {
-        const isDef0 = grid.getRelativePoint3(i + 0, j + 0, p0);
-        const isDef1 = grid.getRelativePoint3(i + 1, j + 0, p1);
-        const isDef2 = grid.getRelativePoint3(i + 1, j + 1, p2);
-        const isDef3 = grid.getRelativePoint3(i + 0, j + 1, p3);
+        const isDef0 = grid.getRelativePosition(i + 0, j + 0, p0);
+        const isDef1 = grid.getRelativePosition(i + 1, j + 0, p1);
+        const isDef2 = grid.getRelativePosition(i + 1, j + 1, p2);
+        const isDef3 = grid.getRelativePosition(i + 0, j + 1, p3);
 
         let triangleCount = 0;
         if (isDef0) triangleCount++;
@@ -107,7 +107,6 @@ export class ContouringService
 
   private addLevelAt(z: number, a: Vector3, b: Vector3, c: Vector3): boolean
   {
-
     // Make sure we don't run into numerical problems
     if (Ma.IsAbsEqual(a.z, z, this.tolerance))
       a.z = z + this.tolerance;

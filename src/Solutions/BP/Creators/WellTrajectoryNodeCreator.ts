@@ -15,18 +15,16 @@ export default class WellTrajectoryNodeCreator
             console.warn("NodeVisualizer: No trajectory available for well");
             return null;
         }
-
-        const mdIndex = trajectoryDataColumnIndices.md!;
-        const azimuthIndex = trajectoryDataColumnIndices.azimuth!;
-        const inclinationIndex = trajectoryDataColumnIndices.inclination!;
-        const tvdIndex = trajectoryDataColumnIndices.tvd!;
-        const xOffsetIndex = trajectoryDataColumnIndices.x_offset!;
-        const yOffsetIndex = trajectoryDataColumnIndices.y_offset!;
+        const mdIndex = trajectoryDataColumnIndices.md == undefined ? -1 : trajectoryDataColumnIndices.md;
+        const azimuthIndex = trajectoryDataColumnIndices.azimuth == undefined ? -1 : trajectoryDataColumnIndices.azimuth;
+        const inclinationIndex = trajectoryDataColumnIndices.inclination == undefined ? -1 : trajectoryDataColumnIndices.inclination;
+        const tvdIndex = trajectoryDataColumnIndices.tvd == undefined ? -1 : trajectoryDataColumnIndices.tvd; 
+        const xOffsetIndex = trajectoryDataColumnIndices.x_offset == undefined ? -1 : trajectoryDataColumnIndices.x_offset; 
+        const yOffsetIndex = trajectoryDataColumnIndices.y_offset == undefined ? -1 : trajectoryDataColumnIndices.y_offset; 
 
         const trajectory = new WellTrajectory();
 
         // tslint:disable-next-line:no-console
-        console.log("======================");
         if (mdIndex >= 0 && azimuthIndex >= 0 && inclinationIndex >= 0)
         {
             for (const curvePointData of trajectoryRows.rows)
@@ -55,8 +53,6 @@ export default class WellTrajectoryNodeCreator
                     break;
 
                 trajectory.add(sample);
-                // tslint:disable-next-line:no-console
-                console.log(sample.point.toString());
             }
         }
         // Iterate through rows array
@@ -87,9 +83,11 @@ export default class WellTrajectoryNodeCreator
                 z = z * unit;
 
                 const sample = new TrajectorySample(new Vector3(x, y, elevation - z), Number.isNaN(md) ? z : md);
-                sample.inclination = curvePoint[inclinationIndex];
-                sample.azimuth = curvePoint[azimuthIndex];
-
+                if (azimuthIndex >= 0 && inclinationIndex >= 0)
+                {
+                    sample.inclination = curvePoint[inclinationIndex];
+                    sample.azimuth = curvePoint[azimuthIndex];
+                }
                 const length = trajectory.length;
                 if (length > 0 && Number.isNaN(md))
                     sample.updateMdFromPrevSample(trajectory.getAt(length - 1));

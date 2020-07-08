@@ -20,8 +20,8 @@ export class Grid2
   // INSTANCE FIELDS
   //==================================================
 
-  public nodeSize: Index2;
-  public cellSize: Index2;
+  public readonly nodeSize: Index2;
+  public readonly cellSize: Index2;
 
   //==================================================
   // CONSTRUCTORS
@@ -36,9 +36,17 @@ export class Grid2
   }
 
   //==================================================
-  // INSTANCE METHODS; Getters
+  // INSTANCE METHODS: Getters
   //==================================================
 
   public toString(): string { return `(${this.nodeSize})`; }
+  
+  public getNodeIndex(i: number, j: number) { return i + this.nodeSize.i * j; }
+  public getCellIndex(i: number, j: number) { return i + this.cellSize.i * j; }
+
+  //==================================================
+  // INSTANCE METHODS: Requests
+  //==================================================
+
   public isNodeInside(i: number, j: number) { return i >= 0 && j >= 0 && i < this.nodeSize.i && j < this.nodeSize.j; }
 }

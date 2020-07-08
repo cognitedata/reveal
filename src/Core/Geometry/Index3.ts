@@ -11,38 +11,46 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseLogSample } from "@/Nodes/Wells/Samples/BaseLogSample";
-
-export class FloatLogSample extends BaseLogSample 
+export class Index3
 {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
 
-  public value: number;
+  public i: number;
+  public j: number;
+  public k: number;
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(value: number, md: number)
+  public constructor(i: number, j: number, k: number)
   {
-    super(md);
-    this.value = value;
+    this.i = i;
+    this.j = j;
+    this.k = k;
+  }
+
+  public /*copy constructor*/ clone(): Index3
+  {
+    return new Index3(this.i, this.j, this.k);
   }
 
   //==================================================
-  // OVERRIDES of MdSample
+  // INSTANCE PROPERTIES
   //==================================================
 
-  public /*override*/ toString(): string { return `${super.toString()} Value: ${this.value}`; }
-  public /*override*/ sampleText(): string { return `Value: ${this.value}`; }
+  public get size(): number { return this.i * this.j * this.k; }
 
   //==================================================
-  // OVERRIDES of BaseLogSample
+  // INSTANCE METHODS: Getters
   //==================================================
 
-  public /*override*/ get isEmpty(): boolean { return Number.isNaN(this.value); }
+  public toString(): string { return `(${this.i}, ${this.j}, ${this.k})`; }
 
-  public /*override*/  clone(): BaseLogSample { return new FloatLogSample(this.value, this.md); }
-}  
+  //==================================================
+  // INSTANCE METHODS: Operations
+  //==================================================
+
+}

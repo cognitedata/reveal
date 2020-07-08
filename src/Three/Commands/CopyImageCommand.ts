@@ -22,7 +22,16 @@ export class CopyImageCommand extends ThreeRenderTargetCommand
 
   public /*override*/ getName(): string { return "Copy a image of the viewer to the clipboard" }
   public /*override*/ getIcon(): string { return CopyImageIcon; }
-  protected /*override*/  invokeCore(): boolean { return true; }
+  protected /*override*/  invokeCore(): boolean
+  {
+
+    if (!this.target)
+      return false;
+
+    // var domElement = this.target.domElement;
+    //const base64ImageData = domElement.toDataURL();
+    return false;
+  }
 }
 
 

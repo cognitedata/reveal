@@ -82,32 +82,37 @@ export default class WellNodesCreator
 
             if (wellBoreToNDSEventsMap)
             {
-                const ndsEvents = wellBoreToNDSEventsMap.get(wellBoreId);
-                const ndsEventLog = WellLogCreator.createRiskLogNode(ndsEvents);
-                if (ndsEventLog)
+                const events = wellBoreToNDSEventsMap.get(wellBoreId);
+                const logNode = WellLogCreator.createRiskLogNode(events);
+                if (logNode)
                 {
-                    ndsEventLog.setName("NDS Risk Events");
-                    trajectoryNode.addChild(ndsEventLog);
+                    logNode.setName("NDS Risk Events");
+                    trajectoryNode.addChild(logNode);
                 }
             }
             if (wellBoreToNPTEventsMap)
             {
-                const nptEvents = wellBoreToNPTEventsMap.get(wellBoreId);
-                const nptEventsLog = WellLogCreator.createRiskLogNode(nptEvents);
-                if (nptEventsLog)
+                const events = wellBoreToNPTEventsMap.get(wellBoreId);
+                const logNode = WellLogCreator.createRiskLogNode(events);
+                if (logNode)
                 {
-                    nptEventsLog.setName("NPT Risk Events");
-                    trajectoryNode.addChild(nptEventsLog);
+                    logNode.setName("NPT Risk Events");
+                    trajectoryNode.addChild(logNode);
+                }
+            }
+            if (wellBoreToCasingDataMap)
+            {
+                const casingData = wellBoreToCasingDataMap.get(wellBoreId);
+                const logNode = WellCasingCreator.createCasingNodeNew(casingData, unit);
+                if (logNode)
+                {
+                    logNode.setName("Casing");
+                    trajectoryNode.addChild(logNode);
                 }
             }
             if (wellBoreToLogsMap)
                 WellLogCreator.addLogNodes(trajectoryNode, wellBoreToLogsMap[wellBoreId], unit);
 
-            if (wellBoreToCasingDataMap)
-            {
-                const casingData = wellBoreToCasingDataMap.get(wellBoreId);
-                WellCasingCreator.addCasingNodes(trajectoryNode, casingData, unit);
-            }
         }
         return wellNodes;
     }

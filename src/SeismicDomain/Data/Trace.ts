@@ -11,38 +11,47 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseLogSample } from "@/Nodes/Wells/Samples/BaseLogSample";
-
-export class FloatLogSample extends BaseLogSample 
+export class Trace 
 {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
 
-  public value: number;
+  private values: Float32Array;
+
+  //==================================================
+  // INSTANCE PROPERTIES
+  //==================================================
+
+  public get length(): number { return this.values.length; }
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(value: number, md: number)
+  public constructor(length: number)
   {
-    super(md);
-    this.value = value;
+    this.values = new Float32Array(length);
   }
 
   //==================================================
-  // OVERRIDES of MdSample
+  // CONSTRUCTORS
   //==================================================
 
-  public /*override*/ toString(): string { return `${super.toString()} Value: ${this.value}`; }
-  public /*override*/ sampleText(): string { return `Value: ${this.value}`; }
+  public getAt(index: number): number { return this.values[index]; }
+  public setAt(index: number, value: number): void { this.values[index] = value; }
 
-  //==================================================
-  // OVERRIDES of BaseLogSample
-  //==================================================
+  public generateSynthetic(x: number, y: number)
+  {
+    // x and y is [0,1]
+    x = Math.sin(x * Math.PI / 3);
+    y = Math.sin(y * Math.PI / 2);
+    for (let k = length - 1; k >= 0; k--)
+    {
+      const z = k / (length - 1); // Z is [0,1]
+      const value = (x + y) * Math.sin(2 * Math.PI * z / 20);
+      this.values[k] = value;
+    }
+  }
+}
 
-  public /*override*/ get isEmpty(): boolean { return Number.isNaN(this.value); }
-
-  public /*override*/  clone(): BaseLogSample { return new FloatLogSample(this.value, this.md); }
-}  
