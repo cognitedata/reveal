@@ -9,7 +9,7 @@ export class ToggleFullscreenCommand extends ThreeRenderTargetCommand
 {
 
     private _isFullScreen = false;
-    
+
     //==================================================
     // CONSTRUCTORS
     //==================================================
@@ -32,6 +32,8 @@ export class ToggleFullscreenCommand extends ThreeRenderTargetCommand
     {
         this._isFullScreen = !this._isFullScreen;
         VirtualUserInterface.setFullScreen(this._isFullScreen);
+        if (this.target)
+            this.target.onResize();
         return true;
     }
 }
