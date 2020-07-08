@@ -13,7 +13,7 @@ export class AnimationLoopHandler {
   }
 
   public start(): boolean {
-    if(this._animationFrameHandle == undefined) {
+    if(this._animationFrameHandle === undefined) {
       const clock = new THREE.Clock();
       const animationLoop = () => {
         this._animationFrameHandle = requestAnimationFrame(animationLoop);
@@ -28,7 +28,7 @@ export class AnimationLoopHandler {
   }
 
   public dispose() {
-    if(this._animationFrameHandle != undefined) {
+    if(this._animationFrameHandle !== undefined) {
       cancelAnimationFrame(this._animationFrameHandle);
     }
   }
