@@ -133,7 +133,7 @@ export function Picking() {
           pickingNeedsUpdate ||
           revealManager.needsRedraw
         ) {
-          renderer.render(scene, camera);
+          revealManager.render(renderer, camera, scene);
           pickingNeedsUpdate = false;
           revealManager.resetRedraw();
         }
@@ -149,11 +149,11 @@ export function Picking() {
         const coords = {
           x:
             ((event.clientX - rect.left) / renderer.domElement.clientWidth) *
-              2 -
+            2 -
             1,
           y:
             ((event.clientY - rect.top) / renderer.domElement.clientHeight) *
-              -2 +
+            -2 +
             1,
         };
         // Pick in Reveal

@@ -87,7 +87,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
     this.cadNode = cadNode;
 
-    this.children.push(this.cadNode);
+    this.add(this.cadNode);
   }
 
   /**

@@ -8,6 +8,8 @@ import * as THREE from 'three';
 import { edgeDetectionShaders } from './shaders';
 import { CogniteColors } from '@/utilities';
 import { CadNode } from '..';
+import { Cognite3DModel } from '@/migration';
+import { Object3D } from 'three';
 
 export class EffectRenderManager {
   private _materialManager: MaterialManager;
@@ -22,7 +24,7 @@ export class EffectRenderManager {
   private _backRenderedCadModelTarget: THREE.WebGLRenderTarget;
   private _frontRenderedCadModelTarget: THREE.WebGLRenderTarget;
 
-  private _cadModelBuffer: Set<CadNode> = new Set();
+  private _cadModelBuffer: Set<[CadNode, Object3D]> = new Set();
 
   private readonly outlineTexelSize = 2;
 
@@ -72,17 +74,13 @@ export class EffectRenderManager {
     };
     this.updateRenderSize(renderer);
 
-    scene.traverseVisible(p => {
-      if (p instanceof CadNode) {
-        this._cadModelBuffer.add(p);
-      }
-    });
+    this.traverseForCadNodes(scene);
 
     this._cadModelBuffer.forEach(p => {
-      if (p.parent !== scene) {
+      if (p[1] !== scene && !(p[1] instanceof Cognite3DModel)) {
         throw new Error('CadNode must be put at scene root');
       }
-      this._cadScene.add(p);
+      this._cadScene.add(p[0]);
     });
 
     try {
@@ -109,8 +107,9 @@ export class EffectRenderManager {
       this._materialManager.setRenderMode(original.renderMode);
 
       this._cadModelBuffer.forEach(p => {
-        scene.add(p);
+        p[1].add(p[0]);
       });
+      this._cadModelBuffer.clear();
     }
   }
 
@@ -123,7 +122,8 @@ export class EffectRenderManager {
     renderer.setRenderTarget(this._frontRenderedCadModelTarget);
 
     let containsRenderInFront = false;
-    this._cadModelBuffer.forEach(cadModel => {
+    this._cadModelBuffer.forEach(cadModelData => {
+      const cadModel = cadModelData[0];
       const inFrontSet = this._materialManager.getModelInFrontTreeIndices(cadModel.cadModelMetadata.blobUrl);
 
       if (!inFrontSet) {
@@ -224,6 +224,19 @@ export class EffectRenderManager {
     const mesh = new THREE.Mesh(geometry, material);
 
     this._triScene.add(mesh);
+  }
+
+  private traverseForCadNodes(root: Object3D) {
+    const objectStack = [root];
+
+    while (objectStack.length > 0) {
+      const element = objectStack.pop()!;
+      if (element instanceof CadNode) {
+        this._cadModelBuffer.add([element, element.parent!]);
+      } else {
+        objectStack.push(...element.children);
+      }
+    }
   }
 }
 
