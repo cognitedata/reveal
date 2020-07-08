@@ -8,14 +8,13 @@ import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import * as reveal from '@cognite/reveal/experimental';
 import { CogniteClient } from '@cognite/sdk';
-import {
-  getParamsFromURL,
-  createRenderManager,
-} from '../utils/example-helpers';
+import { getParamsFromURL } from '../utils/example-helpers';
+import { RevealOptions } from '@cognite/reveal/public/types';
 
 CameraControls.install({ THREE });
 
 export function GpuSectorCuller() {
+  let revealManager: reveal.RevealManager<unknown>;
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -39,30 +38,15 @@ export function GpuSectorCuller() {
         costLimit: 70 * 1024 * 1024,
         logCallback: console.log,
       });
-
-      const revealManager: reveal.RenderManager = createRenderManager(
-        modelRevision !== undefined ? 'cdf' : 'local',
-        client,
-        {
-          internal: { sectorCuller },
-        }
-      );
+      const revealOptions: RevealOptions = { internal: { sectorCuller } };
 
       let model: reveal.CadNode;
-      if (
-        revealManager instanceof reveal.LocalHostRevealManager &&
-        modelUrl !== undefined
-      ) {
-        model = await revealManager.addModel('cad', modelUrl);
-      } else if (
-        revealManager instanceof reveal.RevealManager &&
-        modelRevision !== undefined
-      ) {
-        model = await revealManager.addModel('cad', modelRevision);
+      if(modelRevision) {
+        revealManager = reveal.createCdfRevealManager(client);
+        model = await revealManager.addModel('cad', modelRevision, revealOptions);
       } else {
-        throw new Error(
-          'Need to provide either project & model OR modelUrl as query parameters'
-        );
+        revealManager = reveal.createLocalRevealManager();
+        model = await revealManager.addModel('cad', modelUrl, revealOptions);
       }
       scene.add(model);
 
