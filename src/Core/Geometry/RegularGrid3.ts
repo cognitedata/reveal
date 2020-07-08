@@ -73,12 +73,10 @@ export class RegularGrid3 extends Grid3
   public /*override*/ toString(): string { return `nodeSize: ${this.nodeSize} origin: ${this.origin} inc: ${this.inc} rotationAngle: ${this.rotationAngle}`; }
 
   //==================================================
-  // INSTANCE METHODS; Getters
+  // INSTANCE METHODS: Getters
   //==================================================
 
-  public getZ(i: number, j: number, k: number): number { return 0; }
-
-  public getPosition(i: number, j: number, k: number, result: Vector3): void
+  public getNodePosition(i: number, j: number, k: number, result: Vector3): void
   {
     if (this._hasRotationAngle)
     {
@@ -96,11 +94,21 @@ export class RegularGrid3 extends Grid3
     result.add(this.origin);
   }
 
-  public getRelativePosition(i: number, j: number, k: number, result: Vector3): void
+  public getCellCenter(i: number, j: number, k: number, result: Vector3): void
+  {
+    this.getNodePosition(i + 0.5, j + 0.5, k + 0.5, result);
+  }
+
+  public getRelativeNodePosition(i: number, j: number, k: number, result: Vector3): void
   {
     result.x = this.inc.x * i;
     result.y = this.inc.y * j;
     result.z = this.inc.z * k;
+  }
+
+  public getRelativeCellCenter(i: number, j: number, k: number, result: Vector3): void
+  {
+    this.getRelativeNodePosition(i + 0.5, j + 0.5, k + 0.5, result);
   }
 
   public getRange(): Range3
@@ -108,11 +116,11 @@ export class RegularGrid3 extends Grid3
     const corner = Vector3.newZero;
     const range = new Range3();
     range.add(this.origin);
-    this.getPosition(0, this.nodeSize.j - 1, 0, corner);
+    this.getNodePosition(0, this.nodeSize.j - 1, 0, corner);
     range.add(corner);
-    this.getPosition(this.nodeSize.i - 1, 0, 0, corner);
+    this.getNodePosition(this.nodeSize.i - 1, 0, 0, corner);
     range.add(corner);
-    this.getPosition(this.nodeSize.i - 1, this.nodeSize.j - 1, this.nodeSize.k - 1, corner); // This get the max z
+    this.getNodePosition(this.nodeSize.i - 1, this.nodeSize.j - 1, this.nodeSize.k - 1, corner); // This get the max z
     range.add(corner);
     return range;
   }

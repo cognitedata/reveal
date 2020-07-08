@@ -42,7 +42,7 @@ export class Index2
   public get size(): number { return this.i * this.j; }
 
   //==================================================
-  // INSTANCE METHODS; Getters
+  // INSTANCE METHODS: Getters
   //==================================================
 
   public toString(): string { return `(${this.i}, ${this.j})`; }

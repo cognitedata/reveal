@@ -48,6 +48,68 @@ export class SyntheticSubSurfaceModule extends BaseModule
 
   public /*override*/ loadData(root: BaseRootNode): void
   {
+    //SyntheticSubSurfaceModule.addWells(root);
+    SyntheticSubSurfaceModule.addSurfaces(root);
+  }
+
+  public /*override*/ setDefaultVisible(root: BaseRootNode): void
+  {
+    // SyntheticSubSurfaceModule.setWellsAndLogsVisible(root);
+    SyntheticSubSurfaceModule.setSurfacesVisible(root);
+  }
+
+  public /*override*/ startAnimate(root: BaseRootNode): void
+  {
+    setInterval(() => SyntheticSubSurfaceModule.animate(root), 200);
+  }
+
+  //==================================================
+  // STATIC METHODS: Surfaces
+  //==================================================
+
+  private static addSurfaces(root: BaseRootNode): void
+  {
+    if (!(root instanceof SubSurfaceRootNode))
+      return;
+
+    for (let i = 0; i < 1; i++)
+    {
+      const parent0 = new FolderNode();
+      root.others.addChild(parent0);
+
+      for (let j = 0; j < 1; j++)
+      {
+        const parent1 = new FolderNode();
+        parent0.addChild(parent1);
+
+        for (let k = 0; k < 3; k++)
+        {
+          const node = new SurfaceNode();
+          var range = Range3.newTest.clone();
+          range.expandByFraction(0.2);
+          range.z.set(-1400 + (k - 1) * 300, -1800 + (k - 1) * 300);
+          node.data = RegularGrid2.createFractal(range, 7, 0.9, 5, Ma.toRad(k * 10));
+          parent1.addChild(node);
+        }
+      }
+    }
+  }
+
+  private static setSurfacesVisible(root: BaseRootNode): void
+  {
+    for (const node of root.getDescendantsByType(SurfaceNode))
+    {
+      node.setVisibleInteractive(true);
+      //break;
+    }
+  }
+
+  //==================================================
+  // STATIC METHODS: Wells and logs
+  //==================================================
+
+  private static addWells(root: BaseRootNode): void
+  {
     if (!(root instanceof SubSurfaceRootNode))
       return;
 
@@ -140,33 +202,12 @@ export class SyntheticSubSurfaceModule extends BaseModule
         }
       }
     }
-    for (let i = 0; i < 3; i++)
-    {
-      const parent0 = new FolderNode();
-      root.others.addChild(parent0);
-
-      for (let j = 0; j < 2; j++)
-      {
-        const parent1 = new FolderNode();
-        parent0.addChild(parent1);
-
-        for (let k = 0; k < 3; k++)
-        {
-          const node = new SurfaceNode();
-          var range = Range3.newTest.clone();
-          range.expandByFraction(0.2);
-          range.z.set(-1400 + (k - 1) * 300, -1800 + (k - 1) * 300);
-          node.data = RegularGrid2.createFractal(range, 7, 0.9, 5, Ma.toRad(45));
-          parent1.addChild(node);
-        }
-      }
-    }
     wellTree.synchronize();
   }
 
-  public /*override*/ setDefaultVisible(root: BaseRootNode): void
+
+  private static setWellsAndLogsVisible(root: BaseRootNode): void
   {
-    // Set all wells ands logs visible
     for (const well of root.getDescendantsByType(WellNode))
     {
       for (const wellTrajectory of well.getDescendantsByType(WellTrajectoryNode))
@@ -178,21 +219,17 @@ export class SyntheticSubSurfaceModule extends BaseModule
     for (const node of root.getDescendantsByType(SurfaceNode))
     {
       node.setVisibleInteractive(true);
-      break;
+      //break;
     }
     for (const node of root.getDescendantsByType(BaseFilterLogNode))
     {
+      break;
       node.setVisibleInteractive(true);
     }
   }
 
-  public /*override*/ startAnimate(root: BaseRootNode): void
-  {
-    setInterval(() => SyntheticSubSurfaceModule.animate(root), 200);
-  }
-
   //==================================================
-  // STATIC METHODS
+  // STATIC METHODS: Others
   //==================================================
 
   private static animate(root: BaseRootNode)

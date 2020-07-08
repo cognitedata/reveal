@@ -107,7 +107,6 @@ export class ContouringService
 
   private addLevelAt(z: number, a: Vector3, b: Vector3, c: Vector3): boolean
   {
-
     // Make sure we don't run into numerical problems
     if (Ma.IsAbsEqual(a.z, z, this.tolerance))
       a.z = z + this.tolerance;

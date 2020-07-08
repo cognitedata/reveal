@@ -95,10 +95,8 @@ export class RegularGrid2 extends Grid2
   }
 
   //==================================================
-  // INSTANCE METHODS; Getters
+  // INSTANCE METHODS: Getters
   //==================================================
-
-  public getNodeIndex(i: number, j: number) { return i + this.nodeSize.i * j; }
 
   public getZ(i: number, j: number): number
   {
