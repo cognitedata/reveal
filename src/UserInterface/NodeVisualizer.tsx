@@ -20,6 +20,7 @@ import Viewer from "@/UserInterface/info/Viewer";
 import { Range3 } from "@/Core/Geometry/Range3";
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import Toolbar from "@/UserInterface/impl/Toolbar";
+import { Appearance } from "@/Core/States/Appearance";
 
 /**
  * Subsurface Visualizer Component of the application
@@ -27,6 +28,7 @@ import Toolbar from "@/UserInterface/impl/Toolbar";
  */
 export default function NodeVisualizer(props: { root?: BaseRootNode }) {
   const dispatch = useDispatch();
+  const common = useSelector((state: ReduxStore) => state.common);
   const { root } = props;
   // Add viewer ref here
   const visualizers = useSelector((state: ReduxStore) => state.visualizers);
@@ -70,7 +72,8 @@ export default function NodeVisualizer(props: { root?: BaseRootNode }) {
     <div className="subsurface-container">
       <SplitPane
         split="vertical"
-        minSize={290}
+        minSize={common.isFullscreen ? 0 : Appearance.leftPanelDefaultSize}
+        maxSize={common.isFullscreen ? 0 : Appearance.leftPanelMaxSize}
         onChange={() => {
           const targetIds = Object.keys(visualizers.targets);
           for (const id of targetIds) {

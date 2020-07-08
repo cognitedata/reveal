@@ -19,8 +19,14 @@ export type ToolBarType = {
   };
 }[];
 
+//Common state interface
+export interface CommonStateInterface {
+  isFullscreen: boolean;
+}
+
 // Redux Store
 export interface ReduxStore {
+  common: CommonStateInterface;
   settings: SettingsStateInterface;
   explorer: ExplorerStateInterface;
   visualizers: VisualizerStateInterface

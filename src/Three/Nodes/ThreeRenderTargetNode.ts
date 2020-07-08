@@ -34,6 +34,7 @@ import { CameraControl } from "@/Three/Nodes/Camera";
 import { ToggleCameraTypeCommand } from "../Commands/ToggleCameraTypeCommand";
 import { CopyImageCommand } from "../Commands/CopyImageCommand";
 import { MeasureDistanceTool } from "../Commands/Tools/MeasureDistanceTool";
+import { ToggleFullscreenCommand } from "../Commands/ToggleFullscreenCommand";
 import { PanToolCommand } from "../Commands/Tools/PanToolCommand";
 import { SelectCommand } from "../Commands/Tools/SelectCommand";
 import { ZoomToolCommand } from "../Commands/Tools/ZoomToolCommand";
@@ -251,6 +252,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     this.setDefaultTool(panTool);
 
     // Tools
+    toolbar.add(new ToggleFullscreenCommand(this));
     toolbar.add(panTool);
     toolbar.add(new SelectCommand(this));
     toolbar.add(new ZoomToolCommand(this));
