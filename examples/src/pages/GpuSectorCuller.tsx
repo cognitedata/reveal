@@ -10,14 +10,16 @@ import * as reveal from '@cognite/reveal/experimental';
 import { CogniteClient } from '@cognite/sdk';
 import { getParamsFromURL } from '../utils/example-helpers';
 import { RevealOptions } from '@cognite/reveal/public/types';
+import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 CameraControls.install({ THREE });
 
 export function GpuSectorCuller() {
-  let revealManager: reveal.RevealManager<unknown>;
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    let revealManager: reveal.RevealManager<unknown>;
+    const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
     async function main() {
       const { project, modelUrl, modelRevision } = getParamsFromURL({
         project: 'publicdata',
@@ -44,9 +46,13 @@ export function GpuSectorCuller() {
       if(modelRevision) {
         revealManager = reveal.createCdfRevealManager(client);
         model = await revealManager.addModel('cad', modelRevision, revealOptions);
-      } else {
+      } else if (modelUrl) {
         revealManager = reveal.createLocalRevealManager();
         model = await revealManager.addModel('cad', modelUrl, revealOptions);
+      } else {
+        throw new Error(
+          'Need to provide either project & model OR modelUrl as query parameters'
+        );
       }
       scene.add(model);
 
@@ -71,7 +77,6 @@ export function GpuSectorCuller() {
       controls.update(0.0);
       camera.updateMatrixWorld();
       revealManager.update(camera);
-      const clock = new THREE.Clock();
 
       // revealManager.renderHints = { showSectorBoundingBoxes: false }; Not yet supported.
       // Debug overlay for "determineSectors"
@@ -115,9 +120,8 @@ export function GpuSectorCuller() {
       // });
 
       revealManager.update(camera);
-      const render = async () => {
-        const delta = clock.getDelta();
-        const controlsNeedUpdate = controls.update(delta);
+      animationLoopHandler.setOnAnimationFrameListener(async (deltaTime) => {
+        const controlsNeedUpdate = controls.update(deltaTime);
         if (controlsNeedUpdate) {
           revealManager.update(camera);
         }
@@ -126,10 +130,8 @@ export function GpuSectorCuller() {
           renderer.render(scene, camera);
           revealManager.resetRedraw();
         }
-
-        requestAnimationFrame(render);
-      };
-      render();
+      });
+      animationLoopHandler.start();
 
       (window as any).scene = scene;
       (window as any).THREE = THREE;

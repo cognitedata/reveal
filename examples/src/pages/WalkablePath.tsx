@@ -10,10 +10,8 @@ import { CogniteClient, HttpError } from '@cognite/sdk';
 import * as reveal from '@cognite/reveal/experimental';
 import { vec3 } from 'gl-matrix';
 import { GUI, GUIController } from 'dat.gui';
-import {
-  getParamsFromURL,
-  createRenderManager,
-} from '../utils/example-helpers';
+import { getParamsFromURL } from '../utils/example-helpers';
+import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 CameraControls.install({ THREE });
 
@@ -61,6 +59,8 @@ interface TransitPathData {
 export function WalkablePath() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
+    const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
+    let revealManager: reveal.RevealManager<unknown>;
     async function main() {
       const { project, modelUrl, modelRevision } = getParamsFromURL({
         project: 'publicdata',
@@ -78,22 +78,13 @@ export function WalkablePath() {
       renderer.setClearColor('#444');
       renderer.setSize(window.innerWidth, window.innerHeight);
 
-      const revealManager: reveal.RenderManager = createRenderManager(
-        modelRevision !== undefined ? 'cdf' : 'local',
-        client
-      );
-
       let model: reveal.CadNode;
-      if (
-        revealManager instanceof reveal.LocalHostRevealManager &&
-        modelUrl !== undefined
-      ) {
-        model = await revealManager.addModel('cad', modelUrl);
-      } else if (
-        revealManager instanceof reveal.RevealManager &&
-        modelRevision !== undefined
-      ) {
+      if(modelRevision) {
+        revealManager = reveal.createCdfRevealManager(client);
         model = await revealManager.addModel('cad', modelRevision);
+      } else if(modelUrl) {
+        revealManager = reveal.createLocalRevealManager();
+        model = await revealManager.addModel('cad', modelUrl);
       } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'
@@ -153,10 +144,8 @@ export function WalkablePath() {
         removeWalkablePath,
       });
 
-      const clock = new THREE.Clock();
-      const render = () => {
-        const delta = clock.getDelta();
-        const controlsNeedUpdate = controls.update(delta);
+      animationLoopHandler.setOnAnimationFrameListener((deltaTime) => {
+        const controlsNeedUpdate = controls.update(deltaTime);
         if (controlsNeedUpdate) {
           revealManager.update(camera);
         }
@@ -171,11 +160,9 @@ export function WalkablePath() {
           renderer.render(scene, camera);
           revealManager.resetRedraw();
         }
-
-        requestAnimationFrame(render);
-      };
+      });
+      animationLoopHandler.start();
       revealManager.update(camera);
-      requestAnimationFrame(render);
       (window as any).scene = scene;
       (window as any).THREE = THREE;
       (window as any).camera = camera;
@@ -184,6 +171,10 @@ export function WalkablePath() {
     }
 
     main();
+    return () => {
+      animationLoopHandler.dispose();
+      revealManager.dispose();
+    }
   });
   return (
     <CanvasWrapper>

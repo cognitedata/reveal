@@ -160,8 +160,8 @@ export class RevealManager<TModelIdentifier> implements RenderManager {
   ): Promise<[PotreeGroupWrapper, PotreeNodeWrapper] | CadNode> {
     trackLoadModel(
       {
-        moduleName: 'RevealManagerBase',
-        methodName: 'loadModel',
+        moduleName: 'RevealManager',
+        methodName: 'addModel',
         options: { nodeApperanceProvider }
       },
       modelIdentifier
@@ -169,7 +169,7 @@ export class RevealManager<TModelIdentifier> implements RenderManager {
 
     switch (type) {
       case 'cad': {
-        const cadNode = await this._cadManager.addModel(modelIdentifier);
+        const cadNode = await this._cadManager.addModel(modelIdentifier, nodeApperanceProvider);
         this._subscriptions.add(
           this._cadManager
             .getParsedData()

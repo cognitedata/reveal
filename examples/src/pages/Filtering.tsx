@@ -11,6 +11,7 @@ import dat from 'dat.gui';
 import { getParamsFromURL } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import { RevealOptions } from '@cognite/reveal/public/types';
+import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 CameraControls.install({ THREE });
 
@@ -19,6 +20,8 @@ export function Filtering() {
   useEffect(() => {
     const gui = new dat.GUI();
     let revealManager: reveal.RevealManager<unknown>;
+    const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
+
     async function main() {
       const { project, modelUrl, modelRevision } = getParamsFromURL({
         project: 'publicdata',
@@ -50,9 +53,13 @@ export function Filtering() {
       if(modelRevision) {
         revealManager = reveal.createCdfRevealManager(client);
         model = await revealManager.addModel('cad', modelRevision);
-      } else {
+      } else if(modelUrl) {
         revealManager = reveal.createLocalRevealManager();
         model = await revealManager.addModel('cad', modelUrl);
+      } else {
+        throw new Error(
+          'Need to provide either project & model OR modelUrl as query parameters'
+        );
       }
 
       scene.add(model);
@@ -96,10 +103,8 @@ export function Filtering() {
       controls.update(0.0);
       camera.updateMatrixWorld();
       revealManager.update(camera);
-      const clock = new THREE.Clock();
-      const render = () => {
-        const delta = clock.getDelta();
-        const controlsNeedUpdate = controls.update(delta);
+      animationLoopHandler.setOnAnimationFrameListener((deltaTime) => {
+        const controlsNeedUpdate = controls.update(deltaTime);
         if (controlsNeedUpdate) {
           revealManager.update(camera);
         }
@@ -113,10 +118,8 @@ export function Filtering() {
           shadingNeedsUpdate = false;
           revealManager.resetRedraw();
         }
-
-        requestAnimationFrame(render);
-      };
-      render();
+      });
+      animationLoopHandler.start();
 
       (window as any).scene = scene;
       (window as any).THREE = THREE;
@@ -130,6 +133,7 @@ export function Filtering() {
     return () => {
       gui.destroy();
       revealManager.dispose();
+      animationLoopHandler.dispose();
     };
   });
   return (

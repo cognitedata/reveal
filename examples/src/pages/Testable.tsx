@@ -4,16 +4,14 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import {
-  getParamsFromURL,
-  createRenderManager,
-} from '../utils/example-helpers';
+import { getParamsFromURL } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import * as reveal from '@cognite/reveal/experimental';
 import React, { useEffect, useRef, useState } from 'react';
-import { WebGLRenderer } from 'three';
 import { CanvasWrapper, Loader } from '../components/styled';
 import { BoundingBoxClipper } from '@cognite/reveal';
+import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
+import { resizeRendererToDisplaySize } from '../utils/sceneHelpers';
 
 CameraControls.install({ THREE });
 
@@ -22,7 +20,8 @@ export function Testable() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    let revealManager: reveal.RevealManager | reveal.LocalHostRevealManager;
+    const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
+    let revealManager: reveal.RevealManager<unknown>;
 
     async function main() {
       if (!canvas.current) {
@@ -36,22 +35,14 @@ export function Testable() {
       client.loginWithOAuth({ project });
 
       const scene = new THREE.Scene();
-      revealManager = createRenderManager(
-        modelRevision !== undefined ? 'cdf' : 'local',
-        client
-      );
 
       let model: reveal.CadNode;
-      if (
-        revealManager instanceof reveal.LocalHostRevealManager &&
-        modelUrl !== undefined
-      ) {
-        model = await revealManager.addModel('cad', modelUrl);
-      } else if (
-        revealManager instanceof reveal.RevealManager &&
-        modelRevision !== undefined
-      ) {
+      if(modelRevision) {
+        revealManager = reveal.createCdfRevealManager(client);
         model = await revealManager.addModel('cad', modelRevision);
+      } else if(modelUrl) {
+        revealManager = reveal.createLocalRevealManager();
+        model = await revealManager.addModel('cad', modelUrl);
       } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'
@@ -126,28 +117,10 @@ export function Testable() {
       camera.updateMatrixWorld();
       revealManager.update(camera);
 
-      function resizeRendererToDisplaySize(renderer: WebGLRenderer) {
-        const canvas = renderer.domElement;
-        const width = canvas.clientWidth;
-        const height = canvas.clientHeight;
-        const needResize = canvas.width !== width || canvas.height !== height;
-        if (needResize) {
-          renderer.setSize(width, height, false);
-        }
-        return needResize;
-      }
+      animationLoopHandler.setOnAnimationFrameListener(async (deltaTime) => {
+        let needsResize = resizeRendererToDisplaySize(renderer, camera);
 
-      const clock = new THREE.Clock();
-      const render = async () => {
-        let needsResize = resizeRendererToDisplaySize(renderer);
-        if (needsResize) {
-          const canvas = renderer.domElement;
-          camera.aspect = canvas.clientWidth / canvas.clientHeight;
-          camera.updateProjectionMatrix();
-        }
-
-        const delta = clock.getDelta();
-        const controlsNeedUpdate = controls.update(delta);
+        const controlsNeedUpdate = controls.update(deltaTime);
         if (controlsNeedUpdate) {
           revealManager.update(camera);
         }
@@ -157,9 +130,8 @@ export function Testable() {
           revealManager.resetRedraw();
         }
 
-        requestAnimationFrame(render);
-      };
-      render();
+      });
+      animationLoopHandler.start();
 
       (window as any).scene = scene;
       (window as any).THREE = THREE;
@@ -172,6 +144,8 @@ export function Testable() {
 
     return () => {
       revealManager?.dispose();
+      animationLoopHandler.dispose();
+      revealManager.dispose();
     };
   }, []);
   return (

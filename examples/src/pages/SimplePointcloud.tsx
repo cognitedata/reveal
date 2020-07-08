@@ -12,10 +12,8 @@ import { CogniteClient } from '@cognite/sdk';
 import CameraControls from 'camera-controls';
 import dat, { GUI } from 'dat.gui';
 import { vec3 } from 'gl-matrix';
-import {
-  getParamsFromURL,
-  createRenderManager,
-} from '../utils/example-helpers';
+import { getParamsFromURL } from '../utils/example-helpers';
+import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 CameraControls.install({ THREE });
 
@@ -64,9 +62,11 @@ export function SimplePointcloud() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    let revealManager: reveal.RevealManager<unknown>;
     if (!canvasRef.current) {
       return
     }
+    const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
     const gui = new dat.GUI();
 
     async function main() {
@@ -85,27 +85,17 @@ export function SimplePointcloud() {
       renderer.setClearColor('#000000');
       renderer.setSize(window.innerWidth, window.innerHeight);
 
-      const revealManager: reveal.RenderManager = createRenderManager(
-        modelRevision !== undefined ? 'cdf' : 'local',
-        client
-      );
       let model: [
         reveal.internal.PotreeGroupWrapper,
         reveal.internal.PotreeNodeWrapper
       ];
-
-      if (
-        revealManager instanceof reveal.LocalHostRevealManager &&
-        modelUrl !== undefined
-      ) {
-        model = await revealManager.addModel('pointcloud', modelUrl);
-      } else if (
-        revealManager instanceof reveal.RevealManager &&
-        modelRevision !== undefined
-      ) {
+      if(modelRevision) {
         await client.authenticate();
+        revealManager = reveal.createCdfRevealManager(client);
         model = await revealManager.addModel('pointcloud', modelRevision);
-        revealManager.on('loadingStateChanged', setIsLoading);
+      } else if(modelUrl) {
+        revealManager = reveal.createLocalRevealManager();
+        model = await revealManager.addModel('pointcloud', modelUrl);
       } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'
@@ -160,10 +150,8 @@ export function SimplePointcloud() {
       controls.update(0.0);
       camera.updateMatrixWorld();
 
-      const clock = new THREE.Clock();
-      const render = async () => {
-        const delta = clock.getDelta();
-        const controlsNeedUpdate = controls.update(delta);
+      animationLoopHandler.setOnAnimationFrameListener((deltaTime) => {
+        const controlsNeedUpdate = controls.update(deltaTime);
 
         const needsUpdate =
           controlsNeedUpdate || revealManager.needsRedraw || settingsChanged;
@@ -172,9 +160,8 @@ export function SimplePointcloud() {
           renderer.render(scene, camera);
           settingsChanged = false;
         }
-        requestAnimationFrame(render);
-      };
-      render();
+      });
+      animationLoopHandler.start();
 
       (window as any).scene = scene;
       (window as any).renderer = renderer;
@@ -187,6 +174,8 @@ export function SimplePointcloud() {
 
     return () => {
       gui.destroy();
+      animationLoopHandler.dispose();
+      revealManager.dispose();
     };
   }, []);
 

@@ -26,11 +26,12 @@ export function getParamsFromURL(defaults: {
   return {
     project: project ? project : defaults.project,
     modelRevision,
-    modelUrl:
-      modelUrl !== null
-        ? modelUrl
-        : modelId === null && defaults.modelUrl
-        ? defaults.modelUrl
-        : undefined,
+    modelUrl: {
+      fileName: modelUrl !== null
+      ? modelUrl
+      : modelId === null && defaults.modelUrl
+      ? defaults.modelUrl
+      : undefined,
+    }
   };
 }
