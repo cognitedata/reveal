@@ -8,6 +8,7 @@ import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
 import { PotreeGroupWrapper } from './PotreeGroupWrapper';
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 import { PotreeLoadHandler } from './PotreeLoadHandler';
+import { Observable } from 'rxjs';
 
 export class PointCloudManager<TModelIdentifier> {
   private readonly _pointCloudMetadataRepository: PointCloudMetadataRepository<TModelIdentifier>;
@@ -16,12 +17,9 @@ export class PointCloudManager<TModelIdentifier> {
   private _pointCloudGroupWrapper?: PotreeGroupWrapper;
   private _potreeLoadHandler: PotreeLoadHandler;
 
-  constructor(
-    cadModelMetadataRepository: PointCloudMetadataRepository<TModelIdentifier>,
-    cadModelFactory: PointCloudFactory
-  ) {
-    this._pointCloudMetadataRepository = cadModelMetadataRepository;
-    this._pointCloudFactory = cadModelFactory;
+  constructor(metadataRepository: PointCloudMetadataRepository<TModelIdentifier>, modelFactory: PointCloudFactory) {
+    this._pointCloudMetadataRepository = metadataRepository;
+    this._pointCloudFactory = modelFactory;
     this._potreeLoadHandler = new PotreeLoadHandler();
   }
 
@@ -35,7 +33,7 @@ export class PointCloudManager<TModelIdentifier> {
     return this._pointCloudGroupWrapper ? this._pointCloudGroupWrapper.needsRedraw : false;
   }
 
-  getLoadingStateObserver() {
+  getLoadingStateObserver(): Observable<boolean> {
     return this._potreeLoadHandler.observer();
   }
 

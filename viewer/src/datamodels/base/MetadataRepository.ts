@@ -2,6 +2,6 @@
  * Copyright 2020 Cognite AS
  */
 
-export interface DataRepository<Input, Output> {
+export interface MetadataRepository<Input, Output> {
   loadData(input: Input): Output;
 }

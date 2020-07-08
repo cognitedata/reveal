@@ -13,27 +13,27 @@ import { CadSectorParser } from './sector/CadSectorParser';
 import { CachedRepository } from './sector/CachedRepository';
 import { SimpleAndDetailedToSector3D } from './sector/SimpleAndDetailedToSector3D';
 import { ByVisibilityGpuSectorCuller } from './sector/culling/ByVisibilityGpuSectorCuller';
-import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
-import { LocalUrlClient } from '@/utilities/networking/LocalUrlClient';
 import { File3dFormat } from '@/utilities/types';
+import { LocalModelDataClient } from '@/utilities/networking/LocalModelDataClient';
+import { CdfModelDataClient } from '@/utilities/networking/CdfModelDataClient';
 
-export function createDefaultCadManager(client: LocalUrlClient): CadManager<{ fileName: string }>;
+export function createDefaultCadManager(client: LocalModelDataClient): CadManager<{ fileName: string }>;
 export function createDefaultCadManager(
-  client: CogniteClient3dExtensions
+  client: CdfModelDataClient
 ): CadManager<{ modelId: number; revisionId: number; format: File3dFormat }>;
 export function createDefaultCadManager(
-  client: LocalUrlClient | CogniteClient3dExtensions
+  client: LocalModelDataClient | CdfModelDataClient
 ): CadManager<{ fileName: string }> | CadManager<{ modelId: number; revisionId: number; format: File3dFormat }> {
   const cadModelTransformationProvider = new DefaultCadTransformation();
   const cadMetadataParser = new CadMetadataParser();
   let cadModelMetadataRepository: CadModelMetadataRepository<unknown>;
-  if (client instanceof CogniteClient3dExtensions) {
+  if (client instanceof CdfModelDataClient) {
     cadModelMetadataRepository = new CadModelMetadataRepository(
       client,
       cadModelTransformationProvider,
       cadMetadataParser
     );
-  } else if (client instanceof LocalUrlClient) {
+  } else if (client instanceof LocalModelDataClient) {
     cadModelMetadataRepository = new CadModelMetadataRepository(
       client,
       cadModelTransformationProvider,
@@ -49,5 +49,5 @@ export function createDefaultCadManager(
   const cachedSectorRepository = new CachedRepository(client, modelDataParser, modelDataTransformer);
   const sectorCuller = new ByVisibilityGpuSectorCuller();
   const cadModelUpdateHandler = new CadModelUpdateHandler(cachedSectorRepository, sectorCuller);
-  return new CadManager(cadModelMetadataRepository, cadModelFactory, cadModelUpdateHandler);
+  return new CadManager(materialManager, cadModelMetadataRepository, cadModelFactory, cadModelUpdateHandler);
 }

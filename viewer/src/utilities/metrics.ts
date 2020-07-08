@@ -4,13 +4,14 @@
 
 import mixpanel from 'mixpanel-browser';
 
-type TrackedEvents = 'init' | 'addModel' | 'error';
+type TrackedEvents = 'init' | 'loadModel' | 'error';
 type EventProps = {
   [key: string]: any;
   // names mentioned instead of just `string` type for typo protection,
   // better than nothing, easier than anything else
   moduleName:
     | 'RevealManager'
+    | 'RevealManagerBase'
     | 'Cognite3DViewer'
     | 'CadManager'
     | 'CachedRepository'
@@ -51,9 +52,8 @@ export function trackEvent(eventName: TrackedEvents, eventProps: EventProps) {
   mixpanel.track(eventName, combined);
 }
 
-// failed to overload it correctly, if you know how - just do it like `track('addModel', /* required event props */)`
-export function trackAddModel(eventProps: EventProps & { modelId: number; revisionId: number }) {
-  trackEvent('addModel', eventProps);
+export function trackLoadModel(eventProps: EventProps, modelIdentifier: any) {
+  trackEvent('loadModel', { ...eventProps, modelIdentifier });
 }
 
 export function trackError(error: Error, eventProps: EventProps) {

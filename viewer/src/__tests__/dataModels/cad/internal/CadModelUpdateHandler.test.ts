@@ -35,7 +35,7 @@ describe('CadModelUpdateHandler', () => {
 
   test('updateCamera(), updateLoadingHints() and updateClipPlanes() triggers SectorCuller.determineSectors()', () => {
     const updateHandler = new CadModelUpdateHandler(repository, mockCuller);
-    updateHandler.observable().subscribe();
+    updateHandler.consumedSectorObservable().subscribe();
     updateHandler.updateModels(cadModel);
 
     updateHandler.updateCamera(new THREE.PerspectiveCamera());

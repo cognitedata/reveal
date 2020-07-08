@@ -3,6 +3,7 @@
  */
 
 import { File3dFormat, ModelTransformation } from '../types';
+import { HttpHeadersProvider } from './HttpHeadersProvider';
 
 export interface BlobOutputMetadata {
   blobId: number;
@@ -25,3 +26,9 @@ export interface JsonFileProvider {
 export interface BinaryFileProvider {
   getBinaryFile(blobUrl: string, fileName: string): Promise<ArrayBuffer>;
 }
+
+export interface ModelDataClient<TModelIdentifier>
+  extends ModelUrlProvider<TModelIdentifier>,
+    JsonFileProvider,
+    BinaryFileProvider,
+    HttpHeadersProvider {}

@@ -8,11 +8,16 @@ import { CadModelFactory } from './CadModelFactory';
 import { CadModelMetadataRepository } from './CadModelMetadataRepository';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 import { discardSector } from './sector/sectorUtilities';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import { NodeAppearanceProvider } from './NodeAppearance';
 import { trackError } from '@/utilities/metrics';
+import { SectorGeometry } from './sector/types';
+import { SectorQuads } from './rendering/types';
+import { MaterialManager } from './MaterialManager';
+import { RenderMode } from './rendering/RenderMode';
 
 export class CadManager<TModelIdentifier> {
+  private readonly _materialManager: MaterialManager;
   private readonly _cadModelMetadataRepository: CadModelMetadataRepository<TModelIdentifier>;
   private readonly _cadModelFactory: CadModelFactory;
   private readonly _cadModelUpdateHandler: CadModelUpdateHandler;
@@ -23,15 +28,17 @@ export class CadManager<TModelIdentifier> {
   private _needsRedraw: boolean = false;
 
   constructor(
+    materialManger: MaterialManager,
     cadModelMetadataRepository: CadModelMetadataRepository<TModelIdentifier>,
     cadModelFactory: CadModelFactory,
     cadModelUpdateHandler: CadModelUpdateHandler
   ) {
+    this._materialManager = materialManger;
     this._cadModelMetadataRepository = cadModelMetadataRepository;
     this._cadModelFactory = cadModelFactory;
     this._cadModelUpdateHandler = cadModelUpdateHandler;
     this._subscription.add(
-      this._cadModelUpdateHandler.observable().subscribe(
+      this._cadModelUpdateHandler.consumedSectorObservable().subscribe(
         sector => {
           const cadModel = this._cadModelMap.get(sector.blobUrl);
           if (!cadModel) {
@@ -87,16 +94,35 @@ export class CadManager<TModelIdentifier> {
 
   updateCamera(camera: THREE.PerspectiveCamera) {
     this._cadModelUpdateHandler.updateCamera(camera);
-  }
-
-  set clippingPlanes(value: THREE.Plane[]) {
-    this._cadModelUpdateHandler.clippingPlanes = value;
     this._needsRedraw = true;
   }
 
-  set clipIntersection(value: boolean) {
-    this._cadModelUpdateHandler.clipIntersection = value;
+  get clippingPlanes(): THREE.Plane[] {
+    return this._materialManager.clippingPlanes;
+  }
+
+  set clippingPlanes(clippingPlanes: THREE.Plane[]) {
+    this._materialManager.clippingPlanes = clippingPlanes;
+    this._cadModelUpdateHandler.clippingPlanes = clippingPlanes;
     this._needsRedraw = true;
+  }
+
+  get clipIntersection(): boolean {
+    return this._materialManager.clipIntersection;
+  }
+
+  set clipIntersection(clipIntersection: boolean) {
+    this._materialManager.clipIntersection = clipIntersection;
+    this._cadModelUpdateHandler.clipIntersection = clipIntersection;
+    this._needsRedraw = true;
+  }
+
+  get renderMode(): RenderMode {
+    return this._materialManager.getRenderMode();
+  }
+
+  set renderMode(renderMode: RenderMode) {
+    this._materialManager.setRenderMode(renderMode);
   }
 
   async addModel(modelIdentifier: TModelIdentifier, nodeApperanceProvider?: NodeAppearanceProvider): Promise<CadNode> {
@@ -105,5 +131,13 @@ export class CadManager<TModelIdentifier> {
     this._cadModelMap.set(metadata.blobUrl, model);
     this._cadModelUpdateHandler.updateModels(model);
     return model;
+  }
+
+  getLoadingStateObserver(): Observable<boolean> {
+    return this._cadModelUpdateHandler.getLoadingStateObserver();
+  }
+
+  getParsedData(): Observable<{ blobUrl: string; lod: string; data: SectorGeometry | SectorQuads }> {
+    return this._cadModelUpdateHandler.getParsedData();
   }
 }

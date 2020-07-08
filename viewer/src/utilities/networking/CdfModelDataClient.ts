@@ -3,10 +3,9 @@
  */
 import { CogniteClient, ItemsResponse } from '@cognite/sdk';
 
-import { BlobOutputMetadata, ModelUrlProvider, JsonFileProvider, BinaryFileProvider } from './types';
+import { BlobOutputMetadata, ModelDataClient } from './types';
 import { Model3DOutputList } from './Model3DOutputList';
 import { File3dFormat } from '../types';
-import { HttpHeadersProvider } from './HttpHeadersProvider';
 import { fetchWithStatusCheck } from './utilities';
 
 // TODO 2020-06-25 larsmoa: Extend CogniteClient.files3d.retrieve() to support subpath instead of
@@ -14,12 +13,8 @@ import { fetchWithStatusCheck } from './utilities';
 /**
  * Provides 3D V2 specific extensions for the standard CogniteClient used by Reveal.
  */
-export class CogniteClient3dExtensions
-  implements
-    ModelUrlProvider<{ modelId: number; revisionId: number; format: File3dFormat }>,
-    HttpHeadersProvider,
-    JsonFileProvider,
-    BinaryFileProvider {
+export class CdfModelDataClient
+  implements ModelDataClient<{ modelId: number; revisionId: number; format: File3dFormat }> {
   private readonly client: CogniteClient;
 
   constructor(client: CogniteClient) {
@@ -55,7 +50,7 @@ export class CogniteClient3dExtensions
     const mostRecentOutput = outputs.findMostRecentOutput(format);
     if (!mostRecentOutput) {
       throw new Error(
-        `Model '${modelId}/${revisionId}' is not compatible with this version of Reveal. If this model works with a previous version of Reveal it must be reconverted to support this version.`
+        `Model '${modelId}/${revisionId} (${format})' is not compatible with this version of Reveal. If this model works with a previous version of Reveal it must be reconverted to support this version.`
       );
     }
     const blobId = mostRecentOutput.blobId;

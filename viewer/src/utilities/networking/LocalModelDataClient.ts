@@ -2,12 +2,10 @@
  * Copyright 2020 Cognite AS
  */
 
-import { HttpHeadersProvider } from './HttpHeadersProvider';
-import { ModelUrlProvider, JsonFileProvider, BinaryFileProvider } from './types';
+import { ModelDataClient } from './types';
 import { fetchWithStatusCheck } from './utilities';
 
-export class LocalUrlClient
-  implements ModelUrlProvider<{ fileName: string }>, HttpHeadersProvider, JsonFileProvider, BinaryFileProvider {
+export class LocalModelDataClient implements ModelDataClient<{ fileName: string }> {
   getModelUrl(params: { fileName: string }): Promise<string> {
     return Promise.resolve(`${location.origin}/${params.fileName}`);
   }
