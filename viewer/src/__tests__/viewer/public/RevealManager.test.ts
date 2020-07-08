@@ -4,17 +4,17 @@
 
 import * as THREE from 'three';
 
-import { RevealManagerBase } from '@/public/RevealManagerBase';
 import { File3dFormat } from '@/utilities';
 import { ModelDataClient } from '@/utilities/networking/types';
 import { SectorCuller } from '@/internal';
+import { createRevealManager } from '@/public/createRevealManager';
 
-describe('RevealManagerBase', () => {
+describe('RevealManager', () => {
   const mockClient: ModelDataClient<{ id: number; format: File3dFormat }> = jest.fn() as any;
   const sectorCuller: SectorCuller = {
     determineSectors: jest.fn()
   };
-  const manager = new RevealManagerBase<{ id: number }>(mockClient, { internal: { sectorCuller } });
+  const manager = createRevealManager(mockClient, { internal: { sectorCuller } });
 
   beforeEach(() => {
     jest.clearAllMocks();

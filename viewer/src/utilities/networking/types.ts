@@ -11,6 +11,15 @@ export interface BlobOutputMetadata {
   version: number;
 }
 
+export interface LocalModelIdentifier {
+  fileName: string;
+}
+
+export interface CdfModelIdentifier {
+  modelId: number;
+  revisionId: number;
+}
+
 export interface ModelUrlProvider<TModelIdentifier> {
   getModelUrl(identifier: TModelIdentifier): Promise<string>;
 }
