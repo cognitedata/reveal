@@ -13,6 +13,7 @@ import {
 } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import * as reveal from '@cognite/reveal/experimental';
+import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 CameraControls.install({ THREE });
 
@@ -30,6 +31,7 @@ function getModel2Params() {
 export function TwoModels() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
+    const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
     async function main() {
       const { project, modelUrl, modelRevision } = getParamsFromURL({
         project: 'publicdata',
@@ -114,10 +116,8 @@ export function TwoModels() {
 
       revealManager.update(camera);
 
-      const clock = new THREE.Clock();
-      const render = () => {
-        const delta = clock.getDelta();
-        const controlsNeedUpdate = controls.update(delta);
+      animationLoopHandler.setOnAnimationFrameListener((deltaTime) => {
+        const controlsNeedUpdate = controls.update(deltaTime);
         if (controlsNeedUpdate) {
           revealManager.update(camera);
         }
@@ -127,10 +127,8 @@ export function TwoModels() {
           renderer.render(scene, camera);
           revealManager.resetRedraw();
         }
-
-        requestAnimationFrame(render);
-      };
-      render();
+      });
+      animationLoopHandler.start();
 
       (window as any).scene = scene;
       (window as any).THREE = THREE;
@@ -139,6 +137,9 @@ export function TwoModels() {
     }
 
     main();
+    return () => {
+      animationLoopHandler.dispose();
+    }
   });
   return (
     <CanvasWrapper>
