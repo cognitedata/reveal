@@ -146,12 +146,12 @@ function setAttributes(
     const treeIndexAttribute = attributes.get('treeIndex')!;
     const treeIndexAttributeOffset = treeIndexAttribute.offset;
 
-    const treeIndecies = new Set();
+    const treeIndices = new Set();
 
     for (let i = 0; i < geometry.maxInstancedCount; i++) {
-      treeIndecies.add(collectionView.getFloat32(i * attributesByteSize + treeIndexAttributeOffset, true));
+      treeIndices.add(collectionView.getFloat32(i * attributesByteSize + treeIndexAttributeOffset, true));
     }
-    mesh.userData.treeIndecies = treeIndecies;
+    mesh.userData.treeIndices = treeIndices;
   }
 }
 

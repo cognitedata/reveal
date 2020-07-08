@@ -41,7 +41,7 @@ void main() {
   float frontOutlineIndex2 = floatBitsSubset(floor((texture2D(tFront, vUv2).a * 255.0) + 0.5), 2, 5);
   float frontOutlineIndex3 = floatBitsSubset(floor((texture2D(tFront, vUv3).a * 255.0) + 0.5), 2, 5);
 
-  // There exsists fragments of rendered objects within the edge width that should have boarder
+  // There exsists fragments of rendered objects within the edge width that should have border
   if( any(equal(vec4(frontOutlineIndex0, frontOutlineIndex1, frontOutlineIndex2, frontOutlineIndex3), vec4(0.0))) 
       && frontOutlineIndex > 0.0) 
   { 

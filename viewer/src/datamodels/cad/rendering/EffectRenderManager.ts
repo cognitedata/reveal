@@ -12,19 +12,19 @@ import { Cognite3DModel } from '@/migration';
 import { Object3D } from 'three';
 
 export class EffectRenderManager {
-  private _materialManager: MaterialManager;
-  private _orthographicCamera: THREE.OrthographicCamera;
+  private readonly _materialManager: MaterialManager;
+  private readonly _orthographicCamera: THREE.OrthographicCamera;
 
-  private _triScene: THREE.Scene;
-  private _cadScene: THREE.Scene;
+  private readonly _triScene: THREE.Scene;
+  private readonly _cadScene: THREE.Scene;
 
-  private _combineEdgeDetectionMaterial: THREE.ShaderMaterial;
+  private readonly _combineEdgeDetectionMaterial: THREE.ShaderMaterial;
 
-  private _customObjectRenderTarget: THREE.WebGLRenderTarget;
-  private _backRenderedCadModelTarget: THREE.WebGLRenderTarget;
-  private _frontRenderedCadModelTarget: THREE.WebGLRenderTarget;
+  private readonly _customObjectRenderTarget: THREE.WebGLRenderTarget;
+  private readonly _backRenderedCadModelTarget: THREE.WebGLRenderTarget;
+  private readonly _frontRenderedCadModelTarget: THREE.WebGLRenderTarget;
 
-  private _cadModelBuffer: Set<[CadNode, Object3D]> = new Set();
+  private readonly _cadModelBuffer: Set<[CadNode, Object3D]> = new Set();
 
   private readonly outlineTexelSize = 2;
 
@@ -130,7 +130,7 @@ export class EffectRenderManager {
         return;
       }
       cadModel.traverseVisible(object => {
-        const objectTreeIndices = object.userData.treeIndecies as Set<number> | undefined;
+        const objectTreeIndices = object.userData.treeIndices as Set<number> | undefined;
 
         if (objectTreeIndices && hasIntersection(inFrontSet, objectTreeIndices)) {
           containsRenderInFront = true;

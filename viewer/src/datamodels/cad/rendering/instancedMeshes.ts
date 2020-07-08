@@ -48,7 +48,7 @@ export function createInstancedMeshes(
       const obj = new THREE.Mesh(geometry, material);
       obj.name = `Instanced mesh ${meshFile.fileId}`;
 
-      obj.userData.treeIndecies = new Set(instancedMesh.treeIndices);
+      obj.userData.treeIndices = new Set(instancedMesh.treeIndices);
 
       result.push(obj);
     }
