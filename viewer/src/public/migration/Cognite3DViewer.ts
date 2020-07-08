@@ -48,7 +48,9 @@ export class Cognite3DViewer {
   private readonly sdkClient: CogniteClient;
   private readonly _updateCameraNearAndFarSubject: Subject<THREE.PerspectiveCamera>;
   private readonly _loadingSubscription = new Subscription();
+
   private readonly cdfModelManager: CdfModelManager;
+  // private readonly localModelManager: LocalModelManager;
 
   private readonly eventListeners = {
     cameraChange: new Array<CameraChangeDelegate>(),

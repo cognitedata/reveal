@@ -202,10 +202,13 @@ export function Migration() {
       // Load model if provided by URL
       const modelIdStr = urlParams.get('modelId');
       const revisionIdStr = urlParams.get('revisionId');
+      const localPath = urlParams.get('localpath');
       if (modelIdStr && revisionIdStr) {
         const modelId = Number.parseInt(modelIdStr, 10);
         const revisionId = Number.parseInt(revisionIdStr, 10);
         await addModel({ modelId, revisionId });
+      } else if (localPath) {
+        await addModel({modelId: -1, revisionId: -1, localPath });
       }
 
       viewer.on('click', function (event) {

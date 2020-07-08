@@ -5,32 +5,25 @@
 import { Observable, Subscription, fromEventPattern } from 'rxjs';
 import { CogniteClient } from '@cognite/sdk';
 
-import { Cognite3DModel } from './Cognite3DModel';
+import { Cognite3DModel, CdfCognite3DModel, LocalCognite3DModel } from './Cognite3DModel';
 import { AddModelOptions, Cognite3DViewerOptions } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 
-import { RevealManager } from '../RevealManager';
 import { SectorNodeIdToTreeIndexMapLoadedEvent, RevealOptions } from '../types';
+import { RevealManagerBase } from '../RevealManagerBase';
+import { RevealManager } from '../RevealManager';
+import { LocalHostRevealManager } from '../LocalHostRevealManager';
 
-export class CdfModelManager {
-  private readonly _sdkClient: CogniteClient;
-  private readonly _revealManager: RevealManager;
-  private readonly _subscriptions = new Subscription();
+class ModelManagerBase<TModelIdentifier> {
+  protected readonly _revealManager: RevealManagerBase<TModelIdentifier>;
 
-  constructor(sdkClient: CogniteClient, options: Cognite3DViewerOptions) {
-    const revealManagerOptions = transformOptions(options);
-    this._sdkClient = sdkClient;
-    this._revealManager = new RevealManager(sdkClient, revealManagerOptions);
-  }
-
-  get revealManager(): RevealManager {
-    return this._revealManager;
+  constructor(manager: RevealManagerBase<TModelIdentifier>) {
+    this._revealManager = manager;
   }
 
   dispose(): void {
     this._revealManager.dispose();
-    this._subscriptions.unsubscribe();
   }
 
   getLoadingStateObserver(): Observable<boolean> {
@@ -63,9 +56,28 @@ export class CdfModelManager {
   update(camera: THREE.PerspectiveCamera): void {
     this._revealManager.update(camera);
   }
+}
+
+export class CdfModelManager extends ModelManagerBase<{ modelId: number; revisionId: number }> {
+  private readonly _sdkClient: CogniteClient;
+  private readonly _subscriptions = new Subscription();
+
+  public get revealManager(): RevealManager {
+    return this._revealManager as RevealManager;
+  }
+
+  constructor(sdkClient: CogniteClient, options: Cognite3DViewerOptions) {
+    super(new RevealManager(sdkClient, transformOptions(options)));
+    this._sdkClient = sdkClient;
+  }
+
+  dispose(): void {
+    this._subscriptions.unsubscribe();
+    super.dispose();
+  }
 
   async createPointCloudModel(modelId: number, revisionId: number): Promise<CognitePointCloudModel> {
-    const [potreeGroup, potreeNode] = await this._revealManager.addModel('pointcloud', { modelId, revisionId });
+    const [potreeGroup, potreeNode] = await this.revealManager.addModel('pointcloud', { modelId, revisionId });
     const model = new CognitePointCloudModel(modelId, revisionId, potreeGroup, potreeNode);
     return model;
   }
@@ -75,11 +87,11 @@ export class CdfModelManager {
       throw new NotSupportedInMigrationWrapperError();
     }
 
-    const cadNode = await this._revealManager.addModel('cad', {
+    const cadNode = await this.revealManager.addModel('cad', {
       modelId: options.modelId,
       revisionId: options.revisionId
     });
-    const model = new Cognite3DModel(options.modelId, options.revisionId, cadNode, this._sdkClient);
+    const model = new CdfCognite3DModel(options.modelId, options.revisionId, cadNode, this._sdkClient);
 
     // Update nodeId -> treeIndex mapping when sectors are loaded
     this._subscriptions.add(
@@ -98,6 +110,30 @@ export class CdfModelManager {
       h => this._revealManager.on('nodeIdToTreeIndexMapLoaded', h),
       h => this._revealManager.off('nodeIdToTreeIndexMapLoaded', h)
     );
+  }
+}
+
+export class LocalModelManager extends ModelManagerBase<{ fileName: string }> {
+  constructor(options: Cognite3DViewerOptions) {
+    super(new LocalHostRevealManager(transformOptions(options)));
+  }
+
+  async createPointCloudModel(fileName: string): Promise<CognitePointCloudModel> {
+    const [potreeGroup, potreeNode] = await this._revealManager.loadModel('pointcloud', { fileName });
+    const model = new CognitePointCloudModel(-1, -1, potreeGroup, potreeNode);
+    return model;
+  }
+
+  async createCadModel(options: AddModelOptions): Promise<Cognite3DModel> {
+    if (!options.localPath) {
+      throw new NotSupportedInMigrationWrapperError();
+    }
+
+    const cadNode = await this._revealManager.loadModel('cad', {
+      fileName: options.localPath
+    });
+    const model = new LocalCognite3DModel(options.modelId, options.revisionId, cadNode);
+    return model;
   }
 }
 

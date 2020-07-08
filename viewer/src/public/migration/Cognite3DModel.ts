@@ -21,7 +21,7 @@ const mapCoordinatesBuffers = {
   v: vec3.create()
 };
 
-export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
+export abstract class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = SupportedModelTypes.CAD;
 
   get renderHints(): CadRenderHints {
@@ -45,24 +45,20 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   /** @internal */
   readonly cadNode: CadNode;
 
-  private readonly cadModel: CadModelMetadata;
+  protected readonly cadModel: CadModelMetadata;
   private readonly nodeColors: Map<number, [number, number, number, number]>;
   private readonly selectedNodes: Set<number>;
   private readonly hiddenNodes: Set<number>;
-  private readonly client: CogniteClient;
-  private readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
 
   /** @internal */
-  constructor(modelId: number, revisionId: number, cadNode: CadNode, client: CogniteClient) {
+  constructor(modelId: number, revisionId: number, cadNode: CadNode) {
     super();
     this.modelId = modelId;
     this.revisionId = revisionId;
     this.cadModel = cadNode.cadModelMetadata;
-    this.client = client;
     this.nodeColors = new Map();
     this.hiddenNodes = new Set();
     this.selectedNodes = new Set();
-    this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client);
 
     const nodeAppearanceProvider: NodeAppearanceProvider = {
       styleNode: (treeIndex: number) => {
@@ -120,17 +116,21 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.children = [];
   }
 
+  abstract getBoundingBox(nodeId?: number, box?: THREE.Box3): THREE.Box3;
+  abstract getBoundingBoxFromCdf(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3>;
+  abstract getNodeColor(nodeId: number): Promise<Color>;
+  abstract setNodeColor(nodeId: number, r: number, g: number, b: number): Promise<void>;
+  abstract resetNodeColor(nodeId: number): Promise<void>;
+  abstract selectNode(nodeId: number): Promise<void>;
+  abstract deselectNode(nodeId: number): Promise<void>;
+  abstract showNode(nodeId: number): Promise<void>;
+  abstract hideNode(nodeId: number, makeGray?: boolean): Promise<void>;
+  abstract tryGetNodeId(treeIndex: number): number | undefined;
+  /** @internal */
+  abstract updateNodeIdMaps(sector: Map<number, number>): void;
+
   getSubtreeNodeIds(_nodeId: number, _subtreeSize?: number): Promise<number[]> {
     throw new NotSupportedInMigrationWrapperError();
-  }
-
-  getBoundingBox(nodeId?: number, box?: THREE.Box3): THREE.Box3 {
-    if (nodeId) {
-      throw new NotSupportedInMigrationWrapperError('Use getBoundingBoxFromCdf(nodeId: number)');
-    }
-
-    const bounds = this.cadModel.scene.root.bounds;
-    return toThreeJsBox3(box || new THREE.Box3(), bounds, this.cadModel.modelTransformation);
   }
 
   getModelBoundingBox(outBbox?: THREE.Box3): THREE.Box3 {
@@ -142,27 +142,10 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.cadNode.updateMatrixWorld(false);
   }
 
-  updateNodeIdMaps(sector: Map<number, number>) {
-    this.nodeIdAndTreeIndexMaps.updateMaps(sector);
-  }
-
-  async getBoundingBoxFromCdf(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
-    const response = await this.client.revisions3D.retrieve3DNodes(this.modelId, this.revisionId, [{ id: nodeId }]);
-    if (response.length < 1) {
-      throw new Error('NodeId not found');
-    }
-    const boundingBox3D = response[0].boundingBox;
-    const min = boundingBox3D.min;
-    const max = boundingBox3D.max;
-    const result = box || new THREE.Box3();
-    result.min.set(min[0], min[1], min[2]);
-    result.max.set(max[0], max[1], max[2]);
-    return result.applyMatrix4(toThreeMatrix4(this.cadModel.modelTransformation.modelMatrix));
-  }
-
   iterateNodes(_action: (nodeId: number, treeIndex?: number) => void): void {
     throw new NotSupportedInMigrationWrapperError('Use iterateNodesByTreeIndex(action: (treeIndex: number) => void)');
   }
+
   iterateNodesByTreeIndex(action: (treeIndex: number) => void): void {
     for (let i = 0; i < this.cadModel.scene.maxTreeIndex; i++) {
       action(i);
@@ -178,46 +161,14 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     throw new NotSupportedInMigrationWrapperError();
   }
 
-  async getNodeColor(nodeId: number): Promise<Color> {
-    try {
-      const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-      const color = this.nodeColors.get(treeIndex);
-      if (!color) {
-        // TODO: migration wrapper currently does not support looking up colors not set by the user
-        throw new NotSupportedInMigrationWrapperError();
-      }
-      const [r, g, b] = color;
-      return {
-        r,
-        g,
-        b
-      };
-    } catch (error) {
-      trackError(error, {
-        moduleName: 'Cognite3DModel',
-        methodName: 'getNodeColor'
-      });
-      return {
-        r: 255,
-        g: 255,
-        b: 255
-      };
-    }
-  }
-
-  async setNodeColor(nodeId: number, r: number, g: number, b: number): Promise<void> {
-    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-    this.setNodeColorByTreeIndex(treeIndex, r, g, b);
+  getNodeOverrideColorByTreeIndex(treeIndex: number): Color | undefined {
+    const c = this.nodeColors.get(treeIndex);
+    return c ? { r: c[0], g: c[1], b: c[2] } : undefined;
   }
 
   setNodeColorByTreeIndex(treeIndex: number, r: number, g: number, b: number) {
     this.nodeColors.set(treeIndex, [r, g, b, 255]);
     this.cadNode.requestNodeUpdate([treeIndex]);
-  }
-
-  async resetNodeColor(nodeId: number): Promise<void> {
-    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-    this.resetNodeColorByTreeIndex(treeIndex);
   }
 
   resetNodeColorByTreeIndex(treeIndex: number) {
@@ -231,19 +182,9 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.cadNode.requestNodeUpdate(nodeIds);
   }
 
-  async selectNode(nodeId: number): Promise<void> {
-    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-    this.selectNodeByTreeIndex(treeIndex);
-  }
-
   selectNodeByTreeIndex(treeIndex: number) {
     this.selectedNodes.add(treeIndex);
     this.cadNode.requestNodeUpdate([treeIndex]);
-  }
-
-  async deselectNode(nodeId: number): Promise<void> {
-    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-    this.deselectNodeByTreeIndex(treeIndex);
   }
 
   deselectNodeByTreeIndex(treeIndex: number) {
@@ -255,11 +196,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     const selectedNodes = Array.from(this.selectedNodes);
     this.selectedNodes.clear();
     this.cadNode.requestNodeUpdate(selectedNodes);
-  }
-
-  async showNode(nodeId: number): Promise<void> {
-    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-    this.showNodeByTreeIndex(treeIndex);
   }
 
   showNodeByTreeIndex(treeIndex: number): void {
@@ -283,11 +219,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.cadNode.requestNodeUpdate(Array.from(this.hiddenNodes.values()));
   }
 
-  async hideNode(nodeId: number, makeGray?: boolean): Promise<void> {
-    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-    this.hideNodeByTreeIndex(treeIndex, makeGray);
-  }
-
   hideNodeByTreeIndex(treeIndex: number, makeGray?: boolean): void {
     if (makeGray) {
       throw new NotSupportedInMigrationWrapperError();
@@ -295,8 +226,154 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.hiddenNodes.add(treeIndex);
     this.cadNode.requestNodeUpdate([treeIndex]);
   }
+}
+
+/** @internal */
+export class CdfCognite3DModel extends Cognite3DModel {
+  private readonly client: CogniteClient;
+  private readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
+
+  constructor(modelId: number, revisionId: number, cadNode: CadNode, client: CogniteClient) {
+    super(modelId, revisionId, cadNode);
+    this.client = client;
+    this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, client);
+  }
+
+  getBoundingBox(nodeId?: number, box?: THREE.Box3): THREE.Box3 {
+    if (nodeId) {
+      throw new NotSupportedInMigrationWrapperError('Use getBoundingBoxFromCdf(nodeId: number)');
+    }
+
+    const bounds = this.cadModel.scene.root.bounds;
+    return toThreeJsBox3(box || new THREE.Box3(), bounds, this.cadModel.modelTransformation);
+  }
+
+  async getBoundingBoxFromCdf(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
+    const response = await this.client.revisions3D.retrieve3DNodes(this.modelId, this.revisionId, [{ id: nodeId }]);
+    if (response.length < 1) {
+      throw new Error('NodeId not found');
+    }
+    const boundingBox3D = response[0].boundingBox;
+    const min = boundingBox3D.min;
+    const max = boundingBox3D.max;
+    const result = box || new THREE.Box3();
+    result.min.set(min[0], min[1], min[2]);
+    result.max.set(max[0], max[1], max[2]);
+    return result.applyMatrix4(toThreeMatrix4(this.cadModel.modelTransformation.modelMatrix));
+  }
 
   tryGetNodeId(treeIndex: number): number | undefined {
     return this.nodeIdAndTreeIndexMaps.getNodeId(treeIndex);
   }
+
+  async hideNode(nodeId: number, makeGray?: boolean): Promise<void> {
+    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.hideNodeByTreeIndex(treeIndex, makeGray);
+  }
+
+  async showNode(nodeId: number): Promise<void> {
+    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.showNodeByTreeIndex(treeIndex);
+  }
+
+  async selectNode(nodeId: number): Promise<void> {
+    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.selectNodeByTreeIndex(treeIndex);
+  }
+
+  async deselectNode(nodeId: number): Promise<void> {
+    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.deselectNodeByTreeIndex(treeIndex);
+  }
+
+  async getNodeColor(nodeId: number): Promise<Color> {
+    try {
+      const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+      const color = this.getNodeOverrideColorByTreeIndex(treeIndex);
+      if (!color) {
+        // TODO: migration wrapper currently does not support looking up colors not set by the user
+        throw new NotSupportedInMigrationWrapperError('getNodeColor() only works for overridden colors');
+      }
+      return color;
+    } catch (error) {
+      trackError(error, {
+        moduleName: 'Cognite3DModel',
+        methodName: 'getNodeColor'
+      });
+      return {
+        r: 255,
+        g: 255,
+        b: 255
+      };
+    }
+  }
+
+  async setNodeColor(nodeId: number, r: number, g: number, b: number): Promise<void> {
+    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.setNodeColorByTreeIndex(treeIndex, r, g, b);
+  }
+
+  async resetNodeColor(nodeId: number): Promise<void> {
+    const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
+    this.resetNodeColorByTreeIndex(treeIndex);
+  }
+
+  /** @internal */
+  updateNodeIdMaps(sector: Map<number, number>) {
+    this.nodeIdAndTreeIndexMaps.updateMaps(sector);
+  }
+}
+
+/** @internal */
+export class LocalCognite3DModel extends Cognite3DModel {
+  constructor(modelId: number, revisionId: number, cadNode: CadNode) {
+    super(modelId, revisionId, cadNode);
+  }
+
+  private notSupported(): Error {
+    return new Error(`Not supported for local models`);
+  }
+
+  getBoundingBox(_nodeId?: number, _box?: THREE.Box3): THREE.Box3 {
+    throw this.notSupported();
+  }
+
+  getBoundingBoxFromCdf(_nodeId: number, _box?: THREE.Box3): Promise<THREE.Box3> {
+    throw this.notSupported();
+  }
+
+  tryGetNodeId(_treeIndex: number): number | undefined {
+    throw this.notSupported();
+  }
+
+  hideNode(_nodeId: number, _makeGray?: boolean): Promise<void> {
+    throw this.notSupported();
+  }
+
+  showNode(_nodeId: number): Promise<void> {
+    throw this.notSupported();
+  }
+
+  selectNode(_nodeId: number): Promise<void> {
+    throw this.notSupported();
+  }
+
+  deselectNode(_nodeId: number): Promise<void> {
+    throw this.notSupported();
+  }
+
+  getNodeColor(_nodeId: number): Promise<Color> {
+    throw this.notSupported();
+  }
+
+  setNodeColor(_nodeId: number, _r: number, _g: number, _b: number): Promise<void> {
+    throw this.notSupported();
+  }
+
+  resetNodeColor(_nodeId: number): Promise<void> {
+    throw this.notSupported();
+  }
+
+  /** @internal */
+  updateNodeIdMaps(_sector: Map<number, number>) {}
 }
