@@ -39,9 +39,13 @@ export class MaterialManager {
   private _clippingPlanes: THREE.Plane[] = [];
   private _clipIntersection: boolean = false;
 
+  private _inFrontTreeIndices = new Map<string, Set<number>>();
+
   addModelMaterials(modelIdentifier: string, maxTreeIndex: number) {
     const materials = createMaterials(maxTreeIndex + 1, this._renderMode, this._clippingPlanes);
     this.materialsMap.set(modelIdentifier, { materials });
+
+    this._inFrontTreeIndices.set(modelIdentifier, new Set());
   }
 
   setNodeAppearanceProvider(modelIdentifier: string, nodeAppearanceProvider?: NodeAppearanceProvider) {
@@ -56,6 +60,10 @@ export class MaterialManager {
 
   getModelNodeAppearanceProvider(modelIdentifier: string): NodeAppearanceProvider | undefined {
     return this.materialsMap.get(modelIdentifier)!.nodeAppearanceProvider;
+  }
+
+  getModelInFrontTreeIndices(modelIdentifier: string): Set<number> | undefined {
+    return this._inFrontTreeIndices.get(modelIdentifier);
   }
 
   setRenderMode(mode: RenderMode) {
@@ -80,19 +88,21 @@ export class MaterialManager {
       return;
     }
 
-    this.updateNodeAppearance(appearanceProvider, materials, treeIndices);
+    this.updateNodeAppearance(appearanceProvider, materials, treeIndices, modelIdentifier);
   }
 
   private updateNodeAppearance(
     appearanceProvider: NodeAppearanceProvider | undefined,
     materials: Materials,
-    treeIndices: number[]
+    treeIndices: number[],
+    modelIdentifier: string
   ) {
     if (!appearanceProvider) {
       return;
     }
 
     const count = treeIndices.length;
+    const inFrontSet = this._inFrontTreeIndices.get(modelIdentifier)!;
     for (let i = 0; i < count; ++i) {
       const treeIndex = treeIndices[i];
       let style = appearanceProvider.styleNode(treeIndex);
@@ -104,6 +114,12 @@ export class MaterialManager {
       materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 1] = style.color ? style.color[1] : 0;
       materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 2] = style.color ? style.color[2] : 0;
       materials.overrideColorPerTreeIndex.needsUpdate = true;
+
+      if (style.renderInFront) {
+        inFrontSet.add(treeIndex);
+      } else if (inFrontSet.has(treeIndex)) {
+        inFrontSet.delete(treeIndex);
+      }
 
       const visible = style!.visible === undefined ? true : style.visible;
       // tslint:disable: no-bitwise

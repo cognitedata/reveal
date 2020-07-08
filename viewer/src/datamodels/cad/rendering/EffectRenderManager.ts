@@ -124,25 +124,17 @@ export class EffectRenderManager {
 
     let containsRenderInFront = false;
     this._cadModelBuffer.forEach(cadModel => {
-      const cadModelNodeAppearanceProvider = this._materialManager.getModelNodeAppearanceProvider(
-        cadModel.cadModelMetadata.blobUrl
-      );
+      const inFrontSet = this._materialManager.getModelInFrontTreeIndices(cadModel.cadModelMetadata.blobUrl);
 
-      if (!cadModelNodeAppearanceProvider) {
+      if (!inFrontSet) {
         return;
       }
-
       cadModel.traverseVisible(object => {
-        const treeIndecies = object.userData.treeIndecies as Set<number>;
-        if (treeIndecies) {
-          treeIndecies.forEach(treeIndex => {
-            const treeIndexStyle = cadModelNodeAppearanceProvider.styleNode(treeIndex);
+        const objectTreeIndices = object.userData.treeIndecies as Set<number> | undefined;
 
-            if (treeIndexStyle && treeIndexStyle.renderInFront) {
-              containsRenderInFront = true;
-              return;
-            }
-          });
+        if (objectTreeIndices && hasIntersection(inFrontSet, objectTreeIndices)) {
+          containsRenderInFront = true;
+          return;
         }
       });
     });
@@ -240,4 +232,20 @@ function setOutlineColor(outlineTextureData: Uint8ClampedArray, colorIndex: numb
   outlineTextureData[4 * colorIndex + 1] = Math.floor(255 * color.g);
   outlineTextureData[4 * colorIndex + 2] = Math.floor(255 * color.b);
   outlineTextureData[4 * colorIndex + 3] = 255;
+}
+
+function hasIntersection(left: Set<number>, right: Set<number>): boolean {
+  const iterator = left.size < right.size ? left : right;
+  const iteratee = left.size > right.size ? left : right;
+
+  let intersects = false;
+
+  iterator.forEach(p => {
+    if (iteratee.has(p)) {
+      intersects = true;
+      return;
+    }
+  });
+
+  return intersects;
 }
