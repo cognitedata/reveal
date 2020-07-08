@@ -39,7 +39,7 @@ export class MaterialManager {
   private _clippingPlanes: THREE.Plane[] = [];
   private _clipIntersection: boolean = false;
 
-  private _inFrontTreeIndices = new Map<string, Set<number>>();
+  private readonly _inFrontTreeIndices = new Map<string, Set<number>>();
 
   addModelMaterials(modelIdentifier: string, maxTreeIndex: number) {
     const materials = createMaterials(maxTreeIndex + 1, this._renderMode, this._clippingPlanes);
