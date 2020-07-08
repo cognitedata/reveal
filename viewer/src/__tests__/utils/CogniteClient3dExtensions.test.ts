@@ -71,7 +71,7 @@ describe('CogniteClient3dExtensions', () => {
     nock(/.*/).get(/.*/).reply(200, response, { 'content-type': 'binary' });
 
     // Act
-    const result = await clientExt.getCadSectorFile(baseUrl, 'sector_5.i3d');
+    const result = await clientExt.getBinaryFile(baseUrl, 'sector_5.i3d');
 
     // Assert
     const expected = new Array<number>(response.length);

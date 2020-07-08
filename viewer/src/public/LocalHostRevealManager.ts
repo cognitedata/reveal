@@ -18,7 +18,7 @@ import { ByVisibilityGpuSectorCuller, PotreeGroupWrapper, PotreeNodeWrapper } fr
 import { CachedRepository } from '@/datamodels/cad/sector/CachedRepository';
 import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
 import { CadManager } from '@/datamodels/cad/CadManager';
-import { LocalUrlClient as LocalHostClient } from '@/utilities/networking/LocalUrlClient';
+import { LocalUrlClient } from '@/utilities/networking/LocalUrlClient';
 import { CadNode, NodeAppearanceProvider } from '@/datamodels/cad';
 import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloudMetadataRepository';
 import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
@@ -37,7 +37,7 @@ export class LocalHostRevealManager extends RevealManagerBase<LocalModelIdentifi
     const modelDataParser: CadSectorParser = new CadSectorParser();
     const materialManager: MaterialManager = new MaterialManager();
     const modelDataTransformer = new SimpleAndDetailedToSector3D(materialManager);
-    const localClient: LocalHostClient = new LocalHostClient();
+    const localClient: LocalUrlClient = new LocalUrlClient();
 
     const cadModelRepository = new CadModelMetadataRepository(
       localClient,

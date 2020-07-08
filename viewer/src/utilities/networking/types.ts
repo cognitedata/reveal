@@ -17,3 +17,11 @@ export interface ModelUrlProvider<TModelIdentifier> {
 export interface ModelTransformationProvider {
   getModelTransformation(): ModelTransformation;
 }
+
+export interface JsonFileProvider {
+  getJsonFile(blobUrl: string, fileName: string): Promise<any>;
+}
+
+export interface BinaryFileProvider {
+  getBinaryFile(blobUrl: string, fileName: string): Promise<ArrayBuffer>;
+}
