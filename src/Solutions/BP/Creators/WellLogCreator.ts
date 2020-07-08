@@ -180,26 +180,29 @@ export default class WellLogCreator
         const log = new PointLog();
         for (const event of events)
         {
-            const metadata = event.metadata;
+            const { metadata, } = event;
+            const { md_hole_start, md_hole_start_unit, md_hole_end, md_hole_end_unit, risk_sub_category, details } = metadata as INdsMetadata;
+            const { npt_md } = metadata as INptMetaData;
 
-            let mdStart;
-            if ((metadata as INdsMetadata).md_hole_start !== undefined)
-            {
-                mdStart = Util.getNumberWithUnit((metadata as INdsMetadata).md_hole_start, (metadata as INdsMetadata).md_hole_start_unit);
-            }
-            else
-            {
-                mdStart = Util.getNumber((metadata as INptMetaData).npt_md);
-            }
+            let mdStart = Number.NaN;
+            if (md_hole_start !== undefined)
+                mdStart = Util.getNumberWithUnit(md_hole_start, md_hole_start_unit);
+            else if (npt_md !== undefined)
+                mdStart = Util.getNumber(npt_md);
+
             if (Number.isNaN(mdStart))
                 continue;
 
-            const mdEnd = Util.getNumberWithUnit((metadata as INdsMetadata).md_hole_end, (metadata as INdsMetadata).md_hole_end_unit);
-            const sample = new PointLogSample(event.description, mdStart, mdEnd);
+            const mdEnd = Util.getNumberWithUnit(md_hole_end, md_hole_end_unit);
 
-            sample.subtype = event.subtype;
-            sample.riskSubCategory = (metadata as INdsMetadata).risk_sub_category;
-            sample.details = (metadata as INdsMetadata).details;
+            const { subtype, description } = event;
+            const sample = new PointLogSample(description, mdStart, mdEnd);
+            sample.subtype = subtype;
+            if (risk_sub_category !== undefined)
+                sample.riskSubCategory = risk_sub_category;
+            if (details !== undefined)
+                sample.details = details;
+
             log.samples.push(sample);
         }
         if (log.length === 0)

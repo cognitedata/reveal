@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
+import { CasingLog } from "@/Nodes/Wells/Logs/CasingLog";
 import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
 import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
 import CasingLogNodeIcon from "@images/Nodes/CasingLogNode.png";
@@ -28,8 +28,8 @@ export class CasingLogNode extends BaseLogNode
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): FloatLog | null { return this.anyData as FloatLog; }
-  public set data(value: FloatLog | null) { this.anyData = value; }
+  public get data(): CasingLog | null { return this.anyData as CasingLog; }
+  public set data(value: CasingLog | null) { this.anyData = value; }
 
   //==================================================
   // CONSTRUCTORS

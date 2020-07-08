@@ -33,6 +33,7 @@ import { BaseFilterLogNode } from "@/Nodes/Wells/Filters/BaseFilterLogNode";
 import { IDataLoader } from "@/Core/Interfaces/IDataLoader";
 import { DataNode } from "@/Core/Nodes/DataNode";
 import { Ma } from '@/Core/Primitives/Ma';
+import { CasingLog } from '@/Nodes/Wells/Logs/CasingLog';
 
 export class SyntheticSubSurfaceModule extends BaseModule
 {
@@ -48,13 +49,13 @@ export class SyntheticSubSurfaceModule extends BaseModule
 
   public /*override*/ loadData(root: BaseRootNode): void
   {
-    //SyntheticSubSurfaceModule.addWells(root);
+    SyntheticSubSurfaceModule.addWells(root);
     SyntheticSubSurfaceModule.addSurfaces(root);
   }
 
   public /*override*/ setDefaultVisible(root: BaseRootNode): void
   {
-    // SyntheticSubSurfaceModule.setWellsAndLogsVisible(root);
+    SyntheticSubSurfaceModule.setWellsAndLogsVisible(root);
     SyntheticSubSurfaceModule.setSurfacesVisible(root);
   }
 
@@ -223,7 +224,6 @@ export class SyntheticSubSurfaceModule extends BaseModule
     }
     for (const node of root.getDescendantsByType(BaseFilterLogNode))
     {
-      break;
       node.setVisibleInteractive(true);
     }
   }
@@ -310,7 +310,7 @@ class LogDataLoader implements IDataLoader
     if (origin instanceof CasingLogNode)
     {
       mdRange.expandByFraction(-0.05);
-      return FloatLog.createCasingByRandom(mdRange, 7);
+      return CasingLog.createByRandom(mdRange, 7);
     }
 
     mdRange.min = (mdRange.center + mdRange.min) / 2;

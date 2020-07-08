@@ -53,21 +53,5 @@ export class PointLogSample extends BaseLogSample
 
   public /*override*/ get isEmpty(): boolean { return false; }
 
-  public /*override*/ isEqual(other: BaseLogSample): boolean
-  {
-    const otherSample = other as PointLogSample;
-    if (!otherSample)
-      return false;
-    return this.description === otherSample.description;
-  }
-
-  public /*override*/ copyValueFrom(other: BaseLogSample): void
-  {
-    const otherSample = other as PointLogSample;
-    if (!otherSample)
-      return;
-    this.description = otherSample.description;
-  }
-
   public /*override*/  clone(): BaseLogSample { return new PointLogSample(this.description, this.md); }
 }  

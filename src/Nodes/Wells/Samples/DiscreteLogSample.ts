@@ -44,21 +44,5 @@ export class DiscreteLogSample extends BaseLogSample
 
   public /*override*/ get isEmpty(): boolean { return Number.isNaN(this.value); }
 
-  public /*override*/ isEqual(other: BaseLogSample): boolean
-  {
-    const otherSample = other as DiscreteLogSample;
-    if (!otherSample)
-      return false;
-    return this.value === otherSample.value;
-  }
-
-  public /*override*/ copyValueFrom(other: BaseLogSample): void
-  {
-    const otherSample = other as DiscreteLogSample;
-    if (!otherSample)
-      return;
-    this.value = otherSample.value;
-  }
-
   public /*override*/  clone(): BaseLogSample { return new DiscreteLogSample(this.value, this.md); }
 }  

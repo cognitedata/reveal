@@ -28,7 +28,8 @@ import { Vector3 } from "@/Core/Geometry/Vector3";
 import { WellTrajectoryStyle } from "@/Nodes/Wells/Styles/WellTrajectoryStyle";
 import { CasingLogStyle } from "@/Nodes/Wells/Styles/CasingLogStyle";
 import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
-import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
+import { CasingLog } from '@/Nodes/Wells/Logs/CasingLog';
+
 import Color from "color";
 
 export class CasingLogThreeView extends BaseGroupThreeView
@@ -93,7 +94,7 @@ export class CasingLogThreeView extends BaseGroupThreeView
       if (sample.isMdEmpty || sample.isEmpty)
         continue;
 
-      maxRadius = Math.max(maxRadius, sample.value);
+      maxRadius = Math.max(maxRadius, sample.radius);
       if (trajectory.getPositionAtMd(sample.md, position))
       boundingBox.add(position);
     }
@@ -143,7 +144,7 @@ export class CasingLogThreeView extends BaseGroupThreeView
   // INSTANCE METHODS: Creators
   //==================================================
 
-  public createRenderSamples(trajectory: WellTrajectory, log: FloatLog, color: Color): RenderSample[]
+  public createRenderSamples(trajectory: WellTrajectory, log: CasingLog, color: Color): RenderSample[]
   {
     let wellIndex = 0;
     const samples: RenderSample[] = [];
@@ -161,7 +162,7 @@ export class CasingLogThreeView extends BaseGroupThreeView
       if (!trajectory.getPositionAtMd(minSample.md, position))
         continue;
 
-      samples.push(new RenderSample(position, minSample.md, minSample.value, color));
+      samples.push(new RenderSample(position, minSample.md, minSample.radius, color));
       if (minSample.isEmpty)
         continue;
 
@@ -172,14 +173,14 @@ export class CasingLogThreeView extends BaseGroupThreeView
         if (trajectorySample.md >= maxSample.md)
           break; // Too far
         if (trajectorySample.md > minSample.md)
-          samples.push(new RenderSample(trajectorySample.point.clone(), trajectorySample.md, minSample.value, color));
+          samples.push(new RenderSample(trajectorySample.point.clone(), trajectorySample.md, minSample.radius, color));
       }
       if (logIndex == log.length - 1)
       {
         // Push the last
         const position = Vector3.newZero;
         if (trajectory.getPositionAtMd(maxSample.md, position))
-          samples.push(new RenderSample(position, maxSample.md, maxSample.value, color));
+          samples.push(new RenderSample(position, maxSample.md, maxSample.radius, color));
         break;
       }
     }
