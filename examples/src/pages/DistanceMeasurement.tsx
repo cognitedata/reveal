@@ -22,6 +22,7 @@ import {
 import dat from 'dat.gui';
 import { CanvasWrapper, Container } from '../components/styled';
 import { resizeRendererToDisplaySize } from '../utils/sceneHelpers';
+import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 CameraControls.install({ THREE });
 
@@ -60,6 +61,7 @@ export function DistanceMeasurement() {
   useEffect(() => {
     let scene: Scene | undefined;
     let renderer: WebGLRenderer | undefined;
+    const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
     const gui = new dat.GUI();
 
     (async () => {
@@ -128,15 +130,13 @@ export function DistanceMeasurement() {
 
       const htmlOverlayHelper = new utilities.HtmlOverlayHelper();
 
-      const clock = new THREE.Clock();
 
-      const render = () => {
+      animationLoopHandler.setOnAnimationFrameListener((deltaTime) => {
         if (resizeRendererToDisplaySize(renderer, camera)) {
           isRenderRequired = true;
         }
 
-        const delta = clock.getDelta();
-        const controlsNeedUpdate = controls.update(delta);
+        const controlsNeedUpdate = controls.update(deltaTime);
 
         if (controlsNeedUpdate) {
           isRenderRequired = true;
@@ -148,10 +148,9 @@ export function DistanceMeasurement() {
           revealManager.resetRedraw();
           isRenderRequired = false;
         }
-        requestAnimationFrame(render);
-      };
+      });
       revealManager.update(camera);
-      render();
+      animationLoopHandler.start();
 
       let points: Array<THREE.Mesh> = [];
       let line: THREE.Line | null = null;
@@ -245,6 +244,7 @@ export function DistanceMeasurement() {
     return () => {
       scene?.dispose();
       renderer?.dispose();
+      animationLoopHandler.dispose();
       gui.destroy();
     };
   }, []);

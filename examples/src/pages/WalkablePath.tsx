@@ -14,6 +14,7 @@ import {
   getParamsFromURL,
   createRenderManager,
 } from '../utils/example-helpers';
+import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 CameraControls.install({ THREE });
 
@@ -61,6 +62,7 @@ interface TransitPathData {
 export function WalkablePath() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
+    const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
     async function main() {
       const { project, modelUrl, modelRevision } = getParamsFromURL({
         project: 'publicdata',
@@ -153,10 +155,8 @@ export function WalkablePath() {
         removeWalkablePath,
       });
 
-      const clock = new THREE.Clock();
-      const render = () => {
-        const delta = clock.getDelta();
-        const controlsNeedUpdate = controls.update(delta);
+      animationLoopHandler.setOnAnimationFrameListener((deltaTime) => {
+        const controlsNeedUpdate = controls.update(deltaTime);
         if (controlsNeedUpdate) {
           revealManager.update(camera);
         }
@@ -171,11 +171,9 @@ export function WalkablePath() {
           renderer.render(scene, camera);
           revealManager.resetRedraw();
         }
-
-        requestAnimationFrame(render);
-      };
+      });
+      animationLoopHandler.start();
       revealManager.update(camera);
-      requestAnimationFrame(render);
       (window as any).scene = scene;
       (window as any).THREE = THREE;
       (window as any).camera = camera;
@@ -184,6 +182,9 @@ export function WalkablePath() {
     }
 
     main();
+    return () => {
+      animationLoopHandler.dispose();
+    }
   });
   return (
     <CanvasWrapper>
