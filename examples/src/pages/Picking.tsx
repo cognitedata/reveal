@@ -75,7 +75,6 @@ export function Picking() {
       }
       scene.add(model);
 
-
       // Set up the renderer
       const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current! });
       renderer.setClearColor('#444');

@@ -81,7 +81,7 @@ export const sectorShaders = {
 };
 
 export const edgeDetectionShaders = {
-  fragment: glsl(require('@/glsl/post-processing/edge-detection.frag').default),
+  combine: glsl(require('@/glsl/post-processing/edge-detect-combine.frag').default),
   vertex: glsl(require('@/glsl/post-processing/edge-detection.vert').default)
 };
 

@@ -49,7 +49,7 @@ export function consumeSectorSimple(sector: SectorQuads, materials: Materials): 
 
   const geometry = new THREE.InstancedBufferGeometry();
 
-  const interleavedBuffer32 = new THREE.InstancedInterleavedBuffer(sector.buffer, 3 + 1 + 3 + 16);
+  const interleavedBuffer32 = new THREE.InstancedInterleavedBuffer(sector.buffer, stride);
   const color = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 3, 0, true);
   const treeIndex = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 1, 3, false);
   const normal = new THREE.InterleavedBufferAttribute(interleavedBuffer32, 3, 4, true);
@@ -70,8 +70,10 @@ export function consumeSectorSimple(sector: SectorQuads, materials: Materials): 
   const obj = new THREE.Mesh(geometry, materials.simple);
   obj.onAfterRender = () => {
     disposeAttributeArrayOnUpload.bind(interleavedBuffer32)();
-    obj.onAfterRender = () => {};
+    obj.onAfterRender = () => { };
   };
+
+  setTreeIndeciesToUserData();
 
   // obj.name = `Quads ${sectorId}`;
   // TODO 20191028 dragly figure out why the quads are being culled wrongly and if we
@@ -79,6 +81,17 @@ export function consumeSectorSimple(sector: SectorQuads, materials: Materials): 
   obj.frustumCulled = false;
   group.add(obj);
   return group;
+
+  function setTreeIndeciesToUserData() {
+    const treeIndexAttributeOffset = 3;
+
+    const treeIndecies = new Set();
+
+    for (let i = 0; i < sector.buffer.length / stride; i++) {
+      treeIndecies.add(sector.buffer[i * stride + treeIndexAttributeOffset]);
+    }
+    obj.userData.treeIndecies = treeIndecies;
+  }
 }
 
 export function consumeSectorDetailed(sector: SectorGeometry, metadata: SectorMetadata, materials: Materials) {
