@@ -29,9 +29,11 @@ function addRenderTarget(element: HTMLElement, root: BaseRootNode)
   const fractionRange = Range3.createByMinAndMax(0, 0, 1, 1);
   const target = new ThreeRenderTargetNode(fractionRange);
 
-  target.domElement.style.height = 1200 + "px";
-  target.domElement.style.width = 1000 + "px";
+  target.domElement.style.height = 100 + "vh";
+  target.domElement.style.width = 100 + "vw";
   target.domElement.style.position = "absolute";
+  target.domElement.style.top = 0 + "px";
+  target.domElement.style.left = 0 + "px";
 
   element.appendChild(target.domElement);
 
