@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
 import Logo from 'components/Atoms/Logo';
+import { Avatar } from '@cognite/cogs.js';
+import AppSwitcher from '../Atoms/AppSwitcher';
 
 const Header = styled.header`
   display: flex;
@@ -42,6 +44,8 @@ const MenuContainer = styled(HeaderItem)`
   flex-grow: 2;
 
   padding-left: 24px;
+
+  border-right: 1px solid var(--cogs-greyscale-grey3);
   & nav {
     height: 100%;
     display: flex;
@@ -73,9 +77,15 @@ const MenuLink = styled(NavLink)`
   }
 `;
 
-const AvatarContainer = styled(HeaderItem)``;
+const AvatarContainer = styled(HeaderItem)`
+  padding: 0 12px;
 
-const ActionsContainer = styled(HeaderItem)``;
+  border-right: 1px solid var(--cogs-greyscale-grey3);
+`;
+
+const ActionsContainer = styled(HeaderItem)`
+  padding: 0 12px;
+`;
 
 const MainHeader = (): React.ReactElement => {
   return (
@@ -106,8 +116,12 @@ const MainHeader = (): React.ReactElement => {
           </ul>
         </nav>
       </MenuContainer>
-      <AvatarContainer>avatar</AvatarContainer>
-      <ActionsContainer>actions</ActionsContainer>
+      <AvatarContainer>
+        <Avatar text="Erland Solstrand" />
+      </AvatarContainer>
+      <ActionsContainer>
+        <AppSwitcher />
+      </ActionsContainer>
     </Header>
   );
 };

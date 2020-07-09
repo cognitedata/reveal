@@ -5,7 +5,7 @@ type Props = {
 };
 
 const Logo = ({ size = '32px' }: Props) => (
-  <div style={{ width: `${size}`, height: `${size}` }}>
+  <div style={{ width: size, height: size }}>
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32">
       <path
         fill="url(#paint0_linear)"
