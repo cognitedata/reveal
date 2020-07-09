@@ -5,7 +5,7 @@
 import { WorkerPool } from '@/utilities/workers/WorkerPool';
 import { RevealParserWorker } from '@/utilities/workers/reveal.parser.worker';
 import { SectorQuads } from '../rendering/types';
-import { FlatSectorGeometry } from './types';
+import { SectorGeometry } from './types';
 import { ParseCtmInput } from '@/utilities/workers/types/reveal.parser.types';
 
 export class CadSectorParser {
@@ -18,7 +18,11 @@ export class CadSectorParser {
     return this.parseSimple(data);
   }
 
-  parseAndFinalizeDetailed(i3dFile: string, ctmFiles: ParseCtmInput): Promise<FlatSectorGeometry> {
+  parseAndFinalizeI3D(i3dFile: string, ctmFiles: ParseCtmInput): Promise<SectorGeometry> {
+    return this.parseAndFinalizeDetailed(i3dFile, ctmFiles);
+  }
+
+  private async parseAndFinalizeDetailed(i3dFile: string, ctmFiles: ParseCtmInput): Promise<SectorGeometry> {
     return this.workerPool.postWorkToAvailable(async (worker: RevealParserWorker) => {
       return worker.parseAndFinalizeDetailed(i3dFile, ctmFiles);
     });

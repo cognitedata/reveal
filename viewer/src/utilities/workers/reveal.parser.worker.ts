@@ -5,8 +5,10 @@
 import * as Comlink from 'comlink';
 import { ParsedPrimitives, ParsePrimitiveAttribute, ParseCtmInput } from './types/reveal.parser.types';
 import * as rustTypes from '../../../pkg';
-import { FlatSectorGeometry } from '@/datamodels/cad/sector/types';
-import { SectorQuads } from '@/datamodels/cad/rendering/types';
+import { SectorGeometry, FlatSectorGeometry } from '@/datamodels/cad/sector/types';
+import { SectorQuads, InstancedMesh, InstancedMeshFile, TriangleMesh } from '@/datamodels/cad/rendering/types';
+import { DetailedSector } from '@/datamodels/cad/sector/detailedSector_generated';
+import { flatbuffers } from 'flatbuffers';
 const rustModule = import('../../../pkg');
 
 export class RevealParserWorker {
@@ -25,7 +27,7 @@ export class RevealParserWorker {
     return result;
   }
 
-  public async parseAndFinalizeDetailed(i3dFile: string, ctmFiles: ParseCtmInput): Promise<FlatSectorGeometry> {
+  public async parseAndFinalizeDetailed(i3dFile: string, ctmFiles: ParseCtmInput): Promise<SectorGeometry> {
     const rust = await rustModule;
     // TODO mattman22 2020-6-24 Handle parse/finalize errors
     const sectorData = await rust.load_parse_finalize_detailed(
@@ -39,12 +41,12 @@ export class RevealParserWorker {
     const nodeIdToTreeIndexMap = sector.node_id_to_tree_index_map();
     const treeIndexToNodeIdMap = sector.tree_index_to_node_id_map();
 
-    const result: FlatSectorGeometry = {
+    const result = this.unflattenSector({
       nodeIdToTreeIndexMap,
       treeIndexToNodeIdMap,
       primitives,
       buffer: sectorData.data
-    };
+    });
     sector.free();
     sectorData.free();
     return Comlink.transfer(result, [
@@ -58,8 +60,7 @@ export class RevealParserWorker {
       result.primitives.quadCollection.buffer,
       result.primitives.sphericalSegmentCollection.buffer,
       result.primitives.torusSegmentCollection.buffer,
-      result.primitives.trapeziumCollection.buffer,
-      result.buffer.buffer
+      result.primitives.trapeziumCollection.buffer
     ]);
   }
 
@@ -156,6 +157,61 @@ export class RevealParserWorker {
     }
 
     return jsAttributes;
+  }
+
+  private unflattenSector(data: FlatSectorGeometry): SectorGeometry {
+    const buf = new flatbuffers.ByteBuffer(data.buffer);
+    const sectorG = DetailedSector.SectorGeometry.getRootAsSectorGeometry(buf);
+    const iMeshes: InstancedMeshFile[] = [];
+    for (let i = 0; i < sectorG.instanceMeshesLength(); i++) {
+      const instances: InstancedMesh[] = [];
+      const meshFile = sectorG.instanceMeshes(i)!;
+      for (let j = 0; j < meshFile.instancesLength(); j++) {
+        const int = meshFile.instances(j)!;
+        const colors = new Uint8Array(int.colorsArray()!);
+        const instanceMatrices = new Float32Array(int.instanceMatricesArray()!);
+        const treeIndices = new Float32Array(int.treeIndicesArray()!);
+        instances.push({
+          triangleCount: int.triangleCount(),
+          triangleOffset: int.triangleOffset(),
+          colors,
+          instanceMatrices,
+          treeIndices
+        });
+      }
+      const indices = new Uint32Array(meshFile.indicesArray()!);
+      const vertices = new Float32Array(meshFile.verticesArray()!);
+      const norm = meshFile.normalsArray();
+      iMeshes.push({
+        fileId: meshFile.fileId(),
+        indices,
+        vertices,
+        normals: norm ? new Float32Array(norm) : undefined,
+        instances
+      });
+    }
+    const tMeshes: TriangleMesh[] = [];
+    for (let i = 0; i < sectorG.triangleMeshesLength(); i++) {
+      const tri = sectorG.triangleMeshes(i)!;
+      const indices = new Uint32Array(tri.indicesArray()!);
+      const treeIndices = new Float32Array(tri.treeIndicesArray()!);
+      const vertices = new Float32Array(tri.verticesArray()!);
+      const colors = new Uint8Array(tri.colorsArray()!);
+      const norm = tri.normalsArray();
+      tMeshes.push({
+        fileId: tri.fileId(),
+        indices,
+        treeIndices,
+        vertices,
+        normals: norm ? new Float32Array(norm) : undefined,
+        colors
+      });
+    }
+    return {
+      instanceMeshes: iMeshes,
+      triangleMeshes: tMeshes,
+      ...data
+    };
   }
 }
 

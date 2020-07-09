@@ -3,7 +3,7 @@
  */
 
 import { Repository } from './Repository';
-import { WantedSector, SectorGeometry, FlatSectorGeometry, ConsumedSector } from './types';
+import { WantedSector, SectorGeometry, ConsumedSector } from './types';
 import { LevelOfDetail } from './LevelOfDetail';
 import {
   OperatorFunction,
@@ -37,10 +37,8 @@ import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
 import { CadSectorProvider } from './CadSectorProvider';
 import { MemoryRequestCache } from '@/utilities/cache/MemoryRequestCache';
-import { SectorQuads, InstancedMesh, InstancedMeshFile, TriangleMesh } from '@/datamodels/cad/rendering/types';
+import { SectorQuads } from '@/datamodels/cad/rendering/types';
 import { trackError } from '@/utilities/metrics';
-import { DetailedSector } from '@/datamodels/cad/sector/detailedSector_generated';
-import { flatbuffers } from 'flatbuffers';
 
 type ParsedData = { blobUrl: string; lod: string; data: SectorGeometry | SectorQuads };
 
@@ -197,7 +195,7 @@ export class CachedRepository implements Repository {
   private loadDetailedSectorFromNetwork(wantedSector: WantedSector): Observable<ConsumedSector> {
     const detailedSectorObservable = onErrorResumeNext(
       from(
-        this._modelDataParser.parseAndFinalizeDetailed(wantedSector.metadata.indexFile.fileName, {
+        this._modelDataParser.parseAndFinalizeI3D(wantedSector.metadata.indexFile.fileName, {
           fileNames: wantedSector.metadata.indexFile.peripheralFiles,
           blobUrl: wantedSector.blobUrl,
           headers: this._modelSectorProvider.headers
@@ -212,14 +210,13 @@ export class CachedRepository implements Repository {
           throw error;
         }),
         map(data => {
-          const sector = this.unflattenSector(data);
           this._parsedDataSubject.next({
             blobUrl: wantedSector.blobUrl,
             sectorId: wantedSector.metadata.id,
             lod: 'detailed',
-            data: sector
+            data
           }); // TODO: Remove when migration is gone.
-          return { ...wantedSector, data: sector };
+          return { ...wantedSector, data };
         }),
         this._modelDataTransformer.transform(),
         map(group => ({ ...wantedSector, group })),
@@ -233,60 +230,5 @@ export class CachedRepository implements Repository {
 
   private wantedSectorCacheKey(wantedSector: WantedSector) {
     return '' + wantedSector.blobUrl + '.' + wantedSector.metadata.id + '.' + wantedSector.levelOfDetail;
-  }
-
-  private unflattenSector(data: FlatSectorGeometry): SectorGeometry {
-    const buf = new flatbuffers.ByteBuffer(data.buffer);
-    const sectorG = DetailedSector.SectorGeometry.getRootAsSectorGeometry(buf);
-    const iMeshes: InstancedMeshFile[] = [];
-    for (let i = 0; i < sectorG.instanceMeshesLength(); i++) {
-      const instances: InstancedMesh[] = [];
-      const meshFile = sectorG.instanceMeshes(i)!;
-      for (let j = 0; j < meshFile.instancesLength(); j++) {
-        const int = meshFile.instances(j)!;
-        const colors = new Uint8Array(int.colorsArray()!);
-        const instanceMatrices = new Float32Array(int.instanceMatricesArray()!);
-        const treeIndices = new Float32Array(int.treeIndicesArray()!);
-        instances.push({
-          triangleCount: int.triangleCount(),
-          triangleOffset: int.triangleOffset(),
-          colors,
-          instanceMatrices,
-          treeIndices
-        });
-      }
-      const indices = new Uint32Array(meshFile.indicesArray()!);
-      const vertices = new Float32Array(meshFile.verticesArray()!);
-      const norm = meshFile.normalsArray();
-      iMeshes.push({
-        fileId: meshFile.fileId(),
-        indices,
-        vertices,
-        normals: norm ? new Float32Array(norm) : undefined,
-        instances
-      });
-    }
-    const tMeshes: TriangleMesh[] = [];
-    for (let i = 0; i < sectorG.triangleMeshesLength(); i++) {
-      const tri = sectorG.triangleMeshes(i)!;
-      const indices = new Uint32Array(tri.indicesArray()!);
-      const treeIndices = new Float32Array(tri.treeIndicesArray()!);
-      const vertices = new Float32Array(tri.verticesArray()!);
-      const colors = new Uint8Array(tri.colorsArray()!);
-      const norm = tri.normalsArray();
-      tMeshes.push({
-        fileId: tri.fileId(),
-        indices,
-        treeIndices,
-        vertices,
-        normals: norm ? new Float32Array(norm) : undefined,
-        colors
-      });
-    }
-    return {
-      instanceMeshes: iMeshes,
-      triangleMeshes: tMeshes,
-      ...data
-    };
   }
 }
