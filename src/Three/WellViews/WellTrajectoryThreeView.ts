@@ -184,6 +184,35 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     // return boundingBox;
   }
 
+  public /*override*/ onMouseClick(intersection: THREE.Intersection): void
+  {
+    const parent = this.object3D;
+    if (!parent)
+      return;
+
+    const node = this.node;
+    const wellNode = node.wellNode;
+    if (!wellNode)
+      return;
+
+    const trajectory = node.data;
+    if (!trajectory)
+      return;
+
+    const transformer = this.transformer;
+    const position = transformer.toWorld(intersection.point);
+
+    position.substract(wellNode.origin);
+    var md = trajectory.getClosestMd(position);
+
+    var positionAtMd = Vector3.newEmpty;
+    trajectory.getPositionAtMd(md, positionAtMd);
+    
+    console.log(position.toString());
+    console.log(positionAtMd.toString());
+    console.log(md);
+  }
+
   //==================================================
   // OVERRIDES of BaseGroupThreeView
   //==================================================
@@ -335,10 +364,10 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     if (!wellNode)
       return;
 
-      const trajectory = node.data;
-      if (!trajectory)
-        return;
-  
+    const trajectory = node.data;
+    if (!trajectory)
+      return;
+
     const style = this.style;
     if (!style)
       return;

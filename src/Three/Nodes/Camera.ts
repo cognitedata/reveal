@@ -78,7 +78,7 @@ export class CameraControl
   // INSTANCE METHODS: Operations
   //==================================================
 
-  public onResize(aspectRatio: number)
+  public onResize(aspectRatio: number): void
   {
     const camera = this._camera;
     if (!this._camera)
@@ -221,7 +221,7 @@ export class CameraControl
     if (!boundingBox)
       return;
 
-      // Transform it......
+    // Transform it......
     const box = new THREE.Box3();
     const size = ThreeConverter.to3D(boundingBox.delta);
     const center = ThreeConverter.to3D(boundingBox.center);

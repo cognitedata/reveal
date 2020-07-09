@@ -63,7 +63,7 @@ export abstract class BaseThreeView extends Base3DView
   //==================================================
 
   public /*virtual*/ shouldPick(): boolean { return true; }
-  public /*virtual*/ onMouseClick(intersection: THREE.Intersection) { }
+  public /*virtual*/ onMouseClick(intersection: THREE.Intersection): void { }
 
   //==================================================
   // INSTANCE METHODS

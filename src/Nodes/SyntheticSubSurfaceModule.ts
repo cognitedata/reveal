@@ -35,6 +35,8 @@ import { DataNode } from "@/Core/Nodes/DataNode";
 import { Ma } from '@/Core/Primitives/Ma';
 import { CasingLog } from '@/Nodes/Wells/Logs/CasingLog';
 
+// import { CogniteSeismicClient } from '@cognite/seismic-sdk-js'
+
 export class SyntheticSubSurfaceModule extends BaseModule
 {
   //==================================================
@@ -227,6 +229,16 @@ export class SyntheticSubSurfaceModule extends BaseModule
       node.setVisibleInteractive(true);
     }
   }
+
+  // private static addSeismicData(root: BaseRootNode): void
+  // {
+  //   const apiKey = process.env.REACT_APP_API_KEY as string;
+  //   const client = new CogniteSeismicClient(apiKey, "greenfield.cognitedata.com");
+  //   var file = client.file.getFileDataCoverage("1a25d4cc-4d19-4c0d-a9f3-7fea853020f7", "EPSG:32631");
+
+  //   file.then((result) => { console.log(result) } );
+  
+  // }
 
   //==================================================
   // STATIC METHODS: Others

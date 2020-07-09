@@ -5,15 +5,19 @@ import { ThreeModule } from "@/Three/ThreeModule";
 import BPDataModule from "@/Solutions/BP/BPDataModule";
 import { wells, wellBores, trajectories, trajData, logs } from "@/Solutions/BP/MockData";
 import { SyntheticSubSurfaceModule } from "@/Nodes/SyntheticSubSurfaceModule";
+import { ICasing } from '@/Interface/ICasing';
 
 /**
  * App component acts as a container application. Eg- BP
  */
-export default function App() {
+export default function App()
+{
   const modules = Modules.instance;
 
-  useEffect(() => {
-    return () => {
+  useEffect(() =>
+  {
+    return () =>
+    {
       // clean modules on unmount
       modules.clearModules();
     };
@@ -22,6 +26,8 @@ export default function App() {
   // Setup modules
   const module = new BPDataModule();
 
+  const casings: ICasing | undefined = undefined;
+
   module.setModuleData({
     wells,
     wellBores,
@@ -29,12 +35,13 @@ export default function App() {
     trajectoryData: trajData,
     ndsEvents: [],
     nptEvents: [],
-    logs
+    logs,
+    casings
   });
 
   modules.add(new ThreeModule());
-  // modules.add(new SyntheticSubSurfaceModule());
-  modules.add(module);
+  modules.add(new SyntheticSubSurfaceModule());
+  //modules.add(module);
   modules.install();
 
   const root = modules.createRoot();

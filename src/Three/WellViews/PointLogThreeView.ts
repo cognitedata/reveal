@@ -181,7 +181,7 @@ export class PointLogThreeView extends BaseGroupThreeView
     }
   }
 
-  public /*override*/ onMouseClick(intersection: THREE.Intersection)
+  public /*override*/ onMouseClick(intersection: THREE.Intersection): void
   {
     const parent = this.object3D;
     if (!parent)

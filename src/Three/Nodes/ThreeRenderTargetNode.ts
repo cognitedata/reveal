@@ -132,7 +132,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ initializeCore()
+  public /*override*/ initializeCore() : void
   {
     super.initializeCore();
 
@@ -161,7 +161,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   public /*override*/ get domElement(): HTMLCanvasElement { return this.renderer.domElement; }
 
-  public /*override*/ onResize()
+  public /*override*/ onResize(): void
   {
     const pixelRange = this.pixelRange;
     this.renderer.setSize(pixelRange.x.delta, pixelRange.y.delta);

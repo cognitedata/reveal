@@ -59,7 +59,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ initializeCore()
+  public /*override*/ initializeCore(): void
   {
     super.initializeCore();
     this.invalidate();
@@ -70,8 +70,8 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
   //==================================================
 
   public abstract get domElement(): HTMLElement;
-  public /*virtual*/ onResize() { }
-  public /*virtual*/ viewAll() { }
+  public /*virtual*/ onResize(): void { }
+  public /*virtual*/ viewAll(): void { }
 
   //==================================================
   // INSTANCE METHODS
