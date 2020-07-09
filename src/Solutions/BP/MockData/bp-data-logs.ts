@@ -5,6 +5,7 @@ export const logs: { [key: number]: ILog[] } = {
         {
             "assetId": 2043034474812015,
             "id": 5922058417696571,
+            "name": "log1",
             "state": "success",
             "items": [
                 {
@@ -189,6 +190,7 @@ export const logs: { [key: number]: ILog[] } = {
         {
             "assetId": 2043034474812015,
             "id": 5922058417696571,
+            "name": "log2",
             "state": "success",
             "items": [
                 {
@@ -373,6 +375,7 @@ export const logs: { [key: number]: ILog[] } = {
         {
             "assetId": 2043034474812015,
             "id": 5922058417696571,
+            "name": "log3",
             "state": "success",
             "items": [
                 {
@@ -559,6 +562,7 @@ export const logs: { [key: number]: ILog[] } = {
         {
             "assetId": 2256739683054735,
             "id": 1723292891334065,
+            "name": "log1",
             "state": "success",
             "items": [
                 {
@@ -745,6 +749,7 @@ export const logs: { [key: number]: ILog[] } = {
         {
             "assetId": 6458649755206741,
             "id": 3942476694506338,
+            "name": "log1",
             "state": "success",
             "items": [
                 {
@@ -927,4 +932,4 @@ export const logs: { [key: number]: ILog[] } = {
             ]
         }
     ]
-}
+};

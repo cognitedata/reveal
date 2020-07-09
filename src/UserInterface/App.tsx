@@ -29,7 +29,8 @@ export default function App() {
     trajectoryData: trajData,
     ndsEvents: [],
     nptEvents: [],
-    logs
+    logs,
+    casings: []
   });
 
   modules.add(new ThreeModule());
