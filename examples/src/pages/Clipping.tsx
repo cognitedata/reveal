@@ -13,6 +13,7 @@ import {
 import { CogniteClient } from '@cognite/sdk';
 import { BoundingBoxClipper } from '@cognite/reveal';
 import { CanvasWrapper } from '../components/styled';
+import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 CameraControls.install({ THREE });
 
@@ -21,6 +22,7 @@ export function Clipping() {
 
   useEffect(() => {
     const gui = new dat.GUI();
+    const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
 
     async function main() {
       const { project, modelUrl, modelRevision } = getParamsFromURL({
@@ -154,10 +156,8 @@ export function Clipping() {
       updateClippingPlanes();
       scene.add(helpers);
 
-      const clock = new THREE.Clock();
-      const render = async () => {
-        const delta = clock.getDelta();
-        const controlsNeedUpdate = controls.update(delta);
+      animationLoopHandler.setOnAnimationFrameListener(async (deltaTime) => {
+        const controlsNeedUpdate = controls.update(deltaTime);
         if (controlsNeedUpdate) {
           revealManager.update(camera);
         }
@@ -167,10 +167,8 @@ export function Clipping() {
           guiNeedsUpdate = false;
           revealManager.resetRedraw();
         }
-
-        requestAnimationFrame(render);
-      };
-      render();
+      });
+      animationLoopHandler.start();
 
       gui
         .add(params, 'clipIntersection')
@@ -259,6 +257,7 @@ export function Clipping() {
 
     return () => {
       gui.destroy();
+      animationLoopHandler.dispose();
     };
   });
   return (

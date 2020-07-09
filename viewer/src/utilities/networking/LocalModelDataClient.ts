@@ -4,11 +4,17 @@
 
 import { HttpError } from '@cognite/sdk';
 import { HttpHeadersProvider } from './HttpHeadersProvider';
-import { ModelUrlProvider } from './types';
+import { ModelUrlProvider, CadSceneProvider, EptSceneProvider, CadSectorProvider } from './types';
 
-export class LocalUrlClient implements ModelUrlProvider<{ fileName: string }>, HttpHeadersProvider {
-  getModelUrl(params: { fileName: string }): Promise<string> {
-    return Promise.resolve(`${location.origin}/${params.fileName}`);
+export class LocalModelDataClient
+  implements
+    ModelUrlProvider<{ fileName: string }>,
+    CadSceneProvider,
+    CadSectorProvider,
+    EptSceneProvider,
+    HttpHeadersProvider {
+  getModelUrl(modelIdentifier: { fileName: string }): Promise<string> {
+    return Promise.resolve(`${location.origin}/${modelIdentifier.fileName}`);
   }
 
   get headers() {

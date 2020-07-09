@@ -13,6 +13,7 @@ import {
   createRenderManager,
 } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
+import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 CameraControls.install({ THREE });
 
@@ -20,6 +21,7 @@ export function Filtering() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const gui = new dat.GUI();
+    const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
 
     async function main() {
       const { project, modelUrl, modelRevision } = getParamsFromURL({
@@ -109,10 +111,8 @@ export function Filtering() {
       controls.update(0.0);
       camera.updateMatrixWorld();
       revealManager.update(camera);
-      const clock = new THREE.Clock();
-      const render = () => {
-        const delta = clock.getDelta();
-        const controlsNeedUpdate = controls.update(delta);
+      animationLoopHandler.setOnAnimationFrameListener((deltaTime) => {
+        const controlsNeedUpdate = controls.update(deltaTime);
         if (controlsNeedUpdate) {
           revealManager.update(camera);
         }
@@ -126,10 +126,8 @@ export function Filtering() {
           shadingNeedsUpdate = false;
           revealManager.resetRedraw();
         }
-
-        requestAnimationFrame(render);
-      };
-      render();
+      });
+      animationLoopHandler.start();
 
       (window as any).scene = scene;
       (window as any).THREE = THREE;
@@ -142,6 +140,7 @@ export function Filtering() {
 
     return () => {
       gui.destroy();
+      animationLoopHandler.dispose();
     };
   });
   return (

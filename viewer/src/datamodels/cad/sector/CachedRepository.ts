@@ -35,10 +35,10 @@ import {
 } from 'rxjs/operators';
 import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
-import { CadSectorProvider } from './CadSectorProvider';
 import { MemoryRequestCache } from '@/utilities/cache/MemoryRequestCache';
 import { SectorQuads } from '@/datamodels/cad/rendering/types';
 import { trackError } from '@/utilities/metrics';
+import { CadSectorProvider, ModelDataClient } from '@/utilities/networking/types';
 
 type ParsedData = { blobUrl: string; lod: string; data: SectorGeometry | SectorQuads };
 
@@ -198,7 +198,7 @@ export class CachedRepository implements Repository {
         this._modelDataParser.parseAndFinalizeI3D(wantedSector.metadata.indexFile.fileName, {
           fileNames: wantedSector.metadata.indexFile.peripheralFiles,
           blobUrl: wantedSector.blobUrl,
-          headers: this._modelSectorProvider.headers
+          headers: (this._modelSectorProvider as ModelDataClient<CadSectorProvider>).headers
         })
       ).pipe(
         catchError(error => {
