@@ -35,15 +35,15 @@ import { PotreeThreeView } from "@/Three/MiscViews/PotreeThreeView";
 
 // Wells:
 
-import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
-import { PointLogNode } from "@/Nodes/Wells/Wells/PointLogNode";
-import { FloatLogNode } from "@/Nodes/Wells/Wells/FloatLogNode";
-import { DiscreteLogNode } from "@/Nodes/Wells/Wells/DiscreteLogNode";
+import { WellTrajectoryNode } from "@/Nodes/Wells/Nodes/WellTrajectoryNode";
+import { PointLogNode } from "@/Nodes/Wells/Nodes/PointLogNode";
+import { FloatLogNode } from "@/Nodes/Wells/Nodes/FloatLogNode";
+import { DiscreteLogNode } from "@/Nodes/Wells/Nodes/DiscreteLogNode";
 
 import { WellTrajectoryThreeView } from "@/Three/WellViews/WellTrajectoryThreeView";
 import { PointLogThreeView } from "@/Three/WellViews/PointLogThreeView";
 import { LogFilterView } from "@/Three/WellViews/LogFilterView";
-import { CasingLogNode } from "@/Nodes/Wells/Wells/CasingLogNode";
+import { CasingLogNode } from "@/Nodes/Wells/Nodes/CasingLogNode";
 import { CasingLogThreeView } from "@/Three/WellViews/CasingLogThreeView";
 import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
 import { CasingFilterLogNode } from "@/Nodes/Wells/Filters/CasingFilterLogNode";

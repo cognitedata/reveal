@@ -18,7 +18,7 @@ import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { WellTrajectoryStyle } from "@/Nodes/Wells/Styles/WellTrajectoryStyle";
 import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
-import { WellNode } from "@/Nodes/Wells/Wells/WellNode";
+import { WellNode } from "@/Nodes/Wells/Nodes/WellNode";
 import { FilterLogFolder } from "@/Nodes/Wells/Filters/FilterLogFolder";
 import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 

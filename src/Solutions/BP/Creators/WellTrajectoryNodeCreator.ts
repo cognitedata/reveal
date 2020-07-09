@@ -1,4 +1,4 @@
-import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
+import { WellTrajectoryNode } from "@/Nodes/Wells/Nodes/WellTrajectoryNode";
 import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { ITrajectoryColumnIndices, ITrajectoryRows } from "@/Interface";

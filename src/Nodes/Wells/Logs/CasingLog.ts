@@ -12,10 +12,8 @@
 //=====================================================================================
 
 import { Range1 } from "@/Core/Geometry/Range1";
-import { Ma } from "@/Core/Primitives/Ma";
 import { Random } from "@/Core/Primitives/Random";
 
-import { BaseLogSample } from "@/Nodes/Wells/Samples/BaseLogSample";
 import { CasingLogSample } from "@/Nodes/Wells/Samples/CasingLogSample";
 import { BaseLog } from "@/Nodes/Wells/Logs/BaseLog";
 

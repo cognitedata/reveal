@@ -1,16 +1,16 @@
 import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
-import { FloatLogNode } from "@/Nodes/Wells/Wells/FloatLogNode";
+import { FloatLogNode } from "@/Nodes/Wells/Nodes/FloatLogNode";
 import { IRiskEvent, ILog, ILogRow, ILogRowColumn, INdsMetadata, INptMetaData } from "@/Interface";
 import { PointLog } from "@/Nodes/Wells/Logs/PointLog";
 import { PointLogSample } from "@/Nodes/Wells/Samples/PointLogSample";
-import { PointLogNode } from "@/Nodes/Wells/Wells/PointLogNode";
-import { LogFolder } from "@/Nodes/Wells/Wells/LogFolder";
+import { PointLogNode } from "@/Nodes/Wells/Nodes/PointLogNode";
+import { LogFolder } from "@/Nodes/Wells/Nodes/LogFolder";
 import { Util } from "@/Core/Primitives/Util";
 import { FloatLogSample } from "@/Nodes/Wells/Samples/FloatLogSample";
-import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
+import { BaseLogNode } from "@/Nodes/Wells/Nodes/BaseLogNode";
 import { DiscreteLog } from "@/Nodes/Wells/Logs/DiscreteLog";
 import { DiscreteLogSample } from "@/Nodes/Wells/Samples/DiscreteLogSample";
-import { DiscreteLogNode } from "@/Nodes/Wells/Wells/DiscreteLogNode";
+import { DiscreteLogNode } from "@/Nodes/Wells/Nodes/DiscreteLogNode";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 
 export default class WellLogCreator

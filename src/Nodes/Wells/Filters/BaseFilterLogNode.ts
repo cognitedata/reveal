@@ -14,7 +14,7 @@
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { FilterLogFolder } from "@/Nodes/Wells/Filters/FilterLogFolder";
 import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
-import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
+import { BaseLogNode } from "@/Nodes/Wells/Nodes/BaseLogNode";
 import { Util } from "@/Core/Primitives/Util";
 import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 import { ITarget } from "@/Core/Interfaces/ITarget";

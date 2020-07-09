@@ -17,7 +17,7 @@ import { Range3 } from "@/Core/Geometry/Range3";
 
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 
-import { CasingLogNode } from "@/Nodes/Wells/Wells/CasingLogNode";
+import { CasingLogNode } from "@/Nodes/Wells/Nodes/CasingLogNode";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
@@ -96,7 +96,7 @@ export class CasingLogThreeView extends BaseGroupThreeView
 
       maxRadius = Math.max(maxRadius, sample.radius);
       if (trajectory.getPositionAtMd(sample.md, position))
-      boundingBox.add(position);
+        boundingBox.add(position);
     }
     boundingBox.expandByMargin(maxRadius);
     boundingBox.translate(wellNode.origin);

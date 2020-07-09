@@ -11,25 +11,25 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { CasingLog } from "@/Nodes/Wells/Logs/CasingLog";
-import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
+import { PointLog } from "@/Nodes/Wells/Logs/PointLog";
+import { BaseLogNode } from "@/Nodes/Wells/Nodes/BaseLogNode";
 import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
-import CasingLogNodeIcon from "@images/Nodes/CasingLogNode.png";
+import PointLogNodeIcon from "@images/Nodes/PointLogNode.png";
 
-export class CasingLogNode extends BaseLogNode
+export class PointLogNode extends BaseLogNode
 {
   //==================================================
   // STATIC FIELDS
   //==================================================
 
-  static className = "CasingLogNode";
+  static className = "PointLogNode";
 
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): CasingLog | null { return this.anyData as CasingLog; }
-  public set data(value: CasingLog | null) { this.anyData = value; }
+  public get data(): PointLog | null { return this.anyData as PointLog; }
+  public set data(value: PointLog | null) { this.anyData = value; }
 
   //==================================================
   // CONSTRUCTORS
@@ -41,20 +41,19 @@ export class CasingLogNode extends BaseLogNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return CasingLogNode.className; }
-  public /*override*/ isA(className: string): boolean { return className === CasingLogNode.className || super.isA(className); }
+  public /*override*/ get className(): string { return PointLogNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === PointLogNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Casing" }
-
-  public /*override*/ getIcon(): string { return CasingLogNodeIcon }
+  public /*override*/ get typeName(): string { return "PointLog" }
+  public /*override*/ getIcon(): string { return PointLogNodeIcon }
 
   //==================================================
   // OVERRIDES of BaseLogNode
   //==================================================
 
-  public /*override*/  get wellLogType(): WellLogType { return WellLogType.Casing; }
+  public /*override*/  get wellLogType(): WellLogType { return WellLogType.Point; }
 }
