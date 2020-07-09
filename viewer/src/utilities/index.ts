@@ -4,7 +4,7 @@
 
 // TODO 02-06-2020 j-bjorne: Make index file the source of import for other packages? Adding all relative sub exports to index.ts
 
-export { File3dFormat } from './types';
+export { File3dFormat, ModelTransformation } from './types';
 export { createOffsetsArray } from './arrays';
 export { Box3 } from './Box3';
 export { HtmlOverlayHelper } from './HtmlOverlayHelper';
@@ -19,3 +19,4 @@ export {
 } from './threeConverters';
 export { BoundingBoxClipper } from './BoundingBoxClipper';
 export { isMobileOrTablet } from './isMobileOrTablet';
+export { emissionLastMillis } from './rxOperations';

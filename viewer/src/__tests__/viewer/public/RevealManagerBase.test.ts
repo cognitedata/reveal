@@ -5,72 +5,55 @@
 import * as THREE from 'three';
 
 import { RevealManagerBase } from '@/public/RevealManagerBase';
-import { MaterialManager } from '@/datamodels/cad/MaterialManager';
-import { CadManager } from '@/datamodels/cad/CadManager';
-import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
+import { File3dFormat } from '@/utilities';
+import { ModelDataClient } from '@/utilities/networking/types';
+import { SectorCuller } from '@/internal';
 
 describe('RevealManagerBase', () => {
-  const mockCadManager: Omit<CadManager<number>, ''> = {
-    addModel: jest.fn(),
-    requestRedraw: jest.fn(),
-    resetRedraw: jest.fn(),
-    needsRedraw: false,
-    updateCamera: jest.fn(),
-    dispose: jest.fn(),
-    clippingPlanes: [],
-    clipIntersection: false
+  const mockClient: ModelDataClient<{ id: number; format: File3dFormat }> = jest.fn() as any;
+  const sectorCuller: SectorCuller = {
+    determineSectors: jest.fn()
   };
-
-  const cadManager = mockCadManager as CadManager<number>;
-
-  const mockPointCloudManager: Omit<PointCloudManager<number>, ''> = {
-    addModel: jest.fn(),
-    needsRedraw: false,
-    updateCamera: jest.fn(),
-    getLoadingStateObserver: jest.fn(),
-    requestRedraw: jest.fn()
-  };
-  const pointCloudManager = mockPointCloudManager as PointCloudManager<number>;
-  const materialManager = new MaterialManager();
-  const manager = new RevealManagerBase<number>(cadManager, materialManager, pointCloudManager);
+  const manager = new RevealManagerBase<{ id: number }>(mockClient, { internal: { sectorCuller } });
 
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  test('resetRedraw() calls CadManager.resetRedraw()', () => {
-    const resetRedrawSpy = jest.spyOn(mockCadManager, 'resetRedraw');
     manager.resetRedraw();
-    expect(resetRedrawSpy).toBeCalled();
   });
 
-  test('set clippingPlanes, updates materials', () => {
+  test('resetRedraw() resets needsRedraw', () => {
+    manager.requestRedraw();
+    expect(manager.needsRedraw).toBeTrue();
+    manager.resetRedraw();
+    expect(manager.needsRedraw).toBeFalse();
+  });
+
+  test('set clippingPlanes triggers redraw', () => {
+    expect(manager.needsRedraw).toBeFalse();
     const planes = [new THREE.Plane(), new THREE.Plane()];
-    const setClippingPlanesSpy = jest.spyOn(materialManager, 'clippingPlanes', 'set');
     manager.clippingPlanes = planes;
-    expect(setClippingPlanesSpy).toBeCalled();
-    expect(materialManager.clippingPlanes).toBe(planes);
-    expect(mockCadManager.clippingPlanes).toBe(planes);
+    expect(manager.needsRedraw).toBeTrue();
   });
 
-  test('set clipIntersection, updates materials', () => {
-    const setClipIntersectionSpy = jest.spyOn(materialManager, 'clipIntersection', 'set');
-    manager.clipIntersection = true;
-    expect(setClipIntersectionSpy).toBeCalled();
-    expect(materialManager.clipIntersection).toBeTrue();
-    expect(mockCadManager.clipIntersection).toBeTrue();
+  test('set clipIntersection triggers redraw', () => {
+    expect(manager.needsRedraw).toBeFalse();
+    manager.clipIntersection = !manager.clipIntersection;
+    expect(manager.needsRedraw).toBeTrue();
   });
 
   test('update only triggers update when camera changes', () => {
+    manager.resetRedraw();
     const camera = new THREE.PerspectiveCamera(60, 1, 0.5, 100);
-    const updateCameraSpy = jest.spyOn(mockCadManager, 'updateCamera');
     manager.update(camera);
-    expect(updateCameraSpy).toBeCalledTimes(1); // Changed
+    expect(manager.needsRedraw).toBeTrue(); // Changed
+
+    manager.resetRedraw();
     manager.update(camera);
-    expect(updateCameraSpy).toBeCalledTimes(1); // Unchanged
+    expect(manager.needsRedraw).toBeFalse(); // Unhanged
+
+    manager.resetRedraw();
     camera.position.set(1, 2, 3);
     manager.update(camera);
-    expect(updateCameraSpy).toBeCalledTimes(2); // Changed again
-    updateCameraSpy.mockClear();
+    expect(manager.needsRedraw).toBeTrue(); // Changed again
   });
 });

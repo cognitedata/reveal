@@ -11,8 +11,9 @@ import {
 import { CogniteClient } from '@cognite/sdk';
 import * as reveal from '@cognite/reveal/experimental';
 import React, { useEffect, useRef, useState } from 'react';
-import { WebGLRenderer } from 'three';
 import { CanvasWrapper, Loader } from '../components/styled';
+import { resizeRendererToDisplaySize } from '../utils/sceneHelpers';
+import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 CameraControls.install({ THREE });
 
@@ -21,8 +22,8 @@ export function Simple() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
     let revealManager: reveal.RevealManager | reveal.LocalHostRevealManager;
-
     async function main() {
       if (!canvas.current) {
         return;
@@ -81,28 +82,9 @@ export function Simple() {
       camera.updateMatrixWorld();
       revealManager.update(camera);
 
-      function resizeRendererToDisplaySize(renderer: WebGLRenderer) {
-        const canvas = renderer.domElement;
-        const width = canvas.clientWidth;
-        const height = canvas.clientHeight;
-        const needResize = canvas.width !== width || canvas.height !== height;
-        if (needResize) {
-          renderer.setSize(width, height, false);
-        }
-        return needResize;
-      }
-
-      const clock = new THREE.Clock();
-      const render = async () => {
-        let needsResize = resizeRendererToDisplaySize(renderer);
-        if (needsResize) {
-          const canvas = renderer.domElement;
-          camera.aspect = canvas.clientWidth / canvas.clientHeight;
-          camera.updateProjectionMatrix();
-        }
-
-        const delta = clock.getDelta();
-        const controlsNeedUpdate = controls.update(delta);
+      animationLoopHandler.setOnAnimationFrameListener(async (deltaTime: number) => {
+        let needsResize = resizeRendererToDisplaySize(renderer, camera);
+        const controlsNeedUpdate = controls.update(deltaTime);
         if (controlsNeedUpdate) {
           revealManager.update(camera);
         }
@@ -111,10 +93,8 @@ export function Simple() {
           renderer.render(scene, camera);
           revealManager.resetRedraw();
         }
-
-        requestAnimationFrame(render);
-      };
-      render();
+      });
+      animationLoopHandler.start();
 
       (window as any).scene = scene;
       (window as any).THREE = THREE;
@@ -127,6 +107,7 @@ export function Simple() {
 
     return () => {
       revealManager?.dispose();
+      animationLoopHandler.dispose();
     };
   }, []);
   return (

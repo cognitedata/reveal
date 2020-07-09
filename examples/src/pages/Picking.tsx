@@ -12,6 +12,7 @@ import {
   createRenderManager,
 } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
+import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 CameraControls.install({ THREE });
 
@@ -27,6 +28,7 @@ function createSphere(point: THREE.Vector3, color: string): THREE.Mesh {
 export function Picking() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
+    const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
     async function main() {
       const { project, modelUrl, modelRevision } = getParamsFromURL({
         project: 'publicdata',
@@ -120,10 +122,8 @@ export function Picking() {
       const raycaster = new THREE.Raycaster();
 
       let pickingNeedsUpdate = false;
-      const clock = new THREE.Clock();
-      const render = () => {
-        const delta = clock.getDelta();
-        const controlsNeedUpdate = controls.update(delta);
+      animationLoopHandler.setOnAnimationFrameListener((deltaTime) => {
+        const controlsNeedUpdate = controls.update(deltaTime);
         if (controlsNeedUpdate) {
           revealManager.update(camera);
         }
@@ -137,12 +137,9 @@ export function Picking() {
           pickingNeedsUpdate = false;
           revealManager.resetRedraw();
         }
-
-        requestAnimationFrame(render);
-      };
-
+      });
+      animationLoopHandler.start();
       revealManager.update(camera);
-      render();
 
       const pick = (event: MouseEvent) => {
         const rect = renderer.domElement.getBoundingClientRect();
@@ -241,6 +238,9 @@ export function Picking() {
     }
 
     main();
+    return () => {
+      animationLoopHandler.dispose();
+    }
   });
   return (
     <CanvasWrapper>

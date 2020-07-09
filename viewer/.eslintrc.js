@@ -4,6 +4,9 @@
 
 module.exports = {
   root: true,
+  env: {
+    browser: true
+  },
   parser: '@typescript-eslint/parser', // Specifies the ESLint parser
   parserOptions: {
     project: './tsconfig.json',
@@ -11,7 +14,7 @@ module.exports = {
     ecmaVersion: 2020, // Allows for the parsing of modern ECMAScript features
     sourceType: 'module' // Allows for the use of imports
   },
-  plugins: ['header'],
+  plugins: ['header', '@typescript-eslint'],
   extends: [
     'plugin:@typescript-eslint/recommended',
 
@@ -46,12 +49,6 @@ module.exports = {
     '@typescript-eslint/no-empty-function': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
-    '@typescript-eslint/no-unused-vars-expiremental': [
-      'off',
-      {
-        ignoredNamesRegex: '^_'
-      }
-    ],
 
     // TODO: maksnester 26-06-2020 we need to fix our codebase to play well with these rules
     '@typescript-eslint/explicit-module-boundary-types': 'off',
