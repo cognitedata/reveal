@@ -6,4 +6,5 @@ export interface IUserInterface
 {
   updateNode(node: BaseNode, args: NodeEventArgs): void;
   setFullScreen(isFullScreen: boolean): void;
+  updateStatusPanel(statusText: string): void;
 }

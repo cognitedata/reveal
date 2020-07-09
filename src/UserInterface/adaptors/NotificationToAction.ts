@@ -1,7 +1,8 @@
 import { Dispatch } from 'redux'
 import { Changes } from '@/Core/Views/Changes'
 import { CheckBoxState } from '@/Core/Enums/CheckBoxState'
-import { setFullScreeen } from "@/UserInterface/redux/actions/common";
+import { setFullScreen } from "@/UserInterface/redux/actions/common";
+import { updateStatusPanel } from "@/UserInterface/redux/actions/visualizers";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
@@ -37,8 +38,12 @@ class NotificationsToActionsAdaptor {
         }
     }
 
-    setFullScreeen(isFullScreen: boolean) {
-        this.dispatcher(setFullScreeen(isFullScreen));
+    setFullScreen(isFullScreen: boolean) {
+        this.dispatcher(setFullScreen(isFullScreen));
+    }
+
+    updateStatusPanel(statusText: string){
+        this.dispatcher(updateStatusPanel({ text: statusText }));
     }
 }
 

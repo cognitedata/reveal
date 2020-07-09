@@ -21,7 +21,11 @@ class UserInterfaceListener implements IUserInterface {
   }
 
   setFullScreen(isFullScreen: boolean): void {
-    this.notificationAdaptor.setFullScreeen(isFullScreen);
+    this.notificationAdaptor.setFullScreen(isFullScreen);
+  }
+
+  updateStatusPanel(statusText: string): void {
+    this.notificationAdaptor.updateStatusPanel(statusText);
   }
 }
 

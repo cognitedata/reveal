@@ -24,7 +24,13 @@ export class VirtualUserInterface
     VirtualUserInterface.userInterface?.updateNode(node, args);
   }
 
-  static setFullScreen(isFullScreen: boolean): void {
+  static setFullScreen(isFullScreen: boolean): void
+  {
     VirtualUserInterface.userInterface?.setFullScreen(isFullScreen);
+  }
+
+  static updateStatusPanel(statusText: string): void
+  {
+    VirtualUserInterface.userInterface?.updateStatusPanel(statusText);
   }
 }
