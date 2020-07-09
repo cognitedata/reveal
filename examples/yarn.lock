@@ -1154,10 +1154,10 @@
 "@cognite/reveal@link:../viewer/dist":
   version "0.0.0"
 
-"@cognite/sdk@^2.32.0":
-  version "2.32.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-2.32.0.tgz#4942e7ad21c93804d9be2a65bdc9f0196d1a0f18"
-  integrity sha512-uQivhbRNxwkWyxC9ugckMyi0zFv1OQYSZDcSowH6HTfzPGw+d3w/kE6Kc3Fx8fi1/DisKywWtH21gw1zkH2SQw==
+"@cognite/sdk@^2.33.0":
+  version "2.33.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-2.33.0.tgz#cfc893ffe259c1011d43c1f41b280b7bf2e72181"
+  integrity sha512-dO2cCO3UbNRx8WaJ3cJdPBe3Rd3qaSBYkocEeW+ew3UzjsxiUOwtz//5HYtb+wXig1aTotoU3iR88NNx09fQfg==
   dependencies:
     cross-fetch "^3.0.4"
     lodash "^4.17.11"
