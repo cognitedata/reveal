@@ -8,11 +8,9 @@ import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import * as reveal from '@cognite/reveal/experimental';
 import dat from 'dat.gui';
-import {
-  getParamsFromURL,
-  createRenderManager,
-} from '../utils/example-helpers';
+import { getParamsFromURL } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
+import { RevealOptions } from '@cognite/reveal/public/types';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 CameraControls.install({ THREE });
@@ -21,6 +19,7 @@ export function Filtering() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const gui = new dat.GUI();
+    let revealManager: reveal.RevealManager<unknown>;
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
 
     async function main() {
@@ -38,11 +37,6 @@ export function Filtering() {
         treeIndices: '1, 2, 8, 12',
       };
 
-      const revealManager: reveal.RenderManager = createRenderManager(
-        modelRevision !== undefined ? 'cdf' : 'local',
-        client
-      );
-      let model: reveal.CadNode;
       const nodeAppearanceProvider: reveal.NodeAppearanceProvider = {
         styleNode(treeIndex: number) {
           if (visibleIndices.has(treeIndex)) {
@@ -51,25 +45,23 @@ export function Filtering() {
           return reveal.DefaultNodeAppearance.NoOverrides;
         }
       };
-      if (
-        revealManager instanceof reveal.LocalHostRevealManager &&
-        modelUrl !== undefined
-      ) {
-        model = await revealManager.addModel('cad', modelUrl, nodeAppearanceProvider);
-      } else if (
-        revealManager instanceof reveal.RevealManager &&
-        modelRevision !== undefined
-      ) {
-        model = await revealManager.addModel(
-          'cad',
-          modelRevision,
-          nodeAppearanceProvider
-        );
+      const revealOptions: RevealOptions = {
+        nodeAppearanceProvider
+      }
+
+      let model: reveal.CadNode;
+      if(modelRevision) {
+        revealManager = reveal.createCdfRevealManager(client);
+        model = await revealManager.addModel('cad', modelRevision, revealOptions);
+      } else if(modelUrl) {
+        revealManager = reveal.createLocalRevealManager();
+        model = await revealManager.addModel('cad', modelUrl, revealOptions);
       } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'
         );
       }
+
       scene.add(model);
 
       gui.add(settings, 'treeIndices').onChange(() => {
@@ -140,6 +132,7 @@ export function Filtering() {
 
     return () => {
       gui.destroy();
+      revealManager?.dispose();
       animationLoopHandler.dispose();
     };
   });

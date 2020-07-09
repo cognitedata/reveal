@@ -7,12 +7,10 @@ import { CanvasWrapper } from '../components/styled';
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import * as reveal from '@cognite/reveal/experimental';
-import {
-  getParamsFromURL,
-  createRenderManager,
-} from '../utils/example-helpers';
+import { getParamsFromURL } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
+import { RevealOptions } from '@cognite/reveal/public/types';
 
 CameraControls.install({ THREE });
 
@@ -28,6 +26,7 @@ function createSphere(point: THREE.Vector3, color: string): THREE.Mesh {
 export function Picking() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
+    let revealManager: reveal.RevealManager<unknown>;
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
     async function main() {
       const { project, modelUrl, modelRevision } = getParamsFromURL({
@@ -50,27 +49,15 @@ export function Picking() {
         }
       };
 
-      const revealManager: reveal.RenderManager = createRenderManager(
-        modelRevision !== undefined ? 'cdf' : 'local',
-        client
-      );
-
+      const revealOptions: RevealOptions = { nodeAppearanceProvider };
       let model: reveal.CadNode;
-      if (
-        revealManager instanceof reveal.LocalHostRevealManager &&
-        modelUrl !== undefined
-      ) {
-        model = await revealManager.addModel('cad', modelUrl, nodeAppearanceProvider);
-      } else if (
-        revealManager instanceof reveal.RevealManager &&
-        modelRevision !== undefined
-      ) {
-        model = await revealManager.addModel(
-          'cad',
-          modelRevision,
-          nodeAppearanceProvider
-        );
-      } else {
+      if(modelRevision) {
+        revealManager = reveal.createCdfRevealManager(client, revealOptions);
+        model = await revealManager.addModel('cad', modelRevision);
+      } else if(modelUrl) {
+        revealManager = reveal.createLocalRevealManager(revealOptions);
+        model = await revealManager.addModel('cad', modelUrl);
+      }  else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'
         );
@@ -240,6 +227,7 @@ export function Picking() {
     main();
     return () => {
       animationLoopHandler.dispose();
+      revealManager?.dispose();
     }
   });
   return (

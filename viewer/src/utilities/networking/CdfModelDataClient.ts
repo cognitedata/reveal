@@ -6,6 +6,7 @@ import { CogniteClient, ItemsResponse } from '@cognite/sdk';
 import { BlobOutputMetadata, ModelDataClient } from './types';
 import { Model3DOutputList } from './Model3DOutputList';
 import { File3dFormat } from '../types';
+import { fetchWithStatusCheck } from './utilities';
 
 // TODO 2020-06-25 larsmoa: Extend CogniteClient.files3d.retrieve() to support subpath instead of
 // using URLs directly. Also add support for listing outputs in the SDK.
@@ -24,7 +25,7 @@ export class CdfModelDataClient
     return this.client.getDefaultRequestHeaders();
   }
 
-  public async getCadSectorFile(blobUrl: string, fileName: string): Promise<ArrayBuffer> {
+  public async getBinaryFile(blobUrl: string, fileName: string): Promise<ArrayBuffer> {
     const url = `${blobUrl}/${fileName}`;
     const headers = {
       ...this.client.getDefaultRequestHeaders(),
@@ -34,14 +35,9 @@ export class CdfModelDataClient
     return response.arrayBuffer();
   }
 
-  public async getCadScene(blobUrl: string): Promise<any> {
-    const response = await this.client.get(`${blobUrl}/scene.json`);
-    return response.data;
-  }
-
-  public async getEptScene(blobUrl: string): Promise<any> {
-    const response = await this.client.get(`${blobUrl}/ept.json`);
-    return response.data;
+  async getJsonFile(blobUrl: string, fileName: string): Promise<any> {
+    const response = await fetchWithStatusCheck(`${blobUrl}/${fileName}`);
+    return response.json();
   }
 
   public async getModelUrl(modelIdentififer: {
