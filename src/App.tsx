@@ -3,7 +3,7 @@ import GlobalStyles from 'global-styles';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Home from 'pages/Home';
 import Configurations from './pages/Configurations';
-import Translations from './pages/Translations';
+import DataTransfers from './pages/DataTransfers';
 import Status from './pages/Status';
 import { Content, Layout, Main } from './elements';
 import MainHeader from './components/Organisms/MainHeader';
@@ -24,8 +24,8 @@ const App = () => {
                 <Route path="/configurations">
                   <Configurations />
                 </Route>
-                <Route path="/translations">
-                  <Translations />
+                <Route path="/data-transfers">
+                  <DataTransfers />
                 </Route>
                 <Route path="/status">
                   <Status />
