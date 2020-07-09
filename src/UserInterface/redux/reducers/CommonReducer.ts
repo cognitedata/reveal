@@ -5,7 +5,7 @@ import { SET_FULLSCREEN_STATUS_SUCCESS } from '@/UserInterface/redux/types/commo
 
 const initialState: CommonStateInterface = {
     isFullscreen: false
-}
+};
 
 export default createReducer(initialState, {
     [SET_FULLSCREEN_STATUS_SUCCESS]: (state, action) => {

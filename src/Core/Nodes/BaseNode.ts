@@ -522,7 +522,7 @@ export abstract class BaseNode extends Identifiable
       return;
     }
     if (insertFirst)
-      this._children.unshift(child)
+      this._children.unshift(child);
     else
       this._children.push(child);
     child._parent = this;
@@ -561,6 +561,7 @@ export abstract class BaseNode extends Identifiable
       eventListener.processEvent(this, args);
 
     VirtualUserInterface.updateNode(this, args);
+    VirtualUserInterface.updateStatusPanel(JSON.stringify(args));
     this.notifyCore(args);
   }
 

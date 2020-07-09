@@ -3,7 +3,8 @@ import { BaseCommand } from "@/Core/Commands/BaseCommand";
 // Visualizer component state interface
 export interface VisualizerStateInterface {
     toolbars: { [key: string]: ToolbarCommand[] },
-    targets: { [key: string]: any }
+    targets: { [key: string]: any },
+    statusBar: { text: string }
 }
 
 // Toolbar command interface
