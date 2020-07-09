@@ -71,8 +71,18 @@ const MenuLink = styled(NavLink)`
 
   font-size: 14px;
   font-weight: 600;
+  text-decoration: none;
+
+  &:hover,
+  &:active {
+    color: var(--cogs-greyscale-grey7);
+  }
 
   &.active {
+    &:hover,
+    &:active {
+      border-bottom: 3px solid var(--cogs-greyscale-grey7);
+    }
     border-bottom: 3px solid var(--cogs-greyscale-grey10);
   }
 `;
