@@ -103,6 +103,7 @@ export function SimplePointcloud() {
       }
       const [pointCloudGroup, pointCloudNode] = model;
       scene.add(pointCloudGroup);
+      revealManager.on('loadingStateChanged', setIsLoading);
 
       const camera = new THREE.PerspectiveCamera(
         75,

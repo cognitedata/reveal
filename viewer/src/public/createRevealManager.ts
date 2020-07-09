@@ -22,6 +22,7 @@ export function createLocalRevealManager(revealOptions: RevealOptions = {}): Rev
   });
   return createRevealManager(modelDataClient, revealOptions);
 }
+
 export function createCdfRevealManager(
   client: CogniteClient,
   revealOptions: RevealOptions = {}
