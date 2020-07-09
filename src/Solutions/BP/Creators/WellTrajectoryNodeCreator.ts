@@ -15,12 +15,12 @@ export default class WellTrajectoryNodeCreator
             console.warn("NodeVisualizer: No trajectory available for well");
             return null;
         }
-        const mdIndex = trajectoryDataColumnIndices.md == undefined ? -1 : trajectoryDataColumnIndices.md;
-        const azimuthIndex = trajectoryDataColumnIndices.azimuth == undefined ? -1 : trajectoryDataColumnIndices.azimuth;
-        const inclinationIndex = trajectoryDataColumnIndices.inclination == undefined ? -1 : trajectoryDataColumnIndices.inclination;
-        const tvdIndex = trajectoryDataColumnIndices.tvd == undefined ? -1 : trajectoryDataColumnIndices.tvd; 
-        const xOffsetIndex = trajectoryDataColumnIndices.x_offset == undefined ? -1 : trajectoryDataColumnIndices.x_offset; 
-        const yOffsetIndex = trajectoryDataColumnIndices.y_offset == undefined ? -1 : trajectoryDataColumnIndices.y_offset; 
+        const mdIndex = trajectoryDataColumnIndices.md === undefined ? -1 : trajectoryDataColumnIndices.md;
+        const azimuthIndex = trajectoryDataColumnIndices.azimuth === undefined ? -1 : trajectoryDataColumnIndices.azimuth;
+        const inclinationIndex = trajectoryDataColumnIndices.inclination === undefined ? -1 : trajectoryDataColumnIndices.inclination;
+        const tvdIndex = trajectoryDataColumnIndices.tvd === undefined ? -1 : trajectoryDataColumnIndices.tvd;
+        const xOffsetIndex = trajectoryDataColumnIndices.x_offset === undefined ? -1 : trajectoryDataColumnIndices.x_offset;
+        const yOffsetIndex = trajectoryDataColumnIndices.y_offset === undefined ? -1 : trajectoryDataColumnIndices.y_offset;
 
         const trajectory = new WellTrajectory();
 

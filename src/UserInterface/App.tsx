@@ -26,8 +26,6 @@ export default function App()
   // Setup modules
   const module = new BPDataModule();
 
-  const casings: ICasing | undefined = undefined;
-
   module.setModuleData({
     wells,
     wellBores,
@@ -36,7 +34,7 @@ export default function App()
     ndsEvents: [],
     nptEvents: [],
     logs,
-    casings
+    casings: []
   });
 
   modules.add(new ThreeModule());

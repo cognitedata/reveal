@@ -109,7 +109,7 @@ module.exports = {
     minimize: false
   },
   plugins: [
-    new CleanWebpackPlugin(),
+    new CleanWebpackPlugin({ verbose: true, cleanOnceBeforeBuildPatterns: ["dist"] } ),
     new CopyPlugin({
       patterns: [
         { from: "package.json", to: resolve("dist/subsurface-visualizer") },
