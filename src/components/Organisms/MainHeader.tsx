@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import Logo from '../Atoms/Logo';
+import { NavLink } from 'react-router-dom';
+import Logo from 'components/Atoms/Logo';
 
 const Header = styled.header`
   display: flex;
@@ -17,7 +18,7 @@ const HeaderItem = styled.div`
   align-items: center;
 `;
 
-const Title = styled(HeaderItem)`
+const TitleContainer = styled(HeaderItem)`
   border-right: 1px solid var(--cogs-greyscale-grey3);
   & > div:first-child {
     padding: 0 16px;
@@ -37,8 +38,39 @@ const Title = styled(HeaderItem)`
   }
 `;
 
-const MainMenu = styled(HeaderItem)`
+const MenuContainer = styled(HeaderItem)`
   flex-grow: 2;
+
+  padding-left: 24px;
+  & nav {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    & ul {
+      display: flex;
+
+      list-style: none;
+      padding: 0;
+    }
+  }
+`;
+
+const MenuLink = styled(NavLink)`
+  display: block;
+  margin-right: 20px;
+  padding: 0 16px 12px 12px;
+
+  border-bottom: 3px solid transparent;
+  color: var(--cogs-greyscale-grey10);
+  text-align: center;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  &.active {
+    border-bottom: 3px solid var(--cogs-greyscale-grey10);
+  }
 `;
 
 const AvatarContainer = styled(HeaderItem)``;
@@ -48,16 +80,32 @@ const ActionsContainer = styled(HeaderItem)``;
 const MainHeader = (): React.ReactElement => {
   return (
     <Header>
-      <Title>
+      <TitleContainer>
         <div>
-          <Logo />
+          <NavLink to="">
+            <Logo />
+          </NavLink>
         </div>
         <div>
           <h1>Discover</h1>
           <h2>Cognuit</h2>
         </div>
-      </Title>
-      <MainMenu>menu</MainMenu>
+      </TitleContainer>
+      <MenuContainer>
+        <nav>
+          <ul>
+            <li>
+              <MenuLink to="/configurations">Configurations</MenuLink>
+            </li>
+            <li>
+              <MenuLink to="/data-transfers">Data Transfers</MenuLink>
+            </li>
+            <li>
+              <MenuLink to="/status">Status</MenuLink>
+            </li>
+          </ul>
+        </nav>
+      </MenuContainer>
       <AvatarContainer>avatar</AvatarContainer>
       <ActionsContainer>actions</ActionsContainer>
     </Header>
