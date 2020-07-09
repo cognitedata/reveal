@@ -30,7 +30,7 @@ import { trackError, initMetrics, trackLoadModel } from '@/utilities/metrics';
 import { RevealManager } from '../RevealManager';
 import { createCdfRevealManager } from '../createRevealManager';
 import { CdfModelIdentifier } from '@/utilities/networking/types';
-import { SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
+import { RevealOptions, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
 
 type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
 type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
@@ -143,8 +143,8 @@ export class Cognite3DViewer {
     this.sdkClient = options.sdk;
     this.renderController = new RenderController(this.camera);
 
-    const revealOptions = { internal: {} };
-    revealOptions.internal = { _sectorCuller: options._sectorCuller };
+    const revealOptions: RevealOptions = { internal: {} };
+    revealOptions.internal = { sectorCuller: options._sectorCuller };
 
     this._revealManager = createCdfRevealManager(this.sdkClient, revealOptions);
 
