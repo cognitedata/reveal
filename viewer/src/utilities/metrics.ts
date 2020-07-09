@@ -11,12 +11,11 @@ type EventProps = {
   // better than nothing, easier than anything else
   moduleName:
     | 'RevealManager'
-    | 'RevealManagerBase'
+    | 'createRevealManager'
     | 'Cognite3DViewer'
     | 'CadManager'
     | 'CachedRepository'
     | 'Cognite3DModel'
-    | 'LocalHostRevealManager'
     | 'sectorUtilities';
   methodName: string;
 };

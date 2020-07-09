@@ -36,6 +36,7 @@ export class RevealManager<TModelIdentifier> {
     loadingStateChanged: new Array<LoadingStateChangeListener>()
   };
 
+  /** @internal */
   constructor(cadManager: CadManager<TModelIdentifier>, pointCloudManager: PointCloudManager<TModelIdentifier>) {
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;

@@ -15,31 +15,27 @@ import { omit } from 'lodash';
 
 export function createLocalRevealManager(revealOptions: RevealOptions = {}): RevealManager<LocalModelIdentifier> {
   const modelDataClient = new LocalModelDataClient();
-  initMetrics(revealOptions.logMetrics !== false, 'local', {
-    moduleName: 'RevealManager',
-    methodName: 'constructor',
-    constructorOptions: omit(revealOptions, ['internal'])
-  });
-  return createRevealManager(modelDataClient, revealOptions);
+  return createRevealManager('local', modelDataClient, revealOptions);
 }
 
 export function createCdfRevealManager(
   client: CogniteClient,
   revealOptions: RevealOptions = {}
 ): RevealManager<CdfModelIdentifier> {
-  initMetrics(revealOptions.logMetrics !== false, client.project, {
-    moduleName: 'RevealManager',
-    methodName: 'constructor',
-    constructorOptions: omit(revealOptions, ['internal'])
-  });
   const modelDataClient = new CdfModelDataClient(client);
-  return createRevealManager(modelDataClient, revealOptions);
+  return createRevealManager(client.project, modelDataClient, revealOptions);
 }
 
 export function createRevealManager<T>(
+  project: string,
   client: ModelDataClient<T>,
   revealOptions: RevealOptions = {}
 ): RevealManager<T> {
+  initMetrics(revealOptions.logMetrics !== false, project, {
+    moduleName: 'createRevealManager',
+    methodName: 'createRevealManager',
+    constructorOptions: omit(revealOptions, ['internal'])
+  });
   const cadManager = createCadManager(client, revealOptions);
   const pointCloudManager = createPointCloudManager(client);
   return new RevealManager(cadManager, pointCloudManager);
