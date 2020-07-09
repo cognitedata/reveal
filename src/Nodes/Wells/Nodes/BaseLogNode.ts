@@ -14,8 +14,8 @@
 import * as Color from "color"
 
 import { BaseLog } from "@/Nodes/Wells/Logs/BaseLog";
-import { WellNode } from "@/Nodes/Wells/Wells/WellNode";
-import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
+import { WellNode } from "@/Nodes/Wells/Nodes/WellNode";
+import { WellTrajectoryNode } from "@/Nodes/Wells/Nodes/WellTrajectoryNode";
 import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
 import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
 import { BaseFilterLogNode } from "@/Nodes/Wells/Filters/BaseFilterLogNode";

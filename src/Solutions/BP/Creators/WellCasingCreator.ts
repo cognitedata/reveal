@@ -1,6 +1,5 @@
 import { ICasing } from "@/Interface";
-import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
-import { CasingLogNode } from "@/Nodes/Wells/Wells/CasingLogNode";
+import { CasingLogNode } from "@/Nodes/Wells/Nodes/CasingLogNode";
 import { CasingLogSample } from "@/Nodes/Wells/Samples/CasingLogSample";
 import { Util } from "@/Core/Primitives/Util";
 import { Ma } from '@/Core/Primitives/Ma';
@@ -8,7 +7,7 @@ import { CasingLog } from '@/Nodes/Wells/Logs/CasingLog';
 
 export default class WellCasingCreator
 {
-    public static createCasingNodeNew(casings: ICasing[] | undefined, unit: number): BaseLogNode | null
+    public static createCasingNodeNew(casings: ICasing[] | undefined, unit: number): CasingLogNode | null
     {
         const log = WellCasingCreator.createCasingLog(casings, unit);
         if (!log)
@@ -49,23 +48,28 @@ export default class WellCasingCreator
 
             min *= unit;
             max *= unit;
-            var lastSample = log.last;
-            if (lastSample)
+            var prevMaxSample = log.lastSample;
+            if (prevMaxSample)
             {
-                if (Ma.IsAbsEqual(lastSample.md, min, 0.1))
+                if (Ma.IsAbsEqual(prevMaxSample.md, min, 0.1))
                     log.samples.pop();
             }
-
             var minSample = new CasingLogSample(radius, min);
+            var maxSample = new CasingLogSample(radius, max);
+
+            // Meta data to the min, the max may be taken out anyway.
             minSample.name = casing.metadata.assy_name;
             minSample.comments = casing.metadata.assy_comments;
-            minSample.currentStatusComment = casing.metadata.assy_current_status_comment; 
-          
+            minSample.currentStatusComment = casing.metadata.assy_current_status_comment;
+
             log.samples.push(minSample);
-            log.samples.push(new CasingLogSample(radius, max));
+            log.samples.push(maxSample);
         }
         if (log.length === 0)
             return null;
+
+        const last = log.lastSample as CasingLogSample;
+        last.radius = Number.NaN;
 
         // TODO: casing.metadata.assy_name
         return log;

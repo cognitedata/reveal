@@ -19,14 +19,14 @@ import { Range1 } from "@/Core/Geometry/Range1";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Colors } from "@/Core/Primitives/Colors";
 
-import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
-import { FloatLogNode } from "@/Nodes/Wells/Wells/FloatLogNode";
-import { DiscreteLogNode } from "@/Nodes/Wells/Wells/DiscreteLogNode";
+import { BaseLogNode } from "@/Nodes/Wells/Nodes/BaseLogNode";
+import { FloatLogNode } from "@/Nodes/Wells/Nodes/FloatLogNode";
+import { DiscreteLogNode } from "@/Nodes/Wells/Nodes/DiscreteLogNode";
 import { WellTrajectoryStyle } from "@/Nodes/Wells/Styles/WellTrajectoryStyle";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { Changes } from "@/Core/Views/Changes";
 
-import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
+import { WellTrajectoryNode } from "@/Nodes/Wells/Nodes/WellTrajectoryNode";
 
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";

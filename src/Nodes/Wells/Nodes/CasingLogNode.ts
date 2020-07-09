@@ -11,25 +11,25 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { DiscreteLog } from "@/Nodes/Wells/Logs/DiscreteLog";
-import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
+import { CasingLog } from "@/Nodes/Wells/Logs/CasingLog";
+import { BaseLogNode } from "@/Nodes/Wells/Nodes/BaseLogNode";
 import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
-import DiscreteLogNodeIcon from "@images/Nodes/DiscreteLogNode.png";
+import CasingLogNodeIcon from "@images/Nodes/CasingLogNode.png";
 
-export class DiscreteLogNode extends BaseLogNode
+export class CasingLogNode extends BaseLogNode
 {
   //==================================================
   // STATIC FIELDS
   //==================================================
 
-  static className = "DiscreteLogNode";
+  static className = "CasingLogNode";
 
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): DiscreteLog | null { return this.anyData as DiscreteLog; }
-  public set data(value: DiscreteLog | null) { this.anyData = value; }
+  public get data(): CasingLog | null { return this.anyData as CasingLog; }
+  public set data(value: CasingLog | null) { this.anyData = value; }
 
   //==================================================
   // CONSTRUCTORS
@@ -41,20 +41,20 @@ export class DiscreteLogNode extends BaseLogNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return DiscreteLogNode.className; }
-  public /*override*/ isA(className: string): boolean { return className === DiscreteLogNode.className || super.isA(className); }
+  public /*override*/ get className(): string { return CasingLogNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === CasingLogNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "DiscreteLog" }
-  public /*override*/ getIcon(): string { return DiscreteLogNodeIcon }
-  public /*override*/ hasIconColor(): boolean { return false; }
+  public /*override*/ get typeName(): string { return "Casing" }
+
+  public /*override*/ getIcon(): string { return CasingLogNodeIcon }
 
   //==================================================
   // OVERRIDES of BaseLogNode
   //==================================================
 
-  public /*override*/  get wellLogType(): WellLogType { return WellLogType.Discrete; }
+  public /*override*/  get wellLogType(): WellLogType { return WellLogType.Casing; }
 }

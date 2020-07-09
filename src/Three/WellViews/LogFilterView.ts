@@ -11,8 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
-import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
+import { BaseLogNode } from "@/Nodes/Wells/Nodes/BaseLogNode";
+import { WellTrajectoryNode } from "@/Nodes/Wells/Nodes/WellTrajectoryNode";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { Changes } from "@/Core/Views/Changes";
 import { BaseView } from "@/Core/Views/BaseView";

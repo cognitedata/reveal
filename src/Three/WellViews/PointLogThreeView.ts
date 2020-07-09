@@ -18,7 +18,7 @@ import { Range3 } from "@/Core/Geometry/Range3";
 
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 
-import { PointLogNode } from "@/Nodes/Wells/Wells/PointLogNode";
+import { PointLogNode } from "@/Nodes/Wells/Nodes/PointLogNode";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";

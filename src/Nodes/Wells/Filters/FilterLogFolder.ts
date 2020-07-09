@@ -12,17 +12,17 @@
 //=====================================================================================
 
 import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
+import { BaseLogNode } from "@/Nodes/Wells/Nodes/BaseLogNode";
 import { BaseFilterLogNode } from "@/Nodes/Wells/Filters/BaseFilterLogNode";
 import { ITarget } from "@/Core/Interfaces/ITarget";
-import { PointLogNode } from "@/Nodes/Wells/Wells/PointLogNode";
+import { PointLogNode } from "@/Nodes/Wells/Nodes/PointLogNode";
 import { PointFilterLogNode } from "@/Nodes/Wells/Filters/PointFilterLogNode";
 import { FloatFilterLogNode } from "@/Nodes/Wells/Filters/FloatFilterLogNode";
-import { FloatLogNode } from "@/Nodes/Wells/Wells/FloatLogNode";
+import { FloatLogNode } from "@/Nodes/Wells/Nodes/FloatLogNode";
 import { DiscreteFilterLogNode } from "@/Nodes/Wells/Filters/DiscreteFilterLogNode";
-import { DiscreteLogNode } from "@/Nodes/Wells/Wells/DiscreteLogNode";
+import { DiscreteLogNode } from "@/Nodes/Wells/Nodes/DiscreteLogNode";
 import { CasingFilterLogNode } from "@/Nodes/Wells/Filters/CasingFilterLogNode";
-import { CasingLogNode } from "@/Nodes/Wells/Wells/CasingLogNode";
+import { CasingLogNode } from "@/Nodes/Wells/Nodes/CasingLogNode";
 import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 import FilterLogFolderIcon from "@images/Nodes/FilterLogFolder.png";
 

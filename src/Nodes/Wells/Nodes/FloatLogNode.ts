@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
-import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
+import { BaseLogNode } from "@/Nodes/Wells/Nodes/BaseLogNode";
 import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
 import FloatLogNodeIcon from "@images/Nodes/FloatLogNode.png";
 import { DH_NOT_SUITABLE_GENERATOR } from "constants";

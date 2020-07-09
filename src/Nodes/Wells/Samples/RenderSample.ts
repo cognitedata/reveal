@@ -18,8 +18,8 @@ import { Colors } from "@/Core/Primitives/Colors";
 
 import { MdSample } from "@/Nodes/Wells/Samples/MdSample";
 
-export class RenderSample extends MdSample {
-  
+export class RenderSample extends MdSample
+{
   //==================================================
   // INSTANCE FIELDS
   //==================================================
@@ -44,7 +44,8 @@ export class RenderSample extends MdSample {
   // CONSTRUCTORS
   //==================================================
 
-  constructor(point: Vector3, md: number, radius = 0, color: Color = Colors.white) {
+  constructor(point: Vector3, md: number, radius = 0, color: Color = Colors.white)
+  {
     super(md);
     this.point = point;
     this.radius = radius;

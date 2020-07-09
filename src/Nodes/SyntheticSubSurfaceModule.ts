@@ -4,31 +4,31 @@ import { Vector3 } from "@/Core/Geometry/Vector3";
 
 import { SubSurfaceRootNode } from "./TreeNodes/SubSurfaceRootNode";
 
-import { WellTrajectoryNode } from "@/Nodes/Wells/Wells/WellTrajectoryNode";
-import { WellNode } from "@/Nodes/Wells/Wells/WellNode";
+import { WellTrajectoryNode } from "@/Nodes/Wells/Nodes/WellTrajectoryNode";
+import { WellNode } from "@/Nodes/Wells/Nodes/WellNode";
 import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
 import { FolderNode } from "@/Core/Nodes/FolderNode";
 
-import { PointLogNode } from "@/Nodes/Wells/Wells/PointLogNode";
-import { FloatLogNode } from "@/Nodes/Wells/Wells/FloatLogNode";
-import { DiscreteLogNode } from "@/Nodes/Wells/Wells/DiscreteLogNode";
+import { PointLogNode } from "@/Nodes/Wells/Nodes/PointLogNode";
+import { FloatLogNode } from "@/Nodes/Wells/Nodes/FloatLogNode";
+import { DiscreteLogNode } from "@/Nodes/Wells/Nodes/DiscreteLogNode";
 
 import { PointLog } from "@/Nodes/Wells/Logs/PointLog";
 import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
 import { DiscreteLog } from "@/Nodes/Wells/Logs/DiscreteLog";
-import { CasingLogNode } from "@/Nodes/Wells/Wells/CasingLogNode";
+import { CasingLogNode } from "@/Nodes/Wells/Nodes/CasingLogNode";
 import { Random } from "@/Core/Primitives/Random";
-import { BaseLogNode } from "@/Nodes/Wells/Wells/BaseLogNode";
+import { BaseLogNode } from "@/Nodes/Wells/Nodes/BaseLogNode";
 import { RegularGrid2 } from "@/Core/Geometry/RegularGrid2";
 import { SurfaceNode } from "@/Nodes/Misc/SurfaceNode";
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ToggleAxisVisibleCommand } from "@/Three/Commands/ToggleAxisVisibleCommand";
 import { ViewAllCommand } from "@/Three/Commands/ViewAllCommand";
 import { ToggleBgColorCommand } from "@/Three/Commands/ToggleBgColorCommand";
-import { WellFolder } from "@/Nodes/Wells/Wells/WellFolder";
+import { WellFolder } from "@/Nodes/Wells/Nodes/WellFolder";
 import { BaseModule } from "@/Core/Module/BaseModule";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
-import { LogFolder } from "@/Nodes/Wells/Wells/LogFolder";
+import { LogFolder } from "@/Nodes/Wells/Nodes/LogFolder";
 import { BaseFilterLogNode } from "@/Nodes/Wells/Filters/BaseFilterLogNode";
 import { IDataLoader } from "@/Core/Interfaces/IDataLoader";
 import { DataNode } from "@/Core/Nodes/DataNode";
