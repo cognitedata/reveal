@@ -12,7 +12,7 @@ const App = () => {
   return (
     <>
       <GlobalStyles />
-      <Router basename="/cwp">
+      <Router basename="/publicdata">
         <Layout>
           <Main>
             <MainHeader />
