@@ -8,6 +8,8 @@ import * as serviceWorker from './serviceWorker';
 
 import '@cognite/cogs.js/dist/cogs.css';
 import I18nContainer from './containers/I18nContainer';
+import { ApiProvider } from './contexts/ApiContext';
+import { AuthProvider } from './contexts/AuthContext';
 
 if (process.env.REACT_APP_SENTRY_DSN) {
   Sentry.init({
@@ -23,7 +25,11 @@ if (process.env.REACT_APP_SENTRY_DSN) {
 
 ReactDOM.render(
   <I18nContainer>
-    <App />
+    <AuthProvider>
+      <ApiProvider>
+        <App />
+      </ApiProvider>
+    </AuthProvider>
   </I18nContainer>,
   document.getElementById('root')
 );

@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "react-scripts start",
+    "start:ssl": "HTTPS=true yarn start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "lint": "concurrently \"yarn prettier\" \"yarn eslint\"",
@@ -13,9 +14,11 @@
     "storybook": "start-storybook -p 6006"
   },
   "dependencies": {
-    "@cognite/cogs.js": "^1.0.17",
+    "@cognite/cogs.js": "^1.8.1",
     "@cognite/metrics": "^0.0.32",
+    "@cognite/sdk": "^2.33.0",
     "@sentry/browser": "^5.17.0",
+    "antd": "^4.4.0",
     "i18next": "^19.4.5",
     "i18next-chained-backend": "^2.0.1",
     "i18next-http-backend": "^1.0.15",
@@ -31,15 +34,15 @@
     "styled-components": "^5.1.1"
   },
   "devDependencies": {
-    "@cognite/eslint-config": "^1.4.2",
-    "@cognite/eslint-plugin": "^1.0.17",
+    "@cognite/eslint-config": "^1.6.0",
+    "@cognite/eslint-plugin": "^1.3.0",
     "@storybook/preset-create-react-app": "^3.0.0",
     "@storybook/react": "^5.3.19",
     "@testing-library/jest-dom": "^5.10.0",
     "@testing-library/react": "^10.2.1",
     "@types/jest": "^26.0.0",
     "@types/node": "^14.0.13",
-    "@types/react": "^16.9.36",
+    "@types/react": "^16.9.41",
     "@types/react-dom": "^16.9.8",
     "@types/react-router-dom": "^5.1.5",
     "@types/sinon": "^9.0.4",
@@ -58,7 +61,7 @@
     "prettier": "^2.0.5",
     "pretty-quick": "^2.0.1",
     "sinon": "^9.0.2",
-    "typescript": "^3.9.5"
+    "typescript": "^3.9.6"
   },
   "eslintConfig": {
     "extends": "react-app"

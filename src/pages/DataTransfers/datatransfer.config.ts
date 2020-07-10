@@ -1,0 +1,20 @@
+export default {
+  initialSelectedColumnNames: [
+    'created_time',
+    'last_updated',
+    'package_extid',
+    'object_type',
+    'package_name',
+    'status',
+    'external_id',
+    'author',
+    'revision',
+    'name',
+    'crs',
+    'datatype',
+    'source_project',
+    'connector',
+    'source',
+  ],
+  filterableColumns: ['author', 'status', 'object_type'],
+};

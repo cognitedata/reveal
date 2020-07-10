@@ -1,95 +1,86 @@
-import config from '../utils/config';
-
-const headers = {
-  'Access-Control-Allow-Origin': '*',
-  'api-key': config.api.key,
-  'Content-Type': 'application/json',
-};
-
-const DEFAULT_QUERY_PARAMS = {
-  skip: 0,
-  limit: 3000,
-  include_related: false,
-};
+import config from 'utils/config';
+import { RESTPackageFilter, RESTProject } from '../typings/interfaces';
 
 export type QueryParameters = {
-  [property: string]: number | string | boolean;
+  [property: string]: number | string | boolean | object | undefined;
 };
 
 export function buildQueryString(parameters: QueryParameters): string {
   const params = new URLSearchParams();
-  Object.entries(parameters).forEach(([key, value]) =>
-    params.set(key, value.toString())
-  );
-  return params.toString();
+  Object.entries(parameters).forEach(([key, value]) => {
+    if (value) params.set(key, value.toString());
+  });
+  return params.toString() || '';
 }
 
 class Api {
-  public static async get(
-    url: string,
-    parameters?: QueryParameters
-  ): Promise<any> {
+  private readonly headers: {
+    'Access-Control-Allow-Origin': string;
+    'api-key': string;
+    'Content-Type': string;
+    Authorization: string;
+  };
+
+  constructor(token: string) {
+    this.headers = {
+      'Access-Control-Allow-Origin': '*',
+      'api-key': config.api.key,
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+  }
+
+  private async get(url: string, parameters?: QueryParameters): Promise<any> {
     const urlWithStringQuery: string = `${url}?${buildQueryString(
       parameters || {}
     )}`;
     const response = await fetch(urlWithStringQuery, {
       method: 'GET',
-      headers,
+      headers: this.headers,
     });
     return response.json();
   }
 
-  public static async post(
-    url: string,
-    parameters?: QueryParameters,
-    body?: QueryParameters
-  ): Promise<any> {
-    const urlWithStringQuery: string = `${url}?${buildQueryString(
-      parameters || {}
-    )}`;
-    const response = await fetch(urlWithStringQuery, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(body),
-    });
-    return response.json();
-  }
-
-  public static async hello(): Promise<{ msg: string }> {
-    return Api.get(`${config.api.url}/hello`);
-  }
-
-  public static objects = {
-    get: async (
-      queryParameters: QueryParameters = DEFAULT_QUERY_PARAMS
-    ): Promise<any> => {
-      const mergedParams = { ...DEFAULT_QUERY_PARAMS, ...queryParameters };
-      return Api.get(
-        `${config.api.url}${config.api.project}/objects`,
-        mergedParams
-      );
-    },
-    filter: async (
-      queryParameters: QueryParameters = DEFAULT_QUERY_PARAMS,
-      body: QueryParameters = {}
-    ): Promise<any> => {
-      const mergedParams = { ...DEFAULT_QUERY_PARAMS, ...queryParameters };
-      return Api.post(
-        `${config.api.url}${config.api.project}/objects/filter`,
-        mergedParams,
-        body
-      );
+  public datatypes = {
+    get: async (projectId: number | null = null): Promise<string[]> => {
+      let queryParameters;
+      if (projectId) queryParameters = { project_id: projectId };
+      return this.get(`${config.api.url}/datatypes`, queryParameters);
     },
   };
 
-  public static projects = {
-    get: async (
-      queryParameters: QueryParameters = DEFAULT_QUERY_PARAMS
+  public objects = {
+    get: async () => {
+      return this.get(`${config.api.url}/objects`);
+    },
+  };
+
+  public packages = {
+    get: async (filter: RESTPackageFilter): Promise<any> => {
+      return this.get(`${config.api.url}/packages`, filter);
+    },
+  };
+
+  public sources = {
+    get: async (): Promise<string[]> => {
+      return this.get(`${config.api.url}/sources`);
+    },
+    getHeartbeats: async (source: string, after: number): Promise<number[]> => {
+      const queryParameters = { after };
+      return this.get(
+        `${config.api.url}/sources/${source}/heartbeats`,
+        queryParameters
+      );
+    },
+    getProjects: async (source: string): Promise<RESTProject[]> => {
+      return this.get(`${config.api.url}/sources/${source}/projects`);
+    },
+    getRepositoryTree: async (
+      source: string,
+      projectExternalId: string
     ): Promise<any> => {
-      const mergedParams = { ...DEFAULT_QUERY_PARAMS, ...queryParameters };
-      return Api.get(
-        `${config.api.url}${config.api.project}/projects`,
-        mergedParams
+      return this.get(
+        `${config.api.url}/sources/${source}/projects/${projectExternalId}/tree`
       );
     },
   };
