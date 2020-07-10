@@ -1,6 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { CommonStateInterface } from "@/UserInterface/interfaces/common";
-import { SET_FULLSCREEN_STATUS_SUCCESS } from '@/UserInterface/redux/types/common';
+import { SET_FULLSCREEN_STATUS } from '@/UserInterface/redux/types/common';
 
 
 const initialState: CommonStateInterface = {
@@ -8,10 +8,7 @@ const initialState: CommonStateInterface = {
 };
 
 export default createReducer(initialState, {
-    [SET_FULLSCREEN_STATUS_SUCCESS]: (state, action) => {
-        state.isFullscreen = action.payload.isFullScreen;
-        for (const id of action.payload.targetIds) {
-            action.payload.visualizers.targets[id].onResize();
-        }
-    }
+  [SET_FULLSCREEN_STATUS]: (state, action) => {
+    state.isFullscreen = action.payload;
+  }
 });

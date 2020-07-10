@@ -43,7 +43,7 @@ export default function NodeVisualizer(props: { root?: BaseRootNode }) {
       element.innerHTML = "";
 
       const notificationAdaptor = new NotificationsToActionsAdaptor(dispatch);
-      VirtualUserInterface.install(new UserInterfaceListener(notificationAdaptor));
+      VirtualUserInterface.install(new UserInterfaceListener(notificationAdaptor, dispatch));
       // Add new viewers here Eg - new Viewer("2D", htmlElement2D)
       const viewers = [new Viewer("3D", element)];
       // Add targets and toolbars to root node
