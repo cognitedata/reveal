@@ -6,5 +6,9 @@ export default {
 };
 
 export const Base = () => {
-  return <DetailView />;
+  return (
+    <div style={{ margin: '32px 0 32px 32px' }}>
+      <DetailView />
+    </div>
+  );
 };
