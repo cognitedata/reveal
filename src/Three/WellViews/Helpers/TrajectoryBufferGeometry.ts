@@ -55,14 +55,11 @@ export class TrajectoryBufferGeometry extends THREE.BufferGeometry
     this.addAttribute('position', new THREE.Float32BufferAttribute(this.vertices, 3));
     this.addAttribute('normal', new THREE.Float32BufferAttribute(this.normals, 3));
     this.addAttribute("color", new THREE.Uint8BufferAttribute(this.colors, 3, true));
-
-    // this.addAttribute('uv', new THREE.Float32BufferAttribute(this.uvs, 2));
   }
 
   //==================================================
   // INSTANCE METHODS: Generate the data
   //==================================================
-
 
   private generateBufferData(samples: RenderSample[])
   {

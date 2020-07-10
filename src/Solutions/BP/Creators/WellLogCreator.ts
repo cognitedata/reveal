@@ -77,10 +77,12 @@ export default class WellLogCreator
         return folder;
     }
 
-    private static getMdIndex(columns: ILogRowColumn[]): number {
+    private static getMdIndex(columns: ILogRowColumn[]): number
+    {
         if (!columns)
             return -1;
-        for (let logIndex = 0; logIndex < columns.length; logIndex++) {
+        for (let logIndex = 0; logIndex < columns.length; logIndex++)
+        {
             const column = columns[logIndex];
             if (column.externalId === "DEPT")
                 return logIndex;
@@ -184,19 +186,18 @@ export default class WellLogCreator
             const { md_hole_start, md_hole_start_unit, md_hole_end, md_hole_end_unit, risk_sub_category, details } = metadata as INdsMetadata;
             const { npt_md } = metadata as INptMetaData;
 
-            let mdStart = Number.NaN;
+            let topMd = Number.NaN;
             if (md_hole_start !== undefined)
-                mdStart = Util.getNumberWithUnit(md_hole_start, md_hole_start_unit);
+                topMd = Util.getNumberWithUnit(md_hole_start, md_hole_start_unit);
             else if (npt_md !== undefined)
-                mdStart = Util.getNumber(npt_md);
+                topMd = Util.getNumber(npt_md);
 
-            if (Number.isNaN(mdStart))
+            if (Number.isNaN(topMd))
                 continue;
 
-            const mdEnd = Util.getNumberWithUnit(md_hole_end, md_hole_end_unit);
-
+            const baseMd = Util.getNumberWithUnit(md_hole_end, md_hole_end_unit);
             const { subtype, description } = event;
-            const sample = new PointLogSample(description, mdStart, mdEnd);
+            const sample = new PointLogSample(description, topMd, baseMd);
             sample.subtype = subtype;
             if (risk_sub_category !== undefined)
                 sample.riskSubCategory = risk_sub_category;

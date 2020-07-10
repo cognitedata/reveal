@@ -65,9 +65,9 @@ export default class WellNodesCreator
             const metadata = wellBoreToWell.data.metadata;
             wellNode.elevationType = metadata.elevation_type; //KB
             const elevationUnit = metadata.elevation_value_unit;
-            const elevation = Util.getNumberWithUnit(metadata.elevation_value, elevationUnit);
-            if (!Number.isNaN(elevation))
-                wellNode.wellHead.z = elevation;
+            let elevation = Util.getNumberWithUnit(metadata.elevation_value, elevationUnit);
+            if (Number.isNaN(elevation))
+                elevation = 0;
 
             const unit = Units.isFeet(elevationUnit) ? Units.Feet : 1;
             const trajectoryRows = trajectoryDataMap.get(trajectory.id);

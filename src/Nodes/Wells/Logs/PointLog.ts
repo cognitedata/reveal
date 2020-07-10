@@ -26,6 +26,20 @@ export class PointLog extends BaseLog
   public getAt(index: number): PointLogSample { return this.samples[index] as PointLogSample; }
 
   //==================================================
+  // OVERRIDES of BaseLog
+  //==================================================
+
+  public/*override*/  expandMdRange(range: Range1): void
+  {
+    for (let i = this.length - 1; i >= 0; i--)
+    {
+      const sample = this.getAt(i);
+      range.add(sample.md);
+      range.add(sample.baseMd);
+    }
+  }
+
+  //==================================================
   // INSTANCE METHODS: Operations
   //==================================================
 

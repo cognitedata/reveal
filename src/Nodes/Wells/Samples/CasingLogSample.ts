@@ -11,6 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import * as Lodash from 'lodash';
+
 import { BaseLogSample } from "@/Nodes/Wells/Samples/BaseLogSample";
 
 export class CasingLogSample extends BaseLogSample 
@@ -19,6 +21,7 @@ export class CasingLogSample extends BaseLogSample
   // INSTANCE FIELDS
   //==================================================
 
+  public baseMd: number;
   public radius: number;
   public name: string = "";
   public comments: string = "";
@@ -28,9 +31,10 @@ export class CasingLogSample extends BaseLogSample
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(radius: number, md: number)
+  public constructor(radius: number, topMd: number, baseMd: number)
   {
-    super(md);
+    super(topMd);
+    this.baseMd = baseMd;
     this.radius = radius;
   }
 
@@ -47,5 +51,5 @@ export class CasingLogSample extends BaseLogSample
 
   public /*override*/ get isEmpty(): boolean { return Number.isNaN(this.radius); }
 
-  public /*override*/  clone(): BaseLogSample { return new CasingLogSample(this.radius, this.md); }
+  public /*override*/  clone(): BaseLogSample { return Lodash.clone<CasingLogSample>(this); }
 }  
