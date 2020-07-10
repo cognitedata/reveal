@@ -209,8 +209,9 @@ export class WellTrajectory extends MdSamples
     const lineSegment = new LineSegment();
     let closestPoint: Vector3 | null = null
     let closestDistance = Number.MAX_VALUE;
-    let index = 0;
+    let index = -1;
 
+    const closest = Vector3.newZero;
     for (let i = 0; i < this.length - 1; i++)
     {
       const min = this.getPositionAt(i);
@@ -218,12 +219,12 @@ export class WellTrajectory extends MdSamples
 
       lineSegment.set(min, max);
 
-      const point = lineSegment.getClosest(position);
-      const distance = position.distance(point);
+      lineSegment.getClosest(position, closest);
+      const distance = position.distance(closest);
       if (distance < closestDistance)
       {
         index = i;
-        closestPoint = point;
+        closestPoint = closest;
         closestDistance = distance;
       }
     }
@@ -233,17 +234,17 @@ export class WellTrajectory extends MdSamples
     const minSample = this.getAt(index);
     const maxSample = this.getAt(index + 1);
 
-    const minDistance = minSample.point.distance(closestPoint);
-    if (Ma.isAbsEqual(minDistance, 0, 0.0001))
+    const distanceToMin = minSample.point.distance(closestPoint);
+    if (Ma.isAbsEqual(distanceToMin, 0, 0.0001))
       return minSample.md;
 
-    const maxDistance = maxSample.point.distance(closestPoint);
-    if (Ma.isAbsEqual(maxDistance, 0, 0.0001))
+    const distanceToMax = maxSample.point.distance(closestPoint);
+    if (Ma.isAbsEqual(distanceToMax, 0, 0.0001))
       return maxSample.md;
 
-    const totalDistance = minDistance + maxDistance;
-    const minFraction = minDistance / totalDistance;
-    const maxFraction = maxDistance / totalDistance;
+    const totalDistance = distanceToMin + distanceToMax;
+    const minFraction = distanceToMin / totalDistance;
+    const maxFraction = distanceToMax / totalDistance;
     const md = maxFraction * minSample.md + minFraction * maxSample.md;
     return md
   }

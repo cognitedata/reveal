@@ -11,34 +11,6 @@ main(document.body);
 
 export default function main(element: HTMLElement)
 {
-  const p1 = new Vector3(0, 1, 2);
-  const p2 = new Vector3(5, 7, 9);
-  const line = new LineSegment(p1, p2);
-
-  const p3 = Vector3.getCenterOf2(p1, p2);
-  let a = line.getClosest(p3);
-  console.log(p3.toString());
-  console.log(a.toString());
-
-  a = line.getClosest(p1);
-  console.log(p1.toString());
-  console.log(a.toString());
-
-  a = line.getClosest(p2);
-  console.log(p2.toString());
-  console.log(a.toString());
-
-  p1.addScalar(-1);
-  a = line.getClosest(p1);
-  console.log(p1.toString());
-  console.log(a.toString());
-
-  p2.addScalar(1);
-  a = line.getClosest(p2);
-  console.log(p2.toString());
-  console.log(a.toString());
-
-
   // Create the module and install it it
   const modules = Modules.instance;
   modules.add(new ThreeModule());

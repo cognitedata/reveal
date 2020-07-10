@@ -12,23 +12,26 @@
 //=====================================================================================
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import { Range1 } from "@/Core/Geometry/Range1";
-import { Range3 } from "@/Core/Geometry/Range3";
 
 export class LineSegment
 {
-
   //==================================================
   // INSTANCE FIELDS
   //==================================================
 
-  public origin: Vector3 = Vector3.newZero;
-  public vector: Vector3 = Vector3.newZero;
-  public length = 0;
-
+  public origin: Vector3 = Vector3.newZero; // Min point
+  public vector: Vector3 = Vector3.newZero; // Unit vector in direction to max
+  public length = 0; // The distance between min and max
 
   //==================================================
-  // INSTANCE FIELDS
+  // INSTANCE PROPERTIES
+  //==================================================
+
+  public get min(): Vector3 { return this.origin;}
+  public get max(): Vector3 { return Vector3.addWithFactor(this.origin, this.vector, this.length);}
+
+  //==================================================
+  // CONSTRUCTOR
   //==================================================
 
   public constructor(min?: Vector3, max?: Vector3)
@@ -38,6 +41,31 @@ export class LineSegment
     this.set(min, max);
   }
 
+  //==================================================
+  // INSTANCE METHODS: Getters
+  //==================================================
+
+  public getClosest(external: Vector3, result: Vector3): Vector3
+  {
+    result.copy(external);
+    result.substract(this.origin);
+
+    let t = this.vector.getDot(result);
+    if (t < 0)
+      t = 0;
+    else if (t > this.length)
+      t = this.length;
+
+    result.copy(this.vector);
+    result.multiplyScalar(t);
+    result.add(this.origin);
+    return result;
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Setters
+  //==================================================
+
   public set(min: Vector3, max: Vector3): void
   {
     this.origin.copy(min);
@@ -45,27 +73,5 @@ export class LineSegment
     this.vector.substract(min);
     this.length = this.vector.length;
     this.vector.divideScalar(this.length);
-  }
-
-  //==================================================
-  // INSTANCE METHODS: Getters
-  //==================================================
-
-  public getClosest(external: Vector3): Vector3
-  {
-    const delta = external.clone();
-    delta.substract(this.origin);
-
-    let t = this.vector.getDot(delta);
-    if (t <= 0)
-      t = 0;
-    else if (t >= this.length)
-      t = this.length;
-
-    const result = delta; // reuse it
-    result.copy(this.vector);
-    result.multiplyScalar(t);
-    result.add(this.origin);
-    return result;
   }
 }
