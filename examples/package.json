@@ -24,7 +24,7 @@
   ],
   "license": "Apache-2.0",
   "dependencies": {
-    "@cognite/sdk": "^2.32.0",
+    "@cognite/sdk": "link:../viewer/node_modules/@cognite/sdk",
     "camera-controls": "^1.22.1",
     "@cognite/potree-core": "^1.1.3",
     "@cognite/reveal": "link:../viewer/dist",
