@@ -37,8 +37,8 @@ export default function App()
   });
 
   modules.add(new ThreeModule());
-  modules.add(new SyntheticSubSurfaceModule());
-  //modules.add(module);
+  //modules.add(new SyntheticSubSurfaceModule());
+  modules.add(module);
   modules.install();
 
   const root = modules.createRoot();
