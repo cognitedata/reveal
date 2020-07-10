@@ -15,6 +15,7 @@
     "strict": true,
     "noImplicitAny": false,
     "strictNullChecks": true,
+    "resolveJsonModule": true,
     // "strictFunctionTypes": true,           /* Enable strict checking of function types. */
     // "strictBindCallApply": true,           /* Enable strict 'bind', 'call', and 'apply' methods on functions. */
     // "strictPropertyInitialization": true,  /* Enable strict checking of property initialization in classes. */

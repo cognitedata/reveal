@@ -38,8 +38,8 @@ export interface ICasingMetadata {
 export interface ICasingColumns {
   name: string;
   externalId: string;
-  valueType: "DOUBLE" | "STRING";
-  metadata: { unit?: "in" | "ft" | "ppf" }
+  valueType: string;
+  metadata: { unit?: string }
 }
 
 export interface ICasing {

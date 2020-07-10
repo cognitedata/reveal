@@ -77,10 +77,10 @@ export default class WellLogCreator
         return folder;
     }
 
-    private static getMdIndex(columns: ILogRowColumn[]): number
-    {
-        for (let logIndex = 0; logIndex < columns.length; logIndex++)
-        {
+    private static getMdIndex(columns: ILogRowColumn[]): number {
+        if (!columns)
+            return -1;
+        for (let logIndex = 0; logIndex < columns.length; logIndex++) {
             const column = columns[logIndex];
             if (column.externalId === "DEPT")
                 return logIndex;

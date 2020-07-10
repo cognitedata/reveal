@@ -60,7 +60,7 @@ export interface IRiskEvent {
   externalId: string;
   dataSetId: number;
   startTime: number;
-  endTime: number;
+  endTime?: number;
   subtype: string;
   description: string;
   metadata: IRiskMetadata;

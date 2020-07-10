@@ -1,5 +1,6 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const webpack = require('webpack');
 
 const SUBSURFACE_COMPONENTS_PATH = "src/Components";
 
@@ -7,7 +8,7 @@ function resolve(dir) {
   return path.resolve(__dirname, dir);
 }
 
-module.exports = {
+module.exports = (env) => ({
   mode: "development",
   // webpack will take the files from ./src/index
   entry: "./src/UserInterface/index",
@@ -54,6 +55,6 @@ module.exports = {
       }
     ]
   },
-  plugins: [new HtmlWebpackPlugin()],
+  plugins: [new HtmlWebpackPlugin(), new webpack.DefinePlugin({ 'process.env.data.src': JSON.stringify(`${env.data.src}`) })],
   devtool: "source-map"
-};
+});

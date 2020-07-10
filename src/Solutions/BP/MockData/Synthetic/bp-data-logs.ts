@@ -3,6 +3,7 @@ import { ILog } from "@/Interface";
 export const logs: { [key: number]: ILog[] } = {
     "2043034474812015": [
         {
+            "name": "name1",
             "assetId": 2043034474812015,
             "id": 5922058417696571,
             "name": "log1",
@@ -188,6 +189,7 @@ export const logs: { [key: number]: ILog[] } = {
             ]
         },
         {
+            "name": "name1",
             "assetId": 2043034474812015,
             "id": 5922058417696571,
             "name": "log2",
@@ -373,6 +375,7 @@ export const logs: { [key: number]: ILog[] } = {
             ]
         },
         {
+            "name": "name1",
             "assetId": 2043034474812015,
             "id": 5922058417696571,
             "name": "log3",
@@ -560,6 +563,7 @@ export const logs: { [key: number]: ILog[] } = {
     ],
     "2256739683054735": [
         {
+            "name": "name1",
             "assetId": 2256739683054735,
             "id": 1723292891334065,
             "name": "log1",
@@ -747,7 +751,7 @@ export const logs: { [key: number]: ILog[] } = {
     ],
     "6458649755206741": [
         {
-            "assetId": 6458649755206741,
+            "name": "name1", "assetId": 6458649755206741,
             "id": 3942476694506338,
             "name": "log1",
             "state": "success",

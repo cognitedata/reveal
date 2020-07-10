@@ -10,6 +10,9 @@
 /build
 dist
 
+#sample data
+/src/Solutions/BP/MockData/Sample
+
 # misc
 .DS_Store
 .env.local
