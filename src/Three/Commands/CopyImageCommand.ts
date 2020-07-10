@@ -1,7 +1,7 @@
-
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetCommand";
 import CopyImageIcon from "@images/Commands/CopyImage.png";
+import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 
 export class CopyImageCommand extends ThreeRenderTargetCommand
 {
@@ -21,15 +21,14 @@ export class CopyImageCommand extends ThreeRenderTargetCommand
 
   public /*override*/ getName(): string { return "Copy a image of the viewer to the clipboard" }
   public /*override*/ getIcon(): string { return CopyImageIcon; }
-  protected /*override*/  invokeCore(): boolean
+
+  protected /*override*/ invokeCore(): boolean 
   {
-
-    if (!this.target)
-      return false;
-
-    // const domElement = this.target.domElement;
-    //const base64ImageData = domElement.toDataURL();
-    return false;
+    this.target?.domElement.toBlob((blob: any) => {
+      // @ts-ignore
+      navigator.clipboard.write([new ClipboardItem({ "image/png": blob})]);
+    });
+    return true;
   }
 }
 

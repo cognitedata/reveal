@@ -106,7 +106,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   {
     if (!this._renderer)
     {
-      const renderer = new THREE.WebGLRenderer({ antialias: true, });
+      const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
       renderer.autoClear = false;
       renderer.gammaFactor = 2.2;
       renderer.gammaOutput = true;

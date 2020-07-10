@@ -95,6 +95,8 @@ Recommended extensions:
 
 ### Starting development web server
 
+- Create a folder as /src/Solutions/BP/MockData/Sample and place the sample data files which can be downloaded from https://drive.google.com/drive/folders/1bCFeC9YcWdbDsx0vZ1Uf59PJoreLBGYj?usp=sharing
+
 #### 3D view only
 
 - Start the web server: `npm install && npm run serve`

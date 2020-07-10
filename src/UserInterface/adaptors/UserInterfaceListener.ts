@@ -1,7 +1,10 @@
+import { Dispatch } from 'redux';
 import { IUserInterface } from "@/Core/Interfaces/IUserInterface";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import NotificationsToActionsAdaptor from "@/UserInterface/adaptors/NotificationToAction";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
+import { setFullScreeen } from "@/UserInterface/redux/actions/common";
+
 
 
 /**
@@ -11,9 +14,11 @@ import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 class UserInterfaceListener implements IUserInterface {
 
   private readonly notificationAdaptor: NotificationsToActionsAdaptor;
+  private readonly dispatcher: Dispatch;
 
-  public constructor(notificationAdaptor: NotificationsToActionsAdaptor) {
+  public constructor(notificationAdaptor: NotificationsToActionsAdaptor, dispatcher: Dispatch) {
     this.notificationAdaptor = notificationAdaptor;
+    this.dispatcher = dispatcher;
   }
 
   updateNode(node: BaseNode, args: NodeEventArgs): void {
@@ -21,7 +26,7 @@ class UserInterfaceListener implements IUserInterface {
   }
 
   setFullScreen(isFullScreen: boolean): void {
-    this.notificationAdaptor.setFullScreen(isFullScreen);
+    this.dispatcher(setFullScreeen(isFullScreen));
   }
 
   updateStatusPanel(statusText: string): void {
