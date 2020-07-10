@@ -52,13 +52,13 @@ export class SyntheticSubSurfaceModule extends BaseModule
   public /*override*/ loadData(root: BaseRootNode): void
   {
     SyntheticSubSurfaceModule.addWells(root);
-    SyntheticSubSurfaceModule.addSurfaces(root);
+    //SyntheticSubSurfaceModule.addSurfaces(root);
   }
 
   public /*override*/ setDefaultVisible(root: BaseRootNode): void
   {
     SyntheticSubSurfaceModule.setWellsAndLogsVisible(root);
-    SyntheticSubSurfaceModule.setSurfacesVisible(root);
+    //SyntheticSubSurfaceModule.setSurfacesVisible(root);
   }
 
   public /*override*/ startAnimate(root: BaseRootNode): void
