@@ -53,9 +53,9 @@ const MenuContainer = styled(HeaderItem)`
     justify-content: flex-end;
     & ul {
       display: flex;
-
       list-style: none;
       padding: 0;
+      margin: 0;
     }
   }
 `;

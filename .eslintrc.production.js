@@ -7,6 +7,7 @@ module.exports = {
   ],
   plugins: ['@cognite', 'testing-library', 'lodash', 'testcafe'],
   rules: {
+    '@cognite/require-t-function': 'off',
     '@cognite/no-unissued-todos': [
       'error',
       { issuePattern: '\\(((DEMO)-[0-9]+)\\)' },

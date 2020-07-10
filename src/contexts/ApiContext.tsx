@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Api from '../services/Api';
+import AuthContext from './AuthContext';
 
 type Props = {
   children: any;
@@ -12,7 +13,7 @@ type Values = {
 const ApiContext = React.createContext<Values>({});
 
 const ApiProvider = ({ children }: Props) => {
-  const token = 'TOKEN_FROM_AUTH_CONTEXT';
+  const { token } = useContext(AuthContext);
   const api = new Api(token);
   return <ApiContext.Provider value={{ api }}>{children}</ApiContext.Provider>;
 };
