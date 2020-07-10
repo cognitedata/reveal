@@ -1,7 +1,6 @@
 
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetCommand";
-import { AxisNode } from "@/Core/Nodes/Decorations/AxisNode";
 import CopyImageIcon from "@images/Commands/CopyImage.png";
 
 export class CopyImageCommand extends ThreeRenderTargetCommand
@@ -28,7 +27,7 @@ export class CopyImageCommand extends ThreeRenderTargetCommand
     if (!this.target)
       return false;
 
-    // var domElement = this.target.domElement;
+    // const domElement = this.target.domElement;
     //const base64ImageData = domElement.toDataURL();
     return false;
   }

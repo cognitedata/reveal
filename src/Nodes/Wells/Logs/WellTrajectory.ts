@@ -211,10 +211,10 @@ export class WellTrajectory extends MdSamples
     let closestDistance = Number.MAX_VALUE;
     let index = 0;
 
-    for (let i = 1; i < this.length; i++)
+    for (let i = 0; i < this.length - 1; i++)
     {
-      const min = this.getPositionAt(i - 1);
-      const max = this.getPositionAt(i);
+      const min = this.getPositionAt(i);
+      const max = this.getPositionAt(i + 1);
 
       lineSegment.set(min, max);
 
@@ -222,7 +222,7 @@ export class WellTrajectory extends MdSamples
       const distance = position.distance(point);
       if (distance < closestDistance)
       {
-        index = i - 1;
+        index = i;
         closestPoint = point;
         closestDistance = distance;
       }
@@ -234,11 +234,17 @@ export class WellTrajectory extends MdSamples
     const maxSample = this.getAt(index + 1);
 
     const minDistance = minSample.point.distance(closestPoint);
+    if (Ma.isAbsEqual(minDistance, 0, 0.0001))
+      return minSample.md;
+
     const maxDistance = maxSample.point.distance(closestPoint);
+    if (Ma.isAbsEqual(maxDistance, 0, 0.0001))
+      return maxSample.md;
+
     const totalDistance = minDistance + maxDistance;
     const minFraction = minDistance / totalDistance;
     const maxFraction = maxDistance / totalDistance;
-    const md = maxFraction * minSample.md + minFraction + maxSample.md;
+    const md = maxFraction * minSample.md + minFraction * maxSample.md;
     return md
   }
 

@@ -28,8 +28,8 @@ export class DiscreteLogNode extends BaseLogNode
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): DiscreteLog | null { return this.anyData as DiscreteLog; }
-  public set data(value: DiscreteLog | null) { this.anyData = value; }
+  public get log(): DiscreteLog | null { return this.anyData as DiscreteLog; }
+  public set log(value: DiscreteLog | null) { this.anyData = value; }
 
   //==================================================
   // CONSTRUCTORS

@@ -40,8 +40,8 @@ export class SurfaceNode extends DataNode
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): RegularGrid2 | null { return this.anyData; }
-  public set data(value: RegularGrid2 | null) { this.anyData = value; }
+  public get surface(): RegularGrid2 | null { return this.anyData; }
+  public set surface(value: RegularGrid2 | null) { this.anyData = value; }
   public get renderStyle(): SurfaceRenderStyle | null { return this.getRenderStyle() as SurfaceRenderStyle; }
 
   //==================================================
@@ -59,7 +59,7 @@ export class SurfaceNode extends DataNode
 
   public /*override*/ getIcon(): string { return SurfaceNodeIcon }
 
-  public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
+  public /*override*/ get boundingBox(): Range3 { return this.surface ? this.surface.getRange() : new Range3(); }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {

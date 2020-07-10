@@ -73,7 +73,7 @@ export class PointsThreeView extends BaseGroupThreeView
     const node = this.node;
     const style = this.style;
 
-    const points = node.data;
+    const points = node.points;
     if (!points)
       throw Error("points is missing in view");
 

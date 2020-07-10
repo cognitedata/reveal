@@ -53,7 +53,7 @@ export class LineSegment
 
   public getClosest(external: Vector3): Vector3
   {
-    var delta = external.clone();
+    const delta = external.clone();
     delta.substract(this.origin);
 
     let t = this.vector.getDot(delta);

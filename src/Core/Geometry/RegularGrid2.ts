@@ -112,8 +112,8 @@ export class RegularGrid2 extends Grid2
 
     if (this._hasRotationAngle)
     {
-      var dx = this.inc.x * i;
-      var dy = this.inc.y * j;
+      const dx = this.inc.x * i;
+      const dy = this.inc.y * j;
       result.x = dx * this._cosRotationAngle - dy * this._sinRotationAngle;
       result.y = dx * this._sinRotationAngle + dy * this._cosRotationAngle;
     }
@@ -131,8 +131,8 @@ export class RegularGrid2 extends Grid2
   {
     if (this._hasRotationAngle)
     {
-      var dx = this.inc.x * i;
-      var dy = this.inc.y * j;
+      const dx = this.inc.x * i;
+      const dy = this.inc.y * j;
       result.x = dx * this._cosRotationAngle - dy * this._sinRotationAngle;
       result.y = dx * this._sinRotationAngle + dy * this._cosRotationAngle;
     }

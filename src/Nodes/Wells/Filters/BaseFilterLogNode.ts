@@ -65,7 +65,7 @@ export abstract class BaseFilterLogNode extends BaseVisualNode
 
   public isEqual(other: BaseLogNode): boolean
   {
-    return this.wellLogType == other.wellLogType && Util.equalsIgnoreCase(this.getName(), other.getName());
+    return this.wellLogType == other.wellLogType && Util.equalsIgnoreCase(this.name, other.name);
   }
 
   public * getAllLogs(): Generator<BaseLogNode>

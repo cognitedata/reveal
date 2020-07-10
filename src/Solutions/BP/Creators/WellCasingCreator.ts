@@ -14,7 +14,7 @@ export default class WellCasingCreator
             return null;
 
         const logNode = new CasingLogNode();
-        logNode.data = log;
+        logNode.log = log;
         return logNode;
     }
 
@@ -48,14 +48,14 @@ export default class WellCasingCreator
 
             min *= unit;
             max *= unit;
-            var prevMaxSample = log.lastSample;
+            const prevMaxSample = log.lastSample;
             if (prevMaxSample)
             {
-                if (Ma.IsAbsEqual(prevMaxSample.md, min, 0.1))
+                if (Ma.isAbsEqual(prevMaxSample.md, min, 0.1))
                     log.samples.pop();
             }
-            var minSample = new CasingLogSample(radius, min);
-            var maxSample = new CasingLogSample(radius, max);
+            const minSample = new CasingLogSample(radius, min);
+            const maxSample = new CasingLogSample(radius, max);
 
             // Meta data to the min, the max may be taken out anyway.
             minSample.name = casing.metadata.assy_name;

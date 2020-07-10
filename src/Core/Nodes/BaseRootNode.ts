@@ -31,7 +31,7 @@ export class BaseRootNode extends BaseNode
   public constructor()
   {
     super();
-    this.setName("Root");
+    this.name = "Root";
   }
 
   //==================================================

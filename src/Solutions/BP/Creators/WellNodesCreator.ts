@@ -76,7 +76,7 @@ export default class WellNodesCreator
                 continue;
 
             if (!Util.isEmpty(wellBoreToWell.data.name))
-                trajectoryNode.setName(wellBoreToWell.data.name);
+                trajectoryNode.name = wellBoreToWell.data.name;
 
             wellNode.addChild(trajectoryNode);
 
@@ -86,7 +86,7 @@ export default class WellNodesCreator
                 const logNode = WellLogCreator.createRiskLogNode(events);
                 if (logNode)
                 {
-                    logNode.setName("NDS Risk Events");
+                    logNode.name = "NDS Risk Events";
                     trajectoryNode.addChild(logNode);
                 }
             }
@@ -96,7 +96,7 @@ export default class WellNodesCreator
                 const logNode = WellLogCreator.createRiskLogNode(events);
                 if (logNode)
                 {
-                    logNode.setName("NPT Risk Events");
+                    logNode.name = "NPT Risk Events";
                     trajectoryNode.addChild(logNode);
                 }
             }
@@ -106,7 +106,7 @@ export default class WellNodesCreator
                 const logNode = WellCasingCreator.createCasingNodeNew(casingData, unit);
                 if (logNode)
                 {
-                    logNode.setName("Casing");
+                    logNode.name = "Casing";
                     trajectoryNode.addChild(logNode);
                 }
             }

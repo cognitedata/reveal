@@ -27,7 +27,7 @@ export abstract class BaseThreeView extends Base3DView
 
   protected get scene(): THREE.Scene { return this.renderTarget.scene; }
   protected get camera(): THREE.Camera { return this.renderTarget.camera; }
-  protected get transformer(): ThreeTransformer { return this.renderTarget.transformer; }
+  public get transformer(): ThreeTransformer { return this.renderTarget.transformer; }
   protected get renderTarget(): ThreeRenderTargetNode { return super.getTarget() as ThreeRenderTargetNode; }
 
   //==================================================

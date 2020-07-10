@@ -29,7 +29,7 @@ export default class WellLogCreator
             return null;
 
         const node = new PointLogNode();
-        node.data = log;
+        node.log = log;
         return node;
     }
 
@@ -101,7 +101,7 @@ export default class WellLogCreator
                 return null;
 
             logNode = new FloatLogNode();
-            logNode.data = log;
+            logNode.log = log;
         }
         else if (valueType === "INTEGER" || valueType === "LONG")
         {
@@ -110,7 +110,7 @@ export default class WellLogCreator
                 return null;
 
             logNode = new DiscreteLogNode();
-            logNode.data = log;
+            logNode.log = log;
         }
         else
         {
@@ -120,7 +120,7 @@ export default class WellLogCreator
         }
         const name = firstColumns[logIndex].name;
         if (!Util.isEmpty(name))
-            logNode.setName(name);
+            logNode.name = name;
         return logNode;
     }
 

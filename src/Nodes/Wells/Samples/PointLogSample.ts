@@ -45,7 +45,7 @@ export class PointLogSample extends BaseLogSample
   //==================================================
 
   public /*override*/ toString(): string { return `${super.toString()} Value: ${this.description}`; }
-  public /*override*/ sampleText(): string { return `Value: ${this.description}`; }
+  public /*override*/ getSampleText(): string { return this.description; }
 
   //==================================================
   // OVERRIDES of BaseLogSample

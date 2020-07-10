@@ -275,13 +275,13 @@ export class CameraControl
   //   if (!this._controls)
   //     return;
 
-  //   var cameraPosition = this._camera.position.clone();
-  //   var cameraMatrix = this._camera.matrix.clone();
+  //   const cameraPosition = this._camera.position.clone();
+  //   const cameraMatrix = this._camera.matrix.clone();
 
 
 
-  //   var oControlsTarget = oControls.target.clone();
-  //   var oControlsPosition = oControls.position0.clone();
+  //   const oControlsTarget = oControls.target.clone();
+  //   const oControlsPosition = oControls.position0.clone();
   //   if (isOrthographic == false) {
   //     aCamera = pCamera;
   //   } else {

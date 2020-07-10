@@ -16,6 +16,7 @@ import { Random } from "@/Core/Primitives/Random";
 
 import { CasingLogSample } from "@/Nodes/Wells/Samples/CasingLogSample";
 import { BaseLog } from "@/Nodes/Wells/Logs/BaseLog";
+import { BaseLogSample } from "@/Nodes/Wells/Samples/BaseLogSample";
 
 export class CasingLog extends BaseLog
 {
@@ -26,10 +27,29 @@ export class CasingLog extends BaseLog
   private _radiusRange: Range1 | undefined;
   
   //==================================================
+  // OVERRIDES of BaseLog
+  //==================================================
+
+  public /*override*/ getSampleByMd(md: number): BaseLogSample | null
+  {
+    return this.getConcreteSampleByMd(md);
+  }
+
+  //==================================================
   // INSTANCE METHODS: Getters
   //==================================================
 
   public getAt(index: number): CasingLogSample { return this.samples[index] as CasingLogSample; }
+
+  public getConcreteSampleByMd(md: number): CasingLogSample | null
+  {
+    const floatIndex = this.getFloatIndexAtMd(md);
+    if (floatIndex < 0)
+      return null;
+
+    const index = Math.floor(floatIndex);
+    return this.samples[index] as CasingLogSample;
+  }
 
   //==================================================
   // INSTANCE METHODS: Range

@@ -42,7 +42,12 @@ export class SelectCommand extends ToolCommand
     if (!view)
       return;
 
+    const preCount = target.viewInfo.items.length;
+    target.viewInfo.clearItems();
     view.onMouseClick(intersection)
+    const postCount = target.viewInfo.items.length;
+    if (preCount > 0 || postCount > 0)
+      target.invalidate();
   }
 
   public /*override*/ onMouseMove(event: MouseEvent): void

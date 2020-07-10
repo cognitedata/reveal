@@ -11,13 +11,16 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import { Util } from "@/Core/Primitives/Util";
+
 export class ViewInfo
 {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
 
-  private _texts: TextViewInfo[] = [];
+  public items: TextItem[] = [];
+  public footer: string = "";
 
   //==================================================
   // CONSTRUCTORS
@@ -31,61 +34,40 @@ export class ViewInfo
 
   public get isEmpty(): boolean
   {
-    if (this._texts.length > 0)
+    if (!Util.isEmpty(this.footer))
       return false;
+
+    if (this.items.length > 0)
+      return false;
+
     return true;
   }
 
-  public addText(text: string, priority: number = 1)
-  {
-    this._texts.push(new TextViewInfo(text, priority));
-  }
+  public addHeader(header: string) { this.items.push(new TextItem(header + ":")); }
+  public addText(key: string, value: string) { this.items.push(new TextItem(key, value)); }
+  public addNumber(key: string, value: number) { this.addText(key, value.toString()); }
 
-  public postProcess(): void
+  public clearItems(): void
   {
-    this._texts.sort((a, b) => a.compareTo(b));
+    this.items.splice(0, this.items.length);
   }
-
-  public clear(): void
-  {
-    this._texts.splice(0, this._texts.length);
-  }
-
-  public get text(): string
-  {
-    const delimiter = " ";
-    let result = "";
-    for (const text of this._texts)
-    {
-      if (text.isEmpty)
-        continue;
-      if (result.length > 0)
-        result += delimiter;
-      result += text.text;
-    }
-    return result;
-  }  
 }
 
-class TextViewInfo
+export class TextItem
 {
-  public text: string;
-  public priority: number;
+  public key: string;
+  public value: string | undefined;
 
-  constructor(text: string, priority: number)
+  public dx = 0;
+  public dy = 0;
+  public isMultiLine = false;
+
+  constructor(key: string, value?: string)
   {
-    this.text = text;
-    this.priority = priority;
+    this.key = key;
+    this.value = value;
   }
 
-  public compareTo(other: TextViewInfo): number
-  {
-    if (this.priority > other.priority)
-      return 1;
-    if (this.priority < other.priority)
-      return -1;
-    return 0;
-  }
-  public get isEmpty(): boolean { return !this.text || this.text.length === 0; }
+  public get isEmpty(): boolean { return Util.isEmpty(this.key); }
 }
 

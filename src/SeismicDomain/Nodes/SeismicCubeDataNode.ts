@@ -38,8 +38,8 @@ export class SeismicCubeDataNode extends DataNode
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): SeismicCube | null { return this.anyData; }
-  public set data(value: SeismicCube | null) { this.anyData = value; }
+  public get seismicCube(): SeismicCube | null { return this.anyData; }
+  public set seismicCube(value: SeismicCube | null) { this.anyData = value; }
   public get renderStyle(): SurfaceRenderStyle | null { return this.getRenderStyle() as SurfaceRenderStyle; }
 
   //==================================================
@@ -57,7 +57,7 @@ export class SeismicCubeDataNode extends DataNode
 
   public /*override*/ getIcon(): string { return SurfaceNodeIcon }
 
-  public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
+  public /*override*/ get boundingBox(): Range3 { return this.seismicCube ? this.seismicCube.getRange() : new Range3(); }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {

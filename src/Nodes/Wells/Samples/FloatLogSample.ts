@@ -36,7 +36,7 @@ export class FloatLogSample extends BaseLogSample
   //==================================================
 
   public /*override*/ toString(): string { return `${super.toString()} Value: ${this.value}`; }
-  public /*override*/ sampleText(): string { return `Value: ${this.value}`; }
+  public /*override*/ getSampleText(): string { return Number.isNaN(this.value) ? "Not defined" : this.value.toPrecision(6); }
 
   //==================================================
   // OVERRIDES of BaseLogSample

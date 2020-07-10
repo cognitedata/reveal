@@ -39,8 +39,8 @@ export class PolylinesNode extends DataNode
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): Polylines | null { return this.anyData; }
-  public set data(value: Polylines | null) { this.anyData = value; }
+  public get polylines(): Polylines | null { return this.anyData; }
+  public set polylines(value: Polylines | null) { this.anyData = value; }
   public get renderStyle(): PolylinesRenderStyle | null { return this.getRenderStyle() as PolylinesRenderStyle; }
 
   //==================================================
@@ -58,7 +58,7 @@ export class PolylinesNode extends DataNode
 
   public /*override*/ getIcon(): string { return PolylinesNodeIcon }
 
-  public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
+  public /*override*/ get boundingBox(): Range3 { return this.polylines ? this.polylines.getRange() : new Range3(); }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {

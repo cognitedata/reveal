@@ -31,14 +31,14 @@ import { ToggleBgColorCommand } from "@/Three/Commands/ToggleBgColorCommand";
 import { IToolbar } from "@/Core/Interfaces/IToolbar";
 import { ViewFromCommand } from "@/Three/Commands/ViewFromCommand";
 import { CameraControl } from "@/Three/Nodes/Camera";
-import { ToggleCameraTypeCommand } from "../Commands/ToggleCameraTypeCommand";
-import { CopyImageCommand } from "../Commands/CopyImageCommand";
-import { MeasureDistanceTool } from "../Commands/Tools/MeasureDistanceTool";
-import { ToggleFullscreenCommand } from "../Commands/ToggleFullscreenCommand";
-import { PanToolCommand } from "../Commands/Tools/PanToolCommand";
-import { SelectCommand } from "../Commands/Tools/SelectCommand";
-import { ZoomToolCommand } from "../Commands/Tools/ZoomToolCommand";
-import { ZoomToTargetToolCommand } from "../Commands/Tools/ZoomToTargetToolCommand";
+import { ToggleCameraTypeCommand } from "@/Three/Commands/ToggleCameraTypeCommand";
+import { CopyImageCommand } from "@/Three/Commands/CopyImageCommand";
+import { MeasureDistanceTool } from "@/Three/Commands/Tools/MeasureDistanceTool";
+import { ToggleFullscreenCommand } from "@/Three/Commands/ToggleFullscreenCommand";
+import { PanToolCommand } from "@/Three/Commands/Tools/PanToolCommand";
+import { SelectCommand } from "@/Three/Commands/Tools/SelectCommand";
+import { ZoomToolCommand } from "@/Three/Commands/Tools/ZoomToolCommand";
+import { ZoomToTargetToolCommand } from "@/Three/Commands/Tools/ZoomToTargetToolCommand";
 import { ToolCommand } from "@/Three/Commands/Tools/ToolCommand";
 import { ToolController } from "@/Three/Nodes/ToolController";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
@@ -194,7 +194,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
       const diagonal = boundingBox.diagonal;
       const near = 0.001 * diagonal;
       const far = 2 * diagonal + this.cameraControl.distance;
-      if (!Ma.IsAbsEqual(camera.near, near, 0.1 * near) || !Ma.IsAbsEqual(camera.far, far, 0.1 * far))
+      if (!Ma.isAbsEqual(camera.near, near, 0.1 * near) || !Ma.isAbsEqual(camera.far, far, 0.1 * far))
       {
         camera.near = near;
         camera.far = far;
@@ -236,8 +236,8 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
       this.renderer.render(this.scene, this.camera);
 
-      const viewInfo = this.getViewInfo();
-      this._overlay.render(this.renderer, viewInfo, this.pixelRange.delta, this.fgColor);
+      const viewInfo = this.fillViewInfo();
+      this._overlay.render(this.renderer, viewInfo, this.pixelRange.delta, this.fgColor, this.bgColor);
       this.invalidate(false);
     }
   }

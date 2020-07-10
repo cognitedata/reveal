@@ -5,7 +5,6 @@ import { ThreeModule } from "@/Three/ThreeModule";
 import BPDataModule from "@/Solutions/BP/BPDataModule";
 import { wells, wellBores, trajectories, trajData, logs } from "@/Solutions/BP/MockData";
 import { SyntheticSubSurfaceModule } from "@/Nodes/SyntheticSubSurfaceModule";
-import { ICasing } from '@/Interface/ICasing';
 
 /**
  * App component acts as a container application. Eg- BP
