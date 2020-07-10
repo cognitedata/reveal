@@ -1,6 +1,6 @@
 {
   "name": "@cognite/subsurface-visualizer",
-  "version": "0.0.66",
+  "version": "0.0.66-dev",
   "description": "Subsurface visualizer for cognite",
   "main": "subsurface-visualizer.js",
   "module": "subsurface-visualizer.js",
@@ -17,7 +17,7 @@
     "build-dev": "webpack --debug",
     "build:css": "node-sass src/UserInterface/styles/scss -o src/UserInterface/styles/css ",
     "watch:css": "npm run build:css && node-sass src/UserInterface/styles/scss -o src/UserInterface/styles/css -w -r",
-    "start:react": "node --max-old-space-size=8192 node_modules/webpack-dev-server/bin/webpack-dev-server.js --env.data.src=sample --mode development --open --hot --config webpack.config.dev.js",
+    "start:react": "node --max-old-space-size=8192 node_modules/webpack-dev-server/bin/webpack-dev-server.js --mode development --open --hot --config webpack.config.dev.js",
     "start-dev": "npm-run-all -p watch:css start:react",
     "clean": "tsc --build --clean",
     "serve": "webpack-dev-server --debug --color --progress --watch",

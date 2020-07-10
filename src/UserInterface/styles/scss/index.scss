@@ -20,7 +20,7 @@ $multi-input-base-height: 1.4rem;
 $select-controls-width: 8%;
 $select-controls-margin-start: 2%;
 $multi-input-base-width: 100% - ($select-controls-width + $select-controls-margin-start);
-$status-bar-height: 40px;
+$status-bar-height: 0px;
 
 /** Default Theme **/
 $panel-background: white;
@@ -67,8 +67,6 @@ $explorer-font-size: 16px;
     position: relative;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
     height: 100%;
     width: 100%;
     background: var(--subsurface-viz-background, $panel-background);

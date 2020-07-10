@@ -6,6 +6,7 @@
  * Overview
  * This is the interface for the Well object
  */
+export type WellId = number;
 
 export interface IWellMeta {
   active_indicator: string;
@@ -38,7 +39,7 @@ export interface IWell {
   description: string;
   dataSetId: number;
   source: string;
-  id: number;
+  id: WellId;
   createdTime: string;
   lastUpdatedTime: string;
   rootId: number;

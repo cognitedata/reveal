@@ -21,42 +21,9 @@ export default class WellTrajectoryNodeCreator
         const tvdIndex = trajectoryDataColumnIndices.tvd === undefined ? -1 : trajectoryDataColumnIndices.tvd;
         const xOffsetIndex = trajectoryDataColumnIndices.x_offset === undefined ? -1 : trajectoryDataColumnIndices.x_offset;
         const yOffsetIndex = trajectoryDataColumnIndices.y_offset === undefined ? -1 : trajectoryDataColumnIndices.y_offset;
-
         const trajectory = new WellTrajectory();
-
-        // tslint:disable-next-line:no-console
-        if (mdIndex >= 0 && azimuthIndex >= 0 && inclinationIndex >= 0)
-        {
-            for (const curvePointData of trajectoryRows.rows)
-            {
-                const curvePoint = curvePointData.values;
-                let md = curvePoint[mdIndex]; // Assume md is same as z
-                if (Number.isNaN(md))
-                    continue;
-
-                const azimuth = curvePoint[azimuthIndex];
-                if (Number.isNaN(azimuth))
-                    continue;
-
-                const inclination = curvePoint[inclinationIndex];
-                if (Number.isNaN(inclination))
-                    continue;
-
-                md *= unit;
-
-                const sample = new TrajectorySample(new Vector3(0, 0, elevation), md);
-                sample.inclination = inclination;
-                sample.azimuth = azimuth;
-
-                const length = trajectory.length;
-                if (length > 0 && !sample.updatePointFromPrevSample(trajectory.getAt(length - 1)))
-                    break;
-
-                trajectory.add(sample);
-            }
-        }
         // Iterate through rows array
-        else if (xOffsetIndex >= 0 && yOffsetIndex >= 0 && tvdIndex >= 0)
+        if (xOffsetIndex >= 0 && yOffsetIndex >= 0 && tvdIndex >= 0)
         {
             for (const curvePointData of trajectoryRows.rows)
             {
@@ -64,15 +31,12 @@ export default class WellTrajectoryNodeCreator
                 const x = curvePoint[xOffsetIndex];
                 if (Number.isNaN(x))
                     continue;
-
                 const y = curvePoint[yOffsetIndex];
                 if (Number.isNaN(y))
                     continue;
-
                 let z = curvePoint[tvdIndex]; // Assume md is same as z
                 if (Number.isNaN(z))
                     continue;
-
                 let md = Number.NaN;
                 if (mdIndex >= 0)
                 {
@@ -81,7 +45,6 @@ export default class WellTrajectoryNodeCreator
                         md *= unit;
                 }
                 z = z * unit;
-
                 const sample = new TrajectorySample(new Vector3(x, y, elevation - z), Number.isNaN(md) ? z : md);
                 if (azimuthIndex >= 0 && inclinationIndex >= 0)
                 {
@@ -91,14 +54,35 @@ export default class WellTrajectoryNodeCreator
                 const length = trajectory.length;
                 if (length > 0 && Number.isNaN(md))
                     sample.updateMdFromPrevSample(trajectory.getAt(length - 1));
-
                 trajectory.add(sample);
             }
         }
-
+        else if (mdIndex >= 0 && azimuthIndex >= 0 && inclinationIndex >= 0)
+        {
+            for (const curvePointData of trajectoryRows.rows)
+            {
+                const curvePoint = curvePointData.values;
+                let md = curvePoint[mdIndex]; // Assume md is same as z
+                if (Number.isNaN(md))
+                    continue;
+                const azimuth = curvePoint[azimuthIndex];
+                if (Number.isNaN(azimuth))
+                    continue;
+                const inclination = curvePoint[inclinationIndex];
+                if (Number.isNaN(inclination))
+                    continue;
+                md *= unit;
+                const sample = new TrajectorySample(new Vector3(0, 0, elevation), md);
+                sample.inclination = inclination;
+                sample.azimuth = azimuth;
+                const length = trajectory.length;
+                if (length > 0 && !sample.updatePointFromPrevSample(trajectory.getAt(length - 1)))
+                    break;
+                trajectory.add(sample);
+            }
+        }
         if (trajectory.length < 2)
             return null;
-
         const node = new WellTrajectoryNode();
         node.trajectory = trajectory;
         return node;

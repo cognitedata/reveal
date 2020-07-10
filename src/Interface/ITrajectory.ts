@@ -7,6 +7,8 @@
  * This is the interface for the Trajectory object
  */
 
+export type TrajectoryId = number;
+
 export interface ITrajectoryMeta {
   type: string;
   object_state: string;
@@ -72,7 +74,7 @@ export interface ITrajectoryColumn {
 // { "name":"y_offset" ,    "valueType":"DOUBLE" }
 
 export interface ITrajectory {
-  id: number;
+  id: TrajectoryId;
   assetId: number;
   externalId: string;
   name: string; // Name is "" in some cases

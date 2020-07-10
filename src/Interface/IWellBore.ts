@@ -4,10 +4,11 @@
 
 /**
  * Overview
- * This is the interface for the Wellbore object
+ * This is the interface for the Well bore object
  */
+export type WellBoreId = number;
 
-export interface IWellboreMeta {
+export interface IWellBoreMeta {
   type: string;
   active_indicator: string;
   asset_rig: string;
@@ -35,7 +36,7 @@ export interface IWellboreMeta {
   wellbore_remark: string;
 }
 
-export interface IWellbore {
+export interface IWellBore {
   externalId: string;
   name: string;
   parentId: number;
@@ -43,9 +44,9 @@ export interface IWellbore {
   description: string;
   dataSetId: number;
   source: string;
-  id: number;
+  id: WellBoreId;
   createdTime: string;
   lastUpdatedTime: string;
   rootId: number;
-  metadata: IWellboreMeta;
+  metadata: IWellBoreMeta;
 }

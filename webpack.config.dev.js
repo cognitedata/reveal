@@ -55,6 +55,6 @@ module.exports = (env) => ({
       }
     ]
   },
-  plugins: [new HtmlWebpackPlugin(), new webpack.DefinePlugin({ 'process.env.data.src': JSON.stringify(`${env.data.src}`) })],
+  plugins: [new HtmlWebpackPlugin()],
   devtool: "source-map"
 });
