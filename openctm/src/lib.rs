@@ -5,11 +5,12 @@ use std::{io, str};
 
 #[macro_use]
 pub mod error;
+
 use error::Error;
 
 // The header size is usually 9 bytes in LZMA, but because OpenCTM deduces the unpacked size in
 // a non-standard way, the unpacked size is removed from the header
-static LZMA_HEADER_SIZE: usize = 5;
+const LZMA_HEADER_SIZE: usize = 5;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct File {
@@ -17,6 +18,19 @@ pub struct File {
     pub vertices: Vec<Vertex>,
     pub normals: Option<Vec<Normal>>,
     pub uv_maps: Vec<UvMap>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+pub struct OpenCTMHeader {
+    pub magic_bytes: [u8; 4],
+    pub file_format: i32,
+    pub compression_method: i32,
+    pub vertex_count: u32,
+    pub triangle_count: u32,
+    pub uv_map_count: u32,
+    pub attribute_map_count: u32,
+    pub flags: u32,
+    pub comment: String,
 }
 
 #[derive(FromPrimitive, Deserialize, Serialize)]
@@ -156,47 +170,19 @@ pub trait ReadExt: io::Read {
 
 impl<T: io::Read> ReadExt for T {}
 
-pub fn parse(mut input: impl io::BufRead) -> Result<File, Error> {
-    {
-        let mut magic_bytes = [0 as u8; 4];
-        input.read_exact(&mut magic_bytes)?;
-        // TODO do not assert, but return Error instead
-        assert_eq!(b"OCTM", &magic_bytes);
+impl OpenCTMHeader {
+    pub fn has_normals(&self) -> bool {
+        (self.flags & 0x0000_0001) == 0x0000_0001
     }
+}
 
-    let file_format = input.read_i32::<LittleEndian>()?;
-    if file_format != 5 {
-        return Err(error!(
-            "Unexpected OpenCTM format version. Expected 5, got {}",
-            file_format
-        ));
-    }
-    let compression_method = input.read_i32::<LittleEndian>()?;
-    let vertex_count = input.read_i32::<LittleEndian>()? as usize;
-    let triangle_count = input.read_i32::<LittleEndian>()? as usize;
-    let uv_map_count = input.read_i32::<LittleEndian>()?;
-    let attribute_map_count = input.read_i32::<LittleEndian>()?;
-    if attribute_map_count != 0 {
-        unimplemented!();
-    }
-    let flags = input.read_i32::<LittleEndian>()?;
-    let comment_length = input.read_i32::<LittleEndian>()?;
-    let mut comment = vec![0; comment_length as usize];
-    input.read_exact(&mut comment)?;
-
-    let has_normals = (flags & 0x0000_0001) == 0x0000_0001;
-
-    match num::FromPrimitive::from_i32(compression_method) {
-        Some(CompressionMethod::MG1) => {}
-        Some(_) => return Err(error!("Compression method not yet implemented")), // TODO replace with Result
-        None => return Err(error!("Unknown compression method")), // TODO replace with Result
-    };
-
+fn parse_mg1(header: &OpenCTMHeader, mut input: impl io::BufRead) -> Result<File, Error> {
     let indices = {
         let mut magic_bytes = [0 as u8; 4];
         input.read_exact(&mut magic_bytes)?;
         assert_eq!(b"INDX", &magic_bytes);
 
+        let triangle_count = header.triangle_count as usize;
         let index_count = 3 * triangle_count;
         let decomp = input.read_packed_data(4 * index_count, 3 * 4)?;
 
@@ -229,6 +215,7 @@ pub fn parse(mut input: impl io::BufRead) -> Result<File, Error> {
         indices
     };
 
+    let vertex_count = header.vertex_count as usize;
     let vertices = {
         let mut magic_bytes = [0 as u8; 4];
         input.read_exact(&mut magic_bytes)?;
@@ -252,7 +239,7 @@ pub fn parse(mut input: impl io::BufRead) -> Result<File, Error> {
         vertices
     };
 
-    let normals = if !has_normals {
+    let normals = if !header.has_normals() {
         None
     } else {
         let mut magic_bytes = [0 as u8; 4];
@@ -279,6 +266,7 @@ pub fn parse(mut input: impl io::BufRead) -> Result<File, Error> {
     };
 
     let uv_maps = {
+        let uv_map_count = header.uv_map_count as usize;
         let mut uv_maps = Vec::new();
         for _ in 0..uv_map_count {
             let mut magic_bytes = [0 as u8; 4];
@@ -322,4 +310,52 @@ pub fn parse(mut input: impl io::BufRead) -> Result<File, Error> {
         normals,
         uv_maps,
     })
+}
+
+pub fn parse(mut input: impl io::BufRead) -> Result<File, Error> {
+    let mut magic_bytes = [0 as u8; 4];
+    input.read_exact(&mut magic_bytes)?;
+    if b"OCTM" != &magic_bytes {
+        return Err(Error::new("Malformed OCTM file"));
+    }
+
+    let file_format = input.read_i32::<LittleEndian>()?;
+    if file_format != 5 {
+        return Err(error!(
+            "Unexpected OpenCTM format version. Expected 5, got {}",
+            file_format
+        ));
+    }
+    let compression_method = input.read_i32::<LittleEndian>()?;
+    let vertex_count = input.read_u32::<LittleEndian>()?;
+    let triangle_count = input.read_u32::<LittleEndian>()?;
+    let uv_map_count = input.read_u32::<LittleEndian>()?;
+    let attribute_map_count = input.read_u32::<LittleEndian>()?;
+    let flags = input.read_u32::<LittleEndian>()?;
+    let comment = input.read_ctm_string()?;
+
+    let header = OpenCTMHeader {
+        magic_bytes,
+        file_format,
+        compression_method,
+        vertex_count,
+        triangle_count,
+        uv_map_count,
+        attribute_map_count,
+        flags,
+        comment,
+    };
+
+    if attribute_map_count != 0 {
+        return Err(Error::new(format!(
+            "Attribute maps not implemented. This file contains {} attribute maps",
+            attribute_map_count
+        )));
+    }
+
+    match num::FromPrimitive::from_i32(compression_method) {
+        Some(CompressionMethod::MG1) => { parse_mg1(&header, input) }
+        Some(_) => return Err(error!("Compression method not yet implemented")), // TODO replace with Result
+        None => return Err(error!("Unknown compression method")), // TODO replace with Result
+    }
 }
