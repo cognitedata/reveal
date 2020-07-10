@@ -33,19 +33,19 @@ export class SelectCommand extends ToolCommand
     if (!target)
       return;
 
-    target.viewInfo.clearItems();
+    const viewInfo = target.viewInfo;
+    const preCount = viewInfo.items.length;
+    viewInfo.clearItems();
+
     const pixel = target.getMouseRelativePosition(event);
     const intersection = target.getIntersection(pixel);
-    if (!intersection)
-      return;
-
-    const view = target.getViewByObject(intersection.object);
-    if (!view)
-      return;
-
-    const preCount = target.viewInfo.items.length;
-    view.onMouseClick(intersection)
-    const postCount = target.viewInfo.items.length;
+    if (intersection)
+    {
+      const view = target.getViewByObject(intersection.object);
+      if (view)
+        view.onMouseClick(intersection);
+    }
+    const postCount = viewInfo.items.length;
     if (preCount > 0 || postCount > 0)
       target.invalidate();
   }
