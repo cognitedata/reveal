@@ -23,7 +23,7 @@ export class CasingLogStyle extends BaseRenderStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public colorType = ColorType.White;
+  public colorType = ColorType.Specified;
   public opacity = 0.7;
 
   //==================================================

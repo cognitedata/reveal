@@ -88,7 +88,7 @@ export class WellTrajectory extends MdSamples
   {
     const maxIndex = this.samples.length - 1;
     if (maxIndex < 0)
-      false;
+      return false;
 
     if (md < this.samples[0].md || this.samples[maxIndex].md < md)
       return false;

@@ -250,7 +250,6 @@ export class TreeOverlay
       item.isMultiLine = true;
       item.dx = maxWidth;
       item.dy = Canvas.measureTextHeight(context, item.value, 1.025 * maxWidth, lineHeight);
-      item.dy -= lineHeight * 0.2;
     }
   }
 

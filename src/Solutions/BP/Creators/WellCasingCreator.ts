@@ -34,36 +34,30 @@ export default class WellCasingCreator
         const log = new CasingLog();
         for (const casing of sortedCasings)
         {
-            const radius = Util.getNumber(casing.metadata.assy_hole_size) * unit / 2;
-            if (isNaN(radius))
+            let radius = Util.getNumber(casing.metadata.assy_hole_size) / 2;
+            if (Number.isNaN(radius))
                 continue;
 
-            let min = Util.getNumber(casing.metadata.assy_original_md_top);
-            if (Number.isNaN(min))
+            let topMd = Util.getNumber(casing.metadata.assy_original_md_top);
+            if (Number.isNaN(topMd))
                 continue;
 
-            let max = Util.getNumber(casing.metadata.assy_original_md_base);
-            if (Number.isNaN(max))
+            let baseMd = Util.getNumber(casing.metadata.assy_original_md_base);
+            if (Number.isNaN(baseMd))
                 continue;
 
-            min *= unit;
-            max *= unit;
-            const prevMaxSample = log.lastSample;
-            if (prevMaxSample)
-            {
-                if (Ma.isAbsEqual(prevMaxSample.md, min, 0.1))
-                    log.samples.pop();
-            }
-            const minSample = new CasingLogSample(radius, min);
-            const maxSample = new CasingLogSample(radius, max);
+            radius *= unit;
+            topMd *= unit;
+            baseMd *= unit;
+
+            const sample = new CasingLogSample(radius, topMd, baseMd);
 
             // Meta data to the min, the max may be taken out anyway.
-            minSample.name = casing.metadata.assy_name;
-            minSample.comments = casing.metadata.assy_comments;
-            minSample.currentStatusComment = casing.metadata.assy_current_status_comment;
+            sample.name = casing.metadata.assy_name;
+            sample.comments = casing.metadata.assy_comments;
+            sample.currentStatusComment = casing.metadata.assy_current_status_comment;
 
-            log.samples.push(minSample);
-            log.samples.push(maxSample);
+            log.samples.push(sample);
         }
         if (log.length === 0)
             return null;

@@ -86,7 +86,7 @@ export class CasingLogThreeView extends BaseGroupThreeView
       return undefined;
 
     const boundingBox = new Range3();
-    let maxRadius = 0;
+    let maxSampleRadius = 0;
     const position = Vector3.newZero;
 
     for (let i = log.samples.length - 1; i >= 0; i--)
@@ -95,11 +95,13 @@ export class CasingLogThreeView extends BaseGroupThreeView
       if (sample.isMdEmpty || sample.isEmpty)
         continue;
 
-      maxRadius = Math.max(maxRadius, sample.radius);
+      maxSampleRadius = Math.max(maxSampleRadius, sample.radius);
       if (trajectory.getPositionAtMd(sample.md, position))
         boundingBox.add(position);
+      if (trajectory.getPositionAtMd(sample.baseMd, position))
+        boundingBox.add(position);
     }
-    boundingBox.expandByMargin(maxRadius);
+    boundingBox.expandByMargin(maxSampleRadius + this.trajectoryRadius);
     boundingBox.translate(wellNode.origin);
     return boundingBox;
   }
@@ -123,7 +125,7 @@ export class CasingLogThreeView extends BaseGroupThreeView
       return;
 
     viewInfo.addText("  Name", sample.name);
-    viewInfo.addText("  Radius", Number.isNaN(sample.radius) ? "No casing" : sample.radius.toFixed(3));
+    viewInfo.addText("  Radius", Number.isNaN(sample.radius) || sample.radius == 0 ? "No casing" : sample.radius.toFixed(3));
     viewInfo.addText("  Comments", sample.comments);
     viewInfo.addText("  Status comment", sample.currentStatusComment);
   }
@@ -152,17 +154,22 @@ export class CasingLogThreeView extends BaseGroupThreeView
     if (!log)
       throw Error("Well trajectory is missing");
 
+    const parent = new THREE.Group();
     const samples = this.createRenderSamples(trajectory, log, color);
-    const geometry = new TrajectoryBufferGeometry(samples);
-    const material = new THREE.MeshStandardMaterial({
-      color: ThreeConverter.to3DColor(Colors.white),
-      vertexColors: THREE.VertexColors,
-      transparent: true,
-      opacity: style.opacity
-    });
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.position.copy(this.transformer.to3D(wellNode.origin));
-    return mesh;
+    if (samples && samples.length > 0)
+    {
+      const geometry = new TrajectoryBufferGeometry(samples);
+      const material = new THREE.MeshStandardMaterial({
+        color: ThreeConverter.to3DColor(Colors.white),
+        vertexColors: THREE.VertexColors,
+        transparent: true,
+        opacity: style.opacity
+      });
+      const mesh = new THREE.Mesh(geometry, material);
+      parent.add(mesh);
+    }
+    parent.position.copy(this.transformer.to3D(wellNode.origin));
+    return parent;
   }
 
   //==================================================
@@ -171,43 +178,42 @@ export class CasingLogThreeView extends BaseGroupThreeView
 
   public createRenderSamples(trajectory: WellTrajectory, log: CasingLog, color: Color): RenderSample[]
   {
-    let wellIndex = 0;
+    const trajectoryRadius = this.trajectoryRadius;
+
     const samples: RenderSample[] = [];
-    for (let logIndex = 0; logIndex < log.length - 1; logIndex++)
+    for (let logIndex = 0; logIndex < log.length; logIndex++)
     {
-      const minSample = log.getAt(logIndex);
-      if (Number.isNaN(minSample.md))
+      const sample = log.getAt(logIndex);
+      if (sample.isMdEmpty)
         continue;
 
-      const maxSample = log.getAt(logIndex + 1);
-      if (Number.isNaN(maxSample.md))
+      if (Number.isNaN(sample.baseMd))
         continue;
 
-      const position = Vector3.newZero;
-      if (!trajectory.getPositionAtMd(minSample.md, position))
+      if (Number.isNaN(sample.radius))
         continue;
 
-      samples.push(new RenderSample(position, minSample.md, minSample.radius, color));
-      if (minSample.isEmpty)
-        continue;
+      const sampleRadius = sample.radius + trajectoryRadius;
+      const topPosition = Vector3.newZero;
+      if (trajectory.getPositionAtMd(sample.md, topPosition))
+        samples.push(new RenderSample(topPosition, sample.md, sampleRadius, color));
 
-      // Push inn all values between <minSample.md, maxSample.md>
-      for (; wellIndex < trajectory.length; wellIndex++)
+      // Push in all values between <sample.md, sample.baseMd>
+      for (let wellIndex = 0; wellIndex < trajectory.length; wellIndex++)
       {
         const trajectorySample = trajectory.getAt(wellIndex);
-        if (trajectorySample.md >= maxSample.md)
+        if (trajectorySample.md >= sample.baseMd)
           break; // Too far
-        if (trajectorySample.md > minSample.md)
-          samples.push(new RenderSample(trajectorySample.point.clone(), trajectorySample.md, minSample.radius, color));
+        if (sample.md < trajectorySample.md)
+          samples.push(new RenderSample(trajectorySample.point.clone(), trajectorySample.md, sampleRadius, color));
       }
-      if (logIndex == log.length - 1)
-      {
-        // Push the last
-        const position = Vector3.newZero;
-        if (trajectory.getPositionAtMd(maxSample.md, position))
-          samples.push(new RenderSample(position, maxSample.md, maxSample.radius, color));
-        break;
-      }
+      const basePosition = Vector3.newZero;
+      if (!trajectory.getPositionAtMd(sample.baseMd, basePosition))
+        continue;
+
+      // Add a nan value to the end to terminate it
+      samples.push(new RenderSample(basePosition, sample.baseMd, sampleRadius, color));
+      samples.push(new RenderSample(basePosition.clone(), sample.baseMd, 0, color));
     }
     const transformer = this.transformer;
     for (const sample of samples)
@@ -215,6 +221,51 @@ export class CasingLogThreeView extends BaseGroupThreeView
     return samples;
   }
 
+  // public createRenderSamples(trajectory: WellTrajectory, log: CasingLog, color: Color): RenderSample[]
+  // {
+  //   let wellIndex = 0;
+  //   const samples: RenderSample[] = [];
+  //   for (let logIndex = 0; logIndex < log.length - 1; logIndex++)
+  //   {
+  //     const minSample = log.getAt(logIndex);
+  //     if (Number.isNaN(minSample.md))
+  //       continue;
+
+  //     const maxSample = log.getAt(logIndex + 1);
+  //     if (Number.isNaN(maxSample.md))
+  //       continue;
+
+  //     const position = Vector3.newZero;
+  //     if (!trajectory.getPositionAtMd(minSample.md, position))
+  //       continue;
+
+  //     samples.push(new RenderSample(position, minSample.md, minSample.radius, color));
+  //     if (minSample.isEmpty)
+  //       continue;
+
+  //     // Push inn all values between <minSample.md, maxSample.md>
+  //     for (; wellIndex < trajectory.length; wellIndex++)
+  //     {
+  //       const trajectorySample = trajectory.getAt(wellIndex);
+  //       if (trajectorySample.md >= maxSample.md)
+  //         break; // Too far
+  //       if (trajectorySample.md > minSample.md)
+  //         samples.push(new RenderSample(trajectorySample.point.clone(), trajectorySample.md, minSample.radius, color));
+  //     }
+  //     if (logIndex == log.length - 1)
+  //     {
+  //       // Push the last
+  //       const position = Vector3.newZero;
+  //       if (trajectory.getPositionAtMd(maxSample.md, position))
+  //         samples.push(new RenderSample(position, maxSample.md, maxSample.radius, color));
+  //       break;
+  //     }
+  //   }
+  //   const transformer = this.transformer;
+  //   for (const sample of samples)
+  //     transformer.transformRelativeTo3D(sample.point);
+  //   return samples;
+  // }
   //==================================================
   // INSTANCE METHODS
   //==================================================

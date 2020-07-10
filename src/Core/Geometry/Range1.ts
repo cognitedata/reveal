@@ -206,6 +206,9 @@ export class Range1
 
   public add(value: number): void
   {
+    if (Number.isNaN(value))
+      return;
+
     if (this._isEmpty)
     {
       this._isEmpty = false;

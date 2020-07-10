@@ -25,7 +25,7 @@ export class CasingLog extends BaseLog
   //==================================================
 
   private _radiusRange: Range1 | undefined;
-  
+
   //==================================================
   // OVERRIDES of BaseLog
   //==================================================
@@ -33,6 +33,16 @@ export class CasingLog extends BaseLog
   public /*override*/ getSampleByMd(md: number): BaseLogSample | null
   {
     return this.getConcreteSampleByMd(md);
+  }
+
+  public/*override*/  expandMdRange(range: Range1): void
+  {
+    for (let i = this.length - 1; i >= 0; i--)
+    {
+      const sample = this.getAt(i);
+      range.add(sample.md);
+      range.add(sample.baseMd);
+    }
   }
 
   //==================================================
@@ -43,12 +53,18 @@ export class CasingLog extends BaseLog
 
   public getConcreteSampleByMd(md: number): CasingLogSample | null
   {
-    const floatIndex = this.getFloatIndexAtMd(md);
-    if (floatIndex < 0)
-      return null;
-
-    const index = Math.floor(floatIndex);
-    return this.samples[index] as CasingLogSample;
+    let sampleWithMaxRadius: CasingLogSample | null = null;
+    let maxRadius = Number.MIN_VALUE;
+    for (let i = this.length - 1; i >= 0; i--)
+    {
+      const sample = this.getAt(i);
+      if (sample.md <= md && md <= sample.baseMd && sample.radius > maxRadius)
+      {
+        sampleWithMaxRadius = sample;
+        maxRadius = sample.radius;
+      }
+    }
+    return sampleWithMaxRadius;
   }
 
   //==================================================
@@ -100,7 +116,7 @@ export class CasingLog extends BaseLog
     for (let k = 0, md = mdRange.min; k < numSamples; k++, md += mdInc)
     {
       const radius = (numSamples - k) * 15 / numSamples;
-      log.samples.push(new CasingLogSample(radius, md));
+      log.samples.push(new CasingLogSample(radius, md, md + mdInc / 2));
     }
     return log;
   }

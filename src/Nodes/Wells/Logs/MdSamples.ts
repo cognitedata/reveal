@@ -44,6 +44,13 @@ export abstract class MdSamples
     return null;
   }
 
+  public /*virtual*/ expandMdRange(range: Range1): void
+  {
+    for (const sample of this.samples)
+      if (!sample.isMdEmpty)
+        range.add(sample.md);
+  }
+
   //==================================================
   // INSTANCE METHODS: Getter
   //==================================================
@@ -104,13 +111,6 @@ export abstract class MdSamples
   public touch(): void
   {
     this._mdRange = undefined;
-  }
-
-  public expandMdRange(range: Range1): void
-  {
-    for (const sample of this.samples)
-      if (!sample.isMdEmpty)
-        range.add(sample.md);
   }
 
   //==================================================

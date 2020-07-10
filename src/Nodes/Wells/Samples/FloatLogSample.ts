@@ -11,6 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import * as Lodash from 'lodash';
+
 import { BaseLogSample } from "@/Nodes/Wells/Samples/BaseLogSample";
 
 export class FloatLogSample extends BaseLogSample 
@@ -44,5 +46,5 @@ export class FloatLogSample extends BaseLogSample
 
   public /*override*/ get isEmpty(): boolean { return Number.isNaN(this.value); }
 
-  public /*override*/  clone(): BaseLogSample { return new FloatLogSample(this.value, this.md); }
+  public /*override*/  clone(): BaseLogSample { return Lodash.clone<FloatLogSample>(this); }
 }  

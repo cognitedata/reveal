@@ -11,6 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import * as Lodash from 'lodash';
+
 import { BaseLogSample } from "@/Nodes/Wells/Samples/BaseLogSample";
 
 export class PointLogSample extends BaseLogSample 
@@ -19,7 +21,7 @@ export class PointLogSample extends BaseLogSample
   // INSTANCE FIELDS
   //==================================================
 
-  public mdEnd: number;
+  public baseMd: number;
   public description: string;
   public subtype: string = "";
   public riskSubCategory: string = "";
@@ -30,14 +32,14 @@ export class PointLogSample extends BaseLogSample
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(description: string, mdStart: number, mdEnd?: number)
+  public constructor(description: string, topMd: number, baseMd?: number)
   {
-    super(mdStart);
+    super(topMd);
     this.description = description;
-    if (mdEnd === undefined || Number.isNaN(mdEnd))
-      this.mdEnd = mdStart;
+    if (baseMd === undefined || Number.isNaN(baseMd))
+      this.baseMd = topMd;
     else
-      this.mdEnd = mdEnd;
+      this.baseMd = baseMd;
   }
 
   //==================================================
@@ -53,5 +55,5 @@ export class PointLogSample extends BaseLogSample
 
   public /*override*/ get isEmpty(): boolean { return false; }
 
-  public /*override*/  clone(): BaseLogSample { return new PointLogSample(this.description, this.md); }
+  public /*override*/  clone(): BaseLogSample { return Lodash.clone<PointLogSample>(this); }
 }  
