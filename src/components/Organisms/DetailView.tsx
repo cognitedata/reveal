@@ -3,13 +3,16 @@ import styled from 'styled-components';
 import { Icon, Input } from '@cognite/cogs.js';
 
 const Container = styled.article<{ showing: boolean }>`
-  transform: translateX(${(props) => (props.showing ? 0 : '320px')});
-  transition: transform 300ms ease-in-out;
+  transform: translateX(${(props) => (props.showing ? 0 : '362px')});
+  opacity: ${(props) => (props.showing ? 1 : 0)};
+  transition-property: opacity, transform;
+  transition-duration: 300ms;
+  transition-timing-function: ease-in-out;
   position: absolute;
   right: 0;
   top: 0;
   padding: 32px;
-  width: 288px;
+  width: 352px;
   height: 100%;
   box-sizing: border-box;
   overflow-y: hidden;
