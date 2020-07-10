@@ -66,11 +66,23 @@ export abstract class BaseNode extends Identifiable
   // INSTANCE PROPERTIES
   //==================================================
 
+  public get name(): string { return this.getName(); }
+  public set name(value: string ) { this.setName(value); }
+  public get color(): Color { return this.getColor(); }
+  public set color(value: Color ) { this.setColor(value); }
   public get uniqueId(): UniqueId { return this._uniqueId; }
   public get renderStyles(): BaseRenderStyle[] { return this._renderStyles; }
-  public get path(): string { return (this.parent ? this.parent.path : "") + "\\" + this.getName(); }
+  public get path(): string { return (this.parent ? this.parent.path : "") + "\\" + this.name; }
   public get isInitialized(): boolean { return this._isInitialized; }
   public get activeTarget(): ITarget | null { return this.activeTargetIdAccessor as ITarget; }
+
+  public get displayName(): string // This is the text shown in the tree control
+  {
+    const nameExtension = this.getNameExtension();
+    if (Util.isEmpty(nameExtension))
+      return this.name;
+    return `${this.name} [${nameExtension}]`;
+  }
 
   //==================================================
   // OVERRIDES of Identifiable
@@ -98,14 +110,6 @@ export abstract class BaseNode extends Identifiable
   public /*virtual*/ getLabelColor(): Color { return Colors.black; }
   public /*virtual*/ isLabelInBold(): boolean { return this.isActive; } // true shows the label in bold font
   public /*virtual*/ isLabelInItalic(): boolean { return !this.canBeDeleted(); } // true shows the label in italic font
-
-  public get displayName(): string // This is the text shown in the tree control
-  {
-    const nameExtension = this.getNameExtension();
-    if (Util.isEmpty(nameExtension))
-      return this.getName();
-    return `${this.getName()} [${nameExtension}]`;
-  }
 
   //==================================================
   // VIRTUAL METHODS: Tabs
@@ -345,7 +349,7 @@ export abstract class BaseNode extends Identifiable
   public getChildByName(name: string): BaseNode | null
   {
     for (const child of this.children)
-      if (child.getName() === name)
+      if (child.name === name)
         return child;
     return null;
   }
@@ -548,7 +552,7 @@ export abstract class BaseNode extends Identifiable
 
   public sortChildrenByName(): void
   {
-    this.children.sort((a, b) => a.getName().localeCompare(b.getName()));
+    this.children.sort((a, b) => a.name.localeCompare(b.name));
   }
 
   //==================================================
@@ -746,7 +750,7 @@ export abstract class BaseNode extends Identifiable
 
   public /*virtual*/ getDebugString(): string
   {
-    let result = this.getName();
+    let result = this.name;
     result += Util.cocatinate("typeName", this.typeName);
     result += Util.cocatinate("className", this.className);
     if (this.canChangeColor())

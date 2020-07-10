@@ -27,7 +27,7 @@ export default class WellNodeCreator
         const wellNode = new WellNode();
 
         if (!Util.isEmpty(wellData.description))
-            wellNode.setName(wellData.description);
+            wellNode.name = wellData.description;
 
         wellNode.wellHead = new Vector3(xy.easting, xy.northing, 0);
 

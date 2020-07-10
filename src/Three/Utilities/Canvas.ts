@@ -221,9 +221,10 @@ export class Canvas
   //==================================================
 
   public static getColor(color: Color | null) { return color ? color.string() : "black" };
-  public static getNormalFont(fontSize: number): string { return `${fontSize}px ${Appearance.fontIn3D}`; }
-  public static getBoldFont(fontSize: number): string { return `Bold ` + Canvas.getNormalFont(fontSize); }
-  public static getBolderFont(fontSize: number): string { return `Bolder ` + Canvas.getNormalFont(fontSize); }
+  private static getFont(fontSize: number): string { return `${fontSize}px ${Appearance.fontIn3D}`; }
+  public static getNormalFont(fontSize: number): string { return "Normal " + Canvas.getFont(fontSize); }
+  public static getBoldFont(fontSize: number): string { return "Bold " + Canvas.getFont(fontSize); }
+  public static getBolderFont(fontSize: number): string { return "Bolder " + Canvas.getFont(fontSize); }
 
   public static measureTextHeight(context: CanvasRenderingContext2D, text: string, maxWidth: number, lineHeight: number): number
   {
@@ -237,10 +238,10 @@ export class Canvas
 
   private static fillOrTextHeightText(context: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number): number
   {
-    const words = text.split(' ');
-    var line = '';
-    var height = 0;
-    const draw = x >= 0 && y >= 0;
+    let words = text.split(' ');
+    let line = '';
+    let height = 0;
+    let draw = x >= 0 && y >= 0;
     for (let n = 0; n < words.length; n++)
     {
       let testLine = line;

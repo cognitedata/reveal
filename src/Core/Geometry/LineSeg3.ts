@@ -11,50 +11,67 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { DiscreteLog } from "@/Nodes/Wells/Logs/DiscreteLog";
-import { BaseLogNode } from "@/Nodes/Wells/Nodes/BaseLogNode";
-import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
-import DiscreteLogNodeIcon from "@images/Nodes/DiscreteLogNode.png";
+import { Vector3 } from "@/Core/Geometry/Vector3";
 
-export class DiscreteLogNode extends BaseLogNode
+export class LineSegment
 {
   //==================================================
-  // STATIC FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
-  static className = "DiscreteLogNode";
+  public origin: Vector3 = Vector3.newZero; // Min point
+  public vector: Vector3 = Vector3.newZero; // Unit vector in direction to max
+  public length = 0; // The distance between min and max
 
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get log(): DiscreteLog | null { return this.anyData as DiscreteLog; }
-  public set log(value: DiscreteLog | null) { this.anyData = value; }
+  public get min(): Vector3 { return this.origin;}
+  public get max(): Vector3 { return Vector3.addWithFactor(this.origin, this.vector, this.length);}
 
   //==================================================
-  // CONSTRUCTORS
+  // CONSTRUCTOR
   //==================================================
 
-  public constructor() { super(); }
+  public constructor(min?: Vector3, max?: Vector3)
+  {
+    if (min == undefined || max == undefined)
+      return;
+    this.set(min, max);
+  }
 
   //==================================================
-  // OVERRIDES of Identifiable
+  // INSTANCE METHODS: Getters
   //==================================================
 
-  public /*override*/ get className(): string { return DiscreteLogNode.className; }
-  public /*override*/ isA(className: string): boolean { return className === DiscreteLogNode.className || super.isA(className); }
+  public getClosest(external: Vector3, result: Vector3): Vector3
+  {
+    result.copy(external);
+    result.substract(this.origin);
+
+    let t = this.vector.getDot(result);
+    if (t < 0)
+      t = 0;
+    else if (t > this.length)
+      t = this.length;
+
+    result.copy(this.vector);
+    result.multiplyScalar(t);
+    result.add(this.origin);
+    return result;
+  }
 
   //==================================================
-  // OVERRIDES of BaseNode
+  // INSTANCE METHODS: Setters
   //==================================================
 
-  public /*override*/ get typeName(): string { return "DiscreteLog" }
-  public /*override*/ getIcon(): string { return DiscreteLogNodeIcon }
-  public /*override*/ hasIconColor(): boolean { return false; }
-
-  //==================================================
-  // OVERRIDES of BaseLogNode
-  //==================================================
-
-  public /*override*/  get wellLogType(): WellLogType { return WellLogType.Discrete; }
+  public set(min: Vector3, max: Vector3): void
+  {
+    this.origin.copy(min);
+    this.vector.copy(max);
+    this.vector.substract(min);
+    this.length = this.vector.length;
+    this.vector.divideScalar(this.length);
+  }
 }

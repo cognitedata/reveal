@@ -31,6 +31,7 @@ import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
 import { CasingLog } from '@/Nodes/Wells/Logs/CasingLog';
 
 import Color from "color";
+import { WellTrajectoryThreeView } from "@/Three/WellViews/WellTrajectoryThreeView";
 
 export class CasingLogThreeView extends BaseGroupThreeView
 {
@@ -80,7 +81,7 @@ export class CasingLogThreeView extends BaseGroupThreeView
     if (!wellNode)
       return undefined;
 
-    const log = node.data;
+    const log = node.log;
     if (!log)
       return undefined;
 
@@ -103,6 +104,30 @@ export class CasingLogThreeView extends BaseGroupThreeView
     return boundingBox;
   }
 
+  public /*override*/ onMouseClick(intersection: THREE.Intersection): void
+  {
+    const viewInfo = this.renderTarget.viewInfo;
+    const md = WellTrajectoryThreeView.startPickingAndReturnMd(this, viewInfo, intersection);
+    if (md == undefined)
+      return;
+
+    const node = this.node;
+    viewInfo.addHeader(node.displayName);
+
+    const log = node.log;
+    if (!log)
+      return;
+
+    const sample = log.getConcreteSampleByMd(md);
+    if (!sample)
+      return;
+
+    viewInfo.addText("  Name", sample.name);
+    viewInfo.addText("  Radius", Number.isNaN(sample.radius) ? "No casing" : sample.radius.toFixed(3));
+    viewInfo.addText("  Comments", sample.comments);
+    viewInfo.addText("  Status comment", sample.currentStatusComment);
+  }
+
   //==================================================
   // OVERRIDES of BaseGroupThreeView
   //==================================================
@@ -123,7 +148,7 @@ export class CasingLogThreeView extends BaseGroupThreeView
     if (!trajectory)
       return null;
 
-    const log = node.data;
+    const log = node.log;
     if (!log)
       throw Error("Well trajectory is missing");
 

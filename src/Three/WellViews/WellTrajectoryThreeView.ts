@@ -35,6 +35,11 @@ import { LogRender } from "@/Three/WellViews/Helpers/LogRender";
 import { TrajectoryBufferGeometry } from "@/Three/WellViews/Helpers/TrajectoryBufferGeometry";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { Appearance } from "@/Core/States/Appearance";
+import { PointLogNode } from "@/Nodes/Wells/Nodes/PointLogNode";
+import { Units } from "@/Core/Primitives/Units";
+import { WellNode } from "@/Nodes/Wells/Nodes/WellNode";
+import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
+import { ViewInfo } from "@/Core/Views/ViewInfo";
 
 const TrajectoryName = "trajectory";
 const TrajectoryLabelName = "trajectoryLabel";
@@ -184,6 +189,36 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     // return boundingBox;
   }
 
+  public /*override*/ onMouseClick(intersection: THREE.Intersection): void
+  {
+    const viewInfo = this.renderTarget.viewInfo;
+    const md = WellTrajectoryThreeView.startPickingAndReturnMd(this, viewInfo, intersection);
+    if (md == undefined)
+      return;
+
+    const node = this.node;
+    let counter = 0;
+    for (const logNode of node.getDescendantsByType(BaseLogNode))
+    {
+      if (!logNode.isVisible(this.renderTarget))
+        continue;
+
+      if (logNode instanceof PointLogNode)
+        continue;
+
+      const log = logNode.log;
+      if (!log)
+        continue;
+
+      if (counter === 0)
+        viewInfo.addHeader("Visible Logs");
+
+      const sample = log.getSampleByMd(md);
+      viewInfo.addText("  " + logNode.displayName, sample ? sample.getSampleText() : "Outside MD range");
+      counter++;
+    }
+  }
+
   //==================================================
   // OVERRIDES of BaseGroupThreeView
   //==================================================
@@ -207,7 +242,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
   public /*override*/ mustTouch(): boolean
   {
     const node = this.node;
-    const trajectory = node.data;
+    const trajectory = node.trajectory;
     if (!trajectory)
       return false;
 
@@ -272,7 +307,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     if (!bandRange)
       return undefined;
 
-    const trajectory = node.data;
+    const trajectory = node.trajectory;
     if (!trajectory)
       return undefined;
 
@@ -282,7 +317,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       if (!this.isInBand(logNode))
         continue;
 
-      const log = logNode.data;
+      const log = logNode.log;
       if (!log)
         continue;
 
@@ -310,7 +345,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
   private addTrajectoryLabel(parent: THREE.Object3D)
   {
     const node = this.node;
-    const trajectory = node.data;
+    const trajectory = node.trajectory;
     if (!trajectory)
       return;
 
@@ -320,7 +355,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
     const position = trajectory.getBasePosition().clone();
     this.transformer.transformRelativeTo3D(position);
-    const label = SpriteCreator.createByPositionAndAlignment(node.getName(), position, 7, style.nameFontHeight, this.fgColor);
+    const label = SpriteCreator.createByPositionAndAlignment(name, position, 7, style.nameFontHeight, this.fgColor);
     if (!label)
       return;
 
@@ -335,17 +370,17 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     if (!wellNode)
       return;
 
-      const trajectory = node.data;
-      if (!trajectory)
-        return;
-  
+    const trajectory = node.trajectory;
+    if (!trajectory)
+      return;
+
     const style = this.style;
     if (!style)
       return;
 
     const position = trajectory.getTopPosition().clone();
     this.transformer.transformRelativeTo3D(position);
-    const label = SpriteCreator.createByPositionAndAlignment(wellNode.getName(), position, 1, style.nameFontHeight, this.fgColor);
+    const label = SpriteCreator.createByPositionAndAlignment(wellNode.name, position, 1, style.nameFontHeight, this.fgColor);
     if (!label)
       return;
 
@@ -361,7 +396,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       return;
 
     const style = this.style;
-    const trajectory = node.data;
+    const trajectory = node.trajectory;
     if (!trajectory)
       return;
 
@@ -391,7 +426,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     if (!bandRange)
       return;
 
-    const trajectory = node.data;
+    const trajectory = node.trajectory;
     if (!trajectory)
       return;
 
@@ -497,7 +532,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
         if (!rightBand)
         {
-          logRender.addDiscreteLog(canvas, logNode.data);
+          logRender.addDiscreteLog(canvas, logNode.log);
           visibleCount++;
           filled++;
         }
@@ -510,7 +545,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
         if ((i % 2 === 0) === rightBand && filled < 2)
         {
-          logRender.addFloatLog(canvas, logNode.data, logNode.getColor(), true);
+          logRender.addFloatLog(canvas, logNode.log, logNode.getColor(), true);
           filled++;
           visibleCount++;
         }
@@ -524,7 +559,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
         if ((i % 2 === 0) === rightBand)
         {
-          logRender.addFloatLog(canvas, logNode.data, logNode.getColor(), false);
+          logRender.addFloatLog(canvas, logNode.log, logNode.getColor(), false);
           visibleCount++;
         }
         i++;
@@ -536,5 +571,43 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       textures[rightBand ? 0 : 1] = canvas.createTexture();
     }
     return textures;
+  }
+
+  //==================================================
+  // STATIC METHODS: 
+  //==================================================
+
+  public static startPickingAndReturnMd(view: BaseThreeView, viewInfo: ViewInfo, intersection: THREE.Intersection, md?: number): number | undefined
+  {
+    const node = view.getNode();
+    const wellNode = node.getThisOrAncestorByType(WellNode);
+    if (!wellNode)
+      return undefined;
+
+    const trajectoryNode = node.getThisOrAncestorByType(WellTrajectoryNode);
+    if (!trajectoryNode)
+      return undefined;
+
+    const trajectory = trajectoryNode.trajectory;
+    if (!trajectory)
+      return undefined;
+
+    if (md == undefined)
+    {
+      const transformer = view.transformer;
+      const position = transformer.toWorld(intersection.point);
+
+      position.substract(wellNode.origin);
+      md = trajectory.getClosestMd(position);
+    }
+    const positionAtMd = Vector3.newEmpty;
+    trajectory.getPositionAtMd(md, positionAtMd);
+    const tvd = -positionAtMd.z;
+
+    viewInfo.addText("Well", wellNode.displayName);
+    viewInfo.addText("Trajectory", trajectoryNode.displayName);
+    viewInfo.addText("Md", md.toFixed(2) + " m" + " / " + (md * Units.Feet).toFixed(2) + " ft");
+    viewInfo.addText("Tvd", tvd.toFixed(2) + " m" + " / " + (tvd * Units.Feet).toFixed(2) + " ft");
+    return md;
   }
 }

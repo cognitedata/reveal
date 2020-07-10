@@ -90,7 +90,7 @@ export class FilterLogFolder extends BaseNode
       if (!filterLogNode)
         continue;
 
-      filterLogNode.setName(logNode.getName());
+      filterLogNode.name = logNode.name;
       this.addChild(filterLogNode);
       filterLogNode.initialize();
     }

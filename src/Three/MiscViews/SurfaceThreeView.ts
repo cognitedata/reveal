@@ -64,16 +64,16 @@ export class SurfaceThreeView extends BaseGroupThreeView
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
     const node = this.node;
-    const grid = node.data;
+    const grid = node.surface;
     if (!grid)
       return null;
 
     const parent = new THREE.Group();
-    var solid = this.createSolid();
+    const solid = this.createSolid();
     if (solid)
       parent.add(solid);
 
-    var contours = this.createContours();
+    const contours = this.createContours();
     if (contours)
       parent.add(contours);
 
@@ -90,7 +90,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
   {
     const node = this.node;
     const style = this.style.solid;
-    const grid = node.data;
+    const grid = node.surface;
     if (!grid)
       return null;
 
@@ -123,7 +123,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
   {
     const node = this.node;
     const style = this.style.contours;
-    const grid = node.data;
+    const grid = node.surface;
     if (!grid)
       return null;
 
@@ -134,7 +134,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
     if (contours.length == 0)
       return null;
 
-    var geometry = new THREE.BufferGeometry();
+    const geometry = new THREE.BufferGeometry();
     geometry.addAttribute('position', new THREE.Float32BufferAttribute(contours, 3));
 
     const material = new THREE.LineBasicMaterial({ color: ThreeConverter.to3DColor(color), linewidth: 1 });

@@ -15,7 +15,6 @@ import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
 import { BaseLogNode } from "@/Nodes/Wells/Nodes/BaseLogNode";
 import { WellLogType } from "@/Nodes/Wells/Logs/WellLogType";
 import FloatLogNodeIcon from "@images/Nodes/FloatLogNode.png";
-import { DH_NOT_SUITABLE_GENERATOR } from "constants";
 
 export class FloatLogNode extends BaseLogNode
 {
@@ -38,8 +37,8 @@ export class FloatLogNode extends BaseLogNode
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): FloatLog | null { return this.anyData as FloatLog; }
-  public set data(value: FloatLog | null) { this.anyData = value; }
+  public get log(): FloatLog | null { return this.anyData as FloatLog; }
+  public set log(value: FloatLog | null) { this.anyData = value; }
 
   //==================================================
   // CONSTRUCTORS

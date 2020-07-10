@@ -33,3 +33,5 @@ yarn-error.log*
 
 src/UserInterface/styles/css
 yarn.lock
+
+.env.local

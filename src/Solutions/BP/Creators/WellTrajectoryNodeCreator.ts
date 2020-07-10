@@ -100,7 +100,7 @@ export default class WellTrajectoryNodeCreator
             return null;
 
         const node = new WellTrajectoryNode();
-        node.data = trajectory;
+        node.trajectory = trajectory;
         return node;
     }
 }

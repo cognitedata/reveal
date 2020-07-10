@@ -25,6 +25,7 @@ import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { TrajectorySample } from "@/Nodes/Wells/Samples/TrajectorySample";
 import { MdSamples } from "@/Nodes/Wells/Logs/MdSamples";
 import { RenderSample } from "@/Nodes/Wells/Samples/RenderSample";
+import { LineSegment } from '@/Core/Geometry/LineSeg3';
 
 export class WellTrajectory extends MdSamples
 {
@@ -201,6 +202,51 @@ export class WellTrajectory extends MdSamples
     result.substract(maxSample.point);
     result.normalize();
     return true;
+  }
+
+  public getClosestMd(position: Vector3): number
+  {
+    const lineSegment = new LineSegment();
+    let closestPoint: Vector3 | null = null
+    let closestDistance = Number.MAX_VALUE;
+    let index = -1;
+
+    const closest = Vector3.newZero;
+    for (let i = 0; i < this.length - 1; i++)
+    {
+      const min = this.getPositionAt(i);
+      const max = this.getPositionAt(i + 1);
+
+      lineSegment.set(min, max);
+
+      lineSegment.getClosest(position, closest);
+      const distance = position.distance(closest);
+      if (distance < closestDistance)
+      {
+        index = i;
+        closestPoint = closest;
+        closestDistance = distance;
+      }
+    }
+    if (!closestPoint)
+      return Number.NaN;
+
+    const minSample = this.getAt(index);
+    const maxSample = this.getAt(index + 1);
+
+    const distanceToMin = minSample.point.distance(closestPoint);
+    if (Ma.isAbsEqual(distanceToMin, 0, 0.0001))
+      return minSample.md;
+
+    const distanceToMax = maxSample.point.distance(closestPoint);
+    if (Ma.isAbsEqual(distanceToMax, 0, 0.0001))
+      return maxSample.md;
+
+    const totalDistance = distanceToMin + distanceToMax;
+    const minFraction = distanceToMin / totalDistance;
+    const maxFraction = distanceToMax / totalDistance;
+    const md = maxFraction * minSample.md + minFraction * maxSample.md;
+    return md
   }
 
   //==================================================

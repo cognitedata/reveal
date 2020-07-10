@@ -25,7 +25,7 @@ export class Ma
 
   public static isZero(x: number): boolean { return x < 0 ? x > -Ma.errorTolerance : x < Ma.errorTolerance; }
 
-  public static IsAbsEqual(x: number, y: number, tolerance: number): boolean
+  public static isAbsEqual(x: number, y: number, tolerance: number): boolean
   {
     const error = x - y;
     if (error < 0)

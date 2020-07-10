@@ -20,7 +20,7 @@ export class CasingLogSample extends BaseLogSample
   //==================================================
 
   public radius: number;
-  public name:string = "";
+  public name: string = "";
   public comments: string = "";
   public currentStatusComment: string = "";
 
@@ -38,8 +38,8 @@ export class CasingLogSample extends BaseLogSample
   // OVERRIDES of MdSample
   //==================================================
 
-  public /*override*/ toString(): string { return `${super.toString()} Value: ${this.radius}`; }
-  public /*override*/ sampleText(): string { return `Value: ${this.radius}`; }
+  public /*override*/ toString(): string { return `${super.toString()} Radius: ${this.radius}`; }
+  public /*override*/ getSampleText(): string { return Number.isNaN(this.radius) ? "No casing" : `Radius = ${this.radius.toFixed(3)}`; }
 
   //==================================================
   // OVERRIDES of BaseLogSample

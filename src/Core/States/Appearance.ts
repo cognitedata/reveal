@@ -14,7 +14,7 @@ export class Appearance
   static toolbarCommandsPerLine = 18; // Commands per line in toolbar
   static treeFontSize = 16; // Realative or absolute? Do what best
   static treeBackgroundColor?: Color = undefined; // Use brush instead here?
-  static fontIn3D = "Helvetica"; // Use brush instead here?
+  static fontIn3D = "sans-serif"; // "Helvetica" Use brush instead here?
   static leftPanelDefaultSize = 290; //Default size of left panel
   static leftPanelMaxSize = 1000; //Maximum size of left panel
 

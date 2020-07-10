@@ -39,8 +39,8 @@ export class PointsNode extends DataNode
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): Points | null { return this.anyData; }
-  public set data(value: Points | null) { this.anyData = value; }
+  public get points(): Points | null { return this.anyData; }
+  public set points(value: Points | null) { this.anyData = value; }
   public get renderStyle(): PointsRenderStyle | null { return this.getRenderStyle() as PointsRenderStyle; }
 
   //==================================================
@@ -56,7 +56,7 @@ export class PointsNode extends DataNode
 
   public /*override*/ get typeName(): string { return "Points" }
   public /*override*/ getIcon(): string { return PointsNodeIcon }
-  public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
+  public /*override*/ get boundingBox(): Range3 { return this.points ? this.points.getRange() : new Range3(); }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {

@@ -33,7 +33,7 @@ export class StubRootCreator
     for (let i = 0; i < 4; i++)
     {
       const node = new PolylinesNode();
-      node.data = Polylines.createByRandom(10, 10, Range3.newTest);
+      node.polylines = Polylines.createByRandom(10, 10, Range3.newTest);
       root.others.addChild(node);
       node.initialize();
     }

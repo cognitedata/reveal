@@ -4,6 +4,8 @@ import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { SyntheticSubSurfaceModule } from "@/Nodes/SyntheticSubSurfaceModule";
 import { Modules } from "@/Core/Module/Modules";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
+import { Vector3 } from "@/Core/Geometry/Vector3";
+import { LineSegment } from "@/Core/Geometry/LineSeg3";
 
 main(document.body);
 

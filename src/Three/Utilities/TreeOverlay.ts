@@ -14,9 +14,11 @@
 import * as THREE from "three";
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import { ViewInfo } from "@/Core/Views/ViewInfo";
+import { ViewInfo, TextItem } from "@/Core/Views/ViewInfo";
 import Color from "color";
 import { Canvas } from "@/Three/Utilities/Canvas";
+import { Util } from "@/Core/Primitives/Util";
+import { Colors } from "@/Core/Primitives/Colors";
 
 export class TreeOverlay
 {
@@ -34,7 +36,7 @@ export class TreeOverlay
   // INSTANCE METHODS: 
   //==================================================
 
-  public render(renderer: THREE.WebGLRenderer, viewInfo: ViewInfo, delta: Vector3, fgColor: Color): void
+  public render(renderer: THREE.WebGLRenderer, viewInfo: ViewInfo, delta: Vector3, fgColor: Color, bgColor: Color): void
   {
     if (viewInfo.isEmpty)
       return;
@@ -42,7 +44,8 @@ export class TreeOverlay
     if (!this.delta.equals(delta))
       this.initialize(delta);
 
-    if (!this.context)
+    const context = this.context;
+    if (!context)
       return;
 
     if (!this.texture)
@@ -54,25 +57,11 @@ export class TreeOverlay
     if (!this.camera)
       return;
 
-    const text = viewInfo.text;
+    context.clearRect(0, 0, this.delta.x, this.delta.y);
 
-    if (text && text.length)
-    {
-      this.context.clearRect(0, 0, this.delta.x, this.delta.y);
-
-      this.context.shadowBlur = 2;
-      this.context.shadowColor = 'rgba(0, 0, 0, 0.5)';
-      this.context.shadowOffsetX = 3;
-      this.context.shadowOffsetY = 3;
-
-      this.context.font = Canvas.getNormalFont(14);
-      this.context.textAlign = "right";
-      this.context.textBaseline = "bottom";
-      this.context.fillStyle = fgColor.string();
-
-      this.context.fillText(text, this.delta.x - 6, this.delta.y - 3);
-      this.texture.needsUpdate = true;
-    }
+    this.renderTextItems(context, viewInfo.items, delta, 14, Colors.black, Colors.white.alpha(0.65));
+    this.renderFooter(context, viewInfo.footer, 16, fgColor, bgColor);
+    this.texture.needsUpdate = true;
     renderer.render(this.scene, this.camera);
   }
 
@@ -149,5 +138,141 @@ export class TreeOverlay
     if (!this.scene)
       this.scene = new THREE.Scene();
     this.scene.add(plane);
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Render
+  //==================================================
+
+  public renderTextItems(context: CanvasRenderingContext2D, items: TextItem[], delta: Vector3, fontSize: number, fgColor: Color, bgColor: Color): void
+  {
+    if (!items || !items.length)
+      return;
+
+    const margin = fontSize * 0.33;
+    const spacing = fontSize;
+    const lineDy = 1.5 * fontSize;
+
+    context.textAlign = "left";
+    context.textBaseline = "top";
+
+    // Measure the keys
+    context.font = Canvas.getBoldFont(fontSize);
+    let keyDx = 0;
+    for (const item of items)
+    {
+      const metric = context.measureText(item.key);
+      keyDx = Math.max(keyDx, metric.width);
+    }
+
+    // Measure the values
+    const maxDx = Math.max(200, keyDx);
+    context.font = Canvas.getNormalFont(fontSize);
+    let valueDx = 0;
+    let textDy = 0;
+    for (const item of items)
+    {
+      this.measureValue(context, item, maxDx, lineDy)
+      valueDx = Math.max(valueDx, item.dx);
+      textDy += item.dy;
+    }
+    textDy -= 0.4 * fontSize;
+
+    // Calulate the size
+    const dx = margin + keyDx + spacing + valueDx + margin;
+    const dy = margin + textDy + margin;
+    let xmin = margin;
+    let ymin = delta.y - margin - dy;
+
+    let x = xmin;
+    let y = ymin;
+
+    // Fill the rectangle with shadow
+    context.shadowColor = Canvas.getColor(fgColor.alpha(0.5));
+    context.shadowBlur = 3;
+    context.shadowOffsetX = 6;
+    context.shadowOffsetY = 6;
+    context.fillStyle = Canvas.getColor(bgColor);
+    context.fillRect(x, y, dx, dy);
+    context.shadowBlur = 0;
+    context.shadowOffsetX = 0;
+    context.shadowOffsetY = 0;
+
+    // Draw a border around the rectangle
+    context.strokeStyle = Canvas.getColor(fgColor);
+    context.lineWidth = 1;
+    context.strokeRect(x, y, dx, dy);
+
+    context.fillStyle = Canvas.getColor(fgColor);
+
+    // Draw the keys
+    x += margin;
+    y += margin;
+    context.font = Canvas.getBoldFont(fontSize);
+    for (const item of items)
+    {
+      context.fillText(item.key, x, y);
+      y += item.dy;
+    }
+
+    // Draw the values
+    x += keyDx + spacing;
+    y = ymin + margin;
+    context.font = Canvas.getNormalFont(fontSize);
+    for (const item of items)
+    {
+      if (item.value)
+      {
+        if (item.isMultiLine)
+          Canvas.fillText(context, item.value, x, y, maxDx + margin, lineDy);
+        else
+          context.fillText(item.value, x, y);
+      }
+      y += item.dy;
+    }
+  }
+
+  public measureValue(context: CanvasRenderingContext2D, item: TextItem, maxWidth: number, lineHeight: number): void
+  {
+    if (item.dy > 0)
+      return; // Already done
+
+    item.isMultiLine = false;
+    item.dy = lineHeight;
+    item.dx = 0;
+
+    if (!item.value)
+      return;
+
+    item.dx = context.measureText(item.value).width;
+    if (item.dx > maxWidth)
+    {
+      item.isMultiLine = true;
+      item.dx = maxWidth;
+      item.dy = Canvas.measureTextHeight(context, item.value, 1.025 * maxWidth, lineHeight);
+      item.dy -= lineHeight * 0.2;
+    }
+  }
+
+  public renderFooter(context: CanvasRenderingContext2D, text: string, fontSize: number, fgColor: Color, bgColor: Color): void
+  {
+    if (Util.isEmpty(text))
+      return;
+
+    context.fillStyle = Canvas.getColor(fgColor);
+    context.shadowBlur = 2;
+    context.shadowColor = 'rgba(0, 0, 0, 0.5)';
+    context.shadowOffsetX = 3;
+    context.shadowOffsetY = 3;
+
+    context.font = Canvas.getNormalFont(fontSize);
+    context.textAlign = "right";
+    context.textBaseline = "bottom";
+
+    context.fillText(text, this.delta.x - 6, this.delta.y - 3);
+
+    context.shadowBlur = 0;
+    context.shadowOffsetX = 0;
+    context.shadowOffsetY = 0;
   }
 }

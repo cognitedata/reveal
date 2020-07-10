@@ -37,8 +37,8 @@ export class WellTrajectoryNode extends DataNode
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): WellTrajectory | null { return this.anyData; }
-  public set data(value: WellTrajectory | null) { this.anyData = value; }
+  public get trajectory(): WellTrajectory | null { return this.anyData; }
+  public set trajectory(value: WellTrajectory | null) { this.anyData = value; }
   public get renderStyle(): WellTrajectoryStyle | null { return this.getRenderStyle() as WellTrajectoryStyle; }
   public get wellNode(): WellNode | null { return this.getAncestorByType(WellNode); }
 
@@ -63,7 +63,7 @@ export class WellTrajectoryNode extends DataNode
 
   public /*override*/ getIcon(): string { return WellTrajectoryNodeIcon }
 
-  public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.range : new Range3(); }
+  public /*override*/ get boundingBox(): Range3 { return this.trajectory ? this.trajectory.range : new Range3(); }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {

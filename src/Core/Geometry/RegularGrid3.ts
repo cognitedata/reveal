@@ -80,8 +80,8 @@ export class RegularGrid3 extends Grid3
   {
     if (this._hasRotationAngle)
     {
-      var dx = this.inc.x * i;
-      var dy = this.inc.y * j;
+      const dx = this.inc.x * i;
+      const dy = this.inc.y * j;
       result.x = dx * this._cosRotationAngle - dy * this._sinRotationAngle;
       result.y = dx * this._sinRotationAngle + dy * this._cosRotationAngle;
     }

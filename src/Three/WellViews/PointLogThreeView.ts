@@ -31,6 +31,7 @@ import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
 import { Appearance } from "@/Core/States/Appearance";
 import { WellTrajectoryStyle } from "@/Nodes/Wells/Styles/WellTrajectoryStyle";
 import { PointLogStyle } from "@/Nodes/Wells/Styles/PointLogStyle";
+import { WellTrajectoryThreeView } from "@/Three/WellViews/WellTrajectoryThreeView";
 
 const selectedRadiusFactor = 1.2;
 
@@ -91,7 +92,7 @@ export class PointLogThreeView extends BaseGroupThreeView
     if (!wellNode)
       return undefined;
 
-    const log = node.data;
+    const log = node.log;
     if (!log)
       return undefined;
 
@@ -124,7 +125,7 @@ export class PointLogThreeView extends BaseGroupThreeView
       return;
 
     const node = this.node;
-    const log = node.data;
+    const log = node.log;
     if (!log)
       return;
 
@@ -159,7 +160,7 @@ export class PointLogThreeView extends BaseGroupThreeView
       if (index == undefined)
         continue;
 
-      var sample = log.getAt(index);
+        const sample = log.getAt(index);
       if (sample.isMdEmpty)
         continue;
 
@@ -181,13 +182,13 @@ export class PointLogThreeView extends BaseGroupThreeView
     }
   }
 
-  public /*override*/ onMouseClick(intersection: THREE.Intersection)
+  public /*override*/ onMouseClick(intersection: THREE.Intersection): void
   {
     const parent = this.object3D;
     if (!parent)
       return;
 
-    var index = intersection.object.userData["sphere"];
+      const index = intersection.object.userData["sphere"];
     if (index == undefined)
       return;
 
@@ -196,14 +197,27 @@ export class PointLogThreeView extends BaseGroupThreeView
     if (!trajectory)
       return;
 
-    const log = node.data;
+    const log = node.log;
     if (!log)
       return;
 
     const sample = log.getAt(index);
-    sample.isOpen = !sample.isOpen;
+    if (!sample)
+      return;
 
-    node.notify(new NodeEventArgs(Changes.pointOpenOrClosed));
+    sample.isOpen = !sample.isOpen;
+    node.notify(new NodeEventArgs(Changes.pointOpenOrClosed));  
+    
+    const viewInfo = this.renderTarget.viewInfo;
+    const md = WellTrajectoryThreeView.startPickingAndReturnMd(this, viewInfo, intersection, sample.md);
+    if (md == undefined)
+      return;
+
+    viewInfo.addHeader(node.displayName);
+    viewInfo.addText("  Description", sample.description);
+    viewInfo.addText("  Subtype", sample.subtype);
+    viewInfo.addText("  Subcategory", sample.riskSubCategory);
+    viewInfo.addText("  Details", sample.details);
   }
 
   //==================================================
@@ -226,7 +240,7 @@ export class PointLogThreeView extends BaseGroupThreeView
       return null;
 
     const color = node.getColorByColorType(style.colorType)
-    const log = node.data;
+    const log = node.log;
     if (!log)
       throw Error("Well trajectory is missing");
 
@@ -284,7 +298,7 @@ export class PointLogThreeView extends BaseGroupThreeView
         const prependicular = cameraDirection.getNormal(tangent);
         position.addWithFactor(prependicular, selectedRadius);
 
-        const label = PointLogThreeView.createLabel(node.getName(), sample.description, position, style.fontSize);
+        const label = PointLogThreeView.createLabel(node.name, sample.description, position, style.fontSize);
         if (label)  
         {
           label.center = new THREE.Vector2(0, 1);

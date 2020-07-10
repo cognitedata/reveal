@@ -40,7 +40,7 @@ export class TrajectorySample extends MdSample
   //==================================================
 
   public /*override*/ toString(): string { return `${super.toString()} Point: ${this.point}`; }
-  public /*override*/ sampleText(): string { return `Point: ${this.point}`; }
+  public /*override*/ getSampleText(): string { return this.point.toString(); }
 
   //==================================================
   // INSTANCE METHODS

@@ -108,13 +108,13 @@ export class ContouringService
   private addLevelAt(z: number, a: Vector3, b: Vector3, c: Vector3): boolean
   {
     // Make sure we don't run into numerical problems
-    if (Ma.IsAbsEqual(a.z, z, this.tolerance))
+    if (Ma.isAbsEqual(a.z, z, this.tolerance))
       a.z = z + this.tolerance;
-    if (Ma.IsAbsEqual(b.z, z, this.tolerance))
+    if (Ma.isAbsEqual(b.z, z, this.tolerance))
       b.z = z + this.tolerance;
-    if (Ma.IsAbsEqual(c.z, z, this.tolerance))
+    if (Ma.isAbsEqual(c.z, z, this.tolerance))
       c.z = z + this.tolerance;
-    if (Ma.IsAbsEqual(a.z, b.z, this.tolerance))
+    if (Ma.isAbsEqual(a.z, b.z, this.tolerance))
       b.z = a.z + this.tolerance;
 
     // Special cases, check exact intersection on the corner or along the edges
@@ -161,7 +161,7 @@ export class ContouringService
       return true;
     }
     // Intersection of two of the edges
-    var numPoints = 0;
+    let numPoints = 0;
     if (Ma.isInside(a.z, z, b.z))
     {
       this.addLinearInterpolation(a, b, z);
@@ -207,7 +207,7 @@ export class ContouringService
     // Z is assumed to be on or between a.Z and b.Z, used by the function below
     // a.Z and b.Z is assumed to be different (Check by yourself)
     // Returns  a + (b-a)*(z-a.Z)/(b.Z-a.Z);  (unrolled code)
-    var f = (z - a.z) / (b.z - a.z);
+    const f = (z - a.z) / (b.z - a.z);
     this.positions.push((b.x - a.x) * f + a.x, (b.y - a.y) * f + a.y, z);
   }
 }

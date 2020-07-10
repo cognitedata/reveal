@@ -28,8 +28,8 @@ export class CasingLogNode extends BaseLogNode
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): CasingLog | null { return this.anyData as CasingLog; }
-  public set data(value: CasingLog | null) { this.anyData = value; }
+  public get log(): CasingLog | null { return this.anyData as CasingLog; }
+  public set log(value: CasingLog | null) { this.anyData = value; }
 
   //==================================================
   // CONSTRUCTORS

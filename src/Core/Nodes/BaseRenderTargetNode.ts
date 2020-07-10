@@ -18,11 +18,13 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
 
   private _isInvalidated = true;
   private _fractionRange: Range3;
+  private _viewInfo = new ViewInfo();
 
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
+  public get viewInfo(): ViewInfo { return this._viewInfo; }
   public get aspectRatio(): number { return this.pixelRange.aspectRatio2; }
 
   public get pixelRange(): Range3
@@ -46,6 +48,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
     super();
     this._fractionRange = fractionRange ? fractionRange : Range3.newUnit;
     this.isLightBackground = false;
+    this._viewInfo.footer = "Cognite subsurface viewer";
   }
 
   //==================================================
@@ -59,7 +62,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ initializeCore()
+  public /*override*/ initializeCore(): void
   {
     super.initializeCore();
     this.invalidate();
@@ -70,8 +73,8 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
   //==================================================
 
   public abstract get domElement(): HTMLElement;
-  public /*virtual*/ onResize() { }
-  public /*virtual*/ viewAll() { }
+  public /*virtual*/ onResize(): void { }
+  public /*virtual*/ viewAll(): void { }
 
   //==================================================
   // INSTANCE METHODS
@@ -93,10 +96,9 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
     return boundingBox;
   }
 
-  public getViewInfo(): ViewInfo
+  public fillViewInfo(): ViewInfo
   {
-    const viewInfo = new ViewInfo();
-    viewInfo.addText("Cognite subsurface viewer");
+    const viewInfo = this.viewInfo;
     for (const view of this.viewsShownHere.list)
       if (view instanceof Base3DView)
         view.getViewInfo(viewInfo);

@@ -63,7 +63,7 @@ export class PolylinesThreeView extends BaseGroupThreeView
     const node = this.node;
     const style = this.style;
 
-    const polylines = node.data;
+    const polylines = node.polylines;
     if (!polylines)
       throw Error("polylines is missing in view");
 

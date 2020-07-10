@@ -9,11 +9,14 @@ import { SyntheticSubSurfaceModule } from "@/Nodes/SyntheticSubSurfaceModule";
 /**
  * App component acts as a container application. Eg- BP
  */
-export default function App() {
+export default function App()
+{
   const modules = Modules.instance;
 
-  useEffect(() => {
-    return () => {
+  useEffect(() =>
+  {
+    return () =>
+    {
       // clean modules on unmount
       modules.clearModules();
     };
@@ -34,7 +37,7 @@ export default function App() {
   });
 
   modules.add(new ThreeModule());
-  // modules.add(new SyntheticSubSurfaceModule());
+  //modules.add(new SyntheticSubSurfaceModule());
   modules.add(module);
   modules.install();
 

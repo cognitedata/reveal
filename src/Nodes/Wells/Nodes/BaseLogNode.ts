@@ -37,11 +37,11 @@ export abstract class BaseLogNode extends DataNode
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get data(): BaseLog | null { return this.anyData; }
-  public set data(value: BaseLog | null) { this.anyData = value; }
+  public get log(): BaseLog | null { return this.anyData; }
+  public set log(value: BaseLog | null) { this.anyData = value; }
   public get wellNode(): WellNode | null { return this.getAncestorByType(WellNode); }
   public get trajectoryNode(): WellTrajectoryNode | null { return this.getAncestorByType(WellTrajectoryNode); }
-  public get trajectory(): WellTrajectory | null { const node = this.trajectoryNode; return node ? node.data : null; }
+  public get trajectory(): WellTrajectory | null { const node = this.trajectoryNode; return node ? node.trajectory : null; }
 
   public get filterLogNode(): BaseFilterLogNode | null
   {
@@ -115,6 +115,6 @@ export abstract class BaseLogNode extends DataNode
 
   public isEqual(other: BaseFilterLogNode): boolean
   {
-    return this.wellLogType == other.wellLogType && Util.equalsIgnoreCase(this.getName(), other.getName());
+    return this.wellLogType == other.wellLogType && Util.equalsIgnoreCase(this.name, other.name);
   }
 }
