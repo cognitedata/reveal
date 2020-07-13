@@ -41,7 +41,7 @@ export class RevealParserWorker {
     const nodeIdToTreeIndexMap = sector.node_id_to_tree_index_map();
     const treeIndexToNodeIdMap = sector.tree_index_to_node_id_map();
 
-    const result = this.unflattenSector({
+    const { transferables, result } = this.unflattenSector({
       nodeIdToTreeIndexMap,
       treeIndexToNodeIdMap,
       primitives,
@@ -50,6 +50,7 @@ export class RevealParserWorker {
     sector.free();
     sectorData.free();
     return Comlink.transfer(result, [
+      ...transferables,
       result.primitives.boxCollection.buffer,
       result.primitives.circleCollection.buffer,
       result.primitives.eccentricConeCollection.buffer,
@@ -159,10 +160,11 @@ export class RevealParserWorker {
     return jsAttributes;
   }
 
-  private unflattenSector(data: FlatSectorGeometry): SectorGeometry {
+  private unflattenSector(data: FlatSectorGeometry): { transferables: ArrayBuffer[]; result: SectorGeometry } {
     const buf = new flatbuffers.ByteBuffer(data.buffer);
     const sectorG = DetailedSector.SectorGeometry.getRootAsSectorGeometry(buf);
     const iMeshes: InstancedMeshFile[] = [];
+    const transferables = [];
     for (let i = 0; i < sectorG.instanceMeshesLength(); i++) {
       const instances: InstancedMesh[] = [];
       const meshFile = sectorG.instanceMeshes(i)!;
@@ -171,6 +173,9 @@ export class RevealParserWorker {
         const colors = new Uint8Array(int.colorsArray()!);
         const instanceMatrices = new Float32Array(int.instanceMatricesArray()!);
         const treeIndices = new Float32Array(int.treeIndicesArray()!);
+        transferables.push(colors.buffer);
+        transferables.push(instanceMatrices.buffer);
+        transferables.push(treeIndices.buffer);
         instances.push({
           triangleCount: int.triangleCount(),
           triangleOffset: int.triangleOffset(),
@@ -182,11 +187,17 @@ export class RevealParserWorker {
       const indices = new Uint32Array(meshFile.indicesArray()!);
       const vertices = new Float32Array(meshFile.verticesArray()!);
       const norm = meshFile.normalsArray();
+      transferables.push(indices.buffer);
+      transferables.push(vertices.buffer);
+      const normals = norm ? new Float32Array(norm) : undefined;
+      if (normals) {
+        transferables.push(normals.buffer);
+      }
       iMeshes.push({
         fileId: meshFile.fileId(),
         indices,
         vertices,
-        normals: norm ? new Float32Array(norm) : undefined,
+        normals: normals,
         instances
       });
     }
@@ -198,19 +209,30 @@ export class RevealParserWorker {
       const vertices = new Float32Array(tri.verticesArray()!);
       const colors = new Uint8Array(tri.colorsArray()!);
       const norm = tri.normalsArray();
+      transferables.push(indices.buffer);
+      transferables.push(treeIndices.buffer);
+      transferables.push(vertices.buffer);
+      transferables.push(colors.buffer);
+      const normals = norm ? new Float32Array(norm) : undefined;
+      if (normals) {
+        transferables.push(normals.buffer);
+      }
       tMeshes.push({
         fileId: tri.fileId(),
         indices,
         treeIndices,
         vertices,
-        normals: norm ? new Float32Array(norm) : undefined,
+        normals: normals,
         colors
       });
     }
     return {
-      instanceMeshes: iMeshes,
-      triangleMeshes: tMeshes,
-      ...data
+      transferables,
+      result: {
+        instanceMeshes: iMeshes,
+        triangleMeshes: tMeshes,
+        ...data
+      }
     };
   }
 }
