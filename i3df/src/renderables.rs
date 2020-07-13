@@ -201,9 +201,8 @@ macro_rules! convert_to_js_type {
                 data_as_vector3.len() * 3,
             )
         };
-        let data = data_as_f32.to_vec();
 
-        Float32Array::from(&data[..])
+        Float32Array::from(data_as_f32)
     }};
 
     ($self:ident, $field_name:ident, Vec<Matrix4>, Float32Array) => {{
@@ -215,9 +214,7 @@ macro_rules! convert_to_js_type {
             )
         };
 
-        let data = data_as_f32.to_vec();
-
-        Float32Array::from(&data[..])
+        Float32Array::from(data_as_f32)
     }};
 }
 

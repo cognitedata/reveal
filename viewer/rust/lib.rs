@@ -270,7 +270,6 @@ fn finalize_detailed(
         for (file_id, mesh_indices) in meshes_grouped_by_file {
             let file_triangle_counts: Vec<_> =
                 mesh_indices.iter().map(|i| triangle_counts[*i]).collect();
-            let offsets = create_offsets_array(&file_triangle_counts);
             let filename = format!("mesh_{}.ctm", file_id);
 
             if let Some(ctm_result) = ctm_map.get(&filename) {
@@ -279,19 +278,19 @@ fn finalize_detailed(
                 let normals = ctm_result.normals().map(|x| x.to_vec());
                 let mut shared_colors = vec![0; 3 * indices.len()];
                 let mut shared_tree_indices = vec![0.; indices.len()];
+                let mut tri_offset = 0;
 
                 for i in 0..mesh_indices.len() {
                     let mesh_idx = mesh_indices[i];
                     let tree_index = tree_indices[mesh_idx];
-                    let tri_offset = offsets[i];
-                    let tri_count = file_triangle_counts[i];
+                    let tri_count = file_triangle_counts[i] as usize;
                     let (r, g, b) = (
                         colors[mesh_idx][0],
                         colors[mesh_idx][1],
                         colors[mesh_idx][2],
                     );
 
-                    for tri_idx in tri_offset as usize..(tri_offset + tri_count) as usize {
+                    for tri_idx in tri_offset..(tri_offset + tri_count) {
                         for j in 0..3 {
                             let v_idx = indices[3 * tri_idx + j] as usize;
 
@@ -302,6 +301,7 @@ fn finalize_detailed(
                             shared_colors[3 * v_idx + 2] = b;
                         }
                     }
+                    tri_offset += tri_count;
                 }
 
                 let indices_flat = builder.create_vector_direct(indices);
@@ -425,15 +425,6 @@ fn finalize_detailed(
         sector: i3d_file,
         data: builder.finished_data().into(),
     })
-}
-
-fn create_offsets_array(array: &[u64]) -> Vec<u64> {
-    let mut offsets = Vec::with_capacity(array.len());
-    offsets.push(0);
-    for i in 1..array.len() {
-        offsets.push(offsets[i - 1] + array[i - 1]);
-    }
-    offsets
 }
 
 fn group_meshes_by_number(file_ids: &[u64]) -> HashMap<u64, Vec<usize>> {
