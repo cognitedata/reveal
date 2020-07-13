@@ -12,10 +12,7 @@ import { CogniteClient } from '@cognite/sdk';
 import CameraControls from 'camera-controls';
 import dat, { GUI } from 'dat.gui';
 import { vec3 } from 'gl-matrix';
-import {
-  getParamsFromURL,
-  createRenderManager,
-} from '../utils/example-helpers';
+import { getParamsFromURL } from '../utils/example-helpers';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 CameraControls.install({ THREE });
@@ -65,6 +62,7 @@ export function SimplePointcloud() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    let revealManager: reveal.RevealManager<unknown>;
     if (!canvasRef.current) {
       return
     }
@@ -87,27 +85,17 @@ export function SimplePointcloud() {
       renderer.setClearColor('#000000');
       renderer.setSize(window.innerWidth, window.innerHeight);
 
-      const revealManager: reveal.RenderManager = createRenderManager(
-        modelRevision !== undefined ? 'cdf' : 'local',
-        client
-      );
       let model: [
         reveal.internal.PotreeGroupWrapper,
         reveal.internal.PotreeNodeWrapper
       ];
-
-      if (
-        revealManager instanceof reveal.LocalHostRevealManager &&
-        modelUrl !== undefined
-      ) {
-        model = await revealManager.addModel('pointcloud', modelUrl);
-      } else if (
-        revealManager instanceof reveal.RevealManager &&
-        modelRevision !== undefined
-      ) {
+      if(modelRevision) {
         await client.authenticate();
+        revealManager = reveal.createCdfRevealManager(client);
         model = await revealManager.addModel('pointcloud', modelRevision);
-        revealManager.on('loadingStateChanged', setIsLoading);
+      } else if(modelUrl) {
+        revealManager = reveal.createLocalRevealManager();
+        model = await revealManager.addModel('pointcloud', modelUrl);
       } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'
@@ -115,6 +103,7 @@ export function SimplePointcloud() {
       }
       const [pointCloudGroup, pointCloudNode] = model;
       scene.add(pointCloudGroup);
+      revealManager.on('loadingStateChanged', setIsLoading);
 
       const camera = new THREE.PerspectiveCamera(
         75,
@@ -187,6 +176,7 @@ export function SimplePointcloud() {
     return () => {
       gui.destroy();
       animationLoopHandler.dispose();
+      revealManager?.dispose();
     };
   }, []);
 

@@ -21,15 +21,13 @@ import { CogniteClient } from '@cognite/sdk';
 import {
   CadNode,
   RevealManager,
-  LocalHostRevealManager,
-  RenderManager,
+  createCdfRevealManager,
+  createLocalRevealManager,
 } from '@cognite/reveal/experimental';
-import {
-  getParamsFromURL,
-  createRenderManager,
-} from '../utils/example-helpers';
+import { getParamsFromURL } from '../utils/example-helpers';
 import { OverrideSectorCuller } from '../utils/OverrideSectorCuller';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
+import { RevealOptions } from '@cognite/reveal/public/types';
 
 CameraControls.install({ THREE });
 
@@ -68,6 +66,8 @@ function initializeModel(
 export function SideBySide() {
   useEffect(() => {
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
+    let revealManager1: RevealManager<unknown>;
+    let revealManager2: RevealManager<unknown>;
     async function main() {
       const { project, modelUrl, modelRevision } = getParamsFromURL({
         project: 'publicdata',
@@ -80,57 +80,36 @@ export function SideBySide() {
       client.loginWithOAuth({ project });
 
       const sectorCuller1 = new OverrideSectorCuller();
-      const revealManager1: RenderManager = createRenderManager(
-        modelRevision !== undefined ? 'cdf' : 'local',
-        client,
-        {
-          internal: {
-            sectorCuller: sectorCuller1,
-          },
-        }
-      );
-      const sectorCuller2 = new OverrideSectorCuller();
-      const revealManager2: RenderManager = createRenderManager(
-        modelRevision2 !== undefined ? 'cdf' : 'local',
-        client,
-        {
-          internal: {
-            sectorCuller: sectorCuller2,
-          },
-        }
-      );
-
+      const revealOptions1: RevealOptions = {
+        internal: { sectorCuller: sectorCuller1 }
+      }
       let model1: CadNode;
-      if (
-        revealManager1 instanceof LocalHostRevealManager &&
-        modelUrl !== undefined
-      ) {
-        model1 = await revealManager1.addModel('cad', modelUrl);
-      } else if (
-        revealManager1 instanceof RevealManager &&
-        modelRevision !== undefined
-      ) {
+      if(modelRevision) {
+        revealManager1 = createCdfRevealManager(client, revealOptions1);
         model1 = await revealManager1.addModel('cad', modelRevision);
+      } else if(modelUrl) {
+        revealManager1 = createLocalRevealManager(revealOptions1);
+        model1 = await revealManager1.addModel('cad', modelUrl);
       } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'
         );
       }
 
+      const sectorCuller2 = new OverrideSectorCuller();
+      const revealOptions2: RevealOptions = {
+        internal: { sectorCuller: sectorCuller2 }
+      };
       let model2: CadNode;
-      if (
-        revealManager2 instanceof LocalHostRevealManager &&
-        modelUrl2 !== undefined
-      ) {
-        model2 = await revealManager2.addModel('cad', modelUrl2);
-      } else if (
-        revealManager2 instanceof RevealManager &&
-        modelRevision2 !== undefined
-      ) {
+      if(modelRevision2) {
+        revealManager2 = createCdfRevealManager(client, revealOptions2);
         model2 = await revealManager2.addModel('cad', modelRevision2);
+      } else if(modelUrl2) {
+        revealManager2 = createLocalRevealManager(revealOptions2);
+        model2 = await revealManager2.addModel('cad', modelUrl2);
       } else {
         throw new Error(
-          'Need to provide either model2 OR modelUrl2 as an additional query parameters'
+          'Need to provide either project & model OR modelUrl as query parameters'
         );
       }
 
@@ -229,6 +208,8 @@ export function SideBySide() {
     main();
     return () => {
       animationLoopHandler.dispose();
+      revealManager1?.dispose();
+      revealManager2?.dispose();
     }
   });
   return (

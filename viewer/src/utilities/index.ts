@@ -5,6 +5,7 @@
 // TODO 02-06-2020 j-bjorne: Make index file the source of import for other packages? Adding all relative sub exports to index.ts
 
 export { File3dFormat, ModelTransformation } from './types';
+export { LocalModelIdentifier, CdfModelIdentifier } from './networking/types';
 export { createOffsetsArray } from './arrays';
 export { Box3 } from './Box3';
 export { HtmlOverlayHelper } from './HtmlOverlayHelper';

@@ -38,7 +38,7 @@ import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
 import { MemoryRequestCache } from '@/utilities/cache/MemoryRequestCache';
 import { SectorQuads } from '@/datamodels/cad/rendering/types';
 import { trackError } from '@/utilities/metrics';
-import { CadSectorProvider, ModelDataClient } from '@/utilities/networking/types';
+import { BinaryFileProvider, ModelDataClient } from '@/utilities/networking/types';
 
 type ParsedData = { blobUrl: string; lod: string; data: SectorGeometry | SectorQuads };
 
@@ -51,7 +51,7 @@ export class CachedRepository implements Repository {
     maxElementsInCache: 50
   });
 
-  private readonly _modelSectorProvider: CadSectorProvider;
+  private readonly _modelSectorProvider: BinaryFileProvider;
   private readonly _modelDataParser: CadSectorParser;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
   private readonly _isLoadingSubject: Subject<boolean> = new BehaviorSubject<boolean>(false);
@@ -67,7 +67,7 @@ export class CachedRepository implements Repository {
   private readonly _concurrentNetworkOperations: number;
 
   constructor(
-    modelSectorProvider: CadSectorProvider,
+    modelSectorProvider: BinaryFileProvider,
     modelDataParser: CadSectorParser,
     modelDataTransformer: SimpleAndDetailedToSector3D,
     concurrentNetworkOperations: number = 50
@@ -159,7 +159,7 @@ export class CachedRepository implements Repository {
   private loadSimpleSectorFromNetwork(wantedSector: WantedSector): Observable<ConsumedSector> {
     const networkObservable: Observable<ConsumedSector> = onErrorResumeNext(
       from(
-        this._modelSectorProvider.getCadSectorFile(wantedSector.blobUrl, wantedSector.metadata.facesFile.fileName!)
+        this._modelSectorProvider.getBinaryFile(wantedSector.blobUrl, wantedSector.metadata.facesFile.fileName!)
       ).pipe(
         catchError(error => {
           trackError(error, {
@@ -198,7 +198,7 @@ export class CachedRepository implements Repository {
         this._modelDataParser.parseAndFinalizeI3D(wantedSector.metadata.indexFile.fileName, {
           fileNames: wantedSector.metadata.indexFile.peripheralFiles,
           blobUrl: wantedSector.blobUrl,
-          headers: (this._modelSectorProvider as ModelDataClient<CadSectorProvider>).headers
+          headers: (this._modelSectorProvider as ModelDataClient<BinaryFileProvider>).headers
         })
       ).pipe(
         catchError(error => {

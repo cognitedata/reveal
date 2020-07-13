@@ -8,10 +8,7 @@ import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import * as reveal from '@cognite/reveal/experimental';
 import dat from 'dat.gui';
-import {
-  getParamsFromURL,
-  createRenderManager,
-} from '../utils/example-helpers';
+import { getParamsFromURL } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
@@ -22,6 +19,7 @@ export function SSAO() {
   useEffect(() => {
     const gui = new dat.GUI();
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
+    let revealManager: reveal.RevealManager<unknown>;
 
     async function main() {
       const { project, modelUrl, modelRevision } = getParamsFromURL({
@@ -32,28 +30,19 @@ export function SSAO() {
       client.loginWithOAuth({ project });
 
       const scene = new THREE.Scene();
-      const revealManager: reveal.RenderManager = createRenderManager(
-        modelRevision !== undefined ? 'cdf' : 'local',
-        client
-      );
 
       let model: reveal.CadNode;
-      if (
-        revealManager instanceof reveal.LocalHostRevealManager &&
-        modelUrl !== undefined
-      ) {
-        model = await revealManager.addModel('cad', modelUrl);
-      } else if (
-        revealManager instanceof reveal.RevealManager &&
-        modelRevision !== undefined
-      ) {
+      if(modelRevision) {
+        revealManager = reveal.createCdfRevealManager(client);
         model = await revealManager.addModel('cad', modelRevision);
+      } else if(modelUrl) {
+        revealManager = reveal.createLocalRevealManager();
+        model = await revealManager.addModel('cad', modelUrl);
       } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'
         );
       }
-      scene.add(model);
 
       const effect = new reveal.SsaoEffect();
       const renderer = new THREE.WebGLRenderer({
@@ -130,6 +119,7 @@ export function SSAO() {
     return () => {
       gui.destroy();
       animationLoopHandler.dispose();
+      revealManager?.dispose();
     };
   });
   return (

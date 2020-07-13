@@ -2,8 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
-import { Versioned3DFile } from '@cognite/sdk';
 import { HttpHeaders } from '@cognite/sdk/dist/src/utils/http/basicHttpClient';
+import { Versioned3DFile, HttpError } from '@cognite/sdk';
 
 export const supportedVersions = [8];
 
@@ -35,4 +35,16 @@ export async function getCadSectorFile(
       .catch(() => fetch(url, request))
       .then(x => x.arrayBuffer())
   );
+}
+
+export async function fetchWithStatusCheck(url: string): Promise<Response> {
+  const response = await fetch(url);
+  if (!response.ok) {
+    const headers: { [key: string]: string } = {};
+    response.headers.forEach((key, value) => {
+      headers[key] = value;
+    });
+    throw new HttpError(response.status, response.body, headers);
+  }
+  return response;
 }
