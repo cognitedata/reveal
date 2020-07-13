@@ -74,6 +74,24 @@ pub struct TextureCoordinate {
     pub v: f32,
 }
 
+#[derive(Clone, Copy, Debug, Default)]
+struct Bound {
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
+}
+
+#[derive(Clone, Copy, Debug, Default)]
+struct MG2Header {
+    pub vertex_precision: f32,
+    pub normal_precision: f32,
+    pub lower_bound: Bound,
+    pub upper_bound: Bound,
+    pub div_x: i32,
+    pub div_y: i32,
+    pub div_z: i32,
+}
+
 impl PartialEq for TextureCoordinate {
     fn eq(&self, other: &Self) -> bool {
         self.u == other.u && self.v == other.v
@@ -166,6 +184,47 @@ pub trait ReadExt: io::Read {
         )?;
         Ok(decomp)
     }
+
+    fn read_packed_u32s(
+        &mut self,
+        element_count: usize,
+        interleaved_byte_count: usize,
+    ) -> Result<Vec<u32>, Error> {
+        let decomp = self.read_packed_data(element_count * 4, interleaved_byte_count)?;
+        let mut ints = vec![Default::default(); element_count];
+        let mut rdr = io::Cursor::new(decomp);
+
+        rdr.read_u32_into::<LittleEndian>(&mut ints)?;
+        Ok(ints)
+    }
+
+    fn read_packed_f32s(
+        &mut self,
+        element_count: usize,
+        interleaved_byte_count: usize,
+    ) -> Result<Vec<f32>, Error> {
+        let decomp = self.read_packed_data(element_count * 4, interleaved_byte_count)?;
+        let mut floats = vec![Default::default(); element_count];
+        let mut rdr = io::Cursor::new(decomp);
+
+        rdr.read_f32_into::<LittleEndian>(&mut floats)?;
+        Ok(floats)
+    }
+
+    fn read_magic_bytes(&mut self, magic_bytes: &[u8; 4]) -> Result<[u8; 4], Error> {
+        let mut bytes = [0 as u8; 4];
+        self.read_exact(&mut bytes)?;
+        if magic_bytes == &bytes {
+            Ok(bytes)
+        } else {
+            Err(Error::new(
+                format!("Expected magic bytes {} but got {}",
+                        std::str::from_utf8(magic_bytes)?,
+                        std::str::from_utf8(&bytes)?
+                )
+            ))
+        }
+    }
 }
 
 impl<T: io::Read> ReadExt for T {}
@@ -176,57 +235,63 @@ impl OpenCTMHeader {
     }
 }
 
+impl MG2Header {
+    pub fn size_x(&self) -> f32 {
+        (self.upper_bound.x - self.lower_bound.x) / (self.div_x as f32)
+    }
+    pub fn size_y(&self) -> f32 {
+        (self.upper_bound.y - self.lower_bound.y) / (self.div_y as f32)
+    }
+    pub fn size_z(&self) -> f32 {
+        (self.upper_bound.z - self.lower_bound.z) / (self.div_z as f32)
+    }
+}
+
+fn restore_indices(indices: &mut Vec<u32>) {
+    indices[1] += indices[0]; // i_(k, 2) + i_(k, 1)
+    indices[2] += indices[0]; // i_(k, 3) + i_(k, 1)
+
+    for i in (3..indices.len()).step_by(3) {
+        indices[i] += indices[i - 3];
+        if indices[i] == indices[i - 3] {
+            indices[i + 1] += indices[i - 3 + 1]; // i_(k, 2) + i_(k-1, 2)
+        } else {
+            indices[i + 1] += indices[i]; // i_(k, 2) + i_(k, 1)
+        }
+
+        indices[i + 2] += indices[i]; // i_(k, 3) + i_(k, 1)
+    }
+}
+
+fn parse_triangle_indices(mut input: impl io::BufRead, triangle_count: u32) -> Result<Vec<u32>, Error> {
+    input.read_magic_bytes(b"INDX")?;
+
+    let triangle_count = triangle_count as usize;
+    let index_count = 3 * triangle_count;
+
+    let mut indices = input.read_packed_u32s(index_count, 3 * 4)?;
+    restore_indices(&mut indices);
+
+    let mut triangles = vec![Default::default(); triangle_count];
+    for i in 0..triangle_count {
+        triangles[i] = Triangle {
+            a: indices[3 * i],
+            b: indices[3 * i + 1],
+            c: indices[3 * i + 2],
+        }
+    }
+    Ok(indices)
+}
+
 fn parse_mg1(header: &OpenCTMHeader, mut input: impl io::BufRead) -> Result<File, Error> {
-    let indices = {
-        let mut magic_bytes = [0 as u8; 4];
-        input.read_exact(&mut magic_bytes)?;
-        assert_eq!(b"INDX", &magic_bytes);
-
-        let triangle_count = header.triangle_count as usize;
-        let index_count = 3 * triangle_count;
-        let decomp = input.read_packed_data(4 * index_count, 3 * 4)?;
-
-        let mut indices = vec![Default::default(); index_count];
-        let mut rdr = io::Cursor::new(decomp);
-        rdr.read_u32_into::<LittleEndian>(&mut indices)?;
-
-        indices[1] += indices[0]; // i_(k, 2) + i_(k, 1)
-        indices[2] += indices[0]; // i_(k, 3) + i_(k, 1)
-
-        for i in (3..indices.len()).step_by(3) {
-            indices[i] += indices[i - 3];
-            if indices[i] == indices[i - 3] {
-                indices[i + 1] += indices[i - 3 + 1]; // i_(k, 2) + i_(k-1, 2)
-            } else {
-                indices[i + 1] += indices[i]; // i_(k, 2) + i_(k, 1)
-            }
-
-            indices[i + 2] += indices[i]; // i_(k, 3) + i_(k, 1)
-        }
-
-        let mut triangles = vec![Default::default(); triangle_count];
-        for i in 0..triangle_count {
-            triangles[i] = Triangle {
-                a: indices[3 * i],
-                b: indices[3 * i + 1],
-                c: indices[3 * i + 2],
-            }
-        }
-        indices
-    };
+    let indices = parse_triangle_indices(&mut input, header.triangle_count)?;
 
     let vertex_count = header.vertex_count as usize;
     let vertices = {
-        let mut magic_bytes = [0 as u8; 4];
-        input.read_exact(&mut magic_bytes)?;
-        assert_eq!(b"VERT", &magic_bytes);
+        input.read_magic_bytes(b"VERT")?;
 
         let component_count = vertex_count * 3;
-        let decomp = input.read_packed_data(4 * component_count, 4)?;
-
-        let mut components = vec![Default::default(); component_count];
-        let mut rdr = io::Cursor::new(decomp);
-        rdr.read_f32_into::<LittleEndian>(&mut components)?;
+        let components = input.read_packed_f32s(component_count, 4)?;
 
         let mut vertices = vec![Default::default(); vertex_count];
         for i in 0..vertex_count {
@@ -242,17 +307,10 @@ fn parse_mg1(header: &OpenCTMHeader, mut input: impl io::BufRead) -> Result<File
     let normals = if !header.has_normals() {
         None
     } else {
-        let mut magic_bytes = [0 as u8; 4];
-        input.read_exact(&mut magic_bytes)?;
-        assert_eq!(b"NORM", &magic_bytes);
+        input.read_magic_bytes(b"NORM")?;
 
         let component_count = vertex_count * 3;
-
-        let decomp = input.read_packed_data(4 * component_count, 4)?;
-
-        let mut components = vec![Default::default(); component_count];
-        let mut rdr = io::Cursor::new(decomp);
-        rdr.read_f32_into::<LittleEndian>(&mut components)?;
+        let components = input.read_packed_f32s(component_count, 4)?;
 
         let mut normals = vec![Default::default(); vertex_count];
         for i in 0..vertex_count {
@@ -277,12 +335,7 @@ fn parse_mg1(header: &OpenCTMHeader, mut input: impl io::BufRead) -> Result<File
             let file_name = input.read_ctm_string()?;
 
             let component_count = vertex_count * 2;
-
-            let decomp = input.read_packed_data(4 * component_count, 4)?;
-
-            let mut components = vec![Default::default(); component_count];
-            let mut rdr = io::Cursor::new(decomp);
-            rdr.read_f32_into::<LittleEndian>(&mut components)?;
+            let components = input.read_packed_f32s(component_count, 4)?;
 
             let mut coordinates = vec![Default::default(); vertex_count];
             for i in 0..vertex_count {
@@ -312,12 +365,112 @@ fn parse_mg1(header: &OpenCTMHeader, mut input: impl io::BufRead) -> Result<File
     })
 }
 
-pub fn parse(mut input: impl io::BufRead) -> Result<File, Error> {
-    let mut magic_bytes = [0 as u8; 4];
-    input.read_exact(&mut magic_bytes)?;
-    if b"OCTM" != &magic_bytes {
-        return Err(Error::new("Malformed OCTM file"));
+fn restore_grid_indices(grid_indices: &mut Vec<u32>) {
+    for i in 1..grid_indices.len() {
+        grid_indices[i] += grid_indices[i - 1];
     }
+}
+
+fn restore_vertices(vertex_components: &Vec<u32>, vertex_count: usize, grid_indices: &Vec<u32>, mg2_header: &MG2Header) -> Vec<Vertex> {
+    let precision = mg2_header.vertex_precision;
+    let y_div = mg2_header.div_x as f32;
+    let z_div = y_div * mg2_header.div_y as f32;
+    let size_x = mg2_header.size_x();
+    let size_y = mg2_header.size_y();
+    let size_z = mg2_header.size_z();
+
+    let mut prev_grid_index = 0x7fffffff;
+    let mut prev_delta_x = 0;
+
+
+    let mut vertices: Vec<Vertex> = vec![Default::default(); vertex_count];
+    for (i, vertex) in vertices.iter_mut().enumerate() {
+        let j = 3 * i;
+        let grid_index = grid_indices[i];
+
+        let mut x = grid_index as f32;
+        let z = x / z_div;
+        x -= z * z_div;
+        let y = x / y_div;
+        x -= y * y_div;
+
+        let mut delta_x = vertex_components[j];
+        if grid_index == prev_grid_index {
+            delta_x += prev_delta_x;
+        }
+
+        let lower_bound = mg2_header.lower_bound;
+        vertex.x = precision * delta_x as f32 + x * size_x + lower_bound.x;
+        vertex.y = precision * vertex_components[j + 1] as f32 + y * size_y + lower_bound.y;
+        vertex.z = precision * vertex_components[j + 2] as f32 + z * size_z + lower_bound.z;
+
+        prev_grid_index = grid_index;
+        prev_delta_x = delta_x;
+    }
+    vertices
+}
+
+fn parse_mg2(header: &OpenCTMHeader, mut input: impl io::BufRead) -> Result<File, Error> {
+    let mg2_header = {
+        input.read_magic_bytes(b"MG2H")?;
+        let vertex_precision = input.read_f32::<LittleEndian>()?;
+        let normal_precision = input.read_f32::<LittleEndian>()?;
+        let lower_bound = Bound {
+            x: input.read_f32::<LittleEndian>()?,
+            y: input.read_f32::<LittleEndian>()?,
+            z: input.read_f32::<LittleEndian>()?,
+        };
+        let upper_bound = Bound {
+            x: input.read_f32::<LittleEndian>()?,
+            y: input.read_f32::<LittleEndian>()?,
+            z: input.read_f32::<LittleEndian>()?,
+        };
+        let div_x = input.read_i32::<LittleEndian>()?;
+        let div_y = input.read_i32::<LittleEndian>()?;
+        let div_z = input.read_i32::<LittleEndian>()?;
+
+        MG2Header {
+            vertex_precision,
+            normal_precision,
+            lower_bound,
+            upper_bound,
+            div_x,
+            div_y,
+            div_z,
+        }
+    };
+
+    let vertex_count = header.vertex_count as usize;
+
+    let vertex_components = {
+        input.read_magic_bytes(b"VERT")?;
+
+        let component_count = vertex_count * 3;
+        input.read_packed_u32s(component_count, 3 * 4)?
+    };
+
+    let grid_indices = {
+        input.read_magic_bytes(b"GIDX")?;
+
+        let mut grid_indices = input.read_packed_u32s(vertex_count, 4)?;
+        restore_grid_indices(&mut grid_indices);
+
+        grid_indices
+    };
+
+    let vertices = restore_vertices(&vertex_components, vertex_count, &grid_indices, &mg2_header);
+    let indices = parse_triangle_indices(&mut input, header.triangle_count)?;
+
+    Ok(File {
+        indices,
+        vertices,
+        normals: None,
+        uv_maps: vec![],
+    })
+}
+
+pub fn parse(mut input: impl io::BufRead) -> Result<File, Error> {
+    let magic_bytes = input.read_magic_bytes(b"OCTM")?;
 
     let file_format = input.read_i32::<LittleEndian>()?;
     if file_format != 5 {
@@ -354,8 +507,9 @@ pub fn parse(mut input: impl io::BufRead) -> Result<File, Error> {
     }
 
     match num::FromPrimitive::from_i32(compression_method) {
-        Some(CompressionMethod::MG1) => { parse_mg1(&header, input) }
-        Some(_) => return Err(error!("Compression method not yet implemented")), // TODO replace with Result
+        Some(CompressionMethod::MG1) => parse_mg1(&header, input),
+        Some(CompressionMethod::MG2) => parse_mg2(&header, input),
+        Some(CompressionMethod::RAW) => return Err(error!("RAW compression method not yet implemented")), // TODO replace with Result
         None => return Err(error!("Unknown compression method")), // TODO replace with Result
     }
 }
