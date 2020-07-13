@@ -60,7 +60,7 @@
     "jest-image-snapshot": "^4.0.2",
     "jest-puppeteer": "^4.4.0",
     "prettier": "^2.0.5",
-    "puppeteer": "^5.0.0",
+    "puppeteer": "^5.1.0",
     "react-app-rewired": "^2.1.6",
     "react-scripts": "3.4.1",
     "start-server-and-test": "^1.11.2",
