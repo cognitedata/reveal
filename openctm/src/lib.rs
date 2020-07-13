@@ -41,13 +41,6 @@ pub enum CompressionMethod {
 }
 
 #[derive(Clone, Copy, Debug, Default, Deserialize, Serialize)]
-pub struct Triangle {
-    pub a: u32,
-    pub b: u32,
-    pub c: u32,
-}
-
-#[derive(Clone, Copy, Debug, Default, Deserialize, Serialize)]
 pub struct Normal {
     pub x: f32,
     pub y: f32,
@@ -272,14 +265,6 @@ fn parse_triangle_indices(mut input: impl io::BufRead, triangle_count: u32) -> R
     let mut indices = input.read_packed_u32s(index_count, 3 * 4)?;
     restore_indices(&mut indices);
 
-    let mut triangles = vec![Default::default(); triangle_count];
-    for i in 0..triangle_count {
-        triangles[i] = Triangle {
-            a: indices[3 * i],
-            b: indices[3 * i + 1],
-            c: indices[3 * i + 2],
-        }
-    }
     Ok(indices)
 }
 
