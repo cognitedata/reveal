@@ -40,6 +40,7 @@ pub enum CompressionMethod {
     MG2 = 0x0032_474d,
 }
 
+#[repr(C)]
 #[derive(Clone, Copy, Debug, Default, Deserialize, Serialize)]
 pub struct Normal {
     pub x: f32,
@@ -47,6 +48,7 @@ pub struct Normal {
     pub z: f32,
 }
 
+#[repr(C)]
 #[derive(Clone, Copy, Debug, Default, Deserialize, Serialize)]
 pub struct Vertex {
     pub x: f32,
@@ -61,6 +63,7 @@ pub struct UvMap {
     pub coordinates: Vec<TextureCoordinate>,
 }
 
+#[repr(C)]
 #[derive(Clone, Copy, Debug, Default, Deserialize, Serialize)]
 pub struct TextureCoordinate {
     pub u: f32,
@@ -305,6 +308,7 @@ fn parse_mg1(header: &OpenCTMHeader, mut input: impl io::BufRead) -> Result<File
                 z: components[3 * i + 2],
             }
         }
+
         Some(normals)
     };
 
@@ -312,9 +316,7 @@ fn parse_mg1(header: &OpenCTMHeader, mut input: impl io::BufRead) -> Result<File
         let uv_map_count = header.uv_map_count as usize;
         let mut uv_maps = Vec::new();
         for _ in 0..uv_map_count {
-            let mut magic_bytes = [0 as u8; 4];
-            input.read_exact(&mut magic_bytes)?;
-            assert_eq!(b"TEXC", &magic_bytes);
+            input.read_magic_bytes(b"TEXC")?;
 
             let name = input.read_ctm_string()?;
             let file_name = input.read_ctm_string()?;
@@ -446,11 +448,20 @@ fn parse_mg2(header: &OpenCTMHeader, mut input: impl io::BufRead) -> Result<File
     let vertices = restore_vertices(&vertex_components, vertex_count, &grid_indices, &mg2_header);
     let indices = parse_triangle_indices(&mut input, header.triangle_count)?;
 
+    let normals = if header.has_normals() {
+        Some(vec![Normal::default(); vertex_count])
+        // TODO
+    } else {
+        None
+    };
+
+    let uv_maps = vec![]; // TODO
+
     Ok(File {
         indices,
         vertices,
-        normals: None,
-        uv_maps: vec![],
+        normals,
+        uv_maps,
     })
 }
 
