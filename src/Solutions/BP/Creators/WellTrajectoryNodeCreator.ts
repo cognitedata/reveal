@@ -8,6 +8,8 @@ export default class WellTrajectoryNodeCreator
 {
     public static create(trajectoryDataColumnIndices: ITrajectoryColumnIndices, trajectoryRows: ITrajectoryRows | null | undefined, elevation: number, unit: number): WellTrajectoryNode | null
     {
+        function getIndex(value?: number): number { return value === undefined ? -1 : value; }
+
         // Some trajectories missing data
         if (!trajectoryRows || !trajectoryRows.rows.length)
         {
@@ -15,12 +17,13 @@ export default class WellTrajectoryNodeCreator
             console.warn("NodeVisualizer: No trajectory available for well");
             return null;
         }
-        const mdIndex = trajectoryDataColumnIndices.md === undefined ? -1 : trajectoryDataColumnIndices.md;
-        const azimuthIndex = trajectoryDataColumnIndices.azimuth === undefined ? -1 : trajectoryDataColumnIndices.azimuth;
-        const inclinationIndex = trajectoryDataColumnIndices.inclination === undefined ? -1 : trajectoryDataColumnIndices.inclination;
-        const tvdIndex = trajectoryDataColumnIndices.tvd === undefined ? -1 : trajectoryDataColumnIndices.tvd;
-        const xOffsetIndex = trajectoryDataColumnIndices.x_offset === undefined ? -1 : trajectoryDataColumnIndices.x_offset;
-        const yOffsetIndex = trajectoryDataColumnIndices.y_offset === undefined ? -1 : trajectoryDataColumnIndices.y_offset;
+        const mdIndex = getIndex(trajectoryDataColumnIndices.md);
+        const azimuthIndex = getIndex(trajectoryDataColumnIndices.azimuth);
+        const inclinationIndex = getIndex(trajectoryDataColumnIndices.inclination);
+        const tvdIndex = getIndex(trajectoryDataColumnIndices.tvd);
+        const xOffsetIndex = getIndex(trajectoryDataColumnIndices.x_offset);
+        const yOffsetIndex = getIndex(trajectoryDataColumnIndices.y_offset);
+
         const trajectory = new WellTrajectory();
         // Iterate through rows array
         if (xOffsetIndex >= 0 && yOffsetIndex >= 0 && tvdIndex >= 0)
@@ -34,13 +37,13 @@ export default class WellTrajectoryNodeCreator
                 const y = curvePoint[yOffsetIndex];
                 if (Number.isNaN(y))
                     continue;
-                let z = curvePoint[tvdIndex]; // Assume md is same as z
+                let z = curvePoint[tvdIndex];
                 if (Number.isNaN(z))
                     continue;
                 let md = Number.NaN;
                 if (mdIndex >= 0)
                 {
-                    md = curvePoint[mdIndex]; // Assume md is same as z
+                    md = curvePoint[mdIndex];
                     if (!Number.isNaN(md))
                         md *= unit;
                 }
@@ -62,7 +65,7 @@ export default class WellTrajectoryNodeCreator
             for (const curvePointData of trajectoryRows.rows)
             {
                 const curvePoint = curvePointData.values;
-                let md = curvePoint[mdIndex]; // Assume md is same as z
+                let md = curvePoint[mdIndex];
                 if (Number.isNaN(md))
                     continue;
                 const azimuth = curvePoint[azimuthIndex];

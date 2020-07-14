@@ -129,14 +129,23 @@ export class PointLogThreeView extends BaseGroupThreeView
     if (!log)
       return;
 
+    const wellNode = node.wellNode;
+    if (!wellNode)
+      return;
+
     const trajectory = node.trajectory;
     if (!trajectory)
       return;
 
+    const transformer = this.transformer;
     const camera = this.camera;
-    const cameraPosition = ThreeConverter.toWorld(camera.position);
+    const cameraPosition = transformer.toWorld(camera.position);
+    cameraPosition.substract(wellNode.origin);
+
     const cameraDirection = trajectory.range.center;
-    this.transformer.transformTo3D(cameraDirection);
+
+    transformer.transformRelativeTo3D(cameraPosition);
+    transformer.transformRelativeTo3D(cameraDirection);
 
     cameraDirection.substract(cameraPosition);
     cameraDirection.normalize();
@@ -149,7 +158,6 @@ export class PointLogThreeView extends BaseGroupThreeView
     this.cameraDirection = cameraDirection;
     this.cameraPosition = cameraPosition;
 
-    const transformer = this.transformer;
     const position = Vector3.newZero;
     const tangent = Vector3.newZero;
     const selectedRadius = this.radius * selectedRadiusFactor;
@@ -160,7 +168,7 @@ export class PointLogThreeView extends BaseGroupThreeView
       if (index == undefined)
         continue;
 
-        const sample = log.getAt(index);
+      const sample = log.getAt(index);
       if (sample.isMdEmpty)
         continue;
 
@@ -188,7 +196,7 @@ export class PointLogThreeView extends BaseGroupThreeView
     if (!parent)
       return;
 
-      const index = intersection.object.userData["sphere"];
+    const index = intersection.object.userData["sphere"];
     if (index == undefined)
       return;
 
@@ -206,8 +214,8 @@ export class PointLogThreeView extends BaseGroupThreeView
       return;
 
     sample.isOpen = !sample.isOpen;
-    node.notify(new NodeEventArgs(Changes.pointOpenOrClosed));  
-    
+    node.notify(new NodeEventArgs(Changes.pointOpenOrClosed));
+
     const viewInfo = this.renderTarget.viewInfo;
     const md = WellTrajectoryThreeView.startPickingAndReturnMd(this, viewInfo, intersection, sample.md);
     if (md == undefined)
@@ -247,7 +255,7 @@ export class PointLogThreeView extends BaseGroupThreeView
     const group = new THREE.Group();
     const transformer = this.transformer;
 
-    const radius = style.radius;
+    const radius = this.radius;
     const selectedRadius = radius * selectedRadiusFactor;
     const closedGeometry = new THREE.SphereGeometry(radius, 16, 8);
     const openGeometry = new THREE.SphereGeometry(selectedRadius, 16, 8);
@@ -318,19 +326,24 @@ export class PointLogThreeView extends BaseGroupThreeView
 
   protected get radius(): number
   {
+    let radius = 20;
     const node = this.node;
     if (!node)
-      return 0;
+      return radius;
 
+    const style = this.style;
+    if (style)
+      radius = style.radius;
+  
     const trajectoryNode = node.trajectoryNode;
     if (!trajectoryNode)
-      return 0;
+      return radius;
 
     const wellRenderStyle = trajectoryNode.getRenderStyle(this.targetId) as WellTrajectoryStyle;
-    if (!wellRenderStyle)
-      return 0;
+    if (wellRenderStyle)
+      radius += wellRenderStyle.radius;
 
-    return Math.max(10, wellRenderStyle.radius * 2);
+    return radius;
   }
 
 
