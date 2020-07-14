@@ -25,7 +25,6 @@ import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { BoundingBoxClipper, File3dFormat, isMobileOrTablet } from '@/utilities';
 import { Spinner } from '@/utilities/Spinner';
-import { addPostRenderEffects } from '@/datamodels/cad/rendering/postRenderEffects';
 import { trackError, initMetrics, trackLoadModel } from '@/utilities/metrics';
 import { RevealManager } from '../RevealManager';
 import { createCdfRevealManager } from '../createRevealManager';
@@ -468,7 +467,7 @@ export class Cognite3DViewer {
 
     this.renderer.setSize(width, height);
     this.renderer.render(this.scene, screenshotCamera);
-    addPostRenderEffects(this._revealManager, this.renderer, screenshotCamera, this.scene);
+    this._revealManager.render(this.renderer, screenshotCamera, this.scene);
     const url = this.renderer.domElement.toDataURL();
 
     this.renderer.setSize(originalWidth, originalHeight);
@@ -613,9 +612,6 @@ export class Cognite3DViewer {
 
     if (isVisible) {
       const { renderController } = this;
-      // if (this._enableProfiler) {
-      //   this._performanceMonitor.begin();
-      // }
       TWEEN.update(time);
       const didResize = this.resizeIfNecessary();
       if (didResize) {
@@ -632,8 +628,7 @@ export class Cognite3DViewer {
         this._slicingNeedsUpdate
       ) {
         this.triggerUpdateCameraNearAndFar();
-        this.renderer.render(this.scene, this.camera);
-        addPostRenderEffects(this._revealManager, this.renderer, this.camera, this.scene);
+        this._revealManager.render(this.renderer, this.camera, this.scene);
         renderController.clearNeedsRedraw();
         this._revealManager.resetRedraw();
         this._slicingNeedsUpdate = false;

@@ -18,10 +18,12 @@ import { NodeAppearanceProvider, CadNode } from '@/datamodels/cad';
 import { PotreeGroupWrapper } from '@/datamodels/pointcloud/PotreeGroupWrapper';
 import { PotreeNodeWrapper } from '@/datamodels/pointcloud/PotreeNodeWrapper';
 import { RenderMode } from '@/datamodels/cad/rendering/RenderMode';
+import { EffectRenderManager } from '@/datamodels/cad/rendering/EffectRenderManager';
 
 export class RevealManager<TModelIdentifier> {
   private readonly _cadManager: CadManager<TModelIdentifier>;
   private readonly _pointCloudManager: PointCloudManager<TModelIdentifier>;
+  private readonly _effectRenderManager: EffectRenderManager;
 
   private readonly _lastCamera = {
     position: new THREE.Vector3(NaN, NaN, NaN),
@@ -40,6 +42,7 @@ export class RevealManager<TModelIdentifier> {
   constructor(cadManager: CadManager<TModelIdentifier>, pointCloudManager: PointCloudManager<TModelIdentifier>) {
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;
+    this._effectRenderManager = new EffectRenderManager(this._cadManager.materialManager);
     this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
   }
 
@@ -142,6 +145,10 @@ export class RevealManager<TModelIdentifier> {
       default:
         throw new Error(`Unsupported event '${event}'`);
     }
+  }
+
+  public render(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera, scene: THREE.Scene) {
+    this._effectRenderManager.render(renderer, camera, scene);
   }
 
   public addModel(
