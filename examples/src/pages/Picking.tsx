@@ -51,13 +51,13 @@ export function Picking() {
 
       const revealOptions: RevealOptions = { nodeAppearanceProvider };
       let model: reveal.CadNode;
-      if(modelRevision) {
+      if (modelRevision) {
         revealManager = reveal.createCdfRevealManager(client, revealOptions);
-        model = await revealManager.addModel('cad', modelRevision);
-      } else if(modelUrl) {
+        model = await revealManager.addModel('cad', modelRevision, nodeAppearanceProvider);
+      } else if (modelUrl) {
         revealManager = reveal.createLocalRevealManager(revealOptions);
-        model = await revealManager.addModel('cad', modelUrl);
-      }  else {
+        model = await revealManager.addModel('cad', modelUrl, nodeAppearanceProvider);
+      } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'
         );
@@ -120,7 +120,7 @@ export function Picking() {
           pickingNeedsUpdate ||
           revealManager.needsRedraw
         ) {
-          renderer.render(scene, camera);
+          revealManager.render(renderer, camera, scene);
           pickingNeedsUpdate = false;
           revealManager.resetRedraw();
         }
@@ -133,11 +133,11 @@ export function Picking() {
         const coords = {
           x:
             ((event.clientX - rect.left) / renderer.domElement.clientWidth) *
-              2 -
+            2 -
             1,
           y:
             ((event.clientY - rect.top) / renderer.domElement.clientHeight) *
-              -2 +
+            -2 +
             1,
         };
         // Pick in Reveal

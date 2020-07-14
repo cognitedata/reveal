@@ -16,7 +16,6 @@ export { SectorMetadata } from './datamodels/cad/sector/types';
 export { CadRenderHints } from './datamodels/cad/rendering/CadRenderHints';
 export { CadLoadingHints } from './datamodels/cad/CadLoadingHints';
 export { intersectCadNodes } from './datamodels/cad/picking';
-export { addPostRenderEffects } from './datamodels/cad/rendering/postRenderEffects';
 
 // Point cloud
 export { PointCloudMetadata } from './datamodels/pointcloud';
