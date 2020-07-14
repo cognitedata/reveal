@@ -17,9 +17,13 @@ function createMockAttributes(): Map<string, ParsePrimitiveAttribute> {
   const mockAttribute1: ParsePrimitiveAttribute = { offset: 4, size: 8 };
   const mockAttribute2: ParsePrimitiveAttribute = { offset: 12, size: 12 };
 
+  const treeIndexAttribute: ParsePrimitiveAttribute = { offset: 16, size: 4 };
+
   map.set('attrOne', mockAttribute0);
   map.set('attrTwo', mockAttribute1);
   map.set('attrThree', mockAttribute2);
+
+  map.set('treeIndex', treeIndexAttribute);
 
   return map;
 }

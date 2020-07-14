@@ -27,6 +27,10 @@ export class CadManager<TModelIdentifier> {
 
   private _needsRedraw: boolean = false;
 
+  get materialManager() {
+    return this._materialManager;
+  }
+
   constructor(
     materialManger: MaterialManager,
     cadModelMetadataRepository: CadModelMetadataRepository<TModelIdentifier>,
