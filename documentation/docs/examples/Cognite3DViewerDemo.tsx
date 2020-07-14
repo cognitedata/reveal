@@ -3,7 +3,6 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
 import {
   AddModelOptions,
   Cognite3DViewer,
@@ -16,12 +15,7 @@ import {
   POPUP,
 } from '@cognite/sdk';
 
-const CanvasWrapper = styled.div`
-  & > canvas {
-    display: block;
-    max-height: 95vh;
-  }
-`;
+import { CanvasWrapper } from '../../src/components/styled';
 
 export default function Cognite3DViewerDemo() {
   const canvasWrapperRef = useRef(null);
