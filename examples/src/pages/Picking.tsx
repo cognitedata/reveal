@@ -42,9 +42,6 @@ export function Picking() {
 
       const nodeAppearanceProvider: reveal.NodeAppearanceProvider = {
         styleNode(treeIndex: number) {
-          if (treeIndex < 20) {
-            return reveal.DefaultNodeAppearance.Highlighted;
-          }
           if (pickedNodes.has(treeIndex)) {
             return reveal.DefaultNodeAppearance.Highlighted;
           }

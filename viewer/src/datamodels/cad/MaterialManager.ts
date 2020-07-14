@@ -105,9 +105,7 @@ export class MaterialManager {
     const inFrontSet = this._inFrontTreeIndices.get(modelIdentifier)!;
     for (let i = 0; i < count; ++i) {
       const treeIndex = treeIndices[i];
-      let style = appearanceProvider.styleNode(treeIndex);
-
-      style = style ? style : {};
+      const style = appearanceProvider.styleNode(treeIndex) || {};
 
       // Override color
       materials.overrideColorPerTreeIndex.image.data[4 * treeIndex] = style.color ? style.color[0] : 0;
@@ -122,12 +120,10 @@ export class MaterialManager {
       }
 
       const visible = style!.visible === undefined ? true : style.visible;
-      // tslint:disable: no-bitwise
       materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 3] =
         (visible ? 1 << 0 : 0) +
         (style.renderInFront ? 1 << 1 : 0) +
         (style.outlineColor ? style.outlineColor << 2 : 0);
-      // tslint:enable: no-bitwise
       materials.overrideColorPerTreeIndex.needsUpdate = true;
     }
   }
