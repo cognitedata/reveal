@@ -9,3 +9,36 @@ i.e., just want to view some 3d models from CDF.
 import DemoWrapper from '../../src/components/DemoWrapper';
 
 <DemoWrapper name="Cognite3DViewerDemo" />
+
+```jsx
+import { CogniteClient } from '@cognite/sdk';
+import { Cognite3DViewer } from '@cognite/reveal';
+
+const client = new CogniteClient({
+  appId: 'cognite.reveal.docs.Cognite3DViewer',
+});
+
+// to view models from CDF authentication is required
+client.loginWithOAuth({ project: 'publicdata' });
+
+// some div in your html page for Cognite3DViewer to insert a canvas
+const domElement = document.getElementById('canvas-wrapper');
+
+async function main() {
+  const viewer = new Cognite3DViewer({ sdk: client, domElement });
+
+  // load a model and add it on 3d scene
+  // https://console.cognitedata.com/publicdata/3d-models/4715379429968321/revisions/5688854005909501
+  const model = await viewer.addModel({
+    modelId: 4715379429968321,
+    revisionId: 5688854005909501,
+  });
+
+  viewer.fitCameraToModel(model);
+
+  // call viewer.dispose() when you don't need the viewer anymore
+}
+main();
+```
+
+The full source code for the demo could be found [here](https://github.com/cognitedata/reveal/blob/master/documentation/docs/examples/Cognite3DViewerDemo.tsx)
