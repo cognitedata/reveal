@@ -22,6 +22,17 @@ export class AxisRenderStyle extends BaseRenderStyle
   // INSTANCE FIELDS
   //==================================================
 
+  public showAxis = true;
+  public showAxisLabel = true;
+  public showAxisNumbers = true;
+  public showAxisTicks = true;
+  public showGrid = true;
+
+  public numTicks = 50; // Appoximately number of ticks for the largest axis
+  public tickLength = 0.005; // In fraction of the bounding box diagonal
+  public tickFontSize = 1.5; // In fraction of the real tickLength
+  public labelFontSize = 3; // In fraction of the real tickLength
+
   //==================================================
   // CONSTRUCTORS
   //==================================================

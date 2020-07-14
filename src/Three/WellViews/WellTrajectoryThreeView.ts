@@ -94,8 +94,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     // Pattern: SYNC_LOGS_AND_FILTERLOGS
     super.onShowCore();
 
-    const trajectoryNode = this.node;
-
+    const trajectoryNode = this.node;    
     const filterLogFolder = trajectoryNode.getFilterLogFolder();
 
     if (!filterLogFolder)
@@ -260,8 +259,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       }
     }
     let cameraChanged = false;
-    const transformer = this.transformer;
     {
+      const transformer = this.transformer;
       const camera = this.camera;
       const cameraPosition = transformer.toWorld(camera.position);
       cameraPosition.substract(wellNode.origin);
