@@ -358,7 +358,7 @@ fn restore_grid_indices(grid_indices: &mut Vec<u32>) {
     }
 }
 
-fn restore_vertices(vertex_components: &Vec<u32>, vertex_count: usize, grid_indices: &Vec<u32>, mg2_header: &MG2Header) -> Vec<Vertex> {
+fn restore_vertices(vertex_components: &[u32], vertex_count: usize, grid_indices: &[u32], mg2_header: &MG2Header) -> Vec<Vertex> {
     let precision = mg2_header.vertex_precision;
     let y_div = mg2_header.div_x as f32;
     let z_div = y_div * mg2_header.div_y as f32;
@@ -505,7 +505,7 @@ pub fn parse(mut input: impl io::BufRead) -> Result<File, Error> {
     match num::FromPrimitive::from_i32(compression_method) {
         Some(CompressionMethod::MG1) => parse_mg1(&header, input),
         Some(CompressionMethod::MG2) => parse_mg2(&header, input),
-        Some(CompressionMethod::RAW) => return Err(error!("RAW compression method not yet implemented")), // TODO replace with Result
-        None => return Err(error!("Unknown compression method")), // TODO replace with Result
+        Some(CompressionMethod::RAW) => Err(error!("RAW compression method not yet implemented")), // TODO replace with Result
+        None => Err(error!("Unknown compression method")), // TODO replace with Result
     }
 }
