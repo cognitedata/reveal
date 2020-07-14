@@ -1,0 +1,44 @@
+{
+  "name": "@cognite/griff-loader",
+  "version": "1.0.6",
+  "description": "Griff loader towards the Cognite API",
+  "main": "dist/griff-loader.js",
+  "module": "dist/griff-loader.esm.js",
+  "browser": "dist/griff-loader.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rm -rf dist/ build/ ; microbundle build --target=browser",
+    "watch": "microbundle watch --target=browser",
+    "test": "jest",
+    "test-watch": "jest --watch",
+    "lint": "yarn prettier",
+    "prettier": "prettier -l 'src/**/*'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/cognitedata/frontend/packages/browser/griff-loader"
+  },
+  "keywords": [
+    "griff",
+    "react",
+    "griff-loader",
+    "cognite",
+    "cognite-loader",
+    "griff-react"
+  ],
+  "author": "Cognite AS",
+  "license": "Apache-2.0",
+  "peerDependencies": {
+    "@cognite/sdk": "^2.2.2"
+  },
+  "devDependencies": {
+    "@cognite/sdk": "^2.2.2",
+    "@types/node": "^14.0.13",
+    "microbundle": "^0.12.2"
+  },
+  "dependencies": {
+    "immutable": "^4.0.0-rc.12"
+  }
+}

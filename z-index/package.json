@@ -1,0 +1,31 @@
+{
+  "name": "@cognite/z-index",
+  "version": "0.1.0",
+  "description": "",
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "browser": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "jest",
+    "build": "microbundle --target=browser",
+    "watch": "yarn build --watch",
+    "lint": "yarn prettier",
+    "lint:fix": "yarn prettier --write",
+    "prettier": "prettier -l 'src/**/*'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/frontend"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "homepage": "https://github.com/cognitedata/frontend/tree/master/packages/browser/z-index",
+  "devDependencies": {
+    "microbundle": "^0.12.2"
+  }
+}
