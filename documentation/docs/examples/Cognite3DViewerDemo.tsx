@@ -2,53 +2,20 @@
  * Copyright 2020 Cognite AS
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   AddModelOptions,
   Cognite3DViewer,
   SupportedModelTypes,
 } from '@cognite/reveal';
-import {
-  CogniteClient,
-  isLoginPopupWindow,
-  loginPopupHandler,
-  POPUP,
-} from '@cognite/sdk';
 
 import { CanvasWrapper } from '../../src/components/styled';
+import { DemoProps } from '../../src/components/DemoProps';
 
-export default function Cognite3DViewerDemo() {
+export default function Cognite3DViewerDemo({ client }: DemoProps) {
   const canvasWrapperRef = useRef(null);
-  const [client, setClient] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   useEffect(() => {
-    if (isLoginPopupWindow()) {
-      loginPopupHandler();
-      return;
-    }
-
-    const client = new CogniteClient({
-      appId: 'cognite.reveal.docs.Cognite3DViewer',
-    });
-    client.loginWithOAuth({
-      project: '3ddemo',
-      onAuthenticate: POPUP,
-    });
-
-    setClient(client);
-  }, []);
-
-  useEffect(() => {
-    if (!client) {
-      return;
-    }
-
-    client.authenticate().then(() => {
-      setIsLoggedIn(true);
-    });
-
-    if (!isLoggedIn || !canvasWrapperRef.current) {
+    if (!client || !canvasWrapperRef.current) {
       return;
     }
 
@@ -79,19 +46,7 @@ export default function Cognite3DViewerDemo() {
     return () => {
       viewer && viewer.dispose();
     };
-  }, [client, isLoggedIn]);
-
-  if (!isLoggedIn) {
-    return (
-      <button
-        onClick={() => {
-          client.authenticate().then(() => setIsLoggedIn(true));
-        }}
-      >
-        Login
-      </button>
-    );
-  }
+  }, [client]);
 
   return <CanvasWrapper ref={canvasWrapperRef} />;
 }
