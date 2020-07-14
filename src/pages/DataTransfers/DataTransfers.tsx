@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useContext, useEffect, useReducer } from 'react';
 import { DataTransferObject } from 'typings/interfaces';
 import { Checkbox, Table } from 'antd';
@@ -216,19 +215,18 @@ const DataTransfers: React.FC = () => {
 
   const { api } = useContext(ApiContext);
 
-  // noinspection JSUnusedLocalSymbols
-  function getColumnNames(d: DataTransferObject[]): string[] {
+  function getColumnNames(dataTransferObjects: DataTransferObject[]): string[] {
     const results: string[] = [];
-    Object.keys(d[0]).forEach((k) => {
+    Object.keys(dataTransferObjects[0]).forEach((k) => {
       results.push(k);
     });
     return results;
   }
 
-  function updateColumnSelection(e: CheckboxChangeEvent) {
-    const columnName = e.target.name;
+  function updateColumnSelection(event: CheckboxChangeEvent) {
+    const columnName = event.target.name;
     if (columnName === undefined) return;
-    if (e.target.checked) {
+    if (event.target.checked) {
       dispatch({ type: Action.ADD_COLUMN, payload: columnName });
     } else {
       dispatch({ type: Action.REMOVE_COLUMN, payload: columnName });
@@ -238,7 +236,26 @@ const DataTransfers: React.FC = () => {
   useEffect(() => {
     function fetchDataTransfers() {
       dispatch({ type: Action.LOAD });
-      dispatch({ type: Action.SUCCEED });
+      api!.objects
+        .get()
+        .then((response: DataTransferObject[]) => {
+          dispatch({
+            type: Action.SUCCEED,
+            payload: {
+              data: response,
+              columns: selectColumns(
+                response,
+                config.initialSelectedColumnNames
+              ),
+              rawColumns: selectColumns(response, []),
+              allColumnNames: getColumnNames(response),
+              selectedColumnNames: config.initialSelectedColumnNames,
+            },
+          });
+        })
+        .catch((err: DataTransfersError) => {
+          dispatch({ type: Action.FAIL, error: err });
+        });
     }
     fetchDataTransfers();
   }, [api]);
@@ -253,7 +270,7 @@ const DataTransfers: React.FC = () => {
         <Dropdown
           content={
             <SelectColumnsMenu
-              columnNames={data!.allColumnNames}
+              columnNames={data.allColumnNames}
               selectedColumnNames={data.selectedColumnNames}
               onChange={updateColumnSelection}
             />
@@ -272,6 +289,7 @@ const DataTransfers: React.FC = () => {
         dataSource={data.data}
         columns={data.columns}
         loading={status === ProgressState.LOADING}
+        rowKey="id"
       />
     </ContentContainer>
   );
