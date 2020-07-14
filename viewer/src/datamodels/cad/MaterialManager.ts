@@ -39,9 +39,13 @@ export class MaterialManager {
   private _clippingPlanes: THREE.Plane[] = [];
   private _clipIntersection: boolean = false;
 
+  private readonly _inFrontTreeIndices = new Map<string, Set<number>>();
+
   addModelMaterials(modelIdentifier: string, maxTreeIndex: number) {
     const materials = createMaterials(maxTreeIndex + 1, this._renderMode, this._clippingPlanes);
     this.materialsMap.set(modelIdentifier, { materials });
+
+    this._inFrontTreeIndices.set(modelIdentifier, new Set());
   }
 
   setNodeAppearanceProvider(modelIdentifier: string, nodeAppearanceProvider?: NodeAppearanceProvider) {
@@ -52,6 +56,14 @@ export class MaterialManager {
 
   getModelMaterials(modelIdentifier: string): Materials {
     return this.materialsMap.get(modelIdentifier)!.materials;
+  }
+
+  getModelNodeAppearanceProvider(modelIdentifier: string): NodeAppearanceProvider | undefined {
+    return this.materialsMap.get(modelIdentifier)!.nodeAppearanceProvider;
+  }
+
+  getModelInFrontTreeIndices(modelIdentifier: string): Set<number> | undefined {
+    return this._inFrontTreeIndices.get(modelIdentifier);
   }
 
   setRenderMode(mode: RenderMode) {
@@ -76,47 +88,43 @@ export class MaterialManager {
       return;
     }
 
-    this.updateNodeAppearance(appearanceProvider, materials, treeIndices);
+    this.updateNodeAppearance(appearanceProvider, materials, treeIndices, modelIdentifier);
   }
 
   private updateNodeAppearance(
     appearanceProvider: NodeAppearanceProvider | undefined,
     materials: Materials,
-    treeIndices: number[]
+    treeIndices: number[],
+    modelIdentifier: string
   ) {
     if (!appearanceProvider) {
       return;
     }
 
     const count = treeIndices.length;
+    const inFrontSet = this._inFrontTreeIndices.get(modelIdentifier)!;
     for (let i = 0; i < count; ++i) {
       const treeIndex = treeIndices[i];
-      const style = appearanceProvider.styleNode(treeIndex);
+      const style = appearanceProvider.styleNode(treeIndex) || {};
 
       // Override color
-      if (style && style.color !== undefined) {
-        materials.overrideColorPerTreeIndex.image.data[4 * treeIndex] = style.color[0];
-        materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 1] = style.color[1];
-        materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 2] = style.color[2];
-        materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 3] = style.color[3];
-        materials.overrideColorPerTreeIndex.needsUpdate = true;
+      materials.overrideColorPerTreeIndex.image.data[4 * treeIndex] = style.color ? style.color[0] : 0;
+      materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 1] = style.color ? style.color[1] : 0;
+      materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 2] = style.color ? style.color[2] : 0;
+      materials.overrideColorPerTreeIndex.needsUpdate = true;
+
+      if (style.renderInFront) {
+        inFrontSet.add(treeIndex);
+      } else if (inFrontSet.has(treeIndex)) {
+        inFrontSet.delete(treeIndex);
       }
 
-      // Hide node?
-      if (style && style.visible !== undefined) {
-        materials.overrideVisibilityPerTreeIndex.image.data[4 * treeIndex] = style.visible ? 255 : 0;
-        materials.overrideVisibilityPerTreeIndex.needsUpdate = true;
-      }
-
-      // Render in front of everything?
-      if (style && style.renderInFront !== undefined) {
-        materials.overrideVisibilityPerTreeIndex.image.data[4 * treeIndex + 1] = style.renderInFront ? 255 : 0;
-        materials.overrideVisibilityPerTreeIndex.needsUpdate = true;
-      }
-
-      if (style && style.outline !== undefined) {
-        throw new Error('Outline is not supported yet');
-      }
+      const visible = style!.visible === undefined ? true : style.visible;
+      materials.overrideColorPerTreeIndex.image.data[4 * treeIndex + 3] =
+        (visible ? 1 << 0 : 0) +
+        (style.renderInFront ? 1 << 1 : 0) +
+        (style.outlineColor ? style.outlineColor << 2 : 0);
+      materials.overrideColorPerTreeIndex.needsUpdate = true;
     }
   }
 

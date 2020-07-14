@@ -26,11 +26,11 @@ varying vec3 v_normal;
 uniform int renderMode;
 
 void main() {
-    if (!determineVisibility(overrideVisibilityPerTreeIndex, dataTextureSize, v_treeIndex, renderMode)) {
+    if (!determineVisibility(colorDataTexture, dataTextureSize, v_treeIndex, renderMode)) {
         discard;
     }
 
-    vec3 color = determineColor(v_color, colorDataTexture, dataTextureSize, v_treeIndex);
+    vec4 color = determineColor(v_color, colorDataTexture, dataTextureSize, v_treeIndex);
     vec3 normal = normalize(sphereNormal.xyz);
 
     float vRadius = center.w;
