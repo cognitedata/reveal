@@ -2,23 +2,25 @@
  * Copyright 2020 Cognite AS
  */
 
+import * as THREE from 'three';
+import { pipe, GroupedObservable, Observable, OperatorFunction, of, empty } from 'rxjs';
+import { groupBy, mergeMap, distinctUntilKeyChanged, withLatestFrom, flatMap } from 'rxjs/operators';
+
 import { SectorGeometry, SectorMetadata, WantedSector, ConsumedSector } from './types';
 import { Materials } from '../rendering/materials';
-import { toThreeJsBox3 } from '@/utilities';
-import * as THREE from 'three';
 import { createPrimitives } from '../rendering/primitives';
 import { createTriangleMeshes } from '../rendering/triangleMeshes';
 import { createInstancedMeshes } from '../rendering/instancedMeshes';
 import { SectorQuads } from '../rendering/types';
 import { disposeAttributeArrayOnUpload } from '@/utilities/disposeAttributeArrayOnUpload';
-import { pipe, GroupedObservable, Observable, OperatorFunction, of, empty } from 'rxjs';
-import { groupBy, mergeMap, distinctUntilKeyChanged, withLatestFrom, flatMap } from 'rxjs/operators';
+import { toThreeJsBox3 } from '@/utilities';
 import { traverseDepthFirst } from '@/utilities/objectTraversal';
+import { trackError } from '@/utilities/metrics';
 
 const emptyGeometry = new THREE.Geometry();
 
 const quadVertexData = new Float32Array([
-  // tslint:disable: prettier
+  /* eslint-disable prettier/prettier */
   -0.5, -0.5, 0.0,
   0.5, -0.5, 0.0,
   0.5, 0.5, 0.0,
@@ -26,7 +28,7 @@ const quadVertexData = new Float32Array([
   0.5, 0.5, 0.0,
   -0.5, 0.5, 0.0,
   -0.5, -0.5, 0.0,
-  // tslint:enable: prettier
+  /*  eslint-enable prettier/prettier  */
 ]);
 
 const quadVertexBufferAttribute = new THREE.Float32BufferAttribute(quadVertexData.buffer, 3);
@@ -70,7 +72,7 @@ export function consumeSectorSimple(sector: SectorQuads, materials: Materials): 
   const obj = new THREE.Mesh(geometry, materials.simple);
   obj.onAfterRender = () => {
     disposeAttributeArrayOnUpload.bind(interleavedBuffer32)();
-    obj.onAfterRender = () => { };
+    obj.onAfterRender = () => {};
   };
 
   setTreeIndeciesToUserData();
@@ -151,8 +153,10 @@ export function filterCurrentWantedSectors(
             return of(loaded);
           }
         } catch (error) {
-          // tslint:disable-next-line: no-console
-          console.log(error);
+          trackError(error, {
+            moduleName: 'sectorUtilities',
+            methodName: 'filterCurrentWantedSectors'
+          });
         }
       }
       return empty();

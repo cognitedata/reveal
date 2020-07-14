@@ -121,6 +121,7 @@ function createDetermineSectorInput(
     camera,
     clippingPlanes: [],
     clipIntersection: false,
+    cameraInMotion: true,
     cadModelsMetadata: Array.isArray(models) ? models : [models],
     loadingHints: {}
   };

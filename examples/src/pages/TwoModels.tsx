@@ -7,12 +7,10 @@ import { CanvasWrapper } from '../components/styled';
 import * as THREE from 'three';
 
 import CameraControls from 'camera-controls';
-import {
-  getParamsFromURL,
-  createRenderManager,
-} from '../utils/example-helpers';
+import { getParamsFromURL } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import * as reveal from '@cognite/reveal/experimental';
+import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 CameraControls.install({ THREE });
 
@@ -30,6 +28,8 @@ function getModel2Params() {
 export function TwoModels() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
+    const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
+    let revealManager: reveal.RevealManager<unknown>;
     async function main() {
       const { project, modelUrl, modelRevision } = getParamsFromURL({
         project: 'publicdata',
@@ -46,22 +46,14 @@ export function TwoModels() {
       renderer.setSize(window.innerWidth, window.innerHeight);
 
       const scene = new THREE.Scene();
-      const revealManager: reveal.RenderManager = createRenderManager(
-        modelRevision !== undefined ? 'cdf' : 'local',
-        client
-      );
 
       let model: reveal.CadNode;
-      if (
-        revealManager instanceof reveal.LocalHostRevealManager &&
-        modelUrl !== undefined
-      ) {
-        model = await revealManager.addModel('cad', modelUrl);
-      } else if (
-        revealManager instanceof reveal.RevealManager &&
-        modelRevision !== undefined
-      ) {
+      if(modelRevision) {
+        revealManager = reveal.createCdfRevealManager(client);
         model = await revealManager.addModel('cad', modelRevision);
+      } else if(modelUrl) {
+        revealManager = reveal.createLocalRevealManager();
+        model = await revealManager.addModel('cad', modelUrl);
       } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'
@@ -69,16 +61,11 @@ export function TwoModels() {
       }
       scene.add(model);
       let model2: reveal.CadNode;
-      if (
-        revealManager instanceof reveal.LocalHostRevealManager &&
-        modelUrl2 !== undefined
-      ) {
-        model2 = await revealManager.addModel('cad', modelUrl2);
-      } else if (
-        revealManager instanceof reveal.RevealManager &&
-        modelRevision2 !== undefined
-      ) {
+      if(modelRevision2) {
         model2 = await revealManager.addModel('cad', modelRevision2);
+      } else if(modelUrl2) {
+        revealManager = reveal.createLocalRevealManager();
+        model2 = await revealManager.addModel('cad', modelUrl2);
       } else {
         throw new Error(
           'Need to provide either project & model2 OR modelUrl2 as query parameters'
@@ -114,10 +101,8 @@ export function TwoModels() {
 
       revealManager.update(camera);
 
-      const clock = new THREE.Clock();
-      const render = () => {
-        const delta = clock.getDelta();
-        const controlsNeedUpdate = controls.update(delta);
+      animationLoopHandler.setOnAnimationFrameListener((deltaTime) => {
+        const controlsNeedUpdate = controls.update(deltaTime);
         if (controlsNeedUpdate) {
           revealManager.update(camera);
         }
@@ -127,10 +112,8 @@ export function TwoModels() {
           renderer.render(scene, camera);
           revealManager.resetRedraw();
         }
-
-        requestAnimationFrame(render);
-      };
-      render();
+      });
+      animationLoopHandler.start();
 
       (window as any).scene = scene;
       (window as any).THREE = THREE;
@@ -139,6 +122,10 @@ export function TwoModels() {
     }
 
     main();
+    return () => {
+      animationLoopHandler.dispose();
+      revealManager?.dispose();
+    }
   });
   return (
     <CanvasWrapper>

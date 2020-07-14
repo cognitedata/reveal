@@ -3,26 +3,24 @@
  */
 
 import nock from 'nock';
-import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
+import { CdfModelDataClient } from '@/utilities/networking/CdfModelDataClient';
 import { CogniteClient } from '@cognite/sdk';
 import { Model3DOutputList } from '@/utilities/networking/Model3DOutputList';
 import { File3dFormat } from '@/utilities';
 
-describe('CogniteClient3dExtensions', () => {
-  const appId = 'reveal-CogniteClient3dV2Extensions-test';
+describe('CdfModelDataClient', () => {
+  const appId = 'reveal-CdfModelDataClient-test';
   const baseUrl = 'http://localhost';
   const client = new CogniteClient({
     appId,
     baseUrl
   });
   client.loginWithApiKey({ apiKey: 'dummy', project: 'unittest' });
-  const clientExt = new CogniteClient3dExtensions(client);
+  const clientExt = new CdfModelDataClient(client);
   const apiPath: RegExp = /\/api\/v1\/projects\/unittest\/3d\/.*/;
 
   test('getOutputs() throws error when server returns 400', async () => {
-    const scope = nock(/.*/)
-      .get(apiPath)
-      .reply(400, {});
+    const scope = nock(/.*/).get(apiPath).reply(400, {});
 
     await expect(clientExt.getOutputs({ modelId: 1337, revisionId: 42 })).rejects.toThrowError();
     expect(scope.isDone()).toBeTrue();
@@ -33,9 +31,7 @@ describe('CogniteClient3dExtensions', () => {
     const response = {
       items: []
     };
-    nock(/.*/)
-      .get(apiPath)
-      .reply(200, response);
+    nock(/.*/).get(apiPath).reply(200, response);
 
     // Act
     const result = await clientExt.getOutputs({ modelId: 1337, revisionId: 42 });
@@ -60,9 +56,7 @@ describe('CogniteClient3dExtensions', () => {
         }
       ]
     };
-    nock(/.*/)
-      .get(apiPath)
-      .reply(200, response);
+    nock(/.*/).get(apiPath).reply(200, response);
 
     // Act
     const result = await clientExt.getOutputs({ modelId: 1337, revisionId: 42 });
@@ -74,12 +68,10 @@ describe('CogniteClient3dExtensions', () => {
   test('retrieveBinaryBlob() with binary data returns valid ArrayBuffer', async () => {
     // Arrange
     const response = '0123456789';
-    nock(/.*/)
-      .get(/.*/)
-      .reply(200, response, { 'content-type': 'binary' });
+    nock(/.*/).get(/.*/).reply(200, response, { 'content-type': 'binary' });
 
     // Act
-    const result = await clientExt.getCadSectorFile(baseUrl, 'sector_5.i3d');
+    const result = await clientExt.getBinaryFile(baseUrl, 'sector_5.i3d');
 
     // Assert
     const expected = new Array<number>(response.length);
@@ -101,9 +93,7 @@ describe('CogniteClient3dExtensions', () => {
         }
       ]
     };
-    nock(/.*/)
-      .post(apiPath)
-      .reply(200, response);
+    nock(/.*/).post(apiPath).reply(200, response);
 
     // Act & Assert
     expect(

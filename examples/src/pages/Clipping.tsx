@@ -6,13 +6,11 @@ import * as THREE from 'three';
 import * as reveal from '@cognite/reveal/experimental';
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
-import {
-  getParamsFromURL,
-  createRenderManager,
-} from '../utils/example-helpers';
+import { getParamsFromURL } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import { BoundingBoxClipper } from '@cognite/reveal';
 import { CanvasWrapper } from '../components/styled';
+import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 CameraControls.install({ THREE });
 
@@ -21,6 +19,8 @@ export function Clipping() {
 
   useEffect(() => {
     const gui = new dat.GUI();
+    let revealManager: reveal.RevealManager<unknown>;
+    const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
 
     async function main() {
       const { project, modelUrl, modelRevision } = getParamsFromURL({
@@ -51,30 +51,20 @@ export function Clipping() {
       debugCanvas.style.position = 'absolute';
       canvasRef.current!.parentElement!.appendChild(debugCanvas);
 
-      const revealManager: reveal.RenderManager = createRenderManager(
-        modelRevision !== undefined ? 'cdf' : 'local',
-        client,
-        {
-          internal: { sectorCuller },
-        }
-      );
-
+      const revealOptions = { internal: { sectorCuller } };
       let model: reveal.CadNode;
-      if (
-        revealManager instanceof reveal.LocalHostRevealManager &&
-        modelUrl !== undefined
-      ) {
-        model = await revealManager.addModel('cad', modelUrl);
-      } else if (
-        revealManager instanceof reveal.RevealManager &&
-        modelRevision !== undefined
-      ) {
+      if(modelRevision) {
+        revealManager = reveal.createCdfRevealManager(client, revealOptions);
         model = await revealManager.addModel('cad', modelRevision);
+      } else if(modelUrl) {
+        revealManager = reveal.createLocalRevealManager(revealOptions);
+        model = await revealManager.addModel('cad', modelUrl);
       } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'
         );
       }
+
       scene.add(model);
 
       const { position, target, near, far } = model.suggestCameraConfig();
@@ -154,10 +144,8 @@ export function Clipping() {
       updateClippingPlanes();
       scene.add(helpers);
 
-      const clock = new THREE.Clock();
-      const render = async () => {
-        const delta = clock.getDelta();
-        const controlsNeedUpdate = controls.update(delta);
+      animationLoopHandler.setOnAnimationFrameListener(async (deltaTime) => {
+        const controlsNeedUpdate = controls.update(deltaTime);
         if (controlsNeedUpdate) {
           revealManager.update(camera);
         }
@@ -167,10 +155,8 @@ export function Clipping() {
           guiNeedsUpdate = false;
           revealManager.resetRedraw();
         }
-
-        requestAnimationFrame(render);
-      };
-      render();
+      });
+      animationLoopHandler.start();
 
       gui
         .add(params, 'clipIntersection')
@@ -259,6 +245,8 @@ export function Clipping() {
 
     return () => {
       gui.destroy();
+      revealManager?.dispose();
+      animationLoopHandler.dispose();
     };
   });
   return (

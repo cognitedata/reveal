@@ -5,7 +5,6 @@
 import * as THREE from 'three';
 
 import { CadNode } from '@/datamodels/cad';
-import { CadSectorProvider } from '@/datamodels/cad/sector/CadSectorProvider';
 import { MaterialManager } from '@/datamodels/cad/MaterialManager';
 import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
 import { SimpleAndDetailedToSector3D } from '@/datamodels/cad/sector/SimpleAndDetailedToSector3D';
@@ -15,10 +14,11 @@ import { SectorCuller } from '@/datamodels/cad/sector/culling/SectorCuller';
 import { createCadModelMetadata } from '../../../testutils/createCadModelMetadata';
 import { generateSectorTree } from '../../../testutils/createSectorMetadata';
 import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
+import { BinaryFileProvider } from '@/utilities/networking/types';
 
 describe('CadModelUpdateHandler', () => {
-  const modelSectorProvider: CadSectorProvider = {
-    getCadSectorFile: jest.fn()
+  const modelSectorProvider: BinaryFileProvider = {
+    getBinaryFile: jest.fn()
   };
   const materialManager = new MaterialManager();
   const modelDataParser = new CadSectorParser();
@@ -35,7 +35,7 @@ describe('CadModelUpdateHandler', () => {
 
   test('updateCamera(), updateLoadingHints() and updateClipPlanes() triggers SectorCuller.determineSectors()', () => {
     const updateHandler = new CadModelUpdateHandler(repository, mockCuller);
-    updateHandler.observable().subscribe();
+    updateHandler.consumedSectorObservable().subscribe();
     updateHandler.updateModels(cadModel);
 
     updateHandler.updateCamera(new THREE.PerspectiveCamera());

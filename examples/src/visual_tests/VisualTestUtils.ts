@@ -1,3 +1,5 @@
+import { Page } from "puppeteer";
+
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 async function getCIDiv() {
@@ -28,4 +30,18 @@ export async function gotoAndWaitForRender(url: string) {
     // For good measure - haven't experienced any failures here
     // Visually you can tell that the loading text disappears before the rendered model is presented
     await delay(500);
+}
+
+export async function removeTestableText(page: Page) {
+    await page.evaluate(() => {
+        (document.querySelectorAll('h1, a') || []).forEach(el => el.remove());
+    });
+}
+
+export async function screenShotTest(url: string) {
+    await gotoAndWaitForRender(url);
+    removeTestableText(page);
+
+    const image = await page.screenshot();
+    expect(image).toMatchImageSnapshot();
 }

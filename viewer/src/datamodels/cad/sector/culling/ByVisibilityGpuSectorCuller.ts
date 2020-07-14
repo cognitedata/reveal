@@ -15,10 +15,10 @@ import {
 import { SectorCuller } from './SectorCuller';
 import { TakenSectorTree } from './TakenSectorTree';
 import { PrioritizedWantedSector, DetermineSectorCostDelegate, DetermineSectorsInput } from './types';
-import { fromThreeMatrix, toThreeVector3 } from '@/utilities';
 import { LevelOfDetail } from '../LevelOfDetail';
-import { SectorMetadata, WantedSector, SectorModelTransformation } from '../types';
-import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
+import { CadModelMetadata } from '../../CadModelMetadata';
+import { SectorMetadata, WantedSector } from '../types';
+import { fromThreeMatrix, toThreeVector3, ModelTransformation } from '@/utilities';
 
 /**
  * Options for creating GpuBasedSectorCuller.
@@ -53,7 +53,6 @@ export type ByVisibilityGpuSectorCullerOptions = {
 };
 
 function assert(condition: boolean, message: string = 'assertion hit') {
-  // tslint:disable-next-line: no-console
   console.assert(condition, message);
 }
 
@@ -141,7 +140,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
         options && options.logCallback
           ? options.logCallback
           : // No logging
-          () => { },
+            () => {},
 
       coverageUtil: options && options.coverageUtil ? options.coverageUtil : new GpuOrderSectorsByVisibilityCoverage()
     };
@@ -165,7 +164,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
 
     this.log(
       `Scene: ${wanted.length} (${
-      wanted.filter(x => !Number.isFinite(x.priority)).length
+        wanted.filter(x => !Number.isFinite(x.priority)).length
       } required, ${totalSectorCount} sectors, ${takenPercent}% of all sectors - ${takenDetailedPercent}% detailed)`
     );
     return wanted;
@@ -215,9 +214,9 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
 
     this.log(`Retrieving ${i} of ${prioritizedLength} (last: ${prioritized.length > 0 ? prioritized[i - 1] : null})`);
     this.log(
-      `Total scheduled: ${takenSectors.getWantedSectorCount()} of ${prioritizedLength} (cost: ${takenSectors.totalCost /
-      1024 /
-      1024}/${costLimit / 1024 / 1024}, priority: ${debugAccumulatedPriority})`
+      `Total scheduled: ${takenSectors.getWantedSectorCount()} of ${prioritizedLength} (cost: ${
+        takenSectors.totalCost / 1024 / 1024
+      }/${costLimit / 1024 / 1024}, priority: ${debugAccumulatedPriority})`
     );
 
     return takenSectors;
@@ -267,7 +266,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   private testForClippingOcclusion(
     intersectingSectors: SectorMetadata[],
     clippingPlanes: THREE.Plane[],
-    modelTransform: SectorModelTransformation,
+    modelTransform: ModelTransformation,
     clipIntersection: boolean
   ): SectorMetadata[] {
     const passingSectors = [];

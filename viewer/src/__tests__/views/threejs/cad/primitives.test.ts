@@ -6,7 +6,7 @@ import { SectorGeometry } from '@/datamodels/cad/sector/types';
 import { createPrimitives } from '@/datamodels/cad/rendering/primitives';
 import { createEmptySector } from '../../../models/cad/emptySector';
 import { createMaterials, Materials } from '@/datamodels/cad/rendering/materials';
-import { ParsePrimitiveAttribute } from '@/utilities/workers/types/parser.types';
+import { ParsePrimitiveAttribute } from '@/utilities/workers/types/reveal.parser.types';
 import { InstancedBufferGeometry, LOD, Mesh } from 'three';
 import { RenderMode } from '@/datamodels/cad/rendering/RenderMode';
 

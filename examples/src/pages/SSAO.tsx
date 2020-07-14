@@ -8,11 +8,9 @@ import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import * as reveal from '@cognite/reveal/experimental';
 import dat from 'dat.gui';
-import {
-  getParamsFromURL,
-  createRenderManager,
-} from '../utils/example-helpers';
+import { getParamsFromURL } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
+import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 CameraControls.install({ THREE });
 
@@ -20,6 +18,8 @@ export function SSAO() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const gui = new dat.GUI();
+    const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
+    let revealManager: reveal.RevealManager<unknown>;
 
     async function main() {
       const { project, modelUrl, modelRevision } = getParamsFromURL({
@@ -30,28 +30,19 @@ export function SSAO() {
       client.loginWithOAuth({ project });
 
       const scene = new THREE.Scene();
-      const revealManager: reveal.RenderManager = createRenderManager(
-        modelRevision !== undefined ? 'cdf' : 'local',
-        client
-      );
 
       let model: reveal.CadNode;
-      if (
-        revealManager instanceof reveal.LocalHostRevealManager &&
-        modelUrl !== undefined
-      ) {
-        model = await revealManager.addModel('cad', modelUrl);
-      } else if (
-        revealManager instanceof reveal.RevealManager &&
-        modelRevision !== undefined
-      ) {
+      if(modelRevision) {
+        revealManager = reveal.createCdfRevealManager(client);
         model = await revealManager.addModel('cad', modelRevision);
+      } else if(modelUrl) {
+        revealManager = reveal.createLocalRevealManager();
+        model = await revealManager.addModel('cad', modelUrl);
       } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'
         );
       }
-      scene.add(model);
 
       const effect = new reveal.SsaoEffect();
       const renderer = new THREE.WebGLRenderer({
@@ -80,8 +71,6 @@ export function SSAO() {
       camera.updateMatrixWorld();
       revealManager.update(camera);
 
-      const clock = new THREE.Clock();
-
       let effectNeedsUpdate = false;
       const updateEffect = () => {
         effectNeedsUpdate = true;
@@ -106,9 +95,8 @@ export function SSAO() {
 
       gui.add(effect, 'maxDistance').min(0.0).max(0.2).onChange(updateEffect);
 
-      const render = () => {
-        const delta = clock.getDelta();
-        const controlsNeedUpdate = controls.update(delta);
+      animationLoopHandler.setOnAnimationFrameListener((deltaTime) => {
+        const controlsNeedUpdate = controls.update(deltaTime);
         if (controlsNeedUpdate) {
           revealManager.update(camera);
         }
@@ -122,16 +110,16 @@ export function SSAO() {
           effectNeedsUpdate = false;
           revealManager.resetRedraw();
         }
-
-        requestAnimationFrame(render);
-      };
-      render();
+      });
+      animationLoopHandler.start();
     }
 
     main();
 
     return () => {
       gui.destroy();
+      animationLoopHandler.dispose();
+      revealManager?.dispose();
     };
   });
   return (

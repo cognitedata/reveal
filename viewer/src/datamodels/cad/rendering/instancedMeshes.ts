@@ -3,8 +3,8 @@
  */
 
 import * as THREE from 'three';
-import { disposeAttributeArrayOnUpload } from '@/utilities/disposeAttributeArrayOnUpload';
 import { InstancedMeshFile } from './types';
+import { disposeAttributeArrayOnUpload } from '@/utilities/disposeAttributeArrayOnUpload';
 
 export function createInstancedMeshes(
   meshes: InstancedMeshFile[],

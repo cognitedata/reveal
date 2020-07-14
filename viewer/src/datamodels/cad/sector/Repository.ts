@@ -12,6 +12,6 @@ export type SectorId = number;
 export interface Repository {
   loadSector(): OperatorFunction<WantedSector[], ConsumedSector>;
 
-  // Remove later:
+  getLoadingStateObserver(): Observable<boolean>;
   getParsedData(): Observable<{ blobUrl: string; lod: string; data: SectorGeometry | SectorQuads }>;
 }

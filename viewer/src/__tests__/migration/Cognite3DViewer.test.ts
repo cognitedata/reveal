@@ -14,6 +14,19 @@ import { SectorCuller } from '@/datamodels/cad/sector/culling/SectorCuller';
 const sceneJson = require('./scene.json');
 
 describe('Cognite3DViewer', () => {
+  beforeAll(() => {
+    nock.disableNetConnect();
+    nock('https://api-js.mixpanel.com')
+      .persist(true)
+      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
+      .post(/.*/)
+      .reply(200);
+  });
+
+  afterAll(() => {
+    nock.enableNetConnect();
+  });
+
   const context: WebGLRenderingContext = require('gl')(64, 64, { preserveDrawingBuffer: true });
 
   const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
@@ -25,7 +38,6 @@ describe('Cognite3DViewer', () => {
 
   test('constructor throws error when unsupported options are set', () => {
     expect(() => new Cognite3DViewer({ sdk, renderer, _sectorCuller, enableCache: true })).toThrowError();
-    expect(() => new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: true })).toThrowError();
     expect(() => new Cognite3DViewer({ sdk, renderer, _sectorCuller, viewCube: 'topleft' })).toThrowError();
   });
 
@@ -62,9 +74,11 @@ describe('Cognite3DViewer', () => {
       ]
     };
     nock(/.*/)
+      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
       .get(/.*\/outputs/)
       .reply(200, outputs);
     nock(/.*/)
+      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
       .get(/.*\/scene.json/)
       .reply(200, sceneJson);
 

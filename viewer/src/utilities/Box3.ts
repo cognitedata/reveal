@@ -72,6 +72,7 @@ export class Box3 {
   }
 
   intersectsBox(b: Box3): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const a = this;
     return (
       a.min[0] <= b.max[0] &&

@@ -2,7 +2,6 @@
  * Copyright 2020 Cognite AS
  */
 
-// @ts-ignore
 import * as Potree from '@cognite/potree-core';
 
 export enum PotreePointShape {
@@ -16,7 +15,8 @@ export enum PotreePointColorType {
   Height = Potree.PointColorType.HEIGHT,
   PointIndex = Potree.PointColorType.POINT_INDEX,
   LevelOfDetail = Potree.PointColorType.LOD,
-  Classification = Potree.PointColorType.CLASSIFICATION
+  Classification = Potree.PointColorType.CLASSIFICATION,
+  Intensity = Potree.PointColorType.INTENSITY
 }
 
 export enum PotreePointSizeType {

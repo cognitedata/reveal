@@ -2,146 +2,233 @@
  * Copyright 2020 Cognite AS
  */
 
-import { RevealManagerBase } from './RevealManagerBase';
-import { CogniteClient } from '@cognite/sdk';
-import { CogniteClient3dExtensions } from '@/utilities/networking/CogniteClient3dExtensions';
-import { File3dFormat } from '@/utilities';
-import { CadSectorParser } from '@/datamodels/cad/sector/CadSectorParser';
-import { MaterialManager } from '@/datamodels/cad/MaterialManager';
-import { SimpleAndDetailedToSector3D } from '@/datamodels/cad/sector/SimpleAndDetailedToSector3D';
-import { CadModelMetadataRepository } from '@/datamodels/cad/CadModelMetadataRepository';
-import { DefaultCadTransformation } from '@/datamodels/cad/DefaultCadTransformation';
-import { CadMetadataParser } from '@/datamodels/cad/parsers/CadMetadataParser';
-import { CadModelFactory } from '@/datamodels/cad/CadModelFactory';
-import { ByVisibilityGpuSectorCuller, PotreeGroupWrapper, PotreeNodeWrapper } from '@/internal';
-import { CachedRepository } from '@/datamodels/cad/sector/CachedRepository';
-import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
+import * as THREE from 'three';
+
 import { CadManager } from '@/datamodels/cad/CadManager';
-import { CadNode, NodeAppearanceProvider } from '@/datamodels/cad';
-import { PointCloudMetadataRepository } from '@/datamodels/pointcloud/PointCloudMetadataRepository';
-import { PointCloudFactory } from '@/datamodels/pointcloud/PointCloudFactory';
 import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
-import { DefaultPointCloudTransformation } from '@/datamodels/pointcloud/DefaultPointCloudTransformation';
-import { combineLatest, Subscription } from 'rxjs';
-import { RevealOptions } from './types';
-import { distinctUntilChanged, map } from 'rxjs/operators';
+import {
+  SectorNodeIdToTreeIndexMapLoadedListener,
+  SectorNodeIdToTreeIndexMapLoadedEvent,
+  LoadingStateChangeListener
+} from './types';
+import { Subscription, combineLatest } from 'rxjs';
+import { distinctUntilChanged, map, share, filter } from 'rxjs/operators';
+import { trackError, trackLoadModel } from '@/utilities/metrics';
+import { NodeAppearanceProvider, CadNode } from '@/datamodels/cad';
+import { PotreeGroupWrapper } from '@/datamodels/pointcloud/PotreeGroupWrapper';
+import { PotreeNodeWrapper } from '@/datamodels/pointcloud/PotreeNodeWrapper';
+import { RenderMode } from '@/datamodels/cad/rendering/RenderMode';
+import { EffectRenderManager } from '@/datamodels/cad/rendering/EffectRenderManager';
 
-type CdfModelIdentifier = { modelId: number; revisionId: number; format: File3dFormat };
-type LoadingStateChangeListener = (isLoading: boolean) => any;
+export class RevealManager<TModelIdentifier> {
+  private readonly _cadManager: CadManager<TModelIdentifier>;
+  private readonly _pointCloudManager: PointCloudManager<TModelIdentifier>;
+  private readonly _effectRenderManager: EffectRenderManager;
 
-export class RevealManager extends RevealManagerBase<CdfModelIdentifier> {
-  private readonly eventListeners: { loadingStateChanged: LoadingStateChangeListener[] };
-  private readonly _subscription: Subscription;
+  private readonly _lastCamera = {
+    position: new THREE.Vector3(NaN, NaN, NaN),
+    quaternion: new THREE.Quaternion(NaN, NaN, NaN, NaN),
+    zoom: NaN
+  };
 
-  constructor(client: CogniteClient, options?: RevealOptions) {
-    const modelDataParser: CadSectorParser = new CadSectorParser();
-    const materialManager: MaterialManager = new MaterialManager();
-    const modelDataTransformer = new SimpleAndDetailedToSector3D(materialManager);
-    const cogniteClientExtension = new CogniteClient3dExtensions(client);
-    const cadModelRepository = new CadModelMetadataRepository(
-      cogniteClientExtension,
-      new DefaultCadTransformation(),
-      new CadMetadataParser()
-    );
-    const cadModelFactory = new CadModelFactory(materialManager);
-    const sectorCuller =
-      (options && options.internal && options.internal.sectorCuller) || new ByVisibilityGpuSectorCuller();
-    const sectorRepository = new CachedRepository(cogniteClientExtension, modelDataParser, modelDataTransformer);
-    const cadModelUpdateHandler = new CadModelUpdateHandler(sectorRepository, sectorCuller);
-    const cadManager: CadManager<CdfModelIdentifier> = new CadManager(
-      cadModelRepository,
-      cadModelFactory,
-      cadModelUpdateHandler
-    );
+  private _isDisposed = false;
+  private readonly _subscriptions = new Subscription();
+  private readonly eventListeners = {
+    sectorNodeIdToTreeIndexMapLoaded: new Array<SectorNodeIdToTreeIndexMapLoadedListener>(),
+    loadingStateChanged: new Array<LoadingStateChangeListener>()
+  };
 
-    const pointCloudModelRepository: PointCloudMetadataRepository<CdfModelIdentifier> = new PointCloudMetadataRepository(
-      cogniteClientExtension,
-      new DefaultPointCloudTransformation()
-    );
-    const pointCloudFactory: PointCloudFactory = new PointCloudFactory(cogniteClientExtension);
-    const pointCloudManager: PointCloudManager<CdfModelIdentifier> = new PointCloudManager(
-      pointCloudModelRepository,
-      pointCloudFactory
-    );
+  /** @internal */
+  constructor(cadManager: CadManager<TModelIdentifier>, pointCloudManager: PointCloudManager<TModelIdentifier>) {
+    this._cadManager = cadManager;
+    this._pointCloudManager = pointCloudManager;
+    this._effectRenderManager = new EffectRenderManager(this._cadManager.materialManager);
+    this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
+  }
 
-    super(cadManager, materialManager, pointCloudManager);
+  public dispose(): void {
+    if (this._isDisposed) {
+      return;
+    }
+    this._cadManager.dispose();
+    this._subscriptions.unsubscribe();
+    this._isDisposed = true;
+  }
 
-    this.eventListeners = {
-      loadingStateChanged: new Array<LoadingStateChangeListener>()
-    };
-    this.notifyLoadingStateListeners = this.notifyLoadingStateListeners.bind(this);
+  public requestRedraw(): void {
+    this._cadManager.requestRedraw();
+    this._pointCloudManager.requestRedraw();
+  }
 
-    this._subscription = new Subscription();
-    this._subscription.add(
-      combineLatest([sectorRepository.getLoadingStateObserver(), pointCloudManager.getLoadingStateObserver()])
-        .pipe(
-          map(([pointCloudLoading, cadLoading]) => {
-            return pointCloudLoading || cadLoading;
-          }),
-          distinctUntilChanged()
-        )
-        .subscribe(
-          this.notifyLoadingStateListeners.bind(this),
-          // tslint:disable-next-line: no-console
-          console.error.bind(console)
-        )
-    );
+  public resetRedraw(): void {
+    this._cadManager.resetRedraw();
+  }
+
+  get needsRedraw(): boolean {
+    return this._cadManager.needsRedraw || this._pointCloudManager.needsRedraw;
+  }
+
+  public update(camera: THREE.PerspectiveCamera) {
+    const hasCameraChanged =
+      this._lastCamera.zoom !== camera.zoom ||
+      !this._lastCamera.position.equals(camera.position) ||
+      !this._lastCamera.quaternion.equals(camera.quaternion);
+
+    if (hasCameraChanged) {
+      this._lastCamera.position.copy(camera.position);
+      this._lastCamera.quaternion.copy(camera.quaternion);
+      this._lastCamera.zoom = camera.zoom;
+
+      this._cadManager.updateCamera(camera);
+    }
+  }
+
+  public get renderMode(): RenderMode {
+    return this._cadManager.renderMode;
+  }
+
+  public set renderMode(renderMode: RenderMode) {
+    this._cadManager.renderMode = renderMode;
+  }
+
+  public set clippingPlanes(clippingPlanes: THREE.Plane[]) {
+    this._cadManager.clippingPlanes = clippingPlanes;
+  }
+
+  public get clippingPlanes(): THREE.Plane[] {
+    return this._cadManager.clippingPlanes;
+  }
+
+  public set clipIntersection(intersection: boolean) {
+    this._cadManager.clipIntersection = intersection;
+  }
+
+  public get clipIntersection() {
+    return this._cadManager.clipIntersection;
+  }
+
+  public on(event: 'loadingStateChanged', listener: LoadingStateChangeListener): void;
+  public on(event: 'nodeIdToTreeIndexMapLoaded', listener: SectorNodeIdToTreeIndexMapLoadedListener): void;
+  public on(
+    event: 'loadingStateChanged' | 'nodeIdToTreeIndexMapLoaded',
+    listener: LoadingStateChangeListener | SectorNodeIdToTreeIndexMapLoadedListener
+  ): void {
+    switch (event) {
+      case 'loadingStateChanged':
+        this.eventListeners.loadingStateChanged.push(listener as LoadingStateChangeListener);
+        break;
+
+      case 'nodeIdToTreeIndexMapLoaded':
+        this.eventListeners.sectorNodeIdToTreeIndexMapLoaded.push(listener as SectorNodeIdToTreeIndexMapLoadedListener);
+        break;
+
+      default:
+        throw new Error(`Unsupported event '${event}'`);
+    }
+  }
+
+  public off(event: 'loadingStateChanged', listener: LoadingStateChangeListener): void;
+  public off(event: 'nodeIdToTreeIndexMapLoaded', listener: SectorNodeIdToTreeIndexMapLoadedListener): void;
+  public off(
+    event: 'loadingStateChanged' | 'nodeIdToTreeIndexMapLoaded',
+    listener: LoadingStateChangeListener | SectorNodeIdToTreeIndexMapLoadedListener
+  ): void {
+    switch (event) {
+      case 'loadingStateChanged':
+        this.eventListeners.loadingStateChanged.filter(x => x !== listener);
+        break;
+
+      case 'nodeIdToTreeIndexMapLoaded':
+        this.eventListeners.sectorNodeIdToTreeIndexMapLoaded.filter(x => x !== listener);
+        break;
+
+      default:
+        throw new Error(`Unsupported event '${event}'`);
+    }
+  }
+
+  public render(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera, scene: THREE.Scene) {
+    this._effectRenderManager.render(renderer, camera, scene);
   }
 
   public addModel(
     type: 'cad',
-    modelRevisionId: { modelId: number; revisionId: number },
+    modelIdentifier: TModelIdentifier,
     nodeApperanceProvider?: NodeAppearanceProvider
   ): Promise<CadNode>;
   public addModel(
     type: 'pointcloud',
-    modelRevisionId: { modelId: number; revisionId: number }
+    modelIdentifier: TModelIdentifier
   ): Promise<[PotreeGroupWrapper, PotreeNodeWrapper]>;
-  public addModel(
+  public async addModel(
     type: 'cad' | 'pointcloud',
-    modelRevisionId: { modelId: number; revisionId: number },
+    modelIdentifier: TModelIdentifier,
     nodeApperanceProvider?: NodeAppearanceProvider
-  ): Promise<CadNode | [PotreeGroupWrapper, PotreeNodeWrapper]> {
+  ): Promise<[PotreeGroupWrapper, PotreeNodeWrapper] | CadNode> {
+    trackLoadModel(
+      {
+        moduleName: 'RevealManager',
+        methodName: 'addModel',
+        options: { nodeApperanceProvider }
+      },
+      modelIdentifier
+    );
+
     switch (type) {
-      case 'cad':
-        return this._cadManager.addModel(
-          { ...modelRevisionId, format: File3dFormat.RevealCadModel },
-          nodeApperanceProvider
+      case 'cad': {
+        const cadNode = await this._cadManager.addModel(modelIdentifier, nodeApperanceProvider);
+        this._subscriptions.add(
+          this._cadManager
+            .getParsedData()
+            .pipe(
+              share(),
+              filter(x => x.blobUrl === cadNode.cadModelMetadata.blobUrl)
+            )
+            .subscribe(parseSector => {
+              this.notifySectorNodeIdToTreeIndexMapLoaded(parseSector.blobUrl, parseSector.data.nodeIdToTreeIndexMap);
+            })
         );
-      case 'pointcloud':
-        return this._pointCloudManager.addModel({ ...modelRevisionId, format: File3dFormat.EptPointCloud });
+        return cadNode;
+      }
+
+      case 'pointcloud': {
+        return this._pointCloudManager.addModel(modelIdentifier);
+      }
 
       default:
         throw new Error(`Model type '${type}' is not supported`);
     }
   }
 
-  public on(event: 'loadingStateChanged', listener: LoadingStateChangeListener): void {
-    if (event !== 'loadingStateChanged') {
-      throw new Error(`Unsupported event "${event}"`);
-    }
-    this.eventListeners[event].push(listener);
-  }
-  public off(event: 'loadingStateChanged', listener: LoadingStateChangeListener): void {
-    if (event !== 'loadingStateChanged') {
-      throw new Error(`Unsupported event "${event}"`);
-    }
-    this.eventListeners[event] = this.eventListeners[event].filter(fn => fn !== listener);
+  private notifySectorNodeIdToTreeIndexMapLoaded(blobUrl: string, nodeIdToTreeIndexMap: Map<number, number>): void {
+    const event: SectorNodeIdToTreeIndexMapLoadedEvent = { blobUrl, nodeIdToTreeIndexMap };
+    this.eventListeners.sectorNodeIdToTreeIndexMapLoaded.forEach(listener => {
+      listener(event);
+    });
   }
 
-  public dispose() {
-    if (this.isDisposed) {
-      return;
-    }
-    this.eventListeners.loadingStateChanged.splice(0);
-    this._cadManager.dispose();
-    this._subscription.unsubscribe();
-    super.dispose();
-  }
-
-  private notifyLoadingStateListeners(isLoaded: boolean) {
+  private notifyLoadingStateChanged(isLoaded: boolean) {
     this.eventListeners.loadingStateChanged.forEach(handler => {
       handler(isLoaded);
     });
+  }
+
+  private initLoadingStateObserver(
+    cadManager: CadManager<TModelIdentifier>,
+    pointCloudManager: PointCloudManager<TModelIdentifier>
+  ) {
+    this._subscriptions.add(
+      combineLatest([cadManager.getLoadingStateObserver(), pointCloudManager.getLoadingStateObserver()])
+        .pipe(
+          map(loading => loading.some(x => x)),
+          distinctUntilChanged()
+        )
+        .subscribe(this.notifyLoadingStateChanged.bind(this), error =>
+          trackError(error, {
+            moduleName: 'RevealManager',
+            methodName: 'constructor'
+          })
+        )
+    );
   }
 }

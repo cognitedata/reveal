@@ -13,7 +13,7 @@ import {
   nutGeometry
 } from './primitiveGeometries';
 import { Materials } from './materials';
-import { ParsePrimitiveAttribute } from '@/utilities/workers/types/parser.types';
+import { ParsePrimitiveAttribute } from '@/utilities/workers/types/reveal.parser.types';
 import { disposeAttributeArrayOnUpload } from '@/utilities/disposeAttributeArrayOnUpload';
 
 export function* createPrimitives(sector: SectorGeometry, materials: Materials) {
@@ -134,7 +134,7 @@ function setAttributes(
   mesh.onAfterRender = () => {
     disposeAttributeArrayOnUpload.bind(interleavedBuffer32)();
     disposeAttributeArrayOnUpload.bind(interleavedBuffer8)();
-    mesh.onAfterRender = () => { };
+    mesh.onAfterRender = () => {};
   };
 
   geometry.maxInstancedCount = collection.length / attributesByteSize;
