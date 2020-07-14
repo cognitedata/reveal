@@ -1,6 +1,6 @@
 {
   "name": "@cognite/subsurface-visualizer",
-  "version": "0.0.66-dev",
+  "version": "0.0.67-dev",
   "description": "Subsurface visualizer for cognite",
   "main": "subsurface-visualizer.js",
   "module": "subsurface-visualizer.js",
