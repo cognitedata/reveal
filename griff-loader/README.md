@@ -30,6 +30,14 @@ In your target application
 
 If you start `yarn watch` it'll automatically build your target application if you have hot reloading available.
 
+## Using
+
+createLoader is a function that creates a data loader based on some given optional parameters.
+
+Optional parameters:
+
+- scaleYAxis: boolean: whether the yAxis (ySubDomain) should be adjusted when a time subdomain changes. This defaults to false.
+
 ## Contributing
 
 1.  Clone this repo

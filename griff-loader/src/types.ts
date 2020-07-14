@@ -22,3 +22,7 @@ export type SDKDatapoint =
   | GetAggregateDatapoint
   | GetStringDatapoint
   | GetDoubleDatapoint;
+
+export type Options = {
+  scaleYAxis?: boolean;
+};

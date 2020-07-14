@@ -1,6 +1,6 @@
 {
   "name": "@cognite/griff-loader",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Griff loader towards the Cognite API",
   "main": "dist/griff-loader.js",
   "module": "dist/griff-loader.esm.js",

@@ -8,7 +8,9 @@ import {
   DoubleDatapoint,
   StringDatapoint,
   SDKDatapoint,
+  Options,
 } from './types';
+import { Console } from 'console';
 
 let cogniteClient: CogniteClient | undefined = undefined;
 
@@ -200,7 +202,23 @@ export const mergeInsert = (
 
 const requestsInFlight: { [id: string]: boolean } = {};
 
-export const cogniteloader = async ({
+const defaultOptions = {
+  scaleYAxis: false,
+};
+
+const getYSubDomain = (ySubDomain: number[]) => {
+  const diff = ySubDomain[1] - ySubDomain[0];
+  if (Math.abs(diff) < 1e-3) {
+    const domain = [(1 / 2) * ySubDomain[0], (3 / 2) * ySubDomain[0]];
+    if (domain[1] < domain[0]) {
+      return [domain[1], domain[0]];
+    }
+    return domain;
+  }
+  return [ySubDomain[0] - diff * 0.025, ySubDomain[1] + diff * 0.025];
+};
+
+export const createLoader = (opts: Options = {}) => async ({
   id,
   timeDomain,
   timeSubDomain,
@@ -224,6 +242,7 @@ export const cogniteloader = async ({
   oldSeries: any;
   reason: string;
 }) => {
+  const options = { ...defaultOptions, ...opts };
   const baseDomain = timeDomain || deprecatedXDomain || deprecatedBaseDomain;
   const subDomain =
     timeSubDomain || deprecatedXSubDomain || deprecatedSubDomain;
@@ -336,7 +355,52 @@ export const cogniteloader = async ({
                 subDomain,
                 xAccessor
               );
-              return { ...newSeries, data };
+              if (options.scaleYAxis) {
+                // if multiple datapoints
+                if (newSeries.data.length > 1) {
+                  const newSeriesYSubDomain = newSeries.data.reduce(
+                    (acc, dp) => {
+                      const value = yAccessor(dp);
+                      return [Math.min(acc[0], value), Math.max(acc[1], value)];
+                    },
+                    [Number.MAX_VALUE, Number.MIN_SAFE_INTEGER]
+                  );
+                  const ySubDomain = getYSubDomain(newSeriesYSubDomain);
+                  // if all datapoints have the same y value
+                  if (ySubDomain[0] === ySubDomain[1]) {
+                    return {
+                      ...newSeries,
+                      data,
+                      ySubDomain: [ySubDomain[0] - 0.25, ySubDomain[1] + 0.25],
+                    };
+                  }
+                  // the datapoints have different y values
+                  return {
+                    ...newSeries,
+                    data,
+                    ySubDomain,
+                  };
+                  // if only one datapoint
+                } else if (newSeries.data.length === 1) {
+                  const datapoint = yAccessor(newSeries.data[0]);
+                  return {
+                    ...newSeries,
+                    data,
+                    ySubDomain: [datapoint - 0.25, datapoint + 0.25],
+                  };
+                  // if no datapoints, leave the ySubDomain the same as before
+                } else {
+                  return {
+                    ...newSeries,
+                    data,
+                    ySubDomain: oldSeries.ySubDomain,
+                  };
+                }
+              }
+              return {
+                ...newSeries,
+                data,
+              };
             }
             return newSeries;
           })
@@ -362,3 +426,5 @@ export const cogniteloader = async ({
       return { data: [], ...oldSeries };
     });
 };
+
+export const cogniteloader = createLoader();
