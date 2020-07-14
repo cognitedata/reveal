@@ -19,7 +19,7 @@ uniform int renderMode;
 varying vec3 vViewPosition;
 
 void main() {
-    if (!determineVisibility(overrideVisibilityPerTreeIndex, dataTextureSize, v_treeIndex, renderMode)) {
+    if (!determineVisibility(colorDataTexture, dataTextureSize, v_treeIndex, renderMode)) {
         discard;
     }
 
@@ -27,7 +27,7 @@ void main() {
         discard;
     }
 
-    vec3 color = determineColor(v_color, colorDataTexture, dataTextureSize, v_treeIndex);
+    vec4 color = determineColor(v_color, colorDataTexture, dataTextureSize, v_treeIndex);
     float dist = dot(v_xy, v_xy);
     vec3 normal = normalize( v_normal );
     if (dist > 0.25)
