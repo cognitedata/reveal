@@ -1,0 +1,41 @@
+{
+  "name": "@cognite/metrics",
+  "version": "0.1.2",
+  "description": "",
+  "source": "src/index.ts",
+  "main": "dist/metrics.js",
+  "module": "dist/metrics.esm.js",
+  "browser": "dist/metrics.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "jest",
+    "build": "microbundle --target=browser",
+    "watch": "yarn build --watch",
+    "lint": "yarn prettier",
+    "lint:fix": "yarn prettier --write",
+    "prettier": "prettier -l 'src/**/*'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/frontend"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "homepage": "https://github.com/cognitedata/frontend/tree/master/packages/browser/metrics",
+  "dependencies": {
+    "mixpanel-browser": "^2.35.0"
+  },
+  "devDependencies": {
+    "@babel/parser": "^7.9.4",
+    "@types/mixpanel-browser": "^2.35.0",
+    "@types/react": "^16.9.34",
+    "microbundle": "^0.12.2",
+    "react": "^16.13.1"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0"
+  }
+}
