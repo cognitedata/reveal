@@ -14,10 +14,8 @@ export function createInstancedMeshes(
   const result: THREE.Mesh[] = [];
 
   for (const meshFile of meshes) {
-    const indices = new THREE.Uint32BufferAttribute(meshFile.indices.buffer, 1).onUpload(disposeAttributeArrayOnUpload);
-    const vertices = new THREE.Float32BufferAttribute(meshFile.vertices.buffer, 3).onUpload(
-      disposeAttributeArrayOnUpload
-    );
+    const indices = new THREE.Uint32BufferAttribute(meshFile.indices, 1).onUpload(disposeAttributeArrayOnUpload);
+    const vertices = new THREE.Float32BufferAttribute(meshFile.vertices, 3).onUpload(disposeAttributeArrayOnUpload);
     for (const instancedMesh of meshFile.instances) {
       const triangleCount = instancedMesh.triangleCount;
       const triangleOffset = instancedMesh.triangleOffset;
@@ -49,7 +47,10 @@ export function createInstancedMeshes(
       obj.name = `Instanced mesh ${meshFile.fileId}`;
 
       obj.userData.treeIndices = new Set(instancedMesh.treeIndices);
-
+      obj.onAfterRender = () => {
+        disposeAttributeArrayOnUpload.bind(buffer)();
+        obj.onAfterRender = () => {};
+      };
       result.push(obj);
     }
   }
