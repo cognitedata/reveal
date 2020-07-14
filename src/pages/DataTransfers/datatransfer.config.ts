@@ -17,4 +17,5 @@ export default {
     'source',
   ],
   filterableColumns: ['author', 'status', 'object_type'],
+  keyColumn: 'id',
 };
