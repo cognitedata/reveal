@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+// @ts-ignore it mentioned in docs, but where is the type references - no idea.
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 /**

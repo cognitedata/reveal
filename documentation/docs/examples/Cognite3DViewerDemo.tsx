@@ -23,7 +23,7 @@ const CanvasWrapper = styled.div`
   }
 `;
 
-export default function Cognite3DViewerExampleDemo() {
+export default function Cognite3DViewerDemo() {
   const canvasWrapperRef = useRef(null);
   const [client, setClient] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
