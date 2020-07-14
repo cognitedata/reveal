@@ -13,7 +13,8 @@ export default class ToolbarAdaptor {
             output.push({
                 command,
                 icon: command.getIcon(),
-                isChecked: command.isChecked
+                isChecked: command.isChecked,
+                isVisible: command.isVisible
             });
         });
         return output;

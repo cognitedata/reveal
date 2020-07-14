@@ -22,7 +22,7 @@ export default createReducer(initialState, {
     [SET_VISUALIZER_DATA]: (state, action) => {
         for (const viewer of action.payload.viewers as Viewer[]) {
             const viewerName = viewer.getName();
-            state.toolbars[viewerName] = viewer.getToolbar()!; 
+            state.toolbars[viewerName] = viewer.getToolbar()!;
             state.targets[viewerName] = viewer.getTarget();
         }
     },
@@ -33,6 +33,7 @@ export default createReducer(initialState, {
             const command = item.command;
             item.isChecked = command.isChecked;
             item.icon = command.getIcon();
+            item.isVisible = command.isVisible;
         });
     },
     [SET_STATUS_PANEL_TEXT]: (state, action) => {

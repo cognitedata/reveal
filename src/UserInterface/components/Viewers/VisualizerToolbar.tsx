@@ -65,17 +65,17 @@ export default function VisualizerToolbar(props: {
     }
   };
 
-  // Number of commands
-  const noOfCommands = toolbar.length;
+  // Number of visible commands (isVisible is true)
+  const noOfVisibleCommands = toolbar.filter(command => command.isVisible).length;
   // No Of commands per line in Toolbar UI
   const toolbarCommandsPerLine = Appearance.toolbarCommandsPerLine;
   // Number of rows in toolbar
-  const numberOfToolbarRows = Math.ceil(noOfCommands / toolbarCommandsPerLine);
+  const numberOfToolbarRows = Math.ceil(noOfVisibleCommands / toolbarCommandsPerLine);
   // Consider borders,margins and padding of img tag
   const iconSize = Appearance.toolbarIconSize + 7.2;
   const [dimension1, dimension2] = [
     numberOfToolbarRows * iconSize,
-    numberOfToolbarRows > 1 ? toolbarCommandsPerLine * iconSize : noOfCommands * iconSize
+    numberOfToolbarRows > 1 ? toolbarCommandsPerLine * iconSize : noOfVisibleCommands * iconSize
   ];
   // Render toolbar
   return (
@@ -105,7 +105,7 @@ export default function VisualizerToolbar(props: {
             }}
           >
             {toolbar.map((command, index) =>
-              command.icon ? (
+              command.isVisible && command.icon ? (
                 <div
                   onClick={() =>
                     dispatch(
@@ -116,7 +116,7 @@ export default function VisualizerToolbar(props: {
                     )
                   }
                   key={`visualizer-toolbar-icon-${index}`}
-                  className={`visualizer-tool-bar-icon 
+                  className={`visualizer-tool-bar-icon
                         ${command.isChecked ? "visualizer-tool-bar-icon-selected" : ""}`}
                 >
                   {command.icon && (

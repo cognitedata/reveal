@@ -12,5 +12,6 @@ export interface ToolbarCommand {
     isChecked: boolean;
     icon: string;
     command: BaseCommand;
+    isVisible: boolean;
 }
 
