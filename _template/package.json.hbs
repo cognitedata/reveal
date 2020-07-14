@@ -1,0 +1,34 @@
+{
+  "name": "@cognite/{{ name }}",
+  "version": "0.1.0",
+  "description": "{{ description }}",
+  "source": "src/index.ts",
+  "main": "dist/{{ name }}.js",
+  "module": "dist/{{ name }}.esm.js",
+  "browser": "dist/{{ name }}.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "jest",
+    "build": "microbundle --target=browser",
+    "watch": "yarn build --watch",
+    "lint": "yarn prettier",
+    "lint:fix": "yarn prettier --write",
+    "prettier": "prettier -l 'src/**/*'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/frontend"
+  },
+  "author": "Cognite AS",
+  "license": "UNLICENSED",
+  "homepage": "https://github.com/cognitedata/frontend/tree/master/packages/{{ dirName }}/{{ name }}",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@babel/parser": "^7.9.4",
+    "microbundle": "^0.12.2"
+  }
+}
