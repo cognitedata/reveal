@@ -1,5 +1,5 @@
 import * as utm from "utm";
-import { WellNode } from "@/Nodes/Wells/Nodes/WellNode";
+import { WellNode } from "@/SubSurface/Wells/Nodes/WellNode";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { IWell } from "@/Interface";
 import { Util } from "@/Core/Primitives/Util";

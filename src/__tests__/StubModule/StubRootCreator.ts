@@ -1,8 +1,8 @@
 
 import { Range3 } from "@/Core/Geometry/Range3";
 import { Polylines } from "@/Core/Geometry/Polylines";
-import { PolylinesNode } from "@/Nodes/Misc/PolylinesNode";
-import { SubSurfaceRootNode } from "@/Nodes/TreeNodes/SubSurfaceRootNode";
+import { PolylinesNode } from "@/SubSurface/Basics/PolylinesNode";
+import { SubSurfaceRootNode } from "@/SubSurface/Trees/SubSurfaceRootNode";
 import { StubModule } from "./StubModule";
 import { StubTargetNode } from "./StubTargetNode";
 import { Modules } from "@/Core/Module/Modules";

@@ -13,11 +13,11 @@
 
 import * as THREE from "three";
 
-import { SurfaceRenderStyle } from "@/Nodes/Misc/SurfaceRenderStyle";
+import { SurfaceRenderStyle } from "@/SubSurface/Basics/SurfaceRenderStyle";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
-import { SeismicCubePlaneNode } from '@/SeismicDomain/Nodes/SeismicCubePlaneNode';
+import { SeismicCubePlaneNode } from '@/SubSurface/Seismic/Nodes/SeismicCubePlaneNode';
 
 export class SeismicCubePlaneView extends BaseGroupThreeView
 {

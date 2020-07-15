@@ -25,10 +25,10 @@ import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { SpriteCreator } from "@/Three/Utilities/SpriteCreator";
 import { TextureKit } from "@/Three/Utilities/TextureKit";
 
-import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
-import { DiscreteLog } from "@/Nodes/Wells/Logs/DiscreteLog";
-import { FloatLogSample } from "@/Nodes/Wells/Samples/FloatLogSample";
-import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
+import { FloatLog } from "@/SubSurface/Wells/Logs/FloatLog";
+import { DiscreteLog } from "@/SubSurface/Wells/Logs/DiscreteLog";
+import { FloatLogSample } from "@/SubSurface/Wells/Samples/FloatLogSample";
+import { WellTrajectory } from "@/SubSurface/Wells/Logs/WellTrajectory";
 
 export class LogRenderOld
 {

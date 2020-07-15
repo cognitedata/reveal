@@ -1,4 +1,4 @@
-import { PolylinesNode } from "@/Nodes/Misc/PolylinesNode";
+import { PolylinesNode } from "@/SubSurface/Basics/PolylinesNode";
 import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { isInstanceOf } from "@/Core/Primitives/ClassT";

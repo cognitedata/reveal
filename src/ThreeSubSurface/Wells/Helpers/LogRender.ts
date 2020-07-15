@@ -22,10 +22,10 @@ import { Colors } from "@/Core/Primitives/Colors";
 
 import { Canvas } from "@/Three/Utilities/Canvas";
 
-import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
-import { PointLog } from "@/Nodes/Wells/Logs/PointLog";
-import { DiscreteLog } from "@/Nodes/Wells/Logs/DiscreteLog";
-import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
+import { FloatLog } from "@/SubSurface/Wells/Logs/FloatLog";
+import { PointLog } from "@/SubSurface/Wells/Logs/PointLog";
+import { DiscreteLog } from "@/SubSurface/Wells/Logs/DiscreteLog";
+import { WellTrajectory } from "@/SubSurface/Wells/Logs/WellTrajectory";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
 

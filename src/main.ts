@@ -1,7 +1,7 @@
 import { Range3 } from "@/Core/Geometry/Range3";
 import { ThreeModule } from "@/ThreeSubSurface/ThreeModule";
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
-import { SyntheticSubSurfaceModule } from "@/Nodes/SyntheticSubSurfaceModule";
+import { SyntheticSubSurfaceModule } from "@/SubSurface/SyntheticSubSurfaceModule";
 import { Modules } from "@/Core/Module/Modules";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import { Vector3 } from "@/Core/Geometry/Vector3";

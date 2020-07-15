@@ -4,7 +4,7 @@ import SubsurfaceMiddleware from "@/UserInterface/redux/middlewares/main";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import { Modules } from "@/Core/Module/Modules";
 import { ThreeModule } from "@/ThreeSubSurface/ThreeModule";
-import { SyntheticSubSurfaceModule } from "@/Nodes/SyntheticSubSurfaceModule";
+import { SyntheticSubSurfaceModule } from "@/SubSurface/SyntheticSubSurfaceModule";
 import BPDataModule from "@/Solutions/BP/BPDataModule";
 
 export {

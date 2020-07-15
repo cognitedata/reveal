@@ -1,4 +1,4 @@
-import { WellNode } from "@/Nodes/Wells/Nodes/WellNode";
+import { WellNode } from "@/SubSurface/Wells/Nodes/WellNode";
 import BPData from "@/Solutions/BP/BPData";
 import WellNodeCreator from "@/Solutions/BP/Creators/WellNodeCreator";
 import WellTrajectoryNodeCreator from "@/Solutions/BP/Creators/WellTrajectoryNodeCreator";

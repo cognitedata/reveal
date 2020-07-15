@@ -4,7 +4,7 @@ import { Modules } from "@/Core/Module/Modules";
 import { ThreeModule } from "@/ThreeSubSurface/ThreeModule";
 import BPDataModule from "@/Solutions/BP/BPDataModule";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
-import { SyntheticSubSurfaceModule } from "@/Nodes/SyntheticSubSurfaceModule";
+import { SyntheticSubSurfaceModule } from "@/SubSurface/SyntheticSubSurfaceModule";
 
 const LOAD_MOCK_DATA = true;
 

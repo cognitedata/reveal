@@ -17,8 +17,8 @@ import { Colors } from "@/Core/Primitives/Colors";
 import { Range3 } from "@/Core/Geometry/Range3";
 import { ColorType } from "@/Core/Enums/ColorType";
 
-import { PolylinesNode } from "@/Nodes/Misc/PolylinesNode";
-import { PolylinesRenderStyle } from "@/Nodes/Misc/PolylinesRenderStyle";
+import { PolylinesNode } from "@/SubSurface/Basics/PolylinesNode";
+import { PolylinesRenderStyle } from "@/SubSurface/Basics/PolylinesRenderStyle";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";

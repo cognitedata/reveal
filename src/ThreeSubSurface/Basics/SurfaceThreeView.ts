@@ -16,8 +16,8 @@ import * as THREE from "three";
 import { ColorType } from "@/Core/Enums/ColorType";
 import { Range3 } from "@/Core/Geometry/Range3";
 
-import { SurfaceNode } from "@/Nodes/Misc/SurfaceNode";
-import { SurfaceRenderStyle } from "@/Nodes/Misc/SurfaceRenderStyle";
+import { SurfaceNode } from "@/SubSurface/Basics/SurfaceNode";
+import { SurfaceRenderStyle } from "@/SubSurface/Basics/SurfaceRenderStyle";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { RegularGrid2Buffers } from "@/Core/Geometry/RegularGrid2Buffers";
 

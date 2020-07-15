@@ -18,18 +18,18 @@ import { Range3 } from "@/Core/Geometry/Range3";
 
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 
-import { CasingLogNode } from "@/Nodes/Wells/Nodes/CasingLogNode";
+import { CasingLogNode } from "@/SubSurface/Wells/Nodes/CasingLogNode";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
-import { RenderSample } from "@/Nodes/Wells/Samples/RenderSample";
+import { RenderSample } from "@/SubSurface/Wells/Samples/RenderSample";
 import { Colors } from "@/Core/Primitives/Colors";
 import { TrajectoryBufferGeometry } from "@/ThreeSubSurface/Wells/Helpers/TrajectoryBufferGeometry";
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import { WellTrajectoryStyle } from "@/Nodes/Wells/Styles/WellTrajectoryStyle";
-import { CasingLogStyle } from "@/Nodes/Wells/Styles/CasingLogStyle";
-import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
-import { CasingLog } from '@/Nodes/Wells/Logs/CasingLog';
+import { WellTrajectoryStyle } from "@/SubSurface/Wells/Styles/WellTrajectoryStyle";
+import { CasingLogStyle } from "@/SubSurface/Wells/Styles/CasingLogStyle";
+import { WellTrajectory } from "@/SubSurface/Wells/Logs/WellTrajectory";
+import { CasingLog } from '@/SubSurface/Wells/Logs/CasingLog';
 import { WellTrajectoryThreeView } from "@/ThreeSubSurface/Wells/WellTrajectoryThreeView";
 
 export class CasingLogThreeView extends BaseGroupThreeView
