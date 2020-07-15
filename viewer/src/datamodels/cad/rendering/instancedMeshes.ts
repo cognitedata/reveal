@@ -49,7 +49,10 @@ export function createInstancedMeshes(
       obj.name = `Instanced mesh ${meshFile.fileId}`;
 
       obj.userData.treeIndices = new Set(instancedMesh.treeIndices);
-
+      obj.onAfterRender = () => {
+        disposeAttributeArrayOnUpload.bind(buffer)();
+        obj.onAfterRender = () => {};
+      };
       result.push(obj);
     }
   }
