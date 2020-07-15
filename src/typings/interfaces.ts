@@ -1,13 +1,5 @@
 /* eslint-disable camelcase */
 export interface DataTransferObject {
-  key?: string;
-  id: number;
-  name: string;
-  externalId: string;
-  dataType: string;
-  author: string;
-  repositoryProject: string;
-  report: string;
   [key: string]: any;
 }
 
