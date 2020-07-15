@@ -68,12 +68,12 @@ if (REACT_APP_LOCIZE_API_KEY) {
   });
   initOptions.saveMissing = true;
   initOptions.updateMissing = true;
-}
 
-addBackend(HttpBackend, {
-  loadPath: `https://api.locize.app/${REACT_APP_LOCIZE_PROJECT_ID}/latest/{{lng}}/{{ns}}`,
-  addPath: '',
-});
+  addBackend(HttpBackend, {
+    loadPath: `https://api.locize.app/${REACT_APP_LOCIZE_PROJECT_ID}/latest/{{lng}}/{{ns}}`,
+    addPath: '',
+  });
+}
 
 initOptions = {
   ...initOptions,

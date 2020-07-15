@@ -1,13 +1,16 @@
 import { useEffect } from 'react';
+import { useMetrics, Metrics } from '@cognite/metrics';
 
 const SuspenseFallback = () => {
-  // Add in metrics support to track how long we're waiting for i18n.
+  const metrics = useMetrics('SuspenseFallback', {
+    usingLocize: !!process.env.REACT_APP_LOCIZE_PROJECT_ID,
+  });
   useEffect(() => {
-    console.log('suspending');
+    const timer = metrics.start('suspense');
     return () => {
-      console.log('Done');
+      Metrics.stop(timer);
     };
-  }, []);
+  }, [metrics]);
   return null;
 };
 

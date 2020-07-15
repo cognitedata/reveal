@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import * as Sentry from '@sentry/browser';
 import config from 'utils/config';
+import { Metrics } from '@cognite/metrics';
 
 import App from './App';
 import * as serviceWorker from './serviceWorker';
@@ -16,6 +17,14 @@ if (process.env.REACT_APP_SENTRY_DSN) {
     release: process.env.REACT_APP_RELEASE_ID,
     // This is populated by react-scripts. However, this can be overridden by
     // the app's build process if you wish.
+    environment: config.env,
+  });
+}
+
+if (process.env.REACT_APP_MIXPANEL_TOKEN) {
+  Metrics.init({
+    mixpanelToken: process.env.REACT_APP_MIXPANEL_TOKEN,
+    debug: process.env.REACT_APP_MIXPANEL_DEBUG === 'true',
     environment: config.env,
   });
 }
