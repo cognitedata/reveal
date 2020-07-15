@@ -93,8 +93,8 @@ export class LogRenderOld
         group.add(label);
     }
     const material = new THREE.LineBasicMaterial({ color: ThreeConverter.to3DColor(bandColor) });
-    const object = new THREE.LineSegments(geometry, material);
-    group.add(object);
+    const lineSegments = new THREE.LineSegments(geometry, material);
+    group.add(lineSegments);
   }
 
   //==================================================
