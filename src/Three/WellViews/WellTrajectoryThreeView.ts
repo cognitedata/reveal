@@ -38,9 +38,8 @@ import { Appearance } from "@/Core/States/Appearance";
 import { PointLogNode } from "@/Nodes/Wells/Nodes/PointLogNode";
 import { Units } from "@/Core/Primitives/Units";
 import { WellNode } from "@/Nodes/Wells/Nodes/WellNode";
-import { BaseThreeView } from "@/Three/BaseViews/node_modules/@/Three/BaseViews/BaseThreeView";
+import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
 import { ViewInfo } from "@/Core/Views/ViewInfo";
-import { RenderSample } from "@/Nodes/Wells/Samples/RenderSample";
 
 const TrajectoryName = "trajectory";
 const TrajectoryLabelName = "trajectoryLabel";
