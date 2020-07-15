@@ -18,7 +18,7 @@ import { Range3 } from "@/Core/Geometry/Range3";
 
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 
-import { PointLogNode } from "@/Nodes/Wells/Nodes/PointLogNode";
+import { PointLogNode } from "@/SubSurface/Wells/Nodes/PointLogNode";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
@@ -29,8 +29,8 @@ import { Canvas } from "@/Three/Utilities/Canvas";
 import { Changes } from "@/Core/Views/Changes";
 import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
 import { Appearance } from "@/Core/States/Appearance";
-import { WellTrajectoryStyle } from "@/Nodes/Wells/Styles/WellTrajectoryStyle";
-import { PointLogStyle } from "@/Nodes/Wells/Styles/PointLogStyle";
+import { WellTrajectoryStyle } from "@/SubSurface/Wells/Styles/WellTrajectoryStyle";
+import { PointLogStyle } from "@/SubSurface/Wells/Styles/PointLogStyle";
 import { WellTrajectoryThreeView } from "@/ThreeSubSurface/Wells/WellTrajectoryThreeView";
 
 const selectedRadiusFactor = 1.2;
@@ -261,8 +261,10 @@ export class PointLogThreeView extends BaseGroupThreeView
     const openGeometry = new THREE.SphereGeometry(selectedRadius, 16, 8);
 
     const closedMaterial = new THREE.MeshPhongMaterial({ color: ThreeConverter.to3DColor(color) });
-    const openMaterial = new THREE.MeshPhongMaterial({ color: ThreeConverter.to3DColor(color) });
-    openMaterial.emissive = ThreeConverter.to3DColor(Colors.selectedEmissive);
+    const openMaterial = new THREE.MeshPhongMaterial({
+      color: ThreeConverter.to3DColor(color),
+      emissive: ThreeConverter.to3DColor(Colors.selectedEmissive)
+    });
 
     const up = Vector3.newUp;
     const tangent = Vector3.newZero;
@@ -334,7 +336,7 @@ export class PointLogThreeView extends BaseGroupThreeView
     const style = this.style;
     if (style)
       radius = style.radius;
-  
+
     const trajectoryNode = node.trajectoryNode;
     if (!trajectoryNode)
       return radius;

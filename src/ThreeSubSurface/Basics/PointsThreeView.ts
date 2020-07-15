@@ -19,8 +19,8 @@ import { Range3 } from "@/Core/Geometry/Range3";
 import { ColorType } from "@/Core/Enums/ColorType";
 import { Colors } from "@/Core/Primitives/Colors";
 
-import { PointsNode } from "@/Nodes/Misc/PointsNode";
-import { PointsRenderStyle } from "@/Nodes/Misc/PointsRenderStyle";
+import { PointsNode } from "@/SubSurface/Basics/PointsNode";
+import { PointsRenderStyle } from "@/SubSurface/Basics/PointsRenderStyle";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";

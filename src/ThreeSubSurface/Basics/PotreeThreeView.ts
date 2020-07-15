@@ -16,8 +16,8 @@ import * as THREE from "three";
 // @ts-ignore 
 import * as Potree from "@cognite/potree-core";
 
-import { PotreeNode } from "@/Nodes/Misc/PotreeNode";
-import { PotreeRenderStyle } from "@/Nodes/Misc/PotreeRenderStyle";
+import { PotreeNode } from "@/SubSurface/Basics/PotreeNode";
+import { PotreeRenderStyle } from "@/SubSurface/Basics/PotreeRenderStyle";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 

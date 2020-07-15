@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { BaseFilterLogNode } from "@/Nodes/Wells/Filters/BaseFilterLogNode";
+import { BaseFilterLogNode } from "@/SubSurface/Wells/Filters/BaseFilterLogNode";
 import { BaseView } from "@/Core/Views/BaseView";
 
 export class FilterLogFilterView extends BaseView

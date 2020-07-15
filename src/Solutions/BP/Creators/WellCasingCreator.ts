@@ -1,9 +1,9 @@
 import { ICasing } from "@/Interface";
-import { CasingLogNode } from "@/Nodes/Wells/Nodes/CasingLogNode";
-import { CasingLogSample } from "@/Nodes/Wells/Samples/CasingLogSample";
+import { CasingLogNode } from "@/SubSurface/Wells/Nodes/CasingLogNode";
+import { CasingLogSample } from "@/SubSurface/Wells/Samples/CasingLogSample";
 import { Util } from "@/Core/Primitives/Util";
 import { Ma } from '@/Core/Primitives/Ma';
-import { CasingLog } from '@/Nodes/Wells/Logs/CasingLog';
+import { CasingLog } from '@/SubSurface/Wells/Logs/CasingLog';
 
 export default class WellCasingCreator
 {

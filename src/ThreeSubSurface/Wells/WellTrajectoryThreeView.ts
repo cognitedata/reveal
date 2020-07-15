@@ -19,14 +19,14 @@ import { Range1 } from "@/Core/Geometry/Range1";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Colors } from "@/Core/Primitives/Colors";
 
-import { BaseLogNode } from "@/Nodes/Wells/Nodes/BaseLogNode";
-import { FloatLogNode } from "@/Nodes/Wells/Nodes/FloatLogNode";
-import { DiscreteLogNode } from "@/Nodes/Wells/Nodes/DiscreteLogNode";
-import { WellTrajectoryStyle } from "@/Nodes/Wells/Styles/WellTrajectoryStyle";
+import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
+import { FloatLogNode } from "@/SubSurface/Wells/Nodes/FloatLogNode";
+import { DiscreteLogNode } from "@/SubSurface/Wells/Nodes/DiscreteLogNode";
+import { WellTrajectoryStyle } from "@/SubSurface/Wells/Styles/WellTrajectoryStyle";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { Changes } from "@/Core/Views/Changes";
 
-import { WellTrajectoryNode } from "@/Nodes/Wells/Nodes/WellTrajectoryNode";
+import { WellTrajectoryNode } from "@/SubSurface/Wells/Nodes/WellTrajectoryNode";
 
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
@@ -35,9 +35,9 @@ import { LogRender } from "@/ThreeSubSurface/Wells/Helpers/LogRender";
 import { TrajectoryBufferGeometry } from "@/ThreeSubSurface/Wells/Helpers/TrajectoryBufferGeometry";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { Appearance } from "@/Core/States/Appearance";
-import { PointLogNode } from "@/Nodes/Wells/Nodes/PointLogNode";
+import { PointLogNode } from "@/SubSurface/Wells/Nodes/PointLogNode";
 import { Units } from "@/Core/Primitives/Units";
-import { WellNode } from "@/Nodes/Wells/Nodes/WellNode";
+import { WellNode } from "@/SubSurface/Wells/Nodes/WellNode";
 import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
 import { ViewInfo } from "@/Core/Views/ViewInfo";
 
@@ -407,9 +407,12 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       transformer.transformRelativeTo3D(sample.point);
     {
       const geometry = new TrajectoryBufferGeometry(samples);
-      const material = new THREE.MeshStandardMaterial({
+      const material = new THREE.MeshPhongMaterial({
         color: ThreeConverter.to3DColor(Colors.white),
+        shininess: 75,
         vertexColors: THREE.VertexColors,
+        emissive : ThreeConverter.to3DColor(Colors.cyan),
+        emissiveIntensity: 0.33,
       });
       const mesh = new THREE.Mesh(geometry, material);
       mesh.name = TrajectoryName;

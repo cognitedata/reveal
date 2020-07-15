@@ -1,16 +1,16 @@
-import { FloatLog } from "@/Nodes/Wells/Logs/FloatLog";
-import { FloatLogNode } from "@/Nodes/Wells/Nodes/FloatLogNode";
+import { FloatLog } from "@/SubSurface/Wells/Logs/FloatLog";
+import { FloatLogNode } from "@/SubSurface/Wells/Nodes/FloatLogNode";
 import { IRiskEvent, ILog, ILogRow, ILogRowColumn, INdsMetadata, INptMetaData } from "@/Interface";
-import { PointLog } from "@/Nodes/Wells/Logs/PointLog";
-import { PointLogSample } from "@/Nodes/Wells/Samples/PointLogSample";
-import { PointLogNode } from "@/Nodes/Wells/Nodes/PointLogNode";
-import { LogFolder } from "@/Nodes/Wells/Nodes/LogFolder";
+import { PointLog } from "@/SubSurface/Wells/Logs/PointLog";
+import { PointLogSample } from "@/SubSurface/Wells/Samples/PointLogSample";
+import { PointLogNode } from "@/SubSurface/Wells/Nodes/PointLogNode";
+import { LogFolder } from "@/SubSurface/Wells/Nodes/LogFolder";
 import { Util } from "@/Core/Primitives/Util";
-import { FloatLogSample } from "@/Nodes/Wells/Samples/FloatLogSample";
-import { BaseLogNode } from "@/Nodes/Wells/Nodes/BaseLogNode";
-import { DiscreteLog } from "@/Nodes/Wells/Logs/DiscreteLog";
-import { DiscreteLogSample } from "@/Nodes/Wells/Samples/DiscreteLogSample";
-import { DiscreteLogNode } from "@/Nodes/Wells/Nodes/DiscreteLogNode";
+import { FloatLogSample } from "@/SubSurface/Wells/Samples/FloatLogSample";
+import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
+import { DiscreteLog } from "@/SubSurface/Wells/Logs/DiscreteLog";
+import { DiscreteLogSample } from "@/SubSurface/Wells/Samples/DiscreteLogSample";
+import { DiscreteLogNode } from "@/SubSurface/Wells/Nodes/DiscreteLogNode";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 
 export default class WellLogCreator

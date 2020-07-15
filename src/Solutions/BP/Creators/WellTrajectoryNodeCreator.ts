@@ -1,8 +1,8 @@
-import { WellTrajectoryNode } from "@/Nodes/Wells/Nodes/WellTrajectoryNode";
-import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
+import { WellTrajectoryNode } from "@/SubSurface/Wells/Nodes/WellTrajectoryNode";
+import { WellTrajectory } from "@/SubSurface/Wells/Logs/WellTrajectory";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { ITrajectoryColumnIndices, ITrajectoryRows } from "@/Interface";
-import { TrajectorySample } from "@/Nodes/Wells/Samples/TrajectorySample";
+import { TrajectorySample } from "@/SubSurface/Wells/Samples/TrajectorySample";
 
 export default class WellTrajectoryNodeCreator
 {

@@ -1,6 +1,6 @@
 import { BaseModule } from "@/Core/Module/BaseModule";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
-import { SubSurfaceRootNode } from "@/Nodes/TreeNodes/SubSurfaceRootNode";
+import { SubSurfaceRootNode } from "@/SubSurface/Trees/SubSurfaceRootNode";
 import { ILog, ICasing, IWell, IWellBore, ITrajectory, ITrajectoryRows, IRiskEvent } from "@/Interface";
 import BPData from "@/Solutions/BP/BPData";
 import WellsCreator from "@/Solutions/BP/Creators/WellNodesCreator";
