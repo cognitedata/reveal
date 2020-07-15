@@ -1,6 +1,6 @@
 {
   "name": "@cognite/react-i18n",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",

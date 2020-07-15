@@ -95,7 +95,7 @@ const configureI18n = ({
 
   if (locizeApiKey) {
     addBackend(LocizeBackend, {
-      projectId: locizeApiKey,
+      projectId: locizeProjectId,
       debug,
       apiKey: locizeApiKey,
       referenceLng: 'en',
