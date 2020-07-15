@@ -11,7 +11,7 @@ path = "rust/lib.rs"
 
 [dependencies]
 wasm-bindgen = { version = "0.2.64", features = ["serde-serialize"] }
-js-sys = "0.3.41"
+js-sys = "0.3.42"
 serde = { version = "1.0.114", features = ["derive"] }
 serde_derive = "1.0.104"
 arraymap = "0.1.1"
