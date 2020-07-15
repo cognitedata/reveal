@@ -1,7 +1,6 @@
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetCommand";
 import CopyImageIcon from "@images/Commands/CopyImage.png";
-import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 
 export class CopyImageCommand extends ThreeRenderTargetCommand
 {
