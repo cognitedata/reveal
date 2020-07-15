@@ -31,7 +31,7 @@ import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
 import { Appearance } from "@/Core/States/Appearance";
 import { WellTrajectoryStyle } from "@/Nodes/Wells/Styles/WellTrajectoryStyle";
 import { PointLogStyle } from "@/Nodes/Wells/Styles/PointLogStyle";
-import { WellTrajectoryThreeView } from "@/Three/WellViews/WellTrajectoryThreeView";
+import { WellTrajectoryThreeView } from "@/ThreeSubSurface/Wells/WellTrajectoryThreeView";
 
 const selectedRadiusFactor = 1.2;
 

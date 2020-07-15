@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import NodeVisualizer from "@/UserInterface/NodeVisualizer";
 import { Modules } from "@/Core/Module/Modules";
-import { ThreeModule } from "@/Three/ThreeModule";
+import { ThreeModule } from "@/ThreeSubSurface/ThreeModule";
 import BPDataModule from "@/Solutions/BP/BPDataModule";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import { SyntheticSubSurfaceModule } from "@/Nodes/SyntheticSubSurfaceModule";

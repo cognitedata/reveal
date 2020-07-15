@@ -12,6 +12,7 @@
 //=====================================================================================
 
 import * as THREE from "three";
+import Color from "color";
 
 import { Range3 } from "@/Core/Geometry/Range3";
 
@@ -23,15 +24,13 @@ import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { RenderSample } from "@/Nodes/Wells/Samples/RenderSample";
 import { Colors } from "@/Core/Primitives/Colors";
-import { TrajectoryBufferGeometry } from "@/Three/WellViews/Helpers/TrajectoryBufferGeometry";
+import { TrajectoryBufferGeometry } from "@/ThreeSubSurface/Wells/Helpers/TrajectoryBufferGeometry";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { WellTrajectoryStyle } from "@/Nodes/Wells/Styles/WellTrajectoryStyle";
 import { CasingLogStyle } from "@/Nodes/Wells/Styles/CasingLogStyle";
 import { WellTrajectory } from "@/Nodes/Wells/Logs/WellTrajectory";
 import { CasingLog } from '@/Nodes/Wells/Logs/CasingLog';
-
-import Color from "color";
-import { WellTrajectoryThreeView } from "@/Three/WellViews/WellTrajectoryThreeView";
+import { WellTrajectoryThreeView } from "@/ThreeSubSurface/Wells/WellTrajectoryThreeView";
 
 export class CasingLogThreeView extends BaseGroupThreeView
 {
