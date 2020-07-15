@@ -398,10 +398,10 @@ export class AxisThreeView extends BaseGroupThreeView
 
     const threeColor = ThreeConverter.to3DColor(this.gridColor);
     const material = new THREE.LineBasicMaterial({ color: threeColor, linewidth: 1 });
-    const object = new THREE.LineSegments(geometry, material);
+    const lineSegments = new THREE.LineSegments(geometry, material);
 
-    this.setUserDataOnWall(object, wallIndex);
-    group.add(object);
+    this.setUserDataOnWall(lineSegments, wallIndex);
+    group.add(lineSegments);
   }
 
   private addGridInOneDirection(geometry: THREE.Geometry, inc: number, i0: number, i1: number, i2: number, dimension: number): void

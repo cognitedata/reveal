@@ -31,8 +31,8 @@ import { WellTrajectoryNode } from "@/Nodes/Wells/Nodes/WellTrajectoryNode";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { SpriteCreator } from "@/Three/Utilities/SpriteCreator";
-import { LogRender } from "@/Three/WellViews/Helpers/LogRender";
-import { TrajectoryBufferGeometry } from "@/Three/WellViews/Helpers/TrajectoryBufferGeometry";
+import { LogRender } from "@/ThreeSubSurface/Wells/Helpers/LogRender";
+import { TrajectoryBufferGeometry } from "@/ThreeSubSurface/Wells/Helpers/TrajectoryBufferGeometry";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { Appearance } from "@/Core/States/Appearance";
 import { PointLogNode } from "@/Nodes/Wells/Nodes/PointLogNode";
@@ -94,7 +94,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     // Pattern: SYNC_LOGS_AND_FILTERLOGS
     super.onShowCore();
 
-    const trajectoryNode = this.node;    
+    const trajectoryNode = this.node;
     const filterLogFolder = trajectoryNode.getFilterLogFolder();
 
     if (!filterLogFolder)
@@ -405,17 +405,24 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     const transformer = this.transformer;
     for (const sample of samples)
       transformer.transformRelativeTo3D(sample.point);
-
-    const geometry = new TrajectoryBufferGeometry(samples);
-    const material = new THREE.MeshStandardMaterial({
-      color: ThreeConverter.to3DColor(Colors.white),
-      vertexColors: THREE.VertexColors,
-      transparent: true,
-      opacity: 1
-    });
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.name = TrajectoryName;
-    parent.add(mesh);
+    {
+      const geometry = new TrajectoryBufferGeometry(samples);
+      const material = new THREE.MeshStandardMaterial({
+        color: ThreeConverter.to3DColor(Colors.white),
+        vertexColors: THREE.VertexColors,
+      });
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.name = TrajectoryName;
+      parent.add(mesh);
+    }
+    {
+      const geometry = new THREE.Geometry();
+      for (const sample of samples)
+        geometry.vertices.push(ThreeConverter.to3D(sample.point));
+      const material = new THREE.LineBasicMaterial({ color: ThreeConverter.to3DColor(color), linewidth:2 });
+      const line = new THREE.Line(geometry, material);
+      parent.add(line);
+    }
   }
 
   private addBands(parent: THREE.Object3D): void

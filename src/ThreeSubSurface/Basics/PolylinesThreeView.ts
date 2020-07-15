@@ -22,7 +22,7 @@ import { PolylinesRenderStyle } from "@/Nodes/Misc/PolylinesRenderStyle";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
-import { PointsThreeView } from "@/Three/MiscViews/PointsThreeView";
+import { PointsThreeView } from "@/ThreeSubSurface/Basics/PointsThreeView";
 
 export class PolylinesThreeView extends BaseGroupThreeView
 {

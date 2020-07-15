@@ -28,10 +28,10 @@ import { SurfaceNode } from "@/Nodes/Misc/SurfaceNode";
 import { PotreeNode } from "@/Nodes/Misc/PotreeNode";
 
 import { AxisThreeView } from "@/Three/DecorationViews/AxisThreeView";
-import { PointsThreeView } from "@/Three/MiscViews/PointsThreeView";
-import { PolylinesThreeView } from "@/Three/MiscViews/PolylinesThreeView";
-import { SurfaceThreeView } from "@/Three/MiscViews/SurfaceThreeView";
-import { PotreeThreeView } from "@/Three/MiscViews/PotreeThreeView";
+import { PointsThreeView } from "@/ThreeSubSurface/Basics/PointsThreeView";
+import { PolylinesThreeView } from "@/ThreeSubSurface/Basics/PolylinesThreeView";
+import { SurfaceThreeView } from "@/ThreeSubSurface/Basics/SurfaceThreeView";
+import { PotreeThreeView } from "@/ThreeSubSurface/Basics/PotreeThreeView";
 
 // Wells:
 
@@ -40,17 +40,17 @@ import { PointLogNode } from "@/Nodes/Wells/Nodes/PointLogNode";
 import { FloatLogNode } from "@/Nodes/Wells/Nodes/FloatLogNode";
 import { DiscreteLogNode } from "@/Nodes/Wells/Nodes/DiscreteLogNode";
 
-import { WellTrajectoryThreeView } from "@/Three/WellViews/WellTrajectoryThreeView";
-import { PointLogThreeView } from "@/Three/WellViews/PointLogThreeView";
-import { LogFilterView } from "@/Three/WellViews/LogFilterView";
+import { WellTrajectoryThreeView } from "@/ThreeSubSurface/Wells/WellTrajectoryThreeView";
+import { PointLogThreeView } from "@/ThreeSubSurface/Wells/PointLogThreeView";
+import { LogFilterView } from "@/ThreeSubSurface/Wells/LogFilterView";
 import { CasingLogNode } from "@/Nodes/Wells/Nodes/CasingLogNode";
-import { CasingLogThreeView } from "@/Three/WellViews/CasingLogThreeView";
+import { CasingLogThreeView } from "@/ThreeSubSurface/Wells/CasingLogThreeView";
 import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
 import { CasingFilterLogNode } from "@/Nodes/Wells/Filters/CasingFilterLogNode";
 import { PointFilterLogNode } from "@/Nodes/Wells/Filters/PointFilterLogNode";
 import { FloatFilterLogNode } from "@/Nodes/Wells/Filters/FloatFilterLogNode";
 import { DiscreteFilterLogNode } from "@/Nodes/Wells/Filters/DiscreteFilterLogNode";
-import { FilterLogFilterView } from "@/Three/WellViews/FilterLogFilterView";
+import { FilterLogFilterView } from "@/ThreeSubSurface/Wells/FilterLogFilterView";
 
 export class ThreeModule extends BaseModule
 {
