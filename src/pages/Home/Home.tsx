@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
+
 import { Button } from '@cognite/cogs.js';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
+
 import { Container, Header, ExternalLink, Logo } from './elements';
 import logo from './logo.svg';
 
@@ -30,7 +32,7 @@ const Home = () => {
       <Header>
         <Logo src={logo} />
         <p>
-          <Trans i18nKey="Home:versionInfo_paragraph">
+          <Trans i18nKey="Home:versionInfo_paragraph" t={t}>
             This is v
             {{ versionName: process.env.REACT_APP_VERSION_NAME || '0.0.0' }}
           </Trans>
@@ -40,7 +42,7 @@ const Home = () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Trans i18nKey="Home:learnMore_link">
+          <Trans i18nKey="Home:learnMore_link" t={t}>
             Learn about how this is hosted
           </Trans>
         </ExternalLink>

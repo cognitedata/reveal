@@ -1,7 +1,9 @@
 import React from 'react';
-import I18nContainer from 'containers/I18nContainer';
-import Home from 'pages/Home';
 import GlobalStyles from 'global-styles';
+
+import { I18nContainer } from '@cognite/react-i18n';
+
+import Home from 'pages/Home';
 
 const App = () => {
   return (
