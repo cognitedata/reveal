@@ -1,45 +1,43 @@
 import { Dispatch } from 'redux'
 import { Changes } from '@/Core/Views/Changes'
 import { CheckBoxState } from '@/Core/Enums/CheckBoxState'
-import { updateStatusPanel } from "@/UserInterface/redux/actions/visualizers";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
 export const CHANGE_CHECKBOX_STATE: string = "CHANGE_CHECKBOX_STATE";
 
 const mapToCheckboxStateStr = (cbState: CheckBoxState) => {
-    switch (cbState) {
-        case CheckBoxState.All: return 'checked';
-        case CheckBoxState.None: return 'unchecked';
-        case CheckBoxState.Disabled: return 'disabled';
-        case CheckBoxState.Some: return 'partial';
-        default: return 'undefined';
-    }
+  switch (cbState) {
+    case CheckBoxState.All: return 'checked';
+    case CheckBoxState.None: return 'unchecked';
+    case CheckBoxState.Disabled: return 'disabled';
+    case CheckBoxState.Some: return 'partial';
+    default: return 'undefined';
+  }
 };
 
-class NotificationsToActionsAdaptor {
+class NotificationsToActionsAdaptor
+{
 
-    private readonly dispatcher: Dispatch;
+  private readonly dispatcher: Dispatch;
 
-    public constructor(dispatcher: Dispatch) {
-        this.dispatcher = dispatcher;
+  public constructor(dispatcher: Dispatch)
+  {
+    this.dispatcher = dispatcher;
+  }
+
+  processEvent(sender: BaseNode, args: NodeEventArgs): void
+  {
+    // console.log('notification ', sender, args);
+    if(args.isEmpty) { return; }
+
+    // test for all changes that are relevant for us
+    if (args.isChanged(Changes.visibleState)) {
+      this.dispatcher(changeCheckboxState(sender.uniqueId.toString(), mapToCheckboxStateStr(sender.getCheckBoxState())));
+    } else {
+      //TODO: handle other conversions
     }
-
-    processEvent(sender: BaseNode, args: NodeEventArgs): void {
-        // console.log('notification ', sender, args);
-        if(args.isEmpty) { return; }
-
-        // test for all changes that are relevant for us
-        if (args.isChanged(Changes.visibleState)) {
-            this.dispatcher(changeCheckboxState(sender.uniqueId.toString(), mapToCheckboxStateStr(sender.getCheckBoxState())));
-        } else {
-            //TODO: handle other conversions
-        }
-    }
-
-    updateStatusPanel(statusText: string){
-        this.dispatcher(updateStatusPanel({ text: statusText }));
-    }
+  }
 }
 
 const changeCheckboxState = (appliesTo: string, payload: any) => {

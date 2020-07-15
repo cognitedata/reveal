@@ -4,6 +4,8 @@ import { BaseNode } from "@/Core/Nodes/BaseNode";
 import NotificationsToActionsAdaptor from "@/UserInterface/adaptors/NotificationToAction";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { setFullScreeen } from "@/UserInterface/redux/actions/common";
+import { updateStatusPanel, updateToolbars } from "@/UserInterface/redux/actions/visualizers";
+
 
 
 
@@ -11,26 +13,36 @@ import { setFullScreeen } from "@/UserInterface/redux/actions/common";
  * Gets callbacks from Core components when various events happen
  * such as creation of a BaseNode.
  */
-class UserInterfaceListener implements IUserInterface {
+class UserInterfaceListener implements IUserInterface
+{
 
   private readonly notificationAdaptor: NotificationsToActionsAdaptor;
   private readonly dispatcher: Dispatch;
 
-  public constructor(notificationAdaptor: NotificationsToActionsAdaptor, dispatcher: Dispatch) {
+  public constructor(notificationAdaptor: NotificationsToActionsAdaptor, dispatcher: Dispatch)
+  {
     this.notificationAdaptor = notificationAdaptor;
     this.dispatcher = dispatcher;
   }
 
-  updateNode(node: BaseNode, args: NodeEventArgs): void {
+  updateNode(node: BaseNode, args: NodeEventArgs): void
+  {
     this.notificationAdaptor.processEvent(node, args);
   }
 
-  setFullScreen(isFullScreen: boolean): void {
+  setFullScreen(isFullScreen: boolean): void
+  {
     this.dispatcher(setFullScreeen(isFullScreen));
   }
 
-  updateStatusPanel(statusText: string): void {
-    this.notificationAdaptor.updateStatusPanel(statusText);
+  updateToolbars(): void
+  {
+    this.dispatcher(updateToolbars());
+  }
+
+  updateStatusPanel(statusText: string): void
+  {
+    this.dispatcher(updateStatusPanel({ text: statusText }));
   }
 }
 

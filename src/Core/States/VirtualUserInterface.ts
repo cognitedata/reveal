@@ -2,7 +2,7 @@ import { IUserInterface } from "@/Core/Interfaces/IUserInterface";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
-export class VirtualUserInterface 
+export class VirtualUserInterface
 {
   //==================================================
   // STATIC FIELDS
@@ -14,12 +14,12 @@ export class VirtualUserInterface
   // STATIC METHODS
   //==================================================
 
-  static install(userInterface: IUserInterface): void 
+  static install(userInterface: IUserInterface): void
   {
     this.userInterface = userInterface;
   }
 
-  static updateNode(node: BaseNode, args: NodeEventArgs): void 
+  static updateNode(node: BaseNode, args: NodeEventArgs): void
   {
     VirtualUserInterface.userInterface?.updateNode(node, args);
   }
@@ -28,7 +28,12 @@ export class VirtualUserInterface
   {
     VirtualUserInterface.userInterface?.setFullScreen(isFullScreen);
   }
-  
+
+  static updateToolbars(): void
+  {
+    VirtualUserInterface.userInterface?.updateToolbars();
+  }
+
   static updateStatusPanel(statusText: string): void
   {
     VirtualUserInterface.userInterface?.updateStatusPanel(statusText);
