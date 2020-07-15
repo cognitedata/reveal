@@ -1,14 +1,15 @@
-import React, { useContext, useEffect, useReducer } from 'react';
+import React, { useContext, useEffect, useReducer, useState } from 'react';
 import { DataTransferObject } from 'typings/interfaces';
 import { Checkbox, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
-import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
+import { Button, Dropdown, Icon, Menu, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { ContentContainer } from '../Configurations/elements';
 import 'antd/dist/antd.css';
 import config from './datatransfer.config';
 import ApiContext from '../../contexts/ApiContext';
+import DetailView from '../../components/Organisms/DetailView';
 
 enum ProgressState {
   LOADING = 'loading',
@@ -176,6 +177,11 @@ const TableActions = styled.div`
   justify-content: flex-end;
 `;
 
+const ShowDetails = styled.span`
+  color: var(--cogs-greyscale-grey6);
+  cursor: pointer;
+`;
+
 function getAllValuesFromColumn(
   dataSet: DataTransferObject[],
   columnName: string
@@ -214,6 +220,11 @@ const DataTransfers: React.FC = () => {
   );
 
   const { api } = useContext(ApiContext);
+
+  const [
+    selectedTransfer,
+    setSelectedTransfer,
+  ] = useState<DataTransferObject | null>(null);
 
   function getColumnNames(dataTransferObjects: DataTransferObject[]): string[] {
     const results: string[] = [];
@@ -264,6 +275,23 @@ const DataTransfers: React.FC = () => {
     return <div>ERROR: {error.message}</div>;
   }
 
+  data.columns.push({
+    dataIndex: 'actions',
+    key: 'actions',
+    render: (_: any, record) => {
+      return (
+        <Tooltip content={<span>Show {record.name} details</span>}>
+          <ShowDetails>
+            <Icon
+              type="VerticalEllipsis"
+              onClick={() => setSelectedTransfer(record)}
+            />
+          </ShowDetails>
+        </Tooltip>
+      );
+    },
+  });
+
   return (
     <ContentContainer>
       <TableActions>
@@ -290,6 +318,10 @@ const DataTransfers: React.FC = () => {
         columns={data.columns}
         loading={status === ProgressState.LOADING}
         rowKey="id"
+      />
+      <DetailView
+        showing={!!selectedTransfer}
+        onClose={() => setSelectedTransfer(null)}
       />
     </ContentContainer>
   );

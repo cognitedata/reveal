@@ -12,8 +12,9 @@ const Container = styled.article<{ showing: boolean }>`
   right: 0;
   top: 0;
   padding: 32px;
+  margin: 32px 0;
   width: 352px;
-  height: 100%;
+  height: calc(100% - 64px);
   box-sizing: border-box;
   overflow-y: hidden;
 
