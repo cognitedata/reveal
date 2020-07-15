@@ -372,7 +372,6 @@ fn restore_vertices(vertex_components: &[u32], vertex_count: usize, grid_indices
 
     let mut vertices: Vec<Vertex> = vec![Default::default(); vertex_count];
     for (i, vertex) in vertices.iter_mut().enumerate() {
-        let j = 3 * i;
         let grid_index = grid_indices[i];
 
         let mut x = grid_index as f32;
@@ -381,6 +380,7 @@ fn restore_vertices(vertex_components: &[u32], vertex_count: usize, grid_indices
         let y = x / y_div;
         x -= y * y_div;
 
+        let j = 3 * i;
         let mut delta_x = vertex_components[j];
         if grid_index == prev_grid_index {
             delta_x += prev_delta_x;
