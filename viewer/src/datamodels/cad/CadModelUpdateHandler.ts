@@ -57,10 +57,11 @@ export class CadModelUpdateHandler {
     ).pipe(
       auditTime(250),
       filter(
-        ([_camera, _clippingPlanes, _clipIntersection, loadingHints, _cameraInMotion, cadNodes]) =>
-          cadNodes.length > 0 && loadingHints.suspendLoading !== true
+        ([_camera, _clippingPlanes, _clipIntersection, loadingHints, cameraInMotion, cadNodes]) =>
+          // TODO 2020-07-15 larsmoa: Reenable load while moving when we get the choppyness problem under control
+          !cameraInMotion && cadNodes.length > 0 && loadingHints.suspendLoading !== true
       ),
-      flatMap(([camera, clippingPlanes, clipIntersection, loadingHints, cameraInMotion, cadNodes]) => {
+      flatMap(([camera, clippingPlanes, clipIntersection, loadingHints, _cameraInMotion, cadNodes]) => {
         return from(cadNodes).pipe(
           filter(cadNode => cadNode.loadingHints.suspendLoading !== true),
           map(cadNode => cadNode.cadModelMetadata),
@@ -68,7 +69,6 @@ export class CadModelUpdateHandler {
           map(cadModels => {
             const input: DetermineSectorsInput = {
               camera,
-              cameraInMotion,
               clippingPlanes,
               clipIntersection,
               loadingHints,
