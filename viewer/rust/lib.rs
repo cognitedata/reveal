@@ -1,34 +1,10 @@
 use js_sys::{Float32Array, Map, Uint32Array};
-use serde::{Deserialize, Serialize};
 use std::panic;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
 
 #[macro_use]
 pub mod error;
-
-#[derive(Deserialize, Serialize)]
-struct UvMap {
-    //pub name: String,
-    //pub filename: String,
-    #[serde(with = "serde_bytes")]
-    pub uv: Vec<u8>, // actually u32
-}
-
-#[derive(Deserialize, Serialize)]
-struct Body {
-    #[serde(with = "serde_bytes")]
-    pub indices: Vec<u8>, // actually u32
-    #[serde(with = "serde_bytes")]
-    pub vertices: Vec<u8>, // actually f32
-    pub normals: Vec<u8>, // actually f32
-    pub uv_maps: Vec<UvMap>,
-}
-
-#[derive(Deserialize, Serialize)]
-struct Ctm {
-    pub body: Body,
-}
 
 #[wasm_bindgen]
 pub struct CtmResult {
