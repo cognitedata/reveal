@@ -1,8 +1,16 @@
-import { Dispatch } from 'redux'
-import { Changes } from '@/Core/Views/Changes'
-import { CheckBoxState } from '@/Core/Enums/CheckBoxState'
+import { Dispatch } from "redux";
+import { Changes } from "@/Core/Views/Changes";
+import { CheckBoxState } from "@/Core/Enums/CheckBoxState";
+import {
+  changeCheckboxState,
+  changeActiveState,
+  changeNodeName,
+  changeNodeColor
+} from "../redux/actions/explorer";
+import { updateStatusPanel } from "@/UserInterface/redux/actions/visualizers";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
+import { changeSelectState } from "@/UserInterface/redux/actions/common";
 
 export const CHANGE_CHECKBOX_STATE: string = "CHANGE_CHECKBOX_STATE";
 
@@ -29,19 +37,21 @@ class NotificationsToActionsAdaptor
   processEvent(sender: BaseNode, args: NodeEventArgs): void
   {
     // console.log('notification ', sender, args);
-    if(args.isEmpty) { return; }
+    if (args.isEmpty)
+    { return; }
 
     // test for all changes that are relevant for us
-    if (args.isChanged(Changes.visibleState)) {
+    if (args.isChanged(Changes.visibleState))
       this.dispatcher(changeCheckboxState(sender.uniqueId.toString(), mapToCheckboxStateStr(sender.getCheckBoxState())));
-    } else {
-      //TODO: handle other conversions
-    }
+    if (args.isChanged(Changes.selected))
+      this.dispatcher(changeSelectState(sender.uniqueId.toString(), sender.IsSelected()));
+    if (args.isChanged(Changes.active))
+      this.dispatcher(changeActiveState(sender.uniqueId.toString(), sender.isActive));
+    if (args.isChanged(Changes.nodeName))
+      this.dispatcher(changeNodeName(sender.uniqueId.toString(), sender.getName()));
+    if (args.isChanged(Changes.nodeColor))
+      this.dispatcher(changeNodeColor(sender.uniqueId.toString(), sender.getColor()));
   }
 }
-
-const changeCheckboxState = (appliesTo: string, payload: any) => {
-    return { type: CHANGE_CHECKBOX_STATE, appliesTo, payload };
-};
 
 export default NotificationsToActionsAdaptor;

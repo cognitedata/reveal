@@ -30,6 +30,7 @@ import { Util } from "@/Core/Primitives/Util";
 import { IEventListener } from "@/Core/Interfaces/IEventListener";
 import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 import { FileType } from "@/Core/Enums/FileType";
+import {PropertyFolder} from "@/Core/Property/Concrete/Folder/PropertyFolder";
 
 export abstract class BaseNode extends Identifiable
 {
@@ -255,6 +256,19 @@ export abstract class BaseNode extends Identifiable
   public /*virtual*/ get renderStyleResolution(): RenderStyleResolution { return RenderStyleResolution.Unique; }
   public /*virtual*/ get renderStyleRoot(): BaseNode | null { return null; }
   public /*virtual*/ supportsColorType(colorType: ColorType): boolean { return true; }
+
+  //==================================================
+  // VIRTUAL METHODS: Populate Settings
+  //==================================================
+
+  public /*virtual*/ populateGeneralProperties(generalProperties: PropertyFolder): void
+  {
+    generalProperties.addStringProperty("name", this.getName, !this.canChangeName(), this, this.nameChanged, this.setName);
+    generalProperties.addColorProperty("color", this.getColor, !this.canChangeColor(), this, this.colorChanged, this.setColor);
+  }
+
+  public nameChanged(): void { this.notify(new NodeEventArgs(Changes.nodeName)); }
+  public colorChanged(): void { this.notify(new NodeEventArgs(Changes.nodeColor)); }
 
   //==================================================
   // INSTANCE METHODS: Selected

@@ -3,9 +3,8 @@ import { IUserInterface } from "@/Core/Interfaces/IUserInterface";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import NotificationsToActionsAdaptor from "@/UserInterface/adaptors/NotificationToAction";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { setFullScreeen } from "@/UserInterface/redux/actions/common";
 import { updateStatusPanel, updateToolbars } from "@/UserInterface/redux/actions/visualizers";
-
+import { setFullScreen } from "@/UserInterface/redux/actions/common";
 
 
 
@@ -32,7 +31,7 @@ class UserInterfaceListener implements IUserInterface
 
   setFullScreen(isFullScreen: boolean): void
   {
-    this.dispatcher(setFullScreeen(isFullScreen));
+    this.dispatcher(setFullScreen(isFullScreen));
   }
 
   updateToolbars(): void

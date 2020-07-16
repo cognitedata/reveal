@@ -6,7 +6,7 @@ import {
   SET_STATUS_PANEL_TEXT,
   SET_VISUALIZER_DATA,
   UPDATE_TOOLBARS
-} from "@/UserInterface/redux/types/visualizers";
+} from "@/UserInterface/redux/types/actionTypes";
 
 // Initial settings state
 const initialState: VisualizerStateInterface = {
@@ -21,19 +21,23 @@ const initialState: VisualizerStateInterface = {
 // Because of this, we can write reducers that appear to "mutate" state, but the updates
 // are actually applied immutably.
 export default createReducer(initialState, {
-  [SET_VISUALIZER_DATA]: (state, action) => {
-    for (const viewer of action.payload.viewers as Viewer[]) {
+  [SET_VISUALIZER_DATA]: (state, action) =>
+  {
+    for (const viewer of action.payload.viewers as Viewer[])
+    {
       const viewerName = viewer.getName();
       state.toolbars[viewerName] = viewer.getToolbar()!;
       state.targets[viewerName] = viewer.getTarget();
     }
   },
 
-  [EXECUTE_VISUALIZER_TOOLBAR_COMMAND_SUCCESS]: (state, action) => {
+  [EXECUTE_VISUALIZER_TOOLBAR_COMMAND_SUCCESS]: (state, action) =>
+  {
     const { visualizerId } = action.payload;
     const toolbar = state.toolbars[visualizerId];
 
-    toolbar.map((item) => {
+    toolbar.map((item) =>
+    {
       const command = item.command;
       item.isChecked = command.isChecked;
       item.icon = command.getIcon();
@@ -41,10 +45,12 @@ export default createReducer(initialState, {
     });
   },
 
-  [UPDATE_TOOLBARS]: (state, action) => {
-    for(const [ , toolbar] of Object.entries(state.toolbars))
+  [UPDATE_TOOLBARS]: (state, action) =>
+  {
+    for (const [, toolbar] of Object.entries(state.toolbars))
     {
-      toolbar.map((item) => {
+      toolbar.map((item) =>
+      {
         const command = item.command;
         item.isChecked = command.isChecked;
         item.icon = command.getIcon();
@@ -53,8 +59,9 @@ export default createReducer(initialState, {
     }
   },
 
-  [SET_STATUS_PANEL_TEXT]: (state, action) => {
-    const {text} = action.payload;
+  [SET_STATUS_PANEL_TEXT]: (state, action) =>
+  {
+    const { text } = action.payload;
     state.statusBar.text = text;
   }
 

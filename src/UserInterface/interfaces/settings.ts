@@ -1,4 +1,5 @@
 import { TitleBarInterface, ToolBarType } from "./common";
+import UsePropertyT from "@/Core/Property/Base/UsePropertyT";
 
 // Describes the return type of actions fired from Settings component
 export interface SettingsCommandInterface {
@@ -41,6 +42,7 @@ export interface SettingsSectionInterface {
 
 // Settings Section Element
 export interface SectionElement {
+  propertyObject: UsePropertyT<any>;
   label?: string;
   type: string;
   value?: any;

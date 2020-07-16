@@ -1,17 +1,16 @@
 import React from "react";
-// import SplitPane from "react-split-pane";
-// import Settings from "../Settings/Settings";
 import { Explorer } from "../Explorer/Explorer";
+import SplitPane from "react-split-pane";
+import Settings from "@/UserInterface/components/Settings/Settings";
 
 // Renders Explorer and Settings components
 export default function LeftPanel() {
   return (
     <div className="left-panel">
-      {/* Removed Settings panel and SplitPane temporary and will be added in future */}
-      {/* <SplitPane split="horizontal" defaultSize={"50%"} primary="second"> */}
-      <Explorer />
-      {/* <Settings /> */}
-      {/* </SplitPane> */}
+      <SplitPane split="horizontal" defaultSize={"50%"} primary="second">
+        <Explorer />
+        <Settings />
+      </SplitPane>
     </div>
   );
 }
