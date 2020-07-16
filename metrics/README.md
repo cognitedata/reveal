@@ -7,7 +7,7 @@ A shareable NPM package for doing metrics logging from frontend applications.
 To start, you need to initialize with a [mixpanel](https://mixpanel.com) token:
 
 ```js
-import Metrics from '@cognite/metrics';
+import { Metrics } from '@cognite/metrics';
 
 Metrics.init({ mixpanelToken: '123456' });
 ```
@@ -19,7 +19,7 @@ After that, `Metrics` is ready to go.
 To track events, use the `track` method:
 
 ```js
-import Metrics from '@cognite/metrics';
+import { Metrics } from '@cognite/metrics';
 
 class MyComponent extends React.Component {
   metrics = new Metrics('MyComponent');
@@ -36,13 +36,23 @@ class MyComponent extends React.Component {
 Note that the class names can also be passed as function references:
 
 ```js
-import Metrics from '@cognite/metrics';
+import { Metrics } from '@cognite/metrics';
 
 class MyComponent extends React.Component {
   metrics = new Metrics(MyComponent);
 
   // ...
 }
+```
+
+There is also a hook you can use in functional components:
+
+```js
+import { useMetrics } from '@cognite/metrics';
+const MyComponent = () => {
+  const metrics = useMetrics('MyComponent');
+  // ...
+};
 ```
 
 ### Metadata
@@ -55,7 +65,7 @@ This can be anything that mixpanel allows in the [properties field](https://mixp
 Events can also be timed using the `start` and `stop` methods:
 
 ```js
-import Metrics from '@cognite/metrics';
+import { Metrics } from '@cognite/metrics';
 
 class MyComponent extends React.Component {
   metrics = new Metrics('MyComponent');
@@ -82,7 +92,7 @@ These are then combined and the union is passed up to mixpanel.
 To identify users, use the `identify` method:
 
 ```js
-import Metrics from '@cognite/metrics';
+import { Metrics } from '@cognite/metrics';
 
 Metrics.identify('someone@example.com');
 ```
@@ -94,7 +104,7 @@ Note that this will not work unless `Metrics.init(..)` has been called.
 To log metadata about an individual, pass an object into the `people` method:
 
 ```js
-import Metrics from '@cognite/metrics';
+import { Metrics } from '@cognite/metrics';
 
 Metrics.people({ name: 'Foo', company: 'Bar AS', numberOfProducts: 10 });
 ```
@@ -104,7 +114,7 @@ Metrics.people({ name: 'Foo', company: 'Bar AS', numberOfProducts: 10 });
 To opt a user out or in from tracking use the following methods.
 
 ```js
-import Metrics from '@cognite/metrics';
+import { Metrics } from '@cognite/metrics';
 
 Metrics.optIn(options?);
 Metrics.optOut(options?);
@@ -113,7 +123,7 @@ Metrics.optOut(options?);
 Too check if a user is opted out:
 
 ```js
-import Metrics from '@cognite/metrics';
+import { Metrics } from '@cognite/metrics';
 
 Metrics.hasOptedOut(options?);
 ```

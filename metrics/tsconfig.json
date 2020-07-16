@@ -1,9 +1,18 @@
 {
   "extends": "../../../../tsconfig.json",
   "compilerOptions": {
-    "target": "es5",
     "module": "es2015",
-    "baseUrl": "src",
-    "outDir": "./build"
+    "target": "es5",
+    "declaration": true,
+    "declarationDir": "dist",
+    "outDir": "dist",
+    "strict": true,
+    "sourceMap": false,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "rootDirs": ["src", "stories"],
+    "lib": ["es2015", "dom"],
+    "jsx": "react"
   }
 }
