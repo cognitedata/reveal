@@ -1,10 +1,9 @@
 import React, { useState, useMemo } from 'react';
-
-import { Button } from '@cognite/cogs.js';
+import { Button, A, Body } from '@cognite/cogs.js';
 import { useTranslation, Trans } from 'react-i18next';
+import sidecar from 'utils/sidecar';
 
-import { Container, Header, ExternalLink, Logo } from './elements';
-import logo from './logo.svg';
+import { Container, Header } from './elements';
 
 const Home = () => {
   const [crashing, setCrashing] = useState(false);
@@ -30,14 +29,14 @@ const Home = () => {
   return (
     <Container>
       <Header>
-        <Logo src={logo} />
         <p>
           <Trans i18nKey="Home:versionInfo_paragraph" t={t}>
             This is v
             {{ versionName: process.env.REACT_APP_VERSION_NAME || '0.0.0' }}
           </Trans>
         </p>
-        <ExternalLink
+        <A
+          isExternal
           href="https://cog.link/fas"
           target="_blank"
           rel="noopener noreferrer"
@@ -45,16 +44,36 @@ const Home = () => {
           <Trans i18nKey="Home:learnMore_link" t={t}>
             Learn about how this is hosted
           </Trans>
-        </ExternalLink>
-        <Button
-          disabled={crashing}
-          type="danger"
-          onClick={clickHandler}
-          style={{ marginTop: 8 }}
-        >
-          {buttonText}
-        </Button>
+        </A>
       </Header>
+      <Body>
+        <Trans t={t} i18nKey="cdfBaseUrl_paragraph">
+          The CDF base URL for this cluster is{' '}
+          <code>{{ baseURL: sidecar.cdfApiBaseUrl }}</code>
+        </Trans>
+      </Body>
+      <Body>
+        <Trans t={t} i18nKey="info-sidecar">
+          Learn more about{' '}
+          <A
+            isExternal
+            href="https://cog.link/sidecar"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            sidecars
+          </A>
+          !
+        </Trans>
+      </Body>
+      <Button
+        disabled={crashing}
+        type="danger"
+        onClick={clickHandler}
+        style={{ marginTop: 8 }}
+      >
+        {buttonText}
+      </Button>
     </Container>
   );
 };

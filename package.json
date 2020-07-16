@@ -13,7 +13,7 @@
     "storybook": "start-storybook -p 6006"
   },
   "dependencies": {
-    "@cognite/cogs.js": "^1.10.0",
+    "@cognite/cogs.js": "^1.10.3",
     "@cognite/metrics": "^0.1.2",
     "@cognite/react-i18n": "0.0.3",
     "@sentry/browser": "^5.19.2",
@@ -24,6 +24,7 @@
     "i18next-localstorage-backend": "^3.1.1",
     "i18next-locize-backend": "^4.1.1",
     "i18next-pseudo": "^2.2.0",
+    "lodash": "^4.17.19",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-i18next": "^11.7.0",
@@ -38,6 +39,7 @@
     "@testing-library/jest-dom": "^5.11.1",
     "@testing-library/react": "^10.4.7",
     "@types/jest": "^26.0.4",
+    "@types/lodash": "^4.14.157",
     "@types/node": "^14.0.23",
     "@types/react": "^16.9.43",
     "@types/react-dom": "^16.9.8",
