@@ -32,7 +32,7 @@ export default [
     output: [
       {
         file: 'dist/mocks.js',
-        format: 'es',
+        format: 'cjs',
       },
     ],
     plugins: [
