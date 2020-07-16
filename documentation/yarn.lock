@@ -1097,10 +1097,10 @@
     stringify-object "^3.3.0"
     unist-util-visit "^2.0.2"
 
-"@docusaurus/module-type-aliases@^2.0.0-alpha.51":
-  version "2.0.0-alpha.51"
-  resolved "https://registry.yarnpkg.com/@docusaurus/module-type-aliases/-/module-type-aliases-2.0.0-alpha.51.tgz#7b8f9f772b315571c23db125653f4fc621abfeea"
-  integrity sha512-vBwk49W3DNvr+mbOgizLMI2TAxykqJYlcnpn4N7yvpWNteL2MfjzRf6rgJVJvlN2nrHhDyWDF9imwZpGDKSApg==
+"@docusaurus/module-type-aliases@^2.0.0-alpha.58":
+  version "2.0.0-alpha.58"
+  resolved "https://registry.yarnpkg.com/@docusaurus/module-type-aliases/-/module-type-aliases-2.0.0-alpha.58.tgz#48e214755f53b600fb1d44aeb5d0ad6c7c36e169"
+  integrity sha512-C947WGpN8eyPeBNjWBOhvpcgBcliGW462Frl39WAp/DQ32KGjDUdSmwixFFScuMokipVs3DvkR95OXqWxncsfQ==
 
 "@docusaurus/plugin-content-blog@^2.0.0-alpha.58":
   version "2.0.0-alpha.58"
@@ -1203,16 +1203,15 @@
     react-router-dom "^5.1.2"
     react-toggle "^4.1.1"
 
-"@docusaurus/theme-live-codeblock@^2.0.0-alpha.39":
-  version "2.0.0-alpha.39"
-  resolved "https://registry.yarnpkg.com/@docusaurus/theme-live-codeblock/-/theme-live-codeblock-2.0.0-alpha.39.tgz#4ffdd5fc8271840641a091dd2adcc9e2c2a423a1"
-  integrity sha512-Z0Eru2QhAuZOSuHuygzjCv2pryIIxI7XC568KG5rtFn11ichtDaLwJkmo14KDPdlcpeF3g4ObTkCaHxOVhaeUA==
+"@docusaurus/theme-live-codeblock@^2.0.0-alpha.58":
+  version "2.0.0-alpha.58"
+  resolved "https://registry.yarnpkg.com/@docusaurus/theme-live-codeblock/-/theme-live-codeblock-2.0.0-alpha.58.tgz#7e66f92ae6ff941bdaaff0d1b25927937be497cb"
+  integrity sha512-24O8PyKxX/PdQHbqHGGjkQmsg5vNBRBSBDXmUWNAObt5/6g/5WRerwMd0U+K4YnZ2tAneUnkJxCEJ8W8k+GACQ==
   dependencies:
     "@philpl/buble" "^0.19.7"
-    classnames "^2.2.6"
-    clipboard "^2.0.4"
+    clsx "^1.1.1"
     parse-numeric-range "^0.0.2"
-    prism-react-renderer "^1.0.2"
+    prism-react-renderer "^1.1.0"
     react-live "^2.2.1"
 
 "@docusaurus/theme-search-algolia@^2.0.0-alpha.58":
@@ -2815,7 +2814,7 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-classnames@^2.2.5, classnames@^2.2.6:
+classnames@^2.2.5:
   version "2.2.6"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
   integrity sha512-JR/iSQOSt+LQIWwrwEzJ9uk0xfN3mTVYMwt1Ir5mUcSN6pU+V4zQFFaJsclJbPuAUQH+yfWef6tm7l1quW3C8Q==
@@ -2844,7 +2843,7 @@ cli-width@^2.0.0:
   resolved "https://registry.yarnpkg.com/cli-width/-/cli-width-2.2.1.tgz#b0433d0b4e9c847ef18868a4ef16fd5fc8271c48"
   integrity sha512-GRMWDxpOB6Dgk2E5Uo+3eEBvtOOlimMmpbFiKuLFnQzYDavtLFY3K5ona41jgN/WdRZtG7utuVSVTL4HbZHGkw==
 
-clipboard@^2.0.0, clipboard@^2.0.4:
+clipboard@^2.0.0:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/clipboard/-/clipboard-2.0.6.tgz#52921296eec0fdf77ead1749421b21c968647376"
   integrity sha512-g5zbiixBRk/wyKakSwCKd7vQXDjFnAMGHoEyBogG/bw9kTD9GvdAvaoRR1ALcEzt3pVKxZR0pViekPMIS0QyGg==
@@ -6979,6 +6978,11 @@ npm-run-path@^4.0.0:
   dependencies:
     path-key "^3.0.0"
 
+npm-to-yarn@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/npm-to-yarn/-/npm-to-yarn-1.0.1.tgz#6cdb95114c4ff0be50a7a2381d4d16131a5f52df"
+  integrity sha512-bp8T8oNMfLW+N/fE0itFfSu7RReytwhqNd9skbkfHfzGYC+5CCdzS2HnaXz6JiG4AlK2eA0qlT6NJN1SoFvcWQ==
+
 nprogress@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/nprogress/-/nprogress-0.2.0.tgz#cb8f34c53213d895723fcbab907e9422adbcafb1"
@@ -8177,7 +8181,7 @@ pretty-time@^1.1.0:
   resolved "https://registry.yarnpkg.com/pretty-time/-/pretty-time-1.1.0.tgz#ffb7429afabb8535c346a34e41873adf3d74dd0e"
   integrity sha512-28iF6xPQrP8Oa6uxE6a1biz+lWeTOAPKggvjB8HAs6nVMKZwf5bG++632Dx614hIWgUPkgivRfG+a8uAXGTIbA==
 
-prism-react-renderer@^1.0.1, prism-react-renderer@^1.0.2, prism-react-renderer@^1.1.0:
+prism-react-renderer@^1.0.1, prism-react-renderer@^1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/prism-react-renderer/-/prism-react-renderer-1.1.1.tgz#1c1be61b1eb9446a146ca7a50b7bcf36f2a70a44"
   integrity sha512-MgMhSdHuHymNRqD6KM3eGS0PNqgK9q4QF5P0yoQQvpB6jNjeSAi3jcSAz0Sua/t9fa4xDOMar9HJbLa08gl9ug==

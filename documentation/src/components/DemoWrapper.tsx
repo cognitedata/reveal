@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import { DemoProps } from './DemoProps';
 import { CogniteClient } from '@cognite/sdk';
 import { DemoLoginCover } from './DemoLoginCover';
+import { useBaseTag } from '../hooks/useBaseTag';
 
 const DemoContainer = styled.div`
   height: calc(min(85vh, 600px));
@@ -24,14 +25,15 @@ const components: Record<string, ComponentType<DemoProps>> = {
 };
 
 export function DemoWrapper({ name }: { name: string }) {
+  useBaseTag('[data-basetagnail]');
+
   if (typeof window === 'undefined') {
     return <div />;
   }
   let LazyComponent = components[name];
   return (
-    <DemoContainer>
+    <DemoContainer data-basetagnail>
       <Suspense fallback={<div>Loading demo...</div>}>
-        <WithBasePath />
         <DemoLoginCover>
           {(client: CogniteClient) => <LazyComponent client={client} />}
         </DemoLoginCover>

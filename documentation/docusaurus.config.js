@@ -12,18 +12,30 @@ module.exports = {
       logo: {
         alt: 'Reveal logo',
         src: 'img/logo.svg',
+        srcDark: 'img/logo_dark.svg',
       },
       links: [
-        {
-          to: 'docs/',
-          activeBasePath: 'docs',
-          label: 'Docs',
-          position: 'left',
-        },
-        { to: 'blog', label: 'Blog', position: 'left' },
+        // {
+        //   to: 'docs/',
+        //   activeBaseRegex: `docs/(?!(examples|api-reference))`,
+        //   label: 'DOCS',
+        //   position: 'left',
+        // },
+        // {
+        //   to: 'docs/examples/Cognite3DViewer',
+        //   activeBasePath: `docs/examples`,
+        //   label: 'EXAMPLES',
+        //   position: 'left',
+        // },
+        // {
+        //   to: 'docs/api-reference',
+        //   activeBasePath: `docs/api-reference`,
+        //   label: 'API REFERENCE',
+        //   position: 'left',
+        // },
         {
           href: 'https://github.com/cognitedata/reveal',
-          label: 'GitHub',
+          label: 'GITHUB',
           position: 'right',
         },
       ],
@@ -84,17 +96,12 @@ module.exports = {
       {
         docs: {
           // It is recommended to set document id as docs home page (`docs/` path).
-          homePageId: 'doc1',
+          homePageId: 'overview',
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           editUrl:
-            'https://github.com/facebook/docusaurus/edit/master/website/',
-        },
-        blog: {
-          showReadingTime: true,
-          // Please change this to your repo.
-          editUrl:
-            'https://github.com/facebook/docusaurus/edit/master/website/blog/',
+            'https://github.com/cognitedata/reveal/blob/master/documentation',
+          remarkPlugins: [require('./src/plugins/remark-npm2yarn')],
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
