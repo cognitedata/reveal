@@ -21,6 +21,7 @@ export abstract class BaseRenderStyle extends BaseStyle implements ITargetIdAcce
   // INSTANCE FIELDS
   //==================================================
 
+  public readonly fontSizeOptions = [10, 20, 25, 30, 50, 75, 100, 200];
   private _targetId: TargetId;
   public isDefault: boolean = false;
 

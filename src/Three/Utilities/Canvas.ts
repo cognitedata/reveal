@@ -221,7 +221,7 @@ export class Canvas
   //==================================================
 
   public static getColor(color: Color | null) { return color ? color.string() : "black" };
-  private static getFont(fontSize: number): string { return `${fontSize}px ${Appearance.fontIn3D}`; }
+  private static getFont(fontSize: number): string { return `${fontSize}px ${Appearance.viewerFontType}`; }
   public static getNormalFont(fontSize: number): string { return "Normal " + Canvas.getFont(fontSize); }
   public static getBoldFont(fontSize: number): string { return "Bold " + Canvas.getFont(fontSize); }
   public static getBolderFont(fontSize: number): string { return "Bolder " + Canvas.getFont(fontSize); }

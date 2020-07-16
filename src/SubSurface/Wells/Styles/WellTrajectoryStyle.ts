@@ -23,11 +23,13 @@ export class WellTrajectoryStyle extends BaseRenderStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public radius = 5;
   public colorType = ColorType.White;
-  public nameFontHeight = 50;
-  public bandWidth = 50;
-  public bandFontSize = 30;
+  public radius = 5; // [1,2,3,5,10,20,30,40,50];
+  public nameFontSize = 50; // fontSizeOptions
+  public bandFontSize = 30; // fontSizeOptions
+
+  public bandWidth = 50; 
+  public readonly bandWidthOptions = [20, 25, 30, 50, 75, 100, 200];
 
   //==================================================
   // CONSTRUCTORS

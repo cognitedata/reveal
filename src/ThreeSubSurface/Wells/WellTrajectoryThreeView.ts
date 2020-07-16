@@ -40,6 +40,7 @@ import { Units } from "@/Core/Primitives/Units";
 import { WellNode } from "@/SubSurface/Wells/Nodes/WellNode";
 import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
 import { ViewInfo } from "@/Core/Views/ViewInfo";
+import { FloatLogStyle } from "@/SubSurface/Wells/Styles/FloatLogStyle";
 
 const TrajectoryName = "trajectory";
 const TrajectoryLabelName = "trajectoryLabel";
@@ -275,7 +276,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
       // Check if camera has move slightly
       const angle = Math.acos(cameraDirection.getDot(this.cameraDirection));
-      if (angle > Appearance.maxCameraDifferenceAngle)
+      if (angle > Appearance.viewerSmallestCameraDeltaAngle)
       {
         this.cameraDirection = cameraDirection;
         this.cameraPosition = cameraPosition;
@@ -354,7 +355,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
     const position = trajectory.getBasePosition().clone();
     this.transformer.transformRelativeTo3D(position);
-    const label = SpriteCreator.createByPositionAndAlignment(name, position, 7, style.nameFontHeight, this.fgColor);
+    const label = SpriteCreator.createByPositionAndAlignment(name, position, 7, style.nameFontSize, this.fgColor);
     if (!label)
       return;
 
@@ -379,7 +380,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
     const position = trajectory.getTopPosition().clone();
     this.transformer.transformRelativeTo3D(position);
-    const label = SpriteCreator.createByPositionAndAlignment(wellNode.name, position, 1, style.nameFontHeight, this.fgColor);
+    const label = SpriteCreator.createByPositionAndAlignment(wellNode.name, position, 1, style.nameFontSize, this.fgColor);
     if (!label)
       return;
 
@@ -411,8 +412,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
         color: ThreeConverter.to3DColor(Colors.white),
         shininess: 75,
         vertexColors: THREE.VertexColors,
-        emissive : ThreeConverter.to3DColor(Colors.cyan),
-        emissiveIntensity: 0.33,
+        emissive: ThreeConverter.to3DColor(Colors.cyan),
+        emissiveIntensity: 0.25,
       });
       const mesh = new THREE.Mesh(geometry, material);
       mesh.name = TrajectoryName;
@@ -422,7 +423,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       const geometry = new THREE.Geometry();
       for (const sample of samples)
         geometry.vertices.push(ThreeConverter.to3D(sample.point));
-      const material = new THREE.LineBasicMaterial({ color: ThreeConverter.to3DColor(color), linewidth:2 });
+      const material = new THREE.LineBasicMaterial({ color: ThreeConverter.to3DColor(color), linewidth: 2 });
       const line = new THREE.Line(geometry, material);
       parent.add(line);
     }
@@ -552,23 +553,13 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
         if (!logNode.isVisible(this.renderTarget))
           continue;
 
-        if ((i % 2 === 0) === rightBand && filled < 2)
-        {
-          logRender.addFloatLog(canvas, logNode.log, logNode.getColor(), true);
-          filled++;
-          visibleCount++;
-        }
-        i++;
-      }
-      i = 0;
-      for (const logNode of node.getDescendantsByType(FloatLogNode))
-      {
-        if (!logNode.isVisible(this.renderTarget))
+        var logStyle = logNode.getRenderStyle(this.targetId) as FloatLogStyle;
+        if (!logStyle)
           continue;
 
         if ((i % 2 === 0) === rightBand)
         {
-          logRender.addFloatLog(canvas, logNode.log, logNode.getColor(), false);
+          logRender.addFloatLog(canvas, logNode.log, logStyle, logNode.getColorByColorType(logStyle.colorType), true);
           visibleCount++;
         }
         i++;

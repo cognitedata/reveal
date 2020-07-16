@@ -24,7 +24,8 @@ export class CasingLogStyle extends BaseRenderStyle
   //==================================================
 
   public colorType = ColorType.Specified;
-  public opacity = 0.7;
+  public opacity = 0.7; // Slider for 0 to 1
+  public radiusFactor = 1; // Radius in 3D = radiusFactor * casing.radius
 
   //==================================================
   // CONSTRUCTORS

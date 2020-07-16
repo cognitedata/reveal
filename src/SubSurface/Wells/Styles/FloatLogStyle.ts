@@ -23,10 +23,13 @@ export class FloatLogStyle extends BaseRenderStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public minRadius = 2;
-  public maxRadius = 2;
-  public rightBand = true;
   public colorType = ColorType.Specified;
+  public rightBand = false;
+  public min = 1; // Type in value
+  public max = 1; // Type in value
+  public useMin = false;
+  public useMax = false;
+  //public UseFloat = new UseFloat(false, 0);
 
   //==================================================
   // CONSTRUCTORS

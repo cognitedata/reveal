@@ -3,6 +3,7 @@ import { Range3 } from "@/Core/Geometry/Range3";
 import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
 import { Base3DView } from "@/Core/Views/Base3DView";
 import { ViewInfo } from "@/Core/Views/ViewInfo";
+import { Appearance } from "@/Core/States/Appearance";
 
 export abstract class BaseRenderTargetNode extends BaseTargetNode
 {
@@ -47,8 +48,8 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
   {
     super();
     this._fractionRange = fractionRange ? fractionRange : Range3.newUnit;
-    this.isLightBackground = false;
-    this._viewInfo.footer = "Cognite subsurface viewer";
+    this.isLightBackground = Appearance.viewerIsLightBackground;
+    this._viewInfo.footer = Appearance.viewerFooter;
   }
 
   //==================================================
