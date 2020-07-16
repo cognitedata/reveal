@@ -4,7 +4,6 @@ use i3df::renderables::{PrimitiveCollections, Sector};
 use js_sys::{Float32Array, Map, Promise, Uint32Array, Uint8Array};
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
-use std::panic;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::JsFuture;
@@ -145,14 +144,17 @@ impl CtmResult {
     // TODO 2019-10-23 dragly: add UV maps
 }
 
-cached_key! {
+cached_key_result! {
     PARSE_CTM: SizedCache<String, CtmResult> = SizedCache::with_size(40);
     Key = { _file_name };
-    fn parse_ctm(_file_name: String, input: &[u8]) -> CtmResult = {
+    fn parse_ctm(_file_name: String, input: &[u8]) -> Result<CtmResult, JsValue> = {
         let cursor = std::io::Cursor::new(input);
-        let file = openctm::parse(cursor).unwrap();
+        let file = match openctm::parse(cursor) {
+            Ok(f) => f,
+            Err(e) => return Err(e.to_string()),
+        };
 
-        CtmResult { file }
+        Ok(CtmResult { file })
     }
 }
 
@@ -173,7 +175,7 @@ cached_key_result! {
 async fn load_file(
     blob_url: &str,
     file_name: String,
-    headers: JsValue,
+    headers: &JsValue,
 ) -> Result<(String, Uint8Array), JsValue> {
     let value = JsFuture::from(getCadSectorFile(&blob_url, &file_name, headers)).await?;
     Ok((file_name, Uint8Array::new(&value)))
@@ -181,7 +183,7 @@ async fn load_file(
 
 #[wasm_bindgen(module = "/src/utilities/networking/utilities.ts")]
 extern "C" {
-    fn getCadSectorFile(blob_url: &str, file_name: &str, headers: JsValue) -> Promise;
+    fn getCadSectorFile(blob_url: &str, file_name: &str, headers: &JsValue) -> Promise;
 }
 
 #[wasm_bindgen]
@@ -191,14 +193,14 @@ pub async fn load_parse_finalize_detailed(
     blob_url: String,
     headers: JsValue,
 ) -> Result<SectorGeometry, JsValue> {
-    // TODO read https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/building-your-project.html
-    // and see if this can be moved to one common place
-    panic::set_hook(Box::new(console_error_panic_hook::hook));
+    console_error_panic_hook::set_once();
     wasm_bindgen::intern(&blob_url);
     // Check if sector is cached
     let i3d_future;
     let res;
     {
+        // Note: This call to unwrap should only panic if the lock is poisoned
+        // which should only happen during a panic
         let mut cache = PARSE_AND_CONVERT_SECTOR.lock().unwrap();
         res = Cached::cache_get(&mut *cache, &file_name).cloned();
     }
@@ -207,10 +209,13 @@ pub async fn load_parse_finalize_detailed(
         i3d_future = futures::future::ready(Ok(res)).left_future();
     } else {
         // Cache miss
-        i3d_future = load_file(&blob_url, file_name.clone(), headers.clone())
+        i3d_future = load_file(&blob_url, file_name.clone(), &headers)
             .map(|v| {
-                let (file_name, data) = v.unwrap();
-                parse_and_convert_sector(file_name, &data.to_vec())
+                if let Ok((file_name, data)) = v {
+                    parse_and_convert_sector(file_name, &data.to_vec())
+                } else {
+                    Err("Failed to load i3d file".into())
+                }
             })
             .right_future();
     }
@@ -220,29 +225,36 @@ pub async fn load_parse_finalize_detailed(
     let mut ctm_map = HashMap::new();
 
     // Add all cached CtmResults to map
-    ctm_file_names
-        .iter()
-        .map(|file_name| {
-            let mut cache = PARSE_CTM.lock().unwrap();
-            (
-                Cached::cache_get(&mut *cache, file_name).cloned(),
-                file_name,
-            )
-        })
-        .filter(|(res, _)| res.is_some())
-        .for_each(|(v, k)| {
-            ctm_map.insert(k.clone(), v.unwrap());
-        });
+    {
+        // Note: This call to unwrap should only panic if the lock is poisoned
+        // which should only happen during a panic
+        let mut cache = PARSE_CTM.lock().unwrap();
+        ctm_file_names
+            .iter()
+            .map(|file_name| {
+                (
+                    Cached::cache_get(&mut *cache, file_name).cloned(),
+                    file_name,
+                )
+            })
+            .for_each(|(v, k)| {
+                if let Some(v) = v {
+                    ctm_map.insert(k.clone(), v);
+                }
+            });
+    }
 
     // Load, parse, and add CtmResults to map
     let ctm_future = ctm_file_names
         .into_iter()
         .filter(|file_name| !ctm_map.contains_key(file_name))
-        .map(|x| load_file(&blob_url, x, headers.clone()))
+        .map(|x| load_file(&blob_url, x, &headers))
         .collect::<FuturesUnordered<_>>()
         .for_each_concurrent(None, |x| {
             if let Ok((file_name, buf)) = x {
-                ctm_map.insert(file_name.clone(), parse_ctm(file_name, &buf.to_vec()));
+                if let Ok(result) = parse_ctm(file_name.clone(), &buf.to_vec()) {
+                    ctm_map.insert(file_name, result);
+                }
             }
             futures::future::ready(())
         });
@@ -459,9 +471,7 @@ impl SimpleSectorData {
 
 #[wasm_bindgen]
 pub fn parse_and_convert_f3df(input: &[u8]) -> Result<SimpleSectorData, JsValue> {
-    // TODO read https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/building-your-project.html
-    // and see if this can be moved to one common place
-    panic::set_hook(Box::new(console_error_panic_hook::hook));
+    console_error_panic_hook::set_once();
 
     let cursor = std::io::Cursor::new(input);
 
@@ -492,12 +502,12 @@ pub fn parse_and_convert_f3df(input: &[u8]) -> Result<SimpleSectorData, JsValue>
 
     Ok(SimpleSectorData {
         faces: faces_as_float_32_array,
-        node_id_to_tree_index_map: Map::from(
-            serde_wasm_bindgen::to_value(&renderable_sector.node_id_to_tree_index_map).unwrap(),
-        ),
-        tree_index_to_node_id_map: Map::from(
-            serde_wasm_bindgen::to_value(&renderable_sector.tree_index_to_node_id_map).unwrap(),
-        ),
+        node_id_to_tree_index_map: Map::from(serde_wasm_bindgen::to_value(
+            &renderable_sector.node_id_to_tree_index_map,
+        )?),
+        tree_index_to_node_id_map: Map::from(serde_wasm_bindgen::to_value(
+            &renderable_sector.tree_index_to_node_id_map,
+        )?),
     })
 }
 

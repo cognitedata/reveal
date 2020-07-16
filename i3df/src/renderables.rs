@@ -51,14 +51,17 @@ impl Scene {
     pub fn sector_id(&self, index: usize) -> usize {
         self.sectors[index].id
     }
-    pub fn sector_parent_id(&self, index: usize) -> JsValue {
-        serde_wasm_bindgen::to_value(&self.sectors[index].parent_id).unwrap()
+    pub fn sector_parent_id(&self, index: usize) -> Result<JsValue, JsValue> {
+        serde_wasm_bindgen::to_value(&self.sectors[index].parent_id)
+            .map_err(|e| e.to_string().into())
     }
-    pub fn sector_bbox_min(&self, index: usize) -> JsValue {
-        serde_wasm_bindgen::to_value(&self.sectors[index].bbox_min).unwrap()
+    pub fn sector_bbox_min(&self, index: usize) -> Result<JsValue, JsValue> {
+        serde_wasm_bindgen::to_value(&self.sectors[index].bbox_min)
+            .map_err(|e| e.to_string().into())
     }
-    pub fn sector_bbox_max(&self, index: usize) -> JsValue {
-        serde_wasm_bindgen::to_value(&self.sectors[index].bbox_max).unwrap()
+    pub fn sector_bbox_max(&self, index: usize) -> Result<JsValue, JsValue> {
+        serde_wasm_bindgen::to_value(&self.sectors[index].bbox_max)
+            .map_err(|e| e.to_string().into())
     }
     pub fn sector(&mut self, index: usize) -> Sector {
         // NOTE the user can only get the sector once
@@ -334,12 +337,12 @@ macro_rules! new_geometry_types {
                 self.primitive_collections.instanced_mesh_collection.clone()
             }
 
-            pub fn tree_index_to_node_id_map(&self) -> Map {
-                Map::from(serde_wasm_bindgen::to_value(&self.primitive_collections.tree_index_to_node_id_map).unwrap())
+            pub fn tree_index_to_node_id_map(&self) -> Result<Map, JsValue> {
+                Ok(Map::from(serde_wasm_bindgen::to_value(&self.primitive_collections.tree_index_to_node_id_map).map_err(|e| e.to_string())?))
             }
 
-            pub fn node_id_to_tree_index_map(&self) -> Map {
-                Map::from(serde_wasm_bindgen::to_value(&self.primitive_collections.node_id_to_tree_index_map).unwrap())
+            pub fn node_id_to_tree_index_map(&self) -> Result<Map, JsValue> {
+                Ok(Map::from(serde_wasm_bindgen::to_value(&self.primitive_collections.node_id_to_tree_index_map).map_err(|e| e.to_string())?))
             }
 
             pub fn statistics(&self) -> SectorStatistics {
