@@ -393,9 +393,7 @@ fn restore_vertices(
 
     let component_count = vertex_count * 3;
     let mut vertices: Vec<f32> = vec![Default::default(); component_count];
-    for i in 0..vertex_count {
-        let grid_index = grid_indices[i];
-
+    for (i, &grid_index) in grid_indices.iter().enumerate().take(vertex_count) {
         let mut idx = grid_index;
         let z: u32 = idx / z_div;
         idx -= z * z_div;
@@ -501,10 +499,11 @@ pub fn parse(mut input: impl io::BufRead) -> Result<File, Error> {
             file_format
         ));
     }
-    let compression_method = match num::FromPrimitive::from_i32(input.read_i32::<LittleEndian>()?) {
-        Some(x) => x,
-        None => return Err(error!("Unknown OpenCTM compression method")),
-    };
+    let compression_method: CompressionMethod =
+        match num::FromPrimitive::from_i32(input.read_i32::<LittleEndian>()?) {
+            Some(x) => x,
+            None => return Err(error!("Unknown OpenCTM compression method")),
+        };
     let vertex_count = input.read_u32::<LittleEndian>()?;
     let triangle_count = input.read_u32::<LittleEndian>()?;
     let uv_map_count = input.read_u32::<LittleEndian>()?;
