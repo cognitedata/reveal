@@ -6,7 +6,6 @@ use wasm_bindgen::JsValue;
 #[macro_use]
 pub mod error;
 
-
 #[wasm_bindgen]
 pub struct CtmResult {
     file: openctm::File,
