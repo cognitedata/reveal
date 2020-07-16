@@ -65,7 +65,7 @@
     "react-scripts": "3.4.1",
     "start-server-and-test": "^1.11.2",
     "ts-jest": "^26.1.2",
-    "typescript": "3.9.6"
+    "typescript": "3.9.7"
   },
   "eslintConfig": {
     "extends": "react-app"
