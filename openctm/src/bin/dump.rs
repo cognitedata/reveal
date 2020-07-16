@@ -62,7 +62,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let output = if options.stats {
         Output::FileStats {
             indices: parsed_file.indices.len(),
-            vertices: parsed_file.vertices.len(),
+            vertices: parsed_file.number_of_vertices(),
             normals: match parsed_file.normals {
                 Some(x) => Some(x.len()),
                 None => None,

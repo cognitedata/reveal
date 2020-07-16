@@ -15,7 +15,7 @@ const LZMA_HEADER_SIZE: usize = 5;
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct File {
     pub indices: Vec<u32>,
-    pub vertices: Vec<Vertex>,
+    pub vertex_components: Vec<f32>,
     pub normals: Option<Vec<Normal>>,
     pub uv_maps: Vec<UvMap>,
 }
@@ -224,6 +224,23 @@ pub trait ReadExt: io::Read {
 
 impl<T: io::Read> ReadExt for T {}
 
+impl File {
+    pub fn number_of_vertices(&self) -> usize {
+        self.vertex_components.len() / 3
+    }
+
+    pub fn get_vertices(&self) -> Vec<Vertex> {
+        let n_vertices = self.number_of_vertices();
+        let mut vertices: Vec<Vertex> = vec![Default::default(); n_vertices];
+        for (i, vertex) in vertices.iter_mut().enumerate() {
+            vertex.x = self.vertex_components[3 * i];
+            vertex.y = self.vertex_components[3 * i + 1];
+            vertex.z = self.vertex_components[3 * i + 2];
+        }
+        vertices
+    }
+}
+
 impl OpenCTMHeader {
     pub fn has_normals(&self) -> bool {
         (self.flags & 0x0000_0001) == 0x0000_0001
@@ -277,21 +294,10 @@ fn parse_mg1(header: &OpenCTMHeader, mut input: impl io::BufRead) -> Result<File
     let indices = parse_triangle_indices(&mut input, header.triangle_count)?;
 
     let vertex_count = header.vertex_count as usize;
-    let vertices = {
+    let vertex_components = {
         input.read_magic_bytes(b"VERT")?;
-
         let component_count = vertex_count * 3;
-        let components = input.read_packed_f32s(component_count, 4)?;
-
-        let mut vertices = vec![Default::default(); vertex_count];
-        for i in 0..vertex_count {
-            vertices[i] = Vertex {
-                x: components[3 * i],
-                y: components[3 * i + 1],
-                z: components[3 * i + 2],
-            }
-        }
-        vertices
+        input.read_packed_f32s(component_count, 4)?
     };
 
     let normals = if !header.has_normals() {
@@ -348,7 +354,7 @@ fn parse_mg1(header: &OpenCTMHeader, mut input: impl io::BufRead) -> Result<File
 
     Ok(File {
         indices,
-        vertices,
+        vertex_components,
         normals,
         uv_maps,
     })
@@ -361,11 +367,11 @@ fn restore_grid_indices(grid_indices: &mut Vec<u32>) {
 }
 
 fn restore_vertices(
-    vertex_components: &[u32],
+    int_vertex_components: &[u32],
     vertex_count: usize,
     grid_indices: &[u32],
     mg2_header: &MG2Header,
-) -> Vec<Vertex> {
+) -> Vec<f32> {
     let vertex_precision = mg2_header.vertex_precision;
     let y_div = mg2_header.div_x;
     let z_div = y_div * mg2_header.div_y;
@@ -376,8 +382,9 @@ fn restore_vertices(
     let mut prev_grid_index = 0x7fffffff;
     let mut prev_delta_x = 0;
 
-    let mut vertices: Vec<Vertex> = vec![Default::default(); vertex_count];
-    for (i, vertex) in vertices.iter_mut().enumerate() {
+    let component_count = vertex_count * 3;
+    let mut vertices: Vec<f32> = vec![Default::default(); component_count];
+    for i in 0..vertex_count {
         let grid_index = grid_indices[i];
 
         let mut idx = grid_index;
@@ -393,14 +400,14 @@ fn restore_vertices(
         let grid_z = z as f32 * size_z + lower_bound.z;
 
         let j = 3 * i;
-        let mut delta_x = vertex_components[j];
+        let mut delta_x = int_vertex_components[j];
         if grid_index == prev_grid_index {
             delta_x += prev_delta_x;
         }
 
-        vertex.x = vertex_precision * delta_x as f32 + grid_x;
-        vertex.y = vertex_precision * vertex_components[j + 1] as f32 + grid_y;
-        vertex.z = vertex_precision * vertex_components[j + 2] as f32 + grid_z;
+        vertices[j] = vertex_precision * delta_x as f32 + grid_x;
+        vertices[j + 1] = vertex_precision * int_vertex_components[j + 1] as f32 + grid_y;
+        vertices[j + 2] = vertex_precision * int_vertex_components[j + 2] as f32 + grid_z;
 
         prev_grid_index = grid_index;
         prev_delta_x = delta_x;
@@ -440,7 +447,7 @@ fn parse_mg2(header: &OpenCTMHeader, mut input: impl io::BufRead) -> Result<File
 
     let vertex_count = header.vertex_count as usize;
 
-    let vertex_components = {
+    let int_vertex_components = {
         input.read_magic_bytes(b"VERT")?;
 
         let component_count = vertex_count * 3;
@@ -455,7 +462,12 @@ fn parse_mg2(header: &OpenCTMHeader, mut input: impl io::BufRead) -> Result<File
 
         grid_indices
     };
-    let vertices = restore_vertices(&vertex_components, vertex_count, &grid_indices, &mg2_header);
+    let vertices = restore_vertices(
+        &int_vertex_components,
+        vertex_count,
+        &grid_indices,
+        &mg2_header,
+    );
     let indices = parse_triangle_indices(&mut input, header.triangle_count)?;
 
     let normals = None; // TODO
@@ -464,7 +476,7 @@ fn parse_mg2(header: &OpenCTMHeader, mut input: impl io::BufRead) -> Result<File
 
     Ok(File {
         indices,
-        vertices,
+        vertex_components: vertices,
         normals,
         uv_maps,
     })

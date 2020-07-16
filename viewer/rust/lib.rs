@@ -17,14 +17,7 @@ impl CtmResult {
         Uint32Array::from(self.file.indices.as_slice())
     }
     pub fn vertices(&self) -> Float32Array {
-        let data_as_vector3 = &self.file.vertices;
-        let vertices_as_f32 = unsafe {
-            std::slice::from_raw_parts(
-                data_as_vector3.as_ptr() as *const f32,
-                data_as_vector3.len() * 3,
-            )
-        };
-        Float32Array::from(vertices_as_f32)
+        Float32Array::from(self.file.vertex_components.as_slice())
     }
     pub fn normals(&self) -> Option<Float32Array> {
         let data_as_vector3 = match &self.file.normals {
