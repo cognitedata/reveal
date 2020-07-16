@@ -23,9 +23,10 @@ export class PointLogStyle extends BaseRenderStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public radius = 20;
   public colorType = ColorType.Specified;
-  public fontSize = 20;
+  public radius = 20;
+  public readonly radiusOptions = [10, 20, 25, 30, 50, 75, 100, 200];
+  public fontSize = 20; // fontSizeOptions
 
   //==================================================
   // CONSTRUCTORS

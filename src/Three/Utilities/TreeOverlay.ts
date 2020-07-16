@@ -19,6 +19,7 @@ import Color from "color";
 import { Canvas } from "@/Three/Utilities/Canvas";
 import { Util } from "@/Core/Primitives/Util";
 import { Colors } from "@/Core/Primitives/Colors";
+import { Appearance } from "@/Core/States/Appearance";
 
 export class TreeOverlay
 {
@@ -59,8 +60,8 @@ export class TreeOverlay
 
     context.clearRect(0, 0, this.delta.x, this.delta.y);
 
-    this.renderTextItems(context, viewInfo.items, delta, 14, Colors.black, Colors.white.alpha(0.65));
-    this.renderFooter(context, viewInfo.footer, 16, fgColor, bgColor);
+    this.renderTextItems(context, viewInfo.items, delta, Appearance.viewerOverlayFontSize, Appearance.viewerOverlayFgColor, Appearance.viewerOverlayBgColor);
+    this.renderFooter(context, viewInfo.footer, Appearance.viewerFooterFontSize, fgColor, bgColor);
     this.texture.needsUpdate = true;
     renderer.render(this.scene, this.camera);
   }

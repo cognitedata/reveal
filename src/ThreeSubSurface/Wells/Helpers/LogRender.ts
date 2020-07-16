@@ -28,6 +28,7 @@ import { DiscreteLog } from "@/SubSurface/Wells/Logs/DiscreteLog";
 import { WellTrajectory } from "@/SubSurface/Wells/Logs/WellTrajectory";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
+import { FloatLogStyle } from "@/SubSurface/Wells/Styles/FloatLogStyle";
 
 export class LogRender
 {
@@ -103,7 +104,7 @@ export class LogRender
       transformer.transformRelativeTo3D(position);
       transformer.transformTangentTo3D(tangent);
 
-      const fraction = this.mdRange.getFraction(md);
+      const mdFraction = this.mdRange.getFraction(md);
 
       // Get perpendicular
       const cameraDirection = Vector3.substract(position, cameraPosition);
@@ -114,14 +115,14 @@ export class LogRender
       {
         const startPosition = Vector3.addWithFactor(position, prependicular, this.bandRange.min);
         const endPosition = Vector3.addWithFactor(position, prependicular, this.bandRange.max);
-        rightBuffers.addPair2(startPosition, endPosition, normal, fraction);
+        rightBuffers.addPair2(startPosition, endPosition, normal, mdFraction);
       }
       if (leftBuffers)
       {
         normal.negate();
         const startPosition = Vector3.addWithFactor(position, prependicular, -this.bandRange.min);
         const endPosition = Vector3.addWithFactor(position, prependicular, -this.bandRange.max);
-        leftBuffers.addPair2(startPosition, endPosition, normal, fraction);
+        leftBuffers.addPair2(startPosition, endPosition, normal, mdFraction);
       }
     }
     let rightBand = false;
@@ -152,25 +153,30 @@ export class LogRender
     for (const anyTick of this.mdRange.getTicks(inc))
     {
       const md = Number(anyTick);
-      const fraction = this.mdRange.getFraction(md);
-      canvas.addVerticalLine(fraction);
+      const mdFraction = this.mdRange.getFraction(md);
+      canvas.addVerticalLine(mdFraction);
     }
     canvas.drawPath();
     const labelInc = this.mdRange.getBoldInc(inc, 4);
     for (const anyTick of this.mdRange.getTicks(labelInc))
     {
       const md = Number(anyTick);
-      const fraction = this.mdRange.getFraction(md);
-      canvas.drawText(fraction, `${md}`, fontSize, null, rightBand);
+      const mdFraction = this.mdRange.getFraction(md);
+      canvas.drawText(mdFraction, `${md}`, fontSize, null, rightBand);
     }
   }
 
-  public addFloatLog(canvas: Canvas, log: FloatLog | null, color: Color, fill: boolean): void
+  public addFloatLog(canvas: Canvas, log: FloatLog | null, style: FloatLogStyle, color: Color, fill: boolean): void
   {
     if (!log)
       return;
 
-    const valueRange = log.range;
+    const min = style.useMin ? style.min : log.range.min;
+    const max = style.useMax ? style.max : log.range.max;
+    const valueRange = new Range1(min, max);
+    if (!valueRange.hasSpan)
+      return;
+
     canvas.beginFunction(fill);
     for (let i = 0; i < log.samples.length; i++)
     {
@@ -182,7 +188,7 @@ export class LogRender
         continue;
       }
       const mdFraction = this.mdRange.getFraction(sample.md);
-      const valueFraction = valueRange.getFraction(sample.value);
+      const valueFraction = valueRange.getTruncatedFraction(sample.value);
       canvas.addFunctionValue(mdFraction, valueFraction);
     }
     this.closePath(canvas, color, fill);

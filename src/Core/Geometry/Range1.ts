@@ -94,6 +94,16 @@ export class Range1
     return (value - this.min) / this.delta;
   }
 
+  public getTruncatedFraction(value: number): number
+  {
+    var fraction = this.getFraction(value);
+    if (fraction < 0)
+      return 0;
+    if (fraction > 1)
+      return 1;
+    return fraction;
+  }
+
   public getValue(fraction: number): number
   {
     // Opposite of getFraction

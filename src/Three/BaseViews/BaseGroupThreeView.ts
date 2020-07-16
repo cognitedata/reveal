@@ -138,7 +138,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
     this.touchBoundingBox();
   }
 
-  protected touch(): void
+  public touch(): void
   {
     const scene = this.scene;
     if (this._object3D)

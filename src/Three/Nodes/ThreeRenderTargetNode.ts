@@ -45,6 +45,7 @@ import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { UniqueId } from "@/Core/Primitives/UniqueId";
 import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
 import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
+import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 
 const DirectionalLightName = "DirectionalLight";
 
@@ -86,6 +87,26 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   private get controls(): CameraControls { return this.cameraControl.controls; }
   public get transformer(): ThreeTransformer { return this._transformer; }
   private get directionalLight(): THREE.DirectionalLight | null { return this.scene.getObjectByName(DirectionalLightName) as THREE.DirectionalLight; }
+
+  public get zScale(): number { return this._transformer.zScale; }
+  public set zScale(value: number)
+  {
+    if (this._transformer.zScale <= 0)
+      throw Error("ZScale cannot be less or equal 0");
+
+    if (this._transformer.zScale == value)
+      return;
+
+      // Clear the views
+    this._transformer.zScale = value;
+    for (const view of this.viewsShownHere.list)
+    {
+      if (!(view instanceof BaseGroupThreeView))
+        continue;
+      view.touch();
+    }
+    this.invalidate();
+  }
 
   public get scene(): THREE.Scene
   {
@@ -132,7 +153,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ initializeCore() : void
+  public /*override*/ initializeCore(): void
   {
     super.initializeCore();
 

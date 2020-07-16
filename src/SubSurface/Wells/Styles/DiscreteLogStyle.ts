@@ -15,7 +15,6 @@ import * as Lodash from 'lodash';
 
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { ColorType } from "@/Core/Enums/ColorType";
 
 export class DiscreteLogStyle extends BaseRenderStyle
 {
