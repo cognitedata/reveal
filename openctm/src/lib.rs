@@ -16,7 +16,7 @@ const LZMA_HEADER_SIZE: usize = 5;
 pub struct File {
     pub indices: Vec<u32>,
     pub vertex_components: Vec<f32>,
-    pub normals: Option<Vec<Normal>>,
+    pub normal_components: Option<Vec<f32>>,
     pub uv_maps: Vec<UvMap>,
 }
 
@@ -229,6 +229,13 @@ impl File {
         self.vertex_components.len() / 3
     }
 
+    pub fn number_of_normals(&self) -> usize {
+        match &self.normal_components {
+            Some(x) => x.len() / 3,
+            None => 0,
+        }
+    }
+
     pub fn get_vertices(&self) -> Vec<Vertex> {
         let n_vertices = self.number_of_vertices();
         let mut vertices: Vec<Vertex> = vec![Default::default(); n_vertices];
@@ -238,6 +245,21 @@ impl File {
             vertex.z = self.vertex_components[3 * i + 2];
         }
         vertices
+    }
+
+    pub fn get_normals(&self) -> Option<Vec<Normal>> {
+        let normal_components = match &self.normal_components {
+            Some(x) => x,
+            None => return None,
+        };
+        let n_normals = self.number_of_normals();
+        let mut normals: Vec<Normal> = vec![Default::default(); n_normals];
+        for (i, normal) in normals.iter_mut().enumerate() {
+            normal.x = normal_components[3 * i];
+            normal.y = normal_components[3 * i + 1];
+            normal.z = normal_components[3 * i + 2];
+        }
+        Some(normals)
     }
 }
 
@@ -300,24 +322,14 @@ fn parse_mg1(header: &OpenCTMHeader, mut input: impl io::BufRead) -> Result<File
         input.read_packed_f32s(component_count, 4)?
     };
 
-    let normals = if !header.has_normals() {
+    let normal_components = if !header.has_normals() {
         None
     } else {
         input.read_magic_bytes(b"NORM")?;
 
         let component_count = vertex_count * 3;
         let components = input.read_packed_f32s(component_count, 4)?;
-
-        let mut normals = vec![Default::default(); vertex_count];
-        for i in 0..vertex_count {
-            normals[i] = Normal {
-                x: components[3 * i],
-                y: components[3 * i + 1],
-                z: components[3 * i + 2],
-            }
-        }
-
-        Some(normals)
+        Some(components)
     };
 
     let uv_maps = {
@@ -355,7 +367,7 @@ fn parse_mg1(header: &OpenCTMHeader, mut input: impl io::BufRead) -> Result<File
     Ok(File {
         indices,
         vertex_components,
-        normals,
+        normal_components,
         uv_maps,
     })
 }
@@ -470,14 +482,14 @@ fn parse_mg2(header: &OpenCTMHeader, mut input: impl io::BufRead) -> Result<File
     );
     let indices = parse_triangle_indices(&mut input, header.triangle_count)?;
 
-    let normals = None; // TODO
+    let normal_components = None; // TODO
 
     let uv_maps = vec![]; // TODO
 
     Ok(File {
         indices,
         vertex_components: vertices,
-        normals,
+        normal_components,
         uv_maps,
     })
 }

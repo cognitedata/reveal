@@ -20,17 +20,11 @@ impl CtmResult {
         Float32Array::from(self.file.vertex_components.as_slice())
     }
     pub fn normals(&self) -> Option<Float32Array> {
-        let data_as_vector3 = match &self.file.normals {
+        let components = match &self.file.normal_components {
             Some(x) => x,
             None => return None,
         };
-        let data_as_f32 = unsafe {
-            std::slice::from_raw_parts(
-                data_as_vector3.as_ptr() as *const f32,
-                data_as_vector3.len() * 3,
-            )
-        };
-        Some(Float32Array::from(data_as_f32))
+        Some(Float32Array::from(components.as_slice()))
     }
     // TODO 2019-10-23 dragly: add UV maps
 }

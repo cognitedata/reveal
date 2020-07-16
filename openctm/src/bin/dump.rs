@@ -63,8 +63,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         Output::FileStats {
             indices: parsed_file.indices.len(),
             vertices: parsed_file.number_of_vertices(),
-            normals: match parsed_file.normals {
-                Some(x) => Some(x.len()),
+            normals: match &parsed_file.normal_components {
+                Some(_) => Some(parsed_file.number_of_normals()),
                 None => None,
             },
             uv_maps: parsed_file
