@@ -1,18 +1,21 @@
 {
   "name": "@cognite/metrics",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "",
   "source": "src/index.ts",
-  "main": "dist/metrics.js",
-  "module": "dist/metrics.esm.js",
-  "browser": "dist/metrics.js",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "browser": "dist/index.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
+    "clean": "rm -rf dist",
     "test": "jest",
-    "build": "microbundle --target=browser",
+    "esCheck": "es-check es5 './dist/index.js'",
+    "build": "yarn clean && rollup -c && yarn esCheck",
+    "build:watch": "yarn clean && rollup -c --watch && yarn esCheck",
     "watch": "yarn build --watch",
     "lint": "yarn prettier",
     "lint:fix": "yarn prettier --write",
@@ -26,14 +29,16 @@
   "license": "UNLICENSED",
   "homepage": "https://github.com/cognitedata/frontend/tree/master/packages/browser/metrics",
   "dependencies": {
+    "react": "^16.13.1",
     "mixpanel-browser": "^2.35.0"
   },
   "devDependencies": {
     "@babel/parser": "^7.9.4",
     "@types/mixpanel-browser": "^2.35.0",
     "@types/react": "^16.9.34",
-    "microbundle": "^0.12.2",
-    "react": "^16.13.1"
+    "rollup": "^1.2.0",
+    "rollup-plugin-json": "^3.1.0",
+    "rollup-plugin-typescript2": "^0.19.2"
   },
   "peerDependencies": {
     "react": "^16.8.0"
