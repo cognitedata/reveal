@@ -94,6 +94,7 @@ jobs:
     - name: Setup tools for coverage tests
       working-directory: viewer
       run: |
+        sudo apt-get update
         sudo apt-get install xvfb mesa-utils libgl1-mesa-dri libglapi-mesa libosmesa6
         export DISPLAY=:99.0
 
