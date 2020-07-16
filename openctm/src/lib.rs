@@ -20,11 +20,11 @@ pub struct File {
     pub uv_maps: Vec<UvMap>,
 }
 
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct OpenCTMHeader {
     pub magic_bytes: [u8; 4],
     pub file_format: i32,
-    pub compression_method: i32,
+    pub compression_method: CompressionMethod,
     pub vertex_count: u32,
     pub triangle_count: u32,
     pub uv_map_count: u32,
@@ -33,7 +33,7 @@ pub struct OpenCTMHeader {
     pub comment: String,
 }
 
-#[derive(FromPrimitive, Deserialize, Serialize)]
+#[derive(Clone, Copy, Debug, FromPrimitive, Deserialize, Serialize)]
 pub enum CompressionMethod {
     RAW = 0x0057_4152,
     MG1 = 0x0031_474d,
@@ -83,9 +83,9 @@ struct MG2Header {
     pub normal_precision: f32,
     pub lower_bound: Bound,
     pub upper_bound: Bound,
-    pub div_x: i32,
-    pub div_y: i32,
-    pub div_z: i32,
+    pub div_x: u32,
+    pub div_y: u32,
+    pub div_z: u32,
 }
 
 impl PartialEq for TextureCoordinate {
@@ -359,9 +359,9 @@ fn restore_grid_indices(grid_indices: &mut Vec<u32>) {
 }
 
 fn restore_vertices(vertex_components: &[u32], vertex_count: usize, grid_indices: &[u32], mg2_header: &MG2Header) -> Vec<Vertex> {
-    let precision = mg2_header.vertex_precision;
-    let y_div = mg2_header.div_x as f32;
-    let z_div = y_div * mg2_header.div_y as f32;
+    let vertex_precision = mg2_header.vertex_precision;
+    let y_div = mg2_header.div_x;
+    let z_div = y_div * mg2_header.div_y;
     let size_x = mg2_header.size_x();
     let size_y = mg2_header.size_y();
     let size_z = mg2_header.size_z();
@@ -369,16 +369,22 @@ fn restore_vertices(vertex_components: &[u32], vertex_count: usize, grid_indices
     let mut prev_grid_index = 0x7fffffff;
     let mut prev_delta_x = 0;
 
-
     let mut vertices: Vec<Vertex> = vec![Default::default(); vertex_count];
     for (i, vertex) in vertices.iter_mut().enumerate() {
         let grid_index = grid_indices[i];
 
-        let mut x = grid_index as f32;
-        let z = x / z_div;
-        x -= z * z_div;
-        let y = x / y_div;
-        x -= y * y_div;
+        let mut idx = grid_index;
+        let z: u32 = idx / z_div;
+        idx -= z * z_div;
+        let y: u32 = idx / y_div;
+        idx -= y * y_div;
+        let x: u32 = idx;
+
+        let lower_bound = mg2_header.lower_bound;
+        let grid_x = x as f32 * size_x + lower_bound.x;
+        let grid_y = y as f32 * size_y + lower_bound.y;
+        let grid_z = z as f32 * size_z + lower_bound.z;
+
 
         let j = 3 * i;
         let mut delta_x = vertex_components[j];
@@ -386,10 +392,9 @@ fn restore_vertices(vertex_components: &[u32], vertex_count: usize, grid_indices
             delta_x += prev_delta_x;
         }
 
-        let lower_bound = mg2_header.lower_bound;
-        vertex.x = precision * delta_x as f32 + x * size_x + lower_bound.x;
-        vertex.y = precision * vertex_components[j + 1] as f32 + y * size_y + lower_bound.y;
-        vertex.z = precision * vertex_components[j + 2] as f32 + z * size_z + lower_bound.z;
+        vertex.x = vertex_precision * delta_x as f32 + grid_x;
+        vertex.y = vertex_precision * vertex_components[j + 1] as f32 + grid_y;
+        vertex.z = vertex_precision * vertex_components[j + 2] as f32 + grid_z;
 
         prev_grid_index = grid_index;
         prev_delta_x = delta_x;
@@ -412,9 +417,9 @@ fn parse_mg2(header: &OpenCTMHeader, mut input: impl io::BufRead) -> Result<File
             y: input.read_f32::<LittleEndian>()?,
             z: input.read_f32::<LittleEndian>()?,
         };
-        let div_x = input.read_i32::<LittleEndian>()?;
-        let div_y = input.read_i32::<LittleEndian>()?;
-        let div_z = input.read_i32::<LittleEndian>()?;
+        let div_x = input.read_u32::<LittleEndian>()?;
+        let div_y = input.read_u32::<LittleEndian>()?;
+        let div_z = input.read_u32::<LittleEndian>()?;
 
         MG2Header {
             vertex_precision,
@@ -444,16 +449,10 @@ fn parse_mg2(header: &OpenCTMHeader, mut input: impl io::BufRead) -> Result<File
 
         grid_indices
     };
-
     let vertices = restore_vertices(&vertex_components, vertex_count, &grid_indices, &mg2_header);
     let indices = parse_triangle_indices(&mut input, header.triangle_count)?;
 
-    let normals = if header.has_normals() {
-        Some(vec![Normal::default(); vertex_count])
-        // TODO
-    } else {
-        None
-    };
+    let normals = None; // TODO
 
     let uv_maps = vec![]; // TODO
 
@@ -475,7 +474,10 @@ pub fn parse(mut input: impl io::BufRead) -> Result<File, Error> {
             file_format
         ));
     }
-    let compression_method = input.read_i32::<LittleEndian>()?;
+    let compression_method: CompressionMethod = match num::FromPrimitive::from_i32(input.read_i32::<LittleEndian>()?) {
+        Some(x) => x,
+        None => return Err(error!("Unknown OpenCTM compression method")),
+    };
     let vertex_count = input.read_u32::<LittleEndian>()?;
     let triangle_count = input.read_u32::<LittleEndian>()?;
     let uv_map_count = input.read_u32::<LittleEndian>()?;
@@ -502,10 +504,9 @@ pub fn parse(mut input: impl io::BufRead) -> Result<File, Error> {
         )));
     }
 
-    match num::FromPrimitive::from_i32(compression_method) {
-        Some(CompressionMethod::MG1) => parse_mg1(&header, input),
-        Some(CompressionMethod::MG2) => parse_mg2(&header, input),
-        Some(CompressionMethod::RAW) => Err(error!("RAW compression method not yet implemented")), // TODO replace with Result
-        None => Err(error!("Unknown compression method")), // TODO replace with Result
+    match compression_method {
+        CompressionMethod::MG1 => parse_mg1(&header, input),
+        CompressionMethod::MG2 => parse_mg2(&header, input),
+        CompressionMethod::RAW => Err(error!("RAW compression method not yet implemented")),
     }
 }
