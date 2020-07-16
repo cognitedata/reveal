@@ -1,5 +1,5 @@
 import React, { ErrorInfo } from 'react';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 import { withTranslation, Trans, WithTranslation } from 'react-i18next';
 import { Metrics } from '@cognite/metrics';
 import { A, Button } from '@cognite/cogs.js';

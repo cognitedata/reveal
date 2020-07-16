@@ -1,7 +1,7 @@
 /* eslint-disable func-names */
 /* eslint-disable no-console */
 import React, { useRef, useEffect, useCallback, useState } from 'react';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 const ErrorOverlay = styled.div<{ zIndex: number }>`
   width: 100%;
