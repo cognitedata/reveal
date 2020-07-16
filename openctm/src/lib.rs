@@ -248,10 +248,7 @@ impl File {
     }
 
     pub fn get_normals(&self) -> Option<Vec<Normal>> {
-        let normal_components = match &self.normal_components {
-            Some(x) => x,
-            None => return None,
-        };
+        let normal_components = self.normal_components.as_ref()?;
         let n_normals = self.number_of_normals();
         let mut normals: Vec<Normal> = vec![Default::default(); n_normals];
         for (i, normal) in normals.iter_mut().enumerate() {

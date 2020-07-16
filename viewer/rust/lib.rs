@@ -20,10 +20,7 @@ impl CtmResult {
         Float32Array::from(self.file.vertex_components.as_slice())
     }
     pub fn normals(&self) -> Option<Float32Array> {
-        let components = match &self.file.normal_components {
-            Some(x) => x,
-            None => return None,
-        };
+        let components = self.file.normal_components.as_ref()?;
         Some(Float32Array::from(components.as_slice()))
     }
     // TODO 2019-10-23 dragly: add UV maps
