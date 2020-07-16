@@ -11,7 +11,7 @@ import {
   SectorNodeIdToTreeIndexMapLoadedEvent,
   LoadingStateChangeListener
 } from './types';
-import { Subscription, combineLatest } from 'rxjs';
+import { Subscription, combineLatest, asyncScheduler } from 'rxjs';
 import { distinctUntilChanged, map, share, filter } from 'rxjs/operators';
 import { trackError, trackLoadModel } from '@/utilities/metrics';
 import { NodeAppearanceProvider, CadNode } from '@/datamodels/cad';
@@ -218,7 +218,7 @@ export class RevealManager<TModelIdentifier> {
     pointCloudManager: PointCloudManager<TModelIdentifier>
   ) {
     this._subscriptions.add(
-      combineLatest([cadManager.getLoadingStateObserver(), pointCloudManager.getLoadingStateObserver()])
+      combineLatest([cadManager.getLoadingStateObserver(), pointCloudManager.getLoadingStateObserver()], asyncScheduler)
         .pipe(
           map(loading => loading.some(x => x)),
           distinctUntilChanged()

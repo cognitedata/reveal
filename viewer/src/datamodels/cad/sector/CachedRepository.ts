@@ -16,12 +16,12 @@ import {
   zip,
   Subject,
   onErrorResumeNext,
+  BehaviorSubject,
   asapScheduler,
-  BehaviorSubject
+  scheduled
 } from 'rxjs';
 import {
   publish,
-  filter,
   flatMap,
   map,
   tap,
@@ -34,7 +34,8 @@ import {
   switchMap,
   distinctUntilChanged,
   share,
-  finalize
+  finalize,
+  mergeAll
 } from 'rxjs/operators';
 import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
@@ -112,23 +113,7 @@ export class CachedRepository implements Repository {
           tap(_ => {
             this._isLoadingSubject.next(true);
           }),
-          publish(wantedSectorsObservable => {
-            const simpleAndDetailedObservable = wantedSectorsObservable.pipe(
-              filter(
-                wantedSector =>
-                  wantedSector.levelOfDetail === LevelOfDetail.Simple ||
-                  wantedSector.levelOfDetail === LevelOfDetail.Detailed
-              ),
-              this.loadSimpleAndDetailedSector()
-            );
-
-            const discardedSectorObservable = wantedSectorsObservable.pipe(
-              filter(wantedSector => wantedSector.levelOfDetail === LevelOfDetail.Discarded),
-              map(wantedSector => ({ ...wantedSector, group: undefined } as ConsumedSector))
-            );
-
-            return merge(simpleAndDetailedObservable, discardedSectorObservable, asapScheduler);
-          }),
+          this.loadSimpleAndDetailedSector(),
           finalize(() => this._isLoadingSubject.next(false))
         );
       }),
@@ -144,13 +129,15 @@ export class CachedRepository implements Repository {
         this._consumedSectorCache.has(this.wantedSectorCacheKey(wantedSector))
       );
 
-      return merge(
-        cachedSectorObservable.pipe(
-          flatMap(wantedSector => this._consumedSectorCache.get(this.wantedSectorCacheKey(wantedSector)))
-        ),
-        uncachedSectorObservable.pipe(this.loadSimpleAndDetailedSectorFromNetwork()),
+      return scheduled(
+        [
+          cachedSectorObservable.pipe(
+            flatMap(wantedSector => this._consumedSectorCache.get(this.wantedSectorCacheKey(wantedSector)))
+          ),
+          uncachedSectorObservable.pipe(this.loadSimpleAndDetailedSectorFromNetwork())
+        ],
         asapScheduler
-      );
+      ).pipe(mergeAll());
     });
   }
 
@@ -209,7 +196,7 @@ export class CachedRepository implements Repository {
       flatMap(buffer => this._modelDataParser.parseI3D(new Uint8Array(buffer)))
     );
 
-    const ctmFilesObservable = from(wantedSector.metadata.indexFile.peripheralFiles, asapScheduler).pipe(
+    const ctmFilesObservable = from(wantedSector.metadata.indexFile.peripheralFiles).pipe(
       map(fileName => ({
         blobUrl: wantedSector.blobUrl,
         fileName

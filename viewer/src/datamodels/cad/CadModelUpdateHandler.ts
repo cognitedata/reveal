@@ -3,18 +3,42 @@
  */
 
 import * as THREE from 'three';
-import { Subject, Observable, combineLatest, from, asapScheduler } from 'rxjs';
+import {
+  Subject,
+  Observable,
+  combineLatest,
+  from,
+  asapScheduler,
+  fromEventPattern,
+  asyncScheduler,
+  scheduled,
+  queueScheduler
+} from 'rxjs';
 import { CadNode } from './CadNode';
-import { scan, share, startWith, auditTime, filter, map, publish, flatMap, toArray, tap } from 'rxjs/operators';
+import {
+  scan,
+  share,
+  startWith,
+  auditTime,
+  filter,
+  map,
+  publish,
+  flatMap,
+  toArray,
+  tap,
+  distinctUntilChanged,
+  mergeAll
+} from 'rxjs/operators';
 import { SectorCuller } from './sector/culling/SectorCuller';
 import { DetermineSectorsInput } from './sector/culling/types';
 import { CadLoadingHints } from './CadLoadingHints';
 import { ConsumedSector, WantedSector, SectorGeometry } from './sector/types';
-import { distinctUntilLevelOfDetailChanged, filterCurrentWantedSectors } from './sector/sectorUtilities';
+import { distinctUntilLevelOfDetailChanged } from './sector/sectorUtilities';
 import { LevelOfDetail } from './sector/LevelOfDetail';
 import { Repository } from './sector/Repository';
 import { SectorQuads } from './rendering/types';
 import { emissionLastMillis } from '@/utilities';
+import { CadModelMetadata } from '.';
 
 export class CadModelUpdateHandler {
   private readonly _sectorRepository: Repository;
@@ -28,66 +52,78 @@ export class CadModelUpdateHandler {
 
   constructor(sectorRepository: Repository, sectorCuller: SectorCuller) {
     this._sectorRepository = sectorRepository;
-    const modelsArray: CadNode[] = [];
     this._updateObservable = combineLatest(
-      this._cameraSubject.pipe(auditTime(1000)),
-      this._clippingPlaneSubject.pipe(startWith([])),
-      this._clipIntersectionSubject.pipe(startWith(false)),
-      this._loadingHintsSubject.pipe(startWith({} as CadLoadingHints)),
-      this._cameraSubject.pipe(auditTime(250), emissionLastMillis(600)),
-      this._modelSubject.pipe(
-        share(),
-        scan((array, next) => {
-          array.push(next);
-          return array;
-        }, modelsArray)
-      )
+      [
+        this._cameraSubject.pipe(auditTime(1000)),
+        this._clippingPlaneSubject.pipe(startWith([])),
+        this._clipIntersectionSubject.pipe(startWith(false)),
+        this._loadingHintsSubject.pipe(startWith({} as CadLoadingHints)),
+        this._cameraSubject.pipe(auditTime(250), emissionLastMillis(600)),
+        this.loadingModelObservable()
+      ],
+      asyncScheduler
     ).pipe(
       auditTime(250),
       filter(
-        ([_camera, _clippingPlanes, _clipIntersection, loadingHints, _cameraInMotion, cadNodes]) =>
-          cadNodes.length > 0 && loadingHints.suspendLoading !== true
+        ([_camera, _clippingPlanes, _clipIntersection, loadingHints, _cameraInMotion, cadModelsMetadata]) =>
+          cadModelsMetadata.length > 0 && loadingHints.suspendLoading !== true
       ),
-      flatMap(([camera, clippingPlanes, clipIntersection, loadingHints, cameraInMotion, cadNodes]) => {
-        return from(cadNodes).pipe(
-          filter(cadNode => cadNode.loadingHints.suspendLoading !== true),
-          map(cadNode => cadNode.cadModelMetadata),
-          toArray(),
-          map(cadModels => {
-            const input: DetermineSectorsInput = {
-              camera,
-              cameraInMotion,
-              clippingPlanes,
-              clipIntersection,
-              loadingHints,
-              cadModelsMetadata: cadModels
-            };
-            return sectorCuller.determineSectors(input);
-          })
-        );
+      map(([camera, clippingPlanes, clipIntersection, loadingHints, cameraInMotion, cadModelsMetadata]) => {
+        const input: DetermineSectorsInput = {
+          camera,
+          cameraInMotion,
+          clippingPlanes,
+          clipIntersection,
+          loadingHints,
+          cadModelsMetadata
+        };
+        return sectorCuller.determineSectors(input);
       }),
       // Load sectors from repository
       publish((wantedSectors: Observable<WantedSector[]>) => {
         const modelSectorStates: { [blobUrl: string]: { [id: number]: LevelOfDetail } } = {};
-        const unloadedSectorsObservable = wantedSectors.pipe(
-          flatMap(wantedSectorArray => {
-            return from(wantedSectorArray, asapScheduler).pipe(
-              filter(wantedSector => {
-                const sectorStates = modelSectorStates[wantedSector.blobUrl];
-                if (sectorStates) {
-                  const sectorState = sectorStates[wantedSector.metadata.id];
-                  return sectorState !== wantedSector.levelOfDetail;
-                }
-                return true;
-              }),
+
+        const filterDiscarded = filter<WantedSector>(
+          wantedSector => wantedSector.levelOfDetail === LevelOfDetail.Discarded
+        );
+        const discardedSectorsObservable = wantedSectors.pipe(mergeAll(), filterDiscarded);
+
+        const filterSimpleAndDetailed = filter<WantedSector>(
+          wantedSector =>
+            wantedSector.levelOfDetail === LevelOfDetail.Simple || wantedSector.levelOfDetail === LevelOfDetail.Detailed
+        );
+
+        const filterUnloadedSectors = filter<WantedSector>(wantedSector => {
+          const sectorStates = modelSectorStates[wantedSector.blobUrl];
+          if (sectorStates) {
+            const sectorState = sectorStates[wantedSector.metadata.id];
+            return sectorState !== wantedSector.levelOfDetail;
+          }
+          return true;
+        });
+
+        const simpleAndDetailedSectorsObservable = wantedSectors.pipe(
+          flatMap(wantedSectorsArray => {
+            return from(wantedSectorsArray, asapScheduler).pipe(
+              filterSimpleAndDetailed,
+              filterUnloadedSectors,
               toArray()
             );
           })
         );
 
-        return unloadedSectorsObservable.pipe(
-          sectorRepository.loadSector(),
-          filterCurrentWantedSectors(wantedSectors),
+        return scheduled(
+          [
+            discardedSectorsObservable.pipe(
+              map(wantedSector => ({ ...wantedSector, group: undefined } as ConsumedSector))
+            ),
+            simpleAndDetailedSectorsObservable.pipe(sectorRepository.loadSector())
+          ],
+          queueScheduler
+        ).pipe(
+          mergeAll(),
+          // TODO 16-07-2020 j-bjorne: Might not actually be needed due to switch map logic. If not need to investigate if stale sectors are shown.
+          // filterCurrentWantedSectors(wantedSectors),
           distinctUntilLevelOfDetailChanged(),
           tap(consumedSector => {
             let sectorStates = modelSectorStates[consumedSector.blobUrl];
@@ -136,5 +172,32 @@ export class CadModelUpdateHandler {
 
   getParsedData(): Observable<{ blobUrl: string; lod: string; data: SectorGeometry | SectorQuads }> {
     return this._sectorRepository.getParsedData();
+  }
+
+  private loadingModelObservable() {
+    return this._modelSubject.pipe(
+      publish(modelObservable => {
+        return modelObservable.pipe(
+          flatMap(
+            cadNode => {
+              return fromEventPattern<Readonly<CadLoadingHints>>(
+                h => cadNode.on('loadingHintsChanged', h),
+                h => cadNode.off('loadingHintsChanged', h)
+              ).pipe(startWith(cadNode.loadingHints), distinctUntilChanged());
+            },
+            (cadNode, loadingHints) => ({ cadNode, loadingHints })
+          ),
+          scan((array, next) => {
+            const { cadNode, loadingHints } = next;
+            if (loadingHints && !loadingHints.suspendLoading) {
+              array.push(cadNode.cadModelMetadata);
+            } else {
+              return array.filter(x => x !== cadNode.cadModelMetadata);
+            }
+            return array;
+          }, [] as CadModelMetadata[])
+        );
+      })
+    );
   }
 }
