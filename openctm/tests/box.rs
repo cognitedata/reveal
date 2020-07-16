@@ -12,7 +12,8 @@ mod tests {
     fn box_ctm() {
         let reader = parse(std::io::BufReader::new(
             std::fs::File::open("tests/box.ctm").unwrap(),
-        )).unwrap();
+        ))
+        .unwrap();
 
         let vertices = vec![
             Vertex {

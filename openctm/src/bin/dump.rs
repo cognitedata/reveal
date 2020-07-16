@@ -1,9 +1,9 @@
 use serde_derive::{Deserialize, Serialize};
 use std::error::Error;
 use std::fs::File;
-use std::io::{stdout, SeekFrom, Seek, Read, Cursor};
+use std::io::{stdout, Cursor, Read, Seek, SeekFrom};
+use std::{fs, time};
 use structopt::StructOpt;
-use std::{time, fs};
 
 #[derive(StructOpt)]
 struct Options {

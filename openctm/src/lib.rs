@@ -213,12 +213,11 @@ pub trait ReadExt: io::Read {
         if magic_bytes == &bytes {
             Ok(bytes)
         } else {
-            Err(Error::new(
-                format!("Expected magic bytes {} but got {}",
-                        std::str::from_utf8(magic_bytes)?,
-                        std::str::from_utf8(&bytes)?
-                )
-            ))
+            Err(Error::new(format!(
+                "Expected magic bytes {} but got {}",
+                std::str::from_utf8(magic_bytes)?,
+                std::str::from_utf8(&bytes)?
+            )))
         }
     }
 }
@@ -259,7 +258,10 @@ fn restore_indices(indices: &mut Vec<u32>) {
     }
 }
 
-fn parse_triangle_indices(mut input: impl io::BufRead, triangle_count: u32) -> Result<Vec<u32>, Error> {
+fn parse_triangle_indices(
+    mut input: impl io::BufRead,
+    triangle_count: u32,
+) -> Result<Vec<u32>, Error> {
     input.read_magic_bytes(b"INDX")?;
 
     let triangle_count = triangle_count as usize;
@@ -358,7 +360,12 @@ fn restore_grid_indices(grid_indices: &mut Vec<u32>) {
     }
 }
 
-fn restore_vertices(vertex_components: &[u32], vertex_count: usize, grid_indices: &[u32], mg2_header: &MG2Header) -> Vec<Vertex> {
+fn restore_vertices(
+    vertex_components: &[u32],
+    vertex_count: usize,
+    grid_indices: &[u32],
+    mg2_header: &MG2Header,
+) -> Vec<Vertex> {
     let vertex_precision = mg2_header.vertex_precision;
     let y_div = mg2_header.div_x;
     let z_div = y_div * mg2_header.div_y;
@@ -384,7 +391,6 @@ fn restore_vertices(vertex_components: &[u32], vertex_count: usize, grid_indices
         let grid_x = x as f32 * size_x + lower_bound.x;
         let grid_y = y as f32 * size_y + lower_bound.y;
         let grid_z = z as f32 * size_z + lower_bound.z;
-
 
         let j = 3 * i;
         let mut delta_x = vertex_components[j];
@@ -474,7 +480,7 @@ pub fn parse(mut input: impl io::BufRead) -> Result<File, Error> {
             file_format
         ));
     }
-    let compression_method: CompressionMethod = match num::FromPrimitive::from_i32(input.read_i32::<LittleEndian>()?) {
+    let compression_method = match num::FromPrimitive::from_i32(input.read_i32::<LittleEndian>()?) {
         Some(x) => x,
         None => return Err(error!("Unknown OpenCTM compression method")),
     };
