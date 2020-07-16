@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { Versioned3DFile } from '@cognite/sdk';
+import { Versioned3DFile, HttpError } from '@cognite/sdk';
 
 export const supportedVersions = [8];
 
@@ -13,4 +13,16 @@ export function getNewestVersionedFile(files: Versioned3DFile[]): Versioned3DFil
       fileId: -1,
       version: -1
     });
+}
+
+export async function fetchWithStatusCheck(url: string): Promise<Response> {
+  const response = await fetch(url);
+  if (!response.ok) {
+    const headers: { [key: string]: string } = {};
+    response.headers.forEach((key, value) => {
+      headers[key] = value;
+    });
+    throw new HttpError(response.status, response.body, headers);
+  }
+  return response;
 }

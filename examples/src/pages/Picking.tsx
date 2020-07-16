@@ -7,11 +7,10 @@ import { CanvasWrapper } from '../components/styled';
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import * as reveal from '@cognite/reveal/experimental';
-import {
-  getParamsFromURL,
-  createRenderManager,
-} from '../utils/example-helpers';
+import { getParamsFromURL } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
+import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
+import { RevealOptions } from '@cognite/reveal/public/types';
 
 CameraControls.install({ THREE });
 
@@ -27,6 +26,8 @@ function createSphere(point: THREE.Vector3, color: string): THREE.Mesh {
 export function Picking() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
+    let revealManager: reveal.RevealManager<unknown>;
+    const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
     async function main() {
       const { project, modelUrl, modelRevision } = getParamsFromURL({
         project: 'publicdata',
@@ -48,26 +49,14 @@ export function Picking() {
         }
       };
 
-      const revealManager: reveal.RenderManager = createRenderManager(
-        modelRevision !== undefined ? 'cdf' : 'local',
-        client
-      );
-
+      const revealOptions: RevealOptions = { nodeAppearanceProvider };
       let model: reveal.CadNode;
-      if (
-        revealManager instanceof reveal.LocalHostRevealManager &&
-        modelUrl !== undefined
-      ) {
+      if (modelRevision) {
+        revealManager = reveal.createCdfRevealManager(client, revealOptions);
+        model = await revealManager.addModel('cad', modelRevision, nodeAppearanceProvider);
+      } else if (modelUrl) {
+        revealManager = reveal.createLocalRevealManager(revealOptions);
         model = await revealManager.addModel('cad', modelUrl, nodeAppearanceProvider);
-      } else if (
-        revealManager instanceof reveal.RevealManager &&
-        modelRevision !== undefined
-      ) {
-        model = await revealManager.addModel(
-          'cad',
-          modelRevision,
-          nodeAppearanceProvider
-        );
       } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'
@@ -120,10 +109,8 @@ export function Picking() {
       const raycaster = new THREE.Raycaster();
 
       let pickingNeedsUpdate = false;
-      const clock = new THREE.Clock();
-      const render = () => {
-        const delta = clock.getDelta();
-        const controlsNeedUpdate = controls.update(delta);
+      animationLoopHandler.setOnAnimationFrameListener((deltaTime) => {
+        const controlsNeedUpdate = controls.update(deltaTime);
         if (controlsNeedUpdate) {
           revealManager.update(camera);
         }
@@ -133,27 +120,24 @@ export function Picking() {
           pickingNeedsUpdate ||
           revealManager.needsRedraw
         ) {
-          renderer.render(scene, camera);
+          revealManager.render(renderer, camera, scene);
           pickingNeedsUpdate = false;
           revealManager.resetRedraw();
         }
-
-        requestAnimationFrame(render);
-      };
-
+      });
+      animationLoopHandler.start();
       revealManager.update(camera);
-      render();
 
       const pick = (event: MouseEvent) => {
         const rect = renderer.domElement.getBoundingClientRect();
         const coords = {
           x:
             ((event.clientX - rect.left) / renderer.domElement.clientWidth) *
-              2 -
+            2 -
             1,
           y:
             ((event.clientY - rect.top) / renderer.domElement.clientHeight) *
-              -2 +
+            -2 +
             1,
         };
         // Pick in Reveal
@@ -241,6 +225,10 @@ export function Picking() {
     }
 
     main();
+    return () => {
+      animationLoopHandler.dispose();
+      revealManager?.dispose();
+    }
   });
   return (
     <CanvasWrapper>

@@ -6,8 +6,6 @@ import { CogniteClient } from '@cognite/sdk';
 
 import { SectorCuller } from '@/datamodels/cad/sector/culling/SectorCuller';
 
-// import Color from '@/core/Cognite3DModel';
-
 export interface Color {
   r: number;
   g: number;

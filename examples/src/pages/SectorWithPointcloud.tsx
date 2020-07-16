@@ -18,10 +18,8 @@ import {
   createDefaultRenderOptions,
 } from '../utils/renderer-debug-widget';
 import { CogniteClient } from '@cognite/sdk';
-import {
-  getParamsFromURL,
-  createRenderManager,
-} from '../utils/example-helpers';
+import { getParamsFromURL } from '../utils/example-helpers';
+import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 CameraControls.install({ THREE });
 
@@ -110,6 +108,8 @@ export function SectorWithPointcloud() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const gui = new dat.GUI();
+    const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
+    let revealManager: reveal.RevealManager<unknown>;
 
     async function main() {
       const { project, modelUrl, modelRevision } = getParamsFromURL({
@@ -135,25 +135,15 @@ export function SectorWithPointcloud() {
         value: 'MyDummyValue',
       });
 
-      const revealManager: reveal.RenderManager = createRenderManager(
-        modelRevision !== undefined ? 'cdf' : 'local',
-        client
-      );
 
       let model: reveal.CadNode;
-      if (
-        revealManager instanceof reveal.LocalHostRevealManager &&
-        modelUrl !== undefined
-      ) {
-        model = await revealManager.addModel('cad', modelUrl);
-      } else if (
-        revealManager instanceof reveal.RevealManager &&
-        modelRevision !== undefined
-      ) {
-        await client.authenticate();
+      if(modelRevision) {
+        revealManager = reveal.createCdfRevealManager(client);
         model = await revealManager.addModel('cad', modelRevision);
+      } else if(modelUrl) {
+        revealManager = reveal.createLocalRevealManager();
+        model = await revealManager.addModel('cad', modelUrl);
       } else {
-        console.log(pointCloudModelRevision);
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'
         );
@@ -164,26 +154,22 @@ export function SectorWithPointcloud() {
         reveal.internal.PotreeGroupWrapper,
         reveal.internal.PotreeNodeWrapper
       ];
-      if (
-        revealManager instanceof reveal.LocalHostRevealManager &&
-        pointCloudUrl !== undefined
-      ) {
-        pointCloud = await revealManager.addModel('pointcloud', pointCloudUrl);
-      } else if (
-        revealManager instanceof reveal.RevealManager &&
-        pointCloudModelRevision !== undefined
-      ) {
-        await client.authenticate();
-        pointCloud = await revealManager.addModel(
+      if(pointCloudModelRevision) {
+        await client.authenticate();pointCloud = await revealManager.addModel(
           'pointcloud',
           pointCloudModelRevision
         );
+
+      } else if(pointCloudUrl) {
+        pointCloud = await revealManager.addModel('pointcloud', pointCloudUrl);
       } else {
+
         console.log(pointCloudModelRevision);
         throw new Error(
           'Need to provide either project & pointCloud OR pointCloudlUrl as query parameters'
         );
       }
+
       const [pointCloudGroup, pointCloudNode] = pointCloud;
       scene.add(pointCloudGroup);
 
@@ -223,10 +209,8 @@ export function SectorWithPointcloud() {
       controls.update(0.0);
       camera.updateMatrixWorld();
 
-      const clock = new THREE.Clock();
-      const render = async () => {
-        const delta = clock.getDelta();
-        const controlsNeedUpdate = controls.update(delta);
+      animationLoopHandler.setOnAnimationFrameListener(async (deltaTime) => {
+        const controlsNeedUpdate = controls.update(deltaTime);
         if (renderOptions.loadingEnabled) {
           revealManager.update(camera);
         }
@@ -244,9 +228,8 @@ export function SectorWithPointcloud() {
           settingsChanged = false;
           revealManager.resetRedraw();
         }
-        requestAnimationFrame(render);
-      };
-      render();
+      });
+      animationLoopHandler.start();
 
       (window as any).scene = scene;
       (window as any).THREE = THREE;

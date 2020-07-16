@@ -4,6 +4,7 @@
 
 import * as THREE from 'three';
 import { CogniteClient } from '@cognite/sdk';
+import { vec3 } from 'gl-matrix';
 
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { Color, SupportedModelTypes } from './types';
@@ -13,11 +14,7 @@ import { toThreeJsBox3, toThreeMatrix4, toThreeVector3, fromThreeVector3 } from 
 import { CadRenderHints, CadNode } from '@/experimental';
 import { CadLoadingHints } from '@/datamodels/cad/CadLoadingHints';
 import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
-import { SectorGeometry } from '@/datamodels/cad/sector/types';
-import { SectorQuads } from '@/datamodels/cad/rendering/types';
-import { vec3 } from 'gl-matrix';
 import { NodeAppearanceProvider, DefaultNodeAppearance } from '@/datamodels/cad/NodeAppearance';
-import { Matrix4 } from 'three';
 import { trackError } from '@/utilities/metrics';
 
 const mapCoordinatesBuffers = {
@@ -49,7 +46,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   readonly cadNode: CadNode;
 
   private readonly cadModel: CadModelMetadata;
-  private readonly nodeColors: Map<number, [number, number, number, number]>;
+  private readonly nodeColors: Map<number, [number, number, number]>;
   private readonly selectedNodes: Set<number>;
   private readonly hiddenNodes: Set<number>;
   private readonly client: CogniteClient;
@@ -88,7 +85,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
     this.cadNode = cadNode;
 
-    this.children.push(this.cadNode);
+    this.add(this.cadNode);
   }
 
   /**
@@ -140,12 +137,12 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return this.getBoundingBox(undefined, outBbox);
   }
 
-  updateTransformation(matrix: Matrix4): void {
+  updateTransformation(matrix: THREE.Matrix4): void {
     this.cadNode.applyMatrix4(matrix);
     this.cadNode.updateMatrixWorld(false);
   }
 
-  updateNodeIdMaps(sector: { lod: string; data: SectorGeometry | SectorQuads }) {
+  updateNodeIdMaps(sector: Map<number, number>) {
     this.nodeIdAndTreeIndexMaps.updateMaps(sector);
   }
 
@@ -214,7 +211,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   setNodeColorByTreeIndex(treeIndex: number, r: number, g: number, b: number) {
-    this.nodeColors.set(treeIndex, [r, g, b, 255]);
+    this.nodeColors.set(treeIndex, [r, g, b]);
     this.cadNode.requestNodeUpdate([treeIndex]);
   }
 

@@ -110,8 +110,10 @@ module.exports = env => {
     },
     plugins: [
       new webpack.DefinePlugin({
-        VERSION: JSON.stringify(packageJSON.version),
-        MIXPANEL_TOKEN: JSON.stringify(development ? MIXPANEL_TOKEN_DEV : MIXPANEL_TOKEN_PROD)
+        'process.env': JSON.stringify({
+          VERSION: packageJSON.version,
+          MIXPANEL_TOKEN: development ? MIXPANEL_TOKEN_DEV : MIXPANEL_TOKEN_PROD
+        })
       }),
       new WasmPackPlugin({
         crateDirectory: '.',

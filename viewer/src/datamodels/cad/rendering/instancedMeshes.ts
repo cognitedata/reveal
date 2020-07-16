@@ -3,8 +3,8 @@
  */
 
 import * as THREE from 'three';
-import { disposeAttributeArrayOnUpload } from '@/utilities/disposeAttributeArrayOnUpload';
 import { InstancedMeshFile } from './types';
+import { disposeAttributeArrayOnUpload } from '@/utilities/disposeAttributeArrayOnUpload';
 
 export function createInstancedMeshes(
   meshes: InstancedMeshFile[],
@@ -47,6 +47,12 @@ export function createInstancedMeshes(
       bounds.getBoundingSphere(geometry.boundingSphere);
       const obj = new THREE.Mesh(geometry, material);
       obj.name = `Instanced mesh ${meshFile.fileId}`;
+
+      obj.userData.treeIndices = new Set(instancedMesh.treeIndices);
+      obj.onAfterRender = () => {
+        disposeAttributeArrayOnUpload.bind(buffer)();
+        obj.onAfterRender = () => {};
+      };
       result.push(obj);
     }
   }

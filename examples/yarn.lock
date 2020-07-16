@@ -1162,15 +1162,9 @@
   version "0.0.0"
   uid ""
 
-"@cognite/sdk@^2.32.0":
-  version "2.32.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-2.32.0.tgz#4942e7ad21c93804d9be2a65bdc9f0196d1a0f18"
-  integrity sha512-uQivhbRNxwkWyxC9ugckMyi0zFv1OQYSZDcSowH6HTfzPGw+d3w/kE6Kc3Fx8fi1/DisKywWtH21gw1zkH2SQw==
-  dependencies:
-    cross-fetch "^3.0.4"
-    lodash "^4.17.11"
-    query-string "^5.1.1"
-    url "^0.11.0"
+"@cognite/sdk@link:../viewer/node_modules/@cognite/sdk":
+  version "0.0.0"
+  uid ""
 
 "@cognite/three-combo-controls@^1.4.1":
   version "1.4.1"
