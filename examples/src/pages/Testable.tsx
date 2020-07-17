@@ -4,10 +4,7 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import {
-  getParamsFromURL,
-  createRenderManager,
-} from '../utils/example-helpers';
+import { getParamsFromURL } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import * as reveal from '@cognite/reveal/experimental';
 import React, { useEffect, useRef, useState } from 'react';
@@ -24,7 +21,7 @@ export function Testable() {
 
   useEffect(() => {
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
-    let revealManager: reveal.RevealManager | reveal.LocalHostRevealManager;
+    let revealManager: reveal.RevealManager<unknown>;
 
     async function main() {
       if (!canvas.current) {
@@ -38,22 +35,14 @@ export function Testable() {
       client.loginWithOAuth({ project });
 
       const scene = new THREE.Scene();
-      revealManager = createRenderManager(
-        modelRevision !== undefined ? 'cdf' : 'local',
-        client
-      );
 
       let model: reveal.CadNode;
-      if (
-        revealManager instanceof reveal.LocalHostRevealManager &&
-        modelUrl !== undefined
-      ) {
-        model = await revealManager.addModel('cad', modelUrl);
-      } else if (
-        revealManager instanceof reveal.RevealManager &&
-        modelRevision !== undefined
-      ) {
+      if(modelRevision) {
+        revealManager = reveal.createCdfRevealManager(client);
         model = await revealManager.addModel('cad', modelRevision);
+      } else if(modelUrl) {
+        revealManager = reveal.createLocalRevealManager();
+        model = await revealManager.addModel('cad', modelUrl);
       } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'
@@ -156,6 +145,7 @@ export function Testable() {
     return () => {
       revealManager?.dispose();
       animationLoopHandler.dispose();
+      revealManager?.dispose();
     };
   }, []);
   return (

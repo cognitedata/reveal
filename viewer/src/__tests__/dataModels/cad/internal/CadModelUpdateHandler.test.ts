@@ -14,11 +14,11 @@ import { SectorCuller } from '@/datamodels/cad/sector/culling/SectorCuller';
 import { createCadModelMetadata } from '../../../testutils/createCadModelMetadata';
 import { generateSectorTree } from '../../../testutils/createSectorMetadata';
 import { CadModelUpdateHandler } from '@/datamodels/cad/CadModelUpdateHandler';
-import { CadSectorProvider } from '@/utilities/networking/types';
+import { BinaryFileProvider } from '@/utilities/networking/types';
 
 describe('CadModelUpdateHandler', () => {
-  const modelSectorProvider: CadSectorProvider = {
-    getCadSectorFile: jest.fn()
+  const modelSectorProvider: BinaryFileProvider = {
+    getBinaryFile: jest.fn()
   };
   const materialManager = new MaterialManager();
   const modelDataParser = new CadSectorParser();

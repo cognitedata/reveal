@@ -74,9 +74,11 @@ describe('Cognite3DViewer', () => {
       ]
     };
     nock(/.*/)
+      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
       .get(/.*\/outputs/)
       .reply(200, outputs);
     nock(/.*/)
+      .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
       .get(/.*\/scene.json/)
       .reply(200, sceneJson);
 

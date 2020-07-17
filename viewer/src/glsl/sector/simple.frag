@@ -18,13 +18,13 @@ uniform int renderMode;
 varying vec3 vViewPosition;
 
 void main() {
-    if (!determineVisibility(overrideVisibilityPerTreeIndex, dataTextureSize, v_treeIndex, renderMode)) {
+    if (!determineVisibility(colorDataTexture, dataTextureSize, v_treeIndex, renderMode)) {
         discard;
     }
     if (isSliced(vViewPosition)) {
         discard;
     }
 
-    vec3 color = determineColor(v_color, colorDataTexture, dataTextureSize, v_treeIndex);
+    vec4 color = determineColor(v_color, colorDataTexture, dataTextureSize, v_treeIndex);
     updateFragmentColor(renderMode, color, v_treeIndex, v_normal, gl_FragCoord.z, matCapTexture);
 }
