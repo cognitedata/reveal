@@ -44,7 +44,7 @@ import { ParseCtmResult, ParseSectorResult } from '@/utilities/workers/types/rev
 import { TriangleMesh, InstancedMeshFile, InstancedMesh, SectorQuads } from '../rendering/types';
 import { createOffsetsArray } from '@/utilities';
 import { trackError } from '@/utilities/metrics';
-import { CadSectorProvider } from '@/utilities/networking/types';
+import { BinaryFileProvider } from '@/utilities/networking/types';
 
 type CtmFileRequest = { blobUrl: string; fileName: string };
 type CtmFileResult = { fileName: string; data: ParseCtmResult };
@@ -61,7 +61,7 @@ export class CachedRepository implements Repository {
   private readonly _ctmFileCache: MemoryRequestCache<string, Observable<CtmFileResult>> = new MemoryRequestCache({
     maxElementsInCache: 300
   });
-  private readonly _modelSectorProvider: CadSectorProvider;
+  private readonly _modelSectorProvider: BinaryFileProvider;
   private readonly _modelDataParser: CadSectorParser;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
   private readonly _isLoadingSubject: Subject<boolean> = new BehaviorSubject<boolean>(false);
@@ -77,7 +77,7 @@ export class CachedRepository implements Repository {
   private readonly _concurrentNetworkOperations: number;
 
   constructor(
-    modelSectorProvider: CadSectorProvider,
+    modelSectorProvider: BinaryFileProvider,
     modelDataParser: CadSectorParser,
     modelDataTransformer: SimpleAndDetailedToSector3D,
     concurrentNetworkOperations: number = 50
@@ -170,7 +170,7 @@ export class CachedRepository implements Repository {
   private loadSimpleSectorFromNetwork(wantedSector: WantedSector): Observable<ConsumedSector> {
     const networkObservable: Observable<ConsumedSector> = onErrorResumeNext(
       from(
-        this._modelSectorProvider.getCadSectorFile(wantedSector.blobUrl, wantedSector.metadata.facesFile.fileName!)
+        this._modelSectorProvider.getBinaryFile(wantedSector.blobUrl, wantedSector.metadata.facesFile.fileName!)
       ).pipe(
         catchError(error => {
           trackError(error, {
@@ -205,7 +205,7 @@ export class CachedRepository implements Repository {
 
   private loadDetailedSectorFromNetwork(wantedSector: WantedSector): Observable<ConsumedSector> {
     const i3dFileObservable = of(wantedSector.metadata.indexFile).pipe(
-      flatMap(indexFile => this._modelSectorProvider.getCadSectorFile(wantedSector.blobUrl, indexFile.fileName)),
+      flatMap(indexFile => this._modelSectorProvider.getBinaryFile(wantedSector.blobUrl, indexFile.fileName)),
       retry(3),
       flatMap(buffer => this._modelDataParser.parseI3D(new Uint8Array(buffer)))
     );
@@ -267,7 +267,7 @@ export class CachedRepository implements Repository {
     return pipe(
       flatMap(ctmRequest => {
         const networkObservable: Observable<{ fileName: string; data: ParseCtmResult }> = onErrorResumeNext(
-          from(this._modelSectorProvider.getCadSectorFile(ctmRequest.blobUrl, ctmRequest.fileName)).pipe(
+          from(this._modelSectorProvider.getBinaryFile(ctmRequest.blobUrl, ctmRequest.fileName)).pipe(
             catchError(error => {
               trackError(error, {
                 moduleName: 'CachedRepository',
