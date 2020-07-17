@@ -1,12 +1,20 @@
 {
-  "name": "documentation",
-  "version": "0.0.0",
+  "name": "@cognite/reveal-documentation",
+  "version": "0.0.1",
   "private": true,
+  "author": "Maksim Nesterenko <maksim.nesterenko@cognite.com>",
+  "contributors": [
+    "Lars Moastuen <lars.moastuen@cognite.com>",
+    "Joachim Bjørne <joachim.bjorne@cognite.com>",
+    "Christopher Tannum <christopher.tannum@cognite.com>",
+    "Maksim Nesterenko <maksim.nesterenko@cognite.com>"
+  ],
   "scripts": {
     "start": "yarn run reveal:copy && local-ssl-proxy --source 9000 --target 3000 | docusaurus start --no-open",
     "build": "yarn run reveal:copy && docusaurus build",
     "swizzle": "docusaurus swizzle",
     "reveal:copy": "cpy ./node_modules/@cognite/reveal/*.wasm ./node_modules/@cognite/reveal/*.worker.js ./static --dot",
+    "jsdoc2md": "jsdoc2md --files ../viewer/src/**/*.ts --configure ./jsdoc2md.json --partial src/jsdoc2md-partials/header.hbs > ./docs/api-reference_generated.md",
     "deploy": "docusaurus deploy"
   },
   "dependencies": {
@@ -26,13 +34,16 @@
   "devDependencies": {
     "@types/react": "^16.9.41",
     "cpy-cli": "^3.1.1",
+    "jsdoc-babel": "^0.5.0",
+    "jsdoc-to-markdown": "^6.0.1",
     "local-ssl-proxy": "^1.3.0",
     "typescript": "^3.9.6"
   },
   "browserslist": {
     "production": [
-      ">0.2%",
+      ">1%",
       "not dead",
+      "not ie 11",
       "not op_mini all"
     ],
     "development": [
