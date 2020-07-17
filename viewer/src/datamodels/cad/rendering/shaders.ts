@@ -80,6 +80,11 @@ export const sectorShaders = {
   }
 };
 
+export const edgeDetectionShaders = {
+  combine: glsl(require('@/glsl/post-processing/edge-detect-combine.frag').default),
+  vertex: glsl(require('@/glsl/post-processing/edge-detection.vert').default)
+};
+
 /**
  * Shaders use to estimate how many pixels a sector covers on screen.
  */
