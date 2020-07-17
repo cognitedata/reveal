@@ -33,7 +33,7 @@ pub fn parse_ctm(input: &[u8]) -> Result<CtmResult, JsValue> {
     panic::set_hook(Box::new(console_error_panic_hook::hook));
 
     let cursor = std::io::Cursor::new(input);
-    let file = openctm::parse(cursor).unwrap();
+    let file = openctm::parse(cursor).map_err(|e| e.to_string())?;
 
     let result = CtmResult { file };
 
@@ -111,12 +111,12 @@ pub fn parse_and_convert_f3df(input: &[u8]) -> Result<SimpleSectorData, JsValue>
 
     Ok(SimpleSectorData {
         faces: faces_as_float_32_array,
-        node_id_to_tree_index_map: Map::from(
-            serde_wasm_bindgen::to_value(&renderable_sector.node_id_to_tree_index_map).unwrap(),
-        ),
-        tree_index_to_node_id_map: Map::from(
-            serde_wasm_bindgen::to_value(&renderable_sector.tree_index_to_node_id_map).unwrap(),
-        ),
+        node_id_to_tree_index_map: Map::from(serde_wasm_bindgen::to_value(
+            &renderable_sector.node_id_to_tree_index_map,
+        )?),
+        tree_index_to_node_id_map: Map::from(serde_wasm_bindgen::to_value(
+            &renderable_sector.tree_index_to_node_id_map,
+        )?),
     })
 }
 
