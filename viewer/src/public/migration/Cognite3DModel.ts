@@ -46,7 +46,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   readonly cadNode: CadNode;
 
   private readonly cadModel: CadModelMetadata;
-  private readonly nodeColors: Map<number, [number, number, number, number]>;
+  private readonly nodeColors: Map<number, [number, number, number]>;
   private readonly selectedNodes: Set<number>;
   private readonly hiddenNodes: Set<number>;
   private readonly client: CogniteClient;
@@ -85,7 +85,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
     this.cadNode = cadNode;
 
-    this.children.push(this.cadNode);
+    this.add(this.cadNode);
   }
 
   /**
@@ -211,7 +211,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   setNodeColorByTreeIndex(treeIndex: number, r: number, g: number, b: number) {
-    this.nodeColors.set(treeIndex, [r, g, b, 255]);
+    this.nodeColors.set(treeIndex, [r, g, b]);
     this.cadNode.requestNodeUpdate([treeIndex]);
   }
 

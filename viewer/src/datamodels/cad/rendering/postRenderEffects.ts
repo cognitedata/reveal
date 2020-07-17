@@ -4,10 +4,10 @@
 
 import * as THREE from 'three';
 import { RenderMode } from './RenderMode';
-import { RevealManagerBase } from '@/public/RevealManagerBase';
+import { RevealManager } from '@/public/RevealManager';
 
 export function addPostRenderEffects(
-  renderManager: RevealManagerBase<unknown>,
+  renderManager: RevealManager<unknown>,
   renderer: THREE.WebGLRenderer,
   camera: THREE.PerspectiveCamera,
   scene: THREE.Scene
