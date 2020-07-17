@@ -6,19 +6,18 @@ use crate::renderables::{
     Trapezium,
 };
 use crate::{Matrix, Rotation3, Vector3};
-use std::f64::consts::PI;
+use std::f32::consts::PI;
 
 impl ToRenderables for crate::ClosedCone {
     fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center_axis: Vector3 = self.center_axis.into();
-        let x_axis = Vector3::new(1.0, 0.0, 0.0);
-        let z_axis = Vector3::new(0.0, 0.0, 1.0);
         let center: Vector3 = self.center();
         let center_a = center + center_axis * self.height / 2.0;
         let center_b = center - center_axis * self.height / 2.0;
         let normal = (center_a - center_b).normalize();
-        let rotation = Rotation3::rotation_between(&z_axis, &normal).unwrap();
-        let local_x_axis: Vector3 = rotation.transform_vector(&x_axis);
+        let rotation = Rotation3::rotation_between(&Vector3::z_axis(), &normal)
+            .unwrap_or_else(|| Rotation3::from_axis_angle(&Vector3::x_axis(), PI));
+        let local_x_axis: Vector3 = rotation.transform_vector(&Vector3::x_axis());
         collections.cone_collection.push(Cone {
             tree_index: self.tree_index as f32,
             color: self.color,
@@ -27,7 +26,7 @@ impl ToRenderables for crate::ClosedCone {
             radius_a: self.radius_a,
             radius_b: self.radius_b,
             angle: 0.0,
-            arc_angle: 2.0 * PI as f32,
+            arc_angle: 2.0 * PI,
             local_x_axis,
         });
         collections.circle_collection.push(Circle::new(&CircleInfo {
@@ -91,14 +90,13 @@ impl ToRenderables for crate::ClosedEccentricCone {
 impl ToRenderables for crate::OpenCone {
     fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center_axis: Vector3 = self.center_axis.into();
-        let x_axis = Vector3::new(1.0, 0.0, 0.0);
-        let z_axis = Vector3::new(0.0, 0.0, 1.0);
         let center: Vector3 = self.center();
         let center_a = center + center_axis * self.height / 2.0;
         let center_b = center - center_axis * self.height / 2.0;
         let normal = (center_a - center_b).normalize();
-        let rotation = Rotation3::rotation_between(&z_axis, &normal).unwrap();
-        let local_x_axis: Vector3 = rotation.transform_vector(&x_axis);
+        let rotation = Rotation3::rotation_between(&Vector3::z_axis(), &normal)
+            .unwrap_or_else(|| Rotation3::from_axis_angle(&Vector3::x_axis(), PI));
+        let local_x_axis: Vector3 = rotation.transform_vector(&Vector3::x_axis());
         collections.cone_collection.push(Cone {
             tree_index: self.tree_index as f32,
             color: self.color,
@@ -107,7 +105,7 @@ impl ToRenderables for crate::OpenCone {
             radius_a: self.radius_a,
             radius_b: self.radius_b,
             angle: 0.0,
-            arc_angle: 2.0 * PI as f32,
+            arc_angle: 2.0 * PI,
             local_x_axis,
         });
     }
@@ -141,14 +139,13 @@ impl ToRenderables for crate::OpenEccentricCone {
 impl ToRenderables for crate::OpenGeneralCone {
     fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center_axis: Vector3 = self.center_axis.into();
-        let x_axis = Vector3::new(1.0, 0.0, 0.0);
-        let z_axis = Vector3::new(0.0, 0.0, 1.0);
         let center: Vector3 = self.center();
         let center_a = center + center_axis * self.height / 2.0;
         let center_b = center - center_axis * self.height / 2.0;
         let normal = (center_a - center_b).normalize();
-        let rotation = Rotation3::rotation_between(&z_axis, &normal).unwrap();
-        let local_x_axis: Vector3 = rotation.transform_vector(&x_axis);
+        let rotation = Rotation3::rotation_between(&Vector3::z_axis(), &normal)
+            .unwrap_or_else(|| Rotation3::from_axis_angle(&Vector3::x_axis(), PI));
+        let local_x_axis: Vector3 = rotation.transform_vector(&Vector3::x_axis());
         collections.cone_collection.push(Cone {
             tree_index: self.tree_index as f32,
             color: self.color,
@@ -168,14 +165,13 @@ impl ToRenderables for crate::OpenGeneralCone {
 impl ToRenderables for crate::ClosedGeneralCone {
     fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center_axis: Vector3 = self.center_axis.into();
-        let x_axis = Vector3::new(1.0, 0.0, 0.0);
-        let z_axis = Vector3::new(0.0, 0.0, 1.0);
         let center: Vector3 = self.center();
         let center_a = center + center_axis * self.height / 2.0;
         let center_b = center - center_axis * self.height / 2.0;
         let normal = (center_a - center_b).normalize();
-        let rotation = Rotation3::rotation_between(&z_axis, &normal).unwrap();
-        let local_x_axis: Vector3 = rotation.transform_vector(&x_axis);
+        let rotation = Rotation3::rotation_between(&Vector3::z_axis(), &normal)
+            .unwrap_or_else(|| Rotation3::from_axis_angle(&Vector3::x_axis(), PI));
+        let local_x_axis: Vector3 = rotation.transform_vector(&Vector3::x_axis());
 
         let instance_matrix_a =
             create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
@@ -230,14 +226,13 @@ impl ToRenderables for crate::ClosedGeneralCone {
 impl ToRenderables for crate::SolidOpenGeneralCone {
     fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center_axis: Vector3 = self.center_axis.into();
-        let x_axis = Vector3::new(1.0, 0.0, 0.0);
-        let z_axis = Vector3::new(0.0, 0.0, 1.0);
         let center: Vector3 = self.center();
         let center_a = center + center_axis * self.height / 2.0;
         let center_b = center - center_axis * self.height / 2.0;
         let normal = (center_a - center_b).normalize();
-        let rotation = Rotation3::rotation_between(&z_axis, &normal).unwrap();
-        let local_x_axis: Vector3 = rotation.transform_vector(&x_axis);
+        let rotation = Rotation3::rotation_between(&Vector3::z_axis(), &normal)
+            .unwrap_or_else(|| Rotation3::from_axis_angle(&Vector3::x_axis(), PI));
+        let local_x_axis: Vector3 = rotation.transform_vector(&Vector3::x_axis());
 
         let instance_matrix_a =
             create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
@@ -303,14 +298,13 @@ impl ToRenderables for crate::SolidOpenGeneralCone {
 impl ToRenderables for crate::SolidClosedGeneralCone {
     fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center_axis: Vector3 = self.center_axis.into();
-        let x_axis = Vector3::new(1.0, 0.0, 0.0);
-        let z_axis = Vector3::new(0.0, 0.0, 1.0);
         let center: Vector3 = self.center();
         let center_a = center + center_axis * self.height / 2.0;
         let center_b = center - center_axis * self.height / 2.0;
         let normal = (center_a - center_b).normalize();
-        let rotation = Rotation3::rotation_between(&z_axis, &normal).unwrap();
-        let local_x_axis: Vector3 = rotation.transform_vector(&x_axis);
+        let rotation = Rotation3::rotation_between(&Vector3::z_axis(), &normal)
+            .unwrap_or_else(|| Rotation3::from_axis_angle(&Vector3::x_axis(), PI));
+        let local_x_axis: Vector3 = rotation.transform_vector(&Vector3::x_axis());
 
         let instance_matrix_a =
             create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
@@ -375,7 +369,8 @@ impl ToRenderables for crate::SolidClosedGeneralCone {
         for is_second in [false, true].iter() {
             let final_angle = self.rotation_angle + if *is_second { self.arc_angle } else { 0.0 };
 
-            let rotation = Rotation3::rotation_between(&Vector3::z_axis(), &normal).unwrap();
+            let rotation = Rotation3::rotation_between(&Vector3::z_axis(), &normal)
+                .unwrap_or_else(|| Rotation3::from_axis_angle(&Vector3::x_axis(), PI));
             let point = Vector3::new(f32::cos(final_angle), f32::sin(final_angle), 0.0);
             let point = rotation.transform_vector(&point).normalize();
             let mut vertices = [Vector3::new(0.0, 0.0, 0.0); 4];
