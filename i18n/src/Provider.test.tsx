@@ -3,21 +3,6 @@ import { render, waitFor } from '@testing-library/react';
 
 import { useTranslation, I18nContainer } from './Provider';
 
-const stop = jest.fn();
-jest.mock('@cognite/metrics', () => {
-  return {
-    useMetrics: () => {
-      return {
-        start: () => {
-          return {
-            stop,
-          };
-        },
-      };
-    },
-  };
-});
-
 describe('Provider', () => {
   it('Renders without exploding', async () => {
     const Test = () => {
@@ -35,9 +20,6 @@ describe('Provider', () => {
     };
 
     const { getByText } = render(<Wrapped />);
-
     await waitFor(() => getByText('TRANS: COMPLETE'));
-
-    expect(stop.mock.calls.length).toEqual(1);
   });
 });
