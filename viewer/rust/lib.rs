@@ -20,29 +20,6 @@ use detailedSector_generated::detailed_sector;
 #[macro_use]
 pub mod error;
 
-#[derive(Deserialize, Serialize)]
-struct UvMap {
-    //pub name: String,
-    //pub filename: String,
-    #[serde(with = "serde_bytes")]
-    pub uv: Vec<u8>, // actually u32
-}
-
-#[derive(Deserialize, Serialize)]
-struct Body {
-    #[serde(with = "serde_bytes")]
-    pub indices: Vec<u8>, // actually u32
-    #[serde(with = "serde_bytes")]
-    pub vertices: Vec<u8>, // actually f32
-    pub normals: Vec<u8>, // actually f32
-    pub uv_maps: Vec<UvMap>,
-}
-
-#[derive(Deserialize, Serialize)]
-struct Ctm {
-    pub body: Body,
-}
-
 #[wasm_bindgen]
 #[derive(Deserialize, Serialize, Clone)]
 pub struct CtmResult {
@@ -220,8 +197,7 @@ pub async fn load_parse_finalize_detailed(
             .right_future();
     }
 
-    let ctm_file_names: HashSet<String> =
-        serde_wasm_bindgen::from_value(peripheral_files).map_err(|e| e.to_string())?;
+    let ctm_file_names: HashSet<String> = serde_wasm_bindgen::from_value(peripheral_files)?;
     let mut ctm_map = HashMap::new();
 
     // Add all cached CtmResults to map
