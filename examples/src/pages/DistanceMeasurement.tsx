@@ -8,17 +8,15 @@ import * as THREE from 'three';
 import {
   CadNode,
   intersectCadNodes,
-  LocalHostRevealManager,
   RevealManager,
   utilities,
+  createCdfRevealManager,
+  createLocalRevealManager,
 } from '@cognite/reveal/experimental';
 import CameraControls from 'camera-controls';
 import { Scene, WebGLRenderer } from 'three';
 import { addWASDHandling } from '../utils/cameraControls';
-import {
-  createRenderManager,
-  getParamsFromURL,
-} from '../utils/example-helpers';
+import { getParamsFromURL } from '../utils/example-helpers';
 import dat from 'dat.gui';
 import { CanvasWrapper, Container } from '../components/styled';
 import { resizeRendererToDisplaySize } from '../utils/sceneHelpers';
@@ -61,6 +59,7 @@ export function DistanceMeasurement() {
   useEffect(() => {
     let scene: Scene | undefined;
     let renderer: WebGLRenderer | undefined;
+    let revealManager: RevealManager<unknown>;
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
     const gui = new dat.GUI();
 
@@ -79,22 +78,13 @@ export function DistanceMeasurement() {
       const scene = new THREE.Scene();
       let isRenderRequired = true;
 
-      const revealManager = createRenderManager(
-        modelRevision !== undefined ? 'cdf' : 'local',
-        client
-      );
-
       let model: CadNode;
-      if (
-        revealManager instanceof LocalHostRevealManager &&
-        modelUrl !== undefined
-      ) {
-        model = await revealManager.addModel('cad', modelUrl);
-      } else if (
-        revealManager instanceof RevealManager &&
-        modelRevision !== undefined
-      ) {
+      if(modelRevision) {
+        revealManager = createCdfRevealManager(client);
         model = await revealManager.addModel('cad', modelRevision);
+      } else if (modelUrl) {
+        revealManager = createLocalRevealManager();
+        model = await revealManager.addModel('cad', modelUrl);
       } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'
@@ -246,6 +236,7 @@ export function DistanceMeasurement() {
       renderer?.dispose();
       animationLoopHandler.dispose();
       gui.destroy();
+      revealManager?.dispose();
     };
   }, []);
 

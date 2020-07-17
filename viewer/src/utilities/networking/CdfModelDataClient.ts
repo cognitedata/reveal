@@ -24,7 +24,7 @@ export class CdfModelDataClient
     return this.client.getDefaultRequestHeaders();
   }
 
-  public async getCadSectorFile(blobUrl: string, fileName: string): Promise<ArrayBuffer> {
+  public async getBinaryFile(blobUrl: string, fileName: string): Promise<ArrayBuffer> {
     const url = `${blobUrl}/${fileName}`;
     const headers = {
       ...this.client.getDefaultRequestHeaders(),
@@ -34,13 +34,8 @@ export class CdfModelDataClient
     return response.arrayBuffer();
   }
 
-  public async getCadScene(blobUrl: string): Promise<any> {
-    const response = await this.client.get(`${blobUrl}/scene.json`);
-    return response.data;
-  }
-
-  public async getEptScene(blobUrl: string): Promise<any> {
-    const response = await this.client.get(`${blobUrl}/ept.json`);
+  async getJsonFile(blobUrl: string, fileName: string): Promise<any> {
+    const response = await this.client.get(`${blobUrl}/${fileName}`);
     return response.data;
   }
 

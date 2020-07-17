@@ -15,25 +15,23 @@ vec3 packNormalToRgb( const in vec3 normal ) {
     return normalize( normal ) * 0.5 + 0.5;
 }
 
-void updateFragmentColor(int renderMode, vec3 color, float treeIndex, vec3 normal, float depth, sampler2D matCapTexture) {
+void updateFragmentColor(int renderMode, vec4 color, float treeIndex, vec3 normal, float depth, sampler2D matCapTexture) {
     if (renderMode == RenderTypeColor || renderMode == RenderTypeEffects) {
-        vec3 hsv = rgb2hsv(color);
-        float h = hsv.x;
+        vec3 hsv = rgb2hsv(color.rgb);
         hsv.z = min(0.6 * hsv.z + 0.4, 1.0);
-        color = hsv2rgb(hsv);
+        vec3 colorRGB = hsv2rgb(hsv);
         float amplitude = max(0.0, dot(normal, vec3(0.0, 0.0, 1.0)));
         
-        vec4 albedo = vec4(color * (0.4 + 0.6 * amplitude), h);
+        vec4 albedo = vec4(colorRGB * (0.4 + 0.6 * amplitude), 1.0);
 
         vec2 cap = normal.xy * 0.5 + 0.5;
 
-        vec4 mc = vec4(texture2D(matCapTexture, cap).rgb, 1);
+        vec4 mc = vec4(texture2D(matCapTexture, cap).rgb, 1.0);
         
-        gl_FragColor = albedo * mc * 1.7;
-
+        gl_FragColor = vec4(albedo.rgb * mc.rgb * 1.7, color.a);
 
     } else if (renderMode == RenderTypePackColorAndNormal) {
-        vec3 hsv = rgb2hsv(color);
+        vec3 hsv = rgb2hsv(color.rgb);
         float a = 0.0;
         if (hsv.y > 0.01) {
             if (hsv.z > 0.5) {
@@ -51,8 +49,7 @@ void updateFragmentColor(int renderMode, vec3 color, float treeIndex, vec3 norma
     } else if (renderMode == RenderTypeNormal) {
         gl_FragColor = vec4(packNormalToRgb(normal), 1.0);
     } else if (renderMode == RenderTypeTreeIndex) {
-        color = packIntToColor(treeIndex);
-        gl_FragColor = vec4(color, 1.0);
+        gl_FragColor = vec4(packIntToColor(treeIndex), 1.0);
     } else if (renderMode == RenderTypeDepth) {
         gl_FragColor = packDepthToRGBA(depth);
     } else {
