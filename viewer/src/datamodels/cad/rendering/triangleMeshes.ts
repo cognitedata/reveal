@@ -30,6 +30,9 @@ export function createTriangleMeshes(
 
     const obj = new THREE.Mesh(geometry, material);
     obj.name = `Triangle mesh ${mesh.fileId}`;
+
+    obj.userData.treeIndices = new Set(mesh.treeIndices);
+
     result.push(obj);
   }
   return result;
