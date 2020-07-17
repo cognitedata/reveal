@@ -27,6 +27,8 @@ type ConfigureI18nOptions = {
     apiKey: string;
     version?: string;
   };
+  wait?: boolean;
+  useSuspense?: boolean;
 };
 
 const configureI18n = ({
@@ -36,7 +38,12 @@ const configureI18n = ({
   localStorageCacheTimeMillis = 1000 * 60 * 60 * 24, // 1 day
   locize,
   env = REACT_APP_ENV || NODE_ENV,
+  ...rest
 }: ConfigureI18nOptions = {}) => {
+  const {
+    wait = env === 'test' ? false : true,
+    useSuspense = env === 'test' ? true : false,
+  } = rest;
   const {
     projectId: locizeProjectId,
     apiKey: locizeApiKey,
@@ -67,7 +74,7 @@ const configureI18n = ({
     load: 'currentOnly',
     fallbackNS: ['global'],
     postProcess: [],
-    react: { wait: false, useSuspense: true },
+    react: { wait, useSuspense },
   };
 
   if (pseudo) {
