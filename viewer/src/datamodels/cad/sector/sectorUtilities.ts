@@ -92,7 +92,7 @@ export function consumeSectorSimple(sector: SectorQuads, materials: Materials): 
     for (let i = 0; i < sector.buffer.length / stride; i++) {
       treeIndecies.add(sector.buffer[i * stride + treeIndexAttributeOffset]);
     }
-    obj.userData.treeIndecies = treeIndecies;
+    obj.userData.treeIndices = treeIndecies;
   }
 }
 
