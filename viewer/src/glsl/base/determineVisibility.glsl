@@ -1,3 +1,5 @@
+#pragma glslify: floatBitsSubset = require('../math/floatBitsSubset.glsl')
+
 const int RenderTypeColor = 1;
 const int RenderTypeNormal = 2;
 const int RenderTypeTreeIndex = 3;
@@ -17,11 +19,13 @@ bool determineVisibility(sampler2D visibilityTexture, vec2 textureSize, float tr
     vec2 treeIndexUv = vec2(uCoord, vCoord);
     vec4 visible = texture2D(visibilityTexture, treeIndexUv);
 
-    //if(renderMode == 6){
-      //return visible.r > 0.0 && (visible.g > 0.0 || renderMode != 6);
-    //}
+    float byteUnwrapped = floor((visible.a * 255.0) + 0.5);
+    
+    bool isVisible = floatBitsSubset(byteUnwrapped, 0, 1) == 1.0;
 
-    return visible.r > 0.0 && (visible.g > 0.0 || renderMode != 6);
+    bool renderInFront = floatBitsSubset(byteUnwrapped, 1, 2) == 1.0;
+
+    return isVisible && (renderInFront || renderMode != RenderTypeEffects);
 }
 
 #pragma glslify: export(determineVisibility)

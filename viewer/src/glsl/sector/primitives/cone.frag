@@ -36,12 +36,12 @@ varying vec3 v_normal;
 uniform int renderMode;
 
 void main() {
-  if (!determineVisibility(overrideVisibilityPerTreeIndex, dataTextureSize, v_treeIndex, renderMode)) {
+  if (!determineVisibility(colorDataTexture, dataTextureSize, v_treeIndex, renderMode)) {
     discard;
   }
 
   vec3 normal = normalize( v_normal );
-  vec3 color = determineColor(v_color, colorDataTexture, dataTextureSize, v_treeIndex);
+  vec4 color = determineColor(v_color, colorDataTexture, dataTextureSize, v_treeIndex);
 
   float R1 = v_centerB.w;
   vec4 U = v_U;
