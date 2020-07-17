@@ -71,6 +71,9 @@ export class CadNode extends THREE.Object3D {
     this._loadingHints = {};
     this.renderHints = {};
     this.loadingHints = {};
+
+    this.matrixAutoUpdate = false;
+    this.updateMatrixWorld();
   }
 
   get clippingPlanes(): THREE.Plane[] {
@@ -120,7 +123,7 @@ export class CadNode extends THREE.Object3D {
 
   set renderHints(hints: Readonly<CadRenderHints>) {
     this._renderHints = hints;
-    this._boundingBoxNode.visible = this.shouldRenderSectorBoundingBoxes;
+    // this._boundingBoxNode.visible = this.shouldRenderSectorBoundingBoxes;
   }
 
   get renderHints(): Readonly<CadRenderHints> {
@@ -135,9 +138,9 @@ export class CadNode extends THREE.Object3D {
     return this._loadingHints;
   }
 
-  private get shouldRenderSectorBoundingBoxes(): boolean {
-    return this._renderHints.showSectorBoundingBoxes || false;
-  }
+  // private get shouldRenderSectorBoundingBoxes(): boolean {
+  //   return this._renderHints.showSectorBoundingBoxes || false;
+  // }
 
   public suggestCameraConfig(): SuggestedCameraConfig {
     const { position, target, near, far } = suggestCameraConfig(this._sectorScene.root);
@@ -170,7 +173,6 @@ export class CadNode extends THREE.Object3D {
     });
 
     const boxesNode = new THREE.Group();
-    boxesNode.applyMatrix4(toThreeMatrix4(this.modelTransformation.modelMatrix));
     boxesNode.name = 'Bounding boxes (for debugging)';
     sectors.forEach(sector => {
       const bbox = toThreeJsBox3(new THREE.Box3(), sector.bounds);
@@ -180,7 +182,13 @@ export class CadNode extends THREE.Object3D {
       boxMesh.userData.sectorId = sector.id;
       boxMesh.visible = false;
       boxesNode.add(boxMesh);
+
+      boxMesh.matrixAutoUpdate = false;
+      boxMesh.updateMatrixWorld(true);
     });
+    boxesNode.matrixAutoUpdate = false;
+    boxesNode.applyMatrix4(toThreeMatrix4(this.modelTransformation.modelMatrix));
+    boxesNode.updateMatrixWorld(true);
     return boxesNode;
   }
 }
