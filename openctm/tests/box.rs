@@ -128,7 +128,7 @@ mod tests {
             ],
         }];
 
-        assert_eq!(reader.vertices, vertices);
+        assert_eq!(reader.get_vertices(), vertices);
         assert_eq!(reader.indices, indices);
         assert_eq!(reader.uv_maps, uv_maps);
     }
