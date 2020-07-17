@@ -8,7 +8,6 @@ import {
   Observable,
   combineLatest,
   from,
-  asapScheduler,
   fromEventPattern,
   asyncScheduler,
   scheduled,
@@ -27,7 +26,8 @@ import {
   toArray,
   tap,
   distinctUntilChanged,
-  mergeAll
+  mergeAll,
+  observeOn
 } from 'rxjs/operators';
 import { SectorCuller } from './sector/culling/SectorCuller';
 import { DetermineSectorsInput } from './sector/culling/types';
@@ -52,17 +52,15 @@ export class CadModelUpdateHandler {
 
   constructor(sectorRepository: Repository, sectorCuller: SectorCuller) {
     this._sectorRepository = sectorRepository;
-    this._updateObservable = combineLatest(
-      [
-        this._cameraSubject.pipe(auditTime(1000)),
-        this._clippingPlaneSubject.pipe(startWith([])),
-        this._clipIntersectionSubject.pipe(startWith(false)),
-        this._loadingHintsSubject.pipe(startWith({} as CadLoadingHints)),
-        this._cameraSubject.pipe(auditTime(250), emissionLastMillis(600)),
-        this.loadingModelObservable()
-      ],
-      asyncScheduler
-    ).pipe(
+    this._updateObservable = combineLatest([
+      this._cameraSubject.pipe(auditTime(1000)),
+      this._clippingPlaneSubject.pipe(startWith([])),
+      this._clipIntersectionSubject.pipe(startWith(false)),
+      this._loadingHintsSubject.pipe(startWith({} as CadLoadingHints)),
+      this._cameraSubject.pipe(auditTime(250), emissionLastMillis(600)),
+      this.loadingModelObservable()
+    ]).pipe(
+      observeOn(asyncScheduler),
       auditTime(250),
       filter(
         ([_camera, _clippingPlanes, _clipIntersection, loadingHints, _cameraInMotion, cadModelsMetadata]) =>
@@ -104,11 +102,8 @@ export class CadModelUpdateHandler {
 
         const simpleAndDetailedSectorsObservable = wantedSectors.pipe(
           flatMap(wantedSectorsArray => {
-            return from(wantedSectorsArray, asapScheduler).pipe(
-              filterSimpleAndDetailed,
-              filterUnloadedSectors,
-              toArray()
-            );
+            // TODO: 17-07-2020 j-bjorne adding a scheduled wrapping the from
+            return from(wantedSectorsArray).pipe(filterSimpleAndDetailed, filterUnloadedSectors, toArray());
           })
         );
 

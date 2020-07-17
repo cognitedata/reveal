@@ -109,7 +109,7 @@ export class CachedRepository implements Repository {
   loadSector(): OperatorFunction<WantedSector[], ConsumedSector> {
     return pipe(
       switchMap(wantedSectorsArray => {
-        return from(wantedSectorsArray, asapScheduler).pipe(
+        return scheduled(from(wantedSectorsArray), asapScheduler).pipe(
           tap(_ => {
             this._isLoadingSubject.next(true);
           }),
