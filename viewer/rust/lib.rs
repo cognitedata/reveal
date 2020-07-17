@@ -1,34 +1,10 @@
 use js_sys::{Float32Array, Map, Uint32Array};
-use serde::{Deserialize, Serialize};
 use std::panic;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
 
 #[macro_use]
 pub mod error;
-
-#[derive(Deserialize, Serialize)]
-struct UvMap {
-    //pub name: String,
-    //pub filename: String,
-    #[serde(with = "serde_bytes")]
-    pub uv: Vec<u8>, // actually u32
-}
-
-#[derive(Deserialize, Serialize)]
-struct Body {
-    #[serde(with = "serde_bytes")]
-    pub indices: Vec<u8>, // actually u32
-    #[serde(with = "serde_bytes")]
-    pub vertices: Vec<u8>, // actually f32
-    pub normals: Vec<u8>, // actually f32
-    pub uv_maps: Vec<UvMap>,
-}
-
-#[derive(Deserialize, Serialize)]
-struct Ctm {
-    pub body: Body,
-}
 
 #[wasm_bindgen]
 pub struct CtmResult {
@@ -41,27 +17,11 @@ impl CtmResult {
         Uint32Array::from(self.file.indices.as_slice())
     }
     pub fn vertices(&self) -> Float32Array {
-        let data_as_vector3 = &self.file.vertices;
-        let vertices_as_f32 = unsafe {
-            std::slice::from_raw_parts(
-                data_as_vector3.as_ptr() as *const f32,
-                data_as_vector3.len() * 3,
-            )
-        };
-        Float32Array::from(vertices_as_f32)
+        Float32Array::from(self.file.vertex_components.as_slice())
     }
     pub fn normals(&self) -> Option<Float32Array> {
-        let data_as_vector3 = match &self.file.normals {
-            Some(x) => x,
-            None => return None,
-        };
-        let data_as_f32 = unsafe {
-            std::slice::from_raw_parts(
-                data_as_vector3.as_ptr() as *const f32,
-                data_as_vector3.len() * 3,
-            )
-        };
-        Some(Float32Array::from(data_as_f32))
+        let components = self.file.normal_components.as_ref()?;
+        Some(Float32Array::from(components.as_slice()))
     }
     // TODO 2019-10-23 dragly: add UV maps
 }
@@ -73,7 +33,7 @@ pub fn parse_ctm(input: &[u8]) -> Result<CtmResult, JsValue> {
     panic::set_hook(Box::new(console_error_panic_hook::hook));
 
     let cursor = std::io::Cursor::new(input);
-    let file = openctm::parse(cursor).unwrap();
+    let file = openctm::parse(cursor).map_err(|e| e.to_string())?;
 
     let result = CtmResult { file };
 
@@ -151,12 +111,12 @@ pub fn parse_and_convert_f3df(input: &[u8]) -> Result<SimpleSectorData, JsValue>
 
     Ok(SimpleSectorData {
         faces: faces_as_float_32_array,
-        node_id_to_tree_index_map: Map::from(
-            serde_wasm_bindgen::to_value(&renderable_sector.node_id_to_tree_index_map).unwrap(),
-        ),
-        tree_index_to_node_id_map: Map::from(
-            serde_wasm_bindgen::to_value(&renderable_sector.tree_index_to_node_id_map).unwrap(),
-        ),
+        node_id_to_tree_index_map: Map::from(serde_wasm_bindgen::to_value(
+            &renderable_sector.node_id_to_tree_index_map,
+        )?),
+        tree_index_to_node_id_map: Map::from(serde_wasm_bindgen::to_value(
+            &renderable_sector.tree_index_to_node_id_map,
+        )?),
     })
 }
 
