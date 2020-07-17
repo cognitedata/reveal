@@ -4,7 +4,7 @@ A shareable NPM package for doing metrics logging from frontend applications.
 
 ## Getting started
 
-To start, you need to initialize with a [mixpanel](https://mixpanel.com) token:
+To start, you need to initialize with a [mixpanel] token:
 
 ```js
 import { Metrics } from '@cognite/metrics';
@@ -58,7 +58,7 @@ const MyComponent = () => {
 ### Metadata
 
 You can pass metadata with an event.
-This can be anything that mixpanel allows in the [properties field](https://mixpanel.com/help/reference/javascript-full-api-reference#mixpanel.track).
+This can be anything that mixpanel allows in the [properties field].
 
 ## Timing events
 
@@ -128,6 +128,40 @@ import { Metrics } from '@cognite/metrics';
 Metrics.hasOptedOut(options?);
 ```
 
-Options are passed down to underlying library:
+Options are passed down to underlying library.
+See [the documentation] for possible options.
 
-See https://developer.mixpanel.com/docs/javascript-full-api-reference#mixpanel.opt_in_tracking for possible options.
+## Testing
+
+Unit tests should stub out this library.
+The library provides some boilerplate stubbed-out implementations for [jest].
+In order to use this, import `@cognite/metrics/jest-mocks` somewhere in your tests -- probably in `src/setupTests.ts`.
+
+```ts
+import '@cognite/metrics/jest-mocks';
+```
+
+### Storybook
+
+When run in a [storybook], the mocking isn't quite as automagic.
+However, it's a pretty small change.
+In `.storybook/webpack.config.js`, add this to the `config.resolve.alias` object:
+
+```js
+config.resolve.alias['@cognite/metrics'] = '@cognite/metrics/dist/mocks';
+```
+
+A complete sample looks like this:
+
+```js
+module.exports = ({ config }) => {
+  config.resolve.alias['@cognite/metrics'] = '@cognite/metrics/dist/mocks';
+  return config;
+};
+```
+
+[mixpanel]: https://mixpanel.com
+[properties field]: https://mixpanel.com/help/reference/javascript-full-api-reference#mixpanel.track
+[the documentation]: https://developer.mixpanel.com/docs/javascript-full-api-reference#mixpanel.opt_in_tracking
+[jest]: https://jestjs.io/
+[storybook]: https://storybook.js.org/
