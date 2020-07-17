@@ -40,7 +40,7 @@ export async function removeTestableText(page: Page) {
 
 export async function screenShotTest(url: string) {
     await gotoAndWaitForRender(url);
-    removeTestableText(page);
+    //removeTestableText(page);
 
     const image = await page.screenshot();
     expect(image).toMatchImageSnapshot();
