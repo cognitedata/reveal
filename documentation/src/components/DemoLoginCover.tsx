@@ -15,7 +15,7 @@ const Root = styled.div`
   display: flex;
   flex-direction: column;
   position: relative;
-  background-color: ${(props) =>
+  background-color: ${(props: { theme: { isDarkTheme: boolean } }) =>
     props.theme.isDarkTheme
       ? 'rgba(0, 0, 0, 0.85)'
       : 'rgba(255, 255, 255, 0.93)'};
@@ -28,13 +28,13 @@ const CenteredContainer = styled.div`
   text-align: center;
 `;
 
-const ImageOverlay = styled.div<{ coverUrl: string }>`
+const ImageOverlay = styled.div`
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url(${(props) => props.coverUrl});
+  background-image: url(${(props: { coverUrl: string }) => props.coverUrl});
   z-index: -1;
 `;
 
