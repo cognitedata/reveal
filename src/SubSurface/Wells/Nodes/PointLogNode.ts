@@ -15,6 +15,7 @@ import { PointLog } from "@/SubSurface/Wells/Logs/PointLog";
 import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
 import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
 import PointLogNodeIcon from "@images/Nodes/PointLogNode.png";
+import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
 
 export class PointLogNode extends BaseLogNode
 {
@@ -48,8 +49,13 @@ export class PointLogNode extends BaseLogNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "PointLog" }
+  public /*override*/ get typeName(): string { return "RiskLog" }
   public /*override*/ getIcon(): string { return PointLogNodeIcon }
+
+  public /*override*/ populateStatistics(folder: PropertyFolder): void
+  {
+    super.populateStatistics(folder);
+  }
 
   //==================================================
   // OVERRIDES of BaseLogNode

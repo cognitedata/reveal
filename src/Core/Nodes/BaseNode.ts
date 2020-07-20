@@ -270,6 +270,10 @@ export abstract class BaseNode extends Identifiable
   public nameChanged(): void { this.notify(new NodeEventArgs(Changes.nodeName)); }
   public colorChanged(): void { this.notify(new NodeEventArgs(Changes.nodeColor)); }
 
+  public /*virtual*/ populateStatistics(generalProperties: PropertyFolder): void
+  {
+  }
+
   //==================================================
   // INSTANCE METHODS: Selected
   //==================================================

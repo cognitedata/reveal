@@ -122,18 +122,4 @@ export class FloatLog extends BaseLog
     }
     return log;
   }
-
-  public static createCasingByRandom(mdRange: Range1, numSamples: number): FloatLog
-  {
-    const log = new FloatLog();
-    let mdInc = mdRange.delta / (numSamples - 1);
-    mdInc = Random.getGaussian(mdInc, mdInc / 10);
-
-    for (let k = 0, md = mdRange.min; k < numSamples; k++, md += mdInc)
-    {
-      const radius = (numSamples - k) * 15 / numSamples;
-      log.samples.push(new FloatLogSample(radius, md));
-    }
-    return log;
-  }
 }

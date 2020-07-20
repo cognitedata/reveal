@@ -14,6 +14,7 @@
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import WellNodeIcon from "@images/Nodes/WellNode.png";
+import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
 
 export class WellNode extends BaseNode
 {
@@ -53,6 +54,13 @@ export class WellNode extends BaseNode
   public /*override*/ get typeName(): string { return "Well" }
 
   public /*override*/ getIcon(): string { return WellNodeIcon }
+
+  public /*override*/ populateStatistics(folder: PropertyFolder): void
+  {
+    super.populateStatistics(folder);
+    folder.addReadOnlyVector2("wellHead", this.wellHead.x, this.wellHead.y, 2);
+    folder.addReadOnlyInteger("# Trajectories", this.children.length);
+  }
 
   //public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
 }

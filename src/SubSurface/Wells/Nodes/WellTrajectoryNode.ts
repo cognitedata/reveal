@@ -24,6 +24,7 @@ import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 
 import WellTrajectoryNodeIcon from "@images/Nodes/WellTrajectoryNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
+import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
 
 export class WellTrajectoryNode extends DataNode
 {
@@ -94,6 +95,17 @@ export class WellTrajectoryNode extends DataNode
     }
   }
 
+  public /*override*/ populateStatistics(folder: PropertyFolder): void
+  {
+    super.populateStatistics(folder);
+    const trajectory = this.trajectory;
+    if (!trajectory)
+      return;
+
+    folder.addReadOnlyRange1("Md", trajectory.mdRange, 2);
+    folder.addReadOnlyRange3("", trajectory.range, 2);
+  }
+
   //==================================================
   // INSTANCE METHODS
   //==================================================
@@ -106,5 +118,4 @@ export class WellTrajectoryNode extends DataNode
 
     return tree.getChildByType(FilterLogFolder);
   }
-
 }

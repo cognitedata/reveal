@@ -15,6 +15,7 @@ import { DiscreteLog } from "@/SubSurface/Wells/Logs/DiscreteLog";
 import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
 import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
 import DiscreteLogNodeIcon from "@images/Nodes/DiscreteLogNode.png";
+import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
 
 export class DiscreteLogNode extends BaseLogNode
 {
@@ -51,6 +52,16 @@ export class DiscreteLogNode extends BaseLogNode
   public /*override*/ get typeName(): string { return "DiscreteLog" }
   public /*override*/ getIcon(): string { return DiscreteLogNodeIcon }
   public /*override*/ hasIconColor(): boolean { return false; }
+
+  public /*override*/ populateStatistics(folder: PropertyFolder): void
+  {
+    super.populateStatistics(folder);
+    const log = this.log;
+    if (!log)
+      return;
+
+    folder.addReadOnlyRange1("Values", log.range, 0);
+  }
 
   //==================================================
   // OVERRIDES of BaseLogNode

@@ -15,6 +15,7 @@ import { FloatLog } from "@/SubSurface/Wells/Logs/FloatLog";
 import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
 import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
 import FloatLogNodeIcon from "@images/Nodes/FloatLogNode.png";
+import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
 
 export class FloatLogNode extends BaseLogNode
 {
@@ -60,6 +61,16 @@ export class FloatLogNode extends BaseLogNode
   public /*override*/ get typeName(): string { return "FloatLog" }
   public /*override*/ getIcon(): string { return FloatLogNodeIcon }
   public /*override*/ getNameExtension(): string | null { return this.unit; }
+
+  public /*override*/ populateStatistics(folder: PropertyFolder): void
+  {
+    super.populateStatistics(folder);
+    const log = this.log;
+    if (!log)
+      return;
+
+    folder.addReadOnlyRange1("Values", log.range, 2);
+  }
 
   //==================================================
   // OVERRIDES of BaseLogNode
