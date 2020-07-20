@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import React, { ReactElement, ReactNode, useEffect } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import { CogniteClient } from '@cognite/sdk';
 import { loginManager } from '../utils/LoginManager';
 import useBaseUrl from '@docusaurus/useBaseUrl';
@@ -50,7 +50,7 @@ type Props = {
   children: (client: CogniteClient) => ReactElement;
 };
 
-export function DemoLoginCover(props: Props): ReactElement {
+export default function DemoLoginCover(props: Props): ReactElement {
   const { isDarkTheme } = useThemeContext();
   const [isLoggedIn, setIsLoggedIn] = React.useState(loginManager.isLoggedIn);
   useEffect(() => {

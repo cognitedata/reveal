@@ -3,11 +3,9 @@
  */
 
 import React, { ComponentType, Suspense } from 'react';
-import WithBasePath from './WithBasePath';
 import styled from 'styled-components';
 import { DemoProps } from './DemoProps';
 import { CogniteClient } from '@cognite/sdk';
-import { DemoLoginCover } from './DemoLoginCover';
 import { useBaseTag } from '../hooks/useBaseTag';
 
 const DemoContainer = styled.div`
@@ -16,8 +14,9 @@ const DemoContainer = styled.div`
   flex-direction: column;
 `;
 
-// Demos imported lazily because of docusaurus SSR. Every demo has dependency on reveal which assumes browser context, not nodejs.
-// So every component with client-side code must be loaded in lazy mode, to avoid execution during SSR
+// any component that has client-side only code couldn't be imported directly (it fails SSR)
+const DemoLoginCover = React.lazy(() => import('./DemoLoginCover'));
+
 const components: Record<string, ComponentType<DemoProps>> = {
   Cognite3DViewerDemo: React.lazy(() =>
     import('../../docs/examples/Cognite3DViewerDemo')
