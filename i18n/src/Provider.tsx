@@ -1,13 +1,13 @@
 import React, { Suspense, useEffect } from 'react';
 export { useTranslation, Trans } from 'react-i18next';
-import { useMetrics } from '@cognite/metrics';
+import { Metrics, useMetrics } from '@cognite/metrics';
 
 const SuspenseFallback = () => {
   const metrics = useMetrics('I18NLoader');
 
   useEffect(() => {
-    const loader = metrics.start('startLoading');
-    return loader.stop;
+    const timer = metrics.start('startLoading');
+    return () => Metrics.stop(timer);
   }, []);
 
   return null;
