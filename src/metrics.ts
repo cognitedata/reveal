@@ -32,8 +32,12 @@ class Timer implements ITimer {
   }
 
   public stop(properties: Properties = {}, callback?: Callback) {
-    const combined = { ...globalProperties, ...this.startProps, ...properties };
     try {
+      const combined = {
+        ...globalProperties,
+        ...this.startProps,
+        ...properties,
+      };
       // Mixpanel modifies their params, so spread the props.
       mixpanel.track(this.timerEvent, { ...combined }, callback);
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
