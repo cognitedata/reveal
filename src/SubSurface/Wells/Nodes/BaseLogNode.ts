@@ -24,6 +24,7 @@ import { ITarget } from "@/Core/Interfaces/ITarget";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { DataNode } from "@/Core/Nodes/DataNode";
+import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
 
 export abstract class BaseLogNode extends DataNode
 {
@@ -92,6 +93,17 @@ export abstract class BaseLogNode extends DataNode
     const trajectoryNode = this.trajectoryNode;
     return trajectoryNode ? trajectoryNode.isVisible(target) : false;
   }
+
+  public /*override*/ populateStatistics(folder: PropertyFolder): void
+  {
+    super.populateStatistics(folder);
+    const log = this.log;
+    if (!log)
+      return;
+
+      folder.addReadOnlyRange1("Md", log.mdRange, 2);
+      folder.addReadOnlyInteger("# samples", log.length);
+    }
 
   //==================================================
   // INSTANCE METHODS: Draw styles
