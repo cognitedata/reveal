@@ -1,6 +1,6 @@
 {
   "name": "@cognite/react-i18n",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -48,7 +48,7 @@
     "react-i18next": "^11.7.0"
   },
   "peerDependencies": {
-    "react-i18next": "^11.7.0",
-    "@cognite/metrics": "^0.1.2"
+    "@cognite/metrics": "^0.1.2",
+    "react-i18next": "^11.7.0"
   }
 }
