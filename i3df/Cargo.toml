@@ -42,7 +42,7 @@ serde = { version = "1.0.114", features = ["derive"] }
 heck = "0.3.1"
 i3df-specification = { git = "git://github.com/cognitedata/i3df-specification", version = "0.1.0" }
 quote = "1.0.7"
-proc-macro2 = "1.0.18"
+proc-macro2 = "1.0.19"
 rustfmt = "0.10.0"
 indexmap = { version = "1.5.0", features = ["serde-1"] }
 
