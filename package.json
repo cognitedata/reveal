@@ -17,7 +17,7 @@
     "@cognite/metrics": "^0.1.2",
     "@cognite/react-i18n": "0.0.3",
     "@sentry/browser": "^5.19.2",
-    "antd": "^4.4.2",
+    "antd": "^4.4.3",
     "i18next": "^19.6.2",
     "i18next-chained-backend": "^2.0.1",
     "i18next-http-backend": "^1.0.17",
