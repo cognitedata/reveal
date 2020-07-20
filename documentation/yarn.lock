@@ -1002,9 +1002,15 @@
     lodash "^4.17.15"
     rxjs "^6.5.5"
 
-"@cognite/sdk@link:../viewer/node_modules/@cognite/sdk":
-  version "0.0.0"
-  uid ""
+"@cognite/sdk@^2.33.0":
+  version "2.33.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-2.33.0.tgz#cfc893ffe259c1011d43c1f41b280b7bf2e72181"
+  integrity sha512-dO2cCO3UbNRx8WaJ3cJdPBe3Rd3qaSBYkocEeW+ew3UzjsxiUOwtz//5HYtb+wXig1aTotoU3iR88NNx09fQfg==
+  dependencies:
+    cross-fetch "^3.0.4"
+    lodash "^4.17.11"
+    query-string "^5.1.1"
+    url "^0.11.0"
 
 "@cognite/three-combo-controls@^1.4.1":
   version "1.4.1"
@@ -10287,9 +10293,10 @@ text-table@0.2.0, text-table@^0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
 
-"three@link:../viewer/node_modules/three":
-  version "0.0.0"
-  uid ""
+three@^0.115.0:
+  version "0.115.0"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.115.0.tgz#540d800c381b9da2334c024f0fbe4d23f84eb05e"
+  integrity sha512-mAV2Ky3RdcbdSbR9capI+tKLvRldWYxd4151PZTT/o7+U2jh9Is3a4KmnYwzyUAhB2ZA3pXSgCd2DOY4Tj5kow==
 
 through2@^0.6.3:
   version "0.6.5"

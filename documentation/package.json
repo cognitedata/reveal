@@ -14,12 +14,11 @@
     "build": "yarn run reveal:copy && docusaurus build",
     "swizzle": "docusaurus swizzle",
     "reveal:copy": "cpy ./node_modules/@cognite/reveal/*.wasm ./node_modules/@cognite/reveal/*.worker.js ./static --dot",
-    "jsdoc2md": "jsdoc2md --files ../viewer/src/**/*.ts --configure ./jsdoc2md.json --partial src/jsdoc2md-partials/header.hbs > ./docs/api-reference_generated.md",
-    "deploy": "docusaurus deploy"
+    "jsdoc2md": "jsdoc2md --files ../viewer/src/**/*.ts --configure ./jsdoc2md.json --partial src/jsdoc2md-partials/header.hbs > ./docs/api-reference_generated.md"
   },
   "dependencies": {
     "@cognite/reveal": "^1.0.0-alpha-5",
-    "@cognite/sdk": "link:../viewer/node_modules/@cognite/sdk",
+    "@cognite/sdk": "^2.33.0",
     "@docusaurus/core": "2.0.0-alpha.58",
     "@docusaurus/module-type-aliases": "2.0.0-alpha.58",
     "@docusaurus/preset-classic": "2.0.0-alpha.58",
@@ -29,7 +28,7 @@
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "styled-components": "^5.1.1",
-    "three": "link:../viewer/node_modules/three"
+    "three": "^0.115.0"
   },
   "devDependencies": {
     "@types/react": "^16.9.41",
