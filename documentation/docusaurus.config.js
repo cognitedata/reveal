@@ -7,6 +7,10 @@ module.exports = {
   organizationName: 'cognitedata',
   projectName: 'reveal',
   themeConfig: {
+    prism: {
+      // changes syntax highlighting theme
+      theme: require('prism-react-renderer/themes/oceanicNext'),
+    },
     navbar: {
       title: '@cognite/reveal',
       logo: {
