@@ -9,7 +9,7 @@ module.exports = {
     '.+\\.(css|styl|less|sass|scss)$':
       '<rootDir>/node_modules/jest-css-modules-transform',
   },
-  setupFiles: ['<rootDir>/src/setupTests.ts'],
+  setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   ...baseConfig,
   testEnvironment: 'jsdom',
   displayName: pack.name,

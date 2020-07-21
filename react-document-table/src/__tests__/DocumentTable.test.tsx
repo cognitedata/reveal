@@ -201,7 +201,7 @@ describe('DocumentTable', () => {
           },
         ]}
         categoryPriorityList={['FA', 'XB']}
-        defaultExpandAll={true}
+        defaultExpandAll
       />
     );
     expect(

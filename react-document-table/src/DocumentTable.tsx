@@ -97,13 +97,12 @@ export class DocumentTable extends React.PureComponent<
     const { renderPanelHeader } = this.props;
     if (renderPanelHeader) {
       return renderPanelHeader(description, docNumber);
-    } else {
-      return (
-        <PanelHeader>
-          {description} <span className="count">{docNumber}</span>
-        </PanelHeader>
-      );
     }
+    return (
+      <PanelHeader>
+        {description} <span className="count">{docNumber}</span>
+      </PanelHeader>
+    );
   };
 
   public render() {
@@ -133,9 +132,7 @@ export class DocumentTable extends React.PureComponent<
     if (!categoryByPriority.length) {
       return (
         <NoDocuments data-test-id="no-documents">
-          {noDocumentsSign
-            ? noDocumentsSign
-            : 'No documents linked to this asset'}
+          {noDocumentsSign || 'No documents linked to this asset'}
         </NoDocuments>
       );
     }
@@ -155,7 +152,7 @@ export class DocumentTable extends React.PureComponent<
       : (collapseProps || {}).defaultActiveKey;
 
     return (
-      <React.Fragment>
+      <>
         <TableWrapper className={className}>
           <CollapseContainer
             {...collapseProps}
@@ -177,7 +174,7 @@ export class DocumentTable extends React.PureComponent<
             })}
           </CollapseContainer>
         </TableWrapper>
-      </React.Fragment>
+      </>
     );
   }
 }

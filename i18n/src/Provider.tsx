@@ -1,6 +1,7 @@
 import React, { Suspense, useEffect } from 'react';
-export { useTranslation, Trans } from 'react-i18next';
 import { Metrics, useMetrics } from '@cognite/metrics';
+
+export { useTranslation, Trans } from 'react-i18next';
 
 const SuspenseFallback = () => {
   const metrics = useMetrics('I18NLoader');

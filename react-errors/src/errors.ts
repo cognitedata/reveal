@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 /**
  * Throw this to assert that every possible situation in a {@code switch} is
  * handling all situations. For example:

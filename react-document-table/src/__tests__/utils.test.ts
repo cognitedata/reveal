@@ -5,7 +5,7 @@ import {
   getKeyList,
   getShortDescription,
 } from '../utils';
-// @ts-ignore-next-line
+
 import docs from './files.json';
 
 it('Should return title not longer then 56 characters', () => {

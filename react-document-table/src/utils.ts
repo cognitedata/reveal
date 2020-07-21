@@ -45,13 +45,13 @@ const getDocumentType = (
   metadata?: Metadata,
   documentTypeField?: string[]
 ): string => {
-  const names = documentTypeField ? documentTypeField : documentTypesOptions;
+  const names = documentTypeField || documentTypesOptions;
   return getValueFromObject(metadata, names);
 };
 
 export const getCategoryName = (
   keyList: string[],
-  unknownCategoryName: string = 'Unknown document type',
+  unknownCategoryName = 'Unknown document type',
   types: JsonDocTypes = docTypes
 ): DocumentType => {
   // Unknown type also needs to have a key if we want to make it default-expandable
@@ -64,7 +64,7 @@ export const getCategoryName = (
 
 export const getCategoryByPriority = (
   docsByCat: {
-    [s: string]: any;
+    [s: string]: unknown;
   },
   priorityList: string[] = []
 ) => {
@@ -147,7 +147,7 @@ export const getDocumentTitle = (
   metadata?: Metadata,
   documentTitleField?: string[]
 ): string => {
-  const names = documentTitleField ? documentTitleField : documentTitleOptions;
+  const names = documentTitleField || documentTitleOptions;
   return getValueFromObject(metadata, names);
 };
 

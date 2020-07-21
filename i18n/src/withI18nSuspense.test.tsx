@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { TFunction, i18n } from 'i18next';
 import { withTranslation } from 'react-i18next';
 
@@ -15,11 +15,12 @@ describe('withI18nSuspense', () => {
     };
     const Wrapped = withI18nSuspense(Test);
 
-    const { getByText } = render(<Wrapped />);
-    await waitFor(() => getByText('TRANS: COMPLETE'));
+    render(<Wrapped />);
+    expect(await screen.findByText('TRANS: COMPLETE')).toBeTruthy();
   });
 
   it('Renders a class-based component', async () => {
+    // eslint-disable-next-line react/prefer-stateless-function
     class Test extends React.Component<{
       t: TFunction;
       i18n: i18n;
@@ -36,7 +37,7 @@ describe('withI18nSuspense', () => {
 
     const Wrapped = withI18nSuspense(WithT);
 
-    const { getByText } = render(<Wrapped />);
-    await waitFor(() => getByText('TRANS: COMPLETE'));
+    render(<Wrapped />);
+    expect(await screen.findByText('TRANS: COMPLETE')).toBeTruthy();
   });
 });

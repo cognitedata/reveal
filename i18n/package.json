@@ -12,13 +12,13 @@
   ],
   "scripts": {
     "clean": "rm -rf dist",
-    "test": "jest",
+    "test": "yarn jest -c",
     "esCheck": "es-check es5 './dist/index.js'",
     "build": "yarn clean && rollup -c && yarn esCheck",
     "build:watch": "yarn clean && rollup -c --watch && yarn esCheck",
     "watch": "yarn build --watch",
-    "lint": "yarn prettier",
-    "lint:fix": "yarn prettier --write",
+    "lint": "yarn concurrently \"yarn prettier\" \"yarn eslint 'src/**/*.{ts,tsx}'\"",
+    "lint:fix": "yarn prettier --write && yarn eslint 'src/**/*.{ts,tsx}' --fix",
     "prettier": "prettier -l 'src/**/*'"
   },
   "repository": {
@@ -30,8 +30,8 @@
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-react": "^7.0.0",
     "@cognite/metrics": "^0.1.2",
-    "@testing-library/react": "^10.4.5",
     "lodash": "^4.17.19",
+    "react": "^16.13.1",
     "rollup": "^1.2.0",
     "rollup-plugin-json": "^3.1.0",
     "rollup-plugin-typescript2": "^0.19.2"
@@ -44,11 +44,10 @@
     "i18next-locize-backend": "^4.1.1",
     "i18next-pseudo": "^2.2.0",
     "i18next-xhr-backend": "^3.2.2",
-    "react": "^16.13.1",
     "react-i18next": "^11.7.0"
   },
   "peerDependencies": {
     "@cognite/metrics": "^0.1.2",
-    "react-i18next": "^11.7.0"
+    "react": "^16.13.1"
   }
 }

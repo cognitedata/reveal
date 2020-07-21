@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 
 import { useTranslation, I18nContainer } from './Provider';
 
@@ -19,7 +19,7 @@ describe('Provider', () => {
       );
     };
 
-    const { getByText } = render(<Wrapped />);
-    await waitFor(() => getByText('TRANS: COMPLETE'));
+    render(<Wrapped />);
+    expect(await screen.findByText('TRANS: COMPLETE')).toBeTruthy();
   });
 });

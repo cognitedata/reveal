@@ -40,10 +40,7 @@ const configureI18n = ({
   env = REACT_APP_ENV || NODE_ENV,
   ...rest
 }: ConfigureI18nOptions = {}) => {
-  const {
-    wait = env === 'test' ? false : true,
-    useSuspense = env === 'test' ? true : false,
-  } = rest;
+  const { wait = env !== 'test', useSuspense = env === 'test' } = rest;
   const {
     projectId: locizeProjectId,
     apiKey: locizeApiKey,

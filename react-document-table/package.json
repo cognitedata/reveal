@@ -1,6 +1,6 @@
 {
   "name": "@cognite/react-document-table",
-  "version": "1.22.1",
+  "version": "1.22.2",
   "description": "",
   "contributors": [
     ""
@@ -17,8 +17,9 @@
     "build-storybook": "build-storybook",
     "clean": "rm -rf dist",
     "esCheck": "es-check es5 './dist/index.js'",
-    "lint": "yarn eslint .",
-    "lint:fix": "yarn lint --fix",
+    "lint": "yarn concurrently \"yarn prettier\" \"yarn eslint 'src/**/*.{ts,tsx}'\"",
+    "lint:fix": "yarn prettier --write && yarn eslint 'src/**/*.{ts,tsx}' --fix",
+    "prettier": "prettier -l 'src/**/*'",
     "prepublishOnly": "yarn build",
     "test": "yarn jest",
     "test:watch": "yarn jest --watchAll",
@@ -53,7 +54,6 @@
     "enzyme-adapter-react-16": "^1.9.1",
     "es-check": "^5.0.0",
     "jest-css-modules-transform": "^2.1.1",
-    "prettier": "^1.16.4",
     "react": "^16.8.3",
     "react-dom": "^16.8.3",
     "rollup": "^1.2.0",
