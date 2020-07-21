@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::{stdout, BufReader};
 use structopt::StructOpt;
 
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(StructOpt)]
 struct Options {
