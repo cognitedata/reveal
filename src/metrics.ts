@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import mixpanel, {
   People,
   OutTrackingOptions,
@@ -19,6 +20,7 @@ const globalProperties: Properties = {};
 
 class Timer implements ITimer {
   private timerEvent = '';
+
   private startProps: Properties = {};
 
   constructor(event: string, startProps: Properties) {
@@ -27,6 +29,7 @@ class Timer implements ITimer {
     try {
       mixpanel.time_event(event);
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.warn(`Unable to track ${this.timerEvent}`);
     }
   }
@@ -51,7 +54,9 @@ class Timer implements ITimer {
 
 class Metrics {
   static DEBUGGER: MetricsDebugger = NoopDebugger;
+
   private readonly className: string;
+
   private readonly properties: Properties = {};
 
   public static init({
@@ -160,6 +165,7 @@ class Metrics {
     deprecated = true
   ) {
     if (deprecated === true) {
+      // eslint-disable-next-line no-console
       console.warn(
         'new Metrics(..) has been deprecated; please use Metrics.create(..) instead.'
       );

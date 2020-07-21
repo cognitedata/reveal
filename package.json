@@ -1,6 +1,6 @@
 {
   "name": "@cognite/metrics",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "",
   "source": "src/index.ts",
   "main": "dist/index.js",
@@ -18,8 +18,8 @@
     "build": "yarn clean && rollup -c && yarn esCheck",
     "build:watch": "yarn clean && rollup -c --watch && yarn esCheck",
     "watch": "yarn build --watch",
-    "lint": "yarn prettier",
-    "lint:fix": "yarn prettier --write",
+    "lint": "yarn concurrently \"yarn prettier\" \"yarn eslint 'src/**/*.{ts,tsx}'\"",
+    "lint:fix": "yarn prettier --write && yarn eslint 'src/**/*.{ts,tsx}' --fix",
     "prettier": "prettier -l 'src/**/*'"
   },
   "repository": {
