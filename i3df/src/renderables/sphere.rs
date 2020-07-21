@@ -20,15 +20,13 @@ impl ToRenderables for crate::OpenSphericalSegment {
 
 impl ToRenderables for crate::Sphere {
     fn to_renderables(&self, collections: &mut PrimitiveCollections) {
-        let z_axis = Vector3::new(0.0, 0.0, 1.0);
-
         collections
             .spherical_segment_collection
             .push(SphericalSegment {
                 tree_index: self.tree_index as f32,
                 color: self.color,
                 center: self.center(),
-                normal: z_axis,
+                normal: Vector3::z_axis().into_inner(),
                 radius: self.radius,
                 height: 2.0 * self.radius,
             });
