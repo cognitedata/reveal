@@ -17,7 +17,7 @@ import { SurfaceRenderStyle } from "@/SubSurface/Basics/SurfaceRenderStyle";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
-import { SeismicCubePlaneNode } from '@/SubSurface/Seismic/Nodes/SeismicCubePlaneNode';
+import { SeismicPlaneNode } from '@/SubSurface/Seismic/Nodes/SeismicPlaneNode';
 
 export class SeismicCubePlaneView extends BaseGroupThreeView
 {
@@ -25,7 +25,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
   // INSTANCE PROPERTIES
   //==================================================
 
-  protected get node(): SeismicCubePlaneNode { return super.getNode() as SeismicCubePlaneNode; }
+  protected get node(): SeismicPlaneNode { return super.getNode() as SeismicPlaneNode; }
   protected get style(): SurfaceRenderStyle { return super.getStyle() as SurfaceRenderStyle; }
 
   //==================================================

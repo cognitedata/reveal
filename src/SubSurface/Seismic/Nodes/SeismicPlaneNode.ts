@@ -18,13 +18,13 @@ import { SurfaceRenderStyle } from "@/SubSurface/Basics/SurfaceRenderStyle";
 import SurfaceNodeIcon from "@images/Nodes/SurfaceNode.png";
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 
-export class SeismicCubePlaneNode extends BaseVisualNode
+export class SeismicPlaneNode extends BaseVisualNode
 {
   //==================================================
   // STATIC FIELDS
   //==================================================
 
-  static className = "SeismicCubePlaneNode";
+  static className = "SeismicCubeNode";
 
   //==================================================
   // INSTANCE FIELDS
@@ -74,8 +74,8 @@ export class SeismicCubePlaneNode extends BaseVisualNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return SeismicCubePlaneNode.className; }
-  public /*override*/ isA(className: string): boolean { return className === SeismicCubePlaneNode.className || super.isA(className); }
+  public /*override*/ get className(): string { return SeismicPlaneNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === SeismicPlaneNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
