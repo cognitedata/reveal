@@ -1,8 +1,11 @@
+/* eslint-disable no-new */
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
 import { createSandbox } from 'sinon';
 import mixpanel from 'mixpanel-browser';
 
 import { Metrics } from './index';
 import { NoopDebugger, ConsoleDebugger } from './debuggers';
+import { InitOptions } from './types';
 
 const sandbox = createSandbox();
 
@@ -46,7 +49,7 @@ describe('Metrics', () => {
 
   it('should throw on init without mixpanelToken', () => {
     const initMetrics = () => {
-      Metrics.init({} as any);
+      Metrics.init(({} as unknown) as InitOptions);
     };
     expect(initMetrics).toThrowError(
       new Error('Missing mixpanelToken parameter')
@@ -83,7 +86,6 @@ describe('Metrics', () => {
 
   it('should merge init properties into track event', () => {
     const trackEventStub = sandbox.stub(mixpanel, 'track');
-    const initSpy = sandbox.spy(mixpanel, 'init');
     Metrics.init({ mixpanelToken: 'passedMixpanelToken', global: 'global' });
     const metrics = Metrics.create('SimpleMetrics', { go: 'ba' });
     const properties = { foo: 'bar' };
@@ -157,7 +159,7 @@ describe('Metrics', () => {
       expect(Metrics.DEBUGGER).toEqual(customDebugger);
     });
 
-    it('should use a custom debugger if both are specified', () => {
+    it('should debug with a custom debugger if both are specified', () => {
       const customDebugger = {
         isDebug: true,
         track: sandbox.stub(),
