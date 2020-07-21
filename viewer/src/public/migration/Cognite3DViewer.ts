@@ -31,13 +31,17 @@ import { createCdfRevealManager } from '../createRevealManager';
 import { CdfModelIdentifier } from '@/utilities/networking/types';
 import { RevealOptions, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
 
-type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
-type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
+export type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
+export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
 
 export class Cognite3DViewer {
   private get canvas(): HTMLCanvasElement {
     return this.renderer.domElement;
   }
+
+  /**
+   * It's left for backward compatibility only. Always and always returns true
+   */
   static isBrowserSupported(): boolean {
     return true;
   }
@@ -174,10 +178,21 @@ export class Cognite3DViewer {
     this.animate(0);
   }
 
+  /**
+   * Returns reveal version installed
+   */
   getVersion(): string {
     return process.env.VERSION;
   }
 
+  /**
+   * Dispose of WebGL resources. Can be used to free up memory when the viewer is no longer in use.
+   * @see {@link https://threejs.org/docs/#manual/en/introduction/How-to-dispose-of-objects https://threejs.org/docs/#manual/en/introduction/How-to-dispose-of-objects}
+   * ```ts
+   * // Viewer is no longer in use, free up memory
+   * viewer.dispose();
+   * ```
+   */
   dispose(): void {
     if (this.isDisposed) {
       return;
@@ -201,22 +216,37 @@ export class Cognite3DViewer {
     this.spinner.dispose();
   }
 
+  /**
+   * Add event listener to the viewer
+   * call {@link Cognite3DViewer.off} to remove an event listener
+   * ```js
+   * const onClick = (event) => { console.log(event.offsetX, event.offsetY) };
+   * viewer.on('click', onClick);
+   * ```
+   */
   on(event: 'click' | 'hover', callback: PointerEventDelegate): void;
+  /**
+   * Add event listener to the viewer
+   * call {@link Cognite3DViewer.off} to remove an event listener
+   * ```js
+   * viewer.on('cameraChange', (position, target) => {
+   *   console.log('Camera changed: ', position, target);
+   * });
+   * ```
+   */
   on(event: 'cameraChange', callback: CameraChangeDelegate): void;
-  // fixme: no any
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  on(event: 'click' | 'hover' | 'cameraChange', callback: any): void {
+  on(event: 'click' | 'hover' | 'cameraChange', callback: PointerEventDelegate | CameraChangeDelegate): void {
     switch (event) {
       case 'click':
-        this.eventListeners.click.push(callback);
+        this.eventListeners.click.push(callback as PointerEventDelegate);
         break;
 
       case 'hover':
-        this.eventListeners.hover.push(callback);
+        this.eventListeners.hover.push(callback as PointerEventDelegate);
         break;
 
       case 'cameraChange':
-        this.eventListeners.cameraChange.push(callback);
+        this.eventListeners.cameraChange.push(callback as CameraChangeDelegate);
         break;
 
       default:
@@ -226,6 +256,13 @@ export class Cognite3DViewer {
 
   off(event: 'click' | 'hover', callback: PointerEventDelegate): void;
   off(event: 'cameraChange', callback: CameraChangeDelegate): void;
+  /**
+   * Remove event listener from the viewer
+   * Call {@link Cognite3DViewer.on} to add event listener
+   * ```js
+   * viewer.off('click', onClick);
+   * ```
+   */
   off(event: 'click' | 'hover' | 'cameraChange', callback: any): void {
     switch (event) {
       case 'click':
@@ -245,6 +282,19 @@ export class Cognite3DViewer {
     }
   }
 
+  /**
+   * Add a new CAD 3D model to the viewer.
+   * @see call <a href="#fitcameratomodel">fitCameraToModel</a> to see the model after the model has loaded
+   * ```js
+   * const options = {
+   *   modelId:     'COGNITE_3D_MODEL_ID',
+   *   revisionId:  'COGNITE_3D_REVISION_ID',
+   * };
+   * viewer.addModel(options).then(model => {
+   *   viewer.fitCameraToModel(model, 0);
+   * });
+   * ```
+   */
   async addModel(options: AddModelOptions): Promise<Cognite3DModel> {
     trackLoadModel(
       {
@@ -260,6 +310,9 @@ export class Cognite3DViewer {
     );
 
     if (options.localPath) {
+      throw new NotSupportedInMigrationWrapperError();
+    }
+    if (options.onComplete) {
       throw new NotSupportedInMigrationWrapperError();
     }
     if (options.geometryFilter) {
@@ -289,6 +342,19 @@ export class Cognite3DViewer {
     return model3d;
   }
 
+  /**
+   * Add a new pointcloud 3D model to the viewer.
+   * @see call <a href="#fitcameratomodel">fitCameraToModel</a> to see the model after the model has loaded
+   * ```js
+   * const options = {
+   *   modelId:     'COGNITE_3D_MODEL_ID',
+   *   revisionId:  'COGNITE_3D_REVISION_ID',
+   * };
+   * viewer.addPointCloudModel(options).then(model => {
+   *   viewer.fitCameraToModel(model, 0);
+   * });
+   * ```
+   */
   async addPointCloudModel(options: AddModelOptions): Promise<CognitePointCloudModel> {
     trackLoadModel(
       {
@@ -312,6 +378,10 @@ export class Cognite3DViewer {
     if (options.orthographicCamera) {
       throw new NotSupportedInMigrationWrapperError();
     }
+    if (options.onComplete) {
+      throw new NotSupportedInMigrationWrapperError();
+    }
+
     const { modelId, revisionId } = options;
     const [potreeGroup, potreeNode] = await this._revealManager.addModel('pointcloud', {
       modelId,
@@ -476,7 +546,6 @@ export class Cognite3DViewer {
     return url;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getIntersectionFromPixel(offsetX: number, offsetY: number, _cognite3DModel?: Cognite3DModel): null | Intersection {
     const cadModels = this.getModels(SupportedModelTypes.CAD);
     const nodes = cadModels.map(x => x.cadNode);
