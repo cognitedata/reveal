@@ -1,4 +1,4 @@
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 use std::error::Error;
 use std::fs::File;
 use std::io::{stdout, Cursor, Read, Seek, SeekFrom};
@@ -62,9 +62,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     let output = if options.stats {
         Output::FileStats {
             indices: parsed_file.indices.len(),
-            vertices: parsed_file.vertices.len(),
-            normals: match parsed_file.normals {
-                Some(x) => Some(x.len()),
+            vertices: parsed_file.number_of_vertices(),
+            normals: match &parsed_file.normal_components {
+                Some(_) => Some(parsed_file.number_of_normals()),
                 None => None,
             },
             uv_maps: parsed_file
