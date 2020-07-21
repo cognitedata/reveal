@@ -61,6 +61,8 @@ Presets are enabled by adding a line to the `extends` list in your config file. 
 
 Here are all the individual rules you can use:
 
+### [@cognite/forbid-styled-macro](https://github.com/cognitedata/eslint-plugin-cognite/blob/master/docs/rules/forbid-styled-macro.md) - z-index util should be used inline
+
 ### [@cognite/no-number-z-index-inline-styling](https://github.com/cognitedata/eslint-plugin-cognite/blob/master/docs/rules/no-number-z-index-inline-styling.md) - z-index util should be used inline
 
 ### [@cognite/no-number-z-index-property](https://github.com/cognitedata/eslint-plugin-cognite/blob/master/docs/rules/no-number-z-index-property.md) - z-index util should be used as a prop

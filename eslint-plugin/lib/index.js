@@ -1,5 +1,6 @@
 /* eslint-disable global-require */
 const allRules = {
+  'forbid-styled-macro': require('./rules/forbid-styled-macro'),
   'no-number-z-index-inline-styling': require('./rules/no-number-z-index-inline-styling'),
   'no-number-z-index-property': require('./rules/no-number-z-index-property'),
   'no-number-z-index-styled-components': require('./rules/no-number-z-index-styled-components'),
@@ -9,11 +10,6 @@ const allRules = {
   'require-t-function': require('./rules/require-t-function'),
   'rtl-use-custom-render-function': require('./rules/rtl-use-custom-render-function'),
 };
-
-const pluginsAllRules = Object.keys(allRules).reduce(
-  (o, rule) => Object.assign(o, { [`@cognite/${rule}`]: 'error' }),
-  {}
-);
 
 module.exports = {
   rules: allRules,
@@ -51,7 +47,16 @@ module.exports = {
     },
     all: {
       plugins: ['@cognite'],
-      rules: pluginsAllRules,
+      rules: {
+        'no-number-z-index-inline-styling': 'error',
+        'no-number-z-index-property': 'error',
+        'no-number-z-index-styled-components': 'error',
+        'no-sdk-submodule-imports': 'error',
+        'no-unissued-todos': 'error',
+        'require-styled-macro': 'error',
+        'require-t-function': 'error',
+        'rtl-use-custom-render-function': 'error',
+      },
     },
   },
 };
