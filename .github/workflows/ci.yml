@@ -8,7 +8,7 @@ on:
   pull_request:
     branches:
       - '**'
-      
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   ci-setup:
@@ -171,7 +171,7 @@ jobs:
     - name: Check for failed visual test diffs
       if: failure()
       working-directory: examples
-      run: 'yarn test:ghdiffs'
+      run: 'yarn test:ghprcomment'
       env:
         ACTIONS_RUNTIME_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
