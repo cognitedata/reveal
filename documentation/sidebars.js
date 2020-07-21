@@ -18,7 +18,7 @@ module.exports = {
     },
     {
       type: 'doc',
-      id: 'api-reference',
+      id: 'API Reference' /* must be generated before start or build */
     },
   ],
 };

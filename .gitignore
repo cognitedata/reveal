@@ -52,3 +52,5 @@ documentation/.docusaurus
 documentation/.cache-loader
 documentation/static/*.worker.js
 documentation/static/*.wasm
+documentation/generated
+documentation/docs/API Reference.md
