@@ -62,9 +62,9 @@ export class FloatLogNode extends BaseLogNode
   public /*override*/ getIcon(): string { return FloatLogNodeIcon }
   public /*override*/ getNameExtension(): string | null { return this.unit; }
 
-  public /*override*/ populateStatistics(folder: PropertyFolder): void
+  protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
   {
-    super.populateStatistics(folder);
+    super.populateStatisticsCore(folder);
     const log = this.log;
     if (!log)
       return;

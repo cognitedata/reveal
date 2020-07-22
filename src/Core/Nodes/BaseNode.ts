@@ -30,7 +30,7 @@ import { Util } from "@/Core/Primitives/Util";
 import { IEventListener } from "@/Core/Interfaces/IEventListener";
 import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 import { FileType } from "@/Core/Enums/FileType";
-import {PropertyFolder} from "@/Core/Property/Concrete/Folder/PropertyFolder";
+import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
 
 export abstract class BaseNode extends Identifiable
 {
@@ -68,9 +68,9 @@ export abstract class BaseNode extends Identifiable
   //==================================================
 
   public get name(): string { return this.getName(); }
-  public set name(value: string ) { this.setName(value); }
+  public set name(value: string) { this.setName(value); }
   public get color(): Color { return this.getColor(); }
-  public set color(value: Color ) { this.setColor(value); }
+  public set color(value: Color) { this.setColor(value); }
   public get uniqueId(): UniqueId { return this._uniqueId; }
   public get renderStyles(): BaseRenderStyle[] { return this._renderStyles; }
   public get path(): string { return (this.parent ? this.parent.path : "") + "\\" + this.name; }
@@ -261,17 +261,35 @@ export abstract class BaseNode extends Identifiable
   // VIRTUAL METHODS: Populate Settings
   //==================================================
 
-  public /*virtual*/ populateGeneralProperties(generalProperties: PropertyFolder): void
+  protected /*virtual*/ populateInfoCore(folder: PropertyFolder): void
   {
-    generalProperties.addStringProperty("name", this.getName, !this.canChangeName(), this, this.nameChanged, this.setName);
-    generalProperties.addColorProperty("color", this.getColor, !this.canChangeColor(), this, this.colorChanged, this.setColor);
+    folder.addStringProperty("name", this.getName, !this.canChangeName(), this, this.nameChanged, this.setName);
+    folder.addColorProperty("color", this.getColor, !this.canChangeColor(), this, this.colorChanged, this.setColor);
   }
+
+  protected /*virtual*/ populateStatisticsCore(folder: PropertyFolder): void { }
+
+  //==================================================
+  // INSTANCE METHODS: Populate Settings
+  //==================================================
 
   public nameChanged(): void { this.notify(new NodeEventArgs(Changes.nodeName)); }
   public colorChanged(): void { this.notify(new NodeEventArgs(Changes.nodeColor)); }
 
-  public /*virtual*/ populateStatistics(generalProperties: PropertyFolder): void
+  public populateInfo(folder: PropertyFolder): void
   {
+    this.populateInfoCore(folder);
+  }
+
+  public populateStatistics(folder: PropertyFolder): void { 
+    this.populateStatisticsCore(folder);
+  }
+
+  public populateRenderStyle(folder: PropertyFolder): void
+  {
+    var style = this.getRenderStyle();
+    if (style)
+      style.Populate(folder);
   }
 
   //==================================================

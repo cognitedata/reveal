@@ -16,6 +16,7 @@ import * as Lodash from 'lodash';
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
+import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
 
 export class CasingLogStyle extends BaseRenderStyle
 {
@@ -37,9 +38,11 @@ export class CasingLogStyle extends BaseRenderStyle
   // OVERRIDES of BaseRenderStyle
   //==================================================
 
-  public clone(): BaseRenderStyle
+  public /*override*/ clone(): BaseRenderStyle { return Lodash.cloneDeep<CasingLogStyle>(this); }
+
+  protected /*override*/ PopulateCore(folder: PropertyFolder)
   {
-    return Lodash.cloneDeep<CasingLogStyle>(this);
+    super.PopulateCore(folder);
   }
 }
 

@@ -16,6 +16,7 @@ import * as Lodash from 'lodash';
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
+import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
 
 export class WellTrajectoryStyle extends BaseRenderStyle
 {
@@ -28,7 +29,7 @@ export class WellTrajectoryStyle extends BaseRenderStyle
   public nameFontSize = 50; // fontSizeOptions
   public bandFontSize = 30; // fontSizeOptions
 
-  public bandWidth = 50; 
+  public bandWidth = 50;
   public readonly bandWidthOptions = [20, 25, 30, 50, 75, 100, 200];
 
   //==================================================
@@ -41,9 +42,11 @@ export class WellTrajectoryStyle extends BaseRenderStyle
   // OVERRIDES of BaseRenderStyle
   //==================================================
 
-  public clone(): BaseRenderStyle
+  public /*override*/ clone(): BaseRenderStyle { return Lodash.cloneDeep<WellTrajectoryStyle>(this); }
+
+  protected /*override*/ PopulateCore(folder: PropertyFolder)
   {
-    return Lodash.cloneDeep<WellTrajectoryStyle>(this);
+    super.PopulateCore(folder);
   }
 }
 

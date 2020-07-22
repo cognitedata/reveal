@@ -1,7 +1,7 @@
 import { MiddlewareAPI, Dispatch } from "redux";
 import { SettingsCommandPayloadType, SettingsStateInterface } from "@/UserInterface/interfaces/settings";
 import { ReduxStore } from "@/UserInterface/interfaces/common";
-import { CHANGE_SELECT_STATE, ON_INPUT_CHANGE } from "../types/actionTypes";
+import { CHANGE_SELECT_STATE, ON_INPUT_CHANGE } from "@/UserInterface/redux/types/actionTypes";
 import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
 import { onSelectedNodeChange } from "@/UserInterface/redux/actions/settings";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
@@ -42,9 +42,9 @@ export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
         else
         {
           const settingsProperties = new PropertyFolder("Settings");
-          const generalProperties = new PropertyFolder("General Properties");
-          node.populateGeneralProperties(generalProperties);
-          settingsProperties.addChild(generalProperties);
+          const folder = new PropertyFolder("General Properties");
+          node.populateInfo(folder);
+          settingsProperties.addChild(folder);
           const settingsState = generateSettingsState(node, settingsProperties);
           store.dispatch(onSelectedNodeChange(settingsState));
         }

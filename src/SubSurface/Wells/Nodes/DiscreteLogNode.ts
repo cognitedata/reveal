@@ -53,9 +53,9 @@ export class DiscreteLogNode extends BaseLogNode
   public /*override*/ getIcon(): string { return DiscreteLogNodeIcon }
   public /*override*/ hasIconColor(): boolean { return false; }
 
-  public /*override*/ populateStatistics(folder: PropertyFolder): void
+  protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
   {
-    super.populateStatistics(folder);
+    super.populateStatisticsCore(folder);
     const log = this.log;
     if (!log)
       return;

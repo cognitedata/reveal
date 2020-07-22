@@ -95,9 +95,9 @@ export class WellTrajectoryNode extends DataNode
     }
   }
 
-  public /*override*/ populateStatistics(folder: PropertyFolder): void
+  protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
   {
-    super.populateStatistics(folder);
+    super.populateStatisticsCore(folder);
     const trajectory = this.trajectory;
     if (!trajectory)
       return;

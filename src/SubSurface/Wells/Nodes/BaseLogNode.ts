@@ -94,16 +94,16 @@ export abstract class BaseLogNode extends DataNode
     return trajectoryNode ? trajectoryNode.isVisible(target) : false;
   }
 
-  public /*override*/ populateStatistics(folder: PropertyFolder): void
+  protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
   {
-    super.populateStatistics(folder);
+    super.populateStatisticsCore(folder);
     const log = this.log;
     if (!log)
       return;
 
-      folder.addReadOnlyRange1("Md", log.mdRange, 2);
-      folder.addReadOnlyInteger("# samples", log.length);
-    }
+    folder.addReadOnlyRange1("Md", log.mdRange, 2);
+    folder.addReadOnlyInteger("# samples", log.length);
+  }
 
   //==================================================
   // INSTANCE METHODS: Draw styles

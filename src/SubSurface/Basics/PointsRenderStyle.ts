@@ -16,6 +16,7 @@ import * as Lodash from 'lodash';
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
+import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
 
 export class PointsRenderStyle extends BaseRenderStyle
 {
@@ -36,8 +37,10 @@ export class PointsRenderStyle extends BaseRenderStyle
   // OVERRIDES of BaseRenderStyle
   //==================================================
 
-  public clone(): BaseRenderStyle {
-    return Lodash.cloneDeep<PointsRenderStyle>(this);
+  public /*override*/ clone(): BaseRenderStyle { return Lodash.cloneDeep<PointsRenderStyle>(this); }
+
+  protected /*override*/ PopulateCore(folder: PropertyFolder)
+  {
   }
 }
 
