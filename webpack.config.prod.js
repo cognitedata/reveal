@@ -5,6 +5,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 const SUBSURFACE_COMPONENTS_PATH = "src/Components";
 const SUBSURFACE_INTERFACES_PATH = "src/Interface";
+const SUBSURFACE_VISUALIZER_PATH = "src";
 
 function resolve(dir) {
   return path.resolve(__dirname, dir);
@@ -109,10 +110,10 @@ module.exports = {
     minimize: false
   },
   plugins: [
-    new CleanWebpackPlugin({ verbose: true, cleanOnceBeforeBuildPatterns: ["dist"] } ),
+    new CleanWebpackPlugin({ verbose: true, cleanOnceBeforeBuildPatterns: ["dist"] }),
     new CopyPlugin({
       patterns: [
-        { from: "package.json", to: resolve("dist/subsurface-visualizer") },
+        { context: resolve(SUBSURFACE_VISUALIZER_PATH), from: "package.json", to: resolve("dist/subsurface-visualizer") },
         { from: "README.md", to: resolve("dist/subsurface-visualizer") },
         {
           context: resolve(SUBSURFACE_COMPONENTS_PATH),

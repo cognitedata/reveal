@@ -129,3 +129,29 @@ Optimized standalone application build will be created in **standalone/build** d
 - Run build command in project base directory: `npm run build`
 
 Project build as a library will be created in **dist/subsurface-visualizer** folder.
+
+### Develop with Yarn Workspaces
+
+- Clone bp-visualization and subsurface-visualization projects into a root folder
+- Create a `package.json` at root folder with the following content.
+```
+    {
+        "private": true,
+        "workspaces": [
+            "bp-visualization",
+            "subsurface-visualization"
+        ]
+    }
+```
+
+- Change "@cognite/subsurface-visualizer" version in bp-visualization/package.json to match with subsurface-visualization version.
+- Run `yarn` command at the root folder.
+- Run `yarn build` command at the subsurface-visualization project. (You might have to run `build:types` also depending on the environment)
+- Run `set https=true&&yarn start` at the bp-visualzation project.
+- Make any change in the subsurface-visualzation and run `yarn build` there. The bp-visualization will built automatically to reflect the changes.
+- When subsurface standalone needs to be run, use start:root command which access the node modules from root folder.
+
+#### Get dependancies for bp-visualization again from npm registry
+- Change "@cognite/subsurface-visualizer" version in bp-visualization/package.json to a valid version in npm registry. (It should not match with the locally built subsurface-visualization version).
+- If you face any conflicts/issues while getting dependancies back from npm registry, just remove or rename the root package.json and run `yarn` command from bp-visualization project
+
