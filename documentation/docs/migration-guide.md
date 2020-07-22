@@ -12,3 +12,7 @@ API is mostly the same, but you don't have all model nodes at once,
 because streaming is used. 
 
 <!--- TODO: write migration guide --->
+<!--- notes:
+* Cognite3DViewer.getIntersectionFromPixel doesn't have the model param
+* Cognite3DViewer.clearCache is not supported
+--->
