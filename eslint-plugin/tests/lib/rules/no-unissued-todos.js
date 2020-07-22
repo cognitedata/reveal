@@ -19,7 +19,7 @@ const parserOptions = {
 
 const ruleTester = new RuleTester({ parserOptions });
 
-const errorMessage = /'TODO' comments should include link to JIRA issue, e.g TODO\((OI|OPSUP)-[0-9]+\)/;
+const errorMessage = /'TODO' comments should include link to JIRA issue, e.g TODO\(([A-Z]+)-[0-9]+\)/;
 
 ruleTester.run('no-unissued-todos', rule, {
   valid: [
@@ -40,20 +40,24 @@ ruleTester.run('no-unissued-todos', rule, {
       code: '// TODO(OI-1): test with space before TODO',
     },
     {
+      code: '// TODO(CDF-123): test with space before TODO',
+    },
+    {
+      code: '// TODO(AIR-123): test with space before TODO',
+    },
+    {
+      code: '// TODO(DISCO-123): test with space before TODO',
+    },
+    {
       code: '// @TODO(OI-12): support for jsdoc style todo',
+    },
+    {
+      code: '//TODO(FARTS-123): asd',
     },
   ],
   invalid: [
     {
       code: '//TODO(): asd',
-      errors: [
-        {
-          message: errorMessage,
-        },
-      ],
-    },
-    {
-      code: '//TODO(FARTS-123): asd',
       errors: [
         {
           message: errorMessage,

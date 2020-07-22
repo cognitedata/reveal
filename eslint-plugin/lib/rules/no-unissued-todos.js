@@ -49,7 +49,7 @@ module.exports = {
     const messageRequirement =
       configuration.messageRequirement || 'link to JIRA issue';
     const issuePattern =
-      configuration.issuePattern || '\\(((OI|OPSUP)-[0-9]+)\\)';
+      configuration.issuePattern || '\\((([A-Z][A-Z]+)-[0-9]+)\\)';
     const selfConfigRegEx = /\bno-unissued-todos\b/u;
 
     function convertToRegExp(term, issueRegex = '') {
