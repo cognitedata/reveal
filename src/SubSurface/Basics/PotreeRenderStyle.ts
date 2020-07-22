@@ -15,6 +15,7 @@ import * as Lodash from 'lodash';
 
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
+import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
 
 export class PotreeRenderStyle extends BaseRenderStyle
 {
@@ -34,9 +35,10 @@ export class PotreeRenderStyle extends BaseRenderStyle
   // OVERRIDES of BaseRenderStyle
   //==================================================
 
-  public clone(): BaseRenderStyle
+  public /*override*/ clone(): BaseRenderStyle { return Lodash.cloneDeep<PotreeRenderStyle>(this); }
+
+  protected /*override*/ PopulateCore(folder: PropertyFolder)
   {
-    return Lodash.cloneDeep<PotreeRenderStyle>(this);
   }
 }
 

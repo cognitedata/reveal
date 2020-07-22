@@ -16,8 +16,10 @@ import * as Lodash from 'lodash';
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
+import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
 
-export class PolylinesRenderStyle extends BaseRenderStyle {
+export class PolylinesRenderStyle extends BaseRenderStyle
+{
   //==================================================
   // INSTANCE FIELDS
   //==================================================
@@ -35,8 +37,10 @@ export class PolylinesRenderStyle extends BaseRenderStyle {
   // OVERRIDES of BaseRenderStyle
   //==================================================
 
-  public clone(): BaseRenderStyle {
-    return Lodash.cloneDeep<PolylinesRenderStyle>(this);
+  public /*override*/ clone(): BaseRenderStyle { return Lodash.cloneDeep<PolylinesRenderStyle>(this); }
+
+  protected /*override*/ PopulateCore(folder: PropertyFolder)
+  {
   }
 }
 

@@ -14,6 +14,7 @@
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { ITargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
+import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
 
 export abstract class BaseRenderStyle extends BaseStyle implements ITargetIdAccessor
 {
@@ -42,5 +43,20 @@ export abstract class BaseRenderStyle extends BaseStyle implements ITargetIdAcce
     this._targetId = targetId.clone();
   }
 
+  //==================================================
+  // VIRTUAL METHODS
+  //==================================================
+
   abstract clone(): BaseRenderStyle;
+
+  protected /*virtual*/ PopulateCore(folder: PropertyFolder) { }
+
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
+
+  public Populate(folder: PropertyFolder): void
+  {
+    this.PopulateCore(folder);
+  }
 }

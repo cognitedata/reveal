@@ -20,13 +20,13 @@ import SurfaceNodeIcon from "@images/Nodes/SurfaceNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
 import { SeismicCube } from '@/SubSurface/Seismic/Data/SeismicCube';
 
-export class SeismicCubeDataNode extends DataNode
+export class SeismicCubeNode extends DataNode
 {
   //==================================================
   // STATIC FIELDS
   //==================================================
 
-  static className = "SeismicCubeDataNode";
+  static className = "SeismicCubeNode";
 
   //==================================================
   // CONSTRUCTORS
@@ -46,8 +46,8 @@ export class SeismicCubeDataNode extends DataNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return SeismicCubeDataNode.className; }
-  public /*override*/ isA(className: string): boolean { return className === SeismicCubeDataNode.className || super.isA(className); }
+  public /*override*/ get className(): string { return SeismicCubeNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === SeismicCubeNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode

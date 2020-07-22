@@ -60,7 +60,7 @@ export class FilterLogFolder extends BaseNode
   public /*override*/ canBeChecked(target: ITarget | null): boolean { return false; }
 
   //==================================================
-  // INSTANCE FUNCTIONS
+  // INSTANCE METHODS
   //==================================================
 
   public getFilterLogNode(logNode: BaseLogNode): BaseFilterLogNode | null

@@ -55,9 +55,9 @@ export class WellNode extends BaseNode
 
   public /*override*/ getIcon(): string { return WellNodeIcon }
 
-  public /*override*/ populateStatistics(folder: PropertyFolder): void
+  protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
   {
-    super.populateStatistics(folder);
+    super.populateStatisticsCore(folder);
     folder.addReadOnlyVector2("wellHead", this.wellHead.x, this.wellHead.y, 2);
     folder.addReadOnlyInteger("# Trajectories", this.children.length);
   }

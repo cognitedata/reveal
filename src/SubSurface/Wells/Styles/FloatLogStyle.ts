@@ -16,6 +16,7 @@ import * as Lodash from 'lodash';
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
+import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
 
 export class FloatLogStyle extends BaseRenderStyle
 {
@@ -29,7 +30,8 @@ export class FloatLogStyle extends BaseRenderStyle
   public max = 1; // Type in value
   public useMin = false;
   public useMax = false;
-  //public UseFloat = new UseFloat(false, 0);
+
+  // public minValue = new UseFloat(true, false, 3);
 
   //==================================================
   // CONSTRUCTORS
@@ -41,9 +43,11 @@ export class FloatLogStyle extends BaseRenderStyle
   // OVERRIDES of BaseRenderStyle
   //==================================================
 
-  public clone(): BaseRenderStyle
+  public /*override*/ clone(): BaseRenderStyle { return Lodash.cloneDeep<FloatLogStyle>(this); }
+
+  protected /*override*/ PopulateCore(folder: PropertyFolder)
   {
-    return Lodash.cloneDeep<FloatLogStyle>(this);
+    super.PopulateCore(folder);
   }
 }
 

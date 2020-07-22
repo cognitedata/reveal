@@ -52,9 +52,9 @@ export class PointLogNode extends BaseLogNode
   public /*override*/ get typeName(): string { return "RiskLog" }
   public /*override*/ getIcon(): string { return PointLogNodeIcon }
 
-  public /*override*/ populateStatistics(folder: PropertyFolder): void
+  protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
   {
-    super.populateStatistics(folder);
+    super.populateStatisticsCore(folder);
   }
 
   //==================================================

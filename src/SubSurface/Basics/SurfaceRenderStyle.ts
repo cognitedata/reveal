@@ -17,8 +17,10 @@ import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ContoursStyle } from "@/Core/Styles/ContoursStyle";
 import { SolidStyle } from "@/Core/Styles/SolidStyle";
+import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
 
-export class SurfaceRenderStyle extends BaseRenderStyle {
+export class SurfaceRenderStyle extends BaseRenderStyle
+{
   //==================================================
   // INSTANCE FIELDS
   //==================================================
@@ -30,7 +32,8 @@ export class SurfaceRenderStyle extends BaseRenderStyle {
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(targetId: TargetId) {
+  public constructor(targetId: TargetId)
+  {
     super(targetId);
   }
 
@@ -38,8 +41,10 @@ export class SurfaceRenderStyle extends BaseRenderStyle {
   // OVERRIDES of BaseRenderStyle
   //==================================================
 
-  public clone(): BaseRenderStyle {
-    return Lodash.cloneDeep<SurfaceRenderStyle>(this);
+  public /*override*/ clone(): BaseRenderStyle { return Lodash.cloneDeep<SurfaceRenderStyle>(this); }
+
+  protected /*override*/ PopulateCore(folder: PropertyFolder)
+  {
   }
 }
 
