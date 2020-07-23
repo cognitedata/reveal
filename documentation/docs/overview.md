@@ -10,6 +10,6 @@ visible to users right in their web browsers with outstanding performance.
 It is achieved by streaming and parsing data in Rust and WebAssembly, 
 which allows us to load even huge models within seconds. 
 
-* Check out our [examples](examples/Cognite3DViewer)
+* Check out our [examples](docs/examples/Cognite3DViewer)
 * Read more on adopting streaming in 3d-viewer with Rust and WebAssembly: [https://medium.com/cognite/speeding-up-3d-model-loading-with-rust-and-webassembly-75949fa42c31](https://medium.com/cognite/speeding-up-3d-model-loading-with-rust-and-webassembly-75949fa42c31)  
 * Read more about 3D and photogrammetry in the CDF: [https://www.cognite.com/en/cognite-data-fusion/3d-and-photogrammetry-pipelines](https://www.cognite.com/en/cognite-data-fusion/3d-and-photogrammetry-pipelines).
