@@ -281,7 +281,8 @@ export abstract class BaseNode extends Identifiable
     this.populateInfoCore(folder);
   }
 
-  public populateStatistics(folder: PropertyFolder): void { 
+  public populateStatistics(folder: PropertyFolder): void
+  {
     this.populateStatisticsCore(folder);
   }
 

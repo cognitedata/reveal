@@ -23,8 +23,8 @@ import { DiscreteFilterLogNode } from "@/SubSurface/Wells/Filters/DiscreteFilter
 import { DiscreteLogNode } from "@/SubSurface/Wells/Nodes/DiscreteLogNode";
 import { CasingFilterLogNode } from "@/SubSurface/Wells/Filters/CasingFilterLogNode";
 import { CasingLogNode } from "@/SubSurface/Wells/Nodes/CasingLogNode";
-import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 import FilterLogFolderIcon from "@images/Nodes/FilterLogFolder.png";
+import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 
 export class FilterLogFolder extends BaseNode
 {
