@@ -30,7 +30,7 @@ import { ToggleAxisVisibleCommand } from "@/Three/Commands/ToggleAxisVisibleComm
 import { ToggleBgColorCommand } from "@/Three/Commands/ToggleBgColorCommand";
 import { IToolbar } from "@/Core/Interfaces/IToolbar";
 import { ViewFromCommand } from "@/Three/Commands/ViewFromCommand";
-import { CameraControl } from "@/Three/Nodes/Camera";
+import { CameraControl } from "@/Three/Nodes/CameraControl";
 import { ToggleCameraTypeCommand } from "@/Three/Commands/ToggleCameraTypeCommand";
 import { CopyImageCommand } from "@/Three/Commands/CopyImageCommand";
 import { MeasureDistanceTool } from "@/Three/Commands/Tools/MeasureDistanceTool";
@@ -83,7 +83,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get camera(): THREE.Camera { return this.cameraControl.camera; }
+  public get camera(): THREE.PerspectiveCamera | THREE.OrthographicCamera { return this.cameraControl.camera; }
   private get controls(): CameraControls { return this.cameraControl.controls; }
   public get transformer(): ThreeTransformer { return this._transformer; }
   private get directionalLight(): THREE.DirectionalLight | null { return this.scene.getObjectByName(DirectionalLightName) as THREE.DirectionalLight; }
@@ -158,7 +158,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     super.initializeCore();
 
     this._scene = new THREE.Scene();
-    this._cameraControl = new CameraControl(this);
+    this._cameraControl = new CameraControl(this, true);
 
     // Create lights
     const ambientLight = new THREE.AmbientLight(0x404040, 0.25); // soft white light
@@ -193,7 +193,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   public  /*override*/ viewAll(): boolean
   {
-    const boundingBox = this.getBoundingBoxFromViews()
+    const boundingBox = this.getBoundingBoxFromViews();
     this.transformer.transformRangeTo3D(boundingBox);
     return !this._cameraControl ? false : this._cameraControl.viewRange(boundingBox);
   }
@@ -204,23 +204,20 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
       return;
 
     const camera = this.camera;
-    if (camera instanceof THREE.PerspectiveCamera)
+    const boundingBox = this.getBoundingBoxFromViews();
+    if (!boundingBox || boundingBox.isEmpty)
+      return;
+
+    this.transformer.transformRangeTo3D(boundingBox);
+
+    const diagonal = boundingBox.diagonal;
+    const near = 0.001 * diagonal;
+    const far = 2 * diagonal + this.cameraControl.distance;
+    if (!Ma.isAbsEqual(camera.near, near, 0.1 * near) || !Ma.isAbsEqual(camera.far, far, 0.1 * far))
     {
-      const boundingBox = this.getBoundingBoxFromViews();
-      if (!boundingBox || boundingBox.isEmpty)
-        return;
-
-      this.transformer.transformRangeTo3D(boundingBox);
-
-      const diagonal = boundingBox.diagonal;
-      const near = 0.001 * diagonal;
-      const far = 2 * diagonal + this.cameraControl.distance;
-      if (!Ma.isAbsEqual(camera.near, near, 0.1 * near) || !Ma.isAbsEqual(camera.far, far, 0.1 * far))
-      {
-        camera.near = near;
-        camera.far = far;
-        camera.updateProjectionMatrix();
-      }
+      camera.near = near;
+      camera.far = far;
+      camera.updateProjectionMatrix();
     }
   }
 
@@ -302,6 +299,24 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     const boundingBox = this.getBoundingBoxFromViews()
     this.transformer.transformRangeTo3D(boundingBox);
     return !this._cameraControl ? false : this._cameraControl.viewFrom(boundingBox, index);
+  }
+
+  public switchCamera(isPerspectiveMode: boolean)
+  {
+    const azimuthAngle = this.cameraControl.controls.azimuthAngle;
+    const polarAngle = this.cameraControl.controls.polarAngle;
+
+    this._cameraControl = new CameraControl(this, isPerspectiveMode);
+
+    const boundingBox = this.getBoundingBoxFromViews();
+    this.transformer.transformRangeTo3D(boundingBox);
+    const boundingBoxZRange = boundingBox.z.max - boundingBox.z.min;
+    const pixelYRange = this.pixelRange.y.max - this.pixelRange.y.min;
+
+    // Set camera status to match with previous selected camera
+    !isPerspectiveMode && this.cameraControl.controls.zoomTo(pixelYRange/boundingBoxZRange);
+    this._cameraControl.controls.rotateTo(azimuthAngle, polarAngle, false);
+    this._cameraControl.viewRange(boundingBox)
   }
 
   private updateLightPosition(): void

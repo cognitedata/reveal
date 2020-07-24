@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import CameraControls from "camera-controls";
-import { CameraControl } from "@/Three/Nodes/Camera";
+import { CameraControl } from "@/Three/Nodes/CameraControl";
 import { ToolCommand } from "@/Three/Commands/Tools/ToolCommand";
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 
