@@ -29,14 +29,14 @@ export class CameraControl
   // INSTANCE FIELDS
   //==================================================
 
-  private _camera: THREE.Camera;
+  private _camera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
   private _controls: CameraControls | null = null;
 
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get camera(): THREE.Camera { return this._camera; }
+  public get camera(): THREE.PerspectiveCamera | THREE.OrthographicCamera { return this._camera; }
   public get controls(): CameraControls
   {
     if (!this._controls)
@@ -60,18 +60,18 @@ export class CameraControl
 
   private static _isInstalled = false;
 
-  constructor(target: ThreeRenderTargetNode)
+  constructor(target: ThreeRenderTargetNode, isPerspectiveMode: boolean)
   {
     if (!CameraControl._isInstalled)
     {
       CameraControls.install({ THREE: THREE });
       CameraControl._isInstalled = true;
     }
-    this._camera = this.createPerspectiveCamera(target);
-    if (this._camera instanceof THREE.PerspectiveCamera)
-      this._controls = new CameraControls(this._camera, target.domElement);
-    else if (this._camera instanceof THREE.OrthographicCamera)
-      this._controls = new CameraControls(this._camera, target.domElement);
+
+    this._camera = isPerspectiveMode ? this.createPerspectiveCamera(target) : this.createOrthographicCamera(target);
+    this._camera.position.set(0, 0, 5);
+    this._camera.up.set(0,0,1);
+    this._controls = new CameraControls(this._camera, target.domElement);
   }
 
   //==================================================
@@ -256,42 +256,13 @@ export class CameraControl
   {
     const aspectRatio = target ? target.aspectRatio : undefined;
     const camera = new THREE.PerspectiveCamera(45, aspectRatio, 0.1, 10_000);
-    camera.up.set(0, 0, 1);
     return camera;
   }
 
   private createOrthographicCamera(target: ThreeRenderTargetNode): THREE.OrthographicCamera
   {
     const range = target.pixelRange;
-    const camera = new THREE.OrthographicCamera(-range.x.delta / 2, range.x.delta / 2, range.x.delta / 2, -range.x.delta / 2, 0.1, 10_000);
-    camera.up.set(0, 0, 1);
+    const camera = new THREE.OrthographicCamera(-range.x.delta / 2, range.x.delta / 2, range.y.delta / 2, -range.y.delta / 2, 0.1, 10_000);
     return camera;
   }
-
-  // public switchCamera(isOrthographic) {
-
-  //   if (!this._camera)
-  //     return;
-  //   if (!this._controls)
-  //     return;
-
-  //   const cameraPosition = this._camera.position.clone();
-  //   const cameraMatrix = this._camera.matrix.clone();
-
-
-
-  //   const oControlsTarget = oControls.target.clone();
-  //   const oControlsPosition = oControls.position0.clone();
-  //   if (isOrthographic == false) {
-  //     aCamera = pCamera;
-  //   } else {
-  //     aCamera = oCamera;
-  //   }
-  //   aCamera.position.copy(cameraPosition);
-  //   aCamera.matrix.copy(cameraMatrix);
-  //   aCamera.updateProjectionMatrix();
-  //   this._controls.object = aCamera;
-  //   this._cControls.update();
-  //   render();
-  // }
 }
