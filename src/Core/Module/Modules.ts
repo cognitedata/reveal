@@ -62,7 +62,8 @@ export class Modules
     this.registerViews();
   }
 
-  public clearModules() {
+  public clearModules()
+  {
     this.modules = [];
   }
 
@@ -90,7 +91,8 @@ export class Modules
   {
     // Create the root from the last installed
     let root: BaseRootNode | null = null;
-    for (let i = this.modules.length - 1; i >= 0; --i) {
+    for (let i = this.modules.length - 1; i >= 0; --i)
+    {
       const module = this.modules[i];
       root = module.createRoot();
       if (root)
@@ -104,6 +106,7 @@ export class Modules
     for (const module of this.modules)
       module.loadData(root);
 
+    BaseRootNode.active = root;
     return root;
   }
 

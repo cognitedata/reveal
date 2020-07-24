@@ -16,8 +16,8 @@ import { FilterLogFolder } from "@/SubSurface/Wells/Filters/FilterLogFolder";
 import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
 import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
 import { Util } from "@/Core/Primitives/Util";
-import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 import { ITarget } from "@/Core/Interfaces/ITarget";
+import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 
 export abstract class BaseFilterLogNode extends BaseVisualNode
 {

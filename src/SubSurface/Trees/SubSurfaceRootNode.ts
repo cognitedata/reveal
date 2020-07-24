@@ -14,8 +14,8 @@
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 
 import { WellTreeNode } from "@/SubSurface/Trees/WellTreeNode";
-import { ColorMapTreeNode } from "@/Core/Nodes/ColorMapTreeNode";
-import { SettingsTreeNode } from "@/Core/Nodes/SettingsTreeNode";
+import { ColorMapTreeNode } from "@/Core/Nodes/ColorMaps/ColorMapTreeNode";
+import { SettingsTreeNode } from "@/Core/Nodes/Trees/SettingsTreeNode";
 import { AxisNode } from "@/Core/Nodes/Decorations/AxisNode";
 
 import { OthersTreeNode } from "@/SubSurface/Trees/OthersTreeNode";

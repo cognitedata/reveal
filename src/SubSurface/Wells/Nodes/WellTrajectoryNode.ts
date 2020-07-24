@@ -20,11 +20,11 @@ import { WellTrajectoryStyle } from "@/SubSurface/Wells/Styles/WellTrajectorySty
 import { WellTrajectory } from "@/SubSurface/Wells/Logs/WellTrajectory";
 import { WellNode } from "@/SubSurface/Wells/Nodes/WellNode";
 import { FilterLogFolder } from "@/SubSurface/Wells/Filters/FilterLogFolder";
-import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 
 import WellTrajectoryNodeIcon from "@images/Nodes/WellTrajectoryNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
 import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
+import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 
 export class WellTrajectoryNode extends DataNode
 {

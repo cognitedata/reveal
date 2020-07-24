@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { TargetTreeNode } from "@/Core/Nodes/TargetTreeNode";
+import { TargetTreeNode } from "@/Core/Nodes/Trees/TargetTreeNode";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
 import { ITargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
@@ -81,4 +81,12 @@ export class BaseRootNode extends BaseNode
   {
     return this.targets.getActiveDescendantByType(BaseTargetNode);
   }
+
+  //==================================================
+  // STATICS FIELDS AND PROPERTIES
+  //==================================================
+
+  private static _active: BaseNode | null;
+  public static get active(): BaseNode | null { return BaseRootNode._active; }
+  public static set active(value: BaseNode | null)  { BaseRootNode._active = value; }
 }

@@ -11,8 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 import FolderNodeIcon from "@images/Nodes/FolderNode.png";
+import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 
 export class OthersTreeNode extends BaseTreeNode
 {
