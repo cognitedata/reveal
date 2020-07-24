@@ -1,4 +1,4 @@
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 use std::error::Error;
 use std::fs::File;
 use std::io::{stdout, Cursor, Read, Seek, SeekFrom};
