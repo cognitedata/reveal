@@ -17,16 +17,10 @@ import { RenderStyleResolution } from "@/Core/Enums/RenderStyleResolution";
 export class TargetId
 {
   //==================================================
-  // CONSTRUCTORS
+  // STATIC METHODS
   //==================================================
 
-  public constructor(typeName: string, uniqueId: UniqueId)
-  {
-    this._typeName = typeName;
-    this._uniqueId = uniqueId;
-  }
-
-  public /*copy constructor*/ clone(): TargetId { return new TargetId(this.typeName, this.uniqueId); }
+  public static readonly empty = new TargetId("", UniqueId.empty);
 
   //==================================================
   // INSTANCE FIELDS
@@ -34,7 +28,6 @@ export class TargetId
 
   private _typeName: string;
   private _uniqueId: UniqueId;
-  public static empty = new TargetId("", UniqueId.empty);
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -47,6 +40,18 @@ export class TargetId
   public get isEmpty(): boolean { return this.typeName === "" && this.uniqueId.isEmpty; }
 
   public /*override*/ toString(): string { return `(${this.typeName}, ${this.uniqueId})`; }
+
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
+
+  public constructor(typeName: string, uniqueId: UniqueId)
+  {
+    this._typeName = typeName;
+    this._uniqueId = uniqueId;
+  }
+
+  public /*copy constructor*/ clone(): TargetId { return new TargetId(this.typeName, this.uniqueId); }
 
   //==================================================
   // INSTANCE METHODS: Requests

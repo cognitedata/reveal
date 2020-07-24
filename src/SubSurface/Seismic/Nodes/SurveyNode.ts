@@ -1,4 +1,3 @@
-
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
@@ -12,43 +11,50 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { v4 as uuid } from "uuid";
+import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
+import { TargetId } from "@/Core/Primitives/TargetId";
+import { SurfaceRenderStyle } from "@/SubSurface/Basics/SurfaceRenderStyle";
 
-export class UniqueId
+import SurfaceNodeIcon from "@images/Nodes/SurfaceNode.png";
+import { BaseNode } from "@/Core/Nodes/BaseNode";
+
+export class SurveyNode extends BaseNode
 {
   //==================================================
   // STATIC FIELDS
   //==================================================
 
-  public static readonly empty = new UniqueId(); 
-  public static new(): UniqueId { return new UniqueId(uuid()); }
-
-  //==================================================
-  // INSTANCE FIELDS
-  //==================================================
-
-  private _id: string | undefined;
-
-  //==================================================
-  // INSTANCE PROPERTIES
-  //==================================================
-
-  public get isEmpty(): boolean { return (!this._id || this._id === ""); }
-  public /*override*/ toString(): string { return `${this._id}`; }
+  static className = "SurveyNode";
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  private constructor(id?: string) { this._id = id; }
-
-  public /*copy constructor*/ clone(): UniqueId { return new UniqueId(this._id); }
+  public constructor() { super(); }
 
   //==================================================
-  // INSTANCE METHODS
+  // INSTANCE PROPERTIES
   //==================================================
 
-  public equals(other: UniqueId): boolean { return this._id === other._id; }
-  public equalString(other: string): boolean { return this._id ? this._id === other : false; }
+  public get renderStyle(): SurfaceRenderStyle | null { return this.getRenderStyle() as SurfaceRenderStyle; }
+
+  //==================================================
+  // OVERRIDES of Identifiable
+  //==================================================
+
+  public /*override*/ get className(): string { return SurveyNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === SurveyNode.className || super.isA(className); }
+
+  //==================================================
+  // OVERRIDES of BaseNode
+  //==================================================
+
+  public /*override*/ get typeName(): string { return "Seismic Cube" }
+
+  public /*override*/ getIcon(): string { return SurfaceNodeIcon }
+
+  public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
+  {
+    return new SurfaceRenderStyle(targetId);
+  }
 }
-

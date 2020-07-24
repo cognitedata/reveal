@@ -404,7 +404,6 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
       if (object.name)
       {
-        const id = new UniqueId(object.name);
         for (const view of this.viewsShownHere.list)
         {
           if (!(view instanceof BaseThreeView))
@@ -417,7 +416,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
           if (!node)
             continue;
 
-          if (node.uniqueId.equals(id))
+          if (node.uniqueId.equalString(object.name))
             return view;
         }
       }
