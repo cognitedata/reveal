@@ -14,4 +14,5 @@ export interface Repository {
 
   getLoadingStateObserver(): Observable<boolean>;
   getParsedData(): Observable<{ blobUrl: string; lod: string; data: SectorGeometry | SectorQuads }>;
+  clear(): void;
 }

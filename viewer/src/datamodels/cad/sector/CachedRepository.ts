@@ -17,8 +17,8 @@ import {
   Subject,
   onErrorResumeNext,
   BehaviorSubject,
-  asapScheduler,
-  scheduled
+  scheduled,
+  queueScheduler
 } from 'rxjs';
 import {
   publish,
@@ -31,7 +31,6 @@ import {
   reduce,
   distinct,
   catchError,
-  switchMap,
   distinctUntilChanged,
   share,
   finalize,
@@ -45,6 +44,7 @@ import { TriangleMesh, InstancedMeshFile, InstancedMesh, SectorQuads } from '../
 import { createOffsetsArray } from '@/utilities';
 import { trackError } from '@/utilities/metrics';
 import { BinaryFileProvider } from '@/utilities/networking/types';
+import { Group } from 'three';
 
 type CtmFileRequest = { blobUrl: string; fileName: string };
 type CtmFileResult = { fileName: string; data: ParseCtmResult };
@@ -88,7 +88,7 @@ export class CachedRepository implements Repository {
     this._concurrentNetworkOperations = concurrentNetworkOperations;
   }
 
-  clearCaches() {
+  clear() {
     this._consumedSectorCache.clear();
     this._ctmFileCache.clear();
   }
@@ -108,40 +108,29 @@ export class CachedRepository implements Repository {
 
   loadSector(): OperatorFunction<WantedSector[], ConsumedSector> {
     return pipe(
-      switchMap(wantedSectorsArray => {
-        return scheduled(from(wantedSectorsArray), asapScheduler).pipe(
-          tap(_ => {
-            this._isLoadingSubject.next(true);
-          }),
-          this.loadSimpleAndDetailedSector(),
-          finalize(() => this._isLoadingSubject.next(false))
-        );
+      tap(_ => {
+        this._isLoadingSubject.next(true);
       }),
-      finalize(() => {
-        this.clearCaches();
-      })
+      mergeAll(),
+      publish(wantedSector$ => {
+        const [cachedSector$, uncachedSector$] = partition(wantedSector$, wantedSector =>
+          this._consumedSectorCache.has(this.wantedSectorCacheKey(wantedSector))
+        );
+        return scheduled(
+          [
+            cachedSector$.pipe(
+              flatMap(wantedSector => this._consumedSectorCache.get(this.wantedSectorCacheKey(wantedSector)))
+            ),
+            uncachedSector$.pipe(this.loadSectorFromNetwork())
+          ],
+          queueScheduler
+        ).pipe(mergeAll());
+      }),
+      finalize(() => this._isLoadingSubject.next(false))
     );
   }
 
-  private loadSimpleAndDetailedSector(): OperatorFunction<WantedSector, ConsumedSector> {
-    return publish(wantedSectorObservable => {
-      const [cachedSectorObservable, uncachedSectorObservable] = partition(wantedSectorObservable, wantedSector =>
-        this._consumedSectorCache.has(this.wantedSectorCacheKey(wantedSector))
-      );
-
-      return scheduled(
-        [
-          cachedSectorObservable.pipe(
-            flatMap(wantedSector => this._consumedSectorCache.get(this.wantedSectorCacheKey(wantedSector)))
-          ),
-          uncachedSectorObservable.pipe(this.loadSimpleAndDetailedSectorFromNetwork())
-        ],
-        asapScheduler
-      ).pipe(mergeAll());
-    });
-  }
-
-  private loadSimpleAndDetailedSectorFromNetwork(): OperatorFunction<WantedSector, ConsumedSector> {
+  private loadSectorFromNetwork(): OperatorFunction<WantedSector, ConsumedSector> {
     return flatMap(wantedSector => {
       if (wantedSector.levelOfDetail === LevelOfDetail.Simple) {
         return this.loadSimpleSectorFromNetwork(wantedSector);
@@ -153,33 +142,81 @@ export class CachedRepository implements Repository {
     }, this._concurrentNetworkOperations);
   }
 
+  // private loadSectorFromNetwork(): OperatorFunction<WantedSector, ConsumedSector> {
+  //   return publish(wantedSector$ => {
+  //     const detailedSector$ = wantedSector$.pipe(
+  //       filter(wantedSector => wantedSector.levelOfDetail == LevelOfDetail.Detailed),
+  //       concatMap(wantedSector => this.loadDetailedSectorFromNetwork(wantedSector))
+  //     );
+  //     const simpleSector$ = wantedSector$.pipe(
+  //       filter(wantedSector => wantedSector.levelOfDetail == LevelOfDetail.Simple),
+  //       concatMap(wantedSector => this.loadSimpleSectorFromNetwork(wantedSector))
+  //     );
+  //     return scheduled([detailedSector$, simpleSector$], queueScheduler).pipe(
+  //       mergeAll(2) //this._concurrentNetworkOperations)
+  //       // publish(obs$ => merge(obs$, 20))
+  //     );
+  //   });
+  // }
+
+  private catchWantedSectorError<T>(wantedSector: WantedSector, methodName: string) {
+    return catchError<T, Observable<T>>(error => {
+      trackError(error, { moduleName: 'CachedRepository', methodName });
+      this._consumedSectorCache.remove(this.wantedSectorCacheKey(wantedSector));
+      throw error;
+    });
+  }
+
+  private catchCtmFileError<T>(ctmRequest: CtmFileRequest, methodName: string) {
+    return catchError<T, Observable<T>>(error => {
+      trackError(error, {
+        moduleName: 'CachedRepository',
+        methodName
+      });
+      this._ctmFileCache.remove(this.ctmFileCacheKey(ctmRequest));
+      throw error;
+    });
+  }
+
+  private simpleParsedData(wantedSector: WantedSector): OperatorFunction<SectorQuads, SectorQuads> {
+    return tap(sectorQuads => {
+      this._parsedDataSubject.next({
+        blobUrl: wantedSector.blobUrl,
+        sectorId: wantedSector.metadata.id,
+        lod: 'simple',
+        data: sectorQuads
+      });
+    });
+  }
+
+  private detailedParsedData(wantedSector: WantedSector): OperatorFunction<SectorGeometry, SectorGeometry> {
+    return tap(data => {
+      this._parsedDataSubject.next({
+        blobUrl: wantedSector.blobUrl,
+        sectorId: wantedSector.metadata.id,
+        lod: 'detailed',
+        data
+      }); // TODO: Remove when migration is gone.
+    });
+  }
+
+  private nameGroup(wantedSector: WantedSector): OperatorFunction<Group, Group> {
+    return tap(group => {
+      group.name = `Quads ${wantedSector.metadata.id}`;
+    });
+  }
+
   private loadSimpleSectorFromNetwork(wantedSector: WantedSector): Observable<ConsumedSector> {
     const networkObservable: Observable<ConsumedSector> = onErrorResumeNext(
       from(
         this._modelSectorProvider.getBinaryFile(wantedSector.blobUrl, wantedSector.metadata.facesFile.fileName!)
       ).pipe(
-        catchError(error => {
-          trackError(error, {
-            moduleName: 'CachedRepository',
-            methodName: 'loadSimpleSectorFromNetwork'
-          });
-          this._consumedSectorCache.remove(this.wantedSectorCacheKey(wantedSector));
-          throw error;
-        }),
+        this.catchWantedSectorError(wantedSector, 'loadSimpleSectorFromNetwork'),
         flatMap(buffer => this._modelDataParser.parseF3D(new Uint8Array(buffer))),
-        tap(sectorQuads => {
-          this._parsedDataSubject.next({
-            blobUrl: wantedSector.blobUrl,
-            sectorId: wantedSector.metadata.id,
-            lod: 'simple',
-            data: sectorQuads
-          });
-        }),
+        this.simpleParsedData(wantedSector),
         map(sectorQuads => ({ ...wantedSector, data: sectorQuads })),
         this._modelDataTransformer.transform(),
-        tap(group => {
-          group.name = `Quads ${wantedSector.metadata.id}`;
-        }),
+        this.nameGroup(wantedSector),
         map(group => ({ ...wantedSector, group })),
         shareReplay(1),
         take(1)
@@ -209,22 +246,10 @@ export class CachedRepository implements Repository {
     );
     const networkObservable = onErrorResumeNext(
       zip(i3dFileObservable, ctmFilesObservable).pipe(
-        catchError(error => {
-          trackError(error, {
-            moduleName: 'CachedRepository',
-            methodName: 'loadDetailedSectorFromNetwork'
-          });
-          this._consumedSectorCache.remove(this.wantedSectorCacheKey(wantedSector));
-          throw error;
-        }),
+        this.catchWantedSectorError(wantedSector, 'loadDetailedSectorFromNetwork'),
         map(([i3dFile, ctmFiles]) => this.finalizeDetailed(i3dFile as ParseSectorResult, ctmFiles)),
+        this.detailedParsedData(wantedSector),
         map(data => {
-          this._parsedDataSubject.next({
-            blobUrl: wantedSector.blobUrl,
-            sectorId: wantedSector.metadata.id,
-            lod: 'detailed',
-            data
-          }); // TODO: Remove when migration is gone.
           return { ...wantedSector, data };
         }),
         this._modelDataTransformer.transform(),
@@ -254,14 +279,7 @@ export class CachedRepository implements Repository {
       flatMap(ctmRequest => {
         const networkObservable: Observable<{ fileName: string; data: ParseCtmResult }> = onErrorResumeNext(
           from(this._modelSectorProvider.getBinaryFile(ctmRequest.blobUrl, ctmRequest.fileName)).pipe(
-            catchError(error => {
-              trackError(error, {
-                moduleName: 'CachedRepository',
-                methodName: 'loadCtmFileFromNetwork'
-              });
-              this._ctmFileCache.remove(this.ctmFileCacheKey(ctmRequest));
-              throw error;
-            }),
+            this.catchCtmFileError(ctmRequest, 'loadCtmFileFromNetwork'),
             retry(3),
             flatMap(buffer => this._modelDataParser.parseCTM(new Uint8Array(buffer))),
             map(data => ({ fileName: ctmRequest.fileName, data: data as ParseCtmResult })),
