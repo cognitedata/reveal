@@ -102,7 +102,7 @@ export class CadModelUpdateHandler {
 
         const simpleAndDetailedSectorsObservable = wantedSectors.pipe(
           flatMap(wantedSectorsArray => {
-            // TODO: 17-07-2020 j-bjorne adding a scheduled wrapping the from
+            // TODO: 17-07-2020 j-bjorne adding a scheduled wrapping the from, currently doesn't work
             return from(wantedSectorsArray).pipe(filterSimpleAndDetailed, filterUnloadedSectors, toArray());
           })
         );
