@@ -106,10 +106,8 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
     return viewInfo;
   }
 
-  public invalidate(value?: boolean): void
+  public invalidate(value: boolean = true): void
   {
-    if (value === undefined)
-      value = true;
     this._isInvalidated = value;
   }
 }
