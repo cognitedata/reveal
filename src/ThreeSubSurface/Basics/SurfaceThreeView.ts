@@ -25,7 +25,6 @@ import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { TextureKit } from "@/Three/Utilities/TextureKit";
 import { ContouringService } from "@/Core/Geometry/ContouringService";
-import { Ma } from '@/Core/Primitives/Ma';
 
 export class SurfaceThreeView extends BaseGroupThreeView
 {
@@ -110,7 +109,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
 
     if (style.colorType === ColorType.DepthColor && buffers.hasUvs)
     {
-      const texture = TextureKit.create1D(grid.getZRange());
+      const texture = TextureKit.create1D(grid.zRange);
       texture.anisotropy = 4;
       material.map = texture;
     }
@@ -161,34 +160,4 @@ function vertexShader(): string
   `;
 }
 
-function fragmentShader(): string
-{
-  return `
-      uniform vec3 colorA; 
-      uniform vec3 colorB; 
-      varying vec3 vUv;
 
-      void main() {
-        gl_FragColor = vec4(mix(colorA, colorB, 0.5), 1.0);
-      }
-  `;
-}
-
-function createShader(): THREE.ShaderMaterial
-{
-
-  const uniforms = {
-    colorB: { type: "vec3", value: new THREE.Color(0xFF00000) },
-    colorA: { type: "vec3", value: new THREE.Color(0x00FF000) }
-  };
-
-
-  const material = new THREE.ShaderMaterial({
-    uniforms,
-    vertexShader: vertexShader(),
-    //fragmentShader: fragmentShader(),
-    fragmentShader: THREE.ShaderLib.phong.fragmentShader,
-    lights: true,
-  });
-  return material;
-}

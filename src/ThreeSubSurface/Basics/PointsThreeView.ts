@@ -125,7 +125,7 @@ export class PointsThreeView extends BaseGroupThreeView
 
   private static createColors(points: Points): Uint8Array
   {
-    const zRange = points.getZRange();
+    const zRange = points.zRange;
     let index = 0;
 
     const colors = new Uint8Array(points.count * 3);

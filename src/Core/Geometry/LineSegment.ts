@@ -12,60 +12,66 @@
 //=====================================================================================
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import { Range1 } from "@/Core/Geometry/Range1";
-import { Range3 } from "@/Core/Geometry/Range3";
-import { Shape } from "@/Core/Geometry/Shape";
 
-export class Points extends Shape
+export class LineSegment3
 {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
 
-  public list: Vector3[] = [];
-  public get count(): number { return this.list.length; }
+  public origin: Vector3 = Vector3.newZero; // Min point
+  public vector: Vector3 = Vector3.newZero; // Unit vector in direction to max
+  public length = 0; // The distance between min and max
 
   //==================================================
-  // CONSTRUCTORS
+  // INSTANCE PROPERTIES
   //==================================================
 
-  public constructor() { super(); }
+  public get min(): Vector3 { return this.origin;}
+  public get max(): Vector3 { return Vector3.addWithFactor(this.origin, this.vector, this.length);}
 
   //==================================================
-  // OVERRIDES of Shape:
+  // CONSTRUCTOR
   //==================================================
 
-  public /*override*/ clone(): Shape
+  public constructor(min?: Vector3, max?: Vector3)
   {
-    const result = new Points();
-    result.list = [...this.list]; // This syntax sucks!
+    if (min == undefined || max == undefined)
+      return;
+    this.set(min, max);
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Getters
+  //==================================================
+
+  public getClosest(external: Vector3, result: Vector3): Vector3
+  {
+    result.copy(external);
+    result.substract(this.origin);
+
+    let t = this.vector.getDot(result);
+    if (t < 0)
+      t = 0;
+    else if (t > this.length)
+      t = this.length;
+
+    result.copy(this.vector);
+    result.multiplyScalar(t);
+    result.add(this.origin);
     return result;
   }
 
-  public/*override*/ expandBoundingBox(boundingBox: Range3): void
+  //==================================================
+  // INSTANCE METHODS: Setters
+  //==================================================
+
+  public set(min: Vector3, max: Vector3): void
   {
-    for (const point of this.list)
-      boundingBox.add(point);
-  }
-
-  //==================================================
-  // INSTANCE METHODS: Operations
-  //==================================================
-
-  public add(point: Vector3): void
-  {
-    this.list.push(point);
-  }
-
-  //==================================================
-  // STATIC METHODS: 
-  //==================================================
-
-  public static createByRandom(pointCount: number, boundingBox: Range3): Points
-  {
-    const result = new Points();
-    for (let i = 0; i < pointCount; i++)
-      result.add(Vector3.getRandom(boundingBox));
-    return result;
+    this.origin.copy(min);
+    this.vector.copy(max);
+    this.vector.substract(min);
+    this.length = this.vector.length;
+    this.vector.divideScalar(this.length);
   }
 }

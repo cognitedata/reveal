@@ -11,12 +11,15 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import * as Lodash from 'lodash';
+
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Range1 } from "@/Core/Geometry/Range1";
 import { Range3 } from "@/Core/Geometry/Range3";
 import { Index2 } from "@/Core/Geometry/Index2";
 import { Grid2 } from "@/Core/Geometry/Grid2";
 import { Random } from "@/Core/Primitives/Random";
+import { Shape } from "@/Core/Geometry/Shape";
 
 export class RegularGrid2 extends Grid2
 {
@@ -79,6 +82,25 @@ export class RegularGrid2 extends Grid2
   //==================================================
 
   public /*override*/ toString(): string { return `nodeSize: (${this.nodeSize}) origin: (${this.origin.x}, ${this.origin.y}) inc: (${this.inc.x}, ${this.inc.y})`; }
+
+  //==================================================
+  // OVERRIDES of Shape
+  //==================================================
+
+  public /*override*/ clone(): Shape { return Lodash.cloneDeep(this); }
+
+  public expandBoundingBox(boundingBox: Range3): void
+  {
+    const position = Vector3.newZero;
+    for (let j = this.nodeSize.j - 1; j >= 0; j--)
+    {
+      for (let i = this.nodeSize.i - 1; i >= 0; i--)
+      {
+        if (this.getPosition(i, j, position))
+          boundingBox.add(position)
+      }
+    }
+  }
 
   //==================================================
   // INSTANCE METHODS: Requests
@@ -220,15 +242,7 @@ export class RegularGrid2 extends Grid2
     return result;
   }
 
-  public getZRange(): Range1
-  {
-    const range = new Range1();
-    for (const z of this._buffer)
-      range.add(z);
-    return range;
-  }
-
-  public getRange(): Range3
+  public getCornerRange(): Range3
   {
     const corner = Vector3.newZero;
     const range = new Range3();
@@ -239,7 +253,6 @@ export class RegularGrid2 extends Grid2
     range.add(corner);
     this.getPosition2(this.nodeSize.i - 1, this.nodeSize.j - 1, corner);
     range.add(corner);
-    range.z = this.getZRange();
     return range;
   }
 
@@ -264,7 +277,7 @@ export class RegularGrid2 extends Grid2
 
   public normalizeZ(wantedRange?: Range1): void
   {
-    const currentRange = this.getZRange();
+    const currentRange = this.zRange;
     for (let i = this._buffer.length - 1; i >= 0; i--)
     {
       let z = this._buffer[i];
@@ -273,6 +286,7 @@ export class RegularGrid2 extends Grid2
         z = wantedRange.getValue(z);
       this._buffer[i] = z;
     }
+    this.touch();
   }
 
   public smoothSimple(numberOfPasses: number = 1): void
@@ -316,6 +330,7 @@ export class RegularGrid2 extends Grid2
         }
       [this._buffer, buffer] = [buffer, this._buffer]; // Swap buffers
     }
+    this.touch();
   }
 
   //==================================================

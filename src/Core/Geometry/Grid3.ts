@@ -13,8 +13,10 @@
 //=====================================================================================
 
 import { Index3 } from "@/Core/Geometry/Index3";
+import { Shape } from "@/Core/Geometry/Shape";
+import { Range3 } from "@/Core/Geometry/Range3";
 
-export class Grid3
+export class Grid3 extends Shape 
 {
   //==================================================
   // INSTANCE FIELDS
@@ -27,13 +29,21 @@ export class Grid3
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(numNodes: Index3)
+  public constructor(nodeSize: Index3)
   {
-    this.nodeSize = numNodes.clone();
-    this.cellSize = numNodes.clone();
+    super();
+    this.nodeSize = nodeSize.clone();
+    this.cellSize = nodeSize.clone();
     this.cellSize.i--;
     this.cellSize.j--;
   }
+
+  //==================================================
+  // OVERRIDES of Shape:
+  //==================================================
+
+  public /*override*/ clone(): Shape { return new Grid3(this.nodeSize); }
+  public/*override*/ expandBoundingBox(boundingBox: Range3): void { }
 
   //==================================================
   // INSTANCE METHODS: Getters

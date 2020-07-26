@@ -57,7 +57,7 @@ export class SeismicCubeNode extends DataNode
 
   public /*override*/ getIcon(): string { return SurfaceNodeIcon }
 
-  public /*override*/ get boundingBox(): Range3 { return this.seismicCube ? this.seismicCube.getRange() : new Range3(); }
+  public /*override*/ get boundingBox(): Range3 { return this.seismicCube ? this.seismicCube.boundingBox : new Range3(); }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {

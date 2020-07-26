@@ -11,67 +11,56 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Vector3 } from "@/Core/Geometry/Vector3";
+import { Range3 } from "@/Core/Geometry/Range3";
+import { Range1 } from "@/Core/Geometry/Range1";
 
-export class LineSegment
+export abstract class Shape
 {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
 
-  public origin: Vector3 = Vector3.newZero; // Min point
-  public vector: Vector3 = Vector3.newZero; // Unit vector in direction to max
-  public length = 0; // The distance between min and max
+  private _boundingBox: Range3 | undefined;
 
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get min(): Vector3 { return this.origin;}
-  public get max(): Vector3 { return Vector3.addWithFactor(this.origin, this.vector, this.length);}
+  public get zRange(): Range1 { return this.boundingBox.z; }
 
-  //==================================================
-  // CONSTRUCTOR
-  //==================================================
-
-  public constructor(min?: Vector3, max?: Vector3)
+  public get boundingBox(): Range3
   {
-    if (min == undefined || max == undefined)
-      return;
-    this.set(min, max);
+    if (!this._boundingBox)
+      this._boundingBox = this.calculateBoundingBox();
+    return this._boundingBox;
   }
 
   //==================================================
-  // INSTANCE METHODS: Getters
+  // CONSTRUCTORS
   //==================================================
 
-  public getClosest(external: Vector3, result: Vector3): Vector3
+  public constructor() { }
+
+  //==================================================
+  // VIRTUAL METHODS:
+  //==================================================
+
+  public abstract clone(): Shape;
+  public abstract expandBoundingBox(boundingBox: Range3): void;
+
+  //==================================================
+  // INSTANCE METHODS: Md range
+  //==================================================
+
+  public calculateBoundingBox(): Range3
   {
-    result.copy(external);
-    result.substract(this.origin);
-
-    let t = this.vector.getDot(result);
-    if (t < 0)
-      t = 0;
-    else if (t > this.length)
-      t = this.length;
-
-    result.copy(this.vector);
-    result.multiplyScalar(t);
-    result.add(this.origin);
-    return result;
+    const boundingBox = new Range3();
+    this.expandBoundingBox(boundingBox);
+    return boundingBox;
   }
 
-  //==================================================
-  // INSTANCE METHODS: Setters
-  //==================================================
-
-  public set(min: Vector3, max: Vector3): void
+  public touch(): void
   {
-    this.origin.copy(min);
-    this.vector.copy(max);
-    this.vector.substract(min);
-    this.length = this.vector.length;
-    this.vector.divideScalar(this.length);
+    this._boundingBox = undefined;
   }
 }

@@ -59,7 +59,7 @@ export class SurfaceNode extends DataNode
 
   public /*override*/ getIcon(): string { return SurfaceNodeIcon }
 
-  public /*override*/ get boundingBox(): Range3 { return this.surface ? this.surface.getRange() : new Range3(); }
+  public /*override*/ get boundingBox(): Range3 { return this.surface ? this.surface.boundingBox : new Range3(); }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
