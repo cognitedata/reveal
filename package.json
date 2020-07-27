@@ -57,7 +57,7 @@
     "eslint-plugin-testing-library": "^3.3.2",
     "husky": "^4.2.5",
     "jest-environment-jsdom-sixteen": "^1.0.3",
-    "jest-junit": "^11.0.1",
+    "jest-junit": "^11.1.0",
     "prettier": "^2.0.5",
     "pretty-quick": "^2.0.1",
     "sinon": "^9.0.2",
