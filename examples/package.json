@@ -29,6 +29,7 @@
     "@cognite/sdk": "link:../viewer/node_modules/@cognite/sdk",
     "camera-controls": "^1.22.1",
     "dat.gui": "^0.7.7",
+    "gl-matrix": "^3.3.0",
     "hold-event": "^0.0.1",
     "install": "^0.13.0",
     "react": "^16.13.1",
