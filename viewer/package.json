@@ -1,6 +1,6 @@
 {
-  "name": "@cognite/reveal",
-  "version": "1.0.0-alpha-5",
+  "name": "mn-reveal-worker-test",
+  "version": "0.0.8",
   "private": true,
   "description": "WebGL based 3D viewer for CAD and point clouds processed in Cognite CDF.",
   "repository": {
@@ -25,7 +25,7 @@
     "lint": "eslint . --ext .ts,.js --max-warnings 0 && yarn run tsc",
     "lint:fix": "eslint . --ext .ts,.js --max-warnings 0 --fix",
     "tsc": "tsc --noEmit --incremental false --skipLibCheck true",
-    "prepublishscript": "yarn run release && yarn run coverage",
+    "prepublishscript": "yarn run build",
     "publishscript": "node script/copyPackage.js",
     "postpublishscript": "cd dist && yarn publish"
   },

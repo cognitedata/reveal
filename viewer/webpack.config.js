@@ -131,10 +131,9 @@ module.exports = env => {
     entry: {
       'reveal.parser.worker': './src/utilities/workers/reveal.parser.worker.ts'
     },
-    target: 'webworker',
     output: {
       ...mainConfig.output,
-      globalObject: 'self || this'
+      globalObject: `(typeof self !== 'undefined' ? self : this)`
     },
     plugins: mainConfig.plugins.concat(
       new WasmPackPlugin({

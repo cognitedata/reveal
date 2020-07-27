@@ -32,15 +32,20 @@ export class WorkerPool {
     const numberOfWorkers = this.determineNumberOfWorkers();
     const workerCdnUrl = __webpack_public_path__ + 'reveal.parser.worker.js';
 
-    for (let i = 0; i < numberOfWorkers; i++) {
-      const newWorker = {
-        // NOTE: As of Comlink 4.2.0 we need to go through unknown before RevealParserWorker
-        // Please feel free to remove `as unknown` if possible.
-        worker: (Comlink.wrap(new Worker(getWorkerURL(workerCdnUrl))) as unknown) as RevealParserWorker,
-        activeJobCount: 0,
-        messageIdCounter: 0
-      };
-      this.workerList.push(newWorker);
+    try {
+      for (let i = 0; i < numberOfWorkers; i++) {
+        const newWorker = {
+          // NOTE: As of Comlink 4.2.0 we need to go through unknown before RevealParserWorker
+          // Please feel free to remove `as unknown` if possible.
+          worker: (Comlink.wrap(new Worker(getWorkerURL(workerCdnUrl))) as unknown) as RevealParserWorker,
+          activeJobCount: 0,
+          messageIdCounter: 0
+        };
+        this.workerList.push(newWorker);
+      }
+    } catch (e) {
+      console.error(e);
+      throw e;
     }
 
     URL.revokeObjectURL(workerCdnUrl);
