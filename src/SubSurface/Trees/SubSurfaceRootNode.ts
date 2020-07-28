@@ -20,6 +20,7 @@ import { AxisNode } from "@/Core/Nodes/Decorations/AxisNode";
 
 import { OthersTreeNode } from "@/SubSurface/Trees/OthersTreeNode";
 import RootNodeIcon from "@images/Nodes/RootNode.png";
+import { SeismicTreeNode } from "@/SubSurface/Trees/SeismicTreeNode";
 
 export class SubSurfaceRootNode extends BaseRootNode
 {
@@ -38,6 +39,14 @@ export class SubSurfaceRootNode extends BaseRootNode
     const child = this.getChildByType(WellTreeNode);
     if (!child)
       throw new Error("Cannot find the " + WellTreeNode.className);
+    return child;
+  }
+
+  public get seismic(): SeismicTreeNode
+  {
+    const child = this.getChildByType(SeismicTreeNode);
+    if (!child)
+      throw new Error("Cannot find the " + SeismicTreeNode.className);
     return child;
   }
 
@@ -87,17 +96,19 @@ export class SubSurfaceRootNode extends BaseRootNode
   protected /*override*/ initializeCore(): void
   {
     super.initializeCore();
+    if (!this.hasChildByType(SeismicTreeNode))
+      this.addChild(new SeismicTreeNode());
     if (!this.hasChildByType(WellTreeNode))
       this.addChild(new WellTreeNode());
-
-    if (!this.targets.hasChildByType(AxisNode))
-      this.targets.addChild(new AxisNode());
-
     if (!this.hasChildByType(OthersTreeNode))
       this.addChild(new OthersTreeNode());
     if (!this.hasChildByType(ColorMapTreeNode))
       this.addChild(new ColorMapTreeNode());
     if (!this.hasChildByType(SettingsTreeNode))
       this.addChild(new SettingsTreeNode());
+
+    if (!this.targets.hasChildByType(AxisNode))
+      this.targets.addChild(new AxisNode());
+
   }
 }

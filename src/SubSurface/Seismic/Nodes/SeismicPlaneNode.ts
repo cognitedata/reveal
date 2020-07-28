@@ -42,7 +42,7 @@ export class SeismicPlaneNode extends BaseVisualNode
     {
       case 0: return "I"; // Inline
       case 1: return "X"; // X-line
-      case 2: return "T"; //Time slice
+      case 2: return "T"; // Time slice
       default: return "A";
     }
   }

@@ -97,7 +97,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     if (this._transformer.zScale == value)
       return;
 
-      // Clear the views
+    // Clear the views
     this._transformer.zScale = value;
     for (const view of this.viewsShownHere.list)
     {
@@ -189,6 +189,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     if (this._cameraControl)
       this._cameraControl.onResize(this.aspectRatio);
     this.invalidate();
+    this._prevPixelRange = pixelRange;
   }
 
   public  /*override*/ viewAll(): boolean
@@ -225,12 +226,17 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   // INSTANCE METHODS: Render
   //==================================================
 
+  private _prevPixelRange: Range3 = new Range3();
+
   private render(): void
   {
     requestAnimationFrame(() => { this.render(); });
 
     if (!this.isInitialized)
       return;
+
+    if (!this.pixelRange.isEqual(this._prevPixelRange))
+      this.onResize();
 
     const controls = this.controls;
     let needsUpdate = true;
@@ -239,25 +245,25 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
       const delta = this.clock.getDelta();
       needsUpdate = controls.update(delta);
     }
-    if (this.isInvalidated || needsUpdate)
-    {
-      this.updateNearAndFarPlane();
+    if (!this.isInvalidated && !needsUpdate)
+      return;
 
-      if (this.isEmpty)
-        this.isEmpty = !this.viewFrom(-1);
+    this.updateNearAndFarPlane();
 
-      const hasAxis = this.hasViewOfNodeType(AxisNode);
-      this.scene.background = ThreeConverter.to3DColor(this.getBgColor(hasAxis));
+    if (this.isEmpty)
+      this.isEmpty = !this.viewFrom(-1);
 
-      for (const view of this.viewsShownHere.list)
-        view.beforeRender();
+    const hasAxis = this.hasViewOfNodeType(AxisNode);
+    this.scene.background = ThreeConverter.to3DColor(this.getBgColor(hasAxis));
 
-      this.renderer.render(this.scene, this.camera);
+    for (const view of this.viewsShownHere.list)
+      view.beforeRender();
 
-      const viewInfo = this.fillViewInfo();
-      this._overlay.render(this.renderer, viewInfo, this.pixelRange.delta, this.fgColor, this.bgColor);
-      this.invalidate(false);
-    }
+    this.renderer.render(this.scene, this.camera);
+
+    const viewInfo = this.fillViewInfo();
+    this._overlay.render(this.renderer, viewInfo, this.pixelRange.delta, this.fgColor, this.bgColor);
+    this.invalidate(false);
   }
 
   //==================================================
@@ -314,7 +320,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     const pixelYRange = this.pixelRange.y.max - this.pixelRange.y.min;
 
     // Set camera status to match with previous selected camera
-    !isPerspectiveMode && this.cameraControl.controls.zoomTo(pixelYRange/boundingBoxZRange);
+    !isPerspectiveMode && this.cameraControl.controls.zoomTo(pixelYRange / boundingBoxZRange);
     this._cameraControl.controls.rotateTo(azimuthAngle, polarAngle, false);
     this._cameraControl.viewRange(boundingBox)
   }

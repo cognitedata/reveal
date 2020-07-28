@@ -39,6 +39,5 @@ function addRenderTarget(element: HTMLElement, root: BaseRootNode)
 
   root.targets.addChild(target);
   target.setActiveInteractive();
-  target.onResize();
 }
 

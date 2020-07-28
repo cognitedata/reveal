@@ -11,17 +11,16 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { FilterLogFolder } from "@/SubSurface/Wells/Filters/FilterLogFolder";
-import WellNodeIcon from "@images/Nodes/WellNode.png";
-import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
+import SurfaceNodeIcon from "@images/Nodes/SurfaceNode.png";
+import { BaseNode } from "@/Core/Nodes/BaseNode";
 
-export class WellTreeNode extends BaseTreeNode
+export class SeismicPlaneFolder extends BaseNode
 {
   //==================================================
   // STATIC FIELDS
   //==================================================
 
-  static className = "WellTreeNode";
+  static className = "SeismicPlaneFolder";
 
   //==================================================
   // CONSTRUCTORS
@@ -33,31 +32,15 @@ export class WellTreeNode extends BaseTreeNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return WellTreeNode.className; }
-  public /*override*/ isA(className: string): boolean { return className === WellTreeNode.className || super.isA(className); }
+  public /*override*/ get className(): string { return SeismicPlaneFolder.className; }
+  public /*override*/ isA(className: string): boolean { return className === SeismicPlaneFolder.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "WellTree" }
-  public /*override*/ getIcon(): string { return WellNodeIcon }
-  public /*override*/ getName(): string { return "Wells" }
-  public /*override*/ get isTab(): boolean { return true; }
-
-  //==================================================
-  // INSTANCE METHODS
-  //==================================================
-
-  public synchronize(): void
-  {
-    let filterLogFolder = this.getChildByType(FilterLogFolder);
-    if (!filterLogFolder)
-    {
-      filterLogFolder = new FilterLogFolder();
-      this.addChild(filterLogFolder, true);
-      filterLogFolder.initialize();
-    }
-    filterLogFolder.synchronize();
-  }
+  public /*override*/ get typeName(): string { return "Planes" }
+  public /*override*/ canChangeName(): boolean { return false; }
+  public /*override*/ canChangeColor(): boolean { return false; }
+  public /*override*/ getIcon(): string { return SurfaceNodeIcon }
 }
