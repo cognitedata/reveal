@@ -87,13 +87,10 @@ export class ThreeModule extends BaseModule
 
   public initializeWhenPopulated(root: BaseRootNode): void
   {
-    for (const target of root.targets.getChildrenByType(BaseRenderTargetNode))
-      target.onResize();
-
     document.body.onresize = () =>
     {
       for (const target of root.targets.getChildrenByType(BaseRenderTargetNode))
-        target.onResize();
+        target.invalidate();
     };
   }
 

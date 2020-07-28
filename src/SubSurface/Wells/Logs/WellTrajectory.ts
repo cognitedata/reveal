@@ -25,7 +25,7 @@ import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { TrajectorySample } from "@/SubSurface/Wells/Samples/TrajectorySample";
 import { MdSamples } from "@/SubSurface/Wells/Logs/MdSamples";
 import { RenderSample } from "@/SubSurface/Wells/Samples/RenderSample";
-import { LineSegment } from '@/Core/Geometry/LineSeg3';
+import { LineSegment3 } from '@/Core/Geometry/LineSegment';
 
 export class WellTrajectory extends MdSamples
 {
@@ -33,7 +33,7 @@ export class WellTrajectory extends MdSamples
   // INSTANCE FIELDS
   //==================================================
 
-  private _range: Range3 | undefined;
+  private _boundingBox: Range3 | undefined;
 
   //==================================================
   // INSTANCE FIELDS
@@ -45,14 +45,14 @@ export class WellTrajectory extends MdSamples
   // INSTANCE METHODS: Range
   //==================================================
 
-  public get range(): Range3
+  public get boundingBox(): Range3
   {
-    if (!this._range)
-      this._range = this.calculateRange();
-    return this._range;
+    if (!this._boundingBox)
+      this._boundingBox = this.calculateBoundingBox();
+    return this._boundingBox;
   }
 
-  public calculateRange(): Range3
+  public calculateBoundingBox(): Range3
   {
     const range = new Range3();
     this.expandRange(range);
@@ -62,7 +62,7 @@ export class WellTrajectory extends MdSamples
   public touch(): void
   {
     super.touch();
-    this._range = undefined;
+    this._boundingBox = undefined;
   }
 
   public expandRange(range: Range3): void
@@ -206,7 +206,7 @@ export class WellTrajectory extends MdSamples
 
   public getClosestMd(position: Vector3): number
   {
-    const lineSegment = new LineSegment();
+    const lineSegment = new LineSegment3();
     let closestPoint: Vector3 | null = null
     let closestDistance = Number.MAX_VALUE;
     let index = -1;
@@ -305,51 +305,4 @@ export class WellTrajectory extends MdSamples
     }
     return trajectory;
   }
-
-  //public getStartIndexAboveMd(md: number): number
-  //{
-  //  const maxIndex = this.samples.length - 1;
-  //  if (maxIndex < 0)
-  //    return -1;
-
-  //  if (md < this.samples[0].md)
-  //    return -1;
-
-  //  if (this.samples[maxIndex].md < md)
-  //    return maxIndex;
-
-  //  const index = this.binarySearch(md);
-  //  if (index >= 0)
-  //    return index;
-
-  //  return ~index;
-  //}
-
-  //public getNextIndexAboveMd(index: number, md: number): [number, Vector3]
-  //{
-  //  if (index < 0)
-  //  {
-  //    index = this.getStartIndexAboveMd(md);
-  //    if (index < 0)
-  //      return [-1, Vector3.newEmpty];
-  //  }
-  //  const maxIndex = this.samples.length - 1;
-  //  if (index === maxIndex)
-  //    return [Number.MAX_VALUE, Vector3.newEmpty];
-
-
-  //  for (index + 1; index < maxIndex; index++)
-  //  {
-  //    const maxSample = this.samples[index] as TrajectorySample;
-  //    if (md <= maxSample.md)
-  //    {
-  //      const minSample = this.samples[index - 1] as TrajectorySample;
-  //      const remainder = (md - minSample.md) / (maxSample.md - minSample.md);
-  //      return [index, Vector3.lerp(minSample.point, maxSample.point, remainder)];
-  //    }
-  //  }
-  //  return [Number.MAX_VALUE, Vector3.newEmpty];
-  //}
-
-
 }

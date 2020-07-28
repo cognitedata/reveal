@@ -266,7 +266,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       const cameraPosition = transformer.toWorld(camera.position);
       cameraPosition.substract(wellNode.origin);
 
-      const cameraDirection = trajectory.range.center;
+      const cameraDirection = trajectory.boundingBox.center;
 
       transformer.transformRelativeTo3D(cameraPosition);
       transformer.transformRelativeTo3D(cameraDirection);

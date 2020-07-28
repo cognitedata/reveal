@@ -42,5 +42,5 @@ export class OthersTreeNode extends BaseTreeNode
   public /*override*/ get typeName(): string { return "OthersTree" }
   public /*override*/ getIcon(): string { return FolderNodeIcon }
   public /*override*/ getName(): string { return "Others" }
-  public /*virtual*/ get isTab(): boolean { return true; }
+  public /*override*/ get isTab(): boolean { return true; }
 }

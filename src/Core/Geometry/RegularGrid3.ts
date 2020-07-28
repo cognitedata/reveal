@@ -11,10 +11,13 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import * as Lodash from 'lodash';
+
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Range3 } from "@/Core/Geometry/Range3";
 import { Index3 } from "@/Core/Geometry/Index3";
 import { Grid3 } from "@/Core/Geometry/Grid3";
+import { Shape } from "@/Core/Geometry/Shape";
 
 export class RegularGrid3 extends Grid3
 {
@@ -73,6 +76,17 @@ export class RegularGrid3 extends Grid3
   public /*override*/ toString(): string { return `nodeSize: ${this.nodeSize} origin: ${this.origin} inc: ${this.inc} rotationAngle: ${this.rotationAngle}`; }
 
   //==================================================
+  // OVERRIDES of Shape
+  //==================================================
+
+  public /*override*/ clone(): Shape { return Lodash.cloneDeep(this); }
+
+  public expandBoundingBox(boundingBox: Range3): void
+  {
+    boundingBox.addRange(this.getCornerRange());
+  }
+
+  //==================================================
   // INSTANCE METHODS: Getters
   //==================================================
 
@@ -111,7 +125,7 @@ export class RegularGrid3 extends Grid3
     this.getRelativeNodePosition(i + 0.5, j + 0.5, k + 0.5, result);
   }
 
-  public getRange(): Range3
+  public getCornerRange(): Range3
   {
     const corner = Vector3.newZero;
     const range = new Range3();

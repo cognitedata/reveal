@@ -17,17 +17,22 @@ import { v4 as uuid } from "uuid";
 export class UniqueId
 {
   //==================================================
+  // STATIC FIELDS
+  //==================================================
+
+  public static readonly empty = new UniqueId(); 
+  public static new(): UniqueId { return new UniqueId(uuid()); }
+
+  //==================================================
   // INSTANCE FIELDS
   //==================================================
 
   private _id: string | undefined;
-  public static readonly empty = new UniqueId();
 
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public static new(): UniqueId { return new UniqueId(uuid()); }
   public get isEmpty(): boolean { return (!this._id || this._id === ""); }
   public /*override*/ toString(): string { return `${this._id}`; }
 
@@ -35,7 +40,7 @@ export class UniqueId
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(id?: string) { this._id = id; }
+  private constructor(id?: string) { this._id = id; }
 
   public /*copy constructor*/ clone(): UniqueId { return new UniqueId(this._id); }
 
@@ -44,5 +49,6 @@ export class UniqueId
   //==================================================
 
   public equals(other: UniqueId): boolean { return this._id === other._id; }
+  public equalString(other: string): boolean { return this._id ? this._id === other : false; }
 }
 

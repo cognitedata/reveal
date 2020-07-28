@@ -14,6 +14,7 @@
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Points } from "@/Core/Geometry/Points";
 import { Range3 } from "@/Core/Geometry/Range3";
+import { Shape } from "@/Core/Geometry/Shape";
 
 export class Polyline extends Points
 {
@@ -22,6 +23,17 @@ export class Polyline extends Points
   //==================================================
 
   public constructor() { super(); }
+
+  //==================================================
+  // OVERRIDES of Shape:
+  //==================================================
+
+  public /*override*/ clone(): Shape
+  {
+    const result = new Polyline();
+    result.list = [...this.list]; // This syntax sucks!
+    return result;
+  }
 
   //==================================================
   // STATIC METHODS: 

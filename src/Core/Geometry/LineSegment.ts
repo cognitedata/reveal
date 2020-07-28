@@ -11,53 +11,67 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { FilterLogFolder } from "@/SubSurface/Wells/Filters/FilterLogFolder";
-import WellNodeIcon from "@images/Nodes/WellNode.png";
-import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
+import { Vector3 } from "@/Core/Geometry/Vector3";
 
-export class WellTreeNode extends BaseTreeNode
+export class LineSegment3
 {
   //==================================================
-  // STATIC FIELDS
+  // INSTANCE FIELDS
   //==================================================
 
-  static className = "WellTreeNode";
+  public origin: Vector3 = Vector3.newZero; // Min point
+  public vector: Vector3 = Vector3.newZero; // Unit vector in direction to max
+  public length = 0; // The distance between min and max
 
   //==================================================
-  // CONSTRUCTORS
+  // INSTANCE PROPERTIES
   //==================================================
 
-  public constructor() { super(); }
+  public get min(): Vector3 { return this.origin;}
+  public get max(): Vector3 { return Vector3.addWithFactor(this.origin, this.vector, this.length);}
 
   //==================================================
-  // OVERRIDES of Identifiable
+  // CONSTRUCTOR
   //==================================================
 
-  public /*override*/ get className(): string { return WellTreeNode.className; }
-  public /*override*/ isA(className: string): boolean { return className === WellTreeNode.className || super.isA(className); }
-
-  //==================================================
-  // OVERRIDES of BaseNode
-  //==================================================
-
-  public /*override*/ get typeName(): string { return "WellTree" }
-  public /*override*/ getIcon(): string { return WellNodeIcon }
-  public /*override*/ getName(): string { return "Wells" }
-  public /*override*/ get isTab(): boolean { return true; }
-
-  //==================================================
-  // INSTANCE METHODS
-  //==================================================
-
-  public synchronize(): void
+  public constructor(min?: Vector3, max?: Vector3)
   {
-    let filterLogFolder = this.getChildByType(FilterLogFolder);
-    if (!filterLogFolder)
-    {
-      filterLogFolder = new FilterLogFolder();
-      this.addChild(filterLogFolder, true);
-      filterLogFolder.initialize();
-    }
-    filterLogFolder.synchronize();
+    if (min == undefined || max == undefined)
+      return;
+    this.set(min, max);
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Getters
+  //==================================================
+
+  public getClosest(external: Vector3, result: Vector3): Vector3
+  {
+    result.copy(external);
+    result.substract(this.origin);
+
+    let t = this.vector.getDot(result);
+    if (t < 0)
+      t = 0;
+    else if (t > this.length)
+      t = this.length;
+
+    result.copy(this.vector);
+    result.multiplyScalar(t);
+    result.add(this.origin);
+    return result;
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Setters
+  //==================================================
+
+  public set(min: Vector3, max: Vector3): void
+  {
+    this.origin.copy(min);
+    this.vector.copy(max);
+    this.vector.substract(min);
+    this.length = this.vector.length;
+    this.vector.divideScalar(this.length);
   }
 }

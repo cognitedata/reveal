@@ -18,6 +18,13 @@ import { Ma } from "@/Core/Primitives/Ma";
 export class Vector3
 {
   //==================================================
+  // STATIC PROPERTIES
+  //==================================================
+  public static get newUp(): Vector3 { return new Vector3(0, 0, 1); }
+  public static get newZero(): Vector3 { return new Vector3(0, 0, 0); }
+  public static get newEmpty(): Vector3 { return new Vector3(Number.NaN, Number.NaN, Number.NaN); }
+  
+  //==================================================
   // INSTANCE FIELDS
   //==================================================
 
@@ -29,9 +36,6 @@ export class Vector3
   // INSTANCE PROPERTIES
   //==================================================
 
-  public static get newUp(): Vector3 { return new Vector3(0, 0, 1); }
-  public static get newZero(): Vector3 { return new Vector3(0, 0, 0); }
-  public static get newEmpty(): Vector3 { return new Vector3(Number.NaN, Number.NaN, Number.NaN); }
   public get squareLength(): number { return this.x * this.x + this.y * this.y + this.z * this.z; }
   public get length(): number { return Math.sqrt(this.squareLength); }
   public get isEmpty(): boolean { return isNaN(this.x) || isNaN(this.y) || isNaN(this.z); }

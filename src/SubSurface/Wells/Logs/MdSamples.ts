@@ -132,7 +132,7 @@ export abstract class MdSamples
     samples.sort(MdSample.compareMd);
   }
 
-  protected binarySearch(md: number): number
+  public binarySearch(md: number): number
   {
     const seachSample = new MdSample(md);
     return Ma.binarySearch(this.samples, seachSample, MdSample.compareMd);

@@ -64,7 +64,7 @@ export class WellTrajectoryNode extends DataNode
 
   public /*override*/ getIcon(): string { return WellTrajectoryNodeIcon }
 
-  public /*override*/ get boundingBox(): Range3 { return this.trajectory ? this.trajectory.range : new Range3(); }
+  public /*override*/ get boundingBox(): Range3 { return this.trajectory ? this.trajectory.boundingBox : new Range3(); }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
@@ -103,7 +103,7 @@ export class WellTrajectoryNode extends DataNode
       return;
 
     folder.addReadOnlyRange1("Md", trajectory.mdRange, 2);
-    folder.addReadOnlyRange3("", trajectory.range, 2);
+    folder.addReadOnlyRange3("", trajectory.boundingBox, 2);
   }
 
   //==================================================

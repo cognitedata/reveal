@@ -56,7 +56,7 @@ export class PointsNode extends DataNode
 
   public /*override*/ get typeName(): string { return "Points" }
   public /*override*/ getIcon(): string { return PointsNodeIcon }
-  public /*override*/ get boundingBox(): Range3 { return this.points ? this.points.getRange() : new Range3(); }
+  public /*override*/ get boundingBox(): Range3 { return this.points ? this.points.boundingBox : new Range3(); }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {

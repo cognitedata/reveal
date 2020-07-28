@@ -34,6 +34,11 @@ import { IDataLoader } from "@/Core/Interfaces/IDataLoader";
 import { DataNode } from "@/Core/Nodes/DataNode";
 import { Ma } from '@/Core/Primitives/Ma';
 import { CasingLog } from '@/SubSurface/Wells/Logs/CasingLog';
+import { SurveyNode } from "@/SubSurface/Seismic/Nodes/SurveyNode";
+import { SeismicCube } from "@/SubSurface/Seismic/Data/SeismicCube";
+import { SeismicCubeNode } from "@/SubSurface/Seismic/Nodes/SeismicCubeNode";
+import { SeismicPlaneNode } from "@/SubSurface/Seismic/Nodes/SeismicPlaneNode";
+import { SeismicPlaneFolder } from "@/SubSurface/Seismic/Nodes/SeismicPlaneFolder";
 
 // import { CogniteSeismicClient } from '@cognite/seismic-sdk-js'
 
@@ -51,13 +56,14 @@ export class SyntheticSubSurfaceModule extends BaseModule
 
   public /*override*/ loadData(root: BaseRootNode): void
   {
+    SyntheticSubSurfaceModule.addSeismic(root);
     SyntheticSubSurfaceModule.addWells(root);
-    //SyntheticSubSurfaceModule.addSurfaces(root);
+    SyntheticSubSurfaceModule.addSurfaces(root);
   }
 
   public /*override*/ setDefaultVisible(root: BaseRootNode): void
   {
-    SyntheticSubSurfaceModule.setWellsAndLogsVisible(root);
+    //SyntheticSubSurfaceModule.setWellsAndLogsVisible(root);
     //SyntheticSubSurfaceModule.setSurfacesVisible(root);
   }
 
@@ -230,15 +236,35 @@ export class SyntheticSubSurfaceModule extends BaseModule
     }
   }
 
-  // private static addSeismicData(root: BaseRootNode): void
-  // {
-  //   const apiKey = process.env.REACT_APP_API_KEY as string;
-  //   const client = new CogniteSeismicClient(apiKey, "greenfield.cognitedata.com");
-  //   const file = client.file.getFileDataCoverage("1a25d4cc-4d19-4c0d-a9f3-7fea853020f7", "EPSG:32631");
+  private static addSeismic(root: BaseRootNode): void
+  {
+    //   const apiKey = process.env.REACT_APP_API_KEY as string;
+    //   const client = new CogniteSeismicClient(apiKey, "greenfield.cognitedata.com");
+    //   const file = client.file.getFileDataCoverage("1a25d4cc-4d19-4c0d-a9f3-7fea853020f7", "EPSG:32631");
 
-  //   file.then((result) => { console.log(result) } );
-  
-  // }
+    //   file.then((result) => { console.log(result) } );
+    if (!(root instanceof SubSurfaceRootNode))
+      return;
+
+    const seismicTree = root.seismic;
+
+    const survey = new SurveyNode();
+    const seismicCubeNode = new SeismicCubeNode();
+    survey.addChild(seismicCubeNode);
+
+    const seismicPlaneFolder = new SeismicPlaneFolder();
+    const seismicPlaneNode1 = new SeismicPlaneNode();
+    const seismicPlaneNode2 = new SeismicPlaneNode();
+    const seismicPlaneNode3 = new SeismicPlaneNode();
+    
+    seismicPlaneFolder.addChild(seismicPlaneNode1);
+    seismicPlaneFolder.addChild(seismicPlaneNode2);
+    seismicPlaneFolder.addChild(seismicPlaneNode3);
+    
+    survey.addChild(seismicPlaneFolder);
+
+    seismicTree.addChild(survey);
+  }
 
   //==================================================
   // STATIC METHODS: Others

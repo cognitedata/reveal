@@ -6,7 +6,7 @@ import BPDataModule from "@/Solutions/BP/BPDataModule";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import { SyntheticSubSurfaceModule } from "@/SubSurface/SyntheticSubSurfaceModule";
 
-const LOAD_MOCK_DATA = true;
+const LOAD_MOCK_DATA = false;
 
 /**
  * App component acts as a container application. Eg- BP

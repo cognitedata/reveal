@@ -58,7 +58,7 @@ export class PolylinesNode extends DataNode
 
   public /*override*/ getIcon(): string { return PolylinesNodeIcon }
 
-  public /*override*/ get boundingBox(): Range3 { return this.polylines ? this.polylines.getRange() : new Range3(); }
+  public /*override*/ get boundingBox(): Range3 { return this.polylines ? this.polylines.boundingBox : new Range3(); }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {

@@ -14,8 +14,9 @@
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Range1 } from "@/Core/Geometry/Range1";
 import { Range3 } from "@/Core/Geometry/Range3";
+import { Shape } from "@/Core/Geometry/Shape";
 
-export class Points
+export class Points extends Shape
 {
   //==================================================
   // INSTANCE FIELDS
@@ -28,33 +29,23 @@ export class Points
   // CONSTRUCTORS
   //==================================================
 
-  public constructor() { }
+  public constructor() { super(); }
 
-  public clone(): Points
+  //==================================================
+  // OVERRIDES of Shape:
+  //==================================================
+
+  public /*override*/ clone(): Shape
   {
     const result = new Points();
     result.list = [...this.list]; // This syntax sucks!
     return result;
   }
 
-  //==================================================
-  // INSTANCE METHODS: Getters
-  //==================================================
-
-  public getZRange(): Range1
+  public/*override*/ expandBoundingBox(boundingBox: Range3): void
   {
-    const range = new Range1();
     for (const point of this.list)
-      range.add(point.z);
-    return range;
-  }
-
-  public getRange(): Range3
-  {
-    const range = new Range3();
-    for (const point of this.list)
-      range.add(point);
-    return range;
+      boundingBox.add(point);
   }
 
   //==================================================
@@ -77,5 +68,4 @@ export class Points
       result.add(Vector3.getRandom(boundingBox));
     return result;
   }
-
 }

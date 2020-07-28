@@ -11,17 +11,20 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { FilterLogFolder } from "@/SubSurface/Wells/Filters/FilterLogFolder";
-import WellNodeIcon from "@images/Nodes/WellNode.png";
-import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
+import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
+import { TargetId } from "@/Core/Primitives/TargetId";
+import { SurfaceRenderStyle } from "@/SubSurface/Basics/SurfaceRenderStyle";
 
-export class WellTreeNode extends BaseTreeNode
+import SurfaceNodeIcon from "@images/Nodes/SurfaceNode.png";
+import { BaseNode } from "@/Core/Nodes/BaseNode";
+
+export class SurveyNode extends BaseNode
 {
   //==================================================
   // STATIC FIELDS
   //==================================================
 
-  static className = "WellTreeNode";
+  static className = "SurveyNode";
 
   //==================================================
   // CONSTRUCTORS
@@ -30,34 +33,28 @@ export class WellTreeNode extends BaseTreeNode
   public constructor() { super(); }
 
   //==================================================
+  // INSTANCE PROPERTIES
+  //==================================================
+
+  public get renderStyle(): SurfaceRenderStyle | null { return this.getRenderStyle() as SurfaceRenderStyle; }
+
+  //==================================================
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return WellTreeNode.className; }
-  public /*override*/ isA(className: string): boolean { return className === WellTreeNode.className || super.isA(className); }
+  public /*override*/ get className(): string { return SurveyNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === SurveyNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "WellTree" }
-  public /*override*/ getIcon(): string { return WellNodeIcon }
-  public /*override*/ getName(): string { return "Wells" }
-  public /*override*/ get isTab(): boolean { return true; }
+  public /*override*/ get typeName(): string { return "Seismic Cube" }
 
-  //==================================================
-  // INSTANCE METHODS
-  //==================================================
+  public /*override*/ getIcon(): string { return SurfaceNodeIcon }
 
-  public synchronize(): void
+  public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
-    let filterLogFolder = this.getChildByType(FilterLogFolder);
-    if (!filterLogFolder)
-    {
-      filterLogFolder = new FilterLogFolder();
-      this.addChild(filterLogFolder, true);
-      filterLogFolder.initialize();
-    }
-    filterLogFolder.synchronize();
+    return new SurfaceRenderStyle(targetId);
   }
 }
