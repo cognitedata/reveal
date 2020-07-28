@@ -18,6 +18,36 @@ interface PooledWorker {
   messageIdCounter: number;
 }
 
+// wraps window.Worker with own function that allows to import worker from another domain (to avoid CORS)
+// because worker-plugin parses call to new Worker it's necessary to keep that syntax to have working build
+// also, reuses single blob url to create each worker for the pool
+const workerHacks = (() => {
+  const _Worker = window.Worker;
+  let blob: Blob | undefined;
+  let objURL: string | undefined;
+
+  return {
+    init() {
+      // @ts-ignore
+      window.Worker = function (url: string, opts: WorkerOptions) {
+        if (!objURL) {
+          blob = new Blob(['importScripts(' + JSON.stringify(url) + ')'], {
+            type: 'text/javascript'
+          });
+          objURL = URL.createObjectURL(blob);
+        }
+        return new _Worker(objURL, opts);
+      };
+    },
+    dispose() {
+      if (objURL) {
+        URL.revokeObjectURL(objURL);
+      }
+      window.Worker = _Worker;
+    }
+  };
+})();
+
 export class WorkerPool {
   static get defaultPool(): WorkerPool {
     WorkerPool._defaultPool = WorkerPool._defaultPool || new WorkerPool();
@@ -30,37 +60,22 @@ export class WorkerPool {
 
   constructor() {
     const numberOfWorkers = this.determineNumberOfWorkers();
-    const _Worker = window.Worker;
+    workerHacks.init();
 
-    // @ts-ignore
-    window.Worker = function (url: string, opts: WorkerOptions) {
-      const blob = new Blob(['importScripts(' + JSON.stringify(url) + ')'], {
-        type: 'text/javascript'
-      });
-      const w = new _Worker(URL.createObjectURL(blob), opts);
-      // URL.revokeObjectURL(blob)
-      return w;
-    };
-
-    try {
-      for (let i = 0; i < numberOfWorkers; i++) {
-        const newWorker = {
-          // NOTE: As of Comlink 4.2.0 we need to go through unknown before RevealParserWorker
-          // Please feel free to remove `as unknown` if possible.
-          worker: (Comlink.wrap(
-            new Worker('./reveal.parser.worker', { name: 'reveal.parser', type: 'module' })
-          ) as unknown) as RevealParserWorker,
-          activeJobCount: 0,
-          messageIdCounter: 0
-        };
-        this.workerList.push(newWorker);
-      }
-    } catch (e) {
-      console.error(e);
-      throw e;
+    for (let i = 0; i < numberOfWorkers; i++) {
+      const newWorker = {
+        // NOTE: As of Comlink 4.2.0 we need to go through unknown before RevealParserWorker
+        // Please feel free to remove `as unknown` if possible.
+        worker: (Comlink.wrap(
+          new Worker('./reveal.parser.worker', { name: 'reveal.parser', type: 'module' })
+        ) as unknown) as RevealParserWorker,
+        activeJobCount: 0,
+        messageIdCounter: 0
+      };
+      this.workerList.push(newWorker);
     }
 
-    window.Worker = _Worker;
+    workerHacks.dispose();
   }
 
   async postWorkToAvailable<T>(work: WorkDelegate<T>): Promise<T> {
