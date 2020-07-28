@@ -1,0 +1,26 @@
+{
+  "name": "@cognite/subsurface-interfaces",
+  "version": "0.0.5",
+  "description": "Interfaces for Subsurface Packages",
+  "main": "subsurface-interfaces.js",
+  "module": "subsurface-interfaces.js",
+  "types": "types/subsurface-visualization/src/__export__/subsurface-interfaces/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cognitedata/subsurface-visualization.git"
+  },
+  "keywords": [
+    "subsurface",
+    "cognite",
+    "interface"
+  ],
+  "author": "Mihil Ranathunga",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/cognitedata/subsurface-visualization/issues"
+  },
+  "homepage": "https://github.com/cognitedata/subsurface-visualization/blob/master/src/Interface#readme"
+}

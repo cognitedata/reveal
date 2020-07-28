@@ -156,7 +156,7 @@ export class AxisThreeView extends BaseGroupThreeView
       this.centersIn3d[wallIndex] = Vector3.getCenterOf4(this.corners[indexes[0]], this.corners[indexes[1]], this.corners[indexes[2]], this.corners[indexes[3]]);
       transformer.transformTo3D(this.centersIn3d[wallIndex]);
     }
-    // Start adding components
+    // Start adding Components
     const group = new THREE.Group();
 
     // Add Walls
@@ -406,7 +406,7 @@ export class AxisThreeView extends BaseGroupThreeView
 
   private addGridInOneDirection(geometry: THREE.Geometry, inc: number, i0: number, i1: number, i2: number, dimension: number): void
   {
-    //   p2               
+    //   p2
     //     +-----------+
     //     | | | | | | |
     //     | | | | | | | <--- Draw these lines
@@ -490,7 +490,7 @@ export class AxisThreeView extends BaseGroupThreeView
 
   private static getGridInc(range: Range3, numTicks: number): number
   {
-    let inc = 0;;
+    let inc = 0;
     if (range.x.hasSpan)
       inc = Math.max(inc, range.x.getBestInc(numTicks));
     if (range.y.hasSpan)

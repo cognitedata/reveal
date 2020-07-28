@@ -1,4 +1,4 @@
-import { ICasing } from "@/Interface";
+import { ICasing } from "@cognite/subsurface-interfaces";
 import { CasingLogNode } from "@/SubSurface/Wells/Nodes/CasingLogNode";
 import { CasingLogSample } from "@/SubSurface/Wells/Samples/CasingLogSample";
 import { Util } from "@/Core/Primitives/Util";

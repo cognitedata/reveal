@@ -104,7 +104,7 @@ Recommended extensions:
 
 #### Application with React User interface
 
-- start react app: `npm install && npm run start-dev`
+- start react app: `npm install && npm run start:dev`
 
 #### Standalone React application that uses library output of this project
 

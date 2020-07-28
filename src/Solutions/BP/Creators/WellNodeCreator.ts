@@ -1,7 +1,7 @@
 import * as utm from "utm";
 import { WellNode } from "@/SubSurface/Wells/Nodes/WellNode";
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import { IWell } from "@/Interface";
+import { IWell } from "@cognite/subsurface-interfaces";
 import { Util } from "@/Core/Primitives/Util";
 
 export default class WellNodeCreator
