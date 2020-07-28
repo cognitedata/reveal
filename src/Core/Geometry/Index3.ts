@@ -47,6 +47,17 @@ export class Index3
   // INSTANCE METHODS: Getters
   //==================================================
 
+  public getAt(dimension: number): number
+  {
+    switch (dimension)
+    {
+      case 0: return this.i;
+      case 1: return this.j;
+      case 2: return this.k;
+      default: return Number.NaN;
+    }
+  }
+
   public toString(): string { return `(${this.i}, ${this.j}, ${this.k})`; }
 
   //==================================================

@@ -39,6 +39,7 @@ import { SeismicCube } from "@/SubSurface/Seismic/Data/SeismicCube";
 import { SeismicCubeNode } from "@/SubSurface/Seismic/Nodes/SeismicCubeNode";
 import { SeismicPlaneNode } from "@/SubSurface/Seismic/Nodes/SeismicPlaneNode";
 import { SeismicPlaneFolder } from "@/SubSurface/Seismic/Nodes/SeismicPlaneFolder";
+import { Index3 } from "@/Core/Geometry/Index3";
 
 // import { CogniteSeismicClient } from '@cognite/seismic-sdk-js'
 
@@ -249,19 +250,18 @@ export class SyntheticSubSurfaceModule extends BaseModule
     const seismicTree = root.seismic;
 
     const survey = new SurveyNode();
-    const seismicCubeNode = new SeismicCubeNode();
-    survey.addChild(seismicCubeNode);
 
-    const seismicPlaneFolder = new SeismicPlaneFolder();
-    const seismicPlaneNode1 = new SeismicPlaneNode();
-    const seismicPlaneNode2 = new SeismicPlaneNode();
-    const seismicPlaneNode3 = new SeismicPlaneNode();
+    const nodeSize = new Index3(50, 70, 40);
+    const origin = new Vector3(0,0,0);
+    const inc = new Vector3(20,20,20);
+
+    const cube = new SeismicCube(nodeSize, origin, inc);
+
+    const seismicCubeNode = new SeismicCubeNode();
+    seismicCubeNode.seismicCube = cube;
+    survey.surveyCube = cube.getRegularGrid();
     
-    seismicPlaneFolder.addChild(seismicPlaneNode1);
-    seismicPlaneFolder.addChild(seismicPlaneNode2);
-    seismicPlaneFolder.addChild(seismicPlaneNode3);
-    
-    survey.addChild(seismicPlaneFolder);
+    survey.addChild(seismicCubeNode);
 
     seismicTree.addChild(survey);
   }

@@ -63,6 +63,11 @@ export class SeismicCube extends RegularGrid3
     return trace;
   }
 
+  public getRegularGrid(): RegularGrid3
+  {
+    return new RegularGrid3(this.nodeSize, this.origin, this.inc, this.rotationAngle);
+  }
+
   //==================================================
   // INSTANCE METHODS: Read trace
   //==================================================
