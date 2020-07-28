@@ -3,8 +3,8 @@
  */
 
 import * as THREE from 'three';
-import { pipe, GroupedObservable, Observable, OperatorFunction, of, empty } from 'rxjs';
-import { groupBy, mergeMap, distinctUntilKeyChanged, withLatestFrom, flatMap } from 'rxjs/operators';
+import { pipe, GroupedObservable, Observable, OperatorFunction } from 'rxjs';
+import { groupBy, distinctUntilKeyChanged, withLatestFrom, flatMap, filter, map } from 'rxjs/operators';
 
 import { SectorGeometry, SectorMetadata, WantedSector, ConsumedSector } from './types';
 import { Materials } from '../rendering/materials';
@@ -15,7 +15,6 @@ import { SectorQuads } from '../rendering/types';
 import { disposeAttributeArrayOnUpload } from '@/utilities/disposeAttributeArrayOnUpload';
 import { toThreeJsBox3 } from '@/utilities';
 import { traverseDepthFirst } from '@/utilities/objectTraversal';
-import { trackError } from '@/utilities/metrics';
 
 const emptyGeometry = new THREE.Geometry();
 
@@ -130,10 +129,10 @@ export function discardSector(group: THREE.Group) {
 export function distinctUntilLevelOfDetailChanged() {
   return pipe(
     groupBy((sector: ConsumedSector) => sector.blobUrl),
-    mergeMap((modelGroup: GroupedObservable<string, ConsumedSector>) => {
+    flatMap((modelGroup: GroupedObservable<string, ConsumedSector>) => {
       return modelGroup.pipe(
         groupBy((sector: ConsumedSector) => sector.metadata.id),
-        mergeMap((group: GroupedObservable<number, ConsumedSector>) =>
+        flatMap((group: GroupedObservable<number, ConsumedSector>) =>
           group.pipe(distinctUntilKeyChanged('levelOfDetail'))
         )
       );
@@ -146,21 +145,19 @@ export function filterCurrentWantedSectors(
 ): OperatorFunction<ConsumedSector, ConsumedSector> {
   return pipe(
     withLatestFrom(wantedObservable),
-    flatMap(([loaded, wanted]) => {
+    filter(([loaded, wanted]) => {
       for (const wantedSector of wanted) {
-        try {
-          if (loaded.metadata.id === wantedSector.metadata.id && loaded.levelOfDetail === wantedSector.levelOfDetail) {
-            return of(loaded);
-          }
-        } catch (error) {
-          trackError(error, {
-            moduleName: 'sectorUtilities',
-            methodName: 'filterCurrentWantedSectors'
-          });
+        if (
+          loaded.blobUrl === wantedSector.blobUrl &&
+          loaded.metadata.id === wantedSector.metadata.id &&
+          loaded.levelOfDetail === wantedSector.levelOfDetail
+        ) {
+          return true;
         }
       }
-      return empty();
-    })
+      return false;
+    }),
+    map(([loaded, _wanted]) => loaded)
   );
 }
 
