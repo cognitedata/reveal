@@ -9,8 +9,8 @@ import { faChevronUp } from "@fortawesome/free-solid-svg-icons/faChevronUp";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons/faChevronDown";
 
 import { onExpandChange } from "@/UserInterface/Redux/actions/settings";
-import ToolBar from "../ToolBar/ToolBar";
 import {ToolBarType} from "@/UserInterface/Components/Settings/Types";
+import ToolBar from "@/UserInterface/Components/ToolBar/ToolBar";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

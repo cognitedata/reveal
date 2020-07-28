@@ -5,9 +5,9 @@ import Draggable from "react-draggable";
 import { Appearance } from "@/Core/States/Appearance";
 import InIcon from "@images/Actions/In.png";
 import OutIcon from "@images/Actions/Out.png";
-import Icon from "../../Components/Icon/Icon";
 import { executeToolBarCommand } from "@/UserInterface/Redux/actions/visualizers";
 import {ToolbarCommand} from "@/UserInterface/NodeVisualizer/ToolBar/ToolbarCommand";
+import Icon from "@/UserInterface/Components/Icon/Icon";
 
 /**
  * Get width and height of toolbar

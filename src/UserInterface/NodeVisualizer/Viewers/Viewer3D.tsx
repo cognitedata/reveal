@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import VisualizerToolbar from "../ToolBar/VisualizerToolbar";
 import {State} from "@/UserInterface/Redux/State/State";
+import VisualizerToolbar from "@/UserInterface/NodeVisualizer/ToolBar/VisualizerToolbar";
 
 // 3D Viewer
 export default function Viewer3D(props: { viewer3D: any }) {

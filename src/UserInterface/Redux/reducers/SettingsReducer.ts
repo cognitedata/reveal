@@ -1,13 +1,12 @@
 import { createReducer } from "@reduxjs/toolkit";
-import {
-  ON_EXPAND_CHANGE,
-  ON_CHANGE_SETTING_AVAILABILITY,
-  ON_EXPAND_CHANGE_FROM_TOOLBAR,
-  ON_SELECTED_NODE_CHANGE,
-  ON_INPUT_CHANGE
-} from "../actions/actionTypes";
 import {SettingsState} from "@/UserInterface/Redux/State/settings";
 import {SettingsCommandPayloadType} from "@/UserInterface/Redux/actions/settings";
+import {
+  ON_CHANGE_SETTING_AVAILABILITY,
+  ON_EXPAND_CHANGE, ON_EXPAND_CHANGE_FROM_TOOLBAR,
+  ON_INPUT_CHANGE,
+  ON_SELECTED_NODE_CHANGE
+} from "@/UserInterface/Redux/actions/actionTypes";
 
 // Initial settings state
 const initialState = {} as SettingsState;

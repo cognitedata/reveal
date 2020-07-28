@@ -8,13 +8,13 @@ import { faSortUp } from "@fortawesome/free-solid-svg-icons/faSortUp";
 import { faSortDown } from "@fortawesome/free-solid-svg-icons/faSortDown";
 
 import { onInputChange, onChangeSettingAvailability } from "@/UserInterface/Redux/actions/settings";
-import Icon from "../Icon/Icon";
-import CompactColorPicker from "../CompactColorPicker/CompactColorPicker";
 import Inputs from "@/UserInterface/Components/Settings/ElementTypes";
 import { isNumber } from "@/UserInterface/Foundation/Utils/numericUtils";
 import Color from "color";
 import {SectionElement} from "@/UserInterface/Components/Settings/Types";
 import {State} from "@/UserInterface/Redux/State/State";
+import Icon from "@/UserInterface/Components/Icon/Icon";
+import CompactColorPicker from "@/UserInterface/Components/CompactColorPicker/CompactColorPicker";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

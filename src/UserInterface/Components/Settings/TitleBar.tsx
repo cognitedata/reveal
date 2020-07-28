@@ -1,8 +1,8 @@
 import React from 'react';
 
-import Icon from "../Icon/Icon";
-import ToolBar from '../ToolBar/ToolBar';
 import {ToolBarType} from "@/UserInterface/Components/Settings/Types";
+import Icon from "@/UserInterface/Components/Icon/Icon";
+import ToolBar from "@/UserInterface/Components/ToolBar/ToolBar";
 
 /**
  * TitleBAr component

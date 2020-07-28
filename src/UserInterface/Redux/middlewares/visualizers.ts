@@ -1,9 +1,9 @@
 import { MiddlewareAPI, Dispatch } from "redux";
+import {State} from "@/UserInterface/Redux/State/State";
 import {
   EXECUTE_VISUALIZER_TOOLBAR_COMMAND,
   EXECUTE_VISUALIZER_TOOLBAR_COMMAND_SUCCESS
-} from "../actions/actionTypes";
-import {State} from "@/UserInterface/Redux/State/State";
+} from "@/UserInterface/Redux/actions/actionTypes";
 
 // Visualizer middleware
 export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {

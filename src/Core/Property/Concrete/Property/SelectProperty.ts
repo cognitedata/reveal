@@ -1,5 +1,5 @@
-import UsePropertyT from "../../Base/UsePropertyT";
 import { PropertyType } from "@/Core/Enums/PropertyType";
+import UsePropertyT from "@/Core/Property/Base/UsePropertyT";
 
 export class SelectProperty extends UsePropertyT<string>
 {

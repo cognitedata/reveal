@@ -1,10 +1,10 @@
 import { Action, Retrieve } from "@/Core/Property/Base/BaseProperty";
 import StringProperty from "@/Core/Property/Concrete/Property/StringProperty";
-import BasePropertyFolder from "../../Base/BasePropertyFolder";
 import ColorProperty from "@/Core/Property/Concrete/Property/ColorProperty";
 import Color from "color";
 import { Range1 } from "@/Core/Geometry/Range1";
 import { Range3 } from "@/Core/Geometry/Range3";
+import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
 
 const FractionDigitsDefault = 2;
 

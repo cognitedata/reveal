@@ -1,7 +1,7 @@
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import Toolbar from "@/UserInterface/NodeVisualizer/ToolBar/Toolbar";
-import ToolbarAdaptor from "../ToolBar/ToolbarAdaptor";
 import {ToolbarCommand} from "@/UserInterface/NodeVisualizer/ToolBar/ToolbarCommand";
+import ToolbarAdaptor from "@/UserInterface/NodeVisualizer/ToolBar/ToolbarAdaptor";
 
 export default class Viewer {
 

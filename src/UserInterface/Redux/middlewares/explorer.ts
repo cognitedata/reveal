@@ -1,7 +1,7 @@
 import { MiddlewareAPI, Dispatch } from "redux";
-import { TOGGLE_NODE_CHECK, TOGGLE_NODE_SELECT } from "../actions/actionTypes";
 import {State} from "@/UserInterface/Redux/State/State";
 import {ExplorerCommandPayloadType} from "@/UserInterface/Redux/actions/explorer";
+import {TOGGLE_NODE_CHECK, TOGGLE_NODE_SELECT} from "@/UserInterface/Redux/actions/actionTypes";
 
 // Explorer middleware
 export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {

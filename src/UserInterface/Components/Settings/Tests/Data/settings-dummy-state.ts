@@ -1,4 +1,4 @@
-import { IconTypes } from "../../../Icon/IconTypes";
+import {IconTypes} from "@/UserInterface/Components/Icon/IconTypes";
 
 // Dummy Settings State
 export const settingsDummyState = {

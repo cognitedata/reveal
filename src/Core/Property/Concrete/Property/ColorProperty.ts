@@ -1,7 +1,7 @@
-import UsePropertyT from "../../Base/UsePropertyT";
 import { PropertyType } from "@/Core/Enums/PropertyType";
-import { Action, Retrieve } from "../../Base/BaseProperty";
 import Color from "color";
+import UsePropertyT from "@/Core/Property/Base/UsePropertyT";
+import {Action, Retrieve} from "@/Core/Property/Base/BaseProperty";
 
 export default class ColorProperty extends UsePropertyT<Color>
 {

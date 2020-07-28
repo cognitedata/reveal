@@ -3,8 +3,8 @@ import { useDispatch } from "react-redux";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import { ColorResult, CompactPicker } from "react-color";
 
-import { onInputChange } from "../../Redux/actions/settings";
 import Color from "color";
+import {onInputChange} from "@/UserInterface/Redux/actions/settings";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
