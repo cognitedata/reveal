@@ -30,6 +30,6 @@
     }
   },
   // include is also used for eslint to understand which files should be linted
-  "include": ["*.js", "*.ts", "src/**/*", ".eslintrc.js"],
+  "include": ["*.js", "*.ts", "src/**/*", ".eslintrc.js", "script"],
   "exclude": ["node_modules/**/*", "dist/**/*", "src/@types/**/*"]
 }
