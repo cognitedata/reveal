@@ -1153,16 +1153,11 @@
 
 "@cognite/reveal@link:../viewer/dist":
   version "0.0.0"
+  uid ""
 
-"@cognite/sdk@^2.33.0":
-  version "2.33.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-2.33.0.tgz#cfc893ffe259c1011d43c1f41b280b7bf2e72181"
-  integrity sha512-dO2cCO3UbNRx8WaJ3cJdPBe3Rd3qaSBYkocEeW+ew3UzjsxiUOwtz//5HYtb+wXig1aTotoU3iR88NNx09fQfg==
-  dependencies:
-    cross-fetch "^3.0.4"
-    lodash "^4.17.11"
-    query-string "^5.1.1"
-    url "^0.11.0"
+"@cognite/sdk@link:../viewer/node_modules/@cognite/sdk":
+  version "0.0.0"
+  uid ""
 
 "@csstools/convert-colors@^1.4.0":
   version "1.4.0"
