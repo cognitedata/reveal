@@ -23,10 +23,8 @@ import {
   map,
   publish,
   flatMap,
-  toArray,
   tap,
   distinctUntilChanged,
-  mergeAll,
   observeOn,
   switchMap,
   finalize
@@ -79,125 +77,47 @@ export class CadModelUpdateHandler {
       ),
       publish(input$ => {
         const modelSectorStates: { [blobUrl: string]: { [id: number]: LevelOfDetail } } = {};
-        return input$.pipe(
-          switchMap(input =>
-            scheduled(from(sectorCuller.determineSectors(input)), queueScheduler).pipe(
-              publish(wantedSector$ => {
-                const filterDiscarded = filter<WantedSector>(
-                  wantedSector => wantedSector.levelOfDetail === LevelOfDetail.Discarded
-                );
-                const discardedSectorsObservable = wantedSector$.pipe(filterDiscarded);
 
-                const filterSimpleAndDetailed = filter<WantedSector>(
-                  wantedSector =>
-                    wantedSector.levelOfDetail === LevelOfDetail.Simple ||
-                    wantedSector.levelOfDetail === LevelOfDetail.Detailed
-                );
-
-                const filterUnloadedSectors = filter<WantedSector>(wantedSector => {
-                  const sectorStates = modelSectorStates[wantedSector.blobUrl];
-                  if (sectorStates) {
-                    const sectorState = sectorStates[wantedSector.metadata.id];
-                    return sectorState !== wantedSector.levelOfDetail;
-                  }
-                  return true;
-                });
-
-                const simpleAndDetailedSectorsObservable = wantedSector$.pipe(
-                  filterSimpleAndDetailed,
-                  filterUnloadedSectors,
-                  toArray()
-                );
-                return scheduled(
-                  [
-                    discardedSectorsObservable.pipe(
-                      map(wantedSector => ({ ...wantedSector, group: undefined } as ConsumedSector))
-                    ),
-                    simpleAndDetailedSectorsObservable.pipe(sectorRepository.loadSector())
-                  ],
-                  queueScheduler
-                ).pipe(mergeAll());
-              })
-            )
-          ),
-          distinctUntilLevelOfDetailChanged(),
-          tap(consumedSector => {
-            let sectorStates = modelSectorStates[consumedSector.blobUrl];
-            if (!sectorStates) {
-              sectorStates = {};
-              modelSectorStates[consumedSector.blobUrl] = sectorStates;
-            }
-            if (consumedSector.levelOfDetail === LevelOfDetail.Discarded) {
-              delete sectorStates[consumedSector.metadata.id];
+        const stateHasChanged = filter<WantedSector>(wantedSector => {
+          const sectorStates = modelSectorStates[wantedSector.blobUrl];
+          if (sectorStates) {
+            const sectorState = sectorStates[wantedSector.metadata.id];
+            if (sectorState) {
+              return sectorState !== wantedSector.levelOfDetail;
             } else {
-              sectorStates[consumedSector.metadata.id] = consumedSector.levelOfDetail;
+              return wantedSector.levelOfDetail != LevelOfDetail.Discarded;
             }
-          }),
-          finalize(() => {
-            this._sectorRepository.clear();
+          }
+          return true;
+        });
+        const updateSectorState = tap<ConsumedSector>(consumedSector => {
+          let sectorStates = modelSectorStates[consumedSector.blobUrl];
+          if (!sectorStates) {
+            sectorStates = {};
+            modelSectorStates[consumedSector.blobUrl] = sectorStates;
+          }
+          if (consumedSector.levelOfDetail === LevelOfDetail.Discarded) {
+            delete sectorStates[consumedSector.metadata.id];
+          } else {
+            sectorStates[consumedSector.metadata.id] = consumedSector.levelOfDetail;
+          }
+        });
+
+        return input$.pipe(
+          switchMap(input => {
+            const wantedSector$ = scheduled(from(sectorCuller.determineSectors(input)), queueScheduler);
+            return wantedSector$.pipe(
+              stateHasChanged,
+              this._sectorRepository.loadSector(),
+              distinctUntilLevelOfDetailChanged(),
+              updateSectorState
+            );
           })
         );
+      }),
+      finalize(() => {
+        this._sectorRepository.clear();
       })
-      // Load sectors from repository
-      // publish((wantedSectors: Observable<WantedSector[]>) => {
-      //   const modelSectorStates: { [blobUrl: string]: { [id: number]: LevelOfDetail } } = {};
-
-      //   const filterDiscarded = filter<WantedSector>(
-      //     wantedSector => wantedSector.levelOfDetail === LevelOfDetail.Discarded
-      //   );
-      //   const discardedSectorsObservable = wantedSectors.pipe(mergeAll(), filterDiscarded);
-
-      //   const filterSimpleAndDetailed = filter<WantedSector>(
-      //     wantedSector =>
-      //       wantedSector.levelOfDetail === LevelOfDetail.Simple || wantedSector.levelOfDetail === LevelOfDetail.Detailed
-      //   );
-
-      //   const filterUnloadedSectors = filter<WantedSector>(wantedSector => {
-      //     const sectorStates = modelSectorStates[wantedSector.blobUrl];
-      //     if (sectorStates) {
-      //       const sectorState = sectorStates[wantedSector.metadata.id];
-      //       return sectorState !== wantedSector.levelOfDetail;
-      //     }
-      //     return true;
-      //   });
-
-      //   const simpleAndDetailedSectorsObservable = wantedSectors.pipe(
-      //     switchMap(wantedSectorsArray => {
-      //       // TODO: 17-07-2020 j-bjorne adding a scheduled wrapping the from
-      //       return from(wantedSectorsArray).pipe(filterSimpleAndDetailed, filterUnloadedSectors, toArray());
-      //     })
-      //   );
-
-      //   return scheduled(
-      //     [
-      //       discardedSectorsObservable.pipe(
-      //         map(wantedSector => ({ ...wantedSector, group: undefined } as ConsumedSector))
-      //       ),
-      //       simpleAndDetailedSectorsObservable.pipe(sectorRepository.loadSector())
-      //     ],
-      //     queueScheduler
-      //   ).pipe(
-      //     mergeAll(),
-      //     // TODO 16-07-2020 j-bjorne: Might not actually be needed due to switch map logic. If not need to investigate if stale sectors are shown.
-      //     // filterCurrentWantedSectors(wantedSectors),
-      //     distinctUntilLevelOfDetailChanged(),
-      //     tap(consumedSector => {
-      //       let sectorStates = modelSectorStates[consumedSector.blobUrl];
-      //       if (!sectorStates) {
-      //         sectorStates = {};
-      //         modelSectorStates[consumedSector.blobUrl] = sectorStates;
-      //       }
-      //       if (consumedSector.levelOfDetail === LevelOfDetail.Discarded) {
-      //         delete sectorStates[consumedSector.metadata.id];
-      //       } else {
-      //         sectorStates[consumedSector.metadata.id] = consumedSector.levelOfDetail;
-      //       }
-      //     }),
-      //     finalize(() => {
-      //       this._sectorRepository.clear();
-      //     })
-      //   );
-      // })
     );
   }
 

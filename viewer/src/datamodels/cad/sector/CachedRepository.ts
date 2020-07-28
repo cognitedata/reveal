@@ -10,18 +10,14 @@ import {
   pipe,
   Observable,
   from,
-  merge,
-  partition,
   of,
   zip,
   Subject,
   onErrorResumeNext,
-  BehaviorSubject,
   scheduled,
   queueScheduler
 } from 'rxjs';
 import {
-  publish,
   flatMap,
   map,
   tap,
@@ -31,10 +27,7 @@ import {
   reduce,
   distinct,
   catchError,
-  distinctUntilChanged,
-  share,
-  finalize,
-  mergeAll
+  distinctUntilChanged
 } from 'rxjs/operators';
 import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
@@ -45,6 +38,7 @@ import { createOffsetsArray } from '@/utilities';
 import { trackError } from '@/utilities/metrics';
 import { BinaryFileProvider } from '@/utilities/networking/types';
 import { Group } from 'three';
+import { RxCounter } from '@/utilities/RxCounter';
 
 type CtmFileRequest = { blobUrl: string; fileName: string };
 type CtmFileResult = { fileName: string; data: ParseCtmResult };
@@ -64,7 +58,8 @@ export class CachedRepository implements Repository {
   private readonly _modelSectorProvider: BinaryFileProvider;
   private readonly _modelDataParser: CadSectorParser;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
-  private readonly _isLoadingSubject: Subject<boolean> = new BehaviorSubject<boolean>(false);
+  private readonly _loadingCounter: RxCounter = new RxCounter();
+  // private readonly _isLoadingSubject: Subject<boolean> = new BehaviorSubject<boolean>(false);
 
   // Adding this to support parse map for migration wrapper. Should be removed later.
   private readonly _parsedDataSubject: Subject<{
@@ -75,17 +70,20 @@ export class CachedRepository implements Repository {
   }> = new Subject();
 
   private readonly _concurrentNetworkOperations: number;
+  private readonly _concurrentCtmRequests: number;
 
   constructor(
     modelSectorProvider: BinaryFileProvider,
     modelDataParser: CadSectorParser,
     modelDataTransformer: SimpleAndDetailedToSector3D,
-    concurrentNetworkOperations: number = 50
+    concurrentNetworkOperations: number = 50,
+    concurrentCtmRequest: number = 10
   ) {
     this._modelSectorProvider = modelSectorProvider;
     this._modelDataParser = modelDataParser;
     this._modelDataTransformer = modelDataTransformer;
     this._concurrentNetworkOperations = concurrentNetworkOperations;
+    this._concurrentCtmRequests = concurrentCtmRequest;
   }
 
   clear() {
@@ -100,64 +98,35 @@ export class CachedRepository implements Repository {
   }
 
   getLoadingStateObserver(): Observable<boolean> {
-    return this._isLoadingSubject.pipe(distinctUntilChanged(), share());
+    return this._loadingCounter.observeCount().pipe(
+      distinctUntilChanged(),
+      map(count => count != 0)
+    );
   }
 
   // TODO j-bjorne 16-04-2020: Should look into ways of not sending in discarded sectors,
   // unless we want them to eventually set their priority to lower in the cache.
 
-  loadSector(): OperatorFunction<WantedSector[], ConsumedSector> {
+  loadSector(): OperatorFunction<WantedSector, ConsumedSector> {
     return pipe(
-      tap(_ => {
-        this._isLoadingSubject.next(true);
-      }),
-      mergeAll(),
-      publish(wantedSector$ => {
-        const [cachedSector$, uncachedSector$] = partition(wantedSector$, wantedSector =>
-          this._consumedSectorCache.has(this.wantedSectorCacheKey(wantedSector))
-        );
-        return scheduled(
-          [
-            cachedSector$.pipe(
-              flatMap(wantedSector => this._consumedSectorCache.get(this.wantedSectorCacheKey(wantedSector)))
-            ),
-            uncachedSector$.pipe(this.loadSectorFromNetwork())
-          ],
-          queueScheduler
-        ).pipe(mergeAll());
-      }),
-      finalize(() => this._isLoadingSubject.next(false))
+      this._loadingCounter.add(),
+      flatMap(sector => {
+        if (this._consumedSectorCache.has(this.wantedSectorCacheKey(sector))) {
+          return this._consumedSectorCache.get(this.wantedSectorCacheKey(sector));
+        } else if (sector.levelOfDetail == LevelOfDetail.Detailed) {
+          return this.loadDetailedSectorFromNetwork(sector);
+        } else if (sector.levelOfDetail == LevelOfDetail.Simple) {
+          return this.loadSimpleSectorFromNetwork(sector);
+        } else if (sector.levelOfDetail == LevelOfDetail.Discarded) {
+          return of(sector).pipe(map(wantedSector => ({ ...wantedSector, group: undefined } as ConsumedSector)));
+        } else {
+          throw new Error('Unhandled case');
+        }
+      }, this._concurrentNetworkOperations),
+      this._loadingCounter.remove(),
+      this._loadingCounter.clear()
     );
   }
-
-  private loadSectorFromNetwork(): OperatorFunction<WantedSector, ConsumedSector> {
-    return flatMap(wantedSector => {
-      if (wantedSector.levelOfDetail === LevelOfDetail.Simple) {
-        return this.loadSimpleSectorFromNetwork(wantedSector);
-      } else if (wantedSector.levelOfDetail === LevelOfDetail.Detailed) {
-        return this.loadDetailedSectorFromNetwork(wantedSector);
-      } else {
-        throw new Error('Unhandled LevelOfDetail');
-      }
-    }, this._concurrentNetworkOperations);
-  }
-
-  // private loadSectorFromNetwork(): OperatorFunction<WantedSector, ConsumedSector> {
-  //   return publish(wantedSector$ => {
-  //     const detailedSector$ = wantedSector$.pipe(
-  //       filter(wantedSector => wantedSector.levelOfDetail == LevelOfDetail.Detailed),
-  //       concatMap(wantedSector => this.loadDetailedSectorFromNetwork(wantedSector))
-  //     );
-  //     const simpleSector$ = wantedSector$.pipe(
-  //       filter(wantedSector => wantedSector.levelOfDetail == LevelOfDetail.Simple),
-  //       concatMap(wantedSector => this.loadSimpleSectorFromNetwork(wantedSector))
-  //     );
-  //     return scheduled([detailedSector$, simpleSector$], queueScheduler).pipe(
-  //       mergeAll(2) //this._concurrentNetworkOperations)
-  //       // publish(obs$ => merge(obs$, 20))
-  //     );
-  //   });
-  // }
 
   private catchWantedSectorError<T>(wantedSector: WantedSector, methodName: string) {
     return catchError<T, Observable<T>>(error => {
@@ -208,8 +177,9 @@ export class CachedRepository implements Repository {
 
   private loadSimpleSectorFromNetwork(wantedSector: WantedSector): Observable<ConsumedSector> {
     const networkObservable: Observable<ConsumedSector> = onErrorResumeNext(
-      from(
-        this._modelSectorProvider.getBinaryFile(wantedSector.blobUrl, wantedSector.metadata.facesFile.fileName!)
+      scheduled(
+        from(this._modelSectorProvider.getBinaryFile(wantedSector.blobUrl, wantedSector.metadata.facesFile.fileName!)),
+        queueScheduler
       ).pipe(
         this.catchWantedSectorError(wantedSector, 'loadSimpleSectorFromNetwork'),
         flatMap(buffer => this._modelDataParser.parseF3D(new Uint8Array(buffer))),
@@ -227,13 +197,13 @@ export class CachedRepository implements Repository {
   }
 
   private loadDetailedSectorFromNetwork(wantedSector: WantedSector): Observable<ConsumedSector> {
-    const i3dFileObservable = of(wantedSector.metadata.indexFile).pipe(
+    const i3dFileObservable = scheduled(of(wantedSector.metadata.indexFile), queueScheduler).pipe(
       flatMap(indexFile => this._modelSectorProvider.getBinaryFile(wantedSector.blobUrl, indexFile.fileName)),
       retry(3),
       flatMap(buffer => this._modelDataParser.parseI3D(new Uint8Array(buffer)))
     );
 
-    const ctmFilesObservable = from(wantedSector.metadata.indexFile.peripheralFiles).pipe(
+    const ctmFilesObservable = scheduled(from(wantedSector.metadata.indexFile.peripheralFiles), queueScheduler).pipe(
       map(fileName => ({
         blobUrl: wantedSector.blobUrl,
         fileName
@@ -245,7 +215,7 @@ export class CachedRepository implements Repository {
       }, new Map())
     );
     const networkObservable = onErrorResumeNext(
-      zip(i3dFileObservable, ctmFilesObservable).pipe(
+      scheduled(zip(i3dFileObservable, ctmFilesObservable), queueScheduler).pipe(
         this.catchWantedSectorError(wantedSector, 'loadDetailedSectorFromNetwork'),
         map(([i3dFile, ctmFiles]) => this.finalizeDetailed(i3dFile as ParseSectorResult, ctmFiles)),
         this.detailedParsedData(wantedSector),
@@ -263,34 +233,29 @@ export class CachedRepository implements Repository {
   }
 
   private loadCtmFile(): OperatorFunction<CtmFileRequest, CtmFileResult> {
-    return publish(ctmRequestObservable => {
-      const [cachedCtmFileObservable, uncachedCtmFileObservable] = partition(ctmRequestObservable, ctmRequest =>
-        this._ctmFileCache.has(this.ctmFileCacheKey(ctmRequest))
-      );
-      return merge(
-        cachedCtmFileObservable.pipe(flatMap(ctmRequest => this._ctmFileCache.get(this.ctmFileCacheKey(ctmRequest)))),
-        uncachedCtmFileObservable.pipe(this.loadCtmFileFromNetwork())
-      );
-    });
+    return flatMap(ctmRequest => {
+      const key = this.ctmFileCacheKey(ctmRequest);
+      if (this._ctmFileCache.has(key)) {
+        return this._ctmFileCache.get(key);
+      } else {
+        return this.loadCtmFileFromNetwork(ctmRequest);
+      }
+    }, this._concurrentCtmRequests);
   }
 
-  private loadCtmFileFromNetwork(): OperatorFunction<CtmFileRequest, CtmFileResult> {
-    return pipe(
-      flatMap(ctmRequest => {
-        const networkObservable: Observable<{ fileName: string; data: ParseCtmResult }> = onErrorResumeNext(
-          from(this._modelSectorProvider.getBinaryFile(ctmRequest.blobUrl, ctmRequest.fileName)).pipe(
-            this.catchCtmFileError(ctmRequest, 'loadCtmFileFromNetwork'),
-            retry(3),
-            flatMap(buffer => this._modelDataParser.parseCTM(new Uint8Array(buffer))),
-            map(data => ({ fileName: ctmRequest.fileName, data: data as ParseCtmResult })),
-            shareReplay(1),
-            take(1)
-          )
-        );
-        this._ctmFileCache.forceInsert(this.ctmFileCacheKey(ctmRequest), networkObservable);
-        return networkObservable;
-      })
+  private loadCtmFileFromNetwork(ctmRequest: CtmFileRequest): Observable<CtmFileResult> {
+    const networkObservable: Observable<{ fileName: string; data: ParseCtmResult }> = onErrorResumeNext(
+      from(this._modelSectorProvider.getBinaryFile(ctmRequest.blobUrl, ctmRequest.fileName)).pipe(
+        this.catchCtmFileError(ctmRequest, 'loadCtmFileFromNetwork'),
+        retry(3),
+        flatMap(buffer => this._modelDataParser.parseCTM(new Uint8Array(buffer))),
+        map(data => ({ fileName: ctmRequest.fileName, data: data as ParseCtmResult })),
+        shareReplay(1),
+        take(1)
+      )
     );
+    this._ctmFileCache.forceInsert(this.ctmFileCacheKey(ctmRequest), networkObservable);
+    return networkObservable;
   }
 
   private finalizeDetailed(i3dFile: ParseSectorResult, ctmFiles: Map<string, ParseCtmResult>): SectorGeometry {
