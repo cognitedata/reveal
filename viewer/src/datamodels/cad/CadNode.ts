@@ -20,6 +20,9 @@ import { toThreeVector3, toThreeMatrix4, toThreeJsBox3, ModelTransformation } fr
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 
+export type LoadingHintsChangeListener = (loadingHint: CadLoadingHints) => void;
+export type RenderHintsChangeListener = (renderHint: CadRenderHints) => void;
+
 export interface CadNodeOptions {
   nodeAppearanceProvider?: NodeAppearanceProvider;
 }
@@ -43,6 +46,11 @@ export class CadNode extends THREE.Object3D {
   private readonly _sectorScene: SectorScene;
   private readonly _previousCameraMatrix = new THREE.Matrix4();
   private readonly _boundingBoxNode: THREE.Object3D;
+
+  private readonly eventListeners = {
+    renderHintsChanged: new Array<RenderHintsChangeListener>(),
+    loadingHintsChanged: new Array<LoadingHintsChangeListener>()
+  };
 
   constructor(model: CadModelMetadata, materialManager: MaterialManager) {
     super();
@@ -69,8 +77,6 @@ export class CadNode extends THREE.Object3D {
     // Apply default hints
     this._renderHints = {};
     this._loadingHints = {};
-    this.renderHints = {};
-    this.loadingHints = {};
 
     this.matrixAutoUpdate = false;
     this.updateMatrixWorld();
@@ -132,6 +138,7 @@ export class CadNode extends THREE.Object3D {
 
   set loadingHints(hints: Readonly<CadLoadingHints>) {
     this._loadingHints = hints;
+    this.notifyLoadingHintsChanged(hints);
   }
 
   get loadingHints(): Readonly<CadLoadingHints> {
@@ -190,5 +197,51 @@ export class CadNode extends THREE.Object3D {
     boxesNode.applyMatrix4(toThreeMatrix4(this.modelTransformation.modelMatrix));
     boxesNode.updateMatrixWorld(true);
     return boxesNode;
+  }
+
+  public on(event: 'loadingHintsChanged', listener: LoadingHintsChangeListener): void;
+  public on(event: 'renderHintsChanged', listener: RenderHintsChangeListener): void;
+  public on(
+    event: 'loadingHintsChanged' | 'renderHintsChanged',
+    listener: LoadingHintsChangeListener | RenderHintsChangeListener
+  ): void {
+    switch (event) {
+      case 'loadingHintsChanged':
+        this.eventListeners.loadingHintsChanged.push(listener as LoadingHintsChangeListener);
+        break;
+
+      case 'renderHintsChanged':
+        this.eventListeners.renderHintsChanged.push(listener as RenderHintsChangeListener);
+        break;
+
+      default:
+        throw new Error(`Unsupported event '${event}'`);
+    }
+  }
+
+  public off(event: 'loadingHintsChanged', listener: LoadingHintsChangeListener): void;
+  public off(event: 'renderHintsChanged', listener: RenderHintsChangeListener): void;
+  public off(
+    event: 'loadingHintsChanged' | 'renderHintsChanged',
+    listener: LoadingHintsChangeListener | RenderHintsChangeListener
+  ): void {
+    switch (event) {
+      case 'loadingHintsChanged':
+        this.eventListeners.loadingHintsChanged = this.eventListeners.loadingHintsChanged.filter(x => x !== listener);
+        break;
+
+      case 'renderHintsChanged':
+        this.eventListeners.renderHintsChanged = this.eventListeners.renderHintsChanged.filter(x => x !== listener);
+        break;
+
+      default:
+        throw new Error(`Unsupported event '${event}'`);
+    }
+  }
+
+  private notifyLoadingHintsChanged(loadingHint: CadLoadingHints) {
+    this.eventListeners.loadingHintsChanged.forEach(handler => {
+      handler(loadingHint);
+    });
   }
 }
