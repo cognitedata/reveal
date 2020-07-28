@@ -30,14 +30,26 @@ export class WorkerPool {
 
   constructor() {
     const numberOfWorkers = this.determineNumberOfWorkers();
-    const workerCdnUrl = __webpack_public_path__ + 'reveal.parser.worker.js';
+    const _Worker = window.Worker;
+
+    // @ts-ignore
+    window.Worker = function (url: string, opts: WorkerOptions) {
+      const blob = new Blob(['importScripts(' + JSON.stringify(url) + ')'], {
+        type: 'text/javascript'
+      });
+      const w = new _Worker(URL.createObjectURL(blob), opts);
+      // URL.revokeObjectURL(blob)
+      return w;
+    };
 
     try {
       for (let i = 0; i < numberOfWorkers; i++) {
         const newWorker = {
           // NOTE: As of Comlink 4.2.0 we need to go through unknown before RevealParserWorker
           // Please feel free to remove `as unknown` if possible.
-          worker: (Comlink.wrap(new Worker(getWorkerURL(workerCdnUrl))) as unknown) as RevealParserWorker,
+          worker: (Comlink.wrap(
+            new Worker('./reveal.parser.worker', { name: 'reveal.parser', type: 'module' })
+          ) as unknown) as RevealParserWorker,
           activeJobCount: 0,
           messageIdCounter: 0
         };
@@ -48,7 +60,7 @@ export class WorkerPool {
       throw e;
     }
 
-    URL.revokeObjectURL(workerCdnUrl);
+    window.Worker = _Worker;
   }
 
   async postWorkToAvailable<T>(work: WorkDelegate<T>): Promise<T> {
@@ -69,12 +81,4 @@ export class WorkerPool {
     // Use between 2-4 workers, depending on hardware
     return Math.max(2, Math.min(4, window.navigator.hardwareConcurrency || 2));
   }
-}
-
-// Returns a blob:// URL which points to a javascript file,
-// which will call importScripts with the given URL.
-// You can't load a worker from another origin, so this is the workaround.
-function getWorkerURL(url: string) {
-  const content = `importScripts( "${url}" );`;
-  return URL.createObjectURL(new Blob([content], { type: 'text/javascript' }));
 }

@@ -1,6 +1,6 @@
 {
   "name": "mn-reveal-worker-test",
-  "version": "0.0.8",
+  "version": "0.0.10",
   "private": true,
   "description": "WebGL based 3D viewer for CAD and point clouds processed in Cognite CDF.",
   "repository": {
@@ -13,7 +13,7 @@
   "types": "index.d.ts",
   "scripts": {
     "release": "yarn run mkdist && webpack",
-    "build": "yarn run mkdist && webpack --env.development",
+    "build": "rimraf -rf dist/ && yarn run mkdist && webpack --env.development",
     "build:watch": "yarn run build -- --watch",
     "serve": "cd ../examples && yarn && yarn run start",
     "mkdist": "run-script-os",
