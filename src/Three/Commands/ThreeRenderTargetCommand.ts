@@ -21,8 +21,10 @@ export abstract class ThreeRenderTargetCommand extends BaseCommand
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*override*/get isEnabled(): boolean { return this.target != null; }
+  public /*override*/ get isEnabled(): boolean { return this.target != null; }
   public /*override*/ get isChecked(): boolean { return false; }
+
+  protected /*override*/ invokeValueCore(value: any): boolean { return false; }
 }
 
 

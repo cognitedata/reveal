@@ -45,6 +45,7 @@ import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { UniqueId } from "@/Core/Primitives/UniqueId";
 import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
 import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
+import { ZScaleCommand } from "@/Three/Commands/ZScaleCommand";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 
 const DirectionalLightName = "DirectionalLight";
@@ -294,6 +295,8 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     for (let viewFrom = 0; viewFrom < 6; viewFrom++)
       toolbar.add(new ViewFromCommand(this, viewFrom));
     toolbar.beginOptionMenu();
+
+    toolbar.add(new ZScaleCommand(this));
   }
 
   //==================================================

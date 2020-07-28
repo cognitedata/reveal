@@ -5,9 +5,9 @@ import Draggable from "react-draggable";
 import { Appearance } from "@/Core/States/Appearance";
 import InIcon from "@images/Actions/In.png";
 import OutIcon from "@images/Actions/Out.png";
-import { executeToolBarCommand } from "@/UserInterface/Redux/actions/visualizers";
-import {ToolbarCommand} from "@/UserInterface/NodeVisualizer/ToolBar/ToolbarCommand";
 import Icon from "@/UserInterface/Components/Icon/Icon";
+import { executeToolBarCommand, selectOnChange } from "@/UserInterface/Redux/actions/visualizers";
+import { ToolbarCommand } from "@/UserInterface/NodeVisualizer/ToolBar/ToolbarCommand";
 
 /**
  * Get width and height of toolbar
@@ -65,18 +65,81 @@ export default function VisualizerToolbar(props: {
     }
   };
 
-  // Number of visible commands (isVisible is true)
-  const noOfVisibleCommands = toolbar.filter(command => command.isVisible).length;
+  const visibleNondropdownCommands = toolbar.filter(command => command.isVisible && !command.isDropdown);
+  const visibleDropdownCommands = toolbar.filter(command => command.isVisible && command.isDropdown);
+
+  // dropdown Items takes twice the size
+  const noOfSlots = visibleNondropdownCommands.length + visibleDropdownCommands.length * 2;
   // No Of commands per line in Toolbar UI
   const toolbarCommandsPerLine = Appearance.toolbarCommandsPerLine;
   // Number of rows in toolbar
-  const numberOfToolbarRows = Math.ceil(noOfVisibleCommands / toolbarCommandsPerLine);
+  const numberOfToolbarRows = Math.ceil(noOfSlots / toolbarCommandsPerLine);
   // Consider borders,margins and padding of img tag
   const iconSize = Appearance.toolbarIconSize + 7.2;
   const [dimension1, dimension2] = [
     numberOfToolbarRows * iconSize,
-    numberOfToolbarRows > 1 ? toolbarCommandsPerLine * iconSize : noOfVisibleCommands * iconSize
+    numberOfToolbarRows > 1 ? toolbarCommandsPerLine * iconSize : noOfSlots * iconSize
   ];
+
+  const addButton = (index, command) => {
+    return (
+      <div
+        onClick={() =>
+          dispatch(
+            executeToolBarCommand({
+              visualizerId,
+              index
+            })
+          )
+        }
+        key={`visualizer-toolbar-icon-${index}`}
+        className={`visualizer-tool-bar-icon ${
+          command.isChecked ? "visualizer-tool-bar-icon-selected" : ""
+        }`}
+      >
+        {command.icon && (
+          <Icon
+            src={command.icon}
+            tooltip={{
+              text: command.command.getTooltip(),
+              placement: horizontal ? "bottom" : "right-start"
+            }}
+            iconSize={{
+              width: Appearance.toolbarIconSize,
+              height: Appearance.toolbarIconSize
+            }}
+          />
+        )}
+      </div>
+    );
+  };
+
+  const addDropdown = (index, command) => {
+    return (
+      <div key={`visualizer-toolbar-icon-${index}`} className="visualizer-tool-bar-icon">
+        <input
+          type="number"
+          list="data"
+          className="visualizer-tool-bar-input"
+          onChange={event =>
+            dispatch(
+              selectOnChange({
+                visualizerId,
+                index,
+                event
+              })
+            )
+          }
+        />
+        <datalist id="data">
+          {command.command.dropdownOptions.map(option => (
+            <option key={option}>{option}</option>
+          ))}
+        </datalist>
+      </div>
+    );
+  };
+
   // Render toolbar
   return (
     <Draggable bounds="parent" handle=".handle" onDrag={onDrag} onStop={onStop}>
@@ -104,37 +167,23 @@ export default function VisualizerToolbar(props: {
               top: horizontal ? "0rem" : "1.2rem"
             }}
           >
-            {toolbar.map((command, index) =>
-              command.isVisible && command.icon ? (
-                <div
-                  onClick={() =>
-                    dispatch(
-                      executeToolBarCommand({
-                        visualizerId,
-                        index
-                      })
-                    )
-                  }
-                  key={`visualizer-toolbar-icon-${index}`}
-                  className={`visualizer-tool-bar-icon
-                        ${command.isChecked ? "visualizer-tool-bar-icon-selected" : ""}`}
-                >
-                  {command.icon && (
-                    <Icon
-                      src={command.icon}
-                      tooltip={{
-                        text: command.command.getTooltip(),
-                        placement: horizontal ? "bottom" : "right-start"
-                      }}
-                      iconSize={{
-                        width: Appearance.toolbarIconSize,
-                        height: Appearance.toolbarIconSize
-                      }}
-                    />
-                  )}
-                </div>
-              ) : null
-            )}
+            {toolbar.map((command, index) => {
+              if (command.isVisible)
+              {
+                if (command.isDropdown)
+                {
+                  return addDropdown(index, command);
+                }
+                else
+                {
+                  return addButton(index, command);
+                }
+              }
+              else
+              {
+                return null;
+              }
+            })}
           </div>
         </div>
       </div>

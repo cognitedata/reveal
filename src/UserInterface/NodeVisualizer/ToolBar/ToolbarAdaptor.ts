@@ -14,7 +14,8 @@ export default class ToolbarAdaptor {
                 command,
                 icon: command.getIcon(),
                 isChecked: command.isChecked,
-                isVisible: command.isVisible
+                isVisible: command.isVisible,
+                isDropdown : command.isDropdown
             });
         });
         return output;

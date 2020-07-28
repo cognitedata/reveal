@@ -6,4 +6,5 @@ export interface ToolbarCommand {
   icon: string;
   command: BaseCommand;
   isVisible: boolean;
+  isDropdown : boolean;
 }

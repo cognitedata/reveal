@@ -20,13 +20,16 @@ export abstract class BaseCommand
   public /*virtual*/ get isEnabled(): boolean { return true; } // Is enabled? (default true)
   public /*virtual*/ get isChecked(): boolean { return false; } // Is checked?
   public /*virtual*/ get isCheckable(): boolean { return false; } // Can be checked? (default false)
-  public /*virtual*/ get isVisible(): boolean { return this.isEnabled; } // Is visible? 
+  public /*virtual*/ get isVisible(): boolean { return this.isEnabled; } // Is visible?
+  public /*virtual*/ get isDropdown (): boolean { return false } // Is a Dropdown ?
+  public /*virtual*/ get dropdownOptions(): string[] { return [""]; };
 
   //==================================================
   // VIRTUAL METHODS
   //==================================================
 
   protected abstract invokeCore(): boolean; // Returns true if executed ok
+  protected abstract invokeValueCore(value: string): boolean;
 
   //==================================================
   // INSTANCE METHODS
@@ -35,5 +38,10 @@ export abstract class BaseCommand
   public invoke(): boolean
   {
     return this.invokeCore();
+  }
+
+  public invokeValue(value: string): boolean
+  {
+    return this.invokeValueCore(value);
   }
 }
