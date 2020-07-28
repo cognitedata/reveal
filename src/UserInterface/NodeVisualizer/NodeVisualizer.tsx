@@ -42,8 +42,6 @@ export default function NodeVisualizer(props: { root?: BaseRootNode }) {
       // clear Node
       element.innerHTML = "";
 
-      const notificationAdaptor = new NotificationsToActionsAdaptor(dispatch);
-      VirtualUserInterface.install(new UserInterfaceListener(notificationAdaptor, dispatch));
       // Add new viewers here Eg - new Viewer("2D", htmlElement2D)
       const viewers = [new Viewer("3D", element)];
       // Add targets and toolbars to root node
@@ -58,10 +56,14 @@ export default function NodeVisualizer(props: { root?: BaseRootNode }) {
         element.appendChild(target.domElement);
         target.setActiveInteractive();
       }
+      Modules.instance.initializeWhenPopulated(root);
+
+      const notificationAdaptor = new NotificationsToActionsAdaptor(dispatch);
+      VirtualUserInterface.install(new UserInterfaceListener(notificationAdaptor, dispatch));
+      
       // Add target and toolbar data to state
       dispatch(setVisualizerData({ viewers }));
       dispatch(generateNodeTree({ root }));
-      Modules.instance.initializeWhenPopulated(root);
       // tslint:disable-next-line: no-console
       console.log("SubsurfaceVisualizer: Added toolbars and viewers");
     },

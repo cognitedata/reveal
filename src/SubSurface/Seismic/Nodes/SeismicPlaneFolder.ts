@@ -13,6 +13,7 @@
 
 import SurfaceNodeIcon from "@images/Nodes/SurfaceNode.png";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
+import { SeismicPlaneNode } from "@/SubSurface/Seismic/Nodes/SeismicPlaneNode";
 
 export class SeismicPlaneFolder extends BaseNode
 {
@@ -43,4 +44,14 @@ export class SeismicPlaneFolder extends BaseNode
   public /*override*/ canChangeName(): boolean { return false; }
   public /*override*/ canChangeColor(): boolean { return false; }
   public /*override*/ getIcon(): string { return SurfaceNodeIcon }
+
+  public /*override*/ initializeCore()
+  {
+    super.initializeCore();
+    if (!this.hasChildByType(SeismicPlaneNode))
+    {
+      this.addChild(new SeismicPlaneNode(0));
+      this.addChild(new SeismicPlaneNode(1));
+    }
+  }
 }

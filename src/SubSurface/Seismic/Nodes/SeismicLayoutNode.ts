@@ -11,54 +11,36 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-export class Index2
+import SurfaceNodeIcon from "@images/Nodes/SurfaceNode.png";
+import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
+
+export class SeismicLayoutNode extends BaseVisualNode
 {
   //==================================================
-  // INSTANCE FIELDS
+  // STATIC FIELDS
   //==================================================
 
-  public i: number;
-  public j: number;
+  static className = "SeismicLayoutNode";
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(i: number, j?: number)
-  {
-    this.i = i;
-    this.j = j === undefined ? i : j;
-  }
-
-  public /*copy constructor*/ clone(): Index2
-  {
-    return new Index2(this.i, this.j);
-  }
+  public constructor() { super(); }
 
   //==================================================
-  // INSTANCE PROPERTIES
+  // OVERRIDES of Identifiable
   //==================================================
 
-  public get size(): number { return this.i * this.j; }
+  public /*override*/ get className(): string { return SeismicLayoutNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === SeismicLayoutNode.className || super.isA(className); }
 
   //==================================================
-  // INSTANCE METHODS: Getters
+  // OVERRIDES of BaseNode
   //==================================================
 
-  public getAt(dimension: number): number
-  {
-    switch (dimension)
-    {
-      case 0: return this.i;
-      case 1: return this.j;
-      default: return Number.NaN;
-    }
-  }
-
-  public toString(): string { return `(${this.i}, ${this.j})`; }
-
-  //==================================================
-  // INSTANCE METHODS: Operations
-  //==================================================
-
+  public /*override*/ get typeName(): string { return "Layout" }
+  public /*override*/ canChangeName(): boolean { return false; }
+  public /*override*/ canChangeColor(): boolean { return false; }
+  public /*override*/ getIcon(): string { return SurfaceNodeIcon }
 }

@@ -17,6 +17,10 @@ import { SurfaceRenderStyle } from "@/SubSurface/Basics/SurfaceRenderStyle";
 
 import SurfaceNodeIcon from "@images/Nodes/SurfaceNode.png";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
+import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
+import { basename } from "path";
+import { SeismicPlaneFolder } from "@/SubSurface/Seismic/Nodes/SeismicPlaneFolder";
+import { SeismicLayoutNode } from "@/SubSurface/Seismic/Nodes/SeismicLayoutNode";
 
 export class SurveyNode extends BaseNode
 {
@@ -25,6 +29,8 @@ export class SurveyNode extends BaseNode
   //==================================================
 
   static className = "SurveyNode";
+
+  public surveyCube: RegularGrid3 | null = null;
 
   //==================================================
   // CONSTRUCTORS
@@ -49,12 +55,23 @@ export class SurveyNode extends BaseNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Seismic Cube" }
+  public /*override*/ get typeName(): string { return "Survey" }
 
   public /*override*/ getIcon(): string { return SurfaceNodeIcon }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
     return new SurfaceRenderStyle(targetId);
+  }
+
+  public /*override*/ initializeCore()
+  {
+    super.initializeCore();
+
+    if (!this.hasChildByType(SeismicLayoutNode))
+      this.addChild(new SeismicLayoutNode());
+
+    if (!this.hasChildByType(SeismicPlaneFolder))
+      this.addChild(new SeismicPlaneFolder());
   }
 }

@@ -17,6 +17,8 @@ import { SurfaceRenderStyle } from "@/SubSurface/Basics/SurfaceRenderStyle";
 
 import SurfaceNodeIcon from "@images/Nodes/SurfaceNode.png";
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
+import { SurveyNode } from "@/SubSurface/Seismic/Nodes/SurveyNode";
+import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
 
 export class SeismicPlaneNode extends BaseVisualNode
 {
@@ -30,11 +32,50 @@ export class SeismicPlaneNode extends BaseVisualNode
   // INSTANCE FIELDS
   //==================================================
 
-  public perpendicularAxis = 0;
-  public perpendicularIndexValue = -1; // Not used if arbitrary plane
+  private _perpendicularAxis = 0;
+  private _perpendicularIndex = -1; // Not used if arbitrary plane
+
+  //==================================================
+  // INSTANCE PROPERTIES
+  //==================================================
+
+  public get surveyNode(): SurveyNode | null { return this.getAncestorByType(SurveyNode); }
+
+  public get surveyCube(): RegularGrid3 | null
+  {
+    const surveyNode = this.surveyNode;
+    return surveyNode ? surveyNode.surveyCube : null;
+  }
+
 
   public get isArbitrary(): boolean { return this.perpendicularAxis < 0; }
   public get isHorizontal(): boolean { return this.perpendicularAxis == 2; }
+
+  public get perpendicularAxis(): number { return this._perpendicularAxis }
+
+  public get perpendicularIndex(): number
+  {
+    if (this.isArbitrary)
+      throw Error(this.generalName);
+
+    if (this._perpendicularIndex < 0)
+      this._perpendicularIndex = this.maxPerpendicularIndex / 2;
+    return this._perpendicularIndex;
+  }
+
+  public set perpendicularIndex(value: number) { this._perpendicularIndex = value; }
+
+  private get maxPerpendicularIndex(): number
+  {
+    var surveyCube = this.surveyCube;
+    if (!surveyCube)
+      return -1;
+
+    if (this.isArbitrary)
+      throw Error(this.generalName);
+
+    return surveyCube.cellSize.getAt(this.perpendicularAxis) - 1;
+  }
 
   public get shortName(): string
   {
@@ -62,7 +103,11 @@ export class SeismicPlaneNode extends BaseVisualNode
   // CONSTRUCTORS
   //==================================================
 
-  public constructor() { super(); }
+  public constructor(perpendicularAxis = 0)
+  {
+    super();
+    this._perpendicularAxis = perpendicularAxis;
+  }
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -86,7 +131,7 @@ export class SeismicPlaneNode extends BaseVisualNode
   {
     if (this.perpendicularAxis < 0 || this.perpendicularAxis >= 3)
       return this.generalName;
-    return `${this.generalName} ${this.perpendicularIndexValue}`;
+    return `${this.generalName} ${this.perpendicularIndex}`;
   }
 
   public /*override*/ getIcon(): string { return SurfaceNodeIcon }
