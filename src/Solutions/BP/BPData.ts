@@ -1,7 +1,7 @@
 import {
     IWell, ITrajectory, ITrajectoryRows, IRiskEvent, ILog, ICasing, ITrajectoryColumnIndices,
     WellId, WellBoreId, TrajectoryId, IWellBore
-} from "@/Interface";
+} from "@cognite/subsurface-interfaces";
 import { Util } from "@/Core/Primitives/Util";
 // Represent BP data
 export default class BPData

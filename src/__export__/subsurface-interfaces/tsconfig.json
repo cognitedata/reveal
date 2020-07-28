@@ -1,0 +1,9 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "declarationDir": "../../../dist/subsurface-interfaces/types"
+  },
+  "include": [
+    "../../SubSurface/Wells/Interfaces"
+  ]
+}

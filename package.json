@@ -2,9 +2,9 @@
   "name": "@cognite/subsurface-visualizer",
   "version": "0.0.67-dev",
   "description": "Subsurface visualizer for cognite",
-  "main": "./dist/subsurface-visualizer/subsurface-visualizer.js",
+  "main": "subsurface-visualizer.js",
   "module": "subsurface-visualizer.js",
-  "types": "./dist/subsurface-visualizer/types/index.d.ts",
+  "types": "types/index.d.ts",
   "engines": {
     "node": ">=12"
   },
@@ -12,14 +12,14 @@
     "types"
   ],
   "scripts": {
-    "build": "webpack --config webpack.config.prod.js",
+    "build": "webpack --env.debug=false --config webpack.config.build.js",
     "build:types": "tsc --emitDeclarationOnly",
-    "build-dev": "webpack --debug",
+    "build:dev": "webpack --env.debug=true --config webpack.config.build.js",
     "build:css": "node-sass src/UserInterface/styles/scss -o src/UserInterface/styles/css ",
     "watch:css": "npm run build:css && node-sass src/UserInterface/styles/scss -o src/UserInterface/styles/css -w -r",
-    "start:root": "node --max-old-space-size=8192 ../node_modules/webpack-dev-server/bin/webpack-dev-server.js --mode development --open --hot --config webpack.config.dev.js",
-    "start:react": "node --max-old-space-size=8192 node_modules/webpack-dev-server/bin/webpack-dev-server.js --mode development --open --hot --config webpack.config.dev.js",
-    "start-dev": "npm-run-all -p watch:css start:react",
+    "start:root": "node --max-old-space-size=8192 ../node_modules/webpack-dev-server/bin/webpack-dev-server.js --mode development --open --hot",
+    "start:react": "node --max-old-space-size=8192 node_modules/webpack-dev-server/bin/webpack-dev-server.js --mode development --open --hot",
+    "start:dev": "npm-run-all -p watch:css start:react",
     "clean": "tsc --build --clean",
     "serve": "webpack-dev-server --debug --color --progress --watch",
     "lint": "tslint --project .",
@@ -70,7 +70,7 @@
     "@types/ts-nameof": "^4.2.1",
     "@types/utm": "^1.1.1",
     "@types/uuid": "^8.0.0",
-    "babel-loader": "8.0.6",
+    "babel-loader": "^8.1.0",
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^6.0.2",
     "css-loader": "^3.6.0",
@@ -98,10 +98,10 @@
     "tslint-react": "^5.0.0",
     "typescript": "^3.9.5",
     "url-loader": "^4.1.0",
-    "webpack": "4.41.5",
+    "webpack": "4.42.0",
     "webpack-bundle-analyzer": "^3.8.0",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "3.10.2"
+    "webpack-dev-server": "3.10.3"
   },
   "peer-dependencies": {
     "@material-ui/core": "^4.10.2",

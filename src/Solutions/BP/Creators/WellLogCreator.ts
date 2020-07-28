@@ -1,6 +1,6 @@
 import { FloatLog } from "@/SubSurface/Wells/Logs/FloatLog";
 import { FloatLogNode } from "@/SubSurface/Wells/Nodes/FloatLogNode";
-import { IRiskEvent, ILog, ILogRow, ILogRowColumn, INdsMetadata, INptMetaData } from "@/Interface";
+import { IRiskEvent, ILog, ILogRow, ILogRowColumn, INdsMetadata, INptMetaData } from "@cognite/subsurface-interfaces";
 import { PointLog } from "@/SubSurface/Wells/Logs/PointLog";
 import { PointLogSample } from "@/SubSurface/Wells/Samples/PointLogSample";
 import { PointLogNode } from "@/SubSurface/Wells/Nodes/PointLogNode";

@@ -8,7 +8,7 @@
     "declarationDir": "dist/subsurface-visualizer/types",
     "sourceMap": true,
     "outDir": "dist",
-    "rootDir": "./src",
+    // "rootDir": "./src",
     "importHelpers": true,                 /* Import emit helpers from 'tslib' when using only ts-loader. */
     "downlevelIteration": true,            /* Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'. */
     "isolatedModules": true,
@@ -31,7 +31,9 @@
     "moduleResolution": "node",
     "baseUrl": "./",
     "paths": {
-      "@cognite/subsurface-components": ["./src/Components"],
+      "@cognite/subsurface-components": ["src/__export__/subsurface-components"],
+      "@cognite/subsurface-interfaces": ["src/__export__/subsurface-interfaces"],
+      "@cognite/subsurface-visualizer": ["src/__export__/subsurface-visualizer"],
       "@/*": ["src/*"],
       "@images/*": ["images/*"]
     },

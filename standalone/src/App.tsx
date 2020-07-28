@@ -16,8 +16,8 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store = createStore(
   combineReducers({ ...SubsurfaceReducer }),
-  compose(applyMiddleware(...SubsurfaceMiddleware)) // comment this line to enable redux dev tools
-  //composeEnhancers(applyMiddleware(...SubsurfaceMiddleware))  // uncomment to enable redux dev tools
+  compose(applyMiddleware(...SubsurfaceMiddleware)) // comment this line to enable Redux dev tools
+  //composeEnhancers(applyMiddleware(...SubsurfaceMiddleware))  // uncomment to enable Redux dev tools
 );
 
 function App() {
