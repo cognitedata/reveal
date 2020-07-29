@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { Subject, MonoTypeOperatorFunction } from 'rxjs';
+import { Subject, MonoTypeOperatorFunction, Observable } from 'rxjs';
 import { scan, tap, finalize, shareReplay } from 'rxjs/operators';
 
 enum Action {
@@ -14,25 +14,25 @@ enum Action {
 export class RxCounter {
   private readonly _actionSubject: Subject<Action> = new Subject();
 
-  public add<T>(): MonoTypeOperatorFunction<T> {
+  public incrementOnNext<T>(): MonoTypeOperatorFunction<T> {
     return tap<T>({
       next: () => this._actionSubject.next(Action.Add)
     });
   }
 
-  public remove<T>(): MonoTypeOperatorFunction<T> {
+  public decrementOnNext<T>(): MonoTypeOperatorFunction<T> {
     return tap<T>({
       next: () => this._actionSubject.next(Action.Remove)
     });
   }
 
-  public clear<T>(): MonoTypeOperatorFunction<T> {
+  public resetOnComplete<T>(): MonoTypeOperatorFunction<T> {
     return finalize<T>(() => {
       this._actionSubject.next(Action.Clear);
     });
   }
 
-  public observeCount() {
+  public observeCount(): Observable<number> {
     return this._actionSubject.pipe(
       scan((count, action) => {
         switch (action) {
@@ -43,7 +43,7 @@ export class RxCounter {
           case Action.Clear:
             return 0;
           default:
-            throw new Error('Unhandled switch case');
+            throw new Error(`Unsupported action ${action}`);
         }
       }, 0),
       shareReplay(1)

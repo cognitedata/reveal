@@ -59,7 +59,6 @@ export class CachedRepository implements Repository {
   private readonly _modelDataParser: CadSectorParser;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
   private readonly _loadingCounter: RxCounter = new RxCounter();
-  // private readonly _isLoadingSubject: Subject<boolean> = new BehaviorSubject<boolean>(false);
 
   // Adding this to support parse map for migration wrapper. Should be removed later.
   private readonly _parsedDataSubject: Subject<{
@@ -109,7 +108,7 @@ export class CachedRepository implements Repository {
 
   loadSector(): OperatorFunction<WantedSector, ConsumedSector> {
     return pipe(
-      this._loadingCounter.add(),
+      this._loadingCounter.incrementOnNext(),
       flatMap(sector => {
         if (this._consumedSectorCache.has(this.wantedSectorCacheKey(sector))) {
           return this._consumedSectorCache.get(this.wantedSectorCacheKey(sector));
@@ -123,8 +122,8 @@ export class CachedRepository implements Repository {
           throw new Error('Unhandled case');
         }
       }, this._concurrentNetworkOperations),
-      this._loadingCounter.remove(),
-      this._loadingCounter.clear()
+      this._loadingCounter.decrementOnNext(),
+      this._loadingCounter.resetOnComplete()
     );
   }
 
