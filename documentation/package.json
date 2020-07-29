@@ -1,0 +1,60 @@
+{
+  "name": "@cognite/reveal-documentation",
+  "version": "0.0.1",
+  "private": true,
+  "author": "Maksim Nesterenko <maksim.nesterenko@cognite.com>",
+  "contributors": [
+    "Lars Moastuen <lars.moastuen@cognite.com>",
+    "Joachim Bjørne <joachim.bjorne@cognite.com>",
+    "Christopher Tannum <christopher.tannum@cognite.com>",
+    "Maksim Nesterenko <maksim.nesterenko@cognite.com>"
+  ],
+  "scripts": {
+    "start": "yarn run reveal:copy && yarn run apiref && local-ssl-proxy --source 9000 --target 3000 | docusaurus start --no-open",
+    "build": "yarn run reveal:copy && yarn run apiref && docusaurus build",
+    "swizzle": "docusaurus swizzle",
+    "reveal:copy": "cpy ./node_modules/@cognite/reveal/*.wasm ./node_modules/@cognite/reveal/*.worker.js ./static --dot",
+    "apiref": "yarn run apiref:generate && yarn run apiref:concat",
+    "apiref:generate": "typedoc --inputFiles ../viewer/src/public --out ./generated --mode library --excludeExternals --externalPattern '../viewer/src/__tests__/**/*.ts' --entryPoint '\"index\"' --exclude \"**/*+(index|.spec|.test).ts\" --excludeNotExported --excludePrivate --excludeProtected --stripInternal --ignoreCompilerErrors --readme none",
+    "apiref:concat": "concat-md ./generated --startTitleLevelAt 1 --decrease-title-levels --dir-name-as-title > \"./docs/API Reference.md\""
+  },
+  "dependencies": {
+    "@cognite/reveal": "^1.0.0-alpha-5",
+    "@cognite/sdk": "^2.33.0",
+    "@docusaurus/core": "2.0.0-alpha.58",
+    "@docusaurus/module-type-aliases": "2.0.0-alpha.58",
+    "@docusaurus/preset-classic": "2.0.0-alpha.58",
+    "@docusaurus/theme-live-codeblock": "2.0.0-alpha.58",
+    "clsx": "^1.1.1",
+    "npm-to-yarn": "^1.0.1",
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4",
+    "styled-components": "^5.1.1",
+    "three": "^0.115.0"
+  },
+  "devDependencies": {
+    "@types/react": "^16.9.41",
+    "@types/styled-components": "^5.1.1",
+    "concat-md": "^0.3.5",
+    "cpy-cli": "^3.1.1",
+    "jsdoc-babel": "^0.5.0",
+    "jsdoc-to-markdown": "^6.0.1",
+    "local-ssl-proxy": "^1.3.0",
+    "typedoc": "0.17.0-3",
+    "typedoc-plugin-markdown": "^2.3.1",
+    "typescript": "^3.9.6"
+  },
+  "browserslist": {
+    "production": [
+      ">1%",
+      "not dead",
+      "not ie 11",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

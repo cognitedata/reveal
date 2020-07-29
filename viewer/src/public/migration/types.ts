@@ -14,23 +14,32 @@ export interface Color {
 
 export interface Cognite3DViewerOptions {
   sdk: CogniteClient;
+
+  /** An existing DOM element that we will render canvas into. */
   domElement?: HTMLElement;
-  noBackground?: boolean;
+
+  /** Send anonymous usage statistics. */
   logMetrics?: boolean;
+
+  /** @deprecated and ignored */
   highlightColor?: THREE.Color;
+
+  /** @deprecated and ignored */
+  noBackground?: boolean;
+
+  /** @deprecated and not supported */
   viewCube?: 'topleft' | 'topright' | 'bottomleft' | 'bottomright';
+
+  /** @deprecated and not supported */
   enableCache?: boolean;
 
-  /**
-   * Renderer used to visualize model (optional).
-   */
+  /** Renderer used to visualize model (optional). */
   renderer?: THREE.WebGLRenderer;
 
   /**
-   * Utility used to determine what parts of the model
-   * will be visible on screen and loaded. This is only meant for
-   * unit testing, and might change in the future.
-   * Do not use.
+   * Utility used to determine what parts of the model will be visible on screen and loaded.
+   * This is only meant for unit testing.
+   * @internal
    */
   _sectorCuller?: SectorCuller;
 }
