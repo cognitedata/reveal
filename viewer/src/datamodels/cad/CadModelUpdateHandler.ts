@@ -77,7 +77,6 @@ export class CadModelUpdateHandler {
       ),
       publish(input$ => {
         const modelSectorStates: { [blobUrl: string]: { [id: number]: LevelOfDetail } } = {};
-
         const stateHasChanged = filter<WantedSector>(wantedSector => {
           const sectorStates = modelSectorStates[wantedSector.blobUrl];
           if (sectorStates) {
