@@ -10,8 +10,9 @@ import { SectorQuads } from '../rendering/types';
 export type SectorId = number;
 
 export interface Repository {
-  loadSector(): OperatorFunction<WantedSector[], ConsumedSector>;
+  loadSector(): OperatorFunction<WantedSector, ConsumedSector>;
 
   getLoadingStateObserver(): Observable<boolean>;
   getParsedData(): Observable<{ blobUrl: string; lod: string; data: SectorGeometry | SectorQuads }>;
+  clear(): void;
 }
