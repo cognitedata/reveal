@@ -14,25 +14,41 @@ enum Action {
 export class RxCounter {
   private readonly _actionSubject: Subject<Action> = new Subject();
 
+  /**
+   * Increment counter for each element in the observable.
+   * @return {MonoTypeOperatorFunction<T>} The operator function to increment counter.
+   */
   public incrementOnNext<T>(): MonoTypeOperatorFunction<T> {
     return tap<T>({
       next: () => this._actionSubject.next(Action.Increment)
     });
   }
 
+  /**
+   * Decrement counter for each element in the observable.
+   * @return {MonoTypeOperatorFunction<T>} The operator function to decrement counter.
+   */
   public decrementOnNext<T>(): MonoTypeOperatorFunction<T> {
     return tap<T>({
       next: () => this._actionSubject.next(Action.Decrement)
     });
   }
 
+  /**
+   * Reset counter when observable completes.
+   * @return {MonoTypeOperatorFunction<T>} The operator function to reset counter.
+   */
   public resetOnComplete<T>(): MonoTypeOperatorFunction<T> {
     return finalize<T>(() => {
       this._actionSubject.next(Action.Reset);
     });
   }
 
-  public observeCount(): Observable<number> {
+  /**
+   * Get counter observable.
+   * @return {Observable<number>} The counter observable.
+   */
+  public countObservable(): Observable<number> {
     return this._actionSubject.pipe(
       scan((count, action) => {
         switch (action) {

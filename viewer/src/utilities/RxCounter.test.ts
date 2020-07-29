@@ -13,7 +13,7 @@ describe('RxCounter', () => {
     expect.assertions(incrementCount);
     const increment$ = interval(10).pipe(take(incrementCount), counter.incrementOnNext());
     let expectedCount: number = 0;
-    counter.observeCount().subscribe({
+    counter.countObservable().subscribe({
       next: count => {
         expectedCount++;
         expect(count).toBe(expectedCount);
@@ -41,7 +41,7 @@ describe('RxCounter', () => {
     );
     let expectedCount: number = 0;
     let increment = 1;
-    counter.observeCount().subscribe({
+    counter.countObservable().subscribe({
       next: count => {
         expectedCount += increment;
         expect(count).toBe(expectedCount);
@@ -62,7 +62,7 @@ describe('RxCounter', () => {
     expect.assertions(operationCount + 1);
     const operation$ = interval(10).pipe(take(operationCount), counter.incrementOnNext(), counter.resetOnComplete());
     let expectedCount: number = 0;
-    counter.observeCount().subscribe({
+    counter.countObservable().subscribe({
       next: count => {
         expectedCount++;
         expect(count).toBe(expectedCount);

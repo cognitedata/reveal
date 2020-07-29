@@ -97,7 +97,7 @@ export class CachedRepository implements Repository {
   }
 
   getLoadingStateObserver(): Observable<boolean> {
-    return this._loadingCounter.observeCount().pipe(
+    return this._loadingCounter.countObservable().pipe(
       distinctUntilChanged(),
       map(count => count != 0)
     );
