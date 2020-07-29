@@ -6,9 +6,9 @@ import { Subject, MonoTypeOperatorFunction, Observable } from 'rxjs';
 import { scan, tap, finalize, shareReplay } from 'rxjs/operators';
 
 enum Action {
-  Add,
-  Remove,
-  Clear
+  Increment,
+  Decrement,
+  Reset
 }
 
 export class RxCounter {
@@ -16,19 +16,19 @@ export class RxCounter {
 
   public incrementOnNext<T>(): MonoTypeOperatorFunction<T> {
     return tap<T>({
-      next: () => this._actionSubject.next(Action.Add)
+      next: () => this._actionSubject.next(Action.Increment)
     });
   }
 
   public decrementOnNext<T>(): MonoTypeOperatorFunction<T> {
     return tap<T>({
-      next: () => this._actionSubject.next(Action.Remove)
+      next: () => this._actionSubject.next(Action.Decrement)
     });
   }
 
   public resetOnComplete<T>(): MonoTypeOperatorFunction<T> {
     return finalize<T>(() => {
-      this._actionSubject.next(Action.Clear);
+      this._actionSubject.next(Action.Reset);
     });
   }
 
@@ -36,11 +36,11 @@ export class RxCounter {
     return this._actionSubject.pipe(
       scan((count, action) => {
         switch (action) {
-          case Action.Add:
+          case Action.Increment:
             return count + 1;
-          case Action.Remove:
+          case Action.Decrement:
             return count - 1;
-          case Action.Clear:
+          case Action.Reset:
             return 0;
           default:
             throw new Error(`Unsupported action ${action}`);
