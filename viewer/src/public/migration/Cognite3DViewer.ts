@@ -31,18 +31,39 @@ import { createCdfRevealManager } from '../createRevealManager';
 import { CdfModelIdentifier } from '@/utilities/networking/types';
 import { RevealOptions, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
 
-type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
-type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
+export type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
+export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
 
+/**
+ * @example
+ * ```js
+ * const viewer = new Cognite3DViewer({
+ *   noBackground: true,
+ *   sdk: CogniteClient({...})
+ * });
+ * ```
+ */
 export class Cognite3DViewer {
   private get canvas(): HTMLCanvasElement {
     return this.renderer.domElement;
   }
-  static isBrowserSupported(): boolean {
+
+  /**
+   * For now it just always returns true.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext#Browser_compatibility
+   */
+  static isBrowserSupported(): true {
     return true;
   }
 
+  /**
+   * The DOM element the viewer will insert its rendering canvas into.
+   * The DOM element can be specified in the options when the viewer is created.
+   * If not specified, the DOM element will be created automatically.
+   * The DOM element cannot be changed after the viewer has been created.
+   */
   readonly domElement: HTMLElement;
+
   private readonly renderer: THREE.WebGLRenderer;
   private readonly camera: THREE.PerspectiveCamera;
   private readonly scene: THREE.Scene;
@@ -174,10 +195,21 @@ export class Cognite3DViewer {
     this.animate(0);
   }
 
+  /**
+   * Returns reveal version installed
+   */
   getVersion(): string {
     return process.env.VERSION;
   }
 
+  /**
+   * Dispose of WebGL resources. Can be used to free up memory when the viewer is no longer in use.
+   * @see {@link https://threejs.org/docs/#manual/en/introduction/How-to-dispose-of-objects}
+   * ```ts
+   * // Viewer is no longer in use, free up memory
+   * viewer.dispose();
+   * ```
+   */
   dispose(): void {
     if (this.isDisposed) {
       return;
@@ -201,22 +233,39 @@ export class Cognite3DViewer {
     this.spinner.dispose();
   }
 
+  /**
+   * Add event listener to the viewer
+   * call {@link Cognite3DViewer.off} to remove an event listener
+   * @example
+   * ```js
+   * const onClick = (event) => { console.log(event.offsetX, event.offsetY) };
+   * viewer.on('click', onClick);
+   * ```
+   */
   on(event: 'click' | 'hover', callback: PointerEventDelegate): void;
+  /**
+   * Add event listener to the viewer
+   * call {@link Cognite3DViewer.off} to remove an event listener
+   * @example
+   * ```js
+   * viewer.on('cameraChange', (position, target) => {
+   *   console.log('Camera changed: ', position, target);
+   * });
+   * ```
+   */
   on(event: 'cameraChange', callback: CameraChangeDelegate): void;
-  // fixme: no any
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  on(event: 'click' | 'hover' | 'cameraChange', callback: any): void {
+  on(event: 'click' | 'hover' | 'cameraChange', callback: PointerEventDelegate | CameraChangeDelegate): void {
     switch (event) {
       case 'click':
-        this.eventListeners.click.push(callback);
+        this.eventListeners.click.push(callback as PointerEventDelegate);
         break;
 
       case 'hover':
-        this.eventListeners.hover.push(callback);
+        this.eventListeners.hover.push(callback as PointerEventDelegate);
         break;
 
       case 'cameraChange':
-        this.eventListeners.cameraChange.push(callback);
+        this.eventListeners.cameraChange.push(callback as CameraChangeDelegate);
         break;
 
       default:
@@ -226,6 +275,14 @@ export class Cognite3DViewer {
 
   off(event: 'click' | 'hover', callback: PointerEventDelegate): void;
   off(event: 'cameraChange', callback: CameraChangeDelegate): void;
+  /**
+   * Remove event listener from the viewer
+   * Call {@link Cognite3DViewer.on} to add event listener
+   * @example
+   * ```js
+   * viewer.off('click', onClick);
+   * ```
+   */
   off(event: 'click' | 'hover' | 'cameraChange', callback: any): void {
     switch (event) {
       case 'click':
@@ -245,6 +302,20 @@ export class Cognite3DViewer {
     }
   }
 
+  /**
+   * Add a new CAD 3D model to the viewer.
+   * call {@link Cognite3DViewer.fitCameraToModel} to see the model after the model has loaded
+   * @example
+   * ```js
+   * const options = {
+   *   modelId:     'COGNITE_3D_MODEL_ID',
+   *   revisionId:  'COGNITE_3D_REVISION_ID',
+   * };
+   * viewer.addModel(options).then(model => {
+   *   viewer.fitCameraToModel(model, 0);
+   * });
+   * ```
+   */
   async addModel(options: AddModelOptions): Promise<Cognite3DModel> {
     trackLoadModel(
       {
@@ -260,6 +331,9 @@ export class Cognite3DViewer {
     );
 
     if (options.localPath) {
+      throw new NotSupportedInMigrationWrapperError();
+    }
+    if (options.onComplete) {
       throw new NotSupportedInMigrationWrapperError();
     }
     if (options.geometryFilter) {
@@ -289,6 +363,20 @@ export class Cognite3DViewer {
     return model3d;
   }
 
+  /**
+   * Add a new pointcloud 3D model to the viewer.
+   * call {@link Cognite3DViewer.fitCameraToModel} to see the model after the model has loaded
+   * @example
+   * ```js
+   * const options = {
+   *   modelId:     'COGNITE_3D_MODEL_ID',
+   *   revisionId:  'COGNITE_3D_REVISION_ID',
+   * };
+   * viewer.addPointCloudModel(options).then(model => {
+   *   viewer.fitCameraToModel(model, 0);
+   * });
+   * ```
+   */
   async addPointCloudModel(options: AddModelOptions): Promise<CognitePointCloudModel> {
     trackLoadModel(
       {
@@ -312,6 +400,10 @@ export class Cognite3DViewer {
     if (options.orthographicCamera) {
       throw new NotSupportedInMigrationWrapperError();
     }
+    if (options.onComplete) {
+      throw new NotSupportedInMigrationWrapperError();
+    }
+
     const { modelId, revisionId } = options;
     const [potreeGroup, potreeNode] = await this._revealManager.addModel('pointcloud', {
       modelId,
@@ -323,6 +415,31 @@ export class Cognite3DViewer {
     return model;
   }
 
+  /**
+   * Use to determine which addModel method to call.
+   *
+   * @param modelId the model's id
+   * @param revisionId the model's revision id
+   *
+   * @example
+   * ```typescript
+   * async function addModel(viewer: Cognite3DViewer, options: AddModelOptions) {
+   *   const type = await viewer.determineModelType(options.modelId, options.revisionId)
+   *   let model: Cognite3DModel | CognitePointCloudModel
+   *   switch (type) {
+   *     case SupportedModelTypes.CAD:
+   *       model = await viewer.addModel(options);
+   *       break;
+   *     case SupportedModelTypes.PointCloud:
+   *       model = await viewer.addPointCloudModel(options);
+   *       break;
+   *     default:
+   *       throw new Error('Model is not supported');
+   *   }
+   *   viewer.fitCameraToModel(model);
+   * }
+   * ```
+   */
   async determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes> {
     const clientExt = new CdfModelDataClient(this.sdkClient);
     const outputs = await clientExt.getOutputs({ modelId, revisionId, format: File3dFormat.AnyFormat });
@@ -334,6 +451,17 @@ export class Cognite3DViewer {
     return SupportedModelTypes.NotSupported;
   }
 
+  /**
+   * Add a THREE.Object3D to the viewer
+   * @example
+   * ```js
+   * const sphere = new THREE.Mesh(
+   *   new THREE.SphereBufferGeometry(),
+   *   new THREE.MeshBasicMaterial()
+   * );
+   * viewer.addObject3D(sphere);
+   * ```
+   */
   addObject3D(object: THREE.Object3D): void {
     if (this.isDisposed) {
       return;
@@ -343,6 +471,15 @@ export class Cognite3DViewer {
     this.renderController.redraw();
   }
 
+  /**
+   * Remove a THREE.Object3D from the viewer
+   * @example
+   * ```js
+   * const sphere = new THREE.Mesh(new THREE.SphereBufferGeometry(), new THREE.MeshBasicMaterial());
+   * viewer.addObject3D(sphere);
+   * viewer.removeObject3D(sphere);
+   * ```
+   */
   removeObject3D(object: THREE.Object3D): void {
     if (this.isDisposed) {
       return;
@@ -355,6 +492,9 @@ export class Cognite3DViewer {
     this.renderController.redraw();
   }
 
+  /**
+   * Sets the color used as the clear color of the renderer.
+   */
   setBackgroundColor(color: THREE.Color) {
     if (this.isDisposed) {
       return;
@@ -363,6 +503,36 @@ export class Cognite3DViewer {
     this.renderer.setClearColor(color);
   }
 
+  /**
+   * Sets per-pixel slicing planes. Pixels behind any of the planes will be sliced away.
+   * @param slicingPlanes The planes to use for slicing
+   * @examples
+   * ```js
+   * // Hide pixels with values less than 0 in the x direction
+   * const plane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
+   * viewer.setSlicingPlanes([plane]);
+   * ```
+   * ```js
+   * // Hide pixels with values greater than 20 in the x direction
+   *  const plane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 20);
+   * viewer.setSlicingPlanes([plane]);
+   * ```
+   * ```js
+   * // Hide pixels with values less than 0 in the x direction or greater than 0 in the y direction
+   * const xPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
+   * const yPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
+   * viewer.setSlicingPlanes([xPlane, yPlane]);
+   * ```
+   * ```js
+   * // Hide pixels behind an arbitrary, non axis-aligned plane
+   *  const plane = new THREE.Plane(new THREE.Vector3(1.5, 20, -19), 20);
+   * viewer.setSlicingPlanes([plane]);
+   * ```
+   * ```js
+   * // Disable slicing planes
+   *  viewer.setSlicingPlanes([]);
+   * ```
+   */
   setSlicingPlanes(slicingPlanes: THREE.Plane[]): void {
     const geometryFilterPlanes = this._geometryFilters
       .map(x => new BoundingBoxClipper(x.boundingBox).clippingPlanes)
@@ -374,31 +544,73 @@ export class Cognite3DViewer {
     this._slicingNeedsUpdate = true;
   }
 
+  /**
+   * @returns the THREE.Camera used for rendering.
+   */
   getCamera(): THREE.Camera {
     return this.camera;
   }
+
+  /**
+   * @returns the THREE.Scene used for rendering.
+   */
   getScene(): THREE.Scene {
     return this.scene;
   }
 
+  /**
+   * @returns camera's position in world space
+   */
   getCameraPosition(): THREE.Vector3 {
     if (this.isDisposed) {
       return new THREE.Vector3(-Infinity, -Infinity, -Infinity);
     }
     return this.controls.getState().position.clone();
   }
+
+  /**
+   * @returns camera's target in world space
+   */
   getCameraTarget(): THREE.Vector3 {
     if (this.isDisposed) {
       return new THREE.Vector3(-Infinity, -Infinity, -Infinity);
     }
     return this.controls.getState().target.clone();
   }
+
+  /**
+   * @param position Position in world space
+   * @example
+   * ```js
+   * // store position, target
+   * const position = viewer.getCameraPosition();
+   * const target = viewer.getCameraTarget();
+   * // restore position, target
+   * viewer.setCameraPosition(position);
+   * viewer.setCameraTarget(target);
+   * ```
+   */
   setCameraPosition(position: THREE.Vector3): void {
     if (this.isDisposed) {
       return;
     }
     this.controls.setState(position, this.getCameraTarget());
   }
+
+  /**
+   * Set camera's target
+   * @public
+   * @param target Target in world space
+   * @example
+   * ```js
+   * // store position, target
+   * const position = viewer.getCameraPosition();
+   * const target = viewer.getCameraTarget();
+   * // restore position, target
+   * viewer.setCameraPosition(position);
+   * viewer.setCameraTarget(target);
+   * ```
+   */
   setCameraTarget(target: THREE.Vector3): void {
     if (this.isDisposed) {
       return;
@@ -406,11 +618,49 @@ export class Cognite3DViewer {
     this.controls.setState(this.getCameraPosition(), target);
   }
 
+  /**
+   * Move camera to a place where the 3D model is visible.
+   * It uses the bounding box of the 3D model and calls {@link Cognite3DViewer.fitCameraToBoundingBox}
+   * @param model The 3D model
+   * @param duration The duration of the animation moving the camera. Set this to 0 (zero) to disable animation.
+   * @examples
+   * ```js
+   * // Fit camera to model
+   * viewer.fitCameraToModel(model);
+   * ```
+   * ```js
+   * // Fit camera to model over 500 milliseconds
+   * viewer.fitCameraToModel(model, 500);
+   * ```
+   * ```js
+   * // Fit camera to model instantly
+   * viewer.fitCameraToModel(model, 0);
+   * ```
+   */
   fitCameraToModel(model: CogniteModelBase, duration?: number): void {
     const bounds = model.getModelBoundingBox();
     this.fitCameraToBoundingBox(bounds, duration);
   }
 
+  /**
+   * Move camera to a place where the content of a bounding box is visible to the camera.
+   * @param box The bounding box in world space
+   * @param duration The duration of the animation moving the camera. Set this to 0 (zero) to disable animation.
+   * @param radiusFactor The ratio of the distance from camera to center of box and radius of the box
+   * @example
+   * ```js
+   * // Fit camera to bounding box over 500 milliseconds
+   * viewer.fitCameraToBoundingBox(boundingBox, 500);
+   * ```
+   * ```js
+   * // Fit camera to bounding box instantaneously
+   * viewer.fitCameraToBoundingBox(boundingBox, 0);
+   * ```
+   * ```js
+   * // Place the camera closer to the bounding box
+   * viewer.fitCameraToBoundingBox(boundingBox, 500, 2);
+   * ```
+   */
   fitCameraToBoundingBox(box: THREE.Box3, duration?: number, radiusFactor: number = 2): void {
     const center = new THREE.Vector3().lerpVectors(box.min, box.max, 0.5);
     const radius = 0.5 * new THREE.Vector3().subVectors(box.max, box.min).length();
@@ -430,24 +680,69 @@ export class Cognite3DViewer {
     this.moveCameraTo(position, target, duration);
   }
 
+  /**
+   * Typically used when you perform some changes and can't see them unless you move camera.
+   * To fix this forceRerender might be used.
+   */
   forceRerender(): void {
     this._revealManager.requestRedraw();
   }
 
+  /**
+   * Allows to move camera with WASM or arrows keys.
+   */
   enableKeyboardNavigation(): void {
     this.controls.enableKeyboardNavigation = true;
   }
+
+  /**
+   * Disables camera movement by pressing WASM or arrows keys.
+   */
   disableKeyboardNavigation(): void {
     this.controls.enableKeyboardNavigation = false;
   }
 
-  worldToScreen(_point: THREE.Vector3, _normalize?: boolean): THREE.Vector2 | null {
-    const p = from3DPositionToRelativeViewportCoordinates(this.camera, _point);
+  /**
+   * Convert a point in world space to its coordinates in the canvas. This can be used to place HTML objects near 3D objects on top of the 3D viewer.
+   * @see {@link https://www.w3schools.com/graphics/canvas_coordinates.asp https://www.w3schools.com/graphics/canvas_coordinates.asp}
+   * @param point World space coordinate.
+   * @param normalize Optional. If true, coordinates are normalized into [0,1]. If false, the values are in the range [0, <canvas_size>).
+   * @return Returns 2D coordinates if the point is visible on screen, or `null` if object is outside screen.
+   * @examples
+   * ```js
+   * const boundingBoxCenter = new THREE.Vector3();
+   * // Find center of bounding box in world space
+   * model.getBoundingBox(nodeId).getCenter(boundingBoxCenter);
+   * // Screen coordinates of that point
+   * const screenCoordinates = viewer.worldToScreen(boundingBoxCenter);
+   * ```
+   * ```js
+   * const boundingBoxCenter = new THREE.Vector3();
+   * // Find center of bounding box in world space
+   * model.getBoundingBox(nodeId).getCenter(boundingBoxCenter);
+   * // Screen coordinates of that point normalized in the range [0,1]
+   * const screenCoordinates = viewer.worldToScreen(boundingBoxCenter, true);
+   * ```
+   * ```js
+   * const boundingBoxCenter = new THREE.Vector3();
+   * // Find center of bounding box in world space
+   * model.getBoundingBox(nodeId).getCenter(boundingBoxCenter);
+   * // Screen coordinates of that point
+   * const screenCoordinates = viewer.worldToScreen(boundingBoxCenter);
+   * if (screenCoordinates == null) {
+   *   // Object not visible on screen
+   * } else {
+   *   // Object is visible on screen
+   * }
+   * ```
+   */
+  worldToScreen(point: THREE.Vector3, normalize?: boolean): THREE.Vector2 | null {
+    const p = from3DPositionToRelativeViewportCoordinates(this.camera, point);
     if (p.x < 0 || p.x > 1 || p.y < 0 || p.y > 1 || p.z < 0 || p.z > 1) {
       // Return null if point is outside camera frustum.
       return null;
     }
-    if (!_normalize) {
+    if (!normalize) {
       const canvas = this.renderer.domElement;
       p.x = Math.round(p.x * canvas.clientWidth);
       p.y = Math.round(p.y * canvas.clientHeight);
@@ -455,6 +750,24 @@ export class Cognite3DViewer {
     return new THREE.Vector2(p.x, p.y);
   }
 
+  /**
+   * Take screenshot from the current camera position.
+   * @param width Width of the final image. Default is current canvas size.
+   * @param height Height of the final image. Default is current canvas size.
+   * @returns A {@link https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs Data URL} of the image ('image/png')
+   * @examples
+   * ```js
+   * // Take a screenshot with custom resolution
+   * const url = await viewer.getScreenshot(1920, 1080);
+   * ```
+   * ```js
+   * // Add a screenshot with resolution of the canvas to the page
+   * const url = await viewer.getScreenshot();
+   * const image = document.createElement('img');
+   * image.src = url;
+   * document.body.appendChild(url);
+   * ```
+   */
   async getScreenshot(width = this.canvas.width, height = this.canvas.height): Promise<string> {
     if (this.isDisposed) {
       throw new Error('Viewer is disposed');
@@ -476,8 +789,26 @@ export class Cognite3DViewer {
     return url;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getIntersectionFromPixel(offsetX: number, offsetY: number, _cognite3DModel?: Cognite3DModel): null | Intersection {
+  /**
+   * Raycasting model(s) for finding where the ray intersects with the model.
+   * @param offsetX X coordinate in pixels (relative to the domElement)
+   * @param offsetY Y coordinate in pixels (relative to the domElement)
+   * @returns If there was an intersection then return the intersection object - otherwise it returns `null` if there were no intersections.
+   * @see {@link https://en.wikipedia.org/wiki/Ray_casting}
+   * @example
+   * ```js
+   * const offsetX = 50 // pixels from the left
+   * const offsetY = 100 // pixels from the top
+   * const intersection = viewer.getIntersectionFromPixel(offsetX, offsetY);
+   * if (intersection) // it was a hit
+   *   console.log(
+   *     'You hit model ', intersection.model,
+   *     ' at the node with id ', intersection.nodeId,
+   *     ' at this exact point ', intersection.point
+   *   );
+   * ```
+   */
+  getIntersectionFromPixel(offsetX: number, offsetY: number): null | Intersection {
     const cadModels = this.getModels(SupportedModelTypes.CAD);
     const nodes = cadModels.map(x => x.cadNode);
 
@@ -509,6 +840,10 @@ export class Cognite3DViewer {
     return null;
   }
 
+  /**
+   * @deprecated There is no cache anymore.
+   * @throws {@link NotSupportedInMigrationWrapperError}
+   */
   clearCache(): void {
     throw new NotSupportedInMigrationWrapperError('Cache is not supported');
   }
