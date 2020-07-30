@@ -248,17 +248,16 @@ function setOutlineColor(outlineTextureData: Uint8ClampedArray, colorIndex: numb
 }
 
 function hasIntersection(left: Set<number>, right: Set<number>): boolean {
-  const iterator = left.size < right.size ? left : right;
-  const iteratee = left.size > right.size ? left : right;
+  const needles = left.size < right.size ? left : right;
+  const haystack = left.size > right.size ? left : right;
 
   let intersects = false;
-
-  iterator.forEach(p => {
-    if (iteratee.has(p)) {
-      intersects = true;
-      return;
-    }
-  });
+  const it = needles.values();
+  let itCurr = it.next();
+  while (!intersects && !itCurr.done) {
+    intersects = haystack.has(itCurr.value);
+    itCurr = it.next();
+  }
 
   return intersects;
 }
