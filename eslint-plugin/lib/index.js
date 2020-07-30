@@ -1,9 +1,7 @@
 /* eslint-disable global-require */
 const allRules = {
   'forbid-styled-macro': require('./rules/forbid-styled-macro'),
-  'no-number-z-index-inline-styling': require('./rules/no-number-z-index-inline-styling'),
-  'no-number-z-index-property': require('./rules/no-number-z-index-property'),
-  'no-number-z-index-styled-components': require('./rules/no-number-z-index-styled-components'),
+  'no-number-z-index': require('./rules/no-number-z-index'),
   'no-sdk-submodule-imports': require('./rules/no-sdk-submodule-imports'),
   'no-unissued-todos': require('./rules/no-unissued-todos'),
   'require-hellip': require('./rules/require-hellip'),
@@ -28,9 +26,7 @@ module.exports = {
     opsup: {
       plugins: ['@cognite'],
       rules: {
-        '@cognite/no-number-z-index-inline-styling': 2,
-        '@cognite/no-number-z-index-property': 2,
-        '@cognite/no-number-z-index-styled-components': 2,
+        '@cognite/no-number-z-index': 2,
         '@cognite/no-sdk-submodule-imports': 2,
         '@cognite/require-styled-macro': 1,
         '@cognite/require-t-function': 1,
@@ -45,9 +41,7 @@ module.exports = {
     noNumZIndex: {
       plugins: ['@cognite'],
       rules: {
-        '@cognite/no-number-z-index-inline-styling': 2,
-        '@cognite/no-number-z-index-property': 2,
-        '@cognite/no-number-z-index-styled-components': 2,
+        '@cognite/no-number-z-index': 2,
       },
     },
     sdk: {

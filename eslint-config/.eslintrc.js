@@ -79,9 +79,7 @@ module.exports = {
     },
   ],
   rules: {
-    '@cognite/no-number-z-index-inline-styling': 'error',
-    '@cognite/no-number-z-index-property': 'error',
-    '@cognite/no-number-z-index-styled-components': 'error',
+    '@cognite/no-number-z-index': 'error',
     '@cognite/no-sdk-submodule-imports': 'error',
     '@cognite/no-unissued-todos': 'warn',
     '@cognite/require-t-function': 'error',

@@ -37,7 +37,7 @@ Then configure the rules you want to use under the rules section.
 ```json
 {
   "rules": {
-    "@cognite/no-number-z-index-styled-components": "error"
+    "@cognite/no-number-z-index": "error"
   }
 }
 ```
@@ -61,13 +61,9 @@ Presets are enabled by adding a line to the `extends` list in your config file. 
 
 Here are all the individual rules you can use:
 
-### [@cognite/forbid-styled-macro](https://github.com/cognitedata/eslint-plugin-cognite/blob/master/docs/rules/forbid-styled-macro.md) - z-index util should be used inline
+### [@cognite/forbid-styled-macro](https://github.com/cognitedata/eslint-plugin-cognite/blob/master/docs/rules/forbid-styled-macro.md) - Make sure that styled-components/macro is not used
 
-### [@cognite/no-number-z-index-inline-styling](https://github.com/cognitedata/eslint-plugin-cognite/blob/master/docs/rules/no-number-z-index-inline-styling.md) - z-index util should be used inline
-
-### [@cognite/no-number-z-index-property](https://github.com/cognitedata/eslint-plugin-cognite/blob/master/docs/rules/no-number-z-index-property.md) - z-index util should be used as a prop
-
-### [@cognite/no-number-z-index-styled-components](https://github.com/cognitedata/eslint-plugin-cognite/blob/master/docs/rules/no-number-z-index-styled-components.md) - z-index util should be used in styled components
+### [@cognite/no-number-z-index](https://github.com/cognitedata/eslint-plugin-cognite/blob/master/docs/rules/no-number-z-index.md) - z-index util should be used
 
 ### [@cognite/require-styled-macro](https://github.com/cognitedata/eslint-plugin-cognite/blob/master/docs/rules/require-styled-macro.md) - Make sure styled-components/macro is used
 
