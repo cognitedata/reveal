@@ -1,14 +1,20 @@
 const stub = {
   start: () => ({
-    stop: () => null,
+    stop: () => undefined,
   }),
   track: () => undefined,
 };
 
 export const Metrics = {
   create: () => stub,
-  stop: () => null,
+  stop: () => undefined,
   init: () => undefined,
+  optOut: () => undefined,
+  optIn: () => undefined,
+  props: () => undefined,
+  hasOptedOut: () => false,
+  identify: () => undefined,
+  people: () => undefined,
 };
 
 export const useMetrics = () => stub;

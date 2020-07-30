@@ -22,7 +22,7 @@ To track events, use the `track` method:
 import { Metrics } from '@cognite/metrics';
 
 class MyComponent extends React.Component {
-  metrics = new Metrics('MyComponent');
+  metrics = Metrics.create('MyComponent');
 
   onItemClicked = (itemId) => {
     metrics.track('onItemClicked', { itemClicked: itemId });
@@ -33,22 +33,11 @@ class MyComponent extends React.Component {
 }
 ```
 
-Note that the class names can also be passed as function references:
-
-```js
-import { Metrics } from '@cognite/metrics';
-
-class MyComponent extends React.Component {
-  metrics = new Metrics(MyComponent);
-
-  // ...
-}
-```
-
 There is also a hook you can use in functional components:
 
 ```js
 import { useMetrics } from '@cognite/metrics';
+
 const MyComponent = () => {
   const metrics = useMetrics('MyComponent');
   // ...
@@ -67,19 +56,18 @@ Events can also be timed using the `start` and `stop` methods:
 ```js
 import { Metrics } from '@cognite/metrics';
 
-class MyComponent extends React.Component {
-  metrics = new Metrics('MyComponent');
+const MyComponent = () => {
+  const metrics = useMetrics('MyComponent');
 
-  onLoadChildren = (itemId) => {
+  const onLoadChildren = (itemId) => {
     const timer = metrics.start('onLoadChildren', { parentId: itemId });
     childLoader.load(itemId).then((children) => {
       timer.stop({ numberOfChildren: children.length });
       // ...
     });
   };
-
   // ...
-}
+};
 ```
 
 ### Metadata
@@ -109,7 +97,7 @@ import { Metrics } from '@cognite/metrics';
 Metrics.people({ name: 'Foo', company: 'Bar AS', numberOfProducts: 10 });
 ```
 
-### Opting out / in of tracking for a user
+### Opting out of / in to tracking for a user
 
 To opt a user out or in from tracking use the following methods.
 
@@ -120,7 +108,7 @@ Metrics.optIn(options?);
 Metrics.optOut(options?);
 ```
 
-Too check if a user is opted out:
+To check if a user is opted out:
 
 ```js
 import { Metrics } from '@cognite/metrics';
