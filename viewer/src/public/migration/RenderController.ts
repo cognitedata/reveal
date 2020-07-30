@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 
 export default class RenderController {
-  needsRedraw: boolean;
+  private _needsRedraw: boolean;
   private _camera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
   private _lastCameraPosition: THREE.Vector3;
   private _lastCameraRotation: THREE.Euler;
@@ -13,7 +13,7 @@ export default class RenderController {
 
   constructor(camera: THREE.PerspectiveCamera | THREE.OrthographicCamera) {
     this._camera = camera;
-    this.needsRedraw = true;
+    this._needsRedraw = true;
 
     this._lastCameraPosition = new THREE.Vector3();
     this._lastCameraRotation = new THREE.Euler();
@@ -22,6 +22,10 @@ export default class RenderController {
     window.addEventListener('focus', () => {
       this.redraw(); // force rendering on focus
     });
+  }
+
+  public get needsRedraw(): boolean {
+    return this._needsRedraw;
   }
 
   update(): void {
@@ -33,15 +37,15 @@ export default class RenderController {
     _lastCameraRotation.copy(rotation);
     this._lastCameraZoom = zoom;
     if (hasCameraChanged) {
-      this.needsRedraw = true;
+      this._needsRedraw = true;
     }
   }
 
   clearNeedsRedraw(): void {
-    this.needsRedraw = false;
+    this._needsRedraw = false;
   }
 
   redraw(): void {
-    this.needsRedraw = true;
+    this._needsRedraw = true;
   }
 }
