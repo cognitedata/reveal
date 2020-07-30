@@ -1,8 +1,9 @@
 // Visualizer component state interface
 
-import {ToolbarCommand} from "@/UserInterface/NodeVisualizer/ToolBar/ToolbarCommand";
+import { ToolbarCommand } from "@/UserInterface/NodeVisualizer/ToolBar/ToolbarCommand";
 
-export interface VisualizerState {
+export interface VisualizerState
+{
   toolbars: { [key: string]: ToolbarCommand[] },
   targets: { [key: string]: any },
   statusBar: { text: string }

@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import {State} from "@/UserInterface/Redux/State/State";
+import { State } from "@/UserInterface/Redux/State/State";
 import VisualizerToolbar from "@/UserInterface/NodeVisualizer/ToolBar/VisualizerToolbar";
 
 // 3D Viewer

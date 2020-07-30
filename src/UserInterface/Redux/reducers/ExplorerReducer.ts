@@ -1,16 +1,16 @@
-import {createReducer} from "@reduxjs/toolkit";
-import {ExplorerState, TreeDataItemState} from "@/UserInterface/Redux/State/explorer";
-import {BaseNode} from "@/Core/Nodes/BaseNode";
-import {CheckBoxState} from "@/Core/Enums/CheckBoxState";
-import {BaseRootNode} from "@/Core/Nodes/BaseRootNode";
+import { createReducer } from "@reduxjs/toolkit";
+import { ExplorerState, TreeDataItemState } from "@/UserInterface/Redux/State/explorer";
+import { BaseNode } from "@/Core/Nodes/BaseNode";
+import { CheckBoxState } from "@/Core/Enums/CheckBoxState";
+import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import {
-  CHANGE_CHECKBOX_STATE,
-  CHANGE_NODE_COLOR,
-  CHANGE_NODE_NAME,
-  CHANGE_SELECT_STATE,
-  CHANGE_SELECTED_TAB,
   GENERATE_NODE_TREE,
-  TOGGLE_NODE_EXPAND
+  CHANGE_CHECKBOX_STATE,
+  CHANGE_SELECTED_TAB,
+  CHANGE_SELECT_STATE,
+  CHANGE_NODE_NAME,
+  CHANGE_NODE_COLOR,
+  CHANGE_EXPAND_STATE
 } from "@/UserInterface/Redux/actions/actionTypes";
 
 // Generate Redux store compatible nodes data structure from root node
@@ -44,8 +44,7 @@ function generateNodeStructure(
       italic: node.isLabelInItalic(),
       bold: node.isLabelInBold(),
       color: node.getLabelColor()
-    },
-    domainObject: node
+    }
   };
 }
 
@@ -102,11 +101,6 @@ export default createReducer(initialState, {
     state.nodes = nodes;
     state.tabs = tabs;
   },
-  [TOGGLE_NODE_EXPAND]: (state, action) =>
-  {
-    const { uniqueId, expandState } = action.payload;
-    state.nodes![uniqueId].expanded = expandState;
-  },
 
   /**************************  Notification Adapter Action Start *************************/
 
@@ -158,8 +152,8 @@ export default createReducer(initialState, {
   },
   [CHANGE_SELECT_STATE]: (state, action) =>
   {
-    const uniqueId = action.appliesTo;
-    const selectStatus = action.payload;
+    const uniqueId = action.payload.id;
+    const selectStatus = action.payload.selected;
     const node = state.nodes![uniqueId];
 
     if (node)
@@ -172,10 +166,23 @@ export default createReducer(initialState, {
       }
     }
   },
+  [CHANGE_EXPAND_STATE]: (state, action) =>
+  {
+    const uniqueId = action.appliesTo;
+    const expandStatus = action.payload;
+    const node = state.nodes![uniqueId];
+
+    if (node)
+    {
+      state.nodes![uniqueId].expanded = expandStatus;
+    }
+  },
   [CHANGE_NODE_NAME]: (state, action) =>
   {
     const uniqueId = action.appliesTo;
-    state.nodes![uniqueId].name = action.payload;
+    const nodeLabel = action.payload;
+
+    state.nodes![uniqueId].name = nodeLabel;
   },
   [CHANGE_NODE_COLOR]: (state, action) =>
   {

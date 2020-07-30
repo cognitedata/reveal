@@ -20,7 +20,7 @@ import { Range3 } from "@/Core/Geometry/Range3";
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import Toolbar from "@/UserInterface/NodeVisualizer/ToolBar/Toolbar";
 import { Appearance } from "@/Core/States/Appearance";
-import {State} from "@/UserInterface/Redux/State/State";
+import { State } from "@/UserInterface/Redux/State/State";
 
 /**
  * Subsurface Visualizer Component of the application
@@ -32,6 +32,10 @@ export default function NodeVisualizer(props: { root?: BaseRootNode }) {
   const { root } = props;
   // Add viewer ref here
   const visualizers = useSelector((state: State) => state.visualizers); //TODO: Remove state reference
+
+  if (root) {
+    BaseRootNode.active = root;
+  }
 
   // success callback for registering viewers to DOM
   const viewerElementCallback = useCallback(

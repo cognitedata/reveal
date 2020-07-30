@@ -1,7 +1,8 @@
 // Toolbar command interface
-import {BaseCommand} from "@/Core/Commands/BaseCommand";
+import { BaseCommand } from "@/Core/Commands/BaseCommand";
 
-export interface ToolbarCommand {
+export interface ToolbarCommand
+{
   isChecked: boolean;
   icon: string;
   command: BaseCommand;

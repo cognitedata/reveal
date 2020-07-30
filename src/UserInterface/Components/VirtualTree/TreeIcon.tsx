@@ -2,20 +2,19 @@ import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import * as Color from "color";
 import { fabric } from "fabric";
-import {readCssVariablePixelNumber} from "@/UserInterface/Foundation/Utils/cssUtils";
+import { readCssVariablePixelNumber } from "@/UserInterface/Foundation/Utils/cssUtils";
 
 const DEF_ICON_SIZE = 18;
 const USE_FABRIC = true; // todo: Mihil - remove once fabric.js evaluation is completed
 
-export interface ImageProps
-{
+export interface ImageProps {
   readonly background?: string;
   readonly picture?: string;
 }
 const ImageContainer = styled.div<ImageProps>`
-  background: ${props => props.background };
-  mask-image: ${props => props.picture ? `url(${props.picture})` : "none"};
-  -webkit-mask-image: ${props => props.picture ? `url(${props.picture})` : "none"};
+  background: ${props => props.background};
+  mask-image: ${props => (props.picture ? `url(${props.picture})` : "none")};
+  -webkit-mask-image: ${props => (props.picture ? `url(${props.picture})` : "none")};
 `;
 
 export default function TreeIcon(props: {
@@ -23,8 +22,7 @@ export default function TreeIcon(props: {
   alt?: string;
   size?: number;
   color?: Color;
-})
-{
+}) {
   const DEFAULT_ICON_SIZE = readCssVariablePixelNumber("--v-tree-icon-size") || DEF_ICON_SIZE;
 
   const iconSize = props.size || DEFAULT_ICON_SIZE;
@@ -36,11 +34,15 @@ export default function TreeIcon(props: {
   const fabricRef = useRef<fabric.Canvas>(null);
   const imageRef = useRef<fabric.Image>(null);
 
-  const setImage = (fabricImage: fabric.Image, fabricCanvas: fabric.Canvas, size?: number, color?: Color) => {
-    if(fabricImage && fabricCanvas){
+  const setImage = (
+    fabricImage: fabric.Image,
+    fabricCanvas: fabric.Canvas,
+    size?: number,
+    color?: Color
+  ) => {
+    if (fabricImage && fabricCanvas) {
       fabricImage.scaleToHeight(iconSize);
-      if (color)
-      {
+      if (color) {
         const filter = new fabric.Image.filters.BlendColor({
           color: color.hex(),
           mode: "multiply",
@@ -56,35 +58,35 @@ export default function TreeIcon(props: {
   };
 
   // add image
-  useEffect(() =>
-  {
+  useEffect(() => {
     // only works when USE_FABRIC is true
-    if (props.src && canvasRef.current)
-    {
-      const canvas = new fabric.Canvas(canvasRef.current, { selection: false, width: iconSize, height: iconSize });
+    if (props.src && canvasRef.current) {
+      const canvas = new fabric.Canvas(canvasRef.current, {
+        selection: false,
+        width: iconSize,
+        height: iconSize
+      });
       // @ts-ignore
       fabricRef.current = canvas;
 
-      fabric.Image.fromURL(props.src!, oImg =>
-      {
+      fabric.Image.fromURL(props.src!, oImg => {
         setImage(oImg, canvas, props.size, props.color);
         // @ts-ignore
         imageRef.current = oImg;
       });
-
     }
   }, [canvasRef.current, props.src, props.color, props.size]);
 
   // change Color
 
-  useEffect(()=>{
+  useEffect(() => {
     const fabricCanvas = fabricRef.current;
     const fabricImage = imageRef.current;
 
-    if(fabricImage && fabricCanvas){
+    if (fabricImage && fabricCanvas) {
       setImage(fabricImage, fabricCanvas, props.size, props.color);
     }
-    },[props.color, props.size, imageRef, fabricRef]);
+  }, [props.color, props.size, imageRef, fabricRef]);
   // fabric.js - end
 
   // const paintImage = (container: HTMLElement) =>
@@ -166,23 +168,26 @@ export default function TreeIcon(props: {
   //   </div>
   // );
 
-  if (USE_FABRIC)
-  {
+  if (USE_FABRIC) {
     // todo: Mihil - remove this check once fabric.js evaluation is completed
     return (
       <div className="tree-icon center" ref={containerRef}>
         <canvas ref={canvasRef} height={iconSize} width={iconSize} />
       </div>
     );
-  } else
-  {
-    const background =  props.color && `linear-gradient(to right,${props.color.hex()} 0%,${props.color.hex()} 100%);`;
+  } else {
+    const background =
+      props.color && `linear-gradient(to right,${props.color.hex()} 0%,${props.color.hex()} 100%);`;
 
     return (
-      <ImageContainer className="tree-icon tree-icon-image-container center" background={background} picture={props.src} aria-label={props.alt}>
-        <img className="tree-icon-image"
-            src={props.src}
-            alt={props.alt}/>
-      </ImageContainer>);
+      <ImageContainer
+        className="tree-icon tree-icon-image-container center"
+        background={background}
+        picture={props.src}
+        aria-label={props.alt}
+      >
+        <img className="tree-icon-image" src={props.src} alt={props.alt} />
+      </ImageContainer>
+    );
   }
 }

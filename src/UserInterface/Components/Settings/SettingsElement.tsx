@@ -1,20 +1,16 @@
 import React from "react";
+import Color from "color";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
-import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSortUp } from "@fortawesome/free-solid-svg-icons/faSortUp";
 import { faSortDown } from "@fortawesome/free-solid-svg-icons/faSortDown";
-
-import { onInputChange, onChangeSettingAvailability } from "@/UserInterface/Redux/actions/settings";
-import Inputs from "@/UserInterface/Components/Settings/ElementTypes";
-import { isNumber } from "@/UserInterface/Foundation/Utils/numericUtils";
-import Color from "color";
-import {SectionElement} from "@/UserInterface/Components/Settings/Types";
-import {State} from "@/UserInterface/Redux/State/State";
-import Icon from "@/UserInterface/Components/Icon/Icon";
+import { ISettingsElement } from "@/UserInterface/Components/Settings/Types";
+import ElementTypes from "@/UserInterface/Components/Settings/ElementTypes";
 import CompactColorPicker from "@/UserInterface/Components/CompactColorPicker/CompactColorPicker";
+import Icon from "@/UserInterface/Components/Icon/Icon";
+import { isNumber } from "@/UserInterface/Foundation/Utils/numericUtils";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -87,79 +83,58 @@ function isAvailable(checked?: boolean) {
  * Responsible for rendering dynamic inputs
  * @param props
  */
-export default function Input(props: {
-  config: SectionElement;
-  elementIndex: string;
+export default function SettingsElement(props: {
+  config: ISettingsElement;
   sectionId: string;
-  subSectionId?: string;
+  onChange: (id: string, value: any) => void;
 }) {
   const classes = useStyles();
-  const { config, elementIndex, sectionId } = props;
-  const settings = useSelector((state: State) => state.settings); //TODO: get rid of the reference to store here
-  const { subElements } = settings;
+  const { config, onChange, sectionId } = props;
 
-  const dispatch = useDispatch();
-  const labelElement = config.label ? <label>{`${config.label}:`}</label> : null;
+  const labelElement = config.name ? <label>{`${config.name}:`}</label> : null;
 
-  // Generate keys for mapped Components
+  // Generate keys for mapped components
   const keyExtractor = (
     extraIdentifier: number | string | null,
-    elementType: string,
-    subElementIndex?: string
+    elementName: string,
+    elementType: string
   ) => {
-    let key = `${sectionId}-${elementIndex}-${elementType}`;
+    let key = `${sectionId}-${elementType}-${elementName}`;
     if (extraIdentifier) key += `-${extraIdentifier}`;
-    if (subElementIndex) key += `-${subElementIndex}`;
     return { key };
   };
 
   // Renders input elements dynamically
-  const renderInputElement = (
-    elmConfig: SectionElement,
-    checked?: boolean,
-    subElementIndex?: string
-  ): any => {
-    const { value, isReadOnly, options, subElementIds, icon } = elmConfig;
+  const renderInputElement = (elmConfig: ISettingsElement, checked?: boolean): any => {
+    const { value, isReadOnly, options, subElements, icon } = elmConfig;
 
     switch (elmConfig.type) {
-      case Inputs.INPUT:
+      case ElementTypes.INPUT:
         return (
           <input
             disabled={!isAvailable(checked)}
-            {...keyExtractor(null, elmConfig.type, subElementIndex)}
-            onChange={event =>
-              !isReadOnly
-                ? dispatch(
-                    onInputChange({
-                      elementIndex,
-                      subElementIndex,
-                      value: event.target.value
-                    })
-                  )
-                : null
-            }
+            {...keyExtractor(null, elmConfig.type, elmConfig.name)}
+            onChange={event => (!isReadOnly ? onChange(elmConfig.name, event.target.value) : null)}
             value={value}
             className={
               isReadOnly ? `${classes.textInput} ${classes.readOnlyInput}` : classes.textInput
             }
           />
         );
-      case Inputs.SELECT:
+      case ElementTypes.SELECT:
         return (
-          <div className="select-group" {...keyExtractor(null, elmConfig.type, subElementIndex)}>
+          <div className="select-group" {...keyExtractor(null, elmConfig.type, elmConfig.name)}>
             <Select
               value={value}
               disabled={!isAvailable(checked)}
               onChange={event => {
-                dispatch(
-                  onInputChange({ elementIndex, subElementIndex, value: event.target.value })
-                );
+                onChange(elmConfig.name, event.target.value);
               }}
             >
               {options!.map((option, idx) => (
                 <MenuItem
                   value={idx}
-                  {...keyExtractor(idx, elmConfig.type, subElementIndex)}
+                  {...keyExtractor(idx, elmConfig.type, elmConfig.name)}
                   key={idx}
                 >
                   <div className={"select-option " + classes.option}>
@@ -174,71 +149,54 @@ export default function Input(props: {
                 icon={faSortUp}
                 onClick={() =>
                   isAvailable(checked) &&
-                  dispatch(
-                    onInputChange({
-                      elementIndex,
-                      subElementIndex,
-                      value: isNumber(value) && value! > 0 ? value - 1 : 0
-                    })
-                  )
+                  onChange(elmConfig.name, isNumber(value) && value! > 0 ? value - 1 : 0)
                 }
               />
               <FontAwesomeIcon
                 icon={faSortDown}
                 onClick={() =>
                   isAvailable(checked) &&
-                  dispatch(
-                    onInputChange({
-                      elementIndex,
-                      subElementIndex,
-                      value:
-                        isNumber(value) && value! < options!.length - 1
-                          ? value + 1
-                          : options!.length - 1
-                    })
+                  onChange(
+                    elmConfig.name,
+                    isNumber(value) && value! < options!.length - 1
+                      ? value + 1
+                      : options!.length - 1
                   )
                 }
               />
             </div>
           </div>
         );
-      case Inputs.COLOR_TABLE:
+      case ElementTypes.COLOR_TABLE:
         return (
           <CompactColorPicker
             value={value instanceof Color ? value.hex() : ""}
-            elementIndex={elementIndex}
+            id={elmConfig.name}
+            onChange={onChange}
           />
         );
-      case Inputs.RANGE:
+      case ElementTypes.RANGE:
         return (
           <input
             type="range"
             disabled={!isAvailable(checked)}
-            onChange={event =>
-              dispatch(
-                onInputChange({
-                  elementIndex,
-                  subElementIndex,
-                  value: event.target.value
-                })
-              )
-            }
+            onChange={event => onChange(elmConfig.name, event.target.value)}
             className="slider"
             min="0"
             max="100"
           />
         );
-      case Inputs.IMAGE_BUTTON:
+      case ElementTypes.IMAGE_BUTTON:
         return (
           <div
-            {...keyExtractor(null, elmConfig.type, subElementIndex)}
+            {...keyExtractor(null, elmConfig.type, elmConfig.name)}
             className={`input-icon ${icon!.selected ? "input-icon-selected" : ""}`}
           >
             <Icon type={icon!.type} name={icon!.name} />
           </div>
         );
-      case Inputs.INPUT_GROUP:
-        return subElementIds!.map(id => renderInputElement(subElements[id], checked, id));
+      case ElementTypes.INPUT_GROUP:
+        return subElements!.map(elm => renderInputElement(elm, checked));
       default:
         return null;
     }
@@ -253,14 +211,7 @@ export default function Input(props: {
             type="checkbox"
             className={classes.checkbox}
             checked={config.checked}
-            onChange={event =>
-              dispatch(
-                onChangeSettingAvailability({
-                  elementIndex,
-                  value: !config.checked
-                })
-              )
-            }
+            onChange={event => onChange(config.name, event.target.value)}
           />
         ) : null}
         {renderInputElement(config, config.checked)}

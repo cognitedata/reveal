@@ -49,4 +49,28 @@ export abstract class BaseProperty
   public /*virtual*/ displayName(): string { return this.getName() == null ? "" : this.getName(); }
   public /*virtual*/ getApplyDelegate(): Action<void> | undefined { return this._applyDelegate; }
   public /*virtual*/ setApplyDelegate(value) { this._applyDelegate = value; }
+
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
+
+  public getChildPropertyByName(name: string): BaseProperty | null
+  {
+    if (name === this.getName())
+    {
+      return this;
+    }
+    else
+    {
+      for (const child of this.children)
+      {
+        const childProperty = child.getChildPropertyByName(name);
+        if (childProperty)
+        {
+          return childProperty;
+        }
+      }
+      return null;
+    }
+  }
 }

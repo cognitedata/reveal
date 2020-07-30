@@ -1,4 +1,4 @@
 // Check whether variable is a number
-export function isNumber(number: any) {
-    return (typeof number === "number");
+export function isNumber(num: any) {
+    return (typeof num === "number");
 }

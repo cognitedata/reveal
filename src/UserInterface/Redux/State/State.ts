@@ -1,12 +1,13 @@
-import {SettingsState} from "@/UserInterface/Redux/State/settings";
-import {ExplorerState} from "@/UserInterface/Redux/State/explorer";
-import {CommonState} from "@/UserInterface/Redux/State/common";
-import {VisualizerState} from "@/UserInterface/Redux/State/visualizer";
+import { ISettingsState } from "@/UserInterface/Redux/State/settings";
+import { ExplorerState } from "@/UserInterface/Redux/State/explorer";
+import { CommonState } from "@/UserInterface/Redux/State/common";
+import { VisualizerState } from "@/UserInterface/Redux/State/visualizer";
 
 // Top level state for the sub-surface component
-export interface State {
+export interface State
+{
   common: CommonState;
-  settings: SettingsState;
+  settings: ISettingsState;
   explorer: ExplorerState;
   visualizers: VisualizerState
 }

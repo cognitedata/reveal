@@ -65,8 +65,12 @@ export default function VisualizerToolbar(props: {
     }
   };
 
-  const visibleNondropdownCommands = toolbar.filter(command => command.isVisible && !command.isDropdown);
-  const visibleDropdownCommands = toolbar.filter(command => command.isVisible && command.isDropdown);
+  const visibleNondropdownCommands = toolbar.filter(
+    command => command.isVisible && !command.isDropdown
+  );
+  const visibleDropdownCommands = toolbar.filter(
+    command => command.isVisible && command.isDropdown
+  );
 
   // dropdown Items takes twice the size
   const noOfSlots = visibleNondropdownCommands.length + visibleDropdownCommands.length * 2;
@@ -166,19 +170,13 @@ export default function VisualizerToolbar(props: {
             }}
           >
             {toolbar.map((command, index) => {
-              if (command.isVisible)
-              {
-                if (command.isDropdown)
-                {
+              if (command.isVisible) {
+                if (command.isDropdown) {
                   return addDropdown(index, command);
-                }
-                else
-                {
+                } else {
                   return addButton(index, command);
                 }
-              }
-              else
-              {
+              } else {
                 return null;
               }
             })}

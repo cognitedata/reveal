@@ -1,7 +1,8 @@
-import { TreeNode } from "./TreeNode";
+import { ITreeNode } from "./TreeNode";
 
-export interface VirtualTreeProps{
-  data?: TreeNode[];
+export interface VirtualTreeProps
+{
+  data?: ITreeNode[];
   iconSize?: number;
   rowHeight?: number;
   expandable?: boolean;

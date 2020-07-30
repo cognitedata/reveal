@@ -1,67 +1,166 @@
-import { createReducer } from "@reduxjs/toolkit";
-import {SettingsState} from "@/UserInterface/Redux/State/settings";
-import {SettingsCommandPayloadType} from "@/UserInterface/Redux/actions/settings";
-import {
-  ON_CHANGE_SETTING_AVAILABILITY,
-  ON_EXPAND_CHANGE, ON_EXPAND_CHANGE_FROM_TOOLBAR,
-  ON_INPUT_CHANGE,
-  ON_SELECTED_NODE_CHANGE
-} from "@/UserInterface/Redux/actions/actionTypes";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { BaseNode } from "@/Core/Nodes/BaseNode";
+import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
+import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { PropertyType } from "@/Core/Enums/PropertyType";
+import NodeUtils from "@/UserInterface/utils/NodeUtils";
+import { BaseProperty } from "@/Core/Property/Base/BaseProperty";
+import UsePropertyT from "@/Core/Property/Base/UsePropertyT";
+import SettingsNodeUtils from "@/UserInterface/NodeVisualizer/Settings/SettingsNodeUtils";
+import ElementTypes from "@/UserInterface/Components/Settings/ElementTypes";
+import { IconTypes } from "@/UserInterface/Components/Icon/IconTypes";
+import { ISettingsPropertyState, ISettingsState } from "@/UserInterface/Redux/State/settings";
 
 // Initial settings state
-const initialState = {} as SettingsState;
+const initialState = {
+  currentNodeId: "",
+  properties: {
+    byId: {},
+    allIds: []
+  },
+  titleBar: {
+    name: "",
+    icon: { type: IconTypes.NODES, name: "WellNode" },
+    toolBar: [
+      {
+        icon: { type: IconTypes.STATES, name: "Pinned" }
+      },
+      {
+        icon: { type: IconTypes.ARROWS, name: "FatLeft" }
+      },
+      {
+        icon: { type: IconTypes.ARROWS, name: "FatRight" }
+      }
+    ]
+  }
+} as ISettingsState;
 // Redux Toolkit package includes a createReducer utility that uses Immer internally.
 // Because of this, we can write reducers that appear to "mutate" state, but the updates
 // are actually applied immutably.
 
-export default createReducer(initialState, {
-  [ON_SELECTED_NODE_CHANGE]: (state, action) =>
-  {
-    return action.payload;
-  },
-  [ON_INPUT_CHANGE]: (state, action) =>
-  {
-    const { elementIndex, subElementIndex, value } = action.payload as SettingsCommandPayloadType;
-    if (elementIndex)
-    {
-      state.elements[elementIndex].value = value;
-    }
-    else if (subElementIndex)
-    {
-      state.subElements[subElementIndex].value = value;
-    }
-  },
-  [ON_EXPAND_CHANGE]: (state, action) =>
-  {
-    const { sectionId, subSectionId, expandState } = action.payload;
-    if (subSectionId)
-    {
-      const subSection = state.subSections[subSectionId];
-      const { iconIndex } = subSection;
-      if (iconIndex)
+export const settingsSlice = createSlice({
+  name: "settings",
+  initialState,
+  reducers: {
+    onSelectedNodeChange: {
+      reducer(state: ISettingsState, action: PayloadAction<{ node: BaseNode, propertyFolder: BasePropertyFolder }>)
       {
-        const section = state.sections[sectionId];
-        if (section.toolBar) section.toolBar[iconIndex].selected = expandState;
+        const node = action.payload.node;
+        const propertyFolder = action.payload.propertyFolder;
+
+        if (node && node.IsSelected())
+        {
+          state.currentNodeId = node.uniqueId.toString();
+          state.titleBar.name = node.displayName;
+        }
+        else
+        {
+          state.currentNodeId = "";
+          state.titleBar.name = "";
+        }
+
+        state.properties.byId = {};
+        state.properties.allIds = [];
+
+        if (propertyFolder && propertyFolder.children && propertyFolder.children.length)
+        {
+          const allPropertyStates = convertToSettingsState(propertyFolder.children);
+          for (const property of allPropertyStates)
+          {
+            state.properties.byId[property.name] = property;
+            state.properties.allIds.push(property.name);
+          }
+        }
+      },
+      prepare(node: BaseNode, selectStatus: boolean): { payload: { node: BaseNode, propertyFolder: BasePropertyFolder } }
+      {
+        let settingsProperties;
+
+        if (node && selectStatus)
+        { // populate settings object
+          settingsProperties = new PropertyFolder("Settings");
+          const generalProperties = new PropertyFolder("General Properties");
+          node.populateInfo(generalProperties);
+          settingsProperties.addChild(generalProperties);
+          NodeUtils.properties = settingsProperties;
+        }
+        return {
+          payload: { node, propertyFolder: settingsProperties }
+        };
       }
-      subSection.isExpanded = expandState;
-    }
-    else
-    {
-      state.sections[sectionId].isExpanded = expandState;
+    },
+    onSettingChange: {
+      reducer(state: ISettingsState, action: PayloadAction<{ id: string, value: any }>)
+      {
+        state.properties.byId[action.payload.id].value = action.payload.value;
+      },
+      prepare(propertyId: string, value: any)
+      {
+        SettingsNodeUtils.setPropertyValue(propertyId, value);
+        return {
+          payload: { id: propertyId, value }
+        };
+      }
+    },
+    onExpandChange: {
+      reducer(state: ISettingsState, action: PayloadAction<{ id: string, expandStatus: boolean }>)
+      {
+        const property = state.properties.byId[action.payload.id];
+        if (property)
+        {
+          property.expanded = action.payload.expandStatus;
+        }
+      },
+      prepare(propertyId: string, expanded: boolean)
+      {
+        SettingsNodeUtils.setPropertyFolderExpand(propertyId, expanded);
+        return {
+          payload: { id: propertyId, expandStatus: expanded }
+        };
+      }
+
     }
   },
-  [ON_CHANGE_SETTING_AVAILABILITY]: (state, action) =>
-  {
-    const { elementIndex, value } = action.payload;
-    state.elements[elementIndex].checked = value;
-  },
-  [ON_EXPAND_CHANGE_FROM_TOOLBAR]: (state, action) =>
-  {
-    const { sectionId, subSectionId, iconIndex } = action.payload;
-    const section = state.sections[sectionId!];
-    const icon = section.toolBar![iconIndex!];
-    const expandState = state.subSections[subSectionId].isExpanded;
-    icon.selected = !expandState;
-    state.subSections[subSectionId].isExpanded = !expandState;
-  }
+  extraReducers: {}
 });
+
+export default settingsSlice.reducer;
+export const { onSelectedNodeChange, onSettingChange, onExpandChange } = settingsSlice.actions;
+
+function convertToSettingsState(properties: BaseProperty[] | BasePropertyFolder[], parent?: string): ISettingsPropertyState[]
+{
+  let allPropertyStates: ISettingsPropertyState[] = [];
+
+  if (properties && properties.length)
+  {
+    for (const property of properties)
+    {
+      const propertyState: ISettingsPropertyState = {
+        name: property.getName(),
+        parent,
+        displayName: property.displayName(),
+        type: mapToInputTypes(property.getType()),
+        expanded: (property as BasePropertyFolder).expanded,
+        readonly: property.isReadOnly(),
+        value: (property as UsePropertyT<any>).value
+      };
+
+      const childStates = convertToSettingsState(property.children, property.getName());
+      propertyState.children = property.children.map(child => child.getName());
+      allPropertyStates.push(propertyState);
+      allPropertyStates = allPropertyStates.concat(childStates);
+    }
+  }
+
+  return allPropertyStates;
+}
+
+function mapToInputTypes(type: PropertyType): string
+{
+  if (type === PropertyType.String)
+    return ElementTypes.INPUT;
+  else if (type === PropertyType.Color)
+    return ElementTypes.COLOR_TABLE;
+  return "";
+}
+

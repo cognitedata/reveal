@@ -288,7 +288,7 @@ export abstract class BaseNode extends Identifiable
 
   public populateRenderStyle(folder: PropertyFolder): void
   {
-    var style = this.getRenderStyle();
+    const style = this.getRenderStyle();
     if (style)
       style.Populate(folder);
   }
