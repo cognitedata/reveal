@@ -6,9 +6,9 @@ module.exports = {
   ],
   plugins: ['@cognite', 'jest-dom', 'testing-library'],
   rules: {
-    '@cognite/forbid-styled-macro': 'error',
     '@cognite/no-number-z-index': 'error',
     '@cognite/no-sdk-submodule-imports': 'error',
+    '@cognite/styled-macro': ['error', 'forbid'],
 
     'react/jsx-props-no-spreading': ['off'],
     'react/static-property-placement': ['off'],
