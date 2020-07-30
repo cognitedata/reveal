@@ -33,24 +33,21 @@ describe('CadModelUpdateHandler', () => {
 
   jest.useFakeTimers();
 
-  // TODO 2020-07-15 larsmoa: Test broken due to RxJs async testing issues. RxJs <3
+  // TODO: 24-07-2020 j-bjorne skipped until pipeline split from update handler.
   test.skip('updateCamera(), updateLoadingHints() and updateClipPlanes() triggers SectorCuller.determineSectors()', () => {
     const updateHandler = new CadModelUpdateHandler(repository, mockCuller);
+    // TODO: 16-07-2020 j-bjorne reimplement tests when update handler has been separated from loading pipeline.
     updateHandler.consumedSectorObservable().subscribe();
     updateHandler.updateModels(cadModel);
-
     updateHandler.updateCamera(new THREE.PerspectiveCamera());
     jest.advanceTimersByTime(2000);
     expect(mockCuller.determineSectors).toBeCalledTimes(1);
-
     updateHandler.clippingPlanes = [new THREE.Plane()];
     jest.advanceTimersByTime(1000);
     expect(mockCuller.determineSectors).toBeCalledTimes(2);
-
     updateHandler.clipIntersection = true;
     jest.advanceTimersByTime(1000);
     expect(mockCuller.determineSectors).toBeCalledTimes(3);
-
     updateHandler.updateLoadingHints({});
     jest.advanceTimersByTime(1000);
     expect(mockCuller.determineSectors).toBeCalledTimes(4);

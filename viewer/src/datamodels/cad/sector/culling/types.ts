@@ -13,6 +13,7 @@ export interface DetermineSectorsInput {
   clipIntersection: boolean;
   cadModelsMetadata: CadModelMetadata[];
   loadingHints: CadLoadingHints;
+  cameraInMotion: boolean;
 }
 
 export type PrioritizedWantedSector = WantedSector & { priority: number };
