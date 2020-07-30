@@ -6,7 +6,7 @@ export default abstract class BasePropertyFolder extends BaseProperty
   private _expanded: boolean = true;
   protected _type: PropertyType = PropertyType.DefaultPropertyFolder;
 
-  constructor(public name: string)
+  constructor(private name: string)
   {
     super(name);
   }

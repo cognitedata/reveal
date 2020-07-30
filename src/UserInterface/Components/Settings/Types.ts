@@ -1,7 +1,3 @@
-import {TitleBarState} from "@/UserInterface/Redux/State/settings";
-import UsePropertyT from "@/Core/Property/Base/UsePropertyT";
-
-// ToolBar interface
 export type ToolBarType = {
   icon: { type: string; name: string };
   selected?: boolean;
@@ -11,20 +7,39 @@ export type ToolBarType = {
   };
 }[];
 
-export interface SettingsSection {
+// Setting panel Prop type
+export type SettingPanelProps = {
+  id?: string;
+  titleBar?: { name: string; icon: { type: string; name: string }; toolBar: ToolBarType };
+  sections: ISettingsSection[];
+  onSectionExpand: (sectionId: string, expandStatus: boolean) => void;
+  onSettingChange: (elementId: string, value: any) => void;
+};
+
+// TitleBar interface
+export interface ITitleBar {
   name: string;
-  isExpanded: boolean;
-  titleBar?: TitleBarState;
-  toolBar?: ToolBarType;
-  elementIds: string[];
-  iconIndex?: number;
-  subSectionIds?: string[];
+  icon: { type: string; name: string };
+  toolBar: ToolBarType;
 }
 
-// Settings Section Element
-export interface SectionElement {
-  propertyObject: UsePropertyT<any>;
-  label?: string;
+
+// SettingsPanel SettingsSection Prop Type
+export interface ISettingsSection
+{
+  name: string;
+  isExpanded: boolean;
+  titleBar?: ITitleBar;
+  toolBar?: ToolBarType;
+  elements: ISettingsElement[];
+  iconIndex?: number;
+  subSections: ISettingsSection[];
+}
+
+// SettingsPanel SettingsSection Element
+export interface ISettingsElement
+{
+  name: string;
   type: string;
   value?: any;
   isReadOnly?: boolean;
@@ -41,8 +56,6 @@ export interface SectionElement {
     name: string;
     selected?: boolean;
   };
-  subElementIds?: string[];
+  subElements?: ISettingsElement[];
 }
-
-
 

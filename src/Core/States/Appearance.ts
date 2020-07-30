@@ -17,7 +17,7 @@ export class Appearance
 
   // Toolbar
   static toolbarIconSize = 24; // Toolbar icon size  in pixel
-  static toolbarCommandsPerLine = 18; // Commands per line in toolbar
+  static toolbarCommandsPerLine = 19; // Commands per line in toolbar
 
   // Panel sizes
   static leftPanelDefaultSize = 290; //Default size of left panel

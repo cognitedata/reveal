@@ -2,7 +2,8 @@ import { BaseNode } from "@/Core/Nodes/BaseNode";
 import Color from "color";
 
 // Explorer component state interface
-export interface ExplorerState {
+export interface ExplorerState
+{
   tabs: {
     name: string;
     icon: string;
@@ -15,7 +16,8 @@ export interface ExplorerState {
 }
 
 // Explorer Redux Node interface
-export interface TreeDataItemState {
+export interface TreeDataItemState
+{
   parentId?: string | null;
   uniqueId: string;
   name: string;
@@ -38,7 +40,6 @@ export interface TreeDataItemState {
     bold: boolean;
     color: Color
   }
-  domainObject?: BaseNode; // Reference to BaseNode/WellNode/SurfaceNode..etc
 }
 
 

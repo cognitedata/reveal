@@ -1,0 +1,39 @@
+.expand-panel-root{
+  padding: 0!important;
+  min-height: 1.8rem !important;
+
+  .expand-summary-header{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin: 0 !important;
+    min-height: 1.8rem !important;
+    padding-left: 0.5rem;
+  }
+
+  .expand-btn{
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 0.8rem;
+    line-height: 0.8rem;
+    color: #a6a6a6;
+    font-size: 0.7rem;
+    border: 1px solid #a6a6a6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .expand-title{
+    margin: 0 .5rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+
+  .expand-toolbar{
+    position: absolute;
+    left: 110px;
+    top: -1.8rem;
+    z-index: 2;
+  }
+}

@@ -7,7 +7,7 @@ import SubsurfaceReducer from "@/UserInterface/Redux/reducers/SubsurfaceReducer"
 import SubsurfaceMiddleware from "@/UserInterface/Redux/middlewares/main";
 import "@/UserInterface/styles/scss/theme.scss";
 import { Appearance } from "@/Core/States/Appearance";
-import {setCssVariable} from "@/UserInterface/Foundation/Utils/cssUtils";
+import { setCssVariable } from "@/UserInterface/Foundation/Utils/cssUtils";
 
 // @ts-ignore
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

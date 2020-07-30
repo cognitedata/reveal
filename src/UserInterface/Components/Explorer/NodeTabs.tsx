@@ -5,7 +5,7 @@ import Tab from "@material-ui/core/Tab";
 
 import Icon from "@/UserInterface/Components/Icon/Icon";
 import { changeSelectedTab } from "@/UserInterface/Redux/actions/explorer";
-import {State} from "@/UserInterface/Redux/State/State";
+import { State } from "@/UserInterface/Redux/State/State";
 
 // Renders Explorer Tabs
 export default function NodeTabs() {

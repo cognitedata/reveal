@@ -1,16 +1,19 @@
 import { Dispatch } from "redux";
 import { Changes } from "@/Core/Views/Changes";
 import { CheckBoxState } from "@/Core/Enums/CheckBoxState";
-
+import {
+  changeCheckboxState,
+  changeActiveState,
+  changeNodeName,
+  changeNodeColor,
+  changeExpandedState,
+  changeSelectState
+} from "@/UserInterface/Redux/actions/explorer";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { changeSelectState } from "@/UserInterface/Redux/actions/common";
-import {
-  changeActiveState,
-  changeCheckboxState,
-  changeNodeColor,
-  changeNodeName
-} from "@/UserInterface/Redux/actions/explorer";
+import { onSelectedNodeChange } from "@/UserInterface/Redux/reducers/SettingsReducer";
+
+export const CHANGE_CHECKBOX_STATE: string = "CHANGE_CHECKBOX_STATE";
 
 const mapToCheckboxStateStr = (cbState: CheckBoxState) => {
   switch (cbState) {
@@ -41,7 +44,12 @@ class NotificationsToActionsAdaptor
     if (args.isChanged(Changes.visibleState))
       this.dispatcher(changeCheckboxState(sender.uniqueId.toString(), mapToCheckboxStateStr(sender.getCheckBoxState())));
     if (args.isChanged(Changes.selected))
+    {
+      this.dispatcher(onSelectedNodeChange(sender, sender.IsSelected()));
       this.dispatcher(changeSelectState(sender.uniqueId.toString(), sender.IsSelected()));
+    }
+    if (args.isChanged(Changes.expanded))
+      this.dispatcher(changeExpandedState(sender.uniqueId.toString(), sender.isExpanded));
     if (args.isChanged(Changes.active))
       this.dispatcher(changeActiveState(sender.uniqueId.toString(), sender.isActive));
     if (args.isChanged(Changes.nodeName))

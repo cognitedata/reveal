@@ -1,18 +1,16 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { TreeDataItemState } from "@/UserInterface/Redux/State/explorer";
-import {
-  onToggleNodeSelect,
-  onToggleNodeExpand,
-  onToggleNodeCheck
-} from "@/UserInterface/Redux/actions/explorer";
 import NodeTabs from "./NodeTabs";
 import { getVisibleNodes } from "@/UserInterface/Redux/selectors/explorer";
-import { TreeNode, VirtualTree } from "@cognite/subsurface-components";
+import { ITreeNode, VirtualTree } from "@cognite/subsurface-components";
+import ExplorerNodeUtils from "@/UserInterface/NodeVisualizer/Explorer/ExplorerNodeUtils";
 
 // Get a copy of nodes
-function getCopyOfNodes(nodes?: { [key: string]: TreeDataItemState }): { [key: string]: TreeNode } {
-  const nodesCopy: { [key: string]: TreeNode } = {};
+function getCopyOfNodes(nodes?: {
+  [key: string]: TreeDataItemState;
+}): { [key: string]: ITreeNode } {
+  const nodesCopy: { [key: string]: ITreeNode } = {};
   if (nodes) {
     for (const id in nodes) {
       if (nodes.hasOwnProperty(id)) {
@@ -28,7 +26,7 @@ function getCopyOfNodes(nodes?: { [key: string]: TreeDataItemState }): { [key: s
 
 // Generate tree data structure
 function generateTree(nodes?: { [key: string]: TreeDataItemState }) {
-  const data: TreeNode[] = [];
+  const data: ITreeNode[] = [];
   if (nodes) {
     const nodesCopy = getCopyOfNodes(nodes);
     for (const id in nodesCopy) {
@@ -59,17 +57,17 @@ export function Explorer() {
 
   // Handle Node Check
   const handleToggleNodeCheck = (uniqueId: string, checkState: boolean) => {
-    dispatch(onToggleNodeCheck({ uniqueId, checkState }));
+    ExplorerNodeUtils.viewNodeById(uniqueId);
   };
 
   // Handle Node Expand
   const handleToggleNodeExpand = (uniqueId: string, expandState: boolean) => {
-    dispatch(onToggleNodeExpand({ uniqueId, expandState }));
+    ExplorerNodeUtils.expandNodeById(uniqueId);
   };
 
   // Handle Node Select
   const handleToggleNodeSelect = (uniqueId: string, selectState: boolean) => {
-    dispatch(onToggleNodeSelect({ uniqueId, selectState }));
+    ExplorerNodeUtils.selectNodeById(uniqueId, selectState);
   };
 
   return (

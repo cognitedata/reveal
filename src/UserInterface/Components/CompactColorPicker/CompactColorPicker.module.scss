@@ -1,0 +1,38 @@
+.color-picker-container{
+  width: 100%;
+  position: relative;
+
+  .color-display{
+    height: 1rem;
+    border: 1px #c4c4c4 solid;
+    font-size: 0.6rem;
+    padding-left: 0.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    background-color: white;
+
+    .color-box{
+      width: 0.5rem;
+      height: 0.5rem;
+      border: 1px #c4c4c4 solid;
+    }
+
+    .color-name{
+      margin-left: 0.1rem;
+    }
+  }
+
+  .color-picker{
+    position: fixed;
+    z-index: 999;
+
+    .color-picker-cover {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+  }
+}

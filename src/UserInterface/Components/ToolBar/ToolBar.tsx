@@ -1,9 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-
-import Icon from "@/UserInterface/Components/Icon/Icon";
-import { onExpandChangeFromToolbar } from "@/UserInterface/Redux/actions/settings";
 import { ToolBarType } from "@/UserInterface/Components/Settings/Types";
+import Icon from "@/UserInterface/Components/Icon/Icon";
 
 // Assign toolbar actions
 function assignToolBarAction(
@@ -16,10 +14,13 @@ function assignToolBarAction(
 ) {
   if (action) {
     const { type, subSectionId } = action;
-    switch (type) { // todo: add default case and more cases or change to if/else
+    // tslint:disable-next-line:switch-default
+    switch (
+      type // todo: add default case and more cases or change to if/else
+    ) {
       case "EXPAND":
         return {
-          func: onExpandChangeFromToolbar,
+          // func: onExpandChangeFromToolbar,
           data: {
             sectionId,
             iconIndex,
@@ -50,13 +51,13 @@ export default function ToolBar(props: { sectionId: string; toolBar?: ToolBarTyp
             key={`${sectionId}-toobar-${index}`}
             className={`tool-bar-icon ${selected ? "icon-selected" : ""}`}
             onClick={() => {
-              const out = assignToolBarAction(sectionId, index, action);
-              if (out) {
-                const { func, data } = out;
-                if (func) {
-                  dispatch(func(data));
-                }
-              }
+              // const out = assignToolBarAction(sectionId, index, action);
+              // if (out) {
+              //   const { func, data } = out;
+              //   if (func) {
+              //     dispatch(func(data));
+              //   }
+              // }
             }}
           >
             <Icon type={icon.type} name={icon.name} />

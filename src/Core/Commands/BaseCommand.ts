@@ -21,7 +21,7 @@ export abstract class BaseCommand
   public /*virtual*/ get isChecked(): boolean { return false; } // Is checked?
   public /*virtual*/ get isCheckable(): boolean { return false; } // Can be checked? (default false)
   public /*virtual*/ get isVisible(): boolean { return this.isEnabled; } // Is visible?
-  public /*virtual*/ get isDropdown (): boolean { return false } // Is a Dropdown ?
+  public /*virtual*/ get isDropdown(): boolean { return false; } // Is a Dropdown ?
   public /*virtual*/ get dropdownOptions(): string[] { return [""]; };
 
   //==================================================

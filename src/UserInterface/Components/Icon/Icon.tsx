@@ -14,9 +14,7 @@ const CustomToolTip = withStyles((theme: Theme) => ({
   }
 }))(Tooltip);
 
-/**
- * Icon component
- */
+
 export default function Icon(props: {
   type?: string;
   name?: string;

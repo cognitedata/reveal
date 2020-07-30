@@ -22,6 +22,7 @@ export class UniqueId
 
   public static readonly empty = new UniqueId(); 
   public static new(): UniqueId { return new UniqueId(uuid()); }
+  public static create(other: string): UniqueId { return new UniqueId(other) };
 
   //==================================================
   // INSTANCE FIELDS

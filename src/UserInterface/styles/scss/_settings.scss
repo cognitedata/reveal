@@ -4,6 +4,12 @@
   width: 100%;
 }
 
+.settings-section-element-container {
+  display: flex;
+  flex-direction: column;
+  padding: .5rem .4rem .5rem .8rem;
+}
+
 .settings-container {
   width: 100%;
   overflow-y: auto;

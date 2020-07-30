@@ -6,8 +6,8 @@ import TreeIcon from "./TreeIcon";
 import { ExpandButton } from "./ExpandButton";
 import { TreeCheckBox } from "./TreeCheckbox";
 import { VirtualTreeProps } from "./VirtualTreeProps";
-import { TreeNode } from "./TreeNode";
-import {readCssVariablePixelNumber} from "@/UserInterface/Foundation/Utils/cssUtils";
+import { ITreeNode } from "./TreeNode";
+import { readCssVariablePixelNumber } from "@/UserInterface/Foundation/Utils/cssUtils";
 
 const DEFAULT_ROW_HEIGHT = 22;
 
@@ -15,10 +15,11 @@ export function VirtualTree(props: VirtualTreeProps) {
   const { onToggleNodeSelect, onToggleNodeExpand, onToggleNodeCheck } = props;
 
   const TREE_ITEM_HEIGHT =
-    readCssVariablePixelNumber("--v-tree-item-height") + readCssVariablePixelNumber("--v-tree-item-bottom-margin");
+    readCssVariablePixelNumber("--v-tree-item-height") +
+    readCssVariablePixelNumber("--v-tree-item-bottom-margin");
 
   const data = props.data || [];
-  const singleRowHeight = (props.rowHeight || TREE_ITEM_HEIGHT) || DEFAULT_ROW_HEIGHT;
+  const singleRowHeight = props.rowHeight || TREE_ITEM_HEIGHT || DEFAULT_ROW_HEIGHT;
 
   let List: any;
   function setRef(ref: any) {
@@ -31,7 +32,7 @@ export function VirtualTree(props: VirtualTreeProps) {
     }
   }
 
-  const renderItem = (item: TreeNode, keyPrefix: string) => {
+  const renderItem = (item: ITreeNode, keyPrefix: string) => {
     const onExpand = (event: any) => {
       event.stopPropagation();
       onToggleNodeExpand(item.uniqueId, !item.expanded);
@@ -73,17 +74,17 @@ export function VirtualTree(props: VirtualTreeProps) {
             </div>
           )}
           <div className="tree-item-comp">
-            { item.checkVisible &&
-                <TreeCheckBox
-                  class="tree-checkbox"
-                  id={keyPrefix}
-                  filter={item.isFilter}
-                  checked={item.checked}
-                  indeterminate={item.indeterminate}
-                  disabled={item.disabled}
-                  onToggleCheck={() => onToggleNodeCheck(item.uniqueId, !item.checked)}
-                />
-            }
+            {item.checkVisible && (
+              <TreeCheckBox
+                class="tree-checkbox"
+                id={keyPrefix}
+                filter={item.isFilter}
+                checked={item.checked}
+                indeterminate={item.indeterminate}
+                disabled={item.disabled}
+                onToggleCheck={() => onToggleNodeCheck(item.uniqueId, !item.checked)}
+              />
+            )}
           </div>
           <div className="tree-item-comp tree-item-lbl-container">
             <span
@@ -113,7 +114,7 @@ export function VirtualTree(props: VirtualTreeProps) {
     }
   };
 
-  const getExpandedItemCount = (item: TreeNode) => {
+  const getExpandedItemCount = (item: ITreeNode) => {
     let count = item.visible ? 1 : 0; // depends on visibility  of containing item
     if (item.expanded) {
       count += item.children.map(getExpandedItemCount).reduce((total: number, num: number) => {
