@@ -7,7 +7,7 @@ module.exports = {
   plugins: ['@cognite', 'jest-dom', 'testing-library'],
   rules: {
     '@cognite/forbid-styled-macro': 'error',
-    '@cognite/no-number-z-index-styled-components': 'error',
+    '@cognite/no-number-z-index': 'error',
     '@cognite/no-sdk-submodule-imports': 'error',
 
     'react/jsx-props-no-spreading': ['off'],
