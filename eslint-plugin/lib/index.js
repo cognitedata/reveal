@@ -12,6 +12,16 @@ const allRules = {
   'rtl-use-custom-render-function': require('./rules/rtl-use-custom-render-function'),
 };
 
+const pluginsAllRules = Object.keys(allRules).reduce((acc, name) => {
+  if (name === 'forbid-styled-macro') {
+    return acc;
+  }
+  return {
+    ...acc,
+    [`@cognite/${name}`]: 2,
+  };
+}, {});
+
 module.exports = {
   rules: allRules,
   configs: {
@@ -48,17 +58,7 @@ module.exports = {
     },
     all: {
       plugins: ['@cognite'],
-      rules: {
-        'no-number-z-index-inline-styling': 2,
-        'no-number-z-index-property': 2,
-        'no-number-z-index-styled-components': 2,
-        'no-sdk-submodule-imports': 2,
-        'no-unissued-todos': 2,
-        'require-hellip': 1,
-        'require-styled-macro': 2,
-        'require-t-function': 2,
-        'rtl-use-custom-render-function': 2,
-      },
+      rules: pluginsAllRules,
     },
   },
 };
