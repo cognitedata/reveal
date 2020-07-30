@@ -1,13 +1,12 @@
 /* eslint-disable global-require */
 const allRules = {
-  'forbid-styled-macro': require('./rules/forbid-styled-macro'),
   'no-number-z-index': require('./rules/no-number-z-index'),
   'no-sdk-submodule-imports': require('./rules/no-sdk-submodule-imports'),
   'no-unissued-todos': require('./rules/no-unissued-todos'),
   'require-hellip': require('./rules/require-hellip'),
-  'require-styled-macro': require('./rules/require-styled-macro'),
   'require-t-function': require('./rules/require-t-function'),
   'rtl-use-custom-render-function': require('./rules/rtl-use-custom-render-function'),
+  'styled-macro': require('./rules/styled-macro'),
 };
 
 const pluginsAllRules = Object.keys(allRules).reduce((acc, name) => {
@@ -28,7 +27,7 @@ module.exports = {
       rules: {
         '@cognite/no-number-z-index': 2,
         '@cognite/no-sdk-submodule-imports': 2,
-        '@cognite/require-styled-macro': 1,
+        '@cognite/styled-macro': 1,
         '@cognite/require-t-function': 1,
       },
     },

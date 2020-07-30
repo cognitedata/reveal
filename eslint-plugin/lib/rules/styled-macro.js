@@ -13,33 +13,35 @@ module.exports = {
     type: 'problem',
     docs: {
       category: 'Best Practices',
-      description:
-        'Should import styled-components/macro while using styled-components',
+      description: 'Enforce the correct style-components/macro usage',
       recommended: false,
-      url: getDocsUrl('require-styled-macro'),
+      url: getDocsUrl('styled-macro'),
     },
     fixable: 'code',
     messages: {
       'require-styled-macro': 'Please import from styled-components/macro.',
+      'forbid-styled-macro': 'Please do not use styled-components/macro.',
     },
+    schema: [{ enum: ['require', 'forbid'] }],
   },
   create(context) {
+    const [mode = 'require'] = context.options;
+    const replacements = ['styled-components', 'styled-components/macro'];
+
+    if (mode === 'forbid') {
+      replacements.reverse();
+    }
+
+    const [search, replace] = replacements;
+
     return {
       ImportDeclaration(node) {
-        const name = 'styled-components';
-        if (
-          node.source.value !== undefined &&
-          node.source.value.indexOf(name) > -1 &&
-          node.source.value !== `${name}/macro`
-        ) {
+        if (node.source.value !== undefined && node.source.value === search) {
           context.report({
             node,
-            messageId: 'require-styled-macro',
+            messageId: `${mode}-styled-macro`,
             fix: (fixer) => {
-              return fixer.replaceTextRange(
-                node.source.range,
-                `'${name}/macro'`
-              );
+              return fixer.replaceTextRange(node.source.range, `'${replace}'`);
             },
           });
         }

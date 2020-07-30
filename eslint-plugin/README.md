@@ -61,12 +61,33 @@ Presets are enabled by adding a line to the `extends` list in your config file. 
 
 Here are all the individual rules you can use:
 
-### [@cognite/forbid-styled-macro](https://github.com/cognitedata/eslint-plugin-cognite/blob/master/docs/rules/forbid-styled-macro.md) - Make sure that styled-components/macro is not used
+### [@cognite/no-number-z-index]
 
-### [@cognite/no-number-z-index](https://github.com/cognitedata/eslint-plugin-cognite/blob/master/docs/rules/no-number-z-index.md) - z-index util should be used
+z-index util should be used.
 
-### [@cognite/require-styled-macro](https://github.com/cognitedata/eslint-plugin-cognite/blob/master/docs/rules/require-styled-macro.md) - Make sure styled-components/macro is used
+### [@cognite/no-sdk-submodule-imports]
 
-### [@cognite/require-t-function](https://github.com/cognitedata/eslint-plugin-cognite/blob/master/docs/rules/require-t-function.md) - Trans should be passed as a prop
+Importing from `@cognite/sdk` should only happen from the top-level.
 
-### [@cognite/no-unissued-todos](https://github.com/cognitedata/eslint-plugin-cognite/blob/master/docs/rules/no-unissued-todos.md) - TODO's in code require a JIRA ticket
+### [@cognite/no-unissued-todos]
+
+TODO's in code require a JIRA ticket.
+
+### [@cognite/hellip]
+
+Ensures that ... is rendered as a horizontal ellipsis.
+
+### [@cognite/require-t-function]
+
+`<Trans />` should be passed `t` as a prop.
+
+### [@cognite/styled-macro]
+
+Make sure that `styled-components/macro` is correctly used.
+
+[@cognite/no-number-z-index]: https://github.com/cognitedata/eslint-plugin-cognite/blob/master/docs/rules/no-number-z-index.md
+[@cognite/no-sdk-submodule-imports]: https://github.com/cognitedata/eslint-plugin-cognite/blob/master/docs/rules/no-sdk-submodule-imports.md
+[@cognite/no-unissued-todos]: https://github.com/cognitedata/eslint-plugin-cognite/blob/master/docs/rules/no-unissued-todos.md
+[@cognite/require-hellip]: https://github.com/cognitedata/eslint-plugin-cognite/blob/master/docs/rules/require-hellip.md
+[@cognite/require-t-function]: https://github.com/cognitedata/eslint-plugin-cognite/blob/master/docs/rules/require-t-function.md
+[@cognite/styled-macro]: https://github.com/cognitedata/eslint-plugin-cognite/blob/master/docs/rules/styled-macro.md
