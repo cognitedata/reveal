@@ -117,10 +117,9 @@ export default function VisualizerToolbar(props: {
   const addDropdown = (index, command) => {
     return (
       <div key={`visualizer-toolbar-icon-${index}`} className="visualizer-tool-bar-icon">
-        <input
-          type="number"
-          list="data"
+        <select
           className="visualizer-tool-bar-input"
+          defaultValue={1}
           onChange={event =>
             dispatch(
               selectOnChange({
@@ -130,12 +129,11 @@ export default function VisualizerToolbar(props: {
               })
             )
           }
-        />
-        <datalist id="data">
+        >
           {command.command.dropdownOptions.map(option => (
             <option key={option}>{option}</option>
           ))}
-        </datalist>
+        </select>
       </div>
     );
   };
