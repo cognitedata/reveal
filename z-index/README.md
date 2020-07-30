@@ -1,11 +1,9 @@
 # @cognite/z-index
 
 A tiny utility to bring sanity to `z-index`.
-This is best-paired with `@cognite/eslint-plugin` and the rules:
+This is best-paired with `@cognite/eslint-plugin` and the rule:
 
-- `@cognite/no-number-z-index-inline-styling`
-- `@cognite/no-number-z-index-property`
-- `@cognite/no-number-z-index-styled-components`
+- `@cognite/no-number-z-index`
 
 ## Usage
 
