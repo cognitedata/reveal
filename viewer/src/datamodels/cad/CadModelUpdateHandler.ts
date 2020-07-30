@@ -53,7 +53,7 @@ export class CadModelUpdateHandler {
   constructor(sectorRepository: Repository, sectorCuller: SectorCuller) {
     this._sectorRepository = sectorRepository;
     this._updateObservable = combineLatest([
-      this._cameraSubject.pipe(auditTime(1000)),
+      this._cameraSubject.pipe(auditTime(500)),
       this._clippingPlaneSubject.pipe(startWith([])),
       this._clipIntersectionSubject.pipe(startWith(false)),
       this._loadingHintsSubject.pipe(startWith({} as CadLoadingHints)),
