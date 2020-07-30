@@ -11,7 +11,8 @@ import {
   fromEventPattern,
   asyncScheduler,
   scheduled,
-  queueScheduler
+  queueScheduler,
+  empty
 } from 'rxjs';
 import { CadNode } from './CadNode';
 import {
@@ -53,7 +54,7 @@ export class CadModelUpdateHandler {
   constructor(sectorRepository: Repository, sectorCuller: SectorCuller) {
     this._sectorRepository = sectorRepository;
     this._updateObservable = combineLatest([
-      this._cameraSubject.pipe(auditTime(1000)),
+      this._cameraSubject.pipe(auditTime(500)),
       this._clippingPlaneSubject.pipe(startWith([])),
       this._clipIntersectionSubject.pipe(startWith(false)),
       this._loadingHintsSubject.pipe(startWith({} as CadLoadingHints)),
@@ -104,6 +105,10 @@ export class CadModelUpdateHandler {
 
         return input$.pipe(
           switchMap(input => {
+            const { cameraInMotion } = input;
+            if (cameraInMotion) {
+              return empty();
+            }
             const wantedSector$ = scheduled(from(sectorCuller.determineSectors(input)), queueScheduler);
             return wantedSector$.pipe(
               stateHasChanged,
