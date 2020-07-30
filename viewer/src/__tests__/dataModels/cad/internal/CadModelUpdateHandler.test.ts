@@ -32,9 +32,9 @@ describe('CadModelUpdateHandler', () => {
   const cadModel = new CadNode(cadModelMetadata, materialManager);
 
   jest.useFakeTimers();
+
   // TODO: 24-07-2020 j-bjorne skipped until pipeline split from update handler.
   test.skip('updateCamera(), updateLoadingHints() and updateClipPlanes() triggers SectorCuller.determineSectors()', () => {
-    expect(true);
     const updateHandler = new CadModelUpdateHandler(repository, mockCuller);
     // TODO: 16-07-2020 j-bjorne reimplement tests when update handler has been separated from loading pipeline.
     updateHandler.consumedSectorObservable().subscribe();
