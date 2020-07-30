@@ -11,7 +11,8 @@ import {
   fromEventPattern,
   asyncScheduler,
   scheduled,
-  queueScheduler
+  queueScheduler,
+  empty
 } from 'rxjs';
 import { CadNode } from './CadNode';
 import {
@@ -73,8 +74,7 @@ export class CadModelUpdateHandler {
         };
       }),
       filter<DetermineSectorsInput>(
-        ({ cadModelsMetadata, loadingHints, cameraInMotion }) =>
-          !cameraInMotion && cadModelsMetadata.length > 0 && loadingHints.suspendLoading !== true
+        ({ cadModelsMetadata, loadingHints }) => cadModelsMetadata.length > 0 && loadingHints.suspendLoading !== true
       ),
       publish(input$ => {
         const modelSectorStates: { [blobUrl: string]: { [id: number]: LevelOfDetail } } = {};
@@ -105,6 +105,10 @@ export class CadModelUpdateHandler {
 
         return input$.pipe(
           switchMap(input => {
+            const { cameraInMotion } = input;
+            if (cameraInMotion) {
+              return empty();
+            }
             const wantedSector$ = scheduled(from(sectorCuller.determineSectors(input)), queueScheduler);
             return wantedSector$.pipe(
               stateHasChanged,
