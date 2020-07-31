@@ -6,6 +6,7 @@ It demonstrates best practices, such as:
 - Lint setup to use
 - Jenkinsfile steps
 - TypeScript usage
+- Storybook usage
 - Folder / component layout
 - ...
 
