@@ -296,7 +296,21 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.cadNode.requestNodeUpdate([treeIndex]);
   }
 
+  /** @internal */
   tryGetNodeId(treeIndex: number): number | undefined {
     return this.nodeIdAndTreeIndexMaps.getNodeId(treeIndex);
+  }
+
+  /**
+   * Maps a list of Node IDs to tree indices for use with the API.
+   * This function is useful when you have a list of nodes, e.g. from
+   * Asset Mappings, that you want to highlight, hide, color etc in the viewer.
+   *
+   * @param nodeIds List of node IDs to map to tree indices.
+   * @returns A list of tree indices corresponing to the elements in the input.
+   * @throws If an invalid node ID is provided the function throws an error.
+   */
+  async mapNodeIdsToTreeIndices(nodeIds: number[]): Promise<number[]> {
+    return this.nodeIdAndTreeIndexMaps.getTreeIndices(nodeIds);
   }
 }
