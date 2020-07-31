@@ -67,15 +67,13 @@ export class NodeIdAndTreeIndexMaps {
     if (notCachedNodeIds.length === 0) {
       return mapped;
     }
-
+    const nodeIdToIndex = new Map(nodeIds.map((value, index) => [value, index]));
     const nodes = await this.client.revisions3D.retrieve3DNodes(this.modelId, this.revisionId, notCachedNodeIds);
-    let nodeIdx = 0;
-    for (let i = 0; i < mapped.length && nodeIdx < nodes.length; i++) {
-      if (mapped[i] === -1) {
-        const { id: nodeId, treeIndex } = nodes[nodeIdx++];
-        mapped[i] = treeIndex;
-        this.add(nodeId, treeIndex);
-      }
+    for (let i = 0; i < nodes.length; i++) {
+      const { id: nodeId, treeIndex } = nodes[i];
+      const index = nodeIdToIndex.get(nodeId)!;
+      mapped[index] = treeIndex;
+      this.add(nodeId, treeIndex);
     }
 
     return mapped;

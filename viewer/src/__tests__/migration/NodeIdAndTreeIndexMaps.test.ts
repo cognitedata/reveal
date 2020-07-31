@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { CogniteClient, InternalId } from '@cognite/sdk';
+import { CogniteClient, InternalId, Node3D } from '@cognite/sdk';
 import { NodeIdAndTreeIndexMaps } from '@/public/migration/NodeIdAndTreeIndexMaps';
 
 import { sleep } from '../wait';
@@ -11,8 +11,8 @@ jest.mock('@cognite/sdk');
 
 describe('NodeIdAndTreeIndexMaps', () => {
   beforeAll(() => {
-    // @ts-ignore
-    CogniteClient.mockImplementation(() => {
+    const CogniteClientMock = CogniteClient as jest.Mock<CogniteClient>;
+    CogniteClientMock.mockImplementation(() => {
       return {
         revisions3D: {
           retrieve3DNodes: async (_modelId: number, _revisionId: number, ids: InternalId[]) => {
@@ -24,7 +24,7 @@ describe('NodeIdAndTreeIndexMaps', () => {
             });
           }
         }
-      };
+      } as CogniteClient;
     });
   });
 
@@ -98,5 +98,28 @@ describe('NodeIdAndTreeIndexMaps', () => {
     expect(treeIndices).toEqual([-1, 4, -5]);
     expect(spy).toBeCalledTimes(1);
     spy.mockClear();
+  });
+
+  test('getTreeIndices returns elements out of order, order is maintained in result', async () => {
+    // Arrange
+    const client = new CogniteClient({ appId: 'test' });
+    jest.spyOn(client.revisions3D, 'retrieve3DNodes').mockImplementationOnce(async (_modelId, _revisionId, ids) => {
+      return ids
+        .map((id: InternalId) => {
+          return {
+            id: id.id,
+            treeIndex: -id.id
+          } as Node3D;
+        })
+        .reverse();
+    });
+    const maps = new NodeIdAndTreeIndexMaps(0, 0, client);
+    maps.add(3, 4);
+
+    // Act
+    const result = await maps.getTreeIndices([1, 3, 5]);
+
+    // Assert
+    expect(result).toEqual([-1, 4, -5]);
   });
 });
