@@ -9,7 +9,7 @@ import { Container } from './components/styled';
 
 export default function App() {
   return (
-    <Router>
+    <Router basename={process.env.PUBLIC_URL}>
       <div
         style={{
           padding: '5px',
