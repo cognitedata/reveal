@@ -10,12 +10,6 @@ previewServer.pod(nodeVersion: 'node:10') {
         image: 'node:10',
         envVars: [
           envVar(key: 'CI', value: 'true'),
-          secretEnvVar(
-            key: 'FIREBASE_CI_TOKEN',
-            secretName: "data-studio-cicd-token",
-            secretKey: 'DATA-STUDIO-FIREBASE-TOKEN',
-            optional: true
-          ),
         ],
         resourceRequestCpu: '7000m',
         resourceRequestMemory: '7500Mi',
