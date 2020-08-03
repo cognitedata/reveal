@@ -8,7 +8,7 @@ import * as mixpanelConfig from 'mixpanel-browser';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { RootState } from 'reducers';
 import { getAuthState, loginAndAuthIfNeeded } from 'sdk-singleton';
-import Loader from 'components/Loader';
+import { Loader } from 'components/Common';
 
 type RouteDef = {
   exact?: boolean;
