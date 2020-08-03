@@ -1,7 +1,7 @@
 import * as mixpanelConfig from 'mixpanel-browser';
 import sdk, { getAuthState } from 'sdk-singleton';
 
-const MIXPANEL_TOKEN = '5c4d853e7c3b77b1eb4468d5329b278c';
+const MIXPANEL_TOKEN = '504cfc7feaad55b838d866aff8f91a58';
 
 const mixpanel = mixpanelConfig.init(
   MIXPANEL_TOKEN,
