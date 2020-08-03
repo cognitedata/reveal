@@ -68,7 +68,9 @@ export class EffectRenderManager {
         tBackDepth: { value: this._backRenderedCadModelTarget.depthTexture },
         tCustom: { value: this._customObjectRenderTarget.texture },
         tCustomDepth: { value: this._customObjectRenderTarget.depthTexture },
-        tOutlineColors: { value: outlineColorTexture }
+        tOutlineColors: { value: outlineColorTexture },
+        cameraNear: { value: 0.1 },
+        cameraFar: { value: 10000 }
       },
       depthTest: false
     });
@@ -210,13 +212,8 @@ export class EffectRenderManager {
   }
 
   private renderTargetToCanvas(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
-    this._combineEdgeDetectionMaterial.setValues({
-      uniforms: {
-        ...this._combineEdgeDetectionMaterial.uniforms,
-        cameraNear: { value: camera.near },
-        cameraFar: { value: camera.far }
-      }
-    });
+    this._combineEdgeDetectionMaterial.uniforms.cameraNear.value = camera.near;
+    this._combineEdgeDetectionMaterial.uniforms.cameraFar.value = camera.far;
 
     renderer.setRenderTarget(null);
     renderer.render(this._triScene, this._orthographicCamera);
