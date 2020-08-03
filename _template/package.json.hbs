@@ -19,7 +19,9 @@
     "watch": "yarn build --watch",
     "lint": "yarn concurrently \"yarn prettier\" \"yarn eslint 'src/**/*.{ts,tsx}'\"",
     "lint:fix": "yarn prettier --write && yarn eslint 'src/**/*.{ts,tsx}' --fix",
-    "prettier": "prettier -l 'src/**/*'"
+    "prettier": "prettier -l 'src/**/*'",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "repository": {
     "type": "git",
@@ -30,13 +32,19 @@
     "@babel/core": "^7.3.3",
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-react": "^7.0.0",
-    "@cognite/eslint-plugin": "^1.3.0",
+    "@storybook/addon-actions": "^5.3.19",
+    "@storybook/addon-links": "^5.3.19",
+    "@storybook/addons": "^5.3.19",
+    "@storybook/preset-typescript": "^3.0.0",
+    "@storybook/react": "^5.3.19",
+    "babel-loader": "^8.1.0",
+    "jest-css-modules-transform": "^2.1.1",
     "rollup": "^1.2.0",
     "rollup-plugin-json": "^3.1.0",
     "rollup-plugin-typescript2": "^0.19.2"
   },
-  "dependencies": {
-    "react": "^16.13.1",
-    "react-i18next": "^11.7.0"
+  "dependencies": {},
+  "peerDependencies": {
+    "react": "^16.13.1"
   }
 }

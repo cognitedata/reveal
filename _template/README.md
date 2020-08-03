@@ -11,5 +11,5 @@ yarn add @cognite/{{ name }}
 ## Usage
 
 ```sh
-import { {{ name }} } from '@cognite/{{ name }}'
+import { {{ properCase simpleName }} } from '@cognite/{{ name }}'
 ```

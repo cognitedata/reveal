@@ -1,19 +1,6 @@
 {
-  "extends": "../../../../tsconfig.json",
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "module": "es2015",
-    "target": "es5",
-    "declaration": true,
-    "declarationDir": "dist",
-    "outDir": "dist",
-    "strict": true,
-    "sourceMap": false,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "rootDirs": ["src"],
-    "lib": ["es2015", "dom"],
-    "jsx": "react",
-    "types": ["node", "jest", "@testing-library/jest-dom"]
+    "rootDirs": ["src"]
   }
 }
