@@ -37,8 +37,6 @@ import { CasingLog } from '@/SubSurface/Wells/Logs/CasingLog';
 import { SurveyNode } from "@/SubSurface/Seismic/Nodes/SurveyNode";
 import { SeismicCube } from "@/SubSurface/Seismic/Data/SeismicCube";
 import { SeismicCubeNode } from "@/SubSurface/Seismic/Nodes/SeismicCubeNode";
-import { SeismicPlaneNode } from "@/SubSurface/Seismic/Nodes/SeismicPlaneNode";
-import { SeismicPlaneFolder } from "@/SubSurface/Seismic/Nodes/SeismicPlaneFolder";
 import { Index3 } from "@/Core/Geometry/Index3";
 
 // import { CogniteSeismicClient } from '@cognite/seismic-sdk-js'
