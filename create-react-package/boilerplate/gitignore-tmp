@@ -1,7 +1,0 @@
-/node_modules
-/dist
-.rpt2_cache
-/build
-yarn-error.log
-/storybook-static
-/coverage
