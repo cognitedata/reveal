@@ -119,7 +119,7 @@ i18next.on('languageChanged', async (lng) => {
 To ensure the correct instance of [`i18next`] is used, please use the one exported by this package:
 
 ```js
-import { i18next } from '@cognite/react-i18next';
+import { i18next } from '@cognite/react-i18n';
 
 i18next.on('languageChanged', async (lng) => {
   console.log('Hey neat the language changed');
