@@ -1,0 +1,5 @@
+# By default, @cognitedata/data-studio-frontend receives all PRs.
+#
+# Make sure that @cognitedata/data-studio-frontend is on all other specifications in
+# this file.
+* @cognitedata/data-studio-frontend 

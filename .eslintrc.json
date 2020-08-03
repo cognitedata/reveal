@@ -1,0 +1,39 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "extends": ["@cognite"],
+  "rules": {
+    "eqeqeq": ["error", "always"],
+    "curly": ["error", "all"],
+    "@typescript-eslint/indent": "off",
+    "@typescript-eslint/no-var-requires": "off",
+    "no-param-reassign": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "vars": "all",
+        "args": "after-used",
+        "ignoreRestSiblings": true
+      }
+    ],
+    "react/require-default-props": "off",
+    "react/no-array-index-key": "warn",
+    "react/state-in-constructor": "off",
+    "jest/consistent-test-it": ["error", { "fn": "it" }],
+    "jest/require-top-level-describe": "error",
+    "jest/valid-describe": "error",
+    "no-console": "error",
+    "@cognite/no-unissued-todos": "off",
+    "@cognite/no-number-z-index-styled-components": "off",
+    "@cognite/no-number-z-index-property": "off",
+    "@cognite/no-number-z-index-inline-styling": "off",
+    "prettier/prettier": [
+      "error",
+      {
+        "singleQuote": true,
+        "trailingComma": "es5",
+        "arrowParens": "avoid",
+        "endOfLine": "auto"
+      }
+    ]
+  }
+}

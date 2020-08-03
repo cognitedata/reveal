@@ -1,0 +1,13 @@
+version: 1
+update_configs:
+  # Update your Gemfile (& lockfiles) as soon as
+  # new versions are published to the RubyGems registry
+  - package_manager: 'javascript'
+    directory: '/'
+    update_schedule: 'live'
+
+    # Apply default label to created
+    # pull requests
+    default_labels:
+      - 'auto-update'
+      - 'auto-merge'
