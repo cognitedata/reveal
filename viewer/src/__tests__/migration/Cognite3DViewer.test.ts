@@ -14,27 +14,40 @@ import { SectorCuller } from '@/datamodels/cad/sector/culling/SectorCuller';
 const sceneJson = require('./scene.json');
 
 describe('Cognite3DViewer', () => {
+  const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
+  const context: WebGLRenderingContext = require('gl')(64, 64, { preserveDrawingBuffer: true });
+  const renderer = new THREE.WebGLRenderer({ context });
+  const _sectorCuller: SectorCuller = {
+    determineSectors: jest.fn()
+  };
+
   beforeAll(() => {
+    jest.useFakeTimers();
     nock.disableNetConnect();
+
     nock('https://api-js.mixpanel.com')
       .persist(true)
       .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
       .post(/.*/)
       .reply(200);
+
+    sdk.loginWithApiKey({ project: 'none', apiKey: 'dummy' });
+
+    // Mock function for retriving model metadata, such as transformation
+    jest.spyOn(sdk.revisions3D, 'retrieve').mockImplementation(async (_modelId, revisionId) => ({
+      id: revisionId,
+      fileId: 42,
+      published: false,
+      status: 'Done',
+      createdTime: new Date(),
+      assetMappingCount: 0
+    }));
   });
 
   afterAll(() => {
     nock.enableNetConnect();
+    jest.useRealTimers();
   });
-
-  const context: WebGLRenderingContext = require('gl')(64, 64, { preserveDrawingBuffer: true });
-
-  const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
-  const renderer = new THREE.WebGLRenderer({ context });
-  const _sectorCuller: SectorCuller = {
-    determineSectors: jest.fn()
-  };
-  jest.useFakeTimers();
 
   test('constructor throws error when unsupported options are set', () => {
     expect(() => new Cognite3DViewer({ sdk, renderer, _sectorCuller, enableCache: true })).toThrowError();
