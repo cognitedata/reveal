@@ -9,13 +9,7 @@ previewServer.pod(nodeVersion: 'node:10') {
         name: 'node',
         image: 'node:10',
         envVars: [
-          envVar(key: 'CI', value: 'true'),
-          secretEnvVar(
-            key: 'FIREBASE_CI_TOKEN',
-            secretName: "data-studio-cicd-token",
-            secretKey: 'DATA-STUDIO-FIREBASE-TOKEN',
-            optional: true
-          ),
+          envVar(key: 'CI', value: 'true')
         ],
         resourceRequestCpu: '7000m',
         resourceRequestMemory: '7500Mi',
@@ -121,9 +115,9 @@ previewServer.pod(nodeVersion: 'node:10') {
                     def timestamp = sh(returnStdout: true, script: 'date +"%Y.%m.%d"').trim()
                     sh("gcloud auth activate-service-account jenkins-cdf-hub-deployment@cognitedata.iam.gserviceaccount.com --key-file=/jenkins-cdf-hub-deployer/credentials.json --project=cognitedata-production")
                     // Upload the root config js to the bundles bucket
-                    sh("gsutil cp -z html,css,js,map,svg,json -r build/. gs://${bucketBundles}/cognite-cdf-datastudio/${timestamp}-${gitCommit}/")
-                    sh("gsutil cp -z html,css,js,map,svg,json -r build/. gs://${bucketBundles}/cognite-cdf-datastudio/latest/")
-                    slackSend(channel: "#datastudio-logs", message: "PR '${gitTitle}' by ${gitAuthor} merged and deployed to bundles bucket. It is available at https://cdf-hub-bundles.cogniteapp.com/cognite-cdf-datastudio/${timestamp}-${gitCommit}/index.js and https://cdf-hub-bundles.cogniteapp.com/cognite-cdf-datastudio/latest/index.js. Update https://github.com/cognitedata/cdf-hub/blob/staging/packages/root/static/import-map.json or https://github.com/cognitedata/cdf-hub/blob/release-production/packages/root/static/import-map.json to update staging or production. https://dev.fusion.cogniteapp.com should already be updated.")
+                    sh("gsutil cp -z html,css,js,map,svg,json -r build/. gs://${bucketBundles}/cognite-cdf-functions-ui/${timestamp}-${gitCommit}/")
+                    sh("gsutil cp -z html,css,js,map,svg,json -r build/. gs://${bucketBundles}/cognite-cdf-functions-ui/latest/")
+                    slackSend(channel: "#functions-logs", message: "PR '${gitTitle}' by ${gitAuthor} merged and deployed to bundles bucket. It is available at https://cdf-hub-bundles.cogniteapp.com/cognite-cdf-functions-ui/${timestamp}-${gitCommit}/index.js and https://cdf-hub-bundles.cogniteapp.com/cognite-cdf-functions-ui/latest/index.js. Update https://github.com/cognitedata/cdf-hub/blob/staging/packages/root/static/import-map.json or https://github.com/cognitedata/cdf-hub/blob/release-production/packages/root/static/import-map.json to update staging or production. https://dev.fusion.cogniteapp.com should already be updated.")
                   }
                 }
               }
