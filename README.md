@@ -36,5 +36,5 @@ yarn test:once:unittests
 
 - clone [CDF-hub](https://github.com/cognitedata/cdf-hub) - `git clone https://github.com/cognitedata/cdf-hub.git`
 - `yarn` -> `yarn bootstrap` -> `yarn start`
-- clone the Data Studio repository - `git clone https://github.com/cognitedata/datastudio.git`
+- clone the Data Studio repository - `git clone https://github.com/cognitedata/data-exploration.git`
 - `yarn` -> `yarn start

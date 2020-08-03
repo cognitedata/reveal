@@ -15,6 +15,6 @@ module.exports = {
     'box-shadow-base': '0 2px 8px rgba(0, 0, 0, 0.15)',
   },
   ids: {
-    styleScope: 'data-studio-style-scope',
+    styleScope: 'data-exploration-style-scope',
   },
 };

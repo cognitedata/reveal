@@ -139,7 +139,7 @@ export default function AntStyles(props: { children: React.Node }) {
         document.getElementsByClassName(ids.styleScope).item(0)!
       }
     >
-      <div className="data-studio-style-scope">{props.children}</div>
+      <div className="data-exploration-style-scope">{props.children}</div>
     </ConfigProvider>
   );
 }

@@ -1,6 +1,0 @@
-{
-  "projects": {
-    "production": "cognite-data-studio",
-    "staging": "data-studio-staging"
-  }
-}
