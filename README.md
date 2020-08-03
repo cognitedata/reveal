@@ -28,7 +28,7 @@ yarn test:once:unittests
 - in the Console, use `importMapOverrides.enableUI()` command
 - click on the `{...}` icon that appeared in the bottom right corner
 - find `@cognite/cdf-data-exploration` module name and click on the row including it
-- in the override URL, paste `https://localhost:3008/index.js` (port might differ depending on your local settings)
+- in the override URL, paste `https://localhost:3010/index.js` (port might differ depending on your local settings)
 - click `Apply override`
 - your local code is now available under the `dev.fusion.cogniteapp.com` address
 

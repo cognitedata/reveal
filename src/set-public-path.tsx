@@ -5,5 +5,4 @@ import { setPublicPath } from 'systemjs-webpack-interop';
  * https://single-spa.js.org/docs/faq/#code-splits
  */
 
-// TODO
 setPublicPath('@cognite/cdf-data-exploration');
