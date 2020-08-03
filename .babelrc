@@ -1,0 +1,17 @@
+{
+  "presets": ["react-app"],
+  "plugins": [
+    [
+      // Info: this plugin might silently fail if the format of the styled-components string interpolation css is not correct.
+      "@quickbaseoss/babel-plugin-styled-components-css-namespace",
+      { "cssNamespace": "&&&" }
+    ],
+    [
+      "@cognite/babel-plugin-styled-components",
+      {
+        "namespace": "datastudio",
+        "fileName": false
+      }
+    ]
+  ]
+}
