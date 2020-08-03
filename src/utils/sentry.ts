@@ -4,7 +4,8 @@ import { isProduction, isStaging } from 'utils/environment';
 export function setupSentry() {
   if (isProduction() || isStaging()) {
     Sentry.init({
-      dsn: 'https://0e9c21f42ca24bd8a836cbfff157c58b@sentry.io/2426453',
+      dsn:
+        'https://f980194af28742cc813b747266462b68@o124058.ingest.sentry.io/5375951',
     });
   }
 }
