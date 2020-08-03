@@ -56,7 +56,7 @@
     ]
   },
   "scripts": {
-    "start": "env BROWSER=none WDS_SOCKET_PORT=3009 WDS_SOCKET_HOST=localhost SKIP_PREFLIGHT_CHECK=true PORT=3009 rescripts --max_old_space_size=8192 start",
+    "start": "env BROWSER=none WDS_SOCKET_PORT=3011 WDS_SOCKET_HOST=localhost SKIP_PREFLIGHT_CHECK=true PORT=3011 rescripts --max_old_space_size=8192 start",
     "build": "rescripts --max_old_space_size=8192 build",
     "generate-preview-artifacts": "node ./scripts/generate-mfe-artifacts.js -p @cognite/cdf-datastudio -b cdf-hub-production --outputFilename index.js --destinationPath ./build",
     "build:preview": "yarn build && yarn generate-preview-artifacts",
