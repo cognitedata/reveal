@@ -9,7 +9,7 @@ const lifecycles = singleSpaReact({
   React,
   ReactDOM,
   rootComponent: App,
-  domElementGetter: () => document.getElementById('datastudio')!,
+  domElementGetter: () => document.getElementById('data-exploration')!,
 });
 
 export const { bootstrap, mount, unmount } = lifecycles;

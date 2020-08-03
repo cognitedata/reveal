@@ -6,7 +6,7 @@ const MIXPANEL_TOKEN = '5c4d853e7c3b77b1eb4468d5329b278c';
 const mixpanel = mixpanelConfig.init(
   MIXPANEL_TOKEN,
   { persistence: 'localStorage' },
-  'datastudio'
+  'data-exploration'
 );
 
 export type Props = { [key: string]: string | number | boolean | Props | null };

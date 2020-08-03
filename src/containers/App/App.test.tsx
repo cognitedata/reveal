@@ -1,7 +1,7 @@
 /* eslint-disable import/first */
 jest.mock('mixpanel-browser', () => {
   return {
-    datastudio: {
+    'data-exploration': {
       add_group: jest.fn(),
       identify: jest.fn(),
     },

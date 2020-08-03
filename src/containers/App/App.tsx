@@ -56,9 +56,9 @@ export default function App() {
     if (username) {
       const company = username.split('@').pop();
       // @ts-ignore
-      mixpanelConfig.datastudio.add_group('company', company);
+      mixpanelConfig['data-exploration'].add_group('company', company);
       // @ts-ignore
-      mixpanelConfig.datastudio.identify(username);
+      mixpanelConfig['data-exploration'].identify(username);
     }
     trackUsage('App.Load');
   }, [username]);

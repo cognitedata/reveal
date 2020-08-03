@@ -9,7 +9,7 @@
     [
       "@cognite/babel-plugin-styled-components",
       {
-        "namespace": "datastudio",
+        "namespace": "data-exploration",
         "fileName": false
       }
     ]
