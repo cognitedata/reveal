@@ -115,9 +115,9 @@ previewServer.pod(nodeVersion: 'node:10') {
                     def timestamp = sh(returnStdout: true, script: 'date +"%Y.%m.%d"').trim()
                     sh("gcloud auth activate-service-account jenkins-cdf-hub-deployment@cognitedata.iam.gserviceaccount.com --key-file=/jenkins-cdf-hub-deployer/credentials.json --project=cognitedata-production")
                     // Upload the root config js to the bundles bucket
-                    sh("gsutil cp -z html,css,js,map,svg,json -r build/. gs://${bucketBundles}/cognite-cdf-dataexploration/${timestamp}-${gitCommit}/")
-                    sh("gsutil cp -z html,css,js,map,svg,json -r build/. gs://${bucketBundles}/cognite-cdf-dataexploration/latest/")
-                    slackSend(channel: "#de-logs", message: "PR '${gitTitle}' by ${gitAuthor} merged and deployed to bundles bucket. It is available at https://cdf-hub-bundles.cogniteapp.com/cognite-cdf-dataexploration/${timestamp}-${gitCommit}/index.js and https://cdf-hub-bundles.cogniteapp.com/cognite-cdf-dataexploration/latest/index.js. Update https://github.com/cognitedata/cdf-hub/blob/staging/packages/root/static/import-map.json or https://github.com/cognitedata/cdf-hub/blob/release-production/packages/root/static/import-map.json to update staging or production. https://dev.fusion.cogniteapp.com should already be updated.")
+                    sh("gsutil cp -z html,css,js,map,svg,json -r build/. gs://${bucketBundles}/cognite-cdf-data-exploration/${timestamp}-${gitCommit}/")
+                    sh("gsutil cp -z html,css,js,map,svg,json -r build/. gs://${bucketBundles}/cognite-cdf-data-exploration/latest/")
+                    slackSend(channel: "#de-logs", message: "PR '${gitTitle}' by ${gitAuthor} merged and deployed to bundles bucket. It is available at https://cdf-hub-bundles.cogniteapp.com/cognite-cdf-data-exploration/${timestamp}-${gitCommit}/index.js and https://cdf-hub-bundles.cogniteapp.com/cognite-cdf-data-exploration/latest/index.js. Update https://github.com/cognitedata/cdf-hub/blob/staging/packages/root/static/import-map.json or https://github.com/cognitedata/cdf-hub/blob/release-production/packages/root/static/import-map.json to update staging or production. https://dev.fusion.cogniteapp.com should already be updated.")
                   }
                 }
               }
