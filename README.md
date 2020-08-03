@@ -21,13 +21,13 @@ yarn test:once:unittests
 
 ## Running local copy online
 
-- clone the Data Studio repository - `git clone https://github.com/cognitedata/dataexploration.git`
+- clone the Data Studio repository - `git clone https://github.com/cognitedata/data-exploration.git`
 - `yarn` -> `yarn start`
 - navigate to [dev.fusion.cogniteapp.com](dev.fusion.cogniteapp.com)
 - open Console
 - in the Console, use `importMapOverrides.enableUI()` command
 - click on the `{...}` icon that appeared in the bottom right corner
-- find `@cognite/cdf-dataexploration` module name and click on the row including it
+- find `@cognite/cdf-data-exploration` module name and click on the row including it
 - in the override URL, paste `https://localhost:3008/index.js` (port might differ depending on your local settings)
 - click `Apply override`
 - your local code is now available under the `dev.fusion.cogniteapp.com` address

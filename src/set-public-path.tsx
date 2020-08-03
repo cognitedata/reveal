@@ -6,4 +6,4 @@ import { setPublicPath } from 'systemjs-webpack-interop';
  */
 
 // TODO
-setPublicPath('@cognite/cdf-dataexploration');
+setPublicPath('@cognite/cdf-data-exploration');
