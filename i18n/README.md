@@ -103,6 +103,30 @@ const SomeComponent: React.FC = () => {
 export default withI18nSuspense(SomeComponent);
 ```
 
+## `i18next` usage
+
+If your app needs to use [`i18next`] directly (for example, to listen to language changes), then you should **not** use:
+
+```js
+// Don't do this!!
+import i18next from 'i18next';
+
+i18next.on('languageChanged', async (lng) => {
+  console.log('Hey neat the language changed');
+});
+```
+
+To ensure the correct instance of [`i18next`] is used, please use the one exported by this package:
+
+```js
+import { i18next } from '@cognite/react-i18next';
+
+i18next.on('languageChanged', async (lng) => {
+  console.log('Hey neat the language changed');
+});
+```
+
 [suspense boundary]: https://reactjs.org/docs/react-api.html#reactsuspense
 [suspense boundaries]: https://reactjs.org/docs/react-api.html#reactsuspense
 [hoc]: https://reactjs.org/docs/higher-order-components.html
+[`i18next`]: https://www.npmjs.com/package/i18next
