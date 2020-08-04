@@ -80,7 +80,7 @@
     "webpack-dev-server": "^3.11.0",
     "webpack-log": "^3.0.1",
     "webpack-node-externals": "^2.3.0",
-    "whatwg-fetch": "^3.0.0",
+    "whatwg-fetch": "^3.3.1",
     "worker-plugin": "^4.0.3"
   },
   "dependencies": {
