@@ -1,0 +1,54 @@
+{
+  "name": "@cognite/react-loop-detector",
+  "version": "0.0.1",
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "browser": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "license": "Apache-2.0",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist",
+    "test": "jest",
+    "esCheck": "es-check es5 './dist/index.js'",
+    "build": "yarn clean && rollup -c && yarn esCheck",
+    "build:watch": "yarn clean && rollup -c --watch && yarn esCheck",
+    "watch": "yarn build --watch",
+    "lint": "yarn concurrently \"yarn prettier\" \"yarn eslint 'src/**/*.{ts,tsx}'\"",
+    "lint:fix": "yarn prettier --write && yarn eslint 'src/**/*.{ts,tsx}' --fix",
+    "prettier": "prettier -l 'src/**/*'",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/frontend"
+  },
+  "homepage": "https://github.com/cognitedata/frontend/tree/master/packages/browser/react/react-loop-detector",
+  "devDependencies": {
+    "@babel/core": "^7.3.3",
+    "@babel/preset-env": "^7.3.1",
+    "@babel/preset-react": "^7.0.0",
+    "@cognite/cogs.js": "^1.17.0",
+    "@storybook/addon-actions": "^5.3.19",
+    "@storybook/addon-knobs": "^5.3.19",
+    "@storybook/addon-links": "^5.3.19",
+    "@storybook/addons": "^5.3.19",
+    "@storybook/preset-typescript": "^3.0.0",
+    "@storybook/react": "^5.3.19",
+    "babel-loader": "^8.1.0",
+    "jest-css-modules-transform": "^4.0.1",
+    "react": "^16.13.1",
+    "rollup": "^1.2.0",
+    "rollup-plugin-json": "^3.1.0",
+    "rollup-plugin-typescript2": "^0.19.2"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "@cognite/cogs.js": "^1.17.0",
+    "react": "^16.13.1"
+  }
+}
