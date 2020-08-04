@@ -3,16 +3,16 @@
  */
 
 import * as THREE from 'three';
+// eslint-disable-next-line prettier/prettier
 import {
   Subject,
   Observable,
   combineLatest,
   from,
   fromEventPattern,
-  asyncScheduler,
-  scheduled,
-  queueScheduler,
-  empty
+  empty,
+  OperatorFunction,
+  asyncScheduler
 } from 'rxjs';
 import { CadNode } from './CadNode';
 import {
@@ -26,15 +26,15 @@ import {
   flatMap,
   tap,
   distinctUntilChanged,
-  observeOn,
   switchMap,
-  finalize
+  finalize,
+  observeOn
 } from 'rxjs/operators';
 import { SectorCuller } from './sector/culling/SectorCuller';
 import { DetermineSectorsInput } from './sector/culling/types';
 import { CadLoadingHints } from './CadLoadingHints';
 import { ConsumedSector, WantedSector, SectorGeometry } from './sector/types';
-import { distinctUntilLevelOfDetailChanged } from './sector/sectorUtilities';
+// import { distinctUntilLevelOfDetailChanged } from './sector/sectorUtilities';
 import { LevelOfDetail } from './sector/LevelOfDetail';
 import { Repository } from './sector/Repository';
 import { SectorQuads } from './rendering/types';
@@ -76,49 +76,7 @@ export class CadModelUpdateHandler {
       filter<DetermineSectorsInput>(
         ({ cadModelsMetadata, loadingHints }) => cadModelsMetadata.length > 0 && loadingHints.suspendLoading !== true
       ),
-      publish(input$ => {
-        const modelSectorStates: { [blobUrl: string]: { [id: number]: LevelOfDetail } } = {};
-        const stateHasChanged = filter<WantedSector>(wantedSector => {
-          const sectorStates = modelSectorStates[wantedSector.blobUrl];
-          if (sectorStates) {
-            const sectorState = sectorStates[wantedSector.metadata.id];
-            if (sectorState) {
-              return sectorState !== wantedSector.levelOfDetail;
-            } else {
-              return wantedSector.levelOfDetail != LevelOfDetail.Discarded;
-            }
-          }
-          return true;
-        });
-        const updateSectorState = tap<ConsumedSector>(consumedSector => {
-          let sectorStates = modelSectorStates[consumedSector.blobUrl];
-          if (!sectorStates) {
-            sectorStates = {};
-            modelSectorStates[consumedSector.blobUrl] = sectorStates;
-          }
-          if (consumedSector.levelOfDetail === LevelOfDetail.Discarded) {
-            delete sectorStates[consumedSector.metadata.id];
-          } else {
-            sectorStates[consumedSector.metadata.id] = consumedSector.levelOfDetail;
-          }
-        });
-
-        return input$.pipe(
-          switchMap(input => {
-            const { cameraInMotion } = input;
-            if (cameraInMotion) {
-              return empty();
-            }
-            const wantedSector$ = scheduled(from(sectorCuller.determineSectors(input)), queueScheduler);
-            return wantedSector$.pipe(
-              stateHasChanged,
-              this._sectorRepository.loadSector(),
-              distinctUntilLevelOfDetailChanged(),
-              updateSectorState
-            );
-          })
-        );
-      }),
+      this.updateSectors(sectorCuller),
       finalize(() => {
         this._sectorRepository.clear();
       })
@@ -155,6 +113,52 @@ export class CadModelUpdateHandler {
 
   getParsedData(): Observable<{ blobUrl: string; lod: string; data: SectorGeometry | SectorQuads }> {
     return this._sectorRepository.getParsedData();
+  }
+
+  private updateSectors(sectorCuller: SectorCuller): OperatorFunction<DetermineSectorsInput, ConsumedSector> {
+    return publish(input$ => {
+      const modelSectorStates: { [blobUrl: string]: { [id: number]: LevelOfDetail } } = {};
+      const stateHasChanged = filter<WantedSector>(wantedSector => {
+        const sectorStates = modelSectorStates[wantedSector.blobUrl];
+        if (sectorStates) {
+          const sectorState = sectorStates[wantedSector.metadata.id];
+          if (sectorState) {
+            return sectorState !== wantedSector.levelOfDetail;
+          } else {
+            return wantedSector.levelOfDetail != LevelOfDetail.Discarded;
+          }
+        }
+        return true;
+      });
+      const updateSectorState = tap<ConsumedSector>(consumedSector => {
+        let sectorStates = modelSectorStates[consumedSector.blobUrl];
+        if (!sectorStates) {
+          sectorStates = {};
+          modelSectorStates[consumedSector.blobUrl] = sectorStates;
+        }
+        if (consumedSector.levelOfDetail === LevelOfDetail.Discarded) {
+          delete sectorStates[consumedSector.metadata.id];
+        } else {
+          sectorStates[consumedSector.metadata.id] = consumedSector.levelOfDetail;
+        }
+      });
+
+      return input$
+        .pipe(
+          switchMap(input => {
+            const { cameraInMotion } = input;
+            if (cameraInMotion) {
+              return empty();
+            }
+            return from(sectorCuller.determineSectors(input)).pipe(
+              stateHasChanged,
+              observeOn(asyncScheduler),
+              this._sectorRepository.loadSector()
+            );
+          })
+        )
+        .pipe(updateSectorState); //distinctUntilLevelOfDetailChanged(), updateSectorState);
+    });
   }
 
   private loadingModelObservable() {
