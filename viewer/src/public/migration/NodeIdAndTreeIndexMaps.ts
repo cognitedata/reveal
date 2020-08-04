@@ -13,6 +13,8 @@ export class NodeIdAndTreeIndexMaps {
   private readonly revisionId: number;
   private readonly client: CogniteClient;
 
+  private readonly treeIndexSubTreeSizeMap: Map<number, number>;
+
   readonly nodeIdToTreeIndexMap: Map<number, number>;
   readonly treeIndexToNodeIdMap: Map<number, number>;
   readonly nodeIdRequestObservable: Subject<NodeIdRequest>;
@@ -25,6 +27,7 @@ export class NodeIdAndTreeIndexMaps {
 
     this.nodeIdToTreeIndexMap = new Map();
     this.treeIndexToNodeIdMap = new Map();
+    this.treeIndexSubTreeSizeMap = new Map();
     this.nodeIdRequestObservable = new Subject();
     this.nodeIdResponse = this.nodeIdRequestObservable.pipe(
       bufferTime(50),
@@ -37,6 +40,7 @@ export class NodeIdAndTreeIndexMaps {
       tap((node: Node3D) => {
         this.nodeIdToTreeIndexMap.set(node.id, node.treeIndex);
         this.treeIndexToNodeIdMap.set(node.treeIndex, node.id);
+        this.treeIndexSubTreeSizeMap.set(node.treeIndex, node.subtreeSize);
       }),
       share()
     );
@@ -59,6 +63,27 @@ export class NodeIdAndTreeIndexMaps {
       id: nodeId
     });
     return result;
+  }
+
+  async getNumberOfChildren(treeIndex: number): Promise<number | undefined> {
+    const cachedNumberOfChildren = this.treeIndexSubTreeSizeMap.get(treeIndex);
+
+    if (cachedNumberOfChildren) {
+      return cachedNumberOfChildren;
+    }
+
+    //TODO - christjt 2020-08-04: handle this with with new endpoint to fetch the proper nodeID
+    const nodeId = this.treeIndexToNodeIdMap.get(treeIndex);
+    if (!nodeId) {
+      console.warn(`Could not find nodeID for given treeIndex(${treeIndex})`);
+      return undefined;
+    }
+
+    const nodes = await this.client.revisions3D.retrieve3DNodes(this.modelId, this.revisionId, [{ id: nodeId }]);
+
+    this.treeIndexSubTreeSizeMap.set(treeIndex, nodes[0].subtreeSize);
+
+    return nodes[0].subtreeSize;
   }
 
   async getTreeIndices(nodeIds: number[]): Promise<number[]> {

@@ -207,12 +207,21 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   async setNodeColor(nodeId: number, r: number, g: number, b: number): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-    this.setNodeColorByTreeIndex(treeIndex, r, g, b);
+    await this.setNodeColorByTreeIndex(treeIndex, r, g, b);
   }
 
-  setNodeColorByTreeIndex(treeIndex: number, r: number, g: number, b: number) {
-    this.nodeColors.set(treeIndex, [r, g, b]);
-    this.cadNode.requestNodeUpdate([treeIndex]);
+  async setNodeColorByTreeIndex(treeIndex: number, r: number, g: number, b: number, includeChildren = false) {
+    let numberOfChildren = 1;
+    if (includeChildren) {
+      const numberOfChildrenRequest = await this.nodeIdAndTreeIndexMaps.getNumberOfChildren(treeIndex);
+      numberOfChildren = numberOfChildrenRequest !== undefined ? numberOfChildrenRequest : 1;
+    }
+
+    const treeIndexUpdateList = [...Array(numberOfChildren).keys()].map(p => treeIndex + p);
+
+    treeIndexUpdateList.forEach(p => this.nodeColors.set(p, [r, g, b]));
+
+    this.cadNode.requestNodeUpdate(treeIndexUpdateList);
   }
 
   async resetNodeColor(nodeId: number): Promise<void> {
