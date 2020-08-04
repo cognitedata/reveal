@@ -1,7 +1,7 @@
 import { Action, Retrieve } from "./BaseProperty";
-import UseProperty from "@/Core/Property/Base/UseProperty";
+import Property from "@/Core/Property/Base/Property";
 
-abstract class UsePropertyT<T> extends UseProperty
+abstract class UsePropertyT<T> extends Property
 {
   //==================================================
   // INSTANCE FIELDS
@@ -18,7 +18,7 @@ abstract class UsePropertyT<T> extends UseProperty
 
   protected constructor(name: string, value: T | Retrieve<T>, readonly ?: boolean, instance?: any, applyDelegate?: Action<void>, valueDelegate?: Action<T>)
   {
-    super(name, instance, readonly);
+    super(name, readonly, instance);
     this._value = value;
     this._valueDelegate = valueDelegate;
     this.setApplyDelegate(applyDelegate);

@@ -79,9 +79,15 @@ export const settingsSlice = createSlice({
         if (node && selectStatus)
         { // populate settings object
           settingsProperties = new PropertyFolder("Settings");
+
           const generalProperties = new PropertyFolder("General Properties");
           node.populateInfo(generalProperties);
           settingsProperties.addChild(generalProperties);
+
+          const statistics = new PropertyFolder("Statistics");
+          node.populateStatistics(statistics);
+          settingsProperties.addChild(statistics);
+
           NodeUtils.properties = settingsProperties;
         }
         return {
@@ -142,7 +148,8 @@ function convertToSettingsState(properties: BaseProperty[] | BasePropertyFolder[
         type: mapToInputTypes(property.getType()),
         expanded: (property as BasePropertyFolder).expanded,
         readonly: property.isReadOnly(),
-        value: (property as UsePropertyT<any>).value
+        value: (property as UsePropertyT<any>).value,
+        children: []
       };
 
       const childStates = convertToSettingsState(property.children, property.getName());
@@ -161,6 +168,10 @@ function mapToInputTypes(type: PropertyType): string
     return ElementTypes.INPUT;
   else if (type === PropertyType.Color)
     return ElementTypes.COLOR_TABLE;
+  else if (type === PropertyType.StringGroup)
+    return ElementTypes.INPUT_GROUP;
+  else if (type === PropertyType.DefaultPropertyFolder)
+    return ElementTypes.SECTION;
   return "";
 }
 

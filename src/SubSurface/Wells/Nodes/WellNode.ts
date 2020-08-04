@@ -59,7 +59,7 @@ export class WellNode extends BaseNode
   {
     super.populateStatisticsCore(folder);
     folder.addReadOnlyVector2("wellHead", this.wellHead.x, this.wellHead.y, 2);
-    folder.addReadOnlyInteger("# Trajectories", this.children.length);
+    folder.addStringProperty("# Trajectories", this.children.length.toString(), true);
   }
 
   //public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.getRange() : new Range3(); }

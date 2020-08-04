@@ -16,6 +16,7 @@ export enum PropertyType
   Default,
   DefaultPropertyFolder,
   String,
+  StringGroup,
   Color,
   Select,
 }

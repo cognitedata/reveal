@@ -1,6 +1,7 @@
 import { Action, Retrieve } from "@/Core/Property/Base/BaseProperty";
 import StringProperty from "@/Core/Property/Concrete/Property/StringProperty";
 import ColorProperty from "@/Core/Property/Concrete/Property/ColorProperty";
+import StringGroupProperty from "@/Core/Property/Concrete/Property/StringGroupProperty";
 import Color from "color";
 import { Range1 } from "@/Core/Geometry/Range1";
 import { Range3 } from "@/Core/Geometry/Range3";
@@ -19,14 +20,24 @@ export class PropertyFolder extends BasePropertyFolder
   //   this.AddChild(property);
   // }
   public addStringProperty(name: string, value: string | Retrieve<string>, readonly?: boolean, instance?: object,
-    applyDelegate?: Action<void>, valueDelegate?: Action<string>): void
+                           applyDelegate?: Action<void>, valueDelegate?: Action<string>): void
   {
     const property = new StringProperty(name, value, readonly, instance, applyDelegate, valueDelegate);
     this.addChild(property);
   }
 
+  public addStringGroupProperty(name: string, values: string[], readonly: boolean): void
+  {
+    const property = new StringGroupProperty(name, true);
+    for (const [index, value] of values.entries())
+    {
+      property.addChild(new StringProperty(name + index, value, readonly));
+    }
+    this.addChild(property);
+  }
+
   public addColorProperty(name: string, value: Color | Retrieve<Color>, readonly?: boolean, instance?: object,
-    applyDelegate?: Action<void>, valueDelegate?: Action<Color>): void
+                          applyDelegate?: Action<void>, valueDelegate?: Action<Color>): void
   {
     const property = new ColorProperty(name, value, readonly, instance, applyDelegate, valueDelegate);
     this.addChild(property);
@@ -65,8 +76,8 @@ export class PropertyFolder extends BasePropertyFolder
     this.addReadOnlyStrings(name, x.toFixed(fractionDigits), y.toFixed(fractionDigits));
   }
 
-  public addReadOnlyStrings(name: string, s1: string, s2?: string, s3?: string, s4?: string): void
+  public addReadOnlyStrings(name: string, ...args: string[]): void
   {
-    //Not implemented yet
+    this.addStringGroupProperty(name, args, true);
   }
 }

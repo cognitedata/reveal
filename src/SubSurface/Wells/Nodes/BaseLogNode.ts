@@ -102,7 +102,7 @@ export abstract class BaseLogNode extends DataNode
       return;
 
     folder.addReadOnlyRange1("Md", log.mdRange, 2);
-    folder.addReadOnlyInteger("# samples", log.length);
+    folder.addStringProperty("# samples", log.length.toString(), true);
   }
 
   //==================================================

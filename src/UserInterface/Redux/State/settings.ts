@@ -14,7 +14,7 @@ export interface ISettingsPropertyState
   displayName: string,
   type: string,
   value: number | string | boolean,
-  children?: string[],
+  children: string[],
   parent?: string,
   readonly?: boolean,
   expanded?: boolean,

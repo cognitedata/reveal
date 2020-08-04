@@ -14,7 +14,7 @@ abstract class Property extends BaseProperty
   // CONSTRUCTORS
   //==================================================
 
-  protected constructor(name: string, instance?: any, readonly?: boolean)
+  protected constructor(name: string, readonly?: boolean, instance?: any)
   {
     super(name || "", readonly);
     this._instance = instance;

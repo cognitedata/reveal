@@ -1,5 +1,6 @@
 // Input Types
 export default {
+  SECTION: "section",
   INPUT: "text",
   INPUT_GROUP: "input-group",
   SELECT: "select",
