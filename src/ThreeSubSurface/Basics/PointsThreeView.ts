@@ -85,8 +85,8 @@ export class PointsThreeView extends BaseGroupThreeView
     const material = new THREE.PointsMaterial({ color: ThreeConverter.to3DColor(color), size: style.size, sizeAttenuation: true });
     if (style.colorType === ColorType.DepthColor)
     {
-      geometry.addAttribute("color", PointsThreeView.createColorsAttribute(points));
-      material.vertexColors = THREE.VertexColors;
+      geometry.setAttribute("color", PointsThreeView.createColorsAttribute(points));
+      material.vertexColors = true;
     }
     return new THREE.Points(geometry, material);
   }
@@ -98,7 +98,7 @@ export class PointsThreeView extends BaseGroupThreeView
   public static createBufferGeometry(points: Points, transformer: ThreeTransformer): THREE.BufferGeometry
   {
     const geometry = new THREE.BufferGeometry();
-    geometry.addAttribute("position", new THREE.Float32BufferAttribute(PointsThreeView.createPositions(points, transformer), 3, true));
+    geometry.setAttribute("position", new THREE.Float32BufferAttribute(PointsThreeView.createPositions(points, transformer), 3, true));
     return geometry;
   }
 

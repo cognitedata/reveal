@@ -27,7 +27,7 @@ export class SelectCommand extends ToolCommand
 
   public /*override*/ overrideLeftButton(): boolean { return true; }
 
-  public /*override*/ onMouseClick(event: MouseEvent): void
+  public /*override*/ onMouseHover(event: MouseEvent): void
   {
     const target = this.target;
     if (!target)
@@ -43,27 +43,11 @@ export class SelectCommand extends ToolCommand
     {
       const view = target.getViewByObject(intersection.object);
       if (view)
-        view.onMouseClick(intersection);
+        view.onShowInfo(viewInfo, intersection);
     }
     const postCount = viewInfo.items.length;
     if (preCount > 0 || postCount > 0)
       target.invalidate();
-  }
-
-  public /*override*/ onMouseMove(event: MouseEvent): void
-  {
-    const target = this.target;
-    if (!target)
-      return;
-
-    const pixel = target.getMouseRelativePosition(event);
-    const intersection = target.getIntersection(pixel);
-    if (!intersection)
-      return;
-
-    const node = target.getNodeByObject(intersection.object);
-    if (!node)
-      return;
   }
 }
 

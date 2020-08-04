@@ -103,11 +103,17 @@ export class ToolController
   public onMouseMove(target: ThreeRenderTargetNode, event: MouseEvent): void
   {
     // https://www.w3schools.com/jsref/obj_mouseevent.asp
-    if (event.buttons)
-      return; // A mouse button is pressed
-
-    const tool = this.activeTool;
-    if (tool)
-      tool.onMouseMove(event);
+    if (event.buttons == 1)
+    {
+      const tool = this.activeTool;
+      if (tool)
+        tool.onMouseDrag(event);
+    }
+    if (event.buttons == 0)
+    {
+      const tool = this.activeTool;
+      if (tool)
+        tool.onMouseHover(event);
+    }
   }
 }

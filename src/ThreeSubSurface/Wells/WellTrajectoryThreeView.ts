@@ -189,9 +189,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     // return boundingBox;
   }
 
-  public /*override*/ onMouseClick(intersection: THREE.Intersection): void
+  public /*override*/ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void
   {
-    const viewInfo = this.renderTarget.viewInfo;
     const md = WellTrajectoryThreeView.startPickingAndReturnMd(this, viewInfo, intersection);
     if (md == undefined)
       return;
@@ -411,7 +410,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       const material = new THREE.MeshPhongMaterial({
         color: ThreeConverter.to3DColor(Colors.white),
         shininess: 75,
-        vertexColors: THREE.VertexColors,
+        vertexColors: true,
         emissive: ThreeConverter.to3DColor(Colors.cyan),
         emissiveIntensity: 0.25,
       });
@@ -596,7 +595,6 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     {
       const transformer = view.transformer;
       const position = transformer.toWorld(intersection.point);
-
       position.substract(wellNode.origin);
       md = trajectory.getClosestMd(position);
     }

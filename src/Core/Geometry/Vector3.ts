@@ -20,10 +20,11 @@ export class Vector3
   //==================================================
   // STATIC PROPERTIES
   //==================================================
+  
   public static get newUp(): Vector3 { return new Vector3(0, 0, 1); }
   public static get newZero(): Vector3 { return new Vector3(0, 0, 0); }
   public static get newEmpty(): Vector3 { return new Vector3(Number.NaN, Number.NaN, Number.NaN); }
-  
+
   //==================================================
   // INSTANCE FIELDS
   //==================================================
@@ -40,8 +41,11 @@ export class Vector3
   public get length(): number { return Math.sqrt(this.squareLength); }
   public get isEmpty(): boolean { return isNaN(this.x) || isNaN(this.y) || isNaN(this.z); }
 
-  public get absMinCoord(): number {return Math.min(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z));}
-  public get absMaxCoord(): number {return Math.max(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z));}
+  public get minCoord(): number { return Math.min(this.x, this.y, this.z); }
+  public get maxCoord(): number { return Math.max(this.x, this.y, this.z); }
+
+  public get absMinCoord(): number { return Math.min(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z)); }
+  public get absMaxCoord(): number { return Math.max(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z)); }
 
   public get absMinDimension(): number
   {
@@ -94,6 +98,7 @@ export class Vector3
   //==================================================
 
   public toString(): string { return `(${this.x}, ${this.y}, ${this.z})`; }
+  public getString(decimals: number): string { return `(${this.x.toFixed(decimals)}, ${this.y.toFixed(decimals)}, ${this.z.toFixed(decimals)})`; }
 
   public squareDistance(other: Vector3): number { return Ma.square(this.x - other.x) + Ma.square(this.y - other.y) + Ma.square(this.z - other.z); }
   public distance(other: Vector3): number { return Math.sqrt(this.squareDistance(other)); }
@@ -193,7 +198,7 @@ export class Vector3
     this.z += point.z;
   }
 
-  public addWithFactor(point: Vector3, factor:number): void
+  public addWithFactor(point: Vector3, factor: number): void
   {
     this.x += point.x * factor;
     this.y += point.y * factor;

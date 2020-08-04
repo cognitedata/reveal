@@ -15,7 +15,6 @@ import * as THREE from "three";
 
 import { SurfaceRenderStyle } from "@/SubSurface/Basics/SurfaceRenderStyle";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 import { SeismicPlaneNode } from '@/SubSurface/Seismic/Nodes/SeismicPlaneNode';
 import { SeismicCubeNode } from '@/SubSurface/Seismic/Nodes/SeismicCubeNode';
@@ -27,9 +26,23 @@ import { SeismicCube } from '@/SubSurface/Seismic/Data/SeismicCube';
 import { Range1 } from '@/Core/Geometry/Range1';
 import { Range3 } from '@/Core/Geometry/Range3';
 import { Vector3 } from '@/Core/Geometry/Vector3';
+import { Index2 } from '@/Core/Geometry/Index2';
+import { Changes } from '@/Core/Views/Changes';
+import { RegularGrid3 } from '@/Core/Geometry/RegularGrid3';
+import { Index3 } from '@/Core/Geometry/Index3';
+import { ViewInfo } from '@/Core/Views/ViewInfo';
+
+const SolidName = "Solid";
 
 export class SeismicCubePlaneView extends BaseGroupThreeView
 {
+  //==================================================
+  // INSTANCE MEMBERS
+  //==================================================
+
+  private _index = -1;
+  private _axis = -1;
+
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
@@ -50,6 +63,13 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
   protected /*override*/ updateCore(args: NodeEventArgs): void
   {
     super.updateCore(args);
+
+    if (args.isChanged(Changes.filter))
+    {
+      this._index = -1;
+      this._axis = -1;
+      this.invalidateTarget();
+    }
   }
 
   //==================================================
@@ -59,11 +79,82 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
   public /*override*/ calculateBoundingBoxCore(): Range3 | undefined
   {
     const node = this.node;
-    var cube = node.surveyCube;
-    if (!cube)
+    const surveyCube = node.surveyCube;
+    if (!surveyCube)
       return undefined;
 
-    return cube.boundingBox;
+    const range = new Range3();
+    const cells = SeismicCubePlaneView.createCells(surveyCube, node.perpendicularAxis, node.perpendicularIndex);
+    if (cells.length < 2)
+      return;
+
+    let position: Vector3 = Vector3.newZero;
+
+    const minCell = cells[0];
+    surveyCube.getCellCenter(minCell.i, minCell.j, 0, position);
+    range.add(position);
+
+    const maxCell = cells[cells.length - 1];
+    surveyCube.getCellCenter(maxCell.i, maxCell.j, surveyCube.cellSize.k - 1, position);
+    range.add(position);
+    range.expandByMargin(surveyCube.inc.maxCoord);
+    return range;
+  }
+
+  public /*override*/ beforeRender(): void
+  {
+    super.beforeRender();
+    const parent = this.object3D;
+    if (!parent)
+      return;
+
+    const node = this.node;
+    if (node.perpendicularIndex != this._index || node.perpendicularAxis != this._axis)
+    {
+      this._index = node.perpendicularIndex;
+      this._axis = node.perpendicularAxis;
+      this.updateSolid(parent, node, node.surveyCube, this.getSeismicCube());
+    }
+  }
+
+  public /*override*/ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void
+  {
+    const node = this.node;
+    viewInfo.addHeader(node.displayName);
+
+    const transformer = this.transformer;
+    const position = transformer.toWorld(intersection.point);
+    viewInfo.addText("Position", position.getString(2));
+
+    const surveyNode = node.surveyNode;
+    if (!surveyNode)
+      return;
+
+    const surveyCube = surveyNode.surveyCube;
+    if (!surveyCube)
+      return;
+
+    const cell = Index3.newZero;
+    surveyCube.getCellFromPosition(position, cell);
+    if (!surveyCube.isCellInside(cell.i, cell.j, cell.k))
+      return;
+
+    viewInfo.addText("Cell", cell.toString());
+    const seismicCubeNode = this.getSeismicCubeNode();
+    if (!seismicCubeNode)
+      return;
+
+    viewInfo.addText("Seismic cube", seismicCubeNode.displayName);
+    const seismicCube = seismicCubeNode.seismicCube;
+    if (!seismicCube)
+      return;
+
+    var trace = seismicCube.getTrace(cell.i, cell.j);
+    if (!trace)
+      return;
+
+    var value = trace.getAt(cell.k)
+    viewInfo.addText("Amplitude", value.toFixed(4));
   }
 
   //==================================================
@@ -75,51 +166,40 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     const node = this.node;
     const parent = new THREE.Group();
 
-    const seismicCubeNode = this.getSeismicCubeNode();
-    if (!seismicCubeNode)
+    const surveyNode = node.surveyNode;
+    if (!surveyNode)
       return parent;
 
-    const seismicCube = seismicCubeNode.seismicCube;
-    if (!seismicCube)
+    const surveyCube = surveyNode.surveyCube;
+    if (!surveyCube)
       return parent;
 
-    var style = seismicCubeNode.getRenderStyle(this.targetId) as SurfaceRenderStyle;
+    const style = surveyNode.getRenderStyle(this.targetId) as SurfaceRenderStyle;
     if (!style)
       return parent;
 
-    const solid = this.createSolid(node, seismicCube, style);
+    const solid = this.createSolid(node, surveyCube, style);
     if (solid)
       parent.add(solid);
 
     return parent;
   }
 
+  //==================================================
+  // INSTANCE METHODS: 
+  //==================================================
 
-
-  protected /*override*/ createSolid(node: SeismicPlaneNode, seismicCube: SeismicCube, style: SurfaceRenderStyle): THREE.Object3D | null
+  private createSolid(node: SeismicPlaneNode, surveyCube: RegularGrid3, style: SurfaceRenderStyle): THREE.Object3D | null
   {
-    let index = node.perpendicularIndex;
-    const axis = node.perpendicularAxis;
+    const cells = SeismicCubePlaneView.createCells(surveyCube, node.perpendicularAxis);
+    if (cells.length < 2)
+      return null;
 
-    //index = 0;
+    const normal = node.normal;
+    if (node.perpendicularAxis == 0)
+      normal.negate();
 
-    const buffers = new RegularGrid3Buffers(seismicCube, axis);
-
-    var range = new Range1(0, 1);
-
-    let count = axis == 1 ? seismicCube.cellSize.i : seismicCube.cellSize.j
-    for (let i = 0; i < count; i++)
-    {
-      var trace = seismicCube.getTrace(axis == 1 ? i : index, axis == 0 ? i : index);
-      if (trace == null)
-        continue;
-
-      for (let k = 0; k < trace.length; k++)
-      {
-        const uniqueIndex = i * seismicCube.cellSize.k + k;
-        buffers.setUAt(uniqueIndex, range.getTruncatedFraction(trace.values[k]));
-      }
-    }
+    const buffers = new RegularGrid3Buffers(surveyCube, normal, cells);
     const geometry = buffers.getBufferGeometry();
 
     const material = new THREE.MeshPhongMaterial({
@@ -131,31 +211,58 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
       //polygonOffsetUnits: 4.0
     });
     {
+      const range = new Range1(-1, 1);
       const texture = TextureKit.create1D(range);
       texture.anisotropy = 1;
       material.map = texture;
     }
     const mesh = new THREE.Mesh(geometry, material);
-    mesh.drawMode = THREE.TrianglesDrawMode; //THREE.TriangleStripDrawMode (must use groups)
-
+    mesh.name = SolidName;
     const transformer = this.transformer;
-
-    let origin: Vector3 = Vector3.newZero;
-    if (axis == 0)
-      seismicCube.getCellCenter(index, 0, 0, origin);
-    else
-      seismicCube.getCellCenter(0, index, 0, origin);
-
-    mesh.rotateZ(seismicCube.rotationAngle);
-    mesh.position.copy(transformer.to3D(origin));
     mesh.scale.copy(transformer.scale);
-
+    mesh.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), surveyCube.rotationAngle);
     return mesh;
   }
 
   //==================================================
   // INSTANCE METHODS
   //==================================================
+
+  private updateSolid(parent: THREE.Object3D, node: SeismicPlaneNode, surveyCube: RegularGrid3 | null, seismicCube: SeismicCube | null): void
+  {
+    if (!surveyCube)
+      return;
+
+    const mesh = parent.getObjectByName(SolidName) as THREE.Mesh;
+    if (!mesh)
+      return;
+
+    const geometry = mesh.geometry as THREE.BufferGeometry;
+    if (!geometry)
+      return;
+
+    const cells = SeismicCubePlaneView.createCells(surveyCube, node.perpendicularAxis, node.perpendicularIndex);
+    if (cells.length < 2)
+      return;
+
+    let origin: Vector3 = Vector3.newZero;
+    const cell = cells[0];
+    surveyCube.getNodePosition(cell.i, cell.j, 0, origin);
+
+    const transformer = this.transformer;
+    mesh.position.copy(transformer.to3D(origin));
+
+    var attribute = geometry.getAttribute("uv");
+    if (!attribute)
+      return;
+
+    const uv = attribute.array as Float32Array;
+    if (!uv)
+      return;
+
+    SeismicCubePlaneView.updateTextureCoords(uv, cells, seismicCube);
+    attribute.needsUpdate = true;
+  }
 
   private getSeismicCubeNode(): SeismicCubeNode | null
   {
@@ -171,5 +278,60 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
         return seismicCubeNode;
     }
     return null;
+  }
+
+  private getSeismicCube(): SeismicCube | null
+  {
+    const seismicCubeNode = this.getSeismicCubeNode();
+    return seismicCubeNode ? seismicCubeNode.seismicCube : null;
+  }
+
+  //==================================================
+  // STATIC METHODS
+  //==================================================
+
+  private static updateTextureCoords(uv: Float32Array, cells: Index2[], seismicCube: SeismicCube | null): void
+  {
+    if (!seismicCube)
+    {
+      for (let i = uv.length - 1; i >= 0; i--)
+        uv[i] = 0;
+      return;
+    }
+    const count = cells.length * seismicCube.cellSize.k * 2;
+    const range = new Range1(-1, 1);
+    let index = 0;
+    for (const cell of cells)
+    {
+      const trace = seismicCube.getTrace(cell.i, cell.j);
+      if (trace == null)
+        continue;
+
+      for (let k = 0; k < trace.length; k++)
+      {
+        const u = range.getTruncatedFraction(trace.values[k]);
+        uv[index++] = u;
+        uv[index++] = 0;
+      }
+    }
+    if (count != index)
+      throw Error("Error in createTextureCoords");
+
+  }
+
+  private static createCells(surveyCube: RegularGrid3, axis: number, index = 0): Index2[]
+  {
+    let cells: Index2[] = [];
+    if (axis == 0)
+    {
+      for (let j = 0; j < surveyCube.cellSize.j; j++)
+        cells.push(new Index2(index, j));
+    }
+    else if (axis == 1)
+    {
+      for (let i = 0; i < surveyCube.cellSize.i; i++)
+        cells.push(new Index2(i, index));
+    }
+    return cells;
   }
 }

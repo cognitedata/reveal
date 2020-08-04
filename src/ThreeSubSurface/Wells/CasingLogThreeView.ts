@@ -31,6 +31,7 @@ import { CasingLogStyle } from "@/SubSurface/Wells/Styles/CasingLogStyle";
 import { WellTrajectory } from "@/SubSurface/Wells/Logs/WellTrajectory";
 import { CasingLog } from '@/SubSurface/Wells/Logs/CasingLog';
 import { WellTrajectoryThreeView } from "@/ThreeSubSurface/Wells/WellTrajectoryThreeView";
+import { ViewInfo } from '@/Core/Views/ViewInfo';
 
 export class CasingLogThreeView extends BaseGroupThreeView
 {
@@ -105,9 +106,8 @@ export class CasingLogThreeView extends BaseGroupThreeView
     return boundingBox;
   }
 
-  public /*override*/ onMouseClick(intersection: THREE.Intersection): void
+  public /*override*/ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void
   {
-    const viewInfo = this.renderTarget.viewInfo;
     const md = WellTrajectoryThreeView.startPickingAndReturnMd(this, viewInfo, intersection);
     if (md == undefined)
       return;
@@ -160,7 +160,7 @@ export class CasingLogThreeView extends BaseGroupThreeView
       const geometry = new TrajectoryBufferGeometry(samples);
       const material = new THREE.MeshStandardMaterial({
         color: ThreeConverter.to3DColor(Colors.white),
-        vertexColors: THREE.VertexColors,
+        vertexColors: true,
         transparent: true,
         opacity: style.opacity
       });

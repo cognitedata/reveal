@@ -180,7 +180,6 @@ export class LogRenderOld
 
       LogRenderOld.setPolygonOffset(material, 1);
       const mesh = new THREE.Mesh(geometry, material);
-      mesh.drawMode = THREE.TrianglesDrawMode;
       group.add(mesh);
     }
   }
@@ -235,16 +234,15 @@ export class LogRenderOld
     }
     {
       const geometry = buffers.getBufferGeometry();
-      geometry.addAttribute("color", new THREE.Uint8BufferAttribute(colors, 3, true));
+      geometry.setAttribute("color", new THREE.Uint8BufferAttribute(colors, 3, true));
 
       const material = new THREE.MeshLambertMaterial({
         side: right ? THREE.FrontSide : THREE.BackSide,
-        vertexColors: THREE.VertexColors,
+        vertexColors: true,
         emissiveIntensity: 100,
       });
       LogRenderOld.setPolygonOffset(material, 1);
       const mesh = new THREE.Mesh(geometry, material);
-      mesh.drawMode = THREE.TrianglesDrawMode;
       group.add(mesh);
     }
   }

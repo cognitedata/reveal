@@ -57,4 +57,6 @@ export class Grid3 extends Shape
   //==================================================
 
   public isNodeInside(i: number, j: number, k: number) { return i >= 0 && j >= 0 && k >= 0 && i < this.nodeSize.i && j < this.nodeSize.j && k < this.nodeSize.k; }
+  public isCellInside(i: number, j: number, k: number) { return i >= 0 && j >= 0 && k >= 0 && i < this.cellSize.i && j < this.cellSize.j && k < this.cellSize.k; }
+  public isCellInside3(cell:Index3) { return cell.i >= 0 && cell.j >= 0 && cell.k >= 0 && cell.i < this.cellSize.i && cell.j < this.cellSize.j && cell.k < this.cellSize.k; }
 }

@@ -52,11 +52,11 @@ export class TrianglesBuffers
   public getBufferGeometry(): THREE.BufferGeometry
   {
     const geometry = new THREE.BufferGeometry();
-    geometry.addAttribute("position", new THREE.Float32BufferAttribute(this.positions, 3, true));
-    geometry.addAttribute("normal", new THREE.Float32BufferAttribute(this.normals, 3, false)); // Auto normalizing
+    geometry.setAttribute("position", new THREE.Float32BufferAttribute(this.positions, 3, true));
+    geometry.setAttribute("normal", new THREE.Float32BufferAttribute(this.normals, 3, false)); // Auto normalizing
     geometry.setIndex(new THREE.Uint32BufferAttribute(this.triangleIndexes, 1, true));
     if (this.hasUvs)
-      geometry.addAttribute("uv", new THREE.Float32BufferAttribute(this.uvs, 2, true));
+      geometry.setAttribute("uv", new THREE.Float32BufferAttribute(this.uvs, 2, true));
     return geometry;
   }
 
@@ -127,7 +127,7 @@ export class TrianglesBuffers
     this.uniqueIndex++;
   }
 
-  protected setAt(uniqueIndex: number, position: Vector3, normal: Vector3, u: number): void
+  protected setAt(uniqueIndex: number, position: Vector3, normal: Vector3, u = 0): void
   {
     {
       const index = 3 * uniqueIndex;
