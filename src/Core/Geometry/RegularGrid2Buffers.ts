@@ -33,7 +33,7 @@ export class RegularGrid2Buffers extends TrianglesBuffers
   // INSTANCE METHODS
   //==================================================
 
-  makeBuffers(grid: RegularGrid2, uniqueIndexes: number[])
+  makeBuffers(grid: RegularGrid2, uniqueIndexes: number[]): void
   {
     // Generate the position, normal and uvs
     const zRange = grid.zRange;
@@ -59,7 +59,7 @@ export class RegularGrid2Buffers extends TrianglesBuffers
     }
   }
 
-  private makeTriangleIndexes(grid: RegularGrid2, uniqueIndexes: number[])
+  private makeTriangleIndexes(grid: RegularGrid2, uniqueIndexes: number[]): void
   {
     // Generate the triangle indices
     // Should be strip, but could not get it to work
@@ -126,27 +126,3 @@ export class RegularGrid2Buffers extends TrianglesBuffers
   }
 }
 
-
-  // let prevCount = 0;
-  // for (const count of groups) 
-  // {
-  //   const groupCount = count - prevCount;
-  //   if (groupCount > 0)
-  //   {      
-  //     geometry.addGroup(prevCount, groupCount);
-  //   }
-  //   prevCount = count;
-  // }
-
-
-// function addGroup(geometry: THREE.BufferGeometry, indices: number[], prevCount: number): number
-// {
-//   const count = indices.length - 1;
-//   const groupCount = count - prevCount;
-//   if (groupCount > 0)
-//   {
-//     //geometry.addGroup(prevCount, groupCount);
-//     console.log(groupCount);
-//   }
-//   return count;
-// }

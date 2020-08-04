@@ -11,25 +11,19 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import * as THREE from "three";
-import { Base3DView } from "@/Core/Views/Base3DView";
-import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
-import { ViewInfo } from '@/Core/Views/ViewInfo';
+import { Changes } from "@/Core/Views/Changes";
+import { BaseView } from "@/Core/Views/BaseView";
+import { SeismicCubeNode } from '@/SubSurface/Seismic/Nodes/SeismicCubeNode';
+import { SeismicPlaneNode } from '@/SubSurface/Seismic/Nodes/SeismicPlaneNode';
 
-export abstract class BaseThreeView extends Base3DView
+export class SeismicCubeView extends BaseView
 {
-  public static readonly noPicking = "noPicking";
-
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  protected get scene(): THREE.Scene { return this.renderTarget.scene; }
-  protected get camera(): THREE.Camera { return this.renderTarget.camera; }
-  public get transformer(): ThreeTransformer { return this.renderTarget.transformer; }
-  protected get renderTarget(): ThreeRenderTargetNode { return super.getTarget() as ThreeRenderTargetNode; }
+  private get node(): SeismicCubeNode { return super.getNode() as SeismicCubeNode; }
 
   //==================================================
   // CONSTRUCTORS
@@ -44,38 +38,37 @@ export abstract class BaseThreeView extends Base3DView
   protected /*override*/ updateCore(args: NodeEventArgs): void
   {
     super.updateCore(args);
-    this.invalidateTarget();
+    this.updatePlanes(args);
   }
 
   protected /*override*/ onShowCore(): void
   {
     super.onShowCore();
-    this.invalidateTarget();
+    this.updatePlanes(new NodeEventArgs(Changes.filter));
   }
 
   protected /*override*/ onHideCore(): void
   {
     super.onHideCore();
-    this.invalidateTarget();
+    this.updatePlanes(new NodeEventArgs(Changes.filter));
   }
-
-  //==================================================
-  // VIRTUAL METHODS
-  //==================================================
-
-  public /*virtual*/ shouldPick(): boolean { return true; }
-  public /*virtual*/ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void { }
 
   //==================================================
   // INSTANCE METHODS
   //==================================================
 
-  protected invalidateTarget(): void
+  private updatePlanes(args: NodeEventArgs): void
   {
-    const target = this.renderTarget;
-    if (!target)
+    const node = this.node;
+    const survey = node.surveyNode;
+    if (!survey)
       return;
 
-    target.invalidate();
+    for (const planeNode of survey.getDescendantsByType(SeismicPlaneNode))
+    {
+      const view = planeNode.getViewByTarget(this.renderTarget);
+      if (view)
+        view.update(args);
+    }
   }
 }

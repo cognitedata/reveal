@@ -10,17 +10,13 @@ import FontBold from "@images/Actions/FontBold.png";
 import FontItalic from "@images/Actions/FontItalic.png";
 import FontUnderline from "@images/Actions/FontUnderline.png";
 import Pinned from "@images/States/Pinned.png";
-import PolylinesNode from "@images/Nodes/PolylinesNode.png";
-import PointCloudNode from "@images/Nodes/PointCloudNode.png";
 import FolderNode from "@images/Nodes/FolderNode.png";
 import MapIcon from "@images/Nodes/Map.png";
-import PointsNode from "@images/Nodes/PointsNode.png";
 import FatRight from "@images/Arrows/FatRight.png";
 import FatLeft from "@images/Arrows/FatLeft.png";
 import Cube from "@images/PointSymbol/Cube.png";
 import Sphere from "@images/PointSymbol/Sphere.png";
 import LabelImage from "@images/Show/Label.png";
-import WellNode from "@images/Nodes/WellNode.png";
 
 // checkboxes
 
@@ -85,18 +81,10 @@ export default function getIcon(iconType: string, iconName: string) {
       }
     case IconTypes.NODES:
       switch (iconName) {
-        case "PolylinesNode":
-          return PolylinesNode;
-        case "PointCloudNode":
-          return PointCloudNode;
         case "FolderNode":
           return FolderNode;
         case "MapIcon":
           return MapIcon;
-        case "PointsNode":
-          return PointsNode;
-        case "WellNode":
-          return WellNode;
       }
     case IconTypes.ARROWS:
       switch (iconName) {

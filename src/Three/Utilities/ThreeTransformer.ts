@@ -114,8 +114,10 @@ export class ThreeTransformer
     position.z /= this._zScale;
   }
 
-  public rangeToWorld(value: THREE.Box3, checkEmpty = true): Range3
+  public rangeToWorld(value: THREE.Box3 | null, checkEmpty = true): Range3
   {
+    if (!value)
+      return new Range3();
     if (checkEmpty && value.isEmpty)
       return new Range3();
     return new Range3(this.toWorld(value.min), this.toWorld(value.max));

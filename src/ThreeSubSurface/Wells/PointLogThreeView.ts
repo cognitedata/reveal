@@ -32,6 +32,7 @@ import { Appearance } from "@/Core/States/Appearance";
 import { WellTrajectoryStyle } from "@/SubSurface/Wells/Styles/WellTrajectoryStyle";
 import { PointLogStyle } from "@/SubSurface/Wells/Styles/PointLogStyle";
 import { WellTrajectoryThreeView } from "@/ThreeSubSurface/Wells/WellTrajectoryThreeView";
+import { ViewInfo } from '@/Core/Views/ViewInfo';
 
 const selectedRadiusFactor = 1.2;
 
@@ -190,7 +191,7 @@ export class PointLogThreeView extends BaseGroupThreeView
     }
   }
 
-  public /*override*/ onMouseClick(intersection: THREE.Intersection): void
+  public /*override*/ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void
   {
     const parent = this.object3D;
     if (!parent)
@@ -216,7 +217,6 @@ export class PointLogThreeView extends BaseGroupThreeView
     sample.isOpen = !sample.isOpen;
     node.notify(new NodeEventArgs(Changes.pointOpenOrClosed));
 
-    const viewInfo = this.renderTarget.viewInfo;
     const md = WellTrajectoryThreeView.startPickingAndReturnMd(this, viewInfo, intersection, sample.md);
     if (md == undefined)
       return;

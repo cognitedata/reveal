@@ -11,25 +11,17 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import * as THREE from "three";
-import { Base3DView } from "@/Core/Views/Base3DView";
-import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
-import { ViewInfo } from '@/Core/Views/ViewInfo';
+import { BaseView } from "@/Core/Views/BaseView";
+import { SurveyNode } from '@/SubSurface/Seismic/Nodes/SurveyNode';
 
-export abstract class BaseThreeView extends Base3DView
+export class SurveyView extends BaseView
 {
-  public static readonly noPicking = "noPicking";
-
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  protected get scene(): THREE.Scene { return this.renderTarget.scene; }
-  protected get camera(): THREE.Camera { return this.renderTarget.camera; }
-  public get transformer(): ThreeTransformer { return this.renderTarget.transformer; }
-  protected get renderTarget(): ThreeRenderTargetNode { return super.getTarget() as ThreeRenderTargetNode; }
+  private get node(): SurveyNode { return super.getNode() as SurveyNode; }
 
   //==================================================
   // CONSTRUCTORS
@@ -44,38 +36,15 @@ export abstract class BaseThreeView extends Base3DView
   protected /*override*/ updateCore(args: NodeEventArgs): void
   {
     super.updateCore(args);
-    this.invalidateTarget();
   }
 
   protected /*override*/ onShowCore(): void
   {
     super.onShowCore();
-    this.invalidateTarget();
   }
 
   protected /*override*/ onHideCore(): void
   {
     super.onHideCore();
-    this.invalidateTarget();
-  }
-
-  //==================================================
-  // VIRTUAL METHODS
-  //==================================================
-
-  public /*virtual*/ shouldPick(): boolean { return true; }
-  public /*virtual*/ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void { }
-
-  //==================================================
-  // INSTANCE METHODS
-  //==================================================
-
-  protected invalidateTarget(): void
-  {
-    const target = this.renderTarget;
-    if (!target)
-      return;
-
-    target.invalidate();
   }
 }

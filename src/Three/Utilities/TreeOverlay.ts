@@ -123,8 +123,7 @@ export class TreeOverlay
     this.camera = new THREE.OrthographicCamera(-this.delta.x / 2, this.delta.x / 2, this.delta.y / 2, -this.delta.y / 2, 0, 30);
 
     // Create texture from rendered graphics.
-    this.texture = new THREE.Texture(canvas);
-    this.texture.needsUpdate = true;
+    this.texture = new THREE.CanvasTexture(canvas);
     this.texture.generateMipmaps = false;
     this.texture.minFilter = THREE.LinearFilter;
 

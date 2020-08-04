@@ -51,6 +51,12 @@ import { PointFilterLogNode } from "@/SubSurface/Wells/Filters/PointFilterLogNod
 import { FloatFilterLogNode } from "@/SubSurface/Wells/Filters/FloatFilterLogNode";
 import { DiscreteFilterLogNode } from "@/SubSurface/Wells/Filters/DiscreteFilterLogNode";
 import { FilterLogFilterView } from "@/ThreeSubSurface/Wells/FilterLogFilterView";
+import { SeismicCubePlaneView } from '@/ThreeSubSurface/Seismic/SeismicCubePlaneView';
+import { SeismicPlaneNode } from '@/SubSurface/Seismic/Nodes/SeismicPlaneNode';
+import { SeismicCubeNode } from '@/SubSurface/Seismic/Nodes/SeismicCubeNode';
+import { SeismicCubeView } from '@/ThreeSubSurface/Seismic/SeismicCubeView';
+import { SurveyNode } from '@/SubSurface/Seismic/Nodes/SurveyNode';
+import { SurveyView } from '@/ThreeSubSurface/Seismic/SurveyView';
 
 export class ThreeModule extends BaseModule
 {
@@ -83,6 +89,11 @@ export class ThreeModule extends BaseModule
     factory.register(FloatFilterLogNode.className, FilterLogFilterView, ThreeRenderTargetNode.className);
     factory.register(DiscreteFilterLogNode.className, FilterLogFilterView, ThreeRenderTargetNode.className);
     factory.register(CasingFilterLogNode.className, FilterLogFilterView, ThreeRenderTargetNode.className);
+
+    // Seismic
+    factory.register(SeismicPlaneNode.className, SeismicCubePlaneView, ThreeRenderTargetNode.className);
+    factory.register(SeismicCubeNode.className, SeismicCubeView, ThreeRenderTargetNode.className);
+    factory.register(SurveyNode.className, SurveyView, ThreeRenderTargetNode.className);
   }
 
   public initializeWhenPopulated(root: BaseRootNode): void

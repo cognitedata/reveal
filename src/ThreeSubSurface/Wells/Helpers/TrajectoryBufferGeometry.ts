@@ -52,9 +52,9 @@ export class TrajectoryBufferGeometry extends THREE.BufferGeometry
     this.generateUVs(samples);
 
     this.setIndex(this.indices);
-    this.addAttribute('position', new THREE.Float32BufferAttribute(this.vertices, 3));
-    this.addAttribute('normal', new THREE.Float32BufferAttribute(this.normals, 3));
-    this.addAttribute("color", new THREE.Uint8BufferAttribute(this.colors, 3, true));
+    this.setAttribute('position', new THREE.Float32BufferAttribute(this.vertices, 3));
+    this.setAttribute('normal', new THREE.Float32BufferAttribute(this.normals, 3));
+    this.setAttribute("color", new THREE.Uint8BufferAttribute(this.colors, 3, true));
   }
 
   //==================================================

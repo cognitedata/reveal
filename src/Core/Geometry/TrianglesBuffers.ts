@@ -52,11 +52,11 @@ export class TrianglesBuffers
   public getBufferGeometry(): THREE.BufferGeometry
   {
     const geometry = new THREE.BufferGeometry();
-    geometry.addAttribute("position", new THREE.Float32BufferAttribute(this.positions, 3, true));
-    geometry.addAttribute("normal", new THREE.Float32BufferAttribute(this.normals, 3, false)); // Auto normalizing
+    geometry.setAttribute("position", new THREE.Float32BufferAttribute(this.positions, 3, true));
+    geometry.setAttribute("normal", new THREE.Float32BufferAttribute(this.normals, 3, false)); // Auto normalizing
     geometry.setIndex(new THREE.Uint32BufferAttribute(this.triangleIndexes, 1, true));
     if (this.hasUvs)
-      geometry.addAttribute("uv", new THREE.Float32BufferAttribute(this.uvs, 2, true));
+      geometry.setAttribute("uv", new THREE.Float32BufferAttribute(this.uvs, 2, true));
     return geometry;
   }
 
@@ -64,7 +64,7 @@ export class TrianglesBuffers
   // INSTANCE METHODS: Operations
   //==================================================
 
-  public addPair(p1: Vector3, p2: Vector3, n1: Vector3, n2: Vector3, u = 0)
+  public addPair(p1: Vector3, p2: Vector3, n1: Vector3, n2: Vector3, u = 0): void
   {
     if (this.uniqueIndex >= 2)
     {
@@ -85,7 +85,7 @@ export class TrianglesBuffers
     }
   }
 
-  public addPair2(p1: Vector3, p2: Vector3, normal: Vector3, fraction: number)
+  public addPair2(p1: Vector3, p2: Vector3, normal: Vector3, fraction: number): void
   {
     if (this.uniqueIndex >= 2)
     {
@@ -127,7 +127,7 @@ export class TrianglesBuffers
     this.uniqueIndex++;
   }
 
-  protected setAt(uniqueIndex: number, position: Vector3, normal: Vector3, u: number): void
+  protected setAt(uniqueIndex: number, position: Vector3, normal: Vector3, u = 0): void
   {
     {
       const index = 3 * uniqueIndex;
@@ -139,11 +139,14 @@ export class TrianglesBuffers
       this.normals[index + 2] = normal.z;
     }
     if (this.hasUvs)
-    {
+      this.setUAt(uniqueIndex, u)
+  }
+
+  public setUAt(uniqueIndex: number, u: number): void
+  {
       const index = 2 * uniqueIndex;
       this.uvs[index + 0] = u;
       this.uvs[index + 1] = 0;
-    }
   }
 
   protected addTriangle(index0: number, index1: number, index2: number): void

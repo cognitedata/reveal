@@ -16,13 +16,12 @@ import { TargetId } from "@/Core/Primitives/TargetId";
 import { SurfaceRenderStyle } from "@/SubSurface/Basics/SurfaceRenderStyle";
 
 import SurfaceNodeIcon from "@images/Nodes/SurfaceNode.png";
-import { BaseNode } from "@/Core/Nodes/BaseNode";
+import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
-import { basename } from "path";
 import { SeismicPlaneFolder } from "@/SubSurface/Seismic/Nodes/SeismicPlaneFolder";
 import { SeismicLayoutNode } from "@/SubSurface/Seismic/Nodes/SeismicLayoutNode";
 
-export class SurveyNode extends BaseNode
+export class SurveyNode extends BaseVisualNode
 {
   //==================================================
   // STATIC FIELDS

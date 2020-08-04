@@ -19,6 +19,7 @@ import SurfaceNodeIcon from "@images/Nodes/SurfaceNode.png";
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { SurveyNode } from "@/SubSurface/Seismic/Nodes/SurveyNode";
 import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
+import { Vector3 } from '@/Core/Geometry/Vector3';
 
 export class SeismicPlaneNode extends BaseVisualNode
 {
@@ -26,7 +27,7 @@ export class SeismicPlaneNode extends BaseVisualNode
   // STATIC FIELDS
   //==================================================
 
-  static className = "SeismicCubeNode";
+  static className = "SeismicPlaneNode";
 
   //==================================================
   // INSTANCE FIELDS
@@ -99,6 +100,17 @@ export class SeismicPlaneNode extends BaseVisualNode
     }
   }
 
+  public get normal(): Vector3
+  {
+    switch (this.perpendicularAxis)
+    {
+      case 0:
+      case 1:
+      case 2: return Vector3.getAxis(this.perpendicularAxis);
+      default: return Vector3.newEmpty;
+    }
+  }
+  
   //==================================================
   // CONSTRUCTORS
   //==================================================

@@ -250,15 +250,16 @@ export class SyntheticSubSurfaceModule extends BaseModule
     const survey = new SurveyNode();
 
     const nodeSize = new Index3(50, 70, 40);
-    const origin = new Vector3(0,0,0);
-    const inc = new Vector3(20,20,20);
+    const origin = new Vector3(1000, 2000, 3000);
+    const inc = new Vector3(20, 20, 20);
+    const rotationAngle = Math.PI / 10;
 
-    const cube = new SeismicCube(nodeSize, origin, inc);
+    const cube = new SeismicCube(nodeSize, origin, inc, rotationAngle);
 
     const seismicCubeNode = new SeismicCubeNode();
     seismicCubeNode.seismicCube = cube;
     survey.surveyCube = cube.getRegularGrid();
-    
+
     survey.addChild(seismicCubeNode);
 
     seismicTree.addChild(survey);

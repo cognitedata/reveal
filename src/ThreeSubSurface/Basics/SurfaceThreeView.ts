@@ -84,8 +84,11 @@ export class SurfaceThreeView extends BaseGroupThreeView
     return parent;
   }
 
+  //==================================================
+  // INSTANCE METHODS: 
+  //==================================================
 
-  protected /*override*/ createSolid(): THREE.Object3D | null
+  private createSolid(): THREE.Object3D | null
   {
     const node = this.node;
     const style = this.style.solid;
@@ -114,11 +117,10 @@ export class SurfaceThreeView extends BaseGroupThreeView
       material.map = texture;
     }
     const mesh = new THREE.Mesh(geometry, material);
-    mesh.drawMode = THREE.TrianglesDrawMode; //THREE.TriangleStripDrawMode (must use groups)
     return mesh;
   }
 
-  createContours(): THREE.Object3D | null
+  private createContours(): THREE.Object3D | null
   {
     const node = this.node;
     const style = this.style.contours;
@@ -134,16 +136,15 @@ export class SurfaceThreeView extends BaseGroupThreeView
       return null;
 
     const geometry = new THREE.BufferGeometry();
-    geometry.addAttribute('position', new THREE.Float32BufferAttribute(contours, 3));
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(contours, 3));
 
     const material = new THREE.LineBasicMaterial({ color: ThreeConverter.to3DColor(color), linewidth: 1 });
     return new THREE.LineSegments(geometry, material);
   }
 }
 
-
 //==================================================
-// LOCAL METHODS: Shader experiments
+// INSTANCE METHODS: Shader experiments
 //==================================================
 
 function vertexShader(): string

@@ -108,6 +108,32 @@ export class RegularGrid3 extends Grid3
     result.add(this.origin);
   }
 
+  public getCellFromPosition(position: Vector3, resultCell: Index3): void
+  {
+    const dx = position.x - this.origin.x;
+    const dy = position.y - this.origin.y;
+    const dz = position.z - this.origin.z;
+
+    let i, j: number;
+    if (this._hasRotationAngle)
+    {
+      const x = dx * this._cosRotationAngle + dy * this._sinRotationAngle;
+      const y = -dx * this._sinRotationAngle + dy * this._cosRotationAngle;
+      i = x / this.inc.x;
+      j = y / this.inc.y;
+    }
+    else
+    {
+      i = dx / this.inc.x;
+      j = dy / this.inc.y;
+    }
+    const k = dz / this.inc.z;
+    resultCell.i = Math.floor(i);
+    resultCell.j = Math.floor(j);
+    resultCell.k = Math.floor(k);
+  }
+
+
   public getCellCenter(i: number, j: number, k: number, result: Vector3): void
   {
     this.getNodePosition(i + 0.5, j + 0.5, k + 0.5, result);

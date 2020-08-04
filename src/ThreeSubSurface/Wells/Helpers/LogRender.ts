@@ -139,7 +139,6 @@ export class LogRender
         emissiveIntensity: 0.05,
       });
       const mesh = new THREE.Mesh(geometry, material);
-      mesh.drawMode = THREE.TrianglesDrawMode;
       bands[rightBand ? 0 : 1] = mesh;
     }
     return bands;
