@@ -9,14 +9,13 @@ import GlobalStyle from 'styles/global-styles';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import sdk from 'sdk-singleton';
 import { SubAppWrapper, AuthWrapper } from '@cognite/cdf-utilities';
-
 // import Routes from './routes';
 import RootApp from 'containers/App';
 import AntStyles from 'components/AntStyles';
+import { Loader } from 'components/Common';
 import store from './store';
 import theme from './styles/theme';
 import { setupSentry } from './utils/sentry';
-
 import rootStyles from './styles/index.css';
 
 export default () => {
@@ -40,7 +39,11 @@ export default () => {
   return (
     <AntStyles>
       <SubAppWrapper>
-        <AuthWrapper subAppName="functions-ui">
+        <AuthWrapper
+          subAppName="functions-ui"
+          showLoader
+          loadingScreen={<Loader />}
+        >
           <ClientSDKProvider client={sdk}>
             <ThemeProvider theme={theme}>
               <Provider store={store}>

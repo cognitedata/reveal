@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, Suspense, useState } from 'react';
+import React, { useEffect, useMemo, Suspense } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, Switch, Redirect, useLocation } from 'react-router';
 import { init, setCdfEnv } from 'modules/app';
@@ -7,8 +7,9 @@ import { trackUsage } from 'utils/Metrics';
 import * as mixpanelConfig from 'mixpanel-browser';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { RootState } from 'reducers';
-import { getAuthState, loginAndAuthIfNeeded } from 'sdk-singleton';
+import { getAuthState } from 'sdk-singleton';
 import { Loader } from 'components/Common';
+import GroupsRequired from '../../components/GroupsRequired';
 
 type RouteDef = {
   exact?: boolean;
@@ -32,25 +33,15 @@ export default function App() {
     params: { tenant: pathTenant },
   } = useRouteMatch<{ tenant: string }>();
   const cdfEnv = queryString.parse(window.location.search).env as string;
-  const [{ username, authenticated }, setAuthState] = useState(getAuthState());
+  const { username } = getAuthState();
 
   useEffect(() => {
-    loginAndAuthIfNeeded(pathTenant, cdfEnv).then(() =>
-      setAuthState(getAuthState())
-    );
-  }, [pathTenant, cdfEnv]);
+    dispatch(init(pathTenant));
+  }, [dispatch, pathTenant]);
 
   useEffect(() => {
-    if (authenticated && pathTenant) {
-      dispatch(init(pathTenant));
-    }
-  }, [dispatch, pathTenant, authenticated]);
-
-  useEffect(() => {
-    if (authenticated && cdfEnv) {
-      dispatch(setCdfEnv(cdfEnv));
-    }
-  }, [dispatch, cdfEnv, authenticated]);
+    dispatch(setCdfEnv(cdfEnv));
+  }, [dispatch, cdfEnv]);
 
   const storeCdfEnv = useSelector((state: RootState) => state.app.cdfEnv);
 
@@ -98,25 +89,27 @@ export default function App() {
 
   return (
     <Suspense fallback={<Loader />}>
-      <Switch>
-        <Redirect
-          from="/:url*(/+)"
-          to={{
-            pathname: pathname.slice(0, -1),
-            search,
-            hash,
-          }}
-        />
-        {routes.map(route => (
-          <Route
-            key={route.path}
-            exact={!!route.exact}
-            stric={!!route.strict}
-            path={route.path}
-            component={route.component}
+      <GroupsRequired>
+        <Switch>
+          <Redirect
+            from="/:url*(/+)"
+            to={{
+              pathname: pathname.slice(0, -1),
+              search,
+              hash,
+            }}
           />
-        ))}
-      </Switch>
+          {routes.map(route => (
+            <Route
+              key={route.path}
+              exact={!!route.exact}
+              stric={!!route.strict}
+              path={route.path}
+              component={route.component}
+            />
+          ))}
+        </Switch>
+      </GroupsRequired>
     </Suspense>
   );
 }
