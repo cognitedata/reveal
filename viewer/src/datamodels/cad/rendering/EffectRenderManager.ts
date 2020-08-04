@@ -6,11 +6,10 @@ import { MaterialManager } from '../MaterialManager';
 import { RenderMode } from './RenderMode';
 import * as THREE from 'three';
 import { edgeDetectionShaders } from './shaders';
-import { CogniteColors, toThreeMatrix4 } from '@/utilities';
+import { CogniteColors } from '@/utilities';
 import { CadNode } from '..';
 import { Cognite3DModel } from '@/migration';
 import { Object3D } from 'three';
-import { fromCdfToThreeJsCoordinates } from '@/utilities/constructMatrixFromRotation';
 import { RootSectorNode } from '../sector/RootSectorNode';
 
 export class EffectRenderManager {
@@ -44,7 +43,7 @@ export class EffectRenderManager {
     this._cadTransformParent = new Object3D();
     this._cadTransformParent.matrixAutoUpdate = false;
     this._inFrontScene.add(this._cadTransformParent);
-    this._cadTransformParent.matrix = toThreeMatrix4(fromCdfToThreeJsCoordinates);
+    this._cadTransformParent.matrix.makeRotationFromEuler(new THREE.Euler(0, Math.PI / 4, 0));
 
     const outlineColorTexture = this.createOutlineColorTexture();
 
@@ -69,7 +68,9 @@ export class EffectRenderManager {
         tBackDepth: { value: this._backRenderedCadModelTarget.depthTexture },
         tCustom: { value: this._customObjectRenderTarget.texture },
         tCustomDepth: { value: this._customObjectRenderTarget.depthTexture },
-        tOutlineColors: { value: outlineColorTexture }
+        tOutlineColors: { value: outlineColorTexture },
+        cameraNear: { value: 0.1 },
+        cameraFar: { value: 10000 }
       },
       depthTest: false
     });
@@ -211,13 +212,8 @@ export class EffectRenderManager {
   }
 
   private renderTargetToCanvas(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
-    this._combineEdgeDetectionMaterial.setValues({
-      uniforms: {
-        ...this._combineEdgeDetectionMaterial.uniforms,
-        cameraNear: { value: camera.near },
-        cameraFar: { value: camera.far }
-      }
-    });
+    this._combineEdgeDetectionMaterial.uniforms.cameraNear.value = camera.near;
+    this._combineEdgeDetectionMaterial.uniforms.cameraFar.value = camera.far;
 
     renderer.setRenderTarget(null);
     renderer.render(this._triScene, this._orthographicCamera);

@@ -24,8 +24,8 @@ export interface ModelUrlProvider<TModelIdentifier> {
   getModelUrl(identifier: TModelIdentifier): Promise<string>;
 }
 
-export interface ModelTransformationProvider {
-  getModelTransformation(): ModelTransformation;
+export interface ModelTransformationProvider<TModelIdentifier> {
+  getModelTransformation(identifier: TModelIdentifier): Promise<ModelTransformation>;
 }
 
 export interface JsonFileProvider {
@@ -38,6 +38,7 @@ export interface BinaryFileProvider {
 
 export interface ModelDataClient<TModelIdentifier>
   extends ModelUrlProvider<TModelIdentifier>,
+    ModelTransformationProvider<TModelIdentifier>,
     JsonFileProvider,
     BinaryFileProvider,
     HttpHeadersProvider {}
