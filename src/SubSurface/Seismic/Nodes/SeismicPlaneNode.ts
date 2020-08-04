@@ -26,7 +26,7 @@ export class SeismicPlaneNode extends BaseVisualNode
   // STATIC FIELDS
   //==================================================
 
-  static className = "SeismicCubeNode";
+  static className = "SeismicPlaneNode";
 
   //==================================================
   // INSTANCE FIELDS

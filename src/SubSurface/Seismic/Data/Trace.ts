@@ -17,7 +17,7 @@ export class Trace
   // INSTANCE FIELDS
   //==================================================
 
-  private values: Float32Array;
+  public values: Float32Array;
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -46,10 +46,10 @@ export class Trace
     // x and y is [0,1]
     x = Math.sin(x * Math.PI / 3);
     y = Math.sin(y * Math.PI / 2);
-    for (let k = length - 1; k >= 0; k--)
+    for (let k = this.length - 1; k >= 0; k--)
     {
-      const z = k / (length - 1); // Z is [0,1]
-      const value = (x + y) * Math.sin(2 * Math.PI * z / 20);
+      const z = k / (this.length - 1); // Z is [0,1]
+      const value = (x + y) * Math.sin(2 * Math.PI * z * 20);
       this.values[k] = value;
     }
   }

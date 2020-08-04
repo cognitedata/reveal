@@ -64,7 +64,7 @@ export class TrianglesBuffers
   // INSTANCE METHODS: Operations
   //==================================================
 
-  public addPair(p1: Vector3, p2: Vector3, n1: Vector3, n2: Vector3, u = 0)
+  public addPair(p1: Vector3, p2: Vector3, n1: Vector3, n2: Vector3, u = 0): void
   {
     if (this.uniqueIndex >= 2)
     {
@@ -85,7 +85,7 @@ export class TrianglesBuffers
     }
   }
 
-  public addPair2(p1: Vector3, p2: Vector3, normal: Vector3, fraction: number)
+  public addPair2(p1: Vector3, p2: Vector3, normal: Vector3, fraction: number): void
   {
     if (this.uniqueIndex >= 2)
     {
@@ -139,11 +139,14 @@ export class TrianglesBuffers
       this.normals[index + 2] = normal.z;
     }
     if (this.hasUvs)
-    {
+      this.setUAt(uniqueIndex, u)
+  }
+
+  public setUAt(uniqueIndex: number, u: number): void
+  {
       const index = 2 * uniqueIndex;
       this.uvs[index + 0] = u;
       this.uvs[index + 1] = 0;
-    }
   }
 
   protected addTriangle(index0: number, index1: number, index2: number): void

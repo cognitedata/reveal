@@ -20,7 +20,7 @@ const initialState = {
   },
   titleBar: {
     name: "",
-    icon: { type: IconTypes.NODES, name: "WellNode" },
+    icon: { type: IconTypes.NODES, name: "FolderNode" },
     toolBar: [
       {
         icon: { type: IconTypes.STATES, name: "Pinned" }
