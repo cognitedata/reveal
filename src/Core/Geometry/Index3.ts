@@ -24,9 +24,7 @@ export class Index3
   //==================================================
 
   public i: number;
-
   public j: number;
-
   public k: number;
 
   //==================================================

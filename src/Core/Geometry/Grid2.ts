@@ -22,7 +22,6 @@ export class Grid2 extends Shape
   //==================================================
 
   public readonly nodeSize: Index2;
-
   public readonly cellSize: Index2;
 
   //==================================================

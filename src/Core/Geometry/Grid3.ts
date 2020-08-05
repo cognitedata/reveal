@@ -22,7 +22,6 @@ export class Grid3 extends Shape
   //==================================================
 
   public readonly nodeSize: Index3;
-
   public readonly cellSize: Index3;
 
   //==================================================

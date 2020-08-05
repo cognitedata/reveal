@@ -28,23 +28,17 @@ export class RegularGrid2 extends Grid2
   //==================================================
 
   public origin: Vector3; // Z is translation in Z
-
-  public inc: Vector3; // Z is ignord
+  public inc: Vector3; // Z is ignored
 
   private _hasRotationAngle = false;
-
   private _rotationAngle = 0;
-
   private _sinRotationAngle = 0;
-
   private _cosRotationAngle = 1;
-
+  
   private _buffer: Float32Array;
 
   static readonly _staticHelperA = Vector3.newZero;
-
   static readonly _staticHelperB = Vector3.newZero;
-
   static readonly _staticHelperC = Vector3.newZero;
 
   //==================================================

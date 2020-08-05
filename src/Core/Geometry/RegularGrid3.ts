@@ -26,15 +26,11 @@ export class RegularGrid3 extends Grid3
   //==================================================
 
   public origin: Vector3;
-
   public inc: Vector3;
 
   private _hasRotationAngle = false;
-
   private _rotationAngle = 0;
-
   private _sinRotationAngle = 0;
-
   private _cosRotationAngle = 1;
 
   //==================================================
