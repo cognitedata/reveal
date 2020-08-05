@@ -41,6 +41,9 @@ function arg(env, name, defaultValue) {
 
 module.exports = env => {
   const development = arg(env, 'development', false);
+  const noCDN = arg(env, 'noCDN', false);
+  const publicPath =
+    development || noCDN ? '' : `https://cdn.jsdelivr.net/npm/${packageJSON.name}@${packageJSON.version}/`;
 
   logger.info('Build config:');
   logger.info(`  - development: ${development}`);
@@ -95,7 +98,7 @@ module.exports = env => {
     externals: [nodeExternals()],
     output: {
       filename: '[name].js',
-      publicPath: `https://unpkg.com/${packageJSON.name}@${packageJSON.version}/`,
+      publicPath,
       path: path.resolve(__dirname, 'dist'),
       sourceMapFilename: '[name].map',
       globalObject: `(typeof self !== 'undefined' ? self : this)`,

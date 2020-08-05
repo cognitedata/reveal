@@ -18,12 +18,16 @@ interface PooledWorker {
 // because worker-plugin parses call to new Worker it's necessary to keep that syntax to have working build
 // also, reuses single blob url to create each worker for the pool
 const workerHacks = (() => {
+  const skipHacks = __webpack_public_path__ === '';
   const _Worker = window.Worker;
   let blob: Blob | undefined;
   let objURL: string | undefined;
 
   return {
     init() {
+      if (skipHacks) {
+        return;
+      }
       // @ts-ignore
       window.Worker = function (url: string, opts: WorkerOptions) {
         if (!objURL) {
@@ -36,6 +40,9 @@ const workerHacks = (() => {
       };
     },
     dispose() {
+      if (skipHacks) {
+        return;
+      }
       if (objURL) {
         URL.revokeObjectURL(objURL);
       }
