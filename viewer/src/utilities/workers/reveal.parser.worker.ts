@@ -1,7 +1,7 @@
 /*!
  * Copyright 2020 Cognite AS
  */
-import '../useRuntimePublicPath';
+
 import * as Comlink from 'comlink';
 import {
   ParseSectorResult,
@@ -13,15 +13,7 @@ import * as rustTypes from '../../../pkg';
 import { SectorQuads } from '@/datamodels/cad/rendering/types';
 const rustModule = import('../../../pkg');
 
-console.log('__webpack_public_path__', __webpack_public_path__);
-
 export class RevealParserWorker {
-  public static setPublicPath(path: string) {
-    console.log('setPublicPath before', __webpack_public_path__);
-    __webpack_public_path__ = path;
-    console.log('setPublicPath after', __webpack_public_path__);
-  }
-
   public async parseSector(buffer: Uint8Array): Promise<ParseSectorResult> {
     const rust = await rustModule;
     const sectorData = rust.parse_and_convert_sector(buffer);

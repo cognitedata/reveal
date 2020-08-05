@@ -1,7 +1,6 @@
 /*!
  * Copyright 2020 Cognite AS
  */
-import '../useRuntimePublicPath';
 import * as Comlink from 'comlink';
 import type { RevealParserWorker } from './reveal.parser.worker';
 
@@ -27,22 +26,8 @@ const workerHacks = (() => {
     init() {
       // @ts-ignore
       window.Worker = function (url: string, opts: WorkerOptions) {
-        // chunk is generated during build time, so can't overwrite publicPath normally
-        // if passed a valid url like "http://host/location" - ok, otherwise we need to construct full url
-
-        if (window.publicPath && window.originalRevealPublicPath) {
-          console.log('worker url', url);
-          url = url.replace(window.originalRevealPublicPath, window.publicPath);
-          try {
-            new URL(url); // validate url
-          } catch {
-            url = window.location.href.replace(window.location.pathname, '') + url;
-          }
-        }
-        console.log('worker result url', url);
-
         if (!objURL) {
-          blob = new Blob(['importScripts(' + JSON.stringify(url) + '); self.publicPath = ' + window.publicPath], {
+          blob = new Blob(['importScripts(' + JSON.stringify(url) + ')'], {
             type: 'text/javascript'
           });
           objURL = URL.createObjectURL(blob);
@@ -70,7 +55,6 @@ export class WorkerPool {
   private readonly workerList: PooledWorker[] = [];
 
   constructor() {
-    console.log('WorkerPool constructor');
     const numberOfWorkers = this.determineNumberOfWorkers();
     workerHacks.init();
 
