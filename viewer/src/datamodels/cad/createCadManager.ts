@@ -7,7 +7,6 @@ import { CadMetadataParser } from './parsers/CadMetadataParser';
 import { CadModelMetadataRepository } from './CadModelMetadataRepository';
 import { CadModelFactory } from './CadModelFactory';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
-import { DefaultCadTransformation } from './DefaultCadTransformation';
 import { MaterialManager } from './MaterialManager';
 import { CadSectorParser } from './sector/CadSectorParser';
 import { CachedRepository } from './sector/CachedRepository';
@@ -32,13 +31,8 @@ export function createCdfCadManager(
 }
 
 export function createCadManager<T>(client: ModelDataClient<T>, options: RevealOptions): CadManager<T> {
-  const cadModelTransformationProvider = new DefaultCadTransformation();
   const cadMetadataParser = new CadMetadataParser();
-  const cadModelMetadataRepository = new CadModelMetadataRepository(
-    client,
-    cadModelTransformationProvider,
-    cadMetadataParser
-  );
+  const cadModelMetadataRepository = new CadModelMetadataRepository(client, cadMetadataParser);
   const materialManager = new MaterialManager();
   const cadModelFactory = new CadModelFactory(materialManager);
   const modelDataParser = new CadSectorParser();
