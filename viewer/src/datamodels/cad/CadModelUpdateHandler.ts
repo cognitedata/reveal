@@ -116,9 +116,9 @@ export class CadModelUpdateHandler {
   }
 
   private updateSectors(sectorCuller: SectorCuller): OperatorFunction<DetermineSectorsInput, ConsumedSector> {
-    return publish(input$ => {
+    return (source$: Observable<DetermineSectorsInput>) => {
       const modelSectorStates: { [blobUrl: string]: { [id: number]: LevelOfDetail } } = {};
-      const stateHasChanged = filter<WantedSector>(wantedSector => {
+      const stateHasChanged = (wantedSector: WantedSector) => {
         const sectorStates = modelSectorStates[wantedSector.blobUrl];
         if (sectorStates) {
           const sectorState = sectorStates[wantedSector.metadata.id];
@@ -129,8 +129,8 @@ export class CadModelUpdateHandler {
           }
         }
         return true;
-      });
-      const updateSectorState = tap<ConsumedSector>(consumedSector => {
+      };
+      const updateSectorState = (consumedSector: ConsumedSector) => {
         let sectorStates = modelSectorStates[consumedSector.blobUrl];
         if (!sectorStates) {
           sectorStates = {};
@@ -141,9 +141,9 @@ export class CadModelUpdateHandler {
         } else {
           sectorStates[consumedSector.metadata.id] = consumedSector.levelOfDetail;
         }
-      });
+      };
 
-      return input$
+      return source$
         .pipe(
           switchMap(input => {
             const { cameraInMotion } = input;
@@ -151,14 +151,18 @@ export class CadModelUpdateHandler {
               return empty();
             }
             return from(sectorCuller.determineSectors(input)).pipe(
-              stateHasChanged,
+              filter(stateHasChanged),
               observeOn(asyncScheduler),
               this._sectorRepository.loadSector()
             );
           })
         )
-        .pipe(updateSectorState); //distinctUntilLevelOfDetailChanged(), updateSectorState);
-    });
+        .pipe(
+          tap({
+            next: updateSectorState
+          })
+        ); //distinctUntilLevelOfDetailChanged(), updateSectorState);
+    };
   }
 
   private loadingModelObservable() {
