@@ -4,7 +4,6 @@ import { Util } from "@/Core/Primitives/Util";
 
 export class ZScaleCommand extends ThreeRenderTargetCommand
 {
-
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -21,6 +20,7 @@ export class ZScaleCommand extends ThreeRenderTargetCommand
   public /*override*/ getName(): string { return "Scale Z" }
   public /*override*/ get isDropdown(): boolean { return true; }
   public /*override*/ get dropdownOptions(): string[] { return ["0.1", "0.25", "0.5", "1", "2", "3", "4", "5", "7.5", "10", "20", "50", "100"]; }
+  public /*override*/ get value(): string { return !this.target ? "" : this.target.zScale.toString(); }
 
   protected /*override*/ invokeCore(): boolean { return true; }
 

@@ -29,11 +29,6 @@ export class VirtualUserInterface
     VirtualUserInterface.userInterface?.setFullScreen(isFullScreen);
   }
 
-  static updateToolbars(): void
-  {
-    VirtualUserInterface.userInterface?.updateToolbars();
-  }
-
   static updateStatusPanel(statusText: string): void
   {
     VirtualUserInterface.userInterface?.updateStatusPanel(statusText);

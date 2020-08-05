@@ -7,7 +7,7 @@ import InIcon from "@images/Actions/In.png";
 import OutIcon from "@images/Actions/Out.png";
 import Icon from "@/UserInterface/Components/Icon/Icon";
 import { executeToolBarCommand, selectOnChange } from "@/UserInterface/Redux/actions/visualizers";
-import { ToolbarCommand } from "@/UserInterface/NodeVisualizer/ToolBar/ToolbarCommand";
+import { IToolbarCommand } from "@/UserInterface/NodeVisualizer/ToolBar/ToolbarCommand";
 
 /**
  * Get width and height of toolbar
@@ -33,7 +33,7 @@ const toolBarWrapperMargins = (dimension1: number, dimension2: number, isHorizon
 
 // Visualizer ToolBar Component
 export default function VisualizerToolbar(props: {
-  toolbar: ToolbarCommand[];
+  toolbar: IToolbarCommand[];
   visualizerId: string;
 }) {
   const { visualizerId, toolbar } = props;
@@ -123,7 +123,7 @@ export default function VisualizerToolbar(props: {
       <div key={`visualizer-toolbar-icon-${index}`} className="visualizer-tool-bar-icon">
         <select
           className="visualizer-tool-bar-input"
-          defaultValue={1}
+          value={command.value}
           onChange={event =>
             dispatch(
               selectOnChange({

@@ -3,8 +3,7 @@ import Viewer from "@/UserInterface/NodeVisualizer/Viewers/Viewer";
 import {
   EXECUTE_VISUALIZER_TOOLBAR_COMMAND_SUCCESS,
   SET_STATUS_PANEL_TEXT,
-  SET_VISUALIZER_DATA,
-  UPDATE_TOOLBARS
+  SET_VISUALIZER_DATA
 } from "@/UserInterface/Redux/actions/actionTypes";
 import {VisualizerState} from "@/UserInterface/Redux/State/visualizer";
 
@@ -39,24 +38,12 @@ export default createReducer(initialState, {
       item.icon = command.getIcon();
       item.isVisible = command.isVisible;
       item.isDropdown  = command.isDropdown;
+      item.value = command.value;
     });
   },
 
   [SET_STATUS_PANEL_TEXT]: (state, action) => {
     const { text } = action.payload;
     state.statusBar.text = text;
-  },
-
-  [UPDATE_TOOLBARS]: (state, action) => {
-    for (const [, toolbar] of Object.entries(state.toolbars))
-    {
-      toolbar.map((item) =>
-      {
-        const command = item.command;
-        item.isChecked = command.isChecked;
-        item.icon = command.getIcon();
-        item.isVisible = command.isVisible;
-      });
-    }
-  },
+  }
 });

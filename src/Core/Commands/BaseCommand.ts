@@ -23,6 +23,7 @@ export abstract class BaseCommand
   public /*virtual*/ get isVisible(): boolean { return this.isEnabled; } // Is visible?
   public /*virtual*/ get isDropdown(): boolean { return false; } // Is a Dropdown ?
   public /*virtual*/ get dropdownOptions(): string[] { return [""]; };
+  public /*virtual*/ get value(): string { return "" };
 
   //==================================================
   // VIRTUAL METHODS
