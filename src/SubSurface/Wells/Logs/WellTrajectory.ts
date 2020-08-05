@@ -289,19 +289,19 @@ export class WellTrajectory extends MdSamples
     p3.z += -300;
 
     const points: THREE.Vector3[] = [];
-    points.push(ThreeConverter.to3D(p0));
-    points.push(ThreeConverter.to3D(p1));
-    points.push(ThreeConverter.to3D(p2));
-    points.push(ThreeConverter.to3D(p3));
+    points.push(ThreeConverter.toThreeVector3(p0));
+    points.push(ThreeConverter.toThreeVector3(p1));
+    points.push(ThreeConverter.toThreeVector3(p2));
+    points.push(ThreeConverter.toThreeVector3(p3));
 
     const curve = new THREE.CatmullRomCurve3(points);
     const curvePoints = curve.getPoints(64);
 
     let md = 0;
-    let prevPoint = ThreeConverter.toWorld(curvePoints[0]);
+    let prevPoint = ThreeConverter.fromThreeVector3(curvePoints[0]);
     for (const curvePoint of curvePoints)
     {
-      const point = ThreeConverter.toWorld(curvePoint);
+      const point = ThreeConverter.fromThreeVector3(curvePoint);
       md += prevPoint.distance(point);
       trajectory.add(new TrajectorySample(point, md));
       prevPoint = point;

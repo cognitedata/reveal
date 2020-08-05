@@ -412,10 +412,10 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     {
       const geometry = new TrajectoryBufferGeometry(samples);
       const material = new THREE.MeshPhongMaterial({
-        color: ThreeConverter.to3DColor(Colors.white),
+        color: ThreeConverter.toThreeColor(Colors.white),
         shininess: 75,
         vertexColors: true,
-        emissive: ThreeConverter.to3DColor(Colors.cyan),
+        emissive: ThreeConverter.toThreeColor(Colors.cyan),
         emissiveIntensity: 0.25,
       });
       const mesh = new THREE.Mesh(geometry, material);
@@ -425,8 +425,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     {
       const geometry = new THREE.Geometry();
       for (const sample of samples)
-        geometry.vertices.push(ThreeConverter.to3D(sample.point));
-      const material = new THREE.LineBasicMaterial({ color: ThreeConverter.to3DColor(color), linewidth: 2 });
+        geometry.vertices.push(ThreeConverter.toThreeVector3(sample.point));
+      const material = new THREE.LineBasicMaterial({ color: ThreeConverter.toThreeColor(color), linewidth: 2 });
       const line = new THREE.Line(geometry, material);
       parent.add(line);
     }

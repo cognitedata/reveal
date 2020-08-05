@@ -65,7 +65,13 @@ export class SeismicPlaneNode extends BaseVisualNode
     return this._perpendicularIndex;
   }
 
-  public set perpendicularIndex(value: number) { this._perpendicularIndex = value; }
+  public set perpendicularIndex(value: number)
+  {
+    if (this.isArbitrary)
+      throw Error(this.generalName);
+
+    this._perpendicularIndex = value;
+  }
 
   private get maxPerpendicularIndex(): number
   {
@@ -101,7 +107,7 @@ export class SeismicPlaneNode extends BaseVisualNode
     }
   }
 
-  public get normal(): Vector3
+  public get unrotatedNormal(): Vector3
   {
     switch (this.perpendicularAxis)
     {
@@ -111,7 +117,16 @@ export class SeismicPlaneNode extends BaseVisualNode
       default: return Vector3.newEmpty;
     }
   }
-  
+
+  public get normal(): Vector3
+  {
+    const cube = this.surveyCube;
+    if (!cube)
+      throw Error("surveyCube not found");
+
+    return cube.getAxis(this.perpendicularAxis);
+  }
+
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -155,4 +170,28 @@ export class SeismicPlaneNode extends BaseVisualNode
   {
     return new SurfaceRenderStyle(targetId);
   }
+
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
+
+  public moveTo(perpendicularIndex: number): boolean
+  {
+    if (this.isArbitrary)
+      throw Error(this.generalName);
+
+    if (perpendicularIndex < 0)
+      perpendicularIndex = 0;
+    else if (perpendicularIndex > this.maxPerpendicularIndex)
+      perpendicularIndex = this.maxPerpendicularIndex;
+
+    if (this._perpendicularIndex === perpendicularIndex)
+      return false;
+
+    this._perpendicularIndex = perpendicularIndex;
+    return true;
+  }
+
+
+
 }

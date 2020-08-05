@@ -122,7 +122,7 @@ export class AxisThreeView extends BaseGroupThreeView
       return;
 
     const {camera} = this;
-    const cameraPosition = ThreeConverter.toWorld(camera.position);
+    const cameraPosition = ThreeConverter.fromThreeVector3(camera.position);
 
     for (const child of object3D.children)
       this.updateVisible(child, cameraPosition);
@@ -243,7 +243,7 @@ export class AxisThreeView extends BaseGroupThreeView
         geometry.vertices.push(transformer.to3D(this.corners[i0]));
         geometry.vertices.push(transformer.to3D(this.corners[i1]));
 
-        const material = new THREE.LineBasicMaterial({ color: ThreeConverter.to3DColor(color), linewidth: lineWidth });
+        const material = new THREE.LineBasicMaterial({ color: ThreeConverter.toThreeColor(color), linewidth: lineWidth });
         const lineSegments = new THREE.LineSegments(geometry, material);
 
         this.setUserDataOnAxis(lineSegments, wallIndex0, wallIndex1, isMainAxis);
@@ -309,7 +309,7 @@ export class AxisThreeView extends BaseGroupThreeView
         }
         if (style.showAxisTicks)
         {
-          const threeColor = ThreeConverter.to3DColor(this.axisColor);
+          const threeColor = ThreeConverter.toThreeColor(this.axisColor);
           const material = new THREE.LineBasicMaterial({ color: threeColor, linewidth: 1 });
           const lineSegments = new THREE.LineSegments(geometry, material);
 
@@ -374,7 +374,7 @@ export class AxisThreeView extends BaseGroupThreeView
     geometry.faces.push(new THREE.Face3(0, 1, 2));
     geometry.faces.push(new THREE.Face3(0, 2, 3));
 
-    const threeColor = ThreeConverter.to3DColor(this.wallColor);
+    const threeColor = ThreeConverter.toThreeColor(this.wallColor);
     const squareMaterial = new THREE.MeshBasicMaterial({
       color: threeColor,
       side: THREE.BackSide,
@@ -402,7 +402,7 @@ export class AxisThreeView extends BaseGroupThreeView
     this.addGridInOneDirection(geometry, inc, indexes[0], indexes[1], indexes[3], dim1);
     this.addGridInOneDirection(geometry, inc, indexes[0], indexes[3], indexes[1], dim2);
 
-    const threeColor = ThreeConverter.to3DColor(this.gridColor);
+    const threeColor = ThreeConverter.toThreeColor(this.gridColor);
     const material = new THREE.LineBasicMaterial({ color: threeColor, linewidth: 1 });
     const lineSegments = new THREE.LineSegments(geometry, material);
 

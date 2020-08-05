@@ -20,9 +20,7 @@ export class LineSegment3
   //==================================================
 
   public origin: Vector3 = Vector3.newZero; // Min point
-
   public vector: Vector3 = Vector3.newZero; // Unit vector in direction to max
-
   public length = 0; // The distance between min and max
 
   //==================================================
@@ -30,7 +28,6 @@ export class LineSegment3
   //==================================================
 
   public get min(): Vector3 { return this.origin; }
-
   public get max(): Vector3 { return Vector3.addWithFactor(this.origin, this.vector, this.length); }
 
   //==================================================

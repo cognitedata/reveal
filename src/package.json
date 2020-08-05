@@ -54,10 +54,8 @@
     "react-virtualized": "^9.21.2",
     "reselect": "^4.0.0",
     "reset-css": "^5.0.1",
-    "stats-js": "^1.0.1",
-    "stats.js": "^0.17.0",
     "styled-components": "^5.1.1",
-    "three": "^0.109.0",
+    "three": "^0.119.0",
     "ts-nameof": "^5.0.0",
     "tslib": "^2.0.0",
     "utm": "^1.1.1"

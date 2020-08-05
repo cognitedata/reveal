@@ -20,11 +20,8 @@ export class Range1
   //==================================================
 
   public static get newZero(): Range1 { return new Range1(0, 0); }
-
   public static get newUnit(): Range1 { return new Range1(0, 1); }
-
   public static get newTest(): Range1 { return new Range1(-1000, 1000); }
-
   public static get newZTest(): Range1 { return new Range1(-1000, -1500); }
 
   //==================================================
@@ -32,9 +29,7 @@ export class Range1
   //==================================================
 
   private _min: number = 0;
-
   private _max: number = 0;
-
   private _isEmpty: boolean = true;
 
   //==================================================
@@ -42,21 +37,13 @@ export class Range1
   //==================================================
 
   public get isEmpty(): boolean { return this._isEmpty; }
-
   public get isSingular(): boolean { return this.min === this.max; }
-
   public get hasSpan(): boolean { return !this.isEmpty && !this.isSingular; }
-
   public get min(): number { return this._min; }
-
   public set min(value: number) { this._min = value; }
-
   public get max(): number { return this._max; }
-
   public set max(value: number) { this._max = value; }
-
   public get delta(): number { return this._max - this._min; }
-
   public get center(): number { return (this._min + this._max) / 2; }
 
   //==================================================

@@ -26,15 +26,11 @@ export class RegularGrid3 extends Grid3
   //==================================================
 
   public origin: Vector3;
-
   public inc: Vector3;
 
   private _hasRotationAngle = false;
-
   private _rotationAngle = 0;
-
   private _sinRotationAngle = 0;
-
   private _cosRotationAngle = 1;
 
   //==================================================
@@ -93,6 +89,19 @@ export class RegularGrid3 extends Grid3
   //==================================================
   // INSTANCE METHODS: Getters
   //==================================================
+
+  public getAxis(dimension: number): Vector3
+  {
+    var axis = Vector3.getAxis(dimension);
+    if (dimension < 2 && this._hasRotationAngle)
+    {
+      const dx = axis.x;
+      const dy = axis.y;
+      axis.x = dx * this._cosRotationAngle - dy * this._sinRotationAngle;
+      axis.y = dx * this._sinRotationAngle + dy * this._cosRotationAngle;
+    }
+    return axis;
+  }
 
   public getNodePosition(i: number, j: number, k: number, result: Vector3): void
   {
