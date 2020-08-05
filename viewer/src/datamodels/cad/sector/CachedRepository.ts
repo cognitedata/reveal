@@ -42,6 +42,12 @@ import { Group } from 'three';
 import { RxCounter } from '@/utilities/RxCounter';
 import { merge } from 'lodash';
 
+type KeyedWantedSector = { key: string; wantedSector: WantedSector };
+type WantedSecorWithRequestObservable = {
+  key: string;
+  wantedSector: WantedSector;
+  observable: Observable<ConsumedSector>;
+};
 type CtmFileRequest = { blobUrl: string; fileName: string };
 type CtmFileResult = { fileName: string; data: ParseCtmResult };
 type ParsedData = { blobUrl: string; lod: string; data: SectorGeometry | SectorQuads };
@@ -124,9 +130,10 @@ export class CachedRepository implements Repository {
        * \---------- cached wantedSectors ----------------
        *  \--------- uncached wantedSectors --------------
        */
+      const existsInCache = ({ key }: KeyedWantedSector) => this._consumedSectorCache.has(key);
       const [cached$, uncached$] = partition(
         simpleAndDetailed$.pipe(map(wantedSector => ({ key: this.wantedSectorCacheKey(wantedSector), wantedSector }))),
-        ({ key }) => this._consumedSectorCache.has(key)
+        existsInCache
       );
       /* Split uncached wanted sectors into a pipe of simple wantedSectors and detailed wantedSectors. Increase load count
        * ----------- uncached wantedSectors --------------
@@ -139,39 +146,38 @@ export class CachedRepository implements Repository {
       );
       /* Merge simple and detailed pipeline, save observable to cache, and decrease loadcount
        */
+      const getSimpleSectorFromNetwork = ({ key, wantedSector }: { key: string; wantedSector: WantedSector }) => ({
+        key,
+        wantedSector,
+        observable: this.loadSimpleSectorFromNetwork(wantedSector)
+      });
+      const getDetailedSectorFromNetwork = ({ key, wantedSector }: { key: string; wantedSector: WantedSector }) => ({
+        key,
+        wantedSector,
+        observable: this.loadDetailedSectorFromNetwork(wantedSector)
+      });
+      const saveToCache = ({ key, observable }: WantedSecorWithRequestObservable) =>
+        this._consumedSectorCache.forceInsert(key, observable);
       const network$ = merge(
-        simple$.pipe(
-          map(({ key, wantedSector }) => ({
-            key,
-            wantedSector,
-            observable: this.loadSimpleSectorFromNetwork(wantedSector)
-          }))
-        ),
-        detailed$.pipe(
-          map(({ key, wantedSector }) => ({
-            key,
-            wantedSector,
-            observable: this.loadDetailedSectorFromNetwork(wantedSector)
-          }))
-        )
+        simple$.pipe(map(getSimpleSectorFromNetwork)),
+        detailed$.pipe(map(getDetailedSectorFromNetwork))
       ).pipe(
         tap({
-          next: ({ key, observable }) => this._consumedSectorCache.forceInsert(key, observable)
+          next: saveToCache
         }),
         map(({ observable }) => observable),
         mergeAll(this._concurrentNetworkOperations),
         this._loadingCounter.decrementOnNext()
       );
+
+      const toDiscardedConsumedSector = (wantedSector: WantedSector) =>
+        ({ ...wantedSector, group: undefined } as ConsumedSector);
+      const getFromCache = ({ key }: KeyedWantedSector) => {
+        return this._consumedSectorCache.get(key);
+      };
+
       return scheduled(
-        [
-          discarded$.pipe(map(wantedSector => ({ ...wantedSector, group: undefined } as ConsumedSector))),
-          cached$.pipe(
-            flatMap(({ key }) => {
-              return this._consumedSectorCache.get(key);
-            })
-          ),
-          network$
-        ],
+        [discarded$.pipe(map(toDiscardedConsumedSector)), cached$.pipe(flatMap(getFromCache)), network$],
         asyncScheduler
       ).pipe(mergeAll(), this._loadingCounter.resetOnComplete());
     };
