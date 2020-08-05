@@ -37,7 +37,7 @@ export class SelectCommand extends ToolCommand
     const preCount = viewInfo.items.length;
     viewInfo.clearItems();
 
-    const pixel = target.getMouseRelativePosition(event);
+    const pixel = target.getMouseRelativePositionThree(event);
     const intersection = target.getIntersection(pixel);
     if (intersection)
     {

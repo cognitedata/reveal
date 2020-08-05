@@ -159,7 +159,7 @@ export class CasingLogThreeView extends BaseGroupThreeView
     {
       const geometry = new TrajectoryBufferGeometry(samples);
       const material = new THREE.MeshStandardMaterial({
-        color: ThreeConverter.to3DColor(Colors.white),
+        color: ThreeConverter.toThreeColor(Colors.white),
         vertexColors: true,
         transparent: true,
         opacity: style.opacity

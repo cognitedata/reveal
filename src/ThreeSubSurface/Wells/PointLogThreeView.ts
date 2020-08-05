@@ -187,7 +187,7 @@ export class PointLogThreeView extends BaseGroupThreeView
       const prependicular = cameraDirection.getNormal(tangent);
       position.addWithFactor(prependicular, selectedRadius);
 
-      ThreeConverter.copyTo3D(child.position, position);
+      ThreeConverter.copyToThreeVector3(child.position, position);
     }
   }
 
@@ -260,10 +260,10 @@ export class PointLogThreeView extends BaseGroupThreeView
     const closedGeometry = new THREE.SphereGeometry(radius, 16, 8);
     const openGeometry = new THREE.SphereGeometry(selectedRadius, 16, 8);
 
-    const closedMaterial = new THREE.MeshPhongMaterial({ color: ThreeConverter.to3DColor(color) });
+    const closedMaterial = new THREE.MeshPhongMaterial({ color: ThreeConverter.toThreeColor(color) });
     const openMaterial = new THREE.MeshPhongMaterial({
-      color: ThreeConverter.to3DColor(color),
-      emissive: ThreeConverter.to3DColor(Colors.selectedEmissive)
+      color: ThreeConverter.toThreeColor(color),
+      emissive: ThreeConverter.toThreeColor(Colors.selectedEmissive)
     });
 
     const up = Vector3.newUp;
@@ -293,11 +293,11 @@ export class PointLogThreeView extends BaseGroupThreeView
         const axis = up.getCross(tangent);
         // determine the amount to rotate
         const radians = Math.acos(tangent.getDot(up));
-        sphere.rotateOnAxis(ThreeConverter.to3D(axis), radians);
+        sphere.rotateOnAxis(ThreeConverter.toThreeVector3(axis), radians);
       }
 
       // Get perpendicular
-      ThreeConverter.copyTo3D(sphere.position, position);
+      ThreeConverter.copyToThreeVector3(sphere.position, position);
       sphere.userData["sphere"] = index;
 
       group.add(sphere);
@@ -366,7 +366,7 @@ export class PointLogThreeView extends BaseGroupThreeView
 
     sprite.scale.set(width, height, 1);
 
-    ThreeConverter.copyTo3D(sprite.position, position);
+    ThreeConverter.copyToThreeVector3(sprite.position, position);
     return sprite;
   }
 

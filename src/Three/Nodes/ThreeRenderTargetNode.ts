@@ -14,8 +14,6 @@
 import * as THREE from "three";
 import CameraControls from "camera-controls";
 
-const Stats = require("stats-js");
-
 import { Range3 } from "@/Core/Geometry/Range3";
 import { Colors } from "@/Core/Primitives/Colors";
 
@@ -42,11 +40,12 @@ import { ZoomToTargetToolCommand } from "@/Three/Commands/Tools/ZoomToTargetTool
 import { ToolCommand } from "@/Three/Commands/Tools/ToolCommand";
 import { ToolController } from "@/Three/Nodes/ToolController";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { UniqueId } from "@/Core/Primitives/UniqueId";
 import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
 import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
 import { ZScaleCommand } from "@/Three/Commands/ZScaleCommand";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
+import { Vector3 } from '@/Core/Geometry/Vector3';
+import { PlaneToolCommand } from '@/Three/Commands/Tools/PlaneToolCommand';
 
 const DirectionalLightName = "DirectionalLight";
 
@@ -162,7 +161,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
     // Create lights
     const ambientLight = new THREE.AmbientLight(0x404040, 0.25); // soft white light
-    const directionalLight = new THREE.DirectionalLight(ThreeConverter.to3DColor(Colors.white), 0.95);
+    const directionalLight = new THREE.DirectionalLight(ThreeConverter.toThreeColor(Colors.white), 0.95);
     directionalLight.name = DirectionalLightName;
     this._scene.add(ambientLight);
     this._scene.add(directionalLight);
@@ -254,7 +253,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
       this.isEmpty = !this.viewFrom(-1);
 
     const hasAxis = this.hasViewOfNodeType(AxisNode);
-    this.scene.background = ThreeConverter.to3DColor(this.getBgColor(hasAxis));
+    this.scene.background = ThreeConverter.toThreeColor(this.getBgColor(hasAxis));
 
     for (const view of this.viewsShownHere.list)
       view.beforeRender();
@@ -279,6 +278,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     toolbar.add(new ToggleFullscreenCommand(this));
     toolbar.add(panTool);
     toolbar.add(new SelectCommand(this));
+    toolbar.add(new PlaneToolCommand(this));
     toolbar.add(new ZoomToolCommand(this));
     toolbar.add(new ZoomToTargetToolCommand(this));
     toolbar.add(new MeasureDistanceTool(this));
@@ -362,7 +362,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     verticalAxis.crossVectors(horizontalAxis, vectorToCenter);
 
     vectorToCenter.applyAxisAngle(verticalAxis, Ma.toRad(0)); // Azimuth angle
-    vectorToCenter.applyAxisAngle(horizontalAxis, -Ma.toRad(30)); //Dip angle
+    vectorToCenter.applyAxisAngle(horizontalAxis, -Ma.toRad(0)); //Dip angle
 
     vectorLength = Math.max(vectorLength, 100_000); // Move the light far away
     vectorToCenter.multiplyScalar(vectorLength);
@@ -375,10 +375,18 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   // INSTANCE METHODS: Getters
   //==================================================
 
+  public getRay(pixel: THREE.Vector2): THREE.Ray | null
+  {
+    //https://threejsfundamentals.org/threejs/lessons/threejs-picking.html
+    this._raycaster.setFromCamera(pixel, this.camera);
+    return this._raycaster.ray;
+  }
+
   public getIntersection(pixel: THREE.Vector2): THREE.Intersection | null
   {
     //https://threejsfundamentals.org/threejs/lessons/threejs-picking.html
     this._raycaster.setFromCamera(pixel, this.camera);
+
     const intersects = this._raycaster.intersectObjects(this.scene.children, true);
 
     if (intersects.length > 0)
@@ -392,7 +400,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     return intersection ? intersection.point : null;
   }
 
-  public getMouseRelativePosition(event: MouseEvent): THREE.Vector2
+  public getMouseRelativePositionThree(event: MouseEvent): THREE.Vector2
   {
     const rect = this.domElement.getBoundingClientRect();
     let x = (event.clientX - rect.left) / rect.width;
@@ -400,6 +408,16 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     x = +x * 2 - 1;
     y = -y * 2 + 1;
     return new THREE.Vector2(x, y);
+  }
+
+  public getMouseRelativePosition(event: MouseEvent): Vector3
+  {
+    const rect = this.domElement.getBoundingClientRect();
+    let x = (event.clientX - rect.left) / rect.width;
+    let y = (event.clientY - rect.top) / rect.height;
+    x = +x * 2 - 1;
+    y = -y * 2 + 1;
+    return new Vector3(x, y, 0);
   }
 
   public getViewByObject(object: THREE.Object3D): BaseThreeView | null

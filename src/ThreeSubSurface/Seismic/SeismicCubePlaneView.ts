@@ -62,8 +62,11 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
 
   protected /*override*/ updateCore(args: NodeEventArgs): void
   {
-    super.updateCore(args);
-
+    if (args.isChanged(Changes.geometry))
+    {
+      this.touchBoundingBox();
+      this.invalidateTarget();
+    }
     if (args.isChanged(Changes.filter))
     {
       this._index = -1;
@@ -113,7 +116,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     {
       this._index = node.perpendicularIndex;
       this._axis = node.perpendicularAxis;
-      this.updateSolid(parent, node, node.surveyCube, this.getSeismicCube());
+      this.updateTextureCoords(parent, node, node.surveyCube, this.getSeismicCube());
     }
   }
 
@@ -195,17 +198,17 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     if (cells.length < 2)
       return null;
 
-    const normal = node.normal;
+    const normal = node.unrotatedNormal;
     if (node.perpendicularAxis == 0)
       normal.negate();
 
     const buffers = new RegularGrid3Buffers(surveyCube, normal, cells);
     const geometry = buffers.getBufferGeometry();
 
-    const material = new THREE.MeshPhongMaterial({
-      color: ThreeConverter.to3DColor(Colors.white),
+    const material = new THREE.MeshStandardMaterial({
+      color: ThreeConverter.toThreeColor(Colors.white),
       side: THREE.DoubleSide,
-      shininess: 100 * style.solid.shininess,
+      //shininess: 100 * style.solid.shininess,
       //polygonOffset: true,
       //polygonOffsetFactor: 1,
       //polygonOffsetUnits: 4.0
@@ -228,7 +231,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
   // INSTANCE METHODS
   //==================================================
 
-  private updateSolid(parent: THREE.Object3D, node: SeismicPlaneNode, surveyCube: RegularGrid3 | null, seismicCube: SeismicCube | null): void
+  private updateTextureCoords(parent: THREE.Object3D, node: SeismicPlaneNode, surveyCube: RegularGrid3 | null, seismicCube: SeismicCube | null): void
   {
     if (!surveyCube)
       return;

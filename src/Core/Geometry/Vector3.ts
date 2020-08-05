@@ -20,7 +20,7 @@ export class Vector3
   //==================================================
   // STATIC PROPERTIES
   //==================================================
-  
+
   public static get newUp(): Vector3 { return new Vector3(0, 0, 1); }
   public static get newZero(): Vector3 { return new Vector3(0, 0, 0); }
   public static get newEmpty(): Vector3 { return new Vector3(Number.NaN, Number.NaN, Number.NaN); }
@@ -114,10 +114,7 @@ export class Vector3
     }
   }
 
-  public getDot(other: Vector3): number
-  {
-    return this.x * other.x + this.y * other.y + this.z * other.z;
-  }
+  public getDot(other: Vector3): number { return this.x * other.x + this.y * other.y + this.z * other.z; }
 
   public getCross(other: Vector3): Vector3
   {

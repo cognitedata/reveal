@@ -101,7 +101,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
     const geometry = buffers.getBufferGeometry();
 
     const material = new THREE.MeshPhongMaterial({
-      color: ThreeConverter.to3DColor(color),
+      color: ThreeConverter.toThreeColor(color),
       side: THREE.DoubleSide,
       shininess: 100 * style.shininess,
       polygonOffset: true,
@@ -138,7 +138,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(contours, 3));
 
-    const material = new THREE.LineBasicMaterial({ color: ThreeConverter.to3DColor(color), linewidth: 1 });
+    const material = new THREE.LineBasicMaterial({ color: ThreeConverter.toThreeColor(color), linewidth: 1 });
     return new THREE.LineSegments(geometry, material);
   }
 }

@@ -51,9 +51,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
   {
     super.updateCore(args);
     if (args.isChanged(Changes.geometry) || args.isChanged(Changes.renderStyle))
-    {
       this.touch();
-    }
   }
 
   protected /*override*/ clearMemoryCore(): void

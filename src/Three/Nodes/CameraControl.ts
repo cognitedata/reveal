@@ -125,7 +125,7 @@ export class CameraControl
       tempTarget = controls.getTarget(tempTarget);
 
       // View all
-      const direction = Vector3.substract(ThreeConverter.toWorld(tempPosition), ThreeConverter.toWorld(tempTarget));
+      const direction = Vector3.substract(ThreeConverter.fromThreeVector3(tempPosition), ThreeConverter.fromThreeVector3(tempTarget));
       direction.normalize();
 
       const dots = new Vector3(Vector3.getAxis(0).getDot(direction), Vector3.getAxis(1).getDot(direction), Vector3.getAxis(2).getDot(direction));
@@ -223,8 +223,8 @@ export class CameraControl
 
     // Transform it......
     const box = new THREE.Box3();
-    const size = ThreeConverter.to3D(boundingBox.delta);
-    const center = ThreeConverter.to3D(boundingBox.center);
+    const size = ThreeConverter.toThreeVector3(boundingBox.delta);
+    const center = ThreeConverter.toThreeVector3(boundingBox.center);
 
     const maxSize = Math.max(size.x, size.y, size.z);
     const fitHeightDistance = maxSize / (2 * Math.atan(Math.PI * camera.fov / 360));
