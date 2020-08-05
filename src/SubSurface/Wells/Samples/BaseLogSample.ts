@@ -20,5 +20,6 @@ export abstract class BaseLogSample extends MdSample
   //==================================================
 
   public abstract get isEmpty(): boolean;
+
   public abstract clone(): BaseLogSample;
 }  

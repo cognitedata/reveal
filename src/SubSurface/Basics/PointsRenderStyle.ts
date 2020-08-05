@@ -25,6 +25,7 @@ export class PointsRenderStyle extends BaseRenderStyle
   //==================================================
 
   public size: number = 30;
+
   public colorType: ColorType = ColorType.DepthColor;
 
   //==================================================
@@ -43,6 +44,3 @@ export class PointsRenderStyle extends BaseRenderStyle
   {
   }
 }
-
-
-

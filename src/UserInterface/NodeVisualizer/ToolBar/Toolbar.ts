@@ -9,7 +9,7 @@ export default class Toolbar implements IToolbar {
     private commands: BaseCommand[] = [];
 
     // Getter for commands
-    getCommands(): BaseCommand[] { return this.commands }
+    getCommands(): BaseCommand[] { return this.commands; }
 
     //==================================================
     // OVERRIDES of IToolBar

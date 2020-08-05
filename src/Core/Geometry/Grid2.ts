@@ -1,4 +1,3 @@
-
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
@@ -23,6 +22,7 @@ export class Grid2 extends Shape
   //==================================================
 
   public readonly nodeSize: Index2;
+
   public readonly cellSize: Index2;
 
   //==================================================
@@ -43,6 +43,7 @@ export class Grid2 extends Shape
   //==================================================
 
   public /*override*/ clone(): Shape { return new Grid2(this.nodeSize); }
+
   public/*override*/ expandBoundingBox(boundingBox: Range3): void { }
 
   //==================================================
@@ -52,6 +53,7 @@ export class Grid2 extends Shape
   public toString(): string { return `(${this.nodeSize})`; }
   
   public getNodeIndex(i: number, j: number) { return i + this.nodeSize.i * j; }
+
   public getCellIndex(i: number, j: number) { return i + this.cellSize.i * j; }
 
   //==================================================

@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import * as THREE from "three";
-import * as Color from "color"
+import * as Color from "color";
 
 import { Range1 } from "@/Core/Geometry/Range1";
 import { Vector3 } from "@/Core/Geometry/Vector3";
@@ -37,7 +37,9 @@ export class LogRenderOld
   //==================================================
 
   private cameraPosition: Vector3;
+
   private trajectory: WellTrajectory;
+
   private bandRange: Range1;
 
   //==================================================
@@ -258,4 +260,3 @@ export class LogRenderOld
     material.polygonOffsetUnits = value * 4;
   }
 }
-

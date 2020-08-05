@@ -42,7 +42,7 @@ export class BaseRootNode extends BaseNode
   {
     const child = this.getChildByType(TargetTreeNode);
     if (!child)
-      throw new Error("Cannot find the " + TargetTreeNode.className);
+      throw new Error(`Cannot find the ${TargetTreeNode.className}`);
     return child;
   }
 
@@ -58,7 +58,7 @@ export class BaseRootNode extends BaseNode
   //==================================================
 
   public /*override*/ canChangeColor(): boolean { return false; }
-  public /*override*/ get typeName(): string { return "Root" }
+  public /*override*/ get typeName(): string { return "Root"; }
 
   protected /*override*/ get activeTargetIdAccessor(): ITargetIdAccessor | null
   {
@@ -88,5 +88,5 @@ export class BaseRootNode extends BaseNode
 
   private static _active: BaseNode | null;
   public static get active(): BaseNode | null { return BaseRootNode._active; }
-  public static set active(value: BaseNode | null)  { BaseRootNode._active = value; }
+  public static set active(value: BaseNode | null) { BaseRootNode._active = value; }
 }

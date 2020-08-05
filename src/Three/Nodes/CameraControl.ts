@@ -30,6 +30,7 @@ export class CameraControl
   //==================================================
 
   private _camera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
+
   private _controls: CameraControls | null = null;
 
   //==================================================
@@ -37,6 +38,7 @@ export class CameraControl
   //==================================================
 
   public get camera(): THREE.PerspectiveCamera | THREE.OrthographicCamera { return this._camera; }
+
   public get controls(): CameraControls
   {
     if (!this._controls)
@@ -46,7 +48,7 @@ export class CameraControl
 
   public get distance(): number
   {
-    const controls = this.controls;
+    const {controls} = this;
     let position = new THREE.Vector3();
     let target = new THREE.Vector3();
     position = controls.getPosition(position);
@@ -64,7 +66,7 @@ export class CameraControl
   {
     if (!CameraControl._isInstalled)
     {
-      CameraControls.install({ THREE: THREE });
+      CameraControls.install({ THREE });
       CameraControl._isInstalled = true;
     }
 
@@ -102,8 +104,8 @@ export class CameraControl
     if (!boundingBox || boundingBox.isEmpty)
       return false;
 
-    const controls = this.controls;
-    const camera = this.camera;
+    const {controls} = this;
+    const {camera} = this;
 
     let distanceFactor = 1;
     if (camera instanceof THREE.PerspectiveCamera)
@@ -143,7 +145,7 @@ export class CameraControl
       direction.multiplyScalar(distance);
       position.add(direction);
     }
-    if (index == -1)
+    if (index === -1)
     {
       // View all with a slope
       distanceFactor /= 2;
@@ -209,11 +211,11 @@ export class CameraControl
 
   public zoomToTarget(position: THREE.Vector3): void
   {
-    const controls = this.controls;
+    const {controls} = this;
     const tmp = new THREE.Vector3();
     const distance = controls.getPosition(tmp).distanceTo(position);
     controls.setTarget(position.x, position.y, position.z, true);
-    controls.dollyTo(distance / 2, true)
+    controls.dollyTo(distance / 2, true);
   }
 
   public viewAllAlternative(camera: THREE.PerspectiveCamera, controls: CameraControls, boundingBox: Range3 | undefined, fitOffset = 1.2)

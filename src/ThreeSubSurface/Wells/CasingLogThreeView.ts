@@ -40,6 +40,7 @@ export class CasingLogThreeView extends BaseGroupThreeView
   //==================================================
 
   protected get node(): CasingLogNode { return super.getNode() as CasingLogNode; }
+
   private get style(): CasingLogStyle { return super.getStyle() as CasingLogStyle; }
 
   //==================================================
@@ -55,7 +56,7 @@ export class CasingLogThreeView extends BaseGroupThreeView
   public get /*override*/ isVisible(): boolean
   {
     const parent = this.node.trajectoryNode;
-    return parent != null && parent.isVisible(this.renderTarget)
+    return parent != null && parent.isVisible(this.renderTarget);
   }
 
   protected /*override*/ updateCore(args: NodeEventArgs): void
@@ -72,16 +73,16 @@ export class CasingLogThreeView extends BaseGroupThreeView
     if (!this.isVisible)
       return undefined;
 
-    const node = this.node;
-    const trajectory = node.trajectory;
+    const {node} = this;
+    const {trajectory} = node;
     if (!trajectory)
       return undefined;
 
-    const wellNode = this.node.wellNode;
+    const {wellNode} = this.node;
     if (!wellNode)
       return undefined;
 
-    const log = node.log;
+    const {log} = node;
     if (!log)
       return undefined;
 
@@ -109,13 +110,13 @@ export class CasingLogThreeView extends BaseGroupThreeView
   public /*override*/ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void
   {
     const md = WellTrajectoryThreeView.startPickingAndReturnMd(this, viewInfo, intersection);
-    if (md == undefined)
+    if (md === undefined)
       return;
 
-    const node = this.node;
+    const {node} = this;
     viewInfo.addHeader(node.displayName);
 
-    const log = node.log;
+    const {log} = node;
     if (!log)
       return;
 
@@ -124,7 +125,7 @@ export class CasingLogThreeView extends BaseGroupThreeView
       return;
 
     viewInfo.addText("  Name", sample.name);
-    viewInfo.addText("  Radius", Number.isNaN(sample.radius) || sample.radius == 0 ? "No casing" : sample.radius.toFixed(3));
+    viewInfo.addText("  Radius", Number.isNaN(sample.radius) || sample.radius === 0 ? "No casing" : sample.radius.toFixed(3));
     viewInfo.addText("  Comments", sample.comments);
     viewInfo.addText("  Status comment", sample.currentStatusComment);
   }
@@ -135,21 +136,21 @@ export class CasingLogThreeView extends BaseGroupThreeView
 
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
-    const node = this.node;
-    const wellNode = node.wellNode;
+    const {node} = this;
+    const {wellNode} = node;
     if (!wellNode)
       return null;
 
-    const style = this.style;
+    const {style} = this;
     if (!style)
       return null;
 
     const color = node.getColorByColorType(style.colorType);
-    const trajectory = node.trajectory;
+    const {trajectory} = node;
     if (!trajectory)
       return null;
 
-    const log = node.log;
+    const {log} = node;
     if (!log)
       throw Error("Well trajectory is missing");
 
@@ -177,7 +178,7 @@ export class CasingLogThreeView extends BaseGroupThreeView
 
   public createRenderSamples(trajectory: WellTrajectory, log: CasingLog, color: Color): RenderSample[]
   {
-    const trajectoryRadius = this.trajectoryRadius;
+    const {trajectoryRadius} = this;
 
     const samples: RenderSample[] = [];
     for (let logIndex = 0; logIndex < log.length; logIndex++)
@@ -214,7 +215,7 @@ export class CasingLogThreeView extends BaseGroupThreeView
       samples.push(new RenderSample(basePosition, sample.baseMd, sampleRadius, color));
       samples.push(new RenderSample(basePosition.clone(), sample.baseMd, 0, color));
     }
-    const transformer = this.transformer;
+    const {transformer} = this;
     for (const sample of samples)
       transformer.transformRelativeTo3D(sample.point);
     return samples;
@@ -271,11 +272,11 @@ export class CasingLogThreeView extends BaseGroupThreeView
 
   protected get trajectoryRadius(): number
   {
-    const node = this.node;
+    const {node} = this;
     if (!node)
       return 0;
 
-    const trajectoryNode = node.trajectoryNode;
+    const {trajectoryNode} = node;
     if (!trajectoryNode)
       return 0;
 

@@ -1,4 +1,3 @@
-
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ToolCommand } from "@/Three/Commands/Tools/ToolCommand";
 import ZoomToTargetToolCommandIcon from "@images/Commands/ZoomToTargetToolCommand.png";
@@ -18,9 +17,11 @@ export class ZoomToTargetToolCommand extends ToolCommand
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*override*/ getName(): string { return "Zoom to target" }
+  public /*override*/ getName(): string { return "Zoom to target"; }
+
   public /*override*/ getIcon(): string { return ZoomToTargetToolCommandIcon; }
-  public /*override*/ getShortCutKeys(): string { return "S" }
+
+  public /*override*/ getShortCutKeys(): string { return "S"; }
 
   //==================================================
   // OVERRIDES of ToolCommand
@@ -30,7 +31,7 @@ export class ZoomToTargetToolCommand extends ToolCommand
 
   public /*override*/ onMouseClick(event: MouseEvent): void
   {
-    const target = this.target;
+    const {target} = this;
     if (!target)
       return;
 
@@ -39,10 +40,8 @@ export class ZoomToTargetToolCommand extends ToolCommand
     if (!worldCoords)
       return;
 
-    const cameraControl = target.cameraControl;
+    const {cameraControl} = target;
     cameraControl.zoomToTarget(worldCoords);
     target.setDefaultTool();
   }
 }
-
-

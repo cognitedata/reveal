@@ -22,10 +22,15 @@ export class TrianglesBuffers
   //==================================================
 
   protected positions: Float32Array;
+
   protected normals: Float32Array;
+
   protected uvs: Float32Array;
+
   protected triangleIndexes: number[] = [];
+
   protected uniqueIndex = 0;
+
   public side = THREE.FrontSide;
 
   //==================================================
@@ -79,10 +84,10 @@ export class TrianglesBuffers
       this.addTriangle(unique0, unique2, unique3);
       this.addTriangle(unique0, unique3, unique1);
     }
-    {
-      this.add(p1, n1, u);
-      this.add(p2, n2, u);
-    }
+    
+    this.add(p1, n1, u);
+    this.add(p2, n2, u);
+    
   }
 
   public addPair2(p1: Vector3, p2: Vector3, normal: Vector3, fraction: number): void
@@ -139,14 +144,14 @@ export class TrianglesBuffers
       this.normals[index + 2] = normal.z;
     }
     if (this.hasUvs)
-      this.setUAt(uniqueIndex, u)
+      this.setUAt(uniqueIndex, u);
   }
 
   public setUAt(uniqueIndex: number, u: number): void
   {
-      const index = 2 * uniqueIndex;
-      this.uvs[index + 0] = u;
-      this.uvs[index + 1] = 0;
+    const index = 2 * uniqueIndex;
+    this.uvs[index + 0] = u;
+    this.uvs[index + 1] = 0;
   }
 
   protected addTriangle(index0: number, index1: number, index2: number): void
@@ -154,4 +159,3 @@ export class TrianglesBuffers
     this.triangleIndexes.push(index0, index1, index2);
   }
 }
-

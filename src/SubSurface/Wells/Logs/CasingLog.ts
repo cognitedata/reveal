@@ -35,7 +35,7 @@ export class CasingLog extends BaseLog
     return this.getConcreteSampleByMd(md);
   }
 
-  public/*override*/  expandMdRange(range: Range1): void
+  public/*override*/ expandMdRange(range: Range1): void
   {
     for (let i = this.length - 1; i >= 0; i--)
     {

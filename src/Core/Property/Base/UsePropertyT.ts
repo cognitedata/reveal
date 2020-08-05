@@ -1,5 +1,5 @@
-import { Action, Retrieve } from "./BaseProperty";
 import Property from "@/Core/Property/Base/Property";
+import { Action, Retrieve } from "./BaseProperty";
 
 abstract class UsePropertyT<T> extends Property
 {
@@ -8,8 +8,11 @@ abstract class UsePropertyT<T> extends Property
   //==================================================
 
   protected _value: T | Retrieve<T>;
+
   protected _valueDelegate?: Action<T>;
+
   protected _legalValues: T[] = [];
+
   private _hasLegalValues: boolean = false;
 
   //==================================================
@@ -32,8 +35,7 @@ abstract class UsePropertyT<T> extends Property
   {
     if (this.hasValueInMemory())
       return this._value as T;
-    else
-      return this.getValueByDelegate() as T;
+    return this.getValueByDelegate() as T;
   }
 
   public set value(value: T | undefined)
@@ -60,7 +62,9 @@ abstract class UsePropertyT<T> extends Property
     }
     this.apply();
   }
+
   public get hasLegalValues(): boolean { return this._hasLegalValues; }
+
   public set hasLegalValues(value: boolean) { this._hasLegalValues = value; }
 
   //==================================================
@@ -71,8 +75,7 @@ abstract class UsePropertyT<T> extends Property
   {
     if (this._instance)
       return (this._value as Retrieve<T>).call(this._instance);
-    else
-      return this._value as T;
+    return this._value as T;
   }
 
   protected setValueByDelegate(value): void
@@ -82,6 +85,7 @@ abstract class UsePropertyT<T> extends Property
   }
 
   public getLegalValues(): T[] { return this._legalValues; }
+
   public setLegalValues(values: T[]): void
   {
     this._legalValues = values;

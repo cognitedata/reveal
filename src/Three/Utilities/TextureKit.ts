@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import * as THREE from "three";
-import * as Color from "color"
+import * as Color from "color";
 
 import { Range1 } from "@/Core/Geometry/Range1";
 import { Colors } from "@/Core/Primitives/Colors";
@@ -63,4 +63,3 @@ export class TextureKit
     return new THREE.DataTexture(data, width, height, THREE.RGBFormat);
   }
 }
-

@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import * as Color from "color"
+import * as Color from "color";
 
 import { BaseLog } from "@/SubSurface/Wells/Logs/BaseLog";
 import { WellNode } from "@/SubSurface/Wells/Nodes/WellNode";
@@ -39,14 +39,18 @@ export abstract class BaseLogNode extends DataNode
   //==================================================
 
   public get log(): BaseLog | null { return this.anyData; }
+
   public set log(value: BaseLog | null) { this.anyData = value; }
+
   public get wellNode(): WellNode | null { return this.getAncestorByType(WellNode); }
+
   public get trajectoryNode(): WellTrajectoryNode | null { return this.getAncestorByType(WellTrajectoryNode); }
+
   public get trajectory(): WellTrajectory | null { const node = this.trajectoryNode; return node ? node.trajectory : null; }
 
   public get filterLogNode(): BaseFilterLogNode | null
   {
-    const trajectoryNode = this.trajectoryNode;
+    const {trajectoryNode} = this;
     if (!trajectoryNode)
       return null;
 
@@ -72,6 +76,7 @@ export abstract class BaseLogNode extends DataNode
   //==================================================
 
   public /*override*/ get className(): string { return BaseLogNode.className; }
+
   public /*override*/ isA(className: string): boolean { return className === BaseLogNode.className || super.isA(className); }
 
   //==================================================
@@ -82,7 +87,7 @@ export abstract class BaseLogNode extends DataNode
 
   public /*override*/ getColor(): Color
   {
-    const filterLogNode = this.filterLogNode;
+    const {filterLogNode} = this;
     return filterLogNode ? filterLogNode.getColor() : super.getColor();
   }
 
@@ -90,14 +95,14 @@ export abstract class BaseLogNode extends DataNode
 
   public /*override*/ canBeChecked(target: ITarget | null): boolean
   {
-    const trajectoryNode = this.trajectoryNode;
+    const {trajectoryNode} = this;
     return trajectoryNode ? trajectoryNode.isVisible(target) : false;
   }
 
   protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
   {
     super.populateStatisticsCore(folder);
-    const log = this.log;
+    const {log} = this;
     if (!log)
       return;
 
@@ -111,7 +116,7 @@ export abstract class BaseLogNode extends DataNode
 
   public getRenderStyle(targetId?: TargetId): BaseRenderStyle | null
   {
-    const filterLogNode = this.filterLogNode;
+    const {filterLogNode} = this;
     return filterLogNode ? filterLogNode.getRenderStyle(targetId) : null;
   }
 
@@ -127,6 +132,6 @@ export abstract class BaseLogNode extends DataNode
 
   public isEqual(other: BaseFilterLogNode): boolean
   {
-    return this.wellLogType == other.wellLogType && Util.equalsIgnoreCase(this.name, other.name);
+    return this.wellLogType === other.wellLogType && Util.equalsIgnoreCase(this.name, other.name);
   }
 }

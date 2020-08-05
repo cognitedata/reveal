@@ -45,8 +45,8 @@ export const settingsSlice = createSlice({
     onSelectedNodeChange: {
       reducer(state: ISettingsState, action: PayloadAction<{ node: BaseNode, propertyFolder: BasePropertyFolder }>)
       {
-        const node = action.payload.node;
-        const propertyFolder = action.payload.propertyFolder;
+        const {node} = action.payload;
+        const {propertyFolder} = action.payload;
 
         if (node && node.IsSelected())
         {
@@ -166,12 +166,11 @@ function mapToInputTypes(type: PropertyType): string
 {
   if (type === PropertyType.String)
     return ElementTypes.INPUT;
-  else if (type === PropertyType.Color)
+  if (type === PropertyType.Color)
     return ElementTypes.COLOR_TABLE;
-  else if (type === PropertyType.StringGroup)
+  if (type === PropertyType.StringGroup)
     return ElementTypes.INPUT_GROUP;
-  else if (type === PropertyType.DefaultPropertyFolder)
+  if (type === PropertyType.DefaultPropertyFolder)
     return ElementTypes.SECTION;
   return "";
 }
-

@@ -1,5 +1,4 @@
-
-import * as Color from "color"
+import * as Color from "color";
 
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { ITarget } from "@/Core/Interfaces/ITarget";
@@ -54,7 +53,7 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget
   //==================================================
 
   public /*override*/ getColor(): Color { return this.isLightBackground ? Colors.white : Colors.black; }
-  public /*override*/ get typeName(): string { return "Target" }
+  public /*override*/ get typeName(): string { return "Target"; }
   public /*override*/ canBeActive(): boolean { return true; }
 
   public /*override*/ getDebugString(): string

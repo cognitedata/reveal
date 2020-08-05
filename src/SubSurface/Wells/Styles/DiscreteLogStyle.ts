@@ -42,6 +42,3 @@ export class DiscreteLogStyle extends BaseRenderStyle
     super.PopulateCore(folder);
   }
 }
-
-
-

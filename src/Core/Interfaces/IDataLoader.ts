@@ -13,7 +13,7 @@
 
 import { DataNode } from "@/Core/Nodes/DataNode";
 
-export interface  IDataLoader
+export interface IDataLoader
 {
   load(origin: DataNode): any;
 }

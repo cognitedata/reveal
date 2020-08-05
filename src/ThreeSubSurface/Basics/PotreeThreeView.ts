@@ -28,6 +28,7 @@ export class PotreeThreeView extends BaseGroupThreeView
   //==================================================
 
   protected get node(): PotreeNode { return super.getNode() as PotreeNode; }
+
   protected get style(): PotreeRenderStyle { return super.getStyle() as PotreeRenderStyle; }
 
   //==================================================
@@ -51,8 +52,8 @@ export class PotreeThreeView extends BaseGroupThreeView
 
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
-    const node = this.node;
-    const style = this.style;
+    const {node} = this;
+    const {style} = this;
 
     const path = node.url;
     if (!path || path === "")
@@ -63,10 +64,10 @@ export class PotreeThreeView extends BaseGroupThreeView
 
     Potree.loadPointCloud(path, node.name, (data: any) =>
     {
-      const pointcloud: Potree.PointcloudOctree = data.pointcloud;
+      const {pointcloud} = data;
       group.add(pointcloud);
 
-      const material: Potree.PointCloudMaterial = pointcloud.material;
+      const {material} = pointcloud;
       if (material)
       {
         // https://github.com/tentone/potree-core

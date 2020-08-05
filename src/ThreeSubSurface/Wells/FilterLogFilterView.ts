@@ -36,7 +36,7 @@ export class FilterLogFilterView extends BaseView
   protected /*override*/ updateCore(args: NodeEventArgs): void
   {
     super.updateCore(args);
-    const node = this.node;
+    const {node} = this;
     for (const logNode of node.getAllLogs())
     {
       const view = logNode.getViewByTarget(this.renderTarget);
@@ -64,10 +64,10 @@ export class FilterLogFilterView extends BaseView
   protected onHideOrShowCore( visible:boolean): void
   {
     // Pattern: SYNC_LOGS_AND_FILTERLOGS
-    const node = this.node;
+    const {node} = this;
     for (const logNode of node.getAllLogs())
     {
-      const trajectoryNode = logNode.trajectoryNode;
+      const {trajectoryNode} = logNode;
       if (!trajectoryNode)
         continue;
 

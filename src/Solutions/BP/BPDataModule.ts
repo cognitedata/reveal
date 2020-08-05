@@ -17,26 +17,26 @@ export default class BPDataModule extends BaseModule
 
     public /*override*/ createRoot(): BaseRootNode | null
     {
-        return new SubSurfaceRootNode();
+      return new SubSurfaceRootNode();
     }
 
     public /*override*/ loadData(root: BaseRootNode): void
     {
-        if (!(root instanceof SubSurfaceRootNode))
-            return;
+      if (!(root instanceof SubSurfaceRootNode))
+        return;
         // todo: clear rootNode if needed in the future using proper function
 
-        const wellNodes = WellsCreator.create(this.bpData);
-        if (!wellNodes)
-            return;
+      const wellNodes = WellsCreator.create(this.bpData);
+      if (!wellNodes)
+        return;
 
-        if (!wellNodes.length)
-            return;
+      if (!wellNodes.length)
+        return;
 
-        const wellTree = root.wells;
-        for (const node of wellNodes)
-            wellTree.addChild(node);
-        wellTree.synchronize();
+      const wellTree = root.wells;
+      for (const node of wellNodes)
+        wellTree.addChild(node);
+      wellTree.synchronize();
     }
 
     //==================================================
@@ -53,7 +53,7 @@ export default class BPDataModule extends BaseModule
         logs?: { [key: number]: ILog[] } | {},
         casings?: ICasing[],
     }) {
-        const { wells, wellBores, trajectories, trajectoryData, ndsEvents, nptEvents, logs, casings } = data;
-        this.bpData = new BPData(wells, wellBores, trajectories, trajectoryData, ndsEvents, nptEvents, logs, casings);
+      const { wells, wellBores, trajectories, trajectoryData, ndsEvents, nptEvents, logs, casings } = data;
+      this.bpData = new BPData(wells, wellBores, trajectories, trajectoryData, ndsEvents, nptEvents, logs, casings);
     }
 }

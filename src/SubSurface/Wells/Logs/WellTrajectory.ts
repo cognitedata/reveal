@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import * as THREE from "three";
-import * as Color from "color"
+import * as Color from "color";
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Range1 } from "@/Core/Geometry/Range1";
@@ -80,8 +80,11 @@ export class WellTrajectory extends MdSamples
   //==================================================
 
   public getAt(index: number): TrajectorySample { return this.samples[index] as TrajectorySample; }
+
   public getPositionAt(i: number): Vector3 { return this.getAt(i).point; }
+
   public getTopPosition(): Vector3 { return this.getAt(0).point; }
+
   public getBasePosition(): Vector3 { return this.getAt(this.length - 1).point; }
 
   public getPositionAtMd(md: number, result: Vector3): boolean
@@ -125,7 +128,7 @@ export class WellTrajectory extends MdSamples
     if (maxIndex < 0)
       return false;
 
-    let index0: number, index1: number;
+    let index0: number; let index1: number;
     if (md <= this.samples[0].md)
     {
       index0 = 0;
@@ -172,8 +175,8 @@ export class WellTrajectory extends MdSamples
 
   public getTangentAt(i: number, result: Vector3): boolean
   {
-    let index0: number, index1: number;
-    if (i == 0)
+    let index0: number; let index1: number;
+    if (i === 0)
     {
       index0 = 0;
       index1 = 1;
@@ -207,7 +210,7 @@ export class WellTrajectory extends MdSamples
   public getClosestMd(position: Vector3): number
   {
     const lineSegment = new LineSegment3();
-    let closestPoint: Vector3 | null = null
+    let closestPoint: Vector3 | null = null;
     let closestDistance = Number.MAX_VALUE;
     let index = -1;
 
@@ -246,7 +249,7 @@ export class WellTrajectory extends MdSamples
     const minFraction = distanceToMin / totalDistance;
     const maxFraction = distanceToMax / totalDistance;
     const md = maxFraction * minSample.md + minFraction * maxSample.md;
-    return md
+    return md;
   }
 
   //==================================================

@@ -44,15 +44,16 @@ export class PointFilterLogNode extends BaseFilterLogNode
   //==================================================
 
   public /*override*/ get className(): string { return PointFilterLogNode.className; }
+
   public /*override*/ isA(className: string): boolean { return className === PointFilterLogNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "PointLog" }
+  public /*override*/ get typeName(): string { return "PointLog"; }
 
-  public /*override*/ getIcon(): string { return PointLogNodeIcon }
+  public /*override*/ getIcon(): string { return PointLogNodeIcon; }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
@@ -78,5 +79,5 @@ export class PointFilterLogNode extends BaseFilterLogNode
   // OVERRIDES of BaseLogNode
   //==================================================
 
-  public /*override*/  get wellLogType(): WellLogType { return WellLogType.Point; }
+  public /*override*/ get wellLogType(): WellLogType { return WellLogType.Point; }
 }

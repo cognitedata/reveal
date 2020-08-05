@@ -33,6 +33,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
   //==================================================
 
   protected get node(): SurfaceNode { return super.getNode() as SurfaceNode; }
+
   protected get style(): SurfaceRenderStyle { return super.getStyle() as SurfaceRenderStyle; }
 
   //==================================================
@@ -62,7 +63,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
 
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
-    const node = this.node;
+    const {node} = this;
     const grid = node.surface;
     if (!grid)
       return null;
@@ -76,7 +77,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
     if (contours)
       parent.add(contours);
 
-    const transformer = this.transformer;
+    const {transformer} = this;
 
     parent.rotateZ(grid.rotationAngle);
     parent.position.copy(transformer.to3D(grid.origin));
@@ -90,14 +91,14 @@ export class SurfaceThreeView extends BaseGroupThreeView
 
   private createSolid(): THREE.Object3D | null
   {
-    const node = this.node;
+    const {node} = this;
     const style = this.style.solid;
     const grid = node.surface;
     if (!grid)
       return null;
 
     const color = node.getColorByColorType(style.colorType);
-    const buffers = new RegularGrid2Buffers(grid, style.colorType == ColorType.DepthColor);
+    const buffers = new RegularGrid2Buffers(grid, style.colorType === ColorType.DepthColor);
     const geometry = buffers.getBufferGeometry();
 
     const material = new THREE.MeshPhongMaterial({
@@ -122,7 +123,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
 
   private createContours(): THREE.Object3D | null
   {
-    const node = this.node;
+    const {node} = this;
     const style = this.style.contours;
     const grid = node.surface;
     if (!grid)
@@ -132,7 +133,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
     const service = new ContouringService(style.inc);
 
     const contours = service.createContoursAsXyzArray(grid);
-    if (contours.length == 0)
+    if (contours.length === 0)
       return null;
 
     const geometry = new THREE.BufferGeometry();
@@ -160,5 +161,3 @@ function vertexShader(): string
     }
   `;
 }
-
-

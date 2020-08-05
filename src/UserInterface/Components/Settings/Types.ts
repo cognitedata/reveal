@@ -23,7 +23,6 @@ export interface ITitleBar {
   toolBar: ToolBarType;
 }
 
-
 // SettingsPanel SettingsSection Prop Type
 export interface ISettingsSection
 {
@@ -58,4 +57,3 @@ export interface ISettingsElement
   };
   subElements?: ISettingsElement[];
 }
-

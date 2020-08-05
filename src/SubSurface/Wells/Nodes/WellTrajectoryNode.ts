@@ -39,8 +39,11 @@ export class WellTrajectoryNode extends DataNode
   //==================================================
 
   public get trajectory(): WellTrajectory | null { return this.anyData; }
+
   public set trajectory(value: WellTrajectory | null) { this.anyData = value; }
+
   public get renderStyle(): WellTrajectoryStyle | null { return this.getRenderStyle() as WellTrajectoryStyle; }
+
   public get wellNode(): WellNode | null { return this.getAncestorByType(WellNode); }
 
   //==================================================
@@ -54,15 +57,16 @@ export class WellTrajectoryNode extends DataNode
   //==================================================
 
   public /*override*/ get className(): string { return WellTrajectoryNode.className; }
+
   public /*override*/ isA(className: string): boolean { return className === WellTrajectoryNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "WellTrajectory" }
+  public /*override*/ get typeName(): string { return "WellTrajectory"; }
 
-  public /*override*/ getIcon(): string { return WellTrajectoryNodeIcon }
+  public /*override*/ getIcon(): string { return WellTrajectoryNodeIcon; }
 
   public /*override*/ get boundingBox(): Range3 { return this.trajectory ? this.trajectory.boundingBox : new Range3(); }
 
@@ -98,7 +102,7 @@ export class WellTrajectoryNode extends DataNode
   protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
   {
     super.populateStatisticsCore(folder);
-    const trajectory = this.trajectory;
+    const {trajectory} = this;
     if (!trajectory)
       return;
 

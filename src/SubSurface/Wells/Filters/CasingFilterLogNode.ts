@@ -44,15 +44,16 @@ export class CasingFilterLogNode extends BaseFilterLogNode
   //==================================================
 
   public /*override*/ get className(): string { return CasingFilterLogNode.className; }
+
   public /*override*/ isA(className: string): boolean { return className === CasingFilterLogNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Casing" }
+  public /*override*/ get typeName(): string { return "Casing"; }
 
-  public /*override*/ getIcon(): string { return CasingLogNodeIcon }
+  public /*override*/ getIcon(): string { return CasingLogNodeIcon; }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
@@ -78,5 +79,5 @@ export class CasingFilterLogNode extends BaseFilterLogNode
   // OVERRIDES of BaseLogNode
   //==================================================
 
-  public /*override*/  get wellLogType(): WellLogType { return WellLogType.Casing; }
+  public /*override*/ get wellLogType(): WellLogType { return WellLogType.Casing; }
 }

@@ -13,19 +13,22 @@ export default function SettingsPanel(props: SettingPanelProps) {
   return (
     <div className="settings-container">
       {id ? (
-        <React.Fragment>
+        <>
           {titleBar && (
             <SettingsToolBar
-              sectionId={"-1"}
+              sectionId="-1"
               className="settings-title-bar"
               title={titleBar.name}
               icon={titleBar.icon}
               toolBar={titleBar.toolBar}
             />
           )}
-          {sections.map(section => {
+          {sections.map((section) => {
             return (
-              <div key={`${section.name}-section`} className="settings-section-container">
+              <div
+                key={`${section.name}-section`}
+                className="settings-section-container"
+              >
                 <SettingsSection
                   section={section}
                   onExpand={onSectionExpand}
@@ -34,7 +37,7 @@ export default function SettingsPanel(props: SettingPanelProps) {
               </div>
             );
           })}
-        </React.Fragment>
+        </>
       ) : null}
     </div>
   );

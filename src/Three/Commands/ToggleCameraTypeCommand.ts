@@ -1,4 +1,3 @@
-
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetCommand";
 import ToggleCameraTypeCommandOrthographicIcon from "@images/Commands/ToggleCameraTypeCommandOrthographic.png";
@@ -22,9 +21,12 @@ export class ToggleCameraTypeCommand extends ThreeRenderTargetCommand
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*override*/ getName(): string { return "Toggle between orthographic and perspective view" }
+  public /*override*/ getName(): string { return "Toggle between orthographic and perspective view"; }
+
   public /*override*/ getIcon(): string { return this.isChecked ? ToggleCameraTypeCommandOrthographicIcon : ToggleCameraTypeCommandPerspectiveIcon; }
+
   public /*override*/ get isCheckable(): boolean { return true; } // Can be checked? (default false)
+
   public /*override*/ get isChecked(): boolean { return this.isPerspectiveMode; }
 
   protected /*override*/ invokeCore(): boolean
@@ -39,9 +41,7 @@ export class ToggleCameraTypeCommand extends ThreeRenderTargetCommand
       return false;
 
     this.isPerspectiveMode = !this.isPerspectiveMode;
-    this.target.switchCamera(this.isPerspectiveMode)
+    this.target.switchCamera(this.isPerspectiveMode);
     return true;
   }
 }
-
-

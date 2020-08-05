@@ -52,7 +52,6 @@ export class SyntheticSubSurfaceModule extends BaseModule
     return new SubSurfaceRootNode();
   }
 
-
   public /*override*/ loadData(root: BaseRootNode): void
   {
     SyntheticSubSurfaceModule.addSeismic(root);
@@ -172,15 +171,15 @@ export class SyntheticSubSurfaceModule extends BaseModule
             const logNode = new FloatLogNode();
             logNode.dataLoader = logDataLoader;
             let name: string | null = null;
-            if (logIndex == 0)
+            if (logIndex === 0)
               name = "Gamma ray";
-            else if (logIndex == 1)
+            else if (logIndex === 1)
               name = "Resisivity";
-            else if (logIndex == 2)
+            else if (logIndex === 2)
               name = "Neutron density";
-            else if (logIndex == 3)
+            else if (logIndex === 3)
               name = "Permeability";
-            else if (logIndex == 4)
+            else if (logIndex === 4)
               name = "Permeability";
             if (name)
               logNode.name = name;
@@ -204,7 +203,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
           {
             const logNode = new PointLogNode();
             logNode.dataLoader = logDataLoader;
-            logNode.name = "Risk " + logIndex;
+            logNode.name = `Risk ${logIndex}`;
             folder.addChild(logNode);
           }
         }
@@ -212,7 +211,6 @@ export class SyntheticSubSurfaceModule extends BaseModule
     }
     wellTree.synchronize();
   }
-
 
   private static setWellsAndLogsVisible(root: BaseRootNode): void
   {
@@ -278,7 +276,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
     if (!target)
       return;
 
-    const wells = root.wells
+    const {wells} = root;
     return;
 
     if (Random.isTrue(0.05))
@@ -313,7 +311,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
       let i = 0;
       for (const node of root.getDescendantsByType(SurfaceNode))
       {
-        node.setVisibleInteractive(i == n);
+        node.setVisibleInteractive(i === n);
         i++;
       }
     }
@@ -331,7 +329,6 @@ class TrajectoryDataLoader implements IDataLoader
   }
 }
 
-
 class LogDataLoader implements IDataLoader
 {
   load(origin: DataNode): any
@@ -339,7 +336,7 @@ class LogDataLoader implements IDataLoader
     if (!(origin instanceof BaseLogNode))
       return null;
 
-    const trajectory = origin.trajectory;
+    const {trajectory} = origin;
     if (!trajectory)
       return null;
 
@@ -371,8 +368,6 @@ class LogDataLoader implements IDataLoader
     return null;
   }
 }
-
-
 
 // Old test code:
 //===============

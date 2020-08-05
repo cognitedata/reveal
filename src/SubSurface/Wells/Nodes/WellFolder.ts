@@ -33,13 +33,16 @@ export class WellFolder extends FolderNode
   //==================================================
 
   public /*override*/ get className(): string { return WellFolder.className; }
+
   public /*override*/ isA(className: string): boolean { return className === WellFolder.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Well folder" }
-  public /*override*/ getIcon(): string { return FolderNodeGreyscale }
+  public /*override*/ get typeName(): string { return "Well folder"; }
+
+  public /*override*/ getIcon(): string { return FolderNodeGreyscale; }
+
   public /*virtual*/ canChangeColor(): boolean { return true; }
 }

@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import * as Color from "color"
+import * as Color from "color";
 import * as THREE from "three";
 
 import { Range3 } from "@/Core/Geometry/Range3";
@@ -53,8 +53,11 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
   //==================================================
 
   private cameraDirection = new Vector3(0, 0, 1); // Direction to the center
+
   private cameraPosition = new Vector3(0, 0, 1);
+
   private fgColor: Color = Colors.white;
+
   private bandTextures: [THREE.CanvasTexture | null, THREE.CanvasTexture | null] = [null, null];
 
   private getBandName(rightBand: boolean): string { return rightBand ? "RightBand" : "LeftBand"; }
@@ -64,11 +67,12 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
   //==================================================
 
   private get node(): WellTrajectoryNode { return super.getNode() as WellTrajectoryNode; }
+
   private get style(): WellTrajectoryStyle { return super.getStyle() as WellTrajectoryStyle; }
 
   private get bandRange(): Range1 | undefined
   {
-    const style = this.style;
+    const {style} = this;
     return !style ? undefined : new Range1(style.radius, style.bandWidth);
   }
 
@@ -192,10 +196,10 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
   public /*override*/ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void
   {
     const md = WellTrajectoryThreeView.startPickingAndReturnMd(this, viewInfo, intersection);
-    if (md == undefined)
+    if (md === undefined)
       return;
 
-    const node = this.node;
+    const {node} = this;
     let counter = 0;
     for (const logNode of node.getDescendantsByType(BaseLogNode))
     {
@@ -205,7 +209,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       if (logNode instanceof PointLogNode)
         continue;
 
-      const log = logNode.log;
+      const {log} = logNode;
       if (!log)
         continue;
 
@@ -213,7 +217,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
         viewInfo.addHeader("Visible Logs");
 
       const sample = log.getSampleByMd(md);
-      viewInfo.addText("  " + logNode.displayName, sample ? sample.getSampleText() : "Outside MD range");
+      viewInfo.addText(`  ${logNode.displayName}`, sample ? sample.getSampleText() : "Outside MD range");
       counter++;
     }
   }
@@ -224,8 +228,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
-    const node = this.node;
-    const wellNode = node.wellNode;
+    const {node} = this;
+    const {wellNode} = node;
     if (!wellNode)
       return null;
 
@@ -240,28 +244,28 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
   public /*override*/ mustTouch(): boolean
   {
-    const node = this.node;
-    const trajectory = node.trajectory;
+    const {node} = this;
+    const {trajectory} = node;
     if (!trajectory)
       return false;
 
-    const wellNode = node.wellNode;
+    const {wellNode} = node;
     if (!wellNode)
       return false;
 
     const target = this.renderTarget;
     let colorChanged = false;
+     
+    if (this.fgColor !== target.fgColor)
     {
-      if (this.fgColor !== target.fgColor)
-      {
-        this.fgColor = target.fgColor;
-        colorChanged = true;
-      }
+      this.fgColor = target.fgColor;
+      colorChanged = true;
     }
+     
     let cameraChanged = false;
     {
-      const transformer = this.transformer;
-      const camera = this.camera;
+      const {transformer} = this;
+      const {camera} = this;
       const cameraPosition = transformer.toWorld(camera.position);
       cameraPosition.substract(wellNode.origin);
 
@@ -301,12 +305,12 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
   private getMdRange(): Range1 | undefined
   {
-    const node = this.node;
-    const bandRange = this.bandRange;
+    const {node} = this;
+    const {bandRange} = this;
     if (!bandRange)
       return undefined;
 
-    const trajectory = node.trajectory;
+    const {trajectory} = node;
     if (!trajectory)
       return undefined;
 
@@ -316,7 +320,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       if (!this.isInBand(logNode))
         continue;
 
-      const log = logNode.log;
+      const {log} = logNode;
       if (!log)
         continue;
 
@@ -343,12 +347,12 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
   private addTrajectoryLabel(parent: THREE.Object3D)
   {
-    const node = this.node;
-    const trajectory = node.trajectory;
+    const {node} = this;
+    const {trajectory} = node;
     if (!trajectory)
       return;
 
-    const style = this.style;
+    const {style} = this;
     if (!style)
       return;
 
@@ -364,16 +368,16 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
   private addWellLabel(parent: THREE.Object3D)
   {
-    const node = this.node;
-    const wellNode = node.wellNode;
+    const {node} = this;
+    const {wellNode} = node;
     if (!wellNode)
       return;
 
-    const trajectory = node.trajectory;
+    const {trajectory} = node;
     if (!trajectory)
       return;
 
-    const style = this.style;
+    const {style} = this;
     if (!style)
       return;
 
@@ -389,20 +393,20 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
   private addTrajectory(parent: THREE.Object3D): void
   {
-    const node = this.node;
-    const wellNode = node.wellNode;
+    const {node} = this;
+    const {wellNode} = node;
     if (!wellNode)
       return;
 
-    const style = this.style;
-    const trajectory = node.trajectory;
+    const {style} = this;
+    const {trajectory} = node;
     if (!trajectory)
       return;
 
     const color = node.getColorByColorType(style.colorType);
 
     const samples = trajectory.createRenderSamples(color, style.radius);
-    const transformer = this.transformer;
+    const {transformer} = this;
     for (const sample of samples)
       transformer.transformRelativeTo3D(sample.point);
     {
@@ -430,12 +434,12 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
   private addBands(parent: THREE.Object3D): void
   {
-    const node = this.node;
-    const bandRange = this.bandRange;
+    const {node} = this;
+    const {bandRange} = this;
     if (!bandRange)
       return;
 
-    const trajectory = node.trajectory;
+    const {trajectory} = node;
     if (!trajectory)
       return;
 
@@ -517,9 +521,9 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     if (!parent)
       return textures;
 
-    const node = this.node;
-    const style = this.style;
-    const bandRange = this.bandRange;
+    const {node} = this;
+    const {style} = this;
+    const {bandRange} = this;
     if (!bandRange)
       return textures;
 
@@ -552,7 +556,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
         if (!logNode.isVisible(this.renderTarget))
           continue;
 
-        var logStyle = logNode.getRenderStyle(this.targetId) as FloatLogStyle;
+        const logStyle = logNode.getRenderStyle(this.targetId) as FloatLogStyle;
         if (!logStyle)
           continue;
 
@@ -587,13 +591,13 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     if (!trajectoryNode)
       return undefined;
 
-    const trajectory = trajectoryNode.trajectory;
+    const {trajectory} = trajectoryNode;
     if (!trajectory)
       return undefined;
 
-    if (md == undefined)
+    if (md === undefined)
     {
-      const transformer = view.transformer;
+      const {transformer} = view;
       const position = transformer.toWorld(intersection.point);
       position.substract(wellNode.origin);
       md = trajectory.getClosestMd(position);
@@ -604,8 +608,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
     viewInfo.addText("Well", wellNode.displayName);
     viewInfo.addText("Trajectory", trajectoryNode.displayName);
-    viewInfo.addText("Md", md.toFixed(2) + " m" + " / " + (md * Units.Feet).toFixed(2) + " ft");
-    viewInfo.addText("Tvd", tvd.toFixed(2) + " m" + " / " + (tvd * Units.Feet).toFixed(2) + " ft");
+    viewInfo.addText("Md", `${md.toFixed(2)} m / ${(md * Units.Feet).toFixed(2)} ft`);
+    viewInfo.addText("Tvd", `${tvd.toFixed(2)} m / ${(tvd * Units.Feet).toFixed(2)} ft`);
     return md;
   }
 }

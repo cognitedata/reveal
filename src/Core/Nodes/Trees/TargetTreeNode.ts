@@ -38,6 +38,6 @@ export class TargetTreeNode extends BaseTreeNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "TargetTree" }
-  public /*override*/ getName(): string { return "Targets" }
+  public /*override*/ get typeName(): string { return "TargetTree"; }
+  public /*override*/ getName(): string { return "Targets"; }
 }

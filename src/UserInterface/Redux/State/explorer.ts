@@ -41,5 +41,3 @@ export interface TreeDataItemState
     color: Color
   }
 }
-
-

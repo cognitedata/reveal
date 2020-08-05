@@ -33,14 +33,14 @@ export class SettingsTreeNode extends BaseTreeNode
   //==================================================
 
   public /*override*/ get className(): string { return SettingsTreeNode.className; }
-  public /*override*/ getIcon(): string { return SettingsTreeNodeIcon }
+  public /*override*/ getIcon(): string { return SettingsTreeNodeIcon; }
   public /*override*/ isA(className: string): boolean { return className === SettingsTreeNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "SettingsTree" }
-  public /*override*/ getName(): string { return "Settings" }
+  public /*override*/ get typeName(): string { return "SettingsTree"; }
+  public /*override*/ getName(): string { return "Settings"; }
 
 }

@@ -1,4 +1,3 @@
-
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
@@ -20,9 +19,11 @@ export class UniqueId
   // STATIC FIELDS
   //==================================================
 
-  public static readonly empty = new UniqueId(); 
+  public static readonly empty = new UniqueId();
+ 
   public static new(): UniqueId { return new UniqueId(uuid()); }
-  public static create(other: string): UniqueId { return new UniqueId(other) };
+
+  public static create(other: string): UniqueId { return new UniqueId(other); };
 
   //==================================================
   // INSTANCE FIELDS
@@ -35,6 +36,7 @@ export class UniqueId
   //==================================================
 
   public get isEmpty(): boolean { return (!this._id || this._id === ""); }
+
   public /*override*/ toString(): string { return `${this._id}`; }
 
   //==================================================
@@ -50,6 +52,6 @@ export class UniqueId
   //==================================================
 
   public equals(other: UniqueId): boolean { return this._id === other._id; }
+
   public equalString(other: string): boolean { return this._id ? this._id === other : false; }
 }
-

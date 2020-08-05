@@ -38,6 +38,7 @@ export class DiscreteLogSample extends BaseLogSample
   //==================================================
 
   public /*override*/ toString(): string { return `${super.toString()} Value: ${this.value}`; }
+
   public /*override*/ getSampleText(): string { return Number.isNaN(this.value) ? "Not defined" : this.value.toFixed(0); }
 
   //==================================================
@@ -46,5 +47,5 @@ export class DiscreteLogSample extends BaseLogSample
 
   public /*override*/ get isEmpty(): boolean { return Number.isNaN(this.value); }
 
-  public /*override*/  clone(): BaseLogSample { return Lodash.clone<DiscreteLogSample>(this); }
+  public /*override*/ clone(): BaseLogSample { return Lodash.clone<DiscreteLogSample>(this); }
 }  

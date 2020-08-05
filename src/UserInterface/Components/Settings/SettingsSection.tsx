@@ -20,10 +20,10 @@ export default function SettingsSection(props: SettingsSectionProps) {
       toolBar={toolBar}
       onExpandChange={props.onExpand}
     >
-      <React.Fragment>
+      <>
         {elements && (
           <div className="settings-section-element-container">
-            {elements.map(element => (
+            {elements.map((element) => (
               <SettingsElement
                 key={`${element.name}-input-`}
                 sectionId={name}
@@ -45,7 +45,7 @@ export default function SettingsSection(props: SettingsSectionProps) {
             ))}
           </div>
         ) : null}
-      </React.Fragment>
+      </>
     </ExpansionView>
   );
 }

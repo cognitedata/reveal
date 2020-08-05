@@ -41,6 +41,3 @@ export class PotreeRenderStyle extends BaseRenderStyle
   {
   }
 }
-
-
-

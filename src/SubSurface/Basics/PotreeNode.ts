@@ -37,6 +37,7 @@ export class PotreeNode extends BaseVisualNode
   //==================================================
 
   private _url: string = "";
+
   private _boundingBox: Range3 | undefined = undefined;
 
   //==================================================
@@ -44,7 +45,9 @@ export class PotreeNode extends BaseVisualNode
   //==================================================
 
   public get url(): string { return this._url; }
+
   public set url(value: string) { this._url = value; }
+
   public get renderStyle(): PotreeRenderStyle | null { return this.getRenderStyle() as PotreeRenderStyle; }
 
   //==================================================
@@ -52,25 +55,25 @@ export class PotreeNode extends BaseVisualNode
   //==================================================
 
   public /*override*/ get className(): string { return PotreeNode.className; }
+
   public /*override*/ isA(className: string): boolean { return className === PotreeNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Potree" }
+  public /*override*/ get typeName(): string { return "Potree"; }
 
   public /*override*/ get boundingBox(): Range3 | undefined { return this._boundingBox; }
 
-
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
-{
-  return new PotreeRenderStyle(targetId);
-}
+  {
+    return new PotreeRenderStyle(targetId);
+  }
 
   public /*override*/ verifyRenderStyle(style: BaseRenderStyle)
-{
-  if (!(style instanceof PotreeRenderStyle))
-    return;
-}
+  {
+    if (!(style instanceof PotreeRenderStyle))
+      return;
+  }
 }

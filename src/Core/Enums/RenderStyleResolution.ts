@@ -17,6 +17,3 @@ export enum RenderStyleResolution
   Target,
   Unique
 };
-
-
-

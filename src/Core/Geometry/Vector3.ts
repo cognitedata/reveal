@@ -40,10 +40,8 @@ export class Vector3
   public get squareLength(): number { return this.x * this.x + this.y * this.y + this.z * this.z; }
   public get length(): number { return Math.sqrt(this.squareLength); }
   public get isEmpty(): boolean { return isNaN(this.x) || isNaN(this.y) || isNaN(this.z); }
-
   public get minCoord(): number { return Math.min(this.x, this.y, this.z); }
   public get maxCoord(): number { return Math.max(this.x, this.y, this.z); }
-
   public get absMinCoord(): number { return Math.min(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z)); }
   public get absMaxCoord(): number { return Math.max(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z)); }
 
@@ -99,10 +97,9 @@ export class Vector3
 
   public toString(): string { return `(${this.x}, ${this.y}, ${this.z})`; }
   public getString(decimals: number): string { return `(${this.x.toFixed(decimals)}, ${this.y.toFixed(decimals)}, ${this.z.toFixed(decimals)})`; }
-
   public squareDistance(other: Vector3): number { return Ma.square(this.x - other.x) + Ma.square(this.y - other.y) + Ma.square(this.z - other.z); }
   public distance(other: Vector3): number { return Math.sqrt(this.squareDistance(other)); }
-
+  
   public getAt(dimension: number): number
   {
     switch (dimension)
@@ -183,7 +180,7 @@ export class Vector3
 
   public normalize(): boolean
   {
-    const length = this.length;
+    const {length} = this;
     if (length < Number.EPSILON)
       return false;
 

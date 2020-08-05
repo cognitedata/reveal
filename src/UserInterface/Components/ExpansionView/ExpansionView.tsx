@@ -20,7 +20,10 @@ export default function ExpansionView(props: {
   const { id, title, isExpanded, onExpandChange, toolBar, children } = props;
 
   return (
-    <ExpansionPanel expanded={isExpanded} onChange={event => onExpandChange(id, !isExpanded)}>
+    <ExpansionPanel
+      expanded={isExpanded}
+      onChange={(event) => onExpandChange(id, !isExpanded)}
+    >
       <ExpansionPanelSummary className="expand-panel-root">
         <div className="expand-summary-header">
           <div className="expand-btn">

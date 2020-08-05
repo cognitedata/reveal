@@ -1,4 +1,3 @@
-
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ToolCommand } from "@/Three/Commands/Tools/ToolCommand";
 import MeasureDistanceToolIcon from "@images/Commands/MeasureDistanceTool.png";
@@ -18,10 +17,11 @@ export class MeasureDistanceTool extends ToolCommand
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*override*/ getName(): string { return "Measure distance" }
+  public /*override*/ getName(): string { return "Measure distance"; }
+
   public /*override*/ getIcon(): string { return MeasureDistanceToolIcon; }
-  public /*override*/ getTooltip(): string { return "Measure distance by click and drag to wantet position. You must hit a 3D object to see the distance." }
-  public /*override*/ getShortCutKeys(): string { return "M" }
+
+  public /*override*/ getTooltip(): string { return "Measure distance by click and drag to wantet position. You must hit a 3D object to see the distance."; }
+
+  public /*override*/ getShortCutKeys(): string { return "M"; }
 }
-
-

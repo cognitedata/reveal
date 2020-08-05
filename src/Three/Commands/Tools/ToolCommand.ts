@@ -1,4 +1,3 @@
-
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetCommand";
 
@@ -41,11 +40,16 @@ export abstract class ToolCommand extends ThreeRenderTargetCommand
   //==================================================
 
   public /*virtual*/ overrideLeftButton(): boolean { return false; }
+
   public /*virtual*/ onMouseClick(event: MouseEvent): void { }
+
   public /*virtual*/ onMouseDown(event: MouseEvent): void { }
+
   public /*virtual*/ onMouseUp(event: MouseEvent): void { }
-  public /*virtual*/ onMouseHover(event: MouseEvent): void  { }
-  public /*virtual*/ onMouseDrag(event: MouseEvent): void  { }
+
+  public /*virtual*/ onMouseHover(event: MouseEvent): void { }
+
+  public /*virtual*/ onMouseDrag(event: MouseEvent): void { }
+
+  public /*virtual*/ onMouseMove(event: MouseEvent): void { }
 }
-
-

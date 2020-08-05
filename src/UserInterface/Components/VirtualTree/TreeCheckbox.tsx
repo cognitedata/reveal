@@ -10,6 +10,7 @@ import BackgroundNormal from "@images/Checkboxes/BackgroundNormal.png";
 import BackgroundFilter from "@images/Checkboxes/BackgroundFilter.png";
 import CheckedAll from "@images/Checkboxes/CheckedAll.png";
 import CheckedSome from "@images/Checkboxes/CheckedSome.png";
+
 interface SpanProps {
   readonly background?: string;
   readonly disabled?: boolean;
@@ -31,8 +32,8 @@ const Label = styled.label`
 const Span = styled.span<SpanProps>`
   height: 0.83em;
   width: 0.83em;
-  cursor: ${props => (props.disabled ? "auto" : "pointer")};
-  background-image: ${props => props.background};
+  cursor: ${(props) => (props.disabled ? "auto" : "pointer")};
+  background-image: ${(props) => props.background};
   background-repeat: no-repeat;
   background-size: cover;
 `;
@@ -75,11 +76,11 @@ export function TreeCheckBox(props: {
     }
   };
 
-  const handleHover = (e: any) => {
+  const handleHover = () => {
     hoverChanged(true);
   };
 
-  const handleHoverLeave = (e: any) => {
+  const handleHoverLeave = () => {
     hoverChanged(false);
   };
 
@@ -92,7 +93,10 @@ export function TreeCheckBox(props: {
   );
 
   return (
-    <Label className={`${props.class} ${stateClassArr.join(" ")}`} htmlFor={props.id}>
+    <Label
+      className={`${props.class} ${stateClassArr.join(" ")}`}
+      htmlFor={props.id}
+    >
       <Span
         onClick={handleClick}
         onMouseEnter={handleHover}

@@ -1,4 +1,3 @@
-
 import { Range3 } from "@/Core/Geometry/Range3";
 import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
 import { Base3DView } from "@/Core/Views/Base3DView";
@@ -30,7 +29,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
 
   public get pixelRange(): Range3
   {
-    const domElement = this.domElement;
+    const {domElement} = this;
     const windowWidth = domElement.clientWidth;
     const windowHeight = domElement.clientHeight;
     const x = this._fractionRange.x.min * windowWidth;
@@ -47,7 +46,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
   protected constructor(fractionRange: Range3 | undefined)
   {
     super();
-    this._fractionRange = fractionRange ? fractionRange : Range3.newUnit;
+    this._fractionRange = fractionRange || Range3.newUnit;
     this.isLightBackground = Appearance.viewerIsLightBackground;
     this._viewInfo.footer = Appearance.viewerFooter;
   }
@@ -99,7 +98,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
 
   public fillViewInfo(): ViewInfo
   {
-    const viewInfo = this.viewInfo;
+    const {viewInfo} = this;
     for (const view of this.viewsShownHere.list)
       if (view instanceof Base3DView)
         view.getViewInfo(viewInfo);

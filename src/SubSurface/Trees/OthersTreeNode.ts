@@ -33,14 +33,18 @@ export class OthersTreeNode extends BaseTreeNode
   //==================================================
 
   public /*override*/ get className(): string { return OthersTreeNode.className; }
+
   public /*override*/ isA(className: string): boolean { return className === OthersTreeNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "OthersTree" }
-  public /*override*/ getIcon(): string { return FolderNodeIcon }
-  public /*override*/ getName(): string { return "Others" }
+  public /*override*/ get typeName(): string { return "OthersTree"; }
+
+  public /*override*/ getIcon(): string { return FolderNodeIcon; }
+
+  public /*override*/ getName(): string { return "Others"; }
+
   public /*override*/ get isTab(): boolean { return true; }
 }

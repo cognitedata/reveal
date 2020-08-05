@@ -29,4 +29,3 @@ export class BoundingBoxKit
     return transformer.rangeToWorld(helper.geometry.boundingBox, false);
   }
 }
-

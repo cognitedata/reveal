@@ -11,9 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-
 // tslint:disable: no-console
-
 
 const symbol = Symbol("Nils Petter");
 console.log(symbol);
@@ -47,7 +45,7 @@ export class SyntaxTests
     const f: number = 7;
 
     b += 5;
-    console.log(a + " " + b + " " + c + " " + d + " " + " " + f);
+    console.log(`${a} ${b} ${c} ${d} ` + ` ${f}`);
   }
 
   public static testForLoop()
@@ -70,7 +68,6 @@ export class SyntaxTests
     for (const item of array)
       console.log(item);
   }
-
 
   public static testMap()
   {
@@ -108,4 +105,3 @@ export class SyntaxTests
     console.log(map.has("D"));
   }
 }
-

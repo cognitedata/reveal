@@ -13,7 +13,7 @@ export default function SettingsToolBar(props: {
   const { className, title, icon, toolBar, sectionId } = props;
 
   return (
-    <div className={`title-bar ${className ? className : ""}`}>
+    <div className={`title-bar ${className || ""}`}>
       {icon ? <Icon type={icon.type} name={icon.name} /> : null}
       <h1>{title}</h1>
       {toolBar && <ToolBar toolBar={toolBar} sectionId={sectionId} />}

@@ -31,7 +31,11 @@ export default function CompactColorPicker(props: {
             onChangeComplete={(reactColor: ColorResult) => {
               props.onChange(
                 id,
-                Color({ r: reactColor.rgb.r, g: reactColor.rgb.g, b: reactColor.rgb.b })
+                Color({
+                  r: reactColor.rgb.r,
+                  g: reactColor.rgb.g,
+                  b: reactColor.rgb.b,
+                })
               );
             }}
           />

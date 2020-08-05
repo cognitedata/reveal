@@ -29,7 +29,7 @@ export default function App() {
         import("@/Solutions/BP/MockData/Sample/logs.json"),
         import("@/Solutions/BP/MockData/Sample/casings.json"),
         import("@/Solutions/BP/MockData/Sample/ndsEvents.json"),
-        import("@/Solutions/BP/MockData/Sample/nptEvents.json")
+        import("@/Solutions/BP/MockData/Sample/nptEvents.json"),
       ])
         .then(
           ([
@@ -40,7 +40,7 @@ export default function App() {
             logsJson,
             casingsJson,
             ndsEventsJson,
-            nptEventsJson
+            nptEventsJson,
           ]) => {
             module.setModuleData({
               wells: wellsJson.default,
@@ -50,7 +50,7 @@ export default function App() {
               ndsEvents: ndsEventsJson.default,
               nptEvents: nptEventsJson.default,
               casings: casingsJson.default,
-              logs: logsJson.default
+              logs: logsJson.default,
             });
             modules.add(module);
             modules.install();
@@ -58,9 +58,12 @@ export default function App() {
             setRoot(rootNode);
           }
         )
-        .catch(err => {
+        .catch((err) => {
           // tslint:disable-next-line:no-console
-          console.error("Sample Data not found synthetic data will be loaded!", err);
+          console.error(
+            "Sample Data not found synthetic data will be loaded!",
+            err
+          );
           window.alert(`Sample Data not found! App Loaded with Synthetic Module!
           Disable LOAD_MOCK_DATA constant in App.tsx to remove this warning!`);
           modules.add(new SyntheticSubSurfaceModule());

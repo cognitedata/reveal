@@ -34,6 +34,7 @@ export class SeismicPlaneNode extends BaseVisualNode
   //==================================================
 
   private _perpendicularAxis = 0;
+
   private _perpendicularIndex = -1; // Not used if arbitrary plane
 
   //==================================================
@@ -44,15 +45,15 @@ export class SeismicPlaneNode extends BaseVisualNode
 
   public get surveyCube(): RegularGrid3 | null
   {
-    const surveyNode = this.surveyNode;
+    const {surveyNode} = this;
     return surveyNode ? surveyNode.surveyCube : null;
   }
 
-
   public get isArbitrary(): boolean { return this.perpendicularAxis < 0; }
-  public get isHorizontal(): boolean { return this.perpendicularAxis == 2; }
 
-  public get perpendicularAxis(): number { return this._perpendicularAxis }
+  public get isHorizontal(): boolean { return this.perpendicularAxis === 2; }
+
+  public get perpendicularAxis(): number { return this._perpendicularAxis; }
 
   public get perpendicularIndex(): number
   {
@@ -68,7 +69,7 @@ export class SeismicPlaneNode extends BaseVisualNode
 
   private get maxPerpendicularIndex(): number
   {
-    var surveyCube = this.surveyCube;
+    const {surveyCube} = this;
     if (!surveyCube)
       return -1;
 
@@ -132,13 +133,15 @@ export class SeismicPlaneNode extends BaseVisualNode
   //==================================================
 
   public /*override*/ get className(): string { return SeismicPlaneNode.className; }
+
   public /*override*/ isA(className: string): boolean { return className === SeismicPlaneNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Plane" }
+  public /*override*/ get typeName(): string { return "Plane"; }
+
   public /*override*/ getName(): string
   {
     if (this.perpendicularAxis < 0 || this.perpendicularAxis >= 3)
@@ -146,7 +149,7 @@ export class SeismicPlaneNode extends BaseVisualNode
     return `${this.generalName} ${this.perpendicularIndex}`;
   }
 
-  public /*override*/ getIcon(): string { return SurfaceNodeIcon }
+  public /*override*/ getIcon(): string { return SurfaceNodeIcon; }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {

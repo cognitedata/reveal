@@ -1,7 +1,6 @@
-
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ToolCommand } from "@/Three/Commands/Tools/ToolCommand";
-import SelectCommandIcon from "@images/Commands/SelectCommand.png"
+import SelectCommandIcon from "@images/Commands/SelectCommand.png";
 
 export class SelectCommand extends ToolCommand
 {
@@ -18,7 +17,8 @@ export class SelectCommand extends ToolCommand
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*override*/ getName(): string { return "Select or pick" }
+  public /*override*/ getName(): string { return "Select or pick"; }
+
   public /*override*/ getIcon(): string { return SelectCommandIcon; }
 
   //==================================================
@@ -29,11 +29,11 @@ export class SelectCommand extends ToolCommand
 
   public /*override*/ onMouseHover(event: MouseEvent): void
   {
-    const target = this.target;
+    const {target} = this;
     if (!target)
       return;
 
-    const viewInfo = target.viewInfo;
+    const {viewInfo} = target;
     const preCount = viewInfo.items.length;
     viewInfo.clearItems();
 
@@ -50,5 +50,3 @@ export class SelectCommand extends ToolCommand
       target.invalidate();
   }
 }
-
-

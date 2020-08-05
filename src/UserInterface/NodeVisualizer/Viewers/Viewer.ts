@@ -8,10 +8,13 @@ export default class Viewer
 
   // Name of the viewer
   private name: string;
+
   // Holds reference to HTML element
   private htmlElement: HTMLElement | null = null;
+
   // Holds a reference to ThreeJs target
   private target: ThreeRenderTargetNode | null = null;
+
   // Holds a reference to view toolbar
   private toolbar: IToolbarCommand[] | null = null;
 
@@ -22,9 +25,14 @@ export default class Viewer
   }
 
   public setTarget(target: ThreeRenderTargetNode) { this.target = target; }
+
   public setToolbar(toolbar: Toolbar) { this.toolbar = ToolbarAdaptor.convert(toolbar.getCommands()); }
+
   public getTarget() { return this.target; };
+
   public getToolbar() { return this.toolbar; };
+
   public getHTMLElement() { return this.htmlElement; };
+
   public getName() { return this.name; };
 }

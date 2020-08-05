@@ -69,4 +69,3 @@ export class RegularGrid3Buffers extends TrianglesBuffers
     }
   }
 }
-

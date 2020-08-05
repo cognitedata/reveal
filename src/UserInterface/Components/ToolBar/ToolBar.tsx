@@ -1,64 +1,26 @@
 import React from "react";
-import { useDispatch } from "react-redux";
 import { ToolBarType } from "@/UserInterface/Components/Settings/Types";
 import Icon from "@/UserInterface/Components/Icon/Icon";
-
-// Assign toolbar actions
-function assignToolBarAction(
-  sectionId: string,
-  iconIndex: number,
-  action?: {
-    type: string;
-    subSectionId?: string;
-  }
-) {
-  if (action) {
-    const { type, subSectionId } = action;
-    // tslint:disable-next-line:switch-default
-    switch (
-      type // todo: add default case and more cases or change to if/else
-    ) {
-      case "EXPAND":
-        return {
-          // func: onExpandChangeFromToolbar,
-          data: {
-            sectionId,
-            iconIndex,
-            subSectionId
-          }
-        };
-    }
-  }
-  return undefined;
-}
 
 /**
  * ToolBar component
  * @param props
  */
-export default function ToolBar(props: { sectionId: string; toolBar?: ToolBarType }) {
+export default function ToolBar(props: {
+  sectionId: string;
+  toolBar?: ToolBarType;
+}) {
   const { toolBar, sectionId } = props;
   if (!toolBar || !toolBar.length) return null;
-
-  const dispatch = useDispatch();
 
   return (
     <div className="tool-bar">
       {toolBar.map((config, index: number) => {
-        const { icon, selected, action } = config;
+        const { icon, selected } = config;
         return (
           <div
             key={`${sectionId}-toobar-${index}`}
             className={`tool-bar-icon ${selected ? "icon-selected" : ""}`}
-            onClick={() => {
-              // const out = assignToolBarAction(sectionId, index, action);
-              // if (out) {
-              //   const { func, data } = out;
-              //   if (func) {
-              //     dispatch(func(data));
-              //   }
-              // }
-            }}
           >
             <Icon type={icon.type} name={icon.name} />
           </div>

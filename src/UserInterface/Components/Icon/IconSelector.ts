@@ -1,5 +1,3 @@
-import { IconTypes } from "./IconTypes";
-
 import Close from "@images/Arrows/FatLeft.png";
 import Clean from "@images/Actions/Clean.png";
 import Reset from "@images/Actions/Reset.png";
@@ -36,6 +34,7 @@ import ExpandOpen from "@images/Expanders/ExpandOpen.png";
 import ExpandClosed from "@images/Expanders/ExpandClosed.png";
 import ExpandOpenFocus from "@images/Expanders/ExpandOpenFocus.png";
 import ExpandClosedFocus from "@images/Expanders/ExpandClosedFocus.png";
+import { IconTypes } from "./IconTypes";
 
 export { ExpandOpen, ExpandClosed, ExpandOpenFocus, ExpandClosedFocus };
 export {

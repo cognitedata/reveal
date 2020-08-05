@@ -33,6 +33,5 @@ export class Changes
   // Parent-child relationship changed
   public static readonly childDeleted: symbol = Symbol("childDeleted");
   public static readonly childAdded: symbol = Symbol("childAdded");
-
   public static readonly pointOpenOrClosed: symbol = Symbol("pointOpenOrClosed");
 }

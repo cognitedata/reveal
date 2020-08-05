@@ -25,6 +25,7 @@ export class PolylinesRenderStyle extends BaseRenderStyle
   //==================================================
 
   public lineWidth = 1;
+
   public colorType: ColorType = ColorType.DifferentColor;
 
   //==================================================
@@ -43,6 +44,3 @@ export class PolylinesRenderStyle extends BaseRenderStyle
   {
   }
 }
-
-
-

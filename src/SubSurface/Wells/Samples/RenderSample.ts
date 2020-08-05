@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import * as Color from "color"
+import * as Color from "color";
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Colors } from "@/Core/Primitives/Colors";
@@ -25,7 +25,9 @@ export class RenderSample extends MdSample
   //==================================================
 
   public point: Vector3;
+
   public radius: number;
+
   public color: Color;
 
   //==================================================

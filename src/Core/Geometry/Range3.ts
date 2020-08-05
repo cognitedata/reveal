@@ -44,7 +44,9 @@ export class Range3
   //==================================================
 
   public x: Range1 = new Range1();
+
   public y: Range1 = new Range1();
+
   public z: Range1 = new Range1();
 
   //==================================================
@@ -52,12 +54,19 @@ export class Range3
   //==================================================
 
   public get isEmpty(): boolean { return this.x.isEmpty || this.y.isEmpty || this.z.isEmpty; }
+
   public get min(): Vector3 { return new Vector3(this.x.min, this.y.min, this.z.min); }
+
   public get max(): Vector3 { return new Vector3(this.x.max, this.y.max, this.z.max); }
+
   public get delta(): Vector3 { return new Vector3(this.x.delta, this.y.delta, this.z.delta); }
+
   public get center(): Vector3 { return new Vector3(this.x.center, this.y.center, this.z.center); }
+
   public get aspectRatio2(): number { return this.x.delta / this.y.delta; }
+
   public get volume(): number { return this.x.delta * this.y.delta * this.z.delta; }
+
   public get diagonal(): number { return Math.sqrt(Ma.square(this.x.delta) + Ma.square(this.y.delta) + Ma.square(this.z.delta)); }
 
   //==================================================

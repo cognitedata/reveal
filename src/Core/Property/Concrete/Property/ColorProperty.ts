@@ -16,7 +16,7 @@ export default class ColorProperty extends UsePropertyT<Color>
   //==================================================
 
   public constructor(name: string, value: Color | Retrieve<Color>, readonly?: boolean, instance?: any,
-                     applyDelegate?: Action<void>, valueDelegate?: Action<Color>)
+    applyDelegate?: Action<void>, valueDelegate?: Action<Color>)
   {
     super(name, value, readonly, instance, applyDelegate, valueDelegate);
   }

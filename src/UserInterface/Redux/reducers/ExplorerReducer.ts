@@ -180,7 +180,7 @@ export default createReducer(initialState, {
   {
     const uniqueId = action.appliesTo;
     const nodeColor = action.payload;
-    const icon = state.nodes![uniqueId].icon;
+    const {icon} = state.nodes![uniqueId];
     if (icon)
       icon!.color = nodeColor;
   }

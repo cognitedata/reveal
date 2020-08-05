@@ -8,6 +8,7 @@ abstract class Property extends BaseProperty
   //==================================================
 
   protected readonly _instance: any | undefined; //TODO: can we get rid of any here?
+
   protected _type: PropertyType = PropertyType.Default;
 
   //==================================================

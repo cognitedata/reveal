@@ -41,7 +41,9 @@ export class SurfaceNode extends DataNode
   //==================================================
 
   public get surface(): RegularGrid2 | null { return this.anyData; }
+
   public set surface(value: RegularGrid2 | null) { this.anyData = value; }
+
   public get renderStyle(): SurfaceRenderStyle | null { return this.getRenderStyle() as SurfaceRenderStyle; }
 
   //==================================================
@@ -49,15 +51,16 @@ export class SurfaceNode extends DataNode
   //==================================================
 
   public /*override*/ get className(): string { return SurfaceNode.className; }
+
   public /*override*/ isA(className: string): boolean { return className === SurfaceNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Surface" }
+  public /*override*/ get typeName(): string { return "Surface"; }
 
-  public /*override*/ getIcon(): string { return SurfaceNodeIcon }
+  public /*override*/ getIcon(): string { return SurfaceNodeIcon; }
 
   public /*override*/ get boundingBox(): Range3 { return this.surface ? this.surface.boundingBox : new Range3(); }
 

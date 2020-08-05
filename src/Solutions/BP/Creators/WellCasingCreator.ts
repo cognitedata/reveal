@@ -7,66 +7,65 @@ import { CasingLog } from '@/SubSurface/Wells/Logs/CasingLog';
 
 export default class WellCasingCreator
 {
-    public static createCasingNodeNew(casings: ICasing[] | undefined, unit: number): CasingLogNode | null
+  public static createCasingNodeNew(casings: ICasing[] | undefined, unit: number): CasingLogNode | null
+  {
+    const log = WellCasingCreator.createCasingLog(casings, unit);
+    if (!log)
+      return null;
+
+    const logNode = new CasingLogNode();
+    logNode.log = log;
+    return logNode;
+  }
+
+  public static createCasingLog(casings: ICasing[] | undefined, unit: number): CasingLog | null
+  {
+    if (!casings)
+      return null;
+
+    const sortedCasings = casings.sort((a: ICasing, b: ICasing) =>
     {
-        const log = WellCasingCreator.createCasingLog(casings, unit);
-        if (!log)
-            return null;
+      const aStartPoint = Util.getNumber(a.metadata.assy_original_md_top);
+      const bStartPoint = Util.getNumber(b.metadata.assy_original_md_top);
+      return Ma.compare(aStartPoint, bStartPoint);
+    });
 
-        const logNode = new CasingLogNode();
-        logNode.log = log;
-        return logNode;
-    }
-
-    public static createCasingLog(casings: ICasing[] | undefined, unit: number): CasingLog | null
+    // TODO: casing.metadata.assy_name
+    const log = new CasingLog();
+    for (const casing of sortedCasings)
     {
-        if (!casings)
-            return null;
+      let radius = Util.getNumber(casing.metadata.assy_hole_size) / 2;
+      if (Number.isNaN(radius))
+        continue;
 
-        const sortedCasings = casings.sort((a: ICasing, b: ICasing) =>
-        {
-            const aStartPoint = Util.getNumber(a.metadata.assy_original_md_top);
-            const bStartPoint = Util.getNumber(b.metadata.assy_original_md_top);
-            return Ma.compare(aStartPoint, bStartPoint);
-        });
+      let topMd = Util.getNumber(casing.metadata.assy_original_md_top);
+      if (Number.isNaN(topMd))
+        continue;
 
-        // TODO: casing.metadata.assy_name
-        const log = new CasingLog();
-        for (const casing of sortedCasings)
-        {
-            let radius = Util.getNumber(casing.metadata.assy_hole_size) / 2;
-            if (Number.isNaN(radius))
-                continue;
+      let baseMd = Util.getNumber(casing.metadata.assy_original_md_base);
+      if (Number.isNaN(baseMd))
+        continue;
 
-            let topMd = Util.getNumber(casing.metadata.assy_original_md_top);
-            if (Number.isNaN(topMd))
-                continue;
+      radius *= unit;
+      topMd *= unit;
+      baseMd *= unit;
 
-            let baseMd = Util.getNumber(casing.metadata.assy_original_md_base);
-            if (Number.isNaN(baseMd))
-                continue;
+      const sample = new CasingLogSample(radius, topMd, baseMd);
 
-            radius *= unit;
-            topMd *= unit;
-            baseMd *= unit;
+      // Meta data to the min, the max may be taken out anyway.
+      sample.name = casing.metadata.assy_name;
+      sample.comments = casing.metadata.assy_comments;
+      sample.currentStatusComment = casing.metadata.assy_current_status_comment;
 
-            const sample = new CasingLogSample(radius, topMd, baseMd);
-
-            // Meta data to the min, the max may be taken out anyway.
-            sample.name = casing.metadata.assy_name;
-            sample.comments = casing.metadata.assy_comments;
-            sample.currentStatusComment = casing.metadata.assy_current_status_comment;
-
-            log.samples.push(sample);
-        }
-        if (log.length === 0)
-            return null;
-
-        const last = log.lastSample as CasingLogSample;
-        last.radius = Number.NaN;
-
-        // TODO: casing.metadata.assy_name
-        return log;
+      log.samples.push(sample);
     }
+    if (log.length === 0)
+      return null;
+
+    const last = log.lastSample as CasingLogSample;
+    last.radius = Number.NaN;
+
+    // TODO: casing.metadata.assy_name
+    return log;
+  }
 }
-

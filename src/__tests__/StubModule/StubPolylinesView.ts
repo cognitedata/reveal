@@ -1,4 +1,3 @@
-
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming
 // in October 2019. It is suited for flexible and customizable visualization of
@@ -31,7 +30,9 @@ export class StubPolylinesView extends Base3DView
   //==================================================
 
   protected get node(): PolylinesNode { return super.getNode() as PolylinesNode; }
+
   protected get style(): PolylinesRenderStyle { return super.getStyle() as PolylinesRenderStyle; }
+
   protected get target(): StubTargetNode { return super.getTarget() as StubTargetNode; }
 
   //==================================================
@@ -40,15 +41,15 @@ export class StubPolylinesView extends Base3DView
 
   protected /*override*/ initializeCore(): void
   {
-    const node = this.node;
+    const {node} = this;
     if (!node)
       throw Error("The node is not set");
 
-    const style = this.style;
+    const {style} = this;
     if (!style)
       throw Error("The style is not set");
 
-    const target = this.target;
+    const {target} = this;
     if (!target)
       throw Error("The target is not set");
 
@@ -58,7 +59,7 @@ export class StubPolylinesView extends Base3DView
     if (!node.isInitialized)
       throw Error("The node is not initialized");
 
-    const polylines = node.polylines;
+    const {polylines} = node;
     if (!polylines)
       throw Error("The polylines is missing in view");
 

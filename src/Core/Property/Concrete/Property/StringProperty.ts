@@ -15,7 +15,7 @@ export default class StringProperty extends UsePropertyT<string>
   //==================================================
 
   public constructor(name: string, value: string | Retrieve<string>, readonly?: boolean, instance?: any,
-                     applyDelegate?: Action<void>, valueDelegate?: Action<string>)
+    applyDelegate?: Action<void>, valueDelegate?: Action<string>)
   {
     super(name, value, readonly, instance, applyDelegate, valueDelegate);
   }

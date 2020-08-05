@@ -26,11 +26,15 @@ export class RegularGrid3 extends Grid3
   //==================================================
 
   public origin: Vector3;
+
   public inc: Vector3;
 
   private _hasRotationAngle = false;
+
   private _rotationAngle = 0;
+
   private _sinRotationAngle = 0;
+
   private _cosRotationAngle = 1;
 
   //==================================================
@@ -41,7 +45,7 @@ export class RegularGrid3 extends Grid3
 
   public set rotationAngle(value: number)
   {
-    this._hasRotationAngle = value != 0;
+    this._hasRotationAngle = value !== 0;
     if (this._hasRotationAngle)
     {
       this._rotationAngle = value;
@@ -65,7 +69,7 @@ export class RegularGrid3 extends Grid3
     super(nodeSize);
     this.origin = origin;
     this.inc = inc;
-    if (rotationAngle != undefined)
+    if (rotationAngle !== undefined)
       this.rotationAngle = rotationAngle;
   }
 
@@ -114,7 +118,7 @@ export class RegularGrid3 extends Grid3
     const dy = position.y - this.origin.y;
     const dz = position.z - this.origin.z;
 
-    let i, j: number;
+    let i; let j: number;
     if (this._hasRotationAngle)
     {
       const x = dx * this._cosRotationAngle + dy * this._sinRotationAngle;
@@ -132,7 +136,6 @@ export class RegularGrid3 extends Grid3
     resultCell.j = Math.floor(j);
     resultCell.k = Math.floor(k);
   }
-
 
   public getCellCenter(i: number, j: number, k: number, result: Vector3): void
   {
@@ -165,4 +168,3 @@ export class RegularGrid3 extends Grid3
     return range;
   }
 }
-

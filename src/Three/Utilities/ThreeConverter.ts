@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import * as THREE from "three";
-import * as Color from "color"
+import * as Color from "color";
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
 
@@ -25,7 +25,9 @@ export class ThreeConverter
   //==================================================
 
   public static to3DColor(value: Color): THREE.Color { return new THREE.Color(value.red() / MaxByte, value.green() / MaxByte, value.blue() / MaxByte); }
+
   public static to3D(value: Vector3): THREE.Vector3 { return new THREE.Vector3(value.x, value.y, value.z); }
+
   public static toWorld(value: THREE.Vector3): Vector3 { return new Vector3(value.x, value.y, value.z); }
 
   public static copyTo3D(destination: THREE.Vector3, source: Vector3)

@@ -10,10 +10,9 @@ const CustomToolTip = withStyles((theme: Theme) => ({
     backgroundColor: theme.palette.common.white,
     color: "rgba(0, 0, 0, 0.87)",
     boxShadow: theme.shadows[1],
-    fontSize: "0.7rem"
-  }
+    fontSize: "0.7rem",
+  },
 }))(Tooltip);
-
 
 export default function Icon(props: {
   type?: string;
@@ -27,8 +26,10 @@ export default function Icon(props: {
 }) {
   const { type, name, src, tooltip, iconSize } = props;
   // TODO - Remove getIcon once Settings implementation complete
-  const imgSrc = src ? src : type && name ? getIcon(type, name) : "";
-  const style = iconSize ? { width: iconSize.width, height: iconSize.height } : {};
+  const imgSrc = src || (type && name ? getIcon(type, name) : "");
+  const style = iconSize
+    ? { width: iconSize.width, height: iconSize.height }
+    : {};
 
   const image = <img src={imgSrc} style={style} />;
 

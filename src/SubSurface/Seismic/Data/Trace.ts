@@ -39,6 +39,7 @@ export class Trace
   //==================================================
 
   public getAt(index: number): number { return this.values[index]; }
+
   public setAt(index: number, value: number): void { this.values[index] = value; }
 
   public generateSynthetic(x: number, y: number)
@@ -54,4 +55,3 @@ export class Trace
     }
   }
 }
-
