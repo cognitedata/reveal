@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import SurfaceNodeIcon from "@images/Nodes/SurfaceNode.png";
+import Icon from "@images/Nodes/SeismicLayoutNode.png";
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 
 export class SeismicLayoutNode extends BaseVisualNode
@@ -46,5 +46,5 @@ export class SeismicLayoutNode extends BaseVisualNode
 
   public /*override*/ canChangeColor(): boolean { return false; }
 
-  public /*override*/ getIcon(): string { return SurfaceNodeIcon; }
+  public /*override*/ getIcon(): string { return Icon; }
 }

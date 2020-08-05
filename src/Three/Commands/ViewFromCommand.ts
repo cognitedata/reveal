@@ -1,7 +1,6 @@
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetCommand";
-import ViewFromCommandIcon from "@images/Commands/ViewFromCommand.png";
-import ViewFromCommand_BottomIcon from "@images/Commands/ViewFromCommand_Bottom.png";
+import ViewFromCommandBottomIcon from "@images/Commands/ViewFromCommand_Bottom.png";
 import ViewFromCommandTopIcon from "@images/Commands/ViewFromCommand_Top.png";
 import ViewFromCommandEastIcon from "@images/Commands/ViewFromCommand_East.png";
 import ViewFromCommandWestIcon from "@images/Commands/ViewFromCommand_West.png";
@@ -32,9 +31,9 @@ export class ViewFromCommand extends ThreeRenderTargetCommand
   {
     switch (this.viewFrom)
     {
-      case -1: return ViewFromCommandIcon;
+      case -1: return "";
       case 0: return ViewFromCommandTopIcon;
-      case 1: return ViewFromCommand_BottomIcon;
+      case 1: return ViewFromCommandBottomIcon;
       case 2: return ViewFromCommandSouthIcon;
       case 3: return ViewFromCommandNorthIcon;
       case 4: return ViewFromCommandWestIcon;

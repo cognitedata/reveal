@@ -16,7 +16,7 @@ import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { SurfaceRenderStyle } from "@/SubSurface/Basics/SurfaceRenderStyle";
 
-import SurfaceNodeIcon from "@images/Nodes/SurfaceNode.png";
+import Icon from "@images/Nodes/SeismicCubeNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
 import { SeismicCube } from '@/SubSurface/Seismic/Data/SeismicCube';
 import { ITarget } from "@/Core/Interfaces/ITarget";
@@ -62,9 +62,10 @@ export class SeismicCubeNode extends DataNode
 
   public /*override*/ get typeName(): string { return "Seismic Cube"; }
 
-  public /*override*/ getIcon(): string { return SurfaceNodeIcon; }
+  public /*override*/ getIcon(): string { return Icon; }
 
   public /*override*/ isRadio(target: ITarget | null): boolean { return true; }
+  public /*override*/ canChangeColor(): boolean { return false; }
 
   public /*override*/ get boundingBox(): Range3 { return this.seismicCube ? this.seismicCube.boundingBox : new Range3(); }
 

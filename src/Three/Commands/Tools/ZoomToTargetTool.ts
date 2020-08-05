@@ -1,8 +1,8 @@
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
-import { ToolCommand } from "@/Three/Commands/Tools/ToolCommand";
+import { BaseTool } from "@/Three/Commands/Tools/BaseTool";
 import ZoomToTargetToolCommandIcon from "@images/Commands/ZoomToTargetToolCommand.png";
 
-export class ZoomToTargetToolCommand extends ToolCommand
+export class ZoomToTargetTool extends BaseTool
 {
   //==================================================
   // CONSTRUCTORS
@@ -18,9 +18,7 @@ export class ZoomToTargetToolCommand extends ToolCommand
   //==================================================
 
   public /*override*/ getName(): string { return "Zoom to target"; }
-
   public /*override*/ getIcon(): string { return ZoomToTargetToolCommandIcon; }
-
   public /*override*/ getShortCutKeys(): string { return "S"; }
 
   //==================================================
@@ -35,8 +33,7 @@ export class ZoomToTargetToolCommand extends ToolCommand
     if (!target)
       return;
 
-    const pixelCoords = target.getMouseRelativePositionThree(event);
-    const worldCoords = target.getClickPosition(pixelCoords);
+    const worldCoords = target.getClickPosition(event);
     if (!worldCoords)
       return;
 

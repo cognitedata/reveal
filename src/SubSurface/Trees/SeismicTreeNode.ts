@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import WellNodeIcon from "@images/Nodes/WellNode.png";
+import Icon from "@images/Nodes/SeismicCubeNode.png";
 import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 
 export class SeismicTreeNode extends BaseTreeNode
@@ -42,7 +42,7 @@ export class SeismicTreeNode extends BaseTreeNode
 
   public /*override*/ get typeName(): string { return "Seismic Tree"; }
 
-  public /*override*/ getIcon(): string { return WellNodeIcon; }
+  public /*override*/ getIcon(): string { return Icon; }
 
   public /*override*/ getName(): string { return "Seismic"; }
 

@@ -243,12 +243,14 @@ export class SyntheticSubSurfaceModule extends BaseModule
     if (!(root instanceof SubSurfaceRootNode))
       return;
 
+    const range = Range3.newTest
+
     const seismicTree = root.seismic;
 
     const survey = new SurveyNode();
 
-    const nodeSize = new Index3(50, 70, 40);
-    const origin = new Vector3(1000, 2000, 3000);
+    const nodeSize = new Index3(90, 100, 80);
+    const origin = range.min;
     const inc = new Vector3(20, 20, 20);
     const rotationAngle = Math.PI / 10;
 
@@ -276,7 +278,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
     if (!target)
       return;
 
-    const {wells} = root;
+    const { wells } = root;
     return;
 
     if (Random.isTrue(0.05))
@@ -336,7 +338,7 @@ class LogDataLoader implements IDataLoader
     if (!(origin instanceof BaseLogNode))
       return null;
 
-    const {trajectory} = origin;
+    const { trajectory } = origin;
     if (!trajectory)
       return null;
 

@@ -35,6 +35,7 @@ import { WellTrajectoryThreeView } from "@/ThreeSubSurface/Wells/WellTrajectoryT
 import { ViewInfo } from '@/Core/Views/ViewInfo';
 
 const selectedRadiusFactor = 1.2;
+const sphereName = "sphere";
 
 export class PointLogThreeView extends BaseGroupThreeView
 {
@@ -86,16 +87,16 @@ export class PointLogThreeView extends BaseGroupThreeView
     if (!this.isVisible)
       return undefined;
 
-    const {node} = this;
-    const {trajectory} = node;
+    const { node } = this;
+    const { trajectory } = node;
     if (!trajectory)
       return undefined;
 
-    const {wellNode} = this.node;
+    const { wellNode } = this.node;
     if (!wellNode)
       return undefined;
 
-    const {log} = node;
+    const { log } = node;
     if (!log)
       return undefined;
 
@@ -127,21 +128,21 @@ export class PointLogThreeView extends BaseGroupThreeView
     if (!parent)
       return;
 
-    const {node} = this;
-    const {log} = node;
+    const { node } = this;
+    const { log } = node;
     if (!log)
       return;
 
-    const {wellNode} = node;
+    const { wellNode } = node;
     if (!wellNode)
       return;
 
-    const {trajectory} = node;
+    const { trajectory } = node;
     if (!trajectory)
       return;
 
-    const {transformer} = this;
-    const {camera} = this;
+    const { transformer } = this;
+    const { camera } = this;
     const cameraPosition = transformer.toWorld(camera.position);
     cameraPosition.substract(wellNode.origin);
 
@@ -199,16 +200,16 @@ export class PointLogThreeView extends BaseGroupThreeView
     if (!parent)
       return;
 
-    const index = intersection.object.userData.sphere;
+    const index = intersection.object.userData[sphereName];
     if (index === undefined)
       return;
 
-    const {node} = this;
-    const {trajectory} = node;
+    const { node } = this;
+    const { trajectory } = node;
     if (!trajectory)
       return;
 
-    const {log} = node;
+    const { log } = node;
     if (!log)
       return;
 
@@ -236,28 +237,28 @@ export class PointLogThreeView extends BaseGroupThreeView
 
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
-    const {node} = this;
-    const {wellNode} = node;
+    const { node } = this;
+    const { wellNode } = node;
     if (!wellNode)
       return null;
 
-    const {trajectory} = node;
+    const { trajectory } = node;
     if (!trajectory)
       return null;
 
-    const {style} = this;
+    const { style } = this;
     if (!style)
       return null;
 
     const color = node.getColorByColorType(style.colorType);
-    const {log} = node;
+    const { log } = node;
     if (!log)
       throw Error("Well trajectory is missing");
 
     const group = new THREE.Group();
-    const {transformer} = this;
+    const { transformer } = this;
 
-    const {radius} = this;
+    const { radius } = this;
     const selectedRadius = radius * selectedRadiusFactor;
     const closedGeometry = new THREE.SphereGeometry(radius, 16, 8);
     const openGeometry = new THREE.SphereGeometry(selectedRadius, 16, 8);
@@ -300,7 +301,7 @@ export class PointLogThreeView extends BaseGroupThreeView
 
       // Get perpendicular
       ThreeConverter.copyToThreeVector3(sphere.position, position);
-      sphere.userData["sphere"] = index;
+      sphere.userData[sphereName] = index;
 
       group.add(sphere);
 
@@ -331,15 +332,15 @@ export class PointLogThreeView extends BaseGroupThreeView
   protected get radius(): number
   {
     let radius = 20;
-    const {node} = this;
+    const { node } = this;
     if (!node)
       return radius;
 
-    const {style} = this;
+    const { style } = this;
     if (style)
       radius = style.radius;
 
-    const {trajectoryNode} = node;
+    const { trajectoryNode } = node;
     if (!trajectoryNode)
       return radius;
 
@@ -438,20 +439,20 @@ export class PointLogThreeView extends BaseGroupThreeView
     context.textAlign = "start";
     context.fillStyle = Canvas.getColor(Colors.black);
     let y = margin;
-    
+
     context.font = headerFont;
     if (headerMultiLine)
       Canvas.fillText(context, header, margin, y, maxWidth + margin, lineHeight);
     else
       context.fillText(header, margin, y);
-      
+
     y += headerHeight + 0.5 * fontSize;
     context.font = textFont;
     if (textMultiLine)
       Canvas.fillText(context, text, margin, y, maxWidth + margin, lineHeight);
     else
       context.fillText(text, margin, y);
-     
+
     return canvas;
   }
 }
