@@ -48,6 +48,9 @@ export class EffectRenderManager {
     const outlineColorTexture = this.createOutlineColorTexture();
 
     this._frontRenderedCadModelTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
+    this._frontRenderedCadModelTarget.depthTexture = new THREE.DepthTexture(0, 0);
+    this._frontRenderedCadModelTarget.depthTexture.format = THREE.DepthFormat;
+    this._frontRenderedCadModelTarget.depthTexture.type = THREE.UnsignedIntType;
 
     this._backRenderedCadModelTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
     this._backRenderedCadModelTarget.depthTexture = new THREE.DepthTexture(0, 0);
@@ -64,6 +67,7 @@ export class EffectRenderManager {
       fragmentShader: edgeDetectionShaders.combine,
       uniforms: {
         tFront: { value: this._frontRenderedCadModelTarget.texture },
+        tFrontDepth: { value: this._frontRenderedCadModelTarget.depthTexture },
         tBack: { value: this._backRenderedCadModelTarget.texture },
         tBackDepth: { value: this._backRenderedCadModelTarget.depthTexture },
         tCustom: { value: this._customObjectRenderTarget.texture },
@@ -97,7 +101,6 @@ export class EffectRenderManager {
 
     try {
       this.updateRenderSize(renderer);
-
       renderer.setClearAlpha(0);
 
       // Render behind cad models
@@ -109,7 +112,7 @@ export class EffectRenderManager {
       // Render custom objects
       this.renderCustomObjects(renderer, scene, camera);
 
-      renderer.setClearAlpha(1);
+      renderer.setClearAlpha(original.clearAlpha);
 
       this.renderTargetToCanvas(renderer, camera);
     } finally {

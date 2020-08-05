@@ -32,10 +32,10 @@ export function SSAO() {
       const scene = new THREE.Scene();
 
       let model: reveal.CadNode;
-      if(modelRevision) {
+      if (modelRevision) {
         revealManager = reveal.createCdfRevealManager(client);
         model = await revealManager.addModel('cad', modelRevision);
-      } else if(modelUrl) {
+      } else if (modelUrl) {
         revealManager = reveal.createLocalRevealManager();
         model = await revealManager.addModel('cad', modelUrl);
       } else {
@@ -43,6 +43,8 @@ export function SSAO() {
           'Need to provide either project & model OR modelUrl as query parameters'
         );
       }
+
+      scene.add(model);
 
       const effect = new reveal.SsaoEffect();
       const renderer = new THREE.WebGLRenderer({

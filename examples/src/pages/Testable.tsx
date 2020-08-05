@@ -36,13 +36,24 @@ export function Testable() {
 
       const scene = new THREE.Scene();
 
+      const pickedNodes: Set<number> = new Set();
+
+      const nodeAppearanceProvider: reveal.NodeAppearanceProvider = {
+        styleNode(treeIndex: number) {
+          if (pickedNodes.has(treeIndex)) {
+            return reveal.DefaultNodeAppearance.Highlighted;
+          }
+          return reveal.DefaultNodeAppearance.NoOverrides;
+        }
+      };
+
       let model: reveal.CadNode;
-      if(modelRevision) {
+      if (modelRevision) {
         revealManager = reveal.createCdfRevealManager(client);
-        model = await revealManager.addModel('cad', modelRevision);
-      } else if(modelUrl) {
+        model = await revealManager.addModel('cad', modelRevision, nodeAppearanceProvider);
+      } else if (modelUrl) {
         revealManager = reveal.createLocalRevealManager();
-        model = await revealManager.addModel('cad', modelUrl);
+        model = await revealManager.addModel('cad', modelUrl, nodeAppearanceProvider);
       } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'
@@ -71,6 +82,15 @@ export function Testable() {
         camera = new THREE.PerspectiveCamera();
       } else if (test === "suggested_camera") {
         // Nothing - the suggested camera is default
+      }
+      else if (test === "highlight") {
+        camera = new THREE.PerspectiveCamera();
+        position.x = 12;
+        position.y = -4;
+        position.z = -45;
+        const highlightedTreeIndexes = [...Array(15).keys()];
+        highlightedTreeIndexes.forEach(p => pickedNodes.add(p));
+        model.requestNodeUpdate(highlightedTreeIndexes);
       } else if (test === "clipping") {
         camera = new THREE.PerspectiveCamera();
         const params = {
@@ -126,7 +146,7 @@ export function Testable() {
         }
 
         if (controlsNeedUpdate || revealManager.needsRedraw || needsResize) {
-          renderer.render(scene, camera);
+          revealManager.render(renderer, camera, scene);
           revealManager.resetRedraw();
         }
 
