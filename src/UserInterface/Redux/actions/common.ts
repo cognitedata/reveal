@@ -1,6 +1,6 @@
-import { SET_FULLSCREEN_STATUS } from "@/UserInterface/Redux/actions/actionTypes";
+import ActionTypes from "@/UserInterface/Redux/actions/ActionTypes";
 
 export const setFullScreen = (payload: boolean) =>
 {
-    return { type: SET_FULLSCREEN_STATUS, payload };
+  return { type: ActionTypes.setFullScreenStatus, payload };
 };

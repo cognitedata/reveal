@@ -1,11 +1,12 @@
 import { enableMapSet, enableES5 } from "immer";
-import commonReducer from "./CommonReducer";
 // Enable immer MapSet
 enableMapSet();
 enableES5();
-import settingsReducer from "./SettingsReducer";
-import explorerReducer from "./ExplorerReducer";
-import visualizerReducer from "./VisualizersReducer";
+
+import commonReducer from "@/UserInterface/Redux/reducers/CommonReducer";
+import settingsReducer from "@/UserInterface/Redux/reducers/SettingsReducer";
+import explorerReducer from "@/UserInterface/Redux/reducers/ExplorerReducer";
+import visualizerReducer from "@/UserInterface/Redux/reducers/VisualizersReducer";
 
 /**
  * The combineReducers helper function turns an object whose values

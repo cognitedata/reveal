@@ -1,27 +1,22 @@
-import {
-  SET_VISUALIZER_DATA,
-  EXECUTE_VISUALIZER_TOOLBAR_COMMAND,
-  SELECT_ON_CHANGE,
-  SET_STATUS_PANEL_TEXT
-} from "./actionTypes";
+import ActionTypes from "@/UserInterface/Redux/actions/ActionTypes";
 
 export const setVisualizerData = (payload: any) =>
 {
-  return { type: SET_VISUALIZER_DATA, payload };
+  return { type: ActionTypes.setVisualizerData, payload };
 };
 
 export const executeToolBarCommand = (payload: any) =>
 {
-  return { type: EXECUTE_VISUALIZER_TOOLBAR_COMMAND, payload };
+  return { type: ActionTypes.executeVisualizerToolbarCommand, payload };
 };
 
 export const selectOnChange = (payload: any) =>
 {
-  return { type: SELECT_ON_CHANGE, payload}
+  return { type: ActionTypes.selectOnChange, payload}
 };
 
 export const updateStatusPanel = (payload: { text: string }) =>
 {
-  return { type: SET_STATUS_PANEL_TEXT, payload };
+  return { type: ActionTypes.setStatusPanelText, payload };
 };
 

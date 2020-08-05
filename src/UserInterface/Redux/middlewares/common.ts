@@ -1,6 +1,6 @@
 import { MiddlewareAPI, Dispatch } from "redux";
-import { SET_FULLSCREEN_STATUS } from "@/UserInterface/Redux/actions/actionTypes";
-import {State} from "@/UserInterface/Redux/State/State";
+import ActionTypes from "@/UserInterface/Redux/actions/ActionTypes";
+import { State } from "@/UserInterface/Redux/State/State";
 
 // Common middleware
 export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
@@ -15,7 +15,7 @@ export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
 
   switch (type)
   {
-    case SET_FULLSCREEN_STATUS:
+    case ActionTypes.setFullScreenStatus:
     {
       try
       {
