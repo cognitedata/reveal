@@ -43,7 +43,7 @@ export class EffectRenderManager {
     this._cadTransformParent = new Object3D();
     this._cadTransformParent.matrixAutoUpdate = false;
     this._inFrontScene.add(this._cadTransformParent);
-    this._cadTransformParent.matrix.makeRotationFromEuler(new THREE.Euler(0, Math.PI / 4, 0));
+    this._cadTransformParent.matrix.makeRotationFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0));
 
     const outlineColorTexture = this.createOutlineColorTexture();
 
