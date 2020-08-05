@@ -25,6 +25,7 @@ export abstract class BaseView
   //==================================================
 
   private _node: BaseNode | null = null;
+
   private _target: ITargetIdAccessor | null = null;
 
   //==================================================
@@ -32,6 +33,7 @@ export abstract class BaseView
   //==================================================
 
   public get targetId(): TargetId { return this.getTarget().targetId; }
+
   protected get renderTarget(): BaseTargetNode { return this.getTarget() as BaseTargetNode; }
 
   //==================================================

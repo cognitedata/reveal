@@ -27,7 +27,7 @@ export class LogFilterView extends BaseView
 
   private get trajectoryNode(): WellTrajectoryNode | null
   {
-    const node = this.node;
+    const {node} = this;
     return !node ? null : node.trajectoryNode;
   }
 
@@ -44,7 +44,7 @@ export class LogFilterView extends BaseView
   public get /*override*/ isVisible(): boolean
   {
     const parent = this.trajectoryNode;
-    return parent != null && parent.isVisible(this.renderTarget)
+    return parent != null && parent.isVisible(this.renderTarget);
   }
 
   protected /*override*/ updateCore(args: NodeEventArgs): void
@@ -72,7 +72,7 @@ export class LogFilterView extends BaseView
 
   protected updateTrajectory(args: NodeEventArgs | null = null): void
   {
-    const trajectoryNode = this.trajectoryNode;
+    const {trajectoryNode} = this;
     if (!trajectoryNode)
       return;
 

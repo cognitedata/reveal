@@ -33,14 +33,18 @@ export class SeismicTreeNode extends BaseTreeNode
   //==================================================
 
   public /*override*/ get className(): string { return SeismicTreeNode.className; }
+
   public /*override*/ isA(className: string): boolean { return className === SeismicTreeNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Seismic Tree" }
-  public /*override*/ getIcon(): string { return WellNodeIcon }
-  public /*override*/ getName(): string { return "Seismic" }
+  public /*override*/ get typeName(): string { return "Seismic Tree"; }
+
+  public /*override*/ getIcon(): string { return WellNodeIcon; }
+
+  public /*override*/ getName(): string { return "Seismic"; }
+
   public /*override*/ get isTab(): boolean { return true; }
 }

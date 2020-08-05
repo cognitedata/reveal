@@ -1,9 +1,10 @@
-import { BaseProperty } from "./BaseProperty";
 import { PropertyType } from "@/Core/Enums/PropertyType";
+import { BaseProperty } from "./BaseProperty";
 
 export default abstract class BasePropertyFolder extends BaseProperty
 {
   private _expanded: boolean = true;
+
   protected _type: PropertyType = PropertyType.DefaultPropertyFolder;
 
   constructor(private name: string)
@@ -16,6 +17,7 @@ export default abstract class BasePropertyFolder extends BaseProperty
   //==================================================
 
   public get expanded(): boolean { return this._expanded; }
+
   public set expanded(value: boolean) { this._expanded = value; }
 
   //==================================================

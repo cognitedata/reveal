@@ -28,16 +28,14 @@ const filterNodes = (nodes: { [key: string]: TreeDataItemState }, nodeIds: strin
 
 // select nodes based on node type
 export const getVisibleNodes = createSelector(
-  [getSelectedNodeIds, getNodes],
+  [getSelectedNodeIds, getNodes], 
   (nodeIds, nodes) =>
   {
     if (nodes)
     {
       return filterNodes(nodes, nodeIds);
     }
-    else
-    {
-      return;
-    }
+    // eslint-disable-next-line no-useless-return
+    return;
   }
 );

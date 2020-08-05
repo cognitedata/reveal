@@ -41,6 +41,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
   //==================================================
 
   private _index = -1;
+
   private _axis = -1;
 
   //==================================================
@@ -48,6 +49,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
   //==================================================
 
   protected get node(): SeismicPlaneNode { return super.getNode() as SeismicPlaneNode; }
+
   protected get style(): SurfaceRenderStyle { return super.getStyle() as SurfaceRenderStyle; }
 
   //==================================================
@@ -81,8 +83,8 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
 
   public /*override*/ calculateBoundingBoxCore(): Range3 | undefined
   {
-    const node = this.node;
-    const surveyCube = node.surveyCube;
+    const { node } = this;
+    const { surveyCube } = node;
     if (!surveyCube)
       return undefined;
 
@@ -91,7 +93,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     if (cells.length < 2)
       return;
 
-    let position: Vector3 = Vector3.newZero;
+    const position: Vector3 = Vector3.newZero;
 
     const minCell = cells[0];
     surveyCube.getCellCenter(minCell.i, minCell.j, 0, position);
@@ -111,8 +113,8 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     if (!parent)
       return;
 
-    const node = this.node;
-    if (node.perpendicularIndex != this._index || node.perpendicularAxis != this._axis)
+    const { node } = this;
+    if (node.perpendicularIndex !== this._index || node.perpendicularAxis !== this._axis)
     {
       this._index = node.perpendicularIndex;
       this._axis = node.perpendicularAxis;
@@ -122,18 +124,18 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
 
   public /*override*/ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void
   {
-    const node = this.node;
+    const { node } = this;
     viewInfo.addHeader(node.displayName);
 
-    const transformer = this.transformer;
+    const { transformer } = this;
     const position = transformer.toWorld(intersection.point);
     viewInfo.addText("Position", position.getString(2));
 
-    const surveyNode = node.surveyNode;
+    const { surveyNode } = node;
     if (!surveyNode)
       return;
 
-    const surveyCube = surveyNode.surveyCube;
+    const { surveyCube } = surveyNode;
     if (!surveyCube)
       return;
 
@@ -148,15 +150,15 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
       return;
 
     viewInfo.addText("Seismic cube", seismicCubeNode.displayName);
-    const seismicCube = seismicCubeNode.seismicCube;
+    const { seismicCube } = seismicCubeNode;
     if (!seismicCube)
       return;
 
-    var trace = seismicCube.getTrace(cell.i, cell.j);
+    const trace = seismicCube.getTrace(cell.i, cell.j);
     if (!trace)
       return;
 
-    var value = trace.getAt(cell.k)
+    const value = trace.getAt(cell.k);
     viewInfo.addText("Amplitude", value.toFixed(4));
   }
 
@@ -166,14 +168,14 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
 
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
-    const node = this.node;
+    const { node } = this;
     const parent = new THREE.Group();
 
-    const surveyNode = node.surveyNode;
+    const { surveyNode } = node;
     if (!surveyNode)
       return parent;
 
-    const surveyCube = surveyNode.surveyCube;
+    const { surveyCube } = surveyNode;
     if (!surveyCube)
       return parent;
 
@@ -198,11 +200,11 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     if (cells.length < 2)
       return null;
 
-    const normal = node.unrotatedNormal;
-    if (node.perpendicularAxis == 0)
-      normal.negate();
+    const { unrotatedNormal } = node;
+    if (node.perpendicularAxis === 0)
+      unrotatedNormal.negate();
 
-    const buffers = new RegularGrid3Buffers(surveyCube, normal, cells);
+    const buffers = new RegularGrid3Buffers(surveyCube, unrotatedNormal, cells);
     const geometry = buffers.getBufferGeometry();
 
     const material = new THREE.MeshStandardMaterial({
@@ -221,7 +223,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     }
     const mesh = new THREE.Mesh(geometry, material);
     mesh.name = SolidName;
-    const transformer = this.transformer;
+    const { transformer } = this;
     mesh.scale.copy(transformer.scale);
     mesh.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), surveyCube.rotationAngle);
     return mesh;
@@ -248,14 +250,14 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     if (cells.length < 2)
       return;
 
-    let origin: Vector3 = Vector3.newZero;
+    const origin: Vector3 = Vector3.newZero;
     const cell = cells[0];
     surveyCube.getNodePosition(cell.i, cell.j, 0, origin);
 
-    const transformer = this.transformer;
+    const { transformer } = this;
     mesh.position.copy(transformer.to3D(origin));
 
-    var attribute = geometry.getAttribute("uv");
+    const attribute = geometry.getAttribute("uv");
     if (!attribute)
       return;
 
@@ -269,7 +271,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
 
   private getSeismicCubeNode(): SeismicCubeNode | null
   {
-    const node = this.node;
+    const { node } = this;
     const survey = node.surveyNode;
     if (!survey)
       return null;
@@ -317,20 +319,20 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
         uv[index++] = 0;
       }
     }
-    if (count != index)
+    if (count !== index)
       throw Error("Error in createTextureCoords");
 
   }
 
   private static createCells(surveyCube: RegularGrid3, axis: number, index = 0): Index2[]
   {
-    let cells: Index2[] = [];
-    if (axis == 0)
+    const cells: Index2[] = [];
+    if (axis === 0)
     {
       for (let j = 0; j < surveyCube.cellSize.j; j++)
         cells.push(new Index2(index, j));
     }
-    else if (axis == 1)
+    else if (axis === 1)
     {
       for (let i = 0; i < surveyCube.cellSize.i; i++)
         cells.push(new Index2(i, index));

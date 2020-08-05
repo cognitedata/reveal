@@ -1,10 +1,10 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { TreeDataItemState } from "@/UserInterface/Redux/State/explorer";
-import NodeTabs from "./NodeTabs";
 import { getVisibleNodes } from "@/UserInterface/Redux/selectors/explorer";
 import { ITreeNode, VirtualTree } from "@cognite/subsurface-components";
 import ExplorerNodeUtils from "@/UserInterface/NodeVisualizer/Explorer/ExplorerNodeUtils";
+import NodeTabs from "./NodeTabs";
 
 // Get a copy of nodes
 function getCopyOfNodes(nodes?: {
@@ -16,7 +16,7 @@ function getCopyOfNodes(nodes?: {
       if (nodes.hasOwnProperty(id)) {
         nodesCopy[id] = {
           ...nodes[id],
-          children: []
+          children: [],
         };
       }
     }

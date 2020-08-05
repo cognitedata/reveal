@@ -32,11 +32,12 @@ export class StubTargetNode extends BaseTargetNode
   //==================================================
 
   public /*override*/ get className(): string { return StubTargetNode.className; }
+
   public /*override*/ isA(className: string): boolean { return className === StubTargetNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Stub target" }
+  public /*override*/ get typeName(): string { return "Stub target"; }
 }

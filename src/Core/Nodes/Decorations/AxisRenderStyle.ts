@@ -28,7 +28,6 @@ export class AxisRenderStyle extends BaseRenderStyle
   public showAxisNumbers = true;
   public showAxisTicks = true;
   public showGrid = true;
-
   public numTicks = 50; // Appoximately number of ticks for the largest axis
   public tickLength = 0.005; // In fraction of the bounding box diagonal
   public tickFontSize = 1.5; // In fraction of the real tickLength
@@ -45,12 +44,7 @@ export class AxisRenderStyle extends BaseRenderStyle
   //==================================================
 
   public /*override*/ clone(): BaseRenderStyle { return Lodash.cloneDeep<AxisRenderStyle>(this); }
-
   protected /*override*/ PopulateCore(folder: PropertyFolder)
   {
   }
 }
-
-
-
-

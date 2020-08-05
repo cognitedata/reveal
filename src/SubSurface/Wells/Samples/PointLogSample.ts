@@ -22,10 +22,15 @@ export class PointLogSample extends BaseLogSample
   //==================================================
 
   public baseMd: number;
+
   public description: string;
+
   public subtype: string = "";
+
   public riskSubCategory: string = "";
+
   public details: string = "";
+
   public isOpen = false;
 
   //==================================================
@@ -47,6 +52,7 @@ export class PointLogSample extends BaseLogSample
   //==================================================
 
   public /*override*/ toString(): string { return `${super.toString()} Value: ${this.description}`; }
+
   public /*override*/ getSampleText(): string { return this.description; }
 
   //==================================================
@@ -55,5 +61,5 @@ export class PointLogSample extends BaseLogSample
 
   public /*override*/ get isEmpty(): boolean { return false; }
 
-  public /*override*/  clone(): BaseLogSample { return Lodash.clone<PointLogSample>(this); }
+  public /*override*/ clone(): BaseLogSample { return Lodash.clone<PointLogSample>(this); }
 }  

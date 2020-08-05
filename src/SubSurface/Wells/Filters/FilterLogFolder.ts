@@ -45,6 +45,7 @@ export class FilterLogFolder extends BaseNode
   //==================================================
 
   public /*override*/ get className(): string { return FilterLogFolder.className; }
+
   public /*override*/ isA(className: string): boolean { return className === FilterLogFolder.className || super.isA(className); }
 
   //==================================================
@@ -52,11 +53,17 @@ export class FilterLogFolder extends BaseNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Log filter"; }
-  public /*override*/ getIcon(): string { return FilterLogFolderIcon }
-  public /*override*/ canChangeName(): boolean { return false }
+
+  public /*override*/ getIcon(): string { return FilterLogFolderIcon; }
+
+  public /*override*/ canChangeName(): boolean { return false; }
+
   public /*override*/ canChangeColor(): boolean { return false; }
+
   public /*override*/ isLabelInItalic(): boolean { return true; }
+
   public /*override*/ isFilter(target: ITarget | null): boolean { return true; }
+
   public /*override*/ canBeChecked(target: ITarget | null): boolean { return false; }
 
   //==================================================

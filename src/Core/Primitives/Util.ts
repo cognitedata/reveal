@@ -16,13 +16,14 @@ import { Units } from "@/Core/Primitives/Units";
 export class Util
 {
   public static isEmpty(value: string | null | undefined): boolean { return !value || value.length === 0; }
+
   public static equalsIgnoreCase(value1: string, value2: string): boolean { return value1.toLowerCase() === value2.toLowerCase(); }
 
   public static cocatinate(name: string, value?: any): string
   {
     if (value === undefined || value === null)
-      return ", " + name;
-    return ", " + name + ": " + value;
+      return `, ${name}`;
+    return `, ${name}: ${value}`;
   }
 
   public static isNumber(text: string): boolean
@@ -54,4 +55,3 @@ export class Util
     return value;
   }
 }
-

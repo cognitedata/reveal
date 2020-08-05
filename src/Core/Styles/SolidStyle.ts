@@ -21,6 +21,7 @@ export class SolidStyle extends BaseStyle
   //==================================================
 
   public colorType = ColorType.DepthColor;
+
   public shininess = 0.5;
 
   //==================================================
@@ -30,6 +31,3 @@ export class SolidStyle extends BaseStyle
   public constructor() { super(); }
 
 }
-
-
-

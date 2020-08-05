@@ -33,14 +33,18 @@ export class SeismicLayoutNode extends BaseVisualNode
   //==================================================
 
   public /*override*/ get className(): string { return SeismicLayoutNode.className; }
+
   public /*override*/ isA(className: string): boolean { return className === SeismicLayoutNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Layout" }
+  public /*override*/ get typeName(): string { return "Layout"; }
+
   public /*override*/ canChangeName(): boolean { return false; }
+
   public /*override*/ canChangeColor(): boolean { return false; }
-  public /*override*/ getIcon(): string { return SurfaceNodeIcon }
+
+  public /*override*/ getIcon(): string { return SurfaceNodeIcon; }
 }

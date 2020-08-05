@@ -12,11 +12,10 @@ export const executeToolBarCommand = (payload: any) =>
 
 export const selectOnChange = (payload: any) =>
 {
-  return { type: ActionTypes.selectOnChange, payload}
+  return { type: ActionTypes.selectOnChange, payload};
 };
 
 export const updateStatusPanel = (payload: { text: string }) =>
 {
   return { type: ActionTypes.setStatusPanelText, payload };
 };
-

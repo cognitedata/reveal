@@ -29,7 +29,7 @@ export class PointLog extends BaseLog
   // OVERRIDES of BaseLog
   //==================================================
 
-  public/*override*/  expandMdRange(range: Range1): void
+  public/*override*/ expandMdRange(range: Range1): void
   {
     for (let i = this.length - 1; i >= 0; i--)
     {
@@ -61,7 +61,7 @@ export class PointLog extends BaseLog
           continue;
 
         if (description.length > 0)
-          description += " "
+          description += " ";
         description += words[k];
       }
       const md = Random.getFloat(mdRange);

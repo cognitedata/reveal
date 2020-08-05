@@ -1,0 +1,59 @@
+{
+  "env": {
+    "browser": true,
+    "es2020": true
+  },
+  "extends": [
+    "@cognite"
+    // "plugin:lodash/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 11,
+    "sourceType": "module"
+  },
+  "plugins": ["@cognite", "lodash"],
+  "rules": {
+    "lines-between-class-members": "off",
+    "no-multiple-empty-lines": "error",
+    "indent": "error",
+    "no-alert": "off",
+    "no-irregular-whitespace": "off",
+    "jsx-a11y/click-events-have-key-events": "off",
+    "no-restricted-syntax": "off",
+    "no-param-reassign": "off",
+    "spaced-comment": "off",
+    "no-plusplus": "off",
+    "no-bitwise": "off",
+    "react/require-default-props": "off",
+    "no-continue": "off",
+    "no-underscore-dangle": "off",
+    "semi": "error",
+    "template-curly-spacing": "error",
+    "no-console": "off",
+    "no-multi-spaces": "error",
+    "block-spacing": "error",
+    "class-methods-use-this": "off",
+    "@cognite/no-unissued-todos": "off",
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["*.js", "*.ts"],
+      "rules": {
+        "no-empty-function": "off",
+        "@typescript-eslint/no-unused-vars": "off",
+        "camelcase": "off",
+        "no-restricted-globals": "off"
+      }
+    }
+  ]
+}

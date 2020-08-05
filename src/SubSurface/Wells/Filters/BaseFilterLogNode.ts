@@ -44,6 +44,7 @@ export abstract class BaseFilterLogNode extends BaseVisualNode
   //==================================================
 
   public /*override*/ get className(): string { return BaseFilterLogNode.className; }
+
   public /*override*/ isA(className: string): boolean { return className === BaseFilterLogNode.className || super.isA(className); }
 
   //==================================================
@@ -51,6 +52,7 @@ export abstract class BaseFilterLogNode extends BaseVisualNode
   //==================================================
 
   public /*virtual*/ isLabelInItalic(): boolean { return true; }
+
   public /*virtual*/ isFilter(target: ITarget | null): boolean { return true; }
 
   //==================================================
@@ -65,7 +67,7 @@ export abstract class BaseFilterLogNode extends BaseVisualNode
 
   public isEqual(other: BaseLogNode): boolean
   {
-    return this.wellLogType == other.wellLogType && Util.equalsIgnoreCase(this.name, other.name);
+    return this.wellLogType === other.wellLogType && Util.equalsIgnoreCase(this.name, other.name);
   }
 
   public * getAllLogs(): Generator<BaseLogNode>

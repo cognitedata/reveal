@@ -1,4 +1,3 @@
-
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { BaseCommand } from "@/Core/Commands//BaseCommand";
 
@@ -16,5 +15,3 @@ export abstract class BaseNodeCommand extends BaseCommand
     this.node = node;
   }
 }
-
-

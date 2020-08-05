@@ -30,6 +30,7 @@ export class DiscreteLogNode extends BaseLogNode
   //==================================================
 
   public get log(): DiscreteLog | null { return this.anyData as DiscreteLog; }
+
   public set log(value: DiscreteLog | null) { this.anyData = value; }
 
   //==================================================
@@ -43,20 +44,23 @@ export class DiscreteLogNode extends BaseLogNode
   //==================================================
 
   public /*override*/ get className(): string { return DiscreteLogNode.className; }
+
   public /*override*/ isA(className: string): boolean { return className === DiscreteLogNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "DiscreteLog" }
-  public /*override*/ getIcon(): string { return DiscreteLogNodeIcon }
+  public /*override*/ get typeName(): string { return "DiscreteLog"; }
+
+  public /*override*/ getIcon(): string { return DiscreteLogNodeIcon; }
+
   public /*override*/ hasIconColor(): boolean { return false; }
 
   protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
   {
     super.populateStatisticsCore(folder);
-    const log = this.log;
+    const {log} = this;
     if (!log)
       return;
 
@@ -67,5 +71,5 @@ export class DiscreteLogNode extends BaseLogNode
   // OVERRIDES of BaseLogNode
   //==================================================
 
-  public /*override*/  get wellLogType(): WellLogType { return WellLogType.Discrete; }
+  public /*override*/ get wellLogType(): WellLogType { return WellLogType.Discrete; }
 }

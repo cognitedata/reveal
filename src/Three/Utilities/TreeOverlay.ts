@@ -28,9 +28,14 @@ export class TreeOverlay
   //==================================================
 
   private scene: THREE.Scene | null = null;
+
   private camera: THREE.Camera | null = null;
+
+  // eslint-disable-next-line react/static-property-placement
   private context: CanvasRenderingContext2D | null = null;
+
   private texture: THREE.Texture | null = null;
+
   private delta = new Vector3(-1, -1);
 
   //==================================================
@@ -45,7 +50,7 @@ export class TreeOverlay
     if (!this.delta.equals(delta))
       this.initialize(delta);
 
-    const context = this.context;
+    const {context} = this;
     if (!context)
       return;
 
@@ -92,7 +97,7 @@ export class TreeOverlay
           const material = child.material as THREE.Material;
           if (material)
             material.dispose();
-          const geometry = child.geometry;
+          const {geometry} = child;
           if (geometry)
             geometry.dispose();
         }
@@ -172,7 +177,7 @@ export class TreeOverlay
     let textDy = 0;
     for (const item of items)
     {
-      this.measureValue(context, item, maxDx, lineDy)
+      this.measureValue(context, item, maxDx, lineDy);
       valueDx = Math.max(valueDx, item.dx);
       textDy += item.dy;
     }
@@ -181,8 +186,8 @@ export class TreeOverlay
     // Calulate the size
     const dx = margin + keyDx + spacing + valueDx + margin;
     const dy = margin + textDy + margin;
-    let xmin = margin;
-    let ymin = delta.y - margin - dy;
+    const xmin = margin;
+    const ymin = delta.y - margin - dy;
 
     let x = xmin;
     let y = ymin;

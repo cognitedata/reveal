@@ -1,7 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
-import { createStore, applyMiddleware, combineReducers, compose, Store } from "redux";
+import {
+  createStore,
+  applyMiddleware,
+  combineReducers,
+  compose,
+  Store,
+} from "redux";
 import App from "@/UserInterface/App/App";
 import SubsurfaceReducer from "@/UserInterface/Redux/reducers/SubsurfaceReducer";
 import SubsurfaceMiddleware from "@/UserInterface/Redux/middlewares/main";
@@ -10,6 +16,7 @@ import { Appearance } from "@/Core/States/Appearance";
 import { setCssVariable } from "@/UserInterface/Foundation/Utils/cssUtils";
 
 // @ts-ignore
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store: Store = createStore(
@@ -30,10 +37,14 @@ setCssVariable("--v-tree-item-height", `${Appearance.treeIconSize}px`);
 setCssVariable("--v-tree-item-comp-width", `${Appearance.treeIconSize}px`);
 setCssVariable("--v-tree-item-bottom-margin", `${Appearance.treeItemGap}px`);
 setCssVariable("--v-tree-item-indentation", `${Appearance.treeIndentation}px`);
-setCssVariable("--subsurface-viz-explorer-font-size", `${Appearance.treeFontSize}px`);
+setCssVariable(
+  "--subsurface-viz-explorer-font-size",
+  `${Appearance.treeFontSize}px`
+);
 setCssVariable(
   "--subsurface-viz-tree-background",
-  (Appearance.treeBackgroundColor && Appearance.treeBackgroundColor.hex()) || "inherit"
+  (Appearance.treeBackgroundColor && Appearance.treeBackgroundColor.hex()) ||
+    "inherit"
 );
 
 ReactDOM.render(

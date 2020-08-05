@@ -12,7 +12,7 @@ export default function NodeTabs() {
   const explorer = useSelector((state: State) => state.explorer); //TODO: Remove the reference to state here
   const dispatch = useDispatch();
 
-  const tabs = explorer.tabs;
+  const { tabs } = explorer;
   if (!tabs) {
     return null;
   }

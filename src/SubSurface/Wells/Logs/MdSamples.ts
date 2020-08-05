@@ -24,6 +24,7 @@ export abstract class MdSamples
   //==================================================
 
   public samples: MdSample[] = [];
+
   private _mdRange: Range1 | undefined;
 
   //==================================================
@@ -31,7 +32,9 @@ export abstract class MdSamples
   //==================================================
 
   public get length(): number { return this.samples.length; }
+
   public get firstSample(): MdSample | null { return this.samples.length > 0 ? this.samples[0] : null; }
+
   public get lastSample(): MdSample | null { return this.samples.length > 0 ? this.samples[this.samples.length - 1] : null; }
 
   //==================================================

@@ -105,11 +105,11 @@ export abstract class BaseGroupThreeView extends BaseThreeView
     if (!this.object3D)
       return undefined;
 
-     const boundingBox = BoundingBoxKit.getBoundingBox(this.object3D, this.transformer);
-     if (!boundingBox)
-       return undefined;
+    const boundingBox = BoundingBoxKit.getBoundingBox(this.object3D, this.transformer);
+    if (!boundingBox)
+      return undefined;
 
-     return boundingBox;
+    return boundingBox;
   }
 
   //==================================================
@@ -117,7 +117,9 @@ export abstract class BaseGroupThreeView extends BaseThreeView
   //==================================================
 
   protected abstract createObject3DCore(): THREE.Object3D | null;
+
   protected /*virtual*/ mustTouch(): boolean { return false; }
+
   protected /*virtual*/ touchPart(): void { this.touch(); }
 
   //==================================================
@@ -138,7 +140,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
 
   public touch(): void
   {
-    const scene = this.scene;
+    const {scene} = this;
     if (this._object3D)
       scene.remove(this._object3D);
 

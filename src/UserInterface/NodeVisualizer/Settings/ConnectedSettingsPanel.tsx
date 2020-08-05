@@ -1,8 +1,14 @@
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { State } from "@/UserInterface/Redux/State/State";
-import { onSettingChange, onExpandChange } from "@/UserInterface/Redux/reducers/SettingsReducer";
-import { ISettingsElement, ISettingsSection } from "@/UserInterface/Components/Settings/Types";
+import {
+  onSettingChange,
+  onExpandChange,
+} from "@/UserInterface/Redux/reducers/SettingsReducer";
+import {
+  ISettingsElement,
+  ISettingsSection,
+} from "@/UserInterface/Components/Settings/Types";
 import { ISettingsPropertyState } from "@/UserInterface/Redux/State/settings";
 import SettingsPanel from "@/UserInterface/Components/Settings/SettingsPanel";
 import ElementTypes from "@/UserInterface/Components/Settings/ElementTypes";
@@ -14,7 +20,7 @@ function mapDispatchToSettingsPanel(dispatch: Dispatch) {
     },
     onSettingChange: (id: string, value: any) => {
       dispatch(onSettingChange(id, value));
-    }
+    },
   };
 }
 
@@ -25,7 +31,11 @@ function mapStateToSettingsPanel(state: State) {
     for (const propertyId of properties.allIds) {
       const property = properties.byId[propertyId];
 
-      if (property.type === ElementTypes.SECTION && property.children && property.children.length) {
+      if (
+        property.type === ElementTypes.SECTION &&
+        property.children &&
+        property.children.length
+      ) {
         const section = convertStateToSectionObject(propertyId, properties);
         sections.push(section);
       }
@@ -47,7 +57,7 @@ function convertStateToSectionObject(
     name: property.name,
     isExpanded: !!property.expanded,
     elements: [],
-    subSections: []
+    subSections: [],
   };
 
   if (property.children && property.children.length) {
@@ -58,7 +68,7 @@ function convertStateToSectionObject(
           name: childProperty.name,
           type: childProperty.type,
           value: childProperty.value,
-          isReadOnly: childProperty.readonly
+          isReadOnly: childProperty.readonly,
         };
         for (const childId of childProperty.children) {
           const child = allProperties.byId[childId];
@@ -69,12 +79,15 @@ function convertStateToSectionObject(
             name: child.name,
             type: child.type,
             value: child.value,
-            isReadOnly: child.readonly
+            isReadOnly: child.readonly,
           });
         }
         section.elements.push(element);
       } else {
-        const childSection = convertStateToSectionObject(childPropertyId, allProperties);
+        const childSection = convertStateToSectionObject(
+          childPropertyId,
+          allProperties
+        );
         section.subSections.push(childSection);
       }
     }

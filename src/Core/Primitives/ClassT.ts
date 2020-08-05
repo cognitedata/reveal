@@ -18,5 +18,3 @@ export function isInstanceOf<T>(value: any, classType: Class<T>): value is T
 {
   return value instanceof classType;
 }
-
-

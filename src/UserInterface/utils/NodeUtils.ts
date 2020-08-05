@@ -13,6 +13,7 @@ export default class NodeUtils
   {
     return NodeUtils._currentProperties;
   }
+
   public static set properties(properties: BasePropertyFolder | null)
   {
     NodeUtils._currentProperties = properties;

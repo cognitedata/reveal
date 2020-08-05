@@ -143,7 +143,7 @@ describe("Hierarcy", () =>
       expect(grandChild.hasParent).toBe(true);
       expect(grandChild.parent).not.toBeNull();
 
-      const parent = grandChild.parent;
+      const {parent} = grandChild;
       if (!parent)
         return;
 
@@ -194,7 +194,6 @@ describe("Hierarcy", () =>
       expect(visibleCount).toBe(isVisible ? 4 : 0);
     }
   }
-
 
   function countView(): void
   {
@@ -263,4 +262,3 @@ describe("Hierarcy", () =>
     }
   }
 });
-

@@ -40,7 +40,9 @@ export class PolylinesNode extends DataNode
   //==================================================
 
   public get polylines(): Polylines | null { return this.anyData; }
+
   public set polylines(value: Polylines | null) { this.anyData = value; }
+
   public get renderStyle(): PolylinesRenderStyle | null { return this.getRenderStyle() as PolylinesRenderStyle; }
 
   //==================================================
@@ -48,15 +50,16 @@ export class PolylinesNode extends DataNode
   //==================================================
 
   public /*override*/ get className(): string { return PolylinesNode.className; }
+
   public /*override*/ isA(className: string): boolean { return className === PolylinesNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Polylines" }
+  public /*override*/ get typeName(): string { return "Polylines"; }
 
-  public /*override*/ getIcon(): string { return PolylinesNodeIcon }
+  public /*override*/ getIcon(): string { return PolylinesNodeIcon; }
 
   public /*override*/ get boundingBox(): Range3 { return this.polylines ? this.polylines.boundingBox : new Range3(); }
 

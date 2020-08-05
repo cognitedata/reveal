@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import * as Color from "color"
+import * as Color from "color";
 
 import { UniqueId } from "@/Core/Primitives/UniqueId";
 import { Identifiable } from "@/Core/Primitives/Identifiable";
@@ -53,11 +53,9 @@ export abstract class BaseNode extends Identifiable
   private _color: Color | undefined = undefined;
   private _name: string | undefined = undefined;
   private _isExpanded = false;
-
   private _isActive: boolean = false;
   private _isSelected: boolean = false;
   private _isInitialized: boolean = false;
-
   private _uniqueId: UniqueId = UniqueId.new();
   private _children: BaseNode[] = [];
   private _parent: BaseNode | null = null;
@@ -73,10 +71,9 @@ export abstract class BaseNode extends Identifiable
   public set color(value: Color) { this.setColor(value); }
   public get uniqueId(): UniqueId { return this._uniqueId; }
   public get renderStyles(): BaseRenderStyle[] { return this._renderStyles; }
-  public get path(): string { return (this.parent ? this.parent.path : "") + "\\" + this.name; }
+  public get path(): string { return `${this.parent ? this.parent.path : ""}\\${this.name}`; }
   public get isInitialized(): boolean { return this._isInitialized; }
   public get activeTarget(): ITarget | null { return this.activeTargetIdAccessor as ITarget; }
-
   public get displayName(): string // This is the text shown in the tree control
   {
     const nameExtension = this.getNameExtension();
@@ -89,7 +86,7 @@ export abstract class BaseNode extends Identifiable
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return BaseNode.className }
+  public /*override*/ get className(): string { return BaseNode.className; }
   public /*override*/ isA(className: string): boolean { return className === BaseNode.className || super.isA(className); }
   public /*override*/ toString(): string { return this.getDebugString(); }
 
@@ -243,7 +240,7 @@ export abstract class BaseNode extends Identifiable
   protected /*virtual*/ removeInteractiveCore(): void { }
   protected /*virtual*/ get activeTargetIdAccessor(): ITargetIdAccessor | null
   {
-    const root = this.root;
+    const {root} = this;
     return root ? root.activeTargetIdAccessor : null;
   }
 
@@ -380,7 +377,6 @@ export abstract class BaseNode extends Identifiable
   //==================================================
 
   public hasChildByType<T extends BaseNode>(classType: Class<T>): boolean { return this.getChildByType(classType) !== null; }
-
   public getChild(index: number): BaseNode { return this._children[index]; }
 
   public getChildByName(name: string): BaseNode | null
@@ -576,7 +572,7 @@ export abstract class BaseNode extends Identifiable
       Error(`The child ${this.typeName} don't have a parent`);
       return false;
     }
-    const childIndex = this.childIndex;
+    const {childIndex} = this;
     if (childIndex === undefined)
     {
       Error(`The child ${this.typeName} is not child of it's parent`);
@@ -627,7 +623,7 @@ export abstract class BaseNode extends Identifiable
     // It is not finished, because the children it not taken properly care of
     this.eventListeners.length = 0;
     this.removeInteractiveCore();
-    const parent = this.parent;
+    const {parent} = this;
     this.remove();
     parent!.notify(new NodeEventArgs(Changes.childDeleted));
   }
@@ -666,7 +662,6 @@ export abstract class BaseNode extends Identifiable
   //==================================================
   // INSTANCE METHODS: EventListener impementation
   //==================================================
-
 
   private eventListeners: IEventListener[] = [];
 
@@ -777,7 +772,7 @@ export abstract class BaseNode extends Identifiable
       if (this.typeName === child.typeName)
         childIndex++;
     }
-    result += " " + (childIndex + 1);
+    result += ` ${childIndex + 1}`;
     return result;
   }
 
@@ -792,7 +787,7 @@ export abstract class BaseNode extends Identifiable
     result += Util.cocatinate("className", this.className);
     if (this.canChangeColor())
       result += Util.cocatinate("color", this.getColor());
-    result += Util.cocatinate("id", this.uniqueId.isEmpty ? "" : (this.uniqueId.toString().substring(0, 6) + "..."));
+    result += Util.cocatinate("id", this.uniqueId.isEmpty ? "" : (`${this.uniqueId.toString().substring(0, 6)}...`));
     if (this.isActive)
       result += Util.cocatinate("active");
     if (this.renderStyles.length > 0)
@@ -808,7 +803,7 @@ export abstract class BaseNode extends Identifiable
       let padding = 0;
       for (const { } of node.getAncestors())
         padding++;
-      const line = " ".padStart(padding * 4) + node.toString() + "\n";
+      const line = `${" ".padStart(padding * 4) + node.toString()}\n`;
       text += line;
     }
     return text;
@@ -817,4 +812,3 @@ export abstract class BaseNode extends Identifiable
   // tslint:disable-next-line: no-console
   public debugHierarcy(): void { console.log(this.toHierarcyString()); }
 }
-

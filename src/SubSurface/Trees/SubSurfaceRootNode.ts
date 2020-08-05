@@ -38,7 +38,7 @@ export class SubSurfaceRootNode extends BaseRootNode
   {
     const child = this.getChildByType(WellTreeNode);
     if (!child)
-      throw new Error("Cannot find the " + WellTreeNode.className);
+      throw new Error(`Cannot find the ${WellTreeNode.className}`);
     return child;
   }
 
@@ -46,7 +46,7 @@ export class SubSurfaceRootNode extends BaseRootNode
   {
     const child = this.getChildByType(SeismicTreeNode);
     if (!child)
-      throw new Error("Cannot find the " + SeismicTreeNode.className);
+      throw new Error(`Cannot find the ${SeismicTreeNode.className}`);
     return child;
   }
 
@@ -54,7 +54,7 @@ export class SubSurfaceRootNode extends BaseRootNode
   {
     const child = this.getChildByType(OthersTreeNode);
     if (!child)
-      throw new Error("Cannot find the " + OthersTreeNode.className);
+      throw new Error(`Cannot find the ${OthersTreeNode.className}`);
     return child;
   }
 
@@ -62,7 +62,7 @@ export class SubSurfaceRootNode extends BaseRootNode
   {
     const child = this.getChildByType(ColorMapTreeNode);
     if (!child)
-      throw new Error("Cannot find the " + ColorMapTreeNode.className);
+      throw new Error(`Cannot find the ${ColorMapTreeNode.className}`);
     return child;
   }
 
@@ -70,7 +70,7 @@ export class SubSurfaceRootNode extends BaseRootNode
   {
     const child = this.getChildByType(SettingsTreeNode);
     if (!child)
-      throw new Error("Cannot find the " + SettingsTreeNode.className);
+      throw new Error(`Cannot find the ${SettingsTreeNode.className}`);
     return child;
   }
 
@@ -85,14 +85,17 @@ export class SubSurfaceRootNode extends BaseRootNode
   //==================================================
 
   public /*override*/ get className(): string { return SubSurfaceRootNode.className; }
+
   public /*override*/ isA(className: string): boolean { return className === SubSurfaceRootNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public  /*override*/ isVisibleInTreeControl(): boolean { return false; }
-  public /*override*/ getIcon(): string { return RootNodeIcon }
+  public /*override*/ isVisibleInTreeControl(): boolean { return false; }
+
+  public /*override*/ getIcon(): string { return RootNodeIcon; }
+
   protected /*override*/ initializeCore(): void
   {
     super.initializeCore();

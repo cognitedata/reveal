@@ -5,6 +5,7 @@ import ExpandOpen from "@images/Expanders/ExpandOpen.png";
 import ExpandClosed from "@images/Expanders/ExpandClosed.png";
 import ExpandOpenFocus from "@images/Expanders/ExpandOpenFocus.png";
 import ExpandClosedFocus from "@images/Expanders/ExpandClosedFocus.png";
+
 interface ExpandProps {
   readonly expanded?: boolean;
 }
@@ -12,11 +13,12 @@ interface ExpandProps {
 const Expand = styled.div<ExpandProps>`
   height: 0.7em;
   width: 0.7em;
-  background-image: ${props => (props.expanded ? `url(${ExpandOpen})` : `url(${ExpandClosed})`)};
+  background-image: ${(props) =>
+    props.expanded ? `url(${ExpandOpen})` : `url(${ExpandClosed})`};
   background-repeat: no-repeat, no-repeat;
   background-size: 0.7em 0.7em;
   .expand-btn:hover & {
-    background-image: ${props =>
+    background-image: ${(props) =>
       props.expanded ? `url(${ExpandOpenFocus})` : `url(${ExpandClosedFocus})`};
     background-repeat: no-repeat, no-repeat;
   }
@@ -43,7 +45,6 @@ export function ExpandButton(props: {
         <Expand expanded={props.expanded} />
       </div>
     );
-  } else {
-    return <div className="expand-btn" />;
   }
+  return <div className="expand-btn" />;
 }

@@ -25,8 +25,11 @@ export class ContouringService
   //==================================================
 
   private range = Range1.newZero;
+
   private inc: number;
+
   private tolerance: number;
+
   private positions: number[] = [];
 
   //==================================================
@@ -118,7 +121,7 @@ export class ContouringService
       b.z = a.z + this.tolerance;
 
     // Special cases, check exact intersection on the corner or along the edges
-    if (a.z == z)
+    if (a.z === z)
     {
       if (Ma.isInside(b.z, z, c.z))
       {
@@ -126,20 +129,20 @@ export class ContouringService
         this.addLinearInterpolation(b, c, z);
         return true;
       }
-      if (b.z == z && c.z != z)
+      if (b.z === z && c.z !== z)
       {
         this.add(a);
         this.add(b);
         return true;
       }
-      if (c.z == z && b.z != z)
+      if (c.z === z && b.z !== z)
       {
         this.add(c);
         this.add(a);
         return true;
       }
     }
-    if (b.z == z)
+    if (b.z === z)
     {
       if (Ma.isInside(c.z, z, a.z))
       {
@@ -147,14 +150,14 @@ export class ContouringService
         this.addLinearInterpolation(c, a, z);
         return true;
       }
-      if (c.z == z && a.z != z)
+      if (c.z === z && a.z !== z)
       {
         this.add(b);
         this.add(c);
         return true;
       }
     }
-    if (c.z == z && Ma.isInside(a.z, z, b.z))
+    if (c.z === z && Ma.isInside(a.z, z, b.z))
     {
       this.add(c);
       this.addLinearInterpolation(a, b, z);
@@ -169,7 +172,7 @@ export class ContouringService
     }
     if (Ma.isInside(b.z, z, c.z))
     {
-      if (numPoints == 0)
+      if (numPoints === 0)
         this.addLinearInterpolation(b, c, z);
       else
         this.addLinearInterpolation(b, c, z);
@@ -177,16 +180,16 @@ export class ContouringService
     }
     if (numPoints < 2 && Ma.isInside(c.z, z, a.z))
     {
-      if (numPoints == 0)
+      if (numPoints === 0)
         this.addLinearInterpolation(c, a, z);
       else
         this.addLinearInterpolation(c, a, z);
       numPoints++;
     }
-    if (numPoints == 2)
+    if (numPoints === 2)
       return true;
 
-    if (numPoints == 1)
+    if (numPoints === 1)
     {
       // Remove the last added
       this.positions.pop();
@@ -195,7 +198,6 @@ export class ContouringService
     }
     return false;
   }
-
 
   private add(position: Vector3): void
   {
@@ -211,4 +213,3 @@ export class ContouringService
     this.positions.push((b.x - a.x) * f + a.x, (b.y - a.y) * f + a.y, z);
   }
 }
-

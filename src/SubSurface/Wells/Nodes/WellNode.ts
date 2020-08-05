@@ -29,7 +29,9 @@ export class WellNode extends BaseNode
   //==================================================
 
   public wellHead = Vector3.newZero;
+
   public waterDepth = 0;
+
   public elevationType: string = "";
 
   public get origin(): Vector3 { return new Vector3(this.wellHead.x, this.wellHead.y, 0); }
@@ -45,15 +47,16 @@ export class WellNode extends BaseNode
   //==================================================
 
   public /*override*/ get className(): string { return WellNode.className; }
+
   public /*override*/ isA(className: string): boolean { return className === WellNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Well" }
+  public /*override*/ get typeName(): string { return "Well"; }
 
-  public /*override*/ getIcon(): string { return WellNodeIcon }
+  public /*override*/ getIcon(): string { return WellNodeIcon; }
 
   protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
   {

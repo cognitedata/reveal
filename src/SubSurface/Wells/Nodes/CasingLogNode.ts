@@ -30,6 +30,7 @@ export class CasingLogNode extends BaseLogNode
   //==================================================
 
   public get log(): CasingLog | null { return this.anyData as CasingLog; }
+
   public set log(value: CasingLog | null) { this.anyData = value; }
 
   //==================================================
@@ -43,20 +44,21 @@ export class CasingLogNode extends BaseLogNode
   //==================================================
 
   public /*override*/ get className(): string { return CasingLogNode.className; }
+
   public /*override*/ isA(className: string): boolean { return className === CasingLogNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Casing" }
+  public /*override*/ get typeName(): string { return "Casing"; }
 
-  public /*override*/ getIcon(): string { return CasingLogNodeIcon }
+  public /*override*/ getIcon(): string { return CasingLogNodeIcon; }
 
   protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
   {
     super.populateStatisticsCore(folder);
-    const log = this.log;
+    const {log} = this;
     if (!log)
       return;
 
@@ -67,5 +69,5 @@ export class CasingLogNode extends BaseLogNode
   // OVERRIDES of BaseLogNode
   //==================================================
 
-  public /*override*/  get wellLogType(): WellLogType { return WellLogType.Casing; }
+  public /*override*/ get wellLogType(): WellLogType { return WellLogType.Casing; }
 }

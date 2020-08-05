@@ -1,4 +1,3 @@
-
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { ThreeRenderTargetCommand } from "@/Three/Commands/ThreeRenderTargetCommand";
 import ViewFromCommandIcon from "@images/Commands/ViewFromCommand.png";
@@ -27,7 +26,7 @@ export class ViewFromCommand extends ThreeRenderTargetCommand
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*override*/ getName(): string { return "View from " + this.directionName; }
+  public /*override*/ getName(): string { return `View from ${this.directionName}`; }
 
   public /*override*/ getIcon(): string
   {
@@ -73,5 +72,3 @@ export class ViewFromCommand extends ThreeRenderTargetCommand
     }
   }
 }
-
-

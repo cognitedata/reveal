@@ -22,7 +22,9 @@ export class TrajectorySample extends MdSample
   //==================================================
 
   public point: Vector3;
+
   public inclination = 0;
+
   public azimuth = 0;
 
   //==================================================
@@ -40,6 +42,7 @@ export class TrajectorySample extends MdSample
   //==================================================
 
   public /*override*/ toString(): string { return `${super.toString()} Point: ${this.point}`; }
+
   public /*override*/ getSampleText(): string { return this.point.toString(); }
 
   //==================================================

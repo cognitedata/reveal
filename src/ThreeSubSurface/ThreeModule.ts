@@ -1,4 +1,3 @@
-
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
@@ -113,4 +112,3 @@ export class ThreeModule extends BaseModule
         node.setVisibleInteractive(true, target);
   }
 }
-

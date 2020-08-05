@@ -39,7 +39,7 @@ export class ColorMapTreeNode extends BaseTreeNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Colormaps" }
-  public /*override*/ getIcon(): string { return ColorMapTreeNodeIcon }
-  public /*override*/ getName(): string { return "Colormaps" }
+  public /*override*/ get typeName(): string { return "Colormaps"; }
+  public /*override*/ getIcon(): string { return ColorMapTreeNodeIcon; }
+  public /*override*/ getName(): string { return "Colormaps"; }
 }

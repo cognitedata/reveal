@@ -78,7 +78,8 @@ export class ViewFactory
   //==================================================
 
   private getKeyByNode(node: BaseNode, targetClassName: string): string { return this.getKey(node.className, targetClassName); }
-  private getKey(nodeType: string, targetClassName: string): string { return nodeType + "." + targetClassName }
+
+  private getKey(nodeType: string, targetClassName: string): string { return `${nodeType}.${targetClassName}`; }
 }
 
 //==================================================
@@ -88,9 +89,9 @@ export class ViewFactory
 class Product
 {
   public func: () => BaseView;
+
   public constructor(func: () => BaseView)
   {
     this.func = func;
   }
 }
-

@@ -25,10 +25,15 @@ export class FloatLogStyle extends BaseRenderStyle
   //==================================================
 
   public colorType = ColorType.Specified;
+
   public rightBand = false;
+
   public min = 1; // Type in value
+
   public max = 1; // Type in value
+
   public useMin = false;
+
   public useMax = false;
 
   // public minValue = new UseFloat(true, false, 3);
@@ -50,6 +55,3 @@ export class FloatLogStyle extends BaseRenderStyle
     super.PopulateCore(folder);
   }
 }
-
-
-

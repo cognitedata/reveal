@@ -30,6 +30,7 @@ export class PointLogNode extends BaseLogNode
   //==================================================
 
   public get log(): PointLog | null { return this.anyData as PointLog; }
+
   public set log(value: PointLog | null) { this.anyData = value; }
 
   //==================================================
@@ -43,14 +44,16 @@ export class PointLogNode extends BaseLogNode
   //==================================================
 
   public /*override*/ get className(): string { return PointLogNode.className; }
+
   public /*override*/ isA(className: string): boolean { return className === PointLogNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "RiskLog" }
-  public /*override*/ getIcon(): string { return PointLogNodeIcon }
+  public /*override*/ get typeName(): string { return "RiskLog"; }
+
+  public /*override*/ getIcon(): string { return PointLogNodeIcon; }
 
   protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
   {
@@ -61,5 +64,5 @@ export class PointLogNode extends BaseLogNode
   // OVERRIDES of BaseLogNode
   //==================================================
 
-  public /*override*/  get wellLogType(): WellLogType { return WellLogType.Point; }
+  public /*override*/ get wellLogType(): WellLogType { return WellLogType.Point; }
 }

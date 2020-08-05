@@ -20,7 +20,3 @@ export enum PropertyType
   Color,
   Select,
 }
-
-
-
-

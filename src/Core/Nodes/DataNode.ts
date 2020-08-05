@@ -43,7 +43,6 @@ export abstract class DataNode extends BaseVisualNode
 
   public get dataLoader(): IDataLoader | null { return this._dataLoader; }
   public set dataLoader(value: IDataLoader | null) { this._dataLoader = value; }
-
   public get hasDataInMemory(): boolean { return this._data != null; }
   public get dataIsLost(): boolean { return this._dataIsLost; }
 

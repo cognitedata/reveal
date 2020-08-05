@@ -13,13 +13,10 @@
 
 import * as THREE from "three";
 import CameraControls from "camera-controls";
-
 import { Range3 } from "@/Core/Geometry/Range3";
 import { Colors } from "@/Core/Primitives/Colors";
-
 import { BaseRenderTargetNode } from "@/Core/Nodes/BaseRenderTargetNode";
 import { AxisNode } from "@/Core/Nodes/Decorations/AxisNode";
-
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { TreeOverlay } from "@/Three/Utilities/TreeOverlay";
 import { Ma } from "@/Core/Primitives/Ma";
@@ -76,6 +73,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   //==================================================
 
   public setDefaultTool(tool: ToolCommand | null = null) { this._toolController.setDefaultTool(tool, this._cameraControl); }
+
   public set activeTool(tool: ToolCommand | null) { this._toolController.setActiveTool(tool, this._cameraControl); }
   public get activeTool(): ToolCommand | null { return this._toolController._activeTool; }
 
@@ -87,14 +85,14 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   private get controls(): CameraControls { return this.cameraControl.controls; }
   public get transformer(): ThreeTransformer { return this._transformer; }
   private get directionalLight(): THREE.DirectionalLight | null { return this.scene.getObjectByName(DirectionalLightName) as THREE.DirectionalLight; }
-
   public get zScale(): number { return this._transformer.zScale; }
+
   public set zScale(value: number)
   {
     if (this._transformer.zScale <= 0)
       throw Error("ZScale cannot be less or equal 0");
 
-    if (this._transformer.zScale == value)
+    if (this._transformer.zScale === value)
       return;
 
     // Clear the views
@@ -114,7 +112,6 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
       throw Error("Scene is not set");
     return this._scene;
   }
-
 
   public get cameraControl(): CameraControl
   {
@@ -146,6 +143,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   //==================================================
 
   public /*override*/ get className(): string { return ThreeRenderTargetNode.className; }
+
   public /*override*/ isA(className: string): boolean { return className === ThreeRenderTargetNode.className || super.isA(className); }
 
   //==================================================
@@ -183,7 +181,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   public /*override*/ onResize(): void
   {
-    const pixelRange = this.pixelRange;
+    const {pixelRange} = this;
     this.renderer.setSize(pixelRange.x.delta, pixelRange.y.delta);
     if (this._cameraControl)
       this._cameraControl.onResize(this.aspectRatio);
@@ -191,7 +189,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     this._prevPixelRange = pixelRange;
   }
 
-  public  /*override*/ viewAll(): boolean
+  public /*override*/ viewAll(): boolean
   {
     const boundingBox = this.getBoundingBoxFromViews();
     this.transformer.transformRangeTo3D(boundingBox);
@@ -203,14 +201,14 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     if (!this.isInitialized)
       return;
 
-    const camera = this.camera;
+    const {camera} = this;
     const boundingBox = this.getBoundingBoxFromViews();
     if (!boundingBox || boundingBox.isEmpty)
       return;
 
     this.transformer.transformRangeTo3D(boundingBox);
 
-    const diagonal = boundingBox.diagonal;
+    const {diagonal} = boundingBox;
     const near = 0.001 * diagonal;
     const far = 2 * diagonal + this.cameraControl.distance;
     if (!Ma.isAbsEqual(camera.near, near, 0.1 * near) || !Ma.isAbsEqual(camera.far, far, 0.1 * far))
@@ -237,7 +235,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     if (!this.pixelRange.isEqual(this._prevPixelRange))
       this.onResize();
 
-    const controls = this.controls;
+    const {controls} = this;
     let needsUpdate = true;
     if (controls)
     {
@@ -304,15 +302,15 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   public viewFrom(index: number): boolean
   {
-    const boundingBox = this.getBoundingBoxFromViews()
+    const boundingBox = this.getBoundingBoxFromViews();
     this.transformer.transformRangeTo3D(boundingBox);
     return !this._cameraControl ? false : this._cameraControl.viewFrom(boundingBox, index);
   }
 
   public switchCamera(isPerspectiveMode: boolean)
   {
-    const azimuthAngle = this.cameraControl.controls.azimuthAngle;
-    const polarAngle = this.cameraControl.controls.polarAngle;
+    const {azimuthAngle} = this.cameraControl.controls;
+    const {polarAngle} = this.cameraControl.controls;
 
     this._cameraControl = new CameraControl(this, isPerspectiveMode);
 
@@ -322,15 +320,17 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     const pixelYRange = this.pixelRange.y.max - this.pixelRange.y.min;
 
     // Set camera status to match with previous selected camera
-    !isPerspectiveMode && this.cameraControl.controls.zoomTo(pixelYRange / boundingBoxZRange);
+    if(!isPerspectiveMode)
+      this.cameraControl.controls.zoomTo(pixelYRange / boundingBoxZRange);
+    
     this._cameraControl.controls.rotateTo(azimuthAngle, polarAngle, false);
-    this._cameraControl.viewRange(boundingBox)
+    this._cameraControl.viewRange(boundingBox);
   }
 
   private updateLightPosition(): void
   {
-    const camera = this.camera;
-    const controls = this.controls;
+    const {camera} = this;
+    const {controls} = this;
     const light = this.directionalLight;
     if (!light)
       return;

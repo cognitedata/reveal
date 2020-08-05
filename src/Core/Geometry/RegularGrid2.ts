@@ -28,16 +28,23 @@ export class RegularGrid2 extends Grid2
   //==================================================
 
   public origin: Vector3; // Z is translation in Z
+
   public inc: Vector3; // Z is ignord
 
   private _hasRotationAngle = false;
+
   private _rotationAngle = 0;
+
   private _sinRotationAngle = 0;
+
   private _cosRotationAngle = 1;
+
   private _buffer: Float32Array;
 
   static readonly _staticHelperA = Vector3.newZero;
+
   static readonly _staticHelperB = Vector3.newZero;
+
   static readonly _staticHelperC = Vector3.newZero;
 
   //==================================================
@@ -48,7 +55,7 @@ export class RegularGrid2 extends Grid2
 
   public set rotationAngle(value: number)
   {
-    this._hasRotationAngle = value != 0;
+    this._hasRotationAngle = value !== 0;
     if (this._hasRotationAngle)
     {
       this._rotationAngle = value;
@@ -72,7 +79,7 @@ export class RegularGrid2 extends Grid2
     super(nodeSize);
     this.origin = origin;
     this.inc = inc;
-    if (rotationAngle != undefined)
+    if (rotationAngle !== undefined)
       this.rotationAngle = rotationAngle;
     this._buffer = new Float32Array(nodeSize.size);
   }
@@ -97,7 +104,7 @@ export class RegularGrid2 extends Grid2
       for (let i = this.nodeSize.i - 1; i >= 0; i--)
       {
         if (this.getPosition(i, j, position))
-          boundingBox.add(position)
+          boundingBox.add(position);
       }
     }
   }
@@ -341,7 +348,7 @@ export class RegularGrid2 extends Grid2
   {
     const origin = Vector3.newZero;
     const inc = new Vector3(1, 1, 0);
-    const nodeSize = new Index2(Math.pow(2, powerOf2) + 1);
+    const nodeSize = new Index2(2**powerOf2 + 1);
     const stdDev = 1;
     const grid = new RegularGrid2(nodeSize, origin, inc, rotationAngle);
 

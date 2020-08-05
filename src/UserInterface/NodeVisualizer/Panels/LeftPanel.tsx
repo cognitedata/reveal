@@ -7,7 +7,7 @@ import { Explorer } from "@/UserInterface/Components/Explorer/Explorer";
 export default function LeftPanel() {
   return (
     <div className="left-panel">
-      <SplitPane split="horizontal" defaultSize={"50%"} primary="second">
+      <SplitPane split="horizontal" defaultSize="50%" primary="second">
         <Explorer />
         <ConnectedSettingsPanel />
       </SplitPane>

@@ -22,13 +22,14 @@ export class NodePointer
   //==================================================
 
   private readonly _indexes: number[] = [];
+
   private _uniqueId: UniqueId | null = null;
 
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get uniqueId(): UniqueId | null { return this._uniqueId };
+  public get uniqueId(): UniqueId | null { return this._uniqueId; };
   public get isEmpty(): boolean { return !this._uniqueId || this._uniqueId.isEmpty; }
   public get node(): BaseNode | null { return this.getNode(); }
 
@@ -60,7 +61,7 @@ export class NodePointer
     if (!this._uniqueId)
       return null;
 
-    var root = this.getRoot(anyInTheSameTree);
+    const root = this.getRoot(anyInTheSameTree);
     if (!root)
       return null;
 
@@ -87,11 +88,11 @@ export class NodePointer
 
   private getNodeByIndexes(root: BaseNode): BaseNode | null
   {
-    if (this._indexes.length == 0)
+    if (this._indexes.length === 0)
       return null;
 
-    var node = root;
-    for (let index of this._indexes)
+    let node = root;
+    for (const index of this._indexes)
     {
       if (node == null)
         break;
@@ -111,7 +112,7 @@ export class NodePointer
       this.clearIndexes();
       return null;
     }
-    if (node.uniqueId != this._uniqueId)
+    if (node.uniqueId !== this._uniqueId)
     {
       this.clearIndexes();
       return null;
@@ -139,11 +140,11 @@ export class NodePointer
   {
     this.clearIndexes();
 
-    var child = node;
-    var parent = child.parent;
+    let child = node;
+    let {parent} = child;
     while (parent)
     {
-      var index = parent.children.indexOf(child);
+      const index = parent.children.indexOf(child);
       if (index < 0)
         throw new Error("index < 0");
 
@@ -152,7 +153,7 @@ export class NodePointer
       parent = child.parent;
     }
     this._indexes.reverse();
-    if (this.getNodeByIndexes(root) != node)
+    if (this.getNodeByIndexes(root) !== node)
       throw new Error("rebuildIndexes doesn't work");
   }
 }

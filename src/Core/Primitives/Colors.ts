@@ -1,4 +1,3 @@
-
 //=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
@@ -12,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import * as Color from "color"
+import * as Color from "color";
 
 const MaxByte = 255;
 
@@ -22,23 +21,38 @@ export class Colors
   // INSTANCE FIELDS
   //==================================================
 
-  public static get transparent(): Color { return Color.rgb(0, 0, 0, 0) };
-  public static get white(): Color { return Color.rgb(MaxByte, MaxByte, MaxByte) };
-  public static get veryDarkGrey(): Color { return Color.rgb(MaxByte / 12, MaxByte / 12, MaxByte / 12) };
-  public static get darkGrey(): Color { return Color.rgb(MaxByte / 2, MaxByte / 2, MaxByte / 2) };
-  public static get lightGrey(): Color { return Color.rgb(3 * MaxByte / 4, 3 * MaxByte / 4, 3 * MaxByte / 4) };
-  public static get grey(): Color { return Color.rgb(2 * MaxByte / 3, 2 * MaxByte / 3, 2 * MaxByte / 3) };
-  public static get black(): Color { return Color.rgb(0, 0, 0) };
-  public static get red(): Color { return Color.rgb(MaxByte, 0, 0) };
-  public static get green(): Color { return Color.rgb(0, MaxByte, 0) };
-  public static get blue(): Color { return Color.rgb(0, 0, MaxByte) };
-  public static get orange(): Color { return Color.rgb(MaxByte, 102, 0) };
-  public static get yellow(): Color { return Color.rgb(MaxByte, MaxByte, 0) };
-  public static get cyan(): Color { return Color.rgb(0, MaxByte, MaxByte) };
-  public static get magenta(): Color { return Color.rgb(MaxByte, 0, MaxByte) };
-  public static get selectedEmissive(): Color { return Color.rgb(128, 128, 0) };
+  public static get transparent(): Color { return Color.rgb(0, 0, 0, 0); };
+
+  public static get white(): Color { return Color.rgb(MaxByte, MaxByte, MaxByte); };
+
+  public static get veryDarkGrey(): Color { return Color.rgb(MaxByte / 12, MaxByte / 12, MaxByte / 12); };
+
+  public static get darkGrey(): Color { return Color.rgb(MaxByte / 2, MaxByte / 2, MaxByte / 2); };
+
+  public static get lightGrey(): Color { return Color.rgb(3 * MaxByte / 4, 3 * MaxByte / 4, 3 * MaxByte / 4); };
+
+  public static get grey(): Color { return Color.rgb(2 * MaxByte / 3, 2 * MaxByte / 3, 2 * MaxByte / 3); };
+
+  public static get black(): Color { return Color.rgb(0, 0, 0); };
+
+  public static get red(): Color { return Color.rgb(MaxByte, 0, 0); };
+
+  public static get green(): Color { return Color.rgb(0, MaxByte, 0); };
+
+  public static get blue(): Color { return Color.rgb(0, 0, MaxByte); };
+
+  public static get orange(): Color { return Color.rgb(MaxByte, 102, 0); };
+
+  public static get yellow(): Color { return Color.rgb(MaxByte, MaxByte, 0); };
+
+  public static get cyan(): Color { return Color.rgb(0, MaxByte, MaxByte); };
+
+  public static get magenta(): Color { return Color.rgb(MaxByte, 0, MaxByte); };
+
+  public static get selectedEmissive(): Color { return Color.rgb(128, 128, 0); };
 
   private static index = 0;
+
   private static _colors: Color[] | null = null;
 
   //==================================================
@@ -54,7 +68,7 @@ export class Colors
 
   public static get nextColor(): Color
   {
-    const colors = this.colors;
+    const {colors} = this;
     Colors.index = (Colors.index + 1) % colors.length;
     return colors[Colors.index];
   }
@@ -65,8 +79,8 @@ export class Colors
 
   public static getNextColor(index: number): Color
   {
-    const colors = this.colors;
-    index = index % colors.length;
+    const {colors} = this;
+    index %= colors.length;
     return colors[index];
   }
 
@@ -97,9 +111,9 @@ export class Colors
     let g = color.green() / 255;
     let b = color.blue() / 255;
 
-    r = Math.pow(r, gamma);
-    g = Math.pow(g, gamma);
-    b = Math.pow(b, gamma);
+    r **=gamma;
+    g **=gamma;
+    b **=gamma;
 
     r = Math.round(255 * r);
     g = Math.round(255 * g);
@@ -108,4 +122,3 @@ export class Colors
     return Color.rgb(r, g, b);
   }
 }
-

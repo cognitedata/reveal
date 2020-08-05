@@ -14,6 +14,7 @@ class UserInterfaceListener implements IUserInterface
 {
 
   private readonly notificationAdaptor: NotificationsToActionsAdaptor;
+
   private readonly dispatcher: Dispatch;
 
   public constructor(notificationAdaptor: NotificationsToActionsAdaptor, dispatcher: Dispatch)

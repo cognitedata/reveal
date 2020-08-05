@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import * as Color from "color"
+import * as Color from "color";
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Range1 } from "@/Core/Geometry/Range1";
@@ -16,17 +16,24 @@ export class TrajectoryBufferGeometry extends THREE.BufferGeometry
 
   // Buffers to be filled up
   private vertices: number[] = [];
+
   private normals: number[] = [];
+
   private indices: number[] = [];
+
   private colors: number[] = [];
+
   private uvs: number[] = [];
 
   private sampleIndex = 0;
 
   // Temp vectors for speed
   private pseudoNormal = Vector3.newZero;
+
   private normal = Vector3.newZero;
+
   private n = Vector3.newZero;
+
   private b = Vector3.newZero;
 
   //==================================================

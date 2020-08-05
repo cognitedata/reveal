@@ -23,7 +23,9 @@ export abstract class BaseRenderStyle extends BaseStyle implements ITargetIdAcce
   //==================================================
 
   public readonly fontSizeOptions = [10, 20, 25, 30, 50, 75, 100, 200];
+
   private _targetId: TargetId;
+
   public isDefault: boolean = false;
 
   //==================================================
@@ -31,6 +33,7 @@ export abstract class BaseRenderStyle extends BaseStyle implements ITargetIdAcce
   //==================================================
 
   public get targetId(): TargetId { return this._targetId; }
+
   public set targetId(value: TargetId) { this._targetId = value; }
 
   //==================================================

@@ -34,16 +34,20 @@ export class SeismicPlaneFolder extends BaseNode
   //==================================================
 
   public /*override*/ get className(): string { return SeismicPlaneFolder.className; }
+
   public /*override*/ isA(className: string): boolean { return className === SeismicPlaneFolder.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Planes" }
+  public /*override*/ get typeName(): string { return "Planes"; }
+
   public /*override*/ canChangeName(): boolean { return false; }
+
   public /*override*/ canChangeColor(): boolean { return false; }
-  public /*override*/ getIcon(): string { return SurfaceNodeIcon }
+
+  public /*override*/ getIcon(): string { return SurfaceNodeIcon; }
 
   public /*override*/ initializeCore()
   {

@@ -20,7 +20,9 @@ import { BaseNode } from "@/Core/Nodes/BaseNode";
 class ChangedDescription
 {
   public changed: symbol;
+
   public fieldName: string | undefined;
+
   public origin: BaseNode | null;
 
   public constructor(changed: symbol, fieldName?: string, origin: BaseNode | null = null)

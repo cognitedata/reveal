@@ -51,7 +51,7 @@ export abstract class BaseVisualNode extends BaseNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return BaseVisualNode.className }
+  public /*override*/ get className(): string { return BaseVisualNode.className; }
   public /*override*/ isA(className: string): boolean { return className === BaseVisualNode.className || super.isA(className); }
 
   //==================================================
@@ -73,8 +73,7 @@ export abstract class BaseVisualNode extends BaseNode
     {
       if (this.canBeChecked(target))
         return CheckBoxState.None;
-      else
-        return CheckBoxState.Disabled;
+      return CheckBoxState.Disabled;
     }
     return CheckBoxState.Never;
   }

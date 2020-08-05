@@ -18,7 +18,8 @@ export class CopyImageCommand extends ThreeRenderTargetCommand
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*override*/ getName(): string { return "Copy a image of the viewer to the clipboard" }
+  public /*override*/ getName(): string { return "Copy a image of the viewer to the clipboard"; }
+
   public /*override*/ getIcon(): string { return CopyImageIcon; }
 
   protected /*override*/ invokeCore(): boolean 
@@ -30,5 +31,3 @@ export class CopyImageCommand extends ThreeRenderTargetCommand
     return true;
   }
 }
-
-

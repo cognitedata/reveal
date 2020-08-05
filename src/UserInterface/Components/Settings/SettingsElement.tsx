@@ -15,13 +15,13 @@ import { isNumber } from "@/UserInterface/Foundation/Utils/numericUtils";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      width: "100%"
+      width: "100%",
     },
     formField: {
       flex: 1,
       display: "flex",
       position: "relative",
-      margin: "0.05rem 0rem"
+      margin: "0.05rem 0rem",
     },
     formLabel: {
       flex: 1,
@@ -29,13 +29,13 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: ".5rem",
       fontSize: ".7rem",
       alignItems: "center",
-      fontWeight: 500
+      fontWeight: 500,
     },
     formInput: {
       flex: 1,
       display: "flex",
       position: "relative",
-      alignItems: "center"
+      alignItems: "center",
     },
     textInput: {
       height: "0.8rem",
@@ -46,31 +46,31 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: ".1rem",
       flex: 1,
       fontWeight: 400,
-      width: 0
+      width: 0,
     },
     readOnlyInput: {
-      background: "#ffffc4"
+      background: "#ffffc4",
     },
     checkbox: {
       position: "absolute",
       left: "-1.5rem",
       border: "1px solid black",
-      margin: 0
+      margin: 0,
     },
     select: {
       width: "100%",
-      display: "flex"
+      display: "flex",
     },
     option: {
       paddingLeft: "0.2rem",
       fontSize: ".6rem",
       display: "flex",
       alignItems: "center",
-      justifyContent: "flex-start"
+      justifyContent: "flex-start",
     },
     optionText: {
-      marginLeft: "0.5rem"
-    }
+      marginLeft: "0.5rem",
+    },
   })
 );
 
@@ -105,7 +105,10 @@ export default function SettingsElement(props: {
   };
 
   // Renders input elements dynamically
-  const renderInputElement = (elmConfig: ISettingsElement, checked?: boolean): any => {
+  const renderInputElement = (
+    elmConfig: ISettingsElement,
+    checked?: boolean
+  ): any => {
     const { value, isReadOnly, options, subElements, icon } = elmConfig;
 
     switch (elmConfig.type) {
@@ -114,20 +117,27 @@ export default function SettingsElement(props: {
           <input
             disabled={!isAvailable(checked)}
             {...keyExtractor(null, elmConfig.type, elmConfig.name)}
-            onChange={event => (!isReadOnly ? onChange(elmConfig.name, event.target.value) : null)}
+            onChange={(event) =>
+              !isReadOnly ? onChange(elmConfig.name, event.target.value) : null
+            }
             value={value}
             className={
-              isReadOnly ? `${classes.textInput} ${classes.readOnlyInput}` : classes.textInput
+              isReadOnly
+                ? `${classes.textInput} ${classes.readOnlyInput}`
+                : classes.textInput
             }
           />
         );
       case ElementTypes.SELECT:
         return (
-          <div className="select-group" {...keyExtractor(null, elmConfig.type, elmConfig.name)}>
+          <div
+            className="select-group"
+            {...keyExtractor(null, elmConfig.type, elmConfig.name)}
+          >
             <Select
               value={value}
               disabled={!isAvailable(checked)}
-              onChange={event => {
+              onChange={(event) => {
                 onChange(elmConfig.name, event.target.value);
               }}
             >
@@ -137,8 +147,10 @@ export default function SettingsElement(props: {
                   {...keyExtractor(idx, elmConfig.type, elmConfig.name)}
                   key={idx}
                 >
-                  <div className={"select-option " + classes.option}>
-                    {option.icon ? <Icon name={option.icon.name} type={option.icon.type} /> : null}
+                  <div className={`select-option ${classes.option}`}>
+                    {option.icon ? (
+                      <Icon name={option.icon.name} type={option.icon.type} />
+                    ) : null}
                     <span className={classes.optionText}>{option.name}</span>
                   </div>
                 </MenuItem>
@@ -149,7 +161,10 @@ export default function SettingsElement(props: {
                 icon={faSortUp}
                 onClick={() =>
                   isAvailable(checked) &&
-                  onChange(elmConfig.name, isNumber(value) && value! > 0 ? value - 1 : 0)
+                  onChange(
+                    elmConfig.name,
+                    isNumber(value) && value! > 0 ? value - 1 : 0
+                  )
                 }
               />
               <FontAwesomeIcon
@@ -180,7 +195,7 @@ export default function SettingsElement(props: {
           <input
             type="range"
             disabled={!isAvailable(checked)}
-            onChange={event => onChange(elmConfig.name, event.target.value)}
+            onChange={(event) => onChange(elmConfig.name, event.target.value)}
             className="slider"
             min="0"
             max="100"
@@ -190,13 +205,15 @@ export default function SettingsElement(props: {
         return (
           <div
             {...keyExtractor(null, elmConfig.type, elmConfig.name)}
-            className={`input-icon ${icon!.selected ? "input-icon-selected" : ""}`}
+            className={`input-icon ${
+              icon!.selected ? "input-icon-selected" : ""
+            }`}
           >
             <Icon type={icon!.type} name={icon!.name} />
           </div>
         );
       case ElementTypes.INPUT_GROUP:
-        return subElements!.map(elm => renderInputElement(elm, checked));
+        return subElements!.map((elm) => renderInputElement(elm, checked));
       default:
         return null;
     }
@@ -211,7 +228,7 @@ export default function SettingsElement(props: {
             type="checkbox"
             className={classes.checkbox}
             checked={config.checked}
-            onChange={event => onChange(config.name, event.target.value)}
+            onChange={(event) => onChange(config.name, event.target.value)}
           />
         ) : null}
         {renderInputElement(config, config.checked)}

@@ -30,8 +30,7 @@ export class Ma
     const error = x - y;
     if (error < 0)
       return error > tolerance;
-    else
-      return error < tolerance;
+    return error < tolerance;
   }
 
   public static isEqual(x: number, y: number): boolean
@@ -69,12 +68,15 @@ export class Ma
   //==================================================
 
   public static max(a: number, b: number, c: number): number { return Math.max(a, Math.max(b, c)); }
+
   public static min(a: number, b: number, c: number): number { return Math.min(a, Math.min(b, c)); }
 
   public static sign(value: number): number { return value < 0 ? -1 : 1; }
-  public static strickSign(value: number): number { return value == 0 ? 0 : Ma.sign(value); }
+
+  public static strickSign(value: number): number { return value === 0 ? 0 : Ma.sign(value); }
 
   public static toDeg(radians: number): number { return 180 * radians / Math.PI; }
+
   public static toRad(degrees: number): number { return Math.PI * degrees / 180; }
 
   public static square(value: number): number { return value * value; }
@@ -164,7 +166,6 @@ export class Ma
   // STATIC METHODS: Search
   //==================================================
 
-
   public static binarySearch<T>(array: T[], element: T, compare: Function): number
   {
     let minIndex = 0;
@@ -183,6 +184,4 @@ export class Ma
     return -minIndex - 1;
   }
 
-
 }
-

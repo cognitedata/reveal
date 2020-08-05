@@ -20,6 +20,7 @@ export class ViewInfo
   //==================================================
 
   public items: TextItem[] = [];
+
   public footer: string = "";
 
   //==================================================
@@ -43,8 +44,10 @@ export class ViewInfo
     return true;
   }
 
-  public addHeader(header: string) { this.items.push(new TextItem(header + ":")); }
+  public addHeader(header: string) { this.items.push(new TextItem(`${header}:`)); }
+
   public addText(key: string, value: string) { this.items.push(new TextItem(key, value)); }
+
   public addNumber(key: string, value: number) { this.addText(key, value.toString()); }
 
   public clearItems(): void
@@ -56,10 +59,13 @@ export class ViewInfo
 export class TextItem
 {
   public key: string;
+
   public value: string | undefined;
 
   public dx = 0;
+
   public dy = 0;
+
   public isMultiLine = false;
 
   constructor(key: string, value?: string)
@@ -70,4 +76,3 @@ export class TextItem
 
   public get isEmpty(): boolean { return Util.isEmpty(this.key); }
 }
-

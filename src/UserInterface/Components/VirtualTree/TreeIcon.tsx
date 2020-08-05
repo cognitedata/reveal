@@ -12,9 +12,10 @@ export interface ImageProps {
   readonly picture?: string;
 }
 const ImageContainer = styled.div<ImageProps>`
-  background: ${props => props.background};
-  mask-image: ${props => (props.picture ? `url(${props.picture})` : "none")};
-  -webkit-mask-image: ${props => (props.picture ? `url(${props.picture})` : "none")};
+  background: ${(props) => props.background};
+  mask-image: ${(props) => (props.picture ? `url(${props.picture})` : "none")};
+  -webkit-mask-image: ${(props) =>
+    props.picture ? `url(${props.picture})` : "none"};
 `;
 
 export default function TreeIcon(props: {
@@ -23,7 +24,8 @@ export default function TreeIcon(props: {
   size?: number;
   color?: Color;
 }) {
-  const DEFAULT_ICON_SIZE = readCssVariablePixelNumber("--v-tree-icon-size") || DEF_ICON_SIZE;
+  const DEFAULT_ICON_SIZE =
+    readCssVariablePixelNumber("--v-tree-icon-size") || DEF_ICON_SIZE;
 
   const iconSize = props.size || DEFAULT_ICON_SIZE;
 
@@ -46,7 +48,7 @@ export default function TreeIcon(props: {
         const filter = new fabric.Image.filters.BlendColor({
           color: color.hex(),
           mode: "multiply",
-          alpha: 1.5
+          alpha: 1.5,
         });
         fabricImage.applyFilters([filter]);
       }
@@ -64,12 +66,12 @@ export default function TreeIcon(props: {
       const canvas = new fabric.Canvas(canvasRef.current, {
         selection: false,
         width: iconSize,
-        height: iconSize
+        height: iconSize,
       });
       // @ts-ignore
       fabricRef.current = canvas;
 
-      fabric.Image.fromURL(props.src!, oImg => {
+      fabric.Image.fromURL(props.src!, (oImg) => {
         setImage(oImg, canvas, props.size, props.color);
         // @ts-ignore
         imageRef.current = oImg;
@@ -175,19 +177,19 @@ export default function TreeIcon(props: {
         <canvas ref={canvasRef} height={iconSize} width={iconSize} />
       </div>
     );
-  } else {
-    const background =
-      props.color && `linear-gradient(to right,${props.color.hex()} 0%,${props.color.hex()} 100%);`;
-
-    return (
-      <ImageContainer
-        className="tree-icon tree-icon-image-container center"
-        background={background}
-        picture={props.src}
-        aria-label={props.alt}
-      >
-        <img className="tree-icon-image" src={props.src} alt={props.alt} />
-      </ImageContainer>
-    );
   }
+  const background =
+    props.color &&
+    `linear-gradient(to right,${props.color.hex()} 0%,${props.color.hex()} 100%);`;
+
+  return (
+    <ImageContainer
+      className="tree-icon tree-icon-image-container center"
+      background={background}
+      picture={props.src}
+      aria-label={props.alt}
+    >
+      <img className="tree-icon-image" src={props.src} alt={props.alt} />
+    </ImageContainer>
+  );
 }

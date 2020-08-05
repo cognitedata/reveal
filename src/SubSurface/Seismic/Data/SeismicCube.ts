@@ -24,7 +24,9 @@ export class SeismicCube extends RegularGrid3
   //==================================================
 
   private readonly _traces: (Trace | null)[];
+
   private readonly _usedTraces: Index2[] = [];
+
   private _maxTracesInMemory: number = 1000;
 
   //==================================================
@@ -75,7 +77,7 @@ export class SeismicCube extends RegularGrid3
   private readTrace(i: number, j: number): Trace | null 
   {
     const trace = new Trace(this.cellSize.k);
-    trace.generateSynthetic(i / (this.cellSize.i - 1), j / (this.cellSize.j - 1))
+    trace.generateSynthetic(i / (this.cellSize.i - 1), j / (this.cellSize.j - 1));
     return trace;
   }
 
@@ -102,8 +104,7 @@ export class SeismicCube extends RegularGrid3
         const index = this.getCellIndex2(cell.i, cell.j);
         this._traces[index] = null;
       }
-      this._traces.splice(startIndex, deleteCount)
+      this._traces.splice(startIndex, deleteCount);
     }
   }
 }
-

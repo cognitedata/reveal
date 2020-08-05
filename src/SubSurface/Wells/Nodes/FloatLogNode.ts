@@ -39,6 +39,7 @@ export class FloatLogNode extends BaseLogNode
   //==================================================
 
   public get log(): FloatLog | null { return this.anyData as FloatLog; }
+
   public set log(value: FloatLog | null) { this.anyData = value; }
 
   //==================================================
@@ -52,20 +53,23 @@ export class FloatLogNode extends BaseLogNode
   //==================================================
 
   public /*override*/ get className(): string { return FloatLogNode.className; }
+
   public /*override*/ isA(className: string): boolean { return className === FloatLogNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "FloatLog" }
-  public /*override*/ getIcon(): string { return FloatLogNodeIcon }
+  public /*override*/ get typeName(): string { return "FloatLog"; }
+
+  public /*override*/ getIcon(): string { return FloatLogNodeIcon; }
+
   public /*override*/ getNameExtension(): string | null { return this.unit; }
 
   protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
   {
     super.populateStatisticsCore(folder);
-    const log = this.log;
+    const {log} = this;
     if (!log)
       return;
 
@@ -76,5 +80,5 @@ export class FloatLogNode extends BaseLogNode
   // OVERRIDES of BaseLogNode
   //==================================================
 
-  public /*override*/  get wellLogType(): WellLogType { return WellLogType.Float; }
+  public /*override*/ get wellLogType(): WellLogType { return WellLogType.Float; }
 }

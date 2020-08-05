@@ -50,7 +50,9 @@ export default function NodeVisualizer(props: { root?: BaseRootNode }) {
       const viewers = [new Viewer("3D", element)];
       // Add targets and toolbars to root node
       for (const viewer of viewers) {
-        const target = new ThreeRenderTargetNode(Range3.createByMinAndMax(0, 0, 1, 1));
+        const target = new ThreeRenderTargetNode(
+          Range3.createByMinAndMax(0, 0, 1, 1)
+        );
         const toolbar = new Toolbar();
         target.addTools(toolbar);
         target.setName(viewer.getName());
@@ -63,8 +65,10 @@ export default function NodeVisualizer(props: { root?: BaseRootNode }) {
       Modules.instance.initializeWhenPopulated(root);
 
       const notificationAdaptor = new NotificationsToActionsAdaptor(dispatch);
-      VirtualUserInterface.install(new UserInterfaceListener(notificationAdaptor, dispatch));
-      
+      VirtualUserInterface.install(
+        new UserInterfaceListener(notificationAdaptor, dispatch)
+      );
+
       // Add target and toolbar data to state
       dispatch(setVisualizerData({ viewers }));
       dispatch(generateNodeTree({ root }));

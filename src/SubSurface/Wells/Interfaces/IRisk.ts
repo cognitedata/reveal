@@ -40,7 +40,7 @@ export interface INdsMetadata {
 }
 
 export interface INptMetaData {
-  created_date: string;  // ISO Date String
+  created_date: string; // ISO Date String
   description: string;
   failure_location: string;
   npt_code: string;

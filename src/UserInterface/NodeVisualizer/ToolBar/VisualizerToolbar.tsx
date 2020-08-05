@@ -6,29 +6,38 @@ import { Appearance } from "@/Core/States/Appearance";
 import InIcon from "@images/Actions/In.png";
 import OutIcon from "@images/Actions/Out.png";
 import Icon from "@/UserInterface/Components/Icon/Icon";
-import { executeToolBarCommand, selectOnChange } from "@/UserInterface/Redux/actions/visualizers";
+import {
+  executeToolBarCommand,
+  selectOnChange,
+} from "@/UserInterface/Redux/actions/visualizers";
 import { IToolbarCommand } from "@/UserInterface/NodeVisualizer/ToolBar/ToolbarCommand";
 
 /**
  * Get width and height of toolbar
  */
-const toolBarDimensions = (dimension1: number, dimension2: number, isHorizontal: boolean) => {
+const toolBarDimensions = (
+  dimension1: number,
+  dimension2: number,
+  isHorizontal: boolean
+) => {
   if (isHorizontal) {
     return { width: dimension2, height: dimension1 };
-  } else {
-    return { width: dimension1, height: dimension2 };
   }
+  return { width: dimension1, height: dimension2 };
 };
 
 /**
  * Get bottom and right margins of toolbar
  */
-const toolBarWrapperMargins = (dimension1: number, dimension2: number, isHorizontal: boolean) => {
+const toolBarWrapperMargins = (
+  dimension1: number,
+  dimension2: number,
+  isHorizontal: boolean
+) => {
   if (isHorizontal) {
     return { marginBottom: dimension1, marginRight: dimension2 };
-  } else {
-    return { marginRight: dimension1, marginBottom: dimension2 };
   }
+  return { marginRight: dimension1, marginBottom: dimension2 };
 };
 
 // Visualizer ToolBar Component
@@ -66,23 +75,26 @@ export default function VisualizerToolbar(props: {
   };
 
   const visibleNondropdownCommands = toolbar.filter(
-    command => command.isVisible && !command.isDropdown
+    (command) => command.isVisible && !command.isDropdown
   );
   const visibleDropdownCommands = toolbar.filter(
-    command => command.isVisible && command.isDropdown
+    (command) => command.isVisible && command.isDropdown
   );
 
   // dropdown Items takes twice the size
-  const noOfSlots = visibleNondropdownCommands.length + visibleDropdownCommands.length * 2;
+  const noOfSlots =
+    visibleNondropdownCommands.length + visibleDropdownCommands.length * 2;
   // No Of commands per line in Toolbar UI
-  const toolbarCommandsPerLine = Appearance.toolbarCommandsPerLine;
+  const { toolbarCommandsPerLine } = Appearance;
   // Number of rows in toolbar
   const numberOfToolbarRows = Math.ceil(noOfSlots / toolbarCommandsPerLine);
   // Consider borders,margins and padding of img tag
   const iconSize = Appearance.toolbarIconSize + 7.2;
   const [dimension1, dimension2] = [
     numberOfToolbarRows * iconSize,
-    numberOfToolbarRows > 1 ? toolbarCommandsPerLine * iconSize : noOfSlots * iconSize
+    numberOfToolbarRows > 1
+      ? toolbarCommandsPerLine * iconSize
+      : noOfSlots * iconSize,
   ];
 
   const addButton = (index, command) => {
@@ -92,7 +104,7 @@ export default function VisualizerToolbar(props: {
           dispatch(
             executeToolBarCommand({
               visualizerId,
-              index
+              index,
             })
           )
         }
@@ -106,11 +118,11 @@ export default function VisualizerToolbar(props: {
             src={command.icon}
             tooltip={{
               text: command.command.getTooltip(),
-              placement: horizontal ? "bottom" : "right-start"
+              placement: horizontal ? "bottom" : "right-start",
             }}
             iconSize={{
               width: Appearance.toolbarIconSize,
-              height: Appearance.toolbarIconSize
+              height: Appearance.toolbarIconSize,
             }}
           />
         )}
@@ -120,21 +132,24 @@ export default function VisualizerToolbar(props: {
 
   const addDropdown = (index, command) => {
     return (
-      <div key={`visualizer-toolbar-icon-${index}`} className="visualizer-tool-bar-icon">
+      <div
+        key={`visualizer-toolbar-icon-${index}`}
+        className="visualizer-tool-bar-icon"
+      >
         <select
           className="visualizer-tool-bar-input"
           value={command.value}
-          onChange={event =>
+          onChange={(event) =>
             dispatch(
               selectOnChange({
                 visualizerId,
                 index,
-                event
+                event,
               })
             )
           }
         >
-          {command.command.dropdownOptions.map(option => (
+          {command.command.dropdownOptions.map((option) => (
             <option key={option}>{option}</option>
           ))}
         </select>
@@ -148,14 +163,18 @@ export default function VisualizerToolbar(props: {
       <div
         className="visualizer-toolbar-wrapper"
         style={{
-          ...toolBarWrapperMargins(dimension1 + iconSize, dimension2 + iconSize, horizontal)
+          ...toolBarWrapperMargins(
+            dimension1 + iconSize,
+            dimension2 + iconSize,
+            horizontal
+          ),
         }}
       >
         <div className="visualizer-toolbar-container">
           <div
             className="handle"
             style={{
-              cursor: dragging ? "move" : "pointer"
+              cursor: dragging ? "move" : "pointer",
             }}
           >
             {horizontal ? <img src={InIcon} /> : <img src={OutIcon} />}
@@ -166,19 +185,17 @@ export default function VisualizerToolbar(props: {
               ...toolBarDimensions(dimension1, dimension2, horizontal),
               flexDirection: horizontal ? "row" : "column",
               left: horizontal ? "0.3rem" : "-1rem",
-              top: horizontal ? "0rem" : "1.2rem"
+              top: horizontal ? "0rem" : "1.2rem",
             }}
           >
             {toolbar.map((command, index) => {
               if (command.isVisible) {
                 if (command.isDropdown) {
                   return addDropdown(index, command);
-                } else {
-                  return addButton(index, command);
                 }
-              } else {
-                return null;
+                return addButton(index, command);
               }
+              return null;
             })}
           </div>
         </div>

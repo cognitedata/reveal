@@ -20,7 +20,7 @@ export class PropertyFolder extends BasePropertyFolder
   //   this.AddChild(property);
   // }
   public addStringProperty(name: string, value: string | Retrieve<string>, readonly?: boolean, instance?: object,
-                           applyDelegate?: Action<void>, valueDelegate?: Action<string>): void
+    applyDelegate?: Action<void>, valueDelegate?: Action<string>): void
   {
     const property = new StringProperty(name, value, readonly, instance, applyDelegate, valueDelegate);
     this.addChild(property);
@@ -37,7 +37,7 @@ export class PropertyFolder extends BasePropertyFolder
   }
 
   public addColorProperty(name: string, value: Color | Retrieve<Color>, readonly?: boolean, instance?: object,
-                          applyDelegate?: Action<void>, valueDelegate?: Action<Color>): void
+    applyDelegate?: Action<void>, valueDelegate?: Action<Color>): void
   {
     const property = new ColorProperty(name, value, readonly, instance, applyDelegate, valueDelegate);
     this.addChild(property);
@@ -61,14 +61,14 @@ export class PropertyFolder extends BasePropertyFolder
   {
     if (!range.isEmpty)
       return;
-    this.addReadOnlyStrings(name + "[min/delta/max]", range.min.toFixed(fractionDigits), range.delta.toFixed(fractionDigits), range.max.toFixed(fractionDigits));
+    this.addReadOnlyStrings(`${name}[min/delta/max]`, range.min.toFixed(fractionDigits), range.delta.toFixed(fractionDigits), range.max.toFixed(fractionDigits));
   }
 
   public addReadOnlyRange3(name: string, range: Range3, fractionDigits: number = FractionDigitsDefault): void
   {
-    this.addReadOnlyRange1(name + "X", range.x, fractionDigits);
-    this.addReadOnlyRange1(name + "Y", range.x, fractionDigits);
-    this.addReadOnlyRange1(name + "Z", range.x, fractionDigits);
+    this.addReadOnlyRange1(`${name}X`, range.x, fractionDigits);
+    this.addReadOnlyRange1(`${name}Y`, range.x, fractionDigits);
+    this.addReadOnlyRange1(`${name}Z`, range.x, fractionDigits);
   }
 
   public addReadOnlyVector2(name: string, x: number, y: number, fractionDigits = FractionDigitsDefault): void

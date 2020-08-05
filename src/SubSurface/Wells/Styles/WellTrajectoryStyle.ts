@@ -25,11 +25,15 @@ export class WellTrajectoryStyle extends BaseRenderStyle
   //==================================================
 
   public colorType = ColorType.White;
+
   public radius = 5; // [1,2,3,5,10,20,30,40,50];
+
   public nameFontSize = 50; // fontSizeOptions
+
   public bandFontSize = 30; // fontSizeOptions
 
   public bandWidth = 50;
+
   public readonly bandWidthOptions = [20, 25, 30, 50, 75, 100, 200];
 
   //==================================================
@@ -49,6 +53,3 @@ export class WellTrajectoryStyle extends BaseRenderStyle
     super.PopulateCore(folder);
   }
 }
-
-
-

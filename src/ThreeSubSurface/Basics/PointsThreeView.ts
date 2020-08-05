@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import * as THREE from "three";
-import * as Color from "color"
+import * as Color from "color";
 
 import { Points } from "@/Core/Geometry/Points";
 import { Range3 } from "@/Core/Geometry/Range3";
@@ -33,6 +33,7 @@ export class PointsThreeView extends BaseGroupThreeView
   //==================================================
 
   protected get node(): PointsNode { return super.getNode() as PointsNode; }
+
   protected get style(): PointsRenderStyle { return super.getStyle() as PointsRenderStyle; }
 
   //==================================================
@@ -56,7 +57,7 @@ export class PointsThreeView extends BaseGroupThreeView
 
   public /*override*/ calculateBoundingBoxCore(): Range3 | undefined
   {
-    const boundingBox = this.node.boundingBox;
+    const {boundingBox} = this.node;
     if (!boundingBox)
       return undefined;
 
@@ -70,10 +71,10 @@ export class PointsThreeView extends BaseGroupThreeView
 
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
-    const node = this.node;
-    const style = this.style;
+    const {node} = this;
+    const {style} = this;
 
-    const points = node.points;
+    const {points} = node;
     if (!points)
       throw Error("points is missing in view");
 
@@ -125,13 +126,13 @@ export class PointsThreeView extends BaseGroupThreeView
 
   private static createColors(points: Points): Uint8Array
   {
-    const zRange = points.zRange;
+    const {zRange} = points;
     let index = 0;
 
     const colors = new Uint8Array(points.count * 3);
     for (let i = 0; i < points.count; i++)
     {
-      const z = points.list[i].z;
+      const {z} = points.list[i];
       const fraction = zRange.getFraction(z);
       const color = Color.hsv(fraction * 360, 255, 200);
 
@@ -143,5 +144,3 @@ export class PointsThreeView extends BaseGroupThreeView
   }
 
 }
-
-

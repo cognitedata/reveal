@@ -21,6 +21,7 @@ export class ContoursStyle extends BaseStyle
   //==================================================
 
   public colorType = ColorType.Black;
+
   public inc = 20;
 
   //==================================================
@@ -29,7 +30,4 @@ export class ContoursStyle extends BaseStyle
 
   public constructor() { super(); }
 
-  }
-
-
-
+}

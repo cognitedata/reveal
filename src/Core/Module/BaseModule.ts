@@ -22,10 +22,9 @@ export abstract class BaseModule
 
   public /*virtual*/ installPackages(): void { }
   public /*virtual*/ registerViews(factory: ViewFactory): void { }
-  public /*virtual*/ createRoot(): BaseRootNode | null { return null; }  
-  public /*virtual*/ loadData(root: BaseRootNode): void { }  
+  public /*virtual*/ createRoot(): BaseRootNode | null { return null; }
+  public /*virtual*/ loadData(root: BaseRootNode): void { }
   public /*virtual*/ initializeWhenPopulated(root: BaseRootNode): void { }
   public /*virtual*/ setDefaultVisible(root: BaseRootNode): void { }
   public /*virtual*/ startAnimate(root: BaseRootNode) :void { }
 }
-

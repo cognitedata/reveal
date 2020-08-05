@@ -44,15 +44,16 @@ export class FloatFilterLogNode extends BaseFilterLogNode
   //==================================================
 
   public /*override*/ get className(): string { return FloatFilterLogNode.className; }
+
   public /*override*/ isA(className: string): boolean { return className === FloatFilterLogNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "FloatLog" }
+  public /*override*/ get typeName(): string { return "FloatLog"; }
 
-  public /*override*/ getIcon(): string { return FloatLogNodeIcon }
+  public /*override*/ getIcon(): string { return FloatLogNodeIcon; }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
@@ -78,5 +79,5 @@ export class FloatFilterLogNode extends BaseFilterLogNode
   // OVERRIDES of BaseLogNode
   //==================================================
 
-  public /*override*/  get wellLogType(): WellLogType { return WellLogType.Float; }
+  public /*override*/ get wellLogType(): WellLogType { return WellLogType.Float; }
 }

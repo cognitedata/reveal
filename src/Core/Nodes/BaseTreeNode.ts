@@ -42,6 +42,6 @@ export abstract class BaseTreeNode extends BaseNode
   //==================================================
 
   public /*override*/ isVisibleInTreeControl(): boolean { return false; }
-  public /*override*/ canChangeName(): boolean { return false }
+  public /*override*/ canChangeName(): boolean { return false; }
   public /*override*/ canChangeColor(): boolean { return false; }
 }

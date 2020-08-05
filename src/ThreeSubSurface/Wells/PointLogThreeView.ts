@@ -43,6 +43,7 @@ export class PointLogThreeView extends BaseGroupThreeView
   //==================================================
 
   private cameraDirection = new Vector3(0, 0, 1); // Direction to the center
+
   private cameraPosition = new Vector3(0, 0, 1);
 
   //==================================================
@@ -50,6 +51,7 @@ export class PointLogThreeView extends BaseGroupThreeView
   //==================================================
 
   protected get node(): PointLogNode { return super.getNode() as PointLogNode; }
+
   private get style(): PointLogStyle { return super.getStyle() as PointLogStyle; }
 
   //==================================================
@@ -65,7 +67,7 @@ export class PointLogThreeView extends BaseGroupThreeView
   public get /*override*/ isVisible(): boolean
   {
     const parent = this.node.trajectoryNode;
-    return parent != null && parent.isVisible(this.renderTarget)
+    return parent != null && parent.isVisible(this.renderTarget);
   }
 
   protected /*override*/ updateCore(args: NodeEventArgs): void
@@ -84,16 +86,16 @@ export class PointLogThreeView extends BaseGroupThreeView
     if (!this.isVisible)
       return undefined;
 
-    const node = this.node;
-    const trajectory = node.trajectory;
+    const {node} = this;
+    const {trajectory} = node;
     if (!trajectory)
       return undefined;
 
-    const wellNode = this.node.wellNode;
+    const {wellNode} = this.node;
     if (!wellNode)
       return undefined;
 
-    const log = node.log;
+    const {log} = node;
     if (!log)
       return undefined;
 
@@ -125,21 +127,21 @@ export class PointLogThreeView extends BaseGroupThreeView
     if (!parent)
       return;
 
-    const node = this.node;
-    const log = node.log;
+    const {node} = this;
+    const {log} = node;
     if (!log)
       return;
 
-    const wellNode = node.wellNode;
+    const {wellNode} = node;
     if (!wellNode)
       return;
 
-    const trajectory = node.trajectory;
+    const {trajectory} = node;
     if (!trajectory)
       return;
 
-    const transformer = this.transformer;
-    const camera = this.camera;
+    const {transformer} = this;
+    const {camera} = this;
     const cameraPosition = transformer.toWorld(camera.position);
     cameraPosition.substract(wellNode.origin);
 
@@ -165,8 +167,8 @@ export class PointLogThreeView extends BaseGroupThreeView
 
     for (const child of parent.children)
     {
-      const index = child.userData["label"];
-      if (index == undefined)
+      const index = child.userData.label;
+      if (index === undefined)
         continue;
 
       const sample = log.getAt(index);
@@ -197,16 +199,16 @@ export class PointLogThreeView extends BaseGroupThreeView
     if (!parent)
       return;
 
-    const index = intersection.object.userData["sphere"];
-    if (index == undefined)
+    const index = intersection.object.userData.sphere;
+    if (index === undefined)
       return;
 
-    const node = this.node;
-    const trajectory = node.trajectory;
+    const {node} = this;
+    const {trajectory} = node;
     if (!trajectory)
       return;
 
-    const log = node.log;
+    const {log} = node;
     if (!log)
       return;
 
@@ -218,7 +220,7 @@ export class PointLogThreeView extends BaseGroupThreeView
     node.notify(new NodeEventArgs(Changes.pointOpenOrClosed));
 
     const md = WellTrajectoryThreeView.startPickingAndReturnMd(this, viewInfo, intersection, sample.md);
-    if (md == undefined)
+    if (md === undefined)
       return;
 
     viewInfo.addHeader(node.displayName);
@@ -234,28 +236,28 @@ export class PointLogThreeView extends BaseGroupThreeView
 
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
-    const node = this.node;
-    const wellNode = node.wellNode;
+    const {node} = this;
+    const {wellNode} = node;
     if (!wellNode)
       return null;
 
-    const trajectory = node.trajectory;
+    const {trajectory} = node;
     if (!trajectory)
       return null;
 
-    const style = this.style;
+    const {style} = this;
     if (!style)
       return null;
 
-    const color = node.getColorByColorType(style.colorType)
-    const log = node.log;
+    const color = node.getColorByColorType(style.colorType);
+    const {log} = node;
     if (!log)
       throw Error("Well trajectory is missing");
 
     const group = new THREE.Group();
-    const transformer = this.transformer;
+    const {transformer} = this;
 
-    const radius = this.radius;
+    const {radius} = this;
     const selectedRadius = radius * selectedRadiusFactor;
     const closedGeometry = new THREE.SphereGeometry(radius, 16, 8);
     const openGeometry = new THREE.SphereGeometry(selectedRadius, 16, 8);
@@ -312,7 +314,7 @@ export class PointLogThreeView extends BaseGroupThreeView
         if (label)  
         {
           label.center = new THREE.Vector2(0, 1);
-          label.userData["label"] = index;
+          label.userData.label = index;
           label.userData[BaseThreeView.noPicking] = true;
           group.add(label);
         }
@@ -329,15 +331,15 @@ export class PointLogThreeView extends BaseGroupThreeView
   protected get radius(): number
   {
     let radius = 20;
-    const node = this.node;
+    const {node} = this;
     if (!node)
       return radius;
 
-    const style = this.style;
+    const {style} = this;
     if (style)
       radius = style.radius;
 
-    const trajectoryNode = node.trajectoryNode;
+    const {trajectoryNode} = node;
     if (!trajectoryNode)
       return radius;
 
@@ -347,7 +349,6 @@ export class PointLogThreeView extends BaseGroupThreeView
 
     return radius;
   }
-
 
   public static createLabel(header: string, text: string, position: Vector3, worldfontSize: number): THREE.Sprite | null
   {
@@ -437,22 +438,20 @@ export class PointLogThreeView extends BaseGroupThreeView
     context.textAlign = "start";
     context.fillStyle = Canvas.getColor(Colors.black);
     let y = margin;
-    {
-      context.font = headerFont;
-      if (headerMultiLine)
-        Canvas.fillText(context, header, margin, y, maxWidth + margin, lineHeight);
-      else
-        context.fillText(header, margin, y);
-    }
-    {
-      y += headerHeight + 0.5 * fontSize;
-      context.font = textFont;
-      if (textMultiLine)
-        Canvas.fillText(context, text, margin, y, maxWidth + margin, lineHeight);
-      else
-        context.fillText(text, margin, y);
-    }
+    
+    context.font = headerFont;
+    if (headerMultiLine)
+      Canvas.fillText(context, header, margin, y, maxWidth + margin, lineHeight);
+    else
+      context.fillText(header, margin, y);
+      
+    y += headerHeight + 0.5 * fontSize;
+    context.font = textFont;
+    if (textMultiLine)
+      Canvas.fillText(context, text, margin, y, maxWidth + margin, lineHeight);
+    else
+      context.fillText(text, margin, y);
+     
     return canvas;
   }
 }
-

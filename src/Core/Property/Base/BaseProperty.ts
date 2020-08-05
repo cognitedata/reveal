@@ -6,9 +6,13 @@ export type Retrieve<T> = () => T;
 export abstract class BaseProperty
 {
   private _toolTip?: string;
+
   private _name: string;
+
   private _applyDelegate?: Action<void>;
+
   private _readonly = false;
+
   private _children?: BaseProperty[];
 
   //==================================================
@@ -26,12 +30,19 @@ export abstract class BaseProperty
   //==================================================
 
   public getName(): string { return this._name; }
+
   public setName(value: string) { this._name = value; }
+
   public isReadOnly(): boolean { return this._readonly; }
+
   public setReadOnly(value: boolean) { this._readonly = value; }
+
   public getToolTip(): string | undefined { return this._toolTip; }
+
   public setToolTip(value) { this._toolTip = value; }
+
   public get children(): BaseProperty[] { return this._children || []; }
+
   public abstract getType(): PropertyType;
 
   public addChild(property: BaseProperty): void
@@ -47,7 +58,9 @@ export abstract class BaseProperty
   //==================================================
 
   public /*virtual*/ displayName(): string { return this.getName() == null ? "" : this.getName(); }
+
   public /*virtual*/ getApplyDelegate(): Action<void> | undefined { return this._applyDelegate; }
+
   public /*virtual*/ setApplyDelegate(value) { this._applyDelegate = value; }
 
   //==================================================
@@ -60,17 +73,16 @@ export abstract class BaseProperty
     {
       return this;
     }
-    else
+    
+    for (const child of this.children)
     {
-      for (const child of this.children)
+      const childProperty = child.getChildPropertyByName(name);
+      if (childProperty)
       {
-        const childProperty = child.getChildPropertyByName(name);
-        if (childProperty)
-        {
-          return childProperty;
-        }
+        return childProperty;
       }
-      return null;
     }
+    return null;
+    
   }
 }

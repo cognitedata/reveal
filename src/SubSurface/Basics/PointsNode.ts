@@ -40,7 +40,9 @@ export class PointsNode extends DataNode
   //==================================================
 
   public get points(): Points | null { return this.anyData; }
+
   public set points(value: Points | null) { this.anyData = value; }
+
   public get renderStyle(): PointsRenderStyle | null { return this.getRenderStyle() as PointsRenderStyle; }
 
   //==================================================
@@ -48,14 +50,17 @@ export class PointsNode extends DataNode
   //==================================================
 
   public /*override*/ get className(): string { return PointsNode.className; }
+
   public /*override*/ isA(className: string): boolean { return className === PointsNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Points" }
-  public /*override*/ getIcon(): string { return PointsNodeIcon }
+  public /*override*/ get typeName(): string { return "Points"; }
+
+  public /*override*/ getIcon(): string { return PointsNodeIcon; }
+
   public /*override*/ get boundingBox(): Range3 { return this.points ? this.points.boundingBox : new Range3(); }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null

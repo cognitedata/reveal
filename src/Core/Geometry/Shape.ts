@@ -46,6 +46,7 @@ export abstract class Shape
   //==================================================
 
   public abstract clone(): Shape;
+
   public abstract expandBoundingBox(boundingBox: Range3): void;
 
   //==================================================

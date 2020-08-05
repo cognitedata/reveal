@@ -31,6 +31,7 @@ export class PolylinesThreeView extends BaseGroupThreeView
   //==================================================
 
   protected get node(): PolylinesNode { return super.getNode() as PolylinesNode; }
+
   protected get style(): PolylinesRenderStyle { return super.getStyle() as PolylinesRenderStyle; }
 
   //==================================================
@@ -60,18 +61,18 @@ export class PolylinesThreeView extends BaseGroupThreeView
 
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
-    const node = this.node;
-    const style = this.style;
+    const {node} = this;
+    const {style} = this;
 
-    const polylines = node.polylines;
+    const {polylines} = node;
     if (!polylines)
       throw Error("polylines is missing in view");
 
     let color = node.getColor();
-    const colorType = style.colorType;
+    const {colorType} = style;
 
     const group = new THREE.Group();
-    const transformer = this.transformer;
+    const {transformer} = this;
   
     for (const polyline of polylines.list)
     {

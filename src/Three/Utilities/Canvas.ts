@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import * as THREE from "three";
-import * as Color from "color"
+import * as Color from "color";
 
 import { SpriteCreator } from "@/Three/Utilities/SpriteCreator";
 import { Appearance } from "@/Core/States/Appearance";
@@ -27,14 +27,19 @@ export class Canvas
   //==================================================
 
   private dx = 0;
+
   private dy = 0;
 
   // These 3 values af for beginFunction, fillFunction and addFunctionValue
   private firstX = Number.NaN;
+
   private lastX = Number.NaN;
+
   private fillFunction = false;
 
   private canvas: HTMLCanvasElement
+
+  // eslint-disable-next-line react/static-property-placement
   private context: CanvasRenderingContext2D;
 
   //==================================================
@@ -166,7 +171,7 @@ export class Canvas
     if (rightBand)
       this.context.scale(-1, 1);
 
-    if (rightBand != outerMost)
+    if (rightBand !== outerMost)
       this.context.textAlign = "left";
     else
       this.context.textAlign = "right";
@@ -199,7 +204,6 @@ export class Canvas
     this.context.fillRect(x0, 0, x1 - x0, this.dy);
   }
 
-
   public fillPathBySemiTransparentGradient(color: Color, alphaFraction = 1)
   {
     const operation = this.context.globalCompositeOperation;
@@ -220,11 +224,15 @@ export class Canvas
   // STATIC METHODS: Filling
   //==================================================
 
-  public static getColor(color: Color | null) { return color ? color.string() : "black" };
+  public static getColor(color: Color | null) { return color ? color.string() : "black"; };
+
   private static getFont(fontSize: number): string { return `${fontSize}px ${Appearance.viewerFontType}`; }
-  public static getNormalFont(fontSize: number): string { return "Normal " + Canvas.getFont(fontSize); }
-  public static getBoldFont(fontSize: number): string { return "Bold " + Canvas.getFont(fontSize); }
-  public static getBolderFont(fontSize: number): string { return "Bolder " + Canvas.getFont(fontSize); }
+
+  public static getNormalFont(fontSize: number): string { return `Normal ${Canvas.getFont(fontSize)}`; }
+
+  public static getBoldFont(fontSize: number): string { return `Bold ${Canvas.getFont(fontSize)}`; }
+
+  public static getBolderFont(fontSize: number): string { return `Bolder ${Canvas.getFont(fontSize)}`; }
 
   public static measureTextHeight(context: CanvasRenderingContext2D, text: string, maxWidth: number, lineHeight: number): number
   {
@@ -238,16 +246,16 @@ export class Canvas
 
   private static fillOrTextHeightText(context: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number): number
   {
-    let words = text.split(' ');
+    const words = text.split(' ');
     let line = '';
     let height = 0;
-    let draw = x >= 0 && y >= 0;
+    const draw = x >= 0 && y >= 0;
     for (let n = 0; n < words.length; n++)
     {
       let testLine = line;
       if (line.length > 0)
         testLine += ' ';
-      testLine += words[n]
+      testLine += words[n];
       const metrics = context.measureText(testLine);
       const testWidth = metrics.width;
       if (testWidth > maxWidth && n > 0)

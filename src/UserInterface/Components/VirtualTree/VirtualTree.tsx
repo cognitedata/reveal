@@ -2,12 +2,12 @@ import "./virtual-tree.scss";
 import React from "react";
 import { AutoSizer } from "react-virtualized/dist/es/AutoSizer";
 import { List as VirtualList } from "react-virtualized/dist/es/List";
+import { readCssVariablePixelNumber } from "@/UserInterface/Foundation/Utils/cssUtils";
 import TreeIcon from "./TreeIcon";
 import { ExpandButton } from "./ExpandButton";
 import { TreeCheckBox } from "./TreeCheckbox";
 import { VirtualTreeProps } from "./VirtualTreeProps";
 import { ITreeNode } from "./TreeNode";
-import { readCssVariablePixelNumber } from "@/UserInterface/Foundation/Utils/cssUtils";
 
 const DEFAULT_ROW_HEIGHT = 22;
 
@@ -19,7 +19,8 @@ export function VirtualTree(props: VirtualTreeProps) {
     readCssVariablePixelNumber("--v-tree-item-bottom-margin");
 
   const data = props.data || [];
-  const singleRowHeight = props.rowHeight || TREE_ITEM_HEIGHT || DEFAULT_ROW_HEIGHT;
+  const singleRowHeight =
+    props.rowHeight || TREE_ITEM_HEIGHT || DEFAULT_ROW_HEIGHT;
 
   let List: any;
   function setRef(ref: any) {
@@ -46,7 +47,7 @@ export function VirtualTree(props: VirtualTreeProps) {
     if (item.children.length) {
       if (item.expanded) {
         children = item.children.map((child: any, index: number) => {
-          return renderItem(child, keyPrefix + "-" + index);
+          return renderItem(child, `${keyPrefix}-${index}`);
         });
       }
     }
@@ -82,18 +83,20 @@ export function VirtualTree(props: VirtualTreeProps) {
                 checked={item.checked}
                 indeterminate={item.indeterminate}
                 disabled={item.disabled}
-                onToggleCheck={() => onToggleNodeCheck(item.uniqueId, !item.checked)}
+                onToggleCheck={() =>
+                  onToggleNodeCheck(item.uniqueId, !item.checked)
+                }
               />
             )}
           </div>
           <div className="tree-item-comp tree-item-lbl-container">
             <span
-              className={"tree-item-lbl" + (item.selected ? " selected" : "")}
+              className={`tree-item-lbl${item.selected ? " selected" : ""}`}
               onClick={() => onToggleNodeSelect(item.uniqueId, !item.selected)}
               style={{
                 fontWeight: bold ? "bold" : "normal",
                 fontStyle: italic ? "italic" : "normal",
-                color: color ? color.hex() : "black"
+                color: color ? color.hex() : "black",
               }}
             >
               {itemText}
@@ -109,17 +112,18 @@ export function VirtualTree(props: VirtualTreeProps) {
           <li {...itemProps} children={children} className="list-item" />
         </ul>
       );
-    } else {
-      return <React.Fragment {...itemProps} children={children} />;
     }
+    return <React.Fragment {...itemProps} children={children} />;
   };
 
   const getExpandedItemCount = (item: ITreeNode) => {
     let count = item.visible ? 1 : 0; // depends on visibility  of containing item
     if (item.expanded) {
-      count += item.children.map(getExpandedItemCount).reduce((total: number, num: number) => {
-        return total + num;
-      }, 0);
+      count += item.children
+        .map(getExpandedItemCount)
+        .reduce((total: number, num: number) => {
+          return total + num;
+        }, 0);
     }
     return count;
   };
@@ -140,7 +144,7 @@ export function VirtualTree(props: VirtualTreeProps) {
   return (
     <div className="virtual-tree-container">
       <AutoSizer
-        children={params => {
+        children={(params) => {
           return (
             <VirtualList
               height={params.height}

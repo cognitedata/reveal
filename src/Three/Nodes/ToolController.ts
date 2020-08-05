@@ -23,6 +23,7 @@ export class ToolController
   //==================================================
 
   public _activeTool: ToolCommand | null = null;
+
   public _defaultTool: ToolCommand | null = null;
 
   //==================================================
@@ -61,7 +62,7 @@ export class ToolController
     if (!cameraControl)
       return;
 
-    const controls = cameraControl.controls;
+    const {controls} = cameraControl;
     if (tool.overrideLeftButton())
       controls.mouseButtons.left = CameraControls.ACTION.NONE;
     else
@@ -103,13 +104,13 @@ export class ToolController
   public onMouseMove(target: ThreeRenderTargetNode, event: MouseEvent): void
   {
     // https://www.w3schools.com/jsref/obj_mouseevent.asp
-    if (event.buttons == 1)
+    if (event.buttons === 1)
     {
       const tool = this.activeTool;
       if (tool)
         tool.onMouseDrag(event);
     }
-    if (event.buttons == 0)
+    if (event.buttons === 0)
     {
       const tool = this.activeTool;
       if (tool)

@@ -25,8 +25,11 @@ export class PointLogStyle extends BaseRenderStyle
   //==================================================
 
   public colorType = ColorType.Specified;
+
   public radius = 20;
+
   public readonly radiusOptions = [10, 20, 25, 30, 50, 75, 100, 200];
+
   public fontSize = 20; // fontSizeOptions
 
   //==================================================
@@ -46,6 +49,3 @@ export class PointLogStyle extends BaseRenderStyle
     super.PopulateCore(folder);
   }
 }
-
-
-

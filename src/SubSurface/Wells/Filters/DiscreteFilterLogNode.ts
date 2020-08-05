@@ -44,14 +44,17 @@ export class DiscreteFilterLogNode extends BaseFilterLogNode
   //==================================================
 
   public /*override*/ get className(): string { return DiscreteFilterLogNode.className; }
+
   public /*override*/ isA(className: string): boolean { return className === DiscreteFilterLogNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "DiscreteLog" }
-  public /*override*/ getIcon(): string { return DiscreteLogNodeIcon }
+  public /*override*/ get typeName(): string { return "DiscreteLog"; }
+
+  public /*override*/ getIcon(): string { return DiscreteLogNodeIcon; }
+
   public /*override*/ canChangeColor(): boolean { return false; }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
@@ -78,6 +81,6 @@ export class DiscreteFilterLogNode extends BaseFilterLogNode
   // OVERRIDES of BaseLogNode
   //==================================================
 
-  public /*override*/  get wellLogType(): WellLogType { return WellLogType.Discrete; }
+  public /*override*/ get wellLogType(): WellLogType { return WellLogType.Discrete; }
 
 }

@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import * as THREE from "three";
-import * as Color from "color"
+import * as Color from "color";
 
 import { Range1 } from "@/Core/Geometry/Range1";
 import { Vector3 } from "@/Core/Geometry/Vector3";
@@ -37,6 +37,7 @@ export class LogRender
   //==================================================
 
   private bandRange: Range1;
+
   private mdRange: Range1;
 
   //==================================================
@@ -248,4 +249,3 @@ export class LogRender
     }
   }
 }
-

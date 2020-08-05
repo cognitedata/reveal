@@ -133,4 +133,3 @@ export class Modules
       module.registerViews(factory);
   }
 }
-

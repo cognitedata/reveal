@@ -26,6 +26,7 @@ export class SurfaceRenderStyle extends BaseRenderStyle
   //==================================================
 
   public solid = new SolidStyle();
+
   public contours = new ContoursStyle;
 
   //==================================================
@@ -47,6 +48,3 @@ export class SurfaceRenderStyle extends BaseRenderStyle
   {
   }
 }
-
-
-
