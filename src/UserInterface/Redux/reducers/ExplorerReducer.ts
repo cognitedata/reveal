@@ -3,15 +3,7 @@ import { ExplorerState, TreeDataItemState } from "@/UserInterface/Redux/State/ex
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { CheckBoxState } from "@/Core/Enums/CheckBoxState";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
-import {
-  GENERATE_NODE_TREE,
-  CHANGE_CHECKBOX_STATE,
-  CHANGE_SELECTED_TAB,
-  CHANGE_SELECT_STATE,
-  CHANGE_NODE_NAME,
-  CHANGE_NODE_COLOR,
-  CHANGE_EXPAND_STATE
-} from "@/UserInterface/Redux/actions/actionTypes";
+import ActionTypes from "@/UserInterface/Redux/actions/ActionTypes";
 
 // Generate Redux store compatible nodes data structure from root node
 function generateNodeStructure(
@@ -94,7 +86,7 @@ const initialState: ExplorerState = {
 // Because of this, we can write reducers that appear to "mutate" state, but the updates
 // are actually applied immutably.
 export default createReducer(initialState, {
-  [GENERATE_NODE_TREE]: (state, action) =>
+  [ActionTypes.GENERATE_NODE_TREE]: (state, action) =>
   {
     const { root } = action.payload;
     const { nodes, tabs } = generateExplorerData(root);
@@ -104,7 +96,7 @@ export default createReducer(initialState, {
 
   /**************************  Notification Adapter Action Start *************************/
 
-  [CHANGE_CHECKBOX_STATE]: (state, action) =>
+  [ActionTypes.CHANGE_CHECKBOX_STATE]: (state, action) =>
   {
     const uniqueId = action.appliesTo;
     const treeNodeState = state.nodes![uniqueId];
@@ -145,12 +137,12 @@ export default createReducer(initialState, {
       // do nothing
     }
   },
-  [CHANGE_SELECTED_TAB]: (state, action) =>
+  [ActionTypes.CHANGE_SELECTED_TAB]: (state, action) =>
   {
     const { tabIndex } = action.payload;
     state.selectedTabIndex = tabIndex;
   },
-  [CHANGE_SELECT_STATE]: (state, action) =>
+  [ActionTypes.CHANGE_SELECT_STATE]: (state, action) =>
   {
     const uniqueId = action.payload.id;
     const selectStatus = action.payload.selected;
@@ -166,7 +158,7 @@ export default createReducer(initialState, {
       }
     }
   },
-  [CHANGE_EXPAND_STATE]: (state, action) =>
+  [ActionTypes.CHANGE_EXPAND_STATE]: (state, action) =>
   {
     const uniqueId = action.appliesTo;
     const expandStatus = action.payload;
@@ -177,14 +169,14 @@ export default createReducer(initialState, {
       state.nodes![uniqueId].expanded = expandStatus;
     }
   },
-  [CHANGE_NODE_NAME]: (state, action) =>
+  [ActionTypes.CHANGE_NODE_NAME]: (state, action) =>
   {
     const uniqueId = action.appliesTo;
     const nodeLabel = action.payload;
 
     state.nodes![uniqueId].name = nodeLabel;
   },
-  [CHANGE_NODE_COLOR]: (state, action) =>
+  [ActionTypes.CHANGE_NODE_COLOR]: (state, action) =>
   {
     const uniqueId = action.appliesTo;
     const nodeColor = action.payload;

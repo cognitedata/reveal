@@ -1,11 +1,7 @@
 import { createReducer } from "@reduxjs/toolkit";
 import Viewer from "@/UserInterface/NodeVisualizer/Viewers/Viewer";
-import {
-  EXECUTE_VISUALIZER_TOOLBAR_COMMAND_SUCCESS,
-  SET_STATUS_PANEL_TEXT,
-  SET_VISUALIZER_DATA
-} from "@/UserInterface/Redux/actions/actionTypes";
-import {VisualizerState} from "@/UserInterface/Redux/State/visualizer";
+import ActionTypes from "@/UserInterface/Redux/actions/ActionTypes";
+import { VisualizerState } from "@/UserInterface/Redux/State/visualizer";
 
 // Initial settings state
 const initialState: VisualizerState = {
@@ -20,7 +16,8 @@ const initialState: VisualizerState = {
 // Because of this, we can write reducers that appear to "mutate" state, but the updates
 // are actually applied immutably.
 export default createReducer(initialState, {
-  [SET_VISUALIZER_DATA]: (state, action) => {
+  [ActionTypes.setVisualizerData]: (state, action) =>
+  {
     for (const viewer of action.payload.viewers as Viewer[])
     {
       const viewerName = viewer.getName();
@@ -29,20 +26,23 @@ export default createReducer(initialState, {
     }
   },
 
-  [EXECUTE_VISUALIZER_TOOLBAR_COMMAND_SUCCESS]: (state, action) => {
+  [ActionTypes.executeVisualizerToolbarCommandSuccess]: (state, action) =>
+  {
     const { visualizerId } = action.payload;
     const toolbar = state.toolbars[visualizerId];
-    toolbar.map((item) => {
+    toolbar.map((item) =>
+    {
       const command = item.command;
       item.isChecked = command.isChecked;
       item.icon = command.getIcon();
       item.isVisible = command.isVisible;
-      item.isDropdown  = command.isDropdown;
+      item.isDropdown = command.isDropdown;
       item.value = command.value;
     });
   },
 
-  [SET_STATUS_PANEL_TEXT]: (state, action) => {
+  [ActionTypes.setStatusPanelText]: (state, action) =>
+  {
     const { text } = action.payload;
     state.statusBar.text = text;
   }

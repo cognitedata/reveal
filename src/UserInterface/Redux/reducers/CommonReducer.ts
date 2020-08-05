@@ -1,5 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { SET_FULLSCREEN_STATUS } from "@/UserInterface/Redux/actions/actionTypes";
+import ActionTypes from "@/UserInterface/Redux/actions/ActionTypes";
 import { CommonState } from "@/UserInterface/Redux/State/common";
 
 const initialState: CommonState = {
@@ -7,7 +7,7 @@ const initialState: CommonState = {
 };
 
 export default createReducer(initialState, {
-  [SET_FULLSCREEN_STATUS]: (state, action) =>
+  [ActionTypes.setFullScreenStatus]: (state, action) =>
   {
     state.isFullscreen = action.payload;
   }

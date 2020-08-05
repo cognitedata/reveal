@@ -1,10 +1,6 @@
 import { MiddlewareAPI, Dispatch } from "redux";
 import { State } from "@/UserInterface/Redux/State/State";
-import {
-  EXECUTE_VISUALIZER_TOOLBAR_COMMAND,
-  EXECUTE_VISUALIZER_TOOLBAR_COMMAND_SUCCESS,
-  SELECT_ON_CHANGE
-} from "@/UserInterface/Redux/actions/actionTypes";
+import ActionTypes from "@/UserInterface/Redux/actions/ActionTypes";
 import { VisualizerState } from "@/UserInterface/Redux/State/visualizer";
 import { BaseCommand } from "@/Core/Commands/BaseCommand";
 
@@ -19,17 +15,17 @@ export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
   const { type, payload } = action;
   switch (type)
   {
-    case EXECUTE_VISUALIZER_TOOLBAR_COMMAND:
+    case ActionTypes.executeVisualizerToolbarCommand:
     {
       // A toolbar command is executed
       try
       {
         const { visualizerId, index } = payload;
-        const command = getCommand(visualizers, visualizerId, index)
+        const command = getCommand(visualizers, visualizerId, index);
         command.invoke();
         // Command execution successful. Fire a new action
         const newAction = {
-          type: EXECUTE_VISUALIZER_TOOLBAR_COMMAND_SUCCESS, payload: { visualizerId }
+          type: ActionTypes.executeVisualizerToolbarCommandSuccess, payload: { visualizerId }
         };
         store.dispatch(newAction);
       }
@@ -40,17 +36,17 @@ export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
       }
       break;
     }
-    case SELECT_ON_CHANGE:
+    case ActionTypes.selectOnChange:
     {
       // A toolbar select is changed
       try
       {
         const { visualizerId, index, event } = payload;
-        const command = getCommand(visualizers, visualizerId, index)
+        const command = getCommand(visualizers, visualizerId, index);
         command.invokeValue(event.target.value);
         // Command execution successful. Fire a new action
         const newAction = {
-          type: EXECUTE_VISUALIZER_TOOLBAR_COMMAND_SUCCESS, payload: { visualizerId }
+          type: ActionTypes.executeVisualizerToolbarCommandSuccess, payload: { visualizerId }
         };
         store.dispatch(newAction);
       }
@@ -60,7 +56,7 @@ export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
         console.error(err);
       }
       break;
-      }
+    }
     default:
       next(action);
   }
