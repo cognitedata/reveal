@@ -1,8 +1,8 @@
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
-import { ToolCommand } from "@/Three/Commands/Tools/ToolCommand";
-import ZoomToolCommandIcon from "@images/Commands/ZoomToolCommand.png";
+import { BaseTool } from "@/Three/Commands/Tools/BaseTool";
+import PanToolCommandIcon from "@images/Commands/PanToolCommand.png";
 
-export class ZoomToolCommand extends ToolCommand
+export class PanTool extends BaseTool
 {
   //==================================================
   // CONSTRUCTORS
@@ -17,7 +17,6 @@ export class ZoomToolCommand extends ToolCommand
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*override*/ getName(): string { return "Rectangle zoom"; }
-
-  public /*override*/ getIcon(): string { return ZoomToolCommandIcon; }
+  public /*override*/ getName(): string { return "Pan/Rotate/Zoom"; }
+  public /*override*/ getIcon(): string { return PanToolCommandIcon; }
 }

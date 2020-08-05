@@ -56,6 +56,8 @@ import { SeismicCubeNode } from '@/SubSurface/Seismic/Nodes/SeismicCubeNode';
 import { SeismicCubeView } from '@/ThreeSubSurface/Seismic/SeismicCubeView';
 import { SurveyNode } from '@/SubSurface/Seismic/Nodes/SurveyNode';
 import { SurveyView } from '@/ThreeSubSurface/Seismic/SurveyView';
+import { ManipulatorFactory } from '@/Three/Commands/Manipulators/ManipulatorFactory';
+import { SeismicCubePlaneManipulator } from '@/ThreeSubSurface/Seismic/SeismicCubePlaneManipulator';
 
 export class ThreeModule extends BaseModule
 {
@@ -93,6 +95,10 @@ export class ThreeModule extends BaseModule
     factory.register(SeismicPlaneNode.className, SeismicCubePlaneView, ThreeRenderTargetNode.className);
     factory.register(SeismicCubeNode.className, SeismicCubeView, ThreeRenderTargetNode.className);
     factory.register(SurveyNode.className, SurveyView, ThreeRenderTargetNode.className);
+
+
+    const manipulatorFactory = ManipulatorFactory.instance;
+    manipulatorFactory.register(SeismicPlaneNode.className, SeismicCubePlaneManipulator, ThreeRenderTargetNode.className);
   }
 
   public initializeWhenPopulated(root: BaseRootNode): void

@@ -1,78 +1,47 @@
-
 import * as THREE from "three";
 
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
-import { ToolCommand } from "@/Three/Commands/Tools/ToolCommand";
-import Icon from "@images/Nodes/Plane.png"
-import { BaseNode } from '@/Core/Nodes/BaseNode';
 import { SeismicPlaneNode } from '@/SubSurface/Seismic/Nodes/SeismicPlaneNode';
 import { ThreeConverter } from '@/Three/Utilities/ThreeConverter';
 import { Vector3 } from '@/Core/Geometry/Vector3';
 import { Index3 } from '@/Core/Geometry/Index3';
 import { NodeEventArgs } from '@/Core/Views/NodeEventArgs';
 import { Changes } from '@/Core/Views/Changes';
+import { BaseManipulator } from '@/Three/Commands/Manipulators/BaseManipulator';
+import { BaseNode } from '@/Core/Nodes/BaseNode';
 
-export class PlaneToolCommand extends ToolCommand
+export class SeismicCubePlaneManipulator extends BaseManipulator
 {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
 
-  private _capureNode: BaseNode | null = null;
+  private _capureNode: SeismicPlaneNode | null = null;
   private _startPoint: THREE.Vector3 | null = null;
-
-  //==================================================
-  // CONSTRUCTORS
-  //==================================================
-
-  public constructor(target: ThreeRenderTargetNode | null = null)
-  {
-    super(target);
-  }
-
-  //==================================================
-  // OVERRIDES of BaseCommand
-  //==================================================
-
-  public /*override*/ getName(): string { return "Plane manipulation" }
-  public /*override*/ getIcon(): string { return Icon; }
 
   //==================================================
   // OVERRIDES of ToolCommand
   //==================================================
 
-  public /*override*/ overrideLeftButton(): boolean { return true; }
-
-  public /*override*/ onMouseDown(event: MouseEvent): void
+  public /*override*/ clear(): void
   {
-    const target = this.target;
-    if (!target)
-      return;
-
-    const pixel = target.getMouseRelativePositionThree(event);
-    const intersection = target.getIntersection(pixel);
-    if (!intersection)
-      return;
-
-    const node = target.getNodeByObject(intersection.object);
-    if (!node)
-      return;
-
-    const planeNode = node as SeismicPlaneNode;
-    if (!planeNode)
-      return;
-
-    this._capureNode = planeNode;
-    const startPixel = ThreeConverter.fromThreeVector2(pixel);
-    this._startPoint = intersection.point;
+    this._capureNode = null;
+    this._startPoint = null;
   }
 
-  public /*override*/ onMouseDrag(event: MouseEvent): void
+  public /*override*/ onMouseDown(target: ThreeRenderTargetNode, node:BaseNode,  intersection: THREE.Intersection): boolean
   {
-    const target = this.target;
-    if (!target)
-      return;
+    const planeNode = node as SeismicPlaneNode;
+    if (!planeNode)
+      return false;
 
+    this._capureNode = planeNode;
+    this._startPoint = intersection.point;
+    return true;
+  }
+
+  public /*override*/ onMouseDrag(target: ThreeRenderTargetNode, ray: THREE.Ray, finished: boolean): void
+  {
     const planeNode = this._capureNode as SeismicPlaneNode;
     if (!planeNode)
       return;
@@ -82,11 +51,6 @@ export class PlaneToolCommand extends ToolCommand
 
     var cube = planeNode.surveyCube;
     if (!cube)
-      return;
-
-    const pixel = target.getMouseRelativePositionThree(event);
-    const ray = target.getRay(pixel);
-    if (!ray)
       return;
 
     const normal = planeNode.normal;
@@ -107,12 +71,10 @@ export class PlaneToolCommand extends ToolCommand
 
     const perpendicularIndex = resultCell.getAt(planeNode.perpendicularAxis);
     if (planeNode.moveTo(perpendicularIndex))
-      planeNode.notify(new NodeEventArgs(Changes.geometry));
-  }
-
-  public /*override*/ onMouseUp(event: MouseEvent): void
-  {
-    this._capureNode = null;
-    this._startPoint = null;
+    {
+      const args = new NodeEventArgs(Changes.geometry);
+      //args.add(Changes.nodeName);
+      planeNode.notify(args);
+    }
   }
 }

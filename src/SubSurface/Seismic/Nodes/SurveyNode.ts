@@ -15,7 +15,7 @@ import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { SurfaceRenderStyle } from "@/SubSurface/Basics/SurfaceRenderStyle";
 
-import SurfaceNodeIcon from "@images/Nodes/SurfaceNode.png";
+import Icon from "@images/Nodes/SurveyNode.png";
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
 import { SeismicPlaneFolder } from "@/SubSurface/Seismic/Nodes/SeismicPlaneFolder";
@@ -57,7 +57,9 @@ export class SurveyNode extends BaseVisualNode
 
   public /*override*/ get typeName(): string { return "Survey"; }
 
-  public /*override*/ getIcon(): string { return SurfaceNodeIcon; }
+  public /*override*/ getIcon(): string { return Icon; }
+
+  public /*override*/ canChangeColor(): boolean { return false; }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {

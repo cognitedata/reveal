@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import SurfaceNodeIcon from "@images/Nodes/SurfaceNode.png";
+import Icon from "@images/Nodes/SeismicPlaneFolder.png";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { SeismicPlaneNode } from "@/SubSurface/Seismic/Nodes/SeismicPlaneNode";
 
@@ -47,7 +47,7 @@ export class SeismicPlaneFolder extends BaseNode
 
   public /*override*/ canChangeColor(): boolean { return false; }
 
-  public /*override*/ getIcon(): string { return SurfaceNodeIcon; }
+  public /*override*/ getIcon(): string { return Icon; }
 
   public /*override*/ initializeCore()
   {

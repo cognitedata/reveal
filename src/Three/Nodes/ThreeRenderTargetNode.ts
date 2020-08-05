@@ -30,11 +30,11 @@ import { ToggleCameraTypeCommand } from "@/Three/Commands/ToggleCameraTypeComman
 import { CopyImageCommand } from "@/Three/Commands/CopyImageCommand";
 import { MeasureDistanceTool } from "@/Three/Commands/Tools/MeasureDistanceTool";
 import { ToggleFullscreenCommand } from "@/Three/Commands/ToggleFullscreenCommand";
-import { PanToolCommand } from "@/Three/Commands/Tools/PanToolCommand";
-import { SelectCommand } from "@/Three/Commands/Tools/SelectCommand";
-import { ZoomToolCommand } from "@/Three/Commands/Tools/ZoomToolCommand";
-import { ZoomToTargetToolCommand } from "@/Three/Commands/Tools/ZoomToTargetToolCommand";
-import { ToolCommand } from "@/Three/Commands/Tools/ToolCommand";
+import { PanTool } from "@/Three/Commands/Tools/PanTool";
+import { EditTool } from "@/Three/Commands/Tools/EditTool";
+import { ZoomTool } from "@/Three/Commands/Tools/ZoomTool";
+import { ZoomToTargetTool } from "@/Three/Commands/Tools/ZoomToTargetTool";
+import { BaseTool } from "@/Three/Commands/Tools/BaseTool";
 import { ToolController } from "@/Three/Nodes/ToolController";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
@@ -42,7 +42,6 @@ import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
 import { ZScaleCommand } from "@/Three/Commands/ZScaleCommand";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 import { Vector3 } from '@/Core/Geometry/Vector3';
-import { PlaneToolCommand } from '@/Three/Commands/Tools/PlaneToolCommand';
 
 const DirectionalLightName = "DirectionalLight";
 
@@ -72,10 +71,10 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   // INSTANCE PROPERTIES: Tools
   //==================================================
 
-  public setDefaultTool(tool: ToolCommand | null = null) { this._toolController.setDefaultTool(tool, this._cameraControl); }
+  public setDefaultTool(tool: BaseTool | null = null) { this._toolController.setDefaultTool(tool, this._cameraControl); }
 
-  public set activeTool(tool: ToolCommand | null) { this._toolController.setActiveTool(tool, this._cameraControl); }
-  public get activeTool(): ToolCommand | null { return this._toolController._activeTool; }
+  public set activeTool(tool: BaseTool | null) { this._toolController.setActiveTool(tool, this._cameraControl); }
+  public get activeTool(): BaseTool | null { return this._toolController._activeTool; }
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -181,7 +180,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   public /*override*/ onResize(): void
   {
-    const {pixelRange} = this;
+    const { pixelRange } = this;
     this.renderer.setSize(pixelRange.x.delta, pixelRange.y.delta);
     if (this._cameraControl)
       this._cameraControl.onResize(this.aspectRatio);
@@ -201,14 +200,14 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     if (!this.isInitialized)
       return;
 
-    const {camera} = this;
+    const { camera } = this;
     const boundingBox = this.getBoundingBoxFromViews();
     if (!boundingBox || boundingBox.isEmpty)
       return;
 
     this.transformer.transformRangeTo3D(boundingBox);
 
-    const {diagonal} = boundingBox;
+    const { diagonal } = boundingBox;
     const near = 0.001 * diagonal;
     const far = 2 * diagonal + this.cameraControl.distance;
     if (!Ma.isAbsEqual(camera.near, near, 0.1 * near) || !Ma.isAbsEqual(camera.far, far, 0.1 * far))
@@ -235,7 +234,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     if (!this.pixelRange.isEqual(this._prevPixelRange))
       this.onResize();
 
-    const {controls} = this;
+    const { controls } = this;
     let needsUpdate = true;
     if (controls)
     {
@@ -269,16 +268,15 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   public addTools(toolbar: IToolbar)
   {
-    const panTool = new PanToolCommand(this);
+    const panTool = new PanTool(this);
     this.setDefaultTool(panTool);
 
     // Tools
     toolbar.add(new ToggleFullscreenCommand(this));
     toolbar.add(panTool);
-    toolbar.add(new SelectCommand(this));
-    toolbar.add(new PlaneToolCommand(this));
-    toolbar.add(new ZoomToolCommand(this));
-    toolbar.add(new ZoomToTargetToolCommand(this));
+    toolbar.add(new EditTool(this));
+    toolbar.add(new ZoomTool(this));
+    toolbar.add(new ZoomToTargetTool(this));
     toolbar.add(new MeasureDistanceTool(this));
 
     // Views
@@ -309,8 +307,8 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   public switchCamera(isPerspectiveMode: boolean)
   {
-    const {azimuthAngle} = this.cameraControl.controls;
-    const {polarAngle} = this.cameraControl.controls;
+    const { azimuthAngle } = this.cameraControl.controls;
+    const { polarAngle } = this.cameraControl.controls;
 
     this._cameraControl = new CameraControl(this, isPerspectiveMode);
 
@@ -320,17 +318,17 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     const pixelYRange = this.pixelRange.y.max - this.pixelRange.y.min;
 
     // Set camera status to match with previous selected camera
-    if(!isPerspectiveMode)
+    if (!isPerspectiveMode)
       this.cameraControl.controls.zoomTo(pixelYRange / boundingBoxZRange);
-    
+
     this._cameraControl.controls.rotateTo(azimuthAngle, polarAngle, false);
     this._cameraControl.viewRange(boundingBox);
   }
 
   private updateLightPosition(): void
   {
-    const {camera} = this;
-    const {controls} = this;
+    const { camera } = this;
+    const { controls } = this;
     const light = this.directionalLight;
     if (!light)
       return;
@@ -382,21 +380,16 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     return this._raycaster.ray;
   }
 
-  public getIntersection(pixel: THREE.Vector2): THREE.Intersection | null
+  public getIntersections(pixel: THREE.Vector2): THREE.Intersection[]
   {
     //https://threejsfundamentals.org/threejs/lessons/threejs-picking.html
     this._raycaster.setFromCamera(pixel, this.camera);
-
-    const intersects = this._raycaster.intersectObjects(this.scene.children, true);
-
-    if (intersects.length > 0)
-      return intersects[0];
-    return null;
+    return this._raycaster.intersectObjects(this.scene.children, true);
   }
 
-  public getClickPosition(pixelCoords: THREE.Vector2): THREE.Vector3 | null
+  public getClickPosition(event: MouseEvent): THREE.Vector3 | null
   {
-    const intersection = this.getIntersection(pixelCoords);
+    const [, intersection] = this.getViewByMouseEvent(event);
     return intersection ? intersection.point : null;
   }
 
@@ -420,7 +413,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     return new Vector3(x, y, 0);
   }
 
-  public getViewByObject(object: THREE.Object3D): BaseThreeView | null
+  private getViewByObject(object: THREE.Object3D): BaseThreeView | null
   {
     while (true)
     {
@@ -454,9 +447,22 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     return null;
   }
 
-  public getNodeByObject(object: THREE.Object3D): BaseNode | null
+  public getNodeByMouseEvent(event: MouseEvent): [BaseNode | null, THREE.Intersection | null]
   {
-    const view = this.getViewByObject(object);
-    return view ? view.getNode() : null;
+    const [view, intersection] = this.getViewByMouseEvent(event);
+    return view ? [view.getNode(), intersection] : [null, null];
+  }
+
+  public getViewByMouseEvent(event: MouseEvent): [BaseThreeView | null, THREE.Intersection | null]
+  {
+    const pixel = this.getMouseRelativePositionThree(event);
+    const intersections = this.getIntersections(pixel);
+    for (const intersection of intersections)
+    {
+      const view = this.getViewByObject(intersection.object);
+      if (view)
+        return [view, intersection];
+    }
+    return [null, null];
   }
 }

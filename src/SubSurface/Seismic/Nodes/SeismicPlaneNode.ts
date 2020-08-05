@@ -15,7 +15,8 @@ import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { SurfaceRenderStyle } from "@/SubSurface/Basics/SurfaceRenderStyle";
 
-import SurfaceNodeIcon from "@images/Nodes/SurfaceNode.png";
+import IconI from "@images/Nodes/SeismicPlaneNodeI.png";
+import IconJ from "@images/Nodes/SeismicPlaneNodeJ.png";
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { SurveyNode } from "@/SubSurface/Seismic/Nodes/SurveyNode";
 import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
@@ -101,7 +102,7 @@ export class SeismicPlaneNode extends BaseVisualNode
     switch (this.perpendicularAxis)
     {
       case 0: return "Inline";
-      case 1: return "X-line";
+      case 1: return "Crossline";
       case 2: return "Time Slice";
       default: return "Arbitrary";
     }
@@ -156,6 +157,7 @@ export class SeismicPlaneNode extends BaseVisualNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Plane"; }
+  public /*override*/ canChangeColor(): boolean { return false; }
 
   public /*override*/ getName(): string
   {
@@ -164,7 +166,16 @@ export class SeismicPlaneNode extends BaseVisualNode
     return `${this.generalName} ${this.perpendicularIndex}`;
   }
 
-  public /*override*/ getIcon(): string { return SurfaceNodeIcon; }
+  public /*override*/ getIcon(): string 
+  { 
+    switch (this.perpendicularAxis)
+    {
+      case 0:return IconI;
+      case 1:return IconJ;
+      case 2: return IconJ;
+      default: return IconJ;
+    }
+  }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {

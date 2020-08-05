@@ -13,7 +13,7 @@
 
 import CameraControls from "camera-controls";
 import { CameraControl } from "@/Three/Nodes/CameraControl";
-import { ToolCommand } from "@/Three/Commands/Tools/ToolCommand";
+import { BaseTool } from "@/Three/Commands/Tools/BaseTool";
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 
 export class ToolController
@@ -22,21 +22,21 @@ export class ToolController
   // INSTANCE FIELDS
   //==================================================
 
-  public _activeTool: ToolCommand | null = null;
+  public _activeTool: BaseTool | null = null;
 
-  public _defaultTool: ToolCommand | null = null;
+  public _defaultTool: BaseTool | null = null;
 
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get activeTool(): ToolCommand | null { return this._activeTool; }
+  public get activeTool(): BaseTool | null { return this._activeTool; }
 
   //==================================================
   // INSTANCE METHODS
   //==================================================
 
-  public setDefaultTool(tool: ToolCommand | null, cameraControl: CameraControl | null)
+  public setDefaultTool(tool: BaseTool | null, cameraControl: CameraControl | null)
   {
     if (!tool)
     {
@@ -50,7 +50,7 @@ export class ToolController
     }
   }
 
-  public setActiveTool(tool: ToolCommand | null, cameraControl: CameraControl | null)
+  public setActiveTool(tool: BaseTool | null, cameraControl: CameraControl | null)
   {
     if (!tool)
       return;
