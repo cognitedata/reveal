@@ -41,15 +41,15 @@ export class StubPolylinesView extends Base3DView
 
   protected /*override*/ initializeCore(): void
   {
-    const {node} = this;
+    const { node } = this;
     if (!node)
       throw Error("The node is not set");
 
-    const {style} = this;
+    const { style } = this;
     if (!style)
       throw Error("The style is not set");
 
-    const {target} = this;
+    const { target } = this;
     if (!target)
       throw Error("The target is not set");
 
@@ -59,7 +59,7 @@ export class StubPolylinesView extends Base3DView
     if (!node.isInitialized)
       throw Error("The node is not initialized");
 
-    const {polylines} = node;
+    const { polylines } = node;
     if (!polylines)
       throw Error("The polylines is missing in view");
 

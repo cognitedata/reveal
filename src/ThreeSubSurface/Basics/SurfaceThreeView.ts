@@ -63,7 +63,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
 
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
-    const {node} = this;
+    const { node } = this;
     const grid = node.surface;
     if (!grid)
       return null;
@@ -77,7 +77,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
     if (contours)
       parent.add(contours);
 
-    const {transformer} = this;
+    const { transformer } = this;
 
     parent.rotateZ(grid.rotationAngle);
     parent.position.copy(transformer.to3D(grid.origin));
@@ -91,7 +91,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
 
   private createSolid(): THREE.Object3D | null
   {
-    const {node} = this;
+    const { node } = this;
     const style = this.style.solid;
     const grid = node.surface;
     if (!grid)
@@ -123,7 +123,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
 
   private createContours(): THREE.Object3D | null
   {
-    const {node} = this;
+    const { node } = this;
     const style = this.style.contours;
     const grid = node.surface;
     if (!grid)

@@ -60,7 +60,7 @@ export class DiscreteLogNode extends BaseLogNode
   protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
   {
     super.populateStatisticsCore(folder);
-    const {log} = this;
+    const { log } = this;
     if (!log)
       return;
 

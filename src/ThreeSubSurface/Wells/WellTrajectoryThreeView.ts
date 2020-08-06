@@ -72,7 +72,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
   private get bandRange(): Range1 | undefined
   {
-    const {style} = this;
+    const { style } = this;
     return !style ? undefined : new Range1(style.radius, style.bandWidth);
   }
 
@@ -199,7 +199,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     if (md === undefined)
       return;
 
-    const {node} = this;
+    const { node } = this;
     let counter = 0;
     for (const logNode of node.getDescendantsByType(BaseLogNode))
     {
@@ -209,7 +209,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       if (logNode instanceof PointLogNode)
         continue;
 
-      const {log} = logNode;
+      const { log } = logNode;
       if (!log)
         continue;
 
@@ -228,8 +228,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
-    const {node} = this;
-    const {wellNode} = node;
+    const { node } = this;
+    const { wellNode } = node;
     if (!wellNode)
       return null;
 
@@ -244,12 +244,12 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
   public /*override*/ mustTouch(): boolean
   {
-    const {node} = this;
-    const {trajectory} = node;
+    const { node } = this;
+    const { trajectory } = node;
     if (!trajectory)
       return false;
 
-    const {wellNode} = node;
+    const { wellNode } = node;
     if (!wellNode)
       return false;
 
@@ -264,8 +264,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
      
     let cameraChanged = false;
     {
-      const {transformer} = this;
-      const {camera} = this;
+      const { transformer } = this;
+      const { camera } = this;
       const cameraPosition = transformer.toWorld(camera.position);
       cameraPosition.substract(wellNode.origin);
 
@@ -305,12 +305,12 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
   private getMdRange(): Range1 | undefined
   {
-    const {node} = this;
-    const {bandRange} = this;
+    const { node } = this;
+    const { bandRange } = this;
     if (!bandRange)
       return undefined;
 
-    const {trajectory} = node;
+    const { trajectory } = node;
     if (!trajectory)
       return undefined;
 
@@ -320,7 +320,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
       if (!this.isInBand(logNode))
         continue;
 
-      const {log} = logNode;
+      const { log } = logNode;
       if (!log)
         continue;
 
@@ -347,12 +347,12 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
   private addTrajectoryLabel(parent: THREE.Object3D)
   {
-    const {node} = this;
-    const {trajectory} = node;
+    const { node } = this;
+    const { trajectory } = node;
     if (!trajectory)
       return;
 
-    const {style} = this;
+    const { style } = this;
     if (!style)
       return;
 
@@ -368,16 +368,16 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
   private addWellLabel(parent: THREE.Object3D)
   {
-    const {node} = this;
-    const {wellNode} = node;
+    const { node } = this;
+    const { wellNode } = node;
     if (!wellNode)
       return;
 
-    const {trajectory} = node;
+    const { trajectory } = node;
     if (!trajectory)
       return;
 
-    const {style} = this;
+    const { style } = this;
     if (!style)
       return;
 
@@ -393,20 +393,20 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
   private addTrajectory(parent: THREE.Object3D): void
   {
-    const {node} = this;
-    const {wellNode} = node;
+    const { node } = this;
+    const { wellNode } = node;
     if (!wellNode)
       return;
 
-    const {style} = this;
-    const {trajectory} = node;
+    const { style } = this;
+    const { trajectory } = node;
     if (!trajectory)
       return;
 
     const color = node.getColorByColorType(style.colorType);
 
     const samples = trajectory.createRenderSamples(color, style.radius);
-    const {transformer} = this;
+    const { transformer } = this;
     for (const sample of samples)
       transformer.transformRelativeTo3D(sample.point);
     {
@@ -434,12 +434,12 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
   private addBands(parent: THREE.Object3D): void
   {
-    const {node} = this;
-    const {bandRange} = this;
+    const { node } = this;
+    const { bandRange } = this;
     if (!bandRange)
       return;
 
-    const {trajectory} = node;
+    const { trajectory } = node;
     if (!trajectory)
       return;
 
@@ -521,9 +521,9 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     if (!parent)
       return textures;
 
-    const {node} = this;
-    const {style} = this;
-    const {bandRange} = this;
+    const { node } = this;
+    const { style } = this;
+    const { bandRange } = this;
     if (!bandRange)
       return textures;
 
@@ -591,13 +591,13 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
     if (!trajectoryNode)
       return undefined;
 
-    const {trajectory} = trajectoryNode;
+    const { trajectory } = trajectoryNode;
     if (!trajectory)
       return undefined;
 
     if (md === undefined)
     {
-      const {transformer} = view;
+      const { transformer } = view;
       const position = transformer.toWorld(intersection.point);
       position.substract(wellNode.origin);
       md = trajectory.getClosestMd(position);

@@ -141,7 +141,7 @@ export class NodePointer
     this.clearIndexes();
 
     let child = node;
-    let {parent} = child;
+    let { parent } = child;
     while (parent)
     {
       const index = parent.children.indexOf(child);

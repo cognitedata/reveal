@@ -62,7 +62,7 @@ export class ToolController
     if (!cameraControl)
       return;
 
-    const {controls} = cameraControl;
+    const { controls } = cameraControl;
     if (tool.overrideLeftButton())
       controls.mouseButtons.left = CameraControls.ACTION.NONE;
     else

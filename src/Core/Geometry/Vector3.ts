@@ -177,7 +177,7 @@ export class Vector3
 
   public normalize(): boolean
   {
-    const {length} = this;
+    const { length } = this;
     if (length < Number.EPSILON)
       return false;
 

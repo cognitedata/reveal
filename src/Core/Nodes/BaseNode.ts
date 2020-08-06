@@ -240,7 +240,7 @@ export abstract class BaseNode extends Identifiable
   protected /*virtual*/ removeInteractiveCore(): void { }
   protected /*virtual*/ get activeTargetIdAccessor(): ITargetIdAccessor | null
   {
-    const {root} = this;
+    const { root } = this;
     return root ? root.activeTargetIdAccessor : null;
   }
 
@@ -572,7 +572,7 @@ export abstract class BaseNode extends Identifiable
       Error(`The child ${this.typeName} don't have a parent`);
       return false;
     }
-    const {childIndex} = this;
+    const { childIndex } = this;
     if (childIndex === undefined)
     {
       Error(`The child ${this.typeName} is not child of it's parent`);
@@ -623,7 +623,7 @@ export abstract class BaseNode extends Identifiable
     // It is not finished, because the children it not taken properly care of
     this.eventListeners.length = 0;
     this.removeInteractiveCore();
-    const {parent} = this;
+    const { parent } = this;
     this.remove();
     parent!.notify(new NodeEventArgs(Changes.childDeleted));
   }

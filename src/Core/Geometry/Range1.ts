@@ -208,7 +208,7 @@ export class Range1
     if (this._isEmpty)
       return;
 
-    const {center} = this;
+    const { center } = this;
     this._min = (this._min - center) * scale + center;
     this._max = (this._max - center) * scale + center;
   }

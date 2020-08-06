@@ -27,7 +27,7 @@ export class LogFilterView extends BaseView
 
   private get trajectoryNode(): WellTrajectoryNode | null
   {
-    const {node} = this;
+    const { node } = this;
     return !node ? null : node.trajectoryNode;
   }
 
@@ -72,7 +72,7 @@ export class LogFilterView extends BaseView
 
   protected updateTrajectory(args: NodeEventArgs | null = null): void
   {
-    const {trajectoryNode} = this;
+    const { trajectoryNode } = this;
     if (!trajectoryNode)
       return;
 

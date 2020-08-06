@@ -30,7 +30,7 @@ export const explorerSlice = createSlice({
     generateNodeTree: {
       reducer(state: IExplorerState, action: PayloadAction<{ tabNodes: BaseNode[] }>): IExplorerState
       {
-        const tabNodes = action.payload.tabNodes;
+        const { tabNodes } = action.payload;
         for (const tabNode of tabNodes)
         {
           const nodeType = tabNode.typeName;
@@ -147,7 +147,7 @@ export const explorerSlice = createSlice({
       reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, nodeColor: Color }>): IExplorerState
       {
         const uniqueId = action.payload.nodeId;
-        const icon = state.nodes.byId[uniqueId].icon;
+        const { icon } = state.nodes.byId[uniqueId];
         if (icon)
           icon.color = action.payload.nodeColor;
         return state;
@@ -161,7 +161,7 @@ export const explorerSlice = createSlice({
   extraReducers: {
     [ActionTypes.changeSelectState]: (state: IExplorerState, action: PayloadAction<{ node: BaseNode }>): IExplorerState =>
     {
-      const node = action.payload.node;
+      const { node } = action.payload;
       const uniqueId = node.uniqueId.toString();
       const selectStatus = node.IsSelected();
       const nodeState = state.nodes.byId[uniqueId];

@@ -143,7 +143,7 @@ describe("Hierarcy", () =>
       expect(grandChild.hasParent).toBe(true);
       expect(grandChild.parent).not.toBeNull();
 
-      const {parent} = grandChild;
+      const { parent } = grandChild;
       if (!parent)
         return;
 

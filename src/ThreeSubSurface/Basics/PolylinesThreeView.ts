@@ -61,18 +61,18 @@ export class PolylinesThreeView extends BaseGroupThreeView
 
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
-    const {node} = this;
-    const {style} = this;
+    const { node } = this;
+    const { style } = this;
 
-    const {polylines} = node;
+    const { polylines } = node;
     if (!polylines)
       throw Error("polylines is missing in view");
 
     let color = node.getColor();
-    const {colorType} = style;
+    const { colorType } = style;
 
     const group = new THREE.Group();
-    const {transformer} = this;
+    const { transformer } = this;
   
     for (const polyline of polylines.list)
     {

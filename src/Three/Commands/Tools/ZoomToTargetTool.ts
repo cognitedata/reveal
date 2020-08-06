@@ -29,7 +29,7 @@ export class ZoomToTargetTool extends BaseTool
 
   public /*override*/ onMouseClick(event: MouseEvent): void
   {
-    const {target} = this;
+    const { target } = this;
     if (!target)
       return;
 
@@ -37,7 +37,7 @@ export class ZoomToTargetTool extends BaseTool
     if (!worldCoords)
       return;
 
-    const {cameraControl} = target;
+    const { cameraControl } = target;
     cameraControl.zoomToTarget(worldCoords);
     target.setDefaultTool();
   }

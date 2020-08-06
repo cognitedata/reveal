@@ -29,7 +29,7 @@ export class SeismicCubePlaneManipulator extends BaseManipulator
     this._startPoint = null;
   }
 
-  public /*override*/ onMouseDown(target: ThreeRenderTargetNode, node:BaseNode,  intersection: THREE.Intersection): boolean
+  public /*override*/ onMouseDown(target: ThreeRenderTargetNode, node:BaseNode, intersection: THREE.Intersection): boolean
   {
     const planeNode = node as SeismicPlaneNode;
     if (!planeNode)
@@ -49,11 +49,11 @@ export class SeismicCubePlaneManipulator extends BaseManipulator
     if (!this._startPoint)
       return;
 
-    var cube = planeNode.surveyCube;
+    const cube = planeNode.surveyCube;
     if (!cube)
       return;
 
-    const normal = planeNode.normal;
+    const { normal } = planeNode;
     const up = Vector3.newUp;
     const perpedicularNormal = normal.getCross(up);
 
@@ -64,7 +64,7 @@ export class SeismicCubePlaneManipulator extends BaseManipulator
     if (!ray.intersectPlane(perpedicularPlane, intersection))
       return;
 
-    const transformer = target.transformer;
+    const { transformer } = target;
     const position = transformer.toWorld(intersection);
     const resultCell = Index3.newZero;
     cube.getCellFromPosition(position, resultCell);

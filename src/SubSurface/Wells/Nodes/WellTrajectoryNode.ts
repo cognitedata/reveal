@@ -102,7 +102,7 @@ export class WellTrajectoryNode extends DataNode
   protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
   {
     super.populateStatisticsCore(folder);
-    const {trajectory} = this;
+    const { trajectory } = this;
     if (!trajectory)
       return;
 

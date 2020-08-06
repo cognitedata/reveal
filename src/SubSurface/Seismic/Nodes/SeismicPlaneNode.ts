@@ -46,7 +46,7 @@ export class SeismicPlaneNode extends BaseVisualNode
 
   public get surveyCube(): RegularGrid3 | null
   {
-    const {surveyNode} = this;
+    const { surveyNode } = this;
     return surveyNode ? surveyNode.surveyCube : null;
   }
 
@@ -76,7 +76,7 @@ export class SeismicPlaneNode extends BaseVisualNode
 
   private get maxPerpendicularIndex(): number
   {
-    const {surveyCube} = this;
+    const { surveyCube } = this;
     if (!surveyCube)
       return -1;
 
@@ -202,7 +202,5 @@ export class SeismicPlaneNode extends BaseVisualNode
     this._perpendicularIndex = perpendicularIndex;
     return true;
   }
-
-
 
 }

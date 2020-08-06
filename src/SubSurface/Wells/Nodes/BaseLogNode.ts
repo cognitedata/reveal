@@ -50,7 +50,7 @@ export abstract class BaseLogNode extends DataNode
 
   public get filterLogNode(): BaseFilterLogNode | null
   {
-    const {trajectoryNode} = this;
+    const { trajectoryNode } = this;
     if (!trajectoryNode)
       return null;
 
@@ -87,7 +87,7 @@ export abstract class BaseLogNode extends DataNode
 
   public /*override*/ getColor(): Color
   {
-    const {filterLogNode} = this;
+    const { filterLogNode } = this;
     return filterLogNode ? filterLogNode.getColor() : super.getColor();
   }
 
@@ -95,14 +95,14 @@ export abstract class BaseLogNode extends DataNode
 
   public /*override*/ canBeChecked(target: ITarget | null): boolean
   {
-    const {trajectoryNode} = this;
+    const { trajectoryNode } = this;
     return trajectoryNode ? trajectoryNode.isVisible(target) : false;
   }
 
   protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
   {
     super.populateStatisticsCore(folder);
-    const {log} = this;
+    const { log } = this;
     if (!log)
       return;
 
@@ -116,7 +116,7 @@ export abstract class BaseLogNode extends DataNode
 
   public getRenderStyle(targetId?: TargetId): BaseRenderStyle | null
   {
-    const {filterLogNode} = this;
+    const { filterLogNode } = this;
     return filterLogNode ? filterLogNode.getRenderStyle(targetId) : null;
   }
 

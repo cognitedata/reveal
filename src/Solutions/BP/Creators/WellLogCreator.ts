@@ -120,7 +120,7 @@ export default class WellLogCreator
       console.warn("Unsupported log type", valueType);
       return null;
     }
-    const {name} = firstColumns[logIndex];
+    const { name } = firstColumns[logIndex];
     if (!Util.isEmpty(name))
       logNode.name = name;
     return logNode;

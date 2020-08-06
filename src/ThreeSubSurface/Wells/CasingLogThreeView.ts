@@ -73,16 +73,16 @@ export class CasingLogThreeView extends BaseGroupThreeView
     if (!this.isVisible)
       return undefined;
 
-    const {node} = this;
-    const {trajectory} = node;
+    const { node } = this;
+    const { trajectory } = node;
     if (!trajectory)
       return undefined;
 
-    const {wellNode} = this.node;
+    const { wellNode } = this.node;
     if (!wellNode)
       return undefined;
 
-    const {log} = node;
+    const { log } = node;
     if (!log)
       return undefined;
 
@@ -113,10 +113,10 @@ export class CasingLogThreeView extends BaseGroupThreeView
     if (md === undefined)
       return;
 
-    const {node} = this;
+    const { node } = this;
     viewInfo.addHeader(node.displayName);
 
-    const {log} = node;
+    const { log } = node;
     if (!log)
       return;
 
@@ -136,21 +136,21 @@ export class CasingLogThreeView extends BaseGroupThreeView
 
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
-    const {node} = this;
-    const {wellNode} = node;
+    const { node } = this;
+    const { wellNode } = node;
     if (!wellNode)
       return null;
 
-    const {style} = this;
+    const { style } = this;
     if (!style)
       return null;
 
     const color = node.getColorByColorType(style.colorType);
-    const {trajectory} = node;
+    const { trajectory } = node;
     if (!trajectory)
       return null;
 
-    const {log} = node;
+    const { log } = node;
     if (!log)
       throw Error("Well trajectory is missing");
 
@@ -178,7 +178,7 @@ export class CasingLogThreeView extends BaseGroupThreeView
 
   public createRenderSamples(trajectory: WellTrajectory, log: CasingLog, color: Color): RenderSample[]
   {
-    const {trajectoryRadius} = this;
+    const { trajectoryRadius } = this;
 
     const samples: RenderSample[] = [];
     for (let logIndex = 0; logIndex < log.length; logIndex++)
@@ -215,7 +215,7 @@ export class CasingLogThreeView extends BaseGroupThreeView
       samples.push(new RenderSample(basePosition, sample.baseMd, sampleRadius, color));
       samples.push(new RenderSample(basePosition.clone(), sample.baseMd, 0, color));
     }
-    const {transformer} = this;
+    const { transformer } = this;
     for (const sample of samples)
       transformer.transformRelativeTo3D(sample.point);
     return samples;
@@ -272,11 +272,11 @@ export class CasingLogThreeView extends BaseGroupThreeView
 
   protected get trajectoryRadius(): number
   {
-    const {node} = this;
+    const { node } = this;
     if (!node)
       return 0;
 
-    const {trajectoryNode} = node;
+    const { trajectoryNode } = node;
     if (!trajectoryNode)
       return 0;
 

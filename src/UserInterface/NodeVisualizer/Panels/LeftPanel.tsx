@@ -7,7 +7,7 @@ import { ConnectedExplorerPanel } from "@/UserInterface/NodeVisualizer/Explorer/
 export default function LeftPanel() {
   return (
     <div className="left-panel">
-      <SplitPane split="horizontal" defaultSize={"50%"} primary="second">
+      <SplitPane split="horizontal" defaultSize="50%" primary="second">
         <ConnectedExplorerPanel />
         <ConnectedSettingsPanel />
       </SplitPane>

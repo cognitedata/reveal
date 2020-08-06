@@ -6,7 +6,7 @@ import {
   getAllTabs,
   getCurrentTabIndex,
   getNodeTree,
-  onSelectedTabChange
+  onSelectedTabChange,
 } from "@/UserInterface/Redux/reducers/ExplorerReducer";
 import ExplorerNodeUtils from "@/UserInterface/NodeVisualizer/Explorer/ExplorerNodeUtils";
 
@@ -23,7 +23,7 @@ function mapDispatchToExplorerPanel(dispatch: Dispatch) {
     },
     onNodeSelect: (nodeId: string, selectState: boolean): void => {
       ExplorerNodeUtils.selectNodeById(nodeId, selectState);
-    }
+    },
   };
 }
 

@@ -59,7 +59,7 @@ export class SeismicCubeView extends BaseView
 
   private updatePlanes(args: NodeEventArgs): void
   {
-    const {node} = this;
+    const { node } = this;
     const survey = node.surveyNode;
     if (!survey)
       return;

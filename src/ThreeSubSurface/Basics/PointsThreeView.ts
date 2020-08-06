@@ -57,7 +57,7 @@ export class PointsThreeView extends BaseGroupThreeView
 
   public /*override*/ calculateBoundingBoxCore(): Range3 | undefined
   {
-    const {boundingBox} = this.node;
+    const { boundingBox } = this.node;
     if (!boundingBox)
       return undefined;
 
@@ -71,10 +71,10 @@ export class PointsThreeView extends BaseGroupThreeView
 
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
-    const {node} = this;
-    const {style} = this;
+    const { node } = this;
+    const { style } = this;
 
-    const {points} = node;
+    const { points } = node;
     if (!points)
       throw Error("points is missing in view");
 
@@ -126,13 +126,13 @@ export class PointsThreeView extends BaseGroupThreeView
 
   private static createColors(points: Points): Uint8Array
   {
-    const {zRange} = points;
+    const { zRange } = points;
     let index = 0;
 
     const colors = new Uint8Array(points.count * 3);
     for (let i = 0; i < points.count; i++)
     {
-      const {z} = points.list[i];
+      const { z } = points.list[i];
       const fraction = zRange.getFraction(z);
       const color = Color.hsv(fraction * 360, 255, 200);
 

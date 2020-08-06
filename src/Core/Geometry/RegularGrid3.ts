@@ -92,7 +92,7 @@ export class RegularGrid3 extends Grid3
 
   public getAxis(dimension: number): Vector3
   {
-    var axis = Vector3.getAxis(dimension);
+    const axis = Vector3.getAxis(dimension);
     if (dimension < 2 && this._hasRotationAngle)
     {
       const dx = axis.x;

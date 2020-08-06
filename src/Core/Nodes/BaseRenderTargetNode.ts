@@ -29,7 +29,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
 
   public get pixelRange(): Range3
   {
-    const {domElement} = this;
+    const { domElement } = this;
     const windowWidth = domElement.clientWidth;
     const windowHeight = domElement.clientHeight;
     const x = this._fractionRange.x.min * windowWidth;
@@ -98,7 +98,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
 
   public fillViewInfo(): ViewInfo
   {
-    const {viewInfo} = this;
+    const { viewInfo } = this;
     for (const view of this.viewsShownHere.list)
       if (view instanceof Base3DView)
         view.getViewInfo(viewInfo);

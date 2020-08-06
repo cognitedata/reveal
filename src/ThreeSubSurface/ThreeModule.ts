@@ -96,7 +96,6 @@ export class ThreeModule extends BaseModule
     factory.register(SeismicCubeNode.className, SeismicCubeView, ThreeRenderTargetNode.className);
     factory.register(SurveyNode.className, SurveyView, ThreeRenderTargetNode.className);
 
-
     const manipulatorFactory = ManipulatorFactory.instance;
     manipulatorFactory.register(SeismicPlaneNode.className, SeismicCubePlaneManipulator, ThreeRenderTargetNode.className);
   }

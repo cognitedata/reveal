@@ -14,7 +14,7 @@ export default class WellNodesCreator
     if (!bpData)
       return null;
 
-    const {wellMap} = bpData;
+    const { wellMap } = bpData;
 
     if (!wellMap || wellMap.size === 0)
       return null;
@@ -34,22 +34,22 @@ export default class WellNodesCreator
     if (!wellNodes.length)
       return null;
 
-    const {trajectoryMap} = bpData;
+    const { trajectoryMap } = bpData;
     if (!trajectoryMap || !(trajectoryMap.size > 0))
       return wellNodes;
 
-    const {wellBoreToWellMap} = bpData;
+    const { wellBoreToWellMap } = bpData;
     if (!wellBoreToWellMap || !(wellBoreToWellMap.size > 0))
       return wellNodes;
 
-    const {trajectoryDataMap} = bpData;
+    const { trajectoryDataMap } = bpData;
     if (!trajectoryDataMap || !(trajectoryDataMap.size > 0))
       return wellNodes;
 
-    const {wellBoreToNDSEventsMap} = bpData;
-    const {wellBoreToNPTEventsMap} = bpData;
-    const {wellBoreToLogsMap} = bpData;
-    const {wellBoreToCasingDataMap} = bpData;
+    const { wellBoreToNDSEventsMap } = bpData;
+    const { wellBoreToNPTEventsMap } = bpData;
+    const { wellBoreToLogsMap } = bpData;
+    const { wellBoreToCasingDataMap } = bpData;
 
     for (const trajectory of trajectoryMap.values())
     {
@@ -62,7 +62,7 @@ export default class WellNodesCreator
       if (!wellNode)
         continue;
 
-      const {metadata} = wellBoreToWell.data;
+      const { metadata } = wellBoreToWell.data;
       wellNode.elevationType = metadata.elevation_type; //KB
       const elevationUnit = metadata.elevation_value_unit;
       let elevation = Util.getNumberWithUnit(metadata.elevation_value, elevationUnit);

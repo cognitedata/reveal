@@ -98,7 +98,7 @@ export default class BPData
         return;
       }
       const columnIndexes = this.trajectoryDataColumnIndexes;
-      const {columns} = trajectoryData[0];
+      const { columns } = trajectoryData[0];
       if (!columns || !columns.length)
       {
         // tslint:disable-next-line:no-console

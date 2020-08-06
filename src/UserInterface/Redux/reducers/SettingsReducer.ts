@@ -45,8 +45,8 @@ export const settingsSlice = createSlice({
     onSelectedNodeChange: {
       reducer(state: ISettingsState, action: PayloadAction<{ node: BaseNode, propertyFolder: BasePropertyFolder }>)
       {
-        const {node} = action.payload;
-        const {propertyFolder} = action.payload;
+        const { node } = action.payload;
+        const { propertyFolder } = action.payload;
 
         if (node && node.IsSelected())
         {
