@@ -1,28 +1,26 @@
-import { BaseNode } from "@/Core/Nodes/BaseNode";
 import Color from "color";
 
 // Explorer component state interface
-export interface ExplorerState
+export interface IExplorerState
 {
-  tabs: {
-    name: string;
-    icon: string;
-    nodeIds: string[]
-  }[];
+  tabs: string[];
   selectedTabIndex: number;
-  selectedNode: string | null;
-  checkedNodeIds: Set<string>;
-  nodes?: { [key: string]: TreeDataItemState };
+  selectedNodeId: string | null;
+  nodes: {
+    byId: { [id: string]: ITreeNodeState },
+    allIds: string[]
+  }
 }
 
 // Explorer Redux Node interface
-export interface TreeDataItemState
+export interface ITreeNodeState
 {
+  nodeType: string, // node Type is used to identify whether node is well type, surface type ..etc
   parentId?: string | null;
   uniqueId: string;
   name: string;
   expanded: boolean;
-  icon?: {
+  icon: {
     path: string;
     description?: string;
     color?: Color;

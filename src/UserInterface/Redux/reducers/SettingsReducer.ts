@@ -72,23 +72,29 @@ export const settingsSlice = createSlice({
           }
         }
       },
-      prepare(node: BaseNode, selectStatus: boolean): { payload: { node: BaseNode, propertyFolder: BasePropertyFolder } }
+      prepare(node: BaseNode): { payload: { node: BaseNode, propertyFolder: BasePropertyFolder } }
       {
         let settingsProperties;
 
-        if (node && selectStatus)
-        { // populate settings object
-          settingsProperties = new PropertyFolder("Settings");
+        if (node)
+        {
+          const selectionState = node.IsSelected();
 
-          const generalProperties = new PropertyFolder("General Properties");
-          node.populateInfo(generalProperties);
-          settingsProperties.addChild(generalProperties);
+          if (selectionState)
+          {
+            // populate settings object
+            settingsProperties = new PropertyFolder("Settings");
 
-          const statistics = new PropertyFolder("Statistics");
-          node.populateStatistics(statistics);
-          settingsProperties.addChild(statistics);
+            const generalProperties = new PropertyFolder("General Properties");
+            node.populateInfo(generalProperties);
+            settingsProperties.addChild(generalProperties);
 
-          NodeUtils.properties = settingsProperties;
+            const statistics = new PropertyFolder("Statistics");
+            node.populateStatistics(statistics);
+            settingsProperties.addChild(statistics);
+
+            NodeUtils.properties = settingsProperties;
+          }
         }
         return {
           payload: { node, propertyFolder: settingsProperties }

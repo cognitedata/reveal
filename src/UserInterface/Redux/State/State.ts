@@ -1,5 +1,5 @@
 import { ISettingsState } from "@/UserInterface/Redux/State/settings";
-import { ExplorerState } from "@/UserInterface/Redux/State/explorer";
+import { IExplorerState } from "@/UserInterface/Redux/State/explorer";
 import { CommonState } from "@/UserInterface/Redux/State/common";
 import { VisualizerState } from "@/UserInterface/Redux/State/visualizer";
 
@@ -8,6 +8,6 @@ export interface State
 {
   common: CommonState;
   settings: ISettingsState;
-  explorer: ExplorerState;
+  explorer: IExplorerState;
   visualizers: VisualizerState
 }
