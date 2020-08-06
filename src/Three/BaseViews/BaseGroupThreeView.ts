@@ -140,7 +140,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
 
   public touch(): void
   {
-    const {scene} = this;
+    const { scene } = this;
     if (this._object3D)
       scene.remove(this._object3D);
 

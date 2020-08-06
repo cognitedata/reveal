@@ -117,11 +117,11 @@ export class AxisThreeView extends BaseGroupThreeView
   public /*override*/ beforeRender(): void
   {
     super.beforeRender();
-    const {object3D} = this;
+    const { object3D } = this;
     if (!object3D)
       return;
 
-    const {camera} = this;
+    const { camera } = this;
     const cameraPosition = ThreeConverter.fromThreeVector3(camera.position);
 
     for (const child of object3D.children)
@@ -142,7 +142,7 @@ export class AxisThreeView extends BaseGroupThreeView
     if (boundingBox.isEmpty)
       return null;
 
-    const {style} = this;
+    const { style } = this;
     if (!style)
       return null;
 
@@ -155,7 +155,7 @@ export class AxisThreeView extends BaseGroupThreeView
     // Initialize the corners and the centers
     this.corners = boundingBox.getCornerPoints();
     const useWall = AxisThreeView.getUseWall(boundingBox);
-    const {transformer} = this;
+    const { transformer } = this;
     for (let wallIndex = 0; wallIndex < 6; wallIndex++)
     {
       const indexes = Range3.getWallCornerIndexes(wallIndex);
@@ -216,7 +216,7 @@ export class AxisThreeView extends BaseGroupThreeView
     if (!usedWall[wallIndex0] && !usedWall[wallIndex1])
       return;
 
-    const {transformer} = this;
+    const { transformer } = this;
 
     // Draw X axis
     if (style.showAxis)
@@ -366,7 +366,7 @@ export class AxisThreeView extends BaseGroupThreeView
     const indexes = Range3.getWallCornerIndexes(wallIndex);
     const geometry = new THREE.Geometry();
 
-    const {transformer} = this;
+    const { transformer } = this;
     geometry.vertices.push(transformer.to3D(this.corners[indexes[0]]));
     geometry.vertices.push(transformer.to3D(this.corners[indexes[1]]));
     geometry.vertices.push(transformer.to3D(this.corners[indexes[2]]));
@@ -420,7 +420,7 @@ export class AxisThreeView extends BaseGroupThreeView
     //     +-----------+
     //   p0            p1
 
-    const {transformer} = this;
+    const { transformer } = this;
 
     const p0 = this.corners[i0].clone();
     const p1 = this.corners[i1].clone();

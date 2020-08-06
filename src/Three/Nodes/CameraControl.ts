@@ -48,7 +48,7 @@ export class CameraControl
 
   public get distance(): number
   {
-    const {controls} = this;
+    const { controls } = this;
     let position = new THREE.Vector3();
     let target = new THREE.Vector3();
     position = controls.getPosition(position);
@@ -104,8 +104,8 @@ export class CameraControl
     if (!boundingBox || boundingBox.isEmpty)
       return false;
 
-    const {controls} = this;
-    const {camera} = this;
+    const { controls } = this;
+    const { camera } = this;
 
     let distanceFactor = 1;
     if (camera instanceof THREE.PerspectiveCamera)
@@ -211,7 +211,7 @@ export class CameraControl
 
   public zoomToTarget(position: THREE.Vector3): void
   {
-    const {controls} = this;
+    const { controls } = this;
     const tmp = new THREE.Vector3();
     const distance = controls.getPosition(tmp).distanceTo(position);
     controls.setTarget(position.x, position.y, position.z, true);

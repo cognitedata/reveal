@@ -7,7 +7,7 @@ import SplitPane from "react-split-pane";
 import RightPanel from "@/UserInterface/NodeVisualizer/Panels/RightPanel";
 import LeftPanel from "@/UserInterface/NodeVisualizer/Panels/LeftPanel";
 
-import { generateNodeTree } from "@/UserInterface/Redux/actions/explorer";
+import { generateNodeTree } from "@/UserInterface/Redux/reducers/ExplorerReducer";
 import { setVisualizerData } from "@/UserInterface/Redux/actions/visualizers";
 
 import NotificationsToActionsAdaptor from "@/UserInterface/Adapters/NotificationToAction";
@@ -71,7 +71,7 @@ export default function NodeVisualizer(props: { root?: BaseRootNode }) {
 
       // Add target and toolbar data to state
       dispatch(setVisualizerData({ viewers }));
-      dispatch(generateNodeTree({ root }));
+      dispatch(generateNodeTree());
       // tslint:disable-next-line: no-console
       console.log("SubsurfaceVisualizer: Added toolbars and viewers");
     },

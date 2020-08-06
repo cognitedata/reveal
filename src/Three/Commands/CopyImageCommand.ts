@@ -26,7 +26,7 @@ export class CopyImageCommand extends ThreeRenderTargetCommand
   {
     this.target?.domElement.toBlob((blob: any) => {
       // @ts-ignore
-      navigator.clipboard.write([new ClipboardItem({ "image/png": blob})]);
+      navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
     });
     return true;
   }

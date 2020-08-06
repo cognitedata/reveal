@@ -52,8 +52,8 @@ export class PotreeThreeView extends BaseGroupThreeView
 
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
-    const {node} = this;
-    const {style} = this;
+    const { node } = this;
+    const { style } = this;
 
     const path = node.url;
     if (!path || path === "")
@@ -64,10 +64,10 @@ export class PotreeThreeView extends BaseGroupThreeView
 
     Potree.loadPointCloud(path, node.name, (data: any) =>
     {
-      const {pointcloud} = data;
+      const { pointcloud } = data;
       group.add(pointcloud);
 
-      const {material} = pointcloud;
+      const { material } = pointcloud;
       if (material)
       {
         // https://github.com/tentone/potree-core

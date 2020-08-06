@@ -50,7 +50,7 @@ export class TreeOverlay
     if (!this.delta.equals(delta))
       this.initialize(delta);
 
-    const {context} = this;
+    const { context } = this;
     if (!context)
       return;
 
@@ -97,7 +97,7 @@ export class TreeOverlay
           const material = child.material as THREE.Material;
           if (material)
             material.dispose();
-          const {geometry} = child;
+          const { geometry } = child;
           if (geometry)
             geometry.dispose();
         }

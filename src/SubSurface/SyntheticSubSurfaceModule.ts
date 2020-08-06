@@ -243,7 +243,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
     if (!(root instanceof SubSurfaceRootNode))
       return;
 
-    const range = Range3.newTest
+    const range = Range3.newTest;
 
     const seismicTree = root.seismic;
 

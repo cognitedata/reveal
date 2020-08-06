@@ -54,7 +54,7 @@ export default class WellTrajectoryNodeCreator
           sample.inclination = curvePoint[inclinationIndex];
           sample.azimuth = curvePoint[azimuthIndex];
         }
-        const {length} = trajectory;
+        const { length } = trajectory;
         if (length > 0 && Number.isNaN(md))
           sample.updateMdFromPrevSample(trajectory.getAt(length - 1));
         trajectory.add(sample);
@@ -78,7 +78,7 @@ export default class WellTrajectoryNodeCreator
         const sample = new TrajectorySample(new Vector3(0, 0, elevation), md);
         sample.inclination = inclination;
         sample.azimuth = azimuth;
-        const {length} = trajectory;
+        const { length } = trajectory;
         if (length > 0 && !sample.updatePointFromPrevSample(trajectory.getAt(length - 1)))
           break;
         trajectory.add(sample);

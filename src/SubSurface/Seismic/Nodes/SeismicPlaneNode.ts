@@ -225,7 +225,7 @@ export class SeismicPlaneNode extends BaseVisualNode
 
   public createCells(useIndex: boolean = true): Index2[]
   {
-    var surveyCube = this.surveyCube;
+    const surveyCube = this.surveyCube;
     if (!surveyCube)
       throw Error("surveyCube is not set");
 

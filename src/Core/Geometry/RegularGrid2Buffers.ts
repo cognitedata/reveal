@@ -36,7 +36,7 @@ export class RegularGrid2Buffers extends TrianglesBuffers
   makeBuffers(grid: RegularGrid2, uniqueIndexes: number[]): void
   {
     // Generate the position, normal and uvs
-    const {zRange} = grid;
+    const { zRange } = grid;
     const position = Vector3.newZero;
     const normal = Vector3.newZero;
 

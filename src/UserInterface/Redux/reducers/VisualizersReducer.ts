@@ -32,7 +32,7 @@ export default createReducer(initialState, {
     const toolbar = state.toolbars[visualizerId];
     toolbar.map((item) =>
     {
-      const {command} = item;
+      const { command } = item;
       item.isChecked = command.isChecked;
       item.icon = command.getIcon();
       item.isVisible = command.isVisible;

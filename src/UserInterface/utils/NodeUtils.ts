@@ -19,6 +19,16 @@ export default class NodeUtils
     NodeUtils._currentProperties = properties;
   }
 
+  public static getTreeRoot(): BaseNode | null
+  {
+    let node: BaseNode | null = null;
+    if (BaseRootNode.active)
+    {
+      node = BaseRootNode.active;
+    }
+    return node;
+  }
+
   public static getNodeById(id: string): BaseNode | null
   {
     let node: BaseNode | null = null;

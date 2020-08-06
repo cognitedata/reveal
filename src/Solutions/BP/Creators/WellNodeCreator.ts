@@ -11,7 +11,7 @@ export default class WellNodeCreator
     if (!wellData)
       return null;
 
-    const {metadata} = wellData;
+    const { metadata } = wellData;
     if (!metadata)
       return null;
 

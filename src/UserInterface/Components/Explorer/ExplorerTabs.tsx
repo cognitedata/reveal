@@ -1,36 +1,30 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-
 import Icon from "@/UserInterface/Components/Icon/Icon";
-import { changeSelectedTab } from "@/UserInterface/Redux/actions/explorer";
-import { State } from "@/UserInterface/Redux/State/State";
+import { ExplorerTabsPropType } from "@/UserInterface/Components/Explorer/ExplorerTypes";
 
 // Renders Explorer Tabs
-export default function NodeTabs() {
-  const explorer = useSelector((state: State) => state.explorer); //TODO: Remove the reference to state here
-  const dispatch = useDispatch();
-
-  const { tabs } = explorer;
+export function ExplorerTabs(props: ExplorerTabsPropType) {
+  const { onTabChange, tabs, selectedTabIndex } = props;
   if (!tabs) {
     return null;
   }
   const handleChange = (event: React.ChangeEvent<{}>, tabIndex: number) => {
-    dispatch(changeSelectedTab({ tabIndex }));
+    onTabChange(tabIndex);
   };
 
   return (
     <div className="node-tabs">
       <Tabs
-        value={explorer.selectedTabIndex}
+        value={selectedTabIndex}
         indicatorColor="primary"
         textColor="primary"
         onChange={handleChange}
       >
-        {tabs.map((tab, idx) => (
+        {tabs.map((tab) => (
           <Tab
-            key={`node-type-${idx}`}
+            key={`node-type-${tab.type}`}
             label={
               <div className="node-tab">
                 <Icon src={tab.icon} />

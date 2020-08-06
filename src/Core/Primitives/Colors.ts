@@ -54,7 +54,7 @@ export class Colors
 
   public static get nextColor(): Color
   {
-    const {colors} = this;
+    const { colors } = this;
     Colors.index = (Colors.index + 1) % colors.length;
     return colors[Colors.index];
   }
@@ -65,7 +65,7 @@ export class Colors
 
   public static getNextColor(index: number): Color
   {
-    const {colors} = this;
+    const { colors } = this;
     index %= colors.length;
     return colors[index];
   }

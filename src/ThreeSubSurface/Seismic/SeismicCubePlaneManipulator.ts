@@ -63,7 +63,7 @@ export class SeismicCubePlaneManipulator extends BaseManipulator
     if (!this._perpedicularPlane)
       return;
 
-    var cube = planeNode.surveyCube;
+    const cube = planeNode.surveyCube;
     if (!cube)
       return;
 
@@ -71,7 +71,7 @@ export class SeismicCubePlaneManipulator extends BaseManipulator
     if (!ray.intersectPlane(this._perpedicularPlane, intersection))
       return;
 
-    const transformer = target.transformer;
+    const { transformer } = target;
     const position = transformer.toWorld(intersection);
     const resultCell = Index3.newZero;
     cube.getCellFromPosition(position, resultCell);
