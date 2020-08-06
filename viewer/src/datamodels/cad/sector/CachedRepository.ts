@@ -15,7 +15,8 @@ import {
   defer,
   partition,
   scheduled,
-  asyncScheduler
+  asyncScheduler,
+  merge
 } from 'rxjs';
 import {
   flatMap,
@@ -40,7 +41,6 @@ import { trackError } from '@/utilities/metrics';
 import { BinaryFileProvider } from '@/utilities/networking/types';
 import { Group } from 'three';
 import { RxCounter } from '@/utilities/RxCounter';
-import { merge } from 'lodash';
 
 type KeyedWantedSector = { key: string; wantedSector: WantedSector };
 type WantedSecorWithRequestObservable = {
@@ -125,6 +125,7 @@ export class CachedRepository implements Repository {
         source$,
         wantedSector => wantedSector.levelOfDetail == LevelOfDetail.Discarded
       );
+
       /* Split simple and detailed wanted sectors into a pipe of cached request and uncached requests.
        * ----------- simple and detailed wantedSectors ---
        * \---------- cached wantedSectors ----------------
@@ -135,6 +136,7 @@ export class CachedRepository implements Repository {
         simpleAndDetailed$.pipe(map(wantedSector => ({ key: this.wantedSectorCacheKey(wantedSector), wantedSector }))),
         existsInCache
       );
+
       /* Split uncached wanted sectors into a pipe of simple wantedSectors and detailed wantedSectors. Increase load count
        * ----------- uncached wantedSectors --------------
        * \---------- simple wantedSectors ----------------
@@ -144,6 +146,7 @@ export class CachedRepository implements Repository {
         uncached$.pipe(this._loadingCounter.incrementOnNext()),
         ({ wantedSector }) => wantedSector.levelOfDetail == LevelOfDetail.Simple
       );
+
       /* Merge simple and detailed pipeline, save observable to cache, and decrease loadcount
        */
       const getSimpleSectorFromNetwork = ({ key, wantedSector }: { key: string; wantedSector: WantedSector }) => ({
@@ -151,13 +154,16 @@ export class CachedRepository implements Repository {
         wantedSector,
         observable: this.loadSimpleSectorFromNetwork(wantedSector)
       });
+
       const getDetailedSectorFromNetwork = ({ key, wantedSector }: { key: string; wantedSector: WantedSector }) => ({
         key,
         wantedSector,
         observable: this.loadDetailedSectorFromNetwork(wantedSector)
       });
+
       const saveToCache = ({ key, observable }: WantedSecorWithRequestObservable) =>
         this._consumedSectorCache.forceInsert(key, observable);
+
       const network$ = merge(
         simple$.pipe(map(getSimpleSectorFromNetwork)),
         detailed$.pipe(map(getDetailedSectorFromNetwork))
@@ -172,6 +178,7 @@ export class CachedRepository implements Repository {
 
       const toDiscardedConsumedSector = (wantedSector: WantedSector) =>
         ({ ...wantedSector, group: undefined } as ConsumedSector);
+
       const getFromCache = ({ key }: KeyedWantedSector) => {
         return this._consumedSectorCache.get(key);
       };

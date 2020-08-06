@@ -33,7 +33,6 @@ import { SectorCuller } from './sector/culling/SectorCuller';
 import { DetermineSectorsInput } from './sector/culling/types';
 import { CadLoadingHints } from './CadLoadingHints';
 import { ConsumedSector, WantedSector, SectorGeometry } from './sector/types';
-// import { distinctUntilLevelOfDetailChanged } from './sector/sectorUtilities';
 import { LevelOfDetail } from './sector/LevelOfDetail';
 import { Repository } from './sector/Repository';
 import { SectorQuads } from './rendering/types';
@@ -120,6 +119,7 @@ export class CadModelUpdateHandler {
           this._sectorRepository.loadSector()
         );
       };
+      // TODO: 06-08-2020 j-bjorne: research if distinctUntilLevelOfDetailChanged is needed with the state management.
       return source$.pipe(switchMap(updateSector)).pipe(tap({ next: updateSectorState })); //distinctUntilLevelOfDetailChanged(), updateSectorState);
     };
 
