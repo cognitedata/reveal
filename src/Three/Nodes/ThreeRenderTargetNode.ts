@@ -30,7 +30,7 @@ import { ToggleCameraTypeCommand } from "@/Three/Commands/ToggleCameraTypeComman
 import { CopyImageCommand } from "@/Three/Commands/CopyImageCommand";
 import { MeasureDistanceTool } from "@/Three/Commands/Tools/MeasureDistanceTool";
 import { ToggleFullscreenCommand } from "@/Three/Commands/ToggleFullscreenCommand";
-import { PanTool } from "@/Three/Commands/Tools/PanTool";
+import { NavigationTool } from "@/Three/Commands/Tools/NavigationTool";
 import { EditTool } from "@/Three/Commands/Tools/EditTool";
 import { ZoomTool } from "@/Three/Commands/Tools/ZoomTool";
 import { ZoomToTargetTool } from "@/Three/Commands/Tools/ZoomToTargetTool";
@@ -41,7 +41,6 @@ import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
 import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
 import { ZScaleCommand } from "@/Three/Commands/ZScaleCommand";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
-import { Vector3 } from '@/Core/Geometry/Vector3';
 
 const DirectionalLightName = "DirectionalLight";
 
@@ -268,7 +267,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   public addTools(toolbar: IToolbar)
   {
-    const panTool = new PanTool(this);
+    const panTool = new NavigationTool(this);
     this.setDefaultTool(panTool);
 
     // Tools
@@ -375,18 +374,13 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   public getRayFromEvent(event: MouseEvent): THREE.Ray
   {
-    const pixel = this.getMouseRelativePositionThree(event);
-    return this.getRay(pixel);
-  }
-
-  public getRay(pixel: THREE.Vector2): THREE.Ray
-  {
+    const pixel = this.getMouseRelativePosition(event);
     //https://threejsfundamentals.org/threejs/lessons/threejs-picking.html
     this._raycaster.setFromCamera(pixel, this.camera);
     return this._raycaster.ray;
   }
 
-  public getIntersections(pixel: THREE.Vector2): THREE.Intersection[]
+  private getIntersections(pixel: THREE.Vector2): THREE.Intersection[]
   {
     //https://threejsfundamentals.org/threejs/lessons/threejs-picking.html
     this._raycaster.setFromCamera(pixel, this.camera);
@@ -399,7 +393,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     return intersection ? intersection.point : null;
   }
 
-  public getMouseRelativePositionThree(event: MouseEvent): THREE.Vector2
+  public getMouseRelativePosition(event: MouseEvent): THREE.Vector2
   {
     const rect = this.domElement.getBoundingClientRect();
     let x = (event.clientX - rect.left) / rect.width;
@@ -407,16 +401,6 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     x = +x * 2 - 1;
     y = -y * 2 + 1;
     return new THREE.Vector2(x, y);
-  }
-
-  public getMouseRelativePosition(event: MouseEvent): Vector3
-  {
-    const rect = this.domElement.getBoundingClientRect();
-    let x = (event.clientX - rect.left) / rect.width;
-    let y = (event.clientY - rect.top) / rect.height;
-    x = +x * 2 - 1;
-    y = -y * 2 + 1;
-    return new Vector3(x, y, 0);
   }
 
   private getViewByObject(object: THREE.Object3D): BaseThreeView | null
@@ -464,7 +448,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   public getViewByMouseEvent(event: MouseEvent): [BaseThreeView | null, THREE.Intersection | null]
   {
-    const pixel = this.getMouseRelativePositionThree(event);
+    const pixel = this.getMouseRelativePosition(event);
     const intersections = this.getIntersections(pixel);
     for (const intersection of intersections)
     {

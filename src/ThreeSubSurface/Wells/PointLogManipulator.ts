@@ -15,7 +15,7 @@ import { PointLogView } from "@/ThreeSubSurface/Wells/PointLogView";
 export class PointLogManipulator extends BaseManipulator
 {
   //==================================================
-  // OVERRIDES of ToolCommand
+  // OVERRIDES of BaseTool
   //==================================================
 
   public /*override*/ onMouseDown(target: ThreeRenderTargetNode, node: BaseNode, intersection: THREE.Intersection, ray: THREE.Ray): boolean

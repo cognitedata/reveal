@@ -12,7 +12,6 @@
 //=====================================================================================
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import { Range1 } from "@/Core/Geometry/Range1";
 import { Range3 } from "@/Core/Geometry/Range3";
 import { Shape } from "@/Core/Geometry/Shape";
 
@@ -50,13 +49,36 @@ export class Points extends Shape
   }
 
   //==================================================
+  // INSTANCE METHODS: Getters
+  //==================================================
+
+  public getSum(): Vector3
+  {
+    var sum = Vector3.newZero;
+    for (const point of this.list)
+      sum.add(point);
+    return sum;
+  }
+
+  public getSumDelta(): Vector3
+  {
+    var sum = Vector3.newZero;
+    for (let i = 1; i < this.list.length; i++)
+    {
+      const p0 = this.list[i - 1];
+      const p1 = this.list[i];
+      sum.add(p1);
+      sum.substract(p0);
+    }
+    return sum;
+  }
+
+  //==================================================
   // INSTANCE METHODS: Operations
   //==================================================
 
-  public add(point: Vector3): void
-  {
-    this.list.push(point);
-  }
+  public add(point: Vector3): void { this.list.push(point); }
+  public clear(): void { this.list.splice(0, this.list.length); }
 
   //==================================================
   // STATIC METHODS: 

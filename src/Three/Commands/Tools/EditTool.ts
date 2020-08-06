@@ -1,6 +1,6 @@
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { BaseTool } from "@/Three/Commands/Tools/BaseTool";
-import SelectCommandIcon from "@images/Commands/SelectCommand.png";
+import SelectCommandIcon from "@images/Commands/EditTool.png";
 import { BaseManipulator } from '@/Three/Commands/Manipulators/BaseManipulator';
 import { ManipulatorFactory } from '@/Three/Commands/Manipulators/ManipulatorFactory';
 
@@ -25,32 +25,19 @@ export class EditTool extends BaseTool
   // OVERRIDES of BaseCommand
   //==================================================
 
-  public /*override*/ getName(): string { return "Select, edit or pick"; }
+  public /*override*/ getName(): string { return "Edit"; }
+  public /*override*/ getTooltip(): string { return "Select or edit\nLeft button: Select or edit\nRight button: Pan \nWheel: Zoom\nLeft click: Pick to get information\nMouse hover: Pick to get information"; }
   public /*override*/ getIcon(): string { return SelectCommandIcon; }
 
   //==================================================
-  // OVERRIDES of ToolCommand
+  // OVERRIDES of BaseTool
   //==================================================
 
   public /*override*/ overrideLeftButton(): boolean { return true; }
 
   public /*override*/ onMouseHover(event: MouseEvent): void
   {
-    const { target } = this;
-    if (!target)
-      return;
-
-    const { viewInfo } = target;
-    const preCount = viewInfo.items.length;
-    viewInfo.clearItems();
-
-    const [view, intersection] = target.getViewByMouseEvent(event);
-    if (view && intersection)
-      view.onShowInfo(viewInfo, intersection);
-
-    const postCount = viewInfo.items.length;
-    if (preCount > 0 || postCount > 0)
-      target.invalidate();
+    this.onShowInfo(event);
   }
 
   public /*override*/ onMouseDown(event: MouseEvent): void

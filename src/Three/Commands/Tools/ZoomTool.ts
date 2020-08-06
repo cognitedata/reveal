@@ -1,6 +1,6 @@
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { BaseTool } from "@/Three/Commands/Tools/BaseTool";
-import ZoomToolCommandIcon from "@images/Commands/ZoomToolCommand.png";
+import ZoomBaseToolIcon from "@images/Commands/ZoomTool.png";
 
 export class ZoomTool extends BaseTool
 {
@@ -18,5 +18,5 @@ export class ZoomTool extends BaseTool
   //==================================================
 
   public /*override*/ getName(): string { return "Rectangle zoom"; }
-  public /*override*/ getIcon(): string { return ZoomToolCommandIcon; }
+  public /*override*/ getIcon(): string { return ZoomBaseToolIcon; }
 }

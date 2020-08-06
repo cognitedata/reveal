@@ -20,7 +20,7 @@ export class SeismicCubePlaneManipulator extends BaseManipulator
   private _perpedicularPlane: THREE.Plane | null = null;
 
   //==================================================
-  // OVERRIDES of ToolCommand
+  // OVERRIDES of BaseTool
   //==================================================
 
   public /*override*/ clear(): void

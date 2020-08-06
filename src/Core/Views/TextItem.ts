@@ -12,56 +12,32 @@
 //=====================================================================================
 
 import { Util } from "@/Core/Primitives/Util";
-import { TextItem } from "@/Core/Views/TextItem";
-import { Polyline } from "@/Core/Geometry/Polyline";
 
-export class ViewInfo
+export class TextItem
 {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
 
-  public footer: string = "";
-  public items: TextItem[] = [];
-  public polyline: Polyline | null = null;
+  public key: string;
+  public value: string | undefined;
+  public dx = 0;
+  public dy = 0;
+  public isMultiLine = false;
+
+  //==================================================
+  // INSTANCE PROPERTIES
+  //==================================================
+
+  public get isEmpty(): boolean { return Util.isEmpty(this.key); }
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor() { }
-
-  //==================================================
-  // INSTANCE METHODS: Request
-  //==================================================
-
-  public get isEmpty(): boolean
+  constructor(key: string, value?: string)
   {
-    if (!Util.isEmpty(this.footer))
-      return false;
-
-    if (this.items.length > 0)
-      return false;
-
-    return true;
-  }
-
-  //==================================================
-  // INSTANCE METHODS: Add operations
-  //==================================================
-
-  public addHeader(header: string) { this.items.push(new TextItem(`${header}:`)); }
-  public addText(key: string, value?: string) { this.items.push(new TextItem(key, value)); }
-  public addNumber(key: string, value: number) { this.addText(key, value.toString()); }
-  public setPolyline(polyline: Polyline) { this.polyline = polyline; }
-
-  //==================================================
-  // INSTANCE METHODS: Operations
-  //==================================================
-
-  public clear(): void
-  {
-    this.items.splice(0, this.items.length);
-    this.polyline = null;
+    this.key = key;
+    this.value = value;
   }
 }

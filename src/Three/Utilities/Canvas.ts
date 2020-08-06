@@ -27,16 +27,12 @@ export class Canvas
   //==================================================
 
   private dx = 0;
-
   private dy = 0;
 
   // These 3 values af for beginFunction, fillFunction and addFunctionValue
   private firstX = Number.NaN;
-
   private lastX = Number.NaN;
-
   private fillFunction = false;
-
   private canvas: HTMLCanvasElement
 
   // eslint-disable-next-line react/static-property-placement

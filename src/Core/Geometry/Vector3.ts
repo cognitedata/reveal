@@ -98,7 +98,9 @@ export class Vector3
   public toString(): string { return `(${this.x}, ${this.y}, ${this.z})`; }
   public getString(decimals: number): string { return `(${this.x.toFixed(decimals)}, ${this.y.toFixed(decimals)}, ${this.z.toFixed(decimals)})`; }
   public squareDistance(other: Vector3): number { return Ma.square(this.x - other.x) + Ma.square(this.y - other.y) + Ma.square(this.z - other.z); }
+  public squareDistance2(other: Vector3): number { return Ma.square(this.x - other.x) + Ma.square(this.y - other.y); }
   public distance(other: Vector3): number { return Math.sqrt(this.squareDistance(other)); }
+  public distance2(other: Vector3): number { return Math.sqrt(this.squareDistance2(other)); }
 
   public getAt(dimension: number): number
   {
@@ -112,6 +114,7 @@ export class Vector3
   }
 
   public getDot(other: Vector3): number { return this.x * other.x + this.y * other.y + this.z * other.z; }
+  public getCross2(other: Vector3): number { return this.x * other.y - this.y * other.x; }
 
   public getCross(other: Vector3): Vector3
   {

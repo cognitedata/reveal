@@ -50,6 +50,13 @@ export class Polylines extends Shape
   }
 
   //==================================================
+  // INSTANCE METHODS: Operations
+  //==================================================
+
+  public add(polyline: Polyline): void { this.list.push(polyline); }
+  public clear(): void { this.list.splice(0, this.list.length); }
+
+  //==================================================
   // STATIC METHODS: 
   //==================================================
 
