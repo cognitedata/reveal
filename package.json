@@ -26,6 +26,7 @@
     "react-pdf": "^4.2.0",
     "react-redux": "^7.2.1",
     "react-router-dom": "^5.2.0",
+    "react-split": "^2.0.9",
     "react-string-replace": "^0.4.4",
     "redux": "^4.0.4",
     "redux-devtools-extension": "^2.13.8",

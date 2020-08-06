@@ -1,1 +1,1 @@
-export { default } from './ExplorationRoutes';
+export { Explorer as default } from './Explorer';

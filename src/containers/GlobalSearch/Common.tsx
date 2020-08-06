@@ -4,7 +4,7 @@ export const List = styled.div`
   display: flex;
   flex-direction: column;
   overflow-y: scroll;
-  width: 300px;
+  flex: 1;
 `;
 export const Content = styled.div`
   display: flex;
@@ -13,7 +13,6 @@ export const Content = styled.div`
 `;
 export const Preview = styled.div`
   padding-left: 16px;
-  display: flex;
-  flex: 1;
+  width: 360px;
   overflow-y: scroll;
 `;

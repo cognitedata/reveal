@@ -7,8 +7,7 @@ import {
   ShoppingCartPreview,
 } from 'containers/Exploration/ShoppingCart';
 import ShoppingCartIcon from 'assets/shopping-cart.svg';
-import { RenderResourceActionsFunction } from 'containers/HoverPreview';
-import { GlobalSearchField } from 'containers/Exploration/GlobalSearch';
+import { GlobalSearchField } from 'containers/GlobalSearch';
 import styled from 'styled-components';
 
 const Navbar = styled.div`
@@ -20,17 +19,11 @@ const Navbar = styled.div`
 `;
 
 export const ExplorationNavbar = ({
-  renderResourceActions,
   cart,
   setCart,
-  onFileSelected,
-  onAssetSelected,
 }: {
-  renderResourceActions: RenderResourceActionsFunction;
   cart: ShoppingCart;
   setCart: (cart: ShoppingCart) => void;
-  onFileSelected: (id: number) => void;
-  onAssetSelected: (id: number) => void;
 }) => {
   const history = useHistory();
   const navbarRef = useRef<HTMLDivElement>(null);
@@ -55,19 +48,10 @@ export const ExplorationNavbar = ({
               2
             : 0
         }
-        onFileSelected={onFileSelected}
-        onAssetSelected={onAssetSelected}
-        renderResourceActions={renderResourceActions}
       />
       <Popover
         trigger="click"
-        content={
-          <ShoppingCartPreview
-            cart={cart}
-            setCart={setCart}
-            renderResourceActions={renderResourceActions}
-          />
-        }
+        content={<ShoppingCartPreview cart={cart} setCart={setCart} />}
         placement="bottomRight"
       >
         <Button type="primary" style={{ marginLeft: 24 }}>

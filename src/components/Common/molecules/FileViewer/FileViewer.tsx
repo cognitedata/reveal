@@ -72,6 +72,7 @@ type Props = {
   page?: number;
   setPage?: (page: number) => void;
   hidePagination?: boolean;
+  reloadSize?: boolean;
 };
 
 export const FileViewer = ({
@@ -211,7 +212,7 @@ export const FileViewer = ({
       {totalPages > 1 && !hidePagination && (
         <DocumentPagination
           total={totalPages}
-          current={page}
+          current={page || 1}
           pageSize={1}
           size="small"
           showQuickJumper

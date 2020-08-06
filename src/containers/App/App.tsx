@@ -9,16 +9,9 @@ import { RootState } from 'reducers';
 import { getAuthState } from 'sdk-singleton';
 import { Route, Switch, Redirect, useLocation } from 'react-router';
 import { Loader } from 'components/Common';
+import { ResourceActionsProvider } from 'context/ResourceActionsContext';
 
 const Spinner = () => <Loader />;
-
-type RouteDef = {
-  exact?: boolean;
-  strict?: boolean;
-  path: string;
-  component: any;
-  breadcrumbs?: any;
-};
 
 export default function App() {
   const dispatch = useDispatch();
@@ -67,43 +60,34 @@ export default function App() {
     trackUsage('App.navigation');
   }, [location]);
 
-  const routes = [
-    {
-      path: '/:tenant/explore/file',
-      component: useMemo(
-        () =>
-          React.lazy(() =>
-            import(
-              'containers/Exploration'
-              /* webpackChunkName: "pnid_exploration" */
-            )
-          ),
-        []
-      ),
-    },
-  ] as RouteDef[];
-
   return (
     <Suspense fallback={<Spinner />}>
-      <Switch>
-        <Redirect
-          from="/:url*(/+)"
-          to={{
-            pathname: pathname.slice(0, -1),
-            search,
-            hash,
-          }}
-        />
-        {routes.map(route => (
-          <Route
-            key={route.path}
-            exact={!!route.exact}
-            strict={!!route.strict}
-            path={route.path}
-            component={route.component}
+      <ResourceActionsProvider>
+        <Switch>
+          <Redirect
+            from="/:url*(/+)"
+            to={{
+              pathname: pathname.slice(0, -1),
+              search,
+              hash,
+            }}
           />
-        ))}
-      </Switch>
+          <Route
+            key="/:tenant/explore"
+            path="/:tenant/explore"
+            component={useMemo(
+              () =>
+                React.lazy(() =>
+                  import(
+                    'containers/Exploration'
+                    /* webpackChunkName: "pnid_exploration" */
+                  )
+                ),
+              []
+            )}
+          />
+        </Switch>
+      </ResourceActionsProvider>
     </Suspense>
   );
 }

@@ -2,13 +2,16 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { itemSelector, retrieve } from 'modules/sequences';
 import { Button, Icon, Title } from '@cognite/cogs.js';
-import { SequenceDetailsAbstract, DetailsItem } from 'components/Common';
+import {
+  SequenceDetailsAbstract,
+  DetailsItem,
+  Wrapper,
+} from 'components/Common';
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
 import { useHistory } from 'react-router-dom';
 import { Tabs } from 'antd';
 import moment from 'moment';
 import { SequenceColumn } from '@cognite/sdk';
-import { Wrapper } from './Common';
 
 const formatSequenceColumns = (columns: SequenceColumn[]) =>
   columns.reduce(
@@ -21,7 +24,7 @@ const formatSequenceColumns = (columns: SequenceColumn[]) =>
     {}
   );
 
-export const SequenceMetadataPreview = ({
+export const SequencePreview = ({
   sequenceId,
   extraActions,
 }: {

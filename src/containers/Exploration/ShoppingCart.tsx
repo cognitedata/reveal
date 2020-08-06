@@ -1,13 +1,7 @@
 import React from 'react';
 import { Asset, GetTimeSeriesMetadataDTO, FilesMetadata } from '@cognite/sdk';
 import { Icon, Colors, Button } from '@cognite/cogs.js';
-import { SmallTitle, ListItem, Popover } from 'components/Common';
-import {
-  RenderResourceActionsFunction,
-  AssetHoverPreview,
-  FileHoverPreview,
-  TimeseriesHoverPreview,
-} from 'containers/HoverPreview';
+import { SmallTitle, ListItem } from 'components/Common';
 
 export type ShoppingCart = {
   assets: {
@@ -23,11 +17,9 @@ export type ShoppingCart = {
 export const ShoppingCartPreview = ({
   cart,
   setCart,
-  renderResourceActions = () => [],
 }: {
   cart: ShoppingCart;
   setCart: (cart: ShoppingCart) => void;
-  renderResourceActions?: RenderResourceActionsFunction;
 }) => {
   const onDeleteClicked = ({
     assetId,
@@ -68,35 +60,20 @@ export const ShoppingCartPreview = ({
       <div style={{ height: '400px', overflowY: 'auto' }}>
         <SmallTitle>Asset</SmallTitle>
         {Object.values(cart.assets).map(el => {
-          const actions = renderResourceActions({ assetId: el.id });
           return (
             <ListItem
               key={el.id}
               title={
-                <>
-                  <Popover
-                    content={
-                      <AssetHoverPreview
-                        asset={el}
-                        renderResourceActions={renderResourceActions}
-                        actions={actions}
-                      />
-                    }
-                  >
-                    <div
-                      style={{ display: 'inline-flex', alignItems: 'center' }}
-                    >
-                      <Icon
-                        style={{
-                          alignSelf: 'center',
-                          marginRight: '4px',
-                        }}
-                        type="DataStudio"
-                      />
-                      <span>{el.name}</span>
-                    </div>
-                  </Popover>
-                </>
+                <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  <Icon
+                    style={{
+                      alignSelf: 'center',
+                      marginRight: '4px',
+                    }}
+                    type="DataStudio"
+                  />
+                  <span>{el.name}</span>
+                </div>
               }
             >
               {renderDeleteItemButton({ assetId: el.id })}
@@ -105,34 +82,20 @@ export const ShoppingCartPreview = ({
         })}
         <SmallTitle>Time series</SmallTitle>
         {Object.values(cart.timeseries).map(el => {
-          const actions = renderResourceActions({ timeseriesId: el.id });
           return (
             <ListItem
               key={el.id}
               title={
-                <>
-                  <Popover
-                    content={
-                      <TimeseriesHoverPreview
-                        timeseries={el}
-                        actions={actions}
-                      />
-                    }
-                  >
-                    <div
-                      style={{ display: 'inline-flex', alignItems: 'center' }}
-                    >
-                      <Icon
-                        style={{
-                          alignSelf: 'center',
-                          marginRight: '4px',
-                        }}
-                        type="DataStudio"
-                      />
-                      <span>{el.name}</span>
-                    </div>
-                  </Popover>
-                </>
+                <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  <Icon
+                    style={{
+                      alignSelf: 'center',
+                      marginRight: '4px',
+                    }}
+                    type="DataStudio"
+                  />
+                  <span>{el.name}</span>
+                </div>
               }
             >
               {renderDeleteItemButton({ timeseriesId: el.id })}
@@ -141,29 +104,20 @@ export const ShoppingCartPreview = ({
         })}
         <SmallTitle>Files</SmallTitle>
         {Object.values(cart.files).map(el => {
-          const actions = renderResourceActions({ fileId: el.id });
           return (
             <ListItem
               key={el.id}
               title={
-                <>
-                  <Popover
-                    content={<FileHoverPreview file={el} actions={actions} />}
-                  >
-                    <div
-                      style={{ display: 'inline-flex', alignItems: 'center' }}
-                    >
-                      <Icon
-                        style={{
-                          alignSelf: 'center',
-                          marginRight: '4px',
-                        }}
-                        type="DataStudio"
-                      />
-                      <span>{el.name}</span>
-                    </div>
-                  </Popover>
-                </>
+                <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  <Icon
+                    style={{
+                      alignSelf: 'center',
+                      marginRight: '4px',
+                    }}
+                    type="DataStudio"
+                  />
+                  <span>{el.name}</span>
+                </div>
               }
             >
               {renderDeleteItemButton({ fileId: el.id })}

@@ -4,7 +4,7 @@ import {
   itemSelector as assetSelector,
   retrieve as retrieveAsset,
 } from 'modules/assets';
-import { Button, Icon, Title } from '@cognite/cogs.js';
+import { Icon, Title } from '@cognite/cogs.js';
 import { List, Tabs, message, Row } from 'antd';
 import { AssetBreadcrumb } from '@cognite/gearbox/dist/components/AssetBreadcrumb';
 import { AssetDetailsPanel } from '@cognite/gearbox/dist/components/AssetDetailsPanel';
@@ -39,10 +39,9 @@ import {
 } from '@cognite/sdk';
 import { onResourceSelected } from 'modules/app';
 import { useHistory } from 'react-router-dom';
-import { DetailsItem } from 'components/Common';
+import { DetailsItem, Wrapper } from 'components/Common';
 import moment from 'moment';
 import unionBy from 'lodash/unionBy';
-import { Wrapper } from './Common';
 
 const createFilesFilter = (assetId: number): FilesSearchFilter => ({
   filter: { assetSubtreeIds: [{ id: assetId }] },
@@ -61,14 +60,12 @@ const createEventFilter = (assetId: number): EventFilterRequest => ({
   limit: 1000,
 });
 
-export const AssetMetadataPreview = ({
+export const AssetPreview = ({
   assetId,
   extraActions,
-  showBack = true,
 }: {
   assetId: number;
   extraActions?: React.ReactNode[];
-  showBack?: boolean;
 }) => {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -115,11 +112,6 @@ export const AssetMetadataPreview = ({
 
   return (
     <Wrapper>
-      {showBack && (
-        <Button className="back-button" onClick={() => history.goBack()}>
-          Back
-        </Button>
-      )}
       <div
         style={{
           display: 'flex',

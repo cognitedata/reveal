@@ -37,6 +37,18 @@ describe('CogniteFileViewer', () => {
           getById: {},
         },
       },
+      timeseries: {
+        items: {
+          items: Map(),
+          getById: {},
+        },
+      },
+      sequences: {
+        items: {
+          items: Map(),
+          getById: {},
+        },
+      },
       login: {
         user: 'email',
       },

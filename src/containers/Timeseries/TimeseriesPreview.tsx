@@ -2,10 +2,9 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { itemSelector, retrieve } from 'modules/timeseries';
 import { Button, Icon } from '@cognite/cogs.js';
-import { TimeseriesGraph } from 'components/Common';
+import { TimeseriesGraph, Wrapper } from 'components/Common';
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
 import { useHistory } from 'react-router-dom';
-import { Wrapper } from './Common';
 
 const formatMetadata = (metadata: { [key: string]: any }) =>
   Object.keys(metadata).reduce(
@@ -16,7 +15,7 @@ const formatMetadata = (metadata: { [key: string]: any }) =>
     {}
   );
 
-export const TimeseriesMetadataPreview = ({
+export const TimeseriesPreview = ({
   timeseriesId,
   extraActions,
 }: {

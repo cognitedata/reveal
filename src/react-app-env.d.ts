@@ -9,3 +9,16 @@ declare module '*.png' {
 }
 declare module '*.css';
 declare module '@cognite/gcs-browser-upload';
+declare module 'react-split' {
+  const SplitPane: FunctionComponent<{
+    minSize: number | number[];
+    sizes: number | number[];
+    expandToMin: boolean;
+    gutterSize: number;
+    gutterAlign: string;
+    dragInterval: number;
+    cursor: string;
+    onDragEnd: () => void;
+  }>;
+  export default SplitPane;
+}

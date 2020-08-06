@@ -4,7 +4,6 @@ import { Tabs } from 'antd';
 import { Title, Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useDebounce } from 'use-debounce/lib';
-import { RenderResourceActionsFunction } from 'containers/HoverPreview';
 import { AssetFilterSearch } from './AssetFilterSearch';
 import { FileFilterSearch } from './FileFilterSearch';
 
@@ -33,13 +32,11 @@ const ResourceMap: { [key in ResourceType]: string } = {
 export const GlobalSearchResults = ({
   resourceTypes = ['assets', 'files'],
   query: queryFromProps,
-  renderResourceActions,
   currentResourceId,
   currentResourceType,
 }: {
   resourceTypes?: ResourceType[];
   query?: string;
-  renderResourceActions?: RenderResourceActionsFunction;
   currentResourceId?: number;
   currentResourceType?: ResourceType;
 }) => {
@@ -90,7 +87,6 @@ export const GlobalSearchResults = ({
                       ? [currentResourceId]
                       : undefined
                   }
-                  renderResourceActions={renderResourceActions}
                 />
               );
             case 'files':
@@ -102,7 +98,6 @@ export const GlobalSearchResults = ({
                       ? [currentResourceId]
                       : undefined
                   }
-                  renderResourceActions={renderResourceActions}
                 />
               );
             default:

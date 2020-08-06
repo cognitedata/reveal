@@ -31,50 +31,9 @@ export type ModelStatus =
   | 'Running'
   | 'Failed';
 
-export interface Function {
-  id: number;
-  name: string;
-  fileId: number;
-  owner: string;
-  description: string;
-  apiKey: string;
-  secrets: {};
-  createdTime: Date;
-  status: 'Queued' | 'Deploying' | 'Ready' | 'Failed';
-  externalId: string;
-  error?: Error;
-}
-
-export interface Error {
-  message: string;
-  trace: string;
-}
-
-export interface Call {
-  id: number;
-  startTime: Date;
-  endTime: Date;
-  status: 'Running' | 'Completed' | 'Failed' | 'Timeout';
-  error?: Error;
-}
-
-export interface CallResponse {
-  callId: number;
-  functionId: number;
-  response: any;
-}
-
-export interface Log {
-  timestamp: Date;
-  message: string;
-}
-
-export interface Schedule {
-  id: number;
-  createdTime: Date;
-  name: string;
-  description?: string;
-  functionExternalId: string;
-  cronExpression: string;
-  data?: {};
-}
+export type RenderResourceActionsFunction = (props: {
+  assetId?: number;
+  fileId?: number;
+  timeseriesId?: number;
+  sequenceId?: number;
+}) => React.ReactNode[];

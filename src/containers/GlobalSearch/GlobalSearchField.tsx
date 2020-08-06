@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
-import { RenderResourceActionsFunction } from 'containers/HoverPreview';
-import { Input, Button } from '@cognite/cogs.js';
+import { Input } from '@cognite/cogs.js';
 import { GlobalSearchResults } from './GlobalSearchResults';
 
 const Overlay = styled.div<{ visible: boolean }>`
@@ -98,55 +97,23 @@ export const ListItem = styled.div<{ selected?: boolean }>`
   }
 `;
 type Props = {
-  onFileSelected: (fileId: number) => void;
-  onAssetSelected: (assetId: number) => void;
   currentFileId?: number;
-  renderResourceActions?: RenderResourceActionsFunction;
   offsetTop?: number;
 };
 
-export const GlobalSearchField = ({
-  onFileSelected,
-  onAssetSelected,
-  currentFileId,
-  renderResourceActions: propsResourceActions = () => [],
-  offsetTop = 0,
-}: Props) => {
+export const GlobalSearchField = ({ currentFileId, offsetTop = 0 }: Props) => {
   const [query, setQuery] = useState('');
   const [showSearchResults, setShowSearchResults] = useState(false);
 
-  const onFileClicked = (fileId: number) => {
+  const onResourceSelected = useCallback(() => {
     setShowSearchResults(false);
-    onFileSelected(fileId);
-  };
+  }, []);
 
-  const renderResourceActions: RenderResourceActionsFunction = props => {
-    if (props.fileId) {
-      return [
-        <Button
-          key="view"
-          onClick={() => onFileClicked(props.fileId!)}
-          icon="Expand"
-        >
-          Open File
-        </Button>,
-        ...propsResourceActions(props),
-      ];
-    }
-    if (props.assetId) {
-      return [
-        <Button
-          key="view"
-          onClick={() => onAssetSelected(props.assetId!)}
-          icon="PanelRight"
-        >
-          More Details
-        </Button>,
-        ...propsResourceActions(props),
-      ];
-    }
-    return propsResourceActions(props);
-  };
+  useEffect(() => {
+    window.addEventListener('Resource Selected', onResourceSelected);
+    return () =>
+      window.removeEventListener('Resource Selected', onResourceSelected);
+  }, [onResourceSelected]);
 
   return (
     <>
@@ -174,7 +141,6 @@ export const GlobalSearchField = ({
             query={query}
             currentResourceId={currentFileId}
             currentResourceType="files"
-            renderResourceActions={renderResourceActions}
           />
         </ResultList>
       </SearchWrapper>

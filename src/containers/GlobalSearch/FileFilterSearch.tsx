@@ -9,8 +9,7 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { searchSelector, search, count, countSelector } from 'modules/files';
 import Highlighter from 'react-highlight-words';
-import { RenderResourceActionsFunction } from 'containers/HoverPreview';
-import { FileMetadataPreview } from 'containers/ResourceSidebar';
+import { FileSmallPreview } from 'containers/Files';
 import { List, Content, Preview } from './Common';
 
 const FilesFilterMapping: { [key: string]: string } = {
@@ -45,11 +44,9 @@ const buildFilesFilterQuery = (
 
 export const FileFilterSearch = ({
   query,
-  renderResourceActions = () => [],
   activeIds = [],
 }: {
   query?: string;
-  renderResourceActions?: RenderResourceActionsFunction;
   activeIds?: number[];
 }) => {
   const dispatch = useDispatch();
@@ -113,13 +110,7 @@ export const FileFilterSearch = ({
           })}
         </List>
         <Preview>
-          {selectedFile && (
-            <FileMetadataPreview
-              showBack={false}
-              fileId={selectedFile.id}
-              extraActions={renderResourceActions({ fileId: selectedFile.id })}
-            />
-          )}
+          {selectedFile && <FileSmallPreview fileId={selectedFile.id} />}
         </Preview>
       </Content>
     </>

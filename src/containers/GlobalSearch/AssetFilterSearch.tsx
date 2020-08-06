@@ -5,8 +5,7 @@ import { Asset, AssetSearchFilter, AssetFilterProps } from '@cognite/sdk';
 import { useSelector, useDispatch } from 'react-redux';
 import { searchSelector, search, count, countSelector } from 'modules/assets';
 import Highlighter from 'react-highlight-words';
-import { AssetMetadataPreview } from 'containers/ResourceSidebar';
-import { RenderResourceActionsFunction } from 'containers/HoverPreview';
+import { AssetSmallPreview } from 'containers/Assets';
 import { List, Content, Preview } from './Common';
 
 const AssetsFilterMapping: { [key: string]: string } = {};
@@ -39,11 +38,9 @@ const buildAssetsFilterQuery = (
 
 export const AssetFilterSearch = ({
   query = '',
-  renderResourceActions = () => [],
   activeIds = [],
 }: {
   query?: string;
-  renderResourceActions?: RenderResourceActionsFunction;
   activeIds?: number[];
 }) => {
   const dispatch = useDispatch();
@@ -104,15 +101,7 @@ export const AssetFilterSearch = ({
           })}
         </List>
         <Preview>
-          {selectedAsset && (
-            <AssetMetadataPreview
-              showBack={false}
-              assetId={selectedAsset.id}
-              extraActions={renderResourceActions({
-                assetId: selectedAsset.id,
-              })}
-            />
-          )}
+          {selectedAsset && <AssetSmallPreview assetId={selectedAsset.id} />}
         </Preview>
       </Content>
     </>

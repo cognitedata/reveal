@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
-import { FilesMetadata, InternalId, ExternalId } from '@cognite/sdk';
-import { FileDetailsAbstract } from 'components/Common';
+import { InternalId, ExternalId } from '@cognite/sdk';
+import { FileDetailsAbstract, Loader } from 'components/Common';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   retrieve as retrieveFiles,
   retrieveExternal as retrieveFilesExternal,
+  itemSelector,
 } from 'modules/files';
 import {
   retrieve as retrieveAssets,
@@ -16,34 +17,38 @@ import {
   linkedFilesSelectorByFileId,
 } from 'modules/annotations';
 import { CogniteFileViewerImage } from 'components/CogniteFileViewer';
-import { Button } from '@cognite/cogs.js';
-import { onResourceSelected } from 'modules/app';
-import { useHistory } from 'react-router-dom';
+import { useResourceActionsContext } from 'context/ResourceActionsContext';
 
-export const FileHoverPreview = ({
-  file,
-  actions,
+export const FileSmallPreview = ({
+  fileId,
+  actions: propActions,
   extras,
-  disableSidebarToggle = false,
+  children,
 }: {
-  file: FilesMetadata;
+  fileId: number;
   actions?: React.ReactNode[];
   extras?: React.ReactNode[];
-  disableSidebarToggle?: boolean;
+  children?: React.ReactNode;
 }) => {
-  const history = useHistory();
   const dispatch = useDispatch();
-  const { assetIds, assets } = useSelector(linkedAssetsSelector)(file.id);
-  const { fileIds, files } = useSelector(linkedFilesSelectorByFileId)(file.id);
+  const renderResourceActions = useResourceActionsContext();
+  const { assetIds, assets } = useSelector(linkedAssetsSelector)(fileId);
+  const { fileIds, files } = useSelector(linkedFilesSelectorByFileId)(fileId);
 
-  const hasPreview = file.mimeType === 'application/pdf';
+  const actions: React.ReactNode[] = [];
+  actions.push(...(propActions || []));
+  actions.push(
+    ...renderResourceActions({
+      fileId,
+    })
+  );
 
   useEffect(() => {
     (async () => {
-      await dispatch(retrieveFiles([{ id: file.id }]));
-      await dispatch(listByFileId(file.id));
+      await dispatch(retrieveFiles([{ id: fileId }]));
+      await dispatch(listByFileId(fileId));
     })();
-  }, [dispatch, file.id]);
+  }, [dispatch, fileId]);
 
   useEffect(() => {
     dispatch(
@@ -78,6 +83,13 @@ export const FileHoverPreview = ({
     );
   }, [dispatch, fileIds]);
 
+  const file = useSelector(itemSelector)(fileId);
+  if (!file) {
+    return <Loader />;
+  }
+
+  const hasPreview = file.mimeType === 'application/pdf';
+
   return (
     <FileDetailsAbstract
       key={file.id}
@@ -85,31 +97,10 @@ export const FileHoverPreview = ({
       assets={assets || []}
       files={files || []}
       extras={extras}
-      actions={
-        disableSidebarToggle
-          ? actions
-          : [
-              <Button
-                icon="Expand"
-                key="open"
-                onClick={() =>
-                  dispatch(
-                    onResourceSelected(
-                      {
-                        fileId: file.id,
-                        showSidebar: true,
-                      },
-                      history
-                    )
-                  )
-                }
-              >
-                View
-              </Button>,
-              ...(actions || []),
-            ]
-      }
+      actions={actions}
       imgPreview={hasPreview && <CogniteFileViewerImage fileId={file.id} />}
-    />
+    >
+      {children}
+    </FileDetailsAbstract>
   );
 };

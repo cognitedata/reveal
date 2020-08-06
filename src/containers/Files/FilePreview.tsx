@@ -19,9 +19,9 @@ import {
 import { onResourceSelected } from 'modules/app';
 import { CogniteFileViewer } from 'components/CogniteFileViewer';
 import { useHistory } from 'react-router-dom';
-import { Wrapper } from './Common';
+import { Wrapper } from 'components/Common';
 
-export const FileMetadataPreview = ({
+export const FilePreview = ({
   fileId,
   extraActions,
   showBack = true,

@@ -1,17 +1,23 @@
 import React from 'react';
-import { ids } from 'cogs-variables';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import {
-  FileMetadataPreview,
-  TimeseriesMetadataPreview,
-  AssetMetadataPreview,
-  SequenceMetadataPreview,
-} from 'containers/ResourceSidebar';
 import queryString from 'query-string';
-import { Drawer } from 'antd';
 import { onResourceSelected } from 'modules/app';
 import { useDispatch } from 'react-redux';
+import { Button } from '@cognite/cogs.js';
+import { FileSmallPreview } from 'containers/Files';
+import { AssetSmallPreview } from 'containers/Assets';
+import { SequenceSmallPreview } from 'containers/Sequences';
+import { TimeseriesSmallPreview } from 'containers/Timeseries';
+
+const Drawer = styled.div`
+  width: 360px;
+  height: 100%;
+`;
+
+const CloseButton = styled(Button)`
+  float: right;
+`;
 
 const DetailsWrapper = styled.div`
   pointer-events: all;
@@ -76,33 +82,33 @@ export const ResourceSidebar = ({
   const renderResourceDetails = () => {
     if (previewFileId && Number.isInteger(Number(previewFileId))) {
       return (
-        <FileMetadataPreview
+        <FileSmallPreview
           fileId={previewFileId as number}
-          extraActions={extraActions}
+          extras={extraActions}
         />
       );
     }
     if (previewTimeseriesId && Number.isInteger(Number(previewTimeseriesId))) {
       return (
-        <TimeseriesMetadataPreview
+        <TimeseriesSmallPreview
           timeseriesId={previewTimeseriesId as number}
-          extraActions={extraActions}
+          extras={extraActions}
         />
       );
     }
     if (previewAssetId && Number.isInteger(Number(previewAssetId))) {
       return (
-        <AssetMetadataPreview
+        <AssetSmallPreview
           assetId={previewAssetId as number}
-          extraActions={extraActions}
+          extras={extraActions}
         />
       );
     }
     if (previewSequenceId && Number.isInteger(Number(previewSequenceId))) {
       return (
-        <SequenceMetadataPreview
+        <SequenceSmallPreview
           sequenceId={previewSequenceId as number}
-          extraActions={extraActions}
+          extras={extraActions}
         />
       );
     }
@@ -112,29 +118,19 @@ export const ResourceSidebar = ({
       </>
     );
   };
-
-  return (
-    <Drawer
-      getContainer={() =>
-        document.getElementsByClassName(ids.styleScope).item(0)! as HTMLElement
-      }
-      width="80%"
-      onClose={() =>
-        dispatch(
-          onResourceSelected(
-            {
-              showSidebar: false,
-            },
-            history
-          )
-        )
-      }
-      zIndex={1001}
-      destroyOnClose
-      className="pnid-sidebar"
-      visible={showSidebar}
-    >
-      <DetailsWrapper>{renderResourceDetails()}</DetailsWrapper>
-    </Drawer>
-  );
+  if (showSidebar) {
+    return (
+      <Drawer>
+        <CloseButton
+          icon="Close"
+          variant="ghost"
+          onClick={() =>
+            dispatch(onResourceSelected({ showSidebar: false }, history))
+          }
+        />
+        <DetailsWrapper>{renderResourceDetails()}</DetailsWrapper>
+      </Drawer>
+    );
+  }
+  return null;
 };
