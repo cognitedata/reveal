@@ -7,8 +7,6 @@ import {
   linkedFilesSelectorByAssetId,
   listFilesLinkedToAsset,
 } from 'modules/annotations';
-// import { TimeseriesSmallPreview } from 'containers/Timeseries';
-// import { FileSmallPreview } from 'containers/Files';
 import { retrieve, itemSelector } from 'modules/assets';
 import { useResourceActionsContext } from 'context/ResourceActionsContext';
 
@@ -67,26 +65,6 @@ export const AssetSmallPreview = ({
       files={assetFiles || []}
       extras={extras}
       actions={actions}
-      // timeseriesPreview={(timeseries, content) => {
-      //   return (
-      //     <Popover
-      //       key={timeseries.id}
-      //       content={<TimeseriesSmallPreview timeseriesId={timeseries.id} />}
-      //     >
-      //       <div style={{ position: 'relative' }}>{content}</div>
-      //     </Popover>
-      //   );
-      // }}
-      // filePreview={(file, content) => {
-      //   return (
-      //     <Popover
-      //       key={file.id}
-      //       content={<FileSmallPreview fileId={file.id} />}
-      //     >
-      //       <div style={{ position: 'relative' }}>{content}</div>
-      //     </Popover>
-      //   );
-      // }}
     >
       {children}
     </AssetDetailsAbstract>
