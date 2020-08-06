@@ -24,7 +24,7 @@ export class Points extends Shape
 
   public list: Vector3[] = [];
 
-  public get count(): number { return this.list.length; }
+  public get length(): number { return this.list.length; }
 
   //==================================================
   // CONSTRUCTORS

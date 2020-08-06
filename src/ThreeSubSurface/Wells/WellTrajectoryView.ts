@@ -46,7 +46,7 @@ const TrajectoryName = "trajectory";
 const TrajectoryLabelName = "trajectoryLabel";
 const WellLabelName = "wellLabel";
 
-export class WellTrajectoryThreeView extends BaseGroupThreeView
+export class WellTrajectoryView extends BaseGroupThreeView
 {
   //==================================================
   // INSTANCE FIELDS
@@ -92,6 +92,8 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
     if (args.isChanged(Changes.filter) && this._object3D)
       this.clearTextures(this._object3D);
+    if (args.isChanged(Changes.nodeColor))
+      this.touch();
   }
 
   protected /*override*/ onShowCore(): void
@@ -164,7 +166,16 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
   public /*override*/ calculateBoundingBoxCore(): Range3 | undefined
   {
-    return super.calculateBoundingBoxCore();
+    const range = super.calculateBoundingBoxCore();
+    if (!range)
+      return range;
+
+    // Add extra for the lables, these will for some reasom not be part of the bounding box
+    const { style } = this;
+    if (style)
+      range.z.expandByMargin(style.nameFontSize * 1.25);
+    return range;
+
     // const trajectory = this.node.data;
     // if (!trajectory)
     //   return undefined;
@@ -195,7 +206,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
   public /*override*/ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void
   {
-    const md = WellTrajectoryThreeView.startPickingAndReturnMd(this, viewInfo, intersection);
+    const md = WellTrajectoryView.startPickingAndReturnMd(this, viewInfo, intersection);
     if (md === undefined)
       return;
 
@@ -255,13 +266,13 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
     const target = this.renderTarget;
     let colorChanged = false;
-     
+
     if (this.fgColor !== target.fgColor)
     {
       this.fgColor = target.fgColor;
       colorChanged = true;
     }
-     
+
     let cameraChanged = false;
     {
       const { transformer } = this;
@@ -358,7 +369,7 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
     const position = trajectory.getBasePosition().clone();
     this.transformer.transformRelativeTo3D(position);
-    const label = SpriteCreator.createByPositionAndAlignment(name, position, 7, style.nameFontSize, this.fgColor);
+    const label = SpriteCreator.createByPositionAndAlignment(node.name, position, 7, style.nameFontSize, this.fgColor);
     if (!label)
       return;
 
@@ -562,7 +573,10 @@ export class WellTrajectoryThreeView extends BaseGroupThreeView
 
         if ((i % 2 === 0) === rightBand)
         {
-          logRender.addFloatLog(canvas, logNode.log, logStyle, logNode.getColorByColorType(logStyle.colorType), true);
+          let color = logNode.getColorByColorType(logStyle.colorType);
+          logRender.addFloatLog(canvas, logNode.log, logStyle, color, true, false);
+          color = color.darken(0.5);
+          logRender.addFloatLog(canvas, logNode.log, logStyle, color, false, true);
           visibleCount++;
         }
         i++;

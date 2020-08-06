@@ -149,7 +149,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ initializeCore(): void
+  protected /*override*/ initializeCore(): void
   {
     super.initializeCore();
 
@@ -423,6 +423,9 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   {
     while (true)
     {
+      if (!object.visible)
+        return null;
+
       // If the object is marked by noPicking, no picking should be done
       if (object.userData[BaseThreeView.noPicking])
         return null;

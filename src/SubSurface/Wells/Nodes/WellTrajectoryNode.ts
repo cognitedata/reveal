@@ -106,8 +106,9 @@ export class WellTrajectoryNode extends DataNode
     if (!trajectory)
       return;
 
+    folder.addReadOnlyInteger("# Points", trajectory.length);
     folder.addReadOnlyRange1("Md", trajectory.mdRange, 2);
-    folder.addReadOnlyRange3("", trajectory.boundingBox, 2);
+    folder.addReadOnlyRange3(trajectory.boundingBox, 2);
   }
 
   //==================================================

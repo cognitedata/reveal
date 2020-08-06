@@ -20,6 +20,7 @@ import { TargetId } from "@/Core/Primitives/TargetId";
 import { PointsRenderStyle } from "@/SubSurface/Basics/PointsRenderStyle";
 import PointsNodeIcon from "@images/Nodes/PointsNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
+import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
 
 export class PointsNode extends DataNode
 {
@@ -88,5 +89,17 @@ export class PointsNode extends DataNode
       default:
         return false;
     }
+  }
+
+  protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
+  {
+    super.populateStatisticsCore(folder);
+
+    const { points } = this;
+    if (!points)
+      return;
+
+    folder.addReadOnlyInteger("# Points", points.length);
+    folder.addReadOnlyRange3(points.boundingBox);
   }
 }

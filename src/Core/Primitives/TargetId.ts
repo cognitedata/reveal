@@ -13,6 +13,7 @@
 
 import { UniqueId } from "@/Core/Primitives/UniqueId";
 import { RenderStyleResolution } from "@/Core/Enums/RenderStyleResolution";
+import { Util } from "@/Core/Primitives/Util";
 
 export class TargetId
 {
@@ -37,7 +38,7 @@ export class TargetId
   public set typeName(value: string) { this._typeName = value; }
   public get uniqueId(): UniqueId { return this._uniqueId; }
   public set uniqueId(value: UniqueId) { this._uniqueId = value; }
-  public get isEmpty(): boolean { return this.typeName === "" && this.uniqueId.isEmpty; }
+  public get isEmpty(): boolean { return Util.isEmpty(this.typeName) && this.uniqueId.isEmpty; }
   public /*override*/ toString(): string { return `(${this.typeName}, ${this.uniqueId})`; }
 
   //==================================================

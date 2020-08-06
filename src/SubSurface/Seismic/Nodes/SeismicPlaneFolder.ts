@@ -14,6 +14,7 @@
 import Icon from "@images/Nodes/SeismicPlaneFolder.png";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { SeismicPlaneNode } from "@/SubSurface/Seismic/Nodes/SeismicPlaneNode";
+import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
 
 export class SeismicPlaneFolder extends BaseNode
 {
@@ -49,7 +50,7 @@ export class SeismicPlaneFolder extends BaseNode
 
   public /*override*/ getIcon(): string { return Icon; }
 
-  public /*override*/ initializeCore()
+  protected /*override*/ initializeCore()
   {
     super.initializeCore();
     if (!this.hasChildByType(SeismicPlaneNode))
@@ -57,5 +58,11 @@ export class SeismicPlaneFolder extends BaseNode
       this.addChild(new SeismicPlaneNode(0));
       this.addChild(new SeismicPlaneNode(1));
     }
+  }
+
+  protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
+  {
+    super.populateStatisticsCore(folder);
+    folder.addReadOnlyInteger("# Planes", this.childCount);
   }
 }

@@ -140,7 +140,7 @@ export const explorerSlice = createSlice({
       },
       prepare(node: BaseNode): { payload: { nodeId: string, newLabel: string } }
       {
-        return { payload: { nodeId: node.uniqueId.toString(), newLabel: node.name } };
+        return { payload: { nodeId: node.uniqueId.toString(), newLabel: node.displayName } };
       }
     },
     onNodeColorChange: {

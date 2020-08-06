@@ -20,6 +20,7 @@ import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { PolylinesRenderStyle } from "@/SubSurface/Basics/PolylinesRenderStyle";
 import PolylinesNodeIcon from "@images/Nodes/PolylinesNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
+import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
 
 export class PolylinesNode extends DataNode
 {
@@ -88,5 +89,22 @@ export class PolylinesNode extends DataNode
       default:
         return false;
     }
+  }
+
+  protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
+  {
+    super.populateStatisticsCore(folder);
+
+    const { polylines } = this;
+    if (!polylines)
+      return;
+
+      let pointCount = 0;
+      for (const polyline of polylines.list)
+        pointCount += polyline.length;
+
+      folder.addReadOnlyInteger("# Polylines", polylines.length);
+      folder.addReadOnlyInteger("# Points", pointCount);
+      folder.addReadOnlyRange3(polylines.boundingBox);
   }
 }

@@ -260,8 +260,10 @@ export abstract class BaseNode extends Identifiable
 
   protected /*virtual*/ populateInfoCore(folder: PropertyFolder): void
   {
-    folder.addStringProperty("name", this.getName, !this.canChangeName(), this, this.nameChanged, this.setName);
-    folder.addColorProperty("color", this.getColor, !this.canChangeColor(), this, this.colorChanged, this.setColor);
+    folder.addStringProperty("Name", this.getName, !this.canChangeName(), this, this.nameChanged, this.setName);
+    if (this.canChangeColor())
+      folder.addColorProperty("Color", this.getColor, false, this, this.colorChanged, this.setColor);
+    folder.addReadOnlyStrings("Type", this.typeName);
   }
 
   protected /*virtual*/ populateStatisticsCore(folder: PropertyFolder): void { }

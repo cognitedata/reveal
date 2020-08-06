@@ -31,13 +31,12 @@ import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
 import { Appearance } from "@/Core/States/Appearance";
 import { WellTrajectoryStyle } from "@/SubSurface/Wells/Styles/WellTrajectoryStyle";
 import { PointLogStyle } from "@/SubSurface/Wells/Styles/PointLogStyle";
-import { WellTrajectoryThreeView } from "@/ThreeSubSurface/Wells/WellTrajectoryThreeView";
+import { WellTrajectoryView } from "@/ThreeSubSurface/Wells/WellTrajectoryView";
 import { ViewInfo } from '@/Core/Views/ViewInfo';
 
 const selectedRadiusFactor = 1.2;
-const sphereName = "sphere";
 
-export class PointLogThreeView extends BaseGroupThreeView
+export class PointLogView extends BaseGroupThreeView
 {
   //==================================================
   // INSTANCE FIELDS
@@ -46,6 +45,7 @@ export class PointLogThreeView extends BaseGroupThreeView
   private cameraDirection = new Vector3(0, 0, 1); // Direction to the center
 
   private cameraPosition = new Vector3(0, 0, 1);
+  public static readonly sphereName = "sphere";
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -74,7 +74,7 @@ export class PointLogThreeView extends BaseGroupThreeView
   protected /*override*/ updateCore(args: NodeEventArgs): void
   {
     super.updateCore(args);
-    if (args.isChanged(Changes.pointOpenOrClosed))
+    if (args.isChanged(Changes.pointOpenOrClosed) || args.isChanged(Changes.nodeColor))
       this.touch();
   }
 
@@ -200,7 +200,7 @@ export class PointLogThreeView extends BaseGroupThreeView
     if (!parent)
       return;
 
-    const index = intersection.object.userData[sphereName];
+    const index = intersection.object.userData[PointLogView.sphereName];
     if (index === undefined)
       return;
 
@@ -217,10 +217,7 @@ export class PointLogThreeView extends BaseGroupThreeView
     if (!sample)
       return;
 
-    sample.isOpen = !sample.isOpen;
-    node.notify(new NodeEventArgs(Changes.pointOpenOrClosed));
-
-    const md = WellTrajectoryThreeView.startPickingAndReturnMd(this, viewInfo, intersection, sample.md);
+    const md = WellTrajectoryView.startPickingAndReturnMd(this, viewInfo, intersection, sample.md);
     if (md === undefined)
       return;
 
@@ -301,7 +298,7 @@ export class PointLogThreeView extends BaseGroupThreeView
 
       // Get perpendicular
       ThreeConverter.copyToThreeVector3(sphere.position, position);
-      sphere.userData[sphereName] = index;
+      sphere.userData[PointLogView.sphereName] = index;
 
       group.add(sphere);
 
@@ -311,7 +308,7 @@ export class PointLogThreeView extends BaseGroupThreeView
         const prependicular = cameraDirection.getNormal(tangent);
         position.addWithFactor(prependicular, selectedRadius);
 
-        const label = PointLogThreeView.createLabel(node.name, sample.description, position, style.fontSize);
+        const label = PointLogView.createLabel(node.name, sample.description, position, style.fontSize);
         if (label)  
         {
           label.center = new THREE.Vector2(0, 1);
@@ -355,7 +352,7 @@ export class PointLogThreeView extends BaseGroupThreeView
   {
     const pixelfontSize = 30;
     const maxWidth = pixelfontSize * 20;
-    const canvas = PointLogThreeView.createCanvasWithText(header, text, maxWidth, pixelfontSize);
+    const canvas = PointLogView.createCanvasWithText(header, text, maxWidth, pixelfontSize);
     if (!canvas)
       return null;
 

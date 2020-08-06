@@ -21,6 +21,8 @@ import { SurfaceRenderStyle } from "@/SubSurface/Basics/SurfaceRenderStyle";
 
 import SurfaceNodeIcon from "@images/Nodes/SurfaceNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
+import { Ma } from "@/Core/Primitives/Ma";
+import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
 
 export class SurfaceNode extends DataNode
 {
@@ -94,5 +96,20 @@ export class SurfaceNode extends DataNode
       default:
         return false;
     }
+  }
+
+  protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
+  {
+    super.populateStatisticsCore(folder);
+
+    const { surface } = this;
+    if (!surface)
+      return;
+
+    folder.addReadOnlyIndex2("# Cells", surface.cellSize);
+    folder.addReadOnlyVector2("Spacing", surface.inc);
+    folder.addReadOnlyVector2("Origin", surface.origin);
+    folder.addReadOnlyAngle("Rotation", surface.rotationAngle);
+    folder.addReadOnlyRange3(surface.boundingBox);
   }
 }
