@@ -62,7 +62,7 @@ export class ToolController
     if (!cameraControl)
       return;
 
-    const {controls} = cameraControl;
+    const { controls } = cameraControl;
     if (tool.overrideLeftButton())
       controls.mouseButtons.left = CameraControls.ACTION.NONE;
     else
@@ -106,6 +106,9 @@ export class ToolController
     // https://www.w3schools.com/jsref/obj_mouseevent.asp
     if (event.buttons === 1)
     {
+      if (event.movementX === 0 && event.movementX === 0)
+        return;
+
       const tool = this.activeTool;
       if (tool)
         tool.onMouseDrag(event);

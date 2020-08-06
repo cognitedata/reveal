@@ -21,6 +21,7 @@ import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { SurveyNode } from "@/SubSurface/Seismic/Nodes/SurveyNode";
 import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
 import { Vector3 } from '@/Core/Geometry/Vector3';
+import { Index2 } from "@/Core/Geometry/Index2";
 
 export class SeismicPlaneNode extends BaseVisualNode
 {
@@ -46,7 +47,7 @@ export class SeismicPlaneNode extends BaseVisualNode
 
   public get surveyCube(): RegularGrid3 | null
   {
-    const {surveyNode} = this;
+    const { surveyNode } = this;
     return surveyNode ? surveyNode.surveyCube : null;
   }
 
@@ -76,7 +77,7 @@ export class SeismicPlaneNode extends BaseVisualNode
 
   private get maxPerpendicularIndex(): number
   {
-    const {surveyCube} = this;
+    const { surveyCube } = this;
     if (!surveyCube)
       return -1;
 
@@ -121,11 +122,24 @@ export class SeismicPlaneNode extends BaseVisualNode
 
   public get normal(): Vector3
   {
+    if (this.perpendicularAxis == 2)
+      return Vector3.newUp;
+
     const cube = this.surveyCube;
     if (!cube)
       throw Error("surveyCube not found");
 
     return cube.getAxis(this.perpendicularAxis);
+  }
+
+  public get vectorInPlane(): Vector3
+  {
+    if (this.perpendicularAxis == 2)
+      return new Vector3(1, 0, 0);
+
+    const normal = this.normal;
+    normal.rotatePiHalf();
+    return normal;
   }
 
   //==================================================
@@ -158,20 +172,26 @@ export class SeismicPlaneNode extends BaseVisualNode
 
   public /*override*/ get typeName(): string { return "Plane"; }
   public /*override*/ canChangeColor(): boolean { return false; }
+  public /*override*/ canChangeName(): boolean { return false; }
 
   public /*override*/ getName(): string
   {
+    return this.generalName;
+  }
+
+  public /*override*/ getNameExtension(): string | null
+  {
     if (this.perpendicularAxis < 0 || this.perpendicularAxis >= 3)
-      return this.generalName;
-    return `${this.generalName} ${this.perpendicularIndex}`;
+      return this.getNameExtension();
+    return `${this.perpendicularIndex}`;
   }
 
   public /*override*/ getIcon(): string 
-  { 
+  {
     switch (this.perpendicularAxis)
     {
-      case 0:return IconI;
-      case 1:return IconJ;
+      case 0: return IconI;
+      case 1: return IconJ;
       case 2: return IconJ;
       default: return IconJ;
     }
@@ -201,6 +221,27 @@ export class SeismicPlaneNode extends BaseVisualNode
 
     this._perpendicularIndex = perpendicularIndex;
     return true;
+  }
+
+  public createCells(useIndex: boolean = true): Index2[]
+  {
+    var surveyCube = this.surveyCube;
+    if (!surveyCube)
+      throw Error("surveyCube is not set");
+
+    const cells: Index2[] = [];
+    const index = useIndex ? this.perpendicularIndex : 0;
+    if (this.perpendicularAxis === 0)
+    {
+      for (let j = 0; j < surveyCube.cellSize.j; j++)
+        cells.push(new Index2(index, j));
+    }
+    else if (this.perpendicularAxis === 1)
+    {
+      for (let i = 0; i < surveyCube.cellSize.i; i++)
+        cells.push(new Index2(i, index));
+    }
+    return cells;
   }
 
 

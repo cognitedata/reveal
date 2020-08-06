@@ -22,7 +22,6 @@ export class UniqueId
   public static readonly empty = new UniqueId();
  
   public static new(): UniqueId { return new UniqueId(uuid()); }
-
   public static create(other: string): UniqueId { return new UniqueId(other); };
 
   //==================================================
@@ -52,6 +51,5 @@ export class UniqueId
   //==================================================
 
   public equals(other: UniqueId): boolean { return this._id === other._id; }
-
   public equalString(other: string): boolean { return this._id ? this._id === other : false; }
 }

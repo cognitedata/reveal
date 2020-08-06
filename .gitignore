@@ -40,3 +40,4 @@ yarn.lock
 .env.local
 standalone/package-lock.json
 package-lock.json
+debug.log

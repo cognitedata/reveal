@@ -74,7 +74,8 @@ export class EditTool extends BaseTool
     if (!manipulator)
       return;
 
-    if (!manipulator.onMouseDown(target, node, intersection))
+      const ray = target.getRayFromEvent(event);
+      if (!manipulator.onMouseDown(target, node, intersection, ray))
       return;
 
     this._currentManipulator = manipulator;
@@ -89,11 +90,7 @@ export class EditTool extends BaseTool
     if (!this._currentManipulator)
       return;
 
-    const pixel = target.getMouseRelativePositionThree(event);
-    const ray = target.getRay(pixel);
-    if (!ray)
-      return;
-
+    const ray = target.getRayFromEvent(event);
     this._currentManipulator.onMouseDrag(target, ray, false);
   }
 
@@ -106,11 +103,7 @@ export class EditTool extends BaseTool
     if (!this._currentManipulator)
       return;
 
-    const pixel = target.getMouseRelativePositionThree(event);
-    const ray = target.getRay(pixel);
-    if (!ray)
-      return;
-
+    const ray = target.getRayFromEvent(event);
     this._currentManipulator.onMouseDrag(target, ray, true);
     this._currentManipulator.clear();
     this._currentManipulator = null;
