@@ -23,6 +23,8 @@ export class Polylines extends Shape
 
   public list: Polyline[] = [];
 
+  public get length(): number { return this.list.length; }
+
   //==================================================
   // CONSTRUCTORS
   //==================================================

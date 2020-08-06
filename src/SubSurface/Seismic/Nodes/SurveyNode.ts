@@ -20,6 +20,8 @@ import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
 import { SeismicPlaneFolder } from "@/SubSurface/Seismic/Nodes/SeismicPlaneFolder";
 import { SeismicLayoutNode } from "@/SubSurface/Seismic/Nodes/SeismicLayoutNode";
+import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
+import { Ma } from "@/Core/Primitives/Ma";
 
 export class SurveyNode extends BaseVisualNode
 {
@@ -66,7 +68,7 @@ export class SurveyNode extends BaseVisualNode
     return new SurfaceRenderStyle(targetId);
   }
 
-  public /*override*/ initializeCore()
+  protected /*override*/ initializeCore()
   {
     super.initializeCore();
 
@@ -75,5 +77,20 @@ export class SurveyNode extends BaseVisualNode
 
     if (!this.hasChildByType(SeismicPlaneFolder))
       this.addChild(new SeismicPlaneFolder());
+  }
+
+  protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
+  {
+    super.populateStatisticsCore(folder);
+
+    const { surveyCube } = this;
+    if (!surveyCube)
+      return;
+
+    folder.addReadOnlyIndex3("# Nodes", surveyCube.nodeSize);
+    folder.addReadOnlyVector3("Spacing", surveyCube.inc);
+    folder.addReadOnlyVector3("Origin", surveyCube.origin);
+    folder.addReadOnlyAngle("Rotation", surveyCube.rotationAngle);
+    folder.addReadOnlyRange3(surveyCube.boundingBox);
   }
 }

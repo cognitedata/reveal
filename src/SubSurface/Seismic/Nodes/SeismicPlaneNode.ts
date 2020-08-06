@@ -23,6 +23,7 @@ import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
 import { Vector3 } from '@/Core/Geometry/Vector3';
 import { Index2 } from "@/Core/Geometry/Index2";
 import { Index3 } from "@/Core/Geometry/Index3";
+import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
 
 export class SeismicPlaneNode extends BaseVisualNode
 {
@@ -201,6 +202,16 @@ export class SeismicPlaneNode extends BaseVisualNode
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
     return new SurfaceRenderStyle(targetId);
+  }
+
+  protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
+  {
+    super.populateStatisticsCore(folder);
+
+    if (this.isArbitrary)
+      folder.addReadOnlyStrings("Along", this.generalName);
+    else
+      folder.addReadOnlyStrings("Along/Index", this.generalName, this.perpendicularIndex.toString());
   }
 
   //==================================================

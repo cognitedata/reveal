@@ -62,7 +62,7 @@ export abstract class BaseRenderTargetNode extends BaseTargetNode
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ initializeCore(): void
+  protected /*override*/ initializeCore(): void
   {
     super.initializeCore();
     this.invalidate();

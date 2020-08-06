@@ -110,9 +110,9 @@ export class PointsThreeView extends BaseGroupThreeView
 
   private static createPositions(points: Points, transformer: ThreeTransformer): Float32Array
   {
-    const positions = new Float32Array(points.count * 3);
+    const positions = new Float32Array(points.length * 3);
     let index = 0;
-    for (let i = 0; i < points.count; i++)
+    for (let i = 0; i < points.length; i++)
     {
       const point = points.list[i].clone();
       transformer.transformTo3D(point);
@@ -129,8 +129,8 @@ export class PointsThreeView extends BaseGroupThreeView
     const { zRange } = points;
     let index = 0;
 
-    const colors = new Uint8Array(points.count * 3);
-    for (let i = 0; i < points.count; i++)
+    const colors = new Uint8Array(points.length * 3);
+    for (let i = 0; i < points.length; i++)
     {
       const { z } = points.list[i];
       const fraction = zRange.getFraction(z);

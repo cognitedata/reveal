@@ -39,11 +39,11 @@ import { PointLogNode } from "@/SubSurface/Wells/Nodes/PointLogNode";
 import { FloatLogNode } from "@/SubSurface/Wells/Nodes/FloatLogNode";
 import { DiscreteLogNode } from "@/SubSurface/Wells/Nodes/DiscreteLogNode";
 
-import { WellTrajectoryThreeView } from "@/ThreeSubSurface/Wells/WellTrajectoryThreeView";
-import { PointLogThreeView } from "@/ThreeSubSurface/Wells/PointLogThreeView";
+import { WellTrajectoryView } from "@/ThreeSubSurface/Wells/WellTrajectoryView";
+import { PointLogView } from "@/ThreeSubSurface/Wells/PointLogView";
 import { LogFilterView } from "@/ThreeSubSurface/Wells/LogFilterView";
 import { CasingLogNode } from "@/SubSurface/Wells/Nodes/CasingLogNode";
-import { CasingLogThreeView } from "@/ThreeSubSurface/Wells/CasingLogThreeView";
+import { CasingLogView } from "@/ThreeSubSurface/Wells/CasingLogView";
 import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
 import { CasingFilterLogNode } from "@/SubSurface/Wells/Filters/CasingFilterLogNode";
 import { PointFilterLogNode } from "@/SubSurface/Wells/Filters/PointFilterLogNode";
@@ -58,6 +58,7 @@ import { SurveyNode } from '@/SubSurface/Seismic/Nodes/SurveyNode';
 import { SurveyView } from '@/ThreeSubSurface/Seismic/SurveyView';
 import { ManipulatorFactory } from '@/Three/Commands/Manipulators/ManipulatorFactory';
 import { SeismicCubePlaneManipulator } from '@/ThreeSubSurface/Seismic/SeismicCubePlaneManipulator';
+import { PointLogManipulator } from "@/ThreeSubSurface/Wells/PointLogManipulator";
 
 export class ThreeModule extends BaseModule
 {
@@ -79,11 +80,11 @@ export class ThreeModule extends BaseModule
     factory.register(PotreeNode.className, PotreeThreeView, ThreeRenderTargetNode.className);
 
     // Wells:
-    factory.register(WellTrajectoryNode.className, WellTrajectoryThreeView, ThreeRenderTargetNode.className);
-    factory.register(PointLogNode.className, PointLogThreeView, ThreeRenderTargetNode.className);
+    factory.register(WellTrajectoryNode.className, WellTrajectoryView, ThreeRenderTargetNode.className);
+    factory.register(PointLogNode.className, PointLogView, ThreeRenderTargetNode.className);
     factory.register(FloatLogNode.className, LogFilterView, ThreeRenderTargetNode.className);
     factory.register(DiscreteLogNode.className, LogFilterView, ThreeRenderTargetNode.className);
-    factory.register(CasingLogNode.className, CasingLogThreeView, ThreeRenderTargetNode.className);
+    factory.register(CasingLogNode.className, CasingLogView, ThreeRenderTargetNode.className);
 
     // Log filters
     factory.register(PointFilterLogNode.className, FilterLogFilterView, ThreeRenderTargetNode.className);
@@ -98,6 +99,7 @@ export class ThreeModule extends BaseModule
 
     const manipulatorFactory = ManipulatorFactory.instance;
     manipulatorFactory.register(SeismicPlaneNode.className, SeismicCubePlaneManipulator, ThreeRenderTargetNode.className);
+    manipulatorFactory.register(PointLogNode.className, PointLogManipulator, ThreeRenderTargetNode.className);
   }
 
   public initializeWhenPopulated(root: BaseRootNode): void

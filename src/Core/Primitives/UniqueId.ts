@@ -12,6 +12,7 @@
 //=====================================================================================
 
 import { v4 as uuid } from "uuid";
+import { Util } from "@/Core/Primitives/Util";
 
 export class UniqueId
 {
@@ -34,7 +35,7 @@ export class UniqueId
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get isEmpty(): boolean { return (!this._id || this._id === ""); }
+  public get isEmpty(): boolean { return Util.isEmpty(this._id); }
 
   public /*override*/ toString(): string { return `${this._id}`; }
 

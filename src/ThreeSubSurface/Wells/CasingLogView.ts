@@ -30,10 +30,11 @@ import { WellTrajectoryStyle } from "@/SubSurface/Wells/Styles/WellTrajectorySty
 import { CasingLogStyle } from "@/SubSurface/Wells/Styles/CasingLogStyle";
 import { WellTrajectory } from "@/SubSurface/Wells/Logs/WellTrajectory";
 import { CasingLog } from '@/SubSurface/Wells/Logs/CasingLog';
-import { WellTrajectoryThreeView } from "@/ThreeSubSurface/Wells/WellTrajectoryThreeView";
+import { WellTrajectoryView } from "@/ThreeSubSurface/Wells/WellTrajectoryView";
 import { ViewInfo } from '@/Core/Views/ViewInfo';
+import { Changes } from "@/Core/Views/Changes";
 
-export class CasingLogThreeView extends BaseGroupThreeView
+export class CasingLogView extends BaseGroupThreeView
 {
   //==================================================
   // INSTANCE PROPERTIES
@@ -62,6 +63,8 @@ export class CasingLogThreeView extends BaseGroupThreeView
   protected /*override*/ updateCore(args: NodeEventArgs): void
   {
     super.updateCore(args);
+    if (args.isChanged(Changes.nodeColor))
+      this.touch();
   }
 
   //==================================================
@@ -109,7 +112,7 @@ export class CasingLogThreeView extends BaseGroupThreeView
 
   public /*override*/ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void
   {
-    const md = WellTrajectoryThreeView.startPickingAndReturnMd(this, viewInfo, intersection);
+    const md = WellTrajectoryView.startPickingAndReturnMd(this, viewInfo, intersection);
     if (md === undefined)
       return;
 
