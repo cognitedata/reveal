@@ -40,9 +40,34 @@ export abstract class BaseTool extends ThreeRenderTargetCommand
   //==================================================
 
   public /*virtual*/ overrideLeftButton(): boolean { return false; }
+  public /*virtual*/ onActivate(): void { }
+  public /*virtual*/ onDeactivate(): void { }
   public /*virtual*/ onMouseHover(event: MouseEvent): void { }
   public /*virtual*/ onMouseClick(event: MouseEvent): void { }
   public /*virtual*/ onMouseDown(event: MouseEvent): void { }
   public /*virtual*/ onMouseDrag(event: MouseEvent): void { }
   public /*virtual*/ onMouseUp(event: MouseEvent): void { }
+
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
+
+  public onShowInfo(event: MouseEvent): void
+  {
+    const { target } = this;
+    if (!target)
+      return;
+
+    const { viewInfo } = target;
+    const preCount = viewInfo.items.length;
+    viewInfo.clear();
+
+    const [view, intersection] = target.getViewByMouseEvent(event);
+    if (view && intersection)
+      view.onShowInfo(viewInfo, intersection);
+
+    const postCount = viewInfo.items.length;
+    if (preCount > 0 || postCount > 0)
+      target.invalidate();
+  }
 }

@@ -1,6 +1,6 @@
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { BaseTool } from "@/Three/Commands/Tools/BaseTool";
-import ZoomToTargetToolCommandIcon from "@images/Commands/ZoomToTargetToolCommand.png";
+import ZoomToTargetBaseToolIcon from "@images/Commands/ZoomToTargetTool.png";
 
 export class ZoomToTargetTool extends BaseTool
 {
@@ -18,11 +18,11 @@ export class ZoomToTargetTool extends BaseTool
   //==================================================
 
   public /*override*/ getName(): string { return "Zoom to target"; }
-  public /*override*/ getIcon(): string { return ZoomToTargetToolCommandIcon; }
+  public /*override*/ getIcon(): string { return ZoomToTargetBaseToolIcon; }
   public /*override*/ getShortCutKeys(): string { return "S"; }
 
   //==================================================
-  // OVERRIDES of ToolCommand
+  // OVERRIDES of BaseTool
   //==================================================
 
   public /*override*/ overrideLeftButton(): boolean { return true; }
@@ -40,5 +40,6 @@ export class ZoomToTargetTool extends BaseTool
     const { cameraControl } = target;
     cameraControl.zoomToTarget(worldCoords);
     target.setDefaultTool();
+    // Nils: Todo: Update then the toolbar
   }
 }

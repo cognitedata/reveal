@@ -12,14 +12,16 @@
 //=====================================================================================
 
 import * as THREE from "three";
+import Color from "color";
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import { ViewInfo, TextItem } from "@/Core/Views/ViewInfo";
-import Color from "color";
+import { ViewInfo } from "@/Core/Views/ViewInfo";
+import { TextItem } from "@/Core/Views/TextItem";
 import { Canvas } from "@/Three/Utilities/Canvas";
 import { Util } from "@/Core/Primitives/Util";
-import { Colors } from "@/Core/Primitives/Colors";
 import { Appearance } from "@/Core/States/Appearance";
+import { Polyline } from "@/Core/Geometry/Polyline";
+import { SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION } from "constants";
 
 export class TreeOverlay
 {
@@ -28,14 +30,11 @@ export class TreeOverlay
   //==================================================
 
   private scene: THREE.Scene | null = null;
-
   private camera: THREE.Camera | null = null;
 
   // eslint-disable-next-line react/static-property-placement
   private context: CanvasRenderingContext2D | null = null;
-
   private texture: THREE.Texture | null = null;
-
   private delta = new Vector3(-1, -1);
 
   //==================================================
@@ -65,6 +64,7 @@ export class TreeOverlay
 
     context.clearRect(0, 0, this.delta.x, this.delta.y);
 
+    this.renderPolyline(context, viewInfo.polyline, fgColor, bgColor);
     this.renderTextItems(context, viewInfo.items, delta, Appearance.viewerOverlayFontSize, Appearance.viewerOverlayFgColor, Appearance.viewerOverlayBgColor);
     this.renderFooter(context, viewInfo.footer, Appearance.viewerFooterFontSize, fgColor, bgColor);
     this.texture.needsUpdate = true;
@@ -278,5 +278,30 @@ export class TreeOverlay
     context.shadowBlur = 0;
     context.shadowOffsetX = 0;
     context.shadowOffsetY = 0;
+  }
+
+  public renderPolyline(context: CanvasRenderingContext2D, polyline: Polyline | null, fgColor: Color, bgColor: Color): void
+  {
+    if (!polyline || polyline.length < 1)
+      return;
+
+    context.beginPath();
+    let point = polyline.list[0];
+    context.moveTo(point.x, point.y);
+    for (let i = 1; i < polyline.list.length; i++)
+    {
+      point = polyline.list[i];
+      context.lineTo(point.x, point.y);
+    }
+    if (polyline.isClosed)
+      context.closePath();
+
+    context.lineCap = 'round';
+    context.lineWidth = 3;
+    context.strokeStyle = Canvas.getColor(fgColor);
+    context.stroke();
+    context.lineWidth = 1;
+    context.strokeStyle = Canvas.getColor(bgColor);
+    context.stroke();
   }
 }

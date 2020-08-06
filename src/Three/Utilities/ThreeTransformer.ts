@@ -22,11 +22,8 @@ export class ThreeTransformer
   //==================================================
 
   private _xTranslation = 0;
-
   private _yTranslation = 0;
-
   private _zScale = 1;
-
   private _initialized = false;
 
   //==================================================
@@ -34,11 +31,8 @@ export class ThreeTransformer
   //==================================================
 
   public get zScale(): number { return this._zScale; }
-
   public set zScale(value: number) { this._zScale = value; }
-
   public get scale(): THREE.Vector3 { return new THREE.Vector3(1, 1, this._zScale); }
-
   public get translation(): THREE.Vector3 { return new THREE.Vector3(this._xTranslation, this._yTranslation, 0); }
 
   //==================================================

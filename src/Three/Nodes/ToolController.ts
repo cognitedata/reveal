@@ -58,7 +58,11 @@ export class ToolController
     if (this._activeTool === tool)
       return;
 
+    if (this._activeTool)
+      this._activeTool.onDeactivate();
+
     this._activeTool = tool;
+    this._activeTool.onActivate();
     if (!cameraControl)
       return;
 
