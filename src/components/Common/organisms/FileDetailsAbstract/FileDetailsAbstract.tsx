@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Icon } from '@cognite/cogs.js';
-import { Row } from 'antd';
 import {
   InfoGrid,
   InfoCell,
@@ -68,9 +67,7 @@ export const FileDetailsAbstract = ({
 
       {actions && (
         <InfoCell noBorders>
-          <Row type="flex" gutter={12} justify="start" className="button-row">
-            {actions}
-          </Row>
+          <div className="button-row">{actions}</div>
         </InfoCell>
       )}
 

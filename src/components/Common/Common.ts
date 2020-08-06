@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Colors } from '@cognite/cogs.js';
 
 export type onResourceSelectedParams = {
   assetId?: number;
@@ -8,11 +9,15 @@ export type onResourceSelectedParams = {
 
 export const Wrapper = styled.div`
   width: 100%;
-  .back-button {
-    margin-bottom: 12px;
-  }
-  .ant-collapse {
-    margin-bottom: 12px;
+  flex: 1;
+  padding: 24px;
+  overflow: auto;
+  background: ${Colors['greyscale-grey1'].hex()};
+
+  dl,
+  dt {
+    background: ${Colors['greyscale-grey1'].hex()};
+    border-color: ${Colors['greyscale-grey4'].hex()};
   }
 
   .button-row {

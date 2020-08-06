@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { InternalId, ExternalId } from '@cognite/sdk';
 import { FileDetailsAbstract, Loader } from 'components/Common';
 import { useSelector, useDispatch } from 'react-redux';
@@ -35,13 +35,17 @@ export const FileSmallPreview = ({
   const { assetIds, assets } = useSelector(linkedAssetsSelector)(fileId);
   const { fileIds, files } = useSelector(linkedFilesSelectorByFileId)(fileId);
 
-  const actions: React.ReactNode[] = [];
-  actions.push(...(propActions || []));
-  actions.push(
-    ...renderResourceActions({
-      fileId,
-    })
-  );
+  const actions = useMemo(() => {
+    console.log('asdfsda');
+    const items: React.ReactNode[] = [];
+    items.push(...(propActions || []));
+    items.push(
+      ...renderResourceActions({
+        fileId,
+      })
+    );
+    return items;
+  }, [renderResourceActions, fileId, propActions]);
 
   useEffect(() => {
     (async () => {

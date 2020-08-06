@@ -18,7 +18,12 @@ export const InfoGrid = styled.div<InfoGridProps>(
       border-left: 1px solid var(--cogs-greyscale-grey4);
     `}
 
-    .button-row>* {
+    .button-row {
+      display: flex;
+      align-items: stretch;
+    }
+
+    .button-row > * {
       margin-left: 8px;
     }
     .button-row > *:nth-child(1) {

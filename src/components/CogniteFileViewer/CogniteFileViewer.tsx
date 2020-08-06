@@ -66,7 +66,9 @@ const Wrapper = styled.div<{ showResourceSidebar: boolean }>`
   height: 100%;
   width: 100%;
   display: flex;
-  && .splitter > div:nth-child(4),
+  && .splitter > div:nth-child(4) {
+    pointer-events: ${props => (props.showResourceSidebar ? 'auto' : 'none')};
+  }
   && .splitter > div:nth-child(5) {
     display: ${props => (props.showResourceSidebar ? 'block' : 'none')};
   }

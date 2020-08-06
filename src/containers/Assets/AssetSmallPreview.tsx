@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { TimeseriesFilterQuery } from '@cognite/sdk';
-import { AssetDetailsAbstract, Popover, Loader } from 'components/Common';
+import { AssetDetailsAbstract, Loader } from 'components/Common';
 import { useSelector, useDispatch } from 'react-redux';
 import { list as listTimeseries, listSelector } from 'modules/timeseries';
 import {
   linkedFilesSelectorByAssetId,
   listFilesLinkedToAsset,
 } from 'modules/annotations';
-import { TimeseriesSmallPreview } from 'containers/Timeseries';
-import { FileSmallPreview } from 'containers/Files';
+// import { TimeseriesSmallPreview } from 'containers/Timeseries';
+// import { FileSmallPreview } from 'containers/Files';
 import { retrieve, itemSelector } from 'modules/assets';
 import { useResourceActionsContext } from 'context/ResourceActionsContext';
 
@@ -44,19 +44,21 @@ export const AssetSmallPreview = ({
     dispatch(listTimeseries(createTimeseriesFilter(assetId)));
   }, [assetId, dispatch]);
 
+  const actions = useMemo(() => {
+    const items: React.ReactNode[] = [];
+    items.push(...(propActions || []));
+    items.push(
+      ...renderResourceActions({
+        assetId,
+      })
+    );
+    return items;
+  }, [renderResourceActions, assetId, propActions]);
+
   const asset = useSelector(itemSelector)(assetId);
   if (!asset) {
     return <Loader />;
   }
-
-  const actions: React.ReactNode[] = [];
-  actions.push(...(propActions || []));
-  actions.push(
-    ...renderResourceActions({
-      assetId,
-    })
-  );
-
   return (
     <AssetDetailsAbstract
       key={assetId}
@@ -65,26 +67,26 @@ export const AssetSmallPreview = ({
       files={assetFiles || []}
       extras={extras}
       actions={actions}
-      timeseriesPreview={(timeseries, content) => {
-        return (
-          <Popover
-            key={timeseries.id}
-            content={<TimeseriesSmallPreview timeseriesId={timeseries.id} />}
-          >
-            <div style={{ position: 'relative' }}>{content}</div>
-          </Popover>
-        );
-      }}
-      filePreview={(file, content) => {
-        return (
-          <Popover
-            key={file.id}
-            content={<FileSmallPreview fileId={file.id} />}
-          >
-            <div style={{ position: 'relative' }}>{content}</div>
-          </Popover>
-        );
-      }}
+      // timeseriesPreview={(timeseries, content) => {
+      //   return (
+      //     <Popover
+      //       key={timeseries.id}
+      //       content={<TimeseriesSmallPreview timeseriesId={timeseries.id} />}
+      //     >
+      //       <div style={{ position: 'relative' }}>{content}</div>
+      //     </Popover>
+      //   );
+      // }}
+      // filePreview={(file, content) => {
+      //   return (
+      //     <Popover
+      //       key={file.id}
+      //       content={<FileSmallPreview fileId={file.id} />}
+      //     >
+      //       <div style={{ position: 'relative' }}>{content}</div>
+      //     </Popover>
+      //   );
+      // }}
     >
       {children}
     </AssetDetailsAbstract>

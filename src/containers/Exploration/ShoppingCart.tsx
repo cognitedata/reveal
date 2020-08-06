@@ -1,9 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Asset, GetTimeSeriesMetadataDTO, FilesMetadata } from '@cognite/sdk';
 import { Icon, Colors, Button } from '@cognite/cogs.js';
 import { SmallTitle, ListItem } from 'components/Common';
+import {
+  itemSelector as fileSelector,
+  retrieve as retrieveFiles,
+} from 'modules/files';
+import {
+  itemSelector as timeseriesSelector,
+  retrieve as retrieveTimeseries,
+} from 'modules/timeseries';
+import {
+  itemSelector as assetsSelector,
+  retrieve as retrieveAssets,
+} from 'modules/assets';
+import { useSelector, useDispatch } from 'react-redux';
 
-export type ShoppingCart = {
+export type ShoppingCartWithContent = {
   assets: {
     [key: number]: Asset;
   };
@@ -14,6 +27,11 @@ export type ShoppingCart = {
     [key: number]: FilesMetadata;
   };
 };
+export type ShoppingCart = {
+  assets: number[];
+  timeseries: number[];
+  files: number[];
+};
 export const ShoppingCartPreview = ({
   cart,
   setCart,
@@ -21,6 +39,17 @@ export const ShoppingCartPreview = ({
   cart: ShoppingCart;
   setCart: (cart: ShoppingCart) => void;
 }) => {
+  const dispatch = useDispatch();
+  const getFile = useSelector(fileSelector);
+  const getTimeseries = useSelector(timeseriesSelector);
+  const getAsset = useSelector(assetsSelector);
+
+  useEffect(() => {
+    dispatch(retrieveFiles(cart.files.map(id => ({ id }))));
+    dispatch(retrieveAssets(cart.assets.map(id => ({ id }))));
+    dispatch(retrieveTimeseries(cart.timeseries.map(id => ({ id }))));
+  }, [dispatch, cart]);
+
   const onDeleteClicked = ({
     assetId,
     timeseriesId,
@@ -60,9 +89,10 @@ export const ShoppingCartPreview = ({
       <div style={{ height: '400px', overflowY: 'auto' }}>
         <SmallTitle>Asset</SmallTitle>
         {Object.values(cart.assets).map(el => {
+          const asset = getAsset(el);
           return (
             <ListItem
-              key={el.id}
+              key={el}
               title={
                 <div style={{ display: 'inline-flex', alignItems: 'center' }}>
                   <Icon
@@ -72,19 +102,20 @@ export const ShoppingCartPreview = ({
                     }}
                     type="DataStudio"
                   />
-                  <span>{el.name}</span>
+                  <span>{asset ? asset.name : 'Loading'}</span>
                 </div>
               }
             >
-              {renderDeleteItemButton({ assetId: el.id })}
+              {renderDeleteItemButton({ assetId: el })}
             </ListItem>
           );
         })}
         <SmallTitle>Time series</SmallTitle>
         {Object.values(cart.timeseries).map(el => {
+          const ts = getTimeseries(el);
           return (
             <ListItem
-              key={el.id}
+              key={el}
               title={
                 <div style={{ display: 'inline-flex', alignItems: 'center' }}>
                   <Icon
@@ -94,19 +125,20 @@ export const ShoppingCartPreview = ({
                     }}
                     type="DataStudio"
                   />
-                  <span>{el.name}</span>
+                  <span>{ts ? ts.name : 'Loading...'}</span>
                 </div>
               }
             >
-              {renderDeleteItemButton({ timeseriesId: el.id })}
+              {renderDeleteItemButton({ timeseriesId: el })}
             </ListItem>
           );
         })}
         <SmallTitle>Files</SmallTitle>
         {Object.values(cart.files).map(el => {
+          const file = getFile(el);
           return (
             <ListItem
-              key={el.id}
+              key={el}
               title={
                 <div style={{ display: 'inline-flex', alignItems: 'center' }}>
                   <Icon
@@ -116,11 +148,11 @@ export const ShoppingCartPreview = ({
                     }}
                     type="DataStudio"
                   />
-                  <span>{el.name}</span>
+                  <span>{file ? file.name : 'Loading...'}</span>
                 </div>
               }
             >
-              {renderDeleteItemButton({ fileId: el.id })}
+              {renderDeleteItemButton({ fileId: el })}
             </ListItem>
           );
         })}

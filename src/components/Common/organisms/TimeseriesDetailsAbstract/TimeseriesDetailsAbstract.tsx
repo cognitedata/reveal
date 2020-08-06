@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { GetTimeSeriesMetadataDTO as TimeSeries } from '@cognite/sdk/dist/src/types/types';
 import { Icons } from '@cognite/cogs.js';
-import { Row } from 'antd';
 import {
   InfoGrid,
   InfoCell,
@@ -61,9 +60,7 @@ export const TimeseriesDetailsAbstract = ({
 
       {actions && (
         <InfoCell noBorders>
-          <Row type="flex" gutter={12} justify="start" className="button-row">
-            {actions}
-          </Row>
+          <div className="button-row">{actions}</div>
         </InfoCell>
       )}
 

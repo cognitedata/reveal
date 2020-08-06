@@ -7,7 +7,6 @@ import {
 import { Icon, Title } from '@cognite/cogs.js';
 import { List, Tabs, message, Row } from 'antd';
 import { AssetBreadcrumb } from '@cognite/gearbox/dist/components/AssetBreadcrumb';
-import { AssetDetailsPanel } from '@cognite/gearbox/dist/components/AssetDetailsPanel';
 import { AssetTree } from '@cognite/gearbox/dist/components/AssetTree';
 import { TimeseriesPreview } from '@cognite/gearbox/dist/components/TimeseriesPreview';
 import {
@@ -42,6 +41,16 @@ import { useHistory } from 'react-router-dom';
 import { DetailsItem, Wrapper } from 'components/Common';
 import moment from 'moment';
 import unionBy from 'lodash/unionBy';
+import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
+
+const formatMetadata = (metadata: { [key: string]: any }) =>
+  Object.keys(metadata).reduce(
+    (agg, cur) => ({
+      ...agg,
+      [cur]: String(metadata[cur]) || '',
+    }),
+    {}
+  );
 
 const createFilesFilter = (assetId: number): FilesSearchFilter => ({
   filter: { assetSubtreeIds: [{ id: assetId }] },
@@ -162,7 +171,9 @@ export const AssetPreview = ({
           <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
             Metadata
           </Title>
-          <AssetDetailsPanel assetId={assetId} />
+          <DescriptionList
+            valueSet={formatMetadata((asset && asset.metadata) ?? {})}
+          />
         </Tabs.TabPane>
         <Tabs.TabPane
           key="timeseries"

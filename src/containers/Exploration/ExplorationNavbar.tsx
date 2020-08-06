@@ -52,7 +52,7 @@ export const ExplorationNavbar = ({
       <Popover
         trigger="click"
         content={<ShoppingCartPreview cart={cart} setCart={setCart} />}
-        placement="bottomRight"
+        placement="bottom-end"
       >
         <Button type="primary" style={{ marginLeft: 24 }}>
           <img
