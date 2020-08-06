@@ -99,7 +99,7 @@ export class Vector3
   public getString(decimals: number): string { return `(${this.x.toFixed(decimals)}, ${this.y.toFixed(decimals)}, ${this.z.toFixed(decimals)})`; }
   public squareDistance(other: Vector3): number { return Ma.square(this.x - other.x) + Ma.square(this.y - other.y) + Ma.square(this.z - other.z); }
   public distance(other: Vector3): number { return Math.sqrt(this.squareDistance(other)); }
-  
+
   public getAt(dimension: number): number
   {
     switch (dimension)
@@ -183,6 +183,13 @@ export class Vector3
 
     this.divideScalar(length);
     return true;
+  }
+
+  public rotatePiHalf(): void
+  {
+    const x = this.x;
+    this.x = this.y;
+    this.y = -x;
   }
 
   public add(point: Vector3): void

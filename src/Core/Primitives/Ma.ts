@@ -71,9 +71,7 @@ export class Ma
 
   public static min(a: number, b: number, c: number): number { return Math.min(a, Math.min(b, c)); }
 
-  public static sign(value: number): number { return value < 0 ? -1 : 1; }
-
-  public static strickSign(value: number): number { return value === 0 ? 0 : Ma.sign(value); }
+  public static strickSign(value: number): number { return value === 0 ? 0 : Math.sign(value); }
 
   public static toDeg(radians: number): number { return 180 * radians / Math.PI; }
 

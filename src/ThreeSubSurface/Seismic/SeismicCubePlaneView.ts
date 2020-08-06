@@ -89,19 +89,17 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
       return undefined;
 
     const range = new Range3();
-    const cells = SeismicCubePlaneView.createCells(surveyCube, node.perpendicularAxis, node.perpendicularIndex);
-    if (cells.length < 2)
-      return;
-
     const position: Vector3 = Vector3.newZero;
-
-    const minCell = cells[0];
-    surveyCube.getCellCenter(minCell.i, minCell.j, 0, position);
-    range.add(position);
-
-    const maxCell = cells[cells.length - 1];
-    surveyCube.getCellCenter(maxCell.i, maxCell.j, surveyCube.cellSize.k - 1, position);
-    range.add(position);
+    {
+      const minCell = node.getMinCell();
+      surveyCube.getCellCenter(minCell.i, minCell.j, minCell.k, position);
+      range.add(position);
+    }
+    {
+      const maxCell = node.getMaxCell();
+      surveyCube.getCellCenter(maxCell.i, maxCell.j, maxCell.k, position);
+      range.add(position);
+    }
     range.expandByMargin(surveyCube.inc.maxCoord);
     return range;
   }
@@ -196,7 +194,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
 
   private createSolid(node: SeismicPlaneNode, surveyCube: RegularGrid3, style: SurfaceRenderStyle): THREE.Object3D | null
   {
-    const cells = SeismicCubePlaneView.createCells(surveyCube, node.perpendicularAxis);
+    const cells = node.createCells(false);
     if (cells.length < 2)
       return null;
 
@@ -226,6 +224,8 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     const { transformer } = this;
     mesh.scale.copy(transformer.scale);
     mesh.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), surveyCube.rotationAngle);
+    this._index = -1;
+    this._axis = -1;
     return mesh;
   }
 
@@ -246,7 +246,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     if (!geometry)
       return;
 
-    const cells = SeismicCubePlaneView.createCells(surveyCube, node.perpendicularAxis, node.perpendicularIndex);
+    const cells = node.createCells();
     if (cells.length < 2)
       return;
 
@@ -321,22 +321,5 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     }
     if (count !== index)
       throw Error("Error in createTextureCoords");
-
-  }
-
-  private static createCells(surveyCube: RegularGrid3, axis: number, index = 0): Index2[]
-  {
-    const cells: Index2[] = [];
-    if (axis === 0)
-    {
-      for (let j = 0; j < surveyCube.cellSize.j; j++)
-        cells.push(new Index2(index, j));
-    }
-    else if (axis === 1)
-    {
-      for (let i = 0; i < surveyCube.cellSize.i; i++)
-        cells.push(new Index2(i, index));
-    }
-    return cells;
   }
 }

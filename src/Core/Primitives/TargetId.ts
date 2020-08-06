@@ -27,7 +27,6 @@ export class TargetId
   //==================================================
 
   private _typeName: string;
-
   private _uniqueId: UniqueId;
 
   //==================================================
@@ -35,15 +34,10 @@ export class TargetId
   //==================================================
 
   public get typeName(): string { return this._typeName; }
-
   public set typeName(value: string) { this._typeName = value; }
-
   public get uniqueId(): UniqueId { return this._uniqueId; }
-
   public set uniqueId(value: UniqueId) { this._uniqueId = value; }
-
   public get isEmpty(): boolean { return this.typeName === "" && this.uniqueId.isEmpty; }
-
   public /*override*/ toString(): string { return `(${this.typeName}, ${this.uniqueId})`; }
 
   //==================================================

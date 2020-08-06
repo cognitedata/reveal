@@ -17,7 +17,7 @@ export class SeismicCubePlaneManipulator extends BaseManipulator
   //==================================================
 
   private _capureNode: SeismicPlaneNode | null = null;
-  private _startPoint: THREE.Vector3 | null = null;
+  private _perpedicularPlane: THREE.Plane | null = null;
 
   //==================================================
   // OVERRIDES of ToolCommand
@@ -26,17 +26,31 @@ export class SeismicCubePlaneManipulator extends BaseManipulator
   public /*override*/ clear(): void
   {
     this._capureNode = null;
-    this._startPoint = null;
+    this._perpedicularPlane = null;
   }
 
-  public /*override*/ onMouseDown(target: ThreeRenderTargetNode, node:BaseNode, intersection: THREE.Intersection): boolean
+  public /*override*/ onMouseDown(target: ThreeRenderTargetNode, node: BaseNode, intersection: THREE.Intersection, ray: THREE.Ray): boolean
   {
     const planeNode = node as SeismicPlaneNode;
     if (!planeNode)
       return false;
 
     this._capureNode = planeNode;
-    this._startPoint = intersection.point;
+    this._perpedicularPlane = new THREE.Plane();
+
+    const planeNormal = planeNode.normal;
+    let perpedicularPlaneNormal = ThreeConverter.fromThreeVector3(ray.direction);
+    const cosAngle = planeNormal.getDot(perpedicularPlaneNormal);
+    const angle = Math.acos(Math.abs(cosAngle));
+
+    // When the plane normal and ray are close to colinear
+    if (angle < Math.PI / 10)
+    {
+      perpedicularPlaneNormal = planeNormal;
+      perpedicularPlaneNormal.z -= Math.sign(cosAngle);
+      perpedicularPlaneNormal.normalize();
+    }
+    this._perpedicularPlane.setFromNormalAndCoplanarPoint(ThreeConverter.toThreeVector3(perpedicularPlaneNormal), intersection.point);
     return true;
   }
 
@@ -46,22 +60,15 @@ export class SeismicCubePlaneManipulator extends BaseManipulator
     if (!planeNode)
       return;
 
-    if (!this._startPoint)
+    if (!this._perpedicularPlane)
       return;
 
     const cube = planeNode.surveyCube;
     if (!cube)
       return;
 
-    const { normal } = planeNode;
-    const up = Vector3.newUp;
-    const perpedicularNormal = normal.getCross(up);
-
-    const perpedicularPlane = new THREE.Plane();
-    perpedicularPlane.setFromNormalAndCoplanarPoint(ThreeConverter.toThreeVector3(perpedicularNormal), this._startPoint);
-
     const intersection = new THREE.Vector3();
-    if (!ray.intersectPlane(perpedicularPlane, intersection))
+    if (!ray.intersectPlane(this._perpedicularPlane, intersection))
       return;
 
     const { transformer } = target;

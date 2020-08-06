@@ -373,7 +373,13 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   // INSTANCE METHODS: Getters
   //==================================================
 
-  public getRay(pixel: THREE.Vector2): THREE.Ray | null
+  public getRayFromEvent(event: MouseEvent): THREE.Ray
+  {
+    const pixel = this.getMouseRelativePositionThree(event);
+    return this.getRay(pixel);
+  }
+
+  public getRay(pixel: THREE.Vector2): THREE.Ray
   {
     //https://threejsfundamentals.org/threejs/lessons/threejs-picking.html
     this._raycaster.setFromCamera(pixel, this.camera);
