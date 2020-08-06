@@ -22,6 +22,7 @@ import { SurveyNode } from "@/SubSurface/Seismic/Nodes/SurveyNode";
 import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
 import { Vector3 } from '@/Core/Geometry/Vector3';
 import { Index2 } from "@/Core/Geometry/Index2";
+import { Index3 } from "@/Core/Geometry/Index3";
 
 export class SeismicPlaneNode extends BaseVisualNode
 {
@@ -225,7 +226,7 @@ export class SeismicPlaneNode extends BaseVisualNode
 
   public createCells(useIndex: boolean = true): Index2[]
   {
-    const surveyCube = this.surveyCube;
+    const { surveyCube } = this;
     if (!surveyCube)
       throw Error("surveyCube is not set");
 
@@ -244,6 +245,25 @@ export class SeismicPlaneNode extends BaseVisualNode
     return cells;
   }
 
+  public getMinCell(): Index3
+  {
+    if (this.perpendicularAxis === 0)
+      return new Index3(this.perpendicularIndex, 0, 0);
+    if (this.perpendicularAxis === 1)
+      return new Index3(0, this.perpendicularIndex, 0);
+    throw new Error("getMinCell is not implemented for this case");
+  }
 
+  public getMaxCell(): Index3
+  {
+    const { surveyCube } = this;
+    if (!surveyCube)
+      throw Error("surveyCube is not set");
 
+    if (this.perpendicularAxis === 0)
+      return new Index3(this.perpendicularIndex, surveyCube.cellSize.j - 1, surveyCube.cellSize.k - 1);
+    if (this.perpendicularAxis === 1)
+      return new Index3(surveyCube.cellSize.i - 1, this.perpendicularIndex, surveyCube.cellSize.k - 1);
+    throw new Error("getMinCell is not implemented for this case");
+  }
 }

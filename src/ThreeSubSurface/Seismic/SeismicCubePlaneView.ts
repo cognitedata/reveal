@@ -89,19 +89,17 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
       return undefined;
 
     const range = new Range3();
-    const cells = node.createCells();
-    if (cells.length < 2)
-      return;
-
     const position: Vector3 = Vector3.newZero;
-
-    const minCell = cells[0];
-    surveyCube.getCellCenter(minCell.i, minCell.j, 0, position);
-    range.add(position);
-
-    const maxCell = cells[cells.length - 1];
-    surveyCube.getCellCenter(maxCell.i, maxCell.j, surveyCube.cellSize.k - 1, position);
-    range.add(position);
+    {
+      const minCell = node.getMinCell();
+      surveyCube.getCellCenter(minCell.i, minCell.j, minCell.k, position);
+      range.add(position);
+    }
+    {
+      const maxCell = node.getMaxCell();
+      surveyCube.getCellCenter(maxCell.i, maxCell.j, maxCell.k, position);
+      range.add(position);
+    }
     range.expandByMargin(surveyCube.inc.maxCoord);
     return range;
   }

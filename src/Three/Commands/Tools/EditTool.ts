@@ -74,8 +74,8 @@ export class EditTool extends BaseTool
     if (!manipulator)
       return;
 
-      const ray = target.getRayFromEvent(event);
-      if (!manipulator.onMouseDown(target, node, intersection, ray))
+    const ray = target.getRayFromEvent(event);
+    if (!manipulator.onMouseDown(target, node, intersection, ray))
       return;
 
     this._currentManipulator = manipulator;
