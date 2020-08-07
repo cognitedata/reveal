@@ -99,12 +99,12 @@ export class PolylinesNode extends DataNode
     if (!polylines)
       return;
 
-      let pointCount = 0;
-      for (const polyline of polylines.list)
-        pointCount += polyline.length;
+    let pointCount = 0;
+    for (const polyline of polylines.list)
+      pointCount += polyline.length;
 
-      folder.addReadOnlyInteger("# Polylines", polylines.length);
-      folder.addReadOnlyInteger("# Points", pointCount);
-      folder.addReadOnlyRange3(polylines.boundingBox);
+    folder.addReadOnlyInteger("# Polylines", polylines.length);
+    folder.addReadOnlyInteger("# Points", pointCount);
+    folder.addReadOnlyRange3(polylines.boundingBox);
   }
 }

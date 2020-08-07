@@ -11,6 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+/* eslint-disable max-classes-per-file */
 import { BaseView } from "@/Core/Views/BaseView";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 
@@ -49,10 +50,10 @@ export class ViewFactory
   // INSTANCE METHODS:
   //==================================================
 
-  public register<T extends BaseView>(className: string, viewType: new () => T, targetClassName: string): void
+  public register<T extends BaseView>(className: string, ViewType: new () => T, targetClassName: string): void
   {
     const key = this.getKey(className, targetClassName);
-    const func = () => new viewType();
+    const func = () => new ViewType();
     const product = new Product(func);
     this.products.set(key, product);
   }

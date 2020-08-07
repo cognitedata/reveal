@@ -28,7 +28,6 @@ export class NavigationTool extends BaseTool
   public /*override*/ getTooltip(): string { return "Navigation\nLeft button: Rotate\nRight button: Pan \nWheel: Zoom\nLeft click: Pick to get information"; }
   public /*override*/ getIcon(): string { return PanBaseToolIcon; }
 
-
   public /*override*/ onMouseDown(event: MouseEvent): void
   {
     this._movementX = event.clientX;
@@ -37,7 +36,7 @@ export class NavigationTool extends BaseTool
 
   public /*override*/ onMouseUp(event: MouseEvent): void
   {
-    if (event.clientX == this._movementX && event.clientY == this._movementY)
+    if (event.clientX === this._movementX && event.clientY === this._movementY)
       this.onShowInfo(event);
   }
 }

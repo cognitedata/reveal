@@ -146,7 +146,7 @@ export class PointLogView extends BaseGroupThreeView
     const cameraPosition = transformer.toWorld(camera.position);
     cameraPosition.substract(wellNode.origin);
 
-    const cameraDirection = trajectory.boundingBox.center;
+    let cameraDirection = trajectory.boundingBox.center;
 
     transformer.transformRelativeTo3D(cameraPosition);
     transformer.transformRelativeTo3D(cameraDirection);
@@ -186,7 +186,7 @@ export class PointLogView extends BaseGroupThreeView
       transformer.transformTangentTo3D(tangent);
 
       // Get perpendicular
-      const cameraDirection = Vector3.substract(position, this.cameraPosition);
+      cameraDirection = Vector3.substract(position, this.cameraPosition);
       const prependicular = cameraDirection.getNormal(tangent);
       position.addWithFactor(prependicular, selectedRadius);
 

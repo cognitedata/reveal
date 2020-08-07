@@ -124,7 +124,7 @@ export class SeismicPlaneNode extends BaseVisualNode
 
   public get normal(): Vector3
   {
-    if (this.perpendicularAxis == 2)
+    if (this.perpendicularAxis === 2)
       return Vector3.newUp;
 
     const cube = this.surveyCube;
@@ -136,10 +136,10 @@ export class SeismicPlaneNode extends BaseVisualNode
 
   public get vectorInPlane(): Vector3
   {
-    if (this.perpendicularAxis == 2)
+    if (this.perpendicularAxis === 2)
       return new Vector3(1, 0, 0);
 
-    const normal = this.normal;
+    const { normal } = this;
     normal.rotatePiHalf();
     return normal;
   }

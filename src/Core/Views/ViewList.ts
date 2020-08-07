@@ -17,12 +17,6 @@ import { ITargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
 export class ViewList
 {
   //==================================================
-  // CONSTRUCTORS
-  //==================================================
-
-  public constructor() { }
-
-  //==================================================
   // INSTANCE FIELDS
   //==================================================
 

@@ -70,7 +70,7 @@ export class MeasureDistanceTool extends BaseTool
     if (!view || !intersection)
       return;
 
-    const transformer = target.transformer;
+    const { transformer } = target;
 
     const pixel = new Vector3(event.offsetX, event.offsetY, 0);
     const point = ThreeConverter.fromThreeVector3(intersection.point);
@@ -91,7 +91,7 @@ export class MeasureDistanceTool extends BaseTool
     }
     else
     {
-      var sumDelta = this._worldCoordinates.getSumDelta();;
+      const sumDelta = this._worldCoordinates.getSumDelta();;
       viewInfo.addText("3D Distance", this._worldCoordinates.getLength().toFixed(2));
       viewInfo.addText("2D Distance", this._worldCoordinates.getLength(2).toFixed(2));
       viewInfo.addText("Sum Delta X", sumDelta.x.toFixed(2));

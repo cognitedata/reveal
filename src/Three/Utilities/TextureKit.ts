@@ -47,18 +47,24 @@ export class TextureKit
       const hue = i / (width - 1);
       let color = Color.hsv(hue * 360, 255, 255);
 
+      // eslint-disable-next-line no-constant-condition
       if (false)
         color = Colors.getGammaCorrected(color);
 
+      // eslint-disable-next-line no-constant-condition
       if (false)
       {
         // Darkness correction
         const darknessFraction = (i % inc) / inc;
         color = color.darken(darknessVolume * (darknessFraction - 0.5));
       }
-      data[index1++] = data[index2++] = color.red();
-      data[index1++] = data[index2++] = color.green();
-      data[index1++] = data[index2++] = color.blue();
+      data[index1++] = color.red();
+      data[index1++] = color.green();
+      data[index1++] = color.blue();
+      
+      data[index2++] = color.red();
+      data[index2++] = color.green();
+      data[index2++] = color.blue();
     }
     return new THREE.DataTexture(data, width, height, THREE.RGBFormat);
   }

@@ -190,7 +190,7 @@ export class Vector3
 
   public rotatePiHalf(): void
   {
-    const x = this.x;
+    const { x } = this;
     this.x = this.y;
     this.y = -x;
   }
