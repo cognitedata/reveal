@@ -7337,10 +7337,10 @@ i18next-pseudo@^2.2.0:
   dependencies:
     i18next "^19.1.0"
 
-i18next@^19.1.0, i18next@^19.4.5:
-  version "19.5.6"
-  resolved "https://registry.yarnpkg.com/i18next/-/i18next-19.5.6.tgz#4fa27b1bfc1486c4b10dec807e24de9c57467a84"
-  integrity sha512-5Myu9NDyBhygRUJv6o7/uIXSaHMP/hgS9QLVDICqS5V0i80dcGZEqzYER8pcPRWzuzbLBq4CSJZhFSpWbl+YUA==
+i18next@^19.1.0, i18next@^19.6.3:
+  version "19.6.3"
+  resolved "https://registry.yarnpkg.com/i18next/-/i18next-19.6.3.tgz#ce2346161b35c4c5ab691b0674119c7b349c0817"
+  integrity sha512-eYr98kw/C5z6kY21ti745p4IvbOJwY8F2T9tf/Lvy5lFnYRqE45+bppSgMPmcZZqYNT+xO0N0x6rexVR2wtZZQ==
   dependencies:
     "@babel/runtime" "^7.10.1"
 
