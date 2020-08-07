@@ -3,6 +3,7 @@
  */
 
 import * as THREE from 'three';
+// eslint-disable-next-line prettier/prettier
 import {
   Subject,
   Observable,
@@ -11,7 +12,6 @@ import {
   fromEventPattern,
   asyncScheduler,
   scheduled,
-  queueScheduler,
   empty
 } from 'rxjs';
 import { CadNode } from './CadNode';
@@ -110,7 +110,7 @@ export class CadModelUpdateHandler {
             if (cameraInMotion) {
               return empty();
             }
-            const wantedSector$ = scheduled(from(sectorCuller.determineSectors(input)), queueScheduler);
+            const wantedSector$ = scheduled(from(sectorCuller.determineSectors(input)), asyncScheduler);
             return wantedSector$.pipe(
               stateHasChanged,
               this._sectorRepository.loadSector(),

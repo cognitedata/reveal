@@ -11,12 +11,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { CanvasWrapper, Loader } from '../components/styled';
 import { resizeRendererToDisplaySize } from '../utils/sceneHelpers';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
+import { Progress } from '@cognite/reveal/utilities/types';
 
 CameraControls.install({ THREE });
 
 export function Simple() {
   const canvas = useRef<HTMLCanvasElement>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState<Progress>({ total: 0, completed: 0, remaining: 0 });
 
   useEffect(() => {
     let revealManager: reveal.RevealManager<unknown>;
@@ -47,6 +49,7 @@ export function Simple() {
       }
 
       revealManager.on('loadingStateChanged', setIsLoading);
+      revealManager.on('downloadProgressChanged', setDownloadProgress);
 
       scene.add(model);
       const renderer = new THREE.WebGLRenderer({
@@ -102,6 +105,10 @@ export function Simple() {
     <CanvasWrapper>
       <Loader isLoading={isLoading} style={{ position: 'absolute' }}>
         Loading...
+      </Loader>
+      
+      <Loader isLoading={(downloadProgress.remaining != 0)} style={{ position: 'absolute', top: '20px' }}>
+        Downloading: {downloadProgress.completed}/{downloadProgress.total} sectors.
       </Loader>
       <canvas ref={canvas} />
     </CanvasWrapper>

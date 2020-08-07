@@ -13,7 +13,7 @@ import {
   DownloadProgressChangeListener
 } from './types';
 import { Subscription, combineLatest, asyncScheduler } from 'rxjs';
-import { distinctUntilChanged, map, share, filter, subscribeOn } from 'rxjs/operators';
+import { distinctUntilChanged, map, share, filter, subscribeOn, observeOn } from 'rxjs/operators';
 import { trackError, trackLoadModel } from '@/utilities/metrics';
 import { NodeAppearanceProvider, CadNode } from '@/datamodels/cad';
 import { PotreeGroupWrapper } from '@/datamodels/pointcloud/PotreeGroupWrapper';
@@ -230,10 +230,11 @@ export class RevealManager<TModelIdentifier> {
   ) {
     this._subscriptions.add(
       combineLatest([
-        cadManager.getLoadingProgressObserver().pipe(map(progress => progress.remaining === 0)),
+        cadManager.getLoadingProgressObserver().pipe(map(progress => progress.remaining > 0)),
         pointCloudManager.getLoadingStateObserver()
       ])
         .pipe(
+          observeOn(asyncScheduler),
           map(loading => loading.some(x => x)),
           distinctUntilChanged(),
           subscribeOn(asyncScheduler)
@@ -255,10 +256,13 @@ export class RevealManager<TModelIdentifier> {
 
   private initDownloadProgressObservable(cadManager: CadManager<TModelIdentifier>) {
     this._subscriptions.add(
-      cadManager.getLoadingProgressObserver().subscribe({
-        next: this.notifyDownloadProgressChanged.bind(this),
-        error: error => trackError(error, { moduleName: 'RevealManager', methodName: 'constructor' })
-      })
+      cadManager
+        .getLoadingProgressObserver()
+        .pipe(observeOn(asyncScheduler))
+        .subscribe({
+          next: this.notifyDownloadProgressChanged.bind(this),
+          error: error => trackError(error, { moduleName: 'RevealManager', methodName: 'constructor' })
+        })
     );
   }
 }

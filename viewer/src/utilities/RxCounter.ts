@@ -2,8 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
-import { Subject, MonoTypeOperatorFunction, Observable } from 'rxjs';
-import { scan, tap, finalize, shareReplay } from 'rxjs/operators';
+import { Subject, MonoTypeOperatorFunction, Observable, asyncScheduler } from 'rxjs';
+import { scan, tap, finalize, shareReplay, throttleTime } from 'rxjs/operators';
 import { Progress } from './types';
 
 enum Action {
@@ -74,6 +74,7 @@ export class RxCounter {
         },
         { total: 0, remaining: 0, completed: 0 }
       ),
+      throttleTime(200, asyncScheduler, { trailing: true }),
       shareReplay(1)
     );
   }

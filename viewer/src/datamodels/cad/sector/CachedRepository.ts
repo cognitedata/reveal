@@ -17,6 +17,7 @@ import {
   scheduled,
   queueScheduler
 } from 'rxjs';
+// eslint-disable-next-line prettier/prettier
 import {
   flatMap,
   map,
@@ -26,8 +27,7 @@ import {
   retry,
   reduce,
   distinct,
-  catchError,
-  distinctUntilChanged
+  catchError
 } from 'rxjs/operators';
 import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
@@ -98,7 +98,7 @@ export class CachedRepository implements Repository {
   }
 
   getNetworkProgressObservable(): Observable<Progress> {
-    return this._loadingCounter.progressObservable().pipe(distinctUntilChanged());
+    return this._loadingCounter.progressObservable();
   }
 
   // TODO j-bjorne 16-04-2020: Should look into ways of not sending in discarded sectors,
