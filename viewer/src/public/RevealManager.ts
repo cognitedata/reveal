@@ -155,7 +155,7 @@ export class RevealManager<TModelIdentifier> {
   public addModel(
     type: 'cad',
     modelIdentifier: TModelIdentifier,
-    nodeApperanceProvider?: NodeAppearanceProvider
+    nodeAppearanceProvider?: NodeAppearanceProvider
   ): Promise<CadNode>;
   public addModel(
     type: 'pointcloud',
@@ -164,20 +164,20 @@ export class RevealManager<TModelIdentifier> {
   public async addModel(
     type: SupportedModelTypes,
     modelIdentifier: TModelIdentifier,
-    nodeApperanceProvider?: NodeAppearanceProvider
+    nodeAppearanceProvider?: NodeAppearanceProvider
   ): Promise<[PotreeGroupWrapper, PotreeNodeWrapper] | CadNode> {
     trackLoadModel(
       {
         moduleName: 'RevealManager',
         methodName: 'addModel',
-        options: { nodeApperanceProvider }
+        options: { nodeAppearanceProvider }
       },
       modelIdentifier
     );
 
     switch (type) {
       case 'cad': {
-        const cadNode = await this._cadManager.addModel(modelIdentifier, nodeApperanceProvider);
+        const cadNode = await this._cadManager.addModel(modelIdentifier, nodeAppearanceProvider);
         this._subscriptions.add(
           this._cadManager
             .getParsedData()
