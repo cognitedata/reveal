@@ -19,6 +19,7 @@ import { PotreeGroupWrapper } from '@/datamodels/pointcloud/PotreeGroupWrapper';
 import { PotreeNodeWrapper } from '@/datamodels/pointcloud/PotreeNodeWrapper';
 import { RenderMode } from '@/datamodels/cad/rendering/RenderMode';
 import { EffectRenderManager } from '@/datamodels/cad/rendering/EffectRenderManager';
+import { SupportedModelTypes } from '@/public/migration/types';
 
 export class RevealManager<TModelIdentifier> {
   private readonly _cadManager: CadManager<TModelIdentifier>;
@@ -161,7 +162,7 @@ export class RevealManager<TModelIdentifier> {
     modelIdentifier: TModelIdentifier
   ): Promise<[PotreeGroupWrapper, PotreeNodeWrapper]>;
   public async addModel(
-    type: 'cad' | 'pointcloud',
+    type: SupportedModelTypes,
     modelIdentifier: TModelIdentifier,
     nodeApperanceProvider?: NodeAppearanceProvider
   ): Promise<[PotreeGroupWrapper, PotreeNodeWrapper] | CadNode> {

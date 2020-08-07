@@ -22,7 +22,7 @@ const mapCoordinatesBuffers = {
 };
 
 export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
-  public readonly type: SupportedModelTypes = SupportedModelTypes.CAD;
+  public readonly type: SupportedModelTypes = 'cad';
 
   get renderHints(): CadRenderHints {
     return this.cadNode.renderHints;

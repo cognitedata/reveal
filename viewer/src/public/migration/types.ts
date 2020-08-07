@@ -58,11 +58,4 @@ export interface AddModelOptions {
   onComplete?: () => void;
 }
 
-export enum SupportedModelTypes {
-  PointCloud = 'pointcloud',
-  CAD = 'cad',
-  /**
-   * Not a model supported by Reveal.
-   */
-  NotSupported = ''
-}
+export type SupportedModelTypes = 'pointcloud' | 'cad';
