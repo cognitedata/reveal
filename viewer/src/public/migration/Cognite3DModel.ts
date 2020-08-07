@@ -21,6 +21,10 @@ const mapCoordinatesBuffers = {
   v: vec3.create()
 };
 
+/**
+ * Documentation for the Cognite3DModel class
+ * @noInheritDoc
+ */
 export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = SupportedModelTypes.CAD;
 

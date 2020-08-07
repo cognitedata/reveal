@@ -11,6 +11,10 @@ import { PotreeGroupWrapper } from '@/datamodels/pointcloud/PotreeGroupWrapper';
 import { PotreePointColorType } from '@/datamodels/pointcloud/types';
 import { Matrix4 } from 'three';
 
+/**
+ * Documentation for the Cognite3DModel class
+ * @noInheritDoc
+ */
 export class CognitePointCloudModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = SupportedModelTypes.PointCloud;
   public readonly modelId: number;
