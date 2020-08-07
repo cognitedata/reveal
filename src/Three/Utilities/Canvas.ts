@@ -52,8 +52,10 @@ export class Canvas
       this.context = new CanvasRenderingContext2D();
       return;
     }
-    this.dx = canvas.width = dx;
-    this.dy = canvas.height = dy;
+    canvas.width = dx;
+    canvas.height = dy;
+    this.dx = dx;
+    this.dy = dy;
     this.canvas = canvas;
     this.context = context;
   }

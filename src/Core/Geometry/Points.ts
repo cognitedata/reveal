@@ -54,7 +54,7 @@ export class Points extends Shape
 
   public getSum(): Vector3
   {
-    var sum = Vector3.newZero;
+    const sum = Vector3.newZero;
     for (const point of this.list)
       sum.add(point);
     return sum;
@@ -62,7 +62,7 @@ export class Points extends Shape
 
   public getSumDelta(): Vector3
   {
-    var sum = Vector3.newZero;
+    const sum = Vector3.newZero;
     for (let i = 1; i < this.list.length; i++)
     {
       const p0 = this.list[i - 1];

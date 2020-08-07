@@ -11,25 +11,9 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+/* eslint-disable max-classes-per-file */
+
 import { BaseNode } from "@/Core/Nodes/BaseNode";
-
-//==================================================
-// LOCAL HELPER CLASS
-//==================================================
-
-class ChangedDescription
-{
-  public changed: symbol;
-  public fieldName: string | undefined;
-  public origin: BaseNode | null;
-
-  public constructor(changed: symbol, fieldName?: string, origin: BaseNode | null = null)
-  {
-    this.changed = changed;
-    this.fieldName = fieldName;
-    this.origin = origin;
-  }
-}
 
 export class NodeEventArgs
 {
@@ -96,5 +80,23 @@ export class NodeEventArgs
       this.changes = [];
 
     this.changes.push(new ChangedDescription(changed, fieldName));
+  }
+}
+
+//==================================================
+// LOCAL HELPER CLASS
+//==================================================
+
+class ChangedDescription
+{
+  public changed: symbol;
+  public fieldName: string | undefined;
+  public origin: BaseNode | null;
+
+  public constructor(changed: symbol, fieldName?: string, origin: BaseNode | null = null)
+  {
+    this.changed = changed;
+    this.fieldName = fieldName;
+    this.origin = origin;
   }
 }

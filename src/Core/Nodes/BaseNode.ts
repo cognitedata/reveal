@@ -803,7 +803,7 @@ export abstract class BaseNode extends Identifiable
     for (const node of this.getThisAndDescendants())
     {
       let padding = 0;
-      for (const { } of node.getAncestors())
+      for (const ancestor of node.getAncestors())
         padding++;
       const line = `${" ".padStart(padding * 4) + node.toString()}\n`;
       text += line;

@@ -54,8 +54,7 @@ describe("Hierarcy", () =>
 
     expect(node.isA(node.className)).toBe(true);
     expect(node.isA(BaseVisualNode.className)).toBe(true);
-
-    expect(isInstanceOf(node, PolylinesNode).valueOf()); //Ask F2 about this syntax
+    expect(isInstanceOf(node, PolylinesNode).valueOf()).toBe(true); 
   }
 
   function boundingBox(): void
@@ -92,25 +91,25 @@ describe("Hierarcy", () =>
     // Test Descendants
     {
       let n = 0;
-      for (const { } of root.getThisAndDescendants())
+      for (const descentor of root.getThisAndDescendants())
         n++;
       expect(n).toBe(12);
     }
     {
       let n = 0;
-      for (const { } of root.getDescendants())
+      for (const descentor of root.getDescendants())
         n++;
       expect(n).toBe(11);
     }
     {
       let n = 0;
-      for (const { } of root.getDescendantsByType(PolylinesNode))
+      for (const descentor of root.getDescendantsByType(PolylinesNode))
         n++;
       expect(n).toBe(4);
     }
     {
       let n = 0;
-      for (const { } of root.others.getChildrenByType(PolylinesNode))
+      for (const descentor of root.others.getChildrenByType(PolylinesNode))
         n++;
       expect(n).toBe(4);
     }
@@ -210,10 +209,7 @@ describe("Hierarcy", () =>
 
       expect(expectedVisibleCount).toBeGreaterThan(0);
 
-      if (testType === 0)
-      {
-      }
-      else if (testType === 1)
+      if (testType === 1)
       {
         // Set all invisible
         for (const target of root.targets.getChildrenByType(BaseTargetNode))

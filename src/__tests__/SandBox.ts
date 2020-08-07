@@ -45,7 +45,7 @@ export class SyntaxTests
     const f: number = 7;
 
     b += 5;
-    console.log(`${a} ${b} ${c} ${d} ` + ` ${f}`);
+    console.log(`${a} ${b} ${c} ${d} ${f}`);
   }
 
   public static testForLoop()
@@ -53,13 +53,6 @@ export class SyntaxTests
     console.log("Test for loop");
     for (let i: number = 0; i < 10; i++)
       console.log(i);
-  }
-
-  public static testArray()
-  {
-    const array: number[] = [100, 200, 300];
-    for (const item in array)
-      console.log(array[item]);
   }
 
   public static testArray2()

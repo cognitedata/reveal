@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import { Range1 } from "@/Core/Geometry/Range1";
 import { Range3 } from "@/Core/Geometry/Range3";
 import { Vector3 } from "@/Core/Geometry/Vector3";
@@ -130,15 +131,15 @@ export class SyntheticSubSurfaceModule extends BaseModule
     // Add some random wells
     for (let folderIndex = 0; folderIndex < numberOfFolder; folderIndex++)
     {
-      const folder = new WellFolder();
-      wellTree.addChild(folder);
-      folder.name = `Area ${folderIndex + 1}`;
+      const wellFolder = new WellFolder();
+      wellTree.addChild(wellFolder);
+      wellFolder.name = `Area ${folderIndex + 1}`;
 
       const numberOfWells = Random.getInt2(2, 6);
       for (let wellIndex = 0; wellIndex < numberOfWells; wellIndex++)
       {
         const wellNode = new WellNode();
-        folder.addChild(wellNode);
+        wellFolder.addChild(wellNode);
 
         wellNode.wellHead = Vector3.getRandom(Range3.newTest);
         wellNode.wellHead.z = 0;
@@ -281,6 +282,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
     const { wells } = root;
     return;
 
+    // eslint-disable-next-line no-unreachable
     if (Random.isTrue(0.05))
     {
       const command = new ToggleAxisVisibleCommand(target);

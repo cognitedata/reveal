@@ -63,7 +63,7 @@ export class PropertyFolder extends BasePropertyFolder
 
   public addReadOnlyAngle(name: string, value: number): void
   {
-    this.addReadOnlyStrings(name, Ma.toDeg(value).toFixed(2) + " [degrees]");
+    this.addReadOnlyStrings(name, `${Ma.toDeg(value).toFixed(2)} [degrees]`);
   }
 
   public addReadOnlyRange1(name: string, range: Range1, fractionDigits = FractionDigitsDefault): void

@@ -405,7 +405,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   private getViewByObject(object: THREE.Object3D): BaseThreeView | null
   {
-    while (true)
+    for (;;)
     {
       if (!object.visible)
         return null;

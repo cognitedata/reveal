@@ -129,19 +129,8 @@ export abstract class BaseTargetNode extends BaseNode implements ITarget
     if (!view)
       return false;
 
-    // if (view.stayAliveIfInvisible)
-    // {
-    //   if (!view.isVisible)
-    //     return false;
-
-    //   view.onHide();
-    //   view.isVisible = false;
-    // }
-    // else
-    {
-      this.removeViewShownHere(view);
-      node.views.remove(view);
-    }
+    this.removeViewShownHere(view);
+    node.views.remove(view);
     return true;
   }
 

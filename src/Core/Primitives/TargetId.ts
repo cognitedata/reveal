@@ -72,11 +72,12 @@ export class TargetId
         return this.hasSameTypeName(targetIdOnTargetNode);
 
       case RenderStyleResolution.Unique:
+      {
         const result = this.hasSameUniqueId(targetIdOnTargetNode);
         if (!this.hasSameTypeName(targetIdOnTargetNode))
           throw Error("The TypeName should be equal");
         return result;
-
+      }
       default:
         throw Error(renderStyleResolution);
     }

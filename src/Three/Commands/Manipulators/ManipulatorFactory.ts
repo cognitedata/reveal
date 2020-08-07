@@ -11,6 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+/* eslint-disable max-classes-per-file */
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { BaseManipulator } from '@/Three/Commands/Manipulators/BaseManipulator';
 
@@ -49,10 +50,10 @@ export class ManipulatorFactory
   // INSTANCE METHODS:
   //==================================================
 
-  public register<T extends BaseManipulator>(className: string, manipulatorType: new () => T, targetClassName: string): void
+  public register<T extends BaseManipulator>(className: string, ManipulatorType: new () => T, targetClassName: string): void
   {
     const key = this.getKey(className, targetClassName);
-    const func = () => new manipulatorType();
+    const func = () => new ManipulatorType();
     const product = new Product(func);
     this.products.set(key, product);
   }
@@ -80,10 +81,6 @@ export class ManipulatorFactory
   private getKeyByNode(node: BaseNode, targetClassName: string): string { return this.getKey(node.className, targetClassName); }
   private getKey(nodeType: string, targetClassName: string): string { return `${nodeType}.${targetClassName}`; }
 }
-
-//==================================================
-// LOCAL HELPER CLASS
-//==================================================
 
 class Product
 {
