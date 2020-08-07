@@ -8,9 +8,7 @@ import {
   Subject,
   Observable,
   combineLatest,
-  from,
   fromEventPattern,
-  empty,
   asyncScheduler
 } from 'rxjs';
 import { CadNode } from './CadNode';
@@ -21,32 +19,24 @@ import {
   auditTime,
   filter,
   map,
-  publish,
   flatMap,
-  tap,
   distinctUntilChanged,
-  switchMap,
   finalize,
   observeOn
 } from 'rxjs/operators';
 import { SectorCuller } from './sector/culling/SectorCuller';
-import { DetermineSectorsInput } from './sector/culling/types';
 import { CadLoadingHints } from './CadLoadingHints';
-import { ConsumedSector, WantedSector, SectorGeometry } from './sector/types';
-import { LevelOfDetail } from './sector/LevelOfDetail';
+import { ConsumedSector, SectorGeometry } from './sector/types';
 import { Repository } from './sector/Repository';
 import { SectorQuads } from './rendering/types';
 import { emissionLastMillis } from '@/utilities';
 import { CadModelMetadata } from '.';
+import {
+  createDetermineSectorsInputFromArray,
+  loadingEnabled,
+  handleDetermineSectorsInput
+} from './sector/rxSectorUtilities';
 
-type UpdateEvent = [
-  THREE.PerspectiveCamera,
-  THREE.Plane[] | never[],
-  boolean,
-  CadLoadingHints,
-  boolean,
-  CadModelMetadata[]
-];
 export class CadModelUpdateHandler {
   private readonly _sectorRepository: Repository;
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
@@ -59,70 +49,6 @@ export class CadModelUpdateHandler {
 
   constructor(sectorRepository: Repository, sectorCuller: SectorCuller) {
     this._sectorRepository = sectorRepository;
-
-    const toDetermineSectorsInput = ([
-      camera,
-      clippingPlanes,
-      clipIntersection,
-      loadingHints,
-      cameraInMotion,
-      cadModelsMetadata
-    ]: UpdateEvent) => {
-      return {
-        camera,
-        clippingPlanes,
-        clipIntersection,
-        loadingHints,
-        cameraInMotion,
-        cadModelsMetadata
-      };
-    };
-
-    const loadSectorData = ({ cadModelsMetadata, loadingHints }: DetermineSectorsInput) =>
-      cadModelsMetadata.length > 0 && loadingHints.suspendLoading !== true;
-
-    const handleDetermineSectors = (source$: Observable<DetermineSectorsInput>) => {
-      const modelSectorStates: { [blobUrl: string]: { [id: number]: LevelOfDetail } } = {};
-      const stateHasChanged = (wantedSector: WantedSector) => {
-        const sectorStates = modelSectorStates[wantedSector.blobUrl];
-        if (sectorStates) {
-          const sectorState = sectorStates[wantedSector.metadata.id];
-          if (sectorState) {
-            return sectorState !== wantedSector.levelOfDetail;
-          } else {
-            return wantedSector.levelOfDetail != LevelOfDetail.Discarded;
-          }
-        }
-        return true;
-      };
-
-      const updateSectorState = (consumedSector: ConsumedSector) => {
-        let sectorStates = modelSectorStates[consumedSector.blobUrl];
-        if (!sectorStates) {
-          sectorStates = {};
-          modelSectorStates[consumedSector.blobUrl] = sectorStates;
-        }
-        if (consumedSector.levelOfDetail === LevelOfDetail.Discarded) {
-          delete sectorStates[consumedSector.metadata.id];
-        } else {
-          sectorStates[consumedSector.metadata.id] = consumedSector.levelOfDetail;
-        }
-      };
-
-      const updateSector = (input: DetermineSectorsInput) => {
-        const { cameraInMotion } = input;
-        if (cameraInMotion) {
-          return empty();
-        }
-        return from(sectorCuller.determineSectors(input)).pipe(
-          filter(stateHasChanged),
-          this._sectorRepository.loadSector()
-        );
-      };
-      // TODO: 06-08-2020 j-bjorne: research if distinctUntilLevelOfDetailChanged is needed with the state management.
-      return source$.pipe(switchMap(updateSector)).pipe(tap({ next: updateSectorState })); //distinctUntilLevelOfDetailChanged(), updateSectorState);
-    };
-
     this._updateObservable = combineLatest([
       this._cameraSubject.pipe(auditTime(500)),
       this._clippingPlaneSubject.pipe(startWith([])),
@@ -131,13 +57,13 @@ export class CadModelUpdateHandler {
       this._cameraSubject.pipe(auditTime(250), emissionLastMillis(600)),
       this.loadingModelObservable()
     ]).pipe(
-      observeOn(asyncScheduler),
-      auditTime(250),
-      map(toDetermineSectorsInput),
-      filter(loadSectorData),
-      handleDetermineSectors,
+      observeOn(asyncScheduler), // Schedule tasks on macro task queue (setInterval)
+      auditTime(250), // Take the last value every 250ms // TODO 07-08-2020 j-bjorne: look into throttle
+      map(createDetermineSectorsInputFromArray), // Map from array to interface (enables destructuring)
+      filter(loadingEnabled), // should we load?
+      handleDetermineSectorsInput(sectorRepository, sectorCuller),
       finalize(() => {
-        this._sectorRepository.clear();
+        this._sectorRepository.clear(); // clear the cache
       })
     );
   }
@@ -176,28 +102,24 @@ export class CadModelUpdateHandler {
 
   private loadingModelObservable() {
     return this._modelSubject.pipe(
-      publish(modelObservable => {
-        return modelObservable.pipe(
-          flatMap(
-            cadNode => {
-              return fromEventPattern<Readonly<CadLoadingHints>>(
-                h => cadNode.on('loadingHintsChanged', h),
-                h => cadNode.off('loadingHintsChanged', h)
-              ).pipe(startWith(cadNode.loadingHints), distinctUntilChanged());
-            },
-            (cadNode, loadingHints) => ({ cadNode, loadingHints })
-          ),
-          scan((array, next) => {
-            const { cadNode, loadingHints } = next;
-            if (loadingHints && !loadingHints.suspendLoading) {
-              array.push(cadNode.cadModelMetadata);
-            } else {
-              return array.filter(x => x !== cadNode.cadModelMetadata);
-            }
-            return array;
-          }, [] as CadModelMetadata[])
-        );
-      })
+      flatMap(
+        cadNode => {
+          return fromEventPattern<Readonly<CadLoadingHints>>(
+            h => cadNode.on('loadingHintsChanged', h),
+            h => cadNode.off('loadingHintsChanged', h)
+          ).pipe(startWith(cadNode.loadingHints), distinctUntilChanged());
+        },
+        (cadNode, loadingHints) => ({ cadNode, loadingHints })
+      ),
+      scan((array, next) => {
+        const { cadNode, loadingHints } = next;
+        if (loadingHints && !loadingHints.suspendLoading) {
+          array.push(cadNode.cadModelMetadata);
+        } else {
+          return array.filter(x => x !== cadNode.cadModelMetadata);
+        }
+        return array;
+      }, [] as CadModelMetadata[])
     );
   }
 }
