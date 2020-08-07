@@ -49,6 +49,15 @@ export class CadModelUpdateHandler {
 
   constructor(sectorRepository: Repository, sectorCuller: SectorCuller) {
     this._sectorRepository = sectorRepository;
+
+    /* Creates and observable that emits an event when either of the observables emitts an item.
+     * ------- new camera ---------\
+     * --- new clipping plane ------\
+     * --- new clip intersection ----\_______ [camera, clippingPlanes, clipIntersection, loadingHints, cameraInMotion, cadmodelsMetadata]
+     * --- new global loading hints--/
+     * --- new camera motion state -/
+     * --- changes in cadmodels ---/
+     */
     this._updateObservable = combineLatest([
       this._cameraSubject.pipe(auditTime(500)),
       this._clippingPlaneSubject.pipe(startWith([])),
@@ -63,7 +72,7 @@ export class CadModelUpdateHandler {
       filter(loadingEnabled), // should we load?
       handleDetermineSectorsInput(sectorRepository, sectorCuller),
       finalize(() => {
-        this._sectorRepository.clear(); // clear the cache
+        this._sectorRepository.clear(); // clear the cache once this is unsubscribed from.
       })
     );
   }
@@ -100,6 +109,9 @@ export class CadModelUpdateHandler {
     return this._sectorRepository.getParsedData();
   }
 
+  /* When loading hints of a cadmodel changes, propagate the event down to the stream and either add or remove
+   * the cadmodelmetadata from the array and push the new array down stream
+   */
   private loadingModelObservable() {
     return this._modelSubject.pipe(
       flatMap(

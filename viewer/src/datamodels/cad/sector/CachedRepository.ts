@@ -16,7 +16,8 @@ import {
   partition,
   scheduled,
   asyncScheduler,
-  merge
+  merge,
+  NextObserver
 } from 'rxjs';
 import {
   flatMap,
@@ -209,26 +210,17 @@ export class CachedRepository implements Repository {
     });
   }
 
-  private simpleParsedData(wantedSector: WantedSector): OperatorFunction<SectorQuads, SectorQuads> {
-    return tap(sectorQuads => {
-      this._parsedDataSubject.next({
-        blobUrl: wantedSector.blobUrl,
-        sectorId: wantedSector.metadata.id,
-        lod: 'simple',
-        data: sectorQuads
-      });
-    });
-  }
-
-  private detailedParsedData(wantedSector: WantedSector): OperatorFunction<SectorGeometry, SectorGeometry> {
-    return tap(data => {
-      this._parsedDataSubject.next({
-        blobUrl: wantedSector.blobUrl,
-        sectorId: wantedSector.metadata.id,
-        lod: 'detailed',
-        data
-      }); // TODO: Remove when migration is gone.
-    });
+  private parsedDataObserver(wantedSector: WantedSector): NextObserver<SectorGeometry | SectorQuads> {
+    return {
+      next: data => {
+        this._parsedDataSubject.next({
+          blobUrl: wantedSector.blobUrl,
+          sectorId: wantedSector.metadata.id,
+          lod: wantedSector.levelOfDetail == LevelOfDetail.Simple ? 'simple' : 'detailed',
+          data
+        });
+      }
+    };
   }
 
   private nameGroup(wantedSector: WantedSector): OperatorFunction<Group, Group> {
@@ -244,7 +236,7 @@ export class CachedRepository implements Repository {
       ).pipe(
         this.catchWantedSectorError(wantedSector, 'loadSimpleSectorFromNetwork'),
         flatMap(buffer => this._modelDataParser.parseF3D(new Uint8Array(buffer))),
-        this.simpleParsedData(wantedSector),
+        tap(this.parsedDataObserver(wantedSector)),
         map(sectorQuads => ({ ...wantedSector, data: sectorQuads })),
         this._modelDataTransformer.transform(),
         this.nameGroup(wantedSector),
@@ -281,7 +273,7 @@ export class CachedRepository implements Repository {
           return zip(i3dFileObservable, ctmFilesObservable).pipe(
             this.catchWantedSectorError(wantedSector, 'loadDetailedSectorFromNetwork'),
             map(([i3dFile, ctmFiles]) => this.finalizeDetailed(i3dFile as ParseSectorResult, ctmFiles)),
-            this.detailedParsedData(wantedSector),
+            tap(this.parsedDataObserver(wantedSector)),
             map(data => {
               return { ...wantedSector, data };
             }),
