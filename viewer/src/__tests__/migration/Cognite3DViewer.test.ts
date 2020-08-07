@@ -89,6 +89,7 @@ describe('Cognite3DViewer', () => {
     nock(/.*/)
       .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
       .get(/.*\/outputs/)
+      .twice() // the first one goes to determine model type
       .reply(200, outputs);
     nock(/.*/)
       .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
