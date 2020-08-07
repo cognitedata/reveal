@@ -4,6 +4,7 @@
 
 import { Subject, MonoTypeOperatorFunction, Observable } from 'rxjs';
 import { scan, tap, finalize, shareReplay } from 'rxjs/operators';
+import { Progress } from './types';
 
 enum Action {
   Increment,
@@ -48,20 +49,31 @@ export class RxCounter {
    * Get counter observable.
    * @return {Observable<number>} The counter observable.
    */
-  public countObservable(): Observable<number> {
+  public progressObservable(): Observable<Progress> {
     return this._actionSubject.pipe(
-      scan((count, action) => {
-        switch (action) {
-          case Action.Increment:
-            return count + 1;
-          case Action.Decrement:
-            return count - 1;
-          case Action.Reset:
-            return 0;
-          default:
-            throw new Error(`Unsupported action ${action}`);
-        }
-      }, 0),
+      scan(
+        (progress, action) => {
+          switch (action) {
+            case Action.Increment:
+              progress.remaining++;
+              progress.total++;
+              break;
+            case Action.Decrement:
+              progress.remaining--;
+              progress.completed++;
+              break;
+            case Action.Reset:
+              progress.total = 0;
+              progress.remaining = 0;
+              progress.completed = 0;
+              break;
+            default:
+              throw new Error(`Unsupported action ${action}`);
+          }
+          return progress;
+        },
+        { total: 0, remaining: 0, completed: 0 }
+      ),
       shareReplay(1)
     );
   }

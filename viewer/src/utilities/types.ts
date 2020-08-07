@@ -34,3 +34,9 @@ export type ModelTransformation = {
   readonly modelMatrix: mat4;
   readonly inverseModelMatrix: mat4;
 };
+
+export interface Progress {
+  total: number;
+  remaining: number;
+  completed: number;
+}

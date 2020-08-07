@@ -39,6 +39,7 @@ import { trackError } from '@/utilities/metrics';
 import { BinaryFileProvider } from '@/utilities/networking/types';
 import { Group } from 'three';
 import { RxCounter } from '@/utilities/RxCounter';
+import { Progress } from '@/utilities/types';
 
 type CtmFileRequest = { blobUrl: string; fileName: string };
 type CtmFileResult = { fileName: string; data: ParseCtmResult };
@@ -96,11 +97,8 @@ export class CachedRepository implements Repository {
     ); // TODO: Should we do replay subject here instead of variable type?
   }
 
-  getLoadingStateObserver(): Observable<boolean> {
-    return this._loadingCounter.countObservable().pipe(
-      distinctUntilChanged(),
-      map(count => count != 0)
-    );
+  getNetworkProgressObservable(): Observable<Progress> {
+    return this._loadingCounter.progressObservable().pipe(distinctUntilChanged());
   }
 
   // TODO j-bjorne 16-04-2020: Should look into ways of not sending in discarded sectors,

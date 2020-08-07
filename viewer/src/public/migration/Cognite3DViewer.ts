@@ -189,6 +189,22 @@ export class Cognite3DViewer {
       )
     );
 
+    this._subscription.add(
+      fromEventPattern(
+        h => this._revealManager.on('downloadProgressChanged', h),
+        h => this._revealManager.off('downloadProgressChanged', h)
+      ).subscribe({
+        next: progress => {
+          // TODO: Add progress indication
+        },
+        error: error =>
+          trackError(error, {
+            moduleName: 'Cognite3DViewer',
+            methodName: 'constructor'
+          })
+      })
+    );
+
     this._updateCameraNearAndFarSubject = this.setupUpdateCameraNearAndFar();
 
     this.animate(0);

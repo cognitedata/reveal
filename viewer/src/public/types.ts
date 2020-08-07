@@ -6,6 +6,7 @@ import { NodeAppearanceProvider } from '@/datamodels/cad';
 import { SectorGeometry } from '@/datamodels/cad/sector/types';
 import { SectorQuads } from '@/datamodels/cad/rendering/types';
 import { SectorCuller } from '@/internal';
+import { Progress } from '@/utilities/types';
 
 /**
  * @property logMetrics might be used to disable usage statistics
@@ -41,3 +42,8 @@ export type SectorNodeIdToTreeIndexMapLoadedListener = (event: SectorNodeIdToTre
  * Handler for events about data being loaded.
  */
 export type LoadingStateChangeListener = (isLoading: boolean) => any;
+
+/**
+ * Handler for progress about data being downloaded.
+ */
+export type DownloadProgressChangeListener = (progress: Progress) => any;

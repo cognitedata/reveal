@@ -5,6 +5,7 @@
 import { OperatorFunction, Observable } from 'rxjs';
 import { ConsumedSector, WantedSector, SectorGeometry } from './types';
 import { SectorQuads } from '../rendering/types';
+import { Progress } from '@/utilities/types';
 
 // TODO move
 export type SectorId = number;
@@ -12,7 +13,7 @@ export type SectorId = number;
 export interface Repository {
   loadSector(): OperatorFunction<WantedSector, ConsumedSector>;
 
-  getLoadingStateObserver(): Observable<boolean>;
+  getNetworkProgressObservable(): Observable<Progress>;
   getParsedData(): Observable<{ blobUrl: string; lod: string; data: SectorGeometry | SectorQuads }>;
   clear(): void;
 }
