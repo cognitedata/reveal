@@ -43,7 +43,7 @@
     ]
   },
   "devDependencies": {
-    "@cognite/sdk": "^2.32.0",
+    "@cognite/sdk": "^3.0.0",
     "@types/gl-matrix": "^3.2.0",
     "@types/jest": "^26.0.9",
     "@types/mixpanel-browser": "^2.35.3",
@@ -97,7 +97,7 @@
     "rxjs": "^6.5.5"
   },
   "peerDependencies": {
-    "@cognite/sdk": "^2.32.0",
+    "@cognite/sdk": "^3.0.0",
     "three": "^0.115.0"
   },
   "husky": {
