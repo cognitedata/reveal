@@ -228,7 +228,7 @@ export class WellTrajectoryView extends BaseGroupThreeView
         viewInfo.addHeader("Visible Logs");
 
       const sample = log.getSampleByMd(md);
-      viewInfo.addText(`  ${logNode.displayName}`, sample ? sample.getSampleText() : "Outside MD range");
+      viewInfo.addValue(`  ${logNode.displayName}`, sample ? sample.getSampleText() : "Outside MD range");
       counter++;
     }
   }
@@ -620,10 +620,10 @@ export class WellTrajectoryView extends BaseGroupThreeView
     trajectory.getPositionAtMd(md, positionAtMd);
     const tvd = -positionAtMd.z;
 
-    viewInfo.addText("Well", wellNode.displayName);
-    viewInfo.addText("Trajectory", trajectoryNode.displayName);
-    viewInfo.addText("Md", `${md.toFixed(2)} m / ${(md * Units.Feet).toFixed(2)} ft`);
-    viewInfo.addText("Tvd", `${tvd.toFixed(2)} m / ${(tvd * Units.Feet).toFixed(2)} ft`);
+    viewInfo.addValue("Well", wellNode.displayName);
+    viewInfo.addValue("Trajectory", trajectoryNode.displayName);
+    viewInfo.addValue("Md", `${md.toFixed(2)} m / ${(md * Units.Feet).toFixed(2)} ft`);
+    viewInfo.addValue("Tvd", `${tvd.toFixed(2)} m / ${(tvd * Units.Feet).toFixed(2)} ft`);
     return md;
   }
 }

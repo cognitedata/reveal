@@ -14,6 +14,8 @@
 import { Util } from "@/Core/Primitives/Util";
 import { TextItem } from "@/Core/Views/TextItem";
 import { Polyline } from "@/Core/Geometry/Polyline";
+import { BaseNode } from '@/Core/Nodes/BaseNode';
+import { BaseTool } from '@/Three/Commands/Tools/BaseTool';
 
 export class ViewInfo
 {
@@ -44,9 +46,19 @@ export class ViewInfo
   // INSTANCE METHODS: Add operations
   //==================================================
 
-  public addHeader(header: string) { this.items.push(new TextItem(`${header}`)); }
-  public addText(key: string, value?: string) { this.items.push(new TextItem(key, value)); }
-  public addNumber(key: string, value: number) { this.addText(key, value.toString()); }
+  // Add header of various types
+  public addHeader(header: string) { this.items.push(new TextItem(`${header}`, true)); }
+  public addActiveTool(tool: BaseTool) { this.items.push(new TextItem(`${tool.getName()}:`, true)); }
+  public addPickedNode(node: BaseNode) { this.items.push(new TextItem(`Picked ${node.displayName}:`, true)); }
+
+  // Add text only
+  public addText(key: string) { this.items.push(new TextItem(key, false)); }
+
+  // Add key - value pair
+  public addValue(key: string, value: string) { this.items.push(new TextItem(key, true, value)); }
+  public addTabbedValue(key: string, value: string) { this.items.push(new TextItem(`   ${key}`, true, value)); }
+  public addNumber(key: string, value: number, fractionDigits: number) { this.addValue(key, value.toFixed(fractionDigits)); }
+
   public setPolyline(polyline: Polyline) { this.polyline = polyline; }
 
   //==================================================

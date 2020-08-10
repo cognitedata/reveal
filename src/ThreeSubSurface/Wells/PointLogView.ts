@@ -221,11 +221,11 @@ export class PointLogView extends BaseGroupThreeView
     if (md === undefined)
       return;
 
-    viewInfo.addHeader(node.displayName);
-    viewInfo.addText("  Description", sample.description);
-    viewInfo.addText("  Subtype", sample.subtype);
-    viewInfo.addText("  Subcategory", sample.riskSubCategory);
-    viewInfo.addText("  Details", sample.details);
+    viewInfo.addPickedNode(node);
+    viewInfo.addTabbedValue("Description", sample.description);
+    viewInfo.addTabbedValue("Subtype", sample.subtype);
+    viewInfo.addTabbedValue("Subcategory", sample.riskSubCategory);
+    viewInfo.addTabbedValue("Details", sample.details);
   }
 
   //==================================================

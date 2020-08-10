@@ -117,7 +117,7 @@ export class CasingLogView extends BaseGroupThreeView
       return;
 
     const { node } = this;
-    viewInfo.addHeader(node.displayName);
+    viewInfo.addPickedNode(node);
 
     const { log } = node;
     if (!log)
@@ -127,10 +127,10 @@ export class CasingLogView extends BaseGroupThreeView
     if (!sample)
       return;
 
-    viewInfo.addText("  Name", sample.name);
-    viewInfo.addText("  Radius", Number.isNaN(sample.radius) || sample.radius === 0 ? "No casing" : sample.radius.toFixed(3));
-    viewInfo.addText("  Comments", sample.comments);
-    viewInfo.addText("  Status comment", sample.currentStatusComment);
+    viewInfo.addTabbedValue("Name", sample.name);
+    viewInfo.addTabbedValue("Radius", Number.isNaN(sample.radius) || sample.radius === 0 ? "No casing" : sample.radius.toFixed(3));
+    viewInfo.addTabbedValue("Comments", sample.comments);
+    viewInfo.addTabbedValue("Status comment", sample.currentStatusComment);
   }
 
   //==================================================

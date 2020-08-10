@@ -124,11 +124,11 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
   public /*override*/ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void
   {
     const { node } = this;
-    viewInfo.addHeader(node.displayName);
+    viewInfo.addPickedNode(node);
 
     const { transformer } = this;
     const position = transformer.toWorld(intersection.point);
-    viewInfo.addText("Position", position.getString(2));
+    viewInfo.addValue("Position", position.getString(2));
 
     const { surveyNode } = node;
     if (!surveyNode)
@@ -143,12 +143,12 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     if (!surveyCube.isCellInside(cell.i, cell.j, cell.k))
       return;
 
-    viewInfo.addText("Cell", cell.toString());
+    viewInfo.addValue("Cell", cell.toString());
     const seismicCubeNode = this.getSeismicCubeNode();
     if (!seismicCubeNode)
       return;
 
-    viewInfo.addText("Seismic cube", seismicCubeNode.displayName);
+    viewInfo.addValue("Seismic cube", seismicCubeNode.displayName);
     const { seismicCube } = seismicCubeNode;
     if (!seismicCube)
       return;
@@ -158,7 +158,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
       return;
 
     const value = trace.getAt(cell.k);
-    viewInfo.addText("Amplitude", value.toFixed(4));
+    viewInfo.addNumber("Amplitude", value, 4);
   }
 
   //==================================================
