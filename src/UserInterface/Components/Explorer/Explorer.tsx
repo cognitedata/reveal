@@ -1,3 +1,4 @@
+import "@/UserInterface/Components/Explorer/Explorer.module.scss";
 import React from "react";
 import { VirtualTree } from "@cognite/subsurface-components";
 import { ExplorerPropType } from "@/UserInterface/Components/Explorer/ExplorerTypes";
