@@ -1,13 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Icon, Button } from '@cognite/cogs.js';
-import {
-  InfoGrid,
-  InfoCell,
-  SmallTitle,
-  ListItem,
-  CountLabel,
-} from 'components/Common';
+import { Icon, Button, Title, Badge } from '@cognite/cogs.js';
+import { InfoGrid, InfoCell, ListItem } from 'components/Common';
 import { Asset, FilesMetadata, GetTimeSeriesMetadataDTO } from '@cognite/sdk';
 import { AssetBreadcrumb } from '@cognite/gearbox';
 
@@ -59,7 +53,7 @@ export const AssetDetailsAbstract = ({
             containerStyles={{ paddingTop: 0, paddingBottom: 0 }}
             noBorders
           >
-            <SmallTitle style={{ display: 'flex', alignItems: 'center' }}>
+            <Title level={5} style={{ display: 'flex', alignItems: 'center' }}>
               <IconWrapper>
                 <Icon type="DataStudio" />
               </IconWrapper>
@@ -72,7 +66,7 @@ export const AssetDetailsAbstract = ({
               >
                 {asset.name}
               </span>
-            </SmallTitle>
+            </Title>
           </InfoCell>
         )}
         <InfoCell noBorders>
@@ -125,7 +119,7 @@ export const AssetDetailsAbstract = ({
             containerStyles={{ paddingTop: 0, paddingBottom: 0 }}
             noBorders
           >
-            <SmallTitle style={{ display: 'flex', alignItems: 'center' }}>
+            <Title level={5} style={{ display: 'flex', alignItems: 'center' }}>
               <IconWrapper>
                 <Icon type="Document" />
               </IconWrapper>
@@ -138,7 +132,7 @@ export const AssetDetailsAbstract = ({
               >
                 {asset.name}
               </span>
-            </SmallTitle>
+            </Title>
           </InfoCell>
         )}
         <InfoCell noBorders>
@@ -193,7 +187,7 @@ export const AssetDetailsAbstract = ({
           containerStyles={{ paddingTop: 0, paddingBottom: 0 }}
           noBorders
         >
-          <SmallTitle style={{ display: 'flex', alignItems: 'center' }}>
+          <Title level={5} style={{ display: 'flex', alignItems: 'center' }}>
             <IconWrapper>
               <Icon type="DataStudio" />
             </IconWrapper>
@@ -202,7 +196,7 @@ export const AssetDetailsAbstract = ({
             >
               {asset.name}
             </span>
-          </SmallTitle>
+          </Title>
         </InfoCell>
       )}
 
@@ -237,7 +231,7 @@ export const AssetDetailsAbstract = ({
             }
             bordered={false}
           >
-            <CountLabel value={files.length} />
+            <Badge text={`${files.length}`} />
           </ListItem>
         )}
         {timeseries && (
@@ -258,7 +252,7 @@ export const AssetDetailsAbstract = ({
             }
             bordered={false}
           >
-            <CountLabel value={timeseries.length} />
+            <Badge text={`${timeseries.length}`} />
           </ListItem>
         )}
       </InfoCell>

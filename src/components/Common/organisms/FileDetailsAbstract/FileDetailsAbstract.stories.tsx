@@ -1,10 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';
-import '@cognite/cogs.js/dist/antd.css';
-import '@cognite/cogs.js/dist/cogs.css';
-import GlobalStyle from 'styles/global-styles';
-import theme from 'styles/theme';
 import { FilesMetadata } from '@cognite/sdk';
 
 import { FileDetailsAbstract } from './FileDetailsAbstract';
@@ -28,11 +24,17 @@ export const Example = () => {
     <Container>
       <FileDetailsAbstract
         file={file}
-        imgPreview={<img src="//unsplash.it/400/200" alt="" />}
+        imgPreview={
+          <img
+            src="//unsplash.it/400/200"
+            alt=""
+            style={{ width: '100%', height: 'auto' }}
+          />
+        }
+        files={[file]}
       >
         <Button>Hover me!</Button>
       </FileDetailsAbstract>
-      <GlobalStyle theme={theme} />
     </Container>
   );
 };

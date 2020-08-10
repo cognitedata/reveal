@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button, Colors } from '@cognite/cogs.js';
-import { CountLabel, Popover } from 'components/Common';
+import { Button, Colors, Badge } from '@cognite/cogs.js';
+import { Popover } from 'components/Common';
 import {
   ShoppingCart,
   ShoppingCartPreview,
@@ -61,11 +61,7 @@ export const ExplorationNavbar = ({
             style={{ height: 16, width: 16, marginRight: 8 }}
           />
           <span style={{ marginRight: 8 }}>Kit</span>
-          <CountLabel
-            backgroundColor={Colors['midblue-5'].hex()}
-            color={Colors.white.hex()}
-            value={cartCount}
-          />
+          <Badge inverted text={`${cartCount}`} />
         </Button>
       </Popover>
     </Navbar>

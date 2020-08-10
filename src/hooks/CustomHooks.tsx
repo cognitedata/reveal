@@ -12,3 +12,6 @@ export function usePrevious<T>(value: T) {
 export const useTenant = () => {
   return useSelector((state: RootState) => state.app.tenant);
 };
+export const useEnv = () => {
+  return useSelector((state: RootState) => state.app.cdfEnv);
+};

@@ -140,7 +140,6 @@ export const Explorer = () => {
   );
 
   useEffect(() => {
-    console.log('asdf');
     add('cart', renderResourceActions);
   }, [add, renderResourceActions]);
 

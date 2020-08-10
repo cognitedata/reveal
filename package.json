@@ -13,6 +13,7 @@
     "@cognite/sdk": "^2.33.0",
     "@sentry/browser": "^5.20.1",
     "antd": "^3.26.18",
+    "copy-to-clipboard": "^3.3.1",
     "history": "^4.10.1",
     "immer": "^7.0.7",
     "immutable": "^4.0.0-rc.12",

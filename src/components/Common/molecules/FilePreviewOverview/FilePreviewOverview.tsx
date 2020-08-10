@@ -116,11 +116,6 @@ const CollapseHeader = styled.div`
   .spacer {
     flex: 1;
   }
-  .cogs-badge {
-    padding: 4px 8px !important;
-    color: #4e4f60 !important;
-    font-weight: 800;
-  }
 `;
 
 const Tabs = styled.div`

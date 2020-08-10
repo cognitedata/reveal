@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Icon } from '@cognite/cogs.js';
-import { InfoGrid, InfoCell, SmallTitle, DetailsItem } from 'components/Common';
+import { Icon, Title } from '@cognite/cogs.js';
+import { InfoGrid, InfoCell, DetailsItem } from 'components/Common';
 import { Sequence } from '@cognite/sdk';
 import moment from 'moment';
 import { SequenceInfoGrid } from './SequenceInfoGrid';
@@ -44,7 +44,7 @@ export const SequenceDetailsAbstract = ({
           containerStyles={{ paddingTop: 0, paddingBottom: 0 }}
           noBorders
         >
-          <SmallTitle style={{ display: 'flex', alignItems: 'center' }}>
+          <Title level={5} style={{ display: 'flex', alignItems: 'center' }}>
             <IconWrapper>
               <Icon type="GridFilled" />
             </IconWrapper>
@@ -53,7 +53,7 @@ export const SequenceDetailsAbstract = ({
             >
               {sequence.name}
             </span>
-          </SmallTitle>
+          </Title>
         </InfoCell>
       )}
 

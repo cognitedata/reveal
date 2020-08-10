@@ -29,8 +29,7 @@ import {
   selectAnnotations,
 } from 'modules/annotations';
 import { trackUsage } from 'utils/Metrics';
-import { Button, Input } from '@cognite/cogs.js';
-import { SmallTitle } from 'components/Common';
+import { Button, Input, Title } from '@cognite/cogs.js';
 import { AssetSmallPreview } from 'containers/Assets';
 import { FileSmallPreview } from 'containers/Files/FileSmallPreview';
 import { SequenceSmallPreview } from 'containers/Sequences';
@@ -180,7 +179,7 @@ export const ResourcePreviewSidebar = ({
       if (fromSimilarJob) {
         return (
           <div style={{ paddingLeft: '16px', paddingRight: '16px' }}>
-            <SmallTitle>From Similar Object</SmallTitle>
+            <Title level={5}>From Similar Object</Title>
             <p>Score: {Math.round((Number(score) + Number.EPSILON) * 100)}%</p>
           </div>
         );
