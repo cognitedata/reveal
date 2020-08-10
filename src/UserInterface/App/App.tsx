@@ -5,21 +5,28 @@ import { ThreeModule } from "@/ThreeSubSurface/ThreeModule";
 import BPDataModule from "@/Solutions/BP/BPDataModule";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import { SyntheticSubSurfaceModule } from "@/SubSurface/SyntheticSubSurfaceModule";
+import { CogniteSeismicClient } from "@cognite/seismic-sdk-js";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { grey } from "@material-ui/core/colors";
 
 const LOAD_MOCK_DATA = false;
 
+const client = new CogniteSeismicClient({
+  token: "my-token",
+  api_url: "cdf-api-url",
+  debug: false,
+});
+
 // customize the colors for changing UI style
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: grey[300],
+      main: grey[300]
     },
     secondary: {
-      main: grey[50],
-    },
-  },
+      main: grey[50]
+    }
+  }
 });
 
 /**
@@ -43,7 +50,7 @@ export default function App() {
         import("@/Solutions/BP/MockData/Sample/logs.json"),
         import("@/Solutions/BP/MockData/Sample/casings.json"),
         import("@/Solutions/BP/MockData/Sample/ndsEvents.json"),
-        import("@/Solutions/BP/MockData/Sample/nptEvents.json"),
+        import("@/Solutions/BP/MockData/Sample/nptEvents.json")
       ])
         .then(
           ([
@@ -54,7 +61,7 @@ export default function App() {
             logsJson,
             casingsJson,
             ndsEventsJson,
-            nptEventsJson,
+            nptEventsJson
           ]) => {
             module.setModuleData({
               wells: wellsJson.default,
@@ -64,7 +71,7 @@ export default function App() {
               ndsEvents: ndsEventsJson.default,
               nptEvents: nptEventsJson.default,
               casings: casingsJson.default,
-              logs: logsJson.default,
+              logs: logsJson.default
             });
             modules.add(module);
             modules.install();
@@ -72,7 +79,7 @@ export default function App() {
             setRoot(rootNode);
           }
         )
-        .catch((err) => {
+        .catch(err => {
           // tslint:disable-next-line:no-console
           console.error(
             "Sample Data not found synthetic data will be loaded!",

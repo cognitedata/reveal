@@ -50,7 +50,7 @@ export default function CompactColorPicker(props: {
                 Color({
                   r: reactColor.rgb.r,
                   g: reactColor.rgb.g,
-                  b: reactColor.rgb.b,
+                  b: reactColor.rgb.b
                 })
               );
             }}

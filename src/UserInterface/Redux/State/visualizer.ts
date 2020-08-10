@@ -1,10 +1,12 @@
-// Visualizer component state interface
-
-import { IToolbarCommand } from "@/UserInterface/NodeVisualizer/ToolBar/ToolbarCommand";
-
-export interface VisualizerState
+export interface IVisualizerState
 {
-  toolbars: { [key: string]: IToolbarCommand[] },
-  targets: { [key: string]: any },
+  viewers: { [key: string]: IToolbarCommandState[] },
   statusBar: { text: string }
+}
+
+export interface IToolbarCommandState
+{
+  isChecked: boolean;
+  value: string;
+  isVisible: boolean;
 }

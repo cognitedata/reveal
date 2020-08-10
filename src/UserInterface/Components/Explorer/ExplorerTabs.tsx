@@ -3,7 +3,7 @@ import Icon from "@/UserInterface/Components/Icon/Icon";
 import { ExplorerTabsPropType } from "@/UserInterface/Components/Explorer/ExplorerTypes";
 import {
   StyledTabs,
-  StyledTab,
+  StyledTab
 } from "@/UserInterface/Components/Tabs/StyledTabs";
 
 // Renders Explorer Tabs
@@ -24,7 +24,7 @@ export function ExplorerTabs(props: ExplorerTabsPropType) {
         textColor="primary"
         onChange={handleChange}
       >
-        {tabs.map((tab) => (
+        {tabs.map(tab => (
           <StyledTab
             tabIndex={0}
             key={`node-type-${tab.type}`}
