@@ -3,8 +3,8 @@
  */
 
 import { RxCounter } from './RxCounter';
-import { interval } from 'rxjs';
-import { take, flatMap } from 'rxjs/operators';
+import { interval, queueScheduler } from 'rxjs';
+import { take, flatMap, observeOn } from 'rxjs/operators';
 
 describe('RxCounter', () => {
   test('increment on next', done => {
@@ -35,6 +35,7 @@ describe('RxCounter', () => {
     expect.assertions(operationCount * 2);
     const operation$ = interval(10).pipe(
       take(operationCount),
+      observeOn(queueScheduler),
       counter.incrementOnNext(),
       wait,
       counter.decrementOnNext()
