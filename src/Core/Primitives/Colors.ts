@@ -13,12 +13,19 @@
 
 import * as Color from "color";
 
-const MaxByte = 255;
+export const MaxByte = 255;
 
 export class Colors
 {
   //==================================================
-  // INSTANCE FIELDS
+  // STATIC FIELDS
+  //==================================================
+
+  private static index = 0;
+  private static _colors: Color[] | null = null;
+
+  //==================================================
+  // STATIC PROPERTIES: Predefined color for this system
   //==================================================
 
   public static get transparent(): Color { return Color.rgb(0, 0, 0, 0); };
@@ -37,12 +44,16 @@ export class Colors
   public static get magenta(): Color { return Color.rgb(MaxByte, 0, MaxByte); };
   public static get selectedEmissive(): Color { return Color.rgb(128, 128, 0); };
 
-  private static index = 0;
-
-  private static _colors: Color[] | null = null;
+  public static get nextColor(): Color
+  {
+    // Get a "random" color
+    const { colors } = this;
+    Colors.index = (Colors.index + 1) % colors.length;
+    return colors[Colors.index];
+  }
 
   //==================================================
-  // INSTANCE PROPERTIES
+  // STATIC PROPERTIES: Get colors
   //==================================================
 
   private static get colors(): Color[]
@@ -52,19 +63,13 @@ export class Colors
     return Colors._colors;
   }
 
-  public static get nextColor(): Color
-  {
-    const { colors } = this;
-    Colors.index = (Colors.index + 1) % colors.length;
-    return colors[Colors.index];
-  }
-
   //==================================================
   // STATIC METHODS
   //==================================================
 
   public static getNextColor(index: number): Color
   {
+    // Get a "random" color
     const { colors } = this;
     index %= colors.length;
     return colors[index];
@@ -72,10 +77,10 @@ export class Colors
 
   private static createDifferentColors(count: number): Color[]
   {
-    let fraction = 0.5;
-    const result: Color[] = [];
+    // This function make diffedrent colors
     const goldenRatioConjugate = 0.618033988749895;
-
+    const result: Color[] = [];
+    let fraction = 0.5;
     for (let i = 0; i < count; i++)
     {
       fraction += goldenRatioConjugate;
@@ -89,21 +94,19 @@ export class Colors
     return result;
   }
 
-  public static getGammaCorrected(color: Color): Color
+  public static getGammaCorrected(color: Color, gamma = 2.2): Color
   {
-    const gamma = 1 / 2.2;
+    let r = color.red() / MaxByte;
+    let g = color.green() / MaxByte;
+    let b = color.blue() / MaxByte;
 
-    let r = color.red() / 255;
-    let g = color.green() / 255;
-    let b = color.blue() / 255;
+    r **= gamma;
+    g **= gamma;
+    b **= gamma;
 
-    r **=gamma;
-    g **=gamma;
-    b **=gamma;
-
-    r = Math.round(255 * r);
-    g = Math.round(255 * g);
-    b = Math.round(255 * b);
+    r = Math.round(MaxByte * r);
+    g = Math.round(MaxByte * g);
+    b = Math.round(MaxByte * b);
 
     return Color.rgb(r, g, b);
   }

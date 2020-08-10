@@ -29,6 +29,7 @@ import { FloatLog } from "@/SubSurface/Wells/Logs/FloatLog";
 import { DiscreteLog } from "@/SubSurface/Wells/Logs/DiscreteLog";
 import { FloatLogSample } from "@/SubSurface/Wells/Samples/FloatLogSample";
 import { WellTrajectory } from "@/SubSurface/Wells/Logs/WellTrajectory";
+import { ColorMap } from "@/Core/Primitives/ColorMap";
 
 export class LogRenderOld
 {
@@ -171,7 +172,7 @@ export class LogRenderOld
     }
     {
       const geometry = buffers.getBufferGeometry();
-      const texture = TextureKit.create1D(valueRange);
+      const texture = TextureKit.create1D(ColorMap.createRainbow());
       texture.anisotropy = 4;
 
       const material = new THREE.MeshLambertMaterial({
@@ -222,15 +223,15 @@ export class LogRenderOld
       if (i > 0)
       {
         buffers.addPair(startPosition, endPosition, normal, normal);
-        TextureKit.add(colors, prevColor);
-        TextureKit.add(colors, prevColor);
+        ColorMap.add(colors, prevColor);
+        ColorMap.add(colors, prevColor);
       }
       if (i < log.samples.length - 1)
       {
         const color = sample.isEmpty ? Colors.grey : Colors.getNextColor(sample.value);
         buffers.addPair(startPosition, endPosition, normal, normal);
-        TextureKit.add(colors, color);
-        TextureKit.add(colors, color);
+        ColorMap.add(colors, color);
+        ColorMap.add(colors, color);
         prevColor = color;
       }
     }
