@@ -256,19 +256,23 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.selectNodeByTreeIndex(treeIndex);
   }
 
-  selectNodeByTreeIndex(treeIndex: number) {
-    this.selectedNodes.add(treeIndex);
-    this.cadNode.requestNodeUpdate([treeIndex]);
+  async selectNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
+    const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+    treeIndices.forEach(idx => this.selectedNodes.add(idx));
+    this.cadNode.requestNodeUpdate(treeIndices);
+    return treeIndices.count;
   }
 
   async deselectNode(nodeId: number): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-    this.deselectNodeByTreeIndex(treeIndex);
+    await this.deselectNodeByTreeIndex(treeIndex);
   }
 
-  deselectNodeByTreeIndex(treeIndex: number) {
-    this.selectedNodes.delete(treeIndex);
-    this.cadNode.requestNodeUpdate([treeIndex]);
+  async deselectNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
+    const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+    treeIndices.forEach(idx => this.selectedNodes.delete(idx));
+    this.cadNode.requestNodeUpdate(treeIndices);
+    return treeIndices.count;
   }
 
   deselectAllNodes(): void {
@@ -282,9 +286,11 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.showNodeByTreeIndex(treeIndex);
   }
 
-  showNodeByTreeIndex(treeIndex: number): void {
+  async showNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
+    const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
     this.hiddenNodes.delete(treeIndex);
     this.cadNode.requestNodeUpdate([treeIndex]);
+    return treeIndices.count;
   }
 
   showAllNodes(): void {
@@ -295,7 +301,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   hideAllNodes(makeGray?: boolean): void {
     if (makeGray) {
-      throw new NotSupportedInMigrationWrapperError();
+      throw new NotSupportedInMigrationWrapperError('makeGray is not supported');
     }
     for (let i = 0; i < this.cadModel.scene.maxTreeIndex; i++) {
       this.hiddenNodes.add(i);
@@ -305,15 +311,17 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   async hideNode(nodeId: number, makeGray?: boolean): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-    this.hideNodeByTreeIndex(treeIndex, makeGray);
+    await this.hideNodeByTreeIndex(treeIndex, makeGray);
   }
 
-  hideNodeByTreeIndex(treeIndex: number, makeGray?: boolean): void {
+  async hideNodeByTreeIndex(treeIndex: number, makeGray?: boolean, applyToChildren = false): Promise<number> {
     if (makeGray) {
-      throw new NotSupportedInMigrationWrapperError();
+      throw new NotSupportedInMigrationWrapperError('makeGray is not supported');
     }
-    this.hiddenNodes.add(treeIndex);
-    this.cadNode.requestNodeUpdate([treeIndex]);
+    const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+    treeIndices.forEach(idx => this.hiddenNodes.add(idx));
+    this.cadNode.requestNodeUpdate(treeIndices);
+    return treeIndices.count;
   }
 
   /** @internal */
