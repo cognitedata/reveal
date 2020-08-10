@@ -33,7 +33,7 @@ export class ThreeTransformer
   public get zScale(): number { return this._zScale; }
   public set zScale(value: number) { this._zScale = value; }
   public get scale(): THREE.Vector3 { return new THREE.Vector3(1, 1, this._zScale); }
-  public get translation(): THREE.Vector3 { return new THREE.Vector3(this._xTranslation, this._yTranslation, 0); }
+  public get translation(): Vector3 { return new Vector3(this._xTranslation, this._yTranslation, 0); }
 
   //==================================================
   // INSTANCE FIELDS: World => 3D

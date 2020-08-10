@@ -11,16 +11,30 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import Icon from "@images/Nodes/SeismicLayoutNode.png";
+import Icon from "@images/Nodes/SeismicOutlineNode.png";
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
+import { RegularGrid3 } from '@/Core/Geometry/RegularGrid3';
+import { SurveyNode } from '@/SubSurface/Seismic/Nodes/SurveyNode';
 
-export class SeismicLayoutNode extends BaseVisualNode
+export class SeismicOutlineNode extends BaseVisualNode
 {
   //==================================================
   // STATIC FIELDS
   //==================================================
 
-  static className = "SeismicLayoutNode";
+  static className = "SeismicOutlineNode";
+
+  //==================================================
+  // INSTANCE PROPERTIES
+  //==================================================
+
+  public get surveyNode(): SurveyNode | null { return this.getAncestorByType(SurveyNode); }
+
+  public get surveyCube(): RegularGrid3 | null
+  {
+    const { surveyNode } = this;
+    return surveyNode ? surveyNode.surveyCube : null;
+  }
 
   //==================================================
   // CONSTRUCTORS
@@ -32,14 +46,14 @@ export class SeismicLayoutNode extends BaseVisualNode
   // OVERRIDES of Identifiable
   //==================================================
 
-  public /*override*/ get className(): string { return SeismicLayoutNode.className; }
-  public /*override*/ isA(className: string): boolean { return className === SeismicLayoutNode.className || super.isA(className); }
+  public /*override*/ get className(): string { return SeismicOutlineNode.className; }
+  public /*override*/ isA(className: string): boolean { return className === SeismicOutlineNode.className || super.isA(className); }
 
   //==================================================
   // OVERRIDES of BaseNode
   //==================================================
 
-  public /*override*/ get typeName(): string { return "Layout"; }
+  public /*override*/ get typeName(): string { return "Outline"; }
 
   public /*override*/ canChangeName(): boolean { return false; }
 

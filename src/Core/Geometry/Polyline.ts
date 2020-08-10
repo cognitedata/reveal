@@ -74,13 +74,15 @@ export class Polyline extends Points
 
     let area = 0;
     const first = this.list[0];
-    let p0 = Vector3.newZero;
+    const p0 = Vector3.newZero;
+    const p1 = Vector3.newZero;
+
     for (let index = 1; index <= n; index++)
     {
-      const p1 = this.list[index % n];
+      p1.copy(this.list[index % n]);
       p1.substract(first); // Translate down to first point, to increase acceracy
       area += p0.getCross2(p1);
-      p0 = p1;
+      p0.copy(p1);
     }
     return area * 0.5;
   }

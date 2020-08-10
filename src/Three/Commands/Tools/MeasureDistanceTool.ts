@@ -55,6 +55,14 @@ export class MeasureDistanceTool extends BaseTool
     this._worldCoordinates.clear();
   }
 
+  public /*override*/ onKeyDown(event: KeyboardEvent): void
+  {
+    if (event.code === "Escape")
+    {
+      this.onActivate(); // Reactive it
+    }
+  }
+
   public /*override*/ onDeactivate(): void
   {
     this._pixelCoordinates.clear();
@@ -72,15 +80,16 @@ export class MeasureDistanceTool extends BaseTool
       return;
 
     const { transformer } = target;
-
     const pixel = new Vector3(event.offsetX, event.offsetY, 0);
     const point = ThreeConverter.fromThreeVector3(intersection.point);
-    const worldPosition = transformer.toWorld(intersection.point);
 
     point.z /= transformer.zScale;
 
     this._worldCoordinates.add(point);
     this._pixelCoordinates.add(pixel);
+
+    const worldStartPosition = this._worldCoordinates.list[0].clone();
+    worldStartPosition.add(transformer.translation);
 
     const { viewInfo } = target;
 
@@ -89,15 +98,20 @@ export class MeasureDistanceTool extends BaseTool
     if (this._worldCoordinates.length <= 1)
     {
       viewInfo.addText("Click on another location in 3D to end");
+      viewInfo.addValue("Start Position", worldStartPosition.getString(2));
     }
     else
     {
+      const worldEndPosition = this._worldCoordinates.list[this._worldCoordinates.length - 1].clone();
+      worldEndPosition.add(transformer.translation);
+
       const sumDelta = this._worldCoordinates.getSumDelta();;
       viewInfo.addValue("2D / 3D distance", `${this._worldCoordinates.getLength(2).toFixed(2)} / ${this._worldCoordinates.getLength(3).toFixed(2)}`);
       viewInfo.addValue("Sum delta X,Y,Z", sumDelta.getString(2));
       viewInfo.addValue("2D area", this._worldCoordinates.getArea().toFixed(2));
+      viewInfo.addValue("Start Position", worldStartPosition.getString(2));
+      viewInfo.addValue("End Position", worldEndPosition.getString(2));
     }
-    viewInfo.addValue("Clicked Position", worldPosition.getString(2));
     viewInfo.setPolyline(this._pixelCoordinates);
     target.invalidate();
   }

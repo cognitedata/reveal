@@ -47,6 +47,7 @@ export abstract class BaseTool extends ThreeRenderTargetCommand
   public /*virtual*/ onMouseDown(event: MouseEvent): void { }
   public /*virtual*/ onMouseDrag(event: MouseEvent): void { }
   public /*virtual*/ onMouseUp(event: MouseEvent): void { }
+  public /*virtual*/ onKeyDown(event: KeyboardEvent): void { }
 
   //==================================================
   // INSTANCE METHODS

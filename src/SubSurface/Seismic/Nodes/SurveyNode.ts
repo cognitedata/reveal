@@ -19,7 +19,7 @@ import Icon from "@images/Nodes/SurveyNode.png";
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
 import { SeismicPlaneFolder } from "@/SubSurface/Seismic/Nodes/SeismicPlaneFolder";
-import { SeismicLayoutNode } from "@/SubSurface/Seismic/Nodes/SeismicLayoutNode";
+import { SeismicOutlineNode } from "@/SubSurface/Seismic/Nodes/SeismicOutlineNode";
 import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
 import { Ma } from "@/Core/Primitives/Ma";
 
@@ -72,8 +72,8 @@ export class SurveyNode extends BaseVisualNode
   {
     super.initializeCore();
 
-    if (!this.hasChildByType(SeismicLayoutNode))
-      this.addChild(new SeismicLayoutNode());
+    if (!this.hasChildByType(SeismicOutlineNode))
+      this.addChild(new SeismicOutlineNode());
 
     if (!this.hasChildByType(SeismicPlaneFolder))
       this.addChild(new SeismicPlaneFolder());

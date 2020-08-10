@@ -42,7 +42,6 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
   //==================================================
 
   private _index = -1;
-
   private _axis = -1;
 
   //==================================================
@@ -174,12 +173,12 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     if (!surveyNode)
       return parent;
 
-    const { surveyCube } = surveyNode;
-    if (!surveyCube)
-      return parent;
-
     const style = surveyNode.getRenderStyle(this.targetId) as SurfaceRenderStyle;
     if (!style)
+      return parent;
+
+    const { surveyCube } = node;
+    if (!surveyCube)
       return parent;
 
     const solid = this.createSolid(node, surveyCube, style);
@@ -273,11 +272,11 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
   private getSeismicCubeNode(): SeismicCubeNode | null
   {
     const { node } = this;
-    const survey = node.surveyNode;
-    if (!survey)
+    const { surveyNode } = node;
+    if (!surveyNode)
       return null;
 
-    for (const seismicCubeNode of survey.getDescendantsByType(SeismicCubeNode))
+    for (const seismicCubeNode of surveyNode.getDescendantsByType(SeismicCubeNode))
     {
       const view = seismicCubeNode.getViewByTarget(this.renderTarget);
       if (view)

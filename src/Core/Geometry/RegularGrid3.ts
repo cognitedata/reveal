@@ -103,8 +103,11 @@ export class RegularGrid3 extends Grid3
     return axis;
   }
 
-  public getNodePosition(i: number, j: number, k: number, result: Vector3): void
+  public getNodePosition(i: number, j: number, k: number, result?: Vector3): Vector3
   {
+    if (!result)
+      result = Vector3.newZero;
+
     if (this._hasRotationAngle)
     {
       const dx = this.inc.x * i;
@@ -119,10 +122,14 @@ export class RegularGrid3 extends Grid3
     }
     result.z = this.inc.z * k;
     result.add(this.origin);
+    return result;
   }
 
-  public getCellFromPosition(position: Vector3, resultCell: Index3): void
+  public getCellFromPosition(position: Vector3, resultCell?: Index3): Index3
   {
+    if (!resultCell)
+      resultCell = Index3.newZero;
+
     const dx = position.x - this.origin.x;
     const dy = position.y - this.origin.y;
     const dz = position.z - this.origin.z;
@@ -144,11 +151,12 @@ export class RegularGrid3 extends Grid3
     resultCell.i = Math.floor(i);
     resultCell.j = Math.floor(j);
     resultCell.k = Math.floor(k);
+    return resultCell;
   }
 
-  public getCellCenter(i: number, j: number, k: number, result: Vector3): void
+  public getCellCenter(i: number, j: number, k: number, result?: Vector3): Vector3
   {
-    this.getNodePosition(i + 0.5, j + 0.5, k + 0.5, result);
+    return this.getNodePosition(i + 0.5, j + 0.5, k + 0.5, result);
   }
 
   public getRelativeNodePosition(i: number, j: number, k: number, result: Vector3): void
