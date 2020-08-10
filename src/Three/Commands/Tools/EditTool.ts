@@ -25,8 +25,9 @@ export class EditTool extends BaseTool
   // OVERRIDES of BaseCommand
   //==================================================
 
+  protected /*override*/ getTooltipCore(): string { return "Select or edit\nLeft button: Select or edit\nRight button: Pan \nWheel: Zoom\nLeft click: Pick to get information\nMouse hover: Pick to get information"; }
+
   public /*override*/ getName(): string { return "Edit"; }
-  public /*override*/ getTooltip(): string { return "Select or edit\nLeft button: Select or edit\nRight button: Pan \nWheel: Zoom\nLeft click: Pick to get information\nMouse hover: Pick to get information"; }
   public /*override*/ getIcon(): string { return SelectCommandIcon; }
 
   //==================================================

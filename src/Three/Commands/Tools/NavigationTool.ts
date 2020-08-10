@@ -24,8 +24,9 @@ export class NavigationTool extends BaseTool
   // OVERRIDES of BaseCommand
   //==================================================
 
+  protected /*override*/ getTooltipCore(): string { return "Navigation\nLeft button: Rotate\nRight button: Pan \nWheel: Zoom\nLeft click: Pick to get information"; }
+
   public /*override*/ getName(): string { return "Navigation"; }
-  public /*override*/ getTooltip(): string { return "Navigation\nLeft button: Rotate\nRight button: Pan \nWheel: Zoom\nLeft click: Pick to get information"; }
   public /*override*/ getIcon(): string { return PanBaseToolIcon; }
 
   public /*override*/ onMouseDown(event: MouseEvent): void

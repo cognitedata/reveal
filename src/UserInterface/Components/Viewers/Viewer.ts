@@ -25,7 +25,8 @@ export default class Viewer
 
   public setTarget(target: ThreeRenderTargetNode) { this.target = target; }
 
-  public setToolbarCommands(toolbar: Toolbar) {
+  public setToolbarCommands(toolbar: Toolbar) 
+  {
     this.toolbarCommands = toolbar.getCommands();
   }
 

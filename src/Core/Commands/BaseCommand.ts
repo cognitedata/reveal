@@ -1,3 +1,5 @@
+import { Util } from '@/Core/Primitives/Util';
+
 export abstract class BaseCommand
 {
   //==================================================
@@ -10,10 +12,10 @@ export abstract class BaseCommand
   // VIRTUAL PROPERTIES
   //==================================================
 
+  protected /*virtual*/ getTooltipCore(): string { return ""; } // Get the tooltip text
   public /*virtual*/ getIcon(): string { return ""; } // Icon
   public /*virtual*/ getName(): string { return ""; }; // Get the name of the command
   public /*virtual*/ getDisplayName(): string { return this.getName(); } // Get the name of the command
-  public /*virtual*/ getTooltip(): string { return this.getName(); } // Get the tooltip text
   public /*virtual*/ getShortCutKeys(): string | undefined { return undefined; }; // Somehow gets the shortcut key (default none)
 
   public /*virtual*/ get isEnabled(): boolean { return true; } // Is enabled? (default true)
@@ -34,6 +36,20 @@ export abstract class BaseCommand
   //==================================================
   // INSTANCE METHODS
   //==================================================
+
+  public getTooltip(): string
+  {
+    let tooltip = this.getTooltipCore();
+    if (Util.isEmpty(tooltip))
+      tooltip = this.getName();
+    if (Util.isEmpty(tooltip))
+      return tooltip;
+
+    const shortCut = this.getShortCutKeys();
+    if (shortCut && !Util.isEmpty(shortCut))
+      tooltip += ` [${shortCut.toUpperCase()}]`;
+    return tooltip;
+  }
 
   public invoke(): boolean
   {

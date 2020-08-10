@@ -42,8 +42,8 @@ export class CasingLogStyle extends BaseRenderStyle
 
   public /*override*/ clone(): BaseRenderStyle { return Lodash.cloneDeep<CasingLogStyle>(this); }
 
-  protected /*override*/ PopulateCore(folder: PropertyFolder)
+  protected /*override*/ populateCore(folder: PropertyFolder)
   {
-    super.PopulateCore(folder);
+    super.populateCore(folder);
   }
 }

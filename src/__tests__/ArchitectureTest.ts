@@ -1,3 +1,4 @@
+/* eslint-disable jest/expect-expect */
 import { PolylinesNode } from "@/SubSurface/Basics/PolylinesNode";
 import { BaseTargetNode } from "@/Core/Nodes/BaseTargetNode";
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";

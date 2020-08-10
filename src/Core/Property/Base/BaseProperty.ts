@@ -6,14 +6,10 @@ export type Retrieve<T> = () => T;
 export abstract class BaseProperty
 {
   private _toolTip?: string;
-
   private _name: string;
-
-  private _applyDelegate?: Action<void>;
-
   private _readonly = false;
-
   private _children?: BaseProperty[];
+  private _applyDelegate?: Action<void>;
 
   //==================================================
   // CONSTRUCTORS
@@ -30,15 +26,10 @@ export abstract class BaseProperty
   //==================================================
 
   public getName(): string { return this._name; }
-
   public setName(value: string) { this._name = value; }
-
   public isReadOnly(): boolean { return this._readonly; }
-
   public setReadOnly(value: boolean) { this._readonly = value; }
-
   public getToolTip(): string | undefined { return this._toolTip; }
-
   public setToolTip(value) { this._toolTip = value; }
 
   public get children(): BaseProperty[] { return this._children || []; }
@@ -82,7 +73,6 @@ export abstract class BaseProperty
         return childProperty;
       }
     }
-    return null;
-    
+    return null;    
   }
 }

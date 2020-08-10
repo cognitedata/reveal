@@ -42,6 +42,7 @@ import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
 import { ZScaleCommand } from "@/Three/Commands/ZScaleCommand";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 import { ToolbarGroupIds } from '@/Three/Nodes/ToolbarGroupIds';
+import { BaseCommand } from '@/Core/Commands/BaseCommand';
 
 const DirectionalLightName = "DirectionalLight";
 
@@ -74,7 +75,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   public setDefaultTool(tool: BaseTool | null = null) { this._toolController.setDefaultTool(tool, this._cameraControl); }
 
   public set activeTool(tool: BaseTool | null) { this._toolController.setActiveTool(tool, this._cameraControl); }
-  public get activeTool(): BaseTool | null { return this._toolController._activeTool; }
+  public get activeTool(): BaseTool | null { return this._toolController.activeTool; }
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -163,11 +164,14 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     this._scene.add(ambientLight);
     this._scene.add(directionalLight);
 
+    this.domElement.tabIndex = 1;
     this.controls.addEventListener("update", () => this.updateLightPosition());
     this.domElement.addEventListener('click', (event) => this._toolController.onMouseClick(this, event), false);
     this.domElement.addEventListener('mousedown', (event) => this._toolController.onMouseDown(this, event), false);
     this.domElement.addEventListener('mouseup', (event) => this._toolController.onMouseUp(this, event), false);
     this.domElement.addEventListener('mousemove', (event) => this._toolController.onMouseMove(this, event), false);
+    this.domElement.addEventListener('keydown', (event) => this._toolController.onKeyDown(this, event), false);
+
     //dblclick
     this.render();
   }
@@ -266,30 +270,36 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   // INSTANCE METHODS: Add toolbar
   //==================================================
 
+  public addTool(toolbar: IToolbar, groupId: string, command: BaseCommand)
+  {
+    if (command instanceof BaseTool)
+      this._toolController.add(command);
+
+    toolbar.add(groupId, command);
+  }
+
   public addTools(toolbar: IToolbar)
   {
-    const panTool = new NavigationTool(this);
-    this.setDefaultTool(panTool);
+    const navigationTool = new NavigationTool(this);
+    this.setDefaultTool(navigationTool);
 
-    // Tools
-    toolbar.add(ToolbarGroupIds.Tools, new ToggleFullscreenCommand(this));
-    toolbar.add(ToolbarGroupIds.Tools, panTool);
-    toolbar.add(ToolbarGroupIds.Tools, new EditTool(this));
-    toolbar.add(ToolbarGroupIds.Tools, new ZoomTool(this));
-    toolbar.add(ToolbarGroupIds.Tools, new ZoomToTargetTool(this));
-    toolbar.add(ToolbarGroupIds.Tools, new MeasureDistanceTool(this));
+    this.addTool(toolbar, ToolbarGroupIds.Tools, navigationTool);
+    this.addTool(toolbar, ToolbarGroupIds.Tools, new EditTool(this));
+    this.addTool(toolbar, ToolbarGroupIds.Tools, new ZoomTool(this));
+    this.addTool(toolbar, ToolbarGroupIds.Tools, new ZoomToTargetTool(this));
+    this.addTool(toolbar, ToolbarGroupIds.Tools, new MeasureDistanceTool(this));
 
-    // Views
-    toolbar.add(ToolbarGroupIds.Actions, new ViewAllCommand(this));
-    toolbar.add(ToolbarGroupIds.Actions, new ToggleAxisVisibleCommand(this));
-    toolbar.add(ToolbarGroupIds.Actions, new ToggleCameraTypeCommand(this));
-    toolbar.add(ToolbarGroupIds.Actions, new CopyImageCommand(this));
-    toolbar.add(ToolbarGroupIds.Actions, new ToggleBgColorCommand(this));
+    this.addTool(toolbar, ToolbarGroupIds.Actions, new ViewAllCommand(this));
+    this.addTool(toolbar, ToolbarGroupIds.Actions, new ToggleAxisVisibleCommand(this));
+    this.addTool(toolbar, ToolbarGroupIds.Actions, new ToggleCameraTypeCommand(this));
+    this.addTool(toolbar, ToolbarGroupIds.Actions, new CopyImageCommand(this));
+    this.addTool(toolbar, ToolbarGroupIds.Actions, new ToggleBgColorCommand(this));
+    this.addTool(toolbar, ToolbarGroupIds.Actions, new ToggleFullscreenCommand(this));
 
     for (let viewFrom = 0; viewFrom < 6; viewFrom++)
-      toolbar.add(ToolbarGroupIds.ViewFrom, new ViewFromCommand(this, viewFrom));
+      this.addTool(toolbar, ToolbarGroupIds.ViewFrom, new ViewFromCommand(this, viewFrom));
 
-    toolbar.add(ToolbarGroupIds.Settings, new ZScaleCommand(this));
+    this.addTool(toolbar, ToolbarGroupIds.Settings, new ZScaleCommand(this));
   }
 
   //==================================================

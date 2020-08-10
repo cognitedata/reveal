@@ -19,13 +19,28 @@ export class ZoomToTargetTool extends BaseTool
 
   public /*override*/ getName(): string { return "Zoom to target"; }
   public /*override*/ getIcon(): string { return ZoomToTargetBaseToolIcon; }
-  public /*override*/ getShortCutKeys(): string { return "S"; }
+  public /*override*/ getShortCutKeys(): string { return "s"; }
 
   //==================================================
   // OVERRIDES of BaseTool
   //==================================================
 
   public /*override*/ overrideLeftButton(): boolean { return true; }
+
+  public /*override*/ onActivate(): void
+  {
+    const { target } = this;
+    if (!target)
+      return;
+
+    const { viewInfo } = target;
+    viewInfo.clear();
+    viewInfo.addHeader(this.getName());
+    viewInfo.addHeader("Zoom by cliking on something in the 3D.");
+    viewInfo.addText("This position will then be in the center and");
+    viewInfo.addText("the rotation will be around this point");
+    target.invalidate();
+  }
 
   public /*override*/ onMouseClick(event: MouseEvent): void
   {

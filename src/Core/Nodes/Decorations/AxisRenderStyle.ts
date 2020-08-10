@@ -44,7 +44,7 @@ export class AxisRenderStyle extends BaseRenderStyle
   //==================================================
 
   public /*override*/ clone(): BaseRenderStyle { return Lodash.cloneDeep<AxisRenderStyle>(this); }
-  protected /*override*/ PopulateCore(folder: PropertyFolder)
+  protected /*override*/ populateCore(folder: PropertyFolder)
   {
   }
 }

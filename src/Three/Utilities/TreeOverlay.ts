@@ -164,27 +164,32 @@ export class TreeOverlay
     // Measure the keys
     context.font = Canvas.getBoldFont(fontSize);
     let keyDx = 0;
+    let allDx = 0;
     for (const item of items)
     {
       const metric = context.measureText(item.key);
+      allDx = Math.max(allDx, metric.width);
+      if (item.value === undefined)
+        continue;
+
       keyDx = Math.max(keyDx, metric.width);
     }
 
     // Measure the values
-    const maxDx = Math.max(200, keyDx);
+    const maxKeyDx = Math.max(200, keyDx);
     context.font = Canvas.getNormalFont(fontSize);
     let valueDx = 0;
     let textDy = 0;
     for (const item of items)
     {
-      this.measureValue(context, item, maxDx, lineDy);
+      this.measureValue(context, item, maxKeyDx, lineDy);
       valueDx = Math.max(valueDx, item.dx);
       textDy += item.dy;
     }
     textDy -= 0.4 * fontSize;
 
-    // Calulate the size
-    const dx = margin + keyDx + spacing + valueDx + margin;
+    // Calulate the size    
+    const dx = margin + allDx + spacing + valueDx + margin;
     const dy = margin + textDy + margin;
     const xmin = margin;
     const ymin = delta.y - margin - dy;
@@ -229,7 +234,7 @@ export class TreeOverlay
       if (item.value)
       {
         if (item.isMultiLine)
-          Canvas.fillText(context, item.value, x, y, maxDx + margin, lineDy);
+          Canvas.fillText(context, item.value, x, y, maxKeyDx + margin, lineDy);
         else
           context.fillText(item.value, x, y);
       }

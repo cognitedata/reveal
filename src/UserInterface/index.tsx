@@ -6,7 +6,7 @@ import {
   applyMiddleware,
   combineReducers,
   compose,
-  Store
+  Store,
 } from "redux";
 import App from "@/UserInterface/App/App";
 import SubsurfaceReducer from "@/UserInterface/Redux/reducers/SubsurfaceReducer";

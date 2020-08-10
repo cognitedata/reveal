@@ -180,7 +180,7 @@ export const explorerSlice = createSlice({
     {
       const { node } = action.payload;
       const uniqueId = node.uniqueId.toString();
-      const selectStatus = node.IsSelected();
+      const selectStatus = node.isSelected();
       const nodeState = state.nodes.byId[uniqueId];
 
       if (nodeState)
@@ -277,7 +277,7 @@ function generateNodeState(node: BaseNode, parentId: string | null, typeName: st
       description: node.displayName,
       color: (node.hasIconColor() ? node.getColor() : undefined)
     },
-    selected: node.IsSelected(),
+    selected: node.isSelected(),
     checked: (checkBoxState === CheckBoxState.All),
     indeterminate: (checkBoxState === CheckBoxState.Some),
     disabled: (checkBoxState === CheckBoxState.Disabled),

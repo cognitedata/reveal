@@ -23,7 +23,7 @@ const mapStateToProps = (state: State) => {
       // from state
       isChecked: toolbarCommandStates[index].isChecked,
       value: toolbarCommandStates[index].value,
-      isVisible: toolbarCommandStates[index].isVisible
+      isVisible: toolbarCommandStates[index].isVisible,
     });
   });
   return { toolbar: displayToolbar };
@@ -40,7 +40,7 @@ const mapDispatchToPros = (dispatch: Dispatch) => {
       event: any
     ) => {
       dispatch(executeVisualizerToolbarCommand(visualizerId, index, event));
-    }
+    },
   };
 };
 

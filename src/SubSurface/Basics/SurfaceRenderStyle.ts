@@ -44,7 +44,7 @@ export class SurfaceRenderStyle extends BaseRenderStyle
 
   public /*override*/ clone(): BaseRenderStyle { return Lodash.cloneDeep<SurfaceRenderStyle>(this); }
 
-  protected /*override*/ PopulateCore(folder: PropertyFolder)
+  protected /*override*/ populateCore(folder: PropertyFolder)
   {
   }
 }

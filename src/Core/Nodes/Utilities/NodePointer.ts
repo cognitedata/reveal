@@ -43,7 +43,7 @@ export class NodePointer
   // CONSTRUCTORS
   //==================================================
 
-  public NodePtr(node?: BaseNode) 
+  public constructor(node?: BaseNode) 
   {
     if (node)
       this._uniqueId = node.uniqueId.clone();
