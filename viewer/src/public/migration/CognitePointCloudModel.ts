@@ -4,12 +4,12 @@
 
 import * as THREE from 'three';
 import { CogniteModelBase } from './CogniteModelBase';
-import { SupportedModelTypes } from './types';
 import { toThreeJsBox3 } from '@/utilities';
 import { PotreeNodeWrapper } from '@/datamodels/pointcloud/PotreeNodeWrapper';
 import { PotreeGroupWrapper } from '@/datamodels/pointcloud/PotreeGroupWrapper';
 import { PotreePointColorType } from '@/datamodels/pointcloud/types';
 import { Matrix4 } from 'three';
+import { SupportedModelTypes } from '@/datamodels/base';
 
 export class CognitePointCloudModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = 'pointcloud';

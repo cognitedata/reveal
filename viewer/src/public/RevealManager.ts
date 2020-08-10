@@ -19,7 +19,7 @@ import { PotreeGroupWrapper } from '@/datamodels/pointcloud/PotreeGroupWrapper';
 import { PotreeNodeWrapper } from '@/datamodels/pointcloud/PotreeNodeWrapper';
 import { RenderMode } from '@/datamodels/cad/rendering/RenderMode';
 import { EffectRenderManager } from '@/datamodels/cad/rendering/EffectRenderManager';
-import { SupportedModelTypes } from '@/public/migration/types';
+import { SupportedModelTypes } from '@/datamodels/base';
 
 export class RevealManager<TModelIdentifier> {
   private readonly _cadManager: CadManager<TModelIdentifier>;

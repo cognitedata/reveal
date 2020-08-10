@@ -57,5 +57,3 @@ export interface AddModelOptions {
   orthographicCamera?: boolean;
   onComplete?: () => void;
 }
-
-export type SupportedModelTypes = 'pointcloud' | 'cad';

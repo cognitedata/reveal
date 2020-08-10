@@ -14,7 +14,7 @@ import { merge, Subject, Subscription, fromEventPattern } from 'rxjs';
 import { from3DPositionToRelativeViewportCoordinates } from '@/utilities/worldToViewport';
 import { intersectCadNodes } from '@/datamodels/cad/picking';
 
-import { AddModelOptions, Cognite3DViewerOptions, GeometryFilter, SupportedModelTypes } from './types';
+import { AddModelOptions, Cognite3DViewerOptions, GeometryFilter } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { Intersection } from './intersection';
 import RenderController from './RenderController';
@@ -30,6 +30,7 @@ import { RevealManager } from '../RevealManager';
 import { createCdfRevealManager } from '../createRevealManager';
 import { CdfModelIdentifier } from '@/utilities/networking/types';
 import { RevealOptions, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
+import { SupportedModelTypes } from '@/datamodels/base';
 
 export type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
 export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;

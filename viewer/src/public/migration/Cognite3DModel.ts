@@ -7,7 +7,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { vec3 } from 'gl-matrix';
 
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
-import { Color, SupportedModelTypes } from './types';
+import { Color } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { toThreeJsBox3, toThreeMatrix4, toThreeVector3, fromThreeVector3 } from '@/utilities';
@@ -16,6 +16,7 @@ import { CadLoadingHints } from '@/datamodels/cad/CadLoadingHints';
 import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
 import { NodeAppearanceProvider, DefaultNodeAppearance } from '@/datamodels/cad/NodeAppearance';
 import { trackError } from '@/utilities/metrics';
+import { SupportedModelTypes } from '@/datamodels/base';
 
 const mapCoordinatesBuffers = {
   v: vec3.create()
