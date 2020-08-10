@@ -134,7 +134,6 @@ export class ToolController
 
   public onKeyDown(target: ThreeRenderTargetNode, event: KeyboardEvent): void
   {
-
     // Need this
     // if (document.activeElement !== target.domElement)
     // return;
@@ -142,12 +141,16 @@ export class ToolController
     // ctrlKey, altKey,shiftKey
     // code – the “key code” ("KeyA", "ArrowLeft" and so on), specific to the physical location of the key on keyboard.
     // key – the character ("A", "a" and so on), for non-character keys, such as Esc, usually has the same value as code.
-
     for (const tool of this._alltools)
+    {
       if (tool.getShortCutKeys() === event.key)
       {
         target.activeTool = tool;
-        break;
+        return;
       }
+    }
+    const tool = this.activeTool;
+    if (tool)
+      tool.onKeyDown(event);
   }
 }

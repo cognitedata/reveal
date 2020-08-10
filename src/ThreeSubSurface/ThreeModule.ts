@@ -59,6 +59,8 @@ import { SurveyView } from '@/ThreeSubSurface/Seismic/SurveyView';
 import { ManipulatorFactory } from '@/Three/Commands/Manipulators/ManipulatorFactory';
 import { SeismicCubePlaneManipulator } from '@/ThreeSubSurface/Seismic/SeismicCubePlaneManipulator';
 import { PointLogManipulator } from "@/ThreeSubSurface/Wells/PointLogManipulator";
+import { SeismicOutlineView } from '@/ThreeSubSurface/Seismic/SeismicOutlineView';
+import { SeismicOutlineNode } from '@/SubSurface/Seismic/Nodes/SeismicOutlineNode';
 
 export class ThreeModule extends BaseModule
 {
@@ -96,6 +98,7 @@ export class ThreeModule extends BaseModule
     factory.register(SeismicPlaneNode.className, SeismicCubePlaneView, ThreeRenderTargetNode.className);
     factory.register(SeismicCubeNode.className, SeismicCubeView, ThreeRenderTargetNode.className);
     factory.register(SurveyNode.className, SurveyView, ThreeRenderTargetNode.className);
+    factory.register(SeismicOutlineNode.className, SeismicOutlineView, ThreeRenderTargetNode.className);
 
     const manipulatorFactory = ManipulatorFactory.instance;
     manipulatorFactory.register(SeismicPlaneNode.className, SeismicCubePlaneManipulator, ThreeRenderTargetNode.className);
