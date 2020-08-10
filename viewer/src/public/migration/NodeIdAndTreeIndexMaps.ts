@@ -65,11 +65,10 @@ export class NodeIdAndTreeIndexMaps {
     return result;
   }
 
-  async getNumberOfChildren(treeIndex: number): Promise<number | undefined> {
-    const cachedNumberOfChildren = this.treeIndexSubTreeSizeMap.get(treeIndex);
-
-    if (cachedNumberOfChildren) {
-      return cachedNumberOfChildren;
+  async getSubtreeSize(treeIndex: number): Promise<number | undefined> {
+    const subtreeSize = this.treeIndexSubTreeSizeMap.get(treeIndex);
+    if (subtreeSize) {
+      return subtreeSize;
     }
 
     //TODO - christjt 2020-08-04: handle this with with new endpoint to fetch the proper nodeID
