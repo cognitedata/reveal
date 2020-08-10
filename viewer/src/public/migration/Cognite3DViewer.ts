@@ -1009,7 +1009,7 @@ export class Cognite3DViewer {
             source.pipe(filter(distanceMoved => distanceMoved > 10.0)),
             // Or it's been a while since we last update near/far and camera has moved slightly
             source.pipe(
-              debounceTime(250),
+              debounceTime(100),
               filter(distanceMoved => distanceMoved > 0.0)
             )
           );
