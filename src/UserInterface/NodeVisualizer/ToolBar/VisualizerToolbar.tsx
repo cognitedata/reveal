@@ -20,10 +20,11 @@ const toolBarDimensions = (
   dimension2: number,
   isHorizontal: boolean
 ) => {
-  if (isHorizontal) {
+  if (isHorizontal)
+  {
     return { width: dimension2, height: dimension1 };
   }
-  return { width: dimension1, height: dimension2 };
+  return { width: dimension1 * 2 };
 };
 
 /**
@@ -74,7 +75,7 @@ export default function VisualizerToolbar(props: {
     }
   };
 
-  const visibleNondropdownCommands = toolbar.filter(
+  const visibleNonDropdownCommands = toolbar.filter(
     (command) => command.isVisible && !command.isDropdown
   );
   const visibleDropdownCommands = toolbar.filter(
@@ -83,7 +84,7 @@ export default function VisualizerToolbar(props: {
 
   // dropdown Items takes twice the size
   const noOfSlots =
-    visibleNondropdownCommands.length + visibleDropdownCommands.length * 2;
+    visibleNonDropdownCommands.length + visibleDropdownCommands.length * 2;
   // No Of commands per line in Toolbar UI
   const { toolbarCommandsPerLine } = Appearance;
   // Number of rows in toolbar
@@ -137,7 +138,6 @@ export default function VisualizerToolbar(props: {
         className="visualizer-tool-bar-icon"
       >
         <select
-          className="visualizer-tool-bar-input"
           value={command.value}
           onChange={(event) =>
             dispatch(
@@ -180,10 +180,9 @@ export default function VisualizerToolbar(props: {
             {horizontal ? <img src={InIcon} /> : <img src={OutIcon} />}
           </div>
           <div
-            className="visuaizer-toolbar"
+            className="visualizer-toolbar"
             style={{
               ...toolBarDimensions(dimension1, dimension2, horizontal),
-              flexDirection: horizontal ? "row" : "column",
               left: horizontal ? "0.3rem" : "-1rem",
               top: horizontal ? "0rem" : "1.2rem",
             }}

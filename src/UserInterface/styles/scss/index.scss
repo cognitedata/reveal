@@ -24,11 +24,6 @@ $status-bar-height: 0px;
 
 /** Default Theme **/
 $panel-background: white;
-$tree-background: inherit;
-$tree-color: inherit;
-$tab-background: white;
-$tab-select-background: #e4e4e4;
-$tab-select-color: black;
 $title-bar-background: white;
 $title-bar-color: black;
 $expansion-header-background: white;
@@ -40,7 +35,6 @@ $tool-bar-icon-hover-background: lightblue;
 $select-input-background: inherit;
 $select-input-option-color: #6a0dad;
 $slider-input-background: #d5d5d5;
-$explorer-font-size: 16px;
 
 .subsurface-container {
   height: $root-container-height;
@@ -50,7 +44,6 @@ $explorer-font-size: 16px;
   overflow: hidden;
 
   /** imports **/
-  @import "explorer";
   @import "settings";
   @import "visualizer";
 

@@ -14,7 +14,7 @@
   .visualizer-toolbar-container {
     position: relative;
   }
-  .visuaizer-toolbar {
+  .visualizer-toolbar {
     display: flex;
     align-items: center;
     position: absolute;
@@ -36,12 +36,13 @@
       img {
         margin: 0 0.2rem;
       }
+      select {
+        margin: 0.1rem 0.3rem;
+        width: 50px;
+      }
     }
     .visualizer-tool-bar-icon-selected {
       background-color: lightblue !important;
-    }
-    .visualizer-tool-bar-input{
-      width: 50px;
     }
   }
 

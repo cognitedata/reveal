@@ -1,8 +1,10 @@
 import React from "react";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
 import Icon from "@/UserInterface/Components/Icon/Icon";
 import { ExplorerTabsPropType } from "@/UserInterface/Components/Explorer/ExplorerTypes";
+import {
+  StyledTabs,
+  StyledTab,
+} from "@/UserInterface/Components/Tabs/StyledTabs";
 
 // Renders Explorer Tabs
 export function ExplorerTabs(props: ExplorerTabsPropType) {
@@ -15,25 +17,25 @@ export function ExplorerTabs(props: ExplorerTabsPropType) {
   };
 
   return (
-    <div className="node-tabs">
-      <Tabs
+    <div className="explorer-tabs">
+      <StyledTabs
         value={selectedTabIndex}
         indicatorColor="primary"
         textColor="primary"
         onChange={handleChange}
       >
         {tabs.map((tab) => (
-          <Tab
+          <StyledTab
             key={`node-type-${tab.type}`}
             label={
-              <div className="node-tab">
+              <div className="explorer-tab">
                 <Icon src={tab.icon} />
                 <span>{tab.name}</span>
               </div>
             }
           />
         ))}
-      </Tabs>
+      </StyledTabs>
     </div>
   );
 }

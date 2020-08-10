@@ -5,8 +5,22 @@ import { ThreeModule } from "@/ThreeSubSurface/ThreeModule";
 import BPDataModule from "@/Solutions/BP/BPDataModule";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import { SyntheticSubSurfaceModule } from "@/SubSurface/SyntheticSubSurfaceModule";
+import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import { grey } from "@material-ui/core/colors";
 
 const LOAD_MOCK_DATA = false;
+
+// customize the colors for changing UI style
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: grey[300],
+    },
+    secondary: {
+      main: grey[50],
+    },
+  },
+});
 
 /**
  * App component acts as a container application. Eg- BP
@@ -86,7 +100,9 @@ export default function App() {
 
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
-      <NodeVisualizer root={root} />
+      <ThemeProvider theme={theme}>
+        <NodeVisualizer root={root} />
+      </ThemeProvider>
     </div>
   );
 }
