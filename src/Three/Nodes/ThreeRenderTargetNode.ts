@@ -41,6 +41,7 @@ import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
 import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
 import { ZScaleCommand } from "@/Three/Commands/ZScaleCommand";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
+import { ToolbarGroupIds } from '@/Three/Nodes/ToolbarGroupIds';
 
 const DirectionalLightName = "DirectionalLight";
 
@@ -271,26 +272,24 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     this.setDefaultTool(panTool);
 
     // Tools
-    toolbar.add(new ToggleFullscreenCommand(this));
-    toolbar.add(panTool);
-    toolbar.add(new EditTool(this));
-    toolbar.add(new ZoomTool(this));
-    toolbar.add(new ZoomToTargetTool(this));
-    toolbar.add(new MeasureDistanceTool(this));
+    toolbar.add(ToolbarGroupIds.Tools, new ToggleFullscreenCommand(this));
+    toolbar.add(ToolbarGroupIds.Tools, panTool);
+    toolbar.add(ToolbarGroupIds.Tools, new EditTool(this));
+    toolbar.add(ToolbarGroupIds.Tools, new ZoomTool(this));
+    toolbar.add(ToolbarGroupIds.Tools, new ZoomToTargetTool(this));
+    toolbar.add(ToolbarGroupIds.Tools, new MeasureDistanceTool(this));
 
     // Views
-    toolbar.add(new ViewAllCommand(this));
-    toolbar.add(new ToggleAxisVisibleCommand(this));
-    toolbar.add(new ToggleBgColorCommand(this));
-    toolbar.add(new ToggleCameraTypeCommand(this));
-    toolbar.add(new CopyImageCommand(this));
+    toolbar.add(ToolbarGroupIds.Actions, new ViewAllCommand(this));
+    toolbar.add(ToolbarGroupIds.Actions, new ToggleAxisVisibleCommand(this));
+    toolbar.add(ToolbarGroupIds.Actions, new ToggleCameraTypeCommand(this));
+    toolbar.add(ToolbarGroupIds.Actions, new CopyImageCommand(this));
+    toolbar.add(ToolbarGroupIds.Actions, new ToggleBgColorCommand(this));
 
-    toolbar.beginOptionMenu();
     for (let viewFrom = 0; viewFrom < 6; viewFrom++)
-      toolbar.add(new ViewFromCommand(this, viewFrom));
-    toolbar.beginOptionMenu();
+      toolbar.add(ToolbarGroupIds.ViewFrom, new ViewFromCommand(this, viewFrom));
 
-    toolbar.add(new ZScaleCommand(this));
+    toolbar.add(ToolbarGroupIds.Settings, new ZScaleCommand(this));
   }
 
   //==================================================
@@ -405,7 +404,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   private getViewByObject(object: THREE.Object3D): BaseThreeView | null
   {
-    for (;;)
+    for (; ;)
     {
       if (!object.visible)
         return null;
