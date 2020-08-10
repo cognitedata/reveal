@@ -48,8 +48,8 @@ export class WellTrajectoryStyle extends BaseRenderStyle
 
   public /*override*/ clone(): BaseRenderStyle { return Lodash.cloneDeep<WellTrajectoryStyle>(this); }
 
-  protected /*override*/ PopulateCore(folder: PropertyFolder)
+  protected /*override*/ populateCore(folder: PropertyFolder)
   {
-    super.PopulateCore(folder);
+    super.populateCore(folder);
   }
 }

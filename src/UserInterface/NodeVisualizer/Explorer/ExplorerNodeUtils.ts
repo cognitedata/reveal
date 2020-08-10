@@ -5,16 +5,16 @@ import { CheckBoxState } from "@/Core/Enums/CheckBoxState";
 
 export default class ExplorerNodeUtils
 {
-
   public static selectNodeById(nodeId: string, selectionState: boolean)
   {
     const node = NodeUtils.getNodeById(nodeId);
 
-    if (!node) return;
+    if (!node)
+      return;
 
     try
     {
-      node.SetSelectedInteractive(selectionState);
+      node.setSelectedInteractive(selectionState);
     } catch (err)
     {
       // tslint:disable-next-line:no-console
@@ -26,12 +26,14 @@ export default class ExplorerNodeUtils
   {
     const node = NodeUtils.getNodeById(nodeId);
 
-    if (!node) return;
+    if (!node)
+      return;
 
     try
     {
       node.setVisibleInteractive(visible);
-    } catch (err)
+    }
+    catch (err)
     {
       // tslint:disable-next-line:no-console
       console.log("Error Viewing Node", err);
@@ -41,12 +43,13 @@ export default class ExplorerNodeUtils
   public static setNodeExpandById(nodeId: string, expandState: boolean)
   {
     const node = NodeUtils.getNodeById(nodeId);
-
-    if (!node) return;
+    if (!node)
+      return;
 
     try
     {
-      if(expandState !== node.isExpanded){
+      if (expandState !== node.isExpanded)
+      {
         node.toggleExpandInteractive();
       }
     } catch (err)
@@ -82,7 +85,6 @@ export default class ExplorerNodeUtils
           checkState = TreeCheckState.Default;
       }
     }
-
     return checkState;
   }
 
@@ -91,16 +93,14 @@ export default class ExplorerNodeUtils
     const rootNode = NodeUtils.getTreeRoot();
     const tabNodes: BaseNode[] = [];
 
-    if(rootNode)
+    if (rootNode)
     {
-      for(const child of rootNode.children)
+      for (const child of rootNode.children)
       {
         if (child.isTab)
           tabNodes.push(child);
       }
     }
-
     return tabNodes;
   }
-
 }

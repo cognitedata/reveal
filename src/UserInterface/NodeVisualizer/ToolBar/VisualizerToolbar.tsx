@@ -59,7 +59,7 @@ export default function VisualizerToolbar(props: {
     toolbar,
     visualizerId,
     onToolbarButtonClick,
-    onToolbarSelectionChange
+    onToolbarSelectionChange,
   } = props;
   if (!toolbar) return null;
 
@@ -91,10 +91,10 @@ export default function VisualizerToolbar(props: {
   };
 
   const visibleNonDropdownCommands = toolbar.filter(
-    command => command.isVisible && !command.isDropdown
+    (command) => command.isVisible && !command.isDropdown
   );
   const visibleDropdownCommands = toolbar.filter(
-    command => command.isVisible && command.isDropdown
+    (command) => command.isVisible && command.isDropdown
   );
 
   // dropdown Items takes twice the size
@@ -110,7 +110,7 @@ export default function VisualizerToolbar(props: {
     numberOfToolbarRows * iconSize,
     numberOfToolbarRows > 1
       ? toolbarCommandsPerLine * iconSize
-      : noOfSlots * iconSize
+      : noOfSlots * iconSize,
   ];
 
   const addButton = (index, command) => {
@@ -129,11 +129,11 @@ export default function VisualizerToolbar(props: {
             src={command.icon}
             tooltip={{
               text: command.tooltip,
-              placement: horizontal ? "bottom" : "right-start"
+              placement: horizontal ? "bottom" : "right-start",
             }}
             iconSize={{
               width: Appearance.toolbarIconSize,
-              height: Appearance.toolbarIconSize
+              height: Appearance.toolbarIconSize,
             }}
           />
         )}
@@ -149,11 +149,11 @@ export default function VisualizerToolbar(props: {
       >
         <select
           value={command.value}
-          onChange={event =>
+          onChange={(event) =>
             onToolbarSelectionChange(visualizerId, index, event)
           }
         >
-          {command.dropdownOptions.map(option => (
+          {command.dropdownOptions.map((option) => (
             <option key={option}>{option}</option>
           ))}
         </select>
@@ -171,14 +171,14 @@ export default function VisualizerToolbar(props: {
             dimension1 + iconSize,
             dimension2 + iconSize,
             horizontal
-          )
+          ),
         }}
       >
         <div className="visualizer-toolbar-container">
           <div
             className="handle"
             style={{
-              cursor: dragging ? "move" : "pointer"
+              cursor: dragging ? "move" : "pointer",
             }}
           >
             <img src={horizontal ? InIcon : OutIcon} alt="Tool icon" />
@@ -188,7 +188,7 @@ export default function VisualizerToolbar(props: {
             style={{
               ...toolBarDimensions(dimension1, dimension2, horizontal),
               left: horizontal ? "0.3rem" : "-1rem",
-              top: horizontal ? "0rem" : "1.2rem"
+              top: horizontal ? "0rem" : "1.2rem",
             }}
           >
             {toolbar.map((command, index) => {

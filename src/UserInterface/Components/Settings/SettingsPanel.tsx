@@ -23,7 +23,7 @@ export default function SettingsPanel(props: SettingPanelProps) {
               toolBar={titleBar.toolBar}
             />
           )}
-          {sections.map(section => {
+          {sections.map((section) => {
             return (
               <div
                 key={`${section.name}-section`}

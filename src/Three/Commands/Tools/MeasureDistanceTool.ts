@@ -30,7 +30,7 @@ export class MeasureDistanceTool extends BaseTool
   public /*override*/ getName(): string { return "Measure distance"; }
   public /*override*/ getIcon(): string { return MeasureDistanceToolIcon; }
   public /*override*/ getTooltip(): string { return "Measure distance by click and drag to wantet position. You must hit a 3D object to see the distance."; }
-  public /*override*/ getShortCutKeys(): string { return "M"; }
+  public /*override*/ getShortCutKeys(): string { return "m"; }
 
   //==================================================
   // OVERRIDES of BaseTool
@@ -92,11 +92,8 @@ export class MeasureDistanceTool extends BaseTool
     else
     {
       const sumDelta = this._worldCoordinates.getSumDelta();;
-      viewInfo.addText("3D Distance", this._worldCoordinates.getLength().toFixed(2));
-      viewInfo.addText("2D Distance", this._worldCoordinates.getLength(2).toFixed(2));
-      viewInfo.addText("Sum Delta X", sumDelta.x.toFixed(2));
-      viewInfo.addText("Sum Delta Y", sumDelta.y.toFixed(2));
-      viewInfo.addText("Sum Delta Z", sumDelta.z.toFixed(2));
+      viewInfo.addText("2D / 3D distance", `${this._worldCoordinates.getLength(2).toFixed(2)} / ${this._worldCoordinates.getLength(3).toFixed(2)}`);
+      viewInfo.addText("Sum delta X,Y,Z", sumDelta.getString(2));
       viewInfo.addText("2D area", this._worldCoordinates.getArea().toFixed(2));
     }
     viewInfo.addText("Clicked Position", worldPosition.getString(2));

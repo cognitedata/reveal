@@ -24,7 +24,6 @@ import { DiscreteLogNode } from "@/SubSurface/Wells/Nodes/DiscreteLogNode";
 import { CasingFilterLogNode } from "@/SubSurface/Wells/Filters/CasingFilterLogNode";
 import { CasingLogNode } from "@/SubSurface/Wells/Nodes/CasingLogNode";
 import FilterLogFolderIcon from "@images/Nodes/FilterLogFolder.png";
-import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 
 export class FilterLogFolder extends BaseNode
 {
@@ -82,12 +81,12 @@ export class FilterLogFolder extends BaseNode
 
   public synchronize(): void
   {
-    const tree = this.getAncestorByType(BaseTreeNode);
-    if (!tree)
+    const treeNode = this.getTreeNode();
+    if (!treeNode)
       return;
 
     // Iterate over all logs
-    for (const logNode of tree.getDescendantsByType(BaseLogNode))
+    for (const logNode of treeNode.getDescendantsByType(BaseLogNode))
     {
       let filterLogNode = this.getFilterLogNode(logNode);
       if (filterLogNode)

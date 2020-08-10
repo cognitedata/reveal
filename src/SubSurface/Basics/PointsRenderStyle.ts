@@ -40,7 +40,7 @@ export class PointsRenderStyle extends BaseRenderStyle
 
   public /*override*/ clone(): BaseRenderStyle { return Lodash.cloneDeep<PointsRenderStyle>(this); }
 
-  protected /*override*/ PopulateCore(folder: PropertyFolder)
+  protected /*override*/ populateCore(folder: PropertyFolder)
   {
   }
 }

@@ -44,7 +44,7 @@ export class ViewInfo
   // INSTANCE METHODS: Add operations
   //==================================================
 
-  public addHeader(header: string) { this.items.push(new TextItem(`${header}:`)); }
+  public addHeader(header: string) { this.items.push(new TextItem(`${header}`)); }
   public addText(key: string, value?: string) { this.items.push(new TextItem(key, value)); }
   public addNumber(key: string, value: number) { this.addText(key, value.toString()); }
   public setPolyline(polyline: Polyline) { this.polyline = polyline; }

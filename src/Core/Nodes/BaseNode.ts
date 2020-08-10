@@ -146,6 +146,7 @@ export abstract class BaseNode extends Identifiable
   public /*virtual*/ canBeChecked(target: ITarget | null): boolean { return true; }
   public /*virtual*/ isFilter(target: ITarget | null): boolean { return false; }
   public /*virtual*/ isRadio(target: ITarget | null): boolean { return false; }
+  public /*virtual*/ isTree(): boolean { return false; }
 
   //==================================================
   // VIRTUAL METHODS: Visibility
@@ -288,25 +289,35 @@ export abstract class BaseNode extends Identifiable
   {
     const style = this.getRenderStyle();
     if (style)
-      style.Populate(folder);
+      style.populate(folder);
   }
 
   //==================================================
   // INSTANCE METHODS: Selected
   //==================================================
 
-  public IsSelected(): boolean { return this._isSelected; }
-  public SetSelected(value: boolean) { this._isSelected = value; }
+  public isSelected(): boolean { return this._isSelected; }
+  public setSelected(value: boolean) { this._isSelected = value; }
 
-  public SetSelectedInteractive(value: boolean)
+  public setSelectedInteractive(value: boolean)
   {
     if (this._isSelected === value)
       return false;
 
-    if (!this.canBeExpanded)
+    if (!this.isVisibleInTreeControl)
       return false;
 
-    this._isSelected = value;
+    if (value)
+    {
+      const treeNode = this.getTreeNode();
+      if (treeNode)
+      {
+        for (const descendant of treeNode.getDescendants())
+          if (descendant.isSelected())
+            descendant.setSelectedInteractive(false);
+      }
+    }
+    this.setSelected(value);
     this.notify(new NodeEventArgs(Changes.selected));
     return true;
   }
@@ -492,6 +503,16 @@ export abstract class BaseNode extends Identifiable
   //==================================================
   // INSTANCE METHODS: Get ancestors
   //==================================================
+
+  public getTreeNode(): BaseNode | null
+  {
+    for (const ancestor of this.getThisAndAncestors())
+    {
+      if (ancestor.isTree())
+        return ancestor;
+    }
+    return null;
+  }
 
   public * getThisAndAncestors(): Generator<BaseNode>
   {

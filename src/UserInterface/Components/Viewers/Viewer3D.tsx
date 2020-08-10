@@ -1,6 +1,6 @@
 import React from "react";
 import VisualizerToolbar, {
-  IToolbarButton
+  IToolbarButton,
 } from "@/UserInterface/NodeVisualizer/ToolBar/VisualizerToolbar";
 
 // 3D Viewer
@@ -18,7 +18,7 @@ export default function Viewer3D(props: {
     viewer3D,
     toolbar,
     onToolbarButtonClick,
-    onToolbarSelectionChange
+    onToolbarSelectionChange,
   } = props;
 
   return (

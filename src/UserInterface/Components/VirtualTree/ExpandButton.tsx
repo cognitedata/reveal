@@ -14,7 +14,7 @@ interface ExpandProps {
 const Expand = styled.div<ExpandProps>`
   height: 0.7em;
   width: 0.7em;
-  background-image: ${props =>
+  background-image: ${(props) =>
     props.expanded ? `url(${ExpandOpen})` : `url(${ExpandClosed})`};
   background-repeat: no-repeat, no-repeat;
   background-size: 0.7em 0.7em;

@@ -11,6 +11,22 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
+
 export abstract class BaseStyle
 {
+  //==================================================
+  // VIRTUAL METHODS
+  //==================================================
+
+  protected /*virtual*/ populateCore(folder: PropertyFolder) { }
+
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
+
+  public populate(folder: PropertyFolder): void
+  {
+    this.populateCore(folder);
+  }
 }

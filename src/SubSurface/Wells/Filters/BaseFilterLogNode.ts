@@ -17,7 +17,6 @@ import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
 import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
 import { Util } from "@/Core/Primitives/Util";
 import { ITarget } from "@/Core/Interfaces/ITarget";
-import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 
 export abstract class BaseFilterLogNode extends BaseVisualNode
 {
@@ -72,11 +71,11 @@ export abstract class BaseFilterLogNode extends BaseVisualNode
 
   public * getAllLogs(): Generator<BaseLogNode>
   {
-    const tree = this.getAncestorByType(BaseTreeNode);
-    if (!tree)
+    const treeNode = this.getTreeNode();
+    if (!treeNode)
       return;
 
-    for (const logNode of tree.getDescendantsByType(BaseLogNode))
+    for (const logNode of treeNode.getDescendantsByType(BaseLogNode))
     {
       if (logNode.isEqual(this))
         yield logNode;

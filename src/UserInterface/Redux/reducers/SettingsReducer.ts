@@ -48,7 +48,7 @@ export const settingsSlice = createSlice({
         const { node } = action.payload;
         const { propertyFolder } = action.payload;
 
-        if (node && node.IsSelected())
+        if (node && node.isSelected())
         {
           state.currentNodeId = node.uniqueId.toString();
           state.titleBar.name = node.displayName;
@@ -79,7 +79,7 @@ export const settingsSlice = createSlice({
 
         if (node)
         {
-          const selectionState = node.IsSelected();
+          const selectionState = node.isSelected();
 
           if (selectionState)
           {

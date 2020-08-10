@@ -22,9 +22,9 @@ export class ToolController
   // INSTANCE FIELDS
   //==================================================
 
-  public _activeTool: BaseTool | null = null;
-
-  public _defaultTool: BaseTool | null = null;
+  private _activeTool: BaseTool | null = null;
+  private _defaultTool: BaseTool | null = null;
+  private _alltools: BaseTool[] = [];
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -35,6 +35,11 @@ export class ToolController
   //==================================================
   // INSTANCE METHODS
   //==================================================
+
+  public add(tool: BaseTool)
+  {
+    this._alltools.push(tool);
+  }
 
   public setDefaultTool(tool: BaseTool | null, cameraControl: CameraControl | null)
   {
@@ -127,12 +132,18 @@ export class ToolController
 
   public onKeyDown(target: ThreeRenderTargetNode, event: KeyboardEvent): void
   {
+
+    if (document.activeElement !== target.domElement)
+      return;
     // ctrlKey, altKey,shiftKey
     // code – the “key code” ("KeyA", "ArrowLeft" and so on), specific to the physical location of the key on keyboard.
     // key – the character ("A", "a" and so on), for non-character keys, such as Esc, usually has the same value as code.
-    if (event.key === "S")
-    {
-      // Select the tool
-    }
+
+    for (const tool of this._alltools)
+      if (tool.getShortCutKeys() === event.key)
+      {
+        target.activeTool = tool;
+        break;
+      }
   }
 }

@@ -24,7 +24,6 @@ import { FilterLogFolder } from "@/SubSurface/Wells/Filters/FilterLogFolder";
 import WellTrajectoryNodeIcon from "@images/Nodes/WellTrajectoryNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
 import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
-import { BaseTreeNode } from "@/Core/Nodes/BaseTreeNode";
 
 export class WellTrajectoryNode extends DataNode
 {
@@ -117,10 +116,10 @@ export class WellTrajectoryNode extends DataNode
 
   public getFilterLogFolder(): FilterLogFolder | null
   {
-    const tree = this.getAncestorByType(BaseTreeNode);
-    if (!tree)
+    const treeNode = this.getTreeNode();
+    if (!treeNode)
       return null;
 
-    return tree.getChildByType(FilterLogFolder);
+    return treeNode.getChildByType(FilterLogFolder);
   }
 }
