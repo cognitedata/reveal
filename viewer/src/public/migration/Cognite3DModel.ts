@@ -235,7 +235,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
 
   async resetNodeColor(nodeId: number): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-    this.resetNodeColorByTreeIndex(treeIndex);
+    await this.resetNodeColorByTreeIndex(treeIndex);
   }
 
   async resetNodeColorByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
