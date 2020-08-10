@@ -10,6 +10,7 @@ varying vec2 vUv2;
 varying vec2 vUv3;
 
 uniform sampler2D tFront;
+uniform sampler2D tFrontDepth;
 
 uniform sampler2D tBack;
 uniform sampler2D tBackDepth;
@@ -57,7 +58,7 @@ void main() {
   backDepth = backDepth > 0.0 ? backDepth : infinity; 
 
   // texture has drawn fragment
-  if(frontAlbedo.a > 0.0){
+  if(texture2D(tFrontDepth, vUv).r < 1.0){
     float customDepthTest = step(customDepth, backDepth); // zero if back is in front
 
     float a = customDepthTest > 0.0 ? ceil(customAlbedo.a) * 0.5 : ceil(backAlbedo.a) * 0.5;
@@ -96,7 +97,7 @@ void main() {
     }
   }
 
-  if(backAlbedo.a > 0.0){
+  if(texture2D(tBackDepth, vUv).r < 1.0){
     gl_FragColor = vec4(backAlbedo.rgb, 1.0);
     return;
   }
