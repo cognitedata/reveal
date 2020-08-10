@@ -13,7 +13,7 @@ export class ModelStateHandler {
     this._sceneModelState = {} as SceneModelState;
   }
 
-  stateHasChanged(wantedSector: WantedSector): boolean {
+  hasStateChanged(wantedSector: WantedSector): boolean {
     const modelState = this._sceneModelState[wantedSector.blobUrl];
     if (modelState != undefined) {
       const sectorLevelOfDetail = modelState[wantedSector.metadata.id];

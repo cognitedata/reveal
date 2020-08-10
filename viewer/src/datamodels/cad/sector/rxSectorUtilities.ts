@@ -53,7 +53,7 @@ export function handleDetermineSectorsInput(
         return empty();
       }
       return from(sectorCuller.determineSectors(input)).pipe(
-        filter(modelStateHandler.stateHasChanged.bind(modelStateHandler)),
+        filter(modelStateHandler.hasStateChanged.bind(modelStateHandler)),
         sectorRepository.loadSector()
       );
     };
