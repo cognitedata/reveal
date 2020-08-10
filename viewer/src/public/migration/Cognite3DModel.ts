@@ -121,7 +121,12 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   getSubtreeNodeIds(_nodeId: number, _subtreeSize?: number): Promise<number[]> {
-    throw new NotSupportedInMigrationWrapperError();
+    throw new NotSupportedInMigrationWrapperError('Use getSubtreeTreeIndices(treeIndex: number)');
+  }
+
+  async getSubtreeTreeIndices(treeIndex: number): Promise<number[]> {
+    const treeIndices = await this.determineTreeIndices(treeIndex, true);
+    return treeIndices.asArray();
   }
 
   getBoundingBox(nodeId?: number, box?: THREE.Box3): THREE.Box3 {
