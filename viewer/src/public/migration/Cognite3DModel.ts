@@ -217,6 +217,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @param g               Green component (0-255)
    * @param b               Blue component (0-255)
    * @param applyToChildren When true, the color will be applied to all descendants
+   * @returns               Promise that resolves to number of nodes affected
    */
   async setNodeColorByTreeIndex(
     treeIndex: number,
@@ -224,7 +225,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     g: number,
     b: number,
     applyToChildren = false
-  ): Promise<void> {
+  ): Promise<number> {
     let subtreeSize = 1;
     if (applyToChildren) {
       const subtreeSizePromise = await this.nodeIdAndTreeIndexMaps.getSubtreeSize(treeIndex);
@@ -235,6 +236,8 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     const treeIndices = [...Array(subtreeSize)].map((_, p) => treeIndex + p);
     treeIndices.forEach(p => this.nodeColors.set(p, color));
     this.cadNode.requestNodeUpdate(treeIndices);
+
+    return treeIndices.length;
   }
 
   async resetNodeColor(nodeId: number): Promise<void> {
