@@ -89,6 +89,7 @@ export class ToolController
 
   public onMouseClick(target: ThreeRenderTargetNode, event: MouseEvent): void
   {
+    target.domElement.focus();
     const tool = this.activeTool;
     if (tool)
       tool.onMouseClick(event);
@@ -96,6 +97,7 @@ export class ToolController
 
   public onMouseDown(target: ThreeRenderTargetNode, event: MouseEvent): void
   {
+    target.domElement.focus();
     // https://www.w3schools.com/jsref/obj_mouseevent.asp
     const tool = this.activeTool;
     if (tool)
@@ -133,8 +135,10 @@ export class ToolController
   public onKeyDown(target: ThreeRenderTargetNode, event: KeyboardEvent): void
   {
 
-    if (document.activeElement !== target.domElement)
-      return;
+    // Need this
+    // if (document.activeElement !== target.domElement)
+    // return;
+
     // ctrlKey, altKey,shiftKey
     // code – the “key code” ("KeyA", "ArrowLeft" and so on), specific to the physical location of the key on keyboard.
     // key – the character ("A", "a" and so on), for non-character keys, such as Esc, usually has the same value as code.

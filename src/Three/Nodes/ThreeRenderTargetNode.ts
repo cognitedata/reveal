@@ -170,7 +170,8 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     this.domElement.addEventListener('mousedown', (event) => this._toolController.onMouseDown(this, event), false);
     this.domElement.addEventListener('mouseup', (event) => this._toolController.onMouseUp(this, event), false);
     this.domElement.addEventListener('mousemove', (event) => this._toolController.onMouseMove(this, event), false);
-    document.addEventListener('keydown', (event) => this._toolController.onKeyDown(this, event), true);
+    this.domElement.addEventListener('keydown', (event) => this._toolController.onKeyDown(this, event), false);
+
     //dblclick
     this.render();
   }
