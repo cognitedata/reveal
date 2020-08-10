@@ -47,7 +47,7 @@ export class MeasureDistanceTool extends BaseTool
 
     const { viewInfo } = target;
     viewInfo.clear();
-    viewInfo.addHeader(this.getName());
+    viewInfo.addActiveTool(this);
     viewInfo.addText("Click on a location in 3D to start from");
 
     target.invalidate();
@@ -85,7 +85,7 @@ export class MeasureDistanceTool extends BaseTool
     const { viewInfo } = target;
 
     viewInfo.clear();
-    viewInfo.addHeader(this.getName());
+    viewInfo.addActiveTool(this);
     if (this._worldCoordinates.length <= 1)
     {
       viewInfo.addText("Click on another location in 3D to end");
@@ -93,11 +93,11 @@ export class MeasureDistanceTool extends BaseTool
     else
     {
       const sumDelta = this._worldCoordinates.getSumDelta();;
-      viewInfo.addText("2D / 3D distance", `${this._worldCoordinates.getLength(2).toFixed(2)} / ${this._worldCoordinates.getLength(3).toFixed(2)}`);
-      viewInfo.addText("Sum delta X,Y,Z", sumDelta.getString(2));
-      viewInfo.addText("2D area", this._worldCoordinates.getArea().toFixed(2));
+      viewInfo.addValue("2D / 3D distance", `${this._worldCoordinates.getLength(2).toFixed(2)} / ${this._worldCoordinates.getLength(3).toFixed(2)}`);
+      viewInfo.addValue("Sum delta X,Y,Z", sumDelta.getString(2));
+      viewInfo.addValue("2D area", this._worldCoordinates.getArea().toFixed(2));
     }
-    viewInfo.addText("Clicked Position", worldPosition.getString(2));
+    viewInfo.addValue("Clicked Position", worldPosition.getString(2));
     viewInfo.setPolyline(this._pixelCoordinates);
     target.invalidate();
   }

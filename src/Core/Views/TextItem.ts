@@ -24,20 +24,22 @@ export class TextItem
   public dx = 0;
   public dy = 0;
   public isMultiLine = false;
+  public isBold = false;
 
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get isEmpty(): boolean { return Util.isEmpty(this.key); }
+  public get hasValue(): boolean { return Util.isEmpty(this.value); }
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  constructor(key: string, value?: string)
+  constructor(key: string, isBold: boolean, value?: string)
   {
     this.key = key;
+    this.isBold = isBold;
     this.value = value;
   }
 }

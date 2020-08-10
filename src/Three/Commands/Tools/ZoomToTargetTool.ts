@@ -35,8 +35,8 @@ export class ZoomToTargetTool extends BaseTool
 
     const { viewInfo } = target;
     viewInfo.clear();
-    viewInfo.addHeader(this.getName());
-    viewInfo.addHeader("Zoom by cliking on something in the 3D.");
+    viewInfo.addActiveTool(this);
+    viewInfo.addText("Zoom by clicking on something in the 3D.");
     viewInfo.addText("This position will then be in the center and");
     viewInfo.addText("the rotation will be around this point");
     target.invalidate();
