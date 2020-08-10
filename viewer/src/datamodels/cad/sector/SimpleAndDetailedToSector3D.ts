@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 
 import { OperatorFunction, Observable, asapScheduler, scheduled } from 'rxjs';
-import { publish, filter, map, mergeAll } from 'rxjs/operators';
+import { filter, map, mergeAll } from 'rxjs/operators';
 
 import { MaterialManager } from '../MaterialManager';
 import { SectorQuads } from '../rendering/types';
@@ -22,11 +22,11 @@ export class SimpleAndDetailedToSector3D {
   }
 
   transform(): OperatorFunction<ParsedSector, THREE.Group> {
-    return publish(dataObservable => {
-      const detailedObservable: Observable<ParsedSector> = dataObservable.pipe(
+    return (source: Observable<ParsedSector>) => {
+      const detailedObservable: Observable<ParsedSector> = source.pipe(
         filter((parsedSector: ParsedSector) => parsedSector.levelOfDetail === LevelOfDetail.Detailed)
       );
-      const simpleObservable: Observable<ParsedSector> = dataObservable.pipe(
+      const simpleObservable: Observable<ParsedSector> = source.pipe(
         filter((parsedSector: ParsedSector) => parsedSector.levelOfDetail === LevelOfDetail.Simple)
       );
 
@@ -52,6 +52,6 @@ export class SimpleAndDetailedToSector3D {
         ],
         asapScheduler
       ).pipe(mergeAll());
-    });
+    };
   }
 }
