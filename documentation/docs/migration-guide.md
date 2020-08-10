@@ -15,4 +15,5 @@ because streaming is used.
 <!--- notes:
 * Cognite3DViewer.getIntersectionFromPixel doesn't have the model param
 * Cognite3DViewer.clearCache is not supported
+* Cognite3DViewer.addModel now can return any supported model type, not only cad. For cad use addCadModel
 --->
