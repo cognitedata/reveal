@@ -3,6 +3,8 @@
  */
 
 import * as Potree from '@cognite/potree-core';
+import * as THREE from 'three';
+
 import { PotreePointSizeType, PotreePointColorType, PotreePointShape } from './types';
 import { fromThreeJsBox3 } from '@/utilities';
 import { Box3 } from '@/utilities/Box3';
@@ -56,10 +58,10 @@ export class PotreeNodeWrapper {
     return this.octtree.numVisiblePoints || 0;
   }
 
-  // TODO: 25-05-2020 j-bjorne: Look into splitting debug bounding box from node wrapper.
   get boundingBox(): Box3 {
-    const bbox: THREE.Box3 = this.octtree.root.tightBoundingBox || this.octtree.root.geometryNode.tightBoundingBox;
-    const box = fromThreeJsBox3(bbox);
+    const transformedBbox: THREE.Box3 =
+      this.octtree.pcoGeometry.tightBoundingBox || this.octtree.pcoGeometry.boundingBox || this.octtree.boundingBox;
+    const box = fromThreeJsBox3(transformedBbox);
     // Apply transformation to switch axes
     const min = vec3.fromValues(box.min[0], box.min[2], -box.min[1]);
     const max = vec3.fromValues(box.max[0], box.max[2], -box.max[1]);
