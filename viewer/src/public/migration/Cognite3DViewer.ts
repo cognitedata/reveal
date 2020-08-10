@@ -233,8 +233,8 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Add event listener to the viewer
-   * call {@link Cognite3DViewer.off} to remove an event listener
+   * Add event listener to the viewer.
+   * Call {@link Cognite3DViewer.off} to remove an event listener
    * @example
    * ```js
    * const onClick = (event) => { console.log(event.offsetX, event.offsetY) };
@@ -243,8 +243,8 @@ export class Cognite3DViewer {
    */
   on(event: 'click' | 'hover', callback: PointerEventDelegate): void;
   /**
-   * Add event listener to the viewer
-   * call {@link Cognite3DViewer.off} to remove an event listener
+   * Add event listener to the viewer.
+   * Call {@link Cognite3DViewer.off} to remove an event listener
    * @example
    * ```js
    * viewer.on('cameraChange', (position, target) => {
@@ -302,8 +302,8 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Add a new CAD 3D model to the viewer.
-   * call {@link Cognite3DViewer.fitCameraToModel} to see the model after the model has loaded
+   * Add a new model to the viewer.
+   * Call {@link Cognite3DViewer.fitCameraToModel} to see the model after the model has loaded
    * @example
    * ```js
    * const options = {
@@ -315,13 +315,39 @@ export class Cognite3DViewer {
    * });
    * ```
    */
-  async addModel(options: AddModelOptions): Promise<Cognite3DModel> {
+  async addModel(options: AddModelOptions): Promise<Cognite3DModel | CognitePointCloudModel> {
+    const type = await this.determineModelType(options.modelId, options.revisionId);
+    switch (type) {
+      case SupportedModelTypes.CAD:
+        return this.addCadModel(options);
+      case SupportedModelTypes.PointCloud:
+        return this.addPointCloudModel(options);
+      default:
+        throw new Error('Model is not supported');
+    }
+  }
+
+  /**
+   * Add a new CAD 3D model to the viewer.
+   * Call {@link Cognite3DViewer.fitCameraToModel} to see the model after the model has loaded
+   * @example
+   * ```js
+   * const options = {
+   *   modelId:     'COGNITE_3D_MODEL_ID',
+   *   revisionId:  'COGNITE_3D_REVISION_ID',
+   * };
+   * viewer.addCadModel(options).then(model => {
+   *   viewer.fitCameraToModel(model, 0);
+   * });
+   * ```
+   */
+  async addCadModel(options: AddModelOptions): Promise<Cognite3DModel> {
     trackLoadModel(
       {
         options: omit(options, ['modelId', 'revisionId']),
         type: SupportedModelTypes.CAD,
         moduleName: 'Cognite3DViewer',
-        methodName: 'addModel'
+        methodName: 'addCadModel'
       },
       {
         modelId: options.modelId,
@@ -364,7 +390,7 @@ export class Cognite3DViewer {
 
   /**
    * Add a new pointcloud 3D model to the viewer.
-   * call {@link Cognite3DViewer.fitCameraToModel} to see the model after the model has loaded
+   * Call {@link Cognite3DViewer.fitCameraToModel} to see the model after the model has loaded
    * @example
    * ```js
    * const options = {
@@ -415,28 +441,27 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Use to determine which addModel method to call.
+   * Use to determine of which type the model is.
    *
    * @param modelId the model's id
    * @param revisionId the model's revision id
    *
    * @example
    * ```typescript
-   * async function addModel(viewer: Cognite3DViewer, options: AddModelOptions) {
-   *   const type = await viewer.determineModelType(options.modelId, options.revisionId)
-   *   let model: Cognite3DModel | CognitePointCloudModel
-   *   switch (type) {
-   *     case SupportedModelTypes.CAD:
-   *       model = await viewer.addModel(options);
-   *       break;
-   *     case SupportedModelTypes.PointCloud:
-   *       model = await viewer.addPointCloudModel(options);
-   *       break;
-   *     default:
-   *       throw new Error('Model is not supported');
-   *   }
-   *   viewer.fitCameraToModel(model);
+   * const viewer = new Cognite3DViewer(...);
+   * const type = await viewer.determineModelType(options.modelId, options.revisionId)
+   * let model: Cognite3DModel | CognitePointCloudModel
+   * switch (type) {
+   *   case SupportedModelTypes.CAD:
+   *     model = await viewer.addCadModel(options);
+   *     break;
+   *   case SupportedModelTypes.PointCloud:
+   *     model = await viewer.addPointCloudModel(options);
+   *     break;
+   *   default:
+   *     throw new Error('Model is not supported');
    * }
+   * viewer.fitCameraToModel(model);
    * ```
    */
   async determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes> {
