@@ -31,6 +31,7 @@ function mapStateToExplorerPanel(state: State) {
   const tabs = getAllTabs(state);
   const data = getNodeTree(state);
   const selectedTabIndex = getCurrentTabIndex(state);
+
   return { tabs, data, selectedTabIndex };
 }
 

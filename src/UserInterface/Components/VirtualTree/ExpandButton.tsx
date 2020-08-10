@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, KeyboardEvent, MouseEvent } from "react";
 import styled from "styled-components";
 // images
 import ExpandOpen from "@images/Expanders/ExpandOpen.png";
 import ExpandClosed from "@images/Expanders/ExpandClosed.png";
 import ExpandOpenFocus from "@images/Expanders/ExpandOpenFocus.png";
 import ExpandClosedFocus from "@images/Expanders/ExpandClosedFocus.png";
+import { HTMLUtils } from "@/UserInterface/Foundation/Utils/HTMLUtils";
 
 interface ExpandProps {
   readonly expanded?: boolean;
@@ -18,8 +19,13 @@ const Expand = styled.div<ExpandProps>`
   background-repeat: no-repeat, no-repeat;
   background-size: 0.7em 0.7em;
   .expand-btn:hover & {
-    background-image: ${(props) =>
-      props.expanded ? `url(${ExpandOpenFocus})` : `url(${ExpandClosedFocus})`};
+    background-image: url(${(props /* eslint-disable indent */) =>
+      props.expanded ? ExpandOpenFocus : ExpandClosedFocus});
+    background-repeat: no-repeat, no-repeat;
+  }
+  .expand-btn:focus & {
+    background-image: url(${(props /* eslint-disable indent */) =>
+      props.expanded ? ExpandOpenFocus : ExpandClosedFocus});
     background-repeat: no-repeat, no-repeat;
   }
 `;
@@ -31,7 +37,7 @@ export function ExpandButton(props: {
 }) {
   const [expanded, setExpanded] = useState(props.expanded || true);
 
-  const handleClick = (e: any) => {
+  const onEvent = (e: MouseEvent<HTMLDivElement>) => {
     if (expanded) {
       props.onCollapse(e);
     } else {
@@ -39,9 +45,21 @@ export function ExpandButton(props: {
     }
     setExpanded(!expanded);
   };
+
+  const onEnter = (e: KeyboardEvent) => {
+    return HTMLUtils.onEnter(onEvent)(e);
+  };
+
   if (props.expandable) {
     return (
-      <div className="expand-btn clickable center" onClick={handleClick}>
+      <div
+        role="button"
+        aria-label="expand row group"
+        className="expand-btn clickable center"
+        onClick={onEvent}
+        onKeyDown={onEnter}
+        tabIndex={0}
+      >
         <Expand expanded={props.expanded} />
       </div>
     );

@@ -27,6 +27,7 @@ function mapDispatchToSettingsPanel(dispatch: Dispatch) {
 function mapStateToSettingsPanel(state: State) {
   const { currentNodeId, titleBar, properties } = state.settings;
   const sections: ISettingsSection[] = [];
+
   if (properties && properties.allIds.length) {
     for (const propertyId of properties.allIds) {
       const property = properties.byId[propertyId];
@@ -37,10 +38,12 @@ function mapStateToSettingsPanel(state: State) {
         property.children.length
       ) {
         const section = convertStateToSectionObject(propertyId, properties);
+
         sections.push(section);
       }
     }
   }
+
   return { id: currentNodeId, titleBar, sections };
 }
 
@@ -63,6 +66,7 @@ function convertStateToSectionObject(
   if (property.children && property.children.length) {
     for (const childPropertyId of property.children) {
       const childProperty = allProperties.byId[childPropertyId];
+
       if (childProperty.type) {
         const element: ISettingsElement = {
           name: childProperty.name,
@@ -70,11 +74,12 @@ function convertStateToSectionObject(
           value: childProperty.value,
           isReadOnly: childProperty.readonly,
         };
+
         for (const childId of childProperty.children) {
           const child = allProperties.byId[childId];
-          if (!element.subElements) {
-            element.subElements = [];
-          }
+
+          if (!element.subElements) element.subElements = [];
+
           element.subElements.push({
             name: child.name,
             type: child.type,
@@ -82,16 +87,19 @@ function convertStateToSectionObject(
             isReadOnly: child.readonly,
           });
         }
+
         section.elements.push(element);
       } else {
         const childSection = convertStateToSectionObject(
           childPropertyId,
           allProperties
         );
+
         section.subSections.push(childSection);
       }
     }
   }
+
   return section;
 }
 

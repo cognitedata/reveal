@@ -10,10 +10,8 @@ export default class ExplorerNodeUtils
   {
     const node = NodeUtils.getNodeById(nodeId);
 
-    if (!node)
-    {
-      return;
-    }
+    if (!node) return;
+
     try
     {
       node.SetSelectedInteractive(selectionState);
@@ -28,10 +26,8 @@ export default class ExplorerNodeUtils
   {
     const node = NodeUtils.getNodeById(nodeId);
 
-    if (!node)
-    {
-      return;
-    }
+    if (!node) return;
+
     try
     {
       node.setVisibleInteractive(visible);
@@ -46,10 +42,8 @@ export default class ExplorerNodeUtils
   {
     const node = NodeUtils.getNodeById(nodeId);
 
-    if (!node)
-    {
-      return;
-    }
+    if (!node) return;
+
     try
     {
       if(expandState !== node.isExpanded){
@@ -65,9 +59,11 @@ export default class ExplorerNodeUtils
   public static getCheckBoxStateByNode(node: BaseNode): TreeCheckState
   {
     let checkState = TreeCheckState.Default;
+
     if (node)
     {
       const coreCheckState = node.getCheckBoxState();
+
       switch (coreCheckState)
       {
         case CheckBoxState.All:
@@ -86,6 +82,7 @@ export default class ExplorerNodeUtils
           checkState = TreeCheckState.Default;
       }
     }
+
     return checkState;
   }
 
@@ -93,6 +90,7 @@ export default class ExplorerNodeUtils
   {
     const rootNode = NodeUtils.getTreeRoot();
     const tabNodes: BaseNode[] = [];
+
     if(rootNode)
     {
       for(const child of rootNode.children)
@@ -101,6 +99,7 @@ export default class ExplorerNodeUtils
           tabNodes.push(child);
       }
     }
+
     return tabNodes;
   }
 

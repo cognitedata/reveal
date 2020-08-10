@@ -22,7 +22,7 @@ export default function ExpansionView(props: {
   return (
     <ExpansionPanel
       expanded={isExpanded}
-      onChange={(event) => onExpandChange(id, !isExpanded)}
+      onChange={() => onExpandChange(id, !isExpanded)}
     >
       <ExpansionPanelSummary className="expand-panel-root">
         <div className="expand-summary-header">

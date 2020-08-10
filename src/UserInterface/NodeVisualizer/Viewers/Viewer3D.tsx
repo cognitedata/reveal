@@ -8,6 +8,7 @@ export default function Viewer3D(props: { viewer3D: any }) {
   const toolbar = useSelector(
     (state: State) => state.visualizers.toolbars["3D"]
   ); //TODO: remove state reference
+
   return (
     <div className="visualizer">
       <VisualizerToolbar visualizerId="3D" toolbar={toolbar} />

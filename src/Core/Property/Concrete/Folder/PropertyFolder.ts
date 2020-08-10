@@ -15,10 +15,6 @@ const FractionDigitsDefault = 2;
 
 export class PropertyFolder extends BasePropertyFolder
 {
-  constructor(name: string)
-  {
-    super(name);
-  }
 
   // public Add(property: UsePropertyT<any>){  todo: add this after correct concrete property class can be derived from  parameters
   //   this.AddChild(property);

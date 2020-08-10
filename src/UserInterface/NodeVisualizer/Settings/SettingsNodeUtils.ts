@@ -7,6 +7,7 @@ export default class SettingsNodeUtils
   public static setPropertyValue<T>(id: string, value: T): void
   {
     const property = NodeUtils.getPropertyById(id);
+
     if (property)
     {
       (property as UsePropertyT<T>).value = value;
@@ -21,6 +22,7 @@ export default class SettingsNodeUtils
   public static setPropertyFolderExpand(id: string, expand: boolean): void
   {
     const property = NodeUtils.getPropertyById(id);
+
     if (property)
     {
       (property as BasePropertyFolder).expanded = expand;

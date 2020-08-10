@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, KeyboardEvent } from "react";
 import styled from "styled-components";
 
 // icons
@@ -10,6 +10,7 @@ import BackgroundNormal from "@images/Checkboxes/BackgroundNormal.png";
 import BackgroundFilter from "@images/Checkboxes/BackgroundFilter.png";
 import CheckedAll from "@images/Checkboxes/CheckedAll.png";
 import CheckedSome from "@images/Checkboxes/CheckedSome.png";
+import { HTMLUtils } from "@/UserInterface/Foundation/Utils/HTMLUtils";
 
 interface SpanProps {
   readonly background?: string;
@@ -36,6 +37,7 @@ const Span = styled.span<SpanProps>`
   background-image: ${(props) => props.background};
   background-repeat: no-repeat;
   background-size: cover;
+  outline: none;
 `;
 
 export function TreeCheckBox(props: {
@@ -62,7 +64,7 @@ export function TreeCheckBox(props: {
   if (props.indeterminate) {
     stateClassArr.push("indeterminate");
   }
-  const handleClick = (e: any) => {
+  const handleEvent = (e: any) => {
     e.stopPropagation();
     let checkStatus = false;
     if (props.disabled) {
@@ -74,6 +76,10 @@ export function TreeCheckBox(props: {
     if (props.onToggleCheck) {
       props.onToggleCheck(e, checkStatus);
     }
+  };
+
+  const onEnter = (e: KeyboardEvent) => {
+    return HTMLUtils.onEnter(handleEvent)(e);
   };
 
   const handleHover = () => {
@@ -98,7 +104,11 @@ export function TreeCheckBox(props: {
       htmlFor={props.id}
     >
       <Span
-        onClick={handleClick}
+        tabIndex={0}
+        onClick={handleEvent}
+        onKeyDown={onEnter}
+        onFocus={handleHover}
+        onBlur={handleHoverLeave}
         onMouseEnter={handleHover}
         onMouseLeave={handleHoverLeave}
         background={backgroundImage}

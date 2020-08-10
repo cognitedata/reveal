@@ -31,33 +31,40 @@ export const explorerSlice = createSlice({
       reducer(state: IExplorerState, action: PayloadAction<{ tabNodes: BaseNode[] }>): IExplorerState
       {
         const { tabNodes } = action.payload;
+
         for (const tabNode of tabNodes)
         {
           const nodeType = tabNode.typeName;
           const tabNodeState = generateNodeState(tabNode, null, nodeType);
           const tabNodeId = tabNodeState.uniqueId;
+
           state.tabs.push(tabNodeId);
           state.nodes.byId[tabNodeId] = tabNodeState;
           state.nodes.allIds.push(tabNodeId);
+
           for (const descendent of tabNode.getDescendants())
           {
             const nodeState = generateNodeState(descendent, descendent.parent!.uniqueId.toString(), nodeType);
             const nodeId = nodeState.uniqueId;
+
             state.nodes.byId[nodeId] = nodeState;
             state.nodes.allIds.push(nodeId);
           }
         }
+
         return state;
       },
       prepare(): { payload: { tabNodes: BaseNode[] } }
       {
         const tabNodes = ExplorerNodeUtils.getAllTabNodes();
+
         return { payload: { tabNodes } };
       }
     },
     onSelectedTabChange(state: IExplorerState, action: PayloadAction<{ selectedTabIndex: number }>): IExplorerState
     {
       state.selectedTabIndex = action.payload.selectedTabIndex;
+
       return state;
     },
     onCheckboxStateChange: {
@@ -65,6 +72,7 @@ export const explorerSlice = createSlice({
       {
         const uniqueId = action.payload.nodeId;
         const nodeState = state.nodes.byId[uniqueId];
+
         switch (action.payload.checkBoxState)
         {
           case TreeCheckState.Checked:
@@ -90,6 +98,7 @@ export const explorerSlice = createSlice({
           default:
           // do nothing
         }
+
         return state;
       },
       prepare(node: BaseNode): { payload: { nodeId: string, checkBoxState: string } }
@@ -108,8 +117,10 @@ export const explorerSlice = createSlice({
         const uniqueId = action.payload.nodeId;
         const expandStatus = action.payload.expandState;
         const node = state.nodes.byId[uniqueId];
+
         if (node)
           state.nodes.byId[uniqueId].expanded = expandStatus;
+
         return state;
       },
       prepare(node: BaseNode): { payload: { nodeId: string, expandState: boolean } }
@@ -122,8 +133,10 @@ export const explorerSlice = createSlice({
       {
         const uniqueId = action.payload.nodeId;
         const node = state.nodes![uniqueId];
+
         if (node)
           state.nodes.byId[uniqueId].label.bold = action.payload.activeState;
+
         return state;
       },
       prepare(node: BaseNode): { payload: { nodeId: string, activeState: boolean } }
@@ -135,7 +148,9 @@ export const explorerSlice = createSlice({
       reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, newLabel: string }>): IExplorerState
       {
         const uniqueId = action.payload.nodeId;
+
         state.nodes.byId[uniqueId].name = action.payload.newLabel;
+
         return state;
       },
       prepare(node: BaseNode): { payload: { nodeId: string, newLabel: string } }
@@ -148,8 +163,10 @@ export const explorerSlice = createSlice({
       {
         const uniqueId = action.payload.nodeId;
         const { icon } = state.nodes.byId[uniqueId];
+
         if (icon)
           icon.color = action.payload.nodeColor;
+
         return state;
       },
       prepare(node: BaseNode): { payload: { nodeId: string, nodeColor: Color } }
@@ -173,6 +190,7 @@ export const explorerSlice = createSlice({
         if (selectStatus)
           state.selectedNodeId = uniqueId;
       }
+
       return state;
     }
   }
@@ -201,6 +219,7 @@ export const getAllTabs = createSelector([getAllTabIds, getAllNodeStateMap],
   (tabStateIds, nodeStateMap) =>
   {
     const allTabStates = tabStateIds.map(id => nodeStateMap[id]);
+
     return allTabStates.map(tabNodeState =>
     {
       return { name: tabNodeState.name, icon: tabNodeState.icon.path, type: tabNodeState.nodeType };
@@ -221,19 +240,24 @@ export const getNodeTree = createSelector([getCurrentNodes],
   {
     const nodeTree: ITreeNode[] = [];
     const nodeTreeMap = {};
+
     for (const nodeState of nodeStates)
     {
       const treeNode = { ...nodeState, children: [] };
+
       nodeTreeMap[nodeState.uniqueId] = treeNode;
+
       if (nodeState.parentId)
       {
         const parent = nodeTreeMap[nodeState.parentId];
+
         if (parent) // if parent is not available that means it's a node in first level
           parent.children.push(treeNode);
         else
           nodeTree.push(treeNode);
       }
     }
+
     return nodeTree;
   });
 
@@ -241,6 +265,7 @@ export const getNodeTree = createSelector([getCurrentNodes],
 function generateNodeState(node: BaseNode, parentId: string | null, typeName: string): ITreeNodeState
 {
   const checkBoxState = node.getCheckBoxState();
+
   return {
     nodeType: typeName,
     parentId,

@@ -26,6 +26,7 @@ const store: Store = createStore(
 );
 
 const root = document.createElement("div");
+
 root.setAttribute("id", "root");
 root.style.width = "100vw";
 root.style.height = "100vh";

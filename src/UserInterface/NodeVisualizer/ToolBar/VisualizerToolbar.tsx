@@ -20,10 +20,8 @@ const toolBarDimensions = (
   dimension2: number,
   isHorizontal: boolean
 ) => {
-  if (isHorizontal)
-  {
-    return { width: dimension2, height: dimension1 };
-  }
+  if (isHorizontal) return { width: dimension2, height: dimension1 };
+
   return { width: dimension1 * 2 };
 };
 
@@ -38,6 +36,7 @@ const toolBarWrapperMargins = (
   if (isHorizontal) {
     return { marginBottom: dimension1, marginRight: dimension2 };
   }
+
   return { marginRight: dimension1, marginBottom: dimension2 };
 };
 
@@ -47,7 +46,9 @@ export default function VisualizerToolbar(props: {
   visualizerId: string;
 }) {
   const { visualizerId, toolbar } = props;
+
   if (!toolbar) return null;
+
   const dispatch = useDispatch();
 
   // Toolbar orientation
@@ -192,8 +193,10 @@ export default function VisualizerToolbar(props: {
                 if (command.isDropdown) {
                   return addDropdown(index, command);
                 }
+
                 return addButton(index, command);
               }
+
               return null;
             })}
           </div>

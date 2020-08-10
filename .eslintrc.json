@@ -22,7 +22,8 @@
     "indent": "error",
     "no-alert": "off",
     "no-irregular-whitespace": "off",
-    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/click-events-have-key-events": "off", // need to enable this
+    "react/jsx-props-no-spreading": ["error", { "html":  "ignore", "exceptions": ["React.Fragment"] }],
     "no-restricted-syntax": "off",
     "no-param-reassign": "off",
     "spaced-comment": "off",

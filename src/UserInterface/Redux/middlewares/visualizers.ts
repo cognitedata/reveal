@@ -13,6 +13,7 @@ export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
   const state: State = store.getState();
   const { visualizers } = state;
   const { type, payload } = action;
+
   switch (type)
   {
     case ActionTypes.executeVisualizerToolbarCommand:
@@ -22,11 +23,13 @@ export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
       {
         const { visualizerId, index } = payload;
         const command = getCommand(visualizers, visualizerId, index);
+
         command.invoke();
         // Command execution successful. Fire a new action
         const newAction = {
           type: ActionTypes.executeVisualizerToolbarCommandSuccess, payload: { visualizerId }
         };
+
         store.dispatch(newAction);
       }
       catch (err)
@@ -34,6 +37,7 @@ export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
         // tslint:disable-next-line: no-console
         console.error(err);
       }
+
       break;
     }
     case ActionTypes.selectOnChange:
@@ -43,11 +47,13 @@ export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
       {
         const { visualizerId, index, event } = payload;
         const command = getCommand(visualizers, visualizerId, index);
+
         command.invokeValue(event.target.value);
         // Command execution successful. Fire a new action
         const newAction = {
           type: ActionTypes.executeVisualizerToolbarCommandSuccess, payload: { visualizerId }
         };
+
         store.dispatch(newAction);
       }
       catch (err)
@@ -55,6 +61,7 @@ export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
         // tslint:disable-next-line: no-console
         console.error(err);
       }
+
       break;
     }
     default:

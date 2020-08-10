@@ -26,6 +26,7 @@ export function ExplorerTabs(props: ExplorerTabsPropType) {
       >
         {tabs.map((tab) => (
           <StyledTab
+            tabIndex={0}
             key={`node-type-${tab.type}`}
             label={
               <div className="explorer-tab">

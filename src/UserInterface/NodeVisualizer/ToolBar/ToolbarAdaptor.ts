@@ -10,6 +10,7 @@ export default class ToolbarAdaptor
   static convert(commands: BaseCommand[])
   {
     const output: IToolbarCommand[] = [];
+
     commands.forEach(command =>
     {
       output.push({
@@ -21,6 +22,7 @@ export default class ToolbarAdaptor
         value: command.value
       });
     });
+
     return output;
   }
 }

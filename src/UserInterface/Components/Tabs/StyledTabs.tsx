@@ -8,7 +8,6 @@ export const StyledTabs = withStyles(() => ({
     minHeight: "30px",
     height: "100%",
   },
-  indicator: {},
 }))(Tabs);
 
 export const StyledTab = withStyles((theme) => ({
@@ -29,6 +28,12 @@ export const StyledTab = withStyles((theme) => ({
     "&$selected": {
       background: theme.palette.secondary.light,
       color: theme.palette.secondary.contrastText,
+    },
+    "&:focus": {
+      backgroundColor: theme.palette.secondary.dark,
+      indicator: {
+        backgroundColor: theme.palette.primary.dark,
+      },
     },
   },
   selected: {},

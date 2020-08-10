@@ -21,6 +21,7 @@ export default createReducer(initialState, {
     for (const viewer of action.payload.viewers as Viewer[])
     {
       const viewerName = viewer.getName();
+
       state.toolbars[viewerName] = viewer.getToolbar()!;
       state.targets[viewerName] = viewer.getTarget();
     }
@@ -30,9 +31,11 @@ export default createReducer(initialState, {
   {
     const { visualizerId } = action.payload;
     const toolbar = state.toolbars[visualizerId];
+
     toolbar.map((item) =>
     {
       const { command } = item;
+
       item.isChecked = command.isChecked;
       item.icon = command.getIcon();
       item.isVisible = command.isVisible;
@@ -44,6 +47,7 @@ export default createReducer(initialState, {
   [ActionTypes.setStatusPanelText]: (state, action) =>
   {
     const { text } = action.payload;
+
     state.statusBar.text = text;
   }
 });

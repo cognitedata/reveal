@@ -40,20 +40,21 @@ export default function NodeVisualizer(props: { root?: BaseRootNode }) {
   // success callback for registering viewers to DOM
   const viewerElementCallback = useCallback(
     (element: HTMLElement) => {
-      if (!element || !root) {
-        return;
-      }
+      if (!element || !root) return;
+
       // clear Node
       element.innerHTML = "";
 
       // Add new viewers here Eg - new Viewer("2D", htmlElement2D)
       const viewers = [new Viewer("3D", element)];
+
       // Add targets and toolbars to root node
       for (const viewer of viewers) {
         const target = new ThreeRenderTargetNode(
           Range3.createByMinAndMax(0, 0, 1, 1)
         );
         const toolbar = new Toolbar();
+
         target.addTools(toolbar);
         target.setName(viewer.getName());
         viewer.setTarget(target);
@@ -62,9 +63,11 @@ export default function NodeVisualizer(props: { root?: BaseRootNode }) {
         element.appendChild(target.domElement);
         target.setActiveInteractive();
       }
+
       Modules.instance.initializeWhenPopulated(root);
 
       const notificationAdaptor = new NotificationsToActionsAdaptor(dispatch);
+
       VirtualUserInterface.install(
         new UserInterfaceListener(notificationAdaptor, dispatch)
       );
@@ -86,6 +89,7 @@ export default function NodeVisualizer(props: { root?: BaseRootNode }) {
         maxSize={common.isFullscreen ? 0 : Appearance.leftPanelMaxSize}
         onChange={() => {
           const targetIds = Object.keys(visualizers.targets);
+
           for (const id of targetIds) {
             visualizers.targets[id].onResize();
           }

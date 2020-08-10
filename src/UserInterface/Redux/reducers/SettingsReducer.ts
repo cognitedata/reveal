@@ -65,6 +65,7 @@ export const settingsSlice = createSlice({
         if (propertyFolder && propertyFolder.children && propertyFolder.children.length)
         {
           const allPropertyStates = convertToSettingsState(propertyFolder.children);
+
           for (const property of allPropertyStates)
           {
             state.properties.byId[property.name] = property;
@@ -86,16 +87,19 @@ export const settingsSlice = createSlice({
             settingsProperties = new PropertyFolder("Settings");
 
             const generalProperties = new PropertyFolder("General Properties");
+
             node.populateInfo(generalProperties);
             settingsProperties.addChild(generalProperties);
 
             const statistics = new PropertyFolder("Statistics");
+
             node.populateStatistics(statistics);
             settingsProperties.addChild(statistics);
 
             NodeUtils.properties = settingsProperties;
           }
         }
+
         return {
           payload: { node, propertyFolder: settingsProperties }
         };
@@ -109,6 +113,7 @@ export const settingsSlice = createSlice({
       prepare(propertyId: string, value: any)
       {
         SettingsNodeUtils.setPropertyValue(propertyId, value);
+
         return {
           payload: { id: propertyId, value }
         };
@@ -118,6 +123,7 @@ export const settingsSlice = createSlice({
       reducer(state: ISettingsState, action: PayloadAction<{ id: string, expandStatus: boolean }>)
       {
         const property = state.properties.byId[action.payload.id];
+
         if (property)
         {
           property.expanded = action.payload.expandStatus;
@@ -126,6 +132,7 @@ export const settingsSlice = createSlice({
       prepare(propertyId: string, expanded: boolean)
       {
         SettingsNodeUtils.setPropertyFolderExpand(propertyId, expanded);
+
         return {
           payload: { id: propertyId, expandStatus: expanded }
         };
@@ -159,6 +166,7 @@ function convertToSettingsState(properties: BaseProperty[] | BasePropertyFolder[
       };
 
       const childStates = convertToSettingsState(property.children, property.getName());
+
       propertyState.children = property.children.map(child => child.getName());
       allPropertyStates.push(propertyState);
       allPropertyStates = allPropertyStates.concat(childStates);
@@ -172,11 +180,15 @@ function mapToInputTypes(type: PropertyType): string
 {
   if (type === PropertyType.String)
     return ElementTypes.INPUT;
+
   if (type === PropertyType.Color)
     return ElementTypes.COLOR_TABLE;
+
   if (type === PropertyType.StringGroup)
     return ElementTypes.INPUT_GROUP;
+
   if (type === PropertyType.DefaultPropertyFolder)
     return ElementTypes.SECTION;
+
   return "";
 }

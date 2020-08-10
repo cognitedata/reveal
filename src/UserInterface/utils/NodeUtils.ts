@@ -22,30 +22,30 @@ export default class NodeUtils
   public static getTreeRoot(): BaseNode | null
   {
     let node: BaseNode | null = null;
+
     if (BaseRootNode.active)
-    {
       node = BaseRootNode.active;
-    }
+
     return node;
   }
 
   public static getNodeById(id: string): BaseNode | null
   {
     let node: BaseNode | null = null;
+
     if (BaseRootNode.active)
-    {
       node = BaseRootNode.active.getDescendantByUniqueId(UniqueId.create(id));
-    }
+
     return node;
   }
 
   public static getPropertyById(name: string): BaseProperty | null
   {
     let property: BaseProperty | null = null;
+
     if (NodeUtils.properties)
-    {
       property = NodeUtils.properties.getChildPropertyByName(name);
-    }
+
     return property;
   }
 }

@@ -20,6 +20,7 @@ export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
       try
       {
         next(action);
+
         for (const id of targetIds)
         {
           visualizers.targets[id].onResize();
@@ -29,6 +30,7 @@ export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
         // tslint:disable-next-line: no-console
         console.error(err);
       }
+
       break;
     }
     default:

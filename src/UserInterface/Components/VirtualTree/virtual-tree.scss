@@ -87,6 +87,7 @@ $virtual-tree-label-border-radius: 0.3em;
     width: 100%;
     box-sizing: border-box;
     font-size: 0.75em;
+    outline: none;
 
     &.selected {
       background: #f9fcff;
@@ -104,14 +105,14 @@ $virtual-tree-label-border-radius: 0.3em;
     }
   }
 
-  .tree-item:hover .tree-item-lbl:not(.selected) {
+  @mixin on-hover-tree-item {
     background: #dfedfc;
     background: -webkit-gradient(
-      linear,
-      left top,
-      left bottom,
-      color-stop(31%, white),
-      color-stop(100%, #dfedfc)
+                    linear,
+                    left top,
+                    left bottom,
+                    color-stop(31%, white),
+                    color-stop(100%, #dfedfc)
     );
     background: linear-gradient(to bottom, white 0%, #dfedfc 100%);
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#94c4fe', endColorstr='#d3f6fe',GradientType=0 );
@@ -120,6 +121,14 @@ $virtual-tree-label-border-radius: 0.3em;
     border-radius: var(--v-tree-lbl-border-radius, $virtual-tree-label-border-radius);
     border: 1px solid #9fc8fa;
     color: #000;
+  }
+
+  .tree-item:hover .tree-item-lbl:not(.selected) {
+    @include on-hover-tree-item;
+  }
+
+  .tree-item-lbl:focus.tree-item-lbl:not(.selected) {
+    @include on-hover-tree-item;
   }
 
   .expand-btn {

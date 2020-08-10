@@ -1,8 +1,9 @@
 import "./virtual-tree.scss";
-import React from "react";
+import React, { KeyboardEvent } from "react";
 import { AutoSizer } from "react-virtualized/dist/es/AutoSizer";
 import { List as VirtualList } from "react-virtualized/dist/es/List";
 import { readCssVariablePixelNumber } from "@/UserInterface/Foundation/Utils/cssUtils";
+import { HTMLUtils } from "@/UserInterface/Foundation/Utils/HTMLUtils";
 import TreeIcon from "./TreeIcon";
 import { ExpandButton } from "./ExpandButton";
 import { TreeCheckBox } from "./TreeCheckbox";
@@ -54,9 +55,16 @@ export function VirtualTree(props: VirtualTreeProps) {
     // Label properties
     const { bold, italic, color } = item.label;
     if (item.visible) {
+      const onNodeSelect = (): void => {
+        onToggleNodeSelect(item.uniqueId, !item.selected);
+      };
+      const onNodeLabelEnter = (event: KeyboardEvent): void => {
+        return HTMLUtils.onEnter(onNodeSelect)(event);
+      };
+
       children.unshift(
-        <div className="tree-item center" key="label">
-          <div className="tree-item-comp">
+        <div className="tree-item center" key="label" role="row">
+          <div className="tree-item-comp" role="cell">
             <ExpandButton
               expandable={item.children.length > 0}
               expanded={item.expanded}
@@ -65,7 +73,7 @@ export function VirtualTree(props: VirtualTreeProps) {
             />
           </div>
           {item.icon && (
-            <div className="tree-item-comp">
+            <div className="tree-item-comp" role="cell">
               <TreeIcon
                 src={item.icon.path}
                 alt={item.icon.description}
@@ -74,7 +82,7 @@ export function VirtualTree(props: VirtualTreeProps) {
               />
             </div>
           )}
-          <div className="tree-item-comp">
+          <div className="tree-item-comp" role="cell">
             {item.checkVisible && (
               <TreeCheckBox
                 class="tree-checkbox"
@@ -91,8 +99,12 @@ export function VirtualTree(props: VirtualTreeProps) {
           </div>
           <div className="tree-item-comp tree-item-lbl-container">
             <span
+              tabIndex={0}
+              role="button"
+              aria-label="select tree item"
               className={`tree-item-lbl${item.selected ? " selected" : ""}`}
-              onClick={() => onToggleNodeSelect(item.uniqueId, !item.selected)}
+              onClick={onNodeSelect}
+              onKeyDown={onNodeLabelEnter}
               style={{
                 fontWeight: bold ? "bold" : "normal",
                 fontStyle: italic ? "italic" : "normal",
@@ -108,16 +120,20 @@ export function VirtualTree(props: VirtualTreeProps) {
 
     if (item.visible) {
       return (
-        <ul key={keyPrefix} className="list">
-          <li {...itemProps} children={children} className="list-item" />
+        <ul key={keyPrefix} className="list" role="rowgroup">
+          <li {...itemProps} className="list-item" role="treeitem">
+            {children}
+          </li>
         </ul>
       );
     }
-    return <React.Fragment {...itemProps} children={children} />;
+
+    return <React.Fragment {...itemProps}> {children}</React.Fragment>;
   };
 
   const getExpandedItemCount = (item: ITreeNode) => {
     let count = item.visible ? 1 : 0; // depends on visibility  of containing item
+
     if (item.expanded) {
       count += item.children
         .map(getExpandedItemCount)
@@ -125,11 +141,13 @@ export function VirtualTree(props: VirtualTreeProps) {
           return total + num;
         }, 0);
     }
+
     return count;
   };
 
   const cellRenderer = (params: any) => {
     const renderedCell = renderItem(data[params.index], params.index);
+
     return (
       <div key={params.key} style={params.style}>
         {renderedCell}
@@ -142,9 +160,9 @@ export function VirtualTree(props: VirtualTreeProps) {
   };
 
   return (
-    <div className="virtual-tree-container">
-      <AutoSizer
-        children={(params) => {
+    <div className="virtual-tree-container" role="tree">
+      <AutoSizer>
+        {(params) => {
           return (
             <VirtualList
               height={params.height}
@@ -157,7 +175,7 @@ export function VirtualTree(props: VirtualTreeProps) {
             />
           );
         }}
-      />
+      </AutoSizer>
     </div>
   );
 }
