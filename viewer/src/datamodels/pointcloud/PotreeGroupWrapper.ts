@@ -31,11 +31,12 @@ export class PotreeGroupWrapper extends THREE.Object3D {
   constructor() {
     super();
     this.potreeGroup = new Potree.Group();
-    this.potreeGroup.name = 'PotreeGroup';
+    this.potreeGroup.name = 'Potree.Group';
     this.name = 'Potree point cloud wrapper';
     this.add(this.potreeGroup);
 
     const onAfterRenderTrigger = new THREE.Mesh(new THREE.Geometry());
+    onAfterRenderTrigger.name = 'onAfterRender trigger (no geometry)';
     onAfterRenderTrigger.onAfterRender = () => this.resetNeedsRedraw();
     this.add(onAfterRenderTrigger);
   }
