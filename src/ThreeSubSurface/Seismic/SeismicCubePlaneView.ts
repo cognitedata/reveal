@@ -31,6 +31,7 @@ import { Changes } from '@/Core/Views/Changes';
 import { RegularGrid3 } from '@/Core/Geometry/RegularGrid3';
 import { Index3 } from '@/Core/Geometry/Index3';
 import { ViewInfo } from '@/Core/Views/ViewInfo';
+import { ColorMap } from "@/Core/Primitives/ColorMap";
 
 const SolidName = "Solid";
 
@@ -215,7 +216,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     });
     {
       const range = new Range1(-1, 1);
-      const texture = TextureKit.create1D(range);
+      const texture = TextureKit.create1D(ColorMap.createDefaultSeismic());
       texture.anisotropy = 1;
       material.map = texture;
     }

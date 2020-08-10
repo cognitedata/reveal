@@ -16,24 +16,16 @@ export class TrajectoryBufferGeometry extends THREE.BufferGeometry
 
   // Buffers to be filled up
   private vertices: number[] = [];
-
   private normals: number[] = [];
-
   private indices: number[] = [];
-
   private colors: number[] = [];
-
   private uvs: number[] = [];
-
   private sampleIndex = 0;
 
   // Temp vectors for speed
   private pseudoNormal = Vector3.newZero;
-
   private normal = Vector3.newZero;
-
   private n = Vector3.newZero;
-
   private b = Vector3.newZero;
 
   //==================================================

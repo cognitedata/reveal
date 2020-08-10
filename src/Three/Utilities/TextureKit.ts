@@ -12,10 +12,8 @@
 //=====================================================================================
 
 import * as THREE from "three";
-import * as Color from "color";
 
-import { Range1 } from "@/Core/Geometry/Range1";
-import { Colors } from "@/Core/Primitives/Colors";
+import { ColorMap } from "@/Core/Primitives/ColorMap";
 
 export class TextureKit 
 {
@@ -23,49 +21,9 @@ export class TextureKit
   // STATIC METHODS
   //==================================================
 
-  static add(array: Array<number>, color: Color): void
+  static create1D(colorMap: ColorMap): THREE.DataTexture
   {
-    array.push(color.red());
-    array.push(color.green());
-    array.push(color.blue());
-  }
-
-  static create1D(range: Range1): THREE.DataTexture
-  {
-    const darknessVolume = 0.3;
-
-    const width = 2000;
-    const height = 2;
-    const data = new Uint8Array(3 * width * height);
-    const inc = Math.round(width / 20);
-
-    let index1 = 0;
-    let index2 = 3 * width;
-
-    for (let i = 0; i < width; i++)
-    {
-      const hue = i / (width - 1);
-      let color = Color.hsv(hue * 360, 255, 255);
-
-      // eslint-disable-next-line no-constant-condition
-      if (false)
-        color = Colors.getGammaCorrected(color);
-
-      // eslint-disable-next-line no-constant-condition
-      if (false)
-      {
-        // Darkness correction
-        const darknessFraction = (i % inc) / inc;
-        color = color.darken(darknessVolume * (darknessFraction - 0.5));
-      }
-      data[index1++] = color.red();
-      data[index1++] = color.green();
-      data[index1++] = color.blue();
-      
-      data[index2++] = color.red();
-      data[index2++] = color.green();
-      data[index2++] = color.blue();
-    }
-    return new THREE.DataTexture(data, width, height, THREE.RGBFormat);
+    const colors = colorMap.create1DTexture();
+    return new THREE.DataTexture(colors, colors.length / (2 * 3), 2, THREE.RGBFormat);
   }
 }
