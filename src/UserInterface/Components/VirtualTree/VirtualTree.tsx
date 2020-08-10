@@ -108,7 +108,7 @@ export function VirtualTree(props: VirtualTreeProps) {
               style={{
                 fontWeight: bold ? "bold" : "normal",
                 fontStyle: italic ? "italic" : "normal",
-                color: color ? color.hex() : "black",
+                color: color ? color.hex() : "black"
               }}
             >
               {itemText}
@@ -162,7 +162,7 @@ export function VirtualTree(props: VirtualTreeProps) {
   return (
     <div className="virtual-tree-container" role="tree">
       <AutoSizer>
-        {(params) => {
+        {params => {
           return (
             <VirtualList
               height={params.height}

@@ -23,7 +23,7 @@ export default function SettingsSection(props: SettingsSectionProps) {
       <>
         {elements && (
           <div className="settings-section-element-container">
-            {elements.map((element) => (
+            {elements.map(element => (
               <SettingsElement
                 key={`${element.name}-input-`}
                 sectionId={name}

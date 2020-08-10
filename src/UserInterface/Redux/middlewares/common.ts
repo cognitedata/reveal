@@ -1,16 +1,15 @@
 import { MiddlewareAPI, Dispatch } from "redux";
 import ActionTypes from "@/UserInterface/Redux/actions/ActionTypes";
-import { State } from "@/UserInterface/Redux/State/State";
+import ViewerUtils from '@/UserInterface/NodeVisualizer/Viewers/ViewerUtils';
 
+// TODO: Remove this middleware if possible
 // Common middleware
 export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
   type: string;
   payload: any;
 }) =>
 {
-  const state: State = store.getState();
-  const { visualizers } = state;
-  const targetIds = Object.keys(visualizers.targets);
+  const viewerList = Object.values(ViewerUtils.getViewers());
   const { type } = action;
 
   switch (type)
@@ -20,14 +19,12 @@ export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
       try
       {
         next(action);
-
-        for (const id of targetIds)
+        for (const viewer of viewerList)
         {
-          visualizers.targets[id].onResize();
+          viewer.getTarget()?.onResize();
         }
       } catch (err)
       {
-        // tslint:disable-next-line: no-console
         console.error(err);
       }
 

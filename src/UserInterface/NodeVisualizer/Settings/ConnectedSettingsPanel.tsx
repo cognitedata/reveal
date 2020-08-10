@@ -3,11 +3,11 @@ import { Dispatch } from "redux";
 import { State } from "@/UserInterface/Redux/State/State";
 import {
   onSettingChange,
-  onExpandChange,
+  onExpandChange
 } from "@/UserInterface/Redux/reducers/SettingsReducer";
 import {
   ISettingsElement,
-  ISettingsSection,
+  ISettingsSection
 } from "@/UserInterface/Components/Settings/Types";
 import { ISettingsPropertyState } from "@/UserInterface/Redux/State/settings";
 import SettingsPanel from "@/UserInterface/Components/Settings/SettingsPanel";
@@ -20,7 +20,7 @@ function mapDispatchToSettingsPanel(dispatch: Dispatch) {
     },
     onSettingChange: (id: string, value: any) => {
       dispatch(onSettingChange(id, value));
-    },
+    }
   };
 }
 
@@ -60,7 +60,7 @@ function convertStateToSectionObject(
     name: property.name,
     isExpanded: !!property.expanded,
     elements: [],
-    subSections: [],
+    subSections: []
   };
 
   if (property.children && property.children.length) {
@@ -72,7 +72,7 @@ function convertStateToSectionObject(
           name: childProperty.name,
           type: childProperty.type,
           value: childProperty.value,
-          isReadOnly: childProperty.readonly,
+          isReadOnly: childProperty.readonly
         };
 
         for (const childId of childProperty.children) {
@@ -84,7 +84,7 @@ function convertStateToSectionObject(
             name: child.name,
             type: child.type,
             value: child.value,
-            isReadOnly: child.readonly,
+            isReadOnly: child.readonly
           });
         }
 

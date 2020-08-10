@@ -3,8 +3,8 @@ import { IUserInterface } from "@/Core/Interfaces/IUserInterface";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import NotificationsToActionsAdaptor from "@/UserInterface/Adapters/NotificationToAction";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
-import { updateStatusPanel } from "@/UserInterface/Redux/actions/visualizers";
 import { setFullScreen } from "@/UserInterface/Redux/actions/common";
+import { updateStatusPanel } from '@/UserInterface/Redux/reducers/VisualizersReducer';
 
 /**
  * Gets callbacks from Core Components when various events happen

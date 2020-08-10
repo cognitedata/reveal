@@ -1,53 +1,81 @@
-import { createReducer } from "@reduxjs/toolkit";
-import Viewer from "@/UserInterface/NodeVisualizer/Viewers/Viewer";
-import ActionTypes from "@/UserInterface/Redux/actions/ActionTypes";
-import { VisualizerState } from "@/UserInterface/Redux/State/visualizer";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { IVisualizerState } from "@/UserInterface/Redux/State/visualizer";
+import { BaseCommand } from '@/Core/Commands/BaseCommand';
+import Viewer from '@/UserInterface/Components/Viewers/Viewer';
+import ViewerUtils from '@/UserInterface/NodeVisualizer/Viewers/ViewerUtils';
 
 // Initial settings state
-const initialState: VisualizerState = {
-  toolbars: {},
-  targets: {},
+const initialState: IVisualizerState = {
+  viewers: {},
   statusBar: {
     text: ""
   }
 };
 
-// Redux Toolkit package includes a createReducer utility that uses Immer internally.
-// Because of this, we can write reducers that appear to "mutate" state, but the updates
-// are actually applied immutably.
-export default createReducer(initialState, {
-  [ActionTypes.setVisualizerData]: (state, action) =>
-  {
-    for (const viewer of action.payload.viewers as Viewer[])
-    {
-      const viewerName = viewer.getName();
+export const visualizerSlice = createSlice({
+  name: "visualizer",
+  initialState,
+  reducers: {
+    initializeToolbarStatus:  { 
+      reducer:(state: IVisualizerState, action: PayloadAction<{viewers: {[key: string]: Viewer }}>) =>
+      {
+        for (const viewer of Object.values(action.payload.viewers))
+        {
+          const viewerName = viewer.getName();
+          const toolbar = viewer.getToolbarCommands();
+          state.viewers[viewerName] = [];
+          if(toolbar){
+            toolbar.forEach((item: BaseCommand) => {
+              state.viewers[viewerName].push(populateToolCommandState(item));
+            });
+          }
+        }
+      },
+      prepare: (): { payload: {viewers: {[key: string]: Viewer }} } => {
+        return { payload: { viewers: ViewerUtils.getViewers() } }; 
+      } },
 
-      state.toolbars[viewerName] = viewer.getToolbar()!;
-      state.targets[viewerName] = viewer.getTarget();
+    executeVisualizerToolbarCommand: {
+      reducer: (state: IVisualizerState, action: PayloadAction<{ visualizerId: string, index:number, toolCommand: BaseCommand | null}>) =>
+      {
+        const { visualizerId, index, toolCommand } = action.payload;
+        if(toolCommand)
+          state.viewers[visualizerId][index] = populateToolCommandState(toolCommand);
+      },
+      prepare: (visualizerId: string, index: number, event?: any): {payload: { visualizerId: string, index:number, toolCommand: BaseCommand | null}} => {
+        const toolbar = ViewerUtils.getViewers()[visualizerId].getToolbarCommands();
+
+        if (!toolbar)
+          return { payload: { visualizerId, index, toolCommand: null } }; 
+
+        const toolCommand = toolbar[index];  
+        if (event){
+          toolCommand.invokeValue(event.target.value);
+        }else{
+          toolCommand.invoke();
+        }
+        return { payload: { visualizerId, index, toolCommand } }; 
+      }
+    },
+
+    updateStatusPanel: (state: IVisualizerState, action: PayloadAction<{ text: string}>) =>
+    { 
+      state.statusBar.text = action.payload.text;
     }
   },
-
-  [ActionTypes.executeVisualizerToolbarCommandSuccess]: (state, action) =>
-  {
-    const { visualizerId } = action.payload;
-    const toolbar = state.toolbars[visualizerId];
-
-    toolbar.map((item) =>
-    {
-      const { command } = item;
-
-      item.isChecked = command.isChecked;
-      item.icon = command.getIcon();
-      item.isVisible = command.isVisible;
-      item.isDropdown = command.isDropdown;
-      item.value = command.value;
-    });
-  },
-
-  [ActionTypes.setStatusPanelText]: (state, action) =>
-  {
-    const { text } = action.payload;
-
-    state.statusBar.text = text;
-  }
 });
+
+function populateToolCommandState(item: BaseCommand){
+  return {
+    isChecked: item.isChecked,
+    icon: item.getIcon(),
+    isVisible: item.isVisible,
+    isDropdown: item.isDropdown,
+    value: item.value,
+    tooltip: item.getTooltip(),
+    dropdownOptions: item.dropdownOptions
+  };
+}
+
+export default visualizerSlice.reducer;
+export const { initializeToolbarStatus, executeVisualizerToolbarCommand, updateStatusPanel } = visualizerSlice.actions;

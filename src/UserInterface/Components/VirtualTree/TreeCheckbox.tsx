@@ -33,8 +33,8 @@ const Label = styled.label`
 const Span = styled.span<SpanProps>`
   height: 0.83em;
   width: 0.83em;
-  cursor: ${(props) => (props.disabled ? "auto" : "pointer")};
-  background-image: ${(props) => props.background};
+  cursor: ${props => (props.disabled ? "auto" : "pointer")};
+  background-image: ${props => props.background};
   background-repeat: no-repeat;
   background-size: cover;
   outline: none;

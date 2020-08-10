@@ -12,9 +12,9 @@ export interface ImageProps {
   readonly picture?: string;
 }
 const ImageContainer = styled.div<ImageProps>`
-  background: ${(props) => props.background};
-  mask-image: ${(props) => (props.picture ? `url(${props.picture})` : "none")};
-  -webkit-mask-image: ${(props) =>
+  background: ${props => props.background};
+  mask-image: ${props => (props.picture ? `url(${props.picture})` : "none")};
+  -webkit-mask-image: ${props =>
     props.picture ? `url(${props.picture})` : "none"};
 `;
 
@@ -48,7 +48,7 @@ export default function TreeIcon(props: {
         const filter = new fabric.Image.filters.BlendColor({
           color: color.hex(),
           mode: "multiply",
-          alpha: 1.5,
+          alpha: 1.5
         });
         fabricImage.applyFilters([filter]);
       }
@@ -66,12 +66,12 @@ export default function TreeIcon(props: {
       const canvas = new fabric.Canvas(canvasRef.current, {
         selection: false,
         width: iconSize,
-        height: iconSize,
+        height: iconSize
       });
       // @ts-ignore
       fabricRef.current = canvas;
 
-      fabric.Image.fromURL(props.src!, (oImg) => {
+      fabric.Image.fromURL(props.src!, oImg => {
         setImage(oImg, canvas, props.size, props.color);
         // @ts-ignore
         imageRef.current = oImg;
