@@ -71,7 +71,7 @@
     "raw-loader": "^4.0.1",
     "rimraf": "^3.0.2",
     "run-script-os": "^1.1.1",
-    "three": "^0.119.1",
+    "three": "^0.117.1",
     "ts-jest": "^26.1.1",
     "ts-loader": "8.0.2",
     "typescript": "3.9.7",
