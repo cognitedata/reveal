@@ -168,6 +168,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     this.domElement.addEventListener('mousedown', (event) => this._toolController.onMouseDown(this, event), false);
     this.domElement.addEventListener('mouseup', (event) => this._toolController.onMouseUp(this, event), false);
     this.domElement.addEventListener('mousemove', (event) => this._toolController.onMouseMove(this, event), false);
+    this.domElement.addEventListener('keydown', (event) => this._toolController.onKeyDown(this, event), false);
     //dblclick
     this.render();
   }
@@ -271,7 +272,6 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     const panTool = new NavigationTool(this);
     this.setDefaultTool(panTool);
 
-    // Tools
     toolbar.add(ToolbarGroupIds.Tools, new ToggleFullscreenCommand(this));
     toolbar.add(ToolbarGroupIds.Tools, panTool);
     toolbar.add(ToolbarGroupIds.Tools, new EditTool(this));
@@ -279,7 +279,6 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     toolbar.add(ToolbarGroupIds.Tools, new ZoomToTargetTool(this));
     toolbar.add(ToolbarGroupIds.Tools, new MeasureDistanceTool(this));
 
-    // Views
     toolbar.add(ToolbarGroupIds.Actions, new ViewAllCommand(this));
     toolbar.add(ToolbarGroupIds.Actions, new ToggleAxisVisibleCommand(this));
     toolbar.add(ToolbarGroupIds.Actions, new ToggleCameraTypeCommand(this));

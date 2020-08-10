@@ -124,4 +124,15 @@ export class ToolController
         tool.onMouseHover(event);
     }
   }
+
+  public onKeyDown(target: ThreeRenderTargetNode, event: KeyboardEvent): void
+  {
+    // ctrlKey, altKey,shiftKey
+    // code – the “key code” ("KeyA", "ArrowLeft" and so on), specific to the physical location of the key on keyboard.
+    // key – the character ("A", "a" and so on), for non-character keys, such as Esc, usually has the same value as code.
+    if (event.key === "S")
+    {
+      // Select the tool
+    }
+  }
 }

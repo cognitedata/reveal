@@ -70,10 +70,4 @@ export class PotreeNode extends BaseVisualNode
   {
     return new PotreeRenderStyle(targetId);
   }
-
-  public /*override*/ verifyRenderStyle(style: BaseRenderStyle)
-  {
-    if (!(style instanceof PotreeRenderStyle))
-      return;
-  }
 }
