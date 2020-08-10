@@ -27,7 +27,6 @@ import { Changes } from "@/Core/Views/Changes";
 import { CheckBoxState } from "@/Core/Enums/CheckBoxState";
 import { ITarget } from "@/Core/Interfaces/ITarget";
 import { Util } from "@/Core/Primitives/Util";
-import { IEventListener } from "@/Core/Interfaces/IEventListener";
 import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 import { FileType } from "@/Core/Enums/FileType";
 import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
@@ -596,9 +595,6 @@ export abstract class BaseNode extends Identifiable
 
   public notify(args: NodeEventArgs): void
   {
-    for (const eventListener of this.eventListeners)
-      eventListener.processEvent(this, args);
-
     VirtualUserInterface.updateNode(this, args);
     VirtualUserInterface.updateStatusPanel(JSON.stringify(args));
     this.notifyCore(args);
@@ -623,7 +619,6 @@ export abstract class BaseNode extends Identifiable
   {
     // To be called when a node is removed
     // It is not finished, because the children it not taken properly care of
-    this.eventListeners.length = 0;
     this.removeInteractiveCore();
     const { parent } = this;
     this.remove();
@@ -659,26 +654,6 @@ export abstract class BaseNode extends Identifiable
     }
     this.isActive = true;
     this.notify(new NodeEventArgs(Changes.active));
-  }
-
-  //==================================================
-  // INSTANCE METHODS: EventListener impementation
-  //==================================================
-
-  private eventListeners: IEventListener[] = [];
-
-  public addEventListener(eventListener: IEventListener)
-  {
-    this.eventListeners.push(eventListener);
-  }
-
-  public removeEventListener(eventListener: IEventListener)
-  {
-    const index = this.eventListeners.indexOf(eventListener, 0);
-    if (index < 0)
-      return;
-
-    this.eventListeners.splice(index, 1);
   }
 
   //==================================================
