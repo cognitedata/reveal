@@ -21,7 +21,7 @@ const mapCoordinatesBuffers = {
 };
 
 /**
- * Documentation for the Cognite3DModel class
+ * Represents a single 3D CAD model loaded from CDF.
  * @noInheritDoc
  */
 export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
@@ -133,7 +133,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * Used to clean up memory.
+   * Cleans up used resources.
    */
   dispose() {
     this.children = [];
@@ -148,24 +148,17 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * @deprecated Use {@link Cognite3DModel.getModelBoundingBox}. It does the same thing.
-   * @param nodeId Not supported anymore. See {@link Cognite3DModel.getBoundingBoxFromCdf}
-   * @param box Optional. Used to write result to.
-   * @throws NotSupportedInMigrationWrapperError if nodeId is passed
-   * @returns model's bounding box.
+   * @deprecated Use {@link Cognite3DModel.getModelBoundingBox} or {@link Cognite3DModel.getBoundingBoxFromCdf}.
+   * @throws NotSupportedInMigrationWrapperError
    */
-  getBoundingBox(nodeId?: number, box?: THREE.Box3): THREE.Box3 {
-    if (nodeId) {
-      throw new NotSupportedInMigrationWrapperError('Use getBoundingBoxFromCdf(nodeId: number)');
-    }
-
-    const bounds = this.cadModel.scene.root.bounds;
-    return toThreeJsBox3(box || new THREE.Box3(), bounds, this.cadModel.modelTransformation);
+  getBoundingBox(_nodeId?: number, _box?: THREE.Box3): THREE.Box3 {
+    throw new NotSupportedInMigrationWrapperError('Use getBoundingBoxFromCdf(nodeId: number) or getModelBoundingBox()');
   }
 
   /**
+   * Determines the full bounding box of the model.
    * @param outBbox Optional. Used to write result to.
-   * @returns model's bounding box.
+   * @returns models bounding box.
    * @example
    * ```js
    * const box = new THREE.Box3()
@@ -178,7 +171,8 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * ```
    */
   getModelBoundingBox(outBbox?: THREE.Box3): THREE.Box3 {
-    return this.getBoundingBox(undefined, outBbox);
+    const bounds = this.cadModel.scene.root.bounds;
+    return toThreeJsBox3(outBbox || new THREE.Box3(), bounds, this.cadModel.modelTransformation);
   }
 
   /**
