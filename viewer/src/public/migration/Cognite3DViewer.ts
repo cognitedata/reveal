@@ -8,8 +8,8 @@ import debounce from 'lodash/debounce';
 import omit from 'lodash/omit';
 import ComboControls from '@cognite/three-combo-controls';
 import { CogniteClient } from '@cognite/sdk';
-import { debounceTime, filter, map, publish } from 'rxjs/operators';
-import { merge, Subject, Subscription, fromEventPattern } from 'rxjs';
+import { debounceTime, filter, map } from 'rxjs/operators';
+import { merge, Subject, Subscription, fromEventPattern, Observable } from 'rxjs';
 
 import { from3DPositionToRelativeViewportCoordinates } from '@/utilities/worldToViewport';
 import { intersectCadNodes } from '@/datamodels/cad/picking';
@@ -1003,17 +1003,17 @@ export class Cognite3DViewer {
     updateNearFarSubject
       .pipe(
         map(cam => lastUpdatePosition.distanceToSquared(cam.getWorldPosition(camPosition))),
-        publish(observable => {
+        (source: Observable<number>) => {
           return merge(
             // When camera is moved more than 10 meters
-            observable.pipe(filter(distanceMoved => distanceMoved > 10.0)),
+            source.pipe(filter(distanceMoved => distanceMoved > 10.0)),
             // Or it's been a while since we last update near/far and camera has moved slightly
-            observable.pipe(
-              debounceTime(250),
+            source.pipe(
+              debounceTime(100),
               filter(distanceMoved => distanceMoved > 0.0)
             )
           );
-        })
+        }
       )
       .subscribe(() => {
         this.camera.getWorldPosition(lastUpdatePosition);
