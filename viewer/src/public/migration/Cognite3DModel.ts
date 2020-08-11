@@ -153,12 +153,16 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.nodeIdAndTreeIndexMaps.updateMaps(sector);
   }
 
-  async getBoundingBoxFromCdf(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
+  async getBoundingBoxFromCdf(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3 | undefined> {
     const response = await this.client.revisions3D.retrieve3DNodes(this.modelId, this.revisionId, [{ id: nodeId }]);
     if (response.length < 1) {
       throw new Error('NodeId not found');
     }
     const boundingBox3D = response[0].boundingBox;
+    if (boundingBox3D === undefined) {
+      return undefined;
+    }
+
     const min = boundingBox3D.min;
     const max = boundingBox3D.max;
     const result = box || new THREE.Box3();
