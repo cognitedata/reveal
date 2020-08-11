@@ -3,3 +3,4 @@
  */
 
 export { MetadataRepository } from './MetadataRepository';
+export * from './SupportedModelTypes';

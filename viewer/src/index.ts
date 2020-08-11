@@ -7,7 +7,7 @@ export { Cognite3DModel } from './public/migration/Cognite3DModel';
 export { CognitePointCloudModel } from './public/migration/CognitePointCloudModel';
 export { Cognite3DViewer } from './public/migration/Cognite3DViewer';
 export { Intersection } from './public/migration/intersection';
-export { Color, Cognite3DViewerOptions, AddModelOptions, SupportedModelTypes } from './public/migration/types';
+export { Color, Cognite3DViewerOptions, AddModelOptions } from './public/migration/types';
 export { CadLoadingHints } from './datamodels/cad/CadLoadingHints';
 export { BoundingBoxClipper } from './utilities';
 
@@ -16,3 +16,4 @@ export { PotreePointColorType } from './datamodels/pointcloud/types';
 // Export ThreeJS to enable easy import for our users
 import * as THREE from 'three';
 export { THREE };
+export { SupportedModelTypes } from '@/datamodels/base/SupportedModelTypes';
