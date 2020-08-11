@@ -24,9 +24,7 @@ export class SeismicCube extends RegularGrid3
   //==================================================
 
   private readonly _traces: (Trace | null)[];
-
   private readonly _usedTraces: Index2[] = [];
-
   private _maxTracesInMemory: number = 1000;
 
   //==================================================

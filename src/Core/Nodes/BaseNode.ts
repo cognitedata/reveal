@@ -30,6 +30,7 @@ import { Util } from "@/Core/Primitives/Util";
 import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 import { FileType } from "@/Core/Enums/FileType";
 import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
+import { Range3 } from '@/Core/Geometry/Range3';
 
 export abstract class BaseNode extends Identifiable
 {
@@ -130,6 +131,18 @@ export abstract class BaseNode extends Identifiable
   public /*virtual*/ getIcon(): string { return (this.typeName + FileType.png); }
 
   //==================================================
+  // VIRTUAL METHODS: Bounding box
+  //==================================================
+
+  public /*virtual*/ get boundingBox(): Range3
+  {
+    const range = new Range3();
+    for (const child of this.children)
+      range.addRange(child.boundingBox);
+    return range;
+  }
+
+  //==================================================
   // VIRTUAL METHODS: Active / Selected
   //==================================================
 
@@ -200,14 +213,6 @@ export abstract class BaseNode extends Identifiable
       return false;
     if (checkBoxState === CheckBoxState.None && !this.canBeChecked(target))
       return false;
-
-    if(this.isRadio(target))
-    {
-      const { parent } = this;
-      const visibleSibling = parent?.getVisibleDescendantByType(BaseNode);
-      if(visibleSibling && visibleSibling.uniqueId !== this.uniqueId)
-        visibleSibling.setVisibleInteractive(false);
-    }
 
     let hasChanged = false;
     for (const child of this.children)
@@ -435,7 +440,7 @@ export abstract class BaseNode extends Identifiable
     return null;
   }
 
-  public *getChildrenByType<T extends BaseNode>(classType: Class<T>): Generator<T>
+  public * getChildrenByType<T extends BaseNode>(classType: Class<T>): Generator<T>
   {
     for (const child of this.children)
     {
@@ -488,20 +493,6 @@ export abstract class BaseNode extends Identifiable
         return child as T;
 
       const descendant = child.getActiveDescendantByType(classType);
-      if (descendant)
-        return descendant as T;
-    }
-    return null;
-  }
-
-  public getVisibleDescendantByType<T extends BaseNode>(classType: Class<T>): T | null
-  {
-    for (const child of this.children)
-    {
-      if (child.getCheckBoxState() === CheckBoxState.All && isInstanceOf(child, classType))
-        return child as T;
-
-      const descendant = child.getVisibleDescendantByType(classType);
       if (descendant)
         return descendant as T;
     }
@@ -680,19 +671,19 @@ export abstract class BaseNode extends Identifiable
     if (this.parent)
     {
       // Turn the others off
-      for (const child of this.parent.children)
+      for (const sibling of this.parent.getDescendants())
       {
-        if (child === this)
+        if (sibling === this)
           continue;
-        if (child.className !== this.className)
+        if (sibling.className !== this.className)
           continue;
-        if (!child.canBeActive())
+        if (!sibling.canBeActive())
           return;
-        if (!child.isActive)
+        if (!sibling.isActive)
           continue;
 
-        child.isActive = false;
-        child.notify(new NodeEventArgs(Changes.active));
+        sibling.isActive = false;
+        sibling.notify(new NodeEventArgs(Changes.active));
       }
     }
     this.isActive = true;

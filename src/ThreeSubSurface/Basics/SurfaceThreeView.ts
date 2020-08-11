@@ -25,7 +25,7 @@ import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { TextureKit } from "@/Three/Utilities/TextureKit";
 import { ContouringService } from "@/Core/Geometry/ContouringService";
-import { ColorMap } from "@/Core/Primitives/ColorMap";
+import { ColorMaps } from '@/Core/Primitives/ColorMaps';
 
 export class SurfaceThreeView extends BaseGroupThreeView
 {
@@ -114,8 +114,9 @@ export class SurfaceThreeView extends BaseGroupThreeView
 
     if (style.colorType === ColorType.DepthColor && buffers.hasUvs)
     {
-      const texture = TextureKit.create1D(ColorMap.createRainbow());
-      texture.anisotropy = 4;
+      const texture = TextureKit.create1D(ColorMaps.get(node.colorMap));
+      if (texture)
+        texture.anisotropy = 4;
       material.map = texture;
     }
     const mesh = new THREE.Mesh(geometry, material);

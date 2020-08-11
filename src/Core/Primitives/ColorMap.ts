@@ -123,35 +123,6 @@ export class ColorMap
   // STATIC METHODS
   //==================================================
 
-  static createDefaultSeismic(): ColorMap
-  {
-    const colorMap = new ColorMap();
-    const a = 0.3333;
-    const b = 0.3750;
-
-    const interpolation = ColorInterpolation.Rgb;
-
-    colorMap.add(Color.rgb(161, 255, 255), 0, interpolation);
-    colorMap.add(Color.rgb(0, 0, 191), a, interpolation);
-    colorMap.add(Color.rgb(77, 77, 77), b, interpolation);
-    colorMap.add(Color.rgb(204, 204, 204), 0.5, interpolation);
-    colorMap.add(Color.rgb(97, 69, 0), 1 - b, interpolation);
-    colorMap.add(Color.rgb(191, 0, 0), 1 - a, interpolation);
-    colorMap.add(Colors.yellow, 1, interpolation);
-    colorMap.name = "Default Seismic";
-    return colorMap;
-  }
-
-  static createRainbow(): ColorMap
-  {
-    const colorMap = new ColorMap();
-    const interpolation = ColorInterpolation.HsvMax;
-    colorMap.add(Colors.magenta, 0, interpolation);
-    colorMap.add(Colors.red, 1, interpolation);
-    colorMap.name = "Rainbow";
-    return colorMap;
-  }
-
   static add(array: Array<number>, color: Color): void
   {
     array.push(color.red());

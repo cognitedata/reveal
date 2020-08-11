@@ -21,8 +21,10 @@ export class TextureKit
   // STATIC METHODS
   //==================================================
 
-  static create1D(colorMap: ColorMap): THREE.DataTexture
+  static create1D(colorMap: ColorMap | undefined): THREE.DataTexture | null
   {
+    if (!colorMap)
+      return null;
     const colors = colorMap.create1DTexture();
     return new THREE.DataTexture(colors, colors.length / (2 * 3), 2, THREE.RGBFormat);
   }

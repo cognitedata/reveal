@@ -31,7 +31,8 @@ import { Changes } from '@/Core/Views/Changes';
 import { RegularGrid3 } from '@/Core/Geometry/RegularGrid3';
 import { Index3 } from '@/Core/Geometry/Index3';
 import { ViewInfo } from '@/Core/Views/ViewInfo';
-import { ColorMap } from "@/Core/Primitives/ColorMap";
+import { ColorMaps } from '@/Core/Primitives/ColorMaps';
+import { UniqueId } from '@/Core/Primitives/UniqueId';
 
 const SolidName = "Solid";
 
@@ -43,6 +44,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
 
   private _index = -1;
   private _axis = -1;
+  private _uniqueId: UniqueId = UniqueId.empty;
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -112,11 +114,20 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
       return;
 
     const { node } = this;
+    const { seismicCubeNode } = this;
+    const seismicCube = seismicCubeNode ? seismicCubeNode.seismicCube : null;
+
     if (node.perpendicularIndex !== this._index || node.perpendicularAxis !== this._axis)
     {
       this._index = node.perpendicularIndex;
       this._axis = node.perpendicularAxis;
-      this.updateTextureCoords(parent, node, node.surveyCube, this.getSeismicCube());
+      this.updateTextureCoords(parent, node, node.surveyCube, seismicCube);
+    }
+    const uniqueId = seismicCubeNode ? seismicCubeNode.uniqueId : UniqueId.empty;
+    if (!uniqueId.equals(this._uniqueId))
+    {
+      this._uniqueId = uniqueId;
+      SeismicCubePlaneView.updateTextureMap(parent, seismicCubeNode);
     }
   }
 
@@ -143,7 +154,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
       return;
 
     viewInfo.addValue("Cell", cell.toString());
-    const seismicCubeNode = this.getSeismicCubeNode();
+    const { seismicCubeNode } = this;
     if (!seismicCubeNode)
       return;
 
@@ -189,6 +200,26 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
   }
 
   //==================================================
+  // INSTANCE METHODS: Getters
+  //==================================================
+
+  private get seismicCubeNode(): SeismicCubeNode | null
+  {
+    const { node } = this;
+    const { surveyNode } = node;
+    if (!surveyNode)
+      return null;
+
+    for (const seismicCubeNode of surveyNode.getDescendantsByType(SeismicCubeNode))
+    {
+      const view = seismicCubeNode.getViewByTarget(this.renderTarget);
+      if (view)
+        return seismicCubeNode;
+    }
+    return null;
+  }
+
+  //==================================================
   // INSTANCE METHODS: 
   //==================================================
 
@@ -213,12 +244,6 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
       //polygonOffsetFactor: 1,
       //polygonOffsetUnits: 4.0
     });
-    {
-      const range = new Range1(-1, 1);
-      const texture = TextureKit.create1D(ColorMap.createDefaultSeismic());
-      texture.anisotropy = 1;
-      material.map = texture;
-    }
     const mesh = new THREE.Mesh(geometry, material);
     mesh.name = SolidName;
     const { transformer } = this;
@@ -269,31 +294,36 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     attribute.needsUpdate = true;
   }
 
-  private getSeismicCubeNode(): SeismicCubeNode | null
-  {
-    const { node } = this;
-    const { surveyNode } = node;
-    if (!surveyNode)
-      return null;
-
-    for (const seismicCubeNode of surveyNode.getDescendantsByType(SeismicCubeNode))
-    {
-      const view = seismicCubeNode.getViewByTarget(this.renderTarget);
-      if (view)
-        return seismicCubeNode;
-    }
-    return null;
-  }
-
-  private getSeismicCube(): SeismicCube | null
-  {
-    const seismicCubeNode = this.getSeismicCubeNode();
-    return seismicCubeNode ? seismicCubeNode.seismicCube : null;
-  }
-
   //==================================================
   // STATIC METHODS
   //==================================================
+
+  private static updateTextureMap(parent: THREE.Object3D, seismicCubeNode: SeismicCubeNode | null): void
+  {
+    const mesh = parent.getObjectByName(SolidName) as THREE.Mesh;
+    if (!mesh)
+      return;
+
+    const material = mesh.material as THREE.MeshStandardMaterial;
+    if (!material)
+      return;
+
+    if (!seismicCubeNode)
+    {
+      material.map = null;
+      material.needsUpdate = true;
+      return;
+    }
+    const range = new Range1(-1, 1);
+    const texture = TextureKit.create1D(ColorMaps.get(seismicCubeNode.colorMap));
+    if (texture)
+    {
+      texture.anisotropy = 1;
+      texture.needsUpdate = true;
+    }
+    material.map = texture;
+    material.needsUpdate = true;
+  }
 
   private static updateTextureCoords(uv: Float32Array, cells: Index2[], seismicCube: SeismicCube | null): void
   {
