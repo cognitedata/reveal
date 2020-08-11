@@ -12334,6 +12334,11 @@ typedoc-plugin-markdown@^2.3.1:
     fs-extra "^9.0.0"
     handlebars "^4.7.6"
 
+typedoc-plugin-no-inherit@^1.1.10:
+  version "1.1.10"
+  resolved "https://registry.yarnpkg.com/typedoc-plugin-no-inherit/-/typedoc-plugin-no-inherit-1.1.10.tgz#559d2fa68bc5d31052bf058399c2c135f9af2f68"
+  integrity sha512-BhSFAWlBTh9Bf6PSfruIqdQBM8gd/Gj8hVuRk5pVWkHu4I/SB24LzFr5gAo52ZlaQSeN72+VOkkRD6tNYl8Enw==
+
 typedoc@0.17.0-3:
   version "0.17.0-3"
   resolved "https://registry.yarnpkg.com/typedoc/-/typedoc-0.17.0-3.tgz#91996e77427ff3a208ab76595a927ee11b75e9e8"
