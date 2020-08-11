@@ -43,7 +43,8 @@ module.exports = env => {
   const development = arg(env, 'development', false);
   const noCDN = arg(env, 'noCDN', false);
   const publicPath =
-    development || noCDN ? '' : `https://cdn.jsdelivr.net/npm/${packageJSON.name}@${packageJSON.version}/`;
+    arg(process.env, 'PUBLIC_URL', '') ||
+    (development || noCDN ? '' : `https://cdn.jsdelivr.net/npm/${packageJSON.name}@${packageJSON.version}/`);
 
   logger.info('Build config:');
   logger.info(`  - development: ${development}`);
