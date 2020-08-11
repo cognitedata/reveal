@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { SupportedModelTypes } from './types';
+import { SupportedModelTypes } from '@/datamodels/base';
 
 export interface CogniteModelBase {
   readonly type: SupportedModelTypes;
