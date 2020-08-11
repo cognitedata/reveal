@@ -25,7 +25,7 @@ const mapCoordinatesBuffers = {
  * @noInheritDoc
  */
 export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
-  // overrides `THREE.Object3D` type property
+  // overrides `THREE.Object3D` type property with 'cad' value
   public readonly type: SupportedModelTypes = SupportedModelTypes.CAD;
 
   /**
