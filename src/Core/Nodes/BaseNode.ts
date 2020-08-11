@@ -16,7 +16,7 @@ import * as Color from "color";
 import { UniqueId } from "@/Core/Primitives/UniqueId";
 import { Identifiable } from "@/Core/Primitives/Identifiable";
 import { TargetId } from "@/Core/Primitives/TargetId";
-import { isInstanceOf, Class } from "@/Core/Primitives/ClassT";
+import { Class, isInstanceOf } from "@/Core/Primitives/ClassT";
 import { RenderStyleResolution } from "@/Core/Enums/RenderStyleResolution";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { ITargetIdAccessor } from "@/Core/Interfaces/ITargetIdAccessor";
@@ -200,6 +200,14 @@ export abstract class BaseNode extends Identifiable
       return false;
     if (checkBoxState === CheckBoxState.None && !this.canBeChecked(target))
       return false;
+
+    if(this.isRadio(target))
+    {
+      const { parent } = this;
+      const visibleSibling = parent?.getVisibleDescendantByType(BaseNode);
+      if(visibleSibling && visibleSibling.uniqueId !== this.uniqueId)
+        visibleSibling.setVisibleInteractive(false);
+    }
 
     let hasChanged = false;
     for (const child of this.children)
@@ -480,6 +488,20 @@ export abstract class BaseNode extends Identifiable
         return child as T;
 
       const descendant = child.getActiveDescendantByType(classType);
+      if (descendant)
+        return descendant as T;
+    }
+    return null;
+  }
+
+  public getVisibleDescendantByType<T extends BaseNode>(classType: Class<T>): T | null
+  {
+    for (const child of this.children)
+    {
+      if (child.getCheckBoxState() === CheckBoxState.All && isInstanceOf(child, classType))
+        return child as T;
+
+      const descendant = child.getVisibleDescendantByType(classType);
       if (descendant)
         return descendant as T;
     }
