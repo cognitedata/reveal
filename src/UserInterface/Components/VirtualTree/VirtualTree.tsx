@@ -4,9 +4,9 @@ import { AutoSizer } from "react-virtualized/dist/es/AutoSizer";
 import { List as VirtualList } from "react-virtualized/dist/es/List";
 import { readCssVariablePixelNumber } from "@/UserInterface/Foundation/Utils/cssUtils";
 import { HTMLUtils } from "@/UserInterface/Foundation/Utils/HTMLUtils";
+import { TreeItemButton } from "@/UserInterface/Components/VirtualTree/TreeItemControl";
 import TreeIcon from "./TreeIcon";
 import { ExpandButton } from "./ExpandButton";
-import { TreeCheckBox } from "./TreeCheckbox";
 import { VirtualTreeProps } from "./VirtualTreeProps";
 import { ITreeNode } from "./TreeNode";
 
@@ -83,19 +83,19 @@ export function VirtualTree(props: VirtualTreeProps) {
             </div>
           )}
           <div className="tree-item-comp" role="cell">
-            {item.checkVisible && (
-              <TreeCheckBox
-                class="tree-checkbox"
-                id={keyPrefix}
-                filter={item.isFilter}
-                checked={item.checked}
-                indeterminate={item.indeterminate}
-                disabled={item.disabled}
-                onToggleCheck={() =>
-                  onToggleNodeCheck(item.uniqueId, !item.checked)
-                }
-              />
-            )}
+            <TreeItemButton
+              visible={item.checkVisible}
+              id={keyPrefix}
+              radio={item.isRadio}
+              checkbox={!item.isRadio}
+              disabled={item.disabled}
+              checked={item.checked}
+              filter={item.isFilter}
+              indeterminate={item.indeterminate}
+              onToggleCheck={() =>
+                onToggleNodeCheck(item.uniqueId, !item.checked)
+              }
+            />
           </div>
           <div className="tree-item-comp tree-item-lbl-container">
             <span

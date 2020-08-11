@@ -261,7 +261,11 @@ export class SyntheticSubSurfaceModule extends BaseModule
     seismicCubeNode.seismicCube = cube;
     survey.surveyCube = cube.getRegularGrid();
 
+    const seismicCubeNode1 = new SeismicCubeNode();
+    seismicCubeNode1.seismicCube = cube;
+
     survey.addChild(seismicCubeNode);
+    survey.addChild(seismicCubeNode1);
 
     seismicTree.addChild(survey);
   }

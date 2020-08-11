@@ -1,4 +1,4 @@
-import React, { useState, KeyboardEvent } from "react";
+import React, { KeyboardEvent, MouseEvent } from "react";
 import styled from "styled-components";
 
 // icons
@@ -10,7 +10,6 @@ import BackgroundNormal from "@images/Checkboxes/BackgroundNormal.png";
 import BackgroundFilter from "@images/Checkboxes/BackgroundFilter.png";
 import CheckedAll from "@images/Checkboxes/CheckedAll.png";
 import CheckedSome from "@images/Checkboxes/CheckedSome.png";
-import { HTMLUtils } from "@/UserInterface/Foundation/Utils/HTMLUtils";
 
 interface SpanProps {
   readonly background?: string;
@@ -41,15 +40,20 @@ const Span = styled.span<SpanProps>`
 `;
 
 export function TreeCheckBox(props: {
-  class?: string;
+  class: string;
   id: string;
+  hover: boolean;
+  onClick: (e: MouseEvent<any>) => void;
+  onKeyDown: (e: KeyboardEvent) => void;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+  onFocus: () => void;
+  onBlur: () => void;
   checked?: boolean;
   indeterminate?: boolean;
   disabled?: boolean;
   filter?: boolean;
-  onToggleCheck?: (e: any, state: boolean) => void;
 }) {
-  const [hover, hoverChanged] = useState(false);
   const stateClassArr: string[] = [];
 
   if (props.filter) {
@@ -64,35 +68,10 @@ export function TreeCheckBox(props: {
   if (props.indeterminate) {
     stateClassArr.push("indeterminate");
   }
-  const handleEvent = (e: any) => {
-    e.stopPropagation();
-    let checkStatus = false;
-    if (props.disabled) {
-      return;
-    }
-    if (!props.checked) {
-      checkStatus = true;
-    }
-    if (props.onToggleCheck) {
-      props.onToggleCheck(e, checkStatus);
-    }
-  };
-
-  const onEnter = (e: KeyboardEvent) => {
-    return HTMLUtils.onEnter(handleEvent)(e);
-  };
-
-  const handleHover = () => {
-    hoverChanged(true);
-  };
-
-  const handleHoverLeave = () => {
-    hoverChanged(false);
-  };
 
   const backgroundImage = getBackgroundImage(
     props.disabled,
-    hover,
+    props.hover,
     props.filter,
     props.checked,
     props.indeterminate
@@ -105,12 +84,12 @@ export function TreeCheckBox(props: {
     >
       <Span
         tabIndex={0}
-        onClick={handleEvent}
-        onKeyDown={onEnter}
-        onFocus={handleHover}
-        onBlur={handleHoverLeave}
-        onMouseEnter={handleHover}
-        onMouseLeave={handleHoverLeave}
+        onClick={props.onClick}
+        onKeyDown={props.onKeyDown}
+        onFocus={props.onFocus}
+        onBlur={props.onBlur}
+        onMouseEnter={props.onMouseEnter}
+        onMouseLeave={props.onMouseLeave}
         background={backgroundImage}
         disabled={props.disabled}
       />

@@ -89,6 +89,14 @@ export abstract class BaseVisualNode extends BaseNode
     if (visible && !this.canBeChecked(target))
       return false;
 
+    if(this.isRadio(target))
+    {
+      const { parent } = this;
+      const visibleSibling = parent?.getVisibleDescendantByType(BaseNode);
+      if(visibleSibling && visibleSibling.uniqueId !== this.uniqueId)
+        visibleSibling.setVisibleInteractive(false);
+    }
+    
     if (!this.setVisible(visible, target))
       return false;
 
