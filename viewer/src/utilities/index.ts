@@ -21,3 +21,4 @@ export {
 export { BoundingBoxClipper } from './BoundingBoxClipper';
 export { isMobileOrTablet } from './isMobileOrTablet';
 export { emissionLastMillis } from './rxOperations';
+export { NumericRange } from './NumericRange';
