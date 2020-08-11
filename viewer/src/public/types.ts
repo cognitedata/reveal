@@ -7,6 +7,12 @@ import { SectorGeometry } from '@/datamodels/cad/sector/types';
 import { SectorQuads } from '@/datamodels/cad/rendering/types';
 import { SectorCuller } from '@/internal';
 
+// we use these types in public API so they should be reexported here
+// to appear in the api reference docs
+export { CadRenderHints } from '../datamodels/cad/rendering/CadRenderHints';
+export { CadLoadingHints } from '../datamodels/cad/CadLoadingHints';
+export * from '../datamodels/base/SupportedModelTypes';
+
 /**
  * @property logMetrics might be used to disable usage statistics
  * @property nodeAppearanceProvider style node by tree-index
