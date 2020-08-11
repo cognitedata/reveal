@@ -56,7 +56,13 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.cadNode.loadingHints = hints;
   }
 
+  /**
+   * The CDF model ID of the model.
+   */
   readonly modelId: number;
+  /**
+   * The CDF revision ID of the model.
+   */
   readonly revisionId: number;
   /** @internal */
   readonly cadNode: CadNode;
@@ -178,6 +184,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   /**
    * Apply transformation matrix to the model.
    * @param matrix Matrix to be applied.
+   * @internal
    */
   updateTransformation(matrix: THREE.Matrix4): void {
     this.cadNode.applyMatrix4(matrix);
@@ -292,13 +299,13 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * Set node color by nodeId.
+   * Set node color by node ID.
    * This method is async because nodeId might be not loaded yet.
-   * @see {@link Cognite3DModel.setNodeColorByTreeIndex}
+   * @deprecated Use {@link Cognite3DModel.setNodeColorByTreeIndex}
    * @param nodeId
-   * @param r
-   * @param g
-   * @param b
+   * @param r       Red component (0-255)
+   * @param g       Green component (0-255)
+   * @param b       Blue componenet (0-255)
    */
   async setNodeColor(nodeId: number, r: number, g: number, b: number): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
@@ -306,7 +313,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * Set node color by treeIndex.
+   * Set node color by tree index.
    * @param treeIndex
    * @param r
    * @param g
@@ -322,9 +329,9 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * Set original node color by nodeId.
-   * This method is async because nodeId might be not loaded yet.
-   * @see {@link Cognite3DModel.resetNodeColorByTreeIndex}
+   * Set original node color by node ID.
+   * This method is async because node ID might be not loaded yet.
+   * @deprecated {@link Cognite3DModel.resetNodeColorByTreeIndex}
    * @param nodeId
    */
   async resetNodeColor(nodeId: number): Promise<void> {
@@ -333,7 +340,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * Set original node color by treeIndex.
+   * Set original node color by tree index.
    * @param treeIndex
    */
   resetNodeColorByTreeIndex(treeIndex: number) {
@@ -342,7 +349,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * Restore original colors for all nodes of the model.
+   * Restore original colors for all nodes.
    */
   resetAllNodeColors() {
     const nodeIds = Array.from(this.nodeColors.keys());
@@ -351,8 +358,9 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * Highlight node by nodeId.
-   * This method is async because nodeId might be not loaded yet.
+   * Highlight node by node ID.
+   * This method is async because node ID might be not loaded yet.
+   * @deprecated {@link Use Cognite3DModel.selectNodeByTreeIndex}
    * @see {@link Cognite3DModel.selectNodeByTreeIndex}
    * @param nodeId
    */
@@ -362,7 +370,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * Highlight node by treeIndex.
+   * Highlight node by tree index.
    * @param treeIndex
    */
   selectNodeByTreeIndex(treeIndex: number) {
@@ -371,7 +379,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * Removes selection from the node by nodeId
+   * Removes selection from the node by node ID
    */
   async deselectNode(nodeId: number): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
@@ -379,7 +387,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * Removes selection from the node by treeIndex
+   * Removes selection from the node by tree index
    */
   deselectNodeByTreeIndex(treeIndex: number) {
     this.selectedNodes.delete(treeIndex);
@@ -396,10 +404,10 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * Show the node by nodeId, that was hidden by {@link Cognite3DModel.hideNodeByTreeIndex},
+   * Show the node by node ID, that was hidden by {@link Cognite3DModel.hideNodeByTreeIndex},
    * {@link Cognite3DModel.hideNode} or {@link Cognite3DModel.hideAllNodes}
    * This method is async because nodeId might be not loaded yet.
-   * @see {@link Cognite3DModel.showNodeByTreeIndex}
+   * @deprecated Use {@link Cognite3DModel.showNodeByTreeIndex}
    * @param nodeId
    * @example
    * ```js
@@ -413,7 +421,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * Show the node by treeIndex, that was hidden by {@link Cognite3DModel.hideNodeByTreeIndex},
+   * Show the node by tree index, that was hidden by {@link Cognite3DModel.hideNodeByTreeIndex},
    * {@link Cognite3DModel.hideNode} or {@link Cognite3DModel.hideAllNodes}
    * @param treeIndex
    */
@@ -433,7 +441,8 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * @param makeGray Not supported yet.
+   * Hides all nodes in the model.
+   * @param makeGray Not supported.
    * @throws NotSupportedInMigrationWrapperError if `makeGray` is passed
    */
   hideAllNodes(makeGray?: boolean): void {
@@ -447,9 +456,9 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * Hide the node by nodeId.
+   * Hide the node by node ID.
    * This method is async because nodeId might be not loaded yet.
-   * @see {@link Cognite3DModel.hideNodeByTreeIndex}
+   * @deprecated Use {@link Cognite3DModel.hideNodeByTreeIndex}
    * @param nodeId
    * @param makeGray Not supported yet.
    */
@@ -459,9 +468,9 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * Hide the node by treeIndex.
+   * Hide the node by tree index.
    * @param treeIndex
-   * @param makeGray Not supported yet.
+   * @param makeGray Not supported.
    * @throws NotSupportedInMigrationWrapperError if `makeGray` is passed
    */
   hideNodeByTreeIndex(treeIndex: number, makeGray?: boolean): void {
