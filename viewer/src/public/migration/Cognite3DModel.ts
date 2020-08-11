@@ -190,6 +190,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.cadNode.updateMatrixWorld(false);
   }
 
+  /** @internal */
   updateNodeIdMaps(sector: Map<number, number>) {
     this.nodeIdAndTreeIndexMaps.updateMaps(sector);
   }
