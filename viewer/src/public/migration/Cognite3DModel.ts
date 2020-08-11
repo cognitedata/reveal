@@ -7,14 +7,16 @@ import { CogniteClient } from '@cognite/sdk';
 import { vec3 } from 'gl-matrix';
 
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
-import { Color, SupportedModelTypes } from './types';
+import { Color } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
-import { toThreeJsBox3, toThreeMatrix4, toThreeVector3, fromThreeVector3 } from '@/utilities';
-import { CadLoadingHints, CadNode, CadRenderHints } from '@/experimental';
+import { toThreeJsBox3, toThreeMatrix4, toThreeVector3, fromThreeVector3, NumericRange } from '@/utilities';
+import { CadRenderHints, CadNode } from '@/experimental';
+import { CadLoadingHints } from '@/datamodels/cad/CadLoadingHints';
 import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
 import { NodeAppearanceProvider, DefaultNodeAppearance } from '@/datamodels/cad/NodeAppearance';
 import { trackError } from '@/utilities/metrics';
+import { SupportedModelTypes } from '../types';
 
 const mapCoordinatesBuffers = {
   v: vec3.create()
@@ -25,8 +27,7 @@ const mapCoordinatesBuffers = {
  * @noInheritDoc
  */
 export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
-  // overrides `THREE.Object3D` type property with 'cad' value
-  public readonly type: SupportedModelTypes = SupportedModelTypes.CAD;
+  public readonly type: SupportedModelTypes = 'cad';
 
   /**
    * Get settings used for rendering.
@@ -150,7 +151,12 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @throws NotSupportedInMigrationWrapperError
    */
   getSubtreeNodeIds(_nodeId: number, _subtreeSize?: number): Promise<number[]> {
-    throw new NotSupportedInMigrationWrapperError();
+    throw new NotSupportedInMigrationWrapperError('Use getSubtreeTreeIndices(treeIndex: number)');
+  }
+
+  async getSubtreeTreeIndices(treeIndex: number): Promise<number[]> {
+    const treeIndices = await this.determineTreeIndices(treeIndex, true);
+    return treeIndices.asArray();
   }
 
   /**
@@ -258,7 +264,14 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     _treeIndex?: number,
     _subtreeSize?: number
   ): Promise<boolean> {
-    throw new NotSupportedInMigrationWrapperError();
+    throw new NotSupportedInMigrationWrapperError(
+      'Use iterateSubtreeByTreeIndex(treeIndex: number, action: (treeIndex: number) => void)'
+    );
+  }
+  async iterateSubtreeByTreeIndex(treeIndex: number, action: (treeIndex: number) => void): Promise<number> {
+    const treeIndices = await this.determineTreeIndices(treeIndex, true);
+    treeIndices.forEach(action);
+    return treeIndices.count;
   }
 
   /**
@@ -309,23 +322,30 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   async setNodeColor(nodeId: number, r: number, g: number, b: number): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-    this.setNodeColorByTreeIndex(treeIndex, r, g, b);
+    await this.setNodeColorByTreeIndex(treeIndex, r, g, b);
   }
 
   /**
-   * Set node color by tree index.
-   * @param treeIndex
-   * @param r
-   * @param g
-   * @param b
-   * @example
-   * ```js
-   * model.setNodeColorByTreeIndex(treeIndex, 255, 0, 0);
-   * ```
+   * Update color of a 3D node identified by it's tree index.
+   * @param treeIndex       Tree index of the node to update
+   * @param r               Red component (0-255)
+   * @param g               Green component (0-255)
+   * @param b               Blue component (0-255)
+   * @param applyToChildren When true, the color will be applied to all descendants
+   * @returns               Promise that resolves to number of nodes affected
    */
-  setNodeColorByTreeIndex(treeIndex: number, r: number, g: number, b: number) {
-    this.nodeColors.set(treeIndex, [r, g, b]);
-    this.cadNode.requestNodeUpdate([treeIndex]);
+  async setNodeColorByTreeIndex(
+    treeIndex: number,
+    r: number,
+    g: number,
+    b: number,
+    applyToChildren = false
+  ): Promise<number> {
+    const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+    const color: [number, number, number] = [r, g, b];
+    treeIndices.forEach(idx => this.nodeColors.set(idx, color));
+    this.cadNode.requestNodeUpdate(treeIndices);
+    return treeIndices.count;
   }
 
   /**
@@ -336,25 +356,27 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   async resetNodeColor(nodeId: number): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-    this.resetNodeColorByTreeIndex(treeIndex);
+    await this.resetNodeColorByTreeIndex(treeIndex);
   }
 
   /**
    * Set original node color by tree index.
    * @param treeIndex
    */
-  resetNodeColorByTreeIndex(treeIndex: number) {
-    this.nodeColors.delete(treeIndex);
-    this.cadNode.requestNodeUpdate([treeIndex]);
+  async resetNodeColorByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
+    const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+    treeIndices.forEach(idx => this.nodeColors.delete(idx));
+    this.cadNode.requestNodeUpdate(treeIndices);
+    return treeIndices.count;
   }
 
   /**
    * Restore original colors for all nodes.
    */
   resetAllNodeColors() {
-    const nodeIds = Array.from(this.nodeColors.keys());
+    const treeIndices = [...this.nodeColors.keys()];
     this.nodeColors.clear();
-    this.cadNode.requestNodeUpdate(nodeIds);
+    this.cadNode.requestNodeUpdate(treeIndices);
   }
 
   /**
@@ -372,9 +394,11 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * Highlight node by tree index.
    * @param treeIndex
    */
-  selectNodeByTreeIndex(treeIndex: number) {
-    this.selectedNodes.add(treeIndex);
-    this.cadNode.requestNodeUpdate([treeIndex]);
+  async selectNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
+    const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+    treeIndices.forEach(idx => this.selectedNodes.add(idx));
+    this.cadNode.requestNodeUpdate(treeIndices);
+    return treeIndices.count;
   }
 
   /**
@@ -382,15 +406,17 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   async deselectNode(nodeId: number): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-    this.deselectNodeByTreeIndex(treeIndex);
+    await this.deselectNodeByTreeIndex(treeIndex);
   }
 
   /**
    * Removes selection from the node by tree index
    */
-  deselectNodeByTreeIndex(treeIndex: number) {
-    this.selectedNodes.delete(treeIndex);
-    this.cadNode.requestNodeUpdate([treeIndex]);
+  async deselectNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
+    const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+    treeIndices.forEach(idx => this.selectedNodes.delete(idx));
+    this.cadNode.requestNodeUpdate(treeIndices);
+    return treeIndices.count;
   }
 
   /**
@@ -424,9 +450,11 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * {@link Cognite3DModel.hideNode} or {@link Cognite3DModel.hideAllNodes}
    * @param treeIndex
    */
-  showNodeByTreeIndex(treeIndex: number): void {
+  async showNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
+    const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
     this.hiddenNodes.delete(treeIndex);
     this.cadNode.requestNodeUpdate([treeIndex]);
+    return treeIndices.count;
   }
 
   /**
@@ -446,7 +474,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   hideAllNodes(makeGray?: boolean): void {
     if (makeGray) {
-      throw new NotSupportedInMigrationWrapperError();
+      throw new NotSupportedInMigrationWrapperError('makeGray is not supported');
     }
     for (let i = 0; i < this.cadModel.scene.maxTreeIndex; i++) {
       this.hiddenNodes.add(i);
@@ -463,7 +491,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   async hideNode(nodeId: number, makeGray?: boolean): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
-    this.hideNodeByTreeIndex(treeIndex, makeGray);
+    await this.hideNodeByTreeIndex(treeIndex, makeGray);
   }
 
   /**
@@ -472,12 +500,14 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @param makeGray Not supported.
    * @throws NotSupportedInMigrationWrapperError if `makeGray` is passed
    */
-  hideNodeByTreeIndex(treeIndex: number, makeGray?: boolean): void {
+  async hideNodeByTreeIndex(treeIndex: number, makeGray?: boolean, applyToChildren = false): Promise<number> {
     if (makeGray) {
-      throw new NotSupportedInMigrationWrapperError();
+      throw new NotSupportedInMigrationWrapperError('makeGray is not supported');
     }
-    this.hiddenNodes.add(treeIndex);
-    this.cadNode.requestNodeUpdate([treeIndex]);
+    const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+    treeIndices.forEach(idx => this.hiddenNodes.add(idx));
+    this.cadNode.requestNodeUpdate(treeIndices);
+    return treeIndices.count;
   }
 
   /** @internal */
@@ -496,5 +526,14 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   async mapNodeIdsToTreeIndices(nodeIds: number[]): Promise<number[]> {
     return this.nodeIdAndTreeIndexMaps.getTreeIndices(nodeIds);
+  }
+
+  private async determineTreeIndices(treeIndex: number, includeDescendants: boolean): Promise<NumericRange> {
+    let subtreeSize = 1;
+    if (includeDescendants) {
+      const subtreeSizePromise = await this.nodeIdAndTreeIndexMaps.getSubtreeSize(treeIndex);
+      subtreeSize = subtreeSizePromise !== undefined ? subtreeSizePromise : 1;
+    }
+    return new NumericRange(treeIndex, subtreeSize);
   }
 }

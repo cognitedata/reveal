@@ -11,7 +11,7 @@ import { SectorCuller } from '@/internal';
 // to appear in the api reference docs
 export { CadRenderHints } from '../datamodels/cad/rendering/CadRenderHints';
 export { CadLoadingHints } from '../datamodels/cad/CadLoadingHints';
-export { PotreePointColorType } from '../datamodels/pointcloud/types';
+export * from '../datamodels/base/SupportedModelTypes';
 
 /**
  * @property logMetrics might be used to disable usage statistics

@@ -19,6 +19,7 @@ import { PotreeGroupWrapper } from '@/datamodels/pointcloud/PotreeGroupWrapper';
 import { PotreeNodeWrapper } from '@/datamodels/pointcloud/PotreeNodeWrapper';
 import { RenderMode } from '@/datamodels/cad/rendering/RenderMode';
 import { EffectRenderManager } from '@/datamodels/cad/rendering/EffectRenderManager';
+import { SupportedModelTypes } from '@/datamodels/base';
 
 export class RevealManager<TModelIdentifier> {
   private readonly _cadManager: CadManager<TModelIdentifier>;
@@ -154,29 +155,29 @@ export class RevealManager<TModelIdentifier> {
   public addModel(
     type: 'cad',
     modelIdentifier: TModelIdentifier,
-    nodeApperanceProvider?: NodeAppearanceProvider
+    nodeAppearanceProvider?: NodeAppearanceProvider
   ): Promise<CadNode>;
   public addModel(
     type: 'pointcloud',
     modelIdentifier: TModelIdentifier
   ): Promise<[PotreeGroupWrapper, PotreeNodeWrapper]>;
   public async addModel(
-    type: 'cad' | 'pointcloud',
+    type: SupportedModelTypes,
     modelIdentifier: TModelIdentifier,
-    nodeApperanceProvider?: NodeAppearanceProvider
+    nodeAppearanceProvider?: NodeAppearanceProvider
   ): Promise<[PotreeGroupWrapper, PotreeNodeWrapper] | CadNode> {
     trackLoadModel(
       {
         moduleName: 'RevealManager',
         methodName: 'addModel',
-        options: { nodeApperanceProvider }
+        options: { nodeAppearanceProvider }
       },
       modelIdentifier
     );
 
     switch (type) {
       case 'cad': {
-        const cadNode = await this._cadManager.addModel(modelIdentifier, nodeApperanceProvider);
+        const cadNode = await this._cadManager.addModel(modelIdentifier, nodeAppearanceProvider);
         this._subscriptions.add(
           this._cadManager
             .getParsedData()
