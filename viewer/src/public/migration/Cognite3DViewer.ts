@@ -14,7 +14,7 @@ import { merge, Subject, Subscription, fromEventPattern, Observable } from 'rxjs
 import { from3DPositionToRelativeViewportCoordinates } from '@/utilities/worldToViewport';
 import { intersectCadNodes } from '@/datamodels/cad/picking';
 
-import { AddModelOptions, Cognite3DViewerOptions, GeometryFilter, SupportedModelTypes } from './types';
+import { AddModelOptions, Cognite3DViewerOptions, GeometryFilter } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import { Intersection } from './intersection';
 import RenderController from './RenderController';
@@ -30,6 +30,7 @@ import { RevealManager } from '../RevealManager';
 import { createCdfRevealManager } from '../createRevealManager';
 import { CdfModelIdentifier } from '@/utilities/networking/types';
 import { RevealOptions, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
+import { SupportedModelTypes } from '@/datamodels/base';
 
 export type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
 export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
@@ -318,9 +319,9 @@ export class Cognite3DViewer {
   async addModel(options: AddModelOptions): Promise<Cognite3DModel | CognitePointCloudModel> {
     const type = await this.determineModelType(options.modelId, options.revisionId);
     switch (type) {
-      case SupportedModelTypes.CAD:
+      case 'cad':
         return this.addCadModel(options);
-      case SupportedModelTypes.PointCloud:
+      case 'pointcloud':
         return this.addPointCloudModel(options);
       default:
         throw new Error('Model is not supported');
@@ -345,7 +346,7 @@ export class Cognite3DViewer {
     trackLoadModel(
       {
         options: omit(options, ['modelId', 'revisionId']),
-        type: SupportedModelTypes.CAD,
+        type: 'cad',
         moduleName: 'Cognite3DViewer',
         methodName: 'addCadModel'
       },
@@ -406,7 +407,7 @@ export class Cognite3DViewer {
     trackLoadModel(
       {
         options: omit(options, ['modelId', 'revisionId']),
-        type: SupportedModelTypes.PointCloud,
+        type: 'pointcloud',
         moduleName: 'Cognite3DViewer',
         methodName: 'addPointCloudModel'
       },
@@ -446,16 +447,17 @@ export class Cognite3DViewer {
    * @param modelId the model's id
    * @param revisionId the model's revision id
    *
+   * @returns empty string if type is not supported
    * @example
    * ```typescript
    * const viewer = new Cognite3DViewer(...);
    * const type = await viewer.determineModelType(options.modelId, options.revisionId)
    * let model: Cognite3DModel | CognitePointCloudModel
    * switch (type) {
-   *   case SupportedModelTypes.CAD:
+   *   case 'cad':
    *     model = await viewer.addCadModel(options);
    *     break;
-   *   case SupportedModelTypes.PointCloud:
+   *   case 'pointcloud':
    *     model = await viewer.addPointCloudModel(options);
    *     break;
    *   default:
@@ -464,15 +466,15 @@ export class Cognite3DViewer {
    * viewer.fitCameraToModel(model);
    * ```
    */
-  async determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes> {
+  async determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes | ''> {
     const clientExt = new CdfModelDataClient(this.sdkClient);
     const outputs = await clientExt.getOutputs({ modelId, revisionId, format: File3dFormat.AnyFormat });
     if (outputs.findMostRecentOutput(File3dFormat.RevealCadModel) !== undefined) {
-      return SupportedModelTypes.CAD;
+      return 'cad';
     } else if (outputs.findMostRecentOutput(File3dFormat.EptPointCloud) !== undefined) {
-      return SupportedModelTypes.PointCloud;
+      return 'pointcloud';
     }
-    return SupportedModelTypes.NotSupported;
+    return '';
   }
 
   /**
@@ -833,7 +835,7 @@ export class Cognite3DViewer {
    * ```
    */
   getIntersectionFromPixel(offsetX: number, offsetY: number): null | Intersection {
-    const cadModels = this.getModels(SupportedModelTypes.CAD);
+    const cadModels = this.getModels('cad');
     const nodes = cadModels.map(x => x.cadNode);
 
     const coords = {
@@ -872,8 +874,8 @@ export class Cognite3DViewer {
     throw new NotSupportedInMigrationWrapperError('Cache is not supported');
   }
 
-  private getModels(type: SupportedModelTypes.CAD): Cognite3DModel[];
-  private getModels(type: SupportedModelTypes.PointCloud): CognitePointCloudModel[];
+  private getModels(type: 'cad'): Cognite3DModel[];
+  private getModels(type: 'pointcloud'): CognitePointCloudModel[];
   private getModels(type: SupportedModelTypes): CogniteModelBase[] {
     return this.models.filter(x => x.type === type);
   }

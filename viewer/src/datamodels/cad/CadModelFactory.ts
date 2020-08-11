@@ -12,13 +12,13 @@ export class CadModelFactory {
     this._materialManager = materialManager;
   }
 
-  createModel(modelMetadata: CadModelMetadata, nodeApperanceProvider?: NodeAppearanceProvider): CadNode {
+  createModel(modelMetadata: CadModelMetadata, nodeAppearanceProvider?: NodeAppearanceProvider): CadNode {
     const { blobUrl, scene } = modelMetadata;
     const cadModel = new CadNode(modelMetadata, this._materialManager);
     this._materialManager.addModelMaterials(blobUrl, scene.maxTreeIndex);
 
-    if (nodeApperanceProvider) {
-      this._materialManager.setNodeAppearanceProvider(blobUrl, nodeApperanceProvider);
+    if (nodeAppearanceProvider) {
+      this._materialManager.setNodeAppearanceProvider(blobUrl, nodeAppearanceProvider);
     }
 
     this._materialManager.updateModelNodes(blobUrl, [...Array(scene.maxTreeIndex + 1).keys()]);
