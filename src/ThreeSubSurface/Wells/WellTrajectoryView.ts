@@ -53,13 +53,9 @@ export class WellTrajectoryView extends BaseGroupThreeView
   //==================================================
 
   private cameraDirection = new Vector3(0, 0, 1); // Direction to the center
-
   private cameraPosition = new Vector3(0, 0, 1);
-
   private fgColor: Color = Colors.white;
-
   private bandTextures: [THREE.CanvasTexture | null, THREE.CanvasTexture | null] = [null, null];
-
   private getBandName(rightBand: boolean): string { return rightBand ? "RightBand" : "LeftBand"; }
 
   //==================================================

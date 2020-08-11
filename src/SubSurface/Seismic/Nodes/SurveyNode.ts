@@ -22,6 +22,7 @@ import { SeismicPlaneFolder } from "@/SubSurface/Seismic/Nodes/SeismicPlaneFolde
 import { SeismicOutlineNode } from "@/SubSurface/Seismic/Nodes/SeismicOutlineNode";
 import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
 import { Ma } from "@/Core/Primitives/Ma";
+import { Range3 } from '@/Core/Geometry/Range3';
 
 export class SurveyNode extends BaseVisualNode
 {
@@ -67,6 +68,8 @@ export class SurveyNode extends BaseVisualNode
   {
     return new SurfaceRenderStyle(targetId);
   }
+
+  public /*override*/ get boundingBox(): Range3 { return this.surveyCube ? this.surveyCube.boundingBox : new Range3(); }
 
   protected /*override*/ initializeCore()
   {

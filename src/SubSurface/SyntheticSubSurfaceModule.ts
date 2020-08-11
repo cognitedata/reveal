@@ -39,6 +39,7 @@ import { SurveyNode } from "@/SubSurface/Seismic/Nodes/SurveyNode";
 import { SeismicCube } from "@/SubSurface/Seismic/Data/SeismicCube";
 import { SeismicCubeNode } from "@/SubSurface/Seismic/Nodes/SeismicCubeNode";
 import { Index3 } from "@/Core/Geometry/Index3";
+import { ColorMaps } from '@/Core/Primitives/ColorMaps';
 
 // import { CogniteSeismicClient } from '@cognite/seismic-sdk-js'
 
@@ -255,17 +256,19 @@ export class SyntheticSubSurfaceModule extends BaseModule
     const inc = new Vector3(20, 20, 20);
     const rotationAngle = Math.PI / 10;
 
-    const cube = new SeismicCube(nodeSize, origin, inc, rotationAngle);
-
-    const seismicCubeNode = new SeismicCubeNode();
+    let cube = new SeismicCube(nodeSize, origin, inc, rotationAngle);
+    let seismicCubeNode = new SeismicCubeNode();
     seismicCubeNode.seismicCube = cube;
-    survey.surveyCube = cube.getRegularGrid();
-
-    const seismicCubeNode1 = new SeismicCubeNode();
-    seismicCubeNode1.seismicCube = cube;
-
+    seismicCubeNode.colorMap = ColorMaps.rainbowName;
     survey.addChild(seismicCubeNode);
-    survey.addChild(seismicCubeNode1);
+
+    cube = new SeismicCube(nodeSize, origin, inc, rotationAngle);
+    seismicCubeNode = new SeismicCubeNode();
+    seismicCubeNode.seismicCube = cube;
+    seismicCubeNode.colorMap = ColorMaps.commonSeismicName;
+    survey.addChild(seismicCubeNode);
+
+    survey.surveyCube = cube.getRegularGrid();
 
     seismicTree.addChild(survey);
   }

@@ -78,7 +78,7 @@ export abstract class BaseVisualNode extends BaseNode
     return CheckBoxState.Never;
   }
 
-  public /*override*/setVisibleInteractive(visible: boolean, target?: ITarget | null, topLevel = true): boolean
+  public /*override*/ setVisibleInteractive(visible: boolean, target?: ITarget | null, topLevel = true): boolean
   {
     if (!target)
     {
@@ -86,17 +86,27 @@ export abstract class BaseVisualNode extends BaseNode
       if (!target)
         return false;
     }
-    if (visible && !this.canBeChecked(target))
-      return false;
-
-    if(this.isRadio(target))
+    if (visible)
     {
-      const { parent } = this;
-      const visibleSibling = parent?.getVisibleDescendantByType(BaseNode);
-      if(visibleSibling && visibleSibling.uniqueId !== this.uniqueId)
-        visibleSibling.setVisibleInteractive(false);
+      if (!this.canBeChecked(target))
+        return false;
+
+      if (this.isRadio(target))
+      {
+        // Turn the others off
+        if (this.parent)
+        {
+          for (const sibling of this.parent.getDescendants())
+          {
+            if (sibling === this)
+              continue;
+            if (sibling.className !== this.className)
+              continue;
+            sibling.setVisibleInteractive(false, target);
+          }
+        }
+      }
     }
-    
     if (!this.setVisible(visible, target))
       return false;
 

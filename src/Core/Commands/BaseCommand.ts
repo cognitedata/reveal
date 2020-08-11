@@ -47,7 +47,7 @@ export abstract class BaseCommand
 
     const shortCut = this.getShortCutKeys();
     if (shortCut && !Util.isEmpty(shortCut))
-      tooltip += ` [${shortCut.toUpperCase()}]`;
+      tooltip += ` [${shortCut}]`;
     return tooltip;
   }
 

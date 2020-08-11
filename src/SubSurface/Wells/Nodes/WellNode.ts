@@ -64,6 +64,4 @@ export class WellNode extends BaseNode
     folder.addReadOnlyXY("WellHead", this.wellHead.x, this.wellHead.y, 2);
     folder.addReadOnlyInteger("# Trajectories", this.children.length);
   }
-
-  //public /*override*/ get boundingBox(): Range3 { return this.data ? this.data.getRange() : new Range3(); }
 }

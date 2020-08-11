@@ -72,7 +72,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   // INSTANCE PROPERTIES: Tools
   //==================================================
 
-  public setDefaultTool(tool: BaseTool | null = null) { this._toolController.setDefaultTool(tool, this._cameraControl); }
+  public setPreviousTool() { this._toolController.setPreviousTool(this._cameraControl); }
 
   public set activeTool(tool: BaseTool | null) { this._toolController.setActiveTool(tool, this._cameraControl); }
   public get activeTool(): BaseTool | null { return this._toolController.activeTool; }
@@ -281,7 +281,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   public addTools(toolbar: IToolbar)
   {
     const navigationTool = new NavigationTool(this);
-    this.setDefaultTool(navigationTool);
+    this.activeTool = navigationTool;
 
     this.addTool(toolbar, ToolbarGroupIds.Tools, navigationTool);
     this.addTool(toolbar, ToolbarGroupIds.Tools, new EditTool(this));

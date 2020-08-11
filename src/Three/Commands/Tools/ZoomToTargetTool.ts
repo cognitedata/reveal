@@ -1,6 +1,7 @@
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { BaseTool } from "@/Three/Commands/Tools/BaseTool";
 import ZoomToTargetBaseToolIcon from "@images/Commands/ZoomToTargetTool.png";
+import { VirtualUserInterface } from '@/Core/States/VirtualUserInterface';
 
 export class ZoomToTargetTool extends BaseTool
 {
@@ -19,7 +20,7 @@ export class ZoomToTargetTool extends BaseTool
 
   public /*override*/ getName(): string { return "Zoom to target"; }
   public /*override*/ getIcon(): string { return ZoomToTargetBaseToolIcon; }
-  public /*override*/ getShortCutKeys(): string { return "s"; }
+  public /*override*/ getShortCutKeys(): string { return "S"; }
 
   //==================================================
   // OVERRIDES of BaseTool
@@ -38,7 +39,7 @@ export class ZoomToTargetTool extends BaseTool
     viewInfo.addActiveTool(this);
     viewInfo.addText("Zoom by clicking on something in the 3D.");
     viewInfo.addText("This position will then be in the center and");
-    viewInfo.addText("the rotation will be around this point");
+    viewInfo.addText("the rotation will be around this point.");
     target.invalidate();
   }
 
@@ -54,7 +55,7 @@ export class ZoomToTargetTool extends BaseTool
 
     const { cameraControl } = target;
     cameraControl.zoomToTarget(worldCoords);
-    target.setDefaultTool();
-    // Nils: Todo: Update then the toolbar
+    target.setPreviousTool();
+    VirtualUserInterface.updateToolbars();
   }
 }

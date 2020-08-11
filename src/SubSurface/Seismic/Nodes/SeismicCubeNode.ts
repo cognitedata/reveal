@@ -43,11 +43,8 @@ export class SeismicCubeNode extends DataNode
   //==================================================
 
   public get seismicCube(): SeismicCube | null { return this.anyData; }
-
   public set seismicCube(value: SeismicCube | null) { this.anyData = value; }
-
   public get renderStyle(): SurfaceRenderStyle | null { return this.getRenderStyle() as SurfaceRenderStyle; }
-
   public get surveyNode(): SurveyNode | null { return this.getAncestorByType(SurveyNode); }
 
   //==================================================
@@ -55,7 +52,6 @@ export class SeismicCubeNode extends DataNode
   //==================================================
 
   public /*override*/ get className(): string { return SeismicCubeNode.className; }
-
   public /*override*/ isA(className: string): boolean { return className === SeismicCubeNode.className || super.isA(className); }
 
   //==================================================

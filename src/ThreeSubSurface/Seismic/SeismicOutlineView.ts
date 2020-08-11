@@ -12,17 +12,24 @@
 //=====================================================================================
 
 import * as THREE from "three";
+import Color from 'color';
 
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 import { SeismicOutlineNode } from '@/SubSurface/Seismic/Nodes/SeismicOutlineNode';
 import { ThreeConverter } from '@/Three/Utilities/ThreeConverter';
-import { Colors } from '@/Core/Primitives/Colors';
 import { Range3 } from '@/Core/Geometry/Range3';
 import { Changes } from '@/Core/Views/Changes';
+import { Colors } from '@/Core/Primitives/Colors';
 
 export class SeismicOutlineView extends BaseGroupThreeView
 {
+  //==================================================
+  // INSTANCE FIELDS
+  //==================================================
+
+  private fgColor: Color = Colors.white;
+
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
@@ -54,22 +61,29 @@ export class SeismicOutlineView extends BaseGroupThreeView
 
   public /*override*/ calculateBoundingBoxCore(): Range3 | undefined
   {
-    const { node } = this;
-    const { surveyCube } = node;
-    if (!surveyCube)
-      return undefined;
-
-    return surveyCube.boundingBox;
+    const { surveyNode } = this.node;
+    return surveyNode ? surveyNode.boundingBox : new Range3();
   }
 
   //==================================================
   // OVERRIDES of BaseGroupThreeView
   //==================================================
 
+  public /*override*/ mustTouch(): boolean
+  {
+    const target = this.renderTarget;
+    if (this.fgColor === target.fgColor)
+      return false;
+
+    this.fgColor = target.fgColor;
+    return true;
+  }
+
   protected /*override*/ createObject3DCore(): THREE.Object3D | null
   {
     const { node } = this;
     const parent = new THREE.Group();
+    const target = this.renderTarget;
 
     const { surveyCube } = node;
     if (!surveyCube)
@@ -82,20 +96,23 @@ export class SeismicOutlineView extends BaseGroupThreeView
     const maxJ = surveyCube.nodeSize.j - 1;
     const maxK = surveyCube.nodeSize.k - 1;
 
+    this.fgColor = target.fgColor;
+    const color = ThreeConverter.toThreeColor(this.fgColor);
+
     for (const i of [0, maxI])
       for (const j of [0, maxJ])
         for (const k of [0, maxK])
           geometry.vertices.push(transformer.to3D(surveyCube.getNodePosition(i, j, k)));
     for (const k of [0, maxK])
-      for (const i of [0, maxI])
-        for (const j of [0, maxJ])
-          geometry.vertices.push(transformer.to3D(surveyCube.getNodePosition(i, j, k)));
-    for (const k of [0, maxK])
+    {
       for (const j of [0, maxJ])
         for (const i of [0, maxI])
           geometry.vertices.push(transformer.to3D(surveyCube.getNodePosition(i, j, k)));
-
-    const material = new THREE.LineBasicMaterial({ color: ThreeConverter.toThreeColor(Colors.white), linewidth: 1 });
+      for (const i of [0, maxI])
+        for (const j of [0, maxJ])
+          geometry.vertices.push(transformer.to3D(surveyCube.getNodePosition(i, j, k)));
+    }
+    const material = new THREE.LineBasicMaterial({ color, linewidth: 1 });
     const lineSegments = new THREE.LineSegments(geometry, material);
     parent.add(lineSegments);
     return parent;

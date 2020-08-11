@@ -14,6 +14,7 @@
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { IDataLoader } from "@/Core/Interfaces/IDataLoader";
 import { ITarget } from "@/Core/Interfaces/ITarget";
+import { ColorMaps } from '@/Core/Primitives/ColorMaps';
 
 export abstract class DataNode extends BaseVisualNode
 {
@@ -36,6 +37,7 @@ export abstract class DataNode extends BaseVisualNode
   private _data: any = null;
   private _dataIsLost = false;
   private _dataLoader: IDataLoader | null = null;
+  public colorMap = ColorMaps.rainbowName;
 
   //==================================================
   // INSTANCE PROPERTIES

@@ -23,7 +23,7 @@ export class ToolController
   //==================================================
 
   private _activeTool: BaseTool | null = null;
-  private _defaultTool: BaseTool | null = null;
+  private _previousTool: BaseTool | null = null;
   private _alltools: BaseTool[] = [];
 
   //==================================================
@@ -41,18 +41,10 @@ export class ToolController
     this._alltools.push(tool);
   }
 
-  public setDefaultTool(tool: BaseTool | null, cameraControl: CameraControl | null)
+  public setPreviousTool(cameraControl: CameraControl | null)
   {
-    if (!tool)
-    {
-      if (this._defaultTool)
-        this.setActiveTool(this._defaultTool, cameraControl);
-    }
-    else
-    {
-      this._defaultTool = tool;
-      this.setActiveTool(tool, cameraControl);
-    }
+    if (this._previousTool)
+      this.setActiveTool(this._previousTool, cameraControl);
   }
 
   public setActiveTool(tool: BaseTool | null, cameraControl: CameraControl | null)
@@ -64,8 +56,10 @@ export class ToolController
       return;
 
     if (this._activeTool)
+    {
       this._activeTool.onDeactivate();
-
+      this._previousTool = this._activeTool;
+    }
     this._activeTool = tool;
     this._activeTool.onActivate();
     if (!cameraControl)
@@ -141,9 +135,10 @@ export class ToolController
     // ctrlKey, altKey,shiftKey
     // code – the “key code” ("KeyA", "ArrowLeft" and so on), specific to the physical location of the key on keyboard.
     // key – the character ("A", "a" and so on), for non-character keys, such as Esc, usually has the same value as code.
+    const key = event.key.toUpperCase();
     for (const tool of this._alltools)
     {
-      if (tool.getShortCutKeys() === event.key)
+      if (tool.getShortCutKeys() === key)
       {
         target.activeTool = tool;
         return;

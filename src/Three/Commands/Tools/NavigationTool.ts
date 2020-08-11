@@ -29,6 +29,26 @@ export class NavigationTool extends BaseTool
   public /*override*/ getName(): string { return "Navigation"; }
   public /*override*/ getIcon(): string { return PanBaseToolIcon; }
 
+  //==================================================
+  // OVERRIDES of BaseTool
+  //==================================================
+
+  public /*override*/ onActivate(): void
+  {
+    const { target } = this;
+    if (!target)
+      return;
+
+    const { viewInfo } = target;
+    viewInfo.clear();
+    viewInfo.addActiveTool(this);
+    viewInfo.addValue("Left button drag", "Rotate");
+    viewInfo.addValue("Right button drag", "Move");
+    viewInfo.addValue("Wheel", "Zoom in or out");
+    viewInfo.addValue("Left click", "Pick any object in 3D to get information");
+    target.invalidate();
+  }
+
   public /*override*/ onMouseDown(event: MouseEvent): void
   {
     this._movementX = event.clientX;
