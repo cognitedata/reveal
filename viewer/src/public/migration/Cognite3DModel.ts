@@ -180,7 +180,14 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     _treeIndex?: number,
     _subtreeSize?: number
   ): Promise<boolean> {
-    throw new NotSupportedInMigrationWrapperError();
+    throw new NotSupportedInMigrationWrapperError(
+      'Use iterateSubtreeByTreeIndex(treeIndex: number, action: (treeIndex: number) => void)'
+    );
+  }
+  async iterateSubtreeByTreeIndex(treeIndex: number, action: (treeIndex: number) => void): Promise<number> {
+    const treeIndices = await this.determineTreeIndices(treeIndex, true);
+    treeIndices.forEach(action);
+    return treeIndices.count;
   }
 
   async getNodeColor(nodeId: number): Promise<Color> {
