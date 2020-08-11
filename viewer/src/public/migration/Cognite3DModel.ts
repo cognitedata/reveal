@@ -258,7 +258,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   resetAllNodeColors() {
-    const treeIndices = new NumericRange(0, this.cadNode.cadModelMetadata.scene.maxTreeIndex + 1);
+    const treeIndices = [...this.nodeColors.keys()];
     this.nodeColors.clear();
     this.cadNode.requestNodeUpdate(treeIndices);
   }
