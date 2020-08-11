@@ -361,7 +361,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * Highlight node by node ID.
    * This method is async because node ID might be not loaded yet.
    * @deprecated {@link Use Cognite3DModel.selectNodeByTreeIndex}
-   * @see {@link Cognite3DModel.selectNodeByTreeIndex}
    * @param nodeId
    */
   async selectNode(nodeId: number): Promise<void> {
