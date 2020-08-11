@@ -57,12 +57,3 @@ export interface AddModelOptions {
   orthographicCamera?: boolean;
   onComplete?: () => void;
 }
-
-export enum SupportedModelTypes {
-  PointCloud = 'pointcloud',
-  CAD = 'cad',
-  /**
-   * Not a model supported by Reveal.
-   */
-  NotSupported = ''
-}
