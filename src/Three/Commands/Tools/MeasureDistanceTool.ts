@@ -31,7 +31,7 @@ export class MeasureDistanceTool extends BaseTool
 
   public /*override*/ getName(): string { return "Measure distance"; }
   public /*override*/ getIcon(): string { return MeasureDistanceToolIcon; }
-  public /*override*/ getShortCutKeys(): string { return "m"; }
+  public /*override*/ getShortCutKeys(): string { return "M"; }
 
   //==================================================
   // OVERRIDES of BaseTool
@@ -48,9 +48,9 @@ export class MeasureDistanceTool extends BaseTool
     const { viewInfo } = target;
     viewInfo.clear();
     viewInfo.addActiveTool(this);
-    viewInfo.addText("Click on a location in 3D to start from");
-
+    viewInfo.addText("Click on a location in 3D to start from.");
     target.invalidate();
+
     this._pixelCoordinates.clear();
     this._worldCoordinates.clear();
   }
@@ -97,7 +97,7 @@ export class MeasureDistanceTool extends BaseTool
     viewInfo.addActiveTool(this);
     if (this._worldCoordinates.length <= 1)
     {
-      viewInfo.addText("Click on another location in 3D to end");
+      viewInfo.addText("Click on another location in 3D to end.");
       viewInfo.addValue("Start Position", worldStartPosition.getString(2));
     }
     else

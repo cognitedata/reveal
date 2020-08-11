@@ -19,4 +19,20 @@ export class ZoomTool extends BaseTool
 
   public /*override*/ getName(): string { return "Rectangle zoom"; }
   public /*override*/ getIcon(): string { return ZoomBaseToolIcon; }
+
+  //==================================================
+  // OVERRIDES of BaseTool
+  //==================================================
+
+  public /*override*/ onActivate(): void
+  {
+    const { target } = this;
+    if (!target)
+      return;
+
+    const { viewInfo } = target;
+    viewInfo.clear();
+    viewInfo.addActiveTool(this);
+    target.invalidate();
+  }
 }

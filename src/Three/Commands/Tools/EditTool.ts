@@ -36,6 +36,23 @@ export class EditTool extends BaseTool
 
   public /*override*/ overrideLeftButton(): boolean { return true; }
 
+  public /*override*/ onActivate(): void
+  {
+    const { target } = this;
+    if (!target)
+      return;
+
+    const { viewInfo } = target;
+    viewInfo.clear();
+    viewInfo.addActiveTool(this);
+    viewInfo.addValue("Left button drag", "Context dependent");
+    viewInfo.addValue("Right button drag", "Move");
+    viewInfo.addValue("Wheel", "Zoom in or out");
+    viewInfo.addValue("Move hover", "Pick any object in 3D to get information");
+    viewInfo.addValue("Left click", "Context dependent");
+    target.invalidate();
+  }
+
   public /*override*/ onMouseHover(event: MouseEvent): void
   {
     this.onShowInfo(event);
