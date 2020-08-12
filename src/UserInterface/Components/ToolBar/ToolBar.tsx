@@ -19,7 +19,7 @@ export default function ToolBar(props: {
         const { icon, selected } = config;
         return (
           <div
-            key={`${sectionId}-toobar-${icon.name}`}
+            key={`${sectionId}-toolbar-${icon.name}`}
             className={`tool-bar-icon ${selected ? "icon-selected" : ""}`}
           >
             <Icon type={icon.type} name={icon.name} />

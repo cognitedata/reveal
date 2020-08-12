@@ -7,11 +7,11 @@ import VisualizerToolbar, {
 export default function Viewer3D(props: {
   viewer3D: any;
   toolbar?: IToolbarButton[];
-  onToolbarButtonClick: (visualizerId: string, index: any) => void;
+  onToolbarButtonClick: (visualizerId: string, index: number) => void;
   onToolbarSelectionChange: (
     visualizerId: string,
-    index: any,
-    event: any
+    index: number,
+    value: string
   ) => void;
 }) {
   const {

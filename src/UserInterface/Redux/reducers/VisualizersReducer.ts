@@ -39,14 +39,13 @@ export const visualizerSlice = createSlice({
     executeVisualizerToolbarCommand: {
       reducer: (state: IVisualizerState, action: PayloadAction<{ visualizerId: string, toolbarCommands: BaseCommand[] | null }>) => {
         const { visualizerId, toolbarCommands } = action.payload;
+        if(!toolbarCommands) return;
 
-        if(toolbarCommands){
-          toolbarCommands.forEach((toolCommand, index) => {
-            state.viewers[visualizerId][index] = populateToolCommandState(toolCommand);
-          });
-        }
+        toolbarCommands.forEach((toolCommand, index) => {
+          state.viewers[visualizerId][index] = populateToolCommandState(toolCommand);
+        });
       },
-      prepare: (visualizerId: string, index: number, event?: any): { payload: { visualizerId: string, toolbarCommands: BaseCommand[] | null } } => {
+      prepare: (visualizerId: string, index: number, value?: string): { payload: { visualizerId: string, toolbarCommands: BaseCommand[] | null } } => {
         const toolbarCommands = ViewerUtils.getViewers()[visualizerId].getToolbarCommands();
 
         if (!toolbarCommands)
@@ -54,8 +53,8 @@ export const visualizerSlice = createSlice({
 
         const toolCommand = toolbarCommands[index];
 
-        if (event)
-          toolCommand.invokeValue(event.target.value);
+        if (value)
+          toolCommand.invokeValue(value);
         else
           toolCommand.invoke();
 
@@ -70,11 +69,11 @@ export const visualizerSlice = createSlice({
         for (const [visualizerId, viewer] of Object.entries(viewers))
         {
           const toolbarCommands = viewer.getToolbarCommands();
-          if (toolbarCommands){
-            toolbarCommands.forEach((toolCommand, index) => {
-              state.viewers[visualizerId][index] = populateToolCommandState(toolCommand);
-            });
-          }
+          if (!toolbarCommands) continue;
+
+          toolbarCommands.forEach((toolCommand, index) => {
+            state.viewers[visualizerId][index] = populateToolCommandState(toolCommand);
+          });
         }
       },
       prepare: (): { payload: { viewers: { [key: string]: Viewer } } } => {
@@ -99,7 +98,7 @@ function populateToolCommandState(item: BaseCommand)
     tooltip: item.getTooltip(),
     dropdownOptions: item.dropdownOptions
   };
-};
+}
 
 export default visualizerSlice.reducer;
 export const { initializeToolbarStatus, executeVisualizerToolbarCommand, updateVisualizerToolbars, updateStatusPanel } = visualizerSlice.actions;

@@ -31,15 +31,15 @@ const mapStateToProps = (state: State) => {
 
 const mapDispatchToPros = (dispatch: Dispatch) => {
   return {
-    onToolbarButtonClick: (visualizerId: string, index: any) => {
+    onToolbarButtonClick: (visualizerId: string, index: number) => {
       dispatch(executeVisualizerToolbarCommand(visualizerId, index));
     },
     onToolbarSelectionChange: (
       visualizerId: string,
-      index: any,
-      event: any
+      index: number,
+      value: string
     ) => {
-      dispatch(executeVisualizerToolbarCommand(visualizerId, index, event));
+      dispatch(executeVisualizerToolbarCommand(visualizerId, index, value));
     },
   };
 };
