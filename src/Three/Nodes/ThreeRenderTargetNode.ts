@@ -67,6 +67,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
   private _toolController = new ToolController();
   private _raycaster = new THREE.Raycaster();
   private _transformer = new ThreeTransformer();
+  public isPerspectiveMode = true;
 
   //==================================================
   // INSTANCE PROPERTIES: Tools
@@ -155,7 +156,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     super.initializeCore();
 
     this._scene = new THREE.Scene();
-    this._cameraControl = new CameraControl(this, true);
+    this._cameraControl = new CameraControl(this);
 
     // Create lights
     const ambientLight = new THREE.AmbientLight(0x404040, 0.25); // soft white light
@@ -164,15 +165,13 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     this._scene.add(ambientLight);
     this._scene.add(directionalLight);
 
-    this.domElement.tabIndex = 1;
+    this.domElement.tabIndex = 1; // Trick to let keydown works!
     this.controls.addEventListener("update", () => this.updateLightPosition());
     this.domElement.addEventListener('click', (event) => this._toolController.onMouseClick(this, event), false);
     this.domElement.addEventListener('mousedown', (event) => this._toolController.onMouseDown(this, event), false);
     this.domElement.addEventListener('mouseup', (event) => this._toolController.onMouseUp(this, event), false);
     this.domElement.addEventListener('mousemove', (event) => this._toolController.onMouseMove(this, event), false);
     this.domElement.addEventListener('keydown', (event) => this._toolController.onKeyDown(this, event), false);
-
-    //dblclick
     this.render();
   }
 
@@ -313,12 +312,16 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     return !this._cameraControl ? false : this._cameraControl.viewFrom(boundingBox, index);
   }
 
-  public switchCamera(isPerspectiveMode: boolean)
+  public switchCamera()
   {
+    this.isPerspectiveMode = !this.isPerspectiveMode;
+
     const { azimuthAngle } = this.cameraControl.controls;
     const { polarAngle } = this.cameraControl.controls;
 
-    this._cameraControl = new CameraControl(this, isPerspectiveMode);
+    this.controls.removeEventListener("update", () => this.updateLightPosition());
+    this._cameraControl = new CameraControl(this);
+    this.controls.addEventListener("update", () => this.updateLightPosition());
 
     const boundingBox = this.getBoundingBoxFromViews();
     this.transformer.transformRangeTo3D(boundingBox);
@@ -326,7 +329,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     const pixelYRange = this.pixelRange.y.max - this.pixelRange.y.min;
 
     // Set camera status to match with previous selected camera
-    if (!isPerspectiveMode)
+    if (!this.isPerspectiveMode)
       this.cameraControl.controls.zoomTo(pixelYRange / boundingBoxZRange);
 
     this._cameraControl.controls.rotateTo(azimuthAngle, polarAngle, false);
@@ -368,7 +371,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     verticalAxis.crossVectors(horizontalAxis, vectorToCenter);
 
     vectorToCenter.applyAxisAngle(verticalAxis, Ma.toRad(0)); // Azimuth angle
-    vectorToCenter.applyAxisAngle(horizontalAxis, -Ma.toRad(0)); //Dip angle
+    vectorToCenter.applyAxisAngle(horizontalAxis, -Ma.toRad(0)); // Dip angle
 
     vectorLength = Math.max(vectorLength, 100_000); // Move the light far away
     vectorToCenter.multiplyScalar(vectorLength);

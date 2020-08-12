@@ -122,10 +122,20 @@ export class AxisThreeView extends BaseGroupThreeView
       return;
 
     const { camera } = this;
-    const cameraPosition = ThreeConverter.fromThreeVector3(camera.position);
+    let cameraDirection: Vector3 | null = null;
+    let cameraPosition: Vector3 | null = null;
 
+    if (camera instanceof THREE.OrthographicCamera)
+    {
+      const temp = new THREE.Vector3(0, 0, 0);
+      cameraDirection = ThreeConverter.fromThreeVector3(camera.getWorldDirection(temp));
+    }
+    else
+    {
+      cameraPosition = ThreeConverter.fromThreeVector3(camera.position);
+    }
     for (const child of object3D.children)
-      this.updateVisible(child, cameraPosition);
+      this.updateVisible(child, cameraPosition, cameraDirection);
   }
 
   //==================================================
@@ -462,20 +472,20 @@ export class AxisThreeView extends BaseGroupThreeView
     object.userData[MainAxisName] = mainAxis;
   }
 
-  private updateVisible(object: THREE.Object3D, cameraPosition: Vector3): void
+  private updateVisible(object: THREE.Object3D, cameraPosition: Vector3 | null, cameraDirection: Vector3 | null): void
   {
     const wallIndex0 = object.userData[WallIndex0Name];
     if (wallIndex0 === undefined)
       return;
 
-    const visible0 = this.isWallVisible(wallIndex0, cameraPosition);
+    const visible0 = this.isWallVisible(wallIndex0, cameraPosition, cameraDirection);
     const wallIndex1 = object.userData[WallIndex1Name];
     if (wallIndex1 === undefined)
     {
       object.visible = visible0;
       return;
     }
-    const visible1 = this.isWallVisible(wallIndex1, cameraPosition);
+    const visible1 = this.isWallVisible(wallIndex1, cameraPosition, cameraDirection);
     const mainAxis = object.userData[MainAxisName];
     if (mainAxis)
       object.visible = visible0 !== visible1;
@@ -483,9 +493,14 @@ export class AxisThreeView extends BaseGroupThreeView
       object.visible = visible0 && visible1;
   }
 
-  private isWallVisible(wallIndex: number, cameraPosition: Vector3): boolean
+  private isWallVisible(wallIndex: number, cameraPosition: Vector3 | null, cameraDirection: Vector3 | null): boolean
   {
-    const cameraDirection = Vector3.substract(this.centersIn3d[wallIndex], cameraPosition);
+    if (!cameraDirection)
+    {
+      if (!cameraPosition)
+        return false;
+      cameraDirection = Vector3.substract(this.centersIn3d[wallIndex], cameraPosition);
+    }
     const normal = Range3.getWallNormal(wallIndex);
     return cameraDirection.getDot(normal) > 0;
   }

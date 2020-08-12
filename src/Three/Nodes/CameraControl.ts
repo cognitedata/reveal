@@ -29,8 +29,8 @@ export class CameraControl
   // INSTANCE FIELDS
   //==================================================
 
+  private static _isCameraControlInstalled = false;
   private _camera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
-
   private _controls: CameraControls | null = null;
 
   //==================================================
@@ -60,17 +60,15 @@ export class CameraControl
   // CONSTRUCTOR
   //==================================================
 
-  private static _isInstalled = false;
-
-  constructor(target: ThreeRenderTargetNode, isPerspectiveMode: boolean)
+  constructor(target: ThreeRenderTargetNode)
   {
-    if (!CameraControl._isInstalled)
+    if (!CameraControl._isCameraControlInstalled)
     {
       CameraControls.install({ THREE });
-      CameraControl._isInstalled = true;
+      CameraControl._isCameraControlInstalled = true;
     }
 
-    this._camera = isPerspectiveMode ? this.createPerspectiveCamera(target) : this.createOrthographicCamera(target);
+    this._camera = target.isPerspectiveMode ? this.createPerspectiveCamera(target) : this.createOrthographicCamera(target);
     this._camera.position.set(0, 0, 5);
     this._camera.up.set(0,0,1);
     this._controls = new CameraControls(this._camera, target.domElement);

@@ -5,9 +5,6 @@ import ToggleCameraTypeCommandPerspectiveIcon from "@images/Commands/ToggleCamer
 
 export class ToggleCameraTypeCommand extends ThreeRenderTargetCommand
 {
-  // Whether setlected camera is Perspective mode or Orthographic mode
-  private isPerspectiveMode = true;
-
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -27,21 +24,14 @@ export class ToggleCameraTypeCommand extends ThreeRenderTargetCommand
 
   public /*override*/ get isCheckable(): boolean { return true; } // Can be checked? (default false)
 
-  public /*override*/ get isChecked(): boolean { return this.isPerspectiveMode; }
+  public /*override*/ get isChecked(): boolean { return this.target?.isPerspectiveMode || false; }
 
   protected /*override*/ invokeCore(): boolean
   {
     if(!this.target)
       return false;
 
-    const objectCountExceptAxis = this.target.viewsShownHere.list.length - 1;
-      
-    // Disable the button when objects are not exists on view
-    if (objectCountExceptAxis < 1)
-      return false;
-
-    this.isPerspectiveMode = !this.isPerspectiveMode;
-    this.target.switchCamera(this.isPerspectiveMode);
+    this.target.switchCamera();
     return true;
   }
 }
