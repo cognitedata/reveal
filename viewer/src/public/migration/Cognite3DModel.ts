@@ -227,7 +227,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     if (boundingBox3D === undefined) {
       trackError(new Error(`Node ${nodeId} doesn't have a defined bounding box, returning model bounding box`), {
         moduleName: 'Cognite3DModel',
-        methodName: Cognite3DModel.prototype.getBoundingBoxFromCdf.name
+        methodName: 'getBoundingBoxFromCdf'
       });
       return this.getModelBoundingBox();
     }
