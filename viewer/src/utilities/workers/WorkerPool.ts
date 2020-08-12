@@ -1,10 +1,8 @@
 /*!
  * Copyright 2020 Cognite AS
  */
-
 import * as Comlink from 'comlink';
-import { RevealParserWorker } from './reveal.parser.worker';
-// IMPORTANT NOTE! The path to the RevealParserWorker needs to be the same in the new Worker constructor
+import type { RevealParserWorker } from './reveal.parser.worker';
 
 type WorkDelegate<T> = (worker: RevealParserWorker) => Promise<T>;
 
@@ -15,6 +13,43 @@ interface PooledWorker {
   activeJobCount: number;
   messageIdCounter: number;
 }
+
+// wraps window.Worker with own function that allows to import worker from another domain (to avoid CORS)
+// because worker-plugin parses call to new Worker it's necessary to keep that syntax to have working build
+// also, reuses single blob url to create each worker for the pool
+const workerHacks = (() => {
+  const skipHacks = __webpack_public_path__ === '';
+  const _Worker = window.Worker;
+  let blob: Blob | undefined;
+  let objURL: string | undefined;
+
+  return {
+    init() {
+      if (skipHacks) {
+        return;
+      }
+      // @ts-ignore
+      window.Worker = function (url: string, opts: WorkerOptions) {
+        if (!objURL) {
+          blob = new Blob(['importScripts(' + JSON.stringify(url) + ')'], {
+            type: 'text/javascript'
+          });
+          objURL = URL.createObjectURL(blob);
+        }
+        return new _Worker(objURL, opts);
+      };
+    },
+    dispose() {
+      if (skipHacks) {
+        return;
+      }
+      if (objURL) {
+        URL.revokeObjectURL(objURL);
+      }
+      window.Worker = _Worker;
+    }
+  };
+})();
 
 export class WorkerPool {
   static get defaultPool(): WorkerPool {
@@ -28,6 +63,7 @@ export class WorkerPool {
 
   constructor() {
     const numberOfWorkers = this.determineNumberOfWorkers();
+    workerHacks.init();
 
     for (let i = 0; i < numberOfWorkers; i++) {
       const newWorker = {
@@ -41,6 +77,8 @@ export class WorkerPool {
       };
       this.workerList.push(newWorker);
     }
+
+    workerHacks.dispose();
   }
 
   async postWorkToAvailable<T>(work: WorkDelegate<T>): Promise<T> {
