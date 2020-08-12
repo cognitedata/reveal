@@ -24,10 +24,17 @@ import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 CameraControls.install({ THREE });
 
 function getPointCloudParams() {
-  return getParamsFromURL({
-    project: 'publicdata',
-    modelUrl: 'primitives',
-  }, {modelId: 'pointCloudModelId', revisionId: 'pointCloudRevisionId', modelUrl: 'pointCloudUrl'});
+  return getParamsFromURL(
+    {
+      project: 'publicdata',
+      modelUrl: 'primitives',
+    },
+    {
+      modelId: 'pointCloudModelId',
+      revisionId: 'pointCloudRevisionId',
+      modelUrl: 'pointCloudUrl',
+    }
+  );
 }
 
 function initializeGui(
@@ -116,11 +123,19 @@ export function SectorWithPointcloud() {
         project: 'publicdata',
         modelUrl: 'primitives',
       });
-      const { modelRevision: pointCloudModelRevision, modelUrl: pointCloudUrl } = getPointCloudParams();
+
+      const {
+        modelRevision: pointCloudModelRevision,
+        modelUrl: pointCloudUrl,
+      } = getPointCloudParams();
+
       const client = new CogniteClient({
         appId: 'reveal.example.hybrid-cad-pointcloud',
       });
       client.loginWithOAuth({ project });
+      if (modelRevision || pointCloudModelRevision) {
+        await client.authenticate()
+      }
 
       const scene = new THREE.Scene();
 
@@ -135,12 +150,11 @@ export function SectorWithPointcloud() {
         value: 'MyDummyValue',
       });
 
-
       let model: reveal.CadNode;
-      if(modelRevision) {
+      if (modelRevision) {
         revealManager = reveal.createCdfRevealManager(client);
         model = await revealManager.addModel('cad', modelRevision);
-      } else if(modelUrl) {
+      } else if (modelUrl) {
         revealManager = reveal.createLocalRevealManager();
         model = await revealManager.addModel('cad', modelUrl);
       } else {
@@ -154,17 +168,14 @@ export function SectorWithPointcloud() {
         reveal.internal.PotreeGroupWrapper,
         reveal.internal.PotreeNodeWrapper
       ];
-      if(pointCloudModelRevision) {
-        await client.authenticate();pointCloud = await revealManager.addModel(
+      if (pointCloudModelRevision) {
+        pointCloud = await revealManager.addModel(
           'pointcloud',
           pointCloudModelRevision
         );
-
-      } else if(pointCloudUrl) {
+      } else if (pointCloudUrl) {
         pointCloud = await revealManager.addModel('pointcloud', pointCloudUrl);
       } else {
-
-        console.log(pointCloudModelRevision);
         throw new Error(
           'Need to provide either project & pointCloud OR pointCloudlUrl as query parameters'
         );
