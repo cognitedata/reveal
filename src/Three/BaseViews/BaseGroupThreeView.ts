@@ -122,6 +122,16 @@ export abstract class BaseGroupThreeView extends BaseThreeView
 
   protected /*virtual*/ touchPart(): void { this.touch(); }
 
+  public /*virtual*/ touch(): void
+  {
+    const { scene } = this;
+    if (this._object3D)
+      scene.remove(this._object3D);
+
+    this._object3D = null;
+    this.touchBoundingBox();
+  }
+  
   //==================================================
   // INSTANCE METHODS
   //==================================================
@@ -135,16 +145,6 @@ export abstract class BaseGroupThreeView extends BaseThreeView
     this._object3D.name = this.getNode().uniqueId.toString();
     this._object3D.visible = true;
     this.scene.add(this._object3D);
-    this.touchBoundingBox();
-  }
-
-  public touch(): void
-  {
-    const { scene } = this;
-    if (this._object3D)
-      scene.remove(this._object3D);
-
-    this._object3D = null;
     this.touchBoundingBox();
   }
 }

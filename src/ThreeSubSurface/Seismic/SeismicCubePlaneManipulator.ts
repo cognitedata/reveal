@@ -79,11 +79,10 @@ export class SeismicCubePlaneManipulator extends BaseManipulator
     const perpendicularIndex = resultCell.getAt(planeNode.perpendicularAxis);
     if (planeNode.moveTo(perpendicularIndex))
     {
-      // const args = new NodeEventArgs(Changes.geometry);
-      // args.add(Changes.nodeName);
       planeNode.notify(new NodeEventArgs(Changes.geometry));
       target.viewInfo.clear();
-      target.viewInfo.addHeader(`Moving plane \`${planeNode.name}\` to position ${perpendicularIndex}.`);
+      target.viewInfo.addText(`Moving plane \`${planeNode.name}\` to index ${planeNode.perpendicularIndex + 1}.`);
+      target.invalidate();
     }
     if (finished)
       planeNode.notify(new NodeEventArgs(Changes.nodeName));
