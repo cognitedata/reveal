@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Tooltip, TooltipProps } from '@cognite/cogs.js';
+import { Tooltip, TooltipProps, Colors } from '@cognite/cogs.js';
 
 interface PopoverProps {
   children: TooltipProps['children'];
@@ -13,6 +13,8 @@ interface PopoverProps {
 const StyledTooltip = styled(Tooltip)`
   background: #fff;
   color: #000;
+  box-shadow: 0px 0px 8px ${Colors['greyscale-grey3'].hex()};
+  padding: 8px;
   .tippy-arrow {
     color: #fff;
   }

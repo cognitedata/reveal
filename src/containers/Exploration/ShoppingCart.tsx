@@ -91,7 +91,9 @@ export const ShoppingCartPreview = ({
   return (
     <div style={{ width: 300, position: 'relative' }}>
       <div style={{ height: '400px', overflowY: 'auto' }}>
-        <Title level={5}>Asset</Title>
+        <Title level={5} style={{ marginBottom: 8 }}>
+          Asset
+        </Title>
         {Object.values(cart.assets).map(el => {
           const asset = getAsset(el);
           return (
@@ -114,7 +116,9 @@ export const ShoppingCartPreview = ({
             </ListItem>
           );
         })}
-        <Title level={5}>Time series</Title>
+        <Title level={5} style={{ marginBottom: 8 }}>
+          Time series
+        </Title>
         {Object.values(cart.timeseries).map(el => {
           const ts = getTimeseries(el);
           return (
@@ -137,7 +141,9 @@ export const ShoppingCartPreview = ({
             </ListItem>
           );
         })}
-        <Title level={5}>Files</Title>
+        <Title level={5} style={{ marginBottom: 8 }}>
+          Files
+        </Title>
         {Object.values(cart.files).map(el => {
           const file = getFile(el);
           return (
