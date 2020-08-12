@@ -165,7 +165,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     this._scene.add(directionalLight);
 
     this.domElement.tabIndex = 1;
-    this.controls.addEventListener("update", () => this.updateLightPosition());
+    this.controls.addEventListener("update", ()=> this.updateLightPosition());
     this.domElement.addEventListener('click', (event) => this._toolController.onMouseClick(this, event), false);
     this.domElement.addEventListener('mousedown', (event) => this._toolController.onMouseDown(this, event), false);
     this.domElement.addEventListener('mouseup', (event) => this._toolController.onMouseUp(this, event), false);
@@ -318,7 +318,9 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     const { azimuthAngle } = this.cameraControl.controls;
     const { polarAngle } = this.cameraControl.controls;
 
+    this.controls.removeEventListener("update", ()=> this.updateLightPosition());
     this._cameraControl = new CameraControl(this, isPerspectiveMode);
+    this.controls.addEventListener("update", ()=> this.updateLightPosition());
 
     const boundingBox = this.getBoundingBoxFromViews();
     this.transformer.transformRangeTo3D(boundingBox);
