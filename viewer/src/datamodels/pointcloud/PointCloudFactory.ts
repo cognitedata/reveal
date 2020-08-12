@@ -39,7 +39,7 @@ export class PointCloudFactory {
     let xhrHeaders: { header: string; value: string }[] = Potree.XHRFactory.config.customHeaders;
     for (const [header, value] of Object.entries(clientHeaders)) {
       xhrHeaders = xhrHeaders.filter(x => x.header !== header);
-      xhrHeaders.push({ header, value: value as string });
+      xhrHeaders.push({ header, value });
     }
     Potree.XHRFactory.config.customHeaders = xhrHeaders.filter(x => x.header);
   }
