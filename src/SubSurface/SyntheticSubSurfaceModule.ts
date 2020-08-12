@@ -240,13 +240,24 @@ export class SyntheticSubSurfaceModule extends BaseModule
 
   private static addSeismic(root: BaseRootNode)
   {
+    const apiKey = process.env.REACT_APP_API_KEY as string;
     const client = new CogniteSeismicClient({
-      token: 'my-token',
-      api_url: 'cdf-api-url',
-      debug: false
+      api_url: 'https://api.cognitedata.com',
+      api_key: apiKey,
+      debug: false,
     });
-
-    const fileId = 'aafb3d80-b1b7-4dd1-b373-0ee8a2c0241b';
+    const fileId = 'cc0f791f-e206-4c08-a139-c5d08eea8afc';
+    client.file.getLineRange({ fileId }).then((lineRange) => {
+      if (lineRange) {
+        const inline = lineRange.inline?.min?.value || 0;
+        const xline = lineRange.xline?.min?.value || 0;
+        console.log('inline', inline);
+        console.log('xline', xline);
+        client.volume.getTrace({ fileId }, inline, xline).then((result) => {
+          console.log('result', result);
+        });
+      }
+    });
 
     client.slice.getArbitraryLine(fileId, 0, 0, 1, 1);
 
