@@ -4,6 +4,7 @@ import { Appearance } from "@/Core/States/Appearance";
 import InIcon from "@images/Actions/In.png";
 import OutIcon from "@images/Actions/Out.png";
 import Icon from "@/UserInterface/Components/Icon/Icon";
+import ToolBarSelect from "@/UserInterface/Components/ToolBarSelect/ToolBarSelect";
 
 export interface IToolbarButton {
   icon: string;
@@ -48,11 +49,11 @@ const toolBarWrapperMargins = (
 export default function VisualizerToolbar(props: {
   visualizerId: string;
   toolbar?: IToolbarButton[];
-  onToolbarButtonClick: (visualizerId: string, index: any) => void;
+  onToolbarButtonClick: (visualizerId: string, index: number) => void;
   onToolbarSelectionChange: (
     visualizerId: string,
-    index: any,
-    event: any
+    index: number,
+    value: string
   ) => void;
 }) {
   const {
@@ -147,16 +148,21 @@ export default function VisualizerToolbar(props: {
         key={`visualizer-toolbar-icon-${index}`}
         className="visualizer-tool-bar-icon"
       >
-        <select
-          value={command.value}
-          onChange={(event) =>
-            onToolbarSelectionChange(visualizerId, index, event)
+        <ToolBarSelect
+          currentValue={command.value}
+          onChange={(value) =>
+            onToolbarSelectionChange(visualizerId, index, value)
           }
-        >
-          {command.dropdownOptions.map((option) => (
-            <option key={option}>{option}</option>
-          ))}
-        </select>
+          options={command.dropdownOptions}
+          tooltip={{
+            text: command.tooltip,
+            placement: horizontal ? "bottom" : "right-start",
+          }}
+          iconSize={{
+            width: Appearance.toolbarSelectWidth,
+            height: Appearance.toolbarIconSize,
+          }}
+        />
       </div>
     );
   };
