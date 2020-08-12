@@ -49,10 +49,10 @@ export class RegularGrid2Buffers extends TrianglesBuffers
         if (uniqueIndex < 0)
           continue;
 
-        if (!grid.getRelativePosition(i, j, position))
+        if (!grid.getRelativeNodePosition(i, j, position))
           continue;
 
-        grid.getNormal(i, j, normal, position.z, false);
+        grid.getNormal(i, j, position.z, false, normal);
         const u = zRange.getFraction(position.z);
         this.setAt(uniqueIndex, position, normal, u);
       }

@@ -148,8 +148,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     if (!surveyCube)
       return;
 
-    const cell = Index3.newZero;
-    surveyCube.getCellFromPosition(position, cell);
+    const cell = surveyCube.getCellFromPosition(position);
     if (!surveyCube.isCellInside(cell.i, cell.j, cell.k))
       return;
 

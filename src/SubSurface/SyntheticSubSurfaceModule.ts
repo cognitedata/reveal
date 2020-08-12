@@ -40,7 +40,6 @@ import { SeismicCube } from "@/SubSurface/Seismic/Data/SeismicCube";
 import { SeismicCubeNode } from "@/SubSurface/Seismic/Nodes/SeismicCubeNode";
 import { Index3 } from "@/Core/Geometry/Index3";
 import { ColorMaps } from '@/Core/Primitives/ColorMaps';
-
 import { CogniteSeismicClient } from "@cognite/seismic-sdk-js";
 
 export class SyntheticSubSurfaceModule extends BaseModule
@@ -81,6 +80,8 @@ export class SyntheticSubSurfaceModule extends BaseModule
     if (!(root instanceof SubSurfaceRootNode))
       return;
 
+    const smoothNumberOfPasses = 3;
+    const powerOf2 = 8;
     for (let i = 0; i < 1; i++)
     {
       const parent0 = new FolderNode();
@@ -91,13 +92,15 @@ export class SyntheticSubSurfaceModule extends BaseModule
         const parent1 = new FolderNode();
         parent0.addChild(parent1);
 
+        let dampning = 0.5;
         for (let k = 0; k < 3; k++)
         {
           const node = new SurfaceNode();
           const range = Range3.newTest.clone();
           range.expandByFraction(0.2);
           range.z.set(-1400 + (k - 1) * 300, -1800 + (k - 1) * 300);
-          node.surface = RegularGrid2.createFractal(range, 7, 0.9, 5, Ma.toRad(k * 10));
+          node.surface = RegularGrid2.createFractal(range, powerOf2, dampning, smoothNumberOfPasses, Ma.toRad(k * 10));
+          dampning += 0.1;
           parent1.addChild(node);
         }
       }
@@ -235,19 +238,17 @@ export class SyntheticSubSurfaceModule extends BaseModule
     }
   }
 
-  private static addSeismic(root: BaseRootNode): void
+  private static addSeismic(root: BaseRootNode)
   {
-
-    const apiKey = process.env.REACT_APP_API_KEY as string;
-
     const client = new CogniteSeismicClient({
-      token: "my-token",
-      api_url: "greenfield.cognitedata.com",
-      api_key: apiKey,
-      debug: false,
+      token: 'my-token',
+      api_url: 'cdf-api-url',
+      debug: false
     });
 
     const fileId = 'aafb3d80-b1b7-4dd1-b373-0ee8a2c0241b';
+
+    client.slice.getArbitraryLine(fileId, 0, 0, 1, 1);
 
     client.file.getLineRange({ fileId }).then((lineRange) =>
     {
@@ -258,12 +259,25 @@ export class SyntheticSubSurfaceModule extends BaseModule
 
         console.log('inline', inline);
         console.log('xline', xline);
-
-        client.volume.getTrace({ fileId }, inline, xline).then((result) =>
-        {
-          console.log('result', result);
-        });
       }
+    });
+
+    // Get trace 1
+    client.volume.getTrace({ fileId }, 0, 0).then((result) =>
+    {
+      if (result.coordinate !== undefined)
+      {
+        console.log('x', result.coordinate.x);
+        console.log('y', result.coordinate.y);
+      }
+      if (result.iline !== undefined)
+        console.log('iline', result.iline);
+      if (result.xline !== undefined)
+        console.log('xline', result.xline);
+
+      const values = result.traceList;
+      for (let i = 0; i < values.length; i++)
+        console.log('value', values[i]);
     });
 
     //client.slice.getSliceByGeometry()

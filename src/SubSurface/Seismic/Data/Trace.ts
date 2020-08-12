@@ -11,6 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import { Random } from '@/Core/Primitives/Random';
+
 export class Trace 
 {
   //==================================================
@@ -45,12 +47,12 @@ export class Trace
   public generateSynthetic(x: number, y: number)
   {
     // x and y is [0,1]
-    x = Math.sin(x * Math.PI / 3);
-    y = Math.sin(y * Math.PI / 2);
+    x = Math.sin(x * Math.PI / 3) + Random.getGaussian(0, 0.5);
+    y = Math.sin(y * Math.PI / 2) + Random.getGaussian(0, 0.5);
     for (let k = this.length - 1; k >= 0; k--)
     {
       const z = k / (this.length - 1); // Z is [0,1]
-      const value = (x + y) * Math.sin(2 * Math.PI * z * 20);
+      const value = (x + y) * Math.sin(2 * Math.PI * z * 20) + Random.getGaussian(0, 0.5);
       this.values[k] = value;
     }
   }

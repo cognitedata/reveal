@@ -87,21 +87,8 @@ export class RegularGrid3 extends Grid3
   }
 
   //==================================================
-  // INSTANCE METHODS: Getters
+  // INSTANCE METHODS: Getters: Node position 
   //==================================================
-
-  public getAxis(dimension: number): Vector3
-  {
-    const axis = Vector3.getAxis(dimension);
-    if (dimension < 2 && this._hasRotationAngle)
-    {
-      const dx = axis.x;
-      const dy = axis.y;
-      axis.x = dx * this._cosRotationAngle - dy * this._sinRotationAngle;
-      axis.y = dx * this._sinRotationAngle + dy * this._cosRotationAngle;
-    }
-    return axis;
-  }
 
   public getNodePosition(i: number, j: number, k: number, result?: Vector3): Vector3
   {
@@ -123,6 +110,30 @@ export class RegularGrid3 extends Grid3
     result.z = this.inc.z * k;
     result.add(this.origin);
     return result;
+  }
+
+  public getRelativeNodePosition(i: number, j: number, k: number, result?: Vector3): void
+  {
+    if (!result)
+      result = Vector3.newZero;
+
+    result.x = this.inc.x * i;
+    result.y = this.inc.y * j;
+    result.z = this.inc.z * k;
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Getters: Cell position 
+  //==================================================
+
+  public getCellCenter(i: number, j: number, k: number, result?: Vector3): Vector3
+  {
+    return this.getNodePosition(i + 0.5, j + 0.5, k + 0.5, result);
+  }
+
+  public getRelativeCellCenter(i: number, j: number, k: number, result?: Vector3): void
+  {
+    this.getRelativeNodePosition(i + 0.5, j + 0.5, k + 0.5, result);
   }
 
   public getCellFromPosition(position: Vector3, resultCell?: Index3): Index3
@@ -154,21 +165,21 @@ export class RegularGrid3 extends Grid3
     return resultCell;
   }
 
-  public getCellCenter(i: number, j: number, k: number, result?: Vector3): Vector3
-  {
-    return this.getNodePosition(i + 0.5, j + 0.5, k + 0.5, result);
-  }
+  //==================================================
+  // INSTANCE METHODS: Getters: Others
+  //==================================================
 
-  public getRelativeNodePosition(i: number, j: number, k: number, result: Vector3): void
+  public getAxis(dimension: number): Vector3
   {
-    result.x = this.inc.x * i;
-    result.y = this.inc.y * j;
-    result.z = this.inc.z * k;
-  }
-
-  public getRelativeCellCenter(i: number, j: number, k: number, result: Vector3): void
-  {
-    this.getRelativeNodePosition(i + 0.5, j + 0.5, k + 0.5, result);
+    const axis = Vector3.getAxis(dimension);
+    if (dimension < 2 && this._hasRotationAngle)
+    {
+      const dx = axis.x;
+      const dy = axis.y;
+      axis.x = dx * this._cosRotationAngle - dy * this._sinRotationAngle;
+      axis.y = dx * this._sinRotationAngle + dy * this._cosRotationAngle;
+    }
+    return axis;
   }
 
   public getCornerRange(): Range3
