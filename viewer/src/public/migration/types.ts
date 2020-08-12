@@ -6,11 +6,11 @@ import { CogniteClient } from '@cognite/sdk';
 
 import { SectorCuller } from '@/datamodels/cad/sector/culling/SectorCuller';
 
-export interface Color {
+export type Color = {
   r: number;
   g: number;
   b: number;
-}
+};
 
 export interface Cognite3DViewerOptions {
   sdk: CogniteClient;
@@ -56,13 +56,4 @@ export interface AddModelOptions {
   geometryFilter?: GeometryFilter;
   orthographicCamera?: boolean;
   onComplete?: () => void;
-}
-
-export enum SupportedModelTypes {
-  PointCloud = 'pointcloud',
-  CAD = 'cad',
-  /**
-   * Not a model supported by Reveal.
-   */
-  NotSupported = ''
 }
