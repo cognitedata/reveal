@@ -12,6 +12,8 @@ export type Color = {
   b: number;
 };
 
+export type OnDownloadingCallback = (itemsDownloaded: number, itemsRequested: number) => void;
+
 export interface Cognite3DViewerOptions {
   sdk: CogniteClient;
 
@@ -35,6 +37,9 @@ export interface Cognite3DViewerOptions {
 
   /** Renderer used to visualize model (optional). */
   renderer?: THREE.WebGLRenderer;
+
+  /** Callback to download stream progress */
+  onDownloading?: OnDownloadingCallback;
 
   /**
    * Utility used to determine what parts of the model will be visible on screen and loaded.
