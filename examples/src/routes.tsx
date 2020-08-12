@@ -28,6 +28,14 @@ function getEnv(key: keyof typeof process.env) {
   return process.env[key] || '';
 }
 
+const project = getEnv('REACT_APP_PROJECT');
+const cadId = getEnv('REACT_APP_CAD_ID');
+const cadRevisionId = getEnv('REACT_APP_CAD_REVISION_ID');
+const cad2Id = getEnv('REACT_APP_CAD_2_ID');
+const cad2RevisionId = getEnv('REACT_APP_CAD_2_REVISION_ID');
+const pointCloudId = getEnv('REACT_APP_POINTCLOUD_ID');
+const pointCloudRevisionId = getEnv('REACT_APP_POINTCLOUD_REVISION_ID');
+
 export const routes: Array<ExampleRoute> = [
   {
     path: '/simple',
@@ -55,7 +63,9 @@ export const routes: Array<ExampleRoute> = [
     component: <GpuSectorCuller />,
   },
   {
-    path: `/migration?project=${getEnv('REACT_APP_PROJECT')}`,
+    path: `/migration?project=${project}` +
+      `&modelId=${cadId}` +
+      `&revisionId=${cadRevisionId}`,
     menuTitle: 'Migration',
     component: <Migration />,
   },
@@ -65,25 +75,25 @@ export const routes: Array<ExampleRoute> = [
     component: <Picking />,
   },
   {
-    path: `/sector-with-pointcloud?project=${getEnv(
-      'REACT_APP_PROJECT'
-    )}&model=${getEnv('REACT_APP_CAD_ID')}&pointCloud=${getEnv(
-      'REACT_APP_POINTCLOUD_ID'
-    )}`,
+    path:
+      `/sector-with-pointcloud?project=${project}` +
+      `&modelId=${cadId}` +
+      `&revisionId=${cadRevisionId}` +
+      `&pointCloudModelId=${pointCloudId}` +
+      `&pointCloudRevisionId=${pointCloudRevisionId}`,
     menuTitle: 'Sector With Pointcloud',
     component: <SectorWithPointcloud />,
   },
   {
-    path: `/side-by-side?project=${getEnv('REACT_APP_PROJECT')}&model2=${getEnv(
-      'REACT_APP_CAD_2_ID'
-    )}`,
+    path:
+      `/side-by-side?project=${project}` +
+      `&modelId=${cadId}&revisionId=${cadRevisionId}` +
+      `&modelId2=${cad2Id}&revisionId2=${cad2RevisionId}`,
     menuTitle: 'Side-by-side debugger for sector models',
     component: <SideBySide />,
   },
   {
-    path: `/simple-point-cloud?project=${getEnv(
-      'REACT_APP_PROJECT'
-    )}&model=${getEnv('REACT_APP_POINTCLOUD_ID')}`,
+    path: `/simple-point-cloud?project=${project}&modelId=${pointCloudId}&revisionId=${pointCloudRevisionId}`,
     menuTitle: 'Simple Point Cloud',
     component: <SimplePointcloud />,
   },
@@ -94,9 +104,10 @@ export const routes: Array<ExampleRoute> = [
   },
   {
     // not really good defaults, provide something more meaningful
-    path: `/two-models?project=${getEnv('REACT_APP_PROJECT')}&model=${getEnv(
-      'REACT_APP_CAD_ID'
-    )}&model2=${getEnv('REACT_APP_CAD_2_ID')}`,
+    path:
+      `/two-models?project=${project}` +
+      `&modelId=${cadId}&revisionId=${cadRevisionId}` +
+      `&modelId2=${cad2Id}&revisionId2=${cad2RevisionId}`,
     menuTitle: 'Two models',
     component: <TwoModels />,
   },
