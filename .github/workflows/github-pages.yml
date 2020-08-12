@@ -18,6 +18,11 @@ jobs:
         with:
           persist-credentials: false
 
+      # required to correctly inherit types, e.g. from THREE.Object3D
+      - name: Install Viewer Deps
+        working-directory: viewer
+        run: yarn
+
       - name: Install and Build 🔧
         working-directory: documentation
         run: |

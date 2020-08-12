@@ -79,10 +79,10 @@ export function WalkablePath() {
       renderer.setSize(window.innerWidth, window.innerHeight);
 
       let model: reveal.CadNode;
-      if(modelRevision) {
+      if (modelRevision) {
         revealManager = reveal.createCdfRevealManager(client);
         model = await revealManager.addModel('cad', modelRevision);
-      } else if(modelUrl) {
+      } else if (modelUrl) {
         revealManager = reveal.createLocalRevealManager();
         model = await revealManager.addModel('cad', modelUrl);
       } else {
@@ -174,7 +174,7 @@ export function WalkablePath() {
     return () => {
       animationLoopHandler.dispose();
       revealManager?.dispose();
-    }
+    };
   });
   return (
     <CanvasWrapper>
