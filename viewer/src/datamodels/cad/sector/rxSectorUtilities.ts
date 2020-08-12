@@ -8,11 +8,11 @@ import { CadModelMetadata } from '../CadModelMetadata';
 import { DetermineSectorsInput } from './culling/types';
 import { LevelOfDetail } from './LevelOfDetail';
 import { SectorCuller } from './culling/SectorCuller';
-import { OperatorFunction, empty, from, Observable } from 'rxjs';
-import { ConsumedSector } from './types';
+import { OperatorFunction, empty, from, Observable, asyncScheduler, scheduled } from 'rxjs';
+import { ConsumedSector, WantedSector } from './types';
 import { ModelStateHandler } from './ModelStateHandler';
 import { Repository } from './Repository';
-import { filter, switchMap, tap } from 'rxjs/operators';
+import { filter, switchMap, tap, mergeMap, groupBy, map } from 'rxjs/operators';
 
 type UpdateEvent = [
   THREE.PerspectiveCamera,
@@ -52,12 +52,21 @@ export function handleDetermineSectorsInput(
       if (cameraInMotion) {
         return empty();
       }
-      return from(sectorCuller.determineSectors(input)).pipe(
+      const shouldDiscard = ({ levelOfDetail }: WantedSector) => levelOfDetail === LevelOfDetail.Discarded;
+      const toDiscardedConsumedSector = (wantedSector: WantedSector) =>
+        ({ ...wantedSector, group: undefined } as ConsumedSector);
+      return scheduled(from(sectorCuller.determineSectors(input)), asyncScheduler).pipe(
         filter(modelStateHandler.hasStateChanged.bind(modelStateHandler)),
-        sectorRepository.loadSector()
+        groupBy(shouldDiscard),
+        mergeMap(group$ => {
+          if (group$.key) {
+            return group$.pipe(map(toDiscardedConsumedSector));
+          } else {
+            return group$.pipe(sectorRepository.loadSector());
+          }
+        })
       );
     };
-
     return source.pipe(switchMap(updateSector)).pipe(
       tap({
         next: modelStateHandler.updateState.bind(modelStateHandler)

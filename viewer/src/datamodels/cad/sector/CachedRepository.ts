@@ -13,13 +13,11 @@ import {
   Subject,
   onErrorResumeNext,
   defer,
-  partition,
-  scheduled,
+  NextObserver,
+  pipe,
   asyncScheduler,
-  merge,
-  NextObserver
+  scheduled
 } from 'rxjs';
-// eslint-disable-next-line prettier/prettier
 import {
   flatMap,
   map,
@@ -30,7 +28,9 @@ import {
   reduce,
   distinct,
   catchError,
-  mergeAll
+  mergeAll,
+  groupBy,
+  mergeMap
 } from 'rxjs/operators';
 import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
@@ -42,7 +42,7 @@ import { trackError } from '@/utilities/metrics';
 import { BinaryFileProvider } from '@/utilities/networking/types';
 import { Group } from 'three';
 import { RxCounter } from '@/utilities/RxCounter';
-import { Progress } from '@/utilities/types';
+import { LoadingState } from '@/utilities';
 
 type KeyedWantedSector = { key: string; wantedSector: WantedSector };
 type WantedSecorWithRequestObservable = {
@@ -106,87 +106,94 @@ export class CachedRepository implements Repository {
     ); // TODO: Should we do replay subject here instead of variable type?
   }
 
-  getNetworkProgressObservable(): Observable<Progress> {
+  getLoadingStateObservable(): Observable<LoadingState> {
     return this._loadingCounter.progressObservable();
   }
 
-  // TODO j-bjorne 16-04-2020: Should look into ways of not sending in discarded sectors,
-  // unless we want them to eventually set their priority to lower in the cache.
-
   loadSector(): OperatorFunction<WantedSector, ConsumedSector> {
-    return (source$: Observable<WantedSector>) => {
+    const toDiscardedConsumedSector = (wantedSector: WantedSector) =>
+      ({ ...wantedSector, group: undefined } as ConsumedSector);
+    const isDiscardedSector = (wantedSector: WantedSector) => wantedSector.levelOfDetail === LevelOfDetail.Discarded;
+    return pipe(
       /* Split wantedSectors into a pipe of discarded wantedSectors and a pipe of simple and detailed wantedSectors.
        * ----------- wantedSectors -----------------------
-       * \---------- discarded wantedSectors -------------
-       *  \--------- simple and detailed wantedSectors ---
        */
-      const [discarded$, simpleAndDetailed$] = partition(
-        source$,
-        wantedSector => wantedSector.levelOfDetail == LevelOfDetail.Discarded
-      );
+      groupBy(isDiscardedSector),
+      mergeMap(group$ => {
+        if (group$.key) {
+          //---------- discarded wantedSectors -------------
+          return group$.pipe(map(toDiscardedConsumedSector));
+        } else {
+          //--------- simple and detailed wantedSectors ---
+          return group$.pipe(this.handleSimpleAndDetailedWantedSectors());
+        }
+      })
+    );
+  }
 
+  private handleSimpleAndDetailedWantedSectors(): OperatorFunction<WantedSector, ConsumedSector> {
+    const existsInCache = ({ key }: KeyedWantedSector) => this._consumedSectorCache.has(key);
+    const getFromCache = ({ key }: KeyedWantedSector) => {
+      return this._consumedSectorCache.get(key);
+    };
+    return pipe(
       /* Split simple and detailed wanted sectors into a pipe of cached request and uncached requests.
        * ----------- simple and detailed wantedSectors ---
-       * \---------- cached wantedSectors ----------------
-       *  \--------- uncached wantedSectors --------------
        */
-      const existsInCache = ({ key }: KeyedWantedSector) => this._consumedSectorCache.has(key);
-      const [cached$, uncached$] = partition(
-        simpleAndDetailed$.pipe(map(wantedSector => ({ key: this.wantedSectorCacheKey(wantedSector), wantedSector }))),
-        existsInCache
-      );
+      map(wantedSector => ({ key: this.wantedSectorCacheKey(wantedSector), wantedSector })),
+      groupBy(existsInCache),
+      mergeMap(group$ => {
+        if (group$.key) {
+          // ---------- cached wantedSectors ----------------
+          return group$.pipe(flatMap(getFromCache));
+        } else {
+          // --------- uncached wantedSectors --------------
+          return group$.pipe(this.handleUnchachedWantedSectors());
+        }
+      })
+    );
+  }
 
+  private handleUnchachedWantedSectors(): OperatorFunction<KeyedWantedSector, ConsumedSector> {
+    const getSimpleSectorFromNetwork = ({ key, wantedSector }: { key: string; wantedSector: WantedSector }) => ({
+      key,
+      wantedSector,
+      observable: this.loadSimpleSectorFromNetwork(wantedSector)
+    });
+
+    const getDetailedSectorFromNetwork = ({ key, wantedSector }: { key: string; wantedSector: WantedSector }) => ({
+      key,
+      wantedSector,
+      observable: this.loadDetailedSectorFromNetwork(wantedSector)
+    });
+    const saveToCache = ({ key, observable }: WantedSecorWithRequestObservable) =>
+      this._consumedSectorCache.forceInsert(key, observable);
+    return pipe(
+      this._loadingCounter.incrementOnNext(),
       /* Split uncached wanted sectors into a pipe of simple wantedSectors and detailed wantedSectors. Increase load count
        * ----------- uncached wantedSectors --------------
-       * \---------- simple wantedSectors ----------------
-       *  \--------- detailed wantedSectors --------------
        */
-      const [simple$, detailed$] = partition(
-        uncached$.pipe(this._loadingCounter.incrementOnNext()),
-        ({ wantedSector }) => wantedSector.levelOfDetail == LevelOfDetail.Simple
-      );
-
-      /* Merge simple and detailed pipeline, save observable to cache, and decrease loadcount
-       */
-      const getSimpleSectorFromNetwork = ({ key, wantedSector }: { key: string; wantedSector: WantedSector }) => ({
-        key,
-        wantedSector,
-        observable: this.loadSimpleSectorFromNetwork(wantedSector)
-      });
-
-      const getDetailedSectorFromNetwork = ({ key, wantedSector }: { key: string; wantedSector: WantedSector }) => ({
-        key,
-        wantedSector,
-        observable: this.loadDetailedSectorFromNetwork(wantedSector)
-      });
-
-      const saveToCache = ({ key, observable }: WantedSecorWithRequestObservable) =>
-        this._consumedSectorCache.forceInsert(key, observable);
-
-      const network$ = merge(
-        simple$.pipe(map(getSimpleSectorFromNetwork)),
-        detailed$.pipe(map(getDetailedSectorFromNetwork))
-      ).pipe(
-        tap({
-          next: saveToCache
-        }),
-        map(({ observable }) => observable),
-        mergeAll(this._concurrentNetworkOperations),
-        this._loadingCounter.decrementOnNext()
-      );
-
-      const toDiscardedConsumedSector = (wantedSector: WantedSector) =>
-        ({ ...wantedSector, group: undefined } as ConsumedSector);
-
-      const getFromCache = ({ key }: KeyedWantedSector) => {
-        return this._consumedSectorCache.get(key);
-      };
-
-      return scheduled(
-        [discarded$.pipe(map(toDiscardedConsumedSector)), cached$.pipe(flatMap(getFromCache)), network$],
-        asyncScheduler
-      ).pipe(mergeAll(), this._loadingCounter.resetOnComplete());
-    };
+      groupBy(({ wantedSector }) => wantedSector.levelOfDetail),
+      mergeMap(group$ => {
+        switch (group$.key) {
+          case LevelOfDetail.Simple:
+            // ---------- simple wantedSectors ----------------
+            return group$.pipe(map(getSimpleSectorFromNetwork));
+          case LevelOfDetail.Detailed:
+            // --------- detailed wantedSectors --------------
+            return group$.pipe(map(getDetailedSectorFromNetwork));
+          default:
+            throw new Error(`WantedSector LevelOfDetail ${group$} has no network pipeline`);
+        }
+      }),
+      tap({
+        next: saveToCache
+      }),
+      map(({ observable }) => observable),
+      mergeAll(this._concurrentNetworkOperations),
+      this._loadingCounter.decrementOnNext(),
+      this._loadingCounter.resetOnComplete()
+    );
   }
 
   private catchWantedSectorError<T>(wantedSector: WantedSector, methodName: string) {

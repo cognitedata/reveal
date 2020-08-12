@@ -5,24 +5,22 @@
 import { RxCounter } from './RxCounter';
 import { interval, queueScheduler } from 'rxjs';
 import { take, flatMap, observeOn } from 'rxjs/operators';
-import { Progress } from './types';
+import { LoadingState } from './types';
 
 describe('RxCounter', () => {
   test('increment on next', done => {
     const counter = new RxCounter();
     const incrementCount = 4;
-    const progress: Progress = {
-      total: 0,
-      remaining: 0,
-      completed: 0
+    const loadingState: LoadingState = {
+      itemsLoaded: 0,
+      itemsRequested: 0
     };
     expect.assertions(incrementCount);
     const increment$ = interval(10).pipe(take(incrementCount), counter.incrementOnNext());
     counter.progressObservable().subscribe({
       next: count => {
-        progress.total++;
-        progress.remaining++;
-        expect(count).toStrictEqual(progress);
+        loadingState.itemsRequested++;
+        expect(count).toStrictEqual(loadingState);
       }
     });
     increment$.subscribe({
@@ -37,10 +35,9 @@ describe('RxCounter', () => {
     // const decrementCount = 2;
     const counter = new RxCounter();
     const operationCount = 4;
-    const progress: Progress = {
-      total: 0,
-      remaining: 0,
-      completed: 0
+    const loadingState: LoadingState = {
+      itemsLoaded: 0,
+      itemsRequested: 0
     };
     const wait = flatMap(value => new Promise(resolve => setTimeout(resolve, 100, value)));
     expect.assertions(operationCount * 2);
@@ -55,13 +52,11 @@ describe('RxCounter', () => {
     counter.progressObservable().subscribe({
       next: count => {
         if (operation < operationCount) {
-          progress.total++;
-          progress.remaining++;
+          loadingState.itemsRequested++;
         } else {
-          progress.remaining--;
-          progress.completed++;
+          loadingState.itemsLoaded;
         }
-        expect(count).toStrictEqual(progress);
+        expect(count).toStrictEqual(loadingState);
         operation++;
       }
     });
@@ -74,10 +69,9 @@ describe('RxCounter', () => {
   test('reset counter', done => {
     const counter = new RxCounter();
     const operationCount = 4;
-    const progress: Progress = {
-      total: 0,
-      remaining: 0,
-      completed: 0
+    const loadingState: LoadingState = {
+      itemsLoaded: 0,
+      itemsRequested: 0
     };
     expect.assertions(operationCount + 1);
     const operation$ = interval(10).pipe(take(operationCount), counter.incrementOnNext(), counter.resetOnComplete());
@@ -85,14 +79,12 @@ describe('RxCounter', () => {
     counter.progressObservable().subscribe({
       next: count => {
         if (operation < operationCount) {
-          progress.total++;
-          progress.remaining++;
+          loadingState.itemsRequested++;
         } else {
-          progress.total = 0;
-          progress.remaining = 0;
-          progress.completed = 0;
+          loadingState.itemsLoaded = 0;
+          loadingState.itemsRequested = 0;
         }
-        expect(count).toStrictEqual(progress);
+        expect(count).toStrictEqual(loadingState);
         operation++;
       }
     });

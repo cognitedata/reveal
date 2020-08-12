@@ -30,8 +30,7 @@ import { RevealManager } from '../RevealManager';
 import { createCdfRevealManager } from '../createRevealManager';
 import { CdfModelIdentifier } from '@/utilities/networking/types';
 import { RevealOptions, SectorNodeIdToTreeIndexMapLoadedEvent } from '../types';
-import { ProgressStatus } from '@/utilities/ProgressStatus';
-import { Progress } from '@/utilities/types';
+import { LoadingState } from '@/utilities';
 
 export type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
 export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
@@ -93,7 +92,6 @@ export class Cognite3DViewer {
   private _geometryFilters: GeometryFilter[] = [];
 
   private readonly spinner: Spinner;
-  private readonly _progressStatus: ProgressStatus;
 
   /**
    * Reusable buffers used by functions in Cognite3dViewer to avoid allocations
@@ -145,7 +143,6 @@ export class Cognite3DViewer {
     this.domElement = options.domElement || createCanvasWrapper();
     this.domElement.appendChild(this.canvas);
     this.spinner = new Spinner(this.domElement);
-    this._progressStatus = new ProgressStatus(this.domElement);
 
     this.camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
     this.camera.position.x = 30;
@@ -174,40 +171,27 @@ export class Cognite3DViewer {
     this.startPointerEventListeners();
 
     this._subscription.add(
-      fromEventPattern(
+      fromEventPattern<LoadingState>(
         h => this._revealManager.on('loadingStateChanged', h),
         h => this._revealManager.off('loadingStateChanged', h)
-      ).subscribe(
-        isLoading => {
-          if (isLoading) {
-            this.spinner.show();
-          } else {
-            this.spinner.hide();
-          }
-        },
-        error =>
-          trackError(error, {
-            moduleName: 'Cognite3DViewer',
-            methodName: 'constructor'
-          })
       )
-    );
-
-    this._subscription.add(
-      fromEventPattern<Progress>(
-        h => this._revealManager.on('downloadProgressChanged', h),
-        h => this._revealManager.off('downloadProgressChanged', h)
-      ).subscribe({
-        next: progress => {
-          // TODO: Add progress indication
-          this._progressStatus.update(progress);
-        },
-        error: error =>
-          trackError(error, {
-            moduleName: 'Cognite3DViewer',
-            methodName: 'constructor'
-          })
-      })
+        .pipe(
+          map(({ itemsLoaded: sectorsLoaded, itemsRequested: sectorsRequested }) => sectorsLoaded != sectorsRequested)
+        )
+        .subscribe({
+          next: isLoading => {
+            if (isLoading) {
+              this.spinner.show();
+            } else {
+              this.spinner.hide();
+            }
+          },
+          error: error =>
+            trackError(error, {
+              moduleName: 'Cognite3DViewer',
+              methodName: 'constructor'
+            })
+        })
     );
 
     this._updateCameraNearAndFarSubject = this.setupUpdateCameraNearAndFar();

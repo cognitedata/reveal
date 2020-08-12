@@ -31,12 +31,12 @@ import { Repository } from './sector/Repository';
 import { SectorQuads } from './rendering/types';
 import { emissionLastMillis } from '@/utilities';
 import { CadModelMetadata } from '.';
-import { Progress } from '@/utilities/types';
 import {
   createDetermineSectorsInputFromArray,
   loadingEnabled,
   handleDetermineSectorsInput
 } from './sector/rxSectorUtilities';
+import { LoadingState } from '@/utilities';
 
 export class CadModelUpdateHandler {
   private readonly _sectorRepository: Repository;
@@ -102,8 +102,8 @@ export class CadModelUpdateHandler {
     return this._updateObservable.pipe(share());
   }
 
-  getLoadingProgressObserver(): Observable<Progress> {
-    return this._sectorRepository.getNetworkProgressObservable();
+  getLoadingStateObserver(): Observable<LoadingState> {
+    return this._sectorRepository.getLoadingStateObservable();
   }
 
   getParsedData(): Observable<{ blobUrl: string; lod: string; data: SectorGeometry | SectorQuads }> {

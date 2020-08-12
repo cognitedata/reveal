@@ -35,8 +35,10 @@ export type ModelTransformation = {
   readonly inverseModelMatrix: mat4;
 };
 
-export interface Progress {
-  total: number;
-  remaining: number;
-  completed: number;
-}
+/**
+ * State holding information about data being loaded.
+ */
+export type LoadingState = {
+  itemsLoaded: number;
+  itemsRequested: number;
+};

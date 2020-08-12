@@ -15,7 +15,7 @@ import { SectorGeometry } from './sector/types';
 import { SectorQuads } from './rendering/types';
 import { MaterialManager } from './MaterialManager';
 import { RenderMode } from './rendering/RenderMode';
-import { Progress } from '@/utilities/types';
+import { LoadingState } from '@/utilities';
 
 export class CadManager<TModelIdentifier> {
   private readonly _materialManager: MaterialManager;
@@ -141,8 +141,8 @@ export class CadManager<TModelIdentifier> {
     return model;
   }
 
-  getLoadingProgressObserver(): Observable<Progress> {
-    return this._cadModelUpdateHandler.getLoadingProgressObserver();
+  getLoadingStateObserver(): Observable<LoadingState> {
+    return this._cadModelUpdateHandler.getLoadingStateObserver();
   }
 
   getParsedData(): Observable<{ blobUrl: string; lod: string; data: SectorGeometry | SectorQuads }> {

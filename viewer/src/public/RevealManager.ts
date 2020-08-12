@@ -9,8 +9,7 @@ import { PointCloudManager } from '@/datamodels/pointcloud/PointCloudManager';
 import {
   SectorNodeIdToTreeIndexMapLoadedListener,
   SectorNodeIdToTreeIndexMapLoadedEvent,
-  LoadingStateChangeListener,
-  DownloadProgressChangeListener
+  LoadingStateChangeListener
 } from './types';
 import { Subscription, combineLatest, asyncScheduler } from 'rxjs';
 import { distinctUntilChanged, map, share, filter, subscribeOn, observeOn } from 'rxjs/operators';
@@ -20,7 +19,7 @@ import { PotreeGroupWrapper } from '@/datamodels/pointcloud/PotreeGroupWrapper';
 import { PotreeNodeWrapper } from '@/datamodels/pointcloud/PotreeNodeWrapper';
 import { RenderMode } from '@/datamodels/cad/rendering/RenderMode';
 import { EffectRenderManager } from '@/datamodels/cad/rendering/EffectRenderManager';
-import { Progress } from '@/utilities/types';
+import { LoadingState } from '@/utilities/types';
 
 export class RevealManager<TModelIdentifier> {
   private readonly _cadManager: CadManager<TModelIdentifier>;
@@ -37,8 +36,7 @@ export class RevealManager<TModelIdentifier> {
   private readonly _subscriptions = new Subscription();
   private readonly eventListeners = {
     sectorNodeIdToTreeIndexMapLoaded: new Array<SectorNodeIdToTreeIndexMapLoadedListener>(),
-    loadingStateChanged: new Array<LoadingStateChangeListener>(),
-    downloadProgressChanged: new Array<DownloadProgressChangeListener>()
+    loadingStateChanged: new Array<LoadingStateChangeListener>()
   };
 
   /** @internal */
@@ -47,7 +45,6 @@ export class RevealManager<TModelIdentifier> {
     this._pointCloudManager = pointCloudManager;
     this._effectRenderManager = new EffectRenderManager(cadManager.materialManager);
     this.initLoadingStateObserver(cadManager, pointCloudManager);
-    this.initDownloadProgressObservable(cadManager);
   }
 
   public dispose(): void {
@@ -112,11 +109,10 @@ export class RevealManager<TModelIdentifier> {
   }
 
   public on(event: 'loadingStateChanged', listener: LoadingStateChangeListener): void;
-  public on(event: 'downloadProgressChanged', listener: DownloadProgressChangeListener): void;
   public on(event: 'nodeIdToTreeIndexMapLoaded', listener: SectorNodeIdToTreeIndexMapLoadedListener): void;
   public on(
     event: 'loadingStateChanged' | 'nodeIdToTreeIndexMapLoaded' | 'downloadProgressChanged',
-    listener: LoadingStateChangeListener | SectorNodeIdToTreeIndexMapLoadedListener | DownloadProgressChangeListener
+    listener: LoadingStateChangeListener | SectorNodeIdToTreeIndexMapLoadedListener
   ): void {
     switch (event) {
       case 'loadingStateChanged':
@@ -126,20 +122,16 @@ export class RevealManager<TModelIdentifier> {
       case 'nodeIdToTreeIndexMapLoaded':
         this.eventListeners.sectorNodeIdToTreeIndexMapLoaded.push(listener as SectorNodeIdToTreeIndexMapLoadedListener);
         break;
-      case 'downloadProgressChanged':
-        this.eventListeners.downloadProgressChanged.push(listener as DownloadProgressChangeListener);
-        break;
       default:
         throw new Error(`Unsupported event '${event}'`);
     }
   }
 
   public off(event: 'loadingStateChanged', listener: LoadingStateChangeListener): void;
-  public off(event: 'downloadProgressChanged', listener: DownloadProgressChangeListener): void;
   public off(event: 'nodeIdToTreeIndexMapLoaded', listener: SectorNodeIdToTreeIndexMapLoadedListener): void;
   public off(
     event: 'loadingStateChanged' | 'nodeIdToTreeIndexMapLoaded' | 'downloadProgressChanged',
-    listener: LoadingStateChangeListener | SectorNodeIdToTreeIndexMapLoadedListener | DownloadProgressChangeListener
+    listener: LoadingStateChangeListener | SectorNodeIdToTreeIndexMapLoadedListener
   ): void {
     switch (event) {
       case 'loadingStateChanged':
@@ -148,10 +140,6 @@ export class RevealManager<TModelIdentifier> {
 
       case 'nodeIdToTreeIndexMapLoaded':
         this.eventListeners.sectorNodeIdToTreeIndexMapLoaded.filter(x => x !== listener);
-        break;
-
-      case 'downloadProgressChanged':
-        this.eventListeners.downloadProgressChanged.filter(x => x !== listener);
         break;
       default:
         throw new Error(`Unsupported event '${event}'`);
@@ -218,9 +206,9 @@ export class RevealManager<TModelIdentifier> {
     });
   }
 
-  private notifyLoadingStateChanged(isLoaded: boolean) {
+  private notifyLoadingStateChanged(loadingState: LoadingState) {
     this.eventListeners.loadingStateChanged.forEach(handler => {
-      handler(isLoaded);
+      handler(loadingState);
     });
   }
 
@@ -229,13 +217,14 @@ export class RevealManager<TModelIdentifier> {
     pointCloudManager: PointCloudManager<TModelIdentifier>
   ) {
     this._subscriptions.add(
-      combineLatest([
-        cadManager.getLoadingProgressObserver().pipe(map(progress => progress.remaining > 0)),
-        pointCloudManager.getLoadingStateObserver()
-      ])
+      combineLatest([cadManager.getLoadingStateObserver(), pointCloudManager.getLoadingStateObserver()])
         .pipe(
           observeOn(asyncScheduler),
-          map(loading => loading.some(x => x)),
+          map(([cadState, pointCloudState]) => {
+            const sectorsLoaded = cadState.itemsLoaded + pointCloudState.itemsLoaded;
+            const sectorsRequested = cadState.itemsRequested + pointCloudState.itemsRequested;
+            return { itemsLoaded: sectorsLoaded, itemsRequested: sectorsRequested } as LoadingState;
+          }),
           distinctUntilChanged(),
           subscribeOn(asyncScheduler)
         )
@@ -245,24 +234,6 @@ export class RevealManager<TModelIdentifier> {
             methodName: 'constructor'
           })
         )
-    );
-  }
-
-  private notifyDownloadProgressChanged(progess: Progress) {
-    this.eventListeners.downloadProgressChanged.forEach(handler => {
-      handler(progess);
-    });
-  }
-
-  private initDownloadProgressObservable(cadManager: CadManager<TModelIdentifier>) {
-    this._subscriptions.add(
-      cadManager
-        .getLoadingProgressObserver()
-        .pipe(observeOn(asyncScheduler))
-        .subscribe({
-          next: this.notifyDownloadProgressChanged.bind(this),
-          error: error => trackError(error, { moduleName: 'RevealManager', methodName: 'constructor' })
-        })
     );
   }
 }

@@ -4,7 +4,7 @@
 
 import { Subject, MonoTypeOperatorFunction, Observable, asyncScheduler } from 'rxjs';
 import { scan, tap, finalize, shareReplay, throttleTime } from 'rxjs/operators';
-import { Progress } from './types';
+import { LoadingState } from './types';
 
 enum Action {
   Increment,
@@ -21,7 +21,9 @@ export class RxCounter {
    */
   public incrementOnNext<T>(): MonoTypeOperatorFunction<T> {
     return tap<T>({
-      next: () => this._actionSubject.next(Action.Increment)
+      next: () => {
+        this._actionSubject.next(Action.Increment);
+      }
     });
   }
 
@@ -31,7 +33,9 @@ export class RxCounter {
    */
   public decrementOnNext<T>(): MonoTypeOperatorFunction<T> {
     return tap<T>({
-      next: () => this._actionSubject.next(Action.Decrement)
+      next: () => {
+        this._actionSubject.next(Action.Decrement);
+      }
     });
   }
 
@@ -49,30 +53,27 @@ export class RxCounter {
    * Get counter observable.
    * @return {Observable<number>} The counter observable.
    */
-  public progressObservable(): Observable<Progress> {
+  public progressObservable(): Observable<LoadingState> {
     return this._actionSubject.pipe(
       scan(
-        (progress, action) => {
+        (loadingState, action) => {
           switch (action) {
             case Action.Increment:
-              progress.remaining++;
-              progress.total++;
+              loadingState.itemsRequested++;
               break;
             case Action.Decrement:
-              progress.remaining--;
-              progress.completed++;
+              loadingState.itemsLoaded++;
               break;
             case Action.Reset:
-              progress.total = 0;
-              progress.remaining = 0;
-              progress.completed = 0;
+              loadingState.itemsLoaded = 0;
+              loadingState.itemsRequested = 0;
               break;
             default:
               throw new Error(`Unsupported action ${action}`);
           }
-          return progress;
+          return loadingState;
         },
-        { total: 0, remaining: 0, completed: 0 }
+        { itemsLoaded: 0, itemsRequested: 0 } as LoadingState
       ),
       throttleTime(200, asyncScheduler, { trailing: true }),
       shareReplay(1)
