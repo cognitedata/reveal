@@ -3,12 +3,10 @@
  */
 
 /**
- * Hints that modifies how CAD sectors are loaded.
+ * Hints that are used to modify how CAD sectors are loaded.
+ * @property `suspendLoading` - disables loading of sectors.
  */
 export type CadLoadingHints = {
-  /**
-   * Optionally disables loading of sectors.
-   */
   suspendLoading?: boolean;
 };
 

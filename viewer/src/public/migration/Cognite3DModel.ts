@@ -16,32 +16,54 @@ import { CadLoadingHints } from '@/datamodels/cad/CadLoadingHints';
 import { CadModelMetadata } from '@/datamodels/cad/CadModelMetadata';
 import { NodeAppearanceProvider, DefaultNodeAppearance } from '@/datamodels/cad/NodeAppearance';
 import { trackError } from '@/utilities/metrics';
-import { SupportedModelTypes } from '@/datamodels/base';
+import { SupportedModelTypes } from '../types';
 
 const mapCoordinatesBuffers = {
   v: vec3.create()
 };
 
+/**
+ * Represents a single 3D CAD model loaded from CDF.
+ * @noInheritDoc
+ */
 export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = 'cad';
 
+  /**
+   * Get settings used for rendering.
+   */
   get renderHints(): CadRenderHints {
     return this.cadNode.renderHints;
   }
 
+  /**
+   * Specify settings for rendering.
+   */
   set renderHints(hints: CadRenderHints) {
     this.cadNode.renderHints = hints;
   }
 
+  /**
+   * Get settings used for loading pipeline.
+   */
   get loadingHints(): CadLoadingHints {
     return this.cadNode.loadingHints;
   }
 
+  /**
+   * Specify settings for loading pipeline.
+   */
   set loadingHints(hints: CadLoadingHints) {
     this.cadNode.loadingHints = hints;
   }
 
+  /**
+   * The CDF model ID of the model.
+   */
   readonly modelId: number;
+  /**
+   * The CDF revision ID of the model.
+   */
   readonly revisionId: number;
   /** @internal */
   readonly cadNode: CadNode;
@@ -117,10 +139,17 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return toThreeVector3(out, v);
   }
 
+  /**
+   * Cleans up used resources.
+   */
   dispose() {
     this.children = [];
   }
 
+  /**
+   * @deprecated
+   * @throws NotSupportedInMigrationWrapperError
+   */
   getSubtreeNodeIds(_nodeId: number, _subtreeSize?: number): Promise<number[]> {
     throw new NotSupportedInMigrationWrapperError('Use getSubtreeTreeIndices(treeIndex: number)');
   }
@@ -130,19 +159,39 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return treeIndices.asArray();
   }
 
-  getBoundingBox(nodeId?: number, box?: THREE.Box3): THREE.Box3 {
-    if (nodeId) {
-      throw new NotSupportedInMigrationWrapperError('Use getBoundingBoxFromCdf(nodeId: number)');
-    }
-
-    const bounds = this.cadModel.scene.root.bounds;
-    return toThreeJsBox3(box || new THREE.Box3(), bounds, this.cadModel.modelTransformation);
+  /**
+   * @deprecated Use {@link Cognite3DModel.getModelBoundingBox} or {@link Cognite3DModel.getBoundingBoxFromCdf}.
+   * @throws NotSupportedInMigrationWrapperError
+   */
+  getBoundingBox(_nodeId?: number, _box?: THREE.Box3): THREE.Box3 {
+    throw new NotSupportedInMigrationWrapperError('Use getBoundingBoxFromCdf(nodeId: number) or getModelBoundingBox()');
   }
 
+  /**
+   * Determines the full bounding box of the model.
+   * @param outBbox Optional. Used to write result to.
+   * @returns models bounding box.
+   * @example
+   * ```js
+   * const box = new THREE.Box3()
+   * model.getModelBoundingBox(box);
+   * // box now has the bounding box
+   *```
+   * ```js
+   * // the following code does the same
+   * const box = model.getModelBoundingBox();
+   * ```
+   */
   getModelBoundingBox(outBbox?: THREE.Box3): THREE.Box3 {
-    return this.getBoundingBox(undefined, outBbox);
+    const bounds = this.cadModel.scene.root.bounds;
+    return toThreeJsBox3(outBbox || new THREE.Box3(), bounds, this.cadModel.modelTransformation);
   }
 
+  /**
+   * Apply transformation matrix to the model.
+   * @param matrix Matrix to be applied.
+   * @internal
+   */
   updateTransformation(matrix: THREE.Matrix4): void {
     this.cadNode.applyMatrix4(matrix);
     this.cadNode.updateMatrixWorld(false);
@@ -153,6 +202,22 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.nodeIdAndTreeIndexMaps.updateMaps(sector);
   }
 
+  /**
+   * Fetches a bounding box from the CDF by the nodeId.
+   * @param nodeId
+   * @param box Optional. Used to write result to.
+   * @example
+   * ```js
+   * const box = new THREE.Box3()
+   * const nodeId = 100500;
+   * model.getBoundingBoxFromCdf(nodeId, box);
+   * // box now has the bounding box
+   *```
+   * ```js
+   * // the following code does the same
+   * const box = model.getBoundingBoxFromCdf(nodeId);
+   * ```
+   */
   async getBoundingBoxFromCdf(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
     const response = await this.client.revisions3D.retrieve3DNodes(this.modelId, this.revisionId, [{ id: nodeId }]);
     if (response.length < 1) {
@@ -175,15 +240,32 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return result.applyMatrix4(toThreeMatrix4(this.cadModel.modelTransformation.modelMatrix));
   }
 
+  /**
+   * @deprecated Use {@link Cognite3DModel.iterateNodesByTreeIndex} instead.
+   * @throws NotSupportedInMigrationWrapperError
+   */
   iterateNodes(_action: (nodeId: number, treeIndex?: number) => void): void {
     throw new NotSupportedInMigrationWrapperError('Use iterateNodesByTreeIndex(action: (treeIndex: number) => void)');
   }
+
+  /**
+   * @param action Function that will be called with a treeIndex argument.
+   * @example
+   * ```js
+   * const logIndex = (treeIndex) => console.log(treeIndex);
+   * model.iterateNodesByTreeIndex(logIndex); // 0, 1, 2, ...
+   * ```
+   */
   iterateNodesByTreeIndex(action: (treeIndex: number) => void): void {
     for (let i = 0; i < this.cadModel.scene.maxTreeIndex; i++) {
       action(i);
     }
   }
 
+  /**
+   * @deprecated Use {@link Cognite3DModel.iterateNodesByTreeIndex} instead.
+   * @throws NotSupportedInMigrationWrapperError
+   */
   iterateSubtree(
     _nodeId: number,
     _action: (nodeId: number, treeIndex?: number) => void,
@@ -200,6 +282,16 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return treeIndices.count;
   }
 
+  /**
+   * Get node color by nodeId. You can only get those colors, that you've set with
+   * {@link Cognite3DModel.setNodeColor} or {@link Cognite3DModel.setNodeColorByTreeIndex}.
+   * Otherwise `{ r: 255, g: 255, b: 255 }` is returned as the fallback.
+   * @param nodeId
+   * @example
+   * ```js
+   * let color = model.getNodeColor(nodeId);
+   * ```
+   */
   async getNodeColor(nodeId: number): Promise<Color> {
     try {
       const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
@@ -227,6 +319,15 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     }
   }
 
+  /**
+   * Set node color by node ID.
+   * This method is async because nodeId might be not loaded yet.
+   * @deprecated Use {@link Cognite3DModel.setNodeColorByTreeIndex}
+   * @param nodeId
+   * @param r       Red component (0-255)
+   * @param g       Green component (0-255)
+   * @param b       Blue componenet (0-255)
+   */
   async setNodeColor(nodeId: number, r: number, g: number, b: number): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
     await this.setNodeColorByTreeIndex(treeIndex, r, g, b);
@@ -255,11 +356,21 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return treeIndices.count;
   }
 
+  /**
+   * Set original node color by node ID.
+   * This method is async because node ID might be not loaded yet.
+   * @deprecated {@link Cognite3DModel.resetNodeColorByTreeIndex}
+   * @param nodeId
+   */
   async resetNodeColor(nodeId: number): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
     await this.resetNodeColorByTreeIndex(treeIndex);
   }
 
+  /**
+   * Set original node color by tree index.
+   * @param treeIndex
+   */
   async resetNodeColorByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
     const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
     treeIndices.forEach(idx => this.nodeColors.delete(idx));
@@ -267,17 +378,30 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return treeIndices.count;
   }
 
+  /**
+   * Restore original colors for all nodes.
+   */
   resetAllNodeColors() {
     const treeIndices = [...this.nodeColors.keys()];
     this.nodeColors.clear();
     this.cadNode.requestNodeUpdate(treeIndices);
   }
 
+  /**
+   * Highlight node by node ID.
+   * This method is async because node ID might be not loaded yet.
+   * @deprecated {@link Use Cognite3DModel.selectNodeByTreeIndex}
+   * @param nodeId
+   */
   async selectNode(nodeId: number): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
     this.selectNodeByTreeIndex(treeIndex);
   }
 
+  /**
+   * Highlight node by tree index.
+   * @param treeIndex
+   */
   async selectNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
     const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
     treeIndices.forEach(idx => this.selectedNodes.add(idx));
@@ -285,11 +409,17 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return treeIndices.count;
   }
 
+  /**
+   * Removes selection from the node by node ID
+   */
   async deselectNode(nodeId: number): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
     await this.deselectNodeByTreeIndex(treeIndex);
   }
 
+  /**
+   * Removes selection from the node by tree index
+   */
   async deselectNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
     const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
     treeIndices.forEach(idx => this.selectedNodes.delete(idx));
@@ -297,17 +427,37 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return treeIndices.count;
   }
 
+  /**
+   * Removes selection from all nodes.
+   */
   deselectAllNodes(): void {
     const selectedNodes = Array.from(this.selectedNodes);
     this.selectedNodes.clear();
     this.cadNode.requestNodeUpdate(selectedNodes);
   }
 
+  /**
+   * Show the node by node ID, that was hidden by {@link Cognite3DModel.hideNodeByTreeIndex},
+   * {@link Cognite3DModel.hideNode} or {@link Cognite3DModel.hideAllNodes}
+   * This method is async because nodeId might be not loaded yet.
+   * @deprecated Use {@link Cognite3DModel.showNodeByTreeIndex}
+   * @param nodeId
+   * @example
+   * ```js
+   * model.hideAllNodes();
+   * model.showNode(nodeId);
+   * ```
+   */
   async showNode(nodeId: number): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
     this.showNodeByTreeIndex(treeIndex);
   }
 
+  /**
+   * Show the node by tree index, that was hidden by {@link Cognite3DModel.hideNodeByTreeIndex},
+   * {@link Cognite3DModel.hideNode} or {@link Cognite3DModel.hideAllNodes}
+   * @param treeIndex
+   */
   async showNodeByTreeIndex(treeIndex: number, applyToChildren = false): Promise<number> {
     const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
     this.hiddenNodes.delete(treeIndex);
@@ -315,12 +465,21 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return treeIndices.count;
   }
 
+  /**
+   * Show all the nodes that were hidden by {@link Cognite3DModel.hideNodeByTreeIndex},
+   * {@link Cognite3DModel.hideNode} or {@link Cognite3DModel.hideAllNodes}
+   */
   showAllNodes(): void {
     const wasHidden = Array.from(this.hiddenNodes.values());
     this.hiddenNodes.clear();
     this.cadNode.requestNodeUpdate(wasHidden);
   }
 
+  /**
+   * Hides all nodes in the model.
+   * @param makeGray Not supported.
+   * @throws NotSupportedInMigrationWrapperError if `makeGray` is passed
+   */
   hideAllNodes(makeGray?: boolean): void {
     if (makeGray) {
       throw new NotSupportedInMigrationWrapperError('makeGray is not supported');
@@ -331,11 +490,24 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     this.cadNode.requestNodeUpdate(Array.from(this.hiddenNodes.values()));
   }
 
+  /**
+   * Hide the node by node ID.
+   * This method is async because nodeId might be not loaded yet.
+   * @deprecated Use {@link Cognite3DModel.hideNodeByTreeIndex}
+   * @param nodeId
+   * @param makeGray Not supported yet.
+   */
   async hideNode(nodeId: number, makeGray?: boolean): Promise<void> {
     const treeIndex = await this.nodeIdAndTreeIndexMaps.getTreeIndex(nodeId);
     await this.hideNodeByTreeIndex(treeIndex, makeGray);
   }
 
+  /**
+   * Hide the node by tree index.
+   * @param treeIndex
+   * @param makeGray Not supported.
+   * @throws NotSupportedInMigrationWrapperError if `makeGray` is passed
+   */
   async hideNodeByTreeIndex(treeIndex: number, makeGray?: boolean, applyToChildren = false): Promise<number> {
     if (makeGray) {
       throw new NotSupportedInMigrationWrapperError('makeGray is not supported');
