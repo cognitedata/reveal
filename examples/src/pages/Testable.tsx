@@ -19,6 +19,10 @@ export function Testable() {
   const canvas = useRef<HTMLCanvasElement>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const updateLoadingState = ({ sectorsLoaded, sectorsRequested }: reveal.utilities.LoadingState) => {
+    setIsLoading(sectorsLoaded !== sectorsRequested);
+  }
+
   useEffect(() => {
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
     let revealManager: reveal.RevealManager<unknown>;
@@ -59,7 +63,7 @@ export function Testable() {
           'Need to provide either project & model OR modelUrl as query parameters'
         );
       }
-      revealManager.on('loadingStateChanged', setIsLoading);
+      revealManager.on('loadingStateChanged', updateLoadingState);
 
       scene.add(model);
 

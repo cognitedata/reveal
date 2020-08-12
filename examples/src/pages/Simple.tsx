@@ -11,14 +11,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { CanvasWrapper, Loader } from '../components/styled';
 import { resizeRendererToDisplaySize } from '../utils/sceneHelpers';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
-import { Progress } from '@cognite/reveal/utilities/types';
 
 CameraControls.install({ THREE });
 
 export function Simple() {
   const canvas = useRef<HTMLCanvasElement>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [downloadProgress, setDownloadProgress] = useState<Progress>({ total: 0, completed: 0, remaining: 0 });
+
+  const [loadingState, setLoadingState] = useState<reveal.utilities.LoadingState>({ sectorsLoaded: 0, sectorsRequested: 0 });
+  const { sectorsLoaded, sectorsRequested } = loadingState;
 
   useEffect(() => {
     let revealManager: reveal.RevealManager<unknown>;
@@ -48,8 +48,7 @@ export function Simple() {
         );
       }
 
-      revealManager.on('loadingStateChanged', setIsLoading);
-      revealManager.on('downloadProgressChanged', setDownloadProgress);
+      revealManager.on('loadingStateChanged', setLoadingState);
 
       scene.add(model);
       const renderer = new THREE.WebGLRenderer({
@@ -103,12 +102,10 @@ export function Simple() {
   }, []);
   return (
     <CanvasWrapper>
-      <Loader isLoading={isLoading} style={{ position: 'absolute' }}>
-        Loading...
-      </Loader>
       
-      <Loader isLoading={(downloadProgress.remaining != 0)} style={{ position: 'absolute', top: '20px' }}>
-        Downloading: {downloadProgress.completed}/{downloadProgress.total} sectors.
+      
+      <Loader isLoading={ sectorsLoaded !== sectorsRequested } style={{ position: 'absolute' }}>
+        Downloading: {sectorsLoaded}/{sectorsRequested} sectors.
       </Loader>
       <canvas ref={canvas} />
     </CanvasWrapper>

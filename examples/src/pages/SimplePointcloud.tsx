@@ -61,6 +61,10 @@ export function SimplePointcloud() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const updateLoadingState = ({ sectorsLoaded, sectorsRequested }: reveal.utilities.LoadingState) => {
+    setIsLoading(sectorsLoaded !== sectorsRequested);
+  }
+
   useEffect(() => {
     let revealManager: reveal.RevealManager<unknown>;
     if (!canvasRef.current) {
@@ -103,7 +107,7 @@ export function SimplePointcloud() {
       }
       const [pointCloudGroup, pointCloudNode] = model;
       scene.add(pointCloudGroup);
-      revealManager.on('loadingStateChanged', setIsLoading);
+      revealManager.on('loadingStateChanged', updateLoadingState);
 
       const camera = new THREE.PerspectiveCamera(
         75,
