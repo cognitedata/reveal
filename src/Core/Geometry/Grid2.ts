@@ -50,9 +50,7 @@ export class Grid2 extends Shape
   //==================================================
 
   public toString(): string { return `(${this.nodeSize})`; }
-  
   public getNodeIndex(i: number, j: number) { return i + this.nodeSize.i * j; }
-
   public getCellIndex(i: number, j: number) { return i + this.cellSize.i * j; }
 
   //==================================================
@@ -60,4 +58,5 @@ export class Grid2 extends Shape
   //==================================================
 
   public isNodeInside(i: number, j: number) { return i >= 0 && j >= 0 && i < this.nodeSize.i && j < this.nodeSize.j; }
+  public isCellInside(i: number, j: number) { return i >= 0 && j >= 0 && i < this.cellSize.i && j < this.cellSize.j; }
 }

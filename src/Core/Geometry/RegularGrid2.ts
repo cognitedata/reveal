@@ -34,7 +34,7 @@ export class RegularGrid2 extends Grid2
   private _rotationAngle = 0;
   private _sinRotationAngle = 0;
   private _cosRotationAngle = 1;
-  
+
   private _buffer: Float32Array;
 
   static readonly _staticHelperA = Vector3.newZero;
@@ -97,7 +97,7 @@ export class RegularGrid2 extends Grid2
     {
       for (let i = this.nodeSize.i - 1; i >= 0; i--)
       {
-        if (this.getPosition(i, j, position))
+        if (this.getNodePosition(i, j, position))
           boundingBox.add(position);
       }
     }
@@ -127,8 +127,15 @@ export class RegularGrid2 extends Grid2
     return this._buffer[index];
   }
 
-  public getPosition(i: number, j: number, result: Vector3): boolean
+  //==================================================
+  // INSTANCE METHODS: Getters: Node position 
+  //==================================================
+
+  public getNodePosition(i: number, j: number, resultPosition?: Vector3): boolean
   {
+    if (!resultPosition)
+      resultPosition = Vector3.newZero;
+
     const z = this.getZ(i, j);
     if (Number.isNaN(z))
       return false;
@@ -137,58 +144,95 @@ export class RegularGrid2 extends Grid2
     {
       const dx = this.inc.x * i;
       const dy = this.inc.y * j;
-      result.x = dx * this._cosRotationAngle - dy * this._sinRotationAngle;
-      result.y = dx * this._sinRotationAngle + dy * this._cosRotationAngle;
+      resultPosition.x = dx * this._cosRotationAngle - dy * this._sinRotationAngle;
+      resultPosition.y = dx * this._sinRotationAngle + dy * this._cosRotationAngle;
     }
     else
     {
-      result.x = this.inc.x * i;
-      result.y = this.inc.y * j;
+      resultPosition.x = this.inc.x * i;
+      resultPosition.y = this.inc.y * j;
     }
-    result.z = z;
-    result.add(this.origin);
+    resultPosition.z = z;
+    resultPosition.add(this.origin);
     return true;
   }
 
-  public getPosition2(i: number, j: number, result: Vector3): void
+  public getNodePosition2(i: number, j: number, resultPosition: Vector3): void
   {
     if (this._hasRotationAngle)
     {
       const dx = this.inc.x * i;
       const dy = this.inc.y * j;
-      result.x = dx * this._cosRotationAngle - dy * this._sinRotationAngle;
-      result.y = dx * this._sinRotationAngle + dy * this._cosRotationAngle;
+      resultPosition.x = dx * this._cosRotationAngle - dy * this._sinRotationAngle;
+      resultPosition.y = dx * this._sinRotationAngle + dy * this._cosRotationAngle;
     }
     else
     {
-      result.x = this.inc.x * i;
-      result.y = this.inc.y * j;
+      resultPosition.x = this.inc.x * i;
+      resultPosition.y = this.inc.y * j;
     }
-    result.x += this.origin.x;
-    result.y += this.origin.y;
+    resultPosition.x += this.origin.x;
+    resultPosition.y += this.origin.y;
   }
 
-  public getRelativePosition(i: number, j: number, result: Vector3): boolean
+  public getRelativeNodePosition(i: number, j: number, resultPosition: Vector3): boolean
   {
     const z = this.getZ(i, j);
     if (Number.isNaN(z))
       return false;
 
-    result.x = this.inc.x * i;
-    result.y = this.inc.y * j;
-    result.z = z;
+    resultPosition.x = this.inc.x * i;
+    resultPosition.y = this.inc.y * j;
+    resultPosition.z = z;
     return true;
   }
 
-  public getNormal(i: number, j: number, result: Vector3, z: number, normalize: boolean): Vector3
+  //==================================================
+  // INSTANCE METHODS: Getters: Cell position 
+  //==================================================
+
+  public getCellFromPosition(position: Vector3, resultCell?: Index2): Index2
   {
+    if (!resultCell)
+      resultCell = Index2.newZero;
+
+    const dx = position.x - this.origin.x;
+    const dy = position.y - this.origin.y;
+
+    let i; let j: number;
+    if (this._hasRotationAngle)
+    {
+      const x = dx * this._cosRotationAngle + dy * this._sinRotationAngle;
+      const y = -dx * this._sinRotationAngle + dy * this._cosRotationAngle;
+      i = x / this.inc.x;
+      j = y / this.inc.y;
+    }
+    else
+    {
+      i = dx / this.inc.x;
+      j = dy / this.inc.y;
+    }
+    resultCell.i = Math.floor(i);
+    resultCell.j = Math.floor(j);
+    return resultCell;
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Getters: Others
+  //==================================================
+
+  public getNormal(i: number, j: number, z: number, normalize: boolean, resultNormal?: Vector3): Vector3
+  {
+    if (!resultNormal)
+      resultNormal = Vector3.newZero;
+
     if (!z)
       z = this.getZ(i, j);
 
     const a = RegularGrid2._staticHelperA;
     const b = RegularGrid2._staticHelperB;
 
-    result.set(0, 0, 0);
+    resultNormal.set(0, 0, 0);
 
     let def0 = this.isNodeInside(i + 1, j + 0);
     let def1 = this.isNodeInside(i + 0, j + 1);
@@ -215,32 +259,32 @@ export class RegularGrid2 extends Grid2
       a.set(+this.inc.x, 0, z0);
       b.set(0, +this.inc.y, z1);
       a.crossProduct(b);
-      result.add(a);
+      resultNormal.add(a);
     }
     if (def1 && def2)
     {
       a.set(0, +this.inc.y, z1);
       b.set(-this.inc.x, 0, z2);
       a.crossProduct(b);
-      result.add(a);
+      resultNormal.add(a);
     }
     if (def2 && def3)
     {
       a.set(-this.inc.x, 0, z2);
       b.set(0, -this.inc.y, z3);
       a.crossProduct(b);
-      result.add(a);
+      resultNormal.add(a);
     }
     if (def3 && def0)
     {
       a.set(0, -this.inc.y, z3);
       b.set(+this.inc.x, 0, z0);
       a.crossProduct(b);
-      result.add(a);
+      resultNormal.add(a);
     }
-    if (normalize && !result.normalize())
-      result.set(0, 0, 1);
-    return result;
+    if (normalize && !resultNormal.normalize())
+      resultNormal.set(0, 0, 1);
+    return resultNormal;
   }
 
   public getCornerRange(): Range3
@@ -248,11 +292,11 @@ export class RegularGrid2 extends Grid2
     const corner = Vector3.newZero;
     const range = new Range3();
     range.add(this.origin);
-    this.getPosition2(0, this.nodeSize.j - 1, corner);
+    this.getNodePosition2(0, this.nodeSize.j - 1, corner);
     range.add(corner);
-    this.getPosition2(this.nodeSize.i - 1, 0, corner);
+    this.getNodePosition2(this.nodeSize.i - 1, 0, corner);
     range.add(corner);
-    this.getPosition2(this.nodeSize.i - 1, this.nodeSize.j - 1, corner);
+    this.getNodePosition2(this.nodeSize.i - 1, this.nodeSize.j - 1, corner);
     range.add(corner);
     return range;
   }
@@ -342,7 +386,7 @@ export class RegularGrid2 extends Grid2
   {
     const origin = Vector3.newZero;
     const inc = new Vector3(1, 1, 0);
-    const nodeSize = new Index2(2**powerOf2 + 1);
+    const nodeSize = new Index2(2 ** powerOf2 + 1);
     const stdDev = 1;
     const grid = new RegularGrid2(nodeSize, origin, inc, rotationAngle);
 

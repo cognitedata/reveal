@@ -26,6 +26,8 @@ import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { TextureKit } from "@/Three/Utilities/TextureKit";
 import { ContouringService } from "@/Core/Geometry/ContouringService";
 import { ColorMaps } from '@/Core/Primitives/ColorMaps';
+import { ViewInfo } from '@/Core/Views/ViewInfo';
+import { Index2 } from '@/Core/Geometry/Index2';
 
 export class SurfaceThreeView extends BaseGroupThreeView
 {
@@ -84,6 +86,26 @@ export class SurfaceThreeView extends BaseGroupThreeView
     parent.position.copy(transformer.to3D(grid.origin));
     parent.scale.copy(transformer.scale);
     return parent;
+  }
+
+  public /*override*/ onShowInfo(viewInfo: ViewInfo, intersection: THREE.Intersection): void
+  {
+    const { node } = this;
+    viewInfo.addPickedNode(node);
+
+    const { transformer } = this;
+    const position = transformer.toWorld(intersection.point);
+    viewInfo.addValue("Position", position.getString(2));
+
+    const { surface } = node;
+    if (!surface)
+      return;
+
+    const cell = surface.getCellFromPosition(position);
+    if (!surface.isNodeInside(cell.i, cell.j))
+      return;
+
+    viewInfo.addValue("Cell", cell.toString());
   }
 
   //==================================================

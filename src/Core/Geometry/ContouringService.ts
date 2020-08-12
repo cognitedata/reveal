@@ -59,10 +59,10 @@ export class ContouringService
     {
       for (let j = 0; j < grid.nodeSize.j - 1; j++)
       {
-        const isDef0 = grid.getRelativePosition(i + 0, j + 0, p0);
-        const isDef1 = grid.getRelativePosition(i + 1, j + 0, p1);
-        const isDef2 = grid.getRelativePosition(i + 1, j + 1, p2);
-        const isDef3 = grid.getRelativePosition(i + 0, j + 1, p3);
+        const isDef0 = grid.getRelativeNodePosition(i + 0, j + 0, p0);
+        const isDef1 = grid.getRelativeNodePosition(i + 1, j + 0, p1);
+        const isDef2 = grid.getRelativeNodePosition(i + 1, j + 1, p2);
+        const isDef3 = grid.getRelativeNodePosition(i + 0, j + 1, p3);
 
         let triangleCount = 0;
         if (isDef0) triangleCount++;
