@@ -103,9 +103,9 @@ jobs:
       run: |
         xvfb-run yarn run coverage
 
-    - name: Build release
+    - name: Build prod version
       working-directory: viewer
-      run: yarn run release
+      run: yarn run build:prod
 
     - name: Publish to codecov
       uses: codecov/codecov-action@v1
@@ -149,7 +149,7 @@ jobs:
 
     - name: Build release
       working-directory: viewer
-      run: yarn run release
+      run: yarn run build:prod
 
     - name: Install examples-dependencies
       working-directory: examples
