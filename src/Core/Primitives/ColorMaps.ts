@@ -38,7 +38,7 @@ export class ColorMaps
     return colorMaps.get(name);
   }
 
-  public static getNames(): string[]
+  public static getOptions(): string[]
   {
     const { colorMaps } = ColorMaps;
     return Array.from(colorMaps.keys());

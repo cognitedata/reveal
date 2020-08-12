@@ -14,8 +14,6 @@
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { IDataLoader } from "@/Core/Interfaces/IDataLoader";
 import { ITarget } from "@/Core/Interfaces/ITarget";
-import { ColorMaps } from '@/Core/Primitives/ColorMaps';
-import { PropertyFolder } from '../Property/Concrete/Folder/PropertyFolder';
 
 export abstract class DataNode extends BaseVisualNode
 {
@@ -38,7 +36,6 @@ export abstract class DataNode extends BaseVisualNode
   private _data: any = null;
   private _dataIsLost = false;
   private _dataLoader: IDataLoader | null = null;
-  public colorMap = ColorMaps.rainbowName;
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -82,17 +79,6 @@ export abstract class DataNode extends BaseVisualNode
   public /*override*/ isA(className: string): boolean { return className === DataNode.className || super.isA(className); }
 
   //==================================================
-  // OVERRIDES of BaseNode
-  //==================================================
-
-  protected /*override*/ populateInfoCore(folder: PropertyFolder): void
-  {
-    super.populateInfoCore(folder);
-    // if (this.hasColorMap())
-    //   folder.addColorProperty("Colormap", this.getColoMap, false, this, this.colorChanged, this.setColor);
-  }
-
-  //==================================================
   // OVERRIDES of BaseVisualNode
   //==================================================
 
@@ -104,10 +90,4 @@ export abstract class DataNode extends BaseVisualNode
   }
 
   public /*override*/ canBeVisibleNow(): boolean { return this.anyData != null; }
-
-  //==================================================
-  // VIRTUAL METHODS
-  //==================================================
-
-  public /*virtual*/ hasColorMap(): boolean { return true; }
 }

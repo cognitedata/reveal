@@ -31,6 +31,7 @@ import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 import { FileType } from "@/Core/Enums/FileType";
 import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
 import { Range3 } from '@/Core/Geometry/Range3';
+import { ColorMaps } from '../Primitives/ColorMaps';
 
 export abstract class BaseNode extends Identifiable
 {
@@ -51,6 +52,7 @@ export abstract class BaseNode extends Identifiable
   //==================================================
 
   private _color: Color | undefined = undefined;
+  private _colorMap = ColorMaps.rainbowName;
   private _name: string | undefined = undefined;
   private _isExpanded = false;
   private _isActive: boolean = false;
@@ -69,6 +71,8 @@ export abstract class BaseNode extends Identifiable
   public set name(value: string) { this.setName(value); }
   public get color(): Color { return this.getColor(); }
   public set color(value: Color) { this.setColor(value); }
+  public get colorMap(): string { return this._colorMap; }
+  public set colorMap(value: string) { this._colorMap = value; }
   public get uniqueId(): UniqueId { return this._uniqueId; }
   public get renderStyles(): BaseRenderStyle[] { return this._renderStyles; }
   public get path(): string { return `${this.parent ? this.parent.path : ""}\\${this.name}`; }
@@ -123,6 +127,7 @@ export abstract class BaseNode extends Identifiable
   public /*virtual*/ setColor(value: Color) { this._color = value; }
   public /*virtual*/ canChangeColor(): boolean { return true; }
   public /*virtual*/ hasIconColor(): boolean { return this.canChangeColor(); }
+  public /*virtual*/ hasColorMap(): boolean { return true; }
 
   //==================================================
   // VIRTUAL METHODS: Icon
@@ -277,6 +282,10 @@ export abstract class BaseNode extends Identifiable
     if (this.canChangeColor())
       folder.addColorProperty("Color", this.getColor, false, this, this.colorChanged, this.setColor);
     folder.addReadOnlyStrings("Type", this.typeName);
+    // TODO; Add color map
+    // To the the options, set ColorMaps.getOptions(), it will give all the color maps we have as strings
+    // if (this.hasColorMap())
+    //   folder.addColorProperty("Colormap", this.getColoMap, false, this, this.colorChanged, this.setColor);
   }
 
   protected /*virtual*/ populateStatisticsCore(folder: PropertyFolder): void { }
