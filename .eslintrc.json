@@ -17,12 +17,13 @@
   },
   "plugins": ["@cognite", "lodash"],
   "rules": {
+    "@typescript-eslint/no-non-null-assertion": "error",
     "lines-between-class-members": "off",
     "no-multiple-empty-lines": "error",
     "indent": "error",
     "no-alert": "off",
     "no-irregular-whitespace": "off",
-    "jsx-a11y/click-events-have-key-events": "off", // need to enable this
+    "jsx-a11y/click-events-have-key-events": "off", // needs to be enabled in the future
     "react/jsx-props-no-spreading": ["error", { "html":  "ignore", "exceptions": ["React.Fragment"] }],
     "no-restricted-syntax": "off",
     "no-param-reassign": "off",

@@ -1,6 +1,6 @@
 import React from "react";
 import Color from "color";
-import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
+import { makeStyles, createStyles } from "@material-ui/core/styles";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,7 +12,7 @@ import CompactColorPicker from "@/UserInterface/Components/CompactColorPicker/Co
 import Icon from "@/UserInterface/Components/Icon/Icon";
 import { isNumber } from "@/UserInterface/Foundation/Utils/numericUtils";
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     root: {
       width: "100%",
@@ -91,7 +91,9 @@ export default function SettingsElement(props: {
   const classes = useStyles();
   const { config, onChange, sectionId } = props;
 
-  const labelElement = config.name ? <label>{`${config.name}:`}</label> : null;
+  const labelElement = config.name ? (
+    <label htmlFor={`chBox-${sectionId}`}>{`${config.name}:`}</label>
+  ) : null;
 
   // Generate keys for mapped components
   const keyExtractor = (
@@ -141,11 +143,12 @@ export default function SettingsElement(props: {
                 onChange(elmConfig.name, event.target.value);
               }}
             >
-              {options!.map((option, idx) => (
+              {options?.map((option, idx) => (
                 <MenuItem
                   value={idx}
-                  {...keyExtractor(idx, elmConfig.type, elmConfig.name)}
-                  key={idx}
+                  key={
+                    keyExtractor("select", elmConfig.type, elmConfig.name).key
+                  }
                 >
                   <div className={`select-option ${classes.option}`}>
                     {option.icon ? (
@@ -163,7 +166,7 @@ export default function SettingsElement(props: {
                   isAvailable(checked) &&
                   onChange(
                     elmConfig.name,
-                    isNumber(value) && value! > 0 ? value - 1 : 0
+                    isNumber(value) && value > 0 ? value - 1 : 0
                   )
                 }
               />
@@ -171,11 +174,12 @@ export default function SettingsElement(props: {
                 icon={faSortDown}
                 onClick={() =>
                   isAvailable(checked) &&
+                  options &&
                   onChange(
                     elmConfig.name,
-                    isNumber(value) && value! < options!.length - 1
+                    isNumber(value) && value < options.length - 1
                       ? value + 1
-                      : options!.length - 1
+                      : options.length - 1
                   )
                 }
               />
@@ -206,14 +210,14 @@ export default function SettingsElement(props: {
           <div
             {...keyExtractor(null, elmConfig.type, elmConfig.name)}
             className={`input-icon ${
-              icon!.selected ? "input-icon-selected" : ""
+              icon?.selected ? "input-icon-selected" : ""
             }`}
           >
-            <Icon type={icon!.type} name={icon!.name} />
+            <Icon type={icon?.type} name={icon?.name} />
           </div>
         );
       case ElementTypes.INPUT_GROUP:
-        return subElements!.map((elm) => renderInputElement(elm, checked));
+        return subElements?.map((elm) => renderInputElement(elm, checked));
       default:
         return null;
     }
@@ -222,8 +226,8 @@ export default function SettingsElement(props: {
   return (
     <section className={classes.formField}>
       <div className={classes.formLabel}>{labelElement}</div>
-      <div className={classes.formInput}>
-        {config.hasOwnProperty("checked") ? (
+      <div id={`chBox-${sectionId}`} className={classes.formInput}>
+        {Object.prototype.hasOwnProperty.call(config, "checked") ? (
           <input
             type="checkbox"
             className={classes.checkbox}

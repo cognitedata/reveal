@@ -71,7 +71,7 @@ export default function TreeIcon(props: {
       // @ts-ignore
       fabricRef.current = canvas;
 
-      fabric.Image.fromURL(props.src!, (oImg) => {
+      fabric.Image.fromURL(props.src, (oImg) => {
         setImage(oImg, canvas, props.size, props.color);
         // @ts-ignore
         imageRef.current = oImg;

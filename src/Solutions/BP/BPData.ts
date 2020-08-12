@@ -146,7 +146,8 @@ export default class BPData
             {
               if (!riskEventMap.get(wellBoreId))
                 riskEventMap.set(wellBoreId, []);
-                        riskEventMap.get(wellBoreId)!.push(event);
+
+              riskEventMap.get(wellBoreId)?.push(event);
             }
           }
         }
