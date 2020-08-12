@@ -81,7 +81,7 @@
     "webpack-log": "^3.0.1",
     "webpack-node-externals": "^2.5.1",
     "whatwg-fetch": "^3.4.0",
-    "worker-plugin": "^4.0.3"
+    "worker-plugin": "^5.0.0"
   },
   "dependencies": {
     "@cognite/potree-core": "^1.1.3",
