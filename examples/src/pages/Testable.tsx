@@ -19,8 +19,8 @@ export function Testable() {
   const canvas = useRef<HTMLCanvasElement>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const updateLoadingState = ({ sectorsLoaded, sectorsRequested }: reveal.utilities.LoadingState) => {
-    setIsLoading(sectorsLoaded !== sectorsRequested);
+  const updateLoadingState = ({ itemsLoaded, itemsRequested }: reveal.utilities.LoadingState) => {
+    setIsLoading(itemsLoaded !== itemsRequested);
   }
 
   useEffect(() => {

@@ -61,8 +61,8 @@ export function SimplePointcloud() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const updateLoadingState = ({ sectorsLoaded, sectorsRequested }: reveal.utilities.LoadingState) => {
-    setIsLoading(sectorsLoaded !== sectorsRequested);
+  const updateLoadingState = ({ itemsLoaded, itemsRequested }: reveal.utilities.LoadingState) => {
+    setIsLoading(itemsLoaded !== itemsRequested);
   }
 
   useEffect(() => {

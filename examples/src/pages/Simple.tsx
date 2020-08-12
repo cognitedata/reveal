@@ -17,8 +17,8 @@ CameraControls.install({ THREE });
 export function Simple() {
   const canvas = useRef<HTMLCanvasElement>(null);
 
-  const [loadingState, setLoadingState] = useState<reveal.utilities.LoadingState>({ sectorsLoaded: 0, sectorsRequested: 0 });
-  const { sectorsLoaded, sectorsRequested } = loadingState;
+  const [loadingState, setLoadingState] = useState<reveal.utilities.LoadingState>({ itemsLoaded: 0, itemsRequested: 0 });
+  const { itemsLoaded, itemsRequested } = loadingState;
 
   useEffect(() => {
     let revealManager: reveal.RevealManager<unknown>;
@@ -104,8 +104,8 @@ export function Simple() {
     <CanvasWrapper>
       
       
-      <Loader isLoading={ sectorsLoaded !== sectorsRequested } style={{ position: 'absolute' }}>
-        Downloading: {sectorsLoaded}/{sectorsRequested} sectors.
+      <Loader isLoading={ itemsLoaded !== itemsRequested } style={{ position: 'absolute' }}>
+        Downloading: {itemsLoaded}/{itemsRequested} sectors.
       </Loader>
       <canvas ref={canvas} />
     </CanvasWrapper>
