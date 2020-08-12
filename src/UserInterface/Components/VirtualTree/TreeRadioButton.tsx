@@ -1,9 +1,9 @@
 import React, { KeyboardEvent, MouseEvent } from "react";
 import styled from "styled-components";
-import {
-  RadioOff,
-  RadioOn,
-} from "@/UserInterface/Components/Icon/IconSelector";
+import FocusRadioOff from "@images/Checkboxes/FocusRadioOff.png";
+import FocusRadioOn from "@images/Checkboxes/FocusRadioOn.png";
+import RadioOff from "@images/Checkboxes/RadioOff.png";
+import RadioOn from "@images/Checkboxes/RadioOn.png";
 
 interface SpanProps {
   readonly background?: string;
@@ -75,12 +75,14 @@ const getBackgroundImage = (
 ) => {
   const imageStringArr: string[] = [];
   if (!disabled) {
-    if (checked) imageStringArr.push(`url(${RadioOn})`);
-
-    imageStringArr.push(`url(${RadioOff})`);
-
     if (hover) {
-      // imageStringArr.push(`radial-gradient(white, lightblue)`);
+      if (checked) imageStringArr.push(`url(${FocusRadioOn})`);
+
+      imageStringArr.push(`url(${FocusRadioOff})`);
+    } else {
+      if (checked) imageStringArr.push(`url(${RadioOn})`);
+
+      imageStringArr.push(`url(${RadioOff})`);
     }
   }
 
