@@ -278,14 +278,15 @@ export abstract class BaseNode extends Identifiable
 
   protected /*virtual*/ populateInfoCore(folder: PropertyFolder): void
   {
-    folder.addStringProperty("Name", this.getName, !this.canChangeName(), this, this.nameChanged, this.setName);
+    folder.addStringProperty("Name", this.getName, !this.canChangeName(), this, this.notifyNameChanged, this.setName);
     if (this.canChangeColor())
-      folder.addColorProperty("Color", this.getColor, false, this, this.colorChanged, this.setColor);
+      folder.addColorProperty("Color", this.getColor, false, this, this.notifyColorChanged, this.setColor);
     folder.addReadOnlyStrings("Type", this.typeName);
+
     // TODO; Add color map
-    // To the the options, set ColorMaps.getOptions(), it will give all the color maps we have as strings
+    // The options, set ColorMaps.getOptions(), it will give all the color maps we have as strings
     // if (this.hasColorMap())
-    //   folder.addColorProperty("Colormap", this.getColoMap, false, this, this.colorChanged, this.setColor);
+    // folder.addSomeProperty("Colormap", this.colorMap, false, this, this.notifyColorMapChanged, this.colorMap);
   }
 
   protected /*virtual*/ populateStatisticsCore(folder: PropertyFolder): void { }
@@ -293,9 +294,6 @@ export abstract class BaseNode extends Identifiable
   //==================================================
   // INSTANCE METHODS: Populate Settings
   //==================================================
-
-  public nameChanged(): void { this.notify(new NodeEventArgs(Changes.nodeName)); }
-  public colorChanged(): void { this.notify(new NodeEventArgs(Changes.nodeColor)); }
 
   public populateInfo(folder: PropertyFolder): void
   {
@@ -633,8 +631,12 @@ export abstract class BaseNode extends Identifiable
   }
 
   //==================================================
-  // INSTANCE METHODS: Misc
+  // INSTANCE METHODS: Notifying
   //==================================================
+
+  public notifyNameChanged(): void { this.notify(new NodeEventArgs(Changes.nodeName)); }
+  public notifyColorChanged(): void { this.notify(new NodeEventArgs(Changes.nodeColor)); }
+  public notifyColorMapChanged(): void { this.notify(new NodeEventArgs(Changes.nodeColorMap)); }
 
   public notify(args: NodeEventArgs): void
   {
@@ -642,6 +644,10 @@ export abstract class BaseNode extends Identifiable
     VirtualUserInterface.updateStatusPanel(JSON.stringify(args));
     this.notifyCore(args);
   }
+
+  //==================================================
+  // INSTANCE METHODS: Misc
+  //==================================================
 
   public initialize(): void
   {
