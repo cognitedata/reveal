@@ -11,6 +11,8 @@ import { grey } from "@material-ui/core/colors";
 
 const LOAD_MOCK_DATA = false;
 
+// TODO: remove this exemption
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const client = new CogniteSeismicClient({
   token: "my-token",
   api_url: "cdf-api-url",

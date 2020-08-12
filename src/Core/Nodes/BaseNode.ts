@@ -656,7 +656,7 @@ export abstract class BaseNode extends Identifiable
     this.removeInteractiveCore();
     const { parent } = this;
     this.remove();
-    parent!.notify(new NodeEventArgs(Changes.childDeleted));
+    parent?.notify(new NodeEventArgs(Changes.childDeleted));
   }
 
   public setActiveInteractive(): void

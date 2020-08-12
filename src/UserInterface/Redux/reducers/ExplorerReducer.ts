@@ -44,11 +44,13 @@ export const explorerSlice = createSlice({
 
           for (const descendent of tabNode.getDescendants())
           {
-            const nodeState = generateNodeState(descendent, descendent.parent!.uniqueId.toString(), nodeType);
-            const nodeId = nodeState.uniqueId;
+            if (descendent.parent){
+              const nodeState = generateNodeState(descendent, descendent.parent.uniqueId.toString(), nodeType);
+              const nodeId = nodeState.uniqueId;
 
-            state.nodes.byId[nodeId] = nodeState;
-            state.nodes.allIds.push(nodeId);
+              state.nodes.byId[nodeId] = nodeState;
+              state.nodes.allIds.push(nodeId);
+            }
           }
         }
 
@@ -132,7 +134,7 @@ export const explorerSlice = createSlice({
       reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, activeState: boolean }>): IExplorerState
       {
         const uniqueId = action.payload.nodeId;
-        const node = state.nodes![uniqueId];
+        const node = state.nodes[uniqueId];
 
         if (node)
           state.nodes.byId[uniqueId].label.bold = action.payload.activeState;

@@ -1,4 +1,3 @@
-import Close from "@images/Arrows/FatLeft.png";
 import Clean from "@images/Actions/Clean.png";
 import Reset from "@images/Actions/Reset.png";
 import Solution from "@images/Actions/Solution.png";
@@ -55,7 +54,7 @@ export default function getIcon(iconType: string, iconName: string) {
     case IconTypes.ACTIONS:
       switch (iconName) {
         case "Close":
-          return Close;
+          return FatLeft;
         case "Clean":
           return Clean;
         case "Reset":
@@ -73,11 +72,13 @@ export default function getIcon(iconType: string, iconName: string) {
         case "FontUnderline":
           return FontUnderline;
       }
+      break;
     case IconTypes.STATES:
       switch (iconName) {
         case "Pinned":
           return Pinned;
       }
+      break;
     case IconTypes.NODES:
       switch (iconName) {
         case "FolderNode":
@@ -85,6 +86,7 @@ export default function getIcon(iconType: string, iconName: string) {
         case "MapIcon":
           return MapIcon;
       }
+      break;
     case IconTypes.ARROWS:
       switch (iconName) {
         case "FatRight":
@@ -92,6 +94,7 @@ export default function getIcon(iconType: string, iconName: string) {
         case "FatLeft":
           return FatLeft;
       }
+      break;
     case IconTypes.POINT_SYMBOL:
       switch (iconName) {
         case "Cube":
@@ -99,11 +102,13 @@ export default function getIcon(iconType: string, iconName: string) {
         case "Sphere":
           return Sphere;
       }
+      break;
     case IconTypes.SHOW:
       switch (iconName) {
         case "Label":
           return LabelImage;
       }
+      break;
   }
   return undefined;
 }

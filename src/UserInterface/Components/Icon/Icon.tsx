@@ -31,7 +31,7 @@ export default function Icon(props: {
     ? { width: iconSize.width, height: iconSize.height }
     : {};
 
-  const image = <img src={imgSrc} style={style} />;
+  const image = <img src={imgSrc} style={style} alt={name} />;
 
   return (
     <div className="icon">

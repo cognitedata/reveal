@@ -15,11 +15,11 @@ export default function ToolBar(props: {
 
   return (
     <div className="tool-bar">
-      {toolBar.map((config, index: number) => {
+      {toolBar.map((config) => {
         const { icon, selected } = config;
         return (
           <div
-            key={`${sectionId}-toobar-${index}`}
+            key={`${sectionId}-toobar-${icon.name}`}
             className={`tool-bar-icon ${selected ? "icon-selected" : ""}`}
           >
             <Icon type={icon.type} name={icon.name} />
