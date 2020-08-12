@@ -14,7 +14,6 @@
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { IDataLoader } from "@/Core/Interfaces/IDataLoader";
 import { ITarget } from "@/Core/Interfaces/ITarget";
-import { ColorMaps } from '@/Core/Primitives/ColorMaps';
 
 export abstract class DataNode extends BaseVisualNode
 {
@@ -37,7 +36,6 @@ export abstract class DataNode extends BaseVisualNode
   private _data: any = null;
   private _dataIsLost = false;
   private _dataLoader: IDataLoader | null = null;
-  public colorMap = ColorMaps.rainbowName;
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -84,12 +82,12 @@ export abstract class DataNode extends BaseVisualNode
   // OVERRIDES of BaseVisualNode
   //==================================================
 
-  public canBeVisible(target?: ITarget | null): boolean
+  public /*override*/ canBeVisible(target?: ITarget | null): boolean
   {
     if (this.dataIsLost)
       return false;
     return super.canBeVisible(target);
   }
 
-  public canBeVisibleNow(): boolean { return this.anyData != null; }
+  public /*override*/ canBeVisibleNow(): boolean { return this.anyData != null; }
 }

@@ -41,7 +41,7 @@ import { SeismicCubeNode } from "@/SubSurface/Seismic/Nodes/SeismicCubeNode";
 import { Index3 } from "@/Core/Geometry/Index3";
 import { ColorMaps } from '@/Core/Primitives/ColorMaps';
 
-// import { CogniteSeismicClient } from '@cognite/seismic-sdk-js'
+import { CogniteSeismicClient } from "@cognite/seismic-sdk-js";
 
 export class SyntheticSubSurfaceModule extends BaseModule
 {
@@ -237,6 +237,39 @@ export class SyntheticSubSurfaceModule extends BaseModule
 
   private static addSeismic(root: BaseRootNode): void
   {
+
+    const apiKey = process.env.REACT_APP_API_KEY as string;
+
+    const client = new CogniteSeismicClient({
+      token: "my-token",
+      api_url: "greenfield.cognitedata.com",
+      api_key: apiKey,
+      debug: false,
+    });
+
+    const fileId = 'aafb3d80-b1b7-4dd1-b373-0ee8a2c0241b';
+
+    client.file.getLineRange({ fileId }).then((lineRange) =>
+    {
+      if (lineRange)
+      {
+        const inline = lineRange.inline?.min?.value || 0;
+        const xline = lineRange.xline?.min?.value || 0;
+
+        console.log('inline', inline);
+        console.log('xline', xline);
+
+        client.volume.getTrace({ fileId }, inline, xline).then((result) =>
+        {
+          console.log('result', result);
+        });
+      }
+    });
+
+    //client.slice.getSliceByGeometry()
+    //   client.volume.getTrace();    
+    //  .getLineRange({ fileId: 'file id' });
+
     //   const apiKey = process.env.REACT_APP_API_KEY as string;
     //   const client = new CogniteSeismicClient(apiKey, "greenfield.cognitedata.com");
     //   const file = client.file.getFileDataCoverage("1a25d4cc-4d19-4c0d-a9f3-7fea853020f7", "EPSG:32631");
