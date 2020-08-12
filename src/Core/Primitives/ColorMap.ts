@@ -11,6 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+// eslint-disable-next-line max-classes-per-file
 import * as Color from "color";
 import { Ma } from "@/Core/Primitives/Ma";
 import { ColorMapItem, ColorInterpolation } from "@/Core/Primitives/ColorMapItem";
@@ -66,6 +67,22 @@ export class ColorMap
     return this._items[this._maxIndex].color;
   }
 
+  private getColorFast(value: number, index: Index): Color
+  {
+    // Assume a limited number of colors, otherwise a binary search should be used.
+    for (; index.value <= this._maxIndex; index.value++)
+    {
+      const item = this._items[index.value];
+      if (value <= item.value)
+      {
+        if (index.value === 0)
+          return item.color;
+        return this._items[index.value - 1].mix(item, value);
+      }
+    }
+    return this._items[this._maxIndex].color;
+  }
+
   //==================================================
   // INSTANCE METHODS: Operations
   //==================================================
@@ -92,10 +109,11 @@ export class ColorMap
     let index1 = 0;
     let index2 = 3 * size;
 
+    const index = new Index();
     for (let i = 0; i < size; i++)
     {
       const value = i / (size - 1);
-      let color = this.getColor(value);
+      let color = this.getColorFast(value, index);
 
       // eslint-disable-next-line no-constant-condition
       if (false)
@@ -129,4 +147,9 @@ export class ColorMap
     array.push(color.green());
     array.push(color.blue());
   }
+}
+
+class Index
+{
+  public value = 0;
 }

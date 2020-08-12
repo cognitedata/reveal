@@ -44,14 +44,13 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
 
   private _index = -1;
   private _axis = -1;
-  private _uniqueId: UniqueId = UniqueId.empty;
+  private _uniqueId = UniqueId.empty;
 
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
   protected get node(): SeismicPlaneNode { return super.getNode() as SeismicPlaneNode; }
-
   protected get style(): SurfaceRenderStyle { return super.getStyle() as SurfaceRenderStyle; }
 
   //==================================================
@@ -73,8 +72,6 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     }
     if (args.isChanged(Changes.filter))
     {
-      this._index = -1;
-      this._axis = -1;
       this.invalidateTarget();
     }
   }
@@ -117,17 +114,20 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     const { seismicCubeNode } = this;
     const seismicCube = seismicCubeNode ? seismicCubeNode.seismicCube : null;
 
-    if (node.perpendicularIndex !== this._index || node.perpendicularAxis !== this._axis)
-    {
-      this._index = node.perpendicularIndex;
-      this._axis = node.perpendicularAxis;
-      this.updateTextureCoords(parent, node, node.surveyCube, seismicCube);
-    }
     const uniqueId = seismicCubeNode ? seismicCubeNode.uniqueId : UniqueId.empty;
     if (!uniqueId.equals(this._uniqueId))
     {
       this._uniqueId = uniqueId;
+      this._index = node.perpendicularIndex;
+      this._axis = node.perpendicularAxis;
+      this.updateTextureCoords(parent, node, node.surveyCube, seismicCube);
       SeismicCubePlaneView.updateTextureMap(parent, seismicCubeNode);
+    }
+    else if (node.perpendicularIndex !== this._index || node.perpendicularAxis !== this._axis)
+    {
+      this._index = node.perpendicularIndex;
+      this._axis = node.perpendicularAxis;
+      this.updateTextureCoords(parent, node, node.surveyCube, seismicCube);
     }
   }
 
@@ -197,6 +197,14 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
       parent.add(solid);
 
     return parent;
+  }
+
+  public /*override*/ touch(): void
+  {
+    this._index = -1;
+    this._axis = -1;
+    this._uniqueId = UniqueId.empty;
+    super.touch();
   }
 
   //==================================================
