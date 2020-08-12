@@ -64,7 +64,7 @@ export function Migration() {
       viewer = new Cognite3DViewer({
         sdk: client,
         domElement: canvasWrapperRef.current!,
-        onDownloading: progress
+        onLoading: progress
       });
       (window as any).viewer = viewer;
 

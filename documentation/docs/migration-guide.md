@@ -16,6 +16,7 @@ because streaming is used.
 * Cognite3DViewer.getIntersectionFromPixel doesn't have the model param
 * Cognite3DViewer.clearCache is not supported
 * Cognite3DViewer.addModel now can return any supported model type, not only cad. For cad use addCadModel
+* Cognite3DViewerOptions.onLoading, use OnLoadingCallback instead of onProgress/onComplete.
 
 # Cognite3DModel
 * model getBoundingBox doesn't support nodeId parameter - use getBoundingBoxFromCdf 
