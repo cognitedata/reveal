@@ -41,6 +41,7 @@ import { SeismicCubeNode } from "@/SubSurface/Seismic/Nodes/SeismicCubeNode";
 import { Index3 } from "@/Core/Geometry/Index3";
 import { ColorMaps } from '@/Core/Primitives/ColorMaps';
 import { CogniteSeismicClient } from "@cognite/seismic-sdk-js";
+import { Index2 } from '@/Core/Geometry/Index2';
 
 export class SyntheticSubSurfaceModule extends BaseModule
 {
@@ -240,66 +241,79 @@ export class SyntheticSubSurfaceModule extends BaseModule
 
   private static addSeismic(root: BaseRootNode)
   {
-    const apiKey = process.env.REACT_APP_API_KEY as string;
+    const apiKey = "MzI0MTA3OGEtZjMxNi00MmQ0LWI5ODYtMzFiYTEyZmQ0MThh";
+
     const client = new CogniteSeismicClient({
       api_url: 'https://api.cognitedata.com',
       api_key: apiKey,
       debug: false,
     });
     const fileId = 'cc0f791f-e206-4c08-a139-c5d08eea8afc';
-    client.file.getLineRange({ fileId }).then((lineRange) => {
-      if (lineRange) {
-        const inline = lineRange.inline?.min?.value || 0;
-        const xline = lineRange.xline?.min?.value || 0;
-        console.log('inline', inline);
-        console.log('xline', xline);
-        client.volume.getTrace({ fileId }, inline, xline).then((result) => {
-          console.log('result', result);
-        });
-      }
-    });
-
-    client.slice.getArbitraryLine(fileId, 0, 0, 1, 1);
-
     client.file.getLineRange({ fileId }).then((lineRange) =>
     {
-      if (lineRange)
-      {
-        const inline = lineRange.inline?.min?.value || 0;
-        const xline = lineRange.xline?.min?.value || 0;
+      if (!lineRange)
+        return;
 
-        console.log('inline', inline);
-        console.log('xline', xline);
+      if (!lineRange.inline)
+        return;
+      if (!lineRange.xline)
+        return;
+
+      const minIndex = Index2.newZero;
+      const maxIndex = Index2.newZero;
+      {
+        const { min, max } = lineRange.inline;
+        if (min === undefined || max === undefined)
+          return;
+        minIndex.i = min.value;
+        maxIndex.i = max.value;
+      }
+      {
+        const { min, max } = lineRange.xline;
+        if (min === undefined || max === undefined)
+          return;
+        minIndex.j = min.value;
+        maxIndex.j = max.value;
+      }
+      console.log(`Min and max index: ${minIndex.toString()} ${maxIndex.toString()}`);
+
+      const promises = [
+        client.volume.getTrace({ fileId }, minIndex.i, minIndex.j),
+        client.volume.getTrace({ fileId }, maxIndex.i, minIndex.j),
+        client.volume.getTrace({ fileId }, maxIndex.i, maxIndex.j),
+        client.volume.getTrace({ fileId }, minIndex.i, maxIndex.j)
+      ];
+
+      Promise.all(promises).then(traces =>
+      {
+        for (const trace of traces)
+        {
+          if (trace.coordinate !== undefined && trace.iline !== undefined && trace.xline !== undefined)
+            console.log(`iline: ${trace.iline.value} xline: ${trace.xline.value} x: ${trace.coordinate.x} y: ${trace.coordinate.y}`);
+        }  
+      });
+    });
+
+    client.slice.getArbitraryLine(fileId, 500, 500, 502, 503).then((traces) =>
+    {
+      for (const trace of traces)
+      {
+        if (trace.coordinate !== undefined && trace.iline !== undefined && trace.xline !== undefined)
+          console.log(`iline: ${trace.iline} xline: ${trace.xline} x: ${trace.coordinate.x} y: ${trace.coordinate.y}`);
       }
     });
 
     // Get trace 1
-    client.volume.getTrace({ fileId }, 0, 0).then((result) =>
+    client.volume.getTrace({ fileId }, 500, 500).then((trace) =>
     {
-      if (result.coordinate !== undefined)
-      {
-        console.log('x', result.coordinate.x);
-        console.log('y', result.coordinate.y);
-      }
-      if (result.iline !== undefined)
-        console.log('iline', result.iline);
-      if (result.xline !== undefined)
-        console.log('xline', result.xline);
+      if (trace.coordinate !== undefined && trace.iline !== undefined && trace.xline !== undefined)
+        console.log(`iline: ${trace.iline} xline: ${trace.xline} x: ${trace.coordinate.x} y: ${trace.coordinate.y}`);
 
-      const values = result.traceList;
+      const values = trace.traceList;
       for (let i = 0; i < values.length; i++)
         console.log('value', values[i]);
     });
 
-    //client.slice.getSliceByGeometry()
-    //   client.volume.getTrace();    
-    //  .getLineRange({ fileId: 'file id' });
-
-    //   const apiKey = process.env.REACT_APP_API_KEY as string;
-    //   const client = new CogniteSeismicClient(apiKey, "greenfield.cognitedata.com");
-    //   const file = client.file.getFileDataCoverage("1a25d4cc-4d19-4c0d-a9f3-7fea853020f7", "EPSG:32631");
-
-    //   file.then((result) => { console.log(result) } );
     if (!(root instanceof SubSurfaceRootNode))
       return;
 
