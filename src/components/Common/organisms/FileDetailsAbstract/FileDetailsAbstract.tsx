@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Icon, Title, Badge } from '@cognite/cogs.js';
-import { InfoGrid, InfoCell, ListItem } from 'components/Common';
+import { InfoGrid, InfoCell, ListItem, ButtonRow } from 'components/Common';
 import { FilesMetadata, Asset } from '@cognite/sdk';
 import { FileInfoGrid } from './FileInfoGrid';
 
@@ -60,7 +60,7 @@ export const FileDetailsAbstract = ({
 
       {actions && (
         <InfoCell noBorders>
-          <div className="button-row">{actions}</div>
+          <ButtonRow>{actions}</ButtonRow>
         </InfoCell>
       )}
 

@@ -36,7 +36,6 @@ export const Explorer = () => {
 
   const { pathname } = history.location;
 
-  // TODO: use context provider in the future!
   const renderResourceActions: RenderResourceActionsFunction = useCallback(
     ({ fileId, assetId, timeseriesId, sequenceId }) => {
       const checkIsInCart = () => {
@@ -150,10 +149,22 @@ export const Explorer = () => {
   }, [remove]);
 
   const match = useRouteMatch();
+  let showSearch = false;
+  if (
+    pathname.endsWith('/file') ||
+    pathname.endsWith(match.path) ||
+    pathname.endsWith(`${match.path}/`)
+  ) {
+    showSearch = true;
+  }
 
   return (
     <Wrapper>
-      <ExplorationNavbar cart={cart} setCart={setCart} />
+      <ExplorationNavbar
+        cart={cart}
+        setCart={setCart}
+        showSearch={showSearch}
+      />
       <Switch>
         <Route path={`${match.path}/file/:fileId?`} component={FileExplorer} />
         <Route

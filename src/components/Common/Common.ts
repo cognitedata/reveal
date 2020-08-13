@@ -19,15 +19,18 @@ export const Wrapper = styled.div`
     background: ${Colors['greyscale-grey1'].hex()};
     border-color: ${Colors['greyscale-grey4'].hex()};
   }
+`;
 
-  .button-row {
-    & > * {
-      margin-right: 6px;
-      margin-bottom: 6px;
-      display: inline-flex;
-    }
-    & > *:nth-last-child(1) {
-      margin-left: 0px;
-    }
+export const ButtonRow = styled.div`
+  display: flex;
+  align-items: stretch;
+
+  & > * {
+    margin-right: 6px;
+    margin-bottom: 6px;
+    display: inline-flex;
+  }
+  & > *:nth-last-child(1) {
+    margin-left: 0px;
   }
 `;

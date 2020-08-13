@@ -37,7 +37,7 @@ import {
   FilesSearchFilter,
 } from '@cognite/sdk';
 import { useHistory } from 'react-router-dom';
-import { DetailsItem, Wrapper } from 'components/Common';
+import { DetailsItem, Wrapper, ButtonRow } from 'components/Common';
 import moment from 'moment';
 import unionBy from 'lodash/unionBy';
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
@@ -142,7 +142,7 @@ export const AssetPreview = ({
         <Icon type="DataStudio" /> {asset ? asset.name : 'Loading...'}
       </h1>
 
-      <div className="button-row">{extraActions}</div>
+      <ButtonRow>{extraActions}</ButtonRow>
       <Tabs>
         <Tabs.TabPane key="asset-metadata" tab="Asset Details">
           <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>

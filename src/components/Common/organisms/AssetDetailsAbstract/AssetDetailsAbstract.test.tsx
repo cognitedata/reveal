@@ -78,42 +78,6 @@ describe('AssetDetailsAbstract', () => {
 
     expect(container.text()).toContain(asset.name);
     expect(container.text()).toContain('P&IDs2');
-    expect(container.text()).toContain('Time Series1');
-  });
-  it('render files and timeseries', () => {
-    const container = mount(
-      <ClientSDKProvider client={sdk}>
-        <AssetDetailsAbstract asset={asset} files={files} timeseries={ts} />
-      </ClientSDKProvider>
-    );
-
-    expect(container.text()).toContain(asset.name);
-    container.find('div#pnids').simulate('click');
-    expect(container.text()).toContain(files[0].name);
-    container.find(Button).simulate('click');
-    container.find('div#timeseries').simulate('click');
-    expect(container.text()).toContain(ts[0].name);
-  });
-  it('custom render files and timeseries', () => {
-    const container = mount(
-      <ClientSDKProvider client={sdk}>
-        <AssetDetailsAbstract
-          asset={asset}
-          files={files}
-          timeseries={ts}
-          timeseriesPreview={newTs => <p key={newTs.id}>custom</p>}
-          filePreview={newTs => <p key={newTs.id}>wow a file</p>}
-        />
-      </ClientSDKProvider>
-    );
-
-    expect(container.text()).toContain(asset.name);
-    container.find('div#pnids').simulate('click');
-    expect(container.text()).toContain('wow a file');
-    container.find(Button).simulate('click');
-    container.find('div#timeseries').simulate('click');
-    expect(container.text()).toContain('custom');
-    container.find(Button).simulate('click');
-    expect(container.text()).toContain(asset.name);
+    expect(container.text()).toContain('Time series1');
   });
 });

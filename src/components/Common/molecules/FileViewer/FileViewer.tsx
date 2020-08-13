@@ -75,181 +75,194 @@ type Props = {
   reloadSize?: boolean;
 };
 
-export const FileViewer = ({
-  file,
-  sdk,
-  annotations,
-  drawLabel = true,
-  hoverable = true,
-  onSelect,
-  editCallbacks,
-  renderItemPreview,
-  creatable,
-  hidePagination,
-  page,
-  setPage,
-}: Props) => {
-  const [realAnnotations, setRealAnnotations] = useState<IAnnotationWithPage[]>(
-    annotations || ([] as IAnnotationWithPage[])
-  );
+export const FileViewer = React.forwardRef<ReactPictureAnnotation, Props>(
+  (props, ref) => {
+    const {
+      file,
+      sdk,
+      annotations,
+      drawLabel = true,
+      hoverable = true,
+      onSelect,
+      editCallbacks,
+      renderItemPreview,
+      creatable,
+      hidePagination,
+      page,
+      setPage,
+    } = props || {};
+    const [realAnnotations, setRealAnnotations] = useState<
+      IAnnotationWithPage[]
+    >(annotations || ([] as IAnnotationWithPage[]));
 
-  const annotatorRef = useRef<ReactPictureAnnotation>(null);
-  const wrapperRef = useRef<HTMLDivElement>(null);
+    const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const [height, setHeight] = useState(0);
-  const [width, setWidth] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(true);
-  const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined);
+    const [height, setHeight] = useState(0);
+    const [width, setWidth] = useState(0);
+    const [totalPages, setTotalPages] = useState(1);
+    const [loading, setLoading] = useState(true);
+    const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined);
 
-  const fileId = file ? file.id : undefined;
+    const fileId = file ? file.id : undefined;
 
-  useEffect(() => {
-    (async () => {
-      if (fileId) {
-        setPreviewUrl(undefined);
-        setLoading(true);
-        setPreviewUrl(await retrieveDownloadUrl(sdk, fileId));
-        setLoading(false);
+    useEffect(() => {
+      (async () => {
+        if (fileId) {
+          setPreviewUrl(undefined);
+          setLoading(true);
+          setPreviewUrl(await retrieveDownloadUrl(sdk, fileId));
+          setLoading(false);
+        }
+      })();
+    }, [sdk, fileId]);
+
+    useEffect(() => {
+      if (annotations) {
+        setRealAnnotations(annotations);
       }
-    })();
-  }, [sdk, fileId]);
+    }, [annotations]);
 
-  useEffect(() => {
-    if (annotations) {
-      setRealAnnotations(annotations);
-    }
-  }, [annotations]);
-
-  useEffect(() => {
-    if (wrapperRef.current) {
-      // change width from the state object
-      setHeight(wrapperRef.current!.clientHeight);
-      setWidth(wrapperRef.current!.clientWidth);
-    }
-  }, [wrapperRef]);
-
-  useEffect(() => {
-    const resizeListener = () => {
+    useEffect(() => {
       if (wrapperRef.current) {
         // change width from the state object
         setHeight(wrapperRef.current!.clientHeight);
         setWidth(wrapperRef.current!.clientWidth);
       }
+    }, [wrapperRef]);
+
+    useEffect(() => {
+      const resizeListener = () => {
+        if (wrapperRef.current) {
+          // change width from the state object
+          setHeight(wrapperRef.current!.clientHeight);
+          setWidth(wrapperRef.current!.clientWidth);
+        }
+      };
+      // set resize listener
+      window.addEventListener('resize', resizeListener);
+
+      // clean up function
+      return () => {
+        // remove resize listener
+        window.removeEventListener('resize', resizeListener);
+      };
+    }, []);
+
+    const onAnnotationSelect = (id: string | null) => {
+      if (!onSelect) {
+        return;
+      }
+      if (id === null) {
+        onSelect(undefined);
+      }
+      const annotation = realAnnotations.find(el => el.id === id);
+      if (annotation) {
+        onSelect(annotation);
+      }
     };
-    // set resize listener
-    window.addEventListener('resize', resizeListener);
 
-    // clean up function
-    return () => {
-      // remove resize listener
-      window.removeEventListener('resize', resizeListener);
-    };
-  }, []);
+    const defaultRef = useRef<ReactPictureAnnotation | null>(null);
+    const annotatorRef = ref as React.RefObject<ReactPictureAnnotation>;
 
-  const onAnnotationSelect = (id: string | null) => {
-    if (!onSelect) {
-      return;
-    }
-    if (id === null) {
-      onSelect(undefined);
-    }
-    const annotation = realAnnotations.find(el => el.id === id);
-    if (annotation) {
-      onSelect(annotation);
-    }
-  };
-
-  return (
-    <div
-      ref={wrapperRef}
-      style={{
-        width: '100%',
-        height: '100%',
-        position: 'relative',
-      }}
-    >
-      {loading && (
-        <div style={{ position: 'absolute', height: '100%', width: '100%' }}>
-          <Loader />
-        </div>
-      )}
-      <ReactPictureAnnotation
-        ref={annotatorRef}
-        drawLabel={drawLabel}
-        hoverable={hoverable}
-        annotationData={realAnnotations.filter(
-          el => totalPages === 1 || el.page === page
+    return (
+      <div
+        ref={wrapperRef}
+        style={{
+          width: '100%',
+          height: '100%',
+          position: 'relative',
+        }}
+      >
+        {loading && (
+          <div style={{ position: 'absolute', height: '100%', width: '100%' }}>
+            <Loader />
+          </div>
         )}
-        onChange={e => {
-          setRealAnnotations(
-            realAnnotations
-              .filter(el => !(totalPages === 1 || el.page === page))
-              .concat(e)
-          );
-        }}
-        onSelect={onAnnotationSelect}
-        onAnnotationCreate={editCallbacks && editCallbacks.onCreate}
-        onAnnotationDelete={editCallbacks && editCallbacks.onDelete}
-        onAnnotationUpdate={editCallbacks && editCallbacks.onUpdate}
-        pdf={
-          file && file.mimeType === 'application/pdf' ? previewUrl : undefined
-        }
-        image={
-          file && file.mimeType !== 'application/pdf' ? previewUrl : undefined
-        }
-        creatable={creatable}
-        width={width}
-        height={height}
-        page={page}
-        onLoading={isLoading => setLoading(isLoading)}
-        renderItemPreview={renderItemPreview}
-        onPDFLoaded={({ pages }) => {
-          setLoading(false);
-          setTotalPages(pages);
-        }}
-      />
-      {totalPages > 1 && !hidePagination && (
-        <DocumentPagination
-          total={totalPages}
-          current={page || 1}
-          pageSize={1}
-          size="small"
-          showQuickJumper
-          onChange={newPageNum => setPage && setPage(newPageNum)}
+        <ReactPictureAnnotation
+          ref={ref || defaultRef}
+          drawLabel={drawLabel}
+          hoverable={hoverable}
+          annotationData={realAnnotations.filter(
+            el => totalPages === 1 || el.page === page
+          )}
+          onChange={e => {
+            setRealAnnotations(
+              realAnnotations
+                .filter(el => !(totalPages === 1 || el.page === page))
+                .concat(e)
+            );
+          }}
+          onSelect={onAnnotationSelect}
+          onAnnotationCreate={editCallbacks && editCallbacks.onCreate}
+          onAnnotationDelete={editCallbacks && editCallbacks.onDelete}
+          onAnnotationUpdate={editCallbacks && editCallbacks.onUpdate}
+          pdf={
+            file && file.mimeType === 'application/pdf' ? previewUrl : undefined
+          }
+          image={
+            file && file.mimeType !== 'application/pdf' ? previewUrl : undefined
+          }
+          creatable={creatable}
+          width={width}
+          height={height}
+          page={page}
+          onLoading={isLoading => setLoading(isLoading)}
+          renderItemPreview={renderItemPreview}
+          onPDFLoaded={({ pages }) => {
+            setLoading(false);
+            setTotalPages(pages);
+          }}
         />
-      )}
-      <Buttons>
-        <div id="controls">
-          <Button
-            onClick={() => {
-              if (annotatorRef.current) {
-                annotatorRef.current.zoomIn();
-              }
-            }}
-            icon="ZoomIn"
+        {totalPages > 1 && !hidePagination && (
+          <DocumentPagination
+            total={totalPages}
+            current={page || 1}
+            pageSize={1}
+            size="small"
+            showQuickJumper
+            onChange={newPageNum => setPage && setPage(newPageNum)}
           />
-          <Button
-            icon="Refresh"
-            onClick={() => {
-              if (annotatorRef.current) {
-                annotatorRef.current.reset();
-              }
-            }}
-          />
-          <Button
-            icon="ZoomOut"
-            onClick={() => {
-              if (annotatorRef.current) {
-                annotatorRef.current.zoomOut();
-              }
-            }}
-          />
-        </div>
-      </Buttons>
-    </div>
-  );
-};
+        )}
+        {(!!defaultRef || !!annotatorRef) && (
+          <Buttons>
+            <div id="controls">
+              <Button
+                onClick={() => {
+                  if (defaultRef && defaultRef.current) {
+                    defaultRef.current.zoomIn();
+                  } else if (annotatorRef && annotatorRef.current) {
+                    annotatorRef.current.zoomIn();
+                  }
+                }}
+                icon="ZoomIn"
+              />
+              <Button
+                icon="Refresh"
+                onClick={() => {
+                  if (defaultRef && defaultRef.current) {
+                    defaultRef.current.reset();
+                  } else if (annotatorRef && annotatorRef.current) {
+                    annotatorRef.current.reset();
+                  }
+                }}
+              />
+              <Button
+                icon="ZoomOut"
+                onClick={() => {
+                  if (defaultRef && defaultRef.current) {
+                    defaultRef.current.zoomOut();
+                  } else if (annotatorRef && annotatorRef.current) {
+                    annotatorRef.current.zoomOut();
+                  }
+                }}
+              />
+            </div>
+          </Buttons>
+        )}
+      </div>
+    );
+  }
+);
 
 export const retrieveDownloadUrl = async (
   client: CogniteClient,

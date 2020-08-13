@@ -21,9 +21,11 @@ const Navbar = styled.div`
 export const ExplorationNavbar = ({
   cart,
   setCart,
+  showSearch,
 }: {
   cart: ShoppingCart;
   setCart: (cart: ShoppingCart) => void;
+  showSearch?: boolean;
 }) => {
   const history = useHistory();
   const navbarRef = useRef<HTMLDivElement>(null);
@@ -48,6 +50,7 @@ export const ExplorationNavbar = ({
               2
             : 0
         }
+        showSearch={showSearch}
       />
       <Popover
         trigger="click"

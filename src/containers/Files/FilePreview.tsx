@@ -5,7 +5,7 @@ import {
   retrieve as retrieveFiles,
   retrieveExternal as retrieveExternalFiles,
 } from 'modules/files';
-import { Collapse, List, Row } from 'antd';
+import { Collapse, List } from 'antd';
 import { Button } from '@cognite/cogs.js';
 import {
   retrieve as retrieveAssets,
@@ -18,7 +18,7 @@ import {
 } from 'modules/annotations';
 import { CogniteFileViewer } from 'components/CogniteFileViewer';
 import { useHistory } from 'react-router-dom';
-import { Wrapper } from 'components/Common';
+import { Wrapper, ButtonRow } from 'components/Common';
 import { useTenant } from 'hooks/CustomHooks';
 
 export const FilePreview = ({
@@ -85,9 +85,7 @@ export const FilePreview = ({
         </Button>
       )}
       <h1>{file ? file.name : 'Loading...'}</h1>
-      <Row type="flex" gutter={12} justify="start" className="button-row">
-        {extraActions}
-      </Row>
+      <ButtonRow>{extraActions}</ButtonRow>
       {file && file.mimeType === 'application/pdf' && (
         <div style={{ height: 800, marginTop: 24, marginBottom: 24 }}>
           <CogniteFileViewer fileId={fileId} />

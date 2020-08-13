@@ -65,43 +65,17 @@ const ResultList = styled.div<{ visible: boolean; offsetTop: number }>`
   }
 `;
 
-export const ListItem = styled.div<{ selected?: boolean }>`
-  padding: 6px 8px;
-  transition: 0.2s all;
-  cursor: pointer;
-  position: relative;
-  background: ${props => (props.selected ? '#fafafa' : '#fff')};
-
-  &&:hover {
-    background: #efefef;
-  }
-
-  &&:nth-last-child(1) {
-    border-bottom: none;
-  }
-
-  p {
-    margin-bottom: 0px;
-    margin-top: 0px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    width: 340px;
-    overflow: hidden;
-  }
-  p.name {
-    margin-top: 0px;
-    margin-bottom: 8px;
-    white-space: normal;
-    color: #000;
-    font-size: 16px;
-  }
-`;
 type Props = {
   currentFileId?: number;
   offsetTop?: number;
+  showSearch?: boolean;
 };
 
-export const GlobalSearchField = ({ currentFileId, offsetTop = 0 }: Props) => {
+export const GlobalSearchField = ({
+  currentFileId,
+  offsetTop = 0,
+  showSearch: propShowSearch,
+}: Props) => {
   const [query, setQuery] = useState('');
   const [showSearchResults, setShowSearchResults] = useState(false);
 
@@ -114,6 +88,12 @@ export const GlobalSearchField = ({ currentFileId, offsetTop = 0 }: Props) => {
     return () =>
       window.removeEventListener('Resource Selected', onResourceSelected);
   }, [onResourceSelected]);
+
+  useEffect(() => {
+    if (propShowSearch) {
+      setShowSearchResults(propShowSearch);
+    }
+  }, [propShowSearch]);
 
   return (
     <>

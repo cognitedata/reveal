@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Icon, Button, Title, Badge, Colors } from '@cognite/cogs.js';
-import { InfoGrid, InfoCell, ListItem } from 'components/Common';
+import { InfoGrid, InfoCell, ListItem, ButtonRow } from 'components/Common';
 import { Asset, FilesMetadata, GetTimeSeriesMetadataDTO } from '@cognite/sdk';
 import { AssetBreadcrumb } from '@cognite/gearbox';
 import { FixedSizeList as List } from 'react-window';
@@ -32,16 +32,14 @@ const IconWrapper = styled.span`
 
 const RowItem = ({
   style,
-  key,
   title,
   onClick,
 }: {
   style: React.CSSProperties;
-  key: React.Key;
   title: string | number;
   onClick?: () => void;
 }) => (
-  <div style={style} key={key}>
+  <div style={style}>
     <ListItem
       onClick={onClick}
       style={{
@@ -140,7 +138,7 @@ export const AssetDetailsAbstract = ({
 
       {actions && (
         <InfoCell noBorders>
-          <div className="button-row">{actions}</div>
+          <ButtonRow>{actions}</ButtonRow>
         </InfoCell>
       )}
 

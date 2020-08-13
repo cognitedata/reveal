@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Icon, Title } from '@cognite/cogs.js';
-import { InfoGrid, InfoCell, DetailsItem } from 'components/Common';
+import { InfoGrid, InfoCell, DetailsItem, ButtonRow } from 'components/Common';
 import { Sequence } from '@cognite/sdk';
 import moment from 'moment';
 import { SequenceInfoGrid } from './SequenceInfoGrid';
@@ -59,7 +59,7 @@ export const SequenceDetailsAbstract = ({
 
       {actions && (
         <InfoCell noBorders>
-          <div className="button-row">{actions}</div>
+          <ButtonRow>{actions}</ButtonRow>
         </InfoCell>
       )}
       <SequenceInfoGrid

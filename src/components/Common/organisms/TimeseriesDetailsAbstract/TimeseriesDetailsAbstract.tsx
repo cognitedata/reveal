@@ -7,6 +7,7 @@ import {
   InfoCell,
   LatestDatapoint,
   DetailsItem,
+  ButtonRow,
 } from 'components/Common';
 import { TimeseriesGraph } from 'components/Common/';
 
@@ -59,7 +60,7 @@ export const TimeseriesDetailsAbstract = ({
 
       {actions && (
         <InfoCell noBorders>
-          <div className="button-row">{actions}</div>
+          <ButtonRow>{actions}</ButtonRow>
         </InfoCell>
       )}
 

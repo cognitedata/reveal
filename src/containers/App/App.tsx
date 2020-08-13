@@ -10,6 +10,7 @@ import { getAuthState } from 'sdk-singleton';
 import { Route, Switch, Redirect, useLocation } from 'react-router';
 import { Loader } from 'components/Common';
 import { ResourceActionsProvider } from 'context/ResourceActionsContext';
+import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
 
 const Spinner = () => <Loader />;
 
@@ -63,30 +64,32 @@ export default function App() {
   return (
     <Suspense fallback={<Spinner />}>
       <ResourceActionsProvider>
-        <Switch>
-          <Redirect
-            from="/:url*(/+)"
-            to={{
-              pathname: pathname.slice(0, -1),
-              search,
-              hash,
-            }}
-          />
-          <Route
-            key="/:tenant/explore"
-            path="/:tenant/explore"
-            component={useMemo(
-              () =>
-                React.lazy(() =>
-                  import(
-                    'containers/Exploration'
-                    /* webpackChunkName: "pnid_exploration" */
-                  )
-                ),
-              []
-            )}
-          />
-        </Switch>
+        <ResourceSelectionProvider>
+          <Switch>
+            <Redirect
+              from="/:url*(/+)"
+              to={{
+                pathname: pathname.slice(0, -1),
+                search,
+                hash,
+              }}
+            />
+            <Route
+              key="/:tenant/explore"
+              path="/:tenant/explore"
+              component={useMemo(
+                () =>
+                  React.lazy(() =>
+                    import(
+                      'containers/Exploration'
+                      /* webpackChunkName: "pnid_exploration" */
+                    )
+                  ),
+                []
+              )}
+            />
+          </Switch>
+        </ResourceSelectionProvider>
       </ResourceActionsProvider>
     </Suspense>
   );
