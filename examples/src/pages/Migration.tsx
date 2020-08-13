@@ -59,10 +59,12 @@ export function Migration() {
       client.loginWithOAuth({ project });
       await client.authenticate();
 
+      const progress = (itemsDownloaded: number, itemsRequested: number) => console.log('onDownload', itemsDownloaded, itemsRequested);
       // Prepare viewer
       viewer = new Cognite3DViewer({
         sdk: client,
         domElement: canvasWrapperRef.current!,
+        onLoading: progress
       });
       (window as any).viewer = viewer;
 
