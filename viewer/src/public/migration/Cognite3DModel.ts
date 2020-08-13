@@ -212,12 +212,12 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * ```js
    * const box = new THREE.Box3()
    * const nodeId = 100500;
-   * model.getBoundingBoxByNodeId(nodeId, box);
+   * await model.getBoundingBoxByNodeId(nodeId, box);
    * // box now has the bounding box
    *```
    * ```js
    * // the following code does the same
-   * const box = model.getBoundingBoxByNodeId(nodeId);
+   * const box = await model.getBoundingBoxByNodeId(nodeId);
    * ```
    */
   async getBoundingBoxByNodeId(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
