@@ -15,7 +15,7 @@
     "swizzle": "docusaurus swizzle",
     "reveal:copy": "cpy ./node_modules/@cognite/reveal/*.wasm ./node_modules/@cognite/reveal/*.worker.js ./static --dot",
     "apiref": "yarn run apiref:generate && yarn run apiref:concat",
-    "apiref:generate": "typedoc --inputFiles ../viewer/src/public --out ./generated --mode library --excludeExternals --externalPattern '../viewer/src/__tests__/**/*.ts' --entryPoint '\"index\"' --exclude \"**/*+(index|.spec|.test).ts\" --excludeNotExported --excludePrivate --excludeProtected --stripInternal --ignoreCompilerErrors --readme none --tsconfig ../viewer/tsconfig.json",
+    "apiref:generate": "typedoc --inputFiles ../viewer/src/public --out ./generated --mode library --excludeExternals --externalPattern '../viewer/src/__tests__/**/*.ts' --exclude \"**/*+(index|.spec|.test).ts\" --excludeNotExported --excludePrivate --excludeProtected --stripInternal --ignoreCompilerErrors --readme none --tsconfig ../viewer/tsconfig.json",
     "apiref:concat": "concat-md ./generated --startTitleLevelAt 1 --decrease-title-levels --dir-name-as-title > \"./docs/API Reference.md\""
   },
   "dependencies": {
