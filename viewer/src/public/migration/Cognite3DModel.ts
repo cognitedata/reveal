@@ -224,6 +224,14 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
       throw new Error('NodeId not found');
     }
     const boundingBox3D = response[0].boundingBox;
+    if (boundingBox3D === undefined) {
+      trackError(new Error(`Node ${nodeId} doesn't have a defined bounding box, returning model bounding box`), {
+        moduleName: 'Cognite3DModel',
+        methodName: 'getBoundingBoxFromCdf'
+      });
+      return this.getModelBoundingBox();
+    }
+
     const min = boundingBox3D.min;
     const max = boundingBox3D.max;
     const result = box || new THREE.Box3();
