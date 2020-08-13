@@ -164,7 +164,9 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @throws NotSupportedInMigrationWrapperError
    */
   getBoundingBox(_nodeId?: number, _box?: THREE.Box3): THREE.Box3 {
-    throw new NotSupportedInMigrationWrapperError('Use getBoundingBoxFromCdf(nodeId: number) or getModelBoundingBox()');
+    throw new NotSupportedInMigrationWrapperError(
+      'Use getBoundingboxByTreeIndex(treeIndex: number), getBoundingBoxByNodeId(nodeId: number) or getModelBoundingBox()'
+    );
   }
 
   /**
@@ -210,15 +212,16 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * ```js
    * const box = new THREE.Box3()
    * const nodeId = 100500;
-   * model.getBoundingBoxFromCdf(nodeId, box);
+   * await model.getBoundingBoxByNodeId(nodeId, box);
    * // box now has the bounding box
    *```
    * ```js
    * // the following code does the same
-   * const box = model.getBoundingBoxFromCdf(nodeId);
+   * const box = await model.getBoundingBoxByNodeId(nodeId);
    * ```
    */
-  async getBoundingBoxFromCdf(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
+  async getBoundingBoxByNodeId(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
+    // TODO 2020-08-13 larsmoa: Implement getBoundingBoxByTreeIndex
     const response = await this.client.revisions3D.retrieve3DNodes(this.modelId, this.revisionId, [{ id: nodeId }]);
     if (response.length < 1) {
       throw new Error('NodeId not found');
@@ -227,7 +230,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     if (boundingBox3D === undefined) {
       trackError(new Error(`Node ${nodeId} doesn't have a defined bounding box, returning model bounding box`), {
         moduleName: 'Cognite3DModel',
-        methodName: 'getBoundingBoxFromCdf'
+        methodName: 'getBoundingBoxByNodeId'
       });
       return this.getModelBoundingBox();
     }
@@ -238,6 +241,10 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     result.min.set(min[0], min[1], min[2]);
     result.max.set(max[0], max[1], max[2]);
     return result.applyMatrix4(toThreeMatrix4(this.cadModel.modelTransformation.modelMatrix));
+  }
+
+  async getBoundingBoxByTreeIndex(_treeIndex: number, _box?: THREE.Box3): Promise<THREE.Box3> {
+    throw new NotSupportedInMigrationWrapperError('getBoundingBoxByTreeIndex() is not implemented yet');
   }
 
   /**
