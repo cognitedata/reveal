@@ -44,6 +44,18 @@ export function createMaterials(
   }
   const overrideColorPerTreeIndex = new THREE.DataTexture(colors, textureDims.width, textureDims.height);
 
+  const floats = new Float32Array(textureElementCount);
+  for (let i = 0; i < textureElementCount; i++) {
+    floats[i] = 2.0;
+  }
+
+  const dynamicTransformationTexture = new THREE.DataTexture(
+    floats,
+    textureDims.width,
+    textureDims.height,
+    THREE.RedFormat
+  );
+
   const matCapTexture = new THREE.Texture(matCapTextureImage);
   matCapTexture.needsUpdate = true;
 
@@ -264,7 +276,14 @@ export function createMaterials(
     simple: simpleMaterial
   };
   for (const material of Object.values(allMaterials)) {
-    updateDefinesAndUniforms(material, dataTextureSize, overrideColorPerTreeIndex, matCapTexture, renderMode);
+    updateDefinesAndUniforms(
+      material,
+      dataTextureSize,
+      overrideColorPerTreeIndex,
+      dynamicTransformationTexture,
+      matCapTexture,
+      renderMode
+    );
   }
 
   return { ...allMaterials, overrideColorPerTreeIndex };
@@ -274,6 +293,7 @@ function updateDefinesAndUniforms(
   material: THREE.ShaderMaterial,
   dataTextureSize: THREE.Vector2,
   overrideColorPerTreeIndex: THREE.DataTexture,
+  dynamicTransformationTexture: THREE.DataTexture,
   matCapTexture: THREE.Texture,
   renderMode: RenderMode
 ) {
@@ -290,6 +310,9 @@ function updateDefinesAndUniforms(
       },
       dataTextureSize: {
         value: dataTextureSize
+      },
+      dynamicMatrixTexture: {
+        value: dynamicTransformationTexture
       },
       matCapTexture: {
         value: matCapTexture
