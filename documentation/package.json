@@ -19,8 +19,8 @@
     "apiref:concat": "concat-md ./generated --startTitleLevelAt 1 --decrease-title-levels --dir-name-as-title > \"./docs/API Reference.md\""
   },
   "dependencies": {
-    "@cognite/reveal": "^1.0.0-alpha-5",
-    "@cognite/sdk": "^2.33.0",
+    "@cognite/reveal": "^1.0.0-beta-1",
+    "@cognite/sdk": "^3.0.0",
     "@docusaurus/core": "2.0.0-alpha.58",
     "@docusaurus/module-type-aliases": "2.0.0-alpha.58",
     "@docusaurus/preset-classic": "2.0.0-alpha.58",
