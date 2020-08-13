@@ -181,6 +181,9 @@ export class Cognite3DViewer {
           } else {
             this.spinner.hide();
           }
+          if (options.onLoading) {
+            options.onLoading(0, isLoading ? 1 : 0);
+          }
         },
         error =>
           trackError(error, {

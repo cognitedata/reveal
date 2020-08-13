@@ -11,6 +11,11 @@ export type Color = {
   g: number;
   b: number;
 };
+/**
+ * Callback to monitor downloaded requests and progress.
+ * Use OnLoadingCallback instead of onProgress/onComplete.
+ */
+export type OnLoadingCallback = (itemsDownloaded: number, itemsRequested: number) => void;
 
 export interface Cognite3DViewerOptions {
   sdk: CogniteClient;
@@ -35,6 +40,9 @@ export interface Cognite3DViewerOptions {
 
   /** Renderer used to visualize model (optional). */
   renderer?: THREE.WebGLRenderer;
+
+  /** Callback to download stream progress */
+  onLoading?: OnLoadingCallback;
 
   /**
    * Utility used to determine what parts of the model will be visible on screen and loaded.
