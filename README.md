@@ -6,6 +6,10 @@
 
 [![Build Status](https://travis-ci.org/cognitedata/reveal.svg?branch=master)](https://travis-ci.org/cognitedata/reveal)
 
+Documentation for the latest version is available at [https://cognitedata.github.io/reveal/docs/](https://cognitedata.github.io/reveal/docs/)
+
+---
+
 Reveal viewer a highly performant viewer for the Web written in a combination of TypeScript and Rust.
 
 This repository contains the source code for the new version of the Cognite Reveal 3D viewer,
