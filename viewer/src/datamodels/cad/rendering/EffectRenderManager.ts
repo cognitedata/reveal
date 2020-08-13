@@ -26,7 +26,11 @@ export class EffectRenderManager {
   private readonly _frontRenderedCadModelTarget: THREE.WebGLRenderTarget;
 
   private readonly _rootSectorNodeBuffer: Set<[RootSectorNode, CadNode]> = new Set();
-  private readonly _inFrontObjectBuffer: Set<[THREE.Object3D, THREE.Object3D, THREE.Object3D]> = new Set();
+  private readonly _inFrontObjectBuffer: Set<{
+    inFrontObject: THREE.Object3D;
+    inFrontParent: THREE.Object3D;
+    inFrontSceneParent: THREE.Object3D;
+  }> = new Set();
 
   private readonly outlineTexelSize = 2;
 
@@ -142,7 +146,7 @@ export class EffectRenderManager {
     });
 
     this._inFrontObjectBuffer.forEach(p => {
-      p[2].add(p[0]);
+      p.inFrontSceneParent.add(p.inFrontObject);
     });
 
     this._materialManager.setRenderMode(RenderMode.Effects);
@@ -152,7 +156,7 @@ export class EffectRenderManager {
     this._materialManager.setRenderMode(RenderMode.Color);
 
     this._inFrontObjectBuffer.forEach(p => {
-      p[1].add(p[0]);
+      p.inFrontParent.add(p.inFrontObject);
     });
 
     this._inFrontObjectBuffer.clear();
@@ -173,7 +177,11 @@ export class EffectRenderManager {
       const objectTreeIndices = element.userData.treeIndices as Set<number> | undefined;
 
       if (objectTreeIndices && hasIntersection(frontSet, objectTreeIndices)) {
-        this._inFrontObjectBuffer.add([element, element.parent!, rootTransformObject]);
+        this._inFrontObjectBuffer.add({
+          inFrontObject: element,
+          inFrontParent: element.parent!,
+          inFrontSceneParent: rootTransformObject
+        });
       } else {
         objectStack.push(...element.children);
       }
