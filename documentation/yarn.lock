@@ -986,31 +986,40 @@
     webpack-cli "^3.3.9"
     worker-loader "^2.0.0"
 
-"@cognite/reveal@^1.0.0-alpha-5":
-  version "1.0.0-alpha-5"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-1.0.0-alpha-5.tgz#7318961939cde7bf1cf78fb0ac51d8b6f49ac3be"
-  integrity sha512-3AjSzYRjb8tO+TpF8V13VyiL9HoVPrlDdKiUK4cYjxr9y+pNzSQT7vPOfRWJWdqulREgCrsHELcYjdh3Vg/MPg==
+"@cognite/reveal@^1.0.0-beta-1":
+  version "1.0.0-beta-1"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-1.0.0-beta-1.tgz#f490e236bbdea5f84a51060308140bdddfd32d7c"
+  integrity sha512-IBEymmimjFLKvLwCykMKdbf7/LOJiRUqas5JACKpWtF5c++f0qUwoob9AH/mAP7HvPu8D221av/kFAj9rh0JVw==
   dependencies:
     "@cognite/potree-core" "^1.1.3"
     "@cognite/three-combo-controls" "^1.4.1"
     "@tweenjs/tween.js" "^18.5.0"
-    "@types/lodash" "^4.14.152"
+    "@types/lodash" "^4.14.159"
     comlink "^4.3.0"
     gl-matrix "^3.3.0"
     glslify "^7.0.0"
     glslify-import "^3.1.0"
     lodash "^4.17.15"
+    mixpanel-browser "^2.38.0"
     rxjs "^6.5.5"
 
-"@cognite/sdk@^2.33.0":
-  version "2.33.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-2.33.0.tgz#cfc893ffe259c1011d43c1f41b280b7bf2e72181"
-  integrity sha512-dO2cCO3UbNRx8WaJ3cJdPBe3Rd3qaSBYkocEeW+ew3UzjsxiUOwtz//5HYtb+wXig1aTotoU3iR88NNx09fQfg==
+"@cognite/sdk-core@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.0.0.tgz#8b2ea9a30dc54396cd4980633b92c1714bc27864"
+  integrity sha512-zNarUtJc9RwruDDYukfcUw4FKP9LMc1fMwDYde7WE465kiekCfaE5iEhxNd5TP0tp8fmGyT2YvI/b8Ka9nqu1A==
   dependencies:
     cross-fetch "^3.0.4"
     lodash "^4.17.11"
     query-string "^5.1.1"
     url "^0.11.0"
+
+"@cognite/sdk@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.0.0.tgz#99c9f600129e1f525f2214a7f5f11cf90095e25f"
+  integrity sha512-5zyHEh8drYGQ++4NOjdRr/9XIzHdoI7ssL66ZTJ/uGaLxMhXGa/hq2GK8RaN6uGf0PsirOS9VeU08zA8b2baWQ==
+  dependencies:
+    "@cognite/sdk-core" "^1.0.0"
+    lodash "^4.17.11"
 
 "@cognite/three-combo-controls@^1.4.1":
   version "1.4.1"
@@ -1576,10 +1585,10 @@
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.5.tgz#dcce4430e64b443ba8945f0290fb564ad5bac6dd"
   integrity sha512-7+2BITlgjgDhH0vvwZU/HZJVyk+2XUlvxXe8dFMedNX/aMkaOq++rMAFXc0tM7ij15QaWlbdQASBR9dihi+bDQ==
 
-"@types/lodash@^4.14.152":
-  version "4.14.157"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.157.tgz#fdac1c52448861dfde1a2e1515dbc46e54926dc8"
-  integrity sha512-Ft5BNFmv2pHDgxV5JDsndOWTRJ+56zte0ZpYLowp03tW+K+t8u8YMOzAnpuqPgzX6WO1XpDIUm7u04M8vdDiVQ==
+"@types/lodash@^4.14.159":
+  version "4.14.159"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.159.tgz#61089719dc6fdd9c5cb46efc827f2571d1517065"
+  integrity sha512-gF7A72f7WQN33DpqOWw9geApQPh4M3PxluMtaHxWHXEGSN12/WbcEk/eNSqWNQcQhF66VSZ06vCF94CrHwXJDg==
 
 "@types/mdast@^3.0.0":
   version "3.0.3"
@@ -8104,6 +8113,11 @@ mixin-object@^2.0.1:
   dependencies:
     for-in "^0.1.3"
     is-extendable "^0.1.1"
+
+mixpanel-browser@^2.38.0:
+  version "2.38.0"
+  resolved "https://registry.yarnpkg.com/mixpanel-browser/-/mixpanel-browser-2.38.0.tgz#cfcc9105cbec47b67589b97d755c398dfc13b621"
+  integrity sha512-6Gl95g91PWKBV6E25ga9coD7i4wWl3DgTgtaBPXG+ijNvvj6rQD1tOHJvcZgT4tucGbaNk4oYJC5lmrR0rnOBQ==
 
 mkdirp2@^1.0.4:
   version "1.0.4"
