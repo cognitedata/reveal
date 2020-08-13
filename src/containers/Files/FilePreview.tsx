@@ -16,10 +16,10 @@ import {
   linkedAssetsSelector,
   linkedFilesSelectorByFileId,
 } from 'modules/annotations';
-import { onResourceSelected } from 'modules/app';
 import { CogniteFileViewer } from 'components/CogniteFileViewer';
 import { useHistory } from 'react-router-dom';
 import { Wrapper } from 'components/Common';
+import { useTenant } from 'hooks/CustomHooks';
 
 export const FilePreview = ({
   fileId,
@@ -31,6 +31,7 @@ export const FilePreview = ({
   showBack?: boolean;
 }) => {
   const history = useHistory();
+  const tenant = useTenant();
   const dispatch = useDispatch();
   const file = useSelector(itemSelector)(fileId);
   const { assetIds, assets } = useSelector(linkedAssetsSelector)(fileId);
@@ -107,9 +108,7 @@ export const FilePreview = ({
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
                   if (asset) {
-                    dispatch(
-                      onResourceSelected({ assetId: asset.id }, history)
-                    );
+                    history.push(`/${tenant}/explore/asset/${asset.id}`);
                   }
                 }}
               >
@@ -137,9 +136,7 @@ export const FilePreview = ({
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
                   if (linkedFile) {
-                    dispatch(
-                      onResourceSelected({ fileId: linkedFile.id }, history)
-                    );
+                    history.push(`/${tenant}/explore/file/${linkedFile.id}`);
                   }
                 }}
               >

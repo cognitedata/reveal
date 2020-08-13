@@ -29,11 +29,52 @@ export const Example = () => {
         asset={asset}
         files={[
           {
-            name: 'Hello',
+            name: 'Hello.pdf',
             id: 123,
             uploaded: false,
             lastUpdatedTime: new Date(),
             createdTime: new Date(),
+            mimeType: 'application/pdf',
+          },
+          {
+            name: 'Hello.pdf',
+            id: 123,
+            uploaded: false,
+            lastUpdatedTime: new Date(),
+            createdTime: new Date(),
+            mimeType: 'application/pdf',
+          },
+          {
+            name: 'Hello.pdf',
+            id: 123,
+            uploaded: false,
+            lastUpdatedTime: new Date(),
+            createdTime: new Date(),
+            mimeType: 'application/pdf',
+          },
+          {
+            name: 'Hello.pdf',
+            id: 123,
+            uploaded: false,
+            lastUpdatedTime: new Date(),
+            createdTime: new Date(),
+            mimeType: 'application/pdf',
+          },
+          {
+            name: 'Hello.pdf',
+            id: 123,
+            uploaded: false,
+            lastUpdatedTime: new Date(),
+            createdTime: new Date(),
+            mimeType: 'application/pdf',
+          },
+          {
+            name: 'Hello.pdf',
+            id: 123,
+            uploaded: false,
+            lastUpdatedTime: new Date(),
+            createdTime: new Date(),
+            mimeType: 'application/pdf',
           },
         ]}
         timeseries={[

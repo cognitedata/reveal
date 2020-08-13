@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Icon, Button, Title, Badge } from '@cognite/cogs.js';
+import { Icon, Button, Title, Badge, Colors } from '@cognite/cogs.js';
 import { InfoGrid, InfoCell, ListItem } from 'components/Common';
 import { Asset, FilesMetadata, GetTimeSeriesMetadataDTO } from '@cognite/sdk';
 import { AssetBreadcrumb } from '@cognite/gearbox';
+import { FixedSizeList as List } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
+import { ResourceType } from 'modules/sdk-builder/types';
+
+const LIST_ITEM_HEIGHT = 42;
 
 interface AssetDetailsProps {
   asset: Asset;
@@ -12,14 +17,8 @@ interface AssetDetailsProps {
   actions?: React.ReactNode[];
   extras?: React.ReactNode;
   children?: React.ReactNode;
-  timeseriesPreview?: (
-    timeseries: GetTimeSeriesMetadataDTO,
-    listItem: React.ReactNode
-  ) => React.ReactNode;
-  filePreview?: (
-    file: FilesMetadata,
-    listItem: React.ReactNode
-  ) => React.ReactNode;
+  timeseriesPreview?: (timeseries: GetTimeSeriesMetadataDTO) => React.ReactNode;
+  filePreview?: (file: FilesMetadata) => React.ReactNode;
 }
 
 const IconWrapper = styled.span`
@@ -31,6 +30,41 @@ const IconWrapper = styled.span`
   vertical-align: -0.225em;
 `;
 
+const RowItem = ({
+  style,
+  key,
+  title,
+  onClick,
+}: {
+  style: React.CSSProperties;
+  key: React.Key;
+  title: string | number;
+  onClick?: () => void;
+}) => (
+  <div style={style} key={key}>
+    <ListItem
+      onClick={onClick}
+      style={{
+        padding: `0px 12px`,
+        paddingTop: 8,
+        marginLeft: 8,
+      }}
+      title={
+        <div
+          style={{
+            display: 'flex',
+            height: 32,
+            borderBottom: `1px solid ${Colors['greyscale-grey3'].hex()}`,
+          }}
+        >
+          <span>{title}</span>
+        </div>
+      }
+      bordered={false}
+    />
+  </div>
+);
+
 export const AssetDetailsAbstract = ({
   asset,
   files,
@@ -41,152 +75,56 @@ export const AssetDetailsAbstract = ({
   timeseriesPreview,
   filePreview,
 }: AssetDetailsProps) => {
-  const [selectedView, setSelectedView] = useState<
-    'pnids' | 'timeseries' | undefined
-  >();
-
-  if (selectedView === 'pnids' && files) {
+  const [selected, setSelected] = useState<
+    { type: ResourceType; id: number } | undefined
+  >(undefined);
+  if (selected) {
+    let content: React.ReactNode = null;
+    if (
+      files &&
+      filePreview &&
+      selected.type === 'files' &&
+      files.some(el => el.id === selected.id)
+    ) {
+      const file = files.find(el => el.id === selected.id)!;
+      content = filePreview(file);
+    }
+    if (
+      timeseries &&
+      timeseriesPreview &&
+      selected.type === 'timeseries' &&
+      timeseries.some(el => el.id === selected.id)
+    ) {
+      const ts = timeseries.find(el => el.id === selected.id)!;
+      content = timeseriesPreview(ts);
+    }
     return (
-      <InfoGrid className="asset-info-grid" noBorders>
-        {asset.name && (
-          <InfoCell
-            containerStyles={{ paddingTop: 0, paddingBottom: 0 }}
-            noBorders
-          >
-            <Title level={5} style={{ display: 'flex', alignItems: 'center' }}>
-              <IconWrapper>
-                <Icon type="DataStudio" />
-              </IconWrapper>
-              <span
-                style={{
-                  flex: 1,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
-              >
-                {asset.name}
-              </span>
-            </Title>
-          </InfoCell>
-        )}
+      <InfoGrid noBorders>
         <InfoCell noBorders>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Button onClick={() => setSelectedView(undefined)} type="secondary">
-              BACK
+            <Button
+              onClick={() => setSelected(undefined)}
+              type="secondary"
+              icon="ArrowLeft"
+              variant="ghost"
+            >
+              BACK TO {asset.name.toLocaleUpperCase()}
             </Button>
-            <p style={{ marginLeft: '16px', marginBottom: 0 }}>
-              <strong>ALL FILES</strong>
-            </p>
           </div>
         </InfoCell>
-        <InfoCell noBorders>
-          {files.map(file => {
-            const content = (
-              <ListItem
-                key={file.id}
-                style={{
-                  padding: 0,
-                  width: '100%',
-                  border: 'none',
-                  marginBottom: '8px',
-                }}
-                title={
-                  <div style={{ display: 'flex' }}>
-                    <Icon type="Document" style={{ marginRight: '4px' }} />
-                    <span>{file.name}</span>
-                  </div>
-                }
-                bordered={false}
-              />
-            );
-
-            if (filePreview) {
-              return filePreview(file, content);
-            }
-            return content;
-          })}
-        </InfoCell>
-        {children}
-      </InfoGrid>
-    );
-  }
-
-  if (selectedView === 'timeseries' && timeseries) {
-    return (
-      <InfoGrid className="asset-info-grid" noBorders>
-        {asset.name && (
-          <InfoCell
-            containerStyles={{ paddingTop: 0, paddingBottom: 0 }}
-            noBorders
-          >
-            <Title level={5} style={{ display: 'flex', alignItems: 'center' }}>
-              <IconWrapper>
-                <Icon type="Document" />
-              </IconWrapper>
-              <span
-                style={{
-                  flex: 1,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
-              >
-                {asset.name}
-              </span>
-            </Title>
-          </InfoCell>
-        )}
-        <InfoCell noBorders>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Button onClick={() => setSelectedView(undefined)} type="secondary">
-              BACK
-            </Button>
-            <p style={{ marginLeft: '16px', marginBottom: 0 }}>
-              <strong>ALL TIME SERIES</strong>
-            </p>
-          </div>
-        </InfoCell>
-        <InfoCell noBorders>
-          {timeseries.map(ts => {
-            const content = (
-              <ListItem
-                key={ts.id}
-                style={{
-                  padding: 0,
-                  width: '100%',
-                  border: 'none',
-                  marginBottom: '8px',
-                }}
-                title={
-                  <div style={{ display: 'flex' }}>
-                    <Icon type="Timeseries" style={{ marginRight: '4px' }} />
-                    <span>{ts.name}</span>
-                  </div>
-                }
-                bordered={false}
-              />
-            );
-            if (timeseriesPreview) {
-              return timeseriesPreview(ts, content);
-            }
-            return content;
-          })}
-        </InfoCell>
-        {children}
+        {content}
       </InfoGrid>
     );
   }
   return (
-    <InfoGrid className="asset-info-grid" noBorders>
+    <InfoGrid noBorders>
       {extras && (
         <div style={{ position: 'absolute', top: '16px', right: '16px' }}>
           {extras}
         </div>
       )}
       {asset.name && (
-        <InfoCell
-          containerStyles={{ paddingTop: 0, paddingBottom: 0 }}
-          noBorders
-        >
+        <InfoCell containerStyles={{ paddingBottom: 0 }} noBorders>
           <Title level={5} style={{ display: 'flex', alignItems: 'center' }}>
             <IconWrapper>
               <Icon type="DataStudio" />
@@ -214,46 +152,104 @@ export const AssetDetailsAbstract = ({
       <InfoCell noBorders>
         <p>CONTENT</p>
         {files && (
-          <ListItem
-            id="pnids"
-            onClick={() => setSelectedView('pnids')}
-            style={{
-              padding: 0,
-              width: '100%',
-              border: 'none',
-              marginBottom: '8px',
-            }}
-            title={
-              <div style={{ display: 'flex' }}>
-                <Icon type="Document" style={{ marginRight: '4px' }} />
-                <span>P&IDs</span>
-              </div>
-            }
-            bordered={false}
-          >
-            <Badge text={`${files.length}`} />
-          </ListItem>
+          <>
+            <ListItem
+              id="pnids"
+              style={{
+                padding: 0,
+                marginBottom: '8px',
+                marginTop: '8px',
+              }}
+              title={
+                <div style={{ display: 'flex' }}>
+                  <Icon type="Document" style={{ marginRight: '4px' }} />
+                  <Title level={6}>P&IDs</Title>
+                </div>
+              }
+              bordered={false}
+            >
+              <Badge text={`${files.length}`} />
+            </ListItem>
+            <AutoSizer disableHeight>
+              {({ width }) => (
+                <List
+                  height={Math.min(files.length * LIST_ITEM_HEIGHT, 150)}
+                  itemCount={files.length}
+                  itemSize={LIST_ITEM_HEIGHT}
+                  width={width}
+                >
+                  {({ index, style }) => (
+                    <RowItem
+                      onClick={
+                        filePreview
+                          ? () =>
+                              setSelected({
+                                type: 'files',
+                                id: files[index].id,
+                              })
+                          : undefined
+                      }
+                      key={files[index].id}
+                      style={style}
+                      title={files[index].name}
+                    />
+                  )}
+                </List>
+              )}
+            </AutoSizer>
+          </>
         )}
         {timeseries && (
-          <ListItem
-            id="timeseries"
-            onClick={() => setSelectedView('timeseries')}
-            style={{
-              padding: 0,
-              width: '100%',
-              border: 'none',
-              marginBottom: '8px',
-            }}
-            title={
-              <div style={{ display: 'flex' }}>
-                <Icon type="Timeseries" style={{ marginRight: '4px' }} />
-                <span>Time Series</span>
-              </div>
-            }
-            bordered={false}
-          >
-            <Badge text={`${timeseries.length}`} />
-          </ListItem>
+          <>
+            <ListItem
+              id="timeseries"
+              style={{
+                padding: 0,
+                marginBottom: '8px',
+                marginTop: '8px',
+              }}
+              title={
+                <div style={{ display: 'flex' }}>
+                  <Icon type="Timeseries" style={{ marginRight: '4px' }} />
+                  <Title level={6}>Time series</Title>
+                </div>
+              }
+              bordered={false}
+            >
+              <Badge text={`${timeseries.length}`} />
+            </ListItem>
+            <AutoSizer disableHeight>
+              {({ width }) => (
+                <List
+                  height={Math.min(timeseries.length * LIST_ITEM_HEIGHT, 150)}
+                  itemCount={timeseries.length}
+                  itemSize={LIST_ITEM_HEIGHT}
+                  width={width}
+                >
+                  {({ index, style }) => (
+                    <RowItem
+                      onClick={
+                        timeseriesPreview
+                          ? () =>
+                              setSelected({
+                                type: 'timeseries',
+                                id: timeseries[index].id,
+                              })
+                          : undefined
+                      }
+                      key={timeseries[index].id}
+                      style={style}
+                      title={
+                        timeseries[index].name ||
+                        timeseries[index].externalId ||
+                        timeseries[index].id
+                      }
+                    />
+                  )}
+                </List>
+              )}
+            </AutoSizer>
+          </>
         )}
       </InfoCell>
       {children}

@@ -99,6 +99,7 @@ export const ShoppingCartPreview = ({
           return (
             <ListItem
               key={el}
+              bordered
               title={
                 <div style={{ display: 'inline-flex', alignItems: 'center' }}>
                   <Icon
@@ -124,6 +125,7 @@ export const ShoppingCartPreview = ({
           return (
             <ListItem
               key={el}
+              bordered
               title={
                 <div style={{ display: 'inline-flex', alignItems: 'center' }}>
                   <Icon
@@ -149,6 +151,7 @@ export const ShoppingCartPreview = ({
           return (
             <ListItem
               key={el}
+              bordered
               title={
                 <div style={{ display: 'inline-flex', alignItems: 'center' }}>
                   <Icon

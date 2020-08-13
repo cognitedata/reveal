@@ -9,6 +9,8 @@ import {
 } from 'modules/annotations';
 import { retrieve, itemSelector } from 'modules/assets';
 import { useResourceActionsContext } from 'context/ResourceActionsContext';
+import { TimeseriesSmallPreview } from 'containers/Timeseries';
+import { FileSmallPreview } from 'containers/Files';
 
 const createTimeseriesFilter = (assetId: number): TimeseriesFilterQuery => ({
   filter: { assetSubtreeIds: [{ id: assetId }] },
@@ -65,6 +67,10 @@ export const AssetSmallPreview = ({
       files={assetFiles || []}
       extras={extras}
       actions={actions}
+      timeseriesPreview={timeseries => (
+        <TimeseriesSmallPreview timeseriesId={timeseries.id} />
+      )}
+      filePreview={file => <FileSmallPreview fileId={file.id} />}
     >
       {children}
     </AssetDetailsAbstract>

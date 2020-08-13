@@ -5,7 +5,7 @@ import {
   retrieve as retrieveAsset,
 } from 'modules/assets';
 import { Icon, Title } from '@cognite/cogs.js';
-import { List, Tabs, message, Row } from 'antd';
+import { List, Tabs } from 'antd';
 import { AssetBreadcrumb } from '@cognite/gearbox/dist/components/AssetBreadcrumb';
 import { AssetTree } from '@cognite/gearbox/dist/components/AssetTree';
 import { TimeseriesPreview } from '@cognite/gearbox/dist/components/TimeseriesPreview';
@@ -36,12 +36,12 @@ import {
   EventFilterRequest,
   FilesSearchFilter,
 } from '@cognite/sdk';
-import { onResourceSelected } from 'modules/app';
 import { useHistory } from 'react-router-dom';
 import { DetailsItem, Wrapper } from 'components/Common';
 import moment from 'moment';
 import unionBy from 'lodash/unionBy';
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
+import { useTenant } from 'hooks/CustomHooks';
 
 const formatMetadata = (metadata: { [key: string]: any }) =>
   Object.keys(metadata).reduce(
@@ -78,6 +78,7 @@ export const AssetPreview = ({
 }) => {
   const history = useHistory();
   const dispatch = useDispatch();
+  const tenant = useTenant();
   const asset = useSelector(assetSelector)(assetId);
   const {
     files: filesByAnnotations,
@@ -133,7 +134,7 @@ export const AssetPreview = ({
         <AssetBreadcrumb
           assetId={assetId}
           onBreadcrumbClick={newAsset =>
-            dispatch(onResourceSelected({ assetId: newAsset.id }, history))
+            history.push(`/${tenant}/explore/asset/${newAsset.id}`)
           }
         />
       </div>
@@ -141,9 +142,7 @@ export const AssetPreview = ({
         <Icon type="DataStudio" /> {asset ? asset.name : 'Loading...'}
       </h1>
 
-      <Row type="flex" gutter={12} justify="start" className="button-row">
-        {extraActions}
-      </Row>
+      <div className="button-row">{extraActions}</div>
       <Tabs>
         <Tabs.TabPane key="asset-metadata" tab="Asset Details">
           <Title level={4} style={{ marginTop: 12, marginBottom: 12 }}>
@@ -185,15 +184,7 @@ export const AssetPreview = ({
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
                   if (ts) {
-                    dispatch(
-                      onResourceSelected(
-                        {
-                          timeseriesId: ts.id,
-                          showSidebar: true,
-                        },
-                        history
-                      )
-                    );
+                    history.push(`/${tenant}/explore/timeseries/${ts.id}`);
                   }
                 }}
               >
@@ -214,12 +205,7 @@ export const AssetPreview = ({
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
                   if (file) {
-                    dispatch(
-                      onResourceSelected(
-                        { fileId: file.id, showSidebar: true },
-                        history
-                      )
-                    );
+                    history.push(`/${tenant}/explore/file/${file.id}`);
                   }
                 }}
               >
@@ -243,12 +229,7 @@ export const AssetPreview = ({
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
                   if (sequence) {
-                    dispatch(
-                      onResourceSelected(
-                        { sequenceId: sequence.id, showSidebar: true },
-                        history
-                      )
-                    );
+                    history.push(`/${tenant}/explore/sequence/${sequence.id}`);
                   }
                 }}
               >
@@ -272,13 +253,7 @@ export const AssetPreview = ({
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
                   if (event) {
-                    message.info('Coming soon...');
-                    // dispatch(
-                    //   onResourceSelected(
-                    //     { eventId: event.id, showSidebar: true },
-                    //     history
-                    //   )
-                    // );
+                    history.push(`/${tenant}/explore/event/${event.id}`);
                   }
                 }}
               >
@@ -300,15 +275,7 @@ export const AssetPreview = ({
             defaultExpandedKeys={[assetId]}
             onSelect={newAsset => {
               if (newAsset.node) {
-                dispatch(
-                  onResourceSelected(
-                    {
-                      assetId: newAsset.node.id,
-                      showSidebar: true,
-                    },
-                    history
-                  )
-                );
+                history.push(`/${tenant}/explore/asset/${newAsset.node.id}`);
               }
             }}
           />

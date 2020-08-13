@@ -36,7 +36,6 @@ export const FileSmallPreview = ({
   const { fileIds, files } = useSelector(linkedFilesSelectorByFileId)(fileId);
 
   const actions = useMemo(() => {
-    console.log('asdfsda');
     const items: React.ReactNode[] = [];
     items.push(...(propActions || []));
     items.push(

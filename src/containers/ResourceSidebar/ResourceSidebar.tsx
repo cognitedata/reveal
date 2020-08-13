@@ -2,8 +2,6 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import queryString from 'query-string';
-import { onResourceSelected } from 'modules/app';
-import { useDispatch } from 'react-redux';
 import { Button } from '@cognite/cogs.js';
 import { FileSmallPreview } from 'containers/Files';
 import { AssetSmallPreview } from 'containers/Assets';
@@ -46,7 +44,6 @@ export const ResourceSidebar = ({
       }) => React.ReactNode[]);
 }) => {
   const history = useHistory();
-  const dispatch = useDispatch();
   const { search } = history.location;
   const {
     showSidebar: showSidebarString,
@@ -121,13 +118,7 @@ export const ResourceSidebar = ({
   if (showSidebar) {
     return (
       <Drawer>
-        <CloseButton
-          icon="Close"
-          variant="ghost"
-          onClick={() =>
-            dispatch(onResourceSelected({ showSidebar: false }, history))
-          }
-        />
+        <CloseButton icon="Close" variant="ghost" />
         <DetailsWrapper>{renderResourceDetails()}</DetailsWrapper>
       </Drawer>
     );

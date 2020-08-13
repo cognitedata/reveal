@@ -1,10 +1,11 @@
-import styled, { CSSProperties } from 'styled-components';
+import styled, { CSSProperties, css } from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import React from 'react';
 
 type WrapperProps = {
   selected?: boolean;
   bordered?: boolean;
+  isClickable?: boolean;
 };
 
 export type ListItemProps = {
@@ -22,7 +23,7 @@ export const ListItem = ({
   bordered,
   style,
   id,
-  onClick = () => {},
+  onClick,
 }: ListItemProps) => {
   return (
     <ListItemWrapper
@@ -30,11 +31,12 @@ export const ListItem = ({
       selected={selected}
       bordered={bordered}
       onClick={onClick}
+      isClickable={!!onClick}
       style={style}
     >
       {title && (
-        <div className="title">
-          <strong>{title}</strong>
+        <div className="list-title">
+          {typeof title === 'string' ? <strong>{title}</strong> : title}
         </div>
       )}
       {children}
@@ -42,32 +44,54 @@ export const ListItem = ({
   );
 };
 
-export const ListItemWrapper = styled.div<WrapperProps>`
-  align-items: baseline;
-  display: flex;
-  flex-direction: row;
-  border-radius: 4px;
-  padding: 12px 24px;
-  cursor: pointer;
-  transition: 0.3s all;
+const additionalStyles = (props: WrapperProps) => {
+  if (props.selected) {
+    return css`
+      background: ${Colors['midblue-6'].hex()};
+      color: ${Colors['midblue-2'].hex()};
 
-  p {
-    margin-bottom: 0px;
+      &&:hover {
+        background: ${Colors['midblue-6'].hex()};
+      }
+    `;
   }
-  background: ${props =>
-    props.selected ? Colors['midblue-6'].hex() : 'inherit'};
-  color: ${props => (props.selected ? Colors['midblue-2'].hex() : 'inherit')};
-  border-bottom: ${props =>
-    props.bordered
+  if (!props.isClickable) {
+    return css`
+      cursor: default;
+    `;
+  }
+  return `
+    background: inherit;
+    color: inherit;
+
+    &&:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+  `;
+};
+
+export const ListItemWrapper = styled.div<WrapperProps>(
+  props => css`
+    align-items: baseline;
+    display: flex;
+    flex-direction: row;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: 0.3s all;
+    border-bottom: ${props.bordered
       ? `1px solid ${Colors['greyscale-grey3'].hex()}`
       : 'inherit'};
 
-  .title {
-    flex: 1;
-  }
+    p {
+      margin-bottom: 0px;
+    }
 
-  &&:hover {
-    background: ${props =>
-      props.selected ? Colors['midblue-6'].hex() : 'rgba(0,0,0,0.05)'};
-  }
-`;
+    .list-title {
+      align-self: stretch;
+      flex: 1;
+    }
+
+    ${additionalStyles(props)}
+  `
+);
