@@ -9,7 +9,6 @@ import { edgeDetectionShaders } from './shaders';
 import { CogniteColors } from '@/utilities';
 import { CadNode } from '..';
 import { Cognite3DModel } from '@/migration';
-import { Object3D } from 'three';
 import { RootSectorNode } from '../sector/RootSectorNode';
 
 export class EffectRenderManager {
@@ -27,10 +26,9 @@ export class EffectRenderManager {
   private readonly _frontRenderedCadModelTarget: THREE.WebGLRenderTarget;
 
   private readonly _rootSectorNodeBuffer: Set<[RootSectorNode, CadNode]> = new Set();
-  private readonly _inFrontObjectBuffer: Set<[Object3D, Object3D]> = new Set();
+  private readonly _inFrontObjectBuffer: Set<[THREE.Object3D, THREE.Object3D, THREE.Object3D]> = new Set();
 
   private readonly outlineTexelSize = 2;
-  private _cadTransformParent: THREE.Object3D;
 
   constructor(materialManager: MaterialManager) {
     this._materialManager = materialManager;
@@ -39,11 +37,6 @@ export class EffectRenderManager {
     this._cadScene = new THREE.Scene();
     this._inFrontScene = new THREE.Scene();
     this._triScene = new THREE.Scene();
-
-    this._cadTransformParent = new Object3D();
-    this._cadTransformParent.matrixAutoUpdate = false;
-    this._inFrontScene.add(this._cadTransformParent);
-    this._cadTransformParent.matrix.makeRotationFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0));
 
     const outlineColorTexture = this.createOutlineColorTexture();
 
@@ -149,7 +142,7 @@ export class EffectRenderManager {
     });
 
     this._inFrontObjectBuffer.forEach(p => {
-      this._cadTransformParent.add(p[0]);
+      p[2].add(p[0]);
     });
 
     this._materialManager.setRenderMode(RenderMode.Effects);
@@ -163,10 +156,16 @@ export class EffectRenderManager {
     });
 
     this._inFrontObjectBuffer.clear();
+    this._inFrontScene.remove(...this._inFrontScene.children);
   }
 
   private traverseForInFrontObjects(root: THREE.Object3D, frontSet: Set<number>) {
     const objectStack = [root];
+
+    const rootTransformObject = new THREE.Object3D();
+    rootTransformObject.applyMatrix4(root.matrix);
+
+    this._inFrontScene.add(rootTransformObject);
 
     while (objectStack.length > 0) {
       const element = objectStack.pop()!;
@@ -174,7 +173,7 @@ export class EffectRenderManager {
       const objectTreeIndices = element.userData.treeIndices as Set<number> | undefined;
 
       if (objectTreeIndices && hasIntersection(frontSet, objectTreeIndices)) {
-        this._inFrontObjectBuffer.add([element, element.parent!]);
+        this._inFrontObjectBuffer.add([element, element.parent!, rootTransformObject]);
       } else {
         objectStack.push(...element.children);
       }
@@ -251,7 +250,7 @@ export class EffectRenderManager {
     this._triScene.add(mesh);
   }
 
-  private traverseForRootSectorNode(root: Object3D) {
+  private traverseForRootSectorNode(root: THREE.Object3D) {
     const objectStack = [root];
 
     while (objectStack.length > 0) {
