@@ -2,7 +2,6 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { Asset } from '@cognite/sdk';
 import { ClientSDKProvider } from '@cognite/gearbox';
-import { Button } from '@cognite/cogs.js';
 import { AssetDetailsAbstract } from './AssetDetailsAbstract';
 
 const asset: Asset = {
