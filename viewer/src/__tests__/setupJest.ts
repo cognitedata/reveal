@@ -11,8 +11,6 @@ Object.defineProperty(document, 'currentScript', {
 });
 (document.currentScript as any).src = 'http://localhost/iamdummy.html';
 
-window.URL.createObjectURL = jest.fn();
-
 // Mock Worker for web workers
 class StubWorker {
   constructor(_: string) {}
