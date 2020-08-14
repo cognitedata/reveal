@@ -1,14 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 import { GetTimeSeriesMetadataDTO as TimeSeries } from '@cognite/sdk/dist/src/types/types';
-import { Icons } from '@cognite/cogs.js';
-import { Row } from 'antd';
+import { Icons, Title } from '@cognite/cogs.js';
 import {
   InfoGrid,
   InfoCell,
   LatestDatapoint,
-  SmallTitle,
   DetailsItem,
+  ButtonRow,
 } from 'components/Common';
 import { TimeseriesGraph } from 'components/Common/';
 
@@ -46,7 +45,7 @@ export const TimeseriesDetailsAbstract = ({
           noBorders
           containerStyles={{ paddingTop: 0, paddingBottom: 0 }}
         >
-          <SmallTitle style={{ display: 'flex', alignItems: 'center' }}>
+          <Title level={5} style={{ display: 'flex', alignItems: 'center' }}>
             <IconWrapper>
               <Icons.Timeseries />
             </IconWrapper>
@@ -55,15 +54,13 @@ export const TimeseriesDetailsAbstract = ({
             >
               {timeSeries.name}
             </span>
-          </SmallTitle>
+          </Title>
         </InfoCell>
       )}
 
       {actions && (
         <InfoCell noBorders>
-          <Row type="flex" gutter={12} justify="start" className="button-row">
-            {actions}
-          </Row>
+          <ButtonRow>{actions}</ButtonRow>
         </InfoCell>
       )}
 
@@ -73,7 +70,7 @@ export const TimeseriesDetailsAbstract = ({
       </InfoCell>
 
       <InfoCell noPadding noBorders>
-        <SmallTitle>Details</SmallTitle>
+        <Title level={5}>Details</Title>
       </InfoCell>
 
       <InfoGrid noBorders>

@@ -1,15 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Icon } from '@cognite/cogs.js';
-import { Row } from 'antd';
-import {
-  InfoGrid,
-  InfoCell,
-  ListItem,
-  CountLabel,
-  SmallTitle,
-} from 'components/Common';
-
+import { Icon, Title, Badge } from '@cognite/cogs.js';
+import { InfoGrid, InfoCell, ListItem, ButtonRow } from 'components/Common';
 import { FilesMetadata, Asset } from '@cognite/sdk';
 import { FileInfoGrid } from './FileInfoGrid';
 
@@ -53,7 +45,7 @@ export const FileDetailsAbstract = ({
           noBorders
           containerStyles={{ paddingTop: 0, paddingBottom: 0 }}
         >
-          <SmallTitle style={{ display: 'flex', alignItems: 'center' }}>
+          <Title level={5} style={{ display: 'flex', alignItems: 'center' }}>
             <IconWrapper>
               <Icon type="Document" />
             </IconWrapper>
@@ -62,15 +54,13 @@ export const FileDetailsAbstract = ({
             >
               {file.name}
             </span>
-          </SmallTitle>
+          </Title>
         </InfoCell>
       )}
 
       {actions && (
         <InfoCell noBorders>
-          <Row type="flex" gutter={12} justify="start" className="button-row">
-            {actions}
-          </Row>
+          <ButtonRow>{actions}</ButtonRow>
         </InfoCell>
       )}
 
@@ -94,7 +84,7 @@ export const FileDetailsAbstract = ({
             }
             bordered={false}
           >
-            <CountLabel value={assets.length} />
+            <Badge text={`${assets.length}`} />
           </ListItem>
         )}
 
@@ -114,7 +104,7 @@ export const FileDetailsAbstract = ({
             }
             bordered={false}
           >
-            <CountLabel value={files.length} />
+            <Badge text={`${files.length}`} />
           </ListItem>
         )}
         {!assets && !files && <p>No Tags Detected</p>}

@@ -17,13 +17,6 @@ export const InfoGrid = styled.div<InfoGridProps>(
       border-top: 1px solid var(--cogs-greyscale-grey4);
       border-left: 1px solid var(--cogs-greyscale-grey4);
     `}
-
-    .button-row>* {
-      margin-left: 8px;
-    }
-    .button-row > *:nth-child(1) {
-      margin-left: 0px;
-    }
   `
 );
 

@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button, Colors } from '@cognite/cogs.js';
-import { CountLabel, Popover } from 'components/Common';
+import { Button, Colors, Badge } from '@cognite/cogs.js';
+import { Popover } from 'components/Common';
 import {
   ShoppingCart,
   ShoppingCartPreview,
@@ -21,9 +21,11 @@ const Navbar = styled.div`
 export const ExplorationNavbar = ({
   cart,
   setCart,
+  showSearch,
 }: {
   cart: ShoppingCart;
   setCart: (cart: ShoppingCart) => void;
+  showSearch?: boolean;
 }) => {
   const history = useHistory();
   const navbarRef = useRef<HTMLDivElement>(null);
@@ -48,11 +50,12 @@ export const ExplorationNavbar = ({
               2
             : 0
         }
+        showSearch={showSearch}
       />
       <Popover
         trigger="click"
         content={<ShoppingCartPreview cart={cart} setCart={setCart} />}
-        placement="bottomRight"
+        placement="bottom-end"
       >
         <Button type="primary" style={{ marginLeft: 24 }}>
           <img
@@ -61,11 +64,7 @@ export const ExplorationNavbar = ({
             style={{ height: 16, width: 16, marginRight: 8 }}
           />
           <span style={{ marginRight: 8 }}>Kit</span>
-          <CountLabel
-            backgroundColor={Colors['midblue-5'].hex()}
-            color={Colors.white.hex()}
-            value={cartCount}
-          />
+          <Badge inverted text={`${cartCount}`} />
         </Button>
       </Popover>
     </Navbar>

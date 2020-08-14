@@ -1,136 +1,187 @@
-import React from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useState, useContext, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
-import queryString from 'query-string';
-import { onResourceSelected } from 'modules/app';
-import { useDispatch } from 'react-redux';
-import { Button } from '@cognite/cogs.js';
-import { FileSmallPreview } from 'containers/Files';
-import { AssetSmallPreview } from 'containers/Assets';
-import { SequenceSmallPreview } from 'containers/Sequences';
-import { TimeseriesSmallPreview } from 'containers/Timeseries';
+import { Button, Input } from '@cognite/cogs.js';
+import { FilePreview } from 'containers/Files';
+import { AssetPreview } from 'containers/Assets';
+import { SequencePreview } from 'containers/Sequences';
+import { TimeseriesPreview } from 'containers/Timeseries';
+import { GlobalSearchResults } from 'containers/GlobalSearch/GlobalSearchResults';
+import ResourceActionsContext from 'context/ResourceActionsContext';
+import { RenderResourceActionsFunction } from 'types/Types';
+import {
+  useSelectResource,
+  ResourceItem,
+} from 'context/ResourceSelectionContext';
+import { ResourceType } from 'modules/sdk-builder/types';
 
 const Drawer = styled.div`
-  width: 360px;
-  height: 100%;
+  position: fixed;
+  top: 64px;
+  right: 0;
+  width: 80vw;
+  height: calc(100vh - 64px);
+  padding: 24px;
+  z-index: 1001;
+  background: #fff;
+`;
+const Overlay = styled.div`
+  position: fixed;
+  top: 64px;
+  right: 0;
+  width: 100vw;
+  height: calc(100vh - 64px);
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.1);
 `;
 
 const CloseButton = styled(Button)`
   float: right;
 `;
 
-const DetailsWrapper = styled.div`
-  pointer-events: all;
-  overflow: auto;
-  padding: 12px;
-  margin-top: 12px;
-  padding-top: 6px;
-  border-radius: 4px;
-  margin-right: 12px;
-  flex: 1;
-  overflow: auto;
-  width: 100%;
-  background: #fff;
-`;
-
 export const ResourceSidebar = ({
-  extraButtons,
+  onClose,
+  children,
 }: {
-  extraButtons?:
-    | React.ReactNode[]
-    | ((props: {
-        assetId?: number;
-        fileId?: number;
-        timeseriesId?: number;
-        sequenceId?: number;
-      }) => React.ReactNode[]);
+  onClose: () => void;
+  children?: React.ReactNode;
 }) => {
-  const history = useHistory();
-  const dispatch = useDispatch();
-  const { search } = history.location;
-  const {
-    showSidebar: showSidebarString,
-    assetId: previewAssetId,
-    fileId: previewFileId,
-    timeseriesId: previewTimeseriesId,
-    sequenceId: previewSequenceId,
-  }: {
-    showSidebar?: string;
-    assetId?: number;
-    fileId?: number;
-    timeseriesId?: number;
-    sequenceId?: number;
-  } = queryString.parse(search, {
-    parseNumbers: true,
-  });
+  const [query, setQuery] = useState<string>('');
+  const { add, remove } = useContext(ResourceActionsContext);
+  const onSelect = useSelectResource();
+  const [selectedItem, setSelectedItem] = useState<ResourceItem | undefined>(
+    undefined
+  );
 
-  const showSidebar = showSidebarString === 'true';
+  const renderResourceActions: RenderResourceActionsFunction = useCallback(
+    ({ fileId, assetId, timeseriesId, sequenceId }) => {
+      let resourceName = 'Resource';
+      let resourceType: ResourceType | undefined;
+      if (fileId) {
+        resourceName = 'File';
+        resourceType = 'files';
+      }
+      if (assetId) {
+        resourceName = 'Asset';
+        resourceType = 'assets';
+      }
+      if (timeseriesId) {
+        resourceName = 'Time Series';
+        resourceType = 'timeseries';
+      }
+      if (sequenceId) {
+        resourceName = 'Sequence';
+        resourceType = 'sequences';
+      }
+      const viewButton = () => {
+        if (resourceType) {
+          return (
+            <Button
+              type="secondary"
+              key="view"
+              onClick={() => {
+                setSelectedItem({
+                  type: resourceType!,
+                  id: (fileId || assetId || timeseriesId || sequenceId)!,
+                });
+              }}
+              icon="ArrowRight"
+            >
+              View {resourceName}
+            </Button>
+          );
+        }
+        return null;
+      };
 
-  let extraActions = [] as React.ReactNode[];
+      return [
+        viewButton(),
+        <Button
+          key="select"
+          type="primary"
+          onClick={() => {
+            onSelect({
+              type: resourceType!,
+              id: (fileId || assetId || timeseriesId || sequenceId)!,
+            });
+            onClose();
+          }}
+        >
+          Select {resourceName}
+        </Button>,
+      ];
+    },
+    [onSelect, onClose]
+  );
 
-  if (extraButtons) {
-    extraActions =
-      typeof extraButtons === 'function'
-        ? extraButtons({
-            assetId: previewAssetId,
-            fileId: previewFileId,
-            timeseriesId: previewTimeseriesId,
-          })
-        : (extraButtons as React.ReactNode[]);
-  }
+  useEffect(() => {
+    add('cart', renderResourceActions);
+  }, [add, renderResourceActions]);
 
-  const renderResourceDetails = () => {
-    if (previewFileId && Number.isInteger(Number(previewFileId))) {
-      return (
-        <FileSmallPreview
-          fileId={previewFileId as number}
-          extras={extraActions}
-        />
-      );
+  useEffect(() => {
+    return () => {
+      remove('cart');
+    };
+  }, [remove]);
+
+  let content = null;
+
+  if (selectedItem) {
+    let preview = null;
+    switch (selectedItem.type) {
+      case 'assets': {
+        preview = <AssetPreview assetId={selectedItem.id} />;
+        break;
+      }
+      case 'timeseries': {
+        preview = <TimeseriesPreview timeseriesId={selectedItem.id} />;
+        break;
+      }
+      case 'sequences': {
+        preview = <SequencePreview sequenceId={selectedItem.id} />;
+        break;
+      }
+      case 'files': {
+        preview = <FilePreview fileId={selectedItem.id} />;
+        break;
+      }
     }
-    if (previewTimeseriesId && Number.isInteger(Number(previewTimeseriesId))) {
-      return (
-        <TimeseriesSmallPreview
-          timeseriesId={previewTimeseriesId as number}
-          extras={extraActions}
-        />
-      );
-    }
-    if (previewAssetId && Number.isInteger(Number(previewAssetId))) {
-      return (
-        <AssetSmallPreview
-          assetId={previewAssetId as number}
-          extras={extraActions}
-        />
-      );
-    }
-    if (previewSequenceId && Number.isInteger(Number(previewSequenceId))) {
-      return (
-        <SequenceSmallPreview
-          sequenceId={previewSequenceId as number}
-          extras={extraActions}
-        />
-      );
-    }
-    return (
+    content = (
       <>
-        <p>Start by searching for an asset or file</p>
+        <Button
+          variant="ghost"
+          icon="ArrowLeft"
+          onClick={() => setSelectedItem(undefined)}
+        >
+          Back to search
+        </Button>
+        {preview}
       </>
     );
-  };
-  if (showSidebar) {
-    return (
-      <Drawer>
-        <CloseButton
-          icon="Close"
-          variant="ghost"
-          onClick={() =>
-            dispatch(onResourceSelected({ showSidebar: false }, history))
-          }
+  } else {
+    content = (
+      <>
+        <Input
+          variant="noBorder"
+          icon="Search"
+          fullWidth
+          iconPlacement="left"
+          placeholder="Search..."
+          onChange={ev => setQuery(ev.target.value)}
+          value={query}
         />
-        <DetailsWrapper>{renderResourceDetails()}</DetailsWrapper>
-      </Drawer>
+        <GlobalSearchResults query={query} />
+      </>
     );
   }
-  return null;
+
+  return (
+    <>
+      <Drawer>
+        <CloseButton icon="Close" variant="ghost" onClick={onClose} />
+        {children}
+        {content}
+      </Drawer>
+      <Overlay onClick={onClose} />
+    </>
+  );
 };

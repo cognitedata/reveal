@@ -1,9 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Asset, GetTimeSeriesMetadataDTO, FilesMetadata } from '@cognite/sdk';
-import { Icon, Colors, Button } from '@cognite/cogs.js';
-import { SmallTitle, ListItem } from 'components/Common';
+import { Icon, Colors, Button, Title, Dropdown, Menu } from '@cognite/cogs.js';
+import { ListItem } from 'components/Common';
+import {
+  itemSelector as fileSelector,
+  retrieve as retrieveFiles,
+} from 'modules/files';
+import {
+  itemSelector as timeseriesSelector,
+  retrieve as retrieveTimeseries,
+} from 'modules/timeseries';
+import {
+  itemSelector as assetsSelector,
+  retrieve as retrieveAssets,
+} from 'modules/assets';
+import { useSelector, useDispatch } from 'react-redux';
+import copy from 'copy-to-clipboard';
+import { useTenant, useEnv } from 'hooks/CustomHooks';
 
-export type ShoppingCart = {
+export type ShoppingCartWithContent = {
   assets: {
     [key: number]: Asset;
   };
@@ -14,6 +29,11 @@ export type ShoppingCart = {
     [key: number]: FilesMetadata;
   };
 };
+export type ShoppingCart = {
+  assets: number[];
+  timeseries: number[];
+  files: number[];
+};
 export const ShoppingCartPreview = ({
   cart,
   setCart,
@@ -21,6 +41,19 @@ export const ShoppingCartPreview = ({
   cart: ShoppingCart;
   setCart: (cart: ShoppingCart) => void;
 }) => {
+  const dispatch = useDispatch();
+  const tenant = useTenant();
+  const env = useEnv();
+  const getFile = useSelector(fileSelector);
+  const getTimeseries = useSelector(timeseriesSelector);
+  const getAsset = useSelector(assetsSelector);
+
+  useEffect(() => {
+    dispatch(retrieveFiles(cart.files.map(id => ({ id }))));
+    dispatch(retrieveAssets(cart.assets.map(id => ({ id }))));
+    dispatch(retrieveTimeseries(cart.timeseries.map(id => ({ id }))));
+  }, [dispatch, cart]);
+
   const onDeleteClicked = ({
     assetId,
     timeseriesId,
@@ -58,11 +91,15 @@ export const ShoppingCartPreview = ({
   return (
     <div style={{ width: 300, position: 'relative' }}>
       <div style={{ height: '400px', overflowY: 'auto' }}>
-        <SmallTitle>Asset</SmallTitle>
+        <Title level={5} style={{ marginBottom: 8 }}>
+          Asset
+        </Title>
         {Object.values(cart.assets).map(el => {
+          const asset = getAsset(el);
           return (
             <ListItem
-              key={el.id}
+              key={el}
+              bordered
               title={
                 <div style={{ display: 'inline-flex', alignItems: 'center' }}>
                   <Icon
@@ -72,19 +109,23 @@ export const ShoppingCartPreview = ({
                     }}
                     type="DataStudio"
                   />
-                  <span>{el.name}</span>
+                  <span>{asset ? asset.name : 'Loading'}</span>
                 </div>
               }
             >
-              {renderDeleteItemButton({ assetId: el.id })}
+              {renderDeleteItemButton({ assetId: el })}
             </ListItem>
           );
         })}
-        <SmallTitle>Time series</SmallTitle>
+        <Title level={5} style={{ marginBottom: 8 }}>
+          Time series
+        </Title>
         {Object.values(cart.timeseries).map(el => {
+          const ts = getTimeseries(el);
           return (
             <ListItem
-              key={el.id}
+              key={el}
+              bordered
               title={
                 <div style={{ display: 'inline-flex', alignItems: 'center' }}>
                   <Icon
@@ -94,19 +135,23 @@ export const ShoppingCartPreview = ({
                     }}
                     type="DataStudio"
                   />
-                  <span>{el.name}</span>
+                  <span>{ts ? ts.name : 'Loading...'}</span>
                 </div>
               }
             >
-              {renderDeleteItemButton({ timeseriesId: el.id })}
+              {renderDeleteItemButton({ timeseriesId: el })}
             </ListItem>
           );
         })}
-        <SmallTitle>Files</SmallTitle>
+        <Title level={5} style={{ marginBottom: 8 }}>
+          Files
+        </Title>
         {Object.values(cart.files).map(el => {
+          const file = getFile(el);
           return (
             <ListItem
-              key={el.id}
+              key={el}
+              bordered
               title={
                 <div style={{ display: 'inline-flex', alignItems: 'center' }}>
                   <Icon
@@ -116,30 +161,81 @@ export const ShoppingCartPreview = ({
                     }}
                     type="DataStudio"
                   />
-                  <span>{el.name}</span>
+                  <span>{file ? file.name : 'Loading...'}</span>
                 </div>
               }
             >
-              {renderDeleteItemButton({ fileId: el.id })}
+              {renderDeleteItemButton({ fileId: el })}
             </ListItem>
           );
         })}
       </div>
-      <Button
-        style={{ width: '100%' }}
-        type="primary"
-        onClick={() => {
-          const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(
-            JSON.stringify(cart)
-          )}`;
-          const dlAnchorElem = document.createElement('a');
-          dlAnchorElem.setAttribute('href', dataStr);
-          dlAnchorElem.setAttribute('download', 'resources.json');
-          dlAnchorElem.click();
-        }}
-      >
-        Download JSON
-      </Button>
+      <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
+        <Button
+          style={{ flex: 1 }}
+          type="primary"
+          onClick={() => {
+            const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(
+              JSON.stringify(cart)
+            )}`;
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute('href', dataStr);
+            dlAnchorElem.setAttribute('download', 'resources.json');
+            dlAnchorElem.click();
+          }}
+        >
+          Download JSON
+        </Button>
+        <Dropdown
+          content={
+            <Menu>
+              <Menu.Item
+                onClick={() => {
+                  const urls = [];
+                  if (cart.assets.length > 0) {
+                    urls.push(
+                      `Assets?$filter=${cart.assets
+                        .map(id => `(Id eq ${id})`)
+                        .join(' or ')}`
+                    );
+                  }
+                  if (cart.timeseries.length > 0) {
+                    urls.push(
+                      `Timeseries?$filter=${cart.timeseries
+                        .map(id => `(Id eq ${id})`)
+                        .join(' or ')}`
+                    );
+                  }
+                  if (cart.files.length > 0) {
+                    urls.push(
+                      `Files?$filter=${cart.files
+                        .map(id => `(Id eq ${id})`)
+                        .join(' or ')}`
+                    );
+                  }
+                  copy(
+                    JSON.stringify(
+                      urls.map(
+                        el =>
+                          `https://${
+                            env || 'api'
+                          }.cognitedata.com/odata/v1/projects/${tenant}/${el}`
+                      )
+                    )
+                  );
+                }}
+              >
+                <Icon type="Copy" />
+                Copy OData Queries
+              </Menu.Item>
+            </Menu>
+          }
+        >
+          <Button variant="ghost" icon="VerticalEllipsis" />
+        </Dropdown>
+      </div>
     </div>
   );
 };
+
+// https://api.cognitedata.com/odata/v1/projects/contextualization/Assets?$filter=(Id eq 51865490571) or (Id eq 52579923080)

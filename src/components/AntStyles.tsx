@@ -65,7 +65,7 @@ import tabsStyle from 'antd/es/tabs/style/index.less';
 // import timelineStyle from 'antd/es/timeline/style/index.less';
 import tooltipStyle from 'antd/es/tooltip/style/index.less';
 // import transferStyle from 'antd/es/transfer/style/index.less';
-// import treeStyle from 'antd/es/tree/style/index.less';
+import treeStyle from 'antd/es/tree/style/index.less';
 // import treeSelectStyle from 'antd/es/tree-select/style/index.less';
 import typographyStyle from 'antd/es/typography/style/index.less';
 import uploadStyle from 'antd/es/upload/style/index.less';
@@ -105,6 +105,7 @@ const styles = [
   tooltipStyle,
   typographyStyle,
   uploadStyle,
+  treeStyle,
 ];
 
 Modal.defaultProps = {

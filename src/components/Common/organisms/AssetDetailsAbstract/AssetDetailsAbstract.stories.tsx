@@ -5,8 +5,7 @@ import '@cognite/cogs.js/dist/antd.css';
 import '@cognite/cogs.js/dist/cogs.css';
 import { Asset } from '@cognite/sdk';
 
-import { Popover } from 'components/Common/';
-import { TimeseriesDetailsAbstract } from 'components/Common/organisms';
+import { Popover, TimeseriesDetailsAbstract } from 'components/Common';
 import { AssetDetailsAbstract } from './AssetDetailsAbstract';
 
 const asset: Asset = {
@@ -30,11 +29,52 @@ export const Example = () => {
         asset={asset}
         files={[
           {
-            name: 'Hello',
+            name: 'Hello.pdf',
             id: 123,
             uploaded: false,
             lastUpdatedTime: new Date(),
             createdTime: new Date(),
+            mimeType: 'application/pdf',
+          },
+          {
+            name: 'Hello.pdf',
+            id: 123,
+            uploaded: false,
+            lastUpdatedTime: new Date(),
+            createdTime: new Date(),
+            mimeType: 'application/pdf',
+          },
+          {
+            name: 'Hello.pdf',
+            id: 123,
+            uploaded: false,
+            lastUpdatedTime: new Date(),
+            createdTime: new Date(),
+            mimeType: 'application/pdf',
+          },
+          {
+            name: 'Hello.pdf',
+            id: 123,
+            uploaded: false,
+            lastUpdatedTime: new Date(),
+            createdTime: new Date(),
+            mimeType: 'application/pdf',
+          },
+          {
+            name: 'Hello.pdf',
+            id: 123,
+            uploaded: false,
+            lastUpdatedTime: new Date(),
+            createdTime: new Date(),
+            mimeType: 'application/pdf',
+          },
+          {
+            name: 'Hello.pdf',
+            id: 123,
+            uploaded: false,
+            lastUpdatedTime: new Date(),
+            createdTime: new Date(),
+            mimeType: 'application/pdf',
           },
         ]}
         timeseries={[

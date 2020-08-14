@@ -48,8 +48,8 @@ import {
   retrieveExternal as retrieveExternalSequence,
 } from 'modules/sequences';
 import { DetailsItem, InfoGrid, FileDetailsAbstract } from 'components/Common';
-import { onResourceSelected } from 'modules/app';
 import { useHistory } from 'react-router-dom';
+import { useTenant } from 'hooks/CustomHooks';
 import {
   AssetItem,
   EventItem,
@@ -116,11 +116,6 @@ const CollapseHeader = styled.div`
   .spacer {
     flex: 1;
   }
-  .cogs-badge {
-    padding: 4px 8px !important;
-    color: #4e4f60 !important;
-    font-weight: 800;
-  }
 `;
 
 const Tabs = styled.div`
@@ -168,6 +163,7 @@ export const FilePreviewOverview = ({
 }: FilePreviewOverviewProps) => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const tenant = useTenant();
   const [currentTab, setTab] = useState('resources');
   const [open, setOpen] = useState<string[]>([]);
   const [query, setQuery] = useState<string>('');
@@ -182,67 +178,27 @@ export const FilePreviewOverview = ({
   const onAssetClickedCallback =
     onAssetClicked ||
     (item => {
-      dispatch(
-        onResourceSelected(
-          {
-            showSidebar: true,
-            assetId: item.id,
-          },
-          history
-        )
-      );
+      history.push(`/${tenant}/explore/asset/${item.id}`);
     });
   const onFileClickedCallback =
     onFileClicked ||
     (item => {
-      dispatch(
-        onResourceSelected(
-          {
-            showSidebar: true,
-            fileId: item.id,
-          },
-          history
-        )
-      );
+      history.push(`/${tenant}/explore/file/${item.id}`);
     });
   const onTimeseriesClickedCallback =
     onTimeseriesClicked ||
     (item => {
-      dispatch(
-        onResourceSelected(
-          {
-            showSidebar: true,
-            timeseriesId: item.id,
-          },
-          history
-        )
-      );
+      history.push(`/${tenant}/explore/timeseries/${item.id}`);
     });
   const onEventClickedCallback =
     onEventClicked ||
     (item => {
-      dispatch(
-        onResourceSelected(
-          {
-            showSidebar: true,
-            eventId: item.id,
-          },
-          history
-        )
-      );
+      history.push(`/${tenant}/explore/event/${item.id}`);
     });
   const onSequenceClickedCallback =
     onSequenceClicked ||
     (item => {
-      dispatch(
-        onResourceSelected(
-          {
-            showSidebar: true,
-            sequenceId: item.id,
-          },
-          history
-        )
-      );
+      history.push(`/${tenant}/explore/sequence/${item.id}`);
     });
   const categorizedAnnotations: CategorizedAnnotations = {
     file: { annotations: [], ids: new Set() },

@@ -2,8 +2,6 @@ import { Action, AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { SingleCogniteCapability } from '@cognite/sdk';
 import { RootState } from 'reducers/index';
-import queryString from 'query-string';
-import { History } from 'history';
 
 import sdk, { getAuthState } from 'sdk-singleton';
 
@@ -126,37 +124,6 @@ const fetchUserGroups = () => async (
       payload: {
         loaded: true,
       },
-    });
-  }
-};
-
-export const onResourceSelected = (
-  params: OnResourceSelectedParams,
-  history: History,
-  url?: string,
-  shouldReplace = false
-) => () => {
-  const { search } = history.location;
-  const currentSearch = queryString.parse(search);
-  delete currentSearch.assetId;
-  delete currentSearch.timeseriesId;
-  delete currentSearch.fileId;
-  delete currentSearch.sequenceId;
-  delete currentSearch.eventId;
-
-  const newState = {
-    ...currentSearch,
-    ...params,
-  };
-  if (shouldReplace) {
-    history.replace({
-      ...(url && { pathname: url }),
-      search: queryString.stringify(newState),
-    });
-  } else {
-    history.push({
-      ...(url && { pathname: url }),
-      search: queryString.stringify(newState),
     });
   }
 };

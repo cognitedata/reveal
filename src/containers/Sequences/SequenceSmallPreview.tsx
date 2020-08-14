@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { SequenceDetailsAbstract, Loader } from 'components/Common';
 import { useDispatch, useSelector } from 'react-redux';
 import { itemSelector, retrieve } from 'modules/sequences';
@@ -23,13 +23,16 @@ export const SequenceSmallPreview = ({
   }, [dispatch, sequenceId]);
 
   const sequence = useSelector(itemSelector)(sequenceId);
-  const actions: React.ReactNode[] = [];
-  actions.push(...(propActions || []));
-  actions.push(
-    ...renderResourceActions({
-      sequenceId,
-    })
-  );
+  const actions = useMemo(() => {
+    const items: React.ReactNode[] = [];
+    items.push(...(propActions || []));
+    items.push(
+      ...renderResourceActions({
+        sequenceId,
+      })
+    );
+    return items;
+  }, [renderResourceActions, sequenceId, propActions]);
 
   if (!sequence) {
     return <Loader />;

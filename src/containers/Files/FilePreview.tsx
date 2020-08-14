@@ -5,7 +5,7 @@ import {
   retrieve as retrieveFiles,
   retrieveExternal as retrieveExternalFiles,
 } from 'modules/files';
-import { Collapse, List, Row } from 'antd';
+import { Collapse, List } from 'antd';
 import { Button } from '@cognite/cogs.js';
 import {
   retrieve as retrieveAssets,
@@ -16,10 +16,10 @@ import {
   linkedAssetsSelector,
   linkedFilesSelectorByFileId,
 } from 'modules/annotations';
-import { onResourceSelected } from 'modules/app';
 import { CogniteFileViewer } from 'components/CogniteFileViewer';
 import { useHistory } from 'react-router-dom';
-import { Wrapper } from 'components/Common';
+import { Wrapper, ButtonRow } from 'components/Common';
+import { useTenant } from 'hooks/CustomHooks';
 
 export const FilePreview = ({
   fileId,
@@ -31,6 +31,7 @@ export const FilePreview = ({
   showBack?: boolean;
 }) => {
   const history = useHistory();
+  const tenant = useTenant();
   const dispatch = useDispatch();
   const file = useSelector(itemSelector)(fileId);
   const { assetIds, assets } = useSelector(linkedAssetsSelector)(fileId);
@@ -84,9 +85,7 @@ export const FilePreview = ({
         </Button>
       )}
       <h1>{file ? file.name : 'Loading...'}</h1>
-      <Row type="flex" gutter={12} justify="start" className="button-row">
-        {extraActions}
-      </Row>
+      <ButtonRow>{extraActions}</ButtonRow>
       {file && file.mimeType === 'application/pdf' && (
         <div style={{ height: 800, marginTop: 24, marginBottom: 24 }}>
           <CogniteFileViewer fileId={fileId} />
@@ -107,9 +106,7 @@ export const FilePreview = ({
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
                   if (asset) {
-                    dispatch(
-                      onResourceSelected({ assetId: asset.id }, history)
-                    );
+                    history.push(`/${tenant}/explore/asset/${asset.id}`);
                   }
                 }}
               >
@@ -137,9 +134,7 @@ export const FilePreview = ({
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
                   if (linkedFile) {
-                    dispatch(
-                      onResourceSelected({ fileId: linkedFile.id }, history)
-                    );
+                    history.push(`/${tenant}/explore/file/${linkedFile.id}`);
                   }
                 }}
               >

@@ -1,10 +1,6 @@
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { Switch, Route, useRouteMatch } from 'react-router-dom';
 import { Button } from '@cognite/cogs.js';
-import { itemSelector as fileSelector } from 'modules/files';
-import { itemSelector as timeseriesSelector } from 'modules/timeseries';
-import { itemSelector as assetsSelector } from 'modules/assets';
-import { useSelector } from 'react-redux';
 import { RenderResourceActionsFunction } from 'types/Types';
 import styled from 'styled-components';
 import ResourceActionsContext from 'context/ResourceActionsContext';
@@ -12,7 +8,8 @@ import { FileExplorer } from 'containers/Files';
 import { AssetExplorer } from 'containers/Assets';
 import { SequenceExplorer } from 'containers/Sequences';
 import { TimeseriesExplorer } from 'containers/Timeseries';
-import { useScopedHistory } from 'hooks/CustomHooks';
+import { useHistory } from 'react-router';
+import { useTenant } from 'hooks/CustomHooks';
 import { ShoppingCart } from './ShoppingCart';
 import { ExplorationNavbar } from './ExplorationNavbar';
 
@@ -28,28 +25,27 @@ const Wrapper = styled.div`
 `;
 
 export const Explorer = () => {
-  const history = useScopedHistory();
+  const history = useHistory();
+  const tenant = useTenant();
   const { add, remove } = useContext(ResourceActionsContext);
   const [cart, setCart] = useState<ShoppingCart>({
-    assets: {},
-    timeseries: {},
-    files: {},
+    assets: [],
+    timeseries: [],
+    files: [],
   });
-  const getFile = useSelector(fileSelector);
-  const getTimeseries = useSelector(timeseriesSelector);
-  const getAssets = useSelector(assetsSelector);
 
-  // TODO: use context provider in the future!
+  const { pathname } = history.location;
+
   const renderResourceActions: RenderResourceActionsFunction = useCallback(
     ({ fileId, assetId, timeseriesId, sequenceId }) => {
       const checkIsInCart = () => {
-        if (fileId && cart.files[fileId]) {
+        if (fileId && cart.files.some(el => el === fileId)) {
           return true;
         }
-        if (timeseriesId && cart.timeseries[timeseriesId]) {
+        if (timeseriesId && cart.timeseries.some(el => el === timeseriesId)) {
           return true;
         }
-        if (assetId && cart.assets[assetId]) {
+        if (assetId && cart.assets.some(el => el === assetId)) {
           return true;
         }
         return false;
@@ -76,14 +72,14 @@ export const Explorer = () => {
           resourceName = 'Sequence';
           path = `sequence/${sequenceId}`;
         }
-        if (!history.location.pathname.includes(path)) {
+        if (!pathname.includes(path)) {
           return (
             <Button
               type="secondary"
               key="view"
               onClick={() => {
                 window.dispatchEvent(new Event('Resource Selected'));
-                history.push(`/explore/${path}`);
+                history.push(`/${tenant}/explore/${path}`);
               }}
               icon="ArrowRight"
             >
@@ -101,32 +97,36 @@ export const Explorer = () => {
           type={isInCart ? 'secondary' : 'primary'}
           onClick={() => {
             if (isInCart) {
-              const newCart = { ...cart };
               if (fileId) {
-                delete newCart.files[fileId];
+                setCart({
+                  ...cart,
+                  files: cart.files.filter(el => el !== fileId),
+                });
               } else if (timeseriesId) {
-                delete newCart.timeseries[timeseriesId];
+                setCart({
+                  ...cart,
+                  timeseries: cart.timeseries.filter(el => el !== timeseriesId),
+                });
               } else if (assetId) {
-                delete newCart.assets[assetId];
+                setCart({
+                  ...cart,
+                  assets: cart.assets.filter(el => el !== timeseriesId),
+                });
               }
-              setCart(newCart);
-            } else if (fileId && getFile(fileId)) {
+            } else if (fileId) {
               setCart({
                 ...cart,
-                files: { ...cart.files, [fileId]: getFile(fileId)! },
+                files: [...cart.files, fileId],
               });
-            } else if (timeseriesId && getTimeseries(timeseriesId)) {
+            } else if (timeseriesId) {
               setCart({
                 ...cart,
-                timeseries: {
-                  ...cart.timeseries,
-                  [timeseriesId]: getTimeseries(timeseriesId)!,
-                },
+                timeseries: [...cart.timeseries, timeseriesId],
               });
-            } else if (assetId && getAssets(assetId)) {
+            } else if (assetId) {
               setCart({
                 ...cart,
-                assets: { ...cart.assets, [assetId]: getAssets(assetId)! },
+                assets: [...cart.assets, assetId],
               });
             }
           }}
@@ -135,7 +135,7 @@ export const Explorer = () => {
         </Button>,
       ];
     },
-    [cart, history, getAssets, getFile, getTimeseries]
+    [cart, tenant, history, pathname]
   );
 
   useEffect(() => {
@@ -149,30 +149,37 @@ export const Explorer = () => {
   }, [remove]);
 
   const match = useRouteMatch();
+  let showSearch = false;
+  if (
+    pathname.endsWith('/file') ||
+    pathname.endsWith(match.path) ||
+    pathname.endsWith(`${match.path}/`)
+  ) {
+    showSearch = true;
+  }
 
   return (
     <Wrapper>
-      <ExplorationNavbar cart={cart} setCart={setCart} />
-      <div style={{ flex: 1, overflow: 'gone' }}>
-        <Switch>
-          <Route
-            path={`${match.path}/file/:fileId?`}
-            component={FileExplorer}
-          />
-          <Route
-            path={`${match.path}/asset/:assetId?`}
-            component={AssetExplorer}
-          />
-          <Route
-            path={`${match.path}/sequence/:sequenceId?`}
-            component={SequenceExplorer}
-          />
-          <Route
-            path={`${match.path}/timeseries/:timeseriesId?`}
-            component={TimeseriesExplorer}
-          />
-        </Switch>
-      </div>
+      <ExplorationNavbar
+        cart={cart}
+        setCart={setCart}
+        showSearch={showSearch}
+      />
+      <Switch>
+        <Route path={`${match.path}/file/:fileId?`} component={FileExplorer} />
+        <Route
+          path={`${match.path}/asset/:assetId?`}
+          component={AssetExplorer}
+        />
+        <Route
+          path={`${match.path}/sequence/:sequenceId?`}
+          component={SequenceExplorer}
+        />
+        <Route
+          path={`${match.path}/timeseries/:timeseriesId?`}
+          component={TimeseriesExplorer}
+        />
+      </Switch>
     </Wrapper>
   );
 };

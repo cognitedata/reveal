@@ -1,6 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { message, Modal } from 'antd';
-import { IAnnotation, IRectShapeData } from '@cognite/react-picture-annotation';
+import {
+  IAnnotation,
+  IRectShapeData,
+  ReactPictureAnnotation,
+} from '@cognite/react-picture-annotation';
 import styled from 'styled-components';
 import SplitPane from 'react-split';
 import {
@@ -66,7 +70,9 @@ const Wrapper = styled.div<{ showResourceSidebar: boolean }>`
   height: 100%;
   width: 100%;
   display: flex;
-  && .splitter > div:nth-child(4),
+  && .splitter > div:nth-child(4) {
+    pointer-events: ${props => (props.showResourceSidebar ? 'auto' : 'none')};
+  }
   && .splitter > div:nth-child(5) {
     display: ${props => (props.showResourceSidebar ? 'block' : 'none')};
   }
@@ -118,6 +124,8 @@ export const CogniteFileViewer = ({
   onSequenceClicked,
 }: Props) => {
   const { search } = useLocation();
+
+  const ref = useRef<ReactPictureAnnotation | null>(null);
 
   const { page = 1 }: { page?: number } = queryString.parse(search, {
     parseNumbers: true,
@@ -287,30 +295,31 @@ export const CogniteFileViewer = ({
     trackUsage('Contextualization.PnidViewer.LocalCreateAnnotation', {
       annotation,
     });
+
+    const pendingAnnotation: ProposedCogniteAnnotation = {
+      id: annotation.id,
+      status: 'verified',
+      ...(file!.externalId
+        ? { fileExternalId: file!.externalId }
+        : { fileId: file!.id }),
+      version: CURRENT_VERSION,
+      source: `email:${username}`,
+      label: '',
+      type: PNID_ANNOTATION_TYPE,
+      page: annotation.page,
+      box: {
+        xMin: annotation.mark.x,
+        yMin: annotation.mark.y,
+        xMax: annotation.mark.x + annotation.mark.width,
+        yMax: annotation.mark.y + annotation.mark.height,
+      },
+    };
     setPendingPnidAnnotations(
       pendingPnidAnnotations
         .filter(el => el.label.length > 0)
-        .concat([
-          {
-            id: annotation.id,
-            status: 'verified',
-            ...(file!.externalId
-              ? { fileExternalId: file!.externalId }
-              : { fileId: file!.id }),
-            version: CURRENT_VERSION,
-            source: `email:${username}`,
-            label: '',
-            type: PNID_ANNOTATION_TYPE,
-            page: annotation.page,
-            box: {
-              xMin: annotation.mark.x,
-              yMin: annotation.mark.y,
-              xMax: annotation.mark.x + annotation.mark.width,
-              yMax: annotation.mark.y + annotation.mark.height,
-            },
-          },
-        ])
+        .concat([pendingAnnotation])
     );
+    setSelectedAnnotation(pendingAnnotation);
   };
 
   const renderMenuButton = () => {
@@ -428,6 +437,13 @@ export const CogniteFileViewer = ({
       </Dropdown>
     );
   };
+
+  const loadPreview = (x: number, y: number, w: number, h: number) => {
+    if (ref && ref.current) {
+      return ref.current.extractFromCanvas(x, y, w, h);
+    }
+    return undefined;
+  };
   return (
     <Wrapper showResourceSidebar={!!selectedAnnotation}>
       {renderFeedback ? (
@@ -469,6 +485,7 @@ export const CogniteFileViewer = ({
         <div style={{ flex: 1, position: 'relative' }}>
           {file ? (
             <FileViewer
+              ref={ref}
               file={file}
               sdk={sdk}
               hoverable={false}
@@ -488,7 +505,7 @@ export const CogniteFileViewer = ({
                     pnidAnnotations.find(el => `${el.id}` === annotation.id) ||
                     pendingPnidAnnotations.find(el => el.id === annotation.id);
                   if (pnidAnnotation) {
-                    setSelectedAnnotation(pnidAnnotation);
+                    setSelectedAnnotation({ ...pnidAnnotation });
                   }
                 } else {
                   setSelectedAnnotation(undefined);
@@ -531,7 +548,9 @@ export const CogniteFileViewer = ({
         </div>
         <ResourcePreviewSidebar
           fileId={fileId}
+          loadPreview={loadPreview}
           deselectAnnotation={() => setSelectedAnnotation(undefined)}
+          updateAnnotation={setSelectedAnnotation}
           selectedAnnotation={selectedAnnotation}
           pendingPnidAnnotations={pendingPnidAnnotations}
           setPendingPnidAnnotations={setPendingPnidAnnotations}
