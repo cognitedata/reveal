@@ -7,7 +7,7 @@ import { sectorShaders, shaderDefines } from './shaders';
 import { RenderMode } from './RenderMode';
 import { determinePowerOfTwoDimensions } from '@/utilities/determinePowerOfTwoDimensions';
 import matCapTextureImage from './matCapTextureData';
-import { Vector4, Matrix4, Euler } from 'three';
+import { packFloat } from '@/utilities/packFloatToVec4';
 
 export interface Materials {
   // Materials
@@ -28,43 +28,8 @@ export interface Materials {
   simple: THREE.ShaderMaterial;
   // Data textures
   overrideColorPerTreeIndex: THREE.DataTexture;
+  dynamicTransformationTexture: THREE.DataTexture;
 }
-
-function packFloat(f: number) {
-  const F = Math.abs(f);
-  if (F === 0.0) {
-    return new THREE.Vector4(0.0, 0.0, 0.0, 0.0);
-  }
-  const Sign = -f < 0.0 ? 0.0 : 1.0;
-
-  let Exponent = Math.floor(Math.log2(F));
-
-  const Mantissa = F / Math.pow(2, Exponent);
-  //denormalized values if all exponent bits are zero
-  if (Mantissa < 1.0) Exponent -= 1.0;
-
-  Exponent += 127.0;
-
-  const output = new THREE.Vector4(0.0, 0.0, 0.0, 0.0);
-
-  output.x = Exponent;
-  output.y = 128.0 * Sign + (Math.floor(Mantissa * 128.0) % 128.0);
-  output.z = Math.floor(Math.floor(Mantissa * Math.pow(2.0, 23.0 - 8.0)) % Math.pow(2.0, 8.0));
-  output.w = Math.floor(Math.pow(2.0, 23.0) * (Mantissa % Math.pow(2.0, -15.0)));
-  return output; //.multiplyScalar(1.0 / 255.0);
-}
-
-// function unpackFloat4(_packed: THREE.Vector4) {
-//   const rgba = _packed.multiplyScalar(255.0);
-//   const sign = (-rgba.y < -128.0 ? 0.0 : 1.0) * 2.0 - 1.0;
-//   const exponent = rgba.x - 127.0;
-//   if (Math.abs(exponent + 127.0) < 0.001) {
-//     return 0.0;
-//   }
-
-//   const mantissa = (rgba.y % 128.0) * 65536.0 + rgba.z * 256.0 + rgba.w + 8388608.0; //8388608.0 == 0x800000
-//   return sign * Math.pow(2.0, exponent - 23.0) * mantissa;
-// }
 
 export function createMaterials(
   treeIndexCount: number,
@@ -81,27 +46,29 @@ export function createMaterials(
   }
   const overrideColorPerTreeIndex = new THREE.DataTexture(colors, textureDims.width, textureDims.height);
 
-  const identityMatrix = new Matrix4();
+  // const identityMatrix = new THREE.Matrix4();
 
-  identityMatrix.setPosition(0.0, 0.0, 5.0);
-  identityMatrix.makeScale(2, 2, 2);
+  // identityMatrix.setPosition(0.0, 0.0, 5.0);
+  //identityMatrix.makeScale(2, 2, 2);
   //identityMatrix.makeRotationFromEuler(new Euler(90, 0, 0));
 
-  const identityMatrixArray = identityMatrix.toArray();
+  //const identityMatrixArray = identityMatrix.transpose().toArray();
 
-  console.log(identityMatrixArray);
+  const transformOverrideBuffer = new Uint8Array(16 * 4 * textureElementCount);
 
-  const floats = new Uint8Array(16 * 4);
+  // for (let i = 0; i < identityMatrixArray.length; i++) {
+  //   const element = packFloat(identityMatrixArray[i]);
+  //   transformOverrideBuffer[i * 4] = element.x;
+  //   transformOverrideBuffer[i * 4 + 1] = element.y;
+  //   transformOverrideBuffer[i * 4 + 2] = element.z;
+  //   transformOverrideBuffer[i * 4 + 3] = element.w;
+  // }
 
-  for (let i = 0; i < identityMatrixArray.length; i++) {
-    const element = packFloat(identityMatrixArray[i]);
-    floats[i * 4] = element.x;
-    floats[i * 4 + 1] = element.y;
-    floats[i * 4 + 2] = element.z;
-    floats[i * 4 + 3] = element.w;
-  }
-
-  const dynamicTransformationTexture = new THREE.DataTexture(floats, 16, 1);
+  const dynamicTransformationTexture = new THREE.DataTexture(
+    transformOverrideBuffer,
+    textureDims.width * 4,
+    textureDims.height * 4
+  );
 
   const matCapTexture = new THREE.Texture(matCapTextureImage);
   matCapTexture.needsUpdate = true;
@@ -333,7 +300,7 @@ export function createMaterials(
     );
   }
 
-  return { ...allMaterials, overrideColorPerTreeIndex };
+  return { ...allMaterials, overrideColorPerTreeIndex, dynamicTransformationTexture };
 }
 
 function updateDefinesAndUniforms(
@@ -344,8 +311,6 @@ function updateDefinesAndUniforms(
   matCapTexture: THREE.Texture,
   renderMode: RenderMode
 ) {
-  const test = packFloat(2.5);
-
   const oldUniforms = material.uniforms;
   material.setValues({
     ...shaderDefines,
@@ -360,10 +325,7 @@ function updateDefinesAndUniforms(
       dataTextureSize: {
         value: dataTextureSize
       },
-      testArray: {
-        value: [test.x, test.y, test.z, test.w]
-      },
-      testTexture: {
+      matrixTransformTexture: {
         value: dynamicTransformationTexture
       },
       matCapTexture: {

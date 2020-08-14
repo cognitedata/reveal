@@ -42,6 +42,9 @@ export function Picking() {
 
       const nodeAppearanceProvider: reveal.NodeAppearanceProvider = {
         styleNode(treeIndex: number) {
+          if (treeIndex == 39) {
+            return { color: [255, 0, 0] };
+          }
           if (pickedNodes.has(treeIndex)) {
             return reveal.DefaultNodeAppearance.Highlighted;
           }
