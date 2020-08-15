@@ -46,7 +46,7 @@
   "devDependencies": {
     "@cognite/sdk": "^2.32.0",
     "@types/gl-matrix": "^3.2.0",
-    "@types/jest": "^26.0.9",
+    "@types/jest": "^26.0.10",
     "@types/mixpanel-browser": "^2.35.3",
     "@types/node": "^14.0.14",
     "@types/tween.js": "^18.5.1",
