@@ -48,8 +48,10 @@ export const AssetTable = ({
         {({ width, height }) => (
           <Table
             rowEventHandlers={{
-              onClick: ({ rowData: asset }: { rowData: Asset }) =>
-                onAssetClicked(asset),
+              onClick: ({ rowData: asset, event }) => {
+                onAssetClicked(asset);
+                return event;
+              },
             }}
             rowClassName={() => 'row clickable'}
             width={width}

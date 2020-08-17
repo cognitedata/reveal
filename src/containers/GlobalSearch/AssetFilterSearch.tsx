@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Body } from '@cognite/cogs.js';
+import { Body, Graphic } from '@cognite/cogs.js';
 import { SearchFilterSection, AssetTable } from 'components/Common';
 import { Asset, AssetSearchFilter, AssetFilterProps } from '@cognite/sdk';
 import { useSelector, useDispatch } from 'react-redux';
@@ -12,6 +12,7 @@ import {
   retrieve,
 } from 'modules/assets';
 import { AssetSmallPreview } from 'containers/Assets';
+
 import { List, Content, Preview } from './Common';
 import ResourceSelectionContext from '../../context/ResourceSelectionContext';
 
@@ -125,6 +126,20 @@ export const AssetFilterSearch = ({ query = '' }: { query?: string }) => {
         </List>
         <Preview>
           {selectedAsset && <AssetSmallPreview assetId={selectedAsset.id} />}
+          {!selectedAsset && (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexDirection: 'column',
+                height: '100%',
+              }}
+            >
+              <Graphic type="Search" />
+              <p>Click on an asset to preview here</p>
+            </div>
+          )}
         </Preview>
       </Content>
     </>
