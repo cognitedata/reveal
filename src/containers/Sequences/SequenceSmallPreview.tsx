@@ -3,6 +3,7 @@ import { SequenceDetailsAbstract, Loader } from 'components/Common';
 import { useDispatch, useSelector } from 'react-redux';
 import { itemSelector, retrieve } from 'modules/sequences';
 import { useResourceActionsContext } from 'context/ResourceActionsContext';
+import { useSelectionButton } from 'hooks/useSelection';
 
 export const SequenceSmallPreview = ({
   sequenceId,
@@ -16,6 +17,11 @@ export const SequenceSmallPreview = ({
   children?: React.ReactNode;
 }) => {
   const renderResourceActions = useResourceActionsContext();
+  const selectionButton = useSelectionButton()({
+    type: 'sequences',
+    id: sequenceId,
+  });
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -24,7 +30,7 @@ export const SequenceSmallPreview = ({
 
   const sequence = useSelector(itemSelector)(sequenceId);
   const actions = useMemo(() => {
-    const items: React.ReactNode[] = [];
+    const items: React.ReactNode[] = [selectionButton];
     items.push(...(propActions || []));
     items.push(
       ...renderResourceActions({
@@ -32,7 +38,7 @@ export const SequenceSmallPreview = ({
       })
     );
     return items;
-  }, [renderResourceActions, sequenceId, propActions]);
+  }, [selectionButton, renderResourceActions, sequenceId, propActions]);
 
   if (!sequence) {
     return <Loader />;

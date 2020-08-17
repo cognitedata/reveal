@@ -1,3 +1,4 @@
+export * from './AssetTable/AssetTable';
 export * from './FilePreviewOverview/FilePreviewOverview';
 export * from './FileViewer/FileViewer';
 export * from './InfoGrid/InfoGrid';

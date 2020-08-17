@@ -18,6 +18,7 @@ import {
 } from 'modules/annotations';
 import { CogniteFileViewerImage } from 'components/CogniteFileViewer';
 import { useResourceActionsContext } from 'context/ResourceActionsContext';
+import { useSelectionButton } from 'hooks/useSelection';
 
 export const FileSmallPreview = ({
   fileId,
@@ -32,11 +33,15 @@ export const FileSmallPreview = ({
 }) => {
   const dispatch = useDispatch();
   const renderResourceActions = useResourceActionsContext();
+  const selectionButton = useSelectionButton()({
+    type: 'files',
+    id: fileId,
+  });
   const { assetIds, assets } = useSelector(linkedAssetsSelector)(fileId);
   const { fileIds, files } = useSelector(linkedFilesSelectorByFileId)(fileId);
 
   const actions = useMemo(() => {
-    const items: React.ReactNode[] = [];
+    const items: React.ReactNode[] = [selectionButton];
     items.push(...(propActions || []));
     items.push(
       ...renderResourceActions({
@@ -44,7 +49,7 @@ export const FileSmallPreview = ({
       })
     );
     return items;
-  }, [renderResourceActions, fileId, propActions]);
+  }, [selectionButton, renderResourceActions, fileId, propActions]);
 
   useEffect(() => {
     (async () => {

@@ -10,3 +10,4 @@ declare module '*.png' {
 declare module '*.css';
 declare module '@cognite/gcs-browser-upload';
 declare module 'react-split';
+declare module 'react-base-table';

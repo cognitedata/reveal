@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { ResourceType } from 'modules/sdk-builder/types';
 import { Tabs } from 'antd';
 import { Title, Colors } from '@cognite/cogs.js';
@@ -32,17 +32,24 @@ const ResourceMap: { [key in ResourceType]: string } = {
 export const GlobalSearchResults = ({
   resourceTypes = ['assets', 'files'],
   query: queryFromProps,
-  currentResourceId,
-  currentResourceType,
 }: {
   resourceTypes?: ResourceType[];
   query?: string;
-  currentResourceId?: number;
-  currentResourceType?: ResourceType;
 }) => {
   const [activeKey, setActiveKey] = useState<ResourceType>('assets');
   const [query, setQuery] = useState(queryFromProps);
   const [debouncedQuery] = useDebounce(query, 100);
+
+  const content = useMemo(() => {
+    switch (activeKey) {
+      case 'assets':
+        return <AssetFilterSearch query={debouncedQuery} />;
+      case 'files':
+        return <FileFilterSearch query={debouncedQuery} />;
+      default:
+        return null;
+    }
+  }, [activeKey, debouncedQuery]);
 
   useEffect(() => {
     setQuery(queryFromProps);
@@ -75,36 +82,7 @@ export const GlobalSearchResults = ({
           />
         ))}
       </Tabs>
-      <div className="content">
-        {(() => {
-          switch (activeKey) {
-            case 'assets':
-              return (
-                <AssetFilterSearch
-                  query={debouncedQuery}
-                  activeIds={
-                    currentResourceType === 'assets' && !!currentResourceId
-                      ? [currentResourceId]
-                      : undefined
-                  }
-                />
-              );
-            case 'files':
-              return (
-                <FileFilterSearch
-                  query={debouncedQuery}
-                  activeIds={
-                    currentResourceType === 'files' && !!currentResourceId
-                      ? [currentResourceId]
-                      : undefined
-                  }
-                />
-              );
-            default:
-              return null;
-          }
-        })()}
-      </div>
+      <div className="content">{content}</div>
     </Wrapper>
   );
 };

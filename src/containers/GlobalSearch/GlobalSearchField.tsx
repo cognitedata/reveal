@@ -66,13 +66,11 @@ const ResultList = styled.div<{ visible: boolean; offsetTop: number }>`
 `;
 
 type Props = {
-  currentFileId?: number;
   offsetTop?: number;
   showSearch?: boolean;
 };
 
 export const GlobalSearchField = ({
-  currentFileId,
   offsetTop = 0,
   showSearch: propShowSearch,
 }: Props) => {
@@ -117,11 +115,7 @@ export const GlobalSearchField = ({
           value={query}
         />
         <ResultList visible={showSearchResults} offsetTop={offsetTop}>
-          <GlobalSearchResults
-            query={query}
-            currentResourceId={currentFileId}
-            currentResourceType="files"
-          />
+          <GlobalSearchResults query={query} />
         </ResultList>
       </SearchWrapper>
     </>

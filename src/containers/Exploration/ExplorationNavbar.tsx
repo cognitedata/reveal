@@ -2,13 +2,11 @@ import React, { useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button, Colors, Badge } from '@cognite/cogs.js';
 import { Popover } from 'components/Common';
-import {
-  ShoppingCart,
-  ShoppingCartPreview,
-} from 'containers/Exploration/ShoppingCart';
+import { ShoppingCartPreview } from 'containers/Exploration/ShoppingCart';
 import ShoppingCartIcon from 'assets/shopping-cart.svg';
 import { GlobalSearchField } from 'containers/GlobalSearch';
 import styled from 'styled-components';
+import { ResourceItem } from 'context/ResourceSelectionContext';
 
 const Navbar = styled.div`
   display: flex;
@@ -23,17 +21,14 @@ export const ExplorationNavbar = ({
   setCart,
   showSearch,
 }: {
-  cart: ShoppingCart;
-  setCart: (cart: ShoppingCart) => void;
+  cart: ResourceItem[];
+  setCart: (cart: ResourceItem[]) => void;
   showSearch?: boolean;
 }) => {
   const history = useHistory();
   const navbarRef = useRef<HTMLDivElement>(null);
 
-  const cartCount = Object.values(cart).reduce(
-    (prev, item) => prev + Object.values(item).length,
-    0
-  );
+  const cartCount = cart.length;
 
   return (
     <Navbar ref={navbarRef}>
