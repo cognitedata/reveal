@@ -5,7 +5,7 @@ import { Colors } from '@cognite/cogs.js';
 import { CogniteClient } from '@cognite/sdk';
 import { FileViewer } from './FileViewer';
 
-export default { title: 'Molecules|FileViewer' };
+export default { title: 'Molecules/FileViewer' };
 
 const imageSdk = ({
   files: {

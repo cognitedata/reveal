@@ -25,7 +25,7 @@ const exampleTimeSeries: GetTimeSeriesMetadataDTO = {
   },
 };
 
-export default { title: 'Organisms|TimeseriesDetailsAbstract' };
+export default { title: 'Organisms/TimeseriesDetailsAbstract' };
 
 export const Example = () => {
   return (

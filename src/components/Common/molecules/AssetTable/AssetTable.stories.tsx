@@ -10,7 +10,7 @@ import {
 import { AssetTable } from './AssetTable';
 import { assets } from './assets';
 
-export default { title: 'Molecules|AssetTable' };
+export default { title: 'Molecules/AssetTable' };
 
 export const Example = () => {
   return (

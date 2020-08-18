@@ -74,7 +74,7 @@ const sequence = ({
   lastUpdatedTime: new Date(),
 } as unknown) as Sequence;
 
-export default { title: 'Organisms|SequenceDetailsAbstract' };
+export default { title: 'Organisms/SequenceDetailsAbstract' };
 
 export const Example = () => {
   return (

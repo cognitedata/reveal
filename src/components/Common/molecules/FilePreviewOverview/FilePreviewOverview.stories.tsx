@@ -6,7 +6,7 @@ import { Map } from 'immutable';
 import { CogniteAnnotation } from '@cognite/annotations';
 import { FilePreviewOverview } from './FilePreviewOverview';
 
-export default { title: 'Molecules|FilePreviewOverview' };
+export default { title: 'Molecules/FilePreviewOverview' };
 
 const file = {
   id: 1,

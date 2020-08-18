@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { SearchFilterForm } from './SearchFilterForm';
 
-export default { title: 'Molecules|SearchFilterForm' };
+export default { title: 'Molecules/SearchFilterForm' };
 
 export const Example = () => {
   const [filters, setFilters] = useState<{

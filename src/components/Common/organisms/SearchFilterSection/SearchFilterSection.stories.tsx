@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { SearchFilterSection } from './SearchFilterSection';
 
-export default { title: 'Organisms|SearchFilterSection' };
+export default { title: 'Organisms/SearchFilterSection' };
 
 export const Example = () => {
   const [filters, setFilters] = useState<{

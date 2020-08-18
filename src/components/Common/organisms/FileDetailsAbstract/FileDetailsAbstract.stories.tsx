@@ -17,7 +17,7 @@ const file: FilesMetadata = {
   },
 };
 
-export default { title: 'Organisms|FileDetailsAbstract' };
+export default { title: 'Organisms/FileDetailsAbstract' };
 
 export const Example = () => {
   return (

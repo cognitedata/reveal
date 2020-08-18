@@ -4,6 +4,7 @@ module.exports = async ({ config, mode }) => {
   config.node = {
     '@cognite/cdf-sdk-singleton': 'mock',
   };
+  config.resolve.modules = [path.resolve(__dirname, '../src'), 'node_modules'];
   config.resolve.alias = {
     ...config.resolve.alias,
     '@cognite/cdf-sdk-singleton': path.resolve(

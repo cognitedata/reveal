@@ -20,7 +20,7 @@ const asset: Asset = {
   },
 };
 
-export default { title: 'Organisms|AssetDetailsAbstract' };
+export default { title: 'Organisms/AssetDetailsAbstract' };
 
 export const Example = () => {
   return (
