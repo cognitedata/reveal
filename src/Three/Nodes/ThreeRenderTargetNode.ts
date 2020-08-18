@@ -227,7 +227,7 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
   private _prevPixelRange: Range3 = new Range3();
 
-  private render(): void
+  public render(): void
   {
     requestAnimationFrame(() => { this.render(); });
 
@@ -263,6 +263,13 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
     const viewInfo = this.fillViewInfo();
     this._overlay.render(this.renderer, viewInfo, this.pixelRange.delta, this.fgColor, this.bgColor);
     this.invalidate(false);
+  }
+
+  public renderFast(): void
+  {
+    this.renderer.render(this.scene, this.camera);
+    const viewInfo = this.fillViewInfo();
+    this._overlay.render(this.renderer, viewInfo, this.pixelRange.delta, this.fgColor, this.bgColor);
   }
 
   //==================================================

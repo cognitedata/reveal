@@ -55,8 +55,13 @@ export class SeismicPlaneFolder extends BaseNode
     super.initializeCore();
     if (!this.hasChildByType(SeismicPlaneNode))
     {
+      this.addChild(new SeismicPlaneNode(0, 0));
       this.addChild(new SeismicPlaneNode(0));
+      this.addChild(new SeismicPlaneNode(0, Number.MAX_VALUE));
+
+      this.addChild(new SeismicPlaneNode(1, 0));
       this.addChild(new SeismicPlaneNode(1));
+      this.addChild(new SeismicPlaneNode(1, Number.MAX_VALUE));
     }
   }
 

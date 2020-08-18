@@ -118,7 +118,7 @@
   "dependencies": {
     "@babel/runtime": "^7.10.3",
     "@cognite/potree-core": "1.0.6",
-    "@cognite/seismic-sdk-js": "^0.1.5",
+    "@cognite/seismic-sdk-js": "^0.1.6",
     "@fortawesome/fontawesome-svg-core": "^1.2.29",
     "@fortawesome/free-solid-svg-icons": "^5.13.1",
     "@fortawesome/react-fontawesome": "^0.1.11",

@@ -39,9 +39,7 @@ export class LogRenderOld
   //==================================================
 
   private cameraPosition: Vector3;
-
   private trajectory: WellTrajectory;
-
   private bandRange: Range1;
 
   //==================================================
@@ -107,7 +105,7 @@ export class LogRenderOld
 
   public addLineFloatLog(group: THREE.Group, log: FloatLog, color: Color, right: boolean): void
   {
-    const valueRange = log.range;
+    const { valueRange } = log;
     const geometry = new THREE.Geometry();
     const position = Vector3.newZero;
     const tangent = Vector3.newZero;
@@ -140,7 +138,7 @@ export class LogRenderOld
 
   public addSolidFloatLog(group: THREE.Group, log: FloatLog, right: boolean): void
   {
-    const valueRange = log.range;
+    const { valueRange } = log;
     const buffers = new TrianglesBuffers(2 * log.length, true);
     const position = Vector3.newZero;
     const tangent = Vector3.newZero;
@@ -195,7 +193,7 @@ export class LogRenderOld
 
   public addSolidDiscreteLog(group: THREE.Group, log: DiscreteLog, right: boolean): void
   {
-    const valueRange = log.range;
+    const { valueRange } = log;
     const buffers = new TrianglesBuffers(log.length * 4 - 2);
     const colors = new Array<number>();
     const position = Vector3.newZero;
