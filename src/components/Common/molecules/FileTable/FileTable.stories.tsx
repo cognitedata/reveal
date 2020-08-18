@@ -2,21 +2,20 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Provider } from 'react-redux';
 import { mockStore } from 'utils/mockStore';
-import { Map } from 'immutable';
 import {
   ResourceSelectionProvider,
   ResourceItemState,
 } from 'context/ResourceSelectionContext';
-import { AssetTable } from './AssetTable';
-import { assets } from './assets';
+import { FileTable } from './FileTable';
+import { files } from './files';
 
-export default { title: 'Molecules/AssetTable' };
+export default { title: 'Molecules/FileTable' };
 
 export const Example = () => {
   return (
-    <ResourceSelectionProvider mode="none">
+    <ResourceSelectionProvider>
       <Wrapper>
-        <AssetTable assets={assets} onAssetClicked={() => {}} />
+        <FileTable files={files} onFileClicked={() => {}} />
       </Wrapper>
     </ResourceSelectionProvider>
   );
@@ -24,14 +23,14 @@ export const Example = () => {
 export const ExampleSingleSelect = () => {
   return (
     <Wrapper>
-      <AssetTable assets={assets} onAssetClicked={() => {}} />
+      <FileTable files={files} onFileClicked={() => {}} />
     </Wrapper>
   );
 };
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
   const [selection, setSelection] = useState<ResourceItemState[]>([
-    { id: 1635401930580505, type: 'assets', state: 'selected' },
+    { id: 1635401930580505, type: 'files', state: 'selected' },
   ]);
 
   const onSelect = newItem => {
@@ -52,28 +51,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
       resourcesState={selection}
       onSelect={onSelect}
     >
-      <Provider
-        store={mockStore({
-          assets: {
-            items: {
-              items: Map([
-                [
-                  4617285525372246,
-                  {
-                    name: 'ROOT',
-                    description: '',
-                    source: '',
-                    id: 4617285525372246,
-                    createdTime: new Date(1581956002278),
-                    lastUpdatedTime: new Date(1581956002278),
-                    rootId: 4617285525372246,
-                  },
-                ],
-              ]),
-            },
-          },
-        })}
-      >
+      <Provider store={mockStore({})}>
         <Container>{children}</Container>
       </Provider>
     </ResourceSelectionProvider>

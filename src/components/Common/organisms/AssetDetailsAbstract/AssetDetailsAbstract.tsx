@@ -142,7 +142,7 @@ export const AssetDetailsAbstract = ({
         </InfoCell>
       )}
 
-      <InfoCell noBorders>
+      <InfoCell noBorders noPadding>
         <p>LOCATION</p>
         <AssetBreadcrumb assetId={asset.id} />
       </InfoCell>

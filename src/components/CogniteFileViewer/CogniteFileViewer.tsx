@@ -37,6 +37,7 @@ import queryString from 'query-string';
 import { PNID_ANNOTATION_TYPE } from 'utils/AnnotationUtils';
 import { ResourcePreviewSidebar } from 'components/CogniteFileViewer/ResourcePreviewSidebar';
 import { useResourceActionsContext } from 'context/ResourceActionsContext';
+import { useSelectionButton } from 'hooks/useSelection';
 import { selectAnnotationColor } from './CogniteFileViewerUtils';
 
 const OverviewWrapper = styled.div`
@@ -134,6 +135,7 @@ export const CogniteFileViewer = ({
   const history = useHistory();
   const dispatch = useDispatch();
   const renderResourceActions = useResourceActionsContext();
+  const selectionButton = useSelectionButton();
   const setPage = async (newPage: number) => {
     if (fileId) {
       const currentSearch = queryString.parse(search);
@@ -475,6 +477,7 @@ export const CogniteFileViewer = ({
               onPageChange={setPage}
               extras={
                 <ButtonRow>
+                  {selectionButton({ id: file.id, type: 'files' })}
                   {renderResourceActions({ fileId: file.id })}
                   {renderMenuButton()}
                 </ButtonRow>

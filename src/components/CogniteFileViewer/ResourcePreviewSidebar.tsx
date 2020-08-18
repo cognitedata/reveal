@@ -406,6 +406,7 @@ export const ResourcePreviewSidebar = ({
               resourceExternalId: itemExternalId,
               resourceId: item.id,
             });
+            setShowLinkResource(false);
           }}
         >
           <ResourceSidebar
@@ -429,4 +430,6 @@ const PreviewImage = styled.img`
   width: auto;
   object-fit: contain;
   display: block;
+  align-self: flex-start;
+  margin-bottom: 16px;
 `;

@@ -76,13 +76,25 @@ export const useSelectionCheckbox = () => {
     ResourceSelectionContext
   );
   return (item: ResourceItem) => {
+    if (mode === 'none') {
+      return null;
+    }
+    if (mode === 'single') {
+      return (
+        <Button
+          key="select-button"
+          onClick={e => {
+            e.stopPropagation();
+            onSelect(item);
+          }}
+          icon="Check"
+        />
+      );
+    }
     const isInCart = resourcesState.some(
       el =>
         el.type === item.type && el.id === item.id && el.state === 'selected'
     );
-    if (mode === 'none') {
-      return null;
-    }
     return (
       <Checkbox
         key="select-button"

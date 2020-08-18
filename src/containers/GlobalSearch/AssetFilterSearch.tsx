@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Body, Graphic } from '@cognite/cogs.js';
-import { SearchFilterSection, AssetTable } from 'components/Common';
+import { Body, Graphic, Icon, Colors } from '@cognite/cogs.js';
+import { SearchFilterSection, AssetTable, InfoCell } from 'components/Common';
 import { Asset, AssetSearchFilter, AssetFilterProps } from '@cognite/sdk';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -13,8 +13,8 @@ import {
 } from 'modules/assets';
 import { AssetSmallPreview } from 'containers/Assets';
 
+import ResourceSelectionContext from 'context/ResourceSelectionContext';
 import { List, Content, Preview } from './Common';
-import ResourceSelectionContext from '../../context/ResourceSelectionContext';
 
 // const AssetsFilterMapping: { [key: string]: string } = {};
 
@@ -39,7 +39,9 @@ const buildAssetsFilterQuery = (
 export const AssetFilterSearch = ({ query = '' }: { query?: string }) => {
   const dispatch = useDispatch();
   const getAsset = useSelector(itemSelector);
-  const { assetFilter, setAssetFilter } = useContext(ResourceSelectionContext);
+  const { assetFilter, setAssetFilter, resourcesState } = useContext(
+    ResourceSelectionContext
+  );
   const [selectedAsset, setSelectedAsset] = useState<Asset | undefined>(
     undefined
   );
@@ -54,6 +56,10 @@ export const AssetFilterSearch = ({ query = '' }: { query?: string }) => {
   const rootIds = new Set<number>();
   assets.forEach(el => rootIds.add(el.rootId));
   const rootIdsNotLoaded = [...rootIds].sort().filter(id => !getAsset(id));
+
+  const currentlyViewing = resourcesState.find(
+    el => el.type === 'assets' && el.state === 'active'
+  );
 
   useEffect(() => {
     dispatch(search(buildAssetsFilterQuery(assetFilter, query)));
@@ -125,7 +131,34 @@ export const AssetFilterSearch = ({ query = '' }: { query?: string }) => {
           />
         </List>
         <Preview>
-          {selectedAsset && <AssetSmallPreview assetId={selectedAsset.id} />}
+          {selectedAsset && (
+            <>
+              <Body
+                level={2}
+                strong
+                style={{
+                  alignItems: 'center',
+                  display: 'flex',
+                }}
+              >
+                {selectedAsset.id === (currentlyViewing || {}).id && (
+                  <InfoCell
+                    noBorders
+                    noPadding
+                    containerStyles={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      color: Colors['greyscale-grey6'].hex(),
+                    }}
+                  >
+                    <Icon type="Eye" style={{ marginRight: 8 }} /> Currently
+                    Viewing Asset
+                  </InfoCell>
+                )}
+              </Body>
+              <AssetSmallPreview assetId={selectedAsset.id} />
+            </>
+          )}
           {!selectedAsset && (
             <div
               style={{

@@ -1,41 +1,52 @@
 const path = require('path');
 
 module.exports = {
-  stories: ['../**/*.stories.tsx'],
+  stories: ['../src/**/*.stories.tsx'],
   webpackFinal: async (webpackConfig) => {
-    webpackConfig.module.rules.push({
-      test: /\.(ts|tsx)$/,
-      use: [
-        {
-          loader: require.resolve('babel-loader'),
-          options: {
-            presets: [require.resolve('@babel/preset-react')],
-          },
-        },
-        {
-          loader: require.resolve('react-docgen-typescript-loader'),
-          options: {
-            // Provide the path to your tsconfig.json so that your stories can
-            // display types from outside each individual story.
-            tsconfigPath: path.resolve(__dirname, '../tsconfig.json'),
-          },
-        },
-      ],
-    });
-    webpackConfig.module.rules.push({
-      test: /\.stories\.tsx?$/,
-      loaders: [
-        {
-          loader: require.resolve('@storybook/source-loader'),
-          options: { parser: 'typescript' },
-        },
-      ],
-      enforce: 'pre',
-    });
     webpackConfig.resolve.extensions.push('.ts', '.tsx');
+    webpackConfig.node = {
+      '@cognite/cdf-sdk-singleton': 'mock',
+    };
+    webpackConfig.resolve.modules = [
+      path.resolve(__dirname, '../src'),
+      'node_modules',
+    ];
+    webpackConfig.resolve.alias = {
+      ...webpackConfig.resolve.alias,
+      '@cognite/cdf-sdk-singleton': path.resolve(
+        __dirname,
+        'sdk-singleton-mock.js'
+      ),
+    };
+    webpackConfig.module.rules = webpackConfig.module.rules
+      .filter((rule) => !Array.isArray(rule.oneOf))
+      .filter((el) => el.test !== /\.css$/)
+      .concat([
+        {
+          oneOf: [
+            {
+              test: /\.css$/,
+              use: [
+                {
+                  loader: 'style-loader',
+                  options: {
+                    esModule: true,
+                    injectType: 'lazyStyleTag',
+                  },
+                },
+                'css-loader',
+              ],
+              include: path.resolve(__dirname, '../'),
+            },
+            ...webpackConfig.module.rules
+              .find((rule) => Array.isArray(rule.oneOf))
+              .oneOf.filter((el) => el.test !== /\.css$/),
+          ],
+        },
+      ]);
     return webpackConfig;
   },
-
+  typescript: { reactDocgen: false },
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-essentials',

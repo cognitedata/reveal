@@ -22,7 +22,7 @@ export type ResourceSelectionObserver = {
   mode: ResourceSelectionMode;
   setMode: (newMode: ResourceSelectionMode) => void;
   resourcesState: ResourceItemState[];
-  setResourcesState: (items: ResourceItemState[]) => void;
+  setResourcesState: React.Dispatch<React.SetStateAction<ResourceItemState[]>>;
   resourceTypes: ResourceType[];
   setResourceTypes: (newTypes: ResourceType[]) => void;
   assetFilter: AssetFilterProps;

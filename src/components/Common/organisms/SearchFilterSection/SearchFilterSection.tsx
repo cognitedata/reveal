@@ -80,7 +80,6 @@ export const SearchFilterSection = ({
         <Button
           icon="Filter"
           style={{ marginBottom: 12 }}
-          type="primary"
           onClick={() => setVisible(!visible)}
         >
           Filters ({Object.keys(filters).length})

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
-import { Input } from '@cognite/cogs.js';
+import { Input, Button } from '@cognite/cogs.js';
 import { GlobalSearchResults } from './GlobalSearchResults';
 
 const Overlay = styled.div<{ visible: boolean }>`
@@ -115,6 +115,11 @@ export const GlobalSearchField = ({
           value={query}
         />
         <ResultList visible={showSearchResults} offsetTop={offsetTop}>
+          <Button
+            style={{ position: 'absolute', top: 24, right: 24, zIndex: 2 }}
+            icon="Close"
+            onClick={() => setShowSearchResults(false)}
+          />
           <GlobalSearchResults query={query} />
         </ResultList>
       </SearchWrapper>

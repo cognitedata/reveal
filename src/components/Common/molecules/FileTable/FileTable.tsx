@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Asset } from '@cognite/sdk';
+import { FilesMetadata as File } from '@cognite/sdk';
 import Table, { Column } from 'react-base-table';
-import { Body, Button } from '@cognite/cogs.js';
+import { Body } from '@cognite/cogs.js';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import TableStyle from 'react-base-table/styles.css';
-import { useSelector } from 'react-redux';
-import { itemSelector } from 'modules/assets';
 import { useSelectionCheckbox } from 'hooks/useSelection';
 import {
   useResourceMode,
@@ -13,6 +11,7 @@ import {
 } from 'context/ResourceSelectionContext';
 import Highlighter from 'react-highlight-words';
 import { TableWrapper } from 'components/Common';
+import moment from 'moment';
 
 const headerRenderer = ({
   column: { title },
@@ -24,22 +23,21 @@ const headerRenderer = ({
   </Body>
 );
 
-const ActionCell = ({ asset }: { asset: Asset }) => {
+const ActionCell = ({ file }: { file: File }) => {
   const getButton = useSelectionCheckbox();
-  return getButton({ id: asset.id, type: 'assets' });
+  return getButton({ id: file.id, type: 'files' });
 };
 
-export const AssetTable = ({
-  assets,
+export const FileTable = ({
+  files,
   query,
-  onAssetClicked,
+  onFileClicked,
 }: {
-  assets: Asset[];
+  files: File[];
   query?: string;
-  onAssetClicked: (asset: Asset) => void;
+  onFileClicked: (file: File) => void;
 }) => {
   const [previewId, setPreviewId] = useState<number | undefined>(undefined);
-  const getAsset = useSelector(itemSelector);
   const mode = useResourceMode();
   const resourcesState = useResourcesState();
 
@@ -49,9 +47,9 @@ export const AssetTable = ({
     return () => TableStyle.unuse();
   }, []);
 
-  const onAssetSelected = (asset: Asset) => {
-    onAssetClicked(asset);
-    setPreviewId(asset.id);
+  const onFileSelected = (file: File) => {
+    onFileClicked(file);
+    setPreviewId(file.id);
   };
 
   return (
@@ -60,8 +58,8 @@ export const AssetTable = ({
         {({ width, height }) => (
           <Table
             rowEventHandlers={{
-              onClick: ({ rowData: asset, event }) => {
-                onAssetSelected(asset);
+              onClick: ({ rowData: file, event }) => {
+                onFileSelected(file);
                 return event;
               },
             }}
@@ -96,50 +94,65 @@ export const AssetTable = ({
                 frozen: Column.FrozenDirection.LEFT,
               },
               {
-                key: 'description',
-                title: 'Description',
-                dataKey: 'description',
-                width: 300,
+                key: 'mimeType',
+                title: 'Mime Type',
+                dataKey: 'mimeType',
+                width: 200,
                 headerRenderer,
                 cellRenderer: ({
-                  cellData: description,
+                  cellData: mimeType,
                 }: {
                   cellData?: string;
-                }) => (
+                }) => <Body level={2}>{mimeType}</Body>,
+                resizable: true,
+              },
+              {
+                key: 'uploadedTime',
+                title: 'Uploaded Time',
+                width: 200,
+                headerRenderer,
+                cellRenderer: ({ cellData: file }: { cellData: File }) => (
                   <Body level={2}>
-                    <Highlighter
-                      searchWords={(query || '').split(' ')}
-                      textToHighlight={description || ''}
-                    />
+                    {file &&
+                      file.uploaded &&
+                      moment(file.uploadedTime).format('YYYY-MM-DD, hh:mm')}
                   </Body>
                 ),
                 resizable: true,
               },
               {
-                key: 'root',
-                title: 'Root Asset',
+                key: 'lastUpdatedTime',
+                title: 'Last Updated Time',
+                dataKey: 'lastUpdatedTime',
                 width: 200,
-                resizable: true,
                 headerRenderer,
-                cellRenderer: ({ rowData: asset }: { rowData: Asset }) => {
-                  const rootAsset = getAsset(asset.rootId);
-                  return (
-                    <Button
-                      type="link"
-                      icon="ArrowRight"
-                      iconPlacement="right"
-                      style={{ color: 'inherit' }}
-                      onClick={e => {
-                        e.stopPropagation();
-                        if (rootAsset) {
-                          onAssetSelected(rootAsset);
-                        }
-                      }}
-                    >
-                      {rootAsset ? rootAsset.name : 'Loading...'}
-                    </Button>
-                  );
-                },
+                cellRenderer: ({
+                  cellData: lastUpdatedTime,
+                }: {
+                  cellData?: number;
+                }) => (
+                  <Body level={2}>
+                    {moment(lastUpdatedTime).format('YYYY-MM-DD, hh:mm')}
+                  </Body>
+                ),
+                resizable: true,
+              },
+              {
+                key: 'createdTime',
+                title: 'Created Time',
+                dataKey: 'createdTime',
+                width: 200,
+                headerRenderer,
+                cellRenderer: ({
+                  cellData: createdTime,
+                }: {
+                  cellData?: number;
+                }) => (
+                  <Body level={2}>
+                    {moment(createdTime).format('YYYY-MM-DD, hh:mm')}
+                  </Body>
+                ),
+                resizable: true,
               },
               {
                 key: 'labels',
@@ -148,16 +161,6 @@ export const AssetTable = ({
                 resizable: true,
                 headerRenderer,
                 cellRenderer: () => <Body level={3}>Coming soon....</Body>,
-              },
-              {
-                key: 'templates',
-                title: 'Templates',
-                width: 200,
-                resizable: true,
-                headerRenderer,
-                cellRenderer: () => {
-                  return <Body level={3}>Coming soon....</Body>;
-                },
               },
               ...(mode !== 'none'
                 ? [
@@ -169,19 +172,15 @@ export const AssetTable = ({
                       align: Column.Alignment.CENTER,
                       frozen: Column.FrozenDirection.RIGHT,
                       headerRenderer,
-                      cellRenderer: ({
-                        rowData: asset,
-                      }: {
-                        rowData: Asset;
-                      }) => {
-                        return <ActionCell asset={asset} />;
+                      cellRenderer: ({ rowData: file }: { rowData: File }) => {
+                        return <ActionCell file={file} />;
                       },
                     },
                   ]
                 : []),
             ]}
             fixed
-            data={assets}
+            data={files}
           />
         )}
       </AutoSizer>

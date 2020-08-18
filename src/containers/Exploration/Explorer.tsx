@@ -61,7 +61,7 @@ export const Explorer = () => {
         if (!pathname.includes(path)) {
           return (
             <Button
-              type="secondary"
+              type="primary"
               key="view"
               onClick={() => {
                 window.dispatchEvent(new Event('Resource Selected'));

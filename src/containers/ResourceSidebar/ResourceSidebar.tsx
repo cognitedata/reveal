@@ -8,10 +8,7 @@ import { TimeseriesPreview } from 'containers/Timeseries';
 import { GlobalSearchResults } from 'containers/GlobalSearch/GlobalSearchResults';
 import ResourceActionsContext from 'context/ResourceActionsContext';
 import { RenderResourceActionsFunction } from 'types/Types';
-import {
-  useSelectResource,
-  ResourceItem,
-} from 'context/ResourceSelectionContext';
+import { ResourceItem } from 'context/ResourceSelectionContext';
 import { ResourceType } from 'modules/sdk-builder/types';
 
 const Drawer = styled.div<{ visible: boolean }>`
@@ -25,6 +22,9 @@ const Drawer = styled.div<{ visible: boolean }>`
   transition: 0.3s all;
   && > div {
     padding: 24px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
   }
 `;
 const Overlay = styled.div<{ visible: boolean }>`
@@ -41,7 +41,7 @@ const Overlay = styled.div<{ visible: boolean }>`
 `;
 
 const CloseButton = styled(Button)`
-  float: right;
+  align-self: flex-end;
 `;
 
 export const ResourceSidebar = ({
@@ -55,7 +55,6 @@ export const ResourceSidebar = ({
 }) => {
   const [query, setQuery] = useState<string>('');
   const { add, remove } = useContext(ResourceActionsContext);
-  const onSelect = useSelectResource();
   const [selectedItem, setSelectedItem] = useState<ResourceItem | undefined>(
     undefined
   );
@@ -101,24 +100,9 @@ export const ResourceSidebar = ({
         return null;
       };
 
-      return [
-        viewButton(),
-        <Button
-          key="select"
-          type="primary"
-          onClick={() => {
-            onSelect({
-              type: resourceType!,
-              id: (fileId || assetId || timeseriesId || sequenceId)!,
-            });
-            onClose();
-          }}
-        >
-          Select {resourceName}
-        </Button>,
-      ];
+      return [viewButton()];
     },
-    [onSelect, onClose]
+    []
   );
 
   useEffect(() => {
@@ -159,6 +143,7 @@ export const ResourceSidebar = ({
           variant="ghost"
           icon="ArrowLeft"
           onClick={() => setSelectedItem(undefined)}
+          style={{ alignSelf: 'flex-start' }}
         >
           Back to search
         </Button>
