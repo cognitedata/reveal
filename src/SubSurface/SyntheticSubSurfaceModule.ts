@@ -93,7 +93,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
         const parent1 = new FolderNode();
         parent0.addChild(parent1);
 
-        let dampning = 0.5;
+        const dampning = 0.5;
         for (let k = 0; k < 3; k++)
         {
           const node = new SurfaceNode();
