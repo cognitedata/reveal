@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "@babel/runtime": "^7.10.5",
+    "@babel/runtime": "^7.11.2",
     "@cognite/annotations": "^0.1.9",
     "@cognite/cdf-utilities": "^0.2.0",
     "@cognite/cogs.js": "^1.6.1",
