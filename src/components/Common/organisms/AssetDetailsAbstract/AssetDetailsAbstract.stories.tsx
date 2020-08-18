@@ -4,8 +4,8 @@ import { Button } from '@cognite/cogs.js';
 import '@cognite/cogs.js/dist/antd.css';
 import '@cognite/cogs.js/dist/cogs.css';
 import { Asset } from '@cognite/sdk';
-
-import { Popover, TimeseriesDetailsAbstract } from 'components/Common';
+import { TimeseriesDetailsAbstract } from 'components/Common';
+import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
 import { AssetDetailsAbstract } from './AssetDetailsAbstract';
 
 const asset: Asset = {
@@ -122,22 +122,15 @@ export const WithActions = () => {
           <Button type="primary">Click me</Button>,
           <Button>Click me too</Button>,
         ]}
-        timeseriesPreview={(timeseries, content) => (
-          <Popover
-            key={timeseries.id}
-            content={
-              <TimeseriesDetailsAbstract
-                timeSeries={timeseries}
-                actions={[
-                  <Button key="view" type="primary" icon="ArrowRight">
-                    View Details
-                  </Button>,
-                ]}
-              />
-            }
-          >
-            <div style={{ position: 'relative' }}>{content}</div>
-          </Popover>
+        timeseriesPreview={timeseries => (
+          <TimeseriesDetailsAbstract
+            timeSeries={timeseries}
+            actions={[
+              <Button key="view" type="primary" icon="ArrowRight">
+                View Details
+              </Button>,
+            ]}
+          />
         )}
       >
         <Button>Hover me!</Button>
@@ -178,22 +171,15 @@ export const WithExtras = () => {
             icon="VerticalEllipsis"
           />
         }
-        timeseriesPreview={(timeseries, content) => (
-          <Popover
-            key={timeseries.id}
-            content={
-              <TimeseriesDetailsAbstract
-                timeSeries={timeseries}
-                actions={[
-                  <Button key="view" type="primary" icon="ArrowRight">
-                    View Details
-                  </Button>,
-                ]}
-              />
-            }
-          >
-            <div style={{ position: 'relative' }}>{content}</div>
-          </Popover>
+        timeseriesPreview={timeseries => (
+          <TimeseriesDetailsAbstract
+            timeSeries={timeseries}
+            actions={[
+              <Button key="view" type="primary" icon="ArrowRight">
+                View Details
+              </Button>,
+            ]}
+          />
         )}
       >
         <Button>Hover me!</Button>
@@ -202,7 +188,17 @@ export const WithExtras = () => {
   );
 };
 
-const Container = styled.div`
+const Container = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <ResourceSelectionProvider
+      resourcesState={[{ id: asset.id, state: 'active', type: 'assets' }]}
+    >
+      <Wrapper>{children}</Wrapper>
+    </ResourceSelectionProvider>
+  );
+};
+
+const Wrapper = styled.div`
   padding: 20px;
   width: 400px;
   background: grey;

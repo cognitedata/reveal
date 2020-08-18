@@ -83,6 +83,7 @@ export const FileTable = ({
                 headerRenderer,
                 width: 300,
                 resizable: true,
+                cellProps: { query },
                 cellRenderer: ({ cellData: name }: { cellData: string }) => (
                   <Body level={2} strong>
                     <Highlighter

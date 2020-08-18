@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { InternalId, ExternalId } from '@cognite/sdk';
-import { FileDetailsAbstract, Loader } from 'components/Common';
+import { FileDetailsAbstract, Loader, isImage } from 'components/Common';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   retrieve as retrieveFiles,
@@ -96,7 +96,7 @@ export const FileSmallPreview = ({
     return <Loader />;
   }
 
-  const hasPreview = file.mimeType === 'application/pdf';
+  const hasPreview = file.mimeType === 'application/pdf' || isImage(file);
 
   return (
     <FileDetailsAbstract

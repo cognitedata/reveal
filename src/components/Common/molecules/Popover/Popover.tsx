@@ -34,11 +34,12 @@ export const Popover = (props: PopoverProps) => {
       placement={placement || 'right'}
       delay={mouseEnterDelay}
       trigger={trigger}
+      maxWidth="auto"
       interactive
       hideOnClick={false}
       onClickOutside={instance => instance.hide()}
       content={
-        <div style={{ background: '#fff', maxWidth: '400px' }}>{content}</div>
+        <div style={{ background: '#fff', width: 'auto' }}>{content}</div>
       }
     >
       {children}

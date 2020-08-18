@@ -28,6 +28,16 @@ const ActionCell = ({ asset }: { asset: Asset }) => {
   const getButton = useSelectionCheckbox();
   return getButton({ id: asset.id, type: 'assets' });
 };
+const HighlightCell = ({ text, query }: { text?: string; query?: string }) => {
+  return (
+    <Body level={2} strong>
+      <Highlighter
+        searchWords={(query || '').split(' ')}
+        textToHighlight={text || ''}
+      />
+    </Body>
+  );
+};
 
 export const AssetTable = ({
   assets,
@@ -85,13 +95,9 @@ export const AssetTable = ({
                 headerRenderer,
                 width: 300,
                 resizable: true,
+                cellProps: { query },
                 cellRenderer: ({ cellData: name }: { cellData: string }) => (
-                  <Body level={2} strong>
-                    <Highlighter
-                      searchWords={(query || '').split(' ')}
-                      textToHighlight={name}
-                    />
-                  </Body>
+                  <HighlightCell text={name} query={query} />
                 ),
                 frozen: Column.FrozenDirection.LEFT,
               },
@@ -101,18 +107,12 @@ export const AssetTable = ({
                 dataKey: 'description',
                 width: 300,
                 headerRenderer,
+                cellProps: { query },
                 cellRenderer: ({
                   cellData: description,
                 }: {
                   cellData?: string;
-                }) => (
-                  <Body level={2}>
-                    <Highlighter
-                      searchWords={(query || '').split(' ')}
-                      textToHighlight={description || ''}
-                    />
-                  </Body>
-                ),
+                }) => <HighlightCell text={description} query={query} />,
                 resizable: true,
               },
               {

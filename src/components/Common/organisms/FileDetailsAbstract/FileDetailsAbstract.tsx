@@ -1,8 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Icon, Title, Badge } from '@cognite/cogs.js';
+import { Icon, Title, Badge, Body, Colors } from '@cognite/cogs.js';
 import { InfoGrid, InfoCell, ListItem, ButtonRow } from 'components/Common';
 import { FilesMetadata, Asset } from '@cognite/sdk';
+import { useResourcesState } from 'context/ResourceSelectionContext';
 import { FileInfoGrid } from './FileInfoGrid';
 
 interface FileDetailsProps {
@@ -33,18 +34,42 @@ export const FileDetailsAbstract = ({
   extras,
   files,
 }: FileDetailsProps) => {
+  const resourcesState = useResourcesState();
+
+  const currentlyViewing = resourcesState.find(
+    el => el.type === 'files' && el.state === 'active'
+  );
   return (
     <InfoGrid className="file-info-grid" noBorders>
+      {file.id === (currentlyViewing || {}).id && (
+        <InfoCell
+          noBorders
+          containerStyles={{
+            display: 'flex',
+            alignItems: 'center',
+            color: Colors['greyscale-grey6'].hex(),
+          }}
+        >
+          <Body
+            level={2}
+            strong
+            style={{
+              alignItems: 'center',
+              display: 'flex',
+            }}
+          >
+            <Icon type="Eye" style={{ marginRight: 8 }} /> Currently Viewing
+            File
+          </Body>
+        </InfoCell>
+      )}
       {extras && (
         <div style={{ position: 'absolute', top: '16px', right: '16px' }}>
           {extras}
         </div>
       )}
       {file.name && (
-        <InfoCell
-          noBorders
-          containerStyles={{ paddingTop: 0, paddingBottom: 0 }}
-        >
+        <InfoCell noBorders noPadding>
           <Title level={5} style={{ display: 'flex', alignItems: 'center' }}>
             <IconWrapper>
               <Icon type="Document" />

@@ -102,7 +102,6 @@ const preparedPages = (
 };
 
 type FileViewerSidebarItemProps = {
-  key: React.Key;
   annotations: CogniteAnnotation[];
   selectPage: (page: number) => void;
   onItemClick?: () => void;

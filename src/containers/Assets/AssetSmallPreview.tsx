@@ -62,19 +62,21 @@ export const AssetSmallPreview = ({
     return <Loader />;
   }
   return (
-    <AssetDetailsAbstract
-      key={assetId}
-      asset={asset}
-      timeseries={assetTimeseries || []}
-      files={assetFiles || []}
-      extras={extras}
-      actions={actions}
-      timeseriesPreview={timeseries => (
-        <TimeseriesSmallPreview timeseriesId={timeseries.id} />
-      )}
-      filePreview={file => <FileSmallPreview fileId={file.id} />}
-    >
-      {children}
-    </AssetDetailsAbstract>
+    <>
+      <AssetDetailsAbstract
+        key={assetId}
+        asset={asset}
+        timeseries={assetTimeseries || []}
+        files={assetFiles || []}
+        extras={extras}
+        actions={actions}
+        timeseriesPreview={timeseries => (
+          <TimeseriesSmallPreview timeseriesId={timeseries.id} />
+        )}
+        filePreview={file => <FileSmallPreview fileId={file.id} />}
+      >
+        {children}
+      </AssetDetailsAbstract>
+    </>
   );
 };

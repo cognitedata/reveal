@@ -17,7 +17,7 @@ const Drawer = styled.div<{ visible: boolean }>`
   right: 0;
   width: ${props => (props.visible ? '80vw' : '0')};
   height: calc(100vh - 64px);
-  z-index: 1001;
+  z-index: 4;
   background: #fff;
   transition: 0.3s all;
   && > div {
@@ -33,7 +33,7 @@ const Overlay = styled.div<{ visible: boolean }>`
   right: 0;
   width: 100vw;
   height: calc(100vh - 64px);
-  z-index: 1000;
+  z-index: 3;
   display: ${props => (props.visible ? 'block' : 'none')};
   background-color: ${props =>
     props.visible ? 'rgba(0, 0, 0, 0.1)' : 'rgba(0,0,0,0)'};

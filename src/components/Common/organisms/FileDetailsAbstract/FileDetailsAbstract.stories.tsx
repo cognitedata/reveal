@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';
 import { FilesMetadata } from '@cognite/sdk';
-
+import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
 import { FileDetailsAbstract } from './FileDetailsAbstract';
 
 const file: FilesMetadata = {
@@ -79,7 +79,17 @@ export const WithExtras = () => {
   );
 };
 
-const Container = styled.div`
+const Container = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <ResourceSelectionProvider
+      resourcesState={[{ id: file.id, type: 'files', state: 'active' }]}
+    >
+      <Wrapper>{children}</Wrapper>
+    </ResourceSelectionProvider>
+  );
+};
+
+const Wrapper = styled.div`
   padding: 20px;
   width: 400px;
   background: grey;

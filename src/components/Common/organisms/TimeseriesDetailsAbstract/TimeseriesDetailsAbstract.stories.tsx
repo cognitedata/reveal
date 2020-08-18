@@ -6,7 +6,7 @@ import '@cognite/cogs.js/dist/cogs.css';
 import GlobalStyle from 'styles/global-styles';
 import theme from 'styles/theme';
 import { GetTimeSeriesMetadataDTO } from '@cognite/sdk';
-
+import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
 import { TimeseriesDetailsAbstract } from './TimeseriesDetailsAbstract';
 
 const exampleTimeSeries: GetTimeSeriesMetadataDTO = {
@@ -69,7 +69,15 @@ export const WithExtras = () => {
   );
 };
 
-const Container = styled.div`
+const Container = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <ResourceSelectionProvider>
+      <Wrapper>{children}</Wrapper>
+    </ResourceSelectionProvider>
+  );
+};
+
+const Wrapper = styled.div`
   padding: 20px;
   width: 400px;
   background: grey;

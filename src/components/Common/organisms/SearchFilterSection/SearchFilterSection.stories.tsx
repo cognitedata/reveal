@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { Provider } from 'react-redux';
+import { mockStore } from 'utils/mockStore';
 import { SearchFilterSection } from './SearchFilterSection';
 
 export default { title: 'Organisms/SearchFilterSection' };
@@ -71,7 +73,15 @@ export const ExampleWithLockedCategories = () => {
   );
 };
 
-const Container = styled.div`
+const Container = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <Provider store={mockStore({})}>
+      <Wrapper>{children}</Wrapper>
+    </Provider>
+  );
+};
+
+const Wrapper = styled.div`
   padding: 20px;
   height: 400px;
   width: 600px;
