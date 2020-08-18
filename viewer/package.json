@@ -91,7 +91,7 @@
     "@types/lodash": "^4.14.159",
     "comlink": "^4.3.0",
     "gl-matrix": "^3.3.0",
-    "glslify": "^7.0.0",
+    "glslify": "^7.1.0",
     "glslify-import": "^3.1.0",
     "lodash": "^4.17.20",
     "mixpanel-browser": "^2.38.0",
