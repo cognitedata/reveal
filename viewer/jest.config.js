@@ -18,9 +18,6 @@ module.exports = {
     '\\.css$': '<rootDir>/src/__mocks__/cssMock.js',
     '^@/(.*)': '<rootDir>/src/$1'
   },
-  globals: {
-    __webpack_public_path__: ''
-  },
   coverageDirectory: '../coverage',
   collectCoverageFrom: ['!src/__tests__/**/*.ts', '!**/*.d.ts', '!**/*.json'],
   automock: false,
