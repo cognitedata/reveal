@@ -43,13 +43,8 @@ export interface ISettingsElement
   value?: any;
   isReadOnly?: boolean;
   checked?: boolean;
-  options?: {
-    name: string | number;
-    icon?: {
-      type: string;
-      name: string;
-    };
-  }[];
+  options?: string[];
+  colorMapOptions?: string[][];
   icon?: {
     type: string;
     name: string;

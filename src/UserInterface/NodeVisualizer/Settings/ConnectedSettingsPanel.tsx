@@ -73,6 +73,8 @@ function convertStateToSectionObject(
           type: childProperty.type,
           value: childProperty.value,
           isReadOnly: childProperty.readonly,
+          options: childProperty.options,
+          colorMapOptions: childProperty.colorMapOptions,
         };
 
         for (const childId of childProperty.children) {

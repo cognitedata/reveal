@@ -71,8 +71,8 @@ export abstract class BaseNode extends Identifiable
   public set name(value: string) { this.setName(value); }
   public get color(): Color { return this.getColor(); }
   public set color(value: Color) { this.setColor(value); }
-  public get colorMap(): string { return this._colorMap; }
-  public set colorMap(value: string) { this._colorMap = value; }
+  public get colorMap(): string { return this.getColorMap(); }
+  public set colorMap(value: string) { this.setColorMap(value); }
   public get uniqueId(): UniqueId { return this._uniqueId; }
   public get renderStyles(): BaseRenderStyle[] { return this._renderStyles; }
   public get path(): string { return `${this.parent ? this.parent.path : ""}\\${this.name}`; }
@@ -128,6 +128,8 @@ export abstract class BaseNode extends Identifiable
   public /*virtual*/ canChangeColor(): boolean { return true; }
   public /*virtual*/ hasIconColor(): boolean { return this.canChangeColor(); }
   public /*virtual*/ hasColorMap(): boolean { return true; }
+  public /*virtual*/ getColorMap(): string { return this._colorMap; }
+  public /*virtual*/ setColorMap(value: string) { this._colorMap = value; }
 
   //==================================================
   // VIRTUAL METHODS: Icon
@@ -283,10 +285,8 @@ export abstract class BaseNode extends Identifiable
       folder.addColorProperty("Color", this.getColor, false, this, this.notifyColorChanged, this.setColor);
     folder.addReadOnlyStrings("Type", this.typeName);
 
-    // TODO; Add color map
-    // The options, set ColorMaps.getOptions(), it will give all the color maps we have as strings
-    // if (this.hasColorMap())
-    // folder.addSomeProperty("Colormap", this.colorMap, false, this, this.notifyColorMapChanged, this.colorMap);
+    if (this.hasColorMap())
+      folder.addColorMapPropertyWithOptions("ColorMap", this.getColorMap, false, this, this.notifyColorMapChanged, this.setColorMap, ColorMaps.getOptions());
   }
 
   protected /*virtual*/ populateStatisticsCore(folder: PropertyFolder): void { }

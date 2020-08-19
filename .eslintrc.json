@@ -15,7 +15,7 @@
     "ecmaVersion": 11,
     "sourceType": "module"
   },
-  "plugins": ["@cognite", "lodash"],
+  "plugins": ["@typescript-eslint", "@cognite", "lodash"],
   "rules": {
     "@typescript-eslint/no-non-null-assertion": "error",
     "lines-between-class-members": "off",
@@ -46,7 +46,10 @@
         "endOfLine": "auto"
       }
     ],
-    "object-curly-spacing": ["error", "always"]
+    "object-curly-spacing": ["error", "always"],
+    "brace-style": "off",
+    "@typescript-eslint/brace-style": ["error", "allman", { "allowSingleLine": true }],
+    "keyword-spacing": ["error", { "after": true }]
   },
   "overrides": [
     {

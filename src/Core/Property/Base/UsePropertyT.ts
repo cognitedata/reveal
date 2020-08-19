@@ -19,12 +19,15 @@ abstract class UsePropertyT<T> extends Property
   // CONSTRUCTORS
   //==================================================
 
-  protected constructor(name: string, value: T | Retrieve<T>, readonly ?: boolean, instance?: any, applyDelegate?: Action<void>, valueDelegate?: Action<T>)
+  protected constructor(name: string, value: T | Retrieve<T>, readonly ?: boolean, instance?: any, applyDelegate?: Action<void>, valueDelegate?: Action<T>, options?: T[])
   {
     super(name, readonly, instance);
     this._value = value;
     this._valueDelegate = valueDelegate;
-    this.setApplyDelegate(applyDelegate);
+    if (applyDelegate)
+      this.setApplyDelegate(applyDelegate);
+    if (options)
+      this.setLegalValues(options);
   }
 
   //==================================================

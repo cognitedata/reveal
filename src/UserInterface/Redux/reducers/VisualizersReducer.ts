@@ -39,7 +39,7 @@ export const visualizerSlice = createSlice({
     executeVisualizerToolbarCommand: {
       reducer: (state: IVisualizerState, action: PayloadAction<{ visualizerId: string, toolbarCommands: BaseCommand[] | null }>) => {
         const { visualizerId, toolbarCommands } = action.payload;
-        if(!toolbarCommands) return;
+        if (!toolbarCommands) return;
 
         toolbarCommands.forEach((toolCommand, index) => {
           state.viewers[visualizerId][index] = populateToolCommandState(toolCommand);

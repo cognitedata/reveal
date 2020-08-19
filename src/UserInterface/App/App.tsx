@@ -27,6 +27,9 @@ const theme = createMuiTheme({
     h2: {
       fontSize: 14,
     },
+    body1: {
+      fontSize: 16 * Appearance.ApplicationDefaultFontSize,
+    },
   },
 });
 
