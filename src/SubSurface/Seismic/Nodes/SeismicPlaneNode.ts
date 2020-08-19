@@ -23,7 +23,7 @@ import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
 import { Vector3 } from '@/Core/Geometry/Vector3';
 import Index2 from "@/Core/Geometry/Index2";
 import Index3 from "@/Core/Geometry/Index3";
-import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export class SeismicPlaneNode extends BaseVisualNode
 {

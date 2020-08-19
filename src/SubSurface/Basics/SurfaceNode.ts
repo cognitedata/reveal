@@ -22,7 +22,7 @@ import { SurfaceRenderStyle } from "@/SubSurface/Basics/SurfaceRenderStyle";
 import SurfaceNodeIcon from "@images/Nodes/SurfaceNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
 import { Ma } from "@/Core/Primitives/Ma";
-import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 import { ColorMaps } from '@/Core/Primitives/ColorMaps';
 
 export class SurfaceNode extends DataNode

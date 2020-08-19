@@ -20,7 +20,7 @@ import { TargetId } from "@/Core/Primitives/TargetId";
 import { PointsRenderStyle } from "@/SubSurface/Basics/PointsRenderStyle";
 import PointsNodeIcon from "@images/Nodes/PointsNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
-import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export class PointsNode extends DataNode
 {

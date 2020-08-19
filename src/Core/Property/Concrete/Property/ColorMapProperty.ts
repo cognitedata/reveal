@@ -1,8 +1,8 @@
 import UseProperty from "@/Core/Property/Base/UseProperty";
 import { PropertyType } from "@/Core/Enums/PropertyType";
-import { Action, Retrieve } from "@/Core/Property/Base/BaseProperty";
 import { ColorMaps } from "@/Core/Primitives/ColorMaps";
 import { Range1 } from "@/Core/Geometry/Range1";
+import IPropertyParams from '@/Core/Property/Base/IPropertyParams';
 
 export default class ColorMapProperty extends UseProperty<string>
 {
@@ -10,11 +10,7 @@ export default class ColorMapProperty extends UseProperty<string>
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(name: string, value: string | Retrieve<string>, readonly?: boolean, instance?: any,
-    applyDelegate?: Action<void>, valueDelegate?: Action<string>, options?: string[])
-  {
-    super(name, value, readonly, instance, applyDelegate, valueDelegate, options);
-  }
+  public constructor(params: IPropertyParams<string>) { super(params); }
 
   //==================================================
   // OVERRIDES of BaseProperty
@@ -28,7 +24,10 @@ export default class ColorMapProperty extends UseProperty<string>
 
   public getColorMapOptionColors(valuesPerColorMap: number): string[][]
   {
-    return this.legalValues.map(colorMapName =>
+    if (!this.options)
+      return [];
+
+    return this.options.map(colorMapName =>
     {
       const colorMap = ColorMaps.get(colorMapName);
       const colors: string[] = [];

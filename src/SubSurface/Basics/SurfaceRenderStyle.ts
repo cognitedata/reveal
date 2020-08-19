@@ -17,7 +17,7 @@ import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ContoursStyle } from "@/Core/Styles/ContoursStyle";
 import { SolidStyle } from "@/Core/Styles/SolidStyle";
-import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export class SurfaceRenderStyle extends BaseRenderStyle
 {

@@ -15,7 +15,7 @@ import * as Lodash from 'lodash';
 
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export class PotreeRenderStyle extends BaseRenderStyle
 {

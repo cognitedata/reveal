@@ -29,7 +29,7 @@ import { ITarget } from "@/Core/Interfaces/ITarget";
 import { Util } from "@/Core/Primitives/Util";
 import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 import { FileType } from "@/Core/Enums/FileType";
-import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 import { Range3 } from '@/Core/Geometry/Range3';
 import { ColorMaps } from '../Primitives/ColorMaps';
 
@@ -71,8 +71,8 @@ export abstract class BaseNode extends Identifiable
   public set name(value: string) { this.setName(value); }
   public get color(): Color { return this.getColor(); }
   public set color(value: Color) { this.setColor(value); }
-  public get colorMap(): string { return this.getColorMap(); }
-  public set colorMap(value: string) { this.setColorMap(value); }
+  public get colorMap(): string { return this._colorMap; }
+  public set colorMap(value: string) { this._colorMap = value; }
   public get uniqueId(): UniqueId { return this._uniqueId; }
   public get renderStyles(): BaseRenderStyle[] { return this._renderStyles; }
   public get path(): string { return `${this.parent ? this.parent.path : ""}\\${this.name}`; }
@@ -128,8 +128,6 @@ export abstract class BaseNode extends Identifiable
   public /*virtual*/ canChangeColor(): boolean { return true; }
   public /*virtual*/ hasIconColor(): boolean { return this.canChangeColor(); }
   public /*virtual*/ hasColorMap(): boolean { return true; }
-  public /*virtual*/ getColorMap(): string { return this._colorMap; }
-  public /*virtual*/ setColorMap(value: string) { this._colorMap = value; }
 
   //==================================================
   // VIRTUAL METHODS: Icon
@@ -280,13 +278,12 @@ export abstract class BaseNode extends Identifiable
 
   protected /*virtual*/ populateInfoCore(folder: ExpanderProperty): void
   {
-    folder.addStringProperty("Name", this.getName, !this.canChangeName(), this, this.notifyNameChanged, this.setName);
+    folder.addString({ name: "name", instance: this, readonly: !this.canChangeName(), apply: this.notifyNameChanged });
     if (this.canChangeColor())
-      folder.addColorProperty("Color", this.getColor, false, this, this.notifyColorChanged, this.setColor);
-    folder.addReadOnlyStrings("Type", this.typeName);
-
+      folder.addColor({ name: "color", instance: this, apply: this.notifyColorChanged });
+    folder.addReadOnlyString("type", this.typeName);
     if (this.hasColorMap())
-      folder.addColorMapPropertyWithOptions("ColorMap", this.getColorMap, false, this, this.notifyColorMapChanged, this.setColorMap, ColorMaps.getOptions());
+      folder.addColorMap({ name: "colorMap", instance: this, readonly: false, apply: this.notifyColorMapChanged });
   }
 
   protected /*virtual*/ populateStatisticsCore(folder: ExpanderProperty): void { }

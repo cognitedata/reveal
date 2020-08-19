@@ -15,7 +15,7 @@ import { CasingLog } from "@/SubSurface/Wells/Logs/CasingLog";
 import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
 import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
 import CasingLogNodeIcon from "@images/Nodes/CasingLogNode.png";
-import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export class CasingLogNode extends BaseLogNode
 {

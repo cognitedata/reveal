@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export abstract class BaseStyle
 {

@@ -21,7 +21,7 @@ import { DataNode } from "@/Core/Nodes/DataNode";
 import { SeismicCube } from '@/SubSurface/Seismic/Data/SeismicCube';
 import { ITarget } from "@/Core/Interfaces/ITarget";
 import { SurveyNode } from '@/SubSurface/Seismic/Nodes/SurveyNode';
-import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 import Index2 from '@/Core/Geometry/Index2';
 import { CogniteSeismicClient } from '@cognite/seismic-sdk-js';
 import { Vector3 } from '@/Core/Geometry/Vector3';

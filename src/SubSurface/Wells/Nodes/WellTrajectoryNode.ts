@@ -23,7 +23,7 @@ import { FilterLogFolder } from "@/SubSurface/Wells/Filters/FilterLogFolder";
 
 import WellTrajectoryNodeIcon from "@images/Nodes/WellTrajectoryNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
-import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export class WellTrajectoryNode extends DataNode
 {

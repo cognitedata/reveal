@@ -24,7 +24,7 @@ import { ITarget } from "@/Core/Interfaces/ITarget";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { DataNode } from "@/Core/Nodes/DataNode";
-import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export abstract class BaseLogNode extends DataNode
 {

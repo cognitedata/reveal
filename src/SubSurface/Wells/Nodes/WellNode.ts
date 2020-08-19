@@ -14,7 +14,7 @@
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import WellNodeIcon from "@images/Nodes/WellNode.png";
-import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export class WellNode extends BaseNode
 {

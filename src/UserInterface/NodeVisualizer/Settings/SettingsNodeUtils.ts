@@ -1,8 +1,6 @@
 import NodeUtils from "@/UserInterface/utils/NodeUtils";
 import UseProperty from "@/Core/Property/Base/UseProperty";
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
-import { ExpanderProperty } from '@/Core/Property/Concrete/Folder/ExpanderProperty';
-import { isInstanceOf } from '@/Core/Primitives/ClassT';
+import ExpanderProperty from '@/Core/Property/Concrete/Folder/ExpanderProperty';
 
 export default class SettingsNodeUtils
 {

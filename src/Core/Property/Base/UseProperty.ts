@@ -1,5 +1,9 @@
 import BaseProperty from '@/Core/Property/Base/BaseProperty';
-import { Action, Retrieve } from "./BaseProperty";
+import IPropertyParams from '@/Core/Property/Base/IPropertyParams';
+
+export type Action = () => void;
+export type StringAction = (fieldName: string) => void;
+export type IsEnabled = () => boolean;
 
 export default abstract class UseProperty<T> extends BaseProperty
 {
@@ -7,36 +11,49 @@ export default abstract class UseProperty<T> extends BaseProperty
   // INSTANCE FIELDS
   //==================================================
 
-  protected readonly _instance: any | undefined;
-  protected _value: T | Retrieve<T>;
-  protected _valueDelegate?: Action<T>;
-  protected _legalValues: T[] = [];
-  private _applyDelegate?: Action<void>;
+  private readonly _instance?: object;
+  private _value?: T;
+  private _options?: T[];
+  private _apply?: Action;
+  private _applyByFieldName?: StringAction;
+  private _isEnabled?: IsEnabled;
+  private _fieldName: string;
+  private _use?: boolean; // undefined = hide the use button
 
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get applyDelegate(): Action<void> | undefined { return this._applyDelegate; }
-  public set applyDelegate(value: Action<void> | undefined) { this._applyDelegate = value; }
-  public get hasLegalValues(): boolean { return this._legalValues.length > 0; }
-  public get legalValues(): T[] { return this._legalValues; }
-  public set legalValues(values: T[]) { this._legalValues = values; }
-  protected get hasValueInMemory(): boolean { return this._instance === undefined; };
+  public get isValueEnabled(): boolean { return this.use && this.isEnabled; }
+  public get isEnabled(): boolean { return this._isEnabled === undefined || this._isEnabled.call(this._instance); }
+  public get hasOptions(): boolean { return this._options !== undefined && this._options.length > 0; }
+  public get options(): T[] | undefined { return this._options; }
+  public set options(value: T[] | undefined) { this._options = value; }
+  public get fieldName(): string { return this._fieldName; }
+  public set fieldName(value: string) { this._fieldName = value; }
+  public get isOptional(): boolean { return this._use !== undefined; }
+  public get use(): boolean { return this._use === undefined || this._use; }
+  public set use(value: boolean) { this._use = value; }
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  protected constructor(name: string, value: T | Retrieve<T>, readonly?: boolean, instance?: any, applyDelegate?: Action<void>, valueDelegate?: Action<T>, options?: T[])
+  protected constructor(params: IPropertyParams<T>)
   {
-    super(name, readonly);
-    this._value = value;
-    this._valueDelegate = valueDelegate;
-    this.applyDelegate = applyDelegate;
-    if (options)
-      this.legalValues = options;
-    this._instance = instance;
+    super(params.name, params.readonly, params.toolTip);
+    this._apply = params.apply;
+    this._applyByFieldName = params.applyByFieldName;
+    this._isEnabled = params.isEnabled;
+    this._options = params.options;
+    this._fieldName = params.name;
+    this._use = params.use;
+
+    // Set the calue
+    if (params.instance)
+      this._instance = params.instance;
+    else
+      this._value = params.value;
   }
 
   //==================================================
@@ -47,7 +64,7 @@ export default abstract class UseProperty<T> extends BaseProperty
   {
     if (!this._instance)
       return this._value as T;
-    return (this._value as Retrieve<T>).call(this._instance);
+    return Reflect.get(this._instance, this.name) as T;
   }
 
   public set value(value: T)
@@ -55,14 +72,13 @@ export default abstract class UseProperty<T> extends BaseProperty
     if (this.isReadOnly)
       throw Error("Cannot set to a readonly property");
 
-    const oldValue = this.value;
-    if (oldValue !== undefined && oldValue === value)
-      return;
+    if (this.value === value)
+      return; // not changed
 
     if (!this._instance)
       this._value = value as T;
     else
-      this._valueDelegate?.call(this._instance, value);
+      Reflect.set(this._instance, this.name, value);
     this.apply();
   }
 
@@ -78,6 +94,13 @@ export default abstract class UseProperty<T> extends BaseProperty
 
   protected apply(fieldName?: string): void
   {
-    this.applyDelegate?.call(this._instance);
+    if (!this._instance)
+      return;
+
+    if (this._apply)
+      this._apply.call(this._instance);
+
+    if (this._applyByFieldName)
+      this._applyByFieldName.call(this._instance, this.fieldName);
   }
 }

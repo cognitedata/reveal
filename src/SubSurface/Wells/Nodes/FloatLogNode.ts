@@ -15,7 +15,7 @@ import { FloatLog } from "@/SubSurface/Wells/Logs/FloatLog";
 import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
 import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
 import FloatLogNodeIcon from "@images/Nodes/FloatLogNode.png";
-import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export class FloatLogNode extends BaseLogNode
 {

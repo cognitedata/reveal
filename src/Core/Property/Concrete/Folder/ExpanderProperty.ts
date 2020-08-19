@@ -1,21 +1,15 @@
-import Color from "color";
-import { Action, Retrieve } from "@/Core/Property/Base/BaseProperty";
-import StringProperty from "@/Core/Property/Concrete/Property/StringProperty";
-import ColorProperty from "@/Core/Property/Concrete/Property/ColorProperty";
-import GroupProperty from "@/Core/Property/Concrete/Folder/GroupProperty";
+import GroupProperty from '@/Core/Property/Concrete/Folder/GroupProperty';
+import Index3 from '@/Core/Geometry/Index3';
+import Index2 from '@/Core/Geometry/Index2';
 import { Range1 } from "@/Core/Geometry/Range1";
 import { Range3 } from "@/Core/Geometry/Range3";
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
-import Index3 from "@/Core/Geometry/Index3";
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import Index2 from "@/Core/Geometry/Index2";
-import { Ma } from "@/Core/Primitives/Ma";
-import ColorMapProperty from "@/Core/Property/Concrete/Property/ColorMapProperty";
+import BasePropertyFolder from '@/Core/Property/Base/BasePropertyFolder';
 import { PropertyType } from '@/Core/Enums/PropertyType';
 
 const FractionDigitsDefault = 2;
 
-export class ExpanderProperty extends BasePropertyFolder
+export default class ExpanderProperty extends BasePropertyFolder
 {
   //==================================================
   // INSTANCE MEMBERS
@@ -43,58 +37,8 @@ export class ExpanderProperty extends BasePropertyFolder
   public getType(): PropertyType { return PropertyType.Expander; }
 
   //==================================================
-  // INSTANCE METHODS
-  //==================================================
-
-  public addStringProperty(name: string, value: string | Retrieve<string>, readonly?: boolean, instance?: object,
-    applyDelegate?: Action<void>, valueDelegate?: Action<string>): void
-  {
-    const property = new StringProperty(name, value, readonly, instance, applyDelegate, valueDelegate);
-    this.addChild(property);
-  }
-
-  public addStringGroupProperty(name: string, values: string[], readonly: boolean): void
-  {
-    const property = new GroupProperty(name);
-    for (const [index, value] of values.entries())
-    {
-      property.addChild(new StringProperty(name + index, value, readonly));
-    }
-    this.addChild(property);
-  }
-
-  public addColorProperty(name: string, value: Color | Retrieve<Color>, readonly?: boolean, instance?: object,
-    applyDelegate?: Action<void>, valueDelegate?: Action<Color>): void
-  {
-    const property = new ColorProperty(name, value, readonly, instance, applyDelegate, valueDelegate);
-    this.addChild(property);
-  }
-
-  public addColorMapPropertyWithOptions(name: string, value: string | Retrieve<string>, readonly?: boolean, instance?: object,
-    applyDelegate?: Action<void>, valueDelegate?: Action<string>, options?: string[]): void
-  {
-    const property = new ColorMapProperty(name, value, readonly, instance, applyDelegate, valueDelegate, options);
-    this.addChild(property);
-  }
-
-  //==================================================
   // INSTANCE METHODS: Add read only values
   //==================================================
-
-  public addReadOnlyInteger(name: string, value: number): void
-  {
-    this.addReadOnlyStrings(name, value.toString());
-  }
-
-  public addReadOnlyNumber(name: string, value: number, fractionDigits = FractionDigitsDefault): void
-  {
-    this.addReadOnlyStrings(name, value.toFixed(fractionDigits));
-  }
-
-  public addReadOnlyAngle(name: string, value: number): void
-  {
-    this.addReadOnlyStrings(name, `${Ma.toDeg(value).toFixed(2)} [degrees]`);
-  }
 
   public addReadOnlyRange1(name: string, range: Range1, fractionDigits = FractionDigitsDefault): void
   {
@@ -136,6 +80,9 @@ export class ExpanderProperty extends BasePropertyFolder
 
   public addReadOnlyStrings(name: string, ...args: string[]): void
   {
-    this.addStringGroupProperty(name, args, true);
+    const property = new GroupProperty(name);
+    for (const [index, value] of args.entries())
+      property.addReadOnlyString(name + index, value);
+    this.addChild(property);
   }
 }

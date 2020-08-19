@@ -17,7 +17,8 @@ export type SettingPanelProps = {
 };
 
 // TitleBar interface
-export interface ITitleBar {
+export interface ITitleBar
+{
   name: string;
   icon: { type: string; name: string };
   toolBar: ToolBarType;

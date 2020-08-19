@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
 import { PropertyType } from "@/Core/Enums/PropertyType";
 import NodeUtils from "@/UserInterface/utils/NodeUtils";
@@ -161,13 +161,20 @@ function convertToSettingsState(properties: BaseProperty[] | BasePropertyFolder[
         parent,
         displayName: property.displayName,
         type: mapToInputTypes(property.getType()),
-        expanded: (property as ExpanderProperty).expanded,
         readonly: property.isReadOnly,
-        value: (property as UseProperty<any>).value,
-        options: (property as UseProperty<any>).legalValues && (property as UseProperty<any>).legalValues,
-        colorMapOptions: (property as ColorMapProperty).getColorMapOptionColors && (property as ColorMapProperty).getColorMapOptionColors(Appearance.valuesPerColorMap),
+        value: 0,
         children: []
       };
+      if (property instanceof UseProperty)
+      {
+        propertyState.value = property.value;
+        if (property.options)
+          propertyState.options = property.options;
+      }
+      if (property instanceof ExpanderProperty)
+        propertyState.expanded = property.expanded;
+      if (property instanceof ColorMapProperty)
+        propertyState.colorMapOptions = property.getColorMapOptionColors(Appearance.valuesPerColorMap);
 
       propertyStates.push(propertyState);
 

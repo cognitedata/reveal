@@ -9,7 +9,9 @@ export class SelectProperty extends UseProperty<string>
 
   public addOption(name: string): void
   {
-    this.legalValues.push(name);
+    if (!this.options)
+      this.options = [];
+    this.options.push(name);
   }
 
   //==================================================

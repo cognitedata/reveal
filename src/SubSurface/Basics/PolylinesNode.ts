@@ -20,7 +20,7 @@ import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { PolylinesRenderStyle } from "@/SubSurface/Basics/PolylinesRenderStyle";
 import PolylinesNodeIcon from "@images/Nodes/PolylinesNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
-import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export class PolylinesNode extends DataNode
 {

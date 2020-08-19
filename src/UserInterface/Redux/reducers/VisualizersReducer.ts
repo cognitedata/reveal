@@ -17,7 +17,8 @@ export const visualizerSlice = createSlice({
   initialState,
   reducers: {
     initializeToolbarStatus: {
-      reducer:(state: IVisualizerState, action: PayloadAction<{ viewers: { [key: string]: Viewer } }>) => {
+      reducer:(state: IVisualizerState, action: PayloadAction<{ viewers: { [key: string]: Viewer } }>) => 
+      {
         for (const viewer of Object.values(action.payload.viewers))
         {
           const viewerName = viewer.getName();
@@ -25,27 +26,32 @@ export const visualizerSlice = createSlice({
           state.viewers[viewerName] = [];
           if (toolbar)
           {
-            toolbar.forEach((item: BaseCommand) => {
+            toolbar.forEach((item: BaseCommand) => 
+            {
               state.viewers[viewerName].push(populateToolCommandState(item));
             });
           }
         }
       },
-      prepare: (): { payload: { viewers: { [key: string]: Viewer } } } => {
+      prepare: (): { payload: { viewers: { [key: string]: Viewer } } } => 
+      {
         return { payload: { viewers: ViewerUtils.getViewers() } };
       }
     },
 
     executeVisualizerToolbarCommand: {
-      reducer: (state: IVisualizerState, action: PayloadAction<{ visualizerId: string, toolbarCommands: BaseCommand[] | null }>) => {
+      reducer: (state: IVisualizerState, action: PayloadAction<{ visualizerId: string, toolbarCommands: BaseCommand[] | null }>) => 
+      {
         const { visualizerId, toolbarCommands } = action.payload;
         if (!toolbarCommands) return;
 
-        toolbarCommands.forEach((toolCommand, index) => {
+        toolbarCommands.forEach((toolCommand, index) => 
+        {
           state.viewers[visualizerId][index] = populateToolCommandState(toolCommand);
         });
       },
-      prepare: (visualizerId: string, index: number, value?: string): { payload: { visualizerId: string, toolbarCommands: BaseCommand[] | null } } => {
+      prepare: (visualizerId: string, index: number, value?: string): { payload: { visualizerId: string, toolbarCommands: BaseCommand[] | null } } => 
+      {
         const toolbarCommands = ViewerUtils.getViewers()[visualizerId].getToolbarCommands();
 
         if (!toolbarCommands)
@@ -63,7 +69,8 @@ export const visualizerSlice = createSlice({
     },
 
     updateVisualizerToolbars: {
-      reducer: (state: IVisualizerState, action: PayloadAction <{ viewers: { [key: string]: Viewer } }>) => {
+      reducer: (state: IVisualizerState, action: PayloadAction <{ viewers: { [key: string]: Viewer } }>) => 
+      {
         const { viewers } = action.payload;
 
         for (const [visualizerId, viewer] of Object.entries(viewers))
@@ -71,17 +78,20 @@ export const visualizerSlice = createSlice({
           const toolbarCommands = viewer.getToolbarCommands();
           if (!toolbarCommands) continue;
 
-          toolbarCommands.forEach((toolCommand, index) => {
+          toolbarCommands.forEach((toolCommand, index) => 
+          {
             state.viewers[visualizerId][index] = populateToolCommandState(toolCommand);
           });
         }
       },
-      prepare: (): { payload: { viewers: { [key: string]: Viewer } } } => {
+      prepare: (): { payload: { viewers: { [key: string]: Viewer } } } => 
+      {
         return { payload: { viewers: ViewerUtils.getViewers() } };
       }
     },
 
-    updateStatusPanel: (state: IVisualizerState, action: PayloadAction<{ text: string }>) => {
+    updateStatusPanel: (state: IVisualizerState, action: PayloadAction<{ text: string }>) => 
+    {
       state.statusBar.text = action.payload.text;
     }
   },

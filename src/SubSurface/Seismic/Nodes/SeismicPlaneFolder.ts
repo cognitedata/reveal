@@ -14,7 +14,7 @@
 import Icon from "@images/Nodes/SeismicPlaneFolder.png";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { SeismicPlaneNode } from "@/SubSurface/Seismic/Nodes/SeismicPlaneNode";
-import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export class SeismicPlaneFolder extends BaseNode
 {

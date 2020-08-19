@@ -1,4 +1,5 @@
-export interface ICasingMetadata {
+export interface ICasingMetadata
+{
   assy_min_inside_diameter: string;
   policy_id: string;
   assy_design_native_uid: string;
@@ -35,14 +36,16 @@ export interface ICasingMetadata {
   assy_design_name: string //"7886"
 }
 
-export interface ICasingColumns {
+export interface ICasingColumns
+{
   name: string;
   externalId: string;
   valueType: string;
   metadata: { unit?: string }
 }
 
-export interface ICasing {
+export interface ICasing
+{
   id: number;
   name: string;
   description: string;

@@ -15,7 +15,7 @@ import { DiscreteLog } from "@/SubSurface/Wells/Logs/DiscreteLog";
 import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
 import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
 import DiscreteLogNodeIcon from "@images/Nodes/DiscreteLogNode.png";
-import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export class DiscreteLogNode extends BaseLogNode
 {
