@@ -54,4 +54,26 @@ module.exports = {
       rules: pluginsAllRules,
     },
   },
+  processors: {
+    '.html': {
+      preprocess(text) {
+        // If we would need an advanced parsing we can use JSDOM implementation later
+        const hasDocumentReferrerTag = text.indexOf('referrer') > -1;
+
+        if (!hasDocumentReferrerTag) {
+          throw new Error(
+            `Referrer policy should be specified in html-files
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy
+
+<meta name="referrer" content="origin">
+
+We want to restrict Cognite applications from sending sensitive data such as access tokens in referer headers which may possibly be stored in logs in CDF or be sent to third- party services
+            `
+          );
+        }
+
+        return [];
+      },
+    },
+  },
 };
