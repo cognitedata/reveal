@@ -20,7 +20,7 @@ import { TargetId } from "@/Core/Primitives/TargetId";
 import { PointsRenderStyle } from "@/SubSurface/Basics/PointsRenderStyle";
 import PointsNodeIcon from "@images/Nodes/PointsNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
-import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
+import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export class PointsNode extends DataNode
 {
@@ -41,9 +41,7 @@ export class PointsNode extends DataNode
   //==================================================
 
   public get points(): Points | null { return this.anyData; }
-
   public set points(value: Points | null) { this.anyData = value; }
-
   public get renderStyle(): PointsRenderStyle | null { return this.getRenderStyle() as PointsRenderStyle; }
 
   //==================================================
@@ -91,7 +89,7 @@ export class PointsNode extends DataNode
     }
   }
 
-  protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
+  protected /*override*/ populateStatisticsCore(folder: ExpanderProperty): void
   {
     super.populateStatisticsCore(folder);
 

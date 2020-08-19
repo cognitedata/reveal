@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
+import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export abstract class BaseStyle
 {
@@ -19,13 +19,13 @@ export abstract class BaseStyle
   // VIRTUAL METHODS
   //==================================================
 
-  protected /*virtual*/ populateCore(folder: PropertyFolder) { }
+  protected /*virtual*/ populateCore(folder: ExpanderProperty) { }
 
   //==================================================
   // INSTANCE METHODS
   //==================================================
 
-  public populate(folder: PropertyFolder): void
+  public populate(folder: ExpanderProperty): void
   {
     this.populateCore(folder);
   }

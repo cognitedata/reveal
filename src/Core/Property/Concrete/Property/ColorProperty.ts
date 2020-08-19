@@ -1,16 +1,10 @@
 import { PropertyType } from "@/Core/Enums/PropertyType";
 import Color from "color";
-import UsePropertyT from "@/Core/Property/Base/UsePropertyT";
+import UseProperty from "@/Core/Property/Base/UseProperty";
 import { Action, Retrieve } from "@/Core/Property/Base/BaseProperty";
 
-export default class ColorProperty extends UsePropertyT<Color>
+export default class ColorProperty extends UseProperty<Color>
 {
-  //==================================================
-  // OVERRIDDEN BaseProperty FIELDS
-  //==================================================
-
-  protected _type = PropertyType.Color;
-
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -20,4 +14,10 @@ export default class ColorProperty extends UsePropertyT<Color>
   {
     super(name, value, readonly, instance, applyDelegate, valueDelegate);
   }
+
+  //==================================================
+  // OVERRIDES of BaseProperty
+  //==================================================
+
+  public getType(): PropertyType { return PropertyType.Color; }
 }

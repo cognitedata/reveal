@@ -20,7 +20,7 @@ import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
 import { SeismicPlaneFolder } from "@/SubSurface/Seismic/Nodes/SeismicPlaneFolder";
 import { SeismicOutlineNode } from "@/SubSurface/Seismic/Nodes/SeismicOutlineNode";
-import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
+import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 import { Ma } from "@/Core/Primitives/Ma";
 import { Range3 } from '@/Core/Geometry/Range3';
 
@@ -82,7 +82,7 @@ export class SurveyNode extends BaseVisualNode
       this.addChild(new SeismicPlaneFolder());
   }
 
-  protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
+  protected /*override*/ populateStatisticsCore(folder: ExpanderProperty): void
   {
     super.populateStatisticsCore(folder);
 

@@ -29,7 +29,7 @@ import { ITarget } from "@/Core/Interfaces/ITarget";
 import { Util } from "@/Core/Primitives/Util";
 import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 import { FileType } from "@/Core/Enums/FileType";
-import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
+import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 import { Range3 } from '@/Core/Geometry/Range3';
 import { ColorMaps } from '../Primitives/ColorMaps';
 
@@ -278,7 +278,7 @@ export abstract class BaseNode extends Identifiable
   // VIRTUAL METHODS: Populate Settings
   //==================================================
 
-  protected /*virtual*/ populateInfoCore(folder: PropertyFolder): void
+  protected /*virtual*/ populateInfoCore(folder: ExpanderProperty): void
   {
     folder.addStringProperty("Name", this.getName, !this.canChangeName(), this, this.notifyNameChanged, this.setName);
     if (this.canChangeColor())
@@ -289,23 +289,23 @@ export abstract class BaseNode extends Identifiable
       folder.addColorMapPropertyWithOptions("ColorMap", this.getColorMap, false, this, this.notifyColorMapChanged, this.setColorMap, ColorMaps.getOptions());
   }
 
-  protected /*virtual*/ populateStatisticsCore(folder: PropertyFolder): void { }
+  protected /*virtual*/ populateStatisticsCore(folder: ExpanderProperty): void { }
 
   //==================================================
   // INSTANCE METHODS: Populate Settings
   //==================================================
 
-  public populateInfo(folder: PropertyFolder): void
+  public populateInfo(folder: ExpanderProperty): void
   {
     this.populateInfoCore(folder);
   }
 
-  public populateStatistics(folder: PropertyFolder): void
+  public populateStatistics(folder: ExpanderProperty): void
   {
     this.populateStatisticsCore(folder);
   }
 
-  public populateRenderStyle(folder: PropertyFolder): void
+  public populateRenderStyle(folder: ExpanderProperty): void
   {
     const style = this.getRenderStyle();
     if (style)

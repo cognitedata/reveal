@@ -17,7 +17,7 @@ import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ContoursStyle } from "@/Core/Styles/ContoursStyle";
 import { SolidStyle } from "@/Core/Styles/SolidStyle";
-import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
+import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export class SurfaceRenderStyle extends BaseRenderStyle
 {
@@ -44,7 +44,7 @@ export class SurfaceRenderStyle extends BaseRenderStyle
 
   public /*override*/ clone(): BaseRenderStyle { return Lodash.cloneDeep<SurfaceRenderStyle>(this); }
 
-  protected /*override*/ populateCore(folder: PropertyFolder)
+  protected /*override*/ populateCore(folder: ExpanderProperty)
   {
   }
 }

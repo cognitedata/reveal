@@ -25,7 +25,7 @@ import { Colors } from '@/Core/Primitives/Colors';
 import { SeismicCube } from '@/SubSurface/Seismic/Data/SeismicCube';
 import { Range3 } from '@/Core/Geometry/Range3';
 import { Vector3 } from '@/Core/Geometry/Vector3';
-import { Index2 } from '@/Core/Geometry/Index2';
+import Index2 from '@/Core/Geometry/Index2';
 import { Changes } from '@/Core/Views/Changes';
 import { RegularGrid3 } from '@/Core/Geometry/RegularGrid3';
 import { ViewInfo } from '@/Core/Views/ViewInfo';

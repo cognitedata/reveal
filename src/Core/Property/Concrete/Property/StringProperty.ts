@@ -1,15 +1,9 @@
 import { PropertyType } from "@/Core/Enums/PropertyType";
-import UsePropertyT from "@/Core/Property/Base/UsePropertyT";
 import { Action, Retrieve } from "@/Core/Property/Base/BaseProperty";
+import UseProperty from '@/Core/Property/Base/UseProperty';
 
-export default class StringProperty extends UsePropertyT<string>
+export default class StringProperty extends UseProperty<string>
 {
-  //==================================================
-  // OVERRRIDDEN BaseProperty FIELDS
-  //==================================================
-
-  protected _type = PropertyType.String;
-
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -19,4 +13,11 @@ export default class StringProperty extends UsePropertyT<string>
   {
     super(name, value, readonly, instance, applyDelegate, valueDelegate);
   }
+
+  //==================================================
+  // OVERRIDES of BaseProperty
+  //==================================================
+
+  public getType(): PropertyType { return PropertyType.String; }
+
 }

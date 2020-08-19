@@ -1,36 +1,56 @@
-import { PropertyType } from "@/Core/Enums/PropertyType";
-import { BaseProperty } from "./BaseProperty";
+import BaseProperty from "./BaseProperty";
 
 export default abstract class BasePropertyFolder extends BaseProperty
 {
-  private _expanded: boolean = true;
+  //==================================================
+  // INSTANCE MEMBERS
+  //==================================================
 
-  protected _type: PropertyType = PropertyType.DefaultPropertyFolder;
-
-  constructor(private name: string)
-  {
-    super(name);
-  }
+  private _children: BaseProperty[] = [];
 
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
-  public get expanded(): boolean { return this._expanded; }
-
-  public set expanded(value: boolean) { this._expanded = value; }
+  public get children(): BaseProperty[] { return this._children; }
 
   //==================================================
-  // OVERRIDES of BaseProperty
+  // CONSTRUCTORS
   //==================================================
 
-  public getType(): PropertyType { return this._type; }
+  protected constructor(name: string) { super(name, false); }
 
   //==================================================
   // INSTANCE METHODS
   //==================================================
 
-  public getChildByType(type: BasePropertyFolder): void {}
+  public getChildByName(name: string): BaseProperty | null
+  {
+    for (const child of this.children)
+      if (child.name === name)
+        return child;
+    return null;
+  }
 
-  // public abstract Add(...args: (string | boolean | object)[]): void; todo: add this after correct concrete property class can be derived from  parameters
+  public getDescendantByName(name: string): BaseProperty | null
+  {
+    for (const child of this.children)
+    {
+      if (child.name === name)
+        return child;
+
+      if (child instanceof BasePropertyFolder)
+      {
+        const descendant = child.getDescendantByName(name);
+        if (descendant != null)
+          return descendant;
+      }
+    }
+    return null;
+  }
+
+  public addChild(property: BaseProperty): void
+  {
+    this._children.push(property);
+  }
 }

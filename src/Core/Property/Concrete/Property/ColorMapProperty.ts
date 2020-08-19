@@ -1,17 +1,11 @@
-import UsePropertyT from "@/Core/Property/Base/UsePropertyT";
+import UseProperty from "@/Core/Property/Base/UseProperty";
 import { PropertyType } from "@/Core/Enums/PropertyType";
 import { Action, Retrieve } from "@/Core/Property/Base/BaseProperty";
 import { ColorMaps } from "@/Core/Primitives/ColorMaps";
 import { Range1 } from "@/Core/Geometry/Range1";
 
-export default class ColorMapProperty extends UsePropertyT<string>
+export default class ColorMapProperty extends UseProperty<string>
 {
-  //==================================================
-  // OVERRIDDEN BaseProperty FIELDS
-  //==================================================
-
-  protected _type = PropertyType.ColorMap;
-
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -22,9 +16,19 @@ export default class ColorMapProperty extends UsePropertyT<string>
     super(name, value, readonly, instance, applyDelegate, valueDelegate, options);
   }
 
+  //==================================================
+  // OVERRIDES of BaseProperty
+  //==================================================
+
+  public getType(): PropertyType { return PropertyType.ColorMap; }
+
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
+
   public getColorMapOptionColors(valuesPerColorMap: number): string[][]
   {
-    return this.getLegalValues().map(colorMapName =>
+    return this.legalValues.map(colorMapName =>
     {
       const colorMap = ColorMaps.get(colorMapName);
       const colors: string[] = [];

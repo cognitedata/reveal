@@ -15,7 +15,7 @@ import * as Lodash from 'lodash';
 
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
+import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export class DiscreteLogStyle extends BaseRenderStyle
 {
@@ -37,7 +37,7 @@ export class DiscreteLogStyle extends BaseRenderStyle
 
   public /*override*/ clone(): BaseRenderStyle { return Lodash.cloneDeep<DiscreteLogStyle>(this); }
 
-  protected /*override*/ populateCore(folder: PropertyFolder)
+  protected /*override*/ populateCore(folder: ExpanderProperty)
   {
     super.populateCore(folder);
   }

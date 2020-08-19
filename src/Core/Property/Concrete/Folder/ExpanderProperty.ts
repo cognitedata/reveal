@@ -2,24 +2,50 @@ import Color from "color";
 import { Action, Retrieve } from "@/Core/Property/Base/BaseProperty";
 import StringProperty from "@/Core/Property/Concrete/Property/StringProperty";
 import ColorProperty from "@/Core/Property/Concrete/Property/ColorProperty";
-import StringGroupProperty from "@/Core/Property/Concrete/Property/StringGroupProperty";
+import GroupProperty from "@/Core/Property/Concrete/Folder/GroupProperty";
 import { Range1 } from "@/Core/Geometry/Range1";
 import { Range3 } from "@/Core/Geometry/Range3";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
-import { Index3 } from "@/Core/Geometry/Index3";
+import Index3 from "@/Core/Geometry/Index3";
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import { Index2 } from "@/Core/Geometry/Index2";
+import Index2 from "@/Core/Geometry/Index2";
 import { Ma } from "@/Core/Primitives/Ma";
 import ColorMapProperty from "@/Core/Property/Concrete/Property/ColorMapProperty";
+import { PropertyType } from '@/Core/Enums/PropertyType';
 
 const FractionDigitsDefault = 2;
 
-export class PropertyFolder extends BasePropertyFolder
+export class ExpanderProperty extends BasePropertyFolder
 {
+  //==================================================
+  // INSTANCE MEMBERS
+  //==================================================
 
-  // public add(property: UsePropertyT<any>){  todo: add this after correct concrete property class can be derived from  parameters
-  //   this.addChild(property);
-  // }
+  private _expanded: boolean = true;
+
+  //==================================================
+  // INSTANCE PROPERTIES
+  //==================================================
+
+  public get expanded(): boolean { return this._expanded; }
+  public set expanded(value: boolean) { this._expanded = value; }
+
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
+
+  public constructor(name: string) { super(name); }
+
+  //==================================================
+  // OVERRIDES of BaseProperty
+  //==================================================
+
+  public getType(): PropertyType { return PropertyType.Expander; }
+
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
+
   public addStringProperty(name: string, value: string | Retrieve<string>, readonly?: boolean, instance?: object,
     applyDelegate?: Action<void>, valueDelegate?: Action<string>): void
   {
@@ -29,7 +55,7 @@ export class PropertyFolder extends BasePropertyFolder
 
   public addStringGroupProperty(name: string, values: string[], readonly: boolean): void
   {
-    const property = new StringGroupProperty(name, true);
+    const property = new GroupProperty(name);
     for (const [index, value] of values.entries())
     {
       property.addChild(new StringProperty(name + index, value, readonly));

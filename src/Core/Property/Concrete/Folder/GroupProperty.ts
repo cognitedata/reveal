@@ -1,20 +1,20 @@
 import { PropertyType } from "@/Core/Enums/PropertyType";
-import UseProperty from '@/Core/Property/Base/UseProperty';
+import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
 
-export class SelectProperty extends UseProperty<string>
+export default class GroupProperty extends BasePropertyFolder
 {
   //==================================================
-  // INSTANCE METHODS
+  // CONSTRUCTORS
   //==================================================
 
-  public addOption(name: string): void
-  {
-    this.legalValues.push(name);
-  }
+  public constructor(name: string) { super(name); }
 
   //==================================================
   // OVERRIDES of BaseProperty
   //==================================================
 
-  public getType(): PropertyType { return PropertyType.Select; }
+  public getType(): PropertyType
+  {
+    return PropertyType.Group;
+  }
 }

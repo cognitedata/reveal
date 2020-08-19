@@ -11,12 +11,12 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-export class Index3
+export default class Index3
 {
   //==================================================
   // STATIC PROPERTIES
   //==================================================
-  
+
   public static get newZero(): Index3 { return new Index3(0, 0, 0); }
 
   //==================================================

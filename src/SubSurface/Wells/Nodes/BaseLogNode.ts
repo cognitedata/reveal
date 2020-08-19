@@ -24,7 +24,7 @@ import { ITarget } from "@/Core/Interfaces/ITarget";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { DataNode } from "@/Core/Nodes/DataNode";
-import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
+import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export abstract class BaseLogNode extends DataNode
 {
@@ -99,7 +99,7 @@ export abstract class BaseLogNode extends DataNode
     return trajectoryNode ? trajectoryNode.isVisible(target) : false;
   }
 
-  protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
+  protected /*override*/ populateStatisticsCore(folder: ExpanderProperty): void
   {
     super.populateStatisticsCore(folder);
     const { log } = this;

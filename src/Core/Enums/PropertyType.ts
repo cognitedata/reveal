@@ -13,10 +13,10 @@
 
 export enum PropertyType
 {
-  Default,
-  DefaultPropertyFolder,
+  Expander,
+  Group,
+  
   String,
-  StringGroup,
   Color,
   ColorMap,
   Select,

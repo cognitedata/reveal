@@ -21,12 +21,11 @@ import { DataNode } from "@/Core/Nodes/DataNode";
 import { SeismicCube } from '@/SubSurface/Seismic/Data/SeismicCube';
 import { ITarget } from "@/Core/Interfaces/ITarget";
 import { SurveyNode } from '@/SubSurface/Seismic/Nodes/SurveyNode';
-import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
-import { Index2 } from '@/Core/Geometry/Index2';
+import { ExpanderProperty } from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import Index2 from '@/Core/Geometry/Index2';
 import { CogniteSeismicClient } from '@cognite/seismic-sdk-js';
 import { Vector3 } from '@/Core/Geometry/Vector3';
-import { Index3 } from '@/Core/Geometry/Index3';
-import { Range1 } from '@/Core/Geometry/Range1';
+import Index3 from '@/Core/Geometry/Index3';
 import { Statistics } from '@/Core/Geometry/Statistics';
 import { SeismicPlaneNode } from '@/SubSurface/Seismic/Nodes/SeismicPlaneNode';
 import { Ma } from '@/Core/Primitives/Ma';
@@ -38,7 +37,7 @@ export class SeismicCubeNode extends DataNode
   //==================================================
 
   static className = "SeismicCubeNode";
-
+  public ff: number = 89;
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -76,7 +75,7 @@ export class SeismicCubeNode extends DataNode
     return new SurfaceRenderStyle(targetId);
   }
 
-  protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
+  protected /*override*/ populateStatisticsCore(folder: ExpanderProperty): void
   {
     super.populateStatisticsCore(folder);
 
@@ -148,7 +147,7 @@ export class SeismicCubeNode extends DataNode
         const nodeSize = new Index3(numCellsI + 1, numCellsJ + 1, numCellsK + 1);
         const range = Range3.newTest;
         range.expandByFraction(0.3);
-        
+
         const origin = range.min;
         const inc = new Vector3(5, 5, 4);
         const rotationAngle = Ma.toRad(5);
@@ -198,7 +197,7 @@ export class SeismicCubeNode extends DataNode
               }
             }
           }
-          cube.valueRange = statistics.getMostOfRange(5);
+          cube.valueRange = statistics.getMostOfRange(4);
         });
       });
     });
