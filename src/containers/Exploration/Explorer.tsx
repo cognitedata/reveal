@@ -17,11 +17,7 @@ import { ExplorationNavbar } from './ExplorationNavbar';
 
 const Wrapper = styled.div`
   flex: 1;
-  width: 100vw;
-  height: calc(100vh - 64px);
-  position: absolute;
-  top: 0;
-  left: 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
 `;
