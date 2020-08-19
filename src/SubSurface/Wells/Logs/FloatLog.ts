@@ -117,7 +117,7 @@ export class FloatLog extends BaseLog
 
     for (let k = 0, md = mdRange.min; k < numSamples; k++, md += mdInc)
     {
-      const value = k % 10 === 0 ? Number.NaN : Random.getGaussian(valueRange.center, valueRange.delta);
+      const value = k % 60 === 0 ? Number.NaN : Random.getGaussian(valueRange.center, valueRange.delta);
       log.samples.push(new FloatLogSample(value, md));
     }
     return log;

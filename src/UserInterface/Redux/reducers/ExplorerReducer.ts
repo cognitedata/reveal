@@ -44,7 +44,8 @@ export const explorerSlice = createSlice({
 
           for (const descendent of tabNode.getDescendants())
           {
-            if (descendent.parent){
+            if (descendent.parent)
+            {
               const nodeState = generateNodeState(descendent, descendent.parent.uniqueId.toString(), nodeType);
               const nodeId = nodeState.uniqueId;
 

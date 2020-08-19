@@ -53,7 +53,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
 
   public /*override*/ loadData(root: BaseRootNode): void
   {
-    SyntheticSubSurfaceModule.addSeismic(root);
+    // SyntheticSubSurfaceModule.addSeismic(root);
     SyntheticSubSurfaceModule.addWells(root);
     SyntheticSubSurfaceModule.addSurfaces(root);
   }

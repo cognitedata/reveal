@@ -130,6 +130,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
 
     this._object3D = null;
     this.touchBoundingBox();
+    this.invalidateTarget();
   }
   
   //==================================================

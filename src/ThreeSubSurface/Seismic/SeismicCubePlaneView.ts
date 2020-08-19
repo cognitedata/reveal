@@ -23,7 +23,6 @@ import { RegularGrid3Buffers } from '@/Core/Geometry/RegularGrid3Buffers';
 import { TextureKit } from '@/Three/Utilities/TextureKit';
 import { Colors } from '@/Core/Primitives/Colors';
 import { SeismicCube } from '@/SubSurface/Seismic/Data/SeismicCube';
-import { Range1 } from '@/Core/Geometry/Range1';
 import { Range3 } from '@/Core/Geometry/Range3';
 import { Vector3 } from '@/Core/Geometry/Vector3';
 import { Index2 } from '@/Core/Geometry/Index2';
@@ -85,6 +84,15 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
       else
         this.invalidateTarget();
     }
+    if (args.isChanged(Changes.nodeColorMap))
+    {
+      const parent = this.object3D;
+      if (!parent)
+        return;
+
+      this.updateTextureMap(parent, this.seismicCubeNode);
+      this.invalidateTarget();
+    }
     if (args.isChanged(Changes.filter))
     {
       this.invalidateTarget();
@@ -128,8 +136,8 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     const { node } = this;
     const { seismicCubeNode } = this;
     const seismicCube = seismicCubeNode ? seismicCubeNode.seismicCube : null;
-
     const uniqueId = seismicCubeNode ? seismicCubeNode.uniqueId : UniqueId.empty;
+
     if (!uniqueId.equals(this._uniqueId))
     {
       this._uniqueId = uniqueId;
@@ -403,18 +411,14 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
       attribute.needsUpdate = true;
 
       if (seismicCubeNode)
-        SeismicCubePlaneView.updateTextureMap(parent, seismicCubeNode);
+        this.updateTextureMap(parent, seismicCubeNode);
 
       //if (inDragging)
       this.renderTarget.renderFast();
     })();
   }
 
-  //==================================================
-  // STATIC METHODS
-  //==================================================
-
-  private static updateTextureMap(parent: THREE.Object3D, seismicCubeNode: SeismicCubeNode | null): void
+  private updateTextureMap(parent: THREE.Object3D, seismicCubeNode: SeismicCubeNode | null): void
   {
     const mesh = parent.getObjectByName(SolidName) as THREE.Mesh;
     if (!mesh)
@@ -426,7 +430,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
 
     if (!seismicCubeNode)
     {
-      material.map = null;
+      material.color = ThreeConverter.toThreeColor(this.node.color);
       material.needsUpdate = true;
       return;
     }
@@ -434,6 +438,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     if (texture)
       texture.anisotropy = 1;
 
+    material.color = ThreeConverter.toThreeColor(Colors.white);
     material.map = texture;
     material.needsUpdate = true;
   }

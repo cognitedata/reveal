@@ -124,7 +124,7 @@ export class SeismicCubeNode extends DataNode
         maxIndex.j = max.value;
       }
 
-      console.log(`Min and max index: ${minIndex.toString()} ${maxIndex.toString()}`);
+      // console.log(`Min and max index: ${minIndex.toString()} ${maxIndex.toString()}`);
 
       const promises = [
         client.volume.getTrace({ fileId }, minIndex.i, minIndex.j),
@@ -142,8 +142,8 @@ export class SeismicCubeNode extends DataNode
         for (const trace of traces)
         {
           numCellsK = Math.max(trace.traceList.length, numCellsK);
-          if (trace.coordinate !== undefined && trace.iline !== undefined && trace.xline !== undefined)
-            console.log(`inline: ${trace.iline.value} xline: ${trace.xline.value} x: ${trace.coordinate.x} y: ${trace.coordinate.y}`);
+          // if (trace.coordinate !== undefined && trace.iline !== undefined && trace.xline !== undefined)
+          //   console.log(`inline: ${trace.iline.value} xline: ${trace.xline.value} x: ${trace.coordinate.x} y: ${trace.coordinate.y}`);
         }
         const nodeSize = new Index3(numCellsI + 1, numCellsJ + 1, numCellsK + 1);
         const range = Range3.newTest;
