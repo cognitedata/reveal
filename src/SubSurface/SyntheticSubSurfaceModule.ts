@@ -36,9 +36,7 @@ import { DataNode } from "@/Core/Nodes/DataNode";
 import { Ma } from '@/Core/Primitives/Ma';
 import { CasingLog } from '@/SubSurface/Wells/Logs/CasingLog';
 import { SurveyNode } from "@/SubSurface/Seismic/Nodes/SurveyNode";
-import { SeismicCube } from "@/SubSurface/Seismic/Data/SeismicCube";
 import { SeismicCubeNode } from "@/SubSurface/Seismic/Nodes/SeismicCubeNode";
-import { Index3 } from "@/Core/Geometry/Index3";
 import { ColorMaps } from '@/Core/Primitives/ColorMaps';
 import { CogniteSeismicClient } from "@cognite/seismic-sdk-js";
 
@@ -55,7 +53,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
 
   public /*override*/ loadData(root: BaseRootNode): void
   {
-    SyntheticSubSurfaceModule.addSeismic(root);
+    // SyntheticSubSurfaceModule.addSeismic(root);
     SyntheticSubSurfaceModule.addWells(root);
     SyntheticSubSurfaceModule.addSurfaces(root);
   }
@@ -87,20 +85,20 @@ export class SyntheticSubSurfaceModule extends BaseModule
       const parent0 = new FolderNode();
       root.others.addChild(parent0);
 
-      for (let j = 0; j < 1; j++)
+      for (let j = 0; j < 2; j++)
       {
         const parent1 = new FolderNode();
         parent0.addChild(parent1);
 
-        let dampning = 0.5;
+        const dampning = 0.5;
         for (let k = 0; k < 3; k++)
         {
           const node = new SurfaceNode();
           const range = Range3.newTest.clone();
           range.expandByFraction(0.2);
-          range.z.set(-1400 + (k - 1) * 300, -1800 + (k - 1) * 300);
-          node.surface = RegularGrid2.createFractal(range, powerOf2, dampning, smoothNumberOfPasses, Ma.toRad(k * 10));
-          dampning += 0.1;
+          range.z.set(-1000 + (k - 1) * 300, -1500 + (k - 1) * 300);
+          node.surface = RegularGrid2.createFractal(range, powerOf2, dampning, smoothNumberOfPasses, Ma.toRad(5));
+          //dampning += 0.1;
           parent1.addChild(node);
         }
       }
@@ -238,97 +236,112 @@ export class SyntheticSubSurfaceModule extends BaseModule
     }
   }
 
+  static async hei(): Promise<string>
+  {
+    console.log("In hei");
+    return "Return hei";
+  }
+
+  static async hopp(): Promise<string>
+  {
+    console.log("In hopp");
+    return "Return hopp";
+  }
+
   private static addSeismic(root: BaseRootNode)
   {
-    const apiKey = process.env.REACT_APP_API_KEY as string;
-    const client = new CogniteSeismicClient({
-      api_url: 'https://api.cognitedata.com',
-      api_key: apiKey,
-      debug: false,
-    });
-    const fileId = 'cc0f791f-e206-4c08-a139-c5d08eea8afc';
-    client.file.getLineRange({ fileId }).then((lineRange) => {
-      if (lineRange) {
-        const inline = lineRange.inline?.min?.value || 0;
-        const xline = lineRange.xline?.min?.value || 0;
-        console.log('inline', inline);
-        console.log('xline', xline);
-        client.volume.getTrace({ fileId }, inline, xline).then((result) => {
-          console.log('result', result);
-        });
-      }
-    });
-
-    client.slice.getArbitraryLine(fileId, 0, 0, 1, 1);
-
-    client.file.getLineRange({ fileId }).then((lineRange) =>
-    {
-      if (lineRange)
-      {
-        const inline = lineRange.inline?.min?.value || 0;
-        const xline = lineRange.xline?.min?.value || 0;
-
-        console.log('inline', inline);
-        console.log('xline', xline);
-      }
-    });
-
-    // Get trace 1
-    client.volume.getTrace({ fileId }, 0, 0).then((result) =>
-    {
-      if (result.coordinate !== undefined)
-      {
-        console.log('x', result.coordinate.x);
-        console.log('y', result.coordinate.y);
-      }
-      if (result.iline !== undefined)
-        console.log('iline', result.iline);
-      if (result.xline !== undefined)
-        console.log('xline', result.xline);
-
-      const values = result.traceList;
-      for (let i = 0; i < values.length; i++)
-        console.log('value', values[i]);
-    });
-
-    //client.slice.getSliceByGeometry()
-    //   client.volume.getTrace();    
-    //  .getLineRange({ fileId: 'file id' });
-
-    //   const apiKey = process.env.REACT_APP_API_KEY as string;
-    //   const client = new CogniteSeismicClient(apiKey, "greenfield.cognitedata.com");
-    //   const file = client.file.getFileDataCoverage("1a25d4cc-4d19-4c0d-a9f3-7fea853020f7", "EPSG:32631");
-
-    //   file.then((result) => { console.log(result) } );
     if (!(root instanceof SubSurfaceRootNode))
       return;
 
-    const range = Range3.newTest;
+    console.log("Start asyncsss");
+    (async () =>
+    {
+      const dummyFunc = async () => 
+      {
+        console.log("In dummy");
+      };
+      await dummyFunc();
 
+      console.log("Calling hei");
+      const a = await this.hei();
+      console.log(a);
+
+      console.log("Calling hopp");
+      const b = await this.hopp();
+      console.log(b);
+
+      console.log("Calling hei once more");
+      const c = await this.hei();
+      console.log(c);
+
+      console.log("Calling hopp once more");
+      const d = await this.hopp();
+      console.log(d);
+
+      console.log("Calling async anonym");
+      for (let i = 0; i < 10; i++)
+      {
+        const func = async () => 
+        {
+          console.log(`Anonym ${i.toString()}`);
+          return `Anonym ${i.toString()}`;
+        };
+        // eslint-disable-next-line no-await-in-loop
+        const funcResult = await func();
+        console.log(funcResult);
+      }
+    })();
+    console.log("End async");
+
+    const apiKey = "MzI0MTA3OGEtZjMxNi00MmQ0LWI5ODYtMzFiYTEyZmQ0MThh";
     const seismicTree = root.seismic;
-
     const survey = new SurveyNode();
+    survey.name = "Survey";
 
-    const nodeSize = new Index3(90, 100, 80);
-    const origin = range.min;
-    const inc = new Vector3(20, 20, 20);
-    const rotationAngle = Math.PI / 10;
+    const client = new CogniteSeismicClient({ api_url: 'https://api.cognitedata.com', api_key: apiKey, debug: false });
+    const fileId = 'cc0f791f-e206-4c08-a139-c5d08eea8afc';
+    {
+      const seismicCubeNode = new SeismicCubeNode();
+      seismicCubeNode.colorMap = ColorMaps.seismicName;
+      survey.addChild(seismicCubeNode);
+      seismicTree.addChild(survey);
+      seismicCubeNode.load(client, fileId);
+    }
+    {
+      const seismicCubeNode = new SeismicCubeNode();
+      seismicCubeNode.colorMap = ColorMaps.greyScaleName;
+      survey.addChild(seismicCubeNode);
+      seismicTree.addChild(survey);
+      seismicCubeNode.load(client, fileId, true);
+    }
 
-    let cube = new SeismicCube(nodeSize, origin, inc, rotationAngle);
-    let seismicCubeNode = new SeismicCubeNode();
-    seismicCubeNode.seismicCube = cube;
-    seismicCubeNode.colorMap = ColorMaps.rainbowName;
-    survey.addChild(seismicCubeNode);
+    // Get trace 1
+    // const range = Range3.newTest;
 
-    cube = new SeismicCube(nodeSize, origin, inc, rotationAngle);
-    seismicCubeNode = new SeismicCubeNode();
-    seismicCubeNode.seismicCube = cube;
-    seismicCubeNode.colorMap = ColorMaps.commonSeismicName;
-    survey.addChild(seismicCubeNode);
+    // const seismicTree = root.seismic;
 
-    survey.surveyCube = cube.getRegularGrid();
+    // const survey = new SurveyNode();
 
-    seismicTree.addChild(survey);
+    // const nodeSize = new Index3(90, 100, 80);
+    // const origin = range.min;
+    // const inc = new Vector3(20, 20, 20);
+    // const rotationAngle = Math.PI / 10;
+
+    // let cube = new SeismicCube(nodeSize, origin, inc, rotationAngle);
+    // let seismicCubeNode = new SeismicCubeNode();
+    // seismicCubeNode.seismicCube = cube;
+    // seismicCubeNode.colorMap = ColorMaps.rainbowName;
+    // survey.addChild(seismicCubeNode);
+
+    // cube = new SeismicCube(nodeSize, origin, inc, rotationAngle);
+    // seismicCubeNode = new SeismicCubeNode();
+    // seismicCubeNode.seismicCube = cube;
+    // seismicCubeNode.colorMap = ColorMaps.commonSeismicName;
+    // survey.addChild(seismicCubeNode);
+
+    // survey.surveyCube = cube.getRegularGrid();
+
+    // seismicTree.addChild(survey);
   }
 
   //==================================================

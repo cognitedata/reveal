@@ -16,6 +16,8 @@ import { Index3 } from "@/Core/Geometry/Index3";
 import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
 import { Trace } from '@/SubSurface/Seismic/Data/Trace';
 import { Index2 } from '@/Core/Geometry/Index2';
+import STK from '@cognite/seismic-sdk-js';
+import { Range1 } from '@/Core/Geometry/Range1';
 
 export class SeismicCube extends RegularGrid3
 {
@@ -26,12 +28,19 @@ export class SeismicCube extends RegularGrid3
   private readonly _traces: (Trace | null)[];
   private readonly _usedTraces: Index2[] = [];
   private _maxTracesInMemory: number = 1000;
+  public client: STK.CogniteSeismicClient | null = null;
+  public fileId = "";
+  public minIndex = new Index2(0, 0);
+  public isLog = false;
+  private _valueRange: Range1 | undefined;
 
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
   public get numberOfTraces(): number { return (this.nodeSize.i - 1) * (this.nodeSize.j - 1); }
+  public get valueRange(): Range1 | undefined { return this._valueRange; }
+  public set valueRange(range: Range1 | undefined) { this._valueRange = range; }
 
   //==================================================
   // CONSTRUCTORS
@@ -47,7 +56,7 @@ export class SeismicCube extends RegularGrid3
   // INSTANCE METHODS: Getters
   //==================================================
 
-  public getTrace(i: number, j: number): Trace | null 
+  public getTrace(i: number, j: number): Trace | null
   {
     const index = this.getCellIndex2(i, j);
     let trace = this._traces[index];
@@ -72,7 +81,7 @@ export class SeismicCube extends RegularGrid3
   // INSTANCE METHODS: Read trace
   //==================================================
 
-  private readTrace(i: number, j: number): Trace | null 
+  private readTrace(i: number, j: number): Trace | null
   {
     const trace = new Trace(this.cellSize.k);
     trace.generateSynthetic(i / (this.cellSize.i - 1), j / (this.cellSize.j - 1));
@@ -105,4 +114,38 @@ export class SeismicCube extends RegularGrid3
       this._traces.splice(startIndex, deleteCount);
     }
   }
+
+  public loadTraces(minCell: Index2, maxCell: Index2): Promise<STK.Trace[]> | null
+  {
+    if (!this.client || !this.fileId)
+      return null;
+
+    const iline = { min: minCell.i, max: maxCell.i };
+    const xline = { min: minCell.j, max: maxCell.j };
+
+    iline.min += this.minIndex.i;
+    iline.max += this.minIndex.i;
+    xline.min += this.minIndex.j;
+    xline.max += this.minIndex.j;
+
+    // console.log(`volume.get() inline: ${iline.min} / ${iline.max} xline: ${xline.min} / ${xline.max}`);
+    return this.client.volume.get(this, { iline, xline }, true);
+  }
+
+  public loadTrace(cell: Index2): Promise<STK.Trace> | null
+  {
+    if (!this.client || !this.fileId)
+      return null;
+
+    const inline = cell.i + this.minIndex.i;
+    const xline = cell.j + this.minIndex.j;
+
+    return this.client.volume.getTrace(this, inline, xline);
+  }
+
+  public getRealValue(value: number)
+  {
+    return value;
+  }
+
 }

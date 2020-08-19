@@ -28,6 +28,7 @@ import { ContouringService } from "@/Core/Geometry/ContouringService";
 import { ColorMaps } from '@/Core/Primitives/ColorMaps';
 import { ViewInfo } from '@/Core/Views/ViewInfo';
 import { Index2 } from '@/Core/Geometry/Index2';
+import { Changes } from '@/Core/Views/Changes';
 
 export class SurfaceThreeView extends BaseGroupThreeView
 {
@@ -52,6 +53,14 @@ export class SurfaceThreeView extends BaseGroupThreeView
   protected /*override*/ updateCore(args: NodeEventArgs): void
   {
     super.updateCore(args);
+    if (args.isChanged(Changes.nodeColorMap))
+    {
+      const parent = this.object3D;
+      if (!parent)
+        return;
+
+      this.touch();
+    }
   }
 
   //==================================================

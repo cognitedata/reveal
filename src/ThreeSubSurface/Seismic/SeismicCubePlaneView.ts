@@ -23,13 +23,11 @@ import { RegularGrid3Buffers } from '@/Core/Geometry/RegularGrid3Buffers';
 import { TextureKit } from '@/Three/Utilities/TextureKit';
 import { Colors } from '@/Core/Primitives/Colors';
 import { SeismicCube } from '@/SubSurface/Seismic/Data/SeismicCube';
-import { Range1 } from '@/Core/Geometry/Range1';
 import { Range3 } from '@/Core/Geometry/Range3';
 import { Vector3 } from '@/Core/Geometry/Vector3';
 import { Index2 } from '@/Core/Geometry/Index2';
 import { Changes } from '@/Core/Views/Changes';
 import { RegularGrid3 } from '@/Core/Geometry/RegularGrid3';
-import { Index3 } from '@/Core/Geometry/Index3';
 import { ViewInfo } from '@/Core/Views/ViewInfo';
 import { ColorMaps } from '@/Core/Primitives/ColorMaps';
 import { UniqueId } from '@/Core/Primitives/UniqueId';
@@ -45,6 +43,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
   private _index = -1;
   private _axis = -1;
   private _uniqueId = UniqueId.empty;
+  private _timeStamp = 0;
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -68,6 +67,30 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     if (args.isChanged(Changes.geometry))
     {
       this.touchBoundingBox();
+      const inDragging = args.getFieldName(Changes.geometry) === "InDragging";
+      if (inDragging)
+      {
+        const { node } = this;
+        const { seismicCubeNode } = this;
+        const seismicCube = seismicCubeNode ? seismicCubeNode.seismicCube : null;
+        const parent = this.object3D;
+        if (!parent)
+          return;
+
+        this._index = node.perpendicularIndex;
+        this._axis = node.perpendicularAxis;
+        this.updateTextureCoords(parent, node, node.surveyCube, seismicCube, null, true);
+      }
+      else
+        this.invalidateTarget();
+    }
+    if (args.isChanged(Changes.nodeColorMap))
+    {
+      const parent = this.object3D;
+      if (!parent)
+        return;
+
+      this.updateTextureMap(parent, this.seismicCubeNode);
       this.invalidateTarget();
     }
     if (args.isChanged(Changes.filter))
@@ -113,21 +136,20 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     const { node } = this;
     const { seismicCubeNode } = this;
     const seismicCube = seismicCubeNode ? seismicCubeNode.seismicCube : null;
-
     const uniqueId = seismicCubeNode ? seismicCubeNode.uniqueId : UniqueId.empty;
+
     if (!uniqueId.equals(this._uniqueId))
     {
       this._uniqueId = uniqueId;
       this._index = node.perpendicularIndex;
       this._axis = node.perpendicularAxis;
-      this.updateTextureCoords(parent, node, node.surveyCube, seismicCube);
-      SeismicCubePlaneView.updateTextureMap(parent, seismicCubeNode);
+      this.updateTextureCoords(parent, node, node.surveyCube, seismicCube, seismicCubeNode);
     }
     else if (node.perpendicularIndex !== this._index || node.perpendicularAxis !== this._axis)
     {
       this._index = node.perpendicularIndex;
       this._axis = node.perpendicularAxis;
-      this.updateTextureCoords(parent, node, node.surveyCube, seismicCube);
+      this.updateTextureCoords(parent, node, node.surveyCube, seismicCube, null);
     }
   }
 
@@ -265,7 +287,21 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
   // INSTANCE METHODS
   //==================================================
 
-  private updateTextureCoords(parent: THREE.Object3D, node: SeismicPlaneNode, surveyCube: RegularGrid3 | null, seismicCube: SeismicCube | null): void
+  private move(mesh: THREE.Mesh, surveyCube: RegularGrid3 | null, cell: Index2): void
+  {
+    if (!surveyCube)
+      return;
+
+    const origin: Vector3 = Vector3.newZero;
+    surveyCube.getNodePosition(cell.i, cell.j, 0, origin);
+
+    const { transformer } = this;
+    mesh.position.copy(transformer.to3D(origin));
+    this.invalidateTarget();
+    this.touchBoundingBox();
+  }
+
+  private updateTextureCoords(parent: THREE.Object3D, node: SeismicPlaneNode, surveyCube: RegularGrid3 | null, cube: SeismicCube | null, seismicCubeNode: SeismicCubeNode | null, inDragging = false): void
   {
     if (!surveyCube)
       return;
@@ -282,30 +318,107 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     if (cells.length < 2)
       return;
 
-    const origin: Vector3 = Vector3.newZero;
-    const cell = cells[0];
-    surveyCube.getNodePosition(cell.i, cell.j, 0, origin);
-
-    const { transformer } = this;
-    mesh.position.copy(transformer.to3D(origin));
+    let minCell = cells[0];
 
     const attribute = geometry.getAttribute("uv");
     if (!attribute)
+    {
+      this.move(mesh, surveyCube, minCell);
       return;
-
+    }
     const uv = attribute.array as Float32Array;
     if (!uv)
+    {
+      this.move(mesh, surveyCube, minCell);
+      return;
+    }
+    if (!cube)
+    {
+      this.move(mesh, surveyCube, minCell);
+      for (let i = uv.length - 1; i >= 0; i--)
+        uv[i] = 0;
+      return;
+    }
+    if (!cube.client)
       return;
 
-    SeismicCubePlaneView.updateTextureCoords(uv, cells, seismicCube);
-    attribute.needsUpdate = true;
+    this.move(mesh, surveyCube, minCell);
+
+    if (inDragging)
+      this._timeStamp++;
+    const timeStamp = this._timeStamp;
+    if (inDragging && timeStamp < this._timeStamp)
+      return;
+
+    let minIndex = 0;
+    const step = inDragging ? 100 : 100000;
+    const range = cube.valueRange;
+    if (!range)
+      return;
+
+    (async () =>
+    {
+      const dummyFunc = async () => { };
+      await dummyFunc();
+
+      for (; ;)
+      {
+        if (inDragging && timeStamp < this._timeStamp)
+          break;
+
+        if (minIndex > cells.length - 1)
+          break;
+
+        minCell = cells[minIndex];
+
+        const maxIndex = Math.min(minIndex + step, cells.length - 1);
+        const maxCell = cells[maxIndex];
+
+        // eslint-disable-next-line no-await-in-loop
+        const traces = await cube.loadTraces(minCell, maxCell);
+        if (!traces)
+          continue;
+
+        let traceIndex = minIndex;
+        for (const trace of traces)
+        {
+          traceIndex++;
+          if (inDragging && timeStamp < this._timeStamp)
+            break;
+
+          let index = cube.cellSize.k * 2 * traceIndex;
+          if (!trace || !trace.traceList || trace.traceList.length === 0)
+          {
+            for (let k = 0; k < cube.cellSize.k; k++)
+            {
+              uv[index--] = 0.5;
+              uv[index--] = 0;
+            }
+          }
+          else
+          {
+            for (let value of trace.traceList)
+            {
+              value = cube.getRealValue(value);
+              const u = range.getTruncatedFraction(value);
+              uv[index--] = u;
+              uv[index--] = 0;
+            }
+          }
+        }
+        minIndex += step;
+      }
+      attribute.needsUpdate = true;
+
+      if (seismicCubeNode)
+        this.updateTextureMap(parent, seismicCubeNode);
+
+      //if (inDragging)
+      this.renderTarget.renderFast();
+    })();
   }
 
-  //==================================================
-  // STATIC METHODS
-  //==================================================
-
-  private static updateTextureMap(parent: THREE.Object3D, seismicCubeNode: SeismicCubeNode | null): void
+  private updateTextureMap(parent: THREE.Object3D, seismicCubeNode: SeismicCubeNode | null): void
   {
     const mesh = parent.getObjectByName(SolidName) as THREE.Mesh;
     if (!mesh)
@@ -317,46 +430,43 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
 
     if (!seismicCubeNode)
     {
-      material.map = null;
+      material.color = ThreeConverter.toThreeColor(this.node.color);
       material.needsUpdate = true;
       return;
     }
-    const range = new Range1(-1, 1);
     const texture = TextureKit.create1D(ColorMaps.get(seismicCubeNode.colorMap));
     if (texture)
-    {
       texture.anisotropy = 1;
-      texture.needsUpdate = true;
-    }
+
+    material.color = ThreeConverter.toThreeColor(Colors.white);
     material.map = texture;
     material.needsUpdate = true;
   }
 
-  private static updateTextureCoords(uv: Float32Array, cells: Index2[], seismicCube: SeismicCube | null): void
-  {
-    if (!seismicCube)
-    {
-      for (let i = uv.length - 1; i >= 0; i--)
-        uv[i] = 0;
-      return;
-    }
-    const count = cells.length * seismicCube.cellSize.k * 2;
-    const range = new Range1(-1, 1);
-    let index = 0;
-    for (const cell of cells)
-    {
-      const trace = seismicCube.getTrace(cell.i, cell.j);
-      if (trace == null)
-        continue;
-
-      for (let k = 0; k < trace.length; k++)
-      {
-        const u = range.getTruncatedFraction(trace.values[k]);
-        uv[index++] = u;
-        uv[index++] = 0;
-      }
-    }
-    if (count !== index)
-      throw Error("Error in createTextureCoords");
-  }
+  //   private static updateTextureCoords(uv: Float32Array, cells: Index2[], seismicCube: SeismicCube | null): void
+  //   {
+  //     if (!seismicCube)
+  //     {
+  //       for (let i = uv.length - 1; i >= 0; i--)
+  //         uv[i] = 0;
+  //       return;
+  //     }
+  //     const count = cells.length * seismicCube.cellSize.k * 2;
+  //     const range = new Range1(-1, 1);
+  //     let index = 0;
+  //     for (const cell of cells)
+  //     {
+  //       const trace = seismicCube.getTrace(cell.i, cell.j);
+  //       if (trace == null)
+  //         continue;
+  //       for (let k = 0; k < trace.length; k++)
+  //       {
+  //         const u = range.getTruncatedFraction(trace.values[k]);
+  //         uv[index++] = u;
+  //         uv[index++] = 0;
+  //       }
+  //     }
+  //     if (count !== index)
+  //       throw Error("Error in createTextureCoords");
+  //   }
 }

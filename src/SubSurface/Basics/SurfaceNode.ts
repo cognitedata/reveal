@@ -23,6 +23,7 @@ import SurfaceNodeIcon from "@images/Nodes/SurfaceNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
 import { Ma } from "@/Core/Primitives/Ma";
 import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
+import { ColorMaps } from '@/Core/Primitives/ColorMaps';
 
 export class SurfaceNode extends DataNode
 {
@@ -36,7 +37,11 @@ export class SurfaceNode extends DataNode
   // CONSTRUCTORS
   //==================================================
 
-  public constructor() { super(); }
+  public constructor()
+  {
+    super();
+    this.colorMap = ColorMaps.terrainName;
+  }
 
   //==================================================
   // INSTANCE PROPERTIES

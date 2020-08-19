@@ -21,8 +21,15 @@ import { DataNode } from "@/Core/Nodes/DataNode";
 import { SeismicCube } from '@/SubSurface/Seismic/Data/SeismicCube';
 import { ITarget } from "@/Core/Interfaces/ITarget";
 import { SurveyNode } from '@/SubSurface/Seismic/Nodes/SurveyNode';
-import { Ma } from "@/Core/Primitives/Ma";
 import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
+import { Index2 } from '@/Core/Geometry/Index2';
+import { CogniteSeismicClient } from '@cognite/seismic-sdk-js';
+import { Vector3 } from '@/Core/Geometry/Vector3';
+import { Index3 } from '@/Core/Geometry/Index3';
+import { Range1 } from '@/Core/Geometry/Range1';
+import { Statistics } from '@/Core/Geometry/Statistics';
+import { SeismicPlaneNode } from '@/SubSurface/Seismic/Nodes/SeismicPlaneNode';
+import { Ma } from '@/Core/Primitives/Ma';
 
 export class SeismicCubeNode extends DataNode
 {
@@ -82,5 +89,118 @@ export class SeismicCubeNode extends DataNode
     folder.addReadOnlyVector3("Origin", seismicCube.origin);
     folder.addReadOnlyAngle("Rotation", seismicCube.rotationAngle);
     folder.addReadOnlyRange3(seismicCube.boundingBox);
+  }
+
+  //==================================================
+  // INSTANCE METHODS
+  //==================================================
+
+  public load(client: CogniteSeismicClient, fileId: string, isLog = false): void
+  {
+    client.file.getLineRange({ fileId }).then((lineRange) =>
+    {
+      if (!lineRange)
+        return;
+
+      if (!lineRange.inline)
+        return;
+      if (!lineRange.xline)
+        return;
+
+      const minIndex = Index2.newZero;
+      const maxIndex = Index2.newZero;
+      {
+        const { min, max } = lineRange.inline;
+        if (min === undefined || max === undefined)
+          return;
+        minIndex.i = min.value;
+        maxIndex.i = max.value;
+      }
+      {
+        const { min, max } = lineRange.xline;
+        if (min === undefined || max === undefined)
+          return;
+        minIndex.j = min.value;
+        maxIndex.j = max.value;
+      }
+
+      // console.log(`Min and max index: ${minIndex.toString()} ${maxIndex.toString()}`);
+
+      const promises = [
+        client.volume.getTrace({ fileId }, minIndex.i, minIndex.j),
+        client.volume.getTrace({ fileId }, maxIndex.i, minIndex.j),
+        client.volume.getTrace({ fileId }, maxIndex.i, maxIndex.j),
+        client.volume.getTrace({ fileId }, minIndex.i, maxIndex.j)
+      ];
+
+      const numCellsI = maxIndex.i - minIndex.i + 1;
+      const numCellsJ = maxIndex.j - minIndex.j + 1;
+
+      Promise.all(promises).then(traces =>
+      {
+        let numCellsK = 0;
+        for (const trace of traces)
+        {
+          numCellsK = Math.max(trace.traceList.length, numCellsK);
+          // if (trace.coordinate !== undefined && trace.iline !== undefined && trace.xline !== undefined)
+          //   console.log(`inline: ${trace.iline.value} xline: ${trace.xline.value} x: ${trace.coordinate.x} y: ${trace.coordinate.y}`);
+        }
+        const nodeSize = new Index3(numCellsI + 1, numCellsJ + 1, numCellsK + 1);
+        const range = Range3.newTest;
+        range.expandByFraction(0.3);
+        
+        const origin = range.min;
+        const inc = new Vector3(5, 5, 4);
+        const rotationAngle = Ma.toRad(5);
+        const cube = new SeismicCube(nodeSize, origin, inc, rotationAngle);
+
+        cube.minIndex = minIndex;
+        cube.client = client;
+        cube.fileId = fileId;
+        cube.isLog = isLog;
+
+        this.seismicCube = cube;
+        if (this.surveyNode)
+        {
+          this.surveyNode.surveyCube = cube.getRegularGrid();
+          for (const plane of this.surveyNode.getDescendantsByType(SeismicPlaneNode))
+          {
+            // Just to set the index properly
+            const index = plane.perpendicularIndex;
+            plane.notifyNameChanged();
+          }
+        }
+        let minCell = new Index2(Math.round(cube.cellSize.i / 2), 0);
+        let maxCell = new Index2(Math.round(cube.cellSize.i / 2), cube.cellSize.j - 1);
+        const promise1 = cube.loadTraces(minCell, maxCell);
+
+        minCell = new Index2(0, Math.round(cube.cellSize.j / 2));
+        maxCell = new Index2(cube.cellSize.i - 1, Math.round(cube.cellSize.j / 2));
+        const promise2 = cube.loadTraces(minCell, maxCell);
+
+        Promise.all([promise1, promise2]).then(tracess =>
+        {
+          const statistics = new Statistics();
+          for (const atraces of tracess)
+          {
+            if (!atraces)
+              continue;
+
+            for (const trace of traces)
+            {
+              for (let value of trace.traceList)
+              {
+                if (value === 0)
+                  continue;
+
+                value = cube.getRealValue(value);
+                statistics.add(value);
+              }
+            }
+          }
+          cube.valueRange = statistics.getMostOfRange(5);
+        });
+      });
+    });
   }
 }

@@ -37,9 +37,8 @@ export class SeismicPlaneNode extends BaseVisualNode
   // INSTANCE FIELDS
   //==================================================
 
-  private _perpendicularAxis = 0;
-
-  private _perpendicularIndex = -1; // Not used if arbitrary plane
+  private _perpendicularAxis;
+  private _perpendicularIndex; // Not used if arbitrary plane
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -64,8 +63,14 @@ export class SeismicPlaneNode extends BaseVisualNode
     if (this.isArbitrary)
       throw Error(this.generalName);
 
-    if (this._perpendicularIndex < 0)
-      this._perpendicularIndex = this.maxPerpendicularIndex / 2;
+    const maxIndex = this.maxPerpendicularIndex;
+    if (maxIndex > 0)
+    {
+      if (this._perpendicularIndex < 0)
+        this._perpendicularIndex = maxIndex / 2;
+      else if (this._perpendicularIndex > maxIndex)
+        this._perpendicularIndex = maxIndex;
+    }
     return this._perpendicularIndex;
   }
 
@@ -148,10 +153,11 @@ export class SeismicPlaneNode extends BaseVisualNode
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(perpendicularAxis = 0)
+  public constructor(perpendicularAxis = 0, perpendicularIndex = -1)
   {
     super();
     this._perpendicularAxis = perpendicularAxis;
+    this._perpendicularIndex = perpendicularIndex;
   }
 
   //==================================================
@@ -184,7 +190,9 @@ export class SeismicPlaneNode extends BaseVisualNode
   public /*override*/ getNameExtension(): string | null
   {
     if (this.perpendicularAxis < 0 || this.perpendicularAxis >= 3)
-      return this.getNameExtension();
+      return super.getNameExtension();
+    if (!this.surveyCube)
+      return super.getNameExtension();
     return `${this.perpendicularIndex}`;
   }
 
@@ -228,7 +236,7 @@ export class SeismicPlaneNode extends BaseVisualNode
     else if (perpendicularIndex > this.maxPerpendicularIndex)
       perpendicularIndex = this.maxPerpendicularIndex;
 
-    if (this._perpendicularIndex === perpendicularIndex)
+    if (this.perpendicularIndex === perpendicularIndex)
       return false;
 
     this._perpendicularIndex = perpendicularIndex;
