@@ -1,6 +1,7 @@
+@use "variables";
 .visualizer {
   width: 100%;
-  height: calc(100% - #{$status-bar-height});
+  height: calc(100% - #{variables.$status-bar-height});
 
   canvas {
     width: 100% !important;
@@ -23,22 +24,14 @@
     border: 0.01rem solid black;
     background-color: rgba(223, 223, 223, 0.6);
     border-radius: 0.2rem;
-    overflow: hidden;
     .visualizer-tool-bar-icon {
       transition: background-color 0.3s;
       margin:0.025rem;
-      padding: 0.2rem 0;
+      padding: 0.2rem 0.2rem;
       cursor: pointer;
       &:hover {
         background-color: lightblue;
         border-color: lightblue;
-      }
-      img {
-        margin: 0 0.2rem;
-      }
-      select {
-        margin: 0.1rem 0.3rem;
-        width: 50px;
       }
     }
     .visualizer-tool-bar-icon-selected {
@@ -64,7 +57,7 @@
 
 .status-bar{
   width: 100%;
-  height: $status-bar-height;
+  height: variables.$status-bar-height;
 
   .status-bar-text{
     width: 100%;

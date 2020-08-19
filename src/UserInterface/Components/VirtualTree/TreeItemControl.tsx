@@ -53,7 +53,7 @@ export function TreeItemButton(props: {
         checked={props.checked}
         hover={hover}
         onClick={handleToggleEvent}
-        onKeyDown={onEnter}
+        onKeyUp={onEnter}
         onMouseEnter={handleHover}
         onMouseLeave={handleHoverLeave}
         onFocus={handleHover}
@@ -72,7 +72,7 @@ export function TreeItemButton(props: {
         disabled={props.disabled}
         hover={hover}
         onClick={handleToggleEvent}
-        onKeyDown={onEnter}
+        onKeyUp={onEnter}
         onMouseEnter={handleHover}
         onMouseLeave={handleHoverLeave}
         onFocus={handleHover}

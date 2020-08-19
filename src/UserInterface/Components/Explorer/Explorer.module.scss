@@ -1,15 +1,10 @@
-$tree-padding-left: 7px;
-$tree-padding-top: 5px;
-$explorer-font-size: 16px;
-$tree-background: inherit;
-$tree-color: inherit;
+@use "../../styles/scss/variables";
 
 .explorer {
   height: 100%;
   margin: 0;
   display: flex;
   flex-direction: column;
-  font-size: var(--subsurface-viz-explorer-font-size, $explorer-font-size);
 }
 
 .explorer-tabs {
@@ -19,7 +14,7 @@ $tree-color: inherit;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 0.6rem;
+    font-size: var(--subsurface-viz-default-font-size, variables.$application-default-font-size);
     .img {
       z-index: 1;
       border: 0 !important;
@@ -31,9 +26,9 @@ $tree-color: inherit;
 }
 
 .virtual-tree-container {
-  padding-inline-start: $tree-padding-left;
-  padding-top: $tree-padding-top;
-  background: var(--subsurface-viz-tree-background, $tree-background);
-  color: var(--subsurface-viz-tree-color, $tree-color);
+  padding-inline-start: variables.$tree-padding-left;
+  padding-top: variables.$tree-padding-top;
+  background: var(--subsurface-viz-tree-background, variables.$tree-background);
+  color: var(--subsurface-viz-tree-color, variables.$tree-color);
   flex: 15;
 }

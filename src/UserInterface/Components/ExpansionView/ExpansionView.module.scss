@@ -1,3 +1,4 @@
+@use "../../styles/scss/variables";
 .expand-panel-root{
   padding: 0!important;
   min-height: 1.8rem !important;
@@ -26,7 +27,7 @@
 
   .expand-title{
     margin: 0 .5rem;
-    font-size: 0.7rem;
+    font-size: var(--subsurface-viz-default-font-size, variables.$application-default-font-size);
     font-weight: 700;
   }
 

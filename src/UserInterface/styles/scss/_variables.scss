@@ -1,0 +1,61 @@
+$root-container-width: 100%;
+$root-container-height: 100%;
+$left-panel-min-width: 290px;
+$left-panel-height: $root-container-height;
+
+$select-control-svg-height: 0.7rem;
+$select-control-svg-width: $select-control-svg-height;
+
+$icon-size: 1.125rem;
+
+$titleBarHeight: 1.6rem;
+$titleBarIconWidth: $titleBarHeight;
+
+$multi-input-base-height: 1.4rem;
+$select-controls-width: 8%;
+$select-controls-margin-start: 2%;
+$multi-input-base-width: 100% - ($select-controls-width + $select-controls-margin-start);
+$status-bar-height: 0px;
+
+// Tree Control
+$tree-padding-left: 7px;
+$tree-padding-top: 5px;
+
+/** Default Font Size **/
+$application-default-font-size: 0.75rem;
+
+/** Default Colors **/
+$panel-background: white !default;
+$tree-background: inherit !default;
+$tree-color: inherit !default;
+$title-bar-background: white !default;
+$title-bar-color: black !default;
+$expansion-header-background: white !default;
+$expansion-header-color: black !default;
+$expansion-detail-background: white !default;
+$expansion-detail-color: black !default;
+$tool-bar-icon-selected-background: lightblue !default;
+$tool-bar-icon-hover-background: lightblue !default;
+$select-input-background: inherit !default;
+$select-input-option-color: #6a0dad !default;
+$slider-input-background: #d5d5d5 !default;
+
+// set css properties
+:root {
+  --subsurface-viz-background: #{$panel-background};
+  --subsurface-viz-tree-background: #{$tree-background};
+  --subsurface-viz-tree-color: #{$tree-color};
+  --subsurface-viz-title-bar-background: #{$title-bar-background};
+  --subsurface-viz-title-bar-color: #{$title-bar-color};
+  --subsurface-viz-expansion-header-background: #{$expansion-header-background};
+  --subsurface-viz-expansion-header-color: #{$expansion-header-color};
+  --subsurface-viz-expansion-detail-background: #{$expansion-detail-background};
+  --subsurface-viz-expansion-detail-color: #{$expansion-detail-color};
+  --subsurface-viz-toolbar-icon-selected-background: #{$tool-bar-icon-selected-background};
+  --subsurface-viz-toolbar-icon-hover-background: #{$tool-bar-icon-hover-background};
+  --subsurface-viz-select-input-background: #{$select-input-background};
+  --subsurface-viz-select-input-option-color: #{$select-input-option-color};
+  --subsurface-viz-slider-input-background: #{$slider-input-background};
+}
+
+

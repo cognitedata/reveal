@@ -1,3 +1,4 @@
+@use "variables";
 .settings-section-container {
   display: flex;
   flex-direction: column;
@@ -31,8 +32,8 @@
   }
 
   .MuiExpansionPanelSummary-root{
-    background: var(--subsurface-viz-expansion-header-background, $expansion-header-background);
-    color: var(--subsurface-viz-expansion-header-color, $expansion-header-color);
+    background: var(--subsurface-viz-expansion-header-background, variables.$expansion-header-background);
+    color: var(--subsurface-viz-expansion-header-color, variables.$expansion-header-color);
   }
 
   .MuiExpansionPanelSummary-content,
@@ -47,7 +48,7 @@
   .MuiExpansionPanelDetails-root {
     padding: 0 !important;
     display: block !important;
-    background: var(--subsurface-viz-expansion-detail-background, $expansion-detail-background);
-    color: var(--subsurface-viz-expansion-detail-color, $expansion-detail-color);
+    background: var(--subsurface-viz-expansion-detail-background, variables.$expansion-detail-background);
+    color: var(--subsurface-viz-expansion-detail-color, variables.$expansion-detail-color);
   }
 }

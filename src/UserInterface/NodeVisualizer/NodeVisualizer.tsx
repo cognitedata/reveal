@@ -1,4 +1,3 @@
-import "reset-css";
 import "@/UserInterface/styles/scss/index.scss";
 import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";

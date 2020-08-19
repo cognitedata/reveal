@@ -15,14 +15,14 @@ module.exports = (env) => ({
   entry: {
     "subsurface-visualizer/subsurface-visualizer": `./${SUBSURFACE_VISUALIZER_PATH}/index.ts`,
     "subsurface-components/subsurface-components": `./${SUBSURFACE_COMPONENTS_PATH}/index.ts`,
-    "subsurface-interfaces/subsurface-interfaces": `./${SUBSURFACE_INTERFACES_PATH}/index.ts`
+    "subsurface-interfaces/subsurface-interfaces": `./${SUBSURFACE_INTERFACES_PATH}/index.ts`,
   },
   module: {
     rules: [
       {
         test: /\.js$/,
-        enforce: 'pre',
-        use: ['source-map-loader'],
+        enforce: "pre",
+        use: ["source-map-loader"],
       },
       {
         test: /\.(ts|js)x?$/,
@@ -33,13 +33,15 @@ module.exports = (env) => ({
           //   loader: 'babel-loader',
           // },
           {
-            loader: 'ts-loader',
+            loader: "ts-loader",
             options: {
               instance: "subsurface-visualizer",
-              configFile: resolve(SUBSURFACE_VISUALIZER_PATH + "/tsconfig.json")
-          }
-          }
-        ]
+              configFile: resolve(
+                `${SUBSURFACE_VISUALIZER_PATH}/tsconfig.json`
+              ),
+            },
+          },
+        ],
       },
       {
         test: /\.(ts|js)x?$/,
@@ -50,13 +52,15 @@ module.exports = (env) => ({
           //   loader: 'babel-loader',
           // },
           {
-            loader: 'ts-loader',
+            loader: "ts-loader",
             options: {
               instance: "subsurface-Components",
-              configFile: resolve(SUBSURFACE_COMPONENTS_PATH + "/tsconfig.json")
-            }
-          }
-        ]
+              configFile: resolve(
+                `${SUBSURFACE_COMPONENTS_PATH}/tsconfig.json`
+              ),
+            },
+          },
+        ],
       },
       {
         test: /\.(ts|js)x?$/,
@@ -67,17 +71,48 @@ module.exports = (env) => ({
           //   loader: 'babel-loader',
           // },
           {
-            loader: 'ts-loader',
+            loader: "ts-loader",
             options: {
               instance: "subsurface-interfaces",
-              configFile: resolve(SUBSURFACE_INTERFACES_PATH + "/tsconfig.json")
-            }
-          }
-        ]
+              configFile: resolve(
+                `${SUBSURFACE_INTERFACES_PATH}/tsconfig.json`
+              ),
+            },
+          },
+        ],
       },
       {
-        test: /\.s?css$/,
-        use: ["style-loader", "css-loader", "sass-loader"]
+        test: /\.module\.s([ac])ss$/,
+        loader: [
+          "style-loader",
+          {
+            loader: "css-loader",
+            options: {
+              modules: true,
+              sourceMap: env.debug === "true",
+            },
+          },
+          {
+            loader: "sass-loader",
+            options: {
+              sourceMap: env.debug === "true",
+            },
+          },
+        ],
+      },
+      {
+        test: /\.s([ac])ss$/,
+        exclude: /\.module.(s([ac])ss)$/,
+        loader: [
+          "style-loader",
+          "css-loader",
+          {
+            loader: "sass-loader",
+            options: {
+              sourceMap: env.development,
+            },
+          },
+        ],
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
@@ -85,87 +120,92 @@ module.exports = (env) => ({
           {
             loader: "url-loader",
             options: {
-              limit: 8192
-            }
-          }
-        ]
+              limit: 8192,
+            },
+          },
+        ],
       },
-    ]
+    ],
   },
   resolve: {
-    extensions: [".tsx", ".ts", ".js", ".png", ".svg"],
+    extensions: [".tsx", ".scss", ".ts", ".js", ".png", ".svg"],
     alias: {
       "@": resolve("src"),
       "@images": resolve("images"),
       "@cognite/subsurface-components": resolve(SUBSURFACE_COMPONENTS_PATH),
       "@cognite/subsurface-interfaces": resolve(SUBSURFACE_INTERFACES_PATH),
-      "@cognite/subsurface-visualizer": resolve(SUBSURFACE_VISUALIZER_PATH)
-    }
+      "@cognite/subsurface-visualizer": resolve(SUBSURFACE_VISUALIZER_PATH),
+    },
   },
   output: {
     filename: "[name].js",
     path: resolve("dist"),
     sourceMapFilename: "[name].map",
     library: "[name]",
-    libraryTarget: "umd"
+    libraryTarget: "umd",
   },
   devtool: env.debug === "false" ? undefined : "inline-source-map",
   optimization: {
-    minimize: env.debug === "false" ? true : false
+    minimize: env.debug === "false",
   },
   plugins: [
     new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
     new CopyPlugin({
       patterns: [
-        { context: resolve(SUBSURFACE_VISUALIZER_PATH),
-          from: "package.json",
-          to: resolve("dist/subsurface-visualizer")
-        },
-        { context: resolve(SUBSURFACE_VISUALIZER_PATH),
-          from: "README.md",
-          to: resolve("dist/subsurface-visualizer") },
         {
-          context: resolve(SUBSURFACE_COMPONENTS_PATH),
+          context: resolve(SUBSURFACE_VISUALIZER_PATH),
           from: "package.json",
-          to: resolve("dist/subsurface-components")
+          to: resolve("dist/subsurface-visualizer"),
+        },
+        {
+          context: resolve(SUBSURFACE_VISUALIZER_PATH),
+          from: "README.md",
+          to: resolve("dist/subsurface-visualizer"),
         },
         {
           context: resolve(SUBSURFACE_COMPONENTS_PATH),
+          from: "package.json",
+          to: resolve("dist/subsurface-components"),
+        },
+        {
+          context: resolve(SUBSURFACE_COMPONENTS_PATH),
           from: "README.md",
-          to: resolve("dist/subsurface-components")
+          to: resolve("dist/subsurface-components"),
         },
         {
           context: resolve(SUBSURFACE_INTERFACES_PATH),
           from: "package.json",
-          to: resolve("dist/subsurface-interfaces")
+          to: resolve("dist/subsurface-interfaces"),
         },
         {
           context: resolve(SUBSURFACE_INTERFACES_PATH),
           from: "README.md",
-          to: resolve("dist/subsurface-interfaces")
-        }
-      ]
-    })
+          to: resolve("dist/subsurface-interfaces"),
+        },
+      ],
+    }),
   ],
-  externals: [{
-    react: {
-      root: "React",
-      commonjs2: "react",
-      commonjs: "react",
-      amd: "react",
-      umd: "react"
+  externals: [
+    {
+      react: {
+        root: "React",
+        commonjs2: "react",
+        commonjs: "react",
+        amd: "react",
+        umd: "react",
+      },
+      "react-dom": {
+        root: "ReactDOM",
+        commonjs2: "react-dom",
+        commonjs: "react-dom",
+        amd: "react-dom",
+        umd: "react-dom",
+      },
+      redux: "redux",
+      "react-redux": "react-redux",
+      // "three": "three",
+      // "fabric": "fabric"
     },
-    "react-dom": {
-      root: "ReactDOM",
-      commonjs2: "react-dom",
-      commonjs: "react-dom",
-      amd: "react-dom",
-      umd: "react-dom"
-    },
-    redux: "redux",
-    "react-redux": "react-redux",
-    // "three": "three",
-    // "fabric": "fabric"
-  },
-    /@material-ui\/[a-z,\/]*/i]
+    /@material-ui\/[a-z,/]*/i,
+  ],
 });

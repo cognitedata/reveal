@@ -1,7 +1,10 @@
 {
   "extends": "../../../tsconfig.json",
   "compilerOptions": {
-    "declarationDir": "../../../dist/subsurface-components/types",
+    "declarationDir": "../../../dist/subsurface-components/types"
   },
-  "include": ["../../UserInterface/Components/**/*.ts", "../../UserInterface/Components/**/*.tsx"]
+  "include": [
+    "../../UserInterface/Components/**/*.ts",
+    "../../UserInterface/Components/**/*.tsx"
+  ]
 }

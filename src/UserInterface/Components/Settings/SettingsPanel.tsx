@@ -1,6 +1,6 @@
 import React from "react";
 import { SettingPanelProps } from "@/UserInterface/Components/Settings/Types";
-import SettingsToolBar from "@/UserInterface/Components/Settings/SettingsToolBar";
+import PanelTitleBar from "@/UserInterface/Components/PanelTitleBar/PanelTitleBar";
 import SettingsSection from "@/UserInterface/Components/Settings/SettingsSection";
 
 //==================================================
@@ -15,7 +15,7 @@ export default function SettingsPanel(props: SettingPanelProps) {
       {id ? (
         <>
           {titleBar && (
-            <SettingsToolBar
+            <PanelTitleBar
               sectionId="-1"
               className="settings-title-bar"
               title={titleBar.name}

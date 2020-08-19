@@ -104,7 +104,7 @@ export function VirtualTree(props: VirtualTreeProps) {
               aria-label="select tree item"
               className={`tree-item-lbl${item.selected ? " selected" : ""}`}
               onClick={onNodeSelect}
-              onKeyDown={onNodeLabelEnter}
+              onKeyUp={onNodeLabelEnter}
               style={{
                 fontWeight: bold ? "bold" : "normal",
                 fontStyle: italic ? "italic" : "normal",
