@@ -11,7 +11,8 @@ import {
 import { CanvasWrapper } from '../../src/components/styled';
 import { DemoProps } from '../../src/components/DemoProps';
 
-export default function Cognite3DViewerDemo({ client }: DemoProps) {
+
+export default function Cognite3DViewerDemo({ client, modelId, revisionId }: DemoProps) {
   const canvasWrapperRef = useRef(null);
   useEffect(() => {
     if (!client || !canvasWrapperRef.current) {
@@ -23,13 +24,15 @@ export default function Cognite3DViewerDemo({ client }: DemoProps) {
       sdk: client,
       domElement: canvasWrapperRef.current,
     });
-    addModel({ modelId: 5641986602571236, revisionId: 5254077049582015 });
+    addModel({ modelId, revisionId });
 
     async function addModel(options: AddModelOptions) {
       const model = await viewer.addModel(options);
       viewer.fitCameraToModel(model);
+      (window as any).model = model;
     }
 
+    (window as any).viewer = viewer;
     return () => {
       viewer && viewer.dispose();
     };
