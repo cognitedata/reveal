@@ -6,9 +6,29 @@ import { ContentContainer } from '../../elements';
 import ApiContext from '../../contexts/ApiContext';
 
 const StatusIcon = styled(Icon)`
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: ${(props) => props.color};
   & svg {
     width: 8px;
+  }
+`;
+
+const InfoIcons = styled.div`
+  height: 100%;
+  display: flex;
+  align-items: center;
+`;
+
+const DirectionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  & svg {
+    width: 12px;
+    margin-bottom: -4px;
   }
 `;
 
@@ -26,7 +46,7 @@ const fauxColumns = [
         case 'Inactive':
           color = 'var(--cogs-greyscale-grey5)';
       }
-      return <StatusIcon type="Circle" color={color} />;
+      return <StatusIcon type="Info" color={color} />;
     },
   },
   {
@@ -59,18 +79,50 @@ const fauxColumns = [
     dataIndex: 'project',
     key: 'project',
   },
+  {
+    title: '',
+    dataIndex: 'actions',
+    key: 'actions',
+    render: (_: any, record: any) => {
+      return <RowActions record={record} />;
+    },
+  },
 ];
+
+const ActiveDirections = ({ record }: any) => {
+  return (
+    <DirectionContainer>
+      <Icon
+        type="ArrowRight"
+        style={{ color: 'var(--cogs-greyscale-grey5)' }}
+      />
+      <Icon type="ArrowLeft" style={{ color: 'var(--cogs-midblue-3)' }} />
+    </DirectionContainer>
+  );
+};
+
+const RowActions = ({ record }: any) => {
+  return (
+    <InfoIcons>
+      <ActiveDirections record={record} />
+      <Icon type="TriangleRight" />
+      <Icon type="Link" style={{ transform: 'rotate(-45deg)' }} />
+      <Icon type="Document" style={{ color: 'red' }} />
+    </InfoIcons>
+  );
+};
 
 const Configurations = () => {
   const { api } = useContext(ApiContext);
   const [data, setData] = useState<any[]>([]);
-  const [columns, setColumns] = useState<any[]>(fauxColumns);
+  const [columns, setColumns] = useState<any[]>([]);
 
   useEffect(() => {
     api!.configurations.get().then((response) => {
       setData(response);
+      setColumns(fauxColumns);
     });
-  });
+  }, []);
 
   return (
     <ContentContainer>
