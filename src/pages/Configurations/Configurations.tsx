@@ -1,121 +1,81 @@
-/* eslint-disable no-console */
-import React from 'react';
-import { Button, Icon } from '@cognite/cogs.js';
-import Table from 'components/Organisms/Table';
-import { Trans } from 'react-i18next';
-import { ContentContainer } from './elements';
-import ExpandableInput from '../../components/Molecules/ExpandableInput';
+import React, { useContext, useEffect, useState } from 'react';
+import { Table } from 'antd';
+import { Icon } from '@cognite/cogs.js';
+import styled from 'styled-components';
+import { ContentContainer } from '../../elements';
+import ApiContext from '../../contexts/ApiContext';
 
-const dataSource = [
-  {
-    key: '1',
-    status: 'Active',
-    name: 'CWP_session_1',
-    revision: '17/12/2009',
-    author: 'Erland Glad Solstrand',
-    repositoryProject: 'Valhall_2212/Proj_29991',
-    options: {
-      icon: <Icon type="Circle" style={{ color: 'var(--cogs-success)' }} />,
-    },
-    actions: [
-      <Button
-        key="edit"
-        size="small"
-        onClick={() => console.log('Edit CWP_session_1')}
-      >
-        <Trans i18nKey="Global:BtnEdit" />
-      </Button>,
-    ],
-  },
-  {
-    key: '2',
-    status: 'Inactive',
-    name: 'CWP_session_2',
-    revision: '17/12/2010',
-    author: 'Adam Tombleson',
-    repositoryProject: 'Ivar_Aasen_foobar/Proj_29991',
-    options: {
-      icon: (
-        <Icon type="Circle" style={{ color: 'var(--cogs-greyscale-grey5)' }} />
-      ),
-      expandable: true,
-    },
-    actions: [
-      <Button
-        key="edit"
-        size="small"
-        onClick={() => console.log('Edit CWP_session_2')}
-      >
-        <Trans i18nKey="Global:BtnEdit" />
-      </Button>,
-    ],
-  },
-  {
-    key: '3',
-    status: 'Inactive',
-    name: 'CWP_session_3',
-    revision: '23/01/2020',
-    author: 'Rui Martins',
-    repositoryProject: 'Alvheim/Proj_29991',
-    options: {
-      icon: (
-        <Icon type="Circle" style={{ color: 'var(--cogs-greyscale-grey5)' }} />
-      ),
-    },
-    actions: [
-      <Button
-        key="edit"
-        size="small"
-        onClick={() => console.log('Edit CWP_session_3')}
-      >
-        <Trans i18nKey="Global:BtnEdit" />
-      </Button>,
-    ],
-  },
-];
+const StatusIcon = styled(Icon)`
+  color: ${(props) => props.color};
+  & svg {
+    width: 8px;
+  }
+`;
 
-const columns = [
+const fauxColumns = [
   {
-    title: 'Status',
+    title: '',
+    dataIndex: 'statusIcon',
+    key: 'statusIcon',
+    render: (_: any, record: any) => {
+      let color = 'var(--cogs-success)';
+      switch (record.status) {
+        case 'Active':
+          color = 'var(--cogs-success)';
+          break;
+        case 'Inactive':
+          color = 'var(--cogs-greyscale-grey5)';
+      }
+      return <StatusIcon type="Circle" color={color} />;
+    },
+  },
+  {
+    title: 'status',
     dataIndex: 'status',
     key: 'status',
   },
   {
-    title: '',
-    dataIndex: '',
-    key: 'expander',
-    render: () => <Icon type="Down" />,
-  },
-  {
-    title: 'Name',
+    title: 'name',
     dataIndex: 'name',
     key: 'name',
   },
   {
-    title: 'Revision',
+    title: 'revision',
     dataIndex: 'revision',
     key: 'revision',
   },
   {
-    title: 'Author',
+    title: 'author',
     dataIndex: 'author',
     key: 'author',
   },
   {
-    title: 'Repository/Project',
-    dataIndex: 'repositoryProject',
-    key: 'repositoryProject',
+    title: 'repository',
+    dataIndex: 'repository',
+    key: 'repository',
+  },
+  {
+    title: 'project',
+    dataIndex: 'project',
+    key: 'project',
   },
 ];
 
 const Configurations = () => {
+  const { api } = useContext(ApiContext);
+  const [data, setData] = useState<any[]>([]);
+  const [columns, setColumns] = useState<any[]>(fauxColumns);
+
+  useEffect(() => {
+    api!.configurations.get().then((response) => {
+      setData(response);
+    });
+  });
+
   return (
-    <>
-      <ExpandableInput />
-      <ContentContainer>
-        <Table dataSource={dataSource} columns={columns} />
-      </ContentContainer>
-    </>
+    <ContentContainer>
+      <Table dataSource={data} columns={columns} rowKey="id" />
+    </ContentContainer>
   );
 };
 
