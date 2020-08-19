@@ -360,63 +360,65 @@ export const ResourcePreviewSidebar = ({
         )}
         {content}
       </ResourcePreviewWrapper>
-      {showLinkResource && (
-        <ResourceActionsProvider>
-          <ResourceSelectionProvider
-            mode="single"
-            onSelect={item => {
-              let itemExternalId: string | undefined;
-              let itemType: CogniteAnnotation['resourceType'];
-              switch (item.type) {
-                case 'assets': {
-                  const asset = getAsset(item.id);
-                  itemType = 'asset';
-                  if (asset) {
-                    itemExternalId = asset.externalId;
-                  }
-                  break;
+      <ResourceActionsProvider>
+        <ResourceSelectionProvider
+          mode="single"
+          onSelect={item => {
+            let itemExternalId: string | undefined;
+            let itemType: CogniteAnnotation['resourceType'];
+            switch (item.type) {
+              case 'assets': {
+                const asset = getAsset(item.id);
+                itemType = 'asset';
+                if (asset) {
+                  itemExternalId = asset.externalId;
                 }
-                case 'files': {
-                  const previewFile = getFile(item.id);
-                  itemType = 'file';
-                  if (previewFile) {
-                    itemExternalId = previewFile.externalId;
-                  }
-                  break;
-                }
-                case 'sequences': {
-                  itemType = 'sequence';
-                  const sequence = getSequence(item.id);
-                  if (sequence) {
-                    itemExternalId = sequence.externalId;
-                  }
-                  break;
-                }
-                case 'timeseries': {
-                  itemType = 'timeSeries';
-                  const timeseries = getTimeseries(item.id);
-                  if (timeseries) {
-                    itemExternalId = timeseries.externalId;
-                  }
-                  break;
-                }
+                break;
               }
-              updateAnnotation({
-                ...selectedAnnotation!,
-                resourceType: itemType,
-                resourceExternalId: itemExternalId,
-                resourceId: item.id,
-              });
-            }}
+              case 'files': {
+                const previewFile = getFile(item.id);
+                itemType = 'file';
+                if (previewFile) {
+                  itemExternalId = previewFile.externalId;
+                }
+                break;
+              }
+              case 'sequences': {
+                itemType = 'sequence';
+                const sequence = getSequence(item.id);
+                if (sequence) {
+                  itemExternalId = sequence.externalId;
+                }
+                break;
+              }
+              case 'timeseries': {
+                itemType = 'timeSeries';
+                const timeseries = getTimeseries(item.id);
+                if (timeseries) {
+                  itemExternalId = timeseries.externalId;
+                }
+                break;
+              }
+            }
+            updateAnnotation({
+              ...selectedAnnotation!,
+              resourceType: itemType,
+              resourceExternalId: itemExternalId,
+              resourceId: item.id,
+            });
+            setShowLinkResource(false);
+          }}
+        >
+          <ResourceSidebar
+            onClose={() => setShowLinkResource(false)}
+            visible={showLinkResource}
           >
-            <ResourceSidebar onClose={() => setShowLinkResource(false)}>
-              {annotationPreview && (
-                <PreviewImage src={annotationPreview} alt="preview" />
-              )}
-            </ResourceSidebar>
-          </ResourceSelectionProvider>
-        </ResourceActionsProvider>
-      )}
+            {annotationPreview && (
+              <PreviewImage src={annotationPreview} alt="preview" />
+            )}
+          </ResourceSidebar>
+        </ResourceSelectionProvider>
+      </ResourceActionsProvider>
     </>
   );
 };
@@ -428,4 +430,6 @@ const PreviewImage = styled.img`
   width: auto;
   object-fit: contain;
   display: block;
+  align-self: flex-start;
+  margin-bottom: 16px;
 `;

@@ -11,6 +11,7 @@ import { retrieve, itemSelector } from 'modules/assets';
 import { useResourceActionsContext } from 'context/ResourceActionsContext';
 import { TimeseriesSmallPreview } from 'containers/Timeseries';
 import { FileSmallPreview } from 'containers/Files';
+import { useSelectionButton } from 'hooks/useSelection';
 
 const createTimeseriesFilter = (assetId: number): TimeseriesFilterQuery => ({
   filter: { assetSubtreeIds: [{ id: assetId }] },
@@ -29,6 +30,7 @@ export const AssetSmallPreview = ({
 }) => {
   const renderResourceActions = useResourceActionsContext();
   const dispatch = useDispatch();
+  const selectionButton = useSelectionButton()({ type: 'assets', id: assetId });
   const { files: assetFiles } = useSelector(linkedFilesSelectorByAssetId)(
     assetId
   );
@@ -45,7 +47,7 @@ export const AssetSmallPreview = ({
   }, [assetId, dispatch]);
 
   const actions = useMemo(() => {
-    const items: React.ReactNode[] = [];
+    const items: React.ReactNode[] = [selectionButton];
     items.push(...(propActions || []));
     items.push(
       ...renderResourceActions({
@@ -53,26 +55,28 @@ export const AssetSmallPreview = ({
       })
     );
     return items;
-  }, [renderResourceActions, assetId, propActions]);
+  }, [renderResourceActions, selectionButton, assetId, propActions]);
 
   const asset = useSelector(itemSelector)(assetId);
   if (!asset) {
     return <Loader />;
   }
   return (
-    <AssetDetailsAbstract
-      key={assetId}
-      asset={asset}
-      timeseries={assetTimeseries || []}
-      files={assetFiles || []}
-      extras={extras}
-      actions={actions}
-      timeseriesPreview={timeseries => (
-        <TimeseriesSmallPreview timeseriesId={timeseries.id} />
-      )}
-      filePreview={file => <FileSmallPreview fileId={file.id} />}
-    >
-      {children}
-    </AssetDetailsAbstract>
+    <>
+      <AssetDetailsAbstract
+        key={assetId}
+        asset={asset}
+        timeseries={assetTimeseries || []}
+        files={assetFiles || []}
+        extras={extras}
+        actions={actions}
+        timeseriesPreview={timeseries => (
+          <TimeseriesSmallPreview timeseriesId={timeseries.id} />
+        )}
+        filePreview={file => <FileSmallPreview fileId={file.id} />}
+      >
+        {children}
+      </AssetDetailsAbstract>
+    </>
   );
 };

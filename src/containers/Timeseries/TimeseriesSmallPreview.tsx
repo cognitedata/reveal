@@ -3,6 +3,7 @@ import { TimeseriesDetailsAbstract, Loader } from 'components/Common';
 import { useDispatch, useSelector } from 'react-redux';
 import { itemSelector, retrieve } from 'modules/timeseries';
 import { useResourceActionsContext } from 'context/ResourceActionsContext';
+import { useSelectionButton } from 'hooks/useSelection';
 
 export const TimeseriesSmallPreview = ({
   timeseriesId,
@@ -17,6 +18,10 @@ export const TimeseriesSmallPreview = ({
 }) => {
   const dispatch = useDispatch();
   const renderResourceActions = useResourceActionsContext();
+  const selectionButton = useSelectionButton()({
+    type: 'timeseries',
+    id: timeseriesId,
+  });
 
   useEffect(() => {
     dispatch(retrieve([{ id: timeseriesId }]));
@@ -25,7 +30,7 @@ export const TimeseriesSmallPreview = ({
   const timeseries = useSelector(itemSelector)(timeseriesId);
 
   const actions = useMemo(() => {
-    const items: React.ReactNode[] = [];
+    const items: React.ReactNode[] = [selectionButton];
     items.push(...(propActions || []));
     items.push(
       ...renderResourceActions({
@@ -33,7 +38,7 @@ export const TimeseriesSmallPreview = ({
       })
     );
     return items;
-  }, [renderResourceActions, timeseriesId, propActions]);
+  }, [selectionButton, renderResourceActions, timeseriesId, propActions]);
 
   if (!timeseries) {
     return <Loader />;

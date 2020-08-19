@@ -63,8 +63,8 @@ export default function App() {
 
   return (
     <Suspense fallback={<Spinner />}>
-      <ResourceActionsProvider>
-        <ResourceSelectionProvider>
+      <ResourceSelectionProvider>
+        <ResourceActionsProvider>
           <Switch>
             <Redirect
               from="/:url*(/+)"
@@ -89,8 +89,8 @@ export default function App() {
               )}
             />
           </Switch>
-        </ResourceSelectionProvider>
-      </ResourceActionsProvider>
+        </ResourceActionsProvider>
+      </ResourceSelectionProvider>
     </Suspense>
   );
 }

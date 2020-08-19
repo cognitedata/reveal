@@ -26,7 +26,7 @@ const DocumentPagination = styled(Pagination)`
 const Buttons = styled.div`
   display: inline-flex;
   position: absolute;
-  z-index: 1000;
+  z-index: 2;
   right: 24px;
   bottom: 24px;
   && #controls {
@@ -199,9 +199,7 @@ export const FileViewer = React.forwardRef<ReactPictureAnnotation, Props>(
           pdf={
             file && file.mimeType === 'application/pdf' ? previewUrl : undefined
           }
-          image={
-            file && file.mimeType !== 'application/pdf' ? previewUrl : undefined
-          }
+          image={file && isImage(file) ? previewUrl : undefined}
           creatable={creatable}
           width={width}
           height={height}
@@ -276,4 +274,9 @@ export const retrieveDownloadUrl = async (
   } catch {
     return undefined;
   }
+};
+
+export const isImage = async (file: FilesMetadata) => {
+  const { mimeType = '' } = file;
+  return ['png, jpeg, jpg'].some(el => mimeType.includes(el));
 };

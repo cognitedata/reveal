@@ -1,7 +1,7 @@
 import React from 'react';
 import { InfoGrid, InfoCell } from './InfoGrid';
 
-export default { title: 'Molecules|InfoGrid' };
+export default { title: 'Molecules/InfoGrid' };
 
 export const Example = () => (
   <>

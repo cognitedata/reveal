@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Icon, Button, Title, Badge, Colors } from '@cognite/cogs.js';
+import { Icon, Button, Title, Badge, Colors, Body } from '@cognite/cogs.js';
 import { InfoGrid, InfoCell, ListItem, ButtonRow } from 'components/Common';
 import { Asset, FilesMetadata, GetTimeSeriesMetadataDTO } from '@cognite/sdk';
 import { AssetBreadcrumb } from '@cognite/gearbox';
 import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { ResourceType } from 'modules/sdk-builder/types';
+import { useResourcesState } from 'context/ResourceSelectionContext';
 
 const LIST_ITEM_HEIGHT = 42;
 
@@ -73,6 +74,11 @@ export const AssetDetailsAbstract = ({
   timeseriesPreview,
   filePreview,
 }: AssetDetailsProps) => {
+  const resourcesState = useResourcesState();
+
+  const currentlyViewing = resourcesState.find(
+    el => el.type === 'assets' && el.state === 'active'
+  );
   const [selected, setSelected] = useState<
     { type: ResourceType; id: number } | undefined
   >(undefined);
@@ -116,13 +122,35 @@ export const AssetDetailsAbstract = ({
   }
   return (
     <InfoGrid noBorders>
+      {asset.id === (currentlyViewing || {}).id && (
+        <InfoCell
+          noBorders
+          containerStyles={{
+            display: 'flex',
+            alignItems: 'center',
+            color: Colors['greyscale-grey6'].hex(),
+          }}
+        >
+          <Body
+            level={2}
+            strong
+            style={{
+              alignItems: 'center',
+              display: 'flex',
+            }}
+          >
+            <Icon type="Eye" style={{ marginRight: 8 }} /> Currently Viewing
+            Asset
+          </Body>
+        </InfoCell>
+      )}
       {extras && (
         <div style={{ position: 'absolute', top: '16px', right: '16px' }}>
           {extras}
         </div>
       )}
       {asset.name && (
-        <InfoCell containerStyles={{ paddingBottom: 0 }} noBorders>
+        <InfoCell noPadding noBorders>
           <Title level={5} style={{ display: 'flex', alignItems: 'center' }}>
             <IconWrapper>
               <Icon type="DataStudio" />
@@ -142,7 +170,7 @@ export const AssetDetailsAbstract = ({
         </InfoCell>
       )}
 
-      <InfoCell noBorders>
+      <InfoCell noBorders noPadding>
         <p>LOCATION</p>
         <AssetBreadcrumb assetId={asset.id} />
       </InfoCell>

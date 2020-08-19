@@ -10,16 +10,14 @@ import { SequenceExplorer } from 'containers/Sequences';
 import { TimeseriesExplorer } from 'containers/Timeseries';
 import { useHistory } from 'react-router';
 import { useTenant } from 'hooks/CustomHooks';
-import { ShoppingCart } from './ShoppingCart';
+import ResourceSelectionContext, {
+  ResourceItem,
+} from 'context/ResourceSelectionContext';
 import { ExplorationNavbar } from './ExplorationNavbar';
 
 const Wrapper = styled.div`
   flex: 1;
-  width: 100vw;
-  height: calc(100vh - 64px);
-  position: absolute;
-  top: 0;
-  left: 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
 `;
@@ -28,31 +26,15 @@ export const Explorer = () => {
   const history = useHistory();
   const tenant = useTenant();
   const { add, remove } = useContext(ResourceActionsContext);
-  const [cart, setCart] = useState<ShoppingCart>({
-    assets: [],
-    timeseries: [],
-    files: [],
-  });
+  const { setOnSelectListener, setResourcesState } = useContext(
+    ResourceSelectionContext
+  );
+  const [cart, setCart] = useState<ResourceItem[]>([]);
 
   const { pathname } = history.location;
 
   const renderResourceActions: RenderResourceActionsFunction = useCallback(
     ({ fileId, assetId, timeseriesId, sequenceId }) => {
-      const checkIsInCart = () => {
-        if (fileId && cart.files.some(el => el === fileId)) {
-          return true;
-        }
-        if (timeseriesId && cart.timeseries.some(el => el === timeseriesId)) {
-          return true;
-        }
-        if (assetId && cart.assets.some(el => el === assetId)) {
-          return true;
-        }
-        return false;
-      };
-
-      const isInCart = checkIsInCart();
-
       const viewButton = () => {
         let resourceName = '';
         let path = '';
@@ -75,7 +57,7 @@ export const Explorer = () => {
         if (!pathname.includes(path)) {
           return (
             <Button
-              type="secondary"
+              type="primary"
               key="view"
               onClick={() => {
                 window.dispatchEvent(new Event('Resource Selected'));
@@ -90,63 +72,37 @@ export const Explorer = () => {
         return null;
       };
 
-      return [
-        viewButton(),
-        <Button
-          key="add-to-cart"
-          type={isInCart ? 'secondary' : 'primary'}
-          onClick={() => {
-            if (isInCart) {
-              if (fileId) {
-                setCart({
-                  ...cart,
-                  files: cart.files.filter(el => el !== fileId),
-                });
-              } else if (timeseriesId) {
-                setCart({
-                  ...cart,
-                  timeseries: cart.timeseries.filter(el => el !== timeseriesId),
-                });
-              } else if (assetId) {
-                setCart({
-                  ...cart,
-                  assets: cart.assets.filter(el => el !== timeseriesId),
-                });
-              }
-            } else if (fileId) {
-              setCart({
-                ...cart,
-                files: [...cart.files, fileId],
-              });
-            } else if (timeseriesId) {
-              setCart({
-                ...cart,
-                timeseries: [...cart.timeseries, timeseriesId],
-              });
-            } else if (assetId) {
-              setCart({
-                ...cart,
-                assets: [...cart.assets, assetId],
-              });
-            }
-          }}
-        >
-          {isInCart ? 'Remove from Kit' : 'Add to Kit'}
-        </Button>,
-      ];
+      return [viewButton()];
     },
-    [cart, tenant, history, pathname]
+    [tenant, history, pathname]
   );
 
   useEffect(() => {
-    add('cart', renderResourceActions);
+    add('explore', renderResourceActions);
   }, [add, renderResourceActions]);
 
   useEffect(() => {
     return () => {
-      remove('cart');
+      remove('explore');
     };
   }, [remove]);
+
+  useEffect(() => {
+    setOnSelectListener(() => (item: ResourceItem) => {
+      const index = cart.findIndex(
+        el => el.type === item.type && el.id === item.id
+      );
+      if (index > -1) {
+        setCart(cart.slice(0, index).concat(cart.slice(index + 1)));
+      } else {
+        setCart(cart.concat([item]));
+      }
+    });
+  }, [setOnSelectListener, cart]);
+
+  useEffect(() => {
+    setResourcesState(cart.map(el => ({ ...el, state: 'selected' })));
+  }, [setResourcesState, cart]);
 
   const match = useRouteMatch();
   let showSearch = false;

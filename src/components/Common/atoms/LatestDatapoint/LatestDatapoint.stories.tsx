@@ -32,7 +32,7 @@ const exampleTimeSeries: GetTimeSeriesMetadataDTO[] = [
   },
 ];
 
-export default { title: 'Molecules|LatestDatapoint' };
+export default { title: 'Molecules/LatestDatapoint' };
 
 export const Example = () => (
   <Container>

@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { Asset, GetTimeSeriesMetadataDTO, FilesMetadata } from '@cognite/sdk';
 import { Icon, Colors, Button, Title, Dropdown, Menu } from '@cognite/cogs.js';
 import { ListItem } from 'components/Common';
 import {
@@ -17,29 +16,14 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import copy from 'copy-to-clipboard';
 import { useTenant, useEnv } from 'hooks/CustomHooks';
+import { ResourceItem } from 'context/ResourceSelectionContext';
 
-export type ShoppingCartWithContent = {
-  assets: {
-    [key: number]: Asset;
-  };
-  timeseries: {
-    [key: number]: GetTimeSeriesMetadataDTO;
-  };
-  files: {
-    [key: number]: FilesMetadata;
-  };
-};
-export type ShoppingCart = {
-  assets: number[];
-  timeseries: number[];
-  files: number[];
-};
 export const ShoppingCartPreview = ({
   cart,
   setCart,
 }: {
-  cart: ShoppingCart;
-  setCart: (cart: ShoppingCart) => void;
+  cart: ResourceItem[];
+  setCart: (cart: ResourceItem[]) => void;
 }) => {
   const dispatch = useDispatch();
   const tenant = useTenant();
@@ -49,56 +33,69 @@ export const ShoppingCartPreview = ({
   const getAsset = useSelector(assetsSelector);
 
   useEffect(() => {
-    dispatch(retrieveFiles(cart.files.map(id => ({ id }))));
-    dispatch(retrieveAssets(cart.assets.map(id => ({ id }))));
-    dispatch(retrieveTimeseries(cart.timeseries.map(id => ({ id }))));
+    dispatch(
+      retrieveFiles(
+        cart.filter(el => el.type === 'files').map(({ id }) => ({ id }))
+      )
+    );
+    dispatch(
+      retrieveAssets(
+        cart.filter(el => el.type === 'assets').map(({ id }) => ({ id }))
+      )
+    );
+    dispatch(
+      retrieveTimeseries(
+        cart.filter(el => el.type === 'timeseries').map(({ id }) => ({ id }))
+      )
+    );
   }, [dispatch, cart]);
 
-  const onDeleteClicked = ({
-    assetId,
-    timeseriesId,
-    fileId,
-  }: {
-    assetId?: number;
-    timeseriesId?: number;
-    fileId?: number;
-  }) => {
-    const newCart = { ...cart };
-    if (fileId) {
-      delete newCart.files[fileId];
-    } else if (timeseriesId) {
-      delete newCart.timeseries[timeseriesId];
-    } else if (assetId) {
-      delete newCart.assets[assetId];
-    }
-    setCart(newCart);
+  const onDeleteClicked = (item: ResourceItem) => {
+    setCart(cart.filter(el => el.type !== item.type && el.id !== item.id));
   };
 
-  const renderDeleteItemButton = (ids: {
-    assetId?: number;
-    timeseriesId?: number;
-    fileId?: number;
-  }) => (
+  const renderDeleteItemButton = (item: ResourceItem) => (
     <Icon
       style={{
         alignSelf: 'center',
         color: Colors.danger.hex(),
       }}
       type="Delete"
-      onClick={() => onDeleteClicked(ids)}
+      onClick={() => onDeleteClicked(item)}
     />
   );
+
+  const assets: ResourceItem[] = [];
+  const files: ResourceItem[] = [];
+  const timeseries: ResourceItem[] = [];
+
+  cart.forEach(el => {
+    switch (el.type) {
+      case 'assets': {
+        assets.push(el);
+        break;
+      }
+      case 'timeseries': {
+        timeseries.push(el);
+        break;
+      }
+      case 'files': {
+        files.push(el);
+        break;
+      }
+    }
+  });
   return (
     <div style={{ width: 300, position: 'relative' }}>
       <div style={{ height: '400px', overflowY: 'auto' }}>
         <Title level={5} style={{ marginBottom: 8 }}>
           Asset
         </Title>
-        {Object.values(cart.assets).map(el => {
-          const asset = getAsset(el);
+        {assets.map(item => {
+          const asset = getAsset(item.id);
           return (
             <ListItem
-              key={el}
+              key={item.id}
               bordered
               title={
                 <div style={{ display: 'inline-flex', alignItems: 'center' }}>
@@ -113,18 +110,18 @@ export const ShoppingCartPreview = ({
                 </div>
               }
             >
-              {renderDeleteItemButton({ assetId: el })}
+              {renderDeleteItemButton(item)}
             </ListItem>
           );
         })}
         <Title level={5} style={{ marginBottom: 8 }}>
           Time series
         </Title>
-        {Object.values(cart.timeseries).map(el => {
-          const ts = getTimeseries(el);
+        {timeseries.map(item => {
+          const ts = getTimeseries(item.id);
           return (
             <ListItem
-              key={el}
+              key={item.id}
               bordered
               title={
                 <div style={{ display: 'inline-flex', alignItems: 'center' }}>
@@ -139,18 +136,18 @@ export const ShoppingCartPreview = ({
                 </div>
               }
             >
-              {renderDeleteItemButton({ timeseriesId: el })}
+              {renderDeleteItemButton(item)}
             </ListItem>
           );
         })}
         <Title level={5} style={{ marginBottom: 8 }}>
           Files
         </Title>
-        {Object.values(cart.files).map(el => {
-          const file = getFile(el);
+        {files.map(item => {
+          const file = getFile(item.id);
           return (
             <ListItem
-              key={el}
+              key={item.id}
               bordered
               title={
                 <div style={{ display: 'inline-flex', alignItems: 'center' }}>
@@ -165,7 +162,7 @@ export const ShoppingCartPreview = ({
                 </div>
               }
             >
-              {renderDeleteItemButton({ fileId: el })}
+              {renderDeleteItemButton(item)}
             </ListItem>
           );
         })}
@@ -192,24 +189,24 @@ export const ShoppingCartPreview = ({
               <Menu.Item
                 onClick={() => {
                   const urls = [];
-                  if (cart.assets.length > 0) {
+                  if (assets.length > 0) {
                     urls.push(
-                      `Assets?$filter=${cart.assets
-                        .map(id => `(Id eq ${id})`)
+                      `Assets?$filter=${assets
+                        .map(item => `(Id eq ${item.id})`)
                         .join(' or ')}`
                     );
                   }
-                  if (cart.timeseries.length > 0) {
+                  if (timeseries.length > 0) {
                     urls.push(
-                      `Timeseries?$filter=${cart.timeseries
-                        .map(id => `(Id eq ${id})`)
+                      `Timeseries?$filter=${timeseries
+                        .map(item => `(Id eq ${item.id})`)
                         .join(' or ')}`
                     );
                   }
-                  if (cart.files.length > 0) {
+                  if (files.length > 0) {
                     urls.push(
-                      `Files?$filter=${cart.files
-                        .map(id => `(Id eq ${id})`)
+                      `Files?$filter=${files
+                        .map(item => `(Id eq ${item.id})`)
                         .join(' or ')}`
                     );
                   }

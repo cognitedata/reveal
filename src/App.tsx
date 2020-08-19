@@ -39,7 +39,7 @@ export default () => {
 
   return (
     <AntStyles>
-      <SubAppWrapper>
+      <SubAppWrapper padding={false}>
         <AuthWrapper subAppName="data-exploration">
           <ClientSDKProvider client={sdk}>
             <ThemeProvider theme={theme}>

@@ -8,46 +8,53 @@ import { TimeseriesPreview } from 'containers/Timeseries';
 import { GlobalSearchResults } from 'containers/GlobalSearch/GlobalSearchResults';
 import ResourceActionsContext from 'context/ResourceActionsContext';
 import { RenderResourceActionsFunction } from 'types/Types';
-import {
-  useSelectResource,
-  ResourceItem,
-} from 'context/ResourceSelectionContext';
+import { ResourceItem } from 'context/ResourceSelectionContext';
 import { ResourceType } from 'modules/sdk-builder/types';
 
-const Drawer = styled.div`
+const Drawer = styled.div<{ visible: boolean }>`
   position: fixed;
   top: 64px;
   right: 0;
-  width: 80vw;
+  width: ${props => (props.visible ? '80vw' : '0')};
   height: calc(100vh - 64px);
-  padding: 24px;
-  z-index: 1001;
+  z-index: 4;
   background: #fff;
+  transition: 0.3s all;
+  && > div {
+    padding: 24px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
 `;
-const Overlay = styled.div`
+const Overlay = styled.div<{ visible: boolean }>`
   position: fixed;
   top: 64px;
   right: 0;
   width: 100vw;
   height: calc(100vh - 64px);
-  z-index: 1000;
-  background-color: rgba(0, 0, 0, 0.1);
+  z-index: 3;
+  display: ${props => (props.visible ? 'block' : 'none')};
+  background-color: ${props =>
+    props.visible ? 'rgba(0, 0, 0, 0.1)' : 'rgba(0,0,0,0)'};
+  transition: 0.3s all;
 `;
 
 const CloseButton = styled(Button)`
-  float: right;
+  align-self: flex-end;
 `;
 
 export const ResourceSidebar = ({
+  visible = false,
   onClose,
   children,
 }: {
   onClose: () => void;
+  visible?: boolean;
   children?: React.ReactNode;
 }) => {
   const [query, setQuery] = useState<string>('');
   const { add, remove } = useContext(ResourceActionsContext);
-  const onSelect = useSelectResource();
   const [selectedItem, setSelectedItem] = useState<ResourceItem | undefined>(
     undefined
   );
@@ -93,24 +100,9 @@ export const ResourceSidebar = ({
         return null;
       };
 
-      return [
-        viewButton(),
-        <Button
-          key="select"
-          type="primary"
-          onClick={() => {
-            onSelect({
-              type: resourceType!,
-              id: (fileId || assetId || timeseriesId || sequenceId)!,
-            });
-            onClose();
-          }}
-        >
-          Select {resourceName}
-        </Button>,
-      ];
+      return [viewButton()];
     },
-    [onSelect, onClose]
+    []
   );
 
   useEffect(() => {
@@ -151,6 +143,7 @@ export const ResourceSidebar = ({
           variant="ghost"
           icon="ArrowLeft"
           onClick={() => setSelectedItem(undefined)}
+          style={{ alignSelf: 'flex-start' }}
         >
           Back to search
         </Button>
@@ -176,12 +169,16 @@ export const ResourceSidebar = ({
 
   return (
     <>
-      <Drawer>
-        <CloseButton icon="Close" variant="ghost" onClick={onClose} />
-        {children}
-        {content}
+      <Drawer visible={visible}>
+        {visible && (
+          <div>
+            <CloseButton icon="Close" variant="ghost" onClick={onClose} />
+            {children}
+            {content}
+          </div>
+        )}
       </Drawer>
-      <Overlay onClick={onClose} />
+      <Overlay onClick={onClose} visible={visible} />
     </>
   );
 };

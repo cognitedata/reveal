@@ -1,9 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Icon, Title } from '@cognite/cogs.js';
+import { Icon, Title, Body, Colors } from '@cognite/cogs.js';
 import { InfoGrid, InfoCell, DetailsItem, ButtonRow } from 'components/Common';
 import { Sequence } from '@cognite/sdk';
 import moment from 'moment';
+import { useResourcesState } from 'context/ResourceSelectionContext';
 import { SequenceInfoGrid } from './SequenceInfoGrid';
 
 interface AssetDetailsProps {
@@ -28,22 +29,46 @@ export const SequenceDetailsAbstract = ({
   extras,
   children,
 }: AssetDetailsProps) => {
+  const resourcesState = useResourcesState();
+
+  const currentlyViewing = resourcesState.find(
+    el => el.type === 'sequences' && el.state === 'active'
+  );
   return (
     <InfoGrid
       className="sequence-info-grid"
       noBorders
       style={{ flexDirection: 'column' }}
     >
+      {sequence.id === (currentlyViewing || {}).id && (
+        <InfoCell
+          noBorders
+          containerStyles={{
+            display: 'flex',
+            alignItems: 'center',
+            color: Colors['greyscale-grey6'].hex(),
+          }}
+        >
+          <Body
+            level={2}
+            strong
+            style={{
+              alignItems: 'center',
+              display: 'flex',
+            }}
+          >
+            <Icon type="Eye" style={{ marginRight: 8 }} /> Currently Viewing
+            Sequence
+          </Body>
+        </InfoCell>
+      )}
       {extras && (
         <div style={{ position: 'absolute', top: '16px', right: '16px' }}>
           {extras}
         </div>
       )}
       {sequence.name && (
-        <InfoCell
-          containerStyles={{ paddingTop: 0, paddingBottom: 0 }}
-          noBorders
-        >
+        <InfoCell noBorders noPadding>
           <Title level={5} style={{ display: 'flex', alignItems: 'center' }}>
             <IconWrapper>
               <Icon type="GridFilled" />

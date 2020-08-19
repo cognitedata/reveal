@@ -1,30 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { Body, Colors } from '@cognite/cogs.js';
-import { SearchFilterSection, ListItem } from 'components/Common';
+import React, { useState, useEffect, useContext } from 'react';
+import { Body, Graphic } from '@cognite/cogs.js';
+import { SearchFilterSection, FileTable } from 'components/Common';
 import {
-  FileRequestFilter,
+  FilesMetadata as File,
+  FilesSearchFilter,
   FileFilterProps,
-  FilesMetadata,
 } from '@cognite/sdk';
 import { useSelector, useDispatch } from 'react-redux';
 import { searchSelector, search, count, countSelector } from 'modules/files';
-import Highlighter from 'react-highlight-words';
 import { FileSmallPreview } from 'containers/Files';
+import ResourceSelectionContext from 'context/ResourceSelectionContext';
 import { List, Content, Preview } from './Common';
 
-const FilesFilterMapping: { [key: string]: string } = {
-  mimeType: 'File Type',
-};
+// const FilesFilterMapping: { [key: string]: string } = {};
 
 const buildFilesFilterQuery = (
-  filter: {
-    [key: string]: string;
-  },
+  filter: FileFilterProps,
   query: string | undefined
-): FileRequestFilter => {
-  const reverseLookup: { [key: string]: string } = Object.keys(
-    FilesFilterMapping
-  ).reduce((prev, key) => ({ ...prev, [FilesFilterMapping[key]]: key }), {});
+): FilesSearchFilter => {
+  // const reverseLookup: { [key: string]: string } = Object.keys(
+  //   FilesFilterMapping
+  // ).reduce((prev, key) => ({ ...prev, [FilesFilterMapping[key]]: key }), {});
   return {
     ...(query &&
       query.length > 0 && {
@@ -32,85 +28,118 @@ const buildFilesFilterQuery = (
           name: query,
         },
       }),
-    filter: Object.keys(filter).reduce(
-      (prev, key) => ({
-        ...prev,
-        [reverseLookup[key] || key]: filter[key],
-      }),
-      {}
-    ) as FileFilterProps,
+    filter,
   };
 };
 
-export const FileFilterSearch = ({
-  query,
-  activeIds = [],
-}: {
-  query?: string;
-  activeIds?: number[];
-}) => {
+export const FileFilterSearch = ({ query = '' }: { query?: string }) => {
   const dispatch = useDispatch();
-
-  const [selectedFile, setSelectedFile] = useState<FilesMetadata | undefined>(
-    undefined
-  );
-
-  const [filesFilter, setFilesFilter] = useState<{
-    [key: string]: string;
-  }>({ 'File Type': 'application/pdf' });
+  const { fileFilter, setFileFilter } = useContext(ResourceSelectionContext);
+  const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
 
   const { items: files } = useSelector(searchSelector)(
-    buildFilesFilterQuery(filesFilter, query)
+    buildFilesFilterQuery(fileFilter, query)
   );
-  const { count: fileCount } = useSelector(countSelector)(
-    buildFilesFilterQuery(filesFilter, query)
+  const { count: filesCount } = useSelector(countSelector)(
+    buildFilesFilterQuery(fileFilter, query)
   );
 
   useEffect(() => {
-    dispatch(search(buildFilesFilterQuery(filesFilter, query)));
-    dispatch(count(buildFilesFilterQuery(filesFilter, query)));
-  }, [dispatch, filesFilter, query]);
+    dispatch(search(buildFilesFilterQuery(fileFilter, query)));
+    dispatch(count(buildFilesFilterQuery(fileFilter, query)));
+  }, [dispatch, fileFilter, query]);
+
+  const metadataCategories: { [key: string]: string } = {};
+
+  const tmpMetadata = files.reduce((prev, el) => {
+    if (!prev.source) {
+      prev.source = new Set<string>();
+    }
+    if (!prev.mimeType) {
+      prev.mimeType = new Set<string>();
+    }
+    if (el.source && el.source.length !== 0) {
+      prev.source.add(el.source);
+    }
+    if (el.mimeType && el.mimeType.length !== 0) {
+      prev.mimeType.add(el.mimeType);
+    }
+    Object.keys(el.metadata || {}).forEach(key => {
+      if (key === 'source') {
+        return;
+      }
+      if (el.metadata![key].length !== 0) {
+        if (!metadataCategories[key]) {
+          metadataCategories[key] = 'Metadata';
+        }
+        if (!prev[key]) {
+          prev[key] = new Set<string>();
+        }
+        prev[key].add(el.metadata![key]);
+      }
+    });
+    return prev;
+  }, {} as { [key: string]: Set<string> });
+
+  const metadata = Object.keys(tmpMetadata).reduce((prev, key) => {
+    prev[key] = [...tmpMetadata[key]];
+    return prev;
+  }, {} as { [key: string]: string[] });
+
+  const filters: { [key: string]: string } = {
+    ...(fileFilter.source && { source: fileFilter.source }),
+    ...(fileFilter.mimeType && { mimeType: fileFilter.mimeType }),
+    ...fileFilter.metadata,
+  };
 
   return (
     <>
       <SearchFilterSection
-        metadata={{ 'File Type': ['application/pdf'] }}
-        filters={filesFilter}
-        setFilters={setFilesFilter}
-        lockedFilters={['File Type']}
+        metadata={metadata}
+        filters={filters}
+        metadataCategory={metadataCategories}
+        setFilters={newFilters => {
+          const {
+            source: newSource,
+            mimeType: newMimeType,
+            ...newMetadata
+          } = newFilters;
+          setFileFilter({
+            source: newSource,
+            mimeType: newMimeType,
+            metadata: newMetadata,
+          });
+        }}
       />
       <Content>
         <List>
           <Body>
             {query && query.length > 0
-              ? `${fileCount || 'Loading'} results for "${query}"`
-              : `All ${fileCount || ''} Results`}
+              ? `${filesCount || 'Loading'} results for "${query}"`
+              : `All ${filesCount || ''} Results`}
           </Body>
-          {files.map(el => {
-            return (
-              <ListItem
-                key={el.id}
-                style={{
-                  background: [
-                    selectedFile ? selectedFile.id : undefined,
-                    ...activeIds,
-                  ].some(id => id === el.id)
-                    ? Colors['greyscale-grey3'].hex()
-                    : 'inherit',
-                }}
-                title={
-                  <Highlighter
-                    searchWords={(query || '').split(' ')}
-                    textToHighlight={el.name}
-                  />
-                }
-                onClick={() => setSelectedFile(el)}
-              />
-            );
-          })}
+          <FileTable
+            files={files}
+            onFileClicked={setSelectedFile}
+            query={query}
+          />
         </List>
         <Preview>
           {selectedFile && <FileSmallPreview fileId={selectedFile.id} />}
+          {!selectedFile && (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexDirection: 'column',
+                height: '100%',
+              }}
+            >
+              <Graphic type="Search" />
+              <p>Click on an file to preview here</p>
+            </div>
+          )}
         </Preview>
       </Content>
     </>

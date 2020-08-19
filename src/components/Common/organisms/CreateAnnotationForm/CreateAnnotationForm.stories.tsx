@@ -6,7 +6,7 @@ import { CURRENT_VERSION } from '@cognite/annotations';
 import { v4 as uuid } from 'uuid';
 import { CreateAnnotationForm } from './CreateAnnotationForm';
 
-export default { title: 'Organisms|CreateAnnotationForm' };
+export default { title: 'Organisms/CreateAnnotationForm' };
 
 export const Default = () => {
   const [pendingAnnotation, setPendingAnnotation] = useState<

@@ -94,7 +94,15 @@ export const CreateAnnotationForm = ({
       {previewImageSrc && <PreviewImage src={previewImageSrc} alt="preview" />}
       <p>{buttonText}</p>
       <Button onClick={onLinkResource}>
-        <Icon type="Edit" /> Edit Linkage
+        {annotation.resourceType ? (
+          <>
+            <Icon type="Edit" /> Edit Resource Link
+          </>
+        ) : (
+          <>
+            <Icon type="Plus" /> Link to Resource
+          </>
+        )}
       </Button>
       <Input
         variant="noBorder"

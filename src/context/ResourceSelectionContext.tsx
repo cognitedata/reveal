@@ -1,7 +1,7 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { ResourceType } from 'modules/sdk-builder/types';
 import {
-  AssetFilter,
+  AssetFilterProps,
   TimeseriesFilter,
   FileFilterProps,
   EventFilter,
@@ -13,30 +13,30 @@ export type ResourceItem = {
   id: number;
   type: ResourceType;
 };
-export type DisabledResourceItem = ResourceItem & {
-  state: 'disabled' | 'active';
+export type ResourceItemState = ResourceItem & {
+  state: 'disabled' | 'active' | 'selected';
 };
 export type OnSelectListener = (items: ResourceItem) => void;
 
 export type ResourceSelectionObserver = {
   mode: ResourceSelectionMode;
   setMode: (newMode: ResourceSelectionMode) => void;
-  disabledResources: DisabledResourceItem[];
-  setDisabledResources: (items: DisabledResourceItem[]) => void;
+  resourcesState: ResourceItemState[];
+  setResourcesState: React.Dispatch<React.SetStateAction<ResourceItemState[]>>;
   resourceTypes: ResourceType[];
   setResourceTypes: (newTypes: ResourceType[]) => void;
-  defaultAssetFilter: AssetFilter;
-  setDefaultAssetFilter: (newFilter: AssetFilter) => void;
-  defaultTimeseriesFilter: TimeseriesFilter;
-  setDefaultTimeseriesFilter: (newFilter: TimeseriesFilter) => void;
-  defaultFileFilter: FileFilterProps;
-  setDefaultFileFilter: (newFilter: FileFilterProps) => void;
-  defaultEventFilter: EventFilter;
-  setDefaultEventFilter: (newFilter: EventFilter) => void;
-  defaultSequenceFilter: SequenceFilter;
-  setDefaultSequenceFilter: (newFilter: SequenceFilter) => void;
+  assetFilter: AssetFilterProps;
+  setAssetFilter: (newFilter: AssetFilterProps) => void;
+  timeseriesFilter: TimeseriesFilter;
+  setTimeseriesFilter: (newFilter: TimeseriesFilter) => void;
+  fileFilter: FileFilterProps;
+  setFileFilter: (newFilter: FileFilterProps) => void;
+  eventFilter: EventFilter;
+  setEventFilter: (newFilter: EventFilter) => void;
+  sequenceFilter: SequenceFilter;
+  setSequenceFilter: (newFilter: SequenceFilter) => void;
   onSelect: OnSelectListener;
-  setOnSelectListener: (listener: OnSelectListener) => void;
+  setOnSelectListener: React.Dispatch<React.SetStateAction<OnSelectListener>>;
 };
 
 const ResourceSelectionContext = React.createContext(
@@ -48,47 +48,49 @@ export const useResourceMode = () => {
   return observer.mode;
 };
 
-export const useDisabledResources = () => {
-  const observer = useContext(ResourceSelectionContext);
-  return observer.disabledResources;
-};
-
 export const useSelectResource = () => {
   const observer = useContext(ResourceSelectionContext);
   return observer.onSelect;
 };
 
+export const useResourcesState = () => {
+  const observer = useContext(ResourceSelectionContext);
+  return observer.resourcesState;
+};
+
 export const useResourceFilters = () => {
   const observer = useContext(ResourceSelectionContext);
   return {
-    asset: observer.defaultAssetFilter,
-    timeseries: observer.defaultTimeseriesFilter,
-    event: observer.defaultEventFilter,
-    sequence: observer.defaultSequenceFilter,
-    file: observer.defaultFileFilter,
+    asset: observer.assetFilter,
+    timeseries: observer.timeseriesFilter,
+    event: observer.eventFilter,
+    sequence: observer.sequenceFilter,
+    file: observer.fileFilter,
   };
 };
 
+const defaultOnSelect = () => {};
+
 export const ResourceSelectionProvider = ({
   mode: initialMode = 'none',
-  resourceTypes: initialResourceTypes = ['assets', 'files'],
+  resourceTypes: initialResourceTypes,
   assetFilter: initialAssetFilter = {},
   timeseriesFilter: initialTimeseriesFilter = {},
   fileFilter: initialFileFilter = {},
   eventFilter: initialEventFilter = {},
   sequenceFilter: initialSequenceFilter = {},
-  disabledResources: initialDisabledResources = [],
-  onSelect: initialOnSelect = () => {},
+  resourcesState: initialResourcesState,
+  onSelect: initialOnSelect = defaultOnSelect,
   children,
 }: {
   mode?: ResourceSelectionMode;
   resourceTypes?: ResourceType[];
-  assetFilter?: AssetFilter;
+  assetFilter?: AssetFilterProps;
   timeseriesFilter?: TimeseriesFilter;
   fileFilter?: FileFilterProps;
   eventFilter?: EventFilter;
   sequenceFilter?: SequenceFilter;
-  disabledResources?: DisabledResourceItem[];
+  resourcesState?: ResourceItemState[];
   onSelect?: OnSelectListener;
   children: React.ReactNode;
 }) => {
@@ -96,27 +98,39 @@ export const ResourceSelectionProvider = ({
   const [onSelect, setOnSelectListener] = useState<OnSelectListener>(
     () => initialOnSelect
   );
-  const [disabledResources, setDisabledResources] = useState<
-    DisabledResourceItem[]
-  >(initialDisabledResources);
-  const [resourceTypes, setResourceTypes] = useState<ResourceType[]>(
-    initialResourceTypes
+  const [resourcesState, setResourcesState] = useState<ResourceItemState[]>(
+    initialResourcesState || []
   );
-  const [defaultAssetFilter, setDefaultAssetFilter] = useState<AssetFilter>(
+  const [resourceTypes, setResourceTypes] = useState<ResourceType[]>(
+    initialResourceTypes || ['assets', 'files']
+  );
+  const [assetFilter, setAssetFilter] = useState<AssetFilterProps>(
     initialAssetFilter
   );
-  const [defaultTimeseriesFilter, setDefaultTimeseriesFilter] = useState<
-    TimeseriesFilter
-  >(initialTimeseriesFilter);
-  const [defaultFileFilter, setDefaultFileFilter] = useState<FileFilterProps>(
+  const [timeseriesFilter, setTimeseriesFilter] = useState<TimeseriesFilter>(
+    initialTimeseriesFilter
+  );
+  const [fileFilter, setFileFilter] = useState<FileFilterProps>(
     initialFileFilter
   );
-  const [defaultEventFilter, setDefaultEventFilter] = useState<EventFilter>(
+  const [eventFilter, setEventFilter] = useState<EventFilter>(
     initialEventFilter
   );
-  const [defaultSequenceFilter, setDefaultSequenceFilter] = useState<
-    SequenceFilter
-  >(initialSequenceFilter);
+  const [sequenceFilter, setSequenceFilter] = useState<SequenceFilter>(
+    initialSequenceFilter
+  );
+
+  useEffect(() => {
+    if (initialResourcesState) {
+      setResourcesState(initialResourcesState);
+    }
+  }, [initialResourcesState]);
+
+  useEffect(() => {
+    if (initialOnSelect) {
+      setOnSelectListener(() => initialOnSelect);
+    }
+  }, [initialOnSelect]);
 
   return (
     <ResourceSelectionContext.Provider
@@ -125,18 +139,18 @@ export const ResourceSelectionProvider = ({
         setMode,
         resourceTypes,
         setResourceTypes,
-        defaultAssetFilter,
-        setDefaultAssetFilter,
-        defaultTimeseriesFilter,
-        setDefaultTimeseriesFilter,
-        defaultFileFilter,
-        setDefaultFileFilter,
-        defaultEventFilter,
-        setDefaultEventFilter,
-        defaultSequenceFilter,
-        setDefaultSequenceFilter,
-        disabledResources,
-        setDisabledResources,
+        assetFilter,
+        setAssetFilter,
+        timeseriesFilter,
+        setTimeseriesFilter,
+        fileFilter,
+        setFileFilter,
+        eventFilter,
+        setEventFilter,
+        sequenceFilter,
+        setSequenceFilter,
+        resourcesState,
+        setResourcesState,
         onSelect,
         setOnSelectListener,
       }}

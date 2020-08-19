@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
-import { Input } from '@cognite/cogs.js';
+import { Input, Button } from '@cognite/cogs.js';
 import { GlobalSearchResults } from './GlobalSearchResults';
 
 const Overlay = styled.div<{ visible: boolean }>`
@@ -66,13 +66,11 @@ const ResultList = styled.div<{ visible: boolean; offsetTop: number }>`
 `;
 
 type Props = {
-  currentFileId?: number;
   offsetTop?: number;
   showSearch?: boolean;
 };
 
 export const GlobalSearchField = ({
-  currentFileId,
   offsetTop = 0,
   showSearch: propShowSearch,
 }: Props) => {
@@ -117,11 +115,12 @@ export const GlobalSearchField = ({
           value={query}
         />
         <ResultList visible={showSearchResults} offsetTop={offsetTop}>
-          <GlobalSearchResults
-            query={query}
-            currentResourceId={currentFileId}
-            currentResourceType="files"
+          <Button
+            style={{ position: 'absolute', top: 24, right: 24, zIndex: 2 }}
+            icon="Close"
+            onClick={() => setShowSearchResults(false)}
           />
+          <GlobalSearchResults query={query} />
         </ResultList>
       </SearchWrapper>
     </>

@@ -18,7 +18,6 @@ const Wrapper = styled.div`
 
 type Props = {
   fileId?: number;
-  children?: React.ReactNode;
 };
 
 export const CogniteFileViewerImage = ({ fileId }: Props) => {

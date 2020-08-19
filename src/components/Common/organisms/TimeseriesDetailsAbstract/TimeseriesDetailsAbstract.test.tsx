@@ -2,6 +2,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { GetTimeSeriesMetadataDTO } from '@cognite/sdk';
 import { ClientSDKProvider } from '@cognite/gearbox';
+import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
 import { TimeseriesDetailsAbstract } from './TimeseriesDetailsAbstract';
 
 const timeseries: GetTimeSeriesMetadataDTO = {
@@ -28,13 +29,13 @@ const sdk = {
   },
 };
 
-// (await sdk.datapoints.retrieve({})).
-
 describe('TimeseriesDetailsAbstract', () => {
   it('render normally', () => {
     const container = mount(
       <ClientSDKProvider client={sdk}>
-        <TimeseriesDetailsAbstract timeSeries={timeseries} />
+        <ResourceSelectionProvider>
+          <TimeseriesDetailsAbstract timeSeries={timeseries} />
+        </ResourceSelectionProvider>
       </ClientSDKProvider>
     );
 
