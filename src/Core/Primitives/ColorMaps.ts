@@ -84,8 +84,8 @@ export class ColorMaps
   private static createSeismic(reverse: boolean): ColorMap
   {
     const colorMap = new ColorMap();
-    const a = 0.40;
-    const b = 0.45;
+    const a = 0.20;
+    const b = 0.25;
 
     const interpolation = ColorInterpolation.Rgb;
 
