@@ -108,8 +108,8 @@ export const Explorer = () => {
   let showSearch = false;
   if (
     pathname.endsWith('/file') ||
-    pathname.endsWith(match.path) ||
-    pathname.endsWith(`${match.path}/`)
+    pathname.endsWith('explore') ||
+    pathname.endsWith('explore/')
   ) {
     showSearch = true;
   }
