@@ -33,7 +33,7 @@ class LoginManager {
     });
 
     this.client.loginWithOAuth({
-      project: '3ddemo',
+      project: 'publicdata',
       accessToken,
       onAuthenticate: POPUP,
       onTokens: (tokens) => {
