@@ -95,6 +95,13 @@ export class ColorMap
     this._maxIndex = this._items.length - 1;
   }
 
+  public reverse(): void
+  {
+    this._items.reverse();
+    for (const item of this._items)
+      item.value = 1 - item.value;
+  }
+
   //==================================================
   // INSTANCE METHODS: Operations
   //==================================================

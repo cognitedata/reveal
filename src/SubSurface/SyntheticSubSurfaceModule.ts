@@ -88,7 +88,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
       const parent0 = new FolderNode();
       root.others.addChild(parent0);
 
-      for (let j = 0; j < 1; j++)
+      for (let j = 0; j < 2; j++)
       {
         const parent1 = new FolderNode();
         parent0.addChild(parent1);
@@ -99,7 +99,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
           const node = new SurfaceNode();
           const range = Range3.newTest.clone();
           range.expandByFraction(0.2);
-          range.z.set(-1000 + (k - 1) * 300, -1800 + (k - 1) * 300);
+          range.z.set(-1000 + (k - 1) * 300, -1500 + (k - 1) * 300);
           node.surface = RegularGrid2.createFractal(range, powerOf2, dampning, smoothNumberOfPasses, Ma.toRad(5));
           //dampning += 0.1;
           parent1.addChild(node);
@@ -305,7 +305,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
     const fileId = 'cc0f791f-e206-4c08-a139-c5d08eea8afc';
     {
       const seismicCubeNode = new SeismicCubeNode();
-      seismicCubeNode.colorMap = ColorMaps.commonSeismicName;
+      seismicCubeNode.colorMap = ColorMaps.seismicName;
       survey.addChild(seismicCubeNode);
       seismicTree.addChild(survey);
       seismicCubeNode.load(client, fileId);
