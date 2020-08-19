@@ -18,5 +18,6 @@ export enum PropertyType
   String,
   StringGroup,
   Color,
+  ColorMap,
   Select,
 }

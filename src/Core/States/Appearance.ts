@@ -30,6 +30,10 @@ export class Appearance
 
   static leftPanelMaxSize = 1000; //Maximum size of left panel
 
+  // Settings Panel
+
+  static valuesPerColorMap = 6; // values in color map image
+
   // For the viewer
   static viewerFooter = "Cognite subsurface viewer";
 

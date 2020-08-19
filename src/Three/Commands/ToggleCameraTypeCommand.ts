@@ -28,7 +28,7 @@ export class ToggleCameraTypeCommand extends ThreeRenderTargetCommand
 
   protected /*override*/ invokeCore(): boolean
   {
-    if(!this.target)
+    if (!this.target)
       return false;
 
     this.target.switchCamera();

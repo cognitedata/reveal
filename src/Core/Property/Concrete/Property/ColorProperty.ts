@@ -6,7 +6,7 @@ import { Action, Retrieve } from "@/Core/Property/Base/BaseProperty";
 export default class ColorProperty extends UsePropertyT<Color>
 {
   //==================================================
-  // OVERRRIDDEN BaseProperty FIELDS
+  // OVERRIDDEN BaseProperty FIELDS
   //==================================================
 
   protected _type = PropertyType.Color;

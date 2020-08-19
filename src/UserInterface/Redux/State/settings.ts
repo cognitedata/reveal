@@ -18,7 +18,9 @@ export interface ISettingsPropertyState
   parent?: string,
   readonly?: boolean,
   expanded?: boolean,
-  tooltip?: string
+  tooltip?: string,
+  options?: any[],
+  colorMapOptions?: string[][];
 }
 
 // Settings component state interface

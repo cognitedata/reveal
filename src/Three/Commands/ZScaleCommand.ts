@@ -29,7 +29,7 @@ export class ZScaleCommand extends ThreeRenderTargetCommand
     if (!this.target)
       return false;
 
-    if(Util.getNumber(value) <= 0) return false;
+    if (Util.getNumber(value) <= 0) return false;
     this.target.zScale = Util.getNumber(value);
     return true;
   }

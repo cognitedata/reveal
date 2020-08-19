@@ -10,6 +10,7 @@ import { Index3 } from "@/Core/Geometry/Index3";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Index2 } from "@/Core/Geometry/Index2";
 import { Ma } from "@/Core/Primitives/Ma";
+import ColorMapProperty from "@/Core/Property/Concrete/Property/ColorMapProperty";
 
 const FractionDigitsDefault = 2;
 
@@ -40,6 +41,13 @@ export class PropertyFolder extends BasePropertyFolder
     applyDelegate?: Action<void>, valueDelegate?: Action<Color>): void
   {
     const property = new ColorProperty(name, value, readonly, instance, applyDelegate, valueDelegate);
+    this.addChild(property);
+  }
+
+  public addColorMapPropertyWithOptions(name: string, value: string | Retrieve<string>, readonly?: boolean, instance?: object,
+    applyDelegate?: Action<void>, valueDelegate?: Action<string>, options?: string[]): void
+  {
+    const property = new ColorMapProperty(name, value, readonly, instance, applyDelegate, valueDelegate, options);
     this.addChild(property);
   }
 

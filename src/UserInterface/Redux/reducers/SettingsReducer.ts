@@ -10,6 +10,8 @@ import SettingsNodeUtils from "@/UserInterface/NodeVisualizer/Settings/SettingsN
 import ElementTypes from "@/UserInterface/Components/Settings/ElementTypes";
 import { IconTypes } from "@/UserInterface/Components/Icon/IconTypes";
 import { ISettingsPropertyState, ISettingsState } from "@/UserInterface/Redux/State/settings";
+import ColorMapProperty from "@/Core/Property/Concrete/Property/ColorMapProperty";
+import { Appearance } from "@/Core/States/Appearance";
 
 // Initial settings state
 const initialState = {
@@ -162,6 +164,8 @@ function convertToSettingsState(properties: BaseProperty[] | BasePropertyFolder[
         expanded: (property as BasePropertyFolder).expanded,
         readonly: property.isReadOnly(),
         value: (property as UsePropertyT<any>).value,
+        options: (property as UsePropertyT<any>).getLegalValues && (property as UsePropertyT<any>).getLegalValues(),
+        colorMapOptions: (property as ColorMapProperty).getColorMapOptionColors && (property as ColorMapProperty).getColorMapOptionColors(Appearance.valuesPerColorMap),
         children: []
       };
 
@@ -183,6 +187,9 @@ function mapToInputTypes(type: PropertyType): string
 
   if (type === PropertyType.Color)
     return ElementTypes.COLOR_TABLE;
+
+  if (type === PropertyType.ColorMap)
+    return ElementTypes.COLORMAP_SELECT;
 
   if (type === PropertyType.StringGroup)
     return ElementTypes.INPUT_GROUP;

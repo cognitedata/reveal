@@ -52,7 +52,7 @@ export abstract class BaseProperty
 
   public /*virtual*/ getApplyDelegate(): Action<void> | undefined { return this._applyDelegate; }
 
-  public /*virtual*/ setApplyDelegate(value) { this._applyDelegate = value; }
+  public /*virtual*/ setApplyDelegate(value: Action<void>) { this._applyDelegate = value; }
 
   //==================================================
   // INSTANCE METHODS

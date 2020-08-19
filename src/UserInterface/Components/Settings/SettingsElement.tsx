@@ -11,6 +11,8 @@ import ElementTypes from "@/UserInterface/Components/Settings/ElementTypes";
 import CompactColorPicker from "@/UserInterface/Components/CompactColorPicker/CompactColorPicker";
 import Icon from "@/UserInterface/Components/Icon/Icon";
 import { isNumber } from "@/UserInterface/Foundation/Utils/numericUtils";
+import { ColorMapSelector } from "@/UserInterface/Components/ColoMapSelector/ColorMapSelector";
+import { Box } from "@material-ui/core";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -150,12 +152,12 @@ export default function SettingsElement(props: {
                     keyExtractor("select", elmConfig.type, elmConfig.name).key
                   }
                 >
-                  <div className={`select-option ${classes.option}`}>
-                    {option.icon ? (
-                      <Icon name={option.icon.name} type={option.icon.type} />
-                    ) : null}
-                    <span className={classes.optionText}>{option.name}</span>
-                  </div>
+                  {/*<div className={`select-option ${classes.option}`}>*/}
+                  {/*  {option?.icon ? (*/}
+                  {/*    <Icon name={option.icon.name} type={option.icon.type} />*/}
+                  {/*  ) : null}*/}
+                  {/*  <span className={classes.optionText}>{option.name}</span>*/}
+                  {/*</div>*/}
                 </MenuItem>
               ))}
             </Select>
@@ -204,6 +206,20 @@ export default function SettingsElement(props: {
             min="0"
             max="100"
           />
+        );
+      case ElementTypes.COLORMAP_SELECT:
+        return (
+          <Box height="1.5rem" width="100%">
+            <ColorMapSelector
+              options={elmConfig.options}
+              colorMapOptions={elmConfig.colorMapOptions}
+              value={value}
+              disabled={!isAvailable(checked)}
+              onChange={(colorMap) => {
+                onChange(elmConfig.name, colorMap);
+              }}
+            />
+          </Box>
         );
       case ElementTypes.IMAGE_BUTTON:
         return (
