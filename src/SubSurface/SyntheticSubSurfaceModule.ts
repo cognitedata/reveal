@@ -36,12 +36,9 @@ import { DataNode } from "@/Core/Nodes/DataNode";
 import { Ma } from '@/Core/Primitives/Ma';
 import { CasingLog } from '@/SubSurface/Wells/Logs/CasingLog';
 import { SurveyNode } from "@/SubSurface/Seismic/Nodes/SurveyNode";
-import { SeismicCube } from "@/SubSurface/Seismic/Data/SeismicCube";
 import { SeismicCubeNode } from "@/SubSurface/Seismic/Nodes/SeismicCubeNode";
-import { Index3 } from "@/Core/Geometry/Index3";
 import { ColorMaps } from '@/Core/Primitives/ColorMaps';
 import { CogniteSeismicClient } from "@cognite/seismic-sdk-js";
-import { Index2 } from '@/Core/Geometry/Index2';
 
 export class SyntheticSubSurfaceModule extends BaseModule
 {
