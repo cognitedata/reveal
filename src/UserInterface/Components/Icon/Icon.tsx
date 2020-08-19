@@ -1,18 +1,7 @@
 import React from "react";
-import { withStyles, Theme } from "@material-ui/core/styles";
-import Tooltip from "@material-ui/core/Tooltip";
 
 import getIcon from "@/UserInterface/Components/Icon/IconSelector";
-
-// Custom tooltip with white background
-const CustomToolTip = withStyles((theme: Theme) => ({
-  tooltip: {
-    backgroundColor: theme.palette.common.white,
-    color: "rgba(0, 0, 0, 0.87)",
-    boxShadow: theme.shadows[1],
-    fontSize: "0.7rem",
-  },
-}))(Tooltip);
+import ToolbarToolTip from "@/UserInterface/Components/ToolbarToolTip/ToolbarToolTip";
 
 export default function Icon(props: {
   type?: string;
@@ -34,22 +23,14 @@ export default function Icon(props: {
   const image = <img src={imgSrc} style={style} alt={name} />;
 
   return (
-    <div className="icon">
-      {tooltip ? (
-        <CustomToolTip
-          title={
-            <div className="image-tooltip">
-              {image}
-              <span>{tooltip.text}</span>
-            </div>
-          }
-          placement={tooltip.placement}
-        >
-          {image}
-        </CustomToolTip>
-      ) : (
-        image
-      )}
-    </div>
+    <ToolbarToolTip
+      type={type}
+      name={name}
+      src={src}
+      tooltip={tooltip}
+      iconSize={iconSize}
+    >
+      {image}
+    </ToolbarToolTip>
   );
 }

@@ -2,13 +2,8 @@ import React, { useState } from "react";
 import { Util } from "@/Core/Primitives/Util";
 import { HTMLUtils } from "@/UserInterface/Foundation/Utils/HTMLUtils";
 import { Button, TextField, Select } from "@material-ui/core";
-import Tooltip from "@material-ui/core/Tooltip";
-import {
-  createStyles,
-  makeStyles,
-  Theme,
-  withStyles,
-} from "@material-ui/core/styles";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
+import ToolbarToolTip from "@/UserInterface/Components/ToolbarToolTip/ToolbarToolTip";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -64,16 +59,6 @@ const useStyles = makeStyles(() =>
   })
 );
 
-// Custom tooltip with white background
-const CustomToolTip = withStyles((theme: Theme) => ({
-  tooltip: {
-    backgroundColor: theme.palette.common.white,
-    color: "rgba(0, 0, 0, 0.87)",
-    boxShadow: theme.shadows[1],
-    fontSize: "0.7rem",
-  },
-}))(Tooltip);
-
 export default function ToolBarSelect(props: {
   options: string[];
   currentValue: string;
@@ -125,13 +110,11 @@ export default function ToolBarSelect(props: {
           value={currentValue}
           onChange={updateValue}
         >
-          {options
-            ? options.map((option) => (
-                <option key={option} style={optionTextStyle}>
-                  {option}
-                </option>
-            ))
-            : null}
+          {options?.map((option) => (
+            <option key={option} style={optionTextStyle}>
+              {option}
+            </option>
+          ))}
         </Select>
         <TextField
           className={classes.input}
@@ -147,21 +130,8 @@ export default function ToolBarSelect(props: {
   };
 
   return (
-    <div className="icon">
-      {tooltip ? (
-        <CustomToolTip
-          title={
-            <div className="image-tooltip">
-              <span>{tooltip.text}</span>
-            </div>
-          }
-          placement={tooltip.placement}
-        >
-          {dropDown()}
-        </CustomToolTip>
-      ) : (
-        dropDown()
-      )}
-    </div>
+    <ToolbarToolTip tooltip={tooltip} iconSize={iconSize}>
+      {dropDown()}
+    </ToolbarToolTip>
   );
 }
