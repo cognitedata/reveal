@@ -10,7 +10,11 @@ module.exports = {
       type: 'category',
       label: 'Examples',
       collapsed: false,
-      items: ['examples/Cognite3DViewer'],
+      items: ['examples/cad-basic', 'examples/cad-colors'],
+    },
+    {
+      type: 'doc',
+      id: 'concepts',
     },
     {
       type: 'doc',
