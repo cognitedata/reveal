@@ -547,7 +547,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     let subtreeSize = 1;
     if (includeDescendants) {
       const subtreeSizePromise = await this.nodeIdAndTreeIndexMaps.getSubtreeSize(treeIndex);
-      subtreeSize = subtreeSizePromise !== undefined ? subtreeSizePromise : 1;
+      subtreeSize = subtreeSizePromise ? subtreeSizePromise : 1;
     }
     return new NumericRange(treeIndex, subtreeSize);
   }
