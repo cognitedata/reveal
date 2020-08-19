@@ -44,7 +44,7 @@ export function TreeCheckBox(props: {
   id: string;
   hover: boolean;
   onClick: (e: MouseEvent<any>) => void;
-  onKeyDown: (e: KeyboardEvent) => void;
+  onKeyUp: (e: KeyboardEvent) => void;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
   onFocus: () => void;
@@ -85,7 +85,7 @@ export function TreeCheckBox(props: {
       <Span
         tabIndex={0}
         onClick={props.onClick}
-        onKeyDown={props.onKeyDown}
+        onKeyUp={props.onKeyUp}
         onFocus={props.onFocus}
         onBlur={props.onBlur}
         onMouseEnter={props.onMouseEnter}

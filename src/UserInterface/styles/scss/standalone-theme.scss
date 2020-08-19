@@ -1,0 +1,34 @@
+/** Default Color Theme Overrides**/
+
+@use "variables" with(
+$panel-background: white linear-gradient(to right, white, lightgray),
+$tree-background: inherit,
+$tree-color: inherit,
+$title-bar-background: white linear-gradient(to right, white, #efefef),
+$title-bar-color: black,
+$expansion-header-background: white linear-gradient(to right, white, #e7e7e7),
+$expansion-header-color: black,
+$expansion-detail-background: white linear-gradient(to right, white, #d5d5d5),
+$expansion-detail-color: black,
+$tool-bar-icon-selected-background: lightblue,
+$tool-bar-icon-hover-background: lightblue,
+$select-input-background: #f0f0f0,
+$select-input-option-color: #6a0dad,
+$slider-input-background: white
+);
+
+// Virtual Tree Customizations
+
+:root {
+  --v-tree-item-height:20px;
+  --v-tree-item-bottom-margin:2px;
+  --v-tree-item-comp-width: 20px;
+  --v-tree-icon-size: 20px;
+  --v-tree-item-indentation: 20px;
+}
+
+// Font
+
+:root{
+  --subsurface-viz-default-font-size: 0.75rem;
+}

@@ -1,3 +1,4 @@
+@use "../../styles/scss/variables";
 .color-picker-container{
   width: 100%;
   position: relative;
@@ -5,7 +6,7 @@
   .color-display{
     height: 1rem;
     border: 1px #c4c4c4 solid;
-    font-size: 0.6rem;
+    font-size: var(--subsurface-viz-default-font-size, variables.$application-default-font-size);
     padding-left: 0.1rem;
     cursor: pointer;
     display: flex;

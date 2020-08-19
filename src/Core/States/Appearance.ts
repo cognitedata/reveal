@@ -7,6 +7,10 @@ export class Appearance
   // STATIC FIELDS
   //==================================================
 
+  // App
+
+  static ApplicationDefaultFontSize = 0.75; // in rem units relative to default HTML
+
   // Tree control
   static treeIndentation = 20; // Controls tree indentation in pixels
 
@@ -14,12 +18,10 @@ export class Appearance
 
   static treeIconSize = 20; // Tree icons size in pixel
 
-  static treeFontSize = 16; // Realative or absolute? Do what best
-
   static treeBackgroundColor?: Color = undefined; // Use brush instead here?
 
   // Toolbar
-  static toolbarIconSize = 24; // Toolbar icon size  in pixel
+  static toolbarIconSize = 26; // Toolbar icon size  in pixel
   static toolbarSelectWidth = 58; // Toolbar Select Width in pixel
   static toolbarCommandsPerLine = 19; // Commands per line in toolbar
 

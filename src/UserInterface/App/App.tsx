@@ -7,6 +7,7 @@ import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import { SyntheticSubSurfaceModule } from "@/SubSurface/SyntheticSubSurfaceModule";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { grey } from "@material-ui/core/colors";
+import { Appearance } from "@/Core/States/Appearance";
 
 const LOAD_MOCK_DATA = false;
 
@@ -18,6 +19,13 @@ const theme = createMuiTheme({
     },
     secondary: {
       main: grey[50],
+    },
+  },
+  typography: {
+    htmlFontSize: 16,
+    fontSize: 16 * Appearance.ApplicationDefaultFontSize,
+    h2: {
+      fontSize: 14,
     },
   },
 });

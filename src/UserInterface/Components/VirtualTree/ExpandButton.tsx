@@ -57,7 +57,7 @@ export function ExpandButton(props: {
         aria-label="expand row group"
         className="expand-btn clickable center"
         onClick={onEvent}
-        onKeyDown={onEnter}
+        onKeyUp={onEnter}
         tabIndex={0}
       >
         <Expand expanded={props.expanded} />
