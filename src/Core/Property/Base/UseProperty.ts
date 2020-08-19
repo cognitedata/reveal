@@ -92,7 +92,7 @@ export default abstract class UseProperty<T> extends BaseProperty
   // INSTANCE METHODS
   //==================================================
 
-  protected apply(fieldName?: string): void
+  protected apply(): void
   {
     if (!this._instance)
       return;
