@@ -84,6 +84,51 @@ class Api {
       );
     },
   };
+
+  fauxConfigurations = [
+    {
+      id: '1',
+      status: 'Active',
+      name: 'CWP_Session_1',
+      revision: '1',
+      author: 'Bob',
+      repository: 'Valhall_2212',
+      project: 'Proj_2292',
+    },
+    {
+      id: '2',
+      status: 'Active',
+      name: 'CWP_Session_2',
+      revision: '1',
+      author: 'Bob',
+      repository: 'Valhall_2212',
+      project: 'Proj_2292',
+    },
+    {
+      id: '3',
+      status: 'Inactive',
+      name: 'CWP_Session_3',
+      revision: '1',
+      author: 'Bob',
+      repository: 'Valhall_2212',
+      project: 'Proj_2292',
+    },
+    {
+      id: '4',
+      status: 'Active',
+      name: 'CWP_Session_4',
+      revision: '1',
+      author: 'Bob',
+      repository: 'Valhall_2212',
+      project: 'Proj_2292',
+    },
+  ];
+
+  public configurations = {
+    get: async (): Promise<any[]> => {
+      return this.fauxConfigurations;
+    },
+  };
 }
 
 export default Api;
