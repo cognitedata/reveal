@@ -1,6 +1,6 @@
 import NodeUtils from "@/UserInterface/utils/NodeUtils";
-import UsePropertyT from "@/Core/Property/Base/UsePropertyT";
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import UseProperty from "@/Core/Property/Base/UseProperty";
+import ExpanderProperty from '@/Core/Property/Concrete/Folder/ExpanderProperty';
 
 export default class SettingsNodeUtils
 {
@@ -10,7 +10,7 @@ export default class SettingsNodeUtils
 
     if (property)
     {
-      (property as UsePropertyT<T>).value = value;
+      (property as UseProperty<T>).value = value;
     }
     else
     {
@@ -23,10 +23,8 @@ export default class SettingsNodeUtils
   {
     const property = NodeUtils.getPropertyById(id);
 
-    if (property)
-    {
-      (property as BasePropertyFolder).expanded = expand;
-    }
+    if (property instanceof ExpanderProperty)
+      property.expanded = expand;
     else
     {
       // tslint:disable-next-line:no-console

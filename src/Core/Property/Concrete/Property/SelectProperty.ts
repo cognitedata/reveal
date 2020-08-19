@@ -1,24 +1,22 @@
 import { PropertyType } from "@/Core/Enums/PropertyType";
-import UsePropertyT from "@/Core/Property/Base/UsePropertyT";
+import UseProperty from '@/Core/Property/Base/UseProperty';
 
-export class SelectProperty extends UsePropertyT<string>
+export class SelectProperty extends UseProperty<string>
 {
-
-  //==================================================
-  // INSTANCE FIELDS
-  //==================================================
-
-  protected _type = PropertyType.Select;
-
   //==================================================
   // INSTANCE METHODS
   //==================================================
 
   public addOption(name: string): void
   {
-    if (!this.hasLegalValues)
-      this.setLegalValues([]);
-
-    this.getLegalValues().push(name);
+    if (!this.options)
+      this.options = [];
+    this.options.push(name);
   }
+
+  //==================================================
+  // OVERRIDES of BaseProperty
+  //==================================================
+
+  public getType(): PropertyType { return PropertyType.Select; }
 }

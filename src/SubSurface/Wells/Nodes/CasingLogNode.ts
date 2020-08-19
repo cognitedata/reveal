@@ -15,7 +15,7 @@ import { CasingLog } from "@/SubSurface/Wells/Logs/CasingLog";
 import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
 import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
 import CasingLogNodeIcon from "@images/Nodes/CasingLogNode.png";
-import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export class CasingLogNode extends BaseLogNode
 {
@@ -55,7 +55,7 @@ export class CasingLogNode extends BaseLogNode
 
   public /*override*/ getIcon(): string { return CasingLogNodeIcon; }
 
-  protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
+  protected /*override*/ populateStatisticsCore(folder: ExpanderProperty): void
   {
     super.populateStatisticsCore(folder);
     const { log } = this;

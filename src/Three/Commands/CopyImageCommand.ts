@@ -24,7 +24,8 @@ export class CopyImageCommand extends ThreeRenderTargetCommand
 
   protected /*override*/ invokeCore(): boolean 
   {
-    this.target?.domElement.toBlob((blob: any) => {
+    this.target?.domElement.toBlob((blob: any) => 
+    {
       // @ts-ignore
       navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
     });

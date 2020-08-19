@@ -2,7 +2,8 @@
  * Interfaces for the Risk object at BP
  */
 
-export interface INdsMetadata {
+export interface INdsMetadata 
+{
   archived: string;
   contingency: string;
   country: string;
@@ -39,7 +40,8 @@ export interface INdsMetadata {
   well_name: string;
 }
 
-export interface INptMetaData {
+export interface INptMetaData 
+{
   created_date: string; // ISO Date String
   description: string;
   failure_location: string;
@@ -56,7 +58,8 @@ export interface INptMetaData {
 
 export type IRiskMetadata = INdsMetadata | INptMetaData;
 
-export interface IRiskEvent {
+export interface IRiskEvent 
+{
   externalId: string;
   dataSetId: number;
   startTime: number;

@@ -20,7 +20,7 @@ import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { PolylinesRenderStyle } from "@/SubSurface/Basics/PolylinesRenderStyle";
 import PolylinesNodeIcon from "@images/Nodes/PolylinesNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
-import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export class PolylinesNode extends DataNode
 {
@@ -91,7 +91,7 @@ export class PolylinesNode extends DataNode
     }
   }
 
-  protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
+  protected /*override*/ populateStatisticsCore(folder: ExpanderProperty): void
   {
     super.populateStatisticsCore(folder);
 

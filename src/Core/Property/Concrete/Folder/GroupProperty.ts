@@ -1,18 +1,20 @@
 import { PropertyType } from "@/Core/Enums/PropertyType";
-import UseProperty from '@/Core/Property/Base/UseProperty';
-import IPropertyParams from '@/Core/Property/Base/IPropertyParams';
+import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
 
-export default class StringProperty extends UseProperty<string>
+export default class GroupProperty extends BasePropertyFolder
 {
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(params: IPropertyParams<string>) { super(params); }
+  public constructor(name: string) { super(name); }
 
   //==================================================
   // OVERRIDES of BaseProperty
   //==================================================
 
-  public getType(): PropertyType { return PropertyType.String; }
+  public getType(): PropertyType
+  {
+    return PropertyType.Group;
+  }
 }

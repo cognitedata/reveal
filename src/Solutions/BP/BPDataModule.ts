@@ -52,7 +52,8 @@ export default class BPDataModule extends BaseModule
         nptEvents?: IRiskEvent[],
         logs?: { [key: number]: ILog[] } | {},
         casings?: ICasing[],
-    }) {
+    }) 
+    {
       const { wells, wellBores, trajectories, trajectoryData, ndsEvents, nptEvents, logs, casings } = data;
       this.bpData = new BPData(wells, wellBores, trajectories, trajectoryData, ndsEvents, nptEvents, logs, casings);
     }

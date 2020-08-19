@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
 import { PropertyType } from "@/Core/Enums/PropertyType";
 import NodeUtils from "@/UserInterface/utils/NodeUtils";
-import { BaseProperty } from "@/Core/Property/Base/BaseProperty";
-import UsePropertyT from "@/Core/Property/Base/UsePropertyT";
+import BaseProperty from "@/Core/Property/Base/BaseProperty";
+import UseProperty from "@/Core/Property/Base/UseProperty";
 import SettingsNodeUtils from "@/UserInterface/NodeVisualizer/Settings/SettingsNodeUtils";
 import ElementTypes from "@/UserInterface/Components/Settings/ElementTypes";
 import { IconTypes } from "@/UserInterface/Components/Icon/IconTypes";
@@ -86,14 +86,14 @@ export const settingsSlice = createSlice({
           if (selectionState)
           {
             // populate settings object
-            settingsProperties = new PropertyFolder("Settings");
+            settingsProperties = new ExpanderProperty("Settings");
 
-            const generalProperties = new PropertyFolder("General Properties");
+            const generalProperties = new ExpanderProperty("General Properties");
 
             node.populateInfo(generalProperties);
             settingsProperties.addChild(generalProperties);
 
-            const statistics = new PropertyFolder("Statistics");
+            const statistics = new ExpanderProperty("Statistics");
 
             node.populateStatistics(statistics);
             settingsProperties.addChild(statistics);
@@ -150,34 +150,43 @@ export const { onSelectedNodeChange, onSettingChange, onExpandChange } = setting
 
 function convertToSettingsState(properties: BaseProperty[] | BasePropertyFolder[], parent?: string): ISettingsPropertyState[]
 {
-  let allPropertyStates: ISettingsPropertyState[] = [];
+  let propertyStates: ISettingsPropertyState[] = [];
 
   if (properties && properties.length)
   {
     for (const property of properties)
     {
       const propertyState: ISettingsPropertyState = {
-        name: property.getName(),
+        name: property.name,
         parent,
-        displayName: property.displayName(),
+        displayName: property.displayName,
         type: mapToInputTypes(property.getType()),
-        expanded: (property as BasePropertyFolder).expanded,
-        readonly: property.isReadOnly(),
-        value: (property as UsePropertyT<any>).value,
-        options: (property as UsePropertyT<any>).getLegalValues && (property as UsePropertyT<any>).getLegalValues(),
-        colorMapOptions: (property as ColorMapProperty).getColorMapOptionColors && (property as ColorMapProperty).getColorMapOptionColors(Appearance.valuesPerColorMap),
+        readonly: property.isReadOnly,
+        value: 0,
         children: []
       };
+      if (property instanceof UseProperty)
+      {
+        propertyState.value = property.value;
+        if (property.options)
+          propertyState.options = property.options;
+      }
+      if (property instanceof ExpanderProperty)
+        propertyState.expanded = property.expanded;
+      if (property instanceof ColorMapProperty)
+        propertyState.colorMapOptions = property.getColorMapOptionColors(Appearance.valuesPerColorMap);
 
-      const childStates = convertToSettingsState(property.children, property.getName());
+      propertyStates.push(propertyState);
 
-      propertyState.children = property.children.map(child => child.getName());
-      allPropertyStates.push(propertyState);
-      allPropertyStates = allPropertyStates.concat(childStates);
+      if (property instanceof BasePropertyFolder)
+      {
+        const childStates = convertToSettingsState(property.children, property.name);
+        propertyState.children = property.children.map(child => child.name);
+        propertyStates = propertyStates.concat(childStates);
+      }
     }
   }
-
-  return allPropertyStates;
+  return propertyStates;
 }
 
 function mapToInputTypes(type: PropertyType): string
@@ -191,10 +200,10 @@ function mapToInputTypes(type: PropertyType): string
   if (type === PropertyType.ColorMap)
     return ElementTypes.COLORMAP_SELECT;
 
-  if (type === PropertyType.StringGroup)
+  if (type === PropertyType.Group)
     return ElementTypes.INPUT_GROUP;
 
-  if (type === PropertyType.DefaultPropertyFolder)
+  if (type === PropertyType.Expander)
     return ElementTypes.SECTION;
 
   return "";

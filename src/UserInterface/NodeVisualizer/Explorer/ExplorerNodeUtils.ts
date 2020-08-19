@@ -15,7 +15,8 @@ export default class ExplorerNodeUtils
     try
     {
       node.setSelectedInteractive(selectionState);
-    } catch (err)
+    }
+    catch (err)
     {
       // tslint:disable-next-line:no-console
       console.log("Error Selecting Node", err);
@@ -52,7 +53,8 @@ export default class ExplorerNodeUtils
       {
         node.toggleExpandInteractive();
       }
-    } catch (err)
+    }
+    catch (err)
     {
       // tslint:disable-next-line:no-console
       console.log("Error Expanding Node", err);

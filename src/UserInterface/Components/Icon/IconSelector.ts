@@ -49,10 +49,13 @@ export {
   RadioOn,
 };
 
-export default function getIcon(iconType: string, iconName: string) {
-  switch (iconType) {
+export default function getIcon(iconType: string, iconName: string) 
+{
+  switch (iconType) 
+  {
     case IconTypes.ACTIONS:
-      switch (iconName) {
+      switch (iconName) 
+      {
         case "Close":
           return FatLeft;
         case "Clean":
@@ -74,13 +77,15 @@ export default function getIcon(iconType: string, iconName: string) {
       }
       break;
     case IconTypes.STATES:
-      switch (iconName) {
+      switch (iconName) 
+      {
         case "Pinned":
           return Pinned;
       }
       break;
     case IconTypes.NODES:
-      switch (iconName) {
+      switch (iconName) 
+      {
         case "FolderNode":
           return FolderNode;
         case "MapIcon":
@@ -88,7 +93,8 @@ export default function getIcon(iconType: string, iconName: string) {
       }
       break;
     case IconTypes.ARROWS:
-      switch (iconName) {
+      switch (iconName) 
+      {
         case "FatRight":
           return FatRight;
         case "FatLeft":
@@ -96,7 +102,8 @@ export default function getIcon(iconType: string, iconName: string) {
       }
       break;
     case IconTypes.POINT_SYMBOL:
-      switch (iconName) {
+      switch (iconName) 
+      {
         case "Cube":
           return Cube;
         case "Sphere":
@@ -104,7 +111,8 @@ export default function getIcon(iconType: string, iconName: string) {
       }
       break;
     case IconTypes.SHOW:
-      switch (iconName) {
+      switch (iconName) 
+      {
         case "Label":
           return LabelImage;
       }

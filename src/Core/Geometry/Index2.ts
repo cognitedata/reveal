@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-export class Index2
+export default class Index2
 {
   //==================================================
   // STATIC PROPERTIES

@@ -14,7 +14,7 @@
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import WellNodeIcon from "@images/Nodes/WellNode.png";
-import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export class WellNode extends BaseNode
 {
@@ -58,7 +58,7 @@ export class WellNode extends BaseNode
 
   public /*override*/ getIcon(): string { return WellNodeIcon; }
 
-  protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
+  protected /*override*/ populateStatisticsCore(folder: ExpanderProperty): void
   {
     super.populateStatisticsCore(folder);
     folder.addReadOnlyXY("WellHead", this.wellHead.x, this.wellHead.y, 2);

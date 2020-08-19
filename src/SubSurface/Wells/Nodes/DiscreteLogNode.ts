@@ -15,7 +15,7 @@ import { DiscreteLog } from "@/SubSurface/Wells/Logs/DiscreteLog";
 import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
 import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
 import DiscreteLogNodeIcon from "@images/Nodes/DiscreteLogNode.png";
-import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export class DiscreteLogNode extends BaseLogNode
 {
@@ -57,7 +57,7 @@ export class DiscreteLogNode extends BaseLogNode
 
   public /*override*/ hasIconColor(): boolean { return false; }
 
-  protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
+  protected /*override*/ populateStatisticsCore(folder: ExpanderProperty): void
   {
     super.populateStatisticsCore(folder);
     const { log } = this;

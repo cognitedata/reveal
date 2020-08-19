@@ -15,7 +15,7 @@ import { PointLog } from "@/SubSurface/Wells/Logs/PointLog";
 import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
 import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
 import PointLogNodeIcon from "@images/Nodes/PointLogNode.png";
-import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export class PointLogNode extends BaseLogNode
 {
@@ -55,7 +55,7 @@ export class PointLogNode extends BaseLogNode
 
   public /*override*/ getIcon(): string { return PointLogNodeIcon; }
 
-  protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
+  protected /*override*/ populateStatisticsCore(folder: ExpanderProperty): void
   {
     super.populateStatisticsCore(folder);
   }

@@ -23,7 +23,8 @@ export default (store: MiddlewareAPI) => (next: Dispatch) => (action: {
         {
           viewer.getTarget()?.onResize();
         }
-      } catch (err)
+      }
+      catch (err)
       {
         console.error(err);
       }

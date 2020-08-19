@@ -1,7 +1,7 @@
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { UniqueId } from "@/Core/Primitives/UniqueId";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
-import { BaseProperty } from "@/Core/Property/Base/BaseProperty";
+import BaseProperty from "@/Core/Property/Base/BaseProperty";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 
 export default class NodeUtils
@@ -21,31 +21,22 @@ export default class NodeUtils
 
   public static getTreeRoot(): BaseNode | null
   {
-    let node: BaseNode | null = null;
-
     if (BaseRootNode.active)
-      node = BaseRootNode.active;
-
-    return node;
+      return BaseRootNode.active;
+    return null;
   }
 
   public static getNodeById(id: string): BaseNode | null
   {
-    let node: BaseNode | null = null;
-
     if (BaseRootNode.active)
-      node = BaseRootNode.active.getDescendantByUniqueId(UniqueId.create(id));
-
-    return node;
+      return BaseRootNode.active.getDescendantByUniqueId(UniqueId.create(id));
+    return null;
   }
 
   public static getPropertyById(name: string): BaseProperty | null
   {
-    let property: BaseProperty | null = null;
-
     if (NodeUtils.properties)
-      property = NodeUtils.properties.getChildPropertyByName(name);
-
-    return property;
+      return NodeUtils.properties.getDescendantByName(name);
+    return null;
   }
 }

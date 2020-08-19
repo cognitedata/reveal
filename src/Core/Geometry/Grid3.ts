@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Index3 } from "@/Core/Geometry/Index3";
+import Index3 from "@/Core/Geometry/Index3";
 import { Shape } from "@/Core/Geometry/Shape";
 import { Range3 } from "@/Core/Geometry/Range3";
 

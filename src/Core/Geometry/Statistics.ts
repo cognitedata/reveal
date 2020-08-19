@@ -34,18 +34,7 @@ export class Statistics
   public get stdDev(): number { return this.isEmpty ? Number.NaN : Math.sqrt(this.variance); }
 
   //==================================================
-  // INSTANCE METHODS: Requests
-  //==================================================
-
-  public add(value: number): void
-  {
-    this._n++;
-    this._sum += value;
-    this._sumSquared += value * value;
-  }
-
-  //==================================================
-  // INSTANCE METHODS: Requests
+  // INSTANCE METHODS: Getters
   //==================================================
 
   public getStdDev(mean: number): number
@@ -62,9 +51,33 @@ export class Statistics
     if (this.n <= 2)
       return undefined;
 
-    const margin = sigma * (mean === undefined ? this.stdDev : this.getStdDev(mean));
     const range = new Range1(mean === undefined ? this.mean : mean);
+    const margin = sigma * (mean === undefined ? this.stdDev : this.getStdDev(mean));
     range.expandByMargin(margin);
     return range;
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Operations
+  //==================================================
+
+  public add(value: number): void
+  {
+    this._n++;
+    this._sum += value;
+    this._sumSquared += value * value;
+  }
+
+  public addWithNaN(value: number): void
+  {
+    if (!Number.isNaN(value))
+      this.add(value);
+  }
+
+  public clear(): void
+  {
+    this._n = 0;
+    this._sum = 0;
+    this._sumSquared = 0;
   }
 }

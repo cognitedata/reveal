@@ -22,7 +22,7 @@ import { SurfaceRenderStyle } from "@/SubSurface/Basics/SurfaceRenderStyle";
 import SurfaceNodeIcon from "@images/Nodes/SurfaceNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
 import { Ma } from "@/Core/Primitives/Ma";
-import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 import { ColorMaps } from '@/Core/Primitives/ColorMaps';
 
 export class SurfaceNode extends DataNode
@@ -103,7 +103,7 @@ export class SurfaceNode extends DataNode
     }
   }
 
-  protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
+  protected /*override*/ populateStatisticsCore(folder: ExpanderProperty): void
   {
     super.populateStatisticsCore(folder);
 

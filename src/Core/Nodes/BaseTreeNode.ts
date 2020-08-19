@@ -25,7 +25,8 @@ export abstract class BaseTreeNode extends BaseNode
   // CONSTRUCTORS
   //==================================================
 
-  public constructor() {
+  public constructor() 
+  {
     super();
     this.isExpanded = true;
   }

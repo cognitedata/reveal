@@ -14,7 +14,7 @@
 import Icon from "@images/Nodes/SeismicPlaneFolder.png";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { SeismicPlaneNode } from "@/SubSurface/Seismic/Nodes/SeismicPlaneNode";
-import { PropertyFolder } from "@/Core/Property/Concrete/Folder/PropertyFolder";
+import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export class SeismicPlaneFolder extends BaseNode
 {
@@ -65,7 +65,7 @@ export class SeismicPlaneFolder extends BaseNode
     }
   }
 
-  protected /*override*/ populateStatisticsCore(folder: PropertyFolder): void
+  protected /*override*/ populateStatisticsCore(folder: ExpanderProperty): void
   {
     super.populateStatisticsCore(folder);
     folder.addReadOnlyInteger("# Planes", this.childCount);
