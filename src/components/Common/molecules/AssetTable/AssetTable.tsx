@@ -28,6 +28,32 @@ const ActionCell = ({ asset }: { asset: Asset }) => {
   const getButton = useSelectionCheckbox();
   return getButton({ id: asset.id, type: 'assets' });
 };
+const ParentCell = ({
+  asset,
+  onAssetSelected,
+}: {
+  asset: Asset;
+  onAssetSelected: (asset: Asset) => void;
+}) => {
+  const getAsset = useSelector(itemSelector);
+  const rootAsset = getAsset(asset.rootId);
+  return (
+    <Button
+      type="link"
+      icon="ArrowRight"
+      iconPlacement="right"
+      style={{ color: 'inherit' }}
+      onClick={e => {
+        e.stopPropagation();
+        if (rootAsset) {
+          onAssetSelected(rootAsset);
+        }
+      }}
+    >
+      {rootAsset ? rootAsset.name : 'Loading...'}
+    </Button>
+  );
+};
 const HighlightCell = ({ text, query }: { text?: string; query?: string }) => {
   return (
     <Body level={2} strong>
@@ -49,7 +75,6 @@ export const AssetTable = ({
   onAssetClicked: (asset: Asset) => void;
 }) => {
   const [previewId, setPreviewId] = useState<number | undefined>(undefined);
-  const getAsset = useSelector(itemSelector);
   const mode = useResourceMode();
   const resourcesState = useResourcesState();
 
@@ -122,22 +147,11 @@ export const AssetTable = ({
                 resizable: true,
                 headerRenderer,
                 cellRenderer: ({ rowData: asset }: { rowData: Asset }) => {
-                  const rootAsset = getAsset(asset.rootId);
                   return (
-                    <Button
-                      type="link"
-                      icon="ArrowRight"
-                      iconPlacement="right"
-                      style={{ color: 'inherit' }}
-                      onClick={e => {
-                        e.stopPropagation();
-                        if (rootAsset) {
-                          onAssetSelected(rootAsset);
-                        }
-                      }}
-                    >
-                      {rootAsset ? rootAsset.name : 'Loading...'}
-                    </Button>
+                    <ParentCell
+                      asset={asset}
+                      onAssetSelected={onAssetSelected}
+                    />
                   );
                 },
               },
