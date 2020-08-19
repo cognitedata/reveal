@@ -1,0 +1,31 @@
+/** Outside main container changes **/
+
+.image-tooltip {
+  display: flex;
+  align-items: center;
+  img {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+  span {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin-left: 0.8rem;
+  }
+}
+
+.tooltip{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  .head{
+    font-weight: bold;
+    margin-bottom: 0.2rem;
+  }
+}
+
+.MuiList-padding {
+  padding: 0 !important;
+}

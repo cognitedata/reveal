@@ -237,24 +237,3 @@ $slider-input-background: #d5d5d5;
 .select-option{
   color: var(--subsurface-viz-select-input-option-color, $select-input-option-color);
 }
-
-.image-tooltip {
-  display: flex;
-  align-items: center;
-  img {
-    width: 1.2rem;
-    height: 1.2rem;
-  }
-  span {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    justify-content: flex-start;
-    margin-left: 0.4rem;
-    max-width: 6rem;
-  }
-}
-
-.MuiList-padding {
-  padding: 0 !important;
-}
