@@ -18,6 +18,7 @@ import { Trace } from "@/SubSurface/Seismic/Data/Trace";
 import Index2 from "@/Core/Geometry/Index2";
 import STK from "@cognite/seismic-sdk-js";
 import { Range1 } from "@/Core/Geometry/Range1";
+import { Statistics } from "@/Core/Geometry/Statistics";
 
 export class SeismicCube extends RegularGrid3
 {
@@ -30,9 +31,8 @@ export class SeismicCube extends RegularGrid3
   private _maxTracesInMemory: number = 1000;
   public client: STK.CogniteSeismicClient | null = null;
   public fileId = "";
-  public minIndex = new Index2(0, 0);
-  public isLog = false;
-  private _valueRange: Range1 | undefined;
+  private _valueRange?: Range1;
+  private _statistics?: Statistics;
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -41,6 +41,7 @@ export class SeismicCube extends RegularGrid3
   public get numberOfTraces(): number { return (this.nodeSize.i - 1) * (this.nodeSize.j - 1); }
   public get valueRange(): Range1 | undefined { return this._valueRange; }
   public set valueRange(range: Range1 | undefined) { this._valueRange = range; }
+  public get statistics(): Statistics | undefined { return this._statistics; }
 
   //==================================================
   // CONSTRUCTORS
@@ -74,7 +75,9 @@ export class SeismicCube extends RegularGrid3
 
   public getRegularGrid(): RegularGrid3
   {
-    return new RegularGrid3(this.nodeSize, this.origin, this.inc, this.rotationAngle);
+    const result = new RegularGrid3(this.nodeSize, this.origin, this.inc, this.rotationAngle);
+    result.startCell.copy(this.startCell);
+    return result;
   }
 
   //==================================================
@@ -123,10 +126,10 @@ export class SeismicCube extends RegularGrid3
     const iline = { min: minCell.i, max: maxCell.i };
     const xline = { min: minCell.j, max: maxCell.j };
 
-    iline.min += this.minIndex.i;
-    iline.max += this.minIndex.i;
-    xline.min += this.minIndex.j;
-    xline.max += this.minIndex.j;
+    iline.min += this.startCell.i;
+    iline.max += this.startCell.i;
+    xline.min += this.startCell.j;
+    xline.max += this.startCell.j;
 
     // console.log(`volume.get() inline: ${iline.min} / ${iline.max} xline: ${xline.min} / ${xline.max}`);
     return this.client.volume.get(this, { iline, xline }, true);
@@ -137,9 +140,8 @@ export class SeismicCube extends RegularGrid3
     if (!this.client || !this.fileId)
       return null;
 
-    const inline = cell.i + this.minIndex.i;
-    const xline = cell.j + this.minIndex.j;
-
+    const inline = cell.i + this.startCell.i;
+    const xline = cell.j + this.startCell.j;
     return this.client.volume.getTrace(this, inline, xline);
   }
 
@@ -148,4 +150,43 @@ export class SeismicCube extends RegularGrid3
     return value;
   }
 
+  public calculateStatistics(): void
+  {
+    const iHalf = Math.round(this.cellSize.i / 2);
+    const jHalf = Math.round(this.cellSize.j / 2);
+    const iMax = this.cellSize.i - 1;
+    const jMax = this.cellSize.j - 1;
+
+    let minCell = new Index2(iHalf, 0);
+    let maxCell = new Index2(iHalf, jMax);
+    const promise1 = this.loadTraces(minCell, maxCell);
+
+    minCell = new Index2(0, jHalf);
+    maxCell = new Index2(iMax, jHalf);
+    const promise2 = this.loadTraces(minCell, maxCell);
+
+    Promise.all([promise1, promise2]).then(multiTraces =>
+    {
+      const statistics = new Statistics();
+      for (const traces of multiTraces)
+      {
+        if (!traces)
+          continue;
+
+        for (const trace of traces)
+        {
+          for (let value of trace.traceList)
+          {
+            if (value === 0)
+              continue;
+
+            value = this.getRealValue(value);
+            statistics.add(value);
+          }
+        }
+      }
+      this._statistics = statistics;
+      this.valueRange = statistics.getMostOfRange(4);
+    });
+  }
 }

@@ -178,6 +178,13 @@ export class Range1
   // INSTANCE METHODS: Operations
   //==================================================
 
+  public clear(): void
+  {
+    this._min = 0;
+    this._max = 0;
+    this._isEmpty = true;
+  }
+
   public set(min: number, max: number): void
   {
     this._min = Math.min(min, max);

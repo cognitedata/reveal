@@ -18,6 +18,7 @@ import { Range3 } from "@/Core/Geometry/Range3";
 import Index3 from "@/Core/Geometry/Index3";
 import { Grid3 } from "@/Core/Geometry/Grid3";
 import { Shape } from "@/Core/Geometry/Shape";
+import Index2 from "@/Core/Geometry/Index2";
 
 export class RegularGrid3 extends Grid3
 {
@@ -27,6 +28,7 @@ export class RegularGrid3 extends Grid3
 
   public origin: Vector3;
   public inc: Vector3;
+  public startCell = new Index2(0, 0);
 
   private _hasRotationAngle = false;
   private _rotationAngle = 0;
@@ -112,7 +114,7 @@ export class RegularGrid3 extends Grid3
     return result;
   }
 
-  public getRelativeNodePosition(i: number, j: number, k: number, result?: Vector3): void
+  public getRelativeNodePosition(i: number, j: number, k: number, result?: Vector3): Vector3
   {
     if (!result)
       result = Vector3.newZero;
@@ -120,20 +122,28 @@ export class RegularGrid3 extends Grid3
     result.x = this.inc.x * i;
     result.y = this.inc.y * j;
     result.z = this.inc.z * k;
+    return result;
   }
 
   //==================================================
   // INSTANCE METHODS: Getters: Cell position 
   //==================================================
 
+  public getRealCell(cell: Index3): Index3
+  {
+    const result = cell.clone();
+    result.addIndex2(this.startCell);
+    return result;
+  }
+
   public getCellCenter(i: number, j: number, k: number, result?: Vector3): Vector3
   {
     return this.getNodePosition(i + 0.5, j + 0.5, k + 0.5, result);
   }
 
-  public getRelativeCellCenter(i: number, j: number, k: number, result?: Vector3): void
+  public getRelativeCellCenter(i: number, j: number, k: number, result?: Vector3): Vector3
   {
-    this.getRelativeNodePosition(i + 0.5, j + 0.5, k + 0.5, result);
+    return this.getRelativeNodePosition(i + 0.5, j + 0.5, k + 0.5, result);
   }
 
   public getCellFromPosition(position: Vector3, resultCell?: Index3): Index3

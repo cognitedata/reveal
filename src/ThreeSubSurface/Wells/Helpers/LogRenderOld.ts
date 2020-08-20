@@ -106,6 +106,9 @@ export class LogRenderOld
   public addLineFloatLog(group: THREE.Group, log: FloatLog, color: Color, right: boolean): void
   {
     const { valueRange } = log;
+    if (valueRange.isEmpty)
+      return;
+
     const geometry = new THREE.Geometry();
     const position = Vector3.newZero;
     const tangent = Vector3.newZero;

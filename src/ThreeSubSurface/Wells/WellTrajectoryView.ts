@@ -162,15 +162,18 @@ export class WellTrajectoryView extends BaseGroupThreeView
 
   public /*override*/ calculateBoundingBoxCore(): Range3 | undefined
   {
-    const range = super.calculateBoundingBoxCore();
-    if (!range)
-      return range;
+    const boundingBox = super.calculateBoundingBoxCore();
+    if (!boundingBox)
+      return boundingBox;
 
     // Add extra for the lables, these will for some reasom not be part of the bounding box
     const { style } = this;
-    if (style)
-      range.z.expandByMargin(style.nameFontSize * 1.25);
-    return range;
+    if (!style)
+      return boundingBox;
+
+    const margin = new Vector3(style.bandWidth, style.bandWidth, style.nameFontSize * 1.25);
+    boundingBox.expandByMargin3(margin);
+    return boundingBox;
 
     // const trajectory = this.node.data;
     // if (!trajectory)

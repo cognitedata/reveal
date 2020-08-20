@@ -85,14 +85,15 @@ export class SurveyNode extends BaseVisualNode
   {
     super.populateStatisticsCore(folder);
 
-    const { surveyCube } = this;
-    if (!surveyCube)
+    const cube = this.surveyCube;
+    if (!cube)
       return;
 
-    folder.addReadOnlyIndex3("# Nodes", surveyCube.nodeSize);
-    folder.addReadOnlyVector3("Spacing", surveyCube.inc);
-    folder.addReadOnlyVector3("Origin", surveyCube.origin);
-    folder.addReadOnlyAngle("Rotation", surveyCube.rotationAngle);
-    folder.addReadOnlyRange3(surveyCube.boundingBox);
+    folder.addReadOnlyIndex3("# Cells", cube.cellSize);
+    folder.addReadOnlyIndex2("Start cell", cube.startCell);
+    folder.addReadOnlyVector3("Spacing", cube.inc);
+    folder.addReadOnlyVector3("Origin", cube.origin);
+    folder.addReadOnlyAngle("Rotation", cube.rotationAngle);
+    folder.addReadOnlyRange3(cube.boundingBox);
   }
 }

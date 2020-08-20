@@ -6,6 +6,7 @@ import { Range3 } from "@/Core/Geometry/Range3";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
 import { PropertyType } from "@/Core/Enums/PropertyType";
+import { Statistics } from "@/Core/Geometry/Statistics";
 
 const FractionDigitsDefault = 2;
 
@@ -40,9 +41,15 @@ export default class ExpanderProperty extends BasePropertyFolder
   // INSTANCE METHODS: Add read only values
   //==================================================
 
-  public addReadOnlyRange1(name: string, range: Range1, fractionDigits = FractionDigitsDefault): void
+  public addReadOnlyStatistics(name: string, statistics: Statistics | undefined, fractionDigits = FractionDigitsDefault): void
   {
-    if (!range.isEmpty)
+    if (statistics && !statistics.isEmpty)
+      this.addReadOnlyStrings(`${name}[mean/StdDev]`, statistics.mean.toFixed(fractionDigits), statistics.stdDev.toFixed(fractionDigits));
+  }
+
+  public addReadOnlyRange1(name: string, range: Range1 | undefined, fractionDigits = FractionDigitsDefault): void
+  {
+    if (range && !range.isEmpty)
       this.addReadOnlyStrings(`${name}[min/delta/max]`, range.min.toFixed(fractionDigits), range.delta.toFixed(fractionDigits), range.max.toFixed(fractionDigits));
   }
 

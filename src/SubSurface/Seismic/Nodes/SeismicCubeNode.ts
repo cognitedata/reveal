@@ -79,22 +79,25 @@ export class SeismicCubeNode extends DataNode
   {
     super.populateStatisticsCore(folder);
 
-    const { seismicCube } = this;
-    if (!seismicCube)
+    const cube = this.seismicCube;
+    if (!cube)
       return;
 
-    folder.addReadOnlyIndex3("# Cells", seismicCube.cellSize);
-    folder.addReadOnlyVector3("Spacing", seismicCube.inc);
-    folder.addReadOnlyVector3("Origin", seismicCube.origin);
-    folder.addReadOnlyAngle("Rotation", seismicCube.rotationAngle);
-    folder.addReadOnlyRange3(seismicCube.boundingBox);
+    folder.addReadOnlyIndex3("# Cells", cube.cellSize);
+    folder.addReadOnlyIndex2("Start cell", cube.startCell);
+    folder.addReadOnlyVector3("Spacing", cube.inc);
+    folder.addReadOnlyVector3("Origin", cube.origin);
+    folder.addReadOnlyAngle("Rotation", cube.rotationAngle);
+    folder.addReadOnlyRange3(cube.boundingBox);
+    folder.addReadOnlyRange1("Values (approx)", cube.valueRange);
+    folder.addReadOnlyStatistics("Values (approx)", cube.statistics);
   }
 
   //==================================================
   // INSTANCE METHODS
   //==================================================
 
-  public load(client: CogniteSeismicClient, fileId: string, isLog = false): void
+  public load(client: CogniteSeismicClient, fileId: string): void
   {
     client.file.getLineRange({ fileId }).then((lineRange) =>
     {
@@ -106,34 +109,33 @@ export class SeismicCubeNode extends DataNode
       if (!lineRange.xline)
         return;
 
-      const minIndex = Index2.newZero;
+      const startCell = Index2.newZero;
       const maxIndex = Index2.newZero;
       {
         const { min, max } = lineRange.inline;
         if (min === undefined || max === undefined)
           return;
-        minIndex.i = min.value;
+        startCell.i = min.value;
         maxIndex.i = max.value;
       }
       {
         const { min, max } = lineRange.xline;
         if (min === undefined || max === undefined)
           return;
-        minIndex.j = min.value;
+        startCell.j = min.value;
         maxIndex.j = max.value;
       }
 
       // console.log(`Min and max index: ${minIndex.toString()} ${maxIndex.toString()}`);
-
       const promises = [
-        client.volume.getTrace({ fileId }, minIndex.i, minIndex.j),
-        client.volume.getTrace({ fileId }, maxIndex.i, minIndex.j),
+        client.volume.getTrace({ fileId }, startCell.i, startCell.j),
+        client.volume.getTrace({ fileId }, maxIndex.i, startCell.j),
         client.volume.getTrace({ fileId }, maxIndex.i, maxIndex.j),
-        client.volume.getTrace({ fileId }, minIndex.i, maxIndex.j)
+        client.volume.getTrace({ fileId }, startCell.i, maxIndex.j)
       ];
 
-      const numCellsI = maxIndex.i - minIndex.i + 1;
-      const numCellsJ = maxIndex.j - minIndex.j + 1;
+      const numCellsI = maxIndex.i - startCell.i + 1;
+      const numCellsJ = maxIndex.j - startCell.j + 1;
 
       Promise.all(promises).then(traces =>
       {
@@ -153,10 +155,9 @@ export class SeismicCubeNode extends DataNode
         const rotationAngle = Ma.toRad(5);
         const cube = new SeismicCube(nodeSize, origin, inc, rotationAngle);
 
-        cube.minIndex = minIndex;
+        cube.startCell = startCell;
         cube.client = client;
         cube.fileId = fileId;
-        cube.isLog = isLog;
 
         this.seismicCube = cube;
         if (this.surveyNode)
@@ -169,36 +170,7 @@ export class SeismicCubeNode extends DataNode
             plane.notifyNameChanged();
           }
         }
-        let minCell = new Index2(Math.round(cube.cellSize.i / 2), 0);
-        let maxCell = new Index2(Math.round(cube.cellSize.i / 2), cube.cellSize.j - 1);
-        const promise1 = cube.loadTraces(minCell, maxCell);
-
-        minCell = new Index2(0, Math.round(cube.cellSize.j / 2));
-        maxCell = new Index2(cube.cellSize.i - 1, Math.round(cube.cellSize.j / 2));
-        const promise2 = cube.loadTraces(minCell, maxCell);
-
-        Promise.all([promise1, promise2]).then(tracess =>
-        {
-          const statistics = new Statistics();
-          for (const atraces of tracess)
-          {
-            if (!atraces)
-              continue;
-
-            for (const trace of traces)
-            {
-              for (let value of trace.traceList)
-              {
-                if (value === 0)
-                  continue;
-
-                value = cube.getRealValue(value);
-                statistics.add(value);
-              }
-            }
-          }
-          cube.valueRange = statistics.getMostOfRange(4);
-        });
+        cube.calculateStatistics();
       });
     });
   }
