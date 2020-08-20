@@ -1,10 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Table } from 'antd';
-import { Icon, Menu } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import { useRouteMatch, Route } from 'react-router-dom';
 import { ContentContainer } from '../../elements';
 import ApiContext from '../../contexts/ApiContext';
-import ExpandableInput from '../../components/Molecules/ExpandableInput';
+import CreateNewConfiguration from '../../components/Molecules/CreateNewConfiguration';
+import New from './New';
 
 const StatusIcon = styled(Icon)`
   height: 100%;
@@ -117,6 +119,12 @@ const Configurations = () => {
   const { api } = useContext(ApiContext);
   const [data, setData] = useState<any[]>([]);
   const [columns, setColumns] = useState<any[]>([]);
+  const { path } = useRouteMatch();
+  const [newConfigurationName, setNewConfigurationName] = useState('');
+
+  function onSelect(name: string) {
+    setNewConfigurationName(name);
+  }
 
   useEffect(() => {
     api!.configurations.get().then((response) => {
@@ -127,12 +135,15 @@ const Configurations = () => {
 
   return (
     <>
-      <ExpandableInput buttonIcon="Plus" onClick={() => alert('new')}>
-        ...
-      </ExpandableInput>
-      <ContentContainer>
-        <Table dataSource={data} columns={columns} rowKey="id" />
-      </ContentContainer>
+      <Route exact path="/configurations">
+        <CreateNewConfiguration onSelect={onSelect} />
+        <ContentContainer>
+          <Table dataSource={data} columns={columns} rowKey="id" />
+        </ContentContainer>
+      </Route>
+      <Route path={`${path}/new/:type`}>
+        <New name={newConfigurationName} />
+      </Route>
     </>
   );
 };
