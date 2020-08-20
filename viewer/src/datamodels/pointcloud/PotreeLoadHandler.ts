@@ -4,18 +4,23 @@
 import * as Potree from '@cognite/potree-core';
 import { Observable, interval } from 'rxjs';
 import { map, share, distinctUntilChanged, startWith } from 'rxjs/operators';
+import { LoadingState } from '@/utilities';
 
 export class PotreeLoadHandler {
-  private static isLoading(): boolean {
-    return Potree.Global.numNodesLoading > 0;
+  private static getLoadingState(): LoadingState {
+    return { itemsLoaded: 0, itemsRequested: Potree.Global.numNodesLoading };
   }
 
-  private readonly _potreeLoadObservable: Observable<boolean>;
+  private readonly _potreeLoadObservable: Observable<LoadingState>;
   constructor(intervalMillis: number = 1000) {
-    this._potreeLoadObservable = interval(intervalMillis).pipe(map(_ => PotreeLoadHandler.isLoading()));
+    this._potreeLoadObservable = interval(intervalMillis).pipe(map(_ => PotreeLoadHandler.getLoadingState()));
   }
 
-  observer(): Observable<boolean> {
-    return this._potreeLoadObservable.pipe(share(), startWith(PotreeLoadHandler.isLoading()), distinctUntilChanged());
+  observer(): Observable<LoadingState> {
+    return this._potreeLoadObservable.pipe(
+      share(),
+      startWith(PotreeLoadHandler.getLoadingState()),
+      distinctUntilChanged()
+    );
   }
 }

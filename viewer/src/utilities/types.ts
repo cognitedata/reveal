@@ -34,3 +34,11 @@ export type ModelTransformation = {
   readonly modelMatrix: mat4;
   readonly inverseModelMatrix: mat4;
 };
+
+/**
+ * State holding information about data being loaded.
+ */
+export type LoadingState = {
+  itemsLoaded: number;
+  itemsRequested: number;
+};

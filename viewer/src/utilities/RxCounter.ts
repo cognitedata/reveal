@@ -2,8 +2,9 @@
  * Copyright 2020 Cognite AS
  */
 
-import { Subject, MonoTypeOperatorFunction, Observable } from 'rxjs';
-import { scan, tap, finalize, shareReplay } from 'rxjs/operators';
+import { Subject, MonoTypeOperatorFunction, Observable, asyncScheduler } from 'rxjs';
+import { scan, tap, finalize, shareReplay, throttleTime } from 'rxjs/operators';
+import { LoadingState } from './types';
 
 enum Action {
   Increment,
@@ -20,7 +21,9 @@ export class RxCounter {
    */
   public incrementOnNext<T>(): MonoTypeOperatorFunction<T> {
     return tap<T>({
-      next: () => this._actionSubject.next(Action.Increment)
+      next: () => {
+        this._actionSubject.next(Action.Increment);
+      }
     });
   }
 
@@ -30,7 +33,9 @@ export class RxCounter {
    */
   public decrementOnNext<T>(): MonoTypeOperatorFunction<T> {
     return tap<T>({
-      next: () => this._actionSubject.next(Action.Decrement)
+      next: () => {
+        this._actionSubject.next(Action.Decrement);
+      }
     });
   }
 
@@ -48,20 +53,29 @@ export class RxCounter {
    * Get counter observable.
    * @return {Observable<number>} The counter observable.
    */
-  public countObservable(): Observable<number> {
+  public progressObservable(): Observable<LoadingState> {
     return this._actionSubject.pipe(
-      scan((count, action) => {
-        switch (action) {
-          case Action.Increment:
-            return count + 1;
-          case Action.Decrement:
-            return count - 1;
-          case Action.Reset:
-            return 0;
-          default:
-            throw new Error(`Unsupported action ${action}`);
-        }
-      }, 0),
+      scan(
+        (loadingState, action) => {
+          switch (action) {
+            case Action.Increment:
+              loadingState.itemsRequested++;
+              break;
+            case Action.Decrement:
+              loadingState.itemsLoaded++;
+              break;
+            case Action.Reset:
+              loadingState.itemsLoaded = 0;
+              loadingState.itemsRequested = 0;
+              break;
+            default:
+              throw new Error(`Unsupported action ${action}`);
+          }
+          return loadingState;
+        },
+        { itemsLoaded: 0, itemsRequested: 0 } as LoadingState
+      ),
+      throttleTime(200, asyncScheduler, { trailing: true }),
       shareReplay(1)
     );
   }

@@ -17,7 +17,7 @@ CameraControls.install({ THREE });
 
 export function Testable() {
   const canvas = useRef<HTMLCanvasElement>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loadingState, setLoadingState] = useState<reveal.utilities.LoadingState>({ itemsLoaded: 0, itemsRequested: 0 });
 
   useEffect(() => {
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
@@ -59,7 +59,7 @@ export function Testable() {
           'Need to provide either project & model OR modelUrl as query parameters'
         );
       }
-      revealManager.on('loadingStateChanged', setIsLoading);
+      revealManager.on('loadingStateChanged', setLoadingState);
 
       scene.add(model);
 
@@ -170,7 +170,7 @@ export function Testable() {
   }, []);
   return (
     <CanvasWrapper>
-      <Loader isLoading={isLoading} style={{ position: 'absolute' }}>
+      <Loader isLoading={loadingState.itemsLoaded != loadingState.itemsRequested} style={{ position: 'absolute' }}>
         Not ready...
       </Loader>
       <canvas ref={canvas} />

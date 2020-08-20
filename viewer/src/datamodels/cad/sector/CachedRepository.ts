@@ -19,25 +19,13 @@ import {
   merge,
   NextObserver
 } from 'rxjs';
-import {
-  flatMap,
-  map,
-  tap,
-  shareReplay,
-  take,
-  retry,
-  reduce,
-  distinct,
-  catchError,
-  distinctUntilChanged,
-  mergeAll
-} from 'rxjs/operators';
+import { flatMap, map, tap, shareReplay, take, retry, reduce, distinct, catchError, mergeAll } from 'rxjs/operators';
 import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
 import { MemoryRequestCache } from '@/utilities/cache/MemoryRequestCache';
 import { ParseCtmResult, ParseSectorResult } from '@/utilities/workers/types/reveal.parser.types';
 import { TriangleMesh, InstancedMeshFile, InstancedMesh, SectorQuads } from '../rendering/types';
-import { createOffsetsArray } from '@/utilities';
+import { createOffsetsArray, LoadingState } from '@/utilities';
 import { trackError } from '@/utilities/metrics';
 import { BinaryFileProvider } from '@/utilities/networking/types';
 import { Group } from 'three';
@@ -105,11 +93,8 @@ export class CachedRepository implements Repository {
     ); // TODO: Should we do replay subject here instead of variable type?
   }
 
-  getLoadingStateObserver(): Observable<boolean> {
-    return this._loadingCounter.countObservable().pipe(
-      distinctUntilChanged(),
-      map(count => count != 0)
-    );
+  getLoadingStateObserver(): Observable<LoadingState> {
+    return this._loadingCounter.progressObservable();
   }
 
   // TODO j-bjorne 16-04-2020: Should look into ways of not sending in discarded sectors,
@@ -144,7 +129,7 @@ export class CachedRepository implements Repository {
        *  \--------- detailed wantedSectors --------------
        */
       const [simple$, detailed$] = partition(
-        uncached$.pipe(this._loadingCounter.incrementOnNext()),
+        uncached$,
         ({ wantedSector }) => wantedSector.levelOfDetail == LevelOfDetail.Simple
       );
 
@@ -166,8 +151,8 @@ export class CachedRepository implements Repository {
         this._consumedSectorCache.forceInsert(key, observable);
 
       const network$ = merge(
-        simple$.pipe(map(getSimpleSectorFromNetwork)),
-        detailed$.pipe(map(getDetailedSectorFromNetwork))
+        simple$.pipe(this._loadingCounter.incrementOnNext(), map(getSimpleSectorFromNetwork)),
+        detailed$.pipe(this._loadingCounter.incrementOnNext(), map(getDetailedSectorFromNetwork))
       ).pipe(
         tap({
           next: saveToCache
