@@ -270,7 +270,7 @@ export class TreeOverlay
 
     context.fillStyle = Canvas.getColor(fgColor);
     context.shadowBlur = 2;
-    context.shadowColor = 'rgba(0, 0, 0, 0.5)';
+    context.shadowColor = "rgba(0, 0, 0, 0.5)";
     context.shadowOffsetX = 3;
     context.shadowOffsetY = 3;
 
@@ -301,7 +301,7 @@ export class TreeOverlay
     if (polyline.isClosed)
       context.closePath();
 
-    context.lineCap = 'round';
+    context.lineCap = "round";
     context.lineWidth = 3;
     context.strokeStyle = Canvas.getColor(fgColor);
     context.stroke();

@@ -1,11 +1,11 @@
-import GroupProperty from '@/Core/Property/Concrete/Folder/GroupProperty';
-import Index3 from '@/Core/Geometry/Index3';
-import Index2 from '@/Core/Geometry/Index2';
+import GroupProperty from "@/Core/Property/Concrete/Folder/GroupProperty";
+import Index3 from "@/Core/Geometry/Index3";
+import Index2 from "@/Core/Geometry/Index2";
 import { Range1 } from "@/Core/Geometry/Range1";
 import { Range3 } from "@/Core/Geometry/Range3";
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import BasePropertyFolder from '@/Core/Property/Base/BasePropertyFolder';
-import { PropertyType } from '@/Core/Enums/PropertyType';
+import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { PropertyType } from "@/Core/Enums/PropertyType";
 
 const FractionDigitsDefault = 2;
 

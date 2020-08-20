@@ -14,8 +14,8 @@
 import { Util } from "@/Core/Primitives/Util";
 import { TextItem } from "@/Core/Views/TextItem";
 import { Polyline } from "@/Core/Geometry/Polyline";
-import { BaseNode } from '@/Core/Nodes/BaseNode';
-import { BaseTool } from '@/Three/Commands/Tools/BaseTool';
+import { BaseNode } from "@/Core/Nodes/BaseNode";
+import { BaseTool } from "@/Three/Commands/Tools/BaseTool";
 
 export class ViewInfo
 {

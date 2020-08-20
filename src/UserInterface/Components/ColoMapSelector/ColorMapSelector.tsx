@@ -92,7 +92,8 @@ export interface ColorMapProps {
 const ColorMap = styled.div<ColorMapProps>`
   min-height: 1.2rem;
   min-width: 2rem;
-  margin-inline-end: 8px;
+  border-radius: 0.1rem;
+  margin-inline-end: 0.5rem;
   background-image: linear-gradient(
     to right,
     ${(props) => (props.colors ? props.colors.join(",") : "")}

@@ -29,9 +29,9 @@ import { Vector3 } from "@/Core/Geometry/Vector3";
 import { WellTrajectoryStyle } from "@/SubSurface/Wells/Styles/WellTrajectoryStyle";
 import { CasingLogStyle } from "@/SubSurface/Wells/Styles/CasingLogStyle";
 import { WellTrajectory } from "@/SubSurface/Wells/Logs/WellTrajectory";
-import { CasingLog } from '@/SubSurface/Wells/Logs/CasingLog';
+import { CasingLog } from "@/SubSurface/Wells/Logs/CasingLog";
 import { WellTrajectoryView } from "@/ThreeSubSurface/Wells/WellTrajectoryView";
-import { ViewInfo } from '@/Core/Views/ViewInfo';
+import { ViewInfo } from "@/Core/Views/ViewInfo";
 import { Changes } from "@/Core/Views/Changes";
 
 export class CasingLogView extends BaseGroupThreeView

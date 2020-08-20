@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Random } from '@/Core/Primitives/Random';
+import { Random } from "@/Core/Primitives/Random";
 
 export class Trace 
 {

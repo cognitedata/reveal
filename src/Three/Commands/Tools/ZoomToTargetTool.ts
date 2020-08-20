@@ -1,7 +1,7 @@
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { BaseTool } from "@/Three/Commands/Tools/BaseTool";
 import ZoomToTargetBaseToolIcon from "@images/Commands/ZoomToTargetTool.png";
-import { VirtualUserInterface } from '@/Core/States/VirtualUserInterface';
+import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 
 export class ZoomToTargetTool extends BaseTool
 {

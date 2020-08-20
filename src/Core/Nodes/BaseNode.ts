@@ -30,8 +30,8 @@ import { Util } from "@/Core/Primitives/Util";
 import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 import { FileType } from "@/Core/Enums/FileType";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
-import { Range3 } from '@/Core/Geometry/Range3';
-import { ColorMaps } from '../Primitives/ColorMaps';
+import { Range3 } from "@/Core/Geometry/Range3";
+import { ColorMaps } from "../Primitives/ColorMaps";
 
 export abstract class BaseNode extends Identifiable
 {

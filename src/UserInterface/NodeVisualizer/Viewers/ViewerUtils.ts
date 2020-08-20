@@ -1,4 +1,4 @@
-import Viewer from '@/UserInterface/Components/Viewers/Viewer';
+import Viewer from "@/UserInterface/Components/Viewers/Viewer";
 
 export default class ViewerUtils 
 {

@@ -33,11 +33,11 @@ import { LogFolder } from "@/SubSurface/Wells/Nodes/LogFolder";
 import { BaseFilterLogNode } from "@/SubSurface/Wells/Filters/BaseFilterLogNode";
 import { IDataLoader } from "@/Core/Interfaces/IDataLoader";
 import { DataNode } from "@/Core/Nodes/DataNode";
-import { Ma } from '@/Core/Primitives/Ma';
-import { CasingLog } from '@/SubSurface/Wells/Logs/CasingLog';
+import { Ma } from "@/Core/Primitives/Ma";
+import { CasingLog } from "@/SubSurface/Wells/Logs/CasingLog";
 import { SurveyNode } from "@/SubSurface/Seismic/Nodes/SurveyNode";
 import { SeismicCubeNode } from "@/SubSurface/Seismic/Nodes/SeismicCubeNode";
-import { ColorMaps } from '@/Core/Primitives/ColorMaps';
+import { ColorMaps } from "@/Core/Primitives/ColorMaps";
 import { CogniteSeismicClient } from "@cognite/seismic-sdk-js";
 
 export class SyntheticSubSurfaceModule extends BaseModule
@@ -298,8 +298,8 @@ export class SyntheticSubSurfaceModule extends BaseModule
     const survey = new SurveyNode();
     survey.name = "Survey";
 
-    const client = new CogniteSeismicClient({ api_url: 'https://api.cognitedata.com', api_key: apiKey, debug: false });
-    const fileId = 'cc0f791f-e206-4c08-a139-c5d08eea8afc';
+    const client = new CogniteSeismicClient({ api_url: "https://api.cognitedata.com", api_key: apiKey, debug: false });
+    const fileId = "cc0f791f-e206-4c08-a139-c5d08eea8afc";
     {
       const seismicCubeNode = new SeismicCubeNode();
       seismicCubeNode.colorMap = ColorMaps.seismicName;

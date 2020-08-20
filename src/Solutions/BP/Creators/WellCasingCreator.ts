@@ -2,8 +2,8 @@ import { ICasing } from "@cognite/subsurface-interfaces";
 import { CasingLogNode } from "@/SubSurface/Wells/Nodes/CasingLogNode";
 import { CasingLogSample } from "@/SubSurface/Wells/Samples/CasingLogSample";
 import { Util } from "@/Core/Primitives/Util";
-import { Ma } from '@/Core/Primitives/Ma';
-import { CasingLog } from '@/SubSurface/Wells/Logs/CasingLog';
+import { Ma } from "@/Core/Primitives/Ma";
+import { CasingLog } from "@/SubSurface/Wells/Logs/CasingLog";
 
 export default class WellCasingCreator
 {

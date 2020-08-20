@@ -1,6 +1,6 @@
 import { PropertyType } from "@/Core/Enums/PropertyType";
-import UseProperty from '@/Core/Property/Base/UseProperty';
-import IPropertyParams from '@/Core/Property/Base/IPropertyParams';
+import UseProperty from "@/Core/Property/Base/UseProperty";
+import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 
 export default class StringProperty extends UseProperty<string>
 {

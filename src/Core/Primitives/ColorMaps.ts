@@ -13,8 +13,8 @@
 
 import * as Color from "color";
 import { Colors } from "@/Core/Primitives/Colors";
-import { ColorMap } from '@/Core/Primitives/ColorMap';
-import { ColorInterpolation } from '@/Core/Primitives/ColorMapItem';
+import { ColorMap } from "@/Core/Primitives/ColorMap";
+import { ColorInterpolation } from "@/Core/Primitives/ColorMapItem";
 
 export class ColorMaps
 {

@@ -16,7 +16,7 @@ import { Base3DView } from "@/Core/Views/Base3DView";
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
-import { ViewInfo } from '@/Core/Views/ViewInfo';
+import { ViewInfo } from "@/Core/Views/ViewInfo";
 
 export abstract class BaseThreeView extends Base3DView
 {

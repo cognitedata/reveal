@@ -95,7 +95,7 @@ export class Canvas
 
   public drawPath(color: Color | null = null, lineWidth = 1)
   {
-    this.context.lineCap = 'round';
+    this.context.lineCap = "round";
     this.context.lineWidth = lineWidth;
     this.context.strokeStyle = Canvas.getColor(color);
     this.context.stroke();
@@ -205,12 +205,12 @@ export class Canvas
   public fillPathBySemiTransparentGradient(color: Color, alphaFraction = 1)
   {
     const operation = this.context.globalCompositeOperation;
-    this.context.globalCompositeOperation = 'darker';
+    this.context.globalCompositeOperation = "darker";
     if (alphaFraction !== 1)
       color = color.alpha(alphaFraction);
 
     const gradient = this.context.createLinearGradient(0, 0, 0, this.dy);
-    gradient.addColorStop(0, 'transparent');
+    gradient.addColorStop(0, "transparent");
     gradient.addColorStop(1, Canvas.getColor(color));
 
     this.context.fillStyle = gradient;
@@ -244,15 +244,15 @@ export class Canvas
 
   private static fillOrTextHeightText(context: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number): number
   {
-    const words = text.split(' ');
-    let line = '';
+    const words = text.split(" ");
+    let line = "";
     let height = 0;
     const draw = x >= 0 && y >= 0;
     for (let n = 0; n < words.length; n++)
     {
       let testLine = line;
       if (line.length > 0)
-        testLine += ' ';
+        testLine += " ";
       testLine += words[n];
       const metrics = context.measureText(testLine);
       const testWidth = metrics.width;

@@ -14,8 +14,8 @@
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { Changes } from "@/Core/Views/Changes";
 import { BaseView } from "@/Core/Views/BaseView";
-import { SeismicCubeNode } from '@/SubSurface/Seismic/Nodes/SeismicCubeNode';
-import { SeismicPlaneNode } from '@/SubSurface/Seismic/Nodes/SeismicPlaneNode';
+import { SeismicCubeNode } from "@/SubSurface/Seismic/Nodes/SeismicCubeNode";
+import { SeismicPlaneNode } from "@/SubSurface/Seismic/Nodes/SeismicPlaneNode";
 
 export class SeismicCubeView extends BaseView
 {

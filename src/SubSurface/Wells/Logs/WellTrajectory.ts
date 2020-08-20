@@ -25,7 +25,7 @@ import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { TrajectorySample } from "@/SubSurface/Wells/Samples/TrajectorySample";
 import { MdSamples } from "@/SubSurface/Wells/Logs/MdSamples";
 import { RenderSample } from "@/SubSurface/Wells/Samples/RenderSample";
-import { LineSegment3 } from '@/Core/Geometry/LineSegment';
+import { LineSegment3 } from "@/Core/Geometry/LineSegment";
 
 export class WellTrajectory extends MdSamples
 {

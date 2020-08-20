@@ -30,7 +30,7 @@ import { DiscreteLog } from "@/SubSurface/Wells/Logs/DiscreteLog";
 import { FloatLogSample } from "@/SubSurface/Wells/Samples/FloatLogSample";
 import { WellTrajectory } from "@/SubSurface/Wells/Logs/WellTrajectory";
 import { ColorMap } from "@/Core/Primitives/ColorMap";
-import { ColorMaps } from '@/Core/Primitives/ColorMaps';
+import { ColorMaps } from "@/Core/Primitives/ColorMaps";
 
 export class LogRenderOld
 {

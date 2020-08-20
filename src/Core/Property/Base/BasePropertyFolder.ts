@@ -1,10 +1,10 @@
-import StringProperty from '@/Core/Property/Concrete/Property/StringProperty';
+import StringProperty from "@/Core/Property/Concrete/Property/StringProperty";
 import ColorProperty from "@/Core/Property/Concrete/Property/ColorProperty";
 import ColorMapProperty from "@/Core/Property/Concrete/Property/ColorMapProperty";
-import Color from 'color';
-import { ColorMaps } from '@/Core/Primitives/ColorMaps';
-import IPropertyParams from '@/Core/Property/Base/IPropertyParams';
-import { Ma } from '@/Core/Primitives/Ma';
+import Color from "color";
+import { ColorMaps } from "@/Core/Primitives/ColorMaps";
+import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
+import { Ma } from "@/Core/Primitives/Ma";
 import BaseProperty from "./BaseProperty";
 
 const FractionDigitsDefault = 2;

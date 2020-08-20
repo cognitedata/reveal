@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import * as Lodash from 'lodash';
+import * as Lodash from "lodash";
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Range3 } from "@/Core/Geometry/Range3";

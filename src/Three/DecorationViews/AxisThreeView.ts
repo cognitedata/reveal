@@ -13,7 +13,7 @@
 
 import * as THREE from "three";
 import * as Color from "color";
-import * as Lodash from 'lodash';
+import * as Lodash from "lodash";
 
 import { Range1 } from "@/Core/Geometry/Range1";
 import { Range3 } from "@/Core/Geometry/Range3";

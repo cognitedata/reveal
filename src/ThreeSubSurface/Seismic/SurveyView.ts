@@ -13,7 +13,7 @@
 
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { BaseView } from "@/Core/Views/BaseView";
-import { SurveyNode } from '@/SubSurface/Seismic/Nodes/SurveyNode';
+import { SurveyNode } from "@/SubSurface/Seismic/Nodes/SurveyNode";
 
 export class SurveyView extends BaseView
 {

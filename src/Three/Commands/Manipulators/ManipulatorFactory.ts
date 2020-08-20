@@ -13,7 +13,7 @@
 
 /* eslint-disable max-classes-per-file */
 import { BaseNode } from "@/Core/Nodes/BaseNode";
-import { BaseManipulator } from '@/Three/Commands/Manipulators/BaseManipulator';
+import { BaseManipulator } from "@/Three/Commands/Manipulators/BaseManipulator";
 
 export class ManipulatorFactory
 {

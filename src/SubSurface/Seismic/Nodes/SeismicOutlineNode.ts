@@ -13,8 +13,8 @@
 
 import Icon from "@images/Nodes/SeismicOutlineNode.png";
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
-import { RegularGrid3 } from '@/Core/Geometry/RegularGrid3';
-import { SurveyNode } from '@/SubSurface/Seismic/Nodes/SurveyNode';
+import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
+import { SurveyNode } from "@/SubSurface/Seismic/Nodes/SurveyNode";
 
 export class SeismicOutlineNode extends BaseVisualNode
 {

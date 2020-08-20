@@ -14,10 +14,10 @@
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import Index3 from "@/Core/Geometry/Index3";
 import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
-import { Trace } from '@/SubSurface/Seismic/Data/Trace';
-import Index2 from '@/Core/Geometry/Index2';
-import STK from '@cognite/seismic-sdk-js';
-import { Range1 } from '@/Core/Geometry/Range1';
+import { Trace } from "@/SubSurface/Seismic/Data/Trace";
+import Index2 from "@/Core/Geometry/Index2";
+import STK from "@cognite/seismic-sdk-js";
+import { Range1 } from "@/Core/Geometry/Range1";
 
 export class SeismicCube extends RegularGrid3
 {

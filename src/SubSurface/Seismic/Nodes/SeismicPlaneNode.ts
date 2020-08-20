@@ -20,7 +20,7 @@ import IconJ from "@images/Nodes/SeismicPlaneNodeJ.png";
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { SurveyNode } from "@/SubSurface/Seismic/Nodes/SurveyNode";
 import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
-import { Vector3 } from '@/Core/Geometry/Vector3';
+import { Vector3 } from "@/Core/Geometry/Vector3";
 import Index2 from "@/Core/Geometry/Index2";
 import Index3 from "@/Core/Geometry/Index3";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";

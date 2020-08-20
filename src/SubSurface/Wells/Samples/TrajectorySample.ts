@@ -13,7 +13,7 @@
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { MdSample } from "@/SubSurface/Wells/Samples/MdSample";
-import { Ma } from '@/Core/Primitives/Ma';
+import { Ma } from "@/Core/Primitives/Ma";
 
 export class TrajectorySample extends MdSample 
 {

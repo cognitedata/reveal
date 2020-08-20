@@ -41,8 +41,8 @@ import { BaseThreeView } from "@/Three/BaseViews/BaseThreeView";
 import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";
 import { ZScaleCommand } from "@/Three/Commands/ZScaleCommand";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
-import { ToolbarGroupIds } from '@/Three/Nodes/ToolbarGroupIds';
-import { BaseCommand } from '@/Core/Commands/BaseCommand';
+import { ToolbarGroupIds } from "@/Three/Nodes/ToolbarGroupIds";
+import { BaseCommand } from "@/Core/Commands/BaseCommand";
 
 const DirectionalLightName = "DirectionalLight";
 
@@ -167,11 +167,11 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode
 
     this.domElement.tabIndex = 1; // Trick to let keydown works!
     this.controls.addEventListener("update", () => this.updateLightPosition());
-    this.domElement.addEventListener('click', (event) => this._toolController.onMouseClick(this, event), false);
-    this.domElement.addEventListener('mousedown', (event) => this._toolController.onMouseDown(this, event), false);
-    this.domElement.addEventListener('mouseup', (event) => this._toolController.onMouseUp(this, event), false);
-    this.domElement.addEventListener('mousemove', (event) => this._toolController.onMouseMove(this, event), false);
-    this.domElement.addEventListener('keydown', (event) => this._toolController.onKeyDown(this, event), false);
+    this.domElement.addEventListener("click", (event) => this._toolController.onMouseClick(this, event), false);
+    this.domElement.addEventListener("mousedown", (event) => this._toolController.onMouseDown(this, event), false);
+    this.domElement.addEventListener("mouseup", (event) => this._toolController.onMouseUp(this, event), false);
+    this.domElement.addEventListener("mousemove", (event) => this._toolController.onMouseMove(this, event), false);
+    this.domElement.addEventListener("keydown", (event) => this._toolController.onKeyDown(this, event), false);
     this.render();
   }
 

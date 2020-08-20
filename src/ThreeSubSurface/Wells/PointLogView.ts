@@ -32,7 +32,7 @@ import { Appearance } from "@/Core/States/Appearance";
 import { WellTrajectoryStyle } from "@/SubSurface/Wells/Styles/WellTrajectoryStyle";
 import { PointLogStyle } from "@/SubSurface/Wells/Styles/PointLogStyle";
 import { WellTrajectoryView } from "@/ThreeSubSurface/Wells/WellTrajectoryView";
-import { ViewInfo } from '@/Core/Views/ViewInfo';
+import { ViewInfo } from "@/Core/Views/ViewInfo";
 
 const selectedRadiusFactor = 1.2;
 

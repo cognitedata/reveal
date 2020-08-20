@@ -1,5 +1,5 @@
-import BaseProperty from '@/Core/Property/Base/BaseProperty';
-import IPropertyParams from '@/Core/Property/Base/IPropertyParams';
+import BaseProperty from "@/Core/Property/Base/BaseProperty";
+import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 
 export type Action = () => void;
 export type StringAction = (fieldName: string) => void;

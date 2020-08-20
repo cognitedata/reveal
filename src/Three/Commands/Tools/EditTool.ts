@@ -1,8 +1,8 @@
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import { BaseTool } from "@/Three/Commands/Tools/BaseTool";
 import SelectCommandIcon from "@images/Commands/EditTool.png";
-import { BaseManipulator } from '@/Three/Commands/Manipulators/BaseManipulator';
-import { ManipulatorFactory } from '@/Three/Commands/Manipulators/ManipulatorFactory';
+import { BaseManipulator } from "@/Three/Commands/Manipulators/BaseManipulator";
+import { ManipulatorFactory } from "@/Three/Commands/Manipulators/ManipulatorFactory";
 
 export class EditTool extends BaseTool
 {

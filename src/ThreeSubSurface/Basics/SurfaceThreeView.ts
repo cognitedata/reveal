@@ -25,10 +25,10 @@ import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { TextureKit } from "@/Three/Utilities/TextureKit";
 import { ContouringService } from "@/Core/Geometry/ContouringService";
-import { ColorMaps } from '@/Core/Primitives/ColorMaps';
-import { ViewInfo } from '@/Core/Views/ViewInfo';
-import Index2 from '@/Core/Geometry/Index2';
-import { Changes } from '@/Core/Views/Changes';
+import { ColorMaps } from "@/Core/Primitives/ColorMaps";
+import { ViewInfo } from "@/Core/Views/ViewInfo";
+import Index2 from "@/Core/Geometry/Index2";
+import { Changes } from "@/Core/Views/Changes";
 
 export class SurfaceThreeView extends BaseGroupThreeView
 {
@@ -170,7 +170,7 @@ export class SurfaceThreeView extends BaseGroupThreeView
       return null;
 
     const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.Float32BufferAttribute(contours, 3));
+    geometry.setAttribute("position", new THREE.Float32BufferAttribute(contours, 3));
 
     const material = new THREE.LineBasicMaterial({ color: ThreeConverter.toThreeColor(color), linewidth: 1 });
     return new THREE.LineSegments(geometry, material);

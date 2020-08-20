@@ -50,17 +50,17 @@ import { PointFilterLogNode } from "@/SubSurface/Wells/Filters/PointFilterLogNod
 import { FloatFilterLogNode } from "@/SubSurface/Wells/Filters/FloatFilterLogNode";
 import { DiscreteFilterLogNode } from "@/SubSurface/Wells/Filters/DiscreteFilterLogNode";
 import { FilterLogFilterView } from "@/ThreeSubSurface/Wells/FilterLogFilterView";
-import { SeismicCubePlaneView } from '@/ThreeSubSurface/Seismic/SeismicCubePlaneView';
-import { SeismicPlaneNode } from '@/SubSurface/Seismic/Nodes/SeismicPlaneNode';
-import { SeismicCubeNode } from '@/SubSurface/Seismic/Nodes/SeismicCubeNode';
-import { SeismicCubeView } from '@/ThreeSubSurface/Seismic/SeismicCubeView';
-import { SurveyNode } from '@/SubSurface/Seismic/Nodes/SurveyNode';
-import { SurveyView } from '@/ThreeSubSurface/Seismic/SurveyView';
-import { ManipulatorFactory } from '@/Three/Commands/Manipulators/ManipulatorFactory';
-import { SeismicCubePlaneManipulator } from '@/ThreeSubSurface/Seismic/SeismicCubePlaneManipulator';
+import { SeismicCubePlaneView } from "@/ThreeSubSurface/Seismic/SeismicCubePlaneView";
+import { SeismicPlaneNode } from "@/SubSurface/Seismic/Nodes/SeismicPlaneNode";
+import { SeismicCubeNode } from "@/SubSurface/Seismic/Nodes/SeismicCubeNode";
+import { SeismicCubeView } from "@/ThreeSubSurface/Seismic/SeismicCubeView";
+import { SurveyNode } from "@/SubSurface/Seismic/Nodes/SurveyNode";
+import { SurveyView } from "@/ThreeSubSurface/Seismic/SurveyView";
+import { ManipulatorFactory } from "@/Three/Commands/Manipulators/ManipulatorFactory";
+import { SeismicCubePlaneManipulator } from "@/ThreeSubSurface/Seismic/SeismicCubePlaneManipulator";
 import { PointLogManipulator } from "@/ThreeSubSurface/Wells/PointLogManipulator";
-import { SeismicOutlineView } from '@/ThreeSubSurface/Seismic/SeismicOutlineView';
-import { SeismicOutlineNode } from '@/SubSurface/Seismic/Nodes/SeismicOutlineNode';
+import { SeismicOutlineView } from "@/ThreeSubSurface/Seismic/SeismicOutlineView";
+import { SeismicOutlineNode } from "@/SubSurface/Seismic/Nodes/SeismicOutlineNode";
 
 export class ThreeModule extends BaseModule
 {
