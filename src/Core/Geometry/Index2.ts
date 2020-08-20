@@ -16,7 +16,7 @@ export default class Index2
   //==================================================
   // STATIC PROPERTIES
   //==================================================
-  
+
   public static get newZero(): Index2 { return new Index2(0, 0); }
 
   //==================================================
@@ -67,4 +67,9 @@ export default class Index2
   // INSTANCE METHODS: Operations
   //==================================================
 
+  public copy(other: Index2): void
+  {
+    this.i = other.i;
+    this.j = other.j;
+  }
 }

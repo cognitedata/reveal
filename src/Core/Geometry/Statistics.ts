@@ -22,6 +22,7 @@ export class Statistics
   private _sumSquared: number = 0;
   private _sum: number = 0;
   private _n: number = 0;
+  private _range: Range1 = new Range1();;
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -32,6 +33,7 @@ export class Statistics
   public get mean(): number { return this.isEmpty ? Number.NaN : this._sum / this._n; }
   public get variance(): number { return this.isEmpty ? Number.NaN : (this._sumSquared - this._sum * this._sum / this._n) / this._n; }
   public get stdDev(): number { return this.isEmpty ? Number.NaN : Math.sqrt(this.variance); }
+  public get range(): Range1 { return this._range; }
 
   //==================================================
   // INSTANCE METHODS: Getters
@@ -66,6 +68,7 @@ export class Statistics
     this._n++;
     this._sum += value;
     this._sumSquared += value * value;
+    this.range.add(value);
   }
 
   public addWithNaN(value: number): void
@@ -79,5 +82,6 @@ export class Statistics
     this._n = 0;
     this._sum = 0;
     this._sumSquared = 0;
+    this.range.clear();
   }
 }

@@ -7,6 +7,7 @@ export default abstract class BaseProperty
   //==================================================
 
   private _name: string;
+  private _displayName?: string;
   private _readonly: boolean;
   private _toolTip?: string;
 
@@ -16,7 +17,8 @@ export default abstract class BaseProperty
 
   public get name(): string { return this._name; }
   public set name(value: string) { this._name = value; }
-  public get displayName(): string { return this.name == null ? "" : this.name; }
+  public get displayName(): string { return this._displayName ? this._displayName : this.name; }
+  public set displayName(value: string) { this._displayName = value; }
   public get isReadOnly(): boolean { return this._readonly; }
   public set isReadOnly(value: boolean) { this._readonly = value; }
   public get toolTip(): string | undefined { return this._toolTip; }
@@ -29,6 +31,7 @@ export default abstract class BaseProperty
   protected constructor(name: string, readonly?: boolean, toolTip?: string)
   {
     this._name = name;
+    this._displayName = name;
     this._readonly = readonly === undefined ? false : readonly;
     this._toolTip = toolTip;
   }

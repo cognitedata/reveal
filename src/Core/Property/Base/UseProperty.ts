@@ -1,3 +1,4 @@
+import * as Lodash from "lodash";
 import BaseProperty from "@/Core/Property/Base/BaseProperty";
 import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 
@@ -49,11 +50,21 @@ export default abstract class UseProperty<T> extends BaseProperty
     this._fieldName = params.name;
     this._use = params.use;
 
-    // Set the calue
+    // Set the value
     if (params.instance)
+    {
+      if (!Reflect.has(params.instance, params.name))
+      {
+        this.displayName = "ERROR";
+        return;
+      }
       this._instance = params.instance;
-    else
+      this.displayName = Lodash.startCase(this.name);
+    }
+    else if (params.value !== undefined)
       this._value = params.value;
+    else 
+      throw Error("UseProperty has no value");
   }
 
   //==================================================
@@ -63,7 +74,7 @@ export default abstract class UseProperty<T> extends BaseProperty
   public get value(): T
   {
     if (!this._instance)
-      return this._value as T;
+      return this._value as T;      
     return Reflect.get(this._instance, this.name) as T;
   }
 

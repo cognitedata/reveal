@@ -82,6 +82,19 @@ export class SeismicPlaneNode extends BaseVisualNode
     this._perpendicularIndex = value;
   }
 
+  public get realPerpendicularIndex(): number
+  {
+    const { surveyCube } = this;
+    if (!surveyCube)
+      throw Error("surveyCube is not set");
+
+    if (this.perpendicularAxis === 0)
+      return this.perpendicularIndex + surveyCube.startCell.i;
+    if (this.perpendicularAxis === 1)
+      return this.perpendicularIndex + surveyCube.startCell.j;
+    throw new Error("getMinIndex is not implemented for this case");
+  }
+
   private get maxPerpendicularIndex(): number
   {
     const { surveyCube } = this;
@@ -193,7 +206,7 @@ export class SeismicPlaneNode extends BaseVisualNode
       return super.getNameExtension();
     if (!this.surveyCube)
       return super.getNameExtension();
-    return `${this.perpendicularIndex}`;
+    return `${this.realPerpendicularIndex}`;
   }
 
   public /*override*/ getIcon(): string 
@@ -215,11 +228,10 @@ export class SeismicPlaneNode extends BaseVisualNode
   protected /*override*/ populateStatisticsCore(folder: ExpanderProperty): void
   {
     super.populateStatisticsCore(folder);
-
     if (this.isArbitrary)
       folder.addReadOnlyStrings("Along", this.generalName);
     else
-      folder.addReadOnlyStrings("Along/Index", this.generalName, this.perpendicularIndex.toString());
+      folder.addReadOnlyStrings("Along/Index", this.generalName, this.realPerpendicularIndex.toString());
   }
 
   //==================================================

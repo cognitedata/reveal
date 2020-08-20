@@ -18,6 +18,7 @@ import { Random } from "@/Core/Primitives/Random";
 import { BaseLogSample } from "@/SubSurface/Wells/Samples/BaseLogSample";
 import { FloatLogSample } from "@/SubSurface/Wells/Samples/FloatLogSample";
 import { BaseLog } from "@/SubSurface/Wells/Logs/BaseLog";
+import { Statistics } from "@/Core/Geometry/Statistics";
 
 export class FloatLog extends BaseLog
 {
@@ -25,7 +26,7 @@ export class FloatLog extends BaseLog
   // INSTANCE FIELDS
   //==================================================
 
-  private _valueRange: Range1 | undefined;
+  private _statistics: Statistics | undefined;
 
   //==================================================
   // OVERRIDES of BaseLog
@@ -75,34 +76,37 @@ export class FloatLog extends BaseLog
 
   public get valueRange(): Range1
   {
-    if (!this._valueRange)
-      this._valueRange = this.calculateValueRange();
-    return this._valueRange;
+    const { statistics } = this;
+    if (!statistics)
+      return new Range1;
+    return statistics.range;
   }
 
-  public calculateValueRange(): Range1
+  public get statistics(): Statistics
   {
-    const range = new Range1();
-    this.expandValueRange(range);
-    return range;
+    if (!this._statistics)
+      this._statistics = this.createStatistics();
+    return this._statistics;
   }
 
   public touch(): void
   {
     super.touch();
-    this._valueRange = undefined;
+    this._statistics = undefined;
   }
 
-  public expandValueRange(range: Range1): void
+  private createStatistics(): Statistics
   {
+    const statistics = new Statistics();
     for (let i = this.length - 1; i >= 0; i--)
     {
       const sample = this.getAt(i);
       if (sample.isMdEmpty || sample.isEmpty)
         continue;
 
-      range.add(sample.value);
+      statistics.add(sample.value);
     }
+    return statistics;
   }
 
   //==================================================

@@ -81,7 +81,7 @@ export class SeismicCubePlaneManipulator extends BaseManipulator
     {
       planeNode.notify(new NodeEventArgs(Changes.geometry, finished ? "" : "InDragging"));
       target.viewInfo.clear();
-      target.viewInfo.addText(`Moving plane \`${planeNode.name}\` to index ${planeNode.perpendicularIndex + 1}.`);
+      target.viewInfo.addText(`Moving plane \`${planeNode.name}\` to index ${planeNode.realPerpendicularIndex + 1}.`);
       target.invalidate();
     }
     if (finished)

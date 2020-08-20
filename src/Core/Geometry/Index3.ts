@@ -11,6 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import Index2 from "@/Core/Geometry/Index2";
+
 export default class Index3
 {
   //==================================================
@@ -70,4 +72,16 @@ export default class Index3
   // INSTANCE METHODS: Operations
   //==================================================
 
+  public copy(other: Index3): void
+  {
+    this.i = other.i;
+    this.j = other.j;
+    this.k = other.k;
+  }
+
+  public addIndex2(index: Index2): void
+  {
+    this.i += index.i;
+    this.j += index.j;
+  }
 }

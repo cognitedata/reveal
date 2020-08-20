@@ -312,7 +312,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
       seismicCubeNode.colorMap = ColorMaps.greyScaleName;
       survey.addChild(seismicCubeNode);
       seismicTree.addChild(survey);
-      seismicCubeNode.load(client, fileId, true);
+      seismicCubeNode.load(client, fileId);
     }
 
     // Get trace 1

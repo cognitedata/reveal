@@ -96,7 +96,7 @@ export class ColorMaps
     colorMap.add(Color.rgb(97, 69, 0), 1 - b, interpolation);
     colorMap.add(Color.rgb(191, 0, 0), 1 - a, interpolation);
     colorMap.add(Colors.yellow, 1, interpolation);
-    colorMap.name = reverse ? ColorMaps.seismicName : ColorMaps.seismicRevName;
+    colorMap.name = reverse ? ColorMaps.seismicRevName : ColorMaps.seismicName;
     if (reverse)
       colorMap.reverse();
     return colorMap;
@@ -108,7 +108,7 @@ export class ColorMaps
     const interpolation = ColorInterpolation.HsvMax;
     colorMap.add(Colors.magenta, 0, interpolation);
     colorMap.add(Colors.red, 1, interpolation);
-    colorMap.name = reverse ? ColorMaps.rainbowName : ColorMaps.rainbowRevName;
+    colorMap.name = reverse ? ColorMaps.rainbowRevName : ColorMaps.rainbowName;
     if (reverse)
       colorMap.reverse();
     return colorMap;
@@ -120,7 +120,7 @@ export class ColorMaps
     const interpolation = ColorInterpolation.HsvMax;
     colorMap.add(Colors.white, 0, interpolation);
     colorMap.add(Colors.black, 1, interpolation);
-    colorMap.name = reverse ? ColorMaps.greyScaleName : ColorMaps.greyScaleRevName;
+    colorMap.name = reverse ? ColorMaps.greyScaleRevName : ColorMaps.greyScaleName;
     if (reverse)
       colorMap.reverse();
     return colorMap;
