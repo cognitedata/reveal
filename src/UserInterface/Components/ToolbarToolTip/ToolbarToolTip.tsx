@@ -3,6 +3,7 @@ import "./ToolbarToolTip.module.scss";
 import { Theme, withStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import getIcon from "@/UserInterface/Components/Icon/IconSelector";
+import { Typography } from "@material-ui/core";
 
 // Custom tooltip with white background
 const CustomToolTip = withStyles((theme: Theme) => ({
@@ -46,12 +47,25 @@ export default function ToolbarToolTip(props: {
                 {tooltip.text.split("\n").map((line, index) => {
                   if (index === 0) {
                     return (
-                      <span key={`Tip-line-${line}`} className="head">
+                      <Typography
+                        key={`Tip-line-${line}`}
+                        variant="subtitle1"
+                        component="div"
+                        className="head"
+                      >
                         {line}
-                      </span>
+                      </Typography>
                     );
                   }
-                  return <span key={`Tip-line-${line}`}>{line}</span>;
+                  return (
+                    <Typography
+                      variant="body1"
+                      key={`Tip-line-${line}`}
+                      component="span"
+                    >
+                      {line}
+                    </Typography>
+                  );
                 })}
               </div>
             </div>
