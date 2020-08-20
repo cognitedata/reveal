@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Table } from 'antd';
-import { Button, Icon } from '@cognite/cogs.js';
+import { Icon, Menu } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { ContentContainer } from '../../elements';
 import ApiContext from '../../contexts/ApiContext';
@@ -127,7 +127,9 @@ const Configurations = () => {
 
   return (
     <>
-      <ExpandableInput />
+      <ExpandableInput buttonIcon="Plus" onClick={() => alert('new')}>
+        ...
+      </ExpandableInput>
       <ContentContainer>
         <Table dataSource={data} columns={columns} rowKey="id" />
       </ContentContainer>

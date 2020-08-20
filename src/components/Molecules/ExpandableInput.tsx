@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Trans } from 'react-i18next';
-import { Button, Input } from '@cognite/cogs.js';
+import { Button, IconType, Input } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 enum INPUT_STATE {
@@ -8,21 +7,33 @@ enum INPUT_STATE {
   'EXPANDED',
 }
 
+type Props = {
+  buttonLabelCollapsed?: string;
+  buttonLabelExpanded?: string;
+  buttonIcon?: IconType;
+  inputPlaceholder?: string;
+  onClick: () => void;
+  children?: any;
+};
+
 const Container = styled.div`
   height: 36px;
   display: flex;
   flex-direction: row-reverse;
 `;
 
-const ExpandableInput = (): React.ReactElement => {
+const ExpandableInput = ({
+  buttonLabelCollapsed = 'buttonLabelCollapsed',
+  buttonLabelExpanded = 'buttonLabelExpanded',
+  buttonIcon = 'Placeholder',
+  inputPlaceholder = 'inputPlaceholder',
+  onClick,
+  children,
+}: Props): React.ReactElement => {
   const [state, setState] = useState(INPUT_STATE.COLLAPSED);
 
   function expand() {
     setState(INPUT_STATE.EXPANDED);
-  }
-
-  function collapse() {
-    setState(INPUT_STATE.COLLAPSED);
   }
 
   return (
@@ -30,22 +41,21 @@ const ExpandableInput = (): React.ReactElement => {
       <Button
         type="primary"
         size="large"
-        icon={state === INPUT_STATE.EXPANDED ? undefined : 'Plus'}
-        onClick={state === INPUT_STATE.COLLAPSED ? expand : collapse}
+        icon={state === INPUT_STATE.EXPANDED ? undefined : buttonIcon}
+        onClick={state === INPUT_STATE.COLLAPSED ? expand : onClick}
       >
-        {state === INPUT_STATE.EXPANDED ? (
-          <Trans i18nKey="Global:BtnCreate" />
-        ) : (
-          <Trans i18nKey="Global:BtnNewConfiguration" />
-        )}
+        {state === INPUT_STATE.EXPANDED
+          ? buttonLabelExpanded
+          : buttonLabelCollapsed}
       </Button>
       {state === INPUT_STATE.EXPANDED ? (
         <Input
           autoFocus
-          placeholder="DSG session name..."
+          placeholder={inputPlaceholder}
           style={{ fontFamily: '"Inter", sans-serif', marginRight: '16px' }}
         />
       ) : null}
+      {children}
     </Container>
   );
 };
