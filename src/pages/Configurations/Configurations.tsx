@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Table } from 'antd';
-import { Icon } from '@cognite/cogs.js';
+import { Button, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { ContentContainer } from '../../elements';
 import ApiContext from '../../contexts/ApiContext';
+import ExpandableInput from '../../components/Molecules/ExpandableInput';
 
 const StatusIcon = styled(Icon)`
   height: 100%;
@@ -125,9 +126,12 @@ const Configurations = () => {
   }, []);
 
   return (
-    <ContentContainer>
-      <Table dataSource={data} columns={columns} rowKey="id" />
-    </ContentContainer>
+    <>
+      <ExpandableInput />
+      <ContentContainer>
+        <Table dataSource={data} columns={columns} rowKey="id" />
+      </ContentContainer>
+    </>
   );
 };
 
