@@ -276,7 +276,7 @@ export const retrieveDownloadUrl = async (
   }
 };
 
-export const isImage = async (file: FilesMetadata) => {
+export const isImage = (file: FilesMetadata) => {
   const { mimeType = '' } = file;
   return ['png, jpeg, jpg'].some(el => mimeType.includes(el));
 };

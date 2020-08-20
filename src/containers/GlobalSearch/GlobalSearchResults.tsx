@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { ResourceType } from 'modules/sdk-builder/types';
 import { Tabs } from 'antd';
 import { Title, Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useDebounce } from 'use-debounce/lib';
+import { useQuery } from 'context/ResourceSelectionContext';
 import { AssetFilterSearch } from './AssetFilterSearch';
 import { FileFilterSearch } from './FileFilterSearch';
 
@@ -31,13 +32,11 @@ const ResourceMap: { [key in ResourceType]: string } = {
 
 export const GlobalSearchResults = ({
   resourceTypes = ['assets', 'files'],
-  query: queryFromProps,
 }: {
   resourceTypes?: ResourceType[];
-  query?: string;
 }) => {
   const [activeKey, setActiveKey] = useState<ResourceType>('assets');
-  const [query, setQuery] = useState(queryFromProps);
+  const [query] = useQuery();
   const [debouncedQuery] = useDebounce(query, 100);
 
   const content = useMemo(() => {
@@ -50,10 +49,6 @@ export const GlobalSearchResults = ({
         return null;
     }
   }, [activeKey, debouncedQuery]);
-
-  useEffect(() => {
-    setQuery(queryFromProps);
-  }, [queryFromProps]);
 
   return (
     <Wrapper>

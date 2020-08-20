@@ -8,7 +8,7 @@ import { TimeseriesPreview } from 'containers/Timeseries';
 import { GlobalSearchResults } from 'containers/GlobalSearch/GlobalSearchResults';
 import ResourceActionsContext from 'context/ResourceActionsContext';
 import { RenderResourceActionsFunction } from 'types/Types';
-import { ResourceItem } from 'context/ResourceSelectionContext';
+import { ResourceItem, useQuery } from 'context/ResourceSelectionContext';
 import { ResourceType } from 'modules/sdk-builder/types';
 
 const Drawer = styled.div<{ visible: boolean }>`
@@ -53,7 +53,7 @@ export const ResourceSidebar = ({
   visible?: boolean;
   children?: React.ReactNode;
 }) => {
-  const [query, setQuery] = useState<string>('');
+  const [query, setQuery] = useQuery();
   const { add, remove } = useContext(ResourceActionsContext);
   const [selectedItem, setSelectedItem] = useState<ResourceItem | undefined>(
     undefined
@@ -162,7 +162,7 @@ export const ResourceSidebar = ({
           onChange={ev => setQuery(ev.target.value)}
           value={query}
         />
-        <GlobalSearchResults query={query} />
+        <GlobalSearchResults />
       </>
     );
   }

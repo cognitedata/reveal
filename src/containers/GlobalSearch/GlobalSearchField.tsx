@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { Input, Button } from '@cognite/cogs.js';
+import { useQuery } from 'context/ResourceSelectionContext';
 import { GlobalSearchResults } from './GlobalSearchResults';
 
 const Overlay = styled.div<{ visible: boolean }>`
@@ -74,7 +75,7 @@ export const GlobalSearchField = ({
   offsetTop = 0,
   showSearch: propShowSearch,
 }: Props) => {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useQuery();
   const [showSearchResults, setShowSearchResults] = useState(false);
 
   const onResourceSelected = useCallback(() => {
@@ -120,7 +121,7 @@ export const GlobalSearchField = ({
             icon="Close"
             onClick={() => setShowSearchResults(false)}
           />
-          <GlobalSearchResults query={query} />
+          <GlobalSearchResults />
         </ResultList>
       </SearchWrapper>
     </>
