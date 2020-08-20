@@ -25,33 +25,26 @@ const toolBarDimensions = (
   dimension2: number,
   isHorizontal: boolean
 ) => {
-  if (isHorizontal) return { width: dimension2, height: dimension1 };
-
+  if (isHorizontal) return { width: "fit-content", height: dimension1 };
   return { width: dimension1 * 2 };
 };
 
 /**
  * Get bottom and right margins of toolbar
  */
-const toolBarWrapperMargins = (
-  dimension1: number,
-  dimension2: number,
-  isHorizontal: boolean
-) => {
-  if (isHorizontal) {
-    return { marginBottom: dimension1, marginRight: dimension2 };
-  }
-
-  return { marginRight: dimension1, marginBottom: dimension2 };
-};
 
 // Visualizer ToolBar Component
 export default function VisualizerToolbar(props: {
   visualizerId: string;
-  toolbar?: IToolbarButton[];
-  onToolbarButtonClick: (visualizerId: string, index: number) => void;
+  toolbar?: Map<string, IToolbarButton[]>;
+  onToolbarButtonClick: (
+    visualizerId: string,
+    groupId: string,
+    index: number
+  ) => void;
   onToolbarSelectionChange: (
     visualizerId: string,
+    groupId: string,
     index: number,
     value: string
   ) => void;
@@ -63,6 +56,7 @@ export default function VisualizerToolbar(props: {
     onToolbarSelectionChange,
   } = props;
   if (!toolbar) return null;
+  const groupIds: string[] = toolbar ? Object.keys(toolbar) : [];
 
   // Toolbar orientation
   const [horizontal, setHorizontal] = useState(true);
@@ -91,12 +85,18 @@ export default function VisualizerToolbar(props: {
     }
   };
 
-  const visibleNonDropdownCommands = toolbar.filter(
-    (command) => command.isVisible && !command.isDropdown
-  );
-  const visibleDropdownCommands = toolbar.filter(
-    (command) => command.isVisible && command.isDropdown
-  );
+  let visibleNonDropdownCommands = [];
+
+  let visibleDropdownCommands = [];
+
+  groupIds?.map((groupId) => {
+    visibleNonDropdownCommands = toolbar[groupId].filter(
+      (command) => command.isVisible && !command.isDropdown
+    );
+    visibleDropdownCommands = toolbar[groupId].filter(
+      (command) => command.isVisible && command.isDropdown
+    );
+  });
 
   // dropdown Items takes twice the size
   const noOfSlots =
@@ -114,12 +114,12 @@ export default function VisualizerToolbar(props: {
       : noOfSlots * iconSize,
   ];
 
-  const addButton = (index, command) => {
+  const addButton = (groupId, index, command) => {
     return (
       <div
         role="button"
         tabIndex={0}
-        onClick={() => onToolbarButtonClick(visualizerId, index)}
+        onClick={() => onToolbarButtonClick(visualizerId, groupId, index)}
         key={`visualizer-toolbar-icon-${index}`}
         className={`visualizer-tool-bar-icon ${
           command.isChecked ? "visualizer-tool-bar-icon-selected" : ""
@@ -142,7 +142,7 @@ export default function VisualizerToolbar(props: {
     );
   };
 
-  const addDropdown = (index, command) => {
+  const addDropdown = (groupId, index, command) => {
     return (
       <div
         key={`visualizer-toolbar-icon-${index}`}
@@ -151,7 +151,7 @@ export default function VisualizerToolbar(props: {
         <ToolBarSelect
           currentValue={command.value}
           onChange={(value) =>
-            onToolbarSelectionChange(visualizerId, index, value)
+            onToolbarSelectionChange(visualizerId, groupId, index, value)
           }
           options={command.dropdownOptions}
           tooltip={{
@@ -167,20 +167,47 @@ export default function VisualizerToolbar(props: {
     );
   };
 
+  const addToolbarButtons = (groupId: string) => {
+    return toolbar[groupId].map((command, index) => {
+      if (command.isDropdown) {
+        return addDropdown(groupId, index, command);
+      }
+      return addButton(groupId, index, command);
+    });
+  };
+
+  const addToolbars = () => {
+    return groupIds ? (
+      groupIds.map((id) => {
+        return (
+          <div
+            className="visualizer-toolbar-group"
+            style={{
+              ...toolBarDimensions(dimension1, dimension2, horizontal),
+              left: horizontal ? "0.3rem" : "-1rem",
+              top: horizontal ? "0rem" : "1.2rem",
+            }}
+            key={`tool-group-${id}`}
+          >
+            {addToolbarButtons(id)}
+          </div>
+        );
+      })
+    ) : (
+      <div />
+    );
+  };
+
   // Render toolbar
   return (
     <Draggable bounds="parent" handle=".handle" onDrag={onDrag} onStop={onStop}>
-      <div
-        className="visualizer-toolbar-wrapper"
-        style={{
-          ...toolBarWrapperMargins(
-            dimension1 + iconSize,
-            dimension2 + iconSize,
-            horizontal
-          ),
-        }}
-      >
-        <div className="visualizer-toolbar-container">
+      <div className="visualizer-toolbar-wrapper">
+        <div
+          className="visualizer-toolbar-container"
+          style={{
+            flexDirection: horizontal ? "row" : "column",
+          }}
+        >
           <div
             className="handle"
             style={{
@@ -189,26 +216,7 @@ export default function VisualizerToolbar(props: {
           >
             <img src={horizontal ? InIcon : OutIcon} alt="Tool icon" />
           </div>
-          <div
-            className="visualizer-toolbar"
-            style={{
-              ...toolBarDimensions(dimension1, dimension2, horizontal),
-              left: horizontal ? "0.3rem" : "-1rem",
-              top: horizontal ? "0rem" : "1.2rem",
-            }}
-          >
-            {toolbar.map((command, index) => {
-              if (command.isVisible) {
-                if (command.isDropdown) {
-                  return addDropdown(index, command);
-                }
-
-                return addButton(index, command);
-              }
-
-              return null;
-            })}
-          </div>
+          {addToolbars()}
         </div>
       </div>
     </Draggable>

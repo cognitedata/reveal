@@ -8,22 +8,24 @@ import { IToolbarButton } from "../ToolBar/VisualizerToolbar";
 
 const mapStateToProps = (state: State) => {
   const toolbarCommands = ViewerUtils.getViewers()["3D"]?.getToolbarCommands();
-
-  if (!toolbarCommands) return { toolbar: [] };
+  const toolbarGroupIds = toolbarCommands ? Object.keys(toolbarCommands) : [];
 
   const toolbarCommandStates = state.visualizers.viewers["3D"];
-  const displayToolbar: IToolbarButton[] = [];
+  const displayToolbar = new Map<string, IToolbarButton[]>();
 
-  toolbarCommands.forEach((cmd, index) => {
-    displayToolbar.push({
-      icon: cmd.getIcon(),
-      isDropdown: cmd.isDropdown,
-      tooltip: cmd.getTooltip(),
-      dropdownOptions: cmd.dropdownOptions,
-      // from state
-      isChecked: toolbarCommandStates[index].isChecked,
-      value: toolbarCommandStates[index].value,
-      isVisible: toolbarCommandStates[index].isVisible,
+  toolbarGroupIds.forEach((groupId) => {
+    toolbarCommands[groupId].forEach((command, index) => {
+      if (!displayToolbar[groupId]) displayToolbar[groupId] = [];
+      displayToolbar[groupId].push({
+        icon: command.getIcon(),
+        isDropdown: command.isDropdown,
+        tooltip: command.getTooltip(),
+        dropdownOptions: command.dropdownOptions,
+        // from state
+        isChecked: toolbarCommandStates[groupId][index].isChecked,
+        value: toolbarCommandStates[groupId][index].value,
+        isVisible: toolbarCommandStates[groupId][index].isVisible,
+      });
     });
   });
   return { toolbar: displayToolbar };
@@ -31,15 +33,22 @@ const mapStateToProps = (state: State) => {
 
 const mapDispatchToPros = (dispatch: Dispatch) => {
   return {
-    onToolbarButtonClick: (visualizerId: string, index: number) => {
-      dispatch(executeVisualizerToolbarCommand(visualizerId, index));
+    onToolbarButtonClick: (
+      visualizerId: string,
+      groupId: string,
+      index: number
+    ) => {
+      dispatch(executeVisualizerToolbarCommand(visualizerId, groupId, index));
     },
     onToolbarSelectionChange: (
       visualizerId: string,
+      groupId: string,
       index: number,
       value: string
     ) => {
-      dispatch(executeVisualizerToolbarCommand(visualizerId, index, value));
+      dispatch(
+        executeVisualizerToolbarCommand(visualizerId, groupId, index, value)
+      );
     },
   };
 };

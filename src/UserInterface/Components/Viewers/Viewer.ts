@@ -1,6 +1,6 @@
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import Toolbar from "@/UserInterface/NodeVisualizer/ToolBar/Toolbar";
-import { BaseCommand } from '@/Core/Commands/BaseCommand';
+import { IToolbarGroups } from "@/Core/Interfaces/IToolbarGroups";
 
 export default class Viewer
 {
@@ -15,7 +15,7 @@ export default class Viewer
   private target: ThreeRenderTargetNode | null = null;
 
   // Holds a reference to view toolbar
-  private toolbarCommands: BaseCommand[] | null = null;
+  private toolbarCommands: IToolbarGroups = {};
 
   constructor(name: string, ref: any)
   {
@@ -25,7 +25,7 @@ export default class Viewer
 
   public setTarget(target: ThreeRenderTargetNode) { this.target = target; }
 
-  public setToolbarCommands(toolbar: Toolbar) 
+  public setToolbarCommands(toolbar: Toolbar)
   {
     this.toolbarCommands = toolbar.getCommands();
   }

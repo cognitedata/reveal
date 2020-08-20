@@ -1,6 +1,6 @@
 export interface IVisualizerState
 {
-  viewers: { [key: string]: IToolbarCommandState[] },
+  viewers: { [key: string]: { [groupId: string]: IToolbarCommandState[] }; },
   statusBar: { text: string }
 }
 

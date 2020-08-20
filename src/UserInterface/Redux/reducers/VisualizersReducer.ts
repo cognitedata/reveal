@@ -3,6 +3,7 @@ import { IVisualizerState } from "@/UserInterface/Redux/State/visualizer";
 import { BaseCommand } from '@/Core/Commands/BaseCommand';
 import Viewer from '@/UserInterface/Components/Viewers/Viewer';
 import ViewerUtils from '@/UserInterface/NodeVisualizer/Viewers/ViewerUtils';
+import { IToolbarGroups } from "@/Core/Interfaces/IToolbarGroups";
 
 // Initial settings state
 const initialState: IVisualizerState = {
@@ -17,80 +18,92 @@ export const visualizerSlice = createSlice({
   initialState,
   reducers: {
     initializeToolbarStatus: {
-      reducer:(state: IVisualizerState, action: PayloadAction<{ viewers: { [key: string]: Viewer } }>) => 
+      reducer:(state: IVisualizerState, action: PayloadAction<{ viewers: { [key: string]: Viewer } }>) =>
       {
         for (const viewer of Object.values(action.payload.viewers))
         {
           const viewerName = viewer.getName();
-          const toolbar = viewer.getToolbarCommands();
-          state.viewers[viewerName] = [];
-          if (toolbar)
+          const toolbarCommands = viewer.getToolbarCommands();
+          const groupIds = Object.keys(toolbarCommands);
+          state.viewers[viewerName] = {};
+
+          groupIds?.forEach(groupId =>
           {
-            toolbar.forEach((item: BaseCommand) => 
+            toolbarCommands[groupId].forEach(command =>
             {
-              state.viewers[viewerName].push(populateToolCommandState(item));
+              if (!state.viewers[viewerName][groupId]) state.viewers[viewerName][groupId] = [];
+              state.viewers[viewerName][groupId].push(populateToolCommandState(command));
             });
-          }
+          });
         }
       },
-      prepare: (): { payload: { viewers: { [key: string]: Viewer } } } => 
+      prepare: (): { payload: { viewers: { [key: string]: Viewer } } } =>
       {
         return { payload: { viewers: ViewerUtils.getViewers() } };
       }
     },
 
     executeVisualizerToolbarCommand: {
-      reducer: (state: IVisualizerState, action: PayloadAction<{ visualizerId: string, toolbarCommands: BaseCommand[] | null }>) => 
+      reducer: (state: IVisualizerState, action: PayloadAction<{ visualizerId: string, toolbarCommands: IToolbarGroups | null }>) =>
       {
         const { visualizerId, toolbarCommands } = action.payload;
+        const toolbar = state.viewers[visualizerId];
         if (!toolbarCommands) return;
 
-        toolbarCommands.forEach((toolCommand, index) => 
+        for (const [groupId, toolGroup] of Object.entries(toolbarCommands))
         {
-          state.viewers[visualizerId][index] = populateToolCommandState(toolCommand);
-        });
+          toolGroup.forEach((command, index) =>
+          {
+            toolbar[groupId][index] = populateToolCommandState(command);
+          });
+        }
       },
-      prepare: (visualizerId: string, index: number, value?: string): { payload: { visualizerId: string, toolbarCommands: BaseCommand[] | null } } => 
+      prepare: (visualizerId: string, groupId: string, index: number, value?: string): { payload: { visualizerId: string, toolbarCommands: IToolbarGroups | null } } =>
       {
         const toolbarCommands = ViewerUtils.getViewers()[visualizerId].getToolbarCommands();
 
         if (!toolbarCommands)
           return { payload: { visualizerId, toolbarCommands: null } };
 
-        const toolCommand = toolbarCommands[index];
+        const command = toolbarCommands[groupId][index];
 
         if (value)
-          toolCommand.invokeValue(value);
+          command.invokeValue(value);
         else
-          toolCommand.invoke();
+          command.invoke();
 
         return { payload: { visualizerId, toolbarCommands } };
       }
     },
 
     updateVisualizerToolbars: {
-      reducer: (state: IVisualizerState, action: PayloadAction <{ viewers: { [key: string]: Viewer } }>) => 
+      reducer: (state: IVisualizerState, action: PayloadAction <{ viewers: { [key: string]: Viewer } }>) =>
       {
         const { viewers } = action.payload;
 
         for (const [visualizerId, viewer] of Object.entries(viewers))
         {
+          const toolbar = state.viewers[visualizerId];
           const toolbarCommands = viewer.getToolbarCommands();
+          const groupIds = Object.keys(toolbarCommands);
           if (!toolbarCommands) continue;
 
-          toolbarCommands.forEach((toolCommand, index) => 
+          groupIds?.forEach(groupId =>
           {
-            state.viewers[visualizerId][index] = populateToolCommandState(toolCommand);
+            toolbarCommands[groupId].forEach((command, index) =>
+            {
+              toolbar[groupId][index] = populateToolCommandState(command);
+            });
           });
         }
       },
-      prepare: (): { payload: { viewers: { [key: string]: Viewer } } } => 
+      prepare: (): { payload: { viewers: { [key: string]: Viewer } } } =>
       {
         return { payload: { viewers: ViewerUtils.getViewers() } };
       }
     },
 
-    updateStatusPanel: (state: IVisualizerState, action: PayloadAction<{ text: string }>) => 
+    updateStatusPanel: (state: IVisualizerState, action: PayloadAction<{ text: string }>) =>
     {
       state.statusBar.text = action.payload.text;
     }

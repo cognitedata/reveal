@@ -6,10 +6,15 @@ import VisualizerToolbar, {
 // 3D Viewer
 export default function Viewer3D(props: {
   viewer3D: any;
-  toolbar?: IToolbarButton[];
-  onToolbarButtonClick: (visualizerId: string, index: number) => void;
+  toolbar?: Map<string, IToolbarButton[]>;
+  onToolbarButtonClick: (
+    visualizerId: string,
+    groupId: string,
+    index: number
+  ) => void;
   onToolbarSelectionChange: (
     visualizerId: string,
+    groupId: string,
     index: number,
     value: string
   ) => void;
