@@ -37,6 +37,8 @@ export type ResourceSelectionObserver = {
   setSequenceFilter: (newFilter: SequenceFilter) => void;
   onSelect: OnSelectListener;
   setOnSelectListener: React.Dispatch<React.SetStateAction<OnSelectListener>>;
+  query: string;
+  setQuery: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const ResourceSelectionContext = React.createContext(
@@ -46,6 +48,13 @@ const ResourceSelectionContext = React.createContext(
 export const useResourceMode = () => {
   const observer = useContext(ResourceSelectionContext);
   return observer.mode;
+};
+export const useQuery: () => [
+  string,
+  React.Dispatch<React.SetStateAction<string>>
+] = () => {
+  const observer = useContext(ResourceSelectionContext);
+  return [observer.query, observer.setQuery];
 };
 
 export const useSelectResource = () => {
@@ -94,6 +103,7 @@ export const ResourceSelectionProvider = ({
   onSelect?: OnSelectListener;
   children: React.ReactNode;
 }) => {
+  const [query, setQuery] = useState<string>('');
   const [mode, setMode] = useState<ResourceSelectionMode>(initialMode);
   const [onSelect, setOnSelectListener] = useState<OnSelectListener>(
     () => initialOnSelect
@@ -137,6 +147,8 @@ export const ResourceSelectionProvider = ({
       value={{
         mode,
         setMode,
+        query,
+        setQuery,
         resourceTypes,
         setResourceTypes,
         assetFilter,
