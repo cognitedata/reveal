@@ -3,13 +3,14 @@ import { Changes } from "@/Core/Views/Changes";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { onSelectedNodeChange } from "@/UserInterface/Redux/reducers/SettingsReducer";
-import {
-  onCheckboxStateChange,
-  onExpandStateChange,
-  onActiveStateChange,
-  onNodeColorChange,
-  onNodeNameChange
-} from "@/UserInterface/Redux/reducers/ExplorerReducer";
+import
+  {
+    onCheckboxStateChange,
+    onExpandStateChange,
+    onActiveStateChange,
+    onNodeColorChange,
+    onNodeNameChange
+  } from "@/UserInterface/Redux/reducers/ExplorerReducer";
 
 class NotificationsToActionsAdaptor
 {

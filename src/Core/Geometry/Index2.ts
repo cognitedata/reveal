@@ -46,6 +46,7 @@ export default class Index2
   //==================================================
 
   public get size(): number { return this.i * this.j; }
+  public get isZero(): boolean { return this.i === 0 && this.j === 0; }
 
   //==================================================
   // INSTANCE METHODS: Getters
@@ -67,9 +68,21 @@ export default class Index2
   // INSTANCE METHODS: Operations
   //==================================================
 
-  public copy(other: Index2): void
+  public copy(value: Index2): void
   {
-    this.i = other.i;
-    this.j = other.j;
+    this.i = value.i;
+    this.j = value.j;
+  }
+
+  public add(value: Index2): void
+  {
+    this.i += value.i;
+    this.j += value.j;
+  }
+
+  public substract(value: Index2): void
+  {
+    this.i -= value.i;
+    this.j -= value.j;
   }
 }

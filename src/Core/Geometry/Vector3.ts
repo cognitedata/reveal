@@ -37,9 +37,12 @@ export class Vector3
   // INSTANCE PROPERTIES
   //==================================================
 
+  public get isEmpty(): boolean { return isNaN(this.x) || isNaN(this.y) || isNaN(this.z); }
+  public get isZero(): boolean { return this.x === 0 || this.y === 0 || this.z === 0; }
+  
   public get squareLength(): number { return this.x * this.x + this.y * this.y + this.z * this.z; }
   public get length(): number { return Math.sqrt(this.squareLength); }
-  public get isEmpty(): boolean { return isNaN(this.x) || isNaN(this.y) || isNaN(this.z); }
+  public get angle(): number { return Math.atan2(this.y, this.x); }
   public get minCoord(): number { return Math.min(this.x, this.y, this.z); }
   public get maxCoord(): number { return Math.max(this.x, this.y, this.z); }
   public get absMinCoord(): number { return Math.min(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z)); }
@@ -153,13 +156,6 @@ export class Vector3
     this.z = z;
   }
 
-  public copy(other: Vector3): void
-  {
-    this.x = other.x;
-    this.y = other.y;
-    this.z = other.z;
-  }
-
   //==================================================
   // INSTANCE METHODS: Operations
   //==================================================
@@ -195,18 +191,25 @@ export class Vector3
     this.y = -x;
   }
 
-  public add(point: Vector3): void
+  public copy(value: Vector3): void
   {
-    this.x += point.x;
-    this.y += point.y;
-    this.z += point.z;
+    this.x = value.x;
+    this.y = value.y;
+    this.z = value.z;
   }
 
-  public addWithFactor(point: Vector3, factor: number): void
+  public add(value: Vector3): void
   {
-    this.x += point.x * factor;
-    this.y += point.y * factor;
-    this.z += point.z * factor;
+    this.x += value.x;
+    this.y += value.y;
+    this.z += value.z;
+  }
+
+  public addWithFactor(value: Vector3, factor: number): void
+  {
+    this.x += value.x * factor;
+    this.y += value.y * factor;
+    this.z += value.z * factor;
   }
 
   public addScalar(value: number): void
@@ -216,18 +219,18 @@ export class Vector3
     this.z += value;
   }
 
-  public substract(point: Vector3): void
+  public substract(value: Vector3): void
   {
-    this.x -= point.x;
-    this.y -= point.y;
-    this.z -= point.z;
+    this.x -= value.x;
+    this.y -= value.y;
+    this.z -= value.z;
   }
 
-  public multiply(point: Vector3): void
+  public multiply(value: Vector3): void
   {
-    this.x *= point.x;
-    this.y *= point.y;
-    this.z *= point.z;
+    this.x *= value.x;
+    this.y *= value.y;
+    this.z *= value.z;
   }
 
   public multiplyScalar(value: number): void

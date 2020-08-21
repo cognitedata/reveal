@@ -21,7 +21,7 @@ import { WellTrajectory } from "@/SubSurface/Wells/Logs/WellTrajectory";
 import { WellNode } from "@/SubSurface/Wells/Nodes/WellNode";
 import { FilterLogFolder } from "@/SubSurface/Wells/Filters/FilterLogFolder";
 
-import WellTrajectoryNodeIcon from "@images/Nodes/WellTrajectoryNode.png";
+import Icon from "@images/Nodes/WellTrajectoryNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
@@ -65,7 +65,7 @@ export class WellTrajectoryNode extends DataNode
 
   public /*override*/ get typeName(): string { return "WellTrajectory"; }
 
-  public /*override*/ getIcon(): string { return WellTrajectoryNodeIcon; }
+  public /*override*/ getIcon(): string { return this.dataIsLost ? super.getIcon() : Icon; }
 
   public /*override*/ get boundingBox(): Range3 { return this.trajectory ? this.trajectory.boundingBox : new Range3(); }
 

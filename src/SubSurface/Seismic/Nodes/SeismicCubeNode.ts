@@ -22,13 +22,8 @@ import { SeismicCube } from "@/SubSurface/Seismic/Data/SeismicCube";
 import { ITarget } from "@/Core/Interfaces/ITarget";
 import { SurveyNode } from "@/SubSurface/Seismic/Nodes/SurveyNode";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
-import Index2 from "@/Core/Geometry/Index2";
 import { CogniteSeismicClient } from "@cognite/seismic-sdk-js";
-import { Vector3 } from "@/Core/Geometry/Vector3";
-import Index3 from "@/Core/Geometry/Index3";
-import { Statistics } from "@/Core/Geometry/Statistics";
 import { SeismicPlaneNode } from "@/SubSurface/Seismic/Nodes/SeismicPlaneNode";
-import { Ma } from "@/Core/Primitives/Ma";
 
 export class SeismicCubeNode extends DataNode
 {
@@ -65,7 +60,7 @@ export class SeismicCubeNode extends DataNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Seismic Cube"; }
-  public /*override*/ getIcon(): string { return Icon; }
+  public /*override*/ getIcon(): string { return this.dataIsLost ? super.getIcon() : Icon; }
   public /*override*/ isRadio(target: ITarget | null): boolean { return true; }
   public /*override*/ canChangeColor(): boolean { return false; }
 
@@ -99,79 +94,29 @@ export class SeismicCubeNode extends DataNode
 
   public load(client: CogniteSeismicClient, fileId: string): void
   {
-    client.file.getLineRange({ fileId }).then((lineRange) =>
+    SeismicCube.loadCube(client, fileId).then(cube =>
     {
-      if (!lineRange)
+      if (!cube)
         return;
 
-      if (!lineRange.inline)
-        return;
-      if (!lineRange.xline)
-        return;
+      this.seismicCube = cube;
+      if (this.surveyNode)
+        this.surveyNode.surveyCube = cube.getRegularGrid();
 
-      const startCell = Index2.newZero;
-      const maxIndex = Index2.newZero;
+      // Just to set ensure the index properly
+      if (this.surveyNode)
       {
-        const { min, max } = lineRange.inline;
-        if (min === undefined || max === undefined)
-          return;
-        startCell.i = min.value;
-        maxIndex.i = max.value;
-      }
-      {
-        const { min, max } = lineRange.xline;
-        if (min === undefined || max === undefined)
-          return;
-        startCell.j = min.value;
-        maxIndex.j = max.value;
-      }
-
-      // console.log(`Min and max index: ${minIndex.toString()} ${maxIndex.toString()}`);
-      const promises = [
-        client.volume.getTrace({ fileId }, startCell.i, startCell.j),
-        client.volume.getTrace({ fileId }, maxIndex.i, startCell.j),
-        client.volume.getTrace({ fileId }, maxIndex.i, maxIndex.j),
-        client.volume.getTrace({ fileId }, startCell.i, maxIndex.j)
-      ];
-
-      const numCellsI = maxIndex.i - startCell.i + 1;
-      const numCellsJ = maxIndex.j - startCell.j + 1;
-
-      Promise.all(promises).then(traces =>
-      {
-        let numCellsK = 0;
-        for (const trace of traces)
+        this.surveyNode.surveyCube = cube.getRegularGrid();
+        for (const plane of this.surveyNode.getDescendantsByType(SeismicPlaneNode))
         {
-          numCellsK = Math.max(trace.traceList.length, numCellsK);
-          // if (trace.coordinate !== undefined && trace.iline !== undefined && trace.xline !== undefined)
-          //   console.log(`inline: ${trace.iline.value} xline: ${trace.xline.value} x: ${trace.coordinate.x} y: ${trace.coordinate.y}`);
+          const index = plane.perpendicularIndex;
+          plane.notifyNameChanged();
         }
-        const nodeSize = new Index3(numCellsI + 1, numCellsJ + 1, numCellsK + 1);
-        const range = Range3.newTest;
-        range.expandByFraction(0.3);
-
-        const origin = range.min;
-        const inc = new Vector3(5, 5, 4);
-        const rotationAngle = Ma.toRad(5);
-        const cube = new SeismicCube(nodeSize, origin, inc, rotationAngle);
-
-        cube.startCell = startCell;
-        cube.client = client;
-        cube.fileId = fileId;
-
-        this.seismicCube = cube;
-        if (this.surveyNode)
-        {
-          this.surveyNode.surveyCube = cube.getRegularGrid();
-          for (const plane of this.surveyNode.getDescendantsByType(SeismicPlaneNode))
-          {
-            // Just to set the index properly
-            const index = plane.perpendicularIndex;
-            plane.notifyNameChanged();
-          }
-        }
-        cube.calculateStatistics();
-      });
+      }
+    }).catch(error =>
+    {
+      this.seismicCube = null;
+      alert(`Can not load cube.\nError message: ${error.message}`);
     });
   }
 }
