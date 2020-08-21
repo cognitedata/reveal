@@ -1,0 +1,44 @@
+{
+  "name": "@cognite/reveal-parser-worker",
+  "version": "0.0.6",
+  "description": "Parser worker for reveal viewer",
+  "main": "./dist/reveal.parser.worker.js",
+  "types": "./dist/reveal.parser.worker.d.ts",
+  "files": [
+    "dist/*"
+  ],
+  "conf": {
+    "port": 8080,
+    "folder": "local-cdn"
+  },
+  "scripts": {
+    "build": "yarn run clean && yarn run build:wasm && webpack --env.development",
+    "build:wasm": "rimraf ./pkg && wasm-pack build --release",
+    "build:prod": "yarn run clean && yarn build:wasm && webpack",
+    "clean": "rimraf -rf ./dist",
+    "local-cdn:build": "cross-var cross-env PUBLIC_PATH=https://localhost:$npm_package_conf_port/$npm_package_conf_folder/ yarn run build ",
+    "local-cdn:copy": "cross-var rimraf -rf ../examples/public/$npm_package_conf_folder && mkdirp ../examples/public/$npm_package_conf_folder && cpy ./dist/* ../examples/public/$npm_package_conf_folder/",
+    "local-cdn:viewer": "cd ../viewer && cross-var cross-env PUBLIC_PATH=https://localhost:$npm_package_conf_port/$npm_package_conf_folder/ yarn build",
+    "local-cdn:start": "cd ../examples && cross-var cross-env PORT=$npm_package_conf_port yarn start",
+    "local-cdn": "yarn local-cdn:build && yarn local-cdn:copy && yarn local-cdn:viewer && yarn local-cdn:start",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublishOnly": "yarn run build:prod"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "comlink": "^4.3.0"
+  },
+  "devDependencies": {
+    "cpy-cli": "^3.1.1",
+    "cross-env": "^7.0.2",
+    "cross-var": "^1.1.0",
+    "mkdirp": "^1.0.4",
+    "rimraf": "^3.0.2",
+    "ts-loader": "^8.0.2",
+    "typescript": "^4.0.2",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12",
+    "webpack-log": "^3.0.1"
+  }
+}

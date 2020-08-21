@@ -32,7 +32,6 @@ target
 
 # Viewer ignores
 viewer/public/
-viewer/pkg/
 viewer/false
 
 # Examples

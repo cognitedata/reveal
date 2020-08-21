@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal",
-  "version": "1.0.0-beta-2",
+  "version": "1.0.0-beta-3",
   "private": true,
   "description": "WebGL based 3D viewer for CAD and point clouds processed in Cognite CDF.",
   "repository": {
@@ -13,14 +13,14 @@
   "types": "index.d.ts",
   "scripts": {
     "release": "yarn run mkdist && webpack",
-    "build": "yarn run mkdist && webpack --env.development",
-    "build:prod": "yarn run mkdist && webpack --env.noCDN",
+    "build": "rimraf -rf dist/ && yarn run mkdist && webpack --env.development",
+    "build:prod": "yarn run mkdist && webpack",
     "build:watch": "yarn run build -- --watch",
-    "serve": "cd ../examples && yarn && yarn run start",
+    "serve": "cd ../parser-worker && yarn && yarn build && cd ../examples && yarn && yarn start",
     "mkdist": "run-script-os",
     "mkdist:win32": "@powershell $(if(-not(Test-Path dist -PathType Container)) { mkdir dist;$? } else { $true;$? }) -and $(Copy-Item -Path package.json, README.md, LICENSE -Destination dist;$?)",
     "mkdist:linux:darwin": "mkdir -p dist && cp package.json README.md LICENSE dist",
-    "clean": "rimraf -rf dist/ ../target pkg/",
+    "clean": "rimraf -rf dist/ ../target ../parser-worker/pkg/",
     "test": "jest",
     "coverage": "jest --coverage",
     "lint": "eslint . --ext .ts,.js --max-warnings 0 && yarn run tsc",
@@ -53,7 +53,6 @@
     "@types/tween.js": "^18.5.1",
     "@typescript-eslint/eslint-plugin": "^3.9.0",
     "@typescript-eslint/parser": "^3.9.0",
-    "@wasm-tool/wasm-pack-plugin": "^1.3.1",
     "copy-webpack-plugin": "^6.0.2",
     "eslint": "^7.6.0",
     "eslint-config-prettier": "^6.11.0",
@@ -82,8 +81,7 @@
     "webpack-dev-server": "^3.11.0",
     "webpack-log": "^3.0.1",
     "webpack-node-externals": "^2.5.1",
-    "whatwg-fetch": "^3.4.0",
-    "worker-plugin": "^5.0.0"
+    "whatwg-fetch": "^3.4.0"
   },
   "dependencies": {
     "@cognite/potree-core": "^1.1.3",
@@ -96,6 +94,7 @@
     "glslify-import": "^3.1.0",
     "lodash": "^4.17.15",
     "mixpanel-browser": "^2.38.0",
+    "@cognite/reveal-parser-worker": "link:../parser-worker",
     "rxjs": "^6.5.5"
   },
   "peerDependencies": {
