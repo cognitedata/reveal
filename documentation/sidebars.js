@@ -10,7 +10,7 @@ module.exports = {
       type: 'category',
       label: 'Examples',
       collapsed: false,
-      items: ['examples/cad-basic', 'examples/cad-colors'],
+      items: ['examples/cad-basic', 'examples/cad-colors', 'examples/cad-highlighting'],
     },
     {
       type: 'doc',

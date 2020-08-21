@@ -1,0 +1,65 @@
+---
+id: cad-highlighting
+title: Highlighting objects in CAD models
+---
+
+import { LiveCodeSnippet }from '../../src/components/LiveCodeSnippet';
+import { DemoWrapper } from '../../src/components/DemoWrapper';
+import { Cognite3DModel, Cognite3DViewer } from '@cognite/reveal';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+Highlighting makes a 3D object stand out and always be visible. Highlighted objects are
+rendered in front of other objects, are given an outline and a special color.
+
+<img src={useBaseUrl('/img/highlighted-object.png')} alt="Highlighted object" />
+
+# Examples
+
+<DemoWrapper modelId={4715379429968321} revisionId={5688854005909501} name="Cognite3DViewerDemo" />
+
+### Highlight a single object on click
+
+`Cognite3DViewer.on('click', ...)` can be used to handle mouse click events. This example shows how to highlight objects that are clicked.
+
+<LiveCodeSnippet>
+{`
+viewer.on('click', event => {
+  const intersection = viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
+  if (intersection) {
+    // Deselect any previous selected node
+    intersection.model.deselectAllNodes();
+    // Select clicked object
+    intersection.model.selectNodeByTreeIndex(intersection.treeIndex);
+  };
+});
+`}
+</LiveCodeSnippet>
+
+### Highlight tagged equipment
+
+Equipment in CAD models typically consists of several smaller pieces. When the user clicks
+an object in the 3D model, she or he will click one of the individual small pieces,
+
+Color overrides can be overridden using `Cognite3DModel.resetNodeColorByTreeIndex`, e.g.
+<LiveCodeSnippet>
+{`
+viewer.on('click', event => {
+  const intersection = viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
+  if (intersection) {
+    const { modelId, revisionId } = intersection.model;
+    const nodeId = intersection.nodeId;
+    // Retrieve all ancestors of the clicked node
+    sdk.revisions3D.list3DNodeAncestors(modelId, revisionId, nodeId)
+      .then(ancestors => {
+        // Find first ancestor whose name starts with "/" - we assume this
+        // is the a tagged equipment
+        const taggedEquipment = ancestors.items.find(x => x.name.startsWith('/'));
+        if (taggedEquipment) {
+          // Highlight tagged equipment and all children
+          model.selectNodeByTreeIndex(taggedEquipment.treeIndex, true);
+        }
+      });
+  }
+});
+`}
+</LiveCodeSnippet>
