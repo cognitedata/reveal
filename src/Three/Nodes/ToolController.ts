@@ -15,6 +15,7 @@ import CameraControls from "camera-controls";
 import { CameraControl } from "@/Three/Nodes/CameraControl";
 import { BaseTool } from "@/Three/Commands/Tools/BaseTool";
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
+import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 
 export class ToolController
 {
@@ -141,6 +142,7 @@ export class ToolController
       if (tool.getShortCutKeys() === key)
       {
         target.activeTool = tool;
+        VirtualUserInterface.updateToolbars();
         return;
       }
     }

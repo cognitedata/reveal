@@ -17,7 +17,7 @@ import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
 import { Trace } from "@/SubSurface/Seismic/Data/Trace";
 import Index2 from "@/Core/Geometry/Index2";
 import STK from "@cognite/seismic-sdk-js";
-import { Range1 } from "@/Core/Geometry/Range1";
+import Range1 from "@/Core/Geometry/Range1";
 import { Statistics } from "@/Core/Geometry/Statistics";
 
 export class SeismicCube extends RegularGrid3

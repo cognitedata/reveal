@@ -13,7 +13,7 @@
 
 import { Ma } from "@/Core/Primitives/Ma";
 
-export class Range1
+export default class Range1
 {
   //==================================================
   // STATIC PROPERTIES

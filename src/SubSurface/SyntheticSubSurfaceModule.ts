@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file */
-import { Range1 } from "@/Core/Geometry/Range1";
-import { Range3 } from "@/Core/Geometry/Range3";
+import Range1 from "@/Core/Geometry/Range1";
+import Range3 from "@/Core/Geometry/Range3";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 
 import { SubSurfaceRootNode } from "@/SubSurface/Trees/SubSurfaceRootNode";
@@ -53,7 +53,7 @@ export class SyntheticSubSurfaceModule extends BaseModule
 
   public /*override*/ loadData(root: BaseRootNode): void
   {
-    // SyntheticSubSurfaceModule.addSeismic(root);
+    SyntheticSubSurfaceModule.addSeismic(root);
     SyntheticSubSurfaceModule.addWells(root);
     SyntheticSubSurfaceModule.addSurfaces(root);
   }

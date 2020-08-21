@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Range3 } from "@/Core/Geometry/Range3";
+import Range3 from "@/Core/Geometry/Range3";
 
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";

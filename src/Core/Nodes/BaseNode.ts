@@ -30,7 +30,8 @@ import { Util } from "@/Core/Primitives/Util";
 import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 import { FileType } from "@/Core/Enums/FileType";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
-import { Range3 } from "@/Core/Geometry/Range3";
+import Range3 from "@/Core/Geometry/Range3";
+import UseProperty from "@/Core/Property/Base/UseProperty";
 import { ColorMaps } from "../Primitives/ColorMaps";
 
 export abstract class BaseNode extends Identifiable
@@ -307,6 +308,28 @@ export abstract class BaseNode extends Identifiable
     const style = this.getRenderStyle();
     if (style)
       style.populate(folder);
+
+    for (const child of folder.children)
+    {
+      if (child instanceof UseProperty)
+      {
+        if (child.name === "colorType")
+        {
+          child.options = [];
+          if (this.supportsColorType(ColorType.Specified))
+            child.options.push(ColorType.Specified);
+          if (this.supportsColorType(ColorType.Parent))
+            child.options.push(ColorType.Parent);
+          //....+++  for the rest of the color types
+          child.optionIconDelegate = BaseNode.GetIconFromColorType;
+        }
+      }
+    }
+  }
+
+  static GetIconFromColorType(option: string): string
+  {
+    return "";
   }
 
   //==================================================
@@ -520,6 +543,16 @@ export abstract class BaseNode extends Identifiable
   //==================================================
   // INSTANCE METHODS: Get ancestors
   //==================================================
+
+  public getSelectedNode(): BaseNode | null
+  {
+    for (const descendant of this.getThisAndDescendants())
+    {
+      if (descendant.isSelected())
+        return descendant;
+    }
+    return null;
+  }
 
   public getTreeNode(): BaseNode | null
   {

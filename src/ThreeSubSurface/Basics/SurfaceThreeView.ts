@@ -14,7 +14,7 @@
 import * as THREE from "three";
 
 import { ColorType } from "@/Core/Enums/ColorType";
-import { Range3 } from "@/Core/Geometry/Range3";
+import Range3 from "@/Core/Geometry/Range3";
 
 import { SurfaceNode } from "@/SubSurface/Basics/SurfaceNode";
 import { SurfaceRenderStyle } from "@/SubSurface/Basics/SurfaceRenderStyle";

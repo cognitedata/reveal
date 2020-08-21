@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import { Polyline } from "@/Core/Geometry/Polyline";
-import { Range3 } from "@/Core/Geometry/Range3";
+import Range3 from "@/Core/Geometry/Range3";
 import { Shape } from "@/Core/Geometry/Shape";
 
 export class Polylines extends Shape

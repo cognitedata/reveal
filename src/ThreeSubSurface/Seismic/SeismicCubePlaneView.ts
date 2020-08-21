@@ -23,7 +23,7 @@ import { RegularGrid3Buffers } from "@/Core/Geometry/RegularGrid3Buffers";
 import { TextureKit } from "@/Three/Utilities/TextureKit";
 import { Colors } from "@/Core/Primitives/Colors";
 import { SeismicCube } from "@/SubSurface/Seismic/Data/SeismicCube";
-import { Range3 } from "@/Core/Geometry/Range3";
+import Range3 from "@/Core/Geometry/Range3";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import Index2 from "@/Core/Geometry/Index2";
 import { Changes } from "@/Core/Views/Changes";

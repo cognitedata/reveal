@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Range3 } from "@/Core/Geometry/Range3";
+import Range3 from "@/Core/Geometry/Range3";
 import { BaseView } from "@/Core/Views/BaseView";
 import { Changes } from "@/Core/Views/Changes";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";

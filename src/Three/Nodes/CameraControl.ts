@@ -14,7 +14,7 @@
 import CameraControls from "camera-controls";
 import * as THREE from "three";
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
-import { Range3 } from "@/Core/Geometry/Range3";
+import Range3 from "@/Core/Geometry/Range3";
 import { Ma } from "@/Core/Primitives/Ma";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { Vector3 } from "@/Core/Geometry/Vector3";
