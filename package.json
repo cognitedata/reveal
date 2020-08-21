@@ -59,7 +59,7 @@
     "eslint-plugin-testing-library": "^3.6.0",
     "husky": "^4.2.5",
     "prettier": "^2.0.5",
-    "pretty-quick": "^2.0.1",
+    "pretty-quick": "^2.0.2",
     "sinon": "^9.0.3",
     "typescript": "^3.9.7"
   },
