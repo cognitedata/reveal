@@ -11,13 +11,29 @@ export type ToolBarType = {
 export type SettingPanelProps = {
   id?: string;
   titleBar?: { name: string; icon: { type: string; name: string }; toolBar: ToolBarType };
-  sections: ISettingsSection[];
   onSectionExpand: (sectionId: string, expandStatus: boolean) => void;
-  onSettingChange: (elementId: string, value: any) => void;
+  onPropertyValueChange: (elementId: string, value: any) => void;
+  onPropertyUseChange: (elementId: string, value: boolean) => void;
 };
 
+export interface ISettingsSectionProps 
+{
+  section: ISettingsSection;
+  onExpand: (id: string, expandStatus: boolean) => void;
+  onPropertyValueChange: (elementId: string, value: any) => void;
+  onPropertyUseChange: (elementId: string, value: boolean) => void;
+};
+
+export interface ISettingsElementProps 
+{
+  config: ISettingsElement;
+  sectionId: string;
+  onPropertyValueChange: (id: string, value: any) => void;
+  onPropertyUseChange: (id: string, value: boolean) => void;
+}
+
 // TitleBar interface
-export interface ITitleBar
+export interface ITitleBar 
 {
   name: string;
   icon: { type: string; name: string };
@@ -28,28 +44,41 @@ export interface ITitleBar
 export interface ISettingsSection
 {
   name: string;
-  isExpanded: boolean;
+  isExpanded?: boolean;
   titleBar?: ITitleBar;
   toolBar?: ToolBarType;
   elements: ISettingsElement[];
   iconIndex?: number;
-  subSections: ISettingsSection[];
+  subSections?: ISettingsSection[];
 }
 
 // SettingsPanel SettingsSection Element
-export interface ISettingsElement
+export interface ISettingsElement extends IBaseSettingsElement
 {
-  name: string;
-  type: string;
-  value?: any;
-  isReadOnly?: boolean;
-  checked?: boolean;
-  options?: string[];
+  options?: ISelectOption[] | string[];
   colorMapOptions?: string[][];
   icon?: {
     type: string;
     name: string;
     selected?: boolean;
   };
-  subElements?: ISettingsElement[];
+  subValues?: IBaseSettingsElement[];
+}
+
+export interface IBaseSettingsElement 
+{
+  name: string;
+  type: string;
+  value?: any;
+  isReadOnly?: boolean;
+  useProperty: boolean; 
+  isOptional: boolean;
+}
+
+// SettingsPanel Option selector option
+export interface ISelectOption 
+{
+  label: string;
+  value: any;
+  iconSrc?: string
 }

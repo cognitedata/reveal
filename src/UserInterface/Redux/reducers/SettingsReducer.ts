@@ -16,10 +16,6 @@ import { Appearance } from "@/Core/States/Appearance";
 // Initial settings state
 const initialState = {
   currentNodeId: "",
-  properties: {
-    byId: {},
-    allIds: []
-  },
   titleBar: {
     name: "",
     icon: { type: IconTypes.NODES, name: "FolderNode" },
@@ -60,20 +56,6 @@ export const settingsSlice = createSlice({
           state.currentNodeId = "";
           state.titleBar.name = "";
         }
-
-        state.properties.byId = {};
-        state.properties.allIds = [];
-
-        if (propertyFolder && propertyFolder.children && propertyFolder.children.length)
-        {
-          const allPropertyStates = convertToSettingsState(propertyFolder.children);
-
-          for (const property of allPropertyStates)
-          {
-            state.properties.byId[property.name] = property;
-            state.properties.allIds.push(property.name);
-          }
-        }
       },
       prepare(node: BaseNode): { payload: { node: BaseNode, propertyFolder: BasePropertyFolder } }
       {
@@ -107,29 +89,16 @@ export const settingsSlice = createSlice({
         };
       }
     },
-    onSettingChange: {
-      reducer(state: ISettingsState, action: PayloadAction<{ id: string, value: any }>)
-      {
-        state.properties.byId[action.payload.id].value = action.payload.value;
-      },
-      prepare(propertyId: string, value: any)
-      {
-        SettingsNodeUtils.setPropertyValue(propertyId, value);
-
-        return {
-          payload: { id: propertyId, value }
-        };
-      }
-    },
     onExpandChange: {
       reducer(state: ISettingsState, action: PayloadAction<{ id: string, expandStatus: boolean }>)
       {
-        const property = state.properties.byId[action.payload.id];
+        // TODO: Implement this feature
+        // const property = state.properties.byId[action.payload.id];
 
-        if (property)
-        {
-          property.expanded = action.payload.expandStatus;
-        }
+        // if (property)
+        // {
+        //   property.expanded = action.payload.expandStatus;
+        // }
       },
       prepare(propertyId: string, expanded: boolean)
       {
@@ -146,65 +115,4 @@ export const settingsSlice = createSlice({
 });
 
 export default settingsSlice.reducer;
-export const { onSelectedNodeChange, onSettingChange, onExpandChange } = settingsSlice.actions;
-
-function convertToSettingsState(properties: BaseProperty[] | BasePropertyFolder[], parent?: string): ISettingsPropertyState[]
-{
-  let propertyStates: ISettingsPropertyState[] = [];
-
-  if (properties && properties.length)
-  {
-    for (const property of properties)
-    {
-      const propertyState: ISettingsPropertyState = {
-        name: property.name,
-        parent,
-        displayName: property.displayName,
-        type: mapToInputTypes(property.getType()),
-        readonly: property.isReadOnly,
-        value: 0,
-        children: []
-      };
-      if (property instanceof UseProperty)
-      {
-        propertyState.value = property.value;
-        if (property.options)
-          propertyState.options = property.options;
-      }
-      if (property instanceof ExpanderProperty)
-        propertyState.expanded = property.expanded;
-      if (property instanceof ColorMapProperty)
-        propertyState.colorMapOptions = property.getColorMapOptionColors(Appearance.valuesPerColorMap);
-
-      propertyStates.push(propertyState);
-
-      if (property instanceof BasePropertyFolder)
-      {
-        const childStates = convertToSettingsState(property.children, property.name);
-        propertyState.children = property.children.map(child => child.name);
-        propertyStates = propertyStates.concat(childStates);
-      }
-    }
-  }
-  return propertyStates;
-}
-
-function mapToInputTypes(type: PropertyType): string
-{
-  if (type === PropertyType.String)
-    return ElementTypes.INPUT;
-
-  if (type === PropertyType.Color)
-    return ElementTypes.COLOR_TABLE;
-
-  if (type === PropertyType.ColorMap)
-    return ElementTypes.COLORMAP_SELECT;
-
-  if (type === PropertyType.Group)
-    return ElementTypes.INPUT_GROUP;
-
-  if (type === PropertyType.Expander)
-    return ElementTypes.SECTION;
-
-  return "";
-}
+export const { onSelectedNodeChange, onExpandChange } = settingsSlice.actions;

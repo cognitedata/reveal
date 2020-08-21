@@ -1,0 +1,67 @@
+.form-field {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  place-items: center start;
+  font-size: 0.7rem;
+  height: 1.6rem;
+
+  .input-wrap {
+    display: grid;
+    place-items: center;
+    grid-template-columns: 25px auto;
+    width: 100%;
+
+    .element {
+      width: 100%;
+      display: grid;
+      grid-auto-columns: 1fr;
+      grid-auto-flow: column;
+      grid-gap: 1px;
+
+      .textInput {
+        height: 1rem;
+        border-width: 1px;
+        border-color: #c4c4c4;
+        border-style: solid;
+        font-size: 0.7rem;
+        box-sizing: border-box;
+        width: 100%;
+        height: 1.3rem;
+
+        &.readOnlyInput {
+          background: #ffffc4;
+        }
+      }
+
+      .select-group {
+        display: grid;
+        grid-template-columns: auto 15px;
+        border: #b5b5b5 solid 1px;
+        place-items: center;
+        background: #f9f7f7dd;
+
+        .MuiInput-underline::before {
+          border: none;
+        }
+
+        .MuiInput-root {
+          height: 20px;
+        }
+
+        .select-controls {
+          display: grid;
+          grid-template-rows: 1fr 1fr;
+          place-items: center;
+        }
+      }
+    }
+  }
+}
+
+.select-element-option {
+  display: grid;
+  grid-template-columns: 1fr 5fr;
+  place-items: center start;
+  grid-gap: 5px;
+  padding: 5px;
+}

@@ -12,7 +12,7 @@ import { ToolBarType } from "@/UserInterface/Components/Settings/Types";
 export default function ExpansionView(props: {
   id: string;
   title: string;
-  isExpanded: boolean;
+  isExpanded?: boolean;
   onExpandChange: (id: string, expandStatus: boolean) => void;
   toolBar?: ToolBarType;
   children: JSX.Element;
