@@ -9,5 +9,4 @@ update_configs:
     # Apply default label to created
     # pull requests
     default_labels:
-      - 'auto-update'
       - 'auto-merge'

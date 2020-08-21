@@ -89,8 +89,6 @@ export default function buildCount<Q extends Query>(type: ResourceType) {
           draft[key].done = true;
           draft[key].error = false;
           draft[key].fetching = false;
-          // TODO: figure out why TS isn't happy with count not being
-          // in all actions (or whatever is causing this issue).
           draft[key].count = (action as CountDoneAction).count;
           break;
         }

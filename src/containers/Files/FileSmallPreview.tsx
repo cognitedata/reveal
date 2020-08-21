@@ -1,6 +1,10 @@
 import React, { useEffect, useMemo } from 'react';
 import { InternalId, ExternalId } from '@cognite/sdk';
-import { FileDetailsAbstract, Loader, isImage } from 'components/Common';
+import {
+  FileDetailsAbstract,
+  Loader,
+  isPreviewableImage,
+} from 'components/Common';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   retrieve as retrieveFiles,
@@ -92,11 +96,17 @@ export const FileSmallPreview = ({
   }, [dispatch, fileIds]);
 
   const file = useSelector(itemSelector)(fileId);
+
+  const hasPreview = useMemo(
+    () =>
+      file
+        ? file.mimeType === 'application/pdf' || isPreviewableImage(file)
+        : false,
+    [file]
+  );
   if (!file) {
     return <Loader />;
   }
-
-  const hasPreview = file.mimeType === 'application/pdf' || isImage(file);
 
   return (
     <FileDetailsAbstract

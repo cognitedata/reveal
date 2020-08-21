@@ -65,11 +65,9 @@ export async function callUntilCompleted(
   }
 }
 
-// TODO text?
 export const stripWhitespace = (text: string) =>
   text ? text.replace(/\s/g, '').toLowerCase() : text;
 
-// TODO: fix proper generics typing
 export function mergeItems(
   newStuff: any[],
   oldStuff: any = {},

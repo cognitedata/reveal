@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { GetTimeSeriesMetadataDTO as TimeSeries } from '@cognite/sdk/dist/src/types/types';
+import { GetTimeSeriesMetadataDTO as TimeSeries } from '@cognite/sdk';
 import { Icons, Title, Body, Icon, Colors } from '@cognite/cogs.js';
 import {
   InfoGrid,

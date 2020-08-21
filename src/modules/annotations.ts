@@ -211,7 +211,7 @@ export function hardDeleteAnnotationsForFile(file: FilesMetadata) {
   ) => {
     try {
       const annotations = selectAnnotations(getState())(file.id);
-      await hardDeleteAnnotations(sdk, annotations);
+      await hardDeleteAnnotations(sdk, file);
 
       dispatch({
         type: DELETE_ANNOTATIONS_DONE,

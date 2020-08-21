@@ -203,7 +203,6 @@ export default function buildItems<
     }
   }
 
-  // TODO: merge with external reducer
   function buildRetrieveReducer(
     startAction: string,
     doneAction: string,

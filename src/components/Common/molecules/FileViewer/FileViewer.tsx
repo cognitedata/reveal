@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   ReactPictureAnnotation,
   IAnnotation,
@@ -164,6 +164,13 @@ export const FileViewer = React.forwardRef<ReactPictureAnnotation, Props>(
     const defaultRef = useRef<ReactPictureAnnotation | null>(null);
     const annotatorRef = ref as React.RefObject<ReactPictureAnnotation>;
 
+    const isImage: boolean = useMemo(() => {
+      if (file) {
+        return isPreviewableImage(file);
+      }
+      return false;
+    }, [file]);
+
     return (
       <div
         ref={wrapperRef}
@@ -199,7 +206,7 @@ export const FileViewer = React.forwardRef<ReactPictureAnnotation, Props>(
           pdf={
             file && file.mimeType === 'application/pdf' ? previewUrl : undefined
           }
-          image={file && isImage(file) ? previewUrl : undefined}
+          image={file && isImage ? previewUrl : undefined}
           creatable={creatable}
           width={width}
           height={height}
@@ -276,7 +283,7 @@ export const retrieveDownloadUrl = async (
   }
 };
 
-export const isImage = (file: FilesMetadata) => {
+export const isPreviewableImage = (file: FilesMetadata) => {
   const { mimeType = '' } = file;
-  return ['png, jpeg, jpg'].some(el => mimeType.includes(el));
+  return ['png', 'jpeg', 'jpg', 'svg'].some(el => mimeType.includes(el));
 };

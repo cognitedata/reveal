@@ -29,6 +29,7 @@
         "arrowParens": "avoid",
         "endOfLine": "auto"
       }
-    ]
+    ],
+    "@cognite/no-number-z-index": "off"
   }
 }
