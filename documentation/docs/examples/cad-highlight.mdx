@@ -37,10 +37,10 @@ viewer.on('click', event => {
 
 ### Highlight tagged equipment
 
-Equipment in CAD models typically consists of several smaller pieces. When the user clicks
-an object in the 3D model, she or he will click one of the individual small pieces,
+Equipment in CAD models typically consists of several smaller parts. When the user clicks an object in the 3D model, she or he will click one of the individual small parts,
 
-Color overrides can be overridden using `Cognite3DModel.resetNodeColorByTreeIndex`, e.g.
+The following examples shows how to use node data retrieved from the Cognite SDK to determine to "tagged equipment" (i.e. named equipment) and highlighting the full equipment, rather than a single individual part.
+
 <LiveCodeSnippet>
 {`
 viewer.on('click', event => {
