@@ -2,9 +2,14 @@ import * as Lodash from "lodash";
 import BaseProperty from "@/Core/Property/Base/BaseProperty";
 import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 
+//==================================================
+// Delegates
+//==================================================
+
 export type Action = () => void;
 export type StringAction = (fieldName: string) => void;
 export type IsEnabled = () => boolean;
+export type GetOptionIcon = (option: any) => string;
 
 export default abstract class UseProperty<T> extends BaseProperty
 {
@@ -15,11 +20,13 @@ export default abstract class UseProperty<T> extends BaseProperty
   private readonly _instance?: object;
   private _value?: T;
   private _options?: T[];
+  private _fieldName: string;
+  private _use?: boolean; // undefined = hide the use button
+
   private _apply?: Action;
   private _applyByFieldName?: StringAction;
   private _isEnabled?: IsEnabled;
-  private _fieldName: string;
-  private _use?: boolean; // undefined = hide the use button
+  private _getOptionIconDelegate?: GetOptionIcon
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -35,6 +42,8 @@ export default abstract class UseProperty<T> extends BaseProperty
   public get isOptional(): boolean { return this._use !== undefined; }
   public get use(): boolean { return this._use === undefined || this._use; }
   public set use(value: boolean) { this._use = value; }
+  public get optionIconDelegate(): GetOptionIcon | undefined { return this._getOptionIconDelegate; }
+  public set optionIconDelegate(value: GetOptionIcon | undefined) { this._getOptionIconDelegate = value; }
 
   //==================================================
   // CONSTRUCTORS
@@ -43,9 +52,12 @@ export default abstract class UseProperty<T> extends BaseProperty
   protected constructor(params: IPropertyParams<T>)
   {
     super(params.name, params.readonly, params.toolTip);
+
     this._apply = params.apply;
     this._applyByFieldName = params.applyByFieldName;
     this._isEnabled = params.isEnabled;
+    this._getOptionIconDelegate = params.getOptionIconDelegate;
+
     this._options = params.options;
     this._fieldName = params.name;
     this._use = params.use;
@@ -63,7 +75,7 @@ export default abstract class UseProperty<T> extends BaseProperty
     }
     else if (params.value !== undefined)
       this._value = params.value;
-    else 
+    else
       throw Error("UseProperty has no value");
   }
 
@@ -74,7 +86,7 @@ export default abstract class UseProperty<T> extends BaseProperty
   public get value(): T
   {
     if (!this._instance)
-      return this._value as T;      
+      return this._value as T;
     return Reflect.get(this._instance, this.name) as T;
   }
 
@@ -113,5 +125,12 @@ export default abstract class UseProperty<T> extends BaseProperty
 
     if (this._applyByFieldName)
       this._applyByFieldName.call(this._instance, this.fieldName);
+  }
+
+  public getOptionIcon(option: T): string
+  {
+    if (!this._getOptionIconDelegate)
+      return "";
+    return this._getOptionIconDelegate(option);
   }
 }
