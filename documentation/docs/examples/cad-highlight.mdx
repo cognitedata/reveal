@@ -48,6 +48,7 @@ viewer.on('click', event => {
   if (intersection) {
     const { modelId, revisionId } = intersection.model;
     const nodeId = intersection.nodeId;
+    
     // Retrieve all ancestors of the clicked node
     sdk.revisions3D.list3DNodeAncestors(modelId, revisionId, nodeId)
       .then(ancestors => {
