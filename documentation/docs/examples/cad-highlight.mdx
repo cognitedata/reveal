@@ -1,0 +1,43 @@
+---
+id: cad-highlight
+title: Selecting CAD nodes
+---
+
+import { LiveCodeSnippet }from '../../src/components/LiveCodeSnippet';
+import { DemoWrapper } from '../../src/components/DemoWrapper';
+import { Cognite3DModel, Cognite3DViewer } from '@cognite/reveal';
+
+Reveal supports selecting and highlighting individual objects by providing [tree indices to identify 3D nodes](../concepts.md).
+
+<DemoWrapper modelId={4715379429968321} revisionId={5688854005909501} name="Cognite3DViewerDemo" />
+
+### Select nodes of a subtree
+
+The 3D nodes are organized in a tree structure, where e.g. equipment will have many sub-components. In 
+order to highlight equipment it's typically necessary to highlight the entire
+subtree. Reveal supports this through the use of `Cognite3DModel.selectNodeByTreeIndex` with `applyToChildren`
+set to `true`:
+<LiveCodeSnippet>
+{`
+model.selectNodeByTreeIndex(923980, applyToChildren=true);
+`}
+</LiveCodeSnippet>
+
+### Reset selection
+
+Nodes can be deselected using `Cognite3DModel.deselectNodeByTreeIndex`, e.g.
+<LiveCodeSnippet>
+{`
+model.iterateNodesByTreeIndex(treeIndex => {
+  model.deselectNodeByTreeIndex(treeIndex);
+});
+`}
+</LiveCodeSnippet>
+
+It's also possible (and more performant) to use `Cognite3DModel.deselectAllNodes()` when
+you want to deselect all nodes:
+<LiveCodeSnippet>
+{`
+model.deselectAllNodes();
+`}
+</LiveCodeSnippet>
