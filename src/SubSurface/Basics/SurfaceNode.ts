@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Range3 } from "@/Core/Geometry/Range3";
+import Range3 from "@/Core/Geometry/Range3";
 import { RegularGrid2 } from "@/Core/Geometry/RegularGrid2";
 import { ColorType } from "@/Core/Enums/ColorType";
 

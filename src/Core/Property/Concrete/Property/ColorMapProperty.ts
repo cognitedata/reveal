@@ -1,7 +1,7 @@
 import UseProperty from "@/Core/Property/Base/UseProperty";
 import { PropertyType } from "@/Core/Enums/PropertyType";
 import { ColorMaps } from "@/Core/Primitives/ColorMaps";
-import { Range1 } from "@/Core/Geometry/Range1";
+import Range1 from "@/Core/Geometry/Range1";
 import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 
 export default class ColorMapProperty extends UseProperty<string>

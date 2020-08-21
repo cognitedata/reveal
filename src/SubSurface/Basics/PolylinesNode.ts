@@ -11,7 +11,7 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Range3 } from "@/Core/Geometry/Range3";
+import Range3 from "@/Core/Geometry/Range3";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { ColorType } from "@/Core/Enums/ColorType";
 import { Polylines } from "@/Core/Geometry/Polylines";

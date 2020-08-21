@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import * as THREE from "three";
-import { Range3 } from "@/Core/Geometry/Range3";
+import Range3 from "@/Core/Geometry/Range3";
 import { Colors } from "@/Core/Primitives/Colors";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
 import { ThreeTransformer } from "@/Three/Utilities/ThreeTransformer";

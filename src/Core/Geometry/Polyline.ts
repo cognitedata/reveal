@@ -13,7 +13,7 @@
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Points } from "@/Core/Geometry/Points";
-import { Range3 } from "@/Core/Geometry/Range3";
+import Range3 from "@/Core/Geometry/Range3";
 import { Shape } from "@/Core/Geometry/Shape";
 
 export class Polyline extends Points

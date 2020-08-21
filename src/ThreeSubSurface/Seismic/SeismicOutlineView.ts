@@ -18,7 +18,7 @@ import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 import { SeismicOutlineNode } from "@/SubSurface/Seismic/Nodes/SeismicOutlineNode";
 import { ThreeConverter } from "@/Three/Utilities/ThreeConverter";
-import { Range3 } from "@/Core/Geometry/Range3";
+import Range3 from "@/Core/Geometry/Range3";
 import { Changes } from "@/Core/Views/Changes";
 import { Colors } from "@/Core/Primitives/Colors";
 

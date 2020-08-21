@@ -13,7 +13,7 @@
 
 import * as THREE from "three";
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import { Range3 } from "@/Core/Geometry/Range3";
+import Range3 from "@/Core/Geometry/Range3";
 
 export class ThreeTransformer 
 {

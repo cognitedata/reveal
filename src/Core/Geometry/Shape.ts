@@ -11,8 +11,8 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Range3 } from "@/Core/Geometry/Range3";
-import { Range1 } from "@/Core/Geometry/Range1";
+import Range3 from "@/Core/Geometry/Range3";
+import Range1 from "@/Core/Geometry/Range1";
 
 export abstract class Shape
 {

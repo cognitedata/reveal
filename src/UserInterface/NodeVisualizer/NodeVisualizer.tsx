@@ -10,7 +10,7 @@ import UserInterfaceListener from "@/UserInterface/Adapters/UserInterfaceListene
 import { Modules } from "@/Core/Module/Modules";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
 import Viewer from "@/UserInterface/Components/Viewers/Viewer";
-import { Range3 } from "@/Core/Geometry/Range3";
+import Range3 from "@/Core/Geometry/Range3";
 import { ThreeRenderTargetNode } from "@/Three/Nodes/ThreeRenderTargetNode";
 import Toolbar from "@/UserInterface/NodeVisualizer/ToolBar/Toolbar";
 import { Appearance } from "@/Core/States/Appearance";

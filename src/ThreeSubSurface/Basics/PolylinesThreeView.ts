@@ -14,7 +14,7 @@
 import * as THREE from "three";
 
 import { Colors } from "@/Core/Primitives/Colors";
-import { Range3 } from "@/Core/Geometry/Range3";
+import Range3 from "@/Core/Geometry/Range3";
 import { ColorType } from "@/Core/Enums/ColorType";
 
 import { PolylinesNode } from "@/SubSurface/Basics/PolylinesNode";

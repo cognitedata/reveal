@@ -11,11 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { Range1 } from "@/Core/Geometry/Range1";
+import Range1 from "@/Core/Geometry/Range1";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { Ma } from "@/Core/Primitives/Ma";
 
-export class Range3
+export default class Range3
 {
   //==================================================
   // STATIC PROPERTIES

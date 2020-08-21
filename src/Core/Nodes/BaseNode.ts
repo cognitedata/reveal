@@ -30,7 +30,7 @@ import { Util } from "@/Core/Primitives/Util";
 import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 import { FileType } from "@/Core/Enums/FileType";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
-import { Range3 } from "@/Core/Geometry/Range3";
+import Range3 from "@/Core/Geometry/Range3";
 import { ColorMaps } from "../Primitives/ColorMaps";
 
 export abstract class BaseNode extends Identifiable
@@ -520,6 +520,16 @@ export abstract class BaseNode extends Identifiable
   //==================================================
   // INSTANCE METHODS: Get ancestors
   //==================================================
+
+  public getSelectedNode(): BaseNode | null
+  {
+    for (const descendant of this.getThisAndDescendants())
+    {
+      if (descendant.isSelected())
+        return descendant;
+    }
+    return null;
+  }
 
   public getTreeNode(): BaseNode | null
   {

@@ -12,7 +12,7 @@
 //=====================================================================================
 
 import { ColorType } from "@/Core/Enums/ColorType";
-import { Range3 } from "@/Core/Geometry/Range3";
+import Range3 from "@/Core/Geometry/Range3";
 
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";

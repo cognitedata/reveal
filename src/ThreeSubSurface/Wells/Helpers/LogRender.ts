@@ -14,7 +14,7 @@
 import * as THREE from "three";
 import * as Color from "color";
 
-import { Range1 } from "@/Core/Geometry/Range1";
+import Range1 from "@/Core/Geometry/Range1";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import { TrianglesBuffers } from "@/Core/Geometry/TrianglesBuffers";
 

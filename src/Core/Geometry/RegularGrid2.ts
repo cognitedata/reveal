@@ -14,8 +14,8 @@
 import * as Lodash from "lodash";
 
 import { Vector3 } from "@/Core/Geometry/Vector3";
-import { Range1 } from "@/Core/Geometry/Range1";
-import { Range3 } from "@/Core/Geometry/Range3";
+import Range1 from "@/Core/Geometry/Range1";
+import Range3 from "@/Core/Geometry/Range3";
 import Index2 from "@/Core/Geometry/Index2";
 import { Grid2 } from "@/Core/Geometry/Grid2";
 import { Random } from "@/Core/Primitives/Random";

@@ -1,12 +1,19 @@
 import GroupProperty from "@/Core/Property/Concrete/Folder/GroupProperty";
 import Index3 from "@/Core/Geometry/Index3";
 import Index2 from "@/Core/Geometry/Index2";
-import { Range1 } from "@/Core/Geometry/Range1";
-import { Range3 } from "@/Core/Geometry/Range3";
+import Range1 from "@/Core/Geometry/Range1";
+import Range3 from "@/Core/Geometry/Range3";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
 import { PropertyType } from "@/Core/Enums/PropertyType";
 import { Statistics } from "@/Core/Geometry/Statistics";
+import StringProperty from "@/Core/Property/Concrete/Property/StringProperty";
+import ColorProperty from "@/Core/Property/Concrete/Property/ColorProperty";
+import ColorMapProperty from "@/Core/Property/Concrete/Property/ColorMapProperty";
+import Color from "color";
+import { ColorMaps } from "@/Core/Primitives/ColorMaps";
+import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
+import { Ma } from "@/Core/Primitives/Ma";
 
 const FractionDigitsDefault = 2;
 
@@ -36,6 +43,28 @@ export default class ExpanderProperty extends BasePropertyFolder
   //==================================================
 
   public getType(): PropertyType { return PropertyType.Expander; }
+
+  //==================================================
+  // INSTANCE METHODS: Add variables
+  //==================================================
+
+  public addString(params: IPropertyParams<string>): void { this.addChild(new StringProperty(params)); }
+  public addColor(params: IPropertyParams<Color>): void { this.addChild(new ColorProperty(params)); }
+
+  public addColorMap(params: IPropertyParams<string>): void
+  {
+    params.options = ColorMaps.getOptions();
+    this.addChild(new ColorMapProperty(params));
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Add readonly
+  //==================================================
+
+  public addReadOnlyString(name: string, value: string): void { this.addChild(new StringProperty({ name, value, readonly: true })); }
+  public addReadOnlyInteger(name: string, value: number): void { this.addReadOnlyString(name, value.toString()); }
+  public addReadOnlyNumber(name: string, value: number, fractionDigits = FractionDigitsDefault): void { this.addReadOnlyString(name, value.toFixed(fractionDigits)); }
+  public addReadOnlyAngle(name: string, value: number): void { this.addReadOnlyString(name, `${Ma.toDeg(value).toFixed(2)} [degrees]`); }
 
   //==================================================
   // INSTANCE METHODS: Add read only values
@@ -89,7 +118,7 @@ export default class ExpanderProperty extends BasePropertyFolder
   {
     const property = new GroupProperty(name);
     for (const [index, value] of args.entries())
-      property.addReadOnlyString(name + index, value);
+      property.addChild(new StringProperty({ name: name + index, value, readonly: true }));
     this.addChild(property);
   }
 }
