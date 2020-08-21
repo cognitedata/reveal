@@ -1,15 +1,14 @@
 import React from "react";
-import { ISettingsSection } from "@/UserInterface/Components/Settings/Types";
+import {
+  ISettingsSection,
+  ISettingsElement,
+  ISettingsSectionProps,
+} from "@/UserInterface/Components/Settings/Types";
 import ExpansionView from "@/UserInterface/Components/ExpansionView/ExpansionView";
-import SettingsElement from "@/UserInterface/Components/Settings/SettingsElement";
+import SettingsElement from "@/UserInterface/Components/Settings/SettingsElement/SettingsElement";
+import "./SettingsSection.module.scss";
 
-export type SettingsSectionProps = {
-  section: ISettingsSection;
-  onExpand: (id: string, expandStatus: boolean) => void;
-  onElementChange: (elementId: string, value: any) => void;
-};
-
-export default function SettingsSection(props: SettingsSectionProps) {
+export default function SettingsSection(props: ISettingsSectionProps) {
   const { name, isExpanded, toolBar, subSections, elements } = props.section;
 
   return (
@@ -23,14 +22,18 @@ export default function SettingsSection(props: SettingsSectionProps) {
       <>
         {elements && (
           <div className="settings-section-element-container">
-            {elements.map((element) => (
-              <SettingsElement
-                key={`${element.name}-input-`}
-                sectionId={name}
-                config={element}
-                onChange={props.onElementChange}
-              />
-            ))}
+            {elements.map(
+              (element: ISettingsElement) =>
+                element && (
+                  <SettingsElement
+                    key={`${element.name}-input-`}
+                    sectionId={name}
+                    config={element}
+                    onPropertyValueChange={props.onPropertyValueChange}
+                    onPropertyUseChange={props.onPropertyUseChange}
+                  />
+                )
+            )}
           </div>
         )}
         {subSections && subSections.length ? (
@@ -40,7 +43,8 @@ export default function SettingsSection(props: SettingsSectionProps) {
                 key={`${subSection.name}-sub-section`}
                 section={subSection}
                 onExpand={props.onExpand}
-                onElementChange={props.onElementChange}
+                onPropertyValueChange={props.onPropertyValueChange}
+                onPropertyUseChange={props.onPropertyUseChange}
               />
             ))}
           </div>

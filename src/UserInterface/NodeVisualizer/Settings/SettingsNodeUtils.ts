@@ -14,7 +14,6 @@ export default class SettingsNodeUtils
     }
     else
     {
-      // tslint:disable-next-line:no-console
       console.log("Couldn't find property!");
     }
   }
@@ -27,8 +26,23 @@ export default class SettingsNodeUtils
       property.expanded = expand;
     else
     {
-      // tslint:disable-next-line:no-console
       console.log("Couldn't find property!");
+    }
+  }
+  
+  public static setPropertyUse(id: string, useProperty: boolean): void
+  {
+    const property = NodeUtils.getPropertyById(id);
+
+    if (property)
+    {
+      //Enable this when useProperty is added to UseProperty
+      //(property as UseProperty<boolean>).useProperty = useProperty;
+      console.error("Not implemented yet(setPropertyUse)");
+    }
+    else
+    {
+      console.log("Couldn't find property!", id);
     }
   }
 

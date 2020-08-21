@@ -28,8 +28,4 @@ export interface ISettingsState
 {
   currentNodeId: string;
   titleBar: TitleBarState;
-  properties: {
-    byId: { [id: string]: ISettingsPropertyState },
-    allIds: string[]
-  }
 }
