@@ -50,6 +50,7 @@ export default class Index3
   //==================================================
 
   public get size(): number { return this.i * this.j * this.k; }
+  public get isZero(): boolean { return this.i === 0 && this.j === 0 && this.k === 0; }
 
   //==================================================
   // INSTANCE METHODS: Getters
@@ -77,6 +78,20 @@ export default class Index3
     this.i = other.i;
     this.j = other.j;
     this.k = other.k;
+  }
+
+  public add(value: Index3): void
+  {
+    this.i += value.i;
+    this.j += value.j;
+    this.k += value.k;
+  }
+
+  public substract(value: Index3): void
+  {
+    this.i -= value.i;
+    this.j -= value.j;
+    this.k -= value.k;
   }
 
   public addIndex2(index: Index2): void

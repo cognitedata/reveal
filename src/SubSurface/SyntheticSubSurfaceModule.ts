@@ -293,26 +293,34 @@ export class SyntheticSubSurfaceModule extends BaseModule
     })();
     console.log("End async");
 
-    const apiKey = "MzI0MTA3OGEtZjMxNi00MmQ0LWI5ODYtMzFiYTEyZmQ0MThh";
-    const seismicTree = root.seismic;
-    const survey = new SurveyNode();
-    survey.name = "Survey";
-
-    const client = new CogniteSeismicClient({ api_url: "https://api.cognitedata.com", api_key: apiKey, debug: false });
+    const api_key = "MzI0MTA3OGEtZjMxNi00MmQ0LWI5ODYtMzFiYTEyZmQ0MThh";
     const fileId = "cc0f791f-e206-4c08-a139-c5d08eea8afc";
+    const api_url = "https://api.cognitedata.com";
+
+    try
     {
-      const seismicCubeNode = new SeismicCubeNode();
-      seismicCubeNode.colorMap = ColorMaps.seismicName;
-      survey.addChild(seismicCubeNode);
-      seismicTree.addChild(survey);
-      seismicCubeNode.load(client, fileId);
+      const client = new CogniteSeismicClient({ api_url, api_key, debug: true });
+      const seismicTree = root.seismic;
+      const survey = new SurveyNode();
+      survey.name = "Survey";
+      {
+        const seismicCubeNode = new SeismicCubeNode();
+        seismicCubeNode.colorMap = ColorMaps.seismicName;
+        survey.addChild(seismicCubeNode);
+        seismicTree.addChild(survey);
+        seismicCubeNode.load(client, fileId);
+      }
+      {
+        const seismicCubeNode = new SeismicCubeNode();
+        seismicCubeNode.colorMap = ColorMaps.greyScaleName;
+        survey.addChild(seismicCubeNode);
+        seismicTree.addChild(survey);
+        seismicCubeNode.load(client, fileId);
+      }
     }
+    catch (error)
     {
-      const seismicCubeNode = new SeismicCubeNode();
-      seismicCubeNode.colorMap = ColorMaps.greyScaleName;
-      survey.addChild(seismicCubeNode);
-      seismicTree.addChild(survey);
-      seismicCubeNode.load(client, fileId);
+      alert(error);
     }
 
     // Get trace 1

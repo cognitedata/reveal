@@ -18,7 +18,7 @@ import { Points } from "@/Core/Geometry/Points";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { PointsRenderStyle } from "@/SubSurface/Basics/PointsRenderStyle";
-import PointsNodeIcon from "@images/Nodes/PointsNode.png";
+import Icon from "@images/Nodes/PointsNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
@@ -58,7 +58,7 @@ export class PointsNode extends DataNode
 
   public /*override*/ get typeName(): string { return "Points"; }
 
-  public /*override*/ getIcon(): string { return PointsNodeIcon; }
+  public /*override*/ getIcon(): string { return this.dataIsLost ? super.getIcon() : Icon; }
 
   public /*override*/ get boundingBox(): Range3 { return this.points ? this.points.boundingBox : new Range3(); }
 

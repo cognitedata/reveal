@@ -27,6 +27,7 @@ export class Changes
   // Fields changed
   public static readonly nodeName: symbol = Symbol("nodeName");
   public static readonly nodeColor: symbol = Symbol("nodeColor");
+  public static readonly nodeIcon: symbol = Symbol("nodeIcon");
   public static readonly nodeColorMap: symbol = Symbol("nodeColorMap");
   public static readonly geometry: symbol = Symbol("geometry");
   public static readonly renderStyle: symbol = Symbol("renderStyle");

@@ -14,7 +14,7 @@
 import { DiscreteLog } from "@/SubSurface/Wells/Logs/DiscreteLog";
 import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
 import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
-import DiscreteLogNodeIcon from "@images/Nodes/DiscreteLogNode.png";
+import Icon from "@images/Nodes/DiscreteLogNode.png";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export class DiscreteLogNode extends BaseLogNode
@@ -53,7 +53,7 @@ export class DiscreteLogNode extends BaseLogNode
 
   public /*override*/ get typeName(): string { return "DiscreteLog"; }
 
-  public /*override*/ getIcon(): string { return DiscreteLogNodeIcon; }
+  public /*override*/ getIcon(): string { return this.dataIsLost ? super.getIcon() : Icon; }
 
   public /*override*/ hasIconColor(): boolean { return false; }
 

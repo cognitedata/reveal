@@ -14,6 +14,9 @@
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { IDataLoader } from "@/Core/Interfaces/IDataLoader";
 import { ITarget } from "@/Core/Interfaces/ITarget";
+import Icon from "@images/Commands/Delete.png";
+import { Changes } from "@/Core/Views/Changes";
+import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 
 export abstract class DataNode extends BaseVisualNode
 {
@@ -34,7 +37,7 @@ export abstract class DataNode extends BaseVisualNode
   //==================================================
 
   private _data: any = null;
-  private _dataIsLost = false;
+  private _dataIsLost?: boolean;
   private _dataLoader: IDataLoader | null = null;
 
   //==================================================
@@ -44,7 +47,7 @@ export abstract class DataNode extends BaseVisualNode
   public get dataLoader(): IDataLoader | null { return this._dataLoader; }
   public set dataLoader(value: IDataLoader | null) { this._dataLoader = value; }
   public get hasDataInMemory(): boolean { return this._data != null; }
-  public get dataIsLost(): boolean { return this._dataIsLost; }
+  public get dataIsLost(): boolean { return this._dataIsLost === undefined ? false : this._dataIsLost; }
 
   protected get anyData(): any
   {
@@ -62,7 +65,11 @@ export abstract class DataNode extends BaseVisualNode
   protected set anyData(value: any)
   {
     this._data = value;
+    const dataWasLost = this._dataIsLost;
     this._dataIsLost = !value;
+    if (dataWasLost !== this._dataIsLost)
+      this.notify(new NodeEventArgs(Changes.nodeIcon));
+
     if (this.dataIsLost)
     {
       // tslint:disable-next-line:no-console
@@ -81,6 +88,8 @@ export abstract class DataNode extends BaseVisualNode
   //==================================================
   // OVERRIDES of BaseVisualNode
   //==================================================
+
+  public /*override*/ getIcon(): string { return Icon; }
 
   public /*override*/ canBeVisible(target?: ITarget | null): boolean
   {

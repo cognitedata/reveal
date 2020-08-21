@@ -14,7 +14,7 @@
 import { FloatLog } from "@/SubSurface/Wells/Logs/FloatLog";
 import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
 import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
-import FloatLogNodeIcon from "@images/Nodes/FloatLogNode.png";
+import Icon from "@images/Nodes/FloatLogNode.png";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export class FloatLogNode extends BaseLogNode
@@ -62,7 +62,7 @@ export class FloatLogNode extends BaseLogNode
 
   public /*override*/ get typeName(): string { return "FloatLog"; }
 
-  public /*override*/ getIcon(): string { return FloatLogNodeIcon; }
+  public /*override*/ getIcon(): string { return this.dataIsLost ? super.getIcon() : Icon; }
 
   public /*override*/ getNameExtension(): string | null { return this.unit; }
 

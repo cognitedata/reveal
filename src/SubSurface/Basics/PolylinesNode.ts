@@ -18,7 +18,7 @@ import { Polylines } from "@/Core/Geometry/Polylines";
 
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { PolylinesRenderStyle } from "@/SubSurface/Basics/PolylinesRenderStyle";
-import PolylinesNodeIcon from "@images/Nodes/PolylinesNode.png";
+import Icon from "@images/Nodes/PolylinesNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
@@ -60,7 +60,7 @@ export class PolylinesNode extends DataNode
 
   public /*override*/ get typeName(): string { return "Polylines"; }
 
-  public /*override*/ getIcon(): string { return PolylinesNodeIcon; }
+  public /*override*/ getIcon(): string { return this.dataIsLost ? super.getIcon() : Icon; }
 
   public /*override*/ get boundingBox(): Range3 { return this.polylines ? this.polylines.boundingBox : new Range3(); }
 
