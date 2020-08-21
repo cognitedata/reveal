@@ -7,10 +7,20 @@ import { SectorGeometry } from '@/datamodels/cad/sector/types';
 import { SectorQuads } from '@/datamodels/cad/rendering/types';
 import { SectorCuller } from '@/internal';
 
+// we use these types in public API so they should be reexported here
+// to appear in the api reference docs
+export { CadRenderHints } from '@/datamodels/cad/rendering/CadRenderHints';
+export { CadLoadingHints } from '@/datamodels/cad/CadLoadingHints';
+export * from '@/datamodels/base/SupportedModelTypes';
+
+/**
+ * @property logMetrics might be used to disable usage statistics
+ * @property nodeAppearanceProvider style node by tree-index
+ * @property internal internals are for internal usage only (like unit-testing)
+ */
 export type RevealOptions = {
   logMetrics?: boolean;
   nodeAppearanceProvider?: NodeAppearanceProvider;
-  // internal options are experimental and may change in the future
   internal?: {
     parseCallback?: (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
     sectorCuller?: SectorCuller;
@@ -20,16 +30,11 @@ export type RevealOptions = {
 /**
  * Event notifying about a nodeId -> treeIndex map being loaded
  * as a result of parsing a sector.
+ * @property blobUrl Identifies the model the nodeID map was loaded for.
+ * @property nodeIdToTreeIndexMap Map defining a mapping from nodeId to treeIndex.
  */
 export type SectorNodeIdToTreeIndexMapLoadedEvent = {
-  /**
-   * Identifies the model the nodeID map was loaded for.
-   */
   blobUrl: string;
-
-  /**
-   * Map defining a mapping from nodeId to treeIndex.
-   */
   nodeIdToTreeIndexMap: Map<number, number>;
 };
 

@@ -4,11 +4,19 @@ update_configs:
   - target_branch: dependency-updates
     package_manager: "javascript"
     directory: "/examples"
+    ignored_updates:
+      - match:
+          dependency_name: "@cognite/sdk"
+      - match:
+          dependency_name: "@cognite/reveal"
+      - match:
+          dependency_name: "three"
     update_schedule: live
     automerged_updates:
       - match:
           dependency_name: "*"
           update_type: "all"
+
   - target_branch: dependency-updates
     package_manager: "javascript"
     directory: "/viewer"
@@ -17,6 +25,7 @@ update_configs:
       - match:
           dependency_name: "*"
           update_type: "all"
+
   # Rust deps
   - target_branch: dependency-updates
     package_manager: "rust:cargo"
@@ -26,6 +35,7 @@ update_configs:
       - match:
           dependency_name: "*"
           update_type: "all"
+
   - target_branch: dependency-updates
     package_manager: rust:cargo
     directory: "/i3df"
@@ -34,6 +44,7 @@ update_configs:
       - match:
           dependency_name: "*"
           update_type: "all"
+
   - target_branch: dependency-updates
     package_manager: "rust:cargo"
     directory: "/viewer"
@@ -42,4 +53,3 @@ update_configs:
       - match:
           dependency_name: "*"
           update_type: "all"
-

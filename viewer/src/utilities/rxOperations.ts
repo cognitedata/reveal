@@ -6,14 +6,13 @@ import { of, pipe, OperatorFunction } from 'rxjs';
 import { delay, startWith, switchMap, distinctUntilChanged, tap } from 'rxjs/operators';
 
 export const debug = <T>(tag: string = 'none'): OperatorFunction<T, T> => {
-  return tap(
-    // eslint-disable-next-line no-console
-    (obj: T) => console.log(`next ${tag}`, obj),
-    // eslint-disable-next-line no-console
-    error => console.error(`error ${tag}`, error),
-    // eslint-disable-next-line no-console
-    () => console.log(`complete ${tag}`)
-  );
+  return tap({
+    /* eslint-disable no-console */
+    next: (obj: T) => console.log(`next ${tag}`, obj),
+    error: error => console.error(`error ${tag}`, error),
+    complete: () => console.log(`complete ${tag}`)
+    /* eslint-enable no-console */
+  });
 };
 
 export const emissionLastMillis = (millis: number) => {

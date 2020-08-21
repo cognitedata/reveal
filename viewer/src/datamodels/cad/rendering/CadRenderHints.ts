@@ -7,5 +7,6 @@
  * are rendered.
  */
 export interface CadRenderHints {
+  /** Use to specify if bounding boxes for each sector should be visible */
   showSectorBoundingBoxes?: boolean;
 }

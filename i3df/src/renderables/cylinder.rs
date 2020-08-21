@@ -6,7 +6,7 @@ use crate::renderables::{
     Trapezium,
 };
 use crate::{Matrix, Rotation3, Vector3, Vector4};
-use std::f64::consts::PI;
+use std::f32::consts::PI;
 
 fn intersect(
     ray_vector: &Vector3,
@@ -22,11 +22,11 @@ fn intersect(
 }
 
 fn normalize_radians(mut angle: f32) -> f32 {
-    while angle < -PI as f32 {
-        angle += 2.0 * PI as f32;
+    while angle < -PI {
+        angle += 2.0 * PI;
     }
-    while angle > PI as f32 {
-        angle -= 2.0 * PI as f32;
+    while angle > PI {
+        angle -= 2.0 * PI;
     }
     angle
 }
@@ -60,7 +60,7 @@ fn create_cap(
 
     let center_axis_rotation =
         Rotation3::rotation_between(&Vector3::z_axis(), &Vector3::from(cylinder.center_axis))
-            .unwrap();
+            .unwrap_or_else(|| Rotation3::from_axis_angle(&Vector3::x_axis(), PI));
     let plane = Vector4::new(normal.x, normal.y, normal.z, height);
     let cap_x_axis_a = center_axis_rotation
         .transform_vector(&local_x_axis)
@@ -113,14 +113,13 @@ fn create_cap(
 impl ToRenderables for crate::ClosedCylinder {
     fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center_axis: Vector3 = self.center_axis.into();
-        let x_axis = Vector3::new(1.0, 0.0, 0.0);
-        let z_axis = Vector3::new(0.0, 0.0, 1.0);
         let center: Vector3 = self.center();
         let center_a = center + center_axis * self.height / 2.0;
         let center_b = center - center_axis * self.height / 2.0;
         let normal = (center_a - center_b).normalize();
-        let rotation = Rotation3::rotation_between(&z_axis, &normal).unwrap();
-        let local_x_axis: Vector3 = rotation.transform_vector(&x_axis);
+        let rotation = Rotation3::rotation_between(&Vector3::z_axis(), &normal)
+            .unwrap_or_else(|| Rotation3::from_axis_angle(&Vector3::x_axis(), PI));
+        let local_x_axis: Vector3 = rotation.transform_vector(&Vector3::x_axis());
         collections.cone_collection.push(Cone {
             tree_index: self.tree_index as f32,
             color: self.color,
@@ -129,7 +128,7 @@ impl ToRenderables for crate::ClosedCylinder {
             radius_a: self.radius,
             radius_b: self.radius,
             angle: 0.0,
-            arc_angle: 2.0 * PI as f32,
+            arc_angle: 2.0 * PI,
             local_x_axis,
         });
         collections.circle_collection.push(Circle::new(&CircleInfo {
@@ -153,14 +152,13 @@ impl ToRenderables for crate::ClosedCylinder {
 impl ToRenderables for crate::OpenCylinder {
     fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center_axis: Vector3 = self.center_axis.into();
-        let x_axis = Vector3::new(1.0, 0.0, 0.0);
-        let z_axis = Vector3::new(0.0, 0.0, 1.0);
         let center: Vector3 = self.center();
         let center_a = center + center_axis * self.height / 2.0;
         let center_b = center - center_axis * self.height / 2.0;
         let normal = (center_a - center_b).normalize();
-        let rotation = Rotation3::rotation_between(&z_axis, &normal).unwrap();
-        let local_x_axis: Vector3 = rotation.transform_vector(&x_axis);
+        let rotation = Rotation3::rotation_between(&Vector3::z_axis(), &normal)
+            .unwrap_or_else(|| Rotation3::from_axis_angle(&Vector3::x_axis(), PI));
+        let local_x_axis: Vector3 = rotation.transform_vector(&Vector3::x_axis());
         collections.cone_collection.push(Cone {
             tree_index: self.tree_index as f32,
             color: self.color,
@@ -169,7 +167,7 @@ impl ToRenderables for crate::OpenCylinder {
             radius_a: self.radius,
             radius_b: self.radius,
             angle: 0.0,
-            arc_angle: 2.0 * PI as f32,
+            arc_angle: 2.0 * PI,
             local_x_axis,
         });
     }
@@ -188,7 +186,7 @@ fn angle_between_vectors(v1: &Vector3, v2: &Vector3, up: &Vector3) -> f32 {
     let right = Vector3::cross(v1, up);
     let more_than_pi = Vector3::dot(&right, &v2) < 0.0;
     if more_than_pi {
-        2.0 * PI as f32 - angle
+        2.0 * PI - angle
     } else {
         angle
     } // TODO normalize radians
@@ -210,7 +208,8 @@ fn create_general_cylinder(cylinder: &crate::SolidOpenGeneralCylinder) -> Genera
     let ext_b = -dist_from_b_to_ext_b * center_axis + center_b;
 
     let normal = (ext_a - ext_b).normalize();
-    let rotation = Rotation3::rotation_between(&Vector3::z_axis(), &normal).unwrap();
+    let rotation = Rotation3::rotation_between(&Vector3::z_axis(), &normal)
+        .unwrap_or_else(|| Rotation3::from_axis_angle(&Vector3::x_axis(), PI));
     let local_x_axis: Vector3 = rotation.transform_vector(&Vector3::x_axis());
 
     let cap_a = create_cap(
@@ -386,7 +385,8 @@ impl ToRenderables for crate::SolidClosedGeneralCylinder {
                 [self.radius, self.radius - self.thickness]
             };
 
-            let rotation = Rotation3::rotation_between(&Vector3::z_axis(), &normal).unwrap();
+            let rotation = Rotation3::rotation_between(&Vector3::z_axis(), &normal)
+                .unwrap_or_else(|| Rotation3::from_axis_angle(&Vector3::x_axis(), PI));
             let point = Vector3::new(f32::cos(final_angle), f32::sin(final_angle), 0.0);
             let point = rotation.transform_vector(&point).normalize();
             let mut vertices = [Vector3::new(0.0, 0.0, 0.0); 4];

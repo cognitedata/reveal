@@ -9,13 +9,14 @@ import { edgeDetectionShaders } from './shaders';
 import { CogniteColors } from '@/utilities';
 import { CadNode } from '..';
 import { Cognite3DModel } from '@/migration';
-import { Object3D } from 'three';
+import { RootSectorNode } from '../sector/RootSectorNode';
 
 export class EffectRenderManager {
   private readonly _materialManager: MaterialManager;
   private readonly _orthographicCamera: THREE.OrthographicCamera;
 
   private readonly _triScene: THREE.Scene;
+  private readonly _inFrontScene: THREE.Scene;
   private readonly _cadScene: THREE.Scene;
 
   private readonly _combineEdgeDetectionMaterial: THREE.ShaderMaterial;
@@ -24,7 +25,12 @@ export class EffectRenderManager {
   private readonly _backRenderedCadModelTarget: THREE.WebGLRenderTarget;
   private readonly _frontRenderedCadModelTarget: THREE.WebGLRenderTarget;
 
-  private readonly _cadModelBuffer: Set<[CadNode, Object3D]> = new Set();
+  private readonly _rootSectorNodeBuffer: Set<[RootSectorNode, CadNode]> = new Set();
+  private readonly _inFrontObjectBuffer: Set<{
+    inFrontObject: THREE.Object3D;
+    inFrontParent: THREE.Object3D;
+    inFrontSceneParent: THREE.Object3D;
+  }> = new Set();
 
   private readonly outlineTexelSize = 2;
 
@@ -33,11 +39,15 @@ export class EffectRenderManager {
     this._orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
     this._cadScene = new THREE.Scene();
+    this._inFrontScene = new THREE.Scene();
     this._triScene = new THREE.Scene();
 
     const outlineColorTexture = this.createOutlineColorTexture();
 
     this._frontRenderedCadModelTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
+    this._frontRenderedCadModelTarget.depthTexture = new THREE.DepthTexture(0, 0);
+    this._frontRenderedCadModelTarget.depthTexture.format = THREE.DepthFormat;
+    this._frontRenderedCadModelTarget.depthTexture.type = THREE.UnsignedIntType;
 
     this._backRenderedCadModelTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
     this._backRenderedCadModelTarget.depthTexture = new THREE.DepthTexture(0, 0);
@@ -54,11 +64,14 @@ export class EffectRenderManager {
       fragmentShader: edgeDetectionShaders.combine,
       uniforms: {
         tFront: { value: this._frontRenderedCadModelTarget.texture },
+        tFrontDepth: { value: this._frontRenderedCadModelTarget.depthTexture },
         tBack: { value: this._backRenderedCadModelTarget.texture },
         tBackDepth: { value: this._backRenderedCadModelTarget.depthTexture },
         tCustom: { value: this._customObjectRenderTarget.texture },
         tCustomDepth: { value: this._customObjectRenderTarget.depthTexture },
-        tOutlineColors: { value: outlineColorTexture }
+        tOutlineColors: { value: outlineColorTexture },
+        cameraNear: { value: 0.1 },
+        cameraFar: { value: 10000 }
       },
       depthTest: false
     });
@@ -74,10 +87,10 @@ export class EffectRenderManager {
     };
     this.updateRenderSize(renderer);
 
-    this.traverseForCadNodes(scene);
+    this.traverseForRootSectorNode(scene);
 
-    this._cadModelBuffer.forEach(p => {
-      if (p[1] !== scene && !(p[1] instanceof Cognite3DModel)) {
+    this._rootSectorNodeBuffer.forEach(p => {
+      if (p[1].parent !== scene && !(p[1].parent instanceof Cognite3DModel)) {
         throw new Error('CadNode must be put at scene root');
       }
       this._cadScene.add(p[0]);
@@ -85,7 +98,6 @@ export class EffectRenderManager {
 
     try {
       this.updateRenderSize(renderer);
-
       renderer.setClearAlpha(0);
 
       // Render behind cad models
@@ -97,7 +109,7 @@ export class EffectRenderManager {
       // Render custom objects
       this.renderCustomObjects(renderer, scene, camera);
 
-      renderer.setClearAlpha(1);
+      renderer.setClearAlpha(original.clearAlpha);
 
       this.renderTargetToCanvas(renderer, camera);
     } finally {
@@ -106,10 +118,10 @@ export class EffectRenderManager {
       renderer.setRenderTarget(original.renderTarget);
       this._materialManager.setRenderMode(original.renderMode);
 
-      this._cadModelBuffer.forEach(p => {
+      this._rootSectorNodeBuffer.forEach(p => {
         p[1].add(p[0]);
       });
-      this._cadModelBuffer.clear();
+      this._rootSectorNodeBuffer.clear();
     }
   }
 
@@ -121,34 +133,59 @@ export class EffectRenderManager {
   private renderInFrontCadModels(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
     renderer.setRenderTarget(this._frontRenderedCadModelTarget);
 
-    let containsRenderInFront = false;
-    this._cadModelBuffer.forEach(cadModelData => {
-      const cadModel = cadModelData[0];
-      const inFrontSet = this._materialManager.getModelInFrontTreeIndices(cadModel.cadModelMetadata.blobUrl);
+    this._rootSectorNodeBuffer.forEach(rootSectorNodeData => {
+      const cadNode = rootSectorNodeData[1] as CadNode;
+
+      const inFrontSet = this._materialManager.getModelInFrontTreeIndices(cadNode.cadModelMetadata.blobUrl);
 
       if (!inFrontSet) {
         return;
       }
-      cadModel.traverseVisible(object => {
-        const objectTreeIndices = object.userData.treeIndices as Set<number> | undefined;
 
-        if (objectTreeIndices && hasIntersection(inFrontSet, objectTreeIndices)) {
-          containsRenderInFront = true;
-          return;
-        }
-      });
+      this.traverseForInFrontObjects(rootSectorNodeData[0], inFrontSet);
     });
 
-    if (!containsRenderInFront) {
-      renderer.clear();
-      return;
-    }
+    this._inFrontObjectBuffer.forEach(p => {
+      p.inFrontSceneParent.add(p.inFrontObject);
+    });
 
     this._materialManager.setRenderMode(RenderMode.Effects);
 
-    renderer.render(this._cadScene, camera);
+    renderer.render(this._inFrontScene, camera);
 
     this._materialManager.setRenderMode(RenderMode.Color);
+
+    this._inFrontObjectBuffer.forEach(p => {
+      p.inFrontParent.add(p.inFrontObject);
+    });
+
+    this._inFrontObjectBuffer.clear();
+    this._inFrontScene.remove(...this._inFrontScene.children);
+  }
+
+  private traverseForInFrontObjects(root: THREE.Object3D, frontSet: Set<number>) {
+    const objectStack = [root];
+
+    const rootTransformObject = new THREE.Object3D();
+    rootTransformObject.applyMatrix4(root.matrix);
+
+    this._inFrontScene.add(rootTransformObject);
+
+    while (objectStack.length > 0) {
+      const element = objectStack.pop()!;
+
+      const objectTreeIndices = element.userData.treeIndices as Set<number> | undefined;
+
+      if (objectTreeIndices && hasIntersection(frontSet, objectTreeIndices)) {
+        this._inFrontObjectBuffer.add({
+          inFrontObject: element,
+          inFrontParent: element.parent!,
+          inFrontSceneParent: rootTransformObject
+        });
+      } else {
+        objectStack.push(...element.children);
+      }
+    }
   }
 
   private renderCustomObjects(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
@@ -185,13 +222,8 @@ export class EffectRenderManager {
   }
 
   private renderTargetToCanvas(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
-    this._combineEdgeDetectionMaterial.setValues({
-      uniforms: {
-        ...this._combineEdgeDetectionMaterial.uniforms,
-        cameraNear: { value: camera.near },
-        cameraFar: { value: camera.far }
-      }
-    });
+    this._combineEdgeDetectionMaterial.uniforms.cameraNear.value = camera.near;
+    this._combineEdgeDetectionMaterial.uniforms.cameraFar.value = camera.far;
 
     renderer.setRenderTarget(null);
     renderer.render(this._triScene, this._orthographicCamera);
@@ -226,13 +258,15 @@ export class EffectRenderManager {
     this._triScene.add(mesh);
   }
 
-  private traverseForCadNodes(root: Object3D) {
+  private traverseForRootSectorNode(root: THREE.Object3D) {
     const objectStack = [root];
 
     while (objectStack.length > 0) {
       const element = objectStack.pop()!;
-      if (element instanceof CadNode) {
-        this._cadModelBuffer.add([element, element.parent!]);
+      if (element instanceof RootSectorNode) {
+        this._rootSectorNodeBuffer.add([element, element.parent! as CadNode]);
+      } else if (element instanceof THREE.Group) {
+        continue;
       } else {
         objectStack.push(...element.children);
       }
@@ -248,17 +282,16 @@ function setOutlineColor(outlineTextureData: Uint8ClampedArray, colorIndex: numb
 }
 
 function hasIntersection(left: Set<number>, right: Set<number>): boolean {
-  const iterator = left.size < right.size ? left : right;
-  const iteratee = left.size > right.size ? left : right;
+  const needles = left.size < right.size ? left : right;
+  const haystack = left.size > right.size ? left : right;
 
   let intersects = false;
-
-  iterator.forEach(p => {
-    if (iteratee.has(p)) {
-      intersects = true;
-      return;
-    }
-  });
+  const it = needles.values();
+  let itCurr = it.next();
+  while (!intersects && !itCurr.done) {
+    intersects = haystack.has(itCurr.value);
+    itCurr = it.next();
+  }
 
   return intersects;
 }

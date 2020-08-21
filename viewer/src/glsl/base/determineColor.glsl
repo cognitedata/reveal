@@ -1,4 +1,7 @@
 vec4 determineColor(vec3 originalColor, sampler2D colorDataTexture, vec2 textureSize, float treeIndex) {
+
+    treeIndex = floor(treeIndex + 0.5);
+
     float dataTextureWidth = textureSize.x;
     float dataTextureHeight = textureSize.y;
 

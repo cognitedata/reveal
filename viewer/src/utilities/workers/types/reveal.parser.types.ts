@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { HttpHeaders } from '@cognite/sdk/dist/src/utils/http/basicHttpClient';
+import { HttpHeaders } from '@cognite/sdk-core';
 
 export interface ParseRootSectorArguments {
   parseRootSector: {

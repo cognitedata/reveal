@@ -8,7 +8,7 @@ on:
   pull_request:
     branches:
       - '**'
-      
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   ci-setup:
@@ -110,7 +110,6 @@ jobs:
     - name: Publish to codecov
       uses: codecov/codecov-action@v1
 
-
   ci-examples:
     name: Examples
     runs-on: ubuntu-latest
@@ -171,7 +170,7 @@ jobs:
     - name: Check for failed visual test diffs
       if: failure()
       working-directory: examples
-      run: 'yarn test:ghdiffs'
+      run: 'yarn test:ghprcomment'
       env:
         ACTIONS_RUNTIME_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -181,3 +180,18 @@ jobs:
       with:
         name: image-diffs-${{ github.sha }}
         path: examples/src/visual_tests/__image_snapshots__/__diff_output__/*
+
+  # used to validate there is no fails for generated docs
+  ci-documentation:
+    name: Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install NPM dependencies
+        working-directory: documentation
+        run: yarn
+
+      - name: Build docs
+        working-directory: documentation
+        run: yarn run build

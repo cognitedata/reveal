@@ -9,6 +9,8 @@ const int RenderTypeEffects = 6;
 
 
 bool determineVisibility(sampler2D visibilityTexture, vec2 textureSize, float treeIndex, int renderMode) {
+
+    treeIndex = floor(treeIndex + 0.5);
     float dataTextureWidth = textureSize.x;
     float dataTextureHeight = textureSize.y;
 

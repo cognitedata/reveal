@@ -2,7 +2,7 @@ use std::io::{self, BufRead, BufReader, Cursor, Read};
 
 use byteorder::{LittleEndian, ReadBytesExt};
 
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 
 use wasm_bindgen::prelude::*;
 

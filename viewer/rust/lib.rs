@@ -210,7 +210,7 @@ pub async fn load_parse_finalize_detailed(
         .filter(|file_name| !ctm_map.contains_key(file_name))
         .map(|x| load_file(&blob_url, x, &headers))
         .collect::<FuturesUnordered<_>>()
-        .for_each_concurrent(None, |x| {
+        .for_each_concurrent(5, |x| {
             if let Ok((file_name, buf)) = x {
                 if let Ok(result) = parse_ctm(file_name.clone(), &buf.to_vec()) {
                     ctm_map.insert(file_name, result);

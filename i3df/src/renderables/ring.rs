@@ -3,18 +3,17 @@ use crate::renderables::common::{
 };
 use crate::renderables::{Cone, GeneralRing, PrimitiveCollections, Quad, QuadInfo, ToRenderables};
 use crate::{Rotation3, Vector3};
-use std::f64::consts::PI;
+use std::f32::consts::PI;
 
 impl ToRenderables for crate::ClosedExtrudedRingSegment {
     fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center_axis: Vector3 = self.center_axis.into();
-        let x_axis = Vector3::new(1.0, 0.0, 0.0);
-        let z_axis = Vector3::new(0.0, 0.0, 1.0);
         let center: Vector3 = self.center();
         let center_a = center + center_axis * self.height / 2.0;
         let center_b = center - center_axis * self.height / 2.0;
-        let rotation = Rotation3::rotation_between(&z_axis, &center_axis).unwrap();
-        let local_x_axis: Vector3 = rotation.transform_vector(&x_axis);
+        let rotation = Rotation3::rotation_between(&Vector3::z_axis(), &center_axis)
+            .unwrap_or_else(|| Rotation3::from_axis_angle(&Vector3::x_axis(), PI));
+        let local_x_axis: Vector3 = rotation.transform_vector(&Vector3::x_axis());
 
         let thickness = (self.outer_radius - self.inner_radius) / self.outer_radius;
 
@@ -122,18 +121,17 @@ impl ToRenderables for crate::ExtrudedRing {
         // TODO duplicate of OpenExtrudedRing
 
         let center_axis: Vector3 = self.center_axis.into();
-        let x_axis = Vector3::new(1.0, 0.0, 0.0);
-        let z_axis = Vector3::new(0.0, 0.0, 1.0);
         let center: Vector3 = self.center();
         let center_a = center + center_axis * self.height / 2.0;
         let center_b = center - center_axis * self.height / 2.0;
-        let rotation = Rotation3::rotation_between(&z_axis, &center_axis).unwrap();
-        let local_x_axis: Vector3 = rotation.transform_vector(&x_axis);
+        let rotation = Rotation3::rotation_between(&Vector3::z_axis(), &center_axis)
+            .unwrap_or_else(|| Rotation3::from_axis_angle(&Vector3::x_axis(), PI));
+        let local_x_axis: Vector3 = rotation.transform_vector(&Vector3::x_axis());
 
         let thickness = (self.outer_radius - self.inner_radius) / self.outer_radius;
 
         let rotation_angle = 0.0;
-        let arc_angle = 2.0 * PI as f32;
+        let arc_angle = 2.0 * PI;
 
         let instance_matrix_a =
             create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
@@ -199,13 +197,12 @@ impl ToRenderables for crate::ExtrudedRing {
 impl ToRenderables for crate::OpenExtrudedRingSegment {
     fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center_axis: Vector3 = self.center_axis.into();
-        let x_axis = Vector3::new(1.0, 0.0, 0.0);
-        let z_axis = Vector3::new(0.0, 0.0, 1.0);
         let center: Vector3 = self.center();
         let center_a = center + center_axis * self.height / 2.0;
         let center_b = center - center_axis * self.height / 2.0;
-        let rotation = Rotation3::rotation_between(&z_axis, &center_axis).unwrap();
-        let local_x_axis: Vector3 = rotation.transform_vector(&x_axis);
+        let rotation = Rotation3::rotation_between(&Vector3::z_axis(), &center_axis)
+            .unwrap_or_else(|| Rotation3::from_axis_angle(&Vector3::x_axis(), PI));
+        let local_x_axis: Vector3 = rotation.transform_vector(&Vector3::x_axis());
 
         let thickness = (self.outer_radius - self.inner_radius) / self.outer_radius;
 
@@ -273,13 +270,12 @@ impl ToRenderables for crate::Ring {
     fn to_renderables(&self, collections: &mut PrimitiveCollections) {
         let center: Vector3 = self.center();
         let normal: Vector3 = self.normal.into();
-        let x_axis = Vector3::new(1.0, 0.0, 0.0);
-        let z_axis = Vector3::new(0.0, 0.0, 1.0);
         let thickness = (self.outer_radius - self.inner_radius) / self.outer_radius;
         let angle = 0.0;
-        let arc_angle = 2.0 * PI as f32;
-        let rotation = Rotation3::rotation_between(&z_axis, &normal).unwrap();
-        let local_x_axis: Vector3 = rotation.transform_vector(&x_axis);
+        let arc_angle = 2.0 * PI;
+        let rotation = Rotation3::rotation_between(&Vector3::z_axis(), &normal)
+            .unwrap_or_else(|| Rotation3::from_axis_angle(&Vector3::x_axis(), PI));
+        let local_x_axis: Vector3 = rotation.transform_vector(&Vector3::x_axis());
 
         let instance_matrix = create_general_ring_instance_matrix(&GeneralRingInstanceMatrixInfo {
             center,

@@ -1,14 +1,17 @@
 /*!
  * Copyright 2020 Cognite AS
  */
+import * as THREE from 'three';
 import { CogniteClient, ItemsResponse } from '@cognite/sdk';
 
 import { BlobOutputMetadata, ModelDataClient } from './types';
 import { Model3DOutputList } from './Model3DOutputList';
-import { File3dFormat } from '../types';
+import { File3dFormat, ModelTransformation } from '../types';
+import { applyDefaultModelTransformation, createModelTransformation } from './modelTransformation';
 
 // TODO 2020-06-25 larsmoa: Extend CogniteClient.files3d.retrieve() to support subpath instead of
 // using URLs directly. Also add support for listing outputs in the SDK.
+
 /**
  * Provides 3D V2 specific extensions for the standard CogniteClient used by Reveal.
  */
@@ -69,6 +72,22 @@ export class CdfModelDataClient
       return new Model3DOutputList(modelId, revisionId, response.data.items);
     }
     throw new Error(`Unexpected response ${response.status} (payload: '${response.data})`);
+  }
+
+  public async getModelTransformation(modelIdentifier: {
+    modelId: number;
+    revisionId: number;
+    format: File3dFormat | string;
+  }): Promise<ModelTransformation> {
+    const { modelId, revisionId, format } = modelIdentifier;
+    const model = await this.client.revisions3D.retrieve(modelId, revisionId);
+
+    const modelMatrix = new THREE.Matrix4();
+    if (model.rotation) {
+      modelMatrix.makeRotationFromEuler(new THREE.Euler(...model.rotation));
+    }
+    applyDefaultModelTransformation(modelMatrix, format);
+    return createModelTransformation(modelMatrix);
   }
 
   private buildBlobRequestPath(blobId: number): string {

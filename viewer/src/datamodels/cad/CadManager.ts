@@ -129,9 +129,12 @@ export class CadManager<TModelIdentifier> {
     this._materialManager.setRenderMode(renderMode);
   }
 
-  async addModel(modelIdentifier: TModelIdentifier, nodeApperanceProvider?: NodeAppearanceProvider): Promise<CadNode> {
+  async addModel(modelIdentifier: TModelIdentifier, nodeAppearanceProvider?: NodeAppearanceProvider): Promise<CadNode> {
     const metadata = await this._cadModelMetadataRepository.loadData(modelIdentifier);
-    const model = this._cadModelFactory.createModel(metadata, nodeApperanceProvider);
+    const model = this._cadModelFactory.createModel(metadata, nodeAppearanceProvider);
+    model.addEventListener('update', () => {
+      this._needsRedraw = true;
+    });
     this._cadModelMap.set(metadata.blobUrl, model);
     this._cadModelUpdateHandler.updateModels(model);
     return model;

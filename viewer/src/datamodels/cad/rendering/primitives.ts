@@ -137,7 +137,7 @@ function setAttributes(
     mesh.onAfterRender = () => {};
   };
 
-  geometry.maxInstancedCount = collection.length / attributesByteSize;
+  geometry.instanceCount = collection.length / attributesByteSize;
 
   setTreeIndeciesToUserData();
 
@@ -148,7 +148,7 @@ function setAttributes(
 
     const treeIndices = new Set();
 
-    for (let i = 0; i < geometry.maxInstancedCount; i++) {
+    for (let i = 0; i < geometry.instanceCount; i++) {
       treeIndices.add(collectionView.getFloat32(i * attributesByteSize + treeIndexAttributeOffset, true));
     }
     mesh.userData.treeIndices = treeIndices;

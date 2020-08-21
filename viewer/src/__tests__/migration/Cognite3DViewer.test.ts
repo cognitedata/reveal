@@ -14,27 +14,40 @@ import { SectorCuller } from '@/datamodels/cad/sector/culling/SectorCuller';
 const sceneJson = require('./scene.json');
 
 describe('Cognite3DViewer', () => {
+  const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
+  const context: WebGLRenderingContext = require('gl')(64, 64, { preserveDrawingBuffer: true });
+  const renderer = new THREE.WebGLRenderer({ context });
+  const _sectorCuller: SectorCuller = {
+    determineSectors: jest.fn()
+  };
+
   beforeAll(() => {
+    jest.useFakeTimers();
     nock.disableNetConnect();
+
     nock('https://api-js.mixpanel.com')
       .persist(true)
       .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
       .post(/.*/)
       .reply(200);
+
+    sdk.loginWithApiKey({ project: 'none', apiKey: 'dummy' });
+
+    // Mock function for retriving model metadata, such as transformation
+    jest.spyOn(sdk.revisions3D, 'retrieve').mockImplementation(async (_modelId, revisionId) => ({
+      id: revisionId,
+      fileId: 42,
+      published: false,
+      status: 'Done',
+      createdTime: new Date(),
+      assetMappingCount: 0
+    }));
   });
 
   afterAll(() => {
     nock.enableNetConnect();
+    jest.useRealTimers();
   });
-
-  const context: WebGLRenderingContext = require('gl')(64, 64, { preserveDrawingBuffer: true });
-
-  const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
-  const renderer = new THREE.WebGLRenderer({ context });
-  const _sectorCuller: SectorCuller = {
-    determineSectors: jest.fn()
-  };
-  jest.useFakeTimers();
 
   test('constructor throws error when unsupported options are set', () => {
     expect(() => new Cognite3DViewer({ sdk, renderer, _sectorCuller, enableCache: true })).toThrowError();
@@ -76,6 +89,7 @@ describe('Cognite3DViewer', () => {
     nock(/.*/)
       .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
       .get(/.*\/outputs/)
+      .twice() // the first one goes to determine model type
       .reply(200, outputs);
     nock(/.*/)
       .defaultReplyHeaders({ 'access-control-allow-origin': '*', 'access-control-allow-credentials': 'true' })
@@ -89,7 +103,7 @@ describe('Cognite3DViewer', () => {
     // Act
     const model = await viewer.addModel({ modelId: 1, revisionId: 2 });
     viewer.fitCameraToModel(model);
-    TWEEN.update(0);
+    TWEEN.update(TWEEN.now());
 
     // Assert
     expect(onCameraChange).toBeCalled();
@@ -104,7 +118,27 @@ describe('Cognite3DViewer', () => {
 
     // Act
     viewer.fitCameraToBoundingBox(bbox, 0);
-    TWEEN.update(0);
+    TWEEN.update(TWEEN.now());
+
+    // Assert
+    expect(viewer.getCameraTarget()).toEqual(bbox.getCenter(new THREE.Vector3()));
+    expect(bSphere.containsPoint(viewer.getCameraPosition())).toBeTrue();
+  });
+
+  test('fitCameraToBoundingBox with 1000 duration, moves camera over time', () => {
+    // Arrange
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+    const bbox = new THREE.Box3(new THREE.Vector3(1, 1, 1), new THREE.Vector3(2, 2, 2));
+    const bSphere = bbox.getBoundingSphere(new THREE.Sphere());
+    bSphere.radius *= 3;
+
+    // Act
+    viewer.fitCameraToBoundingBox(bbox, 1000);
+    const now = TWEEN.now();
+    TWEEN.update(now + 500);
+    expect(viewer.getCameraTarget()).not.toEqual(bbox.getCenter(new THREE.Vector3()));
+    expect(bSphere.containsPoint(viewer.getCameraPosition())).toBeFalse();
+    TWEEN.update(now + 1000);
 
     // Assert
     expect(viewer.getCameraTarget()).toEqual(bbox.getCenter(new THREE.Vector3()));

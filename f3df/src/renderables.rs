@@ -1,4 +1,4 @@
-use serde_derive::Serialize;
+use serde::Serialize;
 use std::collections::HashMap;
 use std::f32::consts::{FRAC_PI_2, PI};
 use std::u8;

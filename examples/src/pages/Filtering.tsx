@@ -51,11 +51,11 @@ export function Filtering() {
 
       let model: reveal.CadNode;
       if(modelRevision) {
-        revealManager = reveal.createCdfRevealManager(client);
-        model = await revealManager.addModel('cad', modelRevision, revealOptions);
+        revealManager = reveal.createCdfRevealManager(client, revealOptions);
+        model = await revealManager.addModel('cad', modelRevision);
       } else if(modelUrl) {
-        revealManager = reveal.createLocalRevealManager();
-        model = await revealManager.addModel('cad', modelUrl, revealOptions);
+        revealManager = reveal.createLocalRevealManager(revealOptions);
+        model = await revealManager.addModel('cad', modelUrl);
       } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'

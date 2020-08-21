@@ -4,7 +4,6 @@
 
 import { PointCloudManager } from './PointCloudManager';
 import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
-import { DefaultPointCloudTransformation } from './DefaultPointCloudTransformation';
 import { CdfModelDataClient } from '@/utilities/networking/CdfModelDataClient';
 import { LocalModelDataClient } from '@/utilities/networking/LocalModelDataClient';
 import { PointCloudFactory } from './PointCloudFactory';
@@ -18,8 +17,7 @@ export function createCdfPointCloudManager(client: CdfModelDataClient): PointClo
 }
 
 export function createPointCloudManager<T>(client: ModelDataClient<T>): PointCloudManager<T> {
-  const transformationProvider = new DefaultPointCloudTransformation();
-  const metadataRepository = new PointCloudMetadataRepository(client, transformationProvider);
+  const metadataRepository = new PointCloudMetadataRepository(client);
   const modelFactory = new PointCloudFactory(client);
   return new PointCloudManager(metadataRepository, modelFactory);
 }

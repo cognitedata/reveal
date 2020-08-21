@@ -11,7 +11,6 @@ import {
   AddModelOptions,
   Cognite3DViewer,
   Cognite3DModel,
-  SupportedModelTypes,
   BoundingBoxClipper,
 } from '@cognite/reveal';
 
@@ -60,30 +59,25 @@ export function Migration() {
       client.loginWithOAuth({ project });
       await client.authenticate();
 
+      const progress = (itemsDownloaded: number, itemsRequested: number) => console.log('onDownload', itemsDownloaded, itemsRequested);
       // Prepare viewer
       viewer = new Cognite3DViewer({
         sdk: client,
         domElement: canvasWrapperRef.current!,
+        onLoading: progress
       });
       (window as any).viewer = viewer;
 
       async function addModel(options: AddModelOptions) {
-        switch (
-        await viewer.determineModelType(options.modelId, options.revisionId)
-        ) {
-          case SupportedModelTypes.CAD:
-            const model = await viewer.addModel(options);
-            viewer.fitCameraToModel(model);
+        try {
+          const model = await viewer.addModel(options);
+          viewer.fitCameraToModel(model);
+          if (model instanceof Cognite3DModel) {
             cadModels.push(model);
-            break;
-
-          case SupportedModelTypes.PointCloud:
-            const pointCloud = await viewer.addPointCloudModel(options);
-            viewer.fitCameraToModel(pointCloud);
-            break;
-
-          default:
-            alert(`Model ID is invalid or is not supported`);
+          }
+        } catch (e) {
+          console.error(e);
+          alert(`Model ID is invalid or is not supported`);
         }
       }
 

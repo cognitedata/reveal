@@ -2,7 +2,7 @@
  * Copyright 2020 Cognite AS
  */
 
-import { HttpHeaders } from '@cognite/sdk/dist/src/utils/http/basicHttpClient';
+import { HttpHeaders } from '@cognite/sdk-core';
 import { Versioned3DFile, HttpError } from '@cognite/sdk';
 
 export const supportedVersions = [8];
