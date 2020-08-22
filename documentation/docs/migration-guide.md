@@ -7,7 +7,7 @@ hide_title: true
 # Migrating from [@cognite/3d‑viewer](https://www.npmjs.com/package/@cognite/3d-viewer)
 
 `@cognite/3d-viewer` is an older version of Reveal that has similar functionality to this package. However, some important differences caused us to switch the package name.
-- `@cognite/reveal` is based on "streaming geometry" which downloads necessary geometry within a budget as the camera moves, while `@cognite/3d-viewer` downloads all geometry upfront. This causes higher initial loading time, but potentially increases the performance once the data has been loaded. It also limits the size of the models that can be loaded into view.
+- `@cognite/3d-viewer` downloads all geometry upfront. This causes higher initial loading time, but potentially increases the performance once the data has been loaded. It also limits the size of the models that can be loaded into view. `@cognite/reveal` is based on "streaming geometry" which downloads necessary geometry within a budget as the camera moved. The enables support for very complex 3D models and reduces the initial loading time.
 - `@cognite/3d-viewer` supports styling 3D nodes by node ID. In `@cognite/reveal` the recommended approach is to use tree indices instead. For an introduction to the differences between these concepts, see [Concepts](./concepts). The new component supports mapping between the two identifiers when necessary.
 - `@cognite/reveal` supports styling a 3D node and all it's children in one operation. In `@cognite/3d-viewer` it's necessary to iterate over all children and manually apply the same change to all nodes.
 - `@cognite/reveal` supports point cloud models. This is not supported in `@cognite/3d-viewer`.
