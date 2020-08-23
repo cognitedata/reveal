@@ -6,9 +6,9 @@ hide_title: true
 
 # Migrating from [@cognite/3d‑viewer](https://www.npmjs.com/package/@cognite/3d-viewer)
 
-`@cognite/3d-viewer` is an older version of Reveal that has similar functionality to this package. However, some important differences caused us to switch the package name.
-- `@cognite/3d-viewer` downloads all geometry upfront. This causes higher initial loading time, but potentially increases the performance once the data has been loaded. It also limits the size of the models that can be loaded into view. `@cognite/reveal` is based on "streaming geometry" which downloads necessary geometry within a budget as the camera moved. The enables support for very complex 3D models and reduces the initial loading time.
-- `@cognite/3d-viewer` supports styling 3D nodes by node ID. In `@cognite/reveal` the recommended approach is to use tree indices instead. For an introduction to the differences between these concepts, see [Concepts](./concepts). The new component supports mapping between the two identifiers when necessary.
+`@cognite/3d-viewer` is an older version of Reveal that has similar functionality to this package. However, some important differences caused us to switch the package name to `@cognite/reveal`.
+- `@cognite/3d-viewer` downloads all geometry when a model is loaded. This causes higher initial loading time, but potentially increases the performance once the data has been loaded. It also limits the size of the models that can be loaded. The new version, `@cognite/reveal`, is based on "streaming geometry" which downloads necessary geometry within a budget as the camera moved. This enables support for very complex 3D models and reduces the initial loading time.
+- `@cognite/3d-viewer` supports styling 3D nodes by node ID. In `@cognite/reveal` the recommended approach is to use tree indices instead. See [Styling nodes](#styling-nodes) for more information. For an introduction to the differences between these concepts, see [Concepts](./concepts). The new component supports [mapping between the two identifiers](#accessing-node-information-and-mapping-between-node-ids-and-tree-indices) when necessary.
 - `@cognite/reveal` supports styling a 3D node and all it's children in one operation. In `@cognite/3d-viewer` it's necessary to iterate over all children and manually apply the same change to all nodes.
 - `@cognite/reveal` supports point cloud models. This is not supported in `@cognite/3d-viewer`.
 
@@ -57,7 +57,7 @@ Reveal has functions for iterating over nodes, either all nodes in a 3D model or
 
 Reveal supports accessing information about 3D nodes through the [Cognite SDK](https://cognitedata.github.io/cognite-sdk-js/classes/revisions3dapi.html). However, the SDK identifies nodes by node ID, not tree index. It might be necessary to map between the two concepts. `async Cognite3DModel.mapNodeIdsToTreeIndices(nodeIds)` and `async Cognite3DModel.mapTreeIndicesToNodeIds(treeIndices)` provides such functionality. Note that the operation requires communication with CDF servers and should be kept at a minimum. If possible the calls should be batched to achieve the best performance.
 
-Access to node information such as name, bounding box and properties/attributes is done through the [Cognite SDK](https://cognitedata.github.io/cognite-sdk-js/classes/revisions3dapi.html), specifically:
+Access to node information such as name, bounding box and properties/attributes is done through the [3D revision API](https://cognitedata.github.io/cognite-sdk-js/classes/revisions3dapi.html), specifically:
 - [`list3DNodes`](https://cognitedata.github.io/cognite-sdk-js/classes/revisions3dapi.html#list3dnodes) for retrieving a set of nodes using a filter
 - [`list3DNodeAncestors`](https://cognitedata.github.io/cognite-sdk-js/classes/revisions3dapi.html#list3dnodeancestors) for retrieving ancestors of a specific node
 - [`retrieve3DNodes`](https://cognitedata.github.io/cognite-sdk-js/classes/revisions3dapi.html#retrieve3dnodes) for retrieving a set of nodes identified by their node ids
