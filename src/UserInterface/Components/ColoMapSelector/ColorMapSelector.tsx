@@ -56,6 +56,7 @@ const StyledInput = withStyles((theme) => ({
   root: {
     height: "100%",
     flex: "1 1 auto",
+    width: "50px",
   },
   input: {
     borderRadius: theme.shape.borderRadius,
@@ -70,6 +71,14 @@ const StyledInput = withStyles((theme) => ({
     },
   },
 }))(InputBase);
+
+const StyledListItemText = withStyles(() => ({
+  primary: {
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  },
+}))(ListItemText);
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -156,7 +165,7 @@ export function ColorMapSelector(props: {
           return (
             <MenuItem className={classes.menuItem} value={option} key={option}>
               {colors.length && <ColorMap colors={colors} />}
-              <ListItemText>{option}</ListItemText>
+              <StyledListItemText>{option}</StyledListItemText>
             </MenuItem>
           );
         })}
