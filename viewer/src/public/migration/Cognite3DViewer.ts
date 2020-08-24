@@ -14,9 +14,8 @@ import { merge, Subject, Subscription, fromEventPattern, Observable } from 'rxjs
 import { from3DPositionToRelativeViewportCoordinates } from '@/utilities/worldToViewport';
 import { intersectCadNodes } from '@/datamodels/cad/picking';
 
-import { AddModelOptions, Cognite3DViewerOptions, GeometryFilter } from './types';
+import { AddModelOptions, Cognite3DViewerOptions, GeometryFilter, Intersection } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
-import { Intersection } from './intersection';
 import RenderController from './RenderController';
 import { CogniteModelBase } from './CogniteModelBase';
 

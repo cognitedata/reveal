@@ -5,6 +5,7 @@
 import { CogniteClient } from '@cognite/sdk';
 
 import { SectorCuller } from '@/datamodels/cad/sector/culling/SectorCuller';
+import { Cognite3DModel } from './Cognite3DModel';
 
 /**
  * @module @cognite/reveal
@@ -77,4 +78,15 @@ export interface AddModelOptions {
   geometryFilter?: GeometryFilter;
   orthographicCamera?: boolean;
   onComplete?: () => void;
+}
+
+/**
+ * Represents the result from {@link Cognite3DViewer.getInterSectionFromPixel}.
+ * @module @cognite/reveal
+ */
+export interface Intersection {
+  model: Cognite3DModel;
+  nodeId: number;
+  treeIndex: number;
+  point: THREE.Vector3;
 }
