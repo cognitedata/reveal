@@ -324,6 +324,7 @@ export abstract class BaseNode extends Identifiable
           //....+++  for the rest of the color types
           child.optionIconDelegate = BaseNode.GetIconFromColorType;
         }
+        child.applyByFieldNameDelegate = (fieldName: string) => this.notify(new NodeEventArgs(Changes.renderStyle, fieldName));
       }
     }
   }

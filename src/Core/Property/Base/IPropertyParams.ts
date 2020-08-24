@@ -12,7 +12,7 @@ export default interface IPropertyParams<T>
 
   // Delegates
   apply?: Action;
-  applyByFieldName?: StringAction;
+  applyByFieldNameDelegate?: StringAction;
   isEnabled?: IsEnabled;
   getOptionIconDelegate?: GetOptionIcon;
   // eslint-disable-next-line semi
