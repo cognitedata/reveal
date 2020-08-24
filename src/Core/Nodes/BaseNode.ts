@@ -173,6 +173,9 @@ export abstract class BaseNode extends Identifiable
 
   public /*virtual*/ getCheckBoxState(target?: ITarget | null): CheckBoxState
   {
+    if (this.name === "Log folder 1")
+      console.log(this.name);
+
     if (!target)
       target = this.activeTarget;
 
@@ -192,7 +195,7 @@ export abstract class BaseNode extends Identifiable
       numCandidates++;
       if (childState === CheckBoxState.All)
         numAll++;
-      else if (childState === CheckBoxState.None)
+      else if (childState === CheckBoxState.None || childState === CheckBoxState.Disabled)
         numNone++;
 
       // Optimization, not tested
@@ -242,13 +245,9 @@ export abstract class BaseNode extends Identifiable
   public toggleVisibleInteractive(target?: ITarget | null): void // Use this when clicking on the checkbox in the three control
   {
     const checkBoxState = this.getCheckBoxState(target);
-    if (checkBoxState === CheckBoxState.Never)
-      return;
     if (checkBoxState === CheckBoxState.None)
       this.setVisibleInteractive(true, target);
-    else if (checkBoxState === CheckBoxState.Some)
-      this.setVisibleInteractive(false, target);
-    else if (checkBoxState === CheckBoxState.All)
+    else if (checkBoxState === CheckBoxState.Some || checkBoxState === CheckBoxState.All)
       this.setVisibleInteractive(false, target);
   }
 
