@@ -17,7 +17,7 @@ CameraControls.install({ THREE });
 
 export function Testable() {
   const canvas = useRef<HTMLCanvasElement>(null);
-  const [loadingState, setLoadingState] = useState<reveal.utilities.LoadingState>({ itemsLoaded: 0, itemsRequested: 0 });
+  const [loadingState, setLoadingState] = useState<reveal.utilities.LoadingState>({ itemsLoaded: 0, itemsRequested: 500 });
 
   useEffect(() => {
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
@@ -59,7 +59,18 @@ export function Testable() {
           'Need to provide either project & model OR modelUrl as query parameters'
         );
       }
-      revealManager.on('loadingStateChanged', setLoadingState);
+
+      let skipFirstLoadingState = true;
+      revealManager.on('loadingStateChanged', (loadingState) => {
+        if (skipFirstLoadingState) {
+          skipFirstLoadingState = false;
+          if(loadingState.itemsLoaded != 0 && loadingState.itemsRequested != 0) {
+            setLoadingState(loadingState);
+          }
+        } else {
+          setLoadingState(loadingState);
+        }
+      });
 
       scene.add(model);
 
