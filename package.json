@@ -7,7 +7,7 @@
     "build": "./scripts/build.sh",
     "test": "./scripts/test.sh",
     "lint": "concurrently \"yarn prettier\" \"yarn eslint\"",
-    "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}'",
+    "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}' 'public/index.html'",
     "eslint:changed": "eslint --config .eslintrc.production.js",
     "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
     "storybook": "start-storybook -p 6006"

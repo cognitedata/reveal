@@ -21,7 +21,7 @@ const Home = () => {
   // to the 'Home' namespace (unlike the Trans component).
   const buttonText = useMemo(() => {
     if (crashing) {
-      return t('crashing_button', { defaultValue: 'Crashing ...' });
+      return t('crashing_button', { defaultValue: 'Crashing &hellip;' });
     }
     return t('crashMe_button', { defaultValue: 'Crash me!' });
   }, [t, crashing]);

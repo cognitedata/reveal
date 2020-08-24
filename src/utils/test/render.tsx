@@ -1,4 +1,6 @@
 import React from 'react';
+// Here is where our custom render is being defined, so we don't need this check
+/* eslint-disable-next-line @cognite/rtl-use-custom-render-function */
 import { render, RenderOptions } from '@testing-library/react';
 import { I18nContainer } from '@cognite/react-i18n';
 

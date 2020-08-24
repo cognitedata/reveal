@@ -1,6 +1,7 @@
 module.exports = {
   extends: [
     '@cognite',
+    'plugin:@cognite/all',
     'plugin:testing-library/react',
     'plugin:lodash/recommended',
     'plugin:testcafe/recommended',
