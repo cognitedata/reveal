@@ -24,7 +24,7 @@ function mapDispatchToExplorerPanel(dispatch: Dispatch) {
     onNodeExpandToggle: (nodeId: string, expandState: boolean): void => {
       ExplorerNodeUtils.setNodeExpandById(nodeId, expandState);
     },
-    onNodeVisibleChange: (nodeId: string): void => {
+    onToggleVisible: (nodeId: string): void => {
       ExplorerNodeUtils.toggleVisibleById(nodeId);
     },
     onNodeSelect: (nodeId: string, selectState: boolean): void => {

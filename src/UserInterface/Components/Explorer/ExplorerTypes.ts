@@ -9,7 +9,7 @@ export type ExplorerTab = {
 export type ExplorerPropType = {
   onTabChange: (tabIndex: number) => void;
   onNodeExpandToggle: (nodeId: string, expandState: boolean) => void;
-  onNodeVisibleChange: (nodeId: string) => void;
+  onToggleVisible: (nodeId: string) => void;
   onNodeSelect: (nodeId: string, selectState: boolean) => void;
   data: ITreeNode[];
   tabs: ExplorerTab[];

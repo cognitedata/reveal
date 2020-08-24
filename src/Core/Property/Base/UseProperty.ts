@@ -24,9 +24,9 @@ export default abstract class UseProperty<T> extends BaseProperty
   private _use?: boolean; // undefined = hide the use button
 
   private _apply?: Action;
-  private _applyByFieldName?: StringAction;
   private _isEnabled?: IsEnabled;
   private _getOptionIconDelegate?: GetOptionIcon
+  private _applyByFieldNameDelegate?: StringAction;
 
   //==================================================
   // INSTANCE PROPERTIES
@@ -44,6 +44,8 @@ export default abstract class UseProperty<T> extends BaseProperty
   public set use(value: boolean) { this._use = value; }
   public get optionIconDelegate(): GetOptionIcon | undefined { return this._getOptionIconDelegate; }
   public set optionIconDelegate(value: GetOptionIcon | undefined) { this._getOptionIconDelegate = value; }
+  public get applyByFieldNameDelegate(): StringAction | undefined { return this._applyByFieldNameDelegate; }
+  public set applyByFieldNameDelegate(value: StringAction | undefined) { this._applyByFieldNameDelegate = value; }
 
   //==================================================
   // CONSTRUCTORS
@@ -54,7 +56,7 @@ export default abstract class UseProperty<T> extends BaseProperty
     super(params.name, params.readonly, params.toolTip);
 
     this._apply = params.apply;
-    this._applyByFieldName = params.applyByFieldName;
+    this._applyByFieldNameDelegate = params.applyByFieldNameDelegate;
     this._isEnabled = params.isEnabled;
     this._getOptionIconDelegate = params.getOptionIconDelegate;
 
@@ -117,14 +119,11 @@ export default abstract class UseProperty<T> extends BaseProperty
 
   protected apply(): void
   {
-    if (!this._instance)
-      return;
-
-    if (this._apply)
+    if (this._instance && this._apply)
       this._apply.call(this._instance);
 
-    if (this._applyByFieldName)
-      this._applyByFieldName.call(this._instance, this.fieldName);
+    if (this._applyByFieldNameDelegate)
+      this._applyByFieldNameDelegate(this.fieldName);
   }
 
   public getOptionIcon(option: T): string

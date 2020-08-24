@@ -98,7 +98,6 @@ export class SyntaxTests
     console.log(map.has("D"));
   }
 
-
   static async hei(): Promise<string>
   {
     console.log("In hei");
