@@ -543,6 +543,20 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
     return this.nodeIdAndTreeIndexMaps.getTreeIndices(nodeIds);
   }
 
+  /**
+   * Maps a list of tree indices to Node IDs for use with the Cognite SDK.
+   * This function is useful if you have a list of tree indices, e.g. from
+   * {@link Cognite3DModel.iterateSubtreeByTreeIndex}, and want to perform
+   * some operations on these nodes using the SDK.
+   *
+   * @param treeIndices Tree indices to map to Node IDs
+   * @returns A list of node IDs corresponding to the elements of the inpu
+   * @throws If an invalid tree index is provided the function throws an error.
+   */
+  async mapTreeIndicesToNodeIds(_treeIndices: number[]): Promise<number[]> {
+    throw new Error('Not implemented yet');
+  }
+
   private async determineTreeIndices(treeIndex: number, includeDescendants: boolean): Promise<NumericRange> {
     let subtreeSize = 1;
     if (includeDescendants) {
