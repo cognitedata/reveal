@@ -160,7 +160,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * @deprecated Use {@link Cognite3DModel.getModelBoundingBox} or {@link Cognite3DModel.getBoundingBoxFromCdf}.
+   * @deprecated Use {@link Cognite3DModel.getModelBoundingBox} or {@link Cognite3DModel.getBoundingBoxByTreeIndex}.
    * @throws NotSupportedInMigrationWrapperError
    */
   getBoundingBox(_nodeId?: number, _box?: THREE.Box3): THREE.Box3 {
