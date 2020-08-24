@@ -176,7 +176,7 @@ export class Cognite3DViewer {
         h => this._revealManager.off('loadingStateChanged', h)
       ).subscribe(
         loadingState => {
-          if (loadingState.itemsLoaded == loadingState.itemsRequested) {
+          if (loadingState.itemsLoaded != loadingState.itemsRequested) {
             this.spinner.show();
           } else {
             this.spinner.hide();
