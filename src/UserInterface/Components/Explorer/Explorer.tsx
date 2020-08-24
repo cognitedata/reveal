@@ -7,8 +7,8 @@ import { ExplorerTabs } from "@/UserInterface/Components/Explorer/ExplorerTabs";
 // Renders Tree Controller
 export function Explorer(props: ExplorerPropType) {
   // Handle Node Check
-  const handleToggleNodeCheck = (uniqueId: string, checked: boolean) => {
-    props.onNodeVisibilityChange(uniqueId, checked);
+  const handleToggleNodeCheck = (uniqueId: string) => {
+    props.onNodeVisibleChange(uniqueId);
   };
 
   // Handle Node Expand

@@ -23,7 +23,7 @@ export default class ExplorerNodeUtils
     }
   }
 
-  public static setNodeVisibleById(nodeId: string, visible: boolean)
+  public static toggleVisibleById(nodeId: string)
   {
     const node = NodeUtils.getNodeById(nodeId);
 
@@ -32,7 +32,7 @@ export default class ExplorerNodeUtils
 
     try
     {
-      node.setVisibleInteractive(visible);
+      node.toggleVisibleInteractive();
     }
     catch (err)
     {

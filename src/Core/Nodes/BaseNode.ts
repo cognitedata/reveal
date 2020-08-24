@@ -246,7 +246,9 @@ export abstract class BaseNode extends Identifiable
       return;
     if (checkBoxState === CheckBoxState.None)
       this.setVisibleInteractive(true, target);
-    else
+    else if (checkBoxState === CheckBoxState.Some)
+      this.setVisibleInteractive(false, target);
+    else if (checkBoxState === CheckBoxState.All)
       this.setVisibleInteractive(false, target);
   }
 

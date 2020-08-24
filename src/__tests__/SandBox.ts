@@ -97,4 +97,60 @@ export class SyntaxTests
     console.log(map.has("A"));
     console.log(map.has("D"));
   }
+
+
+  static async hei(): Promise<string>
+  {
+    console.log("In hei");
+    return "Return hei";
+  }
+
+  static async hopp(): Promise<string>
+  {
+    console.log("In hopp");
+    return "Return hopp";
+  }
+
+  public static testAsync()
+  {
+    console.log("Start asyncsss");
+    (async () =>
+    {
+      const dummyFunc = async () => 
+      {
+        console.log("In dummy");
+      };
+      await dummyFunc();
+
+      console.log("Calling hei");
+      const a = await this.hei();
+      console.log(a);
+
+      console.log("Calling hopp");
+      const b = await this.hopp();
+      console.log(b);
+
+      console.log("Calling hei once more");
+      const c = await this.hei();
+      console.log(c);
+
+      console.log("Calling hopp once more");
+      const d = await this.hopp();
+      console.log(d);
+
+      console.log("Calling async anonym");
+      for (let i = 0; i < 10; i++)
+      {
+        const func = async () => 
+        {
+          console.log(`Anonym ${i.toString()}`);
+          return `Anonym ${i.toString()}`;
+        };
+        // eslint-disable-next-line no-await-in-loop
+        const funcResult = await func();
+        console.log(funcResult);
+      }
+    })();
+    console.log("End async");
+  }
 }
