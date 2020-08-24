@@ -236,62 +236,10 @@ export class SyntheticSubSurfaceModule extends BaseModule
     }
   }
 
-  static async hei(): Promise<string>
-  {
-    console.log("In hei");
-    return "Return hei";
-  }
-
-  static async hopp(): Promise<string>
-  {
-    console.log("In hopp");
-    return "Return hopp";
-  }
-
   private static addSeismic(root: BaseRootNode)
   {
     if (!(root instanceof SubSurfaceRootNode))
       return;
-
-    console.log("Start asyncsss");
-    (async () =>
-    {
-      const dummyFunc = async () => 
-      {
-        console.log("In dummy");
-      };
-      await dummyFunc();
-
-      console.log("Calling hei");
-      const a = await this.hei();
-      console.log(a);
-
-      console.log("Calling hopp");
-      const b = await this.hopp();
-      console.log(b);
-
-      console.log("Calling hei once more");
-      const c = await this.hei();
-      console.log(c);
-
-      console.log("Calling hopp once more");
-      const d = await this.hopp();
-      console.log(d);
-
-      console.log("Calling async anonym");
-      for (let i = 0; i < 10; i++)
-      {
-        const func = async () => 
-        {
-          console.log(`Anonym ${i.toString()}`);
-          return `Anonym ${i.toString()}`;
-        };
-        // eslint-disable-next-line no-await-in-loop
-        const funcResult = await func();
-        console.log(funcResult);
-      }
-    })();
-    console.log("End async");
 
     const api_key = "MzI0MTA3OGEtZjMxNi00MmQ0LWI5ODYtMzFiYTEyZmQ0MThh";
     const fileId = "cc0f791f-e206-4c08-a139-c5d08eea8afc";

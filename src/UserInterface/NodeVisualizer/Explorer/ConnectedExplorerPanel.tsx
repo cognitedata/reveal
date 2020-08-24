@@ -18,8 +18,8 @@ function mapDispatchToExplorerPanel(dispatch: Dispatch) {
     onNodeExpandToggle: (nodeId: string, expandState: boolean): void => {
       ExplorerNodeUtils.setNodeExpandById(nodeId, expandState);
     },
-    onNodeVisibilityChange: (nodeId: string, checkState: boolean): void => {
-      ExplorerNodeUtils.setNodeVisibleById(nodeId, checkState);
+    onNodeVisibleChange: (nodeId: string): void => {
+      ExplorerNodeUtils.toggleVisibleById(nodeId);
     },
     onNodeSelect: (nodeId: string, selectState: boolean): void => {
       ExplorerNodeUtils.selectNodeById(nodeId, selectState);

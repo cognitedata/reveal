@@ -92,9 +92,7 @@ export function VirtualTree(props: VirtualTreeProps) {
               checked={item.checked}
               filter={item.isFilter}
               indeterminate={item.indeterminate}
-              onToggleCheck={() =>
-                onToggleNodeCheck(item.uniqueId, !item.checked)
-              }
+              onToggleCheck={() => onToggleNodeCheck(item.uniqueId)}
             />
           </div>
           <div className="tree-item-comp tree-item-lbl-container">

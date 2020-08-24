@@ -25,15 +25,14 @@ export abstract class BaseView
   //==================================================
 
   private _node: BaseNode | null = null;
-
   private _target: ITargetIdAccessor | null = null;
 
   //==================================================
   // INSTANCE PROPERTIES
   //==================================================
 
+  public get hasTarget(): boolean { return this._target != null; }
   public get targetId(): TargetId { return this.getTarget().targetId; }
-
   protected get renderTarget(): BaseTargetNode { return this.getTarget() as BaseTargetNode; }
 
   //==================================================

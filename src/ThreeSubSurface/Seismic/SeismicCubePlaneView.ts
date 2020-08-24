@@ -303,6 +303,9 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
 
   private updateTextureCoords(parent: THREE.Object3D, node: SeismicPlaneNode, surveyCube: RegularGrid3 | null, cube: SeismicCube | null, seismicCubeNode: SeismicCubeNode | null, inDragging = false): void
   {
+    if (!this.hasTarget)
+      return; // This can happen when turning on or off
+
     if (!surveyCube)
       return;
 
@@ -413,7 +416,6 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
       if (seismicCubeNode)
         this.updateTextureMap(parent, seismicCubeNode);
 
-      //if (inDragging)
       this.renderTarget.renderFast();
     })();
   }
