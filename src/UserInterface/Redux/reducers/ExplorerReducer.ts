@@ -176,6 +176,22 @@ export const explorerSlice = createSlice({
       {
         return { payload: { nodeId: node.uniqueId.toString(), nodeColor: node.color } };
       }
+    },
+    onNodeIconChange: {
+      reducer(state: IExplorerState, action: PayloadAction<{ nodeId: string, nodeIcon: string }>): IExplorerState
+      {
+        const uniqueId = action.payload.nodeId;
+        const { icon } = state.nodes.byId[uniqueId];
+
+        if (icon)
+          icon.path = action.payload.nodeIcon;
+
+        return state;
+      },
+      prepare(node: BaseNode): { payload: { nodeId: string, nodeIcon: string } }
+      {
+        return { payload: { nodeId: node.uniqueId.toString(), nodeIcon: node.getIcon() } };
+      }
     }
   },
   extraReducers: {
@@ -201,7 +217,7 @@ export const explorerSlice = createSlice({
 
 export const {
   generateNodeTree, onSelectedTabChange, onCheckboxStateChange, onExpandStateChange,
-  onActiveStateChange, onNodeColorChange, onNodeNameChange
+  onActiveStateChange, onNodeColorChange, onNodeNameChange, onNodeIconChange
 } = explorerSlice.actions;
 export default explorerSlice.reducer;
 
