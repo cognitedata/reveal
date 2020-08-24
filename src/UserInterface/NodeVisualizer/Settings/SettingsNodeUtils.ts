@@ -34,11 +34,9 @@ export default class SettingsNodeUtils
   {
     const property = NodeUtils.getPropertyById(id);
 
-    if (property)
+    if (property instanceof UseProperty)
     {
-      //Enable this when useProperty is added to UseProperty
-      //(property as UseProperty<boolean>).useProperty = useProperty;
-      console.error("Not implemented yet(setPropertyUse)");
+      property.use = useProperty;
     }
     else
     {

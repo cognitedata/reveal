@@ -33,6 +33,7 @@ import { CasingLog } from "@/SubSurface/Wells/Logs/CasingLog";
 import { WellTrajectoryView } from "@/ThreeSubSurface/Wells/WellTrajectoryView";
 import { ViewInfo } from "@/Core/Views/ViewInfo";
 import { Changes } from "@/Core/Views/Changes";
+import { ColorType } from "@/Core/Enums/ColorType";
 
 export class CasingLogView extends BaseGroupThreeView
 {
@@ -148,7 +149,7 @@ export class CasingLogView extends BaseGroupThreeView
     if (!style)
       return null;
 
-    const color = node.getColorByColorType(style.colorType);
+    const color = node.getColorByColorType(style.colorType.value as ColorType);
     const { trajectory } = node;
     if (!trajectory)
       return null;
@@ -166,7 +167,7 @@ export class CasingLogView extends BaseGroupThreeView
         color: ThreeConverter.toThreeColor(Colors.white),
         vertexColors: true,
         transparent: true,
-        opacity: style.opacity
+        opacity: style.opacity.value
       });
       const mesh = new THREE.Mesh(geometry, material);
       parent.add(mesh);

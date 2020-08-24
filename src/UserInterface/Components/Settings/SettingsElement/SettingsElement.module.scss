@@ -41,7 +41,7 @@
         display: grid;
         grid-template-columns: auto 15px;
         border: #b5b5b5 solid 1px;
-        place-items: center;
+        place-items: center stretch;
         background: #f9f7f7dd;
 
         .MuiInput-underline::before {

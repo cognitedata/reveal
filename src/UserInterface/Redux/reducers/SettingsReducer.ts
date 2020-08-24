@@ -2,16 +2,10 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
-import { PropertyType } from "@/Core/Enums/PropertyType";
 import NodeUtils from "@/UserInterface/utils/NodeUtils";
-import BaseProperty from "@/Core/Property/Base/BaseProperty";
-import UseProperty from "@/Core/Property/Base/UseProperty";
 import SettingsNodeUtils from "@/UserInterface/NodeVisualizer/Settings/SettingsNodeUtils";
-import ElementTypes from "@/UserInterface/Components/Settings/ElementTypes";
 import { IconTypes } from "@/UserInterface/Components/Icon/IconTypes";
-import { ISettingsPropertyState, ISettingsState } from "@/UserInterface/Redux/State/settings";
-import ColorMapProperty from "@/Core/Property/Concrete/Property/ColorMapProperty";
-import { Appearance } from "@/Core/States/Appearance";
+import { ISettingsState } from "@/UserInterface/Redux/State/settings";
 
 // Initial settings state
 const initialState = {
@@ -79,6 +73,11 @@ export const settingsSlice = createSlice({
 
             node.populateStatistics(statistics);
             settingsProperties.addChild(statistics);
+
+            const visualSettings = new ExpanderProperty("Visual Settings");
+
+            node.populateRenderStyle(visualSettings);
+            settingsProperties.addChild(visualSettings);
 
             NodeUtils.properties = settingsProperties;
           }

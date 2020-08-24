@@ -17,6 +17,8 @@ import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import { RangeProperty } from "@/Core/Property/Concrete/Property/RangeProperty";
+import { SelectProperty } from "@/Core/Property/Concrete/Property/SelectProperty";
 
 export class CasingLogStyle extends BaseRenderStyle
 {
@@ -24,11 +26,22 @@ export class CasingLogStyle extends BaseRenderStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public colorType = ColorType.Specified;
+  public colorType = new SelectProperty({
+    name: "colorType",
+    value: ColorType[ColorType.Specified]
+  });
 
-  public opacity = 0.7; // Slider for 0 to 1
+  public opacity = new RangeProperty({
+    name: "Opacity",
+    value: 0.2,
+    use: false
+  })
 
-  public radiusFactor = 1; // Radius in 3D = radiusFactor * casing.radius
+  public radiusFactor = new SelectProperty({
+    name: "Radius",
+    value: 3,
+    options: [1, 2, 3, 4]
+  }); // Radius in 3D = radiusFactor * casing.radius
 
   //==================================================
   // CONSTRUCTORS
@@ -45,5 +58,8 @@ export class CasingLogStyle extends BaseRenderStyle
   protected /*override*/ populateCore(folder: ExpanderProperty)
   {
     super.populateCore(folder);
+    folder.addChild(this.radiusFactor);
+    folder.addChild(this.colorType);
+    folder.addChild(this.opacity);
   }
 }

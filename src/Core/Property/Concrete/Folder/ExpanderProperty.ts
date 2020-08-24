@@ -14,6 +14,8 @@ import Color from "color";
 import { ColorMaps } from "@/Core/Primitives/ColorMaps";
 import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 import { Ma } from "@/Core/Primitives/Ma";
+import { RangeProperty } from "@/Core/Property/Concrete/Property/RangeProperty";
+import { SelectProperty } from "@/Core/Property/Concrete/Property/SelectProperty";
 
 const FractionDigitsDefault = 2;
 
@@ -50,6 +52,8 @@ export default class ExpanderProperty extends BasePropertyFolder
 
   public addString(params: IPropertyParams<string>): void { this.addChild(new StringProperty(params)); }
   public addColor(params: IPropertyParams<Color>): void { this.addChild(new ColorProperty(params)); }
+  public addRange(params: IPropertyParams<number>) { this.addChild(new RangeProperty(params)); }
+  public addSelect(params: IPropertyParams<unknown>): void { this.addChild(new SelectProperty(params)); }
 
   public addColorMap(params: IPropertyParams<string>): void
   {

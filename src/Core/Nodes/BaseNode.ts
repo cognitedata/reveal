@@ -318,9 +318,9 @@ export abstract class BaseNode extends Identifiable
         {
           child.options = [];
           if (this.supportsColorType(ColorType.Specified))
-            child.options.push(ColorType.Specified);
+            child.options.push(ColorType[ColorType.Specified]);
           if (this.supportsColorType(ColorType.Parent))
-            child.options.push(ColorType.Parent);
+            child.options.push(ColorType[ColorType.Parent]);
           //....+++  for the rest of the color types
           child.optionIconDelegate = BaseNode.GetIconFromColorType;
         }
