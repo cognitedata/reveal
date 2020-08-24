@@ -20,15 +20,15 @@ const initialState = {
     name: "",
     icon: { type: IconTypes.NODES, name: "FolderNode" },
     toolBar: [
-      {
-        icon: { type: IconTypes.STATES, name: "Pinned" }
-      },
-      {
-        icon: { type: IconTypes.ARROWS, name: "FatLeft" }
-      },
-      {
-        icon: { type: IconTypes.ARROWS, name: "FatRight" }
-      }
+      // {
+      //   icon: { type: IconTypes.STATES, name: "Pinned" }
+      // },
+      // {
+      //   icon: { type: IconTypes.ARROWS, name: "FatLeft" }
+      // },
+      // {
+      //   icon: { type: IconTypes.ARROWS, name: "FatRight" }
+      // }
     ]
   }
 } as ISettingsState;
