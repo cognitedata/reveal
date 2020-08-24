@@ -10,7 +10,7 @@ import UseProperty from "@/Core/Property/Base/UseProperty";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 import GroupProperty from "@/Core/Property/Concrete/Folder/GroupProperty";
 import ElementTypes from "@/UserInterface/Components/Settings/ElementTypes";
-import { ISettingsSection, ISettingsElement } from "@/UserInterface/Components/Settings/Types";
+import { ISettingsSection, ISettingsElement, ISelectOption } from "@/UserInterface/Components/Settings/Types";
 
 export default class NodeUtils
 {
@@ -52,8 +52,6 @@ export default class NodeUtils
     nodeProp: BasePropertyFolder | BaseProperty | null
   ): ISettingsSection | ISettingsElement | null
   {
-    // If property should not be displayed
-    // if (!property || property.enabledDelegate && property.enabledDelegate() === false) // TODO: Enable for VisualSettings
     if (!nodeProp)
       return null;
   
@@ -111,15 +109,18 @@ export default class NodeUtils
     // If the node is Property 
     if (nodeProp instanceof UseProperty)
     {
+      if (!nodeProp.isEnabled)
+        return null;
+
       const element: ISettingsElement = {
         name: nodeProp.name,
         type: NodeUtils.mapToInputTypes(nodeProp.getType()),
         value: nodeProp.value,
         subValues: [],
         isReadOnly: nodeProp.isReadOnly,
-        options: nodeProp.options,
-        useProperty: true,
-        isOptional: false,
+        options: NodeUtils.createSelectOptions(nodeProp.options, nodeProp.optionIconDelegate),
+        useProperty: nodeProp.use,
+        isOptional: nodeProp.isOptional,
       };
       
       // Handle seperate property types
@@ -135,6 +136,23 @@ export default class NodeUtils
       }
     }
     return null;
+  }
+
+  private static createSelectOptions(options, iconDelegate): ISelectOption[] 
+  {
+    const items: ISelectOption[] = [];
+    if (options && options.length > 0)
+    {
+      for (const option of options)
+      {
+        items.push({
+          label: option,
+          value: option,
+          iconSrc: iconDelegate && iconDelegate(option)
+        });
+      }
+    }
+    return items;
   }
   
   private static mapToInputTypes(type: PropertyType): string 
@@ -153,6 +171,12 @@ export default class NodeUtils
 
     if (type === PropertyType.Expander)
       return ElementTypes.SECTION;
+      
+    if (type === PropertyType.Select)
+      return ElementTypes.SELECT;
+
+    if (type === PropertyType.Range)
+      return ElementTypes.RANGE;
 
     return "";
   }

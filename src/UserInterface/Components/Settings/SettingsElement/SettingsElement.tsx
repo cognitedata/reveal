@@ -108,19 +108,21 @@ export default function SettingsElement(props: ISettingsElementProps) {
                 onChange(elmConfig.name, e.target.value);
               }}
             >
-              {options?.map((option) => (
-                <MenuItem
-                  value={option.value}
-                  key={
-                    keyExtractor("select", elmConfig.type, elmConfig.name).key
-                  }
-                >
-                  <div className="select-element-option">
-                    {option.iconSrc ? <Icon src={option.iconSrc} /> : null}
-                    <span className="optionText">{option.label}</span>
-                  </div>
-                </MenuItem>
-              ))}
+              {options?.map((option) => {
+                return (
+                  <MenuItem
+                    value={option.value}
+                    key={keyExtractor("select", option.label, option.value).key}
+                  >
+                    <div className="select-element-option">
+                      <span>
+                        {option.iconSrc && <Icon src={option.iconSrc} />}
+                      </span>
+                      <span className="optionText">{option.label}</span>
+                    </div>
+                  </MenuItem>
+                );
+              })}
             </Select>
             <div className="select-controls">
               <FontAwesomeIcon
