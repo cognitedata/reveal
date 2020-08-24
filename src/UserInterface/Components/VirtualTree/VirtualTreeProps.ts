@@ -8,5 +8,5 @@ export interface VirtualTreeProps
   expandable?: boolean;
   onToggleNodeSelect: (id: string, state: boolean) => void;
   onToggleNodeExpand: (id: string, state: boolean) => void;
-  onToggleNodeCheck: (id: string) => void;
+  onToggleNodeCheck: (id: string, state: boolean) => void;
 }
