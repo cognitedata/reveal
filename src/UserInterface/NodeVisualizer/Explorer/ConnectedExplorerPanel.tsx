@@ -8,12 +8,18 @@ import {
   getNodeTree,
   onSelectedTabChange,
 } from "@/UserInterface/Redux/reducers/ExplorerReducer";
+import { onSelectedNodeChange } from "@/UserInterface/Redux/reducers/SettingsReducer";
 import ExplorerNodeUtils from "@/UserInterface/NodeVisualizer/Explorer/ExplorerNodeUtils";
 
 function mapDispatchToExplorerPanel(dispatch: Dispatch) {
   return {
     onTabChange: (tabIndex: number): void => {
       dispatch(onSelectedTabChange({ selectedTabIndex: tabIndex }));
+      const currentSelectedNode = ExplorerNodeUtils.getSelectedNodeOfCurrentTab(
+        tabIndex
+      );
+      if (currentSelectedNode)
+        dispatch(onSelectedNodeChange(currentSelectedNode));
     },
     onNodeExpandToggle: (nodeId: string, expandState: boolean): void => {
       ExplorerNodeUtils.setNodeExpandById(nodeId, expandState);

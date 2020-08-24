@@ -105,4 +105,12 @@ export default class ExplorerNodeUtils
     }
     return tabNodes;
   }
+
+  public static getSelectedNodeOfCurrentTab(tabIndex: number): BaseNode | null
+  {
+    const tabNodes = ExplorerNodeUtils.getAllTabNodes();
+    const currentTabNode = tabNodes[tabIndex];
+
+    return currentTabNode?.getSelectedNode();
+  }
 }
