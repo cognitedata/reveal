@@ -158,7 +158,7 @@ export default function SettingsElement(props: ISettingsElementProps) {
       case ElementTypes.COLORMAP_SELECT: {
         const options = elmConfig.options as string[];
         return (
-          <Box height="1.5rem" width="100%">
+          <Box className="color-map-select">
             <ColorMapSelector
               options={options}
               colorMapOptions={elmConfig.colorMapOptions}
@@ -189,20 +189,22 @@ export default function SettingsElement(props: ISettingsElementProps) {
     }
   };
 
+  const displayCheckbox = !config.isReadOnly && config.isOptional;
+
   return (
     <section className="form-field">
       <div>{labelElement}</div>
-      <div className="input-wrap">
-        <div>
-          {!config.isReadOnly && config.isOptional && (
+      <div className={`input-wrap ${displayCheckbox ? "optional" : ""}`}>
+        {displayCheckbox && (
+          <div>
             <input
               type="checkbox"
               className="checkbox"
               checked={config.useProperty}
               onChange={(e) => handleCheckboxChange(config.name, e)}
             />
-          )}
-        </div>
+          </div>
+        )}
         <div className="element">{renderInputElement(config)}</div>
       </div>
     </section>

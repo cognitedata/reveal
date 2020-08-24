@@ -13,19 +13,17 @@ import ListItemText from "@material-ui/core/ListItemText";
 
 const ColorButton = withStyles((theme) => ({
   root: {
-    color: theme.palette.primary.contrastText,
-    backgroundColor: theme.palette.primary.light,
+    color: theme.palette.action.active,
+    backgroundColor: theme.palette.background.paper,
     width: "100%",
-    minWidth: "0.8rem",
-    borderColor: theme.palette.primary.contrastText,
-    padding: 2,
-    borderRadius: theme.shape.borderRadius,
-    minHeight: "0.8rem",
-    height: "50%",
-    boxSizing: "border-box",
+    minWidth: "100%",
+    borderRadius: 0,
+    border: "none",
+    padding: 0,
+    minHeight: "50%",
     // backgroundColor: purple[500],
     "&:hover": {
-      borderColor: theme.palette.primary.contrastText,
+      border: "none",
       color: theme.palette.primary.contrastText,
       backgroundColor: theme.palette.primary.dark,
     },
@@ -40,11 +38,10 @@ const ColorButton = withStyles((theme) => ({
 const StyledSelect = withStyles(() => ({
   root: {
     height: "100%",
-    paddingLeft: 5,
-    paddingRight: 0,
-    paddingTop: 0,
-    paddingBottom: 0,
+    padding: "5px 5px",
     flex: "1 1 auto",
+    borderRadius: 0,
+    boxSizing: "border-box",
   },
   select: {
     display: "flex",
@@ -57,9 +54,10 @@ const StyledInput = withStyles((theme) => ({
     height: "100%",
     flex: "1 1 auto",
     width: "50px",
+    borderRadius: 0,
   },
   input: {
-    borderRadius: theme.shape.borderRadius,
+    borderRadius: 0,
     position: "relative",
     fontSize: theme.typography.button.fontSize,
     color: theme.palette.primary.contrastText,
@@ -87,6 +85,7 @@ const useStyles = makeStyles(() => ({
   },
   menuItem: {
     display: "flex",
+    padding: "0.3rem 0.3rem",
   },
   buttonGroup: {
     height: "100%",
@@ -99,9 +98,10 @@ export interface ColorMapProps {
 }
 
 const ColorMap = styled.div<ColorMapProps>`
+  height: 100%;
   min-height: 1.2rem;
   min-width: 2rem;
-  border-radius: 0.1rem;
+  border-radius: 0.15rem;
   margin-inline-end: 0.5rem;
   background-image: linear-gradient(
     to right,

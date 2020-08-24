@@ -4,7 +4,7 @@
   position: relative;
 
   .color-display{
-    height: 1rem;
+    height: 1.3rem;
     border: 1px #c4c4c4 solid;
     font-size: var(--subsurface-viz-default-font-size, variables.$application-default-font-size);
     padding-left: 0.1rem;
@@ -12,6 +12,7 @@
     display: flex;
     align-items: center;
     background-color: white;
+    box-sizing: border-box;
 
     .color-box{
       width: 0.5rem;

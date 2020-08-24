@@ -44,5 +44,5 @@
     "forceConsistentCasingInFileNames": true,  /* Disallow inconsistently-cased references to the same file. */
     "lib": ["dom", "es2015", "es2017", "dom.iterable"]
   },
-  "include": ["src"]
+  "include": ["src", "typings.d.ts"]
 }
