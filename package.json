@@ -58,7 +58,7 @@
     "husky": "^4.2.5",
     "jest-environment-jsdom-sixteen": "^1.0.3",
     "jest-junit": "^11.1.0",
-    "prettier": "^2.0.5",
+    "prettier": "^2.1.0",
     "pretty-quick": "^2.0.2",
     "sinon": "^9.0.3",
     "typescript": "^3.9.7"
