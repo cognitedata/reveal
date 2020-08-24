@@ -19,7 +19,19 @@ import {
   merge,
   NextObserver
 } from 'rxjs';
-import { flatMap, map, tap, shareReplay, take, retry, reduce, distinct, catchError, mergeAll } from 'rxjs/operators';
+import {
+  flatMap,
+  map,
+  tap,
+  shareReplay,
+  take,
+  retry,
+  reduce,
+  distinct,
+  catchError,
+  mergeAll,
+  throttleTime
+} from 'rxjs/operators';
 import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
 import { MemoryRequestCache } from '@/utilities/cache/MemoryRequestCache';
@@ -94,7 +106,7 @@ export class CachedRepository implements Repository {
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {
-    return this._loadingCounter.progressObservable();
+    return this._loadingCounter.progressObservable().pipe(throttleTime(100, asyncScheduler, { trailing: true }));
   }
 
   // TODO j-bjorne 16-04-2020: Should look into ways of not sending in discarded sectors,

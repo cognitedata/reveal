@@ -2,8 +2,8 @@
  * Copyright 2020 Cognite AS
  */
 
-import { Subject, MonoTypeOperatorFunction, Observable, asyncScheduler } from 'rxjs';
-import { scan, tap, finalize, shareReplay, throttleTime } from 'rxjs/operators';
+import { Subject, MonoTypeOperatorFunction, Observable } from 'rxjs';
+import { scan, tap, finalize, shareReplay } from 'rxjs/operators';
 import { LoadingState } from './types';
 
 enum Action {
@@ -75,7 +75,8 @@ export class RxCounter {
         },
         { itemsLoaded: 0, itemsRequested: 0 } as LoadingState
       ),
-      throttleTime(200, asyncScheduler, { trailing: true }),
+      // TODO: 24-08-2020 j-bjorne figure out how to add throttleTime to tests.
+      // throttleTime(this._throttleTime, this._scheduler, { trailing: true }),
       shareReplay(1)
     );
   }

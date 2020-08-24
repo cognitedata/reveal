@@ -16,7 +16,7 @@ describe('RxCounter', () => {
       itemsRequested: 0
     };
     expect.assertions(incrementCount);
-    const increment$ = interval(10).pipe(take(incrementCount), counter.incrementOnNext());
+    const increment$ = interval(10).pipe(take(incrementCount), observeOn(queueScheduler), counter.incrementOnNext());
     counter.progressObservable().subscribe({
       next: count => {
         loadingState.itemsRequested++;
@@ -54,7 +54,7 @@ describe('RxCounter', () => {
         if (operation < operationCount) {
           loadingState.itemsRequested++;
         } else {
-          loadingState.itemsLoaded;
+          loadingState.itemsLoaded++;
         }
         expect(count).toStrictEqual(loadingState);
         operation++;
