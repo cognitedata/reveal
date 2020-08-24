@@ -6,6 +6,9 @@ import { CogniteClient } from '@cognite/sdk';
 
 import { SectorCuller } from '@/datamodels/cad/sector/culling/SectorCuller';
 
+/**
+ * @module @cognite/reveal
+ */
 export type Color = {
   r: number;
   g: number;
@@ -14,9 +17,13 @@ export type Color = {
 /**
  * Callback to monitor downloaded requests and progress.
  * Use OnLoadingCallback instead of onProgress/onComplete.
+ * @module @cognite/reveal
  */
 export type OnLoadingCallback = (itemsDownloaded: number, itemsRequested: number) => void;
 
+/**
+ * @module @cognite/reveal
+ */
 export interface Cognite3DViewerOptions {
   sdk: CogniteClient;
 
@@ -52,10 +59,16 @@ export interface Cognite3DViewerOptions {
   _sectorCuller?: SectorCuller;
 }
 
+/**
+ * @module @cognite/reveal
+ */
 export interface GeometryFilter {
   boundingBox?: THREE.Box3;
 }
 
+/**
+ * @module @cognite/reveal
+ */
 export interface AddModelOptions {
   modelId: number;
   revisionId: number;

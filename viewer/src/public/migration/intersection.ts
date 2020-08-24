@@ -4,6 +4,10 @@
 
 import { Cognite3DModel } from './Cognite3DModel';
 
+/**
+ * Represents the result from {@link Cognite3DViewer.getInterSectionFromPixel}.
+ * @module @cognite/reveal
+ */
 export interface Intersection {
   model: Cognite3DModel;
   nodeId: number;

@@ -1,7 +1,6 @@
 /*!
  * Copyright 2020 Cognite AS
  */
-
 import * as THREE from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import { vec3 } from 'gl-matrix';
@@ -25,6 +24,7 @@ const mapCoordinatesBuffers = {
 /**
  * Represents a single 3D CAD model loaded from CDF.
  * @noInheritDoc
+ * @module @cognite/reveal
  */
 export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = 'cad';

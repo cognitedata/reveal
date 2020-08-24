@@ -43,6 +43,7 @@ export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vecto
  *   sdk: CogniteClient({...})
  * });
  * ```
+ * @module @cognite/reveal
  */
 export class Cognite3DViewer {
   private get canvas(): HTMLCanvasElement {
