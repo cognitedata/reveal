@@ -23,7 +23,8 @@ const initialState = {
       //   icon: { type: IconTypes.ARROWS, name: "FatRight" }
       // }
     ]
-  }
+  },
+  expandedSections: {}
 } as ISettingsState;
 // Redux Toolkit package includes a createReducer utility that uses Immer internally.
 // Because of this, we can write reducers that appear to "mutate" state, but the updates
@@ -86,23 +87,15 @@ export const settingsSlice = createSlice({
         };
       }
     },
-    onExpandChange: {
-      reducer(state: ISettingsState, action: PayloadAction<{ id: string, expandStatus: boolean }>)
+    onSectionExpand: {
+      reducer(state: ISettingsState, action: PayloadAction<{ sectionName: string, expandStatus: boolean }>)
       {
-        // TODO: Implement this feature
-        // const property = state.properties.byId[action.payload.id];
-
-        // if (property)
-        // {
-        //   property.expanded = action.payload.expandStatus;
-        // }
+        state.expandedSections[action.payload.sectionName] = action.payload.expandStatus;
       },
-      prepare(propertyId: string, expanded: boolean)
+      prepare(sectionName: string, expandStatus: boolean)
       {
-        SettingsNodeUtils.setPropertyFolderExpand(propertyId, expanded);
-
         return {
-          payload: { id: propertyId, expandStatus: expanded }
+          payload: { sectionName, expandStatus }
         };
       }
 
@@ -112,4 +105,4 @@ export const settingsSlice = createSlice({
 });
 
 export default settingsSlice.reducer;
-export const { onSelectedNodeChange, onExpandChange } = settingsSlice.actions;
+export const { onSelectedNodeChange, onSectionExpand } = settingsSlice.actions;

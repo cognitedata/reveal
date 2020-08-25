@@ -13,16 +13,16 @@ export default function ExpansionView(props: {
   id: string;
   title: string;
   isExpanded?: boolean;
-  onExpandChange: (id: string, expandStatus: boolean) => void;
+  onSectionExpand: (id: string, expandStatus: boolean) => void;
   toolBar?: ToolBarType;
   children: JSX.Element;
 }) {
-  const { id, title, isExpanded, onExpandChange, toolBar, children } = props;
+  const { id, title, isExpanded, onSectionExpand, toolBar, children } = props;
 
   return (
     <ExpansionPanel
       expanded={isExpanded}
-      onChange={() => onExpandChange(id, !isExpanded)}
+      onChange={() => onSectionExpand(id, !isExpanded)}
     >
       <ExpansionPanelSummary className="expand-panel-root">
         <div className="expand-summary-header">

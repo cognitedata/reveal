@@ -15,6 +15,7 @@ export default function SettingsPanel(props: SettingPanelProps) {
     onSectionExpand,
     onPropertyValueChange,
     onPropertyUseChange,
+    expandedSections,
   } = props;
 
   const [, forceUpdate] = useState(0);
@@ -47,6 +48,7 @@ export default function SettingsPanel(props: SettingPanelProps) {
             />
           )}
           {sections.map((section) => {
+            section.isExpanded = expandedSections[section.name];
             return (
               <div
                 key={`${section.name}-section`}

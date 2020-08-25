@@ -1,13 +1,14 @@
 import { connect } from "react-redux";
 import { State } from "@/UserInterface/Redux/State/State";
 import SettingsPanel from "@/UserInterface/Components/Settings/SettingsPanel";
+import { onSectionExpand } from "@/UserInterface/Redux/reducers/SettingsReducer";
+import { Dispatch } from "redux";
 import SettingsNodeUtils from "./SettingsNodeUtils";
 
-function mapDispatchToSettingsPanel() {
+function mapDispatchToSettingsPanel(dispatch: Dispatch) {
   return {
-    onSectionExpand: () => {
-      // TODO: Implement this feature
-      // dispatch(onExpandChange(id, expandStatus));
+    onSectionExpand: (sectionName, expandStatus) => {
+      dispatch(onSectionExpand(sectionName, expandStatus));
     },
     onPropertyValueChange: (id: string, value: any) => {
       SettingsNodeUtils.setPropertyValue<string>(id, value);
@@ -19,9 +20,8 @@ function mapDispatchToSettingsPanel() {
 }
 
 function mapStateToSettingsPanel(state: State) {
-  const { currentNodeId, titleBar } = state.settings;
-
-  return { id: currentNodeId, titleBar };
+  const { currentNodeId, titleBar, expandedSections } = state.settings;
+  return { id: currentNodeId, titleBar, expandedSections };
 }
 
 export const ConnectedSettingsPanel = connect(
