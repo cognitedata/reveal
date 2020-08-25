@@ -11,8 +11,12 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import * as Lodash from "lodash";
 import { ColorType } from "@/Core/Enums/ColorType";
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
+import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { SelectProperty } from "@/Core/Property/Concrete/Property/SelectProperty";
+import { RangeProperty } from "@/Core/Property/Concrete/Property/RangeProperty";
 
 export class SolidStyle extends BaseStyle
 {
@@ -20,9 +24,8 @@ export class SolidStyle extends BaseStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public colorType = ColorType.DepthColor;
-
-  public shininess = 0.5;
+  public colorType = new SelectProperty({ name: "Solid color", value: ColorType.DepthColor });
+  public shininess = new RangeProperty({ name: "Solid shininess", value: 20 });
 
   //==================================================
   // CONSTRUCTORS
@@ -30,4 +33,15 @@ export class SolidStyle extends BaseStyle
 
   public constructor() { super(); }
 
+  //==================================================
+  // OVERRIDES of BaseStyle
+  //==================================================
+
+  public /*override*/ clone(): BaseStyle { return Lodash.cloneDeep<SolidStyle>(this); }
+
+  protected /*override*/ populateCore(folder: BasePropertyFolder)
+  {
+    folder.addChild(this.colorType);
+    folder.addChild(this.shininess);
+  }
 }

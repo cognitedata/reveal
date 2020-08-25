@@ -16,9 +16,10 @@ import * as Lodash from "lodash";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
-import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 import { RangeProperty } from "@/Core/Property/Concrete/Property/RangeProperty";
 import { SelectProperty } from "@/Core/Property/Concrete/Property/SelectProperty";
+import { BaseStyle } from "@/Core/Styles/BaseStyle";
+import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
 
 export class CasingLogStyle extends BaseRenderStyle
 {
@@ -50,12 +51,12 @@ export class CasingLogStyle extends BaseRenderStyle
   public constructor(targetId: TargetId) { super(targetId); }
 
   //==================================================
-  // OVERRIDES of BaseRenderStyle
+  // OVERRIDES of BaseStyle
   //==================================================
 
-  public /*override*/ clone(): BaseRenderStyle { return Lodash.cloneDeep<CasingLogStyle>(this); }
+  public /*override*/ clone(): BaseStyle { return Lodash.cloneDeep<CasingLogStyle>(this); }
 
-  protected /*override*/ populateCore(folder: ExpanderProperty)
+  protected /*override*/ populateCore(folder: BasePropertyFolder)
   {
     super.populateCore(folder);
     folder.addChild(this.radiusFactor);

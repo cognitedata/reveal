@@ -80,10 +80,27 @@ export class SurfaceNode extends DataNode
     if (!(style instanceof SurfaceRenderStyle))
       return;
 
-    if (!this.supportsColorType(style.solid.colorType))
-      style.solid.colorType = ColorType.DepthColor;
-    if (!this.supportsColorType(style.contours.colorType))
-      style.contours.colorType = ColorType.Black;
+    const { boundingBox } = this;
+    if (boundingBox.isEmpty)
+      return;
+
+    const zRange = boundingBox.z;
+    {
+      const inc = style.contours.inc.value as number;
+      if (inc <= 0)
+        style.contours.inc.value = zRange.getBestInc();
+    }
+    if (!style.contours.inc.hasOptions)
+    {
+      const options: number[] = [];
+      for (let i = 100; i >= 3; i--)
+      {
+        const inc = zRange.getBestInc(i);
+        if (options.length === 0 || options[options.length - 1] !== inc)
+          options.push(inc);
+      }
+      style.contours.inc.options = options;
+    }
   }
 
   public /*override*/ supportsColorType(colorType: ColorType): boolean

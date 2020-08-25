@@ -12,12 +12,12 @@
 //=====================================================================================
 
 import * as Lodash from "lodash";
-
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ContoursStyle } from "@/Core/Styles/ContoursStyle";
 import { SolidStyle } from "@/Core/Styles/SolidStyle";
-import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import { BaseStyle } from "@/Core/Styles/BaseStyle";
+import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
 
 export class SurfaceRenderStyle extends BaseRenderStyle
 {
@@ -26,7 +26,6 @@ export class SurfaceRenderStyle extends BaseRenderStyle
   //==================================================
 
   public solid = new SolidStyle();
-
   public contours = new ContoursStyle;
 
   //==================================================
@@ -39,12 +38,18 @@ export class SurfaceRenderStyle extends BaseRenderStyle
   }
 
   //==================================================
-  // OVERRIDES of BaseRenderStyle
+  // OVERRIDES of BaseStyle
   //==================================================
 
-  public /*override*/ clone(): BaseRenderStyle { return Lodash.cloneDeep<SurfaceRenderStyle>(this); }
+  public /*override*/ clone(): BaseStyle { return Lodash.cloneDeep<SurfaceRenderStyle>(this); }
 
-  protected /*override*/ populateCore(folder: ExpanderProperty)
+  protected /*override*/ populateCore(folder: BasePropertyFolder)
   {
+    //const expander = new ExpanderProperty("Solid");
+    this.solid.populate(folder);
+    //folder.addChild(expander);
+    //const expander = new ExpanderProperty("Contours");
+    this.contours.populate(folder);
+    //folder.addChild(expander);
   }
 }

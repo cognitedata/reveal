@@ -11,8 +11,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
+import * as Lodash from "lodash";
 import { ColorType } from "@/Core/Enums/ColorType";
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
+import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { SelectProperty } from "@/Core/Property/Concrete/Property/SelectProperty";
 
 export class ContoursStyle extends BaseStyle
 {
@@ -20,9 +23,8 @@ export class ContoursStyle extends BaseStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public colorType = ColorType.Black;
-
-  public inc = 20;
+  public colorType = new SelectProperty({ name: "Countour color", value: ColorType.Black });
+  public inc = new SelectProperty({ name: "Countour Inc", value: 0 });
 
   //==================================================
   // CONSTRUCTORS
@@ -30,4 +32,14 @@ export class ContoursStyle extends BaseStyle
 
   public constructor() { super(); }
 
+  //==================================================
+  // OVERRIDES of BaseStyle
+  //==================================================
+
+  public /*override*/ clone(): BaseStyle { return Lodash.cloneDeep<ContoursStyle>(this); }
+  protected /*override*/ populateCore(folder: BasePropertyFolder)
+  {
+    folder.addChild(this.colorType);
+    folder.addChild(this.inc);
+  }
 }

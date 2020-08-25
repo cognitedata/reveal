@@ -16,7 +16,8 @@ import * as Lodash from "lodash";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
-import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { BaseStyle } from "@/Core/Styles/BaseStyle";
 
 export class PolylinesRenderStyle extends BaseRenderStyle
 {
@@ -35,12 +36,9 @@ export class PolylinesRenderStyle extends BaseRenderStyle
   public constructor(targetId: TargetId) { super(targetId); }
 
   //==================================================
-  // OVERRIDES of BaseRenderStyle
+  // OVERRIDES of BaseStyle
   //==================================================
 
-  public /*override*/ clone(): BaseRenderStyle { return Lodash.cloneDeep<PolylinesRenderStyle>(this); }
-
-  protected /*override*/ populateCore(folder: ExpanderProperty)
-  {
-  }
+  public /*override*/ clone(): BaseStyle { return Lodash.cloneDeep<PolylinesRenderStyle>(this); }
+  protected /*override*/ populateCore(folder: BasePropertyFolder) { }
 }

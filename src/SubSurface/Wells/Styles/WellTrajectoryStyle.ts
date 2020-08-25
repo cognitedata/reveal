@@ -16,7 +16,8 @@ import * as Lodash from "lodash";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
-import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import { BaseStyle } from "@/Core/Styles/BaseStyle";
+import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
 
 export class WellTrajectoryStyle extends BaseRenderStyle
 {
@@ -43,12 +44,12 @@ export class WellTrajectoryStyle extends BaseRenderStyle
   public constructor(targetId: TargetId) { super(targetId); }
 
   //==================================================
-  // OVERRIDES of BaseRenderStyle
+  // OVERRIDES of BaseStyle
   //==================================================
 
-  public /*override*/ clone(): BaseRenderStyle { return Lodash.cloneDeep<WellTrajectoryStyle>(this); }
+  public /*override*/ clone(): BaseStyle { return Lodash.cloneDeep<WellTrajectoryStyle>(this); }
 
-  protected /*override*/ populateCore(folder: ExpanderProperty)
+  protected /*override*/ populateCore(folder: BasePropertyFolder)
   {
     super.populateCore(folder);
   }

@@ -129,21 +129,22 @@ export class SurfaceThreeView extends BaseGroupThreeView
     if (!grid)
       return null;
 
-    const color = node.getColorByColorType(style.colorType);
-    const buffers = new RegularGrid2Buffers(grid, style.colorType === ColorType.DepthColor);
+    const colorType = style.colorType.value as ColorType;
+    const color = node.getColorByColorType(colorType);
+    const buffers = new RegularGrid2Buffers(grid, colorType === ColorType.DepthColor);
     const geometry = buffers.getBufferGeometry();
 
     const material = new THREE.MeshPhongMaterial({
       color: ThreeConverter.toThreeColor(color),
       side: THREE.DoubleSide,
-      shininess: 100 * style.shininess,
+      shininess: style.shininess.value as number,
       polygonOffset: true,
       polygonOffsetFactor: 1,
       polygonOffsetUnits: 4.0
     });
     //const material = createShader();
 
-    if (style.colorType === ColorType.DepthColor && buffers.hasUvs)
+    if (colorType === ColorType.DepthColor && buffers.hasUvs)
     {
       const texture = TextureKit.create1D(ColorMaps.get(node.colorMap));
       if (texture)
@@ -162,8 +163,9 @@ export class SurfaceThreeView extends BaseGroupThreeView
     if (!grid)
       return null;
 
-    const color = node.getColorByColorType(style.colorType);
-    const service = new ContouringService(style.inc);
+    const colorType = style.colorType.value as ColorType;
+    const color = node.getColorByColorType(colorType as ColorType);
+    const service = new ContouringService(style.inc.value as number);
 
     const contours = service.createContoursAsXyzArray(grid);
     if (contours.length === 0)
