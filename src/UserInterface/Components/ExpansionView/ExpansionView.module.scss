@@ -1,9 +1,9 @@
 @use "../../styles/scss/variables";
-.expand-panel-root{
-  padding: 0!important;
+.expand-panel-root {
+  padding: 0 !important;
   min-height: 1.8rem !important;
 
-  .expand-summary-header{
+  .expand-summary-header {
     display: flex;
     align-items: center;
     width: 100%;
@@ -12,7 +12,7 @@
     padding-left: 0.5rem;
   }
 
-  .expand-btn{
+  .expand-btn {
     width: 0.8rem;
     height: 0.8rem;
     border-radius: 0.8rem;
@@ -25,13 +25,16 @@
     justify-content: center;
   }
 
-  .expand-title{
-    margin: 0 .5rem;
-    font-size: var(--subsurface-viz-default-font-size, variables.$application-default-font-size);
+  .expand-title {
+    margin: 0 0.5rem;
+    font-size: var(
+      --subsurface-viz-default-font-size,
+      variables.$application-default-font-size
+    );
     font-weight: 700;
   }
 
-  .expand-toolbar{
+  .expand-toolbar {
     position: absolute;
     left: 110px;
     top: -1.8rem;

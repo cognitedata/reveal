@@ -6,6 +6,7 @@
   place-items: center start;
   font-size: var(--subsurface-viz-default-font-size, variables.$application-default-font-size);
   height: 1.6rem;
+  padding: 0.1rem;
 
   .input-wrap {
     display: grid;
@@ -24,7 +25,7 @@
       grid-gap: 1px;
 
       .textInput {
-        height: 1.3rem;
+        height: 1.5rem;
         border-width: 1px;
         border-color: #c4c4c4;
         border-style: solid;
