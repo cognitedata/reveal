@@ -8,6 +8,9 @@ import { CogniteClient, InternalId, Node3D } from '@cognite/sdk';
 
 type NodeIdRequest = InternalId;
 
+/**
+ * @internal
+ */
 export class NodeIdAndTreeIndexMaps {
   private readonly modelId: number;
   private readonly revisionId: number;
