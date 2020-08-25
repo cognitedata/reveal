@@ -101,7 +101,7 @@ export function Simple() {
   const { itemsLoaded, itemsRequested } = loadingState;
   return (
     <CanvasWrapper>
-      <Loader isLoading={itemsLoaded != itemsRequested} style={{ position: 'absolute' }}>
+      <Loader isLoading={itemsLoaded !== itemsRequested} style={{ position: 'absolute' }}>
         Downloading {itemsLoaded} / {itemsRequested} sectors.
       </Loader>
       <canvas ref={canvas} />

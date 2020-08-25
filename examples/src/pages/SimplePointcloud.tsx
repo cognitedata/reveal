@@ -182,7 +182,7 @@ export function SimplePointcloud() {
 
   return (
     <CanvasWrapper>
-      <Loader isLoading={loadingState.itemsLoaded != loadingState.itemsRequested} style={{ position: 'absolute' }}>
+      <Loader isLoading={loadingState.itemsLoaded !== loadingState.itemsRequested} style={{ position: 'absolute' }}>
         Loading...
       </Loader>
       <canvas ref={canvasRef} />
