@@ -51,7 +51,7 @@ jobs:
         # and needs to be disabled
         cargo clippy --all-targets --all-features -- -D warnings -A clippy::mem_replace_with_default
         cargo test --all --verbose
-
+  
   ci-worker:
     name: parser-worker
     runs-on: ubuntu-latest
@@ -86,8 +86,7 @@ jobs:
 
       - name: Build parser-worker
         working-directory: parser-worker
-        run: yarn
-        build:prod
+        run: yarn build:prod
 
   ci-viewer:
     name: Viewer
