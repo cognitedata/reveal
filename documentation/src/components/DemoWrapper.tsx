@@ -23,7 +23,7 @@ const components: Record<string, ComponentType<DemoProps>> = {
   ),
 };
 
-export function DemoWrapper({ name, modelId, revisionId }: { name: string, modelId: number, revisionId: number }) {
+export function DemoWrapper({ name, project, modelId, revisionId }: { name: string, project: string, modelId: number, revisionId: number }) {
   useBaseTag('[data-basetagnail]');
 
   if (typeof window === 'undefined') {
@@ -34,7 +34,7 @@ export function DemoWrapper({ name, modelId, revisionId }: { name: string, model
     <DemoContainer data-basetagnail>
       <Suspense fallback={<div>Loading demo...</div>}>
         <DemoLoginCover>
-          {(client: CogniteClient) => <LazyComponent client={client} modelId={modelId} revisionId={revisionId} />}
+          {(client: CogniteClient) => <LazyComponent client={client} project={project} modelId={modelId} revisionId={revisionId} />}
         </DemoLoginCover>
       </Suspense>
     </DemoContainer>
