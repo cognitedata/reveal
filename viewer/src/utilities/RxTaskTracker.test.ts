@@ -6,7 +6,7 @@ import { RxTaskTracker, TaskTracker } from './RxTaskTracker';
 import { interval, queueScheduler } from 'rxjs';
 import { take, flatMap, observeOn } from 'rxjs/operators';
 
-describe('RxCounter', () => {
+describe('RxTaskTracker', () => {
   test('increment on next', done => {
     const counter = new RxTaskTracker();
     const incrementCount = 4;
