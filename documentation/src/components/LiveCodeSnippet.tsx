@@ -14,6 +14,8 @@ export type LivCodeSnippetProps = {
   props: any;
 }
 
+import { resetViewerEventHandlers } from '../viewerUtilities';
+
 export class LiveCodeSnippet extends React.Component<LivCodeSnippetProps> {
   constructor(props: LivCodeSnippetProps) {
     super(props);
@@ -26,11 +28,16 @@ export class LiveCodeSnippet extends React.Component<LivCodeSnippetProps> {
         code={children.replace(/^\s+|\s+$/g, '')}
         transformCode={((code) => {
           const fullCode = 
-          `const viewer = window.viewer;
+          `
+          const viewer = window.viewer;
           const model = window.model;
+          const sdk = window.sdk;
+          resetViewerEventHandlers(viewer);
+          // User code starts here!
           ${(transformCode ? transformCode(code) : code)}`;
           return `<button onClick={() => \{${fullCode}\}}>Run</button>`;
         })}
+        scope={{resetViewerEventHandlers}}
         theme={theme || defaultCodeTheme}
         {...props}>
         <div
