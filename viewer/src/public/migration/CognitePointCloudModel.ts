@@ -14,6 +14,7 @@ import { SupportedModelTypes } from '../types';
 /**
  * Documentation for the Cognite3DModel class
  * @noInheritDoc
+ * @module @cognite/reveal
  */
 export class CognitePointCloudModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = 'pointcloud';

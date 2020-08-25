@@ -14,9 +14,8 @@ import { merge, Subject, Subscription, fromEventPattern, Observable } from 'rxjs
 import { from3DPositionToRelativeViewportCoordinates } from '@/utilities/worldToViewport';
 import { intersectCadNodes } from '@/datamodels/cad/picking';
 
-import { AddModelOptions, Cognite3DViewerOptions, GeometryFilter } from './types';
+import { AddModelOptions, Cognite3DViewerOptions, GeometryFilter, Intersection } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
-import { Intersection } from './intersection';
 import RenderController from './RenderController';
 import { CogniteModelBase } from './CogniteModelBase';
 
@@ -43,6 +42,7 @@ export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vecto
  *   sdk: CogniteClient({...})
  * });
  * ```
+ * @module @cognite/reveal
  */
 export class Cognite3DViewer {
   private get canvas(): HTMLCanvasElement {

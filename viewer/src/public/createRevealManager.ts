@@ -26,6 +26,9 @@ export function createCdfRevealManager(
   return createRevealManager(client.project, modelDataClient, revealOptions);
 }
 
+/**
+ * @internal
+ */
 export function createRevealManager<T>(
   project: string,
   client: ModelDataClient<T>,
