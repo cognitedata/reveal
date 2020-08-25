@@ -179,7 +179,6 @@ export function Testable() {
       revealManager?.dispose();
     };
   }, []);
-  console.log(`loading: ${loadingState.itemsLoaded !== loadingState.itemsRequested}`);
   return (
     <CanvasWrapper>
       <Loader isLoading={loadingState.itemsLoaded !== loadingState.itemsRequested} style={{ position: 'absolute' }}>
