@@ -103,7 +103,7 @@ describe('Cognite3DViewer', () => {
     // Act
     const model = await viewer.addModel({ modelId: 1, revisionId: 2 });
     viewer.fitCameraToModel(model);
-    TWEEN.update(0);
+    TWEEN.update(TWEEN.now());
 
     // Assert
     expect(onCameraChange).toBeCalled();
@@ -118,7 +118,27 @@ describe('Cognite3DViewer', () => {
 
     // Act
     viewer.fitCameraToBoundingBox(bbox, 0);
-    TWEEN.update(0);
+    TWEEN.update(TWEEN.now());
+
+    // Assert
+    expect(viewer.getCameraTarget()).toEqual(bbox.getCenter(new THREE.Vector3()));
+    expect(bSphere.containsPoint(viewer.getCameraPosition())).toBeTrue();
+  });
+
+  test('fitCameraToBoundingBox with 1000 duration, moves camera over time', () => {
+    // Arrange
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+    const bbox = new THREE.Box3(new THREE.Vector3(1, 1, 1), new THREE.Vector3(2, 2, 2));
+    const bSphere = bbox.getBoundingSphere(new THREE.Sphere());
+    bSphere.radius *= 3;
+
+    // Act
+    viewer.fitCameraToBoundingBox(bbox, 1000);
+    const now = TWEEN.now();
+    TWEEN.update(now + 500);
+    expect(viewer.getCameraTarget()).not.toEqual(bbox.getCenter(new THREE.Vector3()));
+    expect(bSphere.containsPoint(viewer.getCameraPosition())).toBeFalse();
+    TWEEN.update(now + 1000);
 
     // Assert
     expect(viewer.getCameraTarget()).toEqual(bbox.getCenter(new THREE.Vector3()));

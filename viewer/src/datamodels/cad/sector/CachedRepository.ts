@@ -41,7 +41,7 @@ import { createOffsetsArray, LoadingState } from '@/utilities';
 import { trackError } from '@/utilities/metrics';
 import { BinaryFileProvider } from '@/utilities/networking/types';
 import { Group } from 'three';
-import { RxCounter } from '@/utilities/RxCounter';
+import { RxTaskTracker } from '@/utilities/RxTaskTracker';
 
 type KeyedWantedSector = { key: string; wantedSector: WantedSector };
 type WantedSecorWithRequestObservable = {
@@ -67,7 +67,7 @@ export class CachedRepository implements Repository {
   private readonly _modelSectorProvider: BinaryFileProvider;
   private readonly _modelDataParser: CadSectorParser;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
-  private readonly _loadingCounter: RxCounter = new RxCounter();
+  private readonly _loadingCounter: RxTaskTracker = new RxTaskTracker();
 
   // Adding this to support parse map for migration wrapper. Should be removed later.
   private readonly _parsedDataSubject: Subject<{
@@ -106,7 +106,10 @@ export class CachedRepository implements Repository {
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {
-    return this._loadingCounter.progressObservable().pipe(throttleTime(100, asyncScheduler, { trailing: true }));
+    return this._loadingCounter.getTaskTrackerObservable().pipe(
+      throttleTime(30, asyncScheduler, { trailing: true }), // Take 1 emission every 30ms
+      map(({ taskCount, taskCompleted }) => ({ itemsRequested: taskCount, itemsLoaded: taskCompleted } as LoadingState))
+    );
   }
 
   // TODO j-bjorne 16-04-2020: Should look into ways of not sending in discarded sectors,
@@ -163,15 +166,15 @@ export class CachedRepository implements Repository {
         this._consumedSectorCache.forceInsert(key, observable);
 
       const network$ = merge(
-        simple$.pipe(this._loadingCounter.incrementOnNext(), map(getSimpleSectorFromNetwork)),
-        detailed$.pipe(this._loadingCounter.incrementOnNext(), map(getDetailedSectorFromNetwork))
+        simple$.pipe(this._loadingCounter.incrementTaskCountOnNext(), map(getSimpleSectorFromNetwork)),
+        detailed$.pipe(this._loadingCounter.incrementTaskCountOnNext(), map(getDetailedSectorFromNetwork))
       ).pipe(
         tap({
           next: saveToCache
         }),
         map(({ observable }) => observable),
         mergeAll(this._concurrentNetworkOperations),
-        this._loadingCounter.decrementOnNext()
+        this._loadingCounter.incrementTaskCompletedOnNext()
       );
 
       const toDiscardedConsumedSector = (wantedSector: WantedSector) =>

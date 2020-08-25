@@ -4,25 +4,29 @@
 
 import { Subject, MonoTypeOperatorFunction, Observable } from 'rxjs';
 import { scan, tap, finalize, shareReplay } from 'rxjs/operators';
-import { LoadingState } from './types';
 
 enum Action {
-  Increment,
-  Decrement,
+  IncreaseTaskCount,
+  IncreaseTaskCompleted,
   Reset
 }
 
-export class RxCounter {
+export interface TaskTracker {
+  taskCount: number;
+  taskCompleted: number;
+}
+
+export class RxTaskTracker {
   private readonly _actionSubject: Subject<Action> = new Subject();
 
   /**
    * Increment counter for each element in the observable.
    * @return {MonoTypeOperatorFunction<T>} The operator function to increment counter.
    */
-  public incrementOnNext<T>(): MonoTypeOperatorFunction<T> {
+  public incrementTaskCountOnNext<T>(): MonoTypeOperatorFunction<T> {
     return tap<T>({
       next: () => {
-        this._actionSubject.next(Action.Increment);
+        this._actionSubject.next(Action.IncreaseTaskCount);
       }
     });
   }
@@ -31,10 +35,10 @@ export class RxCounter {
    * Decrement counter for each element in the observable.
    * @return {MonoTypeOperatorFunction<T>} The operator function to decrement counter.
    */
-  public decrementOnNext<T>(): MonoTypeOperatorFunction<T> {
+  public incrementTaskCompletedOnNext<T>(): MonoTypeOperatorFunction<T> {
     return tap<T>({
       next: () => {
-        this._actionSubject.next(Action.Decrement);
+        this._actionSubject.next(Action.IncreaseTaskCompleted);
       }
     });
   }
@@ -53,30 +57,30 @@ export class RxCounter {
    * Get counter observable.
    * @return {Observable<number>} The counter observable.
    */
-  public progressObservable(): Observable<LoadingState> {
+  public getTaskTrackerObservable(): Observable<TaskTracker> {
     return this._actionSubject.pipe(
       scan(
-        (loadingState, action) => {
+        (taskTracker, action) => {
           switch (action) {
-            case Action.Increment:
-              loadingState.itemsRequested++;
+            case Action.IncreaseTaskCount:
+              taskTracker.taskCount++;
               break;
-            case Action.Decrement:
-              loadingState.itemsLoaded++;
+            case Action.IncreaseTaskCompleted:
+              taskTracker.taskCompleted++;
               break;
             case Action.Reset:
-              loadingState.itemsLoaded = 0;
-              loadingState.itemsRequested = 0;
+              taskTracker.taskCount = 0;
+              taskTracker.taskCompleted = 0;
               break;
             default:
               throw new Error(`Unsupported action ${action}`);
           }
-          return loadingState;
+          return taskTracker;
         },
-        { itemsLoaded: 0, itemsRequested: 0 } as LoadingState
+        { taskCount: 0, taskCompleted: 0 } as TaskTracker
       ),
-      // TODO: 24-08-2020 j-bjorne figure out how to add throttleTime to tests.
-      // throttleTime(this._throttleTime, this._scheduler, { trailing: true }),
+      // TODO: 24-08-2020 j-bjorne: figure out a way to get last emission in a time window
+      // throttleTime(200, asyncScheduler, { trailing: true }),
       shareReplay(1)
     );
   }

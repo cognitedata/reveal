@@ -176,7 +176,7 @@ export class Cognite3DViewer {
         h => this._revealManager.off('loadingStateChanged', h)
       ).subscribe(
         loadingState => {
-          if (loadingState.itemsLoaded == loadingState.itemsRequested) {
+          if (loadingState.itemsLoaded != loadingState.itemsRequested) {
             this.spinner.show();
           } else {
             this.spinner.hide();
@@ -962,7 +962,7 @@ export class Cognite3DViewer {
         }
         this.canvas.removeEventListener('pointerdown', stopTween);
       })
-      .start(0);
+      .start(TWEEN.now());
   }
 
   private async animate(time: number) {

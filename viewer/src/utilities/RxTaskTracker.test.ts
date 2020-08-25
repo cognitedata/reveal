@@ -2,25 +2,24 @@
  * Copyright 2020 Cognite AS
  */
 
-import { RxCounter } from './RxCounter';
+import { RxTaskTracker, TaskTracker } from './RxTaskTracker';
 import { interval, queueScheduler } from 'rxjs';
 import { take, flatMap, observeOn } from 'rxjs/operators';
-import { LoadingState } from './types';
 
 describe('RxCounter', () => {
   test('increment on next', done => {
-    const counter = new RxCounter();
+    const counter = new RxTaskTracker();
     const incrementCount = 4;
-    const loadingState: LoadingState = {
-      itemsLoaded: 0,
-      itemsRequested: 0
+    const taskTracker: TaskTracker = {
+      taskCount: 0,
+      taskCompleted: 0
     };
     expect.assertions(incrementCount);
-    const increment$ = interval(10).pipe(take(incrementCount), observeOn(queueScheduler), counter.incrementOnNext());
-    counter.progressObservable().subscribe({
+    const increment$ = interval(10).pipe(take(incrementCount), counter.incrementTaskCountOnNext());
+    counter.getTaskTrackerObservable().subscribe({
       next: count => {
-        loadingState.itemsRequested++;
-        expect(count).toStrictEqual(loadingState);
+        taskTracker.taskCount++;
+        expect(count).toStrictEqual(taskTracker);
       }
     });
     increment$.subscribe({
@@ -33,30 +32,30 @@ describe('RxCounter', () => {
   test('decrement on next', done => {
     // const incrementCount = 3;
     // const decrementCount = 2;
-    const counter = new RxCounter();
+    const counter = new RxTaskTracker();
     const operationCount = 4;
-    const loadingState: LoadingState = {
-      itemsLoaded: 0,
-      itemsRequested: 0
+    const taskTracker: TaskTracker = {
+      taskCount: 0,
+      taskCompleted: 0
     };
     const wait = flatMap(value => new Promise(resolve => setTimeout(resolve, 100, value)));
     expect.assertions(operationCount * 2);
     const operation$ = interval(10).pipe(
       take(operationCount),
       observeOn(queueScheduler),
-      counter.incrementOnNext(),
+      counter.incrementTaskCountOnNext(),
       wait,
-      counter.decrementOnNext()
+      counter.incrementTaskCompletedOnNext()
     );
     let operation = 0;
-    counter.progressObservable().subscribe({
+    counter.getTaskTrackerObservable().subscribe({
       next: count => {
         if (operation < operationCount) {
-          loadingState.itemsRequested++;
+          taskTracker.taskCount++;
         } else {
-          loadingState.itemsLoaded++;
+          taskTracker.taskCompleted++;
         }
-        expect(count).toStrictEqual(loadingState);
+        expect(count).toStrictEqual(taskTracker);
         operation++;
       }
     });
@@ -67,24 +66,28 @@ describe('RxCounter', () => {
     });
   });
   test('reset counter', done => {
-    const counter = new RxCounter();
+    const counter = new RxTaskTracker();
     const operationCount = 4;
-    const loadingState: LoadingState = {
-      itemsLoaded: 0,
-      itemsRequested: 0
+    const taskTracker: TaskTracker = {
+      taskCount: 0,
+      taskCompleted: 0
     };
     expect.assertions(operationCount + 1);
-    const operation$ = interval(10).pipe(take(operationCount), counter.incrementOnNext(), counter.resetOnComplete());
+    const operation$ = interval(10).pipe(
+      take(operationCount),
+      counter.incrementTaskCountOnNext(),
+      counter.resetOnComplete()
+    );
     let operation: number = 0;
-    counter.progressObservable().subscribe({
+    counter.getTaskTrackerObservable().subscribe({
       next: count => {
         if (operation < operationCount) {
-          loadingState.itemsRequested++;
+          taskTracker.taskCount++;
         } else {
-          loadingState.itemsLoaded = 0;
-          loadingState.itemsRequested = 0;
+          taskTracker.taskCount = 0;
+          taskTracker.taskCompleted = 0;
         }
-        expect(count).toStrictEqual(loadingState);
+        expect(count).toStrictEqual(taskTracker);
         operation++;
       }
     });
