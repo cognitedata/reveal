@@ -13,7 +13,7 @@ module.exports = {
       items: [
         'examples/cad-basic', 
         'examples/cad-colors', 
-        'examples/cad-highlight', 
+        'examples/cad-highlighting', 
         'examples/cad-2doverlay'
       ],
     },
