@@ -37,7 +37,7 @@ describe('functions retrieve module', () => {
   describe('actions', () => {
     describe('retrieve', () => {
       const store = {
-        functions: { items: { items: Map() } },
+        items: { items: Map() },
       };
 
       it('should call sdk', async () => {
@@ -106,13 +106,11 @@ describe('functions retrieve module', () => {
       it('it should return an array of functions sorted by createdTime', () => {
         expect(
           functionsSortedRecentlyCreated({
-            functions: {
-              items: {
-                items: Map([
-                  [mockFunctionId, mockFunction],
-                  [mockFunctionId2, mockFunction2],
-                ]),
-              },
+            items: {
+              items: Map([
+                [mockFunctionId, mockFunction],
+                [mockFunctionId2, mockFunction2],
+              ]),
             },
           })
         ).toEqual([mockFunction2, mockFunction]);
@@ -122,36 +120,34 @@ describe('functions retrieve module', () => {
       it('it should return an array of functions sorted by its last call', () => {
         expect(
           functionsSortedLastCallSelector({
-            functions: {
-              items: {
-                items: Map([
-                  [mockFunctionId, mockFunction],
-                  [mockFunctionId2, mockFunction2],
-                ]),
+            items: {
+              items: Map([
+                [mockFunctionId, mockFunction],
+                [mockFunctionId2, mockFunction2],
+              ]),
+            },
+            allCalls: {
+              [mockFunctionId]: {
+                functionCalls: [
+                  {
+                    id: 10,
+                    startTime: new Date(1),
+                    endTime: new Date(),
+                    status: 'Completed',
+                  } as Call,
+                ],
+                logs: {},
               },
-              allCalls: {
-                [mockFunctionId]: {
-                  functionCalls: [
-                    {
-                      id: 10,
-                      startTime: new Date(1),
-                      endTime: new Date(),
-                      status: 'Completed',
-                    } as Call,
-                  ],
-                  logs: {},
-                },
-                [mockFunctionId2]: {
-                  functionCalls: [
-                    {
-                      id: 11,
-                      startTime: new Date(2),
-                      endTime: new Date(),
-                      status: 'Completed',
-                    } as Call,
-                  ],
-                  logs: {},
-                },
+              [mockFunctionId2]: {
+                functionCalls: [
+                  {
+                    id: 11,
+                    startTime: new Date(2),
+                    endTime: new Date(),
+                    status: 'Completed',
+                  } as Call,
+                ],
+                logs: {},
               },
             },
           })

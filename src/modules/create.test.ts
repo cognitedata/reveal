@@ -45,7 +45,7 @@ describe('function create module', () => {
       sdk.files.upload.mockClear();
       it('should dispatch appropriate actions', async () => {
         const store = {
-          functions: { create: { fileInfo: {} } },
+          create: { fileInfo: {} },
         };
         const dispatch = jest.fn();
         const getState = jest.fn().mockReturnValue(store);
@@ -68,7 +68,7 @@ describe('function create module', () => {
         sdk.files.upload.mockReturnValue({ uploadUrl: 'upload.com', id: 1 });
         sdk.files.upload.mockClear();
         const store = {
-          functions: { create: { fileInfo: {} } },
+          create: { fileInfo: {} },
         };
         const dispatch = jest.fn();
         const getState = jest.fn().mockReturnValue(store);
@@ -85,7 +85,7 @@ describe('function create module', () => {
       sdk.post.mockReturnValue({ status: 201 });
       it('should throw an error if there is no fileId set', async () => {
         const store = {
-          functions: { create: { fileInfo: {} } },
+          create: { fileInfo: {} },
         };
         const dispatch = jest.fn();
         const getState = jest.fn().mockReturnValue(store);
@@ -109,7 +109,7 @@ describe('function create module', () => {
         sdk.post.mockReturnValue({ status: 500 });
         sdk.post.mockClear();
         const store = {
-          functions: { create: { fileInfo: { fileId: 1 } } },
+          create: { fileInfo: { fileId: 1 } },
         };
         const dispatch = jest.fn();
         const getState = jest.fn().mockReturnValue(store);
@@ -141,7 +141,7 @@ describe('function create module', () => {
       it('should dispatch appropriate actions', async () => {
         sdk.post.mockReturnValue({ status: 201 });
         const store = {
-          functions: { create: { fileInfo: { fileId: 1 } } },
+          create: { fileInfo: { fileId: 1 } },
         };
         const dispatch = jest.fn().mockReturnValue(true);
         const getState = jest.fn().mockReturnValue(store);
@@ -175,7 +175,7 @@ describe('function create module', () => {
         sdk.post.mockReturnValue({ status: 201 });
         sdk.post.mockReset();
         const store = {
-          functions: { create: { fileInfo: { fileId: 1 } } },
+          create: { fileInfo: { fileId: 1 } },
         };
         const dispatch = jest.fn();
         const getState = jest.fn().mockReturnValue(store);

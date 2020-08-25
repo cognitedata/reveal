@@ -19,8 +19,6 @@ import App from './App';
 const middlewares = [thunk]; // add your middlewares like `redux-thunk`
 const mockStore = configureStore(middlewares);
 
-jest.mock('modules/files');
-
 const initialStoreState = {
   app: {},
   router: { location: { pathname: 'foo' } },

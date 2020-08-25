@@ -75,11 +75,12 @@ export default function App() {
       path: '/:tenant/functions',
       component: useMemo(
         () =>
-          React.lazy(() =>
-            import(
-              'containers/Functions/'
-              /* webpackChunkName: "functions" */
-            )
+          React.lazy(
+            () =>
+              import(
+                'containers/Functions/'
+                /* webpackChunkName: "functions" */
+              )
           ),
         []
       ),

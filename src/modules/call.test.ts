@@ -70,11 +70,9 @@ describe('function call module', () => {
         // const callApiMock = sdk.post;
         // const retrieveCallApiMock = sdk.get;
         const store = {
-          functions: {
-            call: {
-              function: mockFunction,
-              currentCallId: mockCallId,
-            },
+          call: {
+            function: mockFunction,
+            currentCallId: mockCallId,
           },
         };
 
@@ -125,11 +123,9 @@ describe('function call module', () => {
       });
       describe('without input', () => {
         const store = {
-          functions: {
-            call: {
-              function: mockFunction,
-              currentCallId: mockCallId,
-            },
+          call: {
+            function: mockFunction,
+            currentCallId: mockCallId,
           },
         };
 

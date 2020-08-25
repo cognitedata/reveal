@@ -29,9 +29,7 @@ describe('function response module', () => {
       sdk.get.mockResolvedValue({ status: 200, data: mockResponse });
 
       const store = {
-        functions: {
-          response: {},
-        },
+        response: {},
       };
       it('should dispatch appropriate actions', async () => {
         const dispatch = jest.fn();

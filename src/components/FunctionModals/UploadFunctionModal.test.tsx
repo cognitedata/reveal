@@ -19,10 +19,8 @@ const mockFile = {
 } as UploadFile;
 
 const initialStoreState = {
-  functions: {
-    create: {
-      fileInfo: {},
-    },
+  create: {
+    fileInfo: {},
   },
 };
 let initialStore = mockStore(initialStoreState);
@@ -143,13 +141,11 @@ describe('UploadFunctionModal', () => {
     it('should allow function upload if all criteria is met', () => {
       // criteria: lowercase function name with 1+ characters & a zip file & all other fields are within their character bounds
       const createFuncStoreState = {
-        functions: {
-          create: {
-            fileInfo: {
-              file: mockFile,
-            },
-            name: 'mocknewfunc',
+        create: {
+          fileInfo: {
+            file: mockFile,
           },
+          name: 'mocknewfunc',
         },
       };
       const createFuncStore = mockStore(createFuncStoreState);
@@ -174,14 +170,12 @@ describe('UploadFunctionModal', () => {
     it('should dispatch createFunction if submit button is clicked', () => {
       const mockFunctionName = 'mocknewfunc';
       const createFunctionStoreState = {
-        functions: {
-          create: {
-            fileInfo: {
-              file: mockFile,
-              fileId: 200,
-            },
-            name: mockFunctionName,
+        create: {
+          fileInfo: {
+            file: mockFile,
+            fileId: 200,
           },
+          name: mockFunctionName,
         },
       };
       const createFunctionStore = mockStore(createFunctionStoreState);

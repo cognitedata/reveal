@@ -1,7 +1,7 @@
 import produce from 'immer';
 import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { UploadFileMetadataResponse } from '@cognite/sdk';
+import { FileUploadResponse } from 'cognite-sdk-v3';
 import { UploadFile } from 'antd/lib/upload/interface';
 import UploadGCS from '@cognite/gcs-browser-upload';
 import { RootState } from 'reducers/index';
@@ -100,7 +100,7 @@ export const uploadFile = (file: UploadFile) => async (
     const fileMetadata = (await sdk.files.upload({
       name: file.name,
       source: 'Datastudio',
-    })) as UploadFileMetadataResponse;
+    })) as FileUploadResponse;
     const { uploadUrl, id } = fileMetadata;
     if (!uploadUrl || !id) {
       dispatch({

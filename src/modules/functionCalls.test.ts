@@ -164,10 +164,8 @@ describe('functionCalls module', () => {
     });
     describe('getFunctionsCalls', () => {
       const store = {
-        functions: {
-          items: {
-            items: Map([[mockFunctionId, mockFunction]]),
-          },
+        items: {
+          items: Map([[mockFunctionId, mockFunction]]),
         },
       };
       it('should dispatch appropriate actions', async () => {

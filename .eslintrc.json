@@ -26,6 +26,7 @@
     "@cognite/no-number-z-index-styled-components": "off",
     "@cognite/no-number-z-index-property": "off",
     "@cognite/no-number-z-index-inline-styling": "off",
+    "@cognite/no-number-z-index": "off",
     "prettier/prettier": [
       "error",
       {

@@ -47,29 +47,27 @@ const mockSchedule = {
 sdk.get.mockReturnValue({ data: { items: {} } });
 sdk.get.mockClear();
 const initialStoreState = {
-  functions: {
-    items: {
-      items: Map([[mockFunctionId, mockFunction]]),
-    },
-    call: {},
-    delete: {},
-    create: { fileInfo: {} },
-    allCalls: {},
-    schedules: {
-      list: {
-        items: {
-          [mockSchedule.id]: {
-            schedule: mockSchedule,
-            calls: [mockCall],
-          },
+  items: {
+    items: Map([[mockFunctionId, mockFunction]]),
+  },
+  call: {},
+  delete: {},
+  create: { fileInfo: {} },
+  allCalls: {},
+  schedules: {
+    list: {
+      items: {
+        [mockSchedule.id]: {
+          schedule: mockSchedule,
+          calls: [mockCall],
         },
       },
-      create: {},
-      delete: {},
     },
-    response: {
-      [mockFunctionExternalId]: {},
-    },
+    create: {},
+    delete: {},
+  },
+  response: {
+    [mockFunctionExternalId]: {},
   },
 };
 let initialStore = mockStore(initialStoreState);
@@ -191,11 +189,8 @@ describe('Functions', () => {
   it('should show run modal if a function is selected to run', () => {
     const runFunctionStoreState = {
       ...initialStoreState,
-      functions: {
-        ...initialStoreState,
-        call: { function: mockFunction },
-        response: {},
-      },
+      call: { function: mockFunction },
+      response: {},
     };
     const runFunctionStore = mockStore(runFunctionStoreState);
     const wrapper = mount(
@@ -249,14 +244,11 @@ describe('Functions', () => {
     } as Function;
     const searchStoreState = {
       ...initialStoreState,
-      functions: {
-        ...initialStoreState,
-        items: {
-          items: Map([
-            [mockFunctionId, mockFunction],
-            [mockFunctionId2, mockFunction2],
-          ]),
-        },
+      items: {
+        items: Map([
+          [mockFunctionId, mockFunction],
+          [mockFunctionId2, mockFunction2],
+        ]),
       },
     };
     const searchStore = mockStore(searchStoreState);
@@ -287,14 +279,11 @@ describe('Functions', () => {
     } as Function;
     const searchStoreState = {
       ...initialStoreState,
-      functions: {
-        ...initialStoreState,
-        items: {
-          items: Map([
-            [mockFunctionId, mockFunction],
-            [mockFunctionId2, mockFunction2],
-          ]),
-        },
+      items: {
+        items: Map([
+          [mockFunctionId, mockFunction],
+          [mockFunctionId2, mockFunction2],
+        ]),
       },
     };
     const searchStore = mockStore(searchStoreState);

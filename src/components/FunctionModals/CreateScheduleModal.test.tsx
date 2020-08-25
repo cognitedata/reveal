@@ -15,10 +15,8 @@ const mockStore = configureStore(middlewares);
 const mockFunctionExternalId = 'external id';
 const initialStoreState = {
   app: {},
-  functions: {
-    schedules: {
-      create: {},
-    },
+  schedules: {
+    create: {},
   },
 };
 let initialStore = mockStore(initialStoreState);

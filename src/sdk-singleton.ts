@@ -1,23 +1,11 @@
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient } from 'cognite-sdk-v3';
 
-import sdk, {
-  getAuthState as _getAuthState,
-  loginAndAuthIfNeeded as _loginAndAuthIfNeeded,
-  // @ts-ignore
+import {
+  v3Client,
+  getAuthState,
+  loginAndAuthIfNeeded,
 } from '@cognite/cdf-sdk-singleton';
 
-export default sdk as CogniteClient;
+export default v3Client as CogniteClient;
 
-type AuthenticationState = {
-  project: string | undefined;
-  projectId: number | undefined;
-  tenant: string | undefined;
-  username: string | undefined;
-  authenticated: boolean;
-};
-
-export const getAuthState: () => AuthenticationState = _getAuthState;
-export const loginAndAuthIfNeeded: (
-  tenant: string,
-  env: string
-) => Promise<AuthenticationState> = _loginAndAuthIfNeeded;
+export { getAuthState, loginAndAuthIfNeeded };

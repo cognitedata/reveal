@@ -9,7 +9,7 @@ import {
   ExternalId,
   CogniteInternalId,
   CogniteClient,
-} from '@cognite/sdk';
+} from 'cognite-sdk-v3';
 import { RootState } from 'reducers';
 import sdk from 'sdk-singleton';
 import { Result } from './types';

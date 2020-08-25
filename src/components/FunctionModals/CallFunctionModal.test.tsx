@@ -26,18 +26,16 @@ const mockSimpleResult = {
 
 const initialStoreState = {
   app: {},
-  functions: {
-    call: {
-      function: mockFunction,
-      result: mockSimpleResult,
-    },
-    response: {
-      [mockFunction.externalId]: {
-        [mockSimpleResult.id]: {
-          response: { a: 'b' },
-          done: true,
-          error: false,
-        },
+  call: {
+    function: mockFunction,
+    result: mockSimpleResult,
+  },
+  response: {
+    [mockFunction.externalId]: {
+      [mockSimpleResult.id]: {
+        response: { a: 'b' },
+        done: true,
+        error: false,
       },
     },
   },
@@ -119,15 +117,13 @@ describe('CallFunctionModal', () => {
 
       const completedStoreState = {
         app: {},
-        functions: {
-          call: {
-            function: mockFunction,
-            result: mockCompletedResult,
-          },
-          delete: {},
-          newFunction: {},
-          response: {},
+        call: {
+          function: mockFunction,
+          result: mockCompletedResult,
         },
+        delete: {},
+        newFunction: {},
+        response: {},
       };
       const completedStore = mockStore(completedStoreState);
 
@@ -152,15 +148,13 @@ describe('CallFunctionModal', () => {
 
       const failedStoreState = {
         app: {},
-        functions: {
-          call: {
-            function: mockFunction,
-            result: mockFaileddResult,
-          },
-          delete: {},
-          newFunction: {},
-          response: {},
+        call: {
+          function: mockFunction,
+          result: mockFaileddResult,
         },
+        delete: {},
+        newFunction: {},
+        response: {},
       };
       const failedStore = mockStore(failedStoreState);
       const wrapper = mount(
@@ -184,15 +178,13 @@ describe('CallFunctionModal', () => {
 
       const failedStoreState = {
         app: {},
-        functions: {
-          call: {
-            function: mockFunction,
-            result: mockFaileddResult,
-          },
-          delete: {},
-          newFunction: {},
-          response: {},
+        call: {
+          function: mockFunction,
+          result: mockFaileddResult,
         },
+        delete: {},
+        newFunction: {},
+        response: {},
       };
       const failedStore = mockStore(failedStoreState);
       const wrapper = mount(
@@ -215,15 +207,13 @@ describe('CallFunctionModal', () => {
 
       const timeoutStoreState = {
         app: {},
-        functions: {
-          call: {
-            function: mockFunction,
-            result: mockTimeoutResult,
-          },
-          delete: {},
-          newFunction: {},
-          response: {},
+        call: {
+          function: mockFunction,
+          result: mockTimeoutResult,
         },
+        delete: {},
+        newFunction: {},
+        response: {},
       };
       const timoeutStore = mockStore(timeoutStoreState);
       const wrapper = mount(

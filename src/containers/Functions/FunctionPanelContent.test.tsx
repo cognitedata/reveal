@@ -45,23 +45,21 @@ const mockSchedule = {
   data: {},
 } as Schedule;
 const initialStoreState = {
-  functions: {
-    allCalls: {
-      [mockFunctionId]: {
-        functionCalls: [mockCall],
-      },
+  allCalls: {
+    [mockFunctionId]: {
+      functionCalls: [mockCall],
     },
-    schedules: {
-      list: {
-        items: {
-          [mockScheduleId]: { schedule: mockSchedule, calls: [mockCall] },
-        },
-      },
-      create: {},
-      delete: {},
-    },
-    response: {},
   },
+  schedules: {
+    list: {
+      items: {
+        [mockScheduleId]: { schedule: mockSchedule, calls: [mockCall] },
+      },
+    },
+    create: {},
+    delete: {},
+  },
+  response: {},
 };
 const initialStore = mockStore(initialStoreState);
 let mockFunctionPanelContent = <Provider store={initialStore} />;

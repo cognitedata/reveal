@@ -1,6 +1,6 @@
 import { Action, AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { SingleCogniteCapability } from '@cognite/sdk';
+import { SingleCogniteCapability } from 'cognite-sdk-v3';
 import { RootState } from 'reducers/index';
 import queryString from 'query-string';
 import { History } from 'history';

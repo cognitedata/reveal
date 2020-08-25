@@ -21,12 +21,10 @@ const mockFunction = {
 } as Function;
 const initialStoreState = {
   app: {},
-  functions: {
-    call: {},
-    delete: {},
-    schedules: {
-      list: {},
-    },
+  call: {},
+  delete: {},
+  schedules: {
+    list: {},
   },
 };
 let initialStore = mockStore(initialStoreState);
@@ -87,11 +85,9 @@ describe('FunctionPanelHeader', () => {
   });
   it('should call useEffect if there was an error in deleting a function', () => {
     const deletingFunctionStoreState = {
-      functions: {
-        ...initialStoreState,
-        delete: {
-          error: true,
-        },
+      ...initialStoreState,
+      delete: {
+        error: true,
       },
     };
     const deletingFunctionStore = mockStore(deletingFunctionStoreState);

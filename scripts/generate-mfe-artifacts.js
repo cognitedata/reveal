@@ -117,7 +117,7 @@ async function main() {
     // serving assets in the preview server.
     shell(`mkdir ${buildDir}/static/static`);
     shell(`mv ${buildDir}/static/js ${buildDir}/static/static`);
-    shell(`mv ${buildDir}/static/media ${buildDir}/static/static`);
+    // shell(`mv ${buildDir}/static/media ${buildDir}/static/static`);
     shell(`mv ${buildDir}/index.js ${buildDir}/static`);
     shell(`mv ${buildDir}/index.js.map ${buildDir}/static`);
 

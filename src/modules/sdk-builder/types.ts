@@ -1,4 +1,4 @@
-import { Limit } from '@cognite/sdk';
+import { Limit } from 'cognite-sdk-v3';
 
 export type ResourceType =
   | 'assets'

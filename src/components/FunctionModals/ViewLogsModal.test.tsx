@@ -27,11 +27,9 @@ const mockLogs = [
 ];
 const initialStoreState = {
   app: {},
-  functions: {
-    allCalls: {
-      [mockFunctionId]: {
-        logs: { [mockCallId]: { logs: mockLogs } },
-      },
+  allCalls: {
+    [mockFunctionId]: {
+      logs: { [mockCallId]: { logs: mockLogs } },
     },
   },
 };
@@ -125,11 +123,9 @@ describe('ViewLogsModal', () => {
   it('displays a title with loading icon if fetching is set', () => {
     const fetchingStoreState = {
       app: {},
-      functions: {
-        allCalls: {
-          [mockFunctionId]: {
-            logs: { [mockCallId]: { fetching: true } },
-          },
+      allCalls: {
+        [mockFunctionId]: {
+          logs: { [mockCallId]: { fetching: true } },
         },
       },
     };
@@ -154,11 +150,9 @@ describe('ViewLogsModal', () => {
   it('displays text if fetching is set', () => {
     const fetchingStoreState = {
       app: {},
-      functions: {
-        allCalls: {
-          [mockFunctionId]: {
-            logs: { [mockCallId]: { fetching: true } },
-          },
+      allCalls: {
+        [mockFunctionId]: {
+          logs: { [mockCallId]: { fetching: true } },
         },
       },
     };
@@ -182,11 +176,9 @@ describe('ViewLogsModal', () => {
   it('displays a title with error icon if error is set', () => {
     const errorStoreState = {
       app: {},
-      functions: {
-        allCalls: {
-          [mockFunctionId]: {
-            logs: { [mockCallId]: { error: true } },
-          },
+      allCalls: {
+        [mockFunctionId]: {
+          logs: { [mockCallId]: { error: true } },
         },
       },
     };
@@ -211,11 +203,9 @@ describe('ViewLogsModal', () => {
   it('displays text if error is set', () => {
     const errorStoreState = {
       app: {},
-      functions: {
-        allCalls: {
-          [mockFunctionId]: {
-            logs: { [mockCallId]: { error: true } },
-          },
+      allCalls: {
+        [mockFunctionId]: {
+          logs: { [mockCallId]: { error: true } },
         },
       },
     };
