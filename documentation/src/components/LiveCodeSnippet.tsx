@@ -7,15 +7,15 @@ import styles from './styles.module.css';
 import oceanicNext from 'prism-react-renderer/themes/oceanicNext';
 const defaultCodeTheme = oceanicNext;
 
-export type LivCodeSnippetProps = {
+export type LiveCodeSnippetProps = {
   children: string;
   theme: PrismTheme;
   transformCode: (code: string) => string;
   props: any;
 }
 
-export class LiveCodeSnippet extends React.Component<LivCodeSnippetProps> {
-  constructor(props: LivCodeSnippetProps) {
+export class LiveCodeSnippet extends React.Component<LiveCodeSnippetProps> {
+  constructor(props: LiveCodeSnippetProps) {
     super(props);
   }
 
