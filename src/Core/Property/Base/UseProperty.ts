@@ -1,4 +1,3 @@
-import * as Lodash from "lodash";
 import BaseProperty from "@/Core/Property/Base/BaseProperty";
 import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 
@@ -20,7 +19,7 @@ export default abstract class UseProperty<T> extends BaseProperty
   private readonly _instance?: object;
   private _value?: T;
   private _options?: T[];
-  private _fieldName: string;
+  private _fieldName?: string;
   private _use?: boolean; // undefined = hide the use button
 
   private _apply?: Action;
@@ -37,11 +36,10 @@ export default abstract class UseProperty<T> extends BaseProperty
   public get hasOptions(): boolean { return this._options !== undefined && this._options.length > 0; }
   public get options(): T[] | undefined { return this._options; }
   public set options(value: T[] | undefined) { this._options = value; }
-  public get fieldName(): string { return this._fieldName; }
-  public set fieldName(value: string) { this._fieldName = value; }
+  public get useName(): string { return `use${this.name.charAt(0).toUpperCase()}${this.name.substring(1)}`; }
+  public get fieldName(): string | undefined { return this._fieldName; }
+  public set fieldName(value: string | undefined) { this._fieldName = value; }
   public get isOptional(): boolean { return this._use !== undefined; }
-  public get use(): boolean { return this._use === undefined || this._use; }
-  public set use(value: boolean) { this._use = value; }
   public get optionIconDelegate(): GetOptionIcon | undefined { return this._getOptionIconDelegate; }
   public set optionIconDelegate(value: GetOptionIcon | undefined) { this._getOptionIconDelegate = value; }
   public get applyByFieldNameDelegate(): StringAction | undefined { return this._applyByFieldNameDelegate; }
@@ -62,23 +60,30 @@ export default abstract class UseProperty<T> extends BaseProperty
 
     this._options = params.options;
     this._fieldName = params.name;
-    this._use = params.use;
 
     // Set the value
     if (params.instance)
     {
-      if (!Reflect.has(params.instance, params.name))
+      if (params.value !== undefined)
+        throw Error("UseProperty has both value and instance");
+
+      if (!Reflect.has(params.instance, this.name))
       {
-        this.displayName = "ERROR";
+        this.displayName = `NOT_FOUND ${this.name}`;
         return;
       }
+      if (Reflect.has(params.instance, this.useName))
+        this._use = true; // just set it either true or false
+
       this._instance = params.instance;
-      this.displayName = Lodash.startCase(this.name);
     }
     else if (params.value !== undefined)
+    {
       this._value = params.value;
+      this._use = params.use;
+    }
     else
-      throw Error("UseProperty has no value");
+      throw Error("UseProperty has no value or instance");
   }
 
   //==================================================
@@ -107,6 +112,35 @@ export default abstract class UseProperty<T> extends BaseProperty
     this.apply();
   }
 
+  public get use(): boolean
+  {
+    if (this._use === undefined)
+      return true;
+
+    if (!this._instance)
+      return this._use;
+
+    return Reflect.get(this._instance, this.useName) as boolean;
+  }
+
+  public set use(value: boolean)
+  {
+    if (this.isReadOnly)
+      throw Error("Cannot set use on a readonly property");
+
+    if (this._use === undefined)
+      throw Error("Cannot set use, it is not optional");
+
+    if (this.use === value)
+      return; // not changed
+
+    if (!this._instance)
+      this._use = value;
+    else
+      Reflect.set(this._instance, this.useName, value);
+    this.apply();
+  }
+
   //==================================================
   // OVERRIDES of BaseProperty
   //==================================================
@@ -122,7 +156,7 @@ export default abstract class UseProperty<T> extends BaseProperty
     if (this._instance && this._apply)
       this._apply.call(this._instance);
 
-    if (this._applyByFieldNameDelegate)
+    if (this._applyByFieldNameDelegate && this.fieldName)
       this._applyByFieldNameDelegate(this.fieldName);
   }
 
