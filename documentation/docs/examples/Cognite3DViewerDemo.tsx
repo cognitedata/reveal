@@ -33,6 +33,7 @@ export default function Cognite3DViewerDemo({ client, modelId, revisionId }: Dem
     }
 
     (window as any).viewer = viewer;
+    (window as any).sdk = client;
     return () => {
       viewer && viewer.dispose();
     };
