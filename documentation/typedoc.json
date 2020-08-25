@@ -1,0 +1,15 @@
+{
+  "excludeExternals": true,
+  "externalPattern": ["../viewer/src/__tests__/**"],
+  "exclude": ["**/*+(index|.spec|.test).ts"],
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "stripInternal": true,
+
+  "ignoreCompilerErrors": true,
+  "readme": "none",
+  "tsconfig": "../viewer/tsconfig.json",
+
+  "out" : "./generated",
+  "mode": "library"
+}
