@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { InputBase, MenuItem } from "@material-ui/core";
+import React from "react";
+import { InputBase, MenuItem, Theme } from "@material-ui/core";
 import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import { makeStyles } from "@material-ui/core/styles";
@@ -21,17 +21,16 @@ const ColorButton = withStyles((theme) => ({
     border: "none",
     padding: 0,
     minHeight: "50%",
-    // backgroundColor: purple[500],
     "&:hover": {
       border: "none",
       color: theme.palette.primary.contrastText,
       backgroundColor: theme.palette.primary.dark,
     },
-    // '&:focus': {
-    //   borderColor: theme.palette.primary.contrastText,
-    //   color: theme.palette.primary.contrastText,
-    //   backgroundColor: theme.palette.primary.dark,
-    // },
+    "&:focus": {
+      border: "none",
+      color: theme.palette.primary.contrastText,
+      backgroundColor: theme.palette.primary.dark,
+    },
   },
 }))(Button);
 
@@ -78,10 +77,15 @@ const StyledListItemText = withStyles(() => ({
   },
 }))(ListItemText);
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme: Theme) => ({
   root: {
     height: "100%",
     width: "100%",
+    borderWidth: 1,
+    borderStyle: "solid",
+    borderRadius: 0,
+    borderColor: theme.palette.primary.main,
+    boxSizing: "border-box",
   },
   menuItem: {
     display: "flex",
@@ -116,34 +120,33 @@ export function ColorMapSelector(props: {
   onChange?: (val: string) => void;
   disabled?: boolean;
 }) {
-  const [currentValue, setCurrentValue] = useState(props.value);
+  const { options, colorMapOptions, value, onChange, disabled } = props;
   const classes = useStyles();
 
-  const updateState = (value) => {
-    setCurrentValue(value);
-    if (props.onChange) {
-      props.onChange(value);
+  const updateState = (updateVal: string) => {
+    if (onChange) {
+      onChange(updateVal);
     }
   };
   const handleChange = (event) => {
     updateState(event.target.value);
   };
+  const findIndexOfValueInOptions = (valueOptions: string[], val?: string) => {
+    // will return -1 if value is not found in options
+    return valueOptions.findIndex((optionValue) => optionValue === val) || 0;
+  };
   const setPrevOption = () => {
-    if (props.options) {
-      const indexOfValueInOptions =
-        props.options.findIndex((value) => value === currentValue) || 0; // will be -1 if value is not found in options
-      const newIndex = indexOfValueInOptions - 1;
+    if (options) {
+      const newIndex = findIndexOfValueInOptions(options, value) - 1;
       if (newIndex < 0) return;
-      updateState(props.options[newIndex]);
+      updateState(options[newIndex]);
     }
   };
   const setNextOption = () => {
-    if (props.options) {
-      const indexOfValueInOptions =
-        props.options.findIndex((value) => value === currentValue) || 0; // will be -1 if value is not found in options
-      const newIndex = indexOfValueInOptions + 1;
-      if (newIndex >= props.options.length) return;
-      updateState(props.options[newIndex]);
+    if (options) {
+      const newIndex = findIndexOfValueInOptions(options, value) + 1;
+      if (newIndex >= options.length) return;
+      updateState(options[newIndex]);
     }
   };
 
@@ -152,15 +155,15 @@ export function ColorMapSelector(props: {
       <StyledSelect
         labelId="color-map-select"
         id="color-map-select"
-        value={currentValue}
-        disabled={props.disabled}
+        value={value}
+        disabled={disabled}
         onChange={handleChange}
         input={<StyledInput />}
       >
-        {props.options?.map((option: string, index: number) => {
+        {options?.map((option: string, index: number) => {
           let colors: string[] = [];
-          if (props.colorMapOptions) {
-            colors = props.colorMapOptions[index];
+          if (colorMapOptions) {
+            colors = colorMapOptions[index];
           }
           return (
             <MenuItem className={classes.menuItem} value={option} key={option}>
@@ -176,10 +179,10 @@ export function ColorMapSelector(props: {
         color="primary"
         aria-label="vertical outlined primary button group"
       >
-        <ColorButton onClick={setPrevOption} disabled={props.disabled}>
+        <ColorButton onClick={setPrevOption} disabled={disabled}>
           <ArrowDropUpIcon />{" "}
         </ColorButton>
-        <ColorButton onClick={setNextOption} disabled={props.disabled}>
+        <ColorButton onClick={setNextOption} disabled={disabled}>
           <ArrowDropDownIcon />{" "}
         </ColorButton>
       </ButtonGroup>
