@@ -12,7 +12,6 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
-    "release": "yarn run mkdist && webpack",
     "build": "rimraf -rf dist/ && yarn run mkdist && webpack --env.development",
     "build:prod": "yarn run mkdist && webpack",
     "build:watch": "yarn run build -- --watch",
@@ -26,7 +25,7 @@
     "lint": "eslint . --ext .ts,.js --max-warnings 0 && yarn run tsc",
     "lint:fix": "eslint . --ext .ts,.js --max-warnings 0 --fix",
     "tsc": "tsc --noEmit --incremental false --skipLibCheck true",
-    "prepublishscript": "yarn run release && yarn run coverage",
+    "prepublishscript": "yarn run build:prod && yarn run coverage",
     "publishscript": "node script/copyPackage.js",
     "postpublishscript": "cd dist && yarn publish"
   },
