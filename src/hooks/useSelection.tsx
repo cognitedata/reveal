@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
-import ResourceSelectionContext, {
-  ResourceItem,
-} from 'context/ResourceSelectionContext';
+import ResourceSelectionContext from 'context/ResourceSelectionContext';
+import { ResourceItem } from 'types';
 import { Button, Checkbox } from '@cognite/cogs.js';
 
 export const useSelectionButton = () => {
@@ -11,23 +10,23 @@ export const useSelectionButton = () => {
   return (item: ResourceItem, small = false) => {
     let resourceName = 'Resource';
     switch (item.type) {
-      case 'assets': {
+      case 'asset': {
         resourceName = 'Asset';
         break;
       }
-      case 'events': {
+      case 'event': {
         resourceName = 'Event';
         break;
       }
-      case 'sequences': {
+      case 'sequence': {
         resourceName = 'Sequence';
         break;
       }
-      case 'files': {
+      case 'file': {
         resourceName = 'File';
         break;
       }
-      case 'timeseries': {
+      case 'timeSeries': {
         resourceName = 'Time Series';
         break;
       }

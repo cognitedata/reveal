@@ -2,10 +2,10 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Body, Graphic } from '@cognite/cogs.js';
 import { SearchFilterSection, FileTable } from 'components/Common';
 import {
-  FilesMetadata as File,
+  FileInfo as File,
   FilesSearchFilter,
   FileFilterProps,
-} from '@cognite/sdk';
+} from 'cognite-sdk-v3';
 import { useSelector, useDispatch } from 'react-redux';
 import { searchSelector, search, count, countSelector } from 'modules/files';
 import { FileSmallPreview } from 'containers/Files';

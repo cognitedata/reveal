@@ -1,9 +1,9 @@
 import React from 'react';
-import { FilesMetadata } from '@cognite/sdk';
+import { FileInfo } from 'cognite-sdk-v3';
 import { InfoGrid, DetailsItem } from 'components/Common';
 import moment from 'moment';
 
-export const FileInfoGrid = ({ file }: { file: FilesMetadata }) => {
+export const FileInfoGrid = ({ file }: { file: FileInfo }) => {
   return (
     <InfoGrid noBorders>
       <DetailsItem name="Source" value={file.source} />

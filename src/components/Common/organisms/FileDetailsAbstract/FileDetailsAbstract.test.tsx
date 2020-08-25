@@ -1,10 +1,10 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import { FilesMetadata } from '@cognite/sdk';
+import { FileInfo } from 'cognite-sdk-v3';
 import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
 import { FileDetailsAbstract } from './FileDetailsAbstract';
 
-const file: FilesMetadata = {
+const file: FileInfo = {
   name: 'Hello',
   id: 123,
   uploaded: false,

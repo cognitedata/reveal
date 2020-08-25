@@ -1,18 +1,18 @@
 import {
   TimeseriesFilterQuery,
-  TimeSeriesSearchDTO,
-  GetTimeSeriesMetadataDTO,
+  TimeseriesSearchFilter,
+  Timeseries,
   TimeSeriesUpdateById,
-} from '@cognite/sdk';
+} from 'cognite-sdk-v3';
 import { RootState } from 'reducers';
 import resourceBuilder from './sdk-builder';
 import { Result } from './sdk-builder/types';
 
 const NAME = 'timeseries';
-type Resource = GetTimeSeriesMetadataDTO;
+type Resource = Timeseries;
 type Change = TimeSeriesUpdateById;
 type ListScope = TimeseriesFilterQuery;
-type SearchFilter = TimeSeriesSearchDTO;
+type SearchFilter = TimeseriesSearchFilter;
 
 const {
   reducer,

@@ -5,14 +5,14 @@ import {
   clearAnnotationsForFile,
   linkFileToAssetIds,
 } from '@cognite/annotations';
-import { FilesMetadata } from '@cognite/sdk';
+import { FileInfo } from 'cognite-sdk-v3';
 import reducer, * as Annotations from './annotations';
 import { mockStore } from '../utils/mockStore';
 
 jest.mock('utils/AnnotationUtils');
 jest.mock('@cognite/annotations');
 
-const mockFile: FilesMetadata = {
+const mockFile: FileInfo = {
   name: 'hello world',
   id: 1,
   createdTime: new Date(),

@@ -1,15 +1,15 @@
 import {
   FilesSearchFilter,
-  FilesMetadata,
+  FileInfo,
   FileRequestFilter,
   FileChangeUpdateById,
-} from '@cognite/sdk';
+} from 'cognite-sdk-v3';
 import { RootState } from 'reducers';
 import resourceBuilder from './sdk-builder';
 import { Result } from './sdk-builder/types';
 
 const NAME = 'files';
-type Resource = FilesMetadata;
+type Resource = FileInfo;
 type Change = FileChangeUpdateById;
 type ListScope = FileRequestFilter;
 type SearchFilter = FilesSearchFilter;

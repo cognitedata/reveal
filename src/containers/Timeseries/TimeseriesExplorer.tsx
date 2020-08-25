@@ -24,7 +24,7 @@ export const TimeseriesExplorer = () => {
     el =>
       el.state === 'active' &&
       el.id === timeseriesIdNumber &&
-      el.type === 'timeseries'
+      el.type === 'timeSeries'
   );
 
   useEffect(() => {
@@ -33,7 +33,7 @@ export const TimeseriesExplorer = () => {
         resourcesState
           .filter(el => el.state !== 'active')
           .concat([
-            { id: timeseriesIdNumber, type: 'timeseries', state: 'active' },
+            { id: timeseriesIdNumber, type: 'timeSeries', state: 'active' },
           ])
       );
     }

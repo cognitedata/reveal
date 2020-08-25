@@ -3,7 +3,7 @@ import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { v4 as uuid } from 'uuid';
 import { createSelector } from 'reselect';
-import { InternalId } from '@cognite/sdk';
+import { InternalId } from 'cognite-sdk-v3';
 import { RootState } from '../reducers/index';
 import { ResourceType } from './sdk-builder/types';
 import {

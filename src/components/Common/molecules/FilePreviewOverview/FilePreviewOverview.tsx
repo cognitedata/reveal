@@ -15,12 +15,12 @@ import {
   AnnotationResourceType,
 } from '@cognite/annotations';
 import {
-  FilesMetadata,
+  FileInfo,
   Asset,
-  GetTimeSeriesMetadataDTO,
+  Timeseries,
   Sequence,
   CogniteEvent,
-} from '@cognite/sdk';
+} from 'cognite-sdk-v3';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   itemSelector as fileSelector,
@@ -130,14 +130,14 @@ const Tabs = styled.div`
 `;
 
 type FilePreviewOverviewProps = {
-  file: FilesMetadata;
+  file: FileInfo;
   annotations: CogniteAnnotation[];
   extras?: React.ReactNode;
   page?: number;
   onPageChange: (page: number) => void;
   onAssetClicked?: (item: Asset) => void;
-  onFileClicked?: (item: FilesMetadata) => void;
-  onTimeseriesClicked?: (item: GetTimeSeriesMetadataDTO) => void;
+  onFileClicked?: (item: FileInfo) => void;
+  onTimeseriesClicked?: (item: Timeseries) => void;
   onEventClicked?: (item: CogniteEvent) => void;
   onSequenceClicked?: (item: Sequence) => void;
 };

@@ -1,18 +1,15 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { ResourceType } from 'modules/sdk-builder/types';
+import { ResourceItem } from 'types';
 import {
   AssetFilterProps,
   TimeseriesFilter,
   FileFilterProps,
   EventFilter,
   SequenceFilter,
-} from '@cognite/sdk';
+} from 'cognite-sdk-v3';
 
 export type ResourceSelectionMode = 'single' | 'multiple' | 'none';
-export type ResourceItem = {
-  id: number;
-  type: ResourceType;
-};
 export type ResourceItemState = ResourceItem & {
   state: 'disabled' | 'active' | 'selected';
 };

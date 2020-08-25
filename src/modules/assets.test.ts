@@ -8,7 +8,7 @@ jest.mock('sdk-singleton', () => {
 });
 
 import { Map } from 'immutable';
-import { Asset } from '@cognite/sdk';
+import { Asset } from 'cognite-sdk-v3';
 import sdk from 'sdk-singleton';
 import reducer, * as Assets from './assets';
 import { mockStore } from '../utils/mockStore';

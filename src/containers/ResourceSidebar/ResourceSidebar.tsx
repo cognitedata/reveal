@@ -8,8 +8,8 @@ import { TimeseriesPreview } from 'containers/Timeseries';
 import { GlobalSearchResults } from 'containers/GlobalSearch/GlobalSearchResults';
 import ResourceActionsContext from 'context/ResourceActionsContext';
 import { RenderResourceActionsFunction } from 'types/Types';
-import { ResourceItem, useQuery } from 'context/ResourceSelectionContext';
-import { ResourceType } from 'modules/sdk-builder/types';
+import { useQuery } from 'context/ResourceSelectionContext';
+import { ResourceItem } from 'types';
 
 const Drawer = styled.div<{ visible: boolean }>`
   position: fixed;
@@ -60,24 +60,26 @@ export const ResourceSidebar = ({
   );
 
   const renderResourceActions: RenderResourceActionsFunction = useCallback(
-    ({ fileId, assetId, timeseriesId, sequenceId }) => {
+    resourceItem => {
       let resourceName = 'Resource';
-      let resourceType: ResourceType | undefined;
-      if (fileId) {
-        resourceName = 'File';
-        resourceType = 'files';
-      }
-      if (assetId) {
-        resourceName = 'Asset';
-        resourceType = 'assets';
-      }
-      if (timeseriesId) {
-        resourceName = 'Time Series';
-        resourceType = 'timeseries';
-      }
-      if (sequenceId) {
-        resourceName = 'Sequence';
-        resourceType = 'sequences';
+      const resourceType = resourceItem?.type;
+      switch (resourceItem?.type) {
+        case 'file': {
+          resourceName = 'File';
+          break;
+        }
+        case 'asset': {
+          resourceName = 'Asset';
+          break;
+        }
+        case 'timeSeries': {
+          resourceName = 'Time Series';
+          break;
+        }
+        case 'sequence': {
+          resourceName = 'Sequence';
+          break;
+        }
       }
       const viewButton = () => {
         if (resourceType) {
@@ -86,10 +88,7 @@ export const ResourceSidebar = ({
               type="secondary"
               key="view"
               onClick={() => {
-                setSelectedItem({
-                  type: resourceType!,
-                  id: (fileId || assetId || timeseriesId || sequenceId)!,
-                });
+                setSelectedItem(resourceItem);
               }}
               icon="ArrowRight"
             >
@@ -120,19 +119,19 @@ export const ResourceSidebar = ({
   if (selectedItem) {
     let preview = null;
     switch (selectedItem.type) {
-      case 'assets': {
+      case 'asset': {
         preview = <AssetPreview assetId={selectedItem.id} />;
         break;
       }
-      case 'timeseries': {
+      case 'timeSeries': {
         preview = <TimeseriesPreview timeseriesId={selectedItem.id} />;
         break;
       }
-      case 'sequences': {
+      case 'sequence': {
         preview = <SequencePreview sequenceId={selectedItem.id} />;
         break;
       }
-      case 'files': {
+      case 'file': {
         preview = <FilePreview fileId={selectedItem.id} />;
         break;
       }

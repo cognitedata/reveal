@@ -156,6 +156,7 @@ export const ResourcePreviewSidebar = ({
           annotation: selectedAnnotation,
         });
         const pendingObj = { ...selectedAnnotation };
+        // @ts-ignore
         delete pendingObj.id;
         delete pendingObj.metadata;
         dispatch(createAnnotations(file!, [pendingObj]));
@@ -349,17 +350,15 @@ export const ResourcePreviewSidebar = ({
     }
   }
   return (
-    <>
-      <ResourcePreviewWrapper hasContent={!!content}>
-        {content && (
-          <CloseButton
-            icon="Close"
-            variant="ghost"
-            onClick={() => deselectAnnotation()}
-          />
-        )}
-        {content}
-      </ResourcePreviewWrapper>
+    <ResourcePreviewWrapper hasContent={!!content}>
+      {content && (
+        <CloseButton
+          icon="Close"
+          variant="ghost"
+          onClick={() => deselectAnnotation()}
+        />
+      )}
+      {content}
       <ResourceActionsProvider>
         <ResourceSelectionProvider
           mode="single"
@@ -367,7 +366,7 @@ export const ResourcePreviewSidebar = ({
             let itemExternalId: string | undefined;
             let itemType: CogniteAnnotation['resourceType'];
             switch (item.type) {
-              case 'assets': {
+              case 'asset': {
                 const asset = getAsset(item.id);
                 itemType = 'asset';
                 if (asset) {
@@ -375,7 +374,7 @@ export const ResourcePreviewSidebar = ({
                 }
                 break;
               }
-              case 'files': {
+              case 'file': {
                 const previewFile = getFile(item.id);
                 itemType = 'file';
                 if (previewFile) {
@@ -383,7 +382,7 @@ export const ResourcePreviewSidebar = ({
                 }
                 break;
               }
-              case 'sequences': {
+              case 'sequence': {
                 itemType = 'sequence';
                 const sequence = getSequence(item.id);
                 if (sequence) {
@@ -391,7 +390,7 @@ export const ResourcePreviewSidebar = ({
                 }
                 break;
               }
-              case 'timeseries': {
+              case 'timeSeries': {
                 itemType = 'timeSeries';
                 const timeseries = getTimeseries(item.id);
                 if (timeseries) {
@@ -419,7 +418,7 @@ export const ResourcePreviewSidebar = ({
           </ResourceSidebar>
         </ResourceSelectionProvider>
       </ResourceActionsProvider>
-    </>
+    </ResourcePreviewWrapper>
   );
 };
 

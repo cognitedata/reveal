@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Icon, Button, Title, Badge, Colors, Body } from '@cognite/cogs.js';
 import { InfoGrid, InfoCell, ListItem, ButtonRow } from 'components/Common';
-import { Asset, FilesMetadata, GetTimeSeriesMetadataDTO } from '@cognite/sdk';
+import { Asset, FileInfo, Timeseries } from 'cognite-sdk-v3';
 import { AssetBreadcrumb } from '@cognite/gearbox';
 import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
@@ -13,13 +13,13 @@ const LIST_ITEM_HEIGHT = 42;
 
 interface AssetDetailsProps {
   asset: Asset;
-  files?: FilesMetadata[];
-  timeseries?: GetTimeSeriesMetadataDTO[];
+  files?: FileInfo[];
+  timeseries?: Timeseries[];
   actions?: React.ReactNode[];
   extras?: React.ReactNode;
   children?: React.ReactNode;
-  timeseriesPreview?: (timeseries: GetTimeSeriesMetadataDTO) => React.ReactNode;
-  filePreview?: (file: FilesMetadata) => React.ReactNode;
+  timeseriesPreview?: (timeseries: Timeseries) => React.ReactNode;
+  filePreview?: (file: FileInfo) => React.ReactNode;
 }
 
 const IconWrapper = styled.span`
@@ -77,7 +77,7 @@ export const AssetDetailsAbstract = ({
   const resourcesState = useResourcesState();
 
   const currentlyViewing = resourcesState.find(
-    el => el.type === 'assets' && el.state === 'active'
+    el => el.type === 'asset' && el.state === 'active'
   );
   const [selected, setSelected] = useState<
     { type: ResourceType; id: number } | undefined

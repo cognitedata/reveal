@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 
-import { InternalId } from '@cognite/sdk';
+import { InternalId } from 'cognite-sdk-v3';
 
 import { ResourceType, Query } from './types';
 

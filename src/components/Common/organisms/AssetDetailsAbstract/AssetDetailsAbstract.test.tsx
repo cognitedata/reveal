@@ -1,6 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import { Asset } from '@cognite/sdk';
+import { Asset } from 'cognite-sdk-v3';
 import { ClientSDKProvider } from '@cognite/gearbox';
 import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
 import { AssetDetailsAbstract } from './AssetDetailsAbstract';

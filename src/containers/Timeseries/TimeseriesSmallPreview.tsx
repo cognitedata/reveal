@@ -19,7 +19,7 @@ export const TimeseriesSmallPreview = ({
   const dispatch = useDispatch();
   const renderResourceActions = useResourceActionsContext();
   const selectionButton = useSelectionButton()({
-    type: 'timeseries',
+    type: 'timeSeries',
     id: timeseriesId,
   });
 
@@ -34,7 +34,8 @@ export const TimeseriesSmallPreview = ({
     items.push(...(propActions || []));
     items.push(
       ...renderResourceActions({
-        timeseriesId,
+        id: timeseriesId,
+        type: 'timeSeries',
       })
     );
     return items;

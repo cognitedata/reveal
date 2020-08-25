@@ -3,7 +3,7 @@ import {
   AssetSearchFilter,
   AssetListScope,
   AssetChangeById,
-} from '@cognite/sdk';
+} from 'cognite-sdk-v3';
 import { RootState } from 'reducers';
 import resourceBuilder from './sdk-builder';
 import { Result } from './sdk-builder/types';

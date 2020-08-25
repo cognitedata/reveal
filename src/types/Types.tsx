@@ -1,27 +1,18 @@
-export interface RelationshipResource {
-  resource:
-    | 'timeSeries'
-    | 'threeD'
-    | 'threeDRevision'
-    | 'asset'
-    | 'event'
-    | 'file';
-  resourceId: string;
-}
+export type ResourceType =
+  | 'asset'
+  | 'timeSeries'
+  | 'sequence'
+  | 'file'
+  | 'event';
 
-export type RelationshipType =
-  | 'flowsTo'
-  | 'belongsTo'
-  | 'isParentOf'
-  | 'implements';
-export interface Relationship {
-  source: RelationshipResource;
-  target: RelationshipResource;
-  confidence: number;
-  dataSet: string;
-  externalId: string;
-  relationshipType: RelationshipType;
-}
+export type ResourceItem = {
+  id: number;
+  type: ResourceType;
+};
+
+export type RenderResourceActionsFunction = (
+  item: ResourceItem
+) => React.ReactNode[];
 
 export type ModelStatus =
   | 'New'
@@ -30,10 +21,3 @@ export type ModelStatus =
   | 'Completed'
   | 'Running'
   | 'Failed';
-
-export type RenderResourceActionsFunction = (props: {
-  assetId?: number;
-  fileId?: number;
-  timeseriesId?: number;
-  sequenceId?: number;
-}) => React.ReactNode[];

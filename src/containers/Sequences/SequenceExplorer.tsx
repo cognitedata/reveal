@@ -22,7 +22,7 @@ export const SequenceExplorer = () => {
     el =>
       el.state === 'active' &&
       el.id === sequenceIdNumber &&
-      el.type === 'sequences'
+      el.type === 'sequence'
   );
 
   useEffect(() => {
@@ -30,9 +30,7 @@ export const SequenceExplorer = () => {
       setResourcesState(
         resourcesState
           .filter(el => el.state !== 'active')
-          .concat([
-            { id: sequenceIdNumber, type: 'sequences', state: 'active' },
-          ])
+          .concat([{ id: sequenceIdNumber, type: 'sequence', state: 'active' }])
       );
     }
   }, [isActive, resourcesState, sequenceIdNumber, setResourcesState]);

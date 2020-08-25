@@ -11,7 +11,7 @@ import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionLis
 import { useHistory } from 'react-router-dom';
 import { Tabs } from 'antd';
 import moment from 'moment';
-import { SequenceColumn } from '@cognite/sdk';
+import { SequenceColumn } from 'cognite-sdk-v3';
 
 const formatSequenceColumns = (columns: SequenceColumn[]) =>
   columns.reduce(

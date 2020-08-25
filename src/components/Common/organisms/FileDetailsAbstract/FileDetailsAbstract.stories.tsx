@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';
-import { FilesMetadata } from '@cognite/sdk';
+import { FileInfo } from 'cognite-sdk-v3';
 import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
 import { FileDetailsAbstract } from './FileDetailsAbstract';
 
-const file: FilesMetadata = {
+const file: FileInfo = {
   id: 5927592366707648,
   createdTime: new Date(1580503121335),
   lastUpdatedTime: new Date(1580503121335),

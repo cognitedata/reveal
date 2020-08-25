@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Body, Graphic } from '@cognite/cogs.js';
 import { SearchFilterSection, AssetTable } from 'components/Common';
-import { Asset, AssetSearchFilter, AssetFilterProps } from '@cognite/sdk';
+import { Asset, AssetSearchFilter, AssetFilterProps } from 'cognite-sdk-v3';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   searchSelector,

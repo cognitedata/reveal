@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
-import { GetTimeSeriesMetadataDTO } from '@cognite/sdk';
+import { Timeseries } from 'cognite-sdk-v3';
 import { TimeseriesChart } from '@cognite/gearbox';
 import { Select } from 'antd';
 import { SelectWrapper, Loader } from 'components/Common';
 
 interface TimeseriesGraphProps {
-  timeseries?: GetTimeSeriesMetadataDTO;
+  timeseries?: Timeseries;
   graphHeight?: number;
   contextChart?: boolean;
 }

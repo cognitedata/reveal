@@ -35,7 +35,7 @@ import {
   SequenceListScope,
   EventFilterRequest,
   FilesSearchFilter,
-} from '@cognite/sdk';
+} from 'cognite-sdk-v3';
 import { useHistory } from 'react-router-dom';
 import { DetailsItem, Wrapper, ButtonRow } from 'components/Common';
 import moment from 'moment';

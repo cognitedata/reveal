@@ -8,7 +8,7 @@ import { Button, Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { Pagination } from 'antd';
 import { Loader } from 'components/Common';
-import { FilesMetadata, CogniteClient } from '@cognite/sdk';
+import { FileInfo, CogniteClient } from 'cognite-sdk-v3';
 
 const DocumentPagination = styled(Pagination)`
   position: absolute;
@@ -50,7 +50,7 @@ export type IAnnotationWithPage = IAnnotation<IRectShapeData> & {
 };
 
 type Props = {
-  file?: FilesMetadata;
+  file?: FileInfo;
   sdk: CogniteClient;
   drawLabel?: boolean;
   creatable?: boolean;
@@ -283,7 +283,7 @@ export const retrieveDownloadUrl = async (
   }
 };
 
-export const isPreviewableImage = (file: FilesMetadata) => {
+export const isPreviewableImage = (file: FileInfo) => {
   const { mimeType = '' } = file;
   return ['png', 'jpeg', 'jpg', 'svg'].some(el => mimeType.includes(el));
 };

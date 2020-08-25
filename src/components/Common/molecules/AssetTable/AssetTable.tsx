@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Asset } from '@cognite/sdk';
+import { Asset } from 'cognite-sdk-v3';
 import Table, { Column } from 'react-base-table';
 import { Body, Button } from '@cognite/cogs.js';
 import AutoSizer from 'react-virtualized-auto-sizer';
@@ -26,7 +26,7 @@ const headerRenderer = ({
 
 const ActionCell = ({ asset }: { asset: Asset }) => {
   const getButton = useSelectionCheckbox();
-  return getButton({ id: asset.id, type: 'assets' });
+  return getButton({ id: asset.id, type: 'asset' });
 };
 const ParentCell = ({
   asset,

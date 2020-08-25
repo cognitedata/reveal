@@ -1,4 +1,4 @@
-import { FilesMetadata, Asset } from '@cognite/sdk';
+import { FileInfo, Asset } from 'cognite-sdk-v3';
 import { PnidResponseEntity } from 'modules/fileContextualization/parsingJobs';
 import { stripWhitespace } from 'helpers/Helpers';
 import {
@@ -25,7 +25,7 @@ const assetNameToIdsMap = (assets: Asset[]) => {
   }, {} as { [key: string]: { id: number[]; externalId: string[] } });
 };
 
-const fileNameToIdsMap = (files: FilesMetadata[]) => {
+const fileNameToIdsMap = (files: FileInfo[]) => {
   return files.reduce((prev, item) => {
     const key = stripWhitespace(removeExtension(item.name));
     if (!prev[key]) {
@@ -65,10 +65,10 @@ const findSimilarMatches = (
 };
 
 export const createPendingAnnotationsFromJob = async (
-  file: FilesMetadata,
+  file: FileInfo,
   entities: PnidResponseEntity[],
   refAssets: Asset[],
-  refFiles: FilesMetadata[],
+  refFiles: FileInfo[],
   jobId: string,
   existingEntities: CogniteAnnotation[]
 ): Promise<PendingCogniteAnnotation[]> => {

@@ -5,11 +5,11 @@ import '@cognite/cogs.js/dist/antd.css';
 import '@cognite/cogs.js/dist/cogs.css';
 import GlobalStyle from 'styles/global-styles';
 import theme from 'styles/theme';
-import { GetTimeSeriesMetadataDTO } from '@cognite/sdk';
+import { Timeseries } from 'cognite-sdk-v3';
 import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
 import { TimeseriesDetailsAbstract } from './TimeseriesDetailsAbstract';
 
-const exampleTimeSeries: GetTimeSeriesMetadataDTO = {
+const exampleTimeSeries: Timeseries = {
   id: 5927592366707648,
   createdTime: new Date(1580503121335),
   lastUpdatedTime: new Date(1580503121335),

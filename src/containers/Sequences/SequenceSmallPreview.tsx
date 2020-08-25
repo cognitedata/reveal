@@ -18,7 +18,7 @@ export const SequenceSmallPreview = ({
 }) => {
   const renderResourceActions = useResourceActionsContext();
   const selectionButton = useSelectionButton()({
-    type: 'sequences',
+    type: 'sequence',
     id: sequenceId,
   });
 
@@ -34,7 +34,8 @@ export const SequenceSmallPreview = ({
     items.push(...(propActions || []));
     items.push(
       ...renderResourceActions({
-        sequenceId,
+        id: sequenceId,
+        type: 'sequence',
       })
     );
     return items;

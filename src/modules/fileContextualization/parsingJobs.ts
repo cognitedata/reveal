@@ -5,7 +5,7 @@ import { callUntilCompleted } from 'helpers/Helpers';
 import { RootState } from 'reducers';
 import { createPendingAnnotationsFromJob } from 'utils/AnnotationUtils';
 import { trackTimedUsage } from 'utils/Metrics';
-import { FilesMetadata, Asset } from '@cognite/sdk';
+import { FileInfo, Asset } from 'cognite-sdk-v3';
 import sdk from 'sdk-singleton';
 import { Result } from 'modules/sdk-builder/types';
 import { ModelStatus } from 'types/Types';
@@ -77,7 +77,7 @@ type PnidParsingJobSchema = {
 };
 
 export const startPnidParsingJob = (
-  file: FilesMetadata,
+  file: FileInfo,
   entities: string[],
   partialMatch: boolean,
   grayscale: boolean,
@@ -154,7 +154,7 @@ export const startPnidParsingJob = (
                 const filesData = dataKitItemsSelector(state)(
                   filesDataKitId,
                   true
-                ) as Result<FilesMetadata>;
+                ) as Result<FileInfo>;
 
                 // load all existing annotations
                 const existingAnnotations = selectAnnotations(state)(
@@ -210,7 +210,7 @@ export const startPnidParsingJob = (
 };
 
 export const startDocumentParsingJob = (
-  file: FilesMetadata,
+  file: FileInfo,
   entities: string[],
   assetsDataKitId: string,
   filesDataKitId: string
@@ -286,7 +286,7 @@ export const startDocumentParsingJob = (
                 const filesData = dataKitItemsSelector(state)(
                   filesDataKitId,
                   true
-                ) as Result<FilesMetadata>;
+                ) as Result<FileInfo>;
 
                 // load all existing annotations
                 const existingAnnotations = selectAnnotations(state)(

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { InternalId, ExternalId } from '@cognite/sdk';
+import { InternalId, ExternalId } from 'cognite-sdk-v3';
 import {
   FileDetailsAbstract,
   Loader,
@@ -38,7 +38,7 @@ export const FileSmallPreview = ({
   const dispatch = useDispatch();
   const renderResourceActions = useResourceActionsContext();
   const selectionButton = useSelectionButton()({
-    type: 'files',
+    type: 'file',
     id: fileId,
   });
   const { assetIds, assets } = useSelector(linkedAssetsSelector)(fileId);
@@ -49,7 +49,8 @@ export const FileSmallPreview = ({
     items.push(...(propActions || []));
     items.push(
       ...renderResourceActions({
-        fileId,
+        id: fileId,
+        type: 'file',
       })
     );
     return items;

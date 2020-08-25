@@ -4,7 +4,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { RootState } from 'reducers';
 import { removeExtension } from 'utils/AnnotationUtils';
 import { trackTimedUsage } from 'utils/Metrics';
-import { FilesMetadata, Asset } from '@cognite/sdk';
+import { FileInfo, Asset } from 'cognite-sdk-v3';
 import { Result } from 'modules/sdk-builder/types';
 import { list as listAnnotations } from '../annotations';
 import { startPnidParsingJob } from './parsingJobs';
@@ -67,7 +67,7 @@ export const startPnidParsingPipeline = (
     const assetNames: string[] = (assetsData as Result<Asset>).items.map(
       i => i.name
     );
-    const files: FilesMetadata[] = (filesData as Result<FilesMetadata>).items;
+    const files: FileInfo[] = (filesData as Result<FileInfo>).items;
 
     chunk(files, 30).reduce(async (previousPromise: Promise<any>, nextSet) => {
       await previousPromise;

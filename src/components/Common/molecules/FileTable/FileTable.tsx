@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FilesMetadata as File } from '@cognite/sdk';
+import { FileInfo as File } from 'cognite-sdk-v3';
 import Table, { Column } from 'react-base-table';
 import { Body } from '@cognite/cogs.js';
 import AutoSizer from 'react-virtualized-auto-sizer';
@@ -25,7 +25,7 @@ const headerRenderer = ({
 
 const ActionCell = ({ file }: { file: File }) => {
   const getButton = useSelectionCheckbox();
-  return getButton({ id: file.id, type: 'files' });
+  return getButton({ id: file.id, type: 'file' });
 };
 
 export const FileTable = ({

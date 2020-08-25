@@ -3,7 +3,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { RootState } from 'reducers';
 import produce from 'immer';
 import unionBy from 'lodash/unionBy';
-import { FilesMetadata, Asset } from '@cognite/sdk';
+import { FileInfo, Asset } from 'cognite-sdk-v3';
 import { createSelector } from 'reselect';
 import sdk from 'sdk-singleton';
 import {
@@ -92,7 +92,7 @@ interface ListFileLinkedToAssetErrorAction
 interface ListFileLinkedToAssetDoneAction
   extends Action<typeof LIST_FILES_LINKED_TO_ASSET_DONE> {
   assetId: number;
-  files: FilesMetadata[];
+  files: FileInfo[];
 }
 
 type ListFilesLinkedToAssetActions =
@@ -117,7 +117,7 @@ export function listByFileId(
 }
 
 export function list(
-  file: FilesMetadata,
+  file: FileInfo,
   shouldClear = true,
   includeDeleted = false
 ) {
@@ -149,7 +149,7 @@ export function list(
 }
 
 export function create(
-  file: FilesMetadata,
+  file: FileInfo,
   pendingAnnotations: PendingCogniteAnnotation[]
 ) {
   return async (dispatch: ThunkDispatch<any, any, AnnotationActions>) => {
@@ -169,7 +169,7 @@ export function create(
   };
 }
 
-export function remove(file: FilesMetadata, annotations: CogniteAnnotation[]) {
+export function remove(file: FileInfo, annotations: CogniteAnnotation[]) {
   return async (dispatch: ThunkDispatch<any, any, AnnotationActions>) => {
     try {
       await deleteAnnotations(sdk, annotations);
@@ -187,7 +187,7 @@ export function remove(file: FilesMetadata, annotations: CogniteAnnotation[]) {
   };
 }
 
-export function clear(file: FilesMetadata) {
+export function clear(file: FileInfo) {
   return async (dispatch: ThunkDispatch<any, any, AnnotationActions>) => {
     try {
       const deletedAnnotations = await clearAnnotationsForFile(sdk, file);
@@ -204,7 +204,7 @@ export function clear(file: FilesMetadata) {
     }
   };
 }
-export function hardDeleteAnnotationsForFile(file: FilesMetadata) {
+export function hardDeleteAnnotationsForFile(file: FileInfo) {
   return async (
     dispatch: ThunkDispatch<any, any, AnnotationActions>,
     getState: () => RootState
@@ -451,7 +451,7 @@ export const linkedFilesSelectorByAssetId = createSelector(
       ...assetIdMap[assetId],
       files: (fileIds || [])
         .map(id => files(id))
-        .filter(el => !!el) as FilesMetadata[],
+        .filter(el => !!el) as FileInfo[],
     };
   }
 );
@@ -477,9 +477,7 @@ export const linkedFilesSelectorByFileId = createSelector(
     return {
       ...annotationsMap[fileId],
       fileIds,
-      files: fileIds
-        .map(id => filesMap(id))
-        .filter(el => !!el) as FilesMetadata[],
+      files: fileIds.map(id => filesMap(id)).filter(el => !!el) as FileInfo[],
     };
   }
 );

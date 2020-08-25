@@ -2,21 +2,17 @@ import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import { InfoCell } from 'components/Common';
 import { Row, Col } from 'antd';
-import {
-  GetTimeSeriesMetadataDTO as TimeSeries,
-  GetDoubleDatapoint,
-  GetStringDatapoint,
-} from '@cognite/sdk';
+import { Timeseries, DoubleDatapoint, StringDatapoint } from 'cognite-sdk-v3';
 
 import sdk from 'sdk-singleton';
 
 interface LatestDatapointProps {
-  timeSeries: TimeSeries;
+  timeSeries: Timeseries;
 }
 export const LatestDatapoint = ({ timeSeries }: LatestDatapointProps) => {
   const [latestDatapoint, setLatestDatapoint] = useState<
-    GetDoubleDatapoint | GetStringDatapoint | undefined
-  >({ value: 0, timestamp: new Date(), isString: false } as GetDoubleDatapoint);
+    DoubleDatapoint | StringDatapoint | undefined
+  >({ value: 0, timestamp: new Date(), isString: false } as DoubleDatapoint);
 
   const fetchLatestDatapoint = async (timeSeriesId: number) => {
     try {

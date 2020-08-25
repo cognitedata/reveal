@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sequence } from '@cognite/sdk';
+import { Sequence } from 'cognite-sdk-v3';
 import { InfoGrid, DetailsItem } from 'components/Common';
 import { Button } from '@cognite/cogs.js';
 

@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Icon, Title, Body, Colors } from '@cognite/cogs.js';
 import { InfoGrid, InfoCell, DetailsItem, ButtonRow } from 'components/Common';
-import { Sequence } from '@cognite/sdk';
+import { Sequence } from 'cognite-sdk-v3';
 import moment from 'moment';
 import { useResourcesState } from 'context/ResourceSelectionContext';
 import { SequenceInfoGrid } from './SequenceInfoGrid';
@@ -32,7 +32,7 @@ export const SequenceDetailsAbstract = ({
   const resourcesState = useResourcesState();
 
   const currentlyViewing = resourcesState.find(
-    el => el.type === 'sequences' && el.state === 'active'
+    el => el.type === 'sequence' && el.state === 'active'
   );
   return (
     <InfoGrid

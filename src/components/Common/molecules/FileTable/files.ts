@@ -1,6 +1,6 @@
-import { FilesMetadata } from '@cognite/sdk';
+import { FileInfo } from 'cognite-sdk-v3';
 
-export const files: FilesMetadata[] = [
+export const files: FileInfo[] = [
   {
     id: 717618390227695,
     externalId: 'SKA-AK-P-XB-2930-001.pdf',

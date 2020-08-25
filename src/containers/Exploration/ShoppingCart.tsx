@@ -16,7 +16,7 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import copy from 'copy-to-clipboard';
 import { useTenant, useEnv } from 'hooks/CustomHooks';
-import { ResourceItem } from 'context/ResourceSelectionContext';
+import { ResourceItem } from 'types';
 
 export const ShoppingCartPreview = ({
   cart,
@@ -35,17 +35,17 @@ export const ShoppingCartPreview = ({
   useEffect(() => {
     dispatch(
       retrieveFiles(
-        cart.filter(el => el.type === 'files').map(({ id }) => ({ id }))
+        cart.filter(el => el.type === 'file').map(({ id }) => ({ id }))
       )
     );
     dispatch(
       retrieveAssets(
-        cart.filter(el => el.type === 'assets').map(({ id }) => ({ id }))
+        cart.filter(el => el.type === 'asset').map(({ id }) => ({ id }))
       )
     );
     dispatch(
       retrieveTimeseries(
-        cart.filter(el => el.type === 'timeseries').map(({ id }) => ({ id }))
+        cart.filter(el => el.type === 'timeSeries').map(({ id }) => ({ id }))
       )
     );
   }, [dispatch, cart]);
@@ -71,15 +71,15 @@ export const ShoppingCartPreview = ({
 
   cart.forEach(el => {
     switch (el.type) {
-      case 'assets': {
+      case 'asset': {
         assets.push(el);
         break;
       }
-      case 'timeseries': {
+      case 'timeSeries': {
         timeseries.push(el);
         break;
       }
-      case 'files': {
+      case 'file': {
         files.push(el);
         break;
       }

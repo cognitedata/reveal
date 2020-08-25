@@ -5,7 +5,7 @@ import {
   FilesSearchFilter,
   TimeseriesFilterQuery,
   EventFilterRequest,
-} from '@cognite/sdk';
+} from 'cognite-sdk-v3';
 import { ResourceType } from 'modules/sdk-builder/types';
 import {
   list as listTimeseries,

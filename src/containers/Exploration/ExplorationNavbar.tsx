@@ -6,9 +6,8 @@ import { ShoppingCartPreview } from 'containers/Exploration/ShoppingCart';
 import ShoppingCartIcon from 'assets/shopping-cart.svg';
 import { GlobalSearchField } from 'containers/GlobalSearch';
 import styled from 'styled-components';
-import ResourceSelectionContext, {
-  ResourceItem,
-} from 'context/ResourceSelectionContext';
+import ResourceSelectionContext from 'context/ResourceSelectionContext';
+import { ResourceItem } from 'types';
 
 const Navbar = styled.div`
   display: flex;

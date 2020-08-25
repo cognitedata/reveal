@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { TimeseriesFilterQuery } from '@cognite/sdk';
+import { TimeseriesFilterQuery } from 'cognite-sdk-v3';
 import { AssetDetailsAbstract, Loader } from 'components/Common';
 import { useSelector, useDispatch } from 'react-redux';
 import { list as listTimeseries, listSelector } from 'modules/timeseries';
@@ -30,7 +30,7 @@ export const AssetSmallPreview = ({
 }) => {
   const renderResourceActions = useResourceActionsContext();
   const dispatch = useDispatch();
-  const selectionButton = useSelectionButton()({ type: 'assets', id: assetId });
+  const selectionButton = useSelectionButton()({ type: 'asset', id: assetId });
   const { files: assetFiles } = useSelector(linkedFilesSelectorByAssetId)(
     assetId
   );
@@ -51,7 +51,8 @@ export const AssetSmallPreview = ({
     items.push(...(propActions || []));
     items.push(
       ...renderResourceActions({
-        assetId,
+        id: assetId,
+        type: 'asset',
       })
     );
     return items;

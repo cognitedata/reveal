@@ -17,7 +17,7 @@ export const FileExplorer = () => {
     ResourceSelectionContext
   );
   const isActive = resourcesState.some(
-    el => el.state === 'active' && el.id === fileIdNumber && el.type === 'files'
+    el => el.state === 'active' && el.id === fileIdNumber && el.type === 'file'
   );
 
   useEffect(() => {
@@ -25,7 +25,7 @@ export const FileExplorer = () => {
       setResourcesState(
         resourcesState
           .filter(el => el.state !== 'active')
-          .concat([{ id: fileIdNumber, type: 'files', state: 'active' }])
+          .concat([{ id: fileIdNumber, type: 'file', state: 'active' }])
       );
     }
   }, [isActive, resourcesState, fileIdNumber, setResourcesState]);

@@ -1,11 +1,11 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import { GetTimeSeriesMetadataDTO } from '@cognite/sdk';
+import { Timeseries } from 'cognite-sdk-v3';
 import { ClientSDKProvider } from '@cognite/gearbox';
 import { ResourceSelectionProvider } from 'context/ResourceSelectionContext';
 import { TimeseriesDetailsAbstract } from './TimeseriesDetailsAbstract';
 
-const timeseries: GetTimeSeriesMetadataDTO = {
+const timeseries: Timeseries = {
   name: 'Hello',
   description: 'Hello',
   id: 123,

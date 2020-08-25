@@ -1370,6 +1370,14 @@
     babel-plugin-syntax-jsx "^6.18.0"
     lodash "^4.17.11"
 
+"@cognite/cdf-sdk-singleton@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-sdk-singleton/-/cdf-sdk-singleton-0.5.0.tgz#ca0f7951cdfa09878b1abb21bdec74e36cdbaf37"
+  integrity sha512-Rits5bl511xpCNoNeied0Ymoa4edY6DWDYmVf1OWM8Sj4tpBJvW1ymyu35aCB2TtNwwGFU644/+W9+GtKvC0Ig==
+  dependencies:
+    cognite-sdk-v2 "npm:@cognite/sdk@^2.28.0"
+    cognite-sdk-v3 "npm:@cognite/sdk@^3.0.0"
+
 "@cognite/cdf-utilities@^0.7.0":
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-0.7.0.tgz#2e3c708c1de273d534cb8191948e18b73078513f"
@@ -1407,10 +1415,10 @@
   optionalDependencies:
     typescript "^3.6"
 
-"@cognite/gearbox@^1.20.0":
-  version "1.20.0"
-  resolved "https://registry.yarnpkg.com/@cognite/gearbox/-/gearbox-1.20.0.tgz#7593662e3b8fd12f662017d8706cab0c823771d6"
-  integrity sha512-7zOVTIqOSwKsP+kqXBA0+9vbjaRIahVUf+DGsNNSR/Z6f9JEV/73ChGf38+oDKwwwr89cOB88Qo64AI+hz0gUA==
+"@cognite/gearbox@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@cognite/gearbox/-/gearbox-2.0.1.tgz#86bd6fd34eb6603a165284378ef3353aab319ad3"
+  integrity sha512-s5dt3d91i6r2mTxWnUhGR2GmWNELMJG7TRCbpig9bSOqTTcJQJpLQDh+LG42obiqg8SzhpaonopLLzJ3zXO70Q==
   dependencies:
     "@types/dompurify" "^2.0.2"
     d3 "^5.14.2"
@@ -1455,10 +1463,10 @@
     styled-components "^5.1.1"
     typescript "^3.9.7"
 
-"@cognite/sdk@^2.33.0":
-  version "2.33.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-2.33.0.tgz#cfc893ffe259c1011d43c1f41b280b7bf2e72181"
-  integrity sha512-dO2cCO3UbNRx8WaJ3cJdPBe3Rd3qaSBYkocEeW+ew3UzjsxiUOwtz//5HYtb+wXig1aTotoU3iR88NNx09fQfg==
+"@cognite/sdk-core@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.0.0.tgz#8b2ea9a30dc54396cd4980633b92c1714bc27864"
+  integrity sha512-zNarUtJc9RwruDDYukfcUw4FKP9LMc1fMwDYde7WE465kiekCfaE5iEhxNd5TP0tp8fmGyT2YvI/b8Ka9nqu1A==
   dependencies:
     cross-fetch "^3.0.4"
     lodash "^4.17.11"
@@ -2066,56 +2074,56 @@
   dependencies:
     ramda "^0.26.0"
 
-"@sentry/browser@^5.20.1":
-  version "5.21.1"
-  resolved "https://registry.yarnpkg.com/@sentry/browser/-/browser-5.21.1.tgz#864b7fe63e1be8a0162642f8541fcdef74f1ce94"
-  integrity sha512-sUxsW545klZxJE4iBAYQ8SuVS85HTOGNmIIIZWFUogB5oW3O0L+nJluXEqf/pHU82LnjDIzqsWCYQ0cRUaeYow==
+"@sentry/browser@^5.21.3":
+  version "5.21.3"
+  resolved "https://registry.yarnpkg.com/@sentry/browser/-/browser-5.21.3.tgz#b408a1953538ace293b214880e17e4b35aa00082"
+  integrity sha512-suY3vn0kJcy+SK87dAwKakXrFb5DQ30jS5MqfTFByS54aiB9Sn9dr9jKqvkvjBsGz9hmnmtH87Llv+vT/qK8pg==
   dependencies:
-    "@sentry/core" "5.21.1"
-    "@sentry/types" "5.21.1"
-    "@sentry/utils" "5.21.1"
+    "@sentry/core" "5.21.3"
+    "@sentry/types" "5.21.3"
+    "@sentry/utils" "5.21.3"
     tslib "^1.9.3"
 
-"@sentry/core@5.21.1":
-  version "5.21.1"
-  resolved "https://registry.yarnpkg.com/@sentry/core/-/core-5.21.1.tgz#fe193b6f13db3f9a56c9bf0adce9a737540c9f60"
-  integrity sha512-Luulwx3GLUiY0gmHOhU+4eSga28Ce8DwoBcRq9GkGuhPu9r80057d5urxrDLp/leIZBXVvpY7tvmSN/rMtvF9w==
+"@sentry/core@5.21.3":
+  version "5.21.3"
+  resolved "https://registry.yarnpkg.com/@sentry/core/-/core-5.21.3.tgz#f8423514d4f4c2227ec43abb5db64f0e45fcdb80"
+  integrity sha512-t1jFVoQXs817HlEw+iJLeygePALJ3dMkxHtQoeexEE50V7uh+ZkMT+OEOAYRm4w70I318HBATLwD/pE4DOLWFg==
   dependencies:
-    "@sentry/hub" "5.21.1"
-    "@sentry/minimal" "5.21.1"
-    "@sentry/types" "5.21.1"
-    "@sentry/utils" "5.21.1"
+    "@sentry/hub" "5.21.3"
+    "@sentry/minimal" "5.21.3"
+    "@sentry/types" "5.21.3"
+    "@sentry/utils" "5.21.3"
     tslib "^1.9.3"
 
-"@sentry/hub@5.21.1":
-  version "5.21.1"
-  resolved "https://registry.yarnpkg.com/@sentry/hub/-/hub-5.21.1.tgz#7ff980060bf7129a663b71d2cb63913b0bd816b5"
-  integrity sha512-x5i9Ggi5ZYMhBYL5kyTu2fUJ6owjKH2tgJL3UExoZdRyZkbLAFZb+DtfSnteWgQ6wriGfgPD3r/hAIEdaomk2A==
+"@sentry/hub@5.21.3":
+  version "5.21.3"
+  resolved "https://registry.yarnpkg.com/@sentry/hub/-/hub-5.21.3.tgz#9a47bc7777a0909b76b3106022cff5a320e90798"
+  integrity sha512-BBCPJcHi7vcby1OCYTQpRlqBjixLKhp4VxCsbJ+97jWFY5/JEkbD5spFEjomm40a6DCAZBTuGBV4ykr5mv0LBQ==
   dependencies:
-    "@sentry/types" "5.21.1"
-    "@sentry/utils" "5.21.1"
+    "@sentry/types" "5.21.3"
+    "@sentry/utils" "5.21.3"
     tslib "^1.9.3"
 
-"@sentry/minimal@5.21.1":
-  version "5.21.1"
-  resolved "https://registry.yarnpkg.com/@sentry/minimal/-/minimal-5.21.1.tgz#3a6482e0963a697d79e0edea563b602abe01fc86"
-  integrity sha512-OBVPASZ+mcXMKajvJon9RjEZ+ny3+VGhOI66acoP1hmYxKvji1OC2bYEuP1r4qtHxWVLAdV7qFj3EQ9ckErZmQ==
+"@sentry/minimal@5.21.3":
+  version "5.21.3"
+  resolved "https://registry.yarnpkg.com/@sentry/minimal/-/minimal-5.21.3.tgz#9954362afca2bf617ed2332218fd3611554dfc3e"
+  integrity sha512-0im2QDgmXiyd5U5q2F7uBfn24vVBkS/qcLKBNFGaSEiHidDVOtFx1snspkBxO8LF5lqzmJO4eMMAjSZbcMReVw==
   dependencies:
-    "@sentry/hub" "5.21.1"
-    "@sentry/types" "5.21.1"
+    "@sentry/hub" "5.21.3"
+    "@sentry/types" "5.21.3"
     tslib "^1.9.3"
 
-"@sentry/types@5.21.1":
-  version "5.21.1"
-  resolved "https://registry.yarnpkg.com/@sentry/types/-/types-5.21.1.tgz#b603afa2d8c331cf520ab8cef986151b18a72e73"
-  integrity sha512-hFN4aDduMpjj6vZSIIp+9kSr8MglcKO/UmbuUXN6hKLewhxt+Zj2wjXN7ulSs5OK5mjXP9QLA5YJvVQsl2//qw==
+"@sentry/types@5.21.3":
+  version "5.21.3"
+  resolved "https://registry.yarnpkg.com/@sentry/types/-/types-5.21.3.tgz#0147f0b76c4b75559343fd46863f9b004ff3d7d4"
+  integrity sha512-GU0lFZkeGJuCuNN3D8lXyBku6M1UtZzV8f8U4a4nGGFS0R3VqxDHrC3eupRc8Vut/1xfgvFz1qCkPstXUrEBuA==
 
-"@sentry/utils@5.21.1":
-  version "5.21.1"
-  resolved "https://registry.yarnpkg.com/@sentry/utils/-/utils-5.21.1.tgz#fb0e96e6134a9d1e9e6eb62c1d9e0c59faac8c25"
-  integrity sha512-p5vPuc7+GfOmW8CXxWd0samS77Q00YrN8q5TC/ztF8nBhEF18GiMeWAdQnlSwt3iWal3q3gSSrbF4c9guIugng==
+"@sentry/utils@5.21.3":
+  version "5.21.3"
+  resolved "https://registry.yarnpkg.com/@sentry/utils/-/utils-5.21.3.tgz#f55237bab454a43edcf2cd77fa2753e7509d7a94"
+  integrity sha512-JethkNMHA32gvKQWkTl8uccW0XP+FCJazIIbYFqVc3qJVhOnzfqgPuhLWt0f9/YvHJKG3SLEs+Li5bpiBDyURQ==
   dependencies:
-    "@sentry/types" "5.21.1"
+    "@sentry/types" "5.21.3"
     tslib "^1.9.3"
 
 "@storybook/addon-actions@6.0.16", "@storybook/addon-actions@^6.0.16":
@@ -5642,6 +5650,24 @@ code-point-at@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
   integrity sha1-DQcLTQQ6W+ozovGkDi7bPZpMz3c=
+
+"cognite-sdk-v2@npm:@cognite/sdk@^2.28.0":
+  version "2.33.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-2.33.0.tgz#cfc893ffe259c1011d43c1f41b280b7bf2e72181"
+  integrity sha512-dO2cCO3UbNRx8WaJ3cJdPBe3Rd3qaSBYkocEeW+ew3UzjsxiUOwtz//5HYtb+wXig1aTotoU3iR88NNx09fQfg==
+  dependencies:
+    cross-fetch "^3.0.4"
+    lodash "^4.17.11"
+    query-string "^5.1.1"
+    url "^0.11.0"
+
+"cognite-sdk-v3@npm:@cognite/sdk@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.0.0.tgz#99c9f600129e1f525f2214a7f5f11cf90095e25f"
+  integrity sha512-5zyHEh8drYGQ++4NOjdRr/9XIzHdoI7ssL66ZTJ/uGaLxMhXGa/hq2GK8RaN6uGf0PsirOS9VeU08zA8b2baWQ==
+  dependencies:
+    "@cognite/sdk-core" "^1.0.0"
+    lodash "^4.17.11"
 
 collapse-white-space@^1.0.0, collapse-white-space@^1.0.2:
   version "1.0.6"

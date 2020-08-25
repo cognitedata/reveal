@@ -30,7 +30,7 @@ import {
   FilePreviewOverview,
   IAnnotationWithPage,
 } from 'components/Common';
-import { FilesMetadata, Asset, Sequence } from '@cognite/sdk';
+import { FileInfo, Asset, Sequence } from 'cognite-sdk-v3';
 import sdk, { getAuthState } from 'sdk-singleton';
 import { useLocation, useHistory } from 'react-router';
 import queryString from 'query-string';
@@ -100,13 +100,17 @@ const SplitWrapper = styled(SplitPane)`
 
   .gutter {
     cursor: col-resize;
+    transition: 0.3s all;
+  }
+  .gutter:hover {
+    background-color: ${Colors['midblue-7'].hex()};
   }
 `;
 
 type Props = {
   fileId?: number;
   children?: React.ReactNode;
-  onFileClicked?: (file: FilesMetadata) => void;
+  onFileClicked?: (file: FileInfo) => void;
   onAssetClicked?: (asset: Asset) => void;
   onSequenceClicked?: (sequence: Sequence) => void;
 };
@@ -477,8 +481,8 @@ export const CogniteFileViewer = ({
               onPageChange={setPage}
               extras={
                 <ButtonRow>
-                  {selectionButton({ id: file.id, type: 'files' })}
-                  {renderResourceActions({ fileId: file.id })}
+                  {selectionButton({ id: file.id, type: 'file' })}
+                  {renderResourceActions({ id: file.id, type: 'file' })}
                   {renderMenuButton()}
                 </ButtonRow>
               }

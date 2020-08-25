@@ -3,7 +3,7 @@ import { Action } from 'redux';
 import { createSelector } from 'reselect';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { InternalId } from '@cognite/sdk';
+import { InternalId } from 'cognite-sdk-v3';
 import sdk from 'sdk-singleton';
 import { RootState } from 'reducers/';
 import { Dictionary } from 'lodash';

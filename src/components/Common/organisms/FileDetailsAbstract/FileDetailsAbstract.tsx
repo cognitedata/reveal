@@ -2,18 +2,18 @@ import React from 'react';
 import styled from 'styled-components';
 import { Icon, Title, Badge, Body, Colors } from '@cognite/cogs.js';
 import { InfoGrid, InfoCell, ListItem, ButtonRow } from 'components/Common';
-import { FilesMetadata, Asset } from '@cognite/sdk';
+import { FileInfo, Asset } from 'cognite-sdk-v3';
 import { useResourcesState } from 'context/ResourceSelectionContext';
 import { FileInfoGrid } from './FileInfoGrid';
 
 interface FileDetailsProps {
-  file: FilesMetadata;
+  file: FileInfo;
   imgPreview?: React.ReactNode;
   actions?: React.ReactNode[];
   children?: React.ReactNode;
   extras?: React.ReactNode;
   assets?: Asset[];
-  files?: FilesMetadata[];
+  files?: FileInfo[];
 }
 
 const IconWrapper = styled.span`
@@ -37,7 +37,7 @@ export const FileDetailsAbstract = ({
   const resourcesState = useResourcesState();
 
   const currentlyViewing = resourcesState.find(
-    el => el.type === 'files' && el.state === 'active'
+    el => el.type === 'file' && el.state === 'active'
   );
   return (
     <InfoGrid className="file-info-grid" noBorders>

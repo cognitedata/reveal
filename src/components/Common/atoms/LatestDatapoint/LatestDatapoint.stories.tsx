@@ -2,10 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import '@cognite/cogs.js/dist/antd.css';
 import '@cognite/cogs.js/dist/cogs.css';
-import { GetTimeSeriesMetadataDTO } from '@cognite/sdk';
+import { Timeseries } from 'cognite-sdk-v3';
 import { LatestDatapoint } from './LatestDatapoint';
 
-const exampleTimeSeries: GetTimeSeriesMetadataDTO[] = [
+const exampleTimeSeries: Timeseries[] = [
   {
     id: 5927592366707648,
     createdTime: new Date(1580503121335),

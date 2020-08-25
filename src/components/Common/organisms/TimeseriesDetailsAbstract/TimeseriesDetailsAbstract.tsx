@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { GetTimeSeriesMetadataDTO as TimeSeries } from '@cognite/sdk';
+import { Timeseries } from 'cognite-sdk-v3';
 import { Icons, Title, Body, Icon, Colors } from '@cognite/cogs.js';
 import {
   InfoGrid,
@@ -28,7 +28,7 @@ export const TimeseriesDetailsAbstract = ({
   actions,
   children,
 }: {
-  timeSeries: TimeSeries;
+  timeSeries: Timeseries;
   extras?: React.ReactNode;
   actions?: React.ReactNode[];
   children?: React.ReactNode;
@@ -37,7 +37,7 @@ export const TimeseriesDetailsAbstract = ({
   const resourcesState = useResourcesState();
 
   const currentlyViewing = resourcesState.find(
-    el => el.type === 'timeseries' && el.state === 'active'
+    el => el.type === 'timeSeries' && el.state === 'active'
   );
   return (
     <InfoGrid className="timeseries-info-grid" noBorders style={style}>

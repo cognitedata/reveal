@@ -24,7 +24,7 @@ export const AssetExplorer = () => {
   );
   const isActive = resourcesState.some(
     el =>
-      el.state === 'active' && el.id === assetIdNumber && el.type === 'assets'
+      el.state === 'active' && el.id === assetIdNumber && el.type === 'asset'
   );
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export const AssetExplorer = () => {
       setResourcesState(
         resourcesState
           .filter(el => el.state !== 'active')
-          .concat([{ id: assetIdNumber, type: 'assets', state: 'active' }])
+          .concat([{ id: assetIdNumber, type: 'asset', state: 'active' }])
       );
     }
   }, [isActive, resourcesState, assetIdNumber, setResourcesState]);

@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { IAnnotation, IRectShapeData } from '@cognite/react-picture-annotation';
 import { Colors } from '@cognite/cogs.js';
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient } from 'cognite-sdk-v3';
 import { FileViewer } from './FileViewer';
 
 export default { title: 'Molecules/FileViewer' };

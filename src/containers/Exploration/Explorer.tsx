@@ -10,9 +10,8 @@ import { SequenceExplorer } from 'containers/Sequences';
 import { TimeseriesExplorer } from 'containers/Timeseries';
 import { useHistory } from 'react-router';
 import { useTenant } from 'hooks/CustomHooks';
-import ResourceSelectionContext, {
-  ResourceItem,
-} from 'context/ResourceSelectionContext';
+import ResourceSelectionContext from 'context/ResourceSelectionContext';
+import { ResourceItem } from 'types';
 import { ExplorationNavbar } from './ExplorationNavbar';
 
 const Wrapper = styled.div`
@@ -34,40 +33,48 @@ export const Explorer = () => {
   const { pathname } = history.location;
 
   const renderResourceActions: RenderResourceActionsFunction = useCallback(
-    ({ fileId, assetId, timeseriesId, sequenceId }) => {
+    resourceItem => {
       const viewButton = () => {
         let resourceName = '';
         let path = '';
-        if (assetId) {
-          resourceName = 'Asset';
-          path = `asset/${assetId}`;
-        }
-        if (timeseriesId) {
-          resourceName = 'Time Series';
-          path = `timeseries/${timeseriesId}`;
-        }
-        if (fileId) {
-          resourceName = 'File';
-          path = `file/${fileId}`;
-        }
-        if (sequenceId) {
-          resourceName = 'Sequence';
-          path = `sequence/${sequenceId}`;
-        }
-        if (!pathname.includes(path)) {
-          return (
-            <Button
-              type="primary"
-              key="view"
-              onClick={() => {
-                window.dispatchEvent(new Event('Resource Selected'));
-                history.push(`/${tenant}/explore/${path}`);
-              }}
-              icon="ArrowRight"
-            >
-              View {resourceName}
-            </Button>
-          );
+        if (resourceItem) {
+          switch (resourceItem.type) {
+            case 'asset': {
+              resourceName = 'Asset';
+              path = `asset/${resourceItem.id}`;
+              break;
+            }
+            case 'timeSeries': {
+              resourceName = 'Time Series';
+              path = `timeseries/${resourceItem.id}`;
+              break;
+            }
+            case 'file': {
+              resourceName = 'File';
+              path = `file/${resourceItem.id}`;
+              break;
+            }
+            case 'sequence': {
+              resourceName = 'Sequence';
+              path = `sequence/${resourceItem.id}`;
+              break;
+            }
+          }
+          if (!pathname.includes(path)) {
+            return (
+              <Button
+                type="primary"
+                key="view"
+                onClick={() => {
+                  window.dispatchEvent(new Event('Resource Selected'));
+                  history.push(`/${tenant}/explore/${path}`);
+                }}
+                icon="ArrowRight"
+              >
+                View {resourceName}
+              </Button>
+            );
+          }
         }
         return null;
       };

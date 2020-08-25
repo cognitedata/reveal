@@ -3,7 +3,7 @@ import { createSelector } from 'reselect';
 import { Action, AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { batch } from 'react-redux';
-import { DataSet, DataSetFilterRequest } from '@cognite/sdk';
+import { DataSet, DataSetFilterRequest } from 'cognite-sdk-v3';
 import { RootState } from 'reducers';
 import { count as countTimeseries } from 'modules/timeseries';
 import { count as countAssets } from 'modules/assets';

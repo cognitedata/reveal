@@ -7,11 +7,11 @@ import { ButtonRow } from 'components/Common';
 
 import {
   Asset,
-  FilesMetadata,
-  GetTimeSeriesMetadataDTO,
+  FileInfo,
+  Timeseries,
   Sequence,
   CogniteEvent,
-} from '@cognite/sdk';
+} from 'cognite-sdk-v3';
 
 const PageButton = styled(Button)`
   padding: 10px;
@@ -165,7 +165,7 @@ const TimeseriesItem = ({
   onItemClick,
   query = '',
 }: {
-  timeseries?: GetTimeSeriesMetadataDTO;
+  timeseries?: Timeseries;
 } & FileViewerSidebarItemProps) => {
   const pages = new Set<number>();
   annotations.forEach(item => {
@@ -215,7 +215,7 @@ const FileItem = ({
   onItemClick,
   query = '',
 }: {
-  file?: FilesMetadata;
+  file?: FileInfo;
 } & FileViewerSidebarItemProps) => {
   const pages = new Set<number>();
   annotations.forEach(item => {
