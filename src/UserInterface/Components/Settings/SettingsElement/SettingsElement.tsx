@@ -63,7 +63,7 @@ export default function SettingsElement(props: ISettingsElementProps) {
     const disabled = config.isReadOnly || !config.useProperty;
 
     switch (type) {
-      case ElementTypes.INPUT:
+      case ElementTypes.String:
         return (
           <input
             disabled={disabled}
@@ -75,7 +75,7 @@ export default function SettingsElement(props: ISettingsElementProps) {
             className={isReadOnly ? "textInput readOnlyInput" : "textInput"}
           />
         );
-      case ElementTypes.SELECT: {
+      case ElementTypes.Select: {
         const options = config.options as ISelectOption[];
         const [selectedValue, setSelectedValue] = useState(
           value ?? (options.length > 0 && options[0].value)
@@ -140,7 +140,7 @@ export default function SettingsElement(props: ISettingsElementProps) {
           </div>
         );
       }
-      case ElementTypes.COLOR_TABLE:
+      case ElementTypes.Color:
         return (
           <CompactColorPicker
             value={value instanceof Color ? value.hex() : ""}
@@ -148,7 +148,7 @@ export default function SettingsElement(props: ISettingsElementProps) {
             onChange={onChange}
           />
         );
-      case ElementTypes.RANGE:
+      case ElementTypes.Range:
         return (
           <input
             type="range"
@@ -160,7 +160,7 @@ export default function SettingsElement(props: ISettingsElementProps) {
             max="100"
           />
         );
-      case ElementTypes.COLORMAP_SELECT: {
+      case ElementTypes.ColorMap: {
         const options = elmConfig.options as string[];
         return (
           <Box className="color-map-select">
@@ -176,7 +176,7 @@ export default function SettingsElement(props: ISettingsElementProps) {
           </Box>
         );
       }
-      case ElementTypes.IMAGE_BUTTON:
+      case ElementTypes.ImageButton:
         return (
           <div
             {...keyExtractor(null, type, name)}
@@ -187,7 +187,7 @@ export default function SettingsElement(props: ISettingsElementProps) {
             <Icon type={icon?.type} name={icon?.name} />
           </div>
         );
-      case ElementTypes.INPUT_GROUP:
+      case ElementTypes.Group:
         return subElements?.map((elm) => renderInputElement(elm));
       default:
         return <></>;

@@ -128,7 +128,7 @@ export abstract class BaseNode extends Identifiable
   public /*virtual*/ setColor(value: Color) { this._color = value; }
   public /*virtual*/ canChangeColor(): boolean { return true; }
   public /*virtual*/ hasIconColor(): boolean { return this.canChangeColor(); }
-  public /*virtual*/ hasColorMap(): boolean { return true; }
+  public /*virtual*/ hasColorMap(): boolean { return false; }
 
   //==================================================
   // VIRTUAL METHODS: Icon
@@ -283,7 +283,7 @@ export abstract class BaseNode extends Identifiable
     folder.addString({ name: "name", instance: this, readonly: !this.canChangeName(), apply: this.notifyNameChanged });
     if (this.canChangeColor())
       folder.addColor({ name: "color", instance: this, apply: this.notifyColorChanged });
-    folder.addReadOnlyString("type", this.typeName);
+    folder.addReadOnlyString("Type", this.typeName);
     if (this.hasColorMap())
       folder.addColorMap({ name: "colorMap", instance: this, readonly: false, apply: this.notifyColorMapChanged });
   }

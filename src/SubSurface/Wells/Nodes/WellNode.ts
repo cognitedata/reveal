@@ -61,7 +61,7 @@ export class WellNode extends BaseNode
   protected /*override*/ populateStatisticsCore(folder: ExpanderProperty): void
   {
     super.populateStatisticsCore(folder);
-    folder.addReadOnlyXY("WellHead", this.wellHead.x, this.wellHead.y, 2);
+    folder.addReadOnlyXY("Wellhead", this.wellHead.x, this.wellHead.y, 2);
     folder.addReadOnlyInteger("# Trajectories", this.children.length);
   }
 }

@@ -13,8 +13,5 @@ export default class GroupProperty extends BasePropertyFolder
   // OVERRIDES of BaseProperty
   //==================================================
 
-  public getType(): PropertyType
-  {
-    return PropertyType.Group;
-  }
+  public getType(): PropertyType { return PropertyType.Group; }
 }

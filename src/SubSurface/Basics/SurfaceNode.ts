@@ -65,9 +65,8 @@ export class SurfaceNode extends DataNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Surface"; }
-
   public /*override*/ getIcon(): string { return this.dataIsLost ? super.getIcon() : Icon; }
-
+  public /*override*/ hasColorMap(): boolean { return true; }
   public /*override*/ get boundingBox(): Range3 { return this.surface ? this.surface.boundingBox : new Range3(); }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null

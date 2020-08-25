@@ -52,8 +52,8 @@ export class FloatFilterLogNode extends BaseFilterLogNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "FloatLog"; }
-
   public /*override*/ getIcon(): string { return FloatLogNodeIcon; }
+  public /*override*/ hasColorMap(): boolean { return true; }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {

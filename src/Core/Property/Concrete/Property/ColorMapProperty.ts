@@ -22,7 +22,7 @@ export default class ColorMapProperty extends UseProperty<string>
   // INSTANCE METHODS
   //==================================================
 
-  public getColorMapOptionColors(valuesPerColorMap: number): string[][]
+  public getColorMapOptionColors(colorCount: number): string[][]
   {
     if (!this.options)
       return [];
@@ -33,8 +33,9 @@ export default class ColorMapProperty extends UseProperty<string>
       const colors: string[] = [];
       if (!colorMap)
         return colors;
-      const range = new Range1(0, valuesPerColorMap - 1);
-      for (let i = 0; i < valuesPerColorMap; i++)
+        
+      const range = new Range1(0, colorCount - 1);
+      for (let i = 0; i < colorCount; i++)
       {
         const fraction = range.getFraction(i);
         const color = colorMap.getColor(fraction).hex();

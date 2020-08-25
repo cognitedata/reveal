@@ -28,7 +28,7 @@ export class CasingLogStyle extends BaseRenderStyle
   //==================================================
 
   public colorType = new SelectProperty({
-    name: "colorType",
+    name: "Color type",
     value: ColorType[ColorType.Specified]
   });
 

@@ -1,3 +1,4 @@
+import * as Lodash from "lodash";
 import BaseProperty from "@/Core/Property/Base/BaseProperty";
 import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 
@@ -76,6 +77,7 @@ export default abstract class UseProperty<T> extends BaseProperty
         this._use = true; // just set it either true or false
 
       this._instance = params.instance;
+      this.displayName = this.name.charAt(0).toUpperCase() + Lodash.startCase(this.name).substring(1).toLowerCase();
     }
     else if (params.value !== undefined)
     {

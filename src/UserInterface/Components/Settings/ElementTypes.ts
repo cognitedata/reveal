@@ -1,11 +1,11 @@
 // Input Types
 export default {
-  SECTION: "section",
-  INPUT: "text",
-  INPUT_GROUP: "input-group",
-  SELECT: "select",
-  COLORMAP_SELECT: "colormap-select",
-  COLOR_TABLE: "color-table",
-  RANGE: "range",
-  IMAGE_BUTTON: "image-button",
+  Expander: "section",
+  String: "text",
+  Group: "input-group",
+  Select: "select",
+  ColorMap: "colormap-select",
+  Color: "color-table",
+  Range: "range",
+  ImageButton: "image-button",
 };

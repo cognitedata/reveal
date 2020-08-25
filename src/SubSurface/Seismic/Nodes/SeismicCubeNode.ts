@@ -60,6 +60,7 @@ export class SeismicCubeNode extends DataNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Seismic Cube"; }
+  public /*override*/ hasColorMap(): boolean { return true; }
   public /*override*/ getIcon(): string { return this.dataIsLost ? super.getIcon() : Icon; }
   public /*override*/ isRadio(target: ITarget | null): boolean { return true; }
   public /*override*/ canChangeColor(): boolean { return false; }

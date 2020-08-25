@@ -57,11 +57,10 @@ export class PointsNode extends DataNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Points"; }
-
+  public /*override*/ hasColorMap(): boolean { return true; }
   public /*override*/ getIcon(): string { return this.dataIsLost ? super.getIcon() : Icon; }
-
   public /*override*/ get boundingBox(): Range3 { return this.points ? this.points.boundingBox : new Range3(); }
-
+  
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
     return new PointsRenderStyle(targetId);
