@@ -4,7 +4,6 @@ import SettingsPanel from "@/UserInterface/Components/Settings/SettingsPanel";
 import SettingsNodeUtils from "./SettingsNodeUtils";
 
 function mapDispatchToSettingsPanel() {
-
   return {
     onSectionExpand: () => {
       // TODO: Implement this feature
@@ -21,6 +20,7 @@ function mapDispatchToSettingsPanel() {
 
 function mapStateToSettingsPanel(state: State) {
   const { currentNodeId, titleBar } = state.settings;
+
   return { id: currentNodeId, titleBar };
 }
 

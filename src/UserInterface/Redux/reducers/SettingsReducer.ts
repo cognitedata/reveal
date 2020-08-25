@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
-import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
 import NodeUtils from "@/UserInterface/utils/NodeUtils";
 import SettingsNodeUtils from "@/UserInterface/NodeVisualizer/Settings/SettingsNodeUtils";
 import { IconTypes } from "@/UserInterface/Components/Icon/IconTypes";
@@ -35,10 +34,9 @@ export const settingsSlice = createSlice({
   initialState,
   reducers: {
     onSelectedNodeChange: {
-      reducer(state: ISettingsState, action: PayloadAction<{ node: BaseNode, propertyFolder: BasePropertyFolder }>)
+      reducer(state: ISettingsState, action: PayloadAction<{ node: BaseNode }>)
       {
         const { node } = action.payload;
-        const { propertyFolder } = action.payload;
 
         if (node && node.isSelected())
         {
@@ -51,7 +49,7 @@ export const settingsSlice = createSlice({
           state.titleBar.name = "";
         }
       },
-      prepare(node: BaseNode): { payload: { node: BaseNode, propertyFolder: BasePropertyFolder } }
+      prepare(node: BaseNode): { payload: { node: BaseNode } }
       {
         let settingsProperties;
 
@@ -84,7 +82,7 @@ export const settingsSlice = createSlice({
         }
 
         return {
-          payload: { node, propertyFolder: settingsProperties }
+          payload: { node }
         };
       }
     },

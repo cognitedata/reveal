@@ -9,11 +9,18 @@ import SettingsElement from "@/UserInterface/Components/Settings/SettingsElement
 import "./SettingsSection.module.scss";
 
 export default function SettingsSection(props: ISettingsSectionProps) {
-  const { name, isExpanded, toolBar, subSections, elements } = props.section;
+  const {
+    id,
+    name,
+    isExpanded,
+    toolBar,
+    subSections,
+    elements,
+  } = props.section;
 
   return (
     <ExpansionView
-      id={name}
+      id={id}
       title={name}
       isExpanded={isExpanded}
       toolBar={toolBar}
@@ -26,8 +33,8 @@ export default function SettingsSection(props: ISettingsSectionProps) {
               (element: ISettingsElement) =>
                 element && (
                   <SettingsElement
-                    key={`${element.name}-input-`}
-                    sectionId={name}
+                    key={`${element.id}-input-`}
+                    sectionId={id}
                     config={element}
                     onPropertyValueChange={props.onPropertyValueChange}
                     onPropertyUseChange={props.onPropertyUseChange}
@@ -40,7 +47,7 @@ export default function SettingsSection(props: ISettingsSectionProps) {
           <div className="sub-section-container additional-padding">
             {subSections.map((subSection: ISettingsSection) => (
               <SettingsSection
-                key={`${subSection.name}-sub-section`}
+                key={`${subSection.id}-sub-section`}
                 section={subSection}
                 onExpand={props.onExpand}
                 onPropertyValueChange={props.onPropertyValueChange}

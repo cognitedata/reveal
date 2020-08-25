@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { SettingPanelProps } from "@/UserInterface/Components/Settings/Types";
 import SettingsSection from "@/UserInterface/Components/Settings/SettingsSection/SettingsSection";
-import NodeUtils from "@/UserInterface/utils/NodeUtils";
 import PanelTitleBar from "@/UserInterface/Components/PanelTitleBar/PanelTitleBar";
+import NodeUtils from "@/UserInterface/utils/NodeUtils";
 
 //==================================================
 // Main Settings Panel Component
@@ -17,11 +17,11 @@ export default function SettingsPanel(props: SettingPanelProps) {
     onPropertyUseChange,
   } = props;
 
+  const [, forceUpdate] = useState(0);
+
   const sections =
     (NodeUtils.generatePropertyTree(NodeUtils.properties) as any)?.elements ??
     [];
-
-  const [, forceUpdate] = useState(0);
 
   const handleUsePropertyChange = (elementId: string, value: boolean) => {
     onPropertyUseChange(elementId, value);

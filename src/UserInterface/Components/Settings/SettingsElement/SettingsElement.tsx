@@ -44,40 +44,46 @@ export default function SettingsElement(props: ISettingsElementProps) {
     return { key };
   };
 
-  const handleCheckboxChange = (name: string, e: any) => {
-    onPropertyUseChange(name, e.target.checked);
+  const handleCheckboxChange = (id: string, e: any) => {
+    onPropertyUseChange(id, e.target.checked);
   };
 
   // Renders input elements dynamically
   const renderInputElement = (elmConfig: ISettingsElement): any => {
-    const { isReadOnly, subValues: subElements, icon, name, value } = elmConfig;
+    const {
+      isReadOnly,
+      subValues: subElements,
+      icon,
+      id,
+      type,
+      name,
+      value,
+    } = elmConfig;
 
     const disabled = config.isReadOnly || !config.useProperty;
 
-    switch (elmConfig.type) {
+    switch (type) {
       case ElementTypes.INPUT:
         return (
           <input
             disabled={disabled}
-            {...keyExtractor(null, elmConfig.type, elmConfig.name)}
+            {...keyExtractor(null, type, name)}
             onChange={(event) =>
-              !isReadOnly ? onChange(elmConfig.name, event.target.value) : null
+              !isReadOnly ? onChange(id, event.target.value) : null
             }
             value={value}
-            className={
-              isReadOnly ? `${"textInput"} ${"readOnlyInput"}` : "textInput"
-            }
+            className={isReadOnly ? "textInput readOnlyInput" : "textInput"}
           />
         );
       case ElementTypes.SELECT: {
         const options = config.options as ISelectOption[];
         const [selectedValue, setSelectedValue] = useState(
-          elmConfig.value ?? (options.length > 0 && options[0].value)
+          value ?? (options.length > 0 && options[0].value)
         );
 
-        // TODO: Create separe component for each of the types and ove this method select renderer
+        // TODO: Create spare component for each of the types and ove this method select renderer
         const handleSelectUpDown = (isUp: boolean) => {
-          if (!elmConfig.isReadOnly) {
+          if (!isReadOnly) {
             const selectedIndex = options.findIndex(
               (ele) => ele.value === selectedValue
             );
@@ -91,21 +97,18 @@ export default function SettingsElement(props: ISettingsElementProps) {
                 selectedIndex === options.length - 1 ? 0 : selectedIndex + 1;
             }
             setSelectedValue(options[nextIndex].value);
-            onChange(name, options[nextIndex].value);
+            onChange(id, options[nextIndex].value);
           }
         };
 
         return (
-          <div
-            className="select-group"
-            {...keyExtractor(null, elmConfig.type, elmConfig.name)}
-          >
+          <div className="select-group" {...keyExtractor(null, type, name)}>
             <Select
               value={selectedValue}
               disabled={disabled}
               onChange={(e) => {
                 setSelectedValue(e.target.value);
-                onChange(elmConfig.name, e.target.value);
+                onChange(id, e.target.value);
               }}
             >
               {options?.map((option) => {
@@ -141,7 +144,7 @@ export default function SettingsElement(props: ISettingsElementProps) {
         return (
           <CompactColorPicker
             value={value instanceof Color ? value.hex() : ""}
-            id={elmConfig.name}
+            id={id}
             onChange={onChange}
           />
         );
@@ -150,8 +153,8 @@ export default function SettingsElement(props: ISettingsElementProps) {
           <input
             type="range"
             disabled={disabled}
-            value={elmConfig.value}
-            onChange={(event) => onChange(elmConfig.name, event.target.value)}
+            value={value}
+            onChange={(event) => onChange(id, event.target.value)}
             className="slider"
             min="0"
             max="100"
@@ -167,7 +170,7 @@ export default function SettingsElement(props: ISettingsElementProps) {
               value={value}
               disabled={disabled}
               onChange={(colorMap) => {
-                onChange(elmConfig.name, colorMap);
+                onChange(id, colorMap);
               }}
             />
           </Box>
@@ -176,7 +179,7 @@ export default function SettingsElement(props: ISettingsElementProps) {
       case ElementTypes.IMAGE_BUTTON:
         return (
           <div
-            {...keyExtractor(null, elmConfig.type, elmConfig.name)}
+            {...keyExtractor(null, type, name)}
             className={`input-icon ${
               icon?.selected ? "input-icon-selected" : ""
             }`}
@@ -203,7 +206,7 @@ export default function SettingsElement(props: ISettingsElementProps) {
               type="checkbox"
               className="checkbox"
               checked={config.useProperty}
-              onChange={(e) => handleCheckboxChange(config.name, e)}
+              onChange={(e) => handleCheckboxChange(config.id, e)}
             />
           </div>
         )}
