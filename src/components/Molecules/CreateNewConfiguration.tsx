@@ -1,95 +1,77 @@
-import React, { useState } from 'react';
-import { Trans } from 'react-i18next';
+import React, { ChangeEvent, useState } from 'react';
 import { Button, Dropdown, Icon, Input, Menu } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useRouteMatch, useHistory } from 'react-router-dom';
-
-enum INPUT_STATE {
-  'COLLAPSED',
-  'EXPANDED',
-}
+import { useHistory, useRouteMatch } from 'react-router-dom';
+import { SessionType } from 'typings/interfaces';
 
 const Container = styled.div`
-  padding: 32px 32px 16px;
   display: flex;
-  flex-direction: row-reverse;
+  justify-content: flex-end;
 `;
 
-const MenuSelectConfigurationType = ({
-  onSelect,
-  name,
-}: {
-  onSelect: (name: string) => void;
-  name: string;
-}) => {
+enum displayState {
+  COLLAPSED = 'COLLAPSED',
+  EXPANDED = 'EXPANDED',
+}
+
+const CreateNewConfiguration = () => {
+  const [display, setDisplay] = useState<displayState>(displayState.COLLAPSED);
+  const [sessionName, setSessionName] = useState<string>('');
   const { url } = useRouteMatch();
   const history = useHistory();
 
-  const createNew = (type: string = 'ps-to-ow') => {
-    history.push(`${url}/new/${type}`);
-    onSelect(name);
-  };
+  function handleChange(e: ChangeEvent<HTMLInputElement>) {
+    setSessionName(e.target.value);
+  }
 
-  return (
+  function handleFinish(type: SessionType) {
+    history.push(`${url}/new/${type}?name=${encodeURIComponent(sessionName)}`);
+  }
+
+  const MenuContent = (
     <Menu>
-      <Menu.Item onClick={() => createNew('ps-to-ow')}>
+      <Menu.Item onClick={() => handleFinish(SessionType.PS_TO_OW)}>
         <Icon type="Plus" />
         PS to OW
       </Menu.Item>
-      <Menu.Item onClick={() => createNew('ow-to-ps')}>
+      <Menu.Item onClick={() => handleFinish(SessionType.OW_TO_PS)}>
         <Icon type="Plus" />
         OW to PS
       </Menu.Item>
     </Menu>
   );
-};
-
-const CreateNewConfiguration = ({
-  onSelect,
-}: {
-  onSelect: (name: string) => void;
-}): React.ReactElement => {
-  const [state, setState] = useState(INPUT_STATE.COLLAPSED);
-  const [name, setName] = useState('');
-
-  function expand() {
-    setState(INPUT_STATE.EXPANDED);
-  }
-
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setName(e.target.value);
-  }
 
   return (
     <Container>
-      {state === INPUT_STATE.COLLAPSED ? (
-        <Button
-          type="primary"
-          size="large"
-          icon="Plus"
-          onClick={expand}
-          style={{ height: '36px' }}
-        >
-          <Trans i18nKey="Global:BtnNewConfiguration" />
-        </Button>
-      ) : (
+      {display === displayState.EXPANDED && (
         <>
-          <Dropdown
-            content={
-              <MenuSelectConfigurationType onSelect={onSelect} name={name} />
-            }
-          >
-            <Button type="primary" size="large" style={{ height: '36px' }}>
-              <Trans i18nKey="Global:BtnCreate" />
-            </Button>
-          </Dropdown>
           <Input
             autoFocus
             placeholder="DSG session name..."
-            style={{ fontFamily: '"Inter", sans-serif', marginRight: '16px' }}
+            style={{ marginRight: '16px' }}
             onChange={handleChange}
+            value={sessionName}
           />
+          <Dropdown content={MenuContent}>
+            <Button
+              type="primary"
+              style={{ height: '36px' }}
+              disabled={sessionName === ''}
+            >
+              Create
+            </Button>
+          </Dropdown>
         </>
+      )}
+      {display === displayState.COLLAPSED && (
+        <Button
+          type="primary"
+          icon="Plus"
+          onClick={() => setDisplay(displayState.EXPANDED)}
+          style={{ height: '36px' }}
+        >
+          New Configuration
+        </Button>
       )}
     </Container>
   );

@@ -15,7 +15,7 @@ export default createGlobalStyle`
     margin: 0;
     padding: 0;
     font-family: "Inter", sans-serif !important;
-    //overflow: hidden;
+    overflow: hidden;
     background-color: var(--cogs-greyscale-grey3);
     color: var(--cogs-greyscale-grey9);
   }

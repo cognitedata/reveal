@@ -20,3 +20,8 @@ export interface RESTPackageFilter {
   created_time?: number;
   [property: string]: any;
 }
+
+export enum SessionType {
+  PS_TO_OW = 'ps-to-ow',
+  OW_TO_PS = 'ow-to-ps',
+}

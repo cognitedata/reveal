@@ -2,11 +2,11 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Table } from 'antd';
 import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useRouteMatch, Route } from 'react-router-dom';
-import { ContentContainer } from '../../elements';
-import ApiContext from '../../contexts/ApiContext';
-import CreateNewConfiguration from '../../components/Molecules/CreateNewConfiguration';
-import New from './New';
+import { Route, useRouteMatch } from 'react-router-dom';
+import { ContentContainer } from 'elements';
+import ApiContext from 'contexts/ApiContext';
+import CreateNewConfiguration from 'components/Molecules/CreateNewConfiguration';
+import New from './New/index';
 
 const StatusIcon = styled(Icon)`
   height: 100%;
@@ -86,13 +86,13 @@ const fauxColumns = [
     title: '',
     dataIndex: 'actions',
     key: 'actions',
-    render: (_: any, record: any) => {
-      return <RowActions record={record} />;
+    render: (_: any) => {
+      return <RowActions />;
     },
   },
 ];
 
-const ActiveDirections = ({ record }: any) => {
+const ActiveDirections = () => {
   return (
     <DirectionContainer>
       <Icon
@@ -104,10 +104,10 @@ const ActiveDirections = ({ record }: any) => {
   );
 };
 
-const RowActions = ({ record }: any) => {
+const RowActions = () => {
   return (
     <InfoIcons>
-      <ActiveDirections record={record} />
+      <ActiveDirections />
       <Icon type="TriangleRight" />
       <Icon type="Link" style={{ transform: 'rotate(-45deg)' }} />
       <Icon type="Document" style={{ color: 'red' }} />
@@ -119,12 +119,7 @@ const Configurations = () => {
   const { api } = useContext(ApiContext);
   const [data, setData] = useState<any[]>([]);
   const [columns, setColumns] = useState<any[]>([]);
-  const { path } = useRouteMatch();
-  const [newConfigurationName, setNewConfigurationName] = useState('');
-
-  function onSelect(name: string) {
-    setNewConfigurationName(name);
-  }
+  const { url } = useRouteMatch();
 
   useEffect(() => {
     api!.configurations.get().then((response) => {
@@ -136,13 +131,13 @@ const Configurations = () => {
   return (
     <>
       <Route exact path="/configurations">
-        <CreateNewConfiguration onSelect={onSelect} />
+        <CreateNewConfiguration />
         <ContentContainer>
           <Table dataSource={data} columns={columns} rowKey="id" />
         </ContentContainer>
       </Route>
-      <Route path={`${path}/new/:type`}>
-        <New name={newConfigurationName} />
+      <Route exact path={`${url}/new/:type`}>
+        <New />
       </Route>
     </>
   );
