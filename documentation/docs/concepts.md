@@ -5,11 +5,11 @@ title: Concepts
 
 This page explains some basic concepts implemented by Reveal.
 
-# CAD model structure
+## CAD model structure
 
 CAD models are typically structured in a tree structure, where larger components or groups of components are located near the root and individual pieces of equipment are located in near the leaf nodes. The hierarchy is defined by the source model and is processed and stored in CDF for efficient lookup and traversal. In Reveal, each of the nodes in the tree is called a "3D node". Each of the 3D nodes can have associated properties defined by the source model. Note that not all 3D nodes will contain geometry - in fact in most models only leaf nodes will contain geometry.
 
-## Tree indices and node IDs
+### Tree indices and node IDs
 
 When processing 3D models in CDF, two IDs associated with each 3D node; tree index and node ID.
 
