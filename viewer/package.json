@@ -12,7 +12,8 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
-    "build": "rimraf -rf dist/ && yarn run mkdist && webpack --env.development",
+    "build": "cd ../parser-worker && yarn && yarn build && cd ../viewer && yarn build:dev",
+    "build:dev": "rimraf -rf dist/ && yarn run mkdist && webpack --env.development",
     "build:prod": "yarn run mkdist && webpack",
     "build:watch": "yarn run build -- --watch",
     "serve": "cd ../parser-worker && yarn && yarn build && cd ../examples && yarn && yarn start",
@@ -52,7 +53,6 @@
     "@types/tween.js": "^18.5.1",
     "@typescript-eslint/eslint-plugin": "^3.9.0",
     "@typescript-eslint/parser": "^3.9.0",
-    "copy-webpack-plugin": "^6.0.2",
     "eslint": "^7.6.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-header": "^3.0.0",
@@ -84,6 +84,7 @@
   },
   "dependencies": {
     "@cognite/potree-core": "^1.1.3",
+    "@cognite/reveal-parser-worker": "link:../parser-worker",
     "@cognite/three-combo-controls": "^1.4.1",
     "@tweenjs/tween.js": "^18.5.0",
     "@types/lodash": "^4.14.159",
@@ -93,7 +94,6 @@
     "glslify-import": "^3.1.0",
     "lodash": "^4.17.15",
     "mixpanel-browser": "^2.38.0",
-    "@cognite/reveal-parser-worker": "link:../parser-worker",
     "rxjs": "^6.5.5"
   },
   "peerDependencies": {

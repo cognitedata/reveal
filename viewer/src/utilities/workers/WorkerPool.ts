@@ -31,7 +31,6 @@ export class WorkerPool {
   constructor() {
     const numberOfWorkers = this.determineNumberOfWorkers();
 
-    // TODO ok try to create 2 built versions of workers - one with CDN url, one without.
     for (let i = 0; i < numberOfWorkers; i++) {
       const newWorker = {
         // NOTE: As of Comlink 4.2.0 we need to go through unknown before RevealParserWorker
@@ -48,10 +47,10 @@ export class WorkerPool {
     }
   }
 
-  // Used to construct workers with or without using importScripts to overcome CORS.
-  // When publicPath is not set we need to fetch worker from CDN
-  // (perform cross-origin request) and that's possible only with importScripts.
-  // If publicPath is set we use it without hacks (it likely points on some allowed domain or the same domain).
+  // Used to construct workers with or without importScripts usage to overcome CORS.
+  // When publicPath is not set we need to fetch worker from CDN (perform cross-origin request)
+  // and that's possible only with importScripts.
+  // If publicPath is set and points on the same domain, we use it normally.
   private createWorker() {
     const workerUrl = (revealEnv.publicPath || __webpack_public_path__) + 'reveal.parser.worker.js';
     const options = { name: 'reveal.parser' };

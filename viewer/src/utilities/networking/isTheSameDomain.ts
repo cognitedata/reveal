@@ -6,9 +6,8 @@
  * Use to determine if the string that represent urls
  * are pointing on different domains.
  * @param url1
- * @param url2 Optional. Default is `location.origin`.
- * If provided then it must be absolute url to avoid comparison between two relative urls.
- * See tests for examples.
+ * @param url2 Optional. Default is `location.origin`. If provided then it must be
+ * absolute url to avoid comparison between two relative urls.
  */
 export function isTheSameDomain(url1: string, url2: string = location.origin) {
   const isRelative = (url: string) => {
@@ -19,7 +18,7 @@ export function isTheSameDomain(url1: string, url2: string = location.origin) {
   };
 
   if (isRelative(url2)) {
-    throw new Error('isTheSameDomain: the second argument must be an absolute url or omitted.');
+    throw new Error(`isTheSameDomain: the second argument must be an absolute url or omitted. Received ${url2}`);
   }
 
   if (isRelative(url1)) {

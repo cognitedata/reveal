@@ -20,8 +20,7 @@ module.exports = env => {
   const publicPathViewer = publicPath || workerCDNPath;
 
   logger.info('Viewer build config:');
-  logger.info('Viewer build config:');
-  logger.info({ development, publicPathViewer, publicPath, workerCDNPath });
+  logger.info({ development, publicPathViewer });
 
   return {
     mode: development ? 'development' : 'production',

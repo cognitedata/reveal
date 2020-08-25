@@ -1,6 +1,6 @@
 const path = require("path");
 const { publicPath, workerCDNPath, cdnDistFolderPath, getEnvArg } = require("./buildUtils");
-const logger = require("webpack-log")("reveal");
+const logger = require("webpack-log")("parser-worker");
 
 const createBaseConfig = (env) => {
   const development = getEnvArg(env, "development", false);
