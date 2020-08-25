@@ -48,7 +48,7 @@ export default function SettingsPanel(props: SettingPanelProps) {
             />
           )}
           {sections.map((section) => {
-            section.isExpanded = expandedSections[section.name];
+            section.isExpanded = expandedSections[section.id];
             return (
               <div
                 key={`${section.name}-section`}
