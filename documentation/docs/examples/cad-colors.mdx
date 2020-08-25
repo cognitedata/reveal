@@ -12,6 +12,7 @@ Reveal supports updating the color of individual objects by providing [tree indi
 <DemoWrapper modelId={4715379429968321} revisionId={5688854005909501} name="Cognite3DViewerDemo" />
 
 ## Update all node colors
+
 To update the colors of all nodes, loop over all tree indices in the model and update the colors
 accordingly:
 
@@ -43,6 +44,7 @@ model.resetAllNodeColors();
 </LiveCodeSnippet>
 
 ## Update the colors of a subtree
+
 The 3D nodes are organized in a tree structure, where e.g. equipment will have many sub-components. In 
 order to update the colors of equipment it's typically necessary to apply the same color to the entire
 subtree. Reveal supports this through the use of `Cognite3DModel.setNodesColorsByTreeIndex` with `applyToChildren`
