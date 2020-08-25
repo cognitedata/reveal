@@ -766,6 +766,7 @@ export class Cognite3DViewer {
    * ```
    */
   worldToScreen(point: THREE.Vector3, normalize?: boolean): THREE.Vector2 | null {
+    this.camera.updateMatrixWorld();
     const p = from3DPositionToRelativeViewportCoordinates(this.camera, point);
     if (p.x < 0 || p.x > 1 || p.y < 0 || p.y > 1 || p.z < 0 || p.z > 1) {
       // Return null if point is outside camera frustum.
