@@ -7,6 +7,8 @@ import styles from './styles.module.css';
 import oceanicNext from 'prism-react-renderer/themes/oceanicNext';
 const defaultCodeTheme = oceanicNext;
 
+import { resetViewerEventHandlers } from '../viewerUtilities';
+
 export type LiveCodeSnippetProps = {
   children: string;
   theme: PrismTheme;
@@ -26,11 +28,16 @@ export class LiveCodeSnippet extends React.Component<LiveCodeSnippetProps> {
         code={children.replace(/^\s+|\s+$/g, '')}
         transformCode={((code) => {
           const fullCode = 
-          `const viewer = window.viewer;
+          `
+          const viewer = window.viewer;
           const model = window.model;
+          const sdk = window.sdk;
+          resetViewerEventHandlers(viewer);
+          // User code starts here!
           ${(transformCode ? transformCode(code) : code)}`;
           return `<button onClick={() => \{${fullCode}\}}>Run</button>`;
         })}
+        scope={{resetViewerEventHandlers}}
         theme={theme || defaultCodeTheme}
         {...props}>
         <div

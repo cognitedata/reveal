@@ -42,7 +42,9 @@ you want to reset the colors of all nodes:
 model.resetAllNodeColors();
 `}
 </LiveCodeSnippet>
+
 <!-- TODO 2020-08-25 larsmoa: Add example for subtree when endpoints for mapping treeIndex <> nodeId are ready
+
 ## Update the colors of a subtree
 
 The 3D nodes are organized in a tree structure, where e.g. equipment will have many sub-components. In 
@@ -51,6 +53,6 @@ subtree. Reveal supports this through the use of `Cognite3DModel.setNodesColorsB
 set to `true`:
 <LiveCodeSnippet>
 {`
-model.setNodeColorByTreeIndex(122, 240, 100, 60, true /* apply to children */);
+model.setNodeColorByTreeIndex(122, 240, 100, 60, applyToChildren=true);
 `}
 </LiveCodeSnippet> -->
