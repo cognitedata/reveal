@@ -59,7 +59,8 @@ export default class NodeUtils
     if (nodeProp instanceof GroupProperty)
     {
       const element: ISettingsElement = {
-        name: nodeProp.name,
+        id: nodeProp.name,
+        name: nodeProp.displayName,
         type: NodeUtils.mapToInputTypes(nodeProp.getType()),
         subValues: [],
         isReadOnly: nodeProp.isReadOnly,
@@ -73,7 +74,8 @@ export default class NodeUtils
           if (subVal instanceof UseProperty) 
           {
             const subElement: ISettingsElement = {
-              name: subVal.name,
+              id: nodeProp.name,
+              name: subVal.displayName,
               isReadOnly: subVal.isReadOnly,
               type: NodeUtils.mapToInputTypes(subVal.getType()),
               value: subVal.value,
@@ -92,7 +94,8 @@ export default class NodeUtils
     {
       const property = <ExpanderProperty>nodeProp;
       const section: ISettingsSection = {
-        name: property.name,
+        id: property.name,
+        name: property.displayName,
         elements: [],
       };
       if (property.children?.length > 0) 
@@ -113,7 +116,8 @@ export default class NodeUtils
         return null;
 
       const element: ISettingsElement = {
-        name: nodeProp.name,
+        id: nodeProp.name,
+        name: nodeProp.displayName,
         type: NodeUtils.mapToInputTypes(nodeProp.getType()),
         value: nodeProp.value,
         subValues: [],
@@ -127,6 +131,7 @@ export default class NodeUtils
       switch (nodeProp.getType())
       {  
         case PropertyType.ColorMap: {
+          element.options = nodeProp.options;
           element.colorMapOptions = (nodeProp as ColorMapProperty).getColorMapOptionColors(Appearance.valuesPerColorMap);
           return element;
         }

@@ -22,7 +22,7 @@ export interface ISettingsSectionProps
   onExpand: (id: string, expandStatus: boolean) => void;
   onPropertyValueChange: (elementId: string, value: any) => void;
   onPropertyUseChange: (elementId: string, value: boolean) => void;
-};
+}
 
 export interface ISettingsElementProps 
 {
@@ -43,6 +43,7 @@ export interface ITitleBar
 // SettingsPanel SettingsSection Prop Type
 export interface ISettingsSection
 {
+  id: string;
   name: string;
   isExpanded?: boolean;
   titleBar?: ITitleBar;
@@ -67,6 +68,7 @@ export interface ISettingsElement extends IBaseSettingsElement
 
 export interface IBaseSettingsElement 
 {
+  id: string;
   name: string;
   type: string;
   value?: any;
