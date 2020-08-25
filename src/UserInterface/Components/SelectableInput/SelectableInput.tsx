@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
@@ -10,8 +10,11 @@ import MenuItem from "@material-ui/core/MenuItem";
 import MenuList from "@material-ui/core/MenuList";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import InputBase from "@material-ui/core/InputBase";
-import Divider from "@material-ui/core/Divider";
 import { HTMLUtils } from "@/UserInterface/Foundation/Utils/HTMLUtils";
+import ButtonGroup from "@material-ui/core/ButtonGroup";
+import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
+import withStyles from "@material-ui/core/styles/withStyles";
+import { Util } from "@/Core/Primitives/Util";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,15 +36,20 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     boxSizing: "border-box",
   },
-  input: {
-    flex: "auto",
-    width: "50%",
-    height: "100%",
-  },
   button: {
     flex: "0 0 2ch",
     minWidth: "2ch",
     height: "100%",
+    borderRadius: 0,
+    "&:hover": {
+      color: theme.palette.primary.contrastText,
+      backgroundColor: theme.palette.primary.dark,
+    },
+  },
+  buttonGroup: {
+    height: "100%",
+    width: "1rem",
+    flex: "0 0 1rem",
   },
   paper: {
     padding: theme.spacing(2),
@@ -66,6 +74,33 @@ const useStyles = makeStyles((theme) => ({
   }),
 }));
 
+const ColorButton = withStyles((theme) => ({
+  root: {
+    backgroundColor: "white",
+    width: "100%",
+    minWidth: "0.8rem",
+    padding: 2,
+    borderRadius: 0,
+    minHeight: "0.8rem",
+    height: "50%",
+    "&:hover": {
+      color: theme.palette.primary.contrastText,
+      backgroundColor: theme.palette.primary.dark,
+    },
+  },
+}))(Button);
+
+const Input = withStyles(() => ({
+  root: {
+    flex: "auto",
+    width: "50%",
+    height: "100%",
+  },
+  input: {
+    textAlign: "center",
+  },
+}))(InputBase);
+
 export default function SelectableInput(props: {
   options: string[];
   value: string;
@@ -75,15 +110,31 @@ export default function SelectableInput(props: {
 }) {
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
-  const [selectedIndex, setSelectedIndex] = useState(1);
+  const [selectedIndex, setSelectedIndex] = useState(3);
   const [displayValue, setDisplayValue] = useState(props.value);
   const classes = useStyles({
     optionHeight: props.optionHeight,
     maxOptions: props.maxOptions,
   });
+  let selectedMenuItem;
+
+  useEffect(() => {
+    const value = props.options[selectedIndex];
+    selectedMenuItem = document.getElementById(`item-id-${value}`);
+    if (selectedMenuItem) selectedMenuItem.scrollIntoView();
+  });
 
   const updateValue = (event) => {
     const { value } = event.target;
+    const value2 = Util.getNumber(value);
+    const closest = props.options.reduce((prev, curr) =>
+      Math.abs(Util.getNumber(curr) - value2) <
+      Math.abs(Util.getNumber(prev) - value2)
+        ? curr
+        : prev
+    );
+    const newIndex = props.options.indexOf(closest);
+    setSelectedIndex(newIndex);
     setDisplayValue(value);
     props.onChange(value);
   };
@@ -117,6 +168,27 @@ export default function SelectableInput(props: {
     HTMLUtils.onEnter(updateValue)(event);
   };
 
+  const setPrevOption = () => {
+    const newIndex =
+      selectedIndex < props.options.length - 1
+        ? selectedIndex + 1
+        : props.options.length - 1;
+    const value = props.options[newIndex];
+
+    setSelectedIndex(newIndex);
+    setDisplayValue(value);
+    props.onChange(value);
+  };
+
+  const setNextOption = () => {
+    const newIndex = selectedIndex > 0 ? selectedIndex - 1 : 0;
+    const value = props.options[newIndex];
+
+    setSelectedIndex(newIndex);
+    setDisplayValue(value);
+    props.onChange(value);
+  };
+
   return (
     <div className={classes.root}>
       <Grid
@@ -133,17 +205,27 @@ export default function SelectableInput(props: {
             ref={anchorRef}
             aria-label="split button"
           >
-            <InputBase
-              className={classes.input}
+            <Input
               id="standard-number"
-              type="number"
               fullWidth
               inputProps={{ "aria-label": "Z-Scale" }}
               value={displayValue}
               onChange={handleValueChange}
               onKeyUp={handleKeyPress}
             />
-            <Divider className={classes.divider} orientation="vertical" />
+            <ButtonGroup
+              className={classes.buttonGroup}
+              orientation="vertical"
+              color="primary"
+              aria-label="vertical outlined primary button group"
+            >
+              <ColorButton>
+                <ArrowDropUpIcon onClick={setPrevOption} />{" "}
+              </ColorButton>
+              <ColorButton>
+                <ArrowDropDownIcon onClick={setNextOption} />{" "}
+              </ColorButton>
+            </ButtonGroup>
             <Button
               className={classes.button}
               color="primary"
@@ -187,6 +269,7 @@ export default function SelectableInput(props: {
                         <MenuItem
                           className={classes.menuItem}
                           key={option}
+                          id={`item-id-${option}`}
                           selected={index === selectedIndex}
                           onClick={(event) => handleMenuItemClick(event, index)}
                         >
