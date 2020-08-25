@@ -4,6 +4,10 @@
 
 import { SupportedModelTypes } from '../types';
 
+/**
+ * Base class for 3D models supported by {@link Cognite3DViewer}.
+ * @module @cognite/reveal
+ */
 export interface CogniteModelBase {
   readonly type: SupportedModelTypes;
   dispose(): void;

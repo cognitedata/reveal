@@ -1,7 +1,6 @@
 /*!
  * Copyright 2020 Cognite AS
  */
-
 import * as THREE from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import { vec3 } from 'gl-matrix';
@@ -25,6 +24,7 @@ const mapCoordinatesBuffers = {
 /**
  * Represents a single 3D CAD model loaded from CDF.
  * @noInheritDoc
+ * @module @cognite/reveal
  */
 export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   public readonly type: SupportedModelTypes = 'cad';
@@ -160,7 +160,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * @deprecated Use {@link Cognite3DModel.getModelBoundingBox} or {@link Cognite3DModel.getBoundingBoxFromCdf}.
+   * @deprecated Use {@link Cognite3DModel.getModelBoundingBox} or {@link Cognite3DModel.getBoundingBoxByTreeIndex}.
    * @throws NotSupportedInMigrationWrapperError
    */
   getBoundingBox(_nodeId?: number, _box?: THREE.Box3): THREE.Box3 {
@@ -541,6 +541,20 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   async mapNodeIdsToTreeIndices(nodeIds: number[]): Promise<number[]> {
     return this.nodeIdAndTreeIndexMaps.getTreeIndices(nodeIds);
+  }
+
+  /**
+   * Maps a list of tree indices to Node IDs for use with the Cognite SDK.
+   * This function is useful if you have a list of tree indices, e.g. from
+   * {@link Cognite3DModel.iterateSubtreeByTreeIndex}, and want to perform
+   * some operations on these nodes using the SDK.
+   *
+   * @param treeIndices Tree indices to map to Node IDs
+   * @returns A list of node IDs corresponding to the elements of the inpu
+   * @throws If an invalid tree index is provided the function throws an error.
+   */
+  async mapTreeIndicesToNodeIds(_treeIndices: number[]): Promise<number[]> {
+    throw new Error('Not implemented yet');
   }
 
   private async determineTreeIndices(treeIndex: number, includeDescendants: boolean): Promise<NumericRange> {
