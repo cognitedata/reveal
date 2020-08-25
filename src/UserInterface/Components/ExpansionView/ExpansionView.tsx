@@ -1,8 +1,8 @@
 import React from "react";
 import "./ExpansionView.module.scss";
-import ExpansionPanel from "@material-ui/core/ExpansionPanel";
-import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
-import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
+import Accordion from "@material-ui/core/Accordion";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronUp } from "@fortawesome/free-solid-svg-icons/faChevronUp";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons/faChevronDown";
@@ -20,11 +20,11 @@ export default function ExpansionView(props: {
   const { id, title, isExpanded, onSectionExpand, toolBar, children } = props;
 
   return (
-    <ExpansionPanel
+    <Accordion
       expanded={isExpanded}
       onChange={() => onSectionExpand(id, !isExpanded)}
     >
-      <ExpansionPanelSummary className="expand-panel-root">
+      <AccordionSummary className="expand-panel-root">
         <div className="expand-summary-header">
           <div className="expand-btn">
             {isExpanded ? (
@@ -37,11 +37,11 @@ export default function ExpansionView(props: {
             <b>{title}</b>
           </span>
         </div>
-      </ExpansionPanelSummary>
+      </AccordionSummary>
       <div className="expand-toolbar">
         <ToolBar toolBar={toolBar} sectionId={id} />
       </div>
-      <ExpansionPanelDetails>{children || null}</ExpansionPanelDetails>
-    </ExpansionPanel>
+      <AccordionDetails>{children || null}</AccordionDetails>
+    </Accordion>
   );
 }

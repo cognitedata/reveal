@@ -27,17 +27,17 @@
 
   /* Tweak expansion panel */
 
-  .MuiExpansionPanel-root {
+  .MuiAccordion-root {
     border-radius: 0 !important;
   }
 
-  .MuiExpansionPanelSummary-root{
+  .MuiAccordionSummary-root{
     background: var(--subsurface-viz-expansion-header-background, variables.$expansion-header-background);
     color: var(--subsurface-viz-expansion-header-color, variables.$expansion-header-color);
   }
 
-  .MuiExpansionPanelSummary-content,
-  .MuiExpansionPanel-root.Mui-expanded {
+  .MuiAccordionSummary-content,
+  .MuiAccordion-root.Mui-expanded {
     margin: 0 !important;
   }
 
@@ -45,7 +45,7 @@
     position: relative;
   }
 
-  .MuiExpansionPanelDetails-root {
+  .MuiAccordionDetails-root {
     padding: 0 !important;
     display: block !important;
     background: var(--subsurface-viz-expansion-detail-background, variables.$expansion-detail-background);
