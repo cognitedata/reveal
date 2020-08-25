@@ -24,7 +24,7 @@ export default function SettingsSection(props: ISettingsSectionProps) {
       title={name}
       isExpanded={isExpanded}
       toolBar={toolBar}
-      onExpandChange={props.onExpand}
+      onSectionExpand={props.onExpand}
     >
       <>
         {elements && (
