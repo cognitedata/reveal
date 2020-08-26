@@ -91,7 +91,7 @@ const SplitterWrapper = styled(SplitPane)<WrapperProps>(
     flex: 1;
     min-height: 200px;
     width: 100%;
-    overflow-y:auto;
+    overflow-y: auto;
     position: relative;
     display: flex;
 
@@ -118,6 +118,8 @@ const SplitterWrapper = styled(SplitPane)<WrapperProps>(
 
     ${props.hide.map(i => hideCss(i)).join('')}
     ${props.lock.map(i => lockCss(i)).join('')}
-    ${props.flex.map(i => flexCss(i)).join('')}
+    ${props.flex
+      .map(i => flexCss(i))
+      .join('')}
   `
 );

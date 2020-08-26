@@ -79,11 +79,12 @@ export default function App() {
               path="/:tenant/explore"
               component={useMemo(
                 () =>
-                  React.lazy(() =>
-                    import(
-                      'containers/Exploration'
-                      /* webpackChunkName: "pnid_exploration" */
-                    )
+                  React.lazy(
+                    () =>
+                      import(
+                        'containers/Exploration'
+                        /* webpackChunkName: "pnid_exploration" */
+                      )
                   ),
                 []
               )}
