@@ -25,7 +25,8 @@ export class SolidStyle extends BaseStyle
   //==================================================
 
   public colorType = new SelectProperty({ name: "Solid color", value: ColorType.DepthColor });
-  public shininess = new RangeProperty({ name: "Solid shininess", value: 20 });
+  public shininess = new RangeProperty({ name: "Shininess", value: 20, use: true });
+  public opacity = new RangeProperty({ name: "Opacity", value: 50, use: false });
 
   //==================================================
   // CONSTRUCTORS
@@ -43,5 +44,6 @@ export class SolidStyle extends BaseStyle
   {
     folder.addChild(this.colorType);
     folder.addChild(this.shininess);
+    folder.addChild(this.opacity);
   }
 }

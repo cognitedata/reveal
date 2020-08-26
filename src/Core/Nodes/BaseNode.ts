@@ -173,9 +173,6 @@ export abstract class BaseNode extends Identifiable
 
   public /*virtual*/ getCheckBoxState(target?: ITarget | null): CheckBoxState
   {
-    if (this.name === "Log folder 1")
-      console.log(this.name);
-
     if (!target)
       target = this.activeTarget;
 

@@ -50,7 +50,7 @@ export abstract class BaseGroupThreeView extends BaseThreeView
   protected /*override*/ updateCore(args: NodeEventArgs): void
   {
     super.updateCore(args);
-    if (args.isChanged(Changes.geometry) || args.isChanged(Changes.renderStyle))
+    if (args.isChanged(Changes.geometry))
       this.touch();
   }
 

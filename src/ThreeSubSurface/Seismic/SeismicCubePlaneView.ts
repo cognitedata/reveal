@@ -13,7 +13,7 @@
 
 import * as THREE from "three";
 
-import { SurfaceRenderStyle } from "@/SubSurface/Basics/SurfaceRenderStyle";
+import { SeismicRenderStyle } from "@/SubSurface/Seismic/Nodes/SeismicRenderStyle";
 import { NodeEventArgs } from "@/Core/Views/NodeEventArgs";
 import { BaseGroupThreeView } from "@/Three/BaseViews/BaseGroupThreeView";
 import { SeismicPlaneNode } from "@/SubSurface/Seismic/Nodes/SeismicPlaneNode";
@@ -50,7 +50,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
   //==================================================
 
   protected get node(): SeismicPlaneNode { return super.getNode() as SeismicPlaneNode; }
-  protected get style(): SurfaceRenderStyle { return super.getStyle() as SurfaceRenderStyle; }
+  protected get style(): SeismicRenderStyle { return super.getStyle() as SeismicRenderStyle; }
 
   //==================================================
   // CONSTRUCTORS
@@ -205,10 +205,9 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     if (!surveyNode)
       return parent;
 
-    const style = surveyNode.getRenderStyle(this.targetId) as SurfaceRenderStyle;
-    if (!style)
-      return parent;
+    const { seismicCubeNode } = this;
 
+    const style = seismicCubeNode ? seismicCubeNode.getRenderStyle(this.targetId) as SeismicRenderStyle : null;
     const { surveyCube } = node;
     if (!surveyCube)
       return parent;
@@ -252,7 +251,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
   // INSTANCE METHODS: 
   //==================================================
 
-  private createSolid(node: SeismicPlaneNode, surveyCube: RegularGrid3, style: SurfaceRenderStyle): THREE.Object3D | null
+  private createSolid(node: SeismicPlaneNode, surveyCube: RegularGrid3, style: SeismicRenderStyle | null): THREE.Object3D | null
   {
     const cells = node.createCells(false);
     if (cells.length < 2)
@@ -268,11 +267,15 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     const material = new THREE.MeshStandardMaterial({
       color: ThreeConverter.toThreeColor(Colors.white),
       side: THREE.DoubleSide,
-      //shininess: 100 * style.solid.shininess,
-      //polygonOffset: true,
-      //polygonOffsetFactor: 1,
-      //polygonOffsetUnits: 4.0
     });
+    if (style)
+    {
+      if (style.opacity.use)
+      {
+        material.opacity = Math.min(100, style.opacity.value) / 100;
+        material.transparent = true;
+      }
+    }
     const mesh = new THREE.Mesh(geometry, material);
     mesh.name = SolidName;
     const { transformer } = this;

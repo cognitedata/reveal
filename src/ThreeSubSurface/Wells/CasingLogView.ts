@@ -168,9 +168,9 @@ export class CasingLogView extends BaseGroupThreeView
         vertexColors: true,
         transparent: true,
       });
-      if (style.opacity.use && style.opacity.value < 100)
+      if (style.opacity.use)
       {
-        material.opacity = style.opacity.value / 100;
+        material.opacity = Math.max(style.opacity.value) / 100;
         material.transparent = true;
       }
       const mesh = new THREE.Mesh(geometry, material);

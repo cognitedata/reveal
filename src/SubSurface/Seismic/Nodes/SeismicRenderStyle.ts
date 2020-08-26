@@ -12,34 +12,37 @@
 //=====================================================================================
 
 import * as Lodash from "lodash";
-import { ColorType } from "@/Core/Enums/ColorType";
+import { TargetId } from "@/Core/Primitives/TargetId";
+import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
-import { SelectProperty } from "@/Core/Property/Concrete/Property/SelectProperty";
+import { RangeProperty } from "@/Core/Property/Concrete/Property/RangeProperty";
 
-export class ContoursStyle extends BaseStyle
+export class SeismicRenderStyle extends BaseRenderStyle
 {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
 
-  public colorType = new SelectProperty({ name: "Contour color", value: ColorType.Black });
-  public increment = new SelectProperty({ name: "Increment", value: 0 });
+  public opacity = new RangeProperty({ name: "Opacity", value: 50, use: false });
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor() { super(); }
+  public constructor(targetId: TargetId)
+  {
+    super(targetId);
+  }
 
   //==================================================
   // OVERRIDES of BaseStyle
   //==================================================
 
-  public /*override*/ clone(): BaseStyle { return Lodash.cloneDeep<ContoursStyle>(this); }
+  public /*override*/ clone(): BaseStyle { return Lodash.cloneDeep<SeismicRenderStyle>(this); }
+
   protected /*override*/ populateCore(folder: BasePropertyFolder)
   {
-    folder.addChild(this.colorType);
-    folder.addChild(this.increment);
+    folder.addChild(this.opacity);
   }
 }

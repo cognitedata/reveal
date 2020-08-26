@@ -11,10 +11,6 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { TargetId } from "@/Core/Primitives/TargetId";
-import { SurfaceRenderStyle } from "@/SubSurface/Basics/SurfaceRenderStyle";
-
 import Icon from "@images/Nodes/SurveyNode.png";
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
 import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
@@ -40,12 +36,6 @@ export class SurveyNode extends BaseVisualNode
   public constructor() { super(); }
 
   //==================================================
-  // INSTANCE PROPERTIES
-  //==================================================
-
-  public get renderStyle(): SurfaceRenderStyle | null { return this.getRenderStyle() as SurfaceRenderStyle; }
-
-  //==================================================
   // OVERRIDES of Identifiable
   //==================================================
 
@@ -62,11 +52,6 @@ export class SurveyNode extends BaseVisualNode
   public /*override*/ getIcon(): string { return Icon; }
 
   public /*override*/ canChangeColor(): boolean { return false; }
-
-  public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
-  {
-    return new SurfaceRenderStyle(targetId);
-  }
 
   public /*override*/ get boundingBox(): Range3 { return this.surveyCube ? this.surveyCube.boundingBox : new Range3(); }
 
