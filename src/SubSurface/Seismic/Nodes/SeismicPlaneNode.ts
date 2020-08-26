@@ -19,7 +19,7 @@ import { RegularGrid3 } from "@/Core/Geometry/RegularGrid3";
 import { Vector3 } from "@/Core/Geometry/Vector3";
 import Index2 from "@/Core/Geometry/Index2";
 import Index3 from "@/Core/Geometry/Index3";
-import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
 
 export class SeismicPlaneNode extends BaseVisualNode
 {
@@ -82,7 +82,7 @@ export class SeismicPlaneNode extends BaseVisualNode
   {
     const { surveyCube } = this;
     if (!surveyCube)
-      throw Error("surveyCube is not set");
+      return 0;
 
     if (this.perpendicularAxis === 0)
       return this.perpendicularIndex + surveyCube.startCell.i;
@@ -210,7 +210,7 @@ export class SeismicPlaneNode extends BaseVisualNode
     }
   }
 
-  protected /*override*/ populateStatisticsCore(folder: ExpanderProperty): void
+  protected /*override*/ populateStatisticsCore(folder: BasePropertyFolder): void
   {
     super.populateStatisticsCore(folder);
     if (this.isArbitrary)

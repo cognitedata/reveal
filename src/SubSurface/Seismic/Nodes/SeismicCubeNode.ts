@@ -20,7 +20,7 @@ import { DataNode } from "@/Core/Nodes/DataNode";
 import { SeismicCube } from "@/SubSurface/Seismic/Data/SeismicCube";
 import { ITarget } from "@/Core/Interfaces/ITarget";
 import { SurveyNode } from "@/SubSurface/Seismic/Nodes/SurveyNode";
-import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
 import { CogniteSeismicClient } from "@cognite/seismic-sdk-js";
 import { SeismicPlaneNode } from "@/SubSurface/Seismic/Nodes/SeismicPlaneNode";
 import { SeismicRenderStyle } from "@/SubSurface/Seismic/Nodes/SeismicRenderStyle";
@@ -70,7 +70,7 @@ export class SeismicCubeNode extends DataNode
     return new SeismicRenderStyle(targetId);
   }
 
-  protected /*override*/ populateStatisticsCore(folder: ExpanderProperty): void
+  protected /*override*/ populateStatisticsCore(folder: BasePropertyFolder): void
   {
     super.populateStatisticsCore(folder);
 
@@ -78,6 +78,7 @@ export class SeismicCubeNode extends DataNode
     if (!cube)
       return;
 
+    folder.addReadOnlyString("FileId", cube.fileId);
     folder.addReadOnlyIndex3("# Cells", cube.cellSize);
     folder.addReadOnlyIndex2("Start cell", cube.startCell);
     folder.addReadOnlyVector3("Spacing", cube.inc);

@@ -24,7 +24,7 @@ import { ITarget } from "@/Core/Interfaces/ITarget";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { DataNode } from "@/Core/Nodes/DataNode";
-import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
 
 export abstract class BaseLogNode extends DataNode
 {
@@ -39,13 +39,9 @@ export abstract class BaseLogNode extends DataNode
   //==================================================
 
   public get log(): BaseLog | null { return this.anyData; }
-
   public set log(value: BaseLog | null) { this.anyData = value; }
-
   public get wellNode(): WellNode | null { return this.getAncestorByType(WellNode); }
-
   public get trajectoryNode(): WellTrajectoryNode | null { return this.getAncestorByType(WellTrajectoryNode); }
-
   public get trajectory(): WellTrajectory | null { const node = this.trajectoryNode; return node ? node.trajectory : null; }
 
   public get filterLogNode(): BaseFilterLogNode | null
@@ -99,7 +95,7 @@ export abstract class BaseLogNode extends DataNode
     return trajectoryNode ? trajectoryNode.isVisible(target) : false;
   }
 
-  protected /*override*/ populateStatisticsCore(folder: ExpanderProperty): void
+  protected /*override*/ populateStatisticsCore(folder: BasePropertyFolder): void
   {
     super.populateStatisticsCore(folder);
     const { log } = this;
