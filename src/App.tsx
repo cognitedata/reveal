@@ -13,6 +13,7 @@ import { SubAppWrapper, AuthWrapper } from '@cognite/cdf-utilities';
 // import Routes from './routes';
 import RootApp from 'containers/App';
 import AntStyles from 'components/AntStyles';
+import { Loader } from 'components/Common';
 import store from './store';
 import theme from './styles/theme';
 import { setupSentry } from './utils/sentry';
@@ -40,7 +41,12 @@ export default () => {
   return (
     <AntStyles>
       <SubAppWrapper padding={false}>
-        <AuthWrapper subAppName="data-exploration">
+        <AuthWrapper
+          showLoader
+          includeGroups
+          loadingScreen={<Loader />}
+          subAppName="data-exploration"
+        >
           <ClientSDKProvider client={sdk}>
             <ThemeProvider theme={theme}>
               <Provider store={store}>
