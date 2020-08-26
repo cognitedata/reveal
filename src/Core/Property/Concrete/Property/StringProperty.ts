@@ -1,8 +1,7 @@
-import { PropertyType } from "@/Core/Enums/PropertyType";
-import UseProperty from "@/Core/Property/Base/UseProperty";
+import ValueProperty from "@/Core/Property/Base/ValueProperty";
 import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 
-export default class StringProperty extends UseProperty<string>
+export default class StringProperty extends ValueProperty<string>
 {
   //==================================================
   // CONSTRUCTORS
@@ -10,9 +9,4 @@ export default class StringProperty extends UseProperty<string>
 
   public constructor(params: IPropertyParams<string>) { super(params); }
 
-  //==================================================
-  // OVERRIDES of BaseProperty
-  //==================================================
-
-  public getType(): PropertyType { return PropertyType.String; }
 }

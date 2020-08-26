@@ -20,7 +20,7 @@ import { SliderProperty } from "@/Core/Property/Concrete/Property/SliderProperty
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
 import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
-import { NumberSelectProperty } from "@/Core/Property/Concrete/Property/NumberSelectProperty";
+import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty";
 
 export class CasingLogStyle extends BaseRenderStyle
 {
@@ -39,7 +39,7 @@ export class CasingLogStyle extends BaseRenderStyle
     use: false
   })
 
-  public radiusFactor = new NumberSelectProperty({
+  public radiusFactor = new NumberProperty({
     name: "Radius",
     value: 3,
     options: [1, 2, 3, 4]

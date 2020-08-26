@@ -11,7 +11,7 @@ export type StringAction = (fieldName: string) => void;
 export type IsEnabled = () => boolean;
 export type GetOptionIcon = (option: any) => string;
 
-export default abstract class UseProperty<T> extends BaseProperty
+export default abstract class ValueProperty<T> extends BaseProperty
 {
   //==================================================
   // INSTANCE FIELDS
@@ -66,7 +66,7 @@ export default abstract class UseProperty<T> extends BaseProperty
     if (params.instance)
     {
       if (params.value !== undefined)
-        throw Error("UseProperty has both value and instance");
+        throw Error("Property has both value and instance");
 
       if (!Reflect.has(params.instance, this.name))
       {
@@ -85,7 +85,7 @@ export default abstract class UseProperty<T> extends BaseProperty
       this._use = params.use;
     }
     else
-      throw Error("UseProperty has no value or instance");
+      throw Error("Property has no value or instance");
   }
 
   //==================================================

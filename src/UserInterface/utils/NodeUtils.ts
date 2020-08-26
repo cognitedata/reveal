@@ -3,14 +3,17 @@ import { UniqueId } from "@/Core/Primitives/UniqueId";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
 import BaseProperty from "@/Core/Property/Base/BaseProperty";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
-import { PropertyType } from "@/Core/Enums/PropertyType";
 import ColorMapProperty from "@/Core/Property/Concrete/Property/ColorMapProperty";
 import { Appearance } from "@/Core/States/Appearance";
-import UseProperty from "@/Core/Property/Base/UseProperty";
+import ValueProperty from "@/Core/Property/Base/ValueProperty";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 import GroupProperty from "@/Core/Property/Concrete/Folder/GroupProperty";
 import ElementTypes from "@/UserInterface/Components/Settings/ElementTypes";
 import { ISettingsSection, ISettingsElement, ISelectOption } from "@/UserInterface/Components/Settings/Types";
+import StringProperty from "@/Core/Property/Concrete/Property/StringProperty";
+import ColorProperty from "@/Core/Property/Concrete/Property/ColorProperty";
+import { SliderProperty } from "@/Core/Property/Concrete/Property/SliderProperty";
+import BooleanProperty from "@/Core/Property/Concrete/Property/BooleanProperty";
 
 export default class NodeUtils
 {
@@ -71,7 +74,7 @@ export default class NodeUtils
       {
         property.children.forEach((subProperty) => 
         {
-          if (subProperty instanceof UseProperty) 
+          if (subProperty instanceof ValueProperty) 
           {
             const subElement: ISettingsElement = {
               id: property.name,
@@ -110,7 +113,7 @@ export default class NodeUtils
     }
 
     // If the node is Property 
-    if (property instanceof UseProperty)
+    if (property instanceof ValueProperty)
     {
       if (!property.isEnabled)
         return null;
@@ -128,17 +131,12 @@ export default class NodeUtils
       };
 
       // Handle seperate property types
-      switch (property.getType())
+      if (property instanceof ColorMapProperty)
       {
-        case PropertyType.ColorMap: {
-          element.options = property.options;
-          element.colorMapOptions = (property as ColorMapProperty).getColorMapOptionColors(Appearance.valuesPerColorMap);
-          return element;
-        }
-        default: {
-          return element;
-        }
+        element.options = property.options;
+        element.colorMapOptions = (property as ColorMapProperty).getColorMapOptionColors(Appearance.valuesPerColorMap);
       }
+      return element;
     }
     return null;
   }
@@ -154,7 +152,7 @@ export default class NodeUtils
         {
           items.push({
             label: option.label,
-            value: option.value ,
+            value: option.value,
             iconSrc: iconDelegate && iconDelegate(option)
           });
         }
@@ -162,7 +160,7 @@ export default class NodeUtils
         {
           items.push({
             label: `${option}`,
-            value: option 
+            value: option
           });
         }
       }
@@ -172,31 +170,29 @@ export default class NodeUtils
 
   private static getControlType(property: BaseProperty): string 
   {
-    const type = property.getType();
-    if (type === PropertyType.String)
-      return ElementTypes.String;
-
-    if (type === PropertyType.Color)
+    // Special properties comes first
+    if (property instanceof BooleanProperty)
+      return ElementTypes.Boolean;
+    if (property instanceof SliderProperty)
+      return ElementTypes.Slider;
+    if (property instanceof ColorProperty)
       return ElementTypes.Color;
-
-    if (type === PropertyType.ColorMap)
+    if (property instanceof ColorMapProperty)
       return ElementTypes.ColorMap;
-
-    if (type === PropertyType.Group)
+    if (property instanceof ExpanderProperty)
+      return ElementTypes.Expander;
+    if (property instanceof GroupProperty)
       return ElementTypes.Group;
 
-    if (type === PropertyType.Expander)
-      return ElementTypes.Expander;
+    // General properties
+    if (property instanceof ValueProperty)
+    {
+      if (property.hasOptions)
+        return ElementTypes.Select;
+    }
+    if (property instanceof StringProperty)
+      return ElementTypes.String;
 
-    if (type === PropertyType.Select)
-      return ElementTypes.Select;
-
-    if (type === PropertyType.Slider)
-      return ElementTypes.Slider;
-
-    if (type === PropertyType.Boolean)
-      return ElementTypes.Boolean;
-
-    return "";
+    throw Error("property is not supported");
   }
 }

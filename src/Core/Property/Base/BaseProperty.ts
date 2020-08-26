@@ -1,5 +1,3 @@
-import { PropertyType } from "@/Core/Enums/PropertyType";
-
 export default abstract class BaseProperty
 {
   //==================================================
@@ -34,10 +32,4 @@ export default abstract class BaseProperty
     this._toolTip = toolTip;
     this._readonly = readonly === undefined ? false : readonly;
   }
-
-  //==================================================
-  // VIRTUAL METHODS
-  //==================================================
-
-  public abstract getType(): PropertyType;
 }

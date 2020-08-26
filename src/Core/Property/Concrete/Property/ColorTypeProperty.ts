@@ -1,4 +1,12 @@
 import { ColorType } from "@/Core/Enums/ColorType";
-import { SelectProperty } from "./SelectProperty";
+import ValueProperty from "@/Core/Property/Base/ValueProperty";
+import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 
-export class ColorTypeProperty extends SelectProperty<ColorType>{ }
+export class ColorTypeProperty extends ValueProperty<ColorType>
+{
+  //==================================================
+  // CONSTRUCTORS
+  //==================================================
+
+  public constructor(params: IPropertyParams<ColorType>) { super(params); }
+}

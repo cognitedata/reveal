@@ -1,6 +1,5 @@
 import GroupProperty from "@/Core/Property/Concrete/Folder/GroupProperty";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
-import { PropertyType } from "@/Core/Enums/PropertyType";
 
 const FractionDigitsDefault = 2;
 
@@ -24,12 +23,6 @@ export default class ExpanderProperty extends BasePropertyFolder
   //==================================================
 
   public constructor(name: string) { super(name); }
-
-  //==================================================
-  // OVERRIDES of BaseProperty
-  //==================================================
-
-  public getType(): PropertyType { return PropertyType.Expander; }
 
   //==================================================
   // OVERRIDES of BasePropertyFolder

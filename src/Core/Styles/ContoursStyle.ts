@@ -15,7 +15,7 @@ import * as Lodash from "lodash";
 import { ColorType } from "@/Core/Enums/ColorType";
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
-import { NumberSelectProperty } from "@/Core/Property/Concrete/Property/NumberSelectProperty";
+import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty";
 import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
 
 export class ContoursStyle extends BaseStyle
@@ -25,7 +25,7 @@ export class ContoursStyle extends BaseStyle
   //==================================================
 
   public colorType = new ColorTypeProperty({ name: "Contour color", value: ColorType.Black });
-  public increment = new NumberSelectProperty({ name: "Increment", value: 0 });
+  public increment = new NumberProperty({ name: "Increment", value: 0 });
 
   //==================================================
   // CONSTRUCTORS

@@ -1,10 +1,9 @@
-import { PropertyType } from "@/Core/Enums/PropertyType";
-import UseProperty from "@/Core/Property/Base/UseProperty";
+import ValueProperty from "@/Core/Property/Base/ValueProperty";
 import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 
 // It goes from 0 to 1
 
-export class SliderProperty extends UseProperty<number>
+export class SliderProperty extends ValueProperty<number>
 {
   //==================================================
   // CONSTRUCTORS
@@ -14,10 +13,4 @@ export class SliderProperty extends UseProperty<number>
   {
     super(params);
   }
-
-  //==================================================
-  // OVERRIDES of BaseProperty
-  //==================================================
-
-  public getType(): PropertyType { return PropertyType.Slider; }
 }

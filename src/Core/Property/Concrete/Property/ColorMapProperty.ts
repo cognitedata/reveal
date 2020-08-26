@@ -1,22 +1,15 @@
-import UseProperty from "@/Core/Property/Base/UseProperty";
-import { PropertyType } from "@/Core/Enums/PropertyType";
+import ValueProperty from "@/Core/Property/Base/ValueProperty";
 import { ColorMaps } from "@/Core/Primitives/ColorMaps";
 import Range1 from "@/Core/Geometry/Range1";
 import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 
-export default class ColorMapProperty extends UseProperty<string>
+export default class ColorMapProperty extends ValueProperty<string>
 {
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
   public constructor(params: IPropertyParams<string>) { super(params); }
-
-  //==================================================
-  // OVERRIDES of BaseProperty
-  //==================================================
-
-  public getType(): PropertyType { return PropertyType.ColorMap; }
 
   //==================================================
   // INSTANCE METHODS

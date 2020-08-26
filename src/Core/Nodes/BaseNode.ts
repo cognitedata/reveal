@@ -32,7 +32,7 @@ import { FileType } from "@/Core/Enums/FileType";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 import Range3 from "@/Core/Geometry/Range3";
 import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
-import UseProperty from "@/Core/Property/Base/UseProperty";
+import ValueProperty from "@/Core/Property/Base/ValueProperty";
 import { ColorMaps } from "../Primitives/ColorMaps";
 
 export abstract class BaseNode extends Identifiable
@@ -310,13 +310,13 @@ export abstract class BaseNode extends Identifiable
 
     for (const child of folder.children)
     {
-      if (child instanceof UseProperty)
+      if (child instanceof ValueProperty)
       {
         child.applyByFieldNameDelegate = (fieldName: string) => this.notify(new NodeEventArgs(Changes.renderStyle, fieldName));
       }
 
       // TODO: Remove this hack
-      if (child instanceof UseProperty && (child as ColorTypeProperty != null) && !child.hasOptions)
+      if (child instanceof ValueProperty && (child as ColorTypeProperty != null) && !child.hasOptions)
       {
         child.options = [];
         // eslint-disable-next-line guard-for-in
