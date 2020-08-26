@@ -3,6 +3,7 @@ import {
   GenericResponseObject,
   RESTPackageFilter,
   RESTProject,
+  Source,
 } from '../typings/interfaces';
 
 export type QueryParameters = {
@@ -62,6 +63,12 @@ class Api {
   public packages = {
     get: async (filter: RESTPackageFilter): Promise<any> => {
       return this.get(`${config.api.url}/packages`, filter);
+    },
+  };
+
+  public projects = {
+    get: async (source: Source): Promise<GenericResponseObject[]> => {
+      return this.get(`${config.api.url}/sources/${source}/projects`);
     },
   };
 

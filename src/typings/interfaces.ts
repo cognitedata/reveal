@@ -35,7 +35,7 @@ export interface Configuration {
   id?: string;
   created_time?: string;
   last_updated?: string;
-  name: string | undefined;
+  name: string | null | undefined;
   source: {
     external_id: string;
     source: Source;
