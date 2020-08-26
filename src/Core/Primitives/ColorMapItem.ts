@@ -13,13 +13,7 @@
 //=====================================================================================
 
 import * as Color from "color";
-
-export enum ColorInterpolation
-{
-  Rgb,
-  HsvMin,
-  HsvMax,
-}
+import { ColorInterpolation } from "@/Core/Primitives/ColorInterpolation";
 
 export class ColorMapItem
 {
@@ -28,7 +22,7 @@ export class ColorMapItem
   //==================================================
 
   public color: Color;
-  public value: number;
+  public fraction: number;
   public interpolation: ColorInterpolation;
 
   //==================================================
@@ -38,7 +32,7 @@ export class ColorMapItem
   constructor(color: Color, value: number, interpolation: ColorInterpolation)
   {
     this.color = color;
-    this.value = value;
+    this.fraction = value;
     this.interpolation = interpolation;
   }
 
@@ -48,7 +42,7 @@ export class ColorMapItem
 
   public mix(other: ColorMapItem, value: number): Color
   {
-    const value2 = (value - this.value) / (other.value - this.value);
+    const value2 = (value - this.fraction) / (other.fraction - this.fraction);
     const value1 = 1 - value2;
 
     if (this.interpolation === ColorInterpolation.Rgb)

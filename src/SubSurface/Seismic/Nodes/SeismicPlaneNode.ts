@@ -11,10 +11,6 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import { TargetId } from "@/Core/Primitives/TargetId";
-import { SurfaceRenderStyle } from "@/SubSurface/Basics/SurfaceRenderStyle";
-
 import IconI from "@images/Nodes/SeismicPlaneNodeI.png";
 import IconJ from "@images/Nodes/SeismicPlaneNodeJ.png";
 import { BaseVisualNode } from "@/Core/Nodes/BaseVisualNode";
@@ -174,12 +170,6 @@ export class SeismicPlaneNode extends BaseVisualNode
   }
 
   //==================================================
-  // INSTANCE PROPERTIES
-  //==================================================
-
-  public get renderStyle(): SurfaceRenderStyle | null { return this.getRenderStyle() as SurfaceRenderStyle; }
-
-  //==================================================
   // OVERRIDES of Identifiable
   //==================================================
 
@@ -218,11 +208,6 @@ export class SeismicPlaneNode extends BaseVisualNode
       case 2: return IconJ;
       default: return IconJ;
     }
-  }
-
-  public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
-  {
-    return new SurfaceRenderStyle(targetId);
   }
 
   protected /*override*/ populateStatisticsCore(folder: ExpanderProperty): void

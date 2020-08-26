@@ -27,8 +27,11 @@ import { TextureKit } from "@/Three/Utilities/TextureKit";
 import { ContouringService } from "@/Core/Geometry/ContouringService";
 import { ColorMaps } from "@/Core/Primitives/ColorMaps";
 import { ViewInfo } from "@/Core/Views/ViewInfo";
-import Index2 from "@/Core/Geometry/Index2";
 import { Changes } from "@/Core/Views/Changes";
+import { SolidStyle } from "@/Core/Styles/SolidStyle";
+
+const SolidName = "Solid";
+const ContoursName = "Contour";
 
 export class SurfaceThreeView extends BaseGroupThreeView
 {
@@ -59,6 +62,24 @@ export class SurfaceThreeView extends BaseGroupThreeView
       if (!parent)
         return;
 
+      this.touch();
+    }
+    if (args.isChanged(Changes.renderStyle))
+    {
+      if (this._object3D)
+      {
+        const fieldName = args.getFieldName(Changes.renderStyle);
+        if (fieldName === "Opacity" || fieldName === "Shininess")
+        {
+          const mesh = this._object3D.getObjectByName(SolidName) as THREE.Mesh;
+          if (mesh)
+          {
+            SurfaceThreeView.setMaterial(mesh.material as THREE.MeshPhongMaterial, this.style.solid);
+            this.invalidateTarget();
+            return;
+          }
+        }
+      }
       this.touch();
     }
   }
@@ -129,28 +150,34 @@ export class SurfaceThreeView extends BaseGroupThreeView
     if (!grid)
       return null;
 
-    const color = node.getColorByColorType(style.colorType);
-    const buffers = new RegularGrid2Buffers(grid, style.colorType === ColorType.DepthColor);
+    const colorType = style.colorType.value;
+    const color = node.getColorByColorType(colorType);
+    const buffers = new RegularGrid2Buffers(grid, colorType === ColorType.DepthColor);
     const geometry = buffers.getBufferGeometry();
 
     const material = new THREE.MeshPhongMaterial({
       color: ThreeConverter.toThreeColor(color),
       side: THREE.DoubleSide,
-      shininess: 100 * style.shininess,
       polygonOffset: true,
       polygonOffsetFactor: 1,
-      polygonOffsetUnits: 4.0
+      polygonOffsetUnits: 4.0,
     });
-    //const material = createShader();
-
-    if (style.colorType === ColorType.DepthColor && buffers.hasUvs)
+    SurfaceThreeView.setMaterial(material, style);
+    if (colorType === ColorType.DepthColor && buffers.hasUvs)
     {
       const texture = TextureKit.create1D(ColorMaps.get(node.colorMap));
       if (texture)
         texture.anisotropy = 4;
       material.map = texture;
     }
+
+    const texture = material.map as THREE.DataTexture;
+    if (texture)
+    {
+      material.map = TextureKit.create1DContours(ColorMaps.get(node.colorMap), grid.boundingBox.z, this.style.contours.increment.value, 1);
+    }
     const mesh = new THREE.Mesh(geometry, material);
+    mesh.name = SolidName;
     return mesh;
   }
 
@@ -162,18 +189,40 @@ export class SurfaceThreeView extends BaseGroupThreeView
     if (!grid)
       return null;
 
-    const color = node.getColorByColorType(style.colorType);
-    const service = new ContouringService(style.inc);
+    const color = node.getColorByColorType(style.colorType.value);
+    const service = new ContouringService(style.increment.value);
 
-    const contours = service.createContoursAsXyzArray(grid);
-    if (contours.length === 0)
+    const contoursBuffer = service.createContoursAsXyzArray(grid);
+    if (contoursBuffer.length === 0)
       return null;
 
     const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute("position", new THREE.Float32BufferAttribute(contours, 3));
+    geometry.setAttribute("position", new THREE.Float32BufferAttribute(contoursBuffer, 3));
 
     const material = new THREE.LineBasicMaterial({ color: ThreeConverter.toThreeColor(color), linewidth: 1 });
-    return new THREE.LineSegments(geometry, material);
+    const contours = new THREE.LineSegments(geometry, material);
+    contours.name = ContoursName;
+    return contours;
+  }
+
+  //==================================================
+  // INSTANCE METHODS: Shader experiments
+  //==================================================
+
+  private static setMaterial(material: THREE.MeshPhongMaterial | null, style: SolidStyle | null)
+  {
+    if (!material || !style)
+      return;
+
+    if (style.opacity.use)
+    {
+      material.opacity = style.opacity.value;
+      material.transparent = true;
+    }
+    else
+      material.transparent = true;
+
+    material.shininess = style.shininess.use ? 100 * style.shininess.value : 0;
   }
 }
 

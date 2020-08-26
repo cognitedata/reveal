@@ -14,7 +14,7 @@
 import * as Color from "color";
 import { Colors } from "@/Core/Primitives/Colors";
 import { ColorMap } from "@/Core/Primitives/ColorMap";
-import { ColorInterpolation } from "@/Core/Primitives/ColorMapItem";
+import { ColorInterpolation } from "@/Core/Primitives/ColorInterpolation";
 
 export class ColorMaps
 {

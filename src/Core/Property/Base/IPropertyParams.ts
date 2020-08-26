@@ -1,4 +1,4 @@
-import { Action, IsEnabled, StringAction, GetOptionIcon } from "@/Core/Property/Base/UseProperty";
+import { Action, IsEnabled, StringAction, GetOptionIcon } from "@/Core/Property/Base/ValueProperty";
 
 export default interface IPropertyParams<T>
 {

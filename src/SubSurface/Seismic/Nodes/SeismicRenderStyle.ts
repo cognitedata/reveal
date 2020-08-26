@@ -12,34 +12,37 @@
 //=====================================================================================
 
 import * as Lodash from "lodash";
-
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { SliderProperty } from "@/Core/Property/Concrete/Property/SliderProperty";
 
-export class DiscreteLogStyle extends BaseRenderStyle
+export class SeismicRenderStyle extends BaseRenderStyle
 {
   //==================================================
   // INSTANCE FIELDS
   //==================================================
 
-  public rightBand = true;
+  public opacity = new SliderProperty({ name: "Opacity", value: 0.5, use: false });
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(targetId: TargetId) { super(targetId); }
+  public constructor(targetId: TargetId)
+  {
+    super(targetId);
+  }
 
   //==================================================
   // OVERRIDES of BaseStyle
   //==================================================
 
-  public /*override*/ clone(): BaseStyle { return Lodash.cloneDeep<DiscreteLogStyle>(this); }
+  public /*override*/ clone(): BaseStyle { return Lodash.cloneDeep<SeismicRenderStyle>(this); }
 
   protected /*override*/ populateCore(folder: BasePropertyFolder)
   {
-    super.populateCore(folder);
+    folder.addChild(this.opacity);
   }
 }

@@ -3,14 +3,17 @@ import { UniqueId } from "@/Core/Primitives/UniqueId";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
 import BaseProperty from "@/Core/Property/Base/BaseProperty";
 import { BaseRootNode } from "@/Core/Nodes/BaseRootNode";
-import { PropertyType } from "@/Core/Enums/PropertyType";
 import ColorMapProperty from "@/Core/Property/Concrete/Property/ColorMapProperty";
 import { Appearance } from "@/Core/States/Appearance";
-import UseProperty from "@/Core/Property/Base/UseProperty";
+import ValueProperty from "@/Core/Property/Base/ValueProperty";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 import GroupProperty from "@/Core/Property/Concrete/Folder/GroupProperty";
 import ElementTypes from "@/UserInterface/Components/Settings/ElementTypes";
 import { ISettingsSection, ISettingsElement, ISelectOption } from "@/UserInterface/Components/Settings/Types";
+import StringProperty from "@/Core/Property/Concrete/Property/StringProperty";
+import ColorProperty from "@/Core/Property/Concrete/Property/ColorProperty";
+import { SliderProperty } from "@/Core/Property/Concrete/Property/SliderProperty";
+import BooleanProperty from "@/Core/Property/Concrete/Property/BooleanProperty";
 
 export default class NodeUtils
 {
@@ -49,96 +52,91 @@ export default class NodeUtils
   }
 
   public static generatePropertyTree(
-    nodeProp: BasePropertyFolder | BaseProperty | null
+    property: BasePropertyFolder | BaseProperty | null
   ): ISettingsSection | ISettingsElement | null
   {
-    if (!nodeProp)
+    if (!property)
       return null;
-  
+
     // If node is a GroupProperty
-    if (nodeProp instanceof GroupProperty)
+    if (property instanceof GroupProperty)
     {
       const element: ISettingsElement = {
-        id: nodeProp.name,
-        name: nodeProp.displayName,
-        type: NodeUtils.mapToInputTypes(nodeProp.getType()),
+        id: property.name,
+        name: property.displayName,
+        type: NodeUtils.getControlType(property),
         subValues: [],
-        isReadOnly: nodeProp.isReadOnly,
+        isReadOnly: property.isReadOnly,
         useProperty: true,
         isOptional: false,
       };
-      if (nodeProp.children?.length > 0) 
+      if (property.children?.length > 0) 
       {
-        nodeProp.children.forEach((subVal) => 
+        property.children.forEach((subProperty) => 
         {
-          if (subVal instanceof UseProperty) 
+          if (subProperty instanceof ValueProperty) 
           {
             const subElement: ISettingsElement = {
-              id: nodeProp.name,
-              name: subVal.displayName,
-              isReadOnly: subVal.isReadOnly,
-              type: NodeUtils.mapToInputTypes(subVal.getType()),
-              value: subVal.value,
-              useProperty: subVal.isValueEnabled,
-              isOptional: subVal.isOptional
+              id: property.name,
+              name: subProperty.displayName,
+              isReadOnly: subProperty.isReadOnly,
+              type: NodeUtils.getControlType(subProperty),
+              value: subProperty.value,
+              useProperty: subProperty.isValueEnabled,
+              isOptional: subProperty.isOptional
             };
-              element?.subValues?.push(subElement);
+            element?.subValues?.push(subElement);
           }
-        });   
+        });
       }
       return element;
     }
-  
+
     // If the node is PropertyFolder  
-    if (nodeProp instanceof BasePropertyFolder)
+    if (property instanceof BasePropertyFolder)
     {
-      const property = <ExpanderProperty>nodeProp;
+      const expander = <ExpanderProperty>property;
       const section: ISettingsSection = {
-        id: property.name,
-        name: property.displayName,
+        id: expander.name,
+        name: expander.displayName,
         elements: [],
       };
-      if (property.children?.length > 0) 
+      if (expander.children?.length > 0) 
       {
-        property.children.forEach((child) => 
+        expander.children.forEach((child) => 
         {
           section.elements.push(NodeUtils.generatePropertyTree(child) as ISettingsElement);
-        });   
+        });
         return section;
-      } 
+      }
       return section;
     }
 
     // If the node is Property 
-    if (nodeProp instanceof UseProperty)
+    if (property instanceof ValueProperty)
     {
-      if (!nodeProp.isEnabled)
+      if (!property.isEnabled)
         return null;
 
       const element: ISettingsElement = {
-        id: nodeProp.name,
-        name: nodeProp.displayName,
-        type: NodeUtils.mapToInputTypes(nodeProp.getType()),
-        value: nodeProp.value,
+        id: property.name,
+        name: property.displayName,
+        type: NodeUtils.getControlType(property),
+        value: property.value,
         subValues: [],
-        isReadOnly: nodeProp.isReadOnly,
-        options: NodeUtils.createSelectOptions(nodeProp.options, nodeProp.optionIconDelegate),
-        useProperty: nodeProp.use,
-        isOptional: nodeProp.isOptional,
+        isReadOnly: property.isReadOnly,
+        options: NodeUtils.createSelectOptions(property.options, property.optionIconDelegate),
+        useProperty: property.use,
+        isOptional: property.isOptional,
       };
-      
+
       // Handle seperate property types
-      switch (nodeProp.getType())
-      {  
-        case PropertyType.ColorMap: {
-          element.options = nodeProp.options;
-          element.colorMapOptions = (nodeProp as ColorMapProperty).getColorMapOptionColors(Appearance.valuesPerColorMap);
-          return element;
-        }
-        default: {
-          return element;
-        }    
+      if (property instanceof ColorMapProperty)
+      {
+        element.options = property.options;
+        element.colorMapOptions = (property as ColorMapProperty).getColorMapOptionColors(Appearance.valuesPerColorMap);
       }
+      return element;
     }
     return null;
   }
@@ -154,7 +152,7 @@ export default class NodeUtils
         {
           items.push({
             label: option.label,
-            value: option.value ,
+            value: option.value,
             iconSrc: iconDelegate && iconDelegate(option)
           });
         }
@@ -162,40 +160,39 @@ export default class NodeUtils
         {
           items.push({
             label: `${option}`,
-            value: option 
+            value: option
           });
         }
       }
     }
     return items;
   }
-  
-  private static mapToInputTypes(type: PropertyType): string 
+
+  private static getControlType(property: BaseProperty): string 
   {
-    if (type === PropertyType.String)
-      return ElementTypes.INPUT;
+    // Special properties comes first
+    if (property instanceof BooleanProperty)
+      return ElementTypes.Boolean;
+    if (property instanceof SliderProperty)
+      return ElementTypes.Slider;
+    if (property instanceof ColorProperty)
+      return ElementTypes.Color;
+    if (property instanceof ColorMapProperty)
+      return ElementTypes.ColorMap;
+    if (property instanceof ExpanderProperty)
+      return ElementTypes.Expander;
+    if (property instanceof GroupProperty)
+      return ElementTypes.Group;
 
-    if (type === PropertyType.Color)
-      return ElementTypes.COLOR_TABLE;
+    // General properties
+    if (property instanceof ValueProperty)
+    {
+      if (property.hasOptions)
+        return ElementTypes.Select;
+    }
+    if (property instanceof StringProperty)
+      return ElementTypes.String;
 
-    if (type === PropertyType.ColorMap)
-      return ElementTypes.COLORMAP_SELECT;
-
-    if (type === PropertyType.Group)
-      return ElementTypes.INPUT_GROUP;
-
-    if (type === PropertyType.Expander)
-      return ElementTypes.SECTION;
-      
-    if (type === PropertyType.Select)
-      return ElementTypes.SELECT;
-
-    if (type === PropertyType.Range)
-      return ElementTypes.RANGE;
-
-    if (type === PropertyType.Boolean)
-      return ElementTypes.BOOLEAN;
-
-    return "";
+    throw Error("property is not supported");
   }
 }

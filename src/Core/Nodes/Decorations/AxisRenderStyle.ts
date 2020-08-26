@@ -15,7 +15,8 @@ import * as Lodash from "lodash";
 
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
-import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { BaseStyle } from "@/Core/Styles/BaseStyle";
 
 export class AxisRenderStyle extends BaseRenderStyle
 {
@@ -40,11 +41,9 @@ export class AxisRenderStyle extends BaseRenderStyle
   public constructor(targetId: TargetId) { super(targetId); }
 
   //==================================================
-  // OVERRIDES of BaseRenderStyle
+  // OVERRIDES of BaseStyle
   //==================================================
 
-  public /*override*/ clone(): BaseRenderStyle { return Lodash.cloneDeep<AxisRenderStyle>(this); }
-  protected /*override*/ populateCore(folder: ExpanderProperty)
-  {
-  }
+  public /*override*/ clone(): BaseStyle { return Lodash.cloneDeep<AxisRenderStyle>(this); }
+  protected /*override*/ populateCore(folder: BasePropertyFolder) { }
 }

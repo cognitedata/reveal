@@ -1,12 +1,12 @@
-import Color from "color";
+import { ColorType } from "@/Core/Enums/ColorType";
 import ValueProperty from "@/Core/Property/Base/ValueProperty";
 import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 
-export default class ColorProperty extends ValueProperty<Color>
+export class ColorTypeProperty extends ValueProperty<ColorType>
 {
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(params: IPropertyParams<Color>) { super(params); }
+  public constructor(params: IPropertyParams<ColorType>) { super(params); }
 }

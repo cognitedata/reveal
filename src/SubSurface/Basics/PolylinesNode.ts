@@ -59,11 +59,10 @@ export class PolylinesNode extends DataNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Polylines"; }
-
+  public /*override*/ hasColorMap(): boolean { return true; }
   public /*override*/ getIcon(): string { return this.dataIsLost ? super.getIcon() : Icon; }
-
   public /*override*/ get boundingBox(): Range3 { return this.polylines ? this.polylines.boundingBox : new Range3(); }
-
+  
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
     return new PolylinesRenderStyle(targetId);

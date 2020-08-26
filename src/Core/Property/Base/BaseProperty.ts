@@ -1,6 +1,3 @@
-import * as Lodash from "lodash";
-import { PropertyType } from "@/Core/Enums/PropertyType";
-
 export default abstract class BaseProperty
 {
   //==================================================
@@ -8,7 +5,7 @@ export default abstract class BaseProperty
   //==================================================
 
   private _name: string;
-  private _displayName: string;
+  private _displayName?: string;
   private _toolTip?: string;
   private _readonly: boolean;
 
@@ -32,14 +29,7 @@ export default abstract class BaseProperty
   protected constructor(name: string, readonly?: boolean, toolTip?: string)
   {
     this._name = name;
-    this._displayName = this.name.charAt(0).toUpperCase() + Lodash.startCase(this.name).substring(1).toLowerCase();
     this._toolTip = toolTip;
     this._readonly = readonly === undefined ? false : readonly;
   }
-
-  //==================================================
-  // VIRTUAL METHODS
-  //==================================================
-
-  public abstract getType(): PropertyType;
 }

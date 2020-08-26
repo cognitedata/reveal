@@ -16,10 +16,11 @@ import * as Lodash from "lodash";
 import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
-import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
-import { RangeProperty } from "@/Core/Property/Concrete/Property/RangeProperty";
-import { ColorTypeSelectProperty } from "@/Core/Property/Concrete/Property/ColorTypeSelectProperty";
-import { NumberSelectProperty } from "@/Core/Property/Concrete/Property/NumberSelectProperty";
+import { SliderProperty } from "@/Core/Property/Concrete/Property/SliderProperty";
+import { BaseStyle } from "@/Core/Styles/BaseStyle";
+import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
+import { NumberProperty } from "@/Core/Property/Concrete/Property/NumberProperty";
 
 export class CasingLogStyle extends BaseRenderStyle
 {
@@ -27,18 +28,18 @@ export class CasingLogStyle extends BaseRenderStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public colorType = new ColorTypeSelectProperty({
+  public colorType = new ColorTypeProperty({
     name: "Color Type",
     value: ColorType.Specified
   });
 
-  public opacity = new RangeProperty({
+  public opacity = new SliderProperty({
     name: "Opacity",
     value: 0.2,
     use: false
   })
 
-  public radiusFactor = new NumberSelectProperty({
+  public radiusFactor = new NumberProperty({
     name: "Radius",
     value: 3,
     options: [1, 2, 3, 4]
@@ -51,12 +52,12 @@ export class CasingLogStyle extends BaseRenderStyle
   public constructor(targetId: TargetId) { super(targetId); }
 
   //==================================================
-  // OVERRIDES of BaseRenderStyle
+  // OVERRIDES of BaseStyle
   //==================================================
 
-  public /*override*/ clone(): BaseRenderStyle { return Lodash.cloneDeep<CasingLogStyle>(this); }
+  public /*override*/ clone(): BaseStyle { return Lodash.cloneDeep<CasingLogStyle>(this); }
 
-  protected /*override*/ populateCore(folder: ExpanderProperty)
+  protected /*override*/ populateCore(folder: BasePropertyFolder)
   {
     super.populateCore(folder);
     folder.addChild(this.radiusFactor);

@@ -15,7 +15,7 @@ import CompactColorPicker from "@/UserInterface/Components/CompactColorPicker/Co
 import Icon from "@/UserInterface/Components/Icon/Icon";
 import "./SettingsElement.module.scss";
 import { Box } from "@material-ui/core";
-import { ColorMapSelector } from "@/UserInterface/Components/ColoMapSelector/ColorMapSelector";
+import { ColorMapSelector } from "@/UserInterface/Components/ColorMapSelector/ColorMapSelector";
 
 /**
  * Responsible for rendering dynamic inputs
@@ -63,7 +63,7 @@ export default function SettingsElement(props: ISettingsElementProps) {
     const disabled = config.isReadOnly || !config.useProperty;
 
     switch (type) {
-      case ElementTypes.INPUT:
+      case ElementTypes.String:
         return (
           <input
             disabled={disabled}
@@ -75,7 +75,7 @@ export default function SettingsElement(props: ISettingsElementProps) {
             className={isReadOnly ? "textInput readOnlyInput" : "textInput"}
           />
         );
-      case ElementTypes.BOOLEAN:
+      case ElementTypes.Boolean:
         return (
           <input
             type="checkbox"
@@ -88,7 +88,7 @@ export default function SettingsElement(props: ISettingsElementProps) {
             value={value}
           />
         );
-      case ElementTypes.SELECT: {
+      case ElementTypes.Select: {
         const options = config.options as ISelectOption[];
         const [selectedValue, setSelectedValue] = useState(
           value ?? (options.length > 0 && options[0].value)
@@ -155,7 +155,7 @@ export default function SettingsElement(props: ISettingsElementProps) {
           </div>
         );
       }
-      case ElementTypes.COLOR_TABLE:
+      case ElementTypes.Color:
         return (
           <CompactColorPicker
             value={value instanceof Color ? value.hex() : ""}
@@ -163,7 +163,7 @@ export default function SettingsElement(props: ISettingsElementProps) {
             onChange={onChange}
           />
         );
-      case ElementTypes.RANGE:
+      case ElementTypes.Slider:
         return (
           <input
             type="range"
@@ -172,10 +172,11 @@ export default function SettingsElement(props: ISettingsElementProps) {
             onChange={(event) => onChange(id, event.target.value)}
             className="slider"
             min="0"
-            max="100"
+            step="0.02"
+            max="1"
           />
         );
-      case ElementTypes.COLORMAP_SELECT: {
+      case ElementTypes.ColorMap: {
         const options = elmConfig.options as string[];
         return (
           <Box className="color-map-select">
@@ -191,7 +192,7 @@ export default function SettingsElement(props: ISettingsElementProps) {
           </Box>
         );
       }
-      case ElementTypes.IMAGE_BUTTON:
+      case ElementTypes.ImageButton:
         return (
           <div
             {...keyExtractor(null, type, name)}
@@ -202,7 +203,7 @@ export default function SettingsElement(props: ISettingsElementProps) {
             <Icon type={icon?.type} name={icon?.name} />
           </div>
         );
-      case ElementTypes.INPUT_GROUP:
+      case ElementTypes.Group:
         return subElements?.map((elm) => renderInputElement(elm));
       default:
         return <></>;

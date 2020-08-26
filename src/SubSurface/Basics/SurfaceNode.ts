@@ -65,9 +65,8 @@ export class SurfaceNode extends DataNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Surface"; }
-
   public /*override*/ getIcon(): string { return this.dataIsLost ? super.getIcon() : Icon; }
-
+  public /*override*/ hasColorMap(): boolean { return true; }
   public /*override*/ get boundingBox(): Range3 { return this.surface ? this.surface.boundingBox : new Range3(); }
 
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
@@ -80,10 +79,27 @@ export class SurfaceNode extends DataNode
     if (!(style instanceof SurfaceRenderStyle))
       return;
 
-    if (!this.supportsColorType(style.solid.colorType))
-      style.solid.colorType = ColorType.DepthColor;
-    if (!this.supportsColorType(style.contours.colorType))
-      style.contours.colorType = ColorType.Black;
+    const { boundingBox } = this;
+    if (boundingBox.isEmpty)
+      return;
+
+    const zRange = boundingBox.z;
+    {
+      const increment = style.contours.increment.value;
+      if (increment <= 0)
+        style.contours.increment.value = zRange.getBestInc();
+    }
+    if (!style.contours.increment.hasOptions)
+    {
+      const options: number[] = [];
+      for (let i = 100; i >= 3; i--)
+      {
+        const increment = zRange.getBestInc(i);
+        if (options.length === 0 || options[options.length - 1] !== increment)
+          options.push(increment);
+      }
+      style.contours.increment.options = options;
+    }
   }
 
   public /*override*/ supportsColorType(colorType: ColorType): boolean

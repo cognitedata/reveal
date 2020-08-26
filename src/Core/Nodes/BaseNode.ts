@@ -31,7 +31,8 @@ import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 import { FileType } from "@/Core/Enums/FileType";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 import Range3 from "@/Core/Geometry/Range3";
-import UseProperty from "@/Core/Property/Base/UseProperty";
+import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
+import ValueProperty from "@/Core/Property/Base/ValueProperty";
 import { ColorMaps } from "../Primitives/ColorMaps";
 
 export abstract class BaseNode extends Identifiable
@@ -128,7 +129,7 @@ export abstract class BaseNode extends Identifiable
   public /*virtual*/ setColor(value: Color) { this._color = value; }
   public /*virtual*/ canChangeColor(): boolean { return true; }
   public /*virtual*/ hasIconColor(): boolean { return this.canChangeColor(); }
-  public /*virtual*/ hasColorMap(): boolean { return true; }
+  public /*virtual*/ hasColorMap(): boolean { return false; }
 
   //==================================================
   // VIRTUAL METHODS: Icon
@@ -173,9 +174,6 @@ export abstract class BaseNode extends Identifiable
 
   public /*virtual*/ getCheckBoxState(target?: ITarget | null): CheckBoxState
   {
-    if (this.name === "Log folder 1")
-      console.log(this.name);
-
     if (!target)
       target = this.activeTarget;
 
@@ -283,7 +281,7 @@ export abstract class BaseNode extends Identifiable
     folder.addString({ name: "name", instance: this, readonly: !this.canChangeName(), apply: this.notifyNameChanged });
     if (this.canChangeColor())
       folder.addColor({ name: "color", instance: this, apply: this.notifyColorChanged });
-    folder.addReadOnlyString("type", this.typeName);
+    folder.addReadOnlyString("Type", this.typeName);
     if (this.hasColorMap())
       folder.addColorMap({ name: "colorMap", instance: this, readonly: false, apply: this.notifyColorMapChanged });
   }
@@ -312,20 +310,23 @@ export abstract class BaseNode extends Identifiable
 
     for (const child of folder.children)
     {
-      if (child instanceof UseProperty)
+      if (child instanceof ValueProperty)
       {
-        if (child.name === "Color Type")
-        {
-          child.options = [];
-          for (const color in ColorType)
-          {
-            if (typeof ColorType[color] === "number")
-              if (this.supportsColorType(ColorType[color] as unknown as number))
-                child.options.push({ label: color, value: ColorType[color] });
-          }
-          child.optionIconDelegate = BaseNode.GetIconFromColorType;
-        }
         child.applyByFieldNameDelegate = (fieldName: string) => this.notify(new NodeEventArgs(Changes.renderStyle, fieldName));
+      }
+
+      // TODO: Remove this hack
+      if (child instanceof ValueProperty && (child as ColorTypeProperty != null) && !child.hasOptions)
+      {
+        child.options = [];
+        // eslint-disable-next-line guard-for-in
+        for (const colorType in ColorType)
+        {
+          const colorTypeValue = ColorType[colorType] as unknown as number;
+          if (this.supportsColorType(colorTypeValue))
+            child.options.push({ label: colorType, value: colorTypeValue });
+        }
+        child.optionIconDelegate = BaseNode.GetIconFromColorType;
       }
     }
   }
@@ -783,7 +784,7 @@ export abstract class BaseNode extends Identifiable
         if (!thisStyle.targetId.hasSameTypeName(targetId))
           continue;
 
-        style = thisStyle.clone();
+        style = thisStyle.clone() as BaseRenderStyle;
         style.isDefault = false;
         style.targetId.set(targetId, this.renderStyleResolution);
         this.renderStyles.push(style);

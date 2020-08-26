@@ -14,8 +14,9 @@
 // eslint-disable-next-line max-classes-per-file
 import * as Color from "color";
 import { Ma } from "@/Core/Primitives/Ma";
-import { ColorMapItem, ColorInterpolation } from "@/Core/Primitives/ColorMapItem";
-import { Colors } from "@/Core/Primitives/Colors";
+import { ColorMapItem } from "@/Core/Primitives/ColorMapItem";
+import { ColorInterpolation } from "@/Core/Primitives/ColorInterpolation";
+import Range1 from "@/Core/Geometry/Range1";
 
 export class ColorMap
 {
@@ -38,46 +39,46 @@ export class ColorMap
 
     this._maxIndex = colors.length - 1;
     const inc = 1.0 / this._maxIndex;
-    let value = 0;
+    let fraction = 0;
     for (const color of colors)
     {
-      this._items.push(new ColorMapItem(color, value, ColorInterpolation.Rgb));
-      value += inc;
+      this._items.push(new ColorMapItem(color, fraction, ColorInterpolation.Rgb));
+      fraction += inc;
     }
-    this._items[this._maxIndex].value = 1; // Ensure 1 at last item
+    this._items[this._maxIndex].fraction = 1; // Ensure 1 at last item
   }
 
   //==================================================
   // INSTANCE METHODS: Getters
   //==================================================
 
-  public getColor(value: number): Color
+  public getColor(fraction: number): Color
   {
     // Assume a limited number of colors, otherwise a binary search should be used.
     for (let i = 0; i <= this._maxIndex; i++)
     {
       const item = this._items[i];
-      if (value <= item.value)
+      if (fraction <= item.fraction)
       {
         if (i === 0)
           return item.color;
-        return this._items[i - 1].mix(item, value);
+        return this._items[i - 1].mix(item, fraction);
       }
     }
     return this._items[this._maxIndex].color;
   }
 
-  private getColorFast(value: number, index: Index): Color
+  private getColorFast(fraction: number, indexInColorMap: Index): Color
   {
     // Assume a limited number of colors, otherwise a binary search should be used.
-    for (; index.value <= this._maxIndex; index.value++)
+    for (; indexInColorMap.value <= this._maxIndex; indexInColorMap.value++)
     {
-      const item = this._items[index.value];
-      if (value <= item.value)
+      const item = this._items[indexInColorMap.value];
+      if (fraction <= item.fraction)
       {
-        if (index.value === 0)
+        if (indexInColorMap.value === 0)
           return item.color;
-        return this._items[index.value - 1].mix(item, value);
+        return this._items[indexInColorMap.value - 1].mix(item, fraction);
       }
     }
     return this._items[this._maxIndex].color;
@@ -87,11 +88,11 @@ export class ColorMap
   // INSTANCE METHODS: Operations
   //==================================================
 
-  public add(color: Color, value: number, interpolation: ColorInterpolation): void
+  public add(color: Color, fraction: number, interpolation: ColorInterpolation): void
   {
-    this._items.push(new ColorMapItem(color, value, interpolation));
+    this._items.push(new ColorMapItem(color, fraction, interpolation));
     // Make it consistent:
-    this._items.sort((a, b) => Ma.compare(a.value, b.value));
+    this._items.sort((a, b) => Ma.compare(a.fraction, b.fraction));
     this._maxIndex = this._items.length - 1;
   }
 
@@ -99,64 +100,92 @@ export class ColorMap
   {
     this._items.reverse();
     for (const item of this._items)
-      item.value = 1 - item.value;
+      item.fraction = 1 - item.fraction;
   }
 
   //==================================================
   // INSTANCE METHODS: Operations
   //==================================================
 
-  public create1DTexture(size: number = 1000): Uint8Array
+  public create1DColors(size: number = 1000): Uint8Array
   {
-    const darknessVolume = 0.3;
     const height = 2;
-    const colors = new Uint8Array(3 * size * height);
-    const inc = Math.round(size / 20);
+    const rgbs = new Uint8Array(3 * size * height);
 
     let index1 = 0;
-    let index2 = 3 * size;
+    let index2 = size;
+    const indexInColorMap = new Index();
 
-    const index = new Index();
     for (let i = 0; i < size; i++)
     {
-      const value = i / (size - 1);
-      let color = this.getColorFast(value, index);
-
-      // eslint-disable-next-line no-constant-condition
-      if (false)
-        color = Colors.getGammaCorrected(color);
-
-      // eslint-disable-next-line no-constant-condition
-      if (false)
-      {
-        // Darkness correction
-        const darknessFraction = (i % inc) / inc;
-        color = color.darken(darknessVolume * (darknessFraction - 0.5));
-      }
-      colors[index1++] = color.red();
-      colors[index1++] = color.green();
-      colors[index1++] = color.blue();
-
-      colors[index2++] = color.red();
-      colors[index2++] = color.green();
-      colors[index2++] = color.blue();
+      const fraction = i / (size - 1);
+      const color = this.getColorFast(fraction, indexInColorMap);
+      ColorMap.setAt(rgbs, index1++, color);
+      ColorMap.setAt(rgbs, index2++, color);
     }
-    return colors;
+    return rgbs;
+  }
+
+  public create1DContourColors(range: Range1, increment: number, volume: number, solidColor?: Color, size: number = 1000): Uint8Array
+  {
+    const height = 2;
+    const rgbs = new Uint8Array(3 * size * height);
+
+    let index1 = 0;
+    let index2 = size;
+    const indexInColorMap = new Index();
+    let color: Color;
+    for (let i = 0; i < size; i++)
+    {
+      const fraction = i / (size - 1);
+      if (volume > 0)
+      {
+        const level = range.getValue(fraction);
+        const reminder = level % increment;
+        let contourFraction = reminder / increment;
+        if (contourFraction < 1)
+          contourFraction += 1;
+
+        // Get color in the middle
+        const middleLevel = (level - reminder) + increment / 2;
+        const middleFraction = range.getFraction(middleLevel);
+        color = solidColor || this.getColorFast(middleFraction, indexInColorMap);
+
+        if (contourFraction < 0.5)
+          color = color.blacken(volume * (0.5 - contourFraction));
+        else
+          color = color.whiten(volume * (contourFraction - 0.5));
+      }
+      else
+      {
+        color = solidColor || this.getColorFast(fraction, indexInColorMap);
+      }
+      ColorMap.setAt(rgbs, index1++, color);
+      ColorMap.setAt(rgbs, index2++, color);
+    }
+    return rgbs;
   }
 
   //==================================================
   // STATIC METHODS
   //==================================================
 
-  static add(array: Array<number>, color: Color): void
+  static setAt(rgbs: Uint8Array, index: number, color: Color): void
   {
-    array.push(color.red());
-    array.push(color.green());
-    array.push(color.blue());
+    index *= 3;
+    rgbs[index] = color.red();
+    rgbs[index + 1] = color.green();
+    rgbs[index + 2] = color.blue();
+  }
+
+  static add(rgbs: Array<number>, color: Color): void
+  {
+    rgbs.push(color.red(), color.green(), color.blue());
   }
 }
 
 class Index
 {
-  public value = 0;
+  public value: number;
+  constructor(value = 0) { this.value = value; }
 }

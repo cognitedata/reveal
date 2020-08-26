@@ -1,3 +1,4 @@
+import * as Lodash from "lodash";
 import BaseProperty from "@/Core/Property/Base/BaseProperty";
 import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 
@@ -10,7 +11,7 @@ export type StringAction = (fieldName: string) => void;
 export type IsEnabled = () => boolean;
 export type GetOptionIcon = (option: any) => string;
 
-export default abstract class UseProperty<T> extends BaseProperty
+export default abstract class ValueProperty<T> extends BaseProperty
 {
   //==================================================
   // INSTANCE FIELDS
@@ -65,7 +66,7 @@ export default abstract class UseProperty<T> extends BaseProperty
     if (params.instance)
     {
       if (params.value !== undefined)
-        throw Error("UseProperty has both value and instance");
+        throw Error("Property has both value and instance");
 
       if (!Reflect.has(params.instance, this.name))
       {
@@ -76,6 +77,7 @@ export default abstract class UseProperty<T> extends BaseProperty
         this._use = true; // just set it either true or false
 
       this._instance = params.instance;
+      this.displayName = this.name.charAt(0).toUpperCase() + Lodash.startCase(this.name).substring(1).toLowerCase();
     }
     else if (params.value !== undefined)
     {
@@ -83,11 +85,11 @@ export default abstract class UseProperty<T> extends BaseProperty
       this._use = params.use;
     }
     else
-      throw Error("UseProperty has no value or instance");
+      throw Error("Property has no value or instance");
   }
 
   //==================================================
-  // INSTANCE PROPERTIES
+  // INSTANCE PROPERTIES: Value setter and getter
   //==================================================
 
   public get value(): T
@@ -142,12 +144,6 @@ export default abstract class UseProperty<T> extends BaseProperty
   }
 
   //==================================================
-  // OVERRIDES of BaseProperty
-  //==================================================
-
-  public useComboBox = () => false;
-
-  //==================================================
   // INSTANCE METHODS
   //==================================================
 
@@ -165,5 +161,12 @@ export default abstract class UseProperty<T> extends BaseProperty
     if (!this._getOptionIconDelegate)
       return "";
     return this._getOptionIconDelegate(option);
+  }
+
+  public addOption(option: T): void
+  {
+    if (!this.options)
+      this.options = [];
+    this.options.push(option);
   }
 }

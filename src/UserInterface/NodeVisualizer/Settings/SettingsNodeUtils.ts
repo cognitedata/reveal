@@ -1,5 +1,5 @@
 import NodeUtils from "@/UserInterface/utils/NodeUtils";
-import UseProperty from "@/Core/Property/Base/UseProperty";
+import ValueProperty from "@/Core/Property/Base/ValueProperty";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 
 export default class SettingsNodeUtils
@@ -10,7 +10,7 @@ export default class SettingsNodeUtils
 
     if (property)
     {
-      (property as UseProperty<T>).value = value;
+      (property as ValueProperty<T>).value = value;
     }
     else
     {
@@ -34,7 +34,7 @@ export default class SettingsNodeUtils
   {
     const property = NodeUtils.getPropertyById(id);
 
-    if (property instanceof UseProperty)
+    if (property instanceof ValueProperty)
     {
       property.use = useProperty;
     }

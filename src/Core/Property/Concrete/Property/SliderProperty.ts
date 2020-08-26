@@ -1,12 +1,16 @@
-import Color from "color";
 import ValueProperty from "@/Core/Property/Base/ValueProperty";
 import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 
-export default class ColorProperty extends ValueProperty<Color>
+// It goes from 0 to 1
+
+export class SliderProperty extends ValueProperty<number>
 {
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(params: IPropertyParams<Color>) { super(params); }
+  public constructor(params: IPropertyParams<number>)
+  {
+    super(params);
+  }
 }

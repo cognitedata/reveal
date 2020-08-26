@@ -2,7 +2,6 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { BaseNode } from "@/Core/Nodes/BaseNode";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 import NodeUtils from "@/UserInterface/utils/NodeUtils";
-import SettingsNodeUtils from "@/UserInterface/NodeVisualizer/Settings/SettingsNodeUtils";
 import { IconTypes } from "@/UserInterface/Components/Icon/IconTypes";
 import { ISettingsState } from "@/UserInterface/Redux/State/settings";
 
@@ -52,39 +51,30 @@ export const settingsSlice = createSlice({
       },
       prepare(node: BaseNode): { payload: { node: BaseNode } }
       {
-        let settingsProperties;
-
+        let settings;
         if (node)
         {
           const selectionState = node.isSelected();
-
           if (selectionState)
           {
             // populate settings object
-            settingsProperties = new ExpanderProperty("Settings");
-
-            const generalProperties = new ExpanderProperty("General Properties");
-
-            node.populateInfo(generalProperties);
-            settingsProperties.addChild(generalProperties);
-
-            const statistics = new ExpanderProperty("Statistics");
-
-            node.populateStatistics(statistics);
-            settingsProperties.addChild(statistics);
-
-            const visualSettings = new ExpanderProperty("Visual Settings");
-
-            node.populateRenderStyle(visualSettings);
-            settingsProperties.addChild(visualSettings);
-
-            NodeUtils.properties = settingsProperties;
+            settings = new ExpanderProperty("Settings");
+            {
+              const expander = settings.createExpander("General Settings");
+              node.populateInfo(expander);
+            }
+            {
+              const expander = settings.createExpander("Statistics");
+              node.populateStatistics(expander);
+            }
+            {
+              const expander = settings.createExpander("Visual Settings");
+              node.populateRenderStyle(expander);
+            }
+            NodeUtils.properties = settings;
           }
         }
-
-        return {
-          payload: { node }
-        };
+        return { payload: { node } };
       }
     },
     onSectionExpand: {
@@ -94,9 +84,7 @@ export const settingsSlice = createSlice({
       },
       prepare(sectionName: string, expandStatus: boolean)
       {
-        return {
-          payload: { sectionName, expandStatus }
-        };
+        return { payload: { sectionName, expandStatus } };
       }
 
     }

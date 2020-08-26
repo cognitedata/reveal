@@ -1,10 +1,9 @@
-import UseProperty from "@/Core/Property/Base/UseProperty";
-import { PropertyType } from "@/Core/Enums/PropertyType";
+import ValueProperty from "@/Core/Property/Base/ValueProperty";
 import { ColorMaps } from "@/Core/Primitives/ColorMaps";
 import Range1 from "@/Core/Geometry/Range1";
 import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 
-export default class ColorMapProperty extends UseProperty<string>
+export default class ColorMapProperty extends ValueProperty<string>
 {
   //==================================================
   // CONSTRUCTORS
@@ -13,16 +12,10 @@ export default class ColorMapProperty extends UseProperty<string>
   public constructor(params: IPropertyParams<string>) { super(params); }
 
   //==================================================
-  // OVERRIDES of BaseProperty
-  //==================================================
-
-  public getType(): PropertyType { return PropertyType.ColorMap; }
-
-  //==================================================
   // INSTANCE METHODS
   //==================================================
 
-  public getColorMapOptionColors(valuesPerColorMap: number): string[][]
+  public getColorMapOptionColors(colorCount: number): string[][]
   {
     if (!this.options)
       return [];
@@ -33,8 +26,9 @@ export default class ColorMapProperty extends UseProperty<string>
       const colors: string[] = [];
       if (!colorMap)
         return colors;
-      const range = new Range1(0, valuesPerColorMap - 1);
-      for (let i = 0; i < valuesPerColorMap; i++)
+        
+      const range = new Range1(0, colorCount - 1);
+      for (let i = 0; i < colorCount; i++)
       {
         const fraction = range.getFraction(i);
         const color = colorMap.getColor(fraction).hex();

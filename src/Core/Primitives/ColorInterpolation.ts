@@ -1,4 +1,5 @@
-//=====================================================================================  
+/* eslint-disable no-lonely-if */
+//=====================================================================================
 // This code is part of the Reveal Viewer architecture, made by Nils Petter Fremming  
 // in October 2019. It is suited for flexible and customizable visualization of   
 // multiple dataset in multiple viewers.
@@ -11,14 +12,11 @@
 // Copyright (c) Cognite AS. All rights reserved.
 //=====================================================================================
 
-export enum PropertyType
+import * as Color from "color";
+
+export enum ColorInterpolation
 {
-  Expander,
-  Group,
-  Range,
-  String,
-  Color,
-  ColorMap,
-  Select,
-  Boolean
+  Rgb,
+  HsvMin,
+  HsvMax,
 }

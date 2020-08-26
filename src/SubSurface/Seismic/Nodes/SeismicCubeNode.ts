@@ -14,7 +14,6 @@
 import Range3 from "@/Core/Geometry/Range3";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { TargetId } from "@/Core/Primitives/TargetId";
-import { SurfaceRenderStyle } from "@/SubSurface/Basics/SurfaceRenderStyle";
 
 import Icon from "@images/Nodes/SeismicCubeNode.png";
 import { DataNode } from "@/Core/Nodes/DataNode";
@@ -24,6 +23,7 @@ import { SurveyNode } from "@/SubSurface/Seismic/Nodes/SurveyNode";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 import { CogniteSeismicClient } from "@cognite/seismic-sdk-js";
 import { SeismicPlaneNode } from "@/SubSurface/Seismic/Nodes/SeismicPlaneNode";
+import { SeismicRenderStyle } from "@/SubSurface/Seismic/Nodes/SeismicRenderStyle";
 
 export class SeismicCubeNode extends DataNode
 {
@@ -32,7 +32,6 @@ export class SeismicCubeNode extends DataNode
   //==================================================
 
   static className = "SeismicCubeNode";
-  public ff: number = 89;
   //==================================================
   // CONSTRUCTORS
   //==================================================
@@ -45,7 +44,7 @@ export class SeismicCubeNode extends DataNode
 
   public get seismicCube(): SeismicCube | null { return this.anyData; }
   public set seismicCube(value: SeismicCube | null) { this.anyData = value; }
-  public get renderStyle(): SurfaceRenderStyle | null { return this.getRenderStyle() as SurfaceRenderStyle; }
+  public get renderStyle(): SeismicRenderStyle | null { return this.getRenderStyle() as SeismicRenderStyle; }
   public get surveyNode(): SurveyNode | null { return this.getAncestorByType(SurveyNode); }
 
   //==================================================
@@ -60,6 +59,7 @@ export class SeismicCubeNode extends DataNode
   //==================================================
 
   public /*override*/ get typeName(): string { return "Seismic Cube"; }
+  public /*override*/ hasColorMap(): boolean { return true; }
   public /*override*/ getIcon(): string { return this.dataIsLost ? super.getIcon() : Icon; }
   public /*override*/ isRadio(target: ITarget | null): boolean { return true; }
   public /*override*/ canChangeColor(): boolean { return false; }
@@ -67,7 +67,7 @@ export class SeismicCubeNode extends DataNode
   public /*override*/ get boundingBox(): Range3 { return this.seismicCube ? this.seismicCube.boundingBox : new Range3(); }
   public /*override*/ createRenderStyle(targetId: TargetId): BaseRenderStyle | null
   {
-    return new SurfaceRenderStyle(targetId);
+    return new SeismicRenderStyle(targetId);
   }
 
   protected /*override*/ populateStatisticsCore(folder: ExpanderProperty): void
@@ -116,7 +116,7 @@ export class SeismicCubeNode extends DataNode
     }).catch(error =>
     {
       this.seismicCube = null;
-      alert(`Can not load cube.\nError message: ${error.message}`);
+      alert(`Can not load seismic cube.\nError message: ${error.message}`);
     });
   }
 }
