@@ -20,4 +20,5 @@ export enum PropertyType
   Color,
   ColorMap,
   Select,
+  Boolean
 }

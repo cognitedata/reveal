@@ -75,6 +75,19 @@ export default function SettingsElement(props: ISettingsElementProps) {
             className={isReadOnly ? "textInput readOnlyInput" : "textInput"}
           />
         );
+      case ElementTypes.Boolean:
+        return (
+          <input
+            type="checkbox"
+            className="checkbox"
+            disabled={disabled}
+            {...keyExtractor(null, type, name)}
+            onChange={(event) =>
+              !isReadOnly ? onChange(id, event.target.checked) : null
+            }
+            value={value}
+          />
+        );
       case ElementTypes.Select: {
         const options = config.options as ISelectOption[];
         const [selectedValue, setSelectedValue] = useState(

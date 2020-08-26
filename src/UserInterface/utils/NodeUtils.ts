@@ -194,6 +194,9 @@ export default class NodeUtils
     if (type === PropertyType.Range)
       return ElementTypes.Range;
 
+    if (type === PropertyType.Boolean)
+      return ElementTypes.BOOLEAN;
+
     return "";
   }
 }

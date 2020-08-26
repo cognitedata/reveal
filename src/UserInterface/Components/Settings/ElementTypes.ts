@@ -8,4 +8,5 @@ export default {
   Color: "color-table",
   Range: "range",
   ImageButton: "image-button",
+  Boolean: "boolean"
 };
