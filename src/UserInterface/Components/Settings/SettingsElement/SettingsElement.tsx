@@ -30,7 +30,7 @@ export default function SettingsElement(props: ISettingsElementProps) {
   } = props;
 
   const labelElement = config.name ? (
-    <label htmlFor={`chBox-${sectionId}`}>{`${config.name}:`}</label>
+    <label htmlFor={`chBox-${sectionId}`}>{`${config.name}`}</label>
   ) : null;
 
   // Generate keys for mapped components
