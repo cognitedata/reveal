@@ -55,7 +55,11 @@ To publish a new version of a viewer follow these steps.
 
 ## Use local build with a project that uses reveal (Dev only)
 
-Because we use workers and wasm files from CDN in our produciton builds,
+There are 2 different types of projects: 
+1) These where CDN is available (no restrictive Content-Security-Policy is set)
+2) Projects with CSP (like CDF)
+
+Because we use workers and wasm files from CDN in our production builds,
 we need to change [webpack `publicPath`](https://webpack.js.org/guides/public-path/) setting to some local path, where 
 the latest worker/wasm files could be found. 
 

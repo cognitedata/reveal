@@ -1,0 +1,131 @@
+---
+id: installation
+title: Installation
+---
+
+```bash npm2yarn
+npm install @cognite/reveal
+```
+
+There are 2 different types of projects:
+
+1. These where CDN is available (no restrictive Content-Security-Policy is set)
+2. Projects with [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
+that forbids to fetch scripts from jsdeliver.
+
+By default, the reveal will try to fetch its worker/wasm files from jsdeliver.
+If there is no CSP in your project, then it will just work without any additional steps.
+
+In case if you see an error like that:
+
+> Refused to load the script 'https://cdn.jsdelivr.net/npm/@cognite/reveal-parser-worker@1.0.0/dist/cdn/reveal.parser.worker.js' because it violates the following Content Security Policy directive: "script-src 'self' https://localhost:* blob:"
+
+See the next steps below.
+
+## Installation for projects with CSP
+
+What you'll need to do is host worker/wasm files somewhere, where you can do it.
+
+Also, notice that because Safari browser [doesn't support](https://caniuse.com/#search=instantiateStreaming)
+`WebAssembly.InstantiateStreaming` yet, so it uses `WebAssembly.instantiate` which requires
+`unsafe-eval` to be presented in CSP.
+
+### Easy case when you can drop some static files in your project
+
+Then just copy all files from `/node_modules/@cognite/reveal-parser-worker/dist/local`
+to some static folder in your project. E.g., for react projects, the typical folder is `/public`.
+
+So you can add this command to your build scripts:
+
+```
+cp ./node_modules/@cognite/reveal-parser-worker/dist/local/* ./public/reveal-worker
+```
+
+The point is that parser-worker files should be available under some network path
+like in that case `https://localhost:xxxx/reveal-worker/reveal.parser.worker.js` if you can see
+script content in browser window - you are almost done.
+
+The only thing left is to tell the reveal library from which path workers should be fetched.
+To do that, use the `revealEnv`.
+
+```js
+import { revealEnv, Cognite3DViewer } from '@cognite/reveal';
+revealEnv.publicPath = `/worker-custom-folder/`;
+
+// ... then use reveal normally ...
+const viewer = new Cognite3DViewer(/*...*/)
+```
+
+### If you can't host workers on the same domain
+
+In case if there is no such `/public` or similar folder in your project, you're likely using something
+to host static assets. And the domain of that something is probably whitelisted in Content Security Policy.
+
+In that case, the only thing you can do is build the reveal-parser-worker from sources with correct publicPath.
+
+Let's say your static server has that URL `https://static.server/`. And you can upload the files
+at some folder, so files should be available at `https://static.server/parser-worker/`
+
+So all you need to do is:
+
+1. Clone or download [@cognite/reveal](https://github.com/cognitedata/reveal).
+2. `cd ./reveal/parser-worker`
+3. Consult `parser-worker/README.md` and install the necessary build tools
+4. Make sure to set env variable correctly and run the build,
+you will see publicPath printed in console during the build
+
+<Tabs
+  groupId="operating-systems"
+  defaultValue="bash"
+  values={[
+    {label: 'Bash', value: 'bash'},
+    {label: 'Windows', value: 'win'},
+  ]
+}>
+<TabItem value="bash">
+
+```bash
+PUBLIC_PATH=https://static.server/parser-worker/ yarn build
+```
+</TabItem>
+<TabItem value="win">
+
+```bash
+set PUBLIC_PATH=https://static.server/parser-worker/ && yarn build
+```
+</TabItem>
+</Tabs>
+
+5. Take the files from `./parser-worker/dist/local` and host them at the path you specified.
+6. In your project, specify `revealEnv.publicPath`
+
+```js
+import { revealEnv, Cognite3DViewer } from '@cognite/reveal';
+revealEnv.publicPath = `https://static.server/parser-worker/`;
+
+// ... then use reveal normally ...
+const viewer = new Cognite3DViewer(/*...*/)
+```
+
+Now it should work.
+
+### A note on Content-type header for .wasm files
+
+:::tip important
+Make sure your server sends `*.wasm` files with `Content-type: application/wasm` header.
+:::
+
+Sometimes servers don't have correct MIME type set for wasm files.
+In that case you might notice this message in a browser console when it fetches a `.wasm` file:
+
+> Uncaught (in promise) TypeError: Failed to execute 'compile' on 'WebAssembly': Incorrect response MIME type. Expected 'application/wasm'.
+
+In that case you'll need to configure your server to set the `Content-type: application/wasm` header for `*.wasm` files.
+If you use the nginx add [types](https://nginx.org/en/docs/http/ngx_http_core_module.html#types) in the config
+or edit the [mime.types file](https://www.nginx.com/resources/wiki/start/topics/examples/full/#mime-types).
+
+```types title="/mime.types"
+types {
+    application/wasm wasm;
+}
+```
