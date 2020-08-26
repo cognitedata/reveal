@@ -31,6 +31,7 @@ const createBaseConfig = (env) => {
 const createLocalBuildConfig = (env) => {
   const localConfig = createBaseConfig(env);
 
+  localConfig.output.path = path.join(__dirname, '/dist/local/');
   localConfig.output.publicPath = publicPath;
 
   logger.info("Worker local build config:");
