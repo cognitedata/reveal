@@ -34,3 +34,24 @@ export const ButtonRow = styled.div`
     margin-left: 0px;
   }
 `;
+
+const HorizontalDivider = styled.div`
+  width: 100%;
+  height: 2px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  background: ${Colors['greyscale-grey3'].hex()};
+`;
+
+const VerticalDivider = styled.div`
+  height: 100%;
+  height: 2px;
+  margin-left: 8px;
+  margin-right: 8px;
+  background: ${Colors['greyscale-grey3'].hex()};
+`;
+
+export const Divider = {
+  Vertical: VerticalDivider,
+  Horizontal: HorizontalDivider,
+};

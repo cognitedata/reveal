@@ -6,7 +6,6 @@ import {
   ReactPictureAnnotation,
 } from '@cognite/react-picture-annotation';
 import styled from 'styled-components';
-import SplitPane from 'react-split';
 import {
   CogniteAnnotation,
   PendingCogniteAnnotation,
@@ -19,7 +18,7 @@ import {
   hardDeleteAnnotationsForFile,
 } from 'modules/annotations';
 import { trackUsage } from 'utils/Metrics';
-import { Button, Menu, Dropdown, Icon, Colors } from '@cognite/cogs.js';
+import { Button, Menu, Dropdown, Icon } from '@cognite/cogs.js';
 import MissingPermissionFeedback from 'components/MissingPermissionFeedback';
 import { checkPermission } from 'modules/app';
 import { findSimilarObjects } from 'modules/fileContextualization/similarObjectJobs';
@@ -29,13 +28,14 @@ import {
   FileViewer,
   FilePreviewOverview,
   IAnnotationWithPage,
+  Splitter,
 } from 'components/Common';
 import { FileInfo, Asset, Sequence } from 'cognite-sdk-v3';
 import sdk, { getAuthState } from 'sdk-singleton';
 import { useLocation, useHistory } from 'react-router';
 import queryString from 'query-string';
 import { PNID_ANNOTATION_TYPE } from 'utils/AnnotationUtils';
-import { ResourcePreviewSidebar } from 'components/CogniteFileViewer/ResourcePreviewSidebar';
+import { FileViewerPreviewSidebar } from 'components/CogniteFileViewer/FileViewerPreviewSidebar';
 import { useResourceActionsContext } from 'context/ResourceActionsContext';
 import { useSelectionButton } from 'hooks/useSelection';
 import { selectAnnotationColor } from './CogniteFileViewerUtils';
@@ -43,6 +43,7 @@ import { selectAnnotationColor } from './CogniteFileViewerUtils';
 const OverviewWrapper = styled.div`
   height: 100%;
   min-width: 360px;
+  width: 360px;
   display: inline-flex;
   flex-direction: column;
 `;
@@ -78,35 +79,6 @@ const Wrapper = styled.div<{ showResourceSidebar: boolean }>`
     display: ${props => (props.showResourceSidebar ? 'block' : 'none')};
   }
 `;
-const SplitWrapper = styled(SplitPane)`
-  flex: 1;
-  min-height: 200px;
-  height: 100%;
-  width: 100%;
-  position: relative;
-  display: flex;
-
-  button.cogs-menu-item {
-    color: ${Colors.black.hex()};
-  }
-
-  .rp-stage {
-    display: flex;
-    position: relative;
-    height: 100%;
-    flex: 1;
-    overflow: hidden;
-  }
-
-  .gutter {
-    cursor: col-resize;
-    transition: 0.3s all;
-  }
-  .gutter:hover {
-    background-color: ${Colors['midblue-7'].hex()};
-  }
-`;
-
 type Props = {
   fileId?: number;
   children?: React.ReactNode;
@@ -158,12 +130,6 @@ export const CogniteFileViewer = ({
   const [pendingPnidAnnotations, setPendingPnidAnnotations] = useState(
     [] as ProposedCogniteAnnotation[]
   );
-
-  const [initialLoadHack, setHack] = useState(false);
-
-  useEffect(() => {
-    setHack(true);
-  }, []);
 
   const [creatable, setCreatable] = useState(false);
   const [similarSearchMode, setSimilarSearchMode] = useState(false);
@@ -455,19 +421,7 @@ export const CogniteFileViewer = ({
       {renderFeedback ? (
         <MissingPermissionFeedback key="eventsAcl" type="WRITE" />
       ) : null}
-      <SplitWrapper
-        className="splitter"
-        minSize={[360, 360, selectedAnnotation ? 360 : 0]}
-        sizes={initialLoadHack ? undefined : [0, 100, 0]}
-        expandToMin={false}
-        gutterSize={10}
-        gutterAlign="center"
-        dragInterval={1}
-        cursor="col-resize"
-        onDragEnd={() => {
-          window.dispatchEvent(new Event('resize'));
-        }}
-      >
+      <Splitter flex={[1]} sizes={[0, 100]}>
         <OverviewWrapper className="overview">
           {children}
           {file && (
@@ -553,16 +507,16 @@ export const CogniteFileViewer = ({
             </CenteredPlaceholder>
           )}
         </div>
-        <ResourcePreviewSidebar
-          fileId={fileId}
-          loadPreview={loadPreview}
-          deselectAnnotation={() => setSelectedAnnotation(undefined)}
-          updateAnnotation={setSelectedAnnotation}
-          selectedAnnotation={selectedAnnotation}
-          pendingPnidAnnotations={pendingPnidAnnotations}
-          setPendingPnidAnnotations={setPendingPnidAnnotations}
-        />
-      </SplitWrapper>
+      </Splitter>
+      <FileViewerPreviewSidebar
+        fileId={fileId}
+        loadPreview={loadPreview}
+        deselectAnnotation={() => setSelectedAnnotation(undefined)}
+        updateAnnotation={setSelectedAnnotation}
+        selectedAnnotation={selectedAnnotation}
+        pendingPnidAnnotations={pendingPnidAnnotations}
+        setPendingPnidAnnotations={setPendingPnidAnnotations}
+      />
     </Wrapper>
   );
 };

@@ -19,6 +19,7 @@ import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';
 import { mount } from 'enzyme';
 import { mockStore } from 'utils/mockStore';
+import { ResourcePreviewProvider } from 'context/ResourcePreviewContext';
 import { CogniteFileViewer } from './CogniteFileViewer';
 
 describe('CogniteFileViewer', () => {
@@ -67,9 +68,11 @@ describe('CogniteFileViewer', () => {
     expect(() => {
       mount(
         <Provider store={store}>
-          <MemoryRouter>
-            <CogniteFileViewer fileId={123} />
-          </MemoryRouter>
+          <ResourcePreviewProvider>
+            <MemoryRouter>
+              <CogniteFileViewer fileId={123} />
+            </MemoryRouter>
+          </ResourcePreviewProvider>
         </Provider>
       );
     }).not.toThrow();

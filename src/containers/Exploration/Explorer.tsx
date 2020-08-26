@@ -12,6 +12,7 @@ import { useHistory } from 'react-router';
 import { useTenant } from 'hooks/CustomHooks';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
 import { ResourceItem } from 'types';
+import { ResourcePreviewProvider } from 'context/ResourcePreviewContext';
 import { ExplorationNavbar } from './ExplorationNavbar';
 
 const Wrapper = styled.div`
@@ -128,21 +129,26 @@ export const Explorer = () => {
         setCart={setCart}
         showSearch={showSearch}
       />
-      <Switch>
-        <Route path={`${match.path}/file/:fileId?`} component={FileExplorer} />
-        <Route
-          path={`${match.path}/asset/:assetId?`}
-          component={AssetExplorer}
-        />
-        <Route
-          path={`${match.path}/sequence/:sequenceId?`}
-          component={SequenceExplorer}
-        />
-        <Route
-          path={`${match.path}/timeseries/:timeseriesId?`}
-          component={TimeseriesExplorer}
-        />
-      </Switch>
+      <ResourcePreviewProvider>
+        <Switch>
+          <Route
+            path={`${match.path}/file/:fileId?`}
+            component={FileExplorer}
+          />
+          <Route
+            path={`${match.path}/asset/:assetId?`}
+            component={AssetExplorer}
+          />
+          <Route
+            path={`${match.path}/sequence/:sequenceId?`}
+            component={SequenceExplorer}
+          />
+          <Route
+            path={`${match.path}/timeseries/:timeseriesId?`}
+            component={TimeseriesExplorer}
+          />
+        </Switch>
+      </ResourcePreviewProvider>
     </Wrapper>
   );
 };

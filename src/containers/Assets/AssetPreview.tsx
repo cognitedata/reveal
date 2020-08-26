@@ -42,6 +42,7 @@ import moment from 'moment';
 import unionBy from 'lodash/unionBy';
 import { DescriptionList } from '@cognite/gearbox/dist/components/DescriptionList';
 import { useTenant } from 'hooks/CustomHooks';
+import { useResourcePreview } from 'context/ResourcePreviewContext';
 
 const formatMetadata = (metadata: { [key: string]: any }) =>
   Object.keys(metadata).reduce(
@@ -76,6 +77,7 @@ export const AssetPreview = ({
   assetId: number;
   extraActions?: React.ReactNode[];
 }) => {
+  const { openPreview, hidePreview } = useResourcePreview();
   const history = useHistory();
   const dispatch = useDispatch();
   const tenant = useTenant();
@@ -113,6 +115,15 @@ export const AssetPreview = ({
       await dispatch(listSequence(createSequenceFilter(assetId), true));
     })();
   }, [dispatch, assetId]);
+
+  useEffect(() => {
+    if (assetId) {
+      hidePreview();
+    }
+    return () => {
+      hidePreview();
+    };
+  }, [dispatch, hidePreview, assetId]);
 
   useEffect(() => {
     if (filesByAnnotationsIds) {
@@ -184,7 +195,9 @@ export const AssetPreview = ({
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
                   if (ts) {
-                    history.push(`/${tenant}/explore/timeseries/${ts.id}`);
+                    openPreview({
+                      item: { id: ts.id, type: 'timeSeries' },
+                    });
                   }
                 }}
               >
@@ -205,7 +218,9 @@ export const AssetPreview = ({
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
                   if (file) {
-                    history.push(`/${tenant}/explore/file/${file.id}`);
+                    openPreview({
+                      item: { id: file.id, type: 'file' },
+                    });
                   }
                 }}
               >
@@ -229,7 +244,9 @@ export const AssetPreview = ({
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
                   if (sequence) {
-                    history.push(`/${tenant}/explore/sequence/${sequence.id}`);
+                    openPreview({
+                      item: { id: sequence.id, type: 'sequence' },
+                    });
                   }
                 }}
               >

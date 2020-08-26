@@ -5,3 +5,4 @@ export * from './FileViewer/FileViewer';
 export * from './InfoGrid/InfoGrid';
 export * from './Popover/Popover';
 export * from './SearchFilterForm/SearchFilterForm';
+export * from './Splitter/Splitter';
