@@ -314,16 +314,14 @@ export abstract class BaseNode extends Identifiable
       {
         child.applyByFieldNameDelegate = (fieldName: string) => this.notify(new NodeEventArgs(Changes.renderStyle, fieldName));
       }
-      if (child instanceof ColorTypeProperty && !child.hasOptions)
+      if (child instanceof UseProperty && !child.hasOptions)
       {
         child.options = [];
-        // eslint-disable-next-line guard-for-in
         for (const color in ColorType)
         {
-          const colorType = ColorType[color] as unknown as number;
-          if (this.supportsColorType(colorType))
-            child.options.push(colorType);
-          //child.options.push({ label: color, value: ColorType[color] });
+          if (typeof ColorType[color] === "number")
+            if (this.supportsColorType(ColorType[color] as unknown as number))
+              child.options.push({ label: color, value: ColorType[color] });
         }
         child.optionIconDelegate = BaseNode.GetIconFromColorType;
       }
