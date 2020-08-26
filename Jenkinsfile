@@ -256,7 +256,6 @@ pods { context ->
             fas.build(
               useContainer: true,
               domainName: STAGING_DOMAIN_NAME,
-              iap: isStaging,
               buildCommand: 'yarn build staging',
             )
           }
@@ -277,7 +276,6 @@ pods { context ->
             fas.build(
               useContainer: true,
               domainName: PRODUCTION_DOMAIN_NAME,
-              iap: false,
               buildCommand: 'yarn build production'
             )
           }
