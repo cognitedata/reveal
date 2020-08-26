@@ -4,7 +4,10 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   place-items: center start;
-  font-size: var(--subsurface-viz-default-font-size, variables.$application-default-font-size);
+  font-size: var(
+    --subsurface-viz-default-font-size,
+    variables.$application-default-font-size
+  );
   height: 1.6rem;
   padding: 0.1rem;
 
@@ -29,7 +32,10 @@
         border-width: 1px;
         border-color: #c4c4c4;
         border-style: solid;
-        font-size: var(--subsurface-viz-default-font-size, variables.$application-default-font-size);
+        font-size: var(
+          --subsurface-viz-default-font-size,
+          variables.$application-default-font-size
+        );
         box-sizing: border-box;
         width: 100%;
 
@@ -60,7 +66,7 @@
         }
       }
 
-      .color-map-select{
+      .color-map-select {
         height: 1.6rem;
         width: 100%;
       }
@@ -70,9 +76,16 @@
 
 .select-element-option {
   display: grid;
-  grid-template-columns: 1fr 5fr;
+  grid-template-columns: auto auto;
   place-items: center start;
   grid-gap: 5px;
   padding: 5px;
-  font-size: var(--subsurface-viz-default-font-size, variables.$application-default-font-size);
+  font-size: var(
+    --subsurface-viz-default-font-size,
+    variables.$application-default-font-size
+  );
+
+  .icon {
+    width: 20px;
+  }
 }

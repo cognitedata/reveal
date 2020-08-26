@@ -150,11 +150,21 @@ export default class NodeUtils
     {
       for (const option of options)
       {
-        items.push({
-          label: option,
-          value: option,
-          iconSrc: iconDelegate && iconDelegate(option)
-        });
+        if (typeof option === "object")
+        {
+          items.push({
+            label: option.label,
+            value: option.value ,
+            iconSrc: iconDelegate && iconDelegate(option)
+          });
+        }
+        else 
+        {
+          items.push({
+            label: `${option}`,
+            value: option 
+          });
+        }
       }
     }
     return items;

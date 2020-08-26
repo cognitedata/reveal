@@ -314,14 +314,15 @@ export abstract class BaseNode extends Identifiable
     {
       if (child instanceof UseProperty)
       {
-        if (child.name === "colorType")
+        if (child.name === "Color Type")
         {
           child.options = [];
-          if (this.supportsColorType(ColorType.Specified))
-            child.options.push(ColorType[ColorType.Specified]);
-          if (this.supportsColorType(ColorType.Parent))
-            child.options.push(ColorType[ColorType.Parent]);
-          //....+++  for the rest of the color types
+          for (const color in ColorType)
+          {
+            if (typeof ColorType[color] === "number")
+              if (this.supportsColorType(ColorType[color] as unknown as number))
+                child.options.push({ label: color, value: ColorType[color] });
+          }
           child.optionIconDelegate = BaseNode.GetIconFromColorType;
         }
         child.applyByFieldNameDelegate = (fieldName: string) => this.notify(new NodeEventArgs(Changes.renderStyle, fieldName));
