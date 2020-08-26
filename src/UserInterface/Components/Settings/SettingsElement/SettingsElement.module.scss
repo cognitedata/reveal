@@ -2,13 +2,13 @@
 
 .form-field {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 40% 60%;
   place-items: center start;
   font-size: var(
     --subsurface-viz-default-font-size,
     variables.$application-default-font-size
   );
-  height: 1.6rem;
+  height: 1.3rem;
   padding: 0.1rem;
 
   .input-wrap {
@@ -28,7 +28,7 @@
       grid-gap: 1px;
 
       .textInput {
-        height: 1.5rem;
+        height: 1.3rem;
         border-width: 1px;
         border-color: #c4c4c4;
         border-style: solid;
@@ -56,18 +56,26 @@
         }
 
         .MuiInput-root {
-          height: 20px;
+          height: 1.3rem;
+        }
+
+        .MuiSelect-select.MuiSelect-select {
+          padding: 0;
         }
 
         .select-controls {
           display: grid;
           grid-template-rows: 1fr 1fr;
           place-items: center;
+
+          .svg-inline--fa {
+            height: 0.8em;
+          }
         }
       }
 
       .color-map-select {
-        height: 1.6rem;
+        height: 1.3rem;
         width: 100%;
       }
     }

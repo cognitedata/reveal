@@ -103,7 +103,7 @@ export interface ColorMapProps {
 
 const ColorMap = styled.div<ColorMapProps>`
   height: 100%;
-  min-height: 1.2rem;
+  min-height: 1rem;
   min-width: 2rem;
   border-radius: 0.15rem;
   margin-inline-end: 0.5rem;
