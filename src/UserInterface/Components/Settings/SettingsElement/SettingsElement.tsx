@@ -5,12 +5,11 @@ import Select from "@material-ui/core/Select";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretUp } from "@fortawesome/free-solid-svg-icons/faCaretUp";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons/faCaretDown";
-import
-  {
-    ISettingsElement,
-    ISettingsElementProps,
-    ISelectOption,
-  } from "@/UserInterface/Components/Settings/Types";
+import {
+  ISettingsElement,
+  ISettingsElementProps,
+  ISelectOption,
+} from "@/UserInterface/Components/Settings/Types";
 import ElementTypes from "@/UserInterface/Components/Settings/ElementTypes";
 import CompactColorPicker from "@/UserInterface/Components/CompactColorPicker/CompactColorPicker";
 import Icon from "@/UserInterface/Components/Icon/Icon";
@@ -22,8 +21,7 @@ import { ColorMapSelector } from "@/UserInterface/Components/ColorMapSelector/Co
  * Responsible for rendering dynamic inputs
  * @param props
  */
-export default function SettingsElement(props: ISettingsElementProps)
-{
+export default function SettingsElement(props: ISettingsElementProps) {
   const {
     config,
     onPropertyValueChange: onChange,
@@ -40,21 +38,18 @@ export default function SettingsElement(props: ISettingsElementProps)
     extraIdentifier: number | string | null,
     elementName: string,
     elementType: string
-  ) =>
-  {
+  ) => {
     let key = `${sectionId}-${elementType}-${elementName}`;
     if (extraIdentifier) key += `-${extraIdentifier}`;
     return { key };
   };
 
-  const handleCheckboxChange = (id: string, e: any) =>
-  {
+  const handleCheckboxChange = (id: string, e: any) => {
     onPropertyUseChange(id, e.target.checked);
   };
 
   // Renders input elements dynamically
-  const renderInputElement = (elmConfig: ISettingsElement): any =>
-  {
+  const renderInputElement = (elmConfig: ISettingsElement): any => {
     const {
       isReadOnly,
       subValues: subElements,
@@ -67,8 +62,7 @@ export default function SettingsElement(props: ISettingsElementProps)
 
     const disabled = config.isReadOnly || !config.useProperty;
 
-    switch (type)
-    {
+    switch (type) {
       case ElementTypes.String:
         return (
           <input
@@ -101,21 +95,17 @@ export default function SettingsElement(props: ISettingsElementProps)
         );
 
         // TODO: Create spare component for each of the types and ove this method select renderer
-        const handleSelectUpDown = (isUp: boolean) =>
-        {
-          if (!isReadOnly)
-          {
+        const handleSelectUpDown = (isUp: boolean) => {
+          if (!isReadOnly) {
             const selectedIndex = options.findIndex(
               (ele) => ele.value === selectedValue
             );
 
             let nextIndex;
-            if (isUp)
-            {
+            if (isUp) {
               nextIndex =
                 selectedIndex <= 0 ? options.length - 1 : selectedIndex - 1;
-            } else
-            {
+            } else {
               nextIndex =
                 selectedIndex === options.length - 1 ? 0 : selectedIndex + 1;
             }
@@ -129,14 +119,12 @@ export default function SettingsElement(props: ISettingsElementProps)
             <Select
               value={selectedValue}
               disabled={disabled}
-              onChange={(e) =>
-              {
+              onChange={(e) => {
                 setSelectedValue(e.target.value);
                 onChange(id, e.target.value);
               }}
             >
-              {options?.map((option) =>
-              {
+              {options?.map((option) => {
                 return (
                   <MenuItem
                     value={option.value}
@@ -197,8 +185,7 @@ export default function SettingsElement(props: ISettingsElementProps)
               colorMapOptions={elmConfig.colorMapOptions}
               value={value}
               disabled={disabled}
-              onChange={(colorMap) =>
-              {
+              onChange={(colorMap) => {
                 onChange(id, colorMap);
               }}
             />
@@ -211,7 +198,7 @@ export default function SettingsElement(props: ISettingsElementProps)
             {...keyExtractor(null, type, name)}
             className={`input-icon ${
               icon?.selected ? "input-icon-selected" : ""
-              }`}
+            }`}
           >
             <Icon type={icon?.type} name={icon?.name} />
           </div>
