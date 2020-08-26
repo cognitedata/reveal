@@ -2,6 +2,10 @@
 
 Documentation for the latest version is available at [https://cognitedata.github.io/reveal/docs/](https://cognitedata.github.io/reveal/docs/)
 
+We have [demos here](https://cognitedata.github.io/reveal/docs/examples/cad-basic)!
+
+---
+
 ## Code Example
 
 ```typescript
