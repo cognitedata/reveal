@@ -31,6 +31,7 @@ export const ConfigurationContainer = styled(ContentCard)`
   margin: 0;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   & > header {
     border-bottom: 1px solid var(--cogs-greyscale-grey5);
     padding: 24px 48px;
@@ -38,6 +39,11 @@ export const ConfigurationContainer = styled(ContentCard)`
   & > main {
     padding: 16px 48px;
     flex-grow: 1;
+  }
+  & > footer {
+    padding: 16px 48px;
+    display: flex;
+    justify-content: center;
   }
 `;
 

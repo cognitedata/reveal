@@ -29,6 +29,7 @@ enum SourceUIState {
 enum ChangeType {
   REPO,
   TAGS,
+  DATATYPES,
 }
 
 const PetrelStudioToOpenWorks = ({ name }: Props) => {
@@ -52,12 +53,18 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
   const [sourceUIState, setSourceUIState] = useState<SourceUIState>(
     SourceUIState.INITIAL
   );
+  const [sourceComplete, setSourceComplete] = useState<boolean>(false);
   const [availableRepositories, setAvailableRepositories] = useState<
     GenericResponseObject[]
   >([]);
   const [availableDataTypes, setAvailableDataTypes] = useState<
-    GenericResponseObject[]
-  >([]);
+    { label: string; value: string }[]
+  >([
+    {
+      label: 'apple',
+      value: 'apple',
+    },
+  ]);
   const { api } = useContext(ApiContext);
   const { Option } = Select;
 
@@ -65,11 +72,31 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
     return api!.projects.get(Source.STUDIO);
   }
 
+  async function fetchDataTypes(projectId: number): Promise<string[]> {
+    return api!.datatypes.get(projectId);
+  }
+
+  function getRepositoryIdInArrayFromExternalId(externalId: string) {
+    return availableRepositories.find(
+      (element) => element.external_id === externalId
+    );
+  }
+
   function handleChange(type: ChangeType, value: SelectValue) {
     if (type === ChangeType.REPO) {
       updateSourceRepository(value);
+      fetchDataTypes(
+        getRepositoryIdInArrayFromExternalId(value.toString())!.id
+      ).then((response) => {
+        const results: any = [];
+        response.map((item) => results.push({ label: item, value: item }));
+        setAvailableDataTypes(results);
+        updateDataTypes([]);
+      });
     } else if (type === ChangeType.TAGS) {
       updateBusinessTags(value);
+    } else if (type === ChangeType.DATATYPES) {
+      updateDataTypes(value);
     }
   }
 
@@ -91,6 +118,15 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
     });
   }
 
+  function updateDataTypes(value: any) {
+    setConfiguration((prevState) => {
+      return {
+        ...prevState,
+        datatypes: value,
+      };
+    });
+  }
+
   return (
     <div>
       <Header>
@@ -108,8 +144,8 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
           <header>
             <b>Petrel Studio</b>
           </header>
-          <main>
-            {sourceUIState === SourceUIState.INITIAL && (
+          {sourceUIState === SourceUIState.INITIAL && (
+            <main>
               <InitialState>
                 <p>No source repository selected</p>
                 <Button
@@ -124,10 +160,12 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
                   Configure
                 </Button>
               </InitialState>
-            )}
-            {sourceUIState === SourceUIState.CONFIGURING && (
-              <>
-                <div>Select repository</div>
+            </main>
+          )}
+          {sourceUIState === SourceUIState.CONFIGURING && (
+            <>
+              <main>
+                <div>Select repository:</div>
                 <Select
                   defaultValue={undefined}
                   placeholder="Available repositories"
@@ -145,7 +183,7 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
                 </Select>
                 {configuration.source.external_id !== '' && (
                   <>
-                    <div>Select tags</div>
+                    <div>Select tags:</div>
                     <Select
                       mode="tags"
                       placeholder="Available tags"
@@ -158,15 +196,23 @@ const PetrelStudioToOpenWorks = ({ name }: Props) => {
                       <Option value="kerfuffle">Kerfuffle</Option>
                       <Option value="mr-fluffy">Mr. Fluffy</Option>
                     </Select>
-                    <div>Select Datatypes</div>
+                    <div>Select Datatypes:</div>
                     <Checkbox.Group
-                      options={[{ label: 'apple', value: 'apple' }]}
+                      options={availableDataTypes}
+                      onChange={(value: any) =>
+                        handleChange(ChangeType.DATATYPES, value)
+                      }
                     />
                   </>
                 )}
-              </>
-            )}
-          </main>
+              </main>
+              <footer>
+                <Button type="primary" disabled={!sourceComplete}>
+                  Confirm
+                </Button>
+              </footer>
+            </>
+          )}
         </ConfigurationContainer>
         <ConfigurationArrow />
         <ConfigurationContainer>
