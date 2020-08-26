@@ -10,6 +10,6 @@ export default {
     'connector',
     'source',
   ],
-  filterableColumns: ['datatype', 'connector', 'source', 'status'],
+  filterableColumns: ['datatype', 'connector', 'source', 'status', 'name'],
   keyColumn: 'id',
 };

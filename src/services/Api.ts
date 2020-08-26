@@ -1,5 +1,9 @@
 import config from 'utils/config';
-import { RESTPackageFilter, RESTProject } from '../typings/interfaces';
+import {
+  GenericResponseObject,
+  RESTPackageFilter,
+  RESTProject,
+} from '../typings/interfaces';
 
 export type QueryParameters = {
   [property: string]: number | string | boolean | object | undefined;
@@ -50,7 +54,7 @@ class Api {
   };
 
   public objects = {
-    get: async () => {
+    get: async (): Promise<GenericResponseObject[]> => {
       return this.get(`${config.api.url}/objects`);
     },
   };
@@ -85,48 +89,9 @@ class Api {
     },
   };
 
-  fauxConfigurations = [
-    {
-      id: '1',
-      status: 'Active',
-      name: 'CWP_Session_1',
-      revision: '1',
-      author: 'Bob',
-      repository: 'Valhall_2212',
-      project: 'Proj_2292',
-    },
-    {
-      id: '2',
-      status: 'Active',
-      name: 'CWP_Session_2',
-      revision: '1',
-      author: 'Bob',
-      repository: 'Valhall_2212',
-      project: 'Proj_2292',
-    },
-    {
-      id: '3',
-      status: 'Inactive',
-      name: 'CWP_Session_3',
-      revision: '1',
-      author: 'Bob',
-      repository: 'Valhall_2212',
-      project: 'Proj_2292',
-    },
-    {
-      id: '4',
-      status: 'Active',
-      name: 'CWP_Session_4',
-      revision: '1',
-      author: 'Bob',
-      repository: 'Valhall_2212',
-      project: 'Proj_2292',
-    },
-  ];
-
   public configurations = {
-    get: async (): Promise<any[]> => {
-      return this.fauxConfigurations;
+    get: async (): Promise<GenericResponseObject[]> => {
+      return this.get(`${config.api.url}/configurations`);
     },
   };
 }
