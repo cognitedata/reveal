@@ -27,7 +27,7 @@ export class PointsRenderStyle extends BaseRenderStyle
 
   public size: number = 30;
 
-  public colorType: ColorType = ColorType.DepthColor;
+  public colorType: ColorType = ColorType.Depth;
 
   //==================================================
   // CONSTRUCTORS

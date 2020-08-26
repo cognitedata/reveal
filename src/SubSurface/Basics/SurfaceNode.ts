@@ -85,11 +85,11 @@ export class SurfaceNode extends DataNode
 
     const zRange = boundingBox.z;
     {
-      const increment = style.contours.increment.value;
+      const increment = style.increment.value;
       if (increment <= 0)
-        style.contours.increment.value = zRange.getBestInc();
+        style.increment.value = zRange.getBestInc();
     }
-    if (!style.contours.increment.hasOptions)
+    if (!style.increment.hasOptions)
     {
       const options: number[] = [];
       for (let i = 100; i >= 3; i--)
@@ -98,7 +98,7 @@ export class SurfaceNode extends DataNode
         if (options.length === 0 || options[options.length - 1] !== increment)
           options.push(increment);
       }
-      style.contours.increment.options = options;
+      style.increment.options = options;
     }
   }
 
@@ -106,7 +106,7 @@ export class SurfaceNode extends DataNode
   {
     switch (colorType)
     {
-      case ColorType.DepthColor:
+      case ColorType.Depth:
       case ColorType.Specified:
       case ColorType.Parent:
       case ColorType.Black:
