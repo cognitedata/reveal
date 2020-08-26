@@ -2,6 +2,8 @@ import GroupProperty from "@/Core/Property/Concrete/Folder/GroupProperty";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
 import { PropertyType } from "@/Core/Enums/PropertyType";
 
+const FractionDigitsDefault = 2;
+
 export default class ExpanderProperty extends BasePropertyFolder
 {
   //==================================================

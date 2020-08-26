@@ -15,7 +15,7 @@ import * as Lodash from "lodash";
 import { ColorType } from "@/Core/Enums/ColorType";
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
-import { SelectProperty } from "@/Core/Property/Concrete/Property/SelectProperty";
+import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
 import { RangeProperty } from "@/Core/Property/Concrete/Property/RangeProperty";
 
 export class SolidStyle extends BaseStyle
@@ -24,7 +24,7 @@ export class SolidStyle extends BaseStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public colorType = new SelectProperty({ name: "Solid color", value: ColorType.DepthColor });
+  public colorType = new ColorTypeProperty({ name: "Solid color", value: ColorType.DepthColor });
   public shininess = new RangeProperty({ name: "Shininess", value: 20, use: true });
   public opacity = new RangeProperty({ name: "Opacity", value: 50, use: false });
 

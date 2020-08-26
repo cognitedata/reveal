@@ -15,7 +15,8 @@ import * as Lodash from "lodash";
 import { ColorType } from "@/Core/Enums/ColorType";
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
-import { SelectProperty } from "@/Core/Property/Concrete/Property/SelectProperty";
+import { NumberSelectProperty } from "@/Core/Property/Concrete/Property/NumberSelectProperty";
+import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
 
 export class ContoursStyle extends BaseStyle
 {
@@ -23,8 +24,8 @@ export class ContoursStyle extends BaseStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public colorType = new SelectProperty({ name: "Contour color", value: ColorType.Black });
-  public increment = new SelectProperty({ name: "Increment", value: 0 });
+  public colorType = new ColorTypeProperty({ name: "Contour color", value: ColorType.Black });
+  public increment = new NumberSelectProperty({ name: "Increment", value: 0 });
 
   //==================================================
   // CONSTRUCTORS

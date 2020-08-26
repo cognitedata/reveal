@@ -17,9 +17,10 @@ import { TargetId } from "@/Core/Primitives/TargetId";
 import { BaseRenderStyle } from "@/Core/Styles/BaseRenderStyle";
 import { ColorType } from "@/Core/Enums/ColorType";
 import { RangeProperty } from "@/Core/Property/Concrete/Property/RangeProperty";
-import { SelectProperty } from "@/Core/Property/Concrete/Property/SelectProperty";
 import { BaseStyle } from "@/Core/Styles/BaseStyle";
 import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
+import { NumberSelectProperty } from "@/Core/Property/Concrete/Property/NumberSelectProperty";
 
 export class CasingLogStyle extends BaseRenderStyle
 {
@@ -27,9 +28,9 @@ export class CasingLogStyle extends BaseRenderStyle
   // INSTANCE FIELDS
   //==================================================
 
-  public colorType = new SelectProperty({
-    name: "Color type",
-    value: ColorType[ColorType.Specified]
+  public colorType = new ColorTypeProperty({
+    name: "Color Type",
+    value: ColorType.Specified
   });
 
   public opacity = new RangeProperty({
@@ -38,7 +39,7 @@ export class CasingLogStyle extends BaseRenderStyle
     use: false
   })
 
-  public radiusFactor = new SelectProperty({
+  public radiusFactor = new NumberSelectProperty({
     name: "Radius",
     value: 3,
     options: [1, 2, 3, 4]

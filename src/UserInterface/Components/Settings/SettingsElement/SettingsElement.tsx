@@ -118,9 +118,11 @@ export default function SettingsElement(props: ISettingsElementProps) {
                     key={keyExtractor("select", option.label, option.value).key}
                   >
                     <div className="select-element-option">
-                      <span>
-                        {option.iconSrc && <Icon src={option.iconSrc} />}
-                      </span>
+                      {option.iconSrc && (
+                        <span className="icon">
+                          <Icon src={option.iconSrc} />
+                        </span>
+                      )}
                       <span className="optionText">{option.label}</span>
                     </div>
                   </MenuItem>

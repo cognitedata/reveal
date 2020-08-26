@@ -13,7 +13,10 @@ import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 import { Ma } from "@/Core/Primitives/Ma";
 import BaseProperty from "@/Core/Property/Base/BaseProperty";
 import { RangeProperty } from "@/Core/Property/Concrete/Property/RangeProperty";
-import { SelectProperty } from "@/Core/Property/Concrete/Property/SelectProperty";
+import { ColorType } from "@/Core/Enums/ColorType";
+import { NumberSelectProperty } from "@/Core/Property/Concrete/Property/NumberSelectProperty";
+import { StringSelectProperty } from "@/Core/Property/Concrete/Property/StringSelectProperty";
+import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
 
 const FractionDigitsDefault = 2;
 
@@ -85,7 +88,9 @@ export default abstract class BasePropertyFolder extends BaseProperty
   public addString(params: IPropertyParams<string>): void { this.addChild(new StringProperty(params)); }
   public addColor(params: IPropertyParams<Color>): void { this.addChild(new ColorProperty(params)); }
   public addRange(params: IPropertyParams<number>) { this.addChild(new RangeProperty(params)); }
-  public addSelect(params: IPropertyParams<unknown>): void { this.addChild(new SelectProperty(params)); }
+  public addNumber(params: IPropertyParams<number>): void { this.addChild(new NumberSelectProperty(params)); }
+  public addStringSelect(params: IPropertyParams<string>): void { this.addChild(new StringSelectProperty(params)); }
+  public addColorType(params: IPropertyParams<ColorType>): void { this.addChild(new ColorTypeProperty(params)); }
 
   public addColorMap(params: IPropertyParams<string>): void
   {

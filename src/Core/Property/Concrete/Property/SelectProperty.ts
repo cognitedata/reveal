@@ -2,24 +2,24 @@ import { PropertyType } from "@/Core/Enums/PropertyType";
 import UseProperty from "@/Core/Property/Base/UseProperty";
 import IPropertyParams from "@/Core/Property/Base/IPropertyParams";
 
-export class SelectProperty extends UseProperty<unknown>
+export abstract class SelectProperty<T> extends UseProperty<T>
 {
   //==================================================
   // INSTANCE METHODS
   //==================================================
 
-  public addOption(name: unknown): void
+  public addOption(option: T): void
   {
     if (!this.options)
       this.options = [];
-    this.options.push(name);
+    this.options.push(option);
   }
 
   //==================================================
   // CONSTRUCTORS
   //==================================================
 
-  public constructor(params: IPropertyParams<unknown>)
+  public constructor(params: IPropertyParams<T>)
   {
     super(params);
   }

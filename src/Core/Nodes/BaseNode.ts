@@ -31,6 +31,7 @@ import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 import { FileType } from "@/Core/Enums/FileType";
 import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 import Range3 from "@/Core/Geometry/Range3";
+import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
 import UseProperty from "@/Core/Property/Base/UseProperty";
 import { ColorMaps } from "../Primitives/ColorMaps";
 
@@ -311,17 +312,20 @@ export abstract class BaseNode extends Identifiable
     {
       if (child instanceof UseProperty)
       {
-        if (child.name === "colorType")
-        {
-          child.options = [];
-          if (this.supportsColorType(ColorType.Specified))
-            child.options.push(ColorType[ColorType.Specified]);
-          if (this.supportsColorType(ColorType.Parent))
-            child.options.push(ColorType[ColorType.Parent]);
-          //....+++  for the rest of the color types
-          child.optionIconDelegate = BaseNode.GetIconFromColorType;
-        }
         child.applyByFieldNameDelegate = (fieldName: string) => this.notify(new NodeEventArgs(Changes.renderStyle, fieldName));
+      }
+      if (child instanceof ColorTypeProperty && !child.hasOptions)
+      {
+        child.options = [];
+        // eslint-disable-next-line guard-for-in
+        for (const color in ColorType)
+        {
+          const colorType = ColorType[color] as unknown as number;
+          if (this.supportsColorType(colorType))
+            child.options.push(colorType);
+          //child.options.push({ label: color, value: ColorType[color] });
+        }
+        child.optionIconDelegate = BaseNode.GetIconFromColorType;
       }
     }
   }

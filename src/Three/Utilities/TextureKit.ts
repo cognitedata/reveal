@@ -28,7 +28,6 @@ export class TextureKit
     return new THREE.DataTexture(rgbs, rgbs.length / (2 * 3), 2, THREE.RGBFormat);
   }
 
-
   public static create1D(colorMap?: ColorMap): THREE.DataTexture | null
   {
     if (!colorMap)
