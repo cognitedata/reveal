@@ -45,6 +45,51 @@ export class NodeEventArgs
     return this.changes.some((desc: ChangedDescription) => desc.changed === changed);
   }
 
+  public isFieldNameChanged(changed: symbol, ...fieldNames: string[]): boolean
+  {
+    // This igonores space and case.
+    const fieldName = this.getFieldName(changed);
+    if (!fieldName)
+      return false;
+
+    const isUpperCase = (s: string) => /^[A-Z]*$/.test(s);
+    const isSpace = (s: string) => s === " ";
+
+    const { length } = fieldName;
+    for (const otherFieldName of fieldNames)
+    {
+      let found = true;
+      const otherLength = otherFieldName.length;
+
+      for (let i = 0, j = 0; i < length && found; i++)
+      {
+        let a = fieldName.charAt(i);
+        if (isSpace(a))
+          continue;
+
+        if (isUpperCase(a))
+          a = a.toLowerCase();
+
+        for (; j < otherLength;)
+        {
+          let b = otherFieldName.charAt(j);
+          j++;
+          if (isSpace(b))
+            continue;
+
+          if (isUpperCase(b))
+            b = b.toLowerCase();
+          if (b !== a)
+            found = false;
+          break;
+        }
+      }
+      if (found)
+        return true;
+    }
+    return false;
+  }
+
   //==================================================
   // INSTANCE METHODS: Getters
   //==================================================
@@ -53,10 +98,12 @@ export class NodeEventArgs
   {
     if (!this.changes)
       return undefined;
+    if (this.changes.length === 1) // optimalization
+      return this.changes[0].changed === changed ? this.changes[0] : undefined;
     return this.changes.find((desc: ChangedDescription) => desc.changed === changed);
   }
 
-  public getFieldName(changed: symbol): string | undefined
+  private getFieldName(changed: symbol): string | undefined
   {
     const changedDescription = this.getChangedDescription(changed);
     return changedDescription ? changedDescription.fieldName : undefined;

@@ -84,7 +84,7 @@ export class PointsThreeView extends BaseGroupThreeView
 
     const geometry = PointsThreeView.createBufferGeometry(points, this.transformer);
     const material = new THREE.PointsMaterial({ color: ThreeConverter.toThreeColor(color), size: style.size, sizeAttenuation: true });
-    if (style.colorType === ColorType.DepthColor)
+    if (style.colorType === ColorType.Depth)
     {
       geometry.setAttribute("color", PointsThreeView.createColorsAttribute(points));
       material.vertexColors = true;

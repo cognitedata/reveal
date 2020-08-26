@@ -12,11 +12,12 @@
 //=====================================================================================
 
 // eslint-disable-next-line max-classes-per-file
-import * as Color from "color";
+import Color from "color";
 import { Ma } from "@/Core/Primitives/Ma";
 import { ColorMapItem } from "@/Core/Primitives/ColorMapItem";
 import { ColorInterpolation } from "@/Core/Primitives/ColorInterpolation";
 import Range1 from "@/Core/Geometry/Range1";
+import { Colors } from "@/Core/Primitives/Colors";
 
 export class ColorMap
 {
@@ -81,7 +82,7 @@ export class ColorMap
         return this._items[indexInColorMap.value - 1].mix(item, fraction);
       }
     }
-    return this._items[this._maxIndex].color;
+    return this._items[this._maxIndex].color.rgb();
   }
 
   //==================================================
@@ -135,31 +136,29 @@ export class ColorMap
     let index2 = size;
     const indexInColorMap = new Index();
     let color: Color;
+    if (solidColor)
+      solidColor = solidColor.rgb();
+
+    const { black } = Colors;
+    const { white } = Colors;
     for (let i = 0; i < size; i++)
     {
       const fraction = i / (size - 1);
-      if (volume > 0)
-      {
-        const level = range.getValue(fraction);
-        const reminder = level % increment;
-        let contourFraction = reminder / increment;
-        if (contourFraction < 1)
-          contourFraction += 1;
+      const level = range.getValue(fraction);
+      const reminder = level % increment;
+      let contourFraction = reminder / increment;
+      if (contourFraction < 1)
+        contourFraction += 1;
 
-        // Get color in the middle
-        const middleLevel = (level - reminder) + increment / 2;
-        const middleFraction = range.getFraction(middleLevel);
-        color = solidColor || this.getColorFast(middleFraction, indexInColorMap);
-
-        if (contourFraction < 0.5)
-          color = color.blacken(volume * (0.5 - contourFraction));
-        else
-          color = color.whiten(volume * (contourFraction - 0.5));
-      }
+      // Get color in the middle
+      const middleLevel = (level - reminder) - increment / 2;
+      const middleFraction = range.getFraction(middleLevel);
+      color = solidColor || this.getColorFast(middleFraction, indexInColorMap);
+      if (contourFraction < 0.5)
+        color = color.mix(white, volume * (0.5 - contourFraction));
       else
-      {
-        color = solidColor || this.getColorFast(fraction, indexInColorMap);
-      }
+        color = color.mix(black, volume * (contourFraction - 0.5));
+
       ColorMap.setAt(rgbs, index1++, color);
       ColorMap.setAt(rgbs, index2++, color);
     }

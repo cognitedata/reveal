@@ -79,7 +79,7 @@ export class PointsNode extends DataNode
   {
     switch (colorType)
     {
-      case ColorType.DepthColor:
+      case ColorType.Depth:
       case ColorType.Specified:
         return true;
 

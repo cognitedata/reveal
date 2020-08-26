@@ -67,8 +67,7 @@ export class SeismicCubePlaneView extends BaseGroupThreeView
     if (args.isChanged(Changes.geometry))
     {
       this.touchBoundingBox();
-      const inDragging = args.getFieldName(Changes.geometry) === "InDragging";
-      if (inDragging)
+      if (args.isFieldNameChanged(Changes.geometry, "InDragging"))
       {
         const { node } = this;
         const { seismicCubeNode } = this;
