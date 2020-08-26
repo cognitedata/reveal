@@ -35,7 +35,7 @@ const createLocalBuildConfig = (env) => {
   localConfig.output.publicPath = publicPath;
 
   logger.info("Worker local build config:");
-  logger.info({ env, publicPath });
+  logger.info({ publicPath }); // don't print to much here since it mentioned in docs
 
   return localConfig;
 };

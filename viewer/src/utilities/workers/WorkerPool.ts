@@ -52,16 +52,12 @@ export class WorkerPool {
   // and that's possible only with importScripts.
   // If publicPath is set and points on the same domain, we use it normally.
   private createWorker() {
-    let publicPath = revealEnv.publicPath;
-    if (publicPath && !publicPath.endsWith('/')) {
-      publicPath += '/';
-    }
-    const workerUrl = (publicPath || __webpack_public_path__) + 'reveal.parser.worker.js';
+    const workerUrl = (revealEnv.publicPath || __webpack_public_path__) + 'reveal.parser.worker.js';
     const options = { name: 'reveal.parser' };
 
     // value by itself doesn't mean that domain is the same
     // if it's relative path - then it's the same, otherwise need to compare domains
-    const isPublicPathHasTheSameDomain = publicPath && isTheSameDomain(revealEnv.publicPath);
+    const isPublicPathHasTheSameDomain = revealEnv.publicPath && isTheSameDomain(revealEnv.publicPath);
 
     if (isPublicPathHasTheSameDomain) {
       return new Worker(workerUrl, options);
