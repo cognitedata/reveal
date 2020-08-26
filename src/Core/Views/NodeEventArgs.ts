@@ -52,7 +52,7 @@ export class NodeEventArgs
     if (!fieldName)
       return false;
 
-    const isUpperCase = (s: string) => /^[A-Z]*$/.test(s);
+    const isUpperCase = (s: string) => /[A-Z]/.test(s);
     const isSpace = (s: string) => s === " ";
 
     const { length } = fieldName;

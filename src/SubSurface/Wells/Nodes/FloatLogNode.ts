@@ -15,7 +15,7 @@ import { FloatLog } from "@/SubSurface/Wells/Logs/FloatLog";
 import { BaseLogNode } from "@/SubSurface/Wells/Nodes/BaseLogNode";
 import { WellLogType } from "@/SubSurface/Wells/Logs/WellLogType";
 import Icon from "@images/Nodes/FloatLogNode.png";
-import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
+import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
 
 export class FloatLogNode extends BaseLogNode
 {
@@ -66,7 +66,7 @@ export class FloatLogNode extends BaseLogNode
 
   public /*override*/ getNameExtension(): string | null { return this.unit; }
 
-  protected /*override*/ populateStatisticsCore(folder: ExpanderProperty): void
+  protected /*override*/ populateStatisticsCore(folder: BasePropertyFolder): void
   {
     super.populateStatisticsCore(folder);
     const { log } = this;

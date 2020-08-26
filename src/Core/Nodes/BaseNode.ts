@@ -29,11 +29,11 @@ import { ITarget } from "@/Core/Interfaces/ITarget";
 import { Util } from "@/Core/Primitives/Util";
 import { VirtualUserInterface } from "@/Core/States/VirtualUserInterface";
 import { FileType } from "@/Core/Enums/FileType";
-import ExpanderProperty from "@/Core/Property/Concrete/Folder/ExpanderProperty";
 import Range3 from "@/Core/Geometry/Range3";
 import { ColorTypeProperty } from "@/Core/Property/Concrete/Property/ColorTypeProperty";
 import ValueProperty from "@/Core/Property/Base/ValueProperty";
-import { ColorMaps } from "../Primitives/ColorMaps";
+import BasePropertyFolder from "@/Core/Property/Base/BasePropertyFolder";
+import { ColorMaps } from "@/Core/Primitives/ColorMaps";
 
 export abstract class BaseNode extends Identifiable
 {
@@ -276,7 +276,7 @@ export abstract class BaseNode extends Identifiable
   // VIRTUAL METHODS: Populate Settings
   //==================================================
 
-  protected /*virtual*/ populateInfoCore(folder: ExpanderProperty): void
+  protected /*virtual*/ populateInfoCore(folder: BasePropertyFolder): void
   {
     folder.addString({ name: "name", instance: this, readonly: !this.canChangeName(), apply: this.notifyNameChanged });
     if (this.canChangeColor())
@@ -286,23 +286,23 @@ export abstract class BaseNode extends Identifiable
       folder.addColorMap({ name: "colorMap", instance: this, readonly: false, apply: this.notifyColorMapChanged });
   }
 
-  protected /*virtual*/ populateStatisticsCore(folder: ExpanderProperty): void { }
+  protected /*virtual*/ populateStatisticsCore(folder: BasePropertyFolder): void { }
 
   //==================================================
   // INSTANCE METHODS: Populate Settings
   //==================================================
 
-  public populateInfo(folder: ExpanderProperty): void
+  public populateInfo(folder: BasePropertyFolder): void
   {
     this.populateInfoCore(folder);
   }
 
-  public populateStatistics(folder: ExpanderProperty): void
+  public populateStatistics(folder: BasePropertyFolder): void
   {
     this.populateStatisticsCore(folder);
   }
 
-  public populateRenderStyle(folder: ExpanderProperty): void
+  public populateRenderStyle(folder: BasePropertyFolder): void
   {
     const style = this.getRenderStyle();
     if (style)
